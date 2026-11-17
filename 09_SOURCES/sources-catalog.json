@@ -4913,10 +4913,10 @@
     "repository": "rqlite/rqlite",
     "platform": "github",
     "sourceUrl": "https://github.com/rqlite/rqlite",
-    "sourceVersion": "4e9a2e59",
+    "sourceVersion": "b9dc726d",
     "license": "MIT",
-    "contentHash": "8ccc4d5cd3a5b5715d19037d9ae015d9014f88999a009946f803219ea83d541a",
-    "lastHarvestedAt": "2026-11-16T00:28:02.250Z",
+    "contentHash": "b1fcb25d6c08ac275046d64b81cdd53de024cc518a9ea41b58de1ce87ee4b628",
+    "lastHarvestedAt": "2026-11-17T08:09:12.955Z",
     "learningId": "learn-github-rqlite-rqlite"
   },
   "arco-design-arco-design": {
@@ -10333,10 +10333,10 @@
     "repository": "expo/expo",
     "platform": "github",
     "sourceUrl": "https://github.com/expo/expo",
-    "sourceVersion": "117d1254",
+    "sourceVersion": "b32f30a4",
     "license": "MIT",
-    "contentHash": "20065d23a52e770336ec54a8d1ca088261403fe2127f56ae752cb91d42296c64",
-    "lastHarvestedAt": "2026-11-13T18:43:47.262Z",
+    "contentHash": "6a5debd9f94c1207a30698ce53a7dfb48412997767da2ab24b57eab4bafe6a89",
+    "lastHarvestedAt": "2026-11-17T08:07:58.744Z",
     "learningId": "learn-github-expo-expo"
   },
   "vercel-swr": {

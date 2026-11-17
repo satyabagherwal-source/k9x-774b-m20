@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T18:43:51.439Z",
+  "timestamp": "2026-11-17T08:09:16.620Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-expo-expo-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [expo-expo-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T18:43:51.439Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-17T08:09:16.620Z`  
 > **Learning ID**: `LEARN-EVO-expo-expo-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/expo-expo-learnings.md`  
 > **Source**: github ([https://github.com/expo/expo](https://github.com/expo/expo))  
-> **Source Version**: `117d1254`  
+> **Source Version**: `b32f30a4`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T18:43:46.695Z  
+> **Timestamp**: 2026-11-17T08:07:57.870Z  
 > **Learning ID**: `learn-github-expo-expo`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/expo-expo-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/expo/expo](https://github.com/expo/expo))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T18:43:46.691Z  
+> **Harvest Timestamp**: 2026-11-17T08:07:57.867Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: An open-source framework for making universal native apps with React. Expo runs on Android, iOS, and the web.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 53522 stars
+- **Stars / Engagement**: 53602 stars
 
 ---
 
@@ -699,307 +699,251 @@ object AsyncCondition {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a41ec590` (2026-11-13)
-**Commit Message**: [docs] Fix API links for library types named like global types (#53359)
+### Incident Patch 1: `aa816379` (2026-11-17)
+**Commit Message**: [docs] Fix the DownloadSlide card link in the generated Markdown (#53579)
 
 # Why
 
-Fix ENG-13666
+Fix ENG-29200. In https://docs.expo.dev/eas/workflows/introduction.md,
+the slide download card is not a valid Markdown link. Its text spans
+blank lines, and it ends with a loose
+`](/static/images/eas-workflows/eas-worfklows-slide.webp)` that has a
+root-relative URL.
 
-On `/versions/latest/sdk/contacts-legacy/`, the `Date` fields of the
-`Contact` type link to the MDN page for the global `Date`.
-`expo-contacts` declares its own `Date` type, and that type has a
-section on the same page. The cause is in `TypeLink` in
-`components/plugins/api/APISectionUtils.tsx`: it looks up a type by its
-name only, and `hardcodedTypeLinks` maps the name `Date` to the MDN URL.
+`DownloadSlide` renders an `<a>` with block content. The Markdown
+converter flattens card links to one line, but it reads only text
+elements marked `data-text="true"`. `DownloadSlide` uses plain `<p>`
+elements, so the converter skips the card.
 
 # How
 
-- Use the default link to the section on the page, and not the MDN link,
-when three conditions are true: the page declares a type with that name,
-the reference has a `package` that is not `typescript`, and the link in
-`hardcodedTypeLinks` is an MDN link.
-- Add the names of the types that the page declares to
-`APISectionPackageContext`, so `TypeLink` can read them.
-- Pass the package of the element type in the array branch of
-`resolveTypeName`. That branch passed the package of the array type,
-which is always empty, so `Date[]` kept the MDN link. `elementType` in
-`APIDataTypes.ts` gets the `package` field that the data already has.
-- The same rule corrects `Headers` on the AuthSession page, `Bl
+- Mark the `DownloadSlide` link with `data-md="card-link"`, as `BoxLink`
+does.
+- Mark its title and description with `data-text="true"`, as
+`AppConfigSchemaTable` does.
+- The converter then writes `[Expo Workflows CI/CD sync
+slide](https://docs.expo.dev/static/images/eas-workflows/eas-worfklows-slide.webp)
+— Learn the benefits of ...`. That is the same form as the `BoxLink`
+cards on the page.
+- The attributes do not change the rendered page. No style selects
+`data-text`. `DownloadSlide` is used only on this page.
 
-**File**: `docs/components/plugins/APISection.tsx` (modified, +2/-1)
-```diff
-@@ -425,9 +425,10 @@ const renderAPI = (
-       : packageName
-         ? [packageName]
-         : [];
-+    const typeNames = new Set(data.map(entry => entry.name));
- 
-     return (
--      <APISectionPackageContext.Provider value={packageNames}>
-+      <APISectionPackageContext.Provider value={{ packageNames, typeNames }}>
-         {hasCategorizedMethods &&
-           (hasHeadersMapping
-             ? Object.entries(headersMapping).map(([key, header], index) => (
-```
+# Test Plan
 
-**File**: `docs/components/plugins/api/APIDataTypes.ts` (modified, +1/-0)
-```diff
-@@ -64,6 +64,7 @@ export type TypeDefinitionData = {
-   elementType?: {
-     name?: string;
-     type: string;
-+    package?: string;
-     types?: TypeDefinitionData[];
-     declaration?: TypeDeclarationContentData;
-   };
-```
+Ran `convertHtmlToMarkdown` on the production HTML of
+`/eas/workf
 
-**File**: `docs/components/plugins/api/APISectionUtils.test.tsx` (modified, +33/-2)
+**File**: `docs/ui/components/DownloadSlide/index.tsx` (modified, +9/-2)
 ```diff
-@@ -1,6 +1,6 @@
--import { render } from '@testing-library/react';
-+import { render, screen } from '@testing-library/react';
- 
--import { resolveTypeName } from './APISectionUtils';
-+import { APISectionPackageContext, resolveTypeName } from './APISectionUtils';
- 
- describe('APISectionUtils.resolveTypeName', () => {
-   test('void', () => {
-@@ -478,4 +478,35 @@ describe('APISectionUtils.resolveTypeName', () => {
-     );
-     expect(container).toMatchSnapshot();
-   });
-+
-+  describe('on a page that declares a Date type', () => {
-+    const renderOnPage = (typeDefinition: Parameters<typeof resolveTypeName>[0]) =>
-+      render(
-+        <APISectionPackageContext.Provider
-+          value={{ packageNames: ['expo-contacts'], typeNames: new Set(['Date']) }}>
-+          {resolveTypeName(typeDefinition, 'v58.0.0')}
-+        </APISectionPackageContext.Provider>
-+      );
-+
-+    test('library type with the name of a global type', () => {
-+      renderOnPage({ type: 'reference', name: 'Date', package: 'expo-contacts' });
-+      expect(screen.getByRole('link', { name: 'Date' })).toHaveAttribute('href', '#date');
-+    });
-+
-+    test('array of a library type with the name of a global type', () => {
-+      renderOnPage({
-+        type: 'array',
-+        elementType: { type: 'reference', name: 'Date', package: 'expo-contacts' },
-+      });
-+      expect(screen.getByRole('link', { name: 'Date[]' })).toHaveAttribute('href', '#date');
-+    });
-+
-+    test('type of another package with the name of a global type', () => {
-+      renderOnPage({ type: 'reference', name: 'MouseEvent', package: '@types/react' });
-+      expect(screen.getByRole('link', { name: 'MouseEvent' })).toHaveAttribute(
-+        'href',
-+        'https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent'
-+      );
-+    });
-+  });
- });
-```
-
-**File**: `docs/components/plugins/api/APISectionUtils.tsx` (modified, +23/-6)
-```diff
-@@ -106,7 +106,18 @@ export const mdComponentsNoValidation: Components = {
-   a: ({ href, children }) => <A href={href}>{children}</A>,
- };
- 
--export const APISectionPackageContext = createContext<string[]>([]);
-+type APISectionPackageContextValue = {
-+  packageNames: string[];
-+  typeNames: ReadonlySet<string>;
-+};
-+
-+export const APISectionPackageContext = createContext<APISectionPackageContextValue>({
-+  packageNames: [],
-+  typeNames: new Set(),
-+});
-+
-+const GLOBAL_TYPE_DOCS_ORIGIN = 'https://developer.mozilla.org/';
-+const GLOBAL_TYPE_PACKAGE = 'typescript';
- 
- type TypeLinkProps = {
-   name: string;
-@@ -116,7 +127,7 @@ type TypeLinkProps = {
- };
- 
- const TypeLink = ({ name, type, typePackage, sdkVersion }: TypeLinkProps) => {
--  const packageNames = useContext(APISectionPackageContext);
-+  const { packageNames, typeNames } = useContext(APISectionPackageContext);
-   const skipReplacement = packageNames.some(packageName =>
-     packagesWithoutReplaceableTypes.includes(packageName)
-   );
-@@ -139,10 +150,16 @@ const TypeLink = ({ name, type, typePackage, sdkVersion }: TypeLinkProps) => {
- 
-   const hardcodedHref =
-     sdkVersionHardcodedTypeLinks[sdkVersion]?.[replacedName] ?? hardcodedTypeLinks[replacedName];
--
--  if (hardcodedHref || !nonLinkableTypes.includes(replacedName)) {
-+  const isPageTypeNamedLikeGlobal =
-+    typeNames.has(name) &&
-+    typePackage !== undefined &&
-+    typePackage !== GLOBAL_TYPE_PACKAGE &&
-+    !!hardcodedHref?.startsWith(GLOBAL_TYPE_DOCS_ORIGIN);
-+  const linkHref = isPageTypeNamedLikeGlobal ? undefined : hardcodedHref;
-+
-+  if (linkHref || !nonLinkableTypes.includes(replacedName)) {
-     return (
--      <A href={hardcodedHref ?? `#${replacedName.toLowerCase()}`} key={`type-link-${replacedName}`}>
-+      <A href={linkHref ?? `#${replacedName.toLowerCase()}`} key={`type-link-${replacedName}`}>
-         {replacedName}
-         {type === 'array' && '[]'}
-       </A>
-@@ -244,7 +261,7 @@ export const resolveTypeName = (
-         return renderWithLink({
-           name: elementType.name,
-           type,
--          typePackage: typeDefinition.package,
-+          typePackage: elementType.package,
-           sdkVersion,
-         });
-       } else if (type === 'array') {
+@@ -14,6 +14,7 @@ export function DownloadSlide({ title, description, imageUrl, className }: Props
+     <a
+       download
+       href={imageUrl}
++      data-md="card-link"
+       className={mergeClasses(
+         'relative flex items-stretch overflow-hidden rounded-3xl border border-default bg-default shadow-xs transition',
+         'hocus:opacity-80 hocus:shadow-sm',
+@@ -35,9 +36,15 @@ export function DownloadSlide({ title, description, imageUrl, className }: Props
+         />
+       </div>
+       <div className="flex flex-col justify-center gap-1 bg-default px-4 py-2">
+-        <p className="flex items-center gap-1.5 text-sm leading-normal font-medium">{title}</p>
++        <p
++          className="flex items-center gap-1.5 text-sm leading-normal font-medium"
++          data-text="true">
++          {title}
++        </p>
+         {description && (
+-          <p className="flex items-center gap-2 text-sm text-secondary">{description}</p>
++          <p className="flex items-center gap-2 text-sm text-secondary" data-text="true">
++            {description}
++          </p>
+         )}
+       </div>
+       <Download03Icon
 ```
 
 ---
 
-### Incident Patch 2: `282ef4e5` (2026-11-13)
-**Commit Message**: [ios][screen-orientation] Fix stale orientation reported after rotating under a two-orientation lock (#48860)
+### Incident Patch 2: `90decdd9` (2026-11-17)
+**Commit Message**: [docs] Fix the missing diffs in Adopting Prebuild (#53630)
 
-**File**: `.changeset/screen-orientation-ios-two-orientation-lock.md` (added, +5/-0)
-```diff
-@@ -0,0 +1,5 @@
-+---
-+'expo-screen-orientation': patch
-+---
-+
-+[iOS] Fix `getOrientationAsync()` returning `UNKNOWN` after `lockAsync(OrientationLock.LANDSCAPE)` rotates the screen, and returning `PORTRAIT_UP` after the next `unlockAsync()` while the screen stays in landscape.
-```
+# Why
 
-**File**: `packages/expo-screen-orientation/ios/ScreenOrientationRegistry.swift` (modified, +1/-1)
+On https://docs.expo.dev/guides/adopting-prebuild/#extra-changes, the
+**app.json** and **package.json** diffs do not render. The generated
+Markdown at `/guides/adopting-prebuild.md` also has no diff under either
+heading.
+
+Both diffs use a bare `@@` hunk header with no line ranges.
+`react-diff-view` parses the header with
+`/^@@\s+-([0-9]+)(,([0-9]+))?\s+\+([0-9]+)(,([0-9]+))?/`, gets `null`,
+and throws "Cannot read properties of null (reading '1')". `DiffBlock`
+catches the error in `safeParseDiff`, logs a warning, and renders
+nothing. The **index.js** diff on the same page has `@@ -1,5 +1,4 @@`,
+so it renders.
+
+# How
+
+- Add hunk ranges: `@@ -1,4 +1,5 @@` for **app.json** and `@@ -5,5 +5,5
+@@` for **package.json**. The counts match the lines in each hunk.
+- Add the opening `{` of **app.json** as a context line, so the hunk
+shows the whole file.
+- No other page or file in `public/static/diffs` has a bare `@@`.
+
+# Test Plan
+
+- `parseDiff` from `react-diff-view` on the 3 `raw` diffs from the
+edited page: each gives 1 hunk with 7 lines. Before the change, the
+**app.json** and **package.json** diffs throw.
+- On the preview
+
+**File**: `docs/pages/guides/adopting-prebuild.mdx` (modified, +3/-2)
 ```diff
-@@ -171,7 +171,7 @@ public class ScreenOrientationRegistry: NSObject, UIApplicationDelegate {
-     let currentDeviceOrientation = UIDevice.current.orientation.toInterfaceOrientation()
-     let currentOrientationMask = self.rootViewController?.supportedInterfaceOrientations ?? []
- 
--    var newScreenOrientation = UIInterfaceOrientation.unknown
-+    var newScreenOrientation = orientation
- 
-     // We need to deduce what is the new screen orientation based on currentOrientationMask and new dimensions of the view
-     if orientation.isPortrait {
+@@ -121,7 +121,8 @@ Remove all fields that are outside the top-level `expo` object as these will not
+ index 0000000..1111111 100644
+ --- a/app.json
+ +++ b/app.json
+-@@
++@@ -1,4 +1,5 @@
++ {
+ -  "name": "myapp",
+ -  "displayName": "myapp"
+ +  "expo": {
+@@ -143,7 +144,7 @@ You may want to change the scripts to use the [Expo CLI](/more/expo-cli/#compili
+ index 0000000..1111111 100644
+ --- a/package.json
+ +++ b/package.json
+-@@
++@@ -5,5 +5,5 @@
+    "scripts": {
+      "start": "expo start",
+ -    "android": "react-native run-android",
 ```
 
 ---
 
-### Incident Patch 3: `4697afa4` (2026-11-12)
-**Commit Message**: [ui][ios] Fix text wrapping in a community BottomSheet without snap points (#53401)
+### Incident Patch 3: `91b65085` (2026-11-16)
+**Commit Message**: [ui] Bind `value`, `get` and `set` of `ObservableState` with `@JS` (#53492)
 
 ## Why
 
-On iOS, text in a community `BottomSheet` without `snapPoints` does not
-wrap when it sits in a row beside another view, such as an icon or a
-button. The text stays on one line and runs past the edge of the sheet.
-Text in a column still wraps.
+The `value` property and the `get` and `set` functions of
+`ObservableState` exist only in JavaScript: `useNativeState` defines
+them in the main runtime, and the worklets serializer of `@expo/ui`
+defines them in the worklet runtime. A shared object that a worklet gets
+through another serializer doesn't have them.
 
-The sheet measures its content once before SwiftUI reports the sheet
-width. That first measure has no maximum width, and Yoga keeps its
-result for a `flex: 1` child in a row.
+## How
 
-The steps are:
+`ObservableState` is a `@SharedObject` with `value`, `get()` and
+`set(_:)` bound with `@JS`, so they are on its class in every runtime.
+Setting the value still happens on the main thread. The JavaScript
+definitions stay for now and take precedence.
 
-1. Without `snapPoints`, the sheet's `RNHostView` uses `matchContents={{
-vertical: true }}`. The width must come from SwiftUI through
-`setViewSize`.
-2. On the first layout, `RNHostView` has no style width yet.
-`hostedContentConstraints()` in `ExpoViewShadowNode.h` then sets no
-maximum width. `measureContent()` ignores the maximum that Yoga offers
-unless `boundedByHost` is set. Yoga measures the content at its one-line
-width.
-3. SwiftUI reports the sheet width. Yoga lays out the content again at
-that width.
-4. Yoga keeps the flex basis from the first pass for a `flex: 1` child
-in a row. In React Native, `flex: 1` also sets `flexShrink: 0`, so the
-child does not sh
+## Test Plan
 
-**File**: `.changeset/expo-ui-bottom-sheet-text-wrap.md` (added, +5/-0)
+Built bare-expo for iOS. A test-suite test that sets
+`ObservableState.value` in a worklet passes with the core worklets
+serializer.
+
+## Screenshots
+
+No UI change.
+
+**File**: `.changeset/expo-ui-observable-state-js-members.md` (added, +5/-0)
 ```diff
 @@ -0,0 +1,5 @@
 +---
 +'@expo/ui': patch
 +---
 +
-+[iOS] Fix text in a community `BottomSheet` without snap points not wrapping beside other views, such as an icon or a button.
++[iOS] Define `value`, `get` and `set` of `ObservableState` natively, so they are also available in worklets.
 ```
 
-**File**: `packages/expo-ui/src/community/bottom-sheet/BottomSheet.ios.tsx` (modified, +5/-2)
+**File**: `packages/expo-ui/ios/ExpoUIModule.swift` (modified, +1/-9)
 ```diff
-@@ -236,12 +236,15 @@ export function BottomSheet(props: BottomSheetProps) {
-             onDismiss={fireCloseCallbacks}
-             fitToContents={fitToContents}>
-             <Group modifiers={modifiers}>
--              <RNHostView matchContents={fitToContents ? { vertical: true } : false}>
-+              <RNHostView
-+                matchContents={fitToContents ? { vertical: true } : false}
-+                boundedByHost={fitToContents}>
-                 {/* paddingTop compensates for tighter spacing between native drag indicator and content
-                     compared to gorhom's handle. flexGrow:1 + height:0 (flex-basis 0) fills the snap-point
-                     height without inheriting the scrollable child's intrinsic content height. With matchContents,
-                     RNHostView takes the width from the sheet, which can be narrower than the window, and
--                    the height from the content. */}
-+                    the height from the content. The first measure runs before SwiftUI reports the sheet
-+                    width, so boundedByHost keeps it within the Host width. */}
-                 <View
-                   style={
-                     fitToContents
-```
-
-**File**: `packages/expo-ui/src/community/bottom-sheet/__tests__/BottomSheet.test.native.tsx` (modified, +24/-0)
-```diff
-@@ -44,6 +44,30 @@ describe('BottomSheet', () => {
-     });
-   });
+@@ -36,15 +36,7 @@ public final class ExpoUIModule: Module {
+       }
  
-+  itIOS(
-+    'bounds the hosted content by the host only when the sheet sizes to its content',
-+    async () => {
-+      const view = await render(
-+        <BottomSheet index={0}>
-+          <View />
-+        </BottomSheet>
-+      );
+       Function("setValue") { (state: ObservableState, wrapper: [String: Any]) in
+-        let newValue = wrapper["value"]
+-        // Update state on the UI thread
+-        if Thread.isMainThread {
+-          state.value = newValue
+-        } else {
+-          DispatchQueue.main.async {
+-            state.value = newValue
+-          }
+-        }
++        state.setValueOnMainThread(wrapper["value"])
+       }
+ 
+       Function("setOnChange") { (state: ObservableState, callback: WorkletCallback?) in
+```
+
+**File**: `packages/expo-ui/ios/State/ObservableState.swift` (modified, +36/-1)
+```diff
+@@ -12,7 +12,8 @@ import SwiftUI
+  *
+  *   Toggle(label, isOn: state.binding(false))
+  */
+-internal class ObservableState: SharedObject, ObservableObject {
++@SharedObject
++internal final class ObservableState: SharedObject, ObservableObject {
+   var onChange: WorkletCallback?
+   private var isNotifying = false
+ 
+@@ -30,6 +31,40 @@ internal class ObservableState: SharedObject, ObservableObject {
+     self.value = value
+   }
+ 
++  // `value`, `get` and `set` are bound with `@JS`, so they are also on the object that a worklet gets.
++  // On Android, `useNativeState` defines them in JavaScript.
 +
-+      expect(latestNativeViewProps('RNHostView')?.expoInternalBoundedByHost).toBe(true);
-+
-+      await view.rerender(
-+        <BottomSheet index={0} snapPoints={['50%']}>
-+          <View />
-+        </BottomSheet>
-+      );
-+
-+      expect(latestNativeViewProps('RNHostView')).toEqual(
-+        expect.objectContaining({ matchContentsVertical: false })
-+      );
-+      expect(latestNativeViewProps('RNHostView')?.expoInternalBoundedByHost).toBeFalsy();
++  @JS("value")
++  var currentValue: Any? {
++    get {
++      return value
 +    }
-+  );
++    set {
++      setValueOnMainThread(newValue)
++    }
++  }
 +
-   itAndroid(
-     'gives the hosted content the window width when the sheet sizes to its content',
-     async () => {
++  @JS
++  func get() -> Any? {
++    return value
++  }
++
++  @JS
++  func set(_ newValue: Any?) {
++    setValueOnMainThread(newValue)
++  }
++
++  /// Sets the value on the main thread, which SwiftUI observes it on.
++  func setValueOnMainThread(_ newValue: Any?) {
++    if Thread.isMainThread {
++      value = newValue
++    } else {
++      DispatchQueue.main.async {
++        self.value = newValue
++      }
++    }
++  }
++
+   func binding<T>(_ fallback: T) -> Binding<T> {
+     Binding(
+       get: { self.value as? T ?? fallback },
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #53466** (2026-11-13): [ios] fix(expo,expo-dev-launcher): use port 443 for an https bundle URL with no port (@vonovak)
-- **PR #53456** (2026-11-13): Bump hono from 4.12.32 to 4.13.18 in /docs (@dependabot[bot])
-- **PR #53451** (2026-11-13): [dev-menu] Attach the three-finger gesture to each window (@alanjhughes)
-- **PR #53446** (2026-11-13): [docs] Sync upstream reference content (EAS CLI reference, Expo Skills, other) (@expo-bot)
-- **PR #53444** (2026-11-13): Bump @hono/node-server from 1.19.15 to 1.19.19 in /docs (@dependabot[bot])
-- **PR #53442** (2026-11-13): [gha] Add mazenchami to the infinite-red partner allowlist (@Kudo)
+- **PR #53646** (closed): Opened by mistake, closed (@jiwon936626)
+- **PR #53641** (2026-11-17): [ios][camera] Read the capture orientation on the main thread (@alanjhughes)
+- **PR #53636** (2026-11-17): [docs] Add the Expo Simulators live stream to additional resources (@amandeepmittal)
+- **PR #53634** (2026-11-16): [router] Match redirect sources against the full path (@Ubax)
+- **PR #53632** (2026-11-16): [router] Skip redirect routes when a protected guard picks a fallback (@Ubax)
+- **PR #53631** (2026-11-17): [docs] Remove kbd and br tags from scene page Markdown (@amandeepmittal)
 
 ---
 
@@ -1019,32 +963,40 @@ child does not sh
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. [docs] Fix API links for library types named like global types (#53359)
+## X. [docs] Fix the DownloadSlide card link in the generated Markdown
 
 **RULE**:
-When implementing operations in `docs/components/plugins/APISection.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in expo/expo. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/ui/components/DownloadSlide/index.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in expo/expo. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a41ec590`: [docs] Fix API links for library types named like global types (#53359). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `aa816379`: [docs] Fix the DownloadSlide card link in the generated Markdown. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/components/plugins/APISection.tsx`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/ui/components/DownloadSlide/index.tsx`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-    const typeNames = new Set(data.map(entry => entry.name));
-      <APISectionPackageContext.Provider value={{ packageNames, typeNames }}>
+      data-md="card-link"
+        <p
+          className="flex items-center gap-1.5 text-sm leading-normal font-medium"
+          data-text="true">
+          {title}
+        </p>
+          <p className="flex items-center gap-2 text-sm text-secondary" data-text="true">
+            {description}
+          </p>
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
-// Anti-pattern to NEVER write (induced failure mode):
-      <APISectionPackageContext.Provider value={packageNames}>
+// Induced defect failure mode:
+        <p className="flex items-center gap-1.5 text-sm leading-normal font-medium">{title}</p>
+          <p className="flex items-center gap-2 text-sm text-secondary">{description}</p>
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a41ec590` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `aa816379` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

@@ -10518,3 +10518,6 @@ Every entry in this ledger must capture:
 | `learn-github-laurent22-joplin` | `https://github.com/laurent22/joplin` | `68b1f922` | Multi-dimensional audit evidence | 2026-11-17T07:55:47.304Z |
 | `learn-github-apache-shardingsphere` | `https://github.com/apache/shardingsphere` | `e2fb0b74` | Multi-dimensional audit evidence | 2026-11-17T07:55:59.355Z |
 | `learn-github-embassy-rs-embassy` | `https://github.com/embassy-rs/embassy` | `03edb03b` | Multi-dimensional audit evidence | 2026-11-17T07:59:55.558Z |
+| `learn-github-expo-expo` | `https://github.com/expo/expo` | `b32f30a4` | Multi-dimensional audit evidence | 2026-11-17T08:07:58.744Z |
+| `learn-github-rqlite-rqlite` | `https://github.com/rqlite/rqlite` | `b9dc726d` | Multi-dimensional audit evidence | 2026-11-17T08:09:12.955Z |
+| `learn-dom-k-642a388a` | `project://rqlite-rqlite` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rqlite-rqlite-learnings.md` | 2026-11-17T08:09:41.908Z |

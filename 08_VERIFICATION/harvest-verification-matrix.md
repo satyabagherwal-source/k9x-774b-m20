@@ -10485,3 +10485,6 @@
 | `CYCLE-20261117-E8KK` | `2026-11-17T07:55:47.300Z` | `laurent22/joplin` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/laurent22-joplin-learnings.md` | Yes (`40dd56d9...`) |
 | `CYCLE-20261117-EHVC` | `2026-11-17T07:55:59.352Z` | `apache/shardingsphere` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8906` | Yes (`e7042acc...`) |
 | `CYCLE-20261117-JK4J` | `2026-11-17T07:59:55.555Z` | `embassy-rs/embassy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8907, Rule 8908, Rule 8909` | Yes (`f2481257...`) |
+| `CYCLE-20261117-TWYC` | `2026-11-17T08:07:58.740Z` | `expo/expo` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8910` | Yes (`6a5debd9...`) |
+| `CYCLE-20261117-VI7S` | `2026-11-17T08:09:12.952Z` | `rqlite/rqlite` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8911, Rule 8912, Rule 8913` | Yes (`b1fcb25d...`) |
+| `CYCLE-2026-11-17-PROJ-EVOLVE` | `2026-11-17T08:09:41.908Z` | `rqlite-rqlite` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-K-642A388A` [Domain K] | Yes (`b4b0a512...`) |

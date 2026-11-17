@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-17T08:00:00.676Z",
-  "total_verified_learnings": 8867,
+  "last_updated": "2026-11-17T08:09:43.223Z",
+  "total_verified_learnings": 8868,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 19951,
+  "total_items": 19964,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112178,9 +112178,9 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "82212a94c6f90e3a123785dc02d6812dcd50465617f83d3ace0dccde5e8aa973",
+      "content_hash": "19d9c2278334998808bb593ce24adaaf85de8349ea411e39353c83d992847f1c",
       "domain_letter": "G",
-      "persisted_at": "2026-11-17T04:43:59.694Z"
+      "persisted_at": "2026-11-17T08:09:43.102Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings",
@@ -112190,9 +112190,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zulip-zulip-learnings",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "d45b3180c2f5e623b9693525576aa1c2cafd7a9eb8a33d5a20f7b7faccf17116",
+      "content_hash": "95c962db10e7030dda61876652cdfe2a27e01d2ecb1d0f7cbda4c95787d112ce",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T04:43:59.807Z"
+      "persisted_at": "2026-11-17T08:09:43.223Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -114817,10 +114817,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-expo-expo-technical-construction-intelligence-expo-expo-core-invariants.md",
       "title": "Technical Construction Intelligence: expo/expo Core Invariants",
       "repository": "expo/expo",
-      "source_version": "117d1254",
-      "content_hash": "52df2b3b2fa640c50051406d1d69898065502c50cb3832dc10958a116ba68396",
+      "source_version": "b32f30a4",
+      "content_hash": "eec3b0b94d19245f61f5a5094a01ecbe63a3956a6336d317ac3f8e920a87d6da",
       "domain_letter": "H",
-      "persisted_at": "2026-11-13T18:43:47.573Z"
+      "persisted_at": "2026-11-17T08:07:59.028Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-expo-expo": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-expo-expo",
@@ -114829,10 +114829,10 @@
       "relative_path": "08_VERIFICATION/expo-expo-verification-protocol-empirical-defect-shield-for-expo-expo.md",
       "title": "Verification Protocol: Empirical Defect Shield for expo/expo",
       "repository": "expo/expo",
-      "source_version": "117d1254",
-      "content_hash": "94def4ed6d7ffb304023cfc7e2c38cd0a077a42bfba825b46b26e23099176f7f",
+      "source_version": "b32f30a4",
+      "content_hash": "34680b80b19dee365db5ff465e1f1e78227fcb497b39f541f8adff5e294ac5ec",
       "domain_letter": "K",
-      "persisted_at": "2026-11-13T18:43:47.671Z"
+      "persisted_at": "2026-11-17T08:07:59.147Z"
     },
     "domain_intelligence-technical-construction-intelligence-kucherenko-jscpd-learnings-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-kucherenko-jscpd-learnings-core-invariants",
@@ -114878,9 +114878,9 @@
       "title": "Technical Construction Intelligence: expo-expo-learnings Core Invariants",
       "repository": "expo-expo-learnings",
       "source_version": "HEAD",
-      "content_hash": "660b61f83138b540ab3bb4013b105db9a88e2a467708512d287fc9da89764512",
+      "content_hash": "009f9b0a280da94593fc7b50638ae45a61ad9f094f2a0e806d9f411afecf7426",
       "domain_letter": "H",
-      "persisted_at": "2026-11-13T18:43:51.638Z"
+      "persisted_at": "2026-11-17T08:09:16.836Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-expo-expo-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-expo-expo-learnings",
@@ -114890,9 +114890,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for expo-expo-learnings",
       "repository": "expo-expo-learnings",
       "source_version": "HEAD",
-      "content_hash": "1bd5a61cdbcd33a0a15ef115c17db0ffaf2dcca875632478773c4b0f2d437f07",
+      "content_hash": "6096b4144d3f922b48d22a082f17f8125e3afdb750de09edbb249675bd8c7007",
       "domain_letter": "K",
-      "persisted_at": "2026-11-13T18:43:51.737Z"
+      "persisted_at": "2026-11-17T08:09:16.947Z"
     },
     "domain_intelligence-research-knowledge-intelligence-alissonerdx-bfs-best-face-swap-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-alissonerdx-bfs-best-face-swap-core-invariants",
@@ -214896,13 +214896,13 @@
       "item_id": "candidate_directive-puppet-fix-postgresql-failing-to-start-on-new-installs",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-JL5N-puppet-fix-postgresql-failing-to-start-on-new-installs.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-W5DY-puppet-fix-postgresql-failing-to-start-on-new-installs.md",
       "title": "puppet: Fix PostgreSQL failing to start on new installs.",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "0a25632ded94a7b723de29eb5b4b5f3cc1e9c7046d4b9d108dc87a6b4e5519f2",
+      "content_hash": "60274f611da34ce0e82adc1251a0e3a76edc160bc49cfc347b0ab2460a698807",
       "domain_letter": "G",
-      "persisted_at": "2026-11-17T04:43:59.582Z"
+      "persisted_at": "2026-11-17T08:09:42.989Z"
     },
     "learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2": {
       "learning_id": "learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
@@ -229768,8 +229768,8 @@
       "slug": "rqlite-rqlite",
       "platform": "github",
       "source_url": "https://github.com/rqlite/rqlite",
-      "source_version": "4e9a2e59",
-      "content_hash": "8ccc4d5cd3a5b5715d19037d9ae015d9014f88999a009946f803219ea83d541a",
+      "source_version": "b9dc726d",
+      "content_hash": "b1fcb25d6c08ac275046d64b81cdd53de024cc518a9ea41b58de1ce87ee4b628",
       "dossier_path": "07_PROJECT_LEARNING/rqlite-rqlite-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rqlite-rqlite-learnings.md",
       "promoted_rules": [
@@ -229782,6 +229782,21 @@
           "number": 8674,
           "title": "Update CONTRIBUTING.md",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8911,
+          "title": "AST-Enforced Storage Safety Barrier",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8912,
+          "title": "Dual-Barrier Staleness Detection for Distributed Reads",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8913,
+          "title": "Allocation-Zero Timer Draining and GC Slice Re-slicing in Batch Queues",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -229789,7 +229804,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-16T00:28:02.048Z",
+      "verified_at": "2026-11-17T08:09:12.802Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -229843,10 +229858,10 @@
       "relative_path": "08_VERIFICATION/rqlite-rqlite-verification-protocol-empirical-defect-shield-for-rqlite-rqlite.md",
       "title": "Verification Protocol: Empirical Defect Shield for rqlite/rqlite",
       "repository": "rqlite/rqlite",
-      "source_version": "4e9a2e59",
-      "content_hash": "c26454fe041b3908497f8f67b40b0419c5a9d7deece032f63ee3a9c8ad9262f1",
+      "source_version": "b9dc726d",
+      "content_hash": "127f9d6543d93f5f6b6e80528cbae9d44e981b25234a8a0b1e3ca83d6fe1bc13",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T00:28:02.664Z"
+      "persisted_at": "2026-11-17T08:09:13.653Z"
     },
     "rule-8495": {
       "learning_id": "rule-8495",
@@ -249529,9 +249544,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for rqlite-rqlite-learnings",
       "repository": "rqlite-rqlite-learnings",
       "source_version": "HEAD",
-      "content_hash": "6b3ae02ca84c8acb88bfa3abd2f1b887adf10b3fa93409cbec5ce7f30942a161",
+      "content_hash": "910cd0d291e2456a28503d7587c9e5fcf13618a0298de5266b44b63a5f3605cd",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T00:28:37.302Z"
+      "persisted_at": "2026-11-17T08:09:42.661Z"
     },
     "learn-huggingface-unsloth-qwen3-8-flash-next-gguf": {
       "learning_id": "learn-huggingface-unsloth-qwen3-8-flash-next-gguf",
@@ -266788,6 +266803,191 @@
       "content_hash": "4915730603f6b3c5393a0e8513f25ee4b8d3e9f1ea74d2f9fd316e9fd2398ac6",
       "domain_letter": "H",
       "persisted_at": "2026-11-17T08:00:00.456Z"
+    },
+    "learn-github-expo-expo": {
+      "learning_id": "learn-github-expo-expo",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "expo/expo",
+      "repository": "expo/expo",
+      "slug": "expo-expo",
+      "platform": "github",
+      "source_url": "https://github.com/expo/expo",
+      "source_version": "b32f30a4",
+      "content_hash": "6a5debd9f94c1207a30698ce53a7dfb48412997767da2ab24b57eab4bafe6a89",
+      "dossier_path": "07_PROJECT_LEARNING/expo-expo-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/expo-expo-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8910,
+          "title": "[docs] Fix the DownloadSlide card link in the generated Markdown",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-17T08:07:58.581Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8910": {
+      "learning_id": "rule-8910",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8910,
+      "title": "[docs] Fix the DownloadSlide card link in the generated Markdown",
+      "source_url": "https://github.com/expo/expo",
+      "source_version": "b32f30a4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T08:07:58.581Z"
+    },
+    "candidate_directive-docs-fix-the-downloadslide-card-link-in-the-generated-markdown": {
+      "item_id": "candidate_directive-docs-fix-the-downloadslide-card-link-in-the-generated-markdown",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-VL4I-docs-fix-the-downloadslide-card-link-in-the-generated-markdown.md",
+      "title": "[docs] Fix the DownloadSlide card link in the generated Markdown",
+      "repository": "expo-expo-learnings",
+      "source_version": "HEAD",
+      "content_hash": "41f70b54d5f99cff5af1674458555a12a194e80cb96f735d31ebc6632344b43c",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-17T08:09:16.723Z"
+    },
+    "rule-8911": {
+      "learning_id": "rule-8911",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8911,
+      "title": "AST-Enforced Storage Safety Barrier",
+      "source_url": "https://github.com/rqlite/rqlite",
+      "source_version": "b9dc726d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T08:09:12.802Z"
+    },
+    "rule-8912": {
+      "learning_id": "rule-8912",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8912,
+      "title": "Dual-Barrier Staleness Detection for Distributed Reads",
+      "source_url": "https://github.com/rqlite/rqlite",
+      "source_version": "b9dc726d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T08:09:12.802Z"
+    },
+    "rule-8913": {
+      "learning_id": "rule-8913",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8913,
+      "title": "Allocation-Zero Timer Draining and GC Slice Re-slicing in Batch Queues",
+      "source_url": "https://github.com/rqlite/rqlite",
+      "source_version": "b9dc726d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T08:09:12.802Z"
+    },
+    "candidate_directive-ast-enforced-storage-safety-barrier": {
+      "item_id": "candidate_directive-ast-enforced-storage-safety-barrier",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-W4OT-ast-enforced-storage-safety-barrier.md",
+      "title": "AST-Enforced Storage Safety Barrier",
+      "repository": "rqlite-rqlite-learnings",
+      "source_version": "HEAD",
+      "content_hash": "a9ba197882233b3885d12e2a270d68599cad9610d00894a7691df6f8bb9ae78c",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T08:09:42.078Z"
+    },
+    "candidate_directive-dual-barrier-staleness-detection-for-distributed-reads": {
+      "item_id": "candidate_directive-dual-barrier-staleness-detection-for-distributed-reads",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-W4OT-dual-barrier-staleness-detection-for-distributed-reads.md",
+      "title": "Dual-Barrier Staleness Detection for Distributed Reads",
+      "repository": "rqlite-rqlite-learnings",
+      "source_version": "HEAD",
+      "content_hash": "76566903fb142c8bccd859f56b237a7c1e07f02cf4c6bc998dacd585d61c6644",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T08:09:42.199Z"
+    },
+    "candidate_directive-allocation-zero-timer-draining-and-gc-slice-re-slicing-in-batch-queues": {
+      "item_id": "candidate_directive-allocation-zero-timer-draining-and-gc-slice-re-slicing-in-batch-queues",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-W4OU-allocation-zero-timer-draining-and-gc-slice-re-slicing-in-batch-queues.md",
+      "title": "Allocation-Zero Timer Draining and GC Slice Re-slicing in Batch Queues",
+      "repository": "rqlite-rqlite-learnings",
+      "source_version": "HEAD",
+      "content_hash": "6d55abbdf5e7556cc620654d4ff6cc587374ebf62149cc42355d2fd00522e088",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T08:09:42.315Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-rqlite-rqlite-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-rqlite-rqlite-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-rqlite-rqlite-technical-construction-intelligence-rqlite-rqlite-core-invariants.md",
+      "title": "Technical Construction Intelligence: rqlite/rqlite Core Invariants",
+      "repository": "rqlite/rqlite",
+      "source_version": "b9dc726d",
+      "content_hash": "c1edcc1086cd19fd2bd41a7b13d88ed411767ca11e27dadbd1550f9c5f5cd6c8",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T08:09:13.443Z"
+    },
+    "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-rqlite-rqlite": {
+      "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-rqlite-rqlite",
+      "artifact_type": "architecture_decision",
+      "target_folder": "12_DECISIONS",
+      "relative_path": "12_DECISIONS/ADR-rqlite-rqlite-adr-subsystem-boundary-modular-decoupling-in-rqlite-rqlite.md",
+      "title": "ADR: Subsystem Boundary & Modular Decoupling in rqlite/rqlite",
+      "repository": "rqlite/rqlite",
+      "source_version": "b9dc726d",
+      "content_hash": "b2938c7ce74b59dd4988ca62cf6dd146daffb992ad6035b77d791dc1d9b5013f",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T08:09:13.552Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-rqlite-rqlite-learnings-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-rqlite-rqlite-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-rqlite-rqlite-learnings-technical-construction-intelligence-rqlite-rqlite-learni.md",
+      "title": "Technical Construction Intelligence: rqlite-rqlite-learnings Core Invariants",
+      "repository": "rqlite-rqlite-learnings",
+      "source_version": "HEAD",
+      "content_hash": "0209bcf20b0fee5e2a187c5c9f1ea8e7f31bcef6f494a4611a517acdc33b1a16",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T08:09:42.430Z"
+    },
+    "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-rqlite-rqlite-learnings": {
+      "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-rqlite-rqlite-learnings",
+      "artifact_type": "architecture_decision",
+      "target_folder": "12_DECISIONS",
+      "relative_path": "12_DECISIONS/ADR-rqlite-rqlite-learnings-adr-subsystem-boundary-modular-decoupling-in-rqlite-rqli.md",
+      "title": "ADR: Subsystem Boundary & Modular Decoupling in rqlite-rqlite-learnings",
+      "repository": "rqlite-rqlite-learnings",
+      "source_version": "HEAD",
+      "content_hash": "244e80e5213c8a3f566f48f03292866440e59ae96227dca3a0dc06d23a8abdaf",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T08:09:42.550Z"
     }
   },
   "ai-builder-brain": {

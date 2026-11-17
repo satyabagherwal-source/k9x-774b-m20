@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-17T07:59:55.566Z",
+  "last_updated": "2026-11-17T08:09:12.963Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -7491,14 +7491,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-rqlite-rqlite",
-      "content_hash": "8ccc4d5cd3a5b5715d19037d9ae015d9014f88999a009946f803219ea83d541a",
-      "verified_at": "2026-11-16T00:28:02.258Z",
+      "content_hash": "b1fcb25d6c08ac275046d64b81cdd53de024cc518a9ea41b58de1ce87ee4b628",
+      "verified_at": "2026-11-17T08:09:12.963Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-16T00:28:02.258Z"
+      "last_updated": "2026-11-17T08:09:12.963Z"
     },
     "arco-design/arco-design": {
       "repository": "arco-design/arco-design",
@@ -15516,14 +15516,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-expo-expo",
-      "content_hash": "20065d23a52e770336ec54a8d1ca088261403fe2127f56ae752cb91d42296c64",
-      "verified_at": "2026-11-13T18:43:47.282Z",
+      "content_hash": "6a5debd9f94c1207a30698ce53a7dfb48412997767da2ab24b57eab4bafe6a89",
+      "verified_at": "2026-11-17T08:07:58.751Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T18:43:47.282Z"
+      "last_updated": "2026-11-17T08:07:58.751Z"
     },
     "vercel/swr": {
       "repository": "vercel/swr",

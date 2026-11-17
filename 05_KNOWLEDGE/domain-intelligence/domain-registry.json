@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-17T08:00:00.564Z",
-  "total_records": 1484,
+  "last_updated": "2026-11-17T08:09:43.102Z",
+  "total_records": 1487,
   "domains": {
     "A": {
       "total": 9,
@@ -1006,7 +1006,7 @@
       ]
     },
     "H": {
-      "total": 345,
+      "total": 347,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1352,7 +1352,9 @@
         "domain_intelligence-technical-construction-intelligence-transact-rs-sqlx-learnings-core-invariants",
         "domain_intelligence-technical-construction-intelligence-apache-shardingsphere-core-invariants",
         "domain_intelligence-technical-construction-intelligence-embassy-rs-embassy-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-embassy-rs-embassy-learnings-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-embassy-rs-embassy-learnings-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-rqlite-rqlite-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-rqlite-rqlite-learnings-core-invariants"
       ]
     },
     "I": {
@@ -1461,7 +1463,7 @@
       ]
     },
     "K": {
-      "total": 64,
+      "total": 65,
       "record_ids": [
         "DOM-K-353B93D6",
         "DOM-K-76C43650",
@@ -1526,7 +1528,8 @@
         "domain_intelligence-quality-verification-intelligence-mswjs-msw-core-invariants",
         "domain_intelligence-quality-verification-intelligence-mswjs-msw-learnings-core-invariants",
         "domain_intelligence-quality-verification-intelligence-appwrite-appwrite-core-invariants",
-        "domain_intelligence-quality-verification-intelligence-appwrite-appwrite-learnings-core-invariants"
+        "domain_intelligence-quality-verification-intelligence-appwrite-appwrite-learnings-core-invariants",
+        "DOM-K-642A388A"
       ]
     },
     "L": {
@@ -7299,8 +7302,8 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zulip-zulip-learnings-architecture-intelligence-zulip-zulip-learnings-core-invar.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "82212a94c6f90e3a123785dc02d6812dcd50465617f83d3ace0dccde5e8aa973",
-      "created_at": "2026-11-17T04:43:59.694Z"
+      "content_hash": "19d9c2278334998808bb593ce24adaaf85de8349ea411e39353c83d992847f1c",
+      "created_at": "2026-11-17T08:09:43.102Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -8955,8 +8958,8 @@
       "title": "Technical Construction Intelligence: expo/expo Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-expo-expo-technical-construction-intelligence-expo-expo-core-invariants.md",
       "repository": "expo/expo",
-      "content_hash": "52df2b3b2fa640c50051406d1d69898065502c50cb3832dc10958a116ba68396",
-      "created_at": "2026-11-13T18:43:47.573Z"
+      "content_hash": "eec3b0b94d19245f61f5a5094a01ecbe63a3956a6336d317ac3f8e920a87d6da",
+      "created_at": "2026-11-17T08:07:59.028Z"
     },
     "domain_intelligence-technical-construction-intelligence-kucherenko-jscpd-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-kucherenko-jscpd-learnings-core-invariants",
@@ -8982,8 +8985,8 @@
       "title": "Technical Construction Intelligence: expo-expo-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-expo-expo-learnings-technical-construction-intelligence-expo-expo-learnings-core.md",
       "repository": "expo-expo-learnings",
-      "content_hash": "660b61f83138b540ab3bb4013b105db9a88e2a467708512d287fc9da89764512",
-      "created_at": "2026-11-13T18:43:51.638Z"
+      "content_hash": "009f9b0a280da94593fc7b50638ae45a61ad9f094f2a0e806d9f411afecf7426",
+      "created_at": "2026-11-17T08:09:16.836Z"
     },
     "domain_intelligence-research-knowledge-intelligence-alissonerdx-bfs-best-face-swap-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-alissonerdx-bfs-best-face-swap-core-invariants",
@@ -25766,6 +25769,58 @@
       "repository": "hf-qwen-qwen3-embedding-0.6b-learnings",
       "content_hash": "6e5b6294aa1a53f4e78934c7c8f30ddbbba2ff96f75186cdf049209df1fe41eb",
       "created_at": "2026-11-17T08:00:00.078Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-rqlite-rqlite-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-rqlite-rqlite-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: rqlite/rqlite Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-rqlite-rqlite-technical-construction-intelligence-rqlite-rqlite-core-invariants.md",
+      "repository": "rqlite/rqlite",
+      "content_hash": "c1edcc1086cd19fd2bd41a7b13d88ed411767ca11e27dadbd1550f9c5f5cd6c8",
+      "created_at": "2026-11-17T08:09:13.443Z"
+    },
+    "DOM-K-642A388A": {
+      "record_id": "DOM-K-642A388A",
+      "domain_letter": "K",
+      "domain_id": "quality_verification",
+      "domain_name": "Quality & Verification Intelligence",
+      "secondary_domains": [],
+      "title": "Flaky CI Build Times via Excessive E2E Helper Timeout (BUG-RQLITE-3048)",
+      "content": "Integration test timeouts must be bound to the minimum realistic operational envelope. Excessively high timeouts lengthen developer feedback loops and hide synchronization regressions.",
+      "content_hash": "b4b0a51220d3f93c4ec63101b635f669cbbb14e0db032beedf08d7f1a6e0b700",
+      "summary": "Over-generous static timeout configuration masked test latency degradations and multiplied test suite execution times during failure cascade -> Integration test timeouts must be bound to the minimum realistic operational envelope. Excessively high timeouts lengthen developer feedback",
+      "provenance": {
+        "source_uri": "project://rqlite-rqlite/rqlite-rqlite-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-17T08:09:17.047Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (rqlite-rqlite)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Commit `1ee8c719`: `Reduce e2e testing timeout`."
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 1,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-17T08:09:41.891Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-rqlite-rqlite-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-rqlite-rqlite-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: rqlite-rqlite-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-rqlite-rqlite-learnings-technical-construction-intelligence-rqlite-rqlite-learni.md",
+      "repository": "rqlite-rqlite-learnings",
+      "content_hash": "0209bcf20b0fee5e2a187c5c9f1ea8e7f31bcef6f494a4611a517acdc33b1a16",
+      "created_at": "2026-11-17T08:09:42.430Z"
     }
   }
 }

@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261114-Y6VJ",
-    "timestamp": "2026-11-14T17:40:09.679Z",
-    "repository": "yugabyte/yugabyte-db",
-    "learningId": "learn-github-yugabyte-yugabyte-db",
-    "contentHash": "66e4803fcf43bdb062ae2c20fdf1bfef78639e4e817caac7b6bf009b3e9a3005",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261114-C8S6",
-    "timestamp": "2026-11-14T17:51:05.334Z",
-    "repository": "unsloth/embeddinggemma-2-GGUF",
-    "learningId": "learn-huggingface-unsloth-embeddinggemma-2-gguf",
-    "contentHash": "7a6d3eedbe07b00a85d247126e949dc67ef458b9ecd426bdfd2e654599732e67",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261114-CANT",
     "timestamp": "2026-11-14T17:51:07.769Z",
     "repository": "apache/arrow",
@@ -7490,6 +7460,36 @@
     "repository": "embassy-rs/embassy",
     "learningId": "learn-github-embassy-rs-embassy",
     "contentHash": "f24812578b0e6aeb56ad93dd2a19e563394a903ede54fcf628655e2cacdb062a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-TWYC",
+    "timestamp": "2026-11-17T08:07:58.740Z",
+    "repository": "expo/expo",
+    "learningId": "learn-github-expo-expo",
+    "contentHash": "6a5debd9f94c1207a30698ce53a7dfb48412997767da2ab24b57eab4bafe6a89",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-VI7S",
+    "timestamp": "2026-11-17T08:09:12.952Z",
+    "repository": "rqlite/rqlite",
+    "learningId": "learn-github-rqlite-rqlite",
+    "contentHash": "b1fcb25d6c08ac275046d64b81cdd53de024cc518a9ea41b58de1ce87ee4b628",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
     "barriers": {

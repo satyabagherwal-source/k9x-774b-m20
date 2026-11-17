@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T07:59:55.563Z",
-  "total_cycles_completed": 10062,
-  "total_learnings_persisted": 10062,
-  "total_rules_promoted": 9649,
+  "last_updated": "2026-11-17T08:09:12.960Z",
+  "total_cycles_completed": 10064,
+  "total_learnings_persisted": 10064,
+  "total_rules_promoted": 9653,
   "history": [
-    {
-      "timestamp": "2026-11-16T13:22:54.309Z",
-      "repository": "scrapy/scrapy",
-      "learningId": "learn-github-scrapy-scrapy",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-16T13:38:19.487Z",
-      "repository": "pola-rs/polars",
-      "learningId": "learn-github-pola-rs-polars",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-16T13:38:24.625Z",
       "repository": "duongductrong/Snapzy",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-17T07:59:55.563Z",
       "repository": "embassy-rs/embassy",
       "learningId": "learn-github-embassy-rs-embassy",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T08:07:58.749Z",
+      "repository": "expo/expo",
+      "learningId": "learn-github-expo-expo",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T08:09:12.960Z",
+      "repository": "rqlite/rqlite",
+      "learningId": "learn-github-rqlite-rqlite",
       "promotedRulesCount": 3,
       "status": "PROMOTED"
     }

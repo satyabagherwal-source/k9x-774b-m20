@@ -2,16 +2,16 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-17T07:20:46.790Z",
+  "updated_at": "2026-11-17T08:09:41.906Z",
   "statistics": {
-    "total_nodes": 297,
+    "total_nodes": 298,
     "total_edges": 152,
     "domain_distribution": {
       "D": 222,
       "M": 1,
       "H": 31,
       "J": 12,
-      "K": 13,
+      "K": 14,
       "L": 4,
       "G": 1,
       "F": 9,
@@ -6665,6 +6665,28 @@
       ],
       "created_at": "2026-11-17T07:20:46.790Z",
       "updated_at": "2026-11-17T07:20:46.790Z"
+    },
+    "DOM-K-642A388A": {
+      "id": "DOM-K-642A388A",
+      "domain": "K",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Flaky CI Build Times via Excessive E2E Helper Timeout (BUG-RQLITE-3048)",
+      "summary": "Over-generous static timeout configuration masked test latency degradations and multiplied test suite execution times during failure cascade -> Integration test timeouts must be bound to the minimum realistic operational envelope. Excessively high timeouts lengthen developer feedback",
+      "confidence": 1,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://rqlite-rqlite/rqlite-rqlite-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-17T08:09:17.047Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (rqlite-rqlite)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "K",
+        "Quality & Verification Intelligence"
+      ],
+      "created_at": "2026-11-17T08:09:41.906Z",
+      "updated_at": "2026-11-17T08:09:41.906Z"
     }
   },
   "edges": [

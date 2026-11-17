@@ -2,15 +2,15 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-17T08:00:00.298Z",
+  "updated_at": "2026-11-17T08:09:16.550Z",
   "stats": {
-    "total_discovered": 4877,
-    "approved_pending_harvest": 4593,
+    "total_discovered": 4880,
+    "approved_pending_harvest": 4596,
     "harvested_count": 0,
     "rejected_count": 284,
     "category_distribution": {
       "COMMUNITY_AND_EXPERT": 4597,
-      "OFFICIAL_DOCUMENTATION": 150,
+      "OFFICIAL_DOCUMENTATION": 153,
       "STANDARDS_AND_SPECIFICATIONS": 101,
       "ENGINEERING_BLOGS": 3,
       "SECURITY_ADVISORIES": 19,
@@ -105327,6 +105327,72 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/laurent22-joplin-learnings.md",
         "fileName": "laurent22-joplin-learnings.md"
+      }
+    },
+    "SRC-A9D0216742B6": {
+      "id": "SRC-A9D0216742B6",
+      "url": "https://docs.expo.dev/eas/workflows/introduction.md",
+      "title": "https://docs.expo.dev/eas/workflows/introduction.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T08:09:16.490Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/expo-expo-learnings.md",
+        "fileName": "expo-expo-learnings.md"
+      }
+    },
+    "SRC-3C644B1661D5": {
+      "id": "SRC-3C644B1661D5",
+      "url": "https://docs.expo.dev/static/images/eas-workflows/eas-worfklows-slide.webp",
+      "title": "https://docs.expo.dev/static/images/eas-workflows/eas-worfklows-slide.webp",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T08:09:16.520Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/expo-expo-learnings.md",
+        "fileName": "expo-expo-learnings.md"
+      }
+    },
+    "SRC-68D30F343782": {
+      "id": "SRC-68D30F343782",
+      "url": "https://docs.expo.dev/guides/adopting-prebuild",
+      "title": "https://docs.expo.dev/guides/adopting-prebuild",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T08:09:16.549Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/expo-expo-learnings.md",
+        "fileName": "expo-expo-learnings.md"
       }
     }
   }
