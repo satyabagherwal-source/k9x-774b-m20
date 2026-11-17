@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T06:47:10.663Z",
-  "total_cycles_completed": 10047,
-  "total_learnings_persisted": 10047,
-  "total_rules_promoted": 9636,
+  "last_updated": "2026-11-17T07:06:54.504Z",
+  "total_cycles_completed": 10051,
+  "total_learnings_persisted": 10051,
+  "total_rules_promoted": 9639,
   "history": [
-    {
-      "timestamp": "2026-11-16T07:19:48.966Z",
-      "repository": "codewhale-hq/Codewhale",
-      "learningId": "learn-github-codewhale-hq-codewhale",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-16T07:37:15.809Z",
-      "repository": "biomejs/biome",
-      "learningId": "learn-github-biomejs-biome",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-16T07:45:01.717Z",
-      "repository": "oxc-project/oxc",
-      "learningId": "learn-github-oxc-project-oxc",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-16T08:06:43.161Z",
-      "repository": "volcengine/OpenViking",
-      "learningId": "learn-github-volcengine-openviking",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-16T08:11:19.661Z",
       "repository": "zed-industries/zed",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-11-17T06:47:10.663Z",
       "repository": "react/react-native",
       "learningId": "learn-github-react-react-native",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T07:06:17.896Z",
+      "repository": "mswjs/msw",
+      "learningId": "learn-github-mswjs-msw",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T07:06:23.926Z",
+      "repository": "zarf-dev/zarf",
+      "learningId": "learn-github-zarf-dev-zarf",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T07:06:27.255Z",
+      "repository": "sfu-db/connector-x",
+      "learningId": "learn-github-sfu-db-connector-x",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T07:06:54.504Z",
+      "repository": "actix/actix-web",
+      "learningId": "learn-github-actix-actix-web",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

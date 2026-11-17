@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T06:47:47.087Z",
+  "last_updated": "2026-11-17T07:07:00.804Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-17T04:43:59.398Z",
@@ -868,7 +868,7 @@
       "staged_for_review": 1
     },
     "actix-actix-web-learnings.md": {
-      "processed_at": "2026-11-15T17:14:26.557Z",
+      "processed_at": "2026-11-17T07:06:57.766Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -918,7 +918,7 @@
       "staged_for_review": 0
     },
     "zarf-dev-zarf-learnings.md": {
-      "processed_at": "2026-11-12T07:38:38.962Z",
+      "processed_at": "2026-11-17T07:06:59.700Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1218,7 +1218,7 @@
       "staged_for_review": 1
     },
     "mswjs-msw-learnings.md": {
-      "processed_at": "2026-11-12T15:34:17.766Z",
+      "processed_at": "2026-11-17T07:06:58.500Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3258,7 +3258,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 1497,
+  "total_dossiers_evaluated": 1500,
   "total_canonical_promoted": 300,
-  "total_staged_for_review": 1183
+  "total_staged_for_review": 1186
 }

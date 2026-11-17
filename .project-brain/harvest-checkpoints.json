@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-17T06:47:10.666Z",
+  "last_updated": "2026-11-17T07:06:54.508Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -6816,14 +6816,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zarf-dev-zarf",
-      "content_hash": "e25c771ba2b73f66bae3775bd502590e7624ea8ac9b12c77c951e6266c751bdb",
-      "verified_at": "2026-11-12T07:38:13.676Z",
+      "content_hash": "3c2c28cbfdd9ec310918ff52dc157739ea176ee8128c7ff74deb53c13f139186",
+      "verified_at": "2026-11-17T07:06:23.929Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T07:38:13.676Z"
+      "last_updated": "2026-11-17T07:06:23.929Z"
     },
     "vlcn-io/cr-sqlite": {
       "repository": "vlcn-io/cr-sqlite",
@@ -7131,14 +7131,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-sfu-db-connector-x",
-      "content_hash": "d20ece584333aab26e520d95f3e50038d47955f1366eb336c9c9a559655ca310",
-      "verified_at": "2026-11-15T23:39:58.591Z",
+      "content_hash": "86df9b1d91db507253997b941944b53fc5df3fa957fd9784b5ca58c5c0249ef0",
+      "verified_at": "2026-11-17T07:06:27.258Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-15T23:39:58.591Z"
+      "last_updated": "2026-11-17T07:06:27.258Z"
     },
     "stenciljs/core": {
       "repository": "stenciljs/core",
@@ -7911,14 +7911,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-actix-actix-web",
-      "content_hash": "05cffc2b3cf2ce22c380579f7803f999bb7f140254c7fc8a496d6c2f653b4c6c",
-      "verified_at": "2026-11-15T17:14:09.880Z",
+      "content_hash": "98c35604eb2a413404890bc23e83f2634343c9b16116d9127b9d71454ee19be2",
+      "verified_at": "2026-11-17T07:06:54.507Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-15T17:14:09.880Z"
+      "last_updated": "2026-11-17T07:06:54.507Z"
     },
     "wix/react-native-ui-lib": {
       "repository": "wix/react-native-ui-lib",
@@ -15276,14 +15276,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-mswjs-msw",
-      "content_hash": "0ad88efd48ce2a815d3b2fb586808aebf37b11e3ab14a7808d1fbb41dc778d4a",
-      "verified_at": "2026-11-12T15:33:58.765Z",
+      "content_hash": "1435df35fb20090260a500a399e34a186cb66d63b804aa8eeebe23869d2c6cd1",
+      "verified_at": "2026-11-17T07:06:17.899Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T15:33:58.765Z"
+      "last_updated": "2026-11-17T07:06:17.899Z"
     },
     "signerlabs/Klee": {
       "repository": "signerlabs/Klee",

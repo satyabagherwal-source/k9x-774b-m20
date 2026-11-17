@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T06:47:46.701Z",
+  "last_updated": "2026-11-17T07:07:00.418Z",
   "directives": [
     {
       "id": "CD-001",
@@ -22608,6 +22608,68 @@
       "source_repo": "zoontek-react-native-bootsplash",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-8F9101-splash-screen-staying-visible-after-warm.md",
+      "staged_date": "2026-11-17"
+    },
+    {
+      "id": "CD-NHBE",
+      "directive_title": "preserve optional path parameters and pipes in handler paths",
+      "source_repo": "mswjs-msw-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-NHBE-preserve-optional-path-parameters-and-pipes-in-handler-paths.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-17",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-NI6A",
+      "directive_title": "paginate registry tag listings",
+      "source_repo": "zarf-dev-zarf-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-NI6A-paginate-registry-tag-listings.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-17",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-NDRP",
+      "directive_title": "map PayloadError::Overflow to 413 Payload Too Large",
+      "source_repo": "actix/actix-web",
+      "source_commit": "27cdad7b",
+      "staged_file": "11_INBOX/candidate-directives/CD-NDRP-map-payloaderror-overflow-to-413-payload-too-large.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-17",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-NGE5",
+      "directive_title": "multipart): map PayloadError::Overflow to 413 Payload Too Large",
+      "source_repo": "actix-actix-web-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-NGE5-multipart-map-payloaderror-overflow-to-413-payload-too-large.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-17",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-1F3CAC",
+      "directive_title": "preserve optional path parameters and pipes in handler paths",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "mswjs-msw",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-1F3CAC-preserve-optional-path-parameters-and-pi.md",
+      "staged_date": "2026-11-17"
+    },
+    {
+      "id": "CD-REV-2CF0A1",
+      "directive_title": "paginate registry tag listings",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zarf-dev-zarf",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-2CF0A1-paginate-registry-tag-listings.md",
       "staged_date": "2026-11-17"
     }
   ]

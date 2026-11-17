@@ -1,48 +1,34 @@
-# Verification Protocol: Verification Protocol: Empirical Defect Shield for zarf/dev/zarf
+# Verification Protocol: Verification Protocol: Empirical Defect Shield for zarf-dev/zarf
 
 <!-- PROVENANCE_START
 {
-  "source_repository": "zarf/dev/zarf",
-  "source_url": "https://github.com/zarf/dev/zarf",
-  "source_version": "historical-head",
-  "license": "OPEN_HARVEST",
-  "timestamp": "2026-11-13T00:00:00.000Z",
-  "ai_provider": "universal-multi-artifact-distributor",
+  "source_repository": "zarf-dev/zarf",
+  "source_url": "https://github.com/zarf-dev/zarf",
+  "source_version": "8942227e",
+  "license": "Apache-2.0",
+  "timestamp": "2026-11-17T07:06:24.140Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
-  "learning_id": "unknown",
+  "learning_id": "learn-github-zarf-dev-zarf",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [zarf/dev/zarf](https://github.com/zarf/dev/zarf) (Revision: `historical`).  
-> **License**: OPEN_HARVEST | **Timestamp**: `2026-11-13T00:00:00.000Z`  
-> **Learning ID**: `unknown`
+> **Provenance**: Harvested from [zarf-dev/zarf](https://github.com/zarf-dev/zarf) (Revision: `8942227e`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-17T07:06:24.140Z`  
+> **Learning ID**: `learn-github-zarf-dev-zarf`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `zarf/dev/zarf` (Commit: `historical`)
+- **Target Repository**: `zarf-dev/zarf` (Commit: `8942227e`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
-> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zarf-dev-zarf-learnings.md`  
-> **Source**: github ([https://github.com/zarf-dev/zarf](https://github.com/zarf-dev/zarf))  
-> **Source Version**: `e62a47c3`  
-> **License**: Apache-2.0  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T07:37:57.558Z  
-> **Learning ID**: `learn-github-zarf-dev-zarf`  
-> **Pipeline Version**: `2.0.0`  
-> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
-> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
-> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
-
----
-
 # Forensic Learning Record (Deep Inspection): zarf-dev/zarf
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zarf-dev-zarf-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zarf-dev/zarf](https://github.com/zarf-dev/zarf))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T07:37:57.551Z  
+> **Harvest Timestamp**: 2026-11-17T07:06:22.874Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: The Airgap Native Package Manager for Kubernetes
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 2092 stars
+- **Stars / Engagement**: 2097 stars
 
 ---
 
@@ -1484,14 +1470,13 @@ func mutateEphemeralContainers(ctx context.Context, cluster *cluster.Cluster, po
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #5657** (2026-11-12): **feat(git): remove external git shell-out fallback (#2772)**
-  *Symptoms*: ## Description Removes the host `git` CLI shell-out fallback across Zarf's Git package as requested in #2772: - Deleted `src/internal/git/fallback.go` (`gitCloneFallback` and `gitFetchCommitFallback`). - Updated `src/internal/git/repository.go` to return errors directly from `go-git` without shelling out to external binaries. - Updated comments in `examples/git-data/zarf.yaml` and `src/test/e2e/07_create_git_test.go`.  ## Related Issue Fixes #2772  ## Testing - Verified compilation with `go test -c ./src/internal/git`. - Ran `go vet ./src/...` (0 errors). - Built CLI binary with `go build -o build/zarf.exe main.go`.
+- **Issue #5676** (2026-11-16): **fix: paginate registry tag listings**
+  *Symptoms*: ## Description   - Discovered while running `uds zarf tools registry ls docker.io/envoyproxy/envoy`, which consistently failed with `unexpected EOF` error.  - Appears unpaginated tag responses exceed ORAS’s [default 4 MiB metadata limit.](https://github.com/zarf-dev/zarf/blob/e62a47c31c2a10854bd3f9d64f31345dffa26c68/vendor/oras.land/oras-go/v2/registry/remote/utils.go#L32-L35) (if I have that correct).     - Setting a 1,000-tag (matched crane's default) page size fixes the failure.  - Added a small pagination regression test. Verified with Go 1.26.11 against envoyproxy.  ## Related Issue  N/A  ## Checklist before merging  - [x] Test, docs, adr added or updated as needed - [x] [Contributor Guide Steps](https://github.com/zarf-dev/zarf/blob/main/CONTRIBUTING.md#developer-workflow) followed 
 
-- **Issue #5648** (2026-11-11): **chore(main): release 1.0.1**
-  *Symptoms*: :robot: I have created a release *beep* *boop* ---   ## [1.0.1](https://github.com/zarf-dev/zarf/compare/v1.0.0...v1.0.1) (2026-11-11)   ### Bug Fixes  * update agent mutation policy handling helm schema validation ([#5644](https://github.com/zarf-dev/zarf/issues/5644)) ([e445545](https://github.com/zarf-dev/zarf/commit/e4455451cb2ef171b939bfc802c69cc96ac42524))  --- This PR was generated with [Release Please](https://github.com/googleapis/release-please). See [documentation](https://github.com/googleapis/release-please#release-please).
+- **Issue #5675** (2026-11-16): **chore(deps): bump docker/login-action from 4.7.0 to 4.8.0**
+  *Symptoms*: Bumps [docker/login-action](https://github.com/docker/login-action) from 4.7.0 to 4.8.0. <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/docker/login-action/releases">docker/login-action's releases</a>.</em></p> <blockquote> <h2>v4.8.0</h2> <ul> <li>Set Docker Hub OIDC token lifetime default to 1 hour by <a href="https://github.com/crazy-max"><code>@​crazy-max</code></a> in <a href="https://redirect.github.com/docker/login-action/pull/1070">docker/login-action#1070</a></li> <li>Bump <code>@​aws-sdk/client-ecr</code> and <code>@​aws-sdk/client-ecr-public</code> to 3.1161.0 in <a href="https://redirect.github.com/docker/login-action/pull/1103">docker/login-action#1103</a></li> <li>Bump <code>@​docker/actions-toolkit</code> from 0.107.0 to 0.109.0 in <a href="https://redirect.github.com/docker/login-action/pull/1105">docker/login-action#1105</a></li> <li>Bump vite from 7.3.6 to 7.3.7 in <a href="https://redirect.github.com/docker/login-action/pull/1101">docker/login-action#1101</a></li> </ul> <p><strong>Full Changelog</strong>: <a href="https://github.com/docker/login-action/compare/v4.7.0...v4.8.0">https://github.com/docker/login-action/compare/v4.7.0...v4.8.0</a></p> </blockquote> </details> <details> <summary>Commits</summary> <ul> <li><a href="https://github.com/docker/login-action/commit/8aa5831fb8d48d8f76594c7ddde61ae58019f550"><code>8aa5831</code></a> Merge pull request <a href="https://redirect.github.com/docker/login-action/iss
   **Post-Mortem & Fix Analysis**:
-  > ### <span aria-hidden="true">✅</span> Deploy Preview for *zarf-docs* canceled.   |  Name | Link | |:-:|------------------------| |<span aria-hidden="true">🔨</span> Latest commit | 6b74fdb19a5932eac70c0d4ed8f14281625f1bf2 | |<span aria-hidden="true">🔍</span> Latest deploy log | https://app.netlify.com/projects/zarf-docs/deploys/6af4beeb4ab93ee08db42240 |
-  > ## [Codecov](https://app.codecov.io/gh/zarf-dev/zarf/pull/5648?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=zarf-dev) Report :white_check_mark: All modified and coverable lines are covered by tests. [see 1 file with indirect coverage changes](https://app.codecov.io/gh/zarf-dev/zarf/pull/5648/indirect-changes?src=pr&el=tree-more&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=zarf-dev) <details><summary> :rocket: New features to boost your workflow: </summary>  - :snowflake: [Test Analytics](https://docs.codecov.com/docs/test-analytics): Detect flaky tests, report on failures, and find test suite problems. - :package: [JS Bundle Analysis](https://docs.codecov.com/docs/javascript-bundle-analysis): Save yourself from yourself by tracking and limiting bundle sizes in JS merges. </details>
+  > ### <span aria-hidden="true">✅</span> Deploy Preview for *zarf-docs* canceled.   |  Name | Link | |:-:|------------------------| |<span aria-hidden="true">🔨</span> Latest commit | 12072d4a55a8d8274445cc4ca4636706cdc3ff3b | |<span aria-hidden="true">🔍</span> Latest deploy log | https://app.netlify.com/projects/zarf-docs/deploys/6af9005149098bad7200edda |
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1508,728 +1493,84 @@ func mutateEphemeralContainers(ctx context.Context, cluster *cluster.Cluster, po
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e4455451` (2026-11-11)
-**Commit Message**: fix: update agent mutation policy handling helm schema validation (#5644)
+### Incident Patch 1: `d9c2a2fe` (2026-11-16)
+**Commit Message**: fix: paginate registry tag listings (#5676)
 
-Signed-off-by: dwertent <[REDACTED_EMAIL]>
-Co-authored-by: Austin Abro <[REDACTED_EMAIL]>
+Signed-off-by: Brian Watson <[REDACTED_EMAIL]>
 
-**File**: `src/pkg/cluster/cluster.go` (modified, +6/-2)
+**File**: `src/cmd/registry_list.go` (modified, +3/-2)
 ```diff
-@@ -314,8 +314,12 @@ func (c *Cluster) InitState(ctx context.Context, opts InitStateOptions) (*state.
- 		s.InjectorInfo.Port = opts.InjectorPort
+@@ -177,8 +177,9 @@ func listRegistryTags(ctx context.Context, out io.Writer, conn registryConnectio
  	}
  
--	if s.AgentInfo.IsConfigured() && opts.AgentMutationPolicy != "" {
--		s.AgentInfo.MutationPolicy = opts.AgentMutationPolicy
-+	if s.AgentInfo.IsConfigured() {
-+		if opts.AgentMutationPolicy != "" {
-+			s.AgentInfo.MutationPolicy = opts.AgentMutationPolicy
-+		} else if s.AgentInfo.MutationPolicy == "" {
-+			s.AgentInfo.MutationPolicy = state.MutationPolicyAll
+ 	repo := &orasRemote.Repository{
+-		Reference: ref,
+-		Client:    conn.client,
++		Reference:       ref,
++		Client:          conn.client,
++		TagListPageSize: 1000,
+ 	}
+ 
+ 	switch {
+```
+
+**File**: `src/cmd/registry_list_test.go` (modified, +32/-0)
+```diff
+@@ -8,6 +8,7 @@ import (
+ 	"bytes"
+ 	"fmt"
+ 	"net/http"
++	"net/http/httptest"
+ 	"strings"
+ 	"testing"
+ 
+@@ -82,6 +83,37 @@ func TestListRegistryTags(t *testing.T) {
+ 	}
+ }
+ 
++func TestListRegistryTagsPagination(t *testing.T) {
++	t.Parallel()
++	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++		var tag string
++		switch r.URL.RawQuery {
++		case "n=1000":
++			tag = "first"
++			w.Header().Set("Link", `</v2/test-repo/tags/list?last=first>; rel="next"`)
++		case "last=first&n=1000":
++			tag = "second"
++		default:
++			http.Error(w, "expected paginated tag request", http.StatusBadRequest)
++			return
 +		}
- 	}
- 
- 	// Save the state back to K8s
-```
-
-**File**: `src/pkg/cluster/cluster_test.go` (modified, +34/-0)
-```diff
-@@ -1088,3 +1088,37 @@ func TestIgnoreExistingNamespacesForAgent(t *testing.T) {
- 		require.ErrorContains(t, c.ignoreExistingNamespacesForAgent(ctx), "unable to mark the namespace app as ignored by Zarf Agent")
- 	})
- }
++		w.Header().Set("Content-Type", "application/json")
++		if _, err := fmt.Fprintf(w, `{"name":"test-repo","tags":["%s"]}`, tag); err != nil {
++			t.Errorf("writing tags: %v", err)
++		}
++	}))
++	defer server.Close()
 +
-+func TestInitStateAgentMutationPolicy(t *testing.T) {
-+	t.Parallel()
-+	for _, tt := range []struct {
-+		name     string
-+		existing state.MutationPolicy
-+		option   state.MutationPolicy
-+		want     state.MutationPolicy
-+	}{
-+		{"new agent defaults to all", "", "", state.MutationPolicyAll},
-+		{"explicit labeled", "", state.MutationPolicyLabeled, state.MutationPolicyLabeled},
-+		{"existing agent without policy defaults to all", "", "", state.MutationPolicyAll},
-+		{"preserve labeled", state.MutationPolicyLabeled, "", state.MutationPolicyLabeled},
-+		{"explicit all overrides labeled", state.MutationPolicyLabeled, state.MutationPolicyAll, state.MutationPolicyAll},
-+	} {
-+		t.Run(tt.name, func(t *testing.T) {
-+			existing := &state.State{AgentInfo: state.AgentInfo{MutationPolicy: tt.existing}}
-+			if tt.name == "new agent defaults to all" || tt.name == "explicit labeled" {
-+				existing = nil
-+			} else {
-+				certs, err := pki.GeneratePKI(state.ZarfAgentHost)
-+				require.NoError(t, err)
-+				existing.AgentInfo.TLS = certs
-+			}
-+			c := newFakeInitStateCluster(t.Context(), t, existing)
-+			got, err := c.InitState(t.Context(), InitStateOptions{
-+				InternalServices:    state.NewServiceSet(state.AgentKey),
-+				AgentMutationPolicy: tt.option,
-+			})
-+			require.NoError(t, err)
-+			require.Equal(t, tt.want, got.AgentInfo.MutationPolicy)
-+		})
++	conn := registryConnection{
++		ref:    strings.TrimPrefix(server.URL, "http://") + "/test-repo",
++		client: &auth.Client{Client: server.Client()},
 +	}
++	var buf bytes.Buffer
++	err := listRegistryTags(testutil.TestContext(t), &buf, conn, true, false, false, false)
++	require.NoError(t, err)
++	require.Equal(t, "first\nsecond\n", buf.String())
 +}
-```
-
-**File**: `src/pkg/state/state.go` (modified, +2/-0)
-```diff
-@@ -620,6 +620,8 @@ func Merge(oldState *State, opts MergeOptions) (*State, error) {
- 		}
- 		if opts.AgentMutationPolicy != "" {
- 			agentInfo.MutationPolicy = opts.AgentMutationPolicy
-+		} else if agentInfo.MutationPolicy == "" {
-+			agentInfo.MutationPolicy = MutationPolicyAll
- 		}
- 		newState.AgentInfo = agentInfo
- 	}
-```
-
-**File**: `src/pkg/state/state_test.go` (modified, +26/-0)
-```diff
-@@ -1182,3 +1182,29 @@ func TestDeployedPackageGetDeployConfigCopiesNestedValues(t *testing.T) {
- 	require.True(t, ok)
- 	require.Equal(t, config, laterSnapshot)
- }
 +
-+func TestMergeStateAgentMutationPolicy(t *testing.T) {
-+	t.Parallel()
-+	for _, tt := range []struct {
-+		name     string
-+		existing MutationPolicy
-+		option   MutationPolicy
-+		want     MutationPolicy
-+	}{
-+		{"new agent defaults to all", "", "", MutationPolicyAll},
-+		{"explicit labeled", "", MutationPolicyLabeled, MutationPolicyLabeled},
-+		{"preserve labeled", MutationPolicyLabeled, "", MutationPolicyLabeled},
-+		{"explicit all overrides labeled", MutationPolicyLabeled, MutationPolicyAll, MutationPolicyAll},
-+	} {
-+		t.Run(tt.name, func(t *testing.T) {
-+			existing := &State{AgentInfo: AgentInfo{MutationPolicy: tt.existing}}
-+			got, err := Merge(existing, MergeOptions{
-+				Services:            NewServiceSet(AgentKey),
-+				AgentMutationPolicy: tt.option,
-+			})
-+			require.NoError(t, err)
-+			require.Equal(t, tt.want, got.AgentInfo.MutationPolicy)
-+			require.Equal(t, tt.existing, existing.AgentInfo.MutationPolicy)
-+		})
-+	}
-+}
-```
-
----
-
-### Incident Patch 2: `b70ff23c` (2026-11-11)
-**Commit Message**: docs: fixed slugs processing for previous versions (#5642)
-
-Signed-off-by: Austin Abro <[REDACTED_EMAIL]>
-
-**File**: `.github/workflows/test-upgrade.yml` (modified, +1/-1)
-```diff
-@@ -75,7 +75,7 @@ jobs:
-         # NOTE: "PATH=$PATH" preserves the default user $PATH. This is needed to maintain the version of zarf installed
-         #       in a previous step. This test run will the current release to create a K3s cluster.
-         run: |
--          sudo env "PATH=$PATH" CI=true zarf init --components k3s,git-server --nodeport 31337 --confirm
-+          sudo env "PATH=$PATH" CI=true zarf init --components k3s,git-server --registry-port 31337 --confirm
- 
-       # Before we run the regular tests we need to aggressively cleanup files to reduce disk pressure
-       - name: Cleanup files
-```
-
-**File**: `site/astro.config.ts` (modified, +1/-0)
-```diff
-@@ -93,6 +93,7 @@ const topicsOption: Record<string, string[]> = {
- 
- // https://astro.build/config
- export default defineConfig({
-+  prerenderConflictBehavior: "error",
-   redirects: {
-     "/docs/zarf-overview": "/",
-   },
-```
-
-**File**: `site/hack/build-versions.mjs` (modified, +2/-2)
-```diff
-@@ -7,6 +7,7 @@ import { promises as fs, existsSync } from "node:fs";
- import path from "node:path";
- import { fileURLToPath } from "node:url";
- import { generateExamples } from "./copy-examples.js";
-+import { stageDocs } from "./stage-docs.js";
- 
- const siteDir = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
- const repoDir = path.resolve(siteDir, "..");
-@@ -186,8 +187,7 @@ async function stageVersion({ ref, slug }) {
-   git(["worktree", "add", "--detach", worktree, ref]);
-   try {
-     const dst = path.join(docsDir, slug);
--    await fs.rm(dst, { recursive: true, force: true });
--    await fs.cp(path.join(worktree, "site/src/content/docs"), dst, { recursive: true });
-+    await stageDocs({ srcDir: path.join(worktree, "site/src/content/docs"), dstDir: dst, slug });
-     await stageVersionedAssets(worktree, slug);
-     // Examples and schema are generated artifacts, absent from the checkout.
-     await generateExamples({
-```
-
-**File**: `site/hack/stage-docs.js` (added, +25/-0)
-```diff
-@@ -0,0 +1,25 @@
-+import { promises as fs } from "node:fs";
-+import path from "node:path";
-+import yaml from "yaml";
-+
-+// Explicit slugs override the directory-based routes, so archived pages must
-+// have their slugs scoped to the version just like pages without an override.
-+export async function stageDocs({ srcDir, dstDir, slug }) {
-+  await fs.rm(dstDir, { recursive: true, force: true });
-+  await fs.cp(srcDir, dstDir, { recursive: true });
-+
-+  for (const entry of await fs.readdir(dstDir, { recursive: true, withFileTypes: true })) {
-+    if (!entry.isFile() || !/\.mdx?$/.test(entry.name)) continue;
-+    const filename = path.join(entry.parentPath, entry.name);
-+    const content = await fs.readFile(filename, "utf8");
-+    const frontmatter = content.match(/^---\r?\n([\s\S]*?)\r?\n---(?:\r?\n|$)/);
-+    if (!frontmatter) continue;
-+
-+    const doc = yaml.parseDocument(frontmatter[1]);
-+    if (doc.errors.length > 0) throw new Error(`Invalid frontmatter in ${filename}`, { cause: doc.errors[0] });
-+    const pageSlug = doc.get("slug");
-+    if (!pageSlug) continue;
-+    doc.set("slug", path.posix.join(slug, String(pageSlug)));
-+    await fs.writeFile(filename, `---\n${doc.toString()}---\n${content.slice(frontmatter[0].length)}`);
-+  }
-+}
-```
-
-**File**: `site/hack/stage-docs.test.js` (added, +38/-0)
-```diff
-@@ -0,0 +1,38 @@
-+import assert from "node:assert/strict";
-+import { mkdtemp, mkdir, readFile, rm, writeFile } from "node:fs/promises";
-+import { tmpdir } from "node:os";
-+import path from "node:path";
-+import test from "node:test";
-+import yaml from "yaml";
-+import { stageDocs } from "./stage-docs.js";
-+
-+test("stages archived pages with version-scoped explicit slugs", async (t) => {
-+  const root = await mkdtemp(path.join(tmpdir(), "zarf-archived-docs-"));
-+  t.after(() => rm(root, { recursive: true, force: true }));
-+  const srcDir = path.join(root, "source");
-+  const dstDir = path.join(root, "v1-0");
-+  await mkdir(path.join(srcDir, "nested"), { recursive: true });
-+
-+  const body = '\nimport Timeline from "@components/Timeline.astro";\n\nRelease notes.\n';
-+  const pages = [
-+    { filename: "v1.0.mdx", slug: "v1.0", expected: "v1-0/v1.0" },
-+    { filename: "nested/custom.md", slug: "/custom/path/", expected: "v1-0/custom/path/" },
-+    { filename: "index.mdx", slug: undefined, expected: undefined },
-+  ];
-+
-+  for (const page of pages) {
-+    page.content = `---\n${yaml.stringify({ title: "Release", slug: page.slug })}---\n${body}`;
-+    await writeFile(path.join(srcDir, page.filename), page.content);
-+  }
-+
-+  await stageDocs({ srcDir, dstDir, slug: "v1-0" });
-+
-+  for (const page of pages) {
-+    const staged = await readFile(path.join(dstDir, page.filename), "utf8");
-+    const frontmatter = staged.match(/^---\n([\s\S]*?)\n---\n/);
-+    assert.equal(yaml.parse(frontmatter[1]).slug, page.expected);
-+    assert.equal(staged.slice(frontmatter[0].length), body);
-+    assert.equal(await readFile(path.join(srcDir, page.filename), "utf8"), page.content);
-+    if (!page.slug) assert.equal(staged, page.content);
-+  }
-+});
-```
-
-**File**: `site/package.json` (modified, +1/-1)
-```diff
-@@ -16,7 +16,7 @@
-     "build:versions": "node hack/build-versions.mjs",
-     "preview": "astro preview",
-     "astro": "astro",
--    "link-check": "linkinator --recurse dist/ --config linkinator.config.json"
-+    "link-check": "linkinator --server-root dist/ \"**/*.html\" --retry-errors --config linkinator.config.json"
-   },
-   "dependencies": {
-     "@astrojs/check": "^0.9.9",
-```
-
-**File**: `site/src/content/docs/v1.0.mdx` (modified, +3/-1)
-```diff
-@@ -9,6 +9,8 @@ import Timeline from "@components/Timeline.astro";
- 
- Zarf is happy to announce `v1.0.0`. This milestone marks our commitment to stable releases, backward compatibility, and long-term support.
- 
-+Users should expect upgrading to v1.0 to be straightforward. However, v1.0 stores package secrets in a format that earlier CLI versions cannot read. Operators who share a cluster should coordinate their upgrades.
-+
- ## v1beta1 Package Schema
- 
- A package schema defines the fields and structure of the `zarf.yaml` package definition. Zarf `v1.0.0` introduces a new version of that format, `v1beta1`. It introduces reusable [published components](/commands/zarf_component_publish/) and a dedicated [templating workflow](/commands/zarf_dev_template/). The new format removes several deprecated features from the existing schema, `v1alpha1`. The `v1beta1` schema provides a migration path for each removed feature, improving usability, security, or performance. The [`v1alpha1` to `v1beta1` migration guide](/best-practices/v1alpha1-to-v1beta1/) provides a detailed list of changes and instructions for updating existing package definitions.
-@@ -29,7 +31,7 @@ With the release of `v1.0.0`, Zarf will log a warning when `v1alpha1` packages a
-   ]}
- />
- 
--Package removal will continue to work without a feature flag until `v1alpha1` is fully unsupported. 
-+Package removal will continue to work without a feature flag until `v1alpha1` is fully unsupported.
- 
- ## Init Package
- 
-```
-
-**File**: `site/src/plugins/remark-link-rewrite.test.ts` (modified, +36/-1)
-```diff
-@@ -1,11 +1,46 @@
- import { test } from "node:test";
- import assert from "node:assert/strict";
- import path from "node:path";
--import { rewriteUrl, fixEscapingRelative, rewriteVersionedAssetImport } from "./remark-link-rewrite.ts";
-+import { createMarkdownProcessor, unified } from "@astrojs/markdown-remark";
-+import { remarkLinkRewrite, rewriteUrl, fixEscapingRelative, rewriteVersionedAssetImport } from "./remark-link-rewrite.ts";
- 
- const sections = new Set(["commands", "ref", "tutorials", "getting-started", "faq"]);
- const prefix = "/v0-76";
- 
-+test("renders archived navigation links alongside shared tutorial recordings", async () => {
-+  const processor = await createMarkdownProcessor({
-+    syntaxHighlight: false,
-+    remarkPlugins: [[remarkLinkRewrite, { srcDir: "/docs", sections: [...sections] }]],
-+  });
-+  const { code } = await processor.render(`
-+[Tutorial](/tutorials/initializing/)
-+
-+<a href="/tutorials/initializing/">Tutorial</a>
-+<iframe src="/tutorials/k3s_init.html" width="100%"></iframe>
-+`, { fileURL: new URL("file:///docs/v1-0/tutorials/initializing.md") });
-+
-+  assert.ok(code.includes('href="/v1-0/tutorials/initializing/"'));
-+  assert.ok(code.includes('<a href="/v1-0/tutorials/initializing/">'));
-+  assert.ok(code.includes('src="/tutorials/k3s_init.html"'));
-+});
-+
-+test("compiles archived MDX links alongside shared tutorial recordings", async () => {
-+  const processor = unified({
-+    remarkPlugins: [[remarkLinkRewrite, { srcDir: "/docs", sections: [...sections] }]],
-+  });
-+  const renderer = await processor.createMdxRenderer!(
-+    { syntaxHighlight: false },
-+    { optimize: false },
-+  );
-+  const { code } = await renderer.process(`
-+<a href="/tutorials/initializing/">Tutorial</a>
-+<iframe src="/tutorials/k3s_init.html" />
-+`, "/docs/v1-0/tutorials/initializing.mdx", {});
-+
-+  assert.ok(code.includes('href: "/v1-0/tutorials/initializing/"'));
-+  assert.ok(code.includes('src: "/tutorials/k3s_init.html"'));
-+});
-+
- test("prefixes root-absolute links into known sections", () => {
-   assert.equal(rewriteUrl("/commands/zarf", prefix, sections), "/v0-76/commands/zarf");
-   assert.equal(rewriteUrl("/ref/examples/argocd/", prefix, sections), "/v0-76/ref/examples/argocd/");
-```
-
----
-
-### Incident Patch 3: `54dd4495` (2026-11-10)
-**Commit Message**: docs: updated examples and reference guide to v1beta1 (#5635)
-
-Signed-off-by: Austin Abro <[REDACTED_EMAIL]>
-
-**File**: `.github/workflows/publish-application-packages.yml` (modified, +0/-3)
-```diff
-@@ -43,6 +43,3 @@ jobs:
-           # Publish a the signed dos-games package
-           zarf package publish ./build/zarf-package-dos-games-amd64-1.3.0.tar.zst oci://ghcr.io/zarf-dev/packages --key=https://zarf.dev/cosign.pub
-           zarf package publish ./build/zarf-package-dos-games-arm64-1.3.0.tar.zst oci://ghcr.io/zarf-dev/packages --key=https://zarf.dev/cosign.pub
--
--          # Publish a skeleton of the dos-games package
--          zarf package publish examples/dos-games oci://ghcr.io/zarf-dev/packages
-```
-
-**File**: `.github/workflows/test-package-create.yml` (modified, +3/-2)
-```diff
-@@ -34,11 +34,12 @@ jobs:
- 
-           # Any component tar files in a package will have the same permissions as the files included in them
-           # Therefore to before building a package to replace a file in hack/examples-checksums/ checksums you must run `chmod -R g-w in zarf/examples`
-+          # SBOM contents vary between builds. Exclude both legacy archives and v1beta1 resources.
-           for f in hack/examples-checksums/*.txt
-           do
-             NAME=$(basename $f .txt)
--            CHECKSUM=$(tar Oxf build/$NAME.tar.zst checksums.txt | grep -v sboms.tar)
--            EXPECTED_CHECKSUM=$(cat $f | grep -v sboms.tar)
-+            CHECKSUM=$(tar Oxf build/$NAME.tar.zst checksums.txt | awk '$2 != "sboms.tar" && $2 !~ /^sboms\//')
-+            EXPECTED_CHECKSUM=$(awk '$2 != "sboms.tar" && $2 !~ /^sboms\//' "$f")
-             if [[ "$CHECKSUM" != "$EXPECTED_CHECKSUM" ]]
-             then
-               echo "Package $f does not have expected checksum."
-```
-
-**File**: `.pre-commit-config.yaml` (modified, +5/-1)
-```diff
-@@ -9,7 +9,11 @@ repos:
-         args:
-           - "--allow-missing-credentials"
-       - id: detect-private-key
--        exclude: "src/test/e2e/29_config_file_test.go"
-+        exclude: |
-+            (?x)^(
-+                src/test/e2e/29_config_file_test\.go|
-+                examples/longhorn/values\.yaml
-+            )$
-       - id: end-of-file-fixer
-         exclude: |
-             (?x)^(
-```
-
-**File**: `examples/argocd/zarf.yaml` (modified, +40/-37)
-```diff
-@@ -1,3 +1,4 @@
-+apiVersion: zarf.dev/v1beta1
- kind: ZarfPackageConfig
- metadata:
-   name: argocd
-@@ -8,44 +9,44 @@ values:
- 
- components:
-   - name: argocd-helm-chart
--    required: true
-     charts:
-       - name: argo-cd
--        version: 9.0.5
-+        helmRepository:
-+          url: https://argoproj.github.io/argo-helm
-+          version: 9.0.5
-         namespace: argocd
--        url: https://argoproj.github.io/argo-helm
-         releaseName: argocd-baseline
-         valuesFiles:
--          - baseline/values.yaml
-+          - path: baseline/values.yaml
-         # Required for 'src/test/external' to validate external git server.
-         values:
-           - sourcePath: ".extraObjects"
-             targetPath: ".extraObjects"
-           - sourcePath: ".repoServer"
-             targetPath: ".repoServer"
-     images:
--      - docker.io/library/redis:7.2.11-alpine
--      - quay.io/argoproj/argocd:v3.1.9
-+      - name: docker.io/library/redis:7.2.11-alpine
-+      - name: quay.io/argoproj/argocd:v3.1.9
-       # Cosign artifacts for images - argocd-helm-chart
--      - quay.io/argoproj/argocd:sha256-9c33285c0b86a66e9cf9fcafc448e48e0ab7c4678b20b3723556bb6cce8ea0b9.sig
--      - quay.io/argoproj/argocd:sha256-9c33285c0b86a66e9cf9fcafc448e48e0ab7c4678b20b3723556bb6cce8ea0b9.att
-+      - name: quay.io/argoproj/argocd:sha256-9c33285c0b86a66e9cf9fcafc448e48e0ab7c4678b20b3723556bb6cce8ea0b9.sig
-+      - name: quay.io/argoproj/argocd:sha256-9c33285c0b86a66e9cf9fcafc448e48e0ab7c4678b20b3723556bb6cce8ea0b9.att
-   - name: argocd-apps
--    required: true
-     charts:
-       - name: argocd-apps
--        version: 2.0.4
-+        helmRepository:
-+          url: https://argoproj.github.io/argo-helm
-+          version: 2.0.4
-         namespace: podinfo
--        url: https://argoproj.github.io/argo-helm
-         releaseName: argocd-apps
-         valuesFiles:
--          - apps/values.yaml
--    repos:
--      - https://github.com/stefanprodan/podinfo.git
-+          - path: apps/values.yaml
-+    repositories:
-+      - url: https://github.com/stefanprodan/podinfo.git
-     images:
--      - ghcr.io/stefanprodan/podinfo:6.4.0
-+      - name: ghcr.io/stefanprodan/podinfo:6.4.0
-     actions:
-       onDeploy:
--        after:
-+        onSuccess:
-           # This will use a wait action to wait for the pods to be ready
-           - description: Podinfo pod to be ready via wait action
-             wait:
-@@ -55,22 +56,24 @@ components:
-                 namespace: podinfo
-                 condition: ready
-   - name: argocd-applicationset
--    required: true
-     charts:
-       - name: argocd-apps
--        version: 2.0.4
-+        helmRepository:
-+          url: https://argoproj.github.io/argo-helm
-+          version: 2.0.4
-         namespace: guestbook
--        url: https://argoproj.github.io/argo-helm
-         releaseName: argocd-apps
-         valuesFiles:
--          - applicationset/values.yaml
--    repos:
--      - https://github.com/argoproj/argocd-example-apps.git@0d521c6e049889134f3122eb32d7ed342f43ca0d
-+          - path: applicationset/values.yaml
-+    repositories:
-+      - url: https://github.com/argoproj/argocd-example-apps.git
-+        ref:
-+          commit: 0d521c6e049889134f3122eb32d7ed342f43ca0d
-     images:
--      - gcr.io/google-samples/gb-frontend:v5
-+      - name: gcr.io/google-samples/gb-frontend:v5
-     actions:
-       onDeploy:
--        after:
-+        onSuccess:
-           - description: Guestbook UI pod to be ready via wait action
-             wait:
-               cluster:
-@@ -79,31 +82,31 @@ components:
-                 namespace: guestbook
-                 condition: ready
-   - name: oci-helm
--    required: true
-     charts:
-       - name: argocd-apps
--        version: 1.6.1
-+        helmRepository:
-+          url: https://argoproj.github.io/argo-helm
-+          version: 1.6.1
-         namespace: podinfo-oci
--        url: https://argoproj.github.io/argo-helm
-         releaseName: argocd-apps
-         valuesFiles:
--          - oci-helm/values.yaml
-+          - path: oci-helm/values.yaml
-     images:
--      - ghcr.io/stefanprodan/charts/podinfo:6.9.2
--      - ghcr.io/stefanprodan/podinfo:6.9.2
-+      - name: ghcr.io/stefanprodan/charts/podinfo:6.9.2
-+      - name: ghcr.io/stefanprodan/podinfo:6.9.2
-   - name: oci-manifests
--    required: true
-     charts:
-       - name: argocd-apps
--        version: 1.6.1
-+        helmRepository:
-+          url: https://argoproj.github.io/argo-helm
-+          version: 1.6.1
-         namespace: oci-manifests
--        url: https://argoproj.github.io/argo-helm
-         releaseName: argocd-apps
-         valuesFiles:
--          - oci-manifests/values.yaml
-+          - path: oci-manifests/values.yaml
-     images:
--      - registry-1.docker.io/dhpup/oci-edge:1.0.6
--      - ghcr.io/dhpup/guestbook:0.1.40
-+      - name: registry-1.docker.io/dhpup/oci-edge:1.0.6
-+      - name: ghcr.io/dhpup/guestbook:0.1.40
- 
--documentation:
-+attachments:
-   readme: readme.md
-```
-
-**File**: `examples/component-actions/readme.md` (modified, +0/-6)
-```diff
-@@ -1,9 +1,3 @@
--:::caution
--
--Component Actions have replaced Component Scripts. Zarf will still read `scripts` entries, but will convert them to `actions`. Component Scripts will be removed in a future release. Please update your package configurations to use Component Actions instead.
--
--:::
--
- This example demonstrates how to define actions within your package that can run either on `zarf package create`, `zarf package deploy` or `zarf package remove`. These actions will be executed with the context that the Zarf binary is executed with.
- 
- For more details on component actions, see the [component actions](/ref/actions/) documentation.
-```
-
-**File**: `examples/component-actions/zarf.yaml` (modified, +38/-24)
-```diff
-@@ -1,3 +1,4 @@
-+apiVersion: zarf.dev/v1beta1
- kind: ZarfPackageConfig
- metadata:
-   name: component-actions
-@@ -10,16 +11,17 @@ values:
- # See the example README.md in this folder or /adrs/0010-scripts-actions.md for more info.
- components:
-   - name: on-create
-+    optional: true
-     actions:
-       # runs during "zarf package create"
-       onCreate:
-         # defaults are applied to all actions in this action set - below are the default defaults
-         defaults:
-           dir: ""
-           env: []
--          maxRetries: 0
-+          retries: 0
-           maxTotalSeconds: 300
--          mute: false
-+          silent: false
-           shell:
-             darwin: sh
-             linux: sh
-@@ -35,17 +37,17 @@ components:
-             # env sets environment variables for this action only
-             env:
-               - thing=stuff
--            # maxRetries is the number of times to retry the action if it fails
--            maxRetries: 0
-+            # retries is the number of times to retry the action if it fails
-+            retries: 0
-             # maxTotalSeconds is the maximum amount of times the action can run before it is killed, over all retries
-             maxTotalSeconds: 30
--            # mute determine if actions output should be printed to the console
--            mute: false
-+            # silent determine if actions output should be printed to the console
-+            silent: false
-             # shell sets the preferred shell across operating systems, in this case "pwsh" instead of "powershell" on Windows
-             shell:
-               windows: pwsh
-         # runs after the component is created
--        after:
-+        onSuccess:
-           # actions in a list run in order
-           - cmd: touch test-create-after.txt
-           - cmd: sleep 0.5
-@@ -63,34 +65,37 @@ components:
-               sleep 0.5
- 
-   - name: on-deploy-and-remove
-+    optional: true
-     actions:
-       # runs during "zarf package deploy"
-       onDeploy:
-         # runs before the component is deployed
-         before:
-           - cmd: touch test-deploy-before.txt
-         # runs after the component is deployed
--        after:
-+        onSuccess:
-           - cmd: touch test-deploy-after.txt
-       # runs during "zarf package remove"
-       onRemove:
-         # runs before anything else from the component is removed
-         before:
-           - cmd: rm test-deploy-before.txt
-         # runs after everything else from the component is removed
--        after:
-+        onSuccess:
-           - cmd: rm test-deploy-after.txt
- 
-   - name: on-deploy-with-value
-+    optional: true
-     actions:
-       # runs during "zarf package deploy"
-       onDeploy:
-         # runs before the component is deployed
-         before:
-           - cmd: echo "the dog says {{ .Values.sounds.dog }}"
--            template: true
-+            enableTemplating: true
- 
-   - name: on-deploy-with-dynamic-value
-+    optional: true
-     actions:
-       # runs during "zarf package deploy"
-       onDeploy:
-@@ -103,9 +108,10 @@ components:
-               - key: .sounds.cat
-           # this action will have access to the value set in the previous action
-           - cmd: echo "the cat says {{ .Values.sounds.cat }}"
--            template: true
-+            enableTemplating: true
- 
-   - name: on-deploy-with-multiple-values
-+    optional: true
-     actions:
-       # runs during "zarf package deploy"
-       onDeploy:
-@@ -121,24 +127,26 @@ components:
-         onSuccess:
-           # this action will print the cat sound value that was set in a previous component
-           - cmd: echo "the cat says {{ .Values.sounds.cat }}"
--            template: true
-+            enableTemplating: true
-           # this action will print the dog sound value set in values.yaml
-           - cmd: echo "the dog says {{ .Values.sounds.dog }}"
--            template: true
-+            enableTemplating: true
-           # this action will print the snake sound value set within this component
-           - cmd: echo "the snake says {{ .Values.sounds.snake }}"
--            template: true
-+            enableTemplating: true
- 
-   - name: on-deploy-with-template-use-of-value
-+    optional: true
-     files:
-       # this file will be copied to the target location and the cat, dog, and snake sounds will be replaced with their values
-       # requires the on-deploy-with-dynamic-value and on-deploy-with-multiple-values components
-       - source: test.txt
--        target: test-templated.txt
--        shasum: d84fa3f5071b5cee0ffb09989c95b0078f4265ed485b314492a19bab2e3f69f3
--        template: true
-+        destination: test-templated.txt
-+        checksum: sha256:d84fa3f5071b5cee0ffb09989c95b0078f4265ed485b314492a19bab2e3f69f3
-+        enableTemplating: true
- 
-   - name: on-deploy-with-timeout
-+    optional: true
-     description: This component will fail after 1 second
-     actions:
-       # runs during "zarf package deploy"
-@@ -154,6 +162,7 @@ components:
-           - cmd: echo "😭😭
-```
-
-**File**: `examples/composable-packages/components/chart/Chart.yaml` (added, +5/-0)
-```diff
-@@ -0,0 +1,5 @@
-+apiVersion: v2
-+name: web-server
-+description: A reusable Nginx web server with configurable content and connection name
-+version: 1.0.0
-+type: application
-```
-
-**File**: `examples/composable-packages/components/chart/templates/configmap.yaml` (added, +16/-0)
-```diff
-@@ -0,0 +1,16 @@
-+apiVersion: v1
-+kind: ConfigMap
-+metadata:
-+  name: web-content
-+data:
-+  index.html: |
-+    <!doctype html>
-+    <html lang="en">
-+      <head>
-+        <meta charset="utf-8">
-+        <title>Composable Zarf packages</title>
-+      </head>
-+      <body>
-+        <h1>{{ .Values.message | html }}</h1>
-+      </body>
-+    </html>
+ func TestNormalizeRepoRef(t *testing.T) {
+ 	t.Parallel()
+ 	tests := []struct {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5676** (2026-11-16): fix: paginate registry tag listings (@briantwatson)
+- **PR #5675** (2026-11-16): chore(deps): bump docker/login-action from 4.7.0 to 4.8.0 (@dependabot[bot])
+- **PR #5674** (2026-11-16): chore(deps): bump the codeql group with 3 updates (@dependabot[bot])
 - **PR #5657** (closed): feat(git): remove external git shell-out fallback (#2772) (@Amankumar-10012004)
 - **PR #5648** (2026-11-11): chore(main): release 1.0.1 (@zarf-release-please[bot])
 - **PR #5645** (2026-11-11): chore(deps): update Go from 1.26.10 to 1.26.11 (@AustinAbro321)
-- **PR #5644** (2026-11-11): fix: update agent mutation policy handling helm schema validation (@dwertent)
-- **PR #5642** (2026-11-11): docs: fixed slugs processing for previous versions (@AustinAbro321)
-- **PR #5635** (2026-11-10): docs: updated examples and reference guide to v1beta1 (@AustinAbro321)
 
 ---
 
@@ -2249,37 +1590,34 @@ Signed-off-by: Austin Abro <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. update agent mutation policy handling helm schema validation (#5644)
+## X. paginate registry tag listings
 
 **RULE**:
-When implementing operations in `src/pkg/cluster/cluster.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zarf-dev/zarf. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/cmd/registry_list.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zarf-dev/zarf. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e4455451`: update agent mutation policy handling helm schema validation (#5644). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d9c2a2fe`: paginate registry tag listings. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/pkg/cluster/cluster.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/cmd/registry_list.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	if s.AgentInfo.IsConfigured() {
-		if opts.AgentMutationPolicy != "" {
-			s.AgentInfo.MutationPolicy = opts.AgentMutationPolicy
-		} else if s.AgentInfo.MutationPolicy == "" {
-			s.AgentInfo.MutationPolicy = state.MutationPolicyAll
-		}
+		Reference:       ref,
+		Client:          conn.client,
+		TagListPageSize: 1000,
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
-// Anti-pattern to NEVER write (induced failure mode):
-	if s.AgentInfo.IsConfigured() && opts.AgentMutationPolicy != "" {
-		s.AgentInfo.MutationPolicy = opts.AgentMutationPolicy
+// Induced defect failure mode:
+		Reference: ref,
+		Client:    conn.client,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e4455451` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d9c2a2fe` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

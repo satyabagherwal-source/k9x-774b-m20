@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-17T06:47:46.961Z",
-  "total_verified_learnings": 8859,
+  "last_updated": "2026-11-17T07:07:00.686Z",
+  "total_verified_learnings": 8861,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 19886,
+  "total_items": 19904,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -114925,10 +114925,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-actix-actix-web-technical-construction-intelligence-actix-actix-web-core-invaria.md",
       "title": "Technical Construction Intelligence: actix/actix-web Core Invariants",
       "repository": "actix/actix-web",
-      "source_version": "baebbb57",
-      "content_hash": "3a59b0add1f75995cefe5cc760f4b8eb80c140ac444d06eb2aee18500b92c158",
+      "source_version": "27cdad7b",
+      "content_hash": "57e2d0b98f72eb33dd54e8a3d3cf83a8b38fc621bb71ba75b4a785923081515e",
       "domain_letter": "H",
-      "persisted_at": "2026-11-15T17:14:10.170Z"
+      "persisted_at": "2026-11-17T07:06:54.842Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-actix-actix-web": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-actix-actix-web",
@@ -114937,10 +114937,10 @@
       "relative_path": "08_VERIFICATION/actix-actix-web-verification-protocol-empirical-defect-shield-for-actix-actix-we.md",
       "title": "Verification Protocol: Empirical Defect Shield for actix/actix-web",
       "repository": "actix/actix-web",
-      "source_version": "baebbb57",
-      "content_hash": "6ee1840582e4e1dbf2ef0dfd126c66f636bb600b0fd6588fd1a500ba61f6a9ce",
+      "source_version": "27cdad7b",
+      "content_hash": "985aad10d63b149267a7405c44a5ce98afcbe461b8b6a2662412f7146f6402da",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T17:14:10.315Z"
+      "persisted_at": "2026-11-17T07:06:54.975Z"
     },
     "candidate_directive-update-yt-music-now-a-native-swiftui-app-2523": {
       "item_id": "candidate_directive-update-yt-music-now-a-native-swiftui-app-2523",
@@ -115022,9 +115022,9 @@
       "title": "Technical Construction Intelligence: actix-actix-web-learnings Core Invariants",
       "repository": "actix-actix-web-learnings",
       "source_version": "HEAD",
-      "content_hash": "73fdc5405fb35cde1842206b25da32a7b4de74d7ffca35238cf996fef1c6c4f4",
+      "content_hash": "e21256d08d5bcdff6172d128377f70c494453b1fe02f6021cfee61f12e274f8d",
       "domain_letter": "H",
-      "persisted_at": "2026-11-15T17:14:26.950Z"
+      "persisted_at": "2026-11-17T07:06:58.241Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-actix-actix-web-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-actix-actix-web-learnings",
@@ -115034,9 +115034,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for actix-actix-web-learnings",
       "repository": "actix-actix-web-learnings",
       "source_version": "HEAD",
-      "content_hash": "f1444fc791480ce2279afbd10b7e879b06de7d5103f41df77f21bcb8b570f95f",
+      "content_hash": "c00beccb956cb490737711ae73602fc9b3d7c7c10e25b93cbf1841d432fd9579",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T17:14:27.089Z"
+      "persisted_at": "2026-11-17T07:06:58.372Z"
     },
     "domain_intelligence-research-knowledge-intelligence-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf-core-i": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf-core-i",
@@ -245538,14 +245538,19 @@
       "slug": "actix-actix-web",
       "platform": "github",
       "source_url": "https://github.com/actix/actix-web",
-      "source_version": "baebbb57",
-      "content_hash": "05cffc2b3cf2ce22c380579f7803f999bb7f140254c7fc8a496d6c2f653b4c6c",
+      "source_version": "27cdad7b",
+      "content_hash": "98c35604eb2a413404890bc23e83f2634343c9b16116d9127b9d71454ee19be2",
       "dossier_path": "07_PROJECT_LEARNING/actix-actix-web-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/actix-actix-web-learnings.md",
       "promoted_rules": [
         {
           "number": 8632,
           "title": "automate releases with release-plz",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8899,
+          "title": "map PayloadError::Overflow to 413 Payload Too Large",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -245554,7 +245559,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-15T17:14:09.689Z",
+      "verified_at": "2026-11-17T07:06:54.278Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -248590,8 +248595,8 @@
       "slug": "sfu-db-connector-x",
       "platform": "github",
       "source_url": "https://github.com/sfu-db/connector-x",
-      "source_version": "ac243a1b",
-      "content_hash": "d20ece584333aab26e520d95f3e50038d47955f1366eb336c9c9a559655ca310",
+      "source_version": "c52b20c0",
+      "content_hash": "86df9b1d91db507253997b941944b53fc5df3fa957fd9784b5ca58c5c0249ef0",
       "dossier_path": "07_PROJECT_LEARNING/sfu-db-connector-x-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/sfu-db-connector-x-learnings.md",
       "promoted_rules": [
@@ -248611,7 +248616,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-15T23:39:58.390Z",
+      "verified_at": "2026-11-17T07:06:27.073Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -265791,6 +265796,270 @@
       "content_hash": "edd85d117f1e73e9d9827821fe2e267a283e07a7396d32686ac97adede059bcc",
       "domain_letter": "K",
       "persisted_at": "2026-11-17T06:47:46.289Z"
+    },
+    "learn-github-mswjs-msw": {
+      "learning_id": "learn-github-mswjs-msw",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "mswjs/msw",
+      "repository": "mswjs/msw",
+      "slug": "mswjs-msw",
+      "platform": "github",
+      "source_url": "https://github.com/mswjs/msw",
+      "source_version": "13fe000c",
+      "content_hash": "1435df35fb20090260a500a399e34a186cb66d63b804aa8eeebe23869d2c6cd1",
+      "dossier_path": "07_PROJECT_LEARNING/mswjs-msw-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/mswjs-msw-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8897,
+          "title": "preserve optional path parameters and pipes in handler paths",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-17T07:06:17.702Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8897": {
+      "learning_id": "rule-8897",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8897,
+      "title": "preserve optional path parameters and pipes in handler paths",
+      "source_url": "https://github.com/mswjs/msw",
+      "source_version": "13fe000c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T07:06:17.702Z"
+    },
+    "candidate_directive-preserve-optional-path-parameters-and-pipes-in-handler-paths": {
+      "item_id": "candidate_directive-preserve-optional-path-parameters-and-pipes-in-handler-paths",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-NHBE-preserve-optional-path-parameters-and-pipes-in-handler-paths.md",
+      "title": "preserve optional path parameters and pipes in handler paths",
+      "repository": "mswjs-msw-learnings",
+      "source_version": "HEAD",
+      "content_hash": "ce8b3c1d5d0a5cefda10abcd51a8203ff872f94d04414f0ae0926ee30439f2d7",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T07:06:59.306Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-mswjs-msw-core-invariants": {
+      "item_id": "domain_intelligence-quality-verification-intelligence-mswjs-msw-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-mswjs-msw-quality-verification-intelligence-mswjs-msw-core-invariants.md",
+      "title": "Quality & Verification Intelligence: mswjs/msw Core Invariants",
+      "repository": "mswjs/msw",
+      "source_version": "13fe000c",
+      "content_hash": "68a96be5d44ee18bd944a8ae0706051c83d895bae1b4a354665b3db7a0c39b09",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T07:06:18.209Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-mswjs-msw": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-mswjs-msw",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/mswjs-msw-verification-protocol-empirical-defect-shield-for-mswjs-msw.md",
+      "title": "Verification Protocol: Empirical Defect Shield for mswjs/msw",
+      "repository": "mswjs/msw",
+      "source_version": "13fe000c",
+      "content_hash": "444ec08058c476d29ab94be6023504c92e103801f1239abb648b378efdedf4c7",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T07:06:18.343Z"
+    },
+    "learn-github-zarf-dev-zarf": {
+      "learning_id": "learn-github-zarf-dev-zarf",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "zarf-dev/zarf",
+      "repository": "zarf-dev/zarf",
+      "slug": "zarf-dev-zarf",
+      "platform": "github",
+      "source_url": "https://github.com/zarf-dev/zarf",
+      "source_version": "8942227e",
+      "content_hash": "3c2c28cbfdd9ec310918ff52dc157739ea176ee8128c7ff74deb53c13f139186",
+      "dossier_path": "07_PROJECT_LEARNING/zarf-dev-zarf-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/zarf-dev-zarf-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8898,
+          "title": "paginate registry tag listings",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-17T07:06:23.719Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8898": {
+      "learning_id": "rule-8898",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8898,
+      "title": "paginate registry tag listings",
+      "source_url": "https://github.com/zarf-dev/zarf",
+      "source_version": "8942227e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T07:06:23.719Z"
+    },
+    "candidate_directive-paginate-registry-tag-listings": {
+      "item_id": "candidate_directive-paginate-registry-tag-listings",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-NI6A-paginate-registry-tag-listings.md",
+      "title": "paginate registry tag listings",
+      "repository": "zarf-dev-zarf-learnings",
+      "source_version": "HEAD",
+      "content_hash": "abb7088bbfb4e9232c44c4e27c481f2eb0a4029b66d81f4688c2648042049438",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-17T07:07:00.418Z"
+    },
+    "domain_intelligence-architecture-intelligence-zarf-dev-zarf-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-zarf-dev-zarf-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zarf-dev-zarf-architecture-intelligence-zarf-dev-zarf-core-invariants.md",
+      "title": "Architecture Intelligence: zarf-dev/zarf Core Invariants",
+      "repository": "zarf-dev/zarf",
+      "source_version": "8942227e",
+      "content_hash": "3dcebd5438d71d00dbbd17b59f420f7665d5ac30d861df11ddaad4af02732295",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-17T07:06:24.287Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-zarf-dev-zarf": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zarf-dev-zarf",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/zarf-dev-zarf-verification-protocol-empirical-defect-shield-for-zarf-dev-zarf.md",
+      "title": "Verification Protocol: Empirical Defect Shield for zarf-dev/zarf",
+      "repository": "zarf-dev/zarf",
+      "source_version": "8942227e",
+      "content_hash": "495d8b9ffd7807a208e78f0d736795c97f0d19f90b95b8fa5d0174dd94ec39cb",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T07:06:24.419Z"
+    },
+    "domain_intelligence-content-information-intelligence-sfu-db-connector-x-core-invariants": {
+      "item_id": "domain_intelligence-content-information-intelligence-sfu-db-connector-x-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-sfu-db-connector-x-content-information-intelligence-sfu-db-connector-x-core-inva.md",
+      "title": "Content & Information Intelligence: sfu-db/connector-x Core Invariants",
+      "repository": "sfu-db/connector-x",
+      "source_version": "c52b20c0",
+      "content_hash": "e997da83a5536cea77a44b0e195f01a0ba4ddc17b04f908bfb4bef429308824a",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-17T07:06:27.462Z"
+    },
+    "rule-8899": {
+      "learning_id": "rule-8899",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8899,
+      "title": "map PayloadError::Overflow to 413 Payload Too Large",
+      "source_url": "https://github.com/actix/actix-web",
+      "source_version": "27cdad7b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T07:06:54.278Z"
+    },
+    "candidate_directive-map-payloaderror-overflow-to-413-payload-too-large": {
+      "item_id": "candidate_directive-map-payloaderror-overflow-to-413-payload-too-large",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-NDRP-map-payloaderror-overflow-to-413-payload-too-large.md",
+      "title": "map PayloadError::Overflow to 413 Payload Too Large",
+      "repository": "actix/actix-web",
+      "source_version": "27cdad7b",
+      "content_hash": "902dc985f1dffc02200ace7bffefaf5893892511a78138b34eba0e98825939b9",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T07:06:54.713Z"
+    },
+    "candidate_directive-multipart-map-payloaderror-overflow-to-413-payload-too-large": {
+      "item_id": "candidate_directive-multipart-map-payloaderror-overflow-to-413-payload-too-large",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-NGE5-multipart-map-payloaderror-overflow-to-413-payload-too-large.md",
+      "title": "multipart): map PayloadError::Overflow to 413 Payload Too Large",
+      "repository": "actix-actix-web-learnings",
+      "source_version": "HEAD",
+      "content_hash": "bf47413ee9cd44b68294a6b1516c980b3bbbbb679e7040c49b0cf587f262faf2",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T07:06:58.110Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-mswjs-msw-learnings-core-invariants": {
+      "item_id": "domain_intelligence-quality-verification-intelligence-mswjs-msw-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-mswjs-msw-learnings-quality-verification-intelligence-mswjs-msw-learnings-core-i.md",
+      "title": "Quality & Verification Intelligence: mswjs-msw-learnings Core Invariants",
+      "repository": "mswjs-msw-learnings",
+      "source_version": "HEAD",
+      "content_hash": "82a463f311f19dff370aa76527def028ab9594c41c241321a93994a8c38ac61a",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T07:06:59.436Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-mswjs-msw-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-mswjs-msw-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/mswjs-msw-learnings-verification-protocol-empirical-defect-shield-for-mswjs-msw-.md",
+      "title": "Verification Protocol: Empirical Defect Shield for mswjs-msw-learnings",
+      "repository": "mswjs-msw-learnings",
+      "source_version": "HEAD",
+      "content_hash": "ca49d146522dad54dbfd3dd4d19075d8b959d9aca93e5a35879c9de93f71af85",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T07:06:59.569Z"
+    },
+    "domain_intelligence-architecture-intelligence-zarf-dev-zarf-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-zarf-dev-zarf-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zarf-dev-zarf-learnings-architecture-intelligence-zarf-dev-zarf-learnings-core-i.md",
+      "title": "Architecture Intelligence: zarf-dev-zarf-learnings Core Invariants",
+      "repository": "zarf-dev-zarf-learnings",
+      "source_version": "HEAD",
+      "content_hash": "c874593ec2ab778201e8428a1efebf85acdcefea59c5654e1156c3f8a680c0ef",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-17T07:07:00.556Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-zarf-dev-zarf-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zarf-dev-zarf-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/zarf-dev-zarf-learnings-verification-protocol-empirical-defect-shield-for-zarf-d.md",
+      "title": "Verification Protocol: Empirical Defect Shield for zarf-dev-zarf-learnings",
+      "repository": "zarf-dev-zarf-learnings",
+      "source_version": "HEAD",
+      "content_hash": "b81c2c370dbef92aaa3b44877b255c9227194ab38064212061026b231f161570",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T07:07:00.686Z"
     }
   },
   "ai-builder-brain": {

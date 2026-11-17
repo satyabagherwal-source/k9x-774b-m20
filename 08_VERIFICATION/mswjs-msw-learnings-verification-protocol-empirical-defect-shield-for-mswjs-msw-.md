@@ -6,16 +6,16 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T12:41:59.925Z",
+  "timestamp": "2026-11-17T07:06:59.193Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
-  "learning_id": "LEARN-REEXTRACT-mswjs-msw-learnings",
+  "learning_id": "LEARN-EVO-mswjs-msw-learnings",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [mswjs-msw-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T12:41:59.925Z`  
-> **Learning ID**: `LEARN-REEXTRACT-mswjs-msw-learnings`
+> **License**: Open-Source | **Timestamp**: `2026-11-17T07:06:59.193Z`  
+> **Learning ID**: `LEARN-EVO-mswjs-msw-learnings`
 
 
 ## 1. Scope & Verification Target
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/mswjs-msw-learnings.md`  
 > **Source**: github ([https://github.com/mswjs/msw](https://github.com/mswjs/msw))  
-> **Source Version**: `ec5e8777`  
+> **Source Version**: `13fe000c`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T15:33:44.763Z  
+> **Timestamp**: 2026-11-17T07:06:16.857Z  
 > **Learning ID**: `learn-github-mswjs-msw`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/mswjs-msw-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/mswjs/msw](https://github.com/mswjs/msw))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T15:33:44.597Z  
+> **Harvest Timestamp**: 2026-11-17T07:06:16.678Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: The industry standard for API mocking in JavaScript.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 18348 stars
+- **Stars / Engagement**: 18352 stars
 
 ---
 
@@ -850,367 +850,299 @@ export function supportsReadableStreamTransfer() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `589c5cfc` (2026-11-10)
-**Commit Message**: fix: update `@mswjs/interceptors` to 0.45.11
+### Incident Patch 1: `022df00e` (2026-11-14)
+**Commit Message**: fix: preserve optional path parameters and pipes in handler paths (#2838)
 
-**File**: `package.json` (modified, +1/-1)
+**File**: `src/core/utils/matching/match-request-url.test.ts` (modified, +49/-0)
 ```diff
-@@ -139,7 +139,7 @@
-   "dependencies": {
-     "@inquirer/confirm": "^6.0.11",
-     "@msw/url": "^0.1.2",
--    "@mswjs/interceptors": "^0.45.6",
-+    "@mswjs/interceptors": "^0.45.11",
-     "cookie": "^2.0.1",
-     "headers-polyfill": "^5.0.1",
-     "is-node-process": "^1.2.0",
+@@ -88,3 +88,52 @@ test('parses matching RegExp groups into index-based parameters', () => {
+     },
+   })
+ })
++
++test('returns true when matching optional path parameters in the middle of the path', () => {
++  expect(
++    matchRequestUrl(
++      new URL('https://test.mswjs.io/user/abc-123/settings'),
++      'https://test.mswjs.io/user/:userId?/settings',
++    ),
++  ).toEqual({
++    matches: true,
++    params: {
++      userId: 'abc-123',
++    },
++  })
++
++  expect(
++    matchRequestUrl(
++      new URL('https://test.mswjs.io/user/settings'),
++      'https://test.mswjs.io/user/:userId?/settings',
++    ),
++  ).toEqual({
++    matches: true,
++    params: {},
++  })
++
++  expect(
++    matchRequestUrl(
++      new URL('https://test.mswjs.io/user/abc-123'),
++      'https://test.mswjs.io/user/:userId?/settings',
++    ),
++  ).toEqual({
++    matches: false,
++    params: {},
++  })
++})
++
++test('returns true when matching optional path parameters separated by a dot', () => {
++  expect(
++    matchRequestUrl(
++      new URL('https://test.mswjs.io/files/report.pdf'),
++      'https://test.mswjs.io/files/:name?.:ext?',
++    ),
++  ).toEqual({
++    matches: true,
++    params: {
++      name: 'report',
++      ext: 'pdf',
++    },
++  })
++})
 ```
 
-**File**: `pnpm-lock.yaml` (modified, +29/-5)
+**File**: `src/core/utils/matching/normalize-path.test.ts` (modified, +6/-0)
 ```diff
-@@ -15,8 +15,8 @@ importers:
-         specifier: ^0.1.2
-         version: 0.1.2
-       '@mswjs/interceptors':
--        specifier: ^0.45.6
--        version: 0.45.6(supports-color@8.1.1)
-+        specifier: ^0.45.11
-+        version: 0.45.11(supports-color@8.1.1)
-       cookie:
-         specifier: ^2.0.1
-         version: 2.0.1
-@@ -658,8 +658,8 @@ packages:
-   '@msw/url@0.1.2':
-     resolution: {integrity: sha512-DdeBLQxQ+ZrtmwEmaj7GQ7lbzPCgbbbyAqOz/I4ulo68hwBpfdNvQJ5bmihJUkAAKOeCmqCIG3OFZGosqFN4mA==}
+@@ -52,3 +52,9 @@ test('preserves optional path parameters', () => {
+     'http://localhost/user/:userId?',
+   )
+ })
++
++test('preserves optional path parameters in the middle of the path', () => {
++  expect(normalizePath('/user/:userId?/settings')).toEqual(
++    'http://localhost/user/:userId?/settings',
++  )
++})
+```
+
+**File**: `src/utils/get-clean-url-string.test.ts` (modified, +44/-0)
+```diff
+@@ -22,3 +22,47 @@ test('preserves optional path parameters', () => {
+     '/user/:id?/:messageId?',
+   )
+ })
++
++test('preserves optional path parameters in the middle of the path', () => {
++  expect(getCleanUrlString('/user/:id?/settings')).toEqual(
++    '/user/:id?/settings',
++  )
++  expect(getCleanUrlString('/user/:id?/:messageId?/settings')).toEqual(
++    '/user/:id?/:messageId?/settings',
++  )
++  expect(getCleanUrlString('http://localhost:3000/user/:id?/settings')).toEqual(
++    'http://localhost:3000/user/:id?/settings',
++  )
++})
++
++test('removes query parameters and hashes after optional path parameters', () => {
++  expect(getCleanUrlString('/user/:id?/settings?tab=1')).toEqual(
++    '/user/:id?/settings',
++  )
++  expect(getCleanUrlString('/user/:id?/settings#hash')).toEqual(
++    '/user/:id?/settings',
++  )
++  expect(getCleanUrlString('/user/:id?#hash')).toEqual('/user/:id?')
++  expect(getCleanUrlString('/user/:id?tab=1')).toEqual('/user/:id')
++})
++
++test('preserves optional path parameters separated by a dot', () => {
++  expect(getCleanUrlString('/files/:name?.:ext?')).toEqual(
++    '/files/:name?.:ext?',
++  )
++  expect(getCleanUrlString('/files/:name?.:ext?#hash')).toEqual(
++    '/files/:name?.:ext?',
++  )
++  expect(getCleanUrlString('/files/:name?.:ext?tab=1')).toEqual(
++    '/files/:name?.:ext',
++  )
++})
++
++test('removes a query string that starts with a dot after a path parameter', () => {
++  expect(getCleanUrlString('/user/:id?.json')).toEqual('/user/:id')
++})
++
++test('preserves pipe characters in the path', () => {
++  expect(getCleanUrlString('/user/a|b/settings')).toEqual('/user/a|b/settings')
++  expect(getCleanUrlString('/user/a|b?id=123')).toEqual('/user/a|b')
++})
+```
+
+**File**: `src/utils/get-clean-url-string.ts` (modified, +12/-8)
+```diff
+@@ -1,16 +1,20 @@
+-const REDUNDANT_CHARACTERS_EXP = /[?|#].*$/g
++/**
++ * Matches either an optional path parameter (e.g. ":id?"), captured
++ * so it can be preserved, or the search and fragment of the URL.
++ * A question mark is an optional parameter modifier only when it
++ * follows a parameter name and either ends the path segment or is
++ * followed by a literal dot and another parameter (e.g. ":name?.:ext?").
++ * A dot followed by anything else (e.g. ":id?.json") is ambiguous
++ * with a query string and is treated as such.
++ */
++const REDUNDANT_CHARACTERS_EXP =
++  /(:[a-zA-Z_]\w*\?(?=[/#]|\.:[a-zA-Z_]|$))|[?#].*$/g
  
--  '@mswjs/interceptors@0.45.6':
--    resolution: {integrity: sha512-qdBK6aOT5Qjt+cmU/XcobZjjmrIsdiQRR6hA0LP72uB7CRx+XfAjm8Opvgia8nX9kPOKqp+BKHuzMa1IFPTvyg==}
-+  '@mswjs/interceptors@0.45.11':
-+    resolution: {integrity: sha512-+ISPERIRIHhSVnFQRGCP9jDJXxn0/z2+pWWbXUym6JUfpUCRW2Pvro4P9RBKGYUKTKAULszKurKMTQIsaJUIgQ==}
-     engines: {node: '>=22'}
- 
-   '@napi-rs/lzma-linux-x64-gnu@1.5.1':
-@@ -1734,133 +1734,157 @@ packages:
-     resolution: {integrity: sha512-Oc2KInVkPfUjEB4PeV6X0NvIoyYTzDe/WmqFrTwBqKs6YKnz4A7XwWQvJTb7M0rLz9a6WgpUUiiS5QKaCi4O/g==}
-     cpu: [arm64]
-     os: [android]
-+    deprecated: yuku-codegen is pure JavaScript since 0.14
- 
-   '@yuku-codegen/binding-darwin-arm64@0.10.2':
-     resolution: {integrity: sha512-3H7eNPIHJndUJXZ4QUGBPq1zC6RGcUZfm7bymJes+/N7wTVWUn1bxZ9JcozYHpkWQNm9f23G8YWbaHD9aYH72A==}
-     cpu: [arm64]
-     os: [darwin]
-+    deprecated: yuku-codegen is pure JavaScript since 0.14
- 
-   '@yuku-codegen/binding-darwin-x64@0.10.2':
-     resolution: {integrity: sha512-AJOUpR2s3LF9AWiiub/Uyc/UoXNTWcq8hK3cVI6fUSXtwh34dG21J6hRuNlO6JVJFTo4o3ScVvZOrh/YFfUEAA==}
-     cpu: [x64]
-     os: [darwin]
-+    deprecated: yuku-codegen is pure JavaScript since 0.14
- 
-   '@yuku-codegen/binding-freebsd-x64@0.10.2':
-     resolution: {integrity: sha512-ms7DcZu87u5CiK/wMwvpKAvAmtaqKjCQIXNweMLypG6qbuiaOMQf1jpbB5+j46xBcgCovo8TQMcv0bCQLKIL9w==}
-     cpu: [x64]
-     os: [freebsd]
-+    deprecated: yuku-codegen is pure JavaScript since 0.14
- 
-   '@yuku-codegen/binding-linux-arm-gnu@0.10.2':
-     resolution: {integrity: sha512-xJDpYAsKV5+eaiBhTYl05fvT6sst4PsCeuIFMRu9b0/WCSrNQPfCDtAQ5/MS6xNpsdujdZEPR+gmfWk3ZG5i3A==}
-     cpu: [arm]
-     os: [linux]
-     libc: [glibc]
-+    deprecated: yuku-codegen is pure JavaScript since 0.14
- 
-   '@yuku-codegen/binding-linux-arm-musl@0.10.2':
-     resolution: {integrity: sha512-qfTkgd7AEx61l4K9VtXWCGTxc/fmXJ4ZheDz3i+/AAJUtg4sa0bPrc0VBxPggB/rayR8Z3+JfrBItuyanBJJ9Q==}
-     cpu: [arm]
-     os: [linux]
-     libc: [musl]
-+    deprecated: yuku-codegen is pure JavaScript since 0.14
- 
-   '@yuku-codegen/binding-linux-arm64-gnu@0.10.2':
-     resolution: {integrity: sha512-4e6Mifm/4UdjtU3D8mATIrvgP+xEiH8xtQOjd0zpd72XKWT7ug3sdyhq2utkkZFP6BvYp7SgZrI+aR4VeIOHdw==}
-     cpu: [arm64]
-     os: [linux]
-     libc: [glibc]
-+    deprecated: yuku-codegen is pure JavaScript since 0.14
- 
-   '@yuku-codegen/binding-linux-arm64-musl@0.10.2':
-     resolution: {integrity: sha512-RdsJrUfDYFVV3JOmWFUWwSu31fa1APn12xDeIKxgl/YWxrabwtxsDBNjF2561c7tmcbiewdCUvngqRs8AyGVLA==}
-     cpu: [arm64]
-     os: [linux]
-     libc: [musl]
-+    deprecated: yuku-codegen is pure JavaScript since 0.14
- 
-   '@yuku-codegen/binding-linux-x64-gnu@0.10.2':
-     resolution: {integrity: sha512-mVzWimEPPreaPyXIUvxsHoJzvO7ckZ5j0LgQFHz04zQIRwt9A9T2hA7K5/jYjJKkMxWG/U2VjhGNwVhtyU+uqg==}
-     cpu: [x64]
-     os: [linux]
-     libc: [glibc]
-+    deprecated: yuku-codegen is pure JavaScript since 0.14
- 
-   '@yuku-codegen/binding-linux-x64-musl@0.10.2':
-     resolution: {integrity: sha512-Y77fyISurmr2mvO1yeq3u+x/WJbACgPR4w+lzEVx30ViCxZzIGrZPRN1yEdZ9xUNPNsIO5thBHIdRNG+UGUG+Q==}
-     cpu: [x64]
-     os: [linux]
-     libc: [musl]
-+    deprecated: yuku-codegen is pure JavaScript since 0.14
- 
-   '@yuku-codegen/binding-win32-arm64@0.10.2':
-     resolution: {integrity: sha512-1+tGLyG0u5YYy0lev4ck7/0sd8xJ9SZde0dLut7qLDPZV5WVTV8x6OxNXUne/PGuHZyO1vK+txPQzzHOyXHGSw==}
-     cpu: [arm64]
-     os: [win32]
-+    deprecated: yuku-codegen is pure JavaScript since 0.14
- 
-   '@yuku-codegen/binding-win32-x64@0.10.2':
-     resolution: {integrity: sha512-8a2SExRohRbwC0MY4VpOF0/RSckrJ2ASZqAor5/RYSJJaeadR93n10gZzcKT6pY9ukiSOIZCRKVRD2tH73T0qA==}
-     cpu: [x64]
-     os: [win32]
-+    deprecated: yuku-codegen is pure JavaScript since 0.14
- 
-   '@yuku-parser/binding-android-arm64@0.10.2':
-     resolution: {integrity: sha512-2VPBU9fRGRAQ2xPAvghnec3oou5Nrxm2Bezhf+13UMspAxQSkF/32r+ySKXSwIPA5/RivumDJDxAxc301Sgicw==}
-     cpu: [arm64]
-     os: [android]
-+    deprecated: yuku-parser runs on yuku-core since 0.14
- 
-   '@yuku-parser/binding-darwin-arm64@0.10.2':
-     resolution: {integrity: sha512-LD+PMZE51tCYTOss5HBkm3/AE39MvcMDBfWJx7A4yDcjfNbAQDnHZKtzSOuqrswx+TQHY0ws5xn6+fWOwtmfBA==}
-     cpu: [arm64]
-     os: [darwin]
-+    deprecated: yuku-parser runs on yuku-core since 0.14
- 
-   '@yuku-parser/binding-darwin-x64@0.10.2':
-     resolution: {integrity: sha512-mmZ8cND+AoIIMRERyMinlg5ApHxP23B9jH2B5wT7T+dliPa9rubLxneB/SUjFwyUjGaFnB5G7t4YvpfbO5zbkQ==}
-     cpu: [x64]
-     os: [darwin]
-+    depr
+ /**
+  * Removes search parameters and the fragment from a given URL string.
+  * Unlike `getCleanUrl()` from Interceptors, accepts relative URLs and
+  * path patterns (e.g. "/user/:id?") since it never parses the input as a URL.
+  */
+ export function getCleanUrlString(url: string): string {
+-  // If the URL ends with an optional path parameter, return it as-is.
+-  if (url.endsWith('?')) {
+-    return url
+-  }
+-
+-  // Otherwise, remove the search and fragment from it.
+-  return url.replace(REDUNDANT_CHARACTERS_EXP, '')
++  return url.replace(REDUNDANT_CHARACTERS_EXP, '$1')
+ }
 ```
 
 ---
 
-### Incident Patch 2: `8719ce23` (2026-11-10)
-**Commit Message**: fix: add `handler` to the "request:match" event (#2834)
+### Incident Patch 2: `76170877` (2026-11-14)
+**Commit Message**: docs: update contributing guidelines after 3.0 (#2837)
 
-**File**: `src/core/experimental/frames/http-frame.test.ts` (modified, +14/-18)
+**File**: `CONTRIBUTING.md` (modified, +35/-144)
 ```diff
-@@ -81,15 +81,12 @@ test('resolves a matching request', async () => {
-   const { events } = spyOnNetworkFrame(frame)
-   const unhandledFrameCallback = vi.fn()
+@@ -33,7 +33,7 @@ Please use the GitHub UI to [fork this repository](https://github.com/mswjs/msw)
+ ```bash
+ $ cd msw
+ $ pnpm install
+-$ pnpm start
++$ pnpm dev
+ ```
  
--  const matches = await frame.resolve(
--    [
--      http.get('http://localhost/api', () => {
--        return new Response(null, { status: 204 })
--      }),
--    ],
--    unhandledFrameCallback,
--    { quiet: true },
--  )
-+  const handler = http.get('http://localhost/api', () => {
-+    return new Response(null, { status: 204 })
-+  })
-+  const matches = await frame.resolve([handler], unhandledFrameCallback, {
-+    quiet: true,
-+  })
+ > Please use [PNPM][pnpm-url] version 8.15 while working on this project.
+@@ -76,26 +76,28 @@ $ pnpm build
  
-   expect.soft(matches).toBe(true)
-   expect.soft(frame.respondWith).toHaveBeenCalledExactlyOnceWith(
-@@ -110,6 +107,7 @@ test('resolves a matching request', async () => {
-       type: 'request:match',
-       requestId: frame.data.id,
-       request: frame.data.request,
-+      handler,
-     }),
-     expect.objectContaining({
-       type: 'request:end',
-@@ -231,15 +229,12 @@ test('resolves a matched passthrough', async () => {
-   const { events } = spyOnNetworkFrame(frame)
-   const unhandledFrameCallback = vi.fn()
+ ## Tests
  
--  const matches = await frame.resolve(
--    [
--      http.get('http://localhost/api', () => {
--        // Intentionally do nothing to passthrough.
--      }),
--    ],
--    unhandledFrameCallback,
--    { quiet: true },
--  )
-+  const handler = http.get('http://localhost/api', () => {
-+    // Intentionally do nothing to passthrough.
-+  })
-+  const matches = await frame.resolve([handler], unhandledFrameCallback, {
-+    quiet: true,
-+  })
+-### Testing levels
++All tests are run with [Vitest](https://vitest.dev/). Build the library and install the browser once, then run the tests:
  
-   expect.soft(matches).toBeNull()
-   expect.soft(frame.passthrough).toHaveBeenCalledOnce()
-@@ -256,6 +251,7 @@ test('resolves a matched passthrough', async () => {
-       type: 'request:match',
-       requestId: frame.data.id,
-       request: frame.data.request,
-+      handler,
-     }),
-     expect.objectContaining({
-       type: 'request:end',
-```
-
-**File**: `src/core/experimental/frames/http-frame.ts` (modified, +28/-2)
-```diff
-@@ -43,6 +43,31 @@ class RequestEvent<
-   }
- }
+-There are two levels of tests on the project:
+-
+-- [Unit tests](#unit-tests), cover small independent functions.
+-- [Integration tests](#integration-tests), test in-browser usage scenarios.
+-
+-**Always begin your implementation from tests**. When tackling an issue, a test for it must be missing, or is incomplete. When working on a feature, starting with a test allows you to model the feature's usage before diving into implementation.
+-
+-### Unit tests
++```bash
++$ pnpm build
++$ pnpm exec playwright install chromium
++$ pnpm test
++```
  
-+class RequestMatchEvent<
-+  DataType extends {
-+    requestId: string
-+    request: Request
-+    handler: RequestHandler
-+  } = {
-+    requestId: string
-+    request: Request
-+    handler: RequestHandler
-+  },
-+  ReturnType = void,
-+  EventType extends string = string,
-+> extends TypedEvent<DataType, ReturnType, EventType> {
-+  public readonly requestId: string
-+  public readonly request: Request
-+  public readonly handler: RequestHandler
+-#### Writing a unit test
++> The tests run against the built library. Keep the build running (`pnpm dev`) while working on the tests.
+ 
+-Unit tests are placed next to the tested code. For example, if you're testing a newly added `multiply` function, create a `multiply.test.ts` file next to where the function is located:
++Provide a file path to run a single test:
+ 
+ ```bash
+-$ touch src/utils/multiply.test.ts
++$ pnpm test src/utils/multiply.test.ts
++$ pnpm test test/protocols/http/example.test.ts
+ ```
+ 
+-Proceed by writing a unit test that resembles the usage of the function. Make sure to cover all the scenarios
++**Always begin your implementation from tests**. When tackling an issue, a test for it must be missing, or is incomplete. When working on a feature, starting with a test allows you to model the feature's usage before diving into implementation.
 +
-+  constructor(type: EventType, data: DataType) {
-+    super(...([type, {}] as any))
-+    this.requestId = data.requestId
-+    this.request = data.request
-+    this.handler = data.handler
-+  }
-+}
++### Unit tests
 +
- export class ResponseEvent<
-   DataType extends {
-     requestId: string
-@@ -95,7 +120,7 @@ class UnhandledExceptionEvent<
++Unit tests cover small independent functions and are placed next to the tested code.
  
- export type HttpNetworkFrameEventMap = {
-   'request:start': RequestEvent
--  'request:match': RequestEvent
-+  'request:match': RequestMatchEvent
-   'request:unhandled': RequestEvent
-   'request:end': RequestEvent
-   'response:mocked': ResponseEvent
-@@ -239,9 +264,10 @@ export abstract class HttpNetworkFrame extends NetworkFrame<
-     const { response, handler, parsedResult } = lookupResult
+ ```ts
+ // src/utils/multiply.test.ts
+@@ -108,118 +110,30 @@ test('multiplies two given numbers', () => {
  
-     this.events.emit(
--      new RequestEvent('request:match', {
-+      new RequestMatchEvent('request:match', {
-         requestId,
-         request,
-+        handler,
-       }),
-     )
+ > Please [avoid nesting](https://kentcdodds.com/blog/avoid-nesting-when-youre-testing/) while you're testing.
  
-```
-
-**File**: `test/msw-api/setup-server/life-cycle-events/on.node.test.ts` (modified, +12/-10)
-```diff
-@@ -53,11 +53,11 @@ test('emits events for a handled request and mocked response', async () => {
-     },
-   })
-   const url = httpServer.http.url('/user').href
--  server.use(
--    http.get(url, () => {
--      return HttpResponse.text('response-body')
--    }),
--  )
-+  const handler = http.get(url, () => {
-+    return HttpResponse.text('response-body')
-+  })
-+
-+  server.use(handler)
+-#### Running a single unit test
+-
+-Once your test is written, run it in isolation.
+-
+-```bash
+-$ pnpm test:unit src/utils/multiply.test.ts
+-```
+-
+-At this point, the actual implementation is not ready yet, so you can expect your test to fail. **That's perfect**. Add the necessary modules and logic, and gradually see your test cases pass.
+-
+-#### Running all unit tests
+-
+-```bash
+-$ pnpm test:unit
+-```
+-
+ ### Integration tests
  
-   const listener = spyOnEvents(server)
-   await fetch(url)
-@@ -85,6 +85,7 @@ test('emits events for a handled request and mocked response', async () => {
-         url,
-       }),
-       requestId,
-+      handler,
-     }),
-   )
-   expect(listener).toHaveBeenNthCalledWith(
-@@ -128,11 +129,11 @@ test('emits events for a handled request with no response', async () => {
-     },
-   })
-   const url = httpServer.http.url('/no-response').href
--  server.use(
--    http.post(url, () => {
--      return
--    }),
--  )
-+  const handler = http.post(url, () => {
-+    return
-+  })
-+
-+  server.use(handler)
+-We follow an example-driven testing paradigm, meaning that each integration test represents a _usage example_. Mock Service Worker can be used in different environments (browser, Node.js), making such usage examples different.
+-
+-> **Make sure that you [build the library](#build) before running the integration tests**. It's a good idea to keep the build running (`pnpm start`) while working on the tests. Keeping both compiler and test runner in watch mode boosts your productivity.
+-
+-#### Browser integration tests
+-
+-You can find all the browser integration tests under `./test/browser`. Those tests are run with Playwright and usually consist of two parts:
+-
+-- `[test-name].mocks.ts`, the usage example of MSW;
+-- `[test-name].test.ts`, the test suite that loads the usage example, does actions and performs assertions.
+-
+-It's also a great idea to get familiar with our Playwright configuration and extensions:
+-
+-- [**Playwright configuration file**](./test/browser/playwright.config.ts)
+-- [Playwright extensions](./test/browser/playwright.extend.ts)
+-
+-Let's write an example integration test that asserts the interception of a GET request. First, start with the `*.mocks.ts` file:
+-
+-```js
+-// test/browser/example.mocks.ts
+-import { http, HttpResponse } from 'msw'
+-import { setupWorker } from 'msw/browser'
++Integration tests live under `./test`. We follow an example-driven testing paradigm, meaning that each integration test represents a _usage example_.
  
-   const listener = spyOnEvents(server)
-   await fetch(url, { method: 'POST' })
-@@ -160,6 +161,7 @@ test('emits events for a handled request with no response', async () => {
-         url,
-       }),
-       requestId,
-+      handler,
-     }),
-   )
-   expect(listener).toHaveBeenNthCalledWith(
-```
-
-**File**: `test/typings/life-cycle-events.test-d.ts` (modified, +11/-2)
-```diff
-@@ -1,5 +1,6 @@
- import { setupServer } from 'msw/node'
- import { setupWorker } from 'msw/browser'
-+import type { RequestHandler } from 'msw'
- import {
-   type HttpNetworkFrameEventMap,
-   type WebSocketNetworkFrameEventMap,
-@@ -57,7 +58,11 @@ test('annotates event listener argument (node)', () => {
-     expectTypeOf(args).toExtend<{ request: Request; requestId: string }>()
-   })
-   server.events.on('request:match', (args) => {
--    expectTypeOf(args).toExtend<{ request: Request; requestId: string }>()
-+    expectTypeOf(args).toExtend<{
-+      request: Request
-+      requestId: string
-+      handler: RequestHandler
-+    }>()
-   })
-   server.events.on('request:unhandled', (args) => {
-     expectTypeOf(args).toExtend<{ request: Request; requestId: string }>()
-@@ -97,7 +102,11 @@ test('annotates event listener argument (browser)', () => {
-     expectTypeOf(args).toExtend<{ request: Request; requestId: string }>()
-   })
-   worker.events.on('request:match', (args) => {
--    expectTypeOf(args).toExtend<{ request: Request; requestId: string }>()
-+    expectTypeOf(args).toExtend<{
-+      request: Request
-+      requestId: string
-+      handler: RequestHandler
-+    }>()
-   })
-   worker.events.on('request:unhandled', (args) => {
-     expectTypeOf(args).toExtend<{ request: Request; requestId: string }>()
+-const worker = setupWorker(
+-  http.get('/books', () => {
+-    return HttpResponse.json([
+-      {
+-        id: 'ea42ffcb-e729-4dd5-bfac-7a5b645cb1da',
+-        title: 'The Lord of the Rings',
+-        publishedAt: -486867600,
+-      },
+-    ])
+-  }),
+-)
++The same test runs in both Node.js and the browser ([Vitest Browser Mode](https://vitest.dev/guide/browser/)). The file name decides where the test runs:
+ 
+-worker.start()
+-```
++| File name           | Environment                                                    |
++| ------------------- | -------------------------------------------------------------- |
++| `*.test.ts`         | Node.js and browser.                                           |
++| `*.node.test.ts`    | Node.js only.                                                  |
++| `*.browser.test.ts` | Browser only.                                                  |
++| `*.pw.test.ts`      | Playwright (fu
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2838** (2026-11-14): fix: preserve optional path parameters and pipes in handler paths (@kettanaito)
+- **PR #2837** (2026-11-14): docs: update contributing guidelines after 3.0 (@kettanaito)
 - **PR #2834** (2026-11-10): fix: add `handler` to the "request:match" event (@kettanaito)
 - **PR #2830** (2026-11-05): fix(worker): prevent the worker from going idle (@kettanaito)
 - **PR #2829** (2026-11-05): fix(isCommonAssetRequest): add `ico` to common assets (@kettanaito)
 - **PR #2819** (2026-10-17): chore: fix the typescript-nightly job to run (@kettanaito)
-- **PR #2810** (2026-10-09): fix(HandlersController): dispose of reset handlers (@kettanaito)
-- **PR #2809** (2026-10-09): fix: expose network context on `enable` in network sources (@kettanaito)
 
 ---
 
@@ -1230,31 +1162,79 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. update `@mswjs/interceptors` to 0.45.11
+## X. preserve optional path parameters and pipes in handler paths
 
 **RULE**:
-When implementing operations in `package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in mswjs/msw. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/core/utils/matching/match-request-url.test.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in mswjs/msw. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `589c5cfc`: update `@mswjs/interceptors` to 0.45.11. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `022df00e`: preserve optional path parameters and pipes in handler paths. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `package.json`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/core/utils/matching/match-request-url.test.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-    "@mswjs/interceptors": "^0.45.11",
+
+test('returns true when matching optional path parameters in the middle of the path', () => {
+  expect(
+    matchRequestUrl(
+      new URL('https://test.mswjs.io/user/abc-123/settings'),
+      'https://test.mswjs.io/user/:userId?/settings',
+    ),
+  ).toEqual({
+    matches: true,
+    params: {
+      userId: 'abc-123',
+    },
+  })
+
+  expect(
+    matchRequestUrl(
+      new URL('https://test.mswjs.io/user/settings'),
+      'https://test.mswjs.io/user/:userId?/settings',
+    ),
+  ).toEqual({
+    matches: true,
+    params: {},
+  })
+
+  expect(
+    matchRequestUrl(
+      new URL('https://test.mswjs.io/user/abc-123'),
+      'https://test.mswjs.io/user/:userId?/settings',
+    ),
+  ).toEqual({
+    matches: false,
+    params: {},
+  })
+})
+
+test('returns true when matching optional path parameters separated by a dot', () => {
+  expect(
+    matchRequestUrl(
+      new URL('https://test.mswjs.io/files/report.pdf'),
+      'https://test.mswjs.io/files/:name?.:ext?',
+    ),
+  ).toEqual({
+    matches: true,
+    params: {
+      name: 'report',
+      ext: 'pdf',
+    },
+  })
+})
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
-// Anti-pattern to NEVER write (induced failure mode):
-    "@mswjs/interceptors": "^0.45.6",
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `589c5cfc` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `022df00e` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

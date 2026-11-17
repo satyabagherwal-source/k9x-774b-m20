@@ -10469,3 +10469,7 @@
 | `CYCLE-20261117-XSHD` | `2026-11-17T06:47:00.721Z` | `mdiri-ai/SoduWork` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8895` | Yes (`17dffa20...`) |
 | `CYCLE-20261117-Y059` | `2026-11-17T06:47:10.653Z` | `react/react-native` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8896` | Yes (`6ba781c2...`) |
 | `CYCLE-2026-11-17-PROJ-EVOLVE` | `2026-11-17T06:47:45.491Z` | `react-react-native` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-B6148692` [Domain H] | Yes (`a01e4912...`) |
+| `CYCLE-20261117-MLCV` | `2026-11-17T07:06:17.887Z` | `mswjs/msw` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8897` | Yes (`1435df35...`) |
+| `CYCLE-20261117-MQ0A` | `2026-11-17T07:06:23.914Z` | `zarf-dev/zarf` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8898` | Yes (`3c2c28cb...`) |
+| `CYCLE-20261117-MSKU` | `2026-11-17T07:06:27.246Z` | `sfu-db/connector-x` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/sfu-db-connector-x-learnings.md` | Yes (`86df9b1d...`) |
+| `CYCLE-20261117-NDLQ` | `2026-11-17T07:06:54.494Z` | `actix/actix-web` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8899` | Yes (`98c35604...`) |

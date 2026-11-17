@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-17T06:47:45.810Z",
+  "updated_at": "2026-11-17T07:07:00.214Z",
   "stats": {
-    "total_discovered": 4839,
-    "approved_pending_harvest": 4558,
+    "total_discovered": 4863,
+    "approved_pending_harvest": 4579,
     "harvested_count": 0,
-    "rejected_count": 281,
+    "rejected_count": 284,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 4559,
+      "COMMUNITY_AND_EXPERT": 4583,
       "OFFICIAL_DOCUMENTATION": 150,
       "STANDARDS_AND_SPECIFICATIONS": 101,
       "ENGINEERING_BLOGS": 3,
@@ -104512,6 +104512,513 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/react-react-native-learnings.md",
         "fileName": "react-react-native-learnings.md"
+      }
+    },
+    "SRC-AAC21BAD0EEB": {
+      "id": "SRC-AAC21BAD0EEB",
+      "url": "https://github.com/actix/actix-web/security/advisories/GHSA-9w4r-xc43-v236",
+      "title": "https://github.com/actix/actix-web/security/advisories/GHSA-9w4r-xc43-v236",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T07:06:57.857Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/actix-actix-web-learnings.md",
+        "fileName": "actix-actix-web-learnings.md"
+      }
+    },
+    "SRC-E2B8CF1758A3": {
+      "id": "SRC-E2B8CF1758A3",
+      "url": "https://test.mswjs.io/user/abc-123/settings",
+      "title": "https://test.mswjs.io/user/abc-123/settings",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T07:06:58.747Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mswjs-msw-learnings.md",
+        "fileName": "mswjs-msw-learnings.md"
+      }
+    },
+    "SRC-BCED51F0B8E3": {
+      "id": "SRC-BCED51F0B8E3",
+      "url": "https://test.mswjs.io/user/:userId?%2Fsettings=",
+      "title": "https://test.mswjs.io/user/:userId?%2Fsettings=",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T07:06:58.778Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mswjs-msw-learnings.md",
+        "fileName": "mswjs-msw-learnings.md"
+      }
+    },
+    "SRC-B71B1AD51623": {
+      "id": "SRC-B71B1AD51623",
+      "url": "https://test.mswjs.io/user/settings",
+      "title": "https://test.mswjs.io/user/settings",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T07:06:58.812Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mswjs-msw-learnings.md",
+        "fileName": "mswjs-msw-learnings.md"
+      }
+    },
+    "SRC-2D34513B3E06": {
+      "id": "SRC-2D34513B3E06",
+      "url": "https://test.mswjs.io/user/abc-123",
+      "title": "https://test.mswjs.io/user/abc-123",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T07:06:58.844Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mswjs-msw-learnings.md",
+        "fileName": "mswjs-msw-learnings.md"
+      }
+    },
+    "SRC-B2D28613AC23": {
+      "id": "SRC-B2D28613AC23",
+      "url": "https://test.mswjs.io/files/report.pdf",
+      "title": "https://test.mswjs.io/files/report.pdf",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T07:06:58.880Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mswjs-msw-learnings.md",
+        "fileName": "mswjs-msw-learnings.md"
+      }
+    },
+    "SRC-D84769645536": {
+      "id": "SRC-D84769645536",
+      "url": "https://test.mswjs.io/files/:name?.%3Aext%3F=",
+      "title": "https://test.mswjs.io/files/:name?.%3Aext%3F=",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T07:06:58.914Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mswjs-msw-learnings.md",
+        "fileName": "mswjs-msw-learnings.md"
+      }
+    },
+    "SRC-59B299D67452": {
+      "id": "SRC-59B299D67452",
+      "url": "http://localhost/user/:userId",
+      "title": "http://localhost/user/:userId",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-17T07:06:58.946Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mswjs-msw-learnings.md",
+        "fileName": "mswjs-msw-learnings.md"
+      }
+    },
+    "SRC-D3C0F41CE657": {
+      "id": "SRC-D3C0F41CE657",
+      "url": "http://localhost/user/:userId?%2Fsettings=",
+      "title": "http://localhost/user/:userId?%2Fsettings=",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-17T07:06:58.983Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mswjs-msw-learnings.md",
+        "fileName": "mswjs-msw-learnings.md"
+      }
+    },
+    "SRC-48822D6237FA": {
+      "id": "SRC-48822D6237FA",
+      "url": "http://localhost:3000/user/:id?%2Fsettings=",
+      "title": "http://localhost:3000/user/:id?%2Fsettings=",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-17T07:06:59.015Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mswjs-msw-learnings.md",
+        "fileName": "mswjs-msw-learnings.md"
+      }
+    },
+    "SRC-2D9B42D49A11": {
+      "id": "SRC-2D9B42D49A11",
+      "url": "https://vitest.dev/",
+      "title": "https://vitest.dev/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T07:06:59.047Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mswjs-msw-learnings.md",
+        "fileName": "mswjs-msw-learnings.md"
+      }
+    },
+    "SRC-9E6951B1183A": {
+      "id": "SRC-9E6951B1183A",
+      "url": "https://kentcdodds.com/blog/avoid-nesting-when-youre-testing",
+      "title": "https://kentcdodds.com/blog/avoid-nesting-when-youre-testing",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T07:06:59.082Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mswjs-msw-learnings.md",
+        "fileName": "mswjs-msw-learnings.md"
+      }
+    },
+    "SRC-B892018767BE": {
+      "id": "SRC-B892018767BE",
+      "url": "https://vitest.dev/guide/browser",
+      "title": "https://vitest.dev/guide/browser",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T07:06:59.115Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mswjs-msw-learnings.md",
+        "fileName": "mswjs-msw-learnings.md"
+      }
+    },
+    "SRC-8F5914B9A3E5": {
+      "id": "SRC-8F5914B9A3E5",
+      "url": "https://github.com/zarf-dev/zarf/blob/e62a47c31c2a10854bd3f9d64f31345dffa26c68/vendor/oras.land/oras-go/v2/registry/remote/utils.go",
+      "title": "https://github.com/zarf-dev/zarf/blob/e62a47c31c2a10854bd3f9d64f31345dffa26c68/vendor/oras.land/oras-go/v2/registry/remote/utils.go",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T07:06:59.844Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zarf-dev-zarf-learnings.md",
+        "fileName": "zarf-dev-zarf-learnings.md"
+      }
+    },
+    "SRC-02A0C8FF417A": {
+      "id": "SRC-02A0C8FF417A",
+      "url": "https://github.com/zarf-dev/zarf/blob/main/CONTRIBUTING.md",
+      "title": "https://github.com/zarf-dev/zarf/blob/main/CONTRIBUTING.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T07:06:59.876Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zarf-dev-zarf-learnings.md",
+        "fileName": "zarf-dev-zarf-learnings.md"
+      }
+    },
+    "SRC-F5442FF5B08E": {
+      "id": "SRC-F5442FF5B08E",
+      "url": "https://github.com/crazy-max",
+      "title": "https://github.com/crazy-max",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T07:06:59.942Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zarf-dev-zarf-learnings.md",
+        "fileName": "zarf-dev-zarf-learnings.md"
+      }
+    },
+    "SRC-D0A080837910": {
+      "id": "SRC-D0A080837910",
+      "url": "https://redirect.github.com/docker/login-action/pull/1070",
+      "title": "https://redirect.github.com/docker/login-action/pull/1070",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T07:06:59.973Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zarf-dev-zarf-learnings.md",
+        "fileName": "zarf-dev-zarf-learnings.md"
+      }
+    },
+    "SRC-CD573EEFE7B6": {
+      "id": "SRC-CD573EEFE7B6",
+      "url": "https://redirect.github.com/docker/login-action/pull/1103",
+      "title": "https://redirect.github.com/docker/login-action/pull/1103",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T07:07:00.007Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zarf-dev-zarf-learnings.md",
+        "fileName": "zarf-dev-zarf-learnings.md"
+      }
+    },
+    "SRC-69571DE12A73": {
+      "id": "SRC-69571DE12A73",
+      "url": "https://redirect.github.com/docker/login-action/pull/1105",
+      "title": "https://redirect.github.com/docker/login-action/pull/1105",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T07:07:00.042Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zarf-dev-zarf-learnings.md",
+        "fileName": "zarf-dev-zarf-learnings.md"
+      }
+    },
+    "SRC-FF2BF640CF4D": {
+      "id": "SRC-FF2BF640CF4D",
+      "url": "https://redirect.github.com/docker/login-action/pull/1101",
+      "title": "https://redirect.github.com/docker/login-action/pull/1101",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T07:07:00.075Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zarf-dev-zarf-learnings.md",
+        "fileName": "zarf-dev-zarf-learnings.md"
+      }
+    },
+    "SRC-8BC3AFE639DE": {
+      "id": "SRC-8BC3AFE639DE",
+      "url": "https://github.com/docker/login-action/compare/v4.7.0...v4.8.0",
+      "title": "https://github.com/docker/login-action/compare/v4.7.0...v4.8.0",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T07:07:00.111Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zarf-dev-zarf-learnings.md",
+        "fileName": "zarf-dev-zarf-learnings.md"
+      }
+    },
+    "SRC-70783AD4AAF8": {
+      "id": "SRC-70783AD4AAF8",
+      "url": "https://github.com/docker/login-action/commit/8aa5831fb8d48d8f76594c7ddde61ae58019f550",
+      "title": "https://github.com/docker/login-action/commit/8aa5831fb8d48d8f76594c7ddde61ae58019f550",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T07:07:00.143Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zarf-dev-zarf-learnings.md",
+        "fileName": "zarf-dev-zarf-learnings.md"
+      }
+    },
+    "SRC-654AD8CA1546": {
+      "id": "SRC-654AD8CA1546",
+      "url": "https://redirect.github.com/docker/login-action/iss",
+      "title": "https://redirect.github.com/docker/login-action/iss",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T07:07:00.177Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zarf-dev-zarf-learnings.md",
+        "fileName": "zarf-dev-zarf-learnings.md"
+      }
+    },
+    "SRC-E011661CFC2B": {
+      "id": "SRC-E011661CFC2B",
+      "url": "https://app.netlify.com/projects/zarf-docs/deploys/6af9005149098bad7200edda",
+      "title": "https://app.netlify.com/projects/zarf-docs/deploys/6af9005149098bad7200edda",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T07:07:00.214Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zarf-dev-zarf-learnings.md",
+        "fileName": "zarf-dev-zarf-learnings.md"
       }
     }
   }

@@ -10502,3 +10502,7 @@ Every entry in this ledger must capture:
 | `learn-github-mdiri-ai-soduwork` | `https://github.com/mdiri-ai/SoduWork` | `c3487b97` | Multi-dimensional audit evidence | 2026-11-17T06:47:00.725Z |
 | `learn-github-react-react-native` | `https://github.com/react/react-native` | `c1acb2bd` | Multi-dimensional audit evidence | 2026-11-17T06:47:10.658Z |
 | `learn-dom-h-b6148692` | `project://react-react-native` | `c1acb2bd` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/react-react-native-learnings.md` | 2026-11-17T06:47:45.491Z |
+| `learn-github-mswjs-msw` | `https://github.com/mswjs/msw` | `13fe000c` | Multi-dimensional audit evidence | 2026-11-17T07:06:17.891Z |
+| `learn-github-zarf-dev-zarf` | `https://github.com/zarf-dev/zarf` | `8942227e` | Multi-dimensional audit evidence | 2026-11-17T07:06:23.919Z |
+| `learn-github-sfu-db-connector-x` | `https://github.com/sfu-db/connector-x` | `c52b20c0` | Multi-dimensional audit evidence | 2026-11-17T07:06:27.250Z |
+| `learn-github-actix-actix-web` | `https://github.com/actix/actix-web` | `27cdad7b` | Multi-dimensional audit evidence | 2026-11-17T07:06:54.498Z |

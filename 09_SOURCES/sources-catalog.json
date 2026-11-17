@@ -4463,10 +4463,10 @@
     "repository": "zarf-dev/zarf",
     "platform": "github",
     "sourceUrl": "https://github.com/zarf-dev/zarf",
-    "sourceVersion": "e62a47c3",
+    "sourceVersion": "8942227e",
     "license": "Apache-2.0",
-    "contentHash": "e25c771ba2b73f66bae3775bd502590e7624ea8ac9b12c77c951e6266c751bdb",
-    "lastHarvestedAt": "2026-11-12T07:38:13.650Z",
+    "contentHash": "3c2c28cbfdd9ec310918ff52dc157739ea176ee8128c7ff74deb53c13f139186",
+    "lastHarvestedAt": "2026-11-17T07:06:23.919Z",
     "learningId": "learn-github-zarf-dev-zarf"
   },
   "vlcn-io-cr-sqlite": {
@@ -4673,10 +4673,10 @@
     "repository": "sfu-db/connector-x",
     "platform": "github",
     "sourceUrl": "https://github.com/sfu-db/connector-x",
-    "sourceVersion": "ac243a1b",
+    "sourceVersion": "c52b20c0",
     "license": "MIT",
-    "contentHash": "d20ece584333aab26e520d95f3e50038d47955f1366eb336c9c9a559655ca310",
-    "lastHarvestedAt": "2026-11-15T23:39:58.580Z",
+    "contentHash": "86df9b1d91db507253997b941944b53fc5df3fa957fd9784b5ca58c5c0249ef0",
+    "lastHarvestedAt": "2026-11-17T07:06:27.250Z",
     "learningId": "learn-github-sfu-db-connector-x"
   },
   "stenciljs-core": {
@@ -5193,10 +5193,10 @@
     "repository": "actix/actix-web",
     "platform": "github",
     "sourceUrl": "https://github.com/actix/actix-web",
-    "sourceVersion": "baebbb57",
+    "sourceVersion": "27cdad7b",
     "license": "Apache-2.0",
-    "contentHash": "05cffc2b3cf2ce22c380579f7803f999bb7f140254c7fc8a496d6c2f653b4c6c",
-    "lastHarvestedAt": "2026-11-15T17:14:09.871Z",
+    "contentHash": "98c35604eb2a413404890bc23e83f2634343c9b16116d9127b9d71454ee19be2",
+    "lastHarvestedAt": "2026-11-17T07:06:54.498Z",
     "learningId": "learn-github-actix-actix-web"
   },
   "wix-react-native-ui-lib": {
@@ -10153,10 +10153,10 @@
     "repository": "mswjs/msw",
     "platform": "github",
     "sourceUrl": "https://github.com/mswjs/msw",
-    "sourceVersion": "ec5e8777",
+    "sourceVersion": "13fe000c",
     "license": "MIT",
-    "contentHash": "0ad88efd48ce2a815d3b2fb586808aebf37b11e3ab14a7808d1fbb41dc778d4a",
-    "lastHarvestedAt": "2026-11-12T15:33:58.747Z",
+    "contentHash": "1435df35fb20090260a500a399e34a186cb66d63b804aa8eeebe23869d2c6cd1",
+    "lastHarvestedAt": "2026-11-17T07:06:17.891Z",
     "learningId": "learn-github-mswjs-msw"
   },
   "signerlabs-klee": {

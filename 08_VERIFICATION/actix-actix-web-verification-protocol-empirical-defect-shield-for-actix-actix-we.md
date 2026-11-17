@@ -4,22 +4,22 @@
 {
   "source_repository": "actix/actix-web",
   "source_url": "https://github.com/actix/actix-web",
-  "source_version": "baebbb57",
+  "source_version": "27cdad7b",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-15T17:14:10.055Z",
+  "timestamp": "2026-11-17T07:06:54.712Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-actix-actix-web",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [actix/actix-web](https://github.com/actix/actix-web) (Revision: `baebbb57`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-15T17:14:10.055Z`  
+> **Provenance**: Harvested from [actix/actix-web](https://github.com/actix/actix-web) (Revision: `27cdad7b`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-17T07:06:54.712Z`  
 > **Learning ID**: `learn-github-actix-actix-web`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `actix/actix-web` (Commit: `baebbb57`)
+- **Target Repository**: `actix/actix-web` (Commit: `27cdad7b`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/actix-actix-web-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/actix/actix-web](https://github.com/actix/actix-web))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-15T17:14:08.705Z  
+> **Harvest Timestamp**: 2026-11-17T07:06:14.744Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Actix Web is a powerful, pragmatic, and extremely fast web framework for Rust.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 24955 stars
+- **Stars / Engagement**: 24962 stars
 
 ---
 
@@ -403,6 +403,12 @@ use super::HeaderValue;
 use crate::{error::ParseError, header::HTTP_VALUE};
 
 /// Reads a comma-delimited raw header into a Vec.
+///
+/// A comma inside a quoted string does not delimit list elements. See [RFC 9110 §5.6.1] and
+/// [RFC 9110 §5.6.4].
+///
+/// [RFC 9110 §5.6.1]: https://www.rfc-editor.org/rfc/rfc9110#section-5.6.1
+/// [RFC 9110 §5.6.4]: https://www.rfc-editor.org/rfc/rfc9110#section-5.6.4
 #[inline]
 pub fn from_comma_delimited<'a, I, T>(all: I) -> Result<Vec<T>, ParseError>
 where
@@ -416,7 +422,7 @@ where
         let s = h.to_str().map_err(|_| ParseError::Header)?;
 
         result.extend(
-            s.split(',')
+            split_list_elements(s)
                 .filter_map(|x| match x.trim() {
                     "" => None,
                     y => Some(y),
@@ -426,6 +432,40 @@ where
     }
 
     Ok(result)
+}
+
+/// Splits a field value on the commas that are outside quoted strings.
+///
+/// A backslash inside a quoted string escapes the next character (a quoted-pair), so an
+/// escaped double quote does not end the quoted string.
+fn split_list_elements(value: &str) -> impl Iterator<Item = &str> {
+    let mut rest = Some(value);
+
+    std::iter::from_fn(move || {
+        let value = rest?;
+        let mut in_quoted_string = false;
+        let mut escaped = false;
+
+        for (idx, byte) in value.bytes().enumerate() {
+            if escaped {
+                escaped = false;
+                continue;
+            }
+
+            match byte {
+                b'\\' if in_quoted_string => escaped = true,
+                b'"' => in_quoted_string = !in_quoted_string,
+                b',' if !in_quoted_string => {
+                    rest = Some(&value[idx + 1..]);
+                    return Some(&value[..idx]);
+                }
+                _ => {}
+            }
+        }
+
+        rest = None;
+        Some(value)
+    })
 }
 
 /// Reads a single string when parsing a header.
@@ -497,6 +537,23 @@ mod tests {
         ];
         let res: Vec<usize> = from_comma_delimited(headers.iter()).unwrap();
         assert_eq!(res, vec![1]);
+    }
+
+    #[test]
+    fn comma_delimited_parsing_keeps_commas_in_quoted_strings() {
+        let headers = [
+            HeaderValue::from_static(r#""a,b", "c""#),
+            HeaderValue::from_static(r#"private="x, y", no-store"#),
+        ];
+        let res: Vec<String> = from_comma_delimited(headers.iter()).unwrap();
+        assert_eq!(res, [r#""a,b""#, r#""c""#, r#"private="x, y""#, "no-store"]);
+    }
+
+    #[test]
+    fn comma_delimited_parsing_skips_quoted_pairs() {
+        let headers = [HeaderValue::from_static(r#"a="x\", y", b"#)];
+        let res: Vec<String> = from_comma_delimited(headers.iter()).unwrap();
+        assert_eq!(res, [r#"a="x\", y""#, "b"]);
     }
 }
 
@@ -1343,13 +1400,13 @@ impl Files {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #4420** (2026-11-15): **fix(actix-http): bound partial request heads on keep-alive connections**
-  *Symptoms*: ## PR Type  Bug Fix  ## PR Checklist  - [x] Tests for the changes have been added / updated. - [x] Documentation comments have been added / updated. - [x] A changelog entry has been made for the appropriate packages. - [x] (Team) Label with affected crates and semver status.  ## Overview  After a successful HTTP/1 request, a client could send `G` or a bare `\r\n` probe and keep the connection open forever. The input cleared the idle keep-alive timer, but the request head timer applied only to the first request. This regressed in #2611 (`3200de3f`, 2022-01-31, "fix request head timeout").  Use the existing `head_timer` when decoding needs more head bytes on a connection that permits keep-alive. Preserve the active deadline across reads and clear it after a complete head, so byte drips cannot extend the deadline and upload bodies remain unrestricted. A partial head uses `client_request_timeout` even when `keep_alive` is shorter. Do not start another head timer after `Connection: close`.  The decode loop also checks for an incomplete head after each complete head. This covers the residual pipelined case: a complete second request followed by a single byte of a third request in the same write. Clearing the timer for the second head must not leave the third head without a deadline.  A client that sends a bare `\r\n` probe and waits longer than `client_request_timeout` (5 seconds by default) now receives 408, then the connection closes, even when no request is pending. HTTP/2 behav
+- **Issue #4423** (2026-11-16): **fix(http): keep commas inside quoted strings in list headers**
+  *Symptoms*: ## PR Type  Bug Fix  ## PR Checklist  - [x] Tests for the changes have been added / updated. - [x] Documentation comments have been added / updated. - [x] A changelog entry has been made for the appropriate packages. - [x] (Team) Label with affected crates and semver status.  ## Overview  `header::from_comma_delimited()` splits each field line on every comma. A comma inside a quoted string therefore cuts one list element in two. Both halves fail to parse, and the typed header drops them without an error.  | Field line | `IfMatch::parse` before | `IfMatch::parse` after | |---|---|---| | `"a,b", "c"` | `Items(["c"])` | `Items(["a,b", "c"])` | | `"a,b"` | `Items([])` | `Items(["a,b"])` |  The grammar allows the comma in both places:  - [RFC 9110 §8.8.3](https://www.rfc-editor.org/rfc/rfc9110#section-8.8.3): `etagc = %x21 / %x23-7E / obs-text`, which includes `,` (%x2C). - [RFC 9110 §5.6.4](https://www.rfc-editor.org/rfc/rfc9110#section-5.6.4): `qdtext` includes `,`, so a quoted parameter value or a quoted `Cache-Control` argument can hold one.  For `If-Match`, the lost tag changes the outcome. §13.1.1 says the condition "is true if any of the listed tags match the entity tag of the selected representation". A server that compares `Items([])` with a current tag of `"a,b"` answers 412 to a request whose condition is true.  ### Change  `from_comma_delimited()` now splits only on the commas outside quoted strings. Inside a quoted string, a backslash escapes the next character (quote
 
-- **Issue #4418** (2026-11-15): **ci: automate releases with release-plz**
-  *Symptoms*: ## PR Type  Other  ## PR Checklist  - [x] Tests for the changes have been added / updated. - [x] Documentation comments have been added / updated. - [x] A changelog entry has been made for the appropriate packages. - [x] (Team) Label with affected crates and semver status.  ## Overview  Add a GitHub Actions workflow that runs release-plz on pushes to `main` and prepares releases for the workspace crates. When releases are created, the workflow uses the Nix release tools to update release notes and undraft the releases. Add the release-plz configuration, Nix release shell, and pinned action dependencies.
+- **Issue #4422** (2026-11-16): **refactor(http): support any item type in InfallibleStream**
+  *Symptoms*: ## PR Type  Refactor  ## PR Checklist  - [x] Tests for the changes have been added / updated. - [x] Documentation comments have been added / updated. - [x] A changelog entry has been made for the appropriate packages. - [x] (Team) Label with affected crates and semver status.  ## Overview  Allow `InfallibleStream` to wrap streams with any item type. It now yields `Result<S::Item, Infallible>` and keeps existing byte stream behavior unchanged.
   **Post-Mortem & Fix Analysis**:
-  > <!-- code-coverage-overview --> ### Code coverage overview  <b>Languages:</b> Rust <h4>Rust / code-coverage/cargo-llvm-cov</h4>  <table> <tr> <th scope="col"><span id="cc-branch-badge" title="actix/actix-web:main">main</span> <a id="cc-sha-link" href="/actix/actix-web/commit/0ac7d21619644f2e8d5ffbf8ccc87ac2d0e96542">0ac7d21</a></th> <th scope="col"><span id="cc-branch-badge" title="actix/actix-web:t3/setup-release-plz">t3/setup-release-plz</span> <a id="cc-sha-link" href="/actix/actix-web/commit/d260ff9ca6e48e61728625d99b365d43107e2e41">d260ff9</a></th> <th scope="col">+/-</th> </tr> <tr> <td>88%</td> <td>88%</td> <td>0%</td> </tr> </table>  :information_source: Calculations represent line coverage. Results may change as calculations are updated.  
+  > <!-- code-coverage-overview --> ### Code coverage overview  <b>Languages:</b> Rust <h4>Rust / code-coverage/cargo-llvm-cov</h4>  <table> <tr> <th scope="col"><span id="cc-branch-badge" title="actix/actix-web:main">main</span> <a id="cc-sha-link" href="/actix/actix-web/commit/1e04b0b804f5210a3960d527d1f59d316e7ee25e">1e04b0b</a></th> <th scope="col"><span id="cc-branch-badge" title="actix/actix-web:t3/generic-infallible-stream-item">t3/generic-infallibl...</span> <a id="cc-sha-link" href="/actix/actix-web/commit/1750601a94ee0531ffa13433354cc87299770885">1750601</a></th> <th scope="col">+/-</th> </tr> <tr> <td>88%</td> <td>88%</td> <td>0%</td> </tr> </table>  :information_source: Calculations represent line coverage. Results may change as calculations are updated.  --- <sub>Updated <relative-time datetime="2026-11-16T18:14:07Z">November 16, 2026 18:14 UTC</relative-time></sub> 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1366,8 +1423,119 @@ impl Files {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `baebbb57` (2026-11-15)
-**Commit Message**: ci: automate releases with release-plz (#4418)
+### Incident Patch 1: `315839cb` (2026-11-16)
+**Commit Message**: fix(multipart): map PayloadError::Overflow to 413 Payload Too Large (#4415)
+
+MultipartError::status_code treated every Payload error as 400, so a
+body that hit the configured size limit was reported as a generic bad
+request. Delegate Payload errors to PayloadError::status_code so
+Overflow returns 413, matching actix-web's own PayloadError mapping.
+
+Update the form size-limit tests and add a changelog entry.
+
+**File**: `actix-multipart/CHANGES.md` (modified, +2/-0)
+```diff
+@@ -2,6 +2,8 @@
+ 
+ ## Unreleased
+ 
++- Map `MultipartError::Payload(PayloadError::Overflow)` to `413 Payload Too Large`, matching `PayloadError`.
++
+ ## 0.8.8
+ 
+ - Significant performance improvement when reading fields.
+```
+
+**File**: `actix-multipart/src/error.rs` (modified, +3/-0)
+```diff
+@@ -104,6 +104,7 @@ impl ResponseError for Error {
+     fn status_code(&self) -> StatusCode {
+         match &self {
+             Error::Field { source, .. } => source.as_response_error().status_code(),
++            Error::Payload(err) => err.status_code(),
+             Error::ContentTypeIncompatible => StatusCode::UNSUPPORTED_MEDIA_TYPE,
+             _ => StatusCode::BAD_REQUEST,
+         }
+@@ -126,6 +127,8 @@ mod tests {
+             Report::new(&err).to_string(),
+             "Payload error: Payload reached size limit",
+         );
++        assert_eq!(err.status_code(), StatusCode::PAYLOAD_TOO_LARGE);
++        assert_eq!(err.error_response().status(), StatusCode::PAYLOAD_TOO_LARGE);
+ 
+         let err = Error::Parse(ParseError::Incomplete);
+         assert_eq!(
+```
+
+**File**: `actix-multipart/src/form/mod.rs` (modified, +7/-7)
+```diff
+@@ -880,13 +880,13 @@ mod tests {
+         form.add_text("field", "7 bytes");
+         form.add_text("unknown", "this string is 28 bytes long");
+         let response = send_form(&srv, form, "/unknown").await;
+-        assert_eq!(response.status(), StatusCode::BAD_REQUEST);
++        assert_eq!(response.status(), StatusCode::PAYLOAD_TOO_LARGE);
+ 
+         let mut form = multipart::Form::default();
+         form.add_text("field", "first_value");
+         form.add_text("field", "this string is 28 bytes long");
+         let response = send_form(&srv, form, "/duplicate").await;
+-        assert_eq!(response.status(), StatusCode::BAD_REQUEST);
++        assert_eq!(response.status(), StatusCode::PAYLOAD_TOO_LARGE);
+     }
+ 
+     #[tokio::test(flavor = "local")]
+@@ -1084,7 +1084,7 @@ mod tests {
+         let mut form = multipart::Form::default();
+         form.add_text("field", "this string is 28 bytes long");
+         let response = send_form(&srv, form, "/text").await;
+-        assert_eq!(response.status(), StatusCode::BAD_REQUEST);
++        assert_eq!(response.status(), StatusCode::PAYLOAD_TOO_LARGE);
+ 
+         // Memory limit should not apply when the data is being streamed to disk
+         let mut form = multipart::Form::default();
+@@ -1116,13 +1116,13 @@ mod tests {
+         let mut form = multipart::Form::default();
+         form.add_text("field", "this string is 28 bytes long");
+         let response = send_form(&srv, form, "/text").await;
+-        assert_eq!(response.status(), StatusCode::BAD_REQUEST);
++        assert_eq!(response.status(), StatusCode::PAYLOAD_TOO_LARGE);
+ 
+         // Exceeds the 20 byte overall limit
+         let mut form = multipart::Form::default();
+         form.add_text("field", "this string is 28 bytes long");
+         let response = send_form(&srv, form, "/file").await;
+-        assert_eq!(response.status(), StatusCode::BAD_REQUEST);
++        assert_eq!(response.status(), StatusCode::PAYLOAD_TOO_LARGE);
+     }
+ 
+     #[derive(MultipartForm)]
+@@ -1160,7 +1160,7 @@ mod tests {
+         let mut form = multipart::Form::default();
+         form.add_text("field", "this string is more than 30 bytes long");
+         let response = send_form(&srv, form, "/").await;
+-        assert_eq!(response.status(), StatusCode::BAD_REQUEST);
++        assert_eq!(response.status(), StatusCode::PAYLOAD_TOO_LARGE);
+ 
+         // Total of values (14 bytes) is within 30 byte limit for "field"
+         let mut form = multipart::Form::default();
+@@ -1174,7 +1174,7 @@ mod tests {
+         form.add_text("field", "this string is 28 bytes long");
+         form.add_text("field", "this string is 28 bytes long");
+         let response = send_form(&srv, form, "/").await;
+-        assert_eq!(response.status(), StatusCode::BAD_REQUEST);
++        assert_eq!(response.status(), StatusCode::PAYLOAD_TOO_LARGE);
+     }
+ 
+     #[tokio::test(flavor = "local")]
+```
+
+---
+
+### Incident Patch 2: `dbc4c3e5` (2026-11-15)
+**Commit Message**: fix(actix-http): merge keep-alive head timeout fix
+
+Merge fix/h1-keepalive-partial-head-timeout into local main. Keep the timeout changelog entry under Unreleased and preserve the 3.21.1 release notes. Combine the test imports so both regression suites remain available.
 
 **File**: `.github/workflows/actions.lock` (modified, +45/-0)
 ```diff
@@ -1532,127 +1700,611 @@ Observed empirical fixes and code patches:
 +git_tag_name = "{{ package }}-v{{ version }}"
 ```
 
-**File**: `flake.lock` (added, +82/-0)
+**File**: `actix-http/CHANGES.md` (modified, +2/-0)
 ```diff
-@@ -0,0 +1,82 @@
-+{
-+  "nodes": {
-+    "flake-parts": {
-+      "inputs": {
-+        "nixpkgs-lib": "nixpkgs-lib"
-+      },
-+      "locked": {
-+        "lastModified": 1715865404,
-+        "narHash": "sha256-/GJvTdTpuDjNn84j82cU6bXztE0MSkdnTWClUCRub78=",
-+        "owner": "hercules-ci",
-+        "repo": "flake-parts",
-+        "rev": "8dc45382d5206bd292f9c2768b8058a8fd8311d9",
-+        "type": "github"
-+      },
-+      "original": {
-+        "owner": "hercules-ci",
-+        "repo": "flake-parts",
-+        "type": "github"
-+      }
-+    },
-+    "nixpkgs": {
-+      "locked": {
-+        "lastModified": 1791662279,
-+        "narHash": "sha256-xI8L+UwJLIg75yVJwLPsY+AUEP1teCT3FyuvodyJu2Y=",
-+        "owner": "NixOS",
-+        "repo": "nixpkgs",
-+        "rev": "6fcc160353f63555b560f25588925133c8f61f2a",
-+        "type": "github"
-+      },
-+      "original": {
-+        "owner": "NixOS",
-+        "ref": "nixos-26.05",
-+        "repo": "nixpkgs",
-+        "type": "github"
-+      }
-+    },
-+    "nixpkgs-lib": {
-+      "locked": {
-+        "lastModified": 1714640452,
-+        "narHash": "sha256-QBx10+k6JWz6u7VsohfSw8g8hjdBZEf8CFzXH1/1Z94=",
-+        "type": "tarball",
-+        "url": "https://github.com/NixOS/nixpkgs/archive/50eb7ecf4cd0a5756d7275c8ba36790e5bd53e33.tar.gz"
-+      },
-+      "original": {
-+        "type": "tarball",
-+        "url": "https://github.com/NixOS/nixpkgs/archive/50eb7ecf4cd0a5756d7275c8ba36790e5bd53e33.tar.gz"
-+      }
-+    },
-+    "root": {
-+      "inputs": {
-+        "flake-parts": "flake-parts",
-+        "nixpkgs": "nixpkgs",
-+        "x52": "x52"
-+      }
-+    },
-+    "x52": {
-+      "inputs": {
-+        "flake-parts": [
-+          "flake-parts"
-+        ],
-+        "nixpkgs": [
-+          "nixpkgs"
-+        ]
-+      },
-+      "locked": {
-+        "lastModified": 1791501778,
-+        "narHash": "sha256-2HLxyAtbHUiTuVx4KCC4SIRZdcgnfpIjfOtjWULRN8o=",
-+        "owner": "x52dev",
-+        "repo": "nix",
-+        "rev": "cb0c45f9c706bd8b3f65dabb6a4e860d7afded8e",
-+        "type": "github"
-+      },
-+      "original": {
-+        "owner": "x52dev",
-+        "repo": "nix",
-+        "type": "github"
-+      }
-+    }
-+  },
-+  "root": "root",
-+  "version": 7
-+}
+@@ -2,6 +2,8 @@
+ 
+ ## Unreleased
+ 
++- Apply the request head timeout to pipelined HTTP/1.1 partial requests on keep-alive connections.
++
+ ## 3.21.1
+ 
+ - Reject bare LF as trailer terminator after chunked encodings. [GHSA-9w4r-xc43-v236](https://github.com/actix/actix-web/security/advisories/GHSA-9w4r-xc43-v236)
 ```
 
-**File**: `flake.nix` (added, +22/-0)
+**File**: `actix-http/src/builder.rs` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,22 @@
-+{
-+  inputs = {
-+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-26.05";
-+    flake-parts.url = "github:hercules-ci/flake-parts";
+@@ -101,7 +101,7 @@ where
+         self
+     }
+ 
+-    /// Set client request timeout (for first request).
++    /// Set the timeout for reading a client request head.
+     ///
+     /// Defines a timeout for reading client request header. If the client does not transmit the
+     /// request head within this duration, the connection is terminated with a `408 Request Timeout`
+```
+
+**File**: `actix-http/src/config.rs` (modified, +3/-3)
+```diff
+@@ -92,7 +92,7 @@ impl ServiceConfigBuilder {
+         self
+     }
+ 
+-    /// Sets the timeout for the client to finish sending the head of its first request
++    /// Sets the timeout for the client to finish sending a request head.
+     pub fn client_request_timeout(mut self, timeout: Duration) -> Self {
+         self.inner.client_request_timeout = timeout;
+         self
+@@ -274,8 +274,8 @@ impl ServiceConfig {
+         }
+     }
+ 
+-    /// Creates a time object representing the deadline for the client to finish sending the head of
+-    /// its first request.
++    /// Creates a time object representing the deadline for the client to finish sending a request
++    /// head.
+     ///
+     /// Returns `None` if this `ServiceConfig was` constructed with `client_request_timeout: 0`.
+     pub fn client_request_deadline(&self) -> Option<Instant> {
+```
+
+**File**: `actix-http/src/h1/dispatcher.rs` (modified, +23/-6)
+```diff
+@@ -1051,7 +1051,7 @@ where
+ 
+                     match msg {
+                         Message::Item(mut req) => {
+-                            // head timer only applies to first request on connection
++                            // Stop the head timer before reading the request payload.
+                             this.head_timer.clear(line!());
+ 
+                             req.head_mut().peer_addr = *this.peer_addr;
+@@ -1125,9 +1125,23 @@ where
+                     }
+                 }
+ 
+-                // decode is partial and buffer is not full yet
+-                // break and wait for more read
+-                Ok(None) => break,
++                // Decode is partial.
++                Ok(None) => {
++                    if this.payload.is_none()
++                        && this.codec.keep_alive()
++                        && !this.read_buf.is_empty()
++                        && !matches!(this.head_timer, TimerState::Active { .. })
++                    {
++                        // Subsequent requests on this connection get client deadlines too.
++                        if let Some(deadline) = this.config.client_request_deadline() {
++                            this.head_timer
++                                .set_and_init(cx, sleep_until(deadline.into()), line!());
++                        }
++                    }
 +
-+    x52 = {
-+      url = "github:x52dev/nix";
-+      inputs.nixpkgs.follows = "nixpkgs";
-+      inputs.flake-parts.follows = "flake-parts";
-+    };
-+  };
++                    // Needs more bytes read for full head.
++                    break;
++                }
+ 
+                 Err(ParseError::Io(err)) => {
+                     trace!("I/O error: {}", &err);
+@@ -1187,7 +1201,7 @@ where
+ 
+         if let TimerState::Active { timer } = this.head_timer {
+             if timer.as_mut().poll(cx).is_ready() {
+-                // timeout on first request (slow request) return 408
++                // Return 408 when a request head takes too long.
+ 
+                 trace!("timed out on slow request; replying with 408 and closing connection");
+ 
+@@ -1517,7 +1531,10 @@ where
+                             PollResponse::DoNothing => {
+                                 // KEEP_ALIVE is set in send_response_inner if client allows it
+                                 // FINISHED is set after writing last chunk of response
+-                                if inner.flags.contains(Flags::KEEP_ALIVE | Flags::FINISHED) {
++                                // A partial head uses its own deadline instead of the idle timeout.
++                                if inner.flags.contains(Flags::KEEP_ALIVE | Flags::FINISHED)
++                                    && !matches!(inner.head_timer, TimerState::Active { .. })
++                                {
+                                     if let Some(timer) = inner.config.keep_alive_deadline() {
+                                         inner.as_mut().project().ka_timer.set_and_init(
+                                             cx,
+```
+
+**File**: `actix-http/tests/test_server.rs` (modified, +269/-1)
+```diff
+@@ -3,6 +3,7 @@ use std::{
+     future::ready,
+     io::{Read, Write},
+     net,
++    pin::pin,
+     sync::{Arc, Mutex},
+     thread,
+     time::{Duration, Instant},
+@@ -23,7 +24,10 @@ use derive_more::{Display, Error};
+ use futures_util::{stream::once, FutureExt as _, StreamExt as _};
+ use rand::RngExt as _;
+ use regex::Regex;
+-use tokio::io::{AsyncReadExt as _, AsyncWriteExt as _};
++use tokio::{
++    io::{AsyncReadExt as _, AsyncWriteExt as _},
++    time::interval,
++};
+ use tokio_util::future::FutureExt as _;
+ 
+ #[tokio::test(flavor = "local")]
+@@ -491,6 +495,270 @@ async fn http1_keepalive_close() {
+     srv.stop().await;
+ }
+ 
++/// Reads the socket until EOF and returns everything received. Panics if EOF does not arrive
++/// within `timeout`.
++fn read_to_end_with_deadline(mut stream: net::TcpStream, timeout: Duration) -> String {
++    let (tx, rx) = std::sync::mpsc::channel();
 +
-+  outputs = inputs@{ flake-parts, ... }:
-+    flake-parts.lib.mkFlake { inherit inputs; } {
-+      systems = [ "x86_64-linux" "aarch64-linux" "x86_64-darwin" "aarch64-darwin" ];
-+      perSystem = { pkgs, inputs', ... }: {
-+        devShells.ci-release = pkgs.mkShellNoCC {
-+          packages = [ inputs'.x52.packages.x52-release-tools ];
-+        };
-+      };
-+    };
++    thread::spawn(move || {
++        let mut buf = Vec::new();
++        let mut chunk = [0u8; 256];
++
++        loop {
++            match stream.read(&mut chunk) {
++                Ok(0) | Err(_) => break,
++                Ok(n) => buf.extend_from_slice(&chunk[..n]),
++            }
++        }
++
++        let _ = tx.send(String::from_utf8_lossy(&buf).into_owned());
++    });
++
++    match rx.recv_timeout(timeout) {
++        Ok(response) => response,
++        Err(_) => panic!("Connection should close within {timeout:?}"),
++    }
 +}
++
++/// Sends `probe` as the start of a second request on an idle keep-alive connection and checks
++/// that the connection is eventually closed.
++async fn keepalive_partial_second_request_probe(probe: &'static [u8]) {
++    let mut srv = test_server(|| {
++        HttpService::build()
++            .keep_alive(Duration::from_secs(1))
++            .client_request_timeout(Duration::from_secs(1))
++            .h1(|_| ready(Ok::<_, Infallible>(Response::ok())))
++            .tcp()
++    })
++    .await;
++
++    let mut stream = net::TcpStream::connect(srv.addr()).unwrap();
++
++    let _ = stream.write_all(b"GET /test HTTP/1.1\r\nHost: localhost\r\n\r\n");
++    let mut data = vec![0; 256];
++    let _ = stream.read(&mut data);
++    assert_eq!(&data[..17], b"HTTP/1.1 200 OK\r\n");
++
++    let _ = stream.write_all(probe);
++
++    let response = read_to_end_with_deadline(stream, Duration::from_secs(5));
++
++    assert!(
++        response.is_empty() || response.contains("408"),
++        "Connection should close or time out; got: {response:?}"
++    );
++
++    srv.stop().await;
++}
++
++#[tokio::test(flavor = "local")]
++async fn http1_keepalive_partial_second_request_timeout() {
++    keepalive_partial_second_request_probe(b"G").await;
++}
++
++#[tokio::test(flavor = "local")]
++async fn http1_keepalive_crlf_probe_timeout() {
++    keepalive_partial_second_request_probe(b"\r\n").await;
++}
++
++#[tokio::test(flavor = "local")]
++async fn http1_keepalive_pipelined_then_partial_timeout() {
++    let mut srv = test_server(|| {
++        HttpService::build()
++            .keep_alive(Duration::from_secs(30))
++            .client_request_timeout(Duration::from_secs(1))
++            .h1(|_| ready(Ok::<_, Infallible>(Response::ok())))
++            .tcp()
++    })
++    .await;
++
++    let mut stream = net::TcpStream::connect(srv.addr()).unwrap();
++
++    let _ = stream.write_all(b"GET /test HTTP/1.1\r\nHost: localhost\r\n\r\n");
++    let mut data = vec![0; 256];
++    let _ = stream.read(&mut data);
++
++    // pipelined second request followed by one byte of a third request, then silence
++    let _ = stream.write_all(b"GET /test HTTP/1.1\r\nHost: localhost\r\n\r\nG");
++
++    let response = read_to_end_with_deadline(stream, Duration::from_secs(5));
++
++    assert!(
++        response.contains("408"),
++        "Connection should time out; got: {response:?}"
++    );
++
++    srv.stop().await;
++}
++
++#[tokio::test(flavor = "local")]
++async fn http1_request_head_timeout_is_not_renewed_by_incoming_bytes() {
++    let mut srv = test_server(|| {
++        HttpService::build()
++            .keep_alive(Duration::from_secs(30))
++            .client_request_timeout(Duration::from_secs(1))
++            .h1(|_| ready(Ok::<_, Infallible>(Response::ok())))
++            .tcp()
++    })
++    .await;
++
++    for follow_up in [false, true] {
++        let mut stream = TcpStream::connect(srv.addr()).await.unwrap();
++
++        if follow_up {
++            stream
++                .write_all(b"GET / HTTP/1.1\r\nHost: localhost\r\n\r\n")
++                .await
++                .unwrap();
++
++            assert!(read_http1_response_head(&mut stream)
++                .await
++                .contains("200 OK"));
++        }
++
++        stream.write_all(b"G").await.unwrap();
++
++        let (mut reader, mut writer) = stream.split();
++        let mut response = String::new();
++
++        async {
++            let mut read = pin!(reader.read_to_string(&mut response));
++
++            let mut interval = interval(Duration::from_millis(150));
++
++            loop {
++                tokio::select! {
++        
+```
+
+---
+
+### Incident Patch 3: `b6fbadad` (2026-11-15)
+**Commit Message**: fix(actix-http): bound partial request heads on keep-alive connections
+
+A client could complete one request, send one byte of the next head, and
+keep the connection open forever. This regressed in #2611 (3200de3f,
+2022-01-31), which cleared the keep-alive timer on input while the head
+timer still applied only to the first request.
+
+Start the existing head timer when decoding needs more head bytes on a
+reusable connection. Preserve an active deadline across reads and clear
+it when the head is complete so upload bodies remain unrestricted.
+
+Check the partial decode after each complete head. This also bounds a
+partial third head buffered behind a complete pipelined second request.
+Do not arm the idle timer while a head deadline is active, or start a
+new
+head timer after a request disables keep-alive.
+
+A client that sends a bare CRLF probe and waits past
+client_request_timeout (5 seconds by default) now receives 408 and the
+connection closes, even when no request is pending. HTTP/2 is unchanged.
+
+Add the three supplied TCP regressions and coverage for byte drips,
+uploads, and a keep-alive timeout shorter than the head timeout.
+
+**File**: `actix-http/CHANGES.md` (modified, +2/-0)
+```diff
+@@ -2,6 +2,8 @@
+ 
+ ## Unreleased
+ 
++- Apply the request head timeout to pipelined HTTP/1.1 partial requests on keep-alive connections.
++
+ ## 3.21.0
+ 
+ - Enable `TCP_NODELAY` by default.
+```
+
+**File**: `actix-http/Cargo.toml` (modified, +1/-0)
+```diff
+@@ -161,6 +161,7 @@ tls-openssl = { package = "openssl", version = "0.10.55" }
+ tls-rustls_023 = { package = "rustls", version = "0.23" }
+ tokio = { version = "1.51", features = ["net", "rt", "macros", "sync", "time"] }
+ tokio-test = "0.4"
++tokio-util = { version = "0.7", features = ["io", "codec", "time"] }
+ 
+ [lints]
+ workspace = true
+```
+
+**File**: `actix-http/src/builder.rs` (modified, +1/-1)
+```diff
+@@ -101,7 +101,7 @@ where
+         self
+     }
+ 
+-    /// Set client request timeout (for first request).
++    /// Set the timeout for reading a client request head.
+     ///
+     /// Defines a timeout for reading client request header. If the client does not transmit the
+     /// request head within this duration, the connection is terminated with a `408 Request Timeout`
+```
+
+**File**: `actix-http/src/config.rs` (modified, +3/-3)
+```diff
+@@ -92,7 +92,7 @@ impl ServiceConfigBuilder {
+         self
+     }
+ 
+-    /// Sets the timeout for the client to finish sending the head of its first request
++    /// Sets the timeout for the client to finish sending a request head.
+     pub fn client_request_timeout(mut self, timeout: Duration) -> Self {
+         self.inner.client_request_timeout = timeout;
+         self
+@@ -274,8 +274,8 @@ impl ServiceConfig {
+         }
+     }
+ 
+-    /// Creates a time object representing the deadline for the client to finish sending the head of
+-    /// its first request.
++    /// Creates a time object representing the deadline for the client to finish sending a request
++    /// head.
+     ///
+     /// Returns `None` if this `ServiceConfig was` constructed with `client_request_timeout: 0`.
+     pub fn client_request_deadline(&self) -> Option<Instant> {
+```
+
+**File**: `actix-http/src/h1/dispatcher.rs` (modified, +23/-6)
+```diff
+@@ -1051,7 +1051,7 @@ where
+ 
+                     match msg {
+                         Message::Item(mut req) => {
+-                            // head timer only applies to first request on connection
++                            // Stop the head timer before reading the request payload.
+                             this.head_timer.clear(line!());
+ 
+                             req.head_mut().peer_addr = *this.peer_addr;
+@@ -1125,9 +1125,23 @@ where
+                     }
+                 }
+ 
+-                // decode is partial and buffer is not full yet
+-                // break and wait for more read
+-                Ok(None) => break,
++                // Decode is partial.
++                Ok(None) => {
++                    if this.payload.is_none()
++                        && this.codec.keep_alive()
++                        && !this.read_buf.is_empty()
++                        && !matches!(this.head_timer, TimerState::Active { .. })
++                    {
++                        // Subsequent requests on this connection get client deadlines too.
++                        if let Some(deadline) = this.config.client_request_deadline() {
++                            this.head_timer
++                                .set_and_init(cx, sleep_until(deadline.into()), line!());
++                        }
++                    }
++
++                    // Needs more bytes read for full head.
++                    break;
++                }
+ 
+                 Err(ParseError::Io(err)) => {
+                     trace!("I/O error: {}", &err);
+@@ -1187,7 +1201,7 @@ where
+ 
+         if let TimerState::Active { timer } = this.head_timer {
+             if timer.as_mut().poll(cx).is_ready() {
+-                // timeout on first request (slow request) return 408
++                // Return 408 when a request head takes too long.
+ 
+                 trace!("timed out on slow request; replying with 408 and closing connection");
+ 
+@@ -1517,7 +1531,10 @@ where
+                             PollResponse::DoNothing => {
+                                 // KEEP_ALIVE is set in send_response_inner if client allows it
+                                 // FINISHED is set after writing last chunk of response
+-                                if inner.flags.contains(Flags::KEEP_ALIVE | Flags::FINISHED) {
++                                // A partial head uses its own deadline instead of the idle timeout.
++                                if inner.flags.contains(Flags::KEEP_ALIVE | Flags::FINISHED)
++                                    && !matches!(inner.head_timer, TimerState::Active { .. })
++                                {
+                                     if let Some(timer) = inner.config.keep_alive_deadline() {
+                                         inner.as_mut().project().ka_timer.set_and_init(
+                                             cx,
+```
+
+**File**: `actix-http/tests/test_server.rs` (modified, +270/-0)
+```diff
+@@ -3,6 +3,7 @@ use std::{
+     future::ready,
+     io::{Read, Write},
+     net,
++    pin::pin,
+     sync::{Arc, Mutex},
+     thread,
+     time::{Duration, Instant},
+@@ -23,6 +24,11 @@ use derive_more::{Display, Error};
+ use futures_util::{stream::once, FutureExt as _, StreamExt as _};
+ use rand::RngExt as _;
+ use regex::Regex;
++use tokio::{
++    io::{AsyncReadExt as _, AsyncWriteExt as _},
++    time::interval,
++};
++use tokio_util::future::FutureExt as _;
+ 
+ #[tokio::test(flavor = "local")]
+ async fn h1_basic() {
+@@ -434,6 +440,270 @@ async fn http1_keepalive_close() {
+     srv.stop().await;
+ }
+ 
++/// Reads the socket until EOF and returns everything received. Panics if EOF does not arrive
++/// within `timeout`.
++fn read_to_end_with_deadline(mut stream: net::TcpStream, timeout: Duration) -> String {
++    let (tx, rx) = std::sync::mpsc::channel();
++
++    thread::spawn(move || {
++        let mut buf = Vec::new();
++        let mut chunk = [0u8; 256];
++
++        loop {
++            match stream.read(&mut chunk) {
++                Ok(0) | Err(_) => break,
++                Ok(n) => buf.extend_from_slice(&chunk[..n]),
++            }
++        }
++
++        let _ = tx.send(String::from_utf8_lossy(&buf).into_owned());
++    });
++
++    match rx.recv_timeout(timeout) {
++        Ok(response) => response,
++        Err(_) => panic!("Connection should close within {timeout:?}"),
++    }
++}
++
++/// Sends `probe` as the start of a second request on an idle keep-alive connection and checks
++/// that the connection is eventually closed.
++async fn keepalive_partial_second_request_probe(probe: &'static [u8]) {
++    let mut srv = test_server(|| {
++        HttpService::build()
++            .keep_alive(Duration::from_secs(1))
++            .client_request_timeout(Duration::from_secs(1))
++            .h1(|_| ready(Ok::<_, Infallible>(Response::ok())))
++            .tcp()
++    })
++    .await;
++
++    let mut stream = net::TcpStream::connect(srv.addr()).unwrap();
++
++    let _ = stream.write_all(b"GET /test HTTP/1.1\r\nHost: localhost\r\n\r\n");
++    let mut data = vec![0; 256];
++    let _ = stream.read(&mut data);
++    assert_eq!(&data[..17], b"HTTP/1.1 200 OK\r\n");
++
++    let _ = stream.write_all(probe);
++
++    let response = read_to_end_with_deadline(stream, Duration::from_secs(5));
++
++    assert!(
++        response.is_empty() || response.contains("408"),
++        "Connection should close or time out; got: {response:?}"
++    );
++
++    srv.stop().await;
++}
++
++#[tokio::test(flavor = "local")]
++async fn http1_keepalive_partial_second_request_timeout() {
++    keepalive_partial_second_request_probe(b"G").await;
++}
++
++#[tokio::test(flavor = "local")]
++async fn http1_keepalive_crlf_probe_timeout() {
++    keepalive_partial_second_request_probe(b"\r\n").await;
++}
++
++#[tokio::test(flavor = "local")]
++async fn http1_keepalive_pipelined_then_partial_timeout() {
++    let mut srv = test_server(|| {
++        HttpService::build()
++            .keep_alive(Duration::from_secs(30))
++            .client_request_timeout(Duration::from_secs(1))
++            .h1(|_| ready(Ok::<_, Infallible>(Response::ok())))
++            .tcp()
++    })
++    .await;
++
++    let mut stream = net::TcpStream::connect(srv.addr()).unwrap();
++
++    let _ = stream.write_all(b"GET /test HTTP/1.1\r\nHost: localhost\r\n\r\n");
++    let mut data = vec![0; 256];
++    let _ = stream.read(&mut data);
++
++    // pipelined second request followed by one byte of a third request, then silence
++    let _ = stream.write_all(b"GET /test HTTP/1.1\r\nHost: localhost\r\n\r\nG");
++
++    let response = read_to_end_with_deadline(stream, Duration::from_secs(5));
++
++    assert!(
++        response.contains("408"),
++        "Connection should time out; got: {response:?}"
++    );
++
++    srv.stop().await;
++}
++
++#[tokio::test(flavor = "local")]
++async fn http1_request_head_timeout_is_not_renewed_by_incoming_bytes() {
++    let mut srv = test_server(|| {
++        HttpService::build()
++            .keep_alive(Duration::from_secs(30))
++            .client_request_timeout(Duration::from_secs(1))
++            .h1(|_| ready(Ok::<_, Infallible>(Response::ok())))
++            .tcp()
++    })
++    .await;
++
++    for follow_up in [false, true] {
++        let mut stream = TcpStream::connect(srv.addr()).await.unwrap();
++
++        if follow_up {
++            stream
++                .write_all(b"GET / HTTP/1.1\r\nHost: localhost\r\n\r\n")
++                .await
++                .unwrap();
++
++            assert!(read_http1_response_head(&mut stream)
++                .await
++                .contains("200 OK"));
++        }
++
++        stream.write_all(b"G").await.unwrap();
++
++        let (mut reader, mut writer) = stream.split();
++        let mut response = String::new();
++
++        async {
++            let mut read = pin!(reader.read_to_string(&mut response));
++
++            let mut interval = interval(Duration::from_millis(150));
++
++            loop {
++                tokio::select! {
++                    result = &mut read => 
+```
+
+**File**: `actix-web/src/server.rs` (modified, +1/-1)
+```diff
+@@ -230,7 +230,7 @@ where
+         self
+     }
+ 
+-    /// Sets server client timeout for first request.
++    /// Sets the timeout for reading a client request head.
+     ///
+     /// Defines a timeout for reading client request head. If a client does not transmit the entire
+     /// set headers within this time, the request is terminated with a 408 (Request Timeout) error.
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4423** (2026-11-16): fix(http): keep commas inside quoted strings in list headers (@JMLX42)
+- **PR #4422** (2026-11-16): refactor(http): support any item type in InfallibleStream (@robjtede)
+- **PR #4421** (2026-11-15): refactor(http): match chunk bytes directly (@robjtede)
 - **PR #4418** (2026-11-15): ci: automate releases with release-plz (@robjtede)
 - **PR #4417** (2026-11-13): test: replace Actix test attributes with Tokio local tests (@robjtede)
 - **PR #4416** (2026-11-13): chore: replace example main macros with Tokio (@robjtede)
-- **PR #4413** (2026-11-11): build(deps): bump smallvec from 1.16.4 to 1.16.5 (@dependabot[bot])
-- **PR #4412** (2026-11-11): build(deps): bump mime from 0.3.17 to 0.3.18 (@dependabot[bot])
-- **PR #4411** (2026-11-11): build(deps): bump flate2 from 1.1.10 to 1.1.11 (@dependabot[bot])
 
 ---
 
@@ -1672,52 +2324,22 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ci: automate releases with release-plz
+## X. multipart): map PayloadError::Overflow to 413 Payload Too Large
 
 **RULE**:
-When implementing operations in `.github/workflows/actions.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in actix/actix-web. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `actix-multipart/CHANGES.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in actix/actix-web. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `baebbb57`: ci: automate releases with release-plz. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `315839cb`: multipart): map PayloadError::Overflow to 413 Payload Too Large. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/actions.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `actix-multipart/CHANGES.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    '.github/workflows/release.yml':
-        - 'actions-rust-lang/setup-rust-toolchain@v2.0.1'
-        - 'actions/checkout@v7.0.1'
-        - 'nicknovitski/nix-develop@v1.2.1'
-        - 'nixbuild/nix-quick-install-action@v35'
-        - 'release-plz/action@v0.5.140'
-    'actions/checkout@v7.0.1':
-        ref: 'v7.0.1'
-        commit: 'sha1-3d3c42e5aac5ba805825da76410c181273ba90b1'
-        owner_id: 44036562
-        repo_id: 197814629
-    'cargo-bins/cargo-binstall@c06f6a0003f7c6165a00c89d1697731c9e8a5c72':
-        ref: 'v1.25.2'
-        commit: 'sha1-c06f6a0003f7c6165a00c89d1697731c9e8a5c72'
-        owner_id: 110581826
-        repo_id: 321270638
-    'nicknovitski/nix-develop@v1.2.1':
-        ref: 'v1.2.1'
-        commit: 'sha1-9be7cfb4b10451d3390a75dc18ad0465bed4932a'
-        owner_id: 151337
-        repo_id: 706956179
-    'nixbuild/nix-quick-install-action@v35':
-        ref: 'v35'
-        commit: 'sha1-9f63be77f412a248c9d9a65a4c82cf066cdf8f0c'
-        owner_id: 60610456
-        repo_id: 296639338
-    'release-plz/action@v0.5.140':
-        ref: 'v0.5.140'
-        commit: 'sha1-18641b6c63063cc5ff8786ebf69cd57e8541bae1'
-        owner_id: 188756284
-        repo_id: 476470908
-        use
+- Map `MultipartError::Payload(PayloadError::Overflow)` to `413 Payload Too Large`, matching `PayloadError`.
+
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1727,7 +2349,7 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `baebbb57` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `315839cb` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol
