@@ -2,16 +2,16 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-17T08:32:18.029Z",
+  "updated_at": "2026-11-17T08:46:51.545Z",
   "statistics": {
-    "total_nodes": 305,
+    "total_nodes": 309,
     "total_edges": 154,
     "domain_distribution": {
       "D": 222,
       "M": 1,
-      "H": 34,
+      "H": 37,
       "J": 12,
-      "K": 16,
+      "K": 17,
       "L": 4,
       "G": 1,
       "F": 10,
@@ -6834,6 +6834,94 @@
       ],
       "created_at": "2026-11-17T08:32:18.029Z",
       "updated_at": "2026-11-17T08:32:18.029Z"
+    },
+    "DOM-H-DC7CEA2A": {
+      "id": "DOM-H-DC7CEA2A",
+      "domain": "H",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Silent Pass on Synchronous Predicate Timeout Overrun (BUG-FASTCHECK-7573)",
+      "summary": "The runner assumed single-threaded execution guarantees meant synchronous timeouts could not be tracked. Because `setTimeout` callbacks cann -> Synchronous code cannot be interrupted cooperatively in single-threaded runtimes, but its completion duration can and must be measured again",
+      "confidence": 0.75,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://dubzzz-fast-check/dubzzz-fast-check-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-17T08:43:41.497Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (dubzzz-fast-check)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "H",
+        "Technical Construction Intelligence"
+      ],
+      "created_at": "2026-11-17T08:44:17.013Z",
+      "updated_at": "2026-11-17T08:44:17.013Z"
+    },
+    "DOM-K-D4FDB7F4": {
+      "id": "DOM-K-D4FDB7F4",
+      "domain": "K",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Lifecycle Hook Execution Reversal & Asynchronous Collapse (BUG-FASTCHECK-LIFECYCLE)",
+      "summary": "Index alignment between dynamic teardown callbacks returned from `beforeEach` and statically declared `afterHooks` was out of order when map -> Teardown hooks must execute in reverse order (LIFO), and teardown errors must never mask primary assertion failures.",
+      "confidence": 1,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://dubzzz-fast-check/dubzzz-fast-check-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-17T08:43:41.497Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (dubzzz-fast-check)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "K",
+        "Quality & Verification Intelligence"
+      ],
+      "created_at": "2026-11-17T08:44:59.286Z",
+      "updated_at": "2026-11-17T08:44:59.286Z"
+    },
+    "DOM-H-C6C068D9": {
+      "id": "DOM-H-C6C068D9",
+      "domain": "H",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Dynamic Filters Pushdown Inconsistency on IS NOT DISTINCT FROM (BUG-OPT-02)",
+      "summary": "The optimizer only checked whether the column types were `REAL` or `DOUBLE` directly, ignoring complex/structural types (`ROW`, `ARRAY`, `MA -> When bridging distinct relational operators in compiler optimization passes, verify complete domain type reflexivity ($x \\equiv x$) across a",
+      "confidence": 1,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://trinodb-trino/trinodb-trino-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-17T08:45:00.625Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (trinodb-trino)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "H",
+        "Technical Construction Intelligence"
+      ],
+      "created_at": "2026-11-17T08:45:48.933Z",
+      "updated_at": "2026-11-17T08:45:48.933Z"
+    },
+    "DOM-H-A32D66BE": {
+      "id": "DOM-H-A32D66BE",
+      "domain": "H",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Release Artifact Hash Mismatch from Concurrent CI/CD Jobs (BUG-PULUMI-02)",
+      "summary": "A race condition in GitHub Actions release workflows. The job calculating `SHA512SUMS` ran concurrently with the artifact compression and co -> Cryptographic checksum calculation MUST occur at the absolute terminal egress point of a release pipeline, strictly dependent on all in-plac",
+      "confidence": 1,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://pulumi-pulumi/pulumi-pulumi-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-17T08:45:50.240Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (pulumi-pulumi)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "H",
+        "Technical Construction Intelligence"
+      ],
+      "created_at": "2026-11-17T08:46:51.545Z",
+      "updated_at": "2026-11-17T08:46:51.545Z"
     }
   },
   "edges": [

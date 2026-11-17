@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-17T08:32:20.967Z",
-  "total_verified_learnings": 8871,
+  "last_updated": "2026-11-17T08:46:52.650Z",
+  "total_verified_learnings": 8872,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 20018,
+  "total_items": 20041,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -230834,8 +230834,8 @@
       "slug": "trinodb-trino",
       "platform": "github",
       "source_url": "https://github.com/trinodb/trino",
-      "source_version": "9fe067c6",
-      "content_hash": "ef3d6562acb3a7ee1898cdd9e3d43d1966c0658cbd3734e4508d6eabefda07c7",
+      "source_version": "d97ac24e",
+      "content_hash": "01a0096592c1741dc2e64f7acda30c4b8cbd1db2d8ddb063a929c5be2d1465de",
       "dossier_path": "07_PROJECT_LEARNING/trinodb-trino-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/trinodb-trino-learnings.md",
       "promoted_rules": [
@@ -230848,6 +230848,21 @@
           "number": 8678,
           "title": "IN with simple CASE in value list",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8937,
+          "title": "Invariant Defense Against Concurrency TOCTOU in Filesystem Probing",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8938,
+          "title": "Semantic Parity Guard for Dynamic Query Optimization Pushdown",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8939,
+          "title": "Idempotent Precondition Retries on Storage Boundaries",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -230855,7 +230870,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-16T00:56:42.127Z",
+      "verified_at": "2026-11-17T08:43:37.474Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -230909,10 +230924,10 @@
       "relative_path": "08_VERIFICATION/trinodb-trino-verification-protocol-empirical-defect-shield-for-trinodb-trino.md",
       "title": "Verification Protocol: Empirical Defect Shield for trinodb/trino",
       "repository": "trinodb/trino",
-      "source_version": "9fe067c6",
-      "content_hash": "3cfa31999cd9e8a60ad81f7c5d58a93f71ad6a410023ea2dc301ce9697c0de6d",
+      "source_version": "d97ac24e",
+      "content_hash": "ab1fbebc9436a7f77c3d99bf655d7eaddc950d192aa5dbb4af87887a011f6404",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T00:56:42.701Z"
+      "persisted_at": "2026-11-17T08:43:38.637Z"
     },
     "candidate_directive-semantic-preserve-catch-and-var-binding-identities": {
       "item_id": "candidate_directive-semantic-preserve-catch-and-var-binding-identities",
@@ -234234,9 +234249,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for pulumi-pulumi-learnings",
       "repository": "pulumi-pulumi-learnings",
       "source_version": "HEAD",
-      "content_hash": "83adefae6fd0e0032647a1e8361cb53bd3457cb69320a994cc3d1b56ebe37a0f",
+      "content_hash": "e45206c40cf6c854362520c21eceeb2ebbec54f157a1161fd1a6cdd09d29a1e2",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T02:06:37.495Z"
+      "persisted_at": "2026-11-17T08:46:52.650Z"
     },
     "domain_intelligence-architecture-intelligence-ytsaurus-ytsaurus-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-ytsaurus-ytsaurus-learnings-core-invariants",
@@ -250000,9 +250015,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for trinodb-trino-learnings",
       "repository": "trinodb-trino-learnings",
       "source_version": "HEAD",
-      "content_hash": "35d98c0609f80786a90ae14061fc339599a9cba0a14951833c177e887fed69ad",
+      "content_hash": "3497ed03508c9040c11bdaed0973b126e880e2f47cf55a00bfee8154594ac709",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T00:56:56.072Z"
+      "persisted_at": "2026-11-17T08:45:50.058Z"
     },
     "learn-github-adobe-structured-data-validator": {
       "learning_id": "learn-github-adobe-structured-data-validator",
@@ -267803,6 +267818,325 @@
       "content_hash": "fb76e27ea30d5c29fb3a392096977353faa940ecd1c7031a20527e90ea111bf1",
       "domain_letter": "H",
       "persisted_at": "2026-11-17T08:32:19.887Z"
+    },
+    "learn-github-dubzzz-fast-check": {
+      "learning_id": "learn-github-dubzzz-fast-check",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "dubzzz/fast-check",
+      "repository": "dubzzz/fast-check",
+      "slug": "dubzzz-fast-check",
+      "platform": "github",
+      "source_url": "https://github.com/dubzzz/fast-check",
+      "source_version": "1114b71b",
+      "content_hash": "90336b5e9394475b5f4c447bcd7aab111ce2da995503cf26555f3a72ab64f673",
+      "dossier_path": "07_PROJECT_LEARNING/dubzzz-fast-check-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/dubzzz-fast-check-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8931,
+          "title": "Dual-Track Synchronous-First Execution Pipeline",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8932,
+          "title": "Post-Execution Wall-Clock Probe for Non-Preemptible Synchronous Runs",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8934,
+          "title": "Leak-Free Signal-to-Promise Adapter Contract",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-17T08:42:31.859Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8931": {
+      "learning_id": "rule-8931",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8931,
+      "title": "Dual-Track Synchronous-First Execution Pipeline",
+      "source_url": "https://github.com/dubzzz/fast-check",
+      "source_version": "1114b71b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T08:42:31.859Z"
+    },
+    "rule-8932": {
+      "learning_id": "rule-8932",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8932,
+      "title": "Post-Execution Wall-Clock Probe for Non-Preemptible Synchronous Runs",
+      "source_url": "https://github.com/dubzzz/fast-check",
+      "source_version": "1114b71b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T08:42:31.859Z"
+    },
+    "rule-8934": {
+      "learning_id": "rule-8934",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8934,
+      "title": "Leak-Free Signal-to-Promise Adapter Contract",
+      "source_url": "https://github.com/dubzzz/fast-check",
+      "source_version": "1114b71b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T08:42:31.859Z"
+    },
+    "candidate_directive-dual-track-synchronous-first-execution-pipeline": {
+      "item_id": "candidate_directive-dual-track-synchronous-first-execution-pipeline",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-5IKI-dual-track-synchronous-first-execution-pipeline.md",
+      "title": "Dual-Track Synchronous-First Execution Pipeline",
+      "repository": "dubzzz-fast-check-learnings",
+      "source_version": "HEAD",
+      "content_hash": "80499e02e3061d48fd1e5a11d7096d9b2fbfd47b571876f2e2302d919d373139",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T08:44:59.588Z"
+    },
+    "candidate_directive-post-execution-wall-clock-probe-for-non-preemptible-synchronous-runs": {
+      "item_id": "candidate_directive-post-execution-wall-clock-probe-for-non-preemptible-synchronous-runs",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-5IKI-post-execution-wall-clock-probe-for-non-preemptible-synchronous-runs.md",
+      "title": "Post-Execution Wall-Clock Probe for Non-Preemptible Synchronous Runs",
+      "repository": "dubzzz-fast-check-learnings",
+      "source_version": "HEAD",
+      "content_hash": "543145920351f51094d33232f2dcaa6e356f76a96e0878d566d718eb1a86a996",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T08:44:59.771Z"
+    },
+    "candidate_directive-leak-free-signal-to-promise-adapter-contract": {
+      "item_id": "candidate_directive-leak-free-signal-to-promise-adapter-contract",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-5IKJ-leak-free-signal-to-promise-adapter-contract.md",
+      "title": "Leak-Free Signal-to-Promise Adapter Contract",
+      "repository": "dubzzz-fast-check-learnings",
+      "source_version": "HEAD",
+      "content_hash": "ec848c731f0e392dee297a7057b68884d6c165a97d8d2792202b47e6925e6170",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-17T08:44:59.967Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-dubzzz-fast-check-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-dubzzz-fast-check-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-dubzzz-fast-check-technical-construction-intelligence-dubzzz-fast-check-core-inv.md",
+      "title": "Technical Construction Intelligence: dubzzz/fast-check Core Invariants",
+      "repository": "dubzzz/fast-check",
+      "source_version": "1114b71b",
+      "content_hash": "bc8f176adf29688795af11782d75ab106a111b9fbd8c13bd97e59e828c4a2082",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T08:42:32.968Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-dubzzz-fast-check": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-dubzzz-fast-check",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/dubzzz-fast-check-verification-protocol-empirical-defect-shield-for-dubzzz-fast-.md",
+      "title": "Verification Protocol: Empirical Defect Shield for dubzzz/fast-check",
+      "repository": "dubzzz/fast-check",
+      "source_version": "1114b71b",
+      "content_hash": "ea38412f4676338532b09a354e5ecc7ba046ed0426cc59691502a3f1d5c277c9",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T08:42:33.151Z"
+    },
+    "rule-8937": {
+      "learning_id": "rule-8937",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8937,
+      "title": "Invariant Defense Against Concurrency TOCTOU in Filesystem Probing",
+      "source_url": "https://github.com/trinodb/trino",
+      "source_version": "d97ac24e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T08:43:37.474Z"
+    },
+    "rule-8938": {
+      "learning_id": "rule-8938",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8938,
+      "title": "Semantic Parity Guard for Dynamic Query Optimization Pushdown",
+      "source_url": "https://github.com/trinodb/trino",
+      "source_version": "d97ac24e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T08:43:37.474Z"
+    },
+    "rule-8939": {
+      "learning_id": "rule-8939",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8939,
+      "title": "Idempotent Precondition Retries on Storage Boundaries",
+      "source_url": "https://github.com/trinodb/trino",
+      "source_version": "d97ac24e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T08:43:37.474Z"
+    },
+    "candidate_directive-invariant-defense-against-concurrency-toctou-in-filesystem-probing": {
+      "item_id": "candidate_directive-invariant-defense-against-concurrency-toctou-in-filesystem-probing",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-6KU9-invariant-defense-against-concurrency-toctou-in-filesystem-probing.md",
+      "title": "Invariant Defense Against Concurrency TOCTOU in Filesystem Probing",
+      "repository": "trinodb-trino-learnings",
+      "source_version": "HEAD",
+      "content_hash": "8c8b0954d032ee04444fa37d83470782c33422179708935b7c67ed7691b46ea0",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-17T08:45:49.186Z"
+    },
+    "candidate_directive-semantic-parity-guard-for-dynamic-query-optimization-pushdown": {
+      "item_id": "candidate_directive-semantic-parity-guard-for-dynamic-query-optimization-pushdown",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-6KU9-semantic-parity-guard-for-dynamic-query-optimization-pushdown.md",
+      "title": "Semantic Parity Guard for Dynamic Query Optimization Pushdown",
+      "repository": "trinodb-trino-learnings",
+      "source_version": "HEAD",
+      "content_hash": "64767674a7e278204aca299df83c3ad5f69ff30121895d9b5869b41de299f8a0",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T08:45:49.449Z"
+    },
+    "candidate_directive-idempotent-precondition-retries-on-storage-boundaries": {
+      "item_id": "candidate_directive-idempotent-precondition-retries-on-storage-boundaries",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-6KUA-idempotent-precondition-retries-on-storage-boundaries.md",
+      "title": "Idempotent Precondition Retries on Storage Boundaries",
+      "repository": "trinodb-trino-learnings",
+      "source_version": "HEAD",
+      "content_hash": "fce682bd6acda0bee867afbc832c00a5091e162feb420ffd3629ffb4521ea533",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T08:45:49.646Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-trinodb-trino-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-trinodb-trino-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-trinodb-trino-technical-construction-intelligence-trinodb-trino-core-invariants.md",
+      "title": "Technical Construction Intelligence: trinodb/trino Core Invariants",
+      "repository": "trinodb/trino",
+      "source_version": "d97ac24e",
+      "content_hash": "53081ae3c9167f0eca01e415e6f677b5085e5cfddc0ccfac5effa9ecabdb3bf3",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T08:43:38.455Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-dubzzz-fast-check-learnings-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-dubzzz-fast-check-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-dubzzz-fast-check-learnings-technical-construction-intelligence-dubzzz-fast-chec.md",
+      "title": "Technical Construction Intelligence: dubzzz-fast-check-learnings Core Invariants",
+      "repository": "dubzzz-fast-check-learnings",
+      "source_version": "HEAD",
+      "content_hash": "79087483ea802de1b0280044c5f21b6fbc7302bfd55c5a9a2f91910440246e15",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T08:45:00.163Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-dubzzz-fast-check-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-dubzzz-fast-check-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/dubzzz-fast-check-learnings-verification-protocol-empirical-defect-shield-for-du.md",
+      "title": "Verification Protocol: Empirical Defect Shield for dubzzz-fast-check-learnings",
+      "repository": "dubzzz-fast-check-learnings",
+      "source_version": "HEAD",
+      "content_hash": "b6f3ce55f84dbd96ada5364809e4a44e0f1b5d28bbad5d4eed95a0e6f4388bdf",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T08:45:00.378Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-trinodb-trino-learnings-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-trinodb-trino-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-trinodb-trino-learnings-technical-construction-intelligence-trinodb-trino-learni.md",
+      "title": "Technical Construction Intelligence: trinodb-trino-learnings Core Invariants",
+      "repository": "trinodb-trino-learnings",
+      "source_version": "HEAD",
+      "content_hash": "3b8bc9d0ee450c754720884746f76e49d618d635f2e50a8c716495876132a6f5",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T08:45:49.842Z"
+    },
+    "candidate_directive-two-phase-evolutionary-rpc-protocol-migration-invariant": {
+      "item_id": "candidate_directive-two-phase-evolutionary-rpc-protocol-migration-invariant",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-7X6Y-two-phase-evolutionary-rpc-protocol-migration-invariant.md",
+      "title": "Two-Phase Evolutionary RPC Protocol Migration Invariant",
+      "repository": "pulumi-pulumi-learnings",
+      "source_version": "HEAD",
+      "content_hash": "ca844eb3c14e1f9d9a72bad537db0d055d452aad8f8b0e6f447a09f18d34e284",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T08:46:51.852Z"
+    },
+    "candidate_directive-state-checkpoint-atomic-swap-and-integrity-gate": {
+      "item_id": "candidate_directive-state-checkpoint-atomic-swap-and-integrity-gate",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-7X6Z-state-checkpoint-atomic-swap-and-integrity-gate.md",
+      "title": "State Checkpoint Atomic Swap and Integrity Gate",
+      "repository": "pulumi-pulumi-learnings",
+      "source_version": "HEAD",
+      "content_hash": "4452d148a54c358003da9539f2c71a50f5616639736cb26c2fa1f1291c81484a",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-17T08:46:52.040Z"
+    },
+    "candidate_directive-bidirectional-middle-out-context-budget-truncation-invariant": {
+      "item_id": "candidate_directive-bidirectional-middle-out-context-budget-truncation-invariant",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-7X70-bidirectional-middle-out-context-budget-truncation-invariant.md",
+      "title": "Bidirectional Middle-Out Context Budget Truncation Invariant",
+      "repository": "pulumi-pulumi-learnings",
+      "source_version": "HEAD",
+      "content_hash": "f357f052fd426fc08a7d04bcd575221d932becd8a0225de25f8d923d384a47cc",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T08:46:52.230Z"
+    },
+    "domain_intelligence-architecture-intelligence-pulumi-pulumi-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-pulumi-pulumi-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-pulumi-pulumi-learnings-architecture-intelligence-pulumi-pulumi-learnings-core-i.md",
+      "title": "Architecture Intelligence: pulumi-pulumi-learnings Core Invariants",
+      "repository": "pulumi-pulumi-learnings",
+      "source_version": "HEAD",
+      "content_hash": "020165c3156b2823e6ac9c217728012016650a5ae3a16de28015085dd267c410",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-17T08:46:52.426Z"
     }
   },
   "ai-builder-brain": {

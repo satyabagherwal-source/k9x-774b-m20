@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T08:31:11.536Z",
-  "total_cycles_completed": 10071,
-  "total_learnings_persisted": 10071,
-  "total_rules_promoted": 9670,
+  "last_updated": "2026-11-17T08:43:37.736Z",
+  "total_cycles_completed": 10073,
+  "total_learnings_persisted": 10073,
+  "total_rules_promoted": 9676,
   "history": [
-    {
-      "timestamp": "2026-11-16T14:35:01.409Z",
-      "repository": "NucleoidAI/Nucleoid",
-      "learningId": "learn-github-nucleoidai-nucleoid",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-16T15:00:35.789Z",
-      "repository": "meta/folly",
-      "learningId": "learn-github-meta-folly",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-16T15:00:40.000Z",
       "repository": "RevenueCat/purchases-ios",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-17T08:31:11.536Z",
       "repository": "aquasecurity/trivy",
       "learningId": "learn-github-aquasecurity-trivy",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T08:42:32.143Z",
+      "repository": "dubzzz/fast-check",
+      "learningId": "learn-github-dubzzz-fast-check",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T08:43:37.736Z",
+      "repository": "trinodb/trino",
+      "learningId": "learn-github-trinodb-trino",
       "promotedRulesCount": 3,
       "status": "PROMOTED"
     }

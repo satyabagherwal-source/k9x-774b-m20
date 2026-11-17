@@ -5073,10 +5073,10 @@
     "repository": "trinodb/trino",
     "platform": "github",
     "sourceUrl": "https://github.com/trinodb/trino",
-    "sourceVersion": "9fe067c6",
+    "sourceVersion": "d97ac24e",
     "license": "Apache-2.0",
-    "contentHash": "ef3d6562acb3a7ee1898cdd9e3d43d1966c0658cbd3734e4508d6eabefda07c7",
-    "lastHarvestedAt": "2026-11-16T00:56:42.284Z",
+    "contentHash": "01a0096592c1741dc2e64f7acda30c4b8cbd1db2d8ddb063a929c5be2d1465de",
+    "lastHarvestedAt": "2026-11-17T08:43:37.729Z",
     "learningId": "learn-github-trinodb-trino"
   },
   "pinterest-gestalt": {
@@ -10263,10 +10263,10 @@
     "repository": "dubzzz/fast-check",
     "platform": "github",
     "sourceUrl": "https://github.com/dubzzz/fast-check",
-    "sourceVersion": "98cf746f",
+    "sourceVersion": "1114b71b",
     "license": "MIT",
-    "contentHash": "580fe0ffc3f28cb86cbc49b52d24c3c2df0004571e2b43c62c02535ab6a66080",
-    "lastHarvestedAt": "2026-11-12T21:56:39.469Z",
+    "contentHash": "90336b5e9394475b5f4c447bcd7aab111ce2da995503cf26555f3a72ab64f673",
+    "lastHarvestedAt": "2026-11-17T08:42:32.136Z",
     "learningId": "learn-github-dubzzz-fast-check"
   },
   "react-react-native": {

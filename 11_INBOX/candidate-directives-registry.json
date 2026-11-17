@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T08:32:20.656Z",
+  "last_updated": "2026-11-17T08:46:52.230Z",
   "directives": [
     {
       "id": "CD-001",
@@ -23175,6 +23175,114 @@
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-17",
       "domain_letter": "H"
+    },
+    {
+      "id": "CD-5IKI",
+      "directive_title": "Post-Execution Wall-Clock Probe for Non-Preemptible Synchronous Runs",
+      "source_repo": "dubzzz-fast-check-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-5IKI-post-execution-wall-clock-probe-for-non-preemptible-synchronous-runs.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-17",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-2CZ4",
+      "directive_title": "Post-Execution Wall-Clock Probe for Non-Preemptible Synchronous Runs",
+      "source_repo": "dubzzz/fast-check",
+      "source_commit": "1114b71b",
+      "staged_file": "11_INBOX/candidate-directives/CD-2CZ4-post-execution-wall-clock-probe-for-non-preemptible-synchronous-runs.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-17",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-5IKJ",
+      "directive_title": "Leak-Free Signal-to-Promise Adapter Contract",
+      "source_repo": "dubzzz-fast-check-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-5IKJ-leak-free-signal-to-promise-adapter-contract.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-17",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-6KU9",
+      "directive_title": "Semantic Parity Guard for Dynamic Query Optimization Pushdown",
+      "source_repo": "trinodb-trino-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-6KU9-semantic-parity-guard-for-dynamic-query-optimization-pushdown.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-17",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-3RKV",
+      "directive_title": "Semantic Parity Guard for Dynamic Query Optimization Pushdown",
+      "source_repo": "trinodb/trino",
+      "source_commit": "d97ac24e",
+      "staged_file": "11_INBOX/candidate-directives/CD-3RKV-semantic-parity-guard-for-dynamic-query-optimization-pushdown.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-17",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-6KUA",
+      "directive_title": "Idempotent Precondition Retries on Storage Boundaries",
+      "source_repo": "trinodb-trino-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-6KUA-idempotent-precondition-retries-on-storage-boundaries.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-17",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-837AEC",
+      "directive_title": "CheckConfig Protocol Coupling and Type Collision (BUG-PULUMI-01)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "pulumi-pulumi",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-837AEC-checkconfig-protocol-coupling-and-type-c.md",
+      "staged_date": "2026-11-17"
+    },
+    {
+      "id": "CD-7X6Y",
+      "directive_title": "Two-Phase Evolutionary RPC Protocol Migration Invariant",
+      "source_repo": "pulumi-pulumi-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-7X6Y-two-phase-evolutionary-rpc-protocol-migration-invariant.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-17",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-7X6Z",
+      "directive_title": "State Checkpoint Atomic Swap and Integrity Gate",
+      "source_repo": "pulumi-pulumi-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-7X6Z-state-checkpoint-atomic-swap-and-integrity-gate.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-17",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-7X70",
+      "directive_title": "Bidirectional Middle-Out Context Budget Truncation Invariant",
+      "source_repo": "pulumi-pulumi-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-7X70-bidirectional-middle-out-context-budget-truncation-invariant.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-17",
+      "domain_letter": "K"
     }
   ]
 }

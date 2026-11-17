@@ -651360,3 +651360,1077 @@ func TestPolicyMetadataRPCParity(t *testing.T) {
 ```
 
 ---
+
+
+---
+
+## 8931. Dual-Track Synchronous-First Execution Pipeline (Harvested from dubzzz/fast-check)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Dual-Track Synchronous-First Execution Pipeline",
+  "source": "dubzzz/fast-check",
+  "source_url": "https://github.com/dubzzz/fast-check",
+  "source_version": "1114b71b",
+  "license": "MIT",
+  "extracted_at": "2026-11-17T08:42:30.176Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-dubzzz-fast-check",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.7,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "WARN",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "WARN",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [dubzzz/fast-check](https://github.com/dubzzz/fast-check) (Revision: `1114b71b`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 70%).
+
+**RULE**:
+Execution harnesses wrapping user callbacks that may be either synchronous or asynchronous MUST execute synchronously by default and MUST NOT convert synchronous returns into Promises. The harness MUST conditionally branch to asynchronous promise continuations only upon encountering a Thenable return value.
+
+**WHY**:
+Promoting synchronous functions to `Promise.resolve()` introduces microtask queue hops, destroying throughput in tight execution loops (e.g., 100,000 property iterations). Converting sync executions to promises also alters execution semantics: synchronous stack traces are preserved directly, synchronous side effects complete immediately before subsequent iterations, and unnecessary heap allocations of `Promise` instances are eliminated.
+
+**WHEN TO APPLY**:
+Apply to test runners, lifecycle hook orchestrators, middleware pipelines, interceptors, and high-throughput plugin runners that accept `() => void | Promise<void>`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+/**
+ * Executes a sequence of callbacks synchronously if possible;
+ * shifts to asynchronous resolution only when a callback returns a Thenable.
+ */
+export function runAllCallbacksAndReturn<T>(
+  value: T,
+  runCallbackAtIndex: (index: number) => void | Promise<void>,
+  callbacksCount: number,
+): T | Promise<T> {
+  let interceptedOnce = false;
+  let interceptedError: unknown = undefined;
+
+  for (let index = 0; index !== callbacksCount; ++index) {
+    try {
+      const out = runCallbackAtIndex(index);
+      if (out !== undefined && typeof out === 'object' && out !== null && 'then' in out) {
+        // Asynchronous branch: promote remaining callbacks to async continuation
+        return runAllCallbacksAndReturnAsync(
+          value,
+          runCallbackAtIndex,
+          out as Promise<void>,
+          index,
+          callbacksCount,
+          interceptedOnce,
+          interceptedError,
+        );
+      }
+    } catch (error) {
+      if (!interceptedOnce) {
+        interceptedOnce = true;
+        interceptedError = error;
+      }
+    }
+  }
+
+  if (interceptedOnce) {
+    // Invariant: Never throw synchronously if the API contract guarantees a uniform return/rejection model
+    return Promise.reject(interceptedError);
+  }
+  return value;
+}
+
+async function runAllCallbacksAndReturnAsync<T>(
+  value: T,
+  runCallbackAtIndex: (index: number) => void | Promise<void>,
+  firstCallbackResult: Promise<void>,
+  callbackIndex: number,
+  callbacksCount: number,
+  hasInitialError: boolean,
+  initialError: unknown,
+): Promise<T> {
+  let interceptedOnce = hasInitialError;
+  let interceptedError = initialError;
+
+  for (let index = callbackIndex; index !== callbacksCount; ++index) {
+    try {
+      const out = index === callbackIndex ? firstCallbackResult : runCallbackAtIndex(index);
+      if (out !== undefined) {
+        await out;
+      }
+    } catch (error) {
+      if (!interceptedOnce) {
+        interceptedOnce = true;
+        interceptedError = error;
+      }
+    }
+  }
+
+  if (interceptedOnce) {
+    throw interceptedError;
+  }
+  return value;
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// ANTI-PATTERN: Indiscriminately wrapping every callback in async/await or Promise.resolve
+export async function runAllCallbacksBad<T>(
+  value: T,
+  callbacks: Array<() => void | Promise<void>>,
+): Promise<T> {
+  // Forcing microtask queue allocation for every synchronous iteration
+  for (const cb of callbacks) {
+    await cb(); // Performance collapse in 100k+ iterations
+  }
+  return value;
+}
+```
+
+**VERIFICATION METHOD**:
+Verify with a benchmark and test asserting that purely synchronous callbacks return a non-Promise primitive (`expect(result instanceof Promise).toBe(false)`), and verify execution order matches synchronous invocation without deferral to `process.nextTick` or microtask loops.
+
+---
+
+
+---
+
+## 8932. Post-Execution Wall-Clock Probe for Non-Preemptible Synchronous Runs (Harvested from dubzzz/fast-check)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Post-Execution Wall-Clock Probe for Non-Preemptible Synchronous Runs",
+  "source": "dubzzz/fast-check",
+  "source_url": "https://github.com/dubzzz/fast-check",
+  "source_version": "1114b71b",
+  "license": "MIT",
+  "extracted_at": "2026-11-17T08:42:30.823Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-dubzzz-fast-check",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.71,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [dubzzz/fast-check](https://github.com/dubzzz/fast-check) (Revision: `1114b71b`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 71%).
+
+**RULE**:
+When implementing timeout bounds around code blocks in single-threaded runtimes (such as JavaScript/Node.js/V8), the timeout harness MUST record a monotonic start timestamp (`performance.now()`) prior to execution and MUST check the elapsed duration upon synchronous return. If elapsed time exceeds the deadline, the harness MUST override any successful return value with a timeout failure.
+
+**WHY**:
+In single-threaded event loops, an active synchronous computation blocks the thread entirely; scheduled timer callbacks (`setTimeout`) cannot fire during execution. Without a post-run wall-clock delta check, a synchronous function that blocks the thread for longer than the timeout limit will return control to the runner and falsely register as successful because `clearTimeout` is invoked before the timer callback ever has a chance to execute.
+
+**WHEN TO APPLY**:
+Apply to all execution wrappers, test harnesses, sandboxes, and plugin systems where user-provided sync code is bounded by a timeout budget.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+const safeSetTimeout = setTimeout;
+const safeClearTimeout = clearTimeout;
+const safePerformanceNow = performance.now.bind(performance);
+
+export interface ExecutionFailure {
+  error: Error;
+}
+
+export function timeoutAfter(timeMs: number) {
+  let timeoutHandle: ReturnType<typeof safeSetTimeout> | undefined = undefined;
+  const abortController = new AbortController();
+  const startTimeProbe = safePerformanceNow();
+
+  const promise = new Promise<ExecutionFailure>((resolve) => {
+    timeoutHandle = safeSetTimeout(() => {
+      const error = new Error(`Execution timeout: exceeded limit of ${timeMs} milliseconds`);
+      resolve({ error });
+      abortController.abort(error);
+    }, timeMs);
+  });
+
+  return {
+    clear: (): ExecutionFailure | undefined => {
+      safeClearTimeout(timeoutHandle);
+      // High-precision monotonic elapsed check for blocked synchronous execution
+      if (safePerformanceNow() - startTimeProbe >= timeMs) {
+        return {
+          error: new Error(`Execution timeout: exceeded limit of ${timeMs} milliseconds`),
+        };
+      }
+      return undefined;
+    },
+    promise,
+    signal: abortController.signal,
+  };
+}
+
+export function executeWithTimeout<TVal, TContext>(
+  limitMs: number,
+  runFn: (val: TVal, ctx: TContext) => unknown | Promise<unknown>,
+  val: TVal,
+  ctx: TContext,
+): unknown | Promise<unknown> {
+  const timer = timeoutAfter(limitMs);
+  const out = runFn(val, ctx);
+
+  if (out === null || typeof out !== 'object' || !('then' in out)) {
+    // Synchronous execution branch: evaluate elapsed time
+    const override = timer.clear();
+    if (override !== undefined) {
+      return override;
+    }
+    return out;
+  }
+
+  // Asynchronous execution branch: race against timer promise
+  return Promise.race([
+    out,
+    timer.promise.then((failure) => failure),
+  ]).finally(() => {
+    timer.clear();
+  });
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// ANTI-PATTERN: Relying strictly on setTimeout for synchronous execution boundaries
+function faultyTimeoutRunner(limitMs: number, fn: () => void) {
+  let timedOut = false;
+  const handle = setTimeout(() => { timedOut = true; }, limitMs);
+  
+  // If fn() executes synchronously for 5000ms when limitMs is 1000ms,
+  // setTimeout cannot fire during this blocking period.
+  fn(); 
+  
+  clearTimeout(handle); // Handle is cleared before the event loop can process timer!
+  if (timedOut) throw new Error("Timed out"); // Never reached!
+}
+```
+
+**VERIFICATION METHOD**:
+Implement a mock or fake timer integration test where a synchronous predicate blocks execution past the timeout window (e.g. using `vi.advanceTimersByTime(10_000)` or busy loop), verifying that the harness flags a failure matching `Property timeout: exceeded limit of ${testTimeout} milliseconds`.
+
+---
+
+
+---
+
+## 8933. Two-Phase Evolutionary RPC Protocol Migration Invariant (Harvested from pulumi/pulumi)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Two-Phase Evolutionary RPC Protocol Migration Invariant",
+  "source": "pulumi/pulumi",
+  "source_url": "https://github.com/pulumi/pulumi",
+  "source_version": "3f4802f9",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-17T08:42:31.064Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-pulumi-pulumi",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [pulumi/pulumi](https://github.com/pulumi/pulumi) (Revision: `3f4802f9`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When evolving a core RPC contract with breaking changes or expanding parameter shapes, the protocol client **MUST** invoke the new versioned method (`MethodV2`) first and catch `codes.Unimplemented`. Upon receiving `codes.Unimplemented`, it **MUST** automatically fall back to the legacy method (`MethodV1`), translating the legacy response types into the unified internal representation. Deprecated SDK stubs **MUST NOT** be removed until complete ecosystem cut-off; they **MUST** explicitly return `codes.Unimplemented`.
+
+**WHY**:
+In distributed plugin architectures, engines and plugins are independently versioned and compiled across different runtimes. In-place modification of existing gRPC request/response messages (`CheckRequest`/`CheckResponse`) causes cross-version serialization skew, breaks un-recompiled plugins, or corrupts structural types when distinct domains (e.g., resource checking vs provider configuration checking) share overloaded payload structs.
+
+**WHEN TO APPLY**:
+Apply to any client-server or host-plugin interface communicating via Protobuf, gRPC, or versioned JSON-RPC where backward compatibility with out-of-tree plugins is mandatory.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Extracted from pkg/resource/plugin/provider_plugin.go
+func (p *provider) CheckConfig(ctx context.Context, req CheckConfigRequest) (CheckConfigResponse, error) {
+    molds := propertyrpc.Marshal(req.Olds)
+    mnews := propertyrpc.Marshal(req.News)
+
+    var rpcInputs *structpb.Struct
+    var failures []CheckConfigFailure
+
+    // Phase 1: Attempt the evolved CheckConfig2 RPC with decoupled schemas
+    resp2, err := p.clientRaw.CheckConfig2(p.requestContext(), &pulumirpc.CheckConfigRequest{
+        Urn:       string(req.URN),
+        Name:      req.URN.Name(),
+        Type:      req.URN.Type().String(),
+        OldInputs: molds,
+        NewInputs: mnews,
+    })
+
+    switch {
+    case err == nil:
+        rpcInputs = resp2.GetInputs()
+        failures = slice.Prealloc[CheckConfigFailure](len(resp2.GetFailures()))
+        for _, failure := range resp2.GetFailures() {
+            failures = append(failures, checkConfigFailureFromRPC(failure))
+        }
+
+    // Phase 2: Detect lack of support on older plugins and fall back seamlessly
+    case rpcerror.Convert(err).Code() == codes.Unimplemented:
+        logging.V(7).Infof("%s CheckConfig2 is unimplemented: falling back to CheckConfig", req.URN)
+        resp, err := p.clientRaw.CheckConfig(p.requestContext(), &pulumirpc.CheckRequest{
+            Urn:  string(req.URN),
+            Name: req.URN.Name(),
+            Type: req.URN.Type().String(),
+            Olds: molds,
+            News: mnews,
+        })
+        if err != nil {
+            rpcErr := rpcerror.Convert(err)
+            if rpcErr.Code() == codes.Unimplemented {
+                // Logical backwards compatibility: assume provider accepted news
+                return CheckConfigResponse{Properties: req.News}, nil
+            }
+            return CheckConfigResponse{}, err
+        }
+        rpcInputs = resp.GetInputs()
+        failures = slice.Prealloc[CheckConfigFailure](len(resp.GetFailures()))
+        for _, failure := range resp.GetFailures() {
+            failures = append(failures, CheckConfigFailure{
+                Property: resource.PropertyKey(failure.Property),
+                Reason:   failure.Reason,
+            })
+        }
+
+    default:
+        return CheckConfigResponse{}, err
+    }
+
+    // Unmarshal inputs safely using standardized decoding
+    var inputs property.Map
+    if ins := rpcInputs; ins != nil {
+        raw, err := propertyrpc.Unmarshal(ins)
+        if err != nil {
+            return CheckConfigResponse{}, err
+        }
+        inputs = raw
+    }
+
+    return CheckConfigResponse{
+        Properties: annotateSecrets(inputs, req.News),
+        Failures:   failures,
+    }, nil
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// ANTI-PATTERN: Modifying the shared legacy gRPC struct or hard-failing without fallback
+func (p *provider) CheckConfigBroken(ctx context.Context, req CheckConfigRequest) (CheckConfigResponse, error) {
+    // VIOLATION 1: Directly calling new RPC without fallback crashes legacy out-of-tree plugins
+    resp, err := p.clientRaw.CheckConfig2(ctx, &pulumirpc.CheckConfigRequest{...})
+    if err != nil {
+        return CheckConfigResponse{}, err // CRASH: Older providers fail whole deployment!
+    }
+
+    // VIOLATION 2: Overloading existing CheckRequest with configuration fields causes
+    // unmarshaling failures or type collisions in older compiled SDKs.
+    return CheckConfigResponse{Properties: resp.Inputs}, nil
+}
+```
+
+**VERIFICATION METHOD**:
+Mock provider harness executing two parallel test suites:
+1. `TestProvider_CheckConfig_prefersCheckConfig2`: Verifies calling client dispatches to `CheckConfig2` when implemented.
+2. `TestProvider_CheckConfig_fallsBackToCheckConfig`: Configures `checkConfig2` stub returning `status.Error(codes.Unimplemented, "")` and asserts that `CheckConfig` is invoked and its legacy output structure mapped to `CheckConfigFailure` without data loss.
+
+---
+
+
+---
+
+## 8934. Leak-Free Signal-to-Promise Adapter Contract (Harvested from dubzzz/fast-check)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Leak-Free Signal-to-Promise Adapter Contract",
+  "source": "dubzzz/fast-check",
+  "source_url": "https://github.com/dubzzz/fast-check",
+  "source_version": "1114b71b",
+  "license": "MIT",
+  "extracted_at": "2026-11-17T08:42:31.507Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-dubzzz-fast-check",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.71,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [dubzzz/fast-check](https://github.com/dubzzz/fast-check) (Revision: `1114b71b`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 71%).
+
+**RULE**:
+Whenever an `AbortSignal` is adapted into a Promise (for racing or notification), the adapter MUST explicitly remove its `abort` event listener when cleared or resolved, and MUST extract the `signal.reason` directly.
+
+**WHY**:
+Attaching event listeners to long-lived `AbortSignal` instances without guaranteed unsubscription causes unbounded heap leaks. In property-based testing where thousands of predicates execute against shared or chained signals, failure to deregister listeners retains the entire execution context closure in memory, eventually exhausting the Node.js/V8 heap.
+
+**WHEN TO APPLY**:
+Apply to all promise-signal bridging, timeout races, stream cancellations, and context deadline implementations.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+export function signalAsPromise(signal: AbortSignal): {
+  promise: Promise<{ error: unknown }>;
+  clear: () => void;
+} {
+  let onAbort: () => void = () => {};
+  const promise = new Promise<{ error: unknown }>((resolve) => {
+    onAbort = () => {
+      const reason = signal.reason;
+      resolve({ error: reason });
+      signal.removeEventListener('abort', onAbort);
+    };
+    if (signal.aborted) {
+      onAbort();
+      return;
+    }
+    signal.addEventListener('abort', onAbort, { once: true });
+  });
+
+  return {
+    promise,
+    clear: () => signal.removeEventListener('abort', onAbort),
+  };
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// ANTI-PATTERN: Creating Promise without exposing unhook/clear capability
+function leakySignalPromise(signal: AbortSignal) {
+  return new Promise((resolve) => {
+    // If signal does not abort, this closure retains outer references indefinitely
+    signal.addEventListener('abort', () => resolve(signal.reason));
+  });
+}
+```
+
+**VERIFICATION METHOD**:
+Execute 10,000 iterations of signal conversion and clearance under test; assert that the listener count on the signal remains zero (`expect(signal.listenerCount?.('abort') ?? 0).toBe(0)`).
+
+---
+
+
+---
+
+## 8935. State Checkpoint Atomic Swap and Integrity Gate (Harvested from pulumi/pulumi)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "State Checkpoint Atomic Swap and Integrity Gate",
+  "source": "pulumi/pulumi",
+  "source_url": "https://github.com/pulumi/pulumi",
+  "source_version": "3f4802f9",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-17T08:42:31.707Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-pulumi-pulumi",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [pulumi/pulumi](https://github.com/pulumi/pulumi) (Revision: `3f4802f9`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+State backends writing checkpoints **MUST** enforce atomic swap semantics (never write directly to the target state file or delete the source before replacement finishes) and **MUST** execute strict cryptographic and relational snapshot integrity verification on read. If integrity checking fails, execution **MUST** halt immediately and refuse to run the engine unless an explicit, logged override is provided.
+
+**WHY**:
+A half-written state file, a crashed process during file modification, or reading a checkpoint with corrupted parent-child URN relationships produces "split-brain" infrastructure state. The engine would lose track of live cloud resources, leading to dangling billable assets or destructive recreation of existing production infrastructure.
+
+**WHEN TO APPLY**:
+Any database, state store, or persistence layer managing deployment state, resource ownership trees, or financial/audit ledgers.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Extracted from pkg/backend/diy/state.go
+func (b *diyBackend) getSnapshot(ctx context.Context, secretsProvider secrets.Provider, ref *diyBackendReference) (*deploy.Snapshot, error) {
+    contract.Requiref(ref != nil, "ref", "must not be nil")
+
+    checkpoint, _, _, err := b.getCheckpoint(ctx, ref)
+    if err != nil {
+        return nil, fmt.Errorf("failed to load checkpoint: %w", err)
+    }
+
+    snap, err := stack.DeserializeCheckpoint(ctx, secretsProvider, checkpoint)
+    if err != nil {
+        return nil, err
+    }
+
+    // Strict integrity gate: Never proceed with corrupted DAG state
+    if !backend.DisableIntegrityChecking {
+        if err := snap.VerifyIntegrity(); err != nil {
+            if sie, ok := snapshot.AsSnapshotIntegrityError(err); ok {
+                var metadata *apitype.SnapshotIntegrityErrorMetadataV1
+                if snap.Metadata.IntegrityErrorMetadata != nil {
+                    metadata = &apitype.SnapshotIntegrityErrorMetadataV1{
+                        Version: snap.Metadata.IntegrityErrorMetadata.Version,
+                        Command: snap.Metadata.IntegrityErrorMetadata.Command,
+                        Error:   snap.Metadata.IntegrityErrorMetadata.Error,
+                    }
+                }
+                return nil, fmt.Errorf("snapshot integrity failure; refusing to use it: %w", sie.ForReadWithMetadata(metadata))
+            }
+            return nil, fmt.Errorf("snapshot integrity failure; refusing to use it: %w", err)
+        }
+    }
+
+    return snap, nil
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// ANTI-PATTERN: Overwriting state in-place without backup, omitting verification
+func (b *diyBackend) saveCheckpointUnsafe(ctx context.Context, file string, bytes []byte) error {
+    // VIOLATION 1: Writing directly to target file without backup or atomic rename
+    // If process is SIGKILLed here, the checkpoint is zeroed or truncated!
+    return b.bucket.WriteAll(ctx, file, bytes, nil)
+}
+
+func (b *diyBackend) getSnapshotUnsafe(ctx context.Context) (*deploy.Snapshot, error) {
+    // VIOLATION 2: Returning deserialized checkpoint directly without VerifyIntegrity()
+    snap, _ := stack.DeserializeCheckpoint(...)
+    return snap, nil // Passes dangling pointers or cyclic dependencies into engine
+}
+```
+
+**VERIFICATION METHOD**:
+Property test injecting artificial corruption into serialized JSON checkpoints:
+- Test 1: Cycle in parent-child URN chain. Assert `snap.VerifyIntegrity()` returns `SnapshotIntegrityError` and `getSnapshot` rejects execution.
+- Test 2: Process interruption test. Assert state backup remains valid and atomic swap prevents zero-length files when stream write fails midway.
+
+---
+
+
+---
+
+## 8936. Bidirectional Middle-Out Context Budget Truncation Invariant (Harvested from pulumi/pulumi)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Bidirectional Middle-Out Context Budget Truncation Invariant",
+  "source": "pulumi/pulumi",
+  "source_url": "https://github.com/pulumi/pulumi",
+  "source_version": "3f4802f9",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-17T08:42:32.372Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-pulumi-pulumi",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [pulumi/pulumi](https://github.com/pulumi/pulumi) (Revision: `3f4802f9`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When packaging large CLI event streams, error logs, or command diffs for consumption by an LLM or remote analytics service, the client **MUST** apply bidirectional "middle-out" truncation rather than head or tail truncation. The system **MUST** preserve both the beginning (initial execution commands, configuration, initialization events) and the end (panics, terminal stack traces, final summary counters) while excising content strictly from the center.
+
+**WHY**:
+LLMs diagnosing failed infrastructure deployments fail when head-truncated (losing the command invoked and input parameters) or tail-truncated (losing the actual fatal error, panic trace, or exit code). Middle execution logs predominantly consist of repetitive progress events, making them the optimal point for truncation.
+
+**WHEN TO APPLY**:
+AI agent tooling, copilot prompt payload synthesizers, log ingestion pipelines, and crash reporting layers with strict token/character quotas.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Extracted from pkg/backend/httpstate/client/ai.go
+const truncationNotice = "... (truncated) ..."
+
+func TruncateWithMiddleOut(content string, maxChars int) string {
+    // If content fits within quota, return unmodified
+    if len(content) <= maxChars {
+        return content
+    }
+
+    // Boundary condition: Quota smaller than or equal to notice text
+    if maxChars <= len(truncationNotice) {
+        if maxChars <= 0 {
+            return ""
+        }
+        return content[:maxChars]
+    }
+
+    // Allocate remaining character budget evenly between head and tail
+    remaining := maxChars - len(truncationNotice)
+    startLen := (remaining + 1) / 2
+    endLen := remaining / 2
+
+    // Retain head context and tail diagnostics, discarding intermediate spam
+    return content[:startLen] + truncationNotice + content[len(content)-endLen:]
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// ANTI-PATTERN: Naive head or tail log slicing
+func TruncateLogTail(content string, maxChars int) string {
+    // VIOLATION: Throws away root command, flags, and early initialization failures
+    if len(content) > maxChars {
+        return content[len(content)-maxChars:]
+    }
+    return content
+}
+
+func TruncateLogHead(content string, maxChars int) string {
+    // VIOLATION: Throws away panic message, fatal stack trace, and summary statistics
+    if len(content) > maxChars {
+        return content[:maxChars] + "..."
+    }
+    return content
+}
+```
+
+**VERIFICATION METHOD**:
+Automated unit test with varied string boundaries:
+- Input with length `< maxChars`: Verify exact match.
+- Input with `maxChars = len(truncationNotice)`: Verify no out-of-bounds slice indexing.
+- 500KB input with `maxChars = 4000`: Verify `len(result) == 4000`, `strings.HasPrefix(result, original[:1989]) == true`, and `strings.HasSuffix(result, original[len-1989:]) == true`.
+
+---
+
+
+---
+
+## 8937. Invariant Defense Against Concurrency TOCTOU in Filesystem Probing (Harvested from trinodb/trino)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Invariant Defense Against Concurrency TOCTOU in Filesystem Probing",
+  "source": "trinodb/trino",
+  "source_url": "https://github.com/trinodb/trino",
+  "source_version": "d97ac24e",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-17T08:43:35.794Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-trinodb-trino",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [trinodb/trino](https://github.com/trinodb/trino) (Revision: `d97ac24e`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+Code MUST NOT invoke existence checks (e.g., `Files.exists(path)`) prior to state read or write operations to decide flow control. Operations MUST directly attempt the required I/O operation and catch precise underlying platform exceptions (e.g., `NoSuchFileException`, `FileAlreadyExistsException`) within the operational boundary.
+
+**WHY**:
+Stateless checks (`Files.exists(path)`) create a Time-of-Check to Time-of-Use (TOCTOU) race condition. Between the return of `Files.exists()` and the execution of `Files.readString()`, concurrent processes or OS-level file operations can delete, truncate, or rewrite the resource. Relying on boolean pre-checks causes transient, hard-to-reproduce unhandled runtime failures (e.g., `NoSuchFileException` escaping to caller threads as an `UncheckedIOException`).
+
+**WHEN TO APPLY**:
+Apply across any filesystem access, token caching, credential retrieval, lock-file acquisition, or socket probing in multi-threaded or multi-process systems (Java NIO, Python `pathlib`, POSIX C/C++, Go `os`).
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```java
+// Production-grade pattern from io.trino.client.auth.external.SystemCachedKnownToken
+public Optional<Token> getToken()
+{
+    // Never do: if (!Files.exists(tokenFile)) return Optional.empty();
+    try {
+        String content = Files.readString(tokenFile).trim();
+        if (content.isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.of(new Token(content));
+    }
+    catch (NoSuchFileException e) {
+        // Safe: File was deleted or did not exist at the exact moment of open syscall
+        return Optional.empty();
+    }
+    catch (IOException e) {
+        throw new UncheckedIOException("Failed to read token from " + tokenFile, e);
+    }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```java
+// ANTI-PATTERN: TOCTOU race hazard
+public Optional<Token> getTokenBuggy()
+{
+    if (!Files.exists(tokenFile)) { // Time of check
+        return Optional.empty();
+    }
+    // Race window: Another thread/process can delete tokenFile here!
+    try {
+        String content = Files.readString(tokenFile).trim(); // Time of use -> Throws NoSuchFileException!
+        return Optional.of(new Token(content));
+    }
+    catch (IOException e) {
+        throw new UncheckedIOException(e); // Fatal crash on normal concurrent operation
+    }
+}
+```
+
+**VERIFICATION METHOD**:
+Enforce static analysis rule banning `Files.exists` immediately followed by `Files.read*` or `Files.newInputStream`. Verify via concurrent stress test spawning 1 writer loop and 1 reader loop over a single file path executing concurrently for >= 3 seconds without catching uncaught I/O exceptions.
+
+---
+
+
+---
+
+## 8938. Semantic Parity Guard for Dynamic Query Optimization Pushdown (Harvested from trinodb/trino)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Semantic Parity Guard for Dynamic Query Optimization Pushdown",
+  "source": "trinodb/trino",
+  "source_url": "https://github.com/trinodb/trino",
+  "source_version": "d97ac24e",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-17T08:43:36.461Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-trinodb-trino",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [trinodb/trino](https://github.com/trinodb/trino) (Revision: `d97ac24e`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+Optimizers MUST NOT convert or push down three-valued logic expressions (e.g., `IS NOT DISTINCT FROM`) into two-valued equality expressions (e.g., `=` or dynamic filters operating under standard equivalence) if the underlying domain type allows self-inequality (e.g., IEEE 754 `NaN`) or nested nullability (structural types: `ROW`, `ARRAY`, `MAP`).
+
+**WHY**:
+In standard SQL, dynamic filters operate via strict equivalence (`=`). Under strict equivalence, `NaN = NaN` is FALSE, and nested structural types containing nulls (e.g., `ROW(NULL) = ROW(NULL)`) evaluate to UNKNOWN/FALSE. Conversely, `IS NOT DISTINCT FROM` treats `NULL` as identical to `NULL` and `NaN` as identical to `NaN`. Mapping `IS NOT DISTINCT FROM` to dynamic filters without verifying type determinism silently prunes valid tuples from the probe side of joins, generating silent data corruption.
+
+**WHEN TO APPLY**:
+Query planners, predicate pushdown engines, distributed join optimizers, and expression rewriters targeting IEEE floating point types (`FLOAT`, `DOUBLE`), structural composite types (`STRUCT`/`ROW`, `ARRAY`, `MAP`), or variant/JSON types.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```java
+// Production-grade pattern from io.trino.sql.planner.optimizations.PredicatePushDown
+private boolean joinDynamicFilteringExpression(Expression expression, Collection<Symbol> rightSymbols)
+{
+    // ...
+    if (operator == IDENTICAL) { // IS NOT DISTINCT FROM
+        // Dynamic filters follow '=' semantics:
+        // NaN is not collected, and structural values containing nulls or NaN do not match themselves.
+        // Therefore, disallow dynamic filter generation if types can fail self-equality.
+        if (mayBeUnequalToItself(left.type()) || mayBeUnequalToItself(right.type())) {
+            return false;
+        }
+    }
+    // ...
+}
+
+private static boolean mayBeUnequalToItself(Type type)
+{
+    return typeHasNaN(type) || isStructural(type);
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```java
+// ANTI-PATTERN: Incomplete type check omitting structural composites
+if (operator == IDENTICAL) {
+    // Fails to check ARRAY, MAP, ROW types that contain NULL or NaN inside elements!
+    if (left.type().equals(REAL) || right.type().equals(REAL) || 
+        left.type().equals(DOUBLE) || right.type().equals(DOUBLE)) {
+        return false;
+    }
+    // Generates dynamic filter for ROW(NULL), dropping valid join matches!
+}
+```
+
+**VERIFICATION METHOD**:
+Execute join queries across composite types containing nulls (`ROW(NULL)`) and `NaN` (`ARRAY[nan()]`) under both dynamic filtering enabled and disabled sessions:
+`SELECT count(*) FROM t1 WHERE col IS NOT DISTINCT FROM (SELECT col FROM t2 WHERE id = 3)`. Assert query results match bit-for-bit.
+
+---
+
+
+---
+
+## 8939. Idempotent Precondition Retries on Storage Boundaries (Harvested from trinodb/trino)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Idempotent Precondition Retries on Storage Boundaries",
+  "source": "trinodb/trino",
+  "source_url": "https://github.com/trinodb/trino",
+  "source_version": "d97ac24e",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-17T08:43:37.150Z",
+  "ai_provider": "google-gemini-cloud-agent",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-trinodb-trino",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [trinodb/trino](https://github.com/trinodb/trino) (Revision: `d97ac24e`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing exclusive writes (`createExclusive`, `PUT if-none-match: *`, `O_CREAT | O_EXCL`) against eventual-consistency or retrying network clients, the operational layer MUST NOT interpret client-side precondition failures as definitive proof of conflict without validating if the existing entity's unique upload identifier matches the current transaction attempt.
+
+**WHY**:
+Network partitions or HTTP socket timeouts often occur *after* the remote storage engine (e.g., AWS S3, Azure Blob, GCS) successfully persists data and registers the metadata. Automatic client SDK retries replay the request with `If-None-Match: *`. The second request fails with `412 Precondition Failed` (`FileAlreadyExistsException`), falsely alerting the query engine that another concurrent writer won the race, aborting an otherwise valid single-producer operation.
+
+**WHEN TO APPLY**:
+Storage connectors, object-store adaptors (S3, GCS, ADLS), distributed lock managers, and consensus client writers executing conditional network writes.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```java
+// Safe exclusive write retry pattern with ownership confirmation
+public void createExclusiveWithRetry(Path target, byte[] data, String writeNonce) 
+        throws FileAlreadyExistsException, IOException
+{
+    try {
+        underlyingClient.putObjectConditional(target, data, /* ifNoneMatch */ "*");
+    }
+    catch (PreconditionFailedException e) {
+        // Did our previous attempt succeed before the connection severed?
+        ObjectMetadata meta = underlyingClient.getObjectMetadata(target);
+        if (writeNonce.equals(meta.getUserMetadata().get("write-nonce"))) {
+            // Self-write confirmed; succeed idempotently
+            return;
+        }
+        // Genuine collision with another writer
+        throw new FileAlreadyExistsException(target.toString());
+    }
+}
+```
+
+**NEGATIVE CONSTRAINT**:
+```java
+// ANTI-PATTERN: Direct translation of precondition failure to collision error
+public void createExclusiveBuggy(Path target, byte[] data) throws IOException {
+    try {
+        s3Client.putObject(PutObjectRequest.builder()
+            .bucket(bucket).key(key).ifNoneMatch("*").build(), 
+            RequestBody.fromBytes(data));
+    } catch (S3Exception e) {
+        if (e.statusCode() == 412) {
+            // BLIND ASSUMPTION: Another writer created this file.
+            // Reality: The first attempt succeeded, the TCP socket dropped, the retry hit 412!
+            throw new FileAlreadyExistsException(target.toString());
+        }
+        throw e;
+    }
+}
+```
+
+**VERIFICATION METHOD**:
+Implement a mock proxy injecting TCP RST after 100% of bytes are uploaded on initial `PUT`. Validate that subsequent SDK retries or application retry loops complete successfully without throwing `FileAlreadyExistsException`.
+
+---

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-17T08:32:20.798Z",
-  "total_records": 1499,
+  "last_updated": "2026-11-17T08:46:52.426Z",
+  "total_records": 1508,
   "domains": {
     "A": {
       "total": 9,
@@ -722,7 +722,7 @@
       ]
     },
     "G": {
-      "total": 281,
+      "total": 282,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -1004,11 +1004,12 @@
         "domain_intelligence-architecture-intelligence-storybookjs-storybook-core-invariants",
         "domain_intelligence-architecture-intelligence-storybookjs-storybook-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-avajs-ava-core-invariants",
-        "domain_intelligence-architecture-intelligence-avajs-ava-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-avajs-ava-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-pulumi-pulumi-learnings-core-invariants"
       ]
     },
     "H": {
-      "total": 352,
+      "total": 359,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1361,7 +1362,14 @@
         "DOM-H-61F97060",
         "DOM-H-E05381FB",
         "DOM-H-9BC71D98",
-        "domain_intelligence-technical-construction-intelligence-react-hook-form-react-hook-form-learnings-co"
+        "domain_intelligence-technical-construction-intelligence-react-hook-form-react-hook-form-learnings-co",
+        "domain_intelligence-technical-construction-intelligence-dubzzz-fast-check-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-trinodb-trino-core-invariants",
+        "DOM-H-DC7CEA2A",
+        "domain_intelligence-technical-construction-intelligence-dubzzz-fast-check-learnings-core-invariants",
+        "DOM-H-C6C068D9",
+        "domain_intelligence-technical-construction-intelligence-trinodb-trino-learnings-core-invariants",
+        "DOM-H-A32D66BE"
       ]
     },
     "I": {
@@ -1473,7 +1481,7 @@
       ]
     },
     "K": {
-      "total": 67,
+      "total": 68,
       "record_ids": [
         "DOM-K-353B93D6",
         "DOM-K-76C43650",
@@ -1541,7 +1549,8 @@
         "domain_intelligence-quality-verification-intelligence-appwrite-appwrite-learnings-core-invariants",
         "DOM-K-642A388A",
         "DOM-K-8B2A4B0A",
-        "DOM-K-93409B61"
+        "DOM-K-93409B61",
+        "DOM-K-D4FDB7F4"
       ]
     },
     "L": {
@@ -26105,6 +26114,187 @@
       "repository": "react-hook-form-react-hook-form-learnings",
       "content_hash": "f1ed23530cb6f1409482edcf3a1a6c95d8460c4eae412e5b7619d2e73b6cccdd",
       "created_at": "2026-11-17T08:32:18.557Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-dubzzz-fast-check-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-dubzzz-fast-check-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: dubzzz/fast-check Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-dubzzz-fast-check-technical-construction-intelligence-dubzzz-fast-check-core-inv.md",
+      "repository": "dubzzz/fast-check",
+      "content_hash": "bc8f176adf29688795af11782d75ab106a111b9fbd8c13bd97e59e828c4a2082",
+      "created_at": "2026-11-17T08:42:32.968Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-trinodb-trino-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-trinodb-trino-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: trinodb/trino Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-trinodb-trino-technical-construction-intelligence-trinodb-trino-core-invariants.md",
+      "repository": "trinodb/trino",
+      "content_hash": "53081ae3c9167f0eca01e415e6f677b5085e5cfddc0ccfac5effa9ecabdb3bf3",
+      "created_at": "2026-11-17T08:43:38.455Z"
+    },
+    "DOM-H-DC7CEA2A": {
+      "record_id": "DOM-H-DC7CEA2A",
+      "domain_letter": "H",
+      "domain_id": "technical_construction",
+      "domain_name": "Technical Construction Intelligence",
+      "secondary_domains": [],
+      "title": "Silent Pass on Synchronous Predicate Timeout Overrun (BUG-FASTCHECK-7573)",
+      "content": "Synchronous code cannot be interrupted cooperatively in single-threaded runtimes, but its completion duration can and must be measured against monotonic time before validating success.",
+      "content_hash": "1c173eaa7a925b94c12570a989c6e5c472398f6409ce3b75c02ead3e30eb5e70",
+      "summary": "The runner assumed single-threaded execution guarantees meant synchronous timeouts could not be tracked. Because `setTimeout` callbacks cann -> Synchronous code cannot be interrupted cooperatively in single-threaded runtimes, but its completion duration can and must be measured again",
+      "provenance": {
+        "source_uri": "project://dubzzz-fast-check/dubzzz-fast-check-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-17T08:43:41.497Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (dubzzz-fast-check)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Commit `d7278047`, PR #7573, test suite in `packages/fast-check/src/check/plugin/TimeoutPlugin.spec.ts`."
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-17T08:44:16.990Z"
+    },
+    "DOM-K-D4FDB7F4": {
+      "record_id": "DOM-K-D4FDB7F4",
+      "domain_letter": "K",
+      "domain_id": "quality_verification",
+      "domain_name": "Quality & Verification Intelligence",
+      "secondary_domains": [],
+      "title": "Lifecycle Hook Execution Reversal & Asynchronous Collapse (BUG-FASTCHECK-LIFECYCLE)",
+      "content": "Teardown hooks must execute in reverse order (LIFO), and teardown errors must never mask primary assertion failures.",
+      "content_hash": "e3863b21d69c05a9b0160dc6182cc91fa326cc4c52e5180b8626e37e14220a84",
+      "summary": "Index alignment between dynamic teardown callbacks returned from `beforeEach` and statically declared `afterHooks` was out of order when map -> Teardown hooks must execute in reverse order (LIFO), and teardown errors must never mask primary assertion failures.",
+      "provenance": {
+        "source_uri": "project://dubzzz-fast-check/dubzzz-fast-check-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-17T08:43:41.497Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (dubzzz-fast-check)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "`packages/fast-check/src/check/plugin/LifeCyclePlugins.ts`, lines 18–39 and 100–160."
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 1,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-17T08:44:59.264Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-dubzzz-fast-check-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-dubzzz-fast-check-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: dubzzz-fast-check-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-dubzzz-fast-check-learnings-technical-construction-intelligence-dubzzz-fast-chec.md",
+      "repository": "dubzzz-fast-check-learnings",
+      "content_hash": "79087483ea802de1b0280044c5f21b6fbc7302bfd55c5a9a2f91910440246e15",
+      "created_at": "2026-11-17T08:45:00.163Z"
+    },
+    "DOM-H-C6C068D9": {
+      "record_id": "DOM-H-C6C068D9",
+      "domain_letter": "H",
+      "domain_id": "technical_construction",
+      "domain_name": "Technical Construction Intelligence",
+      "secondary_domains": [],
+      "title": "Dynamic Filters Pushdown Inconsistency on IS NOT DISTINCT FROM (BUG-OPT-02)",
+      "content": "When bridging distinct relational operators in compiler optimization passes, verify complete domain type reflexivity ($x \\equiv x$) across all recursive and composite data types.",
+      "content_hash": "83c46dcc869946fe8f70c105c9b6714390a9bdf3bee49fc11cd771d334e1fe9b",
+      "summary": "The optimizer only checked whether the column types were `REAL` or `DOUBLE` directly, ignoring complex/structural types (`ROW`, `ARRAY`, `MA -> When bridging distinct relational operators in compiler optimization passes, verify complete domain type reflexivity ($x \\equiv x$) across a",
+      "provenance": {
+        "source_uri": "project://trinodb-trino/trinodb-trino-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-17T08:45:00.625Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (trinodb-trino)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Commit `715f09a9`. Files: `PredicatePushDown.java`, `TestDynamicFilter.java`, `AbstractTestDynamicRowFiltering.java`."
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 1,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-17T08:45:48.911Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-trinodb-trino-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-trinodb-trino-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: trinodb-trino-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-trinodb-trino-learnings-technical-construction-intelligence-trinodb-trino-learni.md",
+      "repository": "trinodb-trino-learnings",
+      "content_hash": "3b8bc9d0ee450c754720884746f76e49d618d635f2e50a8c716495876132a6f5",
+      "created_at": "2026-11-17T08:45:49.842Z"
+    },
+    "DOM-H-A32D66BE": {
+      "record_id": "DOM-H-A32D66BE",
+      "domain_letter": "H",
+      "domain_id": "technical_construction",
+      "domain_name": "Technical Construction Intelligence",
+      "secondary_domains": [],
+      "title": "Release Artifact Hash Mismatch from Concurrent CI/CD Jobs (BUG-PULUMI-02)",
+      "content": "Cryptographic checksum calculation MUST occur at the absolute terminal egress point of a release pipeline, strictly dependent on all in-place modification and code-signing steps.",
+      "content_hash": "40d05197572fd462c71f171957bc21ea8ea4d0fdffe1db73cc15e2fd75fcc216",
+      "summary": "A race condition in GitHub Actions release workflows. The job calculating `SHA512SUMS` ran concurrently with the artifact compression and co -> Cryptographic checksum calculation MUST occur at the absolute terminal egress point of a release pipeline, strictly dependent on all in-plac",
+      "provenance": {
+        "source_uri": "project://pulumi-pulumi/pulumi-pulumi-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-17T08:45:50.240Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (pulumi-pulumi)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Issue `#25685` (\"v3.275.0: SHA512SUMS don't match any release binary\")."
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 1,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-17T08:46:51.523Z"
+    },
+    "domain_intelligence-architecture-intelligence-pulumi-pulumi-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-pulumi-pulumi-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: pulumi-pulumi-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-pulumi-pulumi-learnings-architecture-intelligence-pulumi-pulumi-learnings-core-i.md",
+      "repository": "pulumi-pulumi-learnings",
+      "content_hash": "020165c3156b2823e6ac9c217728012016650a5ae3a16de28015085dd267c410",
+      "created_at": "2026-11-17T08:46:52.426Z"
     }
   }
 }

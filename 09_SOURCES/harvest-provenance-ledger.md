@@ -10534,3 +10534,9 @@ Every entry in this ledger must capture:
 | `learn-github-aquasecurity-trivy` | `https://github.com/aquasecurity/trivy` | `00b73947` | Multi-dimensional audit evidence | 2026-11-17T08:31:11.531Z |
 | `learn-dom-h-e05381fb` | `project://react-hook-form-react-hook-form` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/react-hook-form-react-hook-form-learnings.md` | 2026-11-17T08:31:42.217Z |
 | `learn-dom-h-9bc71d98` | `project://react-hook-form-react-hook-form` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/react-hook-form-react-hook-form-learnings.md` | 2026-11-17T08:32:18.031Z |
+| `learn-github-dubzzz-fast-check` | `https://github.com/dubzzz/fast-check` | `1114b71b` | Multi-dimensional audit evidence | 2026-11-17T08:42:32.136Z |
+| `learn-github-trinodb-trino` | `https://github.com/trinodb/trino` | `d97ac24e` | Multi-dimensional audit evidence | 2026-11-17T08:43:37.729Z |
+| `learn-dom-h-dc7cea2a` | `project://dubzzz-fast-check` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dubzzz-fast-check-learnings.md` | 2026-11-17T08:44:17.017Z |
+| `learn-dom-k-d4fdb7f4` | `project://dubzzz-fast-check` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dubzzz-fast-check-learnings.md` | 2026-11-17T08:44:59.290Z |
+| `learn-dom-h-c6c068d9` | `project://trinodb-trino` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/trinodb-trino-learnings.md` | 2026-11-17T08:45:48.936Z |
+| `learn-dom-h-a32d66be` | `project://pulumi-pulumi` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pulumi-pulumi-learnings.md` | 2026-11-17T08:46:51.548Z |

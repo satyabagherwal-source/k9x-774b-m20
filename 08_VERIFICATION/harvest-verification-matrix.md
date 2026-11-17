@@ -10501,3 +10501,9 @@
 | `CYCLE-20261117-NRMV` | `2026-11-17T08:31:11.527Z` | `aquasecurity/trivy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8928, Rule 8929, Rule 8930` | Yes (`08f64fdd...`) |
 | `CYCLE-2026-11-17-PROJ-EVOLVE` | `2026-11-17T08:31:42.217Z` | `react-hook-form-react-hook-form` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-E05381FB` [Domain H] | Yes (`a666d4ac...`) |
 | `CYCLE-2026-11-17-PROJ-EVOLVE` | `2026-11-17T08:32:18.031Z` | `react-hook-form-react-hook-form` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-9BC71D98` [Domain H] | Yes (`d2ffff9b...`) |
+| `CYCLE-20261117-2CSK` | `2026-11-17T08:42:32.132Z` | `dubzzz/fast-check` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8931, Rule 8932, Rule 8934` | Yes (`90336b5e...`) |
+| `CYCLE-20261117-3REK` | `2026-11-17T08:43:37.724Z` | `trinodb/trino` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8937, Rule 8938, Rule 8939` | Yes (`01a00965...`) |
+| `CYCLE-2026-11-17-PROJ-EVOLVE` | `2026-11-17T08:44:17.017Z` | `dubzzz-fast-check` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-DC7CEA2A` [Domain H] | Yes (`1c173eaa...`) |
+| `CYCLE-2026-11-17-PROJ-EVOLVE` | `2026-11-17T08:44:59.290Z` | `dubzzz-fast-check` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-K-D4FDB7F4` [Domain K] | Yes (`e3863b21...`) |
+| `CYCLE-2026-11-17-PROJ-EVOLVE` | `2026-11-17T08:45:48.936Z` | `trinodb-trino` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-C6C068D9` [Domain H] | Yes (`83c46dcc...`) |
+| `CYCLE-2026-11-17-PROJ-EVOLVE` | `2026-11-17T08:46:51.548Z` | `pulumi-pulumi` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-A32D66BE` [Domain H] | Yes (`40d05197...`) |

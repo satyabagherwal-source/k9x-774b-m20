@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-17T08:31:11.539Z",
+  "last_updated": "2026-11-17T08:43:37.740Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -7188,17 +7188,17 @@
     "pulumi/pulumi": {
       "repository": "pulumi/pulumi",
       "pipeline_mode": "CLOUD_HARVEST",
-      "stage": "VERIFIED",
-      "status": "VERIFIED_LEARNING",
+      "stage": "PROMOTED",
+      "status": "FAILED_PERSISTENCE",
       "learning_id": "learn-github-pulumi-pulumi",
-      "content_hash": "9ed3fc04618cb19a54ac19d4bd17c911730eeab617fb5900de0ede4120402533",
-      "verified_at": "2026-11-16T02:06:19.742Z",
+      "content_hash": "7ee1793c509840f8babe55dc3e62987d633850f5c593a2f7e76cc5eee797611f",
+      "verified_at": null,
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
-      "knowledge_index_updated": true,
-      "last_updated": "2026-11-16T02:06:19.742Z"
+      "knowledge_index_updated": false,
+      "last_updated": "2026-11-17T08:42:32.976Z"
     },
     "sqlpage/SQLPage": {
       "repository": "sqlpage/SQLPage",
@@ -7731,14 +7731,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-trinodb-trino",
-      "content_hash": "ef3d6562acb3a7ee1898cdd9e3d43d1966c0658cbd3734e4508d6eabefda07c7",
-      "verified_at": "2026-11-16T00:56:42.292Z",
+      "content_hash": "01a0096592c1741dc2e64f7acda30c4b8cbd1db2d8ddb063a929c5be2d1465de",
+      "verified_at": "2026-11-17T08:43:37.739Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-16T00:56:42.292Z"
+      "last_updated": "2026-11-17T08:43:37.739Z"
     },
     "pinterest/gestalt": {
       "repository": "pinterest/gestalt",
@@ -15411,14 +15411,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dubzzz-fast-check",
-      "content_hash": "580fe0ffc3f28cb86cbc49b52d24c3c2df0004571e2b43c62c02535ab6a66080",
-      "verified_at": "2026-11-12T21:56:39.478Z",
+      "content_hash": "90336b5e9394475b5f4c447bcd7aab111ce2da995503cf26555f3a72ab64f673",
+      "verified_at": "2026-11-17T08:42:32.147Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T21:56:39.478Z"
+      "last_updated": "2026-11-17T08:42:32.147Z"
     },
     "react/react-native": {
       "repository": "react/react-native",
