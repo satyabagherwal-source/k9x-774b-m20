@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-17T17:36:57.332Z",
-  "total_records": 1630,
+  "last_updated": "2026-11-17T17:50:09.514Z",
+  "total_records": 1632,
   "domains": {
     "A": {
       "total": 11,
@@ -48,7 +48,7 @@
       ]
     },
     "D": {
-      "total": 692,
+      "total": 694,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -741,7 +741,9 @@
         "domain_intelligence-research-knowledge-intelligence-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-ggu",
         "domain_intelligence-research-knowledge-intelligence-hf-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-",
         "domain_intelligence-research-knowledge-intelligence-comfy-org-fibo-2-0-core-invariants",
-        "domain_intelligence-research-knowledge-intelligence-hf-comfy-org-fibo-2-0-learnings-core-invariants"
+        "domain_intelligence-research-knowledge-intelligence-hf-comfy-org-fibo-2-0-learnings-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-krafton-raon-1-mini-preview-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-hf-krafton-raon-1-mini-preview-learnings-core-in"
       ]
     },
     "E": {
@@ -13320,8 +13322,8 @@
       "title": "Architecture Intelligence: BuilderIO/builder Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-builderio-builder-architecture-intelligence-builderio-builder-core-invariants.md",
       "repository": "BuilderIO/builder",
-      "content_hash": "610bd71849fb3e3930d753af09e900fa94d5f1b7b2e6f7effed3f7d21366e449",
-      "created_at": "2026-11-14T05:46:33.873Z"
+      "content_hash": "4ec61316000f29afc39ef5221d5f7343f1d168a5904467f2fdefe1f3e758b39f",
+      "created_at": "2026-11-17T17:50:04.628Z"
     },
     "domain_intelligence-technical-construction-intelligence-pixeltable-pixeltable-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-pixeltable-pixeltable-core-invariants",
@@ -13389,8 +13391,8 @@
       "title": "Architecture Intelligence: builderio-builder-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-builderio-builder-learnings-architecture-intelligence-builderio-builder-learning.md",
       "repository": "builderio-builder-learnings",
-      "content_hash": "52d9d45fb9a23c75a083e38b5d281de80463ffb16fcddadc5c0ae5aca2b889d9",
-      "created_at": "2026-11-14T05:47:17.924Z"
+      "content_hash": "8adac4863a802fdb08c2c9d276e659d47d2802520316dea1ac6adb7880afeb8b",
+      "created_at": "2026-11-17T17:50:08.692Z"
     },
     "domain_intelligence-technical-construction-intelligence-pixeltable-pixeltable-learnings-core-invaria": {
       "record_id": "domain_intelligence-technical-construction-intelligence-pixeltable-pixeltable-learnings-core-invaria",
@@ -22801,8 +22803,8 @@
       "title": "Research & Knowledge Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-zvec-ai-zvec-grep-learnings-research-knowledge-intelligence-zvec-ai-zvec-grep-le.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "9016bb62cb7980fa3e26bc5448ff33cf0200fcfa4c539302ab551c8e45872683",
-      "created_at": "2026-11-17T17:28:13.502Z"
+      "content_hash": "3b5a29637c0035b20654e3f4b79d8efd62dc61b71a9d794f19f8837780009e5f",
+      "created_at": "2026-11-17T17:50:09.514Z"
     },
     "domain_intelligence-technical-construction-intelligence-prof18-feed-flow-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-prof18-feed-flow-core-invariants",
@@ -27870,6 +27872,24 @@
       "repository": "hf-comfy-org-fibo-2.0-learnings",
       "content_hash": "0e6669e77494ed1d6b935c9a5d8060af253b1d3773c1eb1c532db46d59badca7",
       "created_at": "2026-11-17T17:36:55.758Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-krafton-raon-1-mini-preview-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-krafton-raon-1-mini-preview-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: KRAFTON/Raon-1-mini-preview Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-krafton-raon-1-mini-preview-research-knowledge-intelligence-krafton-raon-1-mi.md",
+      "repository": "KRAFTON/Raon-1-mini-preview",
+      "content_hash": "3ef020463259ee8b2b1b6b8cf4ad6297e5a32bfe4778c7dcd95d1abdf96356a9",
+      "created_at": "2026-11-17T17:49:55.455Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-krafton-raon-1-mini-preview-learnings-core-in": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-krafton-raon-1-mini-preview-learnings-core-in",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-krafton-raon-1-mini-preview-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-krafton-raon-1-mini-preview-learnings-research-knowledge-intelligence-hf-kraf.md",
+      "repository": "hf-krafton-raon-1-mini-preview-learnings",
+      "content_hash": "21005fae71594c75bf5fa17a26c14eccb40ddbf4291144372bb05a0c8826130f",
+      "created_at": "2026-11-17T17:50:07.879Z"
     }
   }
 }

@@ -10646,3 +10646,5 @@
 | `CYCLE-20261117-56TB` | `2026-11-17T17:36:37.055Z` | `Comfy-Org/Fibo-2.0` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-comfy-org-fibo-2.0-learnings.md` | Yes (`9e9c79a4...`) |
 | `CYCLE-20261117-5GJ3` | `2026-11-17T17:36:49.647Z` | `open-policy-agent/gatekeeper` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9022` | Yes (`8780100d...`) |
 | `CYCLE-20261117-5ID7` | `2026-11-17T17:36:52.027Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8012` | Yes (`0a266536...`) |
+| `CYCLE-20261117-MAOT` | `2026-11-17T17:49:55.229Z` | `KRAFTON/Raon-1-mini-preview` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-krafton-raon-1-mini-preview-learnings.md` | Yes (`f7de76d7...`) |
+| `CYCLE-20261117-MHMN` | `2026-11-17T17:50:04.223Z` | `BuilderIO/builder` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9023` | Yes (`96230bc3...`) |

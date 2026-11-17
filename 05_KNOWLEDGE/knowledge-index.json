@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-17T17:36:57.520Z",
-  "total_verified_learnings": 8918,
+  "last_updated": "2026-11-17T17:50:09.834Z",
+  "total_verified_learnings": 8919,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 20441,
+  "total_items": 20446,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112058,9 +112058,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "bc2f72187c77b324b1dddd433ef7b870cc5fe90eaa64a722ee2bafa551c4975d",
+      "content_hash": "542b4db5b6e2f83250381f364b1f8279b143e1ab88c9003a036f7c7f18730bbb",
       "domain_letter": "D",
-      "persisted_at": "2026-11-17T17:28:13.632Z"
+      "persisted_at": "2026-11-17T17:50:09.686Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112070,9 +112070,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "cda6437423fa9edcd9f91adac23ebd7a0266fa7a7b5d979559992619ab83b0e3",
+      "content_hash": "f30240da57f07df7c9ee3102bb570943bce255b0d6d3236ca0cdd082d4d03a8c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T17:28:13.745Z"
+      "persisted_at": "2026-11-17T17:50:09.834Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -224277,14 +224277,19 @@
       "slug": "builderio-builder",
       "platform": "github",
       "source_url": "https://github.com/BuilderIO/builder",
-      "source_version": "4f46c3a2",
-      "content_hash": "76eb9d0b5a8cde616e610db26e852104dab50d5c32f7fe6c241244983835ecb4",
+      "source_version": "aa20a509",
+      "content_hash": "96230bc3fe5797d5a075b2158fa1ec6f5f0a69acaffd59c371d44e520677e296",
       "dossier_path": "07_PROJECT_LEARNING/builderio-builder-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/builderio-builder-learnings.md",
       "promoted_rules": [
         {
           "number": 8453,
           "title": "fix[sdks][localization]: ENG-14530 keep explicit locale when previewing drafts",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9023,
+          "title": "fix[gen1][gen2][image]: ENG-14379 stop adding the full-size original image to sr",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -224293,7 +224298,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T05:46:33.386Z",
+      "verified_at": "2026-11-17T17:50:04.015Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -224335,10 +224340,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-builderio-builder-architecture-intelligence-builderio-builder-core-invariants.md",
       "title": "Architecture Intelligence: BuilderIO/builder Core Invariants",
       "repository": "BuilderIO/builder",
-      "source_version": "4f46c3a2",
-      "content_hash": "610bd71849fb3e3930d753af09e900fa94d5f1b7b2e6f7effed3f7d21366e449",
+      "source_version": "aa20a509",
+      "content_hash": "4ec61316000f29afc39ef5221d5f7343f1d168a5904467f2fdefe1f3e758b39f",
       "domain_letter": "G",
-      "persisted_at": "2026-11-14T05:46:33.873Z"
+      "persisted_at": "2026-11-17T17:50:04.628Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-builderio-builder": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-builderio-builder",
@@ -224347,10 +224352,10 @@
       "relative_path": "08_VERIFICATION/builderio-builder-verification-protocol-empirical-defect-shield-for-builderio-bu.md",
       "title": "Verification Protocol: Empirical Defect Shield for BuilderIO/builder",
       "repository": "BuilderIO/builder",
-      "source_version": "4f46c3a2",
-      "content_hash": "b18fdeeac6667bf0f05b04bbaf5411838904ed6636509094d44b20a19dcfbc3e",
+      "source_version": "aa20a509",
+      "content_hash": "6e82ffe244390c11687177172ead834f3f9cbb3f1fa889e767d33ad11bd7ea9f",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T05:46:33.990Z"
+      "persisted_at": "2026-11-17T17:50:04.802Z"
     },
     "learn-github-pixeltable-pixeltable": {
       "learning_id": "learn-github-pixeltable-pixeltable",
@@ -224487,9 +224492,9 @@
       "title": "Architecture Intelligence: builderio-builder-learnings Core Invariants",
       "repository": "builderio-builder-learnings",
       "source_version": "HEAD",
-      "content_hash": "52d9d45fb9a23c75a083e38b5d281de80463ffb16fcddadc5c0ae5aca2b889d9",
+      "content_hash": "8adac4863a802fdb08c2c9d276e659d47d2802520316dea1ac6adb7880afeb8b",
       "domain_letter": "G",
-      "persisted_at": "2026-11-14T05:47:17.924Z"
+      "persisted_at": "2026-11-17T17:50:08.692Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-builderio-builder-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-builderio-builder-learnings",
@@ -224499,9 +224504,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for builderio-builder-learnings",
       "repository": "builderio-builder-learnings",
       "source_version": "HEAD",
-      "content_hash": "747b6d48805926f4933ac9083cfcad5595e9a7f607941c1f943d6c16e858ec1c",
+      "content_hash": "562bb3794a2c910251ab136b21002f1692b750c23d8783f67e8f140584863921",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T05:47:18.054Z"
+      "persisted_at": "2026-11-17T17:50:08.867Z"
     },
     "domain_intelligence-technical-construction-intelligence-pixeltable-pixeltable-learnings-core-invaria": {
       "item_id": "domain_intelligence-technical-construction-intelligence-pixeltable-pixeltable-learnings-core-invaria",
@@ -251454,9 +251459,9 @@
       "title": "Research & Knowledge Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "9016bb62cb7980fa3e26bc5448ff33cf0200fcfa4c539302ab551c8e45872683",
+      "content_hash": "3b5a29637c0035b20654e3f4b79d8efd62dc61b71a9d794f19f8837780009e5f",
       "domain_letter": "D",
-      "persisted_at": "2026-11-17T17:28:13.502Z"
+      "persisted_at": "2026-11-17T17:50:09.514Z"
     },
     "learn-github-prof18-feed-flow": {
       "learning_id": "learn-github-prof18-feed-flow",
@@ -274016,13 +274021,13 @@
       "item_id": "candidate_directive-rust-address-the-remaining-issues-in-418",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-UE68-rust-address-the-remaining-issues-in-418.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-MLL3-rust-address-the-remaining-issues-in-418.md",
       "title": "rust): address the remaining issues in #418",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "e844a080f8fd766acf82196ab5914db58304f4ae8118b01bf6bcccc8f95c050d",
+      "content_hash": "2a5c429bfe237a0a44c3186df2a8e92ac02c6852963dd3782a92f096732872b7",
       "domain_letter": "D",
-      "persisted_at": "2026-11-17T17:28:13.379Z"
+      "persisted_at": "2026-11-17T17:50:09.357Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-m3-1-flash-learnings-core-i": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-m3-1-flash-learnings-core-i",
@@ -274225,6 +274230,83 @@
       "content_hash": "0e6669e77494ed1d6b935c9a5d8060af253b1d3773c1eb1c532db46d59badca7",
       "domain_letter": "D",
       "persisted_at": "2026-11-17T17:36:55.758Z"
+    },
+    "learn-huggingface-krafton-raon-1-mini-preview": {
+      "learning_id": "learn-huggingface-krafton-raon-1-mini-preview",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "KRAFTON/Raon-1-mini-preview",
+      "repository": "KRAFTON/Raon-1-mini-preview",
+      "slug": "hf-krafton-raon-1-mini-preview",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/KRAFTON/Raon-1-mini-preview",
+      "source_version": "hf-krafton-raon-1-mini-preview",
+      "content_hash": "f7de76d77d48c5d9ec8b6f2cfc2982c72a56addd4975eac0e4289e42e6310129",
+      "dossier_path": "07_PROJECT_LEARNING/hf-krafton-raon-1-mini-preview-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-krafton-raon-1-mini-preview-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-17T17:49:54.994Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-krafton-raon-1-mini-preview-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-krafton-raon-1-mini-preview-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-krafton-raon-1-mini-preview-research-knowledge-intelligence-krafton-raon-1-mi.md",
+      "title": "Research & Knowledge Intelligence: KRAFTON/Raon-1-mini-preview Core Invariants",
+      "repository": "KRAFTON/Raon-1-mini-preview",
+      "source_version": "hf-krafton-raon-1-mini-preview",
+      "content_hash": "3ef020463259ee8b2b1b6b8cf4ad6297e5a32bfe4778c7dcd95d1abdf96356a9",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-17T17:49:55.455Z"
+    },
+    "rule-9023": {
+      "learning_id": "rule-9023",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9023,
+      "title": "fix[gen1][gen2][image]: ENG-14379 stop adding the full-size original image to sr",
+      "source_url": "https://github.com/BuilderIO/builder",
+      "source_version": "aa20a509",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T17:50:04.015Z"
+    },
+    "candidate_directive-fix-gen1-gen2-image-eng-14379-stop-adding-the-full-size-original-image-to-sr": {
+      "item_id": "candidate_directive-fix-gen1-gen2-image-eng-14379-stop-adding-the-full-size-original-image-to-sr",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-MKYB-fix-gen1-gen2-image-eng-14379-stop-adding-the-full-size-original-image-to-sr.md",
+      "title": "fix[gen1][gen2][image]: ENG-14379 stop adding the full-size original image to sr",
+      "repository": "builderio-builder-learnings",
+      "source_version": "HEAD",
+      "content_hash": "9f50eaf785510911430bafc991e9cd5bfa394c9211738dc24342c925e1ba8d09",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-17T17:50:08.532Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-krafton-raon-1-mini-preview-learnings-core-in": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-krafton-raon-1-mini-preview-learnings-core-in",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-krafton-raon-1-mini-preview-learnings-research-knowledge-intelligence-hf-kraf.md",
+      "title": "Research & Knowledge Intelligence: hf-krafton-raon-1-mini-preview-learnings Core Invariants",
+      "repository": "hf-krafton-raon-1-mini-preview-learnings",
+      "source_version": "HEAD",
+      "content_hash": "21005fae71594c75bf5fa17a26c14eccb40ddbf4291144372bb05a0c8826130f",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-17T17:50:07.879Z"
     }
   },
   "ai-builder-brain": {

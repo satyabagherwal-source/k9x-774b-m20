@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-17T17:36:56.917Z",
+  "updated_at": "2026-11-17T17:50:08.289Z",
   "stats": {
-    "total_discovered": 5070,
-    "approved_pending_harvest": 4781,
+    "total_discovered": 5073,
+    "approved_pending_harvest": 4784,
     "harvested_count": 0,
     "rejected_count": 289,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 4768,
+      "COMMUNITY_AND_EXPERT": 4771,
       "OFFICIAL_DOCUMENTATION": 163,
       "STANDARDS_AND_SPECIFICATIONS": 106,
       "ENGINEERING_BLOGS": 3,
@@ -109538,6 +109538,72 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
         "fileName": "aleo-labs-protocol-snarkos-learnings.md"
+      }
+    },
+    "SRC-49192539582B": {
+      "id": "SRC-49192539582B",
+      "url": "https://builder-io.atlassian.net/browse/ENG-14379",
+      "title": "https://builder-io.atlassian.net/browse/ENG-14379",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T17:50:08.199Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/builderio-builder-learnings.md",
+        "fileName": "builderio-builder-learnings.md"
+      }
+    },
+    "SRC-3AF92B7B3FBB": {
+      "id": "SRC-3AF92B7B3FBB",
+      "url": "https://cdn.shopify.com/s/files/1/0374/6457/2041/products/valerie-elash-o1Ic6JdypmA-unsplash.jpg?v=1592506853",
+      "title": "https://cdn.shopify.com/s/files/1/0374/6457/2041/products/valerie-elash-o1Ic6JdypmA-unsplash.jpg?v=1592506853",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T17:50:08.243Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/builderio-builder-learnings.md",
+        "fileName": "builderio-builder-learnings.md"
+      }
+    },
+    "SRC-02F56239BE9D": {
+      "id": "SRC-02F56239BE9D",
+      "url": "https://github.com/BuilderIO/builder/pull/4938",
+      "title": "https://github.com/BuilderIO/builder/pull/4938",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T17:50:08.289Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/builderio-builder-learnings.md",
+        "fileName": "builderio-builder-learnings.md"
       }
     }
   }

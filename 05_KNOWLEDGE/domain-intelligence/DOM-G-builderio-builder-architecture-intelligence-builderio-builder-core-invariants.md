@@ -4,24 +4,24 @@
 {
   "source_repository": "BuilderIO/builder",
   "source_url": "https://github.com/BuilderIO/builder",
-  "source_version": "4f46c3a2",
+  "source_version": "aa20a509",
   "license": "MIT",
-  "timestamp": "2026-11-14T05:46:33.755Z",
+  "timestamp": "2026-11-17T17:50:04.465Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-builderio-builder",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [BuilderIO/builder](https://github.com/BuilderIO/builder) (Revision: `4f46c3a2`).  
-> **License**: MIT | **Timestamp**: `2026-11-14T05:46:33.755Z`  
+> **Provenance**: Harvested from [BuilderIO/builder](https://github.com/BuilderIO/builder) (Revision: `aa20a509`).  
+> **License**: MIT | **Timestamp**: `2026-11-17T17:50:04.465Z`  
 > **Learning ID**: `learn-github-builderio-builder`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), F (Design Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence)
-- **Confidence Rating**: 66%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), F (Design Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 72%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from BuilderIO/builder:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/builderio-builder-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/BuilderIO/builder](https://github.com/BuilderIO/builder))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-14T05:46:32.560Z  
+> **Harvest Timestamp**: 2026-11-17T17:50:03.088Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Visual Development for React, Vue, Svelte, Qwik, and more
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 8892 stars
+- **Stars / Engagement**: 8890 stars
 
 ---
 
@@ -619,13 +619,173 @@ export { builder } from './src/constants/builder';
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `728e2e61` (2026-11-12)
-**Commit Message**: fix[sdks][localization]: ENG-14530 keep explicit locale when previewing drafts (#4934)
+### Incident Patch 1: `d02cc7ea` (2026-11-16)
+**Commit Message**: fix[gen1][gen2][image]: ENG-14379 stop adding the full-size original image to srcset (#4938)
 
-**File**: `.changeset/gentle-hotels-cry.md` (added, +12/-0)
+## Description
+The Image block adds the original image URL to the end of its generated
+srcset. If that URL has no `?width=`, which is the default for uploaded
+images, the entry gets no `width` descriptor. Browsers treat an entry
+like that as 1x, so on standard-density screens they often pick it and
+download the full-size original instead of a resized version.
+
+**Fix:**
+- Add the original URL only when it has a width and add the matching
+descriptor (e.g. 800w).
+- Read width from anywhere in the query string. Before, it was only
+found when it was the first parameter.
+- For Shopify images, drop the extra original URL.
+
+**Link to JIRA ticket (if applicable):**
+https://builder-io.atlassian.net/browse/ENG-14379
+
+**Screenshot/Clip**
+If relevant, add a screenshot or clip of the changes you made.
+
+**File**: `packages/react/src/blocks/Image.tsx` (modified, +8/-10)
 ```diff
-@@ -0,0 +1,12 @@
+@@ -71,26 +71,24 @@ export function getSrcSet(url: string): string {
+   const sizes = [100, 200, 400, 800, 1200, 1600, 2000];
+ 
+   if (url.match(/builder\.io/)) {
+-    let srcUrl = url;
+-    const widthInSrc = Number(url.split('?width=')[1]);
+-    if (!isNaN(widthInSrc)) {
+-      srcUrl = `${srcUrl} ${widthInSrc}w`;
+-    }
++    const widthInSrc = Number(url.match(/[?&]width=(\d+)/)?.[1]);
+ 
++    // A candidate without a width descriptor is treated as 1x and can win over
++    // the resized ones, so the original is only kept when its width is known.
+     return sizes
+       .filter(size => size !== widthInSrc)
+       .map(size => `${updateQueryParam(url, 'width', size)} ${size}w`)
+-      .concat([srcUrl])
++      .concat(isNaN(widthInSrc) ? [] : [`${url} ${widthInSrc}w`])
+       .join(', ');
+   }
+ 
+   if (url.match(/cdn\.shopify\.com/)) {
+-    return sizes
++    const candidates = sizes
+       .map(size => [getShopifyImageUrl(url, `${size}x${size}`), size])
+       .filter(([sizeUrl]) => !!sizeUrl)
+-      .map(([sizeUrl, size]) => `${sizeUrl} ${size}w`)
+-      .concat([url])
+-      .join(', ');
++      .map(([sizeUrl, size]) => `${sizeUrl} ${size}w`);
++
++    return candidates.length ? candidates.join(', ') : url;
+   }
+ 
+   return url;
+```
+
+**File**: `packages/react/test/__snapshots__/image.test.tsx.snap` (modified, +3/-3)
+```diff
+@@ -33,7 +33,7 @@ exports[`Image Amp image 1`] = `
+             loading="lazy"
+             role="presentation"
+             src="https://cdn.shopify.com/s/files/1/0374/6457/2041/products/valerie-elash-o1Ic6JdypmA-unsplash.jpg?v=1592506853"
+-            srcSet="//cdn.shopify.com/s/files/1/0374/6457/2041/products/valerie-elash-o1Ic6JdypmA-unsplash_100x100.jpg?v=1592506853 100w, //cdn.shopify.com/s/files/1/0374/6457/2041/products/valerie-elash-o1Ic6JdypmA-unsplash_200x200.jpg?v=1592506853 200w, //cdn.shopify.com/s/files/1/0374/6457/2041/products/valerie-elash-o1Ic6JdypmA-unsplash_400x400.jpg?v=1592506853 400w, //cdn.shopify.com/s/files/1/0374/6457/2041/products/valerie-elash-o1Ic6JdypmA-unsplash_800x800.jpg?v=1592506853 800w, //cdn.shopify.com/s/files/1/0374/6457/2041/products/valerie-elash-o1Ic6JdypmA-unsplash_1200x1200.jpg?v=1592506853 1200w, //cdn.shopify.com/s/files/1/0374/6457/2041/products/valerie-elash-o1Ic6JdypmA-unsplash_1600x1600.jpg?v=1592506853 1600w, //cdn.shopify.com/s/files/1/0374/6457/2041/products/valerie-elash-o1Ic6JdypmA-unsplash_2000x2000.jpg?v=1592506853 2000w, https://cdn.shopify.com/s/files/1/0374/6457/2041/products/valerie-elash-o1Ic6JdypmA-unsplash.jpg?v=1592506853"
++            srcSet="//cdn.shopify.com/s/files/1/0374/6457/2041/products/valerie-elash-o1Ic6JdypmA-unsplash_100x100.jpg?v=1592506853 100w, //cdn.shopify.com/s/files/1/0374/6457/2041/products/valerie-elash-o1Ic6JdypmA-unsplash_200x200.jpg?v=1592506853 200w, //cdn.shopify.com/s/files/1/0374/6457/2041/products/valerie-elash-o1Ic6JdypmA-unsplash_400x400.jpg?v=1592506853 400w, //cdn.shopify.com/s/files/1/0374/6457/2041/products/valerie-elash-o1Ic6JdypmA-unsplash_800x800.jpg?v=1592506853 800w, //cdn.shopify.com/s/files/1/0374/6457/2041/products/valerie-elash-o1Ic6JdypmA-unsplash_1200x1200.jpg?v=1592506853 1200w, //cdn.shopify.com/s/files/1/0374/6457/2041/products/valerie-elash-o1Ic6JdypmA-unsplash_1600x1600.jpg?v=1592506853 1600w, //cdn.shopify.com/s/files/1/0374/6457/2041/products/valerie-elash-o1Ic6JdypmA-unsplash_2000x2000.jpg?v=1592506853 2000w"
+           />
+         </div>
+         <img
+@@ -128,7 +128,7 @@ exports[`Image Shopify image url 1`] = `
+     onLoad={[Function]}
+     role="presentation"
+     src="https://cdn.shopify.com/s/files/1/0374/6457/2041/products/valerie-elash-o1Ic6JdypmA-unsplash.jpg?v=1592506853"
+-    srcSet="//cdn.shopify.com/s/files/1/0374/6457/2041/products/valerie-elash-o1Ic6JdypmA-unsplash_100x100.jpg?v=1592506853 100w, //cdn.shopify.com/s/files/1/0374/6457/2041/products/valerie-elash-o1Ic6JdypmA-unsplash_200x200.jpg?v=1592506853 200w, //cdn.shopify.com/s/files/1/0374/6457/2041/products/valerie-elash-o1Ic6JdypmA-unsplash_400x400.jpg?v=1592506853 400w, //cdn.shopify.com/s/files/1/0374/6457/2041/products/valerie-elash-o1Ic6JdypmA-unsplash_800x800.jpg?v=1592506853 800w, //cdn.shopify.com/s/files/1/0374/6457/2041/products/valerie-elash-o1Ic6JdypmA-unsplash_1200x1200.jpg?v=1592506853 1200w, //cdn.shopify.com/s/files/1/0374/6457/2041/products/valerie-elash-o1Ic6JdypmA-unsplash_1600x1600.jpg?v=1592506853 1600w, //cdn.shopify.com/s/files/1/0374/6457/2041/products/valerie-elash-o1Ic6JdypmA-unsplash_2000x2000.jpg?v=1592506853 2000w, https://cdn.shopify.com/s/files/1/0374/6457/2041/products/valerie-elash-o1Ic6JdypmA-unsplash.jpg?v=1592506853"
++    srcSet="//cdn.shopify.com/s/files/1/0374/6457/2041/products/valerie-elash-o1Ic6JdypmA-unsplash_100x100.jpg?v=1592506853 100w, //cdn.shopify.com/s/files/1/0374/6457/2041/products/valerie-elash-o1Ic6JdypmA-unsplash_200x200.jpg?v=1592506853 200w, //cdn.shopify.com/s/files/1/0374/6457/2041/products/valerie-elash-o1Ic6JdypmA-unsplash_400x400.jpg?v=1592506853 400w, //cdn.shopify.com/s/files/1/0374/6457/2041/products/valerie-elash-o1Ic6JdypmA-unsplash_800x800.jpg?v=1592506853 800w, //cdn.shopify.com/s/files/1/0374/6457/2041/products/valerie-elash-o1Ic6JdypmA-unsplash_1200x1200.jpg?v=1592506853 1200w, //cdn.shopify.com/s/files/1/0374/6457/2041/products/valerie-elash-o1Ic6JdypmA-unsplash_1600x1600.jpg?v=1592506853 1600w, //cdn.shopify.com/s/files/1/0374/6457/2041/products/valerie-elash-o1Ic6JdypmA-unsplash_2000x2000.jpg?v=1592506853 2000w"
+   />
+ </picture>
+ `;
+@@ -168,7 +168,7 @@ exports[`Image with responsive styles 1`] = `
+               role="presentation"
+               sizes="(max-width: 991px) 100vw, 345px"
+               src="https://cdn.shopify.com/s/files/1/0374/6457/2041/products/valerie-elash-o1Ic6JdypmA-unsplash.jpg?v=1592506853"
+-              srcSet="//cdn.shopify.com/s/files/1/0374/6457/2041/products/valerie-elash-o1Ic6JdypmA-unsplash_100x100.jpg?v=1592506853 100w, //cdn.shopify.com/s/files/1/0374/6457/2041/products/valerie-elash-o1Ic6JdypmA-unsplash_200x200.jpg?v=1592506853 200w, //cdn.shopify.com/s/files/1/0374/6457/2041/products/valerie-elash-o1Ic6JdypmA-unsplash_400x400.jpg?v=1592506853 400w, //cdn.shopify.com/s/files/1/0374/6457/2041/products/valerie-elash-o1Ic6JdypmA-unsplash_800x800.jpg?v=1592506853 800w, //cdn.shopify.com/s/files/1/0374/6457/2041/produc
+```
+
+**File**: `packages/sdks-tests/src/e2e-tests/blocks.spec.ts` (modified, +4/-2)
+```diff
+@@ -118,9 +118,11 @@ test.describe('Blocks', () => {
+           // RN SDK does not support object-fit
+           'object-fit': checkIsRN(sdk) ? 'fill' : 'contain',
+         },
++        // The mock serves a 600x400 file for every width, so the browser picking
++        // the 1200w candidate (density 1200 / 71vw) renders it at 600 / 1.32.
+         {
+-          width: '600px',
+-          height: '400px',
++          width: '454.406px',
++          height: '302.938px',
+         },
+       ];
+ 
+```
+
+**File**: `packages/sdks/src/blocks/image/image.helpers.ts` (modified, +8/-10)
+```diff
+@@ -49,26 +49,24 @@ export function getSrcSet(url: string): string {
+   const sizes = [100, 200, 400, 800, 1200, 1600, 2000];
+ 
+   if (url.match(/builder\.io/)) {
+-    let srcUrl = url;
+-    const widthInSrc = Number(url.split('?width=')[1]);
+-    if (!isNaN(widthInSrc)) {
+-      srcUrl = `${srcUrl} ${widthInSrc}w`;
+-    }
++    const widthInSrc = Number(url.match(/[?&]width=(\d+)/)?.[1]);
+ 
++    // A candidate without a width descriptor is treated as 1x and can win over
++    // the resized ones, so the original is only kept when its width is known.
+     return sizes
+       .filter((size) => size !== widthInSrc)
+       .map((size) => `${updateQueryParam(url, 'width', size)} ${size}w`)
+-      .concat([srcUrl])
++      .concat(isNaN(widthInSrc) ? [] : [`${url} ${widthInSrc}w`])
+       .join(', ');
+   }
+ 
+   if (url.match(/cdn\.shopify\.com/)) {
+-    return sizes
++    const candidates = sizes
+       .map((size) => [getShopifyImageUrl(url, `${size}x${size}`), size])
+       .filter(([sizeUrl]) => !!sizeUrl)
+-      .map(([sizeUrl, size]) => `${sizeUrl} ${size}w`)
+-      .concat([url])
+-      .join(', ');
++      .map(([sizeUrl, size]) => `${sizeUrl} ${size}w`);
++
++    return candidates.length ? candidates.join(', ') : url;
+   }
+ 
+   return url;
+```
+
+---
+
+### Incident Patch 2: `87d1e021` (2026-11-16)
+**Commit Message**: chore[gen1][gen2][image]: ENG-14379 add changeset for srcset width fix (#4939)
+
+## Description
+
+Small follow up on https://github.com/BuilderIO/builder/pull/4938,
+adding changeset.
+
+**Link to JIRA ticket (if applicable):**
+https://builder-io.atlassian.net/browse/ENG-14379
+
+**Screenshot/Clip**
+NA
+
+**File**: `.changeset/quiet-pens-shrink.md` (added, +13/-0)
+```diff
+@@ -0,0 +1,13 @@
 +---
++"@builder.io/react": patch
 +"@builder.io/sdk-angular": patch
 +"@builder.io/sdk-react-nextjs": patch
 +"@builder.io/sdk-qwik": patch
@@ -636,359 +796,364 @@ Observed empirical fixes and code patches:
 +"@builder.io/sdk-vue": patch
 +---
 +
-+Fix draft previews of localized content so the locale passed to `fetchOneEntry` or `<Content>` takes precedence over `builder.options.locale` in the preview URL.
-```
-
-**File**: `packages/sdks/src/components/content/components/enable-editor.lite.tsx` (modified, +1/-0)
-```diff
-@@ -439,6 +439,7 @@ export default function EnableEditor(props: BuilderEditorProps) {
-           model: props.model,
-           apiKey: props.apiKey,
-           apiVersion: props.builderContextSignal.value.apiVersion,
-+          ...(props.locale ? { locale: props.locale } : {}),
-           ...(searchParamPreviewModel === 'BUILDER_STUDIO' &&
-           props.context?.symbolId
-             ? { query: { id: props.context.symbolId } }
-```
-
-**File**: `packages/sdks/src/functions/get-content/generate-content-url.test.ts` (modified, +28/-0)
-```diff
-@@ -322,6 +322,34 @@ describe('Generate Content URL', () => {
-     }
-   });
- 
-+  test('does not allow builder.options.locale in the URL to override an explicit locale', () => {
-+    vi.stubGlobal('window', {
-+      location: {
-+        search: '?builder.preview=page&builder.options.locale=Default',
-+        pathname: '/fr-fr/page',
-+        host: 'www.example.com',
-+      },
-+    });
-+    vi.stubGlobal('document', {});
-+
-+    try {
-+      const withLocale = generateContentUrl({
-+        apiKey: testKey,
-+        model: testModel,
-+        locale: 'fr-FR',
-+      });
-+      const withoutLocale = generateContentUrl({
-+        apiKey: testKey,
-+        model: testModel,
-+      });
-+
-+      expect(withLocale.searchParams.get('locale')).toBe('fr-FR');
-+      expect(withoutLocale.searchParams.get('locale')).toBe('Default');
-+    } finally {
-+      vi.unstubAllGlobals();
-+    }
-+  });
-+
-   test('converts Studio boolean user attributes from query parameters', () => {
-     vi.stubGlobal('window', {
-       location: {
-```
-
-**File**: `packages/sdks/src/functions/get-content/generate-content-url.ts` (modified, +4/-3)
-```diff
-@@ -109,9 +109,10 @@ export const generateContentUrl = (options: GetContentOptions): URL => {
- 
-   const flattened = flatten(queryOptions);
-   for (const key in flattened) {
--    if (key !== 'apiKey') {
--      url.searchParams.set(key, String(flattened[key]));
--    }
-+    if (key === 'apiKey') continue;
-+    // explicit `locale` wins over `builder.options.locale` from the preview URL, matching Gen1
-+    if (key === 'locale' && locale) continue;
-+    url.searchParams.set(key, String(flattened[key]));
-   }
- 
-   if (Object.keys(finalUserAttributes).length > 0) {
++Fix Image block srcset so the original image URL is only included when it has a width descriptor, preventing browsers from downloading the full-size original image on standard-density screens.
 ```
 
 ---
 
-### Incident Patch 2: `f3be7078` (2026-11-11)
-**Commit Message**: fix[react][personalization]: ENG-14324 preserve shared styles before discarding variant templates (#4922)
+### Incident Patch 3: `24a41a1b` (2026-11-16)
+**Commit Message**: fix[sdks][personalizationContainer]: ENG-14357 omit other-locale variant content from server-rendered HTML (#4936)
 
-**File**: `.changeset/two-masks-brush.md` (added, +5/-0)
+**File**: `.changeset/spicy-ducks-argue.md` (added, +9/-0)
 ```diff
-@@ -0,0 +1,5 @@
+@@ -0,0 +1,9 @@
 +---
 +"@builder.io/react": patch
++"@builder.io/sdk-qwik": patch
++"@builder.io/sdk-react": patch
++"@builder.io/sdk-svelte": patch
++"@builder.io/sdk-vue": patch
 +---
 +
-+Fix missing first-paint styles for non-first personalization variants and default content, preventing layout shifts during hydration.
++Fix Variant Container server HTML leaking content for other locales. Variants whose locale targeting can't match the page locale are no longer rendered, and the inline personalization script no longer embeds variant blocks.
 ```
 
-**File**: `packages/react/src/blocks/PersonalizationContainer.tsx` (modified, +52/-13)
+**File**: `packages/personalization-utils/src/trim-html.test.ts` (modified, +15/-0)
 ```diff
-@@ -8,6 +8,41 @@ import {
-   Query,
- } from '../functions/filter-with-custom-targeting';
- import { BuilderStoreContext } from '../store/builder-store';
-+import { CacheProvider, EmotionCache, SerializedStyles, withEmotionCache } from '@emotion/core';
-+
-+type ServerEmotionCache = EmotionCache & {
-+  insert(
-+    selector: string,
-+    serialized: SerializedStyles,
-+    sheet: EmotionCache['sheet'],
-+    shouldCache: boolean
-+  ): string | void;
-+};
-+
-+const PersonalizationStyles = withEmotionCache<{ children: React.ReactNode }>(
-+  ({ children }, parentCache) => {
-+    const cache: ServerEmotionCache = {
-+      ...parentCache,
-+      compat: undefined,
-+      inserted: {},
-+      registered: { ...parentCache.registered },
-+      insert(selector, serialized, sheet, shouldCache) {
-+        // A template must not suppress style emission in another branch.
-+        const rules = (parentCache as ServerEmotionCache).insert(
-+          selector,
-+          serialized,
-+          sheet,
-+          false
-+        );
-+        if (shouldCache) {
-+          cache.inserted[serialized.name] = true;
-+        }
-+        return rules;
-+      },
-+    };
-+    return <CacheProvider value={cache}>{children}</CacheProvider>;
-+  }
-+);
+@@ -47,6 +47,21 @@ describe('trimHtml', () => {
+     expect(result).not.toContain('Variant 2 Content');
+   });
  
- export type PersonalizationContainerProps = {
-   children: React.ReactNode;
-@@ -97,12 +132,14 @@ export function PersonalizationContainer(props: PersonalizationContainerProps) {
++  it('should apply the page locale from the script over the user attribute locale', () => {
++    const html = `
++      <div class="builder-personalization-container">
++        <template data-variant-id="builder-123-0"></template>
++        <script id="variants-script-builder-123">
++          (function() { var attributes = {}; attributes.locale = "en-US"; var variants = [{"query":[{"property":"locale","operator":"is","value":"fr-FR"}]}]; })();
++        </script>
++        <div>Default Content</div>
++      </div>
++    `;
++    const result = trimHtml(html, { userAttributes: { locale: 'fr-FR' } }).html;
++    expect(result).toContain('<div>Default Content</div>');
++    expect(result).not.toContain('<template');
++  });
++
+   it('should handle multiple personalization containers', () => {
+     const multipleContainersHtml = `
+       ${baseHtml}
+```
+
+**File**: `packages/personalization-utils/src/utils.ts` (modified, +6/-1)
+```diff
+@@ -117,9 +117,14 @@ function processContainer($: CheerioAPI, $container: Cheerio<any>, userAttribute
+ 
+     if (variantsMatch) {
+       let winningVariantIndex = -1;
++      // Mirror the inline script: the page locale wins, and variants for other locales are rendered empty.
++      const localeMatch = scriptContent.match(/attributes\.locale = "([^"]*)";/);
+       try {
+         const variantsData = JSON.parse(variantsMatch[1]);
+-        winningVariantIndex = findWinningVariant(variantsData, userAttributes);
++        winningVariantIndex = findWinningVariant(
++          variantsData,
++          localeMatch ? { ...userAttributes, locale: localeMatch[1] } : userAttributes
++        );
+       } catch (e) {
+         console.error('Error parsing variants script');
+       }
+```
+
+**File**: `packages/react/src/blocks/PersonalizationContainer.tsx` (modified, +20/-8)
+```diff
+@@ -132,14 +132,17 @@ export function PersonalizationContainer(props: PersonalizationContainerProps) {
          >
            {props.variants?.map((variant, index) => (
              <template key={index} data-variant-id={props.builderBlock?.id! + index}>
--              <BuilderBlocks
--                blocks={variant.blocks}
--                parentElementId={props.builderBlock?.id}
--                dataPath={`component.options.variants.${index}.blocks`}
--                child
--              />
-+              <PersonalizationStyles>
-+                <BuilderBlocks
-+                  blocks={variant.blocks}
-+                  parentElementId={props.builderBlock?.id}
-+                  dataPath={`component.options.variants.${index}.blocks`}
-+                  child
-+                />
-+              </PersonalizationStyles>
+-              <PersonalizationStyles>
+-                <BuilderBlocks
+-                  blocks={variant.blocks}
+-                  parentElementId={props.builderBlock?.id}
+-                  dataPath={`component.options.variants.${index}.blocks`}
+-                  child
+-                />
+-              </PersonalizationStyles>
++              {/* Empty placeholder keeps positional lookups (e.g. personalization-utils) intact */}
++              {isVariantForLocale(variant.query, props.builderState.state?.locale) && (
++                <PersonalizationStyles>
++                  <BuilderBlocks
++                    blocks={variant.blocks}
++                    parentElementId={props.builderBlock?.id}
++                    dataPath={`component.options.variants.${index}.blocks`}
++                    child
++                  />
++                </PersonalizationStyles>
++              )}
              </template>
            ))}
            <script
-@@ -116,12 +153,14 @@ export function PersonalizationContainer(props: PersonalizationContainerProps) {
-               ),
-             }}
-           />
--          <BuilderBlocks
--            blocks={props.builderBlock?.children}
--            parentElementId={props.builderBlock?.id}
--            dataPath="this.children"
--            child
--          />
-+          <PersonalizationStyles>
-+            <BuilderBlocks
-+              blocks={props.builderBlock?.children}
-+              parentElementId={props.builderBlock?.id}
-+              dataPath="this.children"
-+              child
-+            />
-+          </PersonalizationStyles>
-         </div>
-         <script
-           nonce={builderStore.context.nonce}
-@@ -303,7 +342,7 @@ function getPersonalizationScript(
-           if (winningVariant) {
-             var parentNode = winningVariant.parentNode;
-             var newParent = parentNode.cloneNode(false);
--            newParent.appendChild(winningVariant.content.firstChild);
-+            newParent.appendChild(winningVariant.content);
-             parentNode.parentNode.replaceChild(newParent, parentNode);
-             if (isDebug) {
-               console.debug('PersonalizationContainer', 'Winning variant Replaced:', winningVariant);
+@@ -294,6 +297,15 @@ Builder.registerComponent(PersonalizationContainer, {
+   ],
+ });
+ 
++// The inline script forces this locale, so variants targeting another locale can never win.
++function isVariantForLocale(query: Query[] | undefined, locale?: string) {
++  if (!locale) return true;
++  return filterWithCustomTargeting(
++    { locale },
++    (query || []).filter(q => q.property === 'locale')
++  );
++}
++
+ function getPersonalizationScript(
+   variants: PersonalizationContainerProps['variants'],
+   blockId: string,
 ```
 
-**File**: `packages/react/test/personalization-container-ssr.test.tsx` (added, +130/-0)
+**File**: `packages/react/test/personalization-container-ssr.test.tsx` (modified, +15/-2)
 ```diff
-@@ -0,0 +1,130 @@
-+import React from 'react';
-+import { renderToString } from 'react-dom/server';
-+import { CacheProvider, ClassNames, Global, keyframes } from '@emotion/core';
-+import createCache from '@emotion/cache';
-+import { JSDOM, CookieJar } from 'jsdom';
-+import { PersonalizationContainer } from '../src/blocks/PersonalizationContainer';
-+
-+const blockId = 'personalization-styles';
-+const animation = keyframes({ to: { opacity: 1 } });
-+const sharedStyles = { display: 'flex', padding: 40, animation: `${animation} 1s` };
-+
-+const VariantContent = ({ name }: { name: string }) => (
-+  <ClassNames>
-+    {({ css }) => {
-+      const className = css(sharedStyles);
-+      css({ '@font-face': { fontFamily: `variant-${name}`, src: `url('/${name}.woff2')` } });
-+      return (
-+        <div className={className}>
-+          <Global styles={{ body: { '--selected-variant': name } }} />
-+          <span data-content={name}>{name}</span>
-+        </div>
-+      );
-+    }}
-+  </ClassNames>
-+);
-+
-+const renderFixture = (key = 'css', compat = false) => {
-+  const cache = createCache({ key, nonce: 'test-nonce' });
-+  if (compat) cache.compat = true;
-+  const html = renderToString(
-+    <CacheProvider value={cache}>
-+      <PersonalizationContainer
-+        attributes={{}}
-+        builderBlock={{
-+          '@type': '@builder.io/sdk:Element',
-+          id: blockId,
-+          children: [<VariantContent key="default" name="English" />] as any,
-+        }}
-+        builderState={{ state: {} }}
-+        previewingIndex={null}
-+        variants={
-+          [
-+            {
-+              query: [{ property: 'locale', operator: 'is', value: 'fr-FR' }],
-+              blocks: [<VariantContent key="fr" name="French" />],
-+            },
-+            {
-+              query: [{ property: 'locale', operator: 'is', value: 'ca-ES' }],
-+              blocks: [<VariantContent key="ca" name="Catalan" />],
-+            },
-+          ] as any
-+        }
-+      >
-+        {null}
-+      </PersonalizationContainer>
-+    </CacheProvider>
-+  );
-+  return { html, cache };
-+};
-+
-+const runInBrowser = (html: string, locale: string) => {
-+  const cookieJar = new CookieJar();
-+  cookieJar.setCookieSync(
-+    `builder.userAttributes=${JSON.stringify({ locale })}; Path=/`,
-+    'http://localhost/'
-+  );
-+  return new JSDOM(html, { url: 'http://localhost/', cookieJar, runScripts: 'dangerously' });
-+};
-+
-+describe('personalization SSR shared styles', () => {
-+  [
-+    { key: 'custom', compat: false },
-+    { key: 'css', compat: true },
-+  ].forEach(({ key, compat }) =>
-+    test(`preserves the parent cache configuration for ${key} with compat=${compat}`, () => {
-+      const { html, cache } = renderFixture(key, compat);
-+      expect(cache.inserted).toEqual({});
-+      expect(cache.registered).toEqual({});
-+      const dom = runInBrowser(html, 'ca-ES');
-+      const styles = Array.from(dom.window.document.querySelectorAll(`style[data-emotion-${key}]`));
-+      expect(styles.length).toBeGreaterThan(0);
-+      const rules = styles.map(style => style.textContent).join('');
-+      expect(rules).toContain('padding:40px');
-+      expect(rules).not.toContain('variant-French');
-+      styles.forEach(style => expect(style.getAttribute('nonce')).toBe('test-nonce'));
-+      dom.window.close();
-+    })
-+  );
-+
-+  test('Emotion groups shared styles and variant-only font rules in the same tag', () => {
-+    const { html } = renderFixture();
-+    const dom = new JSDOM(html);
-+    const template = dom.window.document.querySelector('template')!;
-+    const groupedStyle = Array.from(template.content.querySelectorAll('style')).find(style =>
-+      style.textContent!.includes('padding:40px')
-+    )!;
-+    expect(groupedStyle.textContent).toContain('@font-face');
-+    expect(groupedStyle.textContent).toContain('variant-French');
+@@ -24,7 +24,7 @@ const VariantContent = ({ name }: { name: string }) => (
+   </ClassNames>
+ );
+ 
+-const renderFixture = (key = 'css', compat = false) => {
++const renderFixture = (key = 'css', compat = false, locale?: string) => {
+   const cache = createCache({ key, nonce: 'test-nonce' });
+   if (compat) cache.compat = true;
+   const html = renderToString(
+@@ -36,7 +36,7 @@ const renderFixture = (key = 'css', compat = false) => {
+           id: blockId,
+           children: [<VariantContent key="default" name="English" />] as any,
+         }}
+-        builderState={{ state: {} }}
++        builderState={{ state: locale ? { locale } : {} }}
+         previewingIndex={null}
+         variants={
+           [
+@@ -67,6 +67,19 @@ const runInBrowser = (html: string, locale: string) => {
+   return new JSDOM(html, { url: 'http://localhost/', cookieJar, runScripts: 'dangerously' });
+ };
+ 
++describe('personalization SSR locale pruning', () => {
++  test('omits content of variants targeting another locale but keeps placeholders', () => {
++    const { html } = renderFixture('css', false, 'fr-FR');
++    expect(html).not.toContain('Catalan');
++    const dom = runInBrowser(html, 'ca-ES');
++    expect(dom.window.document.querySelector('[data-content]')!.textContent).toBe('French');
 +    dom.window.close();
++
++    const before = new JSDOM(html).window.document;
++    expect(before.querySelectorAll('template[data-variant-id]').length).toBe(2);
++  });
++});
++
+ describe('personalization SSR shared styles', () => {
+   [
+     { key: 'custom', compat: false },
+```
+
+**File**: `packages/sdks/src/blocks/personalization-container/helpers.ts` (modified, +29/-2)
+```diff
+@@ -9,6 +9,7 @@ import {
+   PERSONALIZATION_SCRIPT,
+   STUDIO_USER_ATTRIBUTES_SCRIPT,
+   UPDATE_VISIBILITY_STYLES_SCRIPT,
++  filterWithCustomTargeting,
+ } from './helpers/inlined-fns.js';
+ import type { PersonalizationContainerProps } from './personalization-container.types.js';
+ 
+@@ -200,20 +201,46 @@ export const getInitPersonalizationVariantsFnsScriptString = () => {
+ 
+ const isHydrationTarget = TARGET === 'react';
+ 
++/**
++ * The inline scripts force the page locale over user attributes, so a variant
++ * targeting another locale can never win and must not ship in the HTML.
++ */
++export function isVariantForLocale(
++  query: Query[] | undefined,
++  locale?: string
++) {
++  if (!locale) return true;
++  return filterWithCustomTargeting(
++    { locale },
++    (query || []).filter((q) => q.property === 'locale')
++  );
++}
++
++const getTargetingOnly = (
++  variants: PersonalizationContainerProps['variants']
++) =>
++  JSON.stringify(
++    (variants || []).map((v) => ({
++      query: v.query,
++      startDate: v.startDate,
++      endDate: v.endDate,
++    }))
++  );
++
+ export const getPersonalizationScript = (
+   variants: PersonalizationContainerProps['variants'],
+   blockId: string,
+   locale?: string
+ ) => {
+-  return `window.${BUILDER_IO_PERSONALIZATION_SCRIPT_FN_NAME}(${JSON.stringify(variants)}, "${blockId}", ${isHydrationTarget}${locale ? `, "${locale}"` : ''})`;
++  return `window.${BUILDER_IO_PERSONALIZATION_SCRIPT_FN_NAME}(${getTargetingOnly(variants)}, "${blockId}", ${isHydrationTarget}${locale ? `, "${locale}"` : ''})`;
+ };
+ 
+ export const getUpdateVisibilityStylesScript = (
+   variants: PersonalizationContainerProps['variants'],
+   blockId: string,
+   locale?: string
+ ) => {
+-  return `window.${UPDATE_VARIANT_VISIBILITY_SCRIPT_FN_NAME}(${JSON.stringify(variants)}, "${blockId}", ${isHydrationTarget}${locale ? `, "${locale}"` : ''})`;
++  return `window.${UPDATE_VARIANT_VISIBILITY_SCRIPT_FN_NAME}(${getTargetingOnly(variants)}, "${blockId}", ${isHydrationTarget}${locale ? `, "${locale}"` : ''})`;
+ };
+ 
+ export { filterWithCustomTargeting } from './helpers/inlined-fns.js';
+```
+
+**File**: `packages/sdks/src/blocks/personalization-container/is-variant-for-locale.test.ts` (added, +61/-0)
+```diff
+@@ -0,0 +1,61 @@
++import {
++  getPersonalizationScript,
++  isVariantForLocale,
++  type Query,
++} from './helpers.js';
++
++const localeIs = (value: string | string[]): Query => ({
++  property: 'locale',
++  operator: 'is',
++  value,
++});
++
++describe('isVariantForLocale', () => {
++  test('keeps every variant when no locale is known', () => {
++    expect(isVariantForLocale([localeIs('fr-FR')], undefined)).toBe(true);
 +  });
 +
-+  [
-+    ['fr-FR', 'French'],
-+    ['ca-ES', 'Catalan'],
-+    ['en-US', 'English'],
-+  ].forEach(([locale, name]) =>
-+    test(`keeps only ${locale} content and its styles without hydration`, () => {
-+      const { html } = renderFixture();
-+      const dom = runInBrowser(html, locale);
-+      const document = dom.window.document;
-+      const styles = Array.from(document.querySelectorAll('style[data-emotion-css]'));
-+      const rules = styles.map(style => style.textContent).join('');
-+      expect(document.querySelector('[data-content]')!.textContent).toBe(name);
-+      expect(document.querySelector('template')).toBeNull();
-+      expect(rules).toContain('padding:40px');
-+      expect(rules).toContain(`@keyframes ${animation.name}`);
-+      expect(rules).toContain(`variant-${name}`);
-+      expect(rules).toContain(`--selected-variant:${name}`);
-+      styles.forEach(style => expect(style.getAttribute('nonce')).toBe('test-nonce'));
-+      ['French', 'Catalan', 'English']
-+        .filter(value => value !== name)
-+        .forEach(value => {
-+          expect(rules).not.toContain(`variant-${value}`);
-+        
++  test('keeps variants without targeting', () => {
++    expect(isVariantForLocale(undefined, 'en-US')).toBe(true);
++    expect(isVariantForLocale([], 'en-US')).toBe(true);
++  });
++
++  test('drops variants targeting another locale', () => {
++    expect(isVariantForLocale([localeIs('fr-FR')], 'en-US')).toBe(false);
++    expect(isVariantForLocale([localeIs(['fr-FR', 'de-DE'])], 'en-US')).toBe(
++      false
++    );
++  });
++
++  test('keeps variants targeting the page locale', () => {
++    expect(isVariantForLocale([localeIs('en-US')], 'en-US')).toBe(true);
++    expect(isVariantForLocale([localeIs(['fr-FR', 'en-US'])], 'en-US')).toBe(
++      true
++    );
++  });
++
++  test('ignores non-locale rules that depend on visitor attributes', () => {
++    const query: Query[] = [
++      localeIs('en-US'),
++      { property: 'loggedIn', operator: 'is', value: true },
++    ];
++    expect(isVariantForLocale(query, 'en-US')).toBe(true);
++  });
++});
++
++describe('getPersonalizationScript', () => {
++  test('does not inline variant blocks', () => {
++    const script = getPersonalizationScript(
++      [
++        {
++          query: [localeIs('fr-FR')],
++          blocks: [{ '@type': '@builder.io/sdk:Element', id: 'secret-fr' }],
++        },
++      ],
++      'block-1',
++      'en-US'
++    );
++    expect(script).not.toContain('secret-fr');
++    expect(script).toContain('fr-FR');
++  });
++});
 ```
 
----
-
-### Incident Patch 3: `58ae677a` (2026-11-11)
-**Commit Message**: fix[smartling][translationJob]: rewrite job-publish-hook webhook when its private key is stale (#4930)
-
-**File**: `plugins/smartling/src/plugin.tsx` (modified, +12/-5)
+**File**: `packages/sdks/src/blocks/personalization-container/personalization-container.lite.tsx` (modified, +23/-7)
 ```diff
-@@ -215,11 +215,18 @@ const initializeSmartlingPlugin = async () => {
-       pkg.name
-     );
-     
--    // Check if webhook URL needs updating - update whenever the URL is different
--    const currentWebhookUrl = existingModel.webhooks?.[0]?.url;
--    const newWebhookUrl = updatedTemplate.webhooks[0].url;
--    
--    if (currentWebhookUrl !== newWebhookUrl) {
-+    const currentWebhook = existingModel.webhooks?.[0];
-+    const newWebhook = updatedTemplate.webhooks[0];
-+    const getAuthHeader = (webhook: any) =>
-+      webhook?.customHeaders?.find((header: any) => header.name === 'Authorization')?.value;
-+
-+    // The webhook keeps its own copy of the private key, so a rotated or deactivated key 401s
-+    // job-publish-hook until the header is rewritten.
-+    const urlChanged = currentWebhook?.url !== newWebhook.url;
-+    const keyChanged =
-+      Boolean(pluginPrivateKey) && getAuthHeader(currentWebhook) !== getAuthHeader(newWebhook);
-+
-+    if (urlChanged || keyChanged) {
-       // Update the existing model with new webhook configuration
-       existingModel.webhooks = updatedTemplate.webhooks;
-     }
+@@ -25,6 +25,7 @@ import {
+   getBlocksToRender,
+   getPersonalizationScript,
+   getUpdateVisibilityStylesScript,
++  isVariantForLocale,
+   SDKS_REQUIRING_RESET_APPROACH,
+ } from './helpers.js';
+ import type { PersonalizationContainerProps } from './personalization-container.types.js';
+@@ -94,6 +95,16 @@ export default function PersonalizationContainer(
+         );
+       });
+     },
++    get localeVariants() {
++      return (props.variants || [])
++        .map((variant, index) => ({ variant, index }))
++        .filter((item) =>
++          isVariantForLocale(
++            item.variant.query,
++            props.builderContext.value?.rootState?.locale as string | undefined
++          )
++        );
++    },
+     get blocksToRender() {
+       return getBlocksToRender({
+         variants: props.variants,
+@@ -202,26 +213,31 @@ export default function PersonalizationContainer(
+             scriptStr={state.updateVisibilityStylesScript}
+             id={`variants-visibility-script-${props.builderBlock?.id}`}
+           />
+-          <For each={props.variants}>
+-            {(variant, index) => (
++          <For each={state.localeVariants}>
++            {(
++              item,
++              // Angular output needs a named index; Solid rejects a `_` prefix.
++              // eslint-disable-next-line @typescript-eslint/no-unused-vars
++              index
++            ) => (
+               <Blocks
+-                key={`${props.builderBlock?.id}-${index}`}
++                key={`${props.builderBlock?.id}-${item.index}`}
+                 BlocksWrapperProps={{
+                   ...props.builderContext.value?.BlocksWrapperProps,
+                   'aria-hidden': true,
+                   hidden: true,
+-                  'data-variant-id': `${props.builderBlock?.id}-${index}`,
++                  'data-variant-id': `${props.builderBlock?.id}-${item.index}`,
+                 }}
+-                blocks={variant.blocks}
++                blocks={item.variant.blocks}
+                 parent={props.builderBlock?.id}
+-                path={`component.options.variants.${index}.blocks`}
++                path={`component.options.variants.${item.index}.blocks`}
+                 context={props.builderContext}
+                 registeredComponents={props.builderComponents}
+               >
+                 <InlinedScript
+                   nonce={props.builderContext.value?.nonce || ''}
+                   scriptStr={state.scriptStr}
+-                  id={`variants-script-${props.builderBlock?.id}-${index}`}
++                  id={`variants-script-${props.builderBlock?.id}-${item.index}`}
+                 />
+               </Blocks>
+             )}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4941** (2026-11-17): 📦 Publish SDKs (@builder-io-integration[bot])
+- **PR #4940** (2026-11-16): 📦 Publish SDKs (@builder-io-integration[bot])
+- **PR #4939** (2026-11-16): chore[gen1][gen2][image]: ENG-14379 add changeset for srcset width fix (@AishwaryaParab)
+- **PR #4938** (2026-11-16): fix[gen1][gen2][image]: ENG-14379 stop adding the full-size original image to srcset (@AishwaryaParab)
+- **PR #4936** (2026-11-16): fix[sdks][personalizationContainer]: ENG-14357 omit other-locale variant content from server-rendered HTML (@floating-dynamo)
 - **PR #4935** (2026-11-12): 📦 Publish SDKs (@builder-io-integration[bot])
-- **PR #4934** (2026-11-12): fix[sdks][localization]: ENG-14530 keep explicit locale when previewing drafts (@floating-dynamo)
-- **PR #4933** (2026-11-12): 📦 Publish SDKs (@builder-io-integration[bot])
-- **PR #4932** (2026-11-11): chore[smartling]: bump smartling plugin to 0.1.7 (@floating-dynamo)
-- **PR #4931** (2026-11-11): 📦 Publish SDKs (@builder-io-integration[bot])
-- **PR #4930** (2026-11-11): fix[smartling][translationJob]: rewrite job-publish-hook webhook when its private key is stale (@floating-dynamo)
 
 ---
 
@@ -1008,42 +1173,47 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. fix[sdks][localization]: ENG-14530 keep explicit locale when previewing drafts
+## X. fix[gen1][gen2][image]: ENG-14379 stop adding the full-size original image to sr
 
 **RULE**:
-When implementing operations in `.changeset/gentle-hotels-cry.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in BuilderIO/builder. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/react/src/blocks/Image.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in BuilderIO/builder. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `728e2e61`: fix[sdks][localization]: ENG-14530 keep explicit locale when previewing drafts. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d02cc7ea`: fix[gen1][gen2][image]: ENG-14379 stop adding the full-size original image to srcset. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changeset/gentle-hotels-cry.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/react/src/blocks/Image.tsx`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
----
-"@builder.io/sdk-angular": patch
-"@builder.io/sdk-react-nextjs": patch
-"@builder.io/sdk-qwik": patch
-"@builder.io/sdk-react": patch
-"@builder.io/sdk-react-native": patch
-"@builder.io/sdk-solid": patch
-"@builder.io/sdk-svelte": patch
-"@builder.io/sdk-vue": patch
----
+    const widthInSrc = Number(url.match(/[?&]width=(\d+)/)?.[1]);
+    // A candidate without a width descriptor is treated as 1x and can win over
+    // the resized ones, so the original is only kept when its width is known.
+      .concat(isNaN(widthInSrc) ? [] : [`${url} ${widthInSrc}w`])
+    const candidates = sizes
+      .map(([sizeUrl, size]) => `${sizeUrl} ${size}w`);
 
-Fix draft previews of localized content so the locale passed to `fetchOneEntry` or `<Content>` takes precedence over `builder.options.locale` in the preview URL.
+    return candidates.length ? candidates.join(', ') : url;
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+    let srcUrl = url;
+    const widthInSrc = Number(url.split('?width=')[1]);
+    if (!isNaN(widthInSrc)) {
+      srcUrl = `${srcUrl} ${widthInSrc}w`;
+    }
+      .concat([srcUrl])
+    return sizes
+      .map(([sizeUrl, size]) => `${sizeUrl} ${size}w`)
+      .concat([url])
+      .join(', ');
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `728e2e61` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d02cc7ea` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

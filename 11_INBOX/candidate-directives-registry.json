@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T17:36:57.167Z",
+  "last_updated": "2026-11-17T17:50:09.357Z",
   "directives": [
     {
       "id": "CD-001",
@@ -25122,11 +25122,11 @@
       "domain_letter": "G"
     },
     {
-      "id": "CD-UE68",
+      "id": "CD-MLL3",
       "directive_title": "rust): address the remaining issues in #418",
       "source_repo": "zvec-ai-zvec-grep-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-UE68-rust-address-the-remaining-issues-in-418.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-MLL3-rust-address-the-remaining-issues-in-418.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-17",
@@ -25208,6 +25208,35 @@
       "source_repo": "aleo-labs-protocol-snarkos",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-956372-empirical-invariant-guard-in-cargo-lock.md",
+      "staged_date": "2026-11-17"
+    },
+    {
+      "id": "CD-MKYB",
+      "directive_title": "fix[gen1][gen2][image]: ENG-14379 stop adding the full-size original image to sr",
+      "source_repo": "builderio-builder-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-MKYB-fix-gen1-gen2-image-eng-14379-stop-adding-the-full-size-original-image-to-sr.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-17",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-663546",
+      "directive_title": "fix[gen1][gen2][image]: ENG-14379 stop adding the full-size original image to sr",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "builderio-builder",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-663546-fix-gen1-gen2-image-eng-14379-stop-addin.md",
+      "staged_date": "2026-11-17"
+    },
+    {
+      "id": "CD-REV-04373E",
+      "directive_title": "rust): address the remaining issues in #418",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zvec-ai-zvec-grep",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-04373E-rust-address-the-remaining-issues-in-418.md",
       "staged_date": "2026-11-17"
     }
   ]

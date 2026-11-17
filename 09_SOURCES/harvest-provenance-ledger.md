@@ -10679,3 +10679,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-comfy-org-fibo-2-0` | `https://huggingface.co/Comfy-Org/Fibo-2.0` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-11-17T17:36:37.060Z |
 | `learn-github-open-policy-agent-gatekeeper` | `https://github.com/open-policy-agent/gatekeeper` | `b000ecec` | Multi-dimensional audit evidence | 2026-11-17T17:36:49.652Z |
 | `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/aleo-labs-protocol/snarkOS` | `3707bf02` | Multi-dimensional audit evidence | 2026-11-17T17:36:52.032Z |
+| `learn-huggingface-krafton-raon-1-mini-preview` | `https://huggingface.co/KRAFTON/Raon-1-mini-preview` | `hf-krafton` | Multi-dimensional audit evidence | 2026-11-17T17:49:55.233Z |
+| `learn-github-builderio-builder` | `https://github.com/BuilderIO/builder` | `aa20a509` | Multi-dimensional audit evidence | 2026-11-17T17:50:04.227Z |
