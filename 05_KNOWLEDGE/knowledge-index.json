@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-17T14:58:39.225Z",
-  "total_verified_learnings": 8892,
+  "last_updated": "2026-11-17T15:06:29.353Z",
+  "total_verified_learnings": 8893,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 20240,
+  "total_items": 20250,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -212369,8 +212369,8 @@
       "slug": "argoproj-argo-workflows",
       "platform": "github",
       "source_url": "https://github.com/argoproj/argo-workflows",
-      "source_version": "5ecc44fc",
-      "content_hash": "0c484764fa28419a9aa58a873ac2577e1da15e2bc62adc0db1ba75b44b10e7b2",
+      "source_version": "8c331dbf",
+      "content_hash": "87a579b78485e19012d258ea6ea752f088c3f65c6e67011dd3681b2ae9dba3d9",
       "dossier_path": "07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md",
       "promoted_rules": [
@@ -212383,6 +212383,11 @@
           "number": 8569,
           "title": "retry transient package download failures",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8983,
+          "title": "document ARGO_ARTIFACT_GC_ENABLED, artifact security headers and TLS_MIN_V",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -212390,7 +212395,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-15T03:13:36.071Z",
+      "verified_at": "2026-11-17T15:06:23.923Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -212432,10 +212437,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-A-argoproj-argo-workflows-human-need-intelligence-argoproj-argo-workflows-core-inv.md",
       "title": "Human & Need Intelligence: argoproj/argo-workflows Core Invariants",
       "repository": "argoproj/argo-workflows",
-      "source_version": "5ecc44fc",
-      "content_hash": "c368303a3821628709fdf0306118f22d6ef508315693391a0dd289e031988d7e",
+      "source_version": "8c331dbf",
+      "content_hash": "794cb9360ecfbebe277d431c5d07e3dae02c8922741ff7047f44f0ab673a1290",
       "domain_letter": "A",
-      "persisted_at": "2026-11-15T03:13:36.601Z"
+      "persisted_at": "2026-11-17T15:06:24.386Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-argoproj-argo-workflows": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-argoproj-argo-workflows",
@@ -212444,10 +212449,10 @@
       "relative_path": "08_VERIFICATION/argoproj-argo-workflows-verification-protocol-empirical-defect-shield-for-argopr.md",
       "title": "Verification Protocol: Empirical Defect Shield for argoproj/argo-workflows",
       "repository": "argoproj/argo-workflows",
-      "source_version": "5ecc44fc",
-      "content_hash": "7a2e1b3456cd797e6b3c6f3a3504143b7f6f9d4d3e2cf6717d6502ba7845065d",
+      "source_version": "8c331dbf",
+      "content_hash": "bbead8a7e50763c82e753248f32936b71199b40c3cf4719d2d2e14f64a492411",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T03:13:36.733Z"
+      "persisted_at": "2026-11-17T15:06:24.512Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-psrben-visionhope-learnings-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-psrben-visionhope-learnings-core-invariants",
@@ -212481,9 +212486,9 @@
       "title": "Human & Need Intelligence: argoproj-argo-workflows-learnings Core Invariants",
       "repository": "argoproj-argo-workflows-learnings",
       "source_version": "HEAD",
-      "content_hash": "88ef303da12e3477ed769eb16a8f158b2f626811a9079172b5aa14e8b84ca68d",
+      "content_hash": "c80ed8f8fe294a53b4d0d6946e8cab6e83462ce520807ebaab39121ae6ffbd39",
       "domain_letter": "A",
-      "persisted_at": "2026-11-15T03:14:20.440Z"
+      "persisted_at": "2026-11-17T15:06:29.225Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-argoproj-argo-workflows-learni": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-argoproj-argo-workflows-learni",
@@ -212493,9 +212498,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for argoproj-argo-workflows-learnings",
       "repository": "argoproj-argo-workflows-learnings",
       "source_version": "HEAD",
-      "content_hash": "491a8f7e79808450882c6ac773a4b93a51886a8b52edcfda5135b1652ebd13b2",
+      "content_hash": "0a51041c2fe4a89660abc023d8b6212e33976d1c100749217a00eee09e01e419",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T03:14:20.585Z"
+      "persisted_at": "2026-11-17T15:06:29.353Z"
     },
     "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf": {
       "learning_id": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf",
@@ -219335,14 +219340,19 @@
       "slug": "invertase-react-native-firebase",
       "platform": "github",
       "source_url": "https://github.com/invertase/react-native-firebase",
-      "source_version": "439611d7",
-      "content_hash": "9fe8c5e367a33b23cfd1cff3a16c70cd0e7a74f4ee6c39bd745f8bd2c84aaa7a",
+      "source_version": "0d426fe3",
+      "content_hash": "218425efa60557f1862a9b3d45e2a4bcb0d0444a1ed5c133a4ac148c88acc49c",
       "dossier_path": "07_PROJECT_LEARNING/invertase-react-native-firebase-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/invertase-react-native-firebase-learnings.md",
       "promoted_rules": [
         {
           "number": 8410,
           "title": "messaging, ios): refresh the Podfile.lock checksum for the public header",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8982,
+          "title": "app, ios): share GoogleUtilities when only Messaging or Analytics is installed u",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -219351,7 +219361,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T00:25:08.169Z",
+      "verified_at": "2026-11-17T15:06:21.080Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -219393,10 +219403,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-invertase-react-native-firebase-technical-construction-intelligence-invertase-re.md",
       "title": "Technical Construction Intelligence: invertase/react-native-firebase Core Invariants",
       "repository": "invertase/react-native-firebase",
-      "source_version": "439611d7",
-      "content_hash": "8b727f4eb9eb299bffb7889c02a9578a263cbf1b5f039020b03374cefa631f61",
+      "source_version": "0d426fe3",
+      "content_hash": "0a6dec0de3ac670f118c1e244be66ac2689dfa19838250ff7cfb95b134c9e83c",
       "domain_letter": "H",
-      "persisted_at": "2026-11-14T00:25:08.659Z"
+      "persisted_at": "2026-11-17T15:06:21.550Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-invertase-react-native-firebas": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-invertase-react-native-firebas",
@@ -219406,9 +219416,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for invertase-react-native-firebase-learnings",
       "repository": "invertase-react-native-firebase-learnings",
       "source_version": "HEAD",
-      "content_hash": "278ef2c18bb0fa24318c2f6f578aebdcf64cc32303d90d677fcaaa8af21b41f9",
+      "content_hash": "b0b0a060e30f649c4e59569022504e6d6513b05e8b67444162a9aae4344c5220",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T00:26:27.337Z"
+      "persisted_at": "2026-11-17T15:06:28.499Z"
     },
     "learn-github-freenet-freenet-core": {
       "learning_id": "learn-github-freenet-freenet-core",
@@ -219560,9 +219570,9 @@
       "title": "Technical Construction Intelligence: invertase-react-native-firebase-learnings Core Invariants",
       "repository": "invertase-react-native-firebase-learnings",
       "source_version": "HEAD",
-      "content_hash": "d395c3f2ef13597d970fa72bfe191d6d9fe467440b4f7e69bd89f248485f8ed5",
+      "content_hash": "61f484088207028ae77d20feecf85862250975708c305209b3b0eee749134fd7",
       "domain_letter": "H",
-      "persisted_at": "2026-11-14T00:26:27.206Z"
+      "persisted_at": "2026-11-17T15:06:28.261Z"
     },
     "learn-huggingface-black-forest-labs-flux-1-schnell": {
       "learning_id": "learn-huggingface-black-forest-labs-flux-1-schnell",
@@ -271131,6 +271141,145 @@
       "content_hash": "bfd0e8f3edef960fe7153b832d120f2bfad567675c1aece8f80bf603467eef80",
       "domain_letter": "D",
       "persisted_at": "2026-11-17T14:58:11.601Z"
+    },
+    "learn-huggingface-mistralai-timestral-209m": {
+      "learning_id": "learn-huggingface-mistralai-timestral-209m",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "mistralai/Timestral-209M",
+      "repository": "mistralai/Timestral-209M",
+      "slug": "hf-mistralai-timestral-209m",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/mistralai/Timestral-209M",
+      "source_version": "hf-mistralai-timestral-209m",
+      "content_hash": "1b3d9b2c978dd7c2257b0d006d0f536574f9f7a9da9ebe17c7ed171d149fcbf2",
+      "dossier_path": "07_PROJECT_LEARNING/hf-mistralai-timestral-209m-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-mistralai-timestral-209m-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-17T15:06:11.715Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-mistralai-timestral-209m-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-mistralai-timestral-209m-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-mistralai-timestral-209m-research-knowledge-intelligence-mistralai-timestral-.md",
+      "title": "Research & Knowledge Intelligence: mistralai/Timestral-209M Core Invariants",
+      "repository": "mistralai/Timestral-209M",
+      "source_version": "hf-mistralai-timestral-209m",
+      "content_hash": "eb3626e6099393efb575b2e551152a97233ec4feddec12f43b3de5445bf662e3",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-17T15:06:12.068Z"
+    },
+    "rule-8982": {
+      "learning_id": "rule-8982",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8982,
+      "title": "app, ios): share GoogleUtilities when only Messaging or Analytics is installed u",
+      "source_url": "https://github.com/invertase/react-native-firebase",
+      "source_version": "0d426fe3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T15:06:21.080Z"
+    },
+    "candidate_directive-app-ios-share-googleutilities-when-only-messaging-or-analytics-is-installed-u": {
+      "item_id": "candidate_directive-app-ios-share-googleutilities-when-only-messaging-or-analytics-is-installed-u",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-S3HO-app-ios-share-googleutilities-when-only-messaging-or-analytics-is-installed-u.md",
+      "title": "app, ios): share GoogleUtilities when only Messaging or Analytics is installed u",
+      "repository": "invertase-react-native-firebase-learnings",
+      "source_version": "HEAD",
+      "content_hash": "5e3a8a40f78bfdc4cdbbd02b9ff3d1e8efbb30a95ae7ed07f10eb92e4ade422e",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T15:06:28.144Z"
+    },
+    "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-invertase-react-native-firebase": {
+      "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-invertase-react-native-firebase",
+      "artifact_type": "architecture_decision",
+      "target_folder": "12_DECISIONS",
+      "relative_path": "12_DECISIONS/ADR-invertase-react-native-firebase-adr-subsystem-boundary-modular-decoupling-in-inv.md",
+      "title": "ADR: Subsystem Boundary & Modular Decoupling in invertase/react-native-firebase",
+      "repository": "invertase/react-native-firebase",
+      "source_version": "0d426fe3",
+      "content_hash": "a57c8fd6c7d200d90f702cafc68308d804242e62da4f365e21efc13b6973b865",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T15:06:21.675Z"
+    },
+    "rule-8983": {
+      "learning_id": "rule-8983",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8983,
+      "title": "document ARGO_ARTIFACT_GC_ENABLED, artifact security headers and TLS_MIN_V",
+      "source_url": "https://github.com/argoproj/argo-workflows",
+      "source_version": "8c331dbf",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T15:06:23.923Z"
+    },
+    "candidate_directive-document-argo_artifact_gc_enabled-artifact-security-headers-and-tls_min_v": {
+      "item_id": "candidate_directive-document-argo_artifact_gc_enabled-artifact-security-headers-and-tls_min_v",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-S0HX-document-argo_artifact_gc_enabled-artifact-security-headers-and-tls_min_v.md",
+      "title": "document ARGO_ARTIFACT_GC_ENABLED, artifact security headers and TLS_MIN_V",
+      "repository": "argoproj/argo-workflows",
+      "source_version": "8c331dbf",
+      "content_hash": "e3a33a33bb65790927884cefba7572ca32beee0c622e15f8bfa52920ae07f6ee",
+      "domain_letter": "A",
+      "persisted_at": "2026-11-17T15:06:24.262Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-mistralai-timestral-209m-learnings-core-invar": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-mistralai-timestral-209m-learnings-core-invar",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-mistralai-timestral-209m-learnings-research-knowledge-intelligence-hf-mistral.md",
+      "title": "Research & Knowledge Intelligence: hf-mistralai-timestral-209m-learnings Core Invariants",
+      "repository": "hf-mistralai-timestral-209m-learnings",
+      "source_version": "HEAD",
+      "content_hash": "3066b075600896c55b4395c6bb538806911323f9c0ed2874bbebd4fbdc5dddf6",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-17T15:06:27.429Z"
+    },
+    "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-invertase-react-native-firebase-lea": {
+      "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-invertase-react-native-firebase-lea",
+      "artifact_type": "architecture_decision",
+      "target_folder": "12_DECISIONS",
+      "relative_path": "12_DECISIONS/ADR-invertase-react-native-firebase-learnings-adr-subsystem-boundary-modular-decoupl.md",
+      "title": "ADR: Subsystem Boundary & Modular Decoupling in invertase-react-native-firebase-learnings",
+      "repository": "invertase-react-native-firebase-learnings",
+      "source_version": "HEAD",
+      "content_hash": "d494254e41943917bd890193fcbca20e6685500a4a37ba7cb93e15042667bb7d",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T15:06:28.389Z"
+    },
+    "candidate_directive-docs-document-argo_artifact_gc_enabled-artifact-security-headers-and-tls_min_v": {
+      "item_id": "candidate_directive-docs-document-argo_artifact_gc_enabled-artifact-security-headers-and-tls_min_v",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-S48J-docs-document-argo_artifact_gc_enabled-artifact-security-headers-and-tls_min_v.md",
+      "title": "docs: document ARGO_ARTIFACT_GC_ENABLED, artifact security headers and TLS_MIN_V",
+      "repository": "argoproj-argo-workflows-learnings",
+      "source_version": "HEAD",
+      "content_hash": "33e42b83ef96387424868b5a0709f1d0de00c20ec8dafd334c4fc15522dbe0f3",
+      "domain_letter": "A",
+      "persisted_at": "2026-11-17T15:06:29.107Z"
     }
   },
   "ai-builder-brain": {

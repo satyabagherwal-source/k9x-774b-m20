@@ -10578,3 +10578,6 @@
 | `CYCLE-20261117-HDDV` | `2026-11-17T14:58:07.747Z` | `ClickHouse/ClickHouse` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8980` | Yes (`06e2bd22...`) |
 | `CYCLE-20261117-HDS5` | `2026-11-17T14:58:08.261Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8981` | Yes (`cc1b5254...`) |
 | `CYCLE-2026-11-17-PROJ-EVOLVE` | `2026-11-17T14:58:38.464Z` | `dathere-qsv` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-1449F81D` [Domain H] | Yes (`0ef7ce5a...`) |
+| `CYCLE-20261117-RQXS` | `2026-11-17T15:06:11.872Z` | `mistralai/Timestral-209M` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-mistralai-timestral-209m-learnings.md` | Yes (`1b3d9b2c...`) |
+| `CYCLE-20261117-RY65` | `2026-11-17T15:06:21.245Z` | `invertase/react-native-firebase` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8982` | Yes (`218425ef...`) |
+| `CYCLE-20261117-S0CZ` | `2026-11-17T15:06:24.083Z` | `argoproj/argo-workflows` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8983` | Yes (`87a579b7...`) |

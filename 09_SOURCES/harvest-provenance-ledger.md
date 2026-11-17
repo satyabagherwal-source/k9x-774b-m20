@@ -10611,3 +10611,6 @@ Every entry in this ledger must capture:
 | `learn-github-clickhouse-clickhouse` | `https://github.com/ClickHouse/ClickHouse` | `67804652` | Multi-dimensional audit evidence | 2026-11-17T14:58:07.750Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `101f64d3` | Multi-dimensional audit evidence | 2026-11-17T14:58:08.264Z |
 | `learn-dom-h-1449f81d` | `project://dathere-qsv` | `101f64d3` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dathere-qsv-learnings.md` | 2026-11-17T14:58:38.464Z |
+| `learn-huggingface-mistralai-timestral-209m` | `https://huggingface.co/mistralai/Timestral-209M` | `hf-mistral` | Multi-dimensional audit evidence | 2026-11-17T15:06:11.876Z |
+| `learn-github-invertase-react-native-firebase` | `https://github.com/invertase/react-native-firebase` | `0d426fe3` | Multi-dimensional audit evidence | 2026-11-17T15:06:21.249Z |
+| `learn-github-argoproj-argo-workflows` | `https://github.com/argoproj/argo-workflows` | `8c331dbf` | Multi-dimensional audit evidence | 2026-11-17T15:06:24.087Z |

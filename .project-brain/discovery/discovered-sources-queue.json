@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-17T14:58:38.712Z",
+  "updated_at": "2026-11-17T15:06:28.929Z",
   "stats": {
-    "total_discovered": 4999,
-    "approved_pending_harvest": 4711,
+    "total_discovered": 5015,
+    "approved_pending_harvest": 4727,
     "harvested_count": 0,
     "rejected_count": 288,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 4700,
+      "COMMUNITY_AND_EXPERT": 4716,
       "OFFICIAL_DOCUMENTATION": 162,
       "STANDARDS_AND_SPECIFICATIONS": 106,
       "ENGINEERING_BLOGS": 3,
@@ -107983,6 +107983,358 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dathere-qsv-learnings.md",
         "fileName": "dathere-qsv-learnings.md"
+      }
+    },
+    "SRC-26A28379BF45": {
+      "id": "SRC-26A28379BF45",
+      "url": "https://github.com/facebook/react-native/pull/59619",
+      "title": "https://github.com/facebook/react-native/pull/59619",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T15:06:27.642Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/invertase-react-native-firebase-learnings.md",
+        "fileName": "invertase-react-native-firebase-learnings.md"
+      }
+    },
+    "SRC-3AE6D81AC8D7": {
+      "id": "SRC-3AE6D81AC8D7",
+      "url": "https://github.com/invertase/react-native-firebase/pull/9437",
+      "title": "https://github.com/invertase/react-native-firebase/pull/9437",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T15:06:27.673Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/invertase-react-native-firebase-learnings.md",
+        "fileName": "invertase-react-native-firebase-learnings.md"
+      }
+    },
+    "SRC-D565155A1E9E": {
+      "id": "SRC-D565155A1E9E",
+      "url": "https://github.com/cortinico",
+      "title": "https://github.com/cortinico",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T15:06:27.704Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/invertase-react-native-firebase-learnings.md",
+        "fileName": "invertase-react-native-firebase-learnings.md"
+      }
+    },
+    "SRC-94CAD0493A4B": {
+      "id": "SRC-94CAD0493A4B",
+      "url": "https://app.codecov.io/gh/invertase/react-native-firebase/pull/9492?dropdown=coverage&src=pr&el=h1",
+      "title": "https://app.codecov.io/gh/invertase/react-native-firebase/pull/9492?dropdown=coverage&src=pr&el=h1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T15:06:27.738Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/invertase-react-native-firebase-learnings.md",
+        "fileName": "invertase-react-native-firebase-learnings.md"
+      }
+    },
+    "SRC-BA4627CDD44F": {
+      "id": "SRC-BA4627CDD44F",
+      "url": "https://app.codecov.io/gh/invertase/react-native-firebase/commit/461659ea81edffdfc24414f243863a01f7524bbf?dropdown=coverage&el=desc",
+      "title": "https://app.codecov.io/gh/invertase/react-native-firebase/commit/461659ea81edffdfc24414f243863a01f7524bbf?dropdown=coverage&el=desc",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T15:06:27.772Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/invertase-react-native-firebase-learnings.md",
+        "fileName": "invertase-react-native-firebase-learnings.md"
+      }
+    },
+    "SRC-9D8407B50B59": {
+      "id": "SRC-9D8407B50B59",
+      "url": "https://app.codecov.io/gh/invertase/react-native-firebase/commit/aa37e272ad91e061c2bc074aed867a06f22ef288?dropdown=coverage&el=desc",
+      "title": "https://app.codecov.io/gh/invertase/react-native-firebase/commit/aa37e272ad91e061c2bc074aed867a06f22ef288?dropdown=coverage&el=desc",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T15:06:27.801Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/invertase-react-native-firebase-learnings.md",
+        "fileName": "invertase-react-native-firebase-learnings.md"
+      }
+    },
+    "SRC-0089945F9221": {
+      "id": "SRC-0089945F9221",
+      "url": "https://github.com/actions/checkout/releases",
+      "title": "https://github.com/actions/checkout/releases",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T15:06:27.859Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/invertase-react-native-firebase-learnings.md",
+        "fileName": "invertase-react-native-firebase-learnings.md"
+      }
+    },
+    "SRC-C5E1885A8492": {
+      "id": "SRC-C5E1885A8492",
+      "url": "https://github.com/actions/setup-node/releases",
+      "title": "https://github.com/actions/setup-node/releases",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T15:06:27.888Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/invertase-react-native-firebase-learnings.md",
+        "fileName": "invertase-react-native-firebase-learnings.md"
+      }
+    },
+    "SRC-93ACAA81B36C": {
+      "id": "SRC-93ACAA81B36C",
+      "url": "https://github.com/maxim-lobanov/setup-xcode/releases",
+      "title": "https://github.com/maxim-lobanov/setup-xcode/releases",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T15:06:27.920Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/invertase-react-native-firebase-learnings.md",
+        "fileName": "invertase-react-native-firebase-learnings.md"
+      }
+    },
+    "SRC-A3C33B792A21": {
+      "id": "SRC-A3C33B792A21",
+      "url": "https://github.com/ruby/setup-ruby/releases",
+      "title": "https://github.com/ruby/setup-ruby/releases",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T15:06:27.962Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/invertase-react-native-firebase-learnings.md",
+        "fileName": "invertase-react-native-firebase-learnings.md"
+      }
+    },
+    "SRC-826D42263FE1": {
+      "id": "SRC-826D42263FE1",
+      "url": "https://go.googlesource.com/crypto",
+      "title": "https://go.googlesource.com/crypto",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T15:06:28.673Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md",
+        "fileName": "argoproj-argo-workflows-learnings.md"
+      }
+    },
+    "SRC-EDC84F97594C": {
+      "id": "SRC-EDC84F97594C",
+      "url": "https://developer.mend.io/api/mc/badges/adoption/go/golang.org%2fx%2fcrypto/v0.59.0?slim=true",
+      "title": "https://developer.mend.io/api/mc/badges/adoption/go/golang.org%2fx%2fcrypto/v0.59.0?slim=true",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T15:06:28.718Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md",
+        "fileName": "argoproj-argo-workflows-learnings.md"
+      }
+    },
+    "SRC-DABF2681F297": {
+      "id": "SRC-DABF2681F297",
+      "url": "https://developer.mend.io/api/mc/badges/compatibility/go/golang.org%2fx%2fcrypto/v0.58.0/v0.59.0?slim=true",
+      "title": "https://developer.mend.io/api/mc/badges/compatibility/go/golang.org%2fx%2fcrypto/v0.58.0/v0.59.0?slim=true",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T15:06:28.750Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md",
+        "fileName": "argoproj-argo-workflows-learnings.md"
+      }
+    },
+    "SRC-3633738845D2": {
+      "id": "SRC-3633738845D2",
+      "url": "https://developer.mend.io/api/mc/badges/adoption/go/go.opentelemetry.io%2fotel%2ftrace/v1.47.0?slim=true",
+      "title": "https://developer.mend.io/api/mc/badges/adoption/go/go.opentelemetry.io%2fotel%2ftrace/v1.47.0?slim=true",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T15:06:28.832Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md",
+        "fileName": "argoproj-argo-workflows-learnings.md"
+      }
+    },
+    "SRC-C046740018EA": {
+      "id": "SRC-C046740018EA",
+      "url": "https://developer.mend.io/api/mc/badges/compatibility/go/go.opentelemetry.io%2fotel%2ftrace/v1.45.0/v1.47.0?slim=true",
+      "title": "https://developer.mend.io/api/mc/badges/compatibility/go/go.opentelemetry.io%2fotel%2ftrace/v1.45.0/v1.47.0?slim=true",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T15:06:28.862Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md",
+        "fileName": "argoproj-argo-workflows-learnings.md"
+      }
+    },
+    "SRC-E5DDBB4346D5": {
+      "id": "SRC-E5DDBB4346D5",
+      "url": "https://github.com/argoproj/argo-workflows/issues/6629",
+      "title": "https://github.com/argoproj/argo-workflows/issues/6629",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T15:06:28.929Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md",
+        "fileName": "argoproj-argo-workflows-learnings.md"
       }
     }
   }

@@ -4,24 +4,24 @@
 {
   "source_repository": "invertase/react-native-firebase",
   "source_url": "https://github.com/invertase/react-native-firebase",
-  "source_version": "439611d7",
+  "source_version": "0d426fe3",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-14T00:25:08.545Z",
+  "timestamp": "2026-11-17T15:06:21.431Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-invertase-react-native-firebase",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [invertase/react-native-firebase](https://github.com/invertase/react-native-firebase) (Revision: `439611d7`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-14T00:25:08.545Z`  
+> **Provenance**: Harvested from [invertase/react-native-firebase](https://github.com/invertase/react-native-firebase) (Revision: `0d426fe3`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-17T15:06:21.431Z`  
 > **Learning ID**: `learn-github-invertase-react-native-firebase`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), G (Architecture Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), F (Design Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 81%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence)
+- **Confidence Rating**: 88%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from invertase/react-native-firebase:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/invertase-react-native-firebase-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/invertase/react-native-firebase](https://github.com/invertase/react-native-firebase))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-14T00:25:07.295Z  
+> **Harvest Timestamp**: 2026-11-17T15:06:20.326Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: 🔥 A well-tested feature-rich modular Firebase implementation for React Native. Supports both iOS & Android platforms for all Firebase services.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 12328 stars
+- **Stars / Engagement**: 12326 stars
 
 ---
 
@@ -1583,11 +1583,13 @@ extern NSString *const DEFAULT_APP_NAME;
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #9483** (2026-11-13): **build(deps): bump amannn/action-semantic-pull-request from 6.1.1 to 6.1.2 in the github-actions-minor-patch group across 1 directory**
-  *Symptoms*: Bumps the github-actions-minor-patch group with 1 update in the / directory: [amannn/action-semantic-pull-request](https://github.com/amannn/action-semantic-pull-request).  Updates `amannn/action-semantic-pull-request` from 6.1.1 to 6.1.2 <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/amannn/action-semantic-pull-request/releases">amannn/action-semantic-pull-request's releases</a>.</em></p> <blockquote> <h2>v6.1.2</h2> <h2><a href="https://github.com/amannn/action-semantic-pull-request/compare/v6.1.1...v6.1.2">6.1.2</a> (2026-11-05)</h2> <h3>Bug Fixes</h3> <ul> <li>Release accumulated dependency updates (closes <a href="https://redirect.github.com/amannn/action-semantic-pull-request/issues/321">#321</a>) (<a href="https://github.com/amannn/action-semantic-pull-request/commit/fc7da0cece3e8512e50240b0619a03bdd946db1c">fc7da0c</a>)</li> </ul> </blockquote> </details> <details> <summary>Changelog</summary> <p><em>Sourced from <a href="https://github.com/amannn/action-semantic-pull-request/blob/main/CHANGELOG.md">amannn/action-semantic-pull-request's changelog</a>.</em></p> <blockquote> <h1>Changelog</h1> <h2><a href="https://github.com/amannn/action-semantic-pull-request/compare/v6.1.1...v6.1.2">6.1.2</a> (2026-11-05)</h2> <h3>Bug Fixes</h3> <ul> <li>Release accumulated dependency updates (closes <a href="https://redirect.github.com/amannn/action-semantic-pull-request/issues/321">#321</a>) (<a href="https://github.com/amannn/action-seman
+- **Issue #9492** (2026-11-16): **fix(android): tolerate deprecated JNI invokeJavaMethod on RN 0.89+**
+  *Symptoms*: ## Summary  - Durable CMake `-Wno-error=deprecated-declarations` on all **16** library JNI codegen targets so React Native 0.89+ (`-Werror` via `target_compile_reactnative_options`) does not fail builds on the deprecated `JavaTurboModule::invokeJavaMethod` cached-method-ID overload still used by checked-in codegen. - Post-processing lives in `scripts/codegen-package.mjs` after wipe-then-regen so `yarn codegen:verify` stays green (NewArch-AD-22 / AD-5 / **NewArch-AD-24**). - Call-site migration to the new overload from [facebook/react-native#59619](https://github.com/facebook/react-native/pull/59619) stays deferred until the minimum / `tests/` React Native pin is ≥ 0.89; that bump **is** the exit criterion and should delete this CMake patch in the same change.  This Invertase-owned change **supersedes** [#9437](https://github.com/invertase/react-native-firebase/pull/9437). Sincere thanks to [@cortinico](https://github.com/cortinico) for catching this early against the community nightly matrix and for the clear App-target CMake shape — Mastersam07’s review on that PR correctly required all packages plus a regeneration-safe injection point.  ## Test plan  - [x] `yarn codegen:verify` (exit 0 post-commit) - [x] `yarn tests:android:build` (restored RN 0.88.0-rc.3 pin) - [x] `yarn tests:android:test-cover` (1563 passing, slot 1) - [x] `yarn tests:ios:test-cover` (1550 passing, slot 1) - [ ] Ad-hoc local `tests/` pin to RN 0.89-rc was **not** a successful native compile proof (failed
+  **Post-Mortem & Fix Analysis**:
+  > ## [Codecov](https://app.codecov.io/gh/invertase/react-native-firebase/pull/9492?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=invertase) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 75.28%. Comparing base ([`461659e`](https://app.codecov.io/gh/invertase/react-native-firebase/commit/461659ea81edffdfc24414f243863a01f7524bbf?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=invertase)) to head ([`aa37e27`](https://app.codecov.io/gh/invertase/react-native-firebase/commit/aa37e272ad91e061c2bc074aed867a06f22ef288?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=invertase)).  <details><summary>Additional details and impacted files</summary>    ```diff @@            Coverage Diff            @@ ##             
 
-- **Issue #9482** (2026-11-13): **fix(perf): remove the frame metrics listener when a screen trace stops**
-  *Symptoms*: ### Description  On Android, every custom screen trace leaves a frame metrics listener attached to the Activity window after the trace is stopped.  `ScreenTrace.recordScreenTrace()` creates a new `FrameMetricsAggregator` and calls `add(activity)`, which registers an `OnFrameMetricsAvailableListener` on the window. `sendScreenTrace()` then reads the metrics with `reset()`. In androidx, `reset()` only swaps the metrics array and returns the old one; it does not remove the listener. `stop()` removes the listener from every tracked Activity and returns the same metrics. Reference: [`FrameMetricsAggregator.java`](https://github.com/androidx/androidx/blob/androidx-main/core/core/src/main/java/androidx/core/app/FrameMetricsAggregator.java) (`FrameMetricsApi24Impl.reset()` / `stop()`), [API docs](https://developer.android.com/reference/androidx/core/app/FrameMetricsAggregator).  So each start/stop pair leaves one more listener receiving every frame for the life of the Activity. In a single-Activity React Native app that is the whole session, and with one screen trace per navigation the listener count grows with every screen change. Nothing breaks visibly (the reported metrics are correct, since each trace has its own aggregator), which is probably why it hasn't come up.  The fix is the one-line change to `stop()`. The comment above that line already describes `stop()` ("Stops recording metrics for this Activity and returns the currently-collected metrics").  ### Related iss
+- **Issue #9491** (2026-11-16): **build(deps): bump addressable from 2.9.0 to 2.9.1**
+  *Symptoms*: Bumps [addressable](https://github.com/sporkmonger/addressable) from 2.9.0 to 2.9.1. <details> <summary>Changelog</summary> <p><em>Sourced from <a href="https://github.com/sporkmonger/addressable/blob/main/CHANGELOG.md">addressable's changelog</a>.</em></p> <blockquote> <h2>Addressable 2.9.1 <!-- raw HTML omitted --></h2> <h3><code>Addressable::URI</code></h3> <ul> <li>fixes denial of service in <code>Addressable::URI.normalize_path</code>, which took quadratic time on paths with many dot segments; <code>URI#normalize</code>, <code>#join</code>, <code>#==</code> and <code>#===</code> were affected ([GHSA-qq38-m9mg-xjj5])</li> <li>fixes <code>Addressable::URI.normalize_path</code> keeping segments that a <code>..</code> should have removed after a <code>..</code> above the root, e.g. <code>/../../public/x/../../secret</code> normalized to <code>/public/x/secret</code> instead of <code>/secret</code> ([GHSA-8gmh-2hhj-2hv9])</li> <li>fixes <code>Addressable::URI.normalize_path</code> treating a raw line feed as a segment boundary, e.g. joining <code>..\n/secret</code> onto <code>/public/</code> gave <code>/\n/secret</code></li> <li>deprecates <code>Addressable::URI::RULE_2A</code>, <code>RULE_2B_2C</code>, <code>RULE_2D</code> and <code>RULE_PREFIXED_PARENT</code>, which are no longer used; they will be removed in 2.10.0</li> <li>fixes <code>Addressable::URI#route_from</code> and <code>#route_to</code> raising <code>InvalidURIError</code> when the route's first segment contains 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1604,219 +1606,1193 @@ extern NSString *const DEFAULT_APP_NAME;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `66f977c3` (2026-11-12)
-**Commit Message**: fix(messaging, ios): refresh the Podfile.lock checksum for the public header
+### Incident Patch 1: `0d426fe3` (2026-11-17)
+**Commit Message**: fix(app, ios): share GoogleUtilities when only Messaging or Analytics is installed under SPM (#9451)
 
-The podspec header lists changed, so the RNFBMessaging checksum no longer
-matches main. Keep every other checksum on current main.
+Co-authored-by: Mike Hardy <[REDACTED_EMAIL]>
+Co-authored-by: russellwheatley <[REDACTED_EMAIL]>
 
-**File**: `tests/ios/Podfile.lock` (modified, +1/-1)
+**File**: `.github/workflows/scripts/check-duplicate-objc-classes.sh` (modified, +110/-9)
 ```diff
-@@ -3644,7 +3644,7 @@ SPEC CHECKSUMS:
-   RNFBFunctions: 5674d9db94a55163a7fa1b53c4208fd2a00137a1
-   RNFBInAppMessaging: 43c1ae54f8751ce517bcc2c720aa6b8f118f7dc2
-   RNFBInstallations: a4a1dbb0057882089a5a337e97201a10279b096c
--  RNFBMessaging: dd86392ae250f39b626e1d3ee117457055d6739b
-+  RNFBMessaging: a3a316146df4f06f2fc580c5874d44f19a06b91d
-   RNFBPerf: c6ae8130823ffc1396da90785d726ba9ad20ac49
-   RNFBRemoteConfig: 55e59d4ff61b1c1f1cf0d515ccd029f613a85d5f
-   RNFBStorage: e58d9cb2215738fb2fbd3fd2d0bcd6d264d6155f
+@@ -4,11 +4,25 @@
+ # Frameworks/*.dylib, app-root *.dylib).
+ #
+ # Usage: check-duplicate-objc-classes.sh <path/to/App.app>
++#          [--expect-duplicates N | --report-only] [--canary-hint TEXT]
+ #
+ # The ObjC runtime registers every class in a loaded binary's
+ # __objc_classlist, whatever its symbol visibility (pure-Swift and hidden
+ # classes included), so compare classlists of every Mach-O the .app loads.
+ #
++# --expect-duplicates N passes only when exactly N classes are duplicated
++# (default 0). Every other guard still applies, so a control run cannot pass
++# on an empty or unreadable scan. GULNetwork is a canary for the
++# GoogleUtilities sharing graph this check exists for: with 0 expected
++# duplicates it must be defined by exactly one binary; with N > 0 it must be
++# one of the duplicated classes, so a control run proves it hit that graph.
++#
++# --report-only lists every duplicate, the GULNetwork and FIRApp owners, and
++# exits 0 unless a scan guard (dyld_info, missing binary, empty scan) fails.
++#
++# --canary-hint TEXT is appended to the error when GULNetwork is missing.
++# Usage and flag errors exit 2.
++#
+ # RNFB_DYLD_INFO overrides the dyld_info path (used by the Jest harness).
+ set -euo pipefail
+ 
+@@ -22,12 +36,54 @@ dup_check_fail() {
+   exit 1
+ }
+ 
++USAGE="usage: $0 <path/to/App.app> [--expect-duplicates N | --report-only] [--canary-hint TEXT]"
++
++usage_error() {
++  log "ERROR: $*"
++  log "$USAGE"
++  exit 2
++}
++
+ log "--- duplicate Objective-C class check ---"
+ 
+-if [[ $# -ne 1 ]]; then
+-  dup_check_fail "usage: $0 <path/to/App.app>"
++if [[ $# -lt 1 ]]; then
++  usage_error "missing app bundle path"
+ fi
+ APP_DIR="${1%/}"
++shift
++EXPECT_DUPLICATES=0
++EXPECT_SET=0
++REPORT_ONLY=0
++CANARY_HINT=""
++while [[ $# -gt 0 ]]; do
++  case "$1" in
++    --expect-duplicates)
++      [[ $# -ge 2 ]] || usage_error "$1 needs a value"
++      EXPECT_DUPLICATES="$2"
++      EXPECT_SET=1
++      shift 2
++      ;;
++    --report-only)
++      REPORT_ONLY=1
++      shift
++      ;;
++    --canary-hint)
++      [[ $# -ge 2 ]] || usage_error "$1 needs a value"
++      CANARY_HINT="$2"
++      shift 2
++      ;;
++    *)
++      usage_error "unknown argument: $1"
++      ;;
++  esac
++done
++if [[ ! "$EXPECT_DUPLICATES" =~ ^(0|[1-9][0-9]*)$ ]]; then
++  usage_error "--expect-duplicates must be a non-negative integer, got '${EXPECT_DUPLICATES}'"
++fi
++if [[ "$REPORT_ONLY" -eq 1 && "$EXPECT_SET" -eq 1 ]]; then
++  usage_error "--report-only and --expect-duplicates are mutually exclusive"
++fi
++
+ if [[ ! -d "$APP_DIR" ]]; then
+   dup_check_fail "app bundle not found: ${APP_DIR}"
+ fi
+@@ -115,21 +171,66 @@ log "scanned ${binary_count} binaries in ${APP_DIR}: ${class_count} distinct cla
+ if [[ "$class_count" -eq 0 || "$rnfb_class_count" -eq 0 ]]; then
+   dup_check_fail "found no classes overall or in any RNFB* framework; the scan is not trustworthy"
+ fi
++dup_level="ERROR"
++if [[ "$REPORT_ONLY" -eq 1 ]]; then
++  dup_level="report-only"
++elif [[ "$EXPECT_DUPLICATES" -ne 0 ]]; then
++  dup_level="expected-mode"
++fi
+ if [[ "$duplicate_count" -ne 0 ]]; then
+   while IFS= read -r line; do
+-    log "ERROR: duplicate class ${line}"
++    log "${dup_level}: duplicate class ${line}"
+   done <<<"$duplicates"
+-  log "NOTE: a reused DerivedData can embed frameworks left over from an earlier build ([RNFB] Embed Firebase SPM Frameworks copies every dynamic framework in PackageFrameworks); re-check a local failure from an empty DerivedData"
++fi
++
++class_owner_list() {
++  awk -F'\t' -v cls="$1" '$1 == cls { print $2 }' "$class_owners_file"
++}
++
++if [[ "$REPORT_ONLY" -eq 1 ]]; then
++  for cls in GULNetwork FIRApp; do
++    owners="$(class_owner_list "$cls")"
++    if [[ -z "$owners" ]]; then
++      log "report-only: ${cls} absent"
++    else
++      log "report-only: ${cls} defined in $(wc -l <<<"$owners" | tr -d ' ') binaries: $(paste -sd ',' - <<<"$owners")"
++    fi
++  done
++  log "--- end duplicate Objective-C class check ---"
++  log "REPORT: ${duplicate_count} Objective-C classes are defined in more than one binary (report-only, not enforced)"
++  exit 0
++fi
++
++if [[ "$duplicate_count" -ne "$EXPECT_DUPLICATES" ]]; then
++  log "NOTE: when a direct caller reuses a DerivedData, it can embed frameworks left over from an earlier build ([RNFB] Embed Firebase SPM Frameworks copies every dynamic framework in PackageFrameworks); re-check such a failure from an empty DerivedData"
++  if [[ "$EXPECT_DUPLICATES" -ne 0 ]]; then
++    dup_check_fail "expected exactly ${EXPECT_DUPLICATES} duplicated Objective-C classes, found ${duplicate_count}"
++  fi
+   if [[ "$duplicate_count" -eq 1 ]]; then
+     dup_check_fail "1 Objective-C class is defined in more than one binary"
+   fi
+   dup_check_fail "${duplicate_count} Objective-C classes are defined in more than one binary"
+ fi
+-canary_owner="$(awk -F'\t' '$1 == "GULNetwork" { print $2 }' "$class_owners_file")"
+-if [[ -z "$canary_owner" ]]; then
+-  dup_check_fail "GoogleUtilities canary GULNetwork not found in any scanned binary; test-expo/
+```
+
+**File**: `.github/workflows/scripts/lib/derived-data-path.sh` (added, +69/-0)
+```diff
+@@ -0,0 +1,69 @@
++#!/bin/bash
++# Sourced by build scripts that wipe a DerivedData path before xcodebuild.
++#
++# wipeable_derived_data_path <path> <repo-root> prints the physical path, or
++# prints why it refuses and returns 2. The basename must contain
++# "derived-data" or "DerivedData", the path must not contain a ".." component,
++# and it must not be /, $HOME, the repo root, or an ancestor of either.
++#
++# repo_path_tag <repo-root> prints the first 8 hex characters of the SHA-1 of
++# the physical repo root path, so /tmp defaults differ between worktrees.
++
++repo_path_tag() {
++  (cd "$1" && pwd -P) | tr -d '\n' | shasum | cut -c1-8
++}
++
++wipeable_derived_data_path() {
++  local path="$1" repo_root="$2" parent rest="" resolved forbidden
++  if [[ -z "$path" ]]; then
++    echo "refusing to wipe an empty DerivedData path" >&2
++    return 2
++  fi
++  case "/${path}/" in
++    */../*)
++      echo "refusing to wipe DerivedData path '${path}': it contains a '..' component" >&2
++      return 2
++      ;;
++  esac
++  if [[ "${#path}" -gt 1 ]]; then
++    path="${path%/}"
++  fi
++  if [[ "$path" == "/" ]]; then
++    echo "refusing to wipe DerivedData path '/'" >&2
++    return 2
++  fi
++  parent="$path"
++  while [[ ! -d "$parent" ]]; do
++    rest="/$(basename "$parent")${rest}"
++    parent="$(dirname "$parent")"
++  done
++  resolved="$(cd "$parent" && pwd -P)${rest}"
++  while [[ "$resolved" == *//* ]]; do
++    resolved="${resolved//\/\//\/}"
++  done
++  while [[ "${#resolved}" -gt 1 && "$resolved" == */ ]]; do
++    resolved="${resolved%/}"
++  done
++  if [[ "$resolved" == "/" || -z "$resolved" ]]; then
++    echo "refusing to wipe DerivedData path '${path}' (resolves to '${resolved}')" >&2
++    return 2
++  fi
++  case "$(basename "$resolved")" in
++    *derived-data* | *DerivedData*) ;;
++    *)
++      echo "refusing to wipe DerivedData path '${path}' (resolves to '${resolved}'): its basename must contain 'derived-data'" >&2
++      return 2
++      ;;
++  esac
++  for forbidden in "$HOME" "$repo_root"; do
++    [[ -n "$forbidden" && -d "$forbidden" ]] || continue
++    forbidden="$(cd "$forbidden" && pwd -P)"
++    case "${forbidden}/" in
++      "${resolved}"/*)
++        echo "refusing to wipe DerivedData path '${path}' (resolves to '${resolved}'): it is or contains ${forbidden}" >&2
++        return 2
++        ;;
++    esac
++  done
++  echo "$resolved"
++}
+```
+
+**File**: `.github/workflows/scripts/lib/make-expo-fixture.sh` (added, +190/-0)
+```diff
+@@ -0,0 +1,190 @@
++#!/bin/bash
++# Generates a blank Expo app that depends on @react-native-firebase/app plus
++# the requested RNFB modules, with SPM on and useFrameworks: "dynamic".
++#
++# Usage: make-expo-fixture.sh --modules messaging[,analytics...] --out <dir>
++#        (--modules "" or --modules app generates an app-only fixture)
++#        make-expo-fixture.sh --modules <m>[,<m>...] --check-modules
++#        (validates the modules, prints them space-separated, writes nothing)
++#
++# Invalid, duplicate or unpinned module names exit 2.
++#
++# Versions come from test-expo/package.json so the fixture never drifts from
++# the documented-path example. Nothing is installed: the fixture must live
++# under test-expo/ so Node resolution walks up to test-expo/node_modules
++# (.yarnrc.yml sets nmHoistingLimits: workspaces, so the repo root
++# node_modules does not hold `expo` or the RNFB symlinks, and its
++# `react-native` is a different version).
++set -euo pipefail
++
++REPO_ROOT="$(cd "$(dirname "$0")/../../../.." && pwd)"
++TEST_EXPO="${REPO_ROOT}/test-expo"
++
++log() {
++  echo "[make-expo-fixture] $*"
++}
++fail() {
++  log "ERROR: $*" >&2
++  exit 1
++}
++usage_error() {
++  log "ERROR: $*" >&2
++  log "usage: $0 --modules <m>[,<m>...] (--out <dir under test-expo/> | --check-modules)" >&2
++  exit 2
++}
++
++MODULES=""
++OUT=""
++CHECK_ONLY=0
++while [[ $# -gt 0 ]]; do
++  case "$1" in
++    --modules)
++      [[ $# -ge 2 ]] || usage_error "$1 needs a value"
++      MODULES="$2"
++      shift 2
++      ;;
++    --out)
++      [[ $# -ge 2 ]] || usage_error "$1 needs a value"
++      OUT="$2"
++      shift 2
++      ;;
++    --check-modules)
++      CHECK_ONLY=1
++      shift
++      ;;
++    *)
++      usage_error "unknown argument: $1"
++      ;;
++  esac
++done
++
++modules=()
++IFS=',' read -r -a requested <<<"$MODULES"
++for module in ${requested[@]+"${requested[@]}"}; do
++  module="${module// /}"
++  [[ -z "$module" || "$module" == "app" ]] && continue
++  [[ "$module" =~ ^[a-z0-9]+(-[a-z0-9]+)*$ ]] || usage_error "invalid module name '${module}'"
++  for seen in ${modules[@]+"${modules[@]}"}; do
++    [[ "$seen" == "$module" ]] && usage_error "module '${module}' requested twice"
++  done
++  modules+=("$module")
++done
++
++RNFB_MODULES="${modules[*]+"${modules[*]}"}" TEST_EXPO="$TEST_EXPO" node -e '
++const pkg = require(`${process.env.TEST_EXPO}/package.json`);
++const missing = (process.env.RNFB_MODULES || "").split(" ").filter(Boolean)
++  .map(m => `@react-native-firebase/${m}`)
++  .filter(name => !(pkg.dependencies || {})[name]);
++if (missing.length) {
++  console.error(`[make-expo-fixture] ERROR: test-expo/package.json has no dependency pin for ${missing.join(", ")}`);
++  process.exit(2);
++}
++' || exit 2
++
++if [[ "$CHECK_ONLY" -eq 1 ]]; then
++  [[ -z "$OUT" ]] || usage_error "--check-modules and --out are mutually exclusive"
++  echo "${modules[*]+"${modules[*]}"}"
++  exit 0
++fi
++[[ -n "$OUT" ]] || usage_error "--out <dir> is required"
++
++case "/${OUT}/" in
++  */../*) usage_error "--out must not contain a '..' component (got ${OUT})" ;;
++esac
++OUT="${OUT%/}"
++out_parent="$OUT"
++out_rest=""
++while [[ ! -d "$out_parent" ]]; do
++  out_rest="/$(basename "$out_parent")${out_rest}"
++  out_parent="$(dirname "$out_parent")"
++done
++OUT="$(cd "$out_parent" && pwd -P)${out_rest}"
++case "$OUT/" in
++  "$(cd "$TEST_EXPO" && pwd -P)"/*/) ;;
++  *) usage_error "--out must be inside ${TEST_EXPO} so packages resolve from test-expo/node_modules (got ${OUT})" ;;
++esac
++mkdir -p "$OUT"
++if [[ -n "$(ls -A "$OUT")" ]]; then
++  fail "--out ${OUT} is not empty"
++fi
++
++cp "${TEST_EXPO}/GoogleService-Info.plist" "${OUT}/GoogleService-Info.plist"
++
++RNFB_MODULES="${modules[*]+"${modules[*]}"}" \
++  TEST_EXPO="$TEST_EXPO" OUT="$OUT" node <<'NODE'
++const fs = require('fs');
++const path = require('path');
++
++const testExpo = process.env.TEST_EXPO;
++const out = process.env.OUT;
++const modules = (process.env.RNFB_MODULES || '').split(' ').filter(Boolean);
++const source = JSON.parse(fs.readFileSync(path.join(testExpo, 'package.json'), 'utf8'));
++
++function die(message) {
++  console.error(`[make-expo-fixture] ERROR: ${message}`);
++  process.exit(1);
++}
++
++function pin(name) {
++  const version = source.dependencies[name];
++  if (!version) die(`test-expo/package.json has no dependency pin for ${name}`);
++  return version;
++}
++
++const rnfbPackages = ['app', ...modules].map(m => `@react-native-firebase/${m}`);
++const names = ['expo', 'react', 'react-native', 'expo-build-properties', ...rnfbPackages];
++const dependencies = {};
++for (const name of names) dependencies[name] = pin(name);
++
++for (const name of names) {
++  let resolved;
++  try {
++    resolved = require.resolve(`${name}/package.json`, { paths: [out] });
++  } catch {
++    die(`${name} does not resolve from ${out}; run root yarn first`);
++  }
++  const installed = JSON.parse(fs.readFileSync(resolved, 'utf8')).version;
++  const wanted = dependencies[name];
++  if (/^\d/.test(wanted) && installed !== wanted) {
++    die(`${name} resolves to ${
+```
+
+**File**: `.github/workflows/scripts/test-expo-fixture-ios-dupes.sh` (added, +141/-0)
+```diff
+@@ -0,0 +1,141 @@
++#!/bin/bash
++# Builds a generated blank Expo app (app + the requested RNFB modules) the same
++# way test-expo-ios-link.sh builds test-expo, then runs the shared duplicate
++# Objective-C class scan on it. Isolates which RNFB module combination
++# duplicates a class, which the all-modules test-expo graph cannot show.
++#
++# Usage: test-expo-fixture-ios-dupes.sh --modules messaging[,analytics...]
++#          [--expect-duplicates N | --report-only]
++#
++# --modules is required; --modules "" builds app only.
++#
++# --expect-duplicates N asserts an exact duplicate count instead of zero, for
++# control runs against a graph that is known to duplicate classes.
++# --report-only lists duplicates and the GULNetwork/FIRApp owners without
++# failing on them; scan guards still apply.
++set -euo pipefail
++
++REPO_ROOT="$(cd "$(dirname "$0")/../../.." && pwd)"
++SCRIPTS="${REPO_ROOT}/.github/workflows/scripts"
++# shellcheck source=lib/derived-data-path.sh
++source "${SCRIPTS}/lib/derived-data-path.sh"
++
++log() {
++  echo "[test-expo-fixture-ios-dupes] $*"
++}
++
++usage_error() {
++  log "ERROR: $*"
++  log "usage: $0 --modules <m>[,<m>...] [--expect-duplicates N | --report-only]"
++  exit 2
++}
++
++MODULES=""
++MODULES_SET=0
++REPORT_ONLY=0
++scan_mode_args=()
++while [[ $# -gt 0 ]]; do
++  case "$1" in
++    --modules)
++      [[ $# -ge 2 ]] || usage_error "$1 needs a value"
++      MODULES="$2"
++      MODULES_SET=1
++      shift 2
++      ;;
++    --expect-duplicates)
++      [[ $# -ge 2 ]] || usage_error "$1 needs a value"
++      [[ "$2" =~ ^(0|[1-9][0-9]*)$ ]] || usage_error "--expect-duplicates must be a non-negative integer, got '$2'"
++      [[ "$REPORT_ONLY" -eq 0 ]] || usage_error "--report-only and --expect-duplicates are mutually exclusive"
++      scan_mode_args=(--expect-duplicates "$2")
++      shift 2
++      ;;
++    --report-only)
++      [[ "${#scan_mode_args[@]}" -eq 0 || "$REPORT_ONLY" -eq 1 ]] || usage_error "--report-only and --expect-duplicates are mutually exclusive"
++      REPORT_ONLY=1
++      scan_mode_args=(--report-only)
++      shift
++      ;;
++    *)
++      usage_error "unknown argument: $1"
++      ;;
++  esac
++done
++
++[[ "$MODULES_SET" -eq 1 ]] || usage_error "--modules is required (use --modules \"\" for app only)"
++checked_modules="$(bash "${SCRIPTS}/lib/make-expo-fixture.sh" --modules "$MODULES" --check-modules)" ||
++  usage_error "invalid --modules '${MODULES}'"
++suffix="${checked_modules// /-}"
++suffix="${suffix:-app}"
++
++FIXTURE_DIR="${REPO_ROOT}/test-expo/.fixtures/${suffix}"
++REPO_TAG="$(repo_path_tag "$REPO_ROOT")"
++DERIVED_DATA="$(wipeable_derived_data_path "${RNFB_TEST_EXPO_FIXTURE_DERIVED_DATA-/tmp/test-expo-fixture-derived-data-${REPO_TAG}-${suffix}}" "$REPO_ROOT")" || exit 2
++SPM_PACKAGES="${RNFB_TEST_EXPO_SPM_PACKAGES:-/tmp/test-expo-spm-packages-${REPO_TAG}}"
++PREBUILD_LOG="${RNFB_TEST_EXPO_FIXTURE_PREBUILD_LOG:-/tmp/test-expo-fixture-${REPO_TAG}-${suffix}-prebuild.log}"
++XCODEBUILD_LOG="${RNFB_TEST_EXPO_FIXTURE_XCODEBUILD_LOG:-/tmp/test-expo-fixture-${REPO_TAG}-${suffix}-xcodebuild.log}"
++SCHEME="rnfbfixture"
++
++rm -rf "$FIXTURE_DIR"
++bash "${SCRIPTS}/lib/make-expo-fixture.sh" --modules "$MODULES" --out "$FIXTURE_DIR"
++cd "$FIXTURE_DIR"
++
++# Expo silences `pod install` unless EXPO_DEBUG or CI is set.
++log "expo prebuild --platform ios --clean (log: ${PREBUILD_LOG})"
++set +e
++EXPO_DEBUG=1 npx expo prebuild --platform ios --clean 2>&1 | tee "$PREBUILD_LOG"
++prebuild_status=${PIPESTATUS[0]}
++set -e
++if [[ "$prebuild_status" -ne 0 ]]; then
++  log "ERROR: expo prebuild failed (exit ${prebuild_status}); inspect ${PREBUILD_LOG}"
++  exit "$prebuild_status"
++fi
++
++WORKSPACE="ios/${SCHEME}.xcworkspace"
++if [[ ! -d "$WORKSPACE" ]]; then
++  log "ERROR: expected workspace not found at ${WORKSPACE}"
++  ls -la ios || true
++  exit 1
++fi
++
++export SKIP_BUNDLING=1
++export RCT_NO_LAUNCH_PACKAGER=1
++
++# A reused DerivedData can embed frameworks from an earlier graph, so every
++# build starts empty.
++rm -rf "$DERIVED_DATA"
++HOST_ARCH="$(uname -m)"
++log "xcodebuild build (iOS Simulator, unsigned, Release, arch=${HOST_ARCH}, DerivedData=${DERIVED_DATA}, SPM packages=${SPM_PACKAGES}) (log: ${XCODEBUILD_LOG})"
++xcodebuild_args=(
++  ARCHS="${HOST_ARCH}"
++  VALID_ARCHS="${HOST_ARCH}"
++  ONLY_ACTIVE_ARCH=YES
++  CC=clang CPLUSPLUS=clang++
++  -workspace "$WORKSPACE"
++  -scheme "$SCHEME"
++  -configuration Release
++  -destination 'generic/platform=iOS Simulator'
++  -derivedDataPath "$DERIVED_DATA"
++  -clonedSourcePackagesDirPath "$SPM_PACKAGES"
++  CODE_SIGNING_ALLOWED=NO
++  CODE_SIGNING_REQUIRED=NO
++  CODE_SIGN_IDENTITY=""
++  build
++)
++set +e
++if command -v xcbeautify >/dev/null 2>&1; then
++  xcodebuild "${xcodebuild_args[@]}" 2>&1 | tee "$XCODEBUILD_LOG" | xcbeautify
++  xcodebuild_status=${PIPESTATUS[0]}
++else
++  xcodebuild "${xcodebuild_args[@]}" 2>&1 | tee "$XCODEBUILD_LOG"
++  xcodebuild_status=${PIPESTATUS[0]}
++fi
++set -e
++if [[ "$xcodebuild_status" -ne 0 ]]; then
++  log "ERROR: xcodebuild failed (exit ${xcodebuild_stat
+```
+
+**File**: `.github/workflows/scripts/test-expo-ios-launch-smoke.sh` (modified, +18/-10)
+```diff
+@@ -4,10 +4,16 @@
+ # simctl-only — no Simulator.app / Device Hub.
+ set -euo pipefail
+ 
+-cd "$(dirname "$0")/../../.."
++REPO_ROOT="$(cd "$(dirname "$0")/../../.." && pwd)"
++# shellcheck source=lib/derived-data-path.sh
++source "${REPO_ROOT}/.github/workflows/scripts/lib/derived-data-path.sh"
+ # shellcheck source=../../../scripts/e2e/lib/e2e-run-record.sh
+-source "$(pwd)/scripts/e2e/lib/e2e-run-record.sh"
+-cd test-expo
++source "${REPO_ROOT}/scripts/e2e/lib/e2e-run-record.sh"
++REPO_TAG="$(repo_path_tag "$REPO_ROOT")"
++TMP_ROOT="${TMPDIR:-/tmp}"
++TMP_ROOT="${TMP_ROOT%/}"
++TMP_ROOT="${TMP_ROOT:-/tmp}"
++cd "${REPO_ROOT}/test-expo"
+ 
+ log() {
+   echo "[test-expo-ios-launch-smoke] $*"
+@@ -49,12 +55,10 @@ XCODE_SCHEME="${RNFB_TEST_EXPO_XCODE_SCHEME:-testexpo}"
+ SIM_NAME="${RNFB_TEST_EXPO_IOS27_DEVICE:-iPhone 18 Pro}"
+ SIM_RUNTIME="${RNFB_TEST_EXPO_IOS27_RUNTIME:-iOS 27.0}"
+ METRO_PORT="${RNFB_TEST_EXPO_METRO_PORT:-8081}"
+-TMP_ROOT="${TMPDIR:-/tmp}"
+-TMP_ROOT="${TMP_ROOT%/}"
+-TMP_ROOT="${TMP_ROOT:-/tmp}"
+-METRO_LOG="${RNFB_TEST_EXPO_METRO_LOG:-${TMP_ROOT}/test-expo-launch-smoke-metro.log}"
+-APP_LOG="${RNFB_TEST_EXPO_LAUNCH_LOG:-${TMP_ROOT}/test-expo-launch-smoke.log}"
+-XCODEBUILD_LOG="${RNFB_TEST_EXPO_LAUNCH_XCODEBUILD_LOG:-${TMP_ROOT}/test-expo-launch-smoke-xcodebuild.log}"
++METRO_LOG="${RNFB_TEST_EXPO_METRO_LOG:-${TMP_ROOT}/test-expo-launch-smoke-${REPO_TAG}-metro.log}"
++APP_LOG="${RNFB_TEST_EXPO_LAUNCH_LOG:-${TMP_ROOT}/test-expo-launch-smoke-${REPO_TAG}.log}"
++XCODEBUILD_LOG="${RNFB_TEST_EXPO_LAUNCH_XCODEBUILD_LOG:-${TMP_ROOT}/test-expo-launch-smoke-${REPO_TAG}-xcodebuild.log}"
++SPM_PACKAGES="${RNFB_TEST_EXPO_SPM_PACKAGES:-${TMP_ROOT}/test-expo-spm-packages-${REPO_TAG}}"
+ # Cap for key-window + sceneOfRecord poll after launch (replaces fixed sleep 10).
+ KEY_WINDOW_WAIT_SEC="${RNFB_TEST_EXPO_KEY_WINDOW_WAIT_SEC:-60}"
+ 
+@@ -136,7 +140,7 @@ HOST_ARCH="$(uname -m)"
+ xcrun simctl boot "$UDID" 2>/dev/null || true
+ xcrun simctl bootstatus "$UDID" -b >/dev/null
+ 
+-log "xcodebuild Debug (simulator ${UDID}, log: ${XCODEBUILD_LOG})"
++log "xcodebuild Debug (simulator ${UDID}, SPM packages=${SPM_PACKAGES}, log: ${XCODEBUILD_LOG})"
+ # Cap compile time: prior CI run sat silent after ~18m of xcodebuild env spam until the
+ # 60m job timeout. Prefer GNU timeout when present; otherwise perl alarm.
+ XCODEBUILD_TIMEOUT_SEC="${RNFB_TEST_EXPO_XCODEBUILD_TIMEOUT_SEC:-2400}"
+@@ -150,6 +154,7 @@ if command -v gtimeout >/dev/null 2>&1; then
+     -scheme "$XCODE_SCHEME" \
+     -configuration Debug \
+     -destination "id=${UDID}" \
++    -clonedSourcePackagesDirPath "$SPM_PACKAGES" \
+     CODE_SIGNING_ALLOWED=NO \
+     CODE_SIGNING_REQUIRED=NO \
+     CODE_SIGN_IDENTITY="" \
+@@ -164,6 +169,7 @@ elif command -v timeout >/dev/null 2>&1; then
+     -scheme "$XCODE_SCHEME" \
+     -configuration Debug \
+     -destination "id=${UDID}" \
++    -clonedSourcePackagesDirPath "$SPM_PACKAGES" \
+     CODE_SIGNING_ALLOWED=NO \
+     CODE_SIGNING_REQUIRED=NO \
+     CODE_SIGN_IDENTITY="" \
+@@ -179,6 +185,7 @@ else
+     -scheme "$XCODE_SCHEME" \
+     -configuration Debug \
+     -destination "id=${UDID}" \
++    -clonedSourcePackagesDirPath "$SPM_PACKAGES" \
+     CODE_SIGNING_ALLOWED=NO \
+     CODE_SIGNING_REQUIRED=NO \
+     CODE_SIGN_IDENTITY="" \
+@@ -211,6 +218,7 @@ settings_out="$(
+     -scheme "$XCODE_SCHEME" \
+     -configuration Debug \
+     -destination "id=${UDID}" \
++    -clonedSourcePackagesDirPath "$SPM_PACKAGES" \
+     -showBuildSettings 2>"$settings_err"
+ )"
+ settings_status=$?
+```
+
+**File**: `.github/workflows/scripts/test-expo-ios-link.sh` (modified, +26/-12)
+```diff
+@@ -24,18 +24,26 @@
+ set -euo pipefail
+ 
+ SCRIPTS_DIR="$(cd "$(dirname "$0")" && pwd)"
+-cd "$(dirname "$0")/../../.."
+-cd test-expo
++REPO_ROOT="$(cd "$(dirname "$0")/../../.." && pwd)"
++# shellcheck source=lib/derived-data-path.sh
++source "${REPO_ROOT}/.github/workflows/scripts/lib/derived-data-path.sh"
++REPO_TAG="$(repo_path_tag "$REPO_ROOT")"
++TMP_ROOT="${TMPDIR:-/tmp}"
++TMP_ROOT="${TMP_ROOT%/}"
++TMP_ROOT="${TMP_ROOT:-/tmp}"
++DERIVED_DATA="$(wipeable_derived_data_path "${RNFB_TEST_EXPO_DERIVED_DATA-${TMP_ROOT}/test-expo-derived-data-${REPO_TAG}}" "$REPO_ROOT")" || exit 2
++# Shared with test-expo-ios-launch-smoke.sh so its Debug build reuses these
++# Swift package checkouts; never wiped with DerivedData.
++SPM_PACKAGES="${RNFB_TEST_EXPO_SPM_PACKAGES:-${TMP_ROOT}/test-expo-spm-packages-${REPO_TAG}}"
++
++cd "${REPO_ROOT}/test-expo"
+ 
+ log() {
+   echo "[test-expo-ios-link] $*"
+ }
+ 
+-TMP_ROOT="${TMPDIR:-/tmp}"
+-TMP_ROOT="${TMP_ROOT%/}"
+-TMP_ROOT="${TMP_ROOT:-/tmp}"
+-PREBUILD_LOG="${RNFB_TEST_EXPO_PREBUILD_LOG:-${TMP_ROOT}/test-expo-prebuild.log}"
+-XCODEBUILD_LOG="${RNFB_TEST_EXPO_XCODEBUILD_LOG:-${TMP_ROOT}/test-expo-xcodebuild.log}"
++PREBUILD_LOG="${RNFB_TEST_EXPO_PREBUILD_LOG:-${TMP_ROOT}/test-expo-${REPO_TAG}-prebuild.log}"
++XCODEBUILD_LOG="${RNFB_TEST_EXPO_XCODEBUILD_LOG:-${TMP_ROOT}/test-expo-${REPO_TAG}-xcodebuild.log}"
+ PBXPROJ="ios/testexpo.xcodeproj/project.pbxproj"
+ PODS_PBXPROJ="ios/Pods/Pods.xcodeproj/project.pbxproj"
+ PODS_XCCONFIG="ios/Pods/Target Support Files/Pods-testexpo/Pods-testexpo.release.xcconfig"
+@@ -309,8 +317,11 @@ export RCT_NO_LAUNCH_PACKAGER=1
+ # Release reaches the #9202 duplicate `_FIRFirebaseVersion` graph.
+ # Prefer a simulator destination over bare -sdk iphonesimulator so xcodebuild
+ # does not default to a foreign arch (x86_64 on Apple Silicon).
++# A reused DerivedData can embed frameworks from an earlier graph, so every
++# build starts empty.
++rm -rf "$DERIVED_DATA"
+ HOST_ARCH="$(uname -m)"
+-log "xcodebuild build (iOS Simulator, unsigned, Release, arch=${HOST_ARCH}) (log: ${XCODEBUILD_LOG})"
++log "xcodebuild build (iOS Simulator, unsigned, Release, arch=${HOST_ARCH}, DerivedData=${DERIVED_DATA}, SPM packages=${SPM_PACKAGES}) (log: ${XCODEBUILD_LOG})"
+ xcodebuild_args=(
+   ARCHS="${HOST_ARCH}"
+   VALID_ARCHS="${HOST_ARCH}"
+@@ -320,6 +331,8 @@ xcodebuild_args=(
+   -scheme "$SCHEME"
+   -configuration Release
+   -destination 'generic/platform=iOS Simulator'
++  -derivedDataPath "$DERIVED_DATA"
++  -clonedSourcePackagesDirPath "$SPM_PACKAGES"
+   CODE_SIGNING_ALLOWED=NO
+   CODE_SIGNING_REQUIRED=NO
+   CODE_SIGN_IDENTITY=""
+@@ -362,9 +375,9 @@ fi
+ 
+ log "PASS: Expo documented path links RNFBApp/RNFBMessaging as frameworks without duplicate Firebase symbols"
+ 
+-BUILT_PRODUCTS_DIR="$(grep -oE '/[^ ]*/Build/Products/[A-Za-z0-9_.-]+' "$XCODEBUILD_LOG" | head -1 || true)"
+-if [[ -z "$BUILT_PRODUCTS_DIR" || ! -d "$BUILT_PRODUCTS_DIR" ]]; then
+-  log "ERROR: could not determine BUILT_PRODUCTS_DIR from xcodebuild log"
++BUILT_PRODUCTS_DIR="${DERIVED_DATA}/Build/Products/Release-iphonesimulator"
++if [[ ! -d "$BUILT_PRODUCTS_DIR" ]]; then
++  log "ERROR: built products directory not found at ${BUILT_PRODUCTS_DIR}"
+   exit 1
+ fi
+ APP_DIR="${BUILT_PRODUCTS_DIR}/${SCHEME}.app"
+@@ -377,4 +390,5 @@ if [[ ! -d "$APP_DIR" ]]; then
+   APP_DIR="$app_candidates"
+ fi
+ 
+-"${SCRIPTS_DIR}/check-duplicate-objc-classes.sh" "$APP_DIR"
++"${SCRIPTS_DIR}/check-duplicate-objc-classes.sh" "$APP_DIR" \
++  --canary-hint "test-expo/package.json must keep @react-native-firebase/analytics alongside messaging so the GoogleUtilities sharing graph is exercised"
+```
+
+**File**: `.github/workflows/test_expo_fixture_ios_dupes.yml` (added, +182/-0)
+```diff
+@@ -0,0 +1,182 @@
++name: Test Expo Fixture iOS Duplicate Classes
++
++# Per-module Expo fixtures (GitHub #9408 / #9419): GoogleUtilities classes must
++# have exactly one owner whether messaging, analytics, or both are installed.
++
++on:
++  pull_request:
++    branches:
++      - '**'
++    paths:
++      - 'packages/app/package.json'
++      - 'packages/app/RNFBApp.podspec'
++      - 'packages/app/firebase_spm.rb'
++      - 'packages/app/firebase_json.rb'
++      - 'packages/app/app.plugin.js'
++      - 'packages/app/ios/**'
++      - 'packages/app/plugin/**'
++      - 'packages/messaging/package.json'
++      - 'packages/messaging/app.plugin.js'
++      - 'packages/messaging/RNFBMessaging.podspec'
++      - 'packages/messaging/ios/**'
++      - 'packages/messaging/plugin/**'
++      - 'packages/analytics/package.json'
++      - 'packages/analytics/app.plugin.js'
++      - 'packages/analytics/RNFBAnalytics.podspec'
++      - 'packages/analytics/ios/**'
++      - 'packages/analytics/plugin/**'
++      - 'packages/auth/package.json'
++      - 'packages/auth/app.plugin.js'
++      - 'packages/auth/RNFBAuth.podspec'
++      - 'packages/auth/ios/**'
++      - 'packages/auth/plugin/**'
++      - 'test-expo/package.json'
++      - 'yarn.lock'
++      - '.github/workflows/test_expo_fixture_ios_dupes.yml'
++      - '.github/workflows/scripts/test-expo-fixture-ios-dupes.sh'
++      - '.github/workflows/scripts/lib/make-expo-fixture.sh'
++      - '.github/workflows/scripts/check-duplicate-objc-classes.sh'
++      - '.github/workflows/scripts/lib/derived-data-path.sh'
++      - '.github/workflows/scripts/configure-apple-ci.sh'
++  push:
++    branches:
++      - main
++      - release-v*
++    paths:
++      - 'packages/app/package.json'
++      - 'packages/app/RNFBApp.podspec'
++      - 'packages/app/firebase_spm.rb'
++      - 'packages/app/firebase_json.rb'
++      - 'packages/app/app.plugin.js'
++      - 'packages/app/ios/**'
++      - 'packages/app/plugin/**'
++      - 'packages/messaging/package.json'
++      - 'packages/messaging/app.plugin.js'
++      - 'packages/messaging/RNFBMessaging.podspec'
++      - 'packages/messaging/ios/**'
++      - 'packages/messaging/plugin/**'
++      - 'packages/analytics/package.json'
++      - 'packages/analytics/app.plugin.js'
++      - 'packages/analytics/RNFBAnalytics.podspec'
++      - 'packages/analytics/ios/**'
++      - 'packages/analytics/plugin/**'
++      - 'packages/auth/package.json'
++      - 'packages/auth/app.plugin.js'
++      - 'packages/auth/RNFBAuth.podspec'
++      - 'packages/auth/ios/**'
++      - 'packages/auth/plugin/**'
++      - 'test-expo/package.json'
++      - 'yarn.lock'
++      - '.github/workflows/test_expo_fixture_ios_dupes.yml'
++      - '.github/workflows/scripts/test-expo-fixture-ios-dupes.sh'
++      - '.github/workflows/scripts/lib/make-expo-fixture.sh'
++      - '.github/workflows/scripts/check-duplicate-objc-classes.sh'
++      - '.github/workflows/scripts/lib/derived-data-path.sh'
++      - '.github/workflows/scripts/configure-apple-ci.sh'
++
++permissions:
++  contents: read
++  actions: write
++
++concurrency:
++  group: ${{ github.workflow }}-${{ github.ref }}
++  cancel-in-progress: true
++
++jobs:
++  test-expo-fixture-ios-dupes:
++    name: Expo fixture iOS duplicate classes (${{ matrix.modules }})
++    runs-on: xcode-27
++    timeout-minutes: 90
++    strategy:
++      fail-fast: false
++      matrix:
++        include:
++          - slug: messaging-auth
++            modules: messaging,auth
++          - slug: analytics-auth
++            modules: analytics,auth
++          - slug: messaging-analytics-auth
++            modules: messaging,analytics,auth
++    env:
++      XCODE_VERSION: '27.0'
++      RNFB_IOS_SIM_RUNTIME: iOS 27.0
++      CCACHE_SLOPPINESS: clang_index_store,file_stat_matches,include_file_ctime,include_file_mtime,ivfsoverlay,pch_defines,modules,system_headers,time_macros
++      CCACHE_FILECLONE: true
++      CCACHE_DEPEND: true
++      CCACHE_INODECACHE: true
++      CCACHE_LIMIT_MULTIPLE: 0.95
++      # Prefer PATH ccache wrappers from ccache-action (create-symlink). Do not set LD/LDPLUSPLUS (Xcode 27 trap).
++      CC: clang
++      CPLUSPLUS: clang++
++    steps:
++      - name: Check matrix slug matches modules
++        env:
++          MATRIX_SLUG: ${{ matrix.slug }}
++          MATRIX_MODULES: ${{ matrix.modules }}
++        run: |
++          expected="${MATRIX_MODULES//,/-}"
++          if [[ "$MATRIX_SLUG" != "$expected" ]]; then
++            echo "matrix.slug '${MATRIX_SLUG}' does not match matrix.modules '${MATRIX_MODULES}' (expected '${expected}')" >&2
++            exit 1
++          fi
++
++      # https://github.com/actions/checkout/releases
++      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
++
++      # https://github.com/actions/setup-node/releases
++      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
++        with:
++          node-version: 22
++
++      # https://github.com/maxim-lobanov/setup-xcode/releases
++      - uses: maxim-lobanov/setup-xcode@ed7a
+```
+
+**File**: `.github/workflows/test_expo_ios_link.yml` (modified, +5/-3)
+```diff
+@@ -21,6 +21,8 @@ on:
+       - '.github/workflows/test_expo_ios_link.yml'
+       - '.github/workflows/scripts/test-expo-ios-link.sh'
+       - '.github/workflows/scripts/test-expo-ios-launch-smoke.sh'
++      - '.github/workflows/scripts/check-duplicate-objc-classes.sh'
++      - '.github/workflows/scripts/lib/derived-data-path.sh'
+       - '.github/workflows/scripts/configure-apple-ci.sh'
+   push:
+     branches:
+@@ -40,6 +42,8 @@ on:
+       - '.github/workflows/test_expo_ios_link.yml'
+       - '.github/workflows/scripts/test-expo-ios-link.sh'
+       - '.github/workflows/scripts/test-expo-ios-launch-smoke.sh'
++      - '.github/workflows/scripts/check-duplicate-objc-classes.sh'
++      - '.github/workflows/scripts/lib/derived-data-path.sh'
+       - '.github/workflows/scripts/configure-apple-ci.sh'
+ 
+ permissions:
+@@ -130,7 +134,5 @@ jobs:
+         with:
+           name: test-expo-ios-launch-smoke-logs
+           path: |
+-            /tmp/test-expo-launch-smoke.log
+-            /tmp/test-expo-launch-smoke-metro.log
+-            /tmp/test-expo-launch-smoke-xcodebuild.log
++            /tmp/test-expo-launch-smoke-*.log
+           if-no-files-found: ignore
 ```
 
 ---
 
-### Incident Patch 2: `431338d7` (2026-11-10)
-**Commit Message**: fix(app-check): report provider setup failures and align Android provider readiness with iOS (#9405)
+### Incident Patch 2: `6e1921b8` (2026-11-16)
+**Commit Message**: build(deps): dependency updates 20261113 (#9490)
 
-**File**: `.github/scripts/compare-types/configs/app-check.ts` (modified, +3/-3)
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+
+**File**: `.github/workflows/pr_title.yml` (modified, +1/-1)
 ```diff
-@@ -52,12 +52,12 @@ const config: PackageConfig = {
-     {
-       name: 'ReactNativeFirebaseAppCheckProviderWebOptions',
-       reason:
--        'RN Firebase-specific web provider config shape used by `ReactNativeFirebaseAppCheckProvider.configure()`.',
-+        'Deprecated RN Firebase-specific web provider config shape; accepted by `ReactNativeFirebaseAppCheckProvider.configure()` for compatibility but not read at runtime (other platforms use `CustomProvider`).',
-     },
-     {
-       name: 'ReactNativeFirebaseAppCheckProviderAppleOptions',
-       reason:
--        'RN Firebase-specific Apple provider config shape used to select native iOS/macOS App Check providers.',
-+        'RN Firebase-specific provider config shape for the iOS (`apple` key) options, used to select native iOS App Check providers.',
-     },
-     {
-       name: 'ReactNativeFirebaseAppCheckProviderAndroidOptions',
-@@ -67,7 +67,7 @@ const config: PackageConfig = {
-     {
-       name: 'ReactNativeFirebaseAppCheckProviderOptionsMap',
-       reason:
--        'RN Firebase-specific cross-platform provider options map used to configure Android, Apple, and web providers together.',
-+        'RN Firebase-specific cross-platform provider options map used to configure Android and iOS (`apple` key) native providers together (the `web` key is deprecated and not read).',
-     },
-     {
-       name: 'ReactNativeFirebaseAppCheckProviderConfig',
+@@ -22,7 +22,7 @@ jobs:
+         with:
+           node-version: 24
+       # https://github.com/amannn/action-semantic-pull-request/releases
+-      - uses: amannn/action-semantic-pull-request@48f256284bd46cdaab1048c3721360e808335d50 # v6.1.1
++      - uses: amannn/action-semantic-pull-request@2252a14e810aa9b85c2d560bd7070c802206ecf6 # v6.1.2
+         with:
+           validateSingleCommit: true
+           validateSingleCommitMatchesPrTitle: true
 ```
 
-**File**: `docs/app-check/usage/index.mdx` (modified, +5/-3)
+**File**: `.github/workflows/publish.yml` (modified, +1/-1)
 ```diff
-@@ -222,6 +222,8 @@ rnfbProvider.configure({
+@@ -42,7 +42,7 @@ jobs:
  
- ### Install the Custom Provider
+       - name: Setup Ruby
+         # https://github.com/ruby/setup-ruby/releases
+-        uses: ruby/setup-ruby@de492cf36cbab201753d720ce4f4e336cd688c94 # v1.336.0
++        uses: ruby/setup-ruby@b3aaceaef7e0ee231b499e7b5f49c03fc1d32199 # v1.338.0
+         with:
+           ruby-version: 3
+       # Pinned cocoapods/xcodeproj from the root Gemfile. yarn tests:ios:pod:install
+```
+
+**File**: `.github/workflows/tests_e2e_ios.yml` (modified, +2/-2)
+```diff
+@@ -222,7 +222,7 @@ jobs:
  
-+`initializeAppCheck` returns the App Check instance synchronously and provider setup continues in the background: invalid options still throw synchronously, and a failure during provider setup is reported with `console.warn` instead of an unhandled promise rejection.
+       - name: Setup Ruby
+         # https://github.com/ruby/setup-ruby/releases
+-        uses: ruby/setup-ruby@de492cf36cbab201753d720ce4f4e336cd688c94 # v1.336.0
++        uses: ruby/setup-ruby@b3aaceaef7e0ee231b499e7b5f49c03fc1d32199 # v1.338.0
+         with:
+           ruby-version: 3
+ 
+@@ -665,7 +665,7 @@ jobs:
+           max-size: 1500M
+ 
+       - name: Setup Ruby
+-        uses: ruby/setup-ruby@de492cf36cbab201753d720ce4f4e336cd688c94 # v1.336.0
++        uses: ruby/setup-ruby@b3aaceaef7e0ee231b499e7b5f49c03fc1d32199 # v1.338.0
+         with:
+           ruby-version: 3
+ 
+```
+
+**File**: `.github/workflows/tests_e2e_other.yml` (modified, +1/-1)
+```diff
+@@ -194,7 +194,7 @@ jobs:
+           restore-keys: ${{ runner.os }}-nx-v1
+       - name: Setup Ruby
+         # https://github.com/ruby/setup-ruby/releases
+-        uses: ruby/setup-ruby@de492cf36cbab201753d720ce4f4e336cd688c94 # v1.336.0
++        uses: ruby/setup-ruby@b3aaceaef7e0ee231b499e7b5f49c03fc1d32199 # v1.338.0
+         with:
+           ruby-version: 3
+ 
+```
+
+**File**: `Gemfile.lock` (modified, +2/-2)
+```diff
+@@ -14,7 +14,7 @@ GEM
+       minitest (>= 5.1, < 6)
+       securerandom (>= 0.3)
+       tzinfo (~> 2.0, >= 2.0.5)
+-    addressable (2.9.0)
++    addressable (2.9.1)
+       public_suffix (>= 2.0.2, < 8.0)
+     algoliasearch (1.27.5)
+       httpclient (~> 2.8, >= 2.8.3)
+@@ -167,7 +167,7 @@ DEPENDENCIES
+ CHECKSUMS
+   CFPropertyList (3.0.8) sha256=2c99d0d980536d3d7ab252f7bd59ac8be50fbdd1ff487c98c949bb66bb114261
+   activesupport (7.2.3.2) sha256=ddc90d11dd88086d78ace03407fe3c2a3f5c8853c3c3046313db5ed823ef3312
+-  addressable (2.9.0) sha256=7fdf6ac3660f7f4e867a0838be3f6cf722ace541dd97767fa42bc6cfa980c7af
++  addressable (2.9.1) sha256=f1212365945455c84e8d031eea40fc6bedf0c663a78d95b3ab93591040bc5c35
+   algoliasearch (1.27.5) sha256=26c1cddf3c2ec4bd60c148389e42702c98fdac862881dc6b07a4c0b89ffec853
+   ast (2.4.3) sha256=954615157c1d6a382bc27d690d973195e79db7f55e9765ac7c481c60bdb4d383
+   atomos (0.1.3) sha256=7d43b22f2454a36bace5532d30785b06de3711399cb1c6bf932573eda536789f
+```
+
+**File**: `yarn.lock` (modified, +26/-42)
+```diff
+@@ -9894,13 +9894,14 @@ __metadata:
+   linkType: hard
+ 
+ "axios@npm:^1.15.2":
+-  version: 1.15.2
+-  resolution: "axios@npm:1.15.2"
++  version: 1.21.1
++  resolution: "axios@npm:1.21.1"
+   dependencies:
+-    follow-redirects: "npm:^1.15.11"
+-    form-data: "npm:^4.0.5"
++    follow-redirects: "npm:^1.16.2"
++    form-data: "npm:^4.0.6"
++    https-proxy-agent: "npm:^5.0.1"
+     proxy-from-env: "npm:^2.1.0"
+-  checksum: 10/eebbd8cb777316d4252cd994a06ec9fb956ef519214a62dab6c5443ae8b753b5116e9a770502316789e6cdef1101e6aae53b6936d6a3791b2d66d75f4d7d2462
++  checksum: 10/9018790ab5f07a48a73979e5ca420140873b50ea470cf1fdeaabc662533518f3f313ff1bb3107b7fd3f062b0bffffad6600ecb9096e9577182ed4db8fbc2575b
+   languageName: node
+   linkType: hard
+ 
+@@ -10571,7 +10572,7 @@ __metadata:
+   languageName: node
+   linkType: hard
+ 
+-"brace-expansion@npm:5.0.8":
++"brace-expansion@npm:5.0.8, brace-expansion@npm:^5.0.2, brace-expansion@npm:^5.0.5":
+   version: 5.0.8
+   resolution: "brace-expansion@npm:5.0.8"
+   dependencies:
+@@ -10581,25 +10582,16 @@ __metadata:
+   linkType: hard
+ 
+ "brace-expansion@npm:^1.1.7":
+-  version: 1.1.12
+-  resolution: "brace-expansion@npm:1.1.12"
++  version: 1.1.21
++  resolution: "brace-expansion@npm:1.1.21"
+   dependencies:
+     balanced-match: "npm:^1.0.0"
+     concat-map: "npm:0.0.1"
+-  checksum: 10/12cb6d6310629e3048cadb003e1aca4d8c9bb5c67c3c321bafdd7e7a50155de081f78ea3e0ed92ecc75a9015e784f301efc8132383132f4f7904ad1ac529c562
++  checksum: 10/6c0ed34107cb3bd3f44c01d90ec8c01baa3ed75b7755617e2e5797b5908bbf20b313edf575612b200a783b84c7d1826aec2f7a2f03de9905bbfae5dc3dea6a95
+   languageName: node
+   linkType: hard
+ 
+-"brace-expansion@npm:^2.0.1":
+-  version: 2.0.2
+-  resolution: "brace-expansion@npm:2.0.2"
+-  dependencies:
+-    balanced-match: "npm:^1.0.0"
+-  checksum: 10/01dff195e3646bc4b0d27b63d9bab84d2ebc06121ff5013ad6e5356daa5a9d6b60fa26cf73c74797f2dc3fbec112af13578d51f75228c1112b26c790a87b0488
+-  languageName: node
+-  linkType: hard
+-
+-"brace-expansion@npm:^2.0.2":
++"brace-expansion@npm:^2.0.1, brace-expansion@npm:^2.0.2":
+   version: 2.1.0
+   resolution: "brace-expansion@npm:2.1.0"
+   dependencies:
+@@ -10608,24 +10600,6 @@ __metadata:
+   languageName: node
+   linkType: hard
+ 
+-"brace-expansion@npm:^5.0.2":
+-  version: 5.0.4
+-  resolution: "brace-expansion@npm:5.0.4"
+-  dependencies:
+-    balanced-match: "npm:^4.0.2"
+-  checksum: 10/cfd57e20d8ded9578149e47ae4d3fff2b2f78d06b54a32a73057bddff65c8e9b930613f0cbcfefedf12dd117151e19d4da16367d5127c54f3bff02d8a4479bb2
+-  languageName: node
+-  linkType: hard
+-
+-"brace-expansion@npm:^5.0.5":
+-  version: 5.0.5
+-  resolution: "brace-expansion@npm:5.0.5"
+-  dependencies:
+-    balanced-match: "npm:^4.0.2"
+-  checksum: 10/f259b2ddf04489da9512ad637ba6b4ef2d77abd4445d20f7f1714585f153435200a53fa6a2e4a5ee974df14ddad4cd16421f6f803e96e8b452bd48598878d0ee
+-  languageName: node
+-  linkType: hard
+-
+ "braces@npm:^3.0.3, braces@npm:~3.0.2":
+   version: 3.0.3
+   resolution: "braces@npm:3.0.3"
+@@ -15153,7 +15127,7 @@ __metadata:
+   languageName: node
+   linkType: hard
+ 
+-"follow-redirects@npm:1.16.0, follow-redirects@npm:^1.15.11, follow-redirects@npm:^1.16.0":
++"follow-redirects@npm:1.16.0, follow-redirects@npm:^1.16.0":
+   version: 1.16.0
+   resolution: "follow-redirects@npm:1.16.0"
+   peerDependenciesMeta:
+@@ -15163,6 +15137,16 @@ __metadata:
+   languageName: node
+   linkType: hard
+ 
++"follow-redirects@npm:^1.16.2":
++  version: 1.16.3
++  resolution: "follow-redirects@npm:1.16.3"
++  peerDependenciesMeta:
++    debug:
++      optional: true
++  checksum: 10/ac3b15f7d18c26be8b38fb314d271b8def49f710388eea76079721792ef1b828fdb6696cacc92962f54bcd2462479fdcf33497502dc20ed0a5a8be1afb092215
++  languageName: node
++  linkType: hard
 +
- Once you have the custom provider configured, install it in app-check using the firebase-js-sdk compatible API, while saving the returned instance for usage:
+ "fontfaceobserver@npm:^2.1.0":
+   version: 2.3.0
+   resolution: "fontfaceobserver@npm:2.3.0"
+@@ -15199,7 +15183,7 @@ __metadata:
+   languageName: node
+   linkType: hard
  
- ```javascript
-@@ -300,11 +302,11 @@ const { token } = await appCheckInstance.getToken(true);
+-"form-data@npm:4.0.6":
++"form-data@npm:4.0.6, form-data@npm:^4.0.6":
+   version: 4.0.6
+   resolution: "form-data@npm:4.0.6"
+   dependencies:
+@@ -21536,9 +21520,9 @@ __metadata:
+   linkType: hard
  
- ## Automatic Data Collection
+ "moment@npm:^2.19.3":
+-  version: 2.30.1
+-  resolution: "moment@npm:2.30.1"
+-  checksum: 10/ae42d876d4ec831ef66110bdc302c0657c664991e45cf2afffc4b0f6cd6d251dde11375c982a5c0564ccc0fa593fc564576ddceb8c8845e87c15f58aa6baca69
++  version: 2.31.0
++  resolution: "moment@npm:2.31.0"
++  checksum: 10/fd3708d46f820c64fe1e064a60747533a55ee0aefd944490e18f08b2a83a5b6418bb4f42e1de47ef1f1a29f450c7ac41edd1fa6f940db30ded247c9717301b9f
+   languageName: node
+   linkType: hard
  
--App Check has an "tokenAutoRefreshEnabled" setting. This may cause App Check to attempt a remote App Check token fetch prior to user consent. In certain scenarios, like those that exist in GDPR-compliant apps running for the first time, this may be unwanted.
-+App Check has a "tokenAutoRefreshEnabled" setting. This may cause App Check to attempt a remote App Check token fetch prior to user consent. In certain scenarios, like those that exist in GDPR-compliant apps running for the first time, this may be unwanted.
- 
--You may configure this setting in `firebase.json` such that your desired configuration is in place even before you the react-native javascript bundle begins executing and allows for runtime configuration.
-+You may configure this setting with `app_check_token_auto_refresh` in `firebase.json`. On Android, the native module also applies this value as the startup default when it is created, before `initializeAppCheck` runs (in debug builds, this startup default is `false` unless `app_check_token_auto_refresh` is set to `true` in `firebase.json`); on iOS, it only takes effect through the `initializeAppCheck` fallback below.
- 
--If unset, the "tokenAutoRefreshEnabled" setting will defer to the app's "automatic data collection" setting, which may be set in `firebase.json`, or if you wish directly in the Info.plist or AndroidManifest.xml according to the Firebase native SDK documentation. Unless otherwise configured, it will default to true implying there will be automatic data collection and app check token refresh attempts.
-+On Android and iOS, if `isTokenAutoRefreshEnabled` is omitted from `initializeAppCheck`, it falls back to `app_check_token_auto_refresh` in `firebase.json`, then `app_data_collection_default_enabled` in `firebase.json`, then `true`. Values set only in Info.plist or AndroidManifest.xml are not read by this fallback. On other platforms (macOS, web), this fallback is not applied.
- 
- ## Using App Check tokens for non-firebase services
- 
-```
-
-**File**: `docs/migrating-to-v26.mdx` (modified, +2/-2)
-```diff
-@@ -141,7 +141,7 @@ v26 aligns React Native Firebase modular types and several runtime signatures wi
- | Method | Before | After | Notes |
- | ------ | ------ | ----- | ----- |
- | `logEvent(analytics, …)` | `Promise<void>` | `void` | Fire-and-forget; remove `await` / `.then()` |
--| `initializeAppCheck(app?, options?)` | `Promise<AppCheck>` | `AppCheck` | Returns handle immediately; provider setup continues natively |
-+| `initializeAppCheck(app?, options?)` | `Promise<AppCheck>` | `AppCheck` | Returns handle immediately; provider setup continues in the background (native SDK, or firebase-js-sdk web interop on macOS and web); setup failures are reported with `console.warn` |
- | `initializeFirestore(app, settings, databaseId?)` | `Promise<Firestore>` | `Firestore` | Returns instance immediately; `settings()` runs on native bridge |
- | `getRemoteConfig(app?, options?)` | `(app?)` only | `(app?, options?: RemoteConfigOptions)` | `options` accepted for parity; no-op on native |
- | `aggregateFieldEqual()` | Not exported | Exported | Aggregate query helper |
-@@ -554,7 +554,7 @@ The namespaced API for `@react-native-firebase/app-check` has been **removed**.
- 
- ## Signature changes
- 
--- `initializeAppCheck(app?, options?)` returns `AppCheck` synchronously (previously `Promise<AppCheck>`). Native provider setup continues in the background — remove `await` and do not chain `.then()`.
-+- `initializeAppCheck(app?, options?)` returns `AppCheck` synchronously (previously `Promise<AppCheck>`). Provider setup continues in the background (native SDK, or firebase-js-sdk web interop on macOS and web) — remove `await` and do not chain `.then()`. A failure while configuring the provider is reported with `console.warn` instead of an unhandled promise rejection; invalid options still throw synchronously.
- 
- # Analytics
- 
-```
-
-**File**: `okf-bundle/packages/app-check/architecture-decisions.md` (modified, +12/-4)
-```diff
-@@ -103,14 +103,22 @@ While pending, token completions must use an **actionable** error that mentions
- 
- | Layer | Value |
- | ----- | ----- |
--| Provider `NSError` domain | `RNFBErrorDomain` (same as `RNFBSharedUtils`) |
--| Provider `NSError` code | `666` (RNFB promise-error convention) |
--| `userInfo[@"code"]` | `provider-not-ready` |
-+| Provider `NSError` domain (iOS) | `RNFBErrorDomain` (same as `RNFBSharedUtils`) |
-+| Provider `NSError` code (iOS) | `666` (RNFB promise-error convention) |
-+| Provider exception (Android) | `ProviderNotReadyException`, same message |
-+| `userInfo[@"code"]` (iOS) | `provider-not-ready` |
- | Message | `App Check provider is not ready. Call initializeAppCheck before requesting tokens.` |
- | JS / TurboModule reject `code` | `provider-not-ready` |
- | Full `NativeFirebaseError` | `appCheck/provider-not-ready` |
- 
--Map pending in `RNFBAppCheckModule` (`getToken` / `getLimitedUseToken`) so provider errors do not collapse to generic `token-error`. Detect via `userInfo[@"code"] == provider-not-ready` or nil `delegateProvider` before calling the SDK.
-+Map pending in the token entry points (`getToken` / `getLimitedUseToken`) on both platforms so provider errors do not collapse to generic `token-error`:
-+
-+- **Pre-check (before the SDK):** reject `provider-not-ready` when the app has no RNFB provider or its delegate is null. iOS: `RNFBAppCheckRejectIfProviderNotReady` (`RNFBAppCheckHelper.m`). Android: `rejectIfProviderNotReady` in `NativeRNFBTurboAppCheck`, via `ReactNativeFirebaseAppCheckProviderFactory.isProviderReady`.
-+- **Completion mapping (reconfigure fails after the check passes):** iOS matches `userInfo[@"code"] == provider-not-ready` along the error chain (`RNFBAppCheckRejectCodeMapper`). Android walks the cause chain for `ProviderNotReadyException` (`tokenErrorCode` / `tokenErrorMessage`).
-+
-+An app that installs its own native provider factory without calling `initializeAppCheck` gets `provider-not-ready` on both platforms.
-+
-+Platform difference: the Android `providerFactory` belongs to one `NativeRNFBTurboAppCheck` instance, while iOS uses the process-wide `RNFBAppCheckSharedProviderFactory()`. After a JS reload or module invalidation, Android rejects `provider-not-ready` until `initializeAppCheck` runs again; apps normally re-run it on reload.
- 
- **Rejected:** Reusing `FIRAppCheckErrorCodeInvalidConfiguration` (or other `FIRAppCheckErrorDomain` codes) for pending — those mean SDK invalid-config / network / keychain, not “JS has not configured yet,” and would still surface as today’s generic `token-error` path without an explicit module map.
- 
-```
-
-**File**: `okf-bundle/testing/agent-command-policy.md` (modified, +1/-1)
-```diff
-@@ -206,7 +206,7 @@ Local e2e (`yarn tests:*:test-cover`), the packager, emulator start, native buil
- 
- - There is **no** `yarn google-java-format` script. Invented `google-java-format` / `npx google-java-format` invocations are forbidden.
- - **Canonical:** `yarn lint:android` (repo root) — wraps `google-java-format --set-exit-if-changed --replace` on **Java** under `packages/*/android/src` and fails if the tree would change. Outside a git work tree (for example an rsync copy of the checkout) it skips the `git diff` step and relies on the formatter exit alone. It does **not** format Kotlin.
--- **Needs JDK 21+:** the bundled `google-java-format` 1.35.0 jar runs on whatever `java` is first on `PATH` (not Gradle's JDK). On JDK < 21 it fails many files, untouched ones included, with `NoClassDefFoundError: com/sun/tools/javac/tree/JCTree$JCAnyPattern`. This is a host JDK problem, not a formatting failure. Put a JDK 21 first on `PATH` for the same command, e.g. `PATH="$(/usr/libexec/java_home -v 21)/bin:$PATH" yarn lint:android` (macOS).
-+- **Needs JDK 21+:** the bundled `google-java-format` 1.35.0 jar runs on whatever `java` is first on `PATH` (not Gradle's JDK). On JDK < 21 it fails many files, untouched ones included, with `NoClassDefFoundError: com/sun/tools/javac/tree/JCTree$JCAnyPattern`. This is a host JDK problem, not a formatting failure. Put a JDK 21 first on `PATH` for the same command, e.g. `J21="$(/usr/libexec/java_home -v 21 -F)" && PATH="$J21/bin:$PATH" yarn lint:android` (macOS; stops if no JDK 21 is found. Without `-F`, `java_home` returns another installed JDK instead of failing; a Homebrew `/opt/homebrew/opt/openjdk@21/bin` works as the `PATH` entry instead).
- 
- <a id="android-kotlin-format"></a>
- 
-```
-
-**File**: `okf-bundle/testing/android-architecture-decisions.md` (modified, +1/-0)
-```diff
-@@ -41,6 +41,7 @@ Prefer **plain JUnit4** for Android Java state-machine / bridge logic that e2e c
- | `@Config` | Omit unless the test **fails without it**. Keep the smallest working annotation (for example `application = …` when a custom `Application` is required). **Never pin `sdk` unless that test fails without the pin** — an `sdk` pin triggers a large on-demand Robolectric `android-all` download. Do not treat an `sdk` pin as a general requirement. |
- | Doubles | Mockito (`mock`, `mockStatic`, etc.) for RN host/context and Firebase SDK types (for example `ReactApplicationContext`, `Arguments`, `FirebaseMessaging`); prefer a small mock over pulling in Robolectric. Production classes that extend or call RN/Firebase types **may be instantiated** in JVM tests with those collaborators mocked |
- | Test seams | A package-private (no `public`) method on the production class may wrap a collaborator lookup (for example `FirebaseMessaging.getInstance()`) so a test subclass can substitute it. Use this when a `mockStatic` would be thread-bound but the code under test runs on another thread (module executor) |
-+| Framework stubs | Plain JUnit4 runs against `android.jar` stubs that throw (no `testOptions.unitTests.returnDefaultValues`). `new FirebaseException(…)` (shipped in `play-services-basement`) fails because its constructor calls `Preconditions.checkNotEmpty`, which calls `TextUtils.isEmpty`; simulate SDK failures with a plain `Exception` carrying the same message, or `mockStatic(TextUtils.class)` as tests already do for `Log` (for example `ReactNativeFirebaseAppCheckProviderTest`) |
- | Dependencies | Per-package `android/build.gradle` `testImplementation` for JUnit, Robolectric (`4.14.1`) and Mockito (`5.14.2`) where its tests need them |
- | Entry command | `yarn tests:android:unit` → `tests/android` `./gradlew rnfbDebugUnitTests` |
- | Coverage artifact | Module Jacoco `*.exec` (merged into Codecov via `jacocoTestReport` — [coverage design](coverage-design.md)) |
-```
-
-**File**: `okf-bundle/testing/running-e2e.md` (modified, +3/-1)
-```diff
-@@ -854,6 +854,8 @@ Slotted mode: no e2e retries (fail-fast). Serial mode: up to 3 `:test-cover` att
- 
- **First use of a slot:** `yarn tests:e2e:setup-android-avds [count]` / `yarn tests:e2e:setup-ios-sims [count]` — [setup count](#e2e-slot-index). Both scripts are **create/reuse-only** — an existing device is reported and reused; neither deletes, renames, or erases anything. Serial unslotted devices stay `TestingAVD` / `iPhone 17`. iOS simulators are created on **`RNFB_IOS_SIM_RUNTIME`** (default `iOS 27.0`); CI/Jet reboot paths use **UDID** + selected-Xcode **Device Hub** — see [iOS CI simulator reliability](../ci-workflows/ios.md#simulator-reliability). Naming and host migration: [iOS slot simulators](#ios-slot-simulators).
- 
-+**Base `TestingAVD` prerequisite (Android):** `yarn tests:e2e:setup-android-avds` does **not** create the serial `TestingAVD`; [`scripts/e2e/create-android-avds.sh`](../../scripts/e2e/create-android-avds.sh) only clones an existing base (`RNFB_ANDROID_BASE_AVD`, default `TestingAVD`) into `TestingAVD-N` and fails with `base AVD 'TestingAVD' not found` otherwise. A human creates it once in Android Studio Device Manager; CI uses API **36**, `google_apis`, `x86_64` ([`tests_e2e_android.yml`](../../.github/workflows/tests_e2e_android.yml) matrix). If the script reports it missing, agents stop and ask the user — `avdmanager` is not on the [agent allowlist](agent-command-policy.md). Match the CI API level: the readiness probe in [`tests/e2e/firebase.test.js`](../../tests/e2e/firebase.test.js) runs `adb shell cmd package wait-for-handler`, which API 33 does not support (`Unknown command: wait-for-handler`), so an older image stalls retrying `android-ready package handler wait` until `RNFB_REBOOT_ANDROID_EMULATOR_TIMEOUT_MS` (default 5 min) and the app never launches.
-+
- Keep exported env in the **same shell**. `export-slot-env` loads full `RNFB_{ANDROID,IOS,MACOS}_*` carry-in, `ANDROID_SERIAL=emulator-$((5556+2*N))`, `RNFB_ANDROID_CONSOLE_PORT` (Detox must not FreePortFinder **10000–20000**), `RNFB_MACOS_PRODUCT_NAME=io.invertase.testing.sN`. Does not set `GRADLE_USER_HOME`.
- 
- **Serial leftover env + Jest transform cache:** `tests/.babelrc` / `tests-macos/.babelrc` `babel-plugin-transform-inline-environment-variables` inlines `RNFB_*` at transform time. Jest’s transform cache does **not** include those env values, so a prior slotted shell can make serial `:test-cover` wait on android slot-0 Metro **`:12007`**. Mitigations: `eval "$(yarn tests:e2e:clear-slot-env)"` before a serial Law run; `e2e_sanitize_serial_env` inside packager / emulator / `:build` / `:test-cover` when `RNFB_E2E_SLOT` is unset (then **pins** `RNFB_ANDROID_CONSOLE_PORT=5554` / `ANDROID_SERIAL=emulator-5554` so Detox does not FreePortFinder **10000–20000**); `cache: false` in `tests/e2e/jest.config.js` so Detox Jest cannot replay a slotted transform. Host Metro wait is not the only leftover: a **slot-baked APK** (`react_native_dev_server_port=12007`) on serial `:test-cover` still launches `TestingAVD`/`emulator-5554` then fails Detox `isReady` / APP_STATUS — `e2e_assert_android_apk_metro_port` fail-fasts that mismatch.
-@@ -885,7 +887,7 @@ Keep exported env in the **same shell**. `export-slot-env` loads full `RNFB_{AND
- | `RNFB_{ANDROID,IOS,MACOS}_JET_CONTROL_PORT`                                                                                                                              | Per-platform Jet HTTP control (preferred); `RNFB_JET_CONTROL_PORT` remains a process-local fallback                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
- | `RNFB_JET_CONTROL_PORT`                                                                                                                                                  | Process-local Jet HTTP control plane fallback (default `JET_REMOTE_PORT + 1`)                                                                                                                                                                                                                                                                                                                                                                                               
-```
-
-**File**: `okf-bundle/testing/validation-checklist.md` (modified, +3/-0)
-```diff
-@@ -78,6 +78,9 @@ yarn tests:jest --watchman=false packages/firestore/__tests__/pipelines.test.ts
- 
- Optional: `yarn tests:jest-coverage`.
- 
-+<a id="jest-unhandled-rejections"></a>
-+**Unhandled rejections:** on Node 24 an unhandled promise rejection crashes the Jest process (`triggerUncaughtException`), aborting the file so other tests report nothing; a `process.on('unhandledRejection')` listener in a test cannot reliably observe it (Jest sandboxes `process`). Assert the handler is attached instead: spy the method returning the promise, wrap the returned promise's `then` to capture the derived promise, and assert that resolves (pattern: `packages/app-check/__tests__/initializeAppCheck.test.ts`). When proving such tests fail on old code, run them one at a time (`-t`) so each failure is reported.
-+
- ## Android JVM unit tests
- 
- When `packages/*/android/**` Java bridge/state-machine logic changed (or added under `src/test/java`):
 ```
 
 ---
 
-### Incident Patch 3: `439611d7` (2026-11-13)
-**Commit Message**: fix(perf): remove the frame metrics listener when a screen trace stops (#9482)
+### Incident Patch 3: `4aa429a1` (2026-11-16)
+**Commit Message**: fix(android): tolerate deprecated JNI invokeJavaMethod on RN 0.89+ (#9492)
 
-**File**: `packages/perf/android/src/main/java/io/invertase/firebase/perf/ScreenTrace.java` (modified, +1/-1)
+**File**: `okf-bundle/new-architecture/architecture-decisions.md` (modified, +14/-0)
 ```diff
-@@ -102,7 +102,7 @@ public void sendScreenTrace() {
-     int frozenFrames = 0;
+@@ -407,6 +407,20 @@ ResultT inject ([NewArch-AD-21](#newarch-ad-21--interim-ios-resultt-alias-withou
  
-     // Stops recording metrics for this Activity and returns the currently-collected metrics
--    SparseIntArray[] arr = frameMetricsAggregator.reset();
-+    SparseIntArray[] arr = frameMetricsAggregator.stop();
+ ---
  
-     if (arr != null) {
-       SparseIntArray frameTimes = arr[FrameMetricsAggregator.TOTAL_INDEX];
++## NewArch-AD-24 — JNI deprecation CMake patch until min RN ≥ 0.89 — **Accepted**
++
++**Context:** React Native **0.89+** deprecates the `JavaTurboModule::invokeJavaMethod` overload that takes a cached `jmethodID` ([facebook/react-native#59619](https://github.com/facebook/react-native/pull/59619)). RNFB still commits library JNI under each package's `generated/jni/` for TurboModules ([NewArch-AD-5](#newarch-ad-5--commit-generated-code--accepted)). Stock codegen continues to emit the legacy call shape so builds keep working on React Native versions **before** 0.89. On 0.89+, `target_compile_reactnative_options` turns deprecation warnings into errors (`-Werror`), breaking all library codegen CMake targets.
++
++**Decision:** After each successful **library** Android wipe-then-regen ([NewArch-AD-22](#newarch-ad-22--codegen-is-wipe-then-regen-on-the-configured-outputpath--accepted)), [`scripts/codegen-package.mjs`](../../../scripts/codegen-package.mjs) post-processes `jni/CMakeLists.txt` to append `target_compile_options(<react_codegen_* target> PRIVATE -Wno-error=deprecated-declarations)` with a stable `# RNFB:` marker comment. Scope: **16** library packages (not `testing` app codegen). Idempotent on re-run.
++
++**Why not regenerate call sites now:** The replacement `invokeJavaMethod` overload exists only from RN **0.89**; rewriting committed `.cpp` output would break the documented compatibility window for older React Native lines still supported alongside the mobile test app pin.
++
++**Exit criterion:** When RNFB's minimum supported React Native is **≥ 0.89**, run `yarn codegen:all` with a 0.89+ toolchain so upstream templates emit the new overload, commit regenerated JNI, and **remove** this CMake post-process (delete `patchAndroidJniDeprecationCMake` and the marker block from committed `CMakeLists.txt` files).
++
++**Related:** [NewArch-AD-5](#newarch-ad-5--commit-generated-code--accepted), [NewArch-AD-22](#newarch-ad-22--codegen-is-wipe-then-regen-on-the-configured-outputpath--accepted), [agent-command-policy § TurboModule codegen](../testing/agent-command-policy.md#turbomodule-codegen).
++
++---
++
+ ## Related docs
+ 
+ | Topic | Document |
+```
+
+**File**: `packages/analytics/android/src/reactnative/java/io/invertase/firebase/analytics/generated/jni/CMakeLists.txt` (modified, +4/-0)
+```diff
+@@ -26,3 +26,7 @@ target_link_libraries(
+ )
+ 
+ target_compile_reactnative_options(react_codegen_RNFBAnalyticsTurboModules PRIVATE)
++# RNFB: JNI deprecated invokeJavaMethod (RN <0.89 compat)
++# React Native 0.89+ deprecates the cached-method-ID overload used by this
++# checked-in codegen output; older React Native versions still need it.
++target_compile_options(react_codegen_RNFBAnalyticsTurboModules PRIVATE -Wno-error=deprecated-declarations)
+```
+
+**File**: `packages/app-check/android/src/main/java/io/invertase/firebase/appcheck/generated/jni/CMakeLists.txt` (modified, +4/-0)
+```diff
+@@ -26,3 +26,7 @@ target_link_libraries(
+ )
+ 
+ target_compile_reactnative_options(react_codegen_RNFBAppCheckTurboModules PRIVATE)
++# RNFB: JNI deprecated invokeJavaMethod (RN <0.89 compat)
++# React Native 0.89+ deprecates the cached-method-ID overload used by this
++# checked-in codegen output; older React Native versions still need it.
++target_compile_options(react_codegen_RNFBAppCheckTurboModules PRIVATE -Wno-error=deprecated-declarations)
+```
+
+**File**: `packages/app-distribution/android/src/main/java/io/invertase/firebase/appdistribution/generated/jni/CMakeLists.txt` (modified, +4/-0)
+```diff
+@@ -26,3 +26,7 @@ target_link_libraries(
+ )
+ 
+ target_compile_reactnative_options(react_codegen_RNFBAppDistributionTurboModules PRIVATE)
++# RNFB: JNI deprecated invokeJavaMethod (RN <0.89 compat)
++# React Native 0.89+ deprecates the cached-method-ID overload used by this
++# checked-in codegen output; older React Native versions still need it.
++target_compile_options(react_codegen_RNFBAppDistributionTurboModules PRIVATE -Wno-error=deprecated-declarations)
+```
+
+**File**: `packages/app/android/src/reactnative/java/io/invertase/firebase/app/generated/jni/CMakeLists.txt` (modified, +4/-0)
+```diff
+@@ -26,3 +26,7 @@ target_link_libraries(
+ )
+ 
+ target_compile_reactnative_options(react_codegen_RNFBAppTurboModules PRIVATE)
++# RNFB: JNI deprecated invokeJavaMethod (RN <0.89 compat)
++# React Native 0.89+ deprecates the cached-method-ID overload used by this
++# checked-in codegen output; older React Native versions still need it.
++target_compile_options(react_codegen_RNFBAppTurboModules PRIVATE -Wno-error=deprecated-declarations)
+```
+
+**File**: `packages/auth/android/src/main/java/io/invertase/firebase/auth/generated/jni/CMakeLists.txt` (modified, +4/-0)
+```diff
+@@ -26,3 +26,7 @@ target_link_libraries(
+ )
+ 
+ target_compile_reactnative_options(react_codegen_RNFBAuthTurboModules PRIVATE)
++# RNFB: JNI deprecated invokeJavaMethod (RN <0.89 compat)
++# React Native 0.89+ deprecates the cached-method-ID overload used by this
++# checked-in codegen output; older React Native versions still need it.
++target_compile_options(react_codegen_RNFBAuthTurboModules PRIVATE -Wno-error=deprecated-declarations)
+```
+
+**File**: `packages/crashlytics/android/src/main/java/io/invertase/firebase/crashlytics/generated/jni/CMakeLists.txt` (modified, +4/-0)
+```diff
+@@ -26,3 +26,7 @@ target_link_libraries(
+ )
+ 
+ target_compile_reactnative_options(react_codegen_RNFBCrashlyticsTurboModules PRIVATE)
++# RNFB: JNI deprecated invokeJavaMethod (RN <0.89 compat)
++# React Native 0.89+ deprecates the cached-method-ID overload used by this
++# checked-in codegen output; older React Native versions still need it.
++target_compile_options(react_codegen_RNFBCrashlyticsTurboModules PRIVATE -Wno-error=deprecated-declarations)
+```
+
+**File**: `packages/database/android/src/reactnative/java/io/invertase/firebase/database/generated/jni/CMakeLists.txt` (modified, +4/-0)
+```diff
+@@ -26,3 +26,7 @@ target_link_libraries(
+ )
+ 
+ target_compile_reactnative_options(react_codegen_RNFBDatabaseTurboModules PRIVATE)
++# RNFB: JNI deprecated invokeJavaMethod (RN <0.89 compat)
++# React Native 0.89+ deprecates the cached-method-ID overload used by this
++# checked-in codegen output; older React Native versions still need it.
++target_compile_options(react_codegen_RNFBDatabaseTurboModules PRIVATE -Wno-error=deprecated-declarations)
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #9483** (closed): build(deps): bump amannn/action-semantic-pull-request from 6.1.1 to 6.1.2 in the github-actions-minor-patch group across 1 directory (@dependabot[bot])
-- **PR #9482** (2026-11-13): fix(perf): remove the frame metrics listener when a screen trace stops (@MagicDocJr)
-- **PR #9481** (closed): build(deps): bump the github-actions-minor-patch group across 1 directory with 3 updates (@dependabot[bot])
-- **PR #9480** (closed): build(deps): dependency updates 20261111 (@russellwheatley)
-- **PR #9478** (closed): build(deps): bump proxy-addr from 2.0.7 to 2.0.8 (@dependabot[bot])
-- **PR #9477** (closed): build(deps): bump node-forge from 1.3.3 to 1.4.3 (@dependabot[bot])
+- **PR #9492** (2026-11-16): fix(android): tolerate deprecated JNI invokeJavaMethod on RN 0.89+ (@mikehardy)
+- **PR #9491** (closed): build(deps): bump addressable from 2.9.0 to 2.9.1 (@dependabot[bot])
+- **PR #9490** (2026-11-16): build(deps): dependency updates 20261113 (@russellwheatley)
+- **PR #9489** (2026-11-16): feat(app, sdk): bump Firebase JS SDK to 13.3.0 (@SelaseKay)
+- **PR #9488** (2026-11-16): feat(app, sdk): bump Firebase Android SDK to 35.2.0 (@SelaseKay)
+- **PR #9487** (closed): build(deps): bump the github-actions-minor-patch group across 1 directory with 2 updates (@dependabot[bot])
 
 ---
 
@@ -1836,31 +2812,70 @@ matches main. Keep every other checksum on current main.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. messaging, ios): refresh the Podfile.lock checksum for the public header
+## X. app, ios): share GoogleUtilities when only Messaging or Analytics is installed u
 
 **RULE**:
-When implementing operations in `tests/ios/Podfile.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in invertase/react-native-firebase. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/scripts/check-duplicate-objc-classes.sh`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in invertase/react-native-firebase. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `66f977c3`: messaging, ios): refresh the Podfile.lock checksum for the public header. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0d426fe3`: app, ios): share GoogleUtilities when only Messaging or Analytics is installed under SPM. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `tests/ios/Podfile.lock`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/scripts/check-duplicate-objc-classes.sh`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-  RNFBMessaging: a3a316146df4f06f2fc580c5874d44f19a06b91d
+#          [--expect-duplicates N | --report-only] [--canary-hint TEXT]
+# --expect-duplicates N passes only when exactly N classes are duplicated
+# (default 0). Every other guard still applies, so a control run cannot pass
+# on an empty or unreadable scan. GULNetwork is a canary for the
+# GoogleUtilities sharing graph this check exists for: with 0 expected
+# duplicates it must be defined by exactly one binary; with N > 0 it must be
+# one of the duplicated classes, so a control run proves it hit that graph.
+#
+# --report-only lists every duplicate, the GULNetwork and FIRApp owners, and
+# exits 0 unless a scan guard (dyld_info, missing binary, empty scan) fails.
+#
+# --canary-hint TEXT is appended to the error when GULNetwork is missing.
+# Usage and flag errors exit 2.
+#
+USAGE="usage: $0 <path/to/App.app> [--expect-duplicates N | --report-only] [--canary-hint TEXT]"
+
+usage_error() {
+  log "ERROR: $*"
+  log "$USAGE"
+  exit 2
+}
+
+if [[ $# -lt 1 ]]; then
+  usage_error "missing app bundle path"
+shift
+EXPECT_DUPLICATES=0
+EXPECT_SET=0
+REPORT_ONLY=0
+CANARY_HINT=""
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --expect-duplicates)
+      [[ $# -ge 2 ]] || usage_error "$1 needs a value"
+      EXPEC
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Induced defect failure mode:
-  RNFBMessaging: dd86392ae250f39b626e1d3ee117457055d6739b
+if [[ $# -ne 1 ]]; then
+  dup_check_fail "usage: $0 <path/to/App.app>"
+    log "ERROR: duplicate class ${line}"
+  log "NOTE: a reused DerivedData can embed frameworks left over from an earlier build ([RNFB] Embed Firebase SPM Frameworks copies every dynamic framework in PackageFrameworks); re-check a local failure from an empty DerivedData"
+canary_owner="$(awk -F'\t' '$1 == "GULNetwork" { print $2 }' "$class_owners_file")"
+if [[ -z "$canary_owner" ]]; then
+  dup_check_fail "GoogleUtilities canary GULNetwork not found in any scanned binary; test-expo/
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `66f977c3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0d426fe3` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction
