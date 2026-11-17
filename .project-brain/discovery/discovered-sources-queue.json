@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-17T00:11:25.089Z",
+  "updated_at": "2026-11-17T00:38:46.853Z",
   "stats": {
-    "total_discovered": 4547,
-    "approved_pending_harvest": 4281,
+    "total_discovered": 4559,
+    "approved_pending_harvest": 4292,
     "harvested_count": 0,
-    "rejected_count": 266,
+    "rejected_count": 267,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 4278,
+      "COMMUNITY_AND_EXPERT": 4290,
       "OFFICIAL_DOCUMENTATION": 144,
       "STANDARDS_AND_SPECIFICATIONS": 98,
       "ENGINEERING_BLOGS": 3,
@@ -98193,6 +98193,263 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/authzed-spicedb-learnings.md",
         "fileName": "authzed-spicedb-learnings.md"
+      }
+    },
+    "SRC-F899476060C9": {
+      "id": "SRC-F899476060C9",
+      "url": "https://app.codecov.io/gh/ratatui/ratatui/pull/2919?dropdown=coverage&src=pr&el=h1",
+      "title": "https://app.codecov.io/gh/ratatui/ratatui/pull/2919?dropdown=coverage&src=pr&el=h1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T00:38:45.206Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ratatui-ratatui-learnings.md",
+        "fileName": "ratatui-ratatui-learnings.md"
+      }
+    },
+    "SRC-72FA919E332D": {
+      "id": "SRC-72FA919E332D",
+      "url": "https://app.codecov.io/gh/ratatui/ratatui/commit/41c26a74b3bcfa365e8c0f7e2b827f266bad8755?dropdown=coverage&el=desc",
+      "title": "https://app.codecov.io/gh/ratatui/ratatui/commit/41c26a74b3bcfa365e8c0f7e2b827f266bad8755?dropdown=coverage&el=desc",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T00:38:45.245Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ratatui-ratatui-learnings.md",
+        "fileName": "ratatui-ratatui-learnings.md"
+      }
+    },
+    "SRC-567BFE9443FD": {
+      "id": "SRC-567BFE9443FD",
+      "url": "https://app.codecov.io/gh/ratatui/ratatui/commit/e64037bcc8939d1520b3a3778cbad4deabbf2b2f?dropdown=coverage&el=desc",
+      "title": "https://app.codecov.io/gh/ratatui/ratatui/commit/e64037bcc8939d1520b3a3778cbad4deabbf2b2f?dropdown=coverage&el=desc",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T00:38:45.286Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ratatui-ratatui-learnings.md",
+        "fileName": "ratatui-ratatui-learnings.md"
+      }
+    },
+    "SRC-DA7EE55DA288": {
+      "id": "SRC-DA7EE55DA288",
+      "url": "https://github.com/bnjbvr/cargo-machete",
+      "title": "https://github.com/bnjbvr/cargo-machete",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T00:38:45.397Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ratatui-ratatui-learnings.md",
+        "fileName": "ratatui-ratatui-learnings.md"
+      }
+    },
+    "SRC-C83AEDC8AB42": {
+      "id": "SRC-C83AEDC8AB42",
+      "url": "https://github.com/tombi-toml/setup-tombi",
+      "title": "https://github.com/tombi-toml/setup-tombi",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T00:38:45.436Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ratatui-ratatui-learnings.md",
+        "fileName": "ratatui-ratatui-learnings.md"
+      }
+    },
+    "SRC-EBE295A28D34": {
+      "id": "SRC-EBE295A28D34",
+      "url": "https://github.com/tombi-toml/setup-tombi/releases",
+      "title": "https://github.com/tombi-toml/setup-tombi/releases",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T00:38:45.474Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ratatui-ratatui-learnings.md",
+        "fileName": "ratatui-ratatui-learnings.md"
+      }
+    },
+    "SRC-3EE4708B9A1D": {
+      "id": "SRC-3EE4708B9A1D",
+      "url": "https://github.com/tombi-toml/tombi/releases/tag/v1.11.2",
+      "title": "https://github.com/tombi-toml/tombi/releases/tag/v1.11.2",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T00:38:45.512Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ratatui-ratatui-learnings.md",
+        "fileName": "ratatui-ratatui-learnings.md"
+      }
+    },
+    "SRC-57A05D5FFACF": {
+      "id": "SRC-57A05D5FFACF",
+      "url": "https://github.com/tombi-toml/setup-tombi/compare/v1.11.1...v1.11.2",
+      "title": "https://github.com/tombi-toml/setup-tombi/compare/v1.11.1...v1.11.2",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T00:38:45.550Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ratatui-ratatui-learnings.md",
+        "fileName": "ratatui-ratatui-learnings.md"
+      }
+    },
+    "SRC-3A604051A88E": {
+      "id": "SRC-3A604051A88E",
+      "url": "https://github.com/tombi-toml/tombi/releases/tag/v1.11.1",
+      "title": "https://github.com/tombi-toml/tombi/releases/tag/v1.11.1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T00:38:45.587Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ratatui-ratatui-learnings.md",
+        "fileName": "ratatui-ratatui-learnings.md"
+      }
+    },
+    "SRC-23C069BBBC97": {
+      "id": "SRC-23C069BBBC97",
+      "url": "https://github.com/tombi-toml/setup-tombi/compare/v1.11.0...v1.11.1",
+      "title": "https://github.com/tombi-toml/setup-tombi/compare/v1.11.0...v1.11.1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T00:38:45.625Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ratatui-ratatui-learnings.md",
+        "fileName": "ratatui-ratatui-learnings.md"
+      }
+    },
+    "SRC-FFC50BAF6FC4": {
+      "id": "SRC-FFC50BAF6FC4",
+      "url": "https://github.com/tombi-toml/tombi/releases/tag/v1.11.0",
+      "title": "https://github.com/tombi-toml/tombi/releases/tag/v1.11.0",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T00:38:45.663Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ratatui-ratatui-learnings.md",
+        "fileName": "ratatui-ratatui-learnings.md"
+      }
+    },
+    "SRC-ED78867403C8": {
+      "id": "SRC-ED78867403C8",
+      "url": "http://127.0.0.1:{server.server_port",
+      "title": "http://127.0.0.1:{server.server_port",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-17T00:38:46.853Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/goodrain-rainbond-learnings.md",
+        "fileName": "goodrain-rainbond-learnings.md"
       }
     }
   }

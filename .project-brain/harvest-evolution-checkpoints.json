@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T00:27:06.232Z",
+  "last_updated": "2026-11-17T00:38:47.504Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-17T00:27:05.749Z",
@@ -913,8 +913,8 @@
       "staged_for_review": 1
     },
     "hf-prunaai-p-h3-image-learnings.md": {
-      "processed_at": "2026-11-12T07:38:38.948Z",
-      "promoted_canonical": 1,
+      "processed_at": "2026-11-17T00:38:46.347Z",
+      "promoted_canonical": 0,
       "staged_for_review": 0
     },
     "zarf-dev-zarf-learnings.md": {
@@ -1778,7 +1778,7 @@
       "staged_for_review": 0
     },
     "ratatui-ratatui-learnings.md": {
-      "processed_at": "2026-11-13T12:24:43.366Z",
+      "processed_at": "2026-11-17T00:38:45.052Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3038,7 +3038,7 @@
       "staged_for_review": 0
     },
     "goodrain-rainbond-learnings.md": {
-      "processed_at": "2026-11-15T17:40:52.123Z",
+      "processed_at": "2026-11-17T00:38:46.722Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3228,7 +3228,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 1404,
+  "total_dossiers_evaluated": 1407,
   "total_canonical_promoted": 291,
-  "total_staged_for_review": 1100
+  "total_staged_for_review": 1102
 }

@@ -10385,3 +10385,7 @@
 | `CYCLE-20261117-SYWL` | `2026-11-17T00:11:21.141Z` | `xtools-at/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-xtools-at-deepseek-v4-pro-qwen3.5-9b-uncensored-heretic-learnings.md` | Yes (`56862244...`) |
 | `CYCLE-20261117-9AZ0` | `2026-11-17T00:24:03.276Z` | `nats-io/nats.go` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8823` | Yes (`54f14694...`) |
 | `CYCLE-20261117-D4VN` | `2026-11-17T00:27:02.003Z` | `NousResearch/Arete-27B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nousresearch-arete-27b-learnings.md` | Yes (`a89f958c...`) |
+| `CYCLE-20261117-RU6A` | `2026-11-17T00:38:27.970Z` | `PrunaAI/P-H3-Image` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-prunaai-p-h3-image-learnings.md` | Yes (`2ccfc904...`) |
+| `CYCLE-20261117-RX9Y` | `2026-11-17T00:38:31.990Z` | `ratatui/ratatui` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8824` | Yes (`6d4c3a16...`) |
+| `CYCLE-20261117-S2QY` | `2026-11-17T00:38:39.082Z` | `goodrain/rainbond` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8825` | Yes (`ff77003d...`) |
+| `CYCLE-20261117-S4N2` | `2026-11-17T00:38:41.534Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8826` | Yes (`946cdfcd...`) |

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T00:27:05.920Z",
+  "last_updated": "2026-11-17T00:38:47.060Z",
   "directives": [
     {
       "id": "CD-001",
@@ -3601,15 +3601,15 @@
       "learning_id": "learn-github-nucleoidai-nucleoid"
     },
     {
-      "id": "CD-Z8TB",
+      "id": "CD-S4TS",
       "directive_title": "Empirical Invariant Guard in ci.yml",
-      "source_type": "automated_harvester_candidate",
-      "source_repo": "lioensky/VCPToolBox",
-      "source_commit": "77aa5579",
-      "date_staged": "2026-11-02",
-      "status": "STAGED_FOR_VERIFICATION",
-      "reason": "Generic header title rejected",
-      "learning_id": "learn-github-lioensky-vcptoolbox"
+      "source_repo": "aleo-labs-protocol/snarkOS",
+      "source_commit": "bec6d69e",
+      "staged_file": "11_INBOX/candidate-directives/CD-S4TS-empirical-invariant-guard-in-ci-yml.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-17",
+      "domain_letter": "D"
     },
     {
       "id": "CD-9KT3",
@@ -20966,6 +20966,48 @@
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-67BF08-puppet-fix-postgresql-failing-to-start-o.md",
       "staged_date": "2026-11-17"
+    },
+    {
+      "id": "CD-S802",
+      "directive_title": "build(deps): bump crate-ci/typos from 1.52.0 to 1.52.2",
+      "source_repo": "ratatui-ratatui-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-S802-build-deps-bump-crate-ci-typos-from-1-52-0-to-1-52-2.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-17",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-S2XU",
+      "directive_title": "persist UI and console image caches across runners",
+      "source_repo": "goodrain/rainbond",
+      "source_commit": "3a622ae9",
+      "staged_file": "11_INBOX/candidate-directives/CD-S2XU-persist-ui-and-console-image-caches-across-runners.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-17",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-CA6E89",
+      "directive_title": "build(deps): bump crate-ci/typos from 1.52.0 to 1.52.2",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "ratatui-ratatui",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-CA6E89-build-deps-bump-crate-ci-typos-from-1-52.md",
+      "staged_date": "2026-11-17"
+    },
+    {
+      "id": "CD-S8WJ",
+      "directive_title": "ci: persist UI and console image caches across runners",
+      "source_repo": "goodrain-rainbond-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-S8WJ-ci-persist-ui-and-console-image-caches-across-runners.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-17",
+      "domain_letter": "H"
     }
   ]
 }

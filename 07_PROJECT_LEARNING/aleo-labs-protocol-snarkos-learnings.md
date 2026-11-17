@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md`  
 > **Source**: github ([https://github.com/aleo-labs-protocol/snarkOS](https://github.com/aleo-labs-protocol/snarkOS))  
-> **Source Version**: `1c341ad3`  
+> **Source Version**: `bec6d69e`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-16T18:01:49.340Z  
+> **Timestamp**: 2026-11-17T00:38:40.378Z  
 > **Learning ID**: `learn-github-aleo-labs-protocol-snarkos`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/aleo-labs-protocol/snarkOS](https://github.com/aleo-labs-protocol/snarkOS))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T18:01:49.335Z  
+> **Harvest Timestamp**: 2026-11-17T00:38:40.369Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1988,173 +1988,314 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1c341ad3` (2026-11-16)
-**Commit Message**: Merge pull request #4664 from aleo-labs-protocol/fix/propose-drain-ledger-error
+### Incident Patch 1: `bec6d69e` (2026-11-17)
+**Commit Message**: Merge pull request #4684 from aleo-labs-protocol/ci/fork-pr-fleet
 
-Requeue a transmission when the ledger check fails while proposing
+Run fleet CI for approved fork pull requests
 
-**File**: `node/bft/ledger-service/src/mock.rs` (modified, +23/-8)
+**File**: `.github/workflows/ci.yml` (modified, +25/-18)
 ```diff
-@@ -45,12 +45,19 @@ pub struct MockLedgerService<N: Network> {
-     /// The transmission IDs the ledger knows without being able to produce a transmission for them,
-     /// as is the case for the ones it recorded as aborted.
-     known_transmission_ids: HashSet<TransmissionID<N>>,
-+    /// The transmission IDs for which the containment check returns an error, as a failed ledger read would.
-+    unreadable_transmission_ids: HashSet<TransmissionID<N>>,
- }
+@@ -23,9 +23,17 @@ concurrency:
+ env:
+   CARGO_TERM_COLOR: always
  
- impl<N: Network> MockLedgerService<N> {
-     /// Initializes a new mock ledger service.
-     pub fn new(committee: Committee<N>) -> Self {
--        Self { committee, height_to_round_and_hash: Default::default(), known_transmission_ids: Default::default() }
-+        Self {
-+            committee,
-+            height_to_round_and_hash: Default::default(),
-+            known_transmission_ids: Default::default(),
-+            unreadable_transmission_ids: Default::default(),
-+        }
-     }
+-# Every self-hosted job carries the same guard: a fork's code never runs on
+-# the fleet, whose target dirs, sccache and home directories persist between
+-# jobs.
++# GitHub holds an outside contributor's pull request run until a maintainer
++# approves it. A fork's run gets no secrets, so start-cpu-runners is skipped and
++# fork-pr-runners.yml starts the boxes. The fleet jobs therefore accept a
++# skipped start-cpu-runners, and run only in this repository, which alone may
++# use the fleet.
++#
++# The fleet jobs also wait for check-shared-refs, a hosted job. GitHub reports
++# a run as `in_progress`, and fires the `workflow_run` event that starts the
++# boxes, only once none of its ready jobs is waiting for a runner. With no
++# hosted job ahead of them, a fork's fleet jobs would wait for boxes that only
++# that event starts.
+ jobs:
+   start-cpu-runners:
+     # gh-actions is ours; check-shared-refs requires a @vN tag here, not a SHA.
+@@ -37,7 +45,8 @@ jobs:
+       role-to-assume: ${{ vars.RUNNER_ROLE_ARN }}
+       label: cpu
+       # Below the default of 3: snarkOS's jobs run ten minutes or more, so a
+-      # box absorbs fewer of them within the critical path.
++      # box absorbs fewer of them within the critical path. fork-pr-runners.yml
++      # repeats this.
+       jobs-per-box: 2
+       runner-app-id: ${{ vars.RUNNER_APP_ID }}
+     if: >-
+@@ -99,12 +108,13 @@ jobs:
+       - run: .github/merge-fixup.test.sh
  
-     /// Initializes a new mock ledger service at the specified height.
-@@ -59,11 +66,7 @@ impl<N: Network> MockLedgerService<N> {
-         for i in 0..=height {
-             height_to_hash.insert(i, (i as u64 * 2, Field::<N>::from_u32(i).into()));
-         }
--        Self {
--            committee,
--            height_to_round_and_hash: Mutex::new(height_to_hash),
--            known_transmission_ids: Default::default(),
--        }
-+        Self { height_to_round_and_hash: Mutex::new(height_to_hash), ..Self::new(committee) }
-     }
+   lint:
+-    needs: start-cpu-runners
++    needs: [check-shared-refs, start-cpu-runners]
+     runs-on: [self-hosted, linux, x64, cpu]
+     timeout-minutes: 90
+-    if: >-
+-      github.event.pull_request == null ||
+-      github.event.pull_request.head.repo.full_name == github.repository
++    if: &fleet-if >-
++      !cancelled() && needs.check-shared-refs.result == 'success' &&
++      contains(fromJSON('["success", "skipped"]'), needs.start-cpu-runners.result) &&
++      github.repository == 'aleo-labs-protocol/snarkOS'
+     steps:
+       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+         with: { persist-credentials: false }
+@@ -209,13 +219,11 @@ jobs:
+         with: *aleo-resources
  
-     /// Initializes a new mock ledger service that knows the given transmission IDs.
-@@ -74,7 +77,16 @@ impl<N: Network> MockLedgerService<N> {
-         committee: Committee<N>,
-         known_transmission_ids: HashSet<TransmissionID<N>>,
-     ) -> Self {
--        Self { committee, height_to_round_and_hash: Default::default(), known_transmission_ids }
-+        Self { known_transmission_ids, ..Self::new(committee) }
-+    }
-+
-+    /// Makes the containment check fail for the given transmission IDs.
-+    pub fn with_unreadable_transmission_ids(
-+        mut self,
-+        unreadable_transmission_ids: impl IntoIterator<Item = TransmissionID<N>>,
-+    ) -> Self {
-+        self.unreadable_transmission_ids.extend(unreadable_transmission_ids);
-+        self
-     }
- }
+   test:
+-    needs: start-cpu-runners
++    needs: [check-shared-refs, start-cpu-runners]
+     permissions: { contents: read, actions: write }
+     runs-on: [self-hosted, linux, x64, cpu]
+     timeout-minutes: 90
+-    if: >-
+-      github.event.pull_request == null ||
+-      github.event.pull_request.head.repo.full_name == github.repository
++    if: *fleet-if
+     strategy:
+       fail-fast: false
+       matrix:
+@@ -245,12 +253,10 @@ jobs:
  
-@@ -197,8 +209,11 @@ impl<N: Network> LedgerService<N> for MockLedgerService<N> {
-         Ok(false)
-     }
- 
--    /// Returns `false`, unless the mock was configured to know the transmission ID.
-+    /// Returns `false`, unless the mock was configured to know the transmission ID or to fail on it.
-     fn contains_transmission(&self, transmission_id: &TransmissionID<N>) -> Result<bool> {
-+        if self.unreadable_transmission_ids.contains(transmission_id) {
-+            bail!("[MockLedgerService] Unable to read transmission ID {}", fmt_id(transmission_id));
-+        }
-         let contains = self.known_transmission_ids.contains(transmission_id);
-         trace!(
-             "[MockLedgerService] Contains transmission ID {}.{} - {contains}",
+   # The node binary the devnet jobs run, built once per workflow run.
+   build-snarkos:
+-    needs: start-cpu-runners
++    needs: [check-shared-refs, start-cpu-runners]
+     runs-on: [self-hosted, linux, x64, cpu]
+     timeout-minutes: 60
+-    if: >-
+-      github.event.pull_request == null ||
+-      github.event.pull_request.head.repo.full_name == github.repository
++    if: *fleet-if
+     steps:
+       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+         with: { persist-credentials: false }
+@@ -280,8 +286,9 @@ jobs:
+     runs-on: [self-hosted, linux, x64, cpu]
+     timeout-minutes: ${{ matrix.timeout }}
+     if: >-
+-      github.event.pull_request == null ||
+-      github.event.pull_request.head.repo.full_name == github.repository
++      !cancelled() && needs.build-snarkos.result == 'success' &&
++      contains(fromJSON('["success", "skipped"]'), needs.start-cpu-runners.result) &&
++      github.repository == 'aleo-labs-protocol/snarkOS'
+     strategy:
+       fail-fast: false
+       matrix:
 ```
 
-**File**: `node/bft/src/primary.rs` (modified, +57/-4)
+**File**: `.github/workflows/fork-pr-runners.yml` (added, +40/-0)
 ```diff
-@@ -714,9 +714,22 @@ impl<N: Network> proposal_task::BatchPropose for Primary<N> {
-                 }
- 
-                 // Check if the ledger already contains the transmission.
--                if self.ledger.contains_transmission(&id).unwrap_or(true) {
--                    trace!("Proposing - Skipping transmission '{}' - Already in ledger", fmt_id(id));
--                    continue;
-+                match self.ledger.contains_transmission(&id) {
-+                    Ok(true) => {
-+                        trace!("Proposing - Skipping transmission '{}' - Already in ledger", fmt_id(id));
-+                        continue;
-+                    }
-+                    Ok(false) => {}
-+                    Err(e) => {
-+                        warn!(
-+                            "Proposing - Stopping at transmission '{}' - Unable to check the ledger - {e}",
-+                            fmt_id(id)
-+                        );
-+                        // Requeue the transmission at the back of the worker and stop draining,
-+                        // as continuing would cycle through the queue forever if every ledger read fails.
-+                        worker.reinsert(id, transmission);
-+                        break 'outer;
-+                    }
-                 }
- 
-                 // Check if storage already knows the transmission, either way.
-@@ -2266,7 +2279,15 @@ mod tests {
-         committee: Committee<CurrentNetwork>,
-         height: u32,
-     ) -> Primary<CurrentNetwork> {
--        let ledger = Arc::new(MockLedgerService::new_at_height(committee, height));
-+        primary_with_ledger(account_index, accounts, MockLedgerService::new_at_height(committee, height))
-+    }
+@@ -0,0 +1,40 @@
++name: fork-pr-runners
 +
-+    fn primary_with_ledger(
-+        account_index: usize,
-+        accounts: &[(SocketAddr, Account<CurrentNetwork>)],
-+        ledger: MockLedgerService<CurrentNetwork>,
-+    ) -> Primary<CurrentNetwork> {
-+        let ledger = Arc::new(ledger);
-         let storage = Storage::new(ledger.clone(), Arc::new(BFTMemoryService::new()), 10).unwrap();
++# Starts the self-hosted boxes for a pull request from a fork when its run
++# starts. GitHub holds an outside contributor's run until a maintainer approves
++# it.
++#
++# A fork's `pull_request` run gets no secrets, so its own start-runner job is
++# skipped. GitHub runs this workflow from the default branch, with this
++# repository's secrets. A fork's run fires `requested` before approval and
++# `in_progress` after it.
++#
++# SECURITY: this workflow holds the runner role, which can change a box's user
++# data. It must never check out or run the pull request's code. It must never
++# put a `workflow_run` field into a `run:` script either: the fork controls its
++# branch name, its commit messages and its workflow names.
++on:
++  workflow_run:
++    workflows: [CI]
++    types: [in_progress]
++
++permissions: {}
++
++jobs:
++  start-runners:
++    # A mirror receives this file by push; see ci.yml.
++    if: >-
++      github.repository == 'aleo-labs-protocol/snarkOS' &&
++      github.event.workflow_run.event == 'pull_request' &&
++      github.event.workflow_run.head_repository.full_name != github.repository
++    # gh-actions is ours; check-shared-refs requires a @vN tag here, not a SHA.
++    uses: aleo-labs-protocol/gh-actions/.github/workflows/start-runner.yml@v2
++    permissions: { id-token: write, contents: read, actions: read }
++    secrets:
++      runner_app_key: ${{ secrets.RUNNER_APP_KEY }}
++    with:
++      role-to-assume: ${{ vars.RUNNER_ROLE_ARN }}
++      label: cpu
++      # The same box share as ci.yml's start-cpu-runners.
++      jobs-per-box: 2
++      runner-app-id: ${{ vars.RUNNER_APP_ID }}
+```
+
+---
+
+### Incident Patch 2: `a12e356f` (2026-11-17)
+**Commit Message**: Run fleet CI for approved fork pull requests
+
+A fork's pull_request run gets no secrets, so it cannot start the self-hosted
+boxes, and its fleet jobs were skipped. fork-pr-runners.yml starts the boxes
+from the default branch when a maintainer approves the run. The fleet jobs now
+run when start-cpu-runners succeeded or was skipped, only in this repository,
+and after check-shared-refs, so the approved run reaches in_progress before any
+fleet job waits for a box.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `.github/workflows/ci.yml` (modified, +25/-18)
+```diff
+@@ -23,9 +23,17 @@ concurrency:
+ env:
+   CARGO_TERM_COLOR: always
  
-         // Initialize the primary.
-@@ -2590,6 +2611,38 @@ mod tests {
-         );
-     }
+-# Every self-hosted job carries the same guard: a fork's code never runs on
+-# the fleet, whose target dirs, sccache and home directories persist between
+-# jobs.
++# GitHub holds an outside contributor's pull request run until a maintainer
++# approves it. A fork's run gets no secrets, so start-cpu-runners is skipped and
++# fork-pr-runners.yml starts the boxes. The fleet jobs therefore accept a
++# skipped start-cpu-runners, and run only in this repository, which alone may
++# use the fleet.
++#
++# The fleet jobs also wait for check-shared-refs, a hosted job. GitHub reports
++# a run as `in_progress`, and fires the `workflow_run` event that starts the
++# boxes, only once none of its ready jobs is waiting for a runner. With no
++# hosted job ahead of them, a fork's fleet jobs would wait for boxes that only
++# that event starts.
+ jobs:
+   start-cpu-runners:
+     # gh-actions is ours; check-shared-refs requires a @vN tag here, not a SHA.
+@@ -37,7 +45,8 @@ jobs:
+       role-to-assume: ${{ vars.RUNNER_ROLE_ARN }}
+       label: cpu
+       # Below the default of 3: snarkOS's jobs run ten minutes or more, so a
+-      # box absorbs fewer of them within the critical path.
++      # box absorbs fewer of them within the critical path. fork-pr-runners.yml
++      # repeats this.
+       jobs-per-box: 2
+       runner-app-id: ${{ vars.RUNNER_APP_ID }}
+     if: >-
+@@ -99,12 +108,13 @@ jobs:
+       - run: .github/merge-fixup.test.sh
  
-+    #[test_log::test(tokio::test)]
-+    async fn test_propose_batch_requeues_a_transmission_the_ledger_cannot_check() {
-+        let mut rng = TestRng::default();
-+        let (accounts, committee) = sample_committee(&mut rng);
-+        let peer_ip = accounts[1].0;
+   lint:
+-    needs: start-cpu-runners
++    needs: [check-shared-refs, start-cpu-runners]
+     runs-on: [self-hosted, linux, x64, cpu]
+     timeout-minutes: 90
+-    if: >-
+-      github.event.pull_request == null ||
+-      github.event.pull_request.head.repo.full_name == github.repository
++    if: &fleet-if >-
++      !cancelled() && needs.check-shared-refs.result == 'success' &&
++      contains(fromJSON('["success", "skipped"]'), needs.start-cpu-runners.result) &&
++      github.repository == 'aleo-labs-protocol/snarkOS'
+     steps:
+       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+         with: { persist-credentials: false }
+@@ -209,13 +219,11 @@ jobs:
+         with: *aleo-resources
+ 
+   test:
+-    needs: start-cpu-runners
++    needs: [check-shared-refs, start-cpu-runners]
+     permissions: { contents: read, actions: write }
+     runs-on: [self-hosted, linux, x64, cpu]
+     timeout-minutes: 90
+-    if: >-
+-      github.event.pull_request == null ||
+-      github.event.pull_request.head.repo.full_name == github.repository
++    if: *fleet-if
+     strategy:
+       fail-fast: false
+       matrix:
+@@ -245,12 +253,10 @@ jobs:
+ 
+   # The node binary the devnet jobs run, built once per workflow run.
+   build-snarkos:
+-    needs: start-cpu-runners
++    needs: [check-shared-refs, start-cpu-runners]
+     runs-on: [self-hosted, linux, x64, cpu]
+     timeout-minutes: 60
+-    if: >-
+-      github.event.pull_request == null ||
+-      github.event.pull_request.head.repo.full_name == github.repository
++    if: *fleet-if
+     steps:
+       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+         with: { persist-credentials: false }
+@@ -280,8 +286,9 @@ jobs:
+     runs-on: [self-hosted, linux, x64, cpu]
+     timeout-minutes: ${{ matrix.timeout }}
+     if: >-
+-      github.event.pull_request == null ||
+-      github.event.pull_request.head.repo.full_name == github.repository
++      !cancelled() && needs.build-snarkos.result == 'success' &&
++      contains(fromJSON('["success", "skipped"]'), needs.start-cpu-runners.result) &&
++      github.repository == 'aleo-labs-protocol/snarkOS'
+     strategy:
+       fail-fast: false
+       matrix:
+```
+
+**File**: `.github/workflows/fork-pr-runners.yml` (added, +40/-0)
+```diff
+@@ -0,0 +1,40 @@
++name: fork-pr-runners
 +
-+        // Sample three transactions, and make the ledger fail to check the second one.
-+        let transmissions = [(); 3].map(|_| {
-+            let (transaction_id, transaction) = sample_unconfirmed_transaction(&mut rng);
-+            // Hashing serialized transaction data does not fail.
-+            let checksum = transaction.to_checksum::<CurrentNetwork>().unwrap();
-+            (TransmissionID::from((&transaction_id, &checksum)), Transmission::Transaction(transaction))
-+        });
-+        let [first_id, unreadable_id, last_id] = transmissions.each_ref().map(|(transmission_id, _)| *transmission_id);
-+        let height = CurrentNetwork::CONSENSUS_HEIGHT(ConsensusVersion::V1).unwrap();
-+        let ledger =
-+            MockLedgerService::new_at_height(committee, height).with_unreadable_transmission_ids([unreadable_id]);
-+        let primary = primary_with_ledger(0, &accounts, ledger);
-+        for (transmission_id, transmission) in transmissions {
-+            primary.workers()[0].process_transmission_from_peer(peer_ip, transmission_id, transmission);
-+        }
-+        assert_eq!(primary.workers()[0].num_transmissions(), 3);
++# Starts the self-hosted boxes for a pull request from a fork when its run
++# starts. GitHub holds an outside contributor's run until a maintainer approves
++# it.
++#
++# A fork's `pull_request` run gets no secrets, so its own start-runner job is
++# skipped. GitHub runs this workflow from the default branch, with this
++# repository's secrets. A fork's run fires `requested` before approval and
++# `in_progress` after it.
++#
++# SECURITY: this workflow holds the runner role, which can change a box's user
++# data. It must never check out or run the pull request's code. It must never
++# put a `workflow_run` field into a `run:` script either: the fork controls its
++# branch name, its commit messages and its workflow names.
++on:
++  workflow_run:
++    workflows: [CI]
++    types: [in_progress]
 +
-+        // The proposal stops at the transmission the ledger cannot check, which moves to the back of the queue.
-+        assert!(primary.propose_batch().await.unwrap());
-+        assert_eq!(
-+            primary.proposed_batch.read().as_proposal().unwrap().transmissions().keys().copied().collect::<Vec<_>>(),
-+            [first_id]
-+        );
-+        assert_eq!(primary.workers()[0].transmissions().into_keys().collect::<Vec<_>>(), [last_id, unreadable_id]);
-+    }
++permissions: {}
 +
-     #[test_log::test(tokio::test)]
-     async fn test_propose_batch_with_no_transmissions() {
-         let mut rng = TestRng::default();
++jobs:
++  start-runners:
++    # A mirror receives this file by push; see ci.yml.
++    if: >-
++      github.repository == 'aleo-labs-protocol/snarkOS' &&
++      github.event.workflow_run.event == 'pull_request' &&
++      github.event.workflow_run.head_repository.full_name != github.repository
++    # gh-actions is ours; check-shared-refs requires a @vN tag here, not a SHA.
++    uses: aleo-labs-protocol/gh-actions/.github/workflows/start-runner.yml@v2
++    permissions: { id-token: write, contents: read, actions: read }
++    secrets:
++      runner_app_key: ${{ secrets.RUNNER_APP_KEY }}
++    with:
++      role-to-assume: ${{ vars.RUNNER_ROLE_ARN }}
++      label: cpu
++      # The same box share as ci.yml's start-cpu-runners.
++      jobs-per-box: 2
++      runner-app-id: ${{ vars.RUNNER_APP_ID }}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4684** (2026-11-17): Run fleet CI for approved fork pull requests (@cbeck88)
+- **PR #4679** (2026-11-16): Bump snarkVM to aleo-labs-protocol/snarkVM@d36b2f743 (@aleo-labs-merge-bot[bot])
+- **PR #4678** (2026-11-17): [Release] Mainnet v4.13.0 (@snarkworld)
 - **PR #4676** (2026-11-16): chore(deps): bump taiki-e/install-action from 2.90.2 to 2.90.3 in the github-actions group (@dependabot[bot])
 - **PR #4675** (2026-11-16): Bump snarkVM to aleo-labs-protocol/snarkVM@6e917bc9b (@aleo-labs-merge-bot[bot])
-- **PR #4669** (closed): test: do not merge - documentation-only CI probe (@cbeck88)
-- **PR #4667** (2026-11-15): Lower iteration counts in randomized round-trip tests (@cbeck88)
-- **PR #4666** (2026-11-13): Bump snarkVM to aleo-labs-protocol/snarkVM@5c39efdc1 (@aleo-labs-merge-bot[bot])
-- **PR #4665** (2026-11-13): Open the snarkVM bump pull request with gh-actions' bump-pr (@cbeck88)
+- **PR #4673** (2026-11-16): ci: read the consensus version from one node, not a probe devnet (@cbeck88)
 
 ---
 
@@ -2174,57 +2315,67 @@ Requeue a transmission when the ledger check fails while proposing
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in mock.rs
+## X. Empirical Invariant Guard in ci.yml
 
 **RULE**:
-When implementing operations in `node/bft/ledger-service/src/mock.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aleo-labs-protocol/snarkOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/ci.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aleo-labs-protocol/snarkOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1c341ad3`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `bec6d69e`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `node/bft/ledger-service/src/mock.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ci.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    /// The transmission IDs for which the containment check returns an error, as a failed ledger read would.
-    unreadable_transmission_ids: HashSet<TransmissionID<N>>,
-        Self {
-            committee,
-            height_to_round_and_hash: Default::default(),
-            known_transmission_ids: Default::default(),
-            unreadable_transmission_ids: Default::default(),
-        }
-        Self { height_to_round_and_hash: Mutex::new(height_to_hash), ..Self::new(committee) }
-        Self { known_transmission_ids, ..Self::new(committee) }
-    }
-
-    /// Makes the containment check fail for the given transmission IDs.
-    pub fn with_unreadable_transmission_ids(
-        mut self,
-        unreadable_transmission_ids: impl IntoIterator<Item = TransmissionID<N>>,
-    ) -> Self {
-        self.unreadable_transmission_ids.extend(unreadable_transmission_ids);
-        self
-    /// Returns `false`, unless the mock was configured to know the transmission ID or to fail on it.
-        if self.unreadable_transmission_ids.contains(transmission_id) {
-            bail!("[MockLedgerService] Unable to read transmission ID {}", fmt_id(transmission_id));
-        }
+# GitHub holds an outside contributor's pull request run until a maintainer
+# approves it. A fork's run gets no secrets, so start-cpu-runners is skipped and
+# fork-pr-runners.yml starts the boxes. The fleet jobs therefore accept a
+# skipped start-cpu-runners, and run only in this repository, which alone may
+# use the fleet.
+#
+# The fleet jobs also wait for check-shared-refs, a hosted job. GitHub reports
+# a run as `in_progress`, and fires the `workflow_run` event that starts the
+# boxes, only once none of its ready jobs is waiting for a runner. With no
+# hosted job ahead of them, a fork's fleet jobs would wait for boxes that only
+# that event starts.
+      # box absorbs fewer of them within the critical path. fork-pr-runners.yml
+      # repeats this.
+    needs: [check-shared-refs, start-cpu-runners]
+    if: &fleet-if >-
+      !cancelled() && needs.check-shared-refs.result == 'success' &&
+      contains(fromJSON('["success", "skipped"]'), needs.start-cpu-runners.result) &&
+      github.repository == 'aleo-labs-protocol/snarkOS'
+    needs: [check-shared-refs, start-cpu-runners]
+    if: *fleet-if
+    needs: [check-shared-refs, start-cpu-runners]
+    if: *fleet-if
+      !cancelled() &&
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-        Self { committee, height_to_round_and_hash: Default::default(), known_transmission_ids: Default::default() }
-        Self {
-            committee,
-            height_to_round_and_hash: Mutex::new(height_to_hash),
-            known_transmission_ids: Default::default(),
-        }
-        Self { committee, height_to_round_and_hash: Default::default(), known_transmission_ids }
-    /// Returns `false`, unless the mock was configured to know the transmission ID.
+# Every self-hosted job carries the same guard: a fork's code never runs on
+# the fleet, whose target dirs, sccache and home directories persist between
+# jobs.
+      # box absorbs fewer of them within the critical path.
+    needs: start-cpu-runners
+    if: >-
+      github.event.pull_request == null ||
+      github.event.pull_request.head.repo.full_name == github.repository
+    needs: start-cpu-runners
+    if: >-
+      github.event.pull_request == null ||
+      github.event.pull_request.head.repo.full_name == github.repository
+    needs: start-cpu-runners
+    if: >-
+      github.event.pull_request == null ||
+      github.event.pull_request.head.repo.full_name == github.repository
+      github.event.pull_request == null ||
+      github.event.pull_request.head.repo.full_name == github.repository
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1c341ad3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `bec6d69e` are properly handled with clean fallback behavior.

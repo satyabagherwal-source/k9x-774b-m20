@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-17T00:27:06.028Z",
-  "total_records": 1372,
+  "last_updated": "2026-11-17T00:38:47.210Z",
+  "total_records": 1376,
   "domains": {
     "A": {
       "total": 9,
@@ -42,7 +42,7 @@
       ]
     },
     "D": {
-      "total": 602,
+      "total": 604,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -645,7 +645,9 @@
         "domain_intelligence-research-knowledge-intelligence-xtools-at-deepseek-v4-pro-qwen3-5-9b-uncensored-",
         "domain_intelligence-research-knowledge-intelligence-hf-xtools-at-deepseek-v4-pro-qwen3-5-9b-uncensor",
         "domain_intelligence-research-knowledge-intelligence-nousresearch-arete-27b-core-invariants",
-        "domain_intelligence-research-knowledge-intelligence-hf-nousresearch-arete-27b-learnings-core-invaria"
+        "domain_intelligence-research-knowledge-intelligence-hf-nousresearch-arete-27b-learnings-core-invaria",
+        "domain_intelligence-research-knowledge-intelligence-prunaai-p-h3-image-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-hf-prunaai-p-h3-image-learnings-core-invariants"
       ]
     },
     "E": {
@@ -694,7 +696,7 @@
       ]
     },
     "G": {
-      "total": 249,
+      "total": 251,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -944,7 +946,9 @@
         "domain_intelligence-architecture-intelligence-wzh4869-appports-core-invariants",
         "domain_intelligence-architecture-intelligence-kubeedge-kubeedge-core-invariants",
         "domain_intelligence-architecture-intelligence-wzh4869-appports-learnings-core-invariants",
-        "domain_intelligence-architecture-intelligence-kubeedge-kubeedge-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-kubeedge-kubeedge-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-ratatui-ratatui-core-invariants",
+        "domain_intelligence-architecture-intelligence-ratatui-ratatui-learnings-core-invariants"
       ]
     },
     "H": {
@@ -7476,10 +7480,10 @@
       "record_id": "domain_intelligence-architecture-intelligence-aleo-labs-protocol-snarkos-core-invariants",
       "domain_letter": "G",
       "title": "Architecture Intelligence: aleo-labs-protocol/snarkOS Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-provablehq-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-core-inv.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-aleo-labs-protocol-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-.md",
       "repository": "aleo-labs-protocol/snarkOS",
-      "content_hash": "7795b2c7cfd3784b9b34ac46d2237dab65b19ab286182a3b59d151cb5ab97ebf",
-      "created_at": "2026-11-16T21:40:01.328Z"
+      "content_hash": "3bed5a752265b261403247ce742c3b22706cef494df31b5eefb922b6b49b528d",
+      "created_at": "2026-11-17T00:38:41.926Z"
     },
     "DOM-D-7123D3B0": {
       "record_id": "DOM-D-7123D3B0",
@@ -21056,8 +21060,8 @@
       "title": "Technical Construction Intelligence: goodrain/rainbond Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-goodrain-rainbond-technical-construction-intelligence-goodrain-rainbond-core-inv.md",
       "repository": "goodrain/rainbond",
-      "content_hash": "e1bc8680be6568d1f4362d068cb5f4ce0bea5d8d475fad07d417d446004da3f2",
-      "created_at": "2026-11-15T17:40:17.674Z"
+      "content_hash": "a553f0031ffcc42b18aeadad3f70a37db62d682b2bbde8af57e9fa5cef5c6d54",
+      "created_at": "2026-11-17T00:38:39.486Z"
     },
     "domain_intelligence-search-distribution-intelligence-seekstorm-seekstorm-core-invariants": {
       "record_id": "domain_intelligence-search-distribution-intelligence-seekstorm-seekstorm-core-invariants",
@@ -21125,8 +21129,8 @@
       "title": "Technical Construction Intelligence: goodrain-rainbond-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-goodrain-rainbond-learnings-technical-construction-intelligence-goodrain-rainbon.md",
       "repository": "goodrain-rainbond-learnings",
-      "content_hash": "e7a079196a9673dee4f7ed680039d84e0970085804ddd6a578466485b583e4b2",
-      "created_at": "2026-11-15T17:40:52.574Z"
+      "content_hash": "2d8ac9a444e567b5207aa0f768610bf619d0fdad60471b2f8068ef2707ca422a",
+      "created_at": "2026-11-17T00:38:47.210Z"
     },
     "domain_intelligence-search-distribution-intelligence-seekstorm-seekstorm-learnings-core-invariants": {
       "record_id": "domain_intelligence-search-distribution-intelligence-seekstorm-seekstorm-learnings-core-invariants",
@@ -24340,6 +24344,42 @@
       "repository": "hf-nousresearch-arete-27b-learnings",
       "content_hash": "c2816963bc937a7bf06a7e3eef6df0f3e8df06ae6c6586d6aeed6241c8bf399f",
       "created_at": "2026-11-17T00:27:05.090Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-prunaai-p-h3-image-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-prunaai-p-h3-image-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: PrunaAI/P-H3-Image Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-prunaai-p-h3-image-research-knowledge-intelligence-prunaai-p-h3-image-core-in.md",
+      "repository": "PrunaAI/P-H3-Image",
+      "content_hash": "c49dd7f30ce6f0768f15d39dc5efd4ccf6dace6e1bd55d5f4e3808f4570f750b",
+      "created_at": "2026-11-17T00:38:28.202Z"
+    },
+    "domain_intelligence-architecture-intelligence-ratatui-ratatui-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-ratatui-ratatui-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: ratatui/ratatui Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-ratatui-ratatui-architecture-intelligence-ratatui-ratatui-core-invariants.md",
+      "repository": "ratatui/ratatui",
+      "content_hash": "76c64e8c28849939230e87c8f1081e58cee9de62827d39f623e6b471f5e02636",
+      "created_at": "2026-11-17T00:38:32.369Z"
+    },
+    "domain_intelligence-architecture-intelligence-ratatui-ratatui-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-ratatui-ratatui-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: ratatui-ratatui-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-ratatui-ratatui-learnings-architecture-intelligence-ratatui-ratatui-learnings-co.md",
+      "repository": "ratatui-ratatui-learnings",
+      "content_hash": "eaab0a1de8faa8b11043ebb4203517f8251e373790f5c3f789ce6dd8ee34d4be",
+      "created_at": "2026-11-17T00:38:46.041Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-prunaai-p-h3-image-learnings-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-prunaai-p-h3-image-learnings-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-prunaai-p-h3-image-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-prunaai-p-h3-image-learnings-research-knowledge-intelligence-hf-prunaai-p-h3-.md",
+      "repository": "hf-prunaai-p-h3-image-learnings",
+      "content_hash": "a9f70efc59cf7e3887d4b79a17cf45c226a1161ea7ce8cab42272c5481794de5",
+      "created_at": "2026-11-17T00:38:46.553Z"
     }
   }
 }

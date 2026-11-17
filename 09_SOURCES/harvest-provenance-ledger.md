@@ -10418,3 +10418,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-xtools-at-deepseek-v4-pro-qwen3-5-9b-uncensored-heretic` | `https://huggingface.co/xtools-at/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic` | `hf-xtools-` | Multi-dimensional audit evidence | 2026-11-17T00:11:21.145Z |
 | `learn-github-nats-io-nats-go` | `https://github.com/nats-io/nats.go` | `1b180714` | Multi-dimensional audit evidence | 2026-11-17T00:24:03.280Z |
 | `learn-huggingface-nousresearch-arete-27b` | `https://huggingface.co/NousResearch/Arete-27B` | `hf-nousres` | Multi-dimensional audit evidence | 2026-11-17T00:27:02.007Z |
+| `learn-huggingface-prunaai-p-h3-image` | `https://huggingface.co/PrunaAI/P-H3-Image` | `hf-prunaai` | Multi-dimensional audit evidence | 2026-11-17T00:38:27.974Z |
+| `learn-github-ratatui-ratatui` | `https://github.com/ratatui/ratatui` | `77a25c16` | Multi-dimensional audit evidence | 2026-11-17T00:38:31.994Z |
+| `learn-github-goodrain-rainbond` | `https://github.com/goodrain/rainbond` | `3a622ae9` | Multi-dimensional audit evidence | 2026-11-17T00:38:39.087Z |
+| `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/aleo-labs-protocol/snarkOS` | `bec6d69e` | Multi-dimensional audit evidence | 2026-11-17T00:38:41.538Z |

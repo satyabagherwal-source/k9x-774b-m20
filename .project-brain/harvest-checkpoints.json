@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-17T00:27:02.016Z",
+  "last_updated": "2026-11-17T00:38:41.549Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2526,14 +2526,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aleo-labs-protocol-snarkos",
-      "content_hash": "167c2502d2f17bfbabe5914acf0feded6b50670df0a03d92181141bd91c201a3",
-      "verified_at": "2026-11-16T21:40:01.031Z",
+      "content_hash": "946cdfcdc67c61dbb1dc7e24a1e045eb341f79e92095b6cf93832fee554d6f46",
+      "verified_at": "2026-11-17T00:38:41.548Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-16T21:40:01.031Z"
+      "last_updated": "2026-11-17T00:38:41.548Z"
     },
     "volcengine/OpenViking": {
       "repository": "volcengine/OpenViking",
@@ -4071,14 +4071,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-goodrain-rainbond",
-      "content_hash": "23645f09b166ce0ba05d5cdd5df5909fccad1fce49f7ab74abd7a8ac85758ebc",
-      "verified_at": "2026-11-15T17:40:17.352Z",
+      "content_hash": "ff77003d7d25675e9441a27f9ba6ae961da065bdfa648daadbc6effa3423a538",
+      "verified_at": "2026-11-17T00:38:39.096Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-15T17:40:17.352Z"
+      "last_updated": "2026-11-17T00:38:39.096Z"
     },
     "bee-san/Ciphey": {
       "repository": "bee-san/Ciphey",
@@ -5451,14 +5451,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-ratatui-ratatui",
-      "content_hash": "21c27e878fbaacf8e5baf73ed4cfd47379f937da72af17e2c73b4c55a4e812b1",
-      "verified_at": "2026-11-13T12:24:23.074Z",
+      "content_hash": "6d4c3a16c8d0c0f495b1aaa404476f473b5d8f7bb00f4fafdde33e5e1b03fe09",
+      "verified_at": "2026-11-17T00:38:32.004Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T12:24:23.074Z"
+      "last_updated": "2026-11-17T00:38:32.004Z"
     },
     "invertase/react-native-firebase": {
       "repository": "invertase/react-native-firebase",
@@ -18246,14 +18246,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-prunaai-p-h3-image",
-      "content_hash": "76c24eeaf82fb55fb7feb1c86642d2e777eedadd15df152d7bab463de89cc4ca",
-      "verified_at": "2026-11-12T07:37:46.480Z",
+      "content_hash": "2ccfc904b80a0370270ed352e3d86355be0921ab288f83189c58212964b314c6",
+      "verified_at": "2026-11-17T00:38:27.983Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-12T07:37:46.480Z"
+      "last_updated": "2026-11-17T00:38:27.983Z"
     },
     "NousResearch/Arete-27B": {
       "repository": "NousResearch/Arete-27B",

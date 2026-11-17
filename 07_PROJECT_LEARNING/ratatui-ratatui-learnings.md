@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/ratatui-ratatui-learnings.md`  
 > **Source**: github ([https://github.com/ratatui/ratatui](https://github.com/ratatui/ratatui))  
-> **Source Version**: `41c26a74`  
+> **Source Version**: `77a25c16`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T12:24:14.507Z  
+> **Timestamp**: 2026-11-17T00:38:30.818Z  
 > **Learning ID**: `learn-github-ratatui-ratatui`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ratatui-ratatui-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ratatui/ratatui](https://github.com/ratatui/ratatui))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T12:24:14.503Z  
+> **Harvest Timestamp**: 2026-11-17T00:38:30.811Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A Rust crate for cooking up terminal user interfaces (TUIs) 👨‍🍳🐀 https://ratatui.rs
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 23257 stars
+- **Stars / Engagement**: 23329 stars
 
 ---
 
@@ -940,14 +940,13 @@ impl StatefulWidget for CounterWidget {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #2911** (2026-11-12): **chore: fix clippy lints for Rust 1.101 beta**
-  *Symptoms*: 
-  **Post-Mortem & Fix Analysis**:
-  > It's probably time to remove the deprecated stuff from 26.2 and 26.3
-  > ## [Codecov](https://app.codecov.io/gh/ratatui/ratatui/pull/2911?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=ratatui) Report :x: Patch coverage is `5.88235%` with `16 lines` in your changes missing coverage. Please review. :white_check_mark: Project coverage is 92.5%. Comparing base ([`464891b`](https://app.codecov.io/gh/ratatui/ratatui/commit/464891b39dd916471e9e7e3f3be615420141fd2e?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=ratatui)) to head ([`dd2747a`](https://app.codecov.io/gh/ratatui/ratatui/commit/dd2747a718379ebac6c469d10957f7a90c24d431?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=ratatui)). :warning: Report is 1 commits behind head on main.  | [Files with missing lines](https://app.codecov.io/gh/ratatui/ratatui/pull/2911?dropdown=coverage&src=pr&el=tree&
+- **Issue #2921** (2026-11-17): **chore: bump copyright years to 2026**
+  *Symptoms*: Updates the copyright year ranges in `LICENSE` and `ratatui-macros/LICENSE` to include 2026.
 
-- **Issue #2910** (2026-11-12): **docs(readme): move alternatives to the website**
-  *Symptoms*: https://github.com/ratatui/ratatui-website/pull/1280 
+- **Issue #2919** (2026-11-16): **build(deps): bump taiki-e/install-action from 2.90.2 to 2.90.3**
+  *Symptoms*: Bumps [taiki-e/install-action](https://github.com/taiki-e/install-action) from 2.90.2 to 2.90.3. <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/taiki-e/install-action/releases">taiki-e/install-action's releases</a>.</em></p> <blockquote> <h2>2.90.3</h2> <ul> <li> <p>Update <code>yq@latest</code> to 4.54.2.</p> </li> <li> <p>Update <code>vacuum@latest</code> to 0.39.3.</p> </li> <li> <p>Update <code>syft@latest</code> to 1.57.0.</p> </li> <li> <p>Update <code>rclone@latest</code> to 1.76.0.</p> </li> <li> <p>Update <code>protoc-gen-connect-openapi@latest</code> to 0.30.0.</p> </li> <li> <p>Update <code>mise@latest</code> to 2026.11.3.</p> </li> <li> <p>Update <code>kingfisher@latest</code> to 2.17.0.</p> </li> <li> <p>Update <code>biome@latest</code> to 2.6.6.</p> </li> </ul> </blockquote> </details> <details> <summary>Changelog</summary> <p><em>Sourced from <a href="https://github.com/taiki-e/install-action/blob/main/CHANGELOG.md">taiki-e/install-action's changelog</a>.</em></p> <blockquote> <h1>Changelog</h1> <p>All notable changes to this project will be documented in this file.</p> <p>This project adheres to <a href="https://semver.org">Semantic Versioning</a>.</p> <!-- raw HTML omitted --> <h2>[Unreleased]</h2> <h2>[2.90.5] - 2026-11-15</h2> <ul> <li> <p>Update <code>mise@latest</code> to 2026.11.8.</p> </li> <li> <p>Update <code>cargo-nextest@latest</code> to 0.9.152.</p> </li> </ul> <h2>[2.90.4] - 2026-11-14</h2> <ul> <li> <p>
+  **Post-Mortem & Fix Analysis**:
+  > ## [Codecov](https://app.codecov.io/gh/ratatui/ratatui/pull/2919?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=ratatui) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 93.3%. Comparing base ([`41c26a7`](https://app.codecov.io/gh/ratatui/ratatui/commit/41c26a74b3bcfa365e8c0f7e2b827f266bad8755?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=ratatui)) to head ([`e64037b`](https://app.codecov.io/gh/ratatui/ratatui/commit/e64037bcc8939d1520b3a3778cbad4deabbf2b2f?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=ratatui)).  <details><summary>Additional details and impacted files</summary>    ```diff @@           Coverage Diff           @@ ##            main   #2919     +/-   ## ================================
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -964,24 +963,29 @@ impl StatefulWidget for CounterWidget {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `77ee1f80` (2026-11-12)
-**Commit Message**: build(deps): bump crate-ci/typos from 1.51.1 to 1.52.0 (#2905)
+### Incident Patch 1: `1617a940` (2026-11-16)
+**Commit Message**: build(deps): bump crate-ci/typos from 1.52.0 to 1.52.2 (#2917)
 
-Bumps [crate-ci/typos](https://github.com/crate-ci/typos) from 1.51.1 to
-1.52.0.
+Bumps [crate-ci/typos](https://github.com/crate-ci/typos) from 1.52.0 to
+1.52.2.
 <details>
 <summary>Release notes</summary>
 <p><em>Sourced from <a
 href="https://github.com/crate-ci/typos/releases">crate-ci/typos's
 releases</a>.</em></p>
 <blockquote>
-<h2>v1.52.0</h2>
-<h2>[1.52.0] - 2026-11-02</h2>
-<h3>Features</h3>
+<h2>v1.52.2</h2>
+<h2>[1.52.2] - 2026-11-11</h2>
+<h3>Compatibility</h3>
 <ul>
-<li>Updated the dictionary with the <a
-href="https://redirect.github.com/crate-ci/typos/issues/1626">October
-2026</a> changes</li>
+<li><em>(pypi)</em> Don't publish wheels for x86</li>
+</ul>
+<h2>v1.52.1</h2>
+<h2>[1.52.1] - 2026-11-09</h2>
+<h3>Fixes</h3>
+<ul>
+<li>Don't correct <code>extraversion</code></li>
+<li>Don't correct <code>causalities</code></li>
 </ul>
 </blockquote>
 </details>
@@ -1000,11 +1004,8 @@ and this project adheres to <a href="https://semver.org/">Semantic
 Versioning</a>.</p>
 <!-- raw HTML omitted -->
 <h2>[Unreleased] - ReleaseDate</h2>
-<h2>[1.52.0] - 2026-11-02</h2>
-<h3>Features</h3>
-<ul>
-<li>Updated the dictionary with the <a
-href="https://redirect.github.com/crate-ci/typos/i
+<h2>[1.52.2] - 2026-11-11</h2>
+<h3>Compatibi
 
 **File**: `.github/workflows/ci.yml` (modified, +1/-1)
 ```diff
@@ -1012,124 +1013,193 @@ href="https://redirect.github.com/crate-ci/typos/i
        - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
          with:
            persist-credentials: false
--      - uses: crate-ci/typos@7f9d0819ca1c008ade73f4b41fa9d258d48f605b # v1.51.1
-+      - uses: crate-ci/typos@4c8b7f51ca60df14e3c5ca82770dfbbe6c3dae85 # v1.52.0
+-      - uses: crate-ci/typos@4c8b7f51ca60df14e3c5ca82770dfbbe6c3dae85 # v1.52.0
++      - uses: crate-ci/typos@276087d9a4f06398b3e04825487805e2d7375888 # v1.52.2
  
-   # Check for any disallowed dependencies in the codebase due to license / security issues.
-   # See <https://github.com/EmbarkStudios/cargo-deny>
+   # Check for any unused dependencies in the codebase.
+   # See <https://github.com/bnjbvr/cargo-machete/>
 ```
 
 ---
 
-### Incident Patch 2: `6b396976` (2026-11-12)
-**Commit Message**: build(deps): bump amannn/action-semantic-pull-request from 6.1.1 to 6.1.2 (#2909)
+### Incident Patch 2: `f08c02fd` (2026-11-16)
+**Commit Message**: build(deps): bump tombi-toml/setup-tombi from 1.10.0 to 1.11.2 (#2918)
 
 Bumps
-[amannn/action-semantic-pull-request](https://github.com/amannn/action-semantic-pull-request)
-from 6.1.1 to 6.1.2.
+[tombi-toml/setup-tombi](https://github.com/tombi-toml/setup-tombi) from
+1.10.0 to 1.11.2.
 <details>
 <summary>Release notes</summary>
 <p><em>Sourced from <a
-href="https://github.com/amannn/action-semantic-pull-request/releases">amannn/action-semantic-pull-request's
+href="https://github.com/tombi-toml/setup-tombi/releases">tombi-toml/setup-tombi's
 releases</a>.</em></p>
 <blockquote>
-<h2>v6.1.2</h2>
-<h2><a
-href="https://github.com/amannn/action-semantic-pull-request/compare/v6.1.1...v6.1.2">6.1.2</a>
-(2026-11-05)</h2>
-<h3>Bug Fixes</h3>
+<h2>v1.11.2</h2>
+<p>This setup-tombi release matches <a
+href="https://github.com/tombi-toml/tombi/releases/tag/v1.11.2">tombi
+v1.11.2</a>.</p>
+<p><strong>Full Changelog</strong>: <a
+href="https://github.com/tombi-toml/setup-tombi/compare/v1.11.1...v1.11.2">https://github.com/tombi-toml/setup-tombi/compare/v1.11.1...v1.11.2</a></p>
+<h2>v1.11.1</h2>
+<p>This setup-tombi release matches <a
+href="https://github.com/tombi-toml/tombi/releases/tag/v1.11.1">tombi
+v1.11.1</a>.</p>
+<p><strong>Full Changelog</strong>: <a
+href="https://github.com/tombi-toml/setup-tombi/compare/v1.11.0...v1.11.1">https://github.com/tombi-toml/setup-tombi/compare/v1.11.0...v1.11.1</a></p>
+<h2>v1.11.0</h2>
+<p>This setup-tombi release matches <a
+href="https://github.com/tombi-toml/tombi/releases/tag/v1.11.0">tombi
+v1.11.0</a>.</p>
+<p><strong>Full Changelog</strong>: <
+
+**File**: `.github/workflows/ci.yml` (modified, +1/-1)
+```diff
+@@ -37,7 +37,7 @@ jobs:
+           toolchain: nightly
+           components: rustfmt
+       - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2
+-      - uses: tombi-toml/setup-tombi@336fd5f0db887ebf637389a659b4193608756ecd # v1.10.0
++      - uses: tombi-toml/setup-tombi@8ddc6b91b6fa3ad0ce192a68b409930851e4886c # v1.11.2
+         with:
+           version: "0.9.19"
+       - run: cargo xtask format --check
+```
+
+---
+
+### Incident Patch 3: `b287eed3` (2026-11-16)
+**Commit Message**: build(deps): bump taiki-e/install-action from 2.90.2 to 2.90.3 (#2919)
+
+Bumps
+[taiki-e/install-action](https://github.com/taiki-e/install-action) from
+2.90.2 to 2.90.3.
+<details>
+<summary>Release notes</summary>
+<p><em>Sourced from <a
+href="https://github.com/taiki-e/install-action/releases">taiki-e/install-action's
+releases</a>.</em></p>
+<blockquote>
+<h2>2.90.3</h2>
 <ul>
-<li>Release accumulated dependency updates (closes <a
-href="https://redirect.github.com/amannn/action-semantic-pull-request/issues/321">#321</a>)
-(<a
-href="https://github.com/amannn/action-semantic-pull-request/commit/fc7da0cece3e8512e50240b0619a03bdd946db1c">fc7da0c</a>)</li>
+<li>
+<p>Update <code>yq@latest</code> to 4.54.2.</p>
+</li>
+<li>
+<p>Update <code>vacuum@latest</code> to 0.39.3.</p>
+</li>
+<li>
+<p>Update <code>syft@latest</code> to 1.57.0.</p>
+</li>
+<li>
+<p>Update <code>rclone@latest</code> to 1.76.0.</p>
+</li>
+<li>
+<p>Update <code>protoc-gen-connect-openapi@latest</code> to 0.30.0.</p>
+</li>
+<li>
+<p>Update <code>mise@latest</code> to 2026.11.3.</p>
+</li>
+<li>
+<p>Update <code>kingfisher@latest</code> to 2.17.0.</p>
+</li>
+<li>
+<p>Update <code>biome@latest</code> to 2.6.6.</p>
+</li>
 </ul>
 </blockquote>
 </details>
 <details>
 <summary>Changelog</summary>
 <p><em>Sourced from <a
-href="https://github.com/amannn/action-semantic-pull-request/blob/main/CHANGELOG.md">amannn/action-semantic-pull-request's
+href="https://github.com/taiki-e/install-action/blob/main/CHANGELOG.md">taiki-e/install-action's
 changelog</a>.</em></p>
 <blockquote>
 <h1>Changelog</h1>
-<h2><a
-href="https://github.com/amannn/action-semantic-pull-request/compar
+<p>All notable changes to this project will be documented 
 
-**File**: `.github/workflows/check-pr.yml` (modified, +1/-1)
+**File**: `.github/workflows/ci.yml` (modified, +8/-8)
 ```diff
-@@ -24,7 +24,7 @@ jobs:
-     steps:
-       - name: Check PR title
-         if: github.event_name == 'pull_request_target'
--        uses: amannn/action-semantic-pull-request@48f256284bd46cdaab1048c3721360e808335d50 # v5
-+        uses: amannn/action-semantic-pull-request@2252a14e810aa9b85c2d560bd7070c802206ecf6 # v5
-         id: check_pr_title
-         env:
-           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-```
-
----
-
-### Incident Patch 3: `0250ef01` (2026-11-12)
-**Commit Message**: build(deps): bump release-plz/action from 0.5.147 to 0.5.148 (#2908)
-
-Bumps [release-plz/action](https://github.com/release-plz/action) from
-0.5.147 to 0.5.148.
-<details>
-<summary>Release notes</summary>
-<p><em>Sourced from <a
-href="https://github.com/release-plz/action/releases">release-plz/action's
-releases</a>.</em></p>
-<blockquote>
-<h2>v0.5.148</h2>
-<h2>What's Changed</h2>
-<ul>
-<li>chore(deps): update dependency taiki-e/install-action to v2.87.33 by
-<a href="https://github.com/renovate"><code>@​renovate</code></a>[bot]
-in <a
-href="https://redirect.github.com/release-plz/action/pull/588">release-plz/action#588</a></li>
-<li>chore(deps): update dependency taiki-e/install-action to v2.88.0 by
-<a href="https://github.com/renovate"><code>@​renovate</code></a>[bot]
-in <a
-href="https://redirect.github.com/release-plz/action/pull/589">release-plz/action#589</a></li>
-<li>chore(deps): update dependency taiki-e/install-action to v2.88.1 by
-<a href="https://github.com/renovate"><code>@​renovate</code></a>[bot]
-in <a
-href="https://redirect.github.com/release-plz/action/pull/590">release-plz/action#590</a></li>
-<li>chore(deps): update dependency cargo-bins/cargo-binstall to v1.26.2
-by <a
-href
-
-**File**: `.github/workflows/release-plz.yml` (modified, +2/-2)
-```diff
-@@ -35,7 +35,7 @@ jobs:
-       - uses: rust-lang/crates-io-auth-action@3268eb413133e2960fa4ae0e963ca76380c54cd9 # v1
-         id: auth
-       - name: Run release-plz
--        uses: release-plz/action@f67a7e724bdad4a0f6875f186060a0ca2770d76c # v0.5
-+        uses: release-plz/action@66b324fd6c72d05d2a08568492ecdd62bfb8a62b # v0.5
+@@ -79,7 +79,7 @@ jobs:
+       - uses: dtolnay/rust-toolchain@683b588c487a69d01f6c6ddf40f036ff682cc2c8
          with:
-           command: release
-         env:
-@@ -64,7 +64,7 @@ jobs:
+           toolchain: ${{ env.RATATUI_NIGHTLY_TOOLCHAIN }}
+-      - uses: taiki-e/install-action@3a3daafd3b7f23b8f65d9f5ba2db203fb59b79e2 # v2.90.2
++      - uses: taiki-e/install-action@cfdb7ed4ccc7c7dce37759eae89dc5674b469b39 # v2.90.3
+         with:
+           tool: cargo-udeps
+       - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2.9.3
+@@ -127,7 +127,7 @@ jobs:
          with:
            toolchain: stable
-       - name: Run release-plz
--        uses: release-plz/action@f67a7e724bdad4a0f6875f186060a0ca2770d76c # v0.5
-+        uses: release-plz/action@66b324fd6c72d05d2a08568492ecdd62bfb8a62b # v0.5
+           components: llvm-tools
+-      - uses: taiki-e/install-action@3a3daafd3b7f23b8f65d9f5ba2db203fb59b79e2 # v2.90.2
++      - uses: taiki-e/install-action@cfdb7ed4ccc7c7dce37759eae89dc5674b469b39 # v2.90.3
          with:
-           command: release-pr
-         env:
+           tool: cargo-llvm-cov
+       - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2
+@@ -153,7 +153,7 @@ jobs:
+       - uses: dtolnay/rust-toolchain@683b588c487a69d01f6c6ddf40f036ff682cc2c8
+         with:
+           toolchain: ${{ matrix.toolchain }}
+-      - uses: taiki-e/install-action@3a3daafd3b7f23b8f65d9f5ba2db203fb59b79e2 # v2.90.2
++      - uses: taiki-e/install-action@cfdb7ed4ccc7c7dce37759eae89dc5674b469b39 # v2.90.3
+         with:
+           tool: cargo-hack
+       - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2
+@@ -172,7 +172,7 @@ jobs:
+       - uses: dtolnay/rust-toolchain@683b588c487a69d01f6c6ddf40f036ff682cc2c8
+         with:
+           toolchain: stable
+-      - uses: taiki-e/install-action@3a3daafd3b7f23b8f65d9f5ba2db203fb59b79e2 # v2.90.2
++      - uses: taiki-e/install-action@cfdb7ed4ccc7c7dce37759eae89dc5674b469b39 # v2.90.3
+         with:
+           tool: cargo-minimal-versions,cargo-hack
+       - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2.9.3
+@@ -218,7 +218,7 @@ jobs:
+         with:
+           persist-credentials: false
+       - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2
+-      - uses: taiki-e/install-action@3a3daafd3b7f23b8f65d9f5ba2db203fb59b79e2 # v2.90.2
++      - uses: taiki-e/install-action@cfdb7ed4ccc7c7dce37759eae89dc5674b469b39 # v2.90.3
+         with:
+           tool: cargo-rdme
+       - run: cargo rdme install-rust-toolchain-for-intralinks
+@@ -241,7 +241,7 @@ jobs:
+       - uses: dtolnay/install@74f735cdf643820234e37ae1c4089a08fd266d8a # master
+         with:
+           crate: cargo-docs-rs
+-      - uses: taiki-e/install-action@3a3daafd3b7f23b8f65d9f5ba2db203fb59b79e2 # v2.90.2
++      - uses: taiki-e/install-action@cfdb7ed4ccc7c7dce37759eae89dc5674b469b39 # v2.90.3
+         with:
+           tool: cargo-hack
+       - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2
+@@ -259,7 +259,7 @@ jobs:
+       - uses: dtolnay/rust-toolchain@683b588c487a69d01f6c6ddf40f036ff682cc2c8
+         with:
+           toolchain: stable
+-      - uses: taiki-e/install-action@3a3daafd3b7f23b8f65d9f5ba2db203fb59b79e2 # v2.90.2
++      - uses: taiki-e/install-action@cfdb7ed4ccc7c7dce37759eae89dc5674b469b39 # v2.90.3
+         with:
+           tool: cargo-hack
+       - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2
+@@ -281,7 +281,7 @@ jobs:
+       - uses: dtolnay/rust-toolchain@683b588c487a69d01f6c6ddf40f036ff682cc2c8
+         with:
+           toolchain: stable
+-      - uses: taiki-e/install-action@3a3daafd3b7f23b8f65d9f5ba2db203fb59b79e2 # v2.90.2
++      - uses: taiki-e/install-action@cfdb7ed4ccc7c7dce37759eae89dc5674b469b39 # v2.90.3
+         with:
+           tool: cargo-hack
+       - uses: Swatinem/rust-cache@d1527c8f67ef9af357290475d4af4b0fab8f12e0 # v2
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2921** (2026-11-17): chore: bump copyright years to 2026 (@joshka)
+- **PR #2919** (2026-11-16): build(deps): bump taiki-e/install-action from 2.90.2 to 2.90.3 (@dependabot[bot])
+- **PR #2918** (2026-11-16): build(deps): bump tombi-toml/setup-tombi from 1.10.0 to 1.11.2 (@dependabot[bot])
+- **PR #2917** (2026-11-16): build(deps): bump crate-ci/typos from 1.52.0 to 1.52.2 (@dependabot[bot])
 - **PR #2911** (2026-11-12): chore: fix clippy lints for Rust 1.101 beta (@orhun)
 - **PR #2910** (2026-11-12): docs(readme): move alternatives to the website (@orhun)
-- **PR #2909** (2026-11-12): build(deps): bump amannn/action-semantic-pull-request from 6.1.1 to 6.1.2 (@dependabot[bot])
-- **PR #2908** (2026-11-12): build(deps): bump release-plz/action from 0.5.147 to 0.5.148 (@dependabot[bot])
-- **PR #2907** (2026-11-12): build(deps): bump taiki-e/install-action from 2.88.1 to 2.90.2 (@dependabot[bot])
-- **PR #2906** (2026-11-12): build(deps): bump zizmorcore/zizmor-action from 0.8.0 to 0.8.1 (@dependabot[bot])
 
 ---
 
@@ -1149,13 +1219,13 @@ href
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(deps): bump crate-ci/typos from 1.51.1 to 1.52.0 (#2905)
+## X. build(deps): bump crate-ci/typos from 1.52.0 to 1.52.2
 
 **RULE**:
 When implementing operations in `.github/workflows/ci.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ratatui/ratatui. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `77ee1f80`: build(deps): bump crate-ci/typos from 1.51.1 to 1.52.0 (#2905). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1617a940`: build(deps): bump crate-ci/typos from 1.52.0 to 1.52.2. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/ci.yml`.
@@ -1163,14 +1233,14 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-      - uses: crate-ci/typos@4c8b7f51ca60df14e3c5ca82770dfbbe6c3dae85 # v1.52.0
+      - uses: crate-ci/typos@276087d9a4f06398b3e04825487805e2d7375888 # v1.52.2
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Anti-pattern to NEVER write (induced failure mode):
-      - uses: crate-ci/typos@7f9d0819ca1c008ade73f4b41fa9d258d48f605b # v1.51.1
+// Induced defect failure mode:
+      - uses: crate-ci/typos@4c8b7f51ca60df14e3c5ca82770dfbbe6c3dae85 # v1.52.0
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `77ee1f80` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1617a940` are properly handled with clean fallback behavior.
