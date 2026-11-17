@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-17T15:06:28.929Z",
+  "updated_at": "2026-11-17T15:35:21.676Z",
   "stats": {
-    "total_discovered": 5015,
-    "approved_pending_harvest": 4727,
+    "total_discovered": 5017,
+    "approved_pending_harvest": 4729,
     "harvested_count": 0,
     "rejected_count": 288,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 4716,
+      "COMMUNITY_AND_EXPERT": 4718,
       "OFFICIAL_DOCUMENTATION": 162,
       "STANDARDS_AND_SPECIFICATIONS": 106,
       "ENGINEERING_BLOGS": 3,
@@ -108335,6 +108335,50 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/argoproj-argo-workflows-learnings.md",
         "fileName": "argoproj-argo-workflows-learnings.md"
+      }
+    },
+    "SRC-2E9DF7A9E25B": {
+      "id": "SRC-2E9DF7A9E25B",
+      "url": "https://github.com/tickernelz/opencode-mem",
+      "title": "https://github.com/tickernelz/opencode-mem",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T15:35:20.944Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tickernelz-opencode-mem-learnings.md",
+        "fileName": "tickernelz-opencode-mem-learnings.md"
+      }
+    },
+    "SRC-23BED31D1BD3": {
+      "id": "SRC-23BED31D1BD3",
+      "url": "https://github.com/dathere/qsv/pull/5066",
+      "title": "https://github.com/dathere/qsv/pull/5066",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T15:35:21.676Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dathere-qsv-learnings.md",
+        "fileName": "dathere-qsv-learnings.md"
       }
     }
   }

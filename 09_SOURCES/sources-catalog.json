@@ -1413,10 +1413,10 @@
     "repository": "tickernelz/opencode-mem",
     "platform": "github",
     "sourceUrl": "https://github.com/tickernelz/opencode-mem",
-    "sourceVersion": "040b27f4",
+    "sourceVersion": "e42d23c4",
     "license": "MIT",
-    "contentHash": "f7aba3b01d51cfb849e01036a99f6465b5200b752b026f92d54eb5854ff58f49",
-    "lastHarvestedAt": "2026-11-10T02:06:49.125Z",
+    "contentHash": "0cf22914af4c6f7eb6fa546b16400b202627544922b15828055a883904903595",
+    "lastHarvestedAt": "2026-11-17T15:35:15.700Z",
     "learningId": "learn-github-tickernelz-opencode-mem"
   },
   "hf-autotrust-jev-35b-nvfp4": {
@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "101f64d3",
+    "sourceVersion": "c0d30a17",
     "license": "NOASSERTION",
-    "contentHash": "cc1b52540a2b37380326851cca5b41421b896c440e12a7ac93db45e23fa06691",
-    "lastHarvestedAt": "2026-11-17T14:58:08.264Z",
+    "contentHash": "bb2d8aacbba155dfc0e235c02bc4934675faa191c416a054c05bfd519fa3843f",
+    "lastHarvestedAt": "2026-11-17T15:35:17.419Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -8565,8 +8565,8 @@
     "sourceUrl": "https://huggingface.co/meta-models/Muse-Spark-Open-816B-A42B-NVFP4",
     "sourceVersion": "hf-meta-models-muse-spark-open-816b-a42b-nvfp4",
     "license": "Open-Source",
-    "contentHash": "82dfa5b1b00f466879d47754500f817e5c992f198e9d39e7d25b8ab70b5688ae",
-    "lastHarvestedAt": "2026-11-13T03:10:29.824Z",
+    "contentHash": "907e78710c46392261845dbd51f3885aac3819f7782a1412de5e84734fa25fb1",
+    "lastHarvestedAt": "2026-11-17T15:35:00.231Z",
     "learningId": "learn-huggingface-meta-models-muse-spark-open-816b-a42b-nvfp4"
   },
   "rickclephas-kmp-nativecoroutines": {

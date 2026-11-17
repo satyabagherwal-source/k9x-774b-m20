@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T15:24:04.418Z",
+  "last_updated": "2026-11-17T15:35:22.399Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-17T14:15:19.918Z",
@@ -748,9 +748,9 @@
       "staged_for_review": 1
     },
     "dathere-qsv-learnings.md": {
-      "processed_at": "2026-11-17T14:58:38.464Z",
-      "promoted_canonical": 1,
-      "staged_for_review": 0
+      "processed_at": "2026-11-17T15:35:21.490Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     },
     "dragonflyoss-dragonfly-learnings.md": {
       "processed_at": "2026-11-12T03:30:59.262Z",
@@ -1473,8 +1473,8 @@
       "staged_for_review": 1
     },
     "hf-meta-models-muse-spark-open-816b-a42b-nvfp4-learnings.md": {
-      "processed_at": "2026-11-13T03:11:08.604Z",
-      "promoted_canonical": 1,
+      "processed_at": "2026-11-17T15:35:20.624Z",
+      "promoted_canonical": 0,
       "staged_for_review": 0
     },
     "revenuecat-purchases-ios-learnings.md": {
@@ -3321,9 +3321,14 @@
       "processed_at": "2026-11-17T14:15:18.847Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "tickernelz-opencode-mem-learnings.md": {
+      "processed_at": "2026-11-17T15:35:20.924Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 1602,
+  "total_dossiers_evaluated": 1605,
   "total_canonical_promoted": 322,
-  "total_staged_for_review": 1261
+  "total_staged_for_review": 1263
 }

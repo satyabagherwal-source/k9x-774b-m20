@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-17T15:24:04.203Z",
-  "total_records": 1580,
+  "last_updated": "2026-11-17T15:35:22.167Z",
+  "total_records": 1584,
   "domains": {
     "A": {
       "total": 11,
@@ -48,7 +48,7 @@
       ]
     },
     "D": {
-      "total": 659,
+      "total": 661,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -708,7 +708,9 @@
         "domain_intelligence-research-knowledge-intelligence-moonshotai-kimi-k3-1-pro-core-invariants",
         "domain_intelligence-research-knowledge-intelligence-hf-moonshotai-kimi-k3-1-pro-learnings-core-invar",
         "domain_intelligence-research-knowledge-intelligence-nvidia-deepseek-v4-1-flash-1017-nvfp4-core-invar",
-        "domain_intelligence-research-knowledge-intelligence-hf-nvidia-deepseek-v4-1-flash-1017-nvfp4-learnin"
+        "domain_intelligence-research-knowledge-intelligence-hf-nvidia-deepseek-v4-1-flash-1017-nvfp4-learnin",
+        "domain_intelligence-research-knowledge-intelligence-meta-models-muse-spark-open-816b-a42b-nvfp4-core",
+        "domain_intelligence-research-knowledge-intelligence-hf-meta-models-muse-spark-open-816b-a42b-nvfp4-l"
       ]
     },
     "E": {
@@ -1053,7 +1055,7 @@
       ]
     },
     "H": {
-      "total": 380,
+      "total": 382,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1434,7 +1436,9 @@
         "domain_intelligence-technical-construction-intelligence-unjs-nitro-learnings-core-invariants",
         "domain_intelligence-technical-construction-intelligence-meta-docusaurus-core-invariants",
         "domain_intelligence-technical-construction-intelligence-facebook-docusaurus-learnings-core-invariant",
-        "DOM-H-1449F81D"
+        "DOM-H-1449F81D",
+        "domain_intelligence-technical-construction-intelligence-tickernelz-opencode-mem-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-tickernelz-opencode-mem-learnings-core-invar"
       ]
     },
     "I": {
@@ -11637,8 +11641,8 @@
       "title": "Architecture Intelligence: dathere/qsv Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dathere-qsv-architecture-intelligence-dathere-qsv-core-invariants.md",
       "repository": "dathere/qsv",
-      "content_hash": "7cb9b48aac69e80ad8689d75ba9a37306ef695920d9b6b33fd05998804d3828c",
-      "created_at": "2026-11-17T14:58:08.562Z"
+      "content_hash": "c589045f2f121b0dc0d77ba038a9c25541b0111c60cc481ed3a9a2fe8ed2d36b",
+      "created_at": "2026-11-17T15:35:17.746Z"
     },
     "DOM-D-F5645095": {
       "record_id": "DOM-D-F5645095",
@@ -11706,8 +11710,8 @@
       "title": "Architecture Intelligence: dathere-qsv-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dathere-qsv-learnings-architecture-intelligence-dathere-qsv-learnings-core-invar.md",
       "repository": "dathere-qsv-learnings",
-      "content_hash": "a629b94b6e8d388c4cd432bf898dcc9c505c396e6c9f220e0446d5800a070574",
-      "created_at": "2026-11-17T14:58:39.077Z"
+      "content_hash": "e441888b17162016f5e7f0929746a03170a4fff10e46358b718f0f813771f30e",
+      "created_at": "2026-11-17T15:35:22.167Z"
     },
     "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8-flash-next-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8-flash-next-core-invariants",
@@ -27337,6 +27341,42 @@
       "repository": "hf-nvidia-deepseek-v4.1-flash-1017-nvfp4-learnings",
       "content_hash": "1b04c348c8657a4be6169f07fd209991dfa76e36e3208c564e25b9be044535c2",
       "created_at": "2026-11-17T15:24:03.033Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-meta-models-muse-spark-open-816b-a42b-nvfp4-core": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-meta-models-muse-spark-open-816b-a42b-nvfp4-core",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: meta-models/Muse-Spark-Open-816B-A42B-NVFP4 Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-meta-models-muse-spark-open-816b-a42b-nvfp4-research-knowledge-intelligence-m.md",
+      "repository": "meta-models/Muse-Spark-Open-816B-A42B-NVFP4",
+      "content_hash": "c546cd05aa0d2f35b999903bf3c58e2eeee5bd89fe80ac2af705346894d64123",
+      "created_at": "2026-11-17T15:35:00.396Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-tickernelz-opencode-mem-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-tickernelz-opencode-mem-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: tickernelz/opencode-mem Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tickernelz-opencode-mem-technical-construction-intelligence-tickernelz-opencode-.md",
+      "repository": "tickernelz/opencode-mem",
+      "content_hash": "85c7fcd010c3033aa12e80bc316a2213cf05054630adceafe2f6f79afbe955d2",
+      "created_at": "2026-11-17T15:35:15.988Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-meta-models-muse-spark-open-816b-a42b-nvfp4-l": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-meta-models-muse-spark-open-816b-a42b-nvfp4-l",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-meta-models-muse-spark-open-816b-a42b-nvfp4-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-meta-models-muse-spark-open-816b-a42b-nvfp4-learnings-research-knowledge-inte.md",
+      "repository": "hf-meta-models-muse-spark-open-816b-a42b-nvfp4-learnings",
+      "content_hash": "4c6e7f8d7dc60a4380441809b846a16bc52cae18f76c5d7f6a426afe9b0d5d16",
+      "created_at": "2026-11-17T15:35:20.787Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-tickernelz-opencode-mem-learnings-core-invar": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-tickernelz-opencode-mem-learnings-core-invar",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: tickernelz-opencode-mem-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-tickernelz-opencode-mem-learnings-technical-construction-intelligence-tickernelz.md",
+      "repository": "tickernelz-opencode-mem-learnings",
+      "content_hash": "525e336bc017c4c095ef506f06b82f9d0e63a022b2fad844ed209f8f8293f1d1",
+      "created_at": "2026-11-17T15:35:21.242Z"
     }
   }
 }

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-17T15:23:59.632Z",
+  "last_updated": "2026-11-17T15:35:17.444Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -2198,14 +2198,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tickernelz-opencode-mem",
-      "content_hash": "f7aba3b01d51cfb849e01036a99f6465b5200b752b026f92d54eb5854ff58f49",
-      "verified_at": "2026-11-10T02:06:49.135Z",
+      "content_hash": "0cf22914af4c6f7eb6fa546b16400b202627544922b15828055a883904903595",
+      "verified_at": "2026-11-17T15:35:15.707Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-10T02:06:49.135Z"
+      "last_updated": "2026-11-17T15:35:15.707Z"
     },
     "autotrust/JEV-35B-NVFP4": {
       "repository": "autotrust/JEV-35B-NVFP4",
@@ -3681,14 +3681,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dathere-qsv",
-      "content_hash": "cc1b52540a2b37380326851cca5b41421b896c440e12a7ac93db45e23fa06691",
-      "verified_at": "2026-11-17T14:58:08.272Z",
+      "content_hash": "bb2d8aacbba155dfc0e235c02bc4934675faa191c416a054c05bfd519fa3843f",
+      "verified_at": "2026-11-17T15:35:17.443Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T14:58:08.272Z"
+      "last_updated": "2026-11-17T15:35:17.443Z"
     },
     "assistant-ui/assistant-ui": {
       "repository": "assistant-ui/assistant-ui",
@@ -12891,14 +12891,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-meta-models-muse-spark-open-816b-a42b-nvfp4",
-      "content_hash": "82dfa5b1b00f466879d47754500f817e5c992f198e9d39e7d25b8ab70b5688ae",
-      "verified_at": "2026-11-13T03:10:29.831Z",
+      "content_hash": "907e78710c46392261845dbd51f3885aac3819f7782a1412de5e84734fa25fb1",
+      "verified_at": "2026-11-17T15:35:00.238Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T03:10:29.831Z"
+      "last_updated": "2026-11-17T15:35:00.238Z"
     },
     "rickclephas/KMP-NativeCoroutines": {
       "repository": "rickclephas/KMP-NativeCoroutines",

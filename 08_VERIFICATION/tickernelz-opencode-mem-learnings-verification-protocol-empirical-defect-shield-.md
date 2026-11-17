@@ -6,16 +6,16 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T12:45:48.210Z",
+  "timestamp": "2026-11-17T15:35:21.028Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
-  "learning_id": "LEARN-REEXTRACT-tickernelz-opencode-mem-learnings",
+  "learning_id": "LEARN-EVO-tickernelz-opencode-mem-learnings",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [tickernelz-opencode-mem-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T12:45:48.210Z`  
-> **Learning ID**: `LEARN-REEXTRACT-tickernelz-opencode-mem-learnings`
+> **License**: Open-Source | **Timestamp**: `2026-11-17T15:35:21.028Z`  
+> **Learning ID**: `LEARN-EVO-tickernelz-opencode-mem-learnings`
 
 
 ## 1. Scope & Verification Target
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tickernelz-opencode-mem-learnings.md`  
 > **Source**: github ([https://github.com/tickernelz/opencode-mem](https://github.com/tickernelz/opencode-mem))  
-> **Source Version**: `040b27f4`  
+> **Source Version**: `e42d23c4`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-10T02:06:47.559Z  
+> **Timestamp**: 2026-11-17T15:35:14.821Z  
 > **Learning ID**: `learn-github-tickernelz-opencode-mem`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tickernelz-opencode-mem-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tickernelz/opencode-mem](https://github.com/tickernelz/opencode-mem))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-10T02:06:46.963Z  
+> **Harvest Timestamp**: 2026-11-17T15:35:14.816Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: OpenCode plugin that gives coding agents persistent memory using local vector database
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 1844 stars
+- **Stars / Engagement**: 1869 stars
 
 ---
 
@@ -1042,333 +1042,155 @@ export function removeFromSet<T>(set: Set<T>, value: T): Set<T> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e856a02e` (2026-11-09)
-**Commit Message**: feat(ai): add Standard Compute memory provider preset (#502)
+### Incident Patch 1: `e42d23c4` (2026-11-16)
+**Commit Message**: chore(deps): bump the minor-and-patch group across 2 directories with 10 updates (#506)
 
-* feat(ai): add Standard Compute memory provider preset
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-* fix(ai): resolve preset defaults into runtime CONFIG
-
-Key-only preset configs were marked ready but left memoryModel/memoryApiUrl
-undefined, so auto-capture, dreaming, and profile learning skipped the
-external channel. Materialize shared preset defaults during config build.
-
----------
-
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Co-authored-by: EyJunge1 <[REDACTED_EMAIL]>
-
-**File**: `.github/i18n/README.ar.md` (modified, +7/-1)
+**File**: `bun.lock` (modified, +29/-29)
 ```diff
-@@ -632,6 +632,12 @@ memory({ mode: "import", inputPath: "./memories.json" });
-   "memoryApiKey": "env://CLOUDGPU_API_KEY",
-   ```
-   عند اختيار هذا المزود، تُرسل مطالبات الالتقاط التلقائي / الملف، واستجابات النموذج، وسياق المحادثة ذي الصلة إلى `https://cloudgpu.app`.
-+- `standardcompute`: إعداد مسبق لـ OpenAI-compatible Chat Completions لـ [Standard Compute](https://standardcompute.com). `memoryApiUrl` و`memoryModel` اختياريان — الافتراضي `https://api.stdcmpt.com/v1` و`StandardCompute`. إذا حُذف `memoryApiKey`، يُستخدم `STANDARDCOMPUTE_API_KEY` من البيئة (أنشئ مفتاحًا من https://standardcompute.com/dashboard؛ توثيق API: https://docs.standardcompute.com). مثال:
-+  ```jsonc
-+  "memoryProvider": "standardcompute",
-+  "memoryApiKey": "env://STANDARDCOMPUTE_API_KEY",
-+  ```
-+  عند اختيار هذا المزود، تُرسل مطالبات الالتقاط التلقائي / الملف، واستجابات النموذج، وسياق المحادثة ذي الصلة إلى `https://api.stdcmpt.com`.
+@@ -115,11 +115,11 @@
  
- استكشاف الأخطاء:
+     "@cacheable/utils": ["@cacheable/utils@2.5.0", "", { "dependencies": { "hashery": "^1.5.1", "keyv": "^5.6.0" } }, "sha512-buipgOVDkkPXNR5+xBpDw7Zk2n1EvU7qBJCNUcL7rhQ//kfpOXPAvQ511Os0vpLYJ1pZnvudNytkQt2hst3wqA=="],
  
-@@ -675,7 +681,7 @@ memory({ mode: "import", inputPath: "./memories.json" });
- - إذا أبلغ الالتقاط التلقائي أن مزودًا غير متصل، أكّد اسم المزود بـ `opencode providers list` وأعد ذلك المزود في opencode أولًا.
- - إذا أعاد وكيل أو مزود مخصص نصًا عاديًا بدل مخرجات منظمة/أدوات، اختر نموذجًا/مزودًا آخر أو استخدم أحد أوضاع المزود اليدوية أعلاه.
- - للنماذج التي ترفض `temperature`، أضف `"memoryTemperature": false` عند استخدام إعداد API اليدوي.
--- للنماذج التي ترفض استدعاءات الأدوات المفروضة (`tool_choice: "required"`، مثل بعض أوضاع التفكير)، أضف `"forceToolChoice": false` عند استخدام `openai-chat` / `orcarouter` / `atlas-cloud` / `cheaper-inference` / `api-route` / `runcrate` / `cloudgpu`.
-+- للنماذج التي ترفض استدعاءات الأدوات المفروضة (`tool_choice: "required"`، مثل بعض أوضاع التفكير)، أضف `"forceToolChoice": false` عند استخدام `openai-chat` / `orcarouter` / `atlas-cloud` / `cheaper-inference` / `api-route` / `runcrate` / `cloudgpu` / `standardcompute`.
- - لـ `opencodeProvider` / `opencodeModel` (مثل DeepSeek V4 thinking)، ما زال OpenCode يرسل `tool_choice` مفروضًا للمخرجات المنظمة. يعطّل opencode-mem التفكير على الوكيل الداخلي `opencode-mem-structured` (ويعيده في `chat.params` بعد دمج المتغير) حتى يكتمل الالتقاط التلقائي وتعلّم الملف. وكيل الدردشة التفاعلي لديك دون تغيير. إذا فشل الالتقاط ما زال بخطأ تفكير/`tool_choice`، اختر نموذجًا غير تفكير لـ `opencodeModel` أو أعد رجوعًا يدويًا كاملًا (`memoryModel` + `memoryApiUrl`).
- - **`opencode-claude-auth` / Claude Code:** يستخدم الالتقاط التلقائي OpenCode مع مزودك `anthropic` المصادق. غالبًا ما يتكرر `format: json_schema` المفروض مع Claude-auth، لذا يستخدم opencode-mem مسار **نص-JSON** يحافظ على المصادقة لـ `opencodeProvider: "anthropic"` (بدون أدوات `StructuredOutput` مفروضة؛ تُحلَّل الرد بـ Zod). ما زال مراقب الخطوات يجهض الجلسات الداخلية الجامحة بعد خطوتين. إذا فشل الالتقاط ما زال، أعد رجوع Anthropic بمفتاح API يدوي كامل (`memoryProvider: "anthropic"` + `memoryModel` + `memoryApiUrl` + `memoryApiKey`) — لا يمكن إعادة استخدام Claude Pro/Max OAuth خارج OpenCode.
- - **المنصات غير المدعومة:** Intel Mac (`darwin/x64`) غير مدعوم — `@tursodatabase/database` وإصدارات `onnxruntime-node` الثابتة (المثبّت `1.31.1`) لا توفّر ربطًا أصليًا لـ x64. استخدم Apple Silicon أو Linux أو Windows، أو نقطة نهاية تضمين بعيدة عبر `embeddingApiUrl` + `embeddingApiKey`. MLX غير مدعوم.
+-    "@effect/opentelemetry": ["@effect/opentelemetry@4.0.6", "", { "peerDependencies": { "@opentelemetry/api": ">=1.9.0 <2.0.0", "@opentelemetry/api-logs": ">=0.203.0 <0.300.0", "@opentelemetry/resources": ">=2.0.0 <3.0.0", "@opentelemetry/sdk-logs": ">=0.203.0 <0.300.0", "@opentelemetry/sdk-metrics": ">=2.0.0 <3.0.0", "@opentelemetry/sdk-trace-base": ">=2.0.0 <3.0.0", "@opentelemetry/sdk-trace-node": ">=2.0.0 <3.0.0", "@opentelemetry/sdk-trace-web": ">=2.0.0 <3.0.0", "@opentelemetry/semantic-conventions": ">=1.33.0 <2.0.0", "effect": "^4.0.6" }, "optionalPeers": ["@opentelemetry/api", "@opentelemetry/api-logs", "@opentelemetry/resources", "@opentelemetry/sdk-logs", "@opentelemetry/sdk-metrics", "@opentelemetry/sdk-trace-base", "@opentelemetry/sdk-trace-node", "@opentelemetry/sdk-trace-web"] }, "sha512-xhLR1EN4ZNaKM7Bx59SCFiRNduFzgH8LZXDrCpPN8MpQ93V0GQcFHTBah5T3EXO2v+5HTEacdTgetIA0Creqvw=="],
++    "@effect/opentelemetry": ["@effect/opentelemetry@4.1.0", "", { "peerDependencies": { "@opentelemetry/api": ">=1.9.0 <2.0.0", "@opentelemetry/api-logs": ">=0.203.0 <0.300.0", "@opentelemetry/resources": ">=2.0.0 <3.0.0", "@opentelemetry/sdk-logs": ">=0.203.0 <0.300.0", "@opentelemetry/sdk-metrics": ">=2.0.0 <3.0.0", "@opentelemetry/sdk-trace-base": ">=2.0.0 <3.0.0", "@opentelemetry/sdk-trace-node": ">=2.0.0 <3.0.0", "@opentelemetry/sdk-trace-web": ">=2.0.0 <3.0.0", "@opentelemetry/semantic-conventions": ">=1.33.0 <2.0.0", "effect": "^4.1.0" }, "optionalPeers": ["@opentelemetry/api", "@opentelemetry/api-logs", "@opentelemetry/resources", "@opentelemetry/sdk-logs", "@opentelemetry/sdk-metrics", "@opentelemetry/sdk-trace-base", "@opentelemetry/sdk-trace-node", "@opentelemetry/sdk-trace-web"] }, "sha512-j9bNzQaoQvcnimBFMG0i3piEW20E8HjkXAQHTJN/XqG2e4uJ9zCv53/HCNzD7+ooFn5S4nwQy/BOXeNReMIe+A=="],
+ 
+-    "@effect/platform-node": ["@effect/platform-node@4.0.6", "", { "dependencies": { "@effect/platform-node-shared": "^4.0.6", "undici": "^8.12.2" }, "peerDependencies": { "effect": "^4.0.6", "redis": ">=5.0.0 <7.0.0" } }, "sha512-gXvGHAy0/8PZbWvMMguloDUyeSP+rzYEo3FSEqUuGduxo9ORcGioDxPI+GOLCIFfam7VuNkmSUxBOiRMIrMrBw=="],
++    "@effect/platform-node": ["@effect/platform-node@4.1.0", "", { "dependencies": { "@effect/platform-node-shared": "^4.1.0", "undici": "^8.12.2" }, "peerDependencies": { "effect": "^4.1.0", "redis": ">=5.0.0 <7.0.0" } }, "sha512-v+X7moGVF9k5oMVvz0slA+NgtEod+W+oygeI285MDJgSlUCW3JcqElj+cD3rlijFZtpKhC7RLkU1GuCxjGHTpA=="],
+ 
+-    "@effect/platform-node-shared": ["@effect/platform-node-shared@4.0.6", "", { "dependencies": { "@types/ws": "^8.18.2", "ws": "^8.22.0" }, "peerDependencies": { "effect": "^4.0.6" } }, "sha512-0PhyC4uG30xGtsajnxjkcBWfTjNRzUh4ZKl1Kvo/MNyCTb+W2O+fBzf7wCRCoqt+nLudiq4V7vX40Q8XIBuMaQ=="],
++    "@effect/platform-node-shared": ["@effect/platform-node-shared@4.1.0", "", { "dependencies": { "@types/ws": "^8.18.2", "ws": "^8.22.0" }, "peerDependencies": { "effect": "^4.1.0" } }, "sha512-uYQfFRoxWLo8fIhiSeBcmz/R1ooOfE3HF3cWHFgxz82tZMk2Wn02BGABcdLmaAch9VpDLbtWnuhSxNyBsGMUFg=="],
+ 
+     "@emnapi/core": ["@emnapi/core@1.11.3", "", { "dependencies": { "@emnapi/wasi-threads": "1.2.3", "tslib": "^2.4.0" } }, "sha512-zLpS5asjEb7lq8jYLq37N6XKaE41DIexlY1rF/z4/tIl3wo13Sqm28fRyfIsKZD+NZ8mM5RoKkpW/rBcuoSZSg=="],
+ 
+@@ -311,17 +311,17 @@
+ 
+     "@opencode-ai/sdk": ["@opencode-ai/sdk@1.19.5", "", { "dependencies": { "cross-spawn": "7.0.6" } }, "sha512-+bqu8gHiwmq96T9q5G34uLNHWCInIMsrE3hytCNHj1cVaxjY0AGJyNCT1rkeeZwgPU7A5TMTNwN+0XxCO2vqDg=="],
+ 
+-    "@opencode/ai": ["@opencode/ai@2.2.5", "", { "dependencies": { "@aws-sdk/credential-providers": "3.1057.0", "@opencode/schema": "2.2.5", "@smithy/eventstream-codec": "4.2.14", "@smithy/util-utf8": "4.2.2", "aws4fetch": "1.0.20", "effect": "4.0.6", "google-auth-library": "10.5.0" } }, "sha512-TolUvNR615vpkc6FPf2np5PbAbO7k1gaVlrtZ5Wx5tN7Y8K2uSer0BZEiajJ2uBsF6RXJFfjjX1GZbcf85GtGQ=="],
++    "@opencode/ai": ["@opencode/ai@2.2.7", "", { "dependencies": { "@aws-sdk/credential-providers": "3.1057.0", "@opencode/schema": "2.2.7", "@smithy/eventstream-codec": "4.2.14", "@smithy/util-utf8": "4.2.2", "aws4fetch": "1.0.20", "effect": "4.1.0", "google-auth-library": "10.5.0" } }, "sha512-okBbQ0w661Y3fCdlHJUQdolJxGU8mts4W7JrmMrm1kuVEa8FideUm0R4jWenN1NqDLnNHLwmWtxMKHMRVG7wNg=="],
+ 
+-    "@opencode/client": ["@opencode/client@2.2.5", "", { "dependencies": { "@opencode/protocol": "2.2.5", "@opencode/schema": "2.2.5" }, "peerDependencies": { "effect": "4.0.6", "solid-js": ">=1.9.0" }, "optionalPeers": ["effect", "solid-js"] }, "sha512-EjYrFGWHURsIbjtmQdIsGSPmYZGaulxqwEfYxQH5t9838508BCIvDX9f7/ZsgNGHYXM0punA3W8hTt6GjxIEaw=="],
++    "@opencode/client": ["@opencode/client@2.2.7", "", { "dependencies": { "@opencode/protocol": "2.2.7", "@opencode/sche
 ```
 
-**File**: `.github/i18n/README.de.md` (modified, +7/-1)
+**File**: `web/bun.lock` (modified, +57/-45)
 ```diff
-@@ -634,6 +634,12 @@ Manuelle `memoryProvider`-Modi:
-   "memoryApiKey": "env://CLOUDGPU_API_KEY",
-   ```
-   Wenn dieser Provider gewählt ist, werden Auto-Capture- / Profil-Prompts, Modellantworten und relevanter Gesprächskontext an `https://cloudgpu.app` übertragen.
-+- `standardcompute`: OpenAI-kompatibles Chat-Completions-Preset für [Standard Compute](https://standardcompute.com). `memoryApiUrl` und `memoryModel` sind optional — sie defaulten auf `https://api.stdcmpt.com/v1` und `StandardCompute`. Fehlt `memoryApiKey`, wird `STANDARDCOMPUTE_API_KEY` aus der Umgebung verwendet (Key erstellen unter https://standardcompute.com/dashboard; API-Doku: https://docs.standardcompute.com). Beispiel:
-+  ```jsonc
-+  "memoryProvider": "standardcompute",
-+  "memoryApiKey": "env://STANDARDCOMPUTE_API_KEY",
-+  ```
-+  Wenn dieser Provider gewählt ist, werden Auto-Capture- / Profil-Prompts, Modellantworten und relevanter Gesprächskontext an `https://api.stdcmpt.com` übertragen.
- 
- Fehlerbehebung:
- 
-@@ -677,7 +683,7 @@ Fehlerbehebung:
- - Meldet Auto-Capture, dass ein Provider nicht verbunden ist, den Provider-Namen mit `opencode providers list` bestätigen und diesen Provider zuerst in opencode konfigurieren.
- - Gibt ein Proxy oder Custom-Provider Klartext statt strukturierter/Tool-Ausgabe zurück, ein anderes Modell/einen anderen Provider wählen oder einen der manuellen Provider-Modi oben nutzen.
- - Für Modelle, die `temperature` ablehnen, bei manueller API-Konfiguration `"memoryTemperature": false` hinzufügen.
--- Für Modelle, die erzwungene Tool-Calls ablehnen (`tool_choice: "required"`, z. B. manche Thinking-Modi), bei `openai-chat` / `orcarouter` / `atlas-cloud` / `cheaper-inference` / `api-route` / `runcrate` / `cloudgpu` `"forceToolChoice": false` hinzufügen.
-+- Für Modelle, die erzwungene Tool-Calls ablehnen (`tool_choice: "required"`, z. B. manche Thinking-Modi), bei `openai-chat` / `orcarouter` / `atlas-cloud` / `cheaper-inference` / `api-route` / `runcrate` / `cloudgpu` / `standardcompute` `"forceToolChoice": false` hinzufügen.
- - Bei `opencodeProvider` / `opencodeModel` (z. B. DeepSeek V4 Thinking) sendet OpenCode weiterhin erzwungenes `tool_choice` für strukturierte Ausgabe. opencode-mem deaktiviert Thinking auf dem internen Agenten `opencode-mem-structured` (und wendet das in `chat.params` nach Variant-Merge erneut an), damit Auto-Capture und Profil-Lernen abschließen können. Dein interaktiver Chat-Agent bleibt unverändert. Scheitert Capture weiterhin mit einem Thinking-/`tool_choice`-Fehler, für `opencodeModel` ein Non-Thinking-Modell wählen oder einen vollständigen manuellen Fallback konfigurieren (`memoryModel` + `memoryApiUrl`).
- - **`opencode-claude-auth` / Claude Code:** Auto-Capture nutzt OpenCode mit deinem authentifizierten `anthropic`-Provider. Erzwungenes `format: json_schema` loopt oft mit Claude-Auth, daher nutzt opencode-mem einen Auth-erhaltenden **Text-JSON**-Pfad für `opencodeProvider: "anthropic"` (keine erzwungenen `StructuredOutput`-Tools; Antwort wird mit Zod geparst). Ein Step-Watchdog bricht runaway interne Sitzungen nach 2 Schritten weiterhin ab. Scheitert Capture weiterhin, einen vollständigen manuellen Anthropic-API-Key-Fallback konfigurieren (`memoryProvider: "anthropic"` + `memoryModel` + `memoryApiUrl` + `memoryApiKey`) — Claude Pro/Max OAuth lässt sich außerhalb von OpenCode nicht wiederverwenden.
- - **Nicht unterstützte Plattformen:** Intel Mac (`darwin/x64`) wird nicht unterstützt — `@tursodatabase/database` und feste `onnxruntime-node`-Releases (gepinnt `1.31.1`) liefern kein natives x64-Binding. Apple Silicon, Linux oder Windows nutzen, oder einen Remote-Embedding-Endpoint über `embeddingApiUrl` + `embeddingApiKey`. MLX wird nicht unterstützt.
-```
-
-**File**: `.github/i18n/README.nl.md` (modified, +7/-1)
-```diff
-@@ -638,6 +638,12 @@ Handmatige `memoryProvider`-modi:
-   "memoryApiKey": "env://CLOUDGPU_API_KEY",
-   ```
-   Wanneer deze provider is geselecteerd, worden auto-capture- / profielprompts, modelantwoorden en relevante conversatiecontext verzonden naar `https://cloudgpu.app`.
-+- `standardcompute`: OpenAI-compatibel Chat Completions-preset voor [Standard Compute](https://standardcompute.com). `memoryApiUrl` en `memoryModel` zijn optioneel — ze defaulten naar `https://api.stdcmpt.com/v1` en `StandardCompute`. Als `memoryApiKey` wordt weggelaten, wordt `STANDARDCOMPUTE_API_KEY` uit de omgeving gebruikt (maak een key aan via https://standardcompute.com/dashboard; API-docs: https://docs.standardcompute.com). Voorbeeld:
-+  ```jsonc
-+  "memoryProvider": "standardcompute",
-+  "memoryApiKey": "env://STANDARDCOMPUTE_API_KEY",
-+  ```
-+  Wanneer deze provider is geselecteerd, worden auto-capture- / profielprompts, modelantwoorden en relevante conversatiecontext verzonden naar `https://api.stdcmpt.com`.
- 
- Probleemoplossing:
- 
-@@ -681,7 +687,7 @@ Probleemoplossing:
- - Als auto-capture meldt dat een provider niet verbonden is, bevestig de providernaam met `opencode providers list` en configureer die provider eerst in opencode.
- - Als een proxy of custom provider platte tekst teruggeeft in plaats van structured/tool-output, kies een ander model/provider of gebruik een van de handmatige providermodi hierboven.
- - Voor modellen die `temperature` weigeren, voeg `"memoryTemperature": false` toe bij handmatige API-configuratie.
--- Voor modellen die geforceerde tool calls weigeren (`tool_choice: "required"`, bijv. sommige thinking-modi), voeg `"forceToolChoice": false` toe bij `openai-chat` / `orcarouter` / `atlas-cloud` / `cheaper-inference` / `api-route` / `runcrate` / `cloudgpu`.
-+- Voor modellen die geforceerde tool calls weigeren (`tool_choice: "required"`, bijv. sommige thinking-modi), voeg `"forceToolChoice": false` toe bij `openai-chat` / `orcarouter` / `atlas-cloud` / `cheaper-inference` / `api-route` / `runcrate` / `cloudgpu` / `standardcompute`.
- - Voor `opencodeProvider` / `opencodeModel` (bijv. DeepSeek V4 thinking) stuurt OpenCode nog steeds geforceerde `tool_choice` voor structured output. opencode-mem schakelt thinking uit op de interne `opencode-mem-structured`-agent (en past dat opnieuw toe in `chat.params` na variant-merge) zodat auto-capture en profiel-leren kunnen voltooien. Je interactieve chatagent blijft ongewijzigd. Als capture nog steeds faalt met een thinking/`tool_choice`-fout, kies een non-thinking model voor `opencodeModel` of configureer een complete handmatige fallback (`memoryModel` + `memoryApiUrl`).
- - **`opencode-claude-auth` / Claude Code:** auto-capture gebruikt OpenCode met je geauthenticeerde `anthropic`-provider. Geforceerde `format: json_schema` loopt vaak vast met Claude-auth, dus opencode-mem gebruikt een auth-behoudend **text-JSON**-pad voor `opencodeProvider: "anthropic"` (geen geforceerde `StructuredOutput`-tools; antwoord wordt met Zod geparsed). Een step-watchdog breekt runaway interne sessies nog steeds af na 2 stappen. Als capture nog steeds faalt, configureer een complete handmatige Anthropic API-key-fallback (`memoryProvider: "anthropic"` + `memoryModel` + `memoryApiUrl` + `memoryApiKey`) — Claude Pro/Max OAuth kan niet buiten OpenCode worden hergebruikt.
- - **Niet-ondersteunde platforms:** Intel Mac (`darwin/x64`) wordt niet ondersteund — `@tursodatabase/database` en vaste `onnxruntime-node`-releases (vastgezet `1.31.1`) leveren geen x64 native binding. Gebruik Apple Silicon, Linux of Windows, of een remote embedding-endpoint via `embeddingApiUrl` + `embeddingApiKey`. MLX wordt niet ondersteund.
-```
-
-**File**: `.github/i18n/README.tr.md` (modified, +7/-1)
-```diff
-@@ -636,6 +636,12 @@ Manuel `memoryProvider` modları:
-   "memoryApiKey": "env://CLOUDGPU_API_KEY",
-   ```
-   Bu sağlayıcı seçildiğinde otomatik yakalama / profil prompt’ları, model yanıtları ve ilgili konuşma bağlamı `https://cloudgpu.app` adresine iletilir.
-+- `standardcompute`: [Standard Compute](https://standardcompute.com) için OpenAI uyumlu Chat Completions ön ayarı. `memoryApiUrl` ve `memoryModel` isteğe bağlıdır — varsayılanları `https://api.stdcmpt.com/v1` ve `StandardCompute`’tir. `memoryApiKey` atlanırsa ortamdan `STANDARDCOMPUTE_API_KEY` kullanılır (anahtar oluşturma: https://standardcompute.com/dashboard; API belgeleri: https://docs.standardcompute.com). Örnek:
-+  ```jsonc
-+  "memoryProvider": "standardcompute",
-+  "memoryApiKey": "env://STANDARDCOMPUTE_API_KEY",
-+  ```
-+  Bu sağlayıcı seçildiğinde otomatik yakalama / profil prompt’ları, model yanıtları ve ilgili konuşma bağlamı `https://api.stdcmpt.com` adresine iletilir.
- 
- Sorun giderme:
- 
-@@ -682,7 +688,7 @@ Sorun giderme:
- - Otomatik yakalama bir sağlayıcının bağlı olmadığını bildirirse, sağlayıcı adını `opencode providers list` ile doğrulayın ve önce o sağlayıcıyı opencode’da yapılandırın.
- - Bir proxy veya özel sağlayıcı yapılandırılmış/araç çıktısı yerine düz metin döndürürse, başka bir model/sağlayıcı seçin veya yukarıdaki manuel sağlayıcı modlarından birini kullanın.
- - `temperature` reddeden modeller için manuel API yapılandırması kullanırken `"memoryTemperature": false` ekleyin.
--- Zorlanmış araç çağrılarını (`tool_choice: "required"`, örn. bazı düşünme modları) reddeden modeller için `openai-chat` / `orcarouter` / `atlas-cloud` / `cheaper-inference` / `api-route` / `runcrate` / `cloudgpu` kullanırken `"forceToolChoice": false` ekleyin.
-+- Zorlanmış araç çağrılarını (`tool_choice: "required"`, örn. bazı düşünme modları) reddeden modeller için `openai-chat` / `orcarouter` / `atlas-cloud` / `cheaper-inference` / `api-route` / `runcrate` / `cloudgpu` / `standardcompute` kullanırken `"forceToolChoice": false` ekleyin.
- - `opencodeProvider` / `opencodeModel` için (örn. DeepSeek V4 thinking), OpenCode yapılandırılmış çıktı için hâlâ zorlanmış `tool_choice` gönderir. opencode-mem dahili `opencode-mem-structured` ajanında düşünmeyi devre dışı bırakır (ve varyant birleştirmesinden sonra bunu `chat.params` içinde yeniden uygular); böylece otomatik yakalama ve profil öğrenme tamamlanabilir. Etkileşimli sohbet ajanınız değişmez. Yakalama hâlâ bir thinking/`tool_choice` hatasıyla başarısız olursa, `opencodeModel` için düşünmeyen bir model seçin veya eksiksiz bir manuel yedek yapılandırın (`memoryModel` + `memoryApiUrl`).
- - **`opencode-claude-auth` / Claude Code:** otomatik yakalama, kimlik doğrulanmış `anthropic` sağlayıcınızla OpenCode kullanır. Zorlanmış `format: json_schema` Claude-auth ile sık sık döngüye girer; bu nedenle opencode-mem `opencodeProvider: "anthropic"` için kimlik doğrulamayı koruyan bir **metin-JSON** yolu kullanır (zorlanmış `StructuredOutput` araçları yok; yanıt Zod ile ayrıştırılır). Bir adım watchdog’u hâlâ 2 adımdan sonra kaçak dahili oturumları iptal eder. Yakalama hâlâ başarısız olursa, eksiksiz bir manuel Anthropic API anahtarı yedeği yapılandırın (`memoryProvider: "anthropic"` + `memoryModel` + `memoryApiUrl` + `memoryApiKey`) — Claude Pro/Max OAuth OpenCode dışında yeniden kullanılamaz.
- - **Desteklenmeyen platformlar:** Intel Mac (`darwin/x64`) desteklenmez — `@tursodatabase/database` ve sabit `onnxruntime-node` sürümleri (sabitlenmiş `1.31.1`) x64 yerel bağlayıcı yayınlamaz. Apple Silicon, Linux veya Windows kullanın; ya da `embeddingApiUrl` + `embeddingApiKey` ile uzak bir embedding uç noktası. MLX desteklenmez.
-```
-
-**File**: `.github/i18n/README.zh.md` (modified, +7/-1)
-```diff
-@@ -607,6 +607,12 @@ memory({ mode: "import", inputPath: "./memories.json" });
-   "memoryApiKey": "env://CLOUDGPU_API_KEY",
-   ```
-   选择此提供商时，自动捕获 / 画像提示、模型响应与相关对话上下文会传输到 `https://cloudgpu.app`。
-+- `standardcompute`：面向 [Standard Compute](https://standardcompute.com) 的 OpenAI 兼容 Chat Completions 预设。`memoryApiUrl` 与 `memoryModel` 可选 — 它们默认为 `https://api.stdcmpt.com/v1` 与 `StandardCompute`。若省略 `memoryApiKey`，则使用环境中的 `STANDARDCOMPUTE_API_KEY`（在 https://standardcompute.com/dashboard 创建密钥；API 文档：https://docs.standardcompute.com）。示例：
-+  ```jsonc
-+  "memoryProvider": "standardcompute",
-+  "memoryApiKey": "env://STANDARDCOMPUTE_API_KEY",
-+  ```
-+  选择此提供商时，自动捕获 / 画像提示、模型响应与相关对话上下文会传输到 `https://api.stdcmpt.com`。
- 
- 故障排除：
- 
-@@ -619,7 +625,7 @@ memory({ mode: "import", inputPath: "./memories.json" });
- - 若自动捕获报告提供商未连接，请用 `opencode providers list` 确认提供商名称，并先在 opencode 中配置该提供商。
- - 若代理或自定义提供商返回纯文本而非结构化/工具输出，请选择另一模型/提供商，或使用上方手动提供商模式之一。
- - 对于拒绝 `temperature` 的模型，在使用手动 API 配置时添加 `"memoryTemperature": false`。
--- 对于拒绝强制工具调用（`tool_choice: "required"`，例如某些思考模式）的模型，在使用 `openai-chat` / `orcarouter` / `atlas-cloud` / `cheaper-inference` / `api-route` / `runcrate` / `cloudgpu` 时添加 `"forceToolChoice": false`。
-+- 对于拒绝强制工具调用（`tool_choice: "required"`，例如某些思考模式）的模型，在使用 `openai-chat` / `orcarouter` / `atlas-cloud` / `cheaper-inference` / `api-route` / `runcrate` / `cloudgpu` / `standardcompute` 时添加 `"forceToolChoice": false`。
- - 对于 `opencodeProvider` / `opencodeModel`（例如 DeepSeek V4 thinking），OpenCode 仍会为结构化输出发送强制的 `tool_choice`。opencode-mem 在内部 `opencode-mem-structured` 代理上禁用思考（并在变体合并后在 `chat.params` 中重新应用），以便自动捕获与画像学习可以完成。你的交互式聊天代理不变。若捕获仍因 thinking/`tool_choice` 错误失败，请为 `opencodeModel` 选择非思考模型，或配置完整的手动回退（`memoryModel` + `memoryApiUrl`）。
- - **`opencode-claude-auth` / Claude Code：** 自动捕获使用带有你已认证 `anthropic` 提供商的 OpenCode。强制的 `format: json_schema` 常与 Claude-auth 循环，因此 opencode-mem 对 `opencodeProvider: "anthropic"` 使用保留认证的 **text-JSON** 路径（无强制 `StructuredOutput` 工具；用 Zod 解析回复）。步骤看门狗仍会在 2 步后中止失控的内部会话。若捕获仍失败，请配置完整的手动 Anthropic API 密钥回退（`memoryProvider: "anthropic"` + `memoryModel` + `memoryApiUrl` + `memoryApiKey`）— Claude Pro/Max OAuth 无法在 OpenCode 外重用。
- - **不支持的平台：** 不支持 Intel Mac（`darwin/x64`） — `@tursodatabase/database` 与固定版本的 `onnxruntime-node` 发行版（固定 `1.31.1`）不提供 x64 原生绑定。请使用 Apple Silicon、Linux 或 Windows，或通过 `embeddingApiUrl` + `embeddingApiKey` 使用远程嵌入端点。不支持 MLX。
-```
-
-**File**: `README.md` (modified, +7/-1)
-```diff
-@@ -695,6 +695,12 @@ Manual `memoryProvider` modes:
-   "memoryApiKey": "env://CLOUDGPU_API_KEY",
-   ```
-   When this provider is selected, auto-capture / profile prompts, model responses, and relevant conversation context are transmitted to `https://cloudgpu.app`.
-+- `standardcompute`: OpenAI-compatible Chat Completions preset for [Standard Compute](https://standardcompute.com). `memoryApiUrl` and `memoryModel` are optional — they default to `https://api.stdcmpt.com/v1` and `StandardCompute`. If `memoryApiKey` is omitted, `STANDARDCOMPUTE_API_KEY` from the environment is used (create a key at https://standardcompute.com/dashboard; API docs: https://docs.standardcompute.com). Example:
-+  ```jsonc
-+  "memoryProvider": "standardcompute",
-+  "memoryApiKey": "env://STANDARDCOMPUTE_API_KEY",
-+  ```
-+  When this provider is selected, auto-capture / profile prompts, model responses, and relevant conversation context are transmitted to `https://api.stdcmpt.com`.
- 
- Troubleshooting:
- 
-@@ -738,7 +744,7 @@ Troubleshooting:
- - If auto-capture reports that a provider is not connected, confirm the provider name with `opencode providers list` and configure that provider in opencode first.
- - If a proxy or custom provider returns plain text instead of structured/tool output, choose another model/provider or use one of the manual provider modes above.
- - For models that reject `temperature`, add `"memoryTemperature": false` when using manual API configuration.
--- For models that reject forced tool calls (`tool_choice: "required"`, e.g. some thinking modes), add `"forceToolChoice": false` when using `openai-chat` / `orcarouter` / `atlas-cloud` / `cheaper-inference` / `api-route` / `runcrate` / `cloudgpu`.
-+- For models that reject forced tool calls (`tool_choice: "required"`, e.g. some thinking modes), add `"forceToolChoice": false` when using `openai-chat` / `orcarouter` / `atlas-cloud` / `cheaper-inference` / `api-route` / `runcrate` / `cloudgpu` / `standardcompute`.
- - For `opencodeProvider` / `opencodeModel` (e.g. DeepSeek V4 thinking), OpenCode still sends forced `tool_choice` for structured output. opencode-mem disables thinking on the internal `opencode-mem-structured` agent (and re-applies that in `chat.params` after variant merge) so auto-capture and profile learning can complete. Your interactive chat agent is unchanged. If capture still fails with a thinking/`tool_choice` error, pick a non-thinking model for `opencodeModel` or configure a complete manual fallback (`memoryModel` + `memoryApiUrl`).
- - **`opencode-claude-auth` / Claude Code:** auto-capture uses OpenCode with your authenticated `anthropic` provider. Forced `format: json_schema` often loops with Claude-auth, so opencode-mem uses an auth-preserving **text-JSON** path for `opencodeProvider: "anthropic"` (no forced `StructuredOutput` tools; reply is parsed with Zod). A step watchdog still aborts runaway internal sessions after 2 steps. If capture still fails, configure a complete manual Anthropic API-key fallback (`memoryProvider: "anthropic"` + `memoryModel` + `memoryApiUrl` + `memoryApiKey`) — Claude Pro/Max OAuth cannot be reused outside OpenCode.
- - **Unsupported platforms:** Intel Mac (`darwin/x64`) is not supported — `@tursodatabase/database` and fixed `onnxruntime-node` releases (pinned `1.31.1`) ship no x64 native binding. Use Apple Silicon, Linux, or Windows, or a remote embedding endpoint via `embeddingApiUrl` + `embeddingApiKey`. MLX is not supported.
-```
-
-**File**: `opencode-mem.example.jsonc` (modified, +12/-2)
-```diff
-@@ -221,7 +221,7 @@
-   // Faster opencode failover: also lower "opencodeTimeoutMs" (default 90000).
-   // "autoCaptureProviderOrder": "external-first",
- 
--  // Provider type: "api-route" | "atlas-cloud" | "cheaper-inference" | "openai-chat" | "openai-responses" | "anthropic" | "minimax" | "orcarouter" | "runcrate" | "cloudgpu"
-+  // Provider type: "api-route" | "atlas-cloud" | "cheaper-inference" | "openai-chat" | "openai-responses" | "anthropic" | "minimax" | "orcarouter" | "runcrate" | "cloudgpu" | "standardcompute"
-   // Note: "openai-chat" is a generic OpenAI API-compatible mode.
-   // Any service that follows the OpenAI Chat Completions API can use it via custom "memoryApiUrl".
-   "memoryProvider": "openai-chat",
-@@ -331,6 +331,16 @@
-   //   // conversation context are sent to cloudgpu.app.
-   //   // "memoryModel": "deepseek-v4.1-flash"
- 
-+  // Standard Compute (OpenAI-compatible Chat Completions preset, with session support):
-+  //   "memoryProvider": "standardcompute"
-+  //   "memoryApiKey": "env://STANDARDCOMPUTE_API_KEY"
-+  //   // memoryApiUrl and memoryModel are optional — they default to
-+  //   // https://api.stdcmpt.com/v1 and "StandardCompute".
-+  //   // Create a key at https://standardcompute.com/dashboard (docs: https://docs.standardcompute.com).
-+  //   // When selected, auto-capture/profile prompts, responses, and relevant
-+  //   // conversation context are sent to api.stdcmpt.com.
-+  //   // "memoryModel": "StandardCompute"
+@@ -7,31 +7,37 @@
+       "dependencies": {
+         "dompurify": "^3.4.17",
+         "jsonrepair": "^3.15.0",
+-        "marked": "^18.1.3",
++        "marked": "^18.2.0",
+         "zod": "^4.6.7",
+       },
+       "devDependencies": {
+         "@fontsource-variable/jetbrains-mono": "^5.3.0",
+-        "@lucide/svelte": "^1.70.0",
++        "@lucide/svelte": "^1.72.0",
+         "@resvg/resvg-js": "^2.6.2",
+         "@sveltejs/vite-plugin-svelte": "^7.3.1",
+-        "@tailwindcss/vite": "^4.3.4",
++        "@tailwindcss/vite": "^4.3.5",
+         "@types/node": "^26.6.6",
+-        "bits-ui": "^2.20.6",
++        "bits-ui": "^2.21.0",
+         "clsx": "^2.1.1",
+         "prettier-plugin-svelte": "^4.1.1",
+         "svelte": "^5.57.3",
+         "svelte-check": "^4.7.8",
+         "tailwind-merge": "^3.7.0",
+-        "tailwind-variants": "^4.0.1",
+-        "tailwindcss": "^4.3.4",
++        "tailwind-variants": "^4.0.2",
++        "tailwindcss": "^4.3.5",
+         "tw-animate-css": "^1.4.0",
+         "typescript": "6.0.3",
+-        "vite": "^8.3.6",
++        "vite": "^8.3.8",
+       },
+     },
+   },
+   "packages": {
++    "@emnapi/core": ["@emnapi/core@2.0.0-beta.2", "", { "dependencies": { "@emnapi/wasi-threads": "2.2.0", "tslib": "^2.4.0" } }, "sha512-MzCVoWtcg4Pm2B3je5mMvYMvj3MmBKw+fU7vbsJc9/iT8ip6/eYIHo/Dsm/mr+wsHB6SEyJDuxB09Yy6r/8+4A=="],
 +
-   // Groq (OpenAI-compatible, use openai-chat provider):
-   //   "memoryProvider": "openai-chat"
-   //   "memoryModel": "llama-3.3-70b-versatile"
-@@ -359,7 +369,7 @@
-   // Set to false and add "memoryTemperature": false in config when using such models
-   "memoryTemperature": 0.3,
++    "@emnapi/runtime": ["@emnapi/runtime@2.0.0-beta.2", "", { "dependencies": { "tslib": "^2.4.0" } }, "sha512-JcrSPzPvZuNZvJqPTF9Fw25LbOJ8avzFVlaf2grmH4Cku0oGP47tRgqPZadcfj3YoZMHkFVnCYFbQM8I+i5QEw=="],
++
++    "@emnapi/wasi-threads": ["@emnapi/wasi-threads@2.2.0", "", { "dependencies": { "tslib": "^2.4.0" } }, "sha512-JP7OYH38Q7+pyTAe14raZHLQIK7BDKbdwji+Xi3pcd/6QkJYQH3SX4wu6EplGrGJWRepoNzedfm0G3B9Z4e9Rw=="],
++
+     "@floating-ui/core": ["@floating-ui/core@1.8.0", "", { "dependencies": { "@floating-ui/utils": "^0.2.12" } }, "sha512-0CIZ5itps/8x7BG8dEIhs53BvCUH2PCoogtakwRTut+Arm58sJooJ0AuZhLw2HJYIR5cMLNPBSS728sPho2khQ=="],
  
--  // Force tool calls on openai-chat / orcarouter / atlas-cloud / cheaper-inference / api-route / runcrate / cloudgpu (tool_choice: "required"). Default true.
-+  // Force tool calls on openai-chat / orcarouter / atlas-cloud / cheaper-inference / api-route / runcrate / cloudgpu / standardcompute (tool_choice: "required"). Default true.
-   // Some thinking/reasoning models reject forced tool choice — set false to fall back to "auto":
-   // "forceToolChoice": false,
+     "@floating-ui/dom": ["@floating-ui/dom@1.8.0", "", { "dependencies": { "@floating-ui/core": "^1.8.0", "@floating-ui/utils": "^0.2.12" } }, "sha512-yXSrzeHZBTZadLOlfyhCkJHNeLJnHRnRInwdZ40L7ZiaAtrBwoYlsDrX3v5zB1Utk7CLfzcOVnVVWoXEky7Ceg=="],
+@@ -52,7 +58,9 @@
  
+     "@jridgewell/trace-mapping": ["@jridgewell/trace-mapping@0.3.31", "", { "dependencies": { "@jridgewell/resolve-uri": "^3.1.0", "@jridgewell/sourcemap-codec": "^1.4.14" } }, "sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw=="],
+ 
+-    "@lucide/svelte": ["@lucide/svelte@1.70.0", "", { "peerDependencies": { "svelte": "^5" } }, "sha512-zvx7K/WLxo82c4ZYqbsfcYUPDVFrq4561xH0NHfSHJJbajj0AONTQ14EO095/WnfI4XUEl1tyS/nbjQNNiNxdQ=="],
++    "@lucide/svelte": ["@lucide/svelte@1.72.0", "", { "peerDependencies": { "svelte": "^5" } }, "sha512-DRwtZ5p/m5ZRsNlfCzELJRDzd2z19mc76eMs8rwllx/JWfvykmLoTFs3RyzFN519ldQxHt8Jxum/LKukgzuTLQ=="],
++
++    "@napi-rs/wasm-runtime": ["@napi-rs/wasm-runtime@1.2.6", "", { "dependencies": { "@tybys/wasm-util": "^0.10.3" }, "peerDependencies": { "@emnapi/core": "^1.7.1 || 2.0.0-beta.2", "@emnapi/runtime": "^1.7.1 || 2.0.0-beta.2" } }, "sha512-mRyDmEw9/fCDXCGfL1sbgIw/GUK0PVxRW4YwgPN61F3LQ+fSyoBFarJVzgGyhF6kRzEQZ0FejDqm4WLXSeqQmw=="],
+ 
+     "@oxc-project/types": ["@oxc-project/types@0.156.0", "", {}, "sha512-1Duyg48TdJNdyhEB8Xn1L36bT9Pv6GUtlKjHxOys8xkaF/rQq3XJE+bAurSK/AgIz5mGFsb77cn9Pb20+WCScw=="],
+ 
+@@ -82,35 +90,37 @@
+ 
+     "@resvg/resvg-js-win32-x64-msvc": ["@resvg/resvg-js-win32-x64-msvc@2.6.2", "", { "os": "win32", "cpu": "x64" }, "sha512-ZXtYhtUr5SSaBrUDq7DiyjOFJqBVL/dOBN7N/qmi/pO0IgiWW/f/ue3nbvu9joWE5aAKDoIzy/CxsY0suwGosQ=="],
+ 
+-    "@rolldown/binding-android-arm-eabi": ["@rolldown/binding-android-arm-eabi@1.2.16", "", { "os": "android", "cpu": "arm" }, "sha512-ia3DwAs0OsMGS7+IConptSiyk9pEXkOx/AbJ2n/lAGxH3QkWQus1t8d7gnAT38FCU2sQu8lUbeR6AiZFv4JxaA=="],
++    "@rolldown/binding-android-arm-eabi": ["@rolldown/binding-android-arm-eabi@1.2.19", "", { "os": "android", "cpu": "arm" }, "sha512-e+Ebe0WT+9tbXmNKPIiC8YrWAHYwug3m6i4p3rZGGulfZri1jtI4HslT+OZnFf/OIHowWF71DTlHwXBP2SiA7A=="],
++
++    "@rolldown/binding-android-arm64": ["@rolldown/binding-android-arm64@1.2.19", "", { "os": "android", "cpu": "arm64" }, "sha512-hOombrTJ+szt2ciEzS7oCA78lMPBgF5UMQWCJIyNfnrI7GLl8HYoFqCnpL2gcPOaXMqryGCU5ExdQKyDDcC+yA=="],
+ 
+-    "@rolldown/binding-android-arm64": ["@rolldown/binding-android-arm64@1.2.16", "", { "os": "android", "cpu": "arm64" }, "sha512-kx5wBiMB6E7TEvpl2B9gjLU004BkvEm2Dr941BFjx/SontPwSzNuQUIoVKxHHoSjpFIfHMmcguyLOtyn0hObRg=="],
++    "@rolldown/binding-darwin-arm64": ["@rolldown/binding-darwin-arm64@1.2.19", "", { "os": "darwin", "cpu": "arm64" }, "sha512-XoMA2pwCKGTQzUjPgtRwkedH4WmXhdIPKT6l6oOxd1PUbNodGI6DcBekgN7EC//+x3pfBYX/qL1gNmZAqivw5g=="],
+ 
+-    "@rolldown/binding-darwin-arm64": ["@rolldown/binding-darwin-arm64@1.2.16", "", { "os": "darwin", "cpu": "arm64" }, "sha512-qslZrXnKJU4cUpjoAmtAo/KQM9e2IRMlmpig6Zpwj+8KWxW8v+nkAf9216Bsek9lOC1jvg2y
 ```
 
-**File**: `src/config.ts` (modified, +43/-20)
+**File**: `web/package.json` (modified, +7/-7)
 ```diff
-@@ -4,6 +4,10 @@ import { homedir } from "node:os";
- import { stripJsoncComments } from "./services/jsonc.js";
- import { resolveSecretValue } from "./services/secret-resolver.js";
- import { isPlaceholderApiKey } from "./services/ai/api-key-placeholder.js";
-+import {
-+  isMemoryProviderPreset,
-+  resolveMemoryProviderPresetDefaults,
-+} from "./services/ai/memory-provider-presets.js";
- import { getDefaultInjectionMarkers } from "./services/injected-prompt-filter.js";
- 
- const CONFIG_DIR = join(homedir(), ".config", "opencode");
-@@ -112,7 +116,8 @@ interface OpenCodeMemConfig {
-     | "minimax"
-     | "orcarouter"
-     | "runcrate"
--    | "cloudgpu";
-+    | "cloudgpu"
-+    | "standardcompute";
-   memoryModel?: string;
-   memoryApiUrl?: string;
-   memoryApiKey?: string;
-@@ -325,7 +330,8 @@ const DEFAULTS: Required<
-     | "minimax"
-     | "orcarouter"
-     | "runcrate"
--    | "cloudgpu";
-+    | "cloudgpu"
-+    | "standardcompute";
-   memoryTemperature?: number | false;
-   forceToolChoice?: boolean;
-   memoryExtraParams?: Record<string, unknown>;
-@@ -651,7 +657,7 @@ const CONFIG_TEMPLATE = `{
-   // "updateOnCaptureSimilarityThreshold": 0.75,
-   // "updateOnCaptureMaxCandidates": 5,
-   
--  // Provider type: "api-route" | "atlas-cloud" | "cheaper-inference" | "openai-chat" | "openai-responses" | "anthropic" | "minimax" | "orcarouter" | "runcrate" | "cloudgpu"
-+  // Provider type: "api-route" | "atlas-cloud" | "cheaper-inference" | "openai-chat" | "openai-responses" | "anthropic" | "minimax" | "orcarouter" | "runcrate" | "cloudgpu" | "standardcompute"
-   // Note: "openai-chat" is a generic OpenAI API-compatible mode.
-   // Any service that follows the OpenAI Chat Completions API can use it via custom "memoryApiUrl".
-   "memoryProvider": "openai-chat",
-@@ -761,6 +767,16 @@ const CONFIG_TEMPLATE = `{
-   //   // conversation context are sent to cloudgpu.app.
-   //   // "memoryModel": "deepseek-v4.1-flash"
- 
-+  // Standard Compute (OpenAI-compatible Chat Completions preset, with session support):
-+  //   "memoryProvider": "standardcompute"
-+  //   "memoryApiKey": "env://STANDARDCOMPUTE_API_KEY"
-+  //   // memoryApiUrl and memoryModel are optional — they default to
-+  //   // https://api.stdcmpt.com/v1 and "StandardCompute".
-+  //   // Create a key at https://standardcompute.com/dashboard (docs: https://docs.standardcompute.com).
-+  //   // When selected, auto-capture/profile prompts, responses, and relevant
-+  //   // conversation context are sent to api.stdcmpt.com.
-+  //   // "memoryModel": "StandardCompute"
-+
-   // Groq (OpenAI-compatible, use openai-chat provider):
-   //   "memoryProvider": "openai-chat"
-   //   "memoryModel": "llama-3.3-70b-versatile"
-@@ -796,7 +812,7 @@ const CONFIG_TEMPLATE = `{
-   // Set to false and add "memoryTemperature": false in config when using such models
-   "memoryTemperature": 0.3,
- 
--  // Force tool calls on openai-chat / orcarouter / atlas-cloud / cheaper-inference / api-route / runcrate / cloudgpu (tool_choice: "required"). Default true.
-+  // Force tool calls on openai-chat / orcarouter / atlas-cloud / cheaper-inference / api-route / runcrate / cloudgpu / standardcompute (tool_choice: "required"). Default true.
-   // Some thinking/reasoning models reject forced tool choice — set false to fall back to "auto":
-   // "forceToolChoice": false,
- 
-@@ -1274,7 +1290,8 @@ function buildConfig(fileConfig: OpenCodeMemConfig) {
-     | "minimax"
-     | "orcarouter"
-     | "runcrate"
--    | "cloudgpu";
-+    | "cloudgpu"
-+    | "standardcompute";
-   const memoryApiKey =
-     resolveSecretValue(fileConfig.memoryApiKey) ??
-     (memoryProvider === "atlas-cloud"
-@@ -1287,7 +1304,19 @@ function buildConfig(fileConfig: OpenCodeMemConfig) {
-             ? process.env.RUNCRATE_API_KEY
-             : memoryProvider === "cloudgpu"
-               ? process.env.CLOUDGPU_API_KEY
--              : undefined);
-+              : memoryProvider === "standardcompute"
-+                ? process.env.STANDARDCOMPUTE_API_KEY
-+                : undefined);
-+  // Preset providers advertise optional memoryModel / memoryApiUrl in docs and
-+  // factory code, but auto-capture / dreaming / profile learning gate on the
-+  // resolved CONFIG fields. Fill preset defaults here so key-only configs work.
-+  const presetDefaults = resolveMemoryProviderPresetDefaults(memoryProvider);
-+  const memoryModel =
-+    (typeof fileConfig.memoryModel === "string" ? fileConfig.memoryModel.trim() : "") ||
-+    presetDefaults?.model;
-+  const memoryApiUrl =
-+    (typeof fileConfig.memoryApiUrl === "string" ? fileConfig.memoryApiUrl.trim() : "") ||
-+    presetDefaults?.apiUrl;
-   const embeddingModel = fileConfig.embeddingModel ?? DEFAULTS.embeddingModel;
-   const embeddingPreset = getEmbeddingModelPreset(embeddingModel);
-   const embeddingDimensions =
-@@ -1382,8 +1411,8 @@ function buildConfig(fileConfig: OpenCodeMemConfig) {
-       fileConfig.updateOnCaptureMaxCandidates
-     ),
-     memoryProvider,
--    memoryModel: fileConfig.memoryModel,
--
+@@ -13,26 +13,26 @@
+   "dependencies": {
+     "dompurify": "^3.4.17",
+     "jsonrepair": "^3.15.0",
+-    "marked": "^18.1.3",
++    "marked": "^18.2.0",
+     "zod": "^4.6.7"
+   },
+   "devDependencies": {
+     "@fontsource-variable/jetbrains-mono": "^5.3.0",
+-    "@lucide/svelte": "^1.70.0",
++    "@lucide/svelte": "^1.72.0",
+     "@resvg/resvg-js": "^2.6.2",
+     "@sveltejs/vite-plugin-svelte": "^7.3.1",
+-    "@tailwindcss/vite": "^4.3.4",
++    "@tailwindcss/vite": "^4.3.5",
+     "@types/node": "^26.6.6",
+-    "bits-ui": "^2.20.6",
++    "bits-ui": "^2.21.0",
+     "clsx": "^2.1.1",
+     "prettier-plugin-svelte": "^4.1.1",
+     "svelte": "^5.57.3",
+     "svelte-check": "^4.7.8",
+     "tailwind-merge": "^3.7.0",
+-    "tailwind-variants": "^4.0.1",
+-    "tailwindcss": "^4.3.4",
++    "tailwind-variants": "^4.0.2",
++    "tailwindcss": "^4.3.5",
+     "tw-animate-css": "^1.4.0",
+     "typescript": "6.0.3",
+-    "vite": "^8.3.6"
++    "vite": "^8.3.8"
+   }
+ }
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #506** (2026-11-16): chore(deps): bump the minor-and-patch group across 2 directories with 10 updates (@dependabot[bot])
 - **PR #504** (2026-11-09): chore(release): release v2.42.0 (@EyJunge1)
 - **PR #503** (2026-11-09): chore(deps): bump the minor-and-patch group across 2 directories with 11 updates (@dependabot[bot])
 - **PR #502** (2026-11-09): feat(ai): add Standard Compute memory provider preset (@henrikdukefoss)
 - **PR #500** (2026-11-06): chore(release): release v2.41.1 (@EyJunge1)
 - **PR #499** (2026-11-06): fix(dreaming): allow manual runs when disabled and add LLM fallback (@EyJunge1)
-- **PR #498** (2026-11-06): fix(config): deprecate unused profile limits (@Phototonic)
 
 ---
 
@@ -1388,37 +1210,33 @@ Co-authored-by: EyJunge1 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ai): add Standard Compute memory provider preset (#502)
+## X. deps): bump the minor-and-patch group across 2 directories with 10 updates
 
 **RULE**:
-When implementing operations in `.github/i18n/README.ar.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tickernelz/opencode-mem. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `bun.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tickernelz/opencode-mem. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e856a02e`: ai): add Standard Compute memory provider preset (#502). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e42d23c4`: deps): bump the minor-and-patch group across 2 directories with 10 updates. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/i18n/README.ar.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `bun.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-- `standardcompute`: إعداد مسبق لـ OpenAI-compatible Chat Completions لـ [Standard Compute](https://standardcompute.com). `memoryApiUrl` و`memoryModel` اختياريان — الافتراضي `https://api.stdcmpt.com/v1` و`StandardCompute`. إذا حُذف `memoryApiKey`، يُستخدم `STANDARDCOMPUTE_API_KEY` من البيئة (أنشئ مفتاحًا من https://standardcompute.com/dashboard؛ توثيق API: https://docs.standardcompute.com). مثال:
-  ```jsonc
-  "memoryProvider": "standardcompute",
-  "memoryApiKey": "env://STANDARDCOMPUTE_API_KEY",
-  ```
-  عند اختيار هذا المزود، تُرسل مطالبات الالتقاط التلقائي / الملف، واستجابات النموذج، وسياق المحادثة ذي الصلة إلى `https://api.stdcmpt.com`.
-- للنماذج التي ترفض استدعاءات الأدوات المفروضة (`tool_choice: "required"`، مثل بعض أوضاع التفكير)، أضف `"forceToolChoice": false` عند استخدام `openai-chat` / `orcarouter` / `atlas-cloud` / `cheaper-inference` / `api-route` / `runcrate` / `cloudgpu` / `standardcompute`.
+    "@effect/opentelemetry": ["@effect/opentelemetry@4.1.0", "", { "peerDependencies": { "@opentelemetry/api": ">=1.9.0 <2.0.0", "@opentelemetry/api-logs": ">=0.203.0 <0.300.0", "@opentelemetry/resources": ">=2.0.0 <3.0.0", "@opentelemetry/sdk-logs": ">=0.203.0 <0.300.0", "@opentelemetry/sdk-metrics": ">=2.0.0 <3.0.0", "@opentelemetry/sdk-trace-base": ">=2.0.0 <3.0.0", "@opentelemetry/sdk-trace-node": ">=2.0.0 <3.0.0", "@opentelemetry/sdk-trace-web": ">=2.0.0 <3.0.0", "@opentelemetry/semantic-conventions": ">=1.33.0 <2.0.0", "effect": "^4.1.0" }, "optionalPeers": ["@opentelemetry/api", "@opentelemetry/api-logs", "@opentelemetry/resources", "@opentelemetry/sdk-logs", "@opentelemetry/sdk-metrics", "@opentelemetry/sdk-trace-base", "@opentelemetry/sdk-trace-node", "@opentelemetry/sdk-trace-web"] }, "sha512-j9bNzQaoQvcnimBFMG0i3piEW20E8HjkXAQHTJN/XqG2e4uJ9zCv53/HCNzD7+ooFn5S4nwQy/BOXeNReMIe+A=="],
+    "@effect/platform-node": ["@effect/platform-node@4.1.0", "", { "dependencies": { "@effect/platform-node-shared": "^4.1.0", "undici": "^8.12.2" }, "peerDependencies": { "effect": "^4.1.0", "redis": ">=5.0.0 <7.0.0" } }, "sha512-v+X7moGVF9k5oMVvz0slA+NgtEod+W+oygeI285MDJgSlUCW3JcqElj+cD3rlij
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
-// Anti-pattern to NEVER write (induced failure mode):
-- للنماذج التي ترفض استدعاءات الأدوات المفروضة (`tool_choice: "required"`، مثل بعض أوضاع التفكير)، أضف `"forceToolChoice": false` عند استخدام `openai-chat` / `orcarouter` / `atlas-cloud` / `cheaper-inference` / `api-route` / `runcrate` / `cloudgpu`.
+// Induced defect failure mode:
+    "@effect/opentelemetry": ["@effect/opentelemetry@4.0.6", "", { "peerDependencies": { "@opentelemetry/api": ">=1.9.0 <2.0.0", "@opentelemetry/api-logs": ">=0.203.0 <0.300.0", "@opentelemetry/resources": ">=2.0.0 <3.0.0", "@opentelemetry/sdk-logs": ">=0.203.0 <0.300.0", "@opentelemetry/sdk-metrics": ">=2.0.0 <3.0.0", "@opentelemetry/sdk-trace-base": ">=2.0.0 <3.0.0", "@opentelemetry/sdk-trace-node": ">=2.0.0 <3.0.0", "@opentelemetry/sdk-trace-web": ">=2.0.0 <3.0.0", "@opentelemetry/semantic-conventions": ">=1.33.0 <2.0.0", "effect": "^4.0.6" }, "optionalPeers": ["@opentelemetry/api", "@opentelemetry/api-logs", "@opentelemetry/resources", "@opentelemetry/sdk-logs", "@opentelemetry/sdk-metrics", "@opentelemetry/sdk-trace-base", "@opentelemetry/sdk-trace-node", "@opentelemetry/sdk-trace-web"] }, "sha512-xhLR1EN4ZNaKM7Bx59SCFiRNduFzgH8LZXDrCpPN8MpQ93V0GQcFHTBah5T3EXO2v+5HTEacdTgetIA0Creqvw=="],
+    "@effect/platform-node": ["@effect/platform-node@4.0.6", "", { "dependencies": { "@effect/platform-node-shared": "^4.0.6", "undici": "^8.12.2" }, "peerDependencies": { "effect": "^4.0.6", "redis": ">=5.0.0 <7.0.0" } }, "sha512-gXvGHAy0/8PZbWvMMguloDUyeSP+rzYEo3FSEqUuGduxo9ORcGioDxPI+GOLCIF
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e856a02e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e42d23c4` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

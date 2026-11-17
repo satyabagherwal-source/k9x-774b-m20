@@ -10586,3 +10586,6 @@
 | `CYCLE-20261117-5IO7` | `2026-11-17T15:16:54.343Z` | `moonshotai/Kimi-K3.1-Pro` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-moonshotai-kimi-k3.1-pro-learnings.md` | Yes (`756c0ea6...`) |
 | `CYCLE-20261117-EF34` | `2026-11-17T15:23:49.600Z` | `nvidia/DeepSeek-V4.1-Flash-1017-NVFP4` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nvidia-deepseek-v4.1-flash-1017-nvfp4-learnings.md` | Yes (`65827916...`) |
 | `CYCLE-20261117-EMTJ` | `2026-11-17T15:23:59.623Z` | `rook/rook` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8986` | Yes (`17366e72...`) |
+| `CYCLE-20261117-SSJN` | `2026-11-17T15:35:00.227Z` | `meta-models/Muse-Spark-Open-816B-A42B-NVFP4` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-meta-models-muse-spark-open-816b-a42b-nvfp4-learnings.md` | Yes (`907e7871...`) |
+| `CYCLE-20261117-T4HC` | `2026-11-17T15:35:15.696Z` | `tickernelz/opencode-mem` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8987` | Yes (`0cf22914...`) |
+| `CYCLE-20261117-T5T3` | `2026-11-17T15:35:17.415Z` | `dathere/qsv` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/dathere-qsv-learnings.md` | Yes (`bb2d8aac...`) |

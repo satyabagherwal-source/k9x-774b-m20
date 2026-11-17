@@ -10619,3 +10619,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-moonshotai-kimi-k3-1-pro` | `https://huggingface.co/moonshotai/Kimi-K3.1-Pro` | `hf-moonsho` | Multi-dimensional audit evidence | 2026-11-17T15:16:54.347Z |
 | `learn-huggingface-nvidia-deepseek-v4-1-flash-1017-nvfp4` | `https://huggingface.co/nvidia/DeepSeek-V4.1-Flash-1017-NVFP4` | `hf-nvidia-` | Multi-dimensional audit evidence | 2026-11-17T15:23:49.604Z |
 | `learn-github-rook-rook` | `https://github.com/rook/rook` | `f5fa76ed` | Multi-dimensional audit evidence | 2026-11-17T15:23:59.626Z |
+| `learn-huggingface-meta-models-muse-spark-open-816b-a42b-nvfp4` | `https://huggingface.co/meta-models/Muse-Spark-Open-816B-A42B-NVFP4` | `hf-meta-mo` | Multi-dimensional audit evidence | 2026-11-17T15:35:00.231Z |
+| `learn-github-tickernelz-opencode-mem` | `https://github.com/tickernelz/opencode-mem` | `e42d23c4` | Multi-dimensional audit evidence | 2026-11-17T15:35:15.700Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `c0d30a17` | Multi-dimensional audit evidence | 2026-11-17T15:35:17.419Z |

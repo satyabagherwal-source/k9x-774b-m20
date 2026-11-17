@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T15:23:59.630Z",
-  "total_cycles_completed": 10142,
-  "total_learnings_persisted": 10142,
-  "total_rules_promoted": 9725,
+  "last_updated": "2026-11-17T15:35:17.440Z",
+  "total_cycles_completed": 10145,
+  "total_learnings_persisted": 10145,
+  "total_rules_promoted": 9726,
   "history": [
-    {
-      "timestamp": "2026-11-16T22:34:14.015Z",
-      "repository": "nodejs/undici",
-      "learningId": "learn-github-nodejs-undici",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-16T22:47:29.620Z",
-      "repository": "metalbear-co/mirrord",
-      "learningId": "learn-github-metalbear-co-mirrord",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-16T22:47:32.090Z",
-      "repository": "axios/axios",
-      "learningId": "learn-github-axios-axios",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-16T22:47:37.890Z",
       "repository": "siderolabs/talos",
@@ -1403,6 +1382,27 @@
       "repository": "rook/rook",
       "learningId": "learn-github-rook-rook",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T15:35:00.236Z",
+      "repository": "meta-models/Muse-Spark-Open-816B-A42B-NVFP4",
+      "learningId": "learn-huggingface-meta-models-muse-spark-open-816b-a42b-nvfp4",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T15:35:15.704Z",
+      "repository": "tickernelz/opencode-mem",
+      "learningId": "learn-github-tickernelz-opencode-mem",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T15:35:17.440Z",
+      "repository": "dathere/qsv",
+      "learningId": "learn-github-dathere-qsv",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]
