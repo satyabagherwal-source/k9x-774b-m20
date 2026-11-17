@@ -3583,10 +3583,10 @@
     "repository": "tailscale/tailscale",
     "platform": "github",
     "sourceUrl": "https://github.com/tailscale/tailscale",
-    "sourceVersion": "9123e6e2",
+    "sourceVersion": "8a1840ef",
     "license": "BSD-3-Clause",
-    "contentHash": "1469bf05681a671c7988712054b5fe59d7659e7e214575c7800cbcedbc0dab5d",
-    "lastHarvestedAt": "2026-11-17T17:20:24.686Z",
+    "contentHash": "1a19cb22dee23b843c2f1d9715f815f221a0686e4d4f73065f9fd3a392b08f3a",
+    "lastHarvestedAt": "2026-11-17T22:11:10.878Z",
     "learningId": "learn-github-tailscale-tailscale"
   },
   "dingodb-dingo": {
@@ -7593,10 +7593,10 @@
     "repository": "apache/arrow",
     "platform": "github",
     "sourceUrl": "https://github.com/apache/arrow",
-    "sourceVersion": "ffcdfcfa",
+    "sourceVersion": "aa4b89d9",
     "license": "Apache-2.0",
-    "contentHash": "ecedefc29c9af079a224ae5fdced58a2ae84c498b3d0e035dccd5a5719d7afaa",
-    "lastHarvestedAt": "2026-11-16T14:06:57.894Z",
+    "contentHash": "ac22cb855f48d02538f4579371cfd4915113d2763ea6c390d939705b26e31fe1",
+    "lastHarvestedAt": "2026-11-17T22:11:01.954Z",
     "learningId": "learn-github-apache-arrow"
   },
   "crosspaste-crosspaste-desktop": {
@@ -12195,8 +12195,8 @@
     "sourceUrl": "https://huggingface.co/audio-cpp/audio.cpp-gguf",
     "sourceVersion": "hf-audio-cpp-audio.cpp-gguf",
     "license": "Open-Source",
-    "contentHash": "0a3d263a1527f6bebc8d7f13dc4750ffb249ac1e49402d6e417866ef6de7b21d",
-    "lastHarvestedAt": "2026-11-13T12:08:12.459Z",
+    "contentHash": "93f748a7b6a07b7c9fc1ae90436ef05b2a56e1a0e7728f594a62c871d6efacb5",
+    "lastHarvestedAt": "2026-11-17T22:10:59.582Z",
     "learningId": "learn-huggingface-audio-cpp-audio-cpp-gguf"
   },
   "hf-mradermacher-deepseek-v4-pro-qwen3.5-9b-uncensored-heretic-i1-gguf": {

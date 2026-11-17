@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-17T21:56:55.780Z",
+  "last_updated": "2026-11-17T22:11:10.889Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5496,14 +5496,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tailscale-tailscale",
-      "content_hash": "1469bf05681a671c7988712054b5fe59d7659e7e214575c7800cbcedbc0dab5d",
-      "verified_at": "2026-11-17T17:20:24.694Z",
+      "content_hash": "1a19cb22dee23b843c2f1d9715f815f221a0686e4d4f73065f9fd3a392b08f3a",
+      "verified_at": "2026-11-17T22:11:10.888Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T17:20:24.694Z"
+      "last_updated": "2026-11-17T22:11:10.888Z"
     },
     "dingodb/dingo": {
       "repository": "dingodb/dingo",
@@ -11436,14 +11436,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-apache-arrow",
-      "content_hash": "ecedefc29c9af079a224ae5fdced58a2ae84c498b3d0e035dccd5a5719d7afaa",
-      "verified_at": "2026-11-16T14:06:57.902Z",
+      "content_hash": "ac22cb855f48d02538f4579371cfd4915113d2763ea6c390d939705b26e31fe1",
+      "verified_at": "2026-11-17T22:11:01.964Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-16T14:06:57.902Z"
+      "last_updated": "2026-11-17T22:11:01.964Z"
     },
     "CrossPaste/crosspaste-desktop": {
       "repository": "CrossPaste/crosspaste-desktop",
@@ -18351,14 +18351,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-audio-cpp-audio-cpp-gguf",
-      "content_hash": "0a3d263a1527f6bebc8d7f13dc4750ffb249ac1e49402d6e417866ef6de7b21d",
-      "verified_at": "2026-11-13T12:08:12.468Z",
+      "content_hash": "93f748a7b6a07b7c9fc1ae90436ef05b2a56e1a0e7728f594a62c871d6efacb5",
+      "verified_at": "2026-11-17T22:10:59.592Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T12:08:12.468Z"
+      "last_updated": "2026-11-17T22:10:59.592Z"
     },
     "mradermacher/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic-i1-GGUF": {
       "repository": "mradermacher/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic-i1-GGUF",

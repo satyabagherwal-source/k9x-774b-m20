@@ -10729,3 +10729,6 @@
 | `CYCLE-20261117-FT7N` | `2026-11-17T21:56:49.187Z` | `goodrain/rainbond` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9074` | Yes (`a0aa2f5d...`) |
 | `CYCLE-20261117-FY9M` | `2026-11-17T21:56:55.738Z` | `Bitterbot-AI/bitterbot-desktop` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md` | Yes (`0bf3516a...`) |
 | `CYCLE-2026-11-17-PROJ-EVOLVE` | `2026-11-17T21:57:33.618Z` | `hf-harness-hub-qwen3.8-27b-pi-adapted` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-E5720888` [Domain D] | Yes (`e80825fe...`) |
+| `CYCLE-20261117-Y1DM` | `2026-11-17T22:10:59.578Z` | `audio-cpp/audio.cpp-gguf` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-audio-cpp-audio.cpp-gguf-learnings.md` | Yes (`93f748a7...`) |
+| `CYCLE-20261117-Y37I` | `2026-11-17T22:11:01.950Z` | `apache/arrow` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9075` | Yes (`ac22cb85...`) |
+| `CYCLE-20261117-YA3E` | `2026-11-17T22:11:10.874Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9076` | Yes (`1a19cb22...`) |

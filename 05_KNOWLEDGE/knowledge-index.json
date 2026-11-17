@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-17T21:57:35.367Z",
-  "total_verified_learnings": 8945,
+  "last_updated": "2026-11-17T22:11:16.681Z",
+  "total_verified_learnings": 8946,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 20663,
+  "total_items": 20671,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112393,10 +112393,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tailscale-tailscale-architecture-intelligence-tailscale-tailscale-core-invariant.md",
       "title": "Architecture Intelligence: tailscale/tailscale Core Invariants",
       "repository": "tailscale/tailscale",
-      "source_version": "9123e6e2",
-      "content_hash": "e0278bb31e7ccea215c02047fc184c4acfb647d8a17e2055b43308a1453b230e",
+      "source_version": "8a1840ef",
+      "content_hash": "40bfdb8474387a3bd4f6d500425b36b21e043024743086a59a7e79c9acc0ade1",
       "domain_letter": "G",
-      "persisted_at": "2026-11-17T17:20:25.000Z"
+      "persisted_at": "2026-11-17T22:11:11.304Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-tailscale-tailscale": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tailscale-tailscale",
@@ -112405,10 +112405,10 @@
       "relative_path": "08_VERIFICATION/tailscale-tailscale-verification-protocol-empirical-defect-shield-for-tailscale-.md",
       "title": "Verification Protocol: Empirical Defect Shield for tailscale/tailscale",
       "repository": "tailscale/tailscale",
-      "source_version": "9123e6e2",
-      "content_hash": "1442244de4167b5e9850406fcc3af1a55d69c1f0a34f0276d85ba015e0d16f98",
+      "source_version": "8a1840ef",
+      "content_hash": "b4c47cb5ca2ba8e7a8b0fb2ec09c924804455d46a99e94158dae9728364f8d2a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T17:20:25.135Z"
+      "persisted_at": "2026-11-17T22:11:11.480Z"
     },
     "candidate_directive-order-small-runtime-filter-builds-before-filtered-and-nested-scans-28768": {
       "item_id": "candidate_directive-order-small-runtime-filter-builds-before-filtered-and-nested-scans-28768",
@@ -222250,8 +222250,8 @@
       "slug": "tailscale-tailscale",
       "platform": "github",
       "source_url": "https://github.com/tailscale/tailscale",
-      "source_version": "9123e6e2",
-      "content_hash": "1469bf05681a671c7988712054b5fe59d7659e7e214575c7800cbcedbc0dab5d",
+      "source_version": "8a1840ef",
+      "content_hash": "1a19cb22dee23b843c2f1d9715f815f221a0686e4d4f73065f9fd3a392b08f3a",
       "dossier_path": "07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
       "promoted_rules": [
@@ -222294,6 +222294,11 @@
           "number": 9020,
           "title": "cmd/tsconnect: upgrade tsconnect from yarn to pnpm",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9076,
+          "title": "client/web,tool: bump node to 26.x LTS",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -222301,7 +222306,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T17:20:24.507Z",
+      "verified_at": "2026-11-17T22:11:10.661Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -222392,9 +222397,9 @@
       "title": "Architecture Intelligence: tailscale-tailscale-learnings Core Invariants",
       "repository": "tailscale-tailscale-learnings",
       "source_version": "HEAD",
-      "content_hash": "edae8499ad48c947e72dd8dcfbdcb1bc138f4ecfbe6107fef0dd6df450b4dfc7",
+      "content_hash": "ecd1659a93baa6896533bd6422425dcb39b3b5fa0c33045d6572664d45448ba2",
       "domain_letter": "G",
-      "persisted_at": "2026-11-17T05:58:19.611Z"
+      "persisted_at": "2026-11-17T22:11:16.503Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-tailscale-tailscale-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tailscale-tailscale-learnings",
@@ -222404,9 +222409,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for tailscale-tailscale-learnings",
       "repository": "tailscale-tailscale-learnings",
       "source_version": "HEAD",
-      "content_hash": "a471565a497e1c1b6048b67dc0c8e7b8aa3faa1e3efe20ffa6ce603f4188e471",
+      "content_hash": "6179e8079f26f2d3d0382d05d685cbf892ec13d9be4839b1006552444b719488",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T05:58:19.715Z"
+      "persisted_at": "2026-11-17T22:11:16.681Z"
     },
     "learn-huggingface-stabilityai-stable-diffusion-3-medium": {
       "learning_id": "learn-huggingface-stabilityai-stable-diffusion-3-medium",
@@ -233063,8 +233068,8 @@
       "slug": "apache-arrow",
       "platform": "github",
       "source_url": "https://github.com/apache/arrow",
-      "source_version": "ffcdfcfa",
-      "content_hash": "ecedefc29c9af079a224ae5fdced58a2ae84c498b3d0e035dccd5a5719d7afaa",
+      "source_version": "aa4b89d9",
+      "content_hash": "ac22cb855f48d02538f4579371cfd4915113d2763ea6c390d939705b26e31fe1",
       "dossier_path": "07_PROJECT_LEARNING/apache-arrow-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/apache-arrow-learnings.md",
       "promoted_rules": [
@@ -233077,6 +233082,11 @@
           "number": 8743,
           "title": "[Python] Reject a null Expression in two public APIs",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9075,
+          "title": "[C++][CI] Fix protobuf-induced Valgrind failures",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -233084,7 +233094,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-16T14:06:57.728Z",
+      "verified_at": "2026-11-17T22:11:01.742Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -233126,10 +233136,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-apache-arrow-content-information-intelligence-apache-arrow-core-invariants.md",
       "title": "Content & Information Intelligence: apache/arrow Core Invariants",
       "repository": "apache/arrow",
-      "source_version": "ffcdfcfa",
-      "content_hash": "537adbf1fe0b868c507749c5ee293c1392f6c5e9db9929a6ad1e9d67cd4c7dde",
+      "source_version": "aa4b89d9",
+      "content_hash": "e163fc13aeab42744f508998302ec94b89399bb3c669bab308675594c09bdbb3",
       "domain_letter": "I",
-      "persisted_at": "2026-11-16T14:06:58.184Z"
+      "persisted_at": "2026-11-17T22:11:02.352Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-apache-arrow": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-apache-arrow",
@@ -233138,10 +233148,10 @@
       "relative_path": "08_VERIFICATION/apache-arrow-verification-protocol-empirical-defect-shield-for-apache-arrow.md",
       "title": "Verification Protocol: Empirical Defect Shield for apache/arrow",
       "repository": "apache/arrow",
-      "source_version": "ffcdfcfa",
-      "content_hash": "02ebfb57aada67ce549c63cb1db8e62cc09dca379fc9006775cb16a2ce6f1839",
+      "source_version": "aa4b89d9",
+      "content_hash": "5150e6ed6b3913ae5330f3f70b150475d96dda997f0c8fb5892257b1a07746f5",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T14:06:58.305Z"
+      "persisted_at": "2026-11-17T22:11:02.529Z"
     },
     "learn-github-greptimeteam-greptimedb": {
       "learning_id": "learn-github-greptimeteam-greptimedb",
@@ -233256,9 +233266,9 @@
       "title": "Content & Information Intelligence: apache-arrow-learnings Core Invariants",
       "repository": "apache-arrow-learnings",
       "source_version": "HEAD",
-      "content_hash": "82dc8e61a9d771609c4690aea35f9d014c35c13addcdde06bd5d7bff8693042f",
+      "content_hash": "b2419c1faaa95854960ecde70c657f335f185beb28ff71ab1aac780e2f3112fc",
       "domain_letter": "I",
-      "persisted_at": "2026-11-16T14:07:05.826Z"
+      "persisted_at": "2026-11-17T22:11:15.208Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-apache-arrow-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-apache-arrow-learnings",
@@ -233268,9 +233278,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for apache-arrow-learnings",
       "repository": "apache-arrow-learnings",
       "source_version": "HEAD",
-      "content_hash": "dc59cbbd51efb880dbbede4dc0ad9e4077a6c3f8369c07bc106ab0b3d41a9092",
+      "content_hash": "20905f1effe0a9228bbfa0c686e6691763e833e5a3c76778203c2dc3155c6663",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T14:07:05.942Z"
+      "persisted_at": "2026-11-17T22:11:15.383Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-unsloth-embeddinggemma-2-gguf-learnings-core-": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-unsloth-embeddinggemma-2-gguf-learnings-core-",
@@ -277671,6 +277681,121 @@
       "content_hash": "53a3a14fba5d113c3b734b7b7b7ed0f84d7083534911f3e203899d7acbfdd680",
       "domain_letter": "D",
       "persisted_at": "2026-11-17T21:57:34.383Z"
+    },
+    "learn-huggingface-audio-cpp-audio-cpp-gguf": {
+      "learning_id": "learn-huggingface-audio-cpp-audio-cpp-gguf",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "audio-cpp/audio.cpp-gguf",
+      "repository": "audio-cpp/audio.cpp-gguf",
+      "slug": "hf-audio-cpp-audio.cpp-gguf",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/audio-cpp/audio.cpp-gguf",
+      "source_version": "hf-audio-cpp-audio.cpp-gguf",
+      "content_hash": "93f748a7b6a07b7c9fc1ae90436ef05b2a56e1a0e7728f594a62c871d6efacb5",
+      "dossier_path": "07_PROJECT_LEARNING/hf-audio-cpp-audio.cpp-gguf-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-audio-cpp-audio.cpp-gguf-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-17T22:10:59.338Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-audio-cpp-audio-cpp-gguf-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-audio-cpp-audio-cpp-gguf-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-audio-cpp-audio-cpp-gguf-research-knowledge-intelligence-audio-cpp-audio-cpp-.md",
+      "title": "Research & Knowledge Intelligence: audio-cpp/audio.cpp-gguf Core Invariants",
+      "repository": "audio-cpp/audio.cpp-gguf",
+      "source_version": "hf-audio-cpp-audio.cpp-gguf",
+      "content_hash": "ed41985d3419299277f918b83493609182a22a0737b7a848bcaab0995ef9d2ac",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-17T22:10:59.824Z"
+    },
+    "rule-9075": {
+      "learning_id": "rule-9075",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9075,
+      "title": "[C++][CI] Fix protobuf-induced Valgrind failures",
+      "source_url": "https://github.com/apache/arrow",
+      "source_version": "aa4b89d9",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T22:11:01.742Z"
+    },
+    "candidate_directive-c-ci-fix-protobuf-induced-valgrind-failures": {
+      "item_id": "candidate_directive-c-ci-fix-protobuf-induced-valgrind-failures",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-Y3E8-c-ci-fix-protobuf-induced-valgrind-failures.md",
+      "title": "[C++][CI] Fix protobuf-induced Valgrind failures",
+      "repository": "apache/arrow",
+      "source_version": "aa4b89d9",
+      "content_hash": "7d476470b3619fcc731a8c1be0a731e63402ee1a0fdaf2e85cf7ea93f01e394d",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-17T22:11:02.194Z"
+    },
+    "rule-9076": {
+      "learning_id": "rule-9076",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9076,
+      "title": "client/web,tool: bump node to 26.x LTS",
+      "source_url": "https://github.com/tailscale/tailscale",
+      "source_version": "8a1840ef",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T22:11:10.661Z"
+    },
+    "candidate_directive-client-web-tool-bump-node-to-26-x-lts": {
+      "item_id": "candidate_directive-client-web-tool-bump-node-to-26-x-lts",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-YEB6-client-web-tool-bump-node-to-26-x-lts.md",
+      "title": "client/web,tool: bump node to 26.x LTS",
+      "repository": "tailscale-tailscale-learnings",
+      "source_version": "HEAD",
+      "content_hash": "3f3824fe1641a1b4ff6baa72b0c81af6339dec607604d74af2568f54d1833401",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-17T22:11:16.339Z"
+    },
+    "candidate_directive-gh-55648-c-ci-fix-protobuf-induced-valgrind-failures": {
+      "item_id": "candidate_directive-gh-55648-c-ci-fix-protobuf-induced-valgrind-failures",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-YDB8-gh-55648-c-ci-fix-protobuf-induced-valgrind-failures.md",
+      "title": "GH-55648: [C++][CI] Fix protobuf-induced Valgrind failures",
+      "repository": "apache-arrow-learnings",
+      "source_version": "HEAD",
+      "content_hash": "1fa57ed86605325a8b7d910e42ea5efd66f08ea280b6ec2917f8a582b27caeff",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-17T22:11:15.050Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-audio-cpp-audio-cpp-gguf-learnings-core-invar": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-audio-cpp-audio-cpp-gguf-learnings-core-invar",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-audio-cpp-audio-cpp-gguf-learnings-research-knowledge-intelligence-hf-audio-c.md",
+      "title": "Research & Knowledge Intelligence: hf-audio-cpp-audio.cpp-gguf-learnings Core Invariants",
+      "repository": "hf-audio-cpp-audio.cpp-gguf-learnings",
+      "source_version": "HEAD",
+      "content_hash": "42e33af1e6bb28222f364abdd3571fec0c468f332404fbdc3749c0693aebb354",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-17T22:11:15.758Z"
     }
   },
   "ai-builder-brain": {

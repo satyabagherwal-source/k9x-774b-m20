@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T21:57:34.975Z",
+  "last_updated": "2026-11-17T22:11:16.339Z",
   "directives": [
     {
       "id": "CD-001",
@@ -26291,6 +26291,48 @@
       "source_repo": "goodrain-rainbond",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-EFB431-ci-release-add-a-workflow-to-build-the-g.md",
+      "staged_date": "2026-11-17"
+    },
+    {
+      "id": "CD-Y3E8",
+      "directive_title": "[C++][CI] Fix protobuf-induced Valgrind failures",
+      "source_repo": "apache/arrow",
+      "source_commit": "aa4b89d9",
+      "staged_file": "11_INBOX/candidate-directives/CD-Y3E8-c-ci-fix-protobuf-induced-valgrind-failures.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-17",
+      "domain_letter": "I"
+    },
+    {
+      "id": "CD-YEB6",
+      "directive_title": "client/web,tool: bump node to 26.x LTS",
+      "source_repo": "tailscale-tailscale-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-YEB6-client-web-tool-bump-node-to-26-x-lts.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-17",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-YDB8",
+      "directive_title": "GH-55648: [C++][CI] Fix protobuf-induced Valgrind failures",
+      "source_repo": "apache-arrow-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-YDB8-gh-55648-c-ci-fix-protobuf-induced-valgrind-failures.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-17",
+      "domain_letter": "I"
+    },
+    {
+      "id": "CD-REV-E4D432",
+      "directive_title": "client/web,tool: bump node to 26.x LTS",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "tailscale-tailscale",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-E4D432-client-web-tool-bump-node-to-26-x-lts.md",
       "staged_date": "2026-11-17"
     }
   ]

@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-17T05:58:19.414Z",
+  "timestamp": "2026-11-17T22:11:16.225Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-tailscale-tailscale-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [tailscale-tailscale-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-17T05:58:19.414Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-17T22:11:16.225Z`  
 > **Learning ID**: `LEARN-EVO-tailscale-tailscale-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), J (Search & Distribution Intelligence), B (Product Intelligence)
-- **Confidence Rating**: 66%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), B (Product Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence)
+- **Confidence Rating**: 52%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from tailscale-tailscale-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source**: github ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
-> **Source Version**: `46ad4538`  
+> **Source Version**: `8a1840ef`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-17T05:58:14.231Z  
+> **Timestamp**: 2026-11-17T22:11:09.764Z  
 > **Learning ID**: `learn-github-tailscale-tailscale`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T05:58:14.227Z  
+> **Harvest Timestamp**: 2026-11-17T22:11:09.758Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: The easiest, most secure way to use WireGuard and 2FA.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 39207 stars
+- **Stars / Engagement**: 39242 stars
 
 ---
 
@@ -831,8 +831,8 @@ export const sessionStateStorage: IPNStateStorage = {
 - **Issue #22379** (2026-11-16): **magicsock: peer home DERP stays stale after a delta: updateNodes fast path skips a full netmap that equals the unpatched peersByID snapshot**
   *Symptoms*: ### What is the issue?  A peer's home DERP region can go stale in magicsock and stay stale until an unrelated netmap change, while the control plane and the client's own netmap hold the correct value. Packets for that peer are then sent to a DERP region the peer has left. If the two nodes have no other path (no direct UDP in either direction until a CallMeMaybe gets through), the peer is unreachable.  **Mechanism (v1.104.5, also present at v1.102.5 and on `main` at 59064619a):**  1. `Conn.UpdateNetmapDelta` applies `NodeMutationDERPHome` by calling `ep.setDERPHome` only. It does not update `c.peersByID`. The field comment says so: "per-field NodeMutation patches received in UpdateNetmapDelta are never applied to these snapshots" (`wgengine/magicsock/magicsock.go`, `peersByID`). 2. `Conn.updateNodes` has a fast path that returns early when every peer in the incoming full netmap `Equal`s its `peersByID` snapshot. 3. So: a full netmap (or upsert) records home = A in both the endpoint and the snapshot. A delta moves the endpoint to B; the snapshot still says A. The peer moves back to A, and that change reaches magicsock inside a full netmap rather than as a delta. The node equals the stale snapshot, the fast path skips it, and `ep.derpAddr` stays on B.  The change back to A arrives inside a full netmap whenever the `MapResponse` carrying the `DERPRegion` patch also carries any field in `mapResponseContainsNonPatchFields` (`Node`, `DERPMap`, `DNSConfig`, `Health`, `DisplayMessages
 
-- **Issue #22334** (2026-11-13): **ipn/ipnlocal: home DERP change writes the netmap cache without CacheNetworkMaps**
-  *Symptoms*: ### What is the issue?  `onHomeDERPUpdateLocked` writes the self-only netmap cache without checking the `CacheNetworkMaps` node capability. The full netmap and peer delta paths both check it, and a full netmap deletes the cache when the capability is missing.  So on a node without the capability, each home DERP change recreates a cache with no peers. On the next start the node logs `loaded netmap from disk cache; 0 peers` and goes Running before control sends any peers. A tsnet app that sets an exit node by IP when the backend becomes Running gets `no node found in netmap with IP` on those starts.  ### Steps to reproduce  1. Run a tsnet node whose node lacks `CacheNetworkMaps`. 2. Restart it on the same state dir.  After a run that logs `updating netmap in disk cache`, the next start loads a cache with 0 peers. With the capability check added, the cache is never recreated.  ### Are there any recent changes that introduced the issue?  #19491 / #19818. The cache write they added came after the capability gate from #19117.  ### OS  _No response_  ### OS version  15.8.1 (arm64)  ### Tailscale version  main @ 1f6259a88 (tsnet, userspace)  ### Other software  _No response_  ### Bug report  _No response_ 
+- **Issue #22377** (2026-11-17): **Windows 11 26H2: Tailscale v1.104.6 crashes in go-winio (0xc0000005); v1.104.7 service startup timeout**
+  *Symptoms*: ### What is the issue?  ## Description  Tailscale fails to start reliably on my Windows 11 26H2 system. The issue was observed following a Windows update on November 12, 2026.  On Tailscale v1.104.6, the service process appeared to be running, but the CLI could not communicate with the local daemon. The logs confirmed repeated crashes with exception `0xc0000005` during Windows named-pipe handling in `go-winio`.  After attempting to reinstall v1.104.6 and upgrade to v1.104.7, the installer consistently failed while starting the Tailscale service. Windows Service Control Manager recorded repeated service startup timeouts (Event IDs 7000 and 7009).  Renaming the original Tailscale state directory and reinstalling v1.104.7 did not resolve the issue.  The original crash stack closely resembles Issue #20534, although the exception code, CPU generation, and Windows build differ.  Related issue: https://github.com/tailscale/tailscale/issues/20534  ## System information  - OS: Windows 11, version 26H2 - OS build: 26300.9974 - Windows update: KB5132061 (installed November 12, 2026) - CPU: Intel Core i7-8565U @ 1.80 GHz - BIOS: N2HET85W (1.68), dated February 24, 2026 - Tailscale versions tested: 1.104.6 and 1.104.7 - Network adapter: Intel Wireless-AC 9560 160 MHz  The issue was observed after a Windows update, but it has not been established that KB5132061 directly caused the failure.  ## Observed behavior on v1.104.6  The CLI initially returned:  ```text failed to connect to local ta
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -849,348 +849,803 @@ export const sessionStateStorage: IPNStateStorage = {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `46ad4538` (2026-11-17)
-**Commit Message**: go.mod: bump 5 modules
+### Incident Patch 1: `8a1840ef` (2026-11-17)
+**Commit Message**: client/web,tool: bump node to 26.x LTS
 
-* golang.org/x/crypto: v0.58.0 to v0.59.0
-* golang.org/x/mod: v0.41.0 to v0.43.0
-* golang.org/x/sync: v0.24.0 to v0.25.0
-* golang.org/x/text: v0.43.0 to v0.44.0
-* golang.org/x/tools: v0.51.0 to v0.52.0
+Bump node to 26.13.1 as this is the new LTS line.
 
-x/crypto v0.59.0 removed the DSA keys from ssh/testdata, so drop or
-swap out the DSA test cases in tempfork/sshtest/ssh to match upstream.
+Update @types/node to 26.6.6 to match the node bump.
 
-Triggered by @bradfitz via the bumpdep workflow.
+Fixes https://github.com/tailscale/corp/issues/50402
 
-Updates tailscale/corp#47960
+Signed-off-by: Mario Minardi <[REDACTED_EMAIL]>
 
-Signed-off-by: Dep Updater <[REDACTED_EMAIL]>
-
-**File**: `flake.nix` (modified, +1/-1)
+**File**: `client/web/package.json` (modified, +2/-2)
 ```diff
-@@ -173,4 +173,4 @@
-     });
-   };
- }
--# nix-direnv cache busting line: sha256-AeOJeTGIk14FbhP5kPXRiaNHUYm7KP01F/Mx/yoheuo=
-+# nix-direnv cache busting line: sha256-RalHTs+XCjVE33hNhMKjrBeUW5LHSQjPYlRb7iIm/BA=
-```
-
-**File**: `flakehashes.json` (modified, +2/-2)
-```diff
-@@ -4,7 +4,7 @@
-     "sri": "sha256-Up4oMG6TVLQkV9inAYF3uYbxu+bMHeU7q9BLcXIllow="
+@@ -3,7 +3,7 @@
+   "version": "0.0.1",
+   "license": "BSD-3-Clause",
+   "engines": {
+-    "node": "22.23.4"
++    "node": "26.13.1"
    },
-   "vendor": {
--    "goModSum": "sha256-mv93TCMisvb7pystEF5p+6NM4y8eMAxwTNxzjHByOGg=",
--    "sri": "sha256-AeOJeTGIk14FbhP5kPXRiaNHUYm7KP01F/Mx/yoheuo="
-+    "goModSum": "sha256-GWy68gJB/0LJ8btwCN604xRcf4fm9YGU/7S/gMVi7jY=",
-+    "sri": "sha256-RalHTs+XCjVE33hNhMKjrBeUW5LHSQjPYlRb7iIm/BA="
-   }
- }
+   "type": "module",
+   "private": true,
+@@ -19,7 +19,7 @@
+     "zustand": "^4.4.7"
+   },
+   "devDependencies": {
+-    "@types/node": "^22.14.0",
++    "@types/node": "^26.6.6",
+     "@types/react": "^18.0.20",
+     "@types/react-dom": "^18.0.6",
+     "@vitejs/plugin-react-swc": "^3.6.0",
 ```
 
-**File**: `go.mod` (modified, +7/-7)
+**File**: `client/web/pnpm-lock.yaml` (modified, +30/-30)
 ```diff
-@@ -137,18 +137,18 @@ require (
- 	go.uber.org/zap v1.28.0
- 	go4.org/mem v0.0.0-20240501181205-ae6ca9944745
- 	go4.org/netipx v0.0.0-20260823151212-3075585bcbeb
--	golang.org/x/crypto v0.58.0
-+	golang.org/x/crypto v0.59.0
- 	golang.org/x/exp v0.0.0-20260908205506-85c1c2202aba
- 	golang.org/x/image v0.46.0
--	golang.org/x/mod v0.41.0
-+	golang.org/x/mod v0.43.0
- 	golang.org/x/net v0.62.0
- 	golang.org/x/oauth2 v0.37.0
--	golang.org/x/sync v0.24.0
-+	golang.org/x/sync v0.25.0
- 	golang.org/x/sys v0.50.0
--	golang.org/x/term v0.47.0
--	golang.org/x/text v0.43.0
-+	golang.org/x/term v0.48.0
-+	golang.org/x/text v0.44.0
- 	golang.org/x/time v0.16.0
--	golang.org/x/tools v0.51.0
-+	golang.org/x/tools v0.52.0
- 	golang.zx2c4.com/wintun v0.0.0-20230126152724-0fa3db229ce2
- 	golang.zx2c4.com/wireguard v0.0.0-20260522210424-ecfc5a8d5446
- 	golang.zx2c4.com/wireguard/windows v1.0.1
-@@ -529,7 +529,7 @@ require (
- 	go.yaml.in/yaml/v3 v3.0.5 // indirect
- 	golang.org/x/crypto/x509roots/fallback v0.0.0-20260113154411-7d0074ccc6f1 // indirect
- 	golang.org/x/exp/typeparams v0.0.0-20260811152304-ee035b5b010f // indirect
--	golang.org/x/telemetry v0.0.0-20260924152758-ed294f943157 // indirect
-+	golang.org/x/telemetry v0.0.0-20261009151841-97e8ea77aa2a // indirect
- 	gomodules.xyz/jsonpatch/v2 v2.4.0 // indirect
- 	google.golang.org/protobuf v1.36.12 // indirect
- 	gopkg.in/evanphx/json-patch.v4 v4.13.0 // indirect
+@@ -41,8 +41,8 @@ importers:
+         version: 4.4.7(@types/react@18.2.20)(react@18.2.0)
+     devDependencies:
+       '@types/node':
+-        specifier: ^22.14.0
+-        version: 22.14.0
++        specifier: ^26.6.6
++        version: 26.6.6
+       '@types/react':
+         specifier: ^18.0.20
+         version: 18.2.20
+@@ -51,7 +51,7 @@ importers:
+         version: 18.2.7
+       '@vitejs/plugin-react-swc':
+         specifier: ^3.6.0
+-        version: 3.6.0(vite@6.4.6(@types/node@22.14.0))
++        version: 3.6.0(vite@6.4.6(@types/node@26.6.6))
+       autoprefixer:
+         specifier: ^10.4.15
+         version: 10.4.15(postcss@8.5.32)
+@@ -84,16 +84,16 @@ importers:
+         version: 5.3.3
+       vite:
+         specifier: ^6.4.6
+-        version: 6.4.6(@types/node@22.14.0)
++        version: 6.4.6(@types/node@26.6.6)
+       vite-plugin-svgr:
+         specifier: ^4.2.0
+-        version: 4.2.0(rollup@4.68.2)(supports-color@7.2.0)(vite@6.4.6(@types/node@22.14.0))
++        version: 4.2.0(rollup@4.68.2)(supports-color@7.2.0)(vite@6.4.6(@types/node@26.6.6))
+       vite-tsconfig-paths:
+         specifier: ^3.5.0
+-        version: 3.6.0(supports-color@7.2.0)(vite@6.4.6(@types/node@22.14.0))
++        version: 3.6.0(supports-color@7.2.0)(vite@6.4.6(@types/node@26.6.6))
+       vitest:
+         specifier: ^1.6.1
+-        version: 1.6.1(@types/node@22.14.0)(jsdom@23.0.1(supports-color@7.2.0))(supports-color@7.2.0)
++        version: 1.6.1(@types/node@26.6.6)(jsdom@23.0.1(supports-color@7.2.0))(supports-color@7.2.0)
+ 
+ packages:
+ 
+@@ -1735,8 +1735,8 @@ packages:
+   '@types/json5@0.0.29':
+     resolution: {integrity: sha512-dRLjCWHYg4oaA77cxO64oO+7JwCwnIzkZPdrrC71jQmQtlhM556pwKo5bUzqvZndkVbeFLIIi+9TC40JNF5hNQ==}
+ 
+-  '@types/node@22.14.0':
+-    resolution: {integrity: sha512-Kmpl+z84ILoG+3T/zQFyAJsU6EPTmOCj8/2+83fSN6djd6I4o7uOuGIH6vq3PrjY5BGitSbFuMN18j3iknubbA==}
++  '@types/node@26.6.6':
++    resolution: {integrity: sha512-MzQj+8Kx3XI40OmUAE6Qoh58ZMNstNNMwn2nfd3qWsfe7nDNSqJNzes4njhz6AHwrSHOffSLwXU6yb474Q4aog==}
+ 
+   '@types/parse-json@4.0.2':
+     resolution: {integrity: sha512-dISoDXWWQwUquiKsyZ4Ng+HX2KsPL7LyHKHQwgGFEA3IaKac4Obd+h2a/a6waisAoepJlBcx9paWqjA8/HVjCw==}
+@@ -3508,8 +3508,8 @@ packages:
+   unbox-primitive@1.0.2:
+     resolution: {integrity: sha512-61pPlCD9h51VoreyJ0BReideM3MDKMKnh6+V9L08331ipq6Q8OFXZYiqP6n/tbHx4s5I9uRhcye6BrbkizkBDw==}
+ 
+-  undici-types@6.21.0:
+-    resolution: {integrity: sha512-iwDZqg0QAGrg9Rav5H4n0M64c3mkR59cJ6wQp+7C4nI0gsmExaedaYLNO44eT4AtBBwjbTiGPMlt2Md0T9H9JQ==}
++  undici-types@8.9.0:
++    resolution: {integrity: sha512-KTDyRTYX8sWmKXAikPHHSyc63CRPETMctyjKFupcC6OBLXT3xsN0e9aF7m+mIXutFWpUXuedtowG7iLOzp0kQg==}
+ 
+   unicode-canonical-property-names-ecmascript@2.0.0:
+     resolution: {integrity: sha512-yY5PpDlfVIU5+y/BSCxAJRBIS1Zc2dDG3Ujq+sR0U+JjUevW2JhocOF+soROYDSaAezOzOKuyyixhD6mBknSmQ==}
+@@ -5351,9 +5351,9 @@ snapshots:
+ 
+   '@types/json5@0.0.29': {}
+ 
+-  '@types/node@22.14.0':
++  '@types/node@26.6.6':
+     dependencies:
+-      undici-types: 6.21.0
++      undici-types: 8.9.0
+ 
+   '@types/parse-json@4.0.2': {}
+ 
+@@ -5510,10 +5510,10 @@ snapshots:
+ 
+   '@ungap/structured-clone@1.2.0': {}
+ 
+-  '@vitejs/plugin-react-swc@3.6.0(vite@6.4.6(@types/node@22.14.0))':
++  '@vitejs/plugin-react-swc@3.6.0(vite@6.4.6(@types/node@26.6.6))':
+     dependencies:
+       '@swc/core': 1.4.2
+-      vite: 6.4.6(@types/node@22.14.0)
++      vite: 6.4.6(@types/node@26.6.6)
+     transitivePeerDependencies:
+       - '@swc/helpers'
+ 
+@@ -7482,7 +7482,7 @@ snapshots:
+       has-symbols: 1.1.0
+       which-boxed-primitive: 1.0.2
+ 
+-  undici-types@6.21.0: {}
++  undici-types@8.9.0: {}
+ 
+   unicode-canonical-property-names-ecmascript@2.0.0: {}
+ 
+@@ -7533,13 +7533,13 @@ snapshots:
+ 
+   util-deprecate@1.0.2: {}
+ 
+-  vite-node@1.6.1(@types/node@22.14.0)(supports-color@7.2.0):
++  vite-node@1.6.1(@types/node@26.6.6)(supports-color@7.2.0):
+     dependencies:
+       cac: 6.7.14
+       debug: 4.4.3(supports-color@7.2.0)
+       pathe: 1.1.2
+       picocolors: 1.1.1
+-      vite: 5.4.21(@types/node@22.14.0)
++      vite: 5.4.21(@types/node@26.6.6)
+     transitivePeerDependencies:
+       - '@types/node'
+       - less
+@@ -7551,36 +7551,36 @@ snapshots:
+       - supports-color
+       - terser
+ 
+-  vite-plugin-svgr@4.2.0(rollup@4.68.2)(supports-color@7.2.0)(vite@6.4.6(@types/node@22.14.0)):
++  vite-plugin-svgr@4.2.0(rollup@4.68.2)(supports-color@7.2.0)(vite@6.4.6(@types/node@26.6.6)):
+     dependencies:
+       '@rollup/pluginutils': 5.1.0(rollup@4.68.2)
+       '@svgr/core': 8.1.0(supports-color@7.2.0)
+       '@svgr/plugin-jsx': 8.1.0(@svgr/core@8.1.0(supports-color@7.2.0))(supports-color@7.2.0)
+-      vite: 6.4.6(@types/node@22.14.0)
++      vite: 6.4.6(@types/node@26.6.6)
+     transitivePeerDependencies:
+       - rollup
+       - supports-color
+ 
+-  vite-tsconfig-paths@3.6.0(supports-color@7.2.0)(vite@6.4.6(@types/node@22.14.0)):
++  vite-tsconfig-paths@3.6.0(supports-color@7.2.0)(vite@6.4.6(@types/node@26.6.6)):
+     dependencies:
+       debug: 4.
 ```
 
-**File**: `go.sum` (modified, +14/-14)
+**File**: `tool/node.rev` (modified, +1/-1)
 ```diff
-@@ -1316,8 +1316,8 @@ golang.org/x/crypto v0.0.0-20191206172530-e9b2fee46413/go.mod h1:LzIPMQfyMNhhGPh
- golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9/go.mod h1:LzIPMQfyMNhhGPhUkYOs5KpL4U8rLKemX1yGLhDgUto=
- golang.org/x/crypto v0.0.0-20210921155107-089bfa567519/go.mod h1:GvvjBRRGRdwPK5ydBHafDWAxML/pGHZbMvKqRZ5+Abc=
- golang.org/x/crypto v0.0.0-20220622213112-05595931fe9d/go.mod h1:IxCIyHEi3zRg3s0A5j5BB6A9Jmi73HwBIUl50j+osU4=
--golang.org/x/crypto v0.58.0 h1:COkYLr4k7nDI4r6QtMML2AfzeIswWHAJthLS6K/M/54=
--golang.org/x/crypto v0.58.0/go.mod h1:Xh+kl5A+M0gMiWDytH2Hhr5Z7WbNCpv/eB/EFgfSk+w=
-+golang.org/x/crypto v0.59.0 h1:xS2jhqYbzNrpvkWP2YTDf4TJwBy3ykR03i8vFDxEc7c=
-+golang.org/x/crypto v0.59.0/go.mod h1:veDyUwATGs3c+vN3VfTbzViMGXeTBk3WyhBOkn+F/4U=
- golang.org/x/crypto/x509roots/fallback v0.0.0-20260113154411-7d0074ccc6f1 h1:EBHQuS9qI8xJ96+YRgVV2ahFLUYbWpt1rf3wPfXN2wQ=
- golang.org/x/crypto/x509roots/fallback v0.0.0-20260113154411-7d0074ccc6f1/go.mod h1:MEIPiCnxvQEjA4astfaKItNwEVZA5Ki+3+nyGbJ5N18=
- golang.org/x/exp v0.0.0-20260908205506-85c1c2202aba h1:Ck8QetSgk912qxWLMCKxd0in+aiyBQyDSMae6e/xmpU=
-@@ -1336,8 +1336,8 @@ golang.org/x/mod v0.4.1/go.mod h1:s0Qsj1ACt9ePp/hMypM3fl4fZqREWJwdYDEqhRiZZUA=
- golang.org/x/mod v0.6.0-dev.0.20220106191415-9b9b3d81d5e3/go.mod h1:3p9vT2HGsQu2K1YbXdKPJLVgG5VJdoTa1poYQBtP1AY=
- golang.org/x/mod v0.6.0-dev.0.20220419223038-86c51ed26bb4/go.mod h1:jJ57K6gSWd91VN4djpZkiMVwK6gcyfeH4XE8wZrZaV4=
- golang.org/x/mod v0.8.0/go.mod h1:iBbtSCu2XBx23ZKBPSOrRkjjQPZFPuis4dIYUhu/chs=
--golang.org/x/mod v0.41.0 h1:qJmnOUb4YB+FsEuM3HcWucdZASCPGhsX6uljO6pog0c=
--golang.org/x/mod v0.41.0/go.mod h1:Ek9pY8RKWXwsWvd3rQiHYtMqkjSUV+s1Rj7j4H5Ur6o=
-+golang.org/x/mod v0.43.0 h1:MFuq5J6s35W9D3IjkwyWc9vHh0nENOrt5K8Iof4ofmg=
-+golang.org/x/mod v0.43.0/go.mod h1:4ec1JnuyBz5+FIVhg86UsA39YG8BpnrZdJYSNHmGzHY=
- golang.org/x/net v0.0.0-20181114220301-adae6a3d119a/go.mod h1:mL1N/T3taQHkDXs73rZJwtUhF3w3ftmwwsq0BUmARs4=
- golang.org/x/net v0.0.0-20190404232315-eb5bcb51f2a3/go.mod h1:t9HGtf8HONx5eT2rtn7q6eTqICYqUVnKs3thJo3Qplg=
- golang.org/x/net v0.0.0-20190613194153-d28f0bde5980/go.mod h1:z5CRVTTTmAJ677TzLLGU+0bjPO0LkuOLi4/5GtJWs/s=
-@@ -1364,8 +1364,8 @@ golang.org/x/sync v0.0.0-20201020160332-67f06af15bc9/go.mod h1:RxMgew5VJxzue5/jJ
- golang.org/x/sync v0.0.0-20210220032951-036812b2e83c/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
- golang.org/x/sync v0.0.0-20220722155255-886fb9371eb4/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
- golang.org/x/sync v0.1.0/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
--golang.org/x/sync v0.24.0 h1:iqiDrGoDgyuvAKrhLQthUEzU/R378N78gXbBjxed7oA=
--golang.org/x/sync v0.24.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
-+golang.org/x/sync v0.25.0 h1:dJnifr0nMV8/SBnBvdo4eSGGnrc3O4FFx6IqvtLcmRs=
-+golang.org/x/sync v0.25.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
- golang.org/x/sys v0.0.0-20180905080454-ebe1bf3edb33/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
- golang.org/x/sys v0.0.0-20181116152217-5ac8a444bdc5/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
- golang.org/x/sys v0.0.0-20190215142949-d0b11bdaac8a/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
-@@ -1403,21 +1403,21 @@ golang.org/x/sys v0.10.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
- golang.org/x/sys v0.12.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
- golang.org/x/sys v0.50.0 h1:dkKZEFTEKaLr1sjhs0WiKqoi8Jj5nHbS3Njmx1UoMJs=
- golang.org/x/sys v0.50.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
--golang.org/x/telemetry v0.0.0-20260924152758-ed294f943157 h1:DftxASHKl6JolFPqoN+2WrFO53JvkHwRXvFqf8gsivA=
--golang.org/x/telemetry v0.0.0-20260924152758-ed294f943157/go.mod h1:i+ivNqjDnTF3WTElsdk5g9V5DTSBYgdNo7xTU9SDwYA=
-+golang.org/x/telemetry v0.0.0-20261009151841-97e8ea77aa2a h1:wnveMBKHwx8/nIb8WYT5P9vtefdXOvIWxzycCkc5n6Q=
-+golang.org/x/telemetry v0.0.0-20261009151841-97e8ea77aa2a/go.mod h1:i+ivNqjDnTF3WTElsdk5g9V5DTSBYgdNo7xTU9SDwYA=
- golang.org/x/term v0.0.0-20201126162022-7de9c90e9dd1/go.mod h1:bj7SfCRtBDWHUb9snDiAeCFNEtKQo2Wmx5Cou7ajbmo=
- golang.org/x/term v0.0.0-20210927222741-03fcf44c2211/go.mod h1:jbD1KX2456YbFQfuXm/mYQcufACuNUgVhRMnK/tPxf8=
- golang.org/x/term v0.5.0/go.mod h1:jMB1sMXY+tzblOD4FWmEbocvup2/aLOaQEp7JmGp78k=
--golang.org/x/term v0.47.0 h1:cpyOwQkr2Nzxe2p6KnrTG7Ei2wtzjsuSjhpXXepZ/BM=
--golang.org/x/term v0.47.0/go.mod h1:efAfAuG6RKABvg1ArGebRkvX6LXul14SM67o2e4mUCY=
-+golang.org/x/term v0.48.0 h1:G6UU1eiSB8nl3DzeUGt7Mg+2SctI8tPS6Z5/mBt6cOk=
-+golang.org/x/term v0.48.0/go.mod h1:BRDLHCZr2SUjIeBHHpRyQeC9xzSAVbzY2rvKgafnHf4=
- golang.org/x/text v0.3.0/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=
- golang.org/x/text v0.3.2/go.mod h1:bEr9sfX3Q8Zfm5fL9x+3itogRgK3+ptLWKqgva+5dAk=
- golang.org/x/text v0.3.3/go.mod h1:5Zoc/QRtKVWzQhOtBMvqHzDpF6irO9z98xDceosuGiQ=
- golang.org/x/text v0.3.6/go.mod h1:5Zoc/QRtKVWzQhOtBMvqHzDpF6irO9z98xDceosuGiQ=
- golang.org/x/text v0.3.7/go.mod h1:u+2+/6zg+i71rQMx5EYifcz6MCKuco9NR6JIITiCfzQ=
- gola
-```
-
-**File**: `shell.nix` (modified, +1/-1)
-```diff
-@@ -16,4 +16,4 @@
- ) {
-   src =  ./.;
- }).shellNix
--# nix-direnv cache busting line: sha256-AeOJeTGIk14FbhP5kPXRiaNHUYm7KP01F/Mx/yoheuo=
-+# nix-direnv cache busting line: sha256-RalHTs+XCjVE33hNhMKjrBeUW5LHSQjPYlRb7iIm/BA=
-```
-
-**File**: `tempfork/sshtest/ssh/certs_test.go` (modified, +0/-1)
-```diff
-@@ -297,7 +297,6 @@ func TestCertTypes(t *testing.T) {
- 		{"legacyRSASigner", &legacyRSASigner{testSigners["rsa"]}, KeyAlgoRSA},
- 		{"multiAlgoRSASignerSHA256", multiAlgoSignerSHA256, KeyAlgoRSASHA256},
- 		{"multiAlgoRSASignerSHA512", multiAlgoSignerSHA512, KeyAlgoRSASHA512},
--		{CertAlgoDSAv01, testSigners["dsa"], ""},
- 	}
- 
- 	k, err := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
-```
-
-**File**: `tempfork/sshtest/ssh/client_auth_test.go` (modified, +4/-18)
-```diff
-@@ -261,26 +261,12 @@ func TestAuthMethodInvalidPublicKey(t *testing.T) {
- 	config := &ClientConfig{
- 		User: "testuser",
- 		Auth: []AuthMethod{
--			PublicKeys(testSigners["dsa"]),
-+			PublicKeys(testSigners["ed25519"]),
- 		},
- 	}
- 
- 	if err := tryAuth(t, config); err == nil {
--		t.Fatalf("dsa private key should not have authenticated with rsa public key")
--	}
--}
--
--// the client should authenticate with the second key
--func TestAuthMethodRSAandDSA(t *testing.T) {
--	config := &ClientConfig{
--		User: "testuser",
--		Auth: []AuthMethod{
--			PublicKeys(testSigners["dsa"], testSigners["rsa"]),
--		},
--		HostKeyCallback: InsecureIgnoreHostKey(),
--	}
--	if err := tryAuth(t, config); err != nil {
--		t.Fatalf("client could not authenticate with rsa key: %v", err)
-+		t.Fatalf("ed25519 private key should not have authenticated with rsa public key")
- 	}
- }
- 
-@@ -414,7 +400,7 @@ func TestClientLoginCert(t *testing.T) {
- 	cert.Serial = 1
- 
- 	// sign with wrong key
--	cert.SignCert(rand.Reader, testSigners["dsa"])
-+	cert.SignCert(rand.Reader, testSigners["ed25519"])
- 	if err := tryAuth(t, clientConfig); err == nil {
- 		t.Errorf("cert login passed with non-authoritative key")
- 	}
-@@ -673,7 +659,7 @@ func TestClientAuthMaxAuthTries(t *testing.T) {
- func TestClientAuthMaxAuthTriesPublicKey(t *testing.T) {
- 	signers := []Signer{}
- 	for i := 0; i < 6; i++ {
--		signers = append(signers, testSigners["dsa"])
-+		signers = append(signers, testSigners["ed25519"])
- 	}
- 
- 	validConfig := &ClientConfig{
-```
-
-**File**: `tempfork/sshtest/ssh/keys_test.go` (modified, +0/-20)
-```diff
-@@ -216,26 +216,6 @@ func TestParseECPrivateKey(t *testing.T) {
- 	}
- }
- 
--func TestParseDSA(t *testing.T) {
--	// We actually exercise the ParsePrivateKey codepath here, as opposed to
--	// using the ParseRawPrivateKey+NewSignerFromKey path that testdata_test.go
--	// uses.
--	s, err := ParsePrivateKey(testdata.PEMBytes["dsa"])
--	if err != nil {
--		t.Fatalf("ParsePrivateKey returned error: %s", err)
--	}
--
--	data := []byte("sign me")
--	sig, err := s.Sign(rand.Reader, data)
--	if err != nil {
--		t.Fatalf("dsa.Sign: %v", err)
--	}
--
--	if err := s.PublicKey().Verify(data, sig); err != nil {
--		t.Errorf("Verify failed: %v", err)
--	}
--}
--
- // Tests for authorized_keys parsing.
- 
- // getTestKey returns a public key, and its base64 encoding.
+@@ -1 +1 @@
+-22.23.4
++26.13.1
 ```
 
 ---
 
-### Incident Patch 2: `13af579d` (2026-11-16)
-**Commit Message**: ipn/ipnlocal: resend UserProfiles to IPN bus watchers after a profile change
+### Incident Patch 2: `4f19a4af` (2026-11-17)
+**Commit Message**: feature/conn25: reject Magic IPs whose Transit IP isn't in WireGuard yet (#22374)
 
-A watch session's UserProfiles dedup state was only reset when the
-self node delivered to it changed, as of c9fb05b6f512. Switching to
-a profile that never gets a self node, such as a stopped or logged
-out one, and back delivered the same self node again, so the profiles
-were not resent to watchers that had dropped them on the switch. The
-Windows GUI then listed no tagged or other users' devices.
+A Magic IP gets its address assignment when the DNS response is rewritten,
+but the Transit IP it maps to only becomes usable later: handleAddressAssignment
+registers it with the connector over PeerAPI, and only then does
+addTransitIPForConnector put it in byConnKey, where extraWireGuardAllowedIPs
+picks it up and hands it to WireGuard as an allowed IP for that peer.
 
-Reset the dedup state on a profile change as well.
+Until then, transitIPForMagicIP would happily return the Transit IP, the
+datapath would DNAT to it, and WireGuard would drop the packet because no
+peer claims the address. The client application saw a black hole and hung.
+That window stays open indefinitely when the registration never lands: a
+failed PeerAPI request, a full assignment queue, or a reset that clears
+byConnKey.
 
-Updates #19889
-Updates tailscale/corp#51597
+transitIPForMagicIP now checks that the Transit IP is registered under its
+connector's node key, and returns the new ErrTransitIPNotRoutable if it
+isn't. The datapath treats that like an unknown Magic IP and injects an
+ICMP host unreachable, so the application fails fast instead of hanging.
 
-Signed-off-by: Nick Khyl <[REDACTED_EMAIL]>
+Fixes https://github.com/tailscale/corp/issues/50405
 
-**File**: `ipn/ipnlocal/local.go` (modified, +10/-0)
+Change-Id: Id232e27063
+
+**File**: `feature/conn25/client.go` (modified, +33/-6)
 ```diff
-@@ -207,6 +207,8 @@ type watchSession struct {
- 	// this session via [Notify.SelfChange]. A change to self is a profile
- 	// boundary for implicit bus state, so per-session dedup state such as
- 	// lastSentUserProfile must be reset when this identity changes.
-+	// It is itself reset on a profile change, as the new profile may
-+	// have no self node.
- 	lastSentSelf tailcfg.NodeView
+@@ -42,6 +42,25 @@ type client struct {
+ 	byConnKey       map[key.NodePublic]set.Set[netip.Prefix]
+ }
  
- 	// policyUID is the user ID used for policy snapshot scoping.
-@@ -8824,6 +8826,14 @@ func (b *LocalBackend) resetForProfileChangeLocked() error {
- 		return nil
- 	}
- 	b.closeDiskCacheLocked()
-+	// IPN bus watchers may drop the old node's implicit bus state
-+	// on a profile switch, and the new profile may never deliver
-+	// a self node to mark the boundary, such as when the new profile's
-+	// node key has expired.
-+	for _, sess := range b.notifyWatchers {
-+		sess.lastSentUserProfile = nil
-+		sess.lastSentSelf = tailcfg.NodeView{}
++// errNoMagicIPAssignment is returned by [client.PrepareNewFlowForMagicIP] when
++// this client holds no address assignment for the given Magic IP.
++var errNoMagicIPAssignment = errors.New("no address assignment for magic IP")
++
++// transitIPRoutableLocked reports whether as's Transit IP is registered under
++// its connector's node key, i.e. whether [client.extraWireGuardAllowedIPs]
++// will tell WireGuard to route packets for it to that connector. Until it is,
++// sending to the Transit IP would be a black hole: the assignment exists, but
++// no peer claims the address.
++// c.mu must be held.
++func (c *client) transitIPRoutableLocked(as *addrs) bool {
++	conn := as.connectorAddr.node
++	if !conn.Valid() || conn.Key().IsZero() {
++		return false
 +	}
- 	if buildfeatures.HasDNS {
- 		if dm, ok := b.sys.DNSManager.GetOK(); ok {
- 			dm.Resolver().ClearNegativeCache()
-```
-
-**File**: `ipn/ipnlocal/local_test.go` (modified, +35/-0)
-```diff
-@@ -3316,6 +3316,41 @@ func TestNotifyForSessionUserProfilesDedupResetsOnSelfChange(t *testing.T) {
++	tip := as.connectorAddr.transit
++	return c.byConnKey[conn.Key()].Contains(netip.PrefixFrom(tip, tip.BitLen()))
++}
++
+ // linkLocalAllow returns true if the provided packet with a link-local Dst address has a
+ // Dst that is one of our transit IPs, and false otherwise.
+ // Tailscale's wireguard filters drop link-local unicast packets (see [wgengine/filter/filter.go])
+@@ -240,6 +259,7 @@ func (c *client) addTransitIPForConnector(as addrs) error {
+ 	if conn.Key().IsZero() {
+ 		return fmt.Errorf("node with stable ID %q does not have a key", conn.StableID())
+ 	}
++	conn.ID()
+ 	return c.insertTransitConnMapping(as, conn.Key())
+ }
+ 
+@@ -289,17 +309,24 @@ func (r ClientFlowRef) Release() {
  	}
  }
  
-+// TestNotifyForSessionUserProfilesDedupResetsOnProfileChange tests that
-+// user profiles are resent after switching to a profile that never gets
-+// a self node, such as a logged out one, and back.
-+func TestNotifyForSessionUserProfilesDedupResetsOnProfileChange(t *testing.T) {
-+	b := newTestLocalBackend(t)
-+
-+	sess := &watchSession{
-+		sessionID: "test-session",
-+		ctx:       t.Context(),
-+		mask:      ipn.NotifyPeerChanges,
-+		ch:        make(chan *ipn.Notify, 100),
+-// PrepareNewFlowForMagicIP resolves magicIP to the transit IP currently assigned
++// prepareNewFlowForMagicIP resolves magicIP to the transit IP currently assigned
+ // to it and records that a flow is being established against that assignment,
+ // returning the reference that both names that transit IP and keeps the
+-// assignment from being reclaimed. It reports whether magicIP had an
+-// assignment at all.
+-func (c *client) PrepareNewFlowForMagicIP(magicIP netip.Addr) (ClientFlowRef, bool) {
++// assignment from being reclaimed.
++//
++// It returns [errNoMagicIPAssignment] if there is no assignment for magicIP, and
++// [ErrTransitIPNotRoutable] if there is one but its Transit IP can't carry
++// traffic yet. Nothing is counted on either error path, so the returned
++// reference is the zero value and must not be released.
++func (c *client) prepareNewFlowForMagicIP(magicIP netip.Addr) (ClientFlowRef, error) {
+ 	c.mu.Lock()
+ 	defer c.mu.Unlock()
+ 	entry, ok := c.assignments.lookupByMagicIP(magicIP)
+ 	if !ok {
+-		return ClientFlowRef{}, false
++		return ClientFlowRef{}, errNoMagicIPAssignment
 +	}
-+	self := &tailcfg.Node{ID: 1, StableID: "self", User: 10}
-+	profiles := map[tailcfg.UserID]tailcfg.UserProfileView{
-+		10: (&tailcfg.UserProfile{ID: 10, LoginName: "alice@example.com", DisplayName: "Alice"}).View(),
-+		11: (&tailcfg.UserProfile{ID: 11, LoginName: "tagged-devices", DisplayName: "Tagged Devices"}).View(),
++	if !c.transitIPRoutableLocked(entry) {
++		return ClientFlowRef{}, ErrTransitIPNotRoutable
+ 	}
+ 	transit := entry.connectorAddr.transit
+ 	entry.activeFlowCount++
+@@ -319,7 +346,7 @@ func (c *client) PrepareNewFlowForMagicIP(magicIP netip.Addr) (ClientFlowRef, bo
+ 		if entry.activeFlowCount == 0 {
+ 			entry.zeroFlowTime = c.assignments.clock.Now()
+ 		}
+-	}}, true
++	}}, nil
+ }
+ 
+ func (c *client) extraWireGuardAllowedIPs(k key.NodePublic) views.Slice[netip.Prefix] {
+```
+
+**File**: `feature/conn25/client_test.go` (modified, +98/-0)
+```diff
+@@ -482,6 +482,95 @@ func TestTransitIPConnMapping(t *testing.T) {
+ 	}
+ }
+ 
++// registerTransitIPs registers each assignment's Transit IP with its connector,
++// as the PeerAPI round trip in sendLoop does in production, so that
++// [client.prepareNewFlowForMagicIP] considers the Transit IP routable. With no
++// assignments given it registers every assignment the client currently holds,
++// for tests that create them indirectly by running a DNS response through the
++// extension.
++func registerTransitIPs(t *testing.T, c *client, assignments ...*addrs) {
++	t.Helper()
++	if len(assignments) == 0 {
++		c.mu.Lock()
++		for _, as := range c.assignments.byMagicIP {
++			assignments = append(assignments, as)
++		}
++		c.mu.Unlock()
 +	}
-+
-+	b.mu.Lock()
-+	defer b.mu.Unlock()
-+	mak.Set(&b.notifyWatchers, sess.sessionID, sess)
-+
-+	n := b.notifyForSessionLocked(sess, &ipn.Notify{SelfChange: self, UserProfiles: profiles})
-+	if got, want := len(n.UserProfiles), len(profiles); got != want {
-+		t.Fatalf("initial UserProfiles len = %d; want %d", got, want)
-+	}
-+	if err := b.resetForProfileChangeLocked(); err != nil {
-+		t.Fatal(err)
-+	}
-+	n = b.notifyForSessionLocked(sess, &ipn.Notify{SelfChange: self, UserProfiles: profiles})
-+	if got, want := len(n.UserProfiles), len(profiles); got != want {
-+		t.Fatalf("UserProfiles len after profile change = %d; want %d", got, want)
++	for _, as := range assignments {
++		if err := c.addTransitIPForConnector(*as); err != nil {
++			t.Fatal(err)
++		}
 +	}
 +}
 +
- // tests LocalBackend.updateNetmapDeltaLocked
- func TestUpdateNetmapDelta(t *testing.T) {
- 	b := newTestLocalBackend(t)
++// TestPrepareNewFlowForMagicIPRoutability checks that a Transit IP is only handed
++// to the datapath once it has been registered against its connector, which is
++// what puts it in that peer's WireGuard allowed IPs. Before that, and again
++// after a [client.reset] drops the registration, the mapping exists but
++// WireGuard would have nowhere to send the packets.
++func TestPrepareNewFlowForMagicIPRoutability(t *testing.T) {
++	magicIP := netip.MustParseAddr("100.64.0.1")
++	transitIP := netip.MustParseAddr("169.254.0.1")
++
++	c := newConn25(t.Logf).client
++	connector := (&tailcfg.Node{
++		ID:       tailcfg.NodeID(2),
++		Hostinfo: (&tailcfg.Hostinfo{AppConnector: opt.NewBool(true)}).View(),
++		Key:      key.NodePublicFromRaw32(mem.B([]byte{0: 0xff, 31: 0x02})),
++	}).View()
++	as := &addrs{
++		dst:           netip.MustParseAddr("1.2.3.1"),
++		magic:         magicIP,
++		generation:    c.currentGeneration(),
++		connectorAddr: connectorAddr{transit: transitIP, node: connector},
++		domain:        "woo.example.com.",
++		app:           "app1",
++	}
++
++	// No assignment at all yet.
++	if _, err := c.prepareNewFlowForMagicIP(magicIP); !errors.Is(err, errNoMagicIPAssignment) {
++		t.Errorf("before reserving: got error %v, want %v", err, errNoMagicIPAssignment)
++	}
++
++	// The assignment exists, but the connector hasn't acknowledged it, so the
++	// Transit IP isn't in WireGuard yet.
++	if err := c.assignments.insert(as); err != nil {
++		t.Fatal(err)
++	}
++	if _, err := c.prepareNewFlowForMagicIP(magicIP); !errors.Is(err, ErrTransitIPNotRoutable) {
++		t.Errorf("before registering with the connector: got error %v, want %v", err, ErrTransitIPNotRoutable)
++	}
++	if got := as.activeFlowCount; got != 0 {
++		t.Errorf("unroutable Transit IP counted %d flows, want 0", got)
++	}
++
++	// Registering it with the connector makes it usable.
++	if err := c.addTransitIPForConnector(*as); err != nil {
++		t.Fatal(err)
++	}
++	ref, err := c.prepareNewFlowForMagicIP(magicIP)
++	if err != nil {
++		t.Errorf("after registering with the connector: unexpected error %v", err)
++	}
++	if tip := ref.TransitIP(); tip != transitIP {
++		t.Errorf("after registering with the connector: got transit IP %v, want %v", tip, transitIP)
++	}
++	ref.Release()
++
++	// A reset clears the WireGuard registrations along with everything else.
++	c.reset()
++	fresh := *as
++	fresh.expiresAt = time.Time{}
++	fresh.generation = c.currentGeneration()
++	if err := c.assignments.insert(&fresh); err != nil {
++		t.Fatal(err)
++	}
++	if _, err := c.prepareNewFlowForMagicIP(magicIP); !errors.Is(err, ErrTransitIPNotRoutable) {
++		t.Errorf("after reset: got error %v, want %v", err, ErrTransitIPNotRoutable)
++	}
++}
++
+ func TestIsKnownTransitIP(t *testing.T) {
+ 	knownTip := netip.MustParseAddr("100.64.0.41")
+ 	unknownTip := netip.MustParseAddr("100.64.0.42")
+@@ -773,6 +862,10 @@ func TestAddressExpiryDependsOnActiveFlows(t *testing.T) {
+ 				dst:    ipOne,
+ 			}
+ 
++			// the connector acknowledges the assignment, which is what makes
++			// its Transit IP routable and so eligible to carry a flow
++			registerTransitIPs(t, c.client)
++
+ 			// there are client flows and time passes
+ 			tt.flowsAndTimeFx(c, clock, c.client.assignments.byDomainDst[ipOneDD].magic)
+ 
+@@ -843,6 +936,7 @@ func TestFlowRemovedAfterTransitIPReassigned(t *testing.T) {
+ 		t.Fatal(err)
+ 	}
+ 	transit := before.connectorAddr.transit
++	registerTransitIPs(t, c.client, before)
+ 
+ 	// A flow is established against that assignment, and then the profile
+ 	// changes and the client's state is reset out from under the flow.
+@@ -912,6 +1006,7 @@ func TestFlowRemovedDoesNotReclaimReissuedTransitIPInUse(t *testing.T) {
+ 		t.Fatal(err)
+ 	}
+ 	transit := before.connectorAddr.transit
++	registerTransitIPs(t, c.client, before)
+ 
+ 	staleRef, ok, err := c.ClientPrepareNewFlowForMagicIP(before.magic)
+ 	if err != nil || !ok {
+@@ -929,6 +1024,7 @@ func TestFlowRemovedDoesNotReclaimReissuedTransitIPInUse(t *testing.T) {
+ 	if after == before {
+ 		t.Fatal("expected a distinct assignment after reset")
+ 	}
++	registerTransitIPs(t, c.client, after)
+ 
+ 	// The reissued assignment picks up a flow of its own, which is still live
+
+```
+
+**File**: `feature/conn25/conn25.go` (modified, +8/-5)
+```diff
+@@ -310,25 +310,28 @@ func (e *extension) installHooks(dph *datapathHandler) error {
+ // that Transit IP and keeps it and its associated addresses from being removed
+ // from Conn25's state and returned to their pools while the flow uses them.
+ //
++// If m has an active address assignment whose Transit IP isn't routable yet, it
++// reports ok false and returns [ErrTransitIPNotRoutable].
++//
+ // If m has no active address assignment, it reports ok false and returns
+ // [ErrUnmappedMagicIP] when m falls in a configured Magic IP range, and a nil
+ // error when it does not, since in that case m is not a Magic IP at all and the
+ // traffic to it is potentially valid non-app-connector traffic.
+ func (c *Conn25) ClientPrepareNewFlowForMagicIP(m netip.Addr) (ClientFlowRef, bool, error) {
+-	if ref, ok := c.client.PrepareNewFlowForMagicIP(m); ok {
++	ref, err := c.client.prepareNewFlowForMagicIP(m)
++	if err == nil {
+ 		return ref, true, nil
+ 	}
++	if errors.Is(err, ErrTransitIPNotRoutable) {
++		return ClientFlowRef{}, false, err
++	}
+ 	cfg, ok := c.getConfig()
+ 	if !ok {
+ 		return ClientFlowRef{}, false, nil
+ 	}
+ 	if !cfg.ipSets.v4Magic.Contains(m) && !cfg.ipSets.v6Magic.Contains(m) {
+ 		return ClientFlowRef{}, false, nil
+ 	}
+-	// TODO(tailscale/corp#50405): Just because there is a TransitIP associated with the MagicIP,
+-	// that doesn't mean the TransitIP is ready to use. We should also make sure that the TransitIP
+-	// is installed in WireGuard for the correct node, which happens after it is registered with the
+-	// connector. Perhaps a different error message to represent that.
+ 	return ClientFlowRef{}, false, ErrUnmappedMagicIP
+ }
+ 
+```
+
+**File**: `feature/conn25/conn25_test.go` (modified, +103/-44)
+```diff
+@@ -1213,6 +1213,7 @@ var testConnectorPeer = (&tailcfg.Node{
+ 	Addresses: []netip.Prefix{netip.PrefixFrom(testConnectorAddr, testConnectorAddr.BitLen())},
+ 	Hostinfo:  (&tailcfg.Hostinfo{AppConnector: opt.NewBool(true)}).View(),
+ 	Online:    new(true),
++	Key:       key.NodePublicFromRaw32(mem.B([]byte{0: 0xff, 31: 0x63})),
+ }).View()
+ 
+ var nodeViewComparer = cmp.Comparer(func(a, b tailcfg.NodeView) bool {
+@@ -3435,74 +3436,132 @@ func TestClientPrepareNewFlowForMagicIPResolution(t *testing.T) {
+ 	v6NonMip := netip.MustParseAddr("fd7a:115c:a1e0:a99c:11::")
+ 	v6Dst := netip.MustParseAddr("::1")
+ 
++	// connector is the connector both assignments below are made against.
++	// otherConnector stands in for a different connector, to check that a
++	// Transit IP registered against the wrong peer doesn't count as routable.
++	connector := (&tailcfg.Node{
++		ID:       tailcfg.NodeID(99),
++		Hostinfo: (&tailcfg.Hostinfo{AppConnector: opt.NewBool(true)}).View(),
++		Key:      key.NodePublicFromRaw32(mem.B([]byte{0: 0xff, 31: 0x01})),
++	}).View()
++	otherConnector := (&tailcfg.Node{
++		ID:       tailcfg.NodeID(98),
++		Hostinfo: (&tailcfg.Hostinfo{AppConnector: opt.NewBool(true)}).View(),
++		Key:      key.NodePublicFromRaw32(mem.B([]byte{0: 0xff, 31: 0x02})),
++	}).View()
++
+ 	for _, tt := range []struct {
+-		name    string
+-		mip     netip.Addr
+-		wantTip netip.Addr
+-		wantOk  bool
+-		wantErr error
++		name string
++		mip  netip.Addr
++		// registerWith is the connector the assignments are registered against, as [client.addTransitIPForConnector]
++		// would once the connector had acknowledged them.
++		registerWith tailcfg.NodeView
++		wantTip      netip.Addr
++		wantOk       bool
++		wantErr      error
+ 	}{
+ 		{
+-			name:    "not-a-magic-ip",
+-			mip:     nonMip,
+-			wantTip: netip.Addr{},
+-			wantErr: nil,
++			name:         "not-a-magic-ip",
++			mip:          nonMip,
++			registerWith: connector,
++			wantTip:      netip.Addr{},
++			wantErr:      nil,
+ 		},
+ 		{
+-			name:    "unmapped-magic-ip",
+-			mip:     unmappedMip,
+-			wantTip: netip.Addr{},
+-			wantErr: ErrUnmappedMagicIP,
++			name:         "unmapped-magic-ip",
++			mip:          unmappedMip,
++			registerWith: connector,
++			wantTip:      netip.Addr{},
++			wantErr:      ErrUnmappedMagicIP,
+ 		},
+ 		{
+-			name:    "mapped-magic-ip",
+-			mip:     mappedMip,
+-			wantTip: mappedTip,
+-			wantOk:  true,
+-			wantErr: nil,
++			name:         "mapped-magic-ip",
++			mip:          mappedMip,
++			registerWith: connector,
++			wantTip:      mappedTip,
++			wantOk:       true,
++			wantErr:      nil,
+ 		},
+ 		{
+-			name:    "v6-not-magic",
+-			mip:     v6NonMip,
++			name:    "mapped-magic-ip-not-registered",
++			mip:     mappedMip,
+ 			wantTip: netip.Addr{},
+-			wantErr: nil,
++			wantErr: ErrTransitIPNotRoutable,
+ 		},
+ 		{
+-			name:    "v6-unmapped-magic-ip",
+-			mip:     v6UnmappedMip,
+-			wantTip: netip.Addr{},
+-			wantErr: ErrUnmappedMagicIP,
++			name:         "mapped-magic-ip-registered-with-other-connector",
++			mip:          mappedMip,
++			registerWith: otherConnector,
++			wantTip:      netip.Addr{},
++			wantErr:      ErrTransitIPNotRoutable,
++		},
++		{
++			name:         "v6-not-magic",
++			mip:          v6NonMip,
++			registerWith: connector,
++			wantTip:      netip.Addr{},
++			wantErr:      nil,
++		},
++		{
++			name:         "v6-unmapped-magic-ip",
++			mip:          v6UnmappedMip,
++			registerWith: connector,
++			wantTip:      netip.Addr{},
++			wantErr:      ErrUnmappedMagicIP,
++		},
++		{
++			name:         "v6-mapped-magic-ip",
++			mip:          v6MappedMip,
++			registerWith: connector,
++			wantTip:      v6MappedTip,
++			wantOk:       true,
++			wantErr:      nil,
+ 		},
+ 		{
+-			name:    "v6-mapped-magic-ip",
++			name:    "v6-mapped-magic-ip-not-registered",
+ 			mip:     v6MappedMip,
+-			wantTip: v6MappedTip,
+-			wantOk:  true,
+-			wantErr: nil,
++			wantTip: netip.Addr{},
++			wantErr: ErrTransitIPNotRoutable,
+ 		},
+ 	} {
+ 		t.Run(tt.name, func(t *testing.T) {
+ 			c := newConn25(t.Logf)
+ 			c.reconfig(cfg)
+ 
+-			if err := c.client.assignments.insert(&addrs{
+-				magic: mappedMip,
+-				connectorAddr: connectorAddr{
+-					transit: mappedTip,
++			assignments := []*addrs{
++				{
++					magic: mappedMip,
++					connectorAddr: connectorAddr{
++						transit: mappedTip,
++						node:    connector,
++					},
++					dst:        dst,
++					generation: c.client.currentGeneration(),
+ 				},
+-				dst: dst,
+-			}); err != nil {
+-				t.Fatal(err)
+-			}
+-			if err := c.client.assignments.insert(&addrs{
+-				magic: v6MappedMip,
+-				connectorAddr: connectorAddr{
+-					transit: v6MappedTip,
++				{
++					magic: v6MappedMip,
++					connectorAddr: connectorAddr{
++						transit: v6MappedTip,
++						node:    connector,
++					},
++					dst:        v6Dst,
++					generation: c.client.currentGeneration(),
+ 				},
+-				dst: v6Dst,
+-			}); err != nil {
+-				t.Fatal(err)
+ 			}
++			for _, as := range assignments {
++				if err := c.client.assignments.insert(as); err != nil {
++					t.Fatal(err)
++				}
++				if !tt.registerWith.Va
+```
+
+**File**: `feature/conn25/datapath.go` (modified, +19/-3)
+```diff
+@@ -19,7 +19,13 @@ import (
+ )
+ 
+ var (
+-	ErrUnmappedMagicIP         = errors.New("unmapped magic IP")
++	ErrUnmappedMagicIP = errors.New("unmapped magic IP")
++
++	// ErrTransitIPNotRoutable is returned when a Magic IP is mapped to a
++	// Transit IP, but that Transit IP has not yet been registered with its
++	// connector and installed in WireGuard, so packets sent to it would be dropped.
++	ErrTransitIPNotRoutable = errors.New("transit IP not yet routable")
++
+ 	ErrUnmappedSrcAndTransitIP = errors.New("unmapped src and transit IP")
+ )
+ 
+@@ -51,6 +57,15 @@ type Conn25Datapath interface {
+ 	// flow at all. Implementations must count nothing and return ok false and
+ 	// the zero [ClientFlowRef] otherwise, including whenever they return a
+ 	// non-nil error, since the caller does not release on those paths.
++	//
++	// If magicIP is within a configured Magic IP range for an app on the client,
++	// but not mapped to an active Transit IP, implementations should return
++	// [ErrUnmappedMagicIP]. If it is mapped to a Transit IP, but that Transit IP
++	// is not yet usable because WireGuard has not been told to route it to the
++	// connector, implementations should return [ErrTransitIPNotRoutable]. If
++	// magicIP is not within a configured Magic IP range, i.e. it is not actually
++	// a Magic IP, implementations should report ok false with a nil error to
++	// indicate this potentially valid, non-app-connector traffic.
+ 	ClientPrepareNewFlowForMagicIP(magicIP netip.Addr) (ref ClientFlowRef, ok bool, err error)
+ }
+ 
+@@ -242,8 +257,9 @@ func (dh *datapathHandler) HandlePacketFromTunDevice(p *packet.Parsed, tun *tstu
+ 	ref, ok, err := dh.conn25.ClientPrepareNewFlowForMagicIP(magicIP)
+ 	if err != nil {
+ 		// No reference to release: an error means nothing was counted.
+-		if errors.Is(err, ErrUnmappedMagicIP) {
+-			// Couldn't find a mapping. Tell the local application the host is
++		if errors.Is(err, ErrUnmappedMagicIP) || errors.Is(err, ErrTransitIPNotRoutable) {
++			// Either there's no mapping, or there is one but it can't carry
++			// traffic yet. Tell the local application the host is
+ 			// unreachable so it can recover quickly instead of blackholing.
+ 			dh.sendICMPHostUnreachable(p, tun)
+ 			return filter.Drop
+```
+
+**File**: `feature/conn25/datapath_test.go` (modified, +74/-49)
+```diff
+@@ -51,36 +51,39 @@ type testNet struct {
+ 	name      string
+ 	ipVersion uint8
+ 
+-	clientSrcIP   netip.Addr // a client's Tailscale IP
+-	unknownSrcIP  netip.Addr // a Tailscale IP with no mapping on the connector
+-	magicIP       netip.Addr // a Magic IP mapped to transitIP
+-	unusedMagicIP netip.Addr // a Magic IP with no active Transit IP mapping
+-	transitIP     netip.Addr
+-	realIP        netip.Addr // the internet-facing address behind transitIP
++	clientSrcIP       netip.Addr // a client's Tailscale IP
++	unknownSrcIP      netip.Addr // a Tailscale IP with no mapping on the connector
++	magicIP           netip.Addr // a Magic IP mapped to transitIP
++	unusedMagicIP     netip.Addr // a Magic IP with no active Transit IP mapping
++	unroutableMagicIP netip.Addr // a Magic IP whose Transit IP isn't installed in WireGuard yet
++	transitIP         netip.Addr
++	realIP            netip.Addr // the internet-facing address behind transitIP
+ }
+ 
+ var testNets = []testNet{
+ 	{
+ 		name:      "ipv4",
+ 		ipVersion: 4,
+ 
+-		clientSrcIP:   netip.MustParseAddr("100.70.0.1"),
+-		unknownSrcIP:  netip.MustParseAddr("100.99.99.99"),
+-		magicIP:       netip.MustParseAddr("10.64.0.1"),
+-		unusedMagicIP: netip.MustParseAddr("10.64.0.2"),
+-		transitIP:     netip.MustParseAddr("169.254.0.1"),
+-		realIP:        netip.MustParseAddr("240.64.0.1"),
++		clientSrcIP:       netip.MustParseAddr("100.70.0.1"),
++		unknownSrcIP:      netip.MustParseAddr("100.99.99.99"),
++		magicIP:           netip.MustParseAddr("10.64.0.1"),
++		unusedMagicIP:     netip.MustParseAddr("10.64.0.2"),
++		unroutableMagicIP: netip.MustParseAddr("10.64.0.3"),
++		transitIP:         netip.MustParseAddr("169.254.0.1"),
++		realIP:            netip.MustParseAddr("240.64.0.1"),
+ 	},
+ 	{
+ 		name:      "ipv6",
+ 		ipVersion: 6,
+ 
+-		clientSrcIP:   netip.MustParseAddr("fd7a:115c:a1e0::1"),
+-		unknownSrcIP:  netip.MustParseAddr("fd7a:115c:a1e0::9999"),
+-		magicIP:       netip.MustParseAddr("fd7a:115c:a1e0:a99c:100::1"),
+-		unusedMagicIP: netip.MustParseAddr("fd7a:115c:a1e0:a99c:100::2"),
+-		transitIP:     netip.MustParseAddr("fd7a:115c:a1e0:a99c:200::1"),
+-		realIP:        netip.MustParseAddr("2606:4700::6812:1a78"),
++		clientSrcIP:       netip.MustParseAddr("fd7a:115c:a1e0::1"),
++		unknownSrcIP:      netip.MustParseAddr("fd7a:115c:a1e0::9999"),
++		magicIP:           netip.MustParseAddr("fd7a:115c:a1e0:a99c:100::1"),
++		unusedMagicIP:     netip.MustParseAddr("fd7a:115c:a1e0:a99c:100::2"),
++		unroutableMagicIP: netip.MustParseAddr("fd7a:115c:a1e0:a99c:100::3"),
++		transitIP:         netip.MustParseAddr("fd7a:115c:a1e0:a99c:200::1"),
++		realIP:            netip.MustParseAddr("2606:4700::6812:1a78"),
+ 	},
+ }
+ 
+@@ -170,6 +173,8 @@ func (tn testNet) newClientDatapath(t *testing.T, throwMappingErr bool) *datapat
+ 			return tn.transitIP, nil
+ 		case tn.unusedMagicIP:
+ 			return netip.Addr{}, ErrUnmappedMagicIP
++		case tn.unroutableMagicIP:
++			return netip.Addr{}, ErrTransitIPNotRoutable
+ 		}
+ 		return netip.Addr{}, nil
+ 	}
+@@ -224,6 +229,14 @@ func TestHandlePacketFromTunDevice(t *testing.T) {
+ 				expectedDst:            netip.AddrPortFrom(tn.unusedMagicIP, serverPort),
+ 				expectedFilterResponse: filter.Drop,
+ 			},
++			{
++				description:            "drop-magic-ip-with-unroutable-transit-ip",
++				src:                    netip.AddrPortFrom(tn.clientSrcIP, clientPort),
++				dst:                    netip.AddrPortFrom(tn.unroutableMagicIP, serverPort),
++				expectedSrc:            netip.AddrPortFrom(tn.clientSrcIP, clientPort),
++				expectedDst:            netip.AddrPortFrom(tn.unroutableMagicIP, serverPort),
++				expectedFilterResponse: filter.Drop,
++			},
+ 			{
+ 				description:            "accept-dont-nat-other-mapping-error",
+ 				src:                    netip.AddrPortFrom(tn.clientSrcIP, clientPort),
+@@ -268,43 +281,55 @@ func TestHandlePacketFromTunDevice(t *testing.T) {
+ 	}
+ }
+ 
+-// TestUnmappedMagicIPICMPUnreachable verifies that a packet to a Magic IP with
+-// no active Transit IP mapping is dropped and an ICMP host-unreachable error is
++// TestUnreachableMagicIPICMPUnreachable verifies that a packet to a Magic IP
++// that can't carry traffic is dropped and an ICMP host-unreachable error is
+ // injected back toward the local host, sourced from the Magic IP and addressed
+-// to the original sender.
+-func TestUnmappedMagicIPICMPUnreachable(t *testing.T) {
++// to the original sender. A Magic IP can't carry traffic either because it has
++// no Transit IP mapping at all, or because the Transit IP it maps to hasn't
++// been installed in WireGuard for its connector yet.
++func TestUnreachableMagicIPICMPUnreachable(t *testing.T) {
+ 	const clientPort, serverPort = 1234, 80
+ 
+ 	for _, tn := range testNets {
+ 		t.Run(tn.name, func(t *testing.T) {
+-			dph := tn.newClientDatapath(t, false)
+-			chtun, tun := newChannelTUN(t)
+-
+-			// HandlePacketFromTunDevice blocks until the injected packet is
+-			// read, so drain the channel TUN concurrently.
+-			gotInboundPacketChan := make(chan []byte, 1)
+-
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #22471** (2026-11-17): client/web,tool: bump node to 26.x LTS (@mpminardi)
+- **PR #22464** (2026-11-17): client/web,release/dist: move web client from yarn to pnpm (@j--w)
+- **PR #22460** (2026-11-17): derp/xdp: don't write counters back to the per-CPU map on every packet (@mikeodr)
+- **PR #22452** (2026-11-17): go.mod: bump gvisor.dev/gvisor (@tailscale-code-updater[bot])
 - **PR #22449** (2026-11-17): go.mod: bump 5 modules (@tailscale-code-updater[bot])
 - **PR #22446** (2026-11-17): go.mod,wgengine/wgcfg: bump wg-go & make crypto queue sizing cgroup-aware (@jwhited)
-- **PR #22444** (2026-11-17): ipn/ipnlocal: resend UserProfiles to IPN bus watchers after a profile change (@nickkhyl)
-- **PR #22443** (2026-11-16): drive/driveimpl/compositedav: close idle connections of replaced children (@mmporong)
-- **PR #22432** (2026-11-16): go.mod: bump 5 modules (@tailscale-code-updater[bot])
-- **PR #22428** (2026-11-16): wgengine/magicsock: apply DERP home and endpoints deltas to peersByID (@bradfitz)
 
 ---
 
@@ -1210,31 +1665,33 @@ Signed-off-by: Nick Khyl <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. go.mod: bump 5 modules
+## X. client/web,tool: bump node to 26.x LTS
 
 **RULE**:
-When implementing operations in `flake.nix`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `client/web/package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `46ad4538`: go.mod: bump 5 modules. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8a1840ef`: client/web,tool: bump node to 26.x LTS. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `flake.nix`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `client/web/package.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-# nix-direnv cache busting line: sha256-RalHTs+XCjVE33hNhMKjrBeUW5LHSQjPYlRb7iIm/BA=
+    "node": "26.13.1"
+    "@types/node": "^26.6.6",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-# nix-direnv cache busting line: sha256-AeOJeTGIk14FbhP5kPXRiaNHUYm7KP01F/Mx/yoheuo=
+    "node": "22.23.4"
+    "@types/node": "^22.14.0",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `46ad4538` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8a1840ef` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

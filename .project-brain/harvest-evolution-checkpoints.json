@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T21:57:35.543Z",
+  "last_updated": "2026-11-17T22:11:16.832Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-17T19:12:36.114Z",
@@ -118,12 +118,12 @@
       "staged_for_review": 1
     },
     "tailscale-tailscale-learnings.md": {
-      "processed_at": "2026-11-17T05:58:19.345Z",
+      "processed_at": "2026-11-17T22:11:15.946Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
     "apache-arrow-learnings.md": {
-      "processed_at": "2026-11-16T14:07:05.422Z",
+      "processed_at": "2026-11-17T22:11:14.338Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1768,8 +1768,8 @@
       "staged_for_review": 0
     },
     "hf-audio-cpp-audio.cpp-gguf-learnings.md": {
-      "processed_at": "2026-11-13T12:09:03.823Z",
-      "promoted_canonical": 1,
+      "processed_at": "2026-11-17T22:11:15.551Z",
+      "promoted_canonical": 0,
       "staged_for_review": 0
     },
     "hf-black-forest-labs-flux.1-dev-learnings.md": {
@@ -3363,7 +3363,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 1722,
+  "total_dossiers_evaluated": 1725,
   "total_canonical_promoted": 326,
-  "total_staged_for_review": 1342
+  "total_staged_for_review": 1344
 }

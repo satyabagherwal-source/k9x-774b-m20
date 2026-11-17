@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-17T21:57:33.641Z",
+  "updated_at": "2026-11-17T22:11:16.110Z",
   "stats": {
-    "total_discovered": 5159,
-    "approved_pending_harvest": 4870,
+    "total_discovered": 5171,
+    "approved_pending_harvest": 4882,
     "harvested_count": 0,
     "rejected_count": 289,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 4855,
+      "COMMUNITY_AND_EXPERT": 4867,
       "OFFICIAL_DOCUMENTATION": 163,
       "STANDARDS_AND_SPECIFICATIONS": 108,
       "ENGINEERING_BLOGS": 3,
@@ -111496,6 +111496,270 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-harness-hub-qwen3.8-27b-pi-adapted-learnings.md",
         "fileName": "hf-harness-hub-qwen3.8-27b-pi-adapted-learnings.md"
+      }
+    },
+    "SRC-77DFDA6816A9": {
+      "id": "SRC-77DFDA6816A9",
+      "url": "https://github.com/apache/infrastructure-actions",
+      "title": "https://github.com/apache/infrastructure-actions",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T22:11:14.412Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-arrow-learnings.md",
+        "fileName": "apache-arrow-learnings.md"
+      }
+    },
+    "SRC-01F6FAAF90B8": {
+      "id": "SRC-01F6FAAF90B8",
+      "url": "https://github.com/apache/infrastructure-actions/commit/762a01f36a09ab9e0e4c8af8f4b0f2ed12683df5",
+      "title": "https://github.com/apache/infrastructure-actions/commit/762a01f36a09ab9e0e4c8af8f4b0f2ed12683df5",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T22:11:14.454Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-arrow-learnings.md",
+        "fileName": "apache-arrow-learnings.md"
+      }
+    },
+    "SRC-7D423814535E": {
+      "id": "SRC-7D423814535E",
+      "url": "https://redirect.github.com/apache/infrastructure-actions/issues/1534",
+      "title": "https://redirect.github.com/apache/infrastructure-actions/issues/1534",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T22:11:14.499Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-arrow-learnings.md",
+        "fileName": "apache-arrow-learnings.md"
+      }
+    },
+    "SRC-F04745468EE8": {
+      "id": "SRC-F04745468EE8",
+      "url": "https://github.com/apache/infrastructure-actions/commit/48e6b4cd4def0995346e9a48ce9b9e1598b407fc",
+      "title": "https://github.com/apache/infrastructure-actions/commit/48e6b4cd4def0995346e9a48ce9b9e1598b407fc",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T22:11:14.545Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-arrow-learnings.md",
+        "fileName": "apache-arrow-learnings.md"
+      }
+    },
+    "SRC-BB8ADA545525": {
+      "id": "SRC-BB8ADA545525",
+      "url": "https://github.com/apache/infrastructure-actions/commit/5bbd162d9e5952388608e1ae502ec644b99ee358",
+      "title": "https://github.com/apache/infrastructure-actions/commit/5bbd162d9e5952388608e1ae502ec644b99ee358",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T22:11:14.585Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-arrow-learnings.md",
+        "fileName": "apache-arrow-learnings.md"
+      }
+    },
+    "SRC-1D216C064162": {
+      "id": "SRC-1D216C064162",
+      "url": "https://redirect.github.com/apache/infrastructure-actions/issues/1533",
+      "title": "https://redirect.github.com/apache/infrastructure-actions/issues/1533",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T22:11:14.630Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-arrow-learnings.md",
+        "fileName": "apache-arrow-learnings.md"
+      }
+    },
+    "SRC-0E1E449078F6": {
+      "id": "SRC-0E1E449078F6",
+      "url": "https://github.com/apache/infrastructure-actions/commit/39fedec0756fecc6c05a89266fd6c5c4a9a93b94",
+      "title": "https://github.com/apache/infrastructure-actions/commit/39fedec0756fecc6c05a89266fd6c5c4a9a93b94",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T22:11:14.675Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-arrow-learnings.md",
+        "fileName": "apache-arrow-learnings.md"
+      }
+    },
+    "SRC-8E08C35AC67B": {
+      "id": "SRC-8E08C35AC67B",
+      "url": "https://redirect.github.com/apache/infrastructure-actions/issues/1531",
+      "title": "https://redirect.github.com/apache/infrastructure-actions/issues/1531",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T22:11:14.715Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-arrow-learnings.md",
+        "fileName": "apache-arrow-learnings.md"
+      }
+    },
+    "SRC-33C95895A694": {
+      "id": "SRC-33C95895A694",
+      "url": "https://bugs.python.org/issue42248",
+      "title": "https://bugs.python.org/issue42248",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T22:11:14.803Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-arrow-learnings.md",
+        "fileName": "apache-arrow-learnings.md"
+      }
+    },
+    "SRC-A2D178EFDF89": {
+      "id": "SRC-A2D178EFDF89",
+      "url": "https://github.com/tailscale/tailscale/issues/20534",
+      "title": "https://github.com/tailscale/tailscale/issues/20534",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T22:11:16.024Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
+        "fileName": "tailscale-tailscale-learnings.md"
+      }
+    },
+    "SRC-2E84E66C83D0": {
+      "id": "SRC-2E84E66C83D0",
+      "url": "https://github.com/tailscale/corp/issues/50402",
+      "title": "https://github.com/tailscale/corp/issues/50402",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T22:11:16.065Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
+        "fileName": "tailscale-tailscale-learnings.md"
+      }
+    },
+    "SRC-3BBE874FA7F2": {
+      "id": "SRC-3BBE874FA7F2",
+      "url": "https://github.com/tailscale/corp/issues/50405",
+      "title": "https://github.com/tailscale/corp/issues/50405",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T22:11:16.110Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
+        "fileName": "tailscale-tailscale-learnings.md"
       }
     }
   }

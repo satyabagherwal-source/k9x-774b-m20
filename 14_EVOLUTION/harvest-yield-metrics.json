@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T21:56:55.768Z",
-  "total_cycles_completed": 10281,
-  "total_learnings_persisted": 10281,
-  "total_rules_promoted": 9820,
+  "last_updated": "2026-11-17T22:11:10.884Z",
+  "total_cycles_completed": 10284,
+  "total_learnings_persisted": 10284,
+  "total_rules_promoted": 9822,
   "history": [
-    {
-      "timestamp": "2026-11-17T09:47:33.341Z",
-      "repository": "StarRocks/starrocks",
-      "learningId": "learn-github-starrocks-starrocks",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T10:10:56.919Z",
-      "repository": "NVIDIA/cuda-rust",
-      "learningId": "learn-github-nvidia-cuda-rust",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T10:11:01.969Z",
-      "repository": "karakeep-app/karakeep",
-      "learningId": "learn-github-karakeep-app-karakeep",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-17T10:11:09.734Z",
       "repository": "apache/pinot",
@@ -1403,6 +1382,27 @@
       "repository": "Bitterbot-AI/bitterbot-desktop",
       "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T22:10:59.588Z",
+      "repository": "audio-cpp/audio.cpp-gguf",
+      "learningId": "learn-huggingface-audio-cpp-audio-cpp-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T22:11:01.961Z",
+      "repository": "apache/arrow",
+      "learningId": "learn-github-apache-arrow",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T22:11:10.884Z",
+      "repository": "tailscale/tailscale",
+      "learningId": "learn-github-tailscale-tailscale",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

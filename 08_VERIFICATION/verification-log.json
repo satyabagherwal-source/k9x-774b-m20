@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261115-QWHG",
-    "timestamp": "2026-11-15T23:26:05.044Z",
-    "repository": "argoproj/argo-events",
-    "learningId": "learn-github-argoproj-argo-events",
-    "contentHash": "ab1f2b6d8f8b8113f0463f385d68cc970cc76704bc90f5647ae532394caaebdb",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261115-8RN3",
-    "timestamp": "2026-11-15T23:39:58.575Z",
-    "repository": "sfu-db/connector-x",
-    "learningId": "learn-github-sfu-db-connector-x",
-    "contentHash": "d20ece584333aab26e520d95f3e50038d47955f1366eb336c9c9a559655ca310",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261115-Y68C",
-    "timestamp": "2026-11-15T23:59:43.884Z",
-    "repository": "webAI-Official/TwIL-8B",
-    "learningId": "learn-huggingface-webai-official-twil-8b",
-    "contentHash": "2d8600d24a68ab9f5e73738015d2a6d224b1bd13178d7f0ae8ca329d0c53d445",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261115-YDGZ",
     "timestamp": "2026-11-15T23:59:53.267Z",
     "repository": "Agent-Field/agentfield",
@@ -7492,6 +7447,51 @@
     "contentHash": "0bf3516a067582afc7bb1acf89a52a01d30035233f3fcbdf0c0cf96acd659cae",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-Y1DM",
+    "timestamp": "2026-11-17T22:10:59.578Z",
+    "repository": "audio-cpp/audio.cpp-gguf",
+    "learningId": "learn-huggingface-audio-cpp-audio-cpp-gguf",
+    "contentHash": "93f748a7b6a07b7c9fc1ae90436ef05b2a56e1a0e7728f594a62c871d6efacb5",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-Y37I",
+    "timestamp": "2026-11-17T22:11:01.950Z",
+    "repository": "apache/arrow",
+    "learningId": "learn-github-apache-arrow",
+    "contentHash": "ac22cb855f48d02538f4579371cfd4915113d2763ea6c390d939705b26e31fe1",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-YA3E",
+    "timestamp": "2026-11-17T22:11:10.874Z",
+    "repository": "tailscale/tailscale",
+    "learningId": "learn-github-tailscale-tailscale",
+    "contentHash": "1a19cb22dee23b843c2f1d9715f815f221a0686e4d4f73065f9fd3a392b08f3a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source**: github ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
-> **Source Version**: `9123e6e2`  
+> **Source Version**: `8a1840ef`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-17T17:20:23.751Z  
+> **Timestamp**: 2026-11-17T22:11:09.764Z  
 > **Learning ID**: `learn-github-tailscale-tailscale`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T17:20:23.746Z  
+> **Harvest Timestamp**: 2026-11-17T22:11:09.758Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The easiest, most secure way to use WireGuard and 2FA.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 39236 stars
+- **Stars / Engagement**: 39242 stars
 
 ---
 
@@ -821,643 +821,803 @@ export const sessionStateStorage: IPNStateStorage = {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9123e6e2` (2026-11-17)
-**Commit Message**: cmd/tsconnect: upgrade tsconnect from yarn to pnpm (#22437)
+### Incident Patch 1: `8a1840ef` (2026-11-17)
+**Commit Message**: client/web,tool: bump node to 26.x LTS
 
-Import yarn.lock to pnpm-workspace.yaml and pnpm-lock.yaml
-Add pnpm tool and update references
+Bump node to 26.13.1 as this is the new LTS line.
 
-Fixes tailscale/corp#51437
+Update @types/node to 26.6.6 to match the node bump.
 
-Change-Id: Ia25017e7e82cf3af13e04fc3c07b82196f211744
+Fixes https://github.com/tailscale/corp/issues/50402
 
-Signed-off-by: Jim Wright <[REDACTED_EMAIL]>
+Signed-off-by: Mario Minardi <[REDACTED_EMAIL]>
 
-**File**: `cmd/tsconnect/build-pkg.go` (modified, +2/-2)
+**File**: `client/web/package.json` (modified, +2/-2)
 ```diff
-@@ -26,7 +26,7 @@ func runBuildPkg() {
- 	}
- 
- 	log.Printf("Linting...\n")
--	if err := runYarn("lint"); err != nil {
-+	if err := runPnpm("--silent", "run", "lint"); err != nil {
- 		log.Fatalf("Linting failed: %v", err)
- 	}
- 
-@@ -50,7 +50,7 @@ func runBuildPkg() {
- 	}
- 
- 	log.Printf("Generating types...\n")
--	if err := runYarn("pkg-types"); err != nil {
-+	if err := runPnpm("--silent", "run", "pkg-types"); err != nil {
- 		log.Fatalf("Type generation failed: %v", err)
- 	}
- 	if err := copyTypeDeclarations(); err != nil {
+@@ -3,7 +3,7 @@
+   "version": "0.0.1",
+   "license": "BSD-3-Clause",
+   "engines": {
+-    "node": "22.23.4"
++    "node": "26.13.1"
+   },
+   "type": "module",
+   "private": true,
+@@ -19,7 +19,7 @@
+     "zustand": "^4.4.7"
+   },
+   "devDependencies": {
+-    "@types/node": "^22.14.0",
++    "@types/node": "^26.6.6",
+     "@types/react": "^18.0.20",
+     "@types/react-dom": "^18.0.6",
+     "@vitejs/plugin-react-swc": "^3.6.0",
 ```
 
-**File**: `cmd/tsconnect/build.go` (modified, +1/-1)
+**File**: `client/web/pnpm-lock.yaml` (modified, +30/-30)
 ```diff
-@@ -23,7 +23,7 @@ func runBuild() {
- 	}
+@@ -41,8 +41,8 @@ importers:
+         version: 4.4.7(@types/react@18.2.20)(react@18.2.0)
+     devDependencies:
+       '@types/node':
+-        specifier: ^22.14.0
+-        version: 22.14.0
++        specifier: ^26.6.6
++        version: 26.6.6
+       '@types/react':
+         specifier: ^18.0.20
+         version: 18.2.20
+@@ -51,7 +51,7 @@ importers:
+         version: 18.2.7
+       '@vitejs/plugin-react-swc':
+         specifier: ^3.6.0
+-        version: 3.6.0(vite@6.4.6(@types/node@22.14.0))
++        version: 3.6.0(vite@6.4.6(@types/node@26.6.6))
+       autoprefixer:
+         specifier: ^10.4.15
+         version: 10.4.15(postcss@8.5.32)
+@@ -84,16 +84,16 @@ importers:
+         version: 5.3.3
+       vite:
+         specifier: ^6.4.6
+-        version: 6.4.6(@types/node@22.14.0)
++        version: 6.4.6(@types/node@26.6.6)
+       vite-plugin-svgr:
+         specifier: ^4.2.0
+-        version: 4.2.0(rollup@4.68.2)(supports-color@7.2.0)(vite@6.4.6(@types/node@22.14.0))
++        version: 4.2.0(rollup@4.68.2)(supports-color@7.2.0)(vite@6.4.6(@types/node@26.6.6))
+       vite-tsconfig-paths:
+         specifier: ^3.5.0
+-        version: 3.6.0(supports-color@7.2.0)(vite@6.4.6(@types/node@22.14.0))
++        version: 3.6.0(supports-color@7.2.0)(vite@6.4.6(@types/node@26.6.6))
+       vitest:
+         specifier: ^1.6.1
+-        version: 1.6.1(@types/node@22.14.0)(jsdom@23.0.1(supports-color@7.2.0))(supports-color@7.2.0)
++        version: 1.6.1(@types/node@26.6.6)(jsdom@23.0.1(supports-color@7.2.0))(supports-color@7.2.0)
  
- 	log.Printf("Linting...\n")
--	if err := runYarn("lint"); err != nil {
-+	if err := runPnpm("--silent", "run", "lint"); err != nil {
- 		log.Fatalf("Linting failed: %v", err)
- 	}
+ packages:
  
-```
-
-**File**: `cmd/tsconnect/common.go` (modified, +13/-9)
-```diff
-@@ -35,6 +35,11 @@ const (
- 	prodMode = false
- )
+@@ -1735,8 +1735,8 @@ packages:
+   '@types/json5@0.0.29':
+     resolution: {integrity: sha512-dRLjCWHYg4oaA77cxO64oO+7JwCwnIzkZPdrrC71jQmQtlhM556pwKo5bUzqvZndkVbeFLIIi+9TC40JNF5hNQ==}
  
-+// pnpmPath is the repo's pinned pnpm (see tool/pnpm.rev). Like wasm-opt, it is
-+// relative to cmd/tsconnect, which commonSetup makes the working directory
-+// before any pnpm command runs.
-+const pnpmPath = "../../tool/pnpm"
-+
- // commonSetup performs setup that is common to both dev and build modes.
- func commonSetup(dev bool) (*esbuild.BuildOptions, error) {
- 	// Change cwd to to where this file lives -- that's where all inputs for
-@@ -43,9 +48,6 @@ func commonSetup(dev bool) (*esbuild.BuildOptions, error) {
- 	if err != nil {
- 		return nil, err
- 	}
--	if *yarnPath == "" {
--		*yarnPath = path.Join(root, "tool", "yarn")
--	}
- 	tsConnectDir := filepath.Join(root, "cmd", "tsconnect")
- 	if err := os.Chdir(tsConnectDir); err != nil {
- 		return nil, fmt.Errorf("Cannot change cwd: %w", err)
-@@ -318,13 +320,15 @@ func runWasmOpt(path string) error {
- }
+-  '@types/node@22.14.0':
+-    resolution: {integrity: sha512-Kmpl+z84ILoG+3T/zQFyAJsU6EPTmOCj8/2+83fSN6djd6I4o7uOuGIH6vq3PrjY5BGitSbFuMN18j3iknubbA==}
++  '@types/node@26.6.6':
++    resolution: {integrity: sha512-MzQj+8Kx3XI40OmUAE6Qoh58ZMNstNNMwn2nfd3qWsfe7nDNSqJNzes4njhz6AHwrSHOffSLwXU6yb474Q4aog==}
  
- // installJSDeps installs the JavaScript dependencies specified by package.json
-+// and pnpm-lock.yaml. The lockfile is never modified; to add or update
-+// dependencies, run ./tool/pnpm in cmd/tsconnect directly.
- func installJSDeps() error {
- 	log.Printf("Installing JS deps...\n")
--	return runYarn()
-+	return runPnpm("install")
- }
+   '@types/parse-json@4.0.2':
+     resolution: {integrity: sha512-dISoDXWWQwUquiKsyZ4Ng+HX2KsPL7LyHKHQwgGFEA3IaKac4Obd+h2a/a6waisAoepJlBcx9paWqjA8/HVjCw==}
+@@ -3508,8 +3508,8 @@ packages:
+   unbox-primitive@1.0.2:
+     resolution: {integrity: sha512-61pPlCD9h51VoreyJ0BReideM3MDKMKnh6+V9L08331ipq6Q8OFXZYiqP6n/tbHx4s5I9uRhcye6BrbkizkBDw==}
  
--func runYarn(args ...string) error {
--	cmd := exec.Command(*yarnPath, args...)
-+func runPnpm(args ...string) error {
-+	cmd := exec.Command(pnpmPath, args...)
- 	cmd.Stdout = os.Stdout
- 	cmd.Stderr = os.Stderr
- 	return cmd.Run()
-@@ -347,11 +351,11 @@ func setupEsbuildTailwind(build esbuild.PluginBuild, dev bool) {
- 		Filter: "./src/.*\\.css$",
- 	}, func(args esbuild.OnLoadArgs) (esbuild.OnLoadResult, error) {
- 		start := time.Now()
--		yarnArgs := []string{"--silent", "tailwind", "-i", args.Path}
-+		pnpmArgs := []string{"--silent", "exec", "tailwind", "-i", args.Path}
- 		if !dev {
--			yarnArgs = append(yarnArgs, "--minify")
-+			pnpmArgs = append(pnpmArgs, "--minify")
- 		}
--		cmd := exec.Command(*yarnPath, yarnArgs...)
-+		cmd := exec.Command(pnpmPath, pnpmArgs...)
- 		tailwindOutput, err := cmd.Output()
- 		log.Printf("Ran tailwind in %v\n", time.Since(start).Round(time.Millisecond))
- 		if err != nil {
+-  undici-types@6.21.0:
+-    resolution: {integrity: sha512-iwDZqg0QAGrg9Rav5H4n0M64c3mkR59cJ6wQp+7C4nI0gsmExaedaYLNO44eT4AtBBwjbTiGPMlt2Md0T9H9JQ==}
++  undici-types@8.9.0:
++    resolution: {integrity: sha512-KTDyRTYX8sWmKXAikPHHSyc63CRPETMctyjKFupcC6OBLXT3xsN0e9aF7m+mIXutFWpUXuedtowG7iLOzp0kQg==}
+ 
+   unicode-canonical-property-names-ecmascript@2.0.0:
+     resolution: {integrity: sha512-yY5PpDlfVIU5+y/BSCxAJRBIS1Zc2dDG3Ujq+sR0U+JjUevW2JhocOF+soROYDSaAezOzOKuyyixhD6mBknSmQ==}
+@@ -5351,9 +5351,9 @@ snapshots:
+ 
+   '@types/json5@0.0.29': {}
+ 
+-  '@types/node@22.14.0':
++  '@types/node@26.6.6':
+     dependencies:
+-      undici-types: 6.21.0
++      undici-types: 8.9.0
+ 
+   '@types/parse-json@4.0.2': {}
+ 
+@@ -5510,10 +5510,10 @@ snapshots:
+ 
+   '@ungap/structured-clone@1.2.0': {}
+ 
+-  '@vitejs/plugin-react-swc@3.6.0(vite@6.4.6(@types/node@22.14.0))':
++  '@vitejs/plugin-react-swc@3.6.0(vite@6.4.6(@types/node@26.6.6))':
+     dependencies:
+       '@swc/core': 1.4.2
+-      vite: 6.4.6(@types/node@22.14.0)
++      vite: 6.4.6(@types/node@26.6.6)
+     transitivePeerDependencies:
+       - '@swc/helpers'
+ 
+@@ -7482,7 +7482,7 @@ snapshots:
+       has-symbols: 1.1.0
+       which-boxed-primitive: 1.0.2
+ 
+-  undici-types@6.21.0: {}
++  undici-types@8.9.0: {}
+ 
+   unicode-canonical-property-names-ecmascript@2.0.0: {}
+ 
+@@ -7533,13 +7533,13 @@ snapshots:
+ 
+   util-deprecate@1.0.2: {}
+ 
+-  vite-node@1.6.1(@types/node@22.14.0)(supports-color@7.2.0):
++  vite-node@1.6.1(@types/node@26.6.6)(supports-color@7.2.0):
+     dependencies:
+       cac: 6.7.14
+       debug: 4.4.3(supports-color@7.2.0)
+       pathe: 1.1.2
+       picocolors: 1.1.1
+-      vite: 5.4.21(@types/node@22.14.0)
++      vite: 5.4.21(@types/node@26.6.6)
+     transitivePeerDependencies:
+       - '@types/node'
+       - less
+@@ -7551,36 +7551,36 @@ snapshots:
+       - supports-color
+       - terser
+ 
+-  vite-plugin-svgr@4.2.0(rollup@4.68.2)(supports-color@7.2.0)(vite@6.4.6(@types/node@22.14.0)):
++  vite-plugin-svgr@4.2.0(rollup@4.68.2)(supports-color@7.2.0)(vite@6.4.6(@types/node@26.6.6)):
+     dependencies:
+       '@rollup/pluginutils': 5.1.0(rollup@4.68.2)
+       '@svgr/core': 8.1.0(supports-color@7.2.0)
+       '@svgr/plugin-jsx': 8.1.0(@svgr/core@8.1.0(supports-color@7.2.0))(supports-color@7.2.0)
+-      vite: 6.4.6(@types/node@22.14.0)
++      vite: 6.4.6(@types/node@26.6.6)
+     transitivePeerDependencies:
+       - rollup
+       - supports-color
+ 
+-  vite-tsconfig-paths@3.6.0(supports-color@7.2.0)(vite@6.4.6(@types/node@22.14.0)):
++  vite-tsconfig-paths@3.6.0(supports-color@7.2.0)(vite@6.4.6(@types/node@26.6.6)):
+     dependencies:
+       debug: 4.
 ```
 
-**File**: `cmd/tsconnect/pnpm-lock.yaml` (added, +872/-0)
+**File**: `tool/node.rev` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,872 @@
-+lockfileVersion: '9.0'
-+
-+settings:
-+  autoInstallPeers: true
-+  excludeLinksFromLockfile: false
-+
-+importers:
-+
-+  .:
-+    devDependencies:
-+      '@types/golang-wasm-exec':
-+        specifier: ^1.15.0
-+        version: 1.15.0
-+      '@types/qrcode':
-+        specifier: ^1.4.2
-+        version: 1.4.2
-+      dts-bundle-generator:
-+        specifier: ^6.12.0
-+        version: 6.12.0
-+      preact:
-+        specifier: ^10.10.0
-+        version: 10.10.0
-+      qrcode:
-+        specifier: ^1.5.0
-+        version: 1.5.0
-+      tailwindcss:
-+        specifier: ^3.1.6
-+        version: 3.1.6(postcss@8.5.6)
-+      typescript:
-+        specifier: ^4.7.4
-+        version: 4.7.4
-+      xterm:
-+        specifier: ^5.1.0
-+        version: 5.1.0
-+      xterm-addon-fit:
-+        specifier: ^0.7.0
-+        version: 0.7.0(xterm@5.1.0)
-+      xterm-addon-web-links:
-+        specifier: ^0.8.0
-+        version: 0.8.0(xterm@5.1.0)
-+
-+packages:
-+
-+  '@nodelib/fs.scandir@2.1.5':
-+    resolution: {integrity: sha512-vq24Bq3ym5HEQm2NKCr3yXDwjc7vTsEThRDnkp2DK9p1uqLR+DHurm/NOTo0KG7HYHU7eppKZj3MyqYuMBf62g==}
-+    engines: {node: '>= 8'}
-+
-+  '@nodelib/fs.stat@2.0.5':
-+    resolution: {integrity: sha512-RkhPPp2zrqDAQA/2jNhnztcPAlv64XdhIp7a7454A5ovI7Bukxgt7MX7udwAu3zg1DcpPU0rz3VV1SeaqvY4+A==}
-+    engines: {node: '>= 8'}
-+
-+  '@nodelib/fs.walk@1.2.8':
-+    resolution: {integrity: sha512-oGB+UxlgWcgQkgwo8GcEGwemoTFt3FIO9ababBmaGwXIoBKZ+GTy0pP185beGg7Llih/NSHSV2XAs1lnznocSg==}
-+    engines: {node: '>= 8'}
-+
-+  '@types/golang-wasm-exec@1.15.0':
-+    resolution: {integrity: sha512-FrL97mp7WW8LqNinVkzTVKOIQKuYjQqgucnh41+1vRQ+bf1LT8uh++KRf9otZPXsa6H1p8ruIGz1BmCGttOL6Q==}
-+
-+  '@types/node@18.6.1':
-+    resolution: {integrity: sha512-z+2vB6yDt1fNwKOeGbckpmirO+VBDuQqecXkgeIqDlaOtmKn6hPR/viQ8cxCfqLU4fTlvM3+YjM367TukWdxpg==}
-+
-+  '@types/qrcode@1.4.2':
-+    resolution: {integrity: sha512-7uNT9L4WQTNJejHTSTdaJhfBSCN73xtXaHFyBJ8TSwiLhe4PRuTue7Iph0s2nG9R/ifUaSnGhLUOZavlBEqDWQ==}
-+
-+  acorn-node@1.8.2:
-+    resolution: {integrity: sha512-8mt+fslDufLYntIoPAaIMUe/lrbrehIiwmR3t2k9LljIzoigEPF27eLk2hy8zSGzmR/ogr7zbRKINMo1u0yh5A==}
-+
-+  acorn-walk@7.2.0:
-+    resolution: {integrity: sha512-OPdCF6GsMIP+Az+aWfAAOEt2/+iVDKE7oy6lJ098aoe59oAmK76qV6Gw60SbZ8jHuG2wH058GF4pLFbYamYrVA==}
-+    engines: {node: '>=0.4.0'}
-+
-+  acorn@7.4.1:
-+    resolution: {integrity: sha512-nQyp0o1/mNdbTO1PO6kHkwSrmgZ0MT/jCCpNiwbUjGoRN4dlBhqJtoQuCnEOKzgTVwg0ZWiCoQy6SxMebQVh8A==}
-+    engines: {node: '>=0.4.0'}
-+    hasBin: true
-+
-+  ansi-regex@5.0.1:
-+    resolution: {integrity: sha512-quJQXlTSUGL2LH9SUXo8VwsY4soanhgo6LNSm84E1LBcE8s3O0wpdiRzyR9z/ZZJMlMWv37qOOb9pdJlMUEKFQ==}
-+    engines: {node: '>=8'}
-+
-+  ansi-styles@4.3.0:
-+    resolution: {integrity: sha512-zbB9rCJAT1rbjiVDb2hqKFHNYLxgtk8NURxZ3IZwD3F6NtxbXZQCnnSi1Lkx+IDohdPlFp222wVALIheZJQSEg==}
-+    engines: {node: '>=8'}
-+
-+  anymatch@3.1.2:
-+    resolution: {integrity: sha512-P43ePfOAIupkguHUycrc4qJ9kz8ZiuOUijaETwX7THt0Y/GNK7v0aa8rY816xWjZ7rJdA5XdMcpVFTKMq+RvWg==}
-+    engines: {node: '>= 8'}
-+
-+  arg@5.0.2:
-+    resolution: {integrity: sha512-PYjyFOLKQ9y57JvQ6QLo8dAgNqswh8M1RMJYdQduT6xbWSgK36P/Z/v+p888pM69jMMfS8Xd8F6I1kQ/I9HUGg==}
-+
-+  binary-extensions@2.2.0:
-+    resolution: {integrity: sha512-jDctJ/IVQbZoJykoeHbhXpOlNBqGNcwXJKJog42E5HDPUwQTSdjCHdihjj0DlnheQ7blbT6dHOafNAiS8ooQKA==}
-+    engines: {node: '>=8'}
-+
-+  braces@3.0.3:
-+    resolution: {integrity: sha512-yQbXgO/OSZVD2IsiLlro+7Hf6Q18EJrKSEsdoMzKePKXct3gvD8oLcOQdIzGupr5Fj+EDe8gO/lxc1BzfMpxvA==}
-+    engines: {node: '>=8'}
-+
-+  camelcase-css@2.0.1:
-+    resolution: {integrity: sha512-QOSvevhslijgYwRx6Rv7zKdMF8lbRmx+uQGx2+vDc+KI/eBnsy9kit5aj23AgGu3pa4t9AgwbnXWqS+iOY+2aA==}
-+    engines: {node: '>= 6'}
-+
-+  camelcase@5.3.1:
-+    resolution: {integrity: sha512-L28STB170nwWS63UjtlEOE3dldQApaJXZkOI1uMFfzf3rRuPegHaHesyee+YxQ+W6SvRDQV6UrdOdRiR153wJg==}
-+    engines: {node: '>=6'}
-+
-+  chokidar@3.5.3:
-+    resolution: {integrity: sha512-Dr3sfKRP6oTcjf2JmUmFJfeVMvXBdegxB0iVQ5eb2V10uFJUCAS8OByZdVAyVb8xXNz3GjjTgj9kLWsZTqE6kw==}
-+    engines: {node: '>= 8.10.0'}
-+
-+  cliui@6.0.0:
-+    resolution: {integrity: sha512-t6wbgtoCXvAzst7QgXxJYqPt0usEfbgQdftEPbLL/cvv6HPE5VgvqCuAIDR0NgU52ds6rFwqrgakNLrHEjCbrQ==}
-+
-+  cliui@7.0.4:
-+    resolution: {integrity: sha512-OcRE68cOsVMXp1Yvonl/fzkQOyjLSu/8bhPDfQt0e0/Eb283TKP20Fs2MqoPsr9SwA595rRCA+QMzYc9nBP+JQ==}
-+
-+  color-convert@2.0.1:
-+    resolution: {integrity: sha512-RRECPsj7iu/xb5oKYcsFHSppFNnsj/52OVTRKb4zP5onXwVF3zVmmToNcOfGC+CRDpfK/U584fMg38ZHCaElKQ==}
-+    engines: {node: '>=7.0.0'}
-+
-+  color-name@1.1.4:
-+    resolution: {integrity: sha512-dOy+3AuW3a2wNbZHIuMZpTcgjGuLU/uBL/ubcZF9OXbDo8ff4O8yVp5Bf0efS8uEoYo5q4Fx7dY9OgQGXgAsQA==}
-+
-+  cssesc@3.0.0:
-+    resolution: {integrity: sha512-/Tb/JcjK111nNScGob5MNtsntNM1aCNUDipB/TkwZFhyDrrE47SOx/18wF2bbjgc3ZzCSKW1T5nt5EbFoAz/Vg==}
-+    engines: {node: '>=4'}
-+    hasBin: true
-+
-+  decamelize@1.2.0:
-+    resolution: {integrity: sha512-z2S+W9X73hAUUki+N+9Za2lBlun89zigOyGrsax+KUQ6wKW4
-```
-
-**File**: `cmd/tsconnect/pnpm-workspace.yaml` (added, +43/-0)
-```diff
-@@ -0,0 +1,43 @@
-+# pnpm settings for cmd/tsconnect. Use ./tool/pnpm (pinned in tool/pnpm.rev)
-+# rather than a globally installed pnpm.
-+#
-+# Most of these are supply-chain hardening settings. Several match pnpm's
-+# defaults but are set explicitly so that they're visible and can't be
-+# silently weakened by a future default change.
-+# See https://pnpm.io/settings for details.
-+
-+# Don't install any version (direct or transitive) published less than 7 days
-+# ago, and fail rather than fall back to a newer version if nothing in the
-+# requested range is old enough.
-+minimumReleaseAge: 10080 # minutes
-+minimumReleaseAgeStrict: true
-+# Fail if the registry doesn't tell us when a version was published, rather
-+# than skipping the age (and trust) check.
-+minimumReleaseAgeIgnoreMissingTime: false
-+
-+# Fail if a package's trust level (e.g. trusted publishing / provenance) has
-+# decreased compared to its earlier releases.
-+trustPolicy: no-downgrade
-+
-+# Re-check minimumReleaseAge and trustPolicy against lockfile entries on every
-+# install, so a hand-edited lockfile can't bypass them.
-+trustLockfile: false
-+
-+# Only direct dependencies may come from git repos or tarball URLs.
-+blockExoticSubdeps: true
-+
-+# Don't run dependency lifecycle scripts unless the package is listed in
-+# allowBuilds, and fail the install if an unlisted package wants to run one.
-+strictDepBuilds: true
-+dangerouslyAllowAllBuilds: false
-+allowBuilds: {}
-+
-+# Verify package contents in the store before linking them into node_modules.
-+verifyStoreIntegrity: true
-+strictStorePkgContentCheck: true
-+
-+# Error out rather than downloading a different pnpm version if package.json
-+# ever declares one that doesn't match tool/pnpm.rev.
-+pmOnFail: error
-+
-+frozenLockfile: true
-```
-
-**File**: `cmd/tsconnect/tsconnect.go` (modified, +0/-1)
-```diff
-@@ -22,7 +22,6 @@ var (
- 	addr            = flag.String("addr", ":9090", "address to listen on")
- 	distDir         = flag.String("distdir", "./dist", "path of directory to place build output in")
- 	pkgDir          = flag.String("pkgdir", "./pkg", "path of directory to place NPM package build output in")
--	yarnPath        = flag.String("yarnpath", "", "path yarn executable used to install JavaScript dependencies")
- 	fastCompression = flag.Bool("fast-compression", false, "Use faster compression when building, to speed up build time. Meant to iterative/debugging use only.")
- 	devControl      = flag.String("dev-control", "", "URL of a development control server to be used with dev. If provided without specifying dev, an error will be returned.")
- 	rootDir         = flag.String("rootdir", "", "Root directory of repo. If not specified, will be inferred from the cwd.")
-```
-
-**File**: `cmd/tsconnect/yarn.lock` (removed, +0/-718)
-```diff
-@@ -1,718 +0,0 @@
--# THIS IS AN AUTOGENERATED FILE. DO NOT EDIT THIS FILE DIRECTLY.
--# yarn lockfile v1
--
--
--"@nodelib/fs.scandir@2.1.5":
--  version "2.1.5"
--  resolved "https://registry.yarnpkg.com/@nodelib/fs.scandir/-/fs.scandir-2.1.5.tgz#7619c2eb21b25483f6d167548b4cfd5a7488c3d5"
--  integrity sha512-vq24Bq3ym5HEQm2NKCr3yXDwjc7vTsEThRDnkp2DK9p1uqLR+DHurm/NOTo0KG7HYHU7eppKZj3MyqYuMBf62g==
--  dependencies:
--    "@nodelib/fs.stat" "2.0.5"
--    run-parallel "^1.1.9"
--
--"@nodelib/fs.stat@2.0.5", "@nodelib/fs.stat@^2.0.2":
--  version "2.0.5"
--  resolved "https://registry.yarnpkg.com/@nodelib/fs.stat/-/fs.stat-2.0.5.tgz#5bd262af94e9d25bd1e71b05deed44876a222e8b"
--  integrity sha512-RkhPPp2zrqDAQA/2jNhnztcPAlv64XdhIp7a7454A5ovI7Bukxgt7MX7udwAu3zg1DcpPU0rz3VV1SeaqvY4+A==
--
--"@nodelib/fs.walk@^1.2.3":
--  version "1.2.8"
--  resolved "https://registry.yarnpkg.com/@nodelib/fs.walk/-/fs.walk-1.2.8.tgz#e95737e8bb6746ddedf69c556953494f196fe69a"
--  integrity sha512-oGB+UxlgWcgQkgwo8GcEGwemoTFt3FIO9ababBmaGwXIoBKZ+GTy0pP185beGg7Llih/NSHSV2XAs1lnznocSg==
--  dependencies:
--    "@nodelib/fs.scandir" "2.1.5"
--    fastq "^1.6.0"
--
--"@types/golang-wasm-exec@^1.15.0":
--  version "1.15.0"
--  resolved "https://registry.yarnpkg.com/@types/golang-wasm-exec/-/golang-wasm-exec-1.15.0.tgz#d0aafbb2b0dc07eaf45dfb83bfb6cdd5b2b3c55c"
--  integrity sha512-FrL97mp7WW8LqNinVkzTVKOIQKuYjQqgucnh41+1vRQ+bf1LT8uh++KRf9otZPXsa6H1p8ruIGz1BmCGttOL6Q==
--
--"@types/node@*":
--  version "18.6.1"
--  resolved "https://registry.yarnpkg.com/@types/node/-/node-18.6.1.tgz#828e4785ccca13f44e2fb6852ae0ef11e3e20ba5"
--  integrity sha512-z+2vB6yDt1fNwKOeGbckpmirO+VBDuQqecXkgeIqDlaOtmKn6hPR/viQ8cxCfqLU4fTlvM3+YjM367TukWdxpg==
--
--"@types/qrcode@^1.4.2":
--  version "1.4.2"
--  resolved "https://registry.yarnpkg.com/@types/qrcode/-/qrcode-1.4.2.tgz#7d7142d6fa9921f195db342ed08b539181546c74"
--  integrity sha512-7uNT9L4WQTNJejHTSTdaJhfBSCN73xtXaHFyBJ8TSwiLhe4PRuTue7Iph0s2nG9R/ifUaSnGhLUOZavlBEqDWQ==
--  dependencies:
--    "@types/node" "*"
--
--acorn-node@^1.8.2:
--  version "1.8.2"
--  resolved "https://registry.yarnpkg.com/acorn-node/-/acorn-node-1.8.2.tgz#114c95d64539e53dede23de8b9d96df7c7ae2af8"
--  integrity sha512-8mt+fslDufLYntIoPAaIMUe/lrbrehIiwmR3t2k9LljIzoigEPF27eLk2hy8zSGzmR/ogr7zbRKINMo1u0yh5A==
--  dependencies:
--    acorn "^7.0.0"
--    acorn-walk "^7.0.0"
--    xtend "^4.0.2"
--
--acorn-walk@^7.0.0:
--  version "7.2.0"
--  resolved "https://registry.yarnpkg.com/acorn-walk/-/acorn-walk-7.2.0.tgz#0de889a601203909b0fbe07b8938dc21d2e967bc"
--  integrity sha512-OPdCF6GsMIP+Az+aWfAAOEt2/+iVDKE7oy6lJ098aoe59oAmK76qV6Gw60SbZ8jHuG2wH058GF4pLFbYamYrVA==
--
--acorn@^7.0.0:
--  version "7.4.1"
--  resolved "https://registry.yarnpkg.com/acorn/-/acorn-7.4.1.tgz#feaed255973d2e77555b83dbc08851a6c63520fa"
--  integrity sha512-nQyp0o1/mNdbTO1PO6kHkwSrmgZ0MT/jCCpNiwbUjGoRN4dlBhqJtoQuCnEOKzgTVwg0ZWiCoQy6SxMebQVh8A==
--
--ansi-regex@^5.0.1:
--  version "5.0.1"
--  resolved "https://registry.yarnpkg.com/ansi-regex/-/ansi-regex-5.0.1.tgz#082cb2c89c9fe8659a311a53bd6a4dc5301db304"
--  integrity sha512-quJQXlTSUGL2LH9SUXo8VwsY4soanhgo6LNSm84E1LBcE8s3O0wpdiRzyR9z/ZZJMlMWv37qOOb9pdJlMUEKFQ==
--
--ansi-styles@^4.0.0:
--  version "4.3.0"
--  resolved "https://registry.yarnpkg.com/ansi-styles/-/ansi-styles-4.3.0.tgz#edd803628ae71c04c85ae7a0906edad34b648937"
--  integrity sha512-zbB9rCJAT1rbjiVDb2hqKFHNYLxgtk8NURxZ3IZwD3F6NtxbXZQCnnSi1Lkx+IDohdPlFp222wVALIheZJQSEg==
--  dependencies:
--    color-convert "^2.0.1"
--
--anymatch@~3.1.2:
--  version "3.1.2"
--  resolved "https://registry.yarnpkg.com/anymatch/-/anymatch-3.1.2.tgz#c0557c096af32f106198f4f4e2a383537e378716"
--  integrity sha512-P43ePfOAIupkguHUycrc4qJ9kz8ZiuOUijaETwX7THt0Y/GNK7v0aa8rY816xWjZ7rJdA5XdMcpVFTKMq+RvWg==
--  dependencies:
--    normalize-path "^3.0.0"
--    picomatch "^2.0.4"
--
--arg@^5.0.2:
--  version "5.0.2"
--  resolved "https://registry.yarnpkg.com/arg/-/arg-5.0.2.tgz#c81433cc427c92c4dcf4865142dbca6f15acd59c"
--  integrity sha512-PYjyFOLKQ9y57JvQ6QLo8dAgNqswh8M1RMJYdQduT6xbWSgK36P/Z/v+p888pM69jMMfS8Xd8F6I1kQ/I9HUGg==
--
--binary-extensions@^2.0.0:
--  version "2.2.0"
--  resolved "https://registry.yarnpkg.com/binary-extensions/-/binary-extensions-2.2.0.tgz#75f502eeaf9ffde42fc98829645be4ea76bd9e2d"
--  integrity sha512-jDctJ/IVQbZoJykoeHbhXpOlNBqGNcwXJKJog42E5HDPUwQTSdjCHdihjj0DlnheQ7blbT6dHOafNAiS8ooQKA==
--
--braces@^3.0.3, braces@~3.0.2:
--  version "3.0.3"
--  resolved "https://registry.yarnpkg.com/braces/-/braces-3.0.3.tgz#490332f40919452272d55a8480adc0c441358789"
--  integrity sha512-yQbXgO/OSZVD2IsiLlro+7Hf6Q18EJrKSEsdoMzKePKXct3gvD8oLcOQdIzGupr5Fj+EDe8gO/lxc1BzfMpxvA==
--  dependencies:
--    fill-range "^7.1.1"
--
--camelcase-css@^2.0.1:
--  version "2.0.1"
--  resolved "https://registry.yarnpkg.com/camelcase-css/-/camelcase-css-2.0.1.tgz#ee978f6947914cc30c6b44741b6ed1df7f043fd5"
--  integrity sha512-QOSvevhslijgYwRx6Rv7zKdMF8lbRmx+uQGx2+vDc+KI/eBnsy9kit5aj23AgGu3pa4t9AgwbnXWqS+iOY+2aA==
--
--camelcase@^5.0.0:
--  version "5.3.1"
--  resolved "https://registry.yarnpkg.com/
-```
-
-**File**: `tool/pnpm` (added, +80/-0)
-```diff
-@@ -0,0 +1,80 @@
-+#!/usr/bin/env bash
-+# Run a command with our local pnpm install, rather than any globally installed
-+# instance.
-+#
-+# The pnpm version is pinned in tool/pnpm.rev and the expected sha256 of each
-+# platform's release tarball is pinned in tool/pnpm.sha256. To upgrade pnpm,
-+# update both files (the digests are listed on the GitHub release page).
-+
-+set -euo pipefail
-+
-+if [[ "${CI:-}" == "true" ]]; then
-+    set -x
-+fi
-+
-+(
-+    repo_root="${BASH_SOURCE%/*}/../"
-+    cd "$repo_root"
-+
-+    ./tool/node --version >/dev/null # Ensure node is unpacked and ready
-+
-+    cachedir="$HOME/.cache/tailscale-pnpm"
-+
-+    read -r want_rev < "./tool/pnpm.rev"
-+
-+    got_rev=""
-+    if [[ -x "${cachedir}/pnpm" ]]; then
-+        got_rev=$("${cachedir}/pnpm" --version 2>/dev/null || true)
-+    fi
-+
-+    if [[ "$want_rev" != "$got_rev" ]]; then
-+        # works for "linux" and "darwin"
-+        OS=$(uname -s | tr A-Z a-z)
-+        ARCH=$(uname -m)
-+        if [ "$ARCH" = "x86_64" ]; then
-+            ARCH="x64"
-+        fi
-+        if [ "$ARCH" = "aarch64" ]; then
-+            ARCH="arm64"
-+        fi
-+        LIBC=""
-+        if [ "$OS" = "linux" ] && ldd --version 2>&1 | grep -qi musl; then
-+            LIBC="-musl"
-+        fi
-+        asset="pnpm-${OS}-${ARCH}${LIBC}.tar.gz"
-+
-+        want_sum=$(awk -v f="$asset" '$2 == f { print $1 }' ./tool/pnpm.sha256)
-+        if [[ -z "$want_sum" ]]; then
-+            echo "tool/pnpm: no pinned sha256 for $asset in tool/pnpm.sha256" >&2
-+            exit 1
-+        fi
-+
-+        mkdir -p "$(dirname "$cachedir")"
-+        tmpdir=$(mktemp -d "${cachedir}.XXXXXX")
-+        trap 'rm -rf "$tmpdir"' EXIT
-+        tarball="$tmpdir/$asset"
-+        # Force HTTP 1.1, see https://github.com/tailscale/tailscale/issues/8988
-+        curl -f -L --http1.1 -o "$tarball" "https://github.com/pnpm/pnpm/releases/download/v${want_rev}/${asset}"
-+
-+        if command -v sha256sum >/dev/null; then
-+            got_sum=$(sha256sum "$tarball" | awk '{print $1}')
-+        else
-+            got_sum=$(shasum -a 256 "$tarball" | awk '{print $1}')
-+        fi
-+        if [[ "$got_sum" != "$want_sum" ]]; then
-+            echo "tool/pnpm: sha256 mismatch for $asset: got $got_sum, want $want_sum" >&2
-+            exit 1
-+        fi
-+
-+        mkdir "$tmpdir/out"
-+        tar -C "$tmpdir/out" -xzf "$tarball"
-+        rm -rf "$cachedir"
-+        mv "$tmpdir/out" "$cachedir"
-+    fi
-+)
-+
-+# Put our pinned node on PATH: pnpm's standalone binary bundles its own Node but
-+# doesn't expose it, and package scripts and node_modules/.bin shims (tsc,
-+# tailwind, dts-bundle-generator...) are shell scripts that run `node` from PATH.
-+export PATH="$HOME/.cache/tailscale-node/bin:$HOME/.cache/tailscale-pnpm:$PATH"
-+exec "$HOME/.cache/tailscale-pnpm/pnpm" "$@"
+@@ -1 +1 @@
+-22.23.4
++26.13.1
 ```
 
 ---
 
-### Incident Patch 2: `51a970a4` (2026-11-10)
-**Commit Message**: cmd/containerboot: add tests for egress resync on FQDN target changes
+### Incident Patch 2: `4f19a4af` (2026-11-17)
+**Commit Message**: feature/conn25: reject Magic IPs whose Transit IP isn't in WireGuard yet (#22374)
 
-Adds table tests for shouldResync, covering peer device and Tailscale
-Service targets that lose and regain their addresses, a device or
-Tailscale Service that failed to resolve at the last sync, a device
-replaced by a Tailscale Service, a target removed from the config, a
-Service that gains a second host (which must not resync), and a 4via6
-route that is withdrawn or advertised.
+A Magic IP gets its address assignment when the DNS response is rewritten,
+but the Transit IP it maps to only becomes usable later: handleAddressAssignment
+registers it with the connector over PeerAPI, and only then does
+addTransitIPForConnector put it in byConnKey, where extraWireGuardAllowedIPs
+picks it up and hands it to WireGuard as an allowed IP for that peer.
 
-Updates #21159
-Updates #21426
+Until then, transitIPForMagicIP would happily return the Transit IP, the
+datapath would DNAT to it, and WireGuard would drop the packet because no
+peer claims the address. The client application saw a black hole and hung.
+That window stays open indefinitely when the registration never lands: a
+failed PeerAPI request, a full assignment queue, or a reset that clears
+byConnKey.
 
-Signed-off-by: chaosinthecrd <[REDACTED_EMAIL]>
+transitIPForMagicIP now checks that the Transit IP is registered under its
+connector's node key, and returns the new ErrTransitIPNotRoutable if it
+isn't. The datapath treats that like an unknown Magic IP and injects an
+ICMP host unreachable, so the application fails fast instead of hanging.
 
-**File**: `cmd/containerboot/egressservices_test.go` (modified, +101/-0)
+Fixes https://github.com/tailscale/corp/issues/50405
+
+Change-Id: Id232e27063
+
+**File**: `feature/conn25/client.go` (modified, +33/-6)
 ```diff
-@@ -6,6 +6,7 @@
- package main
+@@ -42,6 +42,25 @@ type client struct {
+ 	byConnKey       map[key.NodePublic]set.Set[netip.Prefix]
+ }
  
- import (
-+	"cmp"
- 	"context"
- 	"fmt"
- 	"io"
-@@ -17,8 +18,12 @@ import (
- 	"testing"
- 	"time"
++// errNoMagicIPAssignment is returned by [client.PrepareNewFlowForMagicIP] when
++// this client holds no address assignment for the given Magic IP.
++var errNoMagicIPAssignment = errors.New("no address assignment for magic IP")
++
++// transitIPRoutableLocked reports whether as's Transit IP is registered under
++// its connector's node key, i.e. whether [client.extraWireGuardAllowedIPs]
++// will tell WireGuard to route packets for it to that connector. Until it is,
++// sending to the Transit IP would be a black hole: the assignment exists, but
++// no peer claims the address.
++// c.mu must be held.
++func (c *client) transitIPRoutableLocked(as *addrs) bool {
++	conn := as.connectorAddr.node
++	if !conn.Valid() || conn.Key().IsZero() {
++		return false
++	}
++	tip := as.connectorAddr.transit
++	return c.byConnKey[conn.Key()].Contains(netip.PrefixFrom(tip, tip.BitLen()))
++}
++
+ // linkLocalAllow returns true if the provided packet with a link-local Dst address has a
+ // Dst that is one of our transit IPs, and false otherwise.
+ // Tailscale's wireguard filters drop link-local unicast packets (see [wgengine/filter/filter.go])
+@@ -240,6 +259,7 @@ func (c *client) addTransitIPForConnector(as addrs) error {
+ 	if conn.Key().IsZero() {
+ 		return fmt.Errorf("node with stable ID %q does not have a key", conn.StableID())
+ 	}
++	conn.ID()
+ 	return c.insertTransitConnMapping(as, conn.Key())
+ }
  
-+	kubeutils "tailscale.com/k8s-operator"
- 	"tailscale.com/kube/egressservices"
- 	"tailscale.com/kube/kubetypes"
-+	"tailscale.com/tailcfg"
-+	"tailscale.com/types/views"
-+	"tailscale.com/util/linuxfw"
- )
- 
- func Test_updatesForSvc(t *testing.T) {
-@@ -182,6 +187,102 @@ func Test_updatesForSvc(t *testing.T) {
+@@ -289,17 +309,24 @@ func (r ClientFlowRef) Release() {
  	}
  }
  
-+func TestShouldResync(t *testing.T) {
-+	const fqdn = "foo.tailnetxyz.ts.net"
-+	const viaFQDN = "10-1-0-5-via-7.tailnetxyz.ts.net"
-+	// IPv6 is needed to set up SNAT for the 4via6 target.
-+	self := &tailcfg.Node{ID: 1, Name: "egress-0.tailnetxyz.ts.net.", Addresses: []netip.Prefix{netip.MustParsePrefix("100.64.0.1/32"), netip.MustParsePrefix("fd7a:115c:a1e0::1/128")}}
-+	vip := netip.MustParsePrefix("100.100.0.5/32")
-+
-+	// unresolved returns a netmap in which fqdn does not resolve.
-+	unresolved := func() netmapState {
-+		return netmapState{self: self.View()}
+-// PrepareNewFlowForMagicIP resolves magicIP to the transit IP currently assigned
++// prepareNewFlowForMagicIP resolves magicIP to the transit IP currently assigned
+ // to it and records that a flow is being established against that assignment,
+ // returning the reference that both names that transit IP and keeps the
+-// assignment from being reclaimed. It reports whether magicIP had an
+-// assignment at all.
+-func (c *client) PrepareNewFlowForMagicIP(magicIP netip.Addr) (ClientFlowRef, bool) {
++// assignment from being reclaimed.
++//
++// It returns [errNoMagicIPAssignment] if there is no assignment for magicIP, and
++// [ErrTransitIPNotRoutable] if there is one but its Transit IP can't carry
++// traffic yet. Nothing is counted on either error path, so the returned
++// reference is the zero value and must not be released.
++func (c *client) prepareNewFlowForMagicIP(magicIP netip.Addr) (ClientFlowRef, error) {
+ 	c.mu.Lock()
+ 	defer c.mu.Unlock()
+ 	entry, ok := c.assignments.lookupByMagicIP(magicIP)
+ 	if !ok {
+-		return ClientFlowRef{}, false
++		return ClientFlowRef{}, errNoMagicIPAssignment
 +	}
-+	// device returns a netmap in which fqdn is a peer device with addrs.
-+	device := func(addrs ...string) netmapState {
-+		n := &tailcfg.Node{ID: 2, Name: fqdn + "."}
-+		for _, a := range addrs {
-+			n.Addresses = append(n.Addresses, netip.MustParsePrefix(a))
++	if !c.transitIPRoutableLocked(entry) {
++		return ClientFlowRef{}, ErrTransitIPNotRoutable
+ 	}
+ 	transit := entry.connectorAddr.transit
+ 	entry.activeFlowCount++
+@@ -319,7 +346,7 @@ func (c *client) PrepareNewFlowForMagicIP(magicIP netip.Addr) (ClientFlowRef, bo
+ 		if entry.activeFlowCount == 0 {
+ 			entry.zeroFlowTime = c.assignments.clock.Now()
+ 		}
+-	}}, true
++	}}, nil
+ }
+ 
+ func (c *client) extraWireGuardAllowedIPs(k key.NodePublic) views.Slice[netip.Prefix] {
+```
+
+**File**: `feature/conn25/client_test.go` (modified, +98/-0)
+```diff
+@@ -482,6 +482,95 @@ func TestTransitIPConnMapping(t *testing.T) {
+ 	}
+ }
+ 
++// registerTransitIPs registers each assignment's Transit IP with its connector,
++// as the PeerAPI round trip in sendLoop does in production, so that
++// [client.prepareNewFlowForMagicIP] considers the Transit IP routable. With no
++// assignments given it registers every assignment the client currently holds,
++// for tests that create them indirectly by running a DNS response through the
++// extension.
++func registerTransitIPs(t *testing.T, c *client, assignments ...*addrs) {
++	t.Helper()
++	if len(assignments) == 0 {
++		c.mu.Lock()
++		for _, as := range c.assignments.byMagicIP {
++			assignments = append(assignments, as)
 +		}
-+		return unresolved().upsertPeer(n.View())
++		c.mu.Unlock()
 +	}
-+	// service returns a netmap in which fqdn is a Tailscale Service, with
-+	// hosts peers advertising it.
-+	service := func(hosts int) netmapState {
-+		nm := unresolved()
-+		for i := range hosts {
-+			hostIP := netip.PrefixFrom(netip.AddrFrom4([4]byte{100, 64, 0, byte(10 + i)}), 32)
-+			host := &tailcfg.Node{ID: tailcfg.NodeID(10 + i), Name: fmt.Sprintf("ingress-%d.tailnetxyz.ts.net.", i), Addresses: []netip.Prefix{hostIP}, AllowedIPs: []netip.Prefix{hostIP, vip}}
-+			nm = nm.upsertPeer(host.View())
++	for _, as := range assignments {
++		if err := c.addTransitIPForConnector(*as); err != nil {
++			t.Fatal(err)
 +		}
-+		nm.dnsExtraRecords = views.SliceOf([]tailcfg.DNSRecord{{Name: fqdn + ".", Type: "A", Value: vip.Addr().String()}})
-+		return nm
 +	}
-+	// via returns a netmap with a subnet router, advertising the 4via6
-+	// route for viaFQDN if advertised is true.
-+	via := func(advertised bool) netmapState {
-+		routerIP := netip.MustParsePrefix("100.64.0.6/32")
-+		router := &tailcfg.Node{ID: 6, Name: "router.tailnetxyz.ts.net.", Addresses: []netip.Prefix{routerIP}, AllowedIPs: []netip.Prefix{routerIP}}
-+		if advertised {
-+			addr, _ := kubeutils.ResolveViaDomain(viaFQDN)
-+			router.AllowedIPs = append(router.AllowedIPs, netip.PrefixFrom(addr, 120).Masked())
-+		}
-+		return unresolved().upsertPeer(router.View())
++}
++
++// TestPrepareNewFlowForMagicIPRoutability checks that a Transit IP is only handed
++// to the datapath once it has been registered against its connector, which is
++// what puts it in that peer's WireGuard allowed IPs. Before that, and again
++// after a [client.reset] drops the registration, the mapping exists but
++// WireGuard would have nowhere to send the packets.
++func TestPrepareNewFlowForMagicIPRoutability(t *testing.T) {
++	magicIP := netip.MustParseAddr("100.64.0.1")
++	transitIP := netip.MustParseAddr("169.254.0.1")
++
++	c := newConn25(t.Logf).client
++	connector := (&tailcfg.Node{
++		ID:       tailcfg.NodeID(2),
++		Hostinfo: (&tailcfg.Hostinfo{AppConnector: opt.NewBool(true)}).View(),
++		Key:      key.NodePublicFromRaw32(mem.B([]byte{0: 0xff, 31: 0x02})),
++	}).View()
++	as := &addrs{
++		dst:           netip.MustParseAddr("1.2.3.1"),
++		magic:         magicIP,
++		generation:    c.currentGeneration(),
++		connectorAddr: connectorAddr{transit: transitIP, node: connector},
++		domain:        "woo.example.com.",
++		app:           "app1",
 +	}
 +
-+	tests := []struct {
-+		name    string
-+		target  string      // FQDN, fqdn if empty
-+		synced  netmapState // netmap at the last sync
-+		current netmapState // netmap in the update
-+		removed bool        // target removed from config before the update
-+		want    bool
-+	}{
-+		{name: "device_unchanged", synced: device("100.64.0.2/32"), current: device("100.64.0.2/32")},
-+		{name: "device_addresses_changed", synced: device("100.64.0.2/32"), current: device("100.64.0.4/32"), want: true},
-+		{name: "device_recovers_after_no_addresses", synced: device(), current: device("100.64.0.2/32"), want: true},
-+		{name: "device_appears_after_failed_lookup", synced: unresolved(), current: device("100.64.0.2/32"), want: true},
-+		{name: "service_appears_after_failed_lookup", synced: unresolved(), current: service(1), want: true},
-+		{name: "device_removed", synced: device("100.64.0.2/32"), current: unresolved(), want: true},
-+		{name: "service_unchanged", synced: service(1), current: service(1)},
-+		{name: "service_gains_second_host", synced: service(1), current: service(2)},
-+		{name: "service_loses_host", synced: service(1), current: service(0), want: true},
-+		{name: "service_recovers_after_no_host", synced: service(0), current: service(1), want: true},
-+		{name: "device_replaced_by_service", synced: device("100.64.0.2/32"), current: service(1), want: true},
-+		{name: "via_route_withdrawn", target: viaFQDN, synced: via(true), current: via(false), want: true},
-+		{name: "via_route_advertised", target: viaFQDN, synced: via(false), current: via(true), want: true},
-+		{name: "via_route_unchanged", target: viaFQDN, synced: via(true), current: via(true)},
-+		{name: "unresolved_target_unchanged", synced: unresolved(), current: unresolved()},
-+		{name: "removed_target_ignored", synced: device("100.64.0.2/32"), current: unresolved(), removed: true},
++	// No assignment at all yet.
++	if _, err := c.prepareNewFlowForMagicIP(magicIP); !errors.Is(err, errNoMagicIPAssignment) {
++		t.Errorf("before reserving: got error %v, want %v", err, errNoMagicIPAssignment)
 +	}
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			ep := &egressProxy{
-+				nfr:          linuxfw.NewFakeNetfilterRunner(),
-+				tailnetAddrs: self.Addresses,
-+			}
-+			cfgs := egressservices.Configs{
-+				"foo": {
-+					TailnetTarget: egressservices.TailnetTarget{FQDN: cmp.Or(tt.target, fqdn)},
-+					Ports:         egressservices.PortMaps{{Protocol: "tcp", MatchPort: 4003, TargetPort: 80}: {}},
-+				},
-+			}
-+			if _, err := ep.syncEgressConfigs(cfgs, nil, tt.synced); err != nil {
-+				t.Fatalf("syncEgressConfigs() error = %v", err)
-+			}
-+			if tt.removed {
 +
++	// The assignment exists, but the connector hasn't acknowledged it, so the
++	// Transit IP isn't in WireGuard yet.
++	if err := c.assignments.insert(as); err != nil {
++		t.Fatal(err)
++	}
++	if _, err := c.prepareNewFlowForMagicIP(magicIP); !errors.Is(err, ErrTransitIPNotRoutable) {
++		t.Errorf("before registering with the connector: got error %v, want %v", err, ErrTransitIPNotRoutable)
++	}
++	if got := as.activeFlowCount; got != 0 {
++		t.Errorf("unroutable Transit IP counted %d flows, want 0", got)
++	}
++
++	// Registering it with the connector makes it usable.
++	if err := c.addTransitIPForConnector(*as); err != nil {
++		t.Fatal(err)
++	}
++	ref, err := c.prepareNewFlowForMagicIP(magicIP)
++	if err != nil {
++		t.Errorf("after registering with the connector: unexpected error %v", err)
++	}
++	if tip := ref.TransitIP(); tip != transitIP {
++		t.Errorf("after registering with the connector: got transit IP %v, want %v", tip, transitIP)
++	}
++	ref.Release()
++
++	// A reset clears the WireGuard registrations along with everything else.
++	c.reset()
++	fresh := *as
++	fresh.expiresAt = time.Time{}
++	fresh.generation = c.currentGeneration()
++	if err := c.assignments.insert(&fresh); err != nil {
++		t.Fatal(err)
++	}
++	if _, err := c.prepareNewFlowForMagicIP(magicIP); !errors.Is(err, ErrTransitIPNotRoutable) {
++		t.Errorf("after reset: got error %v, want %v", err, ErrTransitIPNotRoutable)
++	}
++}
++
+ func TestIsKnownTransitIP(t *testing.T) {
+ 	knownTip := netip.MustParseAddr("100.64.0.41")
+ 	unknownTip := netip.MustParseAddr("100.64.0.42")
+@@ -773,6 +862,10 @@ func TestAddressExpiryDependsOnActiveFlows(t *testing.T) {
+ 				dst:    ipOne,
+ 			}
+ 
++			// the connector acknowledges the assignment, which is what makes
++			// its Transit IP routable and so eligible to carry a flow
++			registerTransitIPs(t, c.client)
++
+ 			// there are client flows and time passes
+ 			tt.flowsAndTimeFx(c, clock, c.client.assignments.byDomainDst[ipOneDD].magic)
+ 
+@@ -843,6 +936,7 @@ func TestFlowRemovedAfterTransitIPReassigned(t *testing.T) {
+ 		t.Fatal(err)
+ 	}
+ 	transit := before.connectorAddr.transit
++	registerTransitIPs(t, c.client, before)
+ 
+ 	// A flow is established against that assignment, and then the profile
+ 	// changes and the client's state is reset out from under the flow.
+@@ -912,6 +1006,7 @@ func TestFlowRemovedDoesNotReclaimReissuedTransitIPInUse(t *testing.T) {
+ 		t.Fatal(err)
+ 	}
+ 	transit := before.connectorAddr.transit
++	registerTransitIPs(t, c.client, before)
+ 
+ 	staleRef, ok, err := c.ClientPrepareNewFlowForMagicIP(before.magic)
+ 	if err != nil || !ok {
+@@ -929,6 +1024,7 @@ func TestFlowRemovedDoesNotReclaimReissuedTransitIPInUse(t *testing.T) {
+ 	if after == before {
+ 		t.Fatal("expected a distinct assignment after reset")
+ 	}
++	registerTransitIPs(t, c.client, after)
+ 
+ 	// The reissued assignment picks up a flow of its own, which is still live
+
+```
+
+**File**: `feature/conn25/conn25.go` (modified, +8/-5)
+```diff
+@@ -310,25 +310,28 @@ func (e *extension) installHooks(dph *datapathHandler) error {
+ // that Transit IP and keeps it and its associated addresses from being removed
+ // from Conn25's state and returned to their pools while the flow uses them.
+ //
++// If m has an active address assignment whose Transit IP isn't routable yet, it
++// reports ok false and returns [ErrTransitIPNotRoutable].
++//
+ // If m has no active address assignment, it reports ok false and returns
+ // [ErrUnmappedMagicIP] when m falls in a configured Magic IP range, and a nil
+ // error when it does not, since in that case m is not a Magic IP at all and the
+ // traffic to it is potentially valid non-app-connector traffic.
+ func (c *Conn25) ClientPrepareNewFlowForMagicIP(m netip.Addr) (ClientFlowRef, bool, error) {
+-	if ref, ok := c.client.PrepareNewFlowForMagicIP(m); ok {
++	ref, err := c.client.prepareNewFlowForMagicIP(m)
++	if err == nil {
+ 		return ref, true, nil
+ 	}
++	if errors.Is(err, ErrTransitIPNotRoutable) {
++		return ClientFlowRef{}, false, err
++	}
+ 	cfg, ok := c.getConfig()
+ 	if !ok {
+ 		return ClientFlowRef{}, false, nil
+ 	}
+ 	if !cfg.ipSets.v4Magic.Contains(m) && !cfg.ipSets.v6Magic.Contains(m) {
+ 		return ClientFlowRef{}, false, nil
+ 	}
+-	// TODO(tailscale/corp#50405): Just because there is a TransitIP associated with the MagicIP,
+-	// that doesn't mean the TransitIP is ready to use. We should also make sure that the TransitIP
+-	// is installed in WireGuard for the correct node, which happens after it is registered with the
+-	// connector. Perhaps a different error message to represent that.
+ 	return ClientFlowRef{}, false, ErrUnmappedMagicIP
+ }
+ 
+```
+
+**File**: `feature/conn25/conn25_test.go` (modified, +103/-44)
+```diff
+@@ -1213,6 +1213,7 @@ var testConnectorPeer = (&tailcfg.Node{
+ 	Addresses: []netip.Prefix{netip.PrefixFrom(testConnectorAddr, testConnectorAddr.BitLen())},
+ 	Hostinfo:  (&tailcfg.Hostinfo{AppConnector: opt.NewBool(true)}).View(),
+ 	Online:    new(true),
++	Key:       key.NodePublicFromRaw32(mem.B([]byte{0: 0xff, 31: 0x63})),
+ }).View()
+ 
+ var nodeViewComparer = cmp.Comparer(func(a, b tailcfg.NodeView) bool {
+@@ -3435,74 +3436,132 @@ func TestClientPrepareNewFlowForMagicIPResolution(t *testing.T) {
+ 	v6NonMip := netip.MustParseAddr("fd7a:115c:a1e0:a99c:11::")
+ 	v6Dst := netip.MustParseAddr("::1")
+ 
++	// connector is the connector both assignments below are made against.
++	// otherConnector stands in for a different connector, to check that a
++	// Transit IP registered against the wrong peer doesn't count as routable.
++	connector := (&tailcfg.Node{
++		ID:       tailcfg.NodeID(99),
++		Hostinfo: (&tailcfg.Hostinfo{AppConnector: opt.NewBool(true)}).View(),
++		Key:      key.NodePublicFromRaw32(mem.B([]byte{0: 0xff, 31: 0x01})),
++	}).View()
++	otherConnector := (&tailcfg.Node{
++		ID:       tailcfg.NodeID(98),
++		Hostinfo: (&tailcfg.Hostinfo{AppConnector: opt.NewBool(true)}).View(),
++		Key:      key.NodePublicFromRaw32(mem.B([]byte{0: 0xff, 31: 0x02})),
++	}).View()
++
+ 	for _, tt := range []struct {
+-		name    string
+-		mip     netip.Addr
+-		wantTip netip.Addr
+-		wantOk  bool
+-		wantErr error
++		name string
++		mip  netip.Addr
++		// registerWith is the connector the assignments are registered against, as [client.addTransitIPForConnector]
++		// would once the connector had acknowledged them.
++		registerWith tailcfg.NodeView
++		wantTip      netip.Addr
++		wantOk       bool
++		wantErr      error
+ 	}{
+ 		{
+-			name:    "not-a-magic-ip",
+-			mip:     nonMip,
+-			wantTip: netip.Addr{},
+-			wantErr: nil,
++			name:         "not-a-magic-ip",
++			mip:          nonMip,
++			registerWith: connector,
++			wantTip:      netip.Addr{},
++			wantErr:      nil,
+ 		},
+ 		{
+-			name:    "unmapped-magic-ip",
+-			mip:     unmappedMip,
+-			wantTip: netip.Addr{},
+-			wantErr: ErrUnmappedMagicIP,
++			name:         "unmapped-magic-ip",
++			mip:          unmappedMip,
++			registerWith: connector,
++			wantTip:      netip.Addr{},
++			wantErr:      ErrUnmappedMagicIP,
+ 		},
+ 		{
+-			name:    "mapped-magic-ip",
+-			mip:     mappedMip,
+-			wantTip: mappedTip,
+-			wantOk:  true,
+-			wantErr: nil,
++			name:         "mapped-magic-ip",
++			mip:          mappedMip,
++			registerWith: connector,
++			wantTip:      mappedTip,
++			wantOk:       true,
++			wantErr:      nil,
+ 		},
+ 		{
+-			name:    "v6-not-magic",
+-			mip:     v6NonMip,
++			name:    "mapped-magic-ip-not-registered",
++			mip:     mappedMip,
+ 			wantTip: netip.Addr{},
+-			wantErr: nil,
++			wantErr: ErrTransitIPNotRoutable,
+ 		},
+ 		{
+-			name:    "v6-unmapped-magic-ip",
+-			mip:     v6UnmappedMip,
+-			wantTip: netip.Addr{},
+-			wantErr: ErrUnmappedMagicIP,
++			name:         "mapped-magic-ip-registered-with-other-connector",
++			mip:          mappedMip,
++			registerWith: otherConnector,
++			wantTip:      netip.Addr{},
++			wantErr:      ErrTransitIPNotRoutable,
++		},
++		{
++			name:         "v6-not-magic",
++			mip:          v6NonMip,
++			registerWith: connector,
++			wantTip:      netip.Addr{},
++			wantErr:      nil,
++		},
++		{
++			name:         "v6-unmapped-magic-ip",
++			mip:          v6UnmappedMip,
++			registerWith: connector,
++			wantTip:      netip.Addr{},
++			wantErr:      ErrUnmappedMagicIP,
++		},
++		{
++			name:         "v6-mapped-magic-ip",
++			mip:          v6MappedMip,
++			registerWith: connector,
++			wantTip:      v6MappedTip,
++			wantOk:       true,
++			wantErr:      nil,
+ 		},
+ 		{
+-			name:    "v6-mapped-magic-ip",
++			name:    "v6-mapped-magic-ip-not-registered",
+ 			mip:     v6MappedMip,
+-			wantTip: v6MappedTip,
+-			wantOk:  true,
+-			wantErr: nil,
++			wantTip: netip.Addr{},
++			wantErr: ErrTransitIPNotRoutable,
+ 		},
+ 	} {
+ 		t.Run(tt.name, func(t *testing.T) {
+ 			c := newConn25(t.Logf)
+ 			c.reconfig(cfg)
+ 
+-			if err := c.client.assignments.insert(&addrs{
+-				magic: mappedMip,
+-				connectorAddr: connectorAddr{
+-					transit: mappedTip,
++			assignments := []*addrs{
++				{
++					magic: mappedMip,
++					connectorAddr: connectorAddr{
++						transit: mappedTip,
++						node:    connector,
++					},
++					dst:        dst,
++					generation: c.client.currentGeneration(),
+ 				},
+-				dst: dst,
+-			}); err != nil {
+-				t.Fatal(err)
+-			}
+-			if err := c.client.assignments.insert(&addrs{
+-				magic: v6MappedMip,
+-				connectorAddr: connectorAddr{
+-					transit: v6MappedTip,
++				{
++					magic: v6MappedMip,
++					connectorAddr: connectorAddr{
++						transit: v6MappedTip,
++						node:    connector,
++					},
++					dst:        v6Dst,
++					generation: c.client.currentGeneration(),
+ 				},
+-				dst: v6Dst,
+-			}); err != nil {
+-				t.Fatal(err)
+ 			}
++			for _, as := range assignments {
++				if err := c.client.assignments.insert(as); err != nil {
++					t.Fatal(err)
++				}
++				if !tt.registerWith.Va
+```
+
+**File**: `feature/conn25/datapath.go` (modified, +19/-3)
+```diff
+@@ -19,7 +19,13 @@ import (
+ )
+ 
+ var (
+-	ErrUnmappedMagicIP         = errors.New("unmapped magic IP")
++	ErrUnmappedMagicIP = errors.New("unmapped magic IP")
++
++	// ErrTransitIPNotRoutable is returned when a Magic IP is mapped to a
++	// Transit IP, but that Transit IP has not yet been registered with its
++	// connector and installed in WireGuard, so packets sent to it would be dropped.
++	ErrTransitIPNotRoutable = errors.New("transit IP not yet routable")
++
+ 	ErrUnmappedSrcAndTransitIP = errors.New("unmapped src and transit IP")
+ )
+ 
+@@ -51,6 +57,15 @@ type Conn25Datapath interface {
+ 	// flow at all. Implementations must count nothing and return ok false and
+ 	// the zero [ClientFlowRef] otherwise, including whenever they return a
+ 	// non-nil error, since the caller does not release on those paths.
++	//
++	// If magicIP is within a configured Magic IP range for an app on the client,
++	// but not mapped to an active Transit IP, implementations should return
++	// [ErrUnmappedMagicIP]. If it is mapped to a Transit IP, but that Transit IP
++	// is not yet usable because WireGuard has not been told to route it to the
++	// connector, implementations should return [ErrTransitIPNotRoutable]. If
++	// magicIP is not within a configured Magic IP range, i.e. it is not actually
++	// a Magic IP, implementations should report ok false with a nil error to
++	// indicate this potentially valid, non-app-connector traffic.
+ 	ClientPrepareNewFlowForMagicIP(magicIP netip.Addr) (ref ClientFlowRef, ok bool, err error)
+ }
+ 
+@@ -242,8 +257,9 @@ func (dh *datapathHandler) HandlePacketFromTunDevice(p *packet.Parsed, tun *tstu
+ 	ref, ok, err := dh.conn25.ClientPrepareNewFlowForMagicIP(magicIP)
+ 	if err != nil {
+ 		// No reference to release: an error means nothing was counted.
+-		if errors.Is(err, ErrUnmappedMagicIP) {
+-			// Couldn't find a mapping. Tell the local application the host is
++		if errors.Is(err, ErrUnmappedMagicIP) || errors.Is(err, ErrTransitIPNotRoutable) {
++			// Either there's no mapping, or there is one but it can't carry
++			// traffic yet. Tell the local application the host is
+ 			// unreachable so it can recover quickly instead of blackholing.
+ 			dh.sendICMPHostUnreachable(p, tun)
+ 			return filter.Drop
+```
+
+**File**: `feature/conn25/datapath_test.go` (modified, +74/-49)
+```diff
+@@ -51,36 +51,39 @@ type testNet struct {
+ 	name      string
+ 	ipVersion uint8
+ 
+-	clientSrcIP   netip.Addr // a client's Tailscale IP
+-	unknownSrcIP  netip.Addr // a Tailscale IP with no mapping on the connector
+-	magicIP       netip.Addr // a Magic IP mapped to transitIP
+-	unusedMagicIP netip.Addr // a Magic IP with no active Transit IP mapping
+-	transitIP     netip.Addr
+-	realIP        netip.Addr // the internet-facing address behind transitIP
++	clientSrcIP       netip.Addr // a client's Tailscale IP
++	unknownSrcIP      netip.Addr // a Tailscale IP with no mapping on the connector
++	magicIP           netip.Addr // a Magic IP mapped to transitIP
++	unusedMagicIP     netip.Addr // a Magic IP with no active Transit IP mapping
++	unroutableMagicIP netip.Addr // a Magic IP whose Transit IP isn't installed in WireGuard yet
++	transitIP         netip.Addr
++	realIP            netip.Addr // the internet-facing address behind transitIP
+ }
+ 
+ var testNets = []testNet{
+ 	{
+ 		name:      "ipv4",
+ 		ipVersion: 4,
+ 
+-		clientSrcIP:   netip.MustParseAddr("100.70.0.1"),
+-		unknownSrcIP:  netip.MustParseAddr("100.99.99.99"),
+-		magicIP:       netip.MustParseAddr("10.64.0.1"),
+-		unusedMagicIP: netip.MustParseAddr("10.64.0.2"),
+-		transitIP:     netip.MustParseAddr("169.254.0.1"),
+-		realIP:        netip.MustParseAddr("240.64.0.1"),
++		clientSrcIP:       netip.MustParseAddr("100.70.0.1"),
++		unknownSrcIP:      netip.MustParseAddr("100.99.99.99"),
++		magicIP:           netip.MustParseAddr("10.64.0.1"),
++		unusedMagicIP:     netip.MustParseAddr("10.64.0.2"),
++		unroutableMagicIP: netip.MustParseAddr("10.64.0.3"),
++		transitIP:         netip.MustParseAddr("169.254.0.1"),
++		realIP:            netip.MustParseAddr("240.64.0.1"),
+ 	},
+ 	{
+ 		name:      "ipv6",
+ 		ipVersion: 6,
+ 
+-		clientSrcIP:   netip.MustParseAddr("fd7a:115c:a1e0::1"),
+-		unknownSrcIP:  netip.MustParseAddr("fd7a:115c:a1e0::9999"),
+-		magicIP:       netip.MustParseAddr("fd7a:115c:a1e0:a99c:100::1"),
+-		unusedMagicIP: netip.MustParseAddr("fd7a:115c:a1e0:a99c:100::2"),
+-		transitIP:     netip.MustParseAddr("fd7a:115c:a1e0:a99c:200::1"),
+-		realIP:        netip.MustParseAddr("2606:4700::6812:1a78"),
++		clientSrcIP:       netip.MustParseAddr("fd7a:115c:a1e0::1"),
++		unknownSrcIP:      netip.MustParseAddr("fd7a:115c:a1e0::9999"),
++		magicIP:           netip.MustParseAddr("fd7a:115c:a1e0:a99c:100::1"),
++		unusedMagicIP:     netip.MustParseAddr("fd7a:115c:a1e0:a99c:100::2"),
++		unroutableMagicIP: netip.MustParseAddr("fd7a:115c:a1e0:a99c:100::3"),
++		transitIP:         netip.MustParseAddr("fd7a:115c:a1e0:a99c:200::1"),
++		realIP:            netip.MustParseAddr("2606:4700::6812:1a78"),
+ 	},
+ }
+ 
+@@ -170,6 +173,8 @@ func (tn testNet) newClientDatapath(t *testing.T, throwMappingErr bool) *datapat
+ 			return tn.transitIP, nil
+ 		case tn.unusedMagicIP:
+ 			return netip.Addr{}, ErrUnmappedMagicIP
++		case tn.unroutableMagicIP:
++			return netip.Addr{}, ErrTransitIPNotRoutable
+ 		}
+ 		return netip.Addr{}, nil
+ 	}
+@@ -224,6 +229,14 @@ func TestHandlePacketFromTunDevice(t *testing.T) {
+ 				expectedDst:            netip.AddrPortFrom(tn.unusedMagicIP, serverPort),
+ 				expectedFilterResponse: filter.Drop,
+ 			},
++			{
++				description:            "drop-magic-ip-with-unroutable-transit-ip",
++				src:                    netip.AddrPortFrom(tn.clientSrcIP, clientPort),
++				dst:                    netip.AddrPortFrom(tn.unroutableMagicIP, serverPort),
++				expectedSrc:            netip.AddrPortFrom(tn.clientSrcIP, clientPort),
++				expectedDst:            netip.AddrPortFrom(tn.unroutableMagicIP, serverPort),
++				expectedFilterResponse: filter.Drop,
++			},
+ 			{
+ 				description:            "accept-dont-nat-other-mapping-error",
+ 				src:                    netip.AddrPortFrom(tn.clientSrcIP, clientPort),
+@@ -268,43 +281,55 @@ func TestHandlePacketFromTunDevice(t *testing.T) {
+ 	}
+ }
+ 
+-// TestUnmappedMagicIPICMPUnreachable verifies that a packet to a Magic IP with
+-// no active Transit IP mapping is dropped and an ICMP host-unreachable error is
++// TestUnreachableMagicIPICMPUnreachable verifies that a packet to a Magic IP
++// that can't carry traffic is dropped and an ICMP host-unreachable error is
+ // injected back toward the local host, sourced from the Magic IP and addressed
+-// to the original sender.
+-func TestUnmappedMagicIPICMPUnreachable(t *testing.T) {
++// to the original sender. A Magic IP can't carry traffic either because it has
++// no Transit IP mapping at all, or because the Transit IP it maps to hasn't
++// been installed in WireGuard for its connector yet.
++func TestUnreachableMagicIPICMPUnreachable(t *testing.T) {
+ 	const clientPort, serverPort = 1234, 80
+ 
+ 	for _, tn := range testNets {
+ 		t.Run(tn.name, func(t *testing.T) {
+-			dph := tn.newClientDatapath(t, false)
+-			chtun, tun := newChannelTUN(t)
+-
+-			// HandlePacketFromTunDevice blocks until the injected packet is
+-			// read, so drain the channel TUN concurrently.
+-			gotInboundPacketChan := make(chan []byte, 1)
+-
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #22471** (2026-11-17): client/web,tool: bump node to 26.x LTS (@mpminardi)
+- **PR #22464** (2026-11-17): client/web,release/dist: move web client from yarn to pnpm (@j--w)
+- **PR #22460** (2026-11-17): derp/xdp: don't write counters back to the per-CPU map on every packet (@mikeodr)
+- **PR #22452** (2026-11-17): go.mod: bump gvisor.dev/gvisor (@tailscale-code-updater[bot])
 - **PR #22449** (2026-11-17): go.mod: bump 5 modules (@tailscale-code-updater[bot])
 - **PR #22446** (2026-11-17): go.mod,wgengine/wgcfg: bump wg-go & make crypto queue sizing cgroup-aware (@jwhited)
-- **PR #22444** (2026-11-17): ipn/ipnlocal: resend UserProfiles to IPN bus watchers after a profile change (@nickkhyl)
-- **PR #22443** (2026-11-16): drive/driveimpl/compositedav: close idle connections of replaced children (@mmporong)
-- **PR #22437** (2026-11-17): cmd/tsconnect: upgrade tsconnect from yarn to pnpm (@j--w)
-- **PR #22432** (2026-11-16): go.mod: bump 5 modules (@tailscale-code-updater[bot])
 
 ---
 
@@ -1477,30 +1637,30 @@ Signed-off-by: chaosinthecrd <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. cmd/tsconnect: upgrade tsconnect from yarn to pnpm
+## X. client/web,tool: bump node to 26.x LTS
 
 **RULE**:
-When implementing operations in `cmd/tsconnect/build-pkg.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `client/web/package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9123e6e2`: cmd/tsconnect: upgrade tsconnect from yarn to pnpm. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8a1840ef`: client/web,tool: bump node to 26.x LTS. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cmd/tsconnect/build-pkg.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `client/web/package.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	if err := runPnpm("--silent", "run", "lint"); err != nil {
-	if err := runPnpm("--silent", "run", "pkg-types"); err != nil {
+    "node": "26.13.1"
+    "@types/node": "^26.6.6",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-	if err := runYarn("lint"); err != nil {
-	if err := runYarn("pkg-types"); err != nil {
+    "node": "22.23.4"
+    "@types/node": "^22.14.0",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9123e6e2` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8a1840ef` are properly handled with clean fallback behavior.

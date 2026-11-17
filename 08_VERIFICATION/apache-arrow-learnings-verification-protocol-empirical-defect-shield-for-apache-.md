@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-16T14:07:05.607Z",
+  "timestamp": "2026-11-17T22:11:14.927Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-apache-arrow-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [apache-arrow-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-16T14:07:05.607Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-17T22:11:14.927Z`  
 > **Learning ID**: `LEARN-EVO-apache-arrow-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/apache-arrow-learnings.md`  
 > **Source**: github ([https://github.com/apache/arrow](https://github.com/apache/arrow))  
-> **Source Version**: `ffcdfcfa`  
+> **Source Version**: `aa4b89d9`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-16T14:06:57.016Z  
+> **Timestamp**: 2026-11-17T22:11:00.815Z  
 > **Learning ID**: `learn-github-apache-arrow`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/apache-arrow-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/apache/arrow](https://github.com/apache/arrow))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T14:06:56.665Z  
+> **Harvest Timestamp**: 2026-11-17T22:11:00.809Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Apache Arrow is the universal columnar format and multi-language toolbox for fast data interchange and in-memory analytics
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 17303 stars
+- **Stars / Engagement**: 17310 stars
 
 ---
 
@@ -1402,11 +1402,11 @@ std::vector<ArrayVector> RechunkArraysConsistently(const std::vector<ArrayVector
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #55631** (2026-11-16): **GH-55630: [C++][CI] Append expected prefix on ResolveSimdjsonResult error**
-  *Symptoms*: ### Rationale for this change  Currently MinGW tests are failing for simdjson. This seems to be related to simdjson 5.2.0 adding the following fix: - https://github.com/simdjson/simdjson/pull/3031  It seems an invalid document failed at a different stage on our codebase where we were appending the error prefix but now it fails on simdjson and we are not appending the prefix.  ### What changes are included in this PR?  Use our `JSON parse error:` prefix for other logs.  ### Are these changes tested?  Yes via CI  ### Are there any user-facing changes?  Yes, users might get a log with a slightly different prefix now but we were missing it in the first place.  ### Was AI used for this PR?  In accordance to the [AI generation guidelines](https://arrow.apache.org/docs/dev/developers/overview.html#ai-generated-code), please disclose below whether and how AI was used in this PR.  **PR code and description written by:**  - [x] Human - [x] AI  **Reviewed before submission by:**  - [x] Human - [ ] AI - [ ] Not reviewed  * GitHub Issue: #55630
+- **Issue #55657** (2026-11-17): **MINOR: [CI] Bump the apache-infrastructure-actions-stash group with 2 updates**
+  *Symptoms*: Bumps the apache-infrastructure-actions-stash group with 2 updates: [apache/infrastructure-actions/stash/restore](https://github.com/apache/infrastructure-actions) and [apache/infrastructure-actions/stash/save](https://github.com/apache/infrastructure-actions).  Updates `apache/infrastructure-actions/stash/restore` from 5a4eaabe6c43770c9df95875a513a6b8362be5eb to 762a01f36a09ab9e0e4c8af8f4b0f2ed12683df5 <details> <summary>Commits</summary> <ul> <li><a href="https://github.com/apache/infrastructure-actions/commit/762a01f36a09ab9e0e4c8af8f4b0f2ed12683df5"><code>762a01f</code></a> fork-ci: Add optional commit status reporting (<a href="https://redirect.github.com/apache/infrastructure-actions/issues/1534">#1534</a>)</li> <li><a href="https://github.com/apache/infrastructure-actions/commit/48e6b4cd4def0995346e9a48ce9b9e1598b407fc"><code>48e6b4c</code></a> Remove Expired Refs</li> <li><a href="https://github.com/apache/infrastructure-actions/commit/5bbd162d9e5952388608e1ae502ec644b99ee358"><code>5bbd162</code></a> fork-ci: list jobs that did not succeed in the check (<a href="https://redirect.github.com/apache/infrastructure-actions/issues/1533">#1533</a>)</li> <li><a href="https://github.com/apache/infrastructure-actions/commit/39fedec0756fecc6c05a89266fd6c5c4a9a93b94"><code>39fedec</code></a> Bump the codeql-action group across 1 directory with 2 updates (<a href="https://redirect.github.com/apache/infrastructure-actions/issues/1531">#1531</a>)</li> <li><a href="https://github.c
 
-- **Issue #55610** (2026-11-14): **GH-55503: [C++] Fix Float16 memo table keys built from raw bits**
-  *Symptoms*: ### Rationale for this change  Float16 dictionary unification and `count_distinct` produce incorrect results because raw `uint16_t` storage values are interpreted as numeric values instead of Float16 bit patterns.  For example, the Float16 bit pattern `0x3C00`, representing `1.0`, is interpreted as `15360.0` when passed through the converting constructor.  This causes dictionary values to be corrupted during dictionary unification and distinct Float16 values to be incorrectly merged by `count_distinct`.  ### What changes are included in this PR?  - Use `Float16::FromBits()` when constructing memo table keys from raw Float16 values in `DictionaryUnifierImpl::Unify`. - Fix Float16 handling in the array path of `CountDistinctImpl::Consume`. - Fix Float16 scalar unboxing to preserve the original bit representation in `UnboxScalar<HalfFloatType>::Unbox`.  ### Are these changes tested?  Added regression tests:  - `TestDictionaryUnifier.HalfFloat`: verifies unified dictionary values and transpose maps. - `TestCountDistinctKernel.HalfFloat`: covers distinct Float16 values, duplicates, nulls, chunked arrays, and scalar input.  Verified that both new regression tests fail with the original implementation and pass with the fix.  Validation performed:  - `arrow-array-test`: 346 tests passed (2 disabled). - `arrow-compute-aggregate-test`: 346 tests passed. - `clang-format --dry-run --Werror`: passed. - `git diff --check`: passed.  ### Are there any user-facing changes?  Fixes incorrect Fl
+- **Issue #55654** (2026-11-17): **GH-55653: [Python][Docs] Correction for operator list of Array/Scalar**
+  *Symptoms*: ### Rationale for this change Fixes #55653. Docstring correction - replacing the non-implemented Python arithmetic operator `%` with the missing`*`.  ### What changes are included in this PR? Docstring correction in `array.pxi` and `scalar.pxi` and `compute.rst`  ### Are these changes tested? Yes  ### Are there any user-facing changes? No other than docs correction  ### Was AI used for this PR?  In accordance to the [AI generation guidelines](https://arrow.apache.org/docs/dev/developers/overview.html#ai-generated-code), please disclose below whether and how AI was used in this PR.  **PR code and description written by:**  - [x] Human - [ ] AI  **Reviewed before submission by:**  - [x] Human - [ ] AI - [ ] Not reviewed * GitHub Issue: #55653
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1423,102 +1423,369 @@ std::vector<ArrayVector> RechunkArraysConsistently(const std::vector<ArrayVector
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `dc7ee12b` (2026-11-16)
-**Commit Message**: GH-51293: [Python] Reject a null Expression in two public APIs (#51294)
+### Incident Patch 1: `28a0530b` (2026-11-17)
+**Commit Message**: GH-55648: [C++][CI] Fix protobuf-induced Valgrind failures (#55649)
 
 ### Rationale for this change
 
-Passing None to partition-key extraction or expression equality terminates Python instead of raising an exception. Applications cannot catch that failure.
-
-Fixes https://github.com/apache/arrow/issues/51293.
-
-### What changes are included in this PR?
-
-Both expression parameters reject None at the Cython boundary. Regression tests cover these two entry points.
+Silence Valgrind failures due to eternal memory allocation in Protobuf initialization routines.
+Also fix Valgrind failures due to processing uninitialized padding when chunking JSON input.
 
 ### Are these changes tested?
 
-Built from source on macOS arm64 with Python 3.12.14. Both calls crash on [upstream main](https://github.com/apache/arrow/commit/1f789ffd70f96907698e93ef99f4e034caf0788b) and raise TypeError on the rebased branch.
+Yes, by existing CI job.
 
-```console
-$ python -c 'import pyarrow.dataset as ds; ds.get_partition_keys(None)'
-Before:
-returncode=-10
-After:
-TypeError: Argument 'partition_expression' has incorrect type (expected pyarrow._compute.Expression, got NoneType)
-returncode=1
+### Are there any user-facing changes?
 
-$ python -c "import pyarrow.compute as pc; pc.field('a').equals(None)"
-Before:
-returncode=-10
-After:
-TypeError: Argument 'other' has incorrect type (expected pyarrow._compute.Expression, got NoneType)
-returncode=1
+No.
+
+### Was AI used for this PR?
+
+In accordance to the [AI generation guidelines](https://arrow.apache.org/docs/dev/developers/overview.html#ai-generated-code), please disclose below whether and how AI was used in this PR.
+
+**PR code and description written by:**
+
+- [x] Human
+- [ ] AI
+
+**Reviewed before submission by:**
+
+- [x] Human
+- [ ] AI
+- [ ] Not reviewed
+
+* GitHub Issue: #55648
+
+Authored-by: Antoine Pitrou <[REDACTED_EMAIL]>
+Signed-off-by: Antoine Pitrou <[REDACTED_EMAIL]>
+
+**File**: `cpp/src/arrow/json/chunker.cc` (modified, +2/-0)
+```diff
+@@ -101,6 +101,8 @@ class ParsingBoundaryFinder : public BoundaryFinder {
+     auto data = buffer_->mutable_data();
+     std::memcpy(data, partial.data(), partial.size());
+     std::memcpy(data + partial.size(), block.data(), block.size());
++    // Zero-initialize padding area, to avoid Valgrind failures.
++    std::memset(data + partial.size() + block.size(), 0, simdjson::SIMDJSON_PADDING);
+     auto view = simdjson::padded_string_view(data, /*len=*/data_size,
+                                              /*capacity=*/buffer_->capacity());
+     DCHECK(view.has_sufficient_padding());
 ```
 
-### Are there any user-fac
-
-**File**: `python/pyarrow/_compute.pyx` (modified, +1/-1)
+**File**: `cpp/valgrind.supp` (modified, +1/-1)
 ```diff
-@@ -2686,7 +2686,7 @@ cdef class Expression(_Weakrefable):
-     cdef inline CExpression unwrap(self):
-         return self.expr
- 
--    def equals(self, Expression other):
-+    def equals(self, Expression other not None):
-         """
-         Parameters
-         ----------
+@@ -86,7 +86,7 @@
+     <protobuf>:leak on library initialization
+     Memcheck:Leak
+     ...
+-    fun:*google*protobuf*AddDescriptorsRunner*
++    fun:*google*protobuf*AddDescriptors*
+ }
+ {
+     <protobuf>:leak on library initialization
 ```
 
-**File**: `python/pyarrow/_dataset.pyx` (modified, +1/-1)
-```diff
-@@ -4055,7 +4055,7 @@ cdef class Scanner(_Weakrefable):
-         return reader
- 
- 
--def get_partition_keys(Expression partition_expression):
-+def get_partition_keys(Expression partition_expression not None):
-     """
-     Extract partition keys (equality constraints between a field and a scalar)
-     from an expression as a dict mapping the field's name to its value.
+---
+
+### Incident Patch 2: `a092214b` (2026-11-17)
+**Commit Message**: GH-55638: [C++][Parquet] Fix CDC to make list page boundaries independent of array chunking (#55639)
+
+### Rationale for this change
+
+With content-defined chunking, list columns lose the chunk boundaries that fall at the start of a `WriteArrow()` call, so their pages depend on how the data is chunked in memory.
+
+### What changes are included in this PR?
+
+CDC marks a page boundary at the start of an input array-chunk with an empty CDC-chunk. For list columns this empty CDC-chunk was dropped, so the boundary was lost. Now it is kept, like for non-list columns.
+
+```
+content-defined boundary before D
+
+WriteArrow([A B C])   CDC-chunks: [A B C]       page [A B C] stays open
+WriteArrow([D E F])
+  bug:                CDC-chunks: [D E F]       empty CDC-chunk dropped, D E F join page [A B C]
+  fix:                CDC-chunks: [] [D E F]    empty CDC-chunk closes page [A B C]
+
+pages (bug):  [A B C D E F]
+pages (fix):  [A B C] [D E F]
 ```
 
-**File**: `python/pyarrow/tests/test_compute.py` (modified, +3/-0)
+### Are these changes tested?
+
+Yes. A new test compares the pages of a chunked table and its combined version for each tested type, and the tests now check that no data page is empty.
+
+### Are there any user-facing changes?
+
+No.
+
+### Was AI used for this PR?
+
+
+**File**: `cpp/src/parquet/chunker_internal.cc` (modified, +7/-8)
 ```diff
-@@ -4371,6 +4371,9 @@ def test_expression_construction():
-     with pytest.raises(TypeError):
-         field.isin(1)
+@@ -229,7 +229,8 @@ class ContentDefinedChunker::Impl {
+     // chunks must be non-empty and monotonic increasing
+     ARROW_DCHECK(!chunks.empty());
  
-+    with pytest.raises(TypeError, match="Argument 'other' has incorrect type"):
-+        field.equals(None)
+-    // the first chunk must start at the first level
++    // the first chunk must start at the first level, it may be empty to close the
++    // page left open by the previous call
+     auto first_chunk = chunks.front();
+     ARROW_DCHECK_EQ(first_chunk.level_offset, 0);
+     ARROW_DCHECK_EQ(first_chunk.value_offset, 0);
+@@ -326,13 +327,11 @@ class ContentDefinedChunker::Impl {
+         }
+ 
+         if (rep_level == 0 && gearhash.NeedNewChunk()) {
+-          // if we are at a record boundary and need a new chunk, we create a new chunk
+-          auto levels_to_write = offset - prev_offset;
+-          if (levels_to_write > 0) {
+-            chunks.push_back({prev_offset, prev_value_offset, levels_to_write});
+-            prev_offset = offset;
+-            prev_value_offset = value_offset;
+-          }
++          // if we are at a record boundary and need a new chunk, we create a new chunk,
++          // at offset 0 it is empty and closes the page of the previous call
++          chunks.push_back({prev_offset, prev_value_offset, offset - prev_offset});
++          prev_offset = offset;
++          prev_value_offset = value_offset;
+         }
+         if (def_level >= level_info_.repeated_ancestor_def_level) {
+           // we only increment the value offset if we have a leaf value
+```
+
+**File**: `cpp/src/parquet/chunker_internal_test.cc` (modified, +22/-0)
+```diff
+@@ -396,6 +396,7 @@ ParquetInfo GetColumnParquetInfo(const std::shared_ptr<Buffer>& data, int column
+     while (auto page = page_reader->NextPage()) {
+       if (page->type() == PageType::DATA_PAGE || page->type() == PageType::DATA_PAGE_V2) {
+         auto data_page = static_cast<DataPage*>(page.get());
++        EXPECT_GT(data_page->num_values(), 0) << "empty data page";
+         column_info.page_sizes.push_back(data_page->uncompressed_size());
+         column_info.page_lengths.push_back(data_page->num_values());
+       } else if (page->type() == PageType::DICTIONARY_PAGE) {
+@@ -1467,6 +1468,27 @@ TEST_P(TestCDCSingleRowGroup, ArrayOffsets) {
+   }
+ }
+ 
++TEST_P(TestCDCSingleRowGroup, IndependentOfArrayChunks) {
++  // Content-defined chunking should produce the same pages
++  // for logically equal inputs, regardless of the inputs' own
++  // in-memory chunking.
++  const auto& param = GetParam();
++  ASSERT_OK_AND_ASSIGN(auto chunked, ConcatenateTables({part1_, part2_, part3_}));
++  ASSERT_OK_AND_ASSIGN(auto combined, chunked->CombineChunks());
++  ASSERT_EQ(chunked->column(0)->num_chunks(), 3);
++  ASSERT_EQ(combined->column(0)->num_chunks(), 1);
++  ASSERT_OK_AND_ASSIGN(
++      auto chunked_parquet,
++      WriteTableToBuffer(chunked, kMinChunkSize, kMaxChunkSize, kRowGroupLength, false,
++                         param.data_page_version));
++  ASSERT_OK_AND_ASSIGN(
++      auto combined_parquet,
++      WriteTableToBuffer(combined, kMinChunkSize, kMaxChunkSize, kRowGroupLength, false,
++                         param.data_page_version));
++  ASSERT_EQ(GetPageEnds(chunked_parquet, /*column_index=*/0),
++            GetPageEnds(combined_parquet, /*column_index=*/0));
++}
 +
-     with pytest.raises(pa.ArrowInvalid):
-         field != object()
- 
+ #if defined(ADDRESS_SANITIZER) || defined(ARROW_VALGRIND)
+ // Instantiate the test suite with a reduced set of types to avoid slow tests
+ INSTANTIATE_TEST_SUITE_P(
 ```
 
-**File**: `python/pyarrow/tests/test_dataset.py` (modified, +3/-0)
+---
+
+### Incident Patch 3: `e34fe04c` (2026-11-17)
+**Commit Message**: GH-55500: [Python] Remove the have_signal_refcycle workaround in error.pxi (#55502)
+
+### Rationale for this change
+
+Since we require Python 3.11 the `have_signal_refcycle` code and the connected workaround  in error.pxi is dead code and can be removed.
+
+### What changes are included in this PR?
+
+`have_signal_refcycle` and connected code in removed.
+
+### Are these changes tested?
+
+The test exercising this workaround is removed, current tests should pass.
+
+### Are there any user-facing changes?
+
+No.
+
+### Was AI used for this PR?
+
+**PR code and description written by:**
+
+- [x] Human
+- [ ] AI
+
+**Reviewed before submission by:**
+
+- [x] Human
+- [x] AI
+- [ ] Not reviewed
+
+* GitHub Issue: #55500
+
+Authored-by: AlenkaF <[REDACTED_EMAIL]>
+Signed-off-by: AlenkaF <[REDACTED_EMAIL]>
+
+**File**: `python/pyarrow/error.pxi` (modified, +0/-11)
 ```diff
-@@ -952,6 +952,9 @@ def test_partition_keys():
-     null = ds.field('a').is_null()
-     assert ds.get_partition_keys(null) == {'a': None}
+@@ -19,15 +19,12 @@ from cpython.exc cimport PyErr_CheckSignals, PyErr_SetInterrupt
  
-+    with pytest.raises(TypeError, match="Argument 'partition_expression'"):
-+        ds.get_partition_keys(None)
-+
+ from pyarrow.includes.libarrow cimport CStatus
+ from pyarrow.includes.libarrow_python cimport IsPyError, RestorePyError
+-from pyarrow.includes.common cimport c_string
  
- @pytest.mark.parquet
- def test_parquet_read_options():
+-from contextlib import contextmanager
+ import os
+ import signal
+ import threading
+ 
+ from pyarrow.lib import is_threading_enabled
+-from pyarrow.util import _break_traceback_cycle_from_frame
+ 
+ 
+ class ArrowException(Exception):
+@@ -188,11 +185,6 @@ def enable_signal_handlers(c_bool enable):
+ 
+ # For internal use
+ 
+-# Whether we need a workaround for https://bugs.python.org/issue42248
+-have_signal_refcycle = (sys.version_info < (3, 8, 10) or
+-                        (3, 9) <= sys.version_info < (3, 9, 5) or
+-                        sys.version_info[:2] == (3, 10))
+-
+ cdef class SignalStopHandler:
+     cdef:
+         StopToken _stop_token
+@@ -203,9 +195,6 @@ cdef class SignalStopHandler:
+         self._enabled = False
+ 
+         self._init_signals()
+-        if have_signal_refcycle:
+-            _break_traceback_cycle_from_frame(sys._getframe(0))
+-
+         self._stop_token = StopToken()
+ 
+         if not self._signals.empty():
+```
+
+**File**: `python/pyarrow/tests/test_util.py` (modified, +1/-32)
+```diff
+@@ -15,19 +15,14 @@
+ # specific language governing permissions and limitations
+ # under the License.
+ 
+-import gc
+ import os
+-import signal
+ import shutil
+ import sys
+ import textwrap
+-import weakref
+ 
+ import pytest
+ 
+-from pyarrow.util import (doc, _break_traceback_cycle_from_frame,
+-                          download_tzdata_on_windows)
+-from pyarrow.tests.util import disabled_gc
++from pyarrow.util import doc, download_tzdata_on_windows
+ 
+ 
+ @doc(method="func_a", operation="A")
+@@ -186,32 +181,6 @@ def test_escaping_in_docstring():
+     assert func_f.__doc__ == docstr
+ 
+ 
+-def exhibit_signal_refcycle():
+-    # Put an object in the frame locals and return a weakref to it.
+-    # If `signal.getsignal` has a bug where it creates a reference cycle
+-    # keeping alive the current execution frames, `obj` will not be
+-    # destroyed immediately when this function returns.
+-    obj = set()
+-    signal.getsignal(signal.SIGINT)
+-    return weakref.ref(obj)
+-
+-
+-def test_signal_refcycle():
+-    # Test possible workaround for https://bugs.python.org/issue42248
+-    with disabled_gc():
+-        wr = exhibit_signal_refcycle()
+-        if wr() is None:
+-            pytest.skip(
+-                "Python version does not have the bug we're testing for")
+-
+-    gc.collect()
+-    with disabled_gc():
+-        wr = exhibit_signal_refcycle()
+-        assert wr() is not None
+-        _break_traceback_cycle_from_frame(sys._getframe(0))
+-        assert wr() is None
+-
+-
+ @pytest.mark.skipif(sys.platform != "win32",
+                     reason="Timezone database is already provided.")
+ def test_download_tzdata_on_windows():
+```
+
+**File**: `python/pyarrow/util.py` (modified, +0/-25)
+```diff
+@@ -20,11 +20,9 @@
+ import os
+ import contextlib
+ import functools
+-import gc
+ import socket
+ import sys
+ import textwrap
+-import types
+ import warnings
+ 
+ 
+@@ -207,29 +205,6 @@ def guid():
+     return uuid4().hex
+ 
+ 
+-def _break_traceback_cycle_from_frame(frame):
+-    # Clear local variables in all inner frames, so as to break the
+-    # reference cycle.
+-    this_frame = sys._getframe(0)
+-    refs = gc.get_referrers(frame)
+-    while refs:
+-        for frame in refs:
+-            if frame is not this_frame and isinstance(frame, types.FrameType):
+-                break
+-        else:
+-            # No frame found in referrers (finished?)
+-            break
+-        refs = None
+-        # Clear the frame locals, to try and break the cycle (it is
+-        # somewhere along the chain of execution frames).
+-        frame.clear()
+-        # To visit the inner frame, we need to find it among the
+-        # referrers of this frame (while `frame.f_back` would let
+-        # us visit the outer frame).
+-        refs = gc.get_referrers(frame)
+-    refs = frame = this_frame = None
+-
+-
+ def _download_urllib(url, out_path):
+     from urllib.request import urlopen, Request
+     req = Request(url, headers={'User-Agent': 'pyarrow'})
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #55631** (closed): GH-55630: [C++][CI] Append expected prefix on ResolveSimdjsonResult error (@raulcd)
-- **PR #55610** (closed): GH-55503: [C++] Fix Float16 memo table keys built from raw bits (@AnuragRaut08)
-- **PR #55589** (2026-11-16): GH-55587: Install Node 24 for latest Azurite on Ubuntu 24.04 dockerfile (@raulcd)
-- **PR #55574** (2026-11-13): MINOR: [Docs] Fix compatibility spelling (@Sumdiboii)
-- **PR #55572** (closed): GH-55571: [C++][Parquet] Honor configured column encoding on dictionary fallback (@ryanvickr)
-- **PR #55498** (2026-11-16): GH-55497: [C++] Avoid reusing simdjson values after failed get() (@wgtmac)
+- **PR #55657** (2026-11-17): MINOR: [CI] Bump the apache-infrastructure-actions-stash group with 2 updates (@dependabot[bot])
+- **PR #55654** (2026-11-17): GH-55653: [Python][Docs] Correction for operator list of Array/Scalar (@tadeja)
+- **PR #55651** (2026-11-17): GH-55630: [CI][C++] Relax simdjson error message checking (@pitrou)
+- **PR #55649** (2026-11-17): GH-55648: [C++][CI] Fix protobuf-induced Valgrind failures (@pitrou)
+- **PR #55639** (2026-11-17): GH-55638: [C++][Parquet] Fix CDC to make list page boundaries independent of array chunking (@kszucs)
+- **PR #55637** (2026-11-17): MINOR: [C++][Parquet] Clean up chunker test assertions (@Sumdiboii)
 
 ---
 
@@ -1538,31 +1805,32 @@ returncode=1
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. GH-51293: [Python] Reject a null Expression in two public APIs
+## X. GH-55648: [C++][CI] Fix protobuf-induced Valgrind failures
 
 **RULE**:
-When implementing operations in `python/pyarrow/_compute.pyx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/arrow. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `cpp/src/arrow/json/chunker.cc`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/arrow. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `dc7ee12b`: GH-51293: [Python] Reject a null Expression in two public APIs. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `28a0530b`: GH-55648: [C++][CI] Fix protobuf-induced Valgrind failures. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `python/pyarrow/_compute.pyx`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `cpp/src/arrow/json/chunker.cc`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-    def equals(self, Expression other not None):
+    // Zero-initialize padding area, to avoid Valgrind failures.
+    std::memset(data + partial.size() + block.size(), 0, simdjson::SIMDJSON_PADDING);
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Induced defect failure mode:
-    def equals(self, Expression other):
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `dc7ee12b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `28a0530b` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

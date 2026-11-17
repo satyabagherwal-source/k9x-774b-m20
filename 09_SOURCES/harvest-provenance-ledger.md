@@ -10762,3 +10762,6 @@ Every entry in this ledger must capture:
 | `learn-github-goodrain-rainbond` | `https://github.com/goodrain/rainbond` | `5508cd38` | Multi-dimensional audit evidence | 2026-11-17T21:56:49.191Z |
 | `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `108f7135` | Multi-dimensional audit evidence | 2026-11-17T21:56:55.743Z |
 | `learn-dom-d-e5720888` | `project://hf-harness-hub-qwen3.8-27b-pi-adapted` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-harness-hub-qwen3.8-27b-pi-adapted-learnings.md` | 2026-11-17T21:57:33.618Z |
+| `learn-huggingface-audio-cpp-audio-cpp-gguf` | `https://huggingface.co/audio-cpp/audio.cpp-gguf` | `hf-audio-c` | Multi-dimensional audit evidence | 2026-11-17T22:10:59.582Z |
+| `learn-github-apache-arrow` | `https://github.com/apache/arrow` | `aa4b89d9` | Multi-dimensional audit evidence | 2026-11-17T22:11:01.954Z |
+| `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `8a1840ef` | Multi-dimensional audit evidence | 2026-11-17T22:11:10.878Z |
