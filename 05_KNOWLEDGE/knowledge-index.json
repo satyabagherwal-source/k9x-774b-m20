@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-17T09:48:08.951Z",
+  "last_updated": "2026-11-17T09:56:56.546Z",
   "total_verified_learnings": 8875,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -112058,9 +112058,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "1a0663e746342147a7eadc8a88aadde780f601320c8c535ada888bbea2aa2ffd",
+      "content_hash": "68a0936bb7da33b6006e64a568c51f799d9342545e9be69374d7c6acdb95a030",
       "domain_letter": "D",
-      "persisted_at": "2026-11-17T09:48:08.814Z"
+      "persisted_at": "2026-11-17T09:56:55.679Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112070,9 +112070,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "f9b78faa64604e5a3971f45e7f395e770142d0ca8eee8bebd02b448f04e2686a",
+      "content_hash": "24ba6d53e8ff26fedcb896fdffbafb222789faef85de67726b68973c8b224ba3",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T09:48:08.951Z"
+      "persisted_at": "2026-11-17T09:56:55.798Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -112178,9 +112178,9 @@
       "title": "Architecture Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "9443957e8cedff5038c5f1bee4dd5c093a9b74a05d467169e38bbf35fc179c87",
+      "content_hash": "ea467a61a932f1021bd1866e19ff384c9a8ada9392b17d5d679d6faa6fe97872",
       "domain_letter": "G",
-      "persisted_at": "2026-11-17T09:48:07.918Z"
+      "persisted_at": "2026-11-17T09:56:54.818Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zulip-zulip-learnings",
@@ -112190,9 +112190,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zulip-zulip-learnings",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "888f81079f136d79ccbacf9aa09ef18d9e699ee31719004c423d0a75340ddb2f",
+      "content_hash": "bc3fba983ef2a14f6003ff133ab111d0475a562b544598960699fc5642cc66cf",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T09:48:08.091Z"
+      "persisted_at": "2026-11-17T09:56:54.960Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -214906,13 +214906,13 @@
       "item_id": "candidate_directive-puppet-fix-postgresql-failing-to-start-on-new-installs",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-EPIQ-puppet-fix-postgresql-failing-to-start-on-new-installs.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-Q03Z-puppet-fix-postgresql-failing-to-start-on-new-installs.md",
       "title": "puppet: Fix PostgreSQL failing to start on new installs.",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "24247eb329f8963257730c00a027247b3bd6a6b14d44c49994a35e2edef074aa",
+      "content_hash": "45057fdd691e96fe5e86282d9a740df3cc2d3745bc968c16826e1ed3304d71f6",
       "domain_letter": "G",
-      "persisted_at": "2026-11-17T09:48:07.743Z"
+      "persisted_at": "2026-11-17T09:56:54.672Z"
     },
     "learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2": {
       "learning_id": "learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
@@ -234592,9 +234592,9 @@
       "title": "Technical Construction Intelligence: zleap-ai-sag-learnings Core Invariants",
       "repository": "zleap-ai-sag-learnings",
       "source_version": "HEAD",
-      "content_hash": "d0ed748491aaf941dc69c06e9cb81a0a51278ff3f0f141bd65862e437380c3af",
+      "content_hash": "95397d4608f9cb57295cea2db37c33cd0106bf9d81d1a7146b20bc18ca6d343d",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T03:08:07.478Z"
+      "persisted_at": "2026-11-17T09:56:56.546Z"
     },
     "learn-huggingface-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b": {
       "learning_id": "learn-huggingface-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b",
@@ -251132,13 +251132,13 @@
       "item_id": "candidate_directive-engine-detect-uv-run-script-shebangs",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-EQ4D-engine-detect-uv-run-script-shebangs.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-Q0MS-engine-detect-uv-run-script-shebangs.md",
       "title": "engine): detect uv run script shebangs",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "ae604c0b819b283f68dd667993101cd538336a649c014d361ff893f0c2db3b61",
+      "content_hash": "244a71cde2cd1b40e278d054636e9b9025fe5423d71b357010f22e40afcc66f1",
       "domain_letter": "D",
-      "persisted_at": "2026-11-17T09:48:08.510Z"
+      "persisted_at": "2026-11-17T09:56:55.348Z"
     },
     "domain_intelligence-research-knowledge-intelligence-zvec-ai-zvec-grep-learnings-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-zvec-ai-zvec-grep-learnings-core-invariants",
@@ -251148,9 +251148,9 @@
       "title": "Research & Knowledge Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "8bb9422bf7a3de8a1253d9c3c5dffb8fd8d3e7688d50bde91188dde4285bb0fa",
+      "content_hash": "2fb290047e02d7f3696354773369bcd89a13d8bd5efe4507dd0d3b9c61a92b9e",
       "domain_letter": "D",
-      "persisted_at": "2026-11-17T09:48:08.651Z"
+      "persisted_at": "2026-11-17T09:56:55.471Z"
     },
     "learn-github-prof18-feed-flow": {
       "learning_id": "learn-github-prof18-feed-flow",
