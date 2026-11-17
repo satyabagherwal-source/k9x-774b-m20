@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T00:56:05.508Z",
-  "total_cycles_completed": 9979,
-  "total_learnings_persisted": 9979,
-  "total_rules_promoted": 9566,
+  "last_updated": "2026-11-17T01:34:09.093Z",
+  "total_cycles_completed": 9982,
+  "total_learnings_persisted": 9982,
+  "total_rules_promoted": 9569,
   "history": [
-    {
-      "timestamp": "2026-11-15T23:25:57.113Z",
-      "repository": "Ataraxy-Labs/sem",
-      "learningId": "learn-github-ataraxy-labs-sem",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-15T23:26:01.145Z",
-      "repository": "searchsolved/search-solved-public-seo",
-      "learningId": "learn-github-searchsolved-search-solved-public-seo",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-15T23:26:05.052Z",
-      "repository": "argoproj/argo-events",
-      "learningId": "learn-github-argoproj-argo-events",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-15T23:39:58.586Z",
       "repository": "sfu-db/connector-x",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-17T00:56:05.508Z",
       "repository": "Permify/permify",
       "learningId": "learn-github-permify-permify",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T01:33:53.052Z",
+      "repository": "Orange-OpenSource/hurl",
+      "learningId": "learn-github-orange-opensource-hurl",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T01:34:01.377Z",
+      "repository": "karmada-io/karmada",
+      "learningId": "learn-github-karmada-io-karmada",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T01:34:09.093Z",
+      "repository": "matrixorigin/matrixone",
+      "learningId": "learn-github-matrixorigin-matrixone",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

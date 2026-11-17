@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-17T01:16:03.734Z",
-  "total_records": 1383,
+  "last_updated": "2026-11-17T01:34:14.244Z",
+  "total_records": 1385,
   "domains": {
     "A": {
       "total": 9,
@@ -1266,7 +1266,7 @@
       ]
     },
     "I": {
-      "total": 70,
+      "total": 72,
       "record_ids": [
         "DOM-I-16F011E5",
         "DOM-I-BF0A22A6",
@@ -1337,7 +1337,9 @@
         "domain_intelligence-content-information-intelligence-encode-httpx-learnings-core-invariants",
         "domain_intelligence-content-information-intelligence-chaos-mesh-chaos-mesh-learnings-core-invariants",
         "domain_intelligence-content-information-intelligence-permify-permify-core-invariants",
-        "domain_intelligence-content-information-intelligence-permify-permify-learnings-core-invariants"
+        "domain_intelligence-content-information-intelligence-permify-permify-learnings-core-invariants",
+        "domain_intelligence-content-information-intelligence-karmada-io-karmada-core-invariants",
+        "domain_intelligence-content-information-intelligence-karmada-io-karmada-learnings-core-invariants"
       ]
     },
     "J": {
@@ -19299,8 +19301,8 @@
       "title": "Technical Construction Intelligence: Orange-OpenSource/hurl Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-orange-opensource-hurl-technical-construction-intelligence-orange-opensource-hur.md",
       "repository": "Orange-OpenSource/hurl",
-      "content_hash": "39d250ba6131af7afc65f4bfad94952fd45f8d55b13b98470f8b5f7455635c8b",
-      "created_at": "2026-11-15T06:18:11.718Z"
+      "content_hash": "8e0a0f60aa4eb826e2f6d6ff2a09eb944536d26d0441636c797c37b96bac6fe5",
+      "created_at": "2026-11-17T01:33:53.362Z"
     },
     "domain_intelligence-technical-construction-intelligence-orange-opensource-hurl-learnings-core-invari": {
       "record_id": "domain_intelligence-technical-construction-intelligence-orange-opensource-hurl-learnings-core-invari",
@@ -19308,8 +19310,8 @@
       "title": "Technical Construction Intelligence: orange-opensource-hurl-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-orange-opensource-hurl-learnings-technical-construction-intelligence-orange-open.md",
       "repository": "orange-opensource-hurl-learnings",
-      "content_hash": "8d2349605198d186706d914a7b499a9e16f95198d58ef12375fda7ae9b79e544",
-      "created_at": "2026-11-15T06:18:22.892Z"
+      "content_hash": "0f84664142adb012963f1d786b31fabedca46c0a9e6a528cb9b6d20fca4241b4",
+      "created_at": "2026-11-17T01:34:12.735Z"
     },
     "DOM-D-70830486": {
       "record_id": "DOM-D-70830486",
@@ -20953,8 +20955,8 @@
       "title": "Quality & Verification Intelligence: matrixorigin/matrixone Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-matrixorigin-matrixone-quality-verification-intelligence-matrixorigin-matrixone-.md",
       "repository": "matrixorigin/matrixone",
-      "content_hash": "8b111d4d1068d05d646e14b5fe9e8f0cac2772da276d6aaa35b4a49fb9753990",
-      "created_at": "2026-11-15T17:14:23.549Z"
+      "content_hash": "390bfc5c4e73473b39e713cc2b7f13277036c19bcbf789f04a49a2377c40c241",
+      "created_at": "2026-11-17T01:34:09.390Z"
     },
     "domain_intelligence-quality-verification-intelligence-matrixorigin-matrixone-learnings-core-invarian": {
       "record_id": "domain_intelligence-quality-verification-intelligence-matrixorigin-matrixone-learnings-core-invarian",
@@ -20962,8 +20964,8 @@
       "title": "Quality & Verification Intelligence: matrixorigin-matrixone-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-matrixorigin-matrixone-learnings-quality-verification-intelligence-matrixorigin-.md",
       "repository": "matrixorigin-matrixone-learnings",
-      "content_hash": "cc4553a3aa9a870a6bdd8cfe5cc43f8cbac5cc57f0afcedc8ec893cdd7ff1fd6",
-      "created_at": "2026-11-15T17:14:27.513Z"
+      "content_hash": "d830a41807ce7c93e84631dfd8cdfbc79a7441a829be996c6c3a0d2e28a4ff76",
+      "created_at": "2026-11-17T01:34:14.244Z"
     },
     "domain_intelligence-research-knowledge-intelligence-mistralai-mistral-large-4-1t-a52b-core-invariant": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-mistralai-mistral-large-4-1t-a52b-core-invariant",
@@ -24483,6 +24485,24 @@
       "repository": "permify-permify-learnings",
       "content_hash": "46bbfc997ee4a387b1ef1245b4bf5675fd18965dabad01c8270f151e04fd115c",
       "created_at": "2026-11-17T00:56:39.678Z"
+    },
+    "domain_intelligence-content-information-intelligence-karmada-io-karmada-core-invariants": {
+      "record_id": "domain_intelligence-content-information-intelligence-karmada-io-karmada-core-invariants",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: karmada-io/karmada Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-karmada-io-karmada-content-information-intelligence-karmada-io-karmada-core-inva.md",
+      "repository": "karmada-io/karmada",
+      "content_hash": "5baaf281ccaf9046461604564fadb035f04a4808806795665de95d77de0372e5",
+      "created_at": "2026-11-17T01:34:01.646Z"
+    },
+    "domain_intelligence-content-information-intelligence-karmada-io-karmada-learnings-core-invariants": {
+      "record_id": "domain_intelligence-content-information-intelligence-karmada-io-karmada-learnings-core-invariants",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: karmada-io-karmada-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-karmada-io-karmada-learnings-content-information-intelligence-karmada-io-karmada.md",
+      "repository": "karmada-io-karmada-learnings",
+      "content_hash": "eaf4e083b9c98c724fada83bcae1a8daa067e304a095f5d258edd3d1813d0585",
+      "created_at": "2026-11-17T01:34:13.578Z"
     }
   }
 }

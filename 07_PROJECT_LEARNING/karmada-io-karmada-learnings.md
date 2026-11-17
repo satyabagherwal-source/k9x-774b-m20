@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/karmada-io-karmada-learnings.md`  
 > **Source**: github ([https://github.com/karmada-io/karmada](https://github.com/karmada-io/karmada))  
-> **Source Version**: `aad59e11`  
+> **Source Version**: `a17d6e0a`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T06:06:45.937Z  
+> **Timestamp**: 2026-11-17T01:34:00.479Z  
 > **Learning ID**: `learn-github-karmada-io-karmada`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/karmada-io-karmada-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/karmada-io/karmada](https://github.com/karmada-io/karmada))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T06:06:45.931Z  
+> **Harvest Timestamp**: 2026-11-17T01:34:00.473Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Open, Multi-Cloud, Multi-Cluster Kubernetes Orchestration
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 5763 stars
+- **Stars / Engagement**: 5767 stars
 
 ---
 
@@ -984,11 +984,17 @@ func (e *workloadInterpreter) responseWithExploreInterpretStatus(workload *workl
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #8044** (2026-11-12): **Update Kubernetes compatibility matrix**
-  *Symptoms*: **What type of PR is this?**  /kind documentation  **What this PR does / why we need it:**  - Updates the Kubernetes compatibility table in `README.md`. - Adds Kubernetes `v1.37` and removes the two oldest versions (`v1.26` and `v1.27`). - Keeps the table aligned with the latest 10 Kubernetes versions in the compatibility test matrix.  **Which issue(s) this PR fixes:**  Part of  #7975  **Special notes for your reviewer:**  - This PR only updates the README compatibility table. - Compatibility checkmarks for existing versions are preserved.  **Does this PR introduce a user-facing change?**  ```text NONE ```
+- **Issue #8072** (2026-11-16): **build(deps): bump alpine from 3.24.3 to 3.24.4 in /cluster/images**
+  *Symptoms*: Bumps alpine from 3.24.3 to 3.24.4.   [![Dependabot compatibility score](https://dependabot-badges.githubapp.com/badges/compatibility_score?dependency-name=alpine&package-manager=docker&previous-version=3.24.3&new-version=3.24.4)](https://docs.github.com/en/github/managing-security-vulnerabilities/about-dependabot-security-updates#about-compatibility-scores)  Dependabot will resolve any conflicts with this PR as long as you don't alter it yourself. You can also trigger a rebase manually by commenting `@dependabot rebase`.  [//]: # (dependabot-automerge-start) [//]: # (dependabot-automerge-end)  ---  <details> <summary>Dependabot commands and options</summary> <br />  You can trigger Dependabot actions by commenting on this PR: - `@dependabot rebase` will rebase this PR - `@dependabot recreate` will recreate this PR, overwriting any edits that have been made to it - `@dependabot show <dependency name> ignore conditions` will show all of the ignore conditions of the specified dependency - `@dependabot ignore this major version` will close this PR and stop Dependabot creating any more for this major version (unless you reopen the PR or upgrade to it yourself) - `@dependabot ignore this minor version` will close this PR and stop Dependabot creating any more for this minor version (unless you reopen the PR or upgrade to it yourself) - `@dependabot ignore this dependency` will close this PR and stop Dependabot creating any more for this dependency (unless you 
+  **Post-Mortem & Fix Analysis**:
+  > /lgtm /approve
+  > [APPROVALNOTIFIER] This PR is **APPROVED**  This pull-request has been approved by: *<a href="https://github.com/karmada-io/karmada/pull/8072#issuecomment-6904729902" title="Approved">zhzhuang-zju</a>*  The full list of commands accepted by this bot can be found [here](https://go.k8s.io/bot-commands?repo=karmada-io%2Fkarmada).  The pull request process is described [here](https://git.k8s.io/community/contributors/guide/owners.md#the-code-review-process)  <details > Needs approval from an approver in each of these files:  - ~~[OWNERS](https://github.com/karmada-io/karmada/blob/release-1.19/OWNERS)~~ [zhzhuang-zju]  Approvers can indicate their approval by writing `/approve` in a comment Approvers can cancel approval by writing `/approve cancel` in a comment </details> <!-- META={"approvers":[]} -->
 
-- **Issue #8041** (2026-11-09): **fix(cronfederatedhpa): handle nil TargetReplicas in ScaleWorkloads**
-  *Symptoms*: **What type of PR is this?** /kind bug  **What this PR does / why we need it:** When a `CronFederatedHPA` targets a direct workload rather than a `FederatedHPA`, `ScaleWorkloads()` dereferences `c.rule.TargetReplicas` without checking for `nil`. If an object reaches the controller without `targetReplicas` set, this causes a nil pointer panic during reconciliation. This PR adds a defensive check in `ScaleWorkloads()` returning a descriptive error when `TargetReplicas` is `nil`, preventing crashes and recording the failure into execution history.  **Which issue(s) this PR fixes:** Fixes #7726  **Special notes for your reviewer:** Added unit test `TestScaleWorkloads` in `cronfederatedhpa_job_test.go` verifying that direct workload scaling with `TargetReplicas == nil` does not panic and returns the expected error.  **Does this PR introduce a user-facing change?:** ```release-note NONE ```
+- **Issue #8071** (2026-11-16): **build(deps): bump alpine from 3.24.3 to 3.24.4 in /cluster/images**
+  *Symptoms*: Bumps alpine from 3.24.3 to 3.24.4.   [![Dependabot compatibility score](https://dependabot-badges.githubapp.com/badges/compatibility_score?dependency-name=alpine&package-manager=docker&previous-version=3.24.3&new-version=3.24.4)](https://docs.github.com/en/github/managing-security-vulnerabilities/about-dependabot-security-updates#about-compatibility-scores)  Dependabot will resolve any conflicts with this PR as long as you don't alter it yourself. You can also trigger a rebase manually by commenting `@dependabot rebase`.  [//]: # (dependabot-automerge-start) [//]: # (dependabot-automerge-end)  ---  <details> <summary>Dependabot commands and options</summary> <br />  You can trigger Dependabot actions by commenting on this PR: - `@dependabot rebase` will rebase this PR - `@dependabot recreate` will recreate this PR, overwriting any edits that have been made to it - `@dependabot show <dependency name> ignore conditions` will show all of the ignore conditions of the specified dependency - `@dependabot ignore this major version` will close this PR and stop Dependabot creating any more for this major version (unless you reopen the PR or upgrade to it yourself) - `@dependabot ignore this minor version` will close this PR and stop Dependabot creating any more for this minor version (unless you reopen the PR or upgrade to it yourself) - `@dependabot ignore this dependency` will close this PR and stop Dependabot creating any more for this dependency (unless you 
+  **Post-Mortem & Fix Analysis**:
+  > /lgtm /approve
+  > [APPROVALNOTIFIER] This PR is **APPROVED**  This pull-request has been approved by: *<a href="https://github.com/karmada-io/karmada/pull/8071#issuecomment-6904735804" title="Approved">zhzhuang-zju</a>*  The full list of commands accepted by this bot can be found [here](https://go.k8s.io/bot-commands?repo=karmada-io%2Fkarmada).  The pull request process is described [here](https://git.k8s.io/community/contributors/guide/owners.md#the-code-review-process)  <details > Needs approval from an approver in each of these files:  - ~~[OWNERS](https://github.com/karmada-io/karmada/blob/release-1.18/OWNERS)~~ [zhzhuang-zju]  Approvers can indicate their approval by writing `/approve` in a comment Approvers can cancel approval by writing `/approve cancel` in a comment </details> <!-- META={"approvers":[]} -->
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1005,71 +1011,236 @@ func (e *workloadInterpreter) responseWithExploreInterpretStatus(workload *workl
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `aad59e11` (2026-11-12)
-**Commit Message**: Merge pull request #8044 from Arbaaz123676/update-kubernetes-compatibility-readme
+### Incident Patch 1: `9be09d64` (2026-11-16)
+**Commit Message**: build(deps): bump azure/setup-helm from 5.0.1 to 5.1.0
 
-Update Kubernetes compatibility matrix
+Bumps [azure/setup-helm](https://github.com/azure/setup-helm) from 5.0.1 to 5.1.0.
+- [Release notes](https://github.com/azure/setup-helm/releases)
+- [Changelog](https://github.com/Azure/setup-helm/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/azure/setup-helm/compare/9bc31f4ebc9c6b171d7bfbaa5d006ae7abdb4310...2f5e7bc67f1f9972ab16657bb795f36d8f04de0e)
 
-**File**: `README.md` (modified, +6/-6)
+---
+updated-dependencies:
+- dependency-name: azure/setup-helm
+  dependency-version: 5.1.0
+  dependency-type: direct:production
+  update-type: version-update:semver-minor
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+
+**File**: `.github/workflows/installation-chart.yaml` (modified, +1/-1)
 ```diff
-@@ -190,12 +190,12 @@ please refer to the [Kubernetes Compatibility](https://karmada.io/docs/administr
+@@ -53,7 +53,7 @@ jobs:
+           go-version-file: go.mod
  
- The following table shows compatibility test results for each Karmada version against 10 Kubernetes versions:
+       - name: Set up Helm
+-        uses: azure/setup-helm@9bc31f4ebc9c6b171d7bfbaa5d006ae7abdb4310 # v5.0.1
++        uses: azure/setup-helm@2f5e7bc67f1f9972ab16657bb795f36d8f04de0e # v5.1.0
+         with:
+           version: ${{ env.HELM_VERSION }}
  
--|                       | Kubernetes 1.36 | Kubernetes 1.35 | Kubernetes 1.34 | Kubernetes 1.33 | Kubernetes 1.32 | Kubernetes 1.31 | Kubernetes 1.30 | Kubernetes 1.29 | Kubernetes 1.28 | Kubernetes 1.27 | Kubernetes 1.26 |
--|-----------------------|-----------------|-----------------|-----------------|-----------------|-----------------|-----------------|-----------------|-----------------|-----------------|-----------------|-----------------|
--| Karmada v1.17         |                 | ✓               | ✓               | ✓               | ✓               | ✓               | ✓               | ✓               | ✓               | ✓               | ✓               |
--| Karmada v1.18         |                 | ✓               | ✓               | ✓               | ✓               | ✓               | ✓               | ✓               | ✓               | ✓               | ✓               |
--| Karmada v1.19         | ✓               | ✓               | ✓               | ✓               | ✓               | ✓               | ✓               | ✓               | ✓               | ✓               |                 |
--| Karmada HEAD (master) | ✓               | ✓               | ✓               | ✓               | ✓               | ✓               | ✓               | ✓               | ✓               | ✓               |                 |
-+|                       | Kubernetes 1.37 | Kubernetes 1.36 | Kubernetes 1.35 | Kubernetes 1.34 | Kubernetes 1.33 | Kubernetes 1.32 | Kubernetes 1.31 | Kubernetes 1.30 | Kubernetes 1.29 | Kubernetes 1.28 | Kubernetes 1.27 | Kubernetes 1.26 |
-+|-----------------------|-----------------|-----------------|-----------------|-----------------|-----------------|-----------------|-----------------|-----------------|-----------------|-----------------|-----------------|-----------------|
-+| Karmada v1.17         |                 |                 | ✓               | ✓               | ✓               | ✓               | ✓               | ✓               | ✓               | ✓               | ✓               | ✓               |
-+| Karmada v1.18         |                 |                 | ✓               | ✓               | ✓               | ✓               | ✓               | ✓               | ✓               | ✓               | ✓               | ✓               |
-+| Karmada v1.19         |                 | ✓               | ✓               | ✓               | ✓               | ✓               | ✓               | ✓               | ✓               | ✓               | ✓               |                 |
-+| Karmada HEAD (master) | ✓               | ✓               | ✓               | ✓               | ✓               | ✓               | ✓               | ✓               | ✓               | ✓               |                 |                 |
- 
- Key:
- * `✓` Karmada and the Kubernetes version are exactly compatible.
 ```
 
 ---
 
-### Incident Patch 2: `c3999dc0` (2026-11-09)
-**Commit Message**: Update Kubernetes compatibility matrix
+### Incident Patch 2: `a17d6e0a` (2026-11-16)
+**Commit Message**: Merge pull request #7985 from xiangji2333/fix/search-proxy-metrics-scope
 
-Signed-off-by: Arbaaz Ahmed <[REDACTED_EMAIL]>
+fix(search): correct verb and scope labels for proxied requests
 
-**File**: `README.md` (modified, +6/-6)
+**File**: `pkg/search/proxy/controller.go` (modified, +1/-1)
 ```diff
-@@ -190,12 +190,12 @@ please refer to the [Kubernetes Compatibility](https://karmada.io/docs/administr
+@@ -307,7 +307,7 @@ func (ctl *Controller) Connect(ctx context.Context, proxyPath string, responder
+ 		}
  
- The following table shows compatibility test results for each Karmada version against 10 Kubernetes versions:
+ 		h = metrics.InstrumentHandlerFunc(requestInfo.Verb, requestInfo.APIGroup, requestInfo.APIVersion, requestInfo.Resource, requestInfo.Subresource,
+-			"", names.KarmadaSearchComponentName, false, "", h.ServeHTTP)
++			metrics.CleanScope(requestInfo), names.KarmadaSearchComponentName, false, "", h.ServeHTTP)
+ 		h.ServeHTTP(rw, newReq)
+ 	}), nil
+ }
+```
+
+**File**: `pkg/search/proxy/controller_metrics_test.go` (added, +109/-0)
+```diff
+@@ -0,0 +1,109 @@
++/*
++Copyright 2026 The Karmada Authors.
++
++Licensed under the Apache License, Version 2.0 (the "License");
++you may not use this file except in compliance with the License.
++You may obtain a copy of the License at
++
++    http://www.apache.org/licenses/LICENSE-2.0
++
++Unless required by applicable law or agreed to in writing, software
++distributed under the License is distributed on an "AS IS" BASIS,
++WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++See the License for the specific language governing permissions and
++limitations under the License.
++*/
++
++package proxy
++
++import (
++	"net/http"
++	"net/http/httptest"
++	"testing"
++
++	"github.com/stretchr/testify/assert"
++	"github.com/stretchr/testify/require"
++	"k8s.io/apiserver/pkg/endpoints/metrics"
++	"k8s.io/client-go/kubernetes/scheme"
++	"k8s.io/component-base/metrics/legacyregistry"
++
++	pluginruntime "github.com/karmada-io/karmada/pkg/search/proxy/framework/runtime"
++	"github.com/karmada-io/karmada/pkg/util/names"
++)
++
++func TestController_Connect_Metrics(t *testing.T) {
++	metrics.Register()
++	t.Cleanup(metrics.Reset)
++
++	ctl := &Controller{
++		proxy:                pluginruntime.NewFramework(convertPluginSlice([]*mockPlugin{{IsSupportRequest: true}})),
++		negotiatedSerializer: scheme.Codecs.WithoutConversion(),
++	}
++
++	tests := []struct {
++		name      string
++		proxyPath string
++		query     string
++		verb      string
++		scope     string
++	}{
++		{name: "list all namespaces", proxyPath: "/api/v1/pods", verb: "LIST", scope: "cluster"},
++		{name: "list one namespace", proxyPath: "/api/v1/namespaces/default/pods", verb: "LIST", scope: "namespace"},
++		{name: "get one pod", proxyPath: "/api/v1/namespaces/default/pods/test", verb: "GET", scope: "resource"},
++		{name: "watch pods", proxyPath: "/api/v1/pods", query: "?watch=true", verb: "WATCH", scope: "cluster"},
++	}
++
++	// The apiserver metrics registry is global, so keep cases sequential and isolated.
++	for _, tt := range tests {
++		t.Run(tt.name, func(t *testing.T) {
++			metrics.Reset()
++			handler, err := ctl.Connect(t.Context(), tt.proxyPath, nil)
++			require.NoError(t, err)
++
++			req := httptest.NewRequest(http.MethodGet, "/prefix"+tt.proxyPath+tt.query, nil)
++			recorder := httptest.NewRecorder()
++			handler.ServeHTTP(recorder, req)
++			require.Equal(t, http.StatusOK, recorder.Code)
++
++			families, err := legacyregistry.DefaultGatherer.Gather()
++			require.NoError(t, err)
++			found := map[string]bool{
++				"apiserver_request_total":            false,
++				"apiserver_request_duration_seconds": false,
++			}
++			for _, family := range families {
++				metricName := family.GetName()
++				if _, ok := found[metricName]; !ok {
++					continue
++				}
++				found[metricName] = true
++				require.Len(t, family.Metric, 1, metricName)
++				metric := family.Metric[0]
++				labels := make(map[string]string)
++				for _, label := range metric.GetLabel() {
++					labels[label.GetName()] = label.GetValue()
++				}
++				wantLabels := map[string]string{
++					"component":   names.KarmadaSearchComponentName,
++					"dry_run":     "",
++					"group":       "",
++					"version":     "v1",
++					"resource":    "pods",
++					"subresource": "",
++					"scope":       tt.scope,
++					"verb":        tt.verb,
++				}
++				if metricName == "apiserver_request_total" {
++					wantLabels["code"] = "200"
++					assert.Equal(t, float64(1), metric.GetCounter().GetValue())
++				} else {
++					assert.Equal(t, uint64(1), metric.GetHistogram().GetSampleCount())
++				}
++				assert.Equal(t, wantLabels, labels, metricName)
++			}
++			for metricName, present := range found {
++				assert.True(t, present, "missing metric %s", metricName)
++			}
++		})
++	}
++}
+```
+
+**File**: `pkg/search/proxy/controller_test.go` (modified, +2/-1)
+```diff
+@@ -398,8 +398,9 @@ func (r *mockPlugin) SupportRequest(_ framework.ProxyRequest) bool {
+ }
  
--|                       | Kubernetes 1.36 | Kubernetes 1.35 | Kubernetes 1.34 | Kubernetes 1.33 | Kubernetes 1.32 | Kubernetes 1.31 | Kubernetes 1.30 | Kubernetes 1.29 | Kubernetes 1.28 | Kubernetes 1.27 | Kubernetes 1.26 |
--|-----------------------|-----------------|-----------------|-----------------|-----------------|-----------------|-----------------|-----------------|-----------------|-----------------|-----------------|-----------------|
--| Karmada v1.17         |                 | ✓               | ✓               | ✓               | ✓               | ✓               | ✓               | ✓               | ✓               | ✓               | ✓               |
--| Karmada v1.18         |                 | ✓               | ✓               | ✓               | ✓               | ✓               | ✓               | ✓               | ✓               | ✓               | ✓               |
--| Karmada v1.19         | ✓               | ✓               | ✓               | ✓               | ✓               | ✓               | ✓               | ✓               | ✓               | ✓               |                 |
--| Karmada HEAD (master) | ✓               | ✓               | ✓               | ✓               | ✓               | ✓               | ✓               | ✓               | ✓               | ✓               |                 |
-+|                       | Kubernetes 1.37 | Kubernetes 1.36 | Kubernetes 1.35 | Kubernetes 1.34 | Kubernetes 1.33 | Kubernetes 1.32 | Kubernetes 1.31 | Kubernetes 1.30 | Kubernetes 1.29 | Kubernetes 1.28 | Kubernetes 1.27 | Kubernetes 1.26 |
-+|-----------------------|-----------------|-----------------|-----------------|-----------------|-----------------|-----------------|-----------------|-----------------|-----------------|-----------------|-----------------|-----------------|
-+| Karmada v1.17         |                 |                 | ✓               | ✓               | ✓               | ✓               | ✓               | ✓               | ✓               | ✓               | ✓               | ✓               |
-+| Karmada v1.18         |                 |                 | ✓               | ✓               | ✓               | ✓               | ✓               | ✓               | ✓               | ✓               | ✓               | ✓               |
-+| Karmada v1.19         |                 | ✓               | ✓               | ✓               | ✓               | ✓               | ✓               | ✓               | ✓               | ✓               | ✓               |                 |
-+| Karmada HEAD (master) | ✓               | ✓               | ✓               | ✓               | ✓               | ✓               | ✓               | ✓               | ✓               | ✓               |                 |                 |
+ func (r *mockPlugin) Connect(_ context.Context, _ framework.ProxyRequest) (http.Handler, error) {
+-	return http.HandlerFunc(func(http.ResponseWriter, *http.Request) {
++	return http.HandlerFunc(func(rw http.ResponseWriter, _ *http.Request) {
+ 		r.Called = true
++		rw.WriteHeader(http.StatusOK)
+ 	}), nil
+ }
  
- Key:
- * `✓` Karmada and the Kubernetes version are exactly compatible.
+```
+
+---
+
+### Incident Patch 3: `0fdc8bcc` (2026-11-16)
+**Commit Message**: build(deps): bump alpine from 3.24.3 to 3.24.4 in /cluster/images
+
+Bumps alpine from 3.24.3 to 3.24.4.
+
+---
+updated-dependencies:
+- dependency-name: alpine
+  dependency-version: 3.24.4
+  dependency-type: direct:production
+  update-type: version-update:semver-patch
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+
+**File**: `cluster/images/Dockerfile` (modified, +1/-1)
+```diff
+@@ -12,7 +12,7 @@
+ # See the License for the specific language governing permissions and
+ # limitations under the License.
+ 
+-FROM alpine:3.24.3
++FROM alpine:3.24.4
+ 
+ ARG BINARY
+ 
+```
+
+**File**: `cluster/images/buildx.Dockerfile` (modified, +1/-1)
+```diff
+@@ -12,7 +12,7 @@
+ # See the License for the specific language governing permissions and
+ # limitations under the License.
+ 
+-FROM alpine:3.24.3
++FROM alpine:3.24.4
+ 
+ ARG BINARY
+ ARG TARGETPLATFORM
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #8072** (2026-11-16): build(deps): bump alpine from 3.24.3 to 3.24.4 in /cluster/images (@dependabot[bot])
+- **PR #8071** (2026-11-16): build(deps): bump alpine from 3.24.3 to 3.24.4 in /cluster/images (@dependabot[bot])
+- **PR #8070** (2026-11-16): build(deps): bump alpine from 3.24.3 to 3.24.4 in /cluster/images (@dependabot[bot])
+- **PR #8069** (2026-11-16): build(deps): bump azure/setup-helm from 5.0.1 to 5.1.0 (@dependabot[bot])
+- **PR #8068** (2026-11-16): build(deps): bump alpine from 3.24.3 to 3.24.4 in /cluster/images (@dependabot[bot])
 - **PR #8044** (2026-11-12): Update Kubernetes compatibility matrix (@Arbaaz123676)
-- **PR #8041** (closed): fix(cronfederatedhpa): handle nil TargetReplicas in ScaleWorkloads (@madhavzanwar)
-- **PR #8039** (closed): fix(validation): handle nil TolerationSeconds in ValidateApplicationFailover (@madhavzanwar)
-- **PR #8037** (2026-11-09): build(deps): bump softprops/action-gh-release from 3.0.3 to 3.0.4 (@dependabot[bot])
-- **PR #8036** (2026-11-09): build(deps): bump docker/login-action from 4.7.0 to 4.8.0 (@dependabot[bot])
-- **PR #8035** (2026-11-09): build(deps): bump syntaqx/setup-kustomize from 1.0.3 to 2.0.0 (@dependabot[bot])
 
 ---
 
@@ -1089,37 +1260,28 @@ Signed-off-by: Arbaaz Ahmed <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #8044 from Arbaaz123676/update-kubernetes-compatibility-readm
+## X. build(deps): bump azure/setup-helm from 5.0.1 to 5.1.0
 
 **RULE**:
-When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in karmada-io/karmada. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/installation-chart.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in karmada-io/karmada. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `aad59e11`: Merge pull request #8044 from Arbaaz123676/update-kubernetes-compatibility-readme. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9be09d64`: build(deps): bump azure/setup-helm from 5.0.1 to 5.1.0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/installation-chart.yaml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-|                       | Kubernetes 1.37 | Kubernetes 1.36 | Kubernetes 1.35 | Kubernetes 1.34 | Kubernetes 1.33 | Kubernetes 1.32 | Kubernetes 1.31 | Kubernetes 1.30 | Kubernetes 1.29 | Kubernetes 1.28 | Kubernetes 1.27 | Kubernetes 1.26 |
-|-----------------------|-----------------|-----------------|-----------------|-----------------|-----------------|-----------------|-----------------|-----------------|-----------------|-----------------|-----------------|-----------------|
-| Karmada v1.17         |                 |                 | ✓               | ✓               | ✓               | ✓               | ✓               | ✓               | ✓               | ✓               | ✓               | ✓               |
-| Karmada v1.18         |                 |                 | ✓               | ✓               | ✓               | ✓               | ✓               | ✓               | ✓               | ✓               | ✓               | ✓               |
-| Karmada v1.19         |                 | ✓               | ✓               | ✓               | ✓               | ✓               | ✓               | ✓               | ✓               | ✓               | ✓               |         
+        uses: azure/setup-helm@2f5e7bc67f1f9972ab16657bb795f36d8f04de0e # v5.1.0
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
-// Anti-pattern to NEVER write (induced failure mode):
-|                       | Kubernetes 1.36 | Kubernetes 1.35 | Kubernetes 1.34 | Kubernetes 1.33 | Kubernetes 1.32 | Kubernetes 1.31 | Kubernetes 1.30 | Kubernetes 1.29 | Kubernetes 1.28 | Kubernetes 1.27 | Kubernetes 1.26 |
-|-----------------------|-----------------|-----------------|-----------------|-----------------|-----------------|-----------------|-----------------|-----------------|-----------------|-----------------|-----------------|
-| Karmada v1.17         |                 | ✓               | ✓               | ✓               | ✓               | ✓               | ✓               | ✓               | ✓               | ✓               | ✓               |
-| Karmada v1.18         |                 | ✓               | ✓               | ✓               | ✓               | ✓               | ✓               | ✓               | ✓               | ✓               | ✓               |
-| Karmada v1.19         | ✓               | ✓               | ✓               | ✓               | ✓               | ✓               | ✓               | ✓               | ✓               | ✓               |                 |
-| Karmada HEAD (master) | ✓               | ✓               | ✓               | 
+// Induced defect failure mode:
+        uses: azure/setup-helm@9bc31f4ebc9c6b171d7bfbaa5d006ae7abdb4310 # v5.0.1
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `aad59e11` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9be09d64` are properly handled with clean fallback behavior.

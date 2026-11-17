@@ -10426,3 +10426,6 @@ Every entry in this ledger must capture:
 | `learn-github-rdfjs-n3-js` | `https://github.com/rdfjs/N3.js` | `f921e119` | Multi-dimensional audit evidence | 2026-11-17T00:56:00.933Z |
 | `learn-github-permify-permify` | `https://github.com/Permify/permify` | `18fcfdda` | Multi-dimensional audit evidence | 2026-11-17T00:56:05.503Z |
 | `learn-dom-d-c8024830` | `project://1jehuang-jcode` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/1jehuang-jcode-learnings.md` | 2026-11-17T00:56:37.024Z |
+| `learn-github-orange-opensource-hurl` | `https://github.com/Orange-OpenSource/hurl` | `e6a40af3` | Multi-dimensional audit evidence | 2026-11-17T01:33:53.047Z |
+| `learn-github-karmada-io-karmada` | `https://github.com/karmada-io/karmada` | `a17d6e0a` | Multi-dimensional audit evidence | 2026-11-17T01:34:01.372Z |
+| `learn-github-matrixorigin-matrixone` | `https://github.com/matrixorigin/matrixone` | `e765c5fd` | Multi-dimensional audit evidence | 2026-11-17T01:34:09.088Z |

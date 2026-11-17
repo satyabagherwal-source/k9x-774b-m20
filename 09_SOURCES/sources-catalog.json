@@ -2803,10 +2803,10 @@
     "repository": "karmada-io/karmada",
     "platform": "github",
     "sourceUrl": "https://github.com/karmada-io/karmada",
-    "sourceVersion": "aad59e11",
+    "sourceVersion": "a17d6e0a",
     "license": "Apache-2.0",
-    "contentHash": "d60a676ad0e775d9c7572f2c84b38893fd8728b1ae484a811b6d69b31295db53",
-    "lastHarvestedAt": "2026-11-13T06:07:00.731Z",
+    "contentHash": "382e5736c88ede1c56ecbd731d923782457eb5a6d859e6c4839a69f4daeccf2d",
+    "lastHarvestedAt": "2026-11-17T01:34:01.372Z",
     "learningId": "learn-github-karmada-io-karmada"
   },
   "milvus-io-bootcamp": {
@@ -3173,10 +3173,10 @@
     "repository": "matrixorigin/matrixone",
     "platform": "github",
     "sourceUrl": "https://github.com/matrixorigin/matrixone",
-    "sourceVersion": "f70c37b1",
+    "sourceVersion": "e765c5fd",
     "license": "Apache-2.0",
-    "contentHash": "a9c8e8a62cebac898d9c99e56cfc9cf8109027c7f3699056a1591bd7f88be5c9",
-    "lastHarvestedAt": "2026-11-15T17:14:23.209Z",
+    "contentHash": "399434a8eeee9ce3e7c0ecef8c41ee11daa972fb37d14760c999102085783f5e",
+    "lastHarvestedAt": "2026-11-17T01:34:09.088Z",
     "learningId": "learn-github-matrixorigin-matrixone"
   },
   "fallow-rs-fallow": {
@@ -3733,10 +3733,10 @@
     "repository": "Orange-OpenSource/hurl",
     "platform": "github",
     "sourceUrl": "https://github.com/Orange-OpenSource/hurl",
-    "sourceVersion": "cb4fa2d3",
+    "sourceVersion": "e6a40af3",
     "license": "Apache-2.0",
-    "contentHash": "07b29fa0a5d8fb831de3345ed618c90f77d394a7e96c2907f83bac3613c02da0",
-    "lastHarvestedAt": "2026-11-15T06:18:11.436Z",
+    "contentHash": "169ff26f1dfba667f2d4f60c76a59e247584b3b7b3f59a659c5f0bece6e4f1e1",
+    "lastHarvestedAt": "2026-11-17T01:33:53.047Z",
     "learningId": "learn-github-orange-opensource-hurl"
   },
   "gregberge-svgr": {

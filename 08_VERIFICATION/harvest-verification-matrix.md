@@ -10393,3 +10393,6 @@
 | `CYCLE-20261117-EEN5` | `2026-11-17T00:56:00.929Z` | `rdfjs/N3.js` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8827` | Yes (`77f7278d...`) |
 | `CYCLE-20261117-EI63` | `2026-11-17T00:56:05.499Z` | `Permify/permify` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8828` | Yes (`da9437d6...`) |
 | `CYCLE-2026-11-17-PROJ-EVOLVE` | `2026-11-17T00:56:37.024Z` | `1jehuang-jcode` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-C8024830` [Domain D] | Yes (`9a50b591...`) |
+| `CYCLE-20261117-R3TF` | `2026-11-17T01:33:53.043Z` | `Orange-OpenSource/hurl` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8829` | Yes (`169ff26f...`) |
+| `CYCLE-20261117-RA8N` | `2026-11-17T01:34:01.367Z` | `karmada-io/karmada` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8830` | Yes (`382e5736...`) |
+| `CYCLE-20261117-RG71` | `2026-11-17T01:34:09.085Z` | `matrixorigin/matrixone` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8831` | Yes (`399434a8...`) |

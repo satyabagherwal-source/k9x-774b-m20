@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-17T01:16:03.930Z",
-  "total_verified_learnings": 8823,
+  "last_updated": "2026-11-17T01:34:14.357Z",
+  "total_verified_learnings": 8824,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 19549,
+  "total_items": 19562,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -221503,8 +221503,8 @@
       "slug": "matrixorigin-matrixone",
       "platform": "github",
       "source_url": "https://github.com/matrixorigin/matrixone",
-      "source_version": "f70c37b1",
-      "content_hash": "a9c8e8a62cebac898d9c99e56cfc9cf8109027c7f3699056a1591bd7f88be5c9",
+      "source_version": "e765c5fd",
+      "content_hash": "399434a8eeee9ce3e7c0ecef8c41ee11daa972fb37d14760c999102085783f5e",
       "dossier_path": "07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md",
       "promoted_rules": [
@@ -221517,6 +221517,11 @@
           "number": 8633,
           "title": "correct SCA closure and native test lifecycle ownership",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8831,
+          "title": "publish partitioned CREATE INDEX metadata through ALTER",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -221524,7 +221529,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-15T17:14:23.024Z",
+      "verified_at": "2026-11-17T01:34:08.928Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -221578,10 +221583,10 @@
       "relative_path": "08_VERIFICATION/matrixorigin-matrixone-verification-protocol-empirical-defect-shield-for-matrixo.md",
       "title": "Verification Protocol: Empirical Defect Shield for matrixorigin/matrixone",
       "repository": "matrixorigin/matrixone",
-      "source_version": "f70c37b1",
-      "content_hash": "ea83b7a619728fe20136af4d66523ff0841605e3d4939fd515bf5e5648a5d9c8",
+      "source_version": "e765c5fd",
+      "content_hash": "197ca4f8749dd196ed647023e31071eda8565a5adae126708aef8b8ad498c8b9",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T17:14:23.782Z"
+      "persisted_at": "2026-11-17T01:34:09.506Z"
     },
     "learn-huggingface-openai-gpt-oss-20b": {
       "learning_id": "learn-huggingface-openai-gpt-oss-20b",
@@ -240944,14 +240949,19 @@
       "slug": "orange-opensource-hurl",
       "platform": "github",
       "source_url": "https://github.com/Orange-OpenSource/hurl",
-      "source_version": "cb4fa2d3",
-      "content_hash": "07b29fa0a5d8fb831de3345ed618c90f77d394a7e96c2907f83bac3613c02da0",
+      "source_version": "e6a40af3",
+      "content_hash": "169ff26f1dfba667f2d4f60c76a59e247584b3b7b3f59a659c5f0bece6e4f1e1",
       "dossier_path": "07_PROJECT_LEARNING/orange-opensource-hurl-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/orange-opensource-hurl-learnings.md",
       "promoted_rules": [
         {
           "number": 8582,
           "title": "invertion content for cacert_file.option and clien_cert_file.option.",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8829,
+          "title": "Changes client_key_file type from String to PathBuf.",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -240960,7 +240970,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-15T06:18:11.283Z",
+      "verified_at": "2026-11-17T01:33:52.874Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -241002,10 +241012,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-orange-opensource-hurl-technical-construction-intelligence-orange-opensource-hur.md",
       "title": "Technical Construction Intelligence: Orange-OpenSource/hurl Core Invariants",
       "repository": "Orange-OpenSource/hurl",
-      "source_version": "cb4fa2d3",
-      "content_hash": "39d250ba6131af7afc65f4bfad94952fd45f8d55b13b98470f8b5f7455635c8b",
+      "source_version": "e6a40af3",
+      "content_hash": "8e0a0f60aa4eb826e2f6d6ff2a09eb944536d26d0441636c797c37b96bac6fe5",
       "domain_letter": "H",
-      "persisted_at": "2026-11-15T06:18:11.718Z"
+      "persisted_at": "2026-11-17T01:33:53.362Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-orange-opensource-hurl": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-orange-opensource-hurl",
@@ -241014,10 +241024,10 @@
       "relative_path": "08_VERIFICATION/orange-opensource-hurl-verification-protocol-empirical-defect-shield-for-orange-.md",
       "title": "Verification Protocol: Empirical Defect Shield for Orange-OpenSource/hurl",
       "repository": "Orange-OpenSource/hurl",
-      "source_version": "cb4fa2d3",
-      "content_hash": "cfd360998d0c6ec5bf893c2f4f6e53ef4755a168aec1c014d4fc455d6701e5c6",
+      "source_version": "e6a40af3",
+      "content_hash": "80c06ddc4370189deafb8632ae32b131b5346ccd3e680538231b4dac3f4b511c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T06:18:11.831Z"
+      "persisted_at": "2026-11-17T01:33:53.482Z"
     },
     "domain_intelligence-technical-construction-intelligence-orange-opensource-hurl-learnings-core-invari": {
       "item_id": "domain_intelligence-technical-construction-intelligence-orange-opensource-hurl-learnings-core-invari",
@@ -241027,9 +241037,9 @@
       "title": "Technical Construction Intelligence: orange-opensource-hurl-learnings Core Invariants",
       "repository": "orange-opensource-hurl-learnings",
       "source_version": "HEAD",
-      "content_hash": "8d2349605198d186706d914a7b499a9e16f95198d58ef12375fda7ae9b79e544",
+      "content_hash": "0f84664142adb012963f1d786b31fabedca46c0a9e6a528cb9b6d20fca4241b4",
       "domain_letter": "H",
-      "persisted_at": "2026-11-15T06:18:22.892Z"
+      "persisted_at": "2026-11-17T01:34:12.735Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-orange-opensource-hurl-learnin": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-orange-opensource-hurl-learnin",
@@ -241039,9 +241049,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for orange-opensource-hurl-learnings",
       "repository": "orange-opensource-hurl-learnings",
       "source_version": "HEAD",
-      "content_hash": "83562c117d406b9bad8b19025f258fd1b4a19260822fa6a50db4c7817bba166a",
+      "content_hash": "c49c00bc18caecb3dbc1750228a31f86a0e40b9b39a83a4d871876c948b36f7a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T06:18:23.007Z"
+      "persisted_at": "2026-11-17T01:34:12.844Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-liquidai-lfm3-omni-2b-learnings-core-invarian": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-liquidai-lfm3-omni-2b-learnings-core-invarian",
@@ -245465,10 +245475,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-matrixorigin-matrixone-quality-verification-intelligence-matrixorigin-matrixone-.md",
       "title": "Quality & Verification Intelligence: matrixorigin/matrixone Core Invariants",
       "repository": "matrixorigin/matrixone",
-      "source_version": "f70c37b1",
-      "content_hash": "8b111d4d1068d05d646e14b5fe9e8f0cac2772da276d6aaa35b4a49fb9753990",
+      "source_version": "e765c5fd",
+      "content_hash": "390bfc5c4e73473b39e713cc2b7f13277036c19bcbf789f04a49a2377c40c241",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T17:14:23.549Z"
+      "persisted_at": "2026-11-17T01:34:09.390Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-matrixorigin-matrixone": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-matrixorigin-matrixone",
@@ -245514,9 +245524,9 @@
       "title": "Quality & Verification Intelligence: matrixorigin-matrixone-learnings Core Invariants",
       "repository": "matrixorigin-matrixone-learnings",
       "source_version": "HEAD",
-      "content_hash": "cc4553a3aa9a870a6bdd8cfe5cc43f8cbac5cc57f0afcedc8ec893cdd7ff1fd6",
+      "content_hash": "d830a41807ce7c93e84631dfd8cdfbc79a7441a829be996c6c3a0d2e28a4ff76",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T17:14:27.513Z"
+      "persisted_at": "2026-11-17T01:34:14.244Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-matrixorigin-matrixone-learnings": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-matrixorigin-matrixone-learnings",
@@ -245538,9 +245548,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for matrixorigin-matrixone-learnings",
       "repository": "matrixorigin-matrixone-learnings",
       "source_version": "HEAD",
-      "content_hash": "bb143cd36959afacfddc751f46c6fa51347e0180746f0fea9c71f33409e23a25",
+      "content_hash": "e8593882be146d2ffec072660cd2d60e6ec3c02f7901da4d96c0e40e20475c74",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T17:14:27.740Z"
+      "persisted_at": "2026-11-17T01:34:14.357Z"
     },
     "learn-huggingface-mistralai-mistral-large-4-1t-a52b": {
       "learning_id": "learn-huggingface-mistralai-mistral-large-4-1t-a52b",
@@ -260690,6 +260700,189 @@
       "content_hash": "ad94a307d2f316096a07e6cf669730f62b175af757f4823875c93d186d515a3a",
       "domain_letter": "K",
       "persisted_at": "2026-11-17T00:56:39.811Z"
+    },
+    "rule-8829": {
+      "learning_id": "rule-8829",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8829,
+      "title": "Changes client_key_file type from String to PathBuf.",
+      "source_url": "https://github.com/Orange-OpenSource/hurl",
+      "source_version": "e6a40af3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T01:33:52.874Z"
+    },
+    "candidate_directive-changes-client_key_file-type-from-string-to-pathbuf": {
+      "item_id": "candidate_directive-changes-client_key_file-type-from-string-to-pathbuf",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-RIX8-changes-client_key_file-type-from-string-to-pathbuf.md",
+      "title": "Changes client_key_file type from String to PathBuf.",
+      "repository": "orange-opensource-hurl-learnings",
+      "source_version": "HEAD",
+      "content_hash": "e57f47c9bdd535896be1d363f27f0ae68d61f4f10a90f408ed8369ef869cdac1",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T01:34:12.623Z"
+    },
+    "learn-github-karmada-io-karmada": {
+      "learning_id": "learn-github-karmada-io-karmada",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "karmada-io/karmada",
+      "repository": "karmada-io/karmada",
+      "slug": "karmada-io-karmada",
+      "platform": "github",
+      "source_url": "https://github.com/karmada-io/karmada",
+      "source_version": "a17d6e0a",
+      "content_hash": "382e5736c88ede1c56ecbd731d923782457eb5a6d859e6c4839a69f4daeccf2d",
+      "dossier_path": "07_PROJECT_LEARNING/karmada-io-karmada-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/karmada-io-karmada-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8830,
+          "title": "build(deps): bump azure/setup-helm from 5.0.1 to 5.1.0",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-17T01:34:01.208Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8830": {
+      "learning_id": "rule-8830",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8830,
+      "title": "build(deps): bump azure/setup-helm from 5.0.1 to 5.1.0",
+      "source_url": "https://github.com/karmada-io/karmada",
+      "source_version": "a17d6e0a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T01:34:01.208Z"
+    },
+    "candidate_directive-build-deps-bump-azure-setup-helm-from-5-0-1-to-5-1-0": {
+      "item_id": "candidate_directive-build-deps-bump-azure-setup-helm-from-5-0-1-to-5-1-0",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-RJKQ-build-deps-bump-azure-setup-helm-from-5-0-1-to-5-1-0.md",
+      "title": "build(deps): bump azure/setup-helm from 5.0.1 to 5.1.0",
+      "repository": "karmada-io-karmada-learnings",
+      "source_version": "HEAD",
+      "content_hash": "9f551fc2e78d6ae2e576150b92e39912bfb2f5b67bec44e01d1b0abd03eab5ae",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-17T01:34:13.466Z"
+    },
+    "domain_intelligence-content-information-intelligence-karmada-io-karmada-core-invariants": {
+      "item_id": "domain_intelligence-content-information-intelligence-karmada-io-karmada-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-karmada-io-karmada-content-information-intelligence-karmada-io-karmada-core-inva.md",
+      "title": "Content & Information Intelligence: karmada-io/karmada Core Invariants",
+      "repository": "karmada-io/karmada",
+      "source_version": "a17d6e0a",
+      "content_hash": "5baaf281ccaf9046461604564fadb035f04a4808806795665de95d77de0372e5",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-17T01:34:01.646Z"
+    },
+    "agent_contract-agent-contract-karmada-io-karmada-autonomous-specialist-persona": {
+      "item_id": "agent_contract-agent-contract-karmada-io-karmada-autonomous-specialist-persona",
+      "artifact_type": "agent_contract",
+      "target_folder": "02_AGENT_INTELLIGENCE",
+      "relative_path": "02_AGENT_INTELLIGENCE/karmada-io-karmada-agent-contract-karmada-io-karmada-autonomous-specialist-perso.md",
+      "title": "Agent Contract: karmada-io/karmada Autonomous Specialist Persona",
+      "repository": "karmada-io/karmada",
+      "source_version": "a17d6e0a",
+      "content_hash": "1ded553355b04477c3d484369a894914882020beb3a5852680c0304b5e7bf0db",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-17T01:34:01.761Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-karmada-io-karmada": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-karmada-io-karmada",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/karmada-io-karmada-verification-protocol-empirical-defect-shield-for-karmada-io-.md",
+      "title": "Verification Protocol: Empirical Defect Shield for karmada-io/karmada",
+      "repository": "karmada-io/karmada",
+      "source_version": "a17d6e0a",
+      "content_hash": "834a88f86b39d1f80944707454f183dcd4036c83a90ef6c870dcb159db505b72",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T01:34:01.868Z"
+    },
+    "rule-8831": {
+      "learning_id": "rule-8831",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8831,
+      "title": "publish partitioned CREATE INDEX metadata through ALTER",
+      "source_url": "https://github.com/matrixorigin/matrixone",
+      "source_version": "e765c5fd",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T01:34:08.928Z"
+    },
+    "candidate_directive-publish-partitioned-create-index-metadata-through-alter": {
+      "item_id": "candidate_directive-publish-partitioned-create-index-metadata-through-alter",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-RK38-publish-partitioned-create-index-metadata-through-alter.md",
+      "title": "publish partitioned CREATE INDEX metadata through ALTER",
+      "repository": "matrixorigin-matrixone-learnings",
+      "source_version": "HEAD",
+      "content_hash": "afdbedfa823eb42fccac3efbb68bdd491ad9d0578a5b7e45c6c839ad330c569e",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T01:34:14.133Z"
+    },
+    "domain_intelligence-content-information-intelligence-karmada-io-karmada-learnings-core-invariants": {
+      "item_id": "domain_intelligence-content-information-intelligence-karmada-io-karmada-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-karmada-io-karmada-learnings-content-information-intelligence-karmada-io-karmada.md",
+      "title": "Content & Information Intelligence: karmada-io-karmada-learnings Core Invariants",
+      "repository": "karmada-io-karmada-learnings",
+      "source_version": "HEAD",
+      "content_hash": "eaf4e083b9c98c724fada83bcae1a8daa067e304a095f5d258edd3d1813d0585",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-17T01:34:13.578Z"
+    },
+    "agent_contract-agent-contract-karmada-io-karmada-learnings-autonomous-specialist-persona": {
+      "item_id": "agent_contract-agent-contract-karmada-io-karmada-learnings-autonomous-specialist-persona",
+      "artifact_type": "agent_contract",
+      "target_folder": "02_AGENT_INTELLIGENCE",
+      "relative_path": "02_AGENT_INTELLIGENCE/karmada-io-karmada-learnings-agent-contract-karmada-io-karmada-learnings-autonom.md",
+      "title": "Agent Contract: karmada-io-karmada-learnings Autonomous Specialist Persona",
+      "repository": "karmada-io-karmada-learnings",
+      "source_version": "HEAD",
+      "content_hash": "3c508f669f64daca176ee72fc21cc03bb05f7a4ca2e2142c2f5937332e380c53",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-17T01:34:13.691Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-karmada-io-karmada-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-karmada-io-karmada-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/karmada-io-karmada-learnings-verification-protocol-empirical-defect-shield-for-k.md",
+      "title": "Verification Protocol: Empirical Defect Shield for karmada-io-karmada-learnings",
+      "repository": "karmada-io-karmada-learnings",
+      "source_version": "HEAD",
+      "content_hash": "ebe2cf391d246f30bf2a6059c0138c7e6704e95fc1fb75743f6d92ae4b680845",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T01:34:13.793Z"
     }
   },
   "ai-builder-brain": {

@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261114-Q3RD",
-    "timestamp": "2026-11-14T07:18:00.841Z",
-    "repository": "kgateway-dev/kgateway",
-    "learningId": "learn-github-kgateway-dev-kgateway",
-    "contentHash": "46a129a2a73a2736f4bfc1f7c8b17e89ec19fa2e673440b81518ae8680edfd71",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261114-Q8RT",
-    "timestamp": "2026-11-14T07:18:07.337Z",
-    "repository": "MaterializeInc/materialize",
-    "learningId": "learn-github-materializeinc-materialize",
-    "contentHash": "bee7228afd9a4b35229b950d1fad5f36502711143899b80297b72267e573a23d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261114-6BI3",
-    "timestamp": "2026-11-14T07:30:37.371Z",
-    "repository": "Venastine-Research/Xing4.0-29B-A4B-GGUF",
-    "learningId": "learn-huggingface-venastine-research-xing4-0-29b-a4b-gguf",
-    "contentHash": "76530577fa7501066b66d71fe092ec2fdaab0a3aab85b46afe2f7daaa2c06125",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261114-6M8Y",
     "timestamp": "2026-11-14T07:30:51.298Z",
     "repository": "HelixDB/helix-db",
@@ -7490,6 +7445,51 @@
     "repository": "Permify/permify",
     "learningId": "learn-github-permify-permify",
     "contentHash": "da9437d6ecbadec69da9364a12578b41d42bcd40f686a21b0c7f84d27394e48f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-R3TF",
+    "timestamp": "2026-11-17T01:33:53.043Z",
+    "repository": "Orange-OpenSource/hurl",
+    "learningId": "learn-github-orange-opensource-hurl",
+    "contentHash": "169ff26f1dfba667f2d4f60c76a59e247584b3b7b3f59a659c5f0bece6e4f1e1",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-RA8N",
+    "timestamp": "2026-11-17T01:34:01.367Z",
+    "repository": "karmada-io/karmada",
+    "learningId": "learn-github-karmada-io-karmada",
+    "contentHash": "382e5736c88ede1c56ecbd731d923782457eb5a6d859e6c4839a69f4daeccf2d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-RG71",
+    "timestamp": "2026-11-17T01:34:09.085Z",
+    "repository": "matrixorigin/matrixone",
+    "learningId": "learn-github-matrixorigin-matrixone",
+    "contentHash": "399434a8eeee9ce3e7c0ecef8c41ee11daa972fb37d14760c999102085783f5e",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

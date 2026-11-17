@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T01:16:04.082Z",
+  "last_updated": "2026-11-17T01:34:14.456Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-17T01:16:03.308Z",
@@ -363,7 +363,7 @@
       "staged_for_review": 1
     },
     "matrixorigin-matrixone-learnings.md": {
-      "processed_at": "2026-11-15T17:14:27.207Z",
+      "processed_at": "2026-11-17T01:34:13.902Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -568,7 +568,7 @@
       "staged_for_review": 1
     },
     "orange-opensource-hurl-learnings.md": {
-      "processed_at": "2026-11-15T06:18:22.457Z",
+      "processed_at": "2026-11-17T01:34:12.266Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1583,7 +1583,7 @@
       "staged_for_review": 1
     },
     "karmada-io-karmada-learnings.md": {
-      "processed_at": "2026-11-13T06:07:07.317Z",
+      "processed_at": "2026-11-17T01:34:12.954Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3228,7 +3228,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 1413,
+  "total_dossiers_evaluated": 1416,
   "total_canonical_promoted": 292,
-  "total_staged_for_review": 1107
+  "total_staged_for_review": 1110
 }

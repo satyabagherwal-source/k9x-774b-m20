@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-17T00:56:39.366Z",
+  "updated_at": "2026-11-17T01:34:13.966Z",
   "stats": {
-    "total_discovered": 4584,
-    "approved_pending_harvest": 4314,
+    "total_discovered": 4597,
+    "approved_pending_harvest": 4327,
     "harvested_count": 0,
     "rejected_count": 270,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 4315,
+      "COMMUNITY_AND_EXPERT": 4328,
       "OFFICIAL_DOCUMENTATION": 144,
       "STANDARDS_AND_SPECIFICATIONS": 98,
       "ENGINEERING_BLOGS": 3,
@@ -98979,6 +98979,292 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/permify-permify-learnings.md",
         "fileName": "permify-permify-learnings.md"
+      }
+    },
+    "SRC-506F05152987": {
+      "id": "SRC-506F05152987",
+      "url": "https://dependabot-badges.githubapp.com/badges/compatibility_score?dependency-name=alpine&package-manager=docker&previous-version=3.24.3&new-version=3.24.4",
+      "title": "https://dependabot-badges.githubapp.com/badges/compatibility_score?dependency-name=alpine&package-manager=docker&previous-version=3.24.3&new-version=3.24.4",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T01:34:13.006Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/karmada-io-karmada-learnings.md",
+        "fileName": "karmada-io-karmada-learnings.md"
+      }
+    },
+    "SRC-6B2B45BD4891": {
+      "id": "SRC-6B2B45BD4891",
+      "url": "https://github.com/karmada-io/karmada/pull/8072",
+      "title": "https://github.com/karmada-io/karmada/pull/8072",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T01:34:13.047Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/karmada-io-karmada-learnings.md",
+        "fileName": "karmada-io-karmada-learnings.md"
+      }
+    },
+    "SRC-DD497D54400F": {
+      "id": "SRC-DD497D54400F",
+      "url": "https://go.k8s.io/bot-commands?repo=karmada-io%2Fkarmada",
+      "title": "https://go.k8s.io/bot-commands?repo=karmada-io%2Fkarmada",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T01:34:13.076Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/karmada-io-karmada-learnings.md",
+        "fileName": "karmada-io-karmada-learnings.md"
+      }
+    },
+    "SRC-49FA04CE85EF": {
+      "id": "SRC-49FA04CE85EF",
+      "url": "https://git.k8s.io/community/contributors/guide/owners.md",
+      "title": "https://git.k8s.io/community/contributors/guide/owners.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T01:34:13.103Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/karmada-io-karmada-learnings.md",
+        "fileName": "karmada-io-karmada-learnings.md"
+      }
+    },
+    "SRC-968F1AAE65BA": {
+      "id": "SRC-968F1AAE65BA",
+      "url": "https://github.com/karmada-io/karmada/blob/release-1.19/OWNERS",
+      "title": "https://github.com/karmada-io/karmada/blob/release-1.19/OWNERS",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T01:34:13.132Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/karmada-io-karmada-learnings.md",
+        "fileName": "karmada-io-karmada-learnings.md"
+      }
+    },
+    "SRC-3F1555FB649B": {
+      "id": "SRC-3F1555FB649B",
+      "url": "https://github.com/karmada-io/karmada/pull/8071",
+      "title": "https://github.com/karmada-io/karmada/pull/8071",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T01:34:13.160Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/karmada-io-karmada-learnings.md",
+        "fileName": "karmada-io-karmada-learnings.md"
+      }
+    },
+    "SRC-96743859A593": {
+      "id": "SRC-96743859A593",
+      "url": "https://github.com/karmada-io/karmada/blob/release-1.18/OWNERS",
+      "title": "https://github.com/karmada-io/karmada/blob/release-1.18/OWNERS",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T01:34:13.187Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/karmada-io-karmada-learnings.md",
+        "fileName": "karmada-io-karmada-learnings.md"
+      }
+    },
+    "SRC-74ED4E81448E": {
+      "id": "SRC-74ED4E81448E",
+      "url": "https://github.com/azure/setup-helm",
+      "title": "https://github.com/azure/setup-helm",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T01:34:13.219Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/karmada-io-karmada-learnings.md",
+        "fileName": "karmada-io-karmada-learnings.md"
+      }
+    },
+    "SRC-9E484B70C94B": {
+      "id": "SRC-9E484B70C94B",
+      "url": "https://github.com/azure/setup-helm/releases",
+      "title": "https://github.com/azure/setup-helm/releases",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T01:34:13.246Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/karmada-io-karmada-learnings.md",
+        "fileName": "karmada-io-karmada-learnings.md"
+      }
+    },
+    "SRC-C9D1A8C5AAEB": {
+      "id": "SRC-C9D1A8C5AAEB",
+      "url": "https://github.com/Azure/setup-helm/blob/main/CHANGELOG.md",
+      "title": "https://github.com/Azure/setup-helm/blob/main/CHANGELOG.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T01:34:13.273Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/karmada-io-karmada-learnings.md",
+        "fileName": "karmada-io-karmada-learnings.md"
+      }
+    },
+    "SRC-9C45D16244BA": {
+      "id": "SRC-9C45D16244BA",
+      "url": "https://github.com/azure/setup-helm/compare/9bc31f4ebc9c6b171d7bfbaa5d006ae7abdb4310...2f5e7bc67f1f9972ab16657bb795f36d8f04de0e",
+      "title": "https://github.com/azure/setup-helm/compare/9bc31f4ebc9c6b171d7bfbaa5d006ae7abdb4310...2f5e7bc67f1f9972ab16657bb795f36d8f04de0e",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T01:34:13.304Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/karmada-io-karmada-learnings.md",
+        "fileName": "karmada-io-karmada-learnings.md"
+      }
+    },
+    "SRC-173F8DAB132A": {
+      "id": "SRC-173F8DAB132A",
+      "url": "https://github.com/matrixorigin/matrixone/issues/28933",
+      "title": "https://github.com/matrixorigin/matrixone/issues/28933",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T01:34:13.939Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md",
+        "fileName": "matrixorigin-matrixone-learnings.md"
+      }
+    },
+    "SRC-62DE689E3DA5": {
+      "id": "SRC-62DE689E3DA5",
+      "url": "https://github.com/matrixorigin/matrixone/actions/runs/43871964993",
+      "title": "https://github.com/matrixorigin/matrixone/actions/runs/43871964993",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T01:34:13.966Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md",
+        "fileName": "matrixorigin-matrixone-learnings.md"
       }
     }
   }

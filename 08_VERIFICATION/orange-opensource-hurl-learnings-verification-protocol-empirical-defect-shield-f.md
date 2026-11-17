@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-15T06:18:22.675Z",
+  "timestamp": "2026-11-17T01:34:12.514Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-orange-opensource-hurl-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [orange-opensource-hurl-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-15T06:18:22.675Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-17T01:34:12.514Z`  
 > **Learning ID**: `LEARN-EVO-orange-opensource-hurl-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/orange-opensource-hurl-learnings.md`  
 > **Source**: github ([https://github.com/Orange-OpenSource/hurl](https://github.com/Orange-OpenSource/hurl))  
-> **Source Version**: `cb4fa2d3`  
+> **Source Version**: `e6a40af3`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-15T06:18:10.588Z  
+> **Timestamp**: 2026-11-17T01:33:52.168Z  
 > **Learning ID**: `learn-github-orange-opensource-hurl`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/orange-opensource-hurl-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Orange-OpenSource/hurl](https://github.com/Orange-OpenSource/hurl))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-15T06:18:10.583Z  
+> **Harvest Timestamp**: 2026-11-17T01:33:52.023Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Hurl, run and test HTTP requests with plain text.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 19323 stars
+- **Stars / Engagement**: 19326 stars
 
 ---
 
@@ -1893,118 +1893,207 @@ pub mod visit;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e31691fd` (2026-11-13)
-**Commit Message**: Fix invertion content for cacert_file.option and clien_cert_file.option.
+### Incident Patch 1: `e6a40af3` (2026-11-14)
+**Commit Message**: Changes client_key_file type from String to PathBuf.
+
+**File**: `packages/hurl/src/cli/options/args.rs` (modified, +5/-4)
+```diff
+@@ -378,16 +378,17 @@ fn client_cert_file(
+ 
+ fn client_key_file(
+     arg_matches: &ArgMatches,
+-    default_value: Option<String>,
+-) -> Result<Option<String>, CliOptionsError> {
++    default_value: Option<PathBuf>,
++) -> Result<Option<PathBuf>, CliOptionsError> {
+     match get::<String>(arg_matches, "client_key_file") {
+         None => Ok(default_value),
+         Some(filename) => {
+-            if !Path::new(&filename).is_file() {
++            let path = PathBuf::from(&filename);
++            if !path.is_file() {
+                 let message = format!("File {filename} does not exist");
+                 Err(CliOptionsError::Error(message))
+             } else {
+-                Ok(Some(filename))
++                Ok(Some(path))
+             }
+         }
+     }
+```
+
+**File**: `packages/hurl/src/cli/options/mod.rs` (modified, +1/-2)
+```diff
+@@ -63,9 +63,8 @@ pub use error::CliOptionsError;
+ pub struct CliOptions {
+     pub aws_sigv4: Option<String>,
+     pub cacert_file: Option<PathBuf>,
+-    /// Client certificate file with optional password `certificate(:password)`
+     pub client_cert_file: Option<String>,
+-    pub client_key_file: Option<String>,
++    pub client_key_file: Option<PathBuf>,
+     pub color_stdout: BoolOpt,
+     pub color_stderr: BoolOpt,
+     pub compressed: bool,
+```
+
+**File**: `packages/hurl/src/http/curl_cmd.rs` (modified, +1/-1)
+```diff
+@@ -474,7 +474,7 @@ impl ClientOptions {
+         }
+         if let Some(ref client_key_file) = self.client_key_file {
+             args.push(Arg::plain("--key"));
+-            args.push(Arg::plain(client_key_file));
++            args.push(Arg::plain(&client_key_file.to_string_lossy()));
+         }
+         if self.compressed {
+             args.push(Arg::plain("--compressed"));
+```
+
+**File**: `packages/hurl/src/http/options.rs` (modified, +1/-1)
+```diff
+@@ -33,7 +33,7 @@ pub struct ClientOptions {
+     pub aws_sigv4: Option<String>,
+     pub cacert_file: Option<PathBuf>,
+     pub client_cert_file: Option<CertFile>,
+-    pub client_key_file: Option<String>,
++    pub client_key_file: Option<PathBuf>,
+     pub compressed: bool,
+     pub connect_timeout: Duration,
+     pub connects_to: Vec<String>,
+```
+
+**File**: `packages/hurl/src/runner/options.rs` (modified, +1/-1)
+```diff
+@@ -78,7 +78,7 @@ pub fn get_entry_options(
+             }
+             OptionKind::ClientKey(filename) => {
+                 let value = eval_template(filename, variables)?;
+-                entry_options.client_key_file = Some(value);
++                entry_options.client_key_file = Some(PathBuf::from(value));
+             }
+             OptionKind::Compressed(value) => {
+                 let value = eval_boolean_option(value, variables)?;
+```
+
+**File**: `packages/hurl/src/runner/runner_options.rs` (modified, +3/-3)
+```diff
+@@ -34,7 +34,7 @@ pub struct RunnerOptionsBuilder {
+     aws_sigv4: Option<String>,
+     cacert_file: Option<PathBuf>,
+     client_cert_file: Option<CertFile>,
+-    client_key_file: Option<String>,
++    client_key_file: Option<PathBuf>,
+     color_stdout: bool,
+     compressed: bool,
+     connect_timeout: Duration,
+@@ -184,7 +184,7 @@ impl RunnerOptionsBuilder {
+     }
+ 
+     /// Sets private key file name.
+-    pub fn client_key_file(&mut self, client_key_file: Option<String>) -> &mut Self {
++    pub fn client_key_file(&mut self, client_key_file: Option<PathBuf>) -> &mut Self {
+         self.client_key_file = client_key_file;
+         self
+     }
+@@ -593,7 +593,7 @@ pub struct RunnerOptions {
+     /// Sets client certificate file and password.
+     pub(crate) client_cert_file: Option<CertFile>,
+     /// Sets private key file name.
+-    pub(crate) client_key_file: Option<String>,
++    pub(crate) client_key_file: Option<PathBuf>,
+     /// Whether we use color in stdout, or not. This property is used when response is outputted
+     /// to a file or to standard output through `[Options]` section.
+     pub(crate) color_stdout: bool,
+```
+
+---
+
+### Incident Patch 2: `586a0765` (2026-11-14)
+**Commit Message**: Update doc for --key option.
 
 **File**: `README.md` (modified, +1/-1)
 ```diff
-@@ -1475,7 +1475,7 @@ to configure Hurl, there are four sources from the lowest priority to highest (o
- | Option                                                                                                            | Description                                                                                                                                                                                                                                                                                                                                                                                                                   |
- |-------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
- | <a href="#aws-sigv4" id="aws-sigv4"><code>--aws-sigv4 &lt;PROVIDER1[:PROVIDER2[:REGION[:SERVICE]]]&gt;</code></a> | Generate an `Authorization` header with an AWS SigV4 signature.<br><br>Use [`-u, --user`](#user) to specify Access Key Id (username) and Secret Key (password).<br><br>To use temporary session credentials (e.g. for an AWS IAM Role), add the `X-Amz-Security-Token` header containing the session token.<br>                                                                                                               |
--| <a href="#cacert" id="cacert"><code>--cacert &lt;FILE&gt;</code></a>                                              | Specifies the certificate file for peer verification. The file may contain multiple CA certificates and must be in PEM format.<br>Normally Hurl is built to use a default file for this, so this option is typically used to alter that default file.<br>                                                                                                                                                                     |
-+| <a href="#cacert" id="cacert"><code>--cacert &lt;FILE&gt;</code></a>                                              | Specifies the certificate file for peer verification. The file may contain multiple CA certificates and must be in PEM format.<br>Normally Hurl is built to use a default file for this, so this option is typically used to alter that default file.<br><br>See also [`--insecure`](#insecure).<br>                                                                                                                          |
- | <a href="#cert" id="cert"><code>-E, --cert &lt;CERTIFICATE[:PASSWORD]&gt;</code></a>                              | Client certificate file and password.<br><br>See also [`--key`](#key).<br>                                                                                                                                                                                                                                                                                                                                                    |
- | <a href="#compressed" id="compressed"><code>--compressed</code></a>                                               | Request a compressed response using one of the algorithms br, gzip, deflate and automatically decompress the content.<br><br>Environment variables: HURL_COMPRESSED<br>                                                                                                                                                                                                                                                       |
- | <a href="#connect-timeout" id="connect-timeout"><code>--connect-timeout &lt;SECONDS&gt;</code></a>                | Maximum time in seconds that you allow Hurl's connection to take.<br><br>You can specify time units in the connect timeout expression. Set Hurl to use a connect timeout of 20 seconds with `--connect-timeout 20s` or set it to 35,000 milliseconds with `--connect-timeout 35000ms`. No spaces allowed.<br><br>See also [`-m, --max-time`](#max-time).<br><br>Environment variables: HURL_CONNECT_TIMEOUT<br>               |
+@@ -1490,7 +1490,7 @@ to configure Hurl, there are four sources from the lowest priority to highest (o
+ | <a href="#insecure" id="insecure"><code>-k, --insecure</code></a>                                                 | This option explicitly allows Hurl to perform "insecure" SSL connections and transfers.<br><br>Environment variables: HURL_INSECURE<br>                                                                                                                                                                                                                                                                                       |
+ | <a href="#ipv4" id="ipv4"><code>-4, --ipv4</code></a>                                                             | This option tells Hurl to use IPv4 addresses only when resolving host names, and not for example try IPv6.<br><br>Environment variables: HURL_IPV4<br>                                                                                                                                                                                                                                                                        |
+ | <a href="#ipv6" id="ipv6"><code>-6, --ipv6</code></a>                                                             | This option tells Hurl to use IPv6 addresses only when resolving host names, and not for example try IPv4.<br><br>Environment variables: HURL_IPV6<br>                                                                                                                                                                                                                                                                        |
+-| <a href="#key" id="key"><code>--key &lt;KEY&gt;</code></a>                                                        | Private key file name.<br>                                                                                                                                                                                                                                                                                                                                                                                                    |
++| <a href="#key" id="key"><code>--key &lt;KEY&gt;</code></a>                                                        | Private key file name. Allows you to provide your private key in this separate file.<br><br>See also [`--cert`](#cert).<br>                                                                                                                                                                                                                                                                                                   |
+ | <a href="#limit-rate" id="limit-rate"><code>--limit-rate &lt;SPEED&gt;</code></a>                                 | Specify the maximum transfer rate you want Hurl to use, for both downloads and uploads. This feature is useful if you have a limited pipe and you would like your transfer not to use your entire bandwidth. To make it slower than it otherwise would be.<br>The given speed is measured in bytes/second.<br><br>Environment variables: HURL_LIMIT_RATE<br>                                                                  |
+ | <a href="#location" id="location"><code>-L, --location</code></a>                                                 | Follow redirect. To limit the amount of redirects to follow use the [`--max-redirs`](#max-redirs) option<br><br>Environment variables: HURL_LOCATION<br>                                                                                                                                                                                                                                                                      |
+ | <a href="#location-trusted" id="location-trusted"><code>--location-trusted</code></a>                             | Like [`-L, --location`](#location), but allows sending the name + password to all hosts that the site may redirect to.<br>This may or may not introduce a security breach if the site redirects you to a site to which you send your authentication info (which is plaintext in the case of HTTP Basic authentication).<br><br>Environment variables: HURL_LOCATION_TRUSTED<br>                                               |
 ```
 
 **File**: `docs/manual.md` (modified, +1/-1)
 ```diff
-@@ -174,7 +174,7 @@ to configure Hurl, there are four sources from the lowest priority to highest (o
- | Option                                                                                                            | Description                                                                                                                                                                                                                                                                                                                                                                                                                   |
- |-------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
- | <a href="#aws-sigv4" id="aws-sigv4"><code>--aws-sigv4 &lt;PROVIDER1[:PROVIDER2[:REGION[:SERVICE]]]&gt;</code></a> | Generate an `Authorization` header with an AWS SigV4 signature.<br><br>Use [`-u, --user`](#user) to specify Access Key Id (username) and Secret Key (password).<br><br>To use temporary session credentials (e.g. for an AWS IAM Role), add the `X-Amz-Security-Token` header containing the session token.<br>                                                                                                               |
--| <a href="#cacert" id="cacert"><code>--cacert &lt;FILE&gt;</code></a>                                              | Specifies the certificate file for peer verification. The file may contain multiple CA certificates and must be in PEM format.<br>Normally Hurl is built to use a default file for this, so this option is typically used to alter that default file.<br>                                                                                                                                                                     |
-+| <a href="#cacert" id="cacert"><code>--cacert &lt;FILE&gt;</code></a>                                              | Specifies the certificate file for peer verification. The file may contain multiple CA certificates and must be in PEM format.<br>Normally Hurl is built to use a default file for this, so this option is typically used to alter that default file.<br><br>See also [`--insecure`](#insecure).<br>                                                                                                                          |
- | <a href="#cert" id="cert"><code>-E, --cert &lt;CERTIFICATE[:PASSWORD]&gt;</code></a>                              | Client certificate file and password.<br><br>See also [`--key`](#key).<br>                                                                                                                                                                                                                                                                                                                                                    |
- | <a href="#compressed" id="compressed"><code>--compressed</code></a>                                               | Request a compressed response using one of the algorithms br, gzip, deflate and automatically decompress the content.<br><br>Environment variables: HURL_COMPRESSED<br>                                                                                                                                                                                                                                                       |
- | <a href="#connect-timeout" id="connect-timeout"><code>--connect-timeout &lt;SECONDS&gt;</code></a>                | Maximum time in seconds that you allow Hurl's connection to take.<br><br>You can specify time units in the connect timeout expression. Set Hurl to use a connect timeout of 20 seconds with `--connect-timeout 20s` or set it to 35,000 milliseconds with `--connect-timeout 35000ms`. No spaces allowed.<br><br>See also [`-m, --max-time`](#max-time).<br><br>Environment variables: HURL_CONNECT_TIMEOUT<br>               |
+@@ -189,7 +189,7 @@ to configure Hurl, there are four sources from the lowest priority to highest (o
+ | <a href="#insecure" id="insecure"><code>-k, --insecure</code></a>                                                 | This option explicitly allows Hurl to perform "insecure" SSL connections and transfers.<br><br>Environment variables: HURL_INSECURE<br>                                                                                                                                                                                                                                                                                       |
+ | <a href="#ipv4" id="ipv4"><code>-4, --ipv4</code></a>                                                             | This option tells Hurl to use IPv4 addresses only when resolving host names, and not for example try IPv6.<br><br>Environment variables: HURL_IPV4<br>                                                                                                                                                                                                                                                                        |
+ | <a href="#ipv6" id="ipv6"><code>-6, --ipv6</code></a>                                                             | This option tells Hurl to use IPv6 addresses only when resolving host names, and not for example try IPv4.<br><br>Environment variables: HURL_IPV6<br>                                                                                                                                                                                                                                                                        |
+-| <a href="#key" id="key"><code>--key &lt;KEY&gt;</code></a>                                                        | Private key file name.<br>                                                                                                                                                                                                                                                                                                                                                                                                    |
++| <a href="#key" id="key"><code>--key &lt;KEY&gt;</code></a>                                                        | Private key file name. Allows you to provide your private key in this separate file.<br><br>See also [`--cert`](#cert).<br>                                                                                                                                                                                                                                                                                                   |
+ | <a href="#limit-rate" id="limit-rate"><code>--limit-rate &lt;SPEED&gt;</code></a>                                 | Specify the maximum transfer rate you want Hurl to use, for both downloads and uploads. This feature is useful if you have a limited pipe and you would like your transfer not to use your entire bandwidth. To make it slower than it otherwise would be.<br>The given speed is measured in bytes/second.<br><br>Environment variables: HURL_LIMIT_RATE<br>                                                                  |
+ | <a href="#location" id="location"><code>-L, --location</code></a>                                                 | Follow redirect. To limit the amount of redirects to follow use the [`--max-redirs`](#max-redirs) option<br><br>Environment variables: HURL_LOCATION<br>                                                                                                                                                                                                                                                                      |
+ | <a href="#location-trusted" id="location-trusted"><code>--location-trusted</code></a>                             | Like [`-L, --location`](#location), but allows sending the name + password to all hosts that the site may redirect to.<br>This may or may not introduce a security breach if the site redirects you to a site to which you send your authentication info (which is plaintext in the case of HTTP Basic authentication).<br><br>Environment variables: HURL_LOCATION_TRUSTED<br>                                               |
 ```
 
-**File**: `docs/manual/hurl.1` (modified, +3/-1)
+**File**: `docs/manual/hurl.1` (modified, +4/-2)
 ```diff
 @@ -1,4 +1,4 @@
--.TH hurl 1 "06 Nov 2026" "hurl 9.0.0" " Hurl Manual"
-+.TH hurl 1 "13 Nov 2026" "hurl 9.0.0" " Hurl Manual"
+-.TH hurl 1 "13 Nov 2026" "hurl 9.0.0" " Hurl Manual"
++.TH hurl 1 "14 Nov 2026" "hurl 9.0.0" " Hurl Manual"
  .SH NAME
  
  hurl - run and test HTTP requests.
-@@ -166,6 +166,8 @@ To use temporary session credentials (e.g. for an AWS IAM Role), add the `X-Amz-
- Specifies the certificate file for peer verification. The file may contain multiple CA certificates and must be in PEM format.
- Normally Hurl is built to use a default file for this, so this option is typically used to alter that default file.
+@@ -260,7 +260,9 @@ Environment variables: HURL_IPV6
  
-+See also \fI--insecure\fP.
+ .IP "--key <KEY> "
+ 
+-Private key file name.
++Private key file name. Allows you to provide your private key in this separate file.
 +
- .IP "-E, --cert <CERTIFICATE[:PASSWORD]> "
++See also \fI--cert\fP.
  
- Client certificate file and password.
+ .IP "--limit-rate <SPEED> "
+ 
 ```
 
-**File**: `docs/manual/hurl.md` (modified, +2/-0)
+**File**: `docs/manual/hurl.md` (modified, +3/-1)
 ```diff
-@@ -182,6 +182,8 @@ To use temporary session credentials (e.g. for an AWS IAM Role), add the `X-Amz-
- Specifies the certificate file for peer verification. The file may contain multiple CA certificates and must be in PEM format.
- Normally Hurl is built to use a default file for this, so this option is typically used to alter that default file.
+@@ -276,7 +276,9 @@ Environment variables: HURL_IPV6
  
-+See also [`--insecure`](#insecure).
+ #### --key <KEY> {#key}
+ 
+-Private key file name.
++Private key file name. Allows you to provide your private key in this separate file.
 +
- #### -E, --cert <CERTIFICATE[:PASSWORD]> {#cert}
++See also [`--cert`](#cert).
  
- Client certificate file and password.
+ #### --limit-rate <SPEED> {#limit-rate}
+ 
 ```
 
 **File**: `docs/manual/hurlfmt.1` (modified, +1/-1)
 ```diff
 @@ -1,4 +1,4 @@
--.TH hurl 1 "06 Nov 2026" "hurl 9.0.0" " Hurl Manual"
-+.TH hurl 1 "13 Nov 2026" "hurl 9.0.0" " Hurl Manual"
+-.TH hurl 1 "13 Nov 2026" "hurl 9.0.0" " Hurl Manual"
++.TH hurl 1 "14 Nov 2026" "hurl 9.0.0" " Hurl Manual"
  .SH NAME
  
  hurlfmt - format Hurl files
 ```
 
-**File**: `docs/spec/options/hurl/cacert_file.option` (modified, +7/-7)
+**File**: `docs/spec/options/hurl/client_key_file.option` (modified, +3/-1)
 ```diff
-@@ -1,10 +1,10 @@
--name: client_cert_file
--long: cert
--short: E
--value: CERTIFICATE[:PASSWORD]
--help: Client certificate file and password
-+name: cacert_file
-+long: cacert
-+value: FILE
-+help: CA certificate to verify peer against (PEM format)
+@@ -4,4 +4,6 @@ value: KEY
+ help: Private key file name
  help_heading: HTTP options
  ---
--Client certificate file and password.
-+Specifies the certificate file for peer verification. The file may contain multiple CA certificates and must be in PEM format.
-+Normally Hurl is built to use a default file for this, so this option is typically used to alter that default file.
- 
--See also [`--key`](#key).
-+See also [`--insecure`](#insecure).
-```
-
-**File**: `docs/spec/options/hurl/client_cert_file.option` (modified, +8/-6)
-```diff
-@@ -1,8 +1,10 @@
--name: cacert_file
--long: cacert
--value: FILE
--help: CA certificate to verify peer against (PEM format)
-+name: client_cert_file
-+long: cert
-+short: E
-+value: CERTIFICATE[:PASSWORD]
-+help: Client certificate file and password
- help_heading: HTTP options
- ---
--Specifies the certificate file for peer verification. The file may contain multiple CA certificates and must be in PEM format.
--Normally Hurl is built to use a default file for this, so this option is typically used to alter that default file.
-+Client certificate file and password.
+-Private key file name.
++Private key file name. Allows you to provide your private key in this separate file.
 +
-+See also [`--key`](#key).
++See also [`--cert`](#cert).
 ```
 
 **File**: `docs/standalone/hurl-9.0.0.md` (modified, +2/-2)
@@ -2012,29 +2101,42 @@ Observed empirical fixes and code patches:
 @@ -1,6 +1,6 @@
  # Hurl Documentation
  
--## Version 9.0.0 - 06-11-2026
-+## Version 9.0.0 - 13-11-2026
+-## Version 9.0.0 - 13-11-2026
++## Version 9.0.0 - 14-11-2026
  
  # Table of Contents
  
-@@ -864,7 +864,7 @@ to configure Hurl, there are four sources from the lowest priority to highest (o
- | Option                                                                                                                                                          | Description                                                                                                                                                                                                                                                                                                                                                                                                                                          |
- |-----------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
- | <a href="#getting-started-manual-aws-sigv4" id="getting-started-manual-aws-sigv4"><code>--aws-sigv4 &lt;PROVIDER1[:PROVIDER2[:REGION[:SERVICE]]]&gt;</code></a> | Generate an `Authorization` header with an AWS SigV4 signature.<br><br>Use [`-u, --user`](#getting-started-manual-user) to specify Access Key Id (username) and Secret Key (password).<br><br>To use temporary session credentials (e.g. for an AWS IAM Role), add the `X-Amz-Security-Token` header containing the session token.<br>                                                                                                               |
--| <a href="#getting-started-manual-cacert" id="getting-started-manual-cacert"><code>--cacert &lt;FILE&gt;</code></a>                                              | Specifies the certificate file for peer verification. The file may contain multiple CA certificates and must be in PEM format.<br>Normally Hurl is built to use a default file for this, so this option is typically used to alter that default file.<br>                                                                                                                                                                                            |
-+| <a href="#getting-started-manual-cacert" id="getting-started-manual-cacert"><code>--cacert &lt;FILE&gt;</code></a>                                              | Specifies the certificate file for peer verification. The file may contain multiple CA certificates and must be in PEM format.<br>Normally Hurl is built to use a default file for this, so this option is typically used to alter that default file.<br><br>See also [`--insecure`](#getting-started-manual-insecure).<br>                                                                                                                          |
- | <a href="#getting-started-manual-cert" id="getting-started-manual-cert"><code>-E, --cert &lt;CERTIFICATE[:PASSWORD]&gt;</code></a>                              | Client certificate file and password.<br><br>See also [`--key`](#getting-started-manual-key).<br>                                                                                                                                                                                                                                                                                                                                                    |
- | <a href="#getting-started-manual-compressed" id="getting-started-manual-compressed"><code>--compressed</code></a>                                               | Request a compressed response using one of the algorithms br, gzip, deflate and automatically decompress the content.<br><br>Environment variables: HURL_COMPRESSED<br>                                                                                                                                                                                                                                                                              |
- | <a href="#getting-started-manual-connect-timeout" id="getting-started-manual-connect-timeout"><code>--connect-timeout &lt;SECONDS&gt;</code></a>                | Maximum time in seconds that you allow Hurl's connection to take.<br><br>You can specify time units in the connect timeout expression. Set Hurl to use a connect timeout of 20 seconds with `--connect-timeout 20s` or set it to 35,000 milliseconds with `--connect-timeout 35000ms`. No spaces allowed.<br><br>See also [`-m, --max-time`](#getting-started-manual-max-time).<br><br>Envi
+@@ -879,7 +879,7 @@ to configure Hurl, there are four sources from the lowest priority to highest (o
+ | <a href="#getting-started-manual-insecure" id="getting-started-manual-insecure"><code>-k, --insecure</code></a>                                                 | This option explicitly allows Hurl to perform "insecure" SSL connections and transfers.<br><br>Environment variables: HURL_INSECURE<br>                                                                                                                                                                                                                                                                                                              |
+ | <a href="#getting-started-manual-ipv4" id="getting-started-manual-ipv4"><code>-4, --ipv4</code></a>                                                             | This option tells Hurl to use IPv4 addresses only when resolving host names, and not for example try IPv6.<br><br>Environment variables: HURL_IPV4<br>                                                                                                                                                                                                                                                                                               |
+ | <a href="#getting-started-manual-ipv6" id="getting-started-manual-ipv6"><code>-6, --ipv6</code></a>                                                             | This option tells Hurl to use IPv6 addresses only when resolving host names, and not for example try IPv4.<br><br>Environment variables: HURL_IPV6<br>                                                                                                                                                                                                                                                                                               |
+-| <a href="#getting-started-manual-key" id="getting-started-manual-key"><code>--key &lt;KEY&gt;</code></a>                                                        | Private key file name.<br>                                                                                                                                                                                                                                                                                                                                                                                                                           |
++| <a href="#getting-started-manual-key" id="getting-started-manual-key"><code>--key &lt;KEY&gt;</code></a>                                                        | Private key file name. Allows you to provide your private key in this separate file.<br><br>See also [`--cert`](#getting-started-manual-cert).<br>                                                                                                                                                                                                                                                                                                   |
+ | <a href="#getting-started-manual-limit-rate" id="getting-started-manual-limit-rate"><code>--limit-rate &lt;SPEED&gt;</code></a>                                 | Specify the maximum transfer rate you want Hurl to use, for both downloads and uploads. This feature is useful if you have a limited pipe and you would like your transfer not to use your entire bandwidth. To make it slower than it otherwise would be.<br>The given speed is measured in bytes/second.<br><br>Environment variables: HURL_LIMIT_RATE<br>                                                                                         |
+ | <a href="#getting-started-manual-location" id="getting-started-manual-location"><code>-L, --location</code></a>                                                 | Follow redirect. To limit the amount of redirects to follow use the [`--max-redirs`](#getting-started-manual-max-redirs) option<br><br>Environment variables: HURL_LOCATION<br>                                                                                                                                                                                                                                                                      |
+ | <a href="#getting-started-manual-location-trusted" id="getting-started-manual-location-trusted"><code>--location-trusted</code></a>                             | Like [`-L, --location`](#getting-started-manual-location), but allows sending the name + password to all hosts that the site may redirect to.<br>This may or may not introduce a security breach if the site redirects you to a site to which you send your authentication info (which is plaintext in the case of HTTP Basic authentication).<br><br>Environment variables: HURL_LOCATION_
+```
+
+**File**: `packages/hurl/README.md` (modified, +1/-1)
+```diff
+@@ -1490,7 +1490,7 @@ to configure Hurl, there are four sources from the lowest priority to highest (o
+ | <a href="#insecure" id="insecure"><code>-k, --insecure</code></a>                                                 | This option explicitly allows Hurl to perform "insecure" SSL connections and transfers.<br><br>Environment variables: HURL_INSECURE<br>                                                                                                                                                                                                                                                                                       |
+ | <a href="#ipv4" id="ipv4"><code>-4, --ipv4</code></a>                                                             | This option tells Hurl to use IPv4 addresses only when resolving host names, and not for example try IPv6.<br><br>Environment variables: HURL_IPV4<br>                                                                                                                                                                                                                                                                        |
+ | <a href="#ipv6" id="ipv6"><code>-6, --ipv6</code></a>                                                             | This option tells Hurl to use IPv6 addresses only when resolving host names, and not for example try IPv4.<br><br>Environment variables: HURL_IPV6<br>                                                                                                                                                                                                                                                                        |
+-| <a href="#key" id="key"><code>--key &lt;KEY&gt;</code></a>                                                        | Private key file name.<br>                                                                                                                                                                                                                                                                                                                                                                                                    |
++| <a href="#key" id="key"><code>--key &lt;KEY&gt;</code></a>                                                        | Private key file name. Allows you to provide your private key in this separate file.<br><br>See also [`--cert`](#cert).<br>                                                                                                                                                                                                                                                                                                   |
+ | <a href="#limit-rate" id="limit-rate"><code>--limit-rate &lt;SPEED&gt;</code></a>                                 | Specify the maximum transfer rate you want Hurl to use, for both downloads and uploads. This feature is useful if you have a limited pipe and you would like your transfer not to use your entire bandwidth. To make it slower than it otherwise would be.<br>The given speed is measured in bytes/second.<br><br>Environment variables: HURL_LIMIT_RATE<br>                                                                  |
+ | <a href="#location" id="location"><code>-L, --location</code></a>                                                 | Follow redirect. To limit the amount of redirects to follow use the [`--max-redirs`](#max-redirs) option<br><br>Environment variables: HURL_LOCATION<br>                                                                                                                                                                                                                                                                      |
+ | <a href="#location-trusted" id="location-trusted"><code>--location-trusted</code></a>                             | Like [`-L, --location`](#location), but allows sending the name + password to all hosts that the site may redirect to.<br>This may or may not introduce a security breach if the site redirects you to a site to which you send your authentication info (which is plaintext in the case of HTTP Basic authentication).<br><br>Environment variables: HURL_LOCATION_TRUSTED<br>                                               |
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5443** (2026-11-16): Update crates (@hurl-bot)
+- **PR #5442** (2026-11-16): Use path type for key option (@jcamiel)
+- **PR #5441** (2026-11-16): Started with zlib 1.4, library file names changed on MSVC: z is now libz, as in libz.dll, libz.lib, and the static libzs.lib (@jcamiel)
+- **PR #5440** (2026-11-16): Introduces CertFile and uses it in option client_cert_file. (@jcamiel)
 - **PR #5439** (2026-11-14): Update crates (@hurl-bot)
 - **PR #5438** (2026-11-13): Use path type for cacert option (@jcamiel)
-- **PR #5437** (2026-11-13): Compare JSON Array (@fabricereix)
-- **PR #5436** (closed): Update crates (@hurl-bot)
-- **PR #5435** (2026-11-13): Update Python dev dependencies (@jcamiel)
-- **PR #5434** (2026-11-13): Use minimum publish 7 days for dependencies. (@jcamiel)
 
 ---
 
@@ -2054,31 +2156,38 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. invertion content for cacert_file.option and clien_cert_file.option.
+## X. Changes client_key_file type from String to PathBuf.
 
 **RULE**:
-When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Orange-OpenSource/hurl. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/hurl/src/cli/options/args.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Orange-OpenSource/hurl. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e31691fd`: invertion content for cacert_file.option and clien_cert_file.option.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e6a40af3`: Changes client_key_file type from String to PathBuf.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/hurl/src/cli/options/args.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-| <a href="#cacert" id="cacert"><code>--cacert &lt;FILE&gt;</code></a>                                              | Specifies the certificate file for peer verification. The file may contain multiple CA certificates and must be in PEM format.<br>Normally Hurl is built to use a default file for this, so this option is typically used to alter that default file.<br><br>See also [`--insecure`](#insecure).<br>                                                                                                                          |
+    default_value: Option<PathBuf>,
+) -> Result<Option<PathBuf>, CliOptionsError> {
+            let path = PathBuf::from(&filename);
+            if !path.is_file() {
+                Ok(Some(path))
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-| <a href="#cacert" id="cacert"><code>--cacert &lt;FILE&gt;</code></a>                                              | Specifies the certificate file for peer verification. The file may contain multiple CA certificates and must be in PEM format.<br>Normally Hurl is built to use a default file for this, so this option is typically used to alter that default file.<br>                                                                                                                                                                     |
+    default_value: Option<String>,
+) -> Result<Option<String>, CliOptionsError> {
+            if !Path::new(&filename).is_file() {
+                Ok(Some(filename))
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e31691fd` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e6a40af3` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol
