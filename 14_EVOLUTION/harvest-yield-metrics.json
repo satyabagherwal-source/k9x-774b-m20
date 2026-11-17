@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T14:15:11.817Z",
-  "total_cycles_completed": 10120,
-  "total_learnings_persisted": 10120,
-  "total_rules_promoted": 9710,
+  "last_updated": "2026-11-17T14:22:51.987Z",
+  "total_cycles_completed": 10121,
+  "total_learnings_persisted": 10121,
+  "total_rules_promoted": 9711,
   "history": [
-    {
-      "timestamp": "2026-11-16T20:02:41.810Z",
-      "repository": "nolabs-ai/nono",
-      "learningId": "learn-github-nolabs-ai-nono",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-16T20:11:07.980Z",
       "repository": "cheeriojs/dom-serializer",
@@ -1403,6 +1396,13 @@
       "repository": "xtools-at/DeepSeek-V4-Pro-Qwen3.5-4B-UNCENSORED-heretic",
       "learningId": "learn-huggingface-xtools-at-deepseek-v4-pro-qwen3-5-4b-uncensored-heretic",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T14:22:51.987Z",
+      "repository": "meta/docusaurus",
+      "learningId": "learn-github-meta-docusaurus",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

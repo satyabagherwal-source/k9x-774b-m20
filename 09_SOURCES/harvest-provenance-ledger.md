@@ -10596,3 +10596,4 @@ Every entry in this ledger must capture:
 | `learn-github-vespa-engine-vespa` | `https://github.com/vespa-engine/vespa` | `6dfc8f2d` | Multi-dimensional audit evidence | 2026-11-17T14:01:52.102Z |
 | `learn-dom-d-8e8b1bed` | `project://vespa-engine-vespa` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md` | 2026-11-17T14:02:19.603Z |
 | `learn-huggingface-xtools-at-deepseek-v4-pro-qwen3-5-4b-uncensored-heretic` | `https://huggingface.co/xtools-at/DeepSeek-V4-Pro-Qwen3.5-4B-UNCENSORED-heretic` | `hf-xtools-` | Multi-dimensional audit evidence | 2026-11-17T14:15:11.812Z |
+| `learn-github-meta-docusaurus` | `https://github.com/facebook/docusaurus` | `4c4ec4aa` | Multi-dimensional audit evidence | 2026-11-17T14:22:51.982Z |

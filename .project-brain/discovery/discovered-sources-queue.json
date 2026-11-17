@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-17T14:15:18.866Z",
+  "updated_at": "2026-11-17T14:22:56.185Z",
   "stats": {
-    "total_discovered": 4991,
-    "approved_pending_harvest": 4704,
+    "total_discovered": 4995,
+    "approved_pending_harvest": 4708,
     "harvested_count": 0,
     "rejected_count": 287,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 4692,
+      "COMMUNITY_AND_EXPERT": 4696,
       "OFFICIAL_DOCUMENTATION": 162,
       "STANDARDS_AND_SPECIFICATIONS": 106,
       "ENGINEERING_BLOGS": 3,
@@ -107814,6 +107814,94 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-xtools-at-deepseek-v4-pro-qwen3.5-4b-uncensored-heretic-learnings.md",
         "fileName": "hf-xtools-at-deepseek-v4-pro-qwen3.5-4b-uncensored-heretic-learnings.md"
+      }
+    },
+    "SRC-A69334BA31C2": {
+      "id": "SRC-A69334BA31C2",
+      "url": "https://github.com/meta/docusaurus/pull/13037",
+      "title": "https://github.com/meta/docusaurus/pull/13037",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T14:22:55.934Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/facebook-docusaurus-learnings.md",
+        "fileName": "facebook-docusaurus-learnings.md"
+      }
+    },
+    "SRC-997E467B5A70": {
+      "id": "SRC-997E467B5A70",
+      "url": "https://github.com/meta/docusaurus/pull/13031",
+      "title": "https://github.com/meta/docusaurus/pull/13031",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T14:22:55.967Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/facebook-docusaurus-learnings.md",
+        "fileName": "facebook-docusaurus-learnings.md"
+      }
+    },
+    "SRC-01C9A966E18F": {
+      "id": "SRC-01C9A966E18F",
+      "url": "https://github.com/sindresorhus/globby/blob/v16.2.4/index.js",
+      "title": "https://github.com/sindresorhus/globby/blob/v16.2.4/index.js",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T14:22:56.000Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/facebook-docusaurus-learnings.md",
+        "fileName": "facebook-docusaurus-learnings.md"
+      }
+    },
+    "SRC-8B2C541A0EC3": {
+      "id": "SRC-8B2C541A0EC3",
+      "url": "https://github.com/GoogleChrome/workbox/issues/3366",
+      "title": "https://github.com/GoogleChrome/workbox/issues/3366",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T14:22:56.185Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/facebook-docusaurus-learnings.md",
+        "fileName": "facebook-docusaurus-learnings.md"
       }
     }
   }

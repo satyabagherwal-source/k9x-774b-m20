@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-17T14:15:20.299Z",
-  "total_records": 1557,
+  "last_updated": "2026-11-17T14:22:57.824Z",
+  "total_records": 1559,
   "domains": {
     "A": {
       "total": 11,
@@ -1037,7 +1037,7 @@
       ]
     },
     "H": {
-      "total": 377,
+      "total": 379,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1415,7 +1415,9 @@
         "domain_intelligence-technical-construction-intelligence-startrail-org-leann-core-invariants",
         "domain_intelligence-technical-construction-intelligence-startrail-org-leann-learnings-core-invariant",
         "domain_intelligence-technical-construction-intelligence-nitrojs-nitro-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-unjs-nitro-learnings-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-unjs-nitro-learnings-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-meta-docusaurus-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-facebook-docusaurus-learnings-core-invariant"
       ]
     },
     "I": {
@@ -14348,8 +14350,8 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-bootsplash-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zoontek-react-native-bootsplash-learnings-technical-construction-intelligence-zo.md",
       "repository": "zoontek-react-native-bootsplash-learnings",
-      "content_hash": "94ba682a43325965ce36123af182e104dff1f1cc7aaa1db4afea51e052798995",
-      "created_at": "2026-11-17T14:02:20.429Z"
+      "content_hash": "c6dadd303c6916eca2bf0df304329ddffeca75e17bb9326d140b72c1e4111939",
+      "created_at": "2026-11-17T14:22:57.824Z"
     },
     "domain_intelligence-technical-construction-intelligence-onehumanbeing-esp32-iphone-agent-core-invari": {
       "record_id": "domain_intelligence-technical-construction-intelligence-onehumanbeing-esp32-iphone-agent-core-invari",
@@ -17207,8 +17209,8 @@
       "title": "Technical Construction Intelligence: zleap-ai-sag-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zleap-ai-sag-learnings-technical-construction-intelligence-zleap-ai-sag-learning.md",
       "repository": "zleap-ai-sag-learnings",
-      "content_hash": "95397d4608f9cb57295cea2db37c33cd0106bf9d81d1a7146b20bc18ca6d343d",
-      "created_at": "2026-11-17T09:56:56.546Z"
+      "content_hash": "dccd4d21b507c259c023c63d681e4b20605678cddfa71c76db8ad3c9f3c3c53a",
+      "created_at": "2026-11-17T14:22:57.318Z"
     },
     "domain_intelligence-research-knowledge-intelligence-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b-co": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-nvidia-nvidia-nemotron-3-5-transcribe-30b-a4b-co",
@@ -27074,6 +27076,24 @@
       "repository": "hf-xtools-at-deepseek-v4-pro-qwen3.5-4b-uncensored-heretic-learnings",
       "content_hash": "6f188097cfb8cd585448ced9aeff55c8afacdeb89375b7586d78da4f95ca4828",
       "created_at": "2026-11-17T14:15:19.048Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-meta-docusaurus-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-meta-docusaurus-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: meta/docusaurus Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-facebook-docusaurus-technical-construction-intelligence-meta-docusaurus-core-inv.md",
+      "repository": "meta/docusaurus",
+      "content_hash": "9f338071e8c56ec6f6ab55447d3d0e93e96b9b05e1c2809159b98ff45bbe284d",
+      "created_at": "2026-11-17T14:22:52.290Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-facebook-docusaurus-learnings-core-invariant": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-facebook-docusaurus-learnings-core-invariant",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: facebook-docusaurus-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-facebook-docusaurus-learnings-technical-construction-intelligence-facebook-docus.md",
+      "repository": "facebook-docusaurus-learnings",
+      "content_hash": "af5ebcf1abf8c701efe13aa464ba5a682d4d1ef835ebdb67b18da441e6133091",
+      "created_at": "2026-11-17T14:22:56.512Z"
     }
   }
 }

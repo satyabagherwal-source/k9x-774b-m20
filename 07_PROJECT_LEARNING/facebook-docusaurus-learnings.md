@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/facebook-docusaurus-learnings.md`  
 > **Source**: github ([https://github.com/facebook/docusaurus](https://github.com/facebook/docusaurus))  
-> **Source Version**: `9e7ac3c0`  
+> **Source Version**: `4c4ec4aa`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T01:14:12.046Z  
+> **Timestamp**: 2026-11-17T14:22:51.050Z  
 > **Learning ID**: `learn-github-meta-docusaurus`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/facebook-docusaurus-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/facebook/docusaurus](https://github.com/facebook/docusaurus))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T01:14:11.795Z  
+> **Harvest Timestamp**: 2026-11-17T14:22:50.702Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Easy to maintain open source documentation websites.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 66724 stars
+- **Stars / Engagement**: 66749 stars
 
 ---
 
@@ -397,6 +397,8 @@ export function queueFileOperation<T>(operation: () => Promise<T>): Promise<T> {
 // Tinyglobby/Picomatch are the 2 libs we use in Docusaurus consistently
 
 import path from 'node:path';
+import {fileURLToPath} from 'node:url';
+import {fs} from '@docusaurus/fs';
 import Picomatch from 'picomatch';
 import * as Tinyglobby from 'tinyglobby';
 
@@ -409,13 +411,53 @@ export type GlobOptions = Pick<
   'cwd' | 'ignore' | 'absolute' | 'expandDirectories'
 >;
 
-/** Finds the files matching the given glob patterns. */
+/**
+ * Finds the files matching the given glob patterns, in a stable order. A
+ * pattern that is the path of an existing directory matches all the files of
+ * that directory.
+ */
 export async function glob(
   patterns: string | string[],
   options?: GlobOptions,
 ): Promise<string[]> {
-  // Other lib options are still forwarded at runtime for retro-compatibility
-  return Tinyglobby.glob(patterns, {...options});
+  const cwd = options?.cwd ?? process.cwd();
+  const cwdPath = cwd instanceof URL ? fileURLToPath(cwd) : cwd;
+  const expandedPatterns = await Promise.all(
+    [patterns]
+      .flat()
+      .map((pattern) => expandDirectoryPattern(pattern, cwdPath)),
+  );
+  const files = await Tinyglobby.glob(expandedPatterns, {
+    // Tinyglobby appends `/**` to all patterns, even `**/*.md`, unlike globby
+    // See https://github.com/meta/docusaurus/pull/13037
+    expandDirectories: false,
+    // Other lib options are still forwarded at runtime for retro-compatibility
+    ...options,
+  });
+  // Tinyglobby reads folders concurrently: their files come in a random order
+  // See https://github.com/meta/docusaurus/pull/13031
+  return files.sort();
+}
+
+// Like globby, only expand the patterns of existing directories
+// See https://github.com/sindresorhus/globby/blob/v16.2.4/index.js#L91-L111
+// Doing it ourselves eases a later migration to Node.js `fs.glob`, which never
+// expands directories
+async function expandDirectoryPattern(
+  pattern: string,
+  cwd: string,
+): Promise<string> {
+  if (pattern.startsWith('!')) {
+    return pattern;
+  }
+  const isDirectory = await fs.stat(path.resolve(cwd, pattern)).then(
+    (stats) => stats.isDirectory(),
+    () => false,
+  );
+  // The directory path is literal: `[old]` or `(copy)` are not glob syntax
+  return isDirectory
+    ? path.posix.join(Tinyglobby.escapePath(pattern), '**')
+    : pattern;
 }
 
 /**
@@ -986,261 +1028,651 @@ export function formatNodePositionExtraMessage(node: Node): string {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1d5de88e` (2026-11-12)
-**Commit Message**: chore(ci): skip the security workflows on forks (#13006)
+### Incident Patch 1: `5b2eeddc` (2026-11-13)
+**Commit Message**: fix(pwa): only use our own precache manifest injection when MD5 is not available (#13043)
 
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+* fix(pwa): only use our own precache manifest injection when MD5 is not available
 
-**File**: `.github/workflows/security-supply-chain.yml` (modified, +2/-0)
-```diff
-@@ -29,6 +29,7 @@ jobs:
-   # Check our monorepo for new supply chain compromissions
-   supply-chain-monorepo:
-     name: Supply Chain - Monorepo
-+    if: github.repository == 'meta/docusaurus'
-     timeout-minutes: 30
-     runs-on: ubuntu-latest
-     steps:
-@@ -56,6 +57,7 @@ jobs:
-   # See why https://github.com/meta/docusaurus/pull/12448
-   supply-chain-site-template:
-     name: Supply Chain - Site Template @${{ matrix.npm_dist_tag }}
-+    if: github.repository == 'meta/docusaurus'
-     timeout-minutes: 30
-     runs-on: ubuntu-latest
- 
-```
-
-**File**: `.github/workflows/zizmor.yml` (modified, +1/-0)
-```diff
-@@ -29,6 +29,7 @@ permissions: {}
- jobs:
-   zizmor:
-     name: zizmor
-+    if: github.repository == 'meta/docusaurus'
-     timeout-minutes: 10
-     runs-on: ubuntu-latest
-     permissions:
-```
-
----
-
-### Incident Patch 2: `54e5a88d` (2026-11-12)
-**Commit Message**: fix(create-docusaurus): detect the bun.lock text lockfile of Bun 1.2+ (#13030)
-
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `packages/create-docusaurus/src/constants.ts` (modified, +5/-4)
-```diff
-@@ -11,10 +11,11 @@ export const DefaultPackageManager = 'npm';
- 
- // Order matters
- export const LockfileNames = {
--  npm: 'package-lock.json',
--  yarn: 'yarn.lock',
--  pnpm: 'pnpm-lock.yaml',
--  bun: 'bun.lockb',
-+  npm: ['package-lock.json'],
-+  yarn: ['yarn.lock'],
-+  pnpm: ['pnpm-lock.yaml'],
-+  // bun.lockb is the binary lockfile of Bun < 1.2
-+  bun: ['bun.lock', 'bun.lockb'],
- };
- 
- export type PackageManager = keyof typeof LockfileNames;
-```
-
-**File**: `packages/create-docusaurus/src/index.ts` (modified, +4/-3)
-```diff
-@@ -62,9 +62,10 @@ async function findPackageManagerFromLockFile(
-   rootDir: string,
- ): Promise<PackageManager | undefined> {
-   for (const packageManager of PackageManagers) {
--    const lockFilePath = path.join(rootDir, LockfileNames[packageManager]);
--    if (await pathExists(lockFilePath)) {
--      return packageManager;
-+    for (const lockFileName of LockfileNames[packageManager]) {
-+      if (await pathExists(path.join(rootDir, lockFileName))) {
-+        return packageManager;
-+      }
-     }
-   }
-   return undefined;
-```
-
----
-
-### Incident Patch 3: `d46582cf` (2026-11-12)
-**Commit Message**: fix(theme-translation): add missing Indonesian (id) theme translations (#12933)
-
-* fix(theme-translation): add missing Indonesian (id) theme translations
-
-Translate 35 of the 37 strings in the id locale that were still in English:
-the Ask AI screen and search box of theme-search-algolia, the draft
-banner, blog authors pages, external link and mobile dropdown ARIA
-labels, the system color mode and the live code block reset button.
+Keeps the official Workbox injectManifest() code path for most sites, and
+only falls back to injectManifestFIPS() in FIPS mode, until Workbox
+supports it (GoogleChrome/workbox#3366).
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-* fix(theme-translation): distinguish completed Ask AI search label in Indonesian (id)
+* test(pwa): don't hardcode MD5 in the expected precache revisions
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* test(pwa): test injectManifestFIPS() without MD5, like in FIPS mode
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* refactor(pwa): rename precacheManifest.ts to injectManifestFIPS.ts
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* test(pwa): assert the revisions differ from Workbox, and the service worker isn't precached
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ---------
 
-Co-authored-by: Insan Rizky <[REDACTED_EMAIL]>
 Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `packages/docusaurus-theme-translations/locales/id/theme-common.json` (modified, +9/-9)
+**File**: `packages/docusaurus-plugin-pwa/src/__tests__/injectManifestFIPS.test.ts` (renamed, +46/-13)
 ```diff
-@@ -9,7 +9,7 @@
-   "theme.DocSidebarItem.expandCategoryAriaLabel": "Perluas kategori bilah sisi '{label}'",
-   "theme.ErrorPageContent.title": "Terjadi kesalahan.",
-   "theme.ErrorPageContent.tryAgain": "Coba kembali",
--  "theme.IconExternalLink.ariaLabel": "(opens in new tab)",
-+  "theme.IconExternalLink.ariaLabel": "(terbuka di tab baru)",
-   "theme.NavBar.navAriaLabel": "Utama",
-   "theme.NotFound.p1": "Kami tak dapat menemukan yang anda cari.",
-   "theme.NotFound.p2": "Silakan hubungi pemilik situs yang mengarahkan anda ke URL asli dan beri tahu mereka bahwa tautan mereka salah.",
-@@ -18,13 +18,13 @@
-   "theme.admonition.danger": "bahaya",
-   "theme.admonition.info": "info",
-   "theme.admonition.note": "catatan",
--  "theme.admonition.tip": "tip",
-+  "theme.admonition.tip": "kiat",
-   "theme.admonition.warning": "peringatan",
-   "theme.blog.archive.description": "Arsip",
-   "theme.blog.archive.title": "Arsip",
--  "theme.blog.author.noPosts": "This author has not written any posts yet.",
-+  "theme.blog.author.noPosts": "Penulis ini belum menulis postingan apa pun.",
-   "theme.blog.author.pageTitle": "{authorName} - {nPosts}",
--  "theme.blog.authorsList.pageTitle": "Authors",
-+  "theme.blog.authorsList.pageTitle": "Penulis",
-   "theme.blog.authorsList.viewAll": "View All Authors",
-   "theme.blog.paginator.navAriaLabel": "Navigasi entri blog",
-   "theme.blog.paginator.newerEntries": "Entri lebih baru",
-@@ -41,12 +41,12 @@
-   "theme.colorToggle.ariaLabel": "Ubah antara modus gelap dan modus terang (saat ini {mode})",
-   "theme.colorToggle.ariaLabel.mode.dark": "modus gelap",
-   "theme.colorToggle.ariaLabel.mode.light": "modus terang",
--  "theme.colorToggle.ariaLabel.mode.system": "system mode",
-+  "theme.colorToggle.ariaLabel.mode.system": "modus sistem",
-   "theme.common.editThisPage": "Sunting halaman ini",
-   "theme.common.headingLinkTitle": "Taut langsung ke {heading}",
-   "theme.common.skipToMainContent": "Lewati ke konten utama",
--  "theme.contentVisibility.draftBanner.message": "This page is a draft. It will only be visible in dev and be excluded from the production build.",
--  "theme.contentVisibility.draftBanner.title": "Draft page",
-+  "theme.contentVisibility.draftBanner.message": "Halaman ini adalah draf. Halaman ini hanya terlihat di mode pengembangan dan tidak disertakan dalam build produksi.",
-+  "theme.contentVisibility.draftBanner.title": "Halaman draf",
-   "theme.contentVisibility.unlistedBanner.message": "Halaman ini tidak terdaftar. Mesin pencari tidak akan mengindeksnya, dan hanya pengguna yang memiliki tautan langsung yang dapat mengaksesnya.",
-   "theme.contentVisibility.unlistedBanner.title": "Halaman tak terdaftar",
-   "theme.docs.DocCard.categoryDescription.plurals": "1 butir|{count} butir",
-@@ -72,8 +72,8 @@
-   "theme.lastUpdated.atDate": " pada {date}",
-   "theme.lastUpdated.byUser": " oleh {user}",
-   "theme.lastUpdated.lastUpdatedAtBy": "Diperbaharui{atDate}{byUser}",
--  "theme.navbar.mobileDropdown.collapseButton.collapseAriaLabel": "Collapse the dropdown",
--  "theme.navbar.mobileDropdown.collapseButton.expandAriaLabel": "Expand the dropdown",
-+  "theme.navbar.mobileDropdown.collapseButton.collapseAriaLabel": "Ciutkan dropdown",
-+  "theme.navbar.mobileDropdown.collapseButton.expandAriaLabel": "Bentangkan dropdown",
-   "theme.navbar.mobileLanguageDropdown.label": "Bahasa",
-   "theme.navbar.mobileSidebarSecondaryMenu.backButtonLabel": "← Kembali ke menu utama",
-   "theme.navbar.mobileVersionsDropdown.label": "Versi",
-```
-
-**File**: `packages/docusaurus-theme-translations/locales/id/theme-live-codeblock.json` (modified, +1/-1)
-```diff
-@@ -1,5 +1,5 @@
- {
--  "theme.Playground.buttons.reset": "Reset",
-+  "theme.Playground.buttons.reset": "Setel ulang",
-   "theme.Playground.liveEditor": "Penyunting Langung",
-   "theme.Playground.result": "Hasil"
+@@ -5,13 +5,19 @@
+  * LICENSE file in the root directory of this source tree.
+  */
+ 
+-import {describe, expect, it} from 'vitest';
++import {describe, expect, it, vi} from 'vitest';
+ import crypto from 'node:crypto';
+ import fs from 'node:fs/promises';
+ import {tmpdir} from 'node:os';
+ import path from 'node:path';
+ import {injectManifest, type ManifestEntry} from 'workbox-build';
+-import {injectPrecacheManifest} from '../precacheManifest';
++import {injectManifestFIPS} from '../injectManifestFIPS';
++
++// injectManifestFIPS() only runs when MD5 is not available
++vi.mock('node:crypto', async (importOriginal) => ({
++  ...(await importOriginal<typeof import('node:crypto')>()),
++  getHashes: () => ['sha256'],
++}));
+ 
+ const SwSource = 'const manifest = self.__WB_MANIFEST;';
+ 
+@@ -49,36 +55,63 @@ function getOptions(outDir: string) {
+   };
  }
+ 
+-describe('injectPrecacheManifest', () => {
+-  it('injects the same manifest as Workbox', async () => {
++describe('injectManifestFIPS', () => {
++  it('injects the same files as Workbox', async () => {
+     await using workboxOutDir = await createOutDir();
+     await using outDir = await createOutDir();
+ 
+     await injectManifest(getOptions(workboxOutDir.path));
+-    await injectPrecacheManifest(getOptions(outDir.path));
++    await injectManifestFIPS(getOptions(outDir.path));
+ 
+     const workboxManifest = await readSwManifest(workboxOutDir.path);
+     const manifest = await readSwManifest(outDir.path);
+-    expect(manifest).toEqual(workboxManifest);
++    expect(manifest.map((entry) => entry.url)).toEqual(
++      workboxManifest.map((entry) => entry.url),
++    );
++    // Workbox hashes with MD5 anyway
++    manifest.forEach((entry, index) => {
++      expect(entry.revision).not.toBe(workboxManifest[index]!.revision);
++    });
+   });
+ 
+-  it('injects files hashed with MD5, except the service worker', async () => {
++  it('injects files hashed with SHA-256', async () => {
+     await using outDir = await createOutDir();
+ 
+-    await injectPrecacheManifest(getOptions(outDir.path));
++    await injectManifestFIPS(getOptions(outDir.path));
+ 
+     const manifest = await readSwManifest(outDir.path);
+     expect(manifest).toEqual([
+-      {url: 'assets/main.css', revision: 'aa676972bbd2b68e94ef8e91e81d20be'},
+-      {url: 'assets/main.js', revision: '238e96d5b62a1aec3739730469f27192'},
+-      {url: 'index.html', revision: 'fe919dfbe925337c176e602ebbf0d15c'},
++      {
++        url: 'assets/main.css',
++        revision:
++          '7c98040a541657584690ae2a1cc3b42a8b53b159cc60c5d3abbfecbaeac6c94a',
++      },
++      {
++        url: 'assets/main.js',
++        revision:
++          '6e11c72f7cf6bc383152dd16ddd5903aba6bb1c99d6b6639a4bb0b838185fa92',
++      },
++      {
++        url: 'index.html',
++        revision:
++          '1a7133067a4ac7fe06565943dd44870f232041b1d28b4340e2b678244a3b79f6',
++      },
+     ]);
+   });
+ 
++  it("doesn't precache the service worker", async () => {
++    await using outDir = await createOutDir();
++
++    await injectManifestFIPS(getOptions(outDir.path));
++
++    const manifest = await readSwManifest(outDir.path);
++    expect(manifest.map((entry) => entry.url)).not.toContain('sw.js');
++  });
++
+   it('delegates templatedURLs to Workbox', async () => {
+     await using outDir = await createOutDir();
+ 
+-    await injectPrecacheManifest({
++    await injectManifestFIPS({
+       ...getOptions(outDir.path),
+       templatedURLs: {'/app-shell': 'shell'},
+     });
+@@ -93,7 +126,7 @@ describe('injectPrecacheManifest', () => {
+   it('applies the Workbox manifest options', async () => {
+     await using outDir = await createOutDir();
+ 
+-    await injectPrecacheManifest({
++    await injectManifestFIPS({
+       ...getOptions(outDir.path),
+       globIgnores: ['**/*.css'],
+       maximumFileSizeToCacheInBytes: 10,
 ```
 
-**File**: `packages/docusaurus-theme-translations/locales/id/theme-search-algolia.json` (modified, +25/-25)
+**File**: `packages/docusaurus-plugin-pwa/src/index.ts` (modified, +5/-2)
 ```diff
-@@ -1,21 +1,21 @@
- {
-   "theme.SearchBar.label": "Cari",
-   "theme.SearchBar.seeAll": "Lihat semua {count} hasilnya",
--  "theme.SearchModal.askAiScreen.afterToolCallText": "Searched for",
--  "theme.SearchModal.askAiScreen.copyButtonCopiedText": "Copied!",
--  "theme.SearchModal.askAiScreen.copyButtonText": "Copy",
--  "theme.SearchModal.askAiScreen.copyButtonTitle": "Copy",
--  "theme.SearchModal.askAiScreen.disclaimerText": "Answers are generated with AI which can make mistakes. Verify responses.",
--  "theme.SearchModal.askAiScreen.dislikeButtonTitle": "Dislike",
--  "theme.SearchModal.askAiScreen.duringToolCallText": "Searching for ",
--  "theme.SearchModal.askAiScreen.likeButtonTitle": "Like",
--  "theme.SearchModal.askAiScreen.preToolCallText": "Searching...",
--  "theme.SearchModal.askAiScreen.relatedSourcesText": "Related sources",
--  "theme.SearchModal.askAiScreen.thanksForFeedbackText": "Thanks for your feedback!",
--  "theme.SearchModal.askAiScreen.thinkingText": "Thinking...",
-+  "theme.SearchModal.askAiScreen.afterToolCallText": "Telah mencari",
-+  "theme.SearchModal.askAiScreen.copyButtonCopiedText": "Disalin!",
-+  "theme.SearchModal.askAiScreen.copyButtonText": "Salin",
-+  "theme.SearchModal.askAiScreen.copyButtonTitle": "Salin",
-+  "theme.SearchModal.askAiScreen.disclaimerText": "Jawaban dibuat dengan AI yang bisa keliru. Periksa kembali jawabannya.",
-+  "theme.SearchModal.askAiScreen.dislikeButtonTitle": "Tidak suka",
-+  "theme.SearchModal.askAiScreen.duringToolCallText": "Mencari ",
-+  "theme.SearchModal.askAiScreen.likeButtonTitle": "Suka",
-+  "theme.SearchModal.askAiScreen.preToolCallText": "Mencari...",
-+  "theme.SearchModal.askAiScreen.relatedSourcesText": "Sumber terkait",
-+  "theme.SearchModal.askAiScreen.thanksForFeedbackText": "Terima kasih atas masukan Anda!",
-+  "theme.SearchModal.askAiScreen.thinkingText": "Berpikir...",
-   "theme.SearchModal.errorScreen.helpText": "Barangkali anda perlu memerika koneksi jaringan anda.",
-   "theme.SearchModal.errorScreen.titleText": "Gagal mendapatkan hasilnya",
--  "theme.SearchModal.footer.backToSearchText": "Back to search",
-+  "theme.SearchModal.footer.backToSearchText": "Kembali ke pencarian",
-   "theme.SearchModal.footer.closeKeyAriaLabel": "Tombol Escape",
-   "theme.SearchModal.footer.closeText": "menutup",
-   "theme.SearchModal.footer.navigateDownKeyAriaLabel": "Panah ke bawah",
-@@ -24,29 +24,29 @@
-   "theme.SearchModal.footer.searchByText": "Cari dengan teks",
-   "theme.SearchModal.footer.selectKeyAriaLabel": "Tombol Enter",
-   "theme.SearchModal.footer.selectText": "memilih",
--  "theme.SearchModal.footer.submitQuestionText": "Submit question",
-+  "theme.SearchModal.footer.submitQuestionText": "Kirim pertanyaan",
-   "theme.SearchModal.noResultsScreen.noResultsText": "Tak ada hasil untuk",
-   "theme.SearchModal.noResultsScreen.reportMissingResultsLinkText": "Beri tahu kami.",
-   "theme.SearchModal.noResultsScreen.reportMissingResultsText": "Yakin pencarian ini seharusnya memberikan hasil?",
-   "theme.SearchModal.noResultsScreen.suggestedQueryText": "Coba lakukan pencarian untuk",
-   "theme.SearchModal.placeholder": "Cari dokumentasi",
--  "theme.SearchModal.resultsScreen.askAiPlaceholder": "Ask AI: ",
--  "theme.SearchModal.searchBox.backToKeywordSearchButtonAriaLabel": "Back to keyword search",
--  "theme.SearchModal.searchBox.backToKeywordSearchButtonText": "Back to keyword search",
-+  "theme.SearchModal.resultsScreen.askAiPlaceholder": "Tanya AI: ",
-+  "theme.SearchModal.searchBox.backToKeywordSearchButtonAriaLabel": "Kembali ke pencarian kata kunci",
-+  "theme.SearchModal.searchBox.backToKeywordSearchButtonText": "Kembali ke pencarian kata kunci",
-   "theme.SearchModal.searchBox.cancelButtonText": "Batalkan",
--  "theme.SearchModal.searchBox.enterKeyHint": "search",
--  "theme.SearchModal.searchBox.enterKeyHintAskAi": "enter",
--  "theme.SearchModal.searchBox.placeholderText": "Search docs",
--  "theme.SearchModal.searchBox.placeholderTextAskAi": "Ask another question...",
--  "theme.SearchModal.searchBox.placeholderTextAskAiStreaming": "Answering...",
-+  "theme.SearchModal.searchBox.enterKeyHint": "cari",
-+  "theme.SearchModal.searchBox.enterKeyHintAskAi": "kirim",
-+  "theme.SearchModal.searchBox.placeholderText": "Cari dokumentasi",
-+  "theme.SearchModal.searchBox.placeholderTextAskAi": "Ajukan pertanyaan lain...",
-+  "theme.SearchModal.searchBox.placeholderTextAskAiStreaming": "Menjawab...",
-   "theme.SearchModal.searchBox.resetButtonTitle": "Hapus teks pencarian",
--  "theme.SearchModal.searchBox.searchInputLabel": "Search",
-+  "theme.SearchModal.searchBox.searchInputLabel": "Cari",
-   "theme.SearchModal.startScreen.favoriteSearchesTitle": "Favorit",
-   "theme.SearchModal.startScreen.noRecentSearchesText": "Tak ada riwayat pencarian",
--  "theme.SearchModal.startScreen.recentConversationsTitle": "Recent conversations",
-+  "theme.SearchModal.startScreen.recentConversationsTitle": "Percakapan terbaru",
-   "theme.SearchModal.startScreen.recentSearchesTi
+@@ -13,11 +13,12 @@ import {
+   getProgressBarPlugin,
+   getMinimizers,
+ } from '@docusaurus/bundler';
++import {injectManifest} from 'workbox-build';
+ import {normalizeUrl} from '@docusaurus/utils';
+ import logger from '@docusaurus/logger';
+ import {readDefaultCodeTranslationMessages} from '@docusaurus/theme-translations';
+ import {getGlobPatterns} from './globPatterns';
+-import {injectPrecacheManifest} from './precacheManifest';
++import {injectManifestFIPS, isMD5Available} from './injectManifestFIPS';
+ import type {HtmlTags, LoadContext, Plugin} from '@docusaurus/types';
+ import type {PluginOptions} from '@docusaurus/plugin-pwa';
+ 
+@@ -175,7 +176,9 @@ export default function pluginPWA(
+ 
+       const swDest = path.resolve(props.outDir, 'sw.js');
+ 
+-      await injectPrecacheManifest({
++      const inject = isMD5Available() ? injectManifest : injectManifestFIPS;
++
++      await inject({
+         ...injectManifestConfig,
+         globPatterns: getGlobPatterns(injectManifestConfig),
+         // Those attributes are not overrideable
+```
+
+**File**: `packages/docusaurus-plugin-pwa/src/injectManifestFIPS.ts` (renamed, +12/-2)
+```diff
+@@ -5,6 +5,7 @@
+  * LICENSE file in the root directory of this source tree.
+  */
+ 
++import {getHashes} from 'node:crypto';
+ import path from 'node:path';
+ import {injectManifest} from 'workbox-build';
+ // Internal Workbox APIs, to apply the user options the same way Workbox does
+@@ -16,12 +17,21 @@ import logger from '@docusaurus/logger';
+ import {hashString, posixPath} from '@docusaurus/utils';
+ import type {FileDetails, InjectManifestOptions} from 'workbox-build';
+ 
++/** FIPS mode rejects MD5 */
++export function isMD5Available(): boolean {
++  return getHashes().includes('md5');
++}
++
+ /**
+  * Same as Workbox `injectManifest()`, but falls back to SHA-256 to hash the
+  * files when MD5 is not available. Workbox hardcodes MD5, which FIPS mode
+- * rejects. See https://github.com/GoogleChrome/workbox/issues/3366
++ * rejects. Only use it when MD5 is not available, to keep the Workbox code
++ * path everywhere else.
++ *
++ * TODO temporary workaround: remove once Workbox supports FIPS mode
++ *  See https://github.com/GoogleChrome/workbox/issues/3366
+  */
+-export async function injectPrecacheManifest(
++export async function injectManifestFIPS(
+   config: InjectManifestOptions,
+ ): Promise<void> {
+   const options = validateInjectManifestOptions(config);
+```
+
+---
+
+### Incident Patch 2: `05200e2c` (2026-11-13)
+**Commit Message**: fix(glob): only expand the glob patterns of existing directories, like globby (#13045)
+
+Tinyglobby appends `/**` to all the patterns by default: `**/*.{md,mdx}`
+matched `folder.md/notes.txt`, which the docs, blog and pages plugins
+loaded as content. `glob()` now only expands the patterns that are the
+path of an existing directory, like globby did in v3, and escapes that
+path so that directory names with glob characters work.
+
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `packages/docusaurus-glob/package.json` (modified, +1/-0)
+```diff
+@@ -18,6 +18,7 @@
+   },
+   "license": "MIT",
+   "dependencies": {
++    "@docusaurus/fs": "workspace:*",
+     "chokidar": "catalog:",
+     "picomatch": "catalog:",
+     "tinyglobby": "catalog:",
+```
+
+**File**: `packages/docusaurus-glob/src/__tests__/__fixtures__/folder-named-like-file/doc.md` (added, +1/-0)
+```diff
+@@ -0,0 +1 @@
++# Doc
+```
+
+**File**: `packages/docusaurus-glob/src/__tests__/__fixtures__/folder-named-like-file/folder.md/doc.md` (added, +1/-0)
+```diff
+@@ -0,0 +1 @@
++# Doc
+```
+
+**File**: `packages/docusaurus-glob/src/__tests__/__fixtures__/folder-named-like-file/folder.md/notes.txt` (added, +1/-0)
+```diff
+@@ -0,0 +1 @@
++Not a doc
+```
+
+**File**: `packages/docusaurus-glob/src/__tests__/__fixtures__/glob-characters/folder (copy) [old]/doc.md` (added, +1/-0)
+```diff
+@@ -0,0 +1 @@
++# Doc
+```
+
+**File**: `packages/docusaurus-glob/src/__tests__/globUtils.test.ts` (modified, +57/-1)
+```diff
+@@ -10,10 +10,11 @@ import os from 'node:os';
+ import path from 'node:path';
+ import fs from 'node:fs/promises';
+ import {
++  glob,
++  safeGlob,
+   GlobExcludeDefault,
+   createMatcher,
+   createAbsoluteFilePathMatcher,
+-  glob,
+ } from '../globUtils';
+ 
+ describe('glob', () => {
+@@ -45,6 +46,45 @@ describe('glob', () => {
+       path.join('b', 'a.md'),
+     ]);
+   });
++
++  describe('with a folder named like a file', () => {
++    const cwd = path.join(__dirname, '__fixtures__', 'folder-named-like-file');
++
++    it('does not match the files of a folder named like the pattern', async () => {
++      await expect(glob(['**/*.md'], {cwd})).resolves.toEqual([
++        'doc.md',
++        'folder.md/doc.md',
++      ]);
++    });
++
++    it('matches all the files of a directory pattern', async () => {
++      await expect(glob(['folder.md'], {cwd})).resolves.toEqual([
++        'folder.md/doc.md',
++        'folder.md/notes.txt',
++      ]);
++    });
++
++    it('matches all the files of a directory pattern with a trailing slash', async () => {
++      await expect(glob(['folder.md/'], {cwd})).resolves.toEqual([
++        'folder.md/doc.md',
++        'folder.md/notes.txt',
++      ]);
++    });
++
++    it('ignores all the files of a directory', async () => {
++      await expect(
++        glob(['**/*'], {cwd, ignore: ['folder.md']}),
++      ).resolves.toEqual(['doc.md']);
++    });
++  });
++
++  it('matches all the files of a directory named with glob characters', async () => {
++    await expect(
++      glob(['folder (copy) [old]'], {
++        cwd: path.join(__dirname, '__fixtures__', 'glob-characters'),
++      }),
++    ).resolves.toEqual(['folder (copy) [old]/doc.md']);
++  });
+ });
+ 
+ describe('createMatcher', () => {
+@@ -169,3 +209,19 @@ describe('createAbsoluteFilePathMatcher', () => {
+     ).toBe(false);
+   });
+ });
++
++describe('safeGlob', () => {
++  it('matches all the files of an absolute directory path', async () => {
++    const dirPath = path.join(
++      __dirname,
++      '__fixtures__',
++      'folder-named-like-file',
++      'folder.md',
++    );
++    const files = await safeGlob([dirPath], {absolute: true});
++    expect(files.map((file) => path.relative(dirPath, file))).toEqual([
++      'doc.md',
++      'notes.txt',
++    ]);
++  });
++});
+```
+
+**File**: `packages/docusaurus-glob/src/globUtils.ts` (modified, +42/-3)
+```diff
+@@ -8,6 +8,8 @@
+ // Tinyglobby/Picomatch are the 2 libs we use in Docusaurus consistently
+ 
+ import path from 'node:path';
++import {fileURLToPath} from 'node:url';
++import {fs} from '@docusaurus/fs';
+ import Picomatch from 'picomatch';
+ import * as Tinyglobby from 'tinyglobby';
+ 
+@@ -20,18 +22,55 @@ export type GlobOptions = Pick<
+   'cwd' | 'ignore' | 'absolute' | 'expandDirectories'
+ >;
+ 
+-/** Finds the files matching the given glob patterns, in a stable order. */
++/**
++ * Finds the files matching the given glob patterns, in a stable order. A
++ * pattern that is the path of an existing directory matches all the files of
++ * that directory.
++ */
+ export async function glob(
+   patterns: string | string[],
+   options?: GlobOptions,
+ ): Promise<string[]> {
+-  // Other lib options are still forwarded at runtime for retro-compatibility
+-  const files = await Tinyglobby.glob(patterns, {...options});
++  const cwd = options?.cwd ?? process.cwd();
++  const cwdPath = cwd instanceof URL ? fileURLToPath(cwd) : cwd;
++  const expandedPatterns = await Promise.all(
++    [patterns]
++      .flat()
++      .map((pattern) => expandDirectoryPattern(pattern, cwdPath)),
++  );
++  const files = await Tinyglobby.glob(expandedPatterns, {
++    // Tinyglobby appends `/**` to all patterns, even `**/*.md`, unlike globby
++    // See https://github.com/meta/docusaurus/pull/13037
++    expandDirectories: false,
++    // Other lib options are still forwarded at runtime for retro-compatibility
++    ...options,
++  });
+   // Tinyglobby reads folders concurrently: their files come in a random order
+   // See https://github.com/meta/docusaurus/pull/13031
+   return files.sort();
+ }
+ 
++// Like globby, only expand the patterns of existing directories
++// See https://github.com/sindresorhus/globby/blob/v16.2.4/index.js#L91-L111
++// Doing it ourselves eases a later migration to Node.js `fs.glob`, which never
++// expands directories
++async function expandDirectoryPattern(
++  pattern: string,
++  cwd: string,
++): Promise<string> {
++  if (pattern.startsWith('!')) {
++    return pattern;
++  }
++  const isDirectory = await fs.stat(path.resolve(cwd, pattern)).then(
++    (stats) => stats.isDirectory(),
++    () => false,
++  );
++  // The directory path is literal: `[old]` or `(copy)` are not glob syntax
++  return isDirectory
++    ? path.posix.join(Tinyglobby.escapePath(pattern), '**')
++    : pattern;
++}
++
+ /**
+  * The default glob patterns we ignore when sourcing content.
+  * - Ignore files and folders starting with `_` recursively
+```
+
+**File**: `packages/docusaurus-plugin-content-blog/src/__tests__/index.test.ts` (modified, +0/-1)
+```diff
+@@ -464,7 +464,6 @@ describe('blog plugin', () => {
+     const blogPosts = await getBlogPosts(siteDir);
+ 
+     expect(blogPosts.map((post) => post.metadata.source).sort()).toEqual([
+-      '@site/blog/folder.md/notes.txt',
+       '@site/blog/folder.md/post.md',
+     ]);
+   });
+```
+
+---
+
+### Incident Patch 3: `42e00a97` (2026-11-13)
+**Commit Message**: fix(glob): sort glob results, files of different folders came in a random order (#13031)
+
+* fix(glob): return files in a stable order, whatever the file system and runtime
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* link this PR in the comment
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* sort with a plain sort(), test the concurrent folder reads that cause the random order
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+---------
+
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `packages/docusaurus-glob/src/__tests__/globUtils.test.ts` (modified, +36/-1)
+```diff
+@@ -5,13 +5,48 @@
+  * LICENSE file in the root directory of this source tree.
+  */
+ 
+-import {describe, expect, it} from 'vitest';
++import {describe, expect, it, onTestFinished} from 'vitest';
++import os from 'node:os';
++import path from 'node:path';
++import fs from 'node:fs/promises';
+ import {
+   GlobExcludeDefault,
+   createMatcher,
+   createAbsoluteFilePathMatcher,
++  glob,
+ } from '../globUtils';
+ 
++describe('glob', () => {
++  async function createFiles(files: string[]): Promise<string> {
++    const dir = await fs.mkdtemp(path.join(os.tmpdir(), 'glob-test-'));
++    onTestFinished(() => fs.rm(dir, {recursive: true, force: true}));
++    for (const file of files) {
++      await fs.mkdir(path.dirname(path.join(dir, file)), {recursive: true});
++      await fs.writeFile(path.join(dir, file), '');
++    }
++    return dir;
++  }
++
++  it('sorts the files of folders read concurrently', async () => {
++    const sortedFiles = Array.from(
++      {length: 30},
++      (_, i) => `post-${String(i).padStart(2, '0')}/index.md`,
++    );
++    const dir = await createFiles(sortedFiles);
++    await expect(glob('**/*.md', {cwd: dir})).resolves.toEqual(sortedFiles);
++  });
++
++  it('sorts absolute file paths', async () => {
++    const dir = await createFiles(['b/a.md', 'b.md', 'a.md']);
++    const files = await glob('**/*.md', {cwd: dir, absolute: true});
++    expect(files.map((file) => path.relative(dir, file))).toEqual([
++      'a.md',
++      'b.md',
++      path.join('b', 'a.md'),
++    ]);
++  });
++});
++
+ describe('createMatcher', () => {
+   it('match default exclude MD/MDX partials correctly', () => {
+     const matcher = createMatcher(GlobExcludeDefault);
+```
+
+**File**: `packages/docusaurus-glob/src/globUtils.ts` (modified, +5/-2)
+```diff
+@@ -20,13 +20,16 @@ export type GlobOptions = Pick<
+   'cwd' | 'ignore' | 'absolute' | 'expandDirectories'
+ >;
+ 
+-/** Finds the files matching the given glob patterns. */
++/** Finds the files matching the given glob patterns, in a stable order. */
+ export async function glob(
+   patterns: string | string[],
+   options?: GlobOptions,
+ ): Promise<string[]> {
+   // Other lib options are still forwarded at runtime for retro-compatibility
+-  return Tinyglobby.glob(patterns, {...options});
++  const files = await Tinyglobby.glob(patterns, {...options});
++  // Tinyglobby reads folders concurrently: their files come in a random order
++  // See https://github.com/meta/docusaurus/pull/13031
++  return files.sort();
+ }
+ 
+ /**
+```
+
+**File**: `packages/docusaurus-plugin-content-pages/src/__tests__/__snapshots__/index.test.ts.snap` (modified, +29/-29)
+```diff
+@@ -2,16 +2,6 @@
+ 
+ exports[`docusaurus-plugin-content-pages > loads simple pages 1`] = `
+ [
+-  {
+-    "permalink": "/",
+-    "source": "@site/src/pages/index.js",
+-    "type": "jsx",
+-  },
+-  {
+-    "permalink": "/typescript",
+-    "source": "@site/src/pages/typescript.tsx",
+-    "type": "jsx",
+-  },
+   {
+     "description": "Markdown index page",
+     "editUrl": undefined,
+@@ -67,21 +57,21 @@ exports[`docusaurus-plugin-content-pages > loads simple pages 1`] = `
+     "source": "@site/src/pages/hello/world.js",
+     "type": "jsx",
+   },
+-]
+-`;
+-
+-exports[`docusaurus-plugin-content-pages > loads simple pages with french translations (translate: false) 1`] = `
+-[
+   {
+-    "permalink": "/fr/",
++    "permalink": "/",
+     "source": "@site/src/pages/index.js",
+     "type": "jsx",
+   },
+   {
+-    "permalink": "/fr/typescript",
++    "permalink": "/typescript",
+     "source": "@site/src/pages/typescript.tsx",
+     "type": "jsx",
+   },
++]
++`;
++
++exports[`docusaurus-plugin-content-pages > loads simple pages with french translations (translate: false) 1`] = `
++[
+   {
+     "description": "Markdown index page",
+     "editUrl": undefined,
+@@ -137,11 +127,6 @@ exports[`docusaurus-plugin-content-pages > loads simple pages with french transl
+     "source": "@site/src/pages/hello/world.js",
+     "type": "jsx",
+   },
+-]
+-`;
+-
+-exports[`docusaurus-plugin-content-pages > loads simple pages with french translations 1`] = `
+-[
+   {
+     "permalink": "/fr/",
+     "source": "@site/src/pages/index.js",
+@@ -152,6 +137,11 @@ exports[`docusaurus-plugin-content-pages > loads simple pages with french transl
+     "source": "@site/src/pages/typescript.tsx",
+     "type": "jsx",
+   },
++]
++`;
++
++exports[`docusaurus-plugin-content-pages > loads simple pages with french translations 1`] = `
++[
+   {
+     "description": "Markdown index page",
+     "editUrl": undefined,
+@@ -207,21 +197,21 @@ exports[`docusaurus-plugin-content-pages > loads simple pages with french transl
+     "source": "@site/src/pages/hello/world.js",
+     "type": "jsx",
+   },
+-]
+-`;
+-
+-exports[`docusaurus-plugin-content-pages > loads simple pages with last update 1`] = `
+-[
+   {
+-    "permalink": "/",
++    "permalink": "/fr/",
+     "source": "@site/src/pages/index.js",
+     "type": "jsx",
+   },
+   {
+-    "permalink": "/typescript",
++    "permalink": "/fr/typescript",
+     "source": "@site/src/pages/typescript.tsx",
+     "type": "jsx",
+   },
++]
++`;
++
++exports[`docusaurus-plugin-content-pages > loads simple pages with last update 1`] = `
++[
+   {
+     "description": "Markdown index page",
+     "editUrl": "url placeholder",
+@@ -277,5 +267,15 @@ exports[`docusaurus-plugin-content-pages > loads simple pages with last update 1
+     "source": "@site/src/pages/hello/world.js",
+     "type": "jsx",
+   },
++  {
++    "permalink": "/",
++    "source": "@site/src/pages/index.js",
++    "type": "jsx",
++  },
++  {
++    "permalink": "/typescript",
++    "source": "@site/src/pages/typescript.tsx",
++    "type": "jsx",
++  },
+ ]
+ `;
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #13035** (2026-11-12): fix(core): evict the client and server persistent caches together, to avoid a build hang (@slorber)
-- **PR #13034** (2026-11-12): test(core): reproduce the build hang when only the server persistent cache is evicted (@slorber)
-- **PR #13030** (2026-11-12): fix(create-docusaurus): detect the bun.lock text lockfile of Bun 1.2+ (@slorber)
-- **PR #13026** (2026-11-12): fix(utils): reload the modules imported by the config on the Bun runtime (@slorber)
-- **PR #13024** (2026-11-12): fix(core): don't check the Node.js version on the Bun runtime (@slorber)
-- **PR #13022** (2026-11-12): ci: add a Bun E2E job (@slorber)
+- **PR #13048** (2026-11-13): feat(core): check the Bun version at startup (@slorber)
+- **PR #13047** (2026-11-13): chore(ci): remove the encodeurl@2.0.2 exclude from the site template trust policy (@slorber)
+- **PR #13045** (2026-11-13): fix(glob): only expand the glob patterns of existing directories, like globby (@slorber)
+- **PR #13044** (2026-11-13): feat: support the Bun runtime, starting with Bun 1.4.3 (@slorber)
+- **PR #13043** (2026-11-13): fix(pwa): only use our own precache manifest injection when MD5 is not available (@slorber)
+- **PR #13041** (2026-11-13): test: remove the sorts that compensated for the random glob order (@slorber)
 
 ---
 
@@ -1260,29 +1692,73 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ci): skip the security workflows on forks (#13006)
+## X. pwa): only use our own precache manifest injection when MD5 is not available
 
 **RULE**:
-When implementing operations in `.github/workflows/security-supply-chain.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meta/docusaurus. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/docusaurus-plugin-pwa/src/__tests__/injectManifestFIPS.test.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meta/docusaurus. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1d5de88e`: ci): skip the security workflows on forks (#13006). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5b2eeddc`: pwa): only use our own precache manifest injection when MD5 is not available. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/security-supply-chain.yml`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/docusaurus-plugin-pwa/src/__tests__/injectManifestFIPS.test.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-    if: github.repository == 'meta/docusaurus'
-    if: github.repository == 'meta/docusaurus'
+import {describe, expect, it, vi} from 'vitest';
+import {injectManifestFIPS} from '../injectManifestFIPS';
+
+// injectManifestFIPS() only runs when MD5 is not available
+vi.mock('node:crypto', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('node:crypto')>()),
+  getHashes: () => ['sha256'],
+}));
+describe('injectManifestFIPS', () => {
+  it('injects the same files as Workbox', async () => {
+    await injectManifestFIPS(getOptions(outDir.path));
+    expect(manifest.map((entry) => entry.url)).toEqual(
+      workboxManifest.map((entry) => entry.url),
+    );
+    // Workbox hashes with MD5 anyway
+    manifest.forEach((entry, index) => {
+      expect(entry.revision).not.toBe(workboxManifest[index]!.revision);
+    });
+  it('injects files hashed with SHA-256', async () => {
+    await injectManifestFIPS(getOptions(outDir.path));
+      {
+        url: 'assets/main.css',
+        revision:
+          '7c98040a541657584690ae2a1cc3b42a8b53b159cc60c5d3abbfecbaeac6c94a',
+      },
+      {
+        url: 'assets/main.js',
+        revision:
+          '6e11c72f7cf6bc383152dd16ddd5903aba6bb1c99d6b6639a4bb0b838185fa92',
+      },
+      {
+        url: 'index.html',
+        revision:
+        
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
-// Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+// Induced defect failure mode:
+import {describe, expect, it} from 'vitest';
+import {injectPrecacheManifest} from '../precacheManifest';
+describe('injectPrecacheManifest', () => {
+  it('injects the same manifest as Workbox', async () => {
+    await injectPrecacheManifest(getOptions(outDir.path));
+    expect(manifest).toEqual(workboxManifest);
+  it('injects files hashed with MD5, except the service worker', async () => {
+    await injectPrecacheManifest(getOptions(outDir.path));
+      {url: 'assets/main.css', revision: 'aa676972bbd2b68e94ef8e91e81d20be'},
+      {url: 'assets/main.js', revision: '238e96d5b62a1aec3739730469f27192'},
+      {url: 'index.html', revision: 'fe919dfbe925337c176e602ebbf0d15c'},
+    await injectPrecacheManifest({
+    await injectPrecacheManifest({
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1d5de88e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5b2eeddc` are properly handled with clean fallback behavior.
