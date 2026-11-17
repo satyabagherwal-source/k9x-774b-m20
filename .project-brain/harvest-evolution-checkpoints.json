@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T04:43:59.910Z",
+  "last_updated": "2026-11-17T04:56:59.265Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-17T04:43:59.398Z",
@@ -268,7 +268,7 @@
       "staged_for_review": 1
     },
     "zseven-w-openpencil-learnings.md": {
-      "processed_at": "2026-11-17T02:24:54.683Z",
+      "processed_at": "2026-11-17T04:56:58.388Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -398,9 +398,9 @@
       "staged_for_review": 1
     },
     "cilium-cilium-learnings.md": {
-      "processed_at": "2026-11-16T03:48:43.121Z",
+      "processed_at": "2026-11-17T04:56:57.687Z",
       "promoted_canonical": 0,
-      "staged_for_review": 0
+      "staged_for_review": 1
     },
     "falkordb-falkordb-learnings.md": {
       "processed_at": "2026-11-16T22:19:34.092Z",
@@ -1948,7 +1948,7 @@
       "staged_for_review": 0
     },
     "saffsanity-sill-learnings.md": {
-      "processed_at": "2026-11-13T15:47:56.112Z",
+      "processed_at": "2026-11-17T04:56:56.957Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3248,7 +3248,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 1470,
+  "total_dossiers_evaluated": 1473,
   "total_canonical_promoted": 298,
-  "total_staged_for_review": 1157
+  "total_staged_for_review": 1160
 }

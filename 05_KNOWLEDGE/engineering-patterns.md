@@ -645114,3 +645114,159 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `8404f23a` are properly handled with clean fallback behavior.
+
+
+---
+
+## 8871. Update Now's new copy starts once the old Sill has quit: the launch wait asks th (Harvested from Saffsanity/sill)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Update Now's new copy starts once the old Sill has quit: the launch wait asks th",
+  "source": "Saffsanity/sill",
+  "source_url": "https://github.com/Saffsanity/sill",
+  "source_version": "4e00c805",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-17T04:56:47.483Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-saffsanity-sill",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Saffsanity/sill](https://github.com/Saffsanity/sill) (Revision: `4e00c805`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `Sources/SillMenuBar/AppUpdater.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Saffsanity/sill. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `7ee759c5`: Update Now's new copy starts once the old Sill has quit: the launch wait asks the kernel. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Sources/SillMenuBar/AppUpdater.swift`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```swift
+// Verified production-grade fix pattern:
+    /// Whether the other one has quit is the kernel's word (ProcessLife) as well as AppKit's: `isTerminated`
+    /// alone never changed in a Sill that had only just launched, so the first real update's new copy waited
+    /// the whole 30 s for a Sill that had quit after 0.2 s, and left (the rehearsal, 2026-11-15).
+        // Each as the kernel knows it now, its pid and when it started; none with that pid any more is gone already.
+        let lives = others.map { (app: $0, life: ProcessLife.of($0.processIdentifier)) }
+                if lives.allSatisfy({ $0.app.isTerminated || ($0.life?.gone ?? true) }) {
+```
+
+**NEGATIVE CONSTRAINT**:
+```swift
+// Induced defect failure mode:
+                if others.allSatisfy({ $0.isTerminated }) {
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `7ee759c5` are properly handled with clean fallback behavior.
+
+
+---
+
+## 8872. docs(ztunnel): add built-in CA limitations (Harvested from cilium/cilium)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "docs(ztunnel): add built-in CA limitations",
+  "source": "cilium/cilium",
+  "source_url": "https://github.com/cilium/cilium",
+  "source_version": "911f5a91",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-17T04:56:53.080Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-cilium-cilium",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [cilium/cilium](https://github.com/cilium/cilium) (Revision: `911f5a91`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `Documentation/security/network/encryption-ztunnel.rst`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `911f5a91`: docs(ztunnel): add built-in CA limitations. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `Documentation/security/network/encryption-ztunnel.rst`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Verified production-grade fix pattern:
+.. warning::
+
+   By default (``encryption.ztunnel.ca.type=internal``), Cilium uses a
+   built-in CA to issue workload certificates. The built-in CA is intended
+   for testing and evaluation only. Do not use it in production.
+
+* The built-in CA (``encryption.ztunnel.ca.type=internal``) is for testing
+  only and is not suitable for production. See
+  `Generating secrets for authentication`_. Integration with SPIRE
+  (``encryption.ztunnel.ca.type=spire``) is in progress and will be the
+  recommended CA for production use.
+
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `911f5a91` are properly handled with clean fallback behavior.

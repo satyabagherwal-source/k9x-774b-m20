@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T15:47:56.210Z",
+  "timestamp": "2026-11-17T04:56:57.110Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-saffsanity-sill-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [saffsanity-sill-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T15:47:56.210Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-17T04:56:57.110Z`  
 > **Learning ID**: `LEARN-EVO-saffsanity-sill-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/saffsanity-sill-learnings.md`  
 > **Source**: github ([https://github.com/Saffsanity/sill](https://github.com/Saffsanity/sill))  
-> **Source Version**: `bf69067f`  
+> **Source Version**: `4e00c805`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T15:47:11.290Z  
+> **Timestamp**: 2026-11-17T04:56:46.873Z  
 > **Learning ID**: `learn-github-saffsanity-sill`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/saffsanity-sill-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Saffsanity/sill](https://github.com/Saffsanity/sill))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T15:47:11.285Z  
+> **Harvest Timestamp**: 2026-11-17T04:56:46.684Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Any window from your Mac, live on your iPhone or iPad. Touch, Apple Pencil, trackpad and keys. Free, open source, no servers.
 - **Primary Language / Ecosystem**: Swift
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 4868 stars
+- **Stars / Engagement**: 4920 stars
 
 ---
 
@@ -1567,135 +1567,211 @@ func took(_ header: StreamHeader, _ payload: Data) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1b04b5f7` (2026-11-12)
-**Commit Message**: Full screen's plan and step file: the live loopback gate's result
+### Incident Patch 1: `7ee759c5` (2026-11-15)
+**Commit Message**: Update Now's new copy starts once the old Sill has quit: the launch wait asks the kernel
 
-Run at 67039ddd once Noah's devices were off Sill.app: five cases (an iPhone upright, an iPad mini on its side, the
-Desktop on screen 2, Shake to Show Controls off, a swipe in taken back), one viewport per change, none for the
-swipe in taken back, every scripted input at the host, the Desktop kept on screen 2.
+The rehearsal's first real update (2026-11-15) replaced Sill in two seconds, and then no Sill ran: the
+new copy waits at launch for the Sill that started it to quit, asked NSRunningApplication.isTerminated
+for 30 s, and gave up, though the system log has the old Sill's end 0.2 s after it said it was
+quitting. That value is one AppKit keeps from LaunchServices' notifications, and it never changed in a
+Sill that had only just launched. No test had run this path with Developer ID signed copies.
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+ProcessLife (Foundation only) knows a process by its pid and the time it started, both the kernel's,
+so a pid given to another process is not taken for the Sill that had it. The wait counts the other
+Sill gone when AppKit says so or the kernel does.
 
-**File**: `docs/full-screen-plan.md` (modified, +27/-7)
+update-install: 973 checks (18 new, against this process, launchd and a child of its own), seven new
+mutants, 7 of 7, the first of them the fault as it was.
+
+Co-Authored-By: Claude Fable 5.2 <[REDACTED_EMAIL]>
+
+**File**: `Sources/SillMenuBar/AppUpdater.swift` (modified, +6/-1)
 ```diff
-@@ -364,13 +364,33 @@ after it.
-     its way out on an iPhone on its side, about 16 % in, with nothing drawn under it; the photos' timing is too loose
-     to catch more frames, so the static previews above are the evidence for every stage.
- - **G6:** `Tests/checks/repo-rules`, every rule holds.
--- **G4, live on loopback: not run.** Noah was testing on his devices: a device was streaming from Sill.app at 16:30
--  and at 16:56, and the gate keeps the rule (`Scripts/encoder-check/no-device.sh`: nothing that could share the
--  Mac's encoder while a device is connected), though its host uses the software encoder. The first build's run of
--  it (below) covered the same paths a hide and a show take (the viewport one per change, input around each change,
--  the Desktop kept on screen 2); what is new since is the swipe in's own recognizer, which the touch rig drove with
--  real synthesized touches in both orientations, and Shake to Show Controls, whose off case the gate adds
--  (`phone-up-shake-off`).
-+- **G4, live on loopback**, at 67039ddd from 18:12 to 18:17, once Noah had disconnected his devices (a device was on
-+  Sill.app at 16:30 and 16:56, so it waited; `Scripts/encoder-check/no-device.sh` said "OK: no device connected"
-+  before every case): `SillHost --synthetic` (loopback only, the software encoder, no router, no screen, the
-+  dry-run input log) and the app's Debug build under `-SillLive 1` on the agents' iPad simulator, an input script
-+  tapping, pressing keys and typing every 0.1 s for a second around each change. Five cases, every one as it should:
-+  - An iPhone 15 Pro's size upright: hidden at 4 s, back at 7, hidden at 10, back by a shake at 13 (Shake to Show
-+    Controls on), hidden at 16, back by a played swipe in at 18.8: the viewport 377×235 twice as it connected, then
-+    393×793 and 377×235, one per change, six; every input at the host (39 taps, each down and up; 24 keys and 12
-+    letters).
-+  - An iPad mini on its side, the same: 1117×618 as it connected, then 1133×744 and 1117×618, one per change; every
-+    input at the host.
-+  - The Desktop on the Mac's second screen (two test screens): the device's own Desktop button ("Desktop 1") stepped
-+    the host to display 2, then hidden, back, hidden, back by a shake: one viewport each, and the host's only stream
-+    start after the step was display 2's; the 12 taps arrived.
-+  - Shake to Show Controls off: hidden at 4, a shake at 7 left the controls hidden ("full screen: a shake, and Shake
-+    to Show Controls is off: the controls stay hidden"), a played swipe in at 10 brought them back: one viewport per
-+    change; the 12 taps arrived.
-+  - A swipe in taken back: hidden at 4, a played swipe in taken back at 7 ("reveal: lifted after 619 pt at -1500
-+    pt/s …: springs back"): the controls stayed hidden, no viewport and nothing sent for it; back by a shake at 10,
-+    hidden at 13, back by a played swipe in at 16: one viewport per change, four; every input at the host (39 taps,
-+    24 keys and letters). In every case the one `pointer: this device has it (a pointer move)` line is the session's
-+    first tap, at 3.5 s; none follows a swipe in, finished or taken back.
-+  - Against round one: the same viewports and the same input, change for change. Once, in the taken-back case, the
-+    connect sent its 377×235 a third time, before anything of full screen happened. Played, not swiped: the swipe in
-+    reaches the stream screen as the recognizer's moves and lift (`revealMoved`), which the touch rig drove with real
-+    synthesized touches; the hide is the harness's, the same `hideChrome` that Settings › Full Screen calls once its
-+    panel has closed.
+@@ -1099,6 +1099,9 @@ final class AppUpdater {
+     /// has quit, at most `Policy.launchWait`, then quits itself. True when it waits (`start` comes later).
+     /// Only a process that satisfies Sill's requirement counts (review 3, N7: anything can claim the bundle
+     /// identifier). From applicationDidFinishLaunching; the Timer is a run-loop one (it may call NSApp.terminate).
++    /// Whether the other one has quit is the kernel's word (ProcessLife) as well as AppKit's: `isTerminated`
++    /// alone never changed in a Sill that had only just launched, so the first real update's new copy waited
++    /// the whole 30 s for a Sill that had quit after 0.2 s, and left (the rehearsal, 2026-11-15).
+     static func waitForOtherSill(then start: @escaping @MainActor () -> Void) -> Bool {
+         guard let id = Bundle.main.bundleIdentifier else { return false }
+         let own = ProcessInfo.processInfo.processIdentifier
+@@ -1107,11 +1110,13 @@ final class AppUpdater {
+         let others = candidates.filter { genuine.contains($0.processIdentifier) }
+         guard !others.isEmpty else { return false }
+         let pids = others.map { String($0.processIdentifier) }.joined(separator: ", ")
++        // Each as the kernel knows it now, its pid and when it started; none with that pid any more is gone already.
++        let lives = others.map { (app: $0, life: ProcessLife.of($0.processIdentifier)) }
+         print("Another Sill is running (pid \(pids)); waiting for it to quit before starting.")
+         let deadline = Date().addingTimeInterval(Policy.launchWait)
+         let timer = Timer(timeInterval: 0.2, repeats: true) { timer in
+             MainActor.assumeIsolated {
+-                if others.allSatisfy({ $0.isTerminated }) {
++                if lives.allSatisfy({ $0.app.isTerminated || ($0.life?.gone ?? true) }) {
+                     timer.invalidate()
+                     print("The other Sill quit; starting.")
+                     start()
+```
+
+**File**: `Sources/SillMenuBar/ProcessLife.swift` (added, +56/-0)
+```diff
+@@ -0,0 +1,56 @@
++import Foundation
++
++/// The kernel's word on whether a process is still there. Update Now's new copy waits at launch for the Sill
++/// that started it to quit (AppUpdater.waitForOtherSill), and what it asked at first, NSRunningApplication's
++/// `isTerminated`, is a value AppKit keeps from LaunchServices' notifications: in a Sill that had only just
++/// launched it stayed false through the wait's 30 s although the other Sill had exited 0.2 s after saying so
++/// (the rehearsal, 2026-11-15: the new copy gave up and quit, and no Sill was running until it was opened by
++/// hand). A pid goes to another process once its own is gone, so a process is known here by its pid and the
++/// time it started. Foundation only; `Tests/checks/update-install` runs it against a process of its own.
++struct ProcessLife: Equatable, Sendable {
++    /// When a process started, by the kernel.
++    struct Start: Equatable, Sendable {
++        let seconds: Int
++        let microseconds: Int
++    }
++
++    let pid: pid_t
++    /// Nil when it couldn't be read.
++    let started: Start?
++
++    /// The process that has `pid` now; nil when none has.
++    static func of(_ pid: pid_t) -> ProcessLife? {
++        guard exists(pid) else { return nil }
++        return ProcessLife(pid: pid, started: start(of: pid))
++    }
++
++    /// Whether this very process has gone, asked now.
++    var gone: Bool { Self.gone(then: self, now: Self.of(pid)) }
++
++    /// The rule: gone when no process has the pid, or when the one that has it started at another time (the pid
++    /// was given to another process). A start that couldn't be read, then or now, decides nothing: a process
++    /// with the pid then counts as the same one, so a Sill is never started beside one that may still run.
++    static func gone(then: ProcessLife, now: ProcessLife?) -> Bool {
++        guard let now else { return true }
++        if let before = then.started, let after = now.started, before != after { return true }
++        return false
++    }
++
++    /// A process has `pid`. `kill` with signal 0 sends nothing; it fails with ESRCH only when there is none
++    /// (with EPERM there is one, another account's). No pid at all (0 or less) counts as there.
++    static func exists(_ pid: pid_t) -> Bool {
++        guard pid > 0 else { return true }
++        return kill(pid, 0) == 0 || errno != ESRCH
++    }
++
++    /// When the process `pid` started (kern.proc.pid); nil when there is none or it can't be read.
++    static func start(of pid: pid_t) -> Start? {
++        var info = kinfo_proc()
++        var size = MemoryLayout<kinfo_proc>.stride
++        var mib: [Int32] = [CTL_KERN, KERN_PROC, KERN_PROC_PID, pid]
++        guard pid > 0, sysctl(&mib, UInt32(mib.count), &info, &size, nil, 0) == 0,
++              size >= MemoryLayout<kinfo_proc>.stride, info.kp_proc.p_pid == pid else { return nil }
++        let t = info.kp_proc.p_starttime
++        return Start(seconds: Int(t.tv_sec), microseconds: Int(t.tv_usec))
++    }
++}
+```
+
+**File**: `Tests/checks/update-install/build.sh` (modified, +1/-1)
+```diff
+@@ -5,7 +5,7 @@
+ # module (each `import StreamProtocol` stripped), and this check's main.swift.
+ WT=$1; OUT=$2; SRC=${3:-$WT/Sources/SillMenuBar}; T=$(mktemp -d)
+ cp "$WT"/Sources/StreamProtocol/*.swift "$T"/
+-for f in UpdatePolicy UpdateInstallPolicy UpdateManifest UpdateArchive UpdateAutoPolicy; do
++for f in UpdatePolicy UpdateInstallPolicy UpdateManifest UpdateArchive UpdateAutoPolicy ProcessLife; do
+     sed '/^import StreamProtocol$/d' "$SRC/$f.swift" > "$T/$f.swift"
+ done
+ cp "$(dirname "$0")/main.swift" "$T/main.swift"
+```
+
+**File**: `Tests/checks/update-install/main.swift` (modified, +40/-0)
+```diff
+@@ -1479,5 +1479,45 @@ for path in ["StreamProtocol/HostSettings.swift", "StreamProtocol/StreamMessage.
+ check(!text("DebugHooks.swift").contains("setAutomaticUpdate(") && !text("DebugHooks.swift").contains("AutoUpdateStore")
+       && !text("DebugHooks.swift").contains("setNightly("), "the previews draw the switches, never set them")
  
- ### The first build (the flick; superseded)
- 
++// The other Sill a launch waits for (AppUpdater.waitForOtherSill): gone by the kernel's word, ProcessLife. The
++// rehearsal's first update (2026-11-15) waited 30 s for a Sill that had exited after 0.2 s: NSRunningApplication's
++// isTerminated never changed in the new copy.
++do {
++    typealias Life = ProcessLife
++    let a = Life.Start(seconds: 1_794_000_000, microseconds: 10), b = Life.Start(seconds: 1_794_000_000, microseconds: 11)
++    check(Life.gone(then: Life(pid: 500, started: a), now: nil), "no process with the pid: gone")
++    check(!Life.gone(then: Life(pid: 500, started: a), now: Life(pid: 500, started: a)), "the same pid and start: still there")
++    check(Life.gone(then: Life(pid: 500, started: a), now: Life(pid: 500, started: b)), "the pid with another start (a pid reused): gone")
++    check(!Life.gone(then: Life(pid: 500, started: nil), now: Life(pid: 500, started: b)), "no start read then: the pid alone says still there")
++    check(!Life.gone(then: Life(pid: 500, started: a), now: Life(pid: 500, started: nil)), "no start read now: the pid alone says still there")
++    // Live, against this process, launchd, and a process of the check's own.
++    let me = ProcessInfo.processInfo.processIdentifier
++    let mine = Life.of(me)
++    check(mine != nil && mine?.started != nil, "this process is there, with a start time")
++    check(mine?.gone == false, "this process is not gone")
++    check(Life(pid: me, started: Life.Start(seconds: 1, microseconds: 2)).gone, "this pid under another start counts as another process")
++    check(Life.exists(1) && Life.of(1)?.gone == false, "launchd, another account's process, is there (EPERM is not ESRCH)")
++    check(Life.exists(0) && Life.exists(-1) && Life.start(of: 0) == nil, "no pid at all counts as there, with no start")
++    let child = Process()
++    child.executableURL = URL(fileURLWithPath: "/bin/sleep")
++    child.arguments = ["60"]
++    if (try? child.run()) != nil {
++        let life = Life.of(child.processIdentifier)
++        check(life != nil && life?.started != nil && life?.gone == false, "a running child is there")
++        child.terminate()
++        child.waitUntilExit()
++        check(life?.gone == true, "the child, once it has exited, is gone")
++        check(Life.of(child.processIdentifier) == nil && !Life.exists(child.processIdentifier), "and nothing has its pid")
++        check(Life.start(of: child.processIdentifier) == nil, "and a pid no process has reads no start time")
++    } else {
++        check(false, "the check's child process started")
++    }
++    // The wait asks it: a mutant that asks AppKit alone is the fault as it was.
++    let wait = text("AppUpdater.swift")
++    check(wait.contains("let lives = others.map { (app: $0, life: ProcessLife.of($0.processIdentifier)) }")
++          && wait.contains("if lives.allSatisfy({ $0.app.isTerminated || ($0.life?.gone ?? true) }) {")
++          && !wait.contains("others.allSatisfy({ $0.isTerminated })"), "the launch wait asks the kernel as well as AppKit whether the other Sill has gone")
++}
++
+ print("update-install: \(checks - failures) of \(checks) checks passed")
+ exit(failures == 0 ? 0 : 1)
 ```
 
-**File**: `docs/steps/2026-11-12-full-screen.md` (modified, +5/-1)
+**File**: `Tests/checks/update-install/mutants.py` (modified, +9/-0)
 ```diff
-@@ -44,5 +44,9 @@ no wire change, nothing on the Mac, nothing stored but how often the hint has sh
-   but the Settings panel (and the thumbnail strip's fade on an upright iPad mini, which differs between two builds
-   of main itself), the Settings panel after the merge with main's Quality row and these rows after Frame Rate, and
-   32 previews in every layout and Duo pose, the controls on their own black and nothing of the picture's place.
--- **Not run:** the live loopback gate (a device was on Sill.app both times; the rule holds it).
-+- Live on loopback at 67039ddd once Noah's devices were off Sill.app (18:12): five cases (an iPhone upright, an iPad
-+  mini on its side, the Desktop on screen 2, Shake to Show Controls off, a swipe in taken back), one viewport per
-+  change in each, none for the swipe in taken back, every scripted tap, key and letter at the host, the Desktop kept
-+  on screen 2, a shake with the switch off leaving the controls hidden; the same as round one's run but for one
-+  extra identical viewport at one connect.
- - **Untested, for Noah:** the plan's "Noah's test" on the iPad mini and the iPhone 15 Pro.
+@@ -6,7 +6,16 @@
+ SRC = os.path.join(WT, "Sources/SillMenuBar")
+ POL, MAN, ARC, INS, APP = "UpdateInstallPolicy.swift", "UpdateManifest.swift", "UpdateArchive.swift", "UpdateInstaller.swift", "AppUpdater.swift"
+ AUTO = "UpdateAutoPolicy.swift"
++LIFE = "ProcessLife.swift"
+ MUTANTS = [
++    # The launch wait: whether the other Sill has gone (ProcessLife; the rehearsal's first update, 2026-11-15).
++    ("the launch wait asks AppKit alone (the fault as it was)", APP, "if lives.allSatisfy({ $0.app.isTerminated || ($0.life?.gone ?? true) }) {", "if lives.allSatisfy({ $0.app.isTerminated }) {"),
++    ("no process with the pid counts as still there", LIFE, "guard let now else { return true }", "guard let now else { return false }"),
++    ("a pid given to another process counts as the same one", LIFE, "if let before = then.started, let after = now.started, before != after { return true }", ""),
++    ("an unread start counts as another process", LIFE, "if let before = then.started, let after = now.started, before != after { return true }", "if then.started != now.started { return true }"),
++    ("another account's process counts as none", LIFE, "return kill(pid, 0) == 0 || errno != ESRCH", "return kill(pid, 0) == 0"),
++    ("any failure of kill counts as there (a process gone is never noticed)", LIFE, "return kill(pid, 0) == 0 || errno != ESRCH", "return true"),
++    ("the start read without asking whose it is", LIFE, "size >= MemoryLayout<kinfo_proc>.stride, info.kp_proc.p_pid == pid else { return nil }", "size >= 0 else { return nil }"),
+     # The version rule and the release.
+     ("the same version installed", POL, "guard isNewer(version, build: Int(build), than: running, runningBuild: runningBuild,", "guard version >= running || isNewer(version, build: Int(build), than: running, runningBuild: runningBuild,"),
+     ("the same release fetched", POL, "guard version > running else { return .failure(.releaseNotNewer) }", "guard version >= running else { return .failure(.releaseNotNewer) }"),
 ```
 
----
-
-### Incident Patch 2: `1442d8ac` (2026-11-12)
-**Commit Message**: CLAUDE.md Layout: the edge recognizers' watchers and held landing, the rig's trace
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `CLAUDE.md` (modified, +6/-3)
+**File**: `docs/steps/2026-11-15-update-launch-wait.md` (added, +1/-0)
 ```diff
-@@ -794,8 +794,9 @@ Rules found in the steps that hold for all work (each where it is written):
-   the pointer's dwell at the edge, when it is offered and armed, when the controls come back by
-   themselves, the hint, the room, the words; pure, `Tests/checks/full-screen`; pbxproj A279/F279),
-   `EdgeFlickRecognizer` (the flick's recognizer and the swipe in's, `RevealEdgePan`, on Sill's window,
--  which other recognizers wait for them, `EdgeRecognizers.waits`, and a stroke they held until its lift,
--  `releasedAtLift`; UIKit only, so Tests/touchrig compiles it; A27B/F27B) and `FullScreen`
-+  which other recognizers wait for them, `EdgeRecognizers.waits` (never one that only watches,
-+  `WatchesTouchesOnly`), where a held stroke landed, `heldLanding`, for the picture's scroll, and a stroke
-+  they held until its lift, `releasedAtLift`; UIKit only, so Tests/touchrig compiles it; A27B/F27B) and `FullScreen`
-   (`FullScreenEdges`, which puts them and a hover on the window and says whether it covers the screen and
-   its safe area, `FullScreenSystem` for the status bar, the home indicator and the deferred left edge, the
-   shake through `UIWindow.motionEnded`, the hint, the swipe in's preview hole, the hidden picture's
-@@ -1086,7 +1087,9 @@ Rules found in the steps that hold for all work (each where it is written):
-   made fresh; `compare.py --all` every stroke against main's, and, where the
-   sources have full screen's EdgeFlickRecognizer (on the rig's window),
-   `compare.py --edge` its strokes at the left edge (`RIG_ONLY=edge`): a flick
--  hides and sends nothing, anything else goes on whole and in order.
-+  hides and sends nothing, anything else goes on whole and in order;
-+  `RIG_TRACE=1` logs every recognizer's state (and the flick's trace). It
-+  compiles StreamProtocol whole, and DuoPosture.swift, as the surfaces need.
- - `Tests/duorig/` — TEST ONLY, private interfaces, simulator only: folds and
-   turns the iPhone Duo simulator with Device Hub's own events (usage page
-   0xFF61, usage 0x5B, an IOCFSerialize dictionary from
-```
-
----
-
-### Incident Patch 3: `efc4ccfc` (2026-11-12)
-**Commit Message**: Touch rig: compare.py leaves RIG_TRACE's recognizer states out of the events
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `Tests/touchrig/compare.py` (modified, +1/-0)
-```diff
-@@ -40,6 +40,7 @@ def normal(events):
-     out, coasting = [], False
-     for e in events:
-         if e.startswith("[touch]") or e.startswith("[edge]") or e.startswith("[measure]"): continue
-+        if re.match(r"\s*\[[TOWB]\.", e): continue      # RIG_TRACE's recognizer states, not events
-         who, _, what = e.partition(" send ")
-         who = who.strip()
-         if not what:
+@@ -0,0 +1 @@
++**TITLE: what it does, in plain words (2026-11-15, branch `update-launch-wait` from main at 588ae90).** 
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #364** (2026-11-13): Version 0.6.2 for both apps, after 0.6.1 (@Saffsanity)
-- **PR #363** (2026-11-12): Settings: the Quality row shows the quality's name, and its menu the rates (@Saffsanity)
-- **PR #361** (2026-11-13): pointer-watch: the stale mutant applies again, and SILL_TEST_NO_SCREEN is checked (@Saffsanity)
-- **PR #360** (2026-11-12): Full screen: Settings › Full Screen hides Sill's controls; a swipe in from the left edge or a shake brings them back (@Saffsanity)
-- **PR #358** (2026-11-12): A staged window goes home before Sill's display goes (@Saffsanity)
-- **PR #356** (2026-11-12): Notes in a file per branch, checks that describe themselves, harness photos on shared simulators (@Saffsanity)
+- **PR #378** (2026-11-16): Release 0.6.2: Sill for Mac and Sill for iPhone and iPad (@Saffsanity)
+- **PR #377** (2026-11-15): A nightly is offered the release of its own version (@Saffsanity)
+- **PR #376** (2026-11-15): Sill's nightly key: its public half in nightlyKeys (@Saffsanity)
+- **PR #375** (2026-11-15): One update at a time, and a helper Sill is starting is no other copy of Sill (@Saffsanity)
+- **PR #374** (2026-11-15): Sill's update key: its public half in releaseKeys (@Saffsanity)
+- **PR #373** (2026-11-15): After an update started in Settings, the new Sill opens Settings on General again and says it was installed (@Saffsanity)
 
 ---
 
@@ -1715,49 +1791,36 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Full screen's plan and step file: the live loopback gate's result
+## X. Update Now's new copy starts once the old Sill has quit: the launch wait asks th
 
 **RULE**:
-When implementing operations in `docs/full-screen-plan.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Saffsanity/sill. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Sources/SillMenuBar/AppUpdater.swift`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Saffsanity/sill. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1b04b5f7`: Full screen's plan and step file: the live loopback gate's result. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7ee759c5`: Update Now's new copy starts once the old Sill has quit: the launch wait asks the kernel. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/full-screen-plan.md`.
+Subsystems managing Swift data structures, boundary deserialization, API parsing, or resource lifecycles matching `Sources/SillMenuBar/AppUpdater.swift`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```swift
 // Verified production-grade fix pattern:
-- **G4, live on loopback**, at 67039ddd from 18:12 to 18:17, once Noah had disconnected his devices (a device was on
-  Sill.app at 16:30 and 16:56, so it waited; `Scripts/encoder-check/no-device.sh` said "OK: no device connected"
-  before every case): `SillHost --synthetic` (loopback only, the software encoder, no router, no screen, the
-  dry-run input log) and the app's Debug build under `-SillLive 1` on the agents' iPad simulator, an input script
-  tapping, pressing keys and typing every 0.1 s for a second around each change. Five cases, every one as it should:
-  - An iPhone 15 Pro's size upright: hidden at 4 s, back at 7, hidden at 10, back by a shake at 13 (Shake to Show
-    Controls on), hidden at 16, back by a played swipe in at 18.8: the viewport 377×235 twice as it connected, then
-    393×793 and 377×235, one per change, six; every input at the host (39 taps, each down and up; 24 keys and 12
-    letters).
-  - An iPad mini on its side, the same: 1117×618 as it connected, then 1133×744 and 1117×618, one per change; every
-    input at the host.
-  - The Desktop on the Mac's second screen (two test screens): the device's own Desktop button ("Desktop 1") stepped
-    the host to d
+    /// Whether the other one has quit is the kernel's word (ProcessLife) as well as AppKit's: `isTerminated`
+    /// alone never changed in a Sill that had only just launched, so the first real update's new copy waited
+    /// the whole 30 s for a Sill that had quit after 0.2 s, and left (the rehearsal, 2026-11-15).
+        // Each as the kernel knows it now, its pid and when it started; none with that pid any more is gone already.
+        let lives = others.map { (app: $0, life: ProcessLife.of($0.processIdentifier)) }
+                if lives.allSatisfy({ $0.app.isTerminated || ($0.life?.gone ?? true) }) {
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```swift
-// Anti-pattern to NEVER write (induced failure mode):
-- **G4, live on loopback: not run.** Noah was testing on his devices: a device was streaming from Sill.app at 16:30
-  and at 16:56, and the gate keeps the rule (`Scripts/encoder-check/no-device.sh`: nothing that could share the
-  Mac's encoder while a device is connected), though its host uses the software encoder. The first build's run of
-  it (below) covered the same paths a hide and a show take (the viewport one per change, input around each change,
-  the Desktop kept on screen 2); what is new since is the swipe in's own recognizer, which the touch rig drove with
-  real synthesized touches in both orientations, and Shake to Show Controls, whose off case the gate adds
-  (`phone-up-shake-off`).
+// Induced defect failure mode:
+                if others.allSatisfy({ $0.isTerminated }) {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1b04b5f7` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7ee759c5` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

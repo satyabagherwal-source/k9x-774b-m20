@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-17T04:43:59.694Z",
+  "last_updated": "2026-11-17T04:56:58.976Z",
   "total_records": 1444,
   "domains": {
     "A": {
@@ -7187,8 +7187,8 @@
       "title": "Product Intelligence: cilium/cilium Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-cilium-cilium-product-intelligence-cilium-cilium-core-invariants.md",
       "repository": "cilium/cilium",
-      "content_hash": "03cc23d03aa177211911425489bb66649852a1427f0f2d22001b849c0ca4bd3a",
-      "created_at": "2026-11-16T23:22:34.765Z"
+      "content_hash": "b0f2838806f086813d5fc91e5e4e9890e71bde8172841f0b1ab4747b9a5176a3",
+      "created_at": "2026-11-17T04:56:53.962Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-viggle-qwen-image-2-1-viggle-turbo-learnings-": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-viggle-qwen-image-2-1-viggle-turbo-learnings-",
@@ -7205,8 +7205,8 @@
       "title": "Product Intelligence: cilium-cilium-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-cilium-cilium-learnings-product-intelligence-cilium-cilium-learnings-core-invari.md",
       "repository": "cilium-cilium-learnings",
-      "content_hash": "72ea8646d59f97a5544190ba20a37b00e45833824cfd1aa25f73ff5cc2debbfb",
-      "created_at": "2026-11-15T05:37:24.066Z"
+      "content_hash": "6778badde9779866e3ff793e1e2fb72ea7b09f83c39ea5e56e4b9e8133bb94b0",
+      "created_at": "2026-11-17T04:56:58.085Z"
     },
     "domain_intelligence-technical-construction-intelligence-zvec-ai-zvec-grep-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-zvec-ai-zvec-grep-learnings-core-invariants",
@@ -7637,8 +7637,8 @@
       "title": "Quality & Verification Intelligence: Saffsanity/sill Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-saffsanity-sill-quality-verification-intelligence-saffsanity-sill-core-invariant.md",
       "repository": "Saffsanity/sill",
-      "content_hash": "e24065e57cb959b1b9a3abd19dcb4718875cf3f66f8eac6db6200c3e3419fe7b",
-      "created_at": "2026-11-13T15:47:11.895Z"
+      "content_hash": "d57a68ed7288e4a419f5d135ced200843918c43f2adceb79c4653708cb34af03",
+      "created_at": "2026-11-17T04:56:48.361Z"
     },
     "domain_intelligence-technical-construction-intelligence-bridgecrewio-checkov-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-bridgecrewio-checkov-core-invariants",
@@ -7715,8 +7715,8 @@
       "title": "Quality & Verification Intelligence: saffsanity-sill-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-saffsanity-sill-learnings-quality-verification-intelligence-saffsanity-sill-lear.md",
       "repository": "saffsanity-sill-learnings",
-      "content_hash": "160b71c61fa15bfb85f3ecebf45168bcace6fb31b25e956c875ad2da32242f67",
-      "created_at": "2026-11-13T15:47:56.385Z"
+      "content_hash": "9727af30fe549f88919a31b414ea80d51f256c80dc0ea6f66380417f9283334b",
+      "created_at": "2026-11-17T04:56:57.381Z"
     },
     "domain_intelligence-technical-construction-intelligence-bridgecrewio-checkov-learnings-core-invarian": {
       "record_id": "domain_intelligence-technical-construction-intelligence-bridgecrewio-checkov-learnings-core-invarian",
@@ -8177,8 +8177,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "6f84776d9df6a20aae287523dca4248b2fdd647192b6f2187619671473c58bd5",
-      "created_at": "2026-11-17T02:24:55.189Z"
+      "content_hash": "d544cf05c5cc5e87fc47512d7a343aeefeed9bb6f6423671bb6765af6c567ddd",
+      "created_at": "2026-11-17T04:56:58.976Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",

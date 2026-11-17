@@ -10446,3 +10446,5 @@
 | `CYCLE-20261117-3IMA` | `2026-11-17T04:31:29.794Z` | `typedb/typedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8032` | Yes (`23f6d4ab...`) |
 | `CYCLE-20261117-J9HI` | `2026-11-17T04:43:44.454Z` | `LiquidAI/LFM3-1.7B-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-liquidai-lfm3-1.7b-gguf-learnings.md` | Yes (`69dd95b2...`) |
 | `CYCLE-20261117-JHWI` | `2026-11-17T04:43:55.362Z` | `sigstore/cosign` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8870` | Yes (`b79b24c8...`) |
+| `CYCLE-20261117-022E` | `2026-11-17T04:56:47.990Z` | `Saffsanity/sill` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8871` | Yes (`e4882eac...`) |
+| `CYCLE-20261117-06DX` | `2026-11-17T04:56:53.589Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8872` | Yes (`803b7210...`) |

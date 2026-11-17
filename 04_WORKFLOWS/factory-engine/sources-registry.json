@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-17T04:43:58.396Z",
-    "lastVerified": "2026-11-17T04:43:58.396Z",
+    "lastChecked": "2026-11-17T04:56:56.803Z",
+    "lastVerified": "2026-11-17T04:56:56.803Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -257,8 +257,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-17T04:05:46.271Z",
-    "lastVerified": "2026-11-17T04:05:46.271Z",
+    "lastChecked": "2026-11-17T04:56:51.771Z",
+    "lastVerified": "2026-11-17T04:56:51.771Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -2046,12 +2046,12 @@
     "officialUrl": "https://github.com/cilium/cilium",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-16T23:22:33.673Z",
-    "lastVerified": "2026-11-16T23:22:33.673Z",
+    "lastChecked": "2026-11-17T04:56:52.524Z",
+    "lastVerified": "2026-11-17T04:56:52.524Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-cilium-cilium",
-    "contentHash": "bd2c8928cff24ae7f81b68894ed8f57a18e0eeeebf9d9bb1341709bec35e633a",
+    "contentHash": "803b72102688fcd02f05a3224ef90425752d7b31bb94f83e669090297fe9f5d3",
     "promotedRulesCount": 1,
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
@@ -4276,9 +4276,9 @@
   "liftbridge-io-liftbridge": {
     "name": "liftbridge",
     "officialUrl": "https://github.com/liftbridge-io/liftbridge",
-    "lastChecked": "2026-11-15T22:58:39.824Z",
+    "lastChecked": "2026-11-17T04:56:44.178Z",
     "revisionIdentifier": "af2a6626",
-    "lastVerified": "2026-11-15T22:58:39.824Z"
+    "lastVerified": "2026-11-17T04:56:44.178Z"
   },
   "llphant-llphant": {
     "name": "LLPhant",
@@ -4357,9 +4357,9 @@
   "timvisee-ffsend": {
     "name": "ffsend",
     "officialUrl": "https://github.com/timvisee/ffsend",
-    "lastChecked": "2026-11-15T14:06:48.043Z",
+    "lastChecked": "2026-11-17T04:56:36.663Z",
     "revisionIdentifier": "85aae2f3",
-    "lastVerified": "2026-11-15T14:06:48.043Z"
+    "lastVerified": "2026-11-17T04:56:36.663Z"
   },
   "hf-comfy-org-minimax-h3": {
     "name": "Comfy-Org/MiniMax-H3",
@@ -5165,8 +5165,8 @@
     "officialUrl": "https://github.com/skyzh/mini-lsm",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-15T21:53:30.767Z",
-    "lastVerified": "2026-11-15T21:53:30.767Z",
+    "lastChecked": "2026-11-17T04:56:49.318Z",
+    "lastVerified": "2026-11-17T04:56:49.318Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-skyzh-mini-lsm",
@@ -12499,9 +12499,9 @@
   "evanw-esbuild": {
     "name": "esbuild",
     "officialUrl": "https://github.com/evanw/esbuild",
-    "lastChecked": "2026-11-12T13:32:59.500Z",
+    "lastChecked": "2026-11-17T04:56:39.195Z",
     "revisionIdentifier": "f6058f83",
-    "lastVerified": "2026-11-12T13:32:59.500Z"
+    "lastVerified": "2026-11-17T04:56:39.195Z"
   },
   "zekunyan-ttgtagcollectionview": {
     "name": "TTGTagCollectionView",
@@ -13080,14 +13080,14 @@
     "officialUrl": "https://github.com/Saffsanity/sill",
     "sourceType": "github",
     "technology": "Swift",
-    "lastChecked": "2026-11-13T15:47:11.285Z",
-    "lastVerified": "2026-11-13T15:47:11.285Z",
+    "lastChecked": "2026-11-17T04:56:46.684Z",
+    "lastVerified": "2026-11-17T04:56:46.684Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-saffsanity-sill",
-    "contentHash": "a5ff7c7469b0b9371f80838b84828523a0f68c867682134523ba7a7e3c0f4b46",
+    "contentHash": "e4882eac9192400567ab56b255e15d248ac53739b35c964e9a28b4b90e634570",
     "promotedRulesCount": 1,
-    "recentFixesCount": 5,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"

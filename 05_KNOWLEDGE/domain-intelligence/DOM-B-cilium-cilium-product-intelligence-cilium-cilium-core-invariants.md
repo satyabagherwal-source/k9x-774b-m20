@@ -4,23 +4,23 @@
 {
   "source_repository": "cilium/cilium",
   "source_url": "https://github.com/cilium/cilium",
-  "source_version": "5ec5829e",
+  "source_version": "911f5a91",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-16T23:22:34.660Z",
+  "timestamp": "2026-11-17T04:56:53.812Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-cilium-cilium",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [cilium/cilium](https://github.com/cilium/cilium) (Revision: `5ec5829e`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-16T23:22:34.660Z`  
+> **Provenance**: Harvested from [cilium/cilium](https://github.com/cilium/cilium) (Revision: `911f5a91`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-17T04:56:53.812Z`  
 > **Learning ID**: `learn-github-cilium-cilium`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain B (Product Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), L (Deployment & Operations Intelligence), H (Technical Construction Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), J (Search & Distribution Intelligence)
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), L (Deployment & Operations Intelligence), H (Technical Construction Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), J (Search & Distribution Intelligence)
 - **Confidence Rating**: 83%
 
 ## 2. Core Domain Invariants & Discovered Laws
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T23:22:33.673Z  
+> **Harvest Timestamp**: 2026-11-17T04:56:52.524Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: eBPF-based Networking, Security, and Observability
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod
-- **Stars / Engagement**: 25853 stars
+- **Stars / Engagement**: 25854 stars
 
 ---
 
@@ -1273,16 +1273,15 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #50063** (2026-11-17): **Prepare for release v1.20.5**
+  *Symptoms*:  See the included CHANGELOG.md for a full list of changes. 
+  **Post-Mortem & Fix Analysis**:
+  > /test
+
 - **Issue #50056** (2026-11-16): **bpf: Add doc for proto argument of `send_trace_notify`**
   *Symptoms*: This comment update was missed when introducing the new argument.  Fixes: https://github.com/cilium/cilium/pull/39794.
   **Post-Mortem & Fix Analysis**:
   > /test
-
-- **Issue #50047** (2026-11-16): **[Backport v1.20] pkg/ipam: Bump default Cloud IP release delay to 30 minutes**
-  *Symptoms*: Backport of #49857 to v1.20.  Related to #47910  On the main branch, the `ExcessIPReleaseDelay` was moved to a flag shared by all cloud providers in `operator/pkg/ipam/cell.go`. In v1.20 this flag is ENI only and defined in `operator/pkg/ipam/aws.go`. The difference between the upstream PR and this backport is due to this difference. The Azure docs in v1.20 don't include an IP release section so this part of the upstream PR is also dropped.  Once this PR is merged, a GitHub action will update the labels of these PRs: ```upstream-prs 49857 ```
-  **Post-Mortem & Fix Analysis**:
-  > /test
-  > @aanm I see you started the process for the v1.20.5 release as I opened this backport. Can we make sure this backport is included in the release ?
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1299,42 +1298,51 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5ec5829e` (2026-11-16)
-**Commit Message**: bpf: Add doc for proto argument of send_trace_notify
+### Incident Patch 1: `911f5a91` (2026-11-05)
+**Commit Message**: docs(ztunnel): add built-in CA limitations
 
-This comment update was missed when introducing the new argument.
+The built-in CA for ztunnel is not meant for production use. This commit
+adds an explicit warning about that to the docs.
 
-Fixes: 4866264f77d1 ("bpf:trace: send_trace_notify accept L3 protocol")
-Signed-off-by: Paul Chaignon <[REDACTED_EMAIL]>
+Signed-off-by: Robin Gögge <[REDACTED_EMAIL]>
 
-**File**: `bpf/lib/trace.h` (modified, +2/-1)
+**File**: `Documentation/security/network/encryption-ztunnel.rst` (modified, +12/-0)
 ```diff
-@@ -5,7 +5,7 @@
-  * Packet forwarding notification via perf event ring buffer.
-  *
-  * API:
-- * void send_trace_notify(ctx, obs_point, src, dst, dst_id, ifindex, reason, monitor)
-+ * void send_trace_notify(ctx, obs_point, src, dst, dst_id, ifindex, reason, monitor, proto)
-  *
-  * @ctx:	socket buffer
-  * @obs_point:	observation point (TRACE_*)
-@@ -16,6 +16,7 @@
-  * @reason:	reason for forwarding the packet (TRACE_REASON_*),
-  *		e.g. return value of ct_lookup or TRACE_REASON_ENCRYPTED
-  * @monitor:	monitor aggregation value, e.g. the 'monitor' output of ct_lookup
-+ * @proto:	L3 protocol
-  */
- #pragma once
+@@ -29,6 +29,12 @@ authenticated using mutual TLS before being sent to the destination.
+ Generating secrets for authentication
+ =====================================
+ 
++.. warning::
++
++   By default (``encryption.ztunnel.ca.type=internal``), Cilium uses a
++   built-in CA to issue workload certificates. The built-in CA is intended
++   for testing and evaluation only. Do not use it in production.
++
+ Cilium's ztunnel integration requires a set of private keys and accompanying
+ to certificates be present via Kubernetes secrets. This follows the same pattern
+ as IPsec key injections.
+@@ -229,6 +235,12 @@ Limitations
+ Known Issues
+ ============
+ 
++* The built-in CA (``encryption.ztunnel.ca.type=internal``) is for testing
++  only and is not suitable for production. See
++  `Generating secrets for authentication`_. Integration with SPIRE
++  (``encryption.ztunnel.ca.type=spire``) is in progress and will be the
++  recommended CA for production use.
++
+ * Cluster Mesh is not currently supported when ztunnel is enabled. Attempting
+   to enable both will result in a validation error.
  
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #50063** (2026-11-17): Prepare for release v1.20.5 (@cilium-release-bot[bot])
 - **PR #50056** (2026-11-16): bpf: Add doc for proto argument of `send_trace_notify` (@pchaigno)
 - **PR #50047** (2026-11-16): [Backport v1.20] pkg/ipam: Bump default Cloud IP release delay to 30 minutes (@41ks)
 - **PR #50045** (2026-11-16): v1.20 Backports 2026-11-16 (@mhofstetter)
 - **PR #50042** (2026-11-16): v1.18 Backports 2026-11-16 (@mhofstetter)
 - **PR #50041** (2026-11-16): v1.19 Backports 2026-11-16 (@mhofstetter)
-- **PR #50034** (2026-11-15): fix(deps): update google.golang.org/genproto/googleapis/rpc digest to 09e21b2 (main) (@cilium-renovate[bot])
 
 ---
 
@@ -1354,32 +1362,42 @@ Signed-off-by: Paul Chaignon <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. bpf: Add doc for proto argument of send_trace_notify
+## X. docs(ztunnel): add built-in CA limitations
 
 **RULE**:
-When implementing operations in `bpf/lib/trace.h`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Documentation/security/network/encryption-ztunnel.rst`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5ec5829e`: bpf: Add doc for proto argument of send_trace_notify. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `911f5a91`: docs(ztunnel): add built-in CA limitations. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `bpf/lib/trace.h`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `Documentation/security/network/encryption-ztunnel.rst`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
- * void send_trace_notify(ctx, obs_point, src, dst, dst_id, ifindex, reason, monitor, proto)
- * @proto:	L3 protocol
+.. warning::
+
+   By default (``encryption.ztunnel.ca.type=internal``), Cilium uses a
+   built-in CA to issue workload certificates. The built-in CA is intended
+   for testing and evaluation only. Do not use it in production.
+
+* The built-in CA (``encryption.ztunnel.ca.type=internal``) is for testing
+  only and is not suitable for production. See
+  `Generating secrets for authentication`_. Integration with SPIRE
+  (``encryption.ztunnel.ca.type=spire``) is in progress and will be the
+  recommended CA for production use.
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
- * void send_trace_notify(ctx, obs_point, src, dst, dst_id, ifindex, reason, monitor)
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5ec5829e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `911f5a91` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

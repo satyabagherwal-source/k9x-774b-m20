@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T04:43:59.582Z",
+  "last_updated": "2026-11-17T04:56:58.832Z",
   "directives": [
     {
       "id": "CD-001",
@@ -4835,11 +4835,11 @@
       "staged_date": "2026-11-11"
     },
     {
-      "id": "CD-KQHF",
+      "id": "CD-0AFF",
       "directive_title": "editor): add scoped ios account deletion",
       "source_repo": "zseven-w-openpencil-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-KQHF-editor-add-scoped-ios-account-deletion.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-0AFF-editor-add-scoped-ios-account-deletion.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-17",
@@ -22082,6 +22082,55 @@
       "source_repo": "zulip-zulip",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-0ED6D0-puppet-fix-postgresql-failing-to-start-o.md",
+      "staged_date": "2026-11-17"
+    },
+    {
+      "id": "CD-0971",
+      "directive_title": "Update Now's new copy starts once the old Sill has quit: the launch wait asks th",
+      "source_repo": "saffsanity-sill-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-0971-update-now-s-new-copy-starts-once-the-old-sill-has-quit-the-launch-wait-asks-th.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-17",
+      "domain_letter": "I"
+    },
+    {
+      "id": "CD-09QQ",
+      "directive_title": "docs(ztunnel): add built-in CA limitations",
+      "source_repo": "cilium-cilium-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-09QQ-docs-ztunnel-add-built-in-ca-limitations.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-17",
+      "domain_letter": "B"
+    },
+    {
+      "id": "CD-REV-57BCD4",
+      "directive_title": "Update Now's new copy starts once the old Sill has quit: the launch wait asks th",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "saffsanity-sill",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-57BCD4-update-now-s-new-copy-starts-once-the-ol.md",
+      "staged_date": "2026-11-17"
+    },
+    {
+      "id": "CD-REV-6556ED",
+      "directive_title": "docs(ztunnel): add built-in CA limitations",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "cilium-cilium",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-6556ED-docs-ztunnel-add-built-in-ca-limitations.md",
+      "staged_date": "2026-11-17"
+    },
+    {
+      "id": "CD-REV-059D86",
+      "directive_title": "editor): add scoped ios account deletion",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zseven-w-openpencil",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-059D86-editor-add-scoped-ios-account-deletion.md",
       "staged_date": "2026-11-17"
     }
   ]

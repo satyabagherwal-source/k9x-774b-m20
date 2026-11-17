@@ -1613,10 +1613,10 @@
     "repository": "Saffsanity/sill",
     "platform": "github",
     "sourceUrl": "https://github.com/Saffsanity/sill",
-    "sourceVersion": "bf69067f",
+    "sourceVersion": "4e00c805",
     "license": "Apache-2.0",
-    "contentHash": "a5ff7c7469b0b9371f80838b84828523a0f68c867682134523ba7a7e3c0f4b46",
-    "lastHarvestedAt": "2026-11-13T15:47:11.686Z",
+    "contentHash": "e4882eac9192400567ab56b255e15d248ac53739b35c964e9a28b4b90e634570",
+    "lastHarvestedAt": "2026-11-17T04:56:47.994Z",
     "learningId": "learn-github-saffsanity-sill"
   },
   "textbee-textbee": {
@@ -3343,10 +3343,10 @@
     "repository": "cilium/cilium",
     "platform": "github",
     "sourceUrl": "https://github.com/cilium/cilium",
-    "sourceVersion": "5ec5829e",
+    "sourceVersion": "911f5a91",
     "license": "Apache-2.0",
-    "contentHash": "bd2c8928cff24ae7f81b68894ed8f57a18e0eeeebf9d9bb1341709bec35e633a",
-    "lastHarvestedAt": "2026-11-16T23:22:34.505Z",
+    "contentHash": "803b72102688fcd02f05a3224ef90425752d7b31bb94f83e669090297fe9f5d3",
+    "lastHarvestedAt": "2026-11-17T04:56:53.593Z",
     "learningId": "learn-github-cilium-cilium"
   },
   "seekstorm-seekstorm": {

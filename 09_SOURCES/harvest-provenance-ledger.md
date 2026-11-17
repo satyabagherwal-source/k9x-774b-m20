@@ -10479,3 +10479,5 @@ Every entry in this ledger must capture:
 | `learn-github-typedb-typedb` | `https://github.com/typedb/typedb` | `fb7c1cce` | Multi-dimensional audit evidence | 2026-11-17T04:31:29.798Z |
 | `learn-huggingface-liquidai-lfm3-1-7b-gguf` | `https://huggingface.co/LiquidAI/LFM3-1.7B-GGUF` | `hf-liquida` | Multi-dimensional audit evidence | 2026-11-17T04:43:44.458Z |
 | `learn-github-sigstore-cosign` | `https://github.com/sigstore/cosign` | `8404f23a` | Multi-dimensional audit evidence | 2026-11-17T04:43:55.366Z |
+| `learn-github-saffsanity-sill` | `https://github.com/Saffsanity/sill` | `4e00c805` | Multi-dimensional audit evidence | 2026-11-17T04:56:47.994Z |
+| `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `911f5a91` | Multi-dimensional audit evidence | 2026-11-17T04:56:53.593Z |
