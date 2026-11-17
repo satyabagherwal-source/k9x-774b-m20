@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-17T06:28:37.143Z",
-  "total_verified_learnings": 8855,
+  "last_updated": "2026-11-17T06:36:12.462Z",
+  "total_verified_learnings": 8857,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 19859,
+  "total_items": 19870,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113954,9 +113954,9 @@
       "title": "Technical Construction Intelligence: kirillzyusko-react-native-keyboard-controller-learnings Core Invariants",
       "repository": "kirillzyusko-react-native-keyboard-controller-learnings",
       "source_version": "HEAD",
-      "content_hash": "6af0771e0ec409687822f1a6618ac87a7a996e179918a9d9b03fc483811ba9bd",
+      "content_hash": "640948c65f05268d52b29812775b9107b4e9994118b0cbfc4b9e83c5c8de4b4a",
       "domain_letter": "H",
-      "persisted_at": "2026-11-13T17:25:38.219Z"
+      "persisted_at": "2026-11-17T06:36:11.768Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-kirillzyusko-react-native-keyb": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-kirillzyusko-react-native-keyb",
@@ -113966,9 +113966,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for kirillzyusko-react-native-keyboard-controller-learnings",
       "repository": "kirillzyusko-react-native-keyboard-controller-learnings",
       "source_version": "HEAD",
-      "content_hash": "42a8b1c490bee7b77b546b70e4cd1a00abc2e4521b8919ad9dbb3362e12d7e9f",
+      "content_hash": "7e0aca13aa8a5923bd7f77facfd44a52e7f524872c12630892e2510fc5c350d9",
       "domain_letter": "K",
-      "persisted_at": "2026-11-13T17:25:38.326Z"
+      "persisted_at": "2026-11-17T06:36:11.884Z"
     },
     "domain_intelligence-product-intelligence-pimalaya-himalaya-learnings-core-invariants": {
       "item_id": "domain_intelligence-product-intelligence-pimalaya-himalaya-learnings-core-invariants",
@@ -226934,13 +226934,13 @@
       "item_id": "candidate_directive-splash-screen-staying-visible-after-warm-start-on-android-12",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-TOOL-splash-screen-staying-visible-after-warm-start-on-android-12.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-JW3K-splash-screen-staying-visible-after-warm-start-on-android-12.md",
       "title": "splash screen staying visible after warm start on Android 12+",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "c7861100d3f127abe9596122cb0700aff417733c9ce90cbe1220308ecd86a64b",
+      "content_hash": "eb974bdc28e2df8577c58ac8f964364c2fc9ba8570eeded718679a5d343d866e",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T05:19:50.325Z"
+      "persisted_at": "2026-11-17T06:36:12.225Z"
     },
     "domain_intelligence-technical-construction-intelligence-zoontek-react-native-bootsplash-learnings-co": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-bootsplash-learnings-co",
@@ -226950,9 +226950,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-bootsplash-learnings Core Invariants",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "93ba34a61d8cac7dddbcfd37ff2281f8bce657cccc65044fa7ae4f69eb11c514",
+      "content_hash": "9397f71716b566b4f2904587d4502aff155a4a0b4f47127110b28261836f2715",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T05:19:50.430Z"
+      "persisted_at": "2026-11-17T06:36:12.342Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-bootsplas": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-bootsplas",
@@ -226962,9 +226962,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-bootsplash-learnings",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "bf64bc5253f06d82a8c57fb146dd2e51071a664e4d9f467aa4d577396f16f5ac",
+      "content_hash": "e17fb21258fffa0dc6373b9244211532c3ab1a0a3071f44b0dc4c979b59a9dba",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T05:19:50.539Z"
+      "persisted_at": "2026-11-17T06:36:12.462Z"
     },
     "learn-github-onehumanbeing-esp32-iphone-agent": {
       "learning_id": "learn-github-onehumanbeing-esp32-iphone-agent",
@@ -265375,6 +265375,184 @@
       "content_hash": "1d8d2992c44beacc8f54c81e2395d0132cfc1af2a81b6b4f319c0d8d63c9ca1c",
       "domain_letter": "K",
       "persisted_at": "2026-11-17T06:28:36.504Z"
+    },
+    "learn-github-webdriverio-webdriverio": {
+      "learning_id": "learn-github-webdriverio-webdriverio",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "webdriverio/webdriverio",
+      "repository": "webdriverio/webdriverio",
+      "slug": "webdriverio-webdriverio",
+      "platform": "github",
+      "source_url": "https://github.com/webdriverio/webdriverio",
+      "source_version": "81cc6f0d",
+      "content_hash": "9de65f89270e1eaed21bbc8fd9c02943ff57cc4ef5476b28375b4318d9a62e56",
+      "dossier_path": "07_PROJECT_LEARNING/webdriverio-webdriverio-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/webdriverio-webdriverio-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8893,
+          "title": "update remaining LambdaTest references to TestMu AI",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-17T06:36:02.019Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8893": {
+      "learning_id": "rule-8893",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8893,
+      "title": "update remaining LambdaTest references to TestMu AI",
+      "source_url": "https://github.com/webdriverio/webdriverio",
+      "source_version": "81cc6f0d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T06:36:02.019Z"
+    },
+    "candidate_directive-update-remaining-lambdatest-references-to-testmu-ai": {
+      "item_id": "candidate_directive-update-remaining-lambdatest-references-to-testmu-ai",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-JOHC-update-remaining-lambdatest-references-to-testmu-ai.md",
+      "title": "update remaining LambdaTest references to TestMu AI",
+      "repository": "webdriverio/webdriverio",
+      "source_version": "81cc6f0d",
+      "content_hash": "0b3f47b44a09b7a355e51e8985f8872cd7551dce4bbe9a9a356167cc81336878",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-17T06:36:02.353Z"
+    },
+    "domain_intelligence-architecture-intelligence-webdriverio-webdriverio-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-webdriverio-webdriverio-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-webdriverio-webdriverio-architecture-intelligence-webdriverio-webdriverio-core-i.md",
+      "title": "Architecture Intelligence: webdriverio/webdriverio Core Invariants",
+      "repository": "webdriverio/webdriverio",
+      "source_version": "81cc6f0d",
+      "content_hash": "6f5b84b3776026fb710b60e6b1983d67d3a739ddfc3ad2502bbfc8eb7b40d1db",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-17T06:36:02.474Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-webdriverio-webdriverio": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-webdriverio-webdriverio",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/webdriverio-webdriverio-verification-protocol-empirical-defect-shield-for-webdri.md",
+      "title": "Verification Protocol: Empirical Defect Shield for webdriverio/webdriverio",
+      "repository": "webdriverio/webdriverio",
+      "source_version": "81cc6f0d",
+      "content_hash": "a68e07e972df94480725f8f34f8ab2cac8bd544225f7543e28acba2976a76918",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T06:36:02.601Z"
+    },
+    "learn-github-kirillzyusko-react-native-keyboard-controller": {
+      "learning_id": "learn-github-kirillzyusko-react-native-keyboard-controller",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "kirillzyusko/react-native-keyboard-controller",
+      "repository": "kirillzyusko/react-native-keyboard-controller",
+      "slug": "kirillzyusko-react-native-keyboard-controller",
+      "platform": "github",
+      "source_url": "https://github.com/kirillzyusko/react-native-keyboard-controller",
+      "source_version": "0012bfd1",
+      "content_hash": "55208439477c7494916c1d9925034170a31eeacbe9bebb020d2d1c5c24516d0b",
+      "dossier_path": "07_PROJECT_LEARNING/kirillzyusko-react-native-keyboard-controller-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/kirillzyusko-react-native-keyboard-controller-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8894,
+          "title": "keep KeyboardExtender opaque during predictive back",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-17T06:36:05.577Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8894": {
+      "learning_id": "rule-8894",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8894,
+      "title": "keep KeyboardExtender opaque during predictive back",
+      "source_url": "https://github.com/kirillzyusko/react-native-keyboard-controller",
+      "source_version": "0012bfd1",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T06:36:05.577Z"
+    },
+    "candidate_directive-keep-keyboardextender-opaque-during-predictive-back": {
+      "item_id": "candidate_directive-keep-keyboardextender-opaque-during-predictive-back",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-JVNM-keep-keyboardextender-opaque-during-predictive-back.md",
+      "title": "keep KeyboardExtender opaque during predictive back",
+      "repository": "kirillzyusko-react-native-keyboard-controller-learnings",
+      "source_version": "HEAD",
+      "content_hash": "ce90e7b54d1e3355d5eb24732c622addfdfbe7a9c336640c794ce6f31cb05ca1",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T06:36:11.651Z"
+    },
+    "candidate_directive-docs-update-remaining-lambdatest-references-to-testmu-ai": {
+      "item_id": "candidate_directive-docs-update-remaining-lambdatest-references-to-testmu-ai",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-JV64-docs-update-remaining-lambdatest-references-to-testmu-ai.md",
+      "title": "docs: update remaining LambdaTest references to TestMu AI",
+      "repository": "webdriverio-webdriverio-learnings",
+      "source_version": "HEAD",
+      "content_hash": "6c8f5185994c553645f34e2fddbd4206a7cf213c80e3b154cf2887b0084eafaa",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-17T06:36:11.020Z"
+    },
+    "domain_intelligence-architecture-intelligence-webdriverio-webdriverio-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-webdriverio-webdriverio-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-webdriverio-webdriverio-learnings-architecture-intelligence-webdriverio-webdrive.md",
+      "title": "Architecture Intelligence: webdriverio-webdriverio-learnings Core Invariants",
+      "repository": "webdriverio-webdriverio-learnings",
+      "source_version": "HEAD",
+      "content_hash": "761e9744d8e7943b2e7967d4b643733acb11fa4fe4adaa9af35fe1b6864953e1",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-17T06:36:11.139Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-webdriverio-webdriverio-learni": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-webdriverio-webdriverio-learni",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/webdriverio-webdriverio-learnings-verification-protocol-empirical-defect-shield-.md",
+      "title": "Verification Protocol: Empirical Defect Shield for webdriverio-webdriverio-learnings",
+      "repository": "webdriverio-webdriverio-learnings",
+      "source_version": "HEAD",
+      "content_hash": "16e9042f05ee3be013c358bc66ec482de17586a6b708984c76e62ec46c882dde",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T06:36:11.258Z"
     }
   },
   "ai-builder-brain": {

@@ -10497,3 +10497,5 @@ Every entry in this ledger must capture:
 | `learn-github-vitest-dev-vitest` | `https://github.com/vitest-dev/vitest` | `4e905a1b` | Multi-dimensional audit evidence | 2026-11-17T06:20:40.403Z |
 | `learn-github-cypress-io-cypress` | `https://github.com/cypress-io/cypress` | `9962c4fe` | Multi-dimensional audit evidence | 2026-11-17T06:28:22.782Z |
 | `learn-github-gluesql-gluesql` | `https://github.com/gluesql/gluesql` | `dda0280a` | Multi-dimensional audit evidence | 2026-11-17T06:28:31.347Z |
+| `learn-github-webdriverio-webdriverio` | `https://github.com/webdriverio/webdriverio` | `81cc6f0d` | Multi-dimensional audit evidence | 2026-11-17T06:36:02.190Z |
+| `learn-github-kirillzyusko-react-native-keyboard-controller` | `https://github.com/kirillzyusko/react-native-keyboard-controller` | `0012bfd1` | Multi-dimensional audit evidence | 2026-11-17T06:36:05.745Z |

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-17T06:28:37.028Z",
-  "total_records": 1459,
+  "last_updated": "2026-11-17T06:36:12.342Z",
+  "total_records": 1461,
   "domains": {
     "A": {
       "total": 9,
@@ -718,7 +718,7 @@
       ]
     },
     "G": {
-      "total": 271,
+      "total": 273,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -990,7 +990,9 @@
         "domain_intelligence-architecture-intelligence-preactjs-preact-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-krakend-krakend-ce-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-gluesql-gluesql-core-invariants",
-        "domain_intelligence-architecture-intelligence-gluesql-gluesql-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-gluesql-gluesql-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-webdriverio-webdriverio-core-invariants",
+        "domain_intelligence-architecture-intelligence-webdriverio-webdriverio-learnings-core-invariants"
       ]
     },
     "H": {
@@ -8315,8 +8317,8 @@
       "title": "Technical Construction Intelligence: kirillzyusko-react-native-keyboard-controller-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-kirillzyusko-react-native-keyboard-controller-learnings-technical-construction-i.md",
       "repository": "kirillzyusko-react-native-keyboard-controller-learnings",
-      "content_hash": "6af0771e0ec409687822f1a6618ac87a7a996e179918a9d9b03fc483811ba9bd",
-      "created_at": "2026-11-13T17:25:38.219Z"
+      "content_hash": "640948c65f05268d52b29812775b9107b4e9994118b0cbfc4b9e83c5c8de4b4a",
+      "created_at": "2026-11-17T06:36:11.768Z"
     },
     "domain_intelligence-product-intelligence-pimalaya-himalaya-learnings-core-invariants": {
       "record_id": "domain_intelligence-product-intelligence-pimalaya-himalaya-learnings-core-invariants",
@@ -14250,8 +14252,8 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-bootsplash-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zoontek-react-native-bootsplash-learnings-technical-construction-intelligence-zo.md",
       "repository": "zoontek-react-native-bootsplash-learnings",
-      "content_hash": "93ba34a61d8cac7dddbcfd37ff2281f8bce657cccc65044fa7ae4f69eb11c514",
-      "created_at": "2026-11-17T05:19:50.430Z"
+      "content_hash": "9397f71716b566b4f2904587d4502aff155a4a0b4f47127110b28261836f2715",
+      "created_at": "2026-11-17T06:36:12.342Z"
     },
     "domain_intelligence-technical-construction-intelligence-onehumanbeing-esp32-iphone-agent-core-invari": {
       "record_id": "domain_intelligence-technical-construction-intelligence-onehumanbeing-esp32-iphone-agent-core-invari",
@@ -25450,6 +25452,24 @@
       "repository": "gluesql-gluesql-learnings",
       "content_hash": "0c9ea87822c46021d2c03000aa3f57829691ba48d28e96f7eaf8eab325da3ae6",
       "created_at": "2026-11-17T06:28:36.391Z"
+    },
+    "domain_intelligence-architecture-intelligence-webdriverio-webdriverio-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-webdriverio-webdriverio-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: webdriverio/webdriverio Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-webdriverio-webdriverio-architecture-intelligence-webdriverio-webdriverio-core-i.md",
+      "repository": "webdriverio/webdriverio",
+      "content_hash": "6f5b84b3776026fb710b60e6b1983d67d3a739ddfc3ad2502bbfc8eb7b40d1db",
+      "created_at": "2026-11-17T06:36:02.474Z"
+    },
+    "domain_intelligence-architecture-intelligence-webdriverio-webdriverio-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-webdriverio-webdriverio-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: webdriverio-webdriverio-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-webdriverio-webdriverio-learnings-architecture-intelligence-webdriverio-webdrive.md",
+      "repository": "webdriverio-webdriverio-learnings",
+      "content_hash": "761e9744d8e7943b2e7967d4b643733acb11fa4fe4adaa9af35fe1b6864953e1",
+      "created_at": "2026-11-17T06:36:11.139Z"
     }
   }
 }

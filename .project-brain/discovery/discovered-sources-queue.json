@@ -2,15 +2,15 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-17T06:28:35.617Z",
+  "updated_at": "2026-11-17T06:36:11.491Z",
   "stats": {
-    "total_discovered": 4799,
-    "approved_pending_harvest": 4518,
+    "total_discovered": 4816,
+    "approved_pending_harvest": 4535,
     "harvested_count": 0,
     "rejected_count": 281,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 4520,
-      "OFFICIAL_DOCUMENTATION": 149,
+      "COMMUNITY_AND_EXPERT": 4536,
+      "OFFICIAL_DOCUMENTATION": 150,
       "STANDARDS_AND_SPECIFICATIONS": 101,
       "ENGINEERING_BLOGS": 3,
       "SECURITY_ADVISORIES": 19,
@@ -103632,6 +103632,380 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cypress-io-cypress-learnings.md",
         "fileName": "cypress-io-cypress-learnings.md"
+      }
+    },
+    "SRC-BE2F055E55C7": {
+      "id": "SRC-BE2F055E55C7",
+      "url": "https://www.lambdatest.com/",
+      "title": "https://www.lambdatest.com/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T06:36:10.448Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/webdriverio-webdriverio-learnings.md",
+        "fileName": "webdriverio-webdriverio-learnings.md"
+      }
+    },
+    "SRC-702E9006AF52": {
+      "id": "SRC-702E9006AF52",
+      "url": "https://webdriver.io/img/sponsors/lambdatest_black.svg",
+      "title": "https://webdriver.io/img/sponsors/lambdatest_black.svg",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T06:36:10.479Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/webdriverio-webdriverio-learnings.md",
+        "fileName": "webdriverio-webdriverio-learnings.md"
+      }
+    },
+    "SRC-95D11148E204": {
+      "id": "SRC-95D11148E204",
+      "url": "https://www.testmuai.com/",
+      "title": "https://www.testmuai.com/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T06:36:10.510Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/webdriverio-webdriverio-learnings.md",
+        "fileName": "webdriverio-webdriverio-learnings.md"
+      }
+    },
+    "SRC-3EE83C02FBAC": {
+      "id": "SRC-3EE83C02FBAC",
+      "url": "https://webdriver.io/img/sponsors/testmu_ai_black.svg",
+      "title": "https://webdriver.io/img/sponsors/testmu_ai_black.svg",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T06:36:10.539Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/webdriverio-webdriverio-learnings.md",
+        "fileName": "webdriverio-webdriverio-learnings.md"
+      }
+    },
+    "SRC-70C84985B126": {
+      "id": "SRC-70C84985B126",
+      "url": "https://github.com/sponsors/christian-bromann/sponsorships?tier_id=303973&preview=false",
+      "title": "https://github.com/sponsors/christian-bromann/sponsorships?tier_id=303973&preview=false",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T06:36:10.570Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/webdriverio-webdriverio-learnings.md",
+        "fileName": "webdriverio-webdriverio-learnings.md"
+      }
+    },
+    "SRC-719DA6699E13": {
+      "id": "SRC-719DA6699E13",
+      "url": "https://docs.saucelabs.com/dev/test-configuration-options",
+      "title": "https://docs.saucelabs.com/dev/test-configuration-options",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T06:36:10.601Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/webdriverio-webdriverio-learnings.md",
+        "fileName": "webdriverio-webdriverio-learnings.md"
+      }
+    },
+    "SRC-0F6C121F5891": {
+      "id": "SRC-0F6C121F5891",
+      "url": "https://www.browserstack.com/docs/automate/selenium/organize-tests",
+      "title": "https://www.browserstack.com/docs/automate/selenium/organize-tests",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T06:36:10.630Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/webdriverio-webdriverio-learnings.md",
+        "fileName": "webdriverio-webdriverio-learnings.md"
+      }
+    },
+    "SRC-56C65961319A": {
+      "id": "SRC-56C65961319A",
+      "url": "https://testingbot.com/support/other/test-options",
+      "title": "https://testingbot.com/support/other/test-options",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T06:36:10.659Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/webdriverio-webdriverio-learnings.md",
+        "fileName": "webdriverio-webdriverio-learnings.md"
+      }
+    },
+    "SRC-6C96FB24DCDF": {
+      "id": "SRC-6C96FB24DCDF",
+      "url": "https://www.lambdatest.com/support/docs/webdriverio-with-selenium-running-webdriverio-automation-scripts-on-lambdatest-selenium-grid",
+      "title": "https://www.lambdatest.com/support/docs/webdriverio-with-selenium-running-webdriverio-automation-scripts-on-lambdatest-selenium-grid",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T06:36:10.690Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/webdriverio-webdriverio-learnings.md",
+        "fileName": "webdriverio-webdriverio-learnings.md"
+      }
+    },
+    "SRC-1B87459BBEF2": {
+      "id": "SRC-1B87459BBEF2",
+      "url": "https://www.testmuai.com/support/docs/javascript-with-selenium-running-javascript-automation-scripts-on-testmu-selenium-grid/?framework=webdriverio",
+      "title": "https://www.testmuai.com/support/docs/javascript-with-selenium-running-javascript-automation-scripts-on-testmu-selenium-grid/?framework=webdriverio",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T06:36:10.718Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/webdriverio-webdriverio-learnings.md",
+        "fileName": "webdriverio-webdriverio-learnings.md"
+      }
+    },
+    "SRC-CBB69CA08A0A": {
+      "id": "SRC-CBB69CA08A0A",
+      "url": "https://www.browserstack.com/automate",
+      "title": "https://www.browserstack.com/automate",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T06:36:10.747Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/webdriverio-webdriverio-learnings.md",
+        "fileName": "webdriverio-webdriverio-learnings.md"
+      }
+    },
+    "SRC-38157D052E25": {
+      "id": "SRC-38157D052E25",
+      "url": "https://www.browserstack.com/app-automate",
+      "title": "https://www.browserstack.com/app-automate",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T06:36:10.779Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/webdriverio-webdriverio-learnings.md",
+        "fileName": "webdriverio-webdriverio-learnings.md"
+      }
+    },
+    "SRC-1D4D07023A98": {
+      "id": "SRC-1D4D07023A98",
+      "url": "https://saucelabs.com/",
+      "title": "https://saucelabs.com/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T06:36:10.808Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/webdriverio-webdriverio-learnings.md",
+        "fileName": "webdriverio-webdriverio-learnings.md"
+      }
+    },
+    "SRC-FFF2126DD47F": {
+      "id": "SRC-FFF2126DD47F",
+      "url": "https://testingbot.com/",
+      "title": "https://testingbot.com/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T06:36:10.838Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/webdriverio-webdriverio-learnings.md",
+        "fileName": "webdriverio-webdriverio-learnings.md"
+      }
+    },
+    "SRC-6F032941DFF2": {
+      "id": "SRC-6F032941DFF2",
+      "url": "https://github.com/kirillzyusko/react-native-keyboard-controller/blob/5b1cec70fbc5c6e02946dadef6fcb01109c0a180/FabricExample/src/screens/Examples/KeyboardExtender/index.tsx",
+      "title": "https://github.com/kirillzyusko/react-native-keyboard-controller/blob/5b1cec70fbc5c6e02946dadef6fcb01109c0a180/FabricExample/src/screens/Examples/KeyboardExtender/index.tsx",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T06:36:11.432Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kirillzyusko-react-native-keyboard-controller-learnings.md",
+        "fileName": "kirillzyusko-react-native-keyboard-controller-learnings.md"
+      }
+    },
+    "SRC-68018EC38C0C": {
+      "id": "SRC-68018EC38C0C",
+      "url": "https://android.googlesource.com/platform/frameworks/base/+/refs/tags/android-16.0.0_r1/core/java/android/view/ImeBackAnimationController.java",
+      "title": "https://android.googlesource.com/platform/frameworks/base/+/refs/tags/android-16.0.0_r1/core/java/android/view/ImeBackAnimationController.java",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T06:36:11.463Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kirillzyusko-react-native-keyboard-controller-learnings.md",
+        "fileName": "kirillzyusko-react-native-keyboard-controller-learnings.md"
+      }
+    },
+    "SRC-0653F4F3FFCB": {
+      "id": "SRC-0653F4F3FFCB",
+      "url": "https://github.com/Elehiggle/react-native-keyboard-controller/commit/13801c690e2877c2aff467a4da5f1871b0240867",
+      "title": "https://github.com/Elehiggle/react-native-keyboard-controller/commit/13801c690e2877c2aff467a4da5f1871b0240867",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T06:36:11.491Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kirillzyusko-react-native-keyboard-controller-learnings.md",
+        "fileName": "kirillzyusko-react-native-keyboard-controller-learnings.md"
       }
     }
   }

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T06:28:37.246Z",
+  "last_updated": "2026-11-17T06:36:12.572Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-17T04:43:59.398Z",
@@ -253,7 +253,7 @@
       "staged_for_review": 1
     },
     "zoontek-react-native-bootsplash-learnings.md": {
-      "processed_at": "2026-11-17T05:19:50.114Z",
+      "processed_at": "2026-11-17T06:36:11.999Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1203,7 +1203,7 @@
       "staged_for_review": 1
     },
     "webdriverio-webdriverio-learnings.md": {
-      "processed_at": "2026-11-12T15:17:34.609Z",
+      "processed_at": "2026-11-17T06:36:10.415Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2018,7 +2018,7 @@
       "staged_for_review": 0
     },
     "kirillzyusko-react-native-keyboard-controller-learnings.md": {
-      "processed_at": "2026-11-13T17:25:37.796Z",
+      "processed_at": "2026-11-17T06:36:11.379Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3248,7 +3248,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 1491,
+  "total_dossiers_evaluated": 1494,
   "total_canonical_promoted": 299,
-  "total_staged_for_review": 1178
+  "total_staged_for_review": 1181
 }

@@ -1953,10 +1953,10 @@
     "repository": "webdriverio/webdriverio",
     "platform": "github",
     "sourceUrl": "https://github.com/webdriverio/webdriverio",
-    "sourceVersion": "4ef7adc3",
+    "sourceVersion": "81cc6f0d",
     "license": "MIT",
-    "contentHash": "f580c7726cd388db0057b256fcef8d10934726f12af68422a4a76b29ad9b51a7",
-    "lastHarvestedAt": "2026-11-12T15:17:31.135Z",
+    "contentHash": "9de65f89270e1eaed21bbc8fd9c02943ff57cc4ef5476b28375b4318d9a62e56",
+    "lastHarvestedAt": "2026-11-17T06:36:02.190Z",
     "learningId": "learn-github-webdriverio-webdriverio"
   },
   "rubenverborgh-sparql.js": {
@@ -11343,10 +11343,10 @@
     "repository": "kirillzyusko/react-native-keyboard-controller",
     "platform": "github",
     "sourceUrl": "https://github.com/kirillzyusko/react-native-keyboard-controller",
-    "sourceVersion": "a8700949",
+    "sourceVersion": "0012bfd1",
     "license": "MIT",
-    "contentHash": "776cf5dd132dbf4558d65c393030412c344a4b05b3d54684dfa74eab2b1675bd",
-    "lastHarvestedAt": "2026-11-13T17:24:47.192Z",
+    "contentHash": "55208439477c7494916c1d9925034170a31eeacbe9bebb020d2d1c5c24516d0b",
+    "lastHarvestedAt": "2026-11-17T06:36:05.745Z",
     "learningId": "learn-github-kirillzyusko-react-native-keyboard-controller"
   },
   "margelo-react-native-blur": {
