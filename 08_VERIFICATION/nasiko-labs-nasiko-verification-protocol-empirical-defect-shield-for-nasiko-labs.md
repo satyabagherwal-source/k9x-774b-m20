@@ -4,22 +4,22 @@
 {
   "source_repository": "Nasiko-Labs/nasiko",
   "source_url": "https://github.com/Nasiko-Labs/nasiko",
-  "source_version": "0ec91fb2",
+  "source_version": "97cd065e",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-15T11:40:24.560Z",
+  "timestamp": "2026-11-17T03:41:55.509Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-nasiko-labs-nasiko",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [Nasiko-Labs/nasiko](https://github.com/Nasiko-Labs/nasiko) (Revision: `0ec91fb2`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-15T11:40:24.560Z`  
+> **Provenance**: Harvested from [Nasiko-Labs/nasiko](https://github.com/Nasiko-Labs/nasiko) (Revision: `97cd065e`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-17T03:41:55.509Z`  
 > **Learning ID**: `learn-github-nasiko-labs-nasiko`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `Nasiko-Labs/nasiko` (Commit: `0ec91fb2`)
+- **Target Repository**: `Nasiko-Labs/nasiko` (Commit: `97cd065e`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nasiko-labs-nasiko-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Nasiko-Labs/nasiko](https://github.com/Nasiko-Labs/nasiko))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-15T11:40:23.093Z  
+> **Harvest Timestamp**: 2026-11-17T03:41:54.223Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: The Open Runtime for AI Agents
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 11939 stars
+- **Stars / Engagement**: 11941 stars
 
 ---
 
@@ -2241,14 +2241,14 @@ class _Operation:
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #367** (2026-11-16): **Remove files the private tree deleted before the sync manifest existed**
+  *Symptoms*: ## Problem  `docker compose up -d` fails on a fresh clone of this repo:  ``` ERR_PNPM_PACKAGE_MANAGER_NO_IMPORTER Cannot install with "frozen-lockfile" because pnpm-lock.yaml has no `importers["shared/config"]` entry. ```  `ui/shared/config` and `ui/shared/contracts` were deleted upstream, along with 400+ other UI files, but they are still here. The published `ui/pnpm-lock.yaml` is generated from the upstream tree, so it has no entry for these packages, and pnpm refuses to install.  ## Why they were never removed  The sync's reconcile pass deletes only paths recorded in `.sync-manifest`. These files were published before the manifest existed, so their upstream deletions never reached this repo. Files deleted from now on are in the manifest and are removed automatically, so this is a one-time cleanup.  ## What this deletes (426 files)  - `ui/` (416): leftovers from the React UI refactor, including the two orphaned packages. `ui/shared/ui/src/styles/SHADCN-LICENSE.md` is kept: shadcn code is still vendored and its MIT notice must stay with it - `gateway/src/` (2): the removed gateway; not a workspace member - `server/tests/fixtures/spa/` (8): moved to `spa/tests/fixtures/spa/`, which is what `spa/src/lib.rs` embeds  `LICENSE`, `.sync-marker` and `.sync-manifest` exist only in this repo on purpose and are kept.  Every deleted file was first added by a replayed upstream commit. None came from a public PR.  ## Verification  With these files removed, the `ui` stage of `server/Docke
+
 - **Issue #365** (2026-11-14): **Remove duplicate GitHub badges**
   *Symptoms*: Removed duplicate GitHub badges from README.
   **Post-Mortem & Fix Analysis**:
   > <!-- greptile_summary -->  <h2><a href="https://app.greptile.com/api/retrigger?id=106898781&amp;sig=ab084d94ab947b034e56ec2c080dadfa4cbaa347b7dba8ebf5056aa632063bca"><picture><source media="(prefers-color-scheme: dark)" srcset="https://greptile-static-assets.s3.amazonaws.com/badges/RetriggerDark.svg?v=2"><source media="(prefers-color-scheme: light)" srcset="https://greptile-static-assets.s3.amazonaws.com/badges/Retrigger.svg?v=2"><img alt="Retrigger" src="https://greptile-static-assets.s3.amazonaws.com/badges/Retrigger.svg?v=2" align="right"></picture></a><a href="https://app.greptile.com/-/switch-tenant?tenant=nasiko&amp;next=%2FNasiko-Labs%2Fnasiko%2Fpull%2F365&amp;utm_source=greptile_review&amp;utm_medium=github&amp;utm_campaign=view_in_greptile"><picture><source media="(prefers-color-scheme: dark)" srcset="https://greptile-static-assets.s3.amazonaws.com/badges/ViewInGreptileDark.svg?v=2"><source media="(prefers-color-scheme: light)" srcset="https://greptile-static-assets.s3.amazona
   > <!-- nasiko-oss-pr-status --> @shrawansaproo01, this PR is now in the maintainers' review queue, and its checks passed against our full build. Thanks for cleaning up the README.  The change is clear and small. It removes the second, identical block of stars, commits and pull-request badges near the end of `README.md` and leaves the first set in place.  You'll get a comment here when the PR is merged or closed, and it will always include the reason. If you push new commits, the checks will re-run and this comment will update.
-
-- **Issue #356** (2026-10-24): **fix(llm-router): stop dropping tool_choice "none" and related tool controls**
-  *Symptoms*: ## Issue Fixes Nasiko-Labs/nasiko#165  ## What changed Ten tool-control fields were being silently dropped in `llm-router` during cross-provider translation: every request succeeded, so a caller had no way to tell their restriction was never applied to the model. This PR fixes the cases that have a clear target representation:  - **`tool_choice: "none"`** (cases 1–3 in the issue): Anthropic Messages does define `{"type": "none"}` — the code's own comment claiming otherwise was out of date. `tool_choice_from_anthropic` (inbound) and `tool_choice_to_anthropic` (outbound) both now handle it, so a caller asking for no tool calls actually gets that, instead of the selector being omitted while both tools stayed declared. - **`function.strict`** (case 4 and its follow-up): `FunctionDef` gained a `strict: Option<bool>` field so it survives inbound parsing from both OpenAI (already passthrough) and Anthropic (`tool_from_anthropic` now copies it). It's forwarded where the target supports it (OpenAI, Anthropic) and naturally dropped where it has no equivalent (Gemini). - **`parallel_tool_calls` / `disable_parallel_tool_use`** (cases 5–6): `ChatRequest` gained a named `parallel_tool_calls: Option<bool>` field instead of leaving it to rot in the passthrough `extra` map. Anthropic's `tool_choice.disable_parallel_tool_use` maps onto it inbound, and back onto `disable_parallel_tool_use` outbound to Anthropic. - **`tool_choice.allowed_tools`** (cases 8, 10): now maps to Anthropic's named-tool
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2265,61 +2265,903 @@ class _Operation:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b9f96008` (2026-11-14)
-**Commit Message**: docs(readme): add stop, logs and rebuild commands, and the agent key note
+### Incident Patch 1: `6e6e2590` (2026-11-16)
+**Commit Message**: feat(ui): show the setup guide's CLI steps on an empty Coding harnesses page
 
-Quick start shows how to follow logs, stop the stack and rebuild after a pull. Deploy explains that agents use the server's OPENAI_API_KEY unless given their own secret.
+With no harness connected, Coding harnesses showed only `nasiko agents setup`. It now
+shows the setup guide's own harness step: its title and intro, the CLI installer,
+`nasiko connect <this server>` and what connecting does next. Both read one shared
+block (onboarding/HarnessSetup.tsx), so they cannot drift apart. A failed import
+still offers `nasiko agents setup` to resume it.
+
+Co-Authored-By: Claude Opus 5.5 (1M context) <[REDACTED_EMAIL]>
 [synced-from-private]
 
-**File**: `README.md` (modified, +9/-0)
+**File**: `ui/eslint.config.js` (modified, +2/-1)
 ```diff
-@@ -197,6 +197,12 @@ The `.env` defaults work on your own machine. Before anyone else can reach the s
- After editing `.env`, run `docker compose up -d` again. Every variable is described in
- [`server/.env.example`](server/.env.example).
+@@ -97,7 +97,8 @@ const PUBLIC = {
+     'types',
+   ],
+   narrative: ['tokenops', 'trace', 'harness', 'overview', 'flows', 'agentHub', 'home'],
+-  onboarding: ['api', 'GuideCard', 'GuideHost', 'index', 'logic', 'types'],
++  // Coding harnesses' empty state shows the guide's own harness step.
++  onboarding: ['api', 'GuideCard', 'GuideHost', 'HarnessSetup', 'index', 'logic', 'types'],
+   // The product tour (shared/features/src/tour): the shell's `_app` route mounts its host.
+   tour: ['TourHost'],
+   // Context optimization (plans/feat-context-optimization.md eng D1): its rules, copy, the trace's Optimization block
+```
+
+**File**: `ui/shared/features/src/harnesses/AgentsOnboarding.test.tsx` (modified, +9/-5)
+```diff
+@@ -135,18 +135,22 @@ describe('Token optimization for your coding agents', () => {
+ })
  
-+```sh
-+docker compose logs -f server   # follow the server logs
-+docker compose down             # stop everything
-+docker compose up -d --build    # rebuild after pulling new changes
-+```
+ describe('browser: the command, no consent', () => {
+-  it('a viewer with no harnesses gets the command and its Copy, and nothing asks', async () => {
++  it("a viewer with no harnesses gets the setup guide's install and connect steps, and nothing asks", async () => {
+     as('agents-none')
+     renderApp('/harnesses')
+     const c = await card()
+     expect(
+-      within(c).getByRole('heading', { name: 'Bring in your coding agents' }),
++      within(c).getByRole('heading', { name: 'Bring in your coding harnesses' }),
+     ).toBeInTheDocument()
+     expect(
+-      within(c).getByText('To discover your coding agents and load your previous sessions, run:'),
++      within(c).getByText('curl -fsSL https://registry.nasiko.com/r/nasiko/install | bash'),
+     ).toBeInTheDocument()
+-    expect(within(c).getByText('nasiko agents setup')).toBeInTheDocument()
+-    expect(within(c).getByRole('button', { name: 'Copy command' })).toBeInTheDocument()
++    expect(within(c).getByText(/^nasiko connect /)).toBeInTheDocument()
++    expect(within(c).getByRole('button', { name: 'Copy: Install the CLI' })).toBeInTheDocument()
++    expect(
++      within(c).getByRole('button', { name: 'Copy: Connect it to this server' }),
++    ).toBeInTheDocument()
++    expect(within(c).queryByText('nasiko agents setup')).toBeNull()
+     expect(within(c).queryByRole('button', { name: 'Yes, find my agents' })).toBeNull()
+     await summary()
+     // The card carries the same command, so the CLI panel steps aside.
+```
+
+**File**: `ui/shared/features/src/harnesses/components/AgentsOnboardingCard.tsx` (modified, +9/-5)
+```diff
+@@ -1,7 +1,7 @@
+ /**
+  * The coding-agent onboarding card (onboarding.ts). In the desktop app it asks first, then shows the desktop's own
+- * run; in a browser it shows the command (running it is the consent), then the runs local clients report. Phase
+- * changes are spoken through the card's one polite live region.
++ * run; in a browser it shows the setup guide's install and connect commands (running them is the consent), then the
++ * runs local clients report. Phase changes are spoken through the card's one polite live region.
+  */
+ import { useEffect, useRef } from 'react'
+ import { AlertTriangle } from 'lucide-react'
+@@ -10,6 +10,7 @@ import { useAnnounce } from '@nasiko/ui/composites/announce'
+ import { CopyButton } from '@nasiko/ui/composites/copy-button'
+ import { Button } from '@nasiko/ui/primitives/button'
+ import { Card } from '@nasiko/ui/primitives/card'
++import { HarnessSetupHeading, HarnessSetupSteps } from '@nasiko/features/onboarding/HarnessSetup'
+ import { copy as pageCopy } from '../copy'
+ import type { AgentsOnboarding, CardView, DesktopControl } from '../onboarding'
+ import { rejectedTurns, shownPhase, type SyncRun } from '../runs'
+@@ -45,8 +46,11 @@ function CardBody({ view, onboarding }: { view: CardView; onboarding: AgentsOnbo
+     case 'command':
+       return (
+         <>
+-          <Title>{copy.commandTitle}</Title>
+-          <Command />
++          <HarnessSetupHeading id="agents-onboarding-title" />
++          {/* The setup guide's own steps (onboarding/HarnessStep.tsx): `nasiko connect` signs in, then sets up the
++              coding agents, which reports the run this card follows. */}
++          <HarnessSetupSteps />
++          <ChatHistoryNotice />
+         </>
+       )
+     case 'ask':
+@@ -136,7 +140,7 @@ function Title({ children }: { children: string }) {
+   )
+ }
+ 
+-/** The CLI command with its Copy button. */
++/** A failed run's CLI command with its Copy button: `nasiko agents setup` resumes the import. */
+ function Command() {
+   return (
+     <div className="flex flex-col gap-2 text-sm">
+```
+
+**File**: `ui/shared/features/src/harnesses/copy.ts` (modified, +0/-1)
+```diff
+@@ -85,7 +85,6 @@ export const copy = {
+     findMyAgents: 'Find my agents',
+     idle: 'Your coding agents are not being imported right now.',
+     // Browser: running the command is the consent.
+-    commandTitle: 'Bring in your coding agents',
+     commandBody: 'To discover your coding agents and load your previous sessions, run:',
+     command: 'nasiko agents setup',
+     copyCommand: 'Copy command',
+```
+
+**File**: `ui/shared/features/src/harnesses/onboarding.ts` (modified, +3/-2)
+```diff
+@@ -3,8 +3,9 @@
+  *
+  * - **Desktop app**: consent is local. The card asks, and Yes / Not now / Retry are the desktop's own POSTs; progress
+  *   is the desktop's local run.
+- * - **Browser**: no consent. Running `nasiko agents setup` is the consent, so the card shows the command, then the
+- *   progress the CLI (or a desktop elsewhere) reports to the server:
++ * - **Browser**: no consent. Running the setup guide's `nasiko connect` (or `nasiko agents setup`) is the consent, so
++ *   the card shows the guide's install and connect commands, then the progress the CLI (or a desktop elsewhere)
++ *   reports to the server:
+  *
+  *     GET  /api/me/coding-agents/sync                       {runs: [Run]}  (updated in the last 24 h, newest first)
+  *     POST /api/me/coding-agents/sync/{device_id}/retry     the Run, `retry_requested_at` set (404: no such device)
+```
+
+**File**: `ui/shared/features/src/onboarding/HarnessSetup.tsx` (added, +59/-0)
+```diff
+@@ -0,0 +1,59 @@
++/**
++ * The CLI commands that bring a developer's coding harnesses in: install, then connect to this server, and what
++ * happens next. One block for the setup guide's last step (HarnessStep.tsx) and Coding harnesses' empty state
++ * (harnesses/components/AgentsOnboardingCard.tsx), so the two never drift apart.
++ */
++import { CopyButton } from '@nasiko/ui/composites/copy-button'
++import { connectCommand } from '@nasiko/features/cli/commands'
++import { copy as cliCopy } from '@nasiko/features/cli/copy'
++import { copy as guideCopy } from './copy'
 +
- **3. Connect the CLI**
- 
- ```sh
-@@ -297,6 +303,9 @@ nasiko deploy .                             # build, push and deploy
- nasiko chat --agent my-agent "Hello there"
- ```
- 
-+Deployed agents use the server's `OPENAI_API_KEY` unless you give them their own with
-+`nasiko secrets set`, so set it in `.env` before you chat.
++const copy = guideCopy.harness
 +
- `nasiko deploy` builds locally with Docker. `nasiko upload` sends the source and the server builds it.
- You can also deploy from the dashboard: upload source, import from GitHub, or pull from the registry.
++/** The block's title and intro as a card heading; `id` names it for the card's `aria-labelledby`. */
++export function HarnessSetupHeading({ id }: { id: string }) {
++  return (
++    <div className="flex flex-col gap-1">
++      <h2 id={id} className="text-base font-semibold">
++        {copy.title}
++      </h2>
++      <p className="max-w-[70ch] text-sm text-muted-foreground">{copy.intro}</p>
++    </div>
++  )
++}
++
++export function HarnessSetupSteps() {
++  const steps = [
++    { label: copy.steps.install, command: cliCopy.install.unixCommand },
++    { label: copy.steps.connect, command: connectCommand() },
++  ]
++  return (
++    <>
++      <ol className="flex flex-col gap-4">
++        {steps.map((s, i) => (
++          <li key={s.label} className="flex gap-3">
++            <span
++              aria-hidden
++              className="flex size-6 shrink-0 items-center justify-center rounded-md border font-mono text-xs"
++            >
++              {i + 1}
++            </span>
++            <div className="flex min-w-0 flex-1 flex-col gap-1.5">
++              <span className="text-sm">{s.label}</span>
++              <div className="flex items-center gap-2 rounded-md border bg-muted/50 py-1 pr-1 pl-3">
++                <span aria-hidden className="font-mono text-xs text-muted-foreground select-none">
++                  $
++                </span>
++                <code className="min-w-0 flex-1 font-mono text-xs break-all whitespace-pre-wrap">
++                  {s.command}
++                </code>
++                <CopyButton text={s.command} label={copy.copy(s.label)} />
++              </div>
++            </div>
++          </li>
++        ))}
++      </ol>
++      <p className="text-sm text-muted-foreground">{copy.after}</p>
++    </>
++  )
++}
+```
+
+**File**: `ui/shared/features/src/onboarding/HarnessStep.tsx` (modified, +2/-32)
+```diff
+@@ -7,11 +7,9 @@
+  * to connect, offering to move any connected to another server.
+  */
+ import { Bot, MessageSquare, SquareTerminal } from 'lucide-react'
+-import { CopyButton } from '@nasiko/ui/composites/copy-button'
+ import { Button } from '@nasiko/ui/primitives/button'
+-import { connectCommand } from '@nasiko/features/cli/commands'
+-import { copy as cliCopy } from '@nasiko/features/cli/copy'
+ import { copy as guideCopy } from './copy'
++import { HarnessSetupSteps } from './HarnessSetup'
+ import { StepHeading } from './parts'
  
+ const copy = guideCopy.harness
+@@ -29,38 +27,10 @@ export function HarnessStep({
+   /** Out of the guide to one of these pages. */
+   onOpen: (to: '/harnesses' | '/agents' | '/chat') => void
+ }) {
+-  const steps = [
+-    { label: copy.steps.install, command: cliCopy.install.unixCommand },
+-    { label: copy.steps.connect, command: connectCommand() },
+-  ]
+   return (
+     <div className="flex flex-col gap-6">
+       <StepHeading title={copy.title} intro={copy.intro} />
+-      <ol className="flex flex-col gap-4">
+-        {steps.map((s, i) => (
+-          <li key={s.label} className="flex gap-3">
+-            <span
+-              aria-hidden
+-              className="flex size-6 shrink-0 items-center justify-center rounded-md border font-mono text-xs"
+-            >
+-              {i + 1}
+-            </span>
+-            <div className="flex min-w-0 flex-1 flex-col gap-1.5">
+-              <span className="text-sm">{s.label}</span>
+-              <div className="flex items-center gap-2 rounded-md border bg-muted/50 py-1 pr-1 pl-3">
+-                <span aria-hidden className="font-mono text-xs text-muted-foreground select-none">
+-                  $
+-                </span>
+-                <code className="min-w-0 flex-1 font-mono text-xs break-all whitespace-pre-wrap">
+-                  {s.command}
+-                </code>
+-                <CopyButton text={s.command} label={copy.copy(s.label)} />
+-              </div>
+-            </div>
+-          </li>
+-        ))}
+-      </ol>
+-      <p className="text-sm text-muted-foreground">{copy.after}</p>
++      <HarnessSetupSteps />
+       <section className="flex flex-col gap-3">
+         <h3 className="text-sm font-medium">{copy.next}</h3>
+         <div className="grid grid-cols-[repeat(auto-fit,minmax(13rem,1fr))] gap-3">
 ```
 
 ---
 
-### Incident Patch 2: `1fee19bf` (2026-11-14)
-**Commit Message**: Merge pull request #976 from Nasiko-Labs/docs/readme-quickstart
+### Incident Patch 2: `7c14d77f` (2026-11-16)
+**Commit Message**: Sentry: user and workspace on every event, Sentry Logs, tenant-server traces and cron heartbeats
 
-Docs/readme quickstart
-[synced-from-private]
+Errors said how many events, never how many people or which workspace, and
+nothing told us when a background job stopped running.
 
-**File**: `.sync-marker` (modified, +1/-1)
+- User and workspace: the auth middleware names the signed-in user by
+  account id only (never name or email), inside a Sentry scope that
+  trace_requests now opens for every routed request, so the id stays on
+  that request. Provisioned workspaces tag every event workspace=<TENANT_ID>;
+  /api/telemetry/config hands the UI the same tag, and the UI follows the
+  session query to set the user id.
+- Sentry Logs: SENTRY_LOGS_LEVEL (off/error/warn/info, default warn) sends
+  those tracing lines, and the UI's console warnings and errors, as logs.
+  Log lines are free text nobody reviewed, so they are redacted by value
+  (nasiko_utils::redact: credential query values, user:password, the MCP
+  credential path, email addresses, Bearer tokens, secret-named fields).
+- Tenant-server traces: SENTRY_TRACES_SAMPLE_RATE (default 0.1) records
+  routed requests as transactions with method, route template, status and
+  duration only: no URL, header, query, body or child spans
+
+**File**: `Cargo.toml` (modified, +1/-1)
 ```diff
-@@ -1 +1 @@
--5c24f6a4ef9bb8f1f10b7c9294b93e9f0214ca86
-+9e3cf17af23d7a928aa01b6cd3414c9082503c93
+@@ -159,7 +159,7 @@ tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+ # ureq + rustls: the HTTP stack and TLS the workspace already locks, instead of the default
+ # reqwest 0.13 + native-tls. `tower-axum-matched-path` names transactions by route template, so a
+ # credential in a path (`/api/mcp/s/{token}`) never becomes a transaction name.
+-sentry = { version = "0.49.3", default-features = false, features = ["backtrace", "contexts", "panic", "tracing", "tower", "tower-http", "tower-axum-matched-path", "ureq", "rustls"] }
++sentry = { version = "0.49.3", default-features = false, features = ["backtrace", "contexts", "panic", "tracing", "tower", "tower-http", "tower-axum-matched-path", "ureq", "rustls", "logs"] }
+ 
+ # ─── AWS ────────────────────────────────────────────────────────────────────
+ aws-sdk-s3 = "1"
+```
+
+**File**: `server/.env.example` (modified, +2/-1)
+```diff
+@@ -89,7 +89,7 @@ SEED_AGENTS=
+ # Starter workflows installed after the seed agents, as public workflows every
+ # user can run (server/src/seed_workflows.rs). Space-separated template
+ # ids; each one's agents must be in SEED_AGENTS or it is skipped.
+-# SEED_WORKFLOWS="chief-of-staff-follow-up inbox-morning-brief voice-of-customer-roadmap"
++# SEED_WORKFLOWS="chief-of-staff-follow-up voice-of-customer-roadmap"
+ # SEED_IMAGE_PLATFORM=linux/amd64        # os/arch copied from multi-platform seed images
+ # SEED_FORCE_PULL=                       # (unset) set to any value to re-pull seed images
+ 
+@@ -442,6 +442,7 @@ S3_REGION=us-east-1
+ # SENTRY_BROWSER_TRACES_SAMPLE_RATE=0.1  # share of page loads/navigations traced
+ # SENTRY_REPLAY_SESSION_SAMPLE_RATE=0    # share of all sessions replayed (masked)
+ # SENTRY_REPLAY_ON_ERROR_SAMPLE_RATE=1   # share of sessions with an error replayed
++# SENTRY_LOGS_LEVEL=warn                 # off/error/warn/info: lines also sent to Sentry Logs (redacted)
+ 
+ # Base OTLP/HTTP JSON endpoint for the durable coding-agent outbox. The server
+ # appends /v1/traces and /v1/logs. Unset leaves receipts pending with no worker.
+```
+
+**File**: `server/src/auth/middleware.rs` (modified, +2/-0)
+```diff
+@@ -76,6 +76,7 @@ pub async fn require_auth(State(state): State<AppState>, mut req: Request, next:
+             )
+             .into_response();
+         }
++        crate::error_reporting::identify(&delegated.identity.user_id.to_string());
+         req.extensions_mut()
+             .insert(Claims::from(delegated.identity.clone()));
+         req.extensions_mut().insert(super::delegate::Delegation {
+@@ -99,6 +100,7 @@ pub async fn require_auth(State(state): State<AppState>, mut req: Request, next:
+         req.extensions_mut()
+             .insert(super::delegate::SessionJti(jti));
+     }
++    crate::error_reporting::identify(&claims.sub);
+     req.extensions_mut().insert(claims);
+     next.run(req).await
+ }
+```
+
+**File**: `server/src/error_reporting/config.rs` (modified, +52/-0)
+```diff
+@@ -1,5 +1,6 @@
+ use std::str::FromStr;
+ 
++use nasiko_utils::logs_level::LogsLevel;
+ use sentry::types::Dsn;
+ 
+ /// Where errors go and how much is sampled, read once at startup.
+@@ -26,12 +27,20 @@ pub struct ErrorReportingConfig {
+     /// `SENTRY_REPLAY_ON_ERROR_SAMPLE_RATE`: share of sessions with an error whose last
+     /// minute is kept.
+     pub replay_on_error_sample_rate: f32,
++    /// `SENTRY_LOGS_LEVEL`: which `tracing` lines (and, in the UI, console lines) also go to
++    /// Sentry Logs, searchable and linked to their trace. Default `warn`.
++    pub logs: LogsLevel,
++    /// `TENANT_ID`, the workspace this control plane serves when the multi-tenant management
++    /// plane provisioned it: a `workspace` tag on every event, so an alert says whether one
++    /// workspace or all of them are affected. Unset on a self-hosted install.
++    pub workspace: Option<String>,
+ }
+ 
+ const DEFAULT_ENVIRONMENT: &str = "production";
+ const DEFAULT_TRACES_SAMPLE_RATE: f32 = 0.1;
+ const DEFAULT_REPLAY_SESSION_SAMPLE_RATE: f32 = 0.0;
+ const DEFAULT_REPLAY_ON_ERROR_SAMPLE_RATE: f32 = 1.0;
++const DEFAULT_LOGS_LEVEL: LogsLevel = LogsLevel::Warn;
+ 
+ impl ErrorReportingConfig {
+     pub fn from_env() -> Self {
+@@ -90,6 +99,16 @@ impl ErrorReportingConfig {
+                 "SENTRY_REPLAY_ON_ERROR_SAMPLE_RATE",
+                 DEFAULT_REPLAY_ON_ERROR_SAMPLE_RATE,
+             ),
++            logs: match set("SENTRY_LOGS_LEVEL") {
++                None => DEFAULT_LOGS_LEVEL,
++                Some(raw) => LogsLevel::parse(&raw).unwrap_or_else(|| {
++                    eprintln!(
++                        "SENTRY_LOGS_LEVEL must be off, error, warn or info, got {raw:?}; using warn"
++                    );
++                    DEFAULT_LOGS_LEVEL
++                }),
++            },
++            workspace: set("TENANT_ID").map(|id| id.trim().to_owned()),
+         }
+     }
+ }
+@@ -138,6 +157,39 @@ mod tests {
+         assert_eq!(c.browser_dsn, None);
+     }
+ 
++    #[test]
++    fn logs_default_to_warnings_and_errors() {
++        let c = ErrorReportingConfig::disabled();
++        assert_eq!(c.logs, LogsLevel::Warn);
++        assert!(c.logs.includes(&tracing::Level::ERROR));
++        assert!(c.logs.includes(&tracing::Level::WARN));
++        assert!(!c.logs.includes(&tracing::Level::INFO));
++        assert!(!c.logs.includes(&tracing::Level::DEBUG));
++    }
++
++    #[test]
++    fn logs_level_is_read_and_a_bad_value_keeps_the_default() {
++        assert_eq!(
++            config(&[("SENTRY_LOGS_LEVEL", " INFO ")]).logs,
++            LogsLevel::Info
++        );
++        let off = config(&[("SENTRY_LOGS_LEVEL", "off")]).logs;
++        assert!(!off.includes(&tracing::Level::ERROR));
++        assert_eq!(
++            config(&[("SENTRY_LOGS_LEVEL", "loud")]).logs,
++            LogsLevel::Warn
++        );
++    }
++
++    #[test]
++    fn the_workspace_comes_from_tenant_id() {
++        assert_eq!(ErrorReportingConfig::disabled().workspace, None);
++        assert_eq!(
++            config(&[("TENANT_ID", " t-123 ")]).workspace.as_deref(),
++            Some("t-123")
++        );
++    }
++
+     #[test]
+     fn rates_outside_zero_to_one_fall_back_to_the_default() {
+         let c = config(&[
+```
+
+**File**: `server/src/error_reporting/mod.rs` (modified, +89/-12)
+```diff
+@@ -7,7 +7,10 @@
+ //!
+ //! Four pieces, wired at the composition roots:
+ //! - [`init`]: this server's client, called first thing in `main`. Captures panics, `error!`
+-//!   events (with `warn!` lines as breadcrumbs), and a sample of requests as transactions.
++//!   events (with `warn!` lines as breadcrumbs), a sample of requests as transactions, and
++//!   `SENTRY_LOGS_LEVEL`'s lines (default warnings and errors) as Sentry Logs. Every event names
++//!   the workspace (`TENANT_ID`) and, inside a request, the signed-in user's id ([`identify`]):
++//!   an id, never a name or an email.
+ //! - [`tracing_layer`]: joins `tracing` to that client; `telemetry::init_telemetry` installs it
+ //!   beside the OTLP layer, which keeps working unchanged.
+ //! - [`trace_requests`]: middleware recording a request as a transaction named by its route
+@@ -29,6 +32,7 @@ mod tunnel;
+ use std::sync::OnceLock;
+ 
+ pub use config::ErrorReportingConfig;
++pub use nasiko_utils::logs_level::LogsLevel;
+ pub use requests::trace_requests;
+ pub use tunnel::router;
+ 
+@@ -52,32 +56,105 @@ pub fn init(
+         .send_default_pii(false)
+         .attach_stacktrace(true)
+         .before_send(scrub::event);
++    options.before_send_log = Some(std::sync::Arc::new(scrub::log));
+     options.dsn = Some(dsn);
+     let guard = sentry::init(options);
+-    sentry::configure_scope(|scope| scope.set_tag("edition", edition));
++    let workspace = config.workspace.clone();
++    sentry::configure_scope(|scope| {
++        scope.set_tag("edition", edition);
++        if let Some(workspace) = workspace {
++            scope.set_tag("workspace", workspace);
++        }
++    });
+     Some(guard)
+ }
+ 
++/// Name the signed-in user on what the current request reports, by account id only. Called by
++/// the auth middleware once a caller is known; [`trace_requests`] gives every routed request a
++/// scope of its own, so the id never outlives the request or reaches another one. A no-op when
++/// nothing is reported.
++pub fn identify(user_id: &str) {
++    let id = user_id.to_owned();
++    sentry::configure_scope(|scope| {
++        scope.set_user(Some(sentry::User {
++            id: Some(id),
++            ..Default::default()
++        }))
++    });
++}
++
+ /// What [`init`] was given; nothing is reported before it runs (and in tests that never call it).
+ pub fn current_config() -> &'static ErrorReportingConfig {
+     CONFIG.get_or_init(ErrorReportingConfig::disabled)
+ }
+ 
+ /// `error!` becomes an event, `warn!` a breadcrumb on the next event, and spans join the
+-/// request's transaction. `info!` and below are left out: they are high-volume and carry
+-/// request detail that has not been reviewed for what it may contain. `None` (a no-op layer)
+-/// unless this server reports to Sentry.
++/// request's transaction. Lines at or above `SENTRY_LOGS_LEVEL` are also sent as logs, through
++/// [`scrub::log`]. `debug!` and `trace!` never leave. `None` (a no-op layer) unless this server
++/// reports to Sentry.
+ pub fn tracing_layer<S>() -> Option<sentry::integrations::tracing::SentryLayer<S>>
+ where
+     S: tracing::Subscriber + for<'a> tracing_subscriber::registry::LookupSpan<'a>,
+ {
+-    use sentry::integrations::tracing::EventFilter;
+-    current_config().server_dsn.as_ref()?;
++    let config = current_config();
++    config.server_dsn.as_ref()?;
++    let logs = config.logs;
+     Some(
+-        sentry::integrations::tracing::layer().event_filter(|metadata| match *metadata.level() {
+-            tracing::Level::ERROR => EventFilter::Event,
+-            tracing::Level::WARN => EventFilter::Breadcrumb,
+-            _ => EventFilter::Ignore,
+-        }),
++        sentry::integrations::tracing::layer()
++            .event_filter(move |metadata| event_filter(logs, metadata.level())),
+     )
+ }
++
++/// What one `tracing` line becomes in Sentry.
++fn event_filter(
++    logs: LogsLevel,
++    level: &tracing::Level,
++) -> sentry::integrations::tracing::EventFilter {
++    use sentry::integrations::tracing::EventFilter;
++    let base = match *level {
++        tracing::Level::ERROR => EventFilter::Event,
++        tracing::Level::WARN => EventFilter::Breadcrumb,
++        _ => EventFilter::Ignore,
++    };
++    if logs.includes(level) {
++        base | EventFilter::Log
++    } else {
++        base
++    }
++}
++
++#[cfg(test)]
++mod tests {
++    use super::*;
++    use sentry::integrations::tracing::EventFilter;
++
++    #[test]
++    fn errors_are_events_warnings_breadcrumbs_and_logs_follow_the_level() {
++        let bits = |logs, level| event_filter(logs, level).bits();
++        let warn = LogsLevel::Warn;
++        assert_eq!(
++            bits(warn, &tracing::Level::ERROR),
++            (EventFilter::Event | EventFilter::Log).bits()
++        );
++        assert_eq!(
++            bits(warn, &tracing::Level::WARN),
++            (EventFilter::Breadcrumb | EventFilter::Log).bits()
++        );
++        assert_eq!(
++            bits(warn, &tracing::Level::INFO),
++            EventFilter::Ignore.bits()
++        );
++ 
+```
+
+**File**: `server/src/error_reporting/requests.rs` (modified, +11/-5)
+```diff
+@@ -14,10 +14,13 @@ use super::scrub;
+ /// Routes never recorded: probes and the tunnel itself, which would only trace the reporting.
+ const UNTRACED_ROUTES: &[&str] = &["/health", "/api/telemetry/sentry", "/api/telemetry/config"];
+ 
+-/// Middleware: record the request as a transaction named `<METHOD> <route template>` and give
+-/// its events their own scope. Layered on the whole app with `Router::layer`, so it runs after
+-/// routing and the template is known. A request no route matched (UI pages and assets, which
+-/// the browser traces itself) is passed through, as is everything when nothing is reported.
++/// Middleware: give the request its own Sentry scope, and record it as a transaction named
++/// `<METHOD> <route template>`. Layered on the whole app with `Router::layer`, so it runs after
++/// routing and the template is known. The scope is what keeps per-request context (the user
++/// [`super::identify`] names) on this request's events only, so every routed request gets one,
++/// probes included; only the transaction is skipped for [`UNTRACED_ROUTES`]. A request no route
++/// matched (UI pages and assets, which the browser traces itself) is passed through, as is
++/// everything when nothing is reported.
+ pub async fn trace_requests(req: Request, next: Next) -> Response {
+     let Some(route) = req
+         .extensions()
+@@ -26,11 +29,14 @@ pub async fn trace_requests(req: Request, next: Next) -> Response {
+     else {
+         return next.run(req).await;
+     };
+-    if Hub::current().client().is_none() || UNTRACED_ROUTES.contains(&route.as_str()) {
++    if Hub::current().client().is_none() {
+         return next.run(req).await;
+     }
+ 
+     let hub = Arc::new(Hub::new_from_top(Hub::current()));
++    if UNTRACED_ROUTES.contains(&route.as_str()) {
++        return next.run(req).bind_hub(hub).await;
++    }
+     let request = scrub::from_http(&req);
+     let headers = req
+         .headers()
+```
+
+**File**: `server/src/error_reporting/scrub.rs` (modified, +46/-1)
+```diff
+@@ -1,7 +1,8 @@
+ //! What a request may tell Sentry. An allow-list, not a deny-list: a header or field added
+ //! later stays out until someone decides it is safe to send.
+ 
+-use sentry::protocol::{Event, Map, Request};
++use nasiko_utils::redact::{redact_field, redact_text};
++use sentry::protocol::{Event, Log, LogAttribute, Map, Request, Value};
+ 
+ use crate::mcp::redact_credential_uri;
+ 
+@@ -20,6 +21,23 @@ pub(super) fn event(mut event: Event<'static>) -> Option<Event<'static>> {
+     Some(event)
+ }
+ 
++/// `before_send_log`: a `tracing` line on its way to Sentry Logs. Log lines are free text written
++/// for operators, never reviewed for what Sentry may see, so credentials and email addresses are
++/// redacted by value in the message and in every string field; a field whose name looks secret
++/// keeps only a placeholder. Numbers and booleans pass (a `status_code` is not a secret).
++pub(crate) fn log(mut log: Log) -> Option<Log> {
++    log.body = redact_text(&log.body);
++    for (name, LogAttribute(value)) in log.attributes.iter_mut() {
++        if name.starts_with("sentry.") {
++            continue;
++        }
++        if let Value::String(text) = value {
++            redact_field(name, text);
++        }
++    }
++    Some(log)
++}
++
+ /// The request as Sentry sees it, from the incoming HTTP request.
+ pub(super) fn from_http<B>(req: &axum::http::Request<B>) -> Request {
+     let headers = req
+@@ -118,6 +136,33 @@ mod tests {
+         assert!(!r.headers.contains_key("host"));
+     }
+ 
++    #[test]
++    fn a_log_line_loses_credentials_and_emails() {
++        let mut attributes = Map::new();
++        attributes.insert(
++            "user_email".into(),
++            LogAttribute(Value::from("ada@acme.com")),
++        );
++        attributes.insert("url".into(), LogAttribute(Value::from("/cb?code=abc&x=1")));
++        attributes.insert("status_code".into(), LogAttribute(Value::from(502)));
++        attributes.insert("sentry.release".into(), LogAttribute(Value::from("r@1")));
++        let line = Log {
++            level: sentry::protocol::LogLevel::Warn,
++            body: "invite for bob@acme.com failed: token=abc".into(),
++            trace_id: None,
++            timestamp: std::time::SystemTime::now(),
++            severity_number: None,
++            attributes,
++        };
++        let line = super::log(line).unwrap();
++        assert_eq!(line.body, "invite for [email] failed: token=[REDACTED]");
++        let attr = |k: &str| line.attributes[k].0.clone();
++        assert_eq!(attr("user_email"), Value::from("[REDACTED]"));
++        assert_eq!(attr("url"), Value::from("/cb?code=[REDACTED]&x=1"));
++        assert_eq!(attr("status_code"), Value::from(502));
++        assert_eq!(attr("sentry.release"), Value::from("r@1"));
++    }
++
+     #[test]
+     fn an_event_loses_bodies_cookies_and_environment() {
+         let mut env = Map::new();
+```
+
+**File**: `server/src/error_reporting/tunnel.rs` (modified, +18/-0)
+```diff
+@@ -57,6 +57,8 @@ pub fn router<S: Clone + Send + Sync + 'static>(
+             "replays_session_sample_rate": config.replay_session_sample_rate,
+             "replays_on_error_sample_rate": config.replay_on_error_sample_rate,
+             "tunnel": "/api/telemetry/sentry",
++            "workspace": config.workspace,
++            "logs": config.logs != super::LogsLevel::Off,
+         }}),
+         dsn,
+     });
+@@ -246,6 +248,22 @@ mod tests {
+         assert_eq!(body["data"]["enabled"], true);
+         assert_eq!(body["data"]["dsn"], DSN);
+         assert_eq!(body["data"]["tunnel"], "/api/telemetry/sentry");
++        assert_eq!(body["data"]["logs"], true);
++        assert!(body["data"]["workspace"].is_null());
++    }
++
++    #[tokio::test]
++    async fn config_names_the_workspace_and_whether_logs_are_on() {
++        let config = ErrorReportingConfig {
++            browser_dsn: Some(DSN.parse().unwrap()),
++            workspace: Some("t-123".into()),
++            logs: super::super::LogsLevel::Off,
++            ..ErrorReportingConfig::disabled()
++        };
++        let app = router(&config, reqwest::Client::new());
++        let (_, body) = call(app, "GET", "/api/telemetry/config", String::new()).await;
++        assert_eq!(body["data"]["workspace"], "t-123");
++        assert_eq!(body["data"]["logs"], false);
+     }
+ 
+     #[tokio::test]
+```
+
+---
+
+### Incident Patch 3: `3c654ac6` (2026-11-16)
+**Commit Message**: fix(maf): a retried step reopens its flow, so its agent's calls are authorized again
+
+A step's trace id is derived from the execution and the step index
+(build_traceparent), so a retried step reuses it. The first attempt
+closed that flow row ('completed') when its agent call returned, and the
+retry's insert was ON CONFLICT DO NOTHING, so the row stayed closed. The
+LLM router and the MCP gateway only honour a 'running' flow younger than
+the flow timeout: every model and tool call the retried step's agent
+made was refused with 403 "traceparent does not resolve to a live flow"
+(reproduced against both).
+
+The insert now reopens an existing row: running, created_at = now(),
+completed_at / duration_ms / error_message cleared, and this attempt's
+prompt as metadata. Only a row of the run's own user is reopened.
+FlowGuard's Redis state is already reset per attempt (init_flow), the
+flow sweeper skips a fresh row, and tiering never touches a flow
+completed today, so nothing else reads the reopened row differently.
+
+maf_step_flow_retry: a step fails at its agent, its closed flow is aged
+an hour, and the retry's agent call is authorized; it fails without the
+fix ([true, false]). A flow of anoth
+
+**File**: `orchestrator/src/maf/executor.rs` (modified, +12/-3)
+```diff
+@@ -1007,11 +1007,20 @@ pub async fn execute_step(
+     // step, so the gateway keys its decision cache on the whole MAF run: the
+     // first step writes the tier decision, later steps reuse it. Best-effort —
+     // a failed insert only means this step falls back to the default model.
++    //
++    // A retried step reuses its trace id (`build_traceparent` derives it from the execution and
++    // the step), so the row its last attempt closed is already here. The gateway and the router
++    // only honour a `running` row younger than the flow timeout, so that row is reopened, fresh,
++    // with this attempt's prompt; leaving it closed refused every model and tool call the retried
++    // step's agent made. Only the run's own user's row is reopened.
+     let flow_metadata = step_flow_metadata(execution_id, &actual_prompt);
+     let _ = sqlx::query(
+         r#"INSERT INTO flows (flow_id, user_id, root_agent_name, title, status, metadata, session_id)
+            VALUES ($1, $2, $3, $4, 'running', $5, $6)
+-           ON CONFLICT (flow_id) DO NOTHING"#,
++           ON CONFLICT (flow_id) DO UPDATE
++              SET status = 'running', created_at = now(), completed_at = NULL,
++                  duration_ms = NULL, error_message = NULL, metadata = EXCLUDED.metadata
++            WHERE flows.user_id = EXCLUDED.user_id"#,
+     )
+     .bind(&trace_id)
+     .bind(user_id)
+@@ -1286,8 +1295,8 @@ pub async fn continue_paused_step(
+             .to_string(),
+     };
+ 
+-    // `register_flow` (execute_step's first-attempt insert) stamped `created_at` once, at the
+-    // original attempt — `ON CONFLICT DO NOTHING`, never touched again. The MCP gateway's
++    // `execute_step` stamped `created_at` when the paused attempt called the agent, and the
++    // pause closed the row. The MCP gateway's
+     // liveness check (`gateway.rs::flow_user`) requires `created_at` to be within
+     // `NASIKO_FLOW_TIMEOUT_SECS` (600s default) of `now()`, so a human who takes longer than that to
+     // approve a paused tool call permanently strands this trace id: every retried `tools/call`
+```
+
+**File**: `server/tests/maf_step_flow_retry.rs` (added, +341/-0)
+```diff
+@@ -0,0 +1,341 @@
++//! A retried MAF step reopens the flow its last attempt closed, so its agent's model and tool
++//! calls are authorized again; a flow row of another user's under the same id stays closed.
++//!
++//! Requires infra (Postgres :5432, Redis, S3):
++//!   cargo test -p nasiko-server --test maf_step_flow_retry -- --test-threads=1
++
++mod common;
++
++use std::sync::{Arc, Mutex};
++
++use async_trait::async_trait;
++use axum::extract::State;
++use axum::http::{HeaderMap, StatusCode};
++use axum::response::{IntoResponse, Response};
++use axum::{Json, Router, routing::post};
++use nasiko_orchestrator::maf::llm::LlmClient;
++use nasiko_orchestrator::maf::types::{MafDefinition, MafStep, RunError, StepOutcome};
++use nasiko_orchestrator::maf::{LinearMafExecutor, MafExecutor, MafRunContext};
++use nasiko_orchestrator::target::ForwardTarget;
++use nasiko_orchestrator::{AgentTargetResolver, ResolveCaller, ResolveFailure};
++use serde_json::{Value, json};
++use serial_test::serial;
++use sqlx::PgPool;
++use uuid::Uuid;
++
++/// The MCP gateway's and the LLM router's test for a live flow (`mcp/identity.rs`,
++/// `llm-router/src/resolver`), with the default flow timeout.
++const LIVE_FLOW: &str = "SELECT EXISTS(SELECT 1 FROM flows WHERE flow_id = $1 AND status = 'running' \
++                         AND created_at > now() - make_interval(secs => 600))";
++
++struct Unmetered;
++
++impl nasiko_types::agent_call::AgentCallMeter for Unmetered {
++    fn begin(&self, _agent_id: Uuid) -> Box<dyn nasiko_types::agent_call::AgentCallHandle> {
++        Box::new(nasiko_types::agent_call::UnmeteredCall)
++    }
++}
++
++/// Sends every step to one address.
++struct At(String);
++
++#[async_trait]
++impl AgentTargetResolver for At {
++    async fn resolve(
++        &self,
++        _agent_id: Uuid,
++        _caller: &ResolveCaller,
++        _context_id: Option<&str>,
++    ) -> Result<ForwardTarget, ResolveFailure> {
++        Ok(ForwardTarget::from(self.0.clone()))
++    }
++}
++
++async fn serve(app: Router) -> String {
++    let listener = tokio::net::TcpListener::bind("127.0.0.1:0").await.unwrap();
++    let url = format!("http://{}", listener.local_addr().unwrap());
++    tokio::spawn(async move { axum::serve(listener, app).await.unwrap() });
++    url
++}
++
++/// What the stub agent saw on each call: whether the flow its traceparent names was live.
++#[derive(Clone)]
++struct Agent {
++    db: PgPool,
++    seen_live: Arc<Mutex<Vec<bool>>>,
++    fail_first: bool,
++}
++
++/// A stub agent that records, per call, whether the gateway would authorize its calls. With
++/// `fail_first`, its first call answers 500 (a failed step, not sent again).
++async fn stub_agent(agent: Agent) -> String {
++    async fn answer(
++        State(agent): State<Agent>,
++        headers: HeaderMap,
++        Json(body): Json<Value>,
++    ) -> Response {
++        let trace_id = headers
++            .get("traceparent")
++            .and_then(|v| v.to_str().ok())
++            .and_then(|tp| tp.split('-').nth(1))
++            .unwrap_or_default()
++            .to_string();
++        let live: bool = sqlx::query_scalar(LIVE_FLOW)
++            .bind(&trace_id)
++            .fetch_one(&agent.db)
++            .await
++            .unwrap();
++        let call = {
++            let mut seen = agent.seen_live.lock().unwrap();
++            seen.push(live);
++            seen.len()
++        };
++        if agent.fail_first && call == 1 {
++            return StatusCode::INTERNAL_SERVER_ERROR.into_response();
++        }
++        Json(json!({ "jsonrpc": "2.0", "id": body["id"], "result": {
++            "id": "t1", "contextId": "ctx",
++            "status": { "state": "TASK_STATE_COMPLETED" },
++            "artifacts": [{ "parts": [{ "text": "done" }] }]
++        }}))
++        .into_response()
++    }
++    serve(
++        Router::new()
++            .route("/", post(answer))
++            .route("/jsonrpc", post(answer))
++            .with_state(agent),
++    )
++    .await
++}
++
++/// An OpenAI-compatible endpoint answering MAF's structured calls.
++async fn fake_llm() -> String {
++    async fn complete(Json(body): Json<Value>) -> Json<Value> {
++        let schema = body["response_format"]["json_schema"]["name"]
++            .as_str()
++            .unwrap_or_default();
++        let content = match schema {
++            "execution_plan" => json!({
++                "output_generation": "Summarize.",
++                "steps": [{ "prompt": "Do your task.", "to_extract": "the outcome" }]
++            }),
++            "generated_prompt" => json!({ "prompt": "Do your task." }),
++            "extraction_result" => json!({ "extracted_info": "extracted outcome" }),
++            "final_output" => json!({ "final_output": "final answer" }),
++            other => panic!("unexpected LLM call: {other}"),
++        };
++        Json(json!({
++            "model": "fake-model",
++            "choices": [{ "message": { "role": "assistant", "content": content.to_string() } }],
++            "usage": { "prompt_tokens": 10, "completion_tokens": 5, 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #367** (2026-11-16): Remove files the private tree deleted before the sync manifest existed (@nasiko-neeraj)
 - **PR #365** (closed): Remove duplicate GitHub badges (@shrawansaproo01)
 - **PR #356** (closed): fix(llm-router): stop dropping tool_choice "none" and related tool controls (@Prudhvi-Raj1806)
+- **PR #355** (closed): Bump the npm_and_yarn group across 1 directory with 3 updates (@dependabot[bot])
 - **PR #344** (closed): feat: add reproducible compaction and routing benchmarks (@AbhiramMandala)
 - **PR #338** (closed): [P2: request classifier] add request classifier and context integrity… (@SVaishnaviVasa)
-- **PR #337** (closed): [classifier] P2 request classifier with hosted model fallback, API endpoints, and interactive frontend console (@VrajeshChary)
-- **PR #336** (closed): feat(router): implement P2 request classifier, L2 cache bypass, evalu… (@Varshini2701)
 
 ---
 
@@ -2339,39 +3181,32 @@ Docs/readme quickstart
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs(readme): add stop, logs and rebuild commands, and the agent key note
+## X. ui): show the setup guide's CLI steps on an empty Coding harnesses page
 
 **RULE**:
-When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Nasiko-Labs/nasiko. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `ui/eslint.config.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Nasiko-Labs/nasiko. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b9f96008`: docs(readme): add stop, logs and rebuild commands, and the agent key note. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6e6e2590`: ui): show the setup guide's CLI steps on an empty Coding harnesses page. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `ui/eslint.config.js`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-```sh
-docker compose logs -f server   # follow the server logs
-docker compose down             # stop everything
-docker compose up -d --build    # rebuild after pulling new changes
-```
-
-Deployed agents use the server's `OPENAI_API_KEY` unless you give them their own with
-`nasiko secrets set`, so set it in `.env` before you chat.
-
+  // Coding harnesses' empty state shows the guide's own harness step.
+  onboarding: ['api', 'GuideCard', 'GuideHost', 'HarnessSetup', 'index', 'logic', 'types'],
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+  onboarding: ['api', 'GuideCard', 'GuideHost', 'index', 'logic', 'types'],
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b9f96008` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6e6e2590` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

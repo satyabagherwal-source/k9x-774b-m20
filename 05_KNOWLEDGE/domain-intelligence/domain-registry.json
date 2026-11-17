@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-17T03:34:25.085Z",
-  "total_records": 1413,
+  "last_updated": "2026-11-17T03:42:29.872Z",
+  "total_records": 1417,
   "domains": {
     "A": {
       "total": 9,
@@ -974,7 +974,7 @@
       ]
     },
     "H": {
-      "total": 313,
+      "total": 317,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1288,7 +1288,11 @@
         "domain_intelligence-technical-construction-intelligence-gitoxidelabs-gitoxide-core-invariants",
         "domain_intelligence-technical-construction-intelligence-gitoxidelabs-gitoxide-learnings-core-invaria",
         "domain_intelligence-technical-construction-intelligence-kumahq-kuma-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-kumahq-kuma-learnings-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-kumahq-kuma-learnings-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-google-closure-compiler-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-google-closure-compiler-learnings-core-invar",
+        "DOM-H-7AD63040",
+        "domain_intelligence-technical-construction-intelligence-wcandillon-react-native-skia-learnings-core-"
       ]
     },
     "I": {
@@ -13329,10 +13333,10 @@
       "record_id": "domain_intelligence-technical-construction-intelligence-wcandillon-react-native-skia-core-invariants",
       "domain_letter": "H",
       "title": "Technical Construction Intelligence: wcandillon/react-native-skia Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-shopify-react-native-skia-technical-construction-intelligence-wcandillon-react-n.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-wcandillon-react-native-skia-technical-construction-intelligence-wcandillon-reac.md",
       "repository": "wcandillon/react-native-skia",
-      "content_hash": "b03cfd8b53a042bf6bf747120a29716816348c1f569c53e9308032fcb125e72a",
-      "created_at": "2026-11-14T06:57:01.139Z"
+      "content_hash": "0cac70ca82a0df9cd5a5e3eb03cf677ffb2f08dce2260e509b04e0d413aa798e",
+      "created_at": "2026-11-17T03:41:59.277Z"
     },
     "DOM-D-AF708B11": {
       "record_id": "DOM-D-AF708B11",
@@ -20391,8 +20395,8 @@
       "title": "Architecture Intelligence: Nasiko-Labs/nasiko Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nasiko-labs-nasiko-architecture-intelligence-nasiko-labs-nasiko-core-invariants.md",
       "repository": "Nasiko-Labs/nasiko",
-      "content_hash": "427c56b9734f2364e4768670140f077ebb810a9adcb4850149fdb0fdb9f35e71",
-      "created_at": "2026-11-15T11:40:24.696Z"
+      "content_hash": "0ff30743396ed008149ceeb4ed4165918b0c20d38666b87fcbf6ff96dd24c4d8",
+      "created_at": "2026-11-17T03:41:55.614Z"
     },
     "domain_intelligence-architecture-intelligence-nasiko-labs-nasiko-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-nasiko-labs-nasiko-learnings-core-invariants",
@@ -20400,8 +20404,8 @@
       "title": "Architecture Intelligence: nasiko-labs-nasiko-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nasiko-labs-nasiko-learnings-architecture-intelligence-nasiko-labs-nasiko-learni.md",
       "repository": "nasiko-labs-nasiko-learnings",
-      "content_hash": "2cf0d3be21a4753ce26c877efcded5ceabb74ba62665a41a401ceecfae37399c",
-      "created_at": "2026-11-15T11:40:33.265Z"
+      "content_hash": "e646081bfd8a368ccf9e3995a0f4fd856e584f01b38c87062e87f1f9c5f3736d",
+      "created_at": "2026-11-17T03:42:03.298Z"
     },
     "domain_intelligence-architecture-intelligence-vi-websocat-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-vi-websocat-core-invariants",
@@ -24899,6 +24903,75 @@
       "repository": "sweetpad-dev-sweetpad-learnings",
       "content_hash": "9dee2f644f1390cb16ba0b6e68258e9240d44b67473a445839ce5fb521047845",
       "created_at": "2026-11-17T03:34:24.397Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-google-closure-compiler-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-google-closure-compiler-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: google/closure-compiler Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-google-closure-compiler-technical-construction-intelligence-google-closure-compi.md",
+      "repository": "google/closure-compiler",
+      "content_hash": "47e24e618f8b81564d5025b7ae2bd33a217bb9a1102615f3e8dd9db2165e7479",
+      "created_at": "2026-11-17T03:41:56.844Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-google-closure-compiler-learnings-core-invar": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-google-closure-compiler-learnings-core-invar",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: google-closure-compiler-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-google-closure-compiler-learnings-technical-construction-intelligence-google-clo.md",
+      "repository": "google-closure-compiler-learnings",
+      "content_hash": "a0de504896f696ac56435fb43d0586d57cee61c85845b746c8e4f594d83df7ff",
+      "created_at": "2026-11-17T03:42:04.028Z"
+    },
+    "DOM-H-7AD63040": {
+      "record_id": "DOM-H-7AD63040",
+      "domain_letter": "H",
+      "domain_id": "technical_construction",
+      "domain_name": "Technical Construction Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "G",
+          "id": "architecture",
+          "name": "Architecture Intelligence"
+        }
+      ],
+      "title": "🗿): pace a canvas's frames with one scheduler, and hold a present for the GPU o",
+      "content": "When implementing operations in `apps/docs/docs/canvas/canvas.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in wcandillon/react-native-skia. All inputs crossing module boundaries must be explicitly verified before state persistence.",
+      "content_hash": "8d0816294b2df090d5aae42272a0c714193568ecabbc13a2e657b073148b0bff",
+      "summary": "Prevents defects observed in production commit `b7f2c499`: 🗿): pace a canvas's frames with one scheduler, and hold a present for the GPU on -> When implementing operations in `apps/docs/docs/canvas/canvas.md`, engineers MUST enforce rigorous boundary validation, safe state transitio",
+      "provenance": {
+        "source_uri": "project://wcandillon-react-native-skia/wcandillon-react-native-skia-learnings.md",
+        "source_version": "6da7ac20",
+        "observed_at": "2026-11-17T03:41:58.160Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (wcandillon-react-native-skia)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of wcandillon-react-native-skia"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "G"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.9,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-17T03:42:29.435Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-wcandillon-react-native-skia-learnings-core-": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-wcandillon-react-native-skia-learnings-core-",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: wcandillon-react-native-skia-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-wcandillon-react-native-skia-learnings-technical-construction-intelligence-wcand.md",
+      "repository": "wcandillon-react-native-skia-learnings",
+      "content_hash": "f2f1216b581f7451a23be41af67677593f8e3a3a3e66f4d8c7492a7826cc62f4",
+      "created_at": "2026-11-17T03:42:29.872Z"
     }
   }
 }

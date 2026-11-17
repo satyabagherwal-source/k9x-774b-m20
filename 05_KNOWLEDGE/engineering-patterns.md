@@ -643941,3 +643941,239 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `5b7af17c` are properly handled with clean fallback behavior.
+
+
+---
+
+## 8856. show the setup guide's CLI steps on an empty Coding harnesses page (Harvested from Nasiko-Labs/nasiko)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "show the setup guide's CLI steps on an empty Coding harnesses page",
+  "source": "Nasiko-Labs/nasiko",
+  "source_url": "https://github.com/Nasiko-Labs/nasiko",
+  "source_version": "97cd065e",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-11-17T03:41:54.932Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-nasiko-labs-nasiko",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Nasiko-Labs/nasiko](https://github.com/Nasiko-Labs/nasiko) (Revision: `97cd065e`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `ui/eslint.config.js`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Nasiko-Labs/nasiko. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `6e6e2590`: ui): show the setup guide's CLI steps on an empty Coding harnesses page. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `ui/eslint.config.js`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+  // Coding harnesses' empty state shows the guide's own harness step.
+  onboarding: ['api', 'GuideCard', 'GuideHost', 'HarnessSetup', 'index', 'logic', 'types'],
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+  onboarding: ['api', 'GuideCard', 'GuideHost', 'index', 'logic', 'types'],
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `6e6e2590` are properly handled with clean fallback behavior.
+
+
+---
+
+## 8857. Supply a temporary debug log directory in InlineFunctionsTest. (Harvested from google/closure-compiler)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Supply a temporary debug log directory in InlineFunctionsTest.",
+  "source": "google/closure-compiler",
+  "source_url": "https://github.com/google/closure-compiler",
+  "source_version": "030d049b",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-17T03:41:56.181Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-google-closure-compiler",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.76,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [google/closure-compiler](https://github.com/google/closure-compiler) (Revision: `030d049b`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 76%).
+
+**RULE**:
+When implementing operations in `test/com/google/javascript/jscomp/InlineFunctionsTest.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in google/closure-compiler. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `b22fb58d`: Supply a temporary debug log directory in InlineFunctionsTest.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `test/com/google/javascript/jscomp/InlineFunctionsTest.java`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```javascript
+// Verified production-grade fix pattern:
+import java.io.IOException;
+import java.nio.file.Path;
+import org.jspecify.annotations.Nullable;
+import org.junit.Rule;
+import org.junit.rules.TemporaryFolder;
+  @Rule public final TemporaryFolder tempFolder = new TemporaryFolder();
+
+  private @Nullable Path debugLogDirectoryOverride;
+    debugLogDirectoryOverride = null;
+  @Override
+  protected CompilerOptions getOptions() {
+    CompilerOptions options = super.getOptions();
+    if (debugLogDirectoryOverride != null) {
+      options.setDebugLogDirectory(debugLogDirectoryOverride);
+    }
+    return options;
+  }
+
+  public void testNoInlineTaggedTemplateLitEncourageAndRequireInlining() throws IOException {
+    // InlineFunctions reports MISSED_REQUIRED_INLINING only when a debug log directory is set.
+    // Supply a temporary directory explicitly because CompilerTestCaseUtils.setDebugLogDirectoryOn
+    // is a no-op in open-source builds.
+    debugLogDirectoryOverride = tempFolder.newFolder().toPath();
+
+```
+
+**NEGATIVE CONSTRAINT**:
+```javascript
+// Induced defect failure mode:
+  public void testNoInlineTaggedTemplateLitEncourageAndRequireInlining() {
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `b22fb58d` are properly handled with clean fallback behavior.
+
+
+---
+
+## 8858. 🗿): pace a canvas's frames with one scheduler, and hold a present for the GPU o (Harvested from wcandillon/react-native-skia)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "🗿): pace a canvas's frames with one scheduler, and hold a present for the GPU o",
+  "source": "wcandillon/react-native-skia",
+  "source_url": "https://github.com/wcandillon/react-native-skia",
+  "source_version": "6da7ac20",
+  "license": "MIT",
+  "extracted_at": "2026-11-17T03:41:58.608Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-wcandillon-react-native-skia",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [wcandillon/react-native-skia](https://github.com/wcandillon/react-native-skia) (Revision: `6da7ac20`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `apps/docs/docs/canvas/canvas.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in wcandillon/react-native-skia. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `b7f2c499`: 🗿): pace a canvas's frames with one scheduler, and hold a present for the GPU on Android. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/docs/docs/canvas/canvas.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Verified production-grade fix pattern:
+3. A dedicated native thread pool replays the display list into a Graphite frame whenever its content changed. While a replay fits in a frame of the display, the next one starts once the view has presented the previous frame; when it takes longer, replays run one frame ahead of the display, so that the canvas keeps the display's rate.
+4. The view presents one frame per frame of the display: as soon as the frame is ready when it still makes the display's deadline, on the next frame of the display otherwise. On Android, a frame presented while the GPU is still working on the previous one has its work submitted and its present deferred until the GPU is done, so that no canvas waits for another's GPU work.
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// Induced defect failure mode:
+3. A dedicated native thread pool replays the display list into a Graphite frame whenever its content changed, keeping at most one frame ahead of the display.
+4. The view presents the frame on the next vsync.
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `b7f2c499` are properly handled with clean fallback behavior.

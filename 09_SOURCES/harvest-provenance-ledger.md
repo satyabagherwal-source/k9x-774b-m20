@@ -10457,3 +10457,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-microsoft-mage-vl-cowork` | `https://huggingface.co/microsoft/Mage-VL-Cowork` | `hf-microso` | Multi-dimensional audit evidence | 2026-11-17T03:34:08.366Z |
 | `learn-github-sweetpad-dev-sweetpad` | `https://github.com/sweetpad-dev/sweetpad` | `4b5b7817` | Multi-dimensional audit evidence | 2026-11-17T03:34:15.611Z |
 | `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `61ba4ac1` | Multi-dimensional audit evidence | 2026-11-17T03:34:20.219Z |
+| `learn-github-nasiko-labs-nasiko` | `https://github.com/Nasiko-Labs/nasiko` | `97cd065e` | Multi-dimensional audit evidence | 2026-11-17T03:41:55.332Z |
+| `learn-github-google-closure-compiler` | `https://github.com/google/closure-compiler` | `030d049b` | Multi-dimensional audit evidence | 2026-11-17T03:41:56.570Z |
+| `learn-github-wcandillon-react-native-skia` | `https://github.com/wcandillon/react-native-skia` | `6da7ac20` | Multi-dimensional audit evidence | 2026-11-17T03:41:58.996Z |
+| `learn-dom-h-7ad63040` | `project://wcandillon-react-native-skia` | `6da7ac20` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/wcandillon-react-native-skia-learnings.md` | 2026-11-17T03:42:29.451Z |

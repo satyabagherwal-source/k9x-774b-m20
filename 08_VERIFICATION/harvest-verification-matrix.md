@@ -10424,3 +10424,7 @@
 | `CYCLE-20261117-1R6X` | `2026-11-17T03:34:08.361Z` | `microsoft/Mage-VL-Cowork` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-microsoft-mage-vl-cowork-learnings.md` | Yes (`ea548b85...`) |
 | `CYCLE-20261117-1WS7` | `2026-11-17T03:34:15.607Z` | `sweetpad-dev/sweetpad` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8854` | Yes (`826af8c5...`) |
 | `CYCLE-20261117-20C7` | `2026-11-17T03:34:20.215Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8855` | Yes (`05dcb4ed...`) |
+| `CYCLE-20261117-BRI9` | `2026-11-17T03:41:55.329Z` | `Nasiko-Labs/nasiko` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8856` | Yes (`608805c8...`) |
+| `CYCLE-20261117-BSGN` | `2026-11-17T03:41:56.567Z` | `google/closure-compiler` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8857` | Yes (`861d89f6...`) |
+| `CYCLE-20261117-BUC1` | `2026-11-17T03:41:58.993Z` | `wcandillon/react-native-skia` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8858` | Yes (`3c210580...`) |
+| `CYCLE-2026-11-17-PROJ-EVOLVE` | `2026-11-17T03:42:29.451Z` | `wcandillon-react-native-skia` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-7AD63040` [Domain H] | Yes (`8d081629...`) |

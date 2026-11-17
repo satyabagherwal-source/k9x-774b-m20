@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-17T03:34:25.241Z",
-  "total_verified_learnings": 8833,
+  "last_updated": "2026-11-17T03:42:29.988Z",
+  "total_verified_learnings": 8834,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 19667,
+  "total_items": 19681,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -224957,18 +224957,23 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "wcandillon/react-native-skia",
       "repository": "wcandillon/react-native-skia",
-      "slug": "shopify-react-native-skia",
+      "slug": "wcandillon-react-native-skia",
       "platform": "github",
-      "source_url": "https://github.com/Shopify/react-native-skia",
-      "source_version": "c72569b3",
-      "content_hash": "fbfa20ead96b0f1b8c51423f7930b2c02b2a339bab1a5e1c848379963f98acd0",
-      "dossier_path": "07_PROJECT_LEARNING/shopify-react-native-skia-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/shopify-react-native-skia-learnings.md",
+      "source_url": "https://github.com/wcandillon/react-native-skia",
+      "source_version": "6da7ac20",
+      "content_hash": "3c210580124ce7a8b1c7aabff018ffac1c02553bdcb15ee23159eaf50983f10d",
+      "dossier_path": "07_PROJECT_LEARNING/wcandillon-react-native-skia-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/wcandillon-react-native-skia-learnings.md",
       "promoted_rules": [
         {
           "number": 8346,
           "title": "🐙): drop an e2e reply that comes after its request timed out",
           "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 8858,
+          "title": "🗿): pace a canvas's frames with one scheduler, and hold a present for the GPU o",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -224976,7 +224981,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T06:57:00.837Z",
+      "verified_at": "2026-11-17T03:41:58.844Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -225015,25 +225020,25 @@
       "item_id": "domain_intelligence-technical-construction-intelligence-wcandillon-react-native-skia-core-invariants",
       "artifact_type": "domain_intelligence",
       "target_folder": "05_KNOWLEDGE",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-shopify-react-native-skia-technical-construction-intelligence-wcandillon-react-n.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-wcandillon-react-native-skia-technical-construction-intelligence-wcandillon-reac.md",
       "title": "Technical Construction Intelligence: wcandillon/react-native-skia Core Invariants",
       "repository": "wcandillon/react-native-skia",
-      "source_version": "c72569b3",
-      "content_hash": "b03cfd8b53a042bf6bf747120a29716816348c1f569c53e9308032fcb125e72a",
+      "source_version": "6da7ac20",
+      "content_hash": "0cac70ca82a0df9cd5a5e3eb03cf677ffb2f08dce2260e509b04e0d413aa798e",
       "domain_letter": "H",
-      "persisted_at": "2026-11-14T06:57:01.139Z"
+      "persisted_at": "2026-11-17T03:41:59.277Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-wcandillon-react-native-skia": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-wcandillon-react-native-skia",
       "artifact_type": "verification_contract",
       "target_folder": "08_VERIFICATION",
-      "relative_path": "08_VERIFICATION/shopify-react-native-skia-verification-protocol-empirical-defect-shield-for-wcan.md",
+      "relative_path": "08_VERIFICATION/wcandillon-react-native-skia-verification-protocol-empirical-defect-shield-for-w.md",
       "title": "Verification Protocol: Empirical Defect Shield for wcandillon/react-native-skia",
       "repository": "wcandillon/react-native-skia",
-      "source_version": "c72569b3",
-      "content_hash": "a7e8438ac504a01cfd1962f7f71838ea0af05587e44c6459e32aca601f2a3283",
+      "source_version": "6da7ac20",
+      "content_hash": "2454926b99a8b8045ae8c7fc90b58d50209dd7cc3895c489bfcf92dc50f922b5",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T06:57:01.215Z"
+      "persisted_at": "2026-11-17T03:41:59.382Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-edge0-edge0-145b-nvfp4-learnings-core-invaria": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-edge0-edge0-145b-nvfp4-learnings-core-invaria",
@@ -243555,14 +243560,19 @@
       "slug": "nasiko-labs-nasiko",
       "platform": "github",
       "source_url": "https://github.com/Nasiko-Labs/nasiko",
-      "source_version": "0ec91fb2",
-      "content_hash": "ba1e71c66731667ae312eadf1eeaff065b0ae4386a8bf34b91dfdce5c5dd8d62",
+      "source_version": "97cd065e",
+      "content_hash": "608805c866d1de04412752e4804ecc30ebe5ad51882fdc332f1badb8dcfab55b",
       "dossier_path": "07_PROJECT_LEARNING/nasiko-labs-nasiko-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nasiko-labs-nasiko-learnings.md",
       "promoted_rules": [
         {
           "number": 8611,
           "title": "docs(readme): add stop, logs and rebuild commands, and the agent key note",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 8856,
+          "title": "show the setup guide's CLI steps on an empty Coding harnesses page",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -243571,7 +243581,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-15T11:40:24.154Z",
+      "verified_at": "2026-11-17T03:41:55.177Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -243613,10 +243623,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nasiko-labs-nasiko-architecture-intelligence-nasiko-labs-nasiko-core-invariants.md",
       "title": "Architecture Intelligence: Nasiko-Labs/nasiko Core Invariants",
       "repository": "Nasiko-Labs/nasiko",
-      "source_version": "0ec91fb2",
-      "content_hash": "427c56b9734f2364e4768670140f077ebb810a9adcb4850149fdb0fdb9f35e71",
+      "source_version": "97cd065e",
+      "content_hash": "0ff30743396ed008149ceeb4ed4165918b0c20d38666b87fcbf6ff96dd24c4d8",
       "domain_letter": "G",
-      "persisted_at": "2026-11-15T11:40:24.696Z"
+      "persisted_at": "2026-11-17T03:41:55.614Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nasiko-labs-nasiko": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nasiko-labs-nasiko",
@@ -243625,10 +243635,10 @@
       "relative_path": "08_VERIFICATION/nasiko-labs-nasiko-verification-protocol-empirical-defect-shield-for-nasiko-labs.md",
       "title": "Verification Protocol: Empirical Defect Shield for Nasiko-Labs/nasiko",
       "repository": "Nasiko-Labs/nasiko",
-      "source_version": "0ec91fb2",
-      "content_hash": "f8f7e50bb511bf4ca076726d013c59bc5ff3f212982a033f697090ce76b3d594",
+      "source_version": "97cd065e",
+      "content_hash": "09f32bef15e192713ef5559a9185afd76fd011ddfe6ae8f266dd2f50e530c6e0",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T11:40:24.837Z"
+      "persisted_at": "2026-11-17T03:41:55.721Z"
     },
     "domain_intelligence-architecture-intelligence-nasiko-labs-nasiko-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-nasiko-labs-nasiko-learnings-core-invariants",
@@ -243638,9 +243648,9 @@
       "title": "Architecture Intelligence: nasiko-labs-nasiko-learnings Core Invariants",
       "repository": "nasiko-labs-nasiko-learnings",
       "source_version": "HEAD",
-      "content_hash": "2cf0d3be21a4753ce26c877efcded5ceabb74ba62665a41a401ceecfae37399c",
+      "content_hash": "e646081bfd8a368ccf9e3995a0f4fd856e584f01b38c87062e87f1f9c5f3736d",
       "domain_letter": "G",
-      "persisted_at": "2026-11-15T11:40:33.265Z"
+      "persisted_at": "2026-11-17T03:42:03.298Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nasiko-labs-nasiko-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nasiko-labs-nasiko-learnings",
@@ -243650,9 +243660,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for nasiko-labs-nasiko-learnings",
       "repository": "nasiko-labs-nasiko-learnings",
       "source_version": "HEAD",
-      "content_hash": "6a29e4bc7da658e46b88059f0eccb0e868a612bd976b107111d144506daed2f1",
+      "content_hash": "3c21f349186142e6790341b16d977df93823011c9de64af1a88dd7e1086ea76e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T11:40:33.401Z"
+      "persisted_at": "2026-11-17T03:42:03.410Z"
     },
     "rule-8612": {
       "learning_id": "rule-8612",
@@ -262455,6 +262465,201 @@
       "content_hash": "731efd3c143c4620d86d5626a0455db52e6ec1fe7208de1072871ea7d4034db1",
       "domain_letter": "H",
       "persisted_at": "2026-11-17T03:34:24.935Z"
+    },
+    "rule-8856": {
+      "learning_id": "rule-8856",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8856,
+      "title": "show the setup guide's CLI steps on an empty Coding harnesses page",
+      "source_url": "https://github.com/Nasiko-Labs/nasiko",
+      "source_version": "97cd065e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T03:41:55.177Z"
+    },
+    "candidate_directive-show-the-setup-guide-s-cli-steps-on-an-empty-coding-harnesses-page": {
+      "item_id": "candidate_directive-show-the-setup-guide-s-cli-steps-on-an-empty-coding-harnesses-page",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-BRN6-show-the-setup-guide-s-cli-steps-on-an-empty-coding-harnesses-page.md",
+      "title": "show the setup guide's CLI steps on an empty Coding harnesses page",
+      "repository": "Nasiko-Labs/nasiko",
+      "source_version": "97cd065e",
+      "content_hash": "fef8df0dda5b3da0337f33d8ac23876faf2a828d6043ef387fbc1350b15358ec",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-17T03:41:55.509Z"
+    },
+    "learn-github-google-closure-compiler": {
+      "learning_id": "learn-github-google-closure-compiler",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "google/closure-compiler",
+      "repository": "google/closure-compiler",
+      "slug": "google-closure-compiler",
+      "platform": "github",
+      "source_url": "https://github.com/google/closure-compiler",
+      "source_version": "030d049b",
+      "content_hash": "861d89f66afa2b8ee9d8a1b152388517156908ac0eddc35196b932f9e40228e8",
+      "dossier_path": "07_PROJECT_LEARNING/google-closure-compiler-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/google-closure-compiler-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8857,
+          "title": "Supply a temporary debug log directory in InlineFunctionsTest.",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-17T03:41:56.420Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8857": {
+      "learning_id": "rule-8857",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8857,
+      "title": "Supply a temporary debug log directory in InlineFunctionsTest.",
+      "source_url": "https://github.com/google/closure-compiler",
+      "source_version": "030d049b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T03:41:56.420Z"
+    },
+    "candidate_directive-supply-a-temporary-debug-log-directory-in-inlinefunctionstest": {
+      "item_id": "candidate_directive-supply-a-temporary-debug-log-directory-in-inlinefunctionstest",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-BY4V-supply-a-temporary-debug-log-directory-in-inlinefunctionstest.md",
+      "title": "Supply a temporary debug log directory in InlineFunctionsTest.",
+      "repository": "google-closure-compiler-learnings",
+      "source_version": "HEAD",
+      "content_hash": "36a2238d7dcbe10e851068ee79ce4ffcf37e2edc4f6eae1f878f444b4ebd810f",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T03:42:03.922Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-google-closure-compiler-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-google-closure-compiler-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-google-closure-compiler-technical-construction-intelligence-google-closure-compi.md",
+      "title": "Technical Construction Intelligence: google/closure-compiler Core Invariants",
+      "repository": "google/closure-compiler",
+      "source_version": "030d049b",
+      "content_hash": "47e24e618f8b81564d5025b7ae2bd33a217bb9a1102615f3e8dd9db2165e7479",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T03:41:56.844Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-google-closure-compiler": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-google-closure-compiler",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/google-closure-compiler-verification-protocol-empirical-defect-shield-for-google.md",
+      "title": "Verification Protocol: Empirical Defect Shield for google/closure-compiler",
+      "repository": "google/closure-compiler",
+      "source_version": "030d049b",
+      "content_hash": "7e9574bd9b3e2bde24a7139ee1254e09a14c3d023d8b118b5f3d2e93e7692ec1",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T03:41:56.950Z"
+    },
+    "rule-8858": {
+      "learning_id": "rule-8858",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8858,
+      "title": "🗿): pace a canvas's frames with one scheduler, and hold a present for the GPU o",
+      "source_url": "https://github.com/wcandillon/react-native-skia",
+      "source_version": "6da7ac20",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T03:41:58.844Z"
+    },
+    "candidate_directive-pace-a-canvas-s-frames-with-one-scheduler-and-hold-a-present-for-the-gpu-o": {
+      "item_id": "candidate_directive-pace-a-canvas-s-frames-with-one-scheduler-and-hold-a-present-for-the-gpu-o",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-CI2K-pace-a-canvas-s-frames-with-one-scheduler-and-hold-a-present-for-the-gpu-o.md",
+      "title": "🗿): pace a canvas's frames with one scheduler, and hold a present for the GPU o",
+      "repository": "wcandillon-react-native-skia-learnings",
+      "source_version": "HEAD",
+      "content_hash": "3396312d0e654e1264c730450b5c77b7c57cc5316afdeea0d5df5ce071de1f51",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T03:42:29.762Z"
+    },
+    "candidate_directive-ui-show-the-setup-guide-s-cli-steps-on-an-empty-coding-harnesses-page": {
+      "item_id": "candidate_directive-ui-show-the-setup-guide-s-cli-steps-on-an-empty-coding-harnesses-page",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-BXKG-ui-show-the-setup-guide-s-cli-steps-on-an-empty-coding-harnesses-page.md",
+      "title": "ui): show the setup guide's CLI steps on an empty Coding harnesses page",
+      "repository": "nasiko-labs-nasiko-learnings",
+      "source_version": "HEAD",
+      "content_hash": "019741174310b636ab4c442bddd9948f7f275022e54a8a9e53c0edf541399826",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-17T03:42:03.188Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-google-closure-compiler-learnings-core-invar": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-google-closure-compiler-learnings-core-invar",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-google-closure-compiler-learnings-technical-construction-intelligence-google-clo.md",
+      "title": "Technical Construction Intelligence: google-closure-compiler-learnings Core Invariants",
+      "repository": "google-closure-compiler-learnings",
+      "source_version": "HEAD",
+      "content_hash": "a0de504896f696ac56435fb43d0586d57cee61c85845b746c8e4f594d83df7ff",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T03:42:04.028Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-google-closure-compiler-learni": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-google-closure-compiler-learni",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/google-closure-compiler-learnings-verification-protocol-empirical-defect-shield-.md",
+      "title": "Verification Protocol: Empirical Defect Shield for google-closure-compiler-learnings",
+      "repository": "google-closure-compiler-learnings",
+      "source_version": "HEAD",
+      "content_hash": "2c8a79a5cdd969ab658391c6fa7de5d0403cb1df9010c1d322ec931817d02509",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T03:42:04.136Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-wcandillon-react-native-skia-learnings-core-": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-wcandillon-react-native-skia-learnings-core-",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-wcandillon-react-native-skia-learnings-technical-construction-intelligence-wcand.md",
+      "title": "Technical Construction Intelligence: wcandillon-react-native-skia-learnings Core Invariants",
+      "repository": "wcandillon-react-native-skia-learnings",
+      "source_version": "HEAD",
+      "content_hash": "f2f1216b581f7451a23be41af67677593f8e3a3a3e66f4d8c7492a7826cc62f4",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T03:42:29.872Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-wcandillon-react-native-skia-l": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-wcandillon-react-native-skia-l",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/wcandillon-react-native-skia-learnings-verification-protocol-empirical-defect-sh.md",
+      "title": "Verification Protocol: Empirical Defect Shield for wcandillon-react-native-skia-learnings",
+      "repository": "wcandillon-react-native-skia-learnings",
+      "source_version": "HEAD",
+      "content_hash": "f43a945fbc07ae2b8c6650dd298e1f4ba25f0d57fe44bc73d65985f75658ec39",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T03:42:29.988Z"
     }
   },
   "ai-builder-brain": {

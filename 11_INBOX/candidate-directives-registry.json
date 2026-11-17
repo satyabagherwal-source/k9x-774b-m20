@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T03:34:24.935Z",
+  "last_updated": "2026-11-17T03:42:29.762Z",
   "directives": [
     {
       "id": "CD-001",
@@ -21714,6 +21714,59 @@
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-17",
       "domain_letter": "H"
+    },
+    {
+      "id": "CD-BRN6",
+      "directive_title": "show the setup guide's CLI steps on an empty Coding harnesses page",
+      "source_repo": "Nasiko-Labs/nasiko",
+      "source_commit": "97cd065e",
+      "staged_file": "11_INBOX/candidate-directives/CD-BRN6-show-the-setup-guide-s-cli-steps-on-an-empty-coding-harnesses-page.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-17",
+      "domain_letter": "I"
+    },
+    {
+      "id": "CD-BY4V",
+      "directive_title": "Supply a temporary debug log directory in InlineFunctionsTest.",
+      "source_repo": "google-closure-compiler-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-BY4V-supply-a-temporary-debug-log-directory-in-inlinefunctionstest.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-17",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-CI2K",
+      "directive_title": "🗿): pace a canvas's frames with one scheduler, and hold a present for the GPU o",
+      "source_repo": "wcandillon-react-native-skia-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-CI2K-pace-a-canvas-s-frames-with-one-scheduler-and-hold-a-present-for-the-gpu-o.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-17",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-BXKG",
+      "directive_title": "ui): show the setup guide's CLI steps on an empty Coding harnesses page",
+      "source_repo": "nasiko-labs-nasiko-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-BXKG-ui-show-the-setup-guide-s-cli-steps-on-an-empty-coding-harnesses-page.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-17",
+      "domain_letter": "I"
+    },
+    {
+      "id": "CD-REV-CC85C7",
+      "directive_title": "Supply a temporary debug log directory in InlineFunctionsTest.",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "google-closure-compiler",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-CC85C7-supply-a-temporary-debug-log-directory-i.md",
+      "staged_date": "2026-11-17"
     }
   ]
 }

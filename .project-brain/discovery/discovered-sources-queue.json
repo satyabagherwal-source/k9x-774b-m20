@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-17T03:26:27.706Z",
+  "updated_at": "2026-11-17T03:42:03.759Z",
   "stats": {
-    "total_discovered": 4666,
-    "approved_pending_harvest": 4396,
+    "total_discovered": 4669,
+    "approved_pending_harvest": 4399,
     "harvested_count": 0,
     "rejected_count": 270,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 4392,
+      "COMMUNITY_AND_EXPERT": 4395,
       "OFFICIAL_DOCUMENTATION": 146,
       "STANDARDS_AND_SPECIFICATIONS": 100,
       "ENGINEERING_BLOGS": 3,
@@ -100783,6 +100783,72 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/skyhook-io-radar-learnings.md",
         "fileName": "skyhook-io-radar-learnings.md"
+      }
+    },
+    "SRC-1497010DB15A": {
+      "id": "SRC-1497010DB15A",
+      "url": "https://registry.nasiko.com/r/nasiko/install",
+      "title": "https://registry.nasiko.com/r/nasiko/install",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T03:42:02.998Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nasiko-labs-nasiko-learnings.md",
+        "fileName": "nasiko-labs-nasiko-learnings.md"
+      }
+    },
+    "SRC-7D877161B220": {
+      "id": "SRC-7D877161B220",
+      "url": "https://github.com/google/closure-compiler/actions/workflows/run_tests.yaml",
+      "title": "https://github.com/google/closure-compiler/actions/workflows/run_tests.yaml",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T03:42:03.733Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/google-closure-compiler-learnings.md",
+        "fileName": "google-closure-compiler-learnings.md"
+      }
+    },
+    "SRC-250BA80FDFB4": {
+      "id": "SRC-250BA80FDFB4",
+      "url": "https://github.com/google/closure-compiler/actions/runs/43485582868",
+      "title": "https://github.com/google/closure-compiler/actions/runs/43485582868",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T03:42:03.759Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/google-closure-compiler-learnings.md",
+        "fileName": "google-closure-compiler-learnings.md"
       }
     }
   }
