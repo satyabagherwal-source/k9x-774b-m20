@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-17T06:36:12.342Z",
-  "total_records": 1461,
+  "last_updated": "2026-11-17T06:47:46.823Z",
+  "total_records": 1465,
   "domains": {
     "A": {
       "total": 9,
@@ -718,7 +718,7 @@
       ]
     },
     "G": {
-      "total": 273,
+      "total": 275,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -992,11 +992,13 @@
         "domain_intelligence-architecture-intelligence-gluesql-gluesql-core-invariants",
         "domain_intelligence-architecture-intelligence-gluesql-gluesql-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-webdriverio-webdriverio-core-invariants",
-        "domain_intelligence-architecture-intelligence-webdriverio-webdriverio-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-webdriverio-webdriverio-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-mdiri-ai-soduwork-core-invariants",
+        "domain_intelligence-architecture-intelligence-mdiri-ai-soduwork-learnings-core-invariants"
       ]
     },
     "H": {
-      "total": 337,
+      "total": 339,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1334,7 +1336,9 @@
         "domain_intelligence-technical-construction-intelligence-tanstack-query-core-invariants",
         "domain_intelligence-technical-construction-intelligence-tanstack-query-learnings-core-invariants",
         "domain_intelligence-technical-construction-intelligence-qwikdev-qwik-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-qwikdev-qwik-learnings-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-qwikdev-qwik-learnings-core-invariants",
+        "DOM-H-B6148692",
+        "domain_intelligence-technical-construction-intelligence-react-react-native-learnings-core-invariants"
       ]
     },
     "I": {
@@ -8410,8 +8414,8 @@
       "title": "Technical Construction Intelligence: react/react-native Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-react-react-native-technical-construction-intelligence-react-react-native-core-i.md",
       "repository": "react/react-native",
-      "content_hash": "4f9f3cc43cf05563e811ad758a2e94d33937c63b32eb3596bcf2b4ceb1df96d5",
-      "created_at": "2026-11-13T17:37:39.750Z"
+      "content_hash": "f9d67eddfdd8acde8a332113d9b176cb88f1b22f5afd16b2847389c35a244a7c",
+      "created_at": "2026-11-17T06:47:10.957Z"
     },
     "domain_intelligence-architecture-intelligence-mixelpixx-kicad-mcp-server-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-mixelpixx-kicad-mcp-server-learnings-core-invariants",
@@ -14252,8 +14256,8 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-bootsplash-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zoontek-react-native-bootsplash-learnings-technical-construction-intelligence-zo.md",
       "repository": "zoontek-react-native-bootsplash-learnings",
-      "content_hash": "9397f71716b566b4f2904587d4502aff155a4a0b4f47127110b28261836f2715",
-      "created_at": "2026-11-17T06:36:12.342Z"
+      "content_hash": "131b4cec6d0c8a2e4250fee2cd486e02798eb0b9e874293698c130b1a32db484",
+      "created_at": "2026-11-17T06:47:46.823Z"
     },
     "domain_intelligence-technical-construction-intelligence-onehumanbeing-esp32-iphone-agent-core-invari": {
       "record_id": "domain_intelligence-technical-construction-intelligence-onehumanbeing-esp32-iphone-agent-core-invari",
@@ -25470,6 +25474,75 @@
       "repository": "webdriverio-webdriverio-learnings",
       "content_hash": "761e9744d8e7943b2e7967d4b643733acb11fa4fe4adaa9af35fe1b6864953e1",
       "created_at": "2026-11-17T06:36:11.139Z"
+    },
+    "domain_intelligence-architecture-intelligence-mdiri-ai-soduwork-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-mdiri-ai-soduwork-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: mdiri-ai/SoduWork Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-mdiri-ai-soduwork-architecture-intelligence-mdiri-ai-soduwork-core-invariants.md",
+      "repository": "mdiri-ai/SoduWork",
+      "content_hash": "498afa953da04333ddeb17ef2b36ffa8e8f98de52a030ad6061c804a158eb1c4",
+      "created_at": "2026-11-17T06:47:01.058Z"
+    },
+    "domain_intelligence-architecture-intelligence-mdiri-ai-soduwork-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-mdiri-ai-soduwork-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: mdiri-ai-soduwork-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-mdiri-ai-soduwork-learnings-architecture-intelligence-mdiri-ai-soduwork-learning.md",
+      "repository": "mdiri-ai-soduwork-learnings",
+      "content_hash": "9b533c5041731032cc9d1b837393cd18ec1ed5c1652f7d04b7ab90cc608f819a",
+      "created_at": "2026-11-17T06:47:16.719Z"
+    },
+    "DOM-H-B6148692": {
+      "record_id": "DOM-H-B6148692",
+      "domain_letter": "H",
+      "domain_id": "technical_construction",
+      "domain_name": "Technical Construction Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "H",
+          "id": "technical_construction",
+          "name": "Technical Construction Intelligence"
+        }
+      ],
+      "title": "TextInput state retain chain in AndroidTextInputShadowNode",
+      "content": "When implementing operations in `packages/react-native/ReactCommon/react/renderer/components/textinput/platform/android/react/renderer/components/androidtextinput/AndroidTextInputShadowNode.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in react/react-native. All inputs crossing module boundaries must be explicitly verified before state persistence.",
+      "content_hash": "a01e4912e68213ce7037f638ef02788f978e25f25e24ba11072b62378d87f105",
+      "summary": "Prevents defects observed in production commit `fb07ea35`: TextInput state retain chain in AndroidTextInputShadowNode. Unvalidated execution -> When implementing operations in `packages/react-native/ReactCommon/react/renderer/components/textinput/platform/android/react/renderer/compo",
+      "provenance": {
+        "source_uri": "project://react-react-native/react-react-native-learnings.md",
+        "source_version": "c1acb2bd",
+        "observed_at": "2026-11-17T06:47:09.768Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (react-react-native)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of react-react-native"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "H"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-17T06:47:45.465Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-react-react-native-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-react-react-native-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: react-react-native-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-react-react-native-learnings-technical-construction-intelligence-react-react-nat.md",
+      "repository": "react-react-native-learnings",
+      "content_hash": "97591b7598248db58dc349bde1dc5fb726c6e65947e1ecf7aafe1c1ace378fea",
+      "created_at": "2026-11-17T06:47:46.154Z"
     }
   }
 }

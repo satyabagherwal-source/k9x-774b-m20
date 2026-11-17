@@ -10273,10 +10273,10 @@
     "repository": "react/react-native",
     "platform": "github",
     "sourceUrl": "https://github.com/react/react-native",
-    "sourceVersion": "649c1054",
+    "sourceVersion": "c1acb2bd",
     "license": "MIT",
-    "contentHash": "f7f53d4a92194273686ce08c4d1407d74c26e4d4a9941befb60d4574765b2ae5",
-    "lastHarvestedAt": "2026-11-13T17:37:39.546Z",
+    "contentHash": "6ba781c2ffb21d5d689003f24ce4427f5a8d82ef493344ed53d8e2b318185e2d",
+    "lastHarvestedAt": "2026-11-17T06:47:10.658Z",
     "learningId": "learn-github-react-react-native"
   },
   "faker-js-faker": {
@@ -12728,5 +12728,15 @@
     "contentHash": "881024c9266959d0ab398fca49d0ec152cd8d704c1e5833003944c05f2d31fa2",
     "lastHarvestedAt": "2026-11-16T18:01:43.724Z",
     "learningId": "learn-github-yazinsai-openoats"
+  },
+  "mdiri-ai-soduwork": {
+    "repository": "mdiri-ai/SoduWork",
+    "platform": "github",
+    "sourceUrl": "https://github.com/mdiri-ai/SoduWork",
+    "sourceVersion": "c3487b97",
+    "license": "MIT",
+    "contentHash": "17dffa20af8991643068f9b147d57429e9c49848c8260ed08ba0988f4a950a1d",
+    "lastHarvestedAt": "2026-11-17T06:47:00.725Z",
+    "learningId": "learn-github-mdiri-ai-soduwork"
   }
 }

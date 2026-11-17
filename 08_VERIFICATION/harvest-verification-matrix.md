@@ -10466,3 +10466,6 @@
 | `CYCLE-20261117-A0HB` | `2026-11-17T06:28:31.343Z` | `gluesql/gluesql` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8892` | Yes (`9a410d07...`) |
 | `CYCLE-20261117-JOCR` | `2026-11-17T06:36:02.187Z` | `webdriverio/webdriverio` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8893` | Yes (`9de65f89...`) |
 | `CYCLE-20261117-JR3H` | `2026-11-17T06:36:05.741Z` | `kirillzyusko/react-native-keyboard-controller` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8894` | Yes (`55208439...`) |
+| `CYCLE-20261117-XSHD` | `2026-11-17T06:47:00.721Z` | `mdiri-ai/SoduWork` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8895` | Yes (`17dffa20...`) |
+| `CYCLE-20261117-Y059` | `2026-11-17T06:47:10.653Z` | `react/react-native` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8896` | Yes (`6ba781c2...`) |
+| `CYCLE-2026-11-17-PROJ-EVOLVE` | `2026-11-17T06:47:45.491Z` | `react-react-native` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-B6148692` [Domain H] | Yes (`a01e4912...`) |

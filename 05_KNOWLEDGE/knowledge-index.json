@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-17T06:36:12.462Z",
-  "total_verified_learnings": 8857,
+  "last_updated": "2026-11-17T06:47:46.961Z",
+  "total_verified_learnings": 8859,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 19870,
+  "total_items": 19886,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -114073,10 +114073,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-react-react-native-technical-construction-intelligence-react-react-native-core-i.md",
       "title": "Technical Construction Intelligence: react/react-native Core Invariants",
       "repository": "react/react-native",
-      "source_version": "649c1054",
-      "content_hash": "4f9f3cc43cf05563e811ad758a2e94d33937c63b32eb3596bcf2b4ceb1df96d5",
+      "source_version": "c1acb2bd",
+      "content_hash": "f9d67eddfdd8acde8a332113d9b176cb88f1b22f5afd16b2847389c35a244a7c",
       "domain_letter": "H",
-      "persisted_at": "2026-11-13T17:37:39.750Z"
+      "persisted_at": "2026-11-17T06:47:10.957Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-react-react-native": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-react-react-native",
@@ -114085,10 +114085,10 @@
       "relative_path": "08_VERIFICATION/react-react-native-verification-protocol-empirical-defect-shield-for-react-react.md",
       "title": "Verification Protocol: Empirical Defect Shield for react/react-native",
       "repository": "react/react-native",
-      "source_version": "649c1054",
-      "content_hash": "6a569584c039ce59a09309743dabb897ca55d3ad7155a925e0d5a95d6c802cbc",
+      "source_version": "c1acb2bd",
+      "content_hash": "e5699767dd694eef2829e10399199043b4afdf191dbdd043b1ced85f28d2e688",
       "domain_letter": "K",
-      "persisted_at": "2026-11-13T17:37:39.827Z"
+      "persisted_at": "2026-11-17T06:47:11.075Z"
     },
     "domain_intelligence-architecture-intelligence-mixelpixx-kicad-mcp-server-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-mixelpixx-kicad-mcp-server-learnings-core-invariants",
@@ -226934,13 +226934,13 @@
       "item_id": "candidate_directive-splash-screen-staying-visible-after-warm-start-on-android-12",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-JW3K-splash-screen-staying-visible-after-warm-start-on-android-12.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-YRYL-splash-screen-staying-visible-after-warm-start-on-android-12.md",
       "title": "splash screen staying visible after warm start on Android 12+",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "eb974bdc28e2df8577c58ac8f964364c2fc9ba8570eeded718679a5d343d866e",
+      "content_hash": "98d2b2f2e007e53975a1d1a358dfa3da33a452b97d6486eab73095f62570dd5e",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T06:36:12.225Z"
+      "persisted_at": "2026-11-17T06:47:46.701Z"
     },
     "domain_intelligence-technical-construction-intelligence-zoontek-react-native-bootsplash-learnings-co": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-bootsplash-learnings-co",
@@ -226950,9 +226950,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-bootsplash-learnings Core Invariants",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "9397f71716b566b4f2904587d4502aff155a4a0b4f47127110b28261836f2715",
+      "content_hash": "131b4cec6d0c8a2e4250fee2cd486e02798eb0b9e874293698c130b1a32db484",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T06:36:12.342Z"
+      "persisted_at": "2026-11-17T06:47:46.823Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-bootsplas": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-bootsplas",
@@ -226962,9 +226962,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-bootsplash-learnings",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "e17fb21258fffa0dc6373b9244211532c3ab1a0a3071f44b0dc4c979b59a9dba",
+      "content_hash": "6314fbdb13115215b7bba65f4093c0af740e0be923911c40fa5808a97e837ab5",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T06:36:12.462Z"
+      "persisted_at": "2026-11-17T06:47:46.961Z"
     },
     "learn-github-onehumanbeing-esp32-iphone-agent": {
       "learning_id": "learn-github-onehumanbeing-esp32-iphone-agent",
@@ -265553,6 +265553,244 @@
       "content_hash": "16e9042f05ee3be013c358bc66ec482de17586a6b708984c76e62ec46c882dde",
       "domain_letter": "K",
       "persisted_at": "2026-11-17T06:36:11.258Z"
+    },
+    "learn-github-mdiri-ai-soduwork": {
+      "learning_id": "learn-github-mdiri-ai-soduwork",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "mdiri-ai/SoduWork",
+      "repository": "mdiri-ai/SoduWork",
+      "slug": "mdiri-ai-soduwork",
+      "platform": "github",
+      "source_url": "https://github.com/mdiri-ai/SoduWork",
+      "source_version": "c3487b97",
+      "content_hash": "17dffa20af8991643068f9b147d57429e9c49848c8260ed08ba0988f4a950a1d",
+      "dossier_path": "07_PROJECT_LEARNING/mdiri-ai-soduwork-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/mdiri-ai-soduwork-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8895,
+          "title": "Empirical Invariant Guard in workspace-chat-list.js",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-17T06:47:00.548Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8895": {
+      "learning_id": "rule-8895",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8895,
+      "title": "Empirical Invariant Guard in workspace-chat-list.js",
+      "source_url": "https://github.com/mdiri-ai/SoduWork",
+      "source_version": "c3487b97",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T06:47:00.548Z"
+    },
+    "candidate_directive-empirical-invariant-guard-in-workspace-chat-list-js": {
+      "item_id": "candidate_directive-empirical-invariant-guard-in-workspace-chat-list-js",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-Y4QF-empirical-invariant-guard-in-workspace-chat-list-js.md",
+      "title": "Empirical Invariant Guard in workspace-chat-list.js",
+      "repository": "mdiri-ai-soduwork-learnings",
+      "source_version": "HEAD",
+      "content_hash": "5df1602b26cfc4ac6b0a614970d5243fa96cefd10b5a821a23c5220bd0a06ce8",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-17T06:47:16.603Z"
+    },
+    "domain_intelligence-architecture-intelligence-mdiri-ai-soduwork-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-mdiri-ai-soduwork-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-mdiri-ai-soduwork-architecture-intelligence-mdiri-ai-soduwork-core-invariants.md",
+      "title": "Architecture Intelligence: mdiri-ai/SoduWork Core Invariants",
+      "repository": "mdiri-ai/SoduWork",
+      "source_version": "c3487b97",
+      "content_hash": "498afa953da04333ddeb17ef2b36ffa8e8f98de52a030ad6061c804a158eb1c4",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-17T06:47:01.058Z"
+    },
+    "skill_playbook-skill-operational-integration-playbook-for-mdiri-ai-soduwork": {
+      "item_id": "skill_playbook-skill-operational-integration-playbook-for-mdiri-ai-soduwork",
+      "artifact_type": "skill_playbook",
+      "target_folder": "03_SKILLS",
+      "relative_path": "03_SKILLS/mdiri-ai-soduwork-skill-operational-integration-playbook-for-mdiri-ai-soduwork.md",
+      "title": "Skill: Operational & Integration Playbook for mdiri-ai/SoduWork",
+      "repository": "mdiri-ai/SoduWork",
+      "source_version": "c3487b97",
+      "content_hash": "42479026d0dd3ba158928ce7a747df4e5ec09435234d233a7d757fcb638351d1",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-17T06:47:01.181Z"
+    },
+    "agent_contract-agent-contract-mdiri-ai-soduwork-autonomous-specialist-persona": {
+      "item_id": "agent_contract-agent-contract-mdiri-ai-soduwork-autonomous-specialist-persona",
+      "artifact_type": "agent_contract",
+      "target_folder": "02_AGENT_INTELLIGENCE",
+      "relative_path": "02_AGENT_INTELLIGENCE/mdiri-ai-soduwork-agent-contract-mdiri-ai-soduwork-autonomous-specialist-persona.md",
+      "title": "Agent Contract: mdiri-ai/SoduWork Autonomous Specialist Persona",
+      "repository": "mdiri-ai/SoduWork",
+      "source_version": "c3487b97",
+      "content_hash": "92903fd1725000797d067d10abb65e197f287fe7c2f5219e56c5342fd2f77350",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-17T06:47:01.292Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-mdiri-ai-soduwork": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-mdiri-ai-soduwork",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/mdiri-ai-soduwork-verification-protocol-empirical-defect-shield-for-mdiri-ai-sod.md",
+      "title": "Verification Protocol: Empirical Defect Shield for mdiri-ai/SoduWork",
+      "repository": "mdiri-ai/SoduWork",
+      "source_version": "c3487b97",
+      "content_hash": "36d90c0e070aecafe2087dff5ab91a1e8bf60d208276c0e4e5c61c080cb01f62",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T06:47:01.403Z"
+    },
+    "learn-github-react-react-native": {
+      "learning_id": "learn-github-react-react-native",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "react/react-native",
+      "repository": "react/react-native",
+      "slug": "react-react-native",
+      "platform": "github",
+      "source_url": "https://github.com/react/react-native",
+      "source_version": "c1acb2bd",
+      "content_hash": "6ba781c2ffb21d5d689003f24ce4427f5a8d82ef493344ed53d8e2b318185e2d",
+      "dossier_path": "07_PROJECT_LEARNING/react-react-native-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/react-react-native-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8896,
+          "title": "TextInput state retain chain in AndroidTextInputShadowNode",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-17T06:47:10.487Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-8896": {
+      "learning_id": "rule-8896",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 8896,
+      "title": "TextInput state retain chain in AndroidTextInputShadowNode",
+      "source_url": "https://github.com/react/react-native",
+      "source_version": "c1acb2bd",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-17T06:47:10.487Z"
+    },
+    "candidate_directive-textinput-state-retain-chain-in-androidtextinputshadownode": {
+      "item_id": "candidate_directive-textinput-state-retain-chain-in-androidtextinputshadownode",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-YRFR-textinput-state-retain-chain-in-androidtextinputshadownode.md",
+      "title": "TextInput state retain chain in AndroidTextInputShadowNode",
+      "repository": "react-react-native-learnings",
+      "source_version": "HEAD",
+      "content_hash": "a8bf969aed33c1d6a7c14ed65854e405392f8e0ba0c7ee301243c0e43c64099c",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-17T06:47:46.023Z"
+    },
+    "domain_intelligence-architecture-intelligence-mdiri-ai-soduwork-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-mdiri-ai-soduwork-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-mdiri-ai-soduwork-learnings-architecture-intelligence-mdiri-ai-soduwork-learning.md",
+      "title": "Architecture Intelligence: mdiri-ai-soduwork-learnings Core Invariants",
+      "repository": "mdiri-ai-soduwork-learnings",
+      "source_version": "HEAD",
+      "content_hash": "9b533c5041731032cc9d1b837393cd18ec1ed5c1652f7d04b7ab90cc608f819a",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-17T06:47:16.719Z"
+    },
+    "skill_playbook-skill-operational-integration-playbook-for-mdiri-ai-soduwork-learnings": {
+      "item_id": "skill_playbook-skill-operational-integration-playbook-for-mdiri-ai-soduwork-learnings",
+      "artifact_type": "skill_playbook",
+      "target_folder": "03_SKILLS",
+      "relative_path": "03_SKILLS/mdiri-ai-soduwork-learnings-skill-operational-integration-playbook-for-mdiri-ai-.md",
+      "title": "Skill: Operational & Integration Playbook for mdiri-ai-soduwork-learnings",
+      "repository": "mdiri-ai-soduwork-learnings",
+      "source_version": "HEAD",
+      "content_hash": "cae69458718dd966e931f3fe013cd1a9019c382f0a41c2f1f63135d532ea314f",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-17T06:47:16.838Z"
+    },
+    "agent_contract-agent-contract-mdiri-ai-soduwork-learnings-autonomous-specialist-persona": {
+      "item_id": "agent_contract-agent-contract-mdiri-ai-soduwork-learnings-autonomous-specialist-persona",
+      "artifact_type": "agent_contract",
+      "target_folder": "02_AGENT_INTELLIGENCE",
+      "relative_path": "02_AGENT_INTELLIGENCE/mdiri-ai-soduwork-learnings-agent-contract-mdiri-ai-soduwork-learnings-autonomou.md",
+      "title": "Agent Contract: mdiri-ai-soduwork-learnings Autonomous Specialist Persona",
+      "repository": "mdiri-ai-soduwork-learnings",
+      "source_version": "HEAD",
+      "content_hash": "d74c8ce1616320456d92ea7da4508968dc8d0068b91244ae3f01025d63051e22",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-17T06:47:16.949Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-mdiri-ai-soduwork-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-mdiri-ai-soduwork-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/mdiri-ai-soduwork-learnings-verification-protocol-empirical-defect-shield-for-md.md",
+      "title": "Verification Protocol: Empirical Defect Shield for mdiri-ai-soduwork-learnings",
+      "repository": "mdiri-ai-soduwork-learnings",
+      "source_version": "HEAD",
+      "content_hash": "bd39d650acaf70b5ca162816110456229deebf47a340c740e89841d1cc25c7ee",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T06:47:17.062Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-react-react-native-learnings-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-react-react-native-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-react-react-native-learnings-technical-construction-intelligence-react-react-nat.md",
+      "title": "Technical Construction Intelligence: react-react-native-learnings Core Invariants",
+      "repository": "react-react-native-learnings",
+      "source_version": "HEAD",
+      "content_hash": "97591b7598248db58dc349bde1dc5fb726c6e65947e1ecf7aafe1c1ace378fea",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-17T06:47:46.154Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-react-react-native-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-react-react-native-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/react-react-native-learnings-verification-protocol-empirical-defect-shield-for-r.md",
+      "title": "Verification Protocol: Empirical Defect Shield for react-react-native-learnings",
+      "repository": "react-react-native-learnings",
+      "source_version": "HEAD",
+      "content_hash": "edd85d117f1e73e9d9827821fe2e267a283e07a7396d32686ac97adede059bcc",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-17T06:47:46.289Z"
     }
   },
   "ai-builder-brain": {

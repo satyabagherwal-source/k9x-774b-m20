@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-17T06:36:05.753Z",
+  "last_updated": "2026-11-17T06:47:10.666Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -15426,14 +15426,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-react-react-native",
-      "content_hash": "f7f53d4a92194273686ce08c4d1407d74c26e4d4a9941befb60d4574765b2ae5",
-      "verified_at": "2026-11-13T17:37:39.557Z",
+      "content_hash": "6ba781c2ffb21d5d689003f24ce4427f5a8d82ef493344ed53d8e2b318185e2d",
+      "verified_at": "2026-11-17T06:47:10.665Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T17:37:39.557Z"
+      "last_updated": "2026-11-17T06:47:10.665Z"
     },
     "faker-js/faker": {
       "repository": "faker-js/faker",
@@ -19184,6 +19184,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-16T18:01:43.731Z"
+    },
+    "mdiri-ai/SoduWork": {
+      "repository": "mdiri-ai/SoduWork",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-mdiri-ai-soduwork",
+      "content_hash": "17dffa20af8991643068f9b147d57429e9c49848c8260ed08ba0988f4a950a1d",
+      "verified_at": "2026-11-17T06:47:00.733Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-17T06:47:00.733Z"
     }
   },
   "repos": {

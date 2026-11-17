@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-17T06:36:10.307Z",
-    "lastVerified": "2026-11-17T06:36:10.307Z",
+    "lastChecked": "2026-11-17T06:47:15.917Z",
+    "lastVerified": "2026-11-17T06:47:15.917Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -85,14 +85,14 @@
     "officialUrl": "https://github.com/react/react-native",
     "sourceType": "github",
     "technology": "C++",
-    "lastChecked": "2026-11-13T17:37:39.084Z",
-    "lastVerified": "2026-11-13T17:37:39.084Z",
+    "lastChecked": "2026-11-17T06:47:09.763Z",
+    "lastVerified": "2026-11-17T06:47:09.763Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-react-react-native",
-    "contentHash": "f7f53d4a92194273686ce08c4d1407d74c26e4d4a9941befb60d4574765b2ae5",
+    "contentHash": "6ba781c2ffb21d5d689003f24ce4427f5a8d82ef493344ed53d8e2b318185e2d",
     "promotedRulesCount": 1,
-    "recentFixesCount": 8,
+    "recentFixesCount": 4,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -231,9 +231,9 @@
   "microsoft-security-101": {
     "name": "Security-101",
     "officialUrl": "https://github.com/microsoft/Security-101",
-    "lastChecked": "2026-11-17T01:33:58.257Z",
+    "lastChecked": "2026-11-17T06:47:10.977Z",
     "revisionIdentifier": "b0a31ff7",
-    "lastVerified": "2026-11-17T01:33:58.257Z"
+    "lastVerified": "2026-11-17T06:47:10.977Z"
   },
   "meilisearch-meilisearch": {
     "name": "meilisearch/meilisearch",
@@ -257,8 +257,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-17T06:10:00.906Z",
-    "lastVerified": "2026-11-17T06:10:00.906Z",
+    "lastChecked": "2026-11-17T06:47:15.909Z",
+    "lastVerified": "2026-11-17T06:47:15.909Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -4827,9 +4827,9 @@
   "sealerio-sealer": {
     "name": "sealer",
     "officialUrl": "https://github.com/sealerio/sealer",
-    "lastChecked": "2026-11-16T00:27:51.398Z",
+    "lastChecked": "2026-11-17T06:47:08.453Z",
     "revisionIdentifier": "e426153a",
-    "lastVerified": "2026-11-16T00:27:51.398Z"
+    "lastVerified": "2026-11-17T06:47:08.453Z"
   },
   "helixdb-helix-db": {
     "name": "HelixDB/helix-db",
@@ -5714,9 +5714,9 @@
   "skytable-skytable": {
     "name": "skytable",
     "officialUrl": "https://github.com/skytable/skytable",
-    "lastChecked": "2026-11-15T23:26:06.003Z",
+    "lastChecked": "2026-11-17T06:47:13.505Z",
     "revisionIdentifier": "146d8664",
-    "lastVerified": "2026-11-15T23:26:06.003Z"
+    "lastVerified": "2026-11-17T06:47:13.505Z"
   },
   "datadog-glommio": {
     "name": "glommio",
@@ -12729,12 +12729,12 @@
     "lastVerified": "2026-11-17T02:46:56.134Z"
   },
   "devexpress-testcafe": {
-    "name": "DevExpress/testcafe",
+    "name": "testcafe",
     "officialUrl": "https://github.com/DevExpress/testcafe",
     "sourceType": "github",
     "technology": "JavaScript",
-    "lastChecked": "2026-11-12T15:25:09.252Z",
-    "lastVerified": "2026-11-12T15:25:09.252Z",
+    "lastChecked": "2026-11-17T06:47:03.512Z",
+    "lastVerified": "2026-11-17T06:47:03.512Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-devexpress-testcafe",
@@ -12743,7 +12743,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "1870103c"
   },
   "planetable-planet": {
     "name": "Planet",
@@ -15735,6 +15736,23 @@
     "contentHash": "881024c9266959d0ab398fca49d0ec152cd8d704c1e5833003944c05f2d31fa2",
     "promotedRulesCount": 1,
     "recentFixesCount": 9,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "mdiri-ai-soduwork": {
+    "name": "mdiri-ai/SoduWork",
+    "officialUrl": "https://github.com/mdiri-ai/SoduWork",
+    "sourceType": "github",
+    "technology": "JavaScript",
+    "lastChecked": "2026-11-17T06:46:59.696Z",
+    "lastVerified": "2026-11-17T06:46:59.696Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-mdiri-ai-soduwork",
+    "contentHash": "17dffa20af8991643068f9b147d57429e9c49848c8260ed08ba0988f4a950a1d",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 21,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T06:36:12.225Z",
+  "last_updated": "2026-11-17T06:47:46.701Z",
   "directives": [
     {
       "id": "CD-001",
@@ -4797,11 +4797,11 @@
       "staged_date": "2026-11-11"
     },
     {
-      "id": "CD-JW3K",
+      "id": "CD-YRYL",
       "directive_title": "splash screen staying visible after warm start on Android 12+",
       "source_repo": "zoontek-react-native-bootsplash-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-JW3K-splash-screen-staying-visible-after-warm-start-on-android-12.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-YRYL-splash-screen-staying-visible-after-warm-start-on-android-12.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-17",
@@ -22568,6 +22568,46 @@
       "source_repo": "zoontek-react-native-bootsplash",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-52B3D8-splash-screen-staying-visible-after-warm.md",
+      "staged_date": "2026-11-17"
+    },
+    {
+      "id": "CD-Y4QF",
+      "directive_title": "Empirical Invariant Guard in workspace-chat-list.js",
+      "source_repo": "mdiri-ai-soduwork-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-Y4QF-empirical-invariant-guard-in-workspace-chat-list-js.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-17",
+      "domain_letter": "D"
+    },
+    {
+      "id": "CD-YRFR",
+      "directive_title": "TextInput state retain chain in AndroidTextInputShadowNode",
+      "source_repo": "react-react-native-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-YRFR-textinput-state-retain-chain-in-androidtextinputshadownode.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-17",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-8521E8",
+      "directive_title": "Empirical Invariant Guard in workspace-chat-list.js",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "mdiri-ai-soduwork",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-8521E8-empirical-invariant-guard-in-workspace-c.md",
+      "staged_date": "2026-11-17"
+    },
+    {
+      "id": "CD-REV-8F9101",
+      "directive_title": "splash screen staying visible after warm start on Android 12+",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zoontek-react-native-bootsplash",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-8F9101-splash-screen-staying-visible-after-warm.md",
       "staged_date": "2026-11-17"
     }
   ]

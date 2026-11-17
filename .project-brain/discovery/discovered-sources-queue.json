@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-17T06:36:11.491Z",
+  "updated_at": "2026-11-17T06:47:45.810Z",
   "stats": {
-    "total_discovered": 4816,
-    "approved_pending_harvest": 4535,
+    "total_discovered": 4839,
+    "approved_pending_harvest": 4558,
     "harvested_count": 0,
     "rejected_count": 281,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 4536,
+      "COMMUNITY_AND_EXPERT": 4559,
       "OFFICIAL_DOCUMENTATION": 150,
       "STANDARDS_AND_SPECIFICATIONS": 101,
       "ENGINEERING_BLOGS": 3,
@@ -104006,6 +104006,512 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kirillzyusko-react-native-keyboard-controller-learnings.md",
         "fileName": "kirillzyusko-react-native-keyboard-controller-learnings.md"
+      }
+    },
+    "SRC-66C6C22E7581": {
+      "id": "SRC-66C6C22E7581",
+      "url": "https://github.com/mdiri-ai/SoduWork",
+      "title": "https://github.com/mdiri-ai/SoduWork",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T06:47:16.047Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mdiri-ai-soduwork-learnings.md",
+        "fileName": "mdiri-ai-soduwork-learnings.md"
+      }
+    },
+    "SRC-87F87792BAA9": {
+      "id": "SRC-87F87792BAA9",
+      "url": "https://github.com/mdiri-ai/SoduWork/releases",
+      "title": "https://github.com/mdiri-ai/SoduWork/releases",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T06:47:16.079Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mdiri-ai-soduwork-learnings.md",
+        "fileName": "mdiri-ai-soduwork-learnings.md"
+      }
+    },
+    "SRC-BDE231C4EF9D": {
+      "id": "SRC-BDE231C4EF9D",
+      "url": "https://soduwork.ai`/",
+      "title": "https://soduwork.ai`/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T06:47:16.109Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mdiri-ai-soduwork-learnings.md",
+        "fileName": "mdiri-ai-soduwork-learnings.md"
+      }
+    },
+    "SRC-39E40014F829": {
+      "id": "SRC-39E40014F829",
+      "url": "https://github.com/mdiri-ai/SoduWork/releases/latest",
+      "title": "https://github.com/mdiri-ai/SoduWork/releases/latest",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T06:47:16.139Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mdiri-ai-soduwork-learnings.md",
+        "fileName": "mdiri-ai-soduwork-learnings.md"
+      }
+    },
+    "SRC-4D185E1763A2": {
+      "id": "SRC-4D185E1763A2",
+      "url": "https://service.soduwork.ai`/",
+      "title": "https://service.soduwork.ai`/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T06:47:16.170Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mdiri-ai-soduwork-learnings.md",
+        "fileName": "mdiri-ai-soduwork-learnings.md"
+      }
+    },
+    "SRC-D1471440C84D": {
+      "id": "SRC-D1471440C84D",
+      "url": "https://github.com/mdiri-ai/SoduWork/release",
+      "title": "https://github.com/mdiri-ai/SoduWork/release",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T06:47:16.199Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mdiri-ai-soduwork-learnings.md",
+        "fileName": "mdiri-ai-soduwork-learnings.md"
+      }
+    },
+    "SRC-9FD733015B66": {
+      "id": "SRC-9FD733015B66",
+      "url": "https://soduwork.xn--ai`,-ey8fw4h2ya792dmzb164dn9v./",
+      "title": "https://soduwork.xn--ai`,-ey8fw4h2ya792dmzb164dn9v./",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T06:47:16.233Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mdiri-ai-soduwork-learnings.md",
+        "fileName": "mdiri-ai-soduwork-learnings.md"
+      }
+    },
+    "SRC-CF2EDDD31CF3": {
+      "id": "SRC-CF2EDDD31CF3",
+      "url": "https://service.soduwork.xn--ai`,-ey8fw4h2ya792dmzb164dn9v./",
+      "title": "https://service.soduwork.xn--ai`,-ey8fw4h2ya792dmzb164dn9v./",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T06:47:16.264Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mdiri-ai-soduwork-learnings.md",
+        "fileName": "mdiri-ai-soduwork-learnings.md"
+      }
+    },
+    "SRC-BD0BD8268CAE": {
+      "id": "SRC-BD0BD8268CAE",
+      "url": "https://service.soduwork.xn--ai`,-ed5fw1c3zlgta40g3qnyx30h4entvko52cbpzallwmnhlm6b/",
+      "title": "https://service.soduwork.xn--ai`,-ed5fw1c3zlgta40g3qnyx30h4entvko52cbpzallwmnhlm6b/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T06:47:16.293Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mdiri-ai-soduwork-learnings.md",
+        "fileName": "mdiri-ai-soduwork-learnings.md"
+      }
+    },
+    "SRC-6838A0E12B8E": {
+      "id": "SRC-6838A0E12B8E",
+      "url": "https://service.soduwork.xn--ai`;-ed5fw1cgzaqg03oo3c93gt9ouxulppfoljk6cw9dkshq91ajx2a5d8b/",
+      "title": "https://service.soduwork.xn--ai`;-ed5fw1cgzaqg03oo3c93gt9ouxulppfoljk6cw9dkshq91ajx2a5d8b/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T06:47:16.324Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mdiri-ai-soduwork-learnings.md",
+        "fileName": "mdiri-ai-soduwork-learnings.md"
+      }
+    },
+    "SRC-6B81E4C9585B": {
+      "id": "SRC-6B81E4C9585B",
+      "url": "https://support.apple.com/zh-cn/102445",
+      "title": "https://support.apple.com/zh-cn/102445",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T06:47:16.355Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mdiri-ai-soduwork-learnings.md",
+        "fileName": "mdiri-ai-soduwork-learnings.md"
+      }
+    },
+    "SRC-3D926281E601": {
+      "id": "SRC-3D926281E601",
+      "url": "https://ubuntu.com/server/docs/how-to/software/package-management",
+      "title": "https://ubuntu.com/server/docs/how-to/software/package-management",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T06:47:16.384Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mdiri-ai-soduwork-learnings.md",
+        "fileName": "mdiri-ai-soduwork-learnings.md"
+      }
+    },
+    "SRC-B8C7749EFAB2": {
+      "id": "SRC-B8C7749EFAB2",
+      "url": "https://se/",
+      "title": "https://se/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T06:47:16.415Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mdiri-ai-soduwork-learnings.md",
+        "fileName": "mdiri-ai-soduwork-learnings.md"
+      }
+    },
+    "SRC-42662A67FD89": {
+      "id": "SRC-42662A67FD89",
+      "url": "https://github.com/react/react-native",
+      "title": "https://github.com/react/react-native",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T06:47:45.508Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/react-react-native-learnings.md",
+        "fileName": "react-react-native-learnings.md"
+      }
+    },
+    "SRC-354F93D37E4C": {
+      "id": "SRC-354F93D37E4C",
+      "url": "https://issuetracker.google.com/issues/72884435",
+      "title": "https://issuetracker.google.com/issues/72884435",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T06:47:45.541Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/react-react-native-learnings.md",
+        "fileName": "react-react-native-learnings.md"
+      }
+    },
+    "SRC-0B7F7579EE7B": {
+      "id": "SRC-0B7F7579EE7B",
+      "url": "https://developer.android.com/guide/topics/resources/drawable-resource.html",
+      "title": "https://developer.android.com/guide/topics/resources/drawable-resource.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T06:47:45.581Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/react-react-native-learnings.md",
+        "fileName": "react-react-native-learnings.md"
+      }
+    },
+    "SRC-B626ED069A41": {
+      "id": "SRC-B626ED069A41",
+      "url": "https://github.com/facebook/hermes/blob/HEAD/doc/ReactNativeIntegration.md",
+      "title": "https://github.com/facebook/hermes/blob/HEAD/doc/ReactNativeIntegration.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T06:47:45.610Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/react-react-native-learnings.md",
+        "fileName": "react-react-native-learnings.md"
+      }
+    },
+    "SRC-37C04EDC2CD8": {
+      "id": "SRC-37C04EDC2CD8",
+      "url": "https://www.facebook.com/whitehat",
+      "title": "https://www.facebook.com/whitehat",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T06:47:45.640Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/react-react-native-learnings.md",
+        "fileName": "react-react-native-learnings.md"
+      }
+    },
+    "SRC-0A59ECB576A9": {
+      "id": "SRC-0A59ECB576A9",
+      "url": "https://github.com/facebook/react-native/blob/main/packages/rn-tester/js/examples/Playground/RNTesterPlayground.js",
+      "title": "https://github.com/facebook/react-native/blob/main/packages/rn-tester/js/examples/Playground/RNTesterPlayground.js",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T06:47:45.681Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/react-react-native-learnings.md",
+        "fileName": "react-react-native-learnings.md"
+      }
+    },
+    "SRC-9BD787850EDF": {
+      "id": "SRC-9BD787850EDF",
+      "url": "https://snack.expo.dev/",
+      "title": "https://snack.expo.dev/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T06:47:45.710Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/react-react-native-learnings.md",
+        "fileName": "react-react-native-learnings.md"
+      }
+    },
+    "SRC-298FD02F28E8": {
+      "id": "SRC-298FD02F28E8",
+      "url": "https://github.com/react-native-community/reproducer-react-native/generate",
+      "title": "https://github.com/react-native-community/reproducer-react-native/generate",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T06:47:45.739Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/react-react-native-learnings.md",
+        "fileName": "react-react-native-learnings.md"
+      }
+    },
+    "SRC-12559DD2903B": {
+      "id": "SRC-12559DD2903B",
+      "url": "https://reactnative.dev/contributing/how-to-report-a-bug",
+      "title": "https://reactnative.dev/contributing/how-to-report-a-bug",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T06:47:45.781Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/react-react-native-learnings.md",
+        "fileName": "react-react-native-learnings.md"
+      }
+    },
+    "SRC-C12D5E5E1ECA": {
+      "id": "SRC-C12D5E5E1ECA",
+      "url": "https://github.com/react/react-native/pull/59650",
+      "title": "https://github.com/react/react-native/pull/59650",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T06:47:45.810Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/react-react-native-learnings.md",
+        "fileName": "react-react-native-learnings.md"
       }
     }
   }

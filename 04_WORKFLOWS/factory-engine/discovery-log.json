@@ -21340,5 +21340,20 @@
     "qualityScore": 1667,
     "verifiedOrg": false,
     "discoveredAt": "2026-11-16T17:59:30.863Z"
+  },
+  {
+    "name": "SoduWork",
+    "fullName": "mdiri-ai/SoduWork",
+    "url": "https://github.com/mdiri-ai/SoduWork",
+    "type": "github",
+    "domain": "ai-agents",
+    "description": "The AI-native engine for teams and their agents. Multi-harness, multi-agent, self-hosted.",
+    "stars": 1247,
+    "forks": 173,
+    "openIssues": 78,
+    "language": "JavaScript",
+    "qualityScore": 981,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-11-17T06:43:08.712Z"
   }
 ]

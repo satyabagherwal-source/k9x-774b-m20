@@ -10499,3 +10499,6 @@ Every entry in this ledger must capture:
 | `learn-github-gluesql-gluesql` | `https://github.com/gluesql/gluesql` | `dda0280a` | Multi-dimensional audit evidence | 2026-11-17T06:28:31.347Z |
 | `learn-github-webdriverio-webdriverio` | `https://github.com/webdriverio/webdriverio` | `81cc6f0d` | Multi-dimensional audit evidence | 2026-11-17T06:36:02.190Z |
 | `learn-github-kirillzyusko-react-native-keyboard-controller` | `https://github.com/kirillzyusko/react-native-keyboard-controller` | `0012bfd1` | Multi-dimensional audit evidence | 2026-11-17T06:36:05.745Z |
+| `learn-github-mdiri-ai-soduwork` | `https://github.com/mdiri-ai/SoduWork` | `c3487b97` | Multi-dimensional audit evidence | 2026-11-17T06:47:00.725Z |
+| `learn-github-react-react-native` | `https://github.com/react/react-native` | `c1acb2bd` | Multi-dimensional audit evidence | 2026-11-17T06:47:10.658Z |
+| `learn-dom-h-b6148692` | `project://react-react-native` | `c1acb2bd` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/react-react-native-learnings.md` | 2026-11-17T06:47:45.491Z |
