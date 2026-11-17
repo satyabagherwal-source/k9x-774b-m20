@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T14:02:20.311Z",
+  "last_updated": "2026-11-17T14:15:20.181Z",
   "directives": [
     {
       "id": "CD-001",
@@ -4835,11 +4835,11 @@
       "staged_date": "2026-11-11"
     },
     {
-      "id": "CD-ZHF5",
+      "id": "CD-YBQP",
       "directive_title": "editor): add scoped ios account deletion",
       "source_repo": "zseven-w-openpencil-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-ZHF5-editor-add-scoped-ios-account-deletion.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-YBQP-editor-add-scoped-ios-account-deletion.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-17",
@@ -23628,11 +23628,11 @@
       "domain_letter": "G"
     },
     {
-      "id": "CD-ZI44",
+      "id": "CD-YC8I",
       "directive_title": "portico: Fix typos on development community and security pages.",
       "source_repo": "zulip-zulip-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-ZI44-portico-fix-typos-on-development-community-and-security-pages.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-YC8I-portico-fix-typos-on-development-community-and-security-pages.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-17",
@@ -24095,6 +24095,33 @@
       "source_repo": "zoontek-react-native-bootsplash",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-F20ACB-splash-screen-staying-visible-after-warm.md",
+      "staged_date": "2026-11-17"
+    },
+    {
+      "id": "CD-REV-54976C",
+      "directive_title": "Forensic Learning Record (Deep Inspection): xtools-at/DeepSeek-V4-Pro-Qwen3.5-4B-UNCENSORED-heretic",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "hf-xtools-at-deepseek-v4-pro-qwen3.5-4b-uncensored-heretic",
+      "domain_letter": "M",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-54976C-forensic-learning-record-deep-inspection.md",
+      "staged_date": "2026-11-17"
+    },
+    {
+      "id": "CD-REV-52AAF2",
+      "directive_title": "editor): add scoped ios account deletion",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zseven-w-openpencil",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-52AAF2-editor-add-scoped-ios-account-deletion.md",
+      "staged_date": "2026-11-17"
+    },
+    {
+      "id": "CD-REV-0634F0",
+      "directive_title": "portico: Fix typos on development community and security pages.",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zulip-zulip",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-0634F0-portico-fix-typos-on-development-communi.md",
       "staged_date": "2026-11-17"
     }
   ]

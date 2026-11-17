@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T14:01:52.107Z",
-  "total_cycles_completed": 10119,
-  "total_learnings_persisted": 10119,
+  "last_updated": "2026-11-17T14:15:11.817Z",
+  "total_cycles_completed": 10120,
+  "total_learnings_persisted": 10120,
   "total_rules_promoted": 9710,
   "history": [
-    {
-      "timestamp": "2026-11-16T20:02:34.451Z",
-      "repository": "fb55/css-select",
-      "learningId": "learn-github-fb55-css-select",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-16T20:02:41.810Z",
       "repository": "nolabs-ai/nono",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-17T14:01:52.107Z",
       "repository": "vespa-engine/vespa",
       "learningId": "learn-github-vespa-engine-vespa",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T14:15:11.817Z",
+      "repository": "xtools-at/DeepSeek-V4-Pro-Qwen3.5-4B-UNCENSORED-heretic",
+      "learningId": "learn-huggingface-xtools-at-deepseek-v4-pro-qwen3-5-4b-uncensored-heretic",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

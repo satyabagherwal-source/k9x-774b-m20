@@ -10562,3 +10562,4 @@
 | `CYCLE-20261117-GX1H` | `2026-11-17T14:01:47.333Z` | `gravitl/netmaker` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8971` | Yes (`40d5bd45...`) |
 | `CYCLE-20261117-H0PV` | `2026-11-17T14:01:52.099Z` | `vespa-engine/vespa` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/vespa-engine-vespa-learnings.md` | Yes (`ed8694ce...`) |
 | `CYCLE-2026-11-17-PROJ-EVOLVE` | `2026-11-17T14:02:19.603Z` | `vespa-engine-vespa` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-8E8B1BED` [Domain D] | Yes (`2ce16cc2...`) |
+| `CYCLE-20261117-Y5S0` | `2026-11-17T14:15:11.808Z` | `xtools-at/DeepSeek-V4-Pro-Qwen3.5-4B-UNCENSORED-heretic` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-xtools-at-deepseek-v4-pro-qwen3.5-4b-uncensored-heretic-learnings.md` | Yes (`977b6dc8...`) |

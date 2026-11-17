@@ -21415,5 +21415,17 @@
     "downloads": 337,
     "qualityScore": 1107,
     "discoveredAt": "2026-11-17T12:22:29.818Z"
+  },
+  {
+    "name": "xtools-at/DeepSeek-V4-Pro-Qwen3.5-4B-UNCENSORED-heretic",
+    "fullName": "xtools-at/DeepSeek-V4-Pro-Qwen3.5-4B-UNCENSORED-heretic",
+    "url": "https://huggingface.co/xtools-at/DeepSeek-V4-Pro-Qwen3.5-4B-UNCENSORED-heretic",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: xtools-at/DeepSeek-V4-Pro-Qwen3.5-4B-UNCENSORED-heretic (204 likes, 21167 downloads)",
+    "likes": 204,
+    "downloads": 21167,
+    "qualityScore": 4040,
+    "discoveredAt": "2026-11-17T14:12:49.324Z"
   }
 ]

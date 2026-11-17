@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-17T14:02:20.559Z",
-  "total_verified_learnings": 8886,
+  "last_updated": "2026-11-17T14:15:20.433Z",
+  "total_verified_learnings": 8887,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 20192,
+  "total_items": 20195,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112190,9 +112190,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zulip-zulip-learnings",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "aa4b8a07259dd8c9bcb15b45ab9f2b3cbc2dee04673e664621ec1fadf8e31cc3",
+      "content_hash": "2df7e3ecaeebb7cbf968b7918db5f15c80275fcabb4a727ba770e3097cba6f55",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T13:48:15.165Z"
+      "persisted_at": "2026-11-17T14:15:20.433Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -113686,13 +113686,13 @@
       "item_id": "candidate_directive-editor-add-scoped-ios-account-deletion",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-ZHF5-editor-add-scoped-ios-account-deletion.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-YBQP-editor-add-scoped-ios-account-deletion.md",
       "title": "editor): add scoped ios account deletion",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "c820e1c9930c784a8006e3db2dcf4ccf776ee026f7ef408dc8440bb5c272243a",
+      "content_hash": "f9c8b72a4f5a551d1159fadd0c7abdcbd0ff540245d4cf3fbcdb54d26bbec5de",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T13:48:13.943Z"
+      "persisted_at": "2026-11-17T14:15:19.540Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant",
@@ -113702,9 +113702,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "a04695ec29bc69351f20bde02a07f9dfc9f431399ee99ec527ed5c0cfe02516f",
+      "content_hash": "9feada994401df6ed2ff3e824f21c9f0f8c0eaf8971f09bacba304d7d85cf0b5",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T13:48:14.101Z"
+      "persisted_at": "2026-11-17T14:15:19.661Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113714,9 +113714,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "b5ade4571e75dbc60bc5762206c3322df934babc93e5dd124aa297da9969e82c",
+      "content_hash": "e0f6997e4effcbd34bf67352effcbf5076ceb0adcd9b4084aacc657ab4a8bd7f",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T13:48:14.272Z"
+      "persisted_at": "2026-11-17T14:15:19.793Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -269108,13 +269108,13 @@
       "item_id": "candidate_directive-portico-fix-typos-on-development-community-and-security-pages",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-ZI44-portico-fix-typos-on-development-community-and-security-pages.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-YC8I-portico-fix-typos-on-development-community-and-security-pages.md",
       "title": "portico: Fix typos on development community and security pages.",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "6c4906221717fc20232e8aa0ce884d668429de72f17162501aa22839349d1725",
+      "content_hash": "f6c1310cc598253dc1d9214227b85db22b639ce1cc866cc9125e09e5f1a6a86b",
       "domain_letter": "L",
-      "persisted_at": "2026-11-17T13:48:14.841Z"
+      "persisted_at": "2026-11-17T14:15:20.181Z"
     },
     "domain_intelligence-human-need-intelligence-zulip-zulip-learnings-core-invariants": {
       "item_id": "domain_intelligence-human-need-intelligence-zulip-zulip-learnings-core-invariants",
@@ -269124,9 +269124,9 @@
       "title": "Human & Need Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "32e834137f73a22761303f29f8e740b0e19da897d0d098568e242bb836bb3f19",
+      "content_hash": "1da5726bc3e68ff03917e05f058db8679a93dee73aee1898174def05b6f6349e",
       "domain_letter": "A",
-      "persisted_at": "2026-11-17T13:48:14.993Z"
+      "persisted_at": "2026-11-17T14:15:20.299Z"
     },
     "candidate_directive-mito2-wait-for-a-stopped-region-s-checkpoint-before-reopening-it": {
       "item_id": "candidate_directive-mito2-wait-for-a-stopped-region-s-checkpoint-before-reopening-it",
@@ -270399,6 +270399,57 @@
       "content_hash": "207b93beb3b8e0beb79adfa13904a3702cb0f6dcec41fe12c646c5e8bda99d37",
       "domain_letter": "I",
       "persisted_at": "2026-11-17T14:01:55.297Z"
+    },
+    "learn-huggingface-xtools-at-deepseek-v4-pro-qwen3-5-4b-uncensored-heretic": {
+      "learning_id": "learn-huggingface-xtools-at-deepseek-v4-pro-qwen3-5-4b-uncensored-heretic",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "xtools-at/DeepSeek-V4-Pro-Qwen3.5-4B-UNCENSORED-heretic",
+      "repository": "xtools-at/DeepSeek-V4-Pro-Qwen3.5-4B-UNCENSORED-heretic",
+      "slug": "hf-xtools-at-deepseek-v4-pro-qwen3.5-4b-uncensored-heretic",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/xtools-at/DeepSeek-V4-Pro-Qwen3.5-4B-UNCENSORED-heretic",
+      "source_version": "hf-xtools-at-deepseek-v4-pro-qwen3.5-4b-uncensored-heretic",
+      "content_hash": "977b6dc83e944d84500297c4da4e31b0ade7fe4b109693a7fb517145b76bf2f6",
+      "dossier_path": "07_PROJECT_LEARNING/hf-xtools-at-deepseek-v4-pro-qwen3.5-4b-uncensored-heretic-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-xtools-at-deepseek-v4-pro-qwen3.5-4b-uncensored-heretic-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-17T14:15:11.618Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-xtools-at-deepseek-v4-pro-qwen3-5-4b-uncensored-": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-xtools-at-deepseek-v4-pro-qwen3-5-4b-uncensored-",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-xtools-at-deepseek-v4-pro-qwen3-5-4b-uncensored-heretic-research-knowledge-in.md",
+      "title": "Research & Knowledge Intelligence: xtools-at/DeepSeek-V4-Pro-Qwen3.5-4B-UNCENSORED-heretic Core Invariants",
+      "repository": "xtools-at/DeepSeek-V4-Pro-Qwen3.5-4B-UNCENSORED-heretic",
+      "source_version": "hf-xtools-at-deepseek-v4-pro-qwen3.5-4b-uncensored-heretic",
+      "content_hash": "4c57bb0c67fa200c351f10bb6c52fc68aeaf3f1b6fc32ed57a2f4c762024b9a8",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-17T14:15:11.988Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-xtools-at-deepseek-v4-pro-qwen3-5-4b-uncensor": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-xtools-at-deepseek-v4-pro-qwen3-5-4b-uncensor",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-xtools-at-deepseek-v4-pro-qwen3-5-4b-uncensored-heretic-learnings-research-kn.md",
+      "title": "Research & Knowledge Intelligence: hf-xtools-at-deepseek-v4-pro-qwen3.5-4b-uncensored-heretic-learnings Core Invariants",
+      "repository": "hf-xtools-at-deepseek-v4-pro-qwen3.5-4b-uncensored-heretic-learnings",
+      "source_version": "HEAD",
+      "content_hash": "6f188097cfb8cd585448ced9aeff55c8afacdeb89375b7586d78da4f95ca4828",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-17T14:15:19.048Z"
     }
   },
   "ai-builder-brain": {

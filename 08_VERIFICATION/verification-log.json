@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261114-AQO8",
-    "timestamp": "2026-11-14T22:57:50.984Z",
-    "repository": "dathere/qsv",
-    "learningId": "learn-github-dathere-qsv",
-    "contentHash": "26ea2b70a381ebe86478def8b20a1eea0ab53ff6dc28290b390648c4b581bd54",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261114-WWKY",
     "timestamp": "2026-11-14T23:43:04.690Z",
     "repository": "abenzerps/Qwen-Image-2.1-Turbo-Quantized",
@@ -7490,6 +7475,21 @@
     "repository": "vespa-engine/vespa",
     "learningId": "learn-github-vespa-engine-vespa",
     "contentHash": "ed8694ce56ce5e85ad3d84dbc8789b3cd6c5b2397612b1744d0d1b2b4f74ca1f",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-Y5S0",
+    "timestamp": "2026-11-17T14:15:11.808Z",
+    "repository": "xtools-at/DeepSeek-V4-Pro-Qwen3.5-4B-UNCENSORED-heretic",
+    "learningId": "learn-huggingface-xtools-at-deepseek-v4-pro-qwen3-5-4b-uncensored-heretic",
+    "contentHash": "977b6dc83e944d84500297c4da4e31b0ade7fe4b109693a7fb517145b76bf2f6",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

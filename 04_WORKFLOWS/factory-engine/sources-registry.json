@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-17T14:01:54.997Z",
-    "lastVerified": "2026-11-17T14:01:54.997Z",
+    "lastChecked": "2026-11-17T14:15:18.730Z",
+    "lastVerified": "2026-11-17T14:15:18.730Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -154,8 +154,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-17T13:05:52.085Z",
-    "lastVerified": "2026-11-17T13:05:52.085Z",
+    "lastChecked": "2026-11-17T14:15:18.721Z",
+    "lastVerified": "2026-11-17T14:15:18.721Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -230,9 +230,9 @@
   "microsoft-security-101": {
     "name": "Security-101",
     "officialUrl": "https://github.com/microsoft/Security-101",
-    "lastChecked": "2026-11-17T06:47:10.977Z",
+    "lastChecked": "2026-11-17T14:15:13.727Z",
     "revisionIdentifier": "b0a31ff7",
-    "lastVerified": "2026-11-17T06:47:10.977Z"
+    "lastVerified": "2026-11-17T14:15:13.727Z"
   },
   "meilisearch-meilisearch": {
     "name": "meilisearch/meilisearch",
@@ -2500,9 +2500,9 @@
   "expo-create-react-native-app": {
     "name": "create-react-native-app",
     "officialUrl": "https://github.com/expo/create-react-native-app",
-    "lastChecked": "2026-11-13T22:30:44.462Z",
+    "lastChecked": "2026-11-17T14:15:08.705Z",
     "revisionIdentifier": "3a7b11ee",
-    "lastVerified": "2026-11-13T22:30:44.462Z"
+    "lastVerified": "2026-11-17T14:15:08.705Z"
   },
   "kubeedge-kubeedge": {
     "name": "kubeedge/kubeedge",
@@ -6732,9 +6732,9 @@
   "architect-architect": {
     "name": "architect",
     "officialUrl": "https://github.com/architect/architect",
-    "lastChecked": "2026-11-16T06:35:46.335Z",
+    "lastChecked": "2026-11-17T14:15:11.256Z",
     "revisionIdentifier": "9924cd0a",
-    "lastVerified": "2026-11-16T06:35:46.335Z"
+    "lastVerified": "2026-11-17T14:15:11.256Z"
   },
   "yugabyte-yugabyte-db": {
     "name": "yugabyte/yugabyte-db",
@@ -7552,9 +7552,9 @@
   "postgresml-postgresml": {
     "name": "postgresml",
     "officialUrl": "https://github.com/postgresml/postgresml",
-    "lastChecked": "2026-11-16T05:10:44.708Z",
+    "lastChecked": "2026-11-17T14:15:16.201Z",
     "revisionIdentifier": "caf2b6cc",
-    "lastVerified": "2026-11-16T05:10:44.708Z"
+    "lastVerified": "2026-11-17T14:15:16.201Z"
   },
   "topgrade-rs-topgrade": {
     "name": "topgrade-rs/topgrade",
@@ -13329,9 +13329,9 @@
   "unjs-ufo": {
     "name": "ufo",
     "officialUrl": "https://github.com/unjs/ufo",
-    "lastChecked": "2026-11-13T01:01:09.841Z",
+    "lastChecked": "2026-11-17T14:15:06.421Z",
     "revisionIdentifier": "f06c800d",
-    "lastVerified": "2026-11-13T01:01:09.841Z"
+    "lastVerified": "2026-11-17T14:15:06.421Z"
   },
   "facebook-docusaurus": {
     "name": "meta/docusaurus",
@@ -15846,6 +15846,23 @@
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-internlm-sage-s2-1-flash",
     "contentHash": "c367061a8a6e8715305162b90840477f2dfe5cfa5eeb954c49cc83022e1eacb9",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-xtools-at-deepseek-v4-pro-qwen3.5-4b-uncensored-heretic": {
+    "name": "xtools-at/DeepSeek-V4-Pro-Qwen3.5-4B-UNCENSORED-heretic",
+    "officialUrl": "https://huggingface.co/xtools-at/DeepSeek-V4-Pro-Qwen3.5-4B-UNCENSORED-heretic",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-17T14:15:03.897Z",
+    "lastVerified": "2026-11-17T14:15:03.897Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-xtools-at-deepseek-v4-pro-qwen3-5-4b-uncensored-heretic",
+    "contentHash": "977b6dc83e944d84500297c4da4e31b0ade7fe4b109693a7fb517145b76bf2f6",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,

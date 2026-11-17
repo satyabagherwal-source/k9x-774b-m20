@@ -5154,3 +5154,7 @@ https://huggingface.co/maxwell-model/Maxwell-V1-Flash
 https://huggingface.co/MiniMaxAI/MiniMax-H3-Image-PE
 # [HUGGINGFACE-AI-MODELS] internlm/Sage-S2.1-Flash (1107 score) - Verified Hugging Face Model: internlm/Sage-S2.1-Flash (77 likes, 337 downloads)
 https://huggingface.co/internlm/Sage-S2.1-Flash
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-17T14:14:57.995Z] ---
+# [HUGGINGFACE-AI-MODELS] xtools-at/DeepSeek-V4-Pro-Qwen3.5-4B-UNCENSORED-heretic (4040 score) - Verified Hugging Face Model: xtools-at/DeepSeek-V4-Pro-Qwen3.5-4B-UNCENSORED-her
+https://huggingface.co/xtools-at/DeepSeek-V4-Pro-Qwen3.5-4B-UNCENSORED-heretic
