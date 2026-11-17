@@ -10757,3 +10757,8 @@ Every entry in this ledger must capture:
 | `learn-github-pola-rs-polars` | `https://github.com/pola-rs/polars` | `dec76f87` | Multi-dimensional audit evidence | 2026-11-17T21:41:02.847Z |
 | `learn-github-nats-io-nats-go` | `https://github.com/nats-io/nats.go` | `febd2b97` | Multi-dimensional audit evidence | 2026-11-17T21:41:10.050Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `62b0d320` | Multi-dimensional audit evidence | 2026-11-17T21:41:17.069Z |
+| `learn-huggingface-harness-hub-qwen3-8-27b-pi-adapted` | `https://huggingface.co/harness-hub/Qwen3.8-27B-pi-adapted` | `hf-harness` | Multi-dimensional audit evidence | 2026-11-17T21:56:37.300Z |
+| `learn-huggingface-tencent-hy-simulmt-30b-a3b-fp8` | `https://huggingface.co/tencent/Hy-SimulMT-30B-A3B-FP8` | `hf-tencent` | Multi-dimensional audit evidence | 2026-11-17T21:56:39.846Z |
+| `learn-github-goodrain-rainbond` | `https://github.com/goodrain/rainbond` | `5508cd38` | Multi-dimensional audit evidence | 2026-11-17T21:56:49.191Z |
+| `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `108f7135` | Multi-dimensional audit evidence | 2026-11-17T21:56:55.743Z |
+| `learn-dom-d-e5720888` | `project://hf-harness-hub-qwen3.8-27b-pi-adapted` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-harness-hub-qwen3.8-27b-pi-adapted-learnings.md` | 2026-11-17T21:57:33.618Z |

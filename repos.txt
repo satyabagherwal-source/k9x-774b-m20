@@ -5166,3 +5166,7 @@ https://huggingface.co/sensenova/SenseNova-Loop-9B
 # --- Automatically Discovered by AI Scout Engine [2026-11-17T18:35:15.490Z] ---
 # [HUGGINGFACE-AI-MODELS] MoonMath-ai/DeepSeek-V4.1-Flash-1017-uncensored (3113 score) - Verified Hugging Face Model: MoonMath-ai/DeepSeek-V4.1-Flash-1017-uncensored (14
 https://huggingface.co/MoonMath-ai/DeepSeek-V4.1-Flash-1017-uncensored
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-17T21:56:30.860Z] ---
+# [HUGGINGFACE-AI-MODELS] harness-hub/Qwen3.8-27B-pi-adapted (850 score) - Verified Hugging Face Model: harness-hub/Qwen3.8-27B-pi-adapted (85 likes, 0 dow
+https://huggingface.co/harness-hub/Qwen3.8-27B-pi-adapted

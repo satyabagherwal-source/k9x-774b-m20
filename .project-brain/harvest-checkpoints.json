@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-17T21:41:17.077Z",
+  "last_updated": "2026-11-17T21:56:55.780Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3591,14 +3591,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-bitterbot-ai-bitterbot-desktop",
-      "content_hash": "b9d861094915540141be11ad4c82124659495784a6fe43af689082fba52a684d",
-      "verified_at": "2026-11-17T20:03:41.763Z",
+      "content_hash": "0bf3516a067582afc7bb1acf89a52a01d30035233f3fcbdf0c0cf96acd659cae",
+      "verified_at": "2026-11-17T21:56:55.779Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T20:03:41.763Z"
+      "last_updated": "2026-11-17T21:56:55.779Z"
     },
     "adobe/react-spectrum": {
       "repository": "adobe/react-spectrum",
@@ -4071,14 +4071,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-goodrain-rainbond",
-      "content_hash": "ff77003d7d25675e9441a27f9ba6ae961da065bdfa648daadbc6effa3423a538",
-      "verified_at": "2026-11-17T00:38:39.096Z",
+      "content_hash": "a0aa2f5d532930e9eb0d74ae180a73f98bf8385d8cee15f9fe1f0621c1bc3c6e",
+      "verified_at": "2026-11-17T21:56:49.201Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T00:38:39.096Z"
+      "last_updated": "2026-11-17T21:56:49.201Z"
     },
     "bee-san/Ciphey": {
       "repository": "bee-san/Ciphey",
@@ -17121,14 +17121,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-tencent-hy-simulmt-30b-a3b-fp8",
-      "content_hash": "362967b4a3bf6c26a8efccdcf45cd2bdebc982d17f4b15252247f8b526ed5ecf",
-      "verified_at": "2026-11-13T11:55:29.232Z",
+      "content_hash": "9b60bf2f04609db727dd3ea2c674cfbba3b187616b263f76f70dc44b9ba5202f",
+      "verified_at": "2026-11-17T21:56:39.856Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T11:55:29.232Z"
+      "last_updated": "2026-11-17T21:56:39.856Z"
     },
     "prithivMLmods/Gender-Classifier-Mini": {
       "repository": "prithivMLmods/Gender-Classifier-Mini",
@@ -19319,6 +19319,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-17T18:35:22.283Z"
+    },
+    "harness-hub/Qwen3.8-27B-pi-adapted": {
+      "repository": "harness-hub/Qwen3.8-27B-pi-adapted",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-harness-hub-qwen3-8-27b-pi-adapted",
+      "content_hash": "84ba9b85bab2d4c645895618ca7beec1015a9bbfbdd12a88c2c27336838aae8e",
+      "verified_at": "2026-11-17T21:56:37.311Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-17T21:56:37.311Z"
     }
   },
   "repos": {

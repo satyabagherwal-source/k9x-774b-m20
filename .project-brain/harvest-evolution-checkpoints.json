@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T21:41:21.813Z",
+  "last_updated": "2026-11-17T21:57:35.543Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-17T19:12:36.114Z",
@@ -1763,8 +1763,8 @@
       "staged_for_review": 1
     },
     "hf-tencent-hy-simulmt-30b-a3b-fp8-learnings.md": {
-      "processed_at": "2026-11-13T11:55:59.653Z",
-      "promoted_canonical": 1,
+      "processed_at": "2026-11-17T21:57:34.146Z",
+      "promoted_canonical": 0,
       "staged_for_review": 0
     },
     "hf-audio-cpp-audio.cpp-gguf-learnings.md": {
@@ -3038,7 +3038,7 @@
       "staged_for_review": 0
     },
     "goodrain-rainbond-learnings.md": {
-      "processed_at": "2026-11-17T00:38:46.722Z",
+      "processed_at": "2026-11-17T21:57:34.592Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3356,9 +3356,14 @@
       "processed_at": "2026-11-17T19:12:35.629Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "hf-harness-hub-qwen3.8-27b-pi-adapted-learnings.md": {
+      "processed_at": "2026-11-17T21:57:33.619Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 1719,
-  "total_canonical_promoted": 325,
-  "total_staged_for_review": 1341
+  "total_dossiers_evaluated": 1722,
+  "total_canonical_promoted": 326,
+  "total_staged_for_review": 1342
 }

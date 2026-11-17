@@ -3,7 +3,7 @@
 > **Source Version**: `hf-tencent-h`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T11:55:28.994Z  
+> **Timestamp**: 2026-11-17T21:56:39.278Z  
 > **Learning ID**: `learn-huggingface-tencent-hy-simulmt-30b-a3b-fp8`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-tencent-hy-simulmt-30b-a3b-fp8-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/tencent/Hy-SimulMT-30B-A3B-FP8](https://huggingface.co/tencent/Hy-SimulMT-30B-A3B-FP8))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T11:55:28.837Z  
+> **Harvest Timestamp**: 2026-11-17T21:56:39.272Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: translation
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 1342 downloads | 461 likes
+- **Stars / Engagement**: 1405 downloads | 461 likes
 
 ---
 

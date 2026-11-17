@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-17T00:38:46.929Z",
+  "timestamp": "2026-11-17T21:57:34.854Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-goodrain-rainbond-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [goodrain-rainbond-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-17T00:38:46.929Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-17T21:57:34.854Z`  
 > **Learning ID**: `LEARN-EVO-goodrain-rainbond-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: D (Research & Knowledge Intelligence), G (Architecture Intelligence), L (Deployment & Operations Intelligence), B (Product Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), C (Market & Business Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 77%
+- **Secondary Corroborating Domains**: L (Deployment & Operations Intelligence), D (Research & Knowledge Intelligence), G (Architecture Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), C (Market & Business Intelligence), A (Human & Need Intelligence), K (Quality & Verification Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 76%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from goodrain-rainbond-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/goodrain-rainbond-learnings.md`  
 > **Source**: github ([https://github.com/goodrain/rainbond](https://github.com/goodrain/rainbond))  
-> **Source Version**: `3a622ae9`  
+> **Source Version**: `5508cd38`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-17T00:38:37.922Z  
+> **Timestamp**: 2026-11-17T21:56:48.020Z  
 > **Learning ID**: `learn-github-goodrain-rainbond`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/goodrain-rainbond-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/goodrain/rainbond](https://github.com/goodrain/rainbond))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T00:38:37.915Z  
+> **Harvest Timestamp**: 2026-11-17T21:56:48.014Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1265,397 +1265,301 @@ func NewBadRequest(msg string) Coder {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3a622ae9` (2026-11-16)
-**Commit Message**: ci: persist UI and console image caches across runners (#2753)
+### Incident Patch 1: `cfba2cee` (2026-11-17)
+**Commit Message**: ci(release): add a workflow to build the gateway controller image (#2757)
 
-Signed-off-by: 张启航 <[REDACTED_EMAIL]>
-Co-authored-by: 张启航 <[REDACTED_EMAIL]>
+Signed-off-by: yangkaa <[REDACTED_EMAIL]>
 
-**File**: `.github/workflows/dev-build.yml` (modified, +4/-4)
+**File**: `.github/workflows/release-v6-gateway-controller.yml` (added, +138/-0)
 ```diff
-@@ -273,8 +273,8 @@ jobs:
-           context: .
-           file: ./Dockerfile
-           push: true
--          cache-from: type=gha,scope=ui
--          cache-to: type=gha,mode=max,scope=ui
-+          cache-from: type=gha,version=2,scope=rainbond-ui-amd64
-+          cache-to: type=gha,version=2,mode=max,scope=rainbond-ui-amd64,ignore-error=true,timeout=5m
-           provenance: false
-           tags: |
-             rainbond/rainbond-ui:${{ env.VERSION }}
-@@ -346,8 +346,8 @@ jobs:
-           context: .
-           file: ./Dockerfile
-           push: true
--          cache-from: type=gha,scope=console
--          cache-to: type=gha,mode=max,scope=console
-+          cache-from: type=gha,version=2,scope=rainbond-console-amd64
-+          cache-to: type=gha,version=2,mode=max,scope=rainbond-console-amd64,ignore-error=true,timeout=5m
-           provenance: false
-           tags: |
-             rainbond/rainbond:${{ env.VERSION }}
-```
-
-**File**: `.github/workflows/release-v6.yml` (modified, +4/-0)
-```diff
-@@ -314,6 +314,8 @@ jobs:
-           context: .
-           file: ./Dockerfile
-           push: true
-+          cache-from: type=gha,version=2,scope=rainbond-ui-${{ matrix.arch }}
-+          cache-to: type=gha,version=2,mode=max,scope=rainbond-ui-${{ matrix.arch }},ignore-error=true,timeout=5m
-           provenance: false
-           tags: |
-             rainbond/rainbond-ui:${{ env.VERSION }}${{ env.IS_MULTI_ARCH == 'true' && format('-{0}', matrix.arch) || '' }}
-@@ -368,6 +370,8 @@ jobs:
-           file: ./Dockerfile
-           outputs: ${{ inputs.outputs }}
-           push: true
-+          cache-from: type=gha,version=2,scope=rainbond-console-${{ matrix.arch }}
-+          cache-to: type=gha,version=2,mode=max,scope=rainbond-console-${{ matrix.arch }},ignore-error=true,timeout=5m
-           provenance: false
-           tags: |
-             rainbond/rainbond:${{ env.VERSION }}${{ env.IS_MULTI_ARCH == 'true' && format('-{0}', matrix.arch) || '' }}
+@@ -0,0 +1,138 @@
++name: "release-v6-gateway-controller"
++
++# 构建 rbd-gateway 使用的 apisix-ingress-controller 镜像（goodrain/apisix-ingress-controller 的发布分支），
++# 推到阿里云 goodrain/apisix-ingress-controller:<tag> 和 <tag>-esgz。rainbond-chart 按 tag 引用它。
++# 覆盖已有 tag 前，先把旧镜像复制到 <tag>-<backup_suffix> 和 <tag>-esgz-<backup_suffix>，备份失败就不构建。
++on:
++  workflow_dispatch:
++    inputs:
++      ref:
++        description: 'goodrain/apisix-ingress-controller 的分支或 commit'
++        required: true
++        default: 'release/v1.8.4'
++      tag:
++        description: '要推送的镜像 tag（不带 -esgz）'
++        required: true
++        default: 'v1.8.4-upsert-e26e824'
++      backup_suffix:
++        description: '覆盖前旧镜像的备份后缀，例如 bak-20261117'
++        required: true
++
++permissions:
++  contents: read
++
++jobs:
++  build:
++    runs-on: ubuntu-latest
++    environment: release-v6
++    timeout-minutes: 60
++    env:
++      REPO: registry.cn-hangzhou.aliyuncs.com/goodrain/apisix-ingress-controller
++      TAG: ${{ inputs.tag }}
++      BACKUP_SUFFIX: ${{ inputs.backup_suffix }}
++    steps:
++      - name: Validate inputs
++        run: |
++          [[ "$TAG" =~ ^v[0-9A-Za-z._-]+$ && "$TAG" != *-esgz ]] || { echo "::error::invalid tag $TAG"; exit 1; }
++          [[ "$BACKUP_SUFFIX" =~ ^[0-9A-Za-z._-]+$ ]] || { echo "::error::invalid backup suffix"; exit 1; }
++
++      - name: Checkout controller source
++        uses: actions/checkout@v4
++        with:
++          repository: goodrain/apisix-ingress-controller
++          ref: ${{ inputs.ref }}
++          persist-credentials: false
++
++      - name: Read source revision
++        id: source
++        run: |
++          sha=$(git rev-parse HEAD)
++          echo "sha=$sha" >> "$GITHUB_OUTPUT"
++          echo "version=${TAG#v}-${sha:0:7}" >> "$GITHUB_OUTPUT"
++
++      - name: Set up QEMU
++        uses: docker/setup-qemu-action@v3
++
++      - name: Set up Docker Buildx
++        uses: docker/setup-buildx-action@v3
++
++      - name: Login to Aliyun Container Registry
++        uses: docker/login-action@v3
++        with:
++          registry: registry.cn-hangzhou.aliyuncs.com
++          username: ${{ secrets.DOMESTIC_DOCKER_USERNAME }}
++          password: ${{ secrets.DOMESTIC_DOCKER_PASSWORD }}
++
++      - name: Back up the current images
++        timeout-minutes: 10
++        run: |
++          set -euo pipefail
++          digest() { docker buildx imagetools inspect "$1" --format '{{json .Manifest}}' | python3 -c 'import sys,json;print(json.load(sys.stdin)["digest"])'; }
++          for t in "$TAG" "$TAG-esgz"; do
++            if ! docker buildx imagetools inspect "$REPO:$t" >/dev/null 2>&1; then
++              echo "$REPO:$t does not exist, nothing to back up"
++              continue
++            fi
++            backup="$t-$BACKUP_SUFFIX"
++            if docker buildx imagetools inspect "$REPO:$backup" >/dev/null 2>&1; then
++              echo "::error::$REPO:$backup already exists; pick another backup_suffix"
++              exit 1
++            fi
++            src=$(digest "$REPO:$t")
++            docker buildx imagetools create -t "$REPO:$backup" "$REPO@$src"
++            [[ "$(digest "$REPO:$backup")" == "$src" ]] || { echo "::error::backup digest mismatch for $t"; exit 1; }
++            echo "backed up $REPO:$t ($src) -> $REPO:$backup" | tee -a "$GITHUB_STEP_SUMMARY"
++          done
++
++      - name: Build and push
++        uses: docker/build-push-action@v6
++        with:
++          context: .
++          platforms: linux/amd64,linux/arm64
++          push: true
++          provenance: false
++          tags: ${{ env.REPO }}:${{ inputs.tag }}
++          build-args: |
++            VERSION=${{ steps.source.outputs.version }}
++            GIT_SHA=${{ steps.source.outputs.sha }}
++
++      - name: Convert to eStargz and push
++        run: |
++          echo "FROM $REPO:$TAG" > "$RUNNER_TEMP/Dockerfile.esgz"
++          docker buildx build -f "$RUNNER_TEMP/Dockerfile.esgz" \
++            --platform linux/amd64,linux/arm64 \
++            --provenance=false \
++            --output type=image,push=true,oci-mediatypes=true,compression=estargz,force-compression=true \
++            -t "$REPO:$TAG-esgz" \
++            "$RUNNER_TEMP"
++
++      - name: Verify revision and eStargz layers
++        env:
++          SHA: ${{ steps.source.outputs.sha }}
++        run: |
++          set -euo pipefail
++          for t in "$TAG" "$TAG-esgz"; do
++            docker buildx imagetools inspect "$REPO:$t" --format '{{json .Image}}' | python3 -c '
++          import sys, json
++          sha = sys.argv[1]
++          images = json.load(sys.stdin)
++          assert set(images) == {"linux/amd64", "linux/arm64"}, images.keys()
++          for platform, image in images.items():
++              rev = image["config"]["Labels"]["org.opencontainers.image.revision"]
++              assert rev == sha, (platform, rev)
++          print("revision ok", sorted(images))' "$SHA"
++          done
++          docker buildx imagetools inspect --raw "$REPO:$TAG-esgz" | python3 -c '
++          import json
 ```
 
 ---
 
-### Incident Patch 2: `01d65c24` (2026-11-16)
-**Commit Message**: fix: use GET authentication for Aliyun image synchronization (#2752)
+### Incident Patch 2: `5db94d70` (2026-11-17)
+**Commit Message**: ci(release): build standalone natively and sync to Aliyun with retries (#2755)
 
-Signed-off-by: 张启航 <[REDACTED_EMAIL]>
-Co-authored-by: 张启航 <[REDACTED_EMAIL]>
+Signed-off-by: yangkaa <[REDACTED_EMAIL]>
 
-**File**: `.github/workflows/pr-ci-build.yml` (modified, +1/-1)
+**File**: `.github/workflows/release-v6-standalone.yml` (modified, +156/-38)
 ```diff
-@@ -14,7 +14,7 @@ jobs:
-       - name: Install native dependencies
-         run: |
-           sudo apt-get update
--          sudo apt-get install -y pkg-config libzmq3-dev
-+          sudo apt-get install -y pkg-config libzmq3-dev skopeo
+@@ -33,68 +33,186 @@ on:
  
-       - name: Set up Go
-         uses: actions/setup-go@v5
-```
-
-**File**: `.github/workflows/release-v6.yml` (modified, +39/-45)
-```diff
-@@ -395,7 +395,7 @@ jobs:
-           (needs.rainbond-allinone.result == 'success' || needs.rainbond-allinone.result == 'skipped') }}
-     runs-on: ubuntu-latest
+ env:
+   VERSION: ${{ inputs.version }}
+-  
++
++# Each architecture builds on its own native runner (no QEMU) and pushes only to
++# Docker Hub. Aliyun receives the image afterwards through hack/release/sync-image.sh,
++# which bounds every registry call and retries it, so a stalled Aliyun upload can
++# no longer hang the job for hours or force a rebuild.
+ jobs:
+-  standalone:
+-    runs-on: ubuntu-latest
++  build:
++    runs-on: ${{ matrix.arch == 'amd64' && 'ubuntu-latest' || 'ubuntu-24.04-arm' }}
      environment: release-v6
--    timeout-minutes: 25
 +    timeout-minutes: 40
-     strategy:
-       fail-fast: false
-       max-parallel: 3
-@@ -412,9 +412,11 @@ jobs:
-           name: release-digest-${{ matrix.image }}-${{ matrix.arch }}
-           path: ${{ runner.temp }}/registry-sync
++    strategy:
++      matrix:
++        arch: [amd64, arm64]
++        exclude:
++          - arch: ${{ inputs.platforms == 'linux/amd64' && 'arm64' || 'none' }}
+     steps:
+       - name: Checkout repository
+-        uses: actions/checkout@v3
++        uses: actions/checkout@v4
+         with:
+           repository: goodrain/rainbond-console
+           ref: ${{ inputs.branch }}
+-      
+-      # - name: Free Disk Space (Ubuntu)
+-      #   uses: jlumbroso/free-disk-space@main
+-      #   with:
+-      #     tool-cache: false
+-      #     android: true
+-      #     dotnet: true
+-      #     haskell: true
+-      #     large-packages: true
+-      #     docker-images: true
+-      #     swap-storage: true
+-
+-      - name: Set up QEMU
+-        uses: docker/setup-qemu-action@v3
  
--      - name: Set up Docker Buildx
--        uses: docker/setup-buildx-action@v3
--        timeout-minutes: 3
-+      - name: Install Skopeo
-+        timeout-minutes: 5
-+        run: |
-+          sudo apt-get update
-+          sudo apt-get install -y --no-install-recommends skopeo
- 
-       - name: Login to Docker Hub
-         uses: docker/login-action@v3
-@@ -432,7 +434,7 @@ jobs:
-           password: ${{ secrets.DOMESTIC_DOCKER_PASSWORD }}
- 
-       - name: Sync image to Aliyun by digest
--        timeout-minutes: 17
-+        timeout-minutes: 33
-         env:
-           IMAGE: ${{ matrix.image }}
-           ARCH: ${{ matrix.arch }}
-@@ -447,7 +449,7 @@ jobs:
-           source="docker.io/rainbond/${IMAGE}@${digest}"
-           target="registry.cn-hangzhou.aliyuncs.com/goodrain/${IMAGE}:${tag}"
-           echo "Syncing ${source} -> ${target}"
--          bash hack/release/retry.sh docker buildx imagetools create --prefer-index=false --tag "$target" "$source"
-+          bash hack/release/sync-image.sh "$source" "$target"
- 
-   multi-arch-manifest:
-     runs-on: ubuntu-latest
-@@ -466,6 +468,12 @@ jobs:
        - name: Set up Docker Buildx
          uses: docker/setup-buildx-action@v3
  
+-      - name: Pull Amd64 Docker image
+-        run: |
+-          ARCH=amd64 VERSION=${{ env.VERSION }} sh standalone/images-package.sh
++      - name: Package k3s system images
++        timeout-minutes: 15
++        env:
++          ARCH: ${{ matrix.arch }}
++        run: sh standalone/images-package.sh
+ 
+-      - name: Pull Arm64 Docker image
+-        run: |
+-          if [[ "${{ inputs.platforms }}" == "linux/amd64,linux/arm64" ]]; then
+-            ARCH=arm64 VERSION=${{ env.VERSION }} sh standalone/images-package.sh
+-          fi
+-      
+       - name: Login to Docker Hub
+         uses: docker/login-action@v3
+         with:
+           username: ${{ secrets.DOCKER_USERNAME }}
+           password: ${{ secrets.DOCKER_PASSWORD }}
+ 
+-      - name: Login to Aliyun Container Registry
+-        uses: docker/login-action@v3
+-        with:
+-          registry: registry.cn-hangzhou.aliyuncs.com
+-          username: ${{ secrets.DOMESTIC_DOCKER_USERNAME }}
+-          password: ${{ secrets.DOMESTIC_DOCKER_PASSWORD }}
+-
+-      - name: Build and push
++      # Unchanged layers come from the registry cache with their original
++      # digests, so Docker Hub and Aliyun already hold them and only changed
++      # layers are uploaded. The base stage clones the latest chart and is
++      # always rebuilt so a cached chart is never shipped.
++      - name: Build and push to Docker Hub
++        id: build
+         uses: docker/build-push-action@v6
+         with:
+-          platforms: ${{ inputs.platforms }}
++          platforms: linux/${{ matrix.arch }}
+           build-args: |
+             VERSION=${{ env.VERSION }}
+           context: .
+           file: standalone/Dockerfile
+           push: true
+           provenance: false
++          no-cache-filters: base
++          cache-from: type=registry,ref=rainbond/rainbond:buildcache-standalone-${{ matrix.arch }}-${{ hashFiles('standalone/**') }}
++          cache-to: type=registry,ref=rainbond/rainbond:buildcache-standalone-${{ matrix.arch }}-${{ hashFiles('standalone/**') }},mode=max,image-manifest=true,oci-mediatypes=true,ignore-error=true
+           tags: |
+-            rainbond/rainbond:${{ env.VERSION }}-k3s
+-            registry.cn-hangzhou.aliyuncs.com/goodrain/rainbond:${{ env.VERSION }}-k3s
++            rainbond/rainbond:${{ env.VERSION }}-k3s-${{ matrix.arch }}
++
++      - name: Save image digest
++        env:
++          IMAGE_DIGEST: ${{ steps.build.outputs.digest }}
++        run: printf '%s\n' "$IMAGE_DIGEST" > "$RUNNER_TEMP/image-digest"
++
++      - name: Upload image digest
++        uses: actions/upload-artifact@v4
++        with:
++          name: standalone-digest-${{ matrix.arch }}
++          path: ${{ runner.temp }}/image-digest
++          if-no-files-found: error
++          overwrite: true
++
++  sync-aliyun:
++    needs: build
++    runs-on: ubuntu-latest
++    environment: release-v6
++    timeout-minutes: 60
++    strategy:
++      fail-fast: false
++      matrix:
++        arch: [amd64, arm64]
++        exclude:
++          - arch: ${{ inputs.platforms == 'linux/amd64' && 'arm64' || 'none' }}
++    steps:
++      - name: Checkout workflow tools
++        uses: actions/checkout@v4
++        with:
++          persist-credentials: false
++
++      - name: Download image digest
++        uses: actions/download-artifact@v4
++        with:
++          name: standalone-digest-${{ matrix.arch }}
++          path: ${{ runner.temp }}/registry-sync
++
 +      - name: Install Skopeo
 +        timeout-minutes: 5
 +        run: |
 +          sudo apt-get update
-+          sudo apt-get install -y --no-install-recommends skopeo
-+
-       - name: Login to Docker Hub
-         uses: docker/login-action@v3
-         with:
-@@ -481,52 +489,38 @@ jobs:
- 
-       - name: Create manifests
-         timeout-minutes: 20
-+        env:
-+          BUILD_WHO: ${{ inputs.build-who }}
-         run: |
--          VERSION="${{ env.VERSION }}"
--          BUILD_WHO="${{ inputs.build-who }}"
-+          set -euo pipefail
-+          publish_manifest() {
-+            local image="$1"
-+            local source="docker.io/rainbond/${image}:${VERSION}"
-+            echo "Creating manifest for ${image}..."
-+            bash hack/release/retry.sh docker buildx imagetools create -t "$source" \
-+              "${source}-amd64" "${source}-arm64"
-+            if [[ "$image" != "rainbond-ui" ]]; then
-+              # Each child digest was already copied by sync-aliyun. Transfer only
-+              # the index, using the same GET authentication path as layer sync.
-+              bash hack/release/retry.sh skopeo inspect --raw \
-+                --authfile "${DOCKER_CONFIG:-$HOME/.docker}/config.json" \
-+                "docker://${source}" > "$RUNNER_TEMP/manifest.json"
-+              local digest
-+              digest="sha256:$(sha256sum "$RUNNER_TEMP/manifest.json" | cut -d ' ' -f 1)"
-+              bash hack/release/sync-image.sh --index-only "docker.io/rainbond/${image}@${digest}" \
-+                "registry.cn-hangzhou.aliyuncs.com/goodrain/${image}:${VERSION}"
-+            fi
-+          }
- 
--          # Region components
-           if [[ "$BUILD_WHO" == "all" || "$BUILD_WHO" == "region" ]]; then
-             for component in api chaos worker init-probe mq; do
--              echo "Creating manifest for rbd-${component}..."
--              bash hack/release/retry.sh docker buildx imagetools create -t rainbond/rbd-${component}:${VERSION} \
--                rainbond/rbd-${component}:${VERSION}-amd64 \
--                rainbond/rbd-${component}:${VERSION}-arm64
--
--              bash hack/release/retry.sh docker buildx imagetools create -t registry.cn-hangzhou.aliyuncs.com/goodrain/rbd-${component}:${VERSION} \
--                registry.cn-hangzhou.aliyuncs.com/goodrain/rbd-${component}:${VERSION}-amd64 \
--                registry.cn-hangzhou.aliyuncs.com/goodrain/rbd-${component}:${VERSION}-arm64
-+              publish_manifest "rbd-${component}"
-             done
-           fi
--
--          # Operator
-           if [[ "$BUILD_WHO" == "all" || "$BUILD_WHO" == "operator" ]]; then
--            echo "Creating manifest for rainbond-operator..."
--            bash hack/release/retry.sh docker buildx imagetools create -t rainbond/rainbond-operator:${VERSION} \
--              rainbond/rainbond-operator:${VERSION}-amd64 \
--              rainbond/rainbond-operator:${VERSION}-arm64
--
--            bash hack/release/retry.sh docker buildx imagetools create -t registry.cn-hangzhou.aliyuncs.com/goodrain/rainbond-operator:${VERSION} \
--              registry.cn-hangzhou.aliyuncs.com/goodrain/rainbond-operator:${VERSION}-amd64 \
--              registry.cn-hangzhou.aliyuncs.com/goodrain/rainbond-operator:${VERSION}-arm64
-+            publish_manifest rainbond-operator
-           fi
--
--          # Allinone (Co
-```
-
-**File**: `hack/release/retry.sh` (modified, +1/-1)
-```diff
-@@ -8,7 +8,7 @@ for attempt in 1 2 3; do
-   if (( status == 0 )); then
-     exit 0
-   fi
--  echo "::warning::Registry command failed (exit ${status}, attempt ${attempt}/3)"
-+  echo "::warning::Registry command failed (exit ${status}, attempt ${attempt}/3)" >&2
-   if (( attempt == 3 )); then
-     exit "$status"
-   fi
-```
-
-**File**: `hack/release/retry_test.py` (modified, +1/-0)
-```diff
-@@ -54,6 +54,7 @@ def test_transient_failures_recover_without_rebuilding(self):
-         result, attempts, _, _ = self.run_command(failures=2)
-         self.assertEqual(result.returncode, 0, result.stderr)
-         self.assertEqual(attempts, 3)
-+        self.assertEqual(result.stdout, "")
- 
-     def test_exhausted_retries_fail_the_job(self):
-         result, attempts, _, _ = self.run_command(failures=5)
-```
-
-**File**: `hack/release/sync-image.sh` (added, +35/-0)
-```diff
-@@ -0,0 +1,35 @@
-+#!/usr/bin/env bash
-+# Copy existing compressed layers; never rebuild or recompress the image.
-+set -euo pipefail
-+
-+copy_mode=(--all)
-+if [[ "${1:-}" == "--index-only" ]]; then
-+  copy_mode=(--multi-arch=index-only)
-+  shift
-+fi
-+source_image=$1
-+target_image=$2
-+expected_digest=${source_image##*@}
-+[[ "$expected_digest" =~ ^sha256:[a-f0-9]{64}$ ]] || { echo "::error::Source must use an image digest"; exit 1; }
-+
-+script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
-+cache_dir=$(mktemp -d "${RUNNER_TEMP:?}/registry-copy.XXXXXX")
-+trap 'rm -rf "$cache_dir"' EXIT
-+auth_file="${DOCKER_CONFIG:-$HOME/.docker}/config.json"
-+
-+# Skopeo uses GET token authentication with Docker's stored username/password.
-+# Keep downloaded blobs on disk so an ACR retry cannot repeat the Hub download
-+# or attempt a cross-registry blob mount.
-+echo "Downloading ${source_image} to the runner"
-+bash "$script_dir/retry.sh" skopeo copy "${copy_mode[@]}" --preserve-digests --authfile "$auth_file" \
-+  "docker://${source_image}" "dir:${cache_dir}/image"
-+
-+echo "Uploading cached layers to ${target_image}"
-+bash "$script_dir/retry.sh" skopeo copy "${copy_mode[@]}" --preserve-digests --authfile "$auth_file" \
-+  --digestfile "${cache_dir}/uploaded-digest" "dir:${cache_dir}/image" "docker://${target_image}"
-+
-+[[ "$(cat "${cache_dir}/uploaded-digest")" == "$expected_digest" ]] || {
-+  echo "::error::Synced image digest differs from the build output"
-+  exit 1
-+}
-+echo "Verified ${target_image}@${expected_digest}"
-```
-
-**File**: `hack/release/sync_image_test.py` (added, +204/-0)
-```diff
-@@ -0,0 +1,204 @@
-+"""Exercise the real Skopeo client against isolated local registry endpoints."""
-+
-+import base64
-+import gzip
-+import hashlib
-+from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
-+import io
-+import json
-+import os
-+from pathlib import Path
-+import secrets
-+import subprocess
-+import tarfile
-+import tempfile
-+import threading
-+import unittest
-+from urllib.parse import parse_qs, urlsplit
-+
-+
-+SCRIPT = Path(__file__).with_name("sync-image.sh")
-+
-+
-+def digest(data):
-+    return "sha256:" + hashlib.sha256(data).hexdigest()
-+
-+
-+class Registry(BaseHTTPRequestHandler):
-+    def log_message(self, *_):
-+        pass
-+
-+    def respond(self, status, body=b"", **headers):
-+        self.send_response(status)
-+        for name, value in headers.items():
-+            self.send_header(name.replace("_", "-"), str(value))
-+        self.send_header("Content-Length", str(len(body)))
-+        self.end_headers()
-+        if self.command != "HEAD":
-+            self.wfile.write(body)
-+
-+    def handle_request(self):
-+        server = self.server
-+        path = urlsplit(self.path).path
-+        size = int(self.headers.get("Content-Length", 0))
-+        body = self.rfile.read(size)
-+        if path == "/auth":
-+            server.auth_methods.append(self.command)
-+            if self.command != "GET":
-+                # Reproduce an ACR OAuth POST connection reset, without a network dependency.
-+                self.connection.close()
-+                return
-+            if self.headers.get("Authorization") != server.basic:
-+                self.respond(401)
-+                return
-+            self.respond(200, json.dumps({"token": server.token, "expires_in": 300}).encode(),
-+                         Content_Type="application/json")
-+            return
-+        if self.headers.get("Authorization") != "Bearer " + server.token:
-+            self.respond(401, WWW_Authenticate=f'Bearer realm="{server.url}/auth",service="fixture"')
-+            return
-+        if path == "/v2/":
-+            self.respond(200, b"{}", Content_Type="application/json")
-+        elif "/manifests/" in path:
-+            if self.command == "PUT":
-+                server.published = body
-+                self.respond(201, Docker_Content_Digest=digest(body))
-+            elif server.source:
-+                server.manifest_reads += 1
-+                self.respond(200, server.manifest, Content_Type=server.media_type,
-+                             Docker_Content_Digest=digest(server.manifest))
-+            else:
-+                self.respond(404)
-+        elif path.endswith("/blobs/uploads/") and self.command == "POST":
-+            server.uploads += 1
-+            if server.fail_uploads:
-+                server.fail_uploads -= 1
-+                self.respond(503)
-+                return
-+            key = str(server.uploads)
-+            server.pending[key] = b""
-+            self.respond(202, Location=f"{server.url}/v2/test/blobs/uploads/{key}")
-+        elif "/blobs/uploads/" in path:
-+            key = path.rsplit("/", 1)[-1]
-+            server.pending[key] += body
-+            if self.command == "PUT":
-+                blob_digest = parse_qs(urlsplit(self.path).query)["digest"][0]
-+                if digest(server.pending[key]) != blob_digest:
-+                    self.respond(400)
-+                    return
-+                server.blobs[blob_digest] = server.pending[key]
-+                self.respond(201, Docker_Content_Digest=blob_digest)
-+            else:
-+                self.respond(202, Location=server.url + path, Range=f"0-{len(server.pending[key])}")
-+        elif "/blobs/" in path:
-+            blob_digest = path.rsplit("/", 1)[-1]
-+            blob = server.blobs.get(blob_digest)
-+            if blob is None:
-+                self.respond(404)
-+            else:
-+                self.respond(200, blob, Content_Type="application/octet-stream",
-+                             Docker_Content_Digest=blob_digest)
-+        else:
-+            self.respond(404)
-+
-+    do_GET = do_HEAD = do_POST = do_PATCH = do_PUT = handle_request
-+
-+
-+class SyncImageTest(unittest.TestCase):
-+    def run_sync(self, arch, oci=False, failures=0, index_only=False):
-+        with tempfile.TemporaryDirectory() as directory:
-+            root = Path(directory)
-+            servers = []
-+            try:
-+                for source in (True, False):
-+                    server = ThreadingHTTPServer(("127.0.0.1", 0), Registry)
-+                    server.daemon_threads = True
-+                    server.source = source
-+                    server.url = f"http://127.0.0.1:{server.server_port}"
-+                    server.token = secrets.token_hex(16)
-+                    server.basic = "Basic " + base64.b64encode(b"fixture:fixture").decode()
-+                    server.auth_methods, server.blobs, server.pending = [], {}, {}
-+                    server.published, server.manifest_reads, server.uploads = None, 0, 0
-+                    server.fai
++          sudo apt-get install -y --
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2757** (2026-11-17): ci(release): add a workflow to build the gateway controller image (@yangkaa)
+- **PR #2756** (2026-11-17): ci(release): run the standalone smoke test on Ubuntu 24.04 (@yangkaa)
+- **PR #2755** (2026-11-17): ci(release): build standalone natively and sync to Aliyun with retries (@yangkaa)
+- **PR #2754** (2026-11-17): ci: move large image caches to registry storage (@ZhangSetSail)
 - **PR #2753** (2026-11-16): ci: persist UI and console image caches across runners (@ZhangSetSail)
 - **PR #2752** (2026-11-16): fix: use GET authentication for Aliyun image synchronization (@ZhangSetSail)
-- **PR #2751** (2026-11-15): fix: isolate and retry release image registry sync (@ZhangSetSail)
-- **PR #2749** (2026-11-08): feat: support template artifacts and precise team quotas (@RainBondsongyg)
-- **PR #2748** (2026-11-06): chore: sync latest main into disk cleanup branch (@RainBondsongyg)
-- **PR #2747** (2026-11-04): chore(release): add the other release approvers as code owners (@yangkaa)
 
 ---
 
@@ -1675,37 +1579,67 @@ Co-authored-by: 张启航 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ci: persist UI and console image caches across runners
+## X. ci(release): add a workflow to build the gateway controller image
 
 **RULE**:
-When implementing operations in `.github/workflows/dev-build.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in goodrain/rainbond. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/release-v6-gateway-controller.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in goodrain/rainbond. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3a622ae9`: ci: persist UI and console image caches across runners. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `cfba2cee`: ci(release): add a workflow to build the gateway controller image. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/dev-build.yml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/release-v6-gateway-controller.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-          cache-from: type=gha,version=2,scope=rainbond-ui-amd64
-          cache-to: type=gha,version=2,mode=max,scope=rainbond-ui-amd64,ignore-error=true,timeout=5m
-          cache-from: type=gha,version=2,scope=rainbond-console-amd64
-          cache-to: type=gha,version=2,mode=max,scope=rainbond-console-amd64,ignore-error=true,timeout=5m
+name: "release-v6-gateway-controller"
+
+# 构建 rbd-gateway 使用的 apisix-ingress-controller 镜像（goodrain/apisix-ingress-controller 的发布分支），
+# 推到阿里云 goodrain/apisix-ingress-controller:<tag> 和 <tag>-esgz。rainbond-chart 按 tag 引用它。
+# 覆盖已有 tag 前，先把旧镜像复制到 <tag>-<backup_suffix> 和 <tag>-esgz-<backup_suffix>，备份失败就不构建。
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: 'goodrain/apisix-ingress-controller 的分支或 commit'
+        required: true
+        default: 'release/v1.8.4'
+      tag:
+        description: '要推送的镜像 tag（不带 -esgz）'
+        required: true
+        default: 'v1.8.4-upsert-e26e824'
+      backup_suffix:
+        description: '覆盖前旧镜像的备份后缀，例如 bak-20261117'
+        required: true
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    environment: release-v6
+    timeout-minutes: 60
+    env:
+      REPO: registry.cn-hangzhou.aliyuncs.com/goodrain/apisix-ingress-controller
+      TAG: ${{ inputs.tag }}
+      BACKUP_SUFFIX: ${{ inputs.backup_suffix }}
+    steps:
+      - name: Validate inputs
+        run: |
+          [[ "$TAG" =~ ^v[0-9A-Za-z._-]+$ && "$TAG" != *-esgz ]] || { echo "::error::invalid tag $TAG"; exit 1; }
+          [[ "$BACKUP_SUFFIX" =~ ^[0-9A-Za-z
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-          cache-from: type=gha,scope=ui
-          cache-to: type=gha,mode=max,scope=ui
-          cache-from: type=gha,scope=console
-          cache-to: type=gha,mode=max,scope=console
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3a622ae9` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `cfba2cee` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

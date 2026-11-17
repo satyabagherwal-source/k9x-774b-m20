@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-17T21:41:21.544Z",
-  "total_records": 1695,
+  "last_updated": "2026-11-17T21:57:35.159Z",
+  "total_records": 1700,
   "domains": {
     "A": {
       "total": 11,
@@ -48,7 +48,7 @@
       ]
     },
     "D": {
-      "total": 735,
+      "total": 740,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -784,7 +784,12 @@
         "domain_intelligence-research-knowledge-intelligence-baai-bge-small-en-v1-5-core-invariants",
         "domain_intelligence-research-knowledge-intelligence-hf-baai-bge-small-en-v1-5-learnings-core-invaria",
         "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8-27b-core-invariants",
-        "domain_intelligence-research-knowledge-intelligence-hf-qwen-qwen3-8-27b-learnings-core-invariants"
+        "domain_intelligence-research-knowledge-intelligence-hf-qwen-qwen3-8-27b-learnings-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-harness-hub-qwen3-8-27b-pi-adapted-core-invarian",
+        "domain_intelligence-research-knowledge-intelligence-tencent-hy-simulmt-30b-a3b-fp8-core-invariants",
+        "DOM-D-E5720888",
+        "domain_intelligence-research-knowledge-intelligence-hf-harness-hub-qwen3-8-27b-pi-adapted-learnings-",
+        "domain_intelligence-research-knowledge-intelligence-hf-tencent-hy-simulmt-30b-a3b-fp8-learnings-core"
       ]
     },
     "E": {
@@ -17973,8 +17978,8 @@
       "title": "Architecture Intelligence: Bitterbot-AI/bitterbot-desktop Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-bitterbot-ai-bitterbot-desktop-architecture-intelligence-bitterbot-ai-bitterbot-.md",
       "repository": "Bitterbot-AI/bitterbot-desktop",
-      "content_hash": "def226df49ea3033d0a69b3da650f61bca1ae7a08dd5ad80cb512468e4f058e4",
-      "created_at": "2026-11-17T20:03:42.060Z"
+      "content_hash": "e65317d49d8088b7f19c256e2bfbe957389e4a342293a2be3cbc93037e252202",
+      "created_at": "2026-11-17T21:56:56.189Z"
     },
     "domain_intelligence-search-distribution-intelligence-sharkdp-fd-learnings-core-invariants": {
       "record_id": "domain_intelligence-search-distribution-intelligence-sharkdp-fd-learnings-core-invariants",
@@ -21379,8 +21384,8 @@
       "title": "Technical Construction Intelligence: goodrain/rainbond Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-goodrain-rainbond-technical-construction-intelligence-goodrain-rainbond-core-inv.md",
       "repository": "goodrain/rainbond",
-      "content_hash": "a553f0031ffcc42b18aeadad3f70a37db62d682b2bbde8af57e9fa5cef5c6d54",
-      "created_at": "2026-11-17T00:38:39.486Z"
+      "content_hash": "2c0a0d6f6cd4d529565bdc4666d8e9d5d4fb15f48711d100a8bd81205750cea1",
+      "created_at": "2026-11-17T21:56:49.598Z"
     },
     "domain_intelligence-search-distribution-intelligence-seekstorm-seekstorm-core-invariants": {
       "record_id": "domain_intelligence-search-distribution-intelligence-seekstorm-seekstorm-core-invariants",
@@ -21448,8 +21453,8 @@
       "title": "Technical Construction Intelligence: goodrain-rainbond-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-goodrain-rainbond-learnings-technical-construction-intelligence-goodrain-rainbon.md",
       "repository": "goodrain-rainbond-learnings",
-      "content_hash": "2d8ac9a444e567b5207aa0f768610bf619d0fdad60471b2f8068ef2707ca422a",
-      "created_at": "2026-11-17T00:38:47.210Z"
+      "content_hash": "c9aa1afc55cc11b362dceea5d17e4df88eea2e9d4c44c7c61c2134f745005428",
+      "created_at": "2026-11-17T21:57:35.159Z"
     },
     "domain_intelligence-search-distribution-intelligence-seekstorm-seekstorm-learnings-core-invariants": {
       "record_id": "domain_intelligence-search-distribution-intelligence-seekstorm-seekstorm-learnings-core-invariants",
@@ -28578,6 +28583,84 @@
       "repository": "nats-io-nats.go-learnings",
       "content_hash": "96d4b49f7562f346d690f584a02de6b8ebadc1e3d4d0b6cf837cb8a14dffd4cf",
       "created_at": "2026-11-17T21:41:21.544Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-harness-hub-qwen3-8-27b-pi-adapted-core-invarian": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-harness-hub-qwen3-8-27b-pi-adapted-core-invarian",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: harness-hub/Qwen3.8-27B-pi-adapted Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-harness-hub-qwen3-8-27b-pi-adapted-research-knowledge-intelligence-harness-hu.md",
+      "repository": "harness-hub/Qwen3.8-27B-pi-adapted",
+      "content_hash": "3c26fd038f54f88277ab3e25b05a050d1c2d2c9b6e9d8e39bfc912d2987133c1",
+      "created_at": "2026-11-17T21:56:37.540Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-tencent-hy-simulmt-30b-a3b-fp8-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-tencent-hy-simulmt-30b-a3b-fp8-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: tencent/Hy-SimulMT-30B-A3B-FP8 Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-tencent-hy-simulmt-30b-a3b-fp8-research-knowledge-intelligence-tencent-hy-sim.md",
+      "repository": "tencent/Hy-SimulMT-30B-A3B-FP8",
+      "content_hash": "6f1014603f616b0314ecb8b5288b1189079b9cf3b852272e68d831af506c2856",
+      "created_at": "2026-11-17T21:56:40.088Z"
+    },
+    "DOM-D-E5720888": {
+      "record_id": "DOM-D-E5720888",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): harness-hub/Qwen3.8-27B-pi-adapted",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-harness-hub-qwen3.8-27b-pi-adapted-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/harness-hub/Qwen3.8-27B-pi-adapted](https://huggingface.co/harness-hub/Qwen3.8-27B-pi-adapted))  \n> **Source Version**: `hf-harness-h`  \n>",
+      "content_hash": "e80825fe0304235905b97b914ffc2bc3e1ed62dc86f7cf6624a7592801330447",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-harness-hub-qwen3.8-27b-pi-adapted-learnings.md`  \n> **Source**: huggingface ([ht -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-harness-hub-qwen3.8-27b-pi-adapted-learnings.md`  \n> **Source**: huggingface ([ht",
+      "provenance": {
+        "source_uri": "project://hf-harness-hub-qwen3.8-27b-pi-adapted/hf-harness-hub-qwen3.8-27b-pi-adapted-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-17T21:56:59.206Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-harness-hub-qwen3.8-27b-pi-adapted)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-harness-hub-qwen3.8-27b-pi-adapted"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-17T21:57:33.594Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-harness-hub-qwen3-8-27b-pi-adapted-learnings-": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-harness-hub-qwen3-8-27b-pi-adapted-learnings-",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-harness-hub-qwen3.8-27b-pi-adapted-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-harness-hub-qwen3-8-27b-pi-adapted-learnings-research-knowledge-intelligence-.md",
+      "repository": "hf-harness-hub-qwen3.8-27b-pi-adapted-learnings",
+      "content_hash": "833e93a39454d1d447a783e554e567751cdfdb1b690541c6ecb9bc82a7f43728",
+      "created_at": "2026-11-17T21:57:33.907Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-tencent-hy-simulmt-30b-a3b-fp8-learnings-core": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-tencent-hy-simulmt-30b-a3b-fp8-learnings-core",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-tencent-hy-simulmt-30b-a3b-fp8-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-tencent-hy-simulmt-30b-a3b-fp8-learnings-research-knowledge-intelligence-hf-t.md",
+      "repository": "hf-tencent-hy-simulmt-30b-a3b-fp8-learnings",
+      "content_hash": "53a3a14fba5d113c3b734b7b7b7ed0f84d7083534911f3e203899d7acbfdd680",
+      "created_at": "2026-11-17T21:57:34.383Z"
     }
   }
 }

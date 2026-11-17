@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261115-RO44",
-    "timestamp": "2026-11-15T22:58:41.236Z",
-    "repository": "jellyfin/Swiftfin",
-    "learningId": "learn-github-jellyfin-swiftfin",
-    "contentHash": "5b8c45813fff41ceeab4b9638d834ec0114fef90488a8449fa71ac0f489a203a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261115-RS6A",
-    "timestamp": "2026-11-15T22:58:46.498Z",
-    "repository": "tailscale/tailscale",
-    "learningId": "learn-github-tailscale-tailscale",
-    "contentHash": "540d235719c5aa8d14ff054ff86eda42049874a8d46bf50f157c9e7709bc5032",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261115-QQCM",
-    "timestamp": "2026-11-15T23:25:57.094Z",
-    "repository": "Ataraxy-Labs/sem",
-    "learningId": "learn-github-ataraxy-labs-sem",
-    "contentHash": "d57b19c73fe4a1d1d53ad8a8d88b45d825d2864b29a1ab86f8a4a0ba39095cab",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261115-QTGX",
-    "timestamp": "2026-11-15T23:26:01.137Z",
-    "repository": "searchsolved/search-solved-public-seo",
-    "learningId": "learn-github-searchsolved-search-solved-public-seo",
-    "contentHash": "facdea82f8b15e166cb99a5d7ee5689f3e3caa29aeee367cf53b0da04184b1d8",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261115-QWHG",
     "timestamp": "2026-11-15T23:26:05.044Z",
     "repository": "argoproj/argo-events",
@@ -7492,6 +7432,66 @@
     "contentHash": "1c88aadc9610f33f6dbd4866e6f2ab8d6c62c08259fdea116b52fc72909b38de",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-FK1B",
+    "timestamp": "2026-11-17T21:56:37.295Z",
+    "repository": "harness-hub/Qwen3.8-27B-pi-adapted",
+    "learningId": "learn-huggingface-harness-hub-qwen3-8-27b-pi-adapted",
+    "contentHash": "84ba9b85bab2d4c645895618ca7beec1015a9bbfbdd12a88c2c27336838aae8e",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-FM02",
+    "timestamp": "2026-11-17T21:56:39.842Z",
+    "repository": "tencent/Hy-SimulMT-30B-A3B-FP8",
+    "learningId": "learn-huggingface-tencent-hy-simulmt-30b-a3b-fp8",
+    "contentHash": "9b60bf2f04609db727dd3ea2c674cfbba3b187616b263f76f70dc44b9ba5202f",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-FT7N",
+    "timestamp": "2026-11-17T21:56:49.187Z",
+    "repository": "goodrain/rainbond",
+    "learningId": "learn-github-goodrain-rainbond",
+    "contentHash": "a0aa2f5d532930e9eb0d74ae180a73f98bf8385d8cee15f9fe1f0621c1bc3c6e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-FY9M",
+    "timestamp": "2026-11-17T21:56:55.738Z",
+    "repository": "Bitterbot-AI/bitterbot-desktop",
+    "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
+    "contentHash": "0bf3516a067582afc7bb1acf89a52a01d30035233f3fcbdf0c0cf96acd659cae",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

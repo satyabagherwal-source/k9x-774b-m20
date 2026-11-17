@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-17T21:22:34.247Z",
+  "updated_at": "2026-11-17T21:57:33.641Z",
   "stats": {
-    "total_discovered": 5158,
-    "approved_pending_harvest": 4869,
+    "total_discovered": 5159,
+    "approved_pending_harvest": 4870,
     "harvested_count": 0,
     "rejected_count": 289,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 4854,
+      "COMMUNITY_AND_EXPERT": 4855,
       "OFFICIAL_DOCUMENTATION": 163,
       "STANDARDS_AND_SPECIFICATIONS": 108,
       "ENGINEERING_BLOGS": 3,
@@ -111474,6 +111474,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/astral-sh-uv-learnings.md",
         "fileName": "astral-sh-uv-learnings.md"
+      }
+    },
+    "SRC-DBEDE62D4D71": {
+      "id": "SRC-DBEDE62D4D71",
+      "url": "https://huggingface.co/harness-hub/Qwen3.8-27B-pi-adapted",
+      "title": "https://huggingface.co/harness-hub/Qwen3.8-27B-pi-adapted",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-17T21:57:33.641Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-harness-hub-qwen3.8-27b-pi-adapted-learnings.md",
+        "fileName": "hf-harness-hub-qwen3.8-27b-pi-adapted-learnings.md"
       }
     }
   }

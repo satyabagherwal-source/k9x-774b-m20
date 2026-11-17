@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T21:41:17.074Z",
-  "total_cycles_completed": 10277,
-  "total_learnings_persisted": 10277,
-  "total_rules_promoted": 9819,
+  "last_updated": "2026-11-17T21:56:55.768Z",
+  "total_cycles_completed": 10281,
+  "total_learnings_persisted": 10281,
+  "total_rules_promoted": 9820,
   "history": [
-    {
-      "timestamp": "2026-11-17T09:22:24.431Z",
-      "repository": "freenet/freenet-core",
-      "learningId": "learn-github-freenet-freenet-core",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T09:22:25.889Z",
-      "repository": "citusdata/citus",
-      "learningId": "learn-github-citusdata-citus",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T09:23:12.672Z",
-      "repository": "aws/aws-cdk",
-      "learningId": "learn-github-aws-aws-cdk",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T09:27:23.361Z",
-      "repository": "NervJS/taro",
-      "learningId": "learn-github-nervjs-taro",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-17T09:47:33.341Z",
       "repository": "StarRocks/starrocks",
@@ -1403,6 +1375,34 @@
       "repository": "NucleoidAI/Nucleoid",
       "learningId": "learn-github-nucleoidai-nucleoid",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T21:56:37.307Z",
+      "repository": "harness-hub/Qwen3.8-27B-pi-adapted",
+      "learningId": "learn-huggingface-harness-hub-qwen3-8-27b-pi-adapted",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T21:56:39.853Z",
+      "repository": "tencent/Hy-SimulMT-30B-A3B-FP8",
+      "learningId": "learn-huggingface-tencent-hy-simulmt-30b-a3b-fp8",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T21:56:49.197Z",
+      "repository": "goodrain/rainbond",
+      "learningId": "learn-github-goodrain-rainbond",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T21:56:55.768Z",
+      "repository": "Bitterbot-AI/bitterbot-desktop",
+      "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

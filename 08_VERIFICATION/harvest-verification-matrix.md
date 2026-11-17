@@ -10724,3 +10724,8 @@
 | `CYCLE-20261117-VJ0B` | `2026-11-17T21:41:02.843Z` | `pola-rs/polars` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9071` | Yes (`950edeb9...`) |
 | `CYCLE-20261117-VOKE` | `2026-11-17T21:41:10.046Z` | `nats-io/nats.go` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9072` | Yes (`243da6b6...`) |
 | `CYCLE-20261117-VTZD` | `2026-11-17T21:41:17.065Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9073` | Yes (`1c88aadc...`) |
+| `CYCLE-20261117-FK1B` | `2026-11-17T21:56:37.295Z` | `harness-hub/Qwen3.8-27B-pi-adapted` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-harness-hub-qwen3.8-27b-pi-adapted-learnings.md` | Yes (`84ba9b85...`) |
+| `CYCLE-20261117-FM02` | `2026-11-17T21:56:39.842Z` | `tencent/Hy-SimulMT-30B-A3B-FP8` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-tencent-hy-simulmt-30b-a3b-fp8-learnings.md` | Yes (`9b60bf2f...`) |
+| `CYCLE-20261117-FT7N` | `2026-11-17T21:56:49.187Z` | `goodrain/rainbond` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9074` | Yes (`a0aa2f5d...`) |
+| `CYCLE-20261117-FY9M` | `2026-11-17T21:56:55.738Z` | `Bitterbot-AI/bitterbot-desktop` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md` | Yes (`0bf3516a...`) |
+| `CYCLE-2026-11-17-PROJ-EVOLVE` | `2026-11-17T21:57:33.618Z` | `hf-harness-hub-qwen3.8-27b-pi-adapted` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-E5720888` [Domain D] | Yes (`e80825fe...`) |

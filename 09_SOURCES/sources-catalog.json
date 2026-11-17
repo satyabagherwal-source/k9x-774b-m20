@@ -2303,10 +2303,10 @@
     "repository": "Bitterbot-AI/bitterbot-desktop",
     "platform": "github",
     "sourceUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-    "sourceVersion": "ab1e41df",
+    "sourceVersion": "108f7135",
     "license": "MIT",
-    "contentHash": "b9d861094915540141be11ad4c82124659495784a6fe43af689082fba52a684d",
-    "lastHarvestedAt": "2026-11-17T20:03:41.756Z",
+    "contentHash": "0bf3516a067582afc7bb1acf89a52a01d30035233f3fcbdf0c0cf96acd659cae",
+    "lastHarvestedAt": "2026-11-17T21:56:55.743Z",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop"
   },
   "adobe-react-spectrum": {
@@ -2623,10 +2623,10 @@
     "repository": "goodrain/rainbond",
     "platform": "github",
     "sourceUrl": "https://github.com/goodrain/rainbond",
-    "sourceVersion": "3a622ae9",
+    "sourceVersion": "5508cd38",
     "license": "NOASSERTION",
-    "contentHash": "ff77003d7d25675e9441a27f9ba6ae961da065bdfa648daadbc6effa3423a538",
-    "lastHarvestedAt": "2026-11-17T00:38:39.087Z",
+    "contentHash": "a0aa2f5d532930e9eb0d74ae180a73f98bf8385d8cee15f9fe1f0621c1bc3c6e",
+    "lastHarvestedAt": "2026-11-17T21:56:49.191Z",
     "learningId": "learn-github-goodrain-rainbond"
   },
   "bee-san-ciphey": {
@@ -11395,8 +11395,8 @@
     "sourceUrl": "https://huggingface.co/tencent/Hy-SimulMT-30B-A3B-FP8",
     "sourceVersion": "hf-tencent-hy-simulmt-30b-a3b-fp8",
     "license": "Open-Source",
-    "contentHash": "362967b4a3bf6c26a8efccdcf45cd2bdebc982d17f4b15252247f8b526ed5ecf",
-    "lastHarvestedAt": "2026-11-13T11:55:29.225Z",
+    "contentHash": "9b60bf2f04609db727dd3ea2c674cfbba3b187616b263f76f70dc44b9ba5202f",
+    "lastHarvestedAt": "2026-11-17T21:56:39.846Z",
     "learningId": "learn-huggingface-tencent-hy-simulmt-30b-a3b-fp8"
   },
   "hf-prithivmlmods-gender-classifier-mini": {
@@ -12818,5 +12818,15 @@
     "contentHash": "c0e790dd9f2b8f83b1b3ab17d80f10d146249b19ed131bf6c9eac91da2909810",
     "lastHarvestedAt": "2026-11-17T18:35:22.272Z",
     "learningId": "learn-huggingface-moonmath-ai-deepseek-v4-1-flash-1017-uncensored"
+  },
+  "hf-harness-hub-qwen3.8-27b-pi-adapted": {
+    "repository": "harness-hub/Qwen3.8-27B-pi-adapted",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/harness-hub/Qwen3.8-27B-pi-adapted",
+    "sourceVersion": "hf-harness-hub-qwen3.8-27b-pi-adapted",
+    "license": "Open-Source",
+    "contentHash": "84ba9b85bab2d4c645895618ca7beec1015a9bbfbdd12a88c2c27336838aae8e",
+    "lastHarvestedAt": "2026-11-17T21:56:37.300Z",
+    "learningId": "learn-huggingface-harness-hub-qwen3-8-27b-pi-adapted"
   }
 }

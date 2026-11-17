@@ -4,22 +4,22 @@
 {
   "source_repository": "Bitterbot-AI/bitterbot-desktop",
   "source_url": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-  "source_version": "ab1e41df",
+  "source_version": "108f7135",
   "license": "MIT",
-  "timestamp": "2026-11-17T20:03:41.939Z",
+  "timestamp": "2026-11-17T21:56:56.024Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-bitterbot-ai-bitterbot-desktop",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop) (Revision: `ab1e41df`).  
-> **License**: MIT | **Timestamp**: `2026-11-17T20:03:41.939Z`  
+> **Provenance**: Harvested from [Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop) (Revision: `108f7135`).  
+> **License**: MIT | **Timestamp**: `2026-11-17T21:56:56.024Z`  
 > **Learning ID**: `learn-github-bitterbot-ai-bitterbot-desktop`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `Bitterbot-AI/bitterbot-desktop` (Commit: `ab1e41df`)
+- **Target Repository**: `Bitterbot-AI/bitterbot-desktop` (Commit: `108f7135`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T20:03:40.876Z  
+> **Harvest Timestamp**: 2026-11-17T21:56:55.196Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1581,38 +1581,117 @@ def main():
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ab1e41df` (2026-11-17)
-**Commit Message**: test(installer): do not require a signature check on runners with no verifier (#378)
+### Incident Patch 1: `108f7135` (2026-11-17)
+**Commit Message**: chore(main): release 1.14.0 (#372)
 
-The beta-pin test passed --require-signature unconditionally. macOS runners
-that ship neither minisign nor OpenSSL 3 fail it, which turned main red on
-2d4d05d7 while the same image passed on the PR run.
+Co-authored-by: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
 
-Co-authored-by: Claude Fable 5.2 <[REDACTED_EMAIL]>
-
-**File**: `src/infra/install-sh.test.ts` (modified, +7/-2)
+**File**: `.release-please-manifest.json` (modified, +1/-1)
 ```diff
-@@ -352,13 +352,18 @@ describeInstaller("scripts/install.sh", () => {
-     const stable = runInstaller([], {}, freshHome());
-     expect(stable.status, stable.out).toBe(0);
-     expect(fs.readlinkSync(path.join(stable.home, ".bitterbot/app/current"))).toBe("1.5.0");
-+    // Some macOS runners ship neither minisign nor OpenSSL 3. There the
-+    // signature cannot be required, and the pin is still exercised.
-+    const canVerify = opensslCanVerify() || hasCommand("minisign");
-     const beta = runInstaller(
--      ["--version", "1.10.0-beta.1", "--require-signature"],
-+      ["--version", "1.10.0-beta.1", ...(canVerify ? ["--require-signature"] : [])],
-       {},
-       stable.home,
-     );
-     expect(beta.status, beta.out).toBe(0);
--    expect(beta.out).toContain("Verified:");
-+    if (canVerify) {
-+      expect(beta.out).toContain("Verified:");
-+    }
-     expect(fs.readlinkSync(path.join(beta.home, ".bitterbot/app/current"))).toBe("1.10.0-beta.1");
-     expect(fs.readlinkSync(path.join(beta.home, ".bitterbot/app/previous"))).toBe("1.5.0");
-   });
+@@ -1,3 +1,3 @@
+ {
+-  ".": "1.13.0"
++  ".": "1.14.0"
+ }
+```
+
+**File**: `CHANGELOG.md` (modified, +15/-0)
+```diff
+@@ -1,5 +1,20 @@
+ # Changelog
+ 
++## [1.14.0](https://github.com/Bitterbot-AI/bitterbot-desktop/compare/v1.13.0...v1.14.0) (2026-11-17)
++
++
++### Features
++
++* **skills:** add verified collective learning and reproducible pilot evidence ([#376](https://github.com/Bitterbot-AI/bitterbot-desktop/issues/376)) ([2825902](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/2825902a749459b522212a485636475636f5afc3))
++* **skills:** cross-agent evidence cards with quorum and guard, replicated and integrated ([#377](https://github.com/Bitterbot-AI/bitterbot-desktop/issues/377)) ([2d4d05d](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/2d4d05d79362ea162465d832a31304ef2b8fa075))
++
++
++### Bug Fixes
++
++* **memory:** trim the embedding cache on every write; the agent explains its memory from its guide ([#371](https://github.com/Bitterbot-AI/bitterbot-desktop/issues/371)) ([3fd4221](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/3fd4221814f8d57c5e1e5efd43f5322612f1d61d))
++* **wallet:** stop @coinbase/agentkit sending analytics to Coinbase ([c62b524](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/c62b5245987f2c7453b0b06da9ba68bb53c77fdd))
++* **wallet:** stop @coinbase/agentkit sending analytics to Coinbase ([3ff9302](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/3ff93025e22001cdfa31d01013aee6fc26aff9c6))
++
+ ## [1.13.0](https://github.com/Bitterbot-AI/bitterbot-desktop/compare/v1.12.0...v1.13.0) (2026-11-08)
+ 
+ 
+```
+
+**File**: `desktop/package.json` (modified, +1/-1)
+```diff
+@@ -1,6 +1,6 @@
+ {
+   "name": "bitterbot-control-ui",
+-  "version": "1.13.0",
++  "version": "1.14.0",
+   "private": true,
+   "description": "Bitterbot Control UI - browser-based dashboard for the gateway",
+   "type": "module",
+```
+
+**File**: `desktop/src-tauri/Cargo.lock` (modified, +1/-1)
+```diff
+@@ -316,7 +316,7 @@ dependencies = [
+ 
+ [[package]]
+ name = "bitterbot-desktop"
+-version = "1.13.0"
++version = "1.14.0"
+ dependencies = [
+  "env_logger",
+  "libc",
+```
+
+**File**: `desktop/src-tauri/Cargo.toml` (modified, +1/-1)
+```diff
+@@ -1,6 +1,6 @@
+ [package]
+ name = "bitterbot-desktop"
+-version = "1.13.0"
++version = "1.14.0"
+ edition = "2021"
+ description = "Bitterbot desktop shell — Tauri 2 wrapper for the Control UI"
+ 
+```
+
+**File**: `desktop/src-tauri/tauri.conf.json` (modified, +1/-1)
+```diff
+@@ -1,7 +1,7 @@
+ {
+   "$schema": "https://raw.githubusercontent.com/tauri-apps/tauri/dev/crates/tauri-cli/schema.json",
+   "productName": "Bitterbot",
+-  "version": "1.13.0",
++  "version": "1.14.0",
+   "identifier": "ai.bitterbot.desktop",
+   "build": {
+     "devUrl": "http://localhost:5173",
+```
+
+**File**: `extensions/discord/package.json` (modified, +1/-1)
+```diff
+@@ -1,6 +1,6 @@
+ {
+   "name": "@bitterbot/discord",
+-  "version": "1.13.0",
++  "version": "1.14.0",
+   "description": "Bitterbot Discord channel plugin",
+   "type": "module",
+   "devDependencies": {
+```
+
+**File**: `extensions/email/package.json` (modified, +1/-1)
+```diff
+@@ -1,6 +1,6 @@
+ {
+   "name": "@bitterbot/email",
+-  "version": "1.13.0",
++  "version": "1.14.0",
+   "private": true,
+   "description": "Bitterbot email channel: read a mailbox over IMAP, reply over SMTP",
+   "type": "module",
 ```
 
 #### Recent Merged Pull Requests:
@@ -1620,8 +1699,8 @@ Co-authored-by: Claude Fable 5.2 <[REDACTED_EMAIL]>
 - **PR #377** (2026-11-17): feat(skills): cross-agent evidence cards with quorum and guard, replicated and integrated (@VGIL77)
 - **PR #376** (2026-11-14): feat(skills): add verified collective learning and reproducible pilot evidence (@VGIL77)
 - **PR #373** (2026-11-13): fix(wallet): stop @coinbase/agentkit sending analytics to Coinbase (@VGIL77)
+- **PR #372** (2026-11-17): chore(main): release 1.14.0 (@github-actions[bot])
 - **PR #371** (2026-11-08): fix(memory): trim the embedding cache on every write; the agent explains its memory from its guide (@VGIL77)
-- **PR #370** (2026-11-08): feat(agents): the agent knows which of its parts are on, from the live config (@VGIL77)
 
 ---
 
@@ -1641,38 +1720,44 @@ Co-authored-by: Claude Fable 5.2 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. test(installer): do not require a signature check on runners with no verifier
+## X. main): release 1.14.0
 
 **RULE**:
-When implementing operations in `src/infra/install-sh.test.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ab1e41df`: test(installer): do not require a signature check on runners with no verifier. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `108f7135`: main): release 1.14.0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/infra/install-sh.test.ts`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-    // Some macOS runners ship neither minisign nor OpenSSL 3. There the
-    // signature cannot be required, and the pin is still exercised.
-    const canVerify = opensslCanVerify() || hasCommand("minisign");
-      ["--version", "1.10.0-beta.1", ...(canVerify ? ["--require-signature"] : [])],
-    if (canVerify) {
-      expect(beta.out).toContain("Verified:");
-    }
+## [1.14.0](https://github.com/Bitterbot-AI/bitterbot-desktop/compare/v1.13.0...v1.14.0) (2026-11-17)
+
+
+### Features
+
+* **skills:** add verified collective learning and reproducible pilot evidence ([#376](https://github.com/Bitterbot-AI/bitterbot-desktop/issues/376)) ([2825902](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/2825902a749459b522212a485636475636f5afc3))
+* **skills:** cross-agent evidence cards with quorum and guard, replicated and integrated ([#377](https://github.com/Bitterbot-AI/bitterbot-desktop/issues/377)) ([2d4d05d](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/2d4d05d79362ea162465d832a31304ef2b8fa075))
+
+
+### Bug Fixes
+
+* **memory:** trim the embedding cache on every write; the agent explains its memory from its guide ([#371](https://github.com/Bitterbot-AI/bitterbot-desktop/issues/371)) ([3fd4221](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/3fd4221814f8d57c5e1e5efd43f5322612f1d61d))
+* **wallet:** stop @coinbase/agentkit sending analytics to Coinbase ([c62b524](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/c62b5245987f2c7453b0b06da9ba68bb53c77fdd))
+* **wallet:** stop @coinbase/agentkit sending analytics to Coinbase ([3
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Induced defect failure mode:
-      ["--version", "1.10.0-beta.1", "--require-signature"],
-    expect(beta.out).toContain("Verified:");
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ab1e41df` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `108f7135` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol
