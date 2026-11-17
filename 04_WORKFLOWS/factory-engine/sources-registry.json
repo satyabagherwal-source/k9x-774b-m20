@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-17T22:11:14.186Z",
-    "lastVerified": "2026-11-17T22:11:14.186Z",
+    "lastChecked": "2026-11-17T22:27:26.056Z",
+    "lastVerified": "2026-11-17T22:27:26.056Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -369,8 +369,8 @@
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-17T21:22:29.179Z",
-    "lastVerified": "2026-11-17T21:22:29.179Z",
+    "lastChecked": "2026-11-17T22:27:26.040Z",
+    "lastVerified": "2026-11-17T22:27:26.041Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-synalinks-synalinks-skills",
@@ -779,12 +779,12 @@
     "officialUrl": "https://huggingface.co/black-forest-labs/FLUX.1-dev",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-13T12:16:01.754Z",
-    "lastVerified": "2026-11-13T12:16:01.754Z",
+    "lastChecked": "2026-11-17T22:27:13.605Z",
+    "lastVerified": "2026-11-17T22:27:13.605Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-black-forest-labs-flux-1-dev",
-    "contentHash": "9a4769f24451c8cd46f5246f3530bb751202332261ea8dd87243adeb010d2506",
+    "contentHash": "7a79a84e98554862117d050289b05a26da4f77a4b4968def00b328e7406e186e",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -2431,8 +2431,8 @@
     "officialUrl": "https://github.com/mitmproxy/mitmproxy",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-17T17:28:00.998Z",
-    "lastVerified": "2026-11-17T17:28:00.998Z",
+    "lastChecked": "2026-11-17T22:27:21.022Z",
+    "lastVerified": "2026-11-17T22:27:21.022Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-mitmproxy-mitmproxy",
@@ -2980,8 +2980,8 @@
     "officialUrl": "https://github.com/easegress-io/easegress",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-17T01:15:53.787Z",
-    "lastVerified": "2026-11-17T01:15:53.787Z",
+    "lastChecked": "2026-11-17T22:27:18.576Z",
+    "lastVerified": "2026-11-17T22:27:18.577Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-easegress-io-easegress",
@@ -3346,9 +3346,9 @@
   "liyupi-yu-ai-agent": {
     "name": "yu-ai-agent",
     "officialUrl": "https://github.com/liyupi/yu-ai-agent",
-    "lastChecked": "2026-11-16T23:22:29.915Z",
+    "lastChecked": "2026-11-17T22:27:23.515Z",
     "revisionIdentifier": "6d4608c5",
-    "lastVerified": "2026-11-16T23:22:29.915Z"
+    "lastVerified": "2026-11-17T22:27:23.515Z"
   },
   "clementtsang-bottom": {
     "name": "ClementTsang/bottom",
@@ -5833,9 +5833,9 @@
   "apsl-react-native-keyboard-aware-scroll-view": {
     "name": "react-native-keyboard-aware-scroll-view",
     "officialUrl": "https://github.com/APSL/react-native-keyboard-aware-scroll-view",
-    "lastChecked": "2026-11-14T15:03:44.323Z",
+    "lastChecked": "2026-11-17T22:27:16.154Z",
     "revisionIdentifier": "9eee405f",
-    "lastVerified": "2026-11-14T15:03:44.323Z"
+    "lastVerified": "2026-11-17T22:27:16.154Z"
   },
   "meshery-meshery": {
     "name": "meshery/meshery",
@@ -9171,12 +9171,12 @@
     "revisionIdentifier": "3254ff75"
   },
   "facebook-folly": {
-    "name": "meta/folly",
+    "name": "folly",
     "officialUrl": "https://github.com/facebook/folly",
     "sourceType": "github",
     "technology": "C++",
-    "lastChecked": "2026-11-16T15:00:34.760Z",
-    "lastVerified": "2026-11-16T15:00:34.760Z",
+    "lastChecked": "2026-11-17T22:27:11.061Z",
+    "lastVerified": "2026-11-17T22:27:11.061Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-meta-folly",
@@ -9185,7 +9185,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "f416c5d1"
   },
   "hf-liquidai-lfm2.5-24b-a2b": {
     "name": "LiquidAI/LFM2.5-24B-A2B",

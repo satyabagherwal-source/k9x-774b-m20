@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T22:11:16.339Z",
+  "last_updated": "2026-11-17T22:27:27.924Z",
   "directives": [
     {
       "id": "CD-001",
@@ -23628,11 +23628,11 @@
       "domain_letter": "G"
     },
     {
-      "id": "CD-KMP8",
+      "id": "CD-J7BY",
       "directive_title": "portico: Fix typos on development community and security pages.",
       "source_repo": "zulip-zulip-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-KMP8-portico-fix-typos-on-development-community-and-security-pages.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-J7BY-portico-fix-typos-on-development-community-and-security-pages.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-17",
@@ -25122,11 +25122,11 @@
       "domain_letter": "G"
     },
     {
-      "id": "CD-G6BQ",
+      "id": "CD-J7ZI",
       "directive_title": "rust): address the remaining issues in #418",
       "source_repo": "zvec-ai-zvec-grep-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-G6BQ-rust-address-the-remaining-issues-in-418.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-J7ZI-rust-address-the-remaining-issues-in-418.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-17",
@@ -26333,6 +26333,24 @@
       "source_repo": "tailscale-tailscale",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-E4D432-client-web-tool-bump-node-to-26-x-lts.md",
+      "staged_date": "2026-11-17"
+    },
+    {
+      "id": "CD-REV-379B00",
+      "directive_title": "portico: Fix typos on development community and security pages.",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zulip-zulip",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-379B00-portico-fix-typos-on-development-communi.md",
+      "staged_date": "2026-11-17"
+    },
+    {
+      "id": "CD-REV-DC129D",
+      "directive_title": "rust): address the remaining issues in #418",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zvec-ai-zvec-grep",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-DC129D-rust-address-the-remaining-issues-in-418.md",
       "staged_date": "2026-11-17"
     }
   ]

@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T22:11:10.884Z",
-  "total_cycles_completed": 10284,
-  "total_learnings_persisted": 10284,
+  "last_updated": "2026-11-17T22:27:14.292Z",
+  "total_cycles_completed": 10285,
+  "total_learnings_persisted": 10285,
   "total_rules_promoted": 9822,
   "history": [
-    {
-      "timestamp": "2026-11-17T10:11:09.734Z",
-      "repository": "apache/pinot",
-      "learningId": "learn-github-apache-pinot",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-17T10:40:58.859Z",
       "repository": "speridlabs/idol",
@@ -1403,6 +1396,13 @@
       "repository": "tailscale/tailscale",
       "learningId": "learn-github-tailscale-tailscale",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T22:27:14.292Z",
+      "repository": "black-forest-labs/FLUX.1-dev",
+      "learningId": "learn-huggingface-black-forest-labs-flux-1-dev",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

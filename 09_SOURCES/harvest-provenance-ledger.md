@@ -10765,3 +10765,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-audio-cpp-audio-cpp-gguf` | `https://huggingface.co/audio-cpp/audio.cpp-gguf` | `hf-audio-c` | Multi-dimensional audit evidence | 2026-11-17T22:10:59.582Z |
 | `learn-github-apache-arrow` | `https://github.com/apache/arrow` | `aa4b89d9` | Multi-dimensional audit evidence | 2026-11-17T22:11:01.954Z |
 | `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `8a1840ef` | Multi-dimensional audit evidence | 2026-11-17T22:11:10.878Z |
+| `learn-huggingface-black-forest-labs-flux-1-dev` | `https://huggingface.co/black-forest-labs/FLUX.1-dev` | `hf-black-f` | Multi-dimensional audit evidence | 2026-11-17T22:27:14.284Z |

@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261115-YDGZ",
-    "timestamp": "2026-11-15T23:59:53.267Z",
-    "repository": "Agent-Field/agentfield",
-    "learningId": "learn-github-agent-field-agentfield",
-    "contentHash": "26b3d23c27b32b9a84dad04b7cec039af2d74d2667424f9879f1f9ec2205a8f2",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261115-YHJ4",
     "timestamp": "2026-11-15T23:59:58.528Z",
     "repository": "etcd-io/etcd",
@@ -7492,6 +7477,21 @@
     "contentHash": "1a19cb22dee23b843c2f1d9715f815f221a0686e4d4f73065f9fd3a392b08f3a",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-IXGO",
+    "timestamp": "2026-11-17T22:27:14.280Z",
+    "repository": "black-forest-labs/FLUX.1-dev",
+    "learningId": "learn-huggingface-black-forest-labs-flux-1-dev",
+    "contentHash": "7a79a84e98554862117d050289b05a26da4f77a4b4968def00b328e7406e186e",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

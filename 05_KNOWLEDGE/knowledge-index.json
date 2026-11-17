@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-17T22:11:16.681Z",
-  "total_verified_learnings": 8946,
+  "last_updated": "2026-11-17T22:27:28.461Z",
+  "total_verified_learnings": 8947,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 20671,
+  "total_items": 20674,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112058,9 +112058,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "e50759b5496ddb90a94eb2b83d31ec9d3d738673dbba73a9da659a34095bdd02",
+      "content_hash": "edfffe135715acd8c21d30a1cda8c2119fd5d6822e3dc6c8bee9caf8294cefbe",
       "domain_letter": "D",
-      "persisted_at": "2026-11-17T19:37:08.345Z"
+      "persisted_at": "2026-11-17T22:27:28.302Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112070,9 +112070,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "a59e58f46dfbbf67ff55186a7c331425e7b5efa53a7be28fbc7999df7a5f0ae7",
+      "content_hash": "ff3a8f15d635cb1fa73e5e58ea302dbcb2086d4aee1dd8c05f2c298ebb3c0d1d",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T19:37:08.453Z"
+      "persisted_at": "2026-11-17T22:27:28.461Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -112190,9 +112190,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zulip-zulip-learnings",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "bd3df7cdbc3215da49039a0850ae32ab82d559cf2a9840fb815ec7043336392c",
+      "content_hash": "5f98036ad9a2204796f52349bed7fced613726f762fb2a1e717e2f52ad19b778",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T19:12:36.532Z"
+      "persisted_at": "2026-11-17T22:27:27.432Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -251689,9 +251689,9 @@
       "title": "Research & Knowledge Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "123b108173f2e7eb2fb6f2d2038a2a3a94ff861f3dc86f9677facd4bb37b0a38",
+      "content_hash": "d6c686feda843d7ce809b5b32032f280b8ba8b3270ed74b375295b69dc3f1f39",
       "domain_letter": "D",
-      "persisted_at": "2026-11-17T19:37:08.224Z"
+      "persisted_at": "2026-11-17T22:27:28.103Z"
     },
     "learn-github-prof18-feed-flow": {
       "learning_id": "learn-github-prof18-feed-flow",
@@ -269585,13 +269585,13 @@
       "item_id": "candidate_directive-portico-fix-typos-on-development-community-and-security-pages",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-KMP8-portico-fix-typos-on-development-community-and-security-pages.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-J7BY-portico-fix-typos-on-development-community-and-security-pages.md",
       "title": "portico: Fix typos on development community and security pages.",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "57d562a30796c494a5da0459db6c57677b64a2a86c121f7bef90c11cb4b73815",
+      "content_hash": "89ef654e52c9cfceeb6d8b16729b3f6c426ca317e88a68155a7de275a4ac1b77",
       "domain_letter": "L",
-      "persisted_at": "2026-11-17T19:12:36.337Z"
+      "persisted_at": "2026-11-17T22:27:27.075Z"
     },
     "domain_intelligence-human-need-intelligence-zulip-zulip-learnings-core-invariants": {
       "item_id": "domain_intelligence-human-need-intelligence-zulip-zulip-learnings-core-invariants",
@@ -269601,9 +269601,9 @@
       "title": "Human & Need Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "e5431d4acd99bf55a05e8ca855199c6f7cb4f4b1746fb784e909a34e7c6620bc",
+      "content_hash": "9c3bea9ecfec235e65bcf1f216783f0224cd7ea2ebffe85841eae3b84d5ef4c7",
       "domain_letter": "A",
-      "persisted_at": "2026-11-17T19:12:36.428Z"
+      "persisted_at": "2026-11-17T22:27:27.248Z"
     },
     "candidate_directive-mito2-wait-for-a-stopped-region-s-checkpoint-before-reopening-it": {
       "item_id": "candidate_directive-mito2-wait-for-a-stopped-region-s-checkpoint-before-reopening-it",
@@ -274271,13 +274271,13 @@
       "item_id": "candidate_directive-rust-address-the-remaining-issues-in-418",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-G6BQ-rust-address-the-remaining-issues-in-418.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-J7ZI-rust-address-the-remaining-issues-in-418.md",
       "title": "rust): address the remaining issues in #418",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "3171c59e196f7925da8753b1e97cd266bc3ce6a645b2cfb4bd711711c160199d",
+      "content_hash": "2388883c116536517e00ef90eaaacf75143d2e01630a48ff53369914e9aa9401",
       "domain_letter": "D",
-      "persisted_at": "2026-11-17T19:37:08.104Z"
+      "persisted_at": "2026-11-17T22:27:27.924Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-m3-1-flash-learnings-core-i": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-m3-1-flash-learnings-core-i",
@@ -277796,6 +277796,57 @@
       "content_hash": "42e33af1e6bb28222f364abdd3571fec0c468f332404fbdc3749c0693aebb354",
       "domain_letter": "D",
       "persisted_at": "2026-11-17T22:11:15.758Z"
+    },
+    "learn-huggingface-black-forest-labs-flux-1-dev": {
+      "learning_id": "learn-huggingface-black-forest-labs-flux-1-dev",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "black-forest-labs/FLUX.1-dev",
+      "repository": "black-forest-labs/FLUX.1-dev",
+      "slug": "hf-black-forest-labs-flux.1-dev",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/black-forest-labs/FLUX.1-dev",
+      "source_version": "hf-black-forest-labs-flux.1-dev",
+      "content_hash": "7a79a84e98554862117d050289b05a26da4f77a4b4968def00b328e7406e186e",
+      "dossier_path": "07_PROJECT_LEARNING/hf-black-forest-labs-flux.1-dev-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-black-forest-labs-flux.1-dev-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-17T22:27:14.047Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-black-forest-labs-flux-1-dev-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-black-forest-labs-flux-1-dev-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-black-forest-labs-flux-1-dev-research-knowledge-intelligence-black-forest-lab.md",
+      "title": "Research & Knowledge Intelligence: black-forest-labs/FLUX.1-dev Core Invariants",
+      "repository": "black-forest-labs/FLUX.1-dev",
+      "source_version": "hf-black-forest-labs-flux.1-dev",
+      "content_hash": "74d6aba5182e1a0242bab341ff55894cc344661697e57cc115c883d0c2a3e8e0",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-17T22:27:14.515Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-black-forest-labs-flux-1-dev-learnings-core-i": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-black-forest-labs-flux-1-dev-learnings-core-i",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-black-forest-labs-flux-1-dev-learnings-research-knowledge-intelligence-hf-bla.md",
+      "title": "Research & Knowledge Intelligence: hf-black-forest-labs-flux.1-dev-learnings Core Invariants",
+      "repository": "hf-black-forest-labs-flux.1-dev-learnings",
+      "source_version": "HEAD",
+      "content_hash": "b8ce4919fb65a7cea586a4524eb645de7d8ee95b579ff0ae0a1c3c3119ab7729",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-17T22:27:26.468Z"
     }
   },
   "ai-builder-brain": {

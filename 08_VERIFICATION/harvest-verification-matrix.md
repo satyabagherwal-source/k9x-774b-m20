@@ -10732,3 +10732,4 @@
 | `CYCLE-20261117-Y1DM` | `2026-11-17T22:10:59.578Z` | `audio-cpp/audio.cpp-gguf` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-audio-cpp-audio.cpp-gguf-learnings.md` | Yes (`93f748a7...`) |
 | `CYCLE-20261117-Y37I` | `2026-11-17T22:11:01.950Z` | `apache/arrow` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9075` | Yes (`ac22cb85...`) |
 | `CYCLE-20261117-YA3E` | `2026-11-17T22:11:10.874Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9076` | Yes (`1a19cb22...`) |
+| `CYCLE-20261117-IXGO` | `2026-11-17T22:27:14.280Z` | `black-forest-labs/FLUX.1-dev` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-black-forest-labs-flux.1-dev-learnings.md` | Yes (`7a79a84e...`) |
