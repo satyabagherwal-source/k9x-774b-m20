@@ -656527,3 +656527,80 @@ plus `pg_input_error_info`. Present but always empty: `pg_policy`,
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `328cd87f` are properly handled with clean fallback behavior.
+
+
+---
+
+## 8986. Empirical Invariant Guard in mon.go (Harvested from rook/rook)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Empirical Invariant Guard in mon.go",
+  "source": "rook/rook",
+  "source_url": "https://github.com/rook/rook",
+  "source_version": "f5fa76ed",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-17T15:23:59.261Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-rook-rook",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [rook/rook](https://github.com/rook/rook) (Revision: `f5fa76ed`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `pkg/operator/ceph/cluster/mon/mon.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rook/rook. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `c5877968`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/operator/ceph/cluster/mon/mon.go`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Verified production-grade fix pattern:
+		// scheduling for this monitor has already been completed. Guard the read
+		// with resultLock since previously-spawned goroutines write to the map
+		// concurrently below.
+		resultLock.Lock()
+		_, alreadyScheduled := c.mapping.Schedule[mon.DaemonName]
+		resultLock.Unlock()
+		if alreadyScheduled {
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// Induced defect failure mode:
+		// scheduling for this monitor has already been completed
+		if _, ok := c.mapping.Schedule[mon.DaemonName]; ok {
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `c5877968` are properly handled with clean fallback behavior.

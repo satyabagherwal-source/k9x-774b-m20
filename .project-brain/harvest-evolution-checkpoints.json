@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T15:16:58.781Z",
+  "last_updated": "2026-11-17T15:24:04.418Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-17T14:15:19.918Z",
@@ -133,7 +133,7 @@
       "staged_for_review": 0
     },
     "rook-rook-learnings.md": {
-      "processed_at": "2026-11-16T12:53:13.723Z",
+      "processed_at": "2026-11-17T15:24:03.174Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -268,7 +268,7 @@
       "staged_for_review": 1
     },
     "zseven-w-openpencil-learnings.md": {
-      "processed_at": "2026-11-17T14:15:19.195Z",
+      "processed_at": "2026-11-17T15:24:03.795Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1463,8 +1463,8 @@
       "staged_for_review": 1
     },
     "hf-nvidia-deepseek-v4.1-flash-1017-nvfp4-learnings.md": {
-      "processed_at": "2026-11-13T03:03:22.389Z",
-      "promoted_canonical": 1,
+      "processed_at": "2026-11-17T15:24:02.887Z",
+      "promoted_canonical": 0,
       "staged_for_review": 0
     },
     "seekstorm-seekstorm-learnings.md": {
@@ -3323,7 +3323,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 1599,
+  "total_dossiers_evaluated": 1602,
   "total_canonical_promoted": 322,
-  "total_staged_for_review": 1259
+  "total_staged_for_review": 1261
 }

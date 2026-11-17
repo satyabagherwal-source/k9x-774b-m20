@@ -10617,3 +10617,5 @@ Every entry in this ledger must capture:
 | `learn-github-juicedata-juicefs` | `https://github.com/juicedata/juicefs` | `194da2ab` | Multi-dimensional audit evidence | 2026-11-17T15:16:34.728Z |
 | `learn-github-tursodatabase-turso` | `https://github.com/tursodatabase/limbo` | `ae2cb738` | Multi-dimensional audit evidence | 2026-11-17T15:16:42.504Z |
 | `learn-huggingface-moonshotai-kimi-k3-1-pro` | `https://huggingface.co/moonshotai/Kimi-K3.1-Pro` | `hf-moonsho` | Multi-dimensional audit evidence | 2026-11-17T15:16:54.347Z |
+| `learn-huggingface-nvidia-deepseek-v4-1-flash-1017-nvfp4` | `https://huggingface.co/nvidia/DeepSeek-V4.1-Flash-1017-NVFP4` | `hf-nvidia-` | Multi-dimensional audit evidence | 2026-11-17T15:23:49.604Z |
+| `learn-github-rook-rook` | `https://github.com/rook/rook` | `f5fa76ed` | Multi-dimensional audit evidence | 2026-11-17T15:23:59.626Z |

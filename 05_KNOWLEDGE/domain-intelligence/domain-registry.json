@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-17T15:16:58.528Z",
-  "total_records": 1578,
+  "last_updated": "2026-11-17T15:24:04.203Z",
+  "total_records": 1580,
   "domains": {
     "A": {
       "total": 11,
@@ -48,7 +48,7 @@
       ]
     },
     "D": {
-      "total": 657,
+      "total": 659,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -706,7 +706,9 @@
         "domain_intelligence-research-knowledge-intelligence-mistralai-timestral-209m-core-invariants",
         "domain_intelligence-research-knowledge-intelligence-hf-mistralai-timestral-209m-learnings-core-invar",
         "domain_intelligence-research-knowledge-intelligence-moonshotai-kimi-k3-1-pro-core-invariants",
-        "domain_intelligence-research-knowledge-intelligence-hf-moonshotai-kimi-k3-1-pro-learnings-core-invar"
+        "domain_intelligence-research-knowledge-intelligence-hf-moonshotai-kimi-k3-1-pro-learnings-core-invar",
+        "domain_intelligence-research-knowledge-intelligence-nvidia-deepseek-v4-1-flash-1017-nvfp4-core-invar",
+        "domain_intelligence-research-knowledge-intelligence-hf-nvidia-deepseek-v4-1-flash-1017-nvfp4-learnin"
       ]
     },
     "E": {
@@ -8311,8 +8313,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "9feada994401df6ed2ff3e824f21c9f0f8c0eaf8971f09bacba304d7d85cf0b5",
-      "created_at": "2026-11-17T14:15:19.661Z"
+      "content_hash": "2d096b8b41c399bfb20b4514d41608cb1f760de74f29337159e3671f03e98165",
+      "created_at": "2026-11-17T15:24:04.203Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -9418,8 +9420,8 @@
       "title": "Architecture Intelligence: rook/rook Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-rook-rook-architecture-intelligence-rook-rook-core-invariants.md",
       "repository": "rook/rook",
-      "content_hash": "2fd176a94fbae028c2b236ca3e4dcedeb78ea5e0e72c335d04c6411b42ca1a25",
-      "created_at": "2026-11-16T12:48:14.501Z"
+      "content_hash": "11253aa13f16c18ae65314076394db0295a10bacac2adbebf3cd135f5c0ecd18",
+      "created_at": "2026-11-17T15:23:59.892Z"
     },
     "domain_intelligence-technical-construction-intelligence-zama-ai-tfhe-rs-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-zama-ai-tfhe-rs-core-invariants",
@@ -18999,8 +19001,8 @@
       "title": "Architecture Intelligence: rook-rook-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-rook-rook-learnings-architecture-intelligence-rook-rook-learnings-core-invariant.md",
       "repository": "rook-rook-learnings",
-      "content_hash": "8c824356422d6575b1863c187e395f20a86506bbbdc66f101c7ce0b625daf227",
-      "created_at": "2026-11-16T12:53:14.091Z"
+      "content_hash": "808678b52ef95f74d2e3edb84ceee082b6638a6ef98ff17ee17da66a792929cd",
+      "created_at": "2026-11-17T15:24:03.475Z"
     },
     "domain_intelligence-research-knowledge-intelligence-black-forest-labs-flux-3-image-klein-comfy-core-": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-black-forest-labs-flux-3-image-klein-comfy-core-",
@@ -27317,6 +27319,24 @@
       "repository": "tursodatabase-limbo-learnings",
       "content_hash": "cdc0ba50c6ac8071d776cb428d03a08e9dca2befbdcfdaddc296f40a64493cee",
       "created_at": "2026-11-17T15:16:58.528Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-nvidia-deepseek-v4-1-flash-1017-nvfp4-core-invar": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-nvidia-deepseek-v4-1-flash-1017-nvfp4-core-invar",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: nvidia/DeepSeek-V4.1-Flash-1017-NVFP4 Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-nvidia-deepseek-v4-1-flash-1017-nvfp4-research-knowledge-intelligence-nvidia-.md",
+      "repository": "nvidia/DeepSeek-V4.1-Flash-1017-NVFP4",
+      "content_hash": "c19b140332aafa0b674b70fe30a3a214c89d192080e47c106c1637c395ee25c8",
+      "created_at": "2026-11-17T15:23:49.784Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-nvidia-deepseek-v4-1-flash-1017-nvfp4-learnin": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-nvidia-deepseek-v4-1-flash-1017-nvfp4-learnin",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-nvidia-deepseek-v4.1-flash-1017-nvfp4-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-nvidia-deepseek-v4-1-flash-1017-nvfp4-learnings-research-knowledge-intelligen.md",
+      "repository": "hf-nvidia-deepseek-v4.1-flash-1017-nvfp4-learnings",
+      "content_hash": "1b04c348c8657a4be6169f07fd209991dfa76e36e3208c564e25b9be044535c2",
+      "created_at": "2026-11-17T15:24:03.033Z"
     }
   }
 }

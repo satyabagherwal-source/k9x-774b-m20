@@ -10584,3 +10584,5 @@
 | `CYCLE-20261117-53J8` | `2026-11-17T15:16:34.724Z` | `juicedata/juicefs` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8984` | Yes (`4ca1d6ad...`) |
 | `CYCLE-20261117-59J8` | `2026-11-17T15:16:42.500Z` | `tursodatabase/turso` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8985` | Yes (`0eeb8295...`) |
 | `CYCLE-20261117-5IO7` | `2026-11-17T15:16:54.343Z` | `moonshotai/Kimi-K3.1-Pro` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-moonshotai-kimi-k3.1-pro-learnings.md` | Yes (`756c0ea6...`) |
+| `CYCLE-20261117-EF34` | `2026-11-17T15:23:49.600Z` | `nvidia/DeepSeek-V4.1-Flash-1017-NVFP4` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nvidia-deepseek-v4.1-flash-1017-nvfp4-learnings.md` | Yes (`65827916...`) |
+| `CYCLE-20261117-EMTJ` | `2026-11-17T15:23:59.623Z` | `rook/rook` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8986` | Yes (`17366e72...`) |

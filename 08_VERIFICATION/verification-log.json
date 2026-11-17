@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261115-C8FQ",
-    "timestamp": "2026-11-15T02:14:57.974Z",
-    "repository": "metalbear-co/mirrord",
-    "learningId": "learn-github-metalbear-co-mirrord",
-    "contentHash": "82e18676215350b325b11e44611e458f7f02e786e4e30058c8db21a75884004e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261115-CI20",
-    "timestamp": "2026-11-15T02:15:10.440Z",
-    "repository": "run-llama/llama_index",
-    "learningId": "learn-github-run-llama-llama_index",
-    "contentHash": "b846cd6b1e95f24799483fd2aae5358d4ea6e082f2a1d348ada344c7abf25452",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261115-CJAG",
     "timestamp": "2026-11-15T02:15:12.040Z",
     "repository": "dathere/qsv",
@@ -7492,6 +7462,36 @@
     "contentHash": "756c0ea6ed39ae8fcf64132830c573d2e9722f474c7afebd5859ab2d4cb7b065",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-EF34",
+    "timestamp": "2026-11-17T15:23:49.600Z",
+    "repository": "nvidia/DeepSeek-V4.1-Flash-1017-NVFP4",
+    "learningId": "learn-huggingface-nvidia-deepseek-v4-1-flash-1017-nvfp4",
+    "contentHash": "65827916522e551442f2d31fb2ad27bc24931724f2c747dd3a7536199a4e3b99",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261117-EMTJ",
+    "timestamp": "2026-11-17T15:23:59.623Z",
+    "repository": "rook/rook",
+    "learningId": "learn-github-rook-rook",
+    "contentHash": "17366e72c534c5be7ae849a48ff58ec8436129258b2c58e878022e4ac30e7209",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

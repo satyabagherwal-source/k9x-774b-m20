@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-17T15:16:54.352Z",
-  "total_cycles_completed": 10140,
-  "total_learnings_persisted": 10140,
-  "total_rules_promoted": 9724,
+  "last_updated": "2026-11-17T15:23:59.630Z",
+  "total_cycles_completed": 10142,
+  "total_learnings_persisted": 10142,
+  "total_rules_promoted": 9725,
   "history": [
-    {
-      "timestamp": "2026-11-16T22:19:24.910Z",
-      "repository": "iPlug2/iPlug2",
-      "learningId": "learn-github-iplug2-iplug2",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-16T22:19:30.765Z",
-      "repository": "crate/crate",
-      "learningId": "learn-github-crate-crate",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-16T22:34:14.015Z",
       "repository": "nodejs/undici",
@@ -1403,6 +1389,20 @@
       "repository": "moonshotai/Kimi-K3.1-Pro",
       "learningId": "learn-huggingface-moonshotai-kimi-k3-1-pro",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T15:23:49.611Z",
+      "repository": "nvidia/DeepSeek-V4.1-Flash-1017-NVFP4",
+      "learningId": "learn-huggingface-nvidia-deepseek-v4-1-flash-1017-nvfp4",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-17T15:23:59.630Z",
+      "repository": "rook/rook",
+      "learningId": "learn-github-rook-rook",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

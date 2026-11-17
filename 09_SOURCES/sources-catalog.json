@@ -5963,10 +5963,10 @@
     "repository": "rook/rook",
     "platform": "github",
     "sourceUrl": "https://github.com/rook/rook",
-    "sourceVersion": "5f0de5f5",
+    "sourceVersion": "f5fa76ed",
     "license": "Apache-2.0",
-    "contentHash": "6489991492451957bbec16c35696b015d53f6df3abf822fdd2f7007bec8f96ff",
-    "lastHarvestedAt": "2026-11-16T12:48:14.203Z",
+    "contentHash": "17366e72c534c5be7ae849a48ff58ec8436129258b2c58e878022e4ac30e7209",
+    "lastHarvestedAt": "2026-11-17T15:23:59.626Z",
     "learningId": "learn-github-rook-rook"
   },
   "genkit-ai-genkit": {
@@ -11885,8 +11885,8 @@
     "sourceUrl": "https://huggingface.co/nvidia/DeepSeek-V4.1-Flash-1017-NVFP4",
     "sourceVersion": "hf-nvidia-deepseek-v4.1-flash-1017-nvfp4",
     "license": "Open-Source",
-    "contentHash": "6f3652a72e8285ee8e78d7cc6a58bd4c191c39d06ed63265113f94f49a430120",
-    "lastHarvestedAt": "2026-11-13T03:02:37.716Z",
+    "contentHash": "65827916522e551442f2d31fb2ad27bc24931724f2c747dd3a7536199a4e3b99",
+    "lastHarvestedAt": "2026-11-17T15:23:49.604Z",
     "learningId": "learn-huggingface-nvidia-deepseek-v4-1-flash-1017-nvfp4"
   },
   "hf-moonshotai-kimi-k3.1-pro": {
