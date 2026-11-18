@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T01:38:42.468Z",
-  "total_cycles_completed": 10314,
-  "total_learnings_persisted": 10314,
-  "total_rules_promoted": 9849,
+  "last_updated": "2026-11-18T01:58:04.507Z",
+  "total_cycles_completed": 10317,
+  "total_learnings_persisted": 10317,
+  "total_rules_promoted": 9851,
   "history": [
-    {
-      "timestamp": "2026-11-17T13:29:49.613Z",
-      "repository": "nitrojs/nitro",
-      "learningId": "learn-github-nitrojs-nitro",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T13:29:50.957Z",
-      "repository": "u-root/u-root",
-      "learningId": "learn-github-u-root-u-root",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T13:29:52.633Z",
-      "repository": "callstack/react-native-paper",
-      "learningId": "learn-github-callstack-react-native-paper",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-17T14:01:47.340Z",
       "repository": "gravitl/netmaker",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-18T01:38:42.468Z",
       "repository": "doobidoo/mcp-memory-service",
       "learningId": "learn-github-doobidoo-mcp-memory-service",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T01:57:56.243Z",
+      "repository": "Automattic/harper",
+      "learningId": "learn-github-automattic-harper",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T01:57:58.622Z",
+      "repository": "prism-ml/Ternary-Bonsai-2-27B-gguf",
+      "learningId": "learn-huggingface-prism-ml-ternary-bonsai-2-27b-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T01:58:04.507Z",
+      "repository": "skyhook-io/radar",
+      "learningId": "learn-github-skyhook-io-radar",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

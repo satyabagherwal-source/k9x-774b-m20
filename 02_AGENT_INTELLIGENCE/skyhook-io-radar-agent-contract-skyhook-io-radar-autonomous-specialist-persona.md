@@ -4,17 +4,17 @@
 {
   "source_repository": "skyhook-io/radar",
   "source_url": "https://github.com/skyhook-io/radar",
-  "source_version": "7f30b56d",
+  "source_version": "495dc890",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-15T21:15:43.323Z",
+  "timestamp": "2026-11-18T01:58:04.697Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-skyhook-io-radar",
   "canonical_classification": "agent_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [skyhook-io/radar](https://github.com/skyhook-io/radar) (Revision: `7f30b56d`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-15T21:15:43.323Z`  
+> **Provenance**: Harvested from [skyhook-io/radar](https://github.com/skyhook-io/radar) (Revision: `495dc890`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-18T01:58:04.697Z`  
 > **Learning ID**: `learn-github-skyhook-io-radar`
 
 
@@ -29,7 +29,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/skyhook-io-radar-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/skyhook-io/radar](https://github.com/skyhook-io/radar))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-15T21:15:42.228Z  
+> **Harvest Timestamp**: 2026-11-18T01:58:03.572Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -39,7 +39,7 @@ PROVENANCE_END -->
 - **Description**: The missing open-source Kubernetes UI with a built-in MCP server for AI agents. See what's broken, why, and what changed. Issues, Topology, event timeline, Helm, GitOps, live service traffic, and cluster audits - all in one Go binary.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: package.json, go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 4129 stars
+- **Stars / Engagement**: 4145 stars
 
 ---
 
@@ -2459,488 +2459,2135 @@ func (s *Server) refreshAIEngine(ctx context.Context) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `41dfe716` (2026-11-15)
-**Commit Message**: fix(gitops): let managed resource lists reveal every entry (#2688)
+### Incident Patch 1: `1a0f7e1e` (2026-11-17)
+**Commit Message**: Serve built-in kinds through discovery in census mode (#2760)
 
-## Problem
+## Summary
 
-The inventory list in the Argo CD Application, Kustomization and
-HelmRelease drawers (`ManagedResourcesList`) cut every kind to an equal
-share of the 20-entry cap even when the whole list fit under it, and
-offered **Show all** only when the total exceeded the cap. An uneven
-list therefore lost entries with no way to reveal them, and each kind's
-header counted only the entries shown.
+A `-census` fixture seeds typed objects only, with no discovery catalog.
+Ownership and the relation families resolve kinds through discovery, and
+count a kind as an owner's dependent only when it's served with delete,
+list and watch. So on a census fixture every relationship answer came
+back empty.
 
-| Inventory | Before |
-|---|---|
-| 12 ConfigMaps, a Deployment, a Service (14) | ConfigMap (7): five
-hidden, no Show all |
-| 15 CRDs, a Namespace (16) | CRD (10): five hidden, no Show all |
+`cmd/testserver -census` now serves the census's built-in kinds
+(`resourceid.Builtins`) through discovery, with the verbs a real API
+server lists.
 
-Someone checking whether an object is in the inventory, for example
-after reading a "Tracked by" tooltip, could miss one that is there.
+**Census relationship answers from builds before this change aren't
+comparable with ones after it.** Startup and list timings aren't
+affected; only answers that resolve kinds through discovery are.
 
-## Change
+This was split out of #2708 (the relationship replay harness), which
+doesn't depend on it.
 
-- Kinds are cut only when the list exceeds the cap.
-- **Show all** appears whenever any kind is cut.
-- A cut kind's header reads "N of M" instead of the shown count.
+## Testing
 
-## Tests
+- `TestCensusDiscoveryServesBuiltinsWithGCVerbs` (new).
+- `go vet` and `go test ./cmd/testserver/...`.
+- Smoke test: `-census large-eks -census-scale 0.01`. A Deployment's
+`relationships` returns 3 children (its ReplicaSets) and an ownership
+answer, plus services, ingresses, config refs, network policies and
+service account.
 
-`ManagedResourcesList.test.tsx` adds three cases; all fail on `main`:
-- an uneven list under the cap shows every entry and no Show all;
-- over the cap, a cut kind reads "2 of 6" and Show all appears;
-- over the cap wi
-
-**File**: `packages/k8s-ui/src/components/gitops/ManagedResourcesList.test.tsx` (added, +35/-0)
+**File**: `cmd/testserver/census_discovery.go` (added, +43/-0)
 ```diff
-@@ -0,0 +1,35 @@
-+import { describe, expect, it } from 'vitest'
-+import { renderToString } from 'react-dom/server'
-+import { ManagedResourcesList } from './ManagedResourcesList'
-+import type { ManagedResource } from '../../types/gitops'
+@@ -0,0 +1,43 @@
++package main
 +
-+function render(element: Parameters<typeof renderToString>[0]): string {
-+  return renderToString(element).replace(/<!-- -->/g, '')
-+}
++import (
++	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
++	"k8s.io/client-go/kubernetes/fake"
 +
-+function list(configMaps: number): ManagedResource[] {
-+  return [
-+    ...Array.from({ length: configMaps }, (_, i) => ({ group: '', kind: 'ConfigMap', namespace: 'shop', name: `cm-${i}` })),
-+    { group: 'apps', kind: 'Deployment', namespace: 'shop', name: 'checkout' },
-+    { group: '', kind: 'Service', namespace: 'shop', name: 'checkout' },
-+  ]
-+}
++	"github.com/skyhook-io/radar/internal/k8s"
++	"github.com/skyhook-io/radar/pkg/resourceid"
++)
 +
-+describe('ManagedResourcesList', () => {
-+  it('shows every entry of an uneven list under the cap', () => {
-+    const html = render(<ManagedResourcesList resources={list(8)} />)
-+    expect(html).toContain('ConfigMap</span><span class="text-theme-text-tertiary">(8)')
-+    expect(html).not.toContain('Show all')
-+  })
-+
-+  it('offers Show all whenever a kind is cut', () => {
-+    const html = render(<ManagedResourcesList resources={list(6)} maxVisible={6} />)
-+    expect(html).toContain('ConfigMap</span><span class="text-theme-text-tertiary">(2 of 6)')
-+    expect(html).toContain('Show all 8 resources')
-+  })
-+
-+  it('offers no Show all over the cap when no kind is cut', () => {
-+    const html = render(<ManagedResourcesList resources={list(1)} maxVisible={2} />)
-+    expect(html).not.toContain('Show all')
-+  })
-+})
-```
-
-**File**: `packages/k8s-ui/src/components/gitops/ManagedResourcesList.tsx` (modified, +8/-4)
-```diff
-@@ -38,7 +38,9 @@ export function ManagedResourcesList({
- 
-   const grouped = groupManagedResourcesByKind(resources)
-   const sortedGroups = Array.from(grouped.entries()).sort((a, b) => a[0].localeCompare(b[0]))
--  const hasMore = resources.length > maxVisible && !showAll
-+  // Over the cap, each kind shows an equal share; Show all must appear whenever any kind is cut.
-+  const perKind = !showAll && resources.length > maxVisible ? Math.ceil(maxVisible / sortedGroups.length) : Infinity
-+  const hasMore = sortedGroups.some(([, kindResources]) => kindResources.length > perKind)
- 
-   return (
-     <div className="border-b-subtle pb-4 last:border-0">
-@@ -59,7 +61,8 @@ export function ManagedResourcesList({
-             <ResourceKindGroup
-               key={kind}
-               kind={kind}
--              resources={showAll ? kindResources : kindResources.slice(0, Math.ceil(maxVisible / sortedGroups.length))}
-+              resources={kindResources.slice(0, perKind)}
-+              total={kindResources.length}
-               onResourceClick={onResourceClick}
-               showHealth={showHealth}
-             />
-@@ -82,11 +85,12 @@ export function ManagedResourcesList({
- interface ResourceKindGroupProps {
-   kind: string
-   resources: ManagedResource[]
-+  total: number
-   onResourceClick?: (resource: ManagedResource) => void
-   showHealth?: boolean
- }
- 
--function ResourceKindGroup({ kind, resources, onResourceClick, showHealth }: ResourceKindGroupProps) {
-+function ResourceKindGroup({ kind, resources, total, onResourceClick, showHealth }: ResourceKindGroupProps) {
-   const [expanded, setExpanded] = useState(resources.length <= 5)
- 
-   return (
-@@ -97,7 +101,7 @@ function ResourceKindGroup({ kind, resources, onResourceClick, showHealth }: Res
-       >
-         <CollapseChevron open={expanded} className="w-3 h-3" />
-         <span className="font-medium">{kind}</span>
--        <span className="text-theme-text-tertiary">({resources.length})</span>
-+        <span className="text-theme-text-tertiary">({resources.length < total ? `${resources.length} of ${total}` : total})</span>
-       </button>
- 
-       <Collapse open={expanded} mountLazily>
-```
-
----
-
-### Incident Patch 2: `2104974b` (2026-11-15)
-**Commit Message**: fix(k8score): don't call self-managed AWS clusters EKS (#2655)
-
-## Description
-
-Radar labels any node with an `aws://` providerID as EKS. That ID only
-says the node is an EC2 instance: the AWS cloud controller manager sets
-it on self-managed clusters too (kubeadm, Cluster API + CAPA, kops), so
-those show up as EKS.
-
-`DetectByProviderID` now returns `eks` for an `aws://` node only when
-its kubelet is an EKS build (`-eks-` in the kubelet version, e.g.
-`v1.31.4-eks-2d5f260`). Otherwise detection falls through to the labels
-as before (`eks.amazonaws.com/nodegroup` / `capacityType` still mean
-EKS; OpenShift and Rancher labels now win on AWS too) and, failing
-those, `generic`, which the UI shows as a standard Kubernetes cluster.
-GKE, AKS, kind, Nutanix, RKE2 and NKP detection are unchanged.
-
-The marker is checked only for nodes, not added to
-`DetectPlatformFromVersion`: the traffic manager reads that from the
-server version before its NKP check, so NKP on EKS would have turned
-into `eks` there.
-
-## Type of change
-
-- [x] Bug fix (non-breaking change that fixes an issue)
-- [ ] New feature (non-breaking change that adds functionality)
-- [ ] Breaking change (fix or feature that would cause e
-
-**File**: `pkg/k8score/cluster_detection.go` (modified, +13/-1)
-```diff
-@@ -77,13 +77,19 @@ func DetectPlatformFromVersion(gitVersion string) string {
- }
- 
- // DetectByProviderID detects the platform from a node's ProviderID field.
-+// An aws:// ID only says the node is an EC2 instance: the AWS cloud controller
-+// sets it on self-managed clusters too (kubeadm, Cluster API, kops), so it
-+// counts as EKS only when the kubelet is an EKS build.
- func DetectByProviderID(node corev1.Node) string {
- 	providerID := node.Spec.ProviderID
- 	switch {
- 	case strings.HasPrefix(providerID, "gce://") || strings.HasPrefix(providerID, "gke://"):
- 		return "gke"
- 	case strings.HasPrefix(providerID, "aws://"):
--		return "eks"
-+		if isEKSKubeletVersion(node.Status.NodeInfo.KubeletVersion) {
-+			return "eks"
++// installCensusDiscovery serves the built-in kinds through discovery, as a
++// real API server does. A census fixture seeds typed objects only; without a
++// discovery catalog, readers that resolve kinds through discovery have nothing
++// to resolve against.
++func installCensusDiscovery(client *fake.Clientset) error {
++	lists := map[string]*metav1.APIResourceList{}
++	var order []string
++	for _, b := range resourceid.Builtins {
++		if b.Version == "" {
++			continue
 +		}
-+		return "unknown"
- 	case strings.HasPrefix(providerID, "azure://"):
- 		return "aks"
- 	case strings.HasPrefix(providerID, "kind://"):
-@@ -95,6 +101,12 @@ func DetectByProviderID(node corev1.Node) string {
- 	}
- }
- 
-+// isEKSKubeletVersion reports whether a kubelet version is an EKS build, such
-+// as v1.31.4-eks-2d5f260. Upstream kubelets report a plain v1.31.4.
-+func isEKSKubeletVersion(version string) bool {
-+	return strings.Contains(version, "-eks-")
++		gv := b.Version
++		if b.Group != "" {
++			gv = b.Group + "/" + b.Version
++		}
++		l, ok := lists[gv]
++		if !ok {
++			l = &metav1.APIResourceList{GroupVersion: gv}
++			lists[gv] = l
++			order = append(order, gv)
++		}
++		l.APIResources = append(l.APIResources, metav1.APIResource{
++			Name: b.Resource, Kind: b.Kind, Group: b.Group, Version: b.Version, Namespaced: b.Namespaced,
++			Verbs: metav1.Verbs{"create", "delete", "deletecollection", "get", "list", "patch", "update", "watch"},
++		})
++	}
++	client.Resources = nil
++	for _, gv := range order {
++		client.Resources = append(client.Resources, lists[gv])
++	}
++	_, err := k8s.SetTestResourceDiscovery(client.Discovery())
++	return err
 +}
-+
- // DetectByLabels detects the platform from a node's labels.
- func DetectByLabels(node corev1.Node) string {
- 	if IsNodeGKE(node) {
 ```
 
-**File**: `pkg/k8score/cluster_detection_test.go` (modified, +8/-1)
+**File**: `cmd/testserver/census_discovery_test.go` (added, +32/-0)
 ```diff
-@@ -22,7 +22,12 @@ func TestDetectNodePlatform(t *testing.T) {
- 		{name: "not an RKE2 suffix", node: nodeWithKubeletVersion("v1.31.7-rke2r1"), want: "unknown"},
- 		{name: "GCE provider", node: nodeWithProviderID("gce://project/zone/node"), want: "gke"},
- 		{name: "GKE provider", node: nodeWithProviderID("gke://project/zone/node"), want: "gke"},
--		{name: "AWS provider", node: nodeWithProviderID("aws:///zone/node"), want: "eks"},
-+		{name: "AWS provider on EKS kubelet", node: nodeWithSignals("v1.31.4-eks-2d5f260", "aws:///us-east-1a/i-0abc", nil), want: "eks"},
-+		{name: "AWS provider without EKS kubelet", node: nodeWithSignals("v1.36.5", "aws:///us-east-1a/i-0abc", nil), want: "unknown"},
-+		{name: "AWS provider with no kubelet version", node: nodeWithProviderID("aws:///zone/node"), want: "unknown"},
-+		{name: "AWS provider with EKS nodegroup label", node: nodeWithSignals("v1.31.4", "aws:///us-east-1a/i-0abc", map[string]string{"eks.amazonaws.com/nodegroup": "workers"}), want: "eks"},
-+		{name: "AWS provider on OpenShift", node: nodeWithSignals("v1.31.4", "aws:///us-east-1a/i-0abc", map[string]string{"node.openshift.io/os_id": "rhcos"}), want: "openshift"},
-+		{name: "EKS marker without AWS provider", node: nodeWithKubeletVersion("v1.31.4-eks-2d5f260"), want: "unknown"},
- 		{name: "Azure provider", node: nodeWithProviderID("azure:///subscriptions/node"), want: "aks"},
- 		{name: "kind provider", node: nodeWithProviderID("kind://docker/radar/control-plane"), want: "kind"},
- 		{name: "Nutanix provider", node: nodeWithProviderID("nutanix://99d71c41-e100-4474-601b-5dd604becea6"), want: "nutanix"},
-@@ -74,6 +79,8 @@ func TestDetectClusterPlatform(t *testing.T) {
- 		{name: "no nodes", client: fake.NewSimpleClientset(), want: "unknown"},
- 		{name: "generic node", client: fake.NewSimpleClientset(&corev1.Node{ObjectMeta: metav1.ObjectMeta{Name: "worker-1"}}), want: "generic"},
- 		{name: "RKE2 node", client: fake.NewSimpleClientset(nodePtr(nodeWithKubeletVersion("v1.31.7+rke2r1"))), want: "rke2"},
-+		{name: "self-managed cluster on AWS", client: fake.NewSimpleClientset(nodePtr(nodeWithSignals("v1.36.5", "aws:///us-east-1a/i-0abc", nil))), want: "generic"},
-+		{name: "EKS node", client: fake.NewSimpleClientset(nodePtr(nodeWithSignals("v1.31.4-eks-2d5f260", "aws:///us-east-1a/i-0abc", nil))), want: "eks"},
- 		{name: "NKP on AWS infrastructure", client: fake.NewSimpleClientset(nodePtr(nodeWithProviderID("aws:///zone/node")), &corev1.Namespace{ObjectMeta: metav1.ObjectMeta{Name: NKPNamespace}}), want: "nkp"},
- 		{name: "Nutanix without NKP", client: fake.NewSimpleClientset(nodePtr(nodeWithProviderID("nutanix://uuid"))), want: "nutanix"},
- 		{name: "GKE Autopilot", client: fake.NewSimpleClientset(nodePtr(nodeWithSignals("", "gce://project/zone/node", map[string]string{"cloud.google.com/gke-autopilot": "true"}))), want: "gke-autopilot"},
+@@ -0,0 +1,32 @@
++package main
++
++import (
++	"slices"
++	"testing"
++
++	"k8s.io/client-go/kubernetes/fake"
++
++	"github.com/skyhook-io/radar/internal/k8s"
++)
++
++// Ownership and the relation families resolve kinds through discovery, and
++// count a kind as an owner's dependent only when it is served with the
++// garbage collector's verbs. A census fixture must serve them, or every
++// relationship answer reads as unavailable.
++func TestCensusDiscoveryServesBuiltinsWithGCVerbs(t *testing.T) {
++	if err := installCensusDiscovery(fake.NewClientset()); err != nil {
++		t.Fatal(err)
++	}
++	t.Cleanup(k8s.ResetResourceDiscovery)
++	for _, r := range k8s.GetResourceDiscovery().Catalog().Resources {
++		if r.Group == "apps" && r.Kind == "Deployment" {
++			for _, verb := range []string{"delete", "list", "watch"} {
++				if !slices.Contains(r.Verbs, verb) {
++					t.Fatalf("Deployment verbs = %v, missing %s", r.Verbs, verb)
++				}
++			}
++			return
++		}
++	}
++	t.Fatal("census discovery doesn't serve apps/Deployment")
++}
+```
+
+**File**: `cmd/testserver/main.go` (modified, +3/-0)
+```diff
+@@ -115,6 +115,9 @@ func main() {
+ 		if err := k8s.InitLoadTestResourceCache(fakeClient); err != nil {
+ 			log.Fatalf("InitLoadTestResourceCache: %v", err)
+ 		}
++		if err := installCensusDiscovery(fakeClient); err != nil {
++			log.Fatalf("installCensusDiscovery: %v", err)
++		}
+ 	} else if err := k8s.InitTestResourceCache(fakeClient); err != nil {
+ 		log.Fatalf("InitTestResourceCache: %v", err)
+ 	}
 ```
 
 ---
 
-### Incident Patch 3: `7f30b56d` (2026-11-15)
-**Commit Message**: fix(gitops): avoid treating auto-sync off as manual orchestration (#2698)
+### Incident Patch 2: `d734e671` (2026-11-17)
+**Commit Message**: Measure a Radar process's memory and CPU under a fixed reader and SSE workload (#2709)
 
-An Application with auto-sync off can still be synced by another
-controller, including ApplicationSet RollingSync. Radar's drift advice
-previously said nothing would reconcile until the user clicked Sync and
-suggested enabling auto-sync unconditionally.
+## Summary
 
-The advice now states that auto-sync is off and asks for a review of the
-desired changes and sync policy before deciding whether to sync.
-Missing-resource messages in Issues, Resources and the tree use the same
-review step without promising an in-app diff, and rollback copy retains
-the consequence of syncing without implying that auto-sync off prevents
-other controllers from deploying. When existing readable relationships
-identify a parent, both Enable and Disable auto-sync explain that its
-policy or source may overwrite the setting. For an ApplicationSet
-parent, Enable also warns that pending changes may apply immediately and
-bypass rollout ordering. The display label reads “Auto-sync off”; the
-`Manual` wire value and rollback/filter predicates stay unchanged.
+A tool that drives a fixed workload against a running Radar and samples
+the process: memory (RSS and Go heap), CPU, GC, and per-endpoint
+latency. Because it only speaks HTTP, the same run can be pointed at two
+builds on the same cluster and compared. It exists to measure what
+retiring the all-namespace relationship graph saves on real clusters,
+but works for any server-side change.
 
-Validation: `make test-changed`, including auto-sync-off child shapes,
-rollback and sync-hazard p
+## What it does
 
-**File**: `docs/gitops.md` (modified, +2/-2)
+`radarload -url http://127.0.0.1:9280 -pid <radar pid> -duration 10m
+-sse 3 -askers 4 -qps 20 -out run.json`
+
+- **Readiness:** `/api/connection` must say connected and
+`/api/diagnostics` must report the typed informers fully synced before
+anything is timed.
+- **Subjects:**
+- Taken from Radar's own lists (the `{items, coverage}` envelope): the
+eight built-in kinds, plus relationship-relevant CRD kinds from
+`/api/api-resources`.
+- Sampled deterministically with a seed. `-subjects-from` replays a
+saved subject set. Each build GET-probes every subject, replayed or
+fresh, with the configured identity and drops the unreadable ones
+(counted in `subject_probe_errors`), so two builds run the same 
+
+**File**: `cmd/radarload/README.md` (added, +93/-0)
 ```diff
-@@ -82,7 +82,7 @@ The Issues band at the top of the detail page surfaces seven classes of problems
+@@ -0,0 +1,93 @@
++# radarload
++
++Measure a **local Radar process** while driving it through HTTP. The target
++binary can be built from another checkout; radarload imports only the shared
++stdlib-only resource identity helper. No Kubernetes credentials are needed.
++
++```sh
++go run ./cmd/radarload -url http://localhost:9280 -pid 12345 \
++  -duration 10m -sse 3 -askers 4 -qps 20 -seed 1 -per-kind 100 \
++  -label main-SHA -out old.json
++# Start the other build against the same cluster, then:
++go run ./cmd/radarload -url http://localhost:9280 -pid 23456 \
++  -duration 10m -sse 3 -askers 4 -qps 20 -seed 1 \
++  -subjects-from old.json -label new-SHA -out new.json
++go run ./cmd/radarload compare old.json new.json
++```
++
++Use the **binary's PID**, not the `go run` parent. RSS and CPU come from local
++`ps`; the URL and PID must identify the same process. Use matching startup flags,
++identity, subject manifest, cluster activity, and warmup for both builds.
++`-user fleet-argo -groups team-a,viewers` sends Radar's default proxy headers
++(`X-Forwarded-User`, `X-Forwarded-Groups`) on every request, including SSE and
++pprof, for a target running `--auth-mode=proxy`.
++
++Readiness requires `/api/connection?contexts=0` to say `connected` and
++`/api/diagnostics` to report `informers.syncStatus.phase=complete`, including
++deferred typed informers. Diagnostics also supplies Radar/Go version and OS/arch;
++it does not report a git SHA, so use `-label`. The tool avoids `/api/version-check`,
++which can trigger an external update lookup.
++
++Inventory uses Pod, Deployment, Service, ConfigMap, Secret, Ingress, Node and
++PersistentVolumeClaim lists. `/api/api-resources` adds discovered HTTPRoute,
++GRPCRoute, Gateway, VirtualService, DestinationRule, Application, Kustomization,
++HelmRelease and Certificate kinds. Subjects are sorted before seeded sampling
++and saved in the JSON; unreadable kinds, unavailable discovery and each list's
++coverage are recorded. For an offline target, point it at the replay or census
++testservers. Lists above the server's 50,000-object limit fail in inventory
++rather than being truncated.
++
++`-subjects-from` reuses a prior run's subjects; current inventory is still
++recorded. Every subject, fresh or replayed, is GET-probed with the configured
++identity before measurement, and unreadable ones are dropped and counted by kind
++and group in `subject_probe_errors`, so two builds compared against one manifest
++run the same subjects only when neither drops any (`compare` warns when they
++differ). Neighborhood roots are probed and saved separately, since grouped Pods
++and ordinary Nodes can be listed yet absent from the topology. Replay keeps the
++saved roots that survive the subject probe and fails if one of them no longer
++returns a neighborhood.
++
++A seeded 20-request cycle fixes the offered mix:
++
++| Share | Endpoint |
++| --- | --- |
++| 60% | `/api/resources/{kind}/{namespace}/{name}` |
++| 10% | `/api/ai/resources/{kind}/{namespace}/{name}` (includes resource context) |
++| 10% | `/api/ai/neighborhood/{kind}/{namespace}/{name}?profile=auto&hops=1` |
++| 10% | Same HTTP neighborhood route with `profile=all&hops=2` |
++| 5% | `/api/applications` |
++| 5% | `/api/resources/{kind}?include=summary` |
++
++Both neighborhood shares use the same read-only route; there is no separate
++non-AI neighborhood endpoint.
++
++QPS is combined across workers. A slot without a free worker is dropped and
++counted, with no growing queue. Compare achieved QPS, drops and errors alongside
++latency; overload can change the successful request mix. Latencies include full
++body consumption and errors, including in-flight requests canceled at run end.
++SSE consumers discard arbitrarily large frames, count dispatched data events,
++and reconnect after errors. The tool does **not** mutate the cluster: a quiet
++cluster has fewer change-driven topology broadcasts. Keep the external change
++workload fixed when comparing builds.
++
++RSS and cumulative process CPU are read every two seconds. Go heap figures
++(HeapAlloc/HeapInuse/HeapSys/NumGC) and the goroutine count are read before the
++workload, every 30 seconds and on the window's last tick, because producing a
++heap profile costs the target CPU. `ps` CPU precision is platform-dependent
++(Linux commonly whole seconds). Samples that finish after the window are
++discarded. GC pause time comes from the 256-entry `PauseNs` ring between
++consecutive heap reads; if the ring was overwritten (more than 256 GCs between
++reads), `gc_pause_ns` is null with a reason, never zero.
++
++Pprof must be reachable: loopback listeners enable it by default; authenticated
++installations also enable it; shared unauthenticated listeners require
++`RADAR_PPROF=true`; Cloud does not mount it. Missing/malformed heap or goroutine
++profiles fail preflight instead of running without heap samples. Sample and
++binary-profile failures during a run are saved and return a nonzero exit.
++
++A 30-second CPU profile is taken in the middle of the 
+```
+
+**File**: `cmd/radarload/client.go` (added, +302/-0)
+```diff
+@@ -0,0 +1,302 @@
++package main
++
++import (
++	"context"
++	"encoding/json"
++	"fmt"
++	"io"
++	"math/rand"
++	"net/http"
++	"net/url"
++	"os"
++	"path/filepath"
++	"sort"
++	"strings"
++	"time"
++
++	"github.com/skyhook-io/radar/pkg/resourceid"
++)
++
++type radarClient struct {
++	c    config
++	http *http.Client
++}
++
++func newClient(c config) (*radarClient, error) {
++	u, err := url.Parse(c.URL)
++	if err != nil {
++		return nil, err
++	}
++	if (u.Scheme != "http" && u.Scheme != "https") || u.Host == "" || u.RawQuery != "" || u.Fragment != "" || u.User != nil {
++		return nil, fmt.Errorf("-url must be an HTTP(S) origin with optional base path, without credentials/query/fragment")
++	}
++	c.URL = strings.TrimRight(c.URL, "/")
++	tr := http.DefaultTransport.(*http.Transport).Clone()
++	tr.MaxIdleConnsPerHost = c.Askers + c.SSE + 8
++	tr.ResponseHeaderTimeout = 45 * time.Second
++	return &radarClient{c: c, http: &http.Client{Transport: tr, CheckRedirect: func(*http.Request, []*http.Request) error { return http.ErrUseLastResponse }}}, nil
++}
++
++func (c *radarClient) get(ctx context.Context, path string) (*http.Response, error) {
++	req, err := http.NewRequestWithContext(ctx, http.MethodGet, c.c.URL+path, nil)
++	if err != nil {
++		return nil, err
++	}
++	if c.c.User != "" {
++		req.Header.Set("X-Forwarded-User", c.c.User)
++	}
++	if c.c.Groups != "" {
++		req.Header.Set("X-Forwarded-Groups", c.c.Groups)
++	}
++	return c.http.Do(req)
++}
++
++func (c *radarClient) bytes(ctx context.Context, path string) ([]byte, error) {
++	ctx, cancel := context.WithTimeout(ctx, requestTimeout)
++	defer cancel()
++	resp, err := c.get(ctx, path)
++	if err != nil {
++		return nil, err
++	}
++	defer resp.Body.Close()
++	if resp.StatusCode != 200 {
++		return nil, fmt.Errorf("GET %s: HTTP %d", path, resp.StatusCode)
++	}
++	return io.ReadAll(resp.Body)
++}
++
++func (c *radarClient) json(ctx context.Context, path string, v any) error {
++	b, err := c.bytes(ctx, path)
++	if err != nil {
++		return err
++	}
++	if err = json.Unmarshal(b, v); err != nil {
++		return fmt.Errorf("GET %s: %w", path, err)
++	}
++	return nil
++}
++
++func (c *radarClient) waitReady(ctx context.Context) (map[string]string, error) {
++	ctx, cancel := context.WithTimeout(ctx, c.c.ReadyTimeout)
++	defer cancel()
++	var last error
++	for {
++		var connection struct {
++			State string `json:"state"`
++		}
++		err := c.json(ctx, "/api/connection?contexts=0", &connection)
++		if err == nil && connection.State == "connected" {
++			var d struct {
++				Version   string `json:"radarVersion"`
++				GoVersion string `json:"goVersion"`
++				OS        string `json:"goos"`
++				Arch      string `json:"goarch"`
++				Informers struct {
++					Sync *struct {
++						Phase string `json:"phase"`
++					} `json:"syncStatus"`
++				} `json:"informers"`
++			}
++			err = c.json(ctx, "/api/diagnostics", &d)
++			if err == nil && d.Informers.Sync != nil && d.Informers.Sync.Phase == "complete" {
++				return map[string]string{"version": d.Version, "go_version": d.GoVersion, "os": d.OS, "arch": d.Arch, "source": "/api/diagnostics"}, nil
++			}
++			if err == nil {
++				err = fmt.Errorf("cache sync has not reported complete in /api/diagnostics")
++			}
++		}
++		if err == nil {
++			err = fmt.Errorf("connection state %q", connection.State)
++		}
++		last = err
++		select {
++		case <-ctx.Done():
++			return nil, fmt.Errorf("readiness: %w (last observation: %v)", ctx.Err(), last)
++		case <-time.After(time.Second):
++		}
++	}
++}
++
++type subject = resourceid.Ref
++
++type inventory struct {
++	Kind     string          `json:"kind"`
++	Group    string          `json:"group"`
++	Count    int             `json:"count"`
++	Sampled  int             `json:"sampled"`
++	Error    string          `json:"error,omitempty"`
++	Coverage json.RawMessage `json:"coverage,omitempty"`
++}
++type kindRef struct {
++	Kind  string `json:"kind"`
++	Group string `json:"group"`
++}
++
++func (c *radarClient) subjects(ctx context.Context) ([]subject, []inventory, []string, error) {
++	kinds := []kindRef{{"Pod", ""}, {"Deployment", "apps"}, {"Service", ""}, {"ConfigMap", ""}, {"Secret", ""}, {"Ingress", "networking.k8s.io"}, {"Node", ""}, {"PersistentVolumeClaim", ""}}
++	relevant := map[string]bool{"HTTPRoute": true, "GRPCRoute": true, "Gateway": true, "VirtualService": true, "DestinationRule": true, "Application": true, "Kustomization": true, "HelmRelease": true, "Certificate": true}
++	var discovered []kindRef
++	var notes []string
++	if err := c.json(ctx, "/api/api-resources", &discovered); err != nil {
++		notes = append(notes, "CRD discovery unavailable: "+err.Error())
++	} else {
++		seen := map[kindRef]bool{}
++		sort.Slice(discovered, func(i, j int) bool {
++			if discovered[i].Kind != discovered[j].Kind {
++				return discovered[i].Kind < discovered[j].Kind
++			}
++			return discovered[i].Group < discovered[j].Group
++		})
++		for _, k := range discovered {
++			if relevant[k.Kind] && !seen[k] {
++				kinds = append(kinds, k)
++				seen[k] = true
++			}
++		}
++	}
++	rng := rand.New(rand.NewSource(c.c.Seed))
++	var subjects []subject
++
+```
+
+**File**: `cmd/radarload/main.go` (added, +278/-0)
+```diff
+@@ -0,0 +1,278 @@
++package main
++
++import (
++	"context"
++	"encoding/json"
++	"errors"
++	"flag"
++	"fmt"
++	"math"
++	"os"
++	"os/signal"
++	"path/filepath"
++	"syscall"
++	"time"
++)
++
++type config struct {
++	URL          string        `json:"url"`
++	PID          int           `json:"pid"`
++	Duration     time.Duration `json:"duration_ns"`
++	SSE          int           `json:"sse"`
++	Askers       int           `json:"askers"`
++	QPS          float64       `json:"qps"`
++	PerKind      int           `json:"per_kind"`
++	Seed         int64         `json:"seed"`
++	User         string        `json:"user,omitempty"`
++	Groups       string        `json:"groups,omitempty"`
++	ReadyTimeout time.Duration `json:"ready_timeout_ns"`
++	Out          string        `json:"out"`
++	SubjectsFrom string        `json:"subjects_from,omitempty"`
++	Label        string        `json:"label,omitempty"`
++}
++
++const (
++	requestTimeout = 15 * time.Second
++	sampleEvery    = 2 * time.Second
++	// Producing a heap profile costs the target real CPU, so Go heap and
++	// goroutine reads are spaced further apart than RSS and CPU.
++	runtimeEvery = 30 * time.Second
++)
++
++// runtimeDue also forces a read on the window's last tick, so GC counts and
++// pause totals cover the whole run rather than stopping at the previous read.
++func runtimeDue(now, last, deadline time.Time) bool {
++	return now.Sub(last) >= runtimeEvery || deadline.Sub(now) < sampleEvery+time.Second
++}
++
++type result struct {
++	SubjectProbeErrors      map[string]int           `json:"subject_probe_errors"`
++	NeighborhoodSubjects    []subject                `json:"neighborhood_subjects"`
++	NeighborhoodProbeErrors map[string]int           `json:"neighborhood_probe_errors"`
++	Schema                  int                      `json:"schema"`
++	Config                  config                   `json:"config"`
++	Started                 time.Time                `json:"started"`
++	Ended                   time.Time                `json:"ended"`
++	Build                   map[string]string        `json:"radar_build"`
++	Subjects                []subject                `json:"subjects"`
++	Inventory               []inventory              `json:"inventory"`
++	Notes                   []string                 `json:"notes"`
++	Samples                 []sample                 `json:"samples"`
++	Summary                 summary                  `json:"summary"`
++	Profiles                map[string]profileResult `json:"profiles"`
++}
++
++type profileResult struct {
++	Path    string    `json:"path,omitempty"`
++	Error   string    `json:"error,omitempty"`
++	Started time.Time `json:"started"`
++}
++
++func main() {
++	if err := command(os.Args[1:]); err != nil {
++		fmt.Fprintln(os.Stderr, "radarload:", err)
++		os.Exit(1)
++	}
++}
++
++func command(args []string) error {
++	if len(args) > 0 && args[0] == "compare" {
++		if len(args) != 3 {
++			return errors.New("usage: radarload compare a.json b.json")
++		}
++		var a, b result
++		if err := readResult(args[1], &a); err != nil {
++			return err
++		}
++		if err := readResult(args[2], &b); err != nil {
++			return err
++		}
++		return compare(os.Stdout, a, b)
++	}
++	c := config{}
++	f := flag.NewFlagSet("radarload", flag.ContinueOnError)
++	f.StringVar(&c.URL, "url", "http://localhost:9280", "Radar HTTP base URL (may include a base path)")
++	f.IntVar(&c.PID, "pid", 0, "local Radar process PID (not the go run wrapper)")
++	f.DurationVar(&c.Duration, "duration", 10*time.Minute, "measurement duration; minimum 35s for CPU profiling")
++	f.IntVar(&c.SSE, "sse", 3, "concurrent SSE connections")
++	f.IntVar(&c.Askers, "askers", 4, "concurrent request workers")
++	f.Float64Var(&c.QPS, "qps", 20, "combined offered requests/second; saturated slots are counted as dropped")
++	f.IntVar(&c.PerKind, "per-kind", 100, "maximum sampled subjects per kind")
++	f.Int64Var(&c.Seed, "seed", 1, "deterministic inventory and request seed")
++	f.StringVar(&c.User, "user", "", "optional proxy identity")
++	f.StringVar(&c.Groups, "groups", "", "optional comma-separated proxy groups")
++	f.DurationVar(&c.ReadyTimeout, "ready-timeout", 2*time.Minute, "wait for connected and synced caches")
++	f.StringVar(&c.Out, "out", "result.json", "JSON output; profiles use the same filename stem")
++	f.StringVar(&c.SubjectsFrom, "subjects-from", "", "reuse subjects from a prior result for exact replay")
++	f.StringVar(&c.Label, "label", "", "build label, e.g. git SHA (server reports version, not git SHA)")
++	if err := f.Parse(args); err != nil {
++		if errors.Is(err, flag.ErrHelp) {
++			return nil
++		}
++		return err
++	}
++	if f.NArg() != 0 {
++		return errors.New("unexpected positional arguments")
++	}
++	if c.PID <= 0 || c.Duration < 35*time.Second || c.SSE < 0 || c.Askers < 1 || c.QPS <= 0 || c.QPS > 1e6 || math.IsNaN(c.QPS) || math.IsInf(c.QPS, 0) || c.PerKind < 1 || c.ReadyTimeout <= 0 {
++		return errors.New("require -pid > 0, -duration >= 35s, -sse >= 0, -askers >= 1, 0 < -qps <= 1000000, -per-kind >= 1, -ready-timeout > 0")
++	}
++	if err := os.MkdirAll(file
+```
+
+**File**: `cmd/radarload/main_test.go` (added, +266/-0)
+```diff
+@@ -0,0 +1,266 @@
++package main
++
++import (
++	"bytes"
++	"context"
++	"encoding/json"
++	"fmt"
++	"io"
++	"math"
++	"net/http"
++	"os"
++	"path/filepath"
++	"reflect"
++	"strings"
++	"testing"
++	"time"
++)
++
++func TestParseHeap(t *testing.T) {
++	text := "heap profile: 1: 2 [3: 4] @ heap/1048576\n# HeapAlloc = 1024\n# HeapSys = 8192\n# HeapInuse = 4096\n# NumGC = 257\n# PauseNs = ["
++	for i := range 256 {
++		text += fmt.Sprintf("%d ", i+1)
++	}
++	text += "]\n"
++	h, err := parseHeap(text)
++	if err != nil {
++		t.Fatal(err)
++	}
++	if h.Alloc != 1024 || h.Inuse != 4096 || h.Sys != 8192 || h.GC != 257 {
++		t.Fatalf("bad heap: %+v", h)
++	}
++	d, err := pauseDelta(&heapStats{GC: 255}, h)
++	if err != nil || d != 257 {
++		t.Fatalf("wrap delta: %d, %v", d, err)
++	}
++	if _, err := pauseDelta(&heapStats{GC: 0}, h); err == nil {
++		t.Fatal("overwritten ring reported as exact")
++	}
++	for _, bad := range []string{"<html>SPA</html>", strings.Replace(text, "# HeapAlloc = 1024\n", "", 1), strings.Replace(text, "HeapInuse = 4096", "HeapInuse = bad", 1)} {
++		if _, err := parseHeap(bad); err == nil {
++			t.Fatal("accepted invalid/missing header")
++		}
++	}
++}
++
++func TestCompareMath(t *testing.T) {
++	for _, tc := range []struct {
++		a, b, d, p float64
++		defined    bool
++	}{{100, 75, -25, -25, true}, {100, 125, 25, 25, true}, {0, 0, 0, 0, true}, {0, 5, 5, 0, false}} {
++		d, p := delta(tc.a, tc.b)
++		if d != tc.d || (p != nil) != tc.defined || (p != nil && *p != tc.p) {
++			t.Fatalf("delta(%v,%v): %v %v", tc.a, tc.b, d, p)
++		}
++	}
++	v := []float64{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20}
++	d := describe(v)
++	if d.Mean != 10.5 || d.P95 != 19 || d.Peak != 20 || percentile(v, .99) != 20 {
++		t.Fatalf("bad distribution: %+v", d)
++	}
++	a := result{Summary: summary{RSS: distribution{Count: 1, Mean: 100 << 20, P95: 100 << 20, Peak: 100 << 20}}}
++	b := a
++	b.Summary.RSS.Mean = 75 << 20
++	var out bytes.Buffer
++	if err := compare(&out, a, b); err != nil {
++		t.Fatal(err)
++	}
++	if !strings.Contains(out.String(), "-25.00%") || !strings.Contains(out.String(), "n/a") {
++		t.Fatal(out.String())
++	}
++}
++
++func TestParseCPU(t *testing.T) {
++	for s, want := range map[string]float64{"00:01.23": 1.23, "12:34": 754, "02:03:04": 7384, "1-02:03:04": 93784} {
++		got, err := parseCPU(s)
++		if err != nil || math.Abs(got-want) > 1e-6 {
++			t.Fatalf("%s: %v, %v", s, got, err)
++		}
++	}
++	for _, s := range []string{"oops", "00:NaN", "-1:00", "00:Inf"} {
++		if _, err := parseCPU(s); err == nil {
++			t.Fatalf("accepted %q", s)
++		}
++	}
++}
++
++type subjectProbeTransport func(*http.Request) (*http.Response, error)
++
++// emptyBody answers resource lists with an empty envelope and everything else
++// (API discovery, single-object GETs) with an empty array.
++func emptyBody(path string) string {
++	if rest, ok := strings.CutPrefix(strings.TrimPrefix(path, "/prefix"), "/api/resources/"); ok && !strings.Contains(rest, "/") {
++		return `{"items":[]}`
++	}
++	return `[]`
++}
++
++func (f subjectProbeTransport) RoundTrip(r *http.Request) (*http.Response, error) { return f(r) }
++
++func TestReadableSubjectsRejectsListedAndReplayedSubjects(t *testing.T) {
++	pod := subject{Kind: "Pod", Namespace: "default", Name: "readable"}
++	secret := subject{Kind: "Secret", Namespace: "default", Name: "denied"}
++	node := subject{Kind: "Node", Name: "node"}
++	deleted := subject{Kind: "Widget", Group: "example.io", Namespace: "default", Name: "deleted"}
++	c, err := newClient(config{URL: "http://radar.invalid/prefix", PerKind: 10, User: "reader", Groups: "viewers"})
++	if err != nil {
++		t.Fatal(err)
++	}
++	c.http.Transport = subjectProbeTransport(func(r *http.Request) (*http.Response, error) {
++		if r.Header.Get("X-Forwarded-User") != "reader" || r.Header.Get("X-Forwarded-Groups") != "viewers" {
++			t.Fatal("configured identity missing from request")
++		}
++		status, body := 200, emptyBody(r.URL.Path)
++		switch r.URL.Path {
++		case "/prefix/api/resources/Pod":
++			body = `{"items":[{"apiVersion":"v1","metadata":{"namespace":"default","name":"readable"}}]}`
++		case "/prefix/api/resources/Secret":
++			body = `{"items":[{"apiVersion":"v1","metadata":{"namespace":"default","name":"denied"}}]}`
++		case "/prefix/api/resources/Node":
++			body = `{"items":[{"apiVersion":"v1","metadata":{"name":"node"}}]}`
++		case "/prefix/api/resources/Secret/default/denied":
++			status, body = 403, `{"error":"forbidden"}`
++		case "/prefix/api/resources/Widget/default/deleted":
++			if r.URL.Query().Get("group") != "example.io" {
++				t.Fatal("group lost from resource GET")
++			}
++			status, body = 404, `{"error":"not found"}`
++		}
++		return &http.Response{StatusCode: status, Header: http.Header{"Content-Type": []string{"application/json"}}, Body: io.NopCloser(strings.NewReader(body))}, nil
++	})
++	listed, _, _, err := c.subjects(context.Background())
++	if err != nil {
++		t.Fatal(err)
++	}
++	if len(listed) != 3 {
++		t.Fatalf("expected listed subjects including the denied Secret: %+v", listed)
++	}
++	readable, reje
+```
+
+**File**: `cmd/radarload/sample.go` (added, +215/-0)
+```diff
+@@ -0,0 +1,215 @@
++package main
++
++import (
++	"bufio"
++	"context"
++	"errors"
++	"fmt"
++	"math"
++	"os/exec"
++	"strconv"
++	"strings"
++	"time"
++)
++
++type heapStats struct {
++	Alloc  uint64 `json:"heap_alloc_bytes"`
++	Inuse  uint64 `json:"heap_inuse_bytes"`
++	Sys    uint64 `json:"heap_sys_bytes"`
++	GC     uint64 `json:"num_gc"`
++	pauses []uint64
++}
++type sample struct {
++	At         time.Time  `json:"at"`
++	Elapsed    float64    `json:"elapsed_seconds"`
++	RSS        *uint64    `json:"rss_bytes"`
++	CPU        *float64   `json:"cpu_seconds"`
++	Heap       *heapStats `json:"heap"`
++	Goroutines *int       `json:"goroutines"`
++	GCPauseNS  *uint64    `json:"gc_pause_since_previous_ns"`
++	Errors     []string   `json:"errors,omitempty"`
++}
++
++func parseHeap(text string) (*heapStats, error) {
++	h := &heapStats{}
++	seen := map[string]bool{}
++	scanner := bufio.NewScanner(strings.NewReader(text))
++	scanner.Buffer(make([]byte, 4096), 1024*1024)
++	for scanner.Scan() {
++		line := scanner.Text()
++		if !strings.HasPrefix(line, "# ") {
++			continue
++		}
++		key, value, ok := strings.Cut(strings.TrimPrefix(line, "# "), " = ")
++		if !ok {
++			continue
++		}
++		if key == "PauseNs" {
++			value = strings.TrimSpace(value)
++			if !strings.HasPrefix(value, "[") || !strings.HasSuffix(value, "]") {
++				return nil, errors.New("invalid PauseNs array")
++			}
++			for _, v := range strings.Fields(strings.Trim(value, "[]")) {
++				n, err := strconv.ParseUint(v, 10, 64)
++				if err != nil {
++					return nil, fmt.Errorf("PauseNs: %w", err)
++				}
++				h.pauses = append(h.pauses, n)
++			}
++			continue
++		}
++		var target *uint64
++		switch key {
++		case "HeapAlloc":
++			target = &h.Alloc
++		case "HeapInuse":
++			target = &h.Inuse
++		case "HeapSys":
++			target = &h.Sys
++		case "NumGC":
++			target = &h.GC
++		default:
++			continue
++		}
++		n, err := strconv.ParseUint(strings.TrimSpace(value), 10, 64)
++		if err != nil {
++			return nil, fmt.Errorf("%s: %w", key, err)
++		}
++		*target = n
++		seen[key] = true
++	}
++	if err := scanner.Err(); err != nil {
++		return nil, err
++	}
++	for _, key := range []string{"HeapAlloc", "HeapInuse", "HeapSys", "NumGC"} {
++		if !seen[key] {
++			return nil, fmt.Errorf("pprof heap text missing %s", key)
++		}
++	}
++	return h, nil
++}
++
++func parseGoroutines(text string) (int, error) {
++	first, _, _ := strings.Cut(text, "\n")
++	var n int
++	if _, err := fmt.Sscanf(first, "goroutine profile: total %d", &n); err != nil || n < 1 {
++		return 0, fmt.Errorf("invalid goroutine profile first line %q", first)
++	}
++	return n, nil
++}
++
++func parseCPU(s string) (float64, error) {
++	days := 0.0
++	if d, rest, ok := strings.Cut(s, "-"); ok {
++		n, err := strconv.ParseUint(d, 10, 32)
++		if err != nil {
++			return 0, err
++		}
++		days = float64(n)
++		s = rest
++	}
++	parts := strings.Split(s, ":")
++	if len(parts) < 2 || len(parts) > 3 {
++		return 0, fmt.Errorf("invalid ps CPU time %q", s)
++	}
++	total := 0.0
++	for _, p := range parts {
++		n, err := strconv.ParseFloat(p, 64)
++		if err != nil || n < 0 || math.IsNaN(n) || math.IsInf(n, 0) {
++			return 0, fmt.Errorf("invalid ps CPU component %q", p)
++		}
++		total = total*60 + n
++	}
++	return days*86400 + total, nil
++}
++
++func processStats(ctx context.Context, pid int) (uint64, float64, error) {
++	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
++	defer cancel()
++	b, err := exec.CommandContext(ctx, "ps", "-o", "rss=,time=", "-p", strconv.Itoa(pid)).Output()
++	if err != nil {
++		return 0, 0, fmt.Errorf("ps for PID %d: %w", pid, err)
++	}
++	fields := strings.Fields(string(b))
++	if len(fields) != 2 {
++		return 0, 0, fmt.Errorf("unexpected ps output %q", b)
++	}
++	rss, err := strconv.ParseUint(fields[0], 10, 64)
++	if err != nil {
++		return 0, 0, err
++	}
++	cpu, err := parseCPU(fields[1])
++	return rss * 1024, cpu, err
++}
++
++func (c *radarClient) sample(ctx context.Context, start time.Time, pid int, runtime bool) sample {
++	s := sample{At: time.Now()}
++	if !start.IsZero() {
++		s.Elapsed = s.At.Sub(start).Seconds()
++	}
++	rss, cpu, err := processStats(ctx, pid)
++	if err != nil {
++		s.Errors = append(s.Errors, err.Error())
++	} else {
++		s.RSS = &rss
++		s.CPU = &cpu
++	}
++	if !runtime {
++		return s
++	}
++	b, err := c.bytes(ctx, "/debug/pprof/heap?debug=1")
++	if err == nil {
++		s.Heap, err = parseHeap(string(b))
++	}
++	if err != nil {
++		s.Errors = append(s.Errors, "heap: "+err.Error())
++	}
++	b, err = c.bytes(ctx, "/debug/pprof/goroutine?debug=1")
++	if err == nil {
++		var n int
++		n, err = parseGoroutines(string(b))
++		if err == nil {
++			s.Goroutines = &n
++		}
++	}
++	if err != nil {
++		s.Errors = append(s.Errors, "goroutines: "+err.Error())
++	}
++	return s
++}
++
++func pauseDelta(a, b *heapStats) (uint64, error) {
++	if b.GC < a.GC {
++		return 0, errors.New("GC counter decreased")
++	}
++	n := b.GC - a.GC
++	if n == 0 {
++		return 0, nil
++	}
++	if len(b.pauses) != 256 || n > 256 {
++		return 0, errors.New("GC pause ring unavailable or overwritten between samples")
++	}
++	var total uint64
++	for gc := a.GC; gc < b.GC; gc++ {
++		total += 
+```
+
+**File**: `cmd/radarload/stats.go` (added, +235/-0)
+```diff
+@@ -0,0 +1,235 @@
++package main
++
++import (
++	"fmt"
++	"io"
++	"math"
++	"reflect"
++	"sort"
++	"text/tabwriter"
++)
++
++type distribution struct {
++	Mean  float64 `json:"mean"`
++	P95   float64 `json:"p95"`
++	Peak  float64 `json:"peak"`
++	Count int     `json:"count"`
++}
++type latencySummary struct {
++	Count      int            `json:"count"`
++	Errors     int            `json:"errors"`
++	ErrorKinds map[string]int `json:"error_kinds"`
++	P50        float64        `json:"p50_ms"`
++	P95        float64        `json:"p95_ms"`
++	P99        float64        `json:"p99_ms"`
++	Bytes      int64          `json:"response_bytes"`
++}
++type summary struct {
++	Seconds      float64                   `json:"measured_seconds"`
++	RSS          distribution              `json:"rss_bytes"`
++	HeapInuse    distribution              `json:"heap_inuse_bytes"`
++	CPUSeconds   *float64                  `json:"cpu_seconds"`
++	CPUPerMinute *float64                  `json:"cpu_seconds_per_minute"`
++	GCCount      *uint64                   `json:"gc_count"`
++	PauseNS      *uint64                   `json:"gc_pause_ns"`
++	PauseError   string                    `json:"gc_pause_error,omitempty"`
++	SSE          sseStats                  `json:"sse"`
++	Offered      int                       `json:"offered_requests"`
++	Dropped      int                       `json:"dropped_requests"`
++	ActualQPS    float64                   `json:"actual_qps"`
++	Endpoints    map[string]latencySummary `json:"endpoints"`
++}
++
++func percentile(sorted []float64, p float64) float64 {
++	if len(sorted) == 0 {
++		return 0
++	}
++	return sorted[max(0, int(math.Ceil(float64(len(sorted))*p))-1)]
++}
++func describe(v []float64) distribution {
++	if len(v) == 0 {
++		return distribution{}
++	}
++	sort.Float64s(v)
++	var sum float64
++	for _, n := range v {
++		sum += n
++	}
++	return distribution{sum / float64(len(v)), percentile(v, .95), v[len(v)-1], len(v)}
++}
++
++func summarize(samples []sample, c *workloadCounters, seconds float64) summary {
++	s := summary{Seconds: seconds, Endpoints: map[string]latencySummary{}}
++	var rss, heap []float64
++	for _, v := range samples {
++		if v.RSS != nil {
++			rss = append(rss, float64(*v.RSS))
++		}
++		if v.Heap != nil {
++			heap = append(heap, float64(v.Heap.Inuse))
++		}
++	}
++	s.RSS = describe(rss)
++	s.HeapInuse = describe(heap)
++	if len(samples) >= 2 {
++		a, b := samples[0], samples[len(samples)-1]
++		if a.CPU != nil && b.CPU != nil && *b.CPU >= *a.CPU {
++			delta := *b.CPU - *a.CPU
++			s.CPUSeconds = &delta
++			rate := delta * 60 / b.At.Sub(a.At).Seconds()
++			s.CPUPerMinute = &rate
++		}
++		// Heap reads are spaced out (runtimeEvery), so GC and pause totals
++		// come from the samples that carry one.
++		var withHeap []int
++		for i := range samples {
++			if samples[i].Heap != nil {
++				withHeap = append(withHeap, i)
++			}
++		}
++		if len(withHeap) >= 2 {
++			first, last := samples[withHeap[0]].Heap, samples[withHeap[len(withHeap)-1]].Heap
++			if last.GC >= first.GC {
++				delta := last.GC - first.GC
++				s.GCCount = &delta
++			}
++		}
++		var pause uint64
++		if len(withHeap) < 2 {
++			s.PauseError = "fewer than two heap samples"
++		}
++		for j := 1; j < len(withHeap); j++ {
++			prev, cur := withHeap[j-1], withHeap[j]
++			delta, err := pauseDelta(samples[prev].Heap, samples[cur].Heap)
++			if err != nil {
++				s.PauseError = err.Error()
++				continue
++			}
++			samples[cur].GCPauseNS = &delta
++			pause += delta
++		}
++		if s.PauseError == "" {
++			s.PauseNS = &pause
++		}
++	}
++	c.mu.Lock()
++	defer c.mu.Unlock()
++	s.SSE = c.SSE
++	s.Offered = c.Offered
++	s.Dropped = c.Dropped
++	var requests int
++	for name, d := range c.Endpoints {
++		sort.Float64s(d.latencies)
++		n := 0
++		for _, v := range d.Errors {
++			n += v
++		}
++		s.Endpoints[name] = latencySummary{len(d.latencies), n, d.Errors, percentile(d.latencies, .5), percentile(d.latencies, .95), percentile(d.latencies, .99), d.Bytes}
++		requests += len(d.latencies)
++	}
++	if seconds > 0 {
++		s.ActualQPS = float64(requests) / seconds
++	}
++	return s
++}
++
++func delta(a, b float64) (float64, *float64) {
++	d := b - a
++	if a == 0 {
++		if b == 0 {
++			z := 0.0
++			return d, &z
++		}
++		return d, nil
++	}
++	p := d / math.Abs(a) * 100
++	return d, &p
++}
++
++func compare(out io.Writer, a, b result) error {
++	if a.Config.Duration != b.Config.Duration || a.Config.SSE != b.Config.SSE || a.Config.Askers != b.Config.Askers || a.Config.QPS != b.Config.QPS || a.Config.Seed != b.Config.Seed || a.Config.User != b.Config.User || a.Config.Groups != b.Config.Groups || !reflect.DeepEqual(a.Subjects, b.Subjects) || !reflect.DeepEqual(a.NeighborhoodSubjects, b.NeighborhoodSubjects) {
++		fmt.Fprintln(out, "WARNING: workload configuration or sampled subjects differ")
++	}
++	fmt.Fprintf(out, "A: %s (%s)\nB: %s (%s)\n", a.Config.Label, a.Build["version"], b.Config.Label, b.Build["version"])
++	w := tabwriter.NewWriter(out, 0, 4, 2, ' ', 0)
++	fmt.Fprintln(w, "Metric\tA\tB\tDelta (B-A)\tChange")
++	row := func(name string, a, b *float64) {
++		if a == nil || b == ni
+```
+
+**File**: `cmd/radarload/workload.go` (added, +214/-0)
+```diff
+@@ -0,0 +1,214 @@
++package main
++
++import (
++	"bufio"
++	"context"
++	"errors"
++	"fmt"
++	"io"
++	"math/rand"
++	"net/url"
++	"strings"
++	"sync"
++	"time"
++)
++
++type requestJob struct {
++	Endpoint string
++	Path     string
++}
++type endpointData struct {
++	latencies []float64
++	Errors    map[string]int
++	Bytes     int64
++}
++type sseStats struct {
++	Events      int64          `json:"events"`
++	Connections int64          `json:"connections"`
++	Errors      int64          `json:"errors"`
++	ErrorKinds  map[string]int `json:"error_kinds"`
++}
++type workloadCounters struct {
++	mu        sync.Mutex
++	Endpoints map[string]*endpointData
++	SSE       sseStats
++	Offered   int
++	Dropped   int
++}
++
++func requestFor(slot int, s subject) requestJob {
++	switch {
++	case slot < 12:
++		return requestJob{"resource_get", resourcePath("/api/resources", s)}
++	case slot < 14:
++		return requestJob{"ai_context", resourcePath("/api/ai/resources", s)}
++	case slot < 16:
++		return requestJob{"ai_neighborhood", resourcePath("/api/ai/neighborhood", s) + "&profile=auto&hops=1"}
++	case slot < 18:
++		return requestJob{"rest_neighborhood", resourcePath("/api/ai/neighborhood", s) + "&profile=all&hops=2"}
++	case slot == 18:
++		return requestJob{"applications", "/api/applications"}
++	default:
++		return requestJob{"list_summary", "/api/resources/" + url.PathEscape(s.Kind) + "?include=summary&maxItems=50000&group=" + url.QueryEscape(s.Group)}
++	}
++}
++
++func startWorkload(ctx context.Context, c *radarClient, subjects, neighborhoods []subject) (*workloadCounters, <-chan struct{}) {
++	stats := &workloadCounters{Endpoints: map[string]*endpointData{}, SSE: sseStats{ErrorKinds: map[string]int{}}}
++	done := make(chan struct{})
++	jobs := make(chan requestJob)
++	var workers sync.WaitGroup
++	for range c.c.Askers {
++		workers.Add(1)
++		go func() {
++			defer workers.Done()
++			for job := range jobs {
++				reqCtx, cancel := context.WithTimeout(ctx, requestTimeout)
++				start := time.Now()
++				resp, err := c.get(reqCtx, job.Path)
++				var bytes int64
++				var reason string
++				if err == nil {
++					bytes, err = io.Copy(io.Discard, resp.Body)
++					resp.Body.Close()
++					if resp.StatusCode != 200 {
++						reason = fmt.Sprintf("HTTP %d", resp.StatusCode)
++					} else if !strings.HasPrefix(resp.Header.Get("Content-Type"), "application/json") {
++						reason = "non-JSON response"
++					}
++				}
++				if err != nil {
++					reason = err.Error()
++					if errors.Is(err, context.DeadlineExceeded) {
++						reason = "timeout"
++					}
++					if ctx.Err() != nil {
++						reason = "run ended in flight"
++					}
++				}
++				elapsed := time.Since(start).Seconds() * 1000
++				cancel()
++				stats.mu.Lock()
++				d := stats.Endpoints[job.Endpoint]
++				if d == nil {
++					d = &endpointData{Errors: map[string]int{}}
++					stats.Endpoints[job.Endpoint] = d
++				}
++				d.latencies = append(d.latencies, elapsed)
++				d.Bytes += bytes
++				if reason != "" {
++					d.Errors[reason]++
++				}
++				stats.mu.Unlock()
++			}
++		}()
++	}
++	for range c.c.SSE {
++		workers.Add(1)
++		go func() { defer workers.Done(); c.stream(ctx, stats) }()
++	}
++	go func() {
++		defer close(done)
++		rng := rand.New(rand.NewSource(c.c.Seed))
++		order := rng.Perm(20)
++		start := time.Now()
++		deadline, _ := ctx.Deadline()
++		slot := 0
++		for {
++			target := start.Add(time.Duration(float64(slot) / c.c.QPS * float64(time.Second)))
++			if !deadline.IsZero() && !target.Before(deadline) {
++				<-ctx.Done()
++				close(jobs)
++				workers.Wait()
++				return
++			}
++			t := time.NewTimer(time.Until(target))
++			select {
++			case <-ctx.Done():
++				t.Stop()
++				close(jobs)
++				workers.Wait()
++				return
++			case <-t.C:
++			}
++			if ctx.Err() != nil {
++				close(jobs)
++				workers.Wait()
++				return
++			}
++			endpointSlot := order[slot%20]
++			pool := subjects
++			if endpointSlot >= 14 && endpointSlot < 18 {
++				pool = neighborhoods
++			}
++			job := requestFor(endpointSlot, pool[rng.Intn(len(pool))])
++			stats.mu.Lock()
++			stats.Offered++
++			stats.mu.Unlock()
++			select {
++			case jobs <- job:
++			default:
++				stats.mu.Lock()
++				stats.Dropped++
++				stats.mu.Unlock()
++			}
++			slot++
++		}
++	}()
++	return stats, done
++}
++
++func (c *radarClient) stream(ctx context.Context, stats *workloadCounters) {
++	for ctx.Err() == nil {
++		resp, err := c.get(ctx, "/api/events/stream")
++		if err == nil {
++			if resp.StatusCode != 200 {
++				err = fmt.Errorf("HTTP %d", resp.StatusCode)
++			} else if !strings.HasPrefix(resp.Header.Get("Content-Type"), "text/event-stream") {
++				err = errors.New("non-SSE response")
++			}
++			if err == nil {
++				stats.mu.Lock()
++				stats.SSE.Connections++
++				stats.mu.Unlock()
++				reader := bufio.NewReaderSize(resp.Body, 64*1024)
++				hasData := false
++				continuation := false
++				for {
++					line, readErr := reader.ReadSlice('\n')
++					if !continuation {
++						if strings.HasPrefix(string(line), "data:") {
++							hasData = true
++						}
++						if len(line) == 1 && line[0] == '\n' || len(line) == 2 && line[0] ==
+```
+
+---
+
+### Incident Patch 3: `b9cd4b5f` (2026-11-17)
+**Commit Message**: Replay a frozen cluster capture into two Radar builds and diff every relationship reader (#2708)
+
+## Summary
+
+Tooling to show that a change to how Radar answers relationships gives
+the same answers, or to list exactly where it doesn't. Comparing two
+builds on a live cluster doesn't work, because the cluster changes
+between the two reads. So this captures a cluster once, replays the
+frozen capture into two Radar builds through the test server's
+in-process fake client, and diffs what every relationship reader returns
+over HTTP and MCP.
+
+It's built for retiring the relationship graph: the old build is main,
+the new build is the cutover branch, and both run against identical
+state. It works for any reader-level change.
+
+## What's here
+
+- **`cmd/clustercapture -context <ctx> -out c.ndjson.gz`**: a read-only
+capture.
+- Lists every served, listable resource in pages of 500, plus the
+discovery document; writes gzipped NDJSON.
+- **Privacy:** Secret and ConfigMap values are blanked (keys kept), env
+`value`s are blanked, inline secrets are redacted
+(`pkg/ai/context.RedactInlineSecrets`), and `managedFields` and
+last-applied annotations are dropped. The header stores a hash of the
+context name
+
+**File**: `cmd/clustercapture/main.go` (added, +71/-0)
+```diff
+@@ -0,0 +1,71 @@
++package main
++
++import (
++	"context"
++	"flag"
++	"fmt"
++	"os"
++	"os/signal"
++	"path/filepath"
++	"syscall"
++	"time"
++
++	"github.com/skyhook-io/radar/internal/clusterreplay"
++	"k8s.io/client-go/discovery"
++	"k8s.io/client-go/dynamic"
++	"k8s.io/client-go/tools/clientcmd"
++)
++
++func main() {
++	if err := run(); err != nil {
++		fmt.Fprintln(os.Stderr, err)
++		os.Exit(1)
++	}
++}
++
++func run() error {
++	name := flag.String("context", "", "kubeconfig context to capture (required)")
++	out := flag.String("out", "", "destination .ndjson.gz (required; must not exist)")
++	flag.Parse()
++	if *name == "" || *out == "" {
++		return fmt.Errorf("-context and -out are required")
++	}
++	cfg, err := clientcmd.NewNonInteractiveDeferredLoadingClientConfig(clientcmd.NewDefaultClientConfigLoadingRules(), &clientcmd.ConfigOverrides{CurrentContext: *name}).ClientConfig()
++	if err != nil {
++		return fmt.Errorf("load kubeconfig: %w", err)
++	}
++	cfg.Timeout = 30 * time.Second
++	d, err := discovery.NewDiscoveryClientForConfig(cfg)
++	if err != nil {
++		return fmt.Errorf("create discovery client: %w", err)
++	}
++	c, err := dynamic.NewForConfig(cfg)
++	if err != nil {
++		return fmt.Errorf("create dynamic client: %w", err)
++	}
++	// A failed list must not leave a plausible-looking complete snapshot.
++	f, err := os.CreateTemp(filepath.Dir(*out), ".capture-*.partial")
++	if err != nil {
++		return err
++	}
++	partial := f.Name()
++	defer os.Remove(partial)
++	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
++	defer cancel()
++	count, skipped, captureErr := clusterreplay.Capture(ctx, d, c, *name, f)
++	closeErr := f.Close()
++	if captureErr != nil {
++		return fmt.Errorf("capture failed; no snapshot published: %w", captureErr)
++	}
++	if closeErr != nil {
++		return closeErr
++	}
++	if err := os.Link(partial, *out); err != nil {
++		return err
++	}
++	fmt.Printf("Captured %d objects to %s\n", count, *out)
++	if len(skipped) > 0 {
++		fmt.Printf("Skipped %d resources whose lists failed; details are in the capture header\n", len(skipped))
++	}
++	return nil
++}
+```
+
+**File**: `cmd/clustercapture/main_test.go` (added, +24/-0)
+```diff
+@@ -0,0 +1,24 @@
++package main
++
++import (
++	"os"
++	"path/filepath"
++	"strings"
++	"testing"
++)
++
++func TestRunReportsKubeconfigCause(t *testing.T) {
++	dir := t.TempDir()
++	kubeconfig := filepath.Join(dir, "config")
++	if err := os.WriteFile(kubeconfig, []byte("apiVersion: v1\nkind: Config\n"), 0600); err != nil {
++		t.Fatal(err)
++	}
++	t.Setenv("KUBECONFIG", kubeconfig)
++	args := os.Args
++	defer func() { os.Args = args }()
++	os.Args = []string{"clustercapture", "-context", "absent", "-out", filepath.Join(dir, "c.ndjson.gz")}
++	err := run()
++	if err == nil || !strings.Contains(err.Error(), `context "absent" does not exist`) {
++		t.Fatalf("err = %v, want the kubeconfig loader's cause", err)
++	}
++}
+```
+
+**File**: `cmd/reldiff/main.go` (added, +592/-0)
+```diff
+@@ -0,0 +1,592 @@
++package main
++
++import (
++	"bytes"
++	"encoding/json"
++	"flag"
++	"fmt"
++	"io"
++	"math"
++	"net"
++	"net/http"
++	"net/url"
++	"os"
++	"reflect"
++	"regexp"
++	"sort"
++	"strings"
++	"time"
++
++	"github.com/skyhook-io/radar/internal/clusterreplay"
++	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
++	"k8s.io/apimachinery/pkg/runtime/schema"
++)
++
++type subject struct {
++	Kind      string `json:"kind"`
++	Group     string `json:"group"`
++	Namespace string `json:"namespace"`
++	Name      string `json:"name"`
++}
++type request struct {
++	Reader, Kind, Path string
++	Subject            subject
++	Tool               string
++	Args               map[string]any
++	Relationships      bool
++}
++type example struct {
++	Subject subject `json:"subject"`
++	A       any     `json:"a"`
++	B       any     `json:"b"`
++}
++type delta struct {
++	Reader   string    `json:"reader"`
++	Field    string    `json:"field"`
++	Kind     string    `json:"kind"`
++	Count    int       `json:"count"`
++	Examples []example `json:"examples"`
++}
++type timing struct {
++	Reader string  `json:"reader"`
++	Kind   string  `json:"kind"`
++	Side   string  `json:"side"`
++	Count  int     `json:"count"`
++	Median float64 `json:"median_ms"`
++	P95    float64 `json:"p95_ms"`
++}
++type failure struct {
++	Reader  string  `json:"reader"`
++	Subject subject `json:"subject"`
++	Side    string  `json:"side"`
++	Error   string  `json:"error"`
++}
++type captureGaps struct {
++	FailedGroups []string                `json:"failed_groups"`
++	Skipped      []clusterreplay.Skipped `json:"skipped"`
++}
++
++type report struct {
++	CaptureGaps captureGaps `json:"capture_gaps"`
++	Requests    int         `json:"request_pairs"`
++	DeltaCount  int         `json:"delta_count"`
++	Deltas      []*delta    `json:"deltas"`
++	// Noise holds deltas whose (reader, kind, field) also differed between two runs
++	// of one build (-baseline): output that varies run to run, not between builds.
++	NoiseCount int            `json:"noise_count,omitempty"`
++	Noise      []*delta       `json:"noise,omitempty"`
++	Latency    []timing       `json:"latency"`
++	Failures   []failure      `json:"failures"`
++	Readiness  map[string]any `json:"readiness"`
++}
++
++func main() {
++	a := flag.String("a", "", "first Radar URL")
++	b := flag.String("b", "", "second Radar URL")
++	capture := flag.String("capture", "", "subject capture .ndjson.gz")
++	out := flag.String("out", "report.json", "JSON report")
++	max := flag.Int("max-per-kind", 0, "maximum subjects per group/kind (0 = all)")
++	adminA := flag.String("ready-a", "", "optional replay admin URL; otherwise infer main port+1")
++	adminB := flag.String("ready-b", "", "optional replay admin URL; otherwise infer main port+1")
++	baseline := flag.String("baseline", "", "report from two runs of one build; fields that differed there are reported as noise")
++	flag.Parse()
++	if *a == "" || *b == "" || *capture == "" || *max < 0 {
++		fmt.Fprintln(os.Stderr, "-a, -b, -capture required; -max-per-kind must be >= 0")
++		os.Exit(1)
++	}
++	if err := run(*a, *b, *capture, *out, *max, *adminA, *adminB, *baseline); err != nil {
++		fmt.Fprintln(os.Stderr, err)
++		os.Exit(1)
++	}
++}
++
++func run(a, b, capture, out string, max int, adminA, adminB, baseline string) error {
++	noise, err := loadNoise(baseline)
++	if err != nil {
++		return fmt.Errorf("baseline: %w", err)
++	}
++	f, err := os.Open(capture)
++	if err != nil {
++		return err
++	}
++	defer f.Close()
++	var objects []*unstructured.Unstructured
++	header, err := clusterreplay.Read(f, func(o *unstructured.Unstructured) error { objects = append(objects, o); return nil })
++	if err != nil {
++		return err
++	}
++	requests := plan(objects, header, max)
++	client := &http.Client{Timeout: 65 * time.Second}
++	result := report{Deltas: []*delta{}, Failures: []failure{}, Readiness: map[string]any{}, CaptureGaps: captureGaps{header.FailedGroups, header.Skipped}}
++	if len(header.FailedGroups) > 0 || len(header.Skipped) > 0 {
++		fmt.Fprintf(os.Stderr, "Warning: incomplete capture: %d failed groups, %d skipped resources; see capture_gaps in the report\n", len(header.FailedGroups), len(header.Skipped))
++	}
++	for _, side := range []struct{ Name, Base, Admin string }{{"a", a, adminA}, {"b", b, adminB}} {
++		status, err := waitReady(side.Base, side.Admin)
++		if err != nil {
++			return fmt.Errorf("%s readiness: %w", side.Name, err)
++		}
++		result.Readiness[side.Name] = status
++	}
++	groups, noiseGroups := map[string]*delta{}, map[string]*delta{}
++	times := map[string][]float64{}
++	// Alternate the first side to distribute warm-cache and machine-load bias.
++	for i, r := range requests {
++		var values [2]any
++		order := []int{0, 1}
++		if i%2 != 0 {
++			order = []int{1, 0}
++		}
++		for _, side := range order {
++			base := a
++			label := "a"
++			if side == 1 {
++				base = b
++				label = "b"
++			}
++			start := time.Now()
++			value, err := fetch(client, base, r)
++			elapsed := float64(time.Since(start)) / float64(time.Millisecond)
++			times[r.Reader+"\x00"+r.Kind+"\x00"+label] = append(times[r
+```
+
+**File**: `cmd/reldiff/main_test.go` (added, +246/-0)
+```diff
+@@ -0,0 +1,246 @@
++package main
++
++import (
++	"compress/gzip"
++	"encoding/json"
++	"io"
++	"net/http"
++	"net/http/httptest"
++	"os"
++	"path/filepath"
++	"reflect"
++	"strings"
++	"testing"
++	"time"
++
++	"github.com/skyhook-io/radar/internal/clusterreplay"
++	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
++	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
++)
++
++func TestNormalizationAndDeltas(t *testing.T) {
++	a := map[string]any{"owner": map[string]any{"name": "x", "generation": 1}, "children": []any{map[string]any{"kind": "Pod", "name": "b"}, map[string]any{"kind": "Pod", "name": "a"}}, "conditions": []any{"first", "second"}}
++	b := map[string]any{"owner": map[string]any{"name": "x", "generation": 2}, "children": []any{map[string]any{"kind": "Pod", "name": "a"}, map[string]any{"kind": "Pod", "name": "b"}}, "conditions": []any{"first", "second"}}
++	if !reflect.DeepEqual(normalize(a), normalize(b)) {
++		t.Fatal("ref ordering/generation changed equality")
++	}
++	b["owner"].(map[string]any)["name"] = "y"
++	out := map[string][2]any{}
++	compare("", normalize(a), normalize(b), out)
++	if len(out) != 1 || out["/owner/name"] != [2]any{"x", "y"} {
++		t.Fatal(out)
++	}
++	b["conditions"] = []any{"second", "first"}
++	out = map[string][2]any{}
++	compare("", normalize(a), normalize(b), out)
++	if len(out) != 3 {
++		t.Fatal("ordered arrays must retain order", out)
++	}
++}
++
++func TestMCPTextDecodedAndErrorsRecorded(t *testing.T) {
++	s := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++		if r.Method != "POST" || r.Header.Get("MCP-Protocol-Version") == "" {
++			t.Error("bad MCP request")
++		}
++		w.Header().Set("Content-Type", "text/event-stream")
++		_, _ = w.Write([]byte("event: message\ndata: {\"jsonrpc\":\"2.0\",\"id\":1,\"result\":{\"content\":[{\"type\":\"text\",\"text\":\"{\\\"owner\\\":{\\\"name\\\":\\\"a\\\"}}\"}]}}\n\n"))
++	}))
++	defer s.Close()
++	value, err := fetch(s.Client(), s.URL, request{Tool: "get_resource"})
++	if err != nil {
++		t.Fatal(err)
++	}
++	b, _ := json.Marshal(value)
++	if string(b) != "{\"content\":[{\"text\":{\"owner\":{\"name\":\"a\"}},\"type\":\"text\"}]}" {
++		t.Fatalf("not decoded: %s", b)
++	}
++}
++
++func TestPlanIncludesAllReadersAndDoesNotCapTrees(t *testing.T) {
++	objects := []*unstructured.Unstructured{}
++	for _, name := range []string{"first", "second"} {
++		objects = append(objects, &unstructured.Unstructured{Object: map[string]any{"apiVersion": "argoproj.io/v1alpha1", "kind": "Application", "metadata": map[string]any{"name": name, "namespace": "default"}}})
++	}
++	requests := plan(objects, clusterreplay.Header{}, 1)
++	counts := map[string]int{}
++	for _, r := range requests {
++		counts[r.Reader]++
++	}
++	for _, reader := range []string{"relationships", "neighborhood", "ai_context", "mcp_get_resource", "mcp_get_neighborhood", "summary", "applications"} {
++		if counts[reader] != 1 {
++			t.Fatalf("%s calls=%d", reader, counts[reader])
++		}
++	}
++	if counts["gitops_tree"] != 2 {
++		t.Fatal("trees capped", counts)
++	}
++}
++
++func TestMissingAndNullRemainDifferent(t *testing.T) {
++	out := map[string][2]any{}
++	compare("", map[string]any{}, map[string]any{"owner": nil}, out)
++	if len(out) != 1 || out["/owner"][0] == nil {
++		t.Fatal(out)
++	}
++}
++
++func TestContainerOrderIsNotNormalizedAway(t *testing.T) {
++	a := []any{map[string]any{"name": "first", "image": "a"}, map[string]any{"name": "second", "image": "b"}}
++	b := []any{a[1], a[0]}
++	if reflect.DeepEqual(normalize(a), normalize(b)) {
++		t.Fatal("ordered container array sorted as references")
++	}
++}
++
++func TestRunReportsCaptureGapsAndScopesNoiseByKind(t *testing.T) {
++	dir := t.TempDir()
++	capture, baseline, output := filepath.Join(dir, "capture.gz"), filepath.Join(dir, "baseline.json"), filepath.Join(dir, "report.json")
++	header := clusterreplay.Header{
++		CapturedAt: time.Now().UTC(), Discovery: clusterreplay.Discovery{Resources: []*metav1.APIResourceList{}},
++		FailedGroups: []string{"broken.io"}, Skipped: []clusterreplay.Skipped{{Resource: "secrets", Error: "forbidden"}},
++	}
++	f, err := os.Create(capture)
++	if err != nil {
++		t.Fatal(err)
++	}
++	z := gzip.NewWriter(f)
++	enc := json.NewEncoder(z)
++	if err := enc.Encode(header); err != nil {
++		t.Fatal(err)
++	}
++	for _, kind := range []string{"Pod", "Service"} {
++		if err := enc.Encode(map[string]any{"apiVersion": "v1", "kind": kind, "metadata": map[string]any{"namespace": "default", "name": "one"}}); err != nil {
++			t.Fatal(err)
++		}
++	}
++	if err := z.Close(); err != nil {
++		t.Fatal(err)
++	}
++	if err := f.Close(); err != nil {
++		t.Fatal(err)
++	}
++	base, err := json.Marshal(report{Deltas: []*delta{{Reader: "relationships", Kind: "Pod.", Field: "/owner/name"}}})
++	if err != nil {
++		t.Fatal(err)
++	}
++	if err := os.WriteFile(baseline, base, 0600); err != nil {
++		t.Fatal(err)
++	}
++	server := func(side string) *httptest.Server {
++		return httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++			w.Header().Set("Content-Type", "application/jso
+```
+
+**File**: `cmd/testserver/main.go` (modified, +22/-6)
+```diff
+@@ -45,6 +45,7 @@ import (
+ 	"github.com/skyhook-io/radar/internal/config"
+ 	"github.com/skyhook-io/radar/internal/k8s"
+ 	"github.com/skyhook-io/radar/internal/loadtest"
++	"github.com/skyhook-io/radar/internal/mcp"
+ 	"github.com/skyhook-io/radar/internal/server"
+ 	"github.com/skyhook-io/radar/internal/static"
+ 	"github.com/skyhook-io/radar/internal/timeline"
+@@ -61,6 +62,9 @@ func main() {
+ 	censusScale := flag.Float64("census-scale", 1.0, "load-test: scale factor applied to -census counts")
+ 	vulnReports := flag.Bool("vulnerability-reports", false, "seed Trivy Operator VulnerabilityReports and the workloads they describe (with the default fixture)")
+ 	flag.Parse()
++	if *replayPath != "" && (*pods != 0 || *censusProfile != "" || *vulnReports) {
++		log.Fatal("-replay cannot be combined with -pods, -census or -vulnerability-reports")
++	}
  
- - **Operation failures** (Argo) — the parser recognizes known controller failures (annotation-too-large, label-too-long, hook failure, admission webhook denial, RBAC, conflict, immutable field, schema migration, connectivity, etc.) and rewrites each into a plain-English cause
- - **Stuck-drift loop** — when sync succeeded at the current desired comparison’s sources and revisions but the app is *still* OutOfSync with auto-sync on and a recent reconcile, something is mutating resources after each apply. The Issue calls out likely culprits (mutating webhook, sibling controller, schema migration). An older successful apply or rollback against different desired sources/revisions remains ordinary pending drift, including after auto-sync is re-enabled behind a sync window. Missing apply/comparison evidence does not establish a loop
--- **Manual drift without auto-sync** — drift exists but auto-sync is disabled. The Issue tells you "nothing will reconcile until you click Sync" so you stop waiting, unless a sync would be hazardous (see below). A rollback marker in the latest operation, if successful, instead gives an informational note naming the applied revision(s) and recorded initiator; resource rows explain that Sync can undo the rollback (a current sync hazard replaces that advice, since the hazard is the more urgent consequence), including Missing rows while the current comparison is Unknown. Rows use `summary.rollbackRevision`, the revision(s) deployed by the latest successful marked rollback, only while effective auto-sync is off, independently of the OutOfSync-only informational note. Its absence does not mean no rollback happened. This records the last rollback, not the current live state: later changes can also show as drift. Syncing or enabling auto-sync deploys the current revision and can undo the rollback. A marked, completed rollback whose result sources or revisions differ from the requested ones instead gives a warning in both detail and cluster Issues, even if the app is Synced. A known requested target with no recorded applied revisions warns that the rollback target could not be verified. This operation-outcome warning uses the shared diagnosis and remains stable while that operation is latest, independently of the manual-drift timer. It belongs to the GitOps operation-failure category, with a distinct issue identity so current sync errors, operation failures or drift loops do not absorb its warning and recovery advice. Cluster Issues retains its delayed manual-drift warning after a successful rollback, with guidance to fix or revert Git before syncing again, or keep auto-sync off. Dry runs and failed or pending operations do not qualify. A later operation, including a dry-run, replaces the rollback evidence even if it does not move the app; Radar then returns to ordinary diagnosis. Argo's native rollback and a sync to an older revision have indistinguishable durable operation records, so Radar does not infer a rollback from old revisions or expiring audit events.
-+- **Manual drift without auto-sync** — drift exists but auto-sync is disabled. The Issue asks you to review the desired changes and sync policy before deciding whether to sync, unless a sync would be hazardous (see below). Auto-sync being off does not rule out another controller initiating a sync, including ApplicationSet RollingSync. The visible sync-mode label is "Auto-sync off"; API responses retain "Manual". A rollback marker in the latest operation, if successful, instead gives an informational note naming the applied revision(s) and recorded initiator; resource rows explain that Sync can undo the rollback (a current sync hazard replaces that advice, since the hazard is the more urgent consequence), including Missing rows while the current comparison is Unknown. Rows use `summary.rollbackRevision`, the revision(s) deployed by the latest successful marked rollback, only while effective auto-sync is off, independently of the OutOfSync-only informational note. Its absence does not mean no rollback happened. This records the last rollback, not the current live state: later changes can also show as drift. Syncing or enabling auto-sync deploys the current revision and can undo the rollback. A marked, completed rollback whose result sources or revisions differ from the requested ones instead gives a warning in both detail and cluster Issues, even if the app is Synced. A known requested target with no recorded applied revisions warns that the rollback target could not be verified. This operation-outcome warning uses the shared diagnosis and remains stable while that operation is latest, independently of the manual-drift timer. It belongs to the GitOps operation-failure category, with a distinct issue identity so current sync errors, operation failures or drift loops do not absorb its warning and recovery advice. Cluster Issues retains its 
-```
-
-**File**: `internal/k8s/detect_gitops.go` (modified, +5/-7)
-```diff
-@@ -368,7 +368,7 @@ func detectArgoAppProblems(apps []*unstructured.Unstructured, tracker *argoDrift
- 				setDetectionOnset(&d, now, outOfSyncAt)
- 				d.Stuck = true
- 				d.Cause = "Auto-sync applied cleanly and reconciled recently, yet live state keeps diverging from Git. Common causes: a mutating admission webhook adds defaults Argo isn't told to ignore; a sibling controller (Karpenter, Istio, cert-manager) writes back into spec; or a conversion webhook rewrites a deprecated API schema."
--				d.Action = "Open Changes to see the per-resource drift, then match it against your Git manifest, the resource's controller, and any mutating webhooks."
-+				d.Action = "Open Resources to see the per-resource drift, then match it against your Git manifest, the resource's controller, and any mutating webhooks."
- 				out = append(out, d)
- 			} else {
- 				dd := gitopsProblem(now, "Application", argoGroup, ns, name, "high",
-@@ -380,18 +380,16 @@ func detectArgoAppProblems(apps []*unstructured.Unstructured, tracker *argoDrift
- 				out = append(out, dd)
- 			}
- 		}
--		// A manual-sync app legitimately sits OutOfSync until an operator syncs
--		// it, so unlike the auto-synced branch above we only warn once the drift
--		// has persisted past manualDriftGate — long enough to be a forgotten
--		// change rather than one mid-review.
-+		// Drift with auto-sync off can be intentional, so warn only after the
-+		// existing grace period rather than during review or orchestration.
- 		if !automated && outOfSync && manualDriftFor >= manualDriftGate {
- 			dd := gitopsProblem(now, "Application", argoGroup, ns, name, "warning", "OutOfSyncManual",
- 				fmt.Sprintf("Application has been out of sync for %s and auto-sync is not enabled", timeutil.FormatAgeShort(manualDriftFor)), createdAt)
- 			setDetectionOnset(&dd, now, outOfSyncAt)
--			dd.Action = "Review the drift in Changes, then Sync the application (or enable auto-sync) if the drift is unintended."
-+			dd.Action = "Review the desired changes and sync policy before deciding whether to sync."
- 			if revision, _ := gitops.ArgoSuccessfulRollback(app); revision != "" {
- 				dd.Message = "Last rollback deployed " + revision + "; the live state differs from the desired state and auto-sync is off."
--				dd.Action = "Syncing or enabling auto-sync applies the current source and can undo the rollback. Fix or revert the source first, or keep auto-sync off. Review Changes for later edits."
-+				dd.Action = "Syncing or enabling auto-sync applies the current source and can undo the rollback. Fix or revert the source before syncing again. Review Resources for later edits."
- 			}
- 			if hazard := argoSyncHazardAction(app); hazard != "" {
- 				dd.Action = hazard
-```
-
-**File**: `internal/k8s/detect_gitops_test.go` (modified, +4/-4)
-```diff
-@@ -690,8 +690,8 @@ func TestDetectArgoAppProblems_ManualDriftGate(t *testing.T) {
- 		if !d.OnsetAt.Equal(base) {
- 			t.Errorf("OnsetAt = %v, want exact first observation %v", d.OnsetAt, base)
- 		}
--		if d.Action == "" {
--			t.Error("OutOfSyncManual should carry an Action")
-+		if d.Action != "Review the desired changes and sync policy before deciding whether to sync." {
-+			t.Errorf("unexpected manual drift guidance: %s", d.Action)
- 		}
+ 	// Isolate config/settings writes to a temp directory so e2e tests
+ 	// don't touch the developer's real ~/.radar/config.json.
+@@ -76,8 +80,12 @@ func main() {
+ 	var (
+ 		fakeClient *fake.Clientset
+ 		gen        *loadtest.Generator
++		replay     *replayState
+ 	)
+-	if *censusProfile != "" {
++	if *replayPath != "" {
++		replay = mustLoadReplay(*replayPath)
++		fakeClient = replay.client
++	} else if *censusProfile != "" {
+ 		c, ok := loadtest.Profiles[*censusProfile]
+ 		if !ok {
+ 			log.Fatalf("unknown -census profile %q", *censusProfile)
+@@ -122,6 +130,11 @@ func main() {
+ 		log.Fatalf("InitTestResourceCache: %v", err)
+ 	}
+ 
++	if replay != nil {
++		replay.mustStart()
++		defer k8s.ResetTestDynamicState()
++	}
++
+ 	if *vulnReports {
+ 		_, reports := vulnerabilityFixture()
+ 		if err := initVulnerabilityReports(reports); err != nil {
+@@ -148,6 +161,7 @@ func main() {
+ 		StaticFS:        static.FS,
+ 		StaticRoot:      "dist",
+ 		EffectiveConfig: effectiveCfg,
++		MCPHandler:      mcp.NewReadOnlyHandler(),
  	})
  
-@@ -715,7 +715,7 @@ func TestDetectArgoAppProblems_ManualDriftGate(t *testing.T) {
- 		if d.Message != "Last rollback deployed rev-old; the live state differs from the desired state and auto-sync is off." {
- 			t.Errorf("message = %q", d.Message)
- 		}
--		if d.Action != "Syncing or enabling auto-sync applies the current source and can undo the rollback. Fix or revert the source first, or keep auto-sync off. Review Changes for later edits." {
-+		if d.Action != "Syncing or enabling auto-sync applies the current source and can undo the rollback. Fix or revert the source before syncing again. Review Resources for later edits." {
- 			t.Errorf("action = %q", d.Action)
- 		}
- 	})
-@@ -1239,7 +1239,7 @@ func TestDetectArgoAppProblems_ManualDriftAdviceRespectsSyncHazards(t *testing.T
- 		name, want string
- 		mutate     func(*unstructured.Unstructured)
- 	}{
--		{"plain drift", "then Sync the application", func(*unstructured.Unstructured) {}},
-+		{"plain drift", "before deciding whether to sync", func(*unstructured.Unstructured) {}},
- 		{"shared resources", "also tracked by Application payments", func(app *unstructured.Unstructured) {
- 			_ = unstructured.SetNestedSlice(app.Object, []any{map[string]any{"type": "SharedResourceWarning", "message": "Deployment/web is part of applications argocd/billing and payments"}}, "status", "conditions")
- 		}},
-```
-
-**File**: `packages/k8s-ui/src/components/gitops/GitOpsDetailLayout.tsx` (modified, +9/-6)
-```diff
-@@ -12,11 +12,14 @@ import { RadarUpgradeNote, radarUpgradeNoteText } from '../ui/RadarUpgradeNote'
- import type { GitOpsHealthStatus, GitOpsInsight, GitOpsIssue, GitOpsRemediation, SyncStatus } from '../../types'
- import type { RadarUpgradeRequirement } from '../../types/fetch-error'
+ 	ready := make(chan struct{})
+@@ -161,11 +175,13 @@ func main() {
+ 	fmt.Fprintf(os.Stderr, "Test server ready on http://localhost:%d (fake k8s)\n", *port)
  
--function argoAutoSyncControllerNote(controller: ArgoActionHandlers['autoSyncController']): string {
-+function argoAutoSyncControllerNote(controller: ArgoActionHandlers['autoSyncController'], enabling = false): string {
-   if (!controller) return ''
--  return controller.kind === 'ApplicationSet'
--    ? ` ApplicationSet ${controller.name} can turn it back on; to keep it off, change the ApplicationSet's template.`
--    : ` Application ${controller.name} manages this one from Git and can turn it back on when it syncs; to keep it off, change it in Git.`
-+  if (controller.kind === 'ApplicationSet') {
-+    return enabling
-+      ? ` ApplicationSet ${controller.name} may overwrite this setting. Enabling may apply pending changes immediately and bypass ApplicationSet rollout ordering. Review its template and rollout policy first.`
-+      : ` ApplicationSet ${controller.name} may overwrite this setting or control when this Application syncs. Review its template and rollout policy before changing auto-sync.`
-+  }
-+  return ` Application ${controller.name} manages this one from Git and may overwrite this setting when it syncs. Review its source before changing auto-sync.`
- }
- 
- function argoResumeDescription(suspended: boolean, settings: ArgoActionHandlers['resumeSettings']): string {
-@@ -395,7 +398,7 @@ export function GitOpsDetailLayout(props: GitOpsDetailLayoutProps) {
-                   {detail.path && <AppFact label="Path" value={detail.path} />}
-                   {detail.chart && <AppFact label="Chart" value={detail.chart} />}
-                   <AppFact label="Destination" value={detail.destination || '-'} />
--                  {detail.autoSyncMode && <AppFact label="Sync mode" value={detail.autoSyncMode} />}
-+                  {detail.autoSyncMode && <AppFact label="Sync mode" value={detail.autoSyncMode === 'Manual' ? 'Auto-sync off' : detail.autoSyncMode} />}
-                 </div>
-               )}
-               {resumeBlockedReason && <p className="mt-2 text-xs text-theme-text-secondary">{resumeBlockedReason}</p>}
-@@ -456,7 +459,7 @@ export function GitOpsDetailLayout(props: GitOpsDetailLayoutProps) {
-                   ) : (
-                     <ActionButton
-                       label="Enable auto-sync"
--                      description={argoResumeDescription(effectiveSuspended, argo.resumeSettings)}
-+                      description={argoResumeDescription(effectiveSuspended, argo.resumeSettings) + argoAutoSyncControllerNote(argo.autoSyncController, true)}
-                       icon={Play}
-                       loading={argo.resuming}
-                       onClick={() => !resumeBlockedReason && !resumeUpgrade && argo.onResume()}
-```
-
-**File**: `packages/k8s-ui/src/components/gitops/GitOpsTableView.tsx` (modified, +1/-1)
-```diff
-@@ -1023,7 +1023,7 @@ function GitOpsFilterSidebar({
- 
-         <GitOpsFilterSection icon={CircleDot} title="Automation (Sync policy)">
-           <GitOpsFacetButton label="Auto-sync" count={automationCounts.auto} active={automationFilters.has('auto')} onClick={() => onToggleAutomation('auto')} />
--          <GitOpsFacetButton label="Manual" count={automationCounts.manual} active={automationFilters.has('manual')} onClick={() => onToggleAutomation('manual')} />
-+          <GitOpsFacetButton label="Auto-sync off" count={automationCounts.manual} active={automationFilters.has('manual')} onClick={() => onToggleAutomation('manual')} />
-           <GitOpsFacetButton label="Suspended" count={automationCounts.suspended} active={automationFilters.has('suspended')} tone="warning" onClick={() => onToggleAutomation('suspended')} />
-         </GitOpsFilterSection>
+ 	var adminSrv *http.Server
+-	if gen != nil {
+-		ap := *adminPort
+-		if ap == 0 {
+-			ap = *port + 1
+-		}
++	ap := *adminPort
++	if ap == 0 {
++		ap = *port + 1
++	}
++	if replay != nil {
++		adminSrv = startReplayAdmin(ap, replay)
++	} else if gen != nil {
+ 		adminSrv = startAdminServer(ap, gen, fakeClient)
+ 	}
  
 ```
 
-**File**: `packages/k8s-ui/src/components/gitops/argo-radar-upgrade.test.tsx` (modified, +9/-6)
+**File**: `cmd/testserver/replay.go` (added, +195/-0)
 ```diff
-@@ -56,7 +56,7 @@ function layout(handlers: ArgoActionHandlers, status: GitOpsDetailStatus | null
-       terminating={false}
-       terminatingChipTooltip=""
-       terminatingActionTooltip=""
--      detail={{ project: 'default' }}
-+      detail={{ project: 'default', autoSyncMode: 'Manual' }}
-       insight={null}
-       insightLoading={false}
-       isArgoApp
-@@ -86,6 +86,7 @@ describe('Enable auto-sync on the GitOps detail page', () => {
-     const markup = html(layout(argo({ resumeUpgrade: null })))
-     expect(enableAutoSync(markup)).not.toMatch(/\sdisabled=""/)
-     expect(markup).not.toContain('need the latest Radar')
-+    expect(markup).toContain('Auto-sync off')
-   })
- 
-   // Disable auto-sync works on every Radar; only the way back on is gated.
-@@ -104,13 +105,15 @@ describe('Enable auto-sync on the GitOps detail page', () => {
-       { name: 'first-time enable on a Radar that starts self-heal off', status: { sync: 'OutOfSync', health: 'Healthy', suspended: false } as GitOpsDetailStatus, settings: { prune: false, selfHeal: false }, copy: 'Argo applies new commits. Resources removed from Git are kept (prune off).' },
-       { name: 'a block switched off in place with prune on', status: { sync: 'OutOfSync', health: 'Healthy', suspended: false } as GitOpsDetailStatus, settings: { prune: true, selfHeal: false }, copy: 'Argo applies new commits. Resources removed from Git are deleted (prune on).' },
-       { name: 'unknown settings', status: null, settings: null, copy: 'Turn on automated sync, so Argo applies new commits from Git.' },
--    ])('explains $name', async ({ status, settings, copy }) => {
-+      { name: 'known ApplicationSet parent', status: null, settings: null, controller: { kind: 'ApplicationSet' as const, name: 'clusters' }, copy: 'Turn on automated sync, so Argo applies new commits from Git. ApplicationSet clusters may overwrite this setting. Enabling may apply pending changes immediately and bypass ApplicationSet rollout ordering. Review its template and rollout policy first.' },
-+      { name: 'known parent Application', status: null, settings: null, controller: { kind: 'Application' as const, name: 'bootstrap' }, copy: 'Turn on automated sync, so Argo applies new commits from Git. Application bootstrap manages this one from Git and may overwrite this setting when it syncs. Review its source before changing auto-sync.' },
-+    ])('explains $name', async ({ status, settings, controller, copy }) => {
-       vi.useFakeTimers()
-       const element = document.createElement('div')
-       document.body.appendChild(element)
-       const root = createRoot(element)
-       try {
--        await act(async () => { root.render(layout(argo({ resumeSettings: settings }), status)) })
-+        await act(async () => { root.render(layout(argo({ resumeSettings: settings, autoSyncController: controller }), status)) })
-         const button = [...element.querySelectorAll('button')].find((b) => b.textContent === 'Enable auto-sync')!
-         await act(async () => {
-           button.parentElement!.dispatchEvent(new MouseEvent('mouseover', { bubbles: true }))
-@@ -127,9 +130,9 @@ describe('Enable auto-sync on the GitOps detail page', () => {
-       { name: 'Sync is available', copy: 'Stop Argo from automatically syncing Git changes. Manual Sync still works.' },
-       { name: 'an operation holds Sync', running: true, copy: 'Stop Argo from automatically syncing Git changes.' },
-       { name: 'the Application is suspended', suspended: true, copy: 'Stop Argo from automatically syncing Git changes.' },
--      { name: 'an ApplicationSet owns it', controller: { kind: 'ApplicationSet' as const, name: 'clusters' }, copy: "Stop Argo from automatically syncing Git changes. Manual Sync still works. ApplicationSet clusters can turn it back on; to keep it off, change the ApplicationSet's template." },
--      { name: 'a parent Application manages it', controller: { kind: 'Application' as const, name: 'apps' }, copy: 'Stop Argo from automatically syncing Git changes. Manual Sync still works. Application apps manages this one from Git and can turn it back on when it syncs; to keep it off, change it in Git.' },
--      { name: 'an operation holds Sync on an ApplicationSet-owned app', running: true, controller: { kind: 'ApplicationSet' as const, name: 'clusters' }, copy: "Stop Argo from automatically syncing Git changes. ApplicationSet clusters can turn it back on; to keep it off, change the ApplicationSet's template." },
-+      { name: 'an ApplicationSet owns it', controller: { kind: 'ApplicationSet' as const, name: 'clusters' }, copy: "Stop Argo from automatically syncing Git changes. Manual Sync still works. ApplicationSet clusters may overwrite this setting or control when this Application syncs. Review its template and rollout policy before changing auto-sync." },
-+      { name: 'a parent Application manages it', controller: { kind: 'Application' as const, name: 'apps' }, copy: 'Stop Argo from automatically syncing Git cha
+@@ -0,0 +1,195 @@
++package main
++
++import (
++	"flag"
++	"fmt"
++	"log"
++	"net"
++	"net/http"
++	"os"
++	"strings"
++	"time"
++
++	"github.com/skyhook-io/radar/internal/clusterreplay"
++	"github.com/skyhook-io/radar/internal/k8s"
++	"github.com/skyhook-io/radar/pkg/k8score"
++	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
++	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
++	"k8s.io/apimachinery/pkg/runtime"
++	"k8s.io/apimachinery/pkg/runtime/schema"
++	discoveryfake "k8s.io/client-go/discovery/fake"
++	dynamicfake "k8s.io/client-go/dynamic/fake"
++	"k8s.io/client-go/kubernetes/fake"
++	"k8s.io/client-go/kubernetes/scheme"
++)
++
++var replayPath = flag.String("replay", "", "replay a frozen .ndjson.gz cluster capture")
++
++type replayState struct {
++	client       *fake.Clientset
++	dynamic      *dynamicfake.FakeDynamicClient
++	discovery    *replayDiscovery
++	gvrs         []schema.GroupVersionResource
++	unsupported  []string
++	failedGroups []string
++	skipped      []clusterreplay.Skipped
++	objects      int
++}
++
++func loadReplay(path string) (*replayState, error) {
++	f, err := os.Open(path)
++	if err != nil {
++		return nil, err
++	}
++	defer f.Close()
++	var objects []*unstructured.Unstructured
++	header, err := clusterreplay.Read(f, func(obj *unstructured.Unstructured) error { objects = append(objects, obj); return nil })
++	if err != nil {
++		return nil, err
++	}
++	s := &replayState{client: fake.NewClientset(), objects: len(objects), failedGroups: header.FailedGroups, skipped: header.Skipped}
++	s.discovery = &replayDiscovery{FakeDiscovery: s.client.Discovery().(*discoveryfake.FakeDiscovery), groups: header.Discovery.Groups}
++	s.discovery.Resources = header.Discovery.Resources
++	kinds := map[schema.GroupVersionResource]string{}
++	byGVK := map[schema.GroupVersionKind]schema.GroupVersionResource{}
++	for _, list := range header.Discovery.Resources {
++		gv, err := schema.ParseGroupVersion(list.GroupVersion)
++		if err != nil {
++			return nil, err
++		}
++		for _, r := range list.APIResources {
++			if !clusterreplay.Listable(gv, r) {
++				continue
++			}
++			gvr := gv.WithResource(r.Name)
++			kinds[gvr] = r.Kind + "List"
++			byGVK[gv.WithKind(r.Kind)] = gvr
++			// Production serves built-in kinds from typed informers and starts
++			// dynamic ones only for custom resources and DRA, so replay does too.
++			if k8score.IsBuiltInAPIGroup(gv.Group) && gv.Group != "resource.k8s.io" {
++				continue
++			}
++			canWatch := false
++			for _, verb := range r.Verbs {
++				if verb == "watch" {
++					canWatch = true
++				}
++			}
++			if canWatch {
++				s.gvrs = append(s.gvrs, gvr)
++			} else {
++				s.unsupported = append(s.unsupported, gvr.String()+": discovery has no watch verb")
++			}
++		}
++	}
++	s.dynamic = dynamicfake.NewSimpleDynamicClientWithCustomListKinds(runtime.NewScheme(), kinds)
++	typedScheme := runtime.NewScheme()
++	if err := scheme.AddToScheme(typedScheme); err != nil {
++		return nil, err
++	}
++	seenTyped := map[string]bool{}
++	for _, obj := range objects {
++		gvk := obj.GroupVersionKind()
++		gvr, ok := byGVK[gvk]
++		if !ok {
++			return nil, fmt.Errorf("%s %s missing listable discovery entry", gvk, obj.GetName())
++		}
++		if err := s.dynamic.Tracker().Create(gvr, obj, obj.GetNamespace()); err != nil {
++			return nil, err
++		}
++		typed, err := typedScheme.New(gvk)
++		if runtime.IsNotRegisteredError(err) {
++			continue
++		}
++		if err != nil {
++			return nil, err
++		}
++		if err := runtime.DefaultUnstructuredConverter.FromUnstructured(obj.Object, typed); err != nil {
++			return nil, fmt.Errorf("decode %s: %w", gvk, err)
++		}
++		key := strings.Join([]string{gvk.Group, gvk.Kind, obj.GetNamespace(), obj.GetName()}, "/")
++		if seenTyped[key] {
++			continue
++		}
++		seenTyped[key] = true
++		if err := s.client.Tracker().Add(typed); err != nil {
++			return nil, err
++		}
++	}
++	return s, nil
++}
++
++func mustLoadReplay(path string) *replayState {
++	s, err := loadReplay(path)
++	if err != nil {
++		log.Fatal(err)
++	}
++	return s
++}
++
++func (s *replayState) mustStart() {
++	if err := s.start(); err != nil {
++		log.Fatal(err)
++	}
++}
++
++func (s *replayState) start() error {
++	if err := k8s.InitTestReplayClients(s.dynamic, s.discovery); err != nil {
++		return err
++	}
++	cache := k8s.GetDynamicResourceCache()
++	for _, gvr := range s.gvrs {
++		if err := cache.EnsureWatching(gvr); err != nil {
++			s.unsupported = append(s.unsupported, fmt.Sprintf("%s: %v", gvr, err))
++			continue
++		}
++		if !cache.WaitForSync(gvr, 10*time.Second) {
++			s.unsupported = append(s.unsupported, gvr.String()+": sync timeout")
++		}
++	}
++	fmt.Fprintf(os.Stderr, "Replay caches synced: %d objects; %d unsupported resources\n", s.objects, len(s.unsupported))
++	for _, gap := range s.unsupported {
++		fmt.Fprintln(os.Stderr, "Replay unsupported:", gap)
++	}
++	for _, group := range s.failedGroups {
++		fmt.Fprintln(os.Stderr, "Replay capture failed group:", group)
++	}
++	for _, gap := range s.skipped {
++		fmt.Fprintf(os.Stderr, "Replay capture skipped: %s: %s\n", gap.Resource, gap.Error)
++	}
++	return nil
++}
++
++ty
 ```
 
-**File**: `packages/k8s-ui/src/components/gitops/insights/ArgoResourceDiff.test.tsx` (modified, +1/-1)
+**File**: `cmd/testserver/replay_test.go` (added, +108/-0)
 ```diff
-@@ -141,7 +141,7 @@ describe('GitOpsChangesView expanded Argo row', () => {
-     const data = insight(false)
-     data.summary.autoSyncMode = 'Manual'
-     const html = renderToStaticMarkup(<GitOpsChangesView insight={data} />)
--    expect(html).toContain('Click Sync to apply the desired state.')
-+    expect(html).toContain('Review the desired changes and sync policy before deciding whether to sync.')
-     expect(html).not.toContain('See the sync warning above')
-   })
- 
+@@ -0,0 +1,108 @@
++package main
++
++import (
++	"compress/gzip"
++	"encoding/json"
++	"net/http/httptest"
++	"os"
++	"path/filepath"
++	"reflect"
++	"strings"
++	"testing"
++
++	"github.com/skyhook-io/radar/internal/k8s"
++	"k8s.io/apimachinery/pkg/runtime/schema"
++)
++
++func TestReplayTypedAndDynamic(t *testing.T) {
++	data, err := os.ReadFile("../../internal/clusterreplay/testdata/tiny.ndjson")
++	if err != nil {
++		t.Fatal(err)
++	}
++	data = []byte(strings.Replace(string(data), `"context_hash":`, `"failed_groups":["broken.io"],"skipped":[{"resource":"secrets","error":"forbidden"}],"context_hash":`, 1))
++	data = []byte(strings.Replace(string(data), `{"groupVersion":"argoproj.io/v1alpha1"`, `{"groupVersion":"resource.k8s.io/v1","resources":[{"name":"resourceclaims","kind":"ResourceClaim","namespaced":true,"verbs":["create","delete","deletecollection","get","list","patch","update","watch"]}]},{"groupVersion":"argoproj.io/v1alpha1"`, 1))
++	path := filepath.Join(t.TempDir(), "capture.gz")
++	f, err := os.Create(path)
++	if err != nil {
++		t.Fatal(err)
++	}
++	z := gzip.NewWriter(f)
++	if _, err = z.Write(data); err != nil {
++		t.Fatal(err)
++	}
++	if err = z.Close(); err != nil {
++		t.Fatal(err)
++	}
++	f.Close()
++	s, err := loadReplay(path)
++	if err != nil {
++		t.Fatal(err)
++	}
++	admin := startReplayAdmin(0, s)
++	defer admin.Close()
++	status := httptest.NewRecorder()
++	admin.Handler.ServeHTTP(status, httptest.NewRequest("GET", "/loadtest/status", nil))
++	var body struct {
++		FailedGroups []string `json:"failed_groups"`
++		Skipped      []struct {
++			Resource string
++			Error    string
++		} `json:"skipped"`
++	}
++	if err := json.Unmarshal(status.Body.Bytes(), &body); err != nil {
++		t.Fatal(err)
++	}
++	if len(body.FailedGroups) != 1 || body.FailedGroups[0] != "broken.io" || len(body.Skipped) != 1 || body.Skipped[0].Resource != "secrets" || body.Skipped[0].Error != "forbidden" {
++		t.Fatalf("capture gaps absent from status: %s", status.Body.String())
++	}
++	defer k8s.ResetTestState()
++	defer k8s.ResetTestDynamicState()
++	if err = k8s.InitTestResourceCache(s.client); err != nil {
++		t.Fatal(err)
++	}
++	if err = s.start(); err != nil {
++		t.Fatal(err)
++	}
++	if len(s.unsupported) != 0 {
++		t.Fatal(s.unsupported)
++	}
++	watched := map[string]bool{}
++	for _, gvr := range k8s.GetDynamicResourceCache().GetWatchedResources() {
++		watched[gvr.Group+"/"+gvr.Resource] = true
++	}
++	want := map[string]bool{"example.io/widgets": true, "argoproj.io/applications": true, "resource.k8s.io/resourceclaims": true}
++	if !reflect.DeepEqual(watched, want) {
++		t.Fatalf("dynamic informers = %v, want custom resources and DRA only", watched)
++	}
++	if got := k8s.GetResourceCache().GetKindObjectCounts()["Pod"]; got != 1 {
++		t.Fatalf("pods=%d", got)
++	}
++	gvr := schema.GroupVersionResource{Group: "example.io", Version: "v1", Resource: "widgets"}
++	items, err := k8s.GetDynamicResourceCache().List(gvr, "default")
++	if err != nil || len(items) != 2 {
++		t.Fatalf("widgets=%d err=%v", len(items), err)
++	}
++	discovery := k8s.GetResourceDiscovery()
++	if _, ok := discovery.GetGVRWithGroup("Widget", "example.io"); !ok {
++		t.Fatal("missing Widget discovery")
++	}
++	if err = discovery.Refresh(); err != nil {
++		t.Fatal(err)
++	}
++	if _, ok := discovery.GetGVRWithGroup("Widget", "example.io"); !ok {
++		t.Fatal("catalog lost on refresh")
++	}
++	session, err := k8s.BeginOwnershipRead(k8s.GetResourceCache())
++	if err != nil {
++		t.Fatal(err)
++	}
++	dependents := map[string]bool{}
++	for _, kind := range session.Catalog().DependentKinds() {
++		dependents[kind.GroupKind.Group+"/"+kind.GroupKind.Kind] = true
++	}
++	for _, want := range []string{"apps/ReplicaSet", "/Pod", "example.io/Widget"} {
++		if !dependents[want] {
++			t.Fatalf("ownership can't search %s for dependents: %v", want, dependents)
++		}
++	}
++}
 ```
 
-**File**: `packages/k8s-ui/src/components/gitops/insights/GitOpsInsightViews.tsx` (modified, +3/-7)
+**File**: `docs/relationship-replay.md` (added, +156/-0)
 ```diff
-@@ -290,7 +290,7 @@ function TerminatingStatusStrip({ summary }: { summary: NonNullable<GitOpsInsigh
-             <MetaFact label="Revision" value={summary.lastRevision || summary.targetRevision || '-'} mono />
-           )}
-           <SummaryTiming summary={summary} />
--          {summary.autoSyncMode && <MetaFact label="Sync mode" value={summary.autoSyncMode} />}
-+          {summary.autoSyncMode && <MetaFact label="Sync mode" value={summary.autoSyncMode === 'Manual' ? 'Auto-sync off' : summary.autoSyncMode} />}
-         </div>
-       </Collapse>
-     </div>
-@@ -1322,10 +1322,6 @@ function refKey(ref: { kind: string; namespace?: string; name: string }): string
- // nor a health message is available — otherwise those carry the truth and
- // this would just add noise. Empty string falls through to no row content.
- //
--// The "what to do" framing is intentional: badges already communicate state
--// ("OutOfSync"); the row should communicate what the operator should do
--// about it. With auto-sync on the answer is usually "wait, Argo will fix
--// it"; with manual mode the answer is "click Sync".
- function explainChangeStatus(
-   sync: string | undefined,
-   health: string | undefined,
-@@ -1349,11 +1345,11 @@ function explainChangeStatus(
-     if (inFlight) return 'Live state differs from Git. A sync is in progress — wait for it to finish.'
-     if (context?.rolledBack) return 'Live state differs from Git after a rollback. Sync applies the desired state and can undo the rollback.'
-     if (isAuto) return 'Live state differs from Git. Auto-sync should reconcile this within a few minutes; click Sync to force it.'
--    return 'Live state differs from Git. Click Sync to apply the desired state.'
-+    return 'Live state differs from Git. Review the desired changes and sync policy before deciding whether to sync.'
-   }
-   if (health === 'Missing' && parentFailed) return 'Resource was not created — see the operation error above for the cause.'
-   if (health === 'Degraded') return 'Resource reports an unhealthy state. Open the resource for events and logs.'
--  if (health === 'Missing') return 'Declared in Git but not present in the cluster. Sync to create it.'
-+  if (health === 'Missing') return missingResourceMessage(sync, context)
-   if (health === 'Progressing') return 'Resource is mid-rollout (e.g. pods coming up). Should converge shortly.'
-   if (health === 'Suspended') return 'Resource is paused (e.g. CronJob suspended, HPA disabled). Intentional unless surprising.'
-   return ''
+@@ -0,0 +1,156 @@
++# Relationship replay
++
++Capture once, run two testserver builds over that file, and compare their HTTP
++and MCP relationship readers. Replay never loads kubeconfig or contacts a
++cluster. The capture command is the only command below that uses a real cluster.
++
++## Capture (operator-run)
++
++```sh
++go run ./cmd/clustercapture -context YOUR_CONTEXT -out /tmp/cluster.ndjson.gz
++```
++
++Discovery covers every served group/version, including CRDs. Lists use a limit
++of 500 across all namespaces. Events, coordination leases and subresources are
++excluded. A resource whose list fails is skipped and recorded in the capture
++header (see below); a discovery failure or an interrupt fails the capture, and
++an incomplete capture is never published. The destination must not already
++exist. Capture uses list and discovery reads only, with a 30-second timeout per
++network request.
++
++The gzip contains a header with `captured_at`, SHA-256 `context_hash`, and
++`discovery.groups` / `discovery.resources`, followed by Kubernetes objects.
++Every version is retained. Subject comparison deduplicates versions by
++(group, kind, namespace, name); empty discovered kinds are still listed.
++
++This is a frozen **recording**, not an atomic cross-resource apiserver snapshot:
++objects may change while capture lists different kinds/versions. Both replays
++nevertheless receive exactly the same recorded inputs.
++
++## Build old and new
++
++Build the testserver of both revisions from commits that contain this harness,
++plus `reldiff` from either:
++
++```sh
++(cd OLD_TREE && go build -o /tmp/radar-old-testserver ./cmd/testserver)
++(cd NEW_TREE && go build -o /tmp/radar-new-testserver ./cmd/testserver)
++go build -o /tmp/reldiff ./cmd/reldiff
++```
++
++## Replay and compare
++
++```sh
++/tmp/radar-old-testserver -replay /tmp/cluster.ndjson.gz -port 9381 -admin-port 9382 > /tmp/radar-old.log 2>&1 &
++OLD_PID=$!
++/tmp/radar-new-testserver -replay /tmp/cluster.ndjson.gz -port 9383 -admin-port 9384 > /tmp/radar-new.log 2>&1 &
++NEW_PID=$!
++/tmp/reldiff -a http://127.0.0.1:9381 -b http://127.0.0.1:9383 \
++  -capture /tmp/cluster.ndjson.gz -out /tmp/relationship-diff.json
++kill "$OLD_PID" "$NEW_PID"
++```
++
++Readiness is `GET /loadtest/status` on the admin listener (default main port+1).
++Reldiff polls it for up to 30 seconds. Override custom admin locations with
++`-ready-a URL -ready-b URL`. Readiness includes unsupported resources. Built-in
++kinds with a typed informer are served by it, as in Radar. Custom resources and
++`resource.k8s.io` are synced before the server reports ready; a captured kind
++without a watch verb stays in discovery and the fake tracker and is reported as
++unsupported. Other built-in kinds (CustomResourceDefinitions, for example)
++start watching when first requested, as in Radar, and until then ownership
++reports them as not collected. Start both servers fresh for every comparison,
++so both sides see the same request sequence.
++
++Each subject exercises resource GET `relationships`, REST
++`/api/ai/neighborhood`, REST AI resource context, and MCP `get_resource` /
++`get_neighborhood` through JSON-RPC `tools/call`. There is no separate non-AI
++REST neighborhood route in today's server. MCP is mounted read-only at `/mcp`.
++Reldiff also reads `/api/applications`, each kind's `include=summary` list, and
++every captured Argo Application / Flux Kustomization / HelmRelease GitOps tree.
++`-max-per-kind N` caps subject readers per group/kind; trees and list readers
++remain exhaustive. Group query parameters disambiguate colliding kind names.
++
++The JSON groups deltas by reader, JSON-pointer field and subject group/kind,
++with full counts and at most five examples. Reference/object sets are sorted;
++ordered scalar arrays remain ordered. Normalization drops the explicit volatile
++key set in `cmd/reldiff/main.go` (timestamps, ages, durations, request IDs and
++generation/resource-version counters). Other content is retained, including
++errors. Failures are recorded independently on both sides; **zero deltas with
++failed calls is not full coverage**. Inspect `failures` and readiness's
++`unsupported` arrays before claiming parity. A missing endpoint is a failed
++reader call, not a silently skipped reader.
++
++Latency is one timed call per reader/subject/side, reported as median/p95 by
++reader and group/kind, including errors. Side order alternates to distribute
++cache/load bias. Small captures do not support meaningful p95 claims. This is
++an inexpensive comparison, not an isolated benchmark. Successful report writing
++returns exit zero even when deltas or reader failures exist; inspect the report.
++Responses over 64 MiB fail explicitly.
++
++## Local fixture
++
++```sh
++gzip -c internal/clusterreplay/testdata/tiny.ndjson > /tmp/tiny.ndjson.gz
++go build -o /tmp/replay-testserver ./cmd/testserver
++# Use the replay/diff commands above with this binary on both sides.
++```
++
++The fixture has a Deployment → ReplicaSet → Pod, Service, Node, Namespace,
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #2701** (2026-11-15): Count every supported integration in usage stats, without mislabeling user apps as add-ons (@nadaverell)
-- **PR #2699** (2026-11-15): Show Topology filter on/off with the accent instead of per-kind colors (@nadaverell)
-- **PR #2698** (2026-11-15): fix(gitops): avoid treating auto-sync off as manual orchestration (@nadaverell)
-- **PR #2697** (2026-11-15): fix(gitops): report ApplicationSet rollout health accurately (@nadaverell)
-- **PR #2693** (2026-11-15): Revert "Match resource sidebar icons to Topology kind colors" (@nadaverell)
-- **PR #2690** (2026-11-15): deps(npm): override minimatch to 11.0.4 for GHSA-g3hv-75wg-m249 (@nadaverell)
+- **PR #2760** (2026-11-17): Serve built-in kinds through discovery in census mode (@nadaverell)
+- **PR #2747** (2026-11-16): test(traffic): make the layout-engine tests independent of machine load (@nadaverell)
+- **PR #2746** (2026-11-16): Issue and check cards: the severity rail spans the open card (@nadaverell)
+- **PR #2745** (2026-11-16): Recover panics in MCP request handlers (@nadaverell)
+- **PR #2744** (2026-11-16): fix(traffic): show Data per protocol and label byte-only edges with their throughput (@nadaverell)
+- **PR #2743** (2026-11-16): Return 404 for missing assets, serve ranges uncompressed, and always declare Vary (@nadaverell)
 
 ---
 
@@ -2960,47 +4607,59 @@ rollback and sync-hazard p
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. gitops): let managed resource lists reveal every entry
+## X. Serve built-in kinds through discovery in census mode
 
 **RULE**:
-When implementing operations in `packages/k8s-ui/src/components/gitops/ManagedResourcesList.test.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in skyhook-io/radar. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `cmd/testserver/census_discovery.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in skyhook-io/radar. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `41dfe716`: gitops): let managed resource lists reveal every entry. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1a0f7e1e`: Serve built-in kinds through discovery in census mode. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/k8s-ui/src/components/gitops/ManagedResourcesList.test.tsx`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cmd/testserver/census_discovery.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-import { describe, expect, it } from 'vitest'
-import { renderToString } from 'react-dom/server'
-import { ManagedResourcesList } from './ManagedResourcesList'
-import type { ManagedResource } from '../../types/gitops'
+package main
 
-function render(element: Parameters<typeof renderToString>[0]): string {
-  return renderToString(element).replace(/<!-- -->/g, '')
-}
+import (
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/client-go/kubernetes/fake"
 
-function list(configMaps: number): ManagedResource[] {
-  return [
-    ...Array.from({ length: configMaps }, (_, i) => ({ group: '', kind: 'ConfigMap', namespace: 'shop', name: `cm-${i}` })),
-    { group: 'apps', kind: 'Deployment', namespace: 'shop', name: 'checkout' },
-    { group: '', kind: 'Service', namespace: 'shop', name: 'checkout' },
-  ]
-}
+	"github.com/skyhook-io/radar/internal/k8s"
+	"github.com/skyhook-io/radar/pkg/resourceid"
+)
 
-describe('ManagedResourcesList', () => {
-  it('shows every entry of an uneven list under the cap', () => {
-    const html = render(<ManagedResourcesList resources={list(8)} />)
-    expect(html).toContain('ConfigMap</span><span class="text-theme-text-tertiary">(8)')
-    expect(html).not.toContain('Show all')
-  })
-
-  it('offers Show all whenever a kind is cut', () => {
-    const html = render(<ManagedResourcesList resources={list(6)} maxVisible={6} />)
-    expect(html).toContain('ConfigMap</span
+// installCensusDiscovery serves the built-in kinds through discovery, as a
+// real API server does. A census fixture seeds typed objects only; without a
+// discovery catalog, readers that resolve kinds through discovery have nothing
+// to resolve against.
+func installCensusDiscovery(client *fake.Clientset) error {
+	lists := map[string]*metav1.APIResourceList{}
+	var order []string
+	for _, b := range resourceid.Builtins {
+		if b.Version == "" {
+			continue
+		}
+		gv := b.Version
+		if b.Group != "" {
+			gv = b.Group + "/" + b.Version
+		}
+		l, ok := lists[gv]
+		if !ok {
+			l = &metav1.APIResourceList{GroupVersion: gv}
+			lists[gv] = l
+			order = append(order, gv)
+		}
+		l.APIResources = append(l.APIResources, metav1.APIResource{
+			Name: b.Resource, Kind: b.Kind, Group: b.Group, Version: b.Version, Namespaced: b.Namespaced,
+			Verbs: metav1.Verbs{"create", "delete", "deletecollection", "get", "list", "patch", "update", "watch"},
+		})
+	}
+	client.Resources = nil
+	for _, gv := range order {
+		
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -3010,7 +4669,7 @@ describe('ManagedResourcesList', () => {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `41dfe716` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1a0f7e1e` are properly handled with clean fallback behavior.
 
 
 ## 3. Decision Protocol & Boundary Restrictions

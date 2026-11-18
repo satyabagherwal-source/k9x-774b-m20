@@ -10802,3 +10802,6 @@ Every entry in this ledger must capture:
 | `learn-github-kumahq-kuma` | `https://github.com/kumahq/kuma` | `053b67f7` | Multi-dimensional audit evidence | 2026-11-18T01:38:37.077Z |
 | `learn-github-doobidoo-mcp-memory-service` | `https://github.com/doobidoo/mcp-memory-service` | `a908b7ba` | Multi-dimensional audit evidence | 2026-11-18T01:38:42.464Z |
 | `learn-dom-d-b990e946` | `project://kumahq-kuma` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kumahq-kuma-learnings.md` | 2026-11-18T01:39:14.972Z |
+| `learn-github-automattic-harper` | `https://github.com/Automattic/harper` | `1d972352` | Multi-dimensional audit evidence | 2026-11-18T01:57:56.238Z |
+| `learn-huggingface-prism-ml-ternary-bonsai-2-27b-gguf` | `https://huggingface.co/prism-ml/Ternary-Bonsai-2-27B-gguf` | `hf-prism-m` | Multi-dimensional audit evidence | 2026-11-18T01:57:58.618Z |
+| `learn-github-skyhook-io-radar` | `https://github.com/skyhook-io/radar` | `495dc890` | Multi-dimensional audit evidence | 2026-11-18T01:58:04.502Z |

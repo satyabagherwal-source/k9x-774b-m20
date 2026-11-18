@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-18T01:39:15.084Z",
+  "updated_at": "2026-11-18T01:58:09.000Z",
   "stats": {
-    "total_discovered": 5202,
+    "total_discovered": 5208,
     "approved_pending_harvest": 4908,
     "harvested_count": 0,
-    "rejected_count": 294,
+    "rejected_count": 300,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 4897,
+      "COMMUNITY_AND_EXPERT": 4903,
       "OFFICIAL_DOCUMENTATION": 164,
       "STANDARDS_AND_SPECIFICATIONS": 108,
       "ENGINEERING_BLOGS": 3,
@@ -112407,6 +112407,96 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kumahq-kuma-learnings.md",
         "fileName": "kumahq-kuma-learnings.md"
+      }
+    },
+    "SRC-C5FAC2906A46": {
+      "id": "SRC-C5FAC2906A46",
+      "url": "http://127.0.0.1:9280/",
+      "title": "http://127.0.0.1:9280/",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-18T01:58:08.837Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/skyhook-io-radar-learnings.md",
+        "fileName": "skyhook-io-radar-learnings.md"
+      }
+    },
+    "SRC-B1E663FD3A25": {
+      "id": "SRC-B1E663FD3A25",
+      "url": "http://localhost:9280/",
+      "title": "http://localhost:9280/",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-18T01:58:08.870Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/skyhook-io-radar-learnings.md",
+        "fileName": "skyhook-io-radar-learnings.md"
+      }
+    },
+    "SRC-DDAF1A7BD682": {
+      "id": "SRC-DDAF1A7BD682",
+      "url": "http://radar.invalid/prefix",
+      "title": "http://radar.invalid/prefix",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-18T01:58:08.903Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/skyhook-io-radar-learnings.md",
+        "fileName": "skyhook-io-radar-learnings.md"
+      }
+    },
+    "SRC-6CEC30CA99AF": {
+      "id": "SRC-6CEC30CA99AF",
+      "url": "http://localhost:%d",
+      "title": "http://localhost:%d",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-18T01:58:08.938Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/skyhook-io-radar-learnings.md",
+        "fileName": "skyhook-io-radar-learnings.md"
+      }
+    },
+    "SRC-EB8F4EB6963A": {
+      "id": "SRC-EB8F4EB6963A",
+      "url": "http://127.0.0.1:9381/",
+      "title": "http://127.0.0.1:9381/",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-18T01:58:08.969Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/skyhook-io-radar-learnings.md",
+        "fileName": "skyhook-io-radar-learnings.md"
+      }
+    },
+    "SRC-B1026225EF61": {
+      "id": "SRC-B1026225EF61",
+      "url": "http://127.0.0.1:9383/",
+      "title": "http://127.0.0.1:9383/",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-18T01:58:09.000Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/skyhook-io-radar-learnings.md",
+        "fileName": "skyhook-io-radar-learnings.md"
       }
     }
   }

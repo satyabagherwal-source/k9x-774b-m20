@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/skyhook-io-radar-learnings.md`  
 > **Source**: github ([https://github.com/skyhook-io/radar](https://github.com/skyhook-io/radar))  
-> **Source Version**: `2280c280`  
+> **Source Version**: `495dc890`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-17T03:26:15.695Z  
+> **Timestamp**: 2026-11-18T01:58:03.578Z  
 > **Learning ID**: `learn-github-skyhook-io-radar`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/skyhook-io-radar-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/skyhook-io/radar](https://github.com/skyhook-io/radar))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T03:26:15.688Z  
+> **Harvest Timestamp**: 2026-11-18T01:58:03.572Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The missing open-source Kubernetes UI with a built-in MCP server for AI agents. See what's broken, why, and what changed. Issues, Topology, event timeline, Helm, GitOps, live service traffic, and cluster audits - all in one Go binary.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: package.json, go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 4138 stars
+- **Stars / Engagement**: 4145 stars
 
 ---
 
@@ -2447,827 +2447,2135 @@ func (s *Server) refreshAIEngine(ctx context.Context) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c8f387b4` (2026-11-16)
-**Commit Message**: Recover panics in MCP request handlers (#2745)
+### Incident Patch 1: `1a0f7e1e` (2026-11-17)
+**Commit Message**: Serve built-in kinds through discovery in census mode (#2760)
 
 ## Summary
 
-A panic in any MCP tool handler ends the whole Radar process. The MCP
-SDK runs each request in its own goroutine and doesn't recover panics,
-while Radar's REST routes do. So the same bug that costs a REST caller
-one failed request takes Radar down for everyone when an agent hits it
-through MCP: every open browser, every SSE stream, every other agent.
+A `-census` fixture seeds typed objects only, with no discovery catalog.
+Ownership and the relation families resolve kinds through discovery, and
+count a kind as an owner's dependent only when it's served with delete,
+list and watch. So on a census fixture every relationship answer came
+back empty.
 
-This adds a receiving middleware to every Radar MCP server (the full,
-read-only, apply and investigation servers all come from `newServer`).
-When a handler panics:
+`cmd/testserver -census` now serves the census's built-in kinds
+(`resourceid.Builtins`) through discovery, with the verbs a real API
+server lists.
 
-- the stack is logged, with the method and tool name;
-- a `tools/call` returns a tool error (`isError: true`), which is how
-MCP reports a tool failure an agent can act on. The message points at
-Radar's log and, since a write tool may have changed something before it
-panicked, says to check resource state before retrying;
-- any other method returns a JSON-RPC internal error (`-32603`);
-- the server keeps answering.
+**Census relationship answers from builds before this change aren't
+comparable with ones after it.** Startup and list timings aren't
+affected; only answers that resolve kinds through discovery are.
 
-## What changed
+This was split out of #2708 (the relationship replay harness), which
+doesn't depend on it.
 
-- `internal/mcp/recover.go`: `recoverMiddleware`.
-- `internal/mcp/server.go`: installed first in `newServer`. The SDK
-wraps each later middleware around the earlier ones, so this one si
+## Testing
 
-**File**: `internal/mcp/recover.go` (added, +42/-0)
+- `TestCensusDiscoveryServesBuiltinsWithGCVerbs` (new).
+- `go vet` and `go test ./cmd/testserver/...`.
+- Smoke test: `-census large-eks -census-scale 0.01`. A Deployment's
+`relationships` returns 3 children (its ReplicaSets) and an ownership
+answer, plus services, ingresses, config refs, network policies and
+service account.
+
+**File**: `cmd/testserver/census_discovery.go` (added, +43/-0)
 ```diff
-@@ -0,0 +1,42 @@
-+package mcp
+@@ -0,0 +1,43 @@
++package main
++
++import (
++	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
++	"k8s.io/client-go/kubernetes/fake"
++
++	"github.com/skyhook-io/radar/internal/k8s"
++	"github.com/skyhook-io/radar/pkg/resourceid"
++)
++
++// installCensusDiscovery serves the built-in kinds through discovery, as a
++// real API server does. A census fixture seeds typed objects only; without a
++// discovery catalog, readers that resolve kinds through discovery have nothing
++// to resolve against.
++func installCensusDiscovery(client *fake.Clientset) error {
++	lists := map[string]*metav1.APIResourceList{}
++	var order []string
++	for _, b := range resourceid.Builtins {
++		if b.Version == "" {
++			continue
++		}
++		gv := b.Version
++		if b.Group != "" {
++			gv = b.Group + "/" + b.Version
++		}
++		l, ok := lists[gv]
++		if !ok {
++			l = &metav1.APIResourceList{GroupVersion: gv}
++			lists[gv] = l
++			order = append(order, gv)
++		}
++		l.APIResources = append(l.APIResources, metav1.APIResource{
++			Name: b.Resource, Kind: b.Kind, Group: b.Group, Version: b.Version, Namespaced: b.Namespaced,
++			Verbs: metav1.Verbs{"create", "delete", "deletecollection", "get", "list", "patch", "update", "watch"},
++		})
++	}
++	client.Resources = nil
++	for _, gv := range order {
++		client.Resources = append(client.Resources, lists[gv])
++	}
++	_, err := k8s.SetTestResourceDiscovery(client.Discovery())
++	return err
++}
+```
+
+**File**: `cmd/testserver/census_discovery_test.go` (added, +32/-0)
+```diff
+@@ -0,0 +1,32 @@
++package main
++
++import (
++	"slices"
++	"testing"
++
++	"k8s.io/client-go/kubernetes/fake"
++
++	"github.com/skyhook-io/radar/internal/k8s"
++)
++
++// Ownership and the relation families resolve kinds through discovery, and
++// count a kind as an owner's dependent only when it is served with the
++// garbage collector's verbs. A census fixture must serve them, or every
++// relationship answer reads as unavailable.
++func TestCensusDiscoveryServesBuiltinsWithGCVerbs(t *testing.T) {
++	if err := installCensusDiscovery(fake.NewClientset()); err != nil {
++		t.Fatal(err)
++	}
++	t.Cleanup(k8s.ResetResourceDiscovery)
++	for _, r := range k8s.GetResourceDiscovery().Catalog().Resources {
++		if r.Group == "apps" && r.Kind == "Deployment" {
++			for _, verb := range []string{"delete", "list", "watch"} {
++				if !slices.Contains(r.Verbs, verb) {
++					t.Fatalf("Deployment verbs = %v, missing %s", r.Verbs, verb)
++				}
++			}
++			return
++		}
++	}
++	t.Fatal("census discovery doesn't serve apps/Deployment")
++}
+```
+
+**File**: `cmd/testserver/main.go` (modified, +3/-0)
+```diff
+@@ -115,6 +115,9 @@ func main() {
+ 		if err := k8s.InitLoadTestResourceCache(fakeClient); err != nil {
+ 			log.Fatalf("InitLoadTestResourceCache: %v", err)
+ 		}
++		if err := installCensusDiscovery(fakeClient); err != nil {
++			log.Fatalf("installCensusDiscovery: %v", err)
++		}
+ 	} else if err := k8s.InitTestResourceCache(fakeClient); err != nil {
+ 		log.Fatalf("InitTestResourceCache: %v", err)
+ 	}
+```
+
+---
+
+### Incident Patch 2: `d734e671` (2026-11-17)
+**Commit Message**: Measure a Radar process's memory and CPU under a fixed reader and SSE workload (#2709)
+
+## Summary
+
+A tool that drives a fixed workload against a running Radar and samples
+the process: memory (RSS and Go heap), CPU, GC, and per-endpoint
+latency. Because it only speaks HTTP, the same run can be pointed at two
+builds on the same cluster and compared. It exists to measure what
+retiring the all-namespace relationship graph saves on real clusters,
+but works for any server-side change.
+
+## What it does
+
+`radarload -url http://127.0.0.1:9280 -pid <radar pid> -duration 10m
+-sse 3 -askers 4 -qps 20 -out run.json`
+
+- **Readiness:** `/api/connection` must say connected and
+`/api/diagnostics` must report the typed informers fully synced before
+anything is timed.
+- **Subjects:**
+- Taken from Radar's own lists (the `{items, coverage}` envelope): the
+eight built-in kinds, plus relationship-relevant CRD kinds from
+`/api/api-resources`.
+- Sampled deterministically with a seed. `-subjects-from` replays a
+saved subject set. Each build GET-probes every subject, replayed or
+fresh, with the configured identity and drops the unreadable ones
+(counted in `subject_probe_errors`), so two builds run the same 
+
+**File**: `cmd/radarload/README.md` (added, +93/-0)
+```diff
+@@ -0,0 +1,93 @@
++# radarload
++
++Measure a **local Radar process** while driving it through HTTP. The target
++binary can be built from another checkout; radarload imports only the shared
++stdlib-only resource identity helper. No Kubernetes credentials are needed.
++
++```sh
++go run ./cmd/radarload -url http://localhost:9280 -pid 12345 \
++  -duration 10m -sse 3 -askers 4 -qps 20 -seed 1 -per-kind 100 \
++  -label main-SHA -out old.json
++# Start the other build against the same cluster, then:
++go run ./cmd/radarload -url http://localhost:9280 -pid 23456 \
++  -duration 10m -sse 3 -askers 4 -qps 20 -seed 1 \
++  -subjects-from old.json -label new-SHA -out new.json
++go run ./cmd/radarload compare old.json new.json
++```
++
++Use the **binary's PID**, not the `go run` parent. RSS and CPU come from local
++`ps`; the URL and PID must identify the same process. Use matching startup flags,
++identity, subject manifest, cluster activity, and warmup for both builds.
++`-user fleet-argo -groups team-a,viewers` sends Radar's default proxy headers
++(`X-Forwarded-User`, `X-Forwarded-Groups`) on every request, including SSE and
++pprof, for a target running `--auth-mode=proxy`.
++
++Readiness requires `/api/connection?contexts=0` to say `connected` and
++`/api/diagnostics` to report `informers.syncStatus.phase=complete`, including
++deferred typed informers. Diagnostics also supplies Radar/Go version and OS/arch;
++it does not report a git SHA, so use `-label`. The tool avoids `/api/version-check`,
++which can trigger an external update lookup.
++
++Inventory uses Pod, Deployment, Service, ConfigMap, Secret, Ingress, Node and
++PersistentVolumeClaim lists. `/api/api-resources` adds discovered HTTPRoute,
++GRPCRoute, Gateway, VirtualService, DestinationRule, Application, Kustomization,
++HelmRelease and Certificate kinds. Subjects are sorted before seeded sampling
++and saved in the JSON; unreadable kinds, unavailable discovery and each list's
++coverage are recorded. For an offline target, point it at the replay or census
++testservers. Lists above the server's 50,000-object limit fail in inventory
++rather than being truncated.
++
++`-subjects-from` reuses a prior run's subjects; current inventory is still
++recorded. Every subject, fresh or replayed, is GET-probed with the configured
++identity before measurement, and unreadable ones are dropped and counted by kind
++and group in `subject_probe_errors`, so two builds compared against one manifest
++run the same subjects only when neither drops any (`compare` warns when they
++differ). Neighborhood roots are probed and saved separately, since grouped Pods
++and ordinary Nodes can be listed yet absent from the topology. Replay keeps the
++saved roots that survive the subject probe and fails if one of them no longer
++returns a neighborhood.
++
++A seeded 20-request cycle fixes the offered mix:
++
++| Share | Endpoint |
++| --- | --- |
++| 60% | `/api/resources/{kind}/{namespace}/{name}` |
++| 10% | `/api/ai/resources/{kind}/{namespace}/{name}` (includes resource context) |
++| 10% | `/api/ai/neighborhood/{kind}/{namespace}/{name}?profile=auto&hops=1` |
++| 10% | Same HTTP neighborhood route with `profile=all&hops=2` |
++| 5% | `/api/applications` |
++| 5% | `/api/resources/{kind}?include=summary` |
++
++Both neighborhood shares use the same read-only route; there is no separate
++non-AI neighborhood endpoint.
++
++QPS is combined across workers. A slot without a free worker is dropped and
++counted, with no growing queue. Compare achieved QPS, drops and errors alongside
++latency; overload can change the successful request mix. Latencies include full
++body consumption and errors, including in-flight requests canceled at run end.
++SSE consumers discard arbitrarily large frames, count dispatched data events,
++and reconnect after errors. The tool does **not** mutate the cluster: a quiet
++cluster has fewer change-driven topology broadcasts. Keep the external change
++workload fixed when comparing builds.
++
++RSS and cumulative process CPU are read every two seconds. Go heap figures
++(HeapAlloc/HeapInuse/HeapSys/NumGC) and the goroutine count are read before the
++workload, every 30 seconds and on the window's last tick, because producing a
++heap profile costs the target CPU. `ps` CPU precision is platform-dependent
++(Linux commonly whole seconds). Samples that finish after the window are
++discarded. GC pause time comes from the 256-entry `PauseNs` ring between
++consecutive heap reads; if the ring was overwritten (more than 256 GCs between
++reads), `gc_pause_ns` is null with a reason, never zero.
++
++Pprof must be reachable: loopback listeners enable it by default; authenticated
++installations also enable it; shared unauthenticated listeners require
++`RADAR_PPROF=true`; Cloud does not mount it. Missing/malformed heap or goroutine
++profiles fail preflight instead of running without heap samples. Sample and
++binary-profile failures during a run are saved and return a nonzero exit.
++
++A 30-second CPU profile is taken in the middle of the 
+```
+
+**File**: `cmd/radarload/client.go` (added, +302/-0)
+```diff
+@@ -0,0 +1,302 @@
++package main
 +
 +import (
 +	"context"
-+	"log"
-+	"runtime/debug"
++	"encoding/json"
++	"fmt"
++	"io"
++	"math/rand"
++	"net/http"
++	"net/url"
++	"os"
++	"path/filepath"
++	"sort"
++	"strings"
++	"time"
 +
-+	"github.com/modelcontextprotocol/go-sdk/jsonrpc"
-+	mcpsdk "github.com/modelcontextprotocol/go-sdk/mcp"
++	"github.com/skyhook-io/radar/pkg/resourceid"
 +)
 +
-+// recoverMiddleware turns a panic in a request handler into a failed request.
-+// The SDK runs handlers in their own goroutines without recovering, so a panic
-+// in any tool would otherwise end the whole Radar process; the REST routes
-+// recover theirs. A tool call reports the failure as a tool error, which is
-+// what an agent can act on; other methods return a JSON-RPC internal error.
-+// Goroutines a handler starts itself are outside this and must recover their own.
-+func recoverMiddleware(next mcpsdk.MethodHandler) mcpsdk.MethodHandler {
-+	return func(ctx context.Context, method string, req mcpsdk.Request) (result mcpsdk.Result, err error) {
-+		defer func() {
-+			rec := recover()
-+			if rec == nil {
-+				return
++type radarClient struct {
++	c    config
++	http *http.Client
++}
++
++func newClient(c config) (*radarClient, error) {
++	u, err := url.Parse(c.URL)
++	if err != nil {
++		return nil, err
++	}
++	if (u.Scheme != "http" && u.Scheme != "https") || u.Host == "" || u.RawQuery != "" || u.Fragment != "" || u.User != nil {
++		return nil, fmt.Errorf("-url must be an HTTP(S) origin with optional base path, without credentials/query/fragment")
++	}
++	c.URL = strings.TrimRight(c.URL, "/")
++	tr := http.DefaultTransport.(*http.Transport).Clone()
++	tr.MaxIdleConnsPerHost = c.Askers + c.SSE + 8
++	tr.ResponseHeaderTimeout = 45 * time.Second
++	return &radarClient{c: c, http: &http.Client{Transport: tr, CheckRedirect: func(*http.Request, []*http.Request) error { return http.ErrUseLastResponse }}}, nil
++}
++
++func (c *radarClient) get(ctx context.Context, path string) (*http.Response, error) {
++	req, err := http.NewRequestWithContext(ctx, http.MethodGet, c.c.URL+path, nil)
++	if err != nil {
++		return nil, err
++	}
++	if c.c.User != "" {
++		req.Header.Set("X-Forwarded-User", c.c.User)
++	}
++	if c.c.Groups != "" {
++		req.Header.Set("X-Forwarded-Groups", c.c.Groups)
++	}
++	return c.http.Do(req)
++}
++
++func (c *radarClient) bytes(ctx context.Context, path string) ([]byte, error) {
++	ctx, cancel := context.WithTimeout(ctx, requestTimeout)
++	defer cancel()
++	resp, err := c.get(ctx, path)
++	if err != nil {
++		return nil, err
++	}
++	defer resp.Body.Close()
++	if resp.StatusCode != 200 {
++		return nil, fmt.Errorf("GET %s: HTTP %d", path, resp.StatusCode)
++	}
++	return io.ReadAll(resp.Body)
++}
++
++func (c *radarClient) json(ctx context.Context, path string, v any) error {
++	b, err := c.bytes(ctx, path)
++	if err != nil {
++		return err
++	}
++	if err = json.Unmarshal(b, v); err != nil {
++		return fmt.Errorf("GET %s: %w", path, err)
++	}
++	return nil
++}
++
++func (c *radarClient) waitReady(ctx context.Context) (map[string]string, error) {
++	ctx, cancel := context.WithTimeout(ctx, c.c.ReadyTimeout)
++	defer cancel()
++	var last error
++	for {
++		var connection struct {
++			State string `json:"state"`
++		}
++		err := c.json(ctx, "/api/connection?contexts=0", &connection)
++		if err == nil && connection.State == "connected" {
++			var d struct {
++				Version   string `json:"radarVersion"`
++				GoVersion string `json:"goVersion"`
++				OS        string `json:"goos"`
++				Arch      string `json:"goarch"`
++				Informers struct {
++					Sync *struct {
++						Phase string `json:"phase"`
++					} `json:"syncStatus"`
++				} `json:"informers"`
 +			}
-+			name := method
-+			if call, ok := req.(*mcpsdk.CallToolRequest); ok && call.Params != nil {
-+				name = method + " " + call.Params.Name
++			err = c.json(ctx, "/api/diagnostics", &d)
++			if err == nil && d.Informers.Sync != nil && d.Informers.Sync.Phase == "complete" {
++				return map[string]string{"version": d.Version, "go_version": d.GoVersion, "os": d.OS, "arch": d.Arch, "source": "/api/diagnostics"}, nil
 +			}
-+			log.Printf("[mcp] panic in %s: %v\n%s", name, rec, debug.Stack())
-+			if method == "tools/call" {
-+				result = &mcpsdk.CallToolResult{
-+					IsError: true,
-+					Content: []mcpsdk.Content{&mcpsdk.TextContent{Text: "Radar hit an internal error answering this tool call; details are in Radar's log. If the call could change resources, check their state before retrying."}},
++			if err == nil {
++				err = fmt.Errorf("cache sync has not reported complete in /api/diagnostics")
++			}
++		}
++		if err == nil {
++			err = fmt.Errorf("connection state %q", connection.State)
++		}
++		last = err
++		select {
++		case <-ctx.Done():
++			return nil, fmt.Errorf("readiness: %w (last observation: %v)", ctx.Err(), last)
++		case <-time.After(time.Second):
++		}
++	}
++}
++
++type subject = resourceid.Ref
++
++type inventory struct {
++	Kind     string          `json:"kind"`
++	Group    string          `json:"group"`
++	Count    int             `json:"count"`
++	Sampled  int             `json:"sampled"`
++	Error    string          `json:"error,omitempty"`
++	Coverage json.RawMessage `json:"coverage,omitempty"`
++}
++type kindRef struct {
++	Kind  string `json:"kind"`
++	Group string `json:"group"`
++}
++
++func (c *radarClient) subjects(ctx context.Context) ([]subject, []inventory, []string, error) {
++	kinds := []kindRef{{"Pod", ""}, {"Deployment", "apps"}, {"Service", ""}, {"ConfigMap", ""}, {"Secret", ""}, {"Ingress", "networking.k8s.io"}, {"Node", ""}, {"PersistentVolumeClaim", ""}}
++	relevant := map[string]bool{"HTTPRoute": true, "GRPCRoute": true, "Gateway": true, "VirtualService": true, "DestinationRule": true, "Application": true, "Kustomization": true, "HelmRelease": true, "Certificate": true}
++	var discovered []kindRef
++	var notes []string
++	if err := c.json(ctx, "/api/api-resources", &discovered); err != nil {
++		notes = append(notes, "CRD discovery unavailable: "+err.Error())
++	} else {
++		seen := map[kindRef]bool{}
++		sort.Slice(discovered, func(i, j int) bool {
++			if discovered[i].Kind != discovered[j].Kind {
++				return discovered[i].Kind < discovered[j].Kind
++			}
++			return discovered[i].Group < discovered[j].Group
++		})
++		for _, k := range discovered {
++			if relevant[k.Kind] && !seen[k] {
++				kinds = append(kinds, k)
++				seen[k] = true
++			}
++		}
++	}
++	rng := rand.New(rand.NewSource(c.c.Seed))
++	var subjects []subject
++
+```
+
+**File**: `cmd/radarload/main.go` (added, +278/-0)
+```diff
+@@ -0,0 +1,278 @@
++package main
++
++import (
++	"context"
++	"encoding/json"
++	"errors"
++	"flag"
++	"fmt"
++	"math"
++	"os"
++	"os/signal"
++	"path/filepath"
++	"syscall"
++	"time"
++)
++
++type config struct {
++	URL          string        `json:"url"`
++	PID          int           `json:"pid"`
++	Duration     time.Duration `json:"duration_ns"`
++	SSE          int           `json:"sse"`
++	Askers       int           `json:"askers"`
++	QPS          float64       `json:"qps"`
++	PerKind      int           `json:"per_kind"`
++	Seed         int64         `json:"seed"`
++	User         string        `json:"user,omitempty"`
++	Groups       string        `json:"groups,omitempty"`
++	ReadyTimeout time.Duration `json:"ready_timeout_ns"`
++	Out          string        `json:"out"`
++	SubjectsFrom string        `json:"subjects_from,omitempty"`
++	Label        string        `json:"label,omitempty"`
++}
++
++const (
++	requestTimeout = 15 * time.Second
++	sampleEvery    = 2 * time.Second
++	// Producing a heap profile costs the target real CPU, so Go heap and
++	// goroutine reads are spaced further apart than RSS and CPU.
++	runtimeEvery = 30 * time.Second
++)
++
++// runtimeDue also forces a read on the window's last tick, so GC counts and
++// pause totals cover the whole run rather than stopping at the previous read.
++func runtimeDue(now, last, deadline time.Time) bool {
++	return now.Sub(last) >= runtimeEvery || deadline.Sub(now) < sampleEvery+time.Second
++}
++
++type result struct {
++	SubjectProbeErrors      map[string]int           `json:"subject_probe_errors"`
++	NeighborhoodSubjects    []subject                `json:"neighborhood_subjects"`
++	NeighborhoodProbeErrors map[string]int           `json:"neighborhood_probe_errors"`
++	Schema                  int                      `json:"schema"`
++	Config                  config                   `json:"config"`
++	Started                 time.Time                `json:"started"`
++	Ended                   time.Time                `json:"ended"`
++	Build                   map[string]string        `json:"radar_build"`
++	Subjects                []subject                `json:"subjects"`
++	Inventory               []inventory              `json:"inventory"`
++	Notes                   []string                 `json:"notes"`
++	Samples                 []sample                 `json:"samples"`
++	Summary                 summary                  `json:"summary"`
++	Profiles                map[string]profileResult `json:"profiles"`
++}
++
++type profileResult struct {
++	Path    string    `json:"path,omitempty"`
++	Error   string    `json:"error,omitempty"`
++	Started time.Time `json:"started"`
++}
++
++func main() {
++	if err := command(os.Args[1:]); err != nil {
++		fmt.Fprintln(os.Stderr, "radarload:", err)
++		os.Exit(1)
++	}
++}
++
++func command(args []string) error {
++	if len(args) > 0 && args[0] == "compare" {
++		if len(args) != 3 {
++			return errors.New("usage: radarload compare a.json b.json")
++		}
++		var a, b result
++		if err := readResult(args[1], &a); err != nil {
++			return err
++		}
++		if err := readResult(args[2], &b); err != nil {
++			return err
++		}
++		return compare(os.Stdout, a, b)
++	}
++	c := config{}
++	f := flag.NewFlagSet("radarload", flag.ContinueOnError)
++	f.StringVar(&c.URL, "url", "http://localhost:9280", "Radar HTTP base URL (may include a base path)")
++	f.IntVar(&c.PID, "pid", 0, "local Radar process PID (not the go run wrapper)")
++	f.DurationVar(&c.Duration, "duration", 10*time.Minute, "measurement duration; minimum 35s for CPU profiling")
++	f.IntVar(&c.SSE, "sse", 3, "concurrent SSE connections")
++	f.IntVar(&c.Askers, "askers", 4, "concurrent request workers")
++	f.Float64Var(&c.QPS, "qps", 20, "combined offered requests/second; saturated slots are counted as dropped")
++	f.IntVar(&c.PerKind, "per-kind", 100, "maximum sampled subjects per kind")
++	f.Int64Var(&c.Seed, "seed", 1, "deterministic inventory and request seed")
++	f.StringVar(&c.User, "user", "", "optional proxy identity")
++	f.StringVar(&c.Groups, "groups", "", "optional comma-separated proxy groups")
++	f.DurationVar(&c.ReadyTimeout, "ready-timeout", 2*time.Minute, "wait for connected and synced caches")
++	f.StringVar(&c.Out, "out", "result.json", "JSON output; profiles use the same filename stem")
++	f.StringVar(&c.SubjectsFrom, "subjects-from", "", "reuse subjects from a prior result for exact replay")
++	f.StringVar(&c.Label, "label", "", "build label, e.g. git SHA (server reports version, not git SHA)")
++	if err := f.Parse(args); err != nil {
++		if errors.Is(err, flag.ErrHelp) {
++			return nil
++		}
++		return err
++	}
++	if f.NArg() != 0 {
++		return errors.New("unexpected positional arguments")
++	}
++	if c.PID <= 0 || c.Duration < 35*time.Second || c.SSE < 0 || c.Askers < 1 || c.QPS <= 0 || c.QPS > 1e6 || math.IsNaN(c.QPS) || math.IsInf(c.QPS, 0) || c.PerKind < 1 || c.ReadyTimeout <= 0 {
++		return errors.New("require -pid > 0, -duration >= 35s, -sse >= 0, -askers >= 1, 0 < -qps <= 1000000, -per-kind >= 1, -ready-timeout > 0")
++	}
++	if err := os.MkdirAll(file
+```
+
+**File**: `cmd/radarload/main_test.go` (added, +266/-0)
+```diff
+@@ -0,0 +1,266 @@
++package main
++
++import (
++	"bytes"
++	"context"
++	"encoding/json"
++	"fmt"
++	"io"
++	"math"
++	"net/http"
++	"os"
++	"path/filepath"
++	"reflect"
++	"strings"
++	"testing"
++	"time"
++)
++
++func TestParseHeap(t *testing.T) {
++	text := "heap profile: 1: 2 [3: 4] @ heap/1048576\n# HeapAlloc = 1024\n# HeapSys = 8192\n# HeapInuse = 4096\n# NumGC = 257\n# PauseNs = ["
++	for i := range 256 {
++		text += fmt.Sprintf("%d ", i+1)
++	}
++	text += "]\n"
++	h, err := parseHeap(text)
++	if err != nil {
++		t.Fatal(err)
++	}
++	if h.Alloc != 1024 || h.Inuse != 4096 || h.Sys != 8192 || h.GC != 257 {
++		t.Fatalf("bad heap: %+v", h)
++	}
++	d, err := pauseDelta(&heapStats{GC: 255}, h)
++	if err != nil || d != 257 {
++		t.Fatalf("wrap delta: %d, %v", d, err)
++	}
++	if _, err := pauseDelta(&heapStats{GC: 0}, h); err == nil {
++		t.Fatal("overwritten ring reported as exact")
++	}
++	for _, bad := range []string{"<html>SPA</html>", strings.Replace(text, "# HeapAlloc = 1024\n", "", 1), strings.Replace(text, "HeapInuse = 4096", "HeapInuse = bad", 1)} {
++		if _, err := parseHeap(bad); err == nil {
++			t.Fatal("accepted invalid/missing header")
++		}
++	}
++}
++
++func TestCompareMath(t *testing.T) {
++	for _, tc := range []struct {
++		a, b, d, p float64
++		defined    bool
++	}{{100, 75, -25, -25, true}, {100, 125, 25, 25, true}, {0, 0, 0, 0, true}, {0, 5, 5, 0, false}} {
++		d, p := delta(tc.a, tc.b)
++		if d != tc.d || (p != nil) != tc.defined || (p != nil && *p != tc.p) {
++			t.Fatalf("delta(%v,%v): %v %v", tc.a, tc.b, d, p)
++		}
++	}
++	v := []float64{1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20}
++	d := describe(v)
++	if d.Mean != 10.5 || d.P95 != 19 || d.Peak != 20 || percentile(v, .99) != 20 {
++		t.Fatalf("bad distribution: %+v", d)
++	}
++	a := result{Summary: summary{RSS: distribution{Count: 1, Mean: 100 << 20, P95: 100 << 20, Peak: 100 << 20}}}
++	b := a
++	b.Summary.RSS.Mean = 75 << 20
++	var out bytes.Buffer
++	if err := compare(&out, a, b); err != nil {
++		t.Fatal(err)
++	}
++	if !strings.Contains(out.String(), "-25.00%") || !strings.Contains(out.String(), "n/a") {
++		t.Fatal(out.String())
++	}
++}
++
++func TestParseCPU(t *testing.T) {
++	for s, want := range map[string]float64{"00:01.23": 1.23, "12:34": 754, "02:03:04": 7384, "1-02:03:04": 93784} {
++		got, err := parseCPU(s)
++		if err != nil || math.Abs(got-want) > 1e-6 {
++			t.Fatalf("%s: %v, %v", s, got, err)
++		}
++	}
++	for _, s := range []string{"oops", "00:NaN", "-1:00", "00:Inf"} {
++		if _, err := parseCPU(s); err == nil {
++			t.Fatalf("accepted %q", s)
++		}
++	}
++}
++
++type subjectProbeTransport func(*http.Request) (*http.Response, error)
++
++// emptyBody answers resource lists with an empty envelope and everything else
++// (API discovery, single-object GETs) with an empty array.
++func emptyBody(path string) string {
++	if rest, ok := strings.CutPrefix(strings.TrimPrefix(path, "/prefix"), "/api/resources/"); ok && !strings.Contains(rest, "/") {
++		return `{"items":[]}`
++	}
++	return `[]`
++}
++
++func (f subjectProbeTransport) RoundTrip(r *http.Request) (*http.Response, error) { return f(r) }
++
++func TestReadableSubjectsRejectsListedAndReplayedSubjects(t *testing.T) {
++	pod := subject{Kind: "Pod", Namespace: "default", Name: "readable"}
++	secret := subject{Kind: "Secret", Namespace: "default", Name: "denied"}
++	node := subject{Kind: "Node", Name: "node"}
++	deleted := subject{Kind: "Widget", Group: "example.io", Namespace: "default", Name: "deleted"}
++	c, err := newClient(config{URL: "http://radar.invalid/prefix", PerKind: 10, User: "reader", Groups: "viewers"})
++	if err != nil {
++		t.Fatal(err)
++	}
++	c.http.Transport = subjectProbeTransport(func(r *http.Request) (*http.Response, error) {
++		if r.Header.Get("X-Forwarded-User") != "reader" || r.Header.Get("X-Forwarded-Groups") != "viewers" {
++			t.Fatal("configured identity missing from request")
++		}
++		status, body := 200, emptyBody(r.URL.Path)
++		switch r.URL.Path {
++		case "/prefix/api/resources/Pod":
++			body = `{"items":[{"apiVersion":"v1","metadata":{"namespace":"default","name":"readable"}}]}`
++		case "/prefix/api/resources/Secret":
++			body = `{"items":[{"apiVersion":"v1","metadata":{"namespace":"default","name":"denied"}}]}`
++		case "/prefix/api/resources/Node":
++			body = `{"items":[{"apiVersion":"v1","metadata":{"name":"node"}}]}`
++		case "/prefix/api/resources/Secret/default/denied":
++			status, body = 403, `{"error":"forbidden"}`
++		case "/prefix/api/resources/Widget/default/deleted":
++			if r.URL.Query().Get("group") != "example.io" {
++				t.Fatal("group lost from resource GET")
++			}
++			status, body = 404, `{"error":"not found"}`
++		}
++		return &http.Response{StatusCode: status, Header: http.Header{"Content-Type": []string{"application/json"}}, Body: io.NopCloser(strings.NewReader(body))}, nil
++	})
++	listed, _, _, err := c.subjects(context.Background())
++	if err != nil {
++		t.Fatal(err)
++	}
++	if len(listed) != 3 {
++		t.Fatalf("expected listed subjects including the denied Secret: %+v", listed)
++	}
++	readable, reje
+```
+
+**File**: `cmd/radarload/sample.go` (added, +215/-0)
+```diff
+@@ -0,0 +1,215 @@
++package main
++
++import (
++	"bufio"
++	"context"
++	"errors"
++	"fmt"
++	"math"
++	"os/exec"
++	"strconv"
++	"strings"
++	"time"
++)
++
++type heapStats struct {
++	Alloc  uint64 `json:"heap_alloc_bytes"`
++	Inuse  uint64 `json:"heap_inuse_bytes"`
++	Sys    uint64 `json:"heap_sys_bytes"`
++	GC     uint64 `json:"num_gc"`
++	pauses []uint64
++}
++type sample struct {
++	At         time.Time  `json:"at"`
++	Elapsed    float64    `json:"elapsed_seconds"`
++	RSS        *uint64    `json:"rss_bytes"`
++	CPU        *float64   `json:"cpu_seconds"`
++	Heap       *heapStats `json:"heap"`
++	Goroutines *int       `json:"goroutines"`
++	GCPauseNS  *uint64    `json:"gc_pause_since_previous_ns"`
++	Errors     []string   `json:"errors,omitempty"`
++}
++
++func parseHeap(text string) (*heapStats, error) {
++	h := &heapStats{}
++	seen := map[string]bool{}
++	scanner := bufio.NewScanner(strings.NewReader(text))
++	scanner.Buffer(make([]byte, 4096), 1024*1024)
++	for scanner.Scan() {
++		line := scanner.Text()
++		if !strings.HasPrefix(line, "# ") {
++			continue
++		}
++		key, value, ok := strings.Cut(strings.TrimPrefix(line, "# "), " = ")
++		if !ok {
++			continue
++		}
++		if key == "PauseNs" {
++			value = strings.TrimSpace(value)
++			if !strings.HasPrefix(value, "[") || !strings.HasSuffix(value, "]") {
++				return nil, errors.New("invalid PauseNs array")
++			}
++			for _, v := range strings.Fields(strings.Trim(value, "[]")) {
++				n, err := strconv.ParseUint(v, 10, 64)
++				if err != nil {
++					return nil, fmt.Errorf("PauseNs: %w", err)
 +				}
-+				err = nil
++				h.pauses = append(h.pauses, n)
++			}
++			continue
++		}
++		var target *uint64
++		switch key {
++		case "HeapAlloc":
++			target = &h.Alloc
++		case "HeapInuse":
++			target = &h.Inuse
++		case "HeapSys":
++			target = &h.Sys
++		case "NumGC":
++			target = &h.GC
++		default:
++			continue
++		}
++		n, err := strconv.ParseUint(strings.TrimSpace(value), 10, 64)
++		if err != nil {
++			return nil, fmt.Errorf("%s: %w", key, err)
++		}
++		*target = n
++		seen[key] = true
++	}
++	if err := scanner.Err(); err != nil {
++		return nil, err
++	}
++	for _, key := range []string{"HeapAlloc", "HeapInuse", "HeapSys", "NumGC"} {
++		if !seen[key] {
++			return nil, fmt.Errorf("pprof heap text missing %s", key)
++		}
++	}
++	return h, nil
++}
++
++func parseGoroutines(text string) (int, error) {
++	first, _, _ := strings.Cut(text, "\n")
++	var n int
++	if _, err := fmt.Sscanf(first, "goroutine profile: total %d", &n); err != nil || n < 1 {
++		return 0, fmt.Errorf("invalid goroutine profile first line %q", first)
++	}
++	return n, nil
++}
++
++func parseCPU(s string) (float64, error) {
++	days := 0.0
++	if d, rest, ok := strings.Cut(s, "-"); ok {
++		n, err := strconv.ParseUint(d, 10, 32)
++		if err != nil {
++			return 0, err
++		}
++		days = float64(n)
++		s = rest
++	}
++	parts := strings.Split(s, ":")
++	if len(parts) < 2 || len(parts) > 3 {
++		return 0, fmt.Errorf("invalid ps CPU time %q", s)
++	}
++	total := 0.0
++	for _, p := range parts {
++		n, err := strconv.ParseFloat(p, 64)
++		if err != nil || n < 0 || math.IsNaN(n) || math.IsInf(n, 0) {
++			return 0, fmt.Errorf("invalid ps CPU component %q", p)
++		}
++		total = total*60 + n
++	}
++	return days*86400 + total, nil
++}
++
++func processStats(ctx context.Context, pid int) (uint64, float64, error) {
++	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
++	defer cancel()
++	b, err := exec.CommandContext(ctx, "ps", "-o", "rss=,time=", "-p", strconv.Itoa(pid)).Output()
++	if err != nil {
++		return 0, 0, fmt.Errorf("ps for PID %d: %w", pid, err)
++	}
++	fields := strings.Fields(string(b))
++	if len(fields) != 2 {
++		return 0, 0, fmt.Errorf("unexpected ps output %q", b)
++	}
++	rss, err := strconv.ParseUint(fields[0], 10, 64)
++	if err != nil {
++		return 0, 0, err
++	}
++	cpu, err := parseCPU(fields[1])
++	return rss * 1024, cpu, err
++}
++
++func (c *radarClient) sample(ctx context.Context, start time.Time, pid int, runtime bool) sample {
++	s := sample{At: time.Now()}
++	if !start.IsZero() {
++		s.Elapsed = s.At.Sub(start).Seconds()
++	}
++	rss, cpu, err := processStats(ctx, pid)
++	if err != nil {
++		s.Errors = append(s.Errors, err.Error())
++	} else {
++		s.RSS = &rss
++		s.CPU = &cpu
++	}
++	if !runtime {
++		return s
++	}
++	b, err := c.bytes(ctx, "/debug/pprof/heap?debug=1")
++	if err == nil {
++		s.Heap, err = parseHeap(string(b))
++	}
++	if err != nil {
++		s.Errors = append(s.Errors, "heap: "+err.Error())
++	}
++	b, err = c.bytes(ctx, "/debug/pprof/goroutine?debug=1")
++	if err == nil {
++		var n int
++		n, err = parseGoroutines(string(b))
++		if err == nil {
++			s.Goroutines = &n
++		}
++	}
++	if err != nil {
++		s.Errors = append(s.Errors, "goroutines: "+err.Error())
++	}
++	return s
++}
++
++func pauseDelta(a, b *heapStats) (uint64, error) {
++	if b.GC < a.GC {
++		return 0, errors.New("GC counter decreased")
++	}
++	n := b.GC - a.GC
++	if n == 0 {
++		return 0, nil
++	}
++	if len(b.pauses) != 256 || n > 256 {
++		return 0, errors.New("GC pause ring unavailable or overwritten between samples")
++	}
++	var total uint64
++	for gc := a.GC; gc < b.GC; gc++ {
++		total += 
+```
+
+**File**: `cmd/radarload/stats.go` (added, +235/-0)
+```diff
+@@ -0,0 +1,235 @@
++package main
++
++import (
++	"fmt"
++	"io"
++	"math"
++	"reflect"
++	"sort"
++	"text/tabwriter"
++)
++
++type distribution struct {
++	Mean  float64 `json:"mean"`
++	P95   float64 `json:"p95"`
++	Peak  float64 `json:"peak"`
++	Count int     `json:"count"`
++}
++type latencySummary struct {
++	Count      int            `json:"count"`
++	Errors     int            `json:"errors"`
++	ErrorKinds map[string]int `json:"error_kinds"`
++	P50        float64        `json:"p50_ms"`
++	P95        float64        `json:"p95_ms"`
++	P99        float64        `json:"p99_ms"`
++	Bytes      int64          `json:"response_bytes"`
++}
++type summary struct {
++	Seconds      float64                   `json:"measured_seconds"`
++	RSS          distribution              `json:"rss_bytes"`
++	HeapInuse    distribution              `json:"heap_inuse_bytes"`
++	CPUSeconds   *float64                  `json:"cpu_seconds"`
++	CPUPerMinute *float64                  `json:"cpu_seconds_per_minute"`
++	GCCount      *uint64                   `json:"gc_count"`
++	PauseNS      *uint64                   `json:"gc_pause_ns"`
++	PauseError   string                    `json:"gc_pause_error,omitempty"`
++	SSE          sseStats                  `json:"sse"`
++	Offered      int                       `json:"offered_requests"`
++	Dropped      int                       `json:"dropped_requests"`
++	ActualQPS    float64                   `json:"actual_qps"`
++	Endpoints    map[string]latencySummary `json:"endpoints"`
++}
++
++func percentile(sorted []float64, p float64) float64 {
++	if len(sorted) == 0 {
++		return 0
++	}
++	return sorted[max(0, int(math.Ceil(float64(len(sorted))*p))-1)]
++}
++func describe(v []float64) distribution {
++	if len(v) == 0 {
++		return distribution{}
++	}
++	sort.Float64s(v)
++	var sum float64
++	for _, n := range v {
++		sum += n
++	}
++	return distribution{sum / float64(len(v)), percentile(v, .95), v[len(v)-1], len(v)}
++}
++
++func summarize(samples []sample, c *workloadCounters, seconds float64) summary {
++	s := summary{Seconds: seconds, Endpoints: map[string]latencySummary{}}
++	var rss, heap []float64
++	for _, v := range samples {
++		if v.RSS != nil {
++			rss = append(rss, float64(*v.RSS))
++		}
++		if v.Heap != nil {
++			heap = append(heap, float64(v.Heap.Inuse))
++		}
++	}
++	s.RSS = describe(rss)
++	s.HeapInuse = describe(heap)
++	if len(samples) >= 2 {
++		a, b := samples[0], samples[len(samples)-1]
++		if a.CPU != nil && b.CPU != nil && *b.CPU >= *a.CPU {
++			delta := *b.CPU - *a.CPU
++			s.CPUSeconds = &delta
++			rate := delta * 60 / b.At.Sub(a.At).Seconds()
++			s.CPUPerMinute = &rate
++		}
++		// Heap reads are spaced out (runtimeEvery), so GC and pause totals
++		// come from the samples that carry one.
++		var withHeap []int
++		for i := range samples {
++			if samples[i].Heap != nil {
++				withHeap = append(withHeap, i)
++			}
++		}
++		if len(withHeap) >= 2 {
++			first, last := samples[withHeap[0]].Heap, samples[withHeap[len(withHeap)-1]].Heap
++			if last.GC >= first.GC {
++				delta := last.GC - first.GC
++				s.GCCount = &delta
++			}
++		}
++		var pause uint64
++		if len(withHeap) < 2 {
++			s.PauseError = "fewer than two heap samples"
++		}
++		for j := 1; j < len(withHeap); j++ {
++			prev, cur := withHeap[j-1], withHeap[j]
++			delta, err := pauseDelta(samples[prev].Heap, samples[cur].Heap)
++			if err != nil {
++				s.PauseError = err.Error()
++				continue
++			}
++			samples[cur].GCPauseNS = &delta
++			pause += delta
++		}
++		if s.PauseError == "" {
++			s.PauseNS = &pause
++		}
++	}
++	c.mu.Lock()
++	defer c.mu.Unlock()
++	s.SSE = c.SSE
++	s.Offered = c.Offered
++	s.Dropped = c.Dropped
++	var requests int
++	for name, d := range c.Endpoints {
++		sort.Float64s(d.latencies)
++		n := 0
++		for _, v := range d.Errors {
++			n += v
++		}
++		s.Endpoints[name] = latencySummary{len(d.latencies), n, d.Errors, percentile(d.latencies, .5), percentile(d.latencies, .95), percentile(d.latencies, .99), d.Bytes}
++		requests += len(d.latencies)
++	}
++	if seconds > 0 {
++		s.ActualQPS = float64(requests) / seconds
++	}
++	return s
++}
++
++func delta(a, b float64) (float64, *float64) {
++	d := b - a
++	if a == 0 {
++		if b == 0 {
++			z := 0.0
++			return d, &z
++		}
++		return d, nil
++	}
++	p := d / math.Abs(a) * 100
++	return d, &p
++}
++
++func compare(out io.Writer, a, b result) error {
++	if a.Config.Duration != b.Config.Duration || a.Config.SSE != b.Config.SSE || a.Config.Askers != b.Config.Askers || a.Config.QPS != b.Config.QPS || a.Config.Seed != b.Config.Seed || a.Config.User != b.Config.User || a.Config.Groups != b.Config.Groups || !reflect.DeepEqual(a.Subjects, b.Subjects) || !reflect.DeepEqual(a.NeighborhoodSubjects, b.NeighborhoodSubjects) {
++		fmt.Fprintln(out, "WARNING: workload configuration or sampled subjects differ")
++	}
++	fmt.Fprintf(out, "A: %s (%s)\nB: %s (%s)\n", a.Config.Label, a.Build["version"], b.Config.Label, b.Build["version"])
++	w := tabwriter.NewWriter(out, 0, 4, 2, ' ', 0)
++	fmt.Fprintln(w, "Metric\tA\tB\tDelta (B-A)\tChange")
++	row := func(name string, a, b *float64) {
++		if a == nil || b == ni
+```
+
+**File**: `cmd/radarload/workload.go` (added, +214/-0)
+```diff
+@@ -0,0 +1,214 @@
++package main
++
++import (
++	"bufio"
++	"context"
++	"errors"
++	"fmt"
++	"io"
++	"math/rand"
++	"net/url"
++	"strings"
++	"sync"
++	"time"
++)
++
++type requestJob struct {
++	Endpoint string
++	Path     string
++}
++type endpointData struct {
++	latencies []float64
++	Errors    map[string]int
++	Bytes     int64
++}
++type sseStats struct {
++	Events      int64          `json:"events"`
++	Connections int64          `json:"connections"`
++	Errors      int64          `json:"errors"`
++	ErrorKinds  map[string]int `json:"error_kinds"`
++}
++type workloadCounters struct {
++	mu        sync.Mutex
++	Endpoints map[string]*endpointData
++	SSE       sseStats
++	Offered   int
++	Dropped   int
++}
++
++func requestFor(slot int, s subject) requestJob {
++	switch {
++	case slot < 12:
++		return requestJob{"resource_get", resourcePath("/api/resources", s)}
++	case slot < 14:
++		return requestJob{"ai_context", resourcePath("/api/ai/resources", s)}
++	case slot < 16:
++		return requestJob{"ai_neighborhood", resourcePath("/api/ai/neighborhood", s) + "&profile=auto&hops=1"}
++	case slot < 18:
++		return requestJob{"rest_neighborhood", resourcePath("/api/ai/neighborhood", s) + "&profile=all&hops=2"}
++	case slot == 18:
++		return requestJob{"applications", "/api/applications"}
++	default:
++		return requestJob{"list_summary", "/api/resources/" + url.PathEscape(s.Kind) + "?include=summary&maxItems=50000&group=" + url.QueryEscape(s.Group)}
++	}
++}
++
++func startWorkload(ctx context.Context, c *radarClient, subjects, neighborhoods []subject) (*workloadCounters, <-chan struct{}) {
++	stats := &workloadCounters{Endpoints: map[string]*endpointData{}, SSE: sseStats{ErrorKinds: map[string]int{}}}
++	done := make(chan struct{})
++	jobs := make(chan requestJob)
++	var workers sync.WaitGroup
++	for range c.c.Askers {
++		workers.Add(1)
++		go func() {
++			defer workers.Done()
++			for job := range jobs {
++				reqCtx, cancel := context.WithTimeout(ctx, requestTimeout)
++				start := time.Now()
++				resp, err := c.get(reqCtx, job.Path)
++				var bytes int64
++				var reason string
++				if err == nil {
++					bytes, err = io.Copy(io.Discard, resp.Body)
++					resp.Body.Close()
++					if resp.StatusCode != 200 {
++						reason = fmt.Sprintf("HTTP %d", resp.StatusCode)
++					} else if !strings.HasPrefix(resp.Header.Get("Content-Type"), "application/json") {
++						reason = "non-JSON response"
++					}
++				}
++				if err != nil {
++					reason = err.Error()
++					if errors.Is(err, context.DeadlineExceeded) {
++						reason = "timeout"
++					}
++					if ctx.Err() != nil {
++						reason = "run ended in flight"
++					}
++				}
++				elapsed := time.Since(start).Seconds() * 1000
++				cancel()
++				stats.mu.Lock()
++				d := stats.Endpoints[job.Endpoint]
++				if d == nil {
++					d = &endpointData{Errors: map[string]int{}}
++					stats.Endpoints[job.Endpoint] = d
++				}
++				d.latencies = append(d.latencies, elapsed)
++				d.Bytes += bytes
++				if reason != "" {
++					d.Errors[reason]++
++				}
++				stats.mu.Unlock()
++			}
++		}()
++	}
++	for range c.c.SSE {
++		workers.Add(1)
++		go func() { defer workers.Done(); c.stream(ctx, stats) }()
++	}
++	go func() {
++		defer close(done)
++		rng := rand.New(rand.NewSource(c.c.Seed))
++		order := rng.Perm(20)
++		start := time.Now()
++		deadline, _ := ctx.Deadline()
++		slot := 0
++		for {
++			target := start.Add(time.Duration(float64(slot) / c.c.QPS * float64(time.Second)))
++			if !deadline.IsZero() && !target.Before(deadline) {
++				<-ctx.Done()
++				close(jobs)
++				workers.Wait()
 +				return
 +			}
-+			result, err = nil, &jsonrpc.Error{Code: jsonrpc.CodeInternalError, Message: "internal error handling " + method}
-+		}()
-+		return next(ctx, method, req)
++			t := time.NewTimer(time.Until(target))
++			select {
++			case <-ctx.Done():
++				t.Stop()
++				close(jobs)
++				workers.Wait()
++				return
++			case <-t.C:
++			}
++			if ctx.Err() != nil {
++				close(jobs)
++				workers.Wait()
++				return
++			}
++			endpointSlot := order[slot%20]
++			pool := subjects
++			if endpointSlot >= 14 && endpointSlot < 18 {
++				pool = neighborhoods
++			}
++			job := requestFor(endpointSlot, pool[rng.Intn(len(pool))])
++			stats.mu.Lock()
++			stats.Offered++
++			stats.mu.Unlock()
++			select {
++			case jobs <- job:
++			default:
++				stats.mu.Lock()
++				stats.Dropped++
++				stats.mu.Unlock()
++			}
++			slot++
++		}
++	}()
++	return stats, done
++}
++
++func (c *radarClient) stream(ctx context.Context, stats *workloadCounters) {
++	for ctx.Err() == nil {
++		resp, err := c.get(ctx, "/api/events/stream")
++		if err == nil {
++			if resp.StatusCode != 200 {
++				err = fmt.Errorf("HTTP %d", resp.StatusCode)
++			} else if !strings.HasPrefix(resp.Header.Get("Content-Type"), "text/event-stream") {
++				err = errors.New("non-SSE response")
++			}
++			if err == nil {
++				stats.mu.Lock()
++				stats.SSE.Connections++
++				stats.mu.Unlock()
++				reader := bufio.NewReaderSize(resp.Body, 64*1024)
++				hasData := false
++				continuation := false
++				for {
++					line, readErr := reader.ReadSlice('\n')
++					if !continuation {
++						if strings.HasPrefix(string(line), "data:") {
++							hasData = true
++						}
++						if len(line) == 1 && line[0] == '\n' || len(line) == 2 && line[0] ==
+```
+
+---
+
+### Incident Patch 3: `b9cd4b5f` (2026-11-17)
+**Commit Message**: Replay a frozen cluster capture into two Radar builds and diff every relationship reader (#2708)
+
+## Summary
+
+Tooling to show that a change to how Radar answers relationships gives
+the same answers, or to list exactly where it doesn't. Comparing two
+builds on a live cluster doesn't work, because the cluster changes
+between the two reads. So this captures a cluster once, replays the
+frozen capture into two Radar builds through the test server's
+in-process fake client, and diffs what every relationship reader returns
+over HTTP and MCP.
+
+It's built for retiring the relationship graph: the old build is main,
+the new build is the cutover branch, and both run against identical
+state. It works for any reader-level change.
+
+## What's here
+
+- **`cmd/clustercapture -context <ctx> -out c.ndjson.gz`**: a read-only
+capture.
+- Lists every served, listable resource in pages of 500, plus the
+discovery document; writes gzipped NDJSON.
+- **Privacy:** Secret and ConfigMap values are blanked (keys kept), env
+`value`s are blanked, inline secrets are redacted
+(`pkg/ai/context.RedactInlineSecrets`), and `managedFields` and
+last-applied annotations are dropped. The header stores a hash of the
+context name
+
+**File**: `cmd/clustercapture/main.go` (added, +71/-0)
+```diff
+@@ -0,0 +1,71 @@
++package main
++
++import (
++	"context"
++	"flag"
++	"fmt"
++	"os"
++	"os/signal"
++	"path/filepath"
++	"syscall"
++	"time"
++
++	"github.com/skyhook-io/radar/internal/clusterreplay"
++	"k8s.io/client-go/discovery"
++	"k8s.io/client-go/dynamic"
++	"k8s.io/client-go/tools/clientcmd"
++)
++
++func main() {
++	if err := run(); err != nil {
++		fmt.Fprintln(os.Stderr, err)
++		os.Exit(1)
++	}
++}
++
++func run() error {
++	name := flag.String("context", "", "kubeconfig context to capture (required)")
++	out := flag.String("out", "", "destination .ndjson.gz (required; must not exist)")
++	flag.Parse()
++	if *name == "" || *out == "" {
++		return fmt.Errorf("-context and -out are required")
++	}
++	cfg, err := clientcmd.NewNonInteractiveDeferredLoadingClientConfig(clientcmd.NewDefaultClientConfigLoadingRules(), &clientcmd.ConfigOverrides{CurrentContext: *name}).ClientConfig()
++	if err != nil {
++		return fmt.Errorf("load kubeconfig: %w", err)
++	}
++	cfg.Timeout = 30 * time.Second
++	d, err := discovery.NewDiscoveryClientForConfig(cfg)
++	if err != nil {
++		return fmt.Errorf("create discovery client: %w", err)
++	}
++	c, err := dynamic.NewForConfig(cfg)
++	if err != nil {
++		return fmt.Errorf("create dynamic client: %w", err)
++	}
++	// A failed list must not leave a plausible-looking complete snapshot.
++	f, err := os.CreateTemp(filepath.Dir(*out), ".capture-*.partial")
++	if err != nil {
++		return err
++	}
++	partial := f.Name()
++	defer os.Remove(partial)
++	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
++	defer cancel()
++	count, skipped, captureErr := clusterreplay.Capture(ctx, d, c, *name, f)
++	closeErr := f.Close()
++	if captureErr != nil {
++		return fmt.Errorf("capture failed; no snapshot published: %w", captureErr)
++	}
++	if closeErr != nil {
++		return closeErr
++	}
++	if err := os.Link(partial, *out); err != nil {
++		return err
++	}
++	fmt.Printf("Captured %d objects to %s\n", count, *out)
++	if len(skipped) > 0 {
++		fmt.Printf("Skipped %d resources whose lists failed; details are in the capture header\n", len(skipped))
++	}
++	return nil
++}
+```
+
+**File**: `cmd/clustercapture/main_test.go` (added, +24/-0)
+```diff
+@@ -0,0 +1,24 @@
++package main
++
++import (
++	"os"
++	"path/filepath"
++	"strings"
++	"testing"
++)
++
++func TestRunReportsKubeconfigCause(t *testing.T) {
++	dir := t.TempDir()
++	kubeconfig := filepath.Join(dir, "config")
++	if err := os.WriteFile(kubeconfig, []byte("apiVersion: v1\nkind: Config\n"), 0600); err != nil {
++		t.Fatal(err)
++	}
++	t.Setenv("KUBECONFIG", kubeconfig)
++	args := os.Args
++	defer func() { os.Args = args }()
++	os.Args = []string{"clustercapture", "-context", "absent", "-out", filepath.Join(dir, "c.ndjson.gz")}
++	err := run()
++	if err == nil || !strings.Contains(err.Error(), `context "absent" does not exist`) {
++		t.Fatalf("err = %v, want the kubeconfig loader's cause", err)
 +	}
 +}
 ```
 
-**File**: `internal/mcp/recover_test.go` (added, +57/-0)
+**File**: `cmd/reldiff/main.go` (added, +592/-0)
 ```diff
-@@ -0,0 +1,57 @@
-+package mcp
+@@ -0,0 +1,592 @@
++package main
 +
 +import (
-+	"context"
++	"bytes"
++	"encoding/json"
++	"flag"
++	"fmt"
++	"io"
++	"math"
++	"net"
++	"net/http"
++	"net/url"
++	"os"
++	"reflect"
++	"regexp"
++	"sort"
++	"strings"
++	"time"
++
++	"github.com/skyhook-io/radar/internal/clusterreplay"
++	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
++	"k8s.io/apimachinery/pkg/runtime/schema"
++)
++
++type subject struct {
++	Kind      string `json:"kind"`
++	Group     string `json:"group"`
++	Namespace string `json:"namespace"`
++	Name      string `json:"name"`
++}
++type request struct {
++	Reader, Kind, Path string
++	Subject            subject
++	Tool               string
++	Args               map[string]any
++	Relationships      bool
++}
++type example struct {
++	Subject subject `json:"subject"`
++	A       any     `json:"a"`
++	B       any     `json:"b"`
++}
++type delta struct {
++	Reader   string    `json:"reader"`
++	Field    string    `json:"field"`
++	Kind     string    `json:"kind"`
++	Count    int       `json:"count"`
++	Examples []example `json:"examples"`
++}
++type timing struct {
++	Reader string  `json:"reader"`
++	Kind   string  `json:"kind"`
++	Side   string  `json:"side"`
++	Count  int     `json:"count"`
++	Median float64 `json:"median_ms"`
++	P95    float64 `json:"p95_ms"`
++}
++type failure struct {
++	Reader  string  `json:"reader"`
++	Subject subject `json:"subject"`
++	Side    string  `json:"side"`
++	Error   string  `json:"error"`
++}
++type captureGaps struct {
++	FailedGroups []string                `json:"failed_groups"`
++	Skipped      []clusterreplay.Skipped `json:"skipped"`
++}
++
++type report struct {
++	CaptureGaps captureGaps `json:"capture_gaps"`
++	Requests    int         `json:"request_pairs"`
++	DeltaCount  int         `json:"delta_count"`
++	Deltas      []*delta    `json:"deltas"`
++	// Noise holds deltas whose (reader, kind, field) also differed between two runs
++	// of one build (-baseline): output that varies run to run, not between builds.
++	NoiseCount int            `json:"noise_count,omitempty"`
++	Noise      []*delta       `json:"noise,omitempty"`
++	Latency    []timing       `json:"latency"`
++	Failures   []failure      `json:"failures"`
++	Readiness  map[string]any `json:"readiness"`
++}
++
++func main() {
++	a := flag.String("a", "", "first Radar URL")
++	b := flag.String("b", "", "second Radar URL")
++	capture := flag.String("capture", "", "subject capture .ndjson.gz")
++	out := flag.String("out", "report.json", "JSON report")
++	max := flag.Int("max-per-kind", 0, "maximum subjects per group/kind (0 = all)")
++	adminA := flag.String("ready-a", "", "optional replay admin URL; otherwise infer main port+1")
++	adminB := flag.String("ready-b", "", "optional replay admin URL; otherwise infer main port+1")
++	baseline := flag.String("baseline", "", "report from two runs of one build; fields that differed there are reported as noise")
++	flag.Parse()
++	if *a == "" || *b == "" || *capture == "" || *max < 0 {
++		fmt.Fprintln(os.Stderr, "-a, -b, -capture required; -max-per-kind must be >= 0")
++		os.Exit(1)
++	}
++	if err := run(*a, *b, *capture, *out, *max, *adminA, *adminB, *baseline); err != nil {
++		fmt.Fprintln(os.Stderr, err)
++		os.Exit(1)
++	}
++}
++
++func run(a, b, capture, out string, max int, adminA, adminB, baseline string) error {
++	noise, err := loadNoise(baseline)
++	if err != nil {
++		return fmt.Errorf("baseline: %w", err)
++	}
++	f, err := os.Open(capture)
++	if err != nil {
++		return err
++	}
++	defer f.Close()
++	var objects []*unstructured.Unstructured
++	header, err := clusterreplay.Read(f, func(o *unstructured.Unstructured) error { objects = append(objects, o); return nil })
++	if err != nil {
++		return err
++	}
++	requests := plan(objects, header, max)
++	client := &http.Client{Timeout: 65 * time.Second}
++	result := report{Deltas: []*delta{}, Failures: []failure{}, Readiness: map[string]any{}, CaptureGaps: captureGaps{header.FailedGroups, header.Skipped}}
++	if len(header.FailedGroups) > 0 || len(header.Skipped) > 0 {
++		fmt.Fprintf(os.Stderr, "Warning: incomplete capture: %d failed groups, %d skipped resources; see capture_gaps in the report\n", len(header.FailedGroups), len(header.Skipped))
++	}
++	for _, side := range []struct{ Name, Base, Admin string }{{"a", a, adminA}, {"b", b, adminB}} {
++		status, err := waitReady(side.Base, side.Admin)
++		if err != nil {
++			return fmt.Errorf("%s readiness: %w", side.Name, err)
++		}
++		result.Readiness[side.Name] = status
++	}
++	groups, noiseGroups := map[string]*delta{}, map[string]*delta{}
++	times := map[string][]float64{}
++	// Alternate the first side to distribute warm-cache and machine-load bias.
++	for i, r := range requests {
++		var values [2]any
++		order := []int{0, 1}
++		if i%2 != 0 {
++			order = []int{1, 0}
++		}
++		for _, side := range order {
++			base := a
++			label := "a"
++			if side == 1 {
++				base = b
++				label = "b"
++			}
++			start := time.Now()
++			value, err := fetch(client, base, r)
++			elapsed := float64(time.Since(start)) / float64(time.Millisecond)
++			times[r.Reader+"\x00"+r.Kind+"\x00"+label] = append(times[r
+```
+
+**File**: `cmd/reldiff/main_test.go` (added, +246/-0)
+```diff
+@@ -0,0 +1,246 @@
++package main
++
++import (
++	"compress/gzip"
++	"encoding/json"
++	"io"
++	"net/http"
++	"net/http/httptest"
++	"os"
++	"path/filepath"
++	"reflect"
++	"strings"
++	"testing"
++	"time"
++
++	"github.com/skyhook-io/radar/internal/clusterreplay"
++	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
++	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
++)
++
++func TestNormalizationAndDeltas(t *testing.T) {
++	a := map[string]any{"owner": map[string]any{"name": "x", "generation": 1}, "children": []any{map[string]any{"kind": "Pod", "name": "b"}, map[string]any{"kind": "Pod", "name": "a"}}, "conditions": []any{"first", "second"}}
++	b := map[string]any{"owner": map[string]any{"name": "x", "generation": 2}, "children": []any{map[string]any{"kind": "Pod", "name": "a"}, map[string]any{"kind": "Pod", "name": "b"}}, "conditions": []any{"first", "second"}}
++	if !reflect.DeepEqual(normalize(a), normalize(b)) {
++		t.Fatal("ref ordering/generation changed equality")
++	}
++	b["owner"].(map[string]any)["name"] = "y"
++	out := map[string][2]any{}
++	compare("", normalize(a), normalize(b), out)
++	if len(out) != 1 || out["/owner/name"] != [2]any{"x", "y"} {
++		t.Fatal(out)
++	}
++	b["conditions"] = []any{"second", "first"}
++	out = map[string][2]any{}
++	compare("", normalize(a), normalize(b), out)
++	if len(out) != 3 {
++		t.Fatal("ordered arrays must retain order", out)
++	}
++}
++
++func TestMCPTextDecodedAndErrorsRecorded(t *testing.T) {
++	s := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++		if r.Method != "POST" || r.Header.Get("MCP-Protocol-Version") == "" {
++			t.Error("bad MCP request")
++		}
++		w.Header().Set("Content-Type", "text/event-stream")
++		_, _ = w.Write([]byte("event: message\ndata: {\"jsonrpc\":\"2.0\",\"id\":1,\"result\":{\"content\":[{\"type\":\"text\",\"text\":\"{\\\"owner\\\":{\\\"name\\\":\\\"a\\\"}}\"}]}}\n\n"))
++	}))
++	defer s.Close()
++	value, err := fetch(s.Client(), s.URL, request{Tool: "get_resource"})
++	if err != nil {
++		t.Fatal(err)
++	}
++	b, _ := json.Marshal(value)
++	if string(b) != "{\"content\":[{\"text\":{\"owner\":{\"name\":\"a\"}},\"type\":\"text\"}]}" {
++		t.Fatalf("not decoded: %s", b)
++	}
++}
++
++func TestPlanIncludesAllReadersAndDoesNotCapTrees(t *testing.T) {
++	objects := []*unstructured.Unstructured{}
++	for _, name := range []string{"first", "second"} {
++		objects = append(objects, &unstructured.Unstructured{Object: map[string]any{"apiVersion": "argoproj.io/v1alpha1", "kind": "Application", "metadata": map[string]any{"name": name, "namespace": "default"}}})
++	}
++	requests := plan(objects, clusterreplay.Header{}, 1)
++	counts := map[string]int{}
++	for _, r := range requests {
++		counts[r.Reader]++
++	}
++	for _, reader := range []string{"relationships", "neighborhood", "ai_context", "mcp_get_resource", "mcp_get_neighborhood", "summary", "applications"} {
++		if counts[reader] != 1 {
++			t.Fatalf("%s calls=%d", reader, counts[reader])
++		}
++	}
++	if counts["gitops_tree"] != 2 {
++		t.Fatal("trees capped", counts)
++	}
++}
++
++func TestMissingAndNullRemainDifferent(t *testing.T) {
++	out := map[string][2]any{}
++	compare("", map[string]any{}, map[string]any{"owner": nil}, out)
++	if len(out) != 1 || out["/owner"][0] == nil {
++		t.Fatal(out)
++	}
++}
++
++func TestContainerOrderIsNotNormalizedAway(t *testing.T) {
++	a := []any{map[string]any{"name": "first", "image": "a"}, map[string]any{"name": "second", "image": "b"}}
++	b := []any{a[1], a[0]}
++	if reflect.DeepEqual(normalize(a), normalize(b)) {
++		t.Fatal("ordered container array sorted as references")
++	}
++}
++
++func TestRunReportsCaptureGapsAndScopesNoiseByKind(t *testing.T) {
++	dir := t.TempDir()
++	capture, baseline, output := filepath.Join(dir, "capture.gz"), filepath.Join(dir, "baseline.json"), filepath.Join(dir, "report.json")
++	header := clusterreplay.Header{
++		CapturedAt: time.Now().UTC(), Discovery: clusterreplay.Discovery{Resources: []*metav1.APIResourceList{}},
++		FailedGroups: []string{"broken.io"}, Skipped: []clusterreplay.Skipped{{Resource: "secrets", Error: "forbidden"}},
++	}
++	f, err := os.Create(capture)
++	if err != nil {
++		t.Fatal(err)
++	}
++	z := gzip.NewWriter(f)
++	enc := json.NewEncoder(z)
++	if err := enc.Encode(header); err != nil {
++		t.Fatal(err)
++	}
++	for _, kind := range []string{"Pod", "Service"} {
++		if err := enc.Encode(map[string]any{"apiVersion": "v1", "kind": kind, "metadata": map[string]any{"namespace": "default", "name": "one"}}); err != nil {
++			t.Fatal(err)
++		}
++	}
++	if err := z.Close(); err != nil {
++		t.Fatal(err)
++	}
++	if err := f.Close(); err != nil {
++		t.Fatal(err)
++	}
++	base, err := json.Marshal(report{Deltas: []*delta{{Reader: "relationships", Kind: "Pod.", Field: "/owner/name"}}})
++	if err != nil {
++		t.Fatal(err)
++	}
++	if err := os.WriteFile(baseline, base, 0600); err != nil {
++		t.Fatal(err)
++	}
++	server := func(side string) *httptest.Server {
++		return httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
++			w.Header().Set("Content-Type", "application/jso
+```
+
+**File**: `cmd/testserver/main.go` (modified, +22/-6)
+```diff
+@@ -45,6 +45,7 @@ import (
+ 	"github.com/skyhook-io/radar/internal/config"
+ 	"github.com/skyhook-io/radar/internal/k8s"
+ 	"github.com/skyhook-io/radar/internal/loadtest"
++	"github.com/skyhook-io/radar/internal/mcp"
+ 	"github.com/skyhook-io/radar/internal/server"
+ 	"github.com/skyhook-io/radar/internal/static"
+ 	"github.com/skyhook-io/radar/internal/timeline"
+@@ -61,6 +62,9 @@ func main() {
+ 	censusScale := flag.Float64("census-scale", 1.0, "load-test: scale factor applied to -census counts")
+ 	vulnReports := flag.Bool("vulnerability-reports", false, "seed Trivy Operator VulnerabilityReports and the workloads they describe (with the default fixture)")
+ 	flag.Parse()
++	if *replayPath != "" && (*pods != 0 || *censusProfile != "" || *vulnReports) {
++		log.Fatal("-replay cannot be combined with -pods, -census or -vulnerability-reports")
++	}
+ 
+ 	// Isolate config/settings writes to a temp directory so e2e tests
+ 	// don't touch the developer's real ~/.radar/config.json.
+@@ -76,8 +80,12 @@ func main() {
+ 	var (
+ 		fakeClient *fake.Clientset
+ 		gen        *loadtest.Generator
++		replay     *replayState
+ 	)
+-	if *censusProfile != "" {
++	if *replayPath != "" {
++		replay = mustLoadReplay(*replayPath)
++		fakeClient = replay.client
++	} else if *censusProfile != "" {
+ 		c, ok := loadtest.Profiles[*censusProfile]
+ 		if !ok {
+ 			log.Fatalf("unknown -census profile %q", *censusProfile)
+@@ -122,6 +130,11 @@ func main() {
+ 		log.Fatalf("InitTestResourceCache: %v", err)
+ 	}
+ 
++	if replay != nil {
++		replay.mustStart()
++		defer k8s.ResetTestDynamicState()
++	}
++
+ 	if *vulnReports {
+ 		_, reports := vulnerabilityFixture()
+ 		if err := initVulnerabilityReports(reports); err != nil {
+@@ -148,6 +161,7 @@ func main() {
+ 		StaticFS:        static.FS,
+ 		StaticRoot:      "dist",
+ 		EffectiveConfig: effectiveCfg,
++		MCPHandler:      mcp.NewReadOnlyHandler(),
+ 	})
+ 
+ 	ready := make(chan struct{})
+@@ -161,11 +175,13 @@ func main() {
+ 	fmt.Fprintf(os.Stderr, "Test server ready on http://localhost:%d (fake k8s)\n", *port)
+ 
+ 	var adminSrv *http.Server
+-	if gen != nil {
+-		ap := *adminPort
+-		if ap == 0 {
+-			ap = *port + 1
+-		}
++	ap := *adminPort
++	if ap == 0 {
++		ap = *port + 1
++	}
++	if replay != nil {
++		adminSrv = startReplayAdmin(ap, replay)
++	} else if gen != nil {
+ 		adminSrv = startAdminServer(ap, gen, fakeClient)
+ 	}
+ 
+```
+
+**File**: `cmd/testserver/replay.go` (added, +195/-0)
+```diff
+@@ -0,0 +1,195 @@
++package main
++
++import (
++	"flag"
++	"fmt"
++	"log"
++	"net"
++	"net/http"
++	"os"
++	"strings"
++	"time"
++
++	"github.com/skyhook-io/radar/internal/clusterreplay"
++	"github.com/skyhook-io/radar/internal/k8s"
++	"github.com/skyhook-io/radar/pkg/k8score"
++	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
++	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
++	"k8s.io/apimachinery/pkg/runtime"
++	"k8s.io/apimachinery/pkg/runtime/schema"
++	discoveryfake "k8s.io/client-go/discovery/fake"
++	dynamicfake "k8s.io/client-go/dynamic/fake"
++	"k8s.io/client-go/kubernetes/fake"
++	"k8s.io/client-go/kubernetes/scheme"
++)
++
++var replayPath = flag.String("replay", "", "replay a frozen .ndjson.gz cluster capture")
++
++type replayState struct {
++	client       *fake.Clientset
++	dynamic      *dynamicfake.FakeDynamicClient
++	discovery    *replayDiscovery
++	gvrs         []schema.GroupVersionResource
++	unsupported  []string
++	failedGroups []string
++	skipped      []clusterreplay.Skipped
++	objects      int
++}
++
++func loadReplay(path string) (*replayState, error) {
++	f, err := os.Open(path)
++	if err != nil {
++		return nil, err
++	}
++	defer f.Close()
++	var objects []*unstructured.Unstructured
++	header, err := clusterreplay.Read(f, func(obj *unstructured.Unstructured) error { objects = append(objects, obj); return nil })
++	if err != nil {
++		return nil, err
++	}
++	s := &replayState{client: fake.NewClientset(), objects: len(objects), failedGroups: header.FailedGroups, skipped: header.Skipped}
++	s.discovery = &replayDiscovery{FakeDiscovery: s.client.Discovery().(*discoveryfake.FakeDiscovery), groups: header.Discovery.Groups}
++	s.discovery.Resources = header.Discovery.Resources
++	kinds := map[schema.GroupVersionResource]string{}
++	byGVK := map[schema.GroupVersionKind]schema.GroupVersionResource{}
++	for _, list := range header.Discovery.Resources {
++		gv, err := schema.ParseGroupVersion(list.GroupVersion)
++		if err != nil {
++			return nil, err
++		}
++		for _, r := range list.APIResources {
++			if !clusterreplay.Listable(gv, r) {
++				continue
++			}
++			gvr := gv.WithResource(r.Name)
++			kinds[gvr] = r.Kind + "List"
++			byGVK[gv.WithKind(r.Kind)] = gvr
++			// Production serves built-in kinds from typed informers and starts
++			// dynamic ones only for custom resources and DRA, so replay does too.
++			if k8score.IsBuiltInAPIGroup(gv.Group) && gv.Group != "resource.k8s.io" {
++				continue
++			}
++			canWatch := false
++			for _, verb := range r.Verbs {
++				if verb == "watch" {
++					canWatch = true
++				}
++			}
++			if canWatch {
++				s.gvrs = append(s.gvrs, gvr)
++			} else {
++				s.unsupported = append(s.unsupported, gvr.String()+": discovery has no watch verb")
++			}
++		}
++	}
++	s.dynamic = dynamicfake.NewSimpleDynamicClientWithCustomListKinds(runtime.NewScheme(), kinds)
++	typedScheme := runtime.NewScheme()
++	if err := scheme.AddToScheme(typedScheme); err != nil {
++		return nil, err
++	}
++	seenTyped := map[string]bool{}
++	for _, obj := range objects {
++		gvk := obj.GroupVersionKind()
++		gvr, ok := byGVK[gvk]
++		if !ok {
++			return nil, fmt.Errorf("%s %s missing listable discovery entry", gvk, obj.GetName())
++		}
++		if err := s.dynamic.Tracker().Create(gvr, obj, obj.GetNamespace()); err != nil {
++			return nil, err
++		}
++		typed, err := typedScheme.New(gvk)
++		if runtime.IsNotRegisteredError(err) {
++			continue
++		}
++		if err != nil {
++			return nil, err
++		}
++		if err := runtime.DefaultUnstructuredConverter.FromUnstructured(obj.Object, typed); err != nil {
++			return nil, fmt.Errorf("decode %s: %w", gvk, err)
++		}
++		key := strings.Join([]string{gvk.Group, gvk.Kind, obj.GetNamespace(), obj.GetName()}, "/")
++		if seenTyped[key] {
++			continue
++		}
++		seenTyped[key] = true
++		if err := s.client.Tracker().Add(typed); err != nil {
++			return nil, err
++		}
++	}
++	return s, nil
++}
++
++func mustLoadReplay(path string) *replayState {
++	s, err := loadReplay(path)
++	if err != nil {
++		log.Fatal(err)
++	}
++	return s
++}
++
++func (s *replayState) mustStart() {
++	if err := s.start(); err != nil {
++		log.Fatal(err)
++	}
++}
++
++func (s *replayState) start() error {
++	if err := k8s.InitTestReplayClients(s.dynamic, s.discovery); err != nil {
++		return err
++	}
++	cache := k8s.GetDynamicResourceCache()
++	for _, gvr := range s.gvrs {
++		if err := cache.EnsureWatching(gvr); err != nil {
++			s.unsupported = append(s.unsupported, fmt.Sprintf("%s: %v", gvr, err))
++			continue
++		}
++		if !cache.WaitForSync(gvr, 10*time.Second) {
++			s.unsupported = append(s.unsupported, gvr.String()+": sync timeout")
++		}
++	}
++	fmt.Fprintf(os.Stderr, "Replay caches synced: %d objects; %d unsupported resources\n", s.objects, len(s.unsupported))
++	for _, gap := range s.unsupported {
++		fmt.Fprintln(os.Stderr, "Replay unsupported:", gap)
++	}
++	for _, group := range s.failedGroups {
++		fmt.Fprintln(os.Stderr, "Replay capture failed group:", group)
++	}
++	for _, gap := range s.skipped {
++		fmt.Fprintf(os.Stderr, "Replay capture skipped: %s: %s\n", gap.Resource, gap.Error)
++	}
++	return nil
++}
++
++ty
+```
+
+**File**: `cmd/testserver/replay_test.go` (added, +108/-0)
+```diff
+@@ -0,0 +1,108 @@
++package main
++
++import (
++	"compress/gzip"
++	"encoding/json"
++	"net/http/httptest"
++	"os"
++	"path/filepath"
++	"reflect"
 +	"strings"
 +	"testing"
 +
-+	mcpsdk "github.com/modelcontextprotocol/go-sdk/mcp"
++	"github.com/skyhook-io/radar/internal/k8s"
++	"k8s.io/apimachinery/pkg/runtime/schema"
 +)
 +
-+// A panicking tool fails its own call and leaves Radar's MCP server answering.
-+func TestToolPanicFailsTheCallNotTheServer(t *testing.T) {
-+	ctx := context.Background()
-+	server := newServer(false, false, "")
-+	calls := 0
-+	server.AddTool(&mcpsdk.Tool{Name: "boom", InputSchema: map[string]any{"type": "object"}}, func(context.Context, *mcpsdk.CallToolRequest) (*mcpsdk.CallToolResult, error) {
-+		calls++
-+		var m map[string]any
-+		_ = m["pods"].([]map[string]any)
-+		return nil, nil
-+	})
-+	server.AddTool(&mcpsdk.Tool{Name: "ok", InputSchema: map[string]any{"type": "object"}}, func(context.Context, *mcpsdk.CallToolRequest) (*mcpsdk.CallToolResult, error) {
-+		return &mcpsdk.CallToolResult{Content: []mcpsdk.Content{&mcpsdk.TextContent{Text: "fine"}}}, nil
-+	})
-+	client := mcpsdk.NewClient(&mcpsdk.Implementation{Name: "test", Version: "test"}, nil)
-+	st, ct := mcpsdk.NewInMemoryTransports()
-+	ss, err := server.Connect(ctx, st, nil)
++func TestReplayTypedAndDynamic(t *testing.T) {
++	data, err := os.ReadFile("../../internal/clusterreplay/testdata/tiny.ndjson")
 +	if err != nil {
 +		t.Fatal(err)
 +	}
-+	cs, err := client.Connect(ctx, ct, nil)
++	data = []byte(strings.Replace(string(data), `"context_hash":`, `"failed_groups":["broken.io"],"skipped":[{"resource":"secrets","error":"forbidden"}],"context_hash":`, 1))
++	data = []byte(strings.Replace(string(data), `{"groupVersion":"argoproj.io/v1alpha1"`, `{"groupVersion":"resource.k8s.io/v1","resources":[{"name":"resourceclaims","kind":"ResourceClaim","namespaced":true,"verbs":["create","delete","deletecollection","get","list","patch","update","watch"]}]},{"groupVersion":"argoproj.io/v1alpha1"`, 1))
++	path := filepath.Join(t.TempDir(), "capture.gz")
++	f, err := os.Create(path)
 +	if err != nil {
 +		t.Fatal(err)
 +	}
-+	t.Cleanup(func() { _ = cs.Close(); _ = ss.Wait() })
-+	for i := range 2 {
-+		res, err := cs.CallTool(ctx, &mcpsdk.CallToolParams{Name: "boom"})
-+		if err != nil {
-+			t.Fatalf("call %d: %v", i, err)
-+		}
-+		text := ""
-+		if len(res.Content) == 1 {
-+			if c, ok := res.Content[0].(*mcpsdk.TextContent); ok {
-+				text = c.Text
-+			}
-+		}
-+		if !res.IsError || !strings.Contains(text, "internal error") {
-+			t.Fatalf("call %d: result = %+v", i, res)
-+		}
++	z := gzip.NewWriter(f)
++	if _, err = z.Write(data); err != nil {
++		t.Fatal(err)
 +	}
-+	if calls != 2 {
-+		t.Fatalf("tool ran %d times, want 2", calls)
++	if err = z.Close(); err != nil {
++		t.Fatal(err)
 +	}
-+	if res, err := cs.CallTool(ctx, &mcpsdk.CallToolParams{Name: "ok"}); err != nil || res.IsError {
-+		t.Fatalf("a normal call after the panics: %+v, %v", res, err)
++	f.Close()
++	s, err := loadReplay(path)
++	if err != nil {
++		t.Fatal(err)
++	}
++	admin := startReplayAdmin(0, s)
++	defer admin.Close()
++	status := httptest.NewRecorder()
++	admin.Handler.ServeHTTP(status, httptest.NewRequest("GET", "/loadtest/status", nil))
++	var body struct {
++		FailedGroups []string `json:"failed_groups"`
++		Skipped      []struct {
++			Resource string
++			Error    string
++		} `json:"skipped"`
++	}
++	if err := json.Unmarshal(status.Body.Bytes(), &body); err != nil {
++		t.Fatal(err)
++	}
++	if len(body.FailedGroups) != 1 || body.FailedGroups[0] != "broken.io" || len(body.Skipped) != 1 || body.Skipped[0].Resource != "secrets" || body.Skipped[0].Error != "forbidden" {
++		t.Fatalf("capture gaps absent from status: %s", status.Body.String())
++	}
++	defer k8s.ResetTestState()
++	defer k8s.ResetTestDynamicState()
++	if err = k8s.InitTestResourceCache(s.client); err != nil {
++		t.Fatal(err)
++	}
++	if err = s.start(); err != nil {
++		t.Fatal(err)
++	}
++	if len(s.unsupported) != 0 {
++		t.Fatal(s.unsupported)
++	}
++	watched := map[string]bool{}
++	for _, gvr := range k8s.GetDynamicResourceCache().GetWatchedResources() {
++		watched[gvr.Group+"/"+gvr.Resource] = true
++	}
++	want := map[string]bool{"example.io/widgets": true, "argoproj.io/applications": true, "resource.k8s.io/resourceclaims": true}
++	if !reflect.DeepEqual(watched, want) {
++		t.Fatalf("dynamic informers = %v, want custom resources and DRA only", watched)
++	}
++	if got := k8s.GetResourceCache().GetKindObjectCounts()["Pod"]; got != 1 {
++		t.Fatalf("pods=%d", got)
++	}
++	gvr := schema.GroupVersionResource{Group: "example.io", Version: "v1", Resource: "widgets"}
++	items, err := k8s.GetDynamicResourceCache().List(gvr, "default")
++	if err != nil || len(items) != 2 {
++		t.Fatalf("widgets=%d err=%v", len(items), err)
++	}
++	discovery := k8s.GetResourceDiscovery()
++	if _, ok := discovery.GetGVRWithGroup("Widget", "example.io"); !ok {
++		t.Fatal("missing Widget discovery")
++	}
++	if err = discovery.Refresh(); err != nil {
++		t.Fatal(err)
++	}
++	if _, ok := discovery.GetGVRWithGroup("Widget", "example.io"); !ok {
++		t.Fatal("catalog lost on refresh")
++	}
++	session, err := k8s.BeginOwnershipRead(k8s.GetResourceCache())
++	if err != nil {
++		t.Fatal(err)
++	}
++	dependents := map[string]bool{}
++	for _, kind := range session.Catalog().DependentKinds() {
++		dependents[kind.GroupKind.Group+"/"+kind.GroupKind.Kind] = true
++	}
++	for _, want := range []string{"apps/ReplicaSet", "/Pod", "example.io/Widget"} {
++		if !dependents[want] {
++			t.Fatalf("ownership can't search %s for dependents: %v", want, dependents)
++		}
 +	}
 +}
 ```
 
-**File**: `internal/mcp/server.go` (modified, +2/-0)
+**File**: `docs/relationship-replay.md` (added, +156/-0)
 ```diff
-@@ -30,6 +30,8 @@ func newServer(includeWrites, includeExec bool, instructions string) *mcpsdk.Ser
- 		},
- 	)
- 
-+	server.AddReceivingMiddleware(recoverMiddleware)
+@@ -0,0 +1,156 @@
++# Relationship replay
 +
- 	// Repair recognisable argument-name mistakes before schema validation, and
- 	// report the accepted argument names when validation still fails. Every tool
- 	// schema is additionalProperties:false, so without this one wrong argument
-```
-
----
-
-### Incident Patch 2: `58462cf5` (2026-11-16)
-**Commit Message**: fix(ui): readable status banners in light mode (#2705)
-
-## Summary
-
-Status banners were hard to read in light mode. The banner at the top of
-a generic resource's drawer (any custom resource without a curated
-renderer) used raw Tailwind `-400` hues on a 10% tint: `text-yellow-400`
-on pale yellow reads at about 1.5:1, well under the 4.5:1 small text
-needs, so a degraded status like "Pending" nearly disappeared. And in
-every `AlertBanner`, the 12px message line that says *why* a resource is
-in its state used the variant's tint at 80% opacity, about 2.5–3.8:1 on
-the light backgrounds. Dark mode was fine, which is how both slipped
-through.
-
-## What changed
-
-- **The generic banner renders through the shared `AlertBanner`**, which
-carries light and dark pairs for each tone and is what DESIGN.md asks
-problem surfaces to use. Each health level maps straight to a variant:
-healthy → success, degraded → warning, **alert → the orange alert
-variant** (it used to fold into red, losing Radar's three-step degraded
-→ alert → unhealthy gradient), unhealthy → error, neutral and unknown →
-unknown. Icons stay the same except for alert, which shows AlertCircle
-instead of the XCircle it borrowed from unhe
-
-**File**: `packages/k8s-ui/src/components/resources/renderers/GenericRenderer.banner.test.tsx` (added, +42/-0)
-```diff
-@@ -0,0 +1,42 @@
-+import { describe, expect, it } from 'vitest'
-+import { renderToString } from 'react-dom/server'
-+import { GenericRenderer } from './GenericRenderer'
-+import { AlertBanner } from '../../ui/drawer-components'
++Capture once, run two testserver builds over that file, and compare their HTTP
++and MCP relationship readers. Replay never loads kubeconfig or contacts a
++cluster. The capture command is the only command below that uses a real cluster.
 +
-+const widget = (status: Record<string, unknown>) => ({
-+  apiVersion: 'example.com/v1', kind: 'Widget', metadata: { name: 'w' }, status,
-+})
++## Capture (operator-run)
 +
-+// The status banner uses the shared AlertBanner's light and dark pairs: a raw
-+// -400 hue reads at roughly 1.5:1 on a light tint.
-+describe('GenericRenderer status banner', () => {
-+  it.each([
-+    ['healthy', { conditions: [{ type: 'Ready', status: 'True' }] }, 'text-emerald-700'],
-+    ['degraded', { phase: 'Pending' }, 'text-amber-700'],
-+    ['unhealthy', { conditions: [{ type: 'Ready', status: 'False' }] }, 'text-red-700'],
-+  ])('%s uses theme-paired colors', (_, status, titleClass) => {
-+    const html = renderToString(<GenericRenderer data={widget(status)} />)
-+    const banner = html.slice(0, html.indexOf('</div></div></div>'))
-+    expect(banner).toContain(titleClass)
-+    expect(banner).not.toMatch(/text-(yellow|green|red|slate)-400/)
-+  })
++```sh
++go run ./cmd/clustercapture -context YOUR_CONTEXT -out /tmp/cluster.ndjson.gz
++```
 +
-+  it('keeps the detail line in neutral text, readable on every tint', () => {
-+    const html = renderToString(<GenericRenderer data={widget({ conditions: [{ type: 'Ready', status: 'False', reason: 'BackendDown', message: 'the backend is down' }] })} />)
-+    expect(html).toMatch(/<div class="[^"]*text-theme-text-secondary[^"]*">the backend is down</)
-+    expect(html).not.toMatch(/text-red-600\/80/)
-+  })
++Discovery covers every served group/version, including CRDs. Lists use a limit
++of 500 across all namespaces. Events, coordination leases and subresources are
++excluded. A resource whose list fails is skipped and recorded in the capture
++header (see below); a discovery failure or an interrupt fails the capture, and
++an incomplete capture is never published. The destination must not already
++exist. Capture uses list and discovery reads only, with a 30-second timeout per
++network request.
 +
-+  it('keeps every variant\'s message line neutral, alert included', () => {
-+    for (const variant of ['error', 'warning', 'info', 'success', 'alert'] as const) {
-+      const html = renderToString(<AlertBanner variant={variant} title="t" message="why" />)
-+      expect(html).toMatch(/<div class="[^"]*text-theme-text-secondary[^"]*">why</)
-+    }
-+  })
++The gzip contains a header with `captured_at`, SHA-256 `context_hash`, and
++`discovery.groups` / `discovery.resources`, followed by Kubernetes objects.
++Every version is retained. Subject comparison deduplicates versions by
++(group, kind, namespace, name); empty discovered kinds are still listed.
 +
-+  it('renders no detail line when the status has no message', () => {
-+    const html = renderToString(<GenericRenderer data={widget({ conditions: [{ type: 'Ready', status: 'True' }] })} />)
-+    const banner = html.slice(0, html.indexOf('</div></div></div>'))
-+    expect(banner).not.toContain('text-theme-text-secondary')
-+  })
-+})
-```
-
-**File**: `packages/k8s-ui/src/components/resources/renderers/GenericRenderer.conditions.test.tsx` (modified, +3/-3)
-```diff
-@@ -102,7 +102,7 @@ describe('GenericRenderer conditions', () => {
-     const html = render([cond('InvalidRolloutConfig', 'False'), cond('RolloutProgressing', 'False')], appSet)
-     expect(chipClass(html, 'InvalidRolloutConfig', 'False')).not.toContain('status-red')
-     expect(chipClass(html, 'RolloutProgressing', 'False')).not.toContain('status-red')
--    expect(html).not.toContain('bg-red-500/10')
-+    expect(html).not.toContain('bg-red-50 ')
-   })
- 
-   it("doesn't color a healthy service's Stopped=False red", () => {
-@@ -113,15 +113,15 @@ describe('GenericRenderer conditions', () => {
-   it('shows a deliberately stopped model as stopped, not failed', () => {
-     const html = render([cond('Stopped', 'True'), { type: 'Ready', status: 'False', reason: 'Stopped' }], stopRequested)
-     expect(html).toContain("This model is stopped and isn&#x27;t serving requests.")
--    expect(html).not.toContain('bg-red-500/10')
-+    expect(html).not.toContain('bg-red-50 ')
-     expect(chipClass(html, 'Ready', 'False')).not.toContain('status-red')
-   })
- 
-   it("doesn't call a failed resume stopped", () => {
-     const html = render([cond('Stopped', 'True'), { type: 'PredictorReady', status: 'False', reason: 'ReconcileFailed' }, { type: 'Ready', status: 'False', reason: 'Stopped' }], stopRequested)
-     expect(html).not.toContain('isn&#x27;t serving requests')
-     expect(html).toContain('ReconcileFailed')
--    expect(html).toContain('bg-red-500/10')
-+    expect(html).toContain('bg-red-50 ')
-     expect(chipClass(html, 'PredictorReady', 'False')).toContain('status-red')
-   })
- 
-```
-
-**File**: `packages/k8s-ui/src/components/resources/renderers/GenericRenderer.tsx` (modified, +27/-41)
-```diff
-@@ -1,7 +1,7 @@
- import { useState } from 'react'
- import { Info, CheckCircle, XCircle, AlertCircle, FileCode, AlertTriangle, Layers, Minus } from 'lucide-react'
- import { clsx } from 'clsx'
--import { Section, PropertyList, Property, isInvertedPolarityCondition } from '../../ui/drawer-components'
-+import { AlertBanner, Section, PropertyList, Property, isInvertedPolarityCondition } from '../../ui/drawer-components'
- import { Collapse, CollapseChevron, useDisclosure } from '../../ui/Collapse'
- import { getGenericResourceStatus } from '../generic-status'
- import { isApiGroup } from '../resource-utils-cnpg'
-@@ -40,32 +40,12 @@ export function GenericRenderer({ data }: GenericRendererProps) {
-       {acknowledgedPause && <CrossplanePauseNotice data={data} />}
-       {/* Health Status Banner (if determinable) */}
-       {healthStatus && (
--        <div className={clsx(
--          'mb-4 p-3 rounded-lg border flex items-center gap-3',
--          healthStatus.type === 'healthy' && 'bg-green-500/10 border-green-500/30',
--          healthStatus.type === 'degraded' && 'bg-yellow-500/10 border-yellow-500/30',
--          healthStatus.type === 'unhealthy' && 'bg-red-500/10 border-red-500/30',
--          healthStatus.type === 'unknown' && 'bg-slate-500/10 border-slate-500/30'
--        )}>
--          {healthStatus.type === 'healthy' && <CheckCircle className="w-5 h-5 text-green-400 shrink-0" />}
--          {healthStatus.type === 'degraded' && <AlertCircle className="w-5 h-5 text-yellow-400 shrink-0" />}
--          {healthStatus.type === 'unhealthy' && <XCircle className="w-5 h-5 text-red-400 shrink-0" />}
--          {healthStatus.type === 'unknown' && <Info className="w-5 h-5 text-slate-400 shrink-0" />}
--          <div>
--            <div className={clsx(
--              'text-sm font-medium',
--              healthStatus.type === 'healthy' && 'text-green-400',
--              healthStatus.type === 'degraded' && 'text-yellow-400',
--              healthStatus.type === 'unhealthy' && 'text-red-400',
--              healthStatus.type === 'unknown' && 'text-slate-400'
--            )}>
--              {healthStatus.label}
--            </div>
--            {healthStatus.message && (
--              <div className="text-xs text-theme-text-secondary mt-0.5">{healthStatus.message}</div>
--            )}
--          </div>
--        </div>
-+        <AlertBanner
-+          variant={BANNER_VARIANT[healthStatus.level]}
-+          icon={BANNER_ICON[healthStatus.level]}
-+          title={healthStatus.label}
-+          message={healthStatus.message}
-+        />
-       )}
- 
-       {/* Empty state hint */}
-@@ -139,36 +119,42 @@ export function GenericRenderer({ data }: GenericRendererProps) {
- // HEALTH STATUS DETECTION
- // ============================================================================
- 
--type HealthType = 'healthy' | 'degraded' | 'unhealthy' | 'unknown'
--
- interface HealthStatusResult {
--  type: HealthType
-+  level: HealthLevel
-   label: string
-   message?: string
- }
- 
--// This renderer's banner has four tones, while the shared derivation speaks the
--// full HealthLevel vocabulary. `alert` folds into unhealthy and `neutral` into
--// unknown — the banner has no distinct treatment for either.
--const BANNER_TYPE: Record<HealthLevel, HealthType> = {
--  healthy: 'healthy',
--  degraded: 'degraded',
--  alert: 'unhealthy',
--  unhealthy: 'unhealthy',
-+// The shared banner carries light and dark pairs for each tone. `alert` keeps
-+// its own orange step between degraded and unhealthy; `neutral` reads like
-+// unknown.
-+const BANNER_VARIANT = {
-+  healthy: 'success',
-+  degraded: 'warning',
-+  alert: 'alert',
-+  unhealthy: 'error',
-   neutral: 'unknown',
-   unknown: 'unknown',
-+} as const satisfies Record<HealthLevel, string>
-+const BANNER_ICON: Record<HealthLevel, typeof Info> = {
-+  healthy: CheckCircle,
-+  degraded: AlertCircle,
-+  alert: AlertCircle,
-+  unhealthy: XCircle,
-+  neutral: Info,
-+  unknown: Info,
- }
- 
- function getHealthStatus(resource: any): HealthStatusResult | null {
-   if (resource?.kind === 'InferenceService' && isApiGroup(resource?.apiVersion, 'serving.kserve.io') && isInferenceServiceStopRequested(resource)) {
-     const status = getInferenceServiceStatus(resource)
--    if (status.level === 'neutral') return { type: 'unknown', label: 'Stopped', message: "This model is stopped and isn't serving requests." }
--    return { type: BANNER_TYPE[status.level], label: status.text }
-+    if (status.level === 'neutral') return { level: 'neutral', label: 'Stopped', message: "This model is stopped and isn't serving requests." }
-+    return { level: status.level, label: status.text }
-   }
-   const acknowledgedPause = getCrossplanePauseState(resource) === 'acknowledged'
-   const derived = acknowledgedPause ? getCrossplaneIndependentStatus(resource) : getGenericResourceStatus(resource)
-   if (!derived || (acknowledgedPause && derived.tone === 'healthy')) return null
--  return { type: BANNER_TYPE[derived.tone], label: derived.text, message: 
-```
-
-**File**: `packages/k8s-ui/src/components/ui/drawer-components.tsx` (modified, +7/-5)
-```diff
-@@ -398,13 +398,15 @@ export function ConditionsSection({
- // ALERT BANNER
- // ============================================================================
- 
-+// The message line is 12px body text, so it uses the neutral secondary tone:
-+// the variants' tinted tones fall below 4.5:1 on their light backgrounds.
- const ALERT_COLORS = {
--  alert:   { bg: 'status-alert', border: '', title: '', message: '', list: '', bullet: '' },
-+  alert:   { bg: 'status-alert', border: '', title: '', message: 'text-theme-text-secondary', list: '', bullet: '' },
-   unknown: { bg: 'status-unknown', border: '', title: '', message: '', list: '', bullet: '' },
--  error:   { bg: 'bg-red-50 dark:bg-red-950/30', border: 'border-red-200 dark:border-red-800/30', title: 'text-red-700 dark:text-red-300', message: 'text-red-600/80 dark:text-red-300/70', list: 'text-red-600 dark:text-red-400', bullet: 'text-red-400/60 dark:text-red-400/50' },
--  warning: { bg: 'bg-amber-50 dark:bg-amber-950/30', border: 'border-amber-200 dark:border-amber-800/30', title: 'text-amber-700 dark:text-amber-300', message: 'text-amber-600/80 dark:text-amber-300/70', list: 'text-amber-600 dark:text-amber-400', bullet: 'text-amber-400/60 dark:text-amber-400/50' },
--  info:    { bg: 'bg-sky-50 dark:bg-sky-950/30', border: 'border-sky-200 dark:border-sky-800/30', title: 'text-sky-700 dark:text-sky-300', message: 'text-sky-600/80 dark:text-sky-300/70', list: 'text-sky-600 dark:text-sky-400', bullet: 'text-sky-400/60 dark:text-sky-400/50' },
--  success: { bg: 'bg-emerald-50 dark:bg-emerald-950/30', border: 'border-emerald-200 dark:border-emerald-800/30', title: 'text-emerald-700 dark:text-emerald-300', message: 'text-emerald-600/80 dark:text-emerald-300/70', list: 'text-emerald-600 dark:text-emerald-400', bullet: 'text-emerald-400/60 dark:text-emerald-400/50' },
-+  error:   { bg: 'bg-red-50 dark:bg-red-950/30', border: 'border-red-200 dark:border-red-800/30', title: 'text-red-700 dark:text-red-300', message: 'text-theme-text-secondary', list: 'text-red-600 dark:text-red-400', bullet: 'text-red-400/60 dark:text-red-400/50' },
-+  warning: { bg: 'bg-amber-50 dark:bg-amber-950/30', border: 'border-amber-200 dark:border-amber-800/30', title: 'text-amber-700 dark:text-amber-300', message: 'text-theme-text-secondary', list: 'text-amber-600 dark:text-amber-400', bullet: 'text-amber-400/60 dark:text-amber-400/50' },
-+  info:    { bg: 'bg-sky-50 dark:bg-sky-950/30', border: 'border-sky-200 dark:border-sky-800/30', title: 'text-sky-700 dark:text-sky-300', message: 'text-theme-text-secondary', list: 'text-sky-600 dark:text-sky-400', bullet: 'text-sky-400/60 dark:text-sky-400/50' },
-+  success: { bg: 'bg-emerald-50 dark:bg-emerald-950/30', border: 'border-emerald-200 dark:border-emerald-800/30', title: 'text-emerald-700 dark:text-emerald-300', message: 'text-theme-text-secondary', list: 'text-emerald-600 dark:text-emerald-400', bullet: 'text-emerald-400/60 dark:text-emerald-400/50' },
- } as const
- 
- const DEFAULT_ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
-```
-
----
-
-### Incident Patch 3: `b7e1536d` (2026-11-16)
-**Commit Message**: fix(traffic): show Data per protocol and label byte-only edges with their throughput (#2744)
-
-## Summary
-
-In Istio ambient, a sidecar or ingress client calling an ambient
-workload with no waypoint is reported twice: the calling proxy reports
-HTTP (request and response body bytes, request and error rates) and
-ztunnel reports the connection's TCP bytes. Radar added both into one
-Data figure, so that edge, its nodes and the connections table showed a
-number no proxy measured. #2733 kept both measurements and flagged the
-sum with a "Data may double-count" chip. This removes the sum instead:
-every Data figure on the map is per protocol, and bytes are never added
-across protocols.
-
-## What changed
-
-**Per-protocol bytes on each aggregate** (`pkg/traffic`).
-`AggregatedFlow` gains `bytesByProtocol`, keyed by each flow's protocol
-as the source emits it (`http`, `grpc`, `tcp`, `udp`, …), with every
-observed protocol present. Aggregation identity, rates, latency and L7
-voting are unchanged. `bytesSent`/`bytesRecv` stay on the wire as the
-cross-protocol sum for compatibility, documented as not to be shown as
-one figure when more than one protocol is present.
-
-**One edge, figures per protocol** 
-
-**File**: `docs/integrations.md` (modified, +2/-2)
-```diff
-@@ -852,10 +852,10 @@ permits the reference or has produced an artifact.
- 
- Service links accept short names in the rule's namespace or full `name.namespace.svc.<domain>` names. Radar reads a unique registry domain from standard observed Istiod Deployments' `--domain` argument, using Istio's `cluster.local` default when no override is observed. Conflicting or unresolved control-plane arguments leave FQDN links unresolved. External control planes and nonstandard launch configurations may therefore need additional domain discovery; arbitrary dotted hosts are not treated as local Services.
- 
--**Live Traffic:** the Traffic view reads Istio's standard Prometheus metrics: `istio_requests_total` (with its 5xx rate and request/response bytes) for HTTP and gRPC edges, and `istio_tcp_received_bytes_total` / `istio_tcp_sent_bytes_total` for TCP edges, as rates over the view's time range (5 minutes when it is under a minute). A rate needs two samples per series, so a range shorter than two scrape intervals shows no traffic; the map then says to choose a longer range. TCP edges appear whenever bytes move in the view's range, including on long-lived connections, and show data volume (byte rates × the window) with no request rate. Radar reads the receiving side's report: the destination sidecar (`reporter="destination"`) or, in ambient mode, the destination's waypoint proxy (`reporter="waypoint"`). It never adds the receiving and calling sides' reports together. In ambient mode:
-+**Live Traffic:** the Traffic view reads Istio's standard Prometheus metrics: `istio_requests_total` (with its 5xx rate and request/response bytes) for HTTP and gRPC edges, and `istio_tcp_received_bytes_total` / `istio_tcp_sent_bytes_total` for TCP edges, as rates over the view's time range (5 minutes when it is under a minute). A rate needs two samples per series, so a range shorter than two scrape intervals shows no traffic; the map then says to choose a longer range. TCP edges appear whenever bytes move in the view's range, including on long-lived connections, and show data volume (byte rates × the window) with no request rate; on the map, an edge with no request rate is labelled with its throughput per protocol (for example `TCP · 2.4 KB/s`); against an older Radar that sends no per-protocol breakdown those labels stay empty. Radar reads the receiving side's report: the destination sidecar (`reporter="destination"`) or, in ambient mode, the destination's waypoint proxy (`reporter="waypoint"`). It never adds the receiving and calling sides' reports together. In ambient mode:
- - Workloads behind a waypoint get HTTP and gRPC edges from the waypoint's metrics. ztunnel also reports the hops into and out of the waypoint. Radar recognizes waypoint Deployments by their labels, as Kiali does (`gateway.istio.io/managed=istio.io-mesh-controller`, or, without that label, a `gateway.networking.k8s.io/gateway-name` containing "waypoint"), and leaves those hops out, so the map draws client → server without the proxy in between. If Radar cannot list Deployments, it cannot recognize waypoints and the hops stay on the map.
- - A request into an ambient namespace (labeled `istio.io/dataplane-mode=ambient`) that no waypoint reported, such as an ingress gateway or sidecar calling a workload with no waypoint, is read from the calling proxy's report (`reporter="source"`), as Kiali does. Those figures are used only when the receiving side counted none of that client's requests to the same workload, Service and protocol in the view's time range. When it counted some, its figures are used, so requests that skipped the waypoint are not counted. Radar finds ambient namespaces from its Namespace cache; without it, these reports are not read and the ztunnel check below is off. The query names every ambient namespace and is sent in a POST body; when the namespaces are too many to fit Radar's 16 KB query limit (several hundred, depending on name length), Radar skips these reports and the map says so.
--- Traffic between ambient workloads without a waypoint has no L7 metrics. It appears as TCP edges from ztunnel. When a call's HTTP figures come from the calling proxy (no waypoint or sidecar received it) and ztunnel reports TCP between the same workloads, Data includes both the HTTP bytes and ztunnel's TCP bytes, and the map notes that these may count the same calls twice.
-+- Traffic between ambient workloads without a waypoint has no L7 metrics. It appears as TCP edges from ztunnel. When a call's HTTP figures come from the calling proxy (no waypoint or sidecar received it) and ztunnel reports TCP between the same workloads, Data shows HTTP payload bytes and ztunnel TCP connection bytes side by side by protocol. These measurements can describe the same calls and are never added together.
- - Prometheus has to scrape ztunnel and the waypoint proxies. When the view includes ambient traffic but Radar finds no ztunnel metrics (no `istio_build{component="ztunnel"}` series and no ztun
-```
-
-**File**: `internal/server/traffic_data_note_test.go` (removed, +0/-63)
-```diff
-@@ -1,63 +0,0 @@
--package server
--
--import (
--	"encoding/json"
--	"net/http"
--	"net/http/httptest"
--	"testing"
--
--	"github.com/skyhook-io/radar/pkg/traffic"
--)
--
--func TestTrafficPayloadDataNote(t *testing.T) {
--	for name, payload := range map[string]func(*traffic.FlowsResponse, []traffic.Flow) map[string]any{
--		"flows": func(response *traffic.FlowsResponse, flows []traffic.Flow) map[string]any {
--			return trafficFlowsPayload(response, flows, false)
--		},
--		"records": trafficRecordsPayload,
--	} {
--		t.Run(name, func(t *testing.T) {
--			flows := []traffic.Flow{
--				{Source: traffic.Endpoint{Namespace: "a"}},
--				{Source: traffic.Endpoint{Namespace: "b"}},
--			}
--			for _, tc := range []struct {
--				name       string
--				note       string
--				namespaces []string
--				source     []traffic.Flow
--				wantNote   bool
--			}{
--				{"carried through", "Reported bytes may overlap.", nil, flows, true},
--				{"all filtered away", "Reported bytes may overlap.", []string{"c"}, flows, false},
--				{"some remain", "Reported bytes may overlap.", []string{"a"}, flows, true},
--				{"source returned none", "Reported bytes may overlap.", nil, nil, true},
--				{"absent", "", nil, flows, false},
--			} {
--				t.Run(tc.name, func(t *testing.T) {
--					response := &traffic.FlowsResponse{Flows: tc.source, DataNote: tc.note}
--					s := &Server{}
--					r := httptest.NewRequest(http.MethodGet, "/", nil)
--					visible := s.visibleFlows(r, response.Flows, tc.namespaces, traffic.DefaultFlowOptions())
--					encoded, err := json.Marshal(payload(response, visible))
--					if err != nil {
--						t.Fatal(err)
--					}
--					var decoded map[string]any
--					if err := json.Unmarshal(encoded, &decoded); err != nil {
--						t.Fatal(err)
--					}
--					note, present := decoded["dataNote"]
--					if present != tc.wantNote || present && note != tc.note {
--						t.Errorf("dataNote = %v (present %v), want %q (present %v)", note, present, tc.note, tc.wantNote)
--					}
--					for _, field := range []string{"warning", "warningKind"} {
--						if _, present := decoded[field]; present {
--							t.Errorf("a data note must not set %s", field)
--						}
--					}
--				})
--			}
--		})
--	}
--}
-```
-
-**File**: `internal/server/traffic_handlers.go` (modified, +0/-8)
-```diff
-@@ -292,7 +292,6 @@ func trafficFlowsPayload(response *traffic.FlowsResponse, flows []traffic.Flow,
- 	}
- 	addFlowsCoverage(result, response)
- 	addFlowsWarning(result, response, flows)
--	addFlowsDataNote(result, response, flows)
- 	return result
- }
- 
-@@ -309,12 +308,6 @@ func addFlowsCoverage(result map[string]any, response *traffic.FlowsResponse) {
- 	}
- }
- 
--func addFlowsDataNote(result map[string]any, response *traffic.FlowsResponse, flows []traffic.Flow) {
--	if response.DataNote != "" && !(len(flows) == 0 && len(response.Flows) > 0) {
--		result["dataNote"] = response.DataNote
--	}
--}
--
- func addFlowsWarning(result map[string]any, response *traffic.FlowsResponse, flows []traffic.Flow) {
- 
- 	// A partial-data warning qualifies the flows it came with. If the namespace
-@@ -413,7 +406,6 @@ func trafficRecordsPayload(response *traffic.FlowsResponse, flows []traffic.Flow
- 	}
- 	addFlowsCoverage(result, response)
- 	addFlowsWarning(result, response, flows)
--	addFlowsDataNote(result, response, flows)
- 	return result
- }
- 
-```
-
-**File**: `internal/traffic/beyla_test.go` (modified, +30/-0)
-```diff
-@@ -1851,3 +1851,33 @@ func TestBeylaSource_GetFlows_FailedEnrichmentIsReportedNotZeroed(t *testing.T)
- 		})
- 	}
- }
++This is a frozen **recording**, not an atomic cross-resource apiserver snapshot:
++objects may change while capture lists different kinds/versions. Both replays
++nevertheless receive exactly the same recorded inputs.
 +
-+func TestBeylaSource_GetFlows_UnorientedProtocolBytes(t *testing.T) {
-+	src := &BeylaSource{k8sClient: fake.NewSimpleClientset()}
-+	src.queryFn = func(_ context.Context, query string) (*prom.QueryResult, error) {
-+		if !strings.Contains(query, `direction="unknown"`) {
-+			return emptyResult(), nil
-+		}
-+		return promResult("vector",
-+			promSeries(map[string]string{"k8s_src_owner_name": "client", "k8s_src_namespace": "demo", "k8s_dst_owner_name": "dns", "k8s_dst_namespace": "demo", "transport": "UDP"}, 10),
-+			promSeries(map[string]string{"k8s_src_owner_name": "dns", "k8s_src_namespace": "demo", "k8s_dst_owner_name": "client", "k8s_dst_namespace": "demo", "transport": "UDP"}, 25),
-+			promSeries(map[string]string{"k8s_src_owner_name": "client", "k8s_src_namespace": "demo", "k8s_dst_owner_name": "dns", "k8s_dst_namespace": "demo", "transport": "TCP"}, 4),
-+		), nil
-+	}
-+	resp, err := src.GetFlows(t.Context(), FlowOptions{})
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+	aggregated := AggregateFlows(resp.Flows)
-+	if len(resp.Flows) != 2 || len(aggregated) != 1 {
-+		t.Fatalf("flows=%+v, aggregates=%+v", resp.Flows, aggregated)
-+	}
-+	a := aggregated[0]
-+	if !a.DirectionUnknown || len(a.BytesByProtocol) != 2 {
-+		t.Fatalf("wrong conversation: %+v", a)
-+	}
-+	udp, tcp := a.BytesByProtocol["udp"], a.BytesByProtocol["tcp"]
-+	if udp.BytesSent != 10*defaultRateWindowSeconds || udp.BytesRecv != 25*defaultRateWindowSeconds || tcp.BytesSent != 4*defaultRateWindowSeconds || tcp.BytesRecv != 0 {
-+		t.Errorf("protocol buckets: %+v", a.BytesByProtocol)
-+	}
-+}
-```
-
-**File**: `internal/traffic/istio.go` (modified, +4/-26)
-```diff
-@@ -333,19 +333,11 @@ func (s *IstioSource) GetFlows(ctx context.Context, opts FlowOptions) (*FlowsRes
- 	httpCount := len(httpFlows)
- 	tcpFlows, tcpErr := []Flow(nil), errIstioTCPUnchecked
- 	ztunnelReported := false
--	byteOverlap := false
- 	if !scopes.tcpUnchecked {
- 		var reportedInto []string
--		var destinationTCP map[flowKey]bool
--		tcpFlows, reportedInto, destinationTCP, tcpErr = s.queryTCPFlows(ctx, opts, scopes.tcp)
-+		tcpFlows, reportedInto, tcpErr = s.queryTCPFlows(ctx, opts, scopes.tcp)
- 		ztunnelReported = slices.ContainsFunc(reportedInto, func(ns string) bool { return slices.Contains(ambientKnown, ns) })
- 		tcpFlows = withoutWaypointHops(tcpFlows, waypoints)
--		if tcpErr == nil {
--			byteOverlap = slices.ContainsFunc(httpFlows, func(f Flow) bool {
--				return f.BytesSent+f.BytesRecv > 0 && slices.Contains(ambientNamespaces, f.Destination.Namespace) &&
--					destinationTCP[workloadPairOf(f)] && !opts.Excludes(f) && opts.Match.Matches(f)
--			})
--		}
- 	}
- 	if tcpErr != nil {
- 		log.Printf("[istio] Error querying TCP flows (continuing with HTTP only): %v", tcpErr)
-@@ -378,9 +370,6 @@ func (s *IstioSource) GetFlows(ctx context.Context, opts FlowOptions) (*FlowsRes
- 			response.WarningKind = WarningTransient
- 		}
- 	}
--	if byteOverlap {
--		noteIstioByteOverlap(response)
--	}
- 	mismatch := ""
- 	switch {
- 	case len(httpFlows) == 0:
-@@ -611,12 +600,6 @@ func (s *IstioSource) queryHTTPSeriesRates(ctx context.Context, query string) (m
- 	return rates, nil
- }
- 
--const istioByteOverlapNote = "Data on some edges may count the same calls twice: when no waypoint receives a call into an ambient workload, Radar can show both the calling proxy's HTTP bytes and ztunnel's TCP bytes."
--
--func noteIstioByteOverlap(response *FlowsResponse) {
--	response.DataNote = istioByteOverlapNote
--}
--
- // queryHTTPFlows queries istio_requests_total for HTTP/gRPC traffic.
- // Response codes are aggregated (not split per-code) and a separate error query
- // provides 5xx error rates per series. Optional figures that cannot be read are
-@@ -726,8 +709,7 @@ func (s *IstioSource) queryHTTPFlows(ctx context.Context, opts FlowOptions, sc c
- // queryTCPFlows reads TCP traffic from istio_tcp_received_bytes_total and
- // istio_tcp_sent_bytes_total. reportedInto includes idle series: their presence
- // still shows the reporting proxy is scraped even when no bytes moved.
--// destinationTCP holds the workload pairs whose wire bytes may also cover HTTP.
--func (s *IstioSource) queryTCPFlows(ctx context.Context, opts FlowOptions, sc clusterScope) (flows []Flow, reportedInto []string, destinationTCP map[flowKey]bool, err error) {
-+func (s *IstioSource) queryTCPFlows(ctx context.Context, opts FlowOptions, sc clusterScope) (flows []Flow, reportedInto []string, err error) {
- 	w := rateWindowFor(opts.Since)
- 	const groupBy = "source_workload, source_workload_namespace, destination_workload, destination_workload_namespace, destination_service_name, reporter"
- 	type tcpSeriesKey struct {
-@@ -741,7 +723,7 @@ func (s *IstioSource) queryTCPFlows(ctx context.Context, opts FlowOptions, sc cl
- 	for direction, metric := range []string{istioTCPMetric, "istio_tcp_sent_bytes_total"} {
- 		result, err := s.queryFn(ctx, istioRateQuery(groupBy, metric, istioReporterSelector, opts.Namespace, sc, w))
- 		if err != nil {
--			return nil, nil, nil, err
-+			return nil, nil, err
- 		}
- 		for _, series := range result.Series {
- 			reportedInto = append(reportedInto, series.Labels["destination_workload_namespace"])
-@@ -758,13 +740,9 @@ func (s *IstioSource) queryTCPFlows(ctx context.Context, opts FlowOptions, sc cl
- 		}
- 	}
- 
--	destinationTCP = make(map[flowKey]bool)
- 	flows = make([]Flow, 0, len(keys))
- 	for _, key := range keys {
- 		volume := volumes[key]
--		if key.reporter == "destination" {
--			destinationTCP[key.flowKey] = true
--		}
- 		flow := Flow{
- 			Source: Endpoint{
- 				Name: key.srcWorkload, Namespace: key.srcNs,
-@@ -795,7 +773,7 @@ func (s *IstioSource) queryTCPFlows(ctx context.Context, opts FlowOptions, sc cl
- 		}
- 		flows = append(flows, flow)
- 	}
--	return flows, reportedInto, destinationTCP, nil
-+	return flows, reportedInto, nil
- }
- 
- // StreamFlows returns a channel of flows for real-time updates
-```
-
-**File**: `internal/traffic/istio_ambient.go` (modified, +0/-10)
-```diff
-@@ -108,13 +108,3 @@ func withoutWaypointHops(flows []Flow, waypoints map[istioWorkload]bool) []Flow
- 	}
- 	return kept
- }
--
--// workloadPairOf keys a flow by its workloads alone. ztunnel infers the Service
--// of plaintext traffic from the target port, so its label can differ from the
--// calling proxy's for the same calls, and edges are merged by workloads anyway.
--func workloadPairOf(f Flow) flowKey {
--	return flowKey{
--		srcWorkload: f.Source.Workload, srcNs: f.Source.Namespace,
--		dstWorkload: f.Destination.Workload, dstNs: f.Destination.Namespace,
--	}
--}
-```
-
-**File**: `internal/traffic/istio_tcp_test.go` (modified, +18/-32)
-```diff
-@@ -8,6 +8,7 @@ import (
- 	"time"
- 
- 	"github.com/skyhook-io/radar/pkg/prom"
-+	"github.com/skyhook-io/radar/pkg/traffic"
- )
- 
- func TestIstioTCPByteActivity(t *testing.T) {
-@@ -68,22 +69,22 @@ func TestIstioAmbientHTTPByteOverlap(t *testing.T) {
- 	for _, tc := range []struct {
- 		name, dstNs, tcpService, tcpSource, tcpSourceNs, tcpDestination string
- 		httpReporter, tcpReporter                                       string
--		zeroHTTPBytes, wantOverlap, missingErrors, failTCP              bool
-+		zeroHTTPBytes, missingErrors, failTCP                           bool
- 		excludeClient, selectOther                                      bool
- 	}{
--		{name: "ambient same Service", wantOverlap: true},
-+		{name: "ambient same Service"},
- 		{name: "waypoint same Service", httpReporter: "waypoint", tcpReporter: "waypoint"},
- 		{name: "sidecar same Service", dstNs: "side", httpReporter: "destination"},
--		{name: "sidecar in an ambient namespace, same Service", httpReporter: "destination", wantOverlap: true},
--		{name: "ambient other Service", tcpService: "db", wantOverlap: true},
--		{name: "ambient unknown Service", tcpService: "unknown", wantOverlap: true},
-+		{name: "sidecar in an ambient namespace, same Service", httpReporter: "destination"},
-+		{name: "ambient other Service", tcpService: "db"},
-+		{name: "ambient unknown Service", tcpService: "unknown"},
- 		{name: "ambient pair excluded from the view", excludeClient: true},
- 		{name: "ambient pair not in the selection", selectOther: true},
- 		{name: "ambient other source", tcpSource: "other"},
- 		{name: "ambient other source namespace", tcpSourceNs: "other"},
- 		{name: "ambient other destination", tcpDestination: "other"},
- 		{name: "ambient zero HTTP bytes", zeroHTTPBytes: true},
--		{name: "ambient missing errors", missingErrors: true, wantOverlap: true},
-+		{name: "ambient missing errors", missingErrors: true},
- 		{name: "ambient failed TCP read", failTCP: true},
- 	} {
- 		t.Run(tc.name, func(t *testing.T) {
-@@ -170,6 +171,14 @@ func TestIstioAmbientHTTPByteOverlap(t *testing.T) {
- 			}
- 			var aggregateSent, aggregateRecv, recordsSent, recordsRecv int64
- 			for _, a := range AggregateFlows(resp.Flows) {
-+				for _, f := range resp.Flows {
-+					if f.Source.Name == a.Source.Name && f.Source.Namespace == a.Source.Namespace && f.Destination.Name == a.Destination.Name && f.Destination.Namespace == a.Destination.Namespace {
-+						want := traffic.ProtocolBytes{BytesSent: f.BytesSent, BytesRecv: f.BytesRecv}
-+						if got := a.BytesByProtocol[f.Protocol]; got != want {
-+							t.Errorf("%s bucket = %+v, want %+v", f.Protocol, got, want)
-+						}
-+					}
-+				}
- 				aggregateSent += a.BytesSent
- 				aggregateRecv += a.BytesRecv
- 				match := FlowMatch{Pairs: []EndpointPair{{
-@@ -187,13 +196,6 @@ func TestIstioAmbientHTTPByteOverlap(t *testing.T) {
- 			if aggregateSent != wantTCPSent+wantHTTPSent || aggregateRecv != wantTCPRecv+wantHTTPRecv || recordsSent != aggregateSent || recordsRecv != aggregateRecv {
- 				t.Errorf("aggregate bytes %d/%d, records %d/%d; want %d/%d", aggregateSent, aggregateRecv, recordsSent, recordsRecv, wantTCPSent+wantHTTPSent, wantTCPRecv+wantHTTPRecv)
- 			}
--			wantNote := ""
--			if tc.wantOverlap {
--				wantNote = istioByteOverlapNote
--			}
--			if resp.DataNote != wantNote {
--				t.Errorf("data note = %q, want %q", resp.DataNote, wantNote)
--			}
- 			wantKind := ""
- 			if tc.missingErrors {
- 				wantKind = WarningPartial
-@@ -220,22 +222,6 @@ func TestIstioAmbientHTTPByteOverlap(t *testing.T) {
- 	}
- }
- 
--func TestIstioByteOverlapPreservesWarning(t *testing.T) {
--	for _, kind := range []string{"", WarningPartial, WarningTransient, WarningIncomplete, WarningCluster} {
--		t.Run(kind, func(t *testing.T) {
--			const warning = "Istio metrics are incomplete: 5xx error rates could not be read."
--			response := &FlowsResponse{Warning: warning, WarningKind: kind}
--			noteIstioByteOverlap(response)
--			if response.DataNote != istioByteOverlapNote {
--				t.Errorf("data note = %q, want %q", response.DataNote, istioByteOverlapNote)
--			}
--			if response.Warning != warning || response.WarningKind != kind {
--				t.Errorf("warning = %q (%s), want unchanged %q (%s)", response.Warning, response.WarningKind, warning, kind)
--			}
--		})
--	}
--}
--
- func TestIstioTCPJoinsDirectionalSeriesByReporter(t *testing.T) {
- 	raw := []istioRawSeries{
- 		istioSeries(istioTCPMetric, "destination", "side", "curl", "amb", "httpbin", "", 13),
-@@ -244,12 +230,12 @@ func TestIstioTCPJoinsDirectionalSeriesByReporter(t *testing.T) {
- 		istioSeries("istio_tcp_sent_bytes_total", "waypoint", "side", "curl", "amb", "httpbin", "", 3),
- 	}
- 	s := newTestIstio(fakeIstioProm(raw, nil))
--	flows, _, destinationTCP, err := s.queryTCPFlows(t.Context(), DefaultFlowOptions(), clusterScope{})
-+	flows, _, err := s.queryTCPFlows(t.Context(), DefaultFlowOptions(), clusterScope{})
- 	if err != nil {
- 		t.Fatal(err)
- 	}
--	if len(flows) != 2 || len(destinationTCP) != 1 {
--		t.Fatalf("want two reporter flows and on
-```
-
-**File**: `packages/k8s-ui/src/types/core.ts` (modified, +2/-5)
-```diff
-@@ -1693,6 +1693,8 @@ export interface AggregatedFlow {
-   protocol: string
-   port: number
-   flowCount: number
-+  bytesByProtocol?: Record<string, { bytesSent: number; bytesRecv: number }>
-+  /** Cross-protocol sums kept for compatibility; display the breakdown when present. */
-   bytesSent: number
-   bytesRecv: number
-   connections: number
-@@ -1806,10 +1808,6 @@ export interface TrafficFlowsResponse {
-   /** Set when the warning includes a reason tied to keeping the map to this
-    *  cluster in a shared metrics store, so the view links to how that works. */
-   warningClusterScope?: boolean
--  /** How the Data (byte) figures were measured, when that needs saying: for
--   *  example two reports that may cover the same calls. Not a warning: show it
--   *  quietly and never refetch for it. */
--  dataNote?: string
- }
- 
- export type TrafficWarningKind = 'transient' | 'partial' | 'incomplete' | 'cluster'
-@@ -1829,7 +1827,6 @@ export interface TrafficRecordsResponse {
-   flowLimit?: number
-   warning?: string
-   warningKind?: TrafficWarningKind
--  dataNote?: string
- }
- 
- // Wizard state for traffic setup
++## Build old and new
++
++Build the testserver of both revisions from commits that contain this harness,
++plus `reldiff` from either:
++
++```sh
++(cd OLD_TREE && go build -o /tmp/radar-old-testserver ./cmd/testserver)
++(cd NEW_TREE && go build -o /tmp/radar-new-testserver ./cmd/testserver)
++go build -o /tmp/reldiff ./cmd/reldiff
++```
++
++## Replay and compare
++
++```sh
++/tmp/radar-old-testserver -replay /tmp/cluster.ndjson.gz -port 9381 -admin-port 9382 > /tmp/radar-old.log 2>&1 &
++OLD_PID=$!
++/tmp/radar-new-testserver -replay /tmp/cluster.ndjson.gz -port 9383 -admin-port 9384 > /tmp/radar-new.log 2>&1 &
++NEW_PID=$!
++/tmp/reldiff -a http://127.0.0.1:9381 -b http://127.0.0.1:9383 \
++  -capture /tmp/cluster.ndjson.gz -out /tmp/relationship-diff.json
++kill "$OLD_PID" "$NEW_PID"
++```
++
++Readiness is `GET /loadtest/status` on the admin listener (default main port+1).
++Reldiff polls it for up to 30 seconds. Override custom admin locations with
++`-ready-a URL -ready-b URL`. Readiness includes unsupported resources. Built-in
++kinds with a typed informer are served by it, as in Radar. Custom resources and
++`resource.k8s.io` are synced before the server reports ready; a captured kind
++without a watch verb stays in discovery and the fake tracker and is reported as
++unsupported. Other built-in kinds (CustomResourceDefinitions, for example)
++start watching when first requested, as in Radar, and until then ownership
++reports them as not collected. Start both servers fresh for every comparison,
++so both sides see the same request sequence.
++
++Each subject exercises resource GET `relationships`, REST
++`/api/ai/neighborhood`, REST AI resource context, and MCP `get_resource` /
++`get_neighborhood` through JSON-RPC `tools/call`. There is no separate non-AI
++REST neighborhood route in today's server. MCP is mounted read-only at `/mcp`.
++Reldiff also reads `/api/applications`, each kind's `include=summary` list, and
++every captured Argo Application / Flux Kustomization / HelmRelease GitOps tree.
++`-max-per-kind N` caps subject readers per group/kind; trees and list readers
++remain exhaustive. Group query parameters disambiguate colliding kind names.
++
++The JSON groups deltas by reader, JSON-pointer field and subject group/kind,
++with full counts and at most five examples. Reference/object sets are sorted;
++ordered scalar arrays remain ordered. Normalization drops the explicit volatile
++key set in `cmd/reldiff/main.go` (timestamps, ages, durations, request IDs and
++generation/resource-version counters). Other content is retained, including
++errors. Failures are recorded independently on both sides; **zero deltas with
++failed calls is not full coverage**. Inspect `failures` and readiness's
++`unsupported` arrays before claiming parity. A missing endpoint is a failed
++reader call, not a silently skipped reader.
++
++Latency is one timed call per reader/subject/side, reported as median/p95 by
++reader and group/kind, including errors. Side order alternates to distribute
++cache/load bias. Small captures do not support meaningful p95 claims. This is
++an inexpensive comparison, not an isolated benchmark. Successful report writing
++returns exit zero even when deltas or reader failures exist; inspect the report.
++Responses over 64 MiB fail explicitly.
++
++## Local fixture
++
++```sh
++gzip -c internal/clusterreplay/testdata/tiny.ndjson > /tmp/tiny.ndjson.gz
++go build -o /tmp/replay-testserver ./cmd/testserver
++# Use the replay/diff commands above with this binary on both sides.
++```
++
++The fixture has a Deployment → ReplicaSet → Pod, Service, Node, Namespace,
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2760** (2026-11-17): Serve built-in kinds through discovery in census mode (@nadaverell)
 - **PR #2747** (2026-11-16): test(traffic): make the layout-engine tests independent of machine load (@nadaverell)
 - **PR #2746** (2026-11-16): Issue and check cards: the severity rail spans the open card (@nadaverell)
 - **PR #2745** (2026-11-16): Recover panics in MCP request handlers (@nadaverell)
 - **PR #2744** (2026-11-16): fix(traffic): show Data per protocol and label byte-only edges with their throughput (@nadaverell)
 - **PR #2743** (2026-11-16): Return 404 for missing assets, serve ranges uncompressed, and always declare Vary (@nadaverell)
-- **PR #2742** (2026-11-16): Let browsers keep Radar's fingerprinted assets between page loads (@nadaverell)
 
 ---
 
@@ -3287,53 +4595,59 @@ one figure when more than one protocol is present.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Recover panics in MCP request handlers
+## X. Serve built-in kinds through discovery in census mode
 
 **RULE**:
-When implementing operations in `internal/mcp/recover.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in skyhook-io/radar. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `cmd/testserver/census_discovery.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in skyhook-io/radar. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c8f387b4`: Recover panics in MCP request handlers. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1a0f7e1e`: Serve built-in kinds through discovery in census mode. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/mcp/recover.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cmd/testserver/census_discovery.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-package mcp
+package main
 
 import (
-	"context"
-	"log"
-	"runtime/debug"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/client-go/kubernetes/fake"
 
-	"github.com/modelcontextprotocol/go-sdk/jsonrpc"
-	mcpsdk "github.com/modelcontextprotocol/go-sdk/mcp"
+	"github.com/skyhook-io/radar/internal/k8s"
+	"github.com/skyhook-io/radar/pkg/resourceid"
 )
 
-// recoverMiddleware turns a panic in a request handler into a failed request.
-// The SDK runs handlers in their own goroutines without recovering, so a panic
-// in any tool would otherwise end the whole Radar process; the REST routes
-// recover theirs. A tool call reports the failure as a tool error, which is
-// what an agent can act on; other methods return a JSON-RPC internal error.
-// Goroutines a handler starts itself are outside this and must recover their own.
-func recoverMiddleware(next mcpsdk.MethodHandler) mcpsdk.MethodHandler {
-	return func(ctx context.Context, method string, req mcpsdk.Request) (result mcpsdk.Result, err error) {
-		defer func() {
-			rec := recover()
-			if rec == nil {
-				return
-			}
-			name := method
-			if call, ok := req.(*mcpsdk.CallToolRequest); ok && call.Params != nil {
-				name = method + " " + call.Params.Name
-			}
-			log.Printf("[mcp] panic in %s: %v\n%s", name, rec, debug.Stack())
-			if method == "tools/call" {
-				result = &mcpsdk.CallToolResult{
-					IsError: true,
-					Content: [
+// installCensusDiscovery serves the built-in kinds through discovery, as a
+// real API server does. A census fixture seeds typed objects only; without a
+// discovery catalog, readers that resolve kinds through discovery have nothing
+// to resolve against.
+func installCensusDiscovery(client *fake.Clientset) error {
+	lists := map[string]*metav1.APIResourceList{}
+	var order []string
+	for _, b := range resourceid.Builtins {
+		if b.Version == "" {
+			continue
+		}
+		gv := b.Version
+		if b.Group != "" {
+			gv = b.Group + "/" + b.Version
+		}
+		l, ok := lists[gv]
+		if !ok {
+			l = &metav1.APIResourceList{GroupVersion: gv}
+			lists[gv] = l
+			order = append(order, gv)
+		}
+		l.APIResources = append(l.APIResources, metav1.APIResource{
+			Name: b.Resource, Kind: b.Kind, Group: b.Group, Version: b.Version, Namespaced: b.Namespaced,
+			Verbs: metav1.Verbs{"create", "delete", "deletecollection", "get", "list", "patch", "update", "watch"},
+		})
+	}
+	client.Resources = nil
+	for _, gv := range order {
+		
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -3343,4 +4657,4 @@ func recoverMiddleware(next mcpsdk.MethodHandler) mcpsdk.MethodHandler {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c8f387b4` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1a0f7e1e` are properly handled with clean fallback behavior.

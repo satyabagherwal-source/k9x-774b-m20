@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-18T01:39:15.331Z",
-  "total_records": 1737,
+  "last_updated": "2026-11-18T01:58:09.344Z",
+  "total_records": 1739,
   "domains": {
     "A": {
       "total": 11,
@@ -48,7 +48,7 @@
       ]
     },
     "D": {
-      "total": 759,
+      "total": 761,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -808,7 +808,9 @@
         "domain_intelligence-research-knowledge-intelligence-hf-nvidia-nemotron-3-diarization-learnings-core-",
         "domain_intelligence-research-knowledge-intelligence-lightricks-ltx-2-5-core-invariants",
         "domain_intelligence-research-knowledge-intelligence-hf-lightricks-ltx-2-5-learnings-core-invariants",
-        "DOM-D-B990E946"
+        "DOM-D-B990E946",
+        "domain_intelligence-research-knowledge-intelligence-prism-ml-ternary-bonsai-2-27b-gguf-core-invarian",
+        "domain_intelligence-research-knowledge-intelligence-hf-prism-ml-ternary-bonsai-2-27b-gguf-learnings-"
       ]
     },
     "E": {
@@ -14660,8 +14662,8 @@
       "title": "Architecture Intelligence: skyhook-io/radar Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-skyhook-io-radar-architecture-intelligence-skyhook-io-radar-core-invariants.md",
       "repository": "skyhook-io/radar",
-      "content_hash": "47c48101b59577053d7e2a1b30077593136ad5c99409ee3abe54bbbbf5bcd94d",
-      "created_at": "2026-11-17T03:26:17.235Z"
+      "content_hash": "813a3fbd8af521ad1150eea3579da36ba41a5cf91b9033f04b16a89daf5fde04",
+      "created_at": "2026-11-18T01:58:04.829Z"
     },
     "DOM-D-694FEEFE": {
       "record_id": "DOM-D-694FEEFE",
@@ -14771,8 +14773,8 @@
       "title": "Architecture Intelligence: skyhook-io-radar-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-skyhook-io-radar-learnings-architecture-intelligence-skyhook-io-radar-learnings-.md",
       "repository": "skyhook-io-radar-learnings",
-      "content_hash": "60ea73538a33be07b0acd31b8e4f91c472159d392c8de823fdb710554d1d7c4a",
-      "created_at": "2026-11-17T03:26:28.110Z"
+      "content_hash": "ef83d19be169ee6be16fe4913f222adda604fd4198c0727577b2fdb680e7c063",
+      "created_at": "2026-11-18T01:58:09.344Z"
     },
     "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-vl-8b-instruct-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-vl-8b-instruct-core-invariants",
@@ -17589,8 +17591,8 @@
       "title": "Quality & Verification Intelligence: Automattic/harper Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-automattic-harper-quality-verification-intelligence-automattic-harper-core-invar.md",
       "repository": "Automattic/harper",
-      "content_hash": "05d8154c413bb116b603445afb5576513320436661f2e03e9efc69382fc8c888",
-      "created_at": "2026-11-16T18:46:44.164Z"
+      "content_hash": "979a28cd7119856e6e1350799c4430289e2a9d11b30a0cbe6bf59dca20163696",
+      "created_at": "2026-11-18T01:57:56.561Z"
     },
     "domain_intelligence-content-information-intelligence-kotest-kotest-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-kotest-kotest-core-invariants",
@@ -17616,8 +17618,8 @@
       "title": "Quality & Verification Intelligence: automattic-harper-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-automattic-harper-learnings-quality-verification-intelligence-automattic-harper-.md",
       "repository": "automattic-harper-learnings",
-      "content_hash": "20c0574cd878fbcaaa4ef80a04802588c7980c1799881b6b8d08067938b01165",
-      "created_at": "2026-11-16T18:46:58.623Z"
+      "content_hash": "d8e0d2052b944aefd1616a337ee6b5760e1304b6dc80a6b28a2e379c8301df16",
+      "created_at": "2026-11-18T01:58:08.168Z"
     },
     "DOM-D-04705777": {
       "record_id": "DOM-D-04705777",
@@ -29214,6 +29216,24 @@
       "confidence": 0.6,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-18T01:39:14.943Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-prism-ml-ternary-bonsai-2-27b-gguf-core-invarian": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-prism-ml-ternary-bonsai-2-27b-gguf-core-invarian",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: prism-ml/Ternary-Bonsai-2-27B-gguf Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-prism-ml-ternary-bonsai-2-27b-gguf-research-knowledge-intelligence-prism-ml-t.md",
+      "repository": "prism-ml/Ternary-Bonsai-2-27B-gguf",
+      "content_hash": "3347b7340e55141f08c8b72710770a3cc42b4c75606317fd12d5b5bfca4e32a5",
+      "created_at": "2026-11-18T01:57:58.793Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-prism-ml-ternary-bonsai-2-27b-gguf-learnings-": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-prism-ml-ternary-bonsai-2-27b-gguf-learnings-",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-prism-ml-ternary-bonsai-2-27b-gguf-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-prism-ml-ternary-bonsai-2-27b-gguf-learnings-research-knowledge-intelligence-.md",
+      "repository": "hf-prism-ml-ternary-bonsai-2-27b-gguf-learnings",
+      "content_hash": "37813d0e9c0270920fba94420b3f292d9ae3037cc13a98ec612de73af3b69ec8",
+      "created_at": "2026-11-18T01:58:08.611Z"
     }
   }
 }

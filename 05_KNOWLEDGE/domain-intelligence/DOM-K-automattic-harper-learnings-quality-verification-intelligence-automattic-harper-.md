@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-16T18:46:58.308Z",
+  "timestamp": "2026-11-18T01:58:07.925Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-automattic-harper-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [automattic-harper-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-16T18:46:58.308Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-18T01:58:07.925Z`  
 > **Learning ID**: `LEARN-EVO-automattic-harper-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain K (Quality & Verification Intelligence)
-- **Secondary Corroborating Domains**: D (Research & Knowledge Intelligence), G (Architecture Intelligence), H (Technical Construction Intelligence), F (Design Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 73%
+- **Secondary Corroborating Domains**: D (Research & Knowledge Intelligence), G (Architecture Intelligence), F (Design Intelligence), H (Technical Construction Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 52%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from automattic-harper-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/automattic-harper-learnings.md`  
 > **Source**: github ([https://github.com/Automattic/harper](https://github.com/Automattic/harper))  
-> **Source Version**: `a4b0e5b7`  
+> **Source Version**: `1d972352`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-16T18:46:42.459Z  
+> **Timestamp**: 2026-11-18T01:57:55.309Z  
 > **Learning ID**: `learn-github-automattic-harper`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/automattic-harper-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Automattic/harper](https://github.com/Automattic/harper))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T18:46:40.689Z  
+> **Harvest Timestamp**: 2026-11-18T01:57:55.165Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Offline, privacy-first grammar checker. Fast, open-source, Rust-powered
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 17747 stars
+- **Stars / Engagement**: 17825 stars
 
 ---
 
@@ -1457,625 +1457,705 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a4b0e5b7` (2026-11-16)
-**Commit Message**: test(chrome-ext): fix the most common flaky extension tests (#4943)
+### Incident Patch 1: `1d972352` (2026-11-17)
+**Commit Message**: fix(components): darken background letters beneath text in dark mode (#4988)
 
-* test(chrome-ext): wait for the caret to settle before keys
-
-Rich-text editors can lag behind the browser's caret. Slate in Firefox,
-for example, applies inserted text and then briefly puts the caret back
-where its own selection still thinks it is. A key pressed in that window
-lands in the wrong place. A trace of a failed CI run showed Enter
-splitting a line at its start, which scrambled the three lines of
-"Multiple suggestions and undo".
-
-The same race explains most failures of "Can apply basic suggestion"
-in the four weeks to 12 November: 16 in Firefox ProseMirror ("This is a
-est") and 18 in Chrome Lexical and ProseMirror ("This is  test"). In
-both, the arrow keys ran before the editor had settled the caret after
-the replacement, so Backspace deleted the wrong character.
-
-The new waitForCaretAfter helper waits until the caret has stayed
-directly after some text for 100 ms. replaceEditorContent uses it
-before each line break, and the basic suggestion test uses it before
-the arrow keys and before Backspace. That still checks that the caret
-lands after the replacement, without racing the editor. The single
-animati
-
-**File**: `justfile` (modified, +4/-7)
+**File**: `packages/components/src/lib/FloatingLettersSlideDeck.svelte` (modified, +22/-12)
 ```diff
-@@ -351,13 +351,10 @@ test-firefox-plugin: build-firefox-plugin
-   cd "{{justfile_directory()}}/packages/chrome-plugin"
-   pnpm playwright install
- 
--  # For environments without displays like CI servers or containers
--  if [[ "$(uname)" == "Linux" ]]; then
--    env -u WAYLAND_DISPLAY XDG_SESSION_TYPE=x11 \
--    xvfb-run --auto-servernum pnpm test --project firefox 
--  else
--    pnpm test --project firefox 
--  fi
-+  # Run Firefox headless: `pnpm test` passes `--headed`, which Chromium needs for extensions
-+  # but Firefox doesn't. On a virtual display every headed window opens in the same place,
-+  # and Firefox stops drawing frames for windows that are covered, which stalls the tests.
-+  pnpm exec playwright test --project firefox
- 
- # Run VSCode plugin unit and integration tests.
- alias test-vscode-extension := test-vscode
-```
-
-**File**: `packages/chrome-plugin/tests/testUtils.ts` (modified, +65/-5)
-```diff
-@@ -99,11 +99,71 @@ export async function replaceEditorContent(editorEl: Locator, text: string, soft
- 			await editorEl.page().keyboard.insertText(lines[i]);
- 		}
- 		if (i < lines.length - 1) {
-+			if (lines[i]) {
-+				// Some editors leave the caret behind inserted text, so put it at the end of the line.
-+				// On macOS, End scrolls the page instead.
-+				await editorEl.press(process.platform === 'darwin' ? 'Meta+ArrowRight' : 'End');
-+				await waitForCaretAfter(editorEl, lines[i]);
-+			}
- 			await editorEl.press(breakKey);
- 		}
- 	}
+@@ -15,7 +15,7 @@ interface Sprite {
+ 	height: number;
  }
  
-+/**
-+ * Wait until the caret has stayed directly after `text` for `quietMs`.
-+ *
-+ * Some editors (Slate in Firefox, for example) apply inserted text before their own selection
-+ * catches up, and can leave the caret where it was. A key pressed before the caret settles lands
-+ * in the wrong place: a break key splits the line at the old position and scrambles the content.
-+ */
-+async function waitForCaretAfter(editorEl: Locator, text: string, quietMs = 100) {
-+	let settledSince: number | undefined;
-+
-+	await expect
-+		.poll(
-+			async () => {
-+				const caretFollowsText = await editorEl.evaluate((el, text) => {
-+					if (el instanceof HTMLTextAreaElement || el instanceof HTMLInputElement) {
-+						return (
-+							el.selectionStart === el.selectionEnd &&
-+							el.value.slice(0, el.selectionStart ?? 0).endsWith(text)
-+						);
-+					}
-+					const selection = el.ownerDocument.getSelection();
-+					if (
-+						!selection?.isCollapsed ||
-+						!selection.focusNode ||
-+						!el.contains(selection.focusNode)
-+					) {
-+						return false;
-+					}
-+					const beforeCaret = el.ownerDocument.createRange();
-+					beforeCaret.setStart(el, 0);
-+					beforeCaret.setEnd(selection.focusNode, selection.focusOffset);
-+					// Editors such as Slate pad empty nodes with zero-width characters.
-+					return beforeCaret
-+						.toString()
-+						.replace(/[\uFEFF\u200B]/g, '')
-+						.endsWith(text);
-+				}, text);
-+
-+				const now = performance.now();
-+				if (!caretFollowsText) {
-+					settledSince = undefined;
-+					return false;
-+				}
-+				settledSince ??= now;
-+				return now - settledSince >= quietMs;
-+			},
-+			{
-+				message: `The caret should stay after "${text}" for ${quietMs} ms`,
-+				intervals: [10],
-+			},
-+		)
-+		.toBe(true);
-+}
-+
- /** Locate replacement rows (including explicit empty states) inside Harper's suggestion popup. */
- export function getHarperSuggestionRows(page: Page): Locator {
- 	return page.locator('.harper-container').getByRole('menuitem');
-@@ -320,14 +380,14 @@ export async function testBasicSuggestion(
- 		await assertEditorText(editor, 'This is a test');
- 		await expect(editor).toBeFocused();
+-/** One depth-sorted particle and its cached gray, white, and introductory blurred glyphs. */
++/** One depth-sorted particle and its cached gray, text-blended, and introductory blurred glyphs. */
+ interface Letter {
+ 	character: string;
+ 	x: number;
+@@ -29,7 +29,7 @@ interface Letter {
+ 	phase: number;
+ 	delay: number;
+ 	highlight: number;
+-	white: number;
++	textBlend: number;
+ 	sprites: Sprite[];
+ }
  
--		// Cursor should be right after "a" (pos 9). ArrowRight×3 + Backspace deletes 'e'.
-+		// The caret should be right after "a" (pos 9). ArrowRight×3 + Backspace then deletes 'e',
-+		// which checks the editor's own selection agrees. Wait for each caret move to settle, as
-+		// keys pressed while an editor is still syncing its selection land in the wrong place.
-+		await waitForCaretAfter(editor, 'This is a');
- 		await page.keyboard.press('ArrowRight');
- 		await page.keyboard.press('ArrowRight');
- 		await page.keyboard.press('ArrowRight');
--		// Let rich editors process the queued selectionchange before deleting.
--		await page.evaluate(
--			() => new Promise<void>((resolve) => requestAnimationFrame(() => resolve())),
--		);
-+		await waitForCaretAfter(editor, 'This is a te');
- 		await page.keyboard.press('Backspace');
- 		await assertEditorText(editor, 'This is a tst');
+@@ -57,6 +57,7 @@ function createFloatingLetters(
+ 	let dpr = 1;
+ 	let letters: Letter[] = [];
+ 	let color = '';
++	let blendColor = '';
+ 	let frameId = 0;
+ 	let disposed = false;
+ 	let started = false;
+@@ -117,7 +118,7 @@ function createFloatingLetters(
+ 		const blur = (1 - letter.depth) * 1.2;
+ 		letter.sprites = [
+ 			makeSprite(letter, color, blur),
+-			makeSprite(letter, '#ffffff', blur),
++			makeSprite(letter, blendColor, blur),
+ 			makeSprite(letter, color, INTRO_BLUR),
+ 		];
+ 	}
+@@ -138,7 +139,7 @@ function createFloatingLetters(
+ 				phase: random(0, Math.PI * 2),
+ 				delay: Math.random() * INTRO_SPREAD,
+ 				highlight: 0,
+-				white: 0,
++				textBlend: 0,
+ 				sprites: [],
+ 			};
+ 			buildSprites(letter);
+@@ -227,23 +228,26 @@ function createFloatingLetters(
+ 
+ 			const highlight = distance < CURSOR_RADIUS ? smooth(1 - distance / CURSOR_RADIUS) : 0;
+ 			const textDistance = distanceToText(letter.x, letter.y);
+-			const white = textDistance < TEXT_FADE_RANGE ? smooth(1 - textDistance / TEXT_FADE_RANGE) : 0;
++			const textBlend =
++				textDistance < TEXT_FADE_RANGE ? smooth(1 - textDistance / TEXT_FADE_RANGE) : 0;
+ 			letter.highlight = motion.matches
+ 				? 0
+ 				: letter.highlight +
+ 					(highlight - letter.highlight) * (highlight > letter.highlight ? 0.14 : 0.05) * dt;
+-			letter.white = motion.matches ? white : letter.white + (white - letter.white) * 0.06 * dt;
++			letter.textBlend = motion.matches
++				? textBlend
++				: letter.textBlend + (textBlend - letter.textBlend) * 0.06 * dt;
+ 			const restAlpha = 0.12 + letter.depth * 0.38;
+ 			let alpha = (restAlpha + (0.92 - restAlpha) * letter.highlight) * ease;
+-			alpha += (Math.max(alpha, 0.7 * ease) - alpha) * letter.white;
++			alpha += (Math.max(alpha, 0.7 * ease) - alpha) * letter.textBlend;
+ 			const scale = 0.4 + 0.6 * ease;
+ 			const y = letter.y + (1 - ease) * RISE_DISTANCE * (0.5 + letter.depth);
+ 			const cos = Math.cos(letter.rotation) * scale;
+ 			const sin = Math.sin(letter.rotation) * scale;
+ 			const sharp = p >= 1 ? 1 : ease * ease;
+ 			if (sharp < 1) stamp(letter.sprites[2], cos, sin, letter.x, y, alpha * (1 - sharp));
+-			stamp(letter.sprites[0], cos, sin, letter.x, y, alpha * (1 - letter.white) * sharp);
+-			stamp(letter.sprites[1], cos, sin, letter.x, y, alpha * letter.white * sharp);
++			stamp(letter.sprites[0], cos, sin, letter.x, y, alpha * (1 - letter.textBlend) * sharp);
++			stamp(letter.sprites[1], cos, sin, letter.x, y, alpha * letter.textBlend * sharp);
+ 		}
+ 		if (!motion.matches) requestDraw();
+ 	}
+@@ -269,9 +273,13 @@ function createFloatingLetters(
+ 	}
+ 
+ 	function refreshTheme() {
+-		const nextColor = getComputedStyle(canvas).getPropertyValue('--floating-letter-color').trim();
+-		if (nextColor === color) return;
+-		color = nextColor || '#4a463e';
++		const style = getComputedStyle(canvas);
++		const nextColor = style.getPropertyValue('--floating-letter-color').trim() || '#4a463e';
++		const nextBlendColor =
++			style.getPropertyValue('--floating-letter-blend-color').trim() || '#ffffff';
++		if (nextColor === color && nextBlendColor === blendColor) return;
++		color = nextColor;
++		blendColor = nextBlendColor;
+ 		letters.forEach(buildSprites);
+ 		requestDraw();
+ 	}
+@@ -494,6 +502,7 @@ function handleKeydown(event: KeyboardEvent) {
+ 	--deck-track: rgb(28 26 22 / 9%);
+ 	--deck-focus: #2a6bd8;
+ 	--floating-letter-color: #4a463e;
++	--floating-letter-blend-color: #ffffff;
+ 	position: relative;
+ 	isolation: isolate;
+ 	height: 100dvh;
+@@ -512,6 +521,7 @@ function handleKeydown(event: KeyboardEvent) {
+ 	--deck-track: rgb(255 255 255 / 10%);
+ 	--deck-focus: #f7be6e;
+ 	--floating-letter-color: #d6d3d1;
++	--floating-letter-blend-color: #0c0a09;
+ 	color-scheme: dark;
+ }
  
 ```
 
 ---
 
-### Incident Patch 2: `3ea81449` (2026-11-16)
-**Commit Message**: fix(core): detect "to" before degree words followed by nouns mid-sentence (#3131)
+### Incident Patch 2: `87d28cc2` (2026-11-17)
+**Commit Message**: fix(core): don't join a closed compound that starts a hyphenated word (#4786)
 
-* fix(core): detect 'to' before degree words followed by nouns mid-sentence
+"it self-levels" was flagged as "itself", and "my self-esteem" as "myself". Closed-compound rules now skip a match that is directly followed by a hyphen.
 
-* fix(core): collapse nested if blocks in ToTooDegreeWords for clippy
+Fixes #4779
 
-* refactor(core): sort TO_TAKING_VERBS list alphabetically
-
-* fix(core): address review feedback on to/too degree words
-
-* test(core): add ignored tests for ToTwoToo known limitations
-
----------
-
-Co-authored-by: Elijah Potter <[REDACTED_EMAIL]>
-Co-authored-by: Andrew Dunbar <[REDACTED_EMAIL]>
-
-**File**: `harper-core/src/linting/expr_linter.rs` (modified, +1/-2)
+**File**: `harper-core/src/linting/closed_compounds.rs` (modified, +10/-0)
 ```diff
-@@ -212,8 +212,7 @@ pub fn preceded_by_word(
-     predicate: impl Fn(&Token) -> bool,
- ) -> bool {
-     if let Some((before, _)) = context
--        && let [.., word, ws] = before
--        && ws.kind.is_whitespace()
-+        && let Some(word) = before.iter().rev().find(|t| !t.kind.is_whitespace())
-     {
-         return predicate(word);
+@@ -112,6 +112,16 @@ mod tests {
+         assert_suggestion_result(test_sentence, lint_group(), expected);
      }
-```
-
-**File**: `harper-core/src/linting/to_two_too/mod.rs` (modified, +151/-0)
-```diff
-@@ -463,4 +463,155 @@ mod tests {
-     fn no_lint_to_only_at_end() {
-         assert_no_lints("limited to only", test_linter());
-     }
-+
-+    // --- Degree words + noun (mid-sentence) ---
-+
-+    #[test]
-+    fn fixes_to_many_cookies() {
-+        assert_suggestion_result(
-+            "I ate to many cookies.",
-+            ToTwoToo::default(),
-+            "I ate too many cookies.",
-+        );
-+    }
-+
-+    #[test]
-+    fn fixes_to_much_water() {
-+        assert_suggestion_result(
-+            "There is to much water.",
-+            ToTwoToo::default(),
-+            "There is too much water.",
-+        );
-+    }
-+
-+    #[test]
-+    fn fixes_to_few_options() {
-+        assert_suggestion_result(
-+            "We have to few options.",
-+            ToTwoToo::default(),
-+            "We have too few options.",
-+        );
-+    }
-+
-+    #[test]
-+    fn fixes_to_little_time() {
-+        assert_suggestion_result(
-+            "There is to little time.",
-+            ToTwoToo::default(),
-+            "There is too little time.",
-+        );
-+    }
-+
-+    #[test]
-+    fn fixes_to_many_bugs_mid_sentence() {
-+        assert_suggestion_result(
-+            "There are to many bugs in this project.",
-+            ToTwoToo::default(),
-+            "There are too many bugs in this project.",
-+        );
-+    }
-+
-+    // --- Degree words + noun: false positive guards ---
-+
-+    #[test]
-+    fn no_lint_give_to_many_charities() {
-+        assert_no_lints("She likes to give to many charities.", ToTwoToo::default());
-+    }
-+
-+    #[test]
-+    fn no_lint_listen_to_many_podcasts() {
-+        assert_no_lints("I listen to many podcasts.", ToTwoToo::default());
-+    }
-+
-+    #[test]
-+    fn no_lint_talk_to_many_people() {
-+        assert_no_lints("We talk to many people.", ToTwoToo::default());
-+    }
-+
-+    #[test]
-+    fn no_lint_donate_to_many_causes() {
-+        assert_no_lints("They donate to many causes.", ToTwoToo::default());
-+    }
-+
-+    #[test]
-+    fn no_lint_connected_to_many_servers() {
-+        assert_no_lints("The app is connected to many servers.", ToTwoToo::default());
-+    }
-+
-+    #[test]
-+    fn no_lint_appeals_to_many_developers() {
-+        assert_no_lints(
-+            "SemVer is a false promise that appeals to many developers.",
-+            ToTwoToo::default(),
-+        );
-+    }
-+
-+    #[test]
-+    fn no_lint_to_many_after_verb_with_trailing_whitespace() {
-+        assert_no_lints("give \nto many charities", ToTwoToo::default());
-+    }
-+
-+    // --- Known limitations (each reason explains why it's left failing) ---
-+
-+    #[test]
-+    #[ignore = "false positive: 'expired' is an adjective/verb ending in 'ed', matched by ToTooAdjVerbEdPunct; full runs hide it via overlap with InflectedVerbAfterTo"]
-+    fn no_lint_going_to_expired() {
-+        assert_no_lints(
-+            "I didn't know it was going to expired.",
-+            ToTwoToo::default(),
-+        );
-+    }
-+
-+    #[test]
-+    #[ignore = "false negative: the parenthetical after the degree word breaks the pattern"]
-+    fn correct_to_few_in_parenthetical() {
-+        assert_suggestion_result(
-+            "Possibly to few (unique) data points / predictions.",
-+            ToTwoToo::default(),
-+            "Possibly too few (unique) data points / predictions.",
-+        );
-+    }
-+
-+    #[test]
-+    #[ignore = "false negative: a degree word followed by 'of' isn't handled yet"]
-+    fn correct_to_much_of_regression() {
-+        assert_suggestion_result(
-+            "Question for checking python import times and warning if to much of regression.",
-+            ToTwoToo::default(),
-+            "Question for checking python import times and warning if too much of regression.",
-+        );
-+    }
-+
-+    #[test]
-+    #[ignore = "false positive: only the token directly before 'to' is checked, so the noun between the verb and 'to' isn't recognized"]
-+    fn no_lint_copy_files_to_many_hosts() {
-+        assert_no_lints("Copy files to many hosts in parallel", ToTwoToo::default());
-+    }
-+
-+    #[test]
-+    #[ignore = "false positive: 'little endian' is a technical term, not an excess degree"]
-+    fn no_lint_convert_opcode_to_little_endian() {
-+        assert_no_lints(
-+            "Small script to convert opcode to little endian format",
-+            ToTwoToo::default(),
-+        );
-+    }
-+
-+    #[test]
-+    #[ignore = "false positive: 'little endian' is a technical term, not an excess degree"]
-+    fn no_lint_conversion_to_little_endian() {
-+        assert_no_lints(
-+            "I was working on gpt package in go and I didn't realize that the author had handled conversion to little endian when writing header.",
-+            ToTwoToo::default(),
-+        );
-+    }
-+
-+    #[test]
-+    #[ignore = "false positive: the compound splits into tokens, 'theme' reads as a noun and TooTo misfires on the valid 'too'"]
-+    fn no_lint_too_theme_happy() {
-+        assert_no_lints(
-+            "2018: we may have gotten a bit too theme-happy.",
-+            ToTwoToo:
-```
-
-**File**: `harper-core/src/linting/to_two_too/to_too_degree_words.rs` (modified, +137/-9)
-```diff
-@@ -1,24 +1,129 @@
- use crate::{
-     Token, TokenKind,
-     char_string::CharStringExt,
--    expr::{AnchorEnd, Expr, SequenceExpr},
-+    expr::{AnchorEnd, Expr, FirstMatchOf, SequenceExpr},
-+    patterns::{SingleTokenPattern, prepositional_preceder},
- };
  
- use super::{ExprLinter, Lint, LintKind, Suggestion};
++    #[test]
++    fn no_it_self_before_hyphenated_compound() {
++        assert_no_lints("it self-levels itself", lint_group());
++    }
++
++    #[test]
++    fn no_my_self_before_hyphenated_compound() {
++        assert_no_lints("I worked on my self-esteem.", lint_group());
++    }
++
+     #[test]
+     fn my_self() {
+         let test_sentence = "He treated my self with respect.";
+```
+
+**File**: `harper-core/src/linting/map_phrase_linter.rs` (modified, +16/-2)
+```diff
+@@ -4,7 +4,7 @@ use crate::expr::FixedPhrase;
+ use crate::expr::LongestMatchOf;
+ use crate::expr::SimilarToPhrase;
+ use crate::linting::Suggestion;
 -use crate::linting::expr_linter::Chunk;
-+use crate::linting::expr_linter::{Chunk, preceded_by_word};
-+
-+/// Verbs that commonly take "to" as a prepositional complement.
-+/// Guards against false positives like "give to many charities".
-+const TO_TAKING_VERBS: &[&str] = &[
-+    "add",
-+    "added",
-+    "adding",
-+    "adds",
-+    "amount",
-+    "amounted",
-+    "amounting",
-+    "amounts",
-+    "appeal",
-+    "appealed",
-+    "appealing",
-+    "appeals",
-+    "applied",
-+    "applies",
-+    "apply",
-+    "applying",
-+    "attend",
-+    "attended",
-+    "attending",
-+    "attends",
-+    "belong",
-+    "belonged",
-+    "belonging",
-+    "belongs",
-+    "came",
-+    "cater",
-+    "catered",
-+    "catering",
-+    "caters",
-+    "come",
-+    "comes",
-+    "coming",
-+    "contribute",
-+    "contributed",
-+    "contributes",
-+    "contributing",
-+    "donate",
-+    "donated",
-+    "donates",
-+    "donating",
-+    "expose",
-+    "exposed",
-+    "exposes",
-+    "exposing",
-+    "gave",
-+    "give",
-+    "given",
-+    "gives",
-+    "giving",
-+    "go",
-+    "goes",
-+    "going",
-+    "gone",
-+    "lead",
-+    "leading",
-+    "leads",
-+    "led",
-+    "listen",
-+    "listened",
-+    "listening",
-+    "listens",
-+    "move",
-+    "moved",
-+    "moves",
-+    "moving",
-+    "refer",
-+    "referred",
-+    "referring",
-+    "refers",
-+    "relate",
-+    "related",
-+    "relates",
-+    "relating",
-+    "respond",
-+    "responded",
-+    "responding",
-+    "responds",
-+    "return",
-+    "returned",
-+    "returning",
-+    "returns",
-+    "send",
-+    "sending",
-+    "sends",
-+    "sent",
-+    "speak",
-+    "speaking",
-+    "speaks",
-+    "spoke",
-+    "spoken",
-+    "talk",
-+    "talked",
-+    "talking",
-+    "talks",
-+    "went",
-+    "write",
-+    "writes",
-+    "writing",
-+    "written",
-+    "wrote",
-+];
++use crate::linting::expr_linter::{Chunk, followed_by_hyphen};
+ use crate::weir::weir_expr_to_expr;
+ use crate::{Token, TokenStringExt};
  
- pub struct ToTooDegreeWords {
-     expr: Box<dyn Expr>,
+@@ -14,6 +14,9 @@ pub struct MapPhraseLinter {
+     correct_forms: Vec<String>,
+     message: String,
+     lint_kind: LintKind,
++    /// Skip a match whose last word starts a hyphenated compound, as in
++    /// "it self-levels", where joining the words would be wrong.
++    skip_before_hyphen: bool,
+     skip_inner_acronyms: bool,
  }
  
- impl Default for ToTooDegreeWords {
-     fn default() -> Self {
--        // Only flag `to` before degree words when the phrase ends the clause
--        // (punctuation or end). Avoids false positives like "connected to many X".
--        let expr = SequenceExpr::default()
-+        // Pattern 1: degree word at clause end.
-+        let at_end = SequenceExpr::default()
-             .t_aco("to")
-             .t_ws()
--            .then_word_set(["many", "much", "few"])
-+            .then_word_set(["many", "much", "few", "little"])
-             .then_any_of([
-                 Box::new(SequenceExpr::default().then_kind_is_but_is_not_except(
-                     TokenKind::is_punctuation,
-@@ -28,8 +133,16 @@ impl Default for ToTooDegreeWords {
-                 Box::new(AnchorEnd),
-             ]);
- 
-+        // Pattern 2: degree word followed by a noun (e.g. "to many cookies").
-+        let before_noun = SequenceExpr::default()
-+            .t_aco("to")
-+            .t_ws()
-+            .then_word_set(["many", "much", "few", "little"])
-+            .t_ws()
-+            .then_noun();
-+
-         Self {
--            expr: Box::new(expr),
-+            expr: Box::new(FirstMatchOf::new([Box::new(at_end), Box::new(before_noun)])),
+@@ -31,6 +34,7 @@ impl MapPhraseLinter {
+             correct_forms: correct_forms.into_iter().map(|f| f.to_string()).collect(),
+             message: message.to_string(),
+             lint_kind: lint_kind.unwrap_or(LintKind::Miscellaneous),
++            skip_before_hyphen: false,
+             skip_inner_acronyms: false,
          }
      }
- }
-@@ -41,11 +154,26 @@ impl ExprLinter for ToTooDegreeWords {
+@@ -97,6 +101,7 @@ impl MapPhraseLinter {
+         );
+ 
+         Self {
++            skip_before_hyphen: true,
+             // An all-caps word after a lowercase one is usually an acronym, as in "the RE process".
+             skip_inner_acronyms: true,
+             ..Self::new_fixed_phrases(
+@@ -135,7 +140,16 @@ impl ExprLinter for MapPhraseLinter {
          self.expr.as_ref()
      }
  
--    fn match_to_lint(&self, tokens: &[Token], source: &[char]) -> Option<Lint> {
+-    fn match_to_lint(&self, matched_tokens: &[Token], source: &[char]) -> Option<Lint> {
 +    fn match_to_lint_with_context(
 +        &self,
-+        tokens: &[Token],
++        matched_tokens: &[Token],
 +        source: &[char],
 +        context: Option<(&[Token], &[Token])>,
 +    ) -> Option<Lint> {
-         let to_tok = tokens
-             .iter()
-             .find(|t| t.get_ch(source).eq_ch(&['t', 'o']))?;
- 
-+        // Suppress when "to" is a preposition, not a typo for "too".
-+        if preceded_by_word(context, |prev| {
-+            prepositional_preceder().matches_token(prev, source)
-+                || prev
-+                    .get_ch(source)
-+                    .eq_any_ignore_ascii_case_str(TO_TAKING_VERBS)
-+        }) {
++        if self.skip_before_hyphen && followed_by_hyphen(context) {
 +            return None;
 +        }
 +
-         Some(Lint {
-             span: to_tok.span,
-             lint_kind: LintKind::WordChoice,
-@@ -59,6 +187,6 @@ impl ExprLinter for ToTooDegreeWords {
-     }
- 
-     fn description(&self) -> &str {
--        "Detects `to` used before degree words like `many`, `much`, or `few`."
-+        "Detects `to` used before degree words like `many`, `much`, `few`, or `little`."
-     }
- }
+         if self.skip_inner_acronyms && has_inner_acronym(matched_tokens, source) {
+             return None;
+         }
 ```
 
 ---
 
-### Incident Patch 3: `a9b7fe45` (2026-11-16)
-**Commit Message**: ci: stop release builds crowding out PR check caches (#4952)
+### Incident Patch 3: `97169e0e` (2026-11-17)
+**Commit Message**: fix(core): mark "opening", "hearing", "prayer" and similar nouns as countable (#4855)
 
-The MSVC CRT cache added in #4917 keeps disappearing. Since 12 November
-it has been saved on master five times and evicted within hours each
-time, because the repository uses 11.1 GB of cache against GitHub's
-10 GB limit. When it's restored, the Windows desktop build takes 12
-minutes; without it, 21 to 32. The caches for the test-chrome-plugin,
-test-harperjs, test-obsidian and check-desktop jobs had been evicted
-too, so those PR checks were rebuilding from scratch.
+* fix(core): mark "opening", "hearing", "prayer" and similar nouns as countable
 
-About 6.1 GB of that space is taken by the release builds in
-binaries.yml and vscode_plugin.yml. Each job is cached twice, once by
-its own rust-cache step and once by actions-rust-cross, which runs
-rust-cache itself unless told not to. Yet those caches mostly miss
-anyway, because they evict each other: the Linux harper-ls build missed
-in 22 of its last 25 runs. A miss costs these jobs about one to three
-minutes, and nobody waits on them except when cutting a release. So
-they no longer cache their Rust builds.
+They were mass-only, so "an opening", "a hearing", "a ruling",
+"a prayer" or "a proliferation of" got a MassNouns lint.
 
-They also no longer run in the merge queue. They aren't among the
-checks the queue requires, so a failure there can't stop a merge, and
-they run again 
+* fix(core): generate plurals for the newly countable -ing nouns
 
-**File**: `.github/workflows/binaries.yml` (modified, +3/-5)
+Add /S to the entries that lacked it, and fold the separate
+"findings" line into "finding" so its plural is tagged as plural.
+
+* fix(core): keep the plurals of -ing nouns from reading as verbs
+
+The S flag gives a word that is also a verb a third-person form, so
+"findings" was tagged as a verb. List each plural on its own noun line.
+
+* fix(core): drop the possessive flag from the -ing noun plurals
+
+---------
+
+Co-authored-by: Andrew Dunbar <[REDACTED_EMAIL]>
+
+**File**: `harper-core/dictionary.dict` (modified, +40/-22)
 ```diff
-@@ -4,7 +4,6 @@ on:
-   push:
-     branches: ["master"]
-     tags: ["v*"]
--  merge_group:
- 
- jobs:
-   binaries:
-@@ -117,13 +116,12 @@ jobs:
-     steps:
-       - name: Checkout
-         uses: actions/checkout@v7.0.1
--      - name: Rust Cache
--        uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6 # v2.9.2
--        with:
--          cache-bin: "true"
-       - name: Build binary
-         uses: houseabsolute/actions-rust-cross@21b0f18dc621b25bfae556ff2791fca4173121e8 # v1.0.8
-         with:
-+          # Release builds run after merging, so nobody waits on them. Their caches filled
-+          # most of the repo's cache quota and evicted the ones PR checks rely on.
-+          use-rust-cache: false
-           command: ${{ matrix.platform.command }}
-           target: ${{ matrix.platform.target }}
-           args: "--locked --release --bin ${{ matrix.platform.project }}"
+@@ -14360,7 +14360,8 @@ bearably/RyU
+ beard/~NgSVdG
+ beardless/J
+ bearer/~Ng
+-bearing/~VJNg
++bearing/~VJNwg
++bearings/~N9
+ bearish/JYp
+ bearishness/Ng
+ bearlike/J
+@@ -16426,7 +16427,8 @@ calligrapher/~NSg
+ calligraphic/J
+ calligraphist/NgS
+ calligraphy/~Nmg
+-calling/~V6SNg
++calling/~V6Nwg
++callings/~N9
+ calliope/~NgS
+ callisthenic/JS!_₹
+ callosity/NSg
+@@ -16845,7 +16847,8 @@ cartwheel/NgSVGd
+ carve/~VGd>SNzZ
+ carver/~Ng
+ carvery/NS
+-carving/~NgV
++carving/~NwgV
++carvings/~N9
+ caryatid/NgS
+ casaba/NgS
+ cascade/~NSgVdG
+@@ -18175,7 +18178,8 @@ coaster/~Ng
+ coastguard/NS
+ coastline/~NgS
+ coat/~NgSVdGz
+-coating/~NmSgV
++coating/~NwgV
++coatings/~N9
+ coatroom/NS
+ coattail/NSgV
+ coauthor/~NgSVdG
+@@ -20113,7 +20117,8 @@ crossfade/VdSGNg
+ crossfire/~NgS
+ crosshair/NSg
+ crosshatch/NSVGd
+-crossing/~NSgJV6
++crossing/~NwgJV6
++crossings/~N9
+ crossly/Ry
+ crossmember/NgS
+ crossness/Ng
+@@ -23431,7 +23436,8 @@ endemic/~JNgSQ
+ endgame/~NSJ
+ endian/NSg
+ endianness/Ng
+-ending/~NgV
++ending/~NwgV
++endings/~N9
+ endive/NSg
+ endless/~JYp
+ endlessness/Ng
+@@ -25147,8 +25153,8 @@ financing/~NgV6
+ finch/~NgSV
+ find/~V>GSNgzZ
+ finder/~Ng
+-finding/~NgV6
+-findings/~Ng
++finding/~NwgV6
++findings/~N9
+ fine/~J^NSVGderW
+ fine-tune/VSdG
+ fine's/W
+@@ -28376,7 +28382,8 @@ heap/~NgSVdG
+ hear/~VbGSrHz
+ heard/~VtTJrU
+ hearer/NSg
+-hearing/~JNgVr
++hearing/~JNwgVr
++hearings/~N9
+ hearken/VSGd
+ hearsay/Ng
+ hearse/NSVr
+@@ -28517,7 +28524,8 @@ help/~NgSVd>GZz
+ helper/~NgS
+ helpful/~JYU
+ helpfulness/Nmg
+-helping/~NgV
++helping/~NwgV
++helpings/~N9
+ helpless/~JYp
+ helplessness/Nmg
+ helpline/NSg
+@@ -32029,7 +32037,8 @@ landfall/~NgS
+ landfill/~VSNg
+ landholder/NSg
+ landholding/NgS
+-landing/~NgV
++landing/~NwgV
++landings/~N9
+ landlady/~NSg
+ landless/Jg
+ landline/NgS
+@@ -32771,7 +32780,8 @@ listen/~Vd>GNgBZ
+ listener/~Ng
+ lister/NgS
+ listeria/N
+-listing/~JVNg
++listing/~JVNwg
++listings/~N9
+ listless/JYp
+ listlessness/Nmg
+ lit/~VtT>JNZ
+@@ -37312,7 +37322,8 @@ opener/~NgS
+ openhanded/JpV
+ openhandedness/Nmg
+ openhearted/J
+-opening/~VSJNg
++opening/~VJNwg
++openings/~N9
+ openness/~Nmg
+ openwork/Ng
+ opera/~NgS
+@@ -37633,7 +37644,8 @@ outgunning/V6
+ outhit/VbtTS
+ outhitting/V6
+ outhouse/NSgV
+-outing/~NgSV
++outing/~NwgV
++outings/~N9
+ outlaid/V
+ outland/JNgSVdG
+ outlandish/JYpN
+@@ -40321,7 +40333,8 @@ posthypnotic/J
+ postie/NS
+ postilion/NSg
+ postindustrial/J
+-posting/~VNg
++posting/~VNwg
++postings/~N9
+ postlude/NSgV
+ postman/~Ng
+ postmark/NSgVdG
+@@ -40465,7 +40478,7 @@ prattler/Ng
+ pravity/N
+ prawn/NgSVdG
+ pray/~VGd>SZ
+-prayer/~NmgS
++prayer/~NwgS
+ prayerful/JY
+ pre-COVID/J
+ preach/~Vd>GSNZL
+@@ -41043,7 +41056,7 @@ prole/NSV
+ proletarian/~JNgS
+ proletariat/~Ng
+ proliferate/VdSGn
+-proliferation/~Nmg
++proliferation/~Nwg
+ prolific/~JQ
+ prolix/JYV
+ prolixity/Ng
+@@ -42076,7 +42089,8 @@ rathskeller/NSg
+ ratification/~Ng
+ ratifier/Ng
+ ratify/~Vd>SGnZ
+-rating/~VNg
++rating/~VNwg
++ratings/~N9
+ ratio/~NgSV
+ ratiocinate/VGdSn
+ ratiocination/Ng
+@@ -43651,7 +43665,8 @@ ruinous/JY
+ rule/~NgSVGd>Zz
+ rulebook/NgS
+ ruler/~NgV
+-ruling/~JNgV6
++ruling/~JNwgV6
++rulings/~N9
+ rum/~NwSgJ
+ rumba/~NSgVdG
+ rumble/~NSgVdGz
+@@ -45285,7 +45300,8 @@ shoo/VGdSI
+ shook/~NVtJ
+ shoot/~VG>SNgZz
+ shooter/~NgS
+-shooting/~V6NgJ
++shooting/~V6NwgJ
++shootings/~N9
+ shootout/~NgS
+ shop/~NgSV
+ shopaholic/NgS
+@@ -45369,7 +45385,8 @@ showgirl/NgS
+ showground/NS
+ showily/Ry
+ showiness/Ng
+-showing/~V6Ng
++showing/~V6Nwg
++showings/~N9
+ showjumping/Ng
+ showman/N0g
+ showmanship/Ngm
+@@ -45516,7 +45533,8 @@ sifter/Ng
+ sigh/~VGdNg
+ sighs/NVh
+ sight/~NwgSVGdz
+-sighting/~NgV6
++sighting/~NwgV6
++sightings/~N9
+ sightless/J
+ sightly/J^>U
+ sightread/VbtT
 ```
 
-**File**: `.github/workflows/vscode_plugin.yml` (modified, +3/-5)
+**File**: `harper-core/src/dict_word_metadata.rs` (modified, +9/-0)
 ```diff
-@@ -4,7 +4,6 @@ on:
-   push:
-     branches: ["master"]
-     tags: ["v*"]
--  merge_group:
+@@ -1341,6 +1341,15 @@ pub mod tests {
+     mod noun {
+         use crate::dict_word_metadata::tests::md;
  
- jobs:
-   vscode-plugin:
-@@ -49,13 +48,12 @@ jobs:
-           node-version-file: ".node-version"
-       - name: Enable Corepack
-         run: corepack enable
--      - name: Rust Cache
--        uses: Swatinem/rust-cache@6323deb102c322ba6fcbdcafc7e3dddab59af2b6 # v2.9.2
--        with:
--          cache-bin: "true"
-       - name: Build harper-ls
-         uses: houseabsolute/actions-rust-cross@21b0f18dc621b25bfae556ff2791fca4173121e8 # v1.0.8
-         with:
-+          # Release builds run after merging, so nobody waits on them. Their caches filled
-+          # most of the repo's cache quota and evicted the ones PR checks rely on.
-+          use-rust-cache: false
-           target: ${{ matrix.platform.rust_target }}
-           args: "--locked --release --bin harper-ls"
-           force-use-cross: ${{ matrix.platform.os == 'ubuntu-latest' }}
++        #[test]
++        fn ing_noun_plurals_are_not_verbs() {
++            for word in ["bearings", "findings", "hearings", "openings", "rulings"] {
++                let md = md(word);
++                assert!(md.is_plural_noun_only(), "{word}");
++                assert!(!md.is_verb(), "{word}");
++            }
++        }
++
+         #[test]
+         fn puppy_is_noun() {
+             assert!(md("puppy").is_noun());
+```
+
+**File**: `harper-core/src/linting/mass_nouns/noun_countability.rs` (modified, +32/-0)
+```diff
+@@ -583,4 +583,36 @@ mod tests {
+             NounCountability::default(),
+         );
+     }
++
++    #[test]
++    fn dont_flag_an_opening() {
++        assert_no_lints(
++            "It suggested that a volcano be defined as 'an opening on a planet or moon's surface'.",
++            NounCountability::default(),
++        );
++    }
++
++    #[test]
++    fn dont_flag_a_proliferation() {
++        assert_no_lints(
++            "These have allowed for a proliferation of specialized designs.",
++            NounCountability::default(),
++        );
++    }
++
++    #[test]
++    fn dont_flag_a_hearing_or_a_ruling() {
++        assert_no_lints(
++            "There was a hearing on Monday and a ruling on Friday.",
++            NounCountability::default(),
++        );
++    }
++
++    #[test]
++    fn dont_flag_a_prayer() {
++        assert_no_lints(
++            "A prayer recorded on a slip of paper was found in the tomb.",
++            NounCountability::default(),
++        );
++    }
+ }
+```
+
+**File**: `harper-core/tests/text/tagged/Alice's Adventures in Wonderland.md` (modified, +30/-30)
+```diff
+@@ -112,8 +112,8 @@
+ # NSg/VB . . . R/C/P . ISgPl+ NSg/VB . NPr+  VP  VP     J/Dq    NPl    P  I/Ddem+ NSg/VB+ NPr/J/R/P ISg/D$+
+ > lessons in        the schoolroom , and  though this    was  not     a   very good     opportunity for
+ # NPl/V3+ NPr/J/R/P D   NSg        . VB/C C      I/Ddem+ VLPt NSg/R/C D/P J/R  NPr/VB/J N🅪Sg+       R/C/P
+-> showing  off        her     knowledge , as    there was  no       one      to listen to her     , still      it       was
+-# Nᴹ/Vg/J+ NSg/VB/J/P ISg/D$+ Nᴹ+       . R/C/P R+    VLPt NSg/Dq/P NSg/I/J+ P  NSg/VB P  ISg/D$+ . NSg/VB/J/R NSg/ISg+ VLPt
++> showing    off        her     knowledge , as    there was  no       one      to listen to her     , still      it       was
++# N🅪Sg/Vg/J+ NSg/VB/J/P ISg/D$+ Nᴹ+       . R/C/P R+    VLPt NSg/Dq/P NSg/I/J+ P  NSg/VB P  ISg/D$+ . NSg/VB/J/R NSg/ISg+ VLPt
+ > good     practice to say    it       over    ) “ — yes    , that’s about the right    distance — but     then      I
+ # NPr/VB/J NSg/VB+  P  NSg/VB NSg/ISg+ NSg/J/P . . . NPl/VB . K      J/P   D   NPr/VB/J N🅪Sg/VB+ . NSg/C/P NSg/J/R/C ISg/#r+
+ > wonder  what   Latitude or    Longitude I’ve got to ? ” ( Alice had no        idea what   Latitude
+@@ -272,8 +272,8 @@
+ #
+ > However , this    bottle  was  not     marked “ poison   , ” so          Alice ventured to taste    it       , and
+ # C       . I/Ddem+ NSg/VB+ VLPt NSg/R/C VP/J   . N🅪Sg/VB+ . . NSg/I/J/R/C NPr+  VP/J     P  NSg/VB/J NSg/ISg+ . VB/C
+-> finding it       very nice  , ( it       had , in        fact , a   sort   of mixed flavour      of cherry    - tart     ,
+-# Nᴹ/Vg/J NSg/ISg+ J/R  NPr/J . . NSg/ISg+ VP  . NPr/J/R/P NSg+ . D/P NSg/VB P  VP/J  N🅪Sg/VB/Comm P  NPr🅪Sg/J+ . NSg/VB/J .
++> finding   it       very nice  , ( it       had , in        fact , a   sort   of mixed flavour      of cherry    - tart     ,
++# N🅪Sg/Vg/J NSg/ISg+ J/R  NPr/J . . NSg/ISg+ VP  . NPr/J/R/P NSg+ . D/P NSg/VB P  VP/J  N🅪Sg/VB/Comm P  NPr🅪Sg/J+ . NSg/VB/J .
+ > custard , pine   - apple   , roast     turkey    , toffee  , and  hot      buttered toast    , ) she  very
+ # N🅪Sg    . NSg/VB . NPr🅪Sg+ . N🅪Sg/VB/J NPr🅪Sg/J+ . N🅪Sg/VB . VB/C NSg/VB/J VP/J     N🅪Sg/VB+ . . ISg+ J/R
+ > soon finished it       off        .
+@@ -302,8 +302,8 @@
+ # ISg+ VXB   NSg/R/C NSg/VB   J/R  Nᴹ/Vg/J NSg/VPp NSg/I+ D/P+ NSg+  .
+ >
+ #
+-> After a    while       , finding that     nothing  more         happened , she  decided  on  going   into the
+-# P     D/P+ NSg/VB/C/P+ . Nᴹ/Vg/J I/C/Ddem NSg/I/J+ NPr/I/J/R/Dq VP/J     . ISg+ NSg/VP/J J/P Nᴹ/Vg/J P    D+
++> After a    while       , finding   that     nothing  more         happened , she  decided  on  going   into the
++# P     D/P+ NSg/VB/C/P+ . N🅪Sg/Vg/J I/C/Ddem NSg/I/J+ NPr/I/J/R/Dq VP/J     . ISg+ NSg/VP/J J/P Nᴹ/Vg/J P    D+
+ > garden    at    once  ; but     , alas  for   poor      Alice ! when    she  got to the door    , she  found
+ # NSg/VB/J+ NSg/P NSg/C . NSg/C/P . NPrPl R/C/P NSg/VB/J+ NPr+  . NSg/I/C ISg+ VP  P  D+  NSg/VB+ . ISg+ NSg/VP
+ > she  had forgotten the little     golden   key      , and  when    she  went back     to the table   for
+@@ -376,8 +376,8 @@
+ #
+ > “ Curiouser and  curiouser ! ” cried Alice ( she  was  so          much         surprised , that     for   the
+ # . ?         VB/C ?         . . VP/J  NPr+  . ISg+ VLPt NSg/I/J/R/C NSg/I/J/R/Dq VP/J      . I/C/Ddem R/C/P D+
+-> moment she  quite forgot how   to speak  good      English      ) ; “ now       I’m opening out          like
+-# NSg+   ISg+ R     VPt    NSg/C P  NSg/VB NPr/VB/J+ NPr🅪Sg/VB/J+ . . . NSg/J/R/C K   Nᴹ/Vg/J NSg/VB/J/R/P NSg/VB/J/C/P
++> moment she  quite forgot how   to speak  good      English      ) ; “ now       I’m opening   out          like
++# NSg+   ISg+ R     VPt    NSg/C P  NSg/VB NPr/VB/J+ NPr🅪Sg/VB/J+ . . . NSg/J/R/C K   N🅪Sg/Vg/J NSg/VB/J/R/P NSg/VB/J/C/P
+ > the largest telescope that      ever was  ! Good     - bye     , feet ! ” ( for   when    she  looked down
+ # D   JS      NSg/VB+   I/C/Ddem+ J/R  VLPt . NPr/VB/J . NSg/J/P . NPl+ . . . R/C/P NSg/I/C ISg+ VP/J   N🅪Sg/VB/J/P
+ > at    her     feet , they seemed to be       almost out          of sight    , they were getting so          far
+@@ -904,8 +904,8 @@
+ #
+ > “ Why    , she  , of course  , ” said the Dodo , pointing to Alice with one     finger  ; and  the
+ # . NSg/VB . ISg+ . P  NSg/VB+ . . VP/J D   NSg  . Nᴹ/Vg/J  P  NPr+  P    NSg/I/J NSg/VB+ . VB/C D
+-> whole party     at    once  crowded round      her     , calling out          in        a   confused way    , “ Prizes  !
+-# NSg/J NSg/VB/J+ NSg/P NSg/C VP/J    NSg/VB/J/P ISg/D$+ . Nᴹ/Vg/J NSg/VB/J/R/P NPr/J/R/P D/P VP/J     NSg/J+ . . NPl/V3+ .
++> whole party     at    once  crowded round      her     , calling   out          in        a   confused way    , “ Prizes  !
++# NSg/J NSg/VB/J+ NSg/P NSg/C VP/J    NSg/VB/J/P ISg/D$+ . N🅪Sg/Vg/J NSg/VB/J/R/P NPr/J/R/P D/P VP/J     NSg/J+ . . NPl/V3+ .
+ > Prizes  ! ”
+ # NPl/V3+ . .
+ >
+@@ -1368,8 +1368,8 @@
+ # NSg/JC . .
+ >
+ #
+-> S
+```
+
+**File**: `harper-core/tests/text/tagged/Part-of-speech tagging.md` (modified, +3/-3)
+```diff
+@@ -174,8 +174,8 @@
+ # NSg/J/P+ . #d    . NSg/ISg+ NPl/V3   P  J/P   # . #   . #   NPl/V3 P  Nᴹ/Vg/J/P NPr🅪Sg/VB/J+ Nᴹ/VB N🅪Sg/VB+ .
+ > made up         of 500 samples from randomly chosen   publications . Each sample  is  2 , 000
+ # VP   NSg/VB/J/P P  #   NPl/V3+ P    R        Nᴹ/VPp/J NPl+         . Dq+  NSg/VB+ VL3 # . #
+-> or    more         words   ( ending  at    the first sentence - end     after 2 , 000 words   , so          that     the
+-# NPr/C NPr/I/J/R/Dq NPl/V3+ . Nᴹ/Vg/J NSg/P D   NSg/J NSg/VB+  . NSg/VB+ P     # . #   NPl/V3+ . NSg/I/J/R/C I/C/Ddem D
++> or    more         words   ( ending    at    the first sentence - end     after 2 , 000 words   , so          that     the
++# NPr/C NPr/I/J/R/Dq NPl/V3+ . N🅪Sg/Vg/J NSg/P D   NSg/J NSg/VB+  . NSg/VB+ P     # . #   NPl/V3+ . NSg/I/J/R/C I/C/Ddem D
+ > corpus contains only  complete sentences ) .
+ # NSg+   V3       J/R/C NSg/VB/J NPl/V3+   . .
+ >
+@@ -335,7 +335,7 @@
+ >
+ #
+ > These   findings were surprisingly disruptive to the field  of natural language
+-# I/Ddem+ NSg+     VLPt R            J          P  D   NSg/VB P  NSg/J+  N🅪Sg+
++# I/Ddem+ NPl+     VLPt R            J          P  D   NSg/VB P  NSg/J+  N🅪Sg+
+ > processing . The accuracy reported was  higher than the typical accuracy of very
+ # Nᴹ/Vg/J+   . D+  N🅪Sg+    VP/J     VLPt NSg/JC C/P  D   NSg/J   N🅪Sg     P  J/R
+ > sophisticated algorithms that      integrated part     of speech   choice  with many       higher
+```
+
+**File**: `harper-core/tests/text/tagged/The Constitution of the United States.md` (modified, +4/-4)
+```diff
+@@ -524,8 +524,8 @@
+ #
+ >
+ #
+-> To provide for   calling forth the Militia to execute the Laws   of the Union     ,
+-# P  VB      R/C/P Nᴹ/Vg/J R     D   NSg     P  VB      D   NPl/V3 P  D   NPr/VB/J+ .
++> To provide for   calling   forth the Militia to execute the Laws   of the Union     ,
++# P  VB      R/C/P N🅪Sg/Vg/J R     D   NSg     P  VB      D   NPl/V3 P  D   NPr/VB/J+ .
+ > suppress Insurrections and  repel Invasions ;
+ # VB       NPl           VB/C VB    NPl       .
+ >
+@@ -714,8 +714,8 @@
+ # D+  NSg/J+    N🅪Sg/VB/J+ VXB   NSg/VLXB VP/J   NPr/J/R/P D/P NSg       P  D
+ > United States   of America . He       shall hold     his     Office  during the Term     of four
+ # VP/J   NPrPl/V3 P  NPr+    . NPr/ISg+ VXB   NSg/VB/J ISg/D$+ NSg/VB+ VB/P   D   NSg/VB/J P  NSg+
+-> Years ending  at    noon    on  the 20th day    of January , and  , together with the Vice
+-# NPl+  Nᴹ/Vg/J NSg/P NSg/VB+ J/P D   #    NPr🅪Sg P  NPr+    . VB/C . J        P    D+  NSg/J/P+
++> Years ending    at    noon    on  the 20th day    of January , and  , together with the Vice
++# NPl+  N🅪Sg/Vg/J NSg/P NSg/VB+ J/P D   #    NPr🅪Sg P  NPr+    . VB/C . J        P    D+  NSg/J/P+
+ > President , chosen   for   the same Term      , be       elected  , as    follows
+ # NSg+      . Nᴹ/VPp/J R/C/P D+  I/J+ NSg/VB/J+ . NSg/VLXB NSg/VP/J . R/C/P NPl/V3
+ >
+```
+
+**File**: `harper-core/tests/text/tagged/The Great Gatsby.md` (modified, +49/-49)
+```diff
+@@ -1092,8 +1092,8 @@
+ # ISg/D$+ NSg/VB+ VP/J     ISg+   P    D/P J        N🅪Sg     P  ISg/D$+ NSg/VB+ . VB/C ISg+ VP    NSg/VB/J/P .
+ >
+ #
+-> “ Ten o’clock , ” she  remarked , apparently finding the time       on  the ceiling . “ Time
+-# . NSg R       . . ISg+ VP/J     . R          Nᴹ/Vg/J D   N🅪Sg/VB/J+ J/P D+  NSg/VB+ . . N🅪Sg/VB/J
++> “ Ten o’clock , ” she  remarked , apparently finding   the time       on  the ceiling . “ Time
++# . NSg R       . . ISg+ VP/J     . R          N🅪Sg/Vg/J D   N🅪Sg/VB/J+ J/P D+  NSg/VB+ . . N🅪Sg/VB/J
+ > for   this    good     girl    to go       to bed       . ”
+ # R/C/P I/Ddem+ NPr/VB/J NSg/VB+ P  NSg/VB/J P  NSg/VBP/J . .
+ >
+@@ -1220,8 +1220,8 @@
+ # . NSg$ D/P+ NSg/VB+ . K   R   NSg/VB/J . .
+ >
+ #
+-> “ But     we   heard it       , ” insisted Daisy , surprising me       by opening up         again in        a
+-# . NSg/C/P IPl+ VP/J  NSg/ISg+ . . VP/J     NPr+  . Nᴹ/Vg/J    NPr/ISg+ P  Nᴹ/Vg/J NSg/VB/J/P R     NPr/J/R/P D/P+
++> “ But     we   heard it       , ” insisted Daisy , surprising me       by opening   up         again in        a
++# . NSg/C/P IPl+ VP/J  NSg/ISg+ . . VP/J     NPr+  . Nᴹ/Vg/J    NPr/ISg+ P  N🅪Sg/Vg/J NSg/VB/J/P R     NPr/J/R/P D/P+
+ > flower  - like         way    . “ We   heard it       from three people  , so          it       must    be       true     . ”
+ # NSg/VB+ . NSg/VB/J/C/P NSg/J+ . . IPl+ VP/J  NSg/ISg+ P    NSg+  NPl/VB+ . NSg/I/J/R/C NSg/ISg+ NSg/VXB NSg/VLXB NSg/VB/J . .
+ >
+@@ -2325,7 +2325,7 @@
+ > beach   while      his     two motor     - boats  slit     the waters   of the Sound      , drawing   aquaplanes
+ # NPr/VB+ NSg/VB/C/P ISg/D$+ NSg NSg/VB/J+ . NPl/V3 NSg/VB/J D   NPrPl/V3 P  D+  N🅪Sg/VB/J+ . N🅪Sg/Vg/J NPl/V3
+ > over    cataracts of foam     . On  week   - ends    his     Rolls   - Royce became an  omnibus   , bearing
+-# NSg/J/P NPl       P  N🅪Sg/VB+ . J/P NSg/J+ . NPl/V3+ ISg/D$+ NPl/V3+ . NPr   VPt    D/P NSg/VB/J+ . Nᴹ/Vg/J
++# NSg/J/P NPl       P  N🅪Sg/VB+ . J/P NSg/J+ . NPl/V3+ ISg/D$+ NPl/V3+ . NPr   VPt    D/P NSg/VB/J+ . N🅪Sg/Vg/J
+ > parties to and  from the city between nine in        the morning    and  long     past       midnight ,
+ # NPl/V3+ P  VB/C P    D   NSg+ NSg/P   NSg  NPr/J/R/P D   N🅪Sg/Vg/J+ VB/C NPr/VB/J NSg/VB/J/P NSg/J+   .
+ > while      his     station wagon   scampered like         a   brisk yellow   bug     to meet     all          trains  .
+@@ -2940,8 +2940,8 @@
+ #
+ > Almost at    the moment when    Mr   . Gatsby identified himself a   butler hurried toward
+ # R      NSg/P D+  NSg+   NSg/I/C NSg+ . NPr    VP/J       ISg+    D/P NPr/VB VP/J    J/P
+-> him  with the information that      Chicago was  calling him  on  the wire     . He       excused
+-# ISg+ P    D   Nᴹ+         I/C/Ddem+ NPr+    VLPt Nᴹ/Vg/J ISg+ J/P D   N🅪Sg/VB+ . NPr/ISg+ VP/J
++> him  with the information that      Chicago was  calling   him  on  the wire     . He       excused
++# ISg+ P    D   Nᴹ+         I/C/Ddem+ NPr+    VLPt N🅪Sg/Vg/J ISg+ J/P D   N🅪Sg/VB+ . NPr/ISg+ VP/J
+ > himself with a    small     bow     that      included each of us       in        turn   .
+ # ISg+    P    D/P+ NPr/VB/J+ NSg/VB+ I/C/Ddem+ VP/J     Dq   P  NPr/IPl+ NPr/J/R/P NSg/VB .
+ >
+@@ -3204,8 +3204,8 @@
+ # VP/J       ISg+ P  NSg/VB NPr/VB/J . P  .
+ >
+ #
+-> Jordan’s party     were calling impatiently to her     from the porch , but     she  lingered
+-# NPr$     NSg/VB/J+ VLPt Nᴹ/Vg/J R           P  ISg/D$+ P    D   NSg+  . NSg/C/P ISg+ VP/J
++> Jordan’s party     were calling   impatiently to her     from the porch , but     she  lingered
++# NPr$     NSg/VB/J+ VLPt N🅪Sg/Vg/J R           P  ISg/D$+ P    D   NSg+  . NSg/C/P ISg+ VP/J
+ > for   a   moment to shake  hands   .
+ # R/C/P D/P NSg+   P  NSg/VB NPl/V3+ .
+ >
+@@ -3828,8 +3828,8 @@
+ # J       . J        NPl/V3+ . I/Ddem+ N🅪Sg/J+ VLPt R           Nᴹ/Vg/J  J/P     ISg/D$+
+ > punctilious manner in        the shape    of restlessness . He       was  never quite still      ; there
+ # J           NSg+   NPr/J/R/P D   N🅪Sg/VB+ P  NSg          . NPr/ISg+ VLPt R     R     NSg/VB/J/R . R+
+-> was  always a   tapping foot    somewhere or    the impatient opening  and  closing of a
+-# VLPt R      D/P Nᴹ/Vg   NSg/VB+ R         NPr/C D+  J+        Nᴹ/Vg/J+ VB/C Nᴹ/Vg/J P  D/P+
++> was  always a   tapping foot    somewhere or    the impatient opening    and  closing of a
++# VLPt R      D/P Nᴹ/Vg   NSg/VB+ R         NPr/C D+  J+        N🅪Sg/Vg/J+ VB/C Nᴹ/Vg/J P  D/P+
+ > hand    .
+ # NSg/VB+ .
+ >
+@@ -4038,8 +4038,8 @@
+ #
+ > Then      it       was  all          true     . I       saw     the skins  of tigers flaming in        his     palace  on  the
+ # NSg/J/R/C NSg/ISg+ VLPt NSg/I/J/C/Dq NSg/VB/J . ISg/#r+ NSg/VPt D   NPl/V3 P  NPl+   Nᴹ/Vg/J NPr/J/R/P ISg/D$+ NSg/VB+ J/P D
+-> Grand Canal   ; I       saw     him  opening a   chest   of rubies to ease  , with their
+-# NSg/J NSg/VB+ . ISg/#r+ NSg/VPt ISg+ Nᴹ/Vg/J D/P NSg/VB+ P  NPl/V3 P  Nᴹ/VB . P    D$+
++> Grand Canal   ; I       saw     him  opening   
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4965** (2026-11-16): feat: update dictionary regular past verbs `/j` vs `/tT` (@hippietrail)
-- **PR #4952** (2026-11-16): ci: stop release builds crowding out PR check caches (@GaryJones)
-- **PR #4951** (2026-11-16): docs: update stale paths in AGENTS.md (@shoustak)
-- **PR #4947** (2026-11-13): test(chrome-ext): stop stray blurs failing the iframe popup tests (@GaryJones)
-- **PR #4945** (2026-11-13): Bump CI toolkit to 7.1.1 for AWS cost saving (@mokagio)
-- **PR #4943** (2026-11-16): test(chrome-ext): fix the most common flaky extension tests (@GaryJones)
+- **PR #4988** (2026-11-17): fix(components): darken background letters beneath text in dark mode (@elijah-potter)
+- **PR #4979** (2026-11-17): feat: on the same vein → in the same vein (@hippietrail)
+- **PR #4977** (2026-11-16): feat: replace SlideDeck with something better (@elijah-potter)
+- **PR #4976** (2026-11-17): feat(core): flag 'when ever' to be joined into 'whenever' (@abdul-karim-mia)
+- **PR #4975** (2026-11-16): feat(core): add NUMBER token to Weir exprs (@elijah-potter)
+- **PR #4967** (2026-11-17): feat: quoted of saying→quoted as saying (@hippietrail)
 
 ---
 
@@ -2095,40 +2175,63 @@ they run again
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. test(chrome-ext): fix the most common flaky extension tests
+## X. components): darken background letters beneath text in dark mode
 
 **RULE**:
-When implementing operations in `justfile`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Automattic/harper. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/components/src/lib/FloatingLettersSlideDeck.svelte`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Automattic/harper. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a4b0e5b7`: test(chrome-ext): fix the most common flaky extension tests. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1d972352`: components): darken background letters beneath text in dark mode. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `justfile`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/components/src/lib/FloatingLettersSlideDeck.svelte`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-  # Run Firefox headless: `pnpm test` passes `--headed`, which Chromium needs for extensions
-  # but Firefox doesn't. On a virtual display every headed window opens in the same place,
-  # and Firefox stops drawing frames for windows that are covered, which stalls the tests.
-  pnpm exec playwright test --project firefox
+/** One depth-sorted particle and its cached gray, text-blended, and introductory blurred glyphs. */
+	textBlend: number;
+	let blendColor = '';
+			makeSprite(letter, blendColor, blur),
+				textBlend: 0,
+			const textBlend =
+				textDistance < TEXT_FADE_RANGE ? smooth(1 - textDistance / TEXT_FADE_RANGE) : 0;
+			letter.textBlend = motion.matches
+				? textBlend
+				: letter.textBlend + (textBlend - letter.textBlend) * 0.06 * dt;
+			alpha += (Math.max(alpha, 0.7 * ease) - alpha) * letter.textBlend;
+			stamp(letter.sprites[0], cos, sin, letter.x, y, alpha * (1 - letter.textBlend) * sharp);
+			stamp(letter.sprites[1], cos, sin, letter.x, y, alpha * letter.textBlend * sharp);
+		const style = getComputedStyle(canvas);
+		const nextColor = style.getPropertyValue('--floating-letter-color').trim() || '#4a463e';
+		const nextBlendColor =
+			style.getPropertyValue('--floating-letter-blend-color').trim() || '#ffffff';
+		if (nextColor === color && nextBlendColor === blendColor) return;
+		color = nextColor;
+		blendColor = nextBlendColor;
+	--floating-letter-blend-color: #ffffff;
+	--floating-letter-blend-color: #0c0a09;
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-  # For environments without displays like CI servers or containers
-  if [[ "$(uname)" == "Linux" ]]; then
-    env -u WAYLAND_DISPLAY XDG_SESSION_TYPE=x11 \
-    xvfb-run --auto-servernum pnpm test --project firefox 
-  else
-    pnpm test --project firefox 
-  fi
+/** One depth-sorted particle and its cached gray, white, and introductory blurred glyphs. */
+	white: number;
+			makeSprite(letter, '#ffffff', blur),
+				white: 0,
+			const white = textDistance < TEXT_FADE_RANGE ? smooth(1 - textDistance / TEXT_FADE_RANGE) : 0;
+			letter.white = motion.matches ? white : letter.white + (white - letter.white) * 0.06 * dt;
+			alpha += (Math.max(alpha, 0.7 * ease) - alpha) * letter.white;
+			stamp(letter.sprites[0], cos, sin, letter.x, y, alpha * (1 - letter.white) * sharp);
+			stamp(letter.sprites[1], cos, sin, letter.x, y, alpha * letter.white * sharp);
+		const nextColor = getComputedStyle(canvas).getPropertyValue('--floating-letter-color').trim();
+		if (nextColor === color) return;
+		color = nextColor || '#4a463e';
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a4b0e5b7` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1d972352` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

@@ -355,8 +355,8 @@
     "sourceUrl": "https://huggingface.co/prism-ml/Ternary-Bonsai-2-27B-gguf",
     "sourceVersion": "hf-prism-ml-ternary-bonsai-2-27b-gguf",
     "license": "Open-Source",
-    "contentHash": "2c0dc47e94cfeb460e4b2fce18ef61e6fb4f89ca628340829a2e1a03c43c37bd",
-    "lastHarvestedAt": "2026-11-13T14:05:41.842Z",
+    "contentHash": "dbeb7164897df47373cbefb04e511b0e5dce0a610fcf2829e854d69cd3d045a7",
+    "lastHarvestedAt": "2026-11-18T01:57:58.618Z",
     "learningId": "learn-huggingface-prism-ml-ternary-bonsai-2-27b-gguf"
   },
   "hf-viggle-qwen-image-2.1-viggle-turbo": {
@@ -2253,10 +2253,10 @@
     "repository": "Automattic/harper",
     "platform": "github",
     "sourceUrl": "https://github.com/Automattic/harper",
-    "sourceVersion": "a4b0e5b7",
+    "sourceVersion": "1d972352",
     "license": "Apache-2.0",
-    "contentHash": "4b52c9e957c4daa4b5c5e69ea2e2e4216f1511302f084639166daf59e91041db",
-    "lastHarvestedAt": "2026-11-16T18:46:43.735Z",
+    "contentHash": "bafe1042649aa500f142add0a7dc245f5b1433e49f242fc21e0e4cecb2dc5196",
+    "lastHarvestedAt": "2026-11-18T01:57:56.238Z",
     "learningId": "learn-github-automattic-harper"
   },
   "sudheerj-reactjs-interview-questions": {
@@ -3393,10 +3393,10 @@
     "repository": "skyhook-io/radar",
     "platform": "github",
     "sourceUrl": "https://github.com/skyhook-io/radar",
-    "sourceVersion": "2280c280",
+    "sourceVersion": "495dc890",
     "license": "Apache-2.0",
-    "contentHash": "3bb767671b0641f1206da2b8a1cb8861c8f839b66d797d8dd93a608204132473",
-    "lastHarvestedAt": "2026-11-17T03:26:16.839Z",
+    "contentHash": "368904eac464463ef5951111fb3638596a645e483171f11e83de781ca99f552c",
+    "lastHarvestedAt": "2026-11-18T01:58:04.502Z",
     "learningId": "learn-github-skyhook-io-radar"
   },
   "mitmproxy-mitmproxy": {

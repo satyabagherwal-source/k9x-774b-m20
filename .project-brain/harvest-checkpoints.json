@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-18T01:38:42.472Z",
+  "last_updated": "2026-11-18T01:58:04.510Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -425,14 +425,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-prism-ml-ternary-bonsai-2-27b-gguf",
-      "content_hash": "2c0dc47e94cfeb460e4b2fce18ef61e6fb4f89ca628340829a2e1a03c43c37bd",
-      "verified_at": "2026-11-13T14:05:41.852Z",
+      "content_hash": "dbeb7164897df47373cbefb04e511b0e5dce0a610fcf2829e854d69cd3d045a7",
+      "verified_at": "2026-11-18T01:57:58.625Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T14:05:41.852Z"
+      "last_updated": "2026-11-18T01:57:58.625Z"
     },
     "Viggle/Qwen-Image-2.1-viggle-turbo": {
       "repository": "Viggle/Qwen-Image-2.1-viggle-turbo",
@@ -3516,14 +3516,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-automattic-harper",
-      "content_hash": "4b52c9e957c4daa4b5c5e69ea2e2e4216f1511302f084639166daf59e91041db",
-      "verified_at": "2026-11-16T18:46:43.747Z",
+      "content_hash": "bafe1042649aa500f142add0a7dc245f5b1433e49f242fc21e0e4cecb2dc5196",
+      "verified_at": "2026-11-18T01:57:56.246Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-16T18:46:43.747Z"
+      "last_updated": "2026-11-18T01:57:56.246Z"
     },
     "sudheerj/reactjs-interview-questions": {
       "repository": "sudheerj/reactjs-interview-questions",
@@ -5211,14 +5211,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-skyhook-io-radar",
-      "content_hash": "3bb767671b0641f1206da2b8a1cb8861c8f839b66d797d8dd93a608204132473",
-      "verified_at": "2026-11-17T03:26:16.849Z",
+      "content_hash": "368904eac464463ef5951111fb3638596a645e483171f11e83de781ca99f552c",
+      "verified_at": "2026-11-18T01:58:04.509Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T03:26:16.849Z"
+      "last_updated": "2026-11-18T01:58:04.509Z"
     },
     "mitmproxy/mitmproxy": {
       "repository": "mitmproxy/mitmproxy",
