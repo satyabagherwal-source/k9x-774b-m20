@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T17:28:15.865Z",
-  "total_cycles_completed": 10575,
-  "total_learnings_persisted": 10575,
-  "total_rules_promoted": 10027,
+  "last_updated": "2026-11-18T17:41:28.772Z",
+  "total_cycles_completed": 10578,
+  "total_learnings_persisted": 10578,
+  "total_rules_promoted": 10029,
   "history": [
-    {
-      "timestamp": "2026-11-18T06:07:43.962Z",
-      "repository": "ShiftHackZ/SDAI-KMP",
-      "learningId": "learn-github-shifthackz-sdai-kmp",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-18T06:15:21.095Z",
-      "repository": "Alissonerdx/BFS-Best-Face-Swap",
-      "learningId": "learn-huggingface-alissonerdx-bfs-best-face-swap",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-18T06:15:22.674Z",
-      "repository": "zeronsh/zeron",
-      "learningId": "learn-github-zeronsh-zeron",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-18T06:15:27.630Z",
       "repository": "necolas/react-native-web",
@@ -1403,6 +1382,27 @@
       "repository": "dathere/qsv",
       "learningId": "learn-github-dathere-qsv",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T17:36:31.058Z",
+      "repository": "mfontanini/presenterm",
+      "learningId": "learn-github-mfontanini-presenterm",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T17:36:36.027Z",
+      "repository": "BuilderIO/builder",
+      "learningId": "learn-github-builderio-builder",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T17:41:28.772Z",
+      "repository": "Qwen/Qwen3-0.6B",
+      "learningId": "learn-huggingface-qwen-qwen3-0-6b",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

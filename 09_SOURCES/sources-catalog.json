@@ -745,8 +745,8 @@
     "sourceUrl": "https://huggingface.co/Qwen/Qwen3-0.6B",
     "sourceVersion": "hf-qwen-qwen3-0.6b",
     "license": "Open-Source",
-    "contentHash": "9a0ff4516f74a029b5139525566ba93187eb56ed5112246c0986ccdd53c47a95",
-    "lastHarvestedAt": "2026-11-18T08:20:28.452Z",
+    "contentHash": "046a7b1aa17796f25d841665bbc6a9499c5d00b65676154661a94246cf62e10d",
+    "lastHarvestedAt": "2026-11-18T17:41:28.765Z",
     "learningId": "learn-huggingface-qwen-qwen3-0-6b"
   },
   "hf-google-t5-t5-small": {
@@ -4333,10 +4333,10 @@
     "repository": "mfontanini/presenterm",
     "platform": "github",
     "sourceUrl": "https://github.com/mfontanini/presenterm",
-    "sourceVersion": "5d19c5fe",
+    "sourceVersion": "c6ae2eab",
     "license": "BSD-2-Clause",
-    "contentHash": "be5a7840b8564b115a02cb446cc03a3632628c35b58fdf032e48a05527065dce",
-    "lastHarvestedAt": "2026-11-17T03:50:01.643Z",
+    "contentHash": "536dad1e71cd1e1f7f1e6252a00278c1d54db29bf0c4206fa58804359a000a36",
+    "lastHarvestedAt": "2026-11-18T17:36:31.051Z",
     "learningId": "learn-github-mfontanini-presenterm"
   },
   "ritz078-transform": {
@@ -4503,10 +4503,10 @@
     "repository": "BuilderIO/builder",
     "platform": "github",
     "sourceUrl": "https://github.com/BuilderIO/builder",
-    "sourceVersion": "aa20a509",
+    "sourceVersion": "2c87a393",
     "license": "MIT",
-    "contentHash": "96230bc3fe5797d5a075b2158fa1ec6f5f0a69acaffd59c371d44e520677e296",
-    "lastHarvestedAt": "2026-11-17T17:50:04.227Z",
+    "contentHash": "e91cb66231a5e62979643d56394d0723d1141428e42c982615745c00918461f2",
+    "lastHarvestedAt": "2026-11-18T17:36:36.020Z",
     "learningId": "learn-github-builderio-builder"
   },
   "gocrane-crane": {

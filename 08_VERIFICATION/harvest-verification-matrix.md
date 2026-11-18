@@ -11058,3 +11058,6 @@
 | `CYCLE-20261118-XW3L` | `2026-11-18T17:18:36.993Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9264` | Yes (`f9b013d1...`) |
 | `CYCLE-20261118-9X3A` | `2026-11-18T17:27:58.150Z` | `BAAI/bge-m3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baai-bge-m3-learnings.md` | Yes (`535ba67f...`) |
 | `CYCLE-20261118-AAR4` | `2026-11-18T17:28:15.856Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9265` | Yes (`83cc3075...`) |
+| `CYCLE-20261118-KWUE` | `2026-11-18T17:36:31.046Z` | `mfontanini/presenterm` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9266` | Yes (`536dad1e...`) |
+| `CYCLE-20261118-L0OG` | `2026-11-18T17:36:36.016Z` | `BuilderIO/builder` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9267` | Yes (`e91cb662...`) |
+| `CYCLE-20261118-RAK8` | `2026-11-18T17:41:28.760Z` | `Qwen/Qwen3-0.6B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3-0.6b-learnings.md` | Yes (`046a7b1a...`) |

@@ -4,24 +4,24 @@
 {
   "source_repository": "BuilderIO/builder",
   "source_url": "https://github.com/BuilderIO/builder",
-  "source_version": "aa20a509",
+  "source_version": "2c87a393",
   "license": "MIT",
-  "timestamp": "2026-11-17T17:50:04.465Z",
+  "timestamp": "2026-11-18T17:36:36.254Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-builderio-builder",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [BuilderIO/builder](https://github.com/BuilderIO/builder) (Revision: `aa20a509`).  
-> **License**: MIT | **Timestamp**: `2026-11-17T17:50:04.465Z`  
+> **Provenance**: Harvested from [BuilderIO/builder](https://github.com/BuilderIO/builder) (Revision: `2c87a393`).  
+> **License**: MIT | **Timestamp**: `2026-11-18T17:36:36.254Z`  
 > **Learning ID**: `learn-github-builderio-builder`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), F (Design Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 72%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), F (Design Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence)
+- **Confidence Rating**: 78%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from BuilderIO/builder:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/builderio-builder-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/BuilderIO/builder](https://github.com/BuilderIO/builder))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T17:50:03.088Z  
+> **Harvest Timestamp**: 2026-11-18T17:36:34.825Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Visual Development for React, Vue, Svelte, Qwik, and more
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 8890 stars
+- **Stars / Engagement**: 8891 stars
 
 ---
 
@@ -619,541 +619,219 @@ export { builder } from './src/constants/builder';
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d02cc7ea` (2026-11-16)
-**Commit Message**: fix[gen1][gen2][image]: ENG-14379 stop adding the full-size original image to srcset (#4938)
+### Incident Patch 1: `2d9fc1db` (2026-11-18)
+**Commit Message**: fix[utils]: don't throw on Symbol blocks without data when translating (#4942)
 
-## Description
-The Image block adds the original image URL to the end of its generated
-srcset. If that URL has no `?width=`, which is the default for uploaded
-images, the entry gets no `width` descriptor. Browsers treat an entry
-like that as 1x, so on standard-density screens they often pick it and
-download the full-size original instead of a resized version.
+## Problem
+`getTranslateableFields` and `applyTranslation` read a Symbol block's
+inputs with:
 
-**Fix:**
-- Add the original URL only when it has a width and add the matching
-descriptor (e.g. 800w).
-- Read width from anywhere in the query string. Before, it was only
-found when it was the first parameter.
-- For Shopify images, drop the extra original URL.
-
-**Link to JIRA ticket (if applicable):**
-https://builder-io.atlassian.net/browse/ENG-14379
-
-**Screenshot/Clip**
-If relevant, add a screenshot or clip of the changes you made.
-
-**File**: `packages/react/src/blocks/Image.tsx` (modified, +8/-10)
-```diff
-@@ -71,26 +71,24 @@ export function getSrcSet(url: string): string {
-   const sizes = [100, 200, 400, 800, 1200, 1600, 2000];
- 
-   if (url.match(/builder\.io/)) {
--    let srcUrl = url;
--    const widthInSrc = Number(url.split('?width=')[1]);
--    if (!isNaN(widthInSrc)) {
--      srcUrl = `${srcUrl} ${widthInSrc}w`;
--    }
-+    const widthInSrc = Number(url.match(/[?&]width=(\d+)/)?.[1]);
- 
-+    // A candidate without a width descriptor is treated as 1x and can win over
-+    // the resized ones, so the original is only kept when its width is known.
-     return sizes
-       .filter(size => size !== widthInSrc)
-       .map(size => `${updateQueryParam(url, 'width', size)} ${size}w`)
--      .concat([srcUrl])
-+      .concat(isNaN(widthInSrc) ? [] : [`${url} ${widthInSrc}w`])
-       .join(', ');
-   }
- 
-   if (url.match(/cdn\.shopify\.com/)) {
--    return sizes
-+    const candidates = sizes
-       .map(size => [getShopifyImageUrl(url, `${size}x${size}`), size])
-       .filter(([sizeUrl]) => !!sizeUrl)
--      .map(([sizeUrl, size]) => `${sizeUrl} ${size}w`)
--      .concat([url])
--      .join(', ');
-+      .map(([sizeUrl, size]) => `${sizeUrl} ${size}w`);
-+
-+    return candidates.length ? candidates.join(', ') : url;
-   }
- 
-   return url;
+```ts
+const symbolInputs = Object.entries(el.component?.options?.symbol?.data) || [];
 ```
 
-**File**: `packages/react/test/__snapshots__/image.test.tsx.snap` (modified, +3/-3)
+A Symbol block whose `options.symbol` has no `data` (for example a
+Symbol with no inputs) makes this `Object.entries(undefined)`, which
+throws `TypeError: Cannot convert undefined or null to object`. The `||
+[]` never helps because the throw happens first. Any translation flow
+that walks content containing such a block fails for the whole entry.
+
+## Fix
+Default to `{}` before `Object.entries`, in both places
+(`getTranslateableFields` and `applyTranslation`). A Symbol without data
+has no inputs to translate, so it is skipped and the rest of the content
+is processed as usual.
+
+## Tests
+Two new tests in `translation-helpers.test.ts`: `getTranslateableFields`
+returns `{}` for a Symbol without data, and `applyTranslation` leaves it
+unchanged. Both fail with the error above on `main` and pass with the
+fix; the rest of the package's tests still pass (72/72).
+
+Note: in a fresh checkout the package's jest run fails to compile
+(`"
+
+**File**: `packages/utils/src/translation-helpers.test.ts` (modified, +31/-0)
 ```diff
-@@ -33,7 +33,7 @@ exports[`Image Amp image 1`] = `
-             loading="lazy"
-             role="presentation"
-             src="https://cdn.shopify.com/s/files/1/0374/6457/2041/products/valerie-elash-o1Ic6JdypmA-unsplash.jpg?v=1592506853"
--            srcSet="//cdn.shopify.com/s/files/1/0374/6457/2041/products/valerie-elash-o1Ic6JdypmA-unsplash_100x100.jpg?v=1592506853 100w, //cdn.shopify.com/s/files/1/0374/6457/2041/products/valerie-elash-o1Ic6JdypmA-unsplash_200x200.jpg?v=1592506853 200w, //cdn.shopify.com/s/files/1/0374/6457/2041/products/valerie-elash-o1Ic6JdypmA-unsplash_400x400.jpg?v=1592506853 400w, //cdn.shopify.com/s/files/1/0374/6457/2041/products/valerie-elash-o1Ic6JdypmA-unsplash_800x800.jpg?v=1592506853 800w, //cdn.shopify.com/s/files/1/0374/6457/2041/products/valerie-elash-o1Ic6JdypmA-unsplash_1200x1200.jpg?v=1592506853 1200w, //cdn.shopify.com/s/files/1/0374/6457/2041/products/valerie-elash-o1Ic6JdypmA-unsplash_1600x1600.jpg?v=1592506853 1600w, //cdn.shopify.com/s/files/1/0374/6457/2041/products/valerie-elash-o1Ic6JdypmA-unsplash_2000x2000.jpg?v=1592506853 2000w, https://cdn.shopify.com/s/files/1/0374/6457/2041/products/valerie-elash-o1Ic6JdypmA-unsplash.jpg?v=1592506853"
-+            srcSet="//cdn.shopify.com/s/files/1/0374/6457/2041/products/valerie-elash-o1Ic6JdypmA-unsplash_100x100.jpg?v=1592506853 100w, //cdn.shopify.com/s/files/1/0374/6457/2041/products/valerie-elash-o1Ic6JdypmA-unsplash_200x200.jpg?v=1592506853 200w, //cdn.shopify.com/s/files/1/0374/6457/2041/products/valerie-elash-o1Ic6JdypmA-unsplash_400x400.jpg?v=1592506853 400w, //cdn.shopify.com/s/files/1/0374/6457/2041/products/valerie-elash-o1Ic6JdypmA-unsplash_800x800.jpg?v=1592506853 800w, //cdn.shopify.com/s/files/1/0374/6457/2041/products/valerie-elash-o1Ic6JdypmA-unsplash_1200x1200.jpg?v=1592506853 1200w, //cdn.shopify.com/s/files/1/0374/6457/2041/products/valerie-elash-o1Ic6JdypmA-unsplash_1600x1600.jpg?v=1592506853 1600w, //cdn.shopify.com/s/files/1/0374/6457/2041/products/valerie-elash-o1Ic6JdypmA-unsplash_2000x2000.jpg?v=1592506853 2000w"
-           />
-         </div>
-         <img
-@@ -128,7 +128,7 @@ exports[`Image Shopify image url 1`] = `
-     onLoad={[Function]}
-     role="presentation"
-     src="https://cdn.shopify.com/s/files/1/0374/6457/2041/products/valerie-elash-o1Ic6JdypmA-unsplash.jpg?v=1592506853"
--    srcSet="//cdn.shopify.com/s/files/1/0374/6457/2041/products/valerie-elash-o1Ic6JdypmA-unsplash_100x100.jpg?v=1592506853 100w, //cdn.shopify.com/s/files/1/0374/6457/2041/products/valerie-elash-o1Ic6JdypmA-unsplash_200x200.jpg?v=1592506853 200w, //cdn.shopify.com/s/files/1/0374/6457/2041/products/valerie-elash-o1Ic6JdypmA-unsplash_400x400.jpg?v=1592506853 400w, //cdn.shopify.com/s/files/1/0374/6457/2041/products/valerie-elash-o1Ic6JdypmA-unsplash_800x800.jpg?v=1592506853 800w, //cdn.shopify.com/s/files/1/0374/6457/2041/products/valerie-elash-o1Ic6JdypmA-unsplash_1200x1200.jpg?v=1592506853 1200w, //cdn.shopify.com/s/files/1/0374/6457/2041/products/valerie-elash-o1Ic6JdypmA-unsplash_1600x1600.jpg?v=1592506853 1600w, //cdn.shopify.com/s/files/1/0374/6457/2041/products/valerie-elash-o1Ic6JdypmA-unsplash_2000x2000.jpg?v=1592506853 2000w, https://cdn.shopify.com/s/files/1/0374/6457/2041/products/valerie-elash-o1Ic6JdypmA-unsplash.jpg?v=1592506853"
-+    srcSet="//cdn.shopify.com/s/files/1/0374/6457/2041/products/valerie-elash-o1Ic6JdypmA-unsplash_100x100.jpg?v=1592506853 100w, //cdn.shopify.com/s/files/1/0374/6457/2041/products/valerie-elash-o1Ic6JdypmA-unsplash_200x200.jpg?v=1592506853 200w, //cdn.shopify.com/s/files/1/0374/6457/2041/products/valerie-elash-o1Ic6JdypmA-unsplash_400x400.jpg?v=1592506853 400w, //cdn.shopify.com/s/files/1/0374/6457/2041/products/valerie-elash-o1Ic6JdypmA-unsplash_800x800.jpg?v=1592506853 800w, //cdn.shopify.com/s/files/1/0374/6457/2041/products/valerie-elash-o1Ic6JdypmA-unsplash_1200x1200.jpg?v=1592506853 1200w, //cdn.shopify.com/s/files/1/0374/6457/2041/products/valerie-elash-o1Ic6JdypmA-unsplash_1600x1600.jpg?v=1592506853 1600w, //cdn.shopify.com/s/files/1/0374/6457/2041/products/valerie-elash-o1Ic6JdypmA-unsplash_2000x2000.jpg?v=1592506853 2000w"
-   />
- </picture>
- `;
-@@ -168,7 +168,7 @@ exports[`Image with responsive styles 1`] = `
-               role="presentation"
-               sizes="(max-width: 991px) 100vw, 345px"
-               src="https://cdn.shopify.com/s/files/1/0374/6457/2041/products/valerie-elash-o1Ic6JdypmA-unsplash.jpg?v=1592506853"
--              srcSet="//cdn.shopify.com/s/files/1/0374/6457/2041/products/valerie-elash-o1Ic6JdypmA-unsplash_100x100.jpg?v=1592506853 100w, //cdn.shopify.com/s/files/1/0374/6457/2041/products/valerie-elash-o1Ic6JdypmA-unsplash_200x200.jpg?v=1592506853 200w, //cdn.shopify.com/s/files/1/0374/6457/2041/products/valerie-elash-o1Ic6JdypmA-unsplash_400x400.jpg?v=1592506853 400w, //cdn.shopify.com/s/files/1/0374/6457/2041/products/valerie-elash-o1Ic6JdypmA-unsplash_800x800.jpg?v=1592506853 800w, //cdn.shopify.com/s/files/1/0374/6457/2041/produc
-```
-
-**File**: `packages/sdks-tests/src/e2e-tests/blocks.spec.ts` (modified, +4/-2)
-```diff
-@@ -118,9 +118,11 @@ test.describe('Blocks', () => {
-           // RN SDK does not support object-fit
-           'object-fit': checkIsRN(sdk) ? 'fill' : 'contain',
-         },
-+        // The mock serves a 600x400 file for every width, so the browser picking
-+        // the 1200w candidate (density 1200 / 71vw) renders it at 600 / 1.32.
-         {
--          width: '600px',
--          height: '400px',
-+          width: '454.406px',
-+          height: '302.938px',
-         },
-       ];
- 
-```
-
-**File**: `packages/sdks/src/blocks/image/image.helpers.ts` (modified, +8/-10)
-```diff
-@@ -49,26 +49,24 @@ export function getSrcSet(url: string): string {
-   const sizes = [100, 200, 400, 800, 1200, 1600, 2000];
- 
-   if (url.match(/builder\.io/)) {
--    let srcUrl = url;
--    const widthInSrc = Number(url.split('?width=')[1]);
--    if (!isNaN(widthInSrc)) {
--      srcUrl = `${srcUrl} ${widthInSrc}w`;
--    }
-+    const widthInSrc = Number(url.match(/[?&]width=(\d+)/)?.[1]);
- 
-+    // A candidate without a width descriptor is treated as 1x and can win over
-+    // the resized ones, so the original is only kept when its width is known.
-     return sizes
-       .filter((size) => size !== widthInSrc)
-       .map((size) => `${updateQueryParam(url, 'width', size)} ${size}w`)
--      .concat([srcUrl])
-+      .concat(isNaN(widthInSrc) ? [] : [`${url} ${widthInSrc}w`])
-       .join(', ');
-   }
- 
-   if (url.match(/cdn\.shopify\.com/)) {
--    return sizes
-+    const candidates = sizes
-       .map((size) => [getShopifyImageUrl(url, `${size}x${size}`), size])
-       .filter(([sizeUrl]) => !!sizeUrl)
--      .map(([sizeUrl, size]) => `${sizeUrl} ${size}w`)
--      .concat([url])
--      .join(', ');
-+      .map(([sizeUrl, size]) => `${sizeUrl} ${size}w`);
-+
-+    return candidates.length ? candidates.join(', ') : url;
-   }
- 
-   return url;
-```
-
----
-
-### Incident Patch 2: `87d1e021` (2026-11-16)
-**Commit Message**: chore[gen1][gen2][image]: ENG-14379 add changeset for srcset width fix (#4939)
-
-## Description
-
-Small follow up on https://github.com/BuilderIO/builder/pull/4938,
-adding changeset.
-
-**Link to JIRA ticket (if applicable):**
-https://builder-io.atlassian.net/browse/ENG-14379
-
-**Screenshot/Clip**
-NA
-
-**File**: `.changeset/quiet-pens-shrink.md` (added, +13/-0)
-```diff
-@@ -0,0 +1,13 @@
-+---
-+"@builder.io/react": patch
-+"@builder.io/sdk-angular": patch
-+"@builder.io/sdk-react-nextjs": patch
-+"@builder.io/sdk-qwik": patch
-+"@builder.io/sdk-react": patch
-+"@builder.io/sdk-react-native": patch
-+"@builder.io/sdk-solid": patch
-+"@builder.io/sdk-svelte": patch
-+"@builder.io/sdk-vue": patch
-+---
-+
-+Fix Image block srcset so the original image URL is only included when it has a width descriptor, preventing browsers from downloading the full-size original image on standard-density screens.
-```
-
----
-
-### Incident Patch 3: `24a41a1b` (2026-11-16)
-**Commit Message**: fix[sdks][personalizationContainer]: ENG-14357 omit other-locale variant content from server-rendered HTML (#4936)
-
-**File**: `.changeset/spicy-ducks-argue.md` (added, +9/-0)
-```diff
-@@ -0,0 +1,9 @@
-+---
-+"@builder.io/react": patch
-+"@builder.io/sdk-qwik": patch
-+"@builder.io/sdk-react": patch
-+"@builder.io/sdk-svelte": patch
-+"@builder.io/sdk-vue": patch
-+---
-+
-+Fix Variant Container server HTML leaking content for other locales. Variants whose locale targeting can't match the page locale are no longer rendered, and the inline personalization script no longer embeds variant blocks.
-```
-
-**File**: `packages/personalization-utils/src/trim-html.test.ts` (modified, +15/-0)
-```diff
-@@ -47,6 +47,21 @@ describe('trimHtml', () => {
-     expect(result).not.toContain('Variant 2 Content');
-   });
- 
-+  it('should apply the page locale from the script over the user attribute locale', () => {
-+    const html = `
-+      <div class="builder-personalization-container">
-+        <template data-variant-id="builder-123-0"></template>
-+        <script id="variants-script-builder-123">
-+          (function() { var attributes = {}; attributes.locale = "en-US"; var variants = [{"query":[{"property":"locale","operator":"is","value":"fr-FR"}]}]; })();
-+        </script>
-+        <div>Default Content</div>
-+      </div>
-+    `;
-+    const result = trimHtml(html, { userAttributes: { locale: 'fr-FR' } }).html;
-+    expect(result).toContain('<div>Default Content</div>');
-+    expect(result).not.toContain('<template');
-+  });
-+
-   it('should handle multiple personalization containers', () => {
-     const multipleContainersHtml = `
-       ${baseHtml}
-```
-
-**File**: `packages/personalization-utils/src/utils.ts` (modified, +6/-1)
-```diff
-@@ -117,9 +117,14 @@ function processContainer($: CheerioAPI, $container: Cheerio<any>, userAttribute
- 
-     if (variantsMatch) {
-       let winningVariantIndex = -1;
-+      // Mirror the inline script: the page locale wins, and variants for other locales are rendered empty.
-+      const localeMatch = scriptContent.match(/attributes\.locale = "([^"]*)";/);
-       try {
-         const variantsData = JSON.parse(variantsMatch[1]);
--        winningVariantIndex = findWinningVariant(variantsData, userAttributes);
-+        winningVariantIndex = findWinningVariant(
-+          variantsData,
-+          localeMatch ? { ...userAttributes, locale: localeMatch[1] } : userAttributes
-+        );
-       } catch (e) {
-         console.error('Error parsing variants script');
-       }
-```
-
-**File**: `packages/react/src/blocks/PersonalizationContainer.tsx` (modified, +20/-8)
-```diff
-@@ -132,14 +132,17 @@ export function PersonalizationContainer(props: PersonalizationContainerProps) {
-         >
-           {props.variants?.map((variant, index) => (
-             <template key={index} data-variant-id={props.builderBlock?.id! + index}>
--              <PersonalizationStyles>
--                <BuilderBlocks
--                  blocks={variant.blocks}
--                  parentElementId={props.builderBlock?.id}
--                  dataPath={`component.options.variants.${index}.blocks`}
--                  child
--                />
--              </PersonalizationStyles>
-+              {/* Empty placeholder keeps positional lookups (e.g. personalization-utils) intact */}
-+              {isVariantForLocale(variant.query, props.builderState.state?.locale) && (
-+                <PersonalizationStyles>
-+                  <BuilderBlocks
-+                    blocks={variant.blocks}
-+                    parentElementId={props.builderBlock?.id}
-+                    dataPath={`component.options.variants.${index}.blocks`}
-+                    child
-+                  />
-+                </PersonalizationStyles>
-+              )}
-             </template>
-           ))}
-           <script
-@@ -294,6 +297,15 @@ Builder.registerComponent(PersonalizationContainer, {
-   ],
+@@ -2440,3 +2440,34 @@ test('applyTranslation keeps references intact alongside translated text', () =>
+     { heading: 'Może Ci się spodobać', product: reference('store-product', 'p1') },
+   ]);
  });
- 
-+// The inline script forces this locale, so variants targeting another locale can never win.
-+function isVariantForLocale(query: Query[] | undefined, locale?: string) {
-+  if (!locale) return true;
-+  return filterWithCustomTargeting(
-+    { locale },
-+    (query || []).filter(q => q.property === 'locale')
-+  );
-+}
 +
- function getPersonalizationScript(
-   variants: PersonalizationContainerProps['variants'],
-   blockId: string,
-```
-
-**File**: `packages/react/test/personalization-container-ssr.test.tsx` (modified, +15/-2)
-```diff
-@@ -24,7 +24,7 @@ const VariantContent = ({ name }: { name: string }) => (
-   </ClassNames>
- );
- 
--const renderFixture = (key = 'css', compat = false) => {
-+const renderFixture = (key = 'css', compat = false, locale?: string) => {
-   const cache = createCache({ key, nonce: 'test-nonce' });
-   if (compat) cache.compat = true;
-   const html = renderToString(
-@@ -36,7 +36,7 @@ const renderFixture = (key = 'css', compat = false) => {
-           id: blockId,
-           children: [<VariantContent key="default" name="English" />] as any,
-         }}
--        builderState={{ state: {} }}
-+        builderState={{ state: locale ? { locale } : {} }}
-         previewingIndex={null}
-         variants={
-           [
-@@ -67,6 +67,19 @@ const runInBrowser = (html: string, locale: string) => {
-   return new JSDOM(html, { url: 'http://localhost/', cookieJar, runScripts: 'dangerously' });
- };
- 
-+describe('personalization SSR locale pruning', () => {
-+  test('omits content of variants targeting another locale but keeps placeholders', () => {
-+    const { html } = renderFixture('css', false, 'fr-FR');
-+    expect(html).not.toContain('Catalan');
-+    const dom = runInBrowser(html, 'ca-ES');
-+    expect(dom.window.document.querySelector('[data-content]')!.textContent).toBe('French');
-+    dom.window.close();
-+
-+    const before = new JSDOM(html).window.document;
-+    expect(before.querySelectorAll('template[data-variant-id]').length).toBe(2);
-+  });
-+});
-+
- describe('personalization SSR shared styles', () => {
-   [
-     { key: 'custom', compat: false },
-```
-
-**File**: `packages/sdks/src/blocks/personalization-container/helpers.ts` (modified, +29/-2)
-```diff
-@@ -9,6 +9,7 @@ import {
-   PERSONALIZATION_SCRIPT,
-   STUDIO_USER_ATTRIBUTES_SCRIPT,
-   UPDATE_VISIBILITY_STYLES_SCRIPT,
-+  filterWithCustomTargeting,
- } from './helpers/inlined-fns.js';
- import type { PersonalizationContainerProps } from './personalization-container.types.js';
- 
-@@ -200,20 +201,46 @@ export const getInitPersonalizationVariantsFnsScriptString = () => {
- 
- const isHydrationTarget = TARGET === 'react';
- 
-+/**
-+ * The inline scripts force the page locale over user attributes, so a variant
-+ * targeting another locale can never win and must not ship in the HTML.
-+ */
-+export function isVariantForLocale(
-+  query: Query[] | undefined,
-+  locale?: string
-+) {
-+  if (!locale) return true;
-+  return filterWithCustomTargeting(
-+    { locale },
-+    (query || []).filter((q) => q.property === 'locale')
-+  );
-+}
-+
-+const getTargetingOnly = (
-+  variants: PersonalizationContainerProps['variants']
-+) =>
-+  JSON.stringify(
-+    (variants || []).map((v) => ({
-+      query: v.query,
-+      startDate: v.startDate,
-+      endDate: v.endDate,
-+    }))
-+  );
-+
- export const getPersonalizationScript = (
-   variants: PersonalizationContainerProps['variants'],
-   blockId: string,
-   locale?: string
- ) => {
--  return `window.${BUILDER_IO_PERSONALIZATION_SCRIPT_FN_NAME}(${JSON.stringify(variants)}, "${blockId}", ${isHydrationTarget}${locale ? `, "${locale}"` : ''})`;
-+  return `window.${BUILDER_IO_PERSONALIZATION_SCRIPT_FN_NAME}(${getTargetingOnly(variants)}, "${blockId}", ${isHydrationTarget}${locale ? `, "${locale}"` : ''})`;
- };
- 
- export const getUpdateVisibilityStylesScript = (
-   variants: PersonalizationContainerProps['variants'],
-   blockId: string,
-   locale?: string
- ) => {
--  return `window.${UPDATE_VARIANT_VISIBILITY_SCRIPT_FN_NAME}(${JSON.stringify(variants)}, "${blockId}", ${isHydrationTarget}${locale ? `, "${locale}"` : ''})`;
-+  return `window.${UPDATE_VARIANT_VISIBILITY_SCRIPT_FN_NAME}(${getTargetingOnly(variants)}, "${blockId}", ${isHydrationTarget}${locale ? `, "${locale}"` : ''})`;
- };
- 
- export { filterWithCustomTargeting } from './helpers/inlined-fns.js';
-```
-
-**File**: `packages/sdks/src/blocks/personalization-container/is-variant-for-locale.test.ts` (added, +61/-0)
-```diff
-@@ -0,0 +1,61 @@
-+import {
-+  getPersonalizationScript,
-+  isVariantForLocale,
-+  type Query,
-+} from './helpers.js';
-+
-+const localeIs = (value: string | string[]): Query => ({
-+  property: 'locale',
-+  operator: 'is',
-+  value,
-+});
-+
-+describe('isVariantForLocale', () => {
-+  test('keeps every variant when no locale is known', () => {
-+    expect(isVariantForLocale([localeIs('fr-FR')], undefined)).toBe(true);
-+  });
-+
-+  test('keeps variants without targeting', () => {
-+    expect(isVariantForLocale(undefined, 'en-US')).toBe(true);
-+    expect(isVariantForLocale([], 'en-US')).toBe(true);
-+  });
-+
-+  test('drops variants targeting another locale', () => {
-+    expect(isVariantForLocale([localeIs('fr-FR')], 'en-US')).toBe(false);
-+    expect(isVariantForLocale([localeIs(['fr-FR', 'de-DE'])], 'en-US')).toBe(
-+      false
-+    );
-+  });
-+
-+  test('keeps variants targeting the page locale', () => {
-+    expect(isVariantForLocale([localeIs('en-US')], 'en-US')).toBe(true);
-+    expect(isVariantForLocale([localeIs(['fr-FR', 'en-US'])], 'en-US')).toBe(
-+      true
-+    );
-+  });
-+
-+  test('ignores non-locale rules that depend on visitor attributes', () => {
-+    const query: Query[] = [
-+      localeIs('en-US'),
-+      { property: 'loggedIn', operator: 'is', value: true },
-+    ];
-+    expect(isVariantForLocale(query, 'en-US')).toBe(true);
-+  });
-+});
-+
-+describe('getPersonalizationScript', () => {
-+  test('does not inline variant blocks', () => {
-+    const script = getPersonalizationScript(
-+      [
++describe('Symbol blocks without data', () => {
++  const symbolWithoutData = (): BuilderContent => ({
++    data: {
++      blocks: [
 +        {
-+          query: [localeIs('fr-FR')],
-+          blocks: [{ '@type': '@builder.io/sdk:Element', id: 'secret-fr' }],
++          '@type': '@builder.io/sdk:Element',
++          id: 'builder-symbol',
++          component: {
++            name: 'Symbol',
++            options: { symbol: { model: 'symbol', entry: 'entry-id', ownerId: 'owner-id' } },
++          },
 +        },
 +      ],
-+      'block-1',
-+      'en-US'
-+    );
-+    expect(script).not.toContain('secret-fr');
-+    expect(script).toContain('fr-FR');
++    },
++  });
++
++  test('getTranslateableFields skips the Symbol instead of throwing', () => {
++    expect(getTranslateableFields(symbolWithoutData(), 'Default', '')).toEqual({});
++  });
++
++  test('applyTranslation leaves the Symbol alone instead of throwing', () => {
++    const content = symbolWithoutData();
++    const result = applyTranslation(content, {}, 'fr-FR');
++    expect(result.data!.blocks![0].component!.options.symbol).toEqual({
++      model: 'symbol',
++      entry: 'entry-id',
++      ownerId: 'owner-id',
++    });
 +  });
 +});
 ```
 
-**File**: `packages/sdks/src/blocks/personalization-container/personalization-container.lite.tsx` (modified, +23/-7)
+**File**: `packages/utils/src/translation-helpers.ts` (modified, +2/-2)
 ```diff
-@@ -25,6 +25,7 @@ import {
-   getBlocksToRender,
-   getPersonalizationScript,
-   getUpdateVisibilityStylesScript,
-+  isVariantForLocale,
-   SDKS_REQUIRING_RESET_APPROACH,
- } from './helpers.js';
- import type { PersonalizationContainerProps } from './personalization-container.types.js';
-@@ -94,6 +95,16 @@ export default function PersonalizationContainer(
-         );
-       });
-     },
-+    get localeVariants() {
-+      return (props.variants || [])
-+        .map((variant, index) => ({ variant, index }))
-+        .filter((item) =>
-+          isVariantForLocale(
-+            item.variant.query,
-+            props.builderContext.value?.rootState?.locale as string | undefined
-+          )
-+        );
-+    },
-     get blocksToRender() {
-       return getBlocksToRender({
-         variants: props.variants,
-@@ -202,26 +213,31 @@ export default function PersonalizationContainer(
-             scriptStr={state.updateVisibilityStylesScript}
-             id={`variants-visibility-script-${props.builderBlock?.id}`}
-           />
--          <For each={props.variants}>
--            {(variant, index) => (
-+          <For each={state.localeVariants}>
-+            {(
-+              item,
-+              // Angular output needs a named index; Solid rejects a `_` prefix.
-+              // eslint-disable-next-line @typescript-eslint/no-unused-vars
-+              index
-+            ) => (
-               <Blocks
--                key={`${props.builderBlock?.id}-${index}`}
-+                key={`${props.builderBlock?.id}-${item.index}`}
-                 BlocksWrapperProps={{
-                   ...props.builderContext.value?.BlocksWrapperProps,
-                   'aria-hidden': true,
-                   hidden: true,
--                  'data-variant-id': `${props.builderBlock?.id}-${index}`,
-+                  'data-variant-id': `${props.builderBlock?.id}-${item.index}`,
-                 }}
--                blocks={variant.blocks}
-+                blocks={item.variant.blocks}
-                 parent={props.builderBlock?.id}
--                path={`component.options.variants.${index}.blocks`}
-+                path={`component.options.variants.${item.index}.blocks`}
-                 context={props.builderContext}
-                 registeredComponents={props.builderComponents}
-               >
-                 <InlinedScript
-                   nonce={props.builderContext.value?.nonce || ''}
-                   scriptStr={state.scriptStr}
--                  id={`variants-script-${props.builderBlock?.id}-${index}`}
-+                  id={`variants-script-${props.builderBlock?.id}-${item.index}`}
-                 />
-               </Blocks>
-             )}
+@@ -556,7 +556,7 @@ export function getTranslateableFields(
+       }
+ 
+       if (el && el.id && el.component?.name === 'Symbol'&& !isExcluded) {
+-        const symbolInputs = Object.entries(el.component?.options?.symbol?.data) || [];
++        const symbolInputs = Object.entries(el.component?.options?.symbol?.data || {});
+         if (symbolInputs.length) {
+           const basePath = `blocks.${el.id}.symbolInput`;
+           symbolInputs.forEach(
+@@ -820,7 +820,7 @@ export function applyTranslation(
+       const isExcluded = excludedDepth > 0;
+ 
+       if (el && el.id && el.component?.name === 'Symbol' && !isExcluded) {
+-        const symbolInputs = Object.entries(el.component?.options?.symbol?.data) || [];
++        const symbolInputs = Object.entries(el.component?.options?.symbol?.data || {});
+         if (symbolInputs.length) {
+           const transformedMeta = {};
+ 
+```
+
+---
+
+### Incident Patch 2: `0c3698eb` (2026-11-18)
+**Commit Message**: chore(utils): publish @builder.io/utils via changesets (#4944)
+
+## Description
+
+Moves `@builder.io/utils` onto the same changesets release flow as the
+SDKs.
+
+- Add `packages/utils` to root workspaces; regenerate `yarn.lock`; drop
+its standalone `package-lock.json`
+- `ci:release` builds utils before `changeset publish`, so the existing
+"Publish SDKs" workflow publishes it
+- Remove manual `release:patch` / `release:dev` / `prepublish` scripts
+- `@builder.io/sdk` devDependency -> `workspace:*` (changesets rejected
+`^1.1.29` vs 6.3.3)
+- `tsconfig` `types: ["jest"]` so tests compile under the workspace
+install (70/70 pass)
+- Add changeset + README "Releasing" section
+
+## Notes
+- npm trusted publisher must be configured for `@builder.io/utils` for
+OIDC publishing.
+- `publish-sdks.yml` calls `yarn workspace @builder.io/sdks ci:release`,
+but the script lives in `@builder.io/packages`; worth confirming it
+resolves.
+
+🤖 Generated with [Claude Code](https://claude.com/claude-code)
+
+Co-authored-by: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
+
+**File**: `.changeset/utils-changesets-publish.md` (added, +5/-0)
+```diff
+@@ -0,0 +1,5 @@
++---
++'@builder.io/utils': patch
++---
++
++Move @builder.io/utils to changesets-based publishing alongside the SDKs.
+```
+
+**File**: `package.json` (modified, +1/-0)
+```diff
+@@ -7,6 +7,7 @@
+     "packages/sdks",
+     "packages/react",
+     "packages/core",
++    "packages/utils",
+     "packages/react-tests/*",
+     "packages/sdks/e2e/*",
+     "packages/sdks/snippets/*",
+```
+
+**File**: `packages/package.json` (modified, +2/-1)
+```diff
+@@ -6,7 +6,8 @@
+     "ci:changeset": "changeset status --since=main",
+     "fix-core-version": "yarn workspace @builder.io/react fix-core-version",
+     "build:sdks": "yarn g:nx run-many --skip-nx-cache -t build --projects=@builder.io/sdk-\\*,@builder.io/react",
+-    "ci:release": "yarn build:sdks && yarn run fix-core-version && yarn g:changeset publish"
++    "build:utils": "yarn workspace @builder.io/utils build",
++    "ci:release": "yarn build:sdks && yarn build:utils && yarn run fix-core-version && yarn g:changeset publish"
+   },
+   "devDependencies": {
+     "@changesets/cli": "^2.27.1"
+```
+
+**File**: `packages/utils/README.md` (modified, +4/-0)
+```diff
+@@ -237,3 +237,7 @@ export async function getServerSideProps({
+ }
+ ```
+ note: Pixels will have `alt` by default in next API verison (`v3`);
++
++## Releasing
++
++Add a changeset (`yarn g:changeset` from the repo root, select `@builder.io/utils`) in your PR. Merging to `main` makes the "📦 Publish SDKs" workflow open/update a release PR; merging that publishes to npm.
+```
+
+**File**: `packages/utils/package.json` (modified, +2/-5)
+```diff
+@@ -5,13 +5,10 @@
+   "main": "./dist/index.js",
+   "scripts": {
+     "build": "tsc",
+-    "prepublish": "npm run build",
+-    "test": "jest",
+-    "release:patch": "npm run build && npm version patch --no-git-tag-version && ALLOW_PUBLISH=true npm publish",
+-    "release:dev": "npm run build && npm version prerelease --no-git-tag-version && ALLOW_PUBLISH=true npm publish --tag dev"
++    "test": "jest"
+   },
+   "devDependencies": {
+-    "@builder.io/sdk": "^1.1.29",
++    "@builder.io/sdk": "workspace:*",
+     "@types/jest": "^26.0.19",
+     "@types/traverse": "^0.6.32",
+     "jest": "^26.6.3",
+```
+
+**File**: `packages/utils/tsconfig.json` (modified, +1/-1)
+```diff
+@@ -8,7 +8,7 @@
+     "skipLibCheck": true,
+     "strict": true,
+     "declaration": true,
+-    "types": []
++    "types": ["jest"]
+   },
+   "include": ["./src"],
+   "exclude": ["node_modules", "**/*.test.ts"]
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4945** (2026-11-18): 📦 Publish SDKs (@builder-io-integration[bot])
+- **PR #4944** (2026-11-18): chore(utils): publish @builder.io/utils via changesets (@lihuelg)
+- **PR #4942** (2026-11-18): fix[utils]: don't throw on Symbol blocks without data when translating (@lihuelg)
 - **PR #4941** (2026-11-17): 📦 Publish SDKs (@builder-io-integration[bot])
 - **PR #4940** (2026-11-16): 📦 Publish SDKs (@builder-io-integration[bot])
 - **PR #4939** (2026-11-16): chore[gen1][gen2][image]: ENG-14379 add changeset for srcset width fix (@AishwaryaParab)
-- **PR #4938** (2026-11-16): fix[gen1][gen2][image]: ENG-14379 stop adding the full-size original image to srcset (@AishwaryaParab)
-- **PR #4936** (2026-11-16): fix[sdks][personalizationContainer]: ENG-14357 omit other-locale variant content from server-rendered HTML (@floating-dynamo)
-- **PR #4935** (2026-11-12): 📦 Publish SDKs (@builder-io-integration[bot])
 
 ---
 
@@ -1173,47 +851,61 @@ NA
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. fix[gen1][gen2][image]: ENG-14379 stop adding the full-size original image to sr
+## X. fix[utils]: don't throw on Symbol blocks without data when translating
 
 **RULE**:
-When implementing operations in `packages/react/src/blocks/Image.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in BuilderIO/builder. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/utils/src/translation-helpers.test.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in BuilderIO/builder. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d02cc7ea`: fix[gen1][gen2][image]: ENG-14379 stop adding the full-size original image to srcset. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2d9fc1db`: fix[utils]: don't throw on Symbol blocks without data when translating. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/react/src/blocks/Image.tsx`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/utils/src/translation-helpers.test.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-    const widthInSrc = Number(url.match(/[?&]width=(\d+)/)?.[1]);
-    // A candidate without a width descriptor is treated as 1x and can win over
-    // the resized ones, so the original is only kept when its width is known.
-      .concat(isNaN(widthInSrc) ? [] : [`${url} ${widthInSrc}w`])
-    const candidates = sizes
-      .map(([sizeUrl, size]) => `${sizeUrl} ${size}w`);
 
-    return candidates.length ? candidates.join(', ') : url;
+describe('Symbol blocks without data', () => {
+  const symbolWithoutData = (): BuilderContent => ({
+    data: {
+      blocks: [
+        {
+          '@type': '@builder.io/sdk:Element',
+          id: 'builder-symbol',
+          component: {
+            name: 'Symbol',
+            options: { symbol: { model: 'symbol', entry: 'entry-id', ownerId: 'owner-id' } },
+          },
+        },
+      ],
+    },
+  });
+
+  test('getTranslateableFields skips the Symbol instead of throwing', () => {
+    expect(getTranslateableFields(symbolWithoutData(), 'Default', '')).toEqual({});
+  });
+
+  test('applyTranslation leaves the Symbol alone instead of throwing', () => {
+    const content = symbolWithoutData();
+    const result = applyTranslation(content, {}, 'fr-FR');
+    expect(result.data!.blocks![0].component!.options.symbol).toEqual({
+      model: 'symbol',
+      entry: 'entry-id',
+      ownerId: 'owner-id',
+    });
+  });
+});
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Induced defect failure mode:
-    let srcUrl = url;
-    const widthInSrc = Number(url.split('?width=')[1]);
-    if (!isNaN(widthInSrc)) {
-      srcUrl = `${srcUrl} ${widthInSrc}w`;
-    }
-      .concat([srcUrl])
-    return sizes
-      .map(([sizeUrl, size]) => `${sizeUrl} ${size}w`)
-      .concat([url])
-      .join(', ');
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d02cc7ea` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2d9fc1db` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

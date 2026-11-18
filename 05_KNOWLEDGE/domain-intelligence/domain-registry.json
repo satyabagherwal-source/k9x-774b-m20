@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-18T17:28:20.721Z",
+  "last_updated": "2026-11-18T17:41:33.709Z",
   "total_records": 1883,
   "domains": {
     "A": {
@@ -10716,8 +10716,8 @@
       "title": "Research & Knowledge Intelligence: Qwen/Qwen3-0.6B Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-qwen-qwen3-0-6b-research-knowledge-intelligence-qwen-qwen3-0-6b-core-invarian.md",
       "repository": "Qwen/Qwen3-0.6B",
-      "content_hash": "def543af5e1001f20e212d4dc1fb7bdc3db60e6c10ee0873ccd838f49db5f3a2",
-      "created_at": "2026-11-13T21:28:08.413Z"
+      "content_hash": "95da7a6804d239f1063743d9e31f23676c602dd0786429aceb156fa625597a27",
+      "created_at": "2026-11-18T17:41:29.010Z"
     },
     "DOM-D-7BD861BF": {
       "record_id": "DOM-D-7BD861BF",
@@ -10767,8 +10767,8 @@
       "title": "Research & Knowledge Intelligence: hf-qwen-qwen3-0.6b-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-qwen-qwen3-0-6b-learnings-research-knowledge-intelligence-hf-qwen-qwen3-0-6b-.md",
       "repository": "hf-qwen-qwen3-0.6b-learnings",
-      "content_hash": "89155d168482dd6a3854c27a41aa55a107429278c72d85e19b8b339cb0e67b94",
-      "created_at": "2026-11-13T21:28:53.129Z"
+      "content_hash": "94817c8a657e8b5cbc4f6b35fd617cc97e2567935d280399db67d89188b79d1d",
+      "created_at": "2026-11-18T17:41:32.964Z"
     },
     "domain_intelligence-research-knowledge-intelligence-nvidia-nvidia-nemotronlabs-re-use-core-invariant": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-nvidia-nvidia-nemotronlabs-re-use-core-invariant",
@@ -13573,8 +13573,8 @@
       "title": "Architecture Intelligence: BuilderIO/builder Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-builderio-builder-architecture-intelligence-builderio-builder-core-invariants.md",
       "repository": "BuilderIO/builder",
-      "content_hash": "4ec61316000f29afc39ef5221d5f7343f1d168a5904467f2fdefe1f3e758b39f",
-      "created_at": "2026-11-17T17:50:04.628Z"
+      "content_hash": "9410c11e997c10da9e404fe5315bdbd541ce8452f09ebd622c08a4d6caacca95",
+      "created_at": "2026-11-18T17:36:36.434Z"
     },
     "domain_intelligence-technical-construction-intelligence-pixeltable-pixeltable-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-pixeltable-pixeltable-core-invariants",
@@ -13642,8 +13642,8 @@
       "title": "Architecture Intelligence: builderio-builder-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-builderio-builder-learnings-architecture-intelligence-builderio-builder-learning.md",
       "repository": "builderio-builder-learnings",
-      "content_hash": "8adac4863a802fdb08c2c9d276e659d47d2802520316dea1ac6adb7880afeb8b",
-      "created_at": "2026-11-17T17:50:08.692Z"
+      "content_hash": "5e8125022ac0356fc50351f97cec183e2e27d279458d5aca986aff2514ef0dfa",
+      "created_at": "2026-11-18T17:41:33.709Z"
     },
     "domain_intelligence-technical-construction-intelligence-pixeltable-pixeltable-learnings-core-invaria": {
       "record_id": "domain_intelligence-technical-construction-intelligence-pixeltable-pixeltable-learnings-core-invaria",
@@ -25445,8 +25445,8 @@
       "title": "Market & Business Intelligence: mfontanini/presenterm Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-C-mfontanini-presenterm-market-business-intelligence-mfontanini-presenterm-core-in.md",
       "repository": "mfontanini/presenterm",
-      "content_hash": "e5a655451599b00f5a55eb4903b9e9686575dcc7deb7c8de107493304609e837",
-      "created_at": "2026-11-17T03:50:01.993Z"
+      "content_hash": "093c5c23885336e22599a7f05f20284577454b5dc3c01e262d6b472503792bcd",
+      "created_at": "2026-11-18T17:36:31.486Z"
     },
     "domain_intelligence-technical-construction-intelligence-sveltejs-svelte-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-sveltejs-svelte-core-invariants",
@@ -25472,8 +25472,8 @@
       "title": "Market & Business Intelligence: mfontanini-presenterm-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-C-mfontanini-presenterm-learnings-market-business-intelligence-mfontanini-presente.md",
       "repository": "mfontanini-presenterm-learnings",
-      "content_hash": "0facba85825622af2cf40819c91e07546d796c6225a91a96d8c143991224d750",
-      "created_at": "2026-11-17T03:50:19.329Z"
+      "content_hash": "481f61a98a55a88c0c4a068262633e4f0ea1841625bcb8e83339bb846e2ce657",
+      "created_at": "2026-11-18T17:41:32.365Z"
     },
     "domain_intelligence-technical-construction-intelligence-sveltejs-svelte-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-sveltejs-svelte-learnings-core-invariants",

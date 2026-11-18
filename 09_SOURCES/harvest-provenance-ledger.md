@@ -11091,3 +11091,6 @@ Every entry in this ledger must capture:
 | `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `cde31357` | Multi-dimensional audit evidence | 2026-11-18T17:18:36.997Z |
 | `learn-huggingface-baai-bge-m3` | `https://huggingface.co/BAAI/bge-m3` | `hf-baai-bg` | Multi-dimensional audit evidence | 2026-11-18T17:27:58.155Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `03493b2a` | Multi-dimensional audit evidence | 2026-11-18T17:28:15.860Z |
+| `learn-github-mfontanini-presenterm` | `https://github.com/mfontanini/presenterm` | `c6ae2eab` | Multi-dimensional audit evidence | 2026-11-18T17:36:31.051Z |
+| `learn-github-builderio-builder` | `https://github.com/BuilderIO/builder` | `2c87a393` | Multi-dimensional audit evidence | 2026-11-18T17:36:36.020Z |
+| `learn-huggingface-qwen-qwen3-0-6b` | `https://huggingface.co/Qwen/Qwen3-0.6B` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-11-18T17:41:28.765Z |

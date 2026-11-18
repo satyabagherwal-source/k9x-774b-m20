@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-18T17:28:20.981Z",
+  "last_updated": "2026-11-18T17:41:33.889Z",
   "total_verified_learnings": 9006,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 21395,
+  "total_items": 21399,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -216609,7 +216609,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Qwen/Qwen3-0.6B",
       "source_version": "hf-qwen-qwen3-0.6b",
-      "content_hash": "9a0ff4516f74a029b5139525566ba93187eb56ed5112246c0986ccdd53c47a95",
+      "content_hash": "046a7b1aa17796f25d841665bbc6a9499c5d00b65676154661a94246cf62e10d",
       "dossier_path": "07_PROJECT_LEARNING/hf-qwen-qwen3-0.6b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-qwen-qwen3-0.6b-learnings.md",
       "promoted_rules": [
@@ -216634,7 +216634,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T08:20:28.274Z",
+      "verified_at": "2026-11-18T17:41:28.509Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -216651,9 +216651,9 @@
       "title": "Research & Knowledge Intelligence: Qwen/Qwen3-0.6B Core Invariants",
       "repository": "Qwen/Qwen3-0.6B",
       "source_version": "hf-qwen-qwen3-0.6b",
-      "content_hash": "def543af5e1001f20e212d4dc1fb7bdc3db60e6c10ee0873ccd838f49db5f3a2",
+      "content_hash": "95da7a6804d239f1063743d9e31f23676c602dd0786429aceb156fa625597a27",
       "domain_letter": "D",
-      "persisted_at": "2026-11-13T21:28:08.413Z"
+      "persisted_at": "2026-11-18T17:41:29.010Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-qwen-qwen3-0-6b-learnings-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-qwen-qwen3-0-6b-learnings-core-invariants",
@@ -216663,9 +216663,9 @@
       "title": "Research & Knowledge Intelligence: hf-qwen-qwen3-0.6b-learnings Core Invariants",
       "repository": "hf-qwen-qwen3-0.6b-learnings",
       "source_version": "HEAD",
-      "content_hash": "89155d168482dd6a3854c27a41aa55a107429278c72d85e19b8b339cb0e67b94",
+      "content_hash": "94817c8a657e8b5cbc4f6b35fd617cc97e2567935d280399db67d89188b79d1d",
       "domain_letter": "D",
-      "persisted_at": "2026-11-13T21:28:53.129Z"
+      "persisted_at": "2026-11-18T17:41:32.964Z"
     },
     "learn-huggingface-nvidia-nvidia-nemotronlabs-re-use": {
       "learning_id": "learn-huggingface-nvidia-nvidia-nemotronlabs-re-use",
@@ -224678,8 +224678,8 @@
       "slug": "builderio-builder",
       "platform": "github",
       "source_url": "https://github.com/BuilderIO/builder",
-      "source_version": "aa20a509",
-      "content_hash": "96230bc3fe5797d5a075b2158fa1ec6f5f0a69acaffd59c371d44e520677e296",
+      "source_version": "2c87a393",
+      "content_hash": "e91cb66231a5e62979643d56394d0723d1141428e42c982615745c00918461f2",
       "dossier_path": "07_PROJECT_LEARNING/builderio-builder-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/builderio-builder-learnings.md",
       "promoted_rules": [
@@ -224692,6 +224692,11 @@
           "number": 9023,
           "title": "fix[gen1][gen2][image]: ENG-14379 stop adding the full-size original image to sr",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9267,
+          "title": "fix[utils]: don't throw on Symbol blocks without data when translating",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -224699,7 +224704,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T17:50:04.015Z",
+      "verified_at": "2026-11-18T17:36:35.777Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -224741,10 +224746,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-builderio-builder-architecture-intelligence-builderio-builder-core-invariants.md",
       "title": "Architecture Intelligence: BuilderIO/builder Core Invariants",
       "repository": "BuilderIO/builder",
-      "source_version": "aa20a509",
-      "content_hash": "4ec61316000f29afc39ef5221d5f7343f1d168a5904467f2fdefe1f3e758b39f",
+      "source_version": "2c87a393",
+      "content_hash": "9410c11e997c10da9e404fe5315bdbd541ce8452f09ebd622c08a4d6caacca95",
       "domain_letter": "G",
-      "persisted_at": "2026-11-17T17:50:04.628Z"
+      "persisted_at": "2026-11-18T17:36:36.434Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-builderio-builder": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-builderio-builder",
@@ -224753,10 +224758,10 @@
       "relative_path": "08_VERIFICATION/builderio-builder-verification-protocol-empirical-defect-shield-for-builderio-bu.md",
       "title": "Verification Protocol: Empirical Defect Shield for BuilderIO/builder",
       "repository": "BuilderIO/builder",
-      "source_version": "aa20a509",
-      "content_hash": "6e82ffe244390c11687177172ead834f3f9cbb3f1fa889e767d33ad11bd7ea9f",
+      "source_version": "2c87a393",
+      "content_hash": "7e397ef91155d0f25c3644a4a414650b9f1a24e937bb551e30879221f7264ef4",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T17:50:04.802Z"
+      "persisted_at": "2026-11-18T17:36:36.655Z"
     },
     "learn-github-pixeltable-pixeltable": {
       "learning_id": "learn-github-pixeltable-pixeltable",
@@ -224898,9 +224903,9 @@
       "title": "Architecture Intelligence: builderio-builder-learnings Core Invariants",
       "repository": "builderio-builder-learnings",
       "source_version": "HEAD",
-      "content_hash": "8adac4863a802fdb08c2c9d276e659d47d2802520316dea1ac6adb7880afeb8b",
+      "content_hash": "5e8125022ac0356fc50351f97cec183e2e27d279458d5aca986aff2514ef0dfa",
       "domain_letter": "G",
-      "persisted_at": "2026-11-17T17:50:08.692Z"
+      "persisted_at": "2026-11-18T17:41:33.709Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-builderio-builder-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-builderio-builder-learnings",
@@ -224910,9 +224915,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for builderio-builder-learnings",
       "repository": "builderio-builder-learnings",
       "source_version": "HEAD",
-      "content_hash": "562bb3794a2c910251ab136b21002f1692b750c23d8783f67e8f140584863921",
+      "content_hash": "859b678b608aa915129e51728e57400987908a18b6e242c5006542465687756e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T17:50:08.867Z"
+      "persisted_at": "2026-11-18T17:41:33.889Z"
     },
     "domain_intelligence-technical-construction-intelligence-pixeltable-pixeltable-learnings-core-invaria": {
       "item_id": "domain_intelligence-technical-construction-intelligence-pixeltable-pixeltable-learnings-core-invaria",
@@ -264265,17 +264270,23 @@
       "slug": "mfontanini-presenterm",
       "platform": "github",
       "source_url": "https://github.com/mfontanini/presenterm",
-      "source_version": "5d19c5fe",
-      "content_hash": "be5a7840b8564b115a02cb446cc03a3632628c35b58fdf032e48a05527065dce",
+      "source_version": "c6ae2eab",
+      "content_hash": "536dad1e71cd1e1f7f1e6252a00278c1d54db29bf0c4206fa58804359a000a36",
       "dossier_path": "07_PROJECT_LEARNING/mfontanini-presenterm-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/mfontanini-presenterm-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 9266,
+          "title": "fix clippies",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T03:50:01.439Z",
+      "verified_at": "2026-11-18T17:36:30.818Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -264303,10 +264314,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-C-mfontanini-presenterm-market-business-intelligence-mfontanini-presenterm-core-in.md",
       "title": "Market & Business Intelligence: mfontanini/presenterm Core Invariants",
       "repository": "mfontanini/presenterm",
-      "source_version": "5d19c5fe",
-      "content_hash": "e5a655451599b00f5a55eb4903b9e9686575dcc7deb7c8de107493304609e837",
+      "source_version": "c6ae2eab",
+      "content_hash": "093c5c23885336e22599a7f05f20284577454b5dc3c01e262d6b472503792bcd",
       "domain_letter": "C",
-      "persisted_at": "2026-11-17T03:50:01.993Z"
+      "persisted_at": "2026-11-18T17:36:31.486Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-mfontanini-presenterm": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-mfontanini-presenterm",
@@ -264315,10 +264326,10 @@
       "relative_path": "08_VERIFICATION/mfontanini-presenterm-verification-protocol-empirical-defect-shield-for-mfontani.md",
       "title": "Verification Protocol: Empirical Defect Shield for mfontanini/presenterm",
       "repository": "mfontanini/presenterm",
-      "source_version": "5d19c5fe",
-      "content_hash": "b27adea244abfbd1151d5cd8997bb2040c019e4ce2b6afa32103569213a2f1ad",
+      "source_version": "c6ae2eab",
+      "content_hash": "78fa837c343a1f53ec59c79b68a092d041130e31ba045d6fbed628de3de088af",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T03:50:02.123Z"
+      "persisted_at": "2026-11-18T17:36:31.704Z"
     },
     "learn-github-sveltejs-svelte": {
       "learning_id": "learn-github-sveltejs-svelte",
@@ -264461,9 +264472,9 @@
       "title": "Market & Business Intelligence: mfontanini-presenterm-learnings Core Invariants",
       "repository": "mfontanini-presenterm-learnings",
       "source_version": "HEAD",
-      "content_hash": "0facba85825622af2cf40819c91e07546d796c6225a91a96d8c143991224d750",
+      "content_hash": "481f61a98a55a88c0c4a068262633e4f0ea1841625bcb8e83339bb846e2ce657",
       "domain_letter": "C",
-      "persisted_at": "2026-11-17T03:50:19.329Z"
+      "persisted_at": "2026-11-18T17:41:32.365Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-mfontanini-presenterm-learning": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-mfontanini-presenterm-learning",
@@ -264473,9 +264484,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for mfontanini-presenterm-learnings",
       "repository": "mfontanini-presenterm-learnings",
       "source_version": "HEAD",
-      "content_hash": "18d588dc8daedbd67d6979f74fc6f91b88c17b798a4b4c7885ef32725e100894",
+      "content_hash": "12ed9cf46d0af7c6334afdaeda1c1cc39755a78f825ad6fc5b24f239d015175b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T03:50:19.458Z"
+      "persisted_at": "2026-11-18T17:41:32.564Z"
     },
     "domain_intelligence-technical-construction-intelligence-sveltejs-svelte-learnings-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-sveltejs-svelte-learnings-core-invariants",
@@ -288789,6 +288800,58 @@
       "content_hash": "3be109bd4348909e74d2b15303f4351fa9e8de345271090cb0feb60f291a4e87",
       "domain_letter": "G",
       "persisted_at": "2026-11-18T17:28:19.901Z"
+    },
+    "rule-9266": {
+      "learning_id": "rule-9266",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9266,
+      "title": "fix clippies",
+      "source_url": "https://github.com/mfontanini/presenterm",
+      "source_version": "c6ae2eab",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-18T17:36:30.818Z"
+    },
+    "candidate_directive-fix-clippies": {
+      "item_id": "candidate_directive-fix-clippies",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-RD76-fix-clippies.md",
+      "title": "fix clippies",
+      "repository": "mfontanini-presenterm-learnings",
+      "source_version": "HEAD",
+      "content_hash": "69b54aacee2f1aa0b7dfc4b76eb92102bc40ab435328783a96a1768cc586fe94",
+      "domain_letter": "C",
+      "persisted_at": "2026-11-18T17:41:32.184Z"
+    },
+    "rule-9267": {
+      "learning_id": "rule-9267",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9267,
+      "title": "fix[utils]: don't throw on Symbol blocks without data when translating",
+      "source_url": "https://github.com/BuilderIO/builder",
+      "source_version": "2c87a393",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-18T17:36:35.777Z"
+    },
+    "candidate_directive-fix-utils-don-t-throw-on-symbol-blocks-without-data-when-translating": {
+      "item_id": "candidate_directive-fix-utils-don-t-throw-on-symbol-blocks-without-data-when-translating",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-RE8E-fix-utils-don-t-throw-on-symbol-blocks-without-data-when-translating.md",
+      "title": "fix[utils]: don't throw on Symbol blocks without data when translating",
+      "repository": "builderio-builder-learnings",
+      "source_version": "HEAD",
+      "content_hash": "17c4ab5b30594f6997e0ace5503509b1baf7712f9ccf066e10f16b87f1467da5",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-18T17:41:33.519Z"
     }
   },
   "ai-builder-brain": {

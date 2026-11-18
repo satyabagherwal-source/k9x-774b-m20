@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T17:28:21.102Z",
+  "last_updated": "2026-11-18T17:41:34.050Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-18T17:10:31.307Z",
@@ -2188,9 +2188,9 @@
       "staged_for_review": 1
     },
     "hf-qwen-qwen3-0.6b-learnings.md": {
-      "processed_at": "2026-11-18T08:22:06.101Z",
-      "promoted_canonical": 1,
-      "staged_for_review": 1
+      "processed_at": "2026-11-18T17:41:32.742Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 0
     },
     "hf-nvidia-nvidia-nemotronlabs-re-use-learnings.md": {
       "processed_at": "2026-11-18T08:41:53.701Z",
@@ -2428,7 +2428,7 @@
       "staged_for_review": 0
     },
     "builderio-builder-learnings.md": {
-      "processed_at": "2026-11-17T17:50:08.071Z",
+      "processed_at": "2026-11-18T17:41:33.178Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3243,7 +3243,7 @@
       "staged_for_review": 1
     },
     "mfontanini-presenterm-learnings.md": {
-      "processed_at": "2026-11-17T03:50:18.646Z",
+      "processed_at": "2026-11-18T17:41:31.914Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3458,7 +3458,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 2028,
+  "total_dossiers_evaluated": 2031,
   "total_canonical_promoted": 361,
-  "total_staged_for_review": 1535
+  "total_staged_for_review": 1537
 }

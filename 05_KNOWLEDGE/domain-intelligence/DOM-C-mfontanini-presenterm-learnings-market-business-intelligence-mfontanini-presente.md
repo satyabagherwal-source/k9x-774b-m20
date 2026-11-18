@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-17T03:50:19.103Z",
+  "timestamp": "2026-11-18T17:41:32.059Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-mfontanini-presenterm-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [mfontanini-presenterm-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-17T03:50:19.103Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-18T17:41:32.059Z`  
 > **Learning ID**: `LEARN-EVO-mfontanini-presenterm-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain C (Market & Business Intelligence)
 - **Secondary Corroborating Domains**: G (Architecture Intelligence), F (Design Intelligence), I (Content & Information Intelligence), H (Technical Construction Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 64%
+- **Confidence Rating**: 65%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from mfontanini-presenterm-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/mfontanini-presenterm-learnings.md`  
 > **Source**: github ([https://github.com/mfontanini/presenterm](https://github.com/mfontanini/presenterm))  
-> **Source Version**: `5d19c5fe`  
+> **Source Version**: `c6ae2eab`  
 > **License**: BSD-2-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-17T03:50:01.164Z  
+> **Timestamp**: 2026-11-18T17:36:29.803Z  
 > **Learning ID**: `learn-github-mfontanini-presenterm`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/mfontanini-presenterm-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/mfontanini/presenterm](https://github.com/mfontanini/presenterm))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T03:50:00.865Z  
+> **Harvest Timestamp**: 2026-11-18T17:36:29.693Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: A markdown terminal slideshow tool
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 8988 stars
+- **Stars / Engagement**: 8991 stars
 
 ---
 
@@ -1915,11 +1915,11 @@ impl CommandsRunner {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #933** (2026-11-16): **docs: document the use of merman for mermaid graphs**
-  *Symptoms*: Docs on how to use merman instead of mermaid for graphs. merman is almost as slow as mmdc and seems quite AI-slopped up so I wouldn't recommend it but feel free to if you feel like it!
+- **Issue #936** (2026-11-17): **chore: fix clippies**
+  *Symptoms*: Clippies that popped up after upgrading to rust 1.100 that I presume won't work in the CI because versions but let's see.
 
-- **Issue #931** (2026-11-07): **feat: allow cycling through presentation**
-  *Symptoms*: This adds a `cycle_presentation` option that causes the presentation to start over after jumping to the next slide once you hit the last one.  Closes #924
+- **Issue #935** (2026-11-17): **docs: explain how to use any tool for mermaid-ing**
+  *Symptoms*: This explains how to use any script as a mermaid render given every day there's a new mermaid render.  Closes #906 #934
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1936,145 +1936,230 @@ impl CommandsRunner {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5d19c5fe` (2026-11-16)
-**Commit Message**: docs: document the use of merman for mermaid graphs (#933)
+### Incident Patch 1: `c6ae2eab` (2026-11-17)
+**Commit Message**: chore: fix clippies (#936)
 
-Docs on how to use merman instead of mermaid for graphs. merman is
-almost as slow as mmdc and seems quite AI-slopped up so I wouldn't
-recommend it but feel free to if you feel like it!
+Clippies that popped up after upgrading to rust 1.100 that I presume
+won't work in the CI because versions but let's see.
 
-**File**: `docs/src/configuration/settings.md` (modified, +14/-0)
+**File**: `src/commands/keyboard.rs` (modified, +3/-8)
 ```diff
-@@ -294,6 +294,20 @@ snippet:
- The following configuration parameters can be set to alter the behavior when displaying 
- [mermaid](https://mermaid.js.org/) diagrams.
+@@ -294,14 +294,9 @@ impl KeyMatcher {
+             };
  
-+### CLI
-+
-+The path to the CLI tool to use to render mermaid graphs. This can point to any mermaid tool that respects the
-+mermaid CLI's parameter names:
-+
-+```yaml
-+mermaid:
-+  # default
-+  cli: "mermaid"
-+
-+  # use merman
-+  # cli: "merman-cli"
-+```
-+
- ### Config file
- 
- A custom [mermaid config file](https://mermaid.ai/open-source/config/schema-docs/config.html) can be configured via the 
+             let next = number.unwrap_or(0u32).checked_mul(10).and_then(|number| number.checked_add(digit));
+-            match next {
+-                Some(n) => {
+-                    number = Some(n);
+-                    events = rest;
+-                }
+-                // if we overflow we're done
+-                None => return None,
+-            }
++            let next = next?;
++            number = Some(next);
++            events = rest;
+         }
+         number.map(|number| (MatchContext::Number(number), events))
+     }
 ```
 
-**File**: `docs/src/features/code/mermaid.md` (modified, +15/-6)
+**File**: `src/presentation/builder/mod.rs` (modified, +3/-5)
 ```diff
-@@ -11,15 +11,24 @@ sequenceDiagram
- ```
- ~~~
+@@ -447,11 +447,9 @@ impl<'a, 'b> PresentationBuilder<'a, 'b> {
+         match element {
+             MarkdownElement::Comment { comment, source_position } => self.process_comment(comment, source_position)?,
+             MarkdownElement::SetexHeading { text } => self.push_slide_title(text)?,
+-            MarkdownElement::ThematicBreak => {
+-                if self.options.end_slide_shorthand {
+-                    self.terminate_slide();
+-                    self.slide_state.ignore_element_line_break = true;
+-                }
++            MarkdownElement::ThematicBreak if self.options.end_slide_shorthand => {
++                self.terminate_slide();
++                self.slide_state.ignore_element_line_break = true;
+             }
+             _ => {}
+         }
+```
+
+**File**: `src/presentation/builder/table.rs` (modified, +4/-4)
+```diff
+@@ -68,24 +68,24 @@ impl PresentationBuilder<'_, '_> {
+             let cell_width = widths[column];
+             let padding = cell_width.saturating_sub(text_length);
+             if padding == 0 {
+-                flattened_row.0.extend(text.0.into_iter());
++                flattened_row.0.extend(text.0);
+             } else {
+                 match alignment {
+                     TableColumnAlignment::Left => {
+-                        flattened_row.0.extend(text.0.into_iter());
++                        flattened_row.0.extend(text.0);
+                         flattened_row.0.push(Text::from(" ".repeat(padding)));
+                     }
+                     TableColumnAlignment::Center => {
+                         let padding_after = padding / 2;
+                         let padding_before = padding_after + (padding % 2);
+                         flattened_row.0.push(Text::from(" ".repeat(padding_before)));
+-                        flattened_row.0.extend(text.0.into_iter());
++                        flattened_row.0.extend(text.0);
+                         flattened_row.0.push(Text::from(" ".repeat(padding_after)));
+                     }
+                     TableColumnAlignment::Right => {
+                         let padding = " ".repeat(padding);
+                         flattened_row.0.push(Text::from(padding));
+-                        flattened_row.0.extend(text.0.into_iter());
++                        flattened_row.0.extend(text.0);
+                     }
+                 }
+             }
+```
+
+**File**: `src/terminal/ansi.rs` (modified, +1/-4)
+```diff
+@@ -73,10 +73,7 @@ impl AnsiColorParser {
  
--**This requires having [mermaid-cli](https://github.com/mermaid-js/mermaid-cli) installed**.
-+By default this this requires having the [mermaid-cli](https://github.com/mermaid-js/mermaid-cli) installed. Note
-+that because the mermaid CLI will spin up a browser under the hood, this may not work in all environments and can 
-+also be a bit slow (e.g. ~2 seconds to generate every image).
- 
--Note that because the mermaid CLI will spin up a browser under the hood, this may not work in all environments and can 
--also be a bit slow (e.g. ~2 seconds to generate every image). Mermaid graphs are rendered asynchronously by a number of 
--threads that can be configured in the [configuration file](../../configuration/settings.md#snippet-rendering-threads). 
--This configuration value currently defaults to 2.
-+Alternatively, other tools like [merman](https://github.com/Latias94/merman) can be used instead by configuring
-+the `mermaid.cli` parameter in [the configuration file](../../configuration/settings.md#mermaid):
-+
-+```yaml
-+mermaid:
-+  cli: "merman-cli"
-+```
-+
-+Mermaid graphs are rendered asynchronously by a number of  threads that can be configured in
-+the [configuration file](../../configuration/settings.md#snippet-rendering-threads). This configuration value
-+currently defaults to 2.
- 
- The size of the rendered image can be configured by changing:
--* The `mermaid.scale` [configuration parameter](../../configuration/settings.md#mermaid-scaling).
-+* The `mermaid.scale` [configuration parameter](../../configuration/settings.md#mermaid).
- * Using the `+width:<number>%` attribute in the code snippet.
- 
- For example, this diagram will take up 50% of the width of the window and will preserve its aspect ratio:
+     pub(crate) fn parse(self, mut codes: ParamsIter) -> TextStyle {
+         let mut style = self.starting_style;
+-        loop {
+-            let Some(&[next]) = codes.next() else {
+-                break;
+-            };
++        while let Some(&[next]) = codes.next() {
+             match next {
+                 0 => style = Default::default(),
+                 1 => style = style.bold(),
+```
+
+**File**: `src/terminal/image/protocols/kitty.rs` (modified, +1/-1)
+```diff
+@@ -489,7 +489,7 @@ impl<D: fmt::Display> fmt::Display for ControlCommand<'_, D> {
+             }
+             write!(f, "{option}")?;
+         }
+-        write!(f, ";{}", &self.payload)?;
++        write!(f, ";{}", self.payload)?;
+         if self.tmux {
+             write!(f, "\x1b\x1b\\\x1b\\")?;
+         } else {
 ```
 
 ---
 
-### Incident Patch 2: `9f1ee06d` (2026-11-16)
-**Commit Message**: docs: document the use of merman for mermaid graphs
+### Incident Patch 2: `0cf41937` (2026-11-17)
+**Commit Message**: chore: fix clippies
 
-**File**: `docs/src/configuration/settings.md` (modified, +14/-0)
+**File**: `src/commands/keyboard.rs` (modified, +3/-8)
 ```diff
-@@ -294,6 +294,20 @@ snippet:
- The following configuration parameters can be set to alter the behavior when displaying 
- [mermaid](https://mermaid.js.org/) diagrams.
+@@ -294,14 +294,9 @@ impl KeyMatcher {
+             };
  
-+### CLI
-+
-+The path to the CLI tool to use to render mermaid graphs. This can point to any mermaid tool that respects the
-+mermaid CLI's parameter names:
-+
-+```yaml
-+mermaid:
-+  # default
-+  cli: "mermaid"
-+
-+  # use merman
-+  # cli: "merman-cli"
-+```
-+
- ### Config file
- 
- A custom [mermaid config file](https://mermaid.ai/open-source/config/schema-docs/config.html) can be configured via the 
+             let next = number.unwrap_or(0u32).checked_mul(10).and_then(|number| number.checked_add(digit));
+-            match next {
+-                Some(n) => {
+-                    number = Some(n);
+-                    events = rest;
+-                }
+-                // if we overflow we're done
+-                None => return None,
+-            }
++            let next = next?;
++            number = Some(next);
++            events = rest;
+         }
+         number.map(|number| (MatchContext::Number(number), events))
+     }
 ```
 
-**File**: `docs/src/features/code/mermaid.md` (modified, +15/-6)
+**File**: `src/presentation/builder/mod.rs` (modified, +3/-5)
 ```diff
-@@ -11,15 +11,24 @@ sequenceDiagram
- ```
- ~~~
+@@ -447,11 +447,9 @@ impl<'a, 'b> PresentationBuilder<'a, 'b> {
+         match element {
+             MarkdownElement::Comment { comment, source_position } => self.process_comment(comment, source_position)?,
+             MarkdownElement::SetexHeading { text } => self.push_slide_title(text)?,
+-            MarkdownElement::ThematicBreak => {
+-                if self.options.end_slide_shorthand {
+-                    self.terminate_slide();
+-                    self.slide_state.ignore_element_line_break = true;
+-                }
++            MarkdownElement::ThematicBreak if self.options.end_slide_shorthand => {
++                self.terminate_slide();
++                self.slide_state.ignore_element_line_break = true;
+             }
+             _ => {}
+         }
+```
+
+**File**: `src/presentation/builder/table.rs` (modified, +4/-4)
+```diff
+@@ -68,24 +68,24 @@ impl PresentationBuilder<'_, '_> {
+             let cell_width = widths[column];
+             let padding = cell_width.saturating_sub(text_length);
+             if padding == 0 {
+-                flattened_row.0.extend(text.0.into_iter());
++                flattened_row.0.extend(text.0);
+             } else {
+                 match alignment {
+                     TableColumnAlignment::Left => {
+-                        flattened_row.0.extend(text.0.into_iter());
++                        flattened_row.0.extend(text.0);
+                         flattened_row.0.push(Text::from(" ".repeat(padding)));
+                     }
+                     TableColumnAlignment::Center => {
+                         let padding_after = padding / 2;
+                         let padding_before = padding_after + (padding % 2);
+                         flattened_row.0.push(Text::from(" ".repeat(padding_before)));
+-                        flattened_row.0.extend(text.0.into_iter());
++                        flattened_row.0.extend(text.0);
+                         flattened_row.0.push(Text::from(" ".repeat(padding_after)));
+                     }
+                     TableColumnAlignment::Right => {
+                         let padding = " ".repeat(padding);
+                         flattened_row.0.push(Text::from(padding));
+-                        flattened_row.0.extend(text.0.into_iter());
++                        flattened_row.0.extend(text.0);
+                     }
+                 }
+             }
+```
+
+**File**: `src/terminal/ansi.rs` (modified, +1/-4)
+```diff
+@@ -73,10 +73,7 @@ impl AnsiColorParser {
  
--**This requires having [mermaid-cli](https://github.com/mermaid-js/mermaid-cli) installed**.
-+By default this this requires having the [mermaid-cli](https://github.com/mermaid-js/mermaid-cli) installed. Note
-+that because the mermaid CLI will spin up a browser under the hood, this may not work in all environments and can 
-+also be a bit slow (e.g. ~2 seconds to generate every image).
- 
--Note that because the mermaid CLI will spin up a browser under the hood, this may not work in all environments and can 
--also be a bit slow (e.g. ~2 seconds to generate every image). Mermaid graphs are rendered asynchronously by a number of 
--threads that can be configured in the [configuration file](../../configuration/settings.md#snippet-rendering-threads). 
--This configuration value currently defaults to 2.
-+Alternatively, other tools like [merman](https://github.com/Latias94/merman) can be used instead by configuring
-+the `mermaid.cli` parameter in [the configuration file](../../configuration/settings.md#mermaid):
-+
-+```yaml
-+mermaid:
-+  cli: "merman-cli"
-+```
-+
-+Mermaid graphs are rendered asynchronously by a number of  threads that can be configured in
-+the [configuration file](../../configuration/settings.md#snippet-rendering-threads). This configuration value
-+currently defaults to 2.
- 
- The size of the rendered image can be configured by changing:
--* The `mermaid.scale` [configuration parameter](../../configuration/settings.md#mermaid-scaling).
-+* The `mermaid.scale` [configuration parameter](../../configuration/settings.md#mermaid).
- * Using the `+width:<number>%` attribute in the code snippet.
- 
- For example, this diagram will take up 50% of the width of the window and will preserve its aspect ratio:
+     pub(crate) fn parse(self, mut codes: ParamsIter) -> TextStyle {
+         let mut style = self.starting_style;
+-        loop {
+-            let Some(&[next]) = codes.next() else {
+-                break;
+-            };
++        while let Some(&[next]) = codes.next() {
+             match next {
+                 0 => style = Default::default(),
+                 1 => style = style.bold(),
+```
+
+**File**: `src/terminal/image/protocols/kitty.rs` (modified, +1/-1)
+```diff
+@@ -489,7 +489,7 @@ impl<D: fmt::Display> fmt::Display for ControlCommand<'_, D> {
+             }
+             write!(f, "{option}")?;
+         }
+-        write!(f, ";{}", &self.payload)?;
++        write!(f, ";{}", self.payload)?;
+         if self.tmux {
+             write!(f, "\x1b\x1b\\\x1b\\")?;
+         } else {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #936** (2026-11-17): chore: fix clippies (@mfontanini)
+- **PR #935** (2026-11-17): docs: explain how to use any tool for mermaid-ing (@mfontanini)
 - **PR #933** (2026-11-16): docs: document the use of merman for mermaid graphs (@mfontanini)
 - **PR #931** (2026-11-07): feat: allow cycling through presentation (@mfontanini)
 - **PR #930** (2026-11-04): fix: support bg-image in non-first slides (@mfontanini)
 - **PR #928** (2026-11-03): chore: bump dependencies (@mfontanini)
-- **PR #927** (2026-10-30): ci: fix build (@mfontanini)
-- **PR #925** (closed): docs: add Simplified Chinese README translation (README_zh.md) (@WanderLandWalker)
 
 ---
 
@@ -2094,44 +2179,40 @@ recommend it but feel free to if you feel like it!
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs: document the use of merman for mermaid graphs
+## X. fix clippies
 
 **RULE**:
-When implementing operations in `docs/src/configuration/settings.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in mfontanini/presenterm. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/commands/keyboard.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in mfontanini/presenterm. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5d19c5fe`: docs: document the use of merman for mermaid graphs. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c6ae2eab`: fix clippies. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/src/configuration/settings.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/commands/keyboard.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-### CLI
-
-The path to the CLI tool to use to render mermaid graphs. This can point to any mermaid tool that respects the
-mermaid CLI's parameter names:
-
-```yaml
-mermaid:
-  # default
-  cli: "mermaid"
-
-  # use merman
-  # cli: "merman-cli"
-```
-
+            let next = next?;
+            number = Some(next);
+            events = rest;
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+            match next {
+                Some(n) => {
+                    number = Some(n);
+                    events = rest;
+                }
+                // if we overflow we're done
+                None => return None,
+            }
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5d19c5fe` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c6ae2eab` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

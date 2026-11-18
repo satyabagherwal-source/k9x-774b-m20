@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-18T17:28:15.868Z",
+  "last_updated": "2026-11-18T17:41:28.776Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -950,14 +950,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-qwen-qwen3-0-6b",
-      "content_hash": "9a0ff4516f74a029b5139525566ba93187eb56ed5112246c0986ccdd53c47a95",
-      "verified_at": "2026-11-18T08:20:28.459Z",
+      "content_hash": "046a7b1aa17796f25d841665bbc6a9499c5d00b65676154661a94246cf62e10d",
+      "verified_at": "2026-11-18T17:41:28.776Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T08:20:28.459Z"
+      "last_updated": "2026-11-18T17:41:28.776Z"
     },
     "google-t5/t5-small": {
       "repository": "google-t5/t5-small",
@@ -6621,14 +6621,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-mfontanini-presenterm",
-      "content_hash": "be5a7840b8564b115a02cb446cc03a3632628c35b58fdf032e48a05527065dce",
-      "verified_at": "2026-11-17T03:50:01.665Z",
+      "content_hash": "536dad1e71cd1e1f7f1e6252a00278c1d54db29bf0c4206fa58804359a000a36",
+      "verified_at": "2026-11-18T17:36:31.062Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T03:50:01.665Z"
+      "last_updated": "2026-11-18T17:36:31.062Z"
     },
     "ritz078/transform": {
       "repository": "ritz078/transform",
@@ -6876,14 +6876,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-builderio-builder",
-      "content_hash": "96230bc3fe5797d5a075b2158fa1ec6f5f0a69acaffd59c371d44e520677e296",
-      "verified_at": "2026-11-17T17:50:04.238Z",
+      "content_hash": "e91cb66231a5e62979643d56394d0723d1141428e42c982615745c00918461f2",
+      "verified_at": "2026-11-18T17:36:36.031Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T17:50:04.238Z"
+      "last_updated": "2026-11-18T17:36:36.031Z"
     },
     "gocrane/crane": {
       "repository": "gocrane/crane",
