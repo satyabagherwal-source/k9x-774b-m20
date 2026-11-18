@@ -41,11 +41,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "bitterbot-ai-bitterbot-desktop": {
-    "name": "bitterbot-desktop",
+    "name": "Bitterbot-AI/bitterbot-desktop",
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-    "lastChecked": "2026-11-18T19:10:11.323Z",
-    "revisionIdentifier": "108f7135",
-    "lastVerified": "2026-11-18T19:10:11.323Z"
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-11-18T20:14:31.223Z",
+    "lastVerified": "2026-11-18T20:14:31.223Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
+    "contentHash": "ccb24fadce8d5879391a5fbd11292c95f3306445aeec933e3bf312b544f32689",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 1,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "hf-comfy-org-minimax-h3": {
     "name": "Comfy-Org/MiniMax-H3",
@@ -69,8 +79,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-18T19:52:15.316Z",
-    "lastVerified": "2026-11-18T19:52:15.316Z",
+    "lastChecked": "2026-11-18T20:14:35.286Z",
+    "lastVerified": "2026-11-18T20:14:35.286Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -542,9 +552,9 @@
   "hashicorp-boundary": {
     "name": "boundary",
     "officialUrl": "https://github.com/hashicorp/boundary",
-    "lastChecked": "2026-11-18T14:56:57.981Z",
+    "lastChecked": "2026-11-18T20:14:21.703Z",
     "revisionIdentifier": "eeb38a1a",
-    "lastVerified": "2026-11-18T14:56:57.981Z"
+    "lastVerified": "2026-11-18T20:14:21.703Z"
   },
   "qdrant-qdrant": {
     "name": "qdrant",
@@ -3895,6 +3905,61 @@
     "contentHash": "b1c12794513aa0906f620b69b3bb52b0da428d3176bfe2894e528b02169a71eb",
     "promotedRulesCount": 1,
     "recentFixesCount": 3,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "wasm-bindgen-wasm-pack": {
+    "name": "wasm-pack",
+    "officialUrl": "https://github.com/wasm-bindgen/wasm-pack",
+    "lastChecked": "2026-11-18T20:14:11.702Z",
+    "revisionIdentifier": "c262c330",
+    "lastVerified": "2026-11-18T20:14:11.702Z"
+  },
+  "hf-qwen-qwen3.8-flash-next": {
+    "name": "Qwen/Qwen3.8-Flash-Next",
+    "officialUrl": "https://huggingface.co/Qwen/Qwen3.8-Flash-Next",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-18T20:14:14.201Z",
+    "lastVerified": "2026-11-18T20:14:14.201Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-qwen-qwen3-8-flash-next",
+    "contentHash": "be7d3716fff255c09ddfea537586c3fdd72d872a7ae98bdcc208608244a762d6",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "ptomasroos-react-native-scrollable-tab-view": {
+    "name": "react-native-scrollable-tab-view",
+    "officialUrl": "https://github.com/ptomasroos/react-native-scrollable-tab-view",
+    "lastChecked": "2026-11-18T20:14:16.734Z",
+    "revisionIdentifier": "583a66f7",
+    "lastVerified": "2026-11-18T20:14:16.734Z"
+  },
+  "zarf-dev-zarf": {
+    "name": "zarf",
+    "officialUrl": "https://github.com/zarf-dev/zarf",
+    "lastChecked": "2026-11-18T20:14:19.303Z",
+    "revisionIdentifier": "31862576",
+    "lastVerified": "2026-11-18T20:14:19.303Z"
+  },
+  "malisper-pgrust": {
+    "name": "malisper/pgrust",
+    "officialUrl": "https://github.com/malisper/pgrust",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-11-18T20:14:29.051Z",
+    "lastVerified": "2026-11-18T20:14:29.051Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-malisper-pgrust",
+    "contentHash": "7311c61161a7de858946dde48e959b265c38ee9be9707dd3aa834e4ed7de3588",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"

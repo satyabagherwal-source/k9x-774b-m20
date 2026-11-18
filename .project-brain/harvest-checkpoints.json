@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-18T19:52:12.211Z",
+  "last_updated": "2026-11-18T20:14:32.173Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1130,14 +1130,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-qwen-qwen3-8-flash-next",
-      "content_hash": "f9e35df3ce1974d2b575ee9fd8808e487d140d70b6826f04e5cb6eede780fe35",
-      "verified_at": "2026-11-14T01:48:32.611Z",
+      "content_hash": "be7d3716fff255c09ddfea537586c3fdd72d872a7ae98bdcc208608244a762d6",
+      "verified_at": "2026-11-18T20:14:17.578Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-14T01:48:32.611Z"
+      "last_updated": "2026-11-18T20:14:17.578Z"
     },
     "deepseek-ai/DeepSeek-V4-Pro": {
       "repository": "deepseek-ai/DeepSeek-V4-Pro",
@@ -3591,14 +3591,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-bitterbot-ai-bitterbot-desktop",
-      "content_hash": "0bf3516a067582afc7bb1acf89a52a01d30035233f3fcbdf0c0cf96acd659cae",
-      "verified_at": "2026-11-17T21:56:55.779Z",
+      "content_hash": "ccb24fadce8d5879391a5fbd11292c95f3306445aeec933e3bf312b544f32689",
+      "verified_at": "2026-11-18T20:14:32.172Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T21:56:55.779Z"
+      "last_updated": "2026-11-18T20:14:32.172Z"
     },
     "adobe/react-spectrum": {
       "repository": "adobe/react-spectrum",
@@ -6456,14 +6456,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-malisper-pgrust",
-      "content_hash": "76b0797cb75c7aea8874fa88d4f08ac8ff923f64efbc364f85780c8301f810d6",
-      "verified_at": "2026-10-24T20:11:26.342Z",
+      "content_hash": "7311c61161a7de858946dde48e959b265c38ee9be9707dd3aa834e4ed7de3588",
+      "verified_at": "2026-11-18T20:14:29.525Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-24T20:11:26.342Z"
+      "last_updated": "2026-11-18T20:14:29.526Z"
     },
     "rsuite/rsuite": {
       "repository": "rsuite/rsuite",

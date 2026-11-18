@@ -11118,3 +11118,6 @@ Every entry in this ledger must capture:
 | `learn-github-pimalaya-himalaya` | `https://github.com/pimalaya/himalaya` | `edf58f38` | Multi-dimensional audit evidence | 2026-11-18T19:51:58.417Z |
 | `learn-github-trailbaseio-trailbase` | `https://github.com/trailbaseio/trailbase` | `e0a2df25` | Multi-dimensional audit evidence | 2026-11-18T19:52:12.203Z |
 | `learn-dom-h-26fd692a` | `project://trailbaseio-trailbase` | `e0a2df25` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/trailbaseio-trailbase-learnings.md` | 2026-11-18T19:52:45.524Z |
+| `learn-huggingface-qwen-qwen3-8-flash-next` | `https://huggingface.co/Qwen/Qwen3.8-Flash-Next` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-11-18T20:14:17.570Z |
+| `learn-github-malisper-pgrust` | `https://github.com/malisper/pgrust` | `df8a9bb4` | Multi-dimensional audit evidence | 2026-11-18T20:14:29.483Z |
+| `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `9ef0e544` | Multi-dimensional audit evidence | 2026-11-18T20:14:32.165Z |

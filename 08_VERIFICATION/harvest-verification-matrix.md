@@ -11085,3 +11085,6 @@
 | `CYCLE-20261118-F3YL` | `2026-11-18T19:51:58.413Z` | `pimalaya/himalaya` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9276` | Yes (`92b72d53...`) |
 | `CYCLE-20261118-FELJ` | `2026-11-18T19:52:12.199Z` | `trailbaseio/trailbase` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9277` | Yes (`b1c12794...`) |
 | `CYCLE-2026-11-18-PROJ-EVOLVE` | `2026-11-18T19:52:45.524Z` | `trailbaseio-trailbase` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-26FD692A` [Domain H] | Yes (`0b4ce922...`) |
+| `CYCLE-20261118-7T9A` | `2026-11-18T20:14:17.566Z` | `Qwen/Qwen3.8-Flash-Next` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3.8-flash-next-learnings.md` | Yes (`be7d3716...`) |
+| `CYCLE-20261118-82G6` | `2026-11-18T20:14:29.478Z` | `malisper/pgrust` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/malisper-pgrust-learnings.md` | Yes (`7311c611...`) |
+| `CYCLE-20261118-84IP` | `2026-11-18T20:14:32.161Z` | `Bitterbot-AI/bitterbot-desktop` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9278` | Yes (`ccb24fad...`) |

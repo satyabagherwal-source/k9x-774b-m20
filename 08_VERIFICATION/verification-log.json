@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261117-W4XS",
-    "timestamp": "2026-11-17T11:25:39.712Z",
-    "repository": "NucleoidAI/Nucleoid",
-    "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "f592b8bf74bdb32d44768135f739e63ac4ff624336ac4d34115f2eb05e2400ee",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261117-FAIU",
-    "timestamp": "2026-11-17T11:40:33.414Z",
-    "repository": "Xudong-Huang/may",
-    "learningId": "learn-github-xudong-huang-may",
-    "contentHash": "738843afbf4d489e8a78d74cff68fb57a42fd8260e4b1bfbaefd7dd7ab6bf840",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261117-FDOD",
-    "timestamp": "2026-11-17T11:40:37.501Z",
-    "repository": "fastapi/fastapi",
-    "learningId": "learn-github-fastapi-fastapi",
-    "contentHash": "f735661edf851f08369be72bc68693cf64cfbe7b254c55605169a82bb2a56f9f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261117-FETP",
     "timestamp": "2026-11-17T11:40:38.989Z",
     "repository": "react-navigation/react-navigation",
@@ -7490,6 +7445,51 @@
     "repository": "trailbaseio/trailbase",
     "learningId": "learn-github-trailbaseio-trailbase",
     "contentHash": "b1c12794513aa0906f620b69b3bb52b0da428d3176bfe2894e528b02169a71eb",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-7T9A",
+    "timestamp": "2026-11-18T20:14:17.566Z",
+    "repository": "Qwen/Qwen3.8-Flash-Next",
+    "learningId": "learn-huggingface-qwen-qwen3-8-flash-next",
+    "contentHash": "be7d3716fff255c09ddfea537586c3fdd72d872a7ae98bdcc208608244a762d6",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-82G6",
+    "timestamp": "2026-11-18T20:14:29.478Z",
+    "repository": "malisper/pgrust",
+    "learningId": "learn-github-malisper-pgrust",
+    "contentHash": "7311c61161a7de858946dde48e959b265c38ee9be9707dd3aa834e4ed7de3588",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-84IP",
+    "timestamp": "2026-11-18T20:14:32.161Z",
+    "repository": "Bitterbot-AI/bitterbot-desktop",
+    "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
+    "contentHash": "ccb24fadce8d5879391a5fbd11292c95f3306445aeec933e3bf312b544f32689",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

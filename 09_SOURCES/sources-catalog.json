@@ -875,8 +875,8 @@
     "sourceUrl": "https://huggingface.co/Qwen/Qwen3.8-Flash-Next",
     "sourceVersion": "hf-qwen-qwen3.8-flash-next",
     "license": "Open-Source",
-    "contentHash": "f9e35df3ce1974d2b575ee9fd8808e487d140d70b6826f04e5cb6eede780fe35",
-    "lastHarvestedAt": "2026-11-14T01:48:32.603Z",
+    "contentHash": "be7d3716fff255c09ddfea537586c3fdd72d872a7ae98bdcc208608244a762d6",
+    "lastHarvestedAt": "2026-11-18T20:14:17.570Z",
     "learningId": "learn-huggingface-qwen-qwen3-8-flash-next"
   },
   "hf-deepseek-ai-deepseek-v4-pro": {
@@ -2303,10 +2303,10 @@
     "repository": "Bitterbot-AI/bitterbot-desktop",
     "platform": "github",
     "sourceUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-    "sourceVersion": "108f7135",
+    "sourceVersion": "9ef0e544",
     "license": "MIT",
-    "contentHash": "0bf3516a067582afc7bb1acf89a52a01d30035233f3fcbdf0c0cf96acd659cae",
-    "lastHarvestedAt": "2026-11-17T21:56:55.743Z",
+    "contentHash": "ccb24fadce8d5879391a5fbd11292c95f3306445aeec933e3bf312b544f32689",
+    "lastHarvestedAt": "2026-11-18T20:14:32.165Z",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop"
   },
   "adobe-react-spectrum": {
@@ -4223,10 +4223,10 @@
     "repository": "malisper/pgrust",
     "platform": "github",
     "sourceUrl": "https://github.com/malisper/pgrust",
-    "sourceVersion": "38634b40",
+    "sourceVersion": "df8a9bb4",
     "license": "AGPL-3.0",
-    "contentHash": "76b0797cb75c7aea8874fa88d4f08ac8ff923f64efbc364f85780c8301f810d6",
-    "lastHarvestedAt": "2026-10-24T20:11:26.333Z",
+    "contentHash": "7311c61161a7de858946dde48e959b265c38ee9be9707dd3aa834e4ed7de3588",
+    "lastHarvestedAt": "2026-11-18T20:14:29.483Z",
     "learningId": "learn-github-malisper-pgrust"
   },
   "rsuite-rsuite": {

@@ -4,45 +4,31 @@
 {
   "source_repository": "malisper/pgrust",
   "source_url": "https://github.com/malisper/pgrust",
-  "source_version": "historical-head",
-  "license": "OPEN_HARVEST",
-  "timestamp": "2026-11-13T00:00:00.000Z",
-  "ai_provider": "universal-multi-artifact-distributor",
+  "source_version": "df8a9bb4",
+  "license": "AGPL-3.0",
+  "timestamp": "2026-11-18T20:14:29.712Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
-  "learning_id": "unknown",
+  "learning_id": "learn-github-malisper-pgrust",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [malisper/pgrust](https://github.com/malisper/pgrust) (Revision: `historical`).  
-> **License**: OPEN_HARVEST | **Timestamp**: `2026-11-13T00:00:00.000Z`  
-> **Learning ID**: `unknown`
+> **Provenance**: Harvested from [malisper/pgrust](https://github.com/malisper/pgrust) (Revision: `df8a9bb4`).  
+> **License**: AGPL-3.0 | **Timestamp**: `2026-11-18T20:14:29.712Z`  
+> **Learning ID**: `learn-github-malisper-pgrust`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `malisper/pgrust` (Commit: `historical`)
+- **Target Repository**: `malisper/pgrust` (Commit: `df8a9bb4`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
-> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/malisper-pgrust-learnings.md`  
-> **Source**: github ([https://github.com/malisper/pgrust](https://github.com/malisper/pgrust))  
-> **Source Version**: `38634b40`  
-> **License**: AGPL-3.0  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-24T20:11:26.110Z  
-> **Learning ID**: `learn-github-malisper-pgrust`  
-> **Pipeline Version**: `2.0.0`  
-> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
-> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
-> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
-
----
-
 # Forensic Learning Record (Deep Inspection): malisper/pgrust
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/malisper-pgrust-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/malisper/pgrust](https://github.com/malisper/pgrust))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-24T20:11:24.967Z  
+> **Harvest Timestamp**: 2026-11-18T20:14:29.051Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Postgres rewritten in Rust, now faster than Postgres and Clickhouse
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 5372 stars
+- **Stars / Engagement**: 5898 stars
 
 ---
 
@@ -1766,11 +1752,11 @@ mod tests {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #151** (2026-10-31): **Cheating in clickbench?**
+  *Symptoms*: https://github.com/ClickHouse/ClickBench/pull/2165
+
 - **Issue #136** (2026-09-28): **wasix: run pgrust on the WASIX lane**
   *Symptoms*: ## Summary  This adds the WASIX lane that lets pgrust serve pgwire from a single WASIX guest instance: the postmaster hands each connection its own backend thread and takes a termination signal, which the existing `wasm32-wasip1` lane deliberately stubs out (no threads, no TCP, no epoll).  ## What this changes  WASIX socket / epoll / accept-loop and signal-handling changes across the postmaster and backend:  - `common/ip` (`lib.rs`, `sys.rs`, `Cargo.toml`): real socket + `getaddrinfo` path for WASIX. - `backend/libpq/pqcomm/socket.rs`, `postmaster/postmaster/{main_entry.rs,serverloop.rs}`, `postmaster/launch_backend`: threaded accept loop and per-connection backend spawn. - `storage/ipc/waiter`, `storage/ipc/waiteventset` (`epoll.rs`, `wasm_epoll.rs`): epoll-backed wait set for WASIX.  Guest-side compatibility fixes this port needed on WASIX:  - `port/pg_clock` (`posix.rs`): clockid ABI — a measured `CLOCK_*` mismatch on the guest. - `postmaster/launch_backend`: admission guard against the wasm32 linear-memory ceiling. - `postmaster/memwatchdog`: usage-basis fall-through so the watchdog is not blind in-guest. - `storage/buffer/bufmgr/read.rs`: a PG-faithful `AbortBufferIO` that falls through instead of panicking the postmaster.  ## Notes  - Bundled under `bench/` in this branch is the concurrency harness (`serve-and-bench.sh`, `pgwire_bench.py`) with a tunable worker/concurrency count. - This is the source of the packaged WASIX module; it is a fork branch, and I am open to wh
-
-- **Issue #113** (2026-09-10): **EXPLAIN option `WAL` unsupported: `WAL needs pgWalUsage counters + show_wal_usage (xloginsert lane)`**
-  *Symptoms*: # EXPLAIN option `WAL` unsupported: `WAL needs pgWalUsage counters + show_wal_usage (xloginsert lane)`  **pgrust version**: 0.2 (binary `pgrust-0.2-linux-x86_64`, PostgreSQL 18 compatible) **Component**: `ExplainOnePlan()` in `explain.c` (WAL usage instrumentation)  ## Summary  The `EXPLAIN (WAL)` option fails on every statement, including plain `SELECT`. PostgreSQL's EXPLAIN `WAL` option requires the `pgWalUsage` instrumentation counters collected in the xlog insert lane; pgrust does not expose them, and `ExplainOnePlan()` hard-errors instead of omitting the WAL section.  ## Reproducer  ```sql EXPLAIN (ANALYZE, WAL) SELECT 1; ```  Any statement type fails the same way (SELECT, INSERT, UPDATE, ...). Note: upstream PostgreSQL already requires `ANALYZE` before `WAL` is accepted (`EXPLAIN (WAL)` without `ANALYZE` is rejected by the parser), so the relevant case is `EXPLAIN (ANALYZE, WAL, ...)`, which on pgrust aborts during plan display.  ## Expected behaviour  On PostgreSQL 18.6 the same EXPLAIN prints a `WAL:` section on each plan node that generates WAL records, e.g.:  ```  Insert on events_fact  (cost=... )    WAL: records=4006 fpi=8 bytes=283985 ```  and a plain SELECT plan unchanged (with no WAL section).  ## Actual behaviour  ``` ERROR:  ExplainOnePlan (explain.c): WAL needs pgWalUsage counters + show_wal_usage (xloginsert lane) ```  No plan is printed for the statement.  ## Notes  - Blocks every EXPLAIN run that requests WAL — the entire plan is lost, not  just the WAL n
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1787,595 +1773,90 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `38634b40` (2026-10-22)
-**Commit Message**: pgrust v0.4-beta with ACID-compliant columnar and automatic memory management
+### Incident Patch 1: `df8a9bb4` (2026-11-18)
+**Commit Message**: README: lead with what pgrust is for; update status and extensions
 
-**File**: `.cargo/config.toml` (added, +8/-0)
-```diff
-@@ -0,0 +1,8 @@
-+# Workspace cargo config.
-+#
-+# openssl-src (openssl-sys `vendored`) runs "$OPENSSL_SRC_PERL ./Configure ..."; this wrapper appends the
-+# OpenSSL modules a PostgreSQL server never uses (QUIC, SM2/SM4, ML-DSA/SLH-DSA/LMS, ARIA/BF/CAST/RC2/RC4, engines;
-+# the list and what is kept on purpose are in the script). A caller that exports its own OPENSSL_SRC_PERL wins over
-+# this and gets no trim; the tripwire is be_secure_openssl's src/openssl_trim.rs.
-+[env]
-+OPENSSL_SRC_PERL = { value = "scripts/openssl-src-perl.sh", relative = true }
-```
+- Tagline and intro describe pgrust as a Postgres-compatible drop-in
+  replacement built for fast analytics.
+- New "When to use pgrust" section.
+- Status: we're working with a few early design partners and are
+  targeting production readiness in Q1 2027.
+- Extensions get their own section: the built-in extensions, how to
+  request one that isn't ported yet.
 
-**File**: `.gitignore` (modified, +6/-42)
-```diff
-@@ -1,50 +1,14 @@
- /target
- **/target
--*.profraw
- **/target-*/
--covloop-history/
--proofs/coverage/__pycache__/
-+target-mut/
-+*.profraw
-+__pycache__/
- 
- # cargo-mutants working/output directory (transient audit artifacts)
- mutants.out/
- mutants.out.old/
--/cpg-cov/
--/cpg-ref/
--/cpg-src/
--/cpg-icu/
--/cpg-icu-build.out
--# crashdiff (W1) work root: B-side scratch checkout, per-seed run evidence
--/crashdiff-work/
--/int8-evidence/
--# Q3 nodes/obs lane: per-seed diffrunner evidence + corpus run logs
--/q3-evidence/
--/q3-before-corpus.out
--/q3-after-corpus.out
--/q3-after2-corpus.out
--/pgref-build.out
--/gapreport-build.out
--# Q5 lane (fuzz-q5-adminacl) local rigs/evidence: B-side scratch checkout,
--# hand-verify decks + servers, differential evidence
--/bmain/
--/q5-evidence/
--/q5-handverify/
--# integration-9 local evidence (manifests + leg logs; summary lives in docs/fuzzing/findings-int9.md)
--/int9-evidence/
- 
--# accidental build-log commits
--/cpg-build.log
--cpg-ref-install/
--target-mut/
--# cfg-sampler evidence output (summaries live in docs/fuzzing/findings-cfg*.md)
--cfgfindings/
--
--# FTS-RANK lane transient coverage/differential artifacts
--covloop-*.log
--diffpair*.log
--fts-findings*.jsonl
--fts-only-findings*.jsonl
--fts-*findings-manifest.txt
--wire-diff-out/
--.tpchconv/
--.tpch22/
--__pycache__/
-+# crates/postgres-18.6-reference stays tracked on this branch; scripts/pg-reference.sh's stamp and scratch copy are not
-+/crates/postgres-*-reference/.pgrust-reference-stamp
-+/crates/postgres-*-reference.tmp.*
-```
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `ACKNOWLEDGEMENTS.md` (added, +105/-0)
+**File**: `README.md` (modified, +28/-15)
 ```diff
-@@ -0,0 +1,105 @@
-+# Acknowledgements
-+
-+pgrust is a Rust reimplementation of [PostgreSQL](https://www.postgresql.org),
-+and almost all of it follows PostgreSQL's design and code. Beyond PostgreSQL,
-+pgrust builds on published research and on ideas from other database systems.
-+This file credits them. Code that pgrust ports or vendors from other projects,
-+and the licenses for that code, are listed in [`NOTICE`](NOTICE).
-+
-+## Research
-+
-+- **Self-tuning query scheduling.** Benjamin Wagner, André Kohn, Thomas
-+  Neumann. "Self-Tuning Query Scheduling for Analytical Workloads." SIGMOD 2021.
-+  Basis for the executor's scheduler: resource groups, priority decay, and
-+  adaptive task sizing (`crates/backend/executor/runtime`).
-+- **ALP.** Azim Afroozeh, Leonardo X. Kuffo, Peter Boncz. "ALP: Adaptive Lossless
-+  floating-Point Compression." SIGMOD 2024. Floating-point encoding
-+  (`crates/_support/alp`).
-+- **FastLanes.** Azim Afroozeh, Peter Boncz. "The FastLanes Compression Layout:
-+  Decoding >100 Billion Integers per Second with Scalar Code." PVLDB 16(9), 2023.
-+  The interleaved bit-packing layout (`crates/_support/alp/src/bitpack.rs`,
-+  `pgrc_codec/src/ffor.rs`).
-+- **BtrBlocks.** Maximilian Kuschewski, David Sauerwein, Adnan Alhomssi, Viktor
-+  Leis. "BtrBlocks: Efficient Columnar Compression for Data Lakes." SIGMOD 2023.
-+  Sample-based choice of a column encoding (`pgrc_codec/src/election.rs`).
-+- **OnPair.** Francesco Gargiulo, Rossano Venturini. "OnPair: Short Strings
-+  Compression for Fast Random Access." arXiv:2508.02280, 2025. Token training
-+  and the 16-byte token form for dictionary string bytes before zstd
-+  (`pgrc_codec/src/onpair.rs`).
-+- **Photon.** Alexander Behm et al. "Photon: A Fast Query Engine for Lakehouse
-+  Systems." SIGMOD 2022. Position-list selection vectors
-+  (`pgrc_batch/src/selection.rs`).
-+- **Unnesting.** Thomas Neumann. "Improving Unnesting of Complex Queries."
-+  BTW 2025. Subquery unnesting in the planner
-+  (`crates/backend/optimizer/plan/planner/src/unnest.rs`).
-+- **Groupjoin.** Guido Moerkotte, Thomas Neumann. "Accelerating Queries with
-+  Group-By and Join by Groupjoin." PVLDB 4(11), 2011. The groupjoin aggregation
-+  strategy (`crates/gravity/lowerv4/src/ops/agg/strategies/dependent.rs`).
-+- **Copy-and-patch compilation.** Haoran Xu, Fredrik Kjolstad. "Copy-and-Patch
-+  Compilation." OOPSLA 2021. JIT tuple deforming (`crates/_support/jit_deform`).
-+- **TPDE.** Tobias Schwarz, Tobias Kamm, Alexis Engelke. "TPDE: A Fast Adaptable
-+  Compiler Back-End Framework." arXiv:2505.22610, 2025. The JIT's code
-+  generator is a port of TPDE (`crates/tpde`; see NOTICE).
-+- **SSA construction.** Matthias Braun, Sebastian Buchwald, Sebastian Hack,
-+  Roland Leißa, Christoph Mallon, Andreas Zwinkau. "Simple and Efficient
-+  Construction of Static Single Assignment Form." CC 2013.
-+  (`crates/gravity/ir/src/promote.rs`).
-+- **PCT.** Sebastian Burckhardt, Pravesh Kothari, Madanlal Musuvathi, Santosh
-+  Nagarakatte. "A Randomized Scheduler with Probabilistic Guarantees of Finding
-+  Bugs." ASPLOS 2010. Randomized scheduling in the concurrency simulator
-+  (`crates/_support/pgsync/src/sim`).
-+- **Malthusian locks.** Dave Dice. "Malthusian Locks." EuroSys 2017. Lock
-+  hand-off policy (`crates/_support/pgsync`).
-+- **TinyLFU.** Gil Einziger, Roy Friedman, Ben Manes. "TinyLFU: A Highly
-+  Efficient Cache Admission Policy." ACM TOS 13(4), 2017; with the count-min
-+  sketch of Graham Cormode, S. Muthukrishnan (J. Algorithms 55(1), 2005).
-+  Cache admission (`crates/gravity/hosts/src/tinylfu.rs`).
-+- **SipHash.** Jean-Philippe Aumasson, Daniel J. Bernstein. "SipHash: a fast
-+  short-input PRF." INDOCRYPT 2012. 128-bit value fingerprints
-+  (`crates/gravity/dict`).
-+- **Division by constants.** Torbjörn Granlund, Peter L. Montgomery. "Division
-+  by Invariant Integers using Multiplication." PLDI 1994.
-+  (`crates/gravity/expr`).
-+- **HNSW.** Yu A. Malkov, D. A. Yashunin. "Efficient and Robust Approximate
-+  Nearest Neighbor Search Using Hierarchical Navigable Small World Graphs."
-+  IEEE TPAMI 42(4), 2020. The vector index, via pgvector
-+  (`crates/contrib/pgvector_hnsw`).
-+- **Dremel.** Sergey Melnik et al. "Dremel: Interactive Analysis of Web-Scale
-+  Datasets." PVLDB 3(1), 2010. Nested-column record assembly in the Parquet
-+  reader (`crates/backend/commands/copy/src/fromparquet.rs`).
-+- **LeanStore.** Viktor Leis, Michael Haubenschild, Alfons Kemper, Thomas
-+  Neumann. "LeanStore: In-Memory Data Management Beyond Main Memory." ICDE 2018.
-+  Cooling-stage admission for prefetched extents (`pgrc_read/src/openpart.rs`).
-+- **Strongly connected components.** Robert Tarjan. "Depth-First Search and
-+  Linear Graph Algorithms." SIAM J. Comput. 1(2), 1972.
-+  (`crates/gravity/backend/wasm/src/irreduce.rs`).
-+- Classic algorithms used throughout, largely inherited from PostgreSQL:
-+  Bentley and McIlroy's "Engineering a Sort Function" (Software: Practice and
-+  Experience, 1993), Knuth's *Th
-```
-
-**File**: `Cargo.toml` (modified, +156/-54)
-```diff
-@@ -1,5 +1,7 @@
- [workspace]
- resolver = "2"
-+# The vendored libmimalloc-sys and allocator-api2 ([patch.crates-io] below) are path dependencies, not members.
-+exclude = ["third_party/libmimalloc-sys", "third_party/allocator-api2"]
- members = [
-     "crates/backend/replication/origin",
-     "crates/backend/replication/slotsync",
-@@ -10,6 +12,7 @@ members = [
-     "crates/backend/backup/sink",
-     "crates/backend/backup/compress",
-     "crates/common/compression",
-+    "crates/common/lz4_block",
-     "crates/backend/backup/sink_support",
-     "crates/backend/backup/backup_copy",
-     "crates/backend/backup/backup_copy_seams",
-@@ -23,11 +26,20 @@ members = [
-     "crates/_support/types/types_core",
-     "crates/_support/mcx",
-     "crates/_support/secure_zero",
-+    "crates/_support/pagegive",
-+    "crates/_support/pagepool",
-+    "crates/_support/memledger",
-+    "crates/_support/allocarena",
-+    "crates/_support/mempolicy",
-+    "crates/_support/fp_contract",
-     "crates/_support/pg_qsort",
-     "crates/_support/jit_deform",
-     "crates/_support/types/datum",
-     "crates/_support/seam_core",
-     "crates/_support/pgsync",
-+    "crates/_support/fires",
-+    "crates/_support/cancelpoll",
-+    "crates/_support/leader_tls",
-     "crates/_support/test_boot",
-     "crates/_support/types/types_tuple",
-     "crates/_support/types/types_trigger",
-@@ -36,9 +48,9 @@ members = [
-     "crates/backend/utils/adt/tsvector_stat",
-     "crates/_support/types/stringinfo",
-     "crates/common/blkreftable",
-+    "crates/common/ct_carrier_mimalloc",
-     "crates/common/parse_manifest",
-     "crates/common/hashfn",
--    "crates/common/stringhash",
-     "crates/_support/types/fmgr",
-     "crates/_support/types/types_scan",
-     "crates/_support/types/types_guc",
-@@ -144,6 +156,7 @@ members = [
-     "crates/backend/libpq/be_secure_seams",
-     "crates/backend/libpq/be_secure",
-     "crates/backend/libpq/be_secure_common",
-+    "crates/backend/libpq/be_gssapi_common",
-     "crates/backend/libpq/be_secure_openssl",
-     "crates/backend/libpq/pqcomm",
-     "crates/backend/libpq/pqmq",
-@@ -156,6 +169,7 @@ members = [
-     "crates/backend/tcop/fastpath",
-     "crates/backend/storage/aio/aio_seams",
-     "crates/backend/storage/aio/aio_core",
-+    "crates/backend/storage/aio/read_stream",
-     "crates/backend/postmaster/io_worker",
-     "crates/backend/storage/aio/aio_uring",
-     "crates/backend/storage/aio/aio_funcs",
-@@ -208,11 +222,7 @@ members = [
-     "crates/backend/executor/exectuples_output",
-     "crates/backend/executor/execexpr",
-     "crates/backend/executor/runtime",
--    "crates/backend/executor/sqe",
--    "crates/backend/executor/sqe/lanestitch",
-     "crates/backend/executor/spillset",
--    "crates/backend/executor/laneexec",
--    "crates/backend/executor/lanereg",
-     "crates/backend/executor/executils",
-     "crates/backend/executor/instrument",
-     "crates/backend/executor/execjunk",
-@@ -221,35 +231,7 @@ members = [
-     "crates/backend/executor/nodemodifytable",
-     "crates/backend/executor/nodefunctionscan",
-     "crates/backend/executor/nodetablefuncscan",
--    "crates/backend/executor/nodevaluesscan",
--    "crates/backend/executor/nodeseqscan",
--    "crates/backend/executor/nodetidscan",
--    "crates/backend/executor/nodetidrangescan",
--    "crates/backend/executor/nodeindexscan",
--    "crates/backend/executor/nodebitmapindexscan",
--    "crates/backend/executor/nodectescan",
-     "crates/backend/executor/nodenamedtuplestorescan",
--    "crates/backend/executor/noderecursiveunion",
--    "crates/backend/executor/nodeworktablescan",
--    "crates/backend/executor/nodebitmapheapscan",
--    "crates/backend/executor/nodeindexonlyscan",
--    "crates/backend/executor/nodesort",
--    "crates/backend/executor/nodeincrementalsort",
--    "crates/backend/executor/nodegroup",
--    "crates/backend/executor/nodeunique",
--    "crates/backend/executor/nodeappend",
--    "crates/backend/executor/nodemergeappend",
--    "crates/backend/executor/nodesetop",
--    "crates/backend/executor/nodelimit",
--    "crates/backend/executor/nodelockrows",
--    "crates/backend/executor/nodehash",
--    "crates/backend/executor/nodehashjoin",
--    "crates/backend/executor/nodematerial",
--    "crates/backend/executor/nodememoize",
--    "crates/backend/executor/nodemergejoin",
--    "crates/backend/executor/nodenestloop",
--    "crates/backend/executor/nodeagg",
--    "crates/backend/executor/nodewindowagg",
-     "crates/backend/utils/sort/sharedtuplestore",
-     "crates/backend/utils/sort/sort_storage",
-     "crates/backend/utils/sort/tuplesort",
-@@ -313,27 +295,35 @@ members = [
-     "crates/backend/access/transam/xlogutils",
-     "crates/backend/access/table/tableam_vocab",
-     "crates/backend/access/table/tableam",
--    "crates/backend/access/pgrcolumnar",
--    "crates/backend/access/pgrcolumnar2/pgrc2_batch",
--    "crates/backend/access/pgrcolumnar2/pgrc2_claim",
--    "crates/backend/access/pgrcolumnar2/pgrc2_format",
--    "crates/backend/access/
-```
-
-**File**: `NOTICE` (modified, +166/-5)
-```diff
-@@ -10,11 +10,29 @@ error message text, which are intentionally kept identical to
- PostgreSQL so the two systems can be compared byte-for-byte in
- testing).
- 
--In addition, the equivalence-proof tree under proofs/ contains verbatim
--copies of PostgreSQL C source files (vendored as the reference side of
--machine-checked C-vs-Rust equivalence proofs). Those files are
--PostgreSQL source code, retain their upstream headers, and are
--distributed under the PostgreSQL License reproduced below.
-+Verbatim PostgreSQL source also ships in this repository, under the
-+PostgreSQL License reproduced below, with upstream headers retained:
-+
-+- crates/postgres-18.6-reference/: the unmodified PostgreSQL 18.6 source
-+  tree, kept as a read-only reference (not compiled). It includes the
-+  third-party files PostgreSQL itself carries, under their own headers
-+  (for example src/backend/jit/llvm/SectionMemoryManager.LICENSE).
-+- proofs/: PostgreSQL C files vendored as the reference side of
-+  machine-checked C-vs-Rust equivalence proofs.
-+- Test oracles and generators copied from PostgreSQL inside crates:
-+  crates/_support/pg_qsort/cref, crates/_support/types/nodes/vendor,
-+  crates/backend/access/common/tidstore/bench/cref/vendor,
-+  crates/backend/lib/dshash/bench/cref.c, and the tests/data/cref
-+  directories of crates/common/hashfn, crates/common/pglz and
-+  crates/port/crc32c.
-+- crates/backend/parser/gram_core/gram.c and
-+  crates/backend/parser/scan_fgram/scan.c: Bison and flex output generated
-+  from PostgreSQL's grammar and scanner. The Bison skeleton carries the
-+  Bison special exception, which permits distributing the output under
-+  any terms.
-+- crates/bin/initdb/share/: PostgreSQL 18.6 install-time data (see its
-+  PROVENANCE.md), including the IANA time zone database compiled by zic
-+  (public domain).
- 
- PostgreSQL is developed by the PostgreSQL Global Development Group and
- is distributed under the PostgreSQL License. In accordance with that
-@@ -24,6 +42,117 @@ below.
- PostgreSQL: https://www.postgresql.org
- PostgreSQL source: https://github.com/postgres/postgres
- 
-+Third-party code inside PostgreSQL
-+----------------------------------
-+
-+PostgreSQL incorporates code from other projects under their own
-+permissive licenses. pgrust's Rust ports of those parts derive from that
-+code. The license and copyright text of each is in the named file of
-+crates/postgres-18.6-reference/:
-+
-+- Henry Spencer's regular expression engine, Copyright (c) 1998, 1999
-+  Henry Spencer, BSD-style license (as adapted via Tcl):
-+  ported in crates/backend/regex/ and crates/_support/types/regex.
-+  License: src/backend/regex/COPYRIGHT.
-+- Snowball stemmers and stop-word lists (https://snowballstem.org),
-+  BSD-style license: ported in crates/backend/snowball/dict_snowball.
-+  License: src/backend/snowball/README.
-+- Ryu floating-point output, Copyright 2018 Ulf Adams, Boost Software
-+  License 1.0 (as distributed in PostgreSQL): ported in crates/common/ryu.
-+  License: src/common/d2s.c, src/common/f2s.c, src/common/ryu_common.h.
-+- HyperLogLog, Copyright (c) 2013 Hideaki Ohno, MIT: ported in
-+  crates/backend/lib/hyperloglog. License: src/backend/lib/hyperloglog.c.
-+- MD5 and SHA-1, Copyright (C) 1995-1998 WIDE Project, BSD-3-Clause; SHA-2,
-+  Copyright (c) 2000-2001 Aaron D. Gifford, BSD-3-Clause: ported in
-+  crates/common/md5, crates/common/sha1, crates/common/sha2. License:
-+  src/common/md5.c, src/common/sha1.c, src/common/sha2.c.
-+- inet_net_ntop, Copyright (c) 2004 Internet Systems Consortium and (c)
-+  1996,1999 Internet Software Consortium, ISC: ported in
-+  crates/backend/utils/adt/network. License: src/port/inet_net_ntop.c.
-+- tzcode (time zone library), public domain: ported in
-+  crates/backend/timezone/.
-+- pgcrypto's crypt() engines: crypt-des.c (FreeBSD, BSD), crypt-blowfish.c
-+  and crypt-gensalt.c (Solar Designer, public domain with a fallback
-+  permissive license), crypt-md5.c (Poul-Henning Kamp, "beer-ware"
-+  license), crypt-sha.c (public domain), and Marko Kreen's pgcrypto
-+  framework (BSD-2-Clause): ported in crates/contrib/pgcrypto. License: the
-+  headers of the corresponding files under contrib/pgcrypto/.
-+- Unicode Character Database derived tables, Copyright (c) Unicode, Inc.,
-+  Unicode License v3: transcribed in crates/common/unicode_case,
-+  crates/common/unicode_category and crates/common/unicode_norm (generated
-+  in PostgreSQL by src/common/unicode/).
-+- NetBSD qsort (Copyright (c) 1992, 1993 The Regents of the University of
-+  California, BSD-3-Clause): ported in crates/_support/pg_qsort. License:
-+  src/include/lib/sort_template.h.
-+
-+Other ported or derived code
-+----------------------------
-+
-+- pgvector 0.8.5 (https://github.com/pgvector/pgvector), PostgreSQL
-+  License: the vector type, its functions and the HNSW access method are
-+  ported to Rust in crates/contrib/pgvector, crates/contrib/pgvector_hnsw
-+  and crates/contrib/pgvector_hnsw_build; the extension script and
-+  regression SQL ar
-```
-
-**File**: `README.md` (modified, +285/-257)
-```diff
-@@ -1,13 +1,12 @@
+@@ -1,7 +1,7 @@
  <h1 align="center">pgrust</h1>
  
  <p align="center">
--  <strong>A Rust rewrite of Postgres that's faster than Postgres and ClickHouse.</strong>
-+  <strong>A Rust rewrite of Postgres.</strong>
+-  <strong>A Rust rewrite of Postgres.</strong>
++  <strong>A Postgres-compatible database, rewritten in Rust, built for fast analytics on your Postgres data.</strong>
  </p>
  
  <p align="center">
-   <img alt="Postgres 18.6" src="https://img.shields.io/badge/Postgres-18.6-336791">
--  <img alt="Regression suite: 100%" src="https://img.shields.io/badge/regression_suite-46%2C066%2F46%2C066-brightgreen">
--  <img alt="Version: v0.3.1" src="https://img.shields.io/badge/version-v0.3.1-blue">
-+  <img alt="Version: v0.4-beta" src="https://img.shields.io/badge/version-v0.4--beta-blue">
-   <a href="LICENSE"><img alt="License: AGPL-3.0" src="https://img.shields.io/badge/license-AGPL--3.0-blue"></a>
- </p>
- 
-@@ -23,259 +22,181 @@
- 
- <br />
- 
--> **New: v0.3.1** is a bug-fix release. [Release notes](RELEASE-NOTES.md) · [What's new in v0.3](#whats-new-in-v03)
-->
--> [Video of Michael's talk at PlanetScale on pgrust](https://www.youtube.com/watch?v=7L_nG3EBjck) and the [slides](https://drive.google.com/file/d/1_wDk4HPE9-MuiPBo_X-QdJUmFtVV0p8p/view)
-+> **New:** [Video of Michael's talk at PlanetScale on pgrust](https://www.youtube.com/watch?v=7L_nG3EBjck) — and the [slides](https://drive.google.com/file/d/1_wDk4HPE9-MuiPBo_X-QdJUmFtVV0p8p/view).
+@@ -28,9 +28,10 @@
  >
- > [How AI Changes the Economics of JIT Compilers](https://malisper.me/how-ai-changes-the-economics-of-jit-compilers/)
-+>
-+> **v0.4-beta is out:** [the release post](https://pgrust.com/blog/pgrust-v0-4-beta/) and [what's new](#whats-new-in-v04-beta).
+ > **v0.4-beta is out:** [the release post](https://pgrust.com/blog/pgrust-v0-4-beta/) and [what's new](#whats-new-in-v04-beta).
  
- pgrust is a re-implementation of Postgres meant to show what Postgres would
- look like if it was built in 2026. It is wire compatible and even SQL dialect
--compatible with Postgres. It passes
--[all 46,066 tests in Postgres' regression suite](https://malisper.me/pgrust-passes-100-of-postgresqls-regression-tests/).
--For the story of why we're building it, see
--[pgrust: rebuilding Postgres in Rust with AI](https://malisper.me/pgrust-rebuilding-postgres-in-rust-with-ai/).
-+compatible with Postgres.
+-pgrust is a re-implementation of Postgres meant to show what Postgres would
+-look like if it was built in 2026. It is wire compatible and even SQL dialect
+-compatible with Postgres.
++pgrust is a drop-in replacement for Postgres built for fast analytics. It is
++wire compatible and SQL dialect compatible with Postgres 18, so your existing
++drivers, ORMs, `psql` and tools work unchanged. It is Postgres rebuilt the way
++it would be built in 2026.
  
  Every line is Rust, written to match the behavior of the C implementation.
  Rust makes it easy to re-architect several core Postgres pieces. pgrust has:
+@@ -223,22 +224,34 @@ CREATE TABLE events (id bigint, kind text, val double precision, at timestamp)
+   error saying the table is in the v0.3.x columnar format. Dump them with the
+   v0.3 binary (`pg_dump`) and restore them into v0.4-beta.
  
--- A new vectorized push-based, JIT compiled executor
-+- Gravity, a new vectorized push-based, JIT compiled query engine
- - A thread based concurrency model
- - A query scheduler designed to keep any individual query from taking down
-   your database
--- A built-in OOM killer that gives pgrust control of what happens when you're
--  running low on memory, greatly reducing the chance of your whole DB being
--  taken down by the OS OOM killer
-+- An automatic memory manager: one memory budget, sized from the machine,
-+  covers the buffer pool, the columnar caches and running queries, and gives
-+  pgrust control of what happens when you're running low on memory, greatly
-+  reducing the chance of your whole DB being taken down by the OS OOM killer
++## When to use pgrust
++
++- **Analytics on your Postgres data without a separate warehouse.** Put
++  large tables in `pgrcolumnar` and query them with the same SQL, in the same
++  database as your application data.
++- **Speeding up slow Postgres queries** with large scans, joins and
++  aggregations, such as dashboards and reporting.
++- **One database for transactions and analytics**, instead of Postgres plus
++  ClickHouse or a warehouse kept in sync by a pipeline.
++
+ ## Status
  
--and many other really awesome pieces. The scheduler and the OOM killer go
-+and many other really awesome pieces. The scheduler and the memory manager go
- after two of
- [the four horsemen behind thousands of Postgres outages](https://malisper.me/the-four-horsemen-behind-thousands-of-postgres-outages/).
- 
--## Status
--
 -We don't recommend running pgrust in production (yet), but we are
 -successfully running it ourselves internally. Keep Postgres as the source
 -of truth for data you can't afford to lose.
--
--pgrust currently passes the Postgres regression suite. It's faster than
--Postgres and ClickHouse, but it still has a lot of bugs. Our #1 priority right
--now is testing and reliability.
--
++We're working with a few early design partners and are targeting
++production readiness in Q1 2027. Testing and reliability are our top
++priority; see [Testing](#testing) for how we verify pgrust against
++Postgres. We run pgrust ourselves internally today.
+ 
+-pgrust still has a lot of bugs. Our #1 priority right now is testing and
+-reliability.
++## Extensions
+ 
 -If you need production ready Postgres today, use Postgres.
--
--Existing PostgreSQL extensions do not work. There is no stable extension ABI
--in pgrust yet. Some bundled contrib modules are ported, but PL/Python,
--PL/Perl, and PL/Tcl are not.
--
--pgrust is specifically tuned for Graviton4 and the JIT compiler only targets
--Graviton4. pgrust will still work on other platforms, but will not have
--similar performance.
--
--## Performance
--
--Measured on `c8g.4xlarge` (AWS Graviton4) against PostgreSQL 18.3.
--
--On the ClickBench combined score, pgrust scored 18.5% faster than ClickHouse
--and hundreds of times faster than PostgreSQL. This was using pgrcolumnar,
--pgrust's builtin columnar layout.
--
--On sysbench-oltp, pgrust achieved 30% higher throughput than Postgres 18.3 on
--read-only workloads at 300GB scale.
--
--For a code-level walkthrough of one part of that speedup, read
--[Rebuilding Postgres for 300x faster analytics: batching, operator fusion, and SIMD](https://malisper.me/how-we-made-postgres-hundreds-of-times-faster-the-query-engine/).
--
--These runs were reviewed independently by **Greg Smith**, author of
--*PostgreSQL 9.0 High Performance*.
--
--Two honest caveats. We had previously reported that pgrust was over 50%
--faster than Postgres. On Kubernetes we measure a larger OLTP gap, 50-60%
--rather than 30%, and we have not isolated 
-```
-
-**File**: `RELEASE-NOTES.md` (removed, +0/-17)
-```diff
-@@ -1,17 +0,0 @@
--# pgrust v0.3.1
--
--v0.3.1 is a bug-fix release on top of v0.3, still compatible with Postgres 18.6.
--
--## Fixes
--
--- Fix whole-row record references while preserving fields literally named `"*"`.
--- Fix duplicated COPY notice context.
--- Decode only the requested prefix for LZ4-compressed TOAST slices.
--- Fix BRIN indexes with custom operator classes to use their own support functions instead of the built-in ones.
--- Fix integer percentile ordering and transaction statistics accounting.
--
--## Upgrade
--
--Rebuild existing BRIN indexes that use custom operator classes with `REINDEX`.
--
--pgrust is still experimental and not for production.
-```
-
-**File**: `benchmarks/pgo/README.md` (added, +399/-0)
-```diff
-@@ -0,0 +1,399 @@
-+# PGO training corpus
-+
-+Profile-guided optimization needs a workload to train on. This directory holds
-+that workload, the proof that it is **not** the workload we publish numbers
-+for, and the machinery that keeps the two apart.
-+
-+## Why this exists
-+
-+A PGO binary is shaped by whatever it was profiled running. If the profile run
-+executes the exact statements a published benchmark later measures, the
-+published number is partly a measurement of the training, not of the engine —
-+the compiler has been handed the answer key. That is the ordinary
-+train-on-test failure, and it is invisible from the outside unless the training
-+inputs can be read.
-+
-+So: the training corpus lives in the source tree, under version control; every
-+training run reads it and nothing else (no downloaded data, no benchmark
-+tables); and a lint refuses to build if any training statement is a published
-+measurement statement, or a published analytical statement with its columns
-+renamed.
-+
-+## Provenance
-+
-+One corpus, one training run, two callers:
-+
-+- the release: `scripts/release/linux-builder.sh` builds the instrumented
-+  server and runs `scripts/release/pgo-train.sh` on the builder host;
-+- a local rebuild: `benchmarks/build-pgo.sh` runs the same `pgo-train.sh`.
-+
-+`pgo-train.sh` expands this directory with `gen-corpus.sh` (which re-runs the
-+lint over the expansion), trains on a fresh `initdb` cluster, and logs a
-+`PGO-CORPUS sha256=<hex>` line. The corpus sha256 is the sha256 of the sorted
-+`sha256sum` listing of `corpus/`, `denylist/`, `gen-corpus.sh` and the two lint
-+files; it does not depend on where the corpus is expanded, so it names the
-+corpus revision a binary was trained on. The release builder copies the line
-+into its own log; `build-pgo.sh` writes it into `build-manifest.txt` next to
-+the source sha and the profdata and binary hashes.
-+
-+Where it can be read: this directory ships with the public source tree (the
-+rest of `benchmarks/` does not), so the corpus a published binary was trained
-+on is readable in the public tree at the source sha the binary was built from.
-+
-+## What is here
-+
-+| path | role |
-+|---|---|
-+| `corpus/analytics-pulse.sql` | 88 analytical statements (`J1`…`J88`) over the generated fixture, one per line |
-+| `corpus/analytics-pulse-engines.tsv` | per-statement execution-engine class (drives the two vectors) |
-+| `corpus/analytics-pulse-fixture.sql` | the fixture: DDL plus the SQL that generates and loads every row |
-+| `corpus/oltp-generic.sql` | the transactional statement-class list of record |
-+| `corpus/oltp-schema.sql` | fixture DDL for the transactional corpus |
-+| `corpus/QUARANTINE.tsv` | shape ids held out of the emitted vectors, each with its defect |
-+| `gen-corpus.sh` | expands the corpus into the files a profile run consumes, lints the expansion, prints the corpus sha256 |
-+| `denylist/analytics-skeletons.sql` | the published single-table analytical measurement vector, stored as its column-blind skeletons (no statement text) — **denied** |
-+| `denylist/tpch-official.sql` | the published TPC-H vector (22 templates), stored as column-blind skeletons plus the sha256 of each statement's canonical form (no statement text) — **denied**, exact and column-blind |
-+| `denylist/tpcds-official.sql` | the published TPC-DS vector (99 templates), stored as for TPC-H — **denied**, exact and column-blind |
-+| `denylist/oltp-official.sql` | statement templates of the published transactional rigs — **denied**, exact form |
-+| `denylist/EXEMPTIONS.txt` | statements permitted despite a match, each with a reason (currently empty) |
-+| `lint-training-overlap.sh` / `.awk` | the proof: training ∩ denied = ∅, under both rules |
-+| `../build-pgo.sh` | a local PGO build from source: instrumented build, `scripts/release/pgo-train.sh`, merge, profile-use build, manifest |
-+
-+The denylist files are inputs to the lint only. Nothing in the build reads them
-+as training material.
-+
-+## The line this draws
-+
-+**Enforced mechanically, rule 1: no literal overlap.** No statement that a
-+published benchmark issues may appear in the training corpus, in any binding.
-+The lint canonicalizes both sides — string literals, numbers, `?`, `$1` and
-+`:name` all collapse to a single token, harness `RESET ALL;` / `SET …;`
-+prefixes are stripped, case is folded, punctuation is spaced and whitespace
-+collapsed — so what is compared is the statement's identifier-and-operator
-+skeleton. Changing a search term, a range bound, a table suffix, or a parameter
-+binding does not get a denied statement past the lint; that is deliberate,
-+because a parameterized family is one statement.
-+
-+**Enforced mechanically, rule 2: no renamed copies.** See "The column-blind
-+guard" below.
-+
-+**Disclosed, not enforced: shape-class overlap.** The corpus deliberately
-+exercises the operator classes the product is measured on — grouped
-+aggregation, per-group distinct, top-N, substring and regexp predicates, joins,
-+point lookup
++pgrust ships the most-used Postgres extensions built in: pgvector, pg_cron,
++pg_stat_statements, pg_trgm, hstore, pgcrypto, postgres_fdw and most of
++contrib. Install them with `CREATE EXTENSION` as usual.
+ 
+-PostgreSQL extensions don't work out of the box: there is no stable
+-extension ABI in pgrust yet. But pgrust ships a large number of them,
+-including pgvector, pg_cron, pg_stat_statements, pg_trgm, hstore, pgcrypto,
+-postgres_fdw and most of contrib. PL/Python, PL/Perl and PL/Tcl are not
+-supported yet.
++pgrust doesn't load C extension binaries compiled for Postgres, but porting an
++existing extension to pgrust is straightforward, and we add new ones
++regularly. If you need an extension that isn't listed,
++[open an issue](https://github.com/malisper/pgrust/issues) and we'll
++prioritize it. PL/Python, PL/Perl and PL/Tcl are not supported yet.
+ 
+ ## Performance
+ 
 ```
 
 #### Recent Merged Pull Requests:
@@ -2404,38 +1885,66 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. pgrust v0.4-beta with ACID-compliant columnar and automatic memory management
+## X. README: lead with what pgrust is for; update status and extensions
 
 **RULE**:
-When implementing operations in `.cargo/config.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in malisper/pgrust. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in malisper/pgrust. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `38634b40`: pgrust v0.4-beta with ACID-compliant columnar and automatic memory management. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `df8a9bb4`: README: lead with what pgrust is for; update status and extensions. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.cargo/config.toml`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-# Workspace cargo config.
-#
-# openssl-src (openssl-sys `vendored`) runs "$OPENSSL_SRC_PERL ./Configure ..."; this wrapper appends the
-# OpenSSL modules a PostgreSQL server never uses (QUIC, SM2/SM4, ML-DSA/SLH-DSA/LMS, ARIA/BF/CAST/RC2/RC4, engines;
-# the list and what is kept on purpose are in the script). A caller that exports its own OPENSSL_SRC_PERL wins over
-# this and gets no trim; the tripwire is be_secure_openssl's src/openssl_trim.rs.
-[env]
-OPENSSL_SRC_PERL = { value = "scripts/openssl-src-perl.sh", relative = true }
+  <strong>A Postgres-compatible database, rewritten in Rust, built for fast analytics on your Postgres data.</strong>
+pgrust is a drop-in replacement for Postgres built for fast analytics. It is
+wire compatible and SQL dialect compatible with Postgres 18, so your existing
+drivers, ORMs, `psql` and tools work unchanged. It is Postgres rebuilt the way
+it would be built in 2026.
+## When to use pgrust
+
+- **Analytics on your Postgres data without a separate warehouse.** Put
+  large tables in `pgrcolumnar` and query them with the same SQL, in the same
+  database as your application data.
+- **Speeding up slow Postgres queries** with large scans, joins and
+  aggregations, such as dashboards and reporting.
+- **One database for transactions and analytics**, instead of Postgres plus
+  ClickHouse or a warehouse kept in sync by a pipeline.
+
+We're working with a few early design partners and are targeting
+production readiness in Q1 2027. Testing and reliability are our top
+priority; see [Testing](#testing) for how we verify pgrust against
+Postgres. We run pgrust ourselves internally today.
+## Extensions
+pgrust ships the most-used Postgres extensions built in: pgvector, pg_cron,
+pg_stat_statement
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+// Induced defect failure mode:
+  <strong>A Rust rewrite of Postgres.</strong>
+pgrust is a re-implementation of Postgres meant to show what Postgres would
+look like if it was built in 2026. It is wire compatible and even SQL dialect
+compatible with Postgres.
+We don't recommend running pgrust in production (yet), but we are
+successfully running it ourselves internally. Keep Postgres as the source
+of truth for data you can't afford to lose.
+pgrust still has a lot of bugs. Our #1 priority right now is testing and
+reliability.
+If you need production ready Postgres today, use Postgres.
+PostgreSQL extensions don't work out of the box: there is no stable
+extension ABI in pgrust yet. But pgrust ships a large number of them,
+including pgvector, pg_cron, pg_stat_statements, pg_trgm, hstore, pgcrypto,
+postgres_fdw and most of contrib. PL/Python, PL/Perl and PL/Tcl are not
+supported yet.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `38634b40` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `df8a9bb4` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

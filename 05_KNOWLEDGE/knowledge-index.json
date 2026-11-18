@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-18T19:52:46.196Z",
-  "total_verified_learnings": 9007,
+  "last_updated": "2026-11-18T20:14:37.049Z",
+  "total_verified_learnings": 9008,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 21439,
+  "total_items": 21449,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -218076,8 +218076,8 @@
       "slug": "bitterbot-ai-bitterbot-desktop",
       "platform": "github",
       "source_url": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-      "source_version": "108f7135",
-      "content_hash": "0bf3516a067582afc7bb1acf89a52a01d30035233f3fcbdf0c0cf96acd659cae",
+      "source_version": "9ef0e544",
+      "content_hash": "ccb24fadce8d5879391a5fbd11292c95f3306445aeec933e3bf312b544f32689",
       "dossier_path": "07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md",
       "promoted_rules": [
@@ -218110,6 +218110,11 @@
           "number": 9053,
           "title": "test(installer): do not require a signature check on runners with no verifier",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9278,
+          "title": "ship a sidecar that carries the package topic, and fail loudly without",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -218117,7 +218122,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T21:56:55.524Z",
+      "verified_at": "2026-11-18T20:14:31.981Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -218168,13 +218173,13 @@
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-bitterbot-ai-bitterbot-desktop",
       "artifact_type": "verification_contract",
       "target_folder": "08_VERIFICATION",
-      "relative_path": "08_VERIFICATION/bitterbot-ai-bitterbot-desktop-verification-protocol-empirical-defect-shield-for.md",
-      "title": "Verification Protocol: Empirical Defect Shield for Bitterbot-AI/bitterbot-desktop",
-      "repository": "Bitterbot-AI/bitterbot-desktop",
-      "source_version": "108f7135",
-      "content_hash": "3309dd5af618e9fb7da20c5c66551db7a2eeaf08a92a6139a7c34ca14fa94685",
+      "relative_path": "08_VERIFICATION/bitterbot-ai-bitterbot-desktop-learnings-verification-protocol-empirical-defect-.md",
+      "title": "Verification Protocol: Empirical Defect Shield for bitterbot-ai-bitterbot-desktop-learnings",
+      "repository": "bitterbot-ai-bitterbot-desktop-learnings",
+      "source_version": "HEAD",
+      "content_hash": "e742837b43f60c0318a29f8dd7c9bedc10ca493b67d59e77bfadc2305597cd0f",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T21:56:56.366Z"
+      "persisted_at": "2026-11-18T20:14:37.049Z"
     },
     "domain_intelligence-architecture-intelligence-infiniflow-infinity-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-infiniflow-infinity-learnings-core-invariants",
@@ -220450,7 +220455,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Qwen/Qwen3.8-Flash-Next",
       "source_version": "hf-qwen-qwen3.8-flash-next",
-      "content_hash": "f9e35df3ce1974d2b575ee9fd8808e487d140d70b6826f04e5cb6eede780fe35",
+      "content_hash": "be7d3716fff255c09ddfea537586c3fdd72d872a7ae98bdcc208608244a762d6",
       "dossier_path": "07_PROJECT_LEARNING/hf-qwen-qwen3.8-flash-next-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-qwen-qwen3.8-flash-next-learnings.md",
       "promoted_rules": [],
@@ -220459,7 +220464,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T01:48:32.467Z",
+      "verified_at": "2026-11-18T20:14:17.373Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -220476,9 +220481,9 @@
       "title": "Research & Knowledge Intelligence: Qwen/Qwen3.8-Flash-Next Core Invariants",
       "repository": "Qwen/Qwen3.8-Flash-Next",
       "source_version": "hf-qwen-qwen3.8-flash-next",
-      "content_hash": "4cdc71636f8c3556854c7b46809d586ecaa5e07d7e50c11a210fafee79c22d9e",
+      "content_hash": "5be6c66f6badbc64df334e386fc10acaa7736853484682dcf8ef1b070f7c9001",
       "domain_letter": "D",
-      "persisted_at": "2026-11-14T01:48:32.755Z"
+      "persisted_at": "2026-11-18T20:14:17.750Z"
     },
     "learn-github-software-mansion-react-native-reanimated": {
       "learning_id": "learn-github-software-mansion-react-native-reanimated",
@@ -220674,9 +220679,9 @@
       "title": "Research & Knowledge Intelligence: hf-qwen-qwen3.8-flash-next-learnings Core Invariants",
       "repository": "hf-qwen-qwen3.8-flash-next-learnings",
       "source_version": "HEAD",
-      "content_hash": "230f19bf75815acbcb49d29d41b8ea93dafb8b93907266f805afdedc702d5dfd",
+      "content_hash": "0fa02801fe833d7b9b88dd165a78d379a2df23d4931bc23a8f364c7a803a24a9",
       "domain_letter": "D",
-      "persisted_at": "2026-11-14T01:49:13.096Z"
+      "persisted_at": "2026-11-18T20:14:35.599Z"
     },
     "candidate_directive-docs-fix-dead-links-and-accept-empty-banner-slots-in-url-validation": {
       "item_id": "candidate_directive-docs-fix-dead-links-and-accept-empty-banner-slots-in-url-validation",
@@ -237818,10 +237823,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-bitterbot-ai-bitterbot-desktop-architecture-intelligence-bitterbot-ai-bitterbot-.md",
       "title": "Architecture Intelligence: Bitterbot-AI/bitterbot-desktop Core Invariants",
       "repository": "Bitterbot-AI/bitterbot-desktop",
-      "source_version": "108f7135",
-      "content_hash": "e65317d49d8088b7f19c256e2bfbe957389e4a342293a2be3cbc93037e252202",
+      "source_version": "9ef0e544",
+      "content_hash": "96e2a8ad7d935ba4ad3e41d35836d41df7427bb52f48a504d57281d5b9a11133",
       "domain_letter": "G",
-      "persisted_at": "2026-11-17T21:56:56.189Z"
+      "persisted_at": "2026-11-18T20:14:32.499Z"
     },
     "domain_intelligence-search-distribution-intelligence-sharkdp-fd-learnings-core-invariants": {
       "item_id": "domain_intelligence-search-distribution-intelligence-sharkdp-fd-learnings-core-invariants",
@@ -273533,9 +273538,9 @@
       "title": "Architecture Intelligence: bitterbot-ai-bitterbot-desktop-learnings Core Invariants",
       "repository": "bitterbot-ai-bitterbot-desktop-learnings",
       "source_version": "HEAD",
-      "content_hash": "078146570cea047858378bb58325a2f0b186f1dfae936f18e0506a059d6ba375",
+      "content_hash": "d4c3e64b7ee58ed85355f72cf29143ed1e50d3be669ff09cb1803212ebc47a8b",
       "domain_letter": "G",
-      "persisted_at": "2026-11-17T16:00:02.974Z"
+      "persisted_at": "2026-11-18T20:14:36.893Z"
     },
     "learn-huggingface-lodestones-kromoss": {
       "learning_id": "learn-huggingface-lodestones-kromoss",
@@ -289418,6 +289423,143 @@
       "content_hash": "e7d591b12220bf00ecd6ed3847a2e2dbdc91892233900807f4df8dfda48ed924",
       "domain_letter": "K",
       "persisted_at": "2026-11-18T19:52:46.196Z"
+    },
+    "learn-github-malisper-pgrust": {
+      "learning_id": "learn-github-malisper-pgrust",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "malisper/pgrust",
+      "repository": "malisper/pgrust",
+      "slug": "malisper-pgrust",
+      "platform": "github",
+      "source_url": "https://github.com/malisper/pgrust",
+      "source_version": "df8a9bb4",
+      "content_hash": "7311c61161a7de858946dde48e959b265c38ee9be9707dd3aa834e4ed7de3588",
+      "dossier_path": "07_PROJECT_LEARNING/malisper-pgrust-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/malisper-pgrust-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-18T20:14:29.299Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "candidate_directive-lead-with-what-pgrust-is-for-update-status-and-extensions": {
+      "item_id": "candidate_directive-lead-with-what-pgrust-is-for-update-status-and-extensions",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-82ML-lead-with-what-pgrust-is-for-update-status-and-extensions.md",
+      "title": "lead with what pgrust is for; update status and extensions",
+      "repository": "malisper/pgrust",
+      "source_version": "df8a9bb4",
+      "content_hash": "9f85e641d18271b71e62369b3fd65c925f888bbab9d90dc142eab0ed61db55e6",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-18T20:14:29.712Z"
+    },
+    "domain_intelligence-architecture-intelligence-malisper-pgrust-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-malisper-pgrust-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-malisper-pgrust-architecture-intelligence-malisper-pgrust-core-invariants.md",
+      "title": "Architecture Intelligence: malisper/pgrust Core Invariants",
+      "repository": "malisper/pgrust",
+      "source_version": "df8a9bb4",
+      "content_hash": "4933f1c761b10f6ed53d6476b6baf1797d2ffff1241b2bce0cfd0926f820332e",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-18T20:14:29.850Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-malisper-pgrust": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-malisper-pgrust",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/malisper-pgrust-verification-protocol-empirical-defect-shield-for-malisper-pgrus.md",
+      "title": "Verification Protocol: Empirical Defect Shield for malisper/pgrust",
+      "repository": "malisper/pgrust",
+      "source_version": "df8a9bb4",
+      "content_hash": "c7112eddfe2b5dcadfddb68ba64fe41c686ec3beb8a888a43d1c9d4924ff16fa",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-18T20:14:29.989Z"
+    },
+    "rule-9278": {
+      "learning_id": "rule-9278",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9278,
+      "title": "ship a sidecar that carries the package topic, and fail loudly without",
+      "source_url": "https://github.com/Bitterbot-AI/bitterbot-desktop",
+      "source_version": "9ef0e544",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-18T20:14:31.981Z"
+    },
+    "candidate_directive-ship-a-sidecar-that-carries-the-package-topic-and-fail-loudly-without": {
+      "item_id": "candidate_directive-ship-a-sidecar-that-carries-the-package-topic-and-fail-loudly-without",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-84O5-ship-a-sidecar-that-carries-the-package-topic-and-fail-loudly-without.md",
+      "title": "ship a sidecar that carries the package topic, and fail loudly without",
+      "repository": "Bitterbot-AI/bitterbot-desktop",
+      "source_version": "9ef0e544",
+      "content_hash": "7631f6fa19d86701705131d58a1c0c62dc50a8f509f2152a02ed27e8d5235be0",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-18T20:14:32.360Z"
+    },
+    "candidate_directive-readme-lead-with-what-pgrust-is-for-update-status-and-extensions": {
+      "item_id": "candidate_directive-readme-lead-with-what-pgrust-is-for-update-status-and-extensions",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-87K5-readme-lead-with-what-pgrust-is-for-update-status-and-extensions.md",
+      "title": "README: lead with what pgrust is for; update status and extensions",
+      "repository": "malisper-pgrust-learnings",
+      "source_version": "HEAD",
+      "content_hash": "47257b8a86de6e971b47ff1eeec9a24eb7e72ed2762ac3322c40fae293758819",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-18T20:14:36.104Z"
+    },
+    "domain_intelligence-architecture-intelligence-malisper-pgrust-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-malisper-pgrust-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-malisper-pgrust-learnings-architecture-intelligence-malisper-pgrust-learnings-co.md",
+      "title": "Architecture Intelligence: malisper-pgrust-learnings Core Invariants",
+      "repository": "malisper-pgrust-learnings",
+      "source_version": "HEAD",
+      "content_hash": "751f8951e455f09c97d885f6532818a418c5eeed54c763f69b7e720e3b55ac3b",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-18T20:14:36.246Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-malisper-pgrust-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-malisper-pgrust-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/malisper-pgrust-learnings-verification-protocol-empirical-defect-shield-for-mali.md",
+      "title": "Verification Protocol: Empirical Defect Shield for malisper-pgrust-learnings",
+      "repository": "malisper-pgrust-learnings",
+      "source_version": "HEAD",
+      "content_hash": "0468f2e99b23931360bbf794acf69f2a5ced96fd6633e7cbd4379869167467a4",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-18T20:14:36.383Z"
+    },
+    "candidate_directive-skills-ship-a-sidecar-that-carries-the-package-topic-and-fail-loudly-without": {
+      "item_id": "candidate_directive-skills-ship-a-sidecar-that-carries-the-package-topic-and-fail-loudly-without",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-8824-skills-ship-a-sidecar-that-carries-the-package-topic-and-fail-loudly-without.md",
+      "title": "skills): ship a sidecar that carries the package topic, and fail loudly without",
+      "repository": "bitterbot-ai-bitterbot-desktop-learnings",
+      "source_version": "HEAD",
+      "content_hash": "806ab4092444b0895261cbdcd5b11146391d73fa34944f8e42592ee65d6f05ac",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-18T20:14:36.751Z"
     }
   },
   "ai-builder-brain": {

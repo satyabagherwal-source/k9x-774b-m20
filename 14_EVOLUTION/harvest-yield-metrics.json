@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T19:52:12.208Z",
-  "total_cycles_completed": 10598,
-  "total_learnings_persisted": 10598,
-  "total_rules_promoted": 10039,
+  "last_updated": "2026-11-18T20:14:32.170Z",
+  "total_cycles_completed": 10601,
+  "total_learnings_persisted": 10601,
+  "total_rules_promoted": 10040,
   "history": [
-    {
-      "timestamp": "2026-11-18T07:14:03.479Z",
-      "repository": "tw93/Mole",
-      "learningId": "learn-github-tw93-mole",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-18T07:14:12.839Z",
-      "repository": "apache/shardingsphere",
-      "learningId": "learn-github-apache-shardingsphere",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-18T07:22:56.269Z",
-      "repository": "Cloudflare/clef",
-      "learningId": "learn-huggingface-cloudflare-clef",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-18T07:22:57.828Z",
       "repository": "ClementTsang/bottom",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-18T19:52:12.208Z",
       "repository": "trailbaseio/trailbase",
       "learningId": "learn-github-trailbaseio-trailbase",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T20:14:17.575Z",
+      "repository": "Qwen/Qwen3.8-Flash-Next",
+      "learningId": "learn-huggingface-qwen-qwen3-8-flash-next",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T20:14:29.523Z",
+      "repository": "malisper/pgrust",
+      "learningId": "learn-github-malisper-pgrust",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T20:14:32.170Z",
+      "repository": "Bitterbot-AI/bitterbot-desktop",
+      "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

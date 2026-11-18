@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-18T19:52:46.034Z",
-  "total_records": 1899,
+  "last_updated": "2026-11-18T20:14:36.893Z",
+  "total_records": 1901,
   "domains": {
     "A": {
       "total": 13,
@@ -927,7 +927,7 @@
       ]
     },
     "G": {
-      "total": 333,
+      "total": 335,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -1261,7 +1261,9 @@
         "domain_intelligence-architecture-intelligence-agent-field-agentfield-core-invariants",
         "domain_intelligence-architecture-intelligence-agent-field-agentfield-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-trailbaseio-trailbase-core-invariants",
-        "domain_intelligence-architecture-intelligence-trailbaseio-trailbase-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-trailbaseio-trailbase-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-malisper-pgrust-core-invariants",
+        "domain_intelligence-architecture-intelligence-malisper-pgrust-learnings-core-invariants"
       ]
     },
     "H": {
@@ -12034,8 +12036,8 @@
       "title": "Research & Knowledge Intelligence: Qwen/Qwen3.8-Flash-Next Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-qwen-qwen3-8-flash-next-research-knowledge-intelligence-qwen-qwen3-8-flash-ne.md",
       "repository": "Qwen/Qwen3.8-Flash-Next",
-      "content_hash": "4cdc71636f8c3556854c7b46809d586ecaa5e07d7e50c11a210fafee79c22d9e",
-      "created_at": "2026-11-14T01:48:32.755Z"
+      "content_hash": "5be6c66f6badbc64df334e386fc10acaa7736853484682dcf8ef1b070f7c9001",
+      "created_at": "2026-11-18T20:14:17.750Z"
     },
     "domain_intelligence-architecture-intelligence-software-mansion-react-native-reanimated-core-invarian": {
       "record_id": "domain_intelligence-architecture-intelligence-software-mansion-react-native-reanimated-core-invarian",
@@ -12103,8 +12105,8 @@
       "title": "Research & Knowledge Intelligence: hf-qwen-qwen3.8-flash-next-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-qwen-qwen3-8-flash-next-learnings-research-knowledge-intelligence-hf-qwen-qwe.md",
       "repository": "hf-qwen-qwen3.8-flash-next-learnings",
-      "content_hash": "230f19bf75815acbcb49d29d41b8ea93dafb8b93907266f805afdedc702d5dfd",
-      "created_at": "2026-11-14T01:49:13.096Z"
+      "content_hash": "0fa02801fe833d7b9b88dd165a78d379a2df23d4931bc23a8f364c7a803a24a9",
+      "created_at": "2026-11-18T20:14:35.599Z"
     },
     "domain_intelligence-architecture-intelligence-software-mansion-react-native-reanimated-learnings-cor": {
       "record_id": "domain_intelligence-architecture-intelligence-software-mansion-react-native-reanimated-learnings-cor",
@@ -18177,8 +18179,8 @@
       "title": "Architecture Intelligence: Bitterbot-AI/bitterbot-desktop Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-bitterbot-ai-bitterbot-desktop-architecture-intelligence-bitterbot-ai-bitterbot-.md",
       "repository": "Bitterbot-AI/bitterbot-desktop",
-      "content_hash": "e65317d49d8088b7f19c256e2bfbe957389e4a342293a2be3cbc93037e252202",
-      "created_at": "2026-11-17T21:56:56.189Z"
+      "content_hash": "96e2a8ad7d935ba4ad3e41d35836d41df7427bb52f48a504d57281d5b9a11133",
+      "created_at": "2026-11-18T20:14:32.499Z"
     },
     "domain_intelligence-search-distribution-intelligence-sharkdp-fd-learnings-core-invariants": {
       "record_id": "domain_intelligence-search-distribution-intelligence-sharkdp-fd-learnings-core-invariants",
@@ -27789,8 +27791,8 @@
       "title": "Architecture Intelligence: bitterbot-ai-bitterbot-desktop-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-bitterbot-ai-bitterbot-desktop-learnings-architecture-intelligence-bitterbot-ai-.md",
       "repository": "bitterbot-ai-bitterbot-desktop-learnings",
-      "content_hash": "078146570cea047858378bb58325a2f0b186f1dfae936f18e0506a059d6ba375",
-      "created_at": "2026-11-17T16:00:02.974Z"
+      "content_hash": "d4c3e64b7ee58ed85355f72cf29143ed1e50d3be669ff09cb1803212ebc47a8b",
+      "created_at": "2026-11-18T20:14:36.893Z"
     },
     "domain_intelligence-research-knowledge-intelligence-lodestones-kromoss-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-lodestones-kromoss-core-invariants",
@@ -31810,6 +31812,24 @@
       "repository": "trailbaseio-trailbase-learnings",
       "content_hash": "7b104aef216e9eb3fece2688e5d2f9ab45cae2b89097070b19ce62be447b0ed7",
       "created_at": "2026-11-18T19:52:46.034Z"
+    },
+    "domain_intelligence-architecture-intelligence-malisper-pgrust-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-malisper-pgrust-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: malisper/pgrust Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-malisper-pgrust-architecture-intelligence-malisper-pgrust-core-invariants.md",
+      "repository": "malisper/pgrust",
+      "content_hash": "4933f1c761b10f6ed53d6476b6baf1797d2ffff1241b2bce0cfd0926f820332e",
+      "created_at": "2026-11-18T20:14:29.850Z"
+    },
+    "domain_intelligence-architecture-intelligence-malisper-pgrust-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-malisper-pgrust-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: malisper-pgrust-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-malisper-pgrust-learnings-architecture-intelligence-malisper-pgrust-learnings-co.md",
+      "repository": "malisper-pgrust-learnings",
+      "content_hash": "751f8951e455f09c97d885f6532818a418c5eeed54c763f69b7e720e3b55ac3b",
+      "created_at": "2026-11-18T20:14:36.246Z"
     }
   }
 }

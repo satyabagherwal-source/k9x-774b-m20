@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-18T19:35:05.913Z",
+  "updated_at": "2026-11-18T20:14:35.911Z",
   "stats": {
-    "total_discovered": 5647,
-    "approved_pending_harvest": 5340,
+    "total_discovered": 5651,
+    "approved_pending_harvest": 5344,
     "harvested_count": 0,
     "rejected_count": 307,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 5320,
+      "COMMUNITY_AND_EXPERT": 5324,
       "OFFICIAL_DOCUMENTATION": 180,
       "STANDARDS_AND_SPECIFICATIONS": 111,
       "ENGINEERING_BLOGS": 4,
@@ -122106,6 +122106,94 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
         "fileName": "materializeinc-materialize-learnings.md"
+      }
+    },
+    "SRC-1FBF4355A3DD": {
+      "id": "SRC-1FBF4355A3DD",
+      "url": "https://github.com/malisper/pgrust",
+      "title": "https://github.com/malisper/pgrust",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T20:14:35.797Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/malisper-pgrust-learnings.md",
+        "fileName": "malisper-pgrust-learnings.md"
+      }
+    },
+    "SRC-5A23A3133B19": {
+      "id": "SRC-5A23A3133B19",
+      "url": "https://github.com/ClickHouse/ClickBench/pull/2165",
+      "title": "https://github.com/ClickHouse/ClickBench/pull/2165",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T20:14:35.836Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/malisper-pgrust-learnings.md",
+        "fileName": "malisper-pgrust-learnings.md"
+      }
+    },
+    "SRC-E96CA3E5F832": {
+      "id": "SRC-E96CA3E5F832",
+      "url": "https://pgrust.com/blog/pgrust-v0-4-beta",
+      "title": "https://pgrust.com/blog/pgrust-v0-4-beta",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T20:14:35.874Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/malisper-pgrust-learnings.md",
+        "fileName": "malisper-pgrust-learnings.md"
+      }
+    },
+    "SRC-5F9458EBAB98": {
+      "id": "SRC-5F9458EBAB98",
+      "url": "https://github.com/malisper/pgrust/issues",
+      "title": "https://github.com/malisper/pgrust/issues",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T20:14:35.911Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/malisper-pgrust-learnings.md",
+        "fileName": "malisper-pgrust-learnings.md"
       }
     }
   }

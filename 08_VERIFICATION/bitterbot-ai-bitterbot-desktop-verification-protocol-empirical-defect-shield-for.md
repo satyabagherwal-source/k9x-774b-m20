@@ -4,22 +4,22 @@
 {
   "source_repository": "Bitterbot-AI/bitterbot-desktop",
   "source_url": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-  "source_version": "108f7135",
+  "source_version": "9ef0e544",
   "license": "MIT",
-  "timestamp": "2026-11-17T21:56:56.024Z",
+  "timestamp": "2026-11-18T20:14:32.359Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-bitterbot-ai-bitterbot-desktop",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop) (Revision: `108f7135`).  
-> **License**: MIT | **Timestamp**: `2026-11-17T21:56:56.024Z`  
+> **Provenance**: Harvested from [Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop) (Revision: `9ef0e544`).  
+> **License**: MIT | **Timestamp**: `2026-11-18T20:14:32.359Z`  
 > **Learning ID**: `learn-github-bitterbot-ai-bitterbot-desktop`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `Bitterbot-AI/bitterbot-desktop` (Commit: `108f7135`)
+- **Target Repository**: `Bitterbot-AI/bitterbot-desktop` (Commit: `9ef0e544`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/bitterbot-ai-bitterbot-desktop-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Bitterbot-AI/bitterbot-desktop](https://github.com/Bitterbot-AI/bitterbot-desktop))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T21:56:55.196Z  
+> **Harvest Timestamp**: 2026-11-18T20:14:31.223Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1581,126 +1581,207 @@ def main():
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `108f7135` (2026-11-17)
-**Commit Message**: chore(main): release 1.14.0 (#372)
+### Incident Patch 1: `3ea732a8` (2026-11-18)
+**Commit Message**: fix(skills): ship a sidecar that carries the package topic, and fail loudly without one (#379)
 
-Co-authored-by: github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com>
+* fix(skills): ship a sidecar that carries the package topic, and fail loudly without one
 
-**File**: `.release-please-manifest.json` (modified, +1/-1)
+Releases up to 1.14.0 bundle orchestrator 0.2.4, which predates the package
+topic added in #376 and refuses it with an ok:false reply. The gateway
+ignored that reply, so complete packages and skill cards were silently dead
+on every released install. Found by running two 1.14.0 nodes on loopback.
+
+- orchestrator 0.2.5: the first sidecar release with the package topic
+- the package mesh checks the subscribe and publish replies; a refusal now
+  surfaces as the existing 'Complete package mesh unavailable' warning
+- sim-mesh: wrapper is executable; README covers installed releases and cards
+- docs state the sidecar requirement
+
+Co-Authored-By: Claude Fable 5.2 <[REDACTED_EMAIL]>
+
+* ci(orchestrator): build macOS sidecars on macos-15
+
+GitHub no longer serves the macos-14 arm64 image ('configuration
+macos-14-arm64-us-default is not supported'), so both darwin builds of
+orchestrator-v0.2.5 were cancelled before starting. release-tarball.yml
+already builds on macos-15.
+
+Co-Authored-By: Claude Fable 5.2 <[RED
+
+**File**: `.github/workflows/orchestrator-release.yml` (modified, +2/-2)
 ```diff
-@@ -1,3 +1,3 @@
- {
--  ".": "1.13.0"
-+  ".": "1.14.0"
- }
+@@ -45,12 +45,12 @@ jobs:
+             bin: bitterbot-orchestrator
+             asset: bitterbot-orchestrator-linux-arm64
+           - target: darwin-x64
+-            os: macos-14
++            os: macos-15
+             rust-target: x86_64-apple-darwin
+             bin: bitterbot-orchestrator
+             asset: bitterbot-orchestrator-darwin-x64
+           - target: darwin-arm64
+-            os: macos-14
++            os: macos-15
+             rust-target: aarch64-apple-darwin
+             bin: bitterbot-orchestrator
+             asset: bitterbot-orchestrator-darwin-arm64
 ```
 
-**File**: `CHANGELOG.md` (modified, +15/-0)
+**File**: `docs/agents/collective-learning.md` (modified, +1/-1)
 ```diff
-@@ -1,5 +1,20 @@
- # Changelog
+@@ -39,7 +39,7 @@ Only an operator with `operator.approvals` can create or change automation grant
  
-+## [1.14.0](https://github.com/Bitterbot-AI/bitterbot-desktop/compare/v1.13.0...v1.14.0) (2026-11-17)
-+
-+
-+### Features
-+
-+* **skills:** add verified collective learning and reproducible pilot evidence ([#376](https://github.com/Bitterbot-AI/bitterbot-desktop/issues/376)) ([2825902](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/2825902a749459b522212a485636475636f5afc3))
-+* **skills:** cross-agent evidence cards with quorum and guard, replicated and integrated ([#377](https://github.com/Bitterbot-AI/bitterbot-desktop/issues/377)) ([2d4d05d](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/2d4d05d79362ea162465d832a31304ef2b8fa075))
-+
-+
-+### Bug Fixes
-+
-+* **memory:** trim the embedding cache on every write; the agent explains its memory from its guide ([#371](https://github.com/Bitterbot-AI/bitterbot-desktop/issues/371)) ([3fd4221](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/3fd4221814f8d57c5e1e5efd43f5322612f1d61d))
-+* **wallet:** stop @coinbase/agentkit sending analytics to Coinbase ([c62b524](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/c62b5245987f2c7453b0b06da9ba68bb53c77fdd))
-+* **wallet:** stop @coinbase/agentkit sending analytics to Coinbase ([3ff9302](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/3ff93025e22001cdfa31d01013aee6fc26aff9c6))
-+
- ## [1.13.0](https://github.com/Bitterbot-AI/bitterbot-desktop/compare/v1.12.0...v1.13.0) (2026-11-08)
+ Circle membership, visibility, package hash, policy and budget are checked at execution and object retrieval. Revoking a grant stops subsequent authorized work; already sent requests or copies cannot be erased. Public publication requires a separate public grant and `publicMesh`; Circle permission never authorizes it. Generated research briefs retain their draft/review flow.
  
+-Public package discovery and object transfer also require a sidecar built from the new package-protocol source. The published orchestrator v0.2.4 predates that protocol. Until a signed companion sidecar release is published and pinned, leave `publicMesh` disabled; use the private authenticated RPC transport or offline import/export. An older peer cannot receive a partial package through a legacy fallback.
++Public package discovery and object transfer also require a sidecar built from the new package-protocol source. Orchestrator 0.2.5 is the first sidecar with that protocol; v0.2.4, bundled with application releases up to and including 1.14.0, refuses the package topic. On those releases leave `publicMesh` disabled and use the private authenticated RPC transport or offline import/export. A gateway paired with an older sidecar logs `Complete package mesh unavailable` at start and neither sends nor receives packages or skill cards. An older peer cannot receive a partial package through a legacy fallback.
+ 
+ Structured peer evidence is stored separately from conversational memory. It may guide bounded proposals but cannot qualify a package locally. Start synthesis in `shadow` when explicitly permitted; `off` stops new proposals. Every proposed update returns through the same execution gate. Hermes imports likewise enter quarantine and local validation; external traces remain observations unless independently verified by a trusted host.
  
 ```
 
-**File**: `desktop/package.json` (modified, +1/-1)
+**File**: `docs/gateway/configuration-reference.md` (modified, +2/-1)
 ```diff
-@@ -1,6 +1,6 @@
- {
-   "name": "bitterbot-control-ui",
--  "version": "1.13.0",
-+  "version": "1.14.0",
-   "private": true,
-   "description": "Bitterbot Control UI - browser-based dashboard for the gateway",
-   "type": "module",
+@@ -1907,7 +1907,8 @@ See [Local Models](/gateway/local-models). TL;DR: run MiniMax M2.1 via LM Studio
+   bundles are signed outcome counts keyed by skill content hash (no names,
+   no text) and are exchanged only over the public package mesh, so nothing
+   is sent or received unless `collective.enabled` and
+-  `collective.publicMesh` are both set; with the mesh on, the node also
++  `collective.publicMesh` are both set and the sidecar is orchestrator
++  0.2.5 or newer (bundled from the release after 1.14.0); with the mesh on, the node also
+   announces its own verified counts. A node records verified outcomes only
+   with `prior.writer: "on"`. Received bundles are kept in `prior.peersPath`
+   (default `CONFIG_DIR/skill-cards-peers.json`), one per origin, at most 64
 ```
 
-**File**: `desktop/src-tauri/Cargo.lock` (modified, +1/-1)
+**File**: `docs/memory/skills-pipeline.md` (modified, +5/-2)
 ```diff
-@@ -316,7 +316,7 @@ dependencies = [
+@@ -601,7 +601,10 @@ the next turn. Consequences the rest of this document depends on:
+   carries no skill name and no text, so a record can only ever apply to a
+   skill whose bytes the recipient already holds. Bundles travel on the
+   public package mesh as `type: "cards"` announcements, which exist only
+-  when `skills.collective.enabled` and `publicMesh` are set; a node on the
++  when `skills.collective.enabled` and `publicMesh` are set and the
++  sidecar is orchestrator 0.2.5 or newer (the 0.2.4 sidecar bundled up to
++  release 1.14.0 refuses the topic, and the gateway then logs `Complete
++  package mesh unavailable` at start); a node on the
+   mesh announces its own bundle shortly after start, hourly when it has
+   changed and every six hours otherwise. A node with the writer in shadow
+   has no verified counts and announces nothing. A content hash of a
+@@ -1375,7 +1378,7 @@ bitterbot-orchestrator/<crate version>/edge
+ bitterbot-orchestrator/<crate version>/management
+ ```
+ 
+-The version segment is the orchestrator crate's own version (0.2.4 at the
++The version segment is the orchestrator crate's own version (0.2.5 at the
+ time of writing), not a protocol version.
+ 
+ When a peer identifies as `management`, the receiving node:
+```
+
+**File**: `orchestrator/Cargo.lock` (modified, +1/-1)
+```diff
+@@ -462,7 +462,7 @@ checksum = "843867be96c8daad0d758b57df9392b6d8d271134fce549de6ce169ff98a92af"
  
  [[package]]
- name = "bitterbot-desktop"
--version = "1.13.0"
-+version = "1.14.0"
+ name = "bitterbot-orchestrator"
+-version = "0.2.4"
++version = "0.2.5"
  dependencies = [
-  "env_logger",
-  "libc",
+  "axum",
+  "base64 0.23.1",
 ```
 
-**File**: `desktop/src-tauri/Cargo.toml` (modified, +1/-1)
+**File**: `orchestrator/Cargo.toml` (modified, +1/-1)
 ```diff
 @@ -1,6 +1,6 @@
  [package]
- name = "bitterbot-desktop"
--version = "1.13.0"
-+version = "1.14.0"
+ name = "bitterbot-orchestrator"
+-version = "0.2.4"
++version = "0.2.5"
  edition = "2021"
- description = "Bitterbot desktop shell — Tauri 2 wrapper for the Control UI"
+ description = "P2P orchestrator daemon for Bitterbot skill propagation network"
  
 ```
 
-**File**: `desktop/src-tauri/tauri.conf.json` (modified, +1/-1)
+**File**: `scripts/sim-mesh/README.md` (modified, +13/-1)
 ```diff
-@@ -1,7 +1,7 @@
- {
-   "$schema": "https://raw.githubusercontent.com/tauri-apps/tauri/dev/crates/tauri-cli/schema.json",
-   "productName": "Bitterbot",
--  "version": "1.13.0",
-+  "version": "1.14.0",
-   "identifier": "ai.bitterbot.desktop",
-   "build": {
-     "devUrl": "http://localhost:5173",
+@@ -23,7 +23,19 @@ them as soon as the run is done.
+ ## Run
+ 
+ Build first (`pnpm build`) so `dist/entry.js` is current. All paths below
+-are relative to the repository root. Replace `$A`/`$B` with the state dirs.
++are relative to the repository root.
++
++To test an installed release instead of the checkout, start each node with
++`~/.bitterbot/app/<version>/bin/bitterbot gateway` in place of
++`node dist/entry.js gateway`, and set `SIM_MESH_ORCHESTRATOR` to the sidecar
++to run (the release's own `bin/bitterbot-orchestrator`, or a build from
++`orchestrator/target`). The wrapper defaults to
++`orchestrator/target/release/bitterbot-orchestrator`.
++
++Skill cards and complete packages need `skills.collective.enabled` and
++`publicMesh` in each node's config and a sidecar of 0.2.5 or newer. Start
++the receiving node first: a node announces its cards two minutes after
++start and retries only hourly. Replace `$A`/`$B` with the state dirs.
+ 
+ ```bash
+ A=~/bitterbot-sim/a; B=~/bitterbot-sim/b
 ```
 
-**File**: `extensions/discord/package.json` (modified, +1/-1)
+**File**: `src/agents/skills/collective/mesh-cards.test.ts` (modified, +20/-1)
 ```diff
-@@ -1,6 +1,6 @@
- {
-   "name": "@bitterbot/discord",
--  "version": "1.13.0",
-+  "version": "1.14.0",
-   "description": "Bitterbot Discord channel plugin",
-   "type": "module",
-   "devDependencies": {
-```
-
-**File**: `extensions/email/package.json` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
- {
-   "name": "@bitterbot/email",
--  "version": "1.13.0",
-+  "version": "1.14.0",
-   "private": true,
-   "description": "Bitterbot email channel: read a mailbox over IMAP, reply over SMTP",
-   "type": "module",
+@@ -31,7 +31,7 @@ function gossip() {
+   const sent: string[] = [];
+   const bridge = (id: string) =>
+     ({
+-      subscribeCircleTopic: async () => undefined,
++      subscribeCircleTopic: async () => ({ ok: true }),
+       unsubscribeCircleTopic: async () => undefined,
+       onCircleTopicMessage: (fn: Listener) => {
+         listeners.push({ id, fn });
+@@ -46,6 +46,7 @@ function gossip() {
+             l.fn({ topic, from_peer_id: id, data_b64 });
+           }
+         }
++        return { ok: true };
+       },
+     }) as unknown as OrchestratorBridge;
+   return { bridge, sent };
+@@ -146,6 +147,24 @@ describe("skill cards over the package mesh", () => {
+     expect(await mesh(net.bridge("peer-off"), false).publishCards()).toBe(false);
+   });
+ 
++  it("fails loudly when the sidecar refuses the package topic or a publish", async () => {
++    const refused = {
++      subscribeCircleTopic: async () => ({
++        ok: false,
++        error: "only exact Compute or valid blinded circle topics allowed",
++      }),
++      unsubscribeCircleTopic: async () => undefined,
++      onCircleTopicMessage: () => () => undefined,
++      publishCircleTopic: async () => ({ ok: false, error: "publish failed" }),
++    } as unknown as OrchestratorBridge;
++    await expect(mesh(refused).start()).rejects.toThrow(/orchestrator 0\.2\.5 or newer/);
++
++    const a = node("a", generateKeyPair());
++    use(a);
++    learn(a, 1);
++    await expect(mesh(refused).publishCards(Date.now())).rejects.toThrow(/publish refused/);
++  });
++
+   it("ignores forged cards and cards when peer evidence is off", async () => {
+     const net = gossip();
+     const b = node("b", generateKeyPair());
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #380** (2026-11-18): chore(main): release 1.14.1 (@github-actions[bot])
+- **PR #379** (2026-11-18): fix(skills): ship a sidecar that carries the package topic, and fail loudly without one (@VGIL77)
 - **PR #378** (2026-11-17): test(installer): do not require a signature check on runners with no verifier (@VGIL77)
 - **PR #377** (2026-11-17): feat(skills): cross-agent evidence cards with quorum and guard, replicated and integrated (@VGIL77)
 - **PR #376** (2026-11-14): feat(skills): add verified collective learning and reproducible pilot evidence (@VGIL77)
 - **PR #373** (2026-11-13): fix(wallet): stop @coinbase/agentkit sending analytics to Coinbase (@VGIL77)
-- **PR #372** (2026-11-17): chore(main): release 1.14.0 (@github-actions[bot])
-- **PR #371** (2026-11-08): fix(memory): trim the embedding cache on every write; the agent explains its memory from its guide (@VGIL77)
 
 ---
 
@@ -1720,44 +1801,33 @@ Co-authored-by: github-actions[bot] <41898282+github-actions[bot]@users.noreply.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. main): release 1.14.0
+## X. skills): ship a sidecar that carries the package topic, and fail loudly without 
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/orchestrator-release.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Bitterbot-AI/bitterbot-desktop. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `108f7135`: main): release 1.14.0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3ea732a8`: skills): ship a sidecar that carries the package topic, and fail loudly without one. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/orchestrator-release.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-## [1.14.0](https://github.com/Bitterbot-AI/bitterbot-desktop/compare/v1.13.0...v1.14.0) (2026-11-17)
-
-
-### Features
-
-* **skills:** add verified collective learning and reproducible pilot evidence ([#376](https://github.com/Bitterbot-AI/bitterbot-desktop/issues/376)) ([2825902](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/2825902a749459b522212a485636475636f5afc3))
-* **skills:** cross-agent evidence cards with quorum and guard, replicated and integrated ([#377](https://github.com/Bitterbot-AI/bitterbot-desktop/issues/377)) ([2d4d05d](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/2d4d05d79362ea162465d832a31304ef2b8fa075))
-
-
-### Bug Fixes
-
-* **memory:** trim the embedding cache on every write; the agent explains its memory from its guide ([#371](https://github.com/Bitterbot-AI/bitterbot-desktop/issues/371)) ([3fd4221](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/3fd4221814f8d57c5e1e5efd43f5322612f1d61d))
-* **wallet:** stop @coinbase/agentkit sending analytics to Coinbase ([c62b524](https://github.com/Bitterbot-AI/bitterbot-desktop/commit/c62b5245987f2c7453b0b06da9ba68bb53c77fdd))
-* **wallet:** stop @coinbase/agentkit sending analytics to Coinbase ([3
+            os: macos-15
+            os: macos-15
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+            os: macos-14
+            os: macos-14
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `108f7135` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3ea732a8` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol
