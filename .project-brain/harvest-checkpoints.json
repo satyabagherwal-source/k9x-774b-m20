@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-18T01:02:34.343Z",
+  "last_updated": "2026-11-18T01:18:53.637Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -395,14 +395,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-nvidia-nemotron-3-diarization",
-      "content_hash": "2d8ced2c18182e5347901d63a6d6353c47a0f0a37e8eafb3c5d9024509f2e720",
-      "verified_at": "2026-11-13T13:42:19.187Z",
+      "content_hash": "6476d41f82fdf7d89cd1676f4f0d06a1e35a01d8a7478e227a61d4f667f50af6",
+      "verified_at": "2026-11-18T01:18:46.910Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T13:42:19.187Z"
+      "last_updated": "2026-11-18T01:18:46.910Z"
     },
     "Lightricks/LTX-2.5": {
       "repository": "Lightricks/LTX-2.5",
@@ -9276,14 +9276,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-callstack-agent-device",
-      "content_hash": "6c83fe52f31a89d5da10e3027928a771904ccf987413e3da1450d2a04f6bc4b1",
-      "verified_at": "2026-11-14T17:24:51.824Z",
+      "content_hash": "3c5e71ac4fc5d8bb6e9305253992b6ae3fb2e789c5f522a7453e563ba4e9762a",
+      "verified_at": "2026-11-18T01:18:53.636Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-14T17:24:51.824Z"
+      "last_updated": "2026-11-18T01:18:53.636Z"
     },
     "open-policy-agent/opa": {
       "repository": "open-policy-agent/opa",

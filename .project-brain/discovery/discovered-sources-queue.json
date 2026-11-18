@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-18T01:04:22.757Z",
+  "updated_at": "2026-11-18T01:18:59.548Z",
   "stats": {
-    "total_discovered": 5193,
-    "approved_pending_harvest": 4904,
+    "total_discovered": 5200,
+    "approved_pending_harvest": 4906,
     "harvested_count": 0,
-    "rejected_count": 289,
+    "rejected_count": 294,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 4888,
+      "COMMUNITY_AND_EXPERT": 4895,
       "OFFICIAL_DOCUMENTATION": 164,
       "STANDARDS_AND_SPECIFICATIONS": 108,
       "ENGINEERING_BLOGS": 3,
@@ -112244,6 +112244,125 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/shoutem-ui-learnings.md",
         "fileName": "shoutem-ui-learnings.md"
+      }
+    },
+    "SRC-9F53E8FB8E23": {
+      "id": "SRC-9F53E8FB8E23",
+      "url": "https://github.com/callstack/agent-device/actions/runs/43758267032/job/132947067804",
+      "title": "https://github.com/callstack/agent-device/actions/runs/43758267032/job/132947067804",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T01:18:59.354Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/callstack-agent-device-learnings.md",
+        "fileName": "callstack-agent-device-learnings.md"
+      }
+    },
+    "SRC-335A4E7AF568": {
+      "id": "SRC-335A4E7AF568",
+      "url": "https://github.com/callstack/agent-device/actions/runs/43762301747/job/132959570817",
+      "title": "https://github.com/callstack/agent-device/actions/runs/43762301747/job/132959570817",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T01:18:59.387Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/callstack-agent-device-learnings.md",
+        "fileName": "callstack-agent-device-learnings.md"
+      }
+    },
+    "SRC-C0F5E015CBF7": {
+      "id": "SRC-C0F5E015CBF7",
+      "url": "http://127.0.0.1:${daemonPort",
+      "title": "http://127.0.0.1:${daemonPort",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-18T01:18:59.422Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/callstack-agent-device-learnings.md",
+        "fileName": "callstack-agent-device-learnings.md"
+      }
+    },
+    "SRC-CEB9054B1A89": {
+      "id": "SRC-CEB9054B1A89",
+      "url": "http://127.0.0.1:${await",
+      "title": "http://127.0.0.1:${await",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-18T01:18:59.452Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/callstack-agent-device-learnings.md",
+        "fileName": "callstack-agent-device-learnings.md"
+      }
+    },
+    "SRC-C9C61290E986": {
+      "id": "SRC-C9C61290E986",
+      "url": "http://daemon.internal:4310/",
+      "title": "http://daemon.internal:4310/",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-18T01:18:59.484Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/callstack-agent-device-learnings.md",
+        "fileName": "callstack-agent-device-learnings.md"
+      }
+    },
+    "SRC-7BA272B8C00B": {
+      "id": "SRC-7BA272B8C00B",
+      "url": "http://127.0.0.1:${(server.address(",
+      "title": "http://127.0.0.1:${(server.address(",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-18T01:18:59.517Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/callstack-agent-device-learnings.md",
+        "fileName": "callstack-agent-device-learnings.md"
+      }
+    },
+    "SRC-68A758621D9A": {
+      "id": "SRC-68A758621D9A",
+      "url": "http://daemon.internal/artifacts/build",
+      "title": "http://daemon.internal/artifacts/build",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-18T01:18:59.548Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/callstack-agent-device-learnings.md",
+        "fileName": "callstack-agent-device-learnings.md"
       }
     }
   }

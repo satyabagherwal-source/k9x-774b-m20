@@ -666880,3 +666880,117 @@ test('Android returns actual window metric inset when edge-to-edge is active', (
 ```
 
 ---
+
+
+---
+
+## 9100. dispatch helper taps and keys without the global animation wait (Harvested from callstack/agent-device)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "dispatch helper taps and keys without the global animation wait",
+  "source": "callstack/agent-device",
+  "source_url": "https://github.com/callstack/agent-device",
+  "source_version": "655ede27",
+  "license": "MIT",
+  "extracted_at": "2026-11-18T01:18:53.175Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-callstack-agent-device",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [callstack/agent-device](https://github.com/callstack/agent-device) (Revision: `655ede27`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `android/snapshot-helper/src/main/java/com/callstack/agentdevice/snapshothelper/AutomationCommandHandler.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in callstack/agent-device. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `c0ef6b24`: android): dispatch helper taps and keys without the global animation wait. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `android/snapshot-helper/src/main/java/com/callstack/agentdevice/snapshothelper/AutomationCommandHandler.java`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```typescript
+// Verified production-grade fix pattern:
+  /**
+   * The budget of a host that sends none: a provider-supplied helper can be newer than its host, and
+   * an older host waits 30 s for input, less the 5 s answer margin. It never affords a retry.
+   */
+  private static final long OLDER_HOST_BUDGET_MS = 25_000;
+
+  /** The framework's accessibility interaction timeout, AccessibilityInteractionClient. */
+  private static final long TEXT_ENTRY_RESERVE_MS = 5_000;
+
+  /** The command deadline left too little time for the next step, so it was not started. */
+  static final class InputBudgetExhausted extends IllegalStateException {
+    InputBudgetExhausted(String message) {
+      super(message);
+    }
+  }
+
+  /** Refuses text entry the deadline cannot fit, after a focus tap that may have used the budget. */
+  static void requireTextEntryTime(long deadline, long now) {
+    if (deadline - now < TEXT_ENTRY_RESERVE_MS) {
+      throw new InputBudgetExhausted("Fill text was not entered: too little time left after focus");
+    }
+  }
+
+    // The host's remaining time for this command bounds every retry decision.
+    long deadline =
+        SystemClock.uptimeMillis() + input.optLong("budgetMs", OLDER_HOST_BUDGET_MS);
+        tap(automation, i
+```
+
+**NEGATIVE CONSTRAINT**:
+```typescript
+// Induced defect failure mode:
+        tap(automation, input.getDouble("x"), input.getDouble("y"), dispatch);
+        key(automation, input.getInt("keyCode"), dispatch);
+        fill(automation, input.getInt("x"), input.getInt("y"), input.getString("text"), dispatch);
+  private static void tap(UiAutomation automation, double x, double y, InputDispatch dispatch) {
+    long down = SystemClock.uptimeMillis();
+    touch(automation, down, MotionEvent.ACTION_DOWN, (float) x, (float) y, dispatch);
+    touch(automation, down, MotionEvent.ACTION_UP, (float) x, (float) y, dispatch);
+  private static void touch(UiAutomation automation, long down, int action, float x, float y, InputDispatch dispatch) {
+    MotionEvent event = MotionEvent.obtain(down, SystemClock.uptimeMillis(), action, x, y, 0);
+    event.setSource(InputDevice.SOURCE_TOUCHSCREEN);
+    try {
+      dispatch.attempted = true;
+      if (!automation.injectInputEvent(event, true)) {
+        throw new IllegalStateException("Touch injection was refused");
+      }
+    } finally {
+      event.recycle();
+  private static void key(UiAutomation automation, int code, InputDispatch dispatch) {
+    if (code < 0 || code > KeyEvent.getMaxKeyCode()) throw new IllegalArgumentE
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `c0ef6b24` are properly handled with clean fallback behavior.

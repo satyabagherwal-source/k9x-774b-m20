@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T01:02:34.339Z",
-  "total_cycles_completed": 10308,
-  "total_learnings_persisted": 10308,
-  "total_rules_promoted": 9846,
+  "last_updated": "2026-11-18T01:18:53.633Z",
+  "total_cycles_completed": 10310,
+  "total_learnings_persisted": 10310,
+  "total_rules_promoted": 9847,
   "history": [
-    {
-      "timestamp": "2026-11-17T12:25:04.836Z",
-      "repository": "ytsaurus/ytsaurus",
-      "learningId": "learn-github-ytsaurus-ytsaurus",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T12:41:40.146Z",
-      "repository": "fastify/fastify",
-      "learningId": "learn-github-fastify-fastify",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-17T12:46:12.377Z",
       "repository": "NucleoidAI/Nucleoid",
@@ -1403,6 +1389,20 @@
       "repository": "shoutem/ui",
       "learningId": "learn-github-shoutem-ui",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T01:18:46.907Z",
+      "repository": "nvidia/Nemotron-3-Diarization",
+      "learningId": "learn-huggingface-nvidia-nemotron-3-diarization",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T01:18:53.633Z",
+      "repository": "callstack/agent-device",
+      "learningId": "learn-github-callstack-agent-device",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

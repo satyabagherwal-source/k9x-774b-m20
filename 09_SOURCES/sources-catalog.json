@@ -335,8 +335,8 @@
     "sourceUrl": "https://huggingface.co/nvidia/Nemotron-3-Diarization",
     "sourceVersion": "hf-nvidia-nemotron-3-diarization",
     "license": "Open-Source",
-    "contentHash": "2d8ced2c18182e5347901d63a6d6353c47a0f0a37e8eafb3c5d9024509f2e720",
-    "lastHarvestedAt": "2026-11-13T13:42:19.177Z",
+    "contentHash": "6476d41f82fdf7d89cd1676f4f0d06a1e35a01d8a7478e227a61d4f667f50af6",
+    "lastHarvestedAt": "2026-11-18T01:18:46.902Z",
     "learningId": "learn-huggingface-nvidia-nemotron-3-diarization"
   },
   "hf-lightricks-ltx-2.5": {
@@ -6103,10 +6103,10 @@
     "repository": "callstack/agent-device",
     "platform": "github",
     "sourceUrl": "https://github.com/callstack/agent-device",
-    "sourceVersion": "d78be6c8",
+    "sourceVersion": "655ede27",
     "license": "MIT",
-    "contentHash": "6c83fe52f31a89d5da10e3027928a771904ccf987413e3da1450d2a04f6bc4b1",
-    "lastHarvestedAt": "2026-11-14T17:24:51.817Z",
+    "contentHash": "3c5e71ac4fc5d8bb6e9305253992b6ae3fb2e789c5f522a7453e563ba4e9762a",
+    "lastHarvestedAt": "2026-11-18T01:18:53.628Z",
     "learningId": "learn-github-callstack-agent-device"
   },
   "open-policy-agent-opa": {

@@ -4,24 +4,24 @@
 {
   "source_repository": "callstack/agent-device",
   "source_url": "https://github.com/callstack/agent-device",
-  "source_version": "d78be6c8",
+  "source_version": "655ede27",
   "license": "MIT",
-  "timestamp": "2026-11-14T17:24:51.952Z",
+  "timestamp": "2026-11-18T01:18:53.831Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-callstack-agent-device",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [callstack/agent-device](https://github.com/callstack/agent-device) (Revision: `d78be6c8`).  
-> **License**: MIT | **Timestamp**: `2026-11-14T17:24:51.952Z`  
+> **Provenance**: Harvested from [callstack/agent-device](https://github.com/callstack/agent-device) (Revision: `655ede27`).  
+> **License**: MIT | **Timestamp**: `2026-11-18T01:18:53.831Z`  
 > **Learning ID**: `learn-github-callstack-agent-device`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), G (Architecture Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence), F (Design Intelligence), B (Product Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 73%
+- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), A (Human & Need Intelligence), G (Architecture Intelligence), F (Design Intelligence), B (Product Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), L (Deployment & Operations Intelligence), C (Market & Business Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 74%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from callstack/agent-device:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/callstack-agent-device-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/callstack/agent-device](https://github.com/callstack/agent-device))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-14T17:24:51.181Z  
+> **Harvest Timestamp**: 2026-11-18T01:18:52.693Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Open source device layer for AI coding agents: a CLI, MCP server, and typed Node.js API to control mobile, web, TV, and desktop apps on devices and simulators, locally or in the cloud.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 5392 stars
+- **Stars / Engagement**: 5427 stars
 
 ---
 
@@ -1763,11 +1763,11 @@ function representativesAreValid(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #4530** (2026-11-14): **Android: a view with a content description and no text reads the same as a view showing that text**
-  *Symptoms*: ## Purpose  On Android, a view that has a content description and no text is published exactly like a view whose text is that string. A caller cannot tell whether `label` is text on the screen, so a text check passes on an empty view.  ## Reproduction  Any view with a description and no text:  ```java TextView saved = new TextView(this); saved.setId(R.id.saved_task); saved.setContentDescription("saved_task"); // no text yet ```  `adb shell uiautomator dump` reports it as `text="" content-desc="saved_task"`.  ```sh agent-device get attrs 'id="dev.retest.bench.tasks:id/saved_task"' --json # "node": {"type":"android.widget.TextView","label":"saved_task","identifier":"dev.retest.bench.tasks:id/saved_task", ...} agent-device get text 'id="dev.retest.bench.tasks:id/saved_task"' --json # "text": "saved_task" ```  When the app then sets the view's text to `saved_task`, the node is the same, field for field. `snapshot --raw` gives the same answer as the regular snapshot.  ## Cause  `normalizeAndroidUiHierarchyNode` in `packages/platform-android/src/ui-hierarchy.ts` labels a node with `attrs.text || attrs.desc` and publishes `contentDescription` only when it differs from the label (#2912). When the description is the label, nothing on the node says so. `labelFacts` in `packages/provider-webdriver/src/webdriver-source.ts` follows the same rule.  ## Required behavior  A node labelled by its content description can be told apart from a node labelled by its text. `label` and `contentDescri
+- **Issue #4595** (2026-11-17): **Remote script recordings: deliver batch step scripts through one daemon-side delivery receipt**
+  *Symptoms*: ## Purpose  A remote `batch` delivers no script versions from its steps. To keep the final script from being lost silently, a batch that would close an armed remote recording is refused with `remote_script_batch_close_unsupported`. Users run `close` on its own after the batch.  #4582 first delivered batch-step scripts by having the client read the daemon's batch answer: the step entries, `partialResults` and the failure position. Six review rounds kept finding new ways a daemon answer could make the client deliver the wrong version, retire a recording that never closed, or drop a failure. That approach was removed from #4582, which now carries only the result fields.  ## Required behavior  - The daemon's request owner collects script delivery effects for the outer request, including nested batch steps, and attaches **one delivery receipt** to the outer response. This applies to successful and failed batches. - The receipt names, for each publication:   - the newest full-script version (`scriptRevision` and its artifact);   - an explicit close receipt when a step closed the recording, including when the final script could not be written;   - the typed `scriptDeliveryFailure` that applies, if any, with its paired warning. - The client never reconstructs delivery from step results. It:   - validates the receipt's publication against its own record (exact ID, tenant, session, endpoint);   - validates a close receipt against the batch plan it submitted;   - downloads at most one v
 
-- **Issue #4517** (2026-11-14): **Prepare Android reinstall materialization before uninstalling the app**
-  *Symptoms*: Umbrella: #4368. The user authorized Claude planning, assumption verification and completion workers, followed by correctness-preserving cleanup. Source authority: main ddbfc855661fa9d29b8c836057b7f5b099bcad44. No runtime proof is claimed. Preserve typed errors, existing command envelopes, #4050 full-unit fallback and meaningful integration/regression/native evidence. Do not merge, release, push tags, weaken assertions or retry failures blindly.  Purpose: Failed replacement materialization must not remove an installed Android app.  Current trigger: packages/platform-android/src/deployment/runtime.ts resolves the package and uninstalls before prepareArtifact. The replaceExisting path passes resolveIdentity:false; preparation extracts archives/checks installable shape but does not validate APK contents. A no-installable archive can fail after app removal.  Required behavior: Keep readiness and package resolution, then prepare before uninstall. Preparation failure or pre-uninstall cancellation must not uninstall or install. Preserve fresh-state semantics, native installation caps, installer hooks and whole-operation cache invalidation. Always clean a prepared artifact after later failure/success. Do not add an APK validator, change to adb install -r, broaden identity inspection or claim rollback. Corrupt APK content and bundletool/install failures that occur after successful preparation may still be destructive; this child only protects materialization failures.  Owned files: pa
+- **Issue #4574** (2026-11-17): **Main CI: always-loaded MCP tool payload exceeds its 22 KiB budget**
+  *Symptoms*: ## Purpose  Track the repeated main CI Coverage failure in `command-tools-loading-meta.test.ts`. Existing PR #4572 owns the correction; do not dispatch a duplicate implementation.  ## Evidence  Two consecutive main CI runs fail the same assertion at `src/mcp/__tests__/command-tools-loading-meta.test.ts:46`:  - [43758267032](https://github.com/callstack/agent-device/actions/runs/43758267032/job/132947067804), head `82819f8f224a76d4f34767c7e7788a6d6459136f`. - [43762301747](https://github.com/callstack/agent-device/actions/runs/43762301747/job/132959570817), head `26a8a1b301193a2a592f60e577d15dc6413afdc3`.  Both check annotations report always-loaded tools at 22,862 bytes, above the existing 22 KiB budget. Other main platform lanes passed. This is a named payload-budget regression, separate from #4558's host-process identity fixture and #4247's historical failure-reporting investigation.  ## Required behavior  - Restore the always-loaded payload to the existing budget without raising the limit, skipping the guard or dropping required command semantics. - Retain concise, accurate multi-ref press guidance and consistent interval metadata. - Validate the actual tool JSON, not only source-string lengths.  ## Completion  - The budget guard and affected checks pass at the published fix head. - Main CI passes after the fix merges. - Current covering PR: #4572, head `0bb051e1dd4a99c03cfc93b55f751e82209bb754`. All fetched checks are now success/skipped. Its small remaining byte margin i
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1784,1450 +1784,1674 @@ function representativesAreValid(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `15e298f2` (2026-11-13)
-**Commit Message**: fix(ios): confirm foldable rotation from the lit panel in either simulator set (#4343) (#4440)
+### Incident Patch 1: `c0ef6b24` (2026-11-17)
+**Commit Message**: fix(android): dispatch helper taps and keys without the global animation wait (#4609)
 
-* fix(ios): rotate a foldable in a scoped simulator set
+* fix(android): dispatch helper taps and keys without the global animation wait
 
-Dispatch through the fold helper and confirm from the lit panel's currentOrientation, choosing each picker value for the turn still needed because the guest applies picker events relatively. Map portrait-upside-down to the picker's pud wire spelling in the fold helper.
+The helper's input-tap and key actions injected through the public
+UiAutomation.injectInputEvent(event, sync) overload, which syncs window
+animations before DOWN and after UP for up to five seconds each. While a
+window animation or transition stays pending, every plain press paid up to
+ten seconds even though dispatch itself was immediate (#4590). Touch plans
+already avoided this since #1356.
 
-* fix(ios): confirm the final scoped dispatch and keep picker angles private
+Taps and keys now inject through UiAutomationInputDispatcher without the
+animation wait. A DOWN the framework refuses reached no window, so it is
+cancelled and injected once more with a fresh down time after the
+framework's animation sync.
 
-* refactor(ios): split scoped rotation state out of the dispatch loop
-
-* fix(ios): use the measured outer-panel picker offset on iPhone Duo
-
-The outer panel reads the orientation-picker value itself (offset 0) and
-the inner panel reads it plus 90 degrees. Measured on iPhone Duo (iOS 27.3)
-against the panel table over 27 dispatches and five pose changes in both
-directions: the picker value survives a fold, and only the lit panel's
-offset changes. After a fold that left the picker at the upside-down
-value, which the outer panel's UI could not show, one dispatch of the
-target with the measured offset still landed it.
-
-The guest model in the tests now follows that measurement: one picker
-value
-
-**File**: `.changeset/foldable-scoped-rotation.md` (added, +9/-0)
-```diff
-@@ -0,0 +1,9 @@
-+---
-+'agent-device': patch
-+---
-+
-+Fix foldable iPhone simulator rotation in scoped sets and confirm the lit panel in both default and scoped sets. Rotation in both sets uses the fold helper, with no CoreDevice orientation polling. An already visible target dispatches nothing. Incomplete, unknown-power and multi-lit panel tables neither confirm nor dispatch. A target the panel never shows fails with `orientation-unverified`.
-+
-+Use the fixed iPhone Duo picker offsets measured in both sets (outer 0 degrees, inner +90 degrees), replacing runtime calibration. Inner landscape-left sends `portrait-upside-down`, mapped to the HID wire value `pud`; it remains unsupported as a user target. Delayed reads wait without resending the same picker value to the same panel.
-+
-+Unresolved guest reads inside the settle loop neither confirm nor dispatch and are retried. An unresolved final read fails with `orientation-panel-table-unavailable`. Multi-panel classification admits rotation without a model-name guard; a new multi-panel model needs its own picker mapping.
-```
-
-**File**: `apple/fold-helper/Fold.m` (modified, +8/-4)
-```diff
-@@ -106,14 +106,18 @@ static int runSet(NSString *argument) {
-   return dispatchEvents(^BOOL(CFTypeRef client) { return runFrames(client, frames); });
- }
- 
--// The orientation control has no upside-down value.
-+// The upside-down picker value is spelled "pud" on the wire; "portrait-upside-down" is
-+// ignored by the guest. It matters because each picker event rotates the display by
-+// (new - previous) picker value: without a 180 value, one of the four display orientations
-+// can never be landed (measured on iPhone Duo).
- static int runRotate(NSString *orientation) {
--  if (![@[@"portrait", @"landscape-left", @"landscape-right"] containsObject:orientation]) {
--    fprintf(stderr, "Expected orientation portrait, landscape-left or landscape-right\n");
-+  NSString *value = [orientation isEqualToString:@"portrait-upside-down"] ? @"pud" : orientation;
-+  if (![@[@"portrait", @"landscape-left", @"landscape-right", @"pud"] containsObject:value]) {
-+    fprintf(stderr, "Expected orientation portrait, landscape-left, landscape-right or portrait-upside-down\n");
-     return 2;
-   }
-   return dispatchEvents(^BOOL(CFTypeRef client) {
--    return sendControl(client, @"orientation-picker-control", @"enum", orientation);
-+    return sendControl(client, @"orientation-picker-control", @"enum", value);
-   });
- }
- 
-```
-
-**File**: `docs/adr/0025-foldable-apple-panels.md` (modified, +22/-16)
-```diff
-@@ -58,6 +58,9 @@ It is the only reader of panel tables, and it selects the source.
-   For a simulator in a scoped set, the fold helper's `panels` mode is the screen authority.
-   It emits the same entry shape from the guest sources that `dtdeviceinfod` relays to CoreDevice: `CADisplay` and `BLSBacklight`.
-   The guest lists every integrated panel and omits only the facts it cannot read.
-+  Fold pose and rotation lit-panel reads explicitly request the guest table in either simulator set.
-+  Panel-count classification keeps the set-based source: CoreDevice in the default set, guest in a scoped set.
-+  Rotation confirms the lit panel because CoreDevice orientation can match the picker while the visible panel shows another orientation.
- - **Completeness.**
-   Both sources list one entry per integrated panel. A panel that the parser drops is not single-panel evidence.
-   If two or more integrated entries exist and not all parse, the device is multi-panel without a capture panel. Capture refuses with `capture-panel-unidentified`.
-@@ -104,7 +107,7 @@ It is the only reader of panel tables, and it selects the source.
-   `IOS_APPLE_DISPLAY_PROBE_TIMEOUT_MS` limits the probe to 5s, below the subsequent 20s screenshot deadline.
-   Thus, an unresponsive CoreDevice cannot consume the capture's own budget.
-   Measured cost is 0.16–0.26s, compared with 4.93s for the screenshot.
--  The guest probe costs about 0.3s. `IOS_SCOPED_DISPLAY_PROBE_BUDGET_MS` limits it to 15s, including the first helper build.
-+  The guest probe costs about 0.3s. `IOS_GUEST_DISPLAY_PROBE_BUDGET_MS` limits it to 15s, including the first helper build.
- 
- ## Why the default capture had to stop being implicit
- 
-@@ -370,19 +373,27 @@ Rejected alternatives:
- `XCUIDevice.orientation` has no effect on an iPhone Duo simulator, and the runner readback repeats the requested value.
- `devicectl device orientation set` reports success and has no effect on a simulator that `simctl boot` started.
- `orientation` therefore rotates a multi-panel simulator through the guest device-state control: the HID event that Device Hub's orientation menu sends (`orientation-picker-control`, type `enum`).
--The control has no upside-down value, so `portrait-upside-down` is refused with `unsupported-foldable-orientation`.
--Routing uses the `fold` admission and the panel table. A resolved panel count is a hardware fact, so the daemon probes each simulator once.
--
--The verdict comes from `devicectl device orientation get`, a process that never sent the HID event.
--CoreDevice answers each query with the value that it sampled at the previous query, so the first read after a dispatch is discarded.
--A rotation that no fresh read reports is refused with `orientation-unverified`.
--A simulator in a scoped set is refused with `unsupported-device-scope` before dispatch, because no reader can verify its rotation.
-+The picker accepts `pud` for upside-down dispatch, which the inner panel needs to show landscape-left.
-+The user target `portrait-upside-down` remains refused with `unsupported-foldable-orientation`.
-+Routing uses the `fold` admission and the set-based panel-count source. A resolved panel count is a hardware fact, so the daemon probes each simulator once.
-+A supplied helper is a reuse handle; only an explicit guest-source request changes the default-set source.
-+Thus, classifying a single-panel default-set simulator does not prepare the fold helper.
-+
-+The picker offsets were measured on iPhone Duo; a new multi-panel model needs its own mapping.
-+In both simulator sets, the helper reads the guest panel table and dispatches the fixed picker value for the established lit panel.
-+The table maps the outer panel at zero offset and the inner panel at +90 degrees.
-+Only a fresh `currentOrientation` from an established lit panel confirms the requested visible orientation.
-+An incomplete table, unknown-power sibling, or multiple lit panels cannot confirm or dispatch.
-+A repeated visible target dispatches nothing; delayed reads wait without resending to the same panel.
-+A target that never appears is refused with `orientation-unverified` in either set.
-+An unresolved guest read inside the settle loop neither confirms nor dispatches; the loop retries it.
-+An unresolved final read reports `orientation-panel-table-unavailable` and points to the inventory diagnostic.
- 
- Rejected alternatives:
- 
--- **The panel table's `orientation.currentDeviceOrientation`: rejected.** It is screen-relative. On the Duo inner panel, it is a quarter-turn from the device orientation.
--- **A guest orientation read: rejected.** CoreMotion `CMDeviceOrientationManager` reports `Ambiguous`, and `BKSHIDServicesIsOrientationLockedWithOrientation` reports 0, after a rotation that CoreDevice and the screenshots confirm.
--- **Dispatch without a verdict in a scoped set: rejected.** The runner path already reported a false success there.
-+- **CoreDevice orientation readback: rejected.** Its picker sample can lag and can match th
-```
-
-**File**: `docs/agents/device-foldable.md` (modified, +7/-6)
-```diff
-@@ -1,11 +1,12 @@
- # Foldable Apple verification
- 
--Before you change capture behavior on a multi-panel device, read ADR 0025.
--To list the panels, run `xcrun devicectl device info displays --device <udid>`.
--In a scoped set, run `xcrun simctl --set <set> spawn <udid> ~/.agent-device/fold-helper/<key>/fold-helper panels`.
-+Before capture changes, read ADR 0025.
-+For default-set capture, run `xcrun devicectl device info displays --device <udid>`.
-+For scoped capture or rotation, run `xcrun simctl --set <set> spawn <udid> ~/.agent-device/fold-helper/<key>/fold-helper panels`.
-+For default-set rotation, omit `--set <set>`.
- 
- - Panels: the list shows each integrated panel with `backlightState`. Only the lit panel permits capture.
--  A capture of the dark panel exits 0 and writes an all-black PNG.
-+  A dark-panel capture exits 0 with a black PNG.
- - Input routing: after each pose change, verify a fresh control.
-   A successful synthesis acknowledgement does not prove a hit.
-   Examine the runner and simulator `testmanagerd`/BackBoard logs for display identity and delivery.
-@@ -14,13 +15,13 @@ In a scoped set, run `xcrun simctl --set <set> spawn <udid> ~/.agent-device/fold
-   The same helper reads the hinge back in `hinge` mode.
-   After a fold, take another snapshot. Folds invalidate refs and coordinates.
-   Verify locally with Device Hub stopped and the simulator booted through `simctl boot`.
--  Test these items in the default set and with `--ios-simulator-device-set`:
-+  Test both sets (`--ios-simulator-device-set`):
-   - All three poses.
-   - Capture of the active panel.
-   - An app interaction.
-   Until GHA supports the runtime, Duo coverage remains local.
-   After a fresh boot, a closed hinge can keep the inner panel lit for more than 30 seconds.
--  The lit panel is evidence only. It cannot separate `half-open` from `open`.
-+  Panel power cannot separate `half-open` from `open`.
- - Touch overlays export at the captured track size.
-   The compositor checks its output size and non-black content against the raw capture.
-   If that check fails, `record stop` keeps the raw file. It reports `overlayWarning`.
-```
-
-**File**: `packages/command-surface/src/system/index.ts` (modified, +1/-1)
-```diff
-@@ -290,7 +290,7 @@ const backCommandDescription =
- const homeCommandDescription =
-   'Send the selected device to its home screen. This leaves the app session open but moves the foreground away from the app.';
- const orientationCommandDescription =
--  'Set device orientation on iOS and Android. auto hands rotation back to the sensor on ADB-backed Android (local and Limrun); other backends refuse it. A foldable iPhone simulator (iPhone Duo) refuses portrait-upside-down, and refuses every rotation in a scoped simulator set.';
-+  'Set device orientation on iOS and Android. auto hands rotation back to the sensor on ADB-backed Android (local and Limrun); other backends refuse it. In both default and scoped simulator sets, an iPhone Duo classified with more than one integrated panel refuses portrait-upside-down and rotates through the fold helper; it succeeds only when the lit panel shows the requested orientation, otherwise it fails with orientation-unverified, or orientation-panel-table-unavailable when the final guest panel table cannot be read. A simulator classified with one panel, or whose first classification read is unresolved, uses the standard runner rotation.';
- const foldGuidance = {
-   hingeEvent: 'simulator HID hinge event',
-   permissions: 'Device Hub and host Accessibility permission are not required.',
-```
-
-**File**: `packages/platform-apple/src/core/__tests__/display-inventory.test.ts` (modified, +98/-2)
-```diff
-@@ -33,12 +33,15 @@ vi.mock('@agent-device/host-kit/host-file', async (importOriginal) => {
- });
- 
- import {
-+  appleLitPanel,
-   appleSimulatorDisplayArgvFragment,
-+  establishedLitPanel,
-   buildInventory,
-   parseCoreDeviceDisplays,
-   readPanelPower,
-   resolveAppleCaptureDisplay,
-   queryAppleDisplayInventory,
-+  panelContentRotation,
-   resolveAppleCaptureTarget,
-   type AppleDeviceDisplay,
- } from '../display-inventory.ts';
-@@ -362,6 +365,75 @@ describe('resolveAppleCaptureDisplay', () => {
-   });
- });
- 
-+describe('panelContentRotation', () => {
-+  test('parses each panel content rotation and nothing else', () => {
-+    assert.equal(panelContentRotation('rot0'), 'portrait');
-+    assert.equal(panelContentRotation('rot90'), 'landscape-right');
-+    assert.equal(panelContentRotation('rot180'), 'portrait-upside-down');
-+    assert.equal(panelContentRotation('rot270'), 'landscape-left');
-+    for (const value of ['unknown', 'constructor', 'rot45', '']) {
-+      assert.equal(panelContentRotation(value), undefined);
-+    }
-+  });
-+});
-+
-+describe('establishedLitPanel', () => {
-+  beforeEach(() => {
-+    mockReadHostTextFile.mockReset();
-+    mockReadHostTextFile.mockResolvedValue('');
-+  });
-+
-+  function duoTable(mapEntry: (entry: Record<string, unknown>) => Record<string, unknown>) {
-+    return JSON.stringify({
-+      result: { displays: IPHONE_DUO_CLOSED.result.displays.map(mapEntry) },
-+    });
-+  }
-+
-+  test('a complete table with one lit panel establishes that panel for both selectors', () => {
-+    const inventory = buildInventory([outerPanel, innerPanel]);
-+    assert.equal(establishedLitPanel(inventory), outerPanel);
-+    assert.deepEqual(appleLitPanel(inventory), { displayId: 1, widthPt: 466, heightPt: 678 });
-+  });
-+
-+  test('two lit panels establish none', () => {
-+    const inventory = buildInventory([outerPanel, { ...innerPanel, power: 'lit' }]);
-+    assert.equal(establishedLitPanel(inventory), undefined);
-+    assert.equal(appleLitPanel(inventory), undefined);
-+  });
-+
-+  test('a lit panel beside a panel of unknown power establishes none', () => {
-+    // Unknown power may be showing content, so the lit panel is not the only one that may be lit.
-+    const inventory = buildInventory([outerPanel, { ...innerPanel, power: 'unknown' }]);
-+    assert.equal(establishedLitPanel(inventory), undefined);
-+    assert.equal(appleLitPanel(inventory), undefined);
-+  });
-+
-+  test('an incomplete table establishes no panel even when one parsed panel is the only lit one', async () => {
-+    // Two activeOn integrated entries; the inner one has no geometry and does not parse.
-+    mockReadHostTextFile.mockResolvedValue(
-+      duoTable((entry) => {
-+        const lit: Record<string, unknown> = { ...entry, backlightState: 'activeOn' };
-+        if (entry.name !== 'LCD-1') return lit;
-+        const { nativeSize: _nativeSize, ...withoutGeometry } = lit;
-+        return withoutGeometry;
-+      }),
-+    );
-+    const inventory = await queryAppleDisplayInventory(IOS_TEST_SIMULATOR, {});
-+    assert.equal(inventory.multiScreen, true);
-+    assert.equal(inventory.displays.filter((display) => display.power === 'lit').length, 1);
-+    assert.equal(establishedLitPanel(inventory), undefined);
-+    assert.equal(appleLitPanel(inventory), undefined);
-+  });
-+
-+  test('a single-panel or unresolved table establishes no foldable panel', () => {
-+    assert.equal(establishedLitPanel(buildInventory([outerPanel])), undefined);
-+    assert.equal(
-+      establishedLitPanel({ displays: [], multiScreen: false, ambiguous: false, unresolved: true }),
-+      undefined,
-+    );
-+  });
-+});
-+
- describe('resolveAppleCaptureTarget', () => {
-   beforeEach(() => {
-     mockRunXcrun.mockClear();
-@@ -678,7 +750,10 @@ describe('scoped simulator panel table', () => {
-     assert.equal(mockRunXcrun.mock.calls.length, 0);
-   });
- 
--  test('reads with the fold helper the caller already opened', async () => {
-+  test.each([
-+    ['scoped', scopedDuo],
-+    ['default', { ...scopedDuo, simulatorSetPath: undefined }],
-+  ] as const)('reads with the supplied fold helper in the %s set', async (_set, device) => {
-     vi.mocked(ensureFoldHelperBinary).mockClear();
-     const readPanelPayload = vi.fn(async () => ({
-       result: { displays: (JSON.parse(GUEST_PANELS_OPEN) as { displays: unknown[] }).displays },
-@@ -690,12 +765,33 @@ describe('scoped simulator panel table', () => {
-       readPanelPayload,
-     };
- 
--    const inventory = await queryAppleDisplayInventory(scopedDuo, { foldHelper });
-+    const inventory = await queryAppleDisplayInventory(device, { source: 'guest', foldHelper });
- 
-     assert.equal(inventory.activeDisplay?.name, 'LCD-1');
-     assert.equal(readPanelPayload.mock.calls.length, 1);
-     assert.equal(vi.mocked(ensureFoldHelperBinary).mock.calls.length, 0);
-     assert.equal(mockRunSimctlForDevice.mock.calls.length, 0);
-+    assert.equal(mockRunXcrun.mock.calls.length, 0);
-+  });
-+
-+  test('a helper handle alone keeps the def
-```
-
-**File**: `packages/platform-apple/src/core/config.ts` (modified, +6/-9)
-```diff
-@@ -31,10 +31,10 @@ export const IOS_SIMULATOR_SCREENSHOT_TIMEOUT_MS = 20_000;
- // request-level daemon reset. Measured probe cost is ~0.2s.
- export const IOS_APPLE_DISPLAY_PROBE_TIMEOUT_MS = 5_000;
- /**
-- * A scoped simulator's panel table comes from a guest helper that the first read on a host also
-+ * A guest panel table comes from a helper that the first read on a host also
-  * builds. This ceiling on the whole read, build included, stays below the capture's own budget.
-  */
--export const IOS_SCOPED_DISPLAY_PROBE_BUDGET_MS = 15_000;
-+export const IOS_GUEST_DISPLAY_PROBE_BUDGET_MS = 15_000;
- /**
-  * One guest hinge read, before its sampling window: the fold helper waits at most 3s for its first
-  * CoreMotion sample, so this exec deadline only guards a wedged `simctl spawn`.
-@@ -55,14 +55,11 @@ export const IOS_FOLD_POSE_READ_INTERVAL_MS = 1_000;
- /** Two consecutive reads this close together mean the hinge has stopped moving. */
- export const IOS_FOLD_POSE_STABLE_DEGREES = 0.5;
- /**
-- * How many fresh CoreDevice orientation reads a dispatched foldable rotation gets before it is
-- * refused. One read costs ~0.2s, and the iPhone Duo reported the new orientation on the first
-- * fresh read; the margin covers a loaded host. A read that times out counts as one that saw no
-- * orientation. With the routing probe, a cold fold-helper build, and the HID dispatch, the worst
-- * case stays inside the default 90s request envelope.
-+ * Bounded lit-panel reads cover delayed HID effects and the two-lit interval after a fold.
-+ * A fixed picker value is sent once per lit panel; the remaining reads only observe.
-  */
--export const IOS_FOLDABLE_ORIENTATION_SETTLE_ATTEMPTS = 8;
--export const IOS_FOLDABLE_ORIENTATION_READ_TIMEOUT_MS = 2_000;
-+export const IOS_FOLDABLE_ORIENTATION_SETTLE_ATTEMPTS = 6;
-+export const IOS_FOLDABLE_ORIENTATION_SETTLE_MS = 600;
- 
- // CoreSimulator can briefly stall while it services the scale lookup immediately
- // after a keyboard transition. Keep this bounded below the full capture budget.
-```
-
-**File**: `packages/platform-apple/src/core/device-orientation.ts` (removed, +0/-46)
-```diff
-@@ -1,46 +0,0 @@
--import type { DeviceRotation } from '@agent-device/contracts/device';
--import type { DeviceInfo } from '@agent-device/kernel/device';
--import { isCommandTimeoutError } from '@agent-device/host-kit/command';
--
--import { runIosDevicectlJsonRequest, type IosDevicectlJsonOutcome } from './devicectl.ts';
--
--/** CoreDevice `deviceOrientation` names, which are UIDeviceOrientation case names. */
--const CORE_DEVICE_ORIENTATIONS: ReadonlyMap<unknown, DeviceRotation> = new Map<
--  unknown,
--  DeviceRotation
-->([
--  ['portrait', 'portrait'],
--  ['portraitUpsideDown', 'portrait-upside-down'],
--  ['landscapeLeft', 'landscape-left'],
--  ['landscapeRight', 'landscape-right'],
--]);
--
--/**
-- * Reads the orientation of the device itself through `devicectl device orientation get`.
-- * The display table's `currentDeviceOrientation` is not a replacement: on the iPhone Duo inner
-- * panel, it is a quarter-turn from the device orientation.
-- *
-- * CoreDevice answers each query with the orientation it sampled at the previous query, so the
-- * first read after a change can be stale. A failed or timed-out read, face-up, and face-down
-- * return nothing.
-- */
--export async function readAppleDeviceOrientation(
--  device: DeviceInfo,
--  options: { timeoutMs: number; signal?: AbortSignal },
--): Promise<DeviceRotation | undefined> {
--  let outcome: IosDevicectlJsonOutcome;
--  try {
--    outcome = await runIosDevicectlJsonRequest({
--      jsonPrefix: 'agent-device-apple-orientation',
--      args: ['devicectl', 'device', 'orientation', 'get', '--device', device.id],
--      timeoutMs: options.timeoutMs,
--      signal: options.signal,
--    });
--  } catch (error) {
--    if (options.signal?.aborted || !isCommandTimeoutError(error)) throw error;
--    return undefined;
--  }
--  if (!outcome.ok) return undefined;
--  const payload = outcome.payload as { result?: { deviceOrientation?: unknown } } | null;
--  return CORE_DEVICE_ORIENTATIONS.get(payload?.result?.deviceOrientation);
--}
-```
-
----
-
-### Incident Patch 2: `cc3b99b3` (2026-11-13)
-**Commit Message**: fix(ios): bound the idle wait of keyboard dismiss and keyboard enter (#4454)
-
-* fix(ios): bound the idle wait of keyboard dismiss and keyboard enter
-
-`keyboard dismiss` and `keyboard enter` tapped the keyboard's control with a
-plain XCUIElement.tap() outside withBoundedInteractionIdleTimeoutIfSupported,
-which `type`, `swipe` and taps already use. XCTest then waited for the app to
-idle with its own timeout. An app that keeps animating (Safari right after an
-iPhone Duo unfold) held the runner main thread past its 30 s watchdog: the
-command failed with "main thread execution timed out" and the next commands
-were refused until XCTest gave up.
-
-Both commands now run inside the bounded wait with both quiescence waits
-skipped. dismissKeyboard still waits for the keyboard to go and the screen to
-settle on its own.
-
-The host app's --agent-device-keyboard-busy fixture keeps a UIView animation
-in flight while its field has focus, until a backstop, and records whether its
-Done accessory and its return key landed while the app was still busy.
+Refs #4590
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-* fix(ios): require busy keyboard coverage and settle Return
+* test(android): scan the whole helper source tree for direct input injection
 
-* docs(ios): restore Simulator keyboard
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `apple/runner/AgentDeviceRunner/AgentDeviceRunner/AgentDeviceRunnerAppFixtures.m` (modified, +91/-0)
+* fix(android): report an unavailable animation sync apart from a refused press
+
+Tap and key presses now share PressSequence, an Android-free policy that the
+helper's JVM suite tests with a fake inje
+
+**File**: `android/snapshot-helper/src/main/java/com/callstack/agentdevice/snapshothelper/AutomationCommandHandler.java` (modified, +135/-28)
 ```diff
-@@ -75,6 +75,9 @@ @interface AgentDeviceRunnerFixtureViewController () <UNUserNotificationCenterDe
- @property(nonatomic, assign) BOOL alertFixtureStarted;
- @property(nonatomic, strong) NSTimer *alertActivationBusyBackstop;
- @property(nonatomic, strong) NSTimer *alertBannerRepost;
-+@property(nonatomic, weak) UITextField *keyboardBusyField;
-+@property(nonatomic, strong) UILabel *keyboardBusyAnswer;
-+@property(nonatomic, strong) NSTimer *keyboardBusyBackstop;
- @end
- 
- // A one-time-code field that announces how many digits it holds instead of the digits, the way
-@@ -251,6 +254,57 @@ - (void)stopAlertActivationBusy {
-   self.alertActivationBusyBackstop = nil;
- }
- 
-+// The keyboard counterpart of the busy alert: the field starts the same never-ending UIView animation
-+// when it takes focus, so XCTest sees work in flight for as long as the keyboard is up. Its Done
-+// accessory and its return key record whether they landed while the app was still busy. The backstop
-+// passed after `--agent-device-keyboard-busy` ends the busy state, so a command that waits for the app
-+// to idle before it taps still finishes, and records "after busy" instead of outlasting the test.
-+static NSTimeInterval AgentDeviceKeyboardBusyWindow(void) {
-+  NSArray<NSString *> *arguments = NSProcessInfo.processInfo.arguments;
-+  NSUInteger flag = [arguments indexOfObject:@"--agent-device-keyboard-busy"];
-+  return flag + 1 < arguments.count ? arguments[flag + 1].doubleValue : 0;
-+}
-+
-+- (void)startKeyboardBusy {
-+  if (self.keyboardBusyBackstop != nil) {
-+    return;
-+  }
-+  self.keyboardBusyBackstop = [NSTimer scheduledTimerWithTimeInterval:AgentDeviceKeyboardBusyWindow()
-+                                                               target:self
-+                                                             selector:@selector(stopKeyboardBusy)
-+                                                             userInfo:nil
-+                                                              repeats:NO];
-+  [UIView animateWithDuration:0.4
-+                          delay:0
-+                        options:(UIViewAnimationOptionRepeat | UIViewAnimationOptionAutoreverse)
-+                     animations:^{
-+                       self.keyboardBusyAnswer.transform = CGAffineTransformMakeTranslation(0, 8);
-+                     }
-+                     completion:nil];
-+}
-+
-+- (void)stopKeyboardBusy {
-+  [self.keyboardBusyAnswer.layer removeAllAnimations];
-+  self.keyboardBusyAnswer.transform = CGAffineTransformIdentity;
-+  [self.keyboardBusyBackstop invalidate];
-+  self.keyboardBusyBackstop = nil;
-+}
-+
-+- (void)recordKeyboardBusyAnswer:(NSString *)control {
-+  self.keyboardBusyAnswer.text = [NSString
-+      stringWithFormat:@"%@ %@", control, self.keyboardBusyBackstop != nil ? @"while busy" : @"after busy"];
-+  [self stopKeyboardBusy];
-+  [self.keyboardBusyField resignFirstResponder];
-+}
-+
-+- (void)keyboardBusyDonePressed {
-+  [self recordKeyboardBusyAnswer:@"Done"];
-+}
-+
-+- (void)keyboardBusyReturnPressed {
-+  [self recordKeyboardBusyAnswer:@"Return"];
-+}
-+
- // A banner from this app, shown over its own alert and re-posted before the previous one expires so
- // one is on screen for as long as the first alert is unanswered. XCTest treats such a banner as an
- // interruption of every event aimed at the app (#2546's late tap, from the banner side).
-@@ -652,6 +706,43 @@ - (void)viewDidLoad {
-     self.alertActivationBusyAnswer = busyAnswer;
+@@ -57,59 +57,165 @@ private static final class InputDispatch {
+     boolean attempted;
    }
  
-+  if ([NSProcessInfo.processInfo.arguments containsObject:@"--agent-device-keyboard-busy"]) {
-+    UITextField *field = [[UITextField alloc] init];
-+    field.accessibilityIdentifier = @"agent-device-keyboard-busy-input";
-+    field.placeholder = @"Busy while editing";
-+    field.borderStyle = UITextBorderStyleRoundedRect;
-+    UIToolbar *accessory = [[UIToolbar alloc] initWithFrame:CGRectMake(0, 0, 320, 44)];
-+    accessory.items = @[
-+      [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemFlexibleSpace target:nil action:nil],
-+      [[UIBarButtonItem alloc] initWithTitle:@"Done"
-+                                       style:UIBarButtonItemStyleDone
-+                                      target:self
-+                                      action:@selector(keyboardBusyDonePressed)],
-+    ];
-+    field.inputAccessoryView = accessory;
-+    [field addTarget:self action:@selector(startKeyboardBusy) forControlEvents:UIControlEventEditingDidBegin];
-+    [field addTarget:self
-+                  action:@selector(keyboardBusyReturnPressed)
-+        forControlEvents:UIControlEventEditingDidEndOnExit];
-+    field.translatesAutoresizingMaskIntoConstraints = NO;
-+    [self.view addSubview:field];
-+    UILabel *answer = [[UILabel alloc] init];
-+    answer.text = @"Unanswered";
-+    answer.accessibilityIdentifier = @"agent-device-keyboard-busy-answer";
-+    answer.translatesAutoresizingMaskIntoConstraints = NO;
-+    [self.view addSubview:answer];
-+    [NSLayoutConstraint activateConstraints:@[
-+      [fiel
-```
-
-**File**: `apple/runner/AgentDeviceRunner/AgentDeviceRunnerUITests/RunnerTests+CommandExecution.swift` (modified, +14/-2)
-```diff
-@@ -587,7 +587,13 @@ extension RunnerTests {
-       }
-       return Response(ok: true, data: DataPayload(message: command.command.rawValue))
-     case .keyboardDismiss:
--      let result = dismissKeyboard(app: activeApp)
-+      var dismissal: (wasVisible: Bool, dismissed: Bool, visible: Bool, mechanism: RunnerKeyboardDismissMechanism?)?
-+      withBoundedInteractionIdleTimeoutIfSupported(activeApp, waits: .bothSkipped) {
-+        dismissal = dismissKeyboard(app: activeApp)
-+      }
-+      guard let result = dismissal else {
-+        return Response(ok: false, error: ErrorPayload(message: "keyboardDismiss produced no result"))
-+      }
-       if result.wasVisible && !result.dismissed {
-         return Response(
-           ok: false,
-@@ -610,7 +616,13 @@ extension RunnerTests {
-         )
-       )
-     case .keyboardReturn:
--      let result = pressKeyboardReturn(app: activeApp)
-+      var press: (wasVisible: Bool, pressed: Bool, visible: Bool)?
-+      withBoundedInteractionIdleTimeoutIfSupported(activeApp, waits: .preEventSkipped) {
-+        press = pressKeyboardReturn(app: activeApp)
-+      }
-+      guard let result = press else {
-+        return Response(ok: false, error: ErrorPayload(message: "keyboardReturn produced no result"))
-+      }
-       if !result.pressed {
-         return Response(
-           ok: false,
-```
-
-**File**: `apple/runner/AgentDeviceRunner/AgentDeviceRunnerUITests/UnitTests/RunnerTests+KeyboardTests.swift` (modified, +62/-0)
-```diff
-@@ -327,6 +327,68 @@ extension RunnerTests {
-   private func textEntryInputCount() -> Int {
-     app.textFields.count + app.secureTextFields.count + app.searchFields.count + app.textViews.count
++  /**
++   * The budget of a host that sends none: a provider-supplied helper can be newer than its host, and
++   * an older host waits 30 s for input, less the 5 s answer margin. It never affords a retry.
++   */
++  private static final long OLDER_HOST_BUDGET_MS = 25_000;
++
++  /** The framework's accessibility interaction timeout, AccessibilityInteractionClient. */
++  private static final long TEXT_ENTRY_RESERVE_MS = 5_000;
++
++  /** The command deadline left too little time for the next step, so it was not started. */
++  static final class InputBudgetExhausted extends IllegalStateException {
++    InputBudgetExhausted(String message) {
++      super(message);
++    }
++  }
++
++  /** Refuses text entry the deadline cannot fit, after a focus tap that may have used the budget. */
++  static void requireTextEntryTime(long deadline, long now) {
++    if (deadline - now < TEXT_ENTRY_RESERVE_MS) {
++      throw new InputBudgetExhausted("Fill text was not entered: too little time left after focus");
++    }
++  }
++
+   private static void input(UiAutomation automation, JSONObject input, InputDispatch dispatch) throws Exception {
++    // The host's remaining time for this command bounds every retry decision.
++    long deadline =
++        SystemClock.uptimeMillis() + input.optLong("budgetMs", OLDER_HOST_BUDGET_MS);
+     switch (input.getString("kind")) {
+       case "tap":
+-        tap(automation, input.getDouble("x"), input.getDouble("y"), dispatch);
++        tap(automation, input.getDouble("x"), input.getDouble("y"), dispatch, deadline);
+         return;
+       case "key":
+-        key(automation, input.getInt("keyCode"), dispatch);
++        key(automation, input.getInt("keyCode"), dispatch, deadline);
+         return;
+       case "fill":
+-        fill(automation, input.getInt("x"), input.getInt("y"), input.getString("text"), dispatch);
++        fill(automation, input.getInt("x"), input.getInt("y"), input.getString("text"), dispatch,
++            deadline);
+         return;
+       default:
+         throw new IllegalArgumentException("Unknown input kind");
+     }
    }
-+
-+  // `keyboard dismiss` and `keyboard enter` tap a keyboard control. An app that never stops animating
-+  // made that tap wait for XCTest's idle timeout, past the runner's main-thread watchdog, so the command
-+  // failed with "main thread execution timed out" and the runner refused the next commands. The fixture
-+  // keeps an animation in flight while its field has focus, until its backstop, and records whether
-+  // each control landed while the app was still busy.
-+  static let keyboardBusyBackstop: TimeInterval = 20
-+
-+  @MainActor
-+  func testKeyboardDismissTapsItsDismissKeyWhileTheAppIsBusy() throws {
-+    try withBusyKeyboardField {
-+      let command = try runnerCommandFixture(#"{"command":"keyboardDismiss","commandId":"dismiss-busy"}"#)
-+      let response = try execute(command: command)
-+
-+      XCTAssertTrue(response.ok, String(describing: response.error))
-+      let answer = app.staticTexts["agent-device-keyboard-busy-answer"].label
-+      XCTAssertEqual(answer, "Done while busy")
-+      NSLog("AGENT_DEVICE_KEYBOARD_BUSY command=dismiss response.ok=%@ answer=%@", response.ok ? "true" : "false", answer)
-+    }
+ 
+-  private static void tap(UiAutomation automation, double x, double y, InputDispatch dispatch) {
++  private static void tap(
++      UiAutomation automation, double x, double y, InputDispatch dispatch, long deadline) {
+     if (Double.isNaN(x) || Double.isInfinite(x) || Double.isNaN(y) || Double.isInfinite(y)
+         || x < 0 || y < 0) {
+       throw new IllegalArgumentException("Invalid tap coordinates");
+     }
+-    long down = SystemClock.uptimeMillis();
+-    touch(automation, down, MotionEvent.ACTION_DOWN, (float) x, (float) y, dispatch);
+-    touch(automation, down, MotionEvent.ACTION_UP, (float) x, (float) y, dispatch);
++    dispatch.attempted = true;
++    PressSequence.requireDispatched(PressSequence.run(new TouchPress(automation, (float) x, (float) y), deadline), "Touch");
+   }
+ 
+-  private static void touch(UiAutomation automation, long down, int action, float x, float y, InputDispatch dispatch) {
+-    MotionEvent event = MotionEvent.obtain(down, SystemClock.uptimeMillis(), action, x, y, 0);
+-    event.setSource(InputDevice.SOURCE_TOUCHSCREEN);
+-    try {
+-      dispatch.attempted = true;
+-      if (!automation.injectInputEvent(event, true)) {
+-        throw new IllegalStateException("Touch injection was refused");
+-      }
+-    } finally {
+-      event.recycle();
++  private static void key(UiAutomation automation, int code, InputDispatch dispatch, long deadline) {
++    if (code < 0 || code > KeyEvent.getMaxKeyCode()) throw new IllegalArgumentException("Invalid key code");
++    dispatch.attempted = true;
++    PressSequence.requireDispatched(PressSequence.run(new KeyPress(automation, code), deadline), "Key");
 +  }
 +
-+  @MainActor
-+  func testKeyboardEnterPressesReturnWhileTheAppIsBusy() throws {
-+    try withBusyKeyboardField {
-+      let command = try runnerCommandFixture(#"{"command":"keyboardReturn","commandId":"return-busy"}"#)
-+      let response = try execute(command: command)
++  private abstract static class Press implements PressSequence.Injections {
++    final UiAutomation automation;
 +
-+      XCTAssertTrue(response.ok, String(describing: response.error))
-+      XCTAssertEqual(response.data?.wasVisible, true)
-+      XCTAssertEqual(response.data?.visible, false)
-+      let answer = app.staticTexts["agent-device-keyboard-busy-answer"].label
-+      XCTAssertEqual(answer, "Return while busy")
-+      NSLog("AGENT_DEVICE_KEYBOARD_BUSY command=enter response.ok=%@ visible=%@ answer=%@", response.ok ? "true" : "false", String(describing: response.data?.visible), answer)
++    Press(UiAutomation automation) {
++      this.automation = automation;
 +    }
-+  }
 +
-+  @MainActor
-+  private func withBusyKeyboardField(_ body: () throws -> Void) throws {
-+    app.launchArguments = ["--agent-device-keyboard-busy", String(Self.keyboardBusyBackstop)]
-+    app.launch()
-+    defer {
-+      invalidateCachedTarget(reason: "unit_test_cleanup")
-+      app.terminate()
++    @Override
++    public long now() {
++      return SystemClock.uptimeMillis();
 +    }
-+    let field = app.textFields["agent-device-keyboard-busy-input"]
-+    XCTAssertTrue(field.waitForFixtureExistence(timeout: appExistenceTimeout))
-+    mainOwned.app = app
-+    mainOwned.bundleId = "com.callstack.agentdevice.runner"
-+    mainOwned.processIdentifier = try XCTUnwrap(Self.processIdentifier(of: app))
-+    // Focus starts the busy animation, so this tap must not wait for the app to idle either.
-+    withBoundedInteractionIdleTimeoutIfSupported(app, waits: .bothSkipped) { field.tap() }
-+    let keyboardDeadline = Date().addingTimeInterval(5)
-+    while !isKeyboardVisible(app: app) && Date() < keyboardDeadline {
-+      sleepFor(0.2)
++
++    @Override
++    public boolean skipsAnimationWait() {
++      return UiAutomationInputDispatcher.skipsAnimationWait();
 +    }
-+    XCTAssertTrue(
-+      isKeyboardVisible(app: app),
-+      "Enable the simulator software keyboard before running the busy keyboard tests; see apple/runner/README.md"
-+    )
-+    XCTAssertEqual(app.staticTexts["agent-device-keyboard-busy-answer"].label, "Unanswered")
-+    try body()
-+  }
- #endif
- }
- #endif
++
++    @Override
++    public boolean awaitAnimations() {
++      return UiAutomationInputDispatcher.awaitAnimations(automation);
+     }
+   }
+ 
+-  private static void key(UiAutomation automation, int code, InputDispatch dispatch) {
+-    if (code < 0 || code > KeyEvent.getMaxKeyCode()) throw new IllegalArgumentException("Invalid key code");
+-    long down = SystemClock.uptimeMillis();
+-    for (int action : new int[] {KeyEvent.ACTION_DOWN, KeyEvent.ACTION_UP}) {
+-      KeyEvent event = new KeyEvent(down, SystemClock.uptimeMillis(), action, code, 0, 0,
+-          KeyCharacterMap.VIRTUAL_KEYBOARD, 0, 0, InputDevice.SOURCE_KEYBOARD);
+-      dispatch.attempted = true;
+-      if (!automation.injectInputEvent(event, true)) {
+-        throw new I
 ```
 
-**File**: `apple/runner/README.md` (modified, +25/-0)
+**File**: `android/snapshot-helper/src/main/java/com/callstack/agentdevice/snapshothelper/PressSequence.java` (added, +94/-0)
 ```diff
-@@ -56,6 +56,31 @@ Protocol and maintenance references:
- - `UnitTests/RunnerTests+<Source>Tests.swift`: the `AGENT_DEVICE_RUNNER_UNIT_TESTS` tests for each
-   source file. The packaged runner source omits this directory.
+@@ -0,0 +1,94 @@
++package com.callstack.agentdevice.snapshothelper;
++
++/**
++ * Sequences one tap or key press: a start event, then an end event with the same down time.
++ *
++ * <p>Every refused start is released before anything else is decided: the verifier and the policy
++ * record a start even when the dispatcher drops it, and a start refused by the injection timeout
++ * was delivered. Without the framework's animation wait, a start is often refused only because a
++ * transition leaves nothing able to receive it, so it is retried once after the animation sync,
++ * with a fresh down time, when the host's deadline still has room for that retry.
++ */
++final class PressSequence {
++  /**
++   * The room a retry decision reserves: the framework's animation-sync cap
++   * ({@code WindowManagerService.ANIMATION_COMPLETED_TIMEOUT_MS}) plus the retried start's injection
++   * deadline ({@code InputManagerService.INJECTION_TIMEOUT_MILLIS}). The end is not reserved: it
++   * blocks only while the app does not finish handling it, which a press without a retry meets the
++   * same way, and a 60 s press request could never reserve a second 30 s deadline.
++   */
++  static final long RETRY_WORST_CASE_MS = 5_000 + 30_000;
++
++  /** Builds and injects the platform events of one press. */
++  interface Injections {
++    long now();
++
++    /** Whether {@link #start} skips the framework's animation wait on this runtime. */
++    boolean skipsAnimationWait();
++
++    boolean start(long downTime);
++
++    boolean end(long downTime);
++
++    /** Releases a refused start that has this down time; the receiver may hold it. */
++    void releaseRefusedStart(long downTime);
++
++    /** Waits for the framework's animation sync; false when the runtime cannot wait separately. */
++    boolean awaitAnimations();
++  }
++
++  enum Outcome {
++    DISPATCHED,
++    START_REFUSED,
++    END_REFUSED,
++    ANIMATION_SYNC_UNAVAILABLE,
++  }
++
++  private PressSequence() {}
++
++  /** Runs one press that must answer by {@code deadline}, on the {@link Injections#now} clock. */
++  static Outcome run(Injections injections, long deadline) {
++    long downTime = injections.now();
++    if (!injections.start(downTime)) {
++      release(injections, downTime);
++      if (!injections.skipsAnimationWait()
++          || deadline - injections.now() < RETRY_WORST_CASE_MS) {
++        return Outcome.START_REFUSED;
++      }
++      if (!injections.awaitAnimations()) return Outcome.ANIMATION_SYNC_UNAVAILABLE;
++      downTime = injections.now();
++      if (!injections.start(downTime)) {
++        release(injections, downTime);
++        return Outcome.START_REFUSED;
++      }
++    }
++    // A refused end gets no cancel. The verifier records an event before the dispatcher drops it,
++    // so the press is closed there and a cancel would be inconsistent. The dispatcher drops an end
++    // only when no pointer or focus is still down, after it cancelled the receiving window itself
++    // ("touched window was removed", "focus left window"). A timed-out end was already enqueued,
++    // so the live window still receives it.
++    return injections.end(downTime) ? Outcome.DISPATCHED : Outcome.END_REFUSED;
++  }
++
++  /** Turns an outcome into the helper's response: a typed exception for each failed press. */
++  static void requireDispatched(Outcome outcome, String kind) {
++    switch (outcome) {
++      case DISPATCHED:
++        return;
++      case ANIMATION_SYNC_UNAVAILABLE:
++        throw new UnsupportedOperationException(
++            kind + " injection was refused and this runtime cannot wait for animations to retry it");
++      case START_REFUSED:
++      case END_REFUSED:
++        throw new IllegalStateException(kind + " injection was refused");
++    }
++  }
++
++  private static void release(Injections injections, long downTime) {
++    try {
++      injections.releaseRefusedStart(downTime);
++    } catch (RuntimeException ignored) {
++      // The refused start stays the reported outcome.
++    }
++  }
++}
+```
+
+**File**: `android/snapshot-helper/src/main/java/com/callstack/agentdevice/snapshothelper/TouchEvents.java` (added, +31/-0)
+```diff
+@@ -0,0 +1,31 @@
++package com.callstack.agentdevice.snapshothelper;
++
++import android.view.InputDevice;
++import android.view.MotionEvent;
++
++/** Builds the touchscreen finger events that taps and touch plans inject. */
++final class TouchEvents {
++  private TouchEvents() {}
++
++  /** One pointer per coordinate pair; pointer ids follow the array order. */
++  static MotionEvent obtain(
++      long downTime, long eventTime, int action, float[] x, float[] y, int flags) {
++    int count = x.length;
++    MotionEvent.PointerProperties[] properties = new MotionEvent.PointerProperties[count];
++    MotionEvent.PointerCoords[] coords = new MotionEvent.PointerCoords[count];
++    for (int index = 0; index < count; index += 1) {
++      properties[index] = new MotionEvent.PointerProperties();
++      properties[index].id = index;
++      properties[index].toolType = MotionEvent.TOOL_TYPE_FINGER;
++      coords[index] = new MotionEvent.PointerCoords();
++      coords[index].x = x[index];
++      coords[index].y = y[index];
++      coords[index].pressure = 1.0f;
++      coords[index].size = 1.0f;
++    }
++    MotionEvent event = MotionEvent.obtain(downTime, eventTime, action, count, properties, coords,
++        0, 0, 1.0f, 1.0f, 0, 0, InputDevice.SOURCE_TOUCHSCREEN, flags);
++    event.setSource(InputDevice.SOURCE_TOUCHSCREEN);
++    return event;
++  }
++}
+```
+
+**File**: `android/snapshot-helper/src/main/java/com/callstack/agentdevice/snapshothelper/TouchPlanInjector.java` (modified, +1/-32)
+```diff
+@@ -2,7 +2,6 @@
  
-+### Busy keyboard regression tests
-+
-+Run the two `testKeyboard*WhileTheAppIsBusy` tests with the simulator software keyboard enabled.
-+Before you boot a throwaway simulator, save the current hardware-keyboard preference:
-+
-+```sh
-+keyboard_preference=$(defaults read com.apple.iphonesimulator ConnectHardwareKeyboard 2>/dev/null) || keyboard_preference=absent
-+defaults write com.apple.iphonesimulator ConnectHardwareKeyboard -bool NO
-+```
-+
-+After the tests, restore the preference in the same shell, including when the tests fail.
-+If the key was absent, delete it:
-+
-+```sh
-+if [ "$keyboard_preference" = absent ]; then
-+  defaults delete com.apple.iphonesimulator ConnectHardwareKeyboard
-+else
-+  defaults write com.apple.iphonesimulator ConnectHardwareKeyboard -bool "$keyboard_preference"
-+fi
-+```
-+
-+If the software keyboard does not appear, the tests fail instead of skipping.
-+The tests assert command success and the fixture's `Done while busy` or `Return while busy` label.
-+The Return test also asserts the keyboard visibility reported after submission.
-+
- ## Snapshot Strategy
+ import android.app.UiAutomation;
+ import android.os.SystemClock;
+-import android.view.InputDevice;
+ import android.view.MotionEvent;
  
- iOS snapshots have two explicit public capture modes:
+ /** Injects a validated touch plan through UiAutomation with real-time sample pacing. */
+@@ -104,37 +103,7 @@ private static void injectCancel(
+ 
+   private static MotionEvent motionEvent(
+       long downTime, long eventTime, int action, PointerState pointers) {
+-    MotionEvent.PointerProperties[] properties =
+-        new MotionEvent.PointerProperties[pointers.count];
+-    MotionEvent.PointerCoords[] coords = new MotionEvent.PointerCoords[pointers.count];
+-    for (int index = 0; index < pointers.count; index += 1) {
+-      properties[index] = new MotionEvent.PointerProperties();
+-      properties[index].id = index;
+-      properties[index].toolType = MotionEvent.TOOL_TYPE_FINGER;
+-      coords[index] = new MotionEvent.PointerCoords();
+-      coords[index].x = pointers.x[index];
+-      coords[index].y = pointers.y[index];
+-      coords[index].pressure = 1.0f;
+-      coords[index].size = 1.0f;
+-    }
+-    MotionEvent event =
+-        MotionEvent.obtain(
+-            downTime,
+-            eventTime,
+-            action,
+-            pointers.count,
+-            properties,
+-            coords,
+-            0,
+-            0,
+-            1.0f,
+-            1.0f,
+-            0,
+-            0,
+-            InputDevice.SOURCE_TOUCHSCREEN,
+-            0);
+-    event.setSource(InputDevice.SOURCE_TOUCHSCREEN);
+-    return event;
++    return TouchEvents.obtain(downTime, eventTime, action, pointers.x, pointers.y, 0);
+   }
+ 
+   private static final class PointerState {
+```
+
+**File**: `android/snapshot-helper/src/main/java/com/callstack/agentdevice/snapshothelper/UiAutomationInputDispatcher.java` (modified, +38/-4)
+```diff
+@@ -6,14 +6,16 @@
+ import java.lang.reflect.Method;
+ 
+ /**
+- * Dispatches planned input without the framework's global animation synchronization.
++ * Dispatches input without the framework's global animation synchronization.
+  *
+- * <p>The public two-argument overload waits for global animations before every event. Android's
+- * three-argument test API separates that policy from synchronous input dispatch, but the SDK stub
+- * hides the method, so the helper resolves it from the runtime framework.
++ * <p>The public two-argument overload waits for global animations before a gesture's first event
++ * and after its last one, up to five seconds each. Android's three-argument test API separates that
++ * policy from synchronous input dispatch, but the SDK stub hides the method, so the helper resolves
++ * it from the runtime framework.
+  */
+ final class UiAutomationInputDispatcher {
+   private static volatile Method injectWithoutAnimationWait = findInjectWithoutAnimationWait();
++  private static volatile Method syncInputTransactions = findSyncInputTransactions();
+ 
+   private UiAutomationInputDispatcher() {}
+ 
+@@ -32,6 +34,30 @@ static boolean inject(UiAutomation automation, InputEvent event, boolean waitFor
+     }
+   }
+ 
++  /** Whether injection skips the framework's animation wait on this runtime. */
++  static boolean skipsAnimationWait() {
++    return injectWithoutAnimationWait != null;
++  }
++
++  /**
++   * Waits for the framework's animation sync. Returns false when the runtime does not expose or
++   * permit the separate sync.
++   */
++  static boolean awaitAnimations(UiAutomation automation) {
++    Method method = syncInputTransactions;
++    if (method == null) return false;
++    try {
++      method.invoke(automation);
++      return true;
++    } catch (IllegalAccessException | IllegalArgumentException error) {
++      syncInputTransactions = null;
++      return false;
++    } catch (InvocationTargetException error) {
++      rethrowCause(error.getCause());
++      throw new AssertionError("Unreachable");
++    }
++  }
++
+   private static Method findInjectWithoutAnimationWait() {
+     try {
+       return UiAutomation.class.getMethod(
+@@ -41,6 +67,14 @@ private static Method findInjectWithoutAnimationWait() {
+     }
+   }
+ 
++  private static Method findSyncInputTransactions() {
++    try {
++      return UiAutomation.class.getMethod("syncInputTransactions");
++    } catch (NoSuchMethodException | SecurityException error) {
++      return null;
++    }
++  }
++
+   private static void rethrowCause(Throwable cause) {
+     if (cause instanceof RuntimeException) throw (RuntimeException) cause;
+     if (cause instanceof Error) throw (Error) cause;
+```
+
+**File**: `android/snapshot-helper/src/test/java/com/callstack/agentdevice/snapshothelper/FillTextEntryTimeTest.java` (added, +27/-0)
+```diff
+@@ -0,0 +1,27 @@
++package com.callstack.agentdevice.snapshothelper;
++
++public final class FillTextEntryTimeTest {
++  private FillTextEntryTimeTest() {}
++
++  static void run() {
++    entersTextWhenTheAccessibilityTimeoutStillFits();
++    refusesTextEntryWithATypedBudgetRefusalWhenItNoLongerFits();
++  }
++
++  private static void entersTextWhenTheAccessibilityTimeoutStillFits() {
++    AutomationCommandHandler.requireTextEntryTime(15_000, 10_000);
++  }
++
++  private static void refusesTextEntryWithATypedBudgetRefusalWhenItNoLongerFits() {
++    try {
++      AutomationCommandHandler.requireTextEntryTime(14_999, 10_000);
++    } catch (AutomationCommandHandler.InputBudgetExhausted refusal) {
++      String expected = "Fill text was not entered: too little time left after focus";
++      if (!expected.equals(refusal.getMessage())) {
++        throw new AssertionError("Expected " + expected + ", got " + refusal.getMessage());
++      }
++      return;
++    }
++    throw new AssertionError("Expected the text entry to be refused");
++  }
++}
+```
+
+**File**: `android/snapshot-helper/src/test/java/com/callstack/agentdevice/snapshothelper/PressSequenceTest.java` (added, +190/-0)
+```diff
+@@ -0,0 +1,190 @@
++package com.callstack.agentdevice.snapshothelper;
++
++import java.util.ArrayList;
++import java.util.Arrays;
++import java.util.List;
++
++public final class PressSequenceTest {
++  private static final long ROOM = PressSequence.RETRY_WORST_CASE_MS;
++  /** A deadline far enough away that it never limits the press. */
++  private static final long OPEN = Long.MAX_VALUE / 2;
++
++  private PressSequenceTest() {}
++
++  static void run() {
++    endsWithTheStartDownTime();
++    releasesARefusedStartAndRetriesItAfterTheSyncWithAFreshDownTime();
++    retriesWhenTheDeadlineLeavesExactlyRoomForTheRetry();
++    releasesWithoutRetryingWhenTheDeadlineLeavesNoRoomForTheRetry();
++    releasesWithoutRetryingAStartRefusedLateInTheBudget();
++    releasesAStartRefusedAgainAfterTheSync();
++    doesNotCancelARefusedEnd();
++    releasesAndFailsADroppedStartAtOnceWhenInjectionWaitsForAnimations();
++    reportsAnUnavailableAnimationSyncApartFromARefusal();
++    retriesWhenTheReleaseThrows();
++    failsARefusedPressAsARefusal();
++    failsAnUnavailableSyncAsUnsupported();
++  }
++
++  private static void endsWithTheStartDownTime() {
++    FakeInjections injections = new FakeInjections(accepted());
++    expect(PressSequence.run(injections, OPEN), PressSequence.Outcome.DISPATCHED);
++    expect(injections.calls, "start 1", "end 1");
++  }
++
++  private static void releasesARefusedStartAndRetriesItAfterTheSyncWithAFreshDownTime() {
++    FakeInjections injections = new FakeInjections(refusedAfter(0), accepted());
++    expect(PressSequence.run(injections, OPEN), PressSequence.Outcome.DISPATCHED);
++    expect(injections.calls, "start 1", "release 1", "sync", "start 3", "end 3");
++  }
++
++  private static void retriesWhenTheDeadlineLeavesExactlyRoomForTheRetry() {
++    FakeInjections injections = new FakeInjections(refusedAfter(0), accepted());
++    expect(PressSequence.run(injections, 2 + ROOM), PressSequence.Outcome.DISPATCHED);
++    expect(injections.calls, "start 1", "release 1", "sync", "start 3", "end 3");
++  }
++
++  private static void releasesWithoutRetryingWhenTheDeadlineLeavesNoRoomForTheRetry() {
++    FakeInjections injections = new FakeInjections(refusedAfter(0), accepted());
++    expect(PressSequence.run(injections, 1 + ROOM), PressSequence.Outcome.START_REFUSED);
++    expect(injections.calls, "start 1", "release 1");
++  }
++
++  private static void releasesWithoutRetryingAStartRefusedLateInTheBudget() {
++    FakeInjections injections = new FakeInjections(refusedAfter(30_000), accepted());
++    expect(PressSequence.run(injections, 40_000), PressSequence.Outcome.START_REFUSED);
++    expect(injections.calls, "start 1", "release 1");
++  }
++
++  private static void releasesAStartRefusedAgainAfterTheSync() {
++    FakeInjections injections = new FakeInjections(refusedAfter(0), refusedAfter(0));
++    expect(PressSequence.run(injections, OPEN), PressSequence.Outcome.START_REFUSED);
++    expect(injections.calls, "start 1", "release 1", "sync", "start 3", "release 3");
++  }
++
++  private static void doesNotCancelARefusedEnd() {
++    FakeInjections injections = new FakeInjections(accepted());
++    injections.endAccepted = false;
++    expect(PressSequence.run(injections, OPEN), PressSequence.Outcome.END_REFUSED);
++    expect(injections.calls, "start 1", "end 1");
++  }
++
++  private static void releasesAndFailsADroppedStartAtOnceWhenInjectionWaitsForAnimations() {
++    FakeInjections injections = new FakeInjections(refusedAfter(0), accepted());
++    injections.skipsAnimationWait = false;
++    expect(PressSequence.run(injections, OPEN), PressSequence.Outcome.START_REFUSED);
++    expect(injections.calls, "start 1", "release 1");
++  }
++
++  private static void reportsAnUnavailableAnimationSyncApartFromARefusal() {
++    FakeInjections injections = new FakeInjections(refusedAfter(0), accepted());
++    injections.syncAvailable = false;
++    expect(PressSequence.run(injections, OPEN), PressSequence.Outcome.ANIMATION_SYNC_UNAVAILABLE);
++    expect(injections.calls, "start 1", "release 1", "sync");
++  }
++
++  private static void retriesWhenTheReleaseThrows() {
++    FakeInjections injections = new FakeInjections(refusedAfter(0), accepted());
++    injections.releaseThrows = true;
++    expect(PressSequence.run(injections, OPEN), PressSequence.Outcome.DISPATCHED);
++    expect(injections.calls, "start 1", "release 1", "sync", "start 3", "end 3");
++  }
++
++  private static void failsARefusedPressAsARefusal() {
++    FakeInjections injections = new FakeInjections(refusedAfter(0), refusedAfter(0));
++    expectFailure(injections, IllegalStateException.class, "Key injection was refused");
++  }
++
++  private static void failsAnUnavailableSyncAsUnsupported() {
++    FakeInjections injections = new FakeInjections(refusedAfter(0), accepted());
++    injections.syncAvailable = false;
++    expectFailure(injections, UnsupportedOperationException.class,
++        "Key injection was refused and this runtime cannot wait for animations to retry it");
++  }
++
++  private static void
+```
+
+**File**: `android/snapshot-helper/src/test/java/com/callstack/agentdevice/snapshothelper/SnapshotHelperTestSuite.java` (modified, +2/-0)
+```diff
+@@ -5,6 +5,8 @@ private SnapshotHelperTestSuite() {}
+ 
+   public static void main(String[] args) throws Exception {
+     PointerEventScheduleTest.run();
++    PressSequenceTest.run();
++    FillTextEntryTimeTest.run();
+     AccessibilityCaptureStabilizerTest.run();
+     AccessibilityReadBatchTest.run();
+     AccessibilityTreeXmlTest.run();
 ```
 
 ---
 
-### Incident Patch 3: `e997f1cf` (2026-11-13)
-**Commit Message**: fix(android): restore screenshot demo permission state (#4477)
+### Incident Patch 2: `7f69fe3d` (2026-11-17)
+**Commit Message**: fix(remote): deliver batch recordings through one request receipt (#4627)
 
-* Restore Android screenshot demo permission
+* fix(remote): deliver batch recordings through one request receipt
 
-* fix(android): preserve screenshot errors through cleanup
+* docs(remote): describe batch recording delivery
 
-* test(android): verify normalized screenshot permission restoration
+* refactor(remote): name receipt authorization checks
 
-* fix(android): restore demo permission from its observed listing
+* perf(remote): load receipt owners only for batch delivery
 
-* test(android): retain capture failures when evidence cleanup fails
+* chore(gates): require receipt-aware RPC peers and retire the old export
 
-**File**: `packages/platform-android/src/__tests__/screenshot.test.ts` (modified, +124/-0)
+* fix(remote): disclose receipt failures after client record cleanup
+
+* docs(remote): correct batch recording delivery through proxies
+
+* docs(remote): describe batch receipts for RPC callers
+
+* fix(remote): deliver receipt versions when a batch names no step
+
+A batch that fails with no step position the plan can reconcile, or whose
+close sits at or past the failure, proves no close. Its receipt's version
+and typed failures are still facts the daemon answered about this client's
+own publication, so they settle and disclose instead of being dropped:
+silently losing them left the caller file stale with no warning. Only the
+retirement is dropped. An answer that cannot be reconciled with the plan
+authorizes nothing at all.
+
+Drop the batch-policy re-export of normalizeBatchCommandName so both peers
+read the 
+
+**File**: `docs/adr/0016-active-session-script-publication.md` (modified, +6/-2)
 ```diff
-@@ -17,6 +17,7 @@ import { screenshotAndroid } from '../screenshot.ts';
- import type { DeviceInfo } from '@agent-device/kernel/device';
- import { runCmd } from '@agent-device/host-kit/command';
- import { sleep } from '../adb.ts';
-+import * as adbHost from '../adb-host.ts';
+@@ -204,12 +204,16 @@ It adds no state name, command, or flag:
+ - Teardown without `close` writes no daemon file; the caller keeps the version from the last recorded action.
+ - At the public HTTP boundary, `saveScript` is accepted only as `true` on `open` with a well-formed publication ID.
+   `session save-script` refuses a remote recording (`remote_script_publication_unsupported`), and remote `close --save-script`, `replay --save-script`, and `--save-script` in batch steps stay refused.
+-  A batch whose steps would close an armed remote recording is refused before any step runs (`remote_script_batch_close_unsupported`), because a batch delivers no script versions from its steps.
++  A batch whose steps record or close an armed remote recording is not refused. The daemon collects the versions and the close that the batch's steps wrote, and delivers them on the batch response as one `scriptDeliveryReceipt` (#4595).
+ - The daemon reports the `script-artifacts` capability in `/health`, through a proxy in its upstream health; the client refuses a remote `--save-script` before dispatch without it.
  
- const VALID_PNG = Buffer.from(
-   'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+b9xkAAAAASUVORK5CYII=',
-@@ -146,3 +147,126 @@ test('Android screenshots capture immediately by default and stabilize only when
-     );
-   });
- });
-+
-+for (const initial of [undefined, '0', '1', 'custom=value'] as const) {
-+  for (const outcome of ['success', 'capture failure', 'settle failure'] as const) {
-+    test(`stabilized screenshot restores ${initial ?? 'absent'} after ${outcome}`, async () => {
-+      let setting: string | undefined = initial;
-+      const primary = new Error(outcome);
-+      mockRunCmd.mockImplementation(async (_cmd, args) => {
-+        if (args.includes('settings')) {
-+          if (args.includes('list')) {
-+            return {
-+              exitCode: 0,
-+              stdout: setting === undefined ? '' : `sysui_demo_allowed=${setting}\n`,
-+              stderr: '',
-+            };
-+          }
-+
-+          if (args.includes('get')) return { exitCode: 0, stdout: `${setting}\n`, stderr: '' };
-+          if (args.includes('delete')) setting = undefined;
-+          if (args.includes('put')) setting = args.at(-1);
-+        }
-+        if (args.includes('exec-out')) {
-+          if (outcome === 'capture failure') throw primary;
-+          return { exitCode: 0, stdout: '', stderr: '', stdoutBuffer: VALID_PNG };
-+        }
-+        return { exitCode: 0, stdout: '', stderr: '' };
-+      });
-+      if (outcome === 'settle failure') mockSleep.mockRejectedValue(primary);
-+      await withTempScreenshot('screenshot-restore-', async (outPath) => {
-+        if (outcome === 'success') await screenshotAndroid(device, outPath, { stabilize: true });
-+        else
-+          await assert.rejects(
-+            screenshotAndroid(device, outPath, { stabilize: true }),
-+            (error) => error === primary,
-+          );
-+        assert.equal(setting, initial);
-+      });
-+    });
-+  }
-+}
-+
-+test('failed prior setting read does not mutate demo mode', async () => {
-+  mockRunCmd.mockImplementation(async (_cmd, args) => {
-+    if (args.includes('settings') && args.includes('list'))
-+      return { exitCode: 1, stdout: '', stderr: 'read failed' };
-+    throw new Error('unexpected command');
-+  });
-+  await withTempScreenshot('screenshot-read-failure-', async (outPath) => {
-+    await assert.rejects(screenshotAndroid(device, outPath, { stabilize: true }), {
-+      code: 'COMMAND_FAILED',
-+    });
-+    assert.equal(mockRunCmd.mock.calls.length, 1);
-+  });
-+});
-+
-+test('restoration failure surfaces after a successful capture', async () => {
-+  mockRunCmd.mockImplementation(async (_cmd, args) => {
-+    if (args.includes('settings') && args.includes('delete'))
-+      return { exitCode: 1, stdout: '', stderr: 'restore failed' };
-+    if (args.includes('exec-out'))
-+      return { exitCode: 0, stdout: '', stderr: '', stdoutBuffer: VALID_PNG };
-+    return { exitCode: 0, stdout: '', stderr: '' };
-+  });
-+  await withTempScreenshot('screenshot-restore-failure-', async (outPath) => {
-+    await assert.rejects(screenshotAndroid(device, outPath, { stabilize: true }), {
-+      code: 'COMMAND_FAILED',
-+    });
-+  });
-+});
-+
-+test('restoration failure is diagnostic evidence when capture fails', async () => {
-+  const primary = new Error('capture failed');
-+  const cleanup = new Error('restore failed');
-+  const diagnostic = vi.spyOn(adbHost.requireAndroidAdbHost(), 'emitDiagnostic');
-+  mockRunCmd.mockImplementation(async (_cmd, args) => {
-+    if (args.includes('settings') && args.includes('delete')) throw cleanup;
-+    if (args.includes('exec-out')) throw primary;
-+    return { exitCode: 0, stdout: '', stderr: '' };
-+  });
-+  try {
-+    await withTempScreenshot('screenshot-both-fail-', async (outPath) => {
-+      await assert.rejects(
-+        screenshotAndroid(device, outPath, { stabilize: true }),
-+        (error) => error === primary,
-+      );
-+      assert.equal(
-+        diagnostic.mock.calls.some(
-+          ([event]) => event.phase === 'android_screenshot_demo_setting_restore_failed',
-+        ),
-+        true,
-+      );
-+    });
-+  } finally {
-+    diagnostic.mockRestore();
-+  }
-+});
-+
-+test('restoration uses the exact listing value across CRLF without a secondary get', async () => {
-+  let setting = '0';
-+  mockRunCmd.mockImplementation(async (_cmd, args) => {
-+    if (args.includes('settings')) {
-+      if (args.includes('list'))
-+        return {
-+          exitCode: 0,
-+          stdout: `sysui_demo_allowed_extra=1\r\nsysui_demo_allowed=${setting}\r\nother=2\r\n`,
-+          stderr: '',
-+        };
-+      if (args.includes('get')) return { exitCode: 0, stdout: `${setting}\r\n`, stderr: '' };
-+      if (args.includes('put')) s
+ The destination keeps local `--save-script` semantics: the client creates a missing parent directory and checks no ancestor ownership, so another local user who can write an ancestor directory can redirect the file, locally and remotely alike (#4565).
+ Every result that can carry a script version discloses a failed delivery: the SDK result, the CLI human output and `--json`, and the MCP tool result each carry `scriptDeliveryFailure` and the warning, so no caller reads a stale file as current.
+-Known limitation (#4595): a batch delivers no script versions from its steps, so closing an armed remote recording inside a batch stays refused.
++A batch delivers through one receipt the daemon's request owner answers on the batch reply, successful or failed (#4595). The daemon collects each executed step's script effects as the batch runner reports them, because a step's own reply travels inside a result entry a client must not read. The receipt names the newest full-script version of the recording, the plan position of a step that closed it, and the typed failures; it is answered only for a request whose nested steps fed it, so every single-command reply keeps the shape it had before. A client validates the receipt against its own record and its submitted plan, downloads at most its one version, and treats a receipt it cannot fully account for as authorizing nothing.
++A failed batch distinguishes what its error omits from what it gets wrong. An answer that names no failing step, or one whose close sits at or past a step the plan confirms never reached, proves no close: the version and the failures still settle, because the daemon answered them about that client's own publication, and only the retirement is dropped. Silently dropping them would leave the caller's file stale with no warning. An answer that names a step, or a command at that step, the submitted plan does not carry is a malformed answer and authorizes nothing at all.
++A response artifact may write only a field it creates. `savedScript`, `artifacts`, `scriptDeliveryFailure` and `warnings` belong to the client: an invalid artifact that names one as its `field` leaves that field untouched, so a peer can neither replace the destination the client chose nor erase the disclosure of a delivery it just failed.
++This receipt requires RPC protocol 3: protocol-2 clients ignore it, so admitting a batch close for them could leave the caller's final script undelivered. The health compatibility gate rejects those skewed peers before dispatch (ADR 0006).
++Rejected: deriving delivery effects by interpreting the batch's step entries, partial results and failure position, because six review rounds kept finding answers that made a client deliver the wrong version, retire a recording that never closed, or drop a failure (#4582).
+ Rejected: a remote `session save-script` download, because it added a second publication path and a retry protocol.
+ Rejected: delivery only at close, because a session that an external owner closes would lose its recording.
+ Rejected: daemon-minted recording IDs bound through per-request claims, because the claim, binding, and tombstone protocol cost more than a client-minted ID that only its own client can match.
 ```
 
-**File**: `packages/platform-android/src/__tests__/snapshot-results.test.ts` (added, +563/-0)
+**File**: `packages/command-registry/src/batch-policy.ts` (modified, +3/-4)
 ```diff
-@@ -0,0 +1,563 @@
-+import { afterEach, beforeEach, test, vi } from 'vitest';
-+import assert from 'node:assert/strict';
+@@ -1,6 +1,9 @@
+ import { deriveStructuredBatchCommandNames } from './derive.ts';
+ import { commandDescriptors } from './registry.ts';
+ import { AppError } from '@agent-device/kernel/errors';
++import { normalizeBatchCommandName } from '@agent-device/contracts/input-validation';
 +
-+vi.mock('@agent-device/host-kit/command', async (importOriginal) => {
-+  const actual = await importOriginal<typeof import('@agent-device/host-kit/command')>();
-+  return { ...actual, runCmd: vi.fn() };
-+});
-+vi.mock('../adb.ts', async (importOriginal) => {
-+  const actual = await importOriginal<typeof import('../adb.ts')>();
-+  return { ...actual, sleep: vi.fn() };
-+});
++export { normalizeBatchCommandName };
+ 
+ /**
+  * The exact set of command names exposed through `batch`, as a narrow union.
+@@ -71,10 +74,6 @@ function isStructuredBatchCommandName(command: string): command is StructuredBat
+   return structuredBatchCommandNames.has(command);
+ }
+ 
+-export function normalizeBatchCommandName(command: unknown): string {
+-  return typeof command === 'string' ? command.trim().toLowerCase() : '';
+-}
+-
+ /**
+  * The command a raw step value will RUN as, or undefined.
+  *
+```
+
+**File**: `packages/contracts/src/daemon-http.ts` (modified, +1/-1)
+```diff
+@@ -123,7 +123,7 @@ export function buildDaemonHttpLeaseHeaders(leaseId: string | undefined): Record
+ // Enforced, not just documented: `test/wire-compat/` digests the declarations
+ // that cross this boundary and fails when one changes shape without a bump or
+ // an acknowledged-compatible entry (#1432).
+-export const DAEMON_RPC_PROTOCOL_VERSION = 2;
++export const DAEMON_RPC_PROTOCOL_VERSION = 3;
+ 
+ /**
+  * The largest serialized daemon request, in UTF-8 bytes, that any transport reads: the socket
+```
+
+**File**: `packages/contracts/src/facades/command.ts` (modified, +1/-0)
+```diff
+@@ -15,6 +15,7 @@ export type { DaemonWireRequest, DaemonWireRequestMeta } from '../daemon-wire-re
+ export type { DispatchedCommand } from '../dispatched-command.ts';
+ export {
+   ANDROID_SHELL_TEXT_UNSUPPORTED_REASON,
++  normalizeBatchCommandName,
+   readOptionalInteger,
+   readOptionalNumber,
+ } from '../input-validation.ts';
+```
+
+**File**: `packages/contracts/src/input-validation.ts` (modified, +5/-0)
+```diff
+@@ -46,3 +46,8 @@ export function readOptionalNumber(
+  * because every producer and consumer of the reason already evaluates this module.
+  */
+ export const ANDROID_SHELL_TEXT_UNSUPPORTED_REASON = 'android_shell_text_unsupported' as const;
 +
-+import { bindMissingAndroidHelperHost } from './test-utils/android-host-test-setup.ts';
++/** Resolves a batch step command with the same whitespace and case rules on both peers. */
++export function normalizeBatchCommandName(command: unknown): string {
++  return typeof command === 'string' ? command.trim().toLowerCase() : '';
++}
+```
+
+**File**: `packages/daemon-client/src/__tests__/daemon-client-transport-health-compat.test.ts` (modified, +20/-0)
+```diff
+@@ -102,3 +102,23 @@ test('a daemon health payload without an upstream link or host arch parses as be
+     },
+   );
+ });
 +
-+import { snapshotAndroid } from '../snapshot.ts';
-+
-+import { buildUiHierarchySnapshot, parseUiHierarchyTree } from '../ui-hierarchy.ts';
-+
-+import * as diagnosticsModule from '@agent-device/host-kit/diagnostics';
-+import { AppError } from '@agent-device/kernel/errors';
-+
-+import { resetAndroidSnapshotHelperSessions } from '../snapshot-helper-session-lifecycle.ts';
-+import { type AndroidAdbExecutor } from '../snapshot-helper.ts';
-+
-+import {
-+  androidHelperInstrumentationOutput as helperOutput,
-+  ANDROID_HELPER_INSTALLED_VERSION_PROBE as installedHelperProbe,
-+} from './snapshot-helper-session.fixtures.ts';
-+
-+import {
-+  mockSleep,
-+  device,
-+  helperArtifact,
-+  snapshotAndroidWithHelper,
-+  createHelperAdb,
-+  androidSnapshotHelperAdb,
-+  captureDiagnostics,
-+  resetSnapshotTestState,
-+} from './test-utils/android-snapshot-test-world.ts';
-+
-+beforeEach(resetSnapshotTestState);
-+afterEach(async () => {
-+  await resetAndroidSnapshotHelperSessions();
-+});
-+
-+test('snapshotAndroid emits helper failure diagnostics', async () => {
-+  const helperAdb: AndroidAdbExecutor = async (args) => {
-+    if (args.includes('--show-versioncode')) {
-+      return {
-+        exitCode: 0,
-+        stdout: 'package:com.callstack.agentdevice.snapshothelper versionCode:13004',
-+        stderr: '',
-+      };
-+    }
-+    if (args[0] === 'shell' && args[1] === 'am' && args[2] === 'force-stop')
-+      return { exitCode: 0, stdout: '', stderr: '' };
-+    return { exitCode: 1, stdout: '', stderr: 'helper unavailable' };
-+  };
-+
-+  const diagnostics = await captureDiagnostics(
-+    { session: 'snapshot-failure', requestId: 'req-2', command: 'snapshot', debug: true },
-+    async () => {
++test.each(['daemon', 'upstream'] as const)(
++  'released protocol-2 %s cannot silently omit batch receipt delivery',
++  async (link) => {
++    const payload =
++      link === 'upstream' ? proxyHealth(2) : { ...DAEMON_LINK, rpcProtocolVersion: 2 };
++    await withHealthServer(payload, async (baseUrl) => {
 +      await assert.rejects(
-+        () => snapshotAndroid(device, { helperAdb, helperArtifact }),
++        readRemoteDaemonHealth({ baseUrl, token: 't', pid: 0 }),
 +        (error: unknown) => {
-+          assert(error instanceof AppError);
-+          assert.equal(error.code, 'COMMAND_FAILED');
-+          assert.match(error.message, /helper unavailable/);
++          const failure = error as { code?: string; details?: Record<string, unknown> };
++          assert.equal(failure.code, 'COMMAND_FAILED');
++          assert.equal(failure.details?.remoteRpcProtocolVersion, 2);
++          assert.equal(failure.details?.supportedRpcProtocolVersion, DAEMON_RPC_PROTOCOL_VERSION);
 +          return true;
 +        },
 +      );
-+      return diagnosticsModule.flushDiagnosticsToSessionFile({ force: true })?.path ?? null;
-+    },
-+  );
-+
-+  assert.match(diagnostics, /android_snapshot_helper_failed/);
-+  assert.match(diagnostics, /helper unavailable/);
-+});
-+
-+test('snapshotAndroid emits unavailable diagnostics when helper artifact is missing', async () => {
-+  bindMissingAndroidHelperHost();
-+  const diagnostics = await captureDiagnostics(
-+    {
-+      session: 'snapshot-helper-missing',
-+      requestId: 'req-missing',
-+      command: 'snapshot',
-+      debug: true,
-+    },
-+    async () => {
-+      await assert.rejects(() => snapshotAndroid(device), /Android snapshot helper is unavailable/);
-+      return diagnosticsModule.flushDiagnosticsToSessionFile({ force: true })?.path ?? null;
-+    },
-+  );
-+
-+  assert.match(diagnostics, /android_snapshot_helper_artifact_resolution/);
-+  assert.match(diagnostics, /android_snapshot_helper_unavailable/);
-+  assert.match(diagnostics, /artifact_not_found/);
-+});
-+
-+test('snapshotAndroid gives an actionable hint when the helper artifact is missing on disk', async () => {
-+  bindMissingAndroidHelperHost();
-+  await assert.rejects(
-+    () => snapshotAndroid(device),
-+    (error) => {
-+      assert.match((error as Error).message, /the bundled helper artifact was not found/);
-+      const hint = String((error as { details?: Record<string, unknown> }).details?.hint);
-+      assert.match(hint, /pnpm build:android/);
-+      assert.match(hint, /prepack/);
-+      assert.match(hint, /\.manifest\.json/);
-+      assert.match(hint, /\.apk/);
-+      // The npm package excludes *.idsig by design — the hint must never claim it is required.
-+      assert.doesNotMatch(hint, /idsig/);
-+      return true;
-+    },
-+  );
-+});
-+
-+test('snapshotAndroid distinguishes a device-side install rejection from a missing build artifact', async () => {
-+  const helperAdb: AndroidAdbExecutor = async (args) => {
-+    if (args.includes('--show-versioncode')) {
-+      // No installed package reported, so ensureAndroidSnapshotHelper treats the
-+      // helper as missing and attempts a real install.
-+      return { exitCode: 0, stdout: '', stderr: '' };
-+    }
-+    if (args[0] === 'install') {
-+      return { exitCode: 1, stdout: '', stderr: 'Failure [INSTALL_FAILED_TEST_ONLY]' };
-+    }
-+    throw new Error(`unexpected adb args: ${args.join(' ')}`);
-+  };
-+
-+  aw
-```
-
-**File**: `packages/platform-android/src/__tests__/snapshot.test.ts` (modified, +31/-629)
-```diff
-@@ -12,23 +12,17 @@ vi.mock('../adb.ts', async (importOriginal) => {
-   return { ...actual, sleep: vi.fn() };
- });
- 
--import {
--  bindMissingAndroidHelperHost,
--  mkdtempForTest,
--} from './test-utils/android-host-test-setup.ts';
-+import { mkdtempForTest } from './test-utils/android-host-test-setup.ts';
- import { screenshotAndroid } from '../screenshot.ts';
- import { snapshotAndroid } from '../snapshot.ts';
- import { readAndroidGestureViewport } from '../touch-executor.ts';
--import { buildUiHierarchySnapshot, parseUiHierarchyTree } from '../ui-hierarchy.ts';
--import type { DeviceInfo } from '@agent-device/kernel/device';
-+
- import * as diagnosticsModule from '@agent-device/host-kit/diagnostics';
- import { AppError } from '@agent-device/kernel/errors';
--import { runCmd } from '@agent-device/host-kit/command';
--import { sleep } from '../adb.ts';
--import { resetAndroidSnapshotHelperInstallCache } from '../snapshot-helper-install.ts';
-+
- import { resetAndroidSnapshotHelperSessions } from '../snapshot-helper-session-lifecycle.ts';
- import { type AndroidAdbExecutor } from '../snapshot-helper.ts';
--import { ANDROID_SNAPSHOT_HELPER_FIXTURE_ARTIFACT } from './test-utils/android-snapshot-helper.ts';
-+
- import {
-   androidHelperInstrumentationOutput as helperOutput,
-   createPersistentSnapshotHelperProvider,
-@@ -39,74 +33,20 @@ import {
- } from './snapshot-helper-session.fixtures.ts';
- import { withAndroidAdbProvider, type AndroidAdbProvider } from '../adb-executor.ts';
- 
--const VALID_PNG = Buffer.from(
--  'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+b9xkAAAAASUVORK5CYII=',
--  'base64',
--);
--const mockRunCmd = vi.mocked(runCmd);
--const mockSleep = vi.mocked(sleep);
--
--const device: DeviceInfo = {
--  platform: 'android',
--  id: 'emulator-5554',
--  name: 'Pixel',
--  kind: 'emulator',
--  booted: true,
--};
--
--const helperArtifact = ANDROID_SNAPSHOT_HELPER_FIXTURE_ARTIFACT;
--
--function snapshotAndroidWithHelper(
--  helperAdb: AndroidAdbExecutor,
--  options: Omit<
--    NonNullable<Parameters<typeof snapshotAndroid>[1]>,
--    'helperAdb' | 'helperArtifact'
--  > = {},
--) {
--  return snapshotAndroid(device, {
--    ...options,
--    helperAdb,
--    helperArtifact,
--  });
--}
--
--function createHelperAdb(
--  handlers: Partial<Record<'instrument' | 'activity', AndroidAdbExecutor>>,
--): AndroidAdbExecutor {
--  return async (args, options) => {
--    if (isHelperVersionProbe(args)) return installedHelperProbe;
--    if (isHelperRuntimeReset(args)) {
--      return { exitCode: 0, stdout: '', stderr: '' };
--    }
--    const operation = helperAdbOperation(args);
--    const handler = operation ? handlers[operation] : undefined;
--    if (handler) return await handler(args, options);
--    throw new Error(`unexpected helper adb args: ${args.join(' ')}`);
--  };
--}
--
--function isHelperVersionProbe(args: readonly string[]): boolean {
--  return args.includes('--show-versioncode');
--}
--
--function helperAdbOperation(args: readonly string[]): 'instrument' | 'activity' | undefined {
--  if (args.includes('instrument')) return 'instrument';
--  return args.includes('dumpsys') && args.includes('activity') ? 'activity' : undefined;
--}
--
--beforeEach(async () => {
--  await resetAndroidSnapshotHelperSessions();
--  resetAndroidSnapshotHelperInstallCache();
--  mockRunCmd.mockReset();
--  mockSleep.mockReset();
--  mockSleep.mockResolvedValue(undefined);
--  mockRunCmd.mockImplementation(async (_cmd, args) => {
--    if (args.includes('exec-out')) {
--      return { exitCode: 0, stdout: '', stderr: '', stdoutBuffer: VALID_PNG };
--    }
--    return { exitCode: 0, stdout: '', stderr: '' };
--  });
--});
-+import {
-+  VALID_PNG,
-+  mockRunCmd,
-+  mockSleep,
-+  device,
-+  helperArtifact,
-+  snapshotAndroidWithHelper,
-+  createHelperAdb,
-+  isAndroidSdkVersionCommand,
-+  captureDiagnostics,
-+  resetSnapshotTestState,
-+} from './test-utils/android-snapshot-test-world.ts';
-+
-+beforeEach(resetSnapshotTestState);
- 
- afterEach(async () => {
-   await resetAndroidSnapshotHelperSessions();
-@@ -119,7 +59,16 @@ test('screenshotAndroid waits for transient UI when stabilization is requested',
-     await screenshotAndroid(device, outPath, { stabilize: true });
- 
-     // Demo mode is one setting and two broadcasts, all before the settle.
--    assert.deepEqual(events, ['enable', 'enable', 'enable', 'settle:1000', 'capture', 'disable']);
-+    assert.deepEqual(events, [
-+      'read',
-+      'enable',
-+      'enable',
-+      'enable',
-+      'settle:1000',
-+      'capture',
-+      'disable',
-+      'restore',
-+    ]);
-   });
- });
- 
-@@ -221,7 +170,9 @@ function mockScreenshotEvents(events: string[]): void {
-       events.push('capture');
-       return { exitCode: 0, stdout: '', stderr: '', stdoutBuffer: VALID_PNG };
-     }
--    if (!args.includes('dumpsys')) events.push(args.includes('exit') ? 'disable' : 'enable');
-+    if (args.includes('list') && args.includes('settings')) events.push('read');
-+    else if (args.includes('delete') && args.includes('settings')) eve
-```
-
-**File**: `packages/platform-android/src/__tests__/test-utils/android-snapshot-test-world.ts` (added, +119/-0)
-```diff
-@@ -0,0 +1,119 @@
-+import { vi } from 'vitest';
-+import assert from 'node:assert/strict';
-+import { promises as fs } from 'node:fs';
-+import { runCmd } from '@agent-device/host-kit/command';
-+import type { DeviceInfo } from '@agent-device/kernel/device';
-+import * as diagnosticsModule from '@agent-device/host-kit/diagnostics';
-+import { sleep } from '../../adb.ts';
-+import { snapshotAndroid } from '../../snapshot.ts';
-+import { resetAndroidSnapshotHelperInstallCache } from '../../snapshot-helper-install.ts';
-+import { resetAndroidSnapshotHelperSessions } from '../../snapshot-helper-session-lifecycle.ts';
-+import type { AndroidAdbExecutor } from '../../snapshot-helper.ts';
-+import { mkdtempForTest } from './android-host-test-setup.ts';
-+import { ANDROID_SNAPSHOT_HELPER_FIXTURE_ARTIFACT } from './android-snapshot-helper.ts';
-+import {
-+  androidHelperInstrumentationOutput as helperOutput,
-+  isAndroidHelperRuntimeForceStop as isHelperRuntimeReset,
-+  ANDROID_HELPER_INSTALLED_VERSION_PROBE as installedHelperProbe,
-+} from '../snapshot-helper-session.fixtures.ts';
-+
-+export const VALID_PNG = Buffer.from(
-+  'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+b9xkAAAAASUVORK5CYII=',
-+  'base64',
-+);
-+
-+export const mockRunCmd = vi.mocked(runCmd);
-+
-+export const mockSleep = vi.mocked(sleep);
-+
-+export const device: DeviceInfo = {
-+  platform: 'android',
-+  id: 'emulator-5554',
-+  name: 'Pixel',
-+  kind: 'emulator',
-+  booted: true,
-+};
-+
-+export const helperArtifact = ANDROID_SNAPSHOT_HELPER_FIXTURE_ARTIFACT;
-+
-+export function snapshotAndroidWithHelper(
-+  helperAdb: AndroidAdbExecutor,
-+  options: Omit<
-+    NonNullable<Parameters<typeof snapshotAndroid>[1]>,
-+    'helperAdb' | 'helperArtifact'
-+  > = {},
-+) {
-+  return snapshotAndroid(device, {
-+    ...options,
-+    helperAdb,
-+    helperArtifact,
-+  });
-+}
-+
-+export function createHelperAdb(
-+  handlers: Partial<Record<'instrument' | 'activity', AndroidAdbExecutor>>,
-+): AndroidAdbExecutor {
-+  return async (args, options) => {
-+    if (isHelperVersionProbe(args)) return installedHelperProbe;
-+    if (isHelperRuntimeReset(args)) {
-+      return { exitCode: 0, stdout: '', stderr: '' };
-+    }
-+    const operation = helperAdbOperation(args);
-+    const handler = operation ? handlers[operation] : undefined;
-+    if (handler) return await handler(args, options);
-+    throw new Error(`unexpected helper adb args: ${args.join(' ')}`);
-+  };
-+}
-+
-+function isHelperVersionProbe(args: readonly string[]): boolean {
-+  return args.includes('--show-versioncode');
-+}
-+
-+function helperAdbOperation(args: readonly string[]): 'instrument' | 'activity' | undefined {
-+  if (args.includes('instrument')) return 'instrument';
-+  return args.includes('dumpsys') && args.includes('activity') ? 'activity' : undefined;
-+}
-+
-+export function androidSnapshotHelperAdb(xml: string, activityDump?: string): AndroidAdbExecutor {
-+  return createHelperAdb({
-+    instrument: async () => ({ exitCode: 0, stdout: helperOutput(xml), stderr: '' }),
-+    ...(activityDump === undefined
-+      ? {}
-+      : { activity: async () => ({ exitCode: 0, stdout: activityDump, stderr: '' }) }),
-+  });
-+}
-+
-+export function isAndroidSdkVersionCommand(args: readonly string[]): boolean {
-+  return (
-+    args.includes('shell') && args.includes('getprop') && args.includes('ro.build.version.sdk')
-+  );
-+}
-+
-+export async function captureDiagnostics(
-+  scope: Parameters<typeof diagnosticsModule.withDiagnosticsScope>[0],
-+  callback: () => Promise<string | null>,
-+): Promise<string> {
-+  const previousHome = process.env.HOME;
-+  process.env.HOME = await mkdtempForTest('agent-device-android-diag-');
-+  try {
-+    const diagnosticsPath = await diagnosticsModule.withDiagnosticsScope(scope, callback);
-+    assert.ok(diagnosticsPath);
-+    return await fs.readFile(diagnosticsPath, 'utf8');
-+  } finally {
-+    process.env.HOME = previousHome;
-+  }
-+}
-+
-+export async function resetSnapshotTestState(): Promise<void> {
-+  await resetAndroidSnapshotHelperSessions();
-+  resetAndroidSnapshotHelperInstallCache();
-+  mockRunCmd.mockReset();
-+  mockSleep.mockReset();
-+  mockSleep.mockResolvedValue(undefined);
-+  mockRunCmd.mockImplementation(async (_cmd, args) => {
-+    if (args.includes('exec-out')) {
-+      return { exitCode: 0, stdout: '', stderr: '', stdoutBuffer: VALID_PNG };
-+    }
-+    return { exitCode: 0, stdout: '', stderr: '' };
-+  });
-+}
-```
-
-**File**: `packages/platform-android/src/screenshot.ts` (modified, +46/-7)
-```diff
-@@ -1,9 +1,10 @@
- import type { ScreenshotCaptureFacts } from '@agent-device/contracts/interactor-types';
--import { AppError } from '@agent-device/kernel/errors';
-+import { AppError, normalizeError } from '@agent-device/kernel/errors';
- import type { DeviceInfo } from '@agent-device/kernel/device';
- import type { ShellWord } from '@agent-device/kernel/device-shell';
- import { runAndroidExecOut, runAndroidShell, sleep } from './adb.ts';
--import { requireAndroidAdbHost } from './adb-host.ts';
-+import { emitAndroidAdbDiagnostic, requireAndroidAdbHost } from './adb-host.ts';
-+import { androidAdbResultError } from './adb-executor.ts';
- import { probeAndroidDisplayRotation } from './input-actions.ts';
- 
- // PNG file signature: 0x89 P N G \r \n 0x1A \n
-@@ -29,14 +30,52 @@ export async function screenshotAndroid(
-     return await captureAndroidScreenshotWithRotation(device, outPath);
-   }
- 
--  await enableAndroidDemoMode(device);
-+  const listing = await runDemoSettingCommand(device, ['settings', 'list', 'global']);
-+  const settingPrefix = 'sysui_demo_allowed=';
-+  const previous = listing.stdout
-+    .split(/\r?\n/)
-+    .find((line) => line.startsWith(settingPrefix))
-+    ?.slice(settingPrefix.length);
-+
-+  let capture: ScreenshotCaptureFacts;
-   try {
-+    await enableAndroidDemoMode(device);
-     // Allow transient UI affordances like scrollbars to fade before capture.
-     await sleep(ANDROID_SCREENSHOT_SETTLE_DELAY_MS);
--    return await captureAndroidScreenshotWithRotation(device, outPath);
--  } finally {
--    await disableAndroidDemoMode(device).catch(() => {});
-+    capture = await captureAndroidScreenshotWithRotation(device, outPath);
-+  } catch (error) {
-+    await restoreAndroidDemoSetting(device, previous).catch((restoreError: unknown) => {
-+      emitAndroidAdbDiagnostic({
-+        level: 'error',
-+        phase: 'android_screenshot_demo_setting_restore_failed',
-+        data: { error: normalizeError(restoreError) },
-+      });
 +    });
-+    throw error;
-+  }
-+  await restoreAndroidDemoSetting(device, previous);
-+  return capture;
-+}
-+
-+async function restoreAndroidDemoSetting(
-+  device: DeviceInfo,
-+  previous: string | undefined,
-+): Promise<void> {
-+  await disableAndroidDemoMode(device).catch(() => {});
-+  await runDemoSettingCommand(
-+    device,
-+    previous === undefined
-+      ? ['settings', 'delete', 'global', 'sysui_demo_allowed']
-+      : ['settings', 'put', 'global', 'sysui_demo_allowed', previous],
++  },
++);
+```
+
+**File**: `packages/daemon-client/src/daemon-client-rpc.ts` (modified, +36/-2)
+```diff
+@@ -10,7 +10,11 @@ import {
+ } from '@agent-device/kernel/errors';
+ import { sanitizeErrorCause } from '@agent-device/kernel/redaction';
+ import { createRequestId } from '@agent-device/host-kit/diagnostics';
+-import { materializeRemoteArtifacts } from '@agent-device/remote/daemon-artifacts';
++import {
++  downloadRemoteArtifact,
++  materializeRemoteArtifacts,
++  settleScriptDeliveryReceiptOfFailure,
++} from '@agent-device/remote/daemon-artifacts';
+ import { localizeRemoteDaemonError } from '@agent-device/remote/remote-request-diagnostics';
+ import type { DaemonInfo } from './daemon-client-metadata.ts';
+ import { DAEMON_REQUEST_MAX_BYTES } from '@agent-device/contracts/daemon-http';
+@@ -102,7 +106,37 @@ async function rejectDaemonHttpRpcError(
+     stateDir,
+     requestId,
+   });
+-  reject(appErrorFromDaemonError(localized, requestId));
++  reject(
++    appErrorFromDaemonError(
++      await settleFailedDeliveryReceipt(info, req, stateDir, localized),
++      requestId,
++    ),
 +  );
 +}
 +
-+async function runDemoSettingCommand(device: DeviceInfo, words: ShellWord[]) {
-+  const result = await runAndroidShell(device, words, { allowFailure: true });
-+  if (result.exitCode !== 0) {
-+    throw androidAdbResultError('Android screenshot demo setting command failed', result);
-   }
-+  return result;
++/**
++ * Settles the batch delivery receipt (#4595) a failed remote answer names: a batch that stopped
++ * mid-plan still delivers what its completed steps wrote, and the disclosure rides the error the
++ * caller receives. Never throws, so a receipt that cannot settle still leaves the original failure.
++ */
++async function settleFailedDeliveryReceipt(
++  info: DaemonInfo,
++  req: DaemonWireRequest,
++  stateDir: string,
++  error: DaemonError,
++): Promise<DaemonError> {
++  if (!info.baseUrl) return error;
++  try {
++    return await settleScriptDeliveryReceiptOfFailure(
++      { baseUrl: info.baseUrl, token: info.token },
++      req,
++      error,
++      stateDir,
++      downloadRemoteArtifact,
++    );
++  } catch {
++    return error;
++  }
  }
  
- /**
-@@ -46,7 +85,7 @@ export async function screenshotAndroid(
- async function enableAndroidDemoMode(device: DeviceInfo): Promise<void> {
-   const shell = (words: ShellWord[]) => runAndroidShell(device, words, { allowFailure: true });
- 
--  await shell(['settings', 'put', 'global', 'sysui_demo_allowed', '1']);
-+  await runDemoSettingCommand(device, ['settings', 'put', 'global', 'sysui_demo_allowed', '1']);
- 
-   const broadcast = (extra: ShellWord[]) =>
-     shell(['am', 'broadcast', '-a', 'com.android.systemui.demo', '-e', 'command', ...extra]);
+ function toDaemonHttpRpcError(error: {
 ```
 
-**File**: `test/integration/android-emulator-e2e/live-capture-scenario.ts` (modified, +37/-0)
+**File**: `packages/daemon/src/core/__tests__/request-script-delivery-ledger.test.ts` (added, +388/-0)
 ```diff
-@@ -1,13 +1,50 @@
- import assert from 'node:assert/strict';
- import path from 'node:path';
-+import fs from 'node:fs';
- 
- import { PUBLIC_COMMANDS } from '@agent-device/command-registry/catalog';
- import { assertPngFile } from '../provider-scenarios/assertions.ts';
-+import { assertScreenshotDemoPermissionRestoration } from './live-demo-permission-scenario.ts';
- import { type LiveContext, runStep, verifyCommand } from './live-harness.ts';
- 
- const C = PUBLIC_COMMANDS;
- 
- export async function assertCaptureAndClose(context: LiveContext): Promise<void> {
-+  await runStep(context, 'open Settings for native permission restoration', [
-+    'open',
-+    'com.android.settings',
-+    '--no-test-ime',
-+  ]);
-+  const foreground = await runStep(context, 'verify Settings is foreground', ['appstate']);
-+  assert.equal(foreground.json?.data?.package, 'com.android.settings');
-+  const snapshot = await runStep(
-+    context,
-+    'verify candidate Android helper before normalized capture',
-+    ['snapshot', '-i'],
-+  );
-+  const version = JSON.parse(fs.readFileSync('package.json', 'utf8')).version;
-+  assert.equal(snapshot.json?.data?.androidSnapshot?.backend, 'android-helper');
-+  assert.equal(snapshot.json?.data?.androidSnapshot?.helperVersion, version);
-+  fs.writeFileSync(
-+    path.join(context.artifactDir, 'demo-permission-snapshot.json'),
-+    JSON.stringify(snapshot.json, null, 2),
-+  );
-+  await assertScreenshotDemoPermissionRestoration({
-+    serial: context.serial,
-+    artifactDir: context.artifactDir,
-+    captureScreenshot: async (filePath) => {
-+      await runStep(context, 'capture normalized permission restoration evidence', [
-+        'screenshot',
-+        filePath,
-+        '--normalize-status-bar',
-+      ]);
+@@ -0,0 +1,388 @@
++import { expect, test } from 'vitest';
++import type { DaemonArtifact, DaemonResponse } from '@agent-device/kernel/contracts';
++import { readScriptDeliveryReceipt } from '@agent-device/kernel/contracts';
++import type { DaemonRequest } from '../daemon-request.ts';
++import {
++  collectBatchStepDelivery,
++  type ScriptDeliveryLedger,
++  reportScriptDelivery,
++} from '../request-script-delivery-ledger.ts';
++
++/**
++ * The batch delivery receipt's daemon owner (ADR 0016, #4595). Each case answers step replies the
++ * way a batch runner reports them and asserts what the ONE outer receipt says, because a client may
++ * act only on that receipt.
++ */
++
++const ID = '3f2a1b0c-0000-4000-8000-000000000001';
++const OTHER = '9a8b7c6d-0000-4000-8000-000000000002';
++
++/** The batch request an outermost client sends: its ledger is the one the request owner creates. */
++function batchRequest(steps: number): DaemonRequest {
++  return {
++    token: 't',
++    session: 'journey',
++    command: 'batch',
++    positionals: [],
++    flags: { batchSteps: Array.from({ length: steps }, () => ({ command: 'wait' })) },
++  };
++}
++
++/** The ledger the request owner created for `outer`, as the batch runner sees it. */
++function ledgerOf(outer: DaemonRequest): ScriptDeliveryLedger {
++  const scriptDelivery = outer.internal?.scriptDelivery;
++  if (!scriptDelivery) throw new Error('the request owner answers its handlers on a ledger');
++  return scriptDelivery;
++}
++
++function script(artifactId: string, revision: number, publicationId = ID): DaemonArtifact {
++  return {
++    field: 'savedScript',
++    artifactType: 'session-script',
++    artifactId,
++    scriptPublicationId: publicationId,
++    scriptRevision: revision,
++  };
++}
++
++function failure(publicationId = ID) {
++  return {
++    reason: 'script_delivery_failed' as const,
++    publicationId,
++    message: 'The action succeeded, but the daemon could not write the remote recording.',
++    hint: 'The next recorded action delivers the full recording again.',
++  };
++}
++
++test('a request whose steps delivered nothing answers no receipt', async () => {
++  const response = await reportScriptDelivery(batchRequest(1), async () => ({
++    ok: true,
++    data: { results: [] },
++  }));
++
++  expect(response).toEqual({ ok: true, data: { results: [] } });
++});
++
++test('a reply no nested step fed answers no receipt, even when it names script artifacts', async () => {
++  // A single command's own reply already delivers through its artifacts; a receipt on it would
++  // change every recorded action's shape. Only a request whose ledger its nested steps fed — a
++  // composite — answers one.
++  const response = await reportScriptDelivery(batchRequest(1), async () => ({
++    ok: true,
++    data: { artifacts: [script('v2', 2)], scriptDeliveryFailure: failure() },
++  }));
++
++  expect(response).toEqual({
++    ok: true,
++    data: { artifacts: [script('v2', 2)], scriptDeliveryFailure: failure() },
++  });
++});
++
++test('the versions, the failure and the close the steps answered become one receipt on the outer reply', async () => {
++  let scriptDelivery: ScriptDeliveryLedger | undefined;
++  const response = await reportScriptDelivery(batchRequest(2), async (outer) => {
++    scriptDelivery = ledgerOf(outer);
++    collectBatchStepDelivery(
++      outer,
++      { number: 1, command: 'wait' },
++      {
++        ok: true,
++        data: { artifacts: [script('v2', 2)] },
++      },
++    );
++    collectBatchStepDelivery(
++      outer,
++      { number: 2, command: ' CLOSE ' },
++      {
++        ok: true,
++        data: {
++          scriptPublicationId: ID,
++          artifacts: [script('v3', 3)],
++          scriptDeliveryFailure: failure(),
++        },
++      },
++    );
++    return { ok: true, data: { results: [{ ok: true }, { ok: true }] } };
++  });
++
++  expect(response).toMatchObject({
++    ok: true,
++    data: {
++      scriptDeliveryReceipt: {
++        publicationId: ID,
++        version: { artifactId: 'v3', scriptRevision: 3 },
++        close: { step: 2 },
++        failures: [{ message: failure().message }],
++      },
 +    },
 +  });
-+  await runStep(context, 'restore fixture after native permission restoration', [
-+    'open',
-+    context.appId,
-+    '--no-test-ime',
-+  ]);
-   const screenshotPath = path.join(context.artifactDir, 'fixture-smoke.png');
-   const screenshot = await runStep(context, 'capture fixture screenshot', [
-     'screenshot',
++  expect(scriptDelivery?.nested).toBe(true);
++});
++
++test('a failed batch answers the receipt in the error details and keeps the original error', async () => {
++  const original: DaemonResponse = {
++    ok: false,
++    error: { code: 'COMMAND_FAILED', message: 'step 2 failed' },
++  };
++
++  const response = await reportScriptDelivery(batchRequest(2), async (outer) => {
++    collectBatchStepDelivery(
++      outer,
++      { number: 1, command: 'wait' },
++      {
++        ok: true,
++        data: { artifacts: [script('v2', 2)] },
++      },
++    );
++    collectBatchStepDelivery(outer, { number: 2, command: 'tap' }, original);
++    return original;
++  });
++
++  if (!response.ok) {
++    expect(response.error.code).toBe('COMMAND_FAILED');
++    expect(response.error.message).toBe('step 2 failed');
++    expect(response.error.details).toMatchObject({
++      scriptDeliveryReceipt: { publi
 ```
 
-**File**: `test/integration/android-emulator-e2e/live-demo-permission-scenario.ts` (added, +93/-0)
+---
+
+### Incident Patch 3: `ad147101` (2026-11-17)
+**Commit Message**: fix(proxy): bound transfer phases and join owned cleanup (#4613)
+
+* fix(proxy): bound transfer phases and join owned cleanup
+
+* test(proxy): require reset evidence and clarify forwarding limits
+
+* fix(proxy): centralize bounded transfer route ownership
+
+Keep transfer selection with proxy admission and load transfer mechanics only for transfer routes. Preserve the first classified failure while owned cleanup joins. Keep the independent foreign-preflight null-body repair outside this layer.
+
+* test(proxy): assert the lazy-loader refusal premise
+
+Verify transfer mechanics cannot load in the lazy-boundary control and restore the wire ledger byte-for-byte to base after splitting the independent preflight repair.
+
+**File**: `packages/daemon/src/server/http/http-server-proxy-rollback.test.ts` (added, +166/-0)
 ```diff
-@@ -0,0 +1,93 @@
+@@ -0,0 +1,166 @@
 +import assert from 'node:assert/strict';
++import crypto from 'node:crypto';
 +import fs from 'node:fs';
-+import path from 'node:path';
++import http from 'node:http';
++import { expect, onTestFinished, test, vi } from 'vitest';
++import { createDaemonProxyServer } from '@agent-device/proxy';
++import {
++  closeLoopbackServer,
++  createTestRuntimeStateHandle,
++  listenOnLoopback,
++  skipWhenLoopbackUnavailable,
++} from '@agent-device/test-kit';
++import {
++  cleanupUploadedArtifact,
++  prepareUploadedArtifact,
++} from '../../resources/artifact-tracking.ts';
++import { createDaemonHttpServer } from './http-server.ts';
 +
-+import { runCmd } from '@agent-device/host-kit/command';
-+import { deviceShellArgv } from '@agent-device/kernel/device-shell';
-+import { assertPngFile } from '../provider-scenarios/assertions.ts';
++function deferred<T>() {
++  let resolve!: (value: T) => void;
++  let reject!: (error: unknown) => void;
++  const promise = new Promise<T>((yes, no) => {
++    resolve = yes;
++    reject = no;
++  });
++  return { promise, resolve, reject };
++}
 +
-+const DEMO_PERMISSION = 'sysui_demo_allowed';
-+const DEMO_PERMISSION_PREFIX = `${DEMO_PERMISSION}=`;
++test.for(['disconnect and resume', 'uninterrupted'] as const)(
++  'an actual proxy-to-daemon upload handles %s and verifies finalized bytes',
++  async (mode, t) => {
++    if (await skipWhenLoopbackUnavailable(t, 'proxy-to-daemon upload coverage')) return;
++    const runtime = createTestRuntimeStateHandle();
++    try {
++      await runtime.run(async () => {
++        const daemon = await createDaemonHttpServer({
++          token: 'daemon-secret',
++          handleRequest: async () => ({ ok: true, data: {} }),
++          env: process.env,
++          cwd: process.cwd(),
++        });
++        const daemonPort = await listenOnLoopback(daemon);
++        const proxy = createDaemonProxyServer({
++          upstreamBaseUrl: `http://127.0.0.1:${daemonPort}`,
++          upstreamToken: 'daemon-secret',
++          clientToken: 'client-secret',
++        });
++        let tracked = '';
++        try {
++          const origin = `http://127.0.0.1:${await listenOnLoopback(proxy)}`;
++          const content = Buffer.from('ABCDEF');
++          const headers = {
++            authorization: 'Bearer client-secret',
++            'content-type': 'application/json',
++          };
++          const preflight = await fetch(`${origin}/upload/preflight`, {
++            method: 'POST',
++            headers,
++            body: JSON.stringify({
++              uploadAttemptId: crypto.randomUUID(),
++              sha256: crypto.createHash('sha256').update(content).digest('hex'),
++              fileName: 'demo.apk',
++              sizeBytes: content.length,
++              artifactType: 'file',
++              platform: 'android',
++            }),
++          });
++          expect(preflight.status).toBe(200);
++          const ticket = (await preflight.json()) as {
++            uploadId: string;
++            upload: { url: string; headers: Record<string, string> };
++          };
++          expect(new URL(ticket.upload.url).origin).toBe(origin);
++          expect(ticket.upload.headers.authorization).toBe('Bearer client-secret');
++          const put = (range: string, body: string) =>
++            fetch(ticket.upload.url, {
++              method: 'PUT',
++              headers: { ...ticket.upload.headers, 'content-range': range },
++              body,
++            });
++          const first = await put('bytes 0-1/6', 'AB');
++          expect(first.status).toBe(308);
++          expect(first.headers.get('x-upload-offset')).toBe('2');
++          await first.text();
++          if (mode === 'disconnect and resume') {
++            const prefix = deferred<string>();
++            const rolledBack = deferred<void>();
++            let payload = '';
++            let watcher: fs.FSWatcher | undefined;
++            const createWriter = fs.createWriteStream;
++            const writerSpy = vi.spyOn(fs, 'createWriteStream').mockImplementation((...args) => {
++              const writer = Reflect.apply(createWriter, fs, args) as fs.WriteStream;
++              payload = String(args[0]);
++              writer.once('open', () => {
++                watcher = fs.watch(payload, () => {
++                  void fs.promises.readFile(payload, 'utf8').then((bytes) => {
++                    if (bytes === 'ABCD') prefix.resolve(bytes);
++                  }, prefix.reject);
++                });
++              });
++              return writer;
++            });
++            const truncate = fs.promises.truncate;
++            const rollbackSpy = vi
++              .spyOn(fs.promises, 'truncate')
++              .mockImplementation(async (path, length) => {
++                await truncate(path, length);
++                if (String(path) === payload && length === 2) rolledBack.resolve();
++              });
++            onTestFinished(() => {
++              watcher?.close();
++              writerSpy.mockRestore();
++              rollbackSpy.mockRestore();
++            });
++            const client = http.request(ticket.upload.url, {
++              method: 'PUT',
++              headers: { ...ticket.upload.headers, 'content-range': 'bytes 2-5/6' },
++            });
++            const errors: Error[] = [];
++            client.on('error', (error) => errors.push(
+```
+
+**File**: `packages/host-kit/src/internal/transport-phases.test.ts` (modified, +32/-0)
+```diff
+@@ -207,6 +207,38 @@ test('disposing the phase observer removes only its own listeners', () => {
+   assert.equal(fake.listenerCount('response'), 0);
+ });
+ 
++test('suspend resumes counting when the same phase is armed again', async () => {
++  const watchdog = watchPhases();
++  watchdog.arm('response-body', TRANSFER_BODY_INACTIVITY_TIMEOUT_MS);
++  await vi.advanceTimersByTimeAsync(TRANSFER_BODY_INACTIVITY_TIMEOUT_MS - 10_000);
++  watchdog.suspend();
++  await vi.advanceTimersByTimeAsync(TRANSFER_BODY_INACTIVITY_TIMEOUT_MS * 3);
++  assert.equal(watchdog.signal.aborted, false);
++  watchdog.arm('response-body', TRANSFER_BODY_INACTIVITY_TIMEOUT_MS);
++  await vi.advanceTimersByTimeAsync(TRANSFER_BODY_INACTIVITY_TIMEOUT_MS + 1);
++  assertPhaseDetails(watchdog.signal.reason, 'response-body', 120_000);
++});
 +
-+type PermissionCase = {
-+  state: string;
-+  before: string | null;
-+  after?: string | null;
-+  path: string;
++test('body progress during a suspend cannot restart the stopped ceiling', async () => {
++  const watchdog = watchPhases();
++  watchdog.arm('response-body', TRANSFER_BODY_INACTIVITY_TIMEOUT_MS);
++  watchdog.suspend();
++  watchdog.touchBody();
++  await vi.advanceTimersByTimeAsync(TRANSFER_BODY_INACTIVITY_TIMEOUT_MS * 2);
++  assert.equal(watchdog.signal.aborted, false);
++});
++
++test('caller cancellation still binds an exchange whose idle ceiling is suspended', async () => {
++  const caller = new AbortController();
++  const watchdog = watchPhases(caller.signal);
++  watchdog.arm('response-body', TRANSFER_BODY_INACTIVITY_TIMEOUT_MS);
++  watchdog.suspend();
++  const cancellation = new Error('caller went away');
++  caller.abort(cancellation);
++  assert.equal(watchdog.signal.aborted, true);
++  assert.equal(watchdog.signal.reason, cancellation);
++});
++
+ function assertPhaseDetails(reason: unknown, phase: string, timeoutMs: number): void {
+   assert.ok(reason instanceof AppError, `phase expiry must be an AppError, got ${String(reason)}`);
+   assert.equal(isTransferPhaseTimeoutError(reason), true);
+```
+
+**File**: `packages/host-kit/src/internal/transport.ts` (modified, +11/-1)
+```diff
+@@ -160,6 +160,9 @@ export type TransferPhaseWatchdog = {
+   signal: AbortSignal;
+   arm(phase: TransferPhase, timeoutMs: number): void;
+   touchBody(): void;
++  /** Stops counting an idle ceiling while the holder waits on demand, keeping its armed phase. */
++  suspend(): void;
++  /** Stops observing this attempt. A suspended phase stays suspended. */
+   dispose(): void;
+ };
+ 
+@@ -168,11 +171,12 @@ export function createTransferPhaseWatchdog(callerSignal?: AbortSignal): Transfe
+   const signal = callerSignal ? AbortSignal.any([callerSignal, phase.signal]) : phase.signal;
+   let armed: { phase: TransferPhase; timeoutMs: number } | undefined;
+   let timer: ReturnType<typeof setTimeout> | undefined;
++  let suspended = false;
+   const rearm = () => {
+     if (timer !== undefined) clearTimeout(timer);
+     timer = undefined;
+     const current = armed;
+-    if (!current) return;
++    if (!current || suspended) return;
+     timer = setTimeout(() => {
+       timer = undefined;
+       phase.abort(createTransferPhaseTimeoutError(current.phase, current.timeoutMs));
+@@ -183,13 +187,19 @@ export function createTransferPhaseWatchdog(callerSignal?: AbortSignal): Transfe
+     signal,
+     arm(nextPhase, timeoutMs) {
+       if (signal.aborted) return;
++      suspended = false;
+       armed = { phase: nextPhase, timeoutMs };
+       rearm();
+     },
+     touchBody() {
+       if (!armed || !BODY_PHASES.has(armed.phase)) return;
+       rearm();
+     },
++    suspend() {
++      suspended = true;
++      if (timer !== undefined) clearTimeout(timer);
++      timer = undefined;
++    },
+     dispose() {
+       armed = undefined;
+       if (timer !== undefined) clearTimeout(timer);
+```
+
+**File**: `packages/host-kit/src/transport.ts` (modified, +3/-0)
+```diff
+@@ -8,6 +8,9 @@ export {
+   readNodeHttpRequestBody,
+   readNodeHttpResponseBody,
+   timingSafeStringEqual,
++  TRANSFER_BODY_INACTIVITY_TIMEOUT_MS,
+   TRANSFER_CONNECT_TIMEOUT_MS,
++  TRANSFER_RESPONSE_HEADER_TIMEOUT_MS,
++  type TransferPhaseWatchdog,
+   type NodeHttpRequester,
+ } from './internal/transport.ts';
+```
+
+**File**: `packages/proxy/README.md` (modified, +53/-4)
+```diff
+@@ -94,10 +94,49 @@ Your Node HTTP client must send exactly one valid `Host` header on every request
+ configured. Configure raw-socket and HTTP/1.0 health probes to send `Host: localhost` (or your
+ deployment's host and port).
+ 
++### How the proxy reaches the daemon
++
++On artifact transfer routes — `POST /upload`, `/upload/preflight` and `/upload/finalize`,
++`PUT /upload/direct/*` and `GET /artifacts*` — the proxy forwards with `node:http` / `node:https`.
++Each transfer has a connect limit of 30 seconds, a response-header wait of 30 seconds that
++starts only once its own outgoing body has finished and the connection is established, and a
++120-second limit on body inactivity. For downloads, that limit counts time spent waiting for
++upstream bytes while you read the response; it pauses when you stop reading. Every forwarded
++exchange also ends at 600 seconds regardless of how steadily its bytes move. Your `upstreamTimeoutMs`
++is an additional cap. The earliest caller cancellation, operator cap, phase limit or aggregate expiry
++ends the exchange. A transfer does not retry or restart its aggregate.
++
++Transfer phase and aggregate timeout error responses use HTTP 500 and include `reason`,
++`transferPhase` and `timeoutMs`. These fields appear only for `COMMAND_FAILED` with
++`reason: transfer_phase_timeout` and the matching connect/header (30000ms) or body (120000ms)
++phase budget, or `reason: transfer_forwarding_deadline_exceeded` with
++`transferPhase: forwarding` and `timeoutMs: 600000`. Other errors omit these fields.
++After the proxy returns a response, a timeout while you consume it fails the body read instead of
++replacing its status. Preflight bodies are consumed before ticket rewriting; a timeout there returns
++HTTP 500.
++
++On these routes:
++
++- Redirects are returned without being followed. The daemon's `308` resume response keeps its
++  `Range` and `x-upload-offset` headers.
++- Default request headers added by `fetch`, such as `accept` and `user-agent`, are not sent.
++- A patched global `fetch` or an `undici` global dispatcher no longer intercepts the request.
++
++Supply `upstreamFetch` if you need those Fetch behaviors or your own routing.
++
++Environment-proxy routing depends on your runtime. In loopback checks, Node 22.12 ignores
++`HTTP_PROXY` and `HTTPS_PROXY` for both transports. Node 26.11.1 uses them when
++`NODE_USE_ENV_PROXY=1`. Bun 1.4.2 Fetch uses them without that opt-in, while the default transfer
++transport requires it. On Node 26.11.1 and Bun 1.4.2, `NO_PROXY=127.0.0.1` bypasses the proxy.
++If your Bun deployment needs proxy routing for transfers, set `NODE_USE_ENV_PROXY=1` or supply
++`upstreamFetch`.
++
++By default, `/rpc`, `/health` and request diagnostics use global `fetch`.
++
+ ### Reach the daemon over your own transport
+ 
+-By default the proxy calls the daemon with the global `fetch`. Pass `upstreamFetch` when the daemon
+-is only reachable some other way, such as a tunnel the device host opened to your gateway:
++Pass `upstreamFetch` when the daemon is only reachable some other way, such as a tunnel the device
++host opened to your gateway:
+ 
+ ```ts
+ const proxy = createDaemonProxy({
+@@ -111,6 +150,16 @@ const proxy = createDaemonProxy({
+ `upstreamFetch` receives a `Request` addressed to `upstreamBaseUrl` and must resolve with the
+ daemon's `Response`. Abort the exchange when `request.signal` aborts.
+ 
++On transfer routes, the proxy bounds its wait for your transport and response body. It settles on
++your abort, your `upstreamTimeoutMs`, its 600-second aggregate and its demand-aware response-body
++inactivity limit. Work your transport starts can keep running if it ignores `request.signal`. The
++proxy does not wait for that work or for a cancellation callback that never settles. It cannot
++measure a connect or a header wait it does not own, so on transfer routes your transport keeps those
++obligations. Bound connection establishment to 30 seconds and the response-header wait to 30 seconds
++once the connection is established and the outgoing body has finished. Stream `request.body` with
++120-second body inactivity limits. Stop your request and response sources on cancellation. A body
++pull alone does not confirm that an outgoing byte was sent.
++
+ ### Authenticate each client yourself
+ 
+ One `clientToken` is shared by every client. To give each client its own credential, pass
+@@ -158,9 +207,9 @@ authenticate: async (request) => {
+ | `upstreamToken` | required | The daemon's auth token. |
+ | `clientToken` | required without `authenticate` | Token clients must send as their daemon auth token. |
+ | `authenticate` | none | Authenticates each client and names its tenant; replaces `clientToken`. |
+-| `upstreamFetch` | global `fetch` | Sends one request to the daemon. |
++| `upstreamFetch` | none | Sends one request to the daemon. Without it, transfer routes use `node:http(s)` and every other route uses the global `fetch`. |
+ | `maxRpcBodyBytes` | 64 MiB, the daemon's own request limit | Larger `/rpc`
+```
+
+**File**: `packages/proxy/src/daemon-proxy-transfer.test.ts` (added, +468/-0)
+```diff
+@@ -0,0 +1,468 @@
++import assert from 'node:assert/strict';
++import { once } from 'node:events';
++import http from 'node:http';
++import type { AddressInfo } from 'node:net';
++import { expect, onTestFinished, test, vi } from 'vitest';
++import { AppError } from '@agent-device/kernel/errors';
++import {
++  createDaemonProxy,
++  createDaemonProxyServer,
++  type DaemonProxyOptions,
++} from './daemon-proxy.ts';
++
++const options = {
++  upstreamBaseUrl: 'http://daemon.internal:4310',
++  upstreamToken: 'daemon-secret',
++  clientToken: 'client-secret',
 +};
 +
-+export async function assertScreenshotDemoPermissionRestoration(options: {
-+  serial: string;
-+  artifactDir: string;
-+  captureScreenshot: (filePath: string) => Promise<void>;
-+}): Promise<void> {
-+  const shell = async (words: string[]) => {
-+    const result = await runCmd(
-+      'adb',
-+      deviceShellArgv('adb', 'shell', words, ['-s', options.serial]),
-+      { timeoutMs: 5_000 },
-+    );
-+    return result.stdout;
-+  };
-+  const readPermission = async () => {
-+    const rows = (await shell(['settings', 'list', 'global']))
-+      .split(/\r?\n/)
-+      .filter((row) => row.startsWith(DEMO_PERMISSION_PREFIX));
-+    assert.ok(rows.length <= 1, 'the global permission must have at most one row');
-+    return rows[0] ?? null;
-+  };
-+  const writePermission = async (value: string | undefined) => {
-+    await shell(
-+      value === undefined
-+        ? ['settings', 'delete', 'global', DEMO_PERMISSION]
-+        : ['settings', 'put', 'global', DEMO_PERMISSION, value],
-+    );
-+  };
-+  const apiLevel = Number((await shell(['getprop', 'ro.build.version.sdk'])).trim());
-+  assert.ok(Number.isInteger(apiLevel) && apiLevel > 0, 'Android must report its API level');
-+  const initial = await readPermission();
-+  const cases: PermissionCase[] = [];
-+  const failures: unknown[] = [];
-+  fs.mkdirSync(options.artifactDir, { recursive: true });
-+  try {
-+    for (const value of [undefined, '0', '1']) {
-+      await writePermission(value);
-+      const before = await readPermission();
-+      assert.equal(before, value === undefined ? null : `${DEMO_PERMISSION_PREFIX}${value}`);
-+      const item: PermissionCase = {
-+        state: value ?? 'absent',
-+        before,
-+        path: path.join(options.artifactDir, `demo-permission-${value ?? 'absent'}.png`),
-+      };
-+      cases.push(item);
-+      await options.captureScreenshot(item.path);
-+      assertPngFile(item.path);
-+      assert.ok(fs.statSync(item.path).size > 8, 'the capture must contain PNG image data');
-+      item.after = await readPermission();
-+      assert.equal(item.after, before, `normalized capture changed the ${item.state} permission`);
-+    }
-+  } catch (error) {
-+    failures.push(error);
-+  }
-+  let restored: string | null | undefined;
-+  try {
-+    await writePermission(
-+      initial === null ? undefined : initial.slice(DEMO_PERMISSION_PREFIX.length),
-+    );
-+    restored = await readPermission();
-+    assert.equal(restored, initial, 'the native test must restore its initial global setting');
-+  } catch (error) {
-+    failures.push(error);
-+  }
-+  try {
-+    fs.writeFileSync(
-+      path.join(options.artifactDir, 'demo-permission-evidence.json'),
-+      `${JSON.stringify({ serial: options.serial, apiLevel, initial, restored, cases }, null, 2)}\n`,
-+    );
-+  } catch (error) {
-+    failures.push(error);
-+  }
-+  if (failures.length === 1) throw failures[0];
-+  if (failures.length > 1)
-+    throw new AggregateError(failures, 'Android screenshot evidence and cleanup failed');
++const rpcBody = JSON.stringify({
++  jsonrpc: '2.0',
++  id: 1,
++  method: 'agent-device.command',
++  params: { token: 'client-secret', command: 'version' },
++});
++
++async function listen(server: http.Server): Promise<string> {
++  server.listen(0, '127.0.0.1');
++  await once(server, 'listening');
++  onTestFinished(async () => {
++    server.closeAllConnections();
++    await new Promise<void>((resolve) => server.close(() => resolve()));
++  });
++  return `http://127.0.0.1:${(server.address() as AddressInfo).port}`;
 +}
++
++function requestThroughProxy(origin: string, path: string, method = 'POST') {
++  return new Promise<{ status: number; body: Record<string, unknown> }>((resolve, reject) => {
++    const req = http.request(
++      `${origin}${path}`,
++      {
++        method,
++        headers: { authorization: 'Bearer client-secret', 'content-type': 'application/json' },
++      },
++      (res) => {
++        let text = '';
++        res.setEncoding('utf8');
++        res.on('data', (chunk: string) => {
++          text += chunk;
++        });
++        res.on('error', reject);
++        res.on('end', () =>
++          resolve({ status: res.statusCode!, body: text ? JSON.parse(text) : {} }),
++        );
++      },
++    );
++    req.on('error', reject);
++    req.end(method === 'POST' ? '{}' : undefined);
++  });
++}
++
++test('the actual proxy HTTP response exposes a header timeout as 500 with exactly three transfer details', async () => {
++  let entered!: () => void;
++  const uploaded = new Promise<void>((resolve) => {
++    entered = resolve;
++  });
++  const daemon = await listen(
++    http.createServer((req) => {
++      req.resume();
++      req.once('end', entered);
++    }),
++  );
++  const origin = await listen(createDaemonProxyServer({ ...options, upstreamBaseUrl: daemon }));
++  vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] });
++  onTestFinished(() => {
++    vi.useRealTimers();
++  });
++  const original = http.request;
++  let flushed!: (request: http.ClientRequest) => void;
++  const finished = new Promise<http.ClientRequest>((resolve) => {
++    flushed = resolve;
++  });
++  const observer = vi.spyOn(http, 'request').mockImplementation((...args) => {
++    const req = Reflect.apply(original, http, args) as http.ClientRequest;
++    if (req.getHeader('authorization') === 'Bearer daemon-secret') {
++      req.once('finish', () => flushed(req));
++    }
++    return req;
++  });
++  onTestFinished(() => observer.mockRestore());
++  const response = requestThroughProxy(origin, '/upload/preflight');
++  await uploaded;
++  expect((await finished).writableFinished).toBe(true);
++  await vi.advanceTimersByTimeAsync(30_000);
++  expect(await response).toEqual({
++    status: 500,
++    body: {
++      ok: false,
++      error: 'Artifact transfer response-headers timed out',
++      code: 'COMMAND_FAILED',
++      reason: 'transfer_phase_timeout',
++      transferPhase: 'response-headers',
++      timeoutMs: 30_000,
++    },
++  });
++});
++
++test('the actual HTTP response exposes the forwarding aggregate when a custom transport ignores cancellation', async () => {
++  let entered!: () => void;
++  const started = new Promise<void>((resolve) => {
++    entered = resolve;
++  });
++  const origin = await listen(
++    createDaemonProxyServer({
++      ...options,
++      upstreamFetch: () => {
++        entered();
++        return new Promise<Response>(() => undefined);
++      },
++    }),
++  );
++  vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] });
++  onTestFinished(() => {
++    vi.useRealTimers();
++  });
++  const response = requestThroughProxy(origin, '/upload/preflight');
++  await started;
++  await vi.advanceTimersByTimeAsync(600_000);
++  expect(await response).toEqual({
++    status: 500,
++    body: {
++      ok: false,
++      error: 'Proxy transfer forwarding deadline exceeded',
++      code: 'COMMAND_FAILED',
++      reason: 'transfer_forwarding_deadline_exceeded',
++      transferPhase: 'forwarding',
++      timeoutMs: 600_000,
++    },
++  });
++});
++
++test.each([
++  {
++    code: 'INVALID_ARGS',
++    status: 400,
++    phase: 'response-body',
++    budget: 120_000,
++    reason: 'transfer_phase_timeout',
++  },
++  {
++    code: 'COMMAND_FAILED',
++    status: 500,
++    phase: 'unknown-phase',
++    budget: 120_000,
++    reason: 'transfer_phase_timeout',
++  },
++  {
++    code: 'COMMAND_FAILED',
++    status: 500,
++    phase: 'response-headers',
++    budget: 120_000,
++    reason: 'transfer_phase_timeout',
++  },
++  {
++  
+```
+
+**File**: `packages/proxy/src/daemon-proxy.ts` (modified, +45/-17)
+```diff
+@@ -25,9 +25,14 @@ import {
+ } from './install-source-admission.ts';
+ 
+ /**
+- * Carries one request to the upstream daemon and resolves with its response. The default is the
+- * global `fetch`; supply your own to reach the daemon over another transport, such as a
+- * WebSocket tunnel. Abort the exchange when `request.signal` aborts.
++ * Carries one request to the upstream daemon and resolves with its response. Without `upstreamFetch`
++ * the proxy reaches the daemon over `node:http(s)` on artifact transfer routes and over the global
++ * `fetch` on `/rpc`, health and diagnostics. Supply your own to reach the daemon over another
++ * transport, such as a WebSocket tunnel. Abort the exchange when `request.signal` aborts.
++ *
++ * A custom transport owns its phase guarantees and must observe `request.signal` on every route.
++ * On transfer routes, the proxy bounds its own response and body waits, even if the transport
++ * ignores cancellation. It cannot forcibly join work started by that transport.
+  */
+ export type DaemonProxyUpstreamFetch = (request: Request) => Promise<Response>;
+ 
+@@ -60,10 +65,12 @@ export type DaemonProxyOptions = {
+   publicOrigin?: string;
+   maxRpcBodyBytes?: number;
+   /**
+-   * Longest time one daemon request may take, including its body. Unset, an exchange lasts as long
+-   * as its client request: the client's command envelope bounds it.
++   * Independent cap on one upstream request, including its response body. Transfers also observe
++   * their phase limits and 600-second aggregate. When unset, other requests use the client's
++   * command envelope. The health probe keeps its separate five-second limit.
+    */
+   upstreamTimeoutMs?: number;
++  /** Overrides the transport for every upstream route. See `DaemonProxyUpstreamFetch`. */
+   upstreamFetch?: DaemonProxyUpstreamFetch;
+ } & (
+   | {
+@@ -102,6 +109,7 @@ type NormalizedProxyOptions = {
+   maxRpcBodyBytes: number;
+   upstreamTimeoutMs: number | undefined;
+   upstreamFetch: DaemonProxyUpstreamFetch;
++  upstreamTransport: (route: string, request: Request) => Promise<Response>;
+ };
+ 
+ /** The client a request was authenticated as; `tenantId` is set only by `authenticate`. */
+@@ -141,7 +149,7 @@ export function createDaemonProxy(options: DaemonProxyOptions): DaemonProxy {
+       try {
+         return await handleProxyRequest(request, normalized, instanceId);
+       } catch (error) {
+-        return proxyErrorResponse(error);
++        return proxyErrorResponse(error, request);
+       }
+     },
+   };
+@@ -349,7 +357,8 @@ async function forwardProxyRequest(params: {
+ }): Promise<Response> {
+   const { request, route, options, rpcBody, caller } = params;
+   const body = resolveUpstreamBody(request, route, rpcBody, options.upstreamToken, caller.tenantId);
+-  const upstreamResponse = await options.upstreamFetch(
++  const upstreamResponse = await options.upstreamTransport(
++    route,
+     new Request(buildUpstreamUrl(options.upstreamBaseUrl, route, request.url), {
+       method: request.method,
+       headers: buildUpstreamHeaders(request.headers, options.upstreamToken, route, caller.tenantId),
+@@ -371,10 +380,6 @@ async function forwardProxyRequest(params: {
+   return new Response(upstreamResponse.body, { status: upstreamResponse.status, headers });
+ }
+ 
+-/**
+- * An upstream exchange lives exactly as long as the client keeps waiting for it: the daemon
+- * turns a dropped upstream request into cancellation of in-flight runner work.
+- */
+ function upstreamSignal(request: Request, options: NormalizedProxyOptions): AbortSignal {
+   if (options.upstreamTimeoutMs === undefined) return request.signal;
+   return AbortSignal.any([request.signal, AbortSignal.timeout(options.upstreamTimeoutMs)]);
+@@ -516,6 +521,8 @@ function normalizeProxyOptions(options: DaemonProxyOptions): NormalizedProxyOpti
+   const clientToken = options.authenticate
+     ? undefined
+     : normalizeToken(options.clientToken ?? '', 'clientToken');
++  const upstreamFetch = options.upstreamFetch ?? ((request) => fetch(request));
++  const customUpstreamFetch = options.upstreamFetch;
+   return {
+     upstreamBaseUrl,
+     publicOrigin:
+@@ -527,7 +534,15 @@ function normalizeProxyOptions(options: DaemonProxyOptions): NormalizedProxyOpti
+     authenticate: options.authenticate,
+     maxRpcBodyBytes: options.maxRpcBodyBytes ?? DEFAULT_MAX_RPC_BODY_BYTES,
+     upstreamTimeoutMs: options.upstreamTimeoutMs,
+-    upstreamFetch: options.upstreamFetch ?? ((request) => fetch(request)),
++    upstreamFetch,
++    upstreamTransport: async (route, request) => {
++      if (!isTransferRoute(route, request.method)) return upstreamFetch(request);
++      const { createNodeTransferFetch, settleUpstreamFetch } =
++        await import('./transfer-transport.ts');
++      return customUpstreamFetch
++        ? settleUpstreamFetch(customUpstreamFetch, request)
++        : createNodeTransferFetch()(request);
++    },
+   };
+ }
+ 
+@@ -562,9 +577,7 @@ function resolveProxyRoute(requestUrl: string): string {
+ 
+ funct
+```
+
+**File**: `packages/proxy/src/transfer-transport-lifetime.test.ts` (added, +850/-0)
+```diff
+@@ -0,0 +1,850 @@
++import assert from 'node:assert/strict';
++import { once } from 'node:events';
++import http, { type ClientRequest, type ServerResponse } from 'node:http';
++import net, { type AddressInfo } from 'node:net';
++import { expect, onTestFinished, test, vi } from 'vitest';
++import { AppError } from '@agent-device/kernel/errors';
++import { createNodeTransferFetch, settleUpstreamFetch } from './transfer-transport.ts';
++
++function deferred<T>() {
++  let resolve!: (value: T) => void;
++  let reject!: (error: unknown) => void;
++  const promise = new Promise<T>((yes, no) => {
++    resolve = yes;
++    reject = no;
++  });
++  return { promise, resolve, reject };
++}
++
++function controlledClock() {
++  vi.useFakeTimers({ toFake: ['setTimeout', 'clearTimeout'] });
++  onTestFinished(() => {
++    vi.useRealTimers();
++  });
++}
++
++async function upstream(handler: http.RequestListener) {
++  const server = http.createServer(handler);
++  server.listen(0, '127.0.0.1');
++  await once(server, 'listening');
++  onTestFinished(async () => {
++    server.closeAllConnections();
++    await new Promise<void>((resolve) => server.close(() => resolve()));
++  });
++  return `http://127.0.0.1:${(server.address() as AddressInfo).port}`;
++}
++
++function observeRequest(inspect?: (request: ClientRequest) => void) {
++  const original = http.request;
++  const made = deferred<ClientRequest>();
++  const closed = deferred<void>();
++  const spy = vi.spyOn(http, 'request').mockImplementation((...args) => {
++    const req = Reflect.apply(original, http, args) as ClientRequest;
++    req.once('close', () => closed.resolve());
++    inspect?.(req);
++    made.resolve(req);
++    return req;
++  });
++  onTestFinished(() => spy.mockRestore());
++  return { made: made.promise, closed: closed.promise };
++}
++
++function phaseFailure(error: unknown, phase: string, timeoutMs: number) {
++  assert.ok(error instanceof AppError);
++  expect(error.details).toEqual({
++    reason: 'transfer_phase_timeout',
++    transferPhase: phase,
++    timeoutMs,
++  });
++}
++
++function emptyChunkFlood(caller: AbortController, reason: Error) {
++  const limit = 1_024;
++  let reads = 0;
++  let readsAtAbort = limit;
++  let timer: ReturnType<typeof setTimeout> | undefined;
++  const body = new ReadableStream<Uint8Array>(
++    {
++      pull(controller) {
++        if (reads === 0) {
++          timer = setTimeout(() => {
++            readsAtAbort = reads;
++            caller.abort(reason);
++          }, 0);
++        }
++        if (reads === limit) controller.close();
++        else {
++          reads += 1;
++          controller.enqueue(new Uint8Array());
++        }
++      },
++    },
++    { highWaterMark: 0 },
++  );
++  onTestFinished(() => clearTimeout(timer));
++  return { body, limit, readsAtAbort: () => readsAtAbort };
++}
++
++test('empty upload chunks yield to caller cancellation before the bounded flood ends', async () => {
++  const origin = await upstream((req) => req.resume());
++  const observed = observeRequest();
++  const caller = new AbortController();
++  const reason = new Error('cancel upload while empty chunks are ready');
++  const flood = emptyChunkFlood(caller, reason);
++  const pending = createNodeTransferFetch()(
++    new Request(`${origin}/upload/direct/ticket`, {
++      method: 'PUT',
++      body: flood.body,
++      signal: caller.signal,
++      duplex: 'half',
++    } as RequestInit),
++  );
++  await expect(pending).rejects.toBe(reason);
++  await observed.closed;
++  expect(flood.readsAtAbort()).toBeLessThan(flood.limit);
++  expect(flood.body.locked).toBe(false);
++});
++
++test('empty custom response chunks yield to caller cancellation before the bounded flood ends', async () => {
++  const caller = new AbortController();
++  const reason = new Error('cancel response while empty chunks are ready');
++  const flood = emptyChunkFlood(caller, reason);
++  const response = await settleUpstreamFetch(
++    async () => new Response(flood.body),
++    new Request('http://daemon.internal/artifacts/build', { signal: caller.signal }),
++  );
++  await expect(response.arrayBuffer()).rejects.toBe(reason);
++  expect(flood.readsAtAbort()).toBeLessThan(flood.limit);
++  expect(flood.body.locked).toBe(false);
++});
++
++test('finite empty chunks preserve the following upload and custom response bytes', async () => {
++  const emptyPrefix = () =>
++    new ReadableStream<Uint8Array>({
++      start(controller) {
++        controller.enqueue(new Uint8Array());
++        controller.enqueue(new Uint8Array());
++        controller.enqueue(new TextEncoder().encode('payload intact'));
++        controller.close();
++      },
++    });
++  const origin = await upstream((req, res) => {
++    let text = '';
++    req.setEncoding('utf8');
++    req.on('data', (chunk: string) => {
++      text += chunk;
++    });
++    req.on('end', () => res.end(text));
++  });
++  const uploaded = await createNodeTransferFetch()(
++    new Request(`${origin}/upload/direct/ticket`, {
++      method: 'PUT',
++      body: emptyPrefix(),
++      duplex: 'half',
++  
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4549** (2026-11-14): test: isolate ps fixtures from host proc identity (@thymikee)
-- **PR #4546** (2026-11-14): ci: prepare 0.22 source version and push CI for nightly releases (@thymikee)
-- **PR #4538** (2026-11-14): test(maestro): keep optional-scroll continuation assertion visible (@thymikee)
-- **PR #4536** (2026-11-14): fix(ios): classify the keyboard dismiss refusal by what it dispatched (@thymikee)
-- **PR #4533** (2026-11-14): fix: prepare reinstall artifacts before removing apps (@thymikee)
-- **PR #4532** (2026-11-14): Give remote daemon unavailability a typed refusal reason (@thymikee)
+- **PR #4658** (closed): ci(coverage): measure the Coverage lane across runner classes (@thymikee)
+- **PR #4648** (2026-11-17): test(android): retain original helper diagnostics (@thymikee)
+- **PR #4645** (2026-11-17): fix(daemon): resolve an explicit selector for the bound device from the session (@thymikee)
+- **PR #4642** (2026-11-17): perf(ios): read keyboard status from one keyboard snapshot (@thymikee)
+- **PR #4639** (2026-11-17): feat(screenshot): draw TV overlay refs at the page's capture scale (@alimek)
+- **PR #4638** (2026-11-17): test(test-app): add a Settle lab of single- and multi-stage effects (@thymikee)
 
 ---
 
@@ -3247,39 +3471,75 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ios): confirm foldable rotation from the lit panel in either simulator set
+## X. android): dispatch helper taps and keys without the global animation wait
 
 **RULE**:
-When implementing operations in `.changeset/foldable-scoped-rotation.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in callstack/agent-device. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `android/snapshot-helper/src/main/java/com/callstack/agentdevice/snapshothelper/AutomationCommandHandler.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in callstack/agent-device. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `15e298f2`: ios): confirm foldable rotation from the lit panel in either simulator set. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c0ef6b24`: android): dispatch helper taps and keys without the global animation wait. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.changeset/foldable-scoped-rotation.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `android/snapshot-helper/src/main/java/com/callstack/agentdevice/snapshothelper/AutomationCommandHandler.java`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
----
-'agent-device': patch
----
+  /**
+   * The budget of a host that sends none: a provider-supplied helper can be newer than its host, and
+   * an older host waits 30 s for input, less the 5 s answer margin. It never affords a retry.
+   */
+  private static final long OLDER_HOST_BUDGET_MS = 25_000;
 
-Fix foldable iPhone simulator rotation in scoped sets and confirm the lit panel in both default and scoped sets. Rotation in both sets uses the fold helper, with no CoreDevice orientation polling. An already visible target dispatches nothing. Incomplete, unknown-power and multi-lit panel tables neither confirm nor dispatch. A target the panel never shows fails with `orientation-unverified`.
+  /** The framework's accessibility interaction timeout, AccessibilityInteractionClient. */
+  private static final long TEXT_ENTRY_RESERVE_MS = 5_000;
 
-Use the fixed iPhone Duo picker offsets measured in both sets (outer 0 degrees, inner +90 degrees), replacing runtime calibration. Inner landscape-left sends `portrait-upside-down`, mapped to the HID wire value `pud`; it remains unsupported as a user target. Delayed reads wait without resending the same picker value to the same panel.
+  /** The command deadline left too little time for the next step, so it was not started. */
+  static final class InputBudgetExhausted extends IllegalStateException {
+    InputBudgetExhausted(String message) {
+      super(message);
+    }
+  }
 
-Unresolved guest reads inside the settle loop neither confirm nor dispatch and are retried. An unresolved final read fails with `orientation-panel-table-unavailable`. Multi-panel classification admits rotation without a model-name guard; a new multi-panel model needs its own picker mapping.
+  /** Refuses text entry the deadline cannot fit, after a focus tap that may have used the budget. */
+  static void requireTextEntryTime(long deadline, long now) {
+    if (deadline - now < TEXT_ENTRY_RESERVE_MS) {
+      throw new InputBudgetExhausted("Fill text was not entered: too little time left after focus");
+    }
+  }
+
+    // The host's remaining time for this command bounds every retry decision.
+    long deadline =
+        SystemClock.uptimeMillis() + input.optLong("budgetMs", OLDER_HOST_BUDGET_MS);
+        tap(automation, i
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+        tap(automation, input.getDouble("x"), input.getDouble("y"), dispatch);
+        key(automation, input.getInt("keyCode"), dispatch);
+        fill(automation, input.getInt("x"), input.getInt("y"), input.getString("text"), dispatch);
+  private static void tap(UiAutomation automation, double x, double y, InputDispatch dispatch) {
+    long down = SystemClock.uptimeMillis();
+    touch(automation, down, MotionEvent.ACTION_DOWN, (float) x, (float) y, dispatch);
+    touch(automation, down, MotionEvent.ACTION_UP, (float) x, (float) y, dispatch);
+  private static void touch(UiAutomation automation, long down, int action, float x, float y, InputDispatch dispatch) {
+    MotionEvent event = MotionEvent.obtain(down, SystemClock.uptimeMillis(), action, x, y, 0);
+    event.setSource(InputDevice.SOURCE_TOUCHSCREEN);
+    try {
+      dispatch.attempted = true;
+      if (!automation.injectInputEvent(event, true)) {
+        throw new IllegalStateException("Touch injection was refused");
+      }
+    } finally {
+      event.recycle();
+  private static void key(UiAutomation automation, int code, InputDispatch dispatch) {
+    if (code < 0 || code > KeyEvent.getMaxKeyCode()) throw new IllegalArgumentE
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `15e298f2` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c0ef6b24` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-18T01:04:24.668Z",
-  "total_verified_learnings": 8957,
+  "last_updated": "2026-11-18T01:19:00.856Z",
+  "total_verified_learnings": 8958,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 20764,
+  "total_items": 20770,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113686,13 +113686,13 @@
       "item_id": "candidate_directive-editor-add-scoped-ios-account-deletion",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-L1UA-editor-add-scoped-ios-account-deletion.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-NTUH-editor-add-scoped-ios-account-deletion.md",
       "title": "editor): add scoped ios account deletion",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "be74558ab9a0039f0b7556387f64389b8fe084f9902aa9c9826b86e9e31f0084",
+      "content_hash": "1bae02aa2ff40dcc41da7ac290f0f4ceb5fc12df7532e0a63f6395fd829b7729",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T22:56:52.883Z"
+      "persisted_at": "2026-11-18T01:19:00.572Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant",
@@ -113702,9 +113702,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "5ae304b149b057f94c803ac456b5749536053c22e0f5e3d066912cfe7a692a96",
+      "content_hash": "b013be5c0103390a5f321cf00435e50ba6b075b062fe37549c2cefb193b98920",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T22:56:53.022Z"
+      "persisted_at": "2026-11-18T01:19:00.706Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113714,9 +113714,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "fd5f2b0fa4092cc5b59f462b5e170f3238dde2cc2347359e1ec2e591e9e06683",
+      "content_hash": "327c8cc542e4c83058eec475b3fb1aea3d29878dd8bd336e9916349f89084f61",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T22:56:53.147Z"
+      "persisted_at": "2026-11-18T01:19:00.856Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -232483,14 +232483,19 @@
       "slug": "callstack-agent-device",
       "platform": "github",
       "source_url": "https://github.com/callstack/agent-device",
-      "source_version": "d78be6c8",
-      "content_hash": "6c83fe52f31a89d5da10e3027928a771904ccf987413e3da1450d2a04f6bc4b1",
+      "source_version": "655ede27",
+      "content_hash": "3c5e71ac4fc5d8bb6e9305253992b6ae3fb2e789c5f522a7453e563ba4e9762a",
       "dossier_path": "07_PROJECT_LEARNING/callstack-agent-device-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/callstack-agent-device-learnings.md",
       "promoted_rules": [
         {
           "number": 8510,
           "title": "confirm foldable rotation from the lit panel in either simulator set",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9100,
+          "title": "dispatch helper taps and keys without the global animation wait",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -232499,7 +232504,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T17:24:51.713Z",
+      "verified_at": "2026-11-18T01:18:53.442Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -232541,10 +232546,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-callstack-agent-device-technical-construction-intelligence-callstack-agent-devic.md",
       "title": "Technical Construction Intelligence: callstack/agent-device Core Invariants",
       "repository": "callstack/agent-device",
-      "source_version": "d78be6c8",
-      "content_hash": "a8a6a92bce80b18b8dfc44162e98b2648e3d7cd6b25250382c24cb870de38820",
+      "source_version": "655ede27",
+      "content_hash": "b88f45860bbca6a1e4dafb13ccc5111b845a542b00d8f75875476aa35d46bb9f",
       "domain_letter": "H",
-      "persisted_at": "2026-11-14T17:24:52.040Z"
+      "persisted_at": "2026-11-18T01:18:53.964Z"
     },
     "agent_contract-agent-contract-callstack-agent-device-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-callstack-agent-device-autonomous-specialist-persona",
@@ -232553,10 +232558,10 @@
       "relative_path": "02_AGENT_INTELLIGENCE/callstack-agent-device-agent-contract-callstack-agent-device-autonomous-speciali.md",
       "title": "Agent Contract: callstack/agent-device Autonomous Specialist Persona",
       "repository": "callstack/agent-device",
-      "source_version": "d78be6c8",
-      "content_hash": "d0a3033aae8a5a4da98e1ef5579c7b86c50c1a9293456f72ab8d3b40148632d1",
+      "source_version": "655ede27",
+      "content_hash": "69668218b3e4cb1e993d021a2a3e267cdbdc015454e0c6ca2dfbfb6249888680",
       "domain_letter": "H",
-      "persisted_at": "2026-11-14T17:24:52.113Z"
+      "persisted_at": "2026-11-18T01:18:54.087Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-callstack-agent-device": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-callstack-agent-device",
@@ -232565,10 +232570,10 @@
       "relative_path": "08_VERIFICATION/callstack-agent-device-verification-protocol-empirical-defect-shield-for-callsta.md",
       "title": "Verification Protocol: Empirical Defect Shield for callstack/agent-device",
       "repository": "callstack/agent-device",
-      "source_version": "d78be6c8",
-      "content_hash": "c0614d546c9c74298860e43857236207a2d3cf471e8f3666466e5b3efb2a9bbe",
+      "source_version": "655ede27",
+      "content_hash": "77efcfbbfb6d28db8e77964824a862caacf628921dbf3df9e81df594d901e5ca",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T17:24:52.181Z"
+      "persisted_at": "2026-11-18T01:18:54.196Z"
     },
     "learn-github-apache-pinot": {
       "learning_id": "learn-github-apache-pinot",
@@ -232714,9 +232719,9 @@
       "title": "Technical Construction Intelligence: callstack-agent-device-learnings Core Invariants",
       "repository": "callstack-agent-device-learnings",
       "source_version": "HEAD",
-      "content_hash": "a43485127efb2de3e8a8167b3395ffbbb937c85f49af4fd3332d5a58796ba5d7",
+      "content_hash": "1ea352397120494a7019cb53630c2c02546e1d7937a46910d2a227a571403112",
       "domain_letter": "H",
-      "persisted_at": "2026-11-14T17:25:24.555Z"
+      "persisted_at": "2026-11-18T01:18:59.867Z"
     },
     "agent_contract-agent-contract-callstack-agent-device-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-callstack-agent-device-learnings-autonomous-specialist-persona",
@@ -232726,9 +232731,9 @@
       "title": "Agent Contract: callstack-agent-device-learnings Autonomous Specialist Persona",
       "repository": "callstack-agent-device-learnings",
       "source_version": "HEAD",
-      "content_hash": "afba32a9080b29c64562d2bea18ca1e0618b34ea5d74f09e506c22aea2909e94",
+      "content_hash": "a48118428b12d87df4a0a0a53020b9ba18b6dbc83659b46247b91b72b39e61d9",
       "domain_letter": "H",
-      "persisted_at": "2026-11-14T17:25:24.643Z"
+      "persisted_at": "2026-11-18T01:18:59.996Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-callstack-agent-device-learnin": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-callstack-agent-device-learnin",
@@ -232738,9 +232743,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for callstack-agent-device-learnings",
       "repository": "callstack-agent-device-learnings",
       "source_version": "HEAD",
-      "content_hash": "6b7c04c266bedb0301c40993dd5ff1f6d1e9b4908ad0a98a71cc2999abff45bb",
+      "content_hash": "98387b09509863c5659d249129ce3c49761db5a77f636ec8dea586f6123c7e26",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T17:25:24.725Z"
+      "persisted_at": "2026-11-18T01:19:00.107Z"
     },
     "learn-huggingface-canberkkkkkk-ema-lightning": {
       "learning_id": "learn-huggingface-canberkkkkkk-ema-lightning",
@@ -279242,6 +279247,95 @@
       "content_hash": "c388a128fa4871729de14a28bab44877c4df74e04d842c876591ac1a9e17b4ce",
       "domain_letter": "G",
       "persisted_at": "2026-11-18T01:04:24.185Z"
+    },
+    "learn-huggingface-nvidia-nemotron-3-diarization": {
+      "learning_id": "learn-huggingface-nvidia-nemotron-3-diarization",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "nvidia/Nemotron-3-Diarization",
+      "repository": "nvidia/Nemotron-3-Diarization",
+      "slug": "hf-nvidia-nemotron-3-diarization",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/nvidia/Nemotron-3-Diarization",
+      "source_version": "hf-nvidia-nemotron-3-diarization",
+      "content_hash": "6476d41f82fdf7d89cd1676f4f0d06a1e35a01d8a7478e227a61d4f667f50af6",
+      "dossier_path": "07_PROJECT_LEARNING/hf-nvidia-nemotron-3-diarization-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-nvidia-nemotron-3-diarization-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-18T01:18:46.737Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-nvidia-nemotron-3-diarization-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-nvidia-nemotron-3-diarization-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-nvidia-nemotron-3-diarization-research-knowledge-intelligence-nvidia-nemotron.md",
+      "title": "Research & Knowledge Intelligence: nvidia/Nemotron-3-Diarization Core Invariants",
+      "repository": "nvidia/Nemotron-3-Diarization",
+      "source_version": "hf-nvidia-nemotron-3-diarization",
+      "content_hash": "1c89d304cb0d90dd1091fcc986b85c079d02b13ee55a33ed2eac4d501abefcac",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-18T01:18:47.071Z"
+    },
+    "rule-9100": {
+      "learning_id": "rule-9100",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9100,
+      "title": "dispatch helper taps and keys without the global animation wait",
+      "source_url": "https://github.com/callstack/agent-device",
+      "source_version": "655ede27",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-18T01:18:53.442Z"
+    },
+    "candidate_directive-dispatch-helper-taps-and-keys-without-the-global-animation-wait": {
+      "item_id": "candidate_directive-dispatch-helper-taps-and-keys-without-the-global-animation-wait",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-NONB-dispatch-helper-taps-and-keys-without-the-global-animation-wait.md",
+      "title": "dispatch helper taps and keys without the global animation wait",
+      "repository": "callstack/agent-device",
+      "source_version": "655ede27",
+      "content_hash": "176c05166ae0083cde937293d9303136541b60a333b94366858092c68a780f60",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-18T01:18:53.834Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-nvidia-nemotron-3-diarization-learnings-core-": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-nvidia-nemotron-3-diarization-learnings-core-",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-nvidia-nemotron-3-diarization-learnings-research-knowledge-intelligence-hf-nv.md",
+      "title": "Research & Knowledge Intelligence: hf-nvidia-nemotron-3-diarization-learnings Core Invariants",
+      "repository": "hf-nvidia-nemotron-3-diarization-learnings",
+      "source_version": "HEAD",
+      "content_hash": "7edb8e340bc65c1dcf8de7dcbb680e164503ce01ebac223f70fe020bd7e8de3b",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-18T01:18:59.167Z"
+    },
+    "candidate_directive-android-dispatch-helper-taps-and-keys-without-the-global-animation-wait": {
+      "item_id": "candidate_directive-android-dispatch-helper-taps-and-keys-without-the-global-animation-wait",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-NT78-android-dispatch-helper-taps-and-keys-without-the-global-animation-wait.md",
+      "title": "android): dispatch helper taps and keys without the global animation wait",
+      "repository": "callstack-agent-device-learnings",
+      "source_version": "HEAD",
+      "content_hash": "bd953ee6dd7aed85b6e27a43e482f41fdf9a588e5d10aa6539866d715f3d6814",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-18T01:18:59.735Z"
     }
   },
   "ai-builder-brain": {

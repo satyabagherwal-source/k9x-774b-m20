@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261116-H2Z8",
-    "timestamp": "2026-11-16T02:06:24.596Z",
-    "repository": "yugabyte/yugabyte-db",
-    "learningId": "learn-github-yugabyte-yugabyte-db",
-    "contentHash": "5024bf64f16a00eb9c0d216ad37064ee9a22d3021231313c6491a698eba702f7",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261116-H9MV",
-    "timestamp": "2026-11-16T02:06:33.223Z",
-    "repository": "CrawlCove/hreflang-checker",
-    "learningId": "learn-github-crawlcove-hreflang-checker",
-    "contentHash": "84963a5a4bd7d4e60fd8646ae5859c4e55d529fd2c319dc2fbf6893621d41761",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261116-V5X6",
     "timestamp": "2026-11-16T02:17:21.594Z",
     "repository": "crate-ci/typos",
@@ -7492,6 +7462,36 @@
     "contentHash": "ae4a8d89db6dbebf97a990b5adf34fea80f19815d8b3af10bd3d7f6dd951e021",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-NJAQ",
+    "timestamp": "2026-11-18T01:18:46.898Z",
+    "repository": "nvidia/Nemotron-3-Diarization",
+    "learningId": "learn-huggingface-nvidia-nemotron-3-diarization",
+    "contentHash": "6476d41f82fdf7d89cd1676f4f0d06a1e35a01d8a7478e227a61d4f667f50af6",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-NOHL",
+    "timestamp": "2026-11-18T01:18:53.625Z",
+    "repository": "callstack/agent-device",
+    "learningId": "learn-github-callstack-agent-device",
+    "contentHash": "3c5e71ac4fc5d8bb6e9305253992b6ae3fb2e789c5f522a7453e563ba4e9762a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

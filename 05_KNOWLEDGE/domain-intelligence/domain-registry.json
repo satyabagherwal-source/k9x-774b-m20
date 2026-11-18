@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-18T01:04:24.352Z",
-  "total_records": 1732,
+  "last_updated": "2026-11-18T01:19:00.706Z",
+  "total_records": 1734,
   "domains": {
     "A": {
       "total": 11,
@@ -48,7 +48,7 @@
       ]
     },
     "D": {
-      "total": 754,
+      "total": 756,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -803,7 +803,9 @@
         "domain_intelligence-research-knowledge-intelligence-xingchen-agi-teleocr-core-invariants",
         "domain_intelligence-research-knowledge-intelligence-hf-xingchen-agi-teleocr-learnings-core-invariant",
         "domain_intelligence-research-knowledge-intelligence-contrastive-lm-clm-v0-1-8b-core-invariants",
-        "domain_intelligence-research-knowledge-intelligence-hf-contrastive-lm-clm-v0-1-8b-learnings-core-inv"
+        "domain_intelligence-research-knowledge-intelligence-hf-contrastive-lm-clm-v0-1-8b-learnings-core-inv",
+        "domain_intelligence-research-knowledge-intelligence-nvidia-nemotron-3-diarization-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-hf-nvidia-nemotron-3-diarization-learnings-core-"
       ]
     },
     "E": {
@@ -8465,8 +8467,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "5ae304b149b057f94c803ac456b5749536053c22e0f5e3d066912cfe7a692a96",
-      "created_at": "2026-11-17T22:56:53.022Z"
+      "content_hash": "b013be5c0103390a5f321cf00435e50ba6b075b062fe37549c2cefb193b98920",
+      "created_at": "2026-11-18T01:19:00.706Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -16518,8 +16520,8 @@
       "title": "Technical Construction Intelligence: callstack/agent-device Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-callstack-agent-device-technical-construction-intelligence-callstack-agent-devic.md",
       "repository": "callstack/agent-device",
-      "content_hash": "a8a6a92bce80b18b8dfc44162e98b2648e3d7cd6b25250382c24cb870de38820",
-      "created_at": "2026-11-14T17:24:52.040Z"
+      "content_hash": "b88f45860bbca6a1e4dafb13ccc5111b845a542b00d8f75875476aa35d46bb9f",
+      "created_at": "2026-11-18T01:18:53.964Z"
     },
     "domain_intelligence-content-information-intelligence-apache-pinot-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-apache-pinot-core-invariants",
@@ -16596,8 +16598,8 @@
       "title": "Technical Construction Intelligence: callstack-agent-device-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-callstack-agent-device-learnings-technical-construction-intelligence-callstack-a.md",
       "repository": "callstack-agent-device-learnings",
-      "content_hash": "a43485127efb2de3e8a8167b3395ffbbb937c85f49af4fd3332d5a58796ba5d7",
-      "created_at": "2026-11-14T17:25:24.555Z"
+      "content_hash": "1ea352397120494a7019cb53630c2c02546e1d7937a46910d2a227a571403112",
+      "created_at": "2026-11-18T01:18:59.867Z"
     },
     "domain_intelligence-research-knowledge-intelligence-canberkkkkkk-ema-lightning-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-canberkkkkkk-ema-lightning-core-invariants",
@@ -29131,6 +29133,24 @@
       "repository": "shoutem-ui-learnings",
       "content_hash": "ce079ccfcc440b19518577dbaea0962adaba1652b64d22165114325ec2cfc557",
       "created_at": "2026-11-18T01:04:23.456Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-nvidia-nemotron-3-diarization-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-nvidia-nemotron-3-diarization-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: nvidia/Nemotron-3-Diarization Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-nvidia-nemotron-3-diarization-research-knowledge-intelligence-nvidia-nemotron.md",
+      "repository": "nvidia/Nemotron-3-Diarization",
+      "content_hash": "1c89d304cb0d90dd1091fcc986b85c079d02b13ee55a33ed2eac4d501abefcac",
+      "created_at": "2026-11-18T01:18:47.071Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-nvidia-nemotron-3-diarization-learnings-core-": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-nvidia-nemotron-3-diarization-learnings-core-",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-nvidia-nemotron-3-diarization-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-nvidia-nemotron-3-diarization-learnings-research-knowledge-intelligence-hf-nv.md",
+      "repository": "hf-nvidia-nemotron-3-diarization-learnings",
+      "content_hash": "7edb8e340bc65c1dcf8de7dcbb680e164503ce01ebac223f70fe020bd7e8de3b",
+      "created_at": "2026-11-18T01:18:59.167Z"
     }
   }
 }

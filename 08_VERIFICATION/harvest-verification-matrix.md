@@ -10762,3 +10762,5 @@
 | `CYCLE-2026-11-18-PROJ-EVOLVE` | `2026-11-18T01:03:04.627Z` | `hf-mradermacher-deepseek-v4-pro-qwen3.5-9b-uncensored-heretic-i1-gguf` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-F-F03E14A5` [Domain F] | Yes (`570ccef8...`) |
 | `CYCLE-2026-11-18-PROJ-EVOLVE` | `2026-11-18T01:03:39.617Z` | `shoutem-ui` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-L-9579240F` [Domain L] | Yes (`d8bdb548...`) |
 | `CYCLE-2026-11-18-PROJ-EVOLVE` | `2026-11-18T01:04:22.737Z` | `shoutem-ui` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-F-B4186028` [Domain F] | Yes (`701089a9...`) |
+| `CYCLE-20261118-NJAQ` | `2026-11-18T01:18:46.898Z` | `nvidia/Nemotron-3-Diarization` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nvidia-nemotron-3-diarization-learnings.md` | Yes (`6476d41f...`) |
+| `CYCLE-20261118-NOHL` | `2026-11-18T01:18:53.625Z` | `callstack/agent-device` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9100` | Yes (`3c5e71ac...`) |

@@ -10795,3 +10795,5 @@ Every entry in this ledger must capture:
 | `learn-dom-f-f03e14a5` | `project://hf-mradermacher-deepseek-v4-pro-qwen3.5-9b-uncensored-heretic-i1-gguf` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-mradermacher-deepseek-v4-pro-qwen3.5-9b-uncensored-heretic-i1-gguf-learnings.md` | 2026-11-18T01:03:04.627Z |
 | `learn-dom-l-9579240f` | `project://shoutem-ui` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/shoutem-ui-learnings.md` | 2026-11-18T01:03:39.617Z |
 | `learn-dom-f-b4186028` | `project://shoutem-ui` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/shoutem-ui-learnings.md` | 2026-11-18T01:04:22.737Z |
+| `learn-huggingface-nvidia-nemotron-3-diarization` | `https://huggingface.co/nvidia/Nemotron-3-Diarization` | `hf-nvidia-` | Multi-dimensional audit evidence | 2026-11-18T01:18:46.902Z |
+| `learn-github-callstack-agent-device` | `https://github.com/callstack/agent-device` | `655ede27` | Multi-dimensional audit evidence | 2026-11-18T01:18:53.628Z |
