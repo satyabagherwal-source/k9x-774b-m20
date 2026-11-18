@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-18T00:08:01.087Z",
+  "updated_at": "2026-11-18T00:27:32.306Z",
   "stats": {
-    "total_discovered": 5187,
-    "approved_pending_harvest": 4898,
+    "total_discovered": 5190,
+    "approved_pending_harvest": 4901,
     "harvested_count": 0,
     "rejected_count": 289,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 4882,
+      "COMMUNITY_AND_EXPERT": 4885,
       "OFFICIAL_DOCUMENTATION": 164,
       "STANDARDS_AND_SPECIFICATIONS": 108,
       "ENGINEERING_BLOGS": 3,
@@ -112112,6 +112112,72 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rtk-ai-rtk-learnings.md",
         "fileName": "rtk-ai-rtk-learnings.md"
+      }
+    },
+    "SRC-E3BA517C9032": {
+      "id": "SRC-E3BA517C9032",
+      "url": "https://vercel.com/api/www/av",
+      "title": "https://vercel.com/api/www/av",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T00:27:32.204Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/openziti-zrok-learnings.md",
+        "fileName": "openziti-zrok-learnings.md"
+      }
+    },
+    "SRC-6387F9913E82": {
+      "id": "SRC-6387F9913E82",
+      "url": "https://github.com/openziti/zrok/actions/runs/44140599682",
+      "title": "https://github.com/openziti/zrok/actions/runs/44140599682",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T00:27:32.263Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/openziti-zrok-learnings.md",
+        "fileName": "openziti-zrok-learnings.md"
+      }
+    },
+    "SRC-8744CC79A25C": {
+      "id": "SRC-8744CC79A25C",
+      "url": "https://github.com/openziti/zrok/actions/runs/44121508662",
+      "title": "https://github.com/openziti/zrok/actions/runs/44121508662",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T00:27:32.306Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/openziti-zrok-learnings.md",
+        "fileName": "openziti-zrok-learnings.md"
       }
     }
   }

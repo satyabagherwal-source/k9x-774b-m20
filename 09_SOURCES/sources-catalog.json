@@ -315,8 +315,8 @@
     "sourceUrl": "https://huggingface.co/Qwen/Qwen-Image-2.1",
     "sourceVersion": "hf-qwen-qwen-image-2.1",
     "license": "Open-Source",
-    "contentHash": "fb32d57e2d27ae73d1a1a0e49ada1666e884eb6325f9bf272abdb817519f39e5",
-    "lastHarvestedAt": "2026-11-13T13:10:51.759Z",
+    "contentHash": "406546fb95766040a32a63191befcdf70845e6b634e3690ae94caa9385e3cbb5",
+    "lastHarvestedAt": "2026-11-18T00:27:00.677Z",
     "learningId": "learn-huggingface-qwen-qwen-image-2-1"
   },
   "hf-contrastive-lm-clm-v0.1-8b": {
@@ -2213,10 +2213,10 @@
     "repository": "openziti/zrok",
     "platform": "github",
     "sourceUrl": "https://github.com/openziti/zrok",
-    "sourceVersion": "0c23df62",
+    "sourceVersion": "1a535cfa",
     "license": "Apache-2.0",
-    "contentHash": "f7fc70c2ec5b84b7dfeb180e64e6756bcf3337610bd9b70a2d6ce779fe01efb8",
-    "lastHarvestedAt": "2026-11-17T01:54:45.204Z",
+    "contentHash": "64a81af53335c3cedb1a4cf14a142acb275abf0d946040af0076558cbbf33246",
+    "lastHarvestedAt": "2026-11-18T00:22:46.891Z",
     "learningId": "learn-github-openziti-zrok"
   },
   "crate-crate": {

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-18T00:08:02.253Z",
-  "total_records": 1719,
+  "last_updated": "2026-11-18T00:27:33.403Z",
+  "total_records": 1722,
   "domains": {
     "A": {
       "total": 11,
@@ -812,7 +812,7 @@
       ]
     },
     "F": {
-      "total": 39,
+      "total": 42,
       "record_ids": [
         "DOM-F-C060CCE1",
         "DOM-F-83D565C2",
@@ -852,7 +852,10 @@
         "domain_intelligence-design-intelligence-cypress-io-cypress-learnings-core-invariants",
         "domain_intelligence-design-intelligence-nanbeige-nanbeige4-3-33b-core-invariants",
         "domain_intelligence-design-intelligence-hf-nanbeige-nanbeige4-3-33b-learnings-core-invariants",
-        "DOM-F-DEB23BA9"
+        "DOM-F-DEB23BA9",
+        "domain_intelligence-design-intelligence-qwen-qwen-image-2-1-core-invariants",
+        "DOM-F-D22A5DEE",
+        "domain_intelligence-design-intelligence-hf-qwen-qwen-image-2-1-learnings-core-invariants"
       ]
     },
     "G": {
@@ -24085,8 +24088,8 @@
       "title": "Architecture Intelligence: openziti/zrok Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-openziti-zrok-architecture-intelligence-openziti-zrok-core-invariants.md",
       "repository": "openziti/zrok",
-      "content_hash": "b48d818dd0ca73893d93faca8e0dde86e842d304b47e7135f7479a420043eee4",
-      "created_at": "2026-11-17T01:54:45.510Z"
+      "content_hash": "c849e1595be1d03f57be9c2335a12b17640e4d975bc0a9562d14f1d4c906ecbd",
+      "created_at": "2026-11-18T00:22:47.185Z"
     },
     "domain_intelligence-technical-construction-intelligence-alibaba-zvec-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-alibaba-zvec-core-invariants",
@@ -24112,8 +24115,8 @@
       "title": "Architecture Intelligence: openziti-zrok-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-openziti-zrok-learnings-architecture-intelligence-openziti-zrok-learnings-core-i.md",
       "repository": "openziti-zrok-learnings",
-      "content_hash": "091e829765e42c20c00a531e261620b73566e8ef5c6c0ed5ba5e721158acfcd0",
-      "created_at": "2026-11-17T01:54:52.340Z"
+      "content_hash": "e05a480e27fc72f608a08572b86ea968d8f9e10f392f4d5b14e5c7eadf5b4241",
+      "created_at": "2026-11-18T00:27:32.646Z"
     },
     "domain_intelligence-technical-construction-intelligence-inikulin-parse5-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-inikulin-parse5-core-invariants",
@@ -26706,8 +26709,8 @@
       "title": "Human & Need Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-A-zulip-zulip-learnings-human-need-intelligence-zulip-zulip-learnings-core-invaria.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "9c3bea9ecfec235e65bcf1f216783f0224cd7ea2ebffe85841eae3b84d5ef4c7",
-      "created_at": "2026-11-17T22:27:27.248Z"
+      "content_hash": "932891e8e1ac5c29f5c5608f6f8ecfdbeb82651fac5c06b5d483ef04da02f3b3",
+      "created_at": "2026-11-18T00:27:33.403Z"
     },
     "domain_intelligence-technical-construction-intelligence-zama-ai-tfhe-rs-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-zama-ai-tfhe-rs-learnings-core-invariants",
@@ -28901,6 +28904,58 @@
       "repository": "hf-xingchen-agi-teleocr-learnings",
       "content_hash": "acedf32634e439f75f35498af5f1c50cedebf89c65bd4f572ae86b464d88140e",
       "created_at": "2026-11-18T00:08:01.807Z"
+    },
+    "domain_intelligence-design-intelligence-qwen-qwen-image-2-1-core-invariants": {
+      "record_id": "domain_intelligence-design-intelligence-qwen-qwen-image-2-1-core-invariants",
+      "domain_letter": "F",
+      "title": "Design Intelligence: Qwen/Qwen-Image-2.1 Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-hf-qwen-qwen-image-2-1-design-intelligence-qwen-qwen-image-2-1-core-invariants.md",
+      "repository": "Qwen/Qwen-Image-2.1",
+      "content_hash": "f5e315dfb7d3056cacf1106160ced3363e160d22ff36a05532d1f43c8f1a4381",
+      "created_at": "2026-11-18T00:27:01.054Z"
+    },
+    "DOM-F-D22A5DEE": {
+      "record_id": "DOM-F-D22A5DEE",
+      "domain_letter": "F",
+      "domain_id": "design",
+      "domain_name": "Design Intelligence",
+      "secondary_domains": [],
+      "title": "3D-RoPE Token Grid Striding Overflow on 2048x2048 Generation (BUG-QWEN-01)",
+      "content": "High-resolution latent transformers must implement continuous or base-scaled positional frequency calculation rather than relying on static unscaled coordinate tables.",
+      "content_hash": "a48d2f8b3c935f222cc8d870d04932cb6bc012becd0a24dc098c2d19a5aa8106",
+      "summary": "The default frequency grid assumed token sequences $\\le 4,096$. At $2048 \\times 2048$, the sequence length exceeds $16,384$ tokens, causing  -> High-resolution latent transformers must implement continuous or base-scaled positional frequency calculation rather than relying on static ",
+      "provenance": {
+        "source_uri": "project://hf-qwen-qwen-image-2.1/hf-qwen-qwen-image-2.1-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-18T00:27:04.165Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-qwen-qwen-image-2.1)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Addressed via native resolution scaling and dynamic RoPE base frequency extrapolation ($b_{\\text{scaled}} = b \\cdot S^{\\frac{d}{d-2}}$) for high-resolution tokens."
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 1,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-18T00:27:31.178Z"
+    },
+    "domain_intelligence-design-intelligence-hf-qwen-qwen-image-2-1-learnings-core-invariants": {
+      "record_id": "domain_intelligence-design-intelligence-hf-qwen-qwen-image-2-1-learnings-core-invariants",
+      "domain_letter": "F",
+      "title": "Design Intelligence: hf-qwen-qwen-image-2.1-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-hf-qwen-qwen-image-2-1-learnings-design-intelligence-hf-qwen-qwen-image-2-1-lear.md",
+      "repository": "hf-qwen-qwen-image-2.1-learnings",
+      "content_hash": "ef281bddac9cd76ec486f1adc44fbb2b93d145b912cafcd2d33f28ff458b969b",
+      "created_at": "2026-11-18T00:27:31.835Z"
     }
   }
 }

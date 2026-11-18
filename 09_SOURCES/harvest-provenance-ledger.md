@@ -10783,3 +10783,6 @@ Every entry in this ledger must capture:
 | `learn-github-rtk-ai-rtk` | `https://github.com/rtk-ai/rtk` | `6c94fc51` | Multi-dimensional audit evidence | 2026-11-18T00:07:47.068Z |
 | `learn-github-beclab-olares` | `https://github.com/beclab/Olares` | `139e4a83` | Multi-dimensional audit evidence | 2026-11-18T00:07:54.925Z |
 | `learn-github-microsoft-agent-governance-toolkit` | `https://github.com/microsoft/agent-governance-toolkit` | `3528751a` | Multi-dimensional audit evidence | 2026-11-18T00:07:57.594Z |
+| `learn-github-openziti-zrok` | `https://github.com/openziti/zrok` | `1a535cfa` | Multi-dimensional audit evidence | 2026-11-18T00:22:46.891Z |
+| `learn-huggingface-qwen-qwen-image-2-1` | `https://huggingface.co/Qwen/Qwen-Image-2.1` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-11-18T00:27:00.677Z |
+| `learn-dom-f-d22a5dee` | `project://hf-qwen-qwen-image-2.1` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-qwen-qwen-image-2.1-learnings.md` | 2026-11-18T00:27:31.206Z |

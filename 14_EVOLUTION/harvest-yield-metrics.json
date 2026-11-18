@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T00:07:57.599Z",
-  "total_cycles_completed": 10300,
-  "total_learnings_persisted": 10300,
-  "total_rules_promoted": 9834,
+  "last_updated": "2026-11-18T00:27:00.683Z",
+  "total_cycles_completed": 10302,
+  "total_learnings_persisted": 10302,
+  "total_rules_promoted": 9838,
   "history": [
-    {
-      "timestamp": "2026-11-17T11:40:37.510Z",
-      "repository": "fastapi/fastapi",
-      "learningId": "learn-github-fastapi-fastapi",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T11:40:38.998Z",
-      "repository": "react-navigation/react-navigation",
-      "learningId": "learn-github-react-navigation-react-navigation",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-17T11:40:43.358Z",
       "repository": "cilium/cilium",
@@ -1403,6 +1389,20 @@
       "repository": "microsoft/agent-governance-toolkit",
       "learningId": "learn-github-microsoft-agent-governance-toolkit",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T00:22:46.895Z",
+      "repository": "openziti/zrok",
+      "learningId": "learn-github-openziti-zrok",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T00:27:00.683Z",
+      "repository": "Qwen/Qwen-Image-2.1",
+      "learningId": "learn-huggingface-qwen-qwen-image-2-1",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

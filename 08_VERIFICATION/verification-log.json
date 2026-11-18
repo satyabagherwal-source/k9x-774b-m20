@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261116-A2LJ",
-    "timestamp": "2026-11-16T01:32:57.895Z",
-    "repository": "StarRocks/starrocks",
-    "learningId": "learn-github-starrocks-starrocks",
-    "contentHash": "8ed6e559a818509ff47b745c18c0b1c54547f1ed07947391ee7f4efc0ca62455",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261116-PR5J",
-    "timestamp": "2026-11-16T01:45:09.559Z",
-    "repository": "Comfy-Org/RelayVSR",
-    "learningId": "learn-huggingface-comfy-org-relayvsr",
-    "contentHash": "60782fc62b931b3b445bf33778ac152aa3c7acb04744e9451d91728d97ce0aca",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261116-PT0Z",
     "timestamp": "2026-11-16T01:45:11.987Z",
     "repository": "medialab/xan",
@@ -7492,6 +7462,36 @@
     "contentHash": "71595d7aa1e571c48e6b66c362b4ac61e9abcd8794655a210a056ae9a6435fc2",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-NIP3",
+    "timestamp": "2026-11-18T00:22:46.887Z",
+    "repository": "openziti/zrok",
+    "learningId": "learn-github-openziti-zrok",
+    "contentHash": "64a81af53335c3cedb1a4cf14a142acb275abf0d946040af0076558cbbf33246",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-SYIQ",
+    "timestamp": "2026-11-18T00:27:00.674Z",
+    "repository": "Qwen/Qwen-Image-2.1",
+    "learningId": "learn-huggingface-qwen-qwen-image-2-1",
+    "contentHash": "406546fb95766040a32a63191befcdf70845e6b634e3690ae94caa9385e3cbb5",
+    "status": "VERIFIED",
+    "promotedRulesCount": 3,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

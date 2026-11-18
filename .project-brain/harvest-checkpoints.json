@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-18T00:07:57.603Z",
+  "last_updated": "2026-11-18T00:27:00.686Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -365,14 +365,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-qwen-qwen-image-2-1",
-      "content_hash": "fb32d57e2d27ae73d1a1a0e49ada1666e884eb6325f9bf272abdb817519f39e5",
-      "verified_at": "2026-11-13T13:10:51.769Z",
+      "content_hash": "406546fb95766040a32a63191befcdf70845e6b634e3690ae94caa9385e3cbb5",
+      "verified_at": "2026-11-18T00:27:00.685Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T13:10:51.769Z"
+      "last_updated": "2026-11-18T00:27:00.685Z"
     },
     "Contrastive-LM/CLM-v0.1-8B": {
       "repository": "Contrastive-LM/CLM-v0.1-8B",
@@ -3456,14 +3456,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-openziti-zrok",
-      "content_hash": "f7fc70c2ec5b84b7dfeb180e64e6756bcf3337610bd9b70a2d6ce779fe01efb8",
-      "verified_at": "2026-11-17T01:54:45.221Z",
+      "content_hash": "64a81af53335c3cedb1a4cf14a142acb275abf0d946040af0076558cbbf33246",
+      "verified_at": "2026-11-18T00:22:46.898Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T01:54:45.221Z"
+      "last_updated": "2026-11-18T00:22:46.898Z"
     },
     "crate/crate": {
       "repository": "crate/crate",

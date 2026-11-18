@@ -10750,3 +10750,6 @@
 | `CYCLE-20261118-48E0` | `2026-11-18T00:07:47.064Z` | `rtk-ai/rtk` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9085` | Yes (`eba5a86b...`) |
 | `CYCLE-20261118-4EG9` | `2026-11-18T00:07:54.921Z` | `beclab/Olares` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9086` | Yes (`c50fddb9...`) |
 | `CYCLE-20261118-4GIF` | `2026-11-18T00:07:57.591Z` | `microsoft/agent-governance-toolkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9087` | Yes (`71595d7a...`) |
+| `CYCLE-20261118-NIP3` | `2026-11-18T00:22:46.887Z` | `openziti/zrok` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9088` | Yes (`64a81af5...`) |
+| `CYCLE-20261118-SYIQ` | `2026-11-18T00:27:00.674Z` | `Qwen/Qwen-Image-2.1` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9089, Rule 9090, Rule 9091` | Yes (`406546fb...`) |
+| `CYCLE-2026-11-18-PROJ-EVOLVE` | `2026-11-18T00:27:31.206Z` | `hf-qwen-qwen-image-2.1` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-F-D22A5DEE` [Domain F] | Yes (`a48d2f8b...`) |

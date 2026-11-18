@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T00:08:02.133Z",
+  "last_updated": "2026-11-18T00:27:33.266Z",
   "directives": [
     {
       "id": "CD-001",
@@ -23628,14 +23628,14 @@
       "domain_letter": "G"
     },
     {
-      "id": "CD-J7BY",
+      "id": "CD-TNNR",
       "directive_title": "portico: Fix typos on development community and security pages.",
       "source_repo": "zulip-zulip-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-J7BY-portico-fix-typos-on-development-community-and-security-pages.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-TNNR-portico-fix-typos-on-development-community-and-security-pages.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
-      "date_staged": "2026-11-17",
+      "date_staged": "2026-11-18",
       "domain_letter": "L"
     },
     {
@@ -26585,6 +26585,66 @@
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-18",
       "domain_letter": "H"
+    },
+    {
+      "id": "CD-TN30",
+      "directive_title": "Empirical Invariant Guard in agent-smoke.yml",
+      "source_repo": "openziti-zrok-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-TN30-empirical-invariant-guard-in-agent-smoke-yml.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-18",
+      "domain_letter": "D"
+    },
+    {
+      "id": "CD-REV-BA58F2",
+      "directive_title": "VAE Tile Boundary Discontinuity on RGBA Alpha Seams (BUG-QWEN-02)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "hf-qwen-qwen-image-2.1",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-BA58F2-vae-tile-boundary-discontinuity-on-rgba-.md",
+      "staged_date": "2026-11-18"
+    },
+    {
+      "id": "CD-TM8X",
+      "directive_title": "Multi-Reference Spatial-Temporal Coordinate Collision Prevention (3D-RoPE Boundary Invariant)",
+      "source_repo": "hf-qwen-qwen-image-2.1-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-TM8X-multi-reference-spatial-temporal-coordinate-collision-prevention-3d-rope-boundar.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-18",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-TM8Y",
+      "directive_title": "Native RGBA Latent Normalization & Boundary Clamping",
+      "source_repo": "hf-qwen-qwen-image-2.1-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-TM8Y-native-rgba-latent-normalization-boundary-clamping.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-18",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-605B88",
+      "directive_title": "Empirical Invariant Guard in agent-smoke.yml",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "openziti-zrok",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-605B88-empirical-invariant-guard-in-agent-smoke.md",
+      "staged_date": "2026-11-18"
+    },
+    {
+      "id": "CD-REV-B40760",
+      "directive_title": "portico: Fix typos on development community and security pages.",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zulip-zulip",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-B40760-portico-fix-typos-on-development-communi.md",
+      "staged_date": "2026-11-18"
     }
   ]
 }
