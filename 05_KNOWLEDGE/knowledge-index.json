@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-18T02:42:50.179Z",
-  "total_verified_learnings": 8964,
+  "last_updated": "2026-11-18T02:51:32.513Z",
+  "total_verified_learnings": 8965,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 20815,
+  "total_items": 20821,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112286,9 +112286,9 @@
       "title": "Research & Knowledge Intelligence: Comfy-Org/Wan-2.2 Core Invariants",
       "repository": "Comfy-Org/Wan-2.2",
       "source_version": "hf-comfy-org-wan-2.2",
-      "content_hash": "ca6d0b575ba26ab555ee4be708145bc052ec5ee86bd0853811d2ad6cdae6db88",
+      "content_hash": "3b7bf9a991c072df7345739e6a628c71d57bc399916cb4a66b8845619031954b",
       "domain_letter": "D",
-      "persisted_at": "2026-11-13T15:18:24.716Z"
+      "persisted_at": "2026-11-18T02:51:15.207Z"
     },
     "candidate_directive-flush-cookie-stores-to-disk-before-quitting-55745": {
       "item_id": "candidate_directive-flush-cookie-stores-to-disk-before-quitting-55745",
@@ -112454,9 +112454,9 @@
       "title": "Research & Knowledge Intelligence: hf-comfy-org-wan-2.2-learnings Core Invariants",
       "repository": "hf-comfy-org-wan-2.2-learnings",
       "source_version": "HEAD",
-      "content_hash": "4b5aa898716f0c22c6e5b437524226c37742c462e2889b6bfdd62ceab3615537",
+      "content_hash": "4a2ac67b134de3633a5ad44170c96e8b62d281ae59319b978ca6d6ada34abd97",
       "domain_letter": "D",
-      "persisted_at": "2026-11-13T15:19:16.538Z"
+      "persisted_at": "2026-11-18T02:51:31.135Z"
     },
     "domain_intelligence-architecture-intelligence-electron-electron-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-electron-electron-learnings-core-invariants",
@@ -114637,10 +114637,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-freenet-freenet-core-technical-construction-intelligence-freenet-freenet-core-co.md",
       "title": "Technical Construction Intelligence: freenet/freenet-core Core Invariants",
       "repository": "freenet/freenet-core",
-      "source_version": "3bd9f72f",
-      "content_hash": "ad2ad389ea51081ba7ae04c61dac0a26d951a3fd22375acf618966e600186b9c",
+      "source_version": "0515d873",
+      "content_hash": "ffd33a0cc40f4086502b1431e78c273620848e1831f5eadcd29a8407208c2467",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T19:45:01.388Z"
+      "persisted_at": "2026-11-18T02:51:27.974Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-freenet-freenet-core": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-freenet-freenet-core",
@@ -114649,10 +114649,10 @@
       "relative_path": "08_VERIFICATION/freenet-freenet-core-verification-protocol-empirical-defect-shield-for-freenet-f.md",
       "title": "Verification Protocol: Empirical Defect Shield for freenet/freenet-core",
       "repository": "freenet/freenet-core",
-      "source_version": "3bd9f72f",
-      "content_hash": "9b82fc326687db1ff1ed58f4ef145f2c9f4c653474db9a2985b175d8072a0207",
+      "source_version": "0515d873",
+      "content_hash": "351edf7fd8902e6dc3bb6bcd833fba5631e20a29eeb86df432b28a89b841f75f",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T19:45:01.509Z"
+      "persisted_at": "2026-11-18T02:51:28.145Z"
     },
     "candidate_directive-update-remove-stored-files-no-document-points-at-sdk-1541-6674": {
       "item_id": "candidate_directive-update-remove-stored-files-no-document-points-at-sdk-1541-6674",
@@ -114734,9 +114734,9 @@
       "title": "Technical Construction Intelligence: freenet-freenet-core-learnings Core Invariants",
       "repository": "freenet-freenet-core-learnings",
       "source_version": "HEAD",
-      "content_hash": "5b3184e9df02ccf1f98d277ae60dc98116deee62db08d421366139bad9d05cc2",
+      "content_hash": "3ae7ebadaec372eaa501ec9f9d195ba1a51d35170ebdaafe3db2f721643bc48d",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T15:51:41.316Z"
+      "persisted_at": "2026-11-18T02:51:32.374Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-freenet-freenet-core-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-freenet-freenet-core-learnings",
@@ -114746,9 +114746,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for freenet-freenet-core-learnings",
       "repository": "freenet-freenet-core-learnings",
       "source_version": "HEAD",
-      "content_hash": "75ad6210bdb4e2bdd38cb58680154a51c82e392f774fd604d20e0fcaafcf3e4d",
+      "content_hash": "5b621445d148f2aa6c222d60a20e7233dd8eb71391593dae495a092dcefe8f4e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T15:51:41.616Z"
+      "persisted_at": "2026-11-18T02:51:32.513Z"
     },
     "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-c": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-c",
@@ -219558,8 +219558,8 @@
       "slug": "freenet-freenet-core",
       "platform": "github",
       "source_url": "https://github.com/freenet/freenet-core",
-      "source_version": "3bd9f72f",
-      "content_hash": "b3c856d1e0d5a83e8a720cf40b3a9b3d075abc5668c7c7d9c48cb594fed68dc4",
+      "source_version": "0515d873",
+      "content_hash": "e86717841c864daf12d2385ff22f41ebe445981ec34519dc8f3a88c452b63cbe",
       "dossier_path": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/freenet-freenet-core-learnings.md",
       "promoted_rules": [
@@ -219612,6 +219612,11 @@
           "number": 9042,
           "title": "peers trip the crash breaker only on QUIC-panic short runs",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9111,
+          "title": "run initiate_buffer and instance setup under the guest backstop",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -219619,7 +219624,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T19:45:00.931Z",
+      "verified_at": "2026-11-18T02:51:27.428Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -228953,8 +228958,8 @@
       "slug": "koderover-zadig",
       "platform": "github",
       "source_url": "https://github.com/koderover/zadig",
-      "source_version": "29b826e4",
-      "content_hash": "8b4f6e71e9ecd0702c1f8db3bcdc10d6ad9bd9578f4cbe45aa82cddf196d95e7",
+      "source_version": "2c932905",
+      "content_hash": "57a58c4c06f9b0539dbe6b9d3c8890e3d0f72f5052b45faf16bb1a466d63481b",
       "dossier_path": "07_PROJECT_LEARNING/koderover-zadig-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/koderover-zadig-learnings.md",
       "promoted_rules": [
@@ -228967,6 +228972,11 @@
           "number": 8863,
           "title": "prevent concurrent chart download directory conflicts",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9110,
+          "title": "support skipping CRD upgrade when updating services",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -228974,7 +228984,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T03:57:59.925Z",
+      "verified_at": "2026-11-18T02:51:25.453Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -229040,10 +229050,10 @@
       "relative_path": "08_VERIFICATION/koderover-zadig-verification-protocol-empirical-defect-shield-for-koderover-zadi.md",
       "title": "Verification Protocol: Empirical Defect Shield for koderover/zadig",
       "repository": "koderover/zadig",
-      "source_version": "29b826e4",
-      "content_hash": "9eca30edd857215103b49a06551550d5142cc5b20f481a7794c8ab06bae10819",
+      "source_version": "2c932905",
+      "content_hash": "903f6013acbacc809768d551a5b3574fa6b0597e5c0484e0afb09252d60231c2",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T03:58:00.523Z"
+      "persisted_at": "2026-11-18T02:51:26.165Z"
     },
     "learn-github-projectdiscovery-nuclei": {
       "learning_id": "learn-github-projectdiscovery-nuclei",
@@ -229226,9 +229236,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for koderover-zadig-learnings",
       "repository": "koderover-zadig-learnings",
       "source_version": "HEAD",
-      "content_hash": "9231c309ec96c1dded351274b567ec651620bf618c896b1c409a49970ed678c8",
+      "content_hash": "75e73e2654e456790b2e68d42e8cad0a42c36b34eb690495c46d525cb0d5b100",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T03:58:08.328Z"
+      "persisted_at": "2026-11-18T02:51:31.845Z"
     },
     "learn-huggingface-argmaxinc-whisperkit-coreml": {
       "learning_id": "learn-huggingface-argmaxinc-whisperkit-coreml",
@@ -264029,10 +264039,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-koderover-zadig-technical-construction-intelligence-koderover-zadig-core-invaria.md",
       "title": "Technical Construction Intelligence: koderover/zadig Core Invariants",
       "repository": "koderover/zadig",
-      "source_version": "29b826e4",
-      "content_hash": "8612301bac90e683c208713345645df6fd6ab3c00d2345f4cc2d81fc38493b16",
+      "source_version": "2c932905",
+      "content_hash": "acdeb6381dbb03e0e1cea0796ad8cb7926d3d71450501f3b8b76280297dcfd08",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T03:58:00.400Z"
+      "persisted_at": "2026-11-18T02:51:25.992Z"
     },
     "domain_intelligence-architecture-intelligence-solidjs-solid-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-solidjs-solid-learnings-core-invariants",
@@ -264102,9 +264112,9 @@
       "title": "Technical Construction Intelligence: koderover-zadig-learnings Core Invariants",
       "repository": "koderover-zadig-learnings",
       "source_version": "HEAD",
-      "content_hash": "cf7201c432bb7c39f7f4c294c8cdab573cbc98da8dfaf31c3b4fea36e0c8b704",
+      "content_hash": "02dad1ced52738c6b7f627a71eec5ed6c7122b41e54788f02d2515a161f2a5b4",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T03:58:08.202Z"
+      "persisted_at": "2026-11-18T02:51:31.701Z"
     },
     "learn-github-vitejs-vite": {
       "learning_id": "learn-github-vitejs-vite",
@@ -280030,6 +280040,97 @@
       "content_hash": "e99dd9a931028770b1b66f469a484231702e7351a47ef3c6e898bf2383d1f57d",
       "domain_letter": "K",
       "persisted_at": "2026-11-18T02:42:49.607Z"
+    },
+    "learn-huggingface-comfy-org-wan-2-2": {
+      "learning_id": "learn-huggingface-comfy-org-wan-2-2",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "Comfy-Org/Wan-2.2",
+      "repository": "Comfy-Org/Wan-2.2",
+      "slug": "hf-comfy-org-wan-2.2",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/Comfy-Org/Wan-2.2",
+      "source_version": "hf-comfy-org-wan-2.2",
+      "content_hash": "8fb992a5e474068d98c3acb4542787e58c24d4dccfae4449feac7a4952515bdd",
+      "dossier_path": "07_PROJECT_LEARNING/hf-comfy-org-wan-2.2-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-comfy-org-wan-2.2-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-18T02:51:14.806Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-9110": {
+      "learning_id": "rule-9110",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9110,
+      "title": "support skipping CRD upgrade when updating services",
+      "source_url": "https://github.com/koderover/zadig",
+      "source_version": "2c932905",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-18T02:51:25.453Z"
+    },
+    "candidate_directive-support-skipping-crd-upgrade-when-updating-services": {
+      "item_id": "candidate_directive-support-skipping-crd-upgrade-when-updating-services",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-YOMB-support-skipping-crd-upgrade-when-updating-services.md",
+      "title": "support skipping CRD upgrade when updating services",
+      "repository": "koderover/zadig",
+      "source_version": "2c932905",
+      "content_hash": "881d7451aa1bffe668c24bd85f20285e311e77b0ba265c270d13b54a0f4168e7",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-18T02:51:25.860Z"
+    },
+    "rule-9111": {
+      "learning_id": "rule-9111",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9111,
+      "title": "run initiate_buffer and instance setup under the guest backstop",
+      "source_url": "https://github.com/freenet/freenet-core",
+      "source_version": "0515d873",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-18T02:51:27.428Z"
+    },
+    "candidate_directive-run-initiate_buffer-and-instance-setup-under-the-guest-backstop": {
+      "item_id": "candidate_directive-run-initiate_buffer-and-instance-setup-under-the-guest-backstop",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-YTJ5-run-initiate_buffer-and-instance-setup-under-the-guest-backstop.md",
+      "title": "run initiate_buffer and instance setup under the guest backstop",
+      "repository": "freenet-freenet-core-learnings",
+      "source_version": "HEAD",
+      "content_hash": "02f676f8d094801ab837ce3eac8aa0a3c44151a5b862753da9c36c2e3d1762a2",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-18T02:51:32.230Z"
+    },
+    "candidate_directive-helm-support-skipping-crd-upgrade-when-updating-services": {
+      "item_id": "candidate_directive-helm-support-skipping-crd-upgrade-when-updating-services",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-YT0T-helm-support-skipping-crd-upgrade-when-updating-services.md",
+      "title": "helm): support skipping CRD upgrade when updating services",
+      "repository": "koderover-zadig-learnings",
+      "source_version": "HEAD",
+      "content_hash": "6101e755cbae40354c0ddca1b252a2d461fe81471aafbc3af8120cbfff85dfd0",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-18T02:51:31.565Z"
     }
   },
   "ai-builder-brain": {

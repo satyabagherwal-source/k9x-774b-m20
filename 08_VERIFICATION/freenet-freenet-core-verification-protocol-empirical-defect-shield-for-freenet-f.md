@@ -4,22 +4,22 @@
 {
   "source_repository": "freenet/freenet-core",
   "source_url": "https://github.com/freenet/freenet-core",
-  "source_version": "3bd9f72f",
+  "source_version": "0515d873",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-17T19:45:01.270Z",
+  "timestamp": "2026-11-18T02:51:27.830Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-freenet-freenet-core",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [freenet/freenet-core](https://github.com/freenet/freenet-core) (Revision: `3bd9f72f`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-17T19:45:01.270Z`  
+> **Provenance**: Harvested from [freenet/freenet-core](https://github.com/freenet/freenet-core) (Revision: `0515d873`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-18T02:51:27.830Z`  
 > **Learning ID**: `learn-github-freenet-freenet-core`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `freenet/freenet-core` (Commit: `3bd9f72f`)
+- **Target Repository**: `freenet/freenet-core` (Commit: `0515d873`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/freenet-freenet-core-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/freenet/freenet-core](https://github.com/freenet/freenet-core))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T19:45:00.213Z  
+> **Harvest Timestamp**: 2026-11-18T02:51:26.619Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1749,14 +1749,11 @@ pub mod streaming_buffer;
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #6262** (2026-11-17): **fix(quic): breaker review carry-overs from #6259**
-  *Symptoms*: ## Problem  The re-review of #6259 carried several precision items into the next breaker PR. None of them changes whether QUIC runs; they correct what telemetry reports and what the docs and tests claim:  - `panic_place` trusted any directory above `src` whose name looked versioned (`name-1.2.3`), so a home or project directory named like `bob-2.0` reached telemetry. - The docs said a peer's breaker trips before the post-update rollback. That holds only when a release's crashes are all QUIC panics: the rollback counts every crash. - A legacy shadow left by this release before a rollback, and read again after a return to the same release on the same boot, passes the version and boot checks. - No real-process test started a Windows peer, and no on-disk test covered a Tripped main marker at the shadow's first start.  ## Approach  - **`panic_place`** keeps the directory above the last `src` only when it is a known crate name (quinn's crates, `core`, `alloc`, `std`) or sits where cargo puts crates (`.cargo/registry/src/<index>/<crate>`, `.cargo/git/checkouts/...`). The shape of a name is no longer trusted, so `/home/bob-2.0/src/x.rs` reports `src/x.rs`. - **The trip-first claim is narrowed** in the constant's doc, the binary's pin test doc and `transport.md`: one unrelated crash (an out-of-memory kill, a SIGKILL) before two QUIC panics still lets the rollback act first. - **The shadow's rollback-and-return case is documented as a known inaccuracy** (`read_legacy_shadow`): rare, an
-  **Post-Mortem & Fix Analysis**:
-  > <!-- claude-rule-review --> ### Rule Review: No issues found  **Rules checked:** git-workflow.md, code-style.md, testing.md, transport.md **Files reviewed:** 5  No rule violations detected.  - **`fix:` regression tests:** The `panic_place` change comes with new cases in the `panic_place` table test:   - Home directories named `bob-2.0` on Linux, macOS and Windows.   - macOS and Windows cargo registry paths.   - An extra assertion that `bob` never appears in the output.    The shadow-file reading fix is covered by `the_legacy_shadow_ignores_a_tripped_main_marker_on_disk`. The peer trip threshold is covered by `a_peer_trips_after_two_quic_panics_in_a_row`. - **Edge cases:** The tests cover the cases that would catch the bugs, namely a lookalike home directory name, both registry layouts, and the Armed versus Tripped main marker. - **Docs:** The changed behaviour is documented in `transport.md`, the `short_runs.rs` doc comments and the `freenet.rs` test doc. They agree with each other and
-  > Review at 429b0a795, Light tier. The lead read the code, and Codex found nothing actionable. - `panic_place` keeps the directory above `src` only for a known crate name or a cargo registry or git-checkout path. A versioned home or project directory is dropped, with Linux, macOS and Windows tests. - The on-disk test shows a Tripped main marker is not shadow evidence, while an Armed one still trips the shadow. - The trip-first claim is narrowed. - The rollback-and-return shadow inaccuracy is documented as telemetry-only. - The Windows peer real-process test runs in the Windows CI job.  Approved at 429b0a795, once CI on this SHA is green, including Windows and the rule review.  [AI-assisted - Claude]
+- **Issue #6271** (2026-11-18): **fix: run initiate_buffer and instance setup under the guest backstop**
+  *Symptoms*: ## Problem  The allocator export (`__frnt__initiate_buffer`) and instance setup (the module start function and `__frnt_set_id`) did not run under the wall-clock backstop and panic capture that the typed contract and delegate entry points (`call_2i64_blocking`, `call_3i64_blocking`, `call_3i64`) run under.  ## Approach  All guest entry points, including the allocator and instance setup, now run under the wall-clock backstop and panic capture of `execute_wasm_blocking`, off the calling thread.  - `initiate_buffer` goes through `call_typed_blocking` with `delegate_instance: None`. `call_typed_blocking` now takes the error classifier for the entry. The allocator keeps its existing classification (an epoch interrupt is `Timeout`, anything else `Runtime`, with no error-level log). The other entries keep `classify_runtime_error`. - `create_instance` runs `instantiate_and_init` as one job. Each of its two entries keeps its own freshly armed epoch budget, and the job's wall-clock bound (`WallBounds::for_entries`, `INSTANCE_SETUP_GUEST_ENTRIES = 2`) allows both budgets, so setup timing for in-budget contracts is unchanged. The store is recovered on every failure, as before. - `execute_wasm_blocking` is generic over the job's result, and has an explicit-bounds variant, `execute_wasm_blocking_within`. The linker moves into an `Arc` so the setup job can own a handle to it. - Source pins are updated. `initiate_buffer` is now listed with the entries that delegate to `call_typed_blocking`, a
 
-- **Issue #6260** (2026-11-17): **feat(quic): add ProvenClientKey, a client verifier for a key nobody named**
-  *Symptoms*: ## Problem  Phase B of #5940 lets a joiner dial a gateway's QUIC endpoint directly for its first connection (a native join). Every QUIC server check today is pinned: the node accepts a client only if it was told in advance which key that client holds (`PinnedClientKey`). A gateway accepting a joiner it has never heard of has no key to pin, so it needs a client verifier that accepts the key the client proves it holds.  ## Approach  `ProvenClientKey` (`transport/quic/identity.rs`), a rustls `ClientCertVerifier`: - It accepts only what the pinned verifier accepts, minus the pin. The parser, `peer_key_presented`, takes exactly an Ed25519 SubjectPublicKeyInfo (our 12-byte prefix plus 32 bytes) with no chain. The key must have sign bit 0, XEdDSA's convention, so a transport key has exactly one presented form. It must be a key `PeerKey::of` accepts (no small-order point, no torsion component), in its canonical encoding. The transport key it proves is the Montgomery form of that point. - The handshake signature must be Ed25519 under that key. The presented bytes and the scheme are checked before ring verifies anything. - The verifier keeps no state. Both checks derive the key from the certificate rustls passes them, so one server configuration serves any number of handshakes. - `proven_client_key(&quinn::Connection)` reads the identity after the handshake from the connection's `peer_identity()` and parses it again with `peer_key_presented`. The identity therefore belongs to that conn
+- **Issue #6269** (2026-11-18): **fix(transport): keep transport-internal stream ids below the caller-named bit**
+  *Symptoms*: ## Problem  Every node silently stops delivering its oversized (multi-fragment) messages after a few days of uptime. This is the root cause of #6143.  Each thread's stream-id counter starts at `(thread_index as u32) * 100_000` (`transport/boundary.rs`). `thread_index` grows by one for every thread that ever allocates, and nodes keep creating threads (tokio's blocking pool, `block_in_place` replacements): about 8 a minute on Ian's laptop, faster on the gateways. From index 21,475 the counter is at or above 2^31, so every id from `StreamId::next_transport_internal()` has the top bit set. Receivers read that bit as "caller-named operations stream" (`peer_connection.rs`, the `is_caller_named()` branch), park the stream as an orphan nobody claims, and drop it when it expires. Nothing is logged above debug.  What still works while a node is in that state: one-packet messages, caller-named streams (`StreamId::next()`, used for streamed full state), and everything it receives. What is lost: every message over one packet that a thread at or above index 21,475 sends through the legacy transport stream (on Ian's laptop on 2026-11-13, every allocating thread observed was in that range), for example `BroadcastTo` deltas (they carry the sender's summary, ~40 KB for the River room), `RequestUpdate` with full state, and `ResyncResponse`. It lasts until index 42,950 or a restart, then comes back after another 21,475 threads.  Evidence: - **Laptop.** The logged caller-named stream ids on 2026-
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1773,1053 +1770,862 @@ pub mod streaming_buffer;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `17141a5c` (2026-11-17)
-**Commit Message**: fix(quic): peers trip the crash breaker only on QUIC-panic short runs (#6259)
+### Incident Patch 1: `0515d873` (2026-11-18)
+**Commit Message**: fix: run initiate_buffer and instance setup under the guest backstop (#6271)
 
-**File**: `.claude/rules/transport.md` (modified, +31/-14)
+**File**: `.claude/rules/contracts.md` (modified, +21/-15)
 ```diff
-@@ -496,10 +496,13 @@ inbound session key (`handshake_unauthenticated_dropped`), QUIC endpoint deaths
- (`quic_endpoint_down`), panics the QUIC socket adapter caught
- (`quic_adapter_panicked`, once per endpoint; the process keeps running
- and no breaker state is left), QUIC crash-loop breaker trips at startup
--(`quic_breaker_trips`, on unix counted for any abnormal end of a QUIC-enabled
--run, not only a QUIC fault, and on Windows for three runs in a row that ended
-+(`quic_breaker_trips`; for every peer, and a gateway on Windows, counted for
-+runs in a row (two on a peer while UDP exists, so it trips before the
-+post-update rollback's three crashes; three on a gateway) that ended
- within ten minutes after recording a panic in QUIC code (quinn, quinn-proto or
--transport/quic, by panic location), each starting within 24 h of the one before;
-+transport/quic, by panic location), each starting within 24 h of the one before,
-+and for a unix gateway for any abnormal end of a QUIC-enabled run, not only a
-+QUIC fault;
- a trip keeps QUIC off for 24 h on a peer and 15 min on a gateway (`BreakerRole`),
- doubling on repeat trips up to 4 h, and a gateway run with FREENET_SUPERVISED=1
- restarts itself at the cooldown's end; see
-@@ -1181,7 +1184,7 @@ it must not wait unless it is a pacing point.
+@@ -147,18 +147,30 @@ migration is done.
  
- `transport-quic` (config key: `off`, `shadow` or `prefer`; unset is
- `QuicMode::default_mode`, prefer on Linux, macOS and Windows and off
--elsewhere, since the breaker cannot trip without a boot identity) decides whether `bind_udp_listener` builds a quinn endpoint over the DemuxSocket.
-+elsewhere, since a gateway's breaker cannot trip without a boot identity) decides whether `bind_udp_listener` builds a quinn endpoint over the DemuxSocket.
- `prefer` negotiates data with the share of pairs the ramp gives at the time ("Data
- slice" below; `upgrade::policy::log_startup` reports the share at INFO once per
- node, and each band the ramp enters is logged at INFO), and a pair with both bits
-@@ -1954,7 +1957,8 @@ config value per node (off unless set, whatever the node default: the
- harness writes `off` into every node's config; an unknown value panics;
- tests that start nodes outside SimNetwork, in `crates/core/tests` and through
- freenet-test-network, get the platform default on purpose, as production does,
--except where a restart after SIGKILL would trip the breaker), and the
-+except where a restart after SIGKILL would trip a unix gateway's breaker; a
-+peer's short-run rule does not count a SIGKILL), and the
- endpoint runs on the network's VirtualTime (`get_socket_virtual_time`;
- RealTime in production, pinned by
- `the_transport_endpoint_runs_on_virtual_time_only_in_simulation`). Its
-@@ -2012,7 +2016,10 @@ every rate), endpoint-down, panics and breaker trips, RSS against
- `quic_paths_active`, CPU and egress, and NAT success, connections and transfers.
- From the first release with the Windows default, the release watch also reads
- Windows separately: `quic_adapter_panicked` and `quic_breaker_trips` by version
--against the previous release, and peers with `quic_breaker_suppressed`. A
-+against the previous release, and peers with `quic_breaker_suppressed`. Since
-+unix peers moved to the short-run rule (#6151), it also reads
-+`quic_breaker_start` by version: trips with their `quic_panic_at`, and on unix
-+peers how often `legacy_verdict` and `verdict` disagree. A
- Windows QUIC panic in the field is read (location, version) before the next
- release goes out.
+ ### WASM Call Modes
  
-@@ -3633,21 +3640,31 @@ Liveness ("alive" = the endpoint driver has not ENDED; it does not mean
-     deterministic fault recurs once per start. The exception is a
-     supervised gateway, which records the death in the breaker marker and
-     exits (see above). A panic that is not
--    contained aborts the process. On unix the next start trips the breaker
--    (quic_breaker_trips, see quic/breaker.rs): QUIC off for 24 h on a peer,
--    15 min on a gateway (doubling on repeat trips up to 4 h), which, when
--    supervised, restarts itself with exit 42 at the cooldown's end
--    (breaker::quic_restore_at). On Windows the
-+    contained aborts the process. On a unix gateway the next start trips the
-+    breaker (quic_breaker_trips, see quic/breaker.rs): QUIC off for 15 min
-+    (doubling on repeat trips up to 4 h), and a supervised gateway restarts
-+    itself with exit 42 at the cooldown's end (breaker::quic_restore_at).
-+    Every peer (24 h cooldown; on unix since #6151) and a Windows gateway
-+    decide by short runs instead: the
-     breaker does not look at how a run ended: a panic hook records a panic located in QUIC
-     code in the run's marker, and it counts runs that lasted under 10 minutes
--    and recorded one, so the fourth start after three such aborts in a row
--    trips it. An ordinary stop records no panic and never counts; an abort
-+    and recorded one, so the start after two such aborts in a row trips a
-+    peer while UDP exists (one below the rollback's three crashes,
-```
-
-**File**: `.github/workflows/ci-cache-warm.yml` (modified, +1/-1)
-```diff
-@@ -128,7 +128,7 @@ jobs:
-         run: |
-           cargo nextest run --workspace --exclude freenet-ping-types \
-             --no-default-features \
--            --features trace,websocket,redb,wasmtime-backend,testing \
-+            --features trace,websocket,redb,wasmtime-backend,testing,freenet/quic-panic-injection \
-             --profile ci --no-run
-           cargo nextest run -p freenet-ping-app \
-             --features testing --profile ci --no-run
-```
-
-**File**: `.github/workflows/ci.yml` (modified, +6/-1)
-```diff
-@@ -1103,12 +1103,17 @@ jobs:
-         # feature, breaking test code that uses Ping::insert().
-         # Skip blocked_peers tests (run serially below — they spin up 3 real
-         # nodes each and timeout under parallel resource contention).
-+        # `quic-panic-injection` (test builds only; it refuses to build without
-+        # debug assertions) lets graceful_shutdown_exit_code abort a unix peer
-+        # on an injected QUIC panic, the only real-process test of the peer
-+        # crash-loop breaker on unix (#6151). It does nothing unless a test
-+        # sets FREENET_TEST_QUIC_PANIC.
-         # nextest retries only failed tests (via .config/nextest.toml [profile.ci]),
-         # avoiding the 10-15 min penalty of re-running the entire workspace.
-         run: |
-           cargo nextest run --workspace --exclude freenet-ping-types \
-             --no-default-features \
--            --features trace,websocket,redb,wasmtime-backend,testing \
-+            --features trace,websocket,redb,wasmtime-backend,testing,freenet/quic-panic-injection \
-             --profile ci -E 'not test(blocked_peers)'
+-All three guest entry points share ONE body, `call_typed_blocking` in
+-`engine/wasmtime_engine.rs`. Delegates ran "sync, on the calling thread" until
+-#5480; they no longer do, and nothing should reintroduce a per-entry-point copy.
++All guest entry points, including the allocator export and instance setup
++(module start function and `__frnt_set_id`), run under the wall-clock backstop
++and panic capture: on a blocking-pool thread (a plain thread on a
++`current_thread` runtime), with a host-side panic returned as an `Err`. The
++typed calls share ONE body, `call_typed_blocking` in
++`engine/wasmtime_engine.rs`; instance setup runs as one job of its own, whose
++wall-clock bound allows each of its two entries its own budget. Nothing should
++reintroduce a per-entry-point copy or an inline guest call.
  
-       - name: Test blocked-peers (serial)
-```
-
-**File**: `crates/core/src/bin/freenet.rs` (modified, +22/-2)
-```diff
-@@ -269,8 +269,8 @@ async fn run_network(config: Config) -> anyhow::Result<()> {
-         ));
-     }
- 
--    // The QUIC crash-loop breaker (#5940): if a run with QUIC enabled ended
--    // abnormally, QUIC stays off for a cooldown. Enabled here, before the node
-+    // The QUIC crash-loop breaker (#5940): if runs with QUIC enabled keep
-+    // ending in a QUIC fault, QUIC stays off for a cooldown. Enabled here, before the node
-     // is built, because only this binary marks its clean exits (see `main`).
-     freenet::enable_quic_crash_breaker();
- 
-@@ -2092,6 +2092,26 @@ mod tests {
-         );
-     }
- 
-+    /// #6151: while UDP exists, a peer's QUIC crash-loop breaker trips, and
-+    /// the peer falls back to UDP, before the post-update crash-loop rollback
-+    /// restores the previous release and pins this one as bad. Each run the
-+    /// breaker counts ended in a crash the rollback also counts; the start
-+    /// that trips runs with QUIC off, so it adds no QUIC crash. At that point
-+    /// the rollback's count must still be short of its threshold.
-+    #[test]
-+    fn peer_breaker_trips_before_the_crash_loop_rollback() {
-+        let crashes_when_the_breaker_trips = freenet::PEER_SHORT_RUNS_TO_TRIP_WITH_UDP;
-+        assert!(crashes_when_the_breaker_trips >= 1);
-+        assert!(
-+            !crate::commands::rollback::should_rollback(crashes_when_the_breaker_trips),
-+            "the rollback would act at {crashes_when_the_breaker_trips} crashes, no later than \
-+             the peer breaker"
-+        );
-+        assert!(crate::commands::rollback::should_rollback(
-+            crate::commands::rollback::ROLLBACK_CRASH_THRESHOLD
-+        ));
-+    }
+ ```
+ call_3i64()               — delegates
+ call_2i64_blocking()      — contracts
+ call_3i64_blocking()      — contracts
+-        ↓ all three
+-call_typed_blocking()     — spawn_blocking + wall-clock backstop + panic capture
++initiate_buffer()         — allocator export, contracts and delegates
++        ↓ all four
++call_typed_blocking()     — execute_wasm_blocking
 +
-     /// #5940: a gateway's restarts to restore QUIC stay under the start
-     /// limit of the units `freenet service install` writes, which counts
-     /// every start, exit 42 included, and the first start too. In any window
-```
-
-**File**: `crates/core/src/config.rs` (modified, +7/-6)
-```diff
-@@ -2646,12 +2646,13 @@ pub struct NetworkArgs {
++create_instance()         — module start function + __frnt_set_id
++        ↓ one job
++execute_wasm_blocking_within() — wall-clock backstop + panic capture
+ ```
  
-     /// Run QUIC even when the crash-loop breaker would keep it off.
-     ///
--    /// On unix, if a run with QUIC enabled ends abnormally, the node starts
--    /// with QUIC off for 24 hours (15 minutes on a gateway, doubling on
--    /// repeat trips up to 4 hours; a gateway whose service unit sets
--    /// FREENET_SUPERVISED=1 restarts itself at the end). On
--    /// Windows the same happens after three short runs in a row that each
--    /// panicked in QUIC code. Set this to run QUIC anyway. A start with this
-+    /// After two short runs in a row that each panicked in QUIC code, a
-+    /// peer starts with QUIC off for 24 hours. A gateway on unix does so
-+    /// when a run with QUIC enabled ends abnormally, and a gateway on
-+    /// Windows after three such short runs, in both cases for 15
-+    /// minutes, doubling on repeat trips up to 4 hours (a gateway whose
-+    /// service unit sets FREENET_SUPERVISED=1 restarts itself at the end).
-+    /// Set this to run QUIC anyway. A start with this
-     /// set erases the trip: removing it later does not bring the cooldown
-     /// back. Default: false.
-     ///
-```
-
-**File**: `crates/core/src/lib.rs` (modified, +3/-1)
-```diff
-@@ -34,7 +34,9 @@ pub use node::{
- #[doc(hidden)]
- pub use transport::connection_handler::QUIC_RESTORE_MIN_UPTIME;
- #[doc(hidden)]
--pub use transport::quic::breaker::{ENDPOINT_DOWN_EXITS_TO_TRIP, GATEWAY_QUIC_BREAKER_COOLDOWN};
-+pub use transport::quic::breaker::{
-+    ENDPOINT_DOWN_EXITS_TO_TRIP, GATEWAY_QUIC_BREAKER_COOLDOWN, PEER_SHORT_RUNS_TO_TRIP_WITH_UDP,
-+};
- pub use transport::quic::breaker::{
-     STOP_NOTE_ENV_VAR as QUIC_BREAKER_STOP_NOTE_ENV_VAR,
-     STOP_NOTE_FILE as QUIC_BREAKER_STOP_NOTE_FILE, enable_quic_crash_breaker,
-```
-
-**File**: `crates/core/src/node/p2p_impl.rs` (modified, +50/-0)
-```diff
-@@ -1026,6 +1026,18 @@ impl NodeP2P {
-         )
-         .await?;
- 
-+        // `quic_breaker_start` (#6151): what the QUIC crash-loop breaker
-+        // decided at this start (`P2pConnManager::build` runs it), once per
-+        // start, including, on a unix peer, what the legacy exit-status rule
-+        // would have decided. Sending is a no-op unless telemetry is enabled.
-+        if let Some(report) = crate::transport::quic::breaker::take_start_report() {
-+            crate::tracing::telemetry::send_standalone_event_with_peer_id(
-+                "quic_breaker_start",
-+                &config.local_peer_id_string(),
-+                report.to_json(),
-+            );
-+        }
++`call_void` is the one inline entry left, and only a test calls it.
 +
-         let parent_span = tracing::Span::current();
-         let contract_executor_handle = GlobalExecutor::spawn({
-             let task = async move {
-@@ -1166,6 +1178,44 @@ mod tests {
-         );
-     }
+ Two consequences for anything touching the delegate path:
  
-+    /// #6151: `NodeP2P::build` sends what the crash-loop breaker decided as
-+    /// the `quic_breaker_start` event, after `P2pConnManager::build` (which
-+    /// runs the breaker), so the report exists when it is taken.
-+    #[test]
-+    fn build_sends_the_quic_breaker_start_report_after_the_breaker_ran() {
-+        let all = include_str!("p2p_impl.rs");
-+        let production = &all[..all
-+            .find("\n#[cfg(test)]\nmod tests {")
-+            .expect("test module not located; this pin cannot verify anything")];
-+        let code: String = production
-+            .lines()
-+            .map(|line| line.split_once("//").map_or(line, |(code, _)| code))
-+            .collect::<Vec<_>>()
-+            .join("\n");
-+        let start = code
-+            .find("pub(crate) async fn build<")
-+            .expect("NodeP2P::build not found");
-+        let (build, _) = code[start..]
-+            .split_once("\n    }\n")
-+            .expect("could not locate the end of NodeP2P::build");
-+        let squeezed: String = build.chars().filter(|c| !c.is_whitespace()).collect();
-+        let at = |needle: &str| {
-+            squeezed
-+                .find(needle)
-+                .unwrap_or_else(|| panic!("NodeP2P::build must contain {needle}"))
-+        };
-+        let breaker_ran = at("letconn_manager=P2pConnManager::build(");
-+        let taken = at(
-+            "iflet Some(report)=crate::transport::quic::breaker::take_start_report()"
-+                .replace(' ', "")
-+                .as_str(),
-+        );
-+        let sent = at(
-+            "send_standalone_event_with_peer_id(\"quic_breaker_start\",&config.local_peer_id_string(),report.to_json(),)",
-+        );
-+        assert!(breaker_ran < taken && taken < sent);
-+    }
-+
-     /// #4549: the fast-exit watchdog (`process::exit(42)` on a fatal listener exit)
-     /// is gated by `listener_exit_is_graceful`. A regression in this predicate is
-     /// dangerous in BOTH directions: classifying a graceful shutdown as fatal would
-```
-
-**File**: `crates/core/src/tracing/telemetry.rs` (modified, +15/-6)
-```diff
-@@ -541,7 +541,7 @@ fn priority_for_event_type(event_type: &str) -> EventPriority {
- /// final `other` row, so the exported cardinality never depends on what a
- /// producer names its event. A non-zero `other` means an event type is
- /// missing from this list.
--pub(crate) const KNOWN_EVENT_TYPES: [&str; 76] = [
-+pub(crate) const KNOWN_EVENT_TYPES: [&str; 77] = [
-     // `event_kind_to_string`, in its order.
-     "connect_start",
-     "connect_connected",
-@@ -619,6 +619,7 @@ pub(crate) const KNOWN_EVENT_TYPES: [&str; 76] = [
-     crate::ring::FLAG_TELEMETRY_EVENT,
-     "join_versions",
-     "auto_update_state",
-+    "quic_breaker_start",
-     // Must stay last.
-     "other",
- ];
-@@ -4670,11 +4671,17 @@ mod tests {
-         // = 147: measured 15342, still within this limit. Raised by #6001 for
-         // the 149 counters of `tel_t` and `tel`: measured 18629. Raised for
-         // the 4 `recv_ap` counters (already-applied skips): measured 18725.
--        const MAX_WORST_CASE_JSON_BYTES: usize = 18_816;
-+        // Raised by #6151 for the `quic_breaker_start` row of `tel_t` (2
-+        // counters, 42 bytes at u64::MAX): measured 18857. At #6151 the busy
-+        // JSON block measured 6789, the empty one 2479, and the busy OTLP
-+        // marginal 6865, all within their budgets.
-+        const MAX_WORST_CASE_JSON_BYTES: usize = 19_072;
-         // Raised from 2_048 by #5647 for the same 7 new counters, about 2 bytes
-         // each in an all-zero block (a digit and a comma): measured 2057.
-         // Raised again by #6001 for `tel_t` and `tel`: measured 2515.
--        const MAX_EMPTY_OTLP_MARGINAL_BYTES: usize = 2_560;
-+        // Raised by #6151 for the `quic_breaker_start` row of `tel_t`
-+        // (measured 2555 with that row, 5 bytes under the old 2_560).
-+        const MAX_EMPTY_OTLP_MARGINAL_BYTES: usize = 2_816;
-         // Raised from 5_120 (2026-08-07) to admit `ms_size` + `ms_unt_age`,
-         // the two counters added for #5153. The budget exists to force this
-         // arithmetic, not to forbid growth, so here it is:
-@@ -4707,8 +4714,10 @@ mod tests {
-         // MAX_WORST_CASE_JSON_BYTES (147 bytes at u64::MAX): measured 15414.
-         // Raised by #6001 for `tel_t` and `tel`: measured 18703. Raised for the
-         // `join_versions` row of `tel_t` (2 counters, 44 bytes at u64::MAX):
--        // measured 18845.
--        const MAX_WORST_OTLP_MARGINAL_BYTES: usize = 18_944;
-+        // measured 18845. Raised by #6151 for the `quic_breaker_start` row
-+        // (2 counters at u64::MAX): measured 18933, 11 bytes under the old
-+        // 18_944.
-+        const MAX_WORST_OTLP_MARGINAL_BYTES: usize = 19_200;
-         const MAX_NULL_OTLP_MARGINAL_BYTES: usize = 64;
+ - **A delegate guest can outlive its call.** On the wall-clock-timeout path
+@@ -168,16 +180,10 @@ Two consequences for anything touching the delegate path:
+   different facts (`native_api::LIVE_DELEGATE_GUESTS`).
+ - **During `process()`, delegate host functions run on a blocking-pool thread**,
+   so they find their env through a thread-local installed on THAT thread by
+-  `GuestDelegateInstance`, not on the caller's.
+-
+-  Scope that to `process()` and no further. Buffer setup and instantiation —
+-  `initiate_buffer`, `call_void`, `instantiate_and_init` — still enter the guest
+-  with `block_on_async(func.call_async(...))` INLINE on the calling thread, with
+-  no `execute_wasm_blocking` and no `GuestDelegateInstance`. That is why
+-  `exec_inbound_with_env` still sets `CURRENT_DELEGATE_INSTANCE` on the calling
+-  thread at all, as `DelegateEnvGuard`'s rustdoc explains. "Nothing
+-  delegate-related runs on the calling thread" is false and would produce a wrong
+-  call about exactly those paths.
++  `GuestDelegateInstance`, not on the caller's. The allocator export gets no
++  `GuestDelegateInstance` (it is called with `delegate_instance: None`), so a
++  delegate's allocator cannot reach the delegate host functions. It has no use
++  for them.
  
-         let diagnostic = |value| crate::router::NetworkEfficiencyV1 {
-@@ -7437,7 +7446,7 @@ mod tests {
-         // Exact count of call sites with a literal event type (production and
-         // test). A new producer changes it: bump it deliberately after giving
-         // the event its own `KNOWN_EVENT_TYPES` row.
--        const EXPECTED_LITERAL_STANDALONE_CALLS: usize = 18;
-+        const EXPECTED_LITERAL_STANDALONE_CALLS: usize = 19;
-         assert_eq!(
-             literal_names.len(),
-             EXPECTED_LITERAL_STANDALONE_CALLS,
+ The pins `every_guest_entry_is_preceded_by_arm_epoch_deadline` and
+ `blocking_paths_arm_epoch_inside_the_closure` enforce the single-body structure.
 ```
 
----
-
-### Incident Patch 2: `3bd9f72f` (2026-11-17)
-**Commit Message**: fix(quic): breaker review carry-overs from #6259 (#6262)
-
-**File**: `.claude/rules/transport.md` (modified, +6/-4)
+**File**: `crates/core/src/wasm_runtime/engine/wasmtime_engine.rs` (modified, +583/-81)
 ```diff
-@@ -497,8 +497,9 @@ inbound session key (`handshake_unauthenticated_dropped`), QUIC endpoint deaths
- (`quic_adapter_panicked`, once per endpoint; the process keeps running
- and no breaker state is left), QUIC crash-loop breaker trips at startup
- (`quic_breaker_trips`; for every peer, and a gateway on Windows, counted for
--runs in a row (two on a peer while UDP exists, so it trips before the
--post-update rollback's three crashes; three on a gateway) that ended
-+runs in a row (two on a peer while UDP exists, so that when a release's
-+crashes are all QUIC panics it trips before the post-update rollback's three
-+crashes, which count any crash; three on a gateway) that ended
- within ten minutes after recording a panic in QUIC code (quinn, quinn-proto or
- transport/quic, by panic location), each starting within 24 h of the one before,
- and for a unix gateway for any abnormal end of a QUIC-enabled run, not only a
-@@ -3662,8 +3663,9 @@ Liveness ("alive" = the endpoint driver has not ENDED; it does not mean
-     code in the run's marker, and it counts runs that lasted under 10 minutes
-     and recorded one, so the start after two such aborts in a row trips a
-     peer while UDP exists (one below the rollback's three crashes, pinned by
--    the binary's peer_breaker_trips_before_the_crash_loop_rollback; back to
--    three when UDP is removed) and the start after three trips a gateway. An ordinary stop records no panic and never counts; an abort
-+    the binary's peer_breaker_trips_before_the_crash_loop_rollback; the
-+    rollback counts any crash, so an unrelated crash before two QUIC panics
-+    still lets it act first; back to three when UDP is removed) and the start after three trips a gateway. An ordinary stop records no panic and never counts; an abort
-     after 10 minutes or more never does, nor do aborts a day apart
-     (quic/breaker/short_runs.rs). A panic counts as QUIC's when the thread
-     is inside a QuicCode guard (quinn's driver polls in runtime.rs, the socket
-```
-
-**File**: `crates/core/src/bin/freenet.rs` (modified, +4/-1)
-```diff
-@@ -2097,7 +2097,10 @@ mod tests {
-     /// restores the previous release and pins this one as bad. Each run the
-     /// breaker counts ended in a crash the rollback also counts; the start
-     /// that trips runs with QUIC off, so it adds no QUIC crash. At that point
--    /// the rollback's count must still be short of its threshold.
-+    /// the rollback's count must still be short of its threshold. This holds
-+    /// for a release whose crashes are all QUIC panics; the rollback also
-+    /// counts unrelated crashes, which the breaker does not, so one of those
-+    /// before the panics lets the rollback act first.
-     #[test]
-     fn peer_breaker_trips_before_the_crash_loop_rollback() {
-         let crashes_when_the_breaker_trips = freenet::PEER_SHORT_RUNS_TO_TRIP_WITH_UDP;
-```
-
-**File**: `crates/core/src/transport/quic/breaker.rs` (modified, +69/-0)
-```diff
-@@ -1405,6 +1405,15 @@ pub(crate) struct LegacyShadowFile {
- /// old rule never read one as a crash); a Tripped one still holds, as the
- /// old rule's trip did across a reboot. A file that does not parse is no
- /// evidence; one that cannot be read is [`Previous::Unreadable`].
-+///
-+/// Known inaccuracy, telemetry only: a rollback to an earlier release and a
-+/// return to this same release on the same boot is not detected. An Armed
-+/// marker this release left before the rollback then passes both checks,
-+/// and the next start reports a legacy trip for that run, whether or not it
-+/// crashed. It is rare (a rollback and return within one boot) and changes
-+/// nothing but `legacy_verdict`. Tying the file to the run before it would
-+/// need the main marker to outlive a long run, which the short-run timer
-+/// deletes on purpose.
- fn read_legacy_shadow(path: &Path, version: &str, boot_id: Option<&str>) -> Previous {
-     match std::fs::read(path) {
-         Ok(bytes) => match serde_json::from_slice::<LegacyShadowFile>(&bytes) {
-@@ -3539,6 +3548,66 @@ mod tests {
-         assert_eq!(read(), Previous::Unreadable);
-     }
- 
-+    /// On disk, at the first start with no shadow file: a Tripped marker in
-+    /// the breaker's own file (which may be the short-run rule's own trip)
-+    /// is not the shadow's evidence, so the shadow arms rather than cooling
-+    /// or tripping, and the breaker's file is left as it was; an Armed one
-+    /// there (0.2.159's) is, and trips the shadow.
-+    #[test]
-+    fn the_legacy_shadow_ignores_a_tripped_main_marker_on_disk() {
-+        let dir = tempfile::tempdir().unwrap();
-+        let main = marker_path(dir.path());
-+        let shadow = legacy_shadow_path(dir.path());
-+        let pending = parking_lot::Mutex::new(Pending {
-+            marker: None,
-+            shadow: None,
-+            quic_up: false,
-+            signals_ready: false,
-+            registrar: None,
-+        });
-+        let dead = |_| false;
-+        let tripped = Marker::Tripped {
-+            tripped_at_secs: T0 + 30,
-+            trips: 1,
-+        };
-+        write_marker(&main, &tripped).unwrap();
-+        let decided = legacy_shadow_at(
-+            true,
-+            dir.path(),
-+            None,
-+            false,
-+            legacy_start(&[], false),
-+            dead,
-+            &pending,
-+        );
-+        assert_eq!(decided, Some(Verdict::Arm));
-+        assert!(!shadow.exists(), "nothing written before QUIC is up");
-+        assert_eq!(
-+            pending.lock().shadow.take(),
-+            Some((shadow.clone(), stamped(legacy_armed().unwrap())))
-+        );
-+        assert_eq!(read_previous(&main), Previous::Marker(tripped));
-+
-+        write_marker(&main, &marker_of(armed(PID, Some(BOOT)))).unwrap();
-+        let decided = legacy_shadow_at(
-+            true,
-+            dir.path(),
-+            None,
-+            false,
-+            legacy_start(&[], false),
-+            dead,
-+            &pending,
-+        );
-+        assert_eq!(decided, Some(Verdict::Trip));
-+        assert_eq!(
-+            read_legacy_shadow(&shadow, crate::config::PCK_VERSION, Some(BOOT)),
-+            Previous::Marker(Marker::Tripped {
-+                tripped_at_secs: T0 + 60,
-+                trips: 1
-+            })
-+        );
-+    }
-+
-     /// The shadow with QUIC off decides nothing and writes nothing, but still
-     /// reconciles the stop note, as the old rule did on every start; with
-     /// QUIC on, a crash it finds trips it, and a trip it cannot write is lost
-```
-
-**File**: `crates/core/src/transport/quic/breaker/short_runs.rs` (modified, +40/-18)
-```diff
-@@ -174,7 +174,12 @@ pub(super) const SHORT_RUNS_TO_TRIP: u32 = 3;
- /// rollback counts enough crashes to restore the previous release and pin
- /// this one as bad. A start that trips runs with QUIC off, so it adds no
- /// crash. The binary pins the order
--/// (`peer_breaker_trips_before_the_crash_loop_rollback`). Goes back to
-+/// (`peer_breaker_trips_before_the_crash_loop_rollback`). The order holds
-+/// only when the release's crashes are all QUIC panics: the rollback counts
-+/// every crash (an out-of-memory kill, a SIGKILL, a crash elsewhere), while
-+/// the breaker counts consecutive short runs that panicked in QUIC code, so
-+/// one unrelated crash followed by two QUIC panics still lets the rollback
-+/// act first. Goes back to
- /// [`SHORT_RUNS_TO_TRIP`] when UDP is removed, when there is no UDP to fall
- /// back to and a rollback is the better outcome.
- pub const PEER_SHORT_RUNS_TO_TRIP_WITH_UDP: u32 = 2;
-@@ -679,10 +684,11 @@ const MAX_PANIC_PLACE: usize = 160;
- 
- /// A panic location as telemetry reports it, `file:line`, with no path
- /// from the build machine: the file is cut at its last `src` directory,
--/// keeping the directory above it only when that names a crate
--/// ([`crate_dir`]: `quinn-proto-0.11.9/src/connection/mod.rs`,
--/// `core/src/transport/quic/socket.rs`) and dropping it otherwise
--/// (`/home/alice/src/x.rs` gives `src/x.rs`). A file under a `target`
-+/// keeping the directory above it only when that is known to name a crate
-+/// ([`crate_dir`]: `quinn-proto-0.11.9/src/connection/mod.rs` from the
-+/// cargo registry, `core/src/transport/quic/socket.rs`) and dropping it
-+/// otherwise (`/home/alice/src/x.rs` and `/home/bob-2.0/src/x.rs` give
-+/// `src/x.rs`). A file under a `target`
- /// directory (generated code) and a file with no `src` directory keep only
- /// their name. At most [`MAX_PANIC_PLACE`] bytes ([`cap_place`]).
- pub(super) fn panic_place(file: &str, line: u32) -> String {
-@@ -693,7 +699,7 @@ pub(super) fn panic_place(file: &str, line: u32) -> String {
-         _ if parts.contains(&"target") => name.to_string(),
-         Some(src) => {
-             let from = match src.checked_sub(1) {
--                Some(above) if crate_dir(parts[above]) => above,
-+                Some(above) if crate_dir(&parts, above) => above,
-                 Some(_) | None => src,
-             };
-             parts[from..].join("/")
-@@ -703,18 +709,19 @@ pub(super) fn panic_place(file: &str, line: u32) -> String {
-     cap_place(&format!("{place}:{line}"))
- }
- 
--/// Whether a directory name above `src` names a crate rather than a place on
--/// the build machine: a registry or vendored crate directory
--/// (`name-1.2.3`), quinn's crates, the standard library's (`core`, `alloc`,
--/// `std`), or this crate (`crates/core`).
--fn crate_dir(name: &str) -> bool {
-+/// Whether `parts[at]`, the directory above a `src`, names a crate rather
-+/// than a place on the build machine. Only two things are trusted, never the
-+/// shape of the name (a home directory may be called `bob-2.0`): a known
-+/// name (quinn's crates, the standard library's `core`, `alloc` and `std`,
-+/// and this crate, `crates/core`), or a crate directory in cargo's registry
-+/// (`.cargo/registry/src/<index>/<crate>`) or its git checkouts
-+/// (`.cargo/git/checkouts/...`), whose layout cargo chooses.
-+fn crate_dir(parts: &[&str], at: usize) -> bool {
-     const KNOWN: [&str; 6] = ["core", "alloc", "std", "quinn", "quinn-proto", "quinn-udp"];
--    let versioned = name.rsplit_once('-').is_some_and(|(crate_name, version)| {
--        !crate_name.is_empty()
--            && version.contains('.')
--            && version.starts_with(|c: char| c.is_ascii_digit())
--    });
--    versioned || KNOWN.contains(&name)
-+    let before = &parts[..at];
-+    let registry = before.len() >= 3 && before[before.len() - 3..][..2] == ["registry", "src"];
-+    let git_checkout = before.windows(2).any(|pair| pair == ["git", "checkouts"]);
-+    KNOWN.contains(&parts[at]) || registry || git_checkout
- }
- 
- /// `place` cut to its last [`MAX_PANIC_PLACE`] bytes, on a character
-@@ -1638,8 +1645,22 @@ mod tests {
-                 "/rustc/48a229ce/library/alloc/src/raw_vec/mod.rs",
-                 "alloc/src/raw_vec/mod.rs:7",
-             ),
--            // A user's own `src` directory: the name above it is dropped.
-+            // A user's own `src` directory: the name above it is dropped,
-+            // whatever it looks like.
-             ("/home/alice/src/x.rs", "src/x.rs:7"),
-+            ("/home/bob-2.0/src/x.rs", "src/x.rs:7"),
-+            ("/Users/bob-2.0/src/x.rs", "src/x.rs:7"),
-+            (r"C:\Users\bob-2.0\src\x.rs", "src/x.rs:7"),
-+            ("/home/someone/projects/bob-2.0/src/x.rs", "src/x.rs:7"),
-+            // macOS and Windows cargo registries.
-+            (
-+                "/Users/someone/.cargo/registry/src/index.crates.io-1949cf8c6b5b557f/quinn-0.11.12/src/endpoint.rs",
-+                "quinn-0.11.12/src/endpoint.rs:7",
-+           
-```
-
-**File**: `crates/core/tests/quic_breaker_windows.rs` (modified, +67/-2)
-```diff
-@@ -46,6 +46,10 @@ const START_LIMIT: Duration = Duration::from_secs(40);
- /// What turns QUIC on for a test node.
- const QUIC_ON: &[&str] = &["--transport-quic", "prefer"];
- 
-+/// An `extra_args` entry that starts the node as a peer: it is not passed
-+/// on, and `--is-gateway` is left out. A peer also needs `--gateway`.
-+const AS_PEER: &str = "<as-peer>";
-+
- /// A free TCP port, also free for UDP right now.
- fn free_port() -> anyhow::Result<u16> {
-     for _ in 0..100 {
-@@ -111,12 +115,12 @@ impl Node {
-             .args(["--network-port", &network_port])
-             .args(["--public-network-address", "127.0.0.1"])
-             .args(["--public-network-port", &network_port])
--            .arg("--is-gateway")
-+            .args((!extra_args.contains(&AS_PEER)).then_some("--is-gateway"))
-             .arg("--skip-load-from-network")
-             .arg("--ignore-protocol-checking")
-             .arg("--disable-auto-update")
-             .args(["--location", "0.5"])
--            .args(extra_args)
-+            .args(extra_args.iter().filter(|arg| **arg != AS_PEER))
-             .args(["--config-dir", &dir.to_string_lossy()])
-             .args(["--data-dir", &dir.to_string_lossy()])
-             .args(["--log-dir", &log_dir.to_string_lossy()])
-@@ -314,6 +318,67 @@ fn three_quic_panics_keep_quic_off_for_the_cooldown() -> anyhow::Result<()> {
-     Ok(())
- }
- 
-+/// #6151: a Windows peer trips at two runs that abort on a QUIC panic while
-+/// UDP exists (`PEER_SHORT_RUNS_TO_TRIP_WITH_UDP`), one fewer than a
-+/// gateway: the third start trips and runs with QUIC off. The other tests
-+/// here start gateways.
-+#[cfg(feature = "quic-panic-injection")]
-+#[test]
-+fn a_peer_trips_after_two_quic_panics_in_a_row() -> anyhow::Result<()> {
-+    let dir = tempfile::tempdir()?;
-+    // A peer needs a gateway to start; this one is never reached.
-+    let gateway = format!("127.0.0.1:9,{}", "11".repeat(32));
-+    let peer = [
-+        QUIC_ON[0],
-+        QUIC_ON[1],
-+        AS_PEER,
-+        "--gateway",
-+        gateway.as_str(),
-+    ];
-+    let trip_at = u64::from(freenet::PEER_SHORT_RUNS_TO_TRIP_WITH_UDP);
-+    assert_eq!(trip_at, 2);
-+    let inject = [("FREENET_TEST_QUIC_PANIC", "abort:2")];
-+    for short_runs in 0..trip_at {
-+        let logs = dir.path().join(format!("logs-{short_runs}"));
-+        let mut node = Node::start_with_env(dir.path(), logs, &peer, &inject)?;
-+        node.wait_for_log(QUIC_BUILT)?;
-+        node.wait_for_marker(dir.path(), short_runs)?;
-+        let status = loop {
-+            if let Some(status) = node.child.try_wait()? {
-+                break status;
-+            }
-+            anyhow::ensure!(
-+                Instant::now() < node.deadline,
-+                "the injected panic did not end the node:\n{}",
-+                node.logs()
-+            );
-+            std::thread::sleep(Duration::from_millis(100));
-+        };
-+        assert!(!status.success(), "an abort: {status:?}");
-+        let marker = read_marker(dir.path())?;
-+        assert_eq!(
-+            marker
-+                .as_ref()
-+                .map(|marker| marker["quic_panicked"].clone()),
-+            Some(true.into()),
-+            "the hook marked the run before the abort: {marker:?}\n{}",
-+            node.logs()
-+        );
-+    }
-+
-+    let third = Node::start(dir.path(), dir.path().join("logs-trip"), &peer)?;
-+    let logs = third.logs();
-+    assert!(logs.contains(TRIP_WARN), "{logs}");
-+    assert!(!logs.contains(QUIC_BUILT), "{logs}");
-+    let tripped = read_marker(dir.path())?;
-+    assert_eq!(
-+        tripped.as_ref().map(|marker| marker["state"].clone()),
-+        Some("tripped".into()),
-+        "{logs}"
-+    );
-+    Ok(())
-+}
-+
- /// QUIC is on by default on Windows (prefer, as on Linux and macOS), now that
- /// the breaker has been confirmed on a real Windows machine (#6031): a node
- /// with no `transport-quic` builds the endpoint and arms the breaker's marker.
-```
-
----
-
-### Incident Patch 3: `8f41ca75` (2026-11-17)
-**Commit Message**: feat(quic): add ProvenClientKey, a client verifier for a key nobody named (#6260)
-
-**File**: `.claude/rules/transport.md` (modified, +12/-0)
-```diff
-@@ -2133,6 +2133,18 @@ no extra message, no exporter proof.
-     never as "any key". An inbound transport's key is the key the node
-     bound from the peer's claim, not one the transport authenticated; the
-     QUIC handshake is what checks it.
-+  → A client nobody named (a gateway admitting a native join, A7b; no
-+    production caller yet): ProvenClientKey takes the key the client
-+    presents instead of pinning one. peer_key_presented accepts only an
-+    exact Ed25519 SPKI (prefix + 32 bytes) with sign bit 0, no chain, a key
-+    PeerKey::of accepts, in its canonical encoding; the signature must be
-+    Ed25519 under that key (scheme and bytes checked before ring). The
-+    verifier keeps no state, so one server_tls_proven configuration serves
-+    any number of handshakes; the identity is read after the handshake from
-+    the connection's peer_identity() (proven_client_key, which parses it
-+    with peer_key_presented again), so it belongs to that connection and a
-+    completed handshake. server_tls_proven offers freenet-quic/2 only. It
-+    proves possession of the key's secret, nothing more.
- Tests: conversion vs curve25519-dalek 5 (random keys, bit 255 set, u = -1),
- signer key == verifier key over many keypairs with both natural sign bits,
- signatures verified by ed25519-dalek and refused with any bit flipped,
-```
-
-**File**: `crates/core/proptest-regressions/transport/quic/identity/tests.txt` (added, +17/-0)
-```diff
-@@ -0,0 +1,17 @@
-+# Seeds for failure cases proptest has generated in the past. It is
-+# automatically read and these particular cases re-run before any
-+# novel cases are generated.
-+#
-+# It is recommended to check this file in to source control so that
-+# everyone who runs the test benefits from these saved cases.
-+#
-+# The case below is for `peer_key_presented_takes_any_point`. Its `key` is
-+# the sign-bit-1 encoding of a valid node key: it decompresses to a
-+# torsion-free point that `PeerKey::of` accepts, whose presented form is the
-+# same bytes with bit 255 cleared. `peer_key_presented` must refuse it (the
-+# sign-bit check, and the canonical-form check behind it). Proptest wrote it
-+# during development when a mutation made that refusal fail. It is kept on
-+# purpose: a random 32-byte array decodes to a point about half the time and
-+# to a torsion-free one about one time in sixteen, so this fixed case makes
-+# every run check the sign-bit twin of a real key.
-+cc be6e71b1881c70cb424efce401d560980085dca6fdce0c14a4f4e2cbd678e866 # shrinks to key = [126, 175, 47, 4, 131, 230, 23, 17, 186, 196, 97, 107, 210, 3, 51, 38, 77, 234, 231, 33, 191, 184, 12, 143, 36, 34, 176, 23, 82, 207, 214, 216]
-```
-
-**File**: `crates/core/src/transport/quic.rs` (modified, +3/-2)
-```diff
-@@ -682,8 +682,9 @@ impl QuicEndpoint {
- 
-     /// Panic in the socket adapter at the endpoint's next receive, caught as
-     /// any adapter panic is: the endpoint goes `Down` with the node still
--    /// running (tests, including the real binary built with `testing`).
--    #[cfg(any(test, feature = "testing"))]
-+    /// running. Only the real binary built with `testing` calls it
-+    /// (`connection_handler::fail_endpoint_from_env`).
-+    #[cfg(feature = "testing")]
-     pub(crate) fn panic_adapter(&self) {
-         self.faults.panic_receive();
-     }
-```
-
-**File**: `crates/core/src/transport/quic/identity.rs` (modified, +159/-0)
-```diff
-@@ -25,6 +25,17 @@
- //! A man in the middle that terminates the handshake cannot sign as the
- //! expected key, and the TLS 1.3 signature covers the transcript, so a
- //! relayed handshake cannot be completed with a different peer either.
+@@ -140,6 +140,14 @@
+ //! ```
+ //!
+ //! We wrap with `block_on_async()` to maintain a synchronous interface for callers.
 +//!
-+//! **A client no one named** ([`ProvenClientKey`]). A gateway accepting a
-+//! native join from an address it was not told about has no key to pin. It
-+//! takes the key the client presents instead, under the same rules: exactly
-+//! an Ed25519 SubjectPublicKeyInfo with sign bit 0, no chain, a key
-+//! [`PeerKey::of`] accepts, and an Ed25519 signature checked with ring
-+//! against that key. The verifier keeps no state: after the handshake the
-+//! connection's identity is read from the connection itself
-+//! ([`proven_client_key`]), so it is tied to that connection and to a
-+//! handshake that completed. This proves only that the client holds the
-+//! secret of the key it presents.
++//! That `block_on_async` call runs inside a job passed to
++//! `execute_wasm_blocking` / `execute_wasm_blocking_within`, not on the
++//! caller's thread: every production guest entry (the typed calls through
++//! `call_typed_blocking`, the allocator export, and instance setup in
++//! `create_instance`) runs off the calling thread under the wall-clock
++//! backstop, with a host-side panic returned as an error. `call_void`, used
++//! only by tests, is the exception.
  
- use std::sync::Arc;
+ use std::collections::HashMap;
+ use std::sync::atomic::{AtomicBool, AtomicU64, Ordering};
+@@ -736,8 +744,9 @@ pub(crate) struct WasmtimeEngine {
+     /// Taken during blocking operations, restored after. Recreated on timeout/panic
+     /// or when `lifetime_instances` exceeds `STORE_REFRESH_THRESHOLD`.
+     store: Option<Store<HostState>>,
+-    /// Linker pre-configured with all host functions.
+-    linker: Linker<HostState>,
++    /// Linker pre-configured with all host functions. Shared (`Arc`) so the
++    /// blocking job that instantiates a module can own a handle to it.
++    linker: Arc<Linker<HostState>>,
+     /// Map of instance ID to wasmtime Instance.
+     instances: HashMap<i64, Instance>,
+     /// Maximum execution time in seconds.
+@@ -890,7 +899,7 @@ impl WasmEngine for WasmtimeEngine {
+         Ok(Self {
+             engine,
+             store: Some(store),
+-            linker,
++            linker: Arc::new(linker),
+             instances: HashMap::new(),
+             max_execution_seconds: config.max_execution_seconds,
+             enabled_metering,
+@@ -979,32 +988,60 @@ impl WasmEngine for WasmtimeEngine {
+         }
  
-@@ -120,6 +131,40 @@ fn spki_of(ed25519: &[u8; 32]) -> [u8; ED25519_SPKI_LEN] {
-     spki
- }
- 
-+/// The identity a raw public key `presented` proves, if it is one a node can
-+/// hold: exactly an Ed25519 SubjectPublicKeyInfo ([`ED25519_SPKI_PREFIX`]
-+/// and 32 bytes) whose key has sign bit 0 (XEdDSA's convention, so one
-+/// transport key has one presented form) and is the Edwards form of a
-+/// transport key [`PeerKey::of`] accepts, in its canonical encoding. Every
-+/// other input is refused, before any signature is looked at.
-+pub(crate) fn peer_key_presented(presented: &[u8]) -> Result<PeerKey, UnusableKey> {
-+    let Some(key) = presented.strip_prefix(&ED25519_SPKI_PREFIX[..]) else {
-+        return Err(UnusableKey);
-+    };
-+    let Ok(ed25519) = <[u8; 32]>::try_from(key) else {
-+        return Err(UnusableKey);
-+    };
-+    if ed25519[31] >> 7 != XEDDSA_SIGN_BIT {
-+        return Err(UnusableKey);
-+    }
-+    let point = curve25519_dalek_v4::edwards::CompressedEdwardsY(ed25519)
-+        .decompress()
-+        .ok_or(UnusableKey)?;
-+    let transport = TransportPublicKey::from_bytes(point.to_montgomery().to_bytes());
-+    let peer = PeerKey::of(&transport)?;
-+    // The second of two guards: the output's presented form must equal the
-+    // input. It refuses a sign-bit-1 encoding as well (the form rebuilt from
-+    // the transport key has bit 255 clear), so it also backs the sign-bit
-+    // check above. For a non-canonical encoding it is not reached today: that
-+    // is y + p with y < 19, and every such point is small-order or has a
-+    // torsion component, so `PeerKey::of` refuses it first
-+    // (`only_a_node_keys_exact_presented_form_is_accepted` checks all 19).
-+    if peer.ed25519 != ed25519 {
-+        return Err(UnusableKey);
-+    }
-+    Ok(peer)
-+}
+         // The guest-entry half (instantiate + __frnt_set_id + ensure_memory) is
+-        // factored out so we can RECOVER THE STORE on ANY guest-entry
+-        // timeout/error before returning (#4864 round-9 item 2). Previously an
+-        // epoch interrupt during __frnt_set_id returned via `?` AFTER the module
+-        // was instantiated but BEFORE `instances.insert` / `lifetime_instances += 1`,
+-        // so the store-refresh accounting never counted it: wasmtime's Store arena
+-        // retained the dropped instance's allocation, and repeated init timeouts
+-        // across fresh contract ids accumulated untracked arena memory that never
+-        // triggered a count-based refresh.
++        // factored out so the store is REPLACED on ANY guest-entry failure
++        // before returning (#4864 round-9 item 2). A failure after the module
++        // was instantiated leaves its allocation in the store's arena without an
++        // `instances` entry or a `lifetime_instances` count, so nothing else
++        // would ever trigger a refresh that reclaims it.
+         let epoch_ticks = self.epoch_deadline_ticks;
+-        let store = self
++        let mut store = self
+             .store
+-            .as_mut()
++            .take()
+             .ok_or_else(|| WasmError::Other(anyhow::anyhow!("engine store not available")))?;
+-        let instance = match Self::instantiate_and_init(
+-            store,
+-            &self.linker,
+-            module,
+-            id,
+-            req_bytes,
+-            epoch_ticks,
+-        ) {
++        let linker = Arc::clone(&self.linker);
++        let module = module.clone();
 +
- /// The raw public key a peer is expected to present: the Edwards form of its
- /// transport key, kept with that transport key.
- #[derive(Clone)]
-@@ -322,6 +367,22 @@ impl QuicIdentity {
-         )
-     }
- 
-+    /// TLS for accepting a native connection from a client this node has no
-+    /// key for: it offers only [`Alpn::Native`] and accepts the key the
-+    /// client proves ([`ProvenClientKey`]). The key is read from the
-+    /// connection after the handshake ([`proven_client_key`]). One
-+    /// configuration serves any number of connections.
-+    #[cfg_attr(not(test), allow(dead_code))] // Used by gateway admission (A7b), dark until then.
-+    pub(crate) fn server_tls_proven(
-+        &self,
-+    ) -> Result<quinn::crypto::rustls::QuicServerConfig, TlsConfigError> {
-+        config::tls_server_config(
-+            self.certified_key(),
-+            Arc::new(ProvenClientKey),
-+            Alpn::Native,
-+        )
-+    }
-+
-     /// TLS that completes no handshake: the endpoint's default server
-     /// configuration, used only for an attempt the endpoint accepted
-     /// without a configuration of its own (`QuicEndpoint::accept` never does).
-@@ -607,6 +668,104 @@ impl ClientCertVerifier for PinnedClientKey {
-     }
- }
- 
-+/// A server's check of a client it has no key for (a gateway admitting a
-+/// native join, #5940): the client may present any key [`peer_key_presented`]
-+/// accepts, and its handshake signature must verify under that key. It keeps
-+/// no state, so one verifier serves every handshake of a configuration; both
-+/// checks derive the key from the certificate rustls passes them, and the
-+/// caller reads the proven key from the finished connection
-+/// ([`proven_client_key`]).
-+#[cfg_attr(not(test), allow(dead_code))] // Used by gateway admission (A7b), dark until then.
-+#[derive(Debug, Default, Clone, Copy)]
-+pub(crate) struct ProvenClientKey;
-+
-+#[cfg_attr(not(test), allow(dead_code))] // Used by gateway admission (A7b), dark until then.
-+impl ProvenClientKey {
-+    /// Check the handshake signature over the parts of a
-+    /// `DigitallySignedStruct` under the key `presented` carries. The
-+    /// presented bytes are parsed and the scheme checked before ring
-+    /// ve
++        // A module's start function and `__frnt_set_id` are guest code, so they
++        // run off the calling thread under the wall-clock backstop, with a
++        // host-side panic captured as an error, like every other guest entry
++        // (see `call_typed_blocking`). They run as ONE job, and each gets its
++        // own freshly armed epoch budget, so the wall-clock bound allows
++        // `INSTANCE_SETUP_GUEST_ENTRIES` budgets (see `WallBounds::for_entries`).
++        let result = execute_wasm_blocking_within(
++            move || {
++                let instance = Self::instantiate_and_init(
++                    &mut store,
++                    &linker,
++                    &module,
++                    id,
++                    req_bytes,
++                    epoch_ticks,
++                );
++                (Ok(instance), store)
++            },
++            WallBounds::for_entries(self.max_execution_seconds, INSTANCE_SETUP_GUEST_ENTRIES),
++            self.max_execution_seconds,
++        );
++        let outcome = match result {
++            BlockingResult::Ok(Ok(instance), store) => {
++                self.store = Some(store);
++                Ok(instance)
++            }
++            BlockingResult::Ok(Err(e), _failed_store) => Err(e),
++            // The job classifies its own errors, so it never returns this.
++            BlockingResult::WasmError(e, _failed_store) => {
++                Err(WasmError::Instantiation(e.to_string()))
++            }
++            BlockingResult::Timeout => Err(WasmError::Timeout),
++            BlockingResult::QueuedTimeout => Err(Wasm
 ```
 
-**File**: `crates/core/src/transport/quic/identity/tests.rs` (modified, +332/-0)
+---
+
+### Incident Patch 2: `b0f844ea` (2026-11-18)
+**Commit Message**: fix(transport): keep transport-internal stream ids below the caller-named bit (#6269)
+
+**File**: `crates/core/src/config.rs` (modified, +14/-0)
 ```diff
-@@ -519,3 +519,335 @@ fn a_key_with_a_torsion_component_is_refused() {
+@@ -5529,6 +5529,15 @@ impl GlobalRng {
+         THREAD_INDEX.with(|idx| idx.set(Some(0)));
      }
-     assert_eq!(refused, 32);
+ 
++    /// Give the current thread index `idx`, as if it were the `idx`-th
++    /// thread to ask. Only for a fresh thread that has not asked yet: a
++    /// thread-local derived from the index (the stream-id counter, the nonce
++    /// counter) is initialized on first use and does not see a later change.
++    #[cfg(test)]
++    pub(crate) fn pin_thread_index_for_test(idx: u64) {
++        THREAD_INDEX.with(|c| c.set(Some(idx)));
++    }
++
+     /// Clears the simulation seed, reverting to system RNG.
+     pub fn clear_seed() {
+         THREAD_SEED.with(|s| s.set(None));
+@@ -5542,6 +5551,11 @@ impl GlobalRng {
+     ///
+     /// Each thread gets a unique index from the global `THREAD_INDEX_COUNTER`.
+     /// This is used by thread-local ID counters to compute non-overlapping offset blocks.
++    ///
++    /// Indices are never reused, so a long-running node's index keeps growing
++    /// with every thread it creates (tens of thousands within days). Any
++    /// `idx * block` arithmetic must be wide enough or wrap safely, and must
++    /// not reach bits that carry meaning (#6143).
+     pub fn thread_index() -> u64 {
+         THREAD_INDEX.with(|c| match c.get() {
+             Some(idx) => idx,
+```
+
+**File**: `crates/core/src/transport/boundary.rs` (modified, +113/-13)
+```diff
+@@ -88,11 +88,20 @@ use super::{TransportError, TransportPublicKey};
+ /// ([`StreamId::next_transport_internal`]). The UDP transport relies on that
+ /// split to route a stream (see [`StreamId::is_caller_named`]).
+ ///
+-/// The split is a convention, not a guarantee: both allocators share one
+-/// per-thread counter, so once it passes 2^31 an internal id also has the top
+-/// bit, and each thread's 100,000-id block overlaps the next thread's after
+-/// 100,000 allocations. Receivers key streams by (peer, id), so a collision
+-/// needs both within one connection's live streams.
++/// Both allocators share one per-thread counter that lives in the low 31 bits
++/// ([`COUNTER_MASK`]); the top bit is set or cleared by the allocator, never
++/// by the counter. It used to be a plain `u32` starting at `thread_index *
++/// 100_000`, and `thread_index` grows by one for every thread that ever
++/// allocates, so a node creating a few threads a minute (tokio's blocking pool
++/// and `block_in_place` replacements) passed index 21,475 after a few days of
++/// uptime. From then on every transport-internal id carried the top bit, the
++/// receiver routed it as a caller-named operations stream that nothing claims,
++/// and every oversized message the node sent was silently dropped (#6143).
++///
++/// Each thread's 100,000-id block still overlaps the next thread's after
++/// 100,000 allocations, and blocks wrap modulo 2^31. Receivers key streams by
++/// (peer, id), so a collision needs both within one connection's live or
++/// recently completed streams.
+ #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, serde::Serialize, serde::Deserialize)]
+ #[repr(transparent)]
+ #[serde(transparent)]
+@@ -106,17 +115,29 @@ const STREAM_ID_BLOCK: u32 = 100_000;
+ /// Top bit of ids from [`StreamId::next`].
+ const CALLER_NAMED_BIT: u32 = 0x8000_0000;
+ 
++/// The bits the shared counter may occupy. Keeping the counter below the top
++/// bit is what makes [`StreamId::is_caller_named`] reliable: the bit is only
++/// ever set by [`StreamId::next`].
++const COUNTER_MASK: u32 = !CALLER_NAMED_BIT;
++
++/// Where thread `idx`'s counter starts: its block, wrapped into the 31-bit
++/// counter space. Identical to the old `idx * 100_000` for every index below
++/// 21,475, so ids from young nodes and simulations are unchanged.
++fn block_start(idx: u64) -> u32 {
++    (idx.wrapping_mul(u64::from(STREAM_ID_BLOCK)) & u64::from(COUNTER_MASK)) as u32
++}
++
+ thread_local! {
+     static STREAM_ID_COUNTER: std::cell::Cell<u32> = {
+         let idx = crate::config::GlobalRng::thread_index();
+-        std::cell::Cell::new((idx as u32) * STREAM_ID_BLOCK)
++        std::cell::Cell::new(block_start(idx))
+     };
  }
+ 
+ fn next_stream_counter() -> u32 {
+     STREAM_ID_COUNTER.with(|c| {
+         let v = c.get();
+-        c.set(v + 1);
++        c.set(v.wrapping_add(1) & COUNTER_MASK);
+         v
+     })
+ }
+@@ -129,11 +150,12 @@ impl StreamId {
+     }
+ 
+     /// A fresh id for a stream a transport opens for its own purposes (the
+-    /// UDP transport's oversized messages). Distinct from ids from
+-    /// [`Self::next`] until the shared counter passes 2^31 (see the type
+-    /// docs).
++    /// UDP transport's oversized messages). It never has the top bit, so it
++    /// is always distinct from ids from [`Self::next`]. The counter is
++    /// already kept below the bit; the mask here keeps that true at the one
++    /// place receivers depend on it, whatever the counter does.
+     pub(crate) fn next_transport_internal() -> Self {
+-        Self(next_stream_counter())
++        Self(next_stream_counter() & COUNTER_MASK)
+     }
+ 
+     /// Whether this id came from [`Self::next`]: a stream named by the
+@@ -146,7 +168,14 @@ impl StreamId {
+     /// Thread-local, so safe for parallel test execution.
+     pub fn reset_counter() {
+         let idx = crate::config::GlobalRng::thread_index();
+-        STREAM_ID_COUNTER.with(|c| c.set((idx as u32) * STREAM_ID_BLOCK));
++        STREAM_ID_COUNTER.with(|c| c.set(block_start(idx)));
++    }
 +
-+/// Every node's presented key is accepted by `peer_key_presented` and gives
-+/// back that node's transport key, and `ProvenClientKey` accepts it and a
-+/// handshake signature by that node under it.
-+#[test]
-+fn a_proven_key_is_the_presenting_nodes_transport_key() {
-+    let _seed = GlobalRng::seed_guard(SEED);
-+    let now = rustls::pki_types::UnixTime::now();
-+    for _ in 0..256 {
-+        let keys = TransportKeypair::new();
-+        let peer = PeerKey::of(keys.public()).unwrap();
-+        let parsed = peer_key_presented(peer.spki()).expect("a node's key");
-+        assert_eq!(parsed.transport_key(), keys.public());
-+        assert_eq!(parsed, peer);
++    /// Put this thread's counter where thread `idx` would start, so a test can
++    /// allocate as the thread of a node that has been up for days.
++    #[cfg(test)]
++    pub(crate) fn reset_counter_as_thread(idx: u64) {
++        STREAM_ID_COUNTER.with(|c| c.set(block_start(idx)));
+     }
+ }
+ 
+@@ -827,7 +856,7 @@ mod stream_id_tests {
+     #[test]
+     fn stream_id_values_are_unchanged() {
+         StreamId::reset_counter();
+-        let base = (crate::config::GlobalRng::thread_index() as u32) * 100_000;
++        let base = super::block_start(crate::config::GlobalRng::thread_index());
+         let internal = StreamId::next_transport_internal();
+         let named = StreamId::next();
+         let internal_again = StreamId::next_transport_internal();
+@@ -839,6 +868,77 @@ mod stream_id_tests {
+         assert!(!internal_again.is_caller_named());
+     }
+ 
++    /// #6143: a node's thread indices keep growing for its whole uptime, and
++    /// from index 21,475 on,
+```
+
+**File**: `crates/core/src/transport/peer_connection/ack_policy_tests.rs` (modified, +88/-0)
+```diff
+@@ -2712,6 +2712,94 @@ async fn a_legacy_stream_completed_by_its_task_is_remembered() {
+     assert!(holds_no_state(&e, id), "not started again");
+ }
+ 
++/// Allocates stream ids on this thread as thread `idx` would, and puts the
++/// counter back when dropped, also when the test panics.
++struct ResetStreamCounter;
 +
-+        let presented = cert(peer.spki());
-+        assert!(
-+            ProvenClientKey
-+                .verify_client_cert(&presented, &[], now)
-+                .is_ok()
-+        );
-+        let message = b"transcript";
-+        assert!(
-+            ProvenClientKey::verify_signature(
-+                message,
-+                &presented,
-+                SignatureScheme::ED25519,
-+                &handshake_sign(&keys, message)
-+            )
-+            .is_ok()
-+        );
++impl ResetStreamCounter {
++    fn as_thread(idx: u64) -> Self {
++        StreamId::reset_counter_as_thread(idx);
++        Self
 +    }
 +}
 +
-+/// `peer_key_presented` refuses everything but one node key's exact
-+/// presented form: other encodings and lengths, the sign-bit-1 twin, a
-+/// non-canonical encoding of the point, and the points `PeerKey::of`
-+/// refuses (small order, a torsion component).
-+#[test]
-+fn only_a_node_keys_exact_presented_form_is_accepted() {
-+    use curve25519_dalek::constants::EIGHT_TORSION;
-+    use curve25519_dalek::edwards::CompressedEdwardsY;
-+    let _seed = GlobalRng::seed_guard(SEED);
-+    let keys = TransportKeypair::new();
-+    let peer = PeerKey::of(keys.public()).unwrap();
-+    let spki = |ed25519: &[u8]| [&ED25519_SPKI_PREFIX[..], ed25519].concat();
-+
-+    let mut negated = peer.spki().to_vec();
-+    negated[ED25519_SPKI_LEN - 1] ^= 0x80;
-+    // The identity point (y = 1) and y = -1, both of small order, with
-+    // sign bit 0.
-+    let mut identity = [0u8; 32];
-+    identity[0] = 1;
-+    let mut minus_one = FIELD_PRIME;
-+    minus_one[0] -= 1;
-+    let honest = CompressedEdwardsY(*peer.ed25519()).decompress().unwrap();
-+    let torsioned = (honest + EIGHT_TORSION[1]).compress().to_bytes();
-+    let mut refused: Vec<(&str, Vec<u8>)> = vec![
-+        ("the sign-bit-1 twin", negated),
-+        ("truncated", peer.spki()[..ED25519_SPKI_LEN - 1].to_vec()),
-+        ("extended", [&peer.spki()[..], &[0]].concat()),
-+        ("empty", Vec::new()),
-+        ("the bare key", peer.ed25519().to_vec()),
-+        ("the prefix alone", ED25519_SPKI_PREFIX.to_vec()),
-+        ("the identity point", spki(&identity)),
-+        ("y = -1", spki(&minus_one)),
-+        ("a torsion component", spki(&torsioned)),
-+        (
-+            "arbitrary DER",
-+            vec![0x30, 0x82, 0x01, 0x0a, 0x30, 0x81, 0xb5],
-+        ),
-+    ];
-+    for byte in 0..ED25519_SPKI_PREFIX.len() {
-+        let mut flipped = peer.spki().to_vec();
-+        flipped[byte] ^= 1;
-+        refused.push(("a flipped prefix bit", flipped));
++impl Drop for ResetStreamCounter {
++    fn drop(&mut self) {
++        StreamId::reset_counter();
 +    }
-+    // Every non-canonical encoding with sign bit 0: y + p for y < 19
-+    // (y + p < 2^255).
-+    // Each is refused by `PeerKey::of` already (small order or a torsion
-+    // component), before the canonical-encoding backstop in
-+    // `peer_key_presented` is reached: shown here for every one of them, so
-+    // the backstop's comment ("not reachable today") stays checked.
-+    for y in 0..19u8 {
-+        let mut encoded = FIELD_PRIME;
-+        encoded[0] += y;
-+        if let Some(point) = CompressedEdwardsY(encoded).decompress() {
-+            let transport = TransportPublicKey::from_bytes(point.to_montgomery().to_bytes());
-+            assert!(
-+                PeerKey::of(&transport).is_err(),
-+                "y + p for y = {y}: PeerKey::of accepted it, so only the backstop refuses it"
++}
++
++/// #6143, the sender's side: an oversized message sent on UDP from a thread
++/// whose index is past 21,475 goes out as fragments of a transport-internal
++/// stream, without the caller-named bit. Before the fix every such fragment
++/// carried the bit, so the receiver parked the message as an operations
++/// stream nobody claims.
++#[tokio::test(start_paused = true)]
++async fn an_oversized_send_from_a_long_running_thread_is_not_caller_named() {
++    let mut e = single(CAPABLE);
++    let sent = {
++        let _reset = ResetStreamCounter::as_thread(24_160);
++        e.conn.send_serialized(vec![7u8; 4000]).await
++    };
++    sent.unwrap();
++    let mut ids = Vec::new();
++    for _ in 0..50 {
++        tokio::time::advance(Duration::from_millis(10)).await;
++        tokio::task::yield_now().await;
++        for message in e.drain_sent() {
++            if let SymmetricMessagePayload::StreamFragment { stream_id, .. } = message.payload {
++                ids.push(stream_id);
++            }
++        }
++        if !ids.is_empty() {
++            break;
++        }
++    }
++    assert!(!ids.is_empty(), "the message went out as a stream");
++    assert!(ids.iter().all(|id| !id.is_caller_named()), "{ids:?}");
++    // The id came from the counter set above, not one allocated elsewhere:
++    // thread 24,160's block starts at 24,160 x 100,000 mod 2^31.
++    let start = 268_516_352u32;
++    assert!(
++        ids.iter().all(|id| (start..start + 16).contains(&id.0)),
++        "{ids:?}"
++    );
++}
++
++/// #6143: an oversized message sent from a thread whose index is past
++/// 21,475, which every node reaches after a few days of uptime, is still
++/// reassembled and delivered. Before the fix its transport-internal id carried
++/// the caller-named bit, so the receiver parked it as an operations stream
++/// nobody claims and the message was lost without a trace.
++#[tokio::test(start_paused = true)]
++async fn a_legacy_stream_from_a_long_running_sender_thread_is_delivered() {
++    let mut e = single(CAPABLE);
++    let id = {
++        let _reset = ResetStreamCounter::as_thread(24_160);
++        StreamId::next_transport_internal()
++    };
++    let f = super::MAX_DATA_SIZE;
++    let data: Vec<u8> = (0..(2 * f)).map(|i| i as u8).collect();
++    let total = data.len() as u64;
++    for (i, chunk) in data.chunks(f).enumerate() {
++        feed(
++            &mut e,
++            fragment_with(
++                id,
++                total,
++                i as u32 + 1,
++                bytes::Bytes::copy_from_slice(chunk),
++            ),
++        )
++        .await;
++    }
++    assert_eq!(
++        e.pump(Duration::from_millis(10)).await.as_deref(),
++        Some(&data[..]),
++        "stream {id:?} was not delivered as a message"
++    );
++}
++
+ /// An evicted legacy stream delivers nothing even when the fragments that
+ /// would complete it are already queued for its reassembly task.
+ #[tokio::test(start_paused = true)]
+```
+
+---
+
+### Incident Patch 3: `88ffb1cd` (2026-11-18)
+**Commit Message**: fix(broadcast): bound memory when broadcasting large contract states (#6266)
+
+**File**: `crates/core/src/node/network_bridge/broadcast_payload_mix.rs` (modified, +22/-1)
+```diff
+@@ -41,6 +41,10 @@
+ //!    have three different fixes, published as
+ //!    `tracked_missing_<reason>_{sends,bytes}` plus a
+ //!    `tracked_missing_unattributed_*` residual that must stay at zero.
++//! 7. [`PayloadArm::FullLargeDeltaStreamed`] — a delta WAS computed, but the
++//!    state is large and the delta too large to send inline, so the state went
++//!    out as a stream to keep the fan-out's resident memory under the lane
++//!    bound. Can be several times the bytes of the delta it replaced.
+ //!
+ //! Arms 4-6 were a single `full_no_summary` bucket when #4922 first shipped.
+ //! The 2026-07-25 measurement then found that bucket was the LARGEST single
+@@ -377,20 +381,28 @@ pub(crate) enum PayloadArm {
+     /// cleared by a delta-apply failure / `ResyncRequest`. The next delivered
+     /// broadcast caches a summary and the pair collapses to deltas.
+     FullNoTheirSummaryTracked,
++    /// Full state: the contract's state is large and the computed delta was
++    /// too large to send inline, so the state went out as a stream instead,
++    /// where the lane permit bounds how many are resident. Kept apart from
++    /// [`Self::FullNotEfficient`]: that arm is the delta not being smaller than
++    /// the state, this one is a memory bound chosen over a smaller payload.
++    /// See `broadcast_queue::delta_sent_as_full_state`.
++    FullLargeDeltaStreamed,
+ }
+ 
+ impl PayloadArm {
+     /// Every arm, in reporting order. Exhaustive by construction: the
+     /// `match` in [`PayloadArm::index`] fails to compile if a variant is
+     /// added without being listed here.
+-    pub(crate) const ALL: [PayloadArm; 7] = [
++    pub(crate) const ALL: [PayloadArm; 8] = [
+         PayloadArm::Delta,
+         PayloadArm::FullDeltaSuppressed,
+         PayloadArm::FullNotEfficient,
+         PayloadArm::FullComputeFailed,
+         PayloadArm::FullNoOurSummary,
+         PayloadArm::FullNoTheirSummaryUntracked,
+         PayloadArm::FullNoTheirSummaryTracked,
++        PayloadArm::FullLargeDeltaStreamed,
+     ];
+ 
+     /// The three arms that together make up the legacy `full_no_summary`
+@@ -413,6 +425,7 @@ impl PayloadArm {
+             PayloadArm::FullNoOurSummary => 4,
+             PayloadArm::FullNoTheirSummaryUntracked => 5,
+             PayloadArm::FullNoTheirSummaryTracked => 6,
++            PayloadArm::FullLargeDeltaStreamed => 7,
+         }
+     }
+ 
+@@ -427,6 +440,7 @@ impl PayloadArm {
+             PayloadArm::FullNoOurSummary => "full_no_our_summary",
+             PayloadArm::FullNoTheirSummaryUntracked => "full_no_their_summary_untracked",
+             PayloadArm::FullNoTheirSummaryTracked => "full_no_their_summary_tracked",
++            PayloadArm::FullLargeDeltaStreamed => "full_large_delta_streamed",
+         }
+     }
+ 
+@@ -1136,6 +1150,13 @@ impl PayloadMix {
+         }
+     }
+ 
++    /// Test-only view of one arm's delivered `(sends, bytes)`, without draining.
++    #[cfg(test)]
++    pub(crate) fn arm_for_test(&self, arm: PayloadArm) -> (u64, u64) {
++        let w = self.window.lock();
++        (w.sends[arm.index()], w.bytes[arm.index()])
++    }
++
+     /// Test-only view of the [`PropagationEvent`] counts, without draining.
+     #[cfg(test)]
+     pub(crate) fn propagation_event_for_test(&self, ev: PropagationEvent) -> u64 {
+```
+
+**File**: `crates/core/src/node/network_bridge/broadcast_queue.rs` (modified, +443/-66)
+```diff
+@@ -175,6 +175,28 @@ pub(super) async fn await_stream_completion_releasing_permit<T>(
+ /// old state-size classification had it too) and is not what #4961 was about.
+ const BROADCAST_QUEUE_PAYLOAD_SIZE_THRESHOLD: usize = 64 * 1024;
+ 
++/// State size, in bytes, at or above which a broadcast is queued in the large
++/// lane even when a delta is expected.
++///
++/// The delta prediction only says that a summary is cached for the target, not
++/// how big the delta will be, and a contract's delta against a peer that holds
++/// little of its state is about the size of the state. For a small state a
++/// wrong prediction costs one large payload, corrected by
++/// [`SendLanePermit::ensure_capacity_for`]. For a multi-megabyte state it does
++/// not: every leg of the fan-out runs the summarize and delta work and builds
++/// its payload under one of the 12 small-lane permits before the correction
++/// applies, so a whole fan-out builds state-sized payloads at once. Queueing
++/// these legs in the large lane from the start means a leg does no work at all
++/// until it holds one of the large lane's permits.
++///
++/// The cost is that the small deltas of a state this large share the large
++/// lane's two permits. That is the pre-#4961 behaviour, kept only for states
++/// this size.
++// Only read by the production queue, which is cfg'd out under
++// `simulation_tests`.
++#[cfg_attr(feature = "simulation_tests", allow(dead_code))]
++const LARGE_STATE_LANE_THRESHOLD: usize = 4 * 1024 * 1024;
++
+ #[derive(Clone, Copy, Debug, PartialEq, Eq)]
+ // The simulation feature replaces the production queue, but keeps the shared
+ // payload-selection path and its public signature compiled.
+@@ -848,7 +870,7 @@ mod queue {
+ 
+     /// Maximum concurrent outbound broadcast streams for large payloads (>= 64KB).
+     /// Large payloads (full state) are rate-limited to avoid uplink saturation.
+-    const DEFAULT_LARGE_PAYLOAD_CONCURRENCY: usize = 2;
++    pub(super) const DEFAULT_LARGE_PAYLOAD_CONCURRENCY: usize = 2;
+ 
+     /// Maximum entries in the queue before oldest are dropped.
+     const DEFAULT_MAX_QUEUE_DEPTH: usize = 256;
+@@ -872,11 +894,16 @@ mod queue {
+     /// send full state anyway — so it decides SCHEDULING only. The uplink bound
+     /// is enforced against the real payload by
+     /// [`SendLanePermit::ensure_capacity_for`].
++    ///
++    /// A state at or above [`super::LARGE_STATE_LANE_THRESHOLD`] is queued
++    /// large whatever the prediction; see that constant.
+     pub(super) fn classify_payload_lane(
+         state_size: usize,
+         delta_expected: bool,
+     ) -> QueuedPayloadClass {
+-        if state_size < super::BROADCAST_QUEUE_PAYLOAD_SIZE_THRESHOLD || delta_expected {
++        if state_size < super::BROADCAST_QUEUE_PAYLOAD_SIZE_THRESHOLD
++            || (delta_expected && state_size < super::LARGE_STATE_LANE_THRESHOLD)
++        {
+             QueuedPayloadClass::Small
+         } else {
+             QueuedPayloadClass::Large
+@@ -3412,6 +3439,18 @@ mod queue {
+                 QueuedPayloadClass::Small,
+                 "a state below the threshold is small whatever the payload shape"
+             );
++            const HUGE: usize = super::super::LARGE_STATE_LANE_THRESHOLD;
++            assert_eq!(
++                classify_payload_lane(HUGE - 1, true),
++                QueuedPayloadClass::Small,
++                "an expected delta stays small up to the large-state threshold"
++            );
++            assert_eq!(
++                classify_payload_lane(HUGE, true),
++                QueuedPayloadClass::Large,
++                "a state at the large-state threshold is queued large even when \
++                 a delta is expected: its delta may be as large as the state"
++            );
+ 
+             let queue = BroadcastQueue::new();
+             let mut lanes = spawn_lanes(&queue, 12, 2);
+@@ -4147,6 +4186,11 @@ mod queue {
+                 "THE #4961 CASE: a >64 KiB contract sending a delta to a peer whose \
+                  summary we hold must not spend one of the 2 large-lane permits"
+             );
++            assert_eq!(
++                lane(super::super::LARGE_STATE_LANE_THRESHOLD),
++                QueuedPayloadClass::Large,
++                "a multi-megabyte state is queued large even with a cached summary"
++            );
+ 
+             let addr = |port: u16| -> std::net::SocketAddr {
+                 format!("127.0.0.1:{port}").parse().unwrap()
+@@ -4168,6 +4212,11 @@ mod queue {
+ #[cfg(not(feature = "simulation_tests"))]
+ pub(crate) use queue::BroadcastQueue;
+ 
++/// The large lane's permit count, for the fan-out memory test in
++/// `p2p_protoc`, which derives its bound from it.
++#[cfg(all(test, not(feature = "simulation_tests")))]
++pub(super) const LARGE_LANE_PERMITS: usize = queue::DEFAULT_LARGE_PAYLOAD_CONCURRENCY;
++
+ /// Classify the result of awaiting the streaming completion oneshot into
+ /// "the message was actually delivered" vs "the permit can be released but the
+ /// message was dropped".
+@
+```
+
+**File**: `crates/core/src/node/network_bridge/p2p_protoc.rs` (modified, +2/-0)
+```diff
+@@ -56,6 +56,8 @@ mod connection_lifecycle;
+ mod connection_map;
+ mod dispatch;
+ mod identity;
++#[cfg(all(test, not(feature = "simulation_tests")))]
++mod large_state_fanout_tests;
+ mod migration;
+ mod zombie_sweep;
+ 
+```
+
+**File**: `crates/core/src/node/network_bridge/p2p_protoc/large_state_fanout_tests.rs` (added, +465/-0)
+```diff
+@@ -0,0 +1,465 @@
++//! Memory held by the fan-out of a large new state to many co-hosts, through
++//! the node's real fan-out: `handle_broadcast_state_change` (what the
++//! executor's `BroadcastStateChange` reaches after a PUT or UPDATE commits),
++//! its co-host target selection, the broadcast queue workers and
++//! `broadcast_to_single_peer`.
++//!
++//! Each case runs on one current-thread runtime, so every allocation of the
++//! fan-out lands on the measuring thread (`util::alloc_count`), counted at the
++//! jemalloc size class it would be served from. The state is allocated before
++//! the measurement and shared, as a node's stored state is, so a peak excludes
++//! that one copy. Memory the contract executor uses for real summarize and
++//! delta calls (WASM linear memory, on its own threads) is not modelled: the
++//! stand-in contract below runs on the measuring thread and allocates only the
++//! delta it returns.
++//!
++//! Every co-host has a cached summary that differs from ours, so the queue
++//! predicts a small delta for each, and the stand-in contract returns a delta
++//! of the size each case sets: for a contract new to the receivers that is
++//! about the size of the state.
++//!
++//! The stand-in transport keeps every payload it is handed:
++//! - a stream for `TRANSFER` of virtual time, longer than
++//!   `STREAM_PERMIT_HOLD`, as a slow uplink would, then drops its bytes and
++//!   reports delivery. A stream gives its lane permit back at the hold, so its
++//!   buffer stays resident outside the lane for the rest of the transfer;
++//! - an inline message until every target's leg has reached the transport, so
++//!   a case that sends inline measures all of them resident at once rather
++//!   than however many happened to overlap.
++
++use std::net::SocketAddr;
++use std::sync::Arc;
++use std::time::Duration;
++
++use freenet_stdlib::prelude::{
++    CodeHash, ContractInstanceId, ContractKey, StateDelta, StateSummary, WrappedState,
++};
++
++use super::{P2pBridgeEvent, P2pConnManager};
++use crate::contract::{ContractHandlerEvent, StoreResponse};
++use crate::message::{NetMessage, NetMessageV1};
++use crate::operations::update::{BroadcastStreamingPayload, UpdateMsg};
++use crate::ring::PeerKey;
++use crate::ring::interest::SummaryPopulationSource;
++use crate::transport::{StreamSendOutcome, TransportPublicKey};
++use crate::util::alloc_count::{allocated_by, jemalloc_class, peak_delta};
++
++const STATE_LEN: usize = 30 * 1024 * 1024;
++const TARGETS: u8 = 20;
++/// Longer than `STREAM_PERMIT_HOLD` (120 s), so each stream's buffer outlives
++/// the permit that admitted it and another leg builds its buffer meanwhile.
++const TRANSFER: Duration = Duration::from_secs(150);
++/// The default `streaming-threshold`; [`fan_out`] asserts the node uses it.
++const STREAMING_THRESHOLD: usize = 64 * 1024;
++const OUR_SUMMARY: &[u8] = &[0xA0];
++const THEIR_SUMMARY: &[u8] = &[0xB0];
++
++/// What one fan-out case observed.
++struct Fanout {
++    /// Peak live bytes above the shared state, in jemalloc size classes.
++    peak: isize,
++    /// Every byte allocated on the measuring thread during the fan-out,
++    /// freed or not. A floor on it shows the counter saw the fan-out at all.
++    allocated: usize,
++    streams: usize,
++    inline: usize,
++    /// Streams whose bytes were not exactly the bincode of
++    /// `BroadcastStreamingPayload { stored state, OUR_SUMMARY }`.
++    malformed_streams: usize,
++}
++
++/// Fan a `STATE_LEN` state out to `TARGETS` co-hosts whose deltas the
++/// stand-in contract computes as `delta_bytes` long.
++fn fan_out(id: &str, delta_bytes: usize) -> Fanout {
++    let rt = tokio::runtime::Builder::new_current_thread()
++        .enable_all()
++        .build()
++        .expect("runtime");
++    let state = WrappedState::new(vec![0x5A; STATE_LEN]);
++    let (mut mgr, op_manager, key, handler) = rt.block_on(node(id, state.clone(), delta_bytes));
++    assert_eq!(
++        op_manager.streaming_threshold, STREAMING_THRESHOLD,
++        "the threshold cases below are written against the default"
++    );
++    // What a correct stream carries, built before the measurement so it adds
++    // nothing to the peak.
++    let expected_stream = bincode::serialize(&BroadcastStreamingPayload {
++        state_bytes: state.as_ref().to_vec(),
++        sender_summary_bytes: OUR_SUMMARY.to_vec(),
++    })
++    .expect("serialize");
++
++    let ((observed, allocated), _, peak) = peak_delta(|| {
++        allocated_by(|| {
++            rt.block_on(async {
++                // Virtual time from here: the node is built, and nothing below
++                // waits on I/O, so a 150 s transfer costs no wall time. The
++                // clock is driven explicitly (see `drive_clock`), because the
++                // node keeps a task runnable and tokio only auto-advances a
++                // paused clock when every task is idle.
++                tokio::time::pause();
++                let fan_out = async {
++                    let workers = mgr
++      
+```
+
+**File**: `crates/core/src/operations/update.rs` (modified, +44/-1)
+```diff
+@@ -15,7 +15,9 @@ pub(crate) mod propagation_stats;
+ 
+ use freenet_stdlib::prelude::*;
+ 
+-pub(crate) use self::messages::{BroadcastStreamingPayload, UpdateMsg, UpdateStreamingPayload};
++pub(crate) use self::messages::{
++    BroadcastStreamingPayload, BroadcastStreamingPayloadRef, UpdateMsg, UpdateStreamingPayload,
++};
+ use super::OpError;
+ use crate::contract::{ContractHandlerEvent, ExecutorError, StoreResponse};
+ use crate::message::{NodeEvent, Transaction};
+@@ -1648,6 +1650,18 @@ mod messages {
+         pub sender_summary_bytes: Vec<u8>,
+     }
+ 
++    /// The sender's borrowed form of [`BroadcastStreamingPayload`].
++    ///
++    /// Serializes to the same bytes (serde writes a `&[u8]` and a `Vec<u8>` the
++    /// same way), so a sender can serialize from a state it shares with other
++    /// broadcast legs without first copying it into a `Vec`. Pinned by
++    /// `broadcast_streaming_payload_ref_serializes_like_the_owned_payload`.
++    #[derive(Serialize)]
++    pub(crate) struct BroadcastStreamingPayloadRef<'a> {
++        pub state_bytes: &'a [u8],
++        pub sender_summary_bytes: &'a [u8],
++    }
++
+     #[derive(Debug, Serialize, Deserialize, Clone)]
+     /// Update operation messages.
+     ///
+@@ -1824,6 +1838,35 @@ mod tests {
+     use super::*;
+     use crate::operations::test_utils::make_contract_key;
+ 
++    /// The borrowed payload a broadcast sender serializes must decode as the
++    /// owned payload a receiver deserializes, byte for byte, including the
++    /// empty summary a sender without one sends.
++    #[test]
++    fn broadcast_streaming_payload_ref_serializes_like_the_owned_payload() {
++        for (state, summary) in [
++            (vec![1u8, 2, 3, 250], vec![9u8, 8]),
++            (vec![0u8; 70_000], Vec::new()),
++            (Vec::new(), Vec::new()),
++        ] {
++            let borrowed = bincode::serialize(&BroadcastStreamingPayloadRef {
++                state_bytes: &state,
++                sender_summary_bytes: &summary,
++            })
++            .unwrap();
++            let owned = bincode::serialize(&BroadcastStreamingPayload {
++                state_bytes: state.clone(),
++                sender_summary_bytes: summary.clone(),
++            })
++            .unwrap();
++            assert_eq!(borrowed, owned);
++            let decoded: BroadcastStreamingPayload = bincode::deserialize(&borrowed).unwrap();
++            assert_eq!(
++                (decoded.state_bytes, decoded.sender_summary_bytes),
++                (state, summary)
 +            );
 +        }
-+        refused.push(("a non-canonical y", spki(&encoded)));
 +    }
-+    let now = rustls::pki_types::UnixTime::now();
-+    for (what, bytes) in &refused {
-+        assert!(peer_key_presented(bytes).is_err(), "{what} accepted");
-+        assert!(
-+            ProvenClientKey
-+                .verify_client_cert(&cert(bytes), &[], now)
-+                .is_err(),
-+            "the verifier accepted {what}"
-+        );
-+    }
-+    // Not even an accepted key with a chain.
-+    let verifier = ProvenClientKey;
-+    let exact = cert(peer.spki());
-+    assert!(
-+        verifier
-+            .verify_client_cert(&exact, std::slice::from_ref(&exact), now)
-+            .is_err()
-+    );
-+    assert!(verifier.verify_client_cert(&exact, &[], now).is_ok());
-+    assert!(verifier.requires_raw_public_keys());
-+    assert!(verifier.offer_client_auth() && verifier.client_auth_mandatory());
-+    assert_eq!(
-+        verifier.supported_verify_schemes(),
-+   
++
+     /// Wire-compatibility guard for #5147, in two independent halves.
+     ///
+     /// Appending `BroadcastToV2` / `BroadcastToStreamingV2` must not renumber
 ```
 
-**File**: `crates/core/src/transport/quic/tests.rs` (modified, +63/-5)
+**File**: `crates/core/src/ring.rs` (modified, +7/-0)
 ```diff
-@@ -715,6 +715,8 @@ enum ServerTls {
-     Pinned,
-     /// With this rustls configuration instead (an impostor's).
-     Custom(Box<rustls::ServerConfig>),
-+    /// With this QUIC TLS configuration, which may serve several attempts.
-+    Shared(Arc<quinn::crypto::rustls::QuicServerConfig>),
- }
+@@ -5021,6 +5021,13 @@ impl Ring {
+         self.hosting_manager.disk_usage_stats()
+     }
  
- /// `client` connects to `server` at `server_addr` with `client_config`,
-@@ -736,12 +738,16 @@ async fn attempt(
-                 let incoming = server.accept().await.expect("an incoming attempt");
-                 match server_tls {
-                     ServerTls::Pinned => incoming.establish().await,
--                    ServerTls::Custom(tls) => {
-+                    ServerTls::Custom(_) | ServerTls::Shared(_) => {
-                         let mut config = (*server.server).clone();
--                        config.crypto = Arc::new(
--                            quinn::crypto::rustls::QuicServerConfig::try_from(Arc::new(*tls))
--                                .unwrap(),
--                        );
-+                        config.crypto = match server_tls {
-+                            ServerTls::Custom(tls) => Arc::new(
-+                                quinn::crypto::rustls::QuicServerConfig::try_from(Arc::new(*tls))
-+                                    .unwrap(),
-+                            ),
-+                            ServerTls::Shared(tls) => tls,
-+                            ServerTls::Pinned => unreachable!("matched above"),
-+                        };
-                         let connection =
-                             super::socket::with_poller_holds(&incoming.cap_holds, || {
-                                 incoming.incoming.accept_with(Arc::new(config))
-@@ -5270,3 +5276,55 @@ fn the_bind_records_its_endpoint_state() {
-         "recorded before the result is used, for both arms"
-     );
- }
++    /// The size of `contract`'s stored state at its last committed write, if
++    /// the disk tracker has recorded it. See
++    /// `HostingManager::committed_state_size`.
++    pub(crate) fn committed_state_size(&self, contract: &ContractKey) -> Option<u64> {
++        self.hosting_manager.committed_state_size(contract)
++    }
 +
-+/// A real QUIC handshake under `server_tls_proven`: two clients with
-+/// different keys connect through ONE server configuration, each is
-+/// accepted, the key read from each connection (`proven_client_key`) is that
-+/// client's own, and the ALPN agreed is the native one. A verifier that kept
-+/// the first client's key would refuse the second.
-+#[test]
-+fn a_proven_server_config_accepts_each_client_by_its_own_key() {
-+    bounded(|| async move {
-+        let _seed = GlobalRng::seed_guard(SEED);
-+        let net = crate::transport::test_net::subnet();
-+        let pair = pair("quic-identity-proven", net.addr(1), net.addr(2), None).await;
-+        // The attempt reaches `accept` only from an allowed address; the key
-+        // it is allowed with is not used by this server configuration.
-+        let _permit = pair.b.allow_peer(pair.a_addr, &pair.a_key()).unwrap();
-+        let shared = Arc::new(pair.b.identity.server_tls_proven().unwrap());
-+        let server_peer = PeerKey::of(pair.b_keys.public()).unwrap();
-+        let second_keys = TransportKeypair::new();
-+        let second = Arc::new(QuicIdentity::new(&second_keys).unwrap());
-+        let clients = [
-+            (&pair.a.identity, pair.a_keys.public()),
-+            (&second, second_keys.public()),
-+        ];
-+        for (identity, expected) in clients {
-+            let tls = identity
-+                .client_tls_for(&server_peer, config::Alpn::Native)
-+                .unwrap();
-+            let (client, server) = attempt(
-+                &pair.time,
-+                &pair.a,
-+                &pair.b,
-+                pair.b_addr,
-+                (pair.a.client_config(Arc::new(tls)), server_peer.clone()),
-+                ServerTls::Shared(shared.clone()),
-+            )
-+            .await;
-+            let client = client.expect("the client connects");
-+            let server = server.expect("the server accepts");
-+            let proven = super::identity::proven_client_key(server.inner())
-+                .expect("the connection carries the proven key");
-+            assert_eq!(proven.transport_key(), expected);
-+            let protocol = server
-+                .inner()
-+                .handshake_data()
-+                .and_then(|data| data.downcast::<quinn::crypto::rustls::HandshakeData>().ok())
-+                .and_then(|data| data.protocol);
-+            assert_eq!(protocol.as_deref(), Some(config::NATIVE_ALPN));
-+            client.inner().close(0u32.into(), b"");
-+            server.inner().close(0u32.into(), b"");
-+        }
-+    })
-+}
+     pub(crate) fn commit_state_write(&self, contract: &ContractKey, state_size: usize) {
+         let new_gen = self.hosting_manager.bump_state_generation(contract);
+         self.hosting_manager
+```
+
+**File**: `crates/core/src/ring/hosting.rs` (modified, +10/-0)
+```diff
+@@ -1192,6 +1192,16 @@ impl HostingManager {
+         }
+     }
+ 
++    /// The size of `key`'s state at its last committed write, from the disk
++    /// tracker. `None` before the tracker is installed or when no write or
++    /// seed has recorded it.
++    pub(crate) fn committed_state_size(&self, key: &ContractKey) -> Option<u64> {
++        self.disk_tracker
++            .read()
++            .as_ref()
++            .and_then(|tracker| tracker.committed_state_size(key))
++    }
++
+     /// Apply a state-write delta to the disk tracker at a state-write chokepoint.
+     /// Wired from `Ring::commit_state_write` (the single infallible post-write
+     /// funnel for all four executor chokepoints), so
+```
+
+**File**: `crates/core/src/ring/hosting/disk_usage.rs` (modified, +6/-0)
+```diff
+@@ -444,6 +444,12 @@ impl DiskUsageTracker {
+         self.refresh_webapp_cache();
+     }
+ 
++    /// The size last recorded for `key` by [`Self::record_state_write`] (or
++    /// the seed), or `None` if none is recorded.
++    pub(crate) fn committed_state_size(&self, key: &ContractKey) -> Option<u64> {
++        self.state_sizes.lock().get(key)
++    }
++
+     /// Apply a state-write at a chokepoint: set `key`'s tracked size to
+     /// `new_size` and adjust `state_bytes` by the signed delta against the
+     /// previous size for that key (0 if unseen).
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #6271** (2026-11-18): fix: run initiate_buffer and instance setup under the guest backstop (@sanity)
+- **PR #6269** (2026-11-18): fix(transport): keep transport-internal stream ids below the caller-named bit (@sanity)
+- **PR #6267** (2026-11-18): test(server): pin Host refusal on the permission event stream (@sanity)
+- **PR #6266** (2026-11-18): fix(broadcast): bound memory when broadcasting large contract states (@sanity)
+- **PR #6265** (2026-11-17): feat(telemetry): a native_setup_outcome event per native setup at each end (gate 22) (@sanity)
 - **PR #6262** (2026-11-17): fix(quic): breaker review carry-overs from #6259 (@sanity)
-- **PR #6260** (2026-11-17): feat(quic): add ProvenClientKey, a client verifier for a key nobody named (@sanity)
-- **PR #6259** (2026-11-17): fix(quic): peers trip the crash breaker only on QUIC-panic short runs (@sanity)
-- **PR #6258** (2026-11-17): test(quic): pin the crash-breaker marker lock and correct its doc (@sanity)
-- **PR #6257** (2026-11-17): feat(telemetry): per-path QUIC srtt and send-rate bucket gauges in the transport snapshot (@sanity)
-- **PR #6256** (2026-11-17): fix(quic): keep a Windows endpoint-death record past the short-run clear (@sanity)
 
 ---
 
@@ -2839,59 +2645,65 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. quic): peers trip the crash breaker only on QUIC-panic short runs
+## X. run initiate_buffer and instance setup under the guest backstop
 
 **RULE**:
-When implementing operations in `.claude/rules/transport.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in freenet/freenet-core. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.claude/rules/contracts.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in freenet/freenet-core. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `17141a5c`: quic): peers trip the crash breaker only on QUIC-panic short runs. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0515d873`: run initiate_buffer and instance setup under the guest backstop. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/rules/transport.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/rules/contracts.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-(`quic_breaker_trips`; for every peer, and a gateway on Windows, counted for
-runs in a row (two on a peer while UDP exists, so it trips before the
-post-update rollback's three crashes; three on a gateway) that ended
-transport/quic, by panic location), each starting within 24 h of the one before,
-and for a unix gateway for any abnormal end of a QUIC-enabled run, not only a
-QUIC fault;
-elsewhere, since a gateway's breaker cannot trip without a boot identity) decides whether `bind_udp_listener` builds a quinn endpoint over the DemuxSocket.
-except where a restart after SIGKILL would trip a unix gateway's breaker; a
-peer's short-run rule does not count a SIGKILL), and the
-against the previous release, and peers with `quic_breaker_suppressed`. Since
-unix peers moved to the short-run rule (#6151), it also reads
-`quic_breaker_start` by version: trips with their `quic_panic_at`, and on unix
-peers how often `legacy_verdict` and `verdict` disagree. A
-    contained aborts the process. On a unix gateway the next start trips the
-    breaker (quic_breaker_trips, see quic/breaker.rs): QUIC off for 15 min
-    (doubling on repeat trips up to 4 h), and a supervised gateway restarts
-    itself with ex
+All guest entry points, including the allocator export and instance setup
+(module start function and `__frnt_set_id`), run under the wall-clock backstop
+and panic capture: on a blocking-pool thread (a plain thread on a
+`current_thread` runtime), with a host-side panic returned as an `Err`. The
+typed calls share ONE body, `call_typed_blocking` in
+`engine/wasmtime_engine.rs`; instance setup runs as one job of its own, whose
+wall-clock bound allows each of its two entries its own budget. Nothing should
+reintroduce a per-entry-point copy or an inline guest call.
+initiate_buffer()         — allocator export, contracts and delegates
+        ↓ all four
+call_typed_blocking()     — execute_wasm_blocking
+
+create_instance()         — module start function + __frnt_set_id
+        ↓ one job
+execute_wasm_blocking_within() — wall-clock backstop + panic capture
+`call_void` is the one inline entry left, and only a test calls it.
+
+  `GuestDelegateInstance`, not on the caller's. The allocator export gets no
+  `GuestDelegateInstance` (it is called with `delegate_instance: None`), so a
+  delegate's allocator cannot reach the delegate host functions. It has no use
+  for them.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-(`quic_breaker_trips`, on unix counted for any abnormal end of a QUIC-enabled
-run, not only a QUIC fault, and on Windows for three runs in a row that ended
-transport/quic, by panic location), each starting within 24 h of the one before;
-elsewhere, since the breaker cannot trip without a boot identity) decides whether `bind_udp_listener` builds a quinn endpoint over the DemuxSocket.
-except where a restart after SIGKILL would trip the breaker), and the
-against the previous release, and peers with `quic_breaker_suppressed`. A
-    contained aborts the process. On unix the next start trips the breaker
-    (quic_breaker_trips, see quic/breaker.rs): QUIC off for 24 h on a peer,
-    15 min on a gateway (doubling on repeat trips up to 4 h), which, when
-    supervised, restarts itself with exit 42 at the cooldown's end
-    (breaker::quic_restore_at). On Windows the
-    and recorded one, so the fourth start after three such aborts in a row
-    trips it. An ordinary stop records no panic and never counts; an abort
+All three guest entry points share ONE body, `call_typed_blocking` in
+`engine/wasmtime_engine.rs`. Delegates ran "sync, on the calling thread" until
+#5480; they no longer do, and nothing should reintroduce a per-entry-point copy.
+        ↓ all three
+call_typed_blocking()     — spawn_blocking + wall-clock backstop + panic capture
+  `GuestDelegateInstance`, not on the caller's.
+
+  Scope that to `process()` and no further. Buffer setup and instantiation —
+  `initiate_buffer`, `call_void`, `instantiate_and_init` — still enter the guest
+  with `block_on_async(func.call_async(...))` INLINE on the calling thread, with
+  no `execute_wasm_blocking` and no `GuestDelegateInstance`. That is why
+  `exec_inbound_with_env` still sets `CURRENT_DELEGATE_INSTANCE` on the calling
+  thread at all, as `DelegateEnvGuard`'s rustdoc explains. "Nothing
+  delegate-related runs on the calling thread" is false and would produce a wrong
+  call about exactly those paths.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `17141a5c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0515d873` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

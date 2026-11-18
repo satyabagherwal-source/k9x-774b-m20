@@ -4,24 +4,24 @@
 {
   "source_repository": "koderover/zadig",
   "source_url": "https://github.com/koderover/zadig",
-  "source_version": "29b826e4",
+  "source_version": "2c932905",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-17T03:58:00.275Z",
+  "timestamp": "2026-11-18T02:51:25.859Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-koderover-zadig",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [koderover/zadig](https://github.com/koderover/zadig) (Revision: `29b826e4`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-17T03:58:00.275Z`  
+> **Provenance**: Harvested from [koderover/zadig](https://github.com/koderover/zadig) (Revision: `2c932905`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-18T02:51:25.859Z`  
 > **Learning ID**: `learn-github-koderover-zadig`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), I (Content & Information Intelligence), L (Deployment & Operations Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence), B (Product Intelligence)
-- **Confidence Rating**: 64%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), I (Content & Information Intelligence), B (Product Intelligence), A (Human & Need Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 77%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from koderover/zadig:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/koderover-zadig-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/koderover/zadig](https://github.com/koderover/zadig))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T03:57:59.168Z  
+> **Harvest Timestamp**: 2026-11-18T02:51:24.659Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1218,878 +1218,245 @@ func isSubdirectory(rootDir, subDir string) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f09f6eef` (2026-11-16)
-**Commit Message**: fix(helm): prevent concurrent chart download directory conflicts (#5086)
+### Incident Patch 1: `2c932905` (2026-11-17)
+**Commit Message**: feat(helm): support skipping CRD upgrade when updating services (#5082)
 
-* fix(helm): prevent concurrent chart download directory conflicts
-
-Signed-off-by: Patrick Zhao <[REDACTED_EMAIL]>
-
-* fix(helm): reuse chart caches under shared read and write locks
-
-Signed-off-by: Patrick Zhao <[REDACTED_EMAIL]>
-
-* fix(helm): refresh latest charts and serialize service imports
-
-Signed-off-by: Patrick Zhao <[REDACTED_EMAIL]>
-
-* fix(helm): check cancellation and tolerate backup cleanup failures
-
-Signed-off-by: Patrick Zhao <[REDACTED_EMAIL]>
-
-* fix(delivery): preserve values image update error chain
-
-Signed-off-by: Patrick Zhao <[REDACTED_EMAIL]>
-
----------
-
-Signed-off-by: Patrick Zhao <[REDACTED_EMAIL]>
-
-**File**: `.gitignore` (modified, +2/-0)
-```diff
-@@ -81,6 +81,8 @@ debug/zadig-agent
- !pkg/microservice/aslan/core/stat/handler/ai_review_stat_query_regression_test.go
- !pkg/microservice/aslan/core/common/service/webhook/manual_webhook_test.go
- !pkg/microservice/aslan/core/workflow/testing/service/scanning_webhook_test.go
-+!pkg/tool/helmclient/chart_download_test.go
-+!pkg/microservice/aslan/core/common/service/fs/s3_cleanup_test.go
- !pkg/microservice/halman/**/*_test.go
- !pkg/microservice/aslan/core/system/handler/ai_assistant_test.go
- !pkg/types/ai_assistant_test.go
-```
-
-**File**: `pkg/microservice/aslan/core/common/service/fs/s3.go` (modified, +8/-1)
-```diff
-@@ -135,14 +135,21 @@ func DownloadAndExtractFilesFromS3(name, localBase, s3Base string, logger *zap.S
- }
- 
- func DeleteArchivedFileFromS3(names []string, s3Base string, logger *zap.SugaredLogger) error {
-+	if len(names) == 0 {
-+		return nil
-+	}
- 	s3, err := s3service.FindDefaultS3()
- 	if err != nil {
- 		logger.Errorf("Failed to find default s3, err: %s", err)
- 		return err
- 	}
- 
-+	return deleteArchivedFilesFromS3(names, s3Base, s3, logger)
-+}
-+
-+func deleteArchivedFilesFromS3(names []string, s3Base string, s3 *s3service.S3, logger *zap.SugaredLogger) error {
- 	s3PathList := make([]string, 0, len(names))
--	for _, name := range s3PathList {
-+	for _, name := range names {
- 		tarball := fmt.Sprintf("%s.tar.gz", name)
- 		s3Path := filepath.Join(s3.Subfolder, s3Base, tarball)
- 		s3PathList = append(s3PathList, s3Path)
-```
-
-**File**: `pkg/microservice/aslan/core/common/service/fs/s3_cleanup_test.go` (added, +77/-0)
-```diff
-@@ -0,0 +1,77 @@
-+package fs
-+
-+import (
-+	"encoding/xml"
-+	"net/http"
-+	"net/http/httptest"
-+	"reflect"
-+	"sync"
-+	"testing"
-+
-+	"go.uber.org/zap"
-+
-+	"github.com/koderover/zadig/v2/pkg/microservice/aslan/core/common/repository/models"
-+	s3service "github.com/koderover/zadig/v2/pkg/microservice/aslan/core/common/service/s3"
-+)
-+
-+func TestDeleteArchivedFilesFromS3(t *testing.T) {
-+	for _, tc := range []struct {
-+		name     string
-+		names    []string
-+		wantKeys []string
-+		status   int
-+	}{
-+		{name: "only the requested revision", names: []string{"service-123"}, wantKeys: []string{"prefix/project/service/service-123.tar.gz"}, status: http.StatusOK},
-+		{name: "multiple archives", names: []string{"service", "service-123"}, wantKeys: []string{"prefix/project/service/service.tar.gz", "prefix/project/service/service-123.tar.gz"}, status: http.StatusOK},
-+		{name: "storage error is returned", names: []string{"service-123"}, wantKeys: []string{"prefix/project/service/service-123.tar.gz"}, status: http.StatusBadRequest},
-+	} {
-+		t.Run(tc.name, func(t *testing.T) {
-+			var keys []string
-+			var mu sync.Mutex
-+			server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-+				if r.Method != http.MethodPost || !r.URL.Query().Has("delete") {
-+					t.Errorf("unexpected request: %s %s", r.Method, r.URL)
-+				}
-+				var request struct {
-+					Objects []struct {
-+						Key string `xml:"Key"`
-+					} `xml:"Object"`
-+				}
-+				if err := xml.NewDecoder(r.Body).Decode(&request); err != nil {
-+					t.Error(err)
-+				}
-+				mu.Lock()
-+				for _, object := range request.Objects {
-+					keys = append(keys, object.Key)
-+				}
-+				mu.Unlock()
-+				w.Header().Set("Content-Type", "application/xml")
-+				w.WriteHeader(tc.status)
-+				if tc.status != http.StatusOK {
-+					_, _ = w.Write([]byte("<Error><Code>InvalidRequest</Code><Message>test failure</Message></Error>"))
-+					return
-+				}
-+				_, _ = w.Write([]byte("<DeleteResult xmlns=\"http://s3.amazonaws.com/doc/2006-03-01/\"/>"))
-+			}))
-+			defer server.Close()
-+			storage := &s3service.S3{S3Storage: &models.S3Storage{
-+				Endpoint: server.URL, Ak: "test-key", Sk: "test-secret", Bucket: "bucket", Subfolder: "prefix", Insecure: true,
-+			}}
-+			err := deleteArchivedFilesFromS3(tc.names, "project/service", storage, zap.NewNop().Sugar())
-+			if (err != nil) != (tc.status != http.StatusOK) {
-+				t.Fatalf("unexpected delete error: %v", err)
-+			}
-+			mu.Lock()
-+			defer mu.Unlock()
-+			if !reflect.DeepEqual(keys, tc.wantKeys) {
-+				t.Fatalf("deleted keys %v, want %v", keys, tc.wantKeys)
-+			}
-+		})
-+	}
-+}
-+
-+func TestDeleteArchivedFileFromS3EmptyNames(t *testing.T) {
-+	if err := DeleteArchivedFileFromS3(nil, "unused", zap.NewNop().Sugar()); err != nil {
-+		t.Fatal(err)
-+	}
-+}
-```
-
-**File**: `pkg/microservice/aslan/core/common/service/kube/helm.go` (modified, +0/-16)
-```diff
-@@ -19,7 +19,6 @@ package kube
- import (
- 	"context"
- 	"fmt"
--	"os"
- 	"path/filepath"
- 	"regexp"
- 	"strings"
-@@ -777,12 +776,6 @@ func DownloadInstantiateChart(projectName, chartRepo, chartName, chartVersion, r
- 	chartRef := fmt.Sprintf("%s/%s", chartRepo, chartName)
- 	localPath := config.LocalServicePathWithRevision(projectName, releaseName, chartVersion, production)
- 
--	mutex := cache.NewRedisLockWithExpiry(fmt.Sprintf("helm_chart_download:%s", localPath), time.Minute*1)
--	mutex.Lock()
--	defer mutex.Unlock()
--	// remove local file to untar
--	_ = os.RemoveAll(localPath)
--
- 	hClient, err := commonutil.NewHelmClient(chartRepoEntry)
- 	if err != nil {
- 		return err
-@@ -792,7 +785,6 @@ func DownloadInstantiateChart(projectName, chartRepo, chartName, chartVersion, r
- 	if err != nil {
- 		return fmt.Errorf("failed to download chart, chartName: %s, chartRepo: %+v, err: %s", chartName, chartRepo, err)
- 	}
--	mutex.Unlock()
- 	return nil
- }
- 
-@@ -841,13 +833,6 @@ func DeployMultiHelmRelease(productResp *commonmodels.Product, helmClient *helmt
- 			chartRef := fmt.Sprintf("%s/%s", param.RenderChart.ChartRepo, param.RenderChart.ChartName)
- 			localPath := config.LocalServicePathWithRevision(param.ProductName, param.ReleaseName, param.RenderChart.ChartVersion, param.Production)
- 
--			mutex := cache.NewRedisLockWithExpiry(fmt.Sprintf("helm_chart_download:%s", localPath), time.Minute*1)
--			mutex.Lock()
--			defer mutex.Unlock()
--
--			// remove local file to untar
--			_ = os.RemoveAll(localPath)
--
- 			hClient, err := commonutil.NewHelmClient(chartRepo)
- 			if err != nil {
- 				return err
-@@ -857,7 +842,6 @@ func DeployMultiHelmRelease(productResp *commonmodels.Product, helmClient *helmt
- 			if err != nil {
- 				return fmt.Errorf("failed to download chart, chartName: %s, chartRepo: %+v, err: %s", param.RenderChart.ChartName, chartRepo.RepoName, err)
- 			}
--			mutex.Unlock()
- 		}
- 
- 		errInstall := InstallOrUpgradeHelmChartWithValues(param, isRetry, helmClient)
-```
-
-**File**: `pkg/microservice/aslan/core/delivery/service/version_v2.go` (modified, +70/-49)
-```diff
-@@ -19,6 +19,7 @@ package service
- import (
- 	"bytes"
- 	"cmp"
-+	"context"
- 	"encoding/json"
- 	"fmt"
- 	"net/http"
-@@ -917,42 +918,64 @@ func pushDeliveryChartFromVersion(projectName, versionName string, service *comm
- 		sourceChartRepoInfo = originalChartRepoInfo
- 	}
- 
--	deliveryChartPath, err := ensureChartFilesFromVersion(projectName, versionName, sourceChartRepoInfo, service)
-+	cacheDir, err := makeChartFilesDir(projectName, versionName)
- 	if err != nil {
--		return fmt.Errorf("failed to ensure chart files from version, err: %v", err)
-+		return err
- 	}
-+	var chartPackagePath string
-+	deliveryChartDir := filepath.Join(cacheDir, service.ChartName+"-"+service.OriginalChartVersion)
-+	err = helmtool.WithChartDirectoryLock(deliveryChartDir, func(ctx context.Context) error {
-+		deliveryChartPath, err := ensureChartFilesFromVersion(ctx, projectName, versionName, sourceChartRepoInfo, service)
-+		if err != nil {
-+			return fmt.Errorf("failed to ensure chart files from version: %w", err)
-+		}
- 
--	// write values.yaml file before load
--	if err = yaml.Unmarshal([]byte(service.YamlContent), map[string]interface{}{}); err != nil {
--		log.Errorf("invalid yaml content, serviceName: %s, yamlContent: %s", service.ServiceName, service.YamlContent)
--		return errors.Wrapf(err, "invalid yaml content for service: %s", service.ServiceName)
--	}
-+		// write values.yaml file before load
-+		if err = yaml.Unmarshal([]byte(service.YamlContent), map[string]interface{}{}); err != nil {
-+			log.Errorf("invalid yaml content, serviceName: %s, yamlContent: %s", service.ServiceName, service.YamlContent)
-+			return errors.Wrapf(err, "invalid yaml content for service: %s", service.ServiceName)
-+		}
- 
--	updatedValues, err := updateValuesImage(service)
--	if err != nil {
--		return fmt.Errorf("failed to update values image, serviceName: %s, err: %s", service.ServiceName, err)
--	}
--	service.YamlContent = string(updatedValues)
-+		updatedValues, err := updateValuesImage(service)
-+		if err != nil {
-+			return fmt.Errorf("failed to update values image, serviceName: %s, err: %w", service.ServiceName, err)
-+		}
-+		service.YamlContent = string(updatedValues)
- 
--	valuesFilePath := filepath.Join(deliveryChartPath, setting.ValuesYaml)
--	err = os.WriteFile(valuesFilePath, updatedValues, 0644)
--	if err != nil {
--		return errors.Wrapf(err, "failed to write values.yaml file for service %s", service.ServiceName)
--	}
-+		if err := ctx.Err(); err != nil {
-+			return err
-+		}
-+		valuesFilePath := filepath.Join(deliveryChartPath, setting.ValuesYaml)
-+		err = os.WriteFile(valuesFilePath, updatedValues, 0644)
-+		if err != nil {
-+			return errors.Wrapf(err, "failed to write values.yaml file for service %s", service.ServiceName)
-+		}
- 
--	//load chart info from local storage
--	chartRequested, err := chartloader.Load(deliveryChartPath)
--	if err != nil {
--		return errors.Wrapf(err, "failed to load chart info, path %s", deliveryChartPath)
--	}
-+		if err := ctx.Err(); err != nil {
-+			return err
-+		}
-+		//load chart info from local storage
-+		chartRequested, err := chartloader.Load(deliveryChartPath)
-+		if err != nil {
-+			return errors.Wrapf(err, "failed to load chart info, path %s", deliveryChartPath)
-+		}
- 
--	//set metadata
--	chartRequested.Metadata.Name = service.ChartName
--	chartRequested.Metadata.Version = service.ChartVersion
--	chartRequested.Metadata.AppVersion = service.ChartVersion
-+		//set metadata
-+		chartRequested.Metadata.Name = service.ChartName
-+		chartRequested.Metadata.Version = service.ChartVersion
-+		chartRequested.Metadata.AppVersion = service.ChartVersion
- 
--	//create local chart package
--	chartPackagePath, err := helmchartutil.Save(chartRequested, dir)
-+		if err := ctx.Err(); err != nil {
-+			return err
-+		}
-+		//create local chart package
-+		chartPackagePath, err = helmchartutil.Save(chartRequested, dir)
-+		if err != nil {
-+			return errors.Wrapf(err, "failed to package chart %s version %s in %s", service.ChartName, service.ChartVersion, dir)
-+		}
-+
-+		return nil
-+	})
- 	if err != nil {
- 		return err
- 	}
-@@ -1039,39 +1062,37 @@ func ensureChartFilesFromEnv(service *commonmodels.DeliveryVersionService, env *
- 	return deliveryChartPath, nil
- }
- 
--func ensureChartFilesFromVersion(projectName, versionName string, chartRepo *commonmodels.HelmRepo, service *commonmodels.DeliveryVersionService) (string, error) {
-+func ensureChartFilesFromVersion(ctx context.Context, projectName, versionName string, chartRepo *commonmodels.HelmRepo, service *commonmodels.DeliveryVersionService) (string, error) {
- 	chartNameWithVersion := fmt.Sprintf("%s-%s", service.ChartName, service.OriginalChartVersion)
- 	chartFilesParent, err := makeChartFilesDir(projectName, versionName)
- 	if err != nil {
- 		return "", err
- 	}
- 
--	err = os.RemoveAll(filepath.Join(chartFilesParent, chartNameWithVersion))
--	if err != nil {
--		return "", errors.Wrapf(err, "failed to remove old chart files")
--	}
--
- 	hClient, err := commonutil.NewHelmClient(chartRepo)
- 	if err != nil {
- 		return "", err
- 	}
--
--	cha
-```
-
-**File**: `pkg/microservice/aslan/core/service/service/helm.go` (modified, +115/-66)
-```diff
-@@ -18,6 +18,7 @@ package service
- 
- import (
- 	"bytes"
-+	"context"
- 	"encoding/json"
- 	"fmt"
- 	"io/fs"
-@@ -594,90 +595,138 @@ func CreateOrUpdateHelmServiceFromChartRepo(projectName string, args *HelmServic
- 		return nil, e.ErrCreateTemplate.AddErr(errors.Wrapf(err, "failed to init chart client for repo: %s", chartRepo.RepoName))
- 	}
- 
--	chartRef := fmt.Sprintf("%s/%s", chartRepo.RepoName, chartRepoArgs.ChartName)
--	localPath := config.LocalServicePath(projectName, chartRepoArgs.ChartName, args.Production)
-+	var svc *models.Service
-+	lockKey := fmt.Sprintf("helm_service_edit:%s:%s:%t", projectName, chartRepoArgs.ChartName, args.Production)
-+	err = cache.WithRedisLock(lockKey, func(serviceCtx context.Context) error {
-+		chartRef := fmt.Sprintf("%s/%s", chartRepo.RepoName, chartRepoArgs.ChartName)
-+		localPath := config.LocalServicePath(projectName, chartRepoArgs.ChartName, args.Production)
- 
--	log.Infof("downloading chart %s to %s", chartRef, localPath)
--	// remove local file to untar
--	_ = os.RemoveAll(localPath)
--	err = hClient.DownloadChart(commonutil.GeneHelmRepo(chartRepo), chartRef, chartRepoArgs.ChartVersion, localPath, true)
--	if err != nil {
--		return nil, e.ErrCreateTemplate.AddErr(errors.Wrapf(err, "failed to download chart %s/%s-%s", chartRepo.RepoName, chartRepoArgs.ChartName, chartRepoArgs.ChartVersion))
--	}
-+		log.Infof("downloading chart %s to %s", chartRef, localPath)
- 
--	serviceName := chartRepoArgs.ChartName
--	rev, err := getNextServiceRevision(projectName, serviceName, args.Production)
--	if err != nil {
--		log.Errorf("Failed to get next revision for service %s, err: %s", serviceName, err)
--		return nil, e.ErrCreateTemplate.AddErr(err)
--	}
-+		serviceName := chartRepoArgs.ChartName
-+		var (
-+			rev          int64
-+			valuesYAML   []byte
-+			revisionPath string
-+			finalErr     error
-+		)
-+		defer func() {
-+			if finalErr == nil || revisionPath == "" {
-+				return
-+			}
-+			svc, err := repository.QueryTemplateService(&commonrepo.ServiceFindOption{
-+				ProductName:         projectName,
-+				ServiceName:         serviceName,
-+				Revision:            rev,
-+				IgnoreNoDocumentErr: true,
-+			}, args.Production)
-+			if err != nil {
-+				log.Warnf("Cannot verify chart revision %s/%s/%d; retaining files: %v", projectName, serviceName, rev, err)
-+				return
-+			}
-+			if svc != nil {
-+				return
-+			}
-+			s3Base := config.ObjectStorageServicePath(projectName, serviceName, args.Production)
-+			if err := fsservice.DeleteArchivedFileFromS3([]string{config.ServiceNameWithRevision(serviceName, rev)}, s3Base, log); err != nil {
-+				log.Warnf("Failed to delete chart revision from storage: %v", err)
-+			}
-+			if err := os.RemoveAll(revisionPath); err != nil {
-+				log.Warnf("Failed to delete chart revision %s: %v", revisionPath, err)
-+			}
-+		}()
-+		err = hClient.WithDownloadedChart(commonutil.GeneHelmRepo(chartRepo), chartRef, chartRepoArgs.ChartVersion, localPath, func(ctx context.Context, chartPath string) error {
-+			var err error
-+			if err := serviceCtx.Err(); err != nil {
-+				return err
-+			}
-+			rev, err = getNextServiceRevision(projectName, serviceName, args.Production)
-+			if err != nil {
-+				log.Errorf("Failed to get next revision for service %s, err: %s", serviceName, err)
-+				return e.ErrCreateTemplate.AddErr(err)
-+			}
-+			revisionPath = config.LocalServicePathWithRevision(projectName, serviceName, fmt.Sprint(rev), args.Production)
- 
--	var finalErr error
--	// clear files from both s3 and local when error occurred in next stages
--	defer func() {
--		if finalErr != nil {
--			clearChartFiles(projectName, serviceName, rev, args.Production, log)
--		}
--	}()
-+			// read values.yaml
-+			fsTree := os.DirFS(localPath)
-+			valuesYAML, err = util.ReadValuesYAML(fsTree, chartRepoArgs.ChartName, log)
-+			if err != nil {
-+				return e.ErrCreateTemplate.AddErr(err)
-+			}
- 
--	// read values.yaml
--	fsTree := os.DirFS(localPath)
--	valuesYAML, err := util.ReadValuesYAML(fsTree, chartRepoArgs.ChartName, log)
--	if err != nil {
--		finalErr = e.ErrCreateTemplate.AddErr(err)
--		return nil, finalErr
--	}
-+			// upload to s3 storage
-+			s3Base := config.ObjectStorageServicePath(projectName, serviceName, args.Production)
- 
--	// upload to s3 storage
--	s3Base := config.ObjectStorageServicePath(projectName, serviceName, args.Production)
-+			err = fsservice.ArchiveAndUploadFilesToS3(fsTree, []string{serviceName, fmt.Sprintf("%s-%d", serviceName, rev)}, s3Base, log)
-+			if err != nil {
-+				return e.ErrCreateTemplate.AddErr(err)
-+			}
- 
--	err = fsservice.ArchiveAndUploadFilesToS3(fsTree, []string{serviceName, fmt.Sprintf("%s-%d", serviceName, rev)}, s3Base, log)
--	if err != nil {
--		finalErr = e.ErrCreateTemplate.AddErr(err)
--		return nil, finalErr
--	}
-+			if err := ctx.Err(); err != nil {
-+				return err
-+			}
- 
--	// copy service revision data from latest
--	err = copyChartRevision(projectName, serviceName, rev, args.Production)
--	if err != nil {
--		log.Errorf("Failed to copy file %s, err: %s", serviceName, err)
--		finalE
-```
-
-**File**: `pkg/tool/cache/lock.go` (modified, +46/-0)
-```diff
-@@ -18,6 +18,8 @@ package cache
- 
- import (
- 	"context"
-+	"errors"
-+	"fmt"
- 	"strings"
- 	"time"
- 
-@@ -85,3 +87,47 @@ func (lock *RedisLock) Unlock() error {
- 	_, err := lock.mutex.Unlock()
- 	return err
- }
-+
-+// WithRedisLock renews the lease until the operation completes.
-+// The callback must stop using protected state when its context is cancelled.
-+func WithRedisLock(key string, use func(context.Context) error) (err error) {
-+	mutex := NewRedisLockWithExpiry(key, time.Minute)
-+	if err := mutex.Lock(); err != nil {
-+		return fmt.Errorf("failed to acquire redis lock %s: %w", key, err)
-+	}
-+	ctx, cancel := context.WithCancel(context.Background())
-+	done := make(chan error, 1)
-+	go func() {
-+		ticker := time.NewTicker(10 * time.Second)
-+		defer ticker.Stop()
-+		for {
-+			select {
-+			case <-ctx.Done():
-+				done <- nil
-+				return
-+			case <-ticker.C:
-+				renewCtx, stop := context.WithTimeout(ctx, 5*time.Second)
-+				ok, err := mutex.mutex.ExtendContext(renewCtx)
-+				if err == nil && !ok {
-+					err = redsync.ErrExtendFailed
-+				}
-+				stop()
-+				if err != nil {
-+					if ctx.Err() != nil {
-+						done <- nil
-+					} else {
-+						cancel()
-+						done <- fmt.Errorf("lost redis lock %s: %w", key, err)
-+					}
-+					return
-+				}
-+			}
-+		}
-+	}()
-+	defer func() {
-+		cancel()
-+		renewErr := <-done
-+		err = errors.Join(err, renewErr, mutex.Unlock())
-+	}()
-+	return errors.Join(use(ctx), ctx.Err())
-+}
-```
-
-**File**: `pkg/tool/helmclient/chart_download.go` (added, +161/-0)
-```diff
-@@ -0,0 +1,161 @@
-+package helmclient
-+
-+import (
-+	"context"
-+	"crypto/sha256"
-+	"fmt"
-+	"os"
-+	"path/filepath"
-+
-+	"helm.sh/helm/v3/pkg/chart/loader"
-+	"helm.sh/helm/v3/pkg/chartutil"
-+	"helm.sh/helm/v3/pkg/repo"
-+
-+	"github.com/koderover/zadig/v2/pkg/tool/cache"
-+	"github.com/koderover/zadig/v2/pkg/tool/log"
-+)
-+
-+func expandDownloadedChart(ctx context.Context, archive, dest string) error {
-+	if err := ctx.Err(); err != nil {
-+		return err
-+	}
-+	dest, err := filepath.Abs(dest)
-+	if err != nil {
-+		return err
-+	}
-+	ch, err := loader.LoadFile(archive)
-+	if err != nil {
-+		return fmt.Errorf("failed to load downloaded chart: %w", err)
-+	}
-+	if ch.Name() == "." || ch.Name() == ".." {
-+		return fmt.Errorf("invalid downloaded chart name %q", ch.Name())
-+	}
-+	if err := os.MkdirAll(dest, 0755); err != nil {
-+		return fmt.Errorf("failed to create chart destination: %w", err)
-+	}
-+	staging, err := os.MkdirTemp(dest, ".helm-download-")
-+	if err != nil {
-+		return fmt.Errorf("failed to create chart staging directory in %s: %w", dest, err)
-+	}
-+	defer func() {
-+		if err := os.RemoveAll(staging); err != nil {
-+			log.Warnf("Failed to clean chart staging directory %s: %v", staging, err)
-+		}
-+	}()
-+	if err := chartutil.ExpandFile(staging, archive); err != nil {
-+		return fmt.Errorf("failed to untar chart: %w", err)
-+	}
-+
-+	if err := ctx.Err(); err != nil {
-+		return err
-+	}
-+	return replaceChartDirectory(filepath.Join(staging, ch.Name()), filepath.Join(dest, ch.Name()))
-+}
-+
-+// Keep the previous directory until replacement succeeds, so errors can be rolled back.
-+func replaceChartDirectory(source, target string) error {
-+	backup, err := os.MkdirTemp(filepath.Dir(target), ".helm-backup-")
-+	if err != nil {
-+		return fmt.Errorf("failed to create backup directory for chart %s: %w", target, err)
-+	}
-+	previous := filepath.Join(backup, "chart")
-+	err = os.Rename(target, previous)
-+	if err != nil && !os.IsNotExist(err) {
-+		_ = os.RemoveAll(backup)
-+		return fmt.Errorf("failed to move old chart %s: %w", target, err)
-+	}
-+	hadPrevious := err == nil
-+	if err := os.Rename(source, target); err != nil {
-+		if hadPrevious {
-+			if restoreErr := os.Rename(previous, target); restoreErr != nil {
-+				return fmt.Errorf("failed to publish chart: %w; failed to restore old chart from %s: %v", err, previous, restoreErr)
-+			}
-+		}
-+		_ = os.RemoveAll(backup)
-+		return fmt.Errorf("failed to publish chart %s: %w", target, err)
-+	}
-+	if err := os.RemoveAll(backup); err != nil {
-+		log.Warnf("Failed to clean old chart backup %s: %v", backup, err)
-+	}
-+	return nil
-+}
-+
-+// WithDownloadedChart holds the cache lock until the caller finishes using its files.
-+func (hClient *HelmClient) WithDownloadedChart(entry *repo.Entry, ref, version, dest string, use func(context.Context, string) error) error {
-+	return WithChartDirectoryLock(dest, func(ctx context.Context) error {
-+		if err := ctx.Err(); err != nil {
-+			return err
-+		}
-+		name := filepath.Base(ref)
-+		chartPath := filepath.Join(dest, name)
-+		if filepath.Base(filepath.Clean(dest)) == "latest" {
-+			if err := os.RemoveAll(dest); err != nil {
-+				return fmt.Errorf("failed to clear latest chart %s: %w", dest, err)
-+			}
-+			if err := hClient.downloadChart(ctx, entry, ref, version, dest, true); err != nil {
-+				return err
-+			}
-+		} else {
-+			if err := os.MkdirAll(dest, 0755); err != nil {
-+				return fmt.Errorf("failed to create chart cache directory %s: %w", dest, err)
-+			}
-+			source := fmt.Sprintf("%x", sha256.Sum256([]byte(entry.URL+"\x00"+ref+"\x00"+version)))
-+			sourceFile := filepath.Join(dest, ".zadig-chart-"+name+".source")
-+			previous, err := os.ReadFile(sourceFile)
-+			if err != nil && !os.IsNotExist(err) {
-+				return fmt.Errorf("failed to read chart cache source marker %s: %w", sourceFile, err)
-+			}
-+			hit := false
-+			if version != "" && string(previous) == source {
-+				cached, err := loader.Load(chartPath)
-+				hit = err == nil && cached.Metadata.Version == version
-+			}
-+			if !hit {
-+				// An empty marker keeps readers locked while the cache is being refreshed.
-+				if err := os.WriteFile(sourceFile, nil, 0644); err != nil {
-+					return fmt.Errorf("failed to mark chart cache refresh pending in %s: %w", sourceFile, err)
-+				}
-+				if err := hClient.downloadChart(ctx, entry, ref, version, dest, true); err != nil {
-+					return err
-+				}
-+				if err := ctx.Err(); err != nil {
-+					return err
-+				}
-+				if err := os.WriteFile(sourceFile, []byte(source), 0644); err != nil {
-+					return fmt.Errorf("failed to write chart cache source marker %s: %w", sourceFile, err)
-+				}
-+			}
-+		}
-+
-+		if err := ctx.Err(); err != nil {
-+			return err
-+		}
-+		if use != nil {
-+			return use(ctx, chartPath)
-+		}
-+		return nil
-+	})
-+}
-+
-+// WithChartDirectoryLock protects a complete file operation, including readers.
-+// The callback must stop using the directory when its context is cancelled.
-+func WithChartDirectoryLock(dir string, use func(context.Context) error) error {
-+	dir, err 
-```
-
----
-
-### Incident Patch 2: `37d745c5` (2026-11-16)
-**Commit Message**: docs: document Gloo security patch Dockerfile usage
+* feat(helm): support skipping CRD upgrade when updating services
 
 Signed-off-by: huanghongbo-hhb <[REDACTED_EMAIL]>
 
-**File**: `docs/gloo-security-patch-dockerfile.md` (added, +79/-0)
+* fix(helm): honor CRD upgrade option for standalone charts
+
+Forward the CRD upgrade option through single and batch standalone chart updates. Reuse boolptr.IsFalse for the existing optional-boolean conversion.
+
+Signed-off-by: huanghongbo-hhb <[REDACTED_EMAIL]>
+
+* feat(helm): add CRD upgrade options for env updates, rollback and values sync
+
+- Default values update and service version rollback accept upgradeCRD.
+- Updating service images skips CRD upgrade by default.
+- Values source config persists upgrade_crd and sync applies it per service.
+- Omitted upgrade_crd keeps the existing policy; OpenAPI reads and writes it.
+- Standalone chart updates keep upgrading CRDs.
+
+Signed-off-by: huanghongbo-hhb <[REDACTED_EMAIL]>
+
+* fix(helm): guard empty install param and unify render keys
+
+- Skip services whose install param is empty instead of dereferencing nil.
+- Share one helper for helm render keys in values sync.
+
+Signed-off-by: huanghongbo-hhb <[REDACTED_EMAIL]>
+
+* feat(openapi): support CRD upgrade 
+
+**File**: `pkg/microservice/aslan/core/common/repository/models/template/product.go` (modified, +2/-0)
 ```diff
-@@ -0,0 +1,79 @@
-+# Gloo 系统包补丁 Dockerfile 使用说明
-+
-+本文介绍如何使用 `docker/gloo-security-patch.Dockerfile`，基于原有 Gloo 镜像升级指定的 Alpine 系统包。
-+
-+适用于本次补丁使用的 `gateway`、`discovery`、`gloo` 和 `gloo-envoy-wrapper` 镜像。
-+
-+## 准备工作
-+
-+- 安装并启动 Docker，确保可以使用 `docker buildx`。
-+- 确认当前代码目录包含 `docker/gloo-security-patch.Dockerfile`。
-+- 准备原始镜像地址及 digest，以及需要升级的软件包和固定版本。
-+
-+> 该 Dockerfile 只更新系统包，不升级 Gloo、Envoy 程序版本。构建需要能够访问原镜像仓库和镜像中配置的 APK 软件源。
-+
-+## 构建参数
-+
-+| 参数 | 说明 | 示例 |
-+| --- | --- | --- |
-+| `BASE_IMAGE` | 原始镜像地址，使用 digest 固定构建来源 | `镜像仓库/组件@sha256:...` |
-+| `APK_PACKAGES` | 需要升级的软件包，按 `包名=版本号` 填写，多个包使用空格分隔 | `busybox=1.32.1-r9 zlib=1.2.12-r3` |
-+
-+构建时临时使用 root 用户执行 `apk add --upgrade --no-cache`，完成后切换为 `10101` 用户，并继承基础镜像的 `ENTRYPOINT` 和 `CMD`。
-+
-+`APK_PACKAGES` 未填写或为空时，构建会失败。Dockerfile 不会自动校验每个包是否指定了固定版本，需要在传参时保证格式正确。
-+
-+## 构建镜像
-+
-+以下以 `gateway` 的 amd64 补丁镜像为例，在包含 Dockerfile 的代码仓库根目录执行。
-+
-+**第一步**：设置基础镜像和软件包参数。
-+
-+```bash
-+BASE_IMAGE='koderover.tencentcloudcr.com/koderover-public/gateway@sha256:96eba53042b0108548aeb049440091addd3b838b61f17ca815a68aef204f0b7e'
-+
-+APK_PACKAGES='busybox=1.32.1-r9 ssl_client=1.32.1-r9 libcrypto1.1=1.1.1s-r0 libssl1.1=1.1.1s-r0 zlib=1.2.12-r3'
-+```
-+
-+上述软件包版本为本次补丁实际使用的版本。后续构建新补丁时，需要根据待修复漏洞和原镜像的 Alpine 分支重新确认，不能将其作为长期通用的修复版本。
-+
-+**第二步**：执行构建。
-+
-+```bash
-+docker buildx build \
-+  --platform linux/amd64 \
-+  --build-arg "BASE_IMAGE=${BASE_IMAGE}" \
-+  --build-arg "APK_PACKAGES=${APK_PACKAGES}" \
-+  --file docker/gloo-security-patch.Dockerfile \
-+  --tag gloo-security-patch/gateway:local-amd64 \
-+  --load \
-+  .
-+```
-+
-+参数说明：
-+
-+- `--platform`：本次构建的目标架构。
-+- `--build-arg`：传入基础镜像和软件包参数。
-+- `--file`：指定 Dockerfile 路径。
-+- `--tag`：设置构建结果的镜像名称和标签，使用与原镜像不同的标签。
-+- `--load`：将构建结果加载到本地 Docker。
-+- `.`：使用当前目录作为构建上下文。
-+
-+构建成功后，本地镜像为 `gloo-security-patch/gateway:local-amd64`。此命令只在本地构建，不会推送镜像或更新环境。
-+
-+## 构建其他组件和架构
-+
-+四个组件共用同一个 Dockerfile。构建其他组件时，替换 `BASE_IMAGE`、`APK_PACKAGES` 和 `--tag`；构建 arm64 时，同时将 `--platform` 改为 `linux/arm64`，并使用能够执行该架构构建的节点。
-+
-+原始镜像的 Alpine 分支存在以下差异：
-+
-+| 架构 | 组件 | Alpine 分支 |
-+| --- | --- | --- |
-+| amd64 | gateway、discovery、gloo、gloo-envoy-wrapper | 3.13 |
-+| arm64 | gateway、discovery | 3.13 |
-+| arm64 | gloo | 3.12 |
-+| arm64 | gloo-envoy-wrapper | 3.14 |
-+
-+基础镜像必须包含目标架构，软件包版本必须匹配对应 Alpine 分支。不同组件和架构的参数不能直接通用；包版本不可获取时，应核对版本和原软件源，不要直接更换 Alpine 分支。
-+
-+> 当前 Dockerfile 最终固定使用 `10101` 用户，适用于上述已核对运行用户的 Gloo 镜像，不应直接套用于运行用户不同的其他镜像。
-```
-
----
-
-### Incident Patch 3: `79613a43` (2026-11-16)
-**Commit Message**: fix: skip dind injection when unavailable (#5090)
-
-Signed-off-by: Cynthia <[REDACTED_EMAIL]>
-
-**File**: `pkg/microservice/aslan/core/common/service/workflowcontroller/jobcontroller/kubernetes.go` (modified, +7/-7)
-```diff
-@@ -487,7 +487,7 @@ EOF`,
- 							Command:         []string{"/bin/sh", "-c"},
- 							Args:            []string{jobExecutorBootingScript},
- 							Env:             getEnvs(workflowCtx.ConfigMapMountDir, jobTaskSpec),
--							VolumeMounts:    getVolumeMounts(workflowCtx.ConfigMapMountDir, jobTaskSpec.Properties.UseHostDockerDaemon),
-+							VolumeMounts:    getVolumeMounts(workflowCtx.ConfigMapMountDir, jobTaskSpec.Properties.UseHostDockerDaemon, jobTaskSpec.Properties.DockerHost),
- 							Resources:       getResourceRequirements(resReq, resReqSpec),
- 							SecurityContext: &corev1.SecurityContext{
- 								Privileged: &jobTaskSpec.Properties.EnablePrivileged,
-@@ -497,7 +497,7 @@ EOF`,
- 							TerminationMessagePath:   job.JobTerminationFile,
- 						},
- 					},
--					Volumes:     getVolumes(jobName, jobTaskSpec.Properties.UseHostDockerDaemon),
-+					Volumes:     getVolumes(jobName, jobTaskSpec.Properties.UseHostDockerDaemon, jobTaskSpec.Properties.DockerHost),
- 					Tolerations: commonutil.BuildTolerations(targetCluster.AdvancedConfig, jobTaskSpec.Properties.StrategyID),
- 					Affinity:    commonutil.AddNodeAffinity(targetCluster.AdvancedConfig, jobTaskSpec.Properties.StrategyID),
- 				},
-@@ -742,7 +742,7 @@ func getEnvs(configMapMountDir string, jobTaskSpec *commonmodels.JobTaskFreestyl
- 		Value: path.Join(configMapMountDir, "job-config.xml"),
- 	})
- 
--	if !jobTaskSpec.Properties.UseHostDockerDaemon {
-+	if !jobTaskSpec.Properties.UseHostDockerDaemon && jobTaskSpec.Properties.DockerHost != "" {
- 		ret = append(ret, corev1.EnvVar{
- 			Name:  setting.DockerHost,
- 			Value: jobTaskSpec.Properties.DockerHost,
-@@ -764,7 +764,7 @@ func getEnvs(configMapMountDir string, jobTaskSpec *commonmodels.JobTaskFreestyl
- 	return ret
+@@ -134,6 +134,8 @@ type CustomYaml struct {
+ 	AutoSyncYaml      string                          `bson:"auto_sync_yaml"                    json:"auto_sync_yaml"`
+ 	SourceDetail      interface{}                     `bson:"source_detail"                     json:"source_detail"`
+ 	SourceID          string                          `bson:"source_id"                         json:"source_id"`
++	// UpgradeCRD controls whether CRDs are upgraded when values are synced from source, nil means true
++	UpgradeCRD *bool `bson:"upgrade_crd,omitempty"               json:"upgrade_crd,omitempty"`
  }
  
--func getVolumeMounts(configMapMountDir string, userHostDockerDaemon bool) []corev1.VolumeMount {
-+func getVolumeMounts(configMapMountDir string, userHostDockerDaemon bool, dockerHost string) []corev1.VolumeMount {
- 	resp := make([]corev1.VolumeMount, 0)
- 
- 	resp = append(resp, corev1.VolumeMount{
-@@ -788,7 +788,7 @@ func getVolumeMounts(configMapMountDir string, userHostDockerDaemon bool) []core
- 			Name:      "docker-sock",
- 			MountPath: setting.DefaultDockSock,
- 		})
--	} else {
-+	} else if dockerHost != "" {
- 		resp = append(resp, corev1.VolumeMount{
- 			Name:      types.DindTLSVolumeName,
- 			MountPath: types.DindTLSClientMountPath,
-@@ -798,7 +798,7 @@ func getVolumeMounts(configMapMountDir string, userHostDockerDaemon bool) []core
- 	return resp
- }
- 
--func getVolumes(jobName string, userHostDockerDaemon bool) []corev1.Volume {
-+func getVolumes(jobName string, userHostDockerDaemon bool, dockerHost string) []corev1.Volume {
- 	resp := make([]corev1.Volume, 0)
- 	resp = append(resp, corev1.Volume{
- 		Name: "job-config",
-@@ -839,7 +839,7 @@ func getVolumes(jobName string, userHostDockerDaemon bool) []corev1.Volume {
- 				},
- 			},
- 		})
--	} else {
-+	} else if dockerHost != "" {
- 		resp = append(resp, corev1.Volume{
- 			Name: types.DindTLSVolumeName,
- 			VolumeSource: corev1.VolumeSource{
+ // ServiceRender used for helm product service ...
 ```
 
-**File**: `pkg/tool/dockerhost/docker_host.go` (modified, +9/-1)
+**File**: `pkg/microservice/aslan/core/common/repository/models/wokflow_task_v4.go` (modified, +1/-0)
 ```diff
-@@ -29,6 +29,7 @@ import (
- 	"github.com/redis/go-redis/v9"
- 	"go.uber.org/zap"
- 	appsv1 "k8s.io/api/apps/v1"
-+	apierrors "k8s.io/apimachinery/pkg/api/errors"
- 	"k8s.io/apimachinery/pkg/util/wait"
- 	"sigs.k8s.io/controller-runtime/pkg/client"
+@@ -322,6 +322,7 @@ type JobTaskHelmDeploySpec struct {
+ 	ReplaceResources             []Resource                `bson:"replace_resources"                json:"replace_resources"                   yaml:"replace_resources"`
+ 	OriginRevision               int64                     `bson:"origin_revision"                  json:"origin_revision"                     yaml:"origin_revision"`
+ 	ValueMergeStrategy           config.ValueMergeStrategy `bson:"value_merge_strategy"             json:"value_merge_strategy"                yaml:"value_merge_strategy"`
++	SkipUpgradeCRDs              bool                      `bson:"skip_upgrade_crds"                json:"skip_upgrade_crds"                   yaml:"skip_upgrade_crds"`
+ }
  
-@@ -103,6 +104,9 @@ func (d *dockerhosts) GetBestHost(clusterID ClusterID, key string) string {
+ func (j *JobTaskHelmDeploySpec) GetDeployImages() []string {
+```
+
+**File**: `pkg/microservice/aslan/core/common/repository/models/workflow_v4.go` (modified, +2/-0)
+```diff
+@@ -651,6 +651,8 @@ type DeployServiceVariableConfig struct {
  
- 	// round-robin
- 	members := d.store[clusterID].GetMembers()
-+	if len(members) == 0 {
-+		return ""
-+	}
- 	index := d.GetBestHostIndex(clusterID)
- 	index = (index + 1) % len(members)
- 	member := members[index]
-@@ -165,12 +169,16 @@ func (d *dockerhosts) getDockerHostsSvc(clusterID ClusterID) []consistent.Member
- 		Name:      "dind",
- 		Namespace: ns,
- 	}, dindSts)
-+	if apierrors.IsNotFound(err) {
-+		d.logger.Infof("Dind statefulset not found in namespace %q of cluster %q, skipping dind injection", ns, clusterID)
+ 	// VariableConfigs used to determine if a variable is visible to the workflow user.
+ 	VariableConfigs []*DeployVariableConfig `bson:"variable_configs"                 yaml:"variable_configs,omitempty"          json:"variable_configs,omitempty"`
++	// UpgradeCRD controls whether CRDs in the helm chart are upgraded, nil means true
++	UpgradeCRD *bool `bson:"upgrade_crd,omitempty"              yaml:"upgrade_crd,omitempty"               json:"upgrade_crd,omitempty"`
+ }
+ 
+ type DeployServiceVariableConfigList []*DeployServiceVariableConfig
+```
+
+**File**: `pkg/microservice/aslan/core/common/repository/mongodb/product.go` (modified, +1/-0)
+```diff
+@@ -534,6 +534,7 @@ func (c *ProductColl) UpdateServiceValuesSource(productName, envName string, pro
+ 		valuesPath + ".source_detail":  sourceData.SourceDetail,
+ 		valuesPath + ".auto_sync":      sourceData.AutoSync,
+ 		valuesPath + ".auto_sync_yaml": sourceData.AutoSyncYaml,
++		valuesPath + ".upgrade_crd":    sourceData.UpgradeCRD,
+ 	}}
+ 	arrayFilters := options.ArrayFilters{Filters: []interface{}{serviceFilter}}
+ 	updateOptions := options.UpdateOptions{ArrayFilters: &arrayFilters}
+```
+
+**File**: `pkg/microservice/aslan/core/common/service/kube/helm.go` (modified, +31/-12)
+```diff
+@@ -80,6 +80,19 @@ type ReleaseInstallParam struct {
+ 	DryRun         bool
+ 	Production     bool
+ 	MaxHistory     int
++	// SkipUpgradeCRDs skips upgrading the CRDs in the chart's crds/ directory; zero value keeps the default behavior.
++	SkipUpgradeCRDs bool
++}
++
++// SkipUpgradeCRDsFunc decides per service whether to skip upgrading CRDs; nil keeps upgrading CRDs.
++type SkipUpgradeCRDsFunc func(render *templatemodels.ServiceRender) bool
++
++// SkipUpgradeCRDsForAll applies the same CRD upgrade decision to every service.
++func SkipUpgradeCRDsForAll(skip bool) SkipUpgradeCRDsFunc {
++	if !skip {
 +		return nil
 +	}
- 	if err != nil {
- 		d.logger.Warnf("Failed to get dind statefuleset in namespace %q of cluster %q: %s", ns, clusterID, err)
- 		return d.getDefaultDockerHosts()
++	return func(*templatemodels.ServiceRender) bool { return true }
+ }
+ 
+ func InstallOrUpgradeHelmChartWithValues(param *ReleaseInstallParam, isRetry bool, helmClient *helmtool.HelmClient) error {
+@@ -99,7 +112,7 @@ func InstallOrUpgradeHelmChartWithValues(param *ReleaseInstallParam, isRetry boo
+ 		Namespace:     namespace,
+ 		Version:       renderChart.ChartVersion,
+ 		ValuesYaml:    valuesYaml,
+-		UpgradeCRDs:   true,
++		UpgradeCRDs:   !param.SkipUpgradeCRDs,
+ 		CleanupOnFail: true,
+ 		MaxHistory:    param.MaxHistory,
+ 	}
+@@ -652,7 +665,7 @@ func EnsureDeleteZadigServiceBySvcName(ctx context.Context, env *commonmodels.Pr
+ 	return nil
+ }
+ func DeploySingleHelmRelease(product *commonmodels.Product, productSvc *commonmodels.ProductService,
+-	svcTemp *commonmodels.Service, images []string, maxHistory, timeout int, user string) error {
++	svcTemp *commonmodels.Service, images []string, maxHistory, timeout int, user string, skipUpgradeCRDs bool) error {
+ 	chartInfo := productSvc.GetServiceRender()
+ 
+ 	var (
+@@ -707,15 +720,16 @@ func DeploySingleHelmRelease(product *commonmodels.Product, productSvc *commonmo
  	}
  
--	members := []consistent.Member{}
-+	var members []consistent.Member
- 	for i := 0; i < int(*dindSts.Spec.Replicas); i++ {
- 		members = append(members, d.genDindAddr(i))
+ 	param := &ReleaseInstallParam{
+-		ProductName:  svcTemp.ProductName,
+-		Namespace:    product.Namespace,
+-		ReleaseName:  releaseName,
+-		MergedValues: replacedMergedValuesYaml,
+-		RenderChart:  chartInfo,
+-		ServiceObj:   svcTemp,
+-		Timeout:      timeout,
+-		Production:   product.Production,
+-		MaxHistory:   maxHistory,
++		ProductName:     svcTemp.ProductName,
++		Namespace:       product.Namespace,
++		ReleaseName:     releaseName,
++		MergedValues:    replacedMergedValuesYaml,
++		RenderChart:     chartInfo,
++		ServiceObj:      svcTemp,
++		Timeout:         timeout,
++		Production:      product.Production,
++		MaxHistory:      maxHistory,
++		SkipUpgradeCRDs: skipUpgradeCRDs,
  	}
+ 	if !productSvc.FromZadig() {
+ 		param.IsChartInstall = true
+@@ -788,7 +802,7 @@ func DownloadInstantiateChart(projectName, chartRepo, chartName, chartVersion, r
+ 	return nil
+ }
+ 
+-func DeployMultiHelmRelease(productResp *commonmodels.Product, helmClient *helmtool.HelmClient, filter DeploySvcFilter, user string, log *zap.SugaredLogger) error {
++func DeployMultiHelmRelease(productResp *commonmodels.Product, helmClient *helmtool.HelmClient, filter DeploySvcFilter, user string, skipUpgradeCRDs SkipUpgradeCRDsFunc, log *zap.SugaredLogger) error {
+ 	productName, envName := productResp.ProductName, productResp.EnvName
+ 
+ 	session := mongotool.Session()
+@@ -893,6 +907,11 @@ func DeployMultiHelmRelease(productResp *commonmodels.Product, helmClient *helmt
+ 				mongotool.AbortTransaction(session)
+ 				return err
+ 			}
++			if param == nil {
++				log.Warnf("skip deploying service %s in namespace %s: install param is empty", prodSvc.ServiceName, productResp.Namespace)
++				continue
++			}
++			param.SkipUpgradeCRDs = skipUpgradeCRDs != nil && skipUpgradeCRDs(chartInfo)
+ 			prodSvc.Render = chartInfo
+ 			prodSvc.UpdateTime = time.Now().Unix()
+ 			installParamList = append(installParamList, param)
+```
+
+**File**: `pkg/microservice/aslan/core/common/service/render.go` (modified, +9/-1)
+```diff
+@@ -49,6 +49,8 @@ type ValuesDataArgs struct {
+ 	AutoSyncYaml  string         `json:"autoSyncYaml"`
+ 	GitRepoConfig *RepoConfig    `json:"gitRepoConfig"`
+ 	Commit        *models.Commit `json:"-"`
++	// UpgradeCRD controls whether CRDs are upgraded when values are synced from source, nil means true
++	UpgradeCRD *bool `json:"upgradeCRD,omitempty"`
+ }
+ 
+ type HelmSvcRenderArg struct {
+@@ -118,6 +120,7 @@ func (args *HelmSvcRenderArg) toCustomValuesYaml() *templatemodels.CustomYaml {
+ 		ret.Source = args.ValuesData.YamlSource
+ 		ret.AutoSync = args.ValuesData.AutoSync
+ 		ret.AutoSyncYaml = args.ValuesData.AutoSyncYaml
++		ret.UpgradeCRD = args.ValuesData.UpgradeCRD
+ 
+ 		if args.ValuesData.GitRepoConfig != nil {
+ 			repoData := &models.CreateFromRepo{
+@@ -153,7 +156,12 @@ func (args *HelmSvcRenderArg) FillRenderChartModel(chart *templatemodels.Service
+ 	chart.ChartVersion = version
+ 	// chart.ValuesYaml = valuesYaml
+ 	chart.OverrideValues = args.ToOverrideValueString()
+-	chart.OverrideYaml = args.toCustomValuesYaml()
++	newOverrideYaml := args.toCustomValuesYaml()
++	if newOverrideYaml.UpgradeCRD == nil && chart.OverrideYaml != nil {
++		// keep the configured CRD policy when the request omits it
++		newOverrideYaml.UpgradeCRD = chart.OverrideYaml.UpgradeCRD
++	}
++	chart.OverrideYaml = newOverrideYaml
+ }
+ 
+ // LoadFromRenderChartModel load from render chart model
+```
+
+**File**: `pkg/microservice/aslan/core/common/service/version.go` (modified, +2/-2)
+```diff
+@@ -444,7 +444,7 @@ func CheckRollbackEnvServiceVersion(projectName, envName, serviceName string, re
+ 	}, nil
+ }
+ 
+-func RollbackEnvServiceVersion(ctx *internalhandler.Context, projectName, envName, serviceName string, revision int64, isHelmChart, isProduction, overrideResource bool, detail string, log *zap.SugaredLogger) (*RollbackEnvServiceVersionData, error) {
++func RollbackEnvServiceVersion(ctx *internalhandler.Context, projectName, envName, serviceName string, revision int64, isHelmChart, isProduction, overrideResource, skipUpgradeCRDs bool, detail string, log *zap.SugaredLogger) (*RollbackEnvServiceVersionData, error) {
+ 	envSvcVersion, err := mongodb.NewEnvServiceVersionColl().Find(projectName, envName, serviceName, isHelmChart, isProduction, revision)
+ 	if err != nil {
+ 		if mongodb.IsErrNoDocuments(err) {
+@@ -783,7 +783,7 @@ func RollbackEnvServiceVersion(ctx *internalhandler.Context, projectName, envNam
+ 				// buffered so the deploy goroutine never blocks when the caller does not wait for the result
+ 				rollbackStatus.HelmDeployStatusChan = make(chan bool, 1)
+ 				go func(done chan<- bool) {
+-					err := kube.DeploySingleHelmRelease(env, envSvcVersion.Service, svcTmpl, nil, templateProduct.ReleaseMaxHistory, 0, ctx.UserName)
++					err := kube.DeploySingleHelmRelease(env, envSvcVersion.Service, svcTmpl, nil, templateProduct.ReleaseMaxHistory, 0, ctx.UserName, skipUpgradeCRDs)
+ 					if err != nil {
+ 						title := fmt.Sprintf("回滚 %s/%s 环境 %s 服务失败", projectName, envName, serviceName)
+ 						notify.SendErrorMessage(ctx.UserName, title, ctx.RequestID, err, log)
+```
+
+**File**: `pkg/microservice/aslan/core/common/service/workflowcontroller/jobcontroller/job_helm_chart_deploy.go` (modified, +1/-1)
+```diff
+@@ -135,7 +135,7 @@ func (c *HelmChartDeployJobCtl) Run(ctx context.Context) {
+ 
+ 	done := make(chan bool)
+ 	go func(chan bool) {
+-		if err = kube.DeploySingleHelmRelease(productInfo, productChartService, nil, nil, c.jobTaskSpec.MaxHistory, timeOut, c.workflowCtx.WorkflowTaskCreatorUsername); err != nil {
++		if err = kube.DeploySingleHelmRelease(productInfo, productChartService, nil, nil, c.jobTaskSpec.MaxHistory, timeOut, c.workflowCtx.WorkflowTaskCreatorUsername, false); err != nil {
+ 			err = errors.WithMessagef(
+ 				err,
+ 				"failed to upgrade helm chart %s/%s",
 ```
 
 #### Recent Merged Pull Requests:
@@ -2118,22 +1485,22 @@ Signed-off-by: Cynthia <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. helm): prevent concurrent chart download directory conflicts
+## X. helm): support skipping CRD upgrade when updating services
 
 **RULE**:
-When implementing operations in `.gitignore`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in koderover/zadig. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/microservice/aslan/core/common/repository/models/template/product.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in koderover/zadig. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f09f6eef`: helm): prevent concurrent chart download directory conflicts. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2c932905`: helm): support skipping CRD upgrade when updating services. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.gitignore`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/microservice/aslan/core/common/repository/models/template/product.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-!pkg/tool/helmclient/chart_download_test.go
-!pkg/microservice/aslan/core/common/service/fs/s3_cleanup_test.go
+	// UpgradeCRD controls whether CRDs are upgraded when values are synced from source, nil means true
+	UpgradeCRD *bool `bson:"upgrade_crd,omitempty"               json:"upgrade_crd,omitempty"`
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2143,7 +1510,7 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f09f6eef` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2c932905` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

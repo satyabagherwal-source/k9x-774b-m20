@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-17T15:51:41.087Z",
+  "timestamp": "2026-11-18T02:51:32.126Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-freenet-freenet-core-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [freenet-freenet-core-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-17T15:51:41.087Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-18T02:51:32.126Z`  
 > **Learning ID**: `LEARN-EVO-freenet-freenet-core-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/freenet-freenet-core-learnings.md`  
 > **Source**: github ([https://github.com/freenet/freenet-core](https://github.com/freenet/freenet-core))  
-> **Source Version**: `6e7fbbd6`  
+> **Source Version**: `0515d873`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-17T15:51:32.214Z  
+> **Timestamp**: 2026-11-18T02:51:26.625Z  
 > **Learning ID**: `learn-github-freenet-freenet-core`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/freenet-freenet-core-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/freenet/freenet-core](https://github.com/freenet/freenet-core))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T15:51:32.208Z  
+> **Harvest Timestamp**: 2026-11-18T02:51:26.619Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1763,11 +1763,11 @@ pub mod streaming_buffer;
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #6258** (2026-11-17): **test(quic): pin the crash-breaker marker lock and correct its doc**
-  *Symptoms*: ## Problem  Two leftovers from the review of #6256: - `MARKER_UPDATE` orders the Windows short-run clear and the endpoint-death record, so that in either order the death record survives to the next start. Deleting either lock left every behaviour test green, because a single-threaded test cannot interleave the two writers. - The lock's doc said it covered each read-and-change of the marker. Arming and the Windows panic-hook write do not take it.  ## Approach  Test and documentation only; no behaviour change.  - A source pin, `the_marker_update_lock_is_taken_by_the_clear_and_the_record`, checks that both writers take the lock before reading the marker: `short_runs::clear_short_run`, and both write paths of `note_endpoint_down_exit_with`. - The lock's doc now says it orders exactly those two writers, and why the others do not need it:   - arming, and a death recorded before arming, are ordered by `PENDING`, and the clear timer starts only after arming;   - the Windows panic hook takes no lock. A caught socket-adapter panic writes before the endpoint goes down; an unrelated QUIC panic at the same moment could cost one free restart;   - a clean exit's clear does not run on a death. - A comment on `clear_short_run` notes that a clock stepped back during a run can date a death before the run's start. The clear then removes the marker, and that one death restarts the gateway without counting.  This does not change #6184. An earlier version of this PR also hardened the QUIC runtime a
+- **Issue #6271** (2026-11-18): **fix: run initiate_buffer and instance setup under the guest backstop**
+  *Symptoms*: ## Problem  The allocator export (`__frnt__initiate_buffer`) and instance setup (the module start function and `__frnt_set_id`) did not run under the wall-clock backstop and panic capture that the typed contract and delegate entry points (`call_2i64_blocking`, `call_3i64_blocking`, `call_3i64`) run under.  ## Approach  All guest entry points, including the allocator and instance setup, now run under the wall-clock backstop and panic capture of `execute_wasm_blocking`, off the calling thread.  - `initiate_buffer` goes through `call_typed_blocking` with `delegate_instance: None`. `call_typed_blocking` now takes the error classifier for the entry. The allocator keeps its existing classification (an epoch interrupt is `Timeout`, anything else `Runtime`, with no error-level log). The other entries keep `classify_runtime_error`. - `create_instance` runs `instantiate_and_init` as one job. Each of its two entries keeps its own freshly armed epoch budget, and the job's wall-clock bound (`WallBounds::for_entries`, `INSTANCE_SETUP_GUEST_ENTRIES = 2`) allows both budgets, so setup timing for in-budget contracts is unchanged. The store is recovered on every failure, as before. - `execute_wasm_blocking` is generic over the job's result, and has an explicit-bounds variant, `execute_wasm_blocking_within`. The linker moves into an `Arc` so the setup job can own a handle to it. - Source pins are updated. `initiate_buffer` is now listed with the entries that delegate to `call_typed_blocking`, a
 
-- **Issue #6257** (2026-11-17): **feat(telemetry): per-path QUIC srtt and send-rate bucket gauges in the transport snapshot**
-  *Symptoms*: ## Problem The transport snapshot says how much QUIC paths lost but not how fast or how far away they are. Judging QUIC as the default (and the removal of UDP) needs the distribution of path round-trip times and send rates across the fleet, which the snapshot does not carry.  ## Approach Two gauge families, both of live QUIC paths that carry data (a path that carries none, such as an idle shadow path, is in neither, and a path that stops carrying leaves), moved at each acknowledgement-watch tick (about 2 s) and left when the path ends, as the existing `quic_loss_rate_<bucket>` gauges are. They live under the `loss` lock and in the same `PathLossWindow`, so a path is in at most one bucket of each and a snapshot reads them consistently; the bucket moves are their own critical section, not written together with a loss report's sums. Observe-only: no transport behaviour changes. - `quic_srtt_<bucket>`: quinn's `PathStats::rtt`. Buckets `lt_10ms`, `lt_25ms`, `lt_50ms`, `lt_100ms`, `lt_200ms`, `lt_400ms`, `ge_400ms`. - `quic_tx_bps_<bucket>`: UDP payload bits per second sent over the last tick. Buckets `lt_10kbps`, `lt_100kbps`, `lt_1mbps`, `lt_10mbps`, `lt_100mbps`, `ge_100mbps`. A tick of 0 ms leaves the path in its bucket.  `tx_bps` counts the datagram bytes quinn built (`udp_tx.bytes`): retransmissions, acknowledgements, padding and keepalives included. It is neither goodput nor capacity. These gauges describe path conditions; the speed of QUIC against UDP is answered from tran
+- **Issue #6269** (2026-11-18): **fix(transport): keep transport-internal stream ids below the caller-named bit**
+  *Symptoms*: ## Problem  Every node silently stops delivering its oversized (multi-fragment) messages after a few days of uptime. This is the root cause of #6143.  Each thread's stream-id counter starts at `(thread_index as u32) * 100_000` (`transport/boundary.rs`). `thread_index` grows by one for every thread that ever allocates, and nodes keep creating threads (tokio's blocking pool, `block_in_place` replacements): about 8 a minute on Ian's laptop, faster on the gateways. From index 21,475 the counter is at or above 2^31, so every id from `StreamId::next_transport_internal()` has the top bit set. Receivers read that bit as "caller-named operations stream" (`peer_connection.rs`, the `is_caller_named()` branch), park the stream as an orphan nobody claims, and drop it when it expires. Nothing is logged above debug.  What still works while a node is in that state: one-packet messages, caller-named streams (`StreamId::next()`, used for streamed full state), and everything it receives. What is lost: every message over one packet that a thread at or above index 21,475 sends through the legacy transport stream (on Ian's laptop on 2026-11-13, every allocating thread observed was in that range), for example `BroadcastTo` deltas (they carry the sender's summary, ~40 KB for the River room), `RequestUpdate` with full state, and `ResyncResponse`. It lasts until index 42,950 or a restart, then comes back after another 21,475 threads.  Evidence: - **Laptop.** The logged caller-named stream ids on 2026-
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1784,738 +1784,862 @@ pub mod streaming_buffer;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `01e05980` (2026-11-17)
-**Commit Message**: test(quic): pin the crash-breaker marker lock and correct its doc (#6258)
+### Incident Patch 1: `0515d873` (2026-11-18)
+**Commit Message**: fix: run initiate_buffer and instance setup under the guest backstop (#6271)
 
-**File**: `crates/core/src/transport/quic/breaker.rs` (modified, +59/-5)
+**File**: `.claude/rules/contracts.md` (modified, +21/-15)
 ```diff
-@@ -385,11 +385,25 @@ static PENDING: parking_lot::Mutex<Pending> = parking_lot::Mutex::new(Pending {
- /// start would restart the node without bound.
- static OVERRIDDEN: AtomicBool = AtomicBool::new(false);
+@@ -147,18 +147,30 @@ migration is done.
  
--/// Held across each read-and-change of this run's marker by the Windows
--/// short-run clear ([`short_runs`]) and by [`note_endpoint_down_exit`], so
--/// in either order the death record survives: a clear that comes first is
--/// followed by the record written again, and a record written first makes
--/// the clear leave the marker.
-+/// Orders exactly two writers of this run's marker: the Windows short-run
-+/// clear (`short_runs::clear_short_run`) and the endpoint-death record
-+/// ([`note_endpoint_down_exit_with`]). Each holds it across its
-+/// read-and-change, so in either order the death record survives: a clear
-+/// that comes first is followed by the record written again, and a record
-+/// written first makes the clear leave the marker. Pinned by
-+/// `the_marker_update_lock_is_taken_by_the_clear_and_the_record`.
-+///
-+/// The other writers do not take it, and it does not order them:
-+/// - arming ([`arm`]) runs under [`PENDING`], as does the record of a death
-+///   before arming, so those two are ordered by that lock instead, and the
-+///   clear timer starts only after arming;
-+/// - the Windows panic hook (`short_runs::mark_quic_panic`) takes no lock,
-+///   since it runs inside a panic. A caught socket-adapter panic marks the
-+///   marker before the endpoint goes down, so its write lands before the
-+///   death record; an unrelated QUIC panic on another thread at the same
-+///   moment could overwrite the record, which then costs one free restart;
-+/// - a clean exit's removal ([`clear_if_owned`]) does not run on a death,
-+///   which ends the process without a clean exit.
- pub(super) static MARKER_UPDATE: parking_lot::Mutex<()> = parking_lot::Mutex::new(());
+ ### WASM Call Modes
  
- /// The marker this process armed, as armed, for a Windows run that must
-@@ -1913,6 +1927,46 @@ mod tests {
+-All three guest entry points share ONE body, `call_typed_blocking` in
+-`engine/wasmtime_engine.rs`. Delegates ran "sync, on the calling thread" until
+-#5480; they no longer do, and nothing should reintroduce a per-entry-point copy.
++All guest entry points, including the allocator export and instance setup
++(module start function and `__frnt_set_id`), run under the wall-clock backstop
++and panic capture: on a blocking-pool thread (a plain thread on a
++`current_thread` runtime), with a host-side panic returned as an `Err`. The
++typed calls share ONE body, `call_typed_blocking` in
++`engine/wasmtime_engine.rs`; instance setup runs as one job of its own, whose
++wall-clock bound allows each of its two entries its own budget. Nothing should
++reintroduce a per-entry-point copy or an inline guest call.
+ 
+ ```
+ call_3i64()               — delegates
+ call_2i64_blocking()      — contracts
+ call_3i64_blocking()      — contracts
+-        ↓ all three
+-call_typed_blocking()     — spawn_blocking + wall-clock backstop + panic capture
++initiate_buffer()         — allocator export, contracts and delegates
++        ↓ all four
++call_typed_blocking()     — execute_wasm_blocking
++
++create_instance()         — module start function + __frnt_set_id
++        ↓ one job
++execute_wasm_blocking_within() — wall-clock backstop + panic capture
+ ```
+ 
++`call_void` is the one inline entry left, and only a test calls it.
++
+ Two consequences for anything touching the delegate path:
+ 
+ - **A delegate guest can outlive its call.** On the wall-clock-timeout path
+@@ -168,16 +180,10 @@ Two consequences for anything touching the delegate path:
+   different facts (`native_api::LIVE_DELEGATE_GUESTS`).
+ - **During `process()`, delegate host functions run on a blocking-pool thread**,
+   so they find their env through a thread-local installed on THAT thread by
+-  `GuestDelegateInstance`, not on the caller's.
+-
+-  Scope that to `process()` and no further. Buffer setup and instantiation —
+-  `initiate_buffer`, `call_void`, `instantiate_and_init` — still enter the guest
+-  with `block_on_async(func.call_async(...))` INLINE on the calling thread, with
+-  no `execute_wasm_blocking` and no `GuestDelegateInstance`. That is why
+-  `exec_inbound_with_env` still sets `CURRENT_DELEGATE_INSTANCE` on the calling
+-  thread at all, as `DelegateEnvGuard`'s rustdoc explains. "Nothing
+-  delegate-related runs on the calling thread" is false and would produce a wrong
+-  call about exactly those paths.
++  `GuestDelegateInstance`, not on the caller's. The allocator export gets no
++  `GuestDelegateInstance` (it is called with `delegate_instance: None`), so a
++  delegate's allocator cannot reach the delegate host functions. It has no use
++  for them.
+ 
+ The pins `every_guest_entry_is_preceded_by_arm_epoch_deadline` and
+ `blocking_paths_arm_epoch_inside_the_closure` enforce the single-body structure.
+```
+
+**File**: `crates/core/src/wasm_runtime/engine/wasmtime_engine.rs` (modified, +583/-81)
+```diff
+@@ -140,6 +140,14 @@
+ //! ```
+ //!
+ //! We wrap with `block_on_async()` to maintain a synchronous interface for callers.
++//!
++//! That `block_on_async` call runs inside a job passed to
++//! `execute_wasm_blocking` / `execute_wasm_blocking_within`, not on the
++//! caller's thread: every production guest entry (the typed calls through
++//! `call_typed_blocking`, the allocator export, and instance setup in
++//! `create_instance`) runs off the calling thread under the wall-clock
++//! backstop, with a host-side panic returned as an error. `call_void`, used
++//! only by tests, is the exception.
+ 
+ use std::collections::HashMap;
+ use std::sync::atomic::{AtomicBool, AtomicU64, Ordering};
+@@ -736,8 +744,9 @@ pub(crate) struct WasmtimeEngine {
+     /// Taken during blocking operations, restored after. Recreated on timeout/panic
+     /// or when `lifetime_instances` exceeds `STORE_REFRESH_THRESHOLD`.
+     store: Option<Store<HostState>>,
+-    /// Linker pre-configured with all host functions.
+-    linker: Linker<HostState>,
++    /// Linker pre-configured with all host functions. Shared (`Arc`) so the
++    /// blocking job that instantiates a module can own a handle to it.
++    linker: Arc<Linker<HostState>>,
+     /// Map of instance ID to wasmtime Instance.
+     instances: HashMap<i64, Instance>,
+     /// Maximum execution time in seconds.
+@@ -890,7 +899,7 @@ impl WasmEngine for WasmtimeEngine {
+         Ok(Self {
+             engine,
+             store: Some(store),
+-            linker,
++            linker: Arc::new(linker),
+             instances: HashMap::new(),
+             max_execution_seconds: config.max_execution_seconds,
+             enabled_metering,
+@@ -979,32 +988,60 @@ impl WasmEngine for WasmtimeEngine {
          }
+ 
+         // The guest-entry half (instantiate + __frnt_set_id + ensure_memory) is
+-        // factored out so we can RECOVER THE STORE on ANY guest-entry
+-        // timeout/error before returning (#4864 round-9 item 2). Previously an
+-        // epoch interrupt during __frnt_set_id returned via `?` AFTER the module
+-        // was instantiated but BEFORE `instances.insert` / `lifetime_instances += 1`,
+-        // so the store-refresh accounting never counted it: wasmtime's Store arena
+-        // retained the dropped instance's allocation, and repeated init timeouts
+-        // across fresh contract ids accumulated untracked arena memory that never
+-        // triggered a count-based refresh.
++        // factored out so the store is REPLACED on ANY guest-entry failure
++        // before returning (#4864 round-9 item 2). A failure after the module
++        // was instantiated leaves its allocation in the store's arena without an
++        // `instances` entry or a `lifetime_instances` count, so nothing else
++        // would ever trigger a refresh that reclaims it.
+         let epoch_ticks = self.epoch_deadline_ticks;
+-        let store = self
++        let mut store = self
+             .store
+-            .as_mut()
++            .take()
+             .ok_or_else(|| WasmError::Other(anyhow::anyhow!("engine store not available")))?;
+-        let instance = match Self::instantiate_and_init(
+-            store,
+-            &self.linker,
+-            module,
+-            id,
+-            req_bytes,
+-            epoch_ticks,
+-        ) {
++        let linker = Arc::clone(&self.linker);
++        let module = module.clone();
++
++        // A module's start function and `__frnt_set_id` are guest code, so they
++        // run off the calling thread under the wall-clock backstop, with a
++        // host-side panic captured as an error, like every other guest entry
++        // (see `call_typed_blocking`). They run as ONE job, and each gets its
++        // own freshly armed epoch budget, so the wall-clock bound allows
++        // `INSTANCE_SETUP_GUEST_ENTRIES` budgets (see `WallBounds::for_entries`).
++        let result = execute_wasm_blocking_within(
++            move || {
++                let instance = Self::instantiate_and_init(
++                    &mut store,
++                    &linker,
++                    &module,
++                    id,
++                    req_bytes,
++                    epoch_ticks,
++                );
++                (Ok(instance), store)
++            },
++            WallBounds::for_entries(self.max_execution_seconds, INSTANCE_SETUP_GUEST_ENTRIES),
++            self.max_execution_seconds,
++        );
++        let outcome = match result {
++            BlockingResult::Ok(Ok(instance), store) => {
++                self.store = Some(store);
++                Ok(instance)
++            }
++            BlockingResult::Ok(Err(e), _failed_store) => Err(e),
++            // The job classifies its own errors, so it never returns this.
++            BlockingResult::WasmError(e, _failed_store) => {
++                Err(WasmError::Instantiation(e.to_string()))
++            }
++            BlockingResult::Timeout => Err(WasmError::Timeout),
++            BlockingResult::QueuedTimeout => Err(Wasm
+```
+
+---
+
+### Incident Patch 2: `b0f844ea` (2026-11-18)
+**Commit Message**: fix(transport): keep transport-internal stream ids below the caller-named bit (#6269)
+
+**File**: `crates/core/src/config.rs` (modified, +14/-0)
+```diff
+@@ -5529,6 +5529,15 @@ impl GlobalRng {
+         THREAD_INDEX.with(|idx| idx.set(Some(0)));
      }
  
-+    /// Both writers [`MARKER_UPDATE`] orders take it before they read the
-+    /// marker. Deleting either lock leaves every behaviour test green (a
-+    /// single-threaded test cannot interleave them), so this pins the lines.
-+    #[test]
-+    fn the_marker_update_lock_is_taken_by_the_clear_and_the_record() {
-+        let flat = |src: &str, signature: &str| -> String {
-+            production_fn_body(src, signature)
-+                .lines()
-+                .map(|line| line.split_once("//").map_or(line, |(code, _)| code))
-+                .collect::<String>()
-+                .split_whitespace()
-+                .collect()
-+        };
-+        let clear = flat(include_str!("breaker/short_runs.rs"), "fn clear_short_run(");
-+        let lock = clear
-+            .find("let_update=super::MARKER_UPDATE.lock();")
-+            .expect("the clear takes the lock");
-+        let read = clear.find("read_previous(path)").expect("the read");
-+        assert!(lock < read, "before it reads the marker: {clear}");
-+        assert!(clear[lock..].contains("clear_if_owned(path,nonce)"));
-+
-+        let record = flat(
-+            include_str!("breaker.rs"),
-+            "fn note_endpoint_down_exit_with(",
-+        );
-+        let lock = record
-+            .find("let_update=MARKER_UPDATE.lock();")
-+            .expect("the record takes the lock");
-+        let armed = record
-+            .find("ifletSome((path,nonce))=armed{")
-+            .expect("the armed-marker path");
-+        let pending = record
-+            .find("letmutpending=pending.lock();")
-+            .expect("the pending-marker path");
-+        assert!(
-+            lock < armed && lock < pending,
-+            "before either write path: {record}"
-+        );
++    /// Give the current thread index `idx`, as if it were the `idx`-th
++    /// thread to ask. Only for a fresh thread that has not asked yet: a
++    /// thread-local derived from the index (the stream-id counter, the nonce
++    /// counter) is initialized on first use and does not see a later change.
++    #[cfg(test)]
++    pub(crate) fn pin_thread_index_for_test(idx: u64) {
++        THREAD_INDEX.with(|c| c.set(Some(idx)));
 +    }
 +
-     /// The Windows rewrite of a cleared marker is wired end to end: arming
-     /// keeps the marker as armed, and the endpoint-death record passes it on
-     /// off unix. Neither runs in a unix unit test (arming writes through
+     /// Clears the simulation seed, reverting to system RNG.
+     pub fn clear_seed() {
+         THREAD_SEED.with(|s| s.set(None));
+@@ -5542,6 +5551,11 @@ impl GlobalRng {
+     ///
+     /// Each thread gets a unique index from the global `THREAD_INDEX_COUNTER`.
+     /// This is used by thread-local ID counters to compute non-overlapping offset blocks.
++    ///
++    /// Indices are never reused, so a long-running node's index keeps growing
++    /// with every thread it creates (tens of thousands within days). Any
++    /// `idx * block` arithmetic must be wide enough or wrap safely, and must
++    /// not reach bits that carry meaning (#6143).
+     pub fn thread_index() -> u64 {
+         THREAD_INDEX.with(|c| match c.get() {
+             Some(idx) => idx,
 ```
 
-**File**: `crates/core/src/transport/quic/breaker/short_runs.rs` (modified, +5/-0)
+**File**: `crates/core/src/transport/boundary.rs` (modified, +113/-13)
 ```diff
-@@ -501,6 +501,11 @@ fn in_quic_code() -> bool {
- /// (`super::endpoint_down_verdict`). Runs under [`super::MARKER_UPDATE`],
- /// which the record is written under too, so the two cannot interleave.
- /// Returns whether it removed the marker.
-+///
-+/// A clock stepped back during the run can date the death before
-+/// `started_at_secs`; the clear then takes it for an earlier run's and
-+/// removes the marker, so that death restarts the gateway once without
-+/// counting (`super::endpoint_down_verdict` applies the same test).
- fn clear_short_run(path: &Path, nonce: u64) -> std::io::Result<bool> {
-     let _update = super::MARKER_UPDATE.lock();
-     if let Previous::Marker(Marker::ShortRuns {
-```
-
----
-
-### Incident Patch 2: `6e7fbbd6` (2026-11-17)
-**Commit Message**: fix(connect): one survivor rule for native and UDP connections to one peer (gates 18-19) (#6255)
-
-**File**: `.claude/rules/transport.md` (modified, +42/-12)
-```diff
-@@ -521,9 +521,10 @@ dropped unanswered past the per-CONNECT cap on refused acceptors,
- turned its own native connects off,
- `connect_native_rescued_by_udp_{joiner,acceptor}` for each UDP dial after a
- failed native setup that connected (R5: a connection a node without UDP
--would not have made), `connect_native_both_dials_connected_kept_{udp,native}`
--for a native dial and the UDP dial beside it that both connected (the first
--kept), and the last offer as states
-+would not have made), `connect_native_both_dials_connected_{udp,native}_first`
-+for a native dial and the UDP dial beside it that both connected (the native
-+one kept), `connect_native_survivor_{swapped,udp_dropped}` for each
-+survivor-rule decision, and the last offer as states
- `connect_native_offer_{level,percent,ready}`; see
- `operations/connect/native.rs`) and the shadow-mode upgrade
- telemetry (below, "Upgrade telemetry"). Each label set is declared once in a
-@@ -2284,15 +2285,44 @@ Fallback: a failed native setup is followed by today's UDP dial to the same
-   it with the native dial, and not held back, which punched late. An
-   outcome answers only its own transport's callbacks, except that a kept
-   connection answers both dials' requesters, since all asked for a
--  connection to that peer (never answered Ok without a kept connection). If
--  both connect, the one established first is kept and the later one is
--  closed without touching the ring or the transient budget
--  (connect_native_both_dials_connected_kept_{udp,native}); whether the two
--  sides can disagree on which survives is open (design note 10.2 item 18).
--  A UDP dial beside a native one that fails never backs off (a 30 s backoff
--  would refuse the native dial's own fallback); while the native dial is
--  pending it also marks nothing, and once the native dial has ended without
--  a connection it takes the ordinary failure path apart from the backoff. A
-+  connection to that peer (never answered Ok without a kept connection).
-+  SURVIVOR RULE (design note 10.2 item 18): when a node holds, or is handed,
-+  a native and a UDP connection to one peer key, it keeps the native one,
-+  whichever came first and whether the UDP one was dialled or arrived
-+  inbound (matched key looked up by key, else the address:
-+  native_holds_peer), as long as the native entry is LIVE (heard from within
-+  identity::HOLD_WINDOW, 30 s). A quiet native entry (peer restarted, NAT
-+  rebound) does not hold the peer: the UDP connection takes the ordinary
-+  replace, or it would be refused until the 120 s QUIC idle timeout. Both
-+  ends apply the rule, so they normally agree with no message. Residual:
-+  each end judges liveness on its OWN receipt stamp, so a UDP connection
-+  arriving just as one end's native connection crosses HOLD_WINDOW can be
-+  kept at one end and dropped at the other; that needs the native
-+  connection silent for about two keepalive intervals (HOLD_WINDOW >= 2 x
-+  KEEPALIVE_INTERVAL is a const assert in identity.rs), so about two lost
-+  keepalives. Rare; a gate before native is enabled (design note 10.2 item
-+  18). Native second: replace_transport_in_place swaps only the
-+  transport (listener, sender, connection id, receipt, remote version) and
-+  keeps identity, ring membership, transient status, ReadyState,
-+  connected-since and health (no promotion, prune or budget call); the old
-+  listener's close carries the old id and is ignored. UDP second: dropped,
-+  nothing else touched. A native dial onto an entry bound to ANOTHER key
-+  takes the ordinary replace (the entry is stale). Two UDP connections keep
-+  the old later-replaces-earlier behaviour. record_success runs before any
-+  keep/swap/drop. A dropped UDP dial's requesters are answered with the
-+  native holder's address, and an unused reservation at the dial's own
-+  address is released. Counted: connect_native_survivor_{swapped,udp_dropped},
-+  connect_native_both_dials_connected_{udp,native}_first (beside pair only).
-+  One-sided native setups (one end connected, the other's setup failed;
-+  10.2 item 20) are NOT counted locally: no counter at one end can see them
-+  (a "native won then closed soon" counter was tried in #6255 and both
-+  missed them and counted unrelated closes). They are measured by joining
-+  both ends' setup outcomes by the CONNECT transaction (in simulation, the
-+  native wire trace's native_setup_pairs).
-+  A UDP dial beside a native one that fails while the native dial is
-+  pending neither backs off (a 30 s backoff would refuse the native dial's
-+  own fallback) nor marks anything; once the native dial has ended without
-+  a connection it takes the ordinary failure path, backoff included. A
-   native failure marks
-   no failed address and records no peer backoff, so the fallback is not
-   refused. Until UDP is removed a failed native setup never costs the join
-```
-
-**File**: `crates/core/src/node/network_bridge/in_memory.rs` (modified, +8/-0)
-```diff
-@@ -113,6 +113,12 @@ pub struct FaultInjectorState {
-     /// each with the bytes it has let through so far. Kept here rather than in
-     /// [`FaultConfig`], whose rules are values.
-     pub quic_datagram_cuts: Vec<(crate::simulation::QuicDatagramCut, u64)>,
-+    /// One-way delay added to every QUIC-class datagram
-+    /// (`SimNetwork::delay_quic_datagrams`), if any.
-+    pub quic_datagram_delay: Option<std::time::Duration>,
-+    /// One-way delay added to every legacy UDP intro datagram, the packets
-+    /// that open a UDP connection (`SimNetwork::delay_udp_intros`), if any.
-+    pub udp_intro_delay: Option<std::time::Duration>,
- }
- 
- impl FaultInjectorState {
-@@ -127,6 +133,8 @@ impl FaultInjectorState {
-             network_name: None,
-             enforce_fault_drops: false,
-             quic_datagram_cuts: Vec::new(),
-+            quic_datagram_delay: None,
-+            udp_intro_delay: None,
-         }
-     }
- 
-```
-
-**File**: `crates/core/src/node/network_bridge/p2p_protoc.rs` (modified, +17/-5)
-```diff
-@@ -564,6 +564,11 @@ struct ConnectionEntry {
-     /// `None` when the version wasn't exchanged (e.g. joiner->gateway path).
-     /// Used to gate version-dependent message types (e.g. SubscribeHint).
-     remote_version: Option<(u8, u8, u16)>,
-+    /// Whether this transport is a QUIC-native connection rather than a
-+    /// legacy UDP one. The survivor rule reads it: when a node holds, or is
-+    /// handed, a native and a UDP connection to one peer, it keeps the
-+    /// native one (`P2pConnManager::replace_transport_in_place`).
-+    native: bool,
- }
- 
- impl ConnectionEntry {
-@@ -1265,7 +1270,12 @@ impl P2pConnManager {
- 
-     /// Removes a transport from the connection map and the open-transport set.
-     fn remove_connection(&mut self, addr: SocketAddr) -> Option<ConnectionEntry> {
--        self.connections.remove(addr)
-+        let removed = self.connections.remove(addr);
-+        #[cfg(any(test, feature = "testing"))]
-+        if removed.is_some() {
-+            self.trace_transport(addr, None);
-+        }
-+        removed
-     }
- 
-     pub(in crate::node) fn listening_port(&self) -> u16 {
-@@ -3379,10 +3389,10 @@ struct EventListenerState {
-     /// remote peer's, so the bound is the dial's.
-     udp_beside_native: HashMap<SocketAddr, Vec<BesideUdpRequester>>,
-     /// Addresses whose UDP dial beside a still-pending native dial connected
--    /// first. If the native dial then connects too, its connection is closed
--    /// (the first established is kept) and counted as
--    /// `connect_native_both_dials_connected_kept_udp`. Cleared when the native
--    /// dial ends.
-+    /// first. If the native dial then connects too, it is swapped in for the
-+    /// UDP connection (the survivor rule keeps native) and counted as
-+    /// `connect_native_both_dials_connected_udp_first`. Cleared when the
-+    /// native dial ends.
-     beside_udp_connected: HashSet<SocketAddr>,
-     pending_op_results: HashMap<Transaction, Sender<WaiterReply>>,
-     /// Last time pending_op_results was scanned for closed senders.
-@@ -5895,6 +5905,7 @@ pub(crate) mod tests {
-                 created_at: Instant::now(),
-                 link_use: super::zombie_sweep::LinkUseStamp::new(Instant::now()),
-                 remote_version: None,
-+                native: false,
-             },
-         );
-         let (tx2, _rx2) = mpsc::channel(1);
-@@ -5908,6 +5919,7 @@ pub(crate) mod tests {
-                 created_at: Instant::now(),
-                 link_use: super::zombie_sweep::LinkUseStamp::new(Instant::now()),
-                 remote_version: None,
-+                native: false,
-             },
-         );
- 
-```
-
-**File**: `crates/core/src/node/network_bridge/p2p_protoc/connection_lifecycle.rs` (modified, +437/-116)
-```diff
-@@ -1247,6 +1247,37 @@ impl P2pConnManager {
-                     }
-                 };
- 
-+                // The survivor rule (`native_holds_peer`): an inbound UDP
-+                // connection from a peer a native connection holds is dropped,
-+                // leaving the native entry, the ring and the transient budget
-+                // untouched. The peer applies the same rule to its own copy
-+                // of this pair, so it normally keeps the native connection
-+                // too; see `native_holds_peer` for when the two ends can
-+                // decide differently.
-+                if let Some(holder) =
-+                    self.native_holds_peer(remote_addr, peer.as_ref().map(|p| p.pub_key()))
-+                {
-+                    tracing::info!(
-+                        remote = %remote_addr,
-+                        %holder,
-+                        transient,
-+                        transaction = ?transaction,
-+                        "Inbound UDP connection from a peer a native connection holds; \
-+                         keeping the native connection"
-+                    );
-+                    TRANSPORT_METRICS.record_connect_native_survivor(false);
-+                    #[cfg(any(test, feature = "testing"))]
-+                    crate::operations::connect::native_wire_trace::record_at(
-+                        remote_addr,
-+                        crate::operations::connect::native_wire_trace::NativeWireEvent::Survivor {
-+                            swapped: false,
-+                            inbound: true,
-+                        },
-+                    );
-+                    drop(connection);
-+                    return Ok(());
-+                }
-+
-                 tracing::info!(
-                     remote = %remote_addr,
-                     peer_known = peer.is_some(),
-@@ -1304,30 +1335,70 @@ impl P2pConnManager {
-                     transaction = %transaction,
-                     "Outbound connection established"
-                 );
--                // A UDP dial beside a native one connected.
-                 if !transport.is_native() {
--                    if let Some(beside) = state.udp_beside_native.remove(&peer_addr) {
--                        // The native dial connected first: the connection
--                        // established first is kept. This one is closed (dropped)
--                        // without touching the ring or the transient budget, and
--                        // this dial's requesters are answered with the kept one.
--                        if self.connections.contains_key(&peer_addr) {
--                            tracing::info!(
--                                remote = %peer_addr,
--                                transaction = %transaction,
--                                "UDP dial beside a native dial connected after the native one; \
--                                 keeping the native connection"
--                            );
-+                    let beside = state.udp_beside_native.remove(&peer_addr);
-+                    // The survivor rule (`native_holds_peer`): a UDP dial to a
-+                    // peer a native connection holds is dropped without
-+                    // touching the ring or the transient budget, whether it
-+                    // ran beside that native dial or not, and its requesters
-+                    // are answered with the native connection.
-+                    if let Some(holder) = self.native_holds_peer(peer_addr, Some(peer.pub_key())) {
-+                        // The in-transit reservation this dial made at its
-+                        // own address is not used: the peer is held at
-+                        // `holder`. At the holder's own address it is the
-+                        // ring entry, which stays.
-+                        // Not while a native dial to that address is
-+                        // pending: the reservation is that dial's too.
-+                        if holder != peer_addr && !state.native_pending.contains(&peer_addr) {
-+                            let cm = &self.bridge.op_manager.ring.connection_manager;
-+                            if !cm.is_in_ring(peer_addr) && cm.has_connection_or_pending(peer_addr)
-+                            {
-+                                cm.prune_in_transit_connection(peer_addr);
-+                            }
-+                        }
-+                        tracing::info!(
-+                            %holder,
-+                            remote = %peer_addr,
-+                            transaction = %transaction,
-+                            beside = beside.is_some(),
-+                            "UDP dial connected to a peer a native connection holds; \
-+                             keeping the native connection"
-+                        );
-+                        TRANSPORT_METRICS.record_connect_native_survivor(false);
-+                        #[cfg(any(test, feature = "testing"))]
-+                        crate::operations:
-```
-
-**File**: `crates/core/src/node/network_bridge/p2p_protoc/connection_lifecycle/tests.rs` (modified, +643/-12)
-```diff
-@@ -4062,11 +4062,15 @@ async fn native_then_udp_both_connect_keeps_the_native_connection() {
-     let mut h = Harness::new("beside-native-then-udp").await;
-     let addr: SocketAddr = "203.0.113.236:6281".parse().unwrap();
-     let before = both_connected_here();
-+    let survivors = survivor_here();
-     let (peer, mut native, mut udp) = beside::dials(&mut h, addr).await;
-     h.handshake_event(beside::established(&peer, true)).await;
-     let id = h.mgr.connections[&addr].connection_id;
-+    let pair = PairState::of(&h, addr);
-     h.handshake_event(beside::established(&peer, false)).await;
-     assert_eq!(both_connected_here(), (before.0, before.1 + 1));
-+    assert_eq!(survivor_here(), (survivors.0 + 1, survivors.1));
-+    assert_eq!(PairState::of(&h, addr), pair, "nothing else changed");
-     assert_eq!(native.try_recv(), Ok(Ok((addr, None))));
-     assert_eq!(udp.try_recv(), Ok(Ok((addr, None))));
-     assert_eq!(
-@@ -4085,26 +4089,37 @@ fn both_connected_here() -> (u64, u64) {
-     (udp, native)
- }
- 
--/// #6253 review round 2: both dials connect, the UDP one first. The first
--/// connection is kept: the native one is closed without touching the ring
--/// (no prune, so no second DropConnection) and counted, and the native
--/// dial's requesters were answered by the UDP connection.
-+/// Gate 18: both dials connect, the UDP one first. The survivor rule keeps
-+/// the native connection: it is swapped in for the UDP one in place, without
-+/// promotion, prune (so no second DropConnection) or transient budget call,
-+/// and counted. What the ring and the connection manager hold for the peer
-+/// survives the swap: ring entry, ReadyState, connected-since, health record
-+/// and transient count (the in-place switch #6253 removed lost these).
- #[tokio::test]
--async fn udp_then_native_both_connect_keeps_the_udp_connection() {
-+async fn udp_then_native_both_connect_swaps_in_the_native_connection() {
-     let mut h = Harness::new("beside-udp-then-native").await;
-     let addr: SocketAddr = "203.0.113.236:6282".parse().unwrap();
-     let before = both_connected_here();
-+    let survivors = survivor_here();
-     let (peer, mut native, mut udp) = beside::dials(&mut h, addr).await;
-     h.handshake_event(beside::established(&peer, false)).await;
-     assert_eq!(native.try_recv(), Ok(Ok((addr, None))));
-     assert_eq!(udp.try_recv(), Ok(Ok((addr, None))));
-     let udp_id = h.mgr.connections[&addr].connection_id;
-+    assert!(!h.mgr.connections[&addr].native, "premise: a UDP entry");
-+    let cm = &h.mgr.bridge.op_manager.ring.connection_manager;
-+    cm.mark_peer_ready(addr);
-+    cm.peer_health.lock().record_success(addr);
-+    let pair = PairState::of(&h, addr);
-+    assert!(pair.marked_ready && pair.connected_since.is_some() && pair.health == Some((1, 0)));
-     while h.handshake_rx.try_recv().is_ok() {}
-     h.handshake_event(beside::established(&peer, true)).await;
--    assert_eq!(
--        h.mgr.connections[&addr].connection_id, udp_id,
--        "the UDP connection, established first, stays"
-+    let entry = &h.mgr.connections[&addr];
-+    assert_ne!(
-+        entry.connection_id, udp_id,
-+        "the native connection took the entry"
-     );
-+    assert!(entry.native);
-     let mut drops = 0;
-     while let Ok(command) = h.handshake_rx.try_recv() {
-         if matches!(command, HandshakeCommand::DropConnection { addr: a } if a == addr) {
-@@ -4114,10 +4129,88 @@ async fn udp_then_native_both_connect_keeps_the_udp_connection() {
-     // The arm drops the address's expectation once, as for any outbound
-     // connection; a replacement would prune and send a second.
-     assert_eq!(drops, 1, "nothing was pruned or replaced");
--    assert_eq!(h.ring_key_at(addr).as_ref(), Some(peer.pub_key()));
--    assert_eq!(h_count(&h), 1);
-+    assert_eq!(PairState::of(&h, addr), pair, "everything else survived");
-     assert_eq!(both_connected_here(), (before.0 + 1, before.1));
-+    assert_eq!(survivor_here(), (survivors.0, survivors.1 + 1));
-     beside::assert_clear(&h, addr);
-+    // The UDP listener's close carries the old id and is ignored.
-+    h.mgr
-+        .handle_transport_event(
-+            Some(ConnEvent::TransportClosed {
-+                remote_addr: addr,
-+                error: TransportError::ConnectionClosed(addr),
-+                connection_id: udp_id,
-+                reason: crate::tracing::DisconnectReason::Timeout,
-+            }),
-+            &mut h.state,
-+            &h.handshake,
-+        )
-+        .await
-+        .expect("handle_transport_event");
-+    assert!(
-+        h.mgr.connections[&addr].native,
-+        "the stale close is ignored"
-+    );
-+    assert_eq!(PairState::of(&h, addr), pair);
-+    // The old UDP listener itself ended: its sender was dropped, so it
-+    // reports its close, under the old id.
-+    let ended = tokio::time::timeout(Duration::from_secs(5), async {
-+        loop {
-+            match h._conn_events_rx.recv().await {
-+                Some(ConnEvent::TransportClo
-```
-
-**File**: `crates/core/src/node/network_bridge/p2p_protoc/connection_map.rs` (modified, +1/-0)
-```diff
-@@ -132,6 +132,7 @@ mod tests {
-             created_at: now,
-             link_use: LinkUseStamp::new(now),
-             remote_version: None,
-+            native: false,
-         }
-     }
- 
-```
-
-**File**: `crates/core/src/node/network_bridge/p2p_protoc/identity.rs` (modified, +19/-6)
-```diff
-@@ -188,6 +188,23 @@ pub(super) enum BindOutcome {
- /// count too, stamped at the path's next 2 s watch tick.
- pub(super) const HOLD_WINDOW: std::time::Duration = std::time::Duration::from_secs(30);
- 
-+// The survivor rule treats a native connection silent for HOLD_WINDOW as
-+// gone; with keepalives at KEEPALIVE_INTERVAL that takes at least two lost
-+// keepalives in a row, not one.
-+const _: () = assert!(
-+    HOLD_WINDOW.as_nanos() >= 2 * crate::transport::quic::config::KEEPALIVE_INTERVAL.as_nanos()
-+);
-+
-+/// Whether `entry`'s transport received an authenticated packet within
-+/// [`HOLD_WINDOW`]. A transport that does not report receipt (a test double)
-+/// counts as heard from.
-+pub(super) fn heard_from_recently(entry: &ConnectionEntry) -> bool {
-+    entry
-+        .receipt
-+        .as_ref()
-+        .is_none_or(|stamp| stamp.since_last_receipt() <= HOLD_WINDOW)
-+}
-+
- /// The connection, other than `exclude`, bound to `key`, and whether it was
- /// heard from within [`HOLD_WINDOW`]. A connection whose transport does not
- /// report receipt (a test double) counts as heard from.
-@@ -196,12 +213,7 @@ pub(super) fn key_holder(
-     exclude: Option<SocketAddr>,
-     key: &TransportPublicKey,
- ) -> Option<(SocketAddr, bool)> {
--    let live = |entry: &ConnectionEntry| {
--        entry
--            .receipt
--            .as_ref()
--            .is_none_or(|stamp| stamp.since_last_receipt() <= HOLD_WINDOW)
--    };
-+    let live = heard_from_recently;
-     let mut quiet = None;
-     for (addr, entry) in connections {
-         if Some(*addr) == exclude || entry.identity.key() != Some(key) {
-@@ -492,6 +504,7 @@ mod tests {
-                     created_at: now,
-                     link_use: super::super::zombie_sweep::LinkUseStamp::new(now),
-                     remote_version: None,
-+                    native: false,
-                 },
-             );
-         }
-```
-
-**File**: `crates/core/src/node/network_bridge/p2p_protoc/zombie_sweep.rs` (modified, +3/-0)
-```diff
-@@ -1648,6 +1648,7 @@ mod tests {
-                     created_at: created,
-                     link_use: LinkUseStamp::new(created),
-                     remote_version: None,
-+                    native: false,
-                 },
-             );
-         }
-@@ -1716,6 +1717,7 @@ mod tests {
-             created_at,
-             link_use,
-             remote_version: None,
-+            native: false,
-         }
-     }
- 
-@@ -2511,6 +2513,7 @@ mod tests {
-                 created_at: created,
-                 link_use: link_use.clone(),
-                 remote_version: None,
-+                native: false,
-             },
-         );
- 
-```
-
----
-
-### Incident Patch 3: `340dbf84` (2026-11-17)
-**Commit Message**: feat(telemetry): per-path QUIC srtt and send-rate bucket gauges in the transport snapshot (#6257)
-
-**File**: `.claude/rules/transport.md` (modified, +6/-1)
-```diff
-@@ -1526,7 +1526,12 @@ a test passes its own; tests read their own, never the global).
-   both are recorded in one record_path_loss call under the one loss lock, the
-   exception the bug-prevention rule on a metric re-derived at the call site
-   allows (as for broadcast_payload_mix). The single keys are not under quic_carrying_, which the two carrying
--  families share. Packets in flight at close are dropped by quinn, not declared
-+  families share.
-+  Two more gauges of live paths, moved at each watch tick under the same lock and
-+  left by the window's drop: quic_srtt_<bucket> (quinn's PathStats::rtt) and
-+  quic_tx_bps_<bucket> (UDP payload bits per second over the last tick), every
-+  bucket uploaded at 0; both are one tick's reading, so they describe the fleet's
-+  distribution, not a path's throughput. Packets in flight at close are dropped by quinn, not declared
-   lost, so a final bucket can understate the loss at the end. The rate is quinn's lost over
-   sent (quinn-proto 0.11.19), not a measurement of the link: sent counts every
-   packet quinn built, acknowledgement-only ones included; lost counts quinn's
-```
-
-**File**: `crates/core/src/tracing/telemetry.rs` (modified, +2/-0)
-```diff
-@@ -8030,6 +8030,8 @@ mod tests {
-         data.pipe_source = (1108..1112).collect();
-         data.pipe_dropped = (1112..1115).collect();
-         data.late_end = (1121..1124).collect();
-+        data.path_srtt = (1124..1131).collect();
-+        data.path_tx_bps = (1131..1137).collect();
-         let want: std::collections::BTreeMap<String, u64> =
-             snapshot.quic_data.keys().into_iter().collect();
-         assert!(want.values().all(|value| *value != 0));
-```
-
-**File**: `crates/core/src/transport/metrics/quic_data.rs` (modified, +272/-6)
-```diff
-@@ -26,6 +26,8 @@
- //! | `quic_ended_paths_below_floor` | paths that ended in the period before sending 200 packets, so in no bucket |
- //! | `quic_carried_packets_sent`, `quic_carried_packets_lost` | the period's packets sent, and declared lost, while their path carried data (a subset of `quic_sent_packets` and `quic_lost_packets`; the shadow share is the difference, a reconciliation residual: both operands are recorded by `record_path_loss` under the one `loss` lock, the exception the bug-prevention rule "metric describing a filtering decision, re-derived at the call site" allows, as for `broadcast_payload_mix`) |
- //! | `quic_carrying_loss_rate_<bucket>`, `quic_carrying_ended_loss_rate_<bucket>`, `quic_carried_paths_ended_below_floor` | the same three as for every path, for paths that carry data, by their loss counted from the first report that found the path carrying (a path whose data bit came on after it started starts its carrying count then); every gauge bucket sent every period |
-+//! | `quic_srtt_<bucket>` | live QUIC paths that carry data, by their smoothed round-trip time (quinn's `PathStats::rtt`) at their last tick (a gauge, not reset, every bucket sent every period, 0 included): `lt_10ms`, `lt_25ms`, `lt_50ms`, `lt_100ms`, `lt_200ms`, `lt_400ms`, `ge_400ms`. A path is in a bucket from its first tick as a data path (it is built from an established connection, which has an RTT sample), and leaves when it stops carrying or ends; paths that carry no data are in none |
-+//! | `quic_tx_bps_<bucket>` | live QUIC paths that carry data, by the datagram bits per second quinn built on them over their last tick (about 2 s; a gauge, not reset, every bucket sent every period, 0 included): `lt_10kbps`, `lt_100kbps`, `lt_1mbps`, `lt_10mbps`, `lt_100mbps`, `ge_100mbps`. The bytes are UDP payload as quinn counts them (`udp_tx.bytes`): retransmissions, acknowledgements, padding and keepalives included, so it is neither goodput nor capacity. These two gauges describe path conditions; the speed of QUIC against UDP is answered from transfer events (bytes over duration, by transport and release), not from them. One tick's rate, sampled when the snapshot is taken, so it describes the fleet's distribution rather than one path's throughput; a tick of 0 ms is not counted |
- //! | `quic_streams_sampled_paths`, `quic_streams_open_ge_<n>`, `quic_streams_peak_max` | per path and period, the peak of inbound streams read at once: the paths sampled, those whose peak reached each level, and the highest peak |
- //! | `quic_gate_loss_<verdict>` | congestion events by the loss gate's verdict (`recycle::loss_gate`): passed to Cubic as `queue`, `share` (loss share above the ceiling), `persistent`, `ecn` (a congestion mark), `no_sample`, or `ignored` as random loss; summed over the node's paths up to each path's last tick. Over a path's life they sum to its `quic_congestion_events`; within one period they can differ by the events between the two reads of a tick |
- //! | `quic_gate_ended_queue_<bucket>` | paths that ended in the period after at least 20 gate verdicts, by the share of them passed as `queue`: `lt_10pct`, `lt_50pct`, `ge_50pct`. A path whose losses mostly read as a queue runs as plain Cubic, whether the queue is real or jitter |
-@@ -164,6 +166,53 @@ fn loss_rate_bucket(lost: u64, sent: u64) -> usize {
-         .count()
- }
- 
-+/// The per-path round-trip-time gauges' prefix; every bucket is uploaded in
-+/// every snapshot.
-+const PATH_SRTT_PREFIX: &str = "quic_srtt_";
-+
-+/// The upper bounds of the round-trip-time buckets, in milliseconds; the last
-+/// bucket is `ge_400ms`.
-+const PATH_SRTT_BOUNDS_MS: [u128; 6] = [10, 25, 50, 100, 200, 400];
-+
-+/// The round-trip-time buckets' labels (`quic_srtt_<label>`), in order.
-+pub(crate) const PATH_SRTT_LABELS: [&str; 7] = [
-+    "lt_10ms", "lt_25ms", "lt_50ms", "lt_100ms", "lt_200ms", "lt_400ms", "ge_400ms",
-+];
-+
-+fn path_srtt_bucket(rtt: std::time::Duration) -> usize {
-+    let ms = rtt.as_millis();
-+    PATH_SRTT_BOUNDS_MS
-+        .iter()
-+        .take_while(|bound| ms >= **bound)
-+        .count()
-+}
-+
-+/// The per-path send-rate gauges' prefix; uploaded like [`PATH_SRTT_PREFIX`].
-+const PATH_TX_BPS_PREFIX: &str = "quic_tx_bps_";
-+
-+/// The upper bounds of the send-rate buckets, in bits per second; the last
-+/// bucket is `ge_100mbps`.
-+const PATH_TX_BPS_BOUNDS: [u128; 5] = [10_000, 100_000, 1_000_000, 10_000_000, 100_000_000];
-+
-+/// The send-rate buckets' labels (`quic_tx_bps_<label>`), in order.
-+pub(crate) const PATH_TX_BPS_LABELS: [&str; 6] = [
-+    "lt_10kbps",
-+    "lt_100kbps",
-+    "lt_1mbps",
-+    "lt_10mbps",
-+    "lt_100mbps",
-+    "ge_100mbps",
-+];
-+
-+/// The bucket of `bytes` sent in `ms` (not 0) milliseconds.
-+fn path_tx_bps_bucket(bytes: u64, ms: u64) -> usize {
-+    let bits_per_second = u128::from(bytes) * 8 * 1000 / u128::from(ms);
-+    PATH_TX_BPS_BOUNDS
-+        .iter()
-+        .take_while(|bound| bits_per_second >= **bound)
-+        .count()
-+}
-+
+@@ -88,11 +88,20 @@ use super::{TransportError, TransportPublicKey};
+ /// ([`StreamId::next_transport_internal`]). The UDP transport relies on that
+ /// split to route a stream (see [`StreamId::is_caller_named`]).
  ///
-```
-
-**File**: `crates/core/src/transport/quic/recycle.rs` (modified, +10/-0)
-```diff
-@@ -2297,9 +2297,11 @@ impl PathReport {
-     /// on drop, has no clock, so a path's last tick to its end (under
-     /// [`ACK_WATCH_TICK`]) is not counted.
-     fn report(&mut self, now: Option<u64>) {
-+        let mut tick_ms = None;
-         if let Some(now) = now {
-             // Whole milliseconds, carrying the rest to the next report.
-             let ms = now.saturating_sub(self.timed_at) / 1_000_000;
-+            tick_ms = Some(ms);
-             self.timed_at = self.timed_at.saturating_add(ms * 1_000_000);
-             self.node.record_path_time(ms);
-             if let Some(meter) = &self.meter {
-@@ -2320,6 +2322,14 @@ impl PathReport {
-         self.node
-             .record_path_loss(&mut self.window, delta, carrying);
-         self.loss = next;
-+        // The round-trip time and send-rate gauges of data paths
-+        // (`quic_srtt_<bucket>`, `quic_tx_bps_<bucket>`), at each timed tick.
-+        // The final report has no clock, and the window's drop takes the path
-+        // out of them.
-+        if let Some(ms) = tick_ms {
-+            self.node
-+                .record_path_rates(&mut self.window, stats.path.rtt, sent, ms, carrying);
-+        }
-         if let Some((verdicts, seen)) = &mut self.gate {
-             let now = verdicts.read();
-             let delta: [u64; loss_gate::GATE_VERDICTS] =
-```
-
-**File**: `crates/core/src/transport/quic/recycle/tests.rs` (modified, +35/-0)
-```diff
-@@ -1329,6 +1329,41 @@ fn ack_counting_implements_every_controller_method() {
-     assert_eq!(ours, trait_methods);
+-/// The split is a convention, not a guarantee: both allocators share one
+-/// per-thread counter, so once it passes 2^31 an internal id also has the top
+-/// bit, and each thread's 100,000-id block overlaps the next thread's after
+-/// 100,000 allocations. Receivers key streams by (peer, id), so a collision
+-/// needs both within one connection's live streams.
++/// Both allocators share one per-thread counter that lives in the low 31 bits
++/// ([`COUNTER_MASK`]); the top bit is set or cleared by the allocator, never
++/// by the counter. It used to be a plain `u32` starting at `thread_index *
++/// 100_000`, and `thread_index` grows by one for every thread that ever
++/// allocates, so a node creating a few threads a minute (tokio's blocking pool
++/// and `block_in_place` replacements) passed index 21,475 after a few days of
++/// uptime. From then on every transport-internal id carried the top bit, the
++/// receiver routed it as a caller-named operations stream that nothing claims,
++/// and every oversized message the node sent was silently dropped (#6143).
++///
++/// Each thread's 100,000-id block still overlaps the next thread's after
++/// 100,000 allocations, and blocks wrap modulo 2^31. Receivers key streams by
++/// (peer, id), so a collision needs both within one connection's live or
++/// recently completed streams.
+ #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, serde::Serialize, serde::Deserialize)]
+ #[repr(transparent)]
+ #[serde(transparent)]
+@@ -106,17 +115,29 @@ const STREAM_ID_BLOCK: u32 = 100_000;
+ /// Top bit of ids from [`StreamId::next`].
+ const CALLER_NAMED_BIT: u32 = 0x8000_0000;
+ 
++/// The bits the shared counter may occupy. Keeping the counter below the top
++/// bit is what makes [`StreamId::is_caller_named`] reliable: the bit is only
++/// ever set by [`StreamId::next`].
++const COUNTER_MASK: u32 = !CALLER_NAMED_BIT;
++
++/// Where thread `idx`'s counter starts: its block, wrapped into the 31-bit
++/// counter space. Identical to the old `idx * 100_000` for every index below
++/// 21,475, so ids from young nodes and simulations are unchanged.
++fn block_start(idx: u64) -> u32 {
++    (idx.wrapping_mul(u64::from(STREAM_ID_BLOCK)) & u64::from(COUNTER_MASK)) as u32
++}
++
+ thread_local! {
+     static STREAM_ID_COUNTER: std::cell::Cell<u32> = {
+         let idx = crate::config::GlobalRng::thread_index();
+-        std::cell::Cell::new((idx as u32) * STREAM_ID_BLOCK)
++        std::cell::Cell::new(block_start(idx))
+     };
  }
  
-+/// Pin: each timed tick of a path's report passes the path's smoothed RTT, the
-+/// bytes it sent since the last report, the milliseconds since it and whether
-+/// it carries data to the
-+/// per-path gauges (`quic_srtt_<bucket>`, `quic_tx_bps_<bucket>`), and the final
-+/// report, which has no clock, does not. Deleting the call, or passing another
-+/// RTT, leaves every unit test of the gauges green while the fleet reads 0.
-+#[test]
-+fn a_timed_report_feeds_the_per_path_gauges() {
-+    let code: String = include_str!("../recycle.rs")
-+        .lines()
-+        .map(|line| line.split_once("//").map_or(line, |(code, _)| code))
-+        .collect::<Vec<_>>()
-+        .join("\n");
-+    let start = code
-+        .find("fn report(&mut self, now: Option<u64>)")
-+        .expect("PathReport::report not found");
-+    let (body, _) = code[start..]
-+        .split_once("\n    }\n")
-+        .expect("could not locate the end of PathReport::report");
-+    let body: String = body.chars().filter(|c| !c.is_whitespace()).collect();
+ fn next_stream_counter() -> u32 {
+     STREAM_ID_COUNTER.with(|c| {
+         let v = c.get();
+-        c.set(v + 1);
++        c.set(v.wrapping_add(1) & COUNTER_MASK);
+         v
+     })
+ }
+@@ -129,11 +150,12 @@ impl StreamId {
+     }
+ 
+     /// A fresh id for a stream a transport opens for its own purposes (the
+-    /// UDP transport's oversized messages). Distinct from ids from
+-    /// [`Self::next`] until the shared counter passes 2^31 (see the type
+-    /// docs).
++    /// UDP transport's oversized messages). It never has the top bit, so it
++    /// is always distinct from ids from [`Self::next`]. The counter is
++    /// already kept below the bit; the mask here keeps that true at the one
++    /// place receivers depend on it, whatever the counter does.
+     pub(crate) fn next_transport_internal() -> Self {
+-        Self(next_stream_counter())
++        Self(next_stream_counter() & COUNTER_MASK)
+     }
+ 
+     /// Whether this id came from [`Self::next`]: a stream named by the
+@@ -146,7 +168,14 @@ impl StreamId {
+     /// Thread-local, so safe for parallel test execution.
+     pub fn reset_counter() {
+         let idx = crate::config::GlobalRng::thread_index();
+-        STREAM_ID_COUNTER.with(|c| c.set((idx as u32) * STREAM_ID_BLOCK));
++        STREAM_ID_COUNTER.with(|c| c.set(block_start(idx)));
++    }
++
++    /// Put this thread's counter where thread `idx` would start, so a test can
++    /// allocate as the thread of a node that has been up for days.
++    #[cfg(test)]
++    pub(crate) fn reset_counter_as_thread(idx: u64) {
++        STREAM_ID_COUNTER.with(|c| c.set(block_start(idx)));
+     }
+ }
+ 
+@@ -827,7 +856,7 @@ mod stream_id_tests {
+     #[test]
+     fn stream_id_values_are_unchanged() {
+         StreamId::reset_counter();
+-        let base = (crate::config::GlobalRng::thread_index() as u32) * 100_000;
++        let base = super::block_start(crate::config::GlobalRng::thread_index());
+         let internal = StreamId::next_transport_internal();
+         let named = StreamId::next();
+         let internal_again = StreamId::next_transport_internal();
+@@ -839,6 +868,77 @@ mod stream_id_tests {
+         assert!(!internal_again.is_caller_named());
+     }
+ 
++    /// #6143: a node's thread indices keep growing for its whole uptime, and
++    /// from index 21,475 on,
+```
+
+**File**: `crates/core/src/transport/peer_connection/ack_policy_tests.rs` (modified, +88/-0)
+```diff
+@@ -2712,6 +2712,94 @@ async fn a_legacy_stream_completed_by_its_task_is_remembered() {
+     assert!(holds_no_state(&e, id), "not started again");
+ }
+ 
++/// Allocates stream ids on this thread as thread `idx` would, and puts the
++/// counter back when dropped, also when the test panics.
++struct ResetStreamCounter;
++
++impl ResetStreamCounter {
++    fn as_thread(idx: u64) -> Self {
++        StreamId::reset_counter_as_thread(idx);
++        Self
++    }
++}
++
++impl Drop for ResetStreamCounter {
++    fn drop(&mut self) {
++        StreamId::reset_counter();
++    }
++}
++
++/// #6143, the sender's side: an oversized message sent on UDP from a thread
++/// whose index is past 21,475 goes out as fragments of a transport-internal
++/// stream, without the caller-named bit. Before the fix every such fragment
++/// carried the bit, so the receiver parked the message as an operations
++/// stream nobody claims.
++#[tokio::test(start_paused = true)]
++async fn an_oversized_send_from_a_long_running_thread_is_not_caller_named() {
++    let mut e = single(CAPABLE);
++    let sent = {
++        let _reset = ResetStreamCounter::as_thread(24_160);
++        e.conn.send_serialized(vec![7u8; 4000]).await
++    };
++    sent.unwrap();
++    let mut ids = Vec::new();
++    for _ in 0..50 {
++        tokio::time::advance(Duration::from_millis(10)).await;
++        tokio::task::yield_now().await;
++        for message in e.drain_sent() {
++            if let SymmetricMessagePayload::StreamFragment { stream_id, .. } = message.payload {
++                ids.push(stream_id);
++            }
++        }
++        if !ids.is_empty() {
++            break;
++        }
++    }
++    assert!(!ids.is_empty(), "the message went out as a stream");
++    assert!(ids.iter().all(|id| !id.is_caller_named()), "{ids:?}");
++    // The id came from the counter set above, not one allocated elsewhere:
++    // thread 24,160's block starts at 24,160 x 100,000 mod 2^31.
++    let start = 268_516_352u32;
 +    assert!(
-+        body.contains("iflet Some(now)=now{".replace(' ', "").as_str())
-+            && body.contains("tick_ms=Some(ms);"),
-+        "the timed tick must record the milliseconds it covers"
-+    );
-+    assert!(
-+        body.contains(
-+            "iflet Some(ms)=tick_ms{self.node.record_path_rates(&mutself.window,stats.path.rtt,sent,ms,carrying);}"
-+                .replace(' ', "")
-+                .as_str()
-+        ),
-+        "a timed report must pass the path's rtt, sent bytes and ms to record_path_rates"
++        ids.iter().all(|id| (start..start + 16).contains(&id.0)),
++        "{ids:?}"
 +    );
 +}
 +
- /// Each report is the change since the last one, sent and received kept apart,
- /// and the next is taken from the state it hands back; a count that went down
- /// reports 0.
++/// #6143: an oversized message sent from a thread whose index is past
++/// 21,475, which every node reaches after a few days of uptime, is still
++/// reassembled and delivered. Before the fix its transport-internal id carried
++/// the caller-named bit, so the receiver parked it as an operations stream
++/// nobody claims and the message was lost without a trace.
++#[tokio::test(start_paused = true)]
++async fn a_legacy_stream_from_a_long_running_sender_thread_is_delivered() {
++    let mut e = single(CAPABLE);
++    let id = {
++        let _reset = ResetStreamCounter::as_thread(24_160);
++        StreamId::next_transport_internal()
++    };
++    let f = super::MAX_DATA_SIZE;
++    let data: Vec<u8> = (0..(2 * f)).map(|i| i as u8).collect();
++    let total = data.len() as u64;
++    for (i, chunk) in data.chunks(f).enumerate() {
++        feed(
++            &mut e,
++            fragment_with(
++                id,
++                total,
++                i as u32 + 1,
++                bytes::Bytes::copy_from_slice(chunk),
++            ),
++        )
++        .await;
++    }
++    assert_eq!(
++        e.pump(Duration::from_millis(10)).await.as_deref(),
++        Some(&data[..]),
++        "stream {id:?} was not delivered as a message"
++    );
++}
++
+ /// An evicted legacy stream delivers nothing even when the fragments that
+ /// would complete it are already queued for its reassembly task.
+ #[tokio::test(start_paused = true)]
+```
+
+---
+
+### Incident Patch 3: `88ffb1cd` (2026-11-18)
+**Commit Message**: fix(broadcast): bound memory when broadcasting large contract states (#6266)
+
+**File**: `crates/core/src/node/network_bridge/broadcast_payload_mix.rs` (modified, +22/-1)
+```diff
+@@ -41,6 +41,10 @@
+ //!    have three different fixes, published as
+ //!    `tracked_missing_<reason>_{sends,bytes}` plus a
+ //!    `tracked_missing_unattributed_*` residual that must stay at zero.
++//! 7. [`PayloadArm::FullLargeDeltaStreamed`] — a delta WAS computed, but the
++//!    state is large and the delta too large to send inline, so the state went
++//!    out as a stream to keep the fan-out's resident memory under the lane
++//!    bound. Can be several times the bytes of the delta it replaced.
+ //!
+ //! Arms 4-6 were a single `full_no_summary` bucket when #4922 first shipped.
+ //! The 2026-07-25 measurement then found that bucket was the LARGEST single
+@@ -377,20 +381,28 @@ pub(crate) enum PayloadArm {
+     /// cleared by a delta-apply failure / `ResyncRequest`. The next delivered
+     /// broadcast caches a summary and the pair collapses to deltas.
+     FullNoTheirSummaryTracked,
++    /// Full state: the contract's state is large and the computed delta was
++    /// too large to send inline, so the state went out as a stream instead,
++    /// where the lane permit bounds how many are resident. Kept apart from
++    /// [`Self::FullNotEfficient`]: that arm is the delta not being smaller than
++    /// the state, this one is a memory bound chosen over a smaller payload.
++    /// See `broadcast_queue::delta_sent_as_full_state`.
++    FullLargeDeltaStreamed,
+ }
+ 
+ impl PayloadArm {
+     /// Every arm, in reporting order. Exhaustive by construction: the
+     /// `match` in [`PayloadArm::index`] fails to compile if a variant is
+     /// added without being listed here.
+-    pub(crate) const ALL: [PayloadArm; 7] = [
++    pub(crate) const ALL: [PayloadArm; 8] = [
+         PayloadArm::Delta,
+         PayloadArm::FullDeltaSuppressed,
+         PayloadArm::FullNotEfficient,
+         PayloadArm::FullComputeFailed,
+         PayloadArm::FullNoOurSummary,
+         PayloadArm::FullNoTheirSummaryUntracked,
+         PayloadArm::FullNoTheirSummaryTracked,
++        PayloadArm::FullLargeDeltaStreamed,
+     ];
+ 
+     /// The three arms that together make up the legacy `full_no_summary`
+@@ -413,6 +425,7 @@ impl PayloadArm {
+             PayloadArm::FullNoOurSummary => 4,
+             PayloadArm::FullNoTheirSummaryUntracked => 5,
+             PayloadArm::FullNoTheirSummaryTracked => 6,
++            PayloadArm::FullLargeDeltaStreamed => 7,
+         }
+     }
+ 
+@@ -427,6 +440,7 @@ impl PayloadArm {
+             PayloadArm::FullNoOurSummary => "full_no_our_summary",
+             PayloadArm::FullNoTheirSummaryUntracked => "full_no_their_summary_untracked",
+             PayloadArm::FullNoTheirSummaryTracked => "full_no_their_summary_tracked",
++            PayloadArm::FullLargeDeltaStreamed => "full_large_delta_streamed",
+         }
+     }
+ 
+@@ -1136,6 +1150,13 @@ impl PayloadMix {
+         }
+     }
+ 
++    /// Test-only view of one arm's delivered `(sends, bytes)`, without draining.
++    #[cfg(test)]
++    pub(crate) fn arm_for_test(&self, arm: PayloadArm) -> (u64, u64) {
++        let w = self.window.lock();
++        (w.sends[arm.index()], w.bytes[arm.index()])
++    }
++
+     /// Test-only view of the [`PropagationEvent`] counts, without draining.
+     #[cfg(test)]
+     pub(crate) fn propagation_event_for_test(&self, ev: PropagationEvent) -> u64 {
+```
+
+**File**: `crates/core/src/node/network_bridge/broadcast_queue.rs` (modified, +443/-66)
+```diff
+@@ -175,6 +175,28 @@ pub(super) async fn await_stream_completion_releasing_permit<T>(
+ /// old state-size classification had it too) and is not what #4961 was about.
+ const BROADCAST_QUEUE_PAYLOAD_SIZE_THRESHOLD: usize = 64 * 1024;
+ 
++/// State size, in bytes, at or above which a broadcast is queued in the large
++/// lane even when a delta is expected.
++///
++/// The delta prediction only says that a summary is cached for the target, not
++/// how big the delta will be, and a contract's delta against a peer that holds
++/// little of its state is about the size of the state. For a small state a
++/// wrong prediction costs one large payload, corrected by
++/// [`SendLanePermit::ensure_capacity_for`]. For a multi-megabyte state it does
++/// not: every leg of the fan-out runs the summarize and delta work and builds
++/// its payload under one of the 12 small-lane permits before the correction
++/// applies, so a whole fan-out builds state-sized payloads at once. Queueing
++/// these legs in the large lane from the start means a leg does no work at all
++/// until it holds one of the large lane's permits.
++///
++/// The cost is that the small deltas of a state this large share the large
++/// lane's two permits. That is the pre-#4961 behaviour, kept only for states
++/// this size.
++// Only read by the production queue, which is cfg'd out under
++// `simulation_tests`.
++#[cfg_attr(feature = "simulation_tests", allow(dead_code))]
++const LARGE_STATE_LANE_THRESHOLD: usize = 4 * 1024 * 1024;
++
+ #[derive(Clone, Copy, Debug, PartialEq, Eq)]
+ // The simulation feature replaces the production queue, but keeps the shared
+ // payload-selection path and its public signature compiled.
+@@ -848,7 +870,7 @@ mod queue {
+ 
+     /// Maximum concurrent outbound broadcast streams for large payloads (>= 64KB).
+     /// Large payloads (full state) are rate-limited to avoid uplink saturation.
+-    const DEFAULT_LARGE_PAYLOAD_CONCURRENCY: usize = 2;
++    pub(super) const DEFAULT_LARGE_PAYLOAD_CONCURRENCY: usize = 2;
+ 
+     /// Maximum entries in the queue before oldest are dropped.
+     const DEFAULT_MAX_QUEUE_DEPTH: usize = 256;
+@@ -872,11 +894,16 @@ mod queue {
+     /// send full state anyway — so it decides SCHEDULING only. The uplink bound
+     /// is enforced against the real payload by
+     /// [`SendLanePermit::ensure_capacity_for`].
++    ///
++    /// A state at or above [`super::LARGE_STATE_LANE_THRESHOLD`] is queued
++    /// large whatever the prediction; see that constant.
+     pub(super) fn classify_payload_lane(
+         state_size: usize,
+         delta_expected: bool,
+     ) -> QueuedPayloadClass {
+-        if state_size < super::BROADCAST_QUEUE_PAYLOAD_SIZE_THRESHOLD || delta_expected {
++        if state_size < super::BROADCAST_QUEUE_PAYLOAD_SIZE_THRESHOLD
++            || (delta_expected && state_size < super::LARGE_STATE_LANE_THRESHOLD)
++        {
+             QueuedPayloadClass::Small
+         } else {
+             QueuedPayloadClass::Large
+@@ -3412,6 +3439,18 @@ mod queue {
+                 QueuedPayloadClass::Small,
+                 "a state below the threshold is small whatever the payload shape"
+             );
++            const HUGE: usize = super::super::LARGE_STATE_LANE_THRESHOLD;
++            assert_eq!(
++                classify_payload_lane(HUGE - 1, true),
++                QueuedPayloadClass::Small,
++                "an expected delta stays small up to the large-state threshold"
++            );
++            assert_eq!(
++                classify_payload_lane(HUGE, true),
++                QueuedPayloadClass::Large,
++                "a state at the large-state threshold is queued large even when \
++                 a delta is expected: its delta may be as large as the state"
++            );
+ 
+             let queue = BroadcastQueue::new();
+             let mut lanes = spawn_lanes(&queue, 12, 2);
+@@ -4147,6 +4186,11 @@ mod queue {
+                 "THE #4961 CASE: a >64 KiB contract sending a delta to a peer whose \
+                  summary we hold must not spend one of the 2 large-lane permits"
+             );
++            assert_eq!(
++                lane(super::super::LARGE_STATE_LANE_THRESHOLD),
++                QueuedPayloadClass::Large,
++                "a multi-megabyte state is queued large even with a cached summary"
++            );
+ 
+             let addr = |port: u16| -> std::net::SocketAddr {
+                 format!("127.0.0.1:{port}").parse().unwrap()
+@@ -4168,6 +4212,11 @@ mod queue {
+ #[cfg(not(feature = "simulation_tests"))]
+ pub(crate) use queue::BroadcastQueue;
+ 
++/// The large lane's permit count, for the fan-out memory test in
++/// `p2p_protoc`, which derives its bound from it.
++#[cfg(all(test, not(feature = "simulation_tests")))]
++pub(super) const LARGE_LANE_PERMITS: usize = queue::DEFAULT_LARGE_PAYLOAD_CONCURRENCY;
++
+ /// Classify the result of awaiting the streaming completion oneshot into
+ /// "the message was actually delivered" vs "the permit can be released but the
+ /// message was dropped".
+@
+```
+
+**File**: `crates/core/src/node/network_bridge/p2p_protoc.rs` (modified, +2/-0)
+```diff
+@@ -56,6 +56,8 @@ mod connection_lifecycle;
+ mod connection_map;
+ mod dispatch;
+ mod identity;
++#[cfg(all(test, not(feature = "simulation_tests")))]
++mod large_state_fanout_tests;
+ mod migration;
+ mod zombie_sweep;
+ 
+```
+
+**File**: `crates/core/src/node/network_bridge/p2p_protoc/large_state_fanout_tests.rs` (added, +465/-0)
+```diff
+@@ -0,0 +1,465 @@
++//! Memory held by the fan-out of a large new state to many co-hosts, through
++//! the node's real fan-out: `handle_broadcast_state_change` (what the
++//! executor's `BroadcastStateChange` reaches after a PUT or UPDATE commits),
++//! its co-host target selection, the broadcast queue workers and
++//! `broadcast_to_single_peer`.
++//!
++//! Each case runs on one current-thread runtime, so every allocation of the
++//! fan-out lands on the measuring thread (`util::alloc_count`), counted at the
++//! jemalloc size class it would be served from. The state is allocated before
++//! the measurement and shared, as a node's stored state is, so a peak excludes
++//! that one copy. Memory the contract executor uses for real summarize and
++//! delta calls (WASM linear memory, on its own threads) is not modelled: the
++//! stand-in contract below runs on the measuring thread and allocates only the
++//! delta it returns.
++//!
++//! Every co-host has a cached summary that differs from ours, so the queue
++//! predicts a small delta for each, and the stand-in contract returns a delta
++//! of the size each case sets: for a contract new to the receivers that is
++//! about the size of the state.
++//!
++//! The stand-in transport keeps every payload it is handed:
++//! - a stream for `TRANSFER` of virtual time, longer than
++//!   `STREAM_PERMIT_HOLD`, as a slow uplink would, then drops its bytes and
++//!   reports delivery. A stream gives its lane permit back at the hold, so its
++//!   buffer stays resident outside the lane for the rest of the transfer;
++//! - an inline message until every target's leg has reached the transport, so
++//!   a case that sends inline measures all of them resident at once rather
++//!   than however many happened to overlap.
++
++use std::net::SocketAddr;
++use std::sync::Arc;
++use std::time::Duration;
++
++use freenet_stdlib::prelude::{
++    CodeHash, ContractInstanceId, ContractKey, StateDelta, StateSummary, WrappedState,
++};
++
++use super::{P2pBridgeEvent, P2pConnManager};
++use crate::contract::{ContractHandlerEvent, StoreResponse};
++use crate::message::{NetMessage, NetMessageV1};
++use crate::operations::update::{BroadcastStreamingPayload, UpdateMsg};
++use crate::ring::PeerKey;
++use crate::ring::interest::SummaryPopulationSource;
++use crate::transport::{StreamSendOutcome, TransportPublicKey};
++use crate::util::alloc_count::{allocated_by, jemalloc_class, peak_delta};
++
++const STATE_LEN: usize = 30 * 1024 * 1024;
++const TARGETS: u8 = 20;
++/// Longer than `STREAM_PERMIT_HOLD` (120 s), so each stream's buffer outlives
++/// the permit that admitted it and another leg builds its buffer meanwhile.
++const TRANSFER: Duration = Duration::from_secs(150);
++/// The default `streaming-threshold`; [`fan_out`] asserts the node uses it.
++const STREAMING_THRESHOLD: usize = 64 * 1024;
++const OUR_SUMMARY: &[u8] = &[0xA0];
++const THEIR_SUMMARY: &[u8] = &[0xB0];
++
++/// What one fan-out case observed.
++struct Fanout {
++    /// Peak live bytes above the shared state, in jemalloc size classes.
++    peak: isize,
++    /// Every byte allocated on the measuring thread during the fan-out,
++    /// freed or not. A floor on it shows the counter saw the fan-out at all.
++    allocated: usize,
++    streams: usize,
++    inline: usize,
++    /// Streams whose bytes were not exactly the bincode of
++    /// `BroadcastStreamingPayload { stored state, OUR_SUMMARY }`.
++    malformed_streams: usize,
++}
++
++/// Fan a `STATE_LEN` state out to `TARGETS` co-hosts whose deltas the
++/// stand-in contract computes as `delta_bytes` long.
++fn fan_out(id: &str, delta_bytes: usize) -> Fanout {
++    let rt = tokio::runtime::Builder::new_current_thread()
++        .enable_all()
++        .build()
++        .expect("runtime");
++    let state = WrappedState::new(vec![0x5A; STATE_LEN]);
++    let (mut mgr, op_manager, key, handler) = rt.block_on(node(id, state.clone(), delta_bytes));
++    assert_eq!(
++        op_manager.streaming_threshold, STREAMING_THRESHOLD,
++        "the threshold cases below are written against the default"
++    );
++    // What a correct stream carries, built before the measurement so it adds
++    // nothing to the peak.
++    let expected_stream = bincode::serialize(&BroadcastStreamingPayload {
++        state_bytes: state.as_ref().to_vec(),
++        sender_summary_bytes: OUR_SUMMARY.to_vec(),
++    })
++    .expect("serialize");
++
++    let ((observed, allocated), _, peak) = peak_delta(|| {
++        allocated_by(|| {
++            rt.block_on(async {
++                // Virtual time from here: the node is built, and nothing below
++                // waits on I/O, so a 150 s transfer costs no wall time. The
++                // clock is driven explicitly (see `drive_clock`), because the
++                // node keeps a task runnable and tokio only auto-advances a
++                // paused clock when every task is idle.
++                tokio::time::pause();
++                let fan_out = async {
++                    let workers = mgr
++      
+```
+
+**File**: `crates/core/src/operations/update.rs` (modified, +44/-1)
+```diff
+@@ -15,7 +15,9 @@ pub(crate) mod propagation_stats;
+ 
+ use freenet_stdlib::prelude::*;
+ 
+-pub(crate) use self::messages::{BroadcastStreamingPayload, UpdateMsg, UpdateStreamingPayload};
++pub(crate) use self::messages::{
++    BroadcastStreamingPayload, BroadcastStreamingPayloadRef, UpdateMsg, UpdateStreamingPayload,
++};
+ use super::OpError;
+ use crate::contract::{ContractHandlerEvent, ExecutorError, StoreResponse};
+ use crate::message::{NodeEvent, Transaction};
+@@ -1648,6 +1650,18 @@ mod messages {
+         pub sender_summary_bytes: Vec<u8>,
+     }
+ 
++    /// The sender's borrowed form of [`BroadcastStreamingPayload`].
++    ///
++    /// Serializes to the same bytes (serde writes a `&[u8]` and a `Vec<u8>` the
++    /// same way), so a sender can serialize from a state it shares with other
++    /// broadcast legs without first copying it into a `Vec`. Pinned by
++    /// `broadcast_streaming_payload_ref_serializes_like_the_owned_payload`.
++    #[derive(Serialize)]
++    pub(crate) struct BroadcastStreamingPayloadRef<'a> {
++        pub state_bytes: &'a [u8],
++        pub sender_summary_bytes: &'a [u8],
++    }
++
+     #[derive(Debug, Serialize, Deserialize, Clone)]
+     /// Update operation messages.
+     ///
+@@ -1824,6 +1838,35 @@ mod tests {
+     use super::*;
+     use crate::operations::test_utils::make_contract_key;
+ 
++    /// The borrowed payload a broadcast sender serializes must decode as the
++    /// owned payload a receiver deserializes, byte for byte, including the
++    /// empty summary a sender without one sends.
++    #[test]
++    fn broadcast_streaming_payload_ref_serializes_like_the_owned_payload() {
++        for (state, summary) in [
++            (vec![1u8, 2, 3, 250], vec![9u8, 8]),
++            (vec![0u8; 70_000], Vec::new()),
++            (Vec::new(), Vec::new()),
++        ] {
++            let borrowed = bincode::serialize(&BroadcastStreamingPayloadRef {
++                state_bytes: &state,
++                sender_summary_bytes: &summary,
++            })
++            .unwrap();
++            let owned = bincode::serialize(&BroadcastStreamingPayload {
++                state_bytes: state.clone(),
++                sender_summary_bytes: summary.clone(),
++            })
++            .unwrap();
++            assert_eq!(borrowed, owned);
++            let decoded: BroadcastStreamingPayload = bincode::deserialize(&borrowed).unwrap();
++            assert_eq!(
++                (decoded.state_bytes, decoded.sender_summary_bytes),
++                (state, summary)
++            );
++        }
++    }
++
+     /// Wire-compatibility guard for #5147, in two independent halves.
+     ///
+     /// Appending `BroadcastToV2` / `BroadcastToStreamingV2` must not renumber
+```
+
+**File**: `crates/core/src/ring.rs` (modified, +7/-0)
+```diff
+@@ -5021,6 +5021,13 @@ impl Ring {
+         self.hosting_manager.disk_usage_stats()
+     }
+ 
++    /// The size of `contract`'s stored state at its last committed write, if
++    /// the disk tracker has recorded it. See
++    /// `HostingManager::committed_state_size`.
++    pub(crate) fn committed_state_size(&self, contract: &ContractKey) -> Option<u64> {
++        self.hosting_manager.committed_state_size(contract)
++    }
++
+     pub(crate) fn commit_state_write(&self, contract: &ContractKey, state_size: usize) {
+         let new_gen = self.hosting_manager.bump_state_generation(contract);
+         self.hosting_manager
+```
+
+**File**: `crates/core/src/ring/hosting.rs` (modified, +10/-0)
+```diff
+@@ -1192,6 +1192,16 @@ impl HostingManager {
+         }
+     }
+ 
++    /// The size of `key`'s state at its last committed write, from the disk
++    /// tracker. `None` before the tracker is installed or when no write or
++    /// seed has recorded it.
++    pub(crate) fn committed_state_size(&self, key: &ContractKey) -> Option<u64> {
++        self.disk_tracker
++            .read()
++            .as_ref()
++            .and_then(|tracker| tracker.committed_state_size(key))
++    }
++
+     /// Apply a state-write delta to the disk tracker at a state-write chokepoint.
+     /// Wired from `Ring::commit_state_write` (the single infallible post-write
+     /// funnel for all four executor chokepoints), so
+```
+
+**File**: `crates/core/src/ring/hosting/disk_usage.rs` (modified, +6/-0)
+```diff
+@@ -444,6 +444,12 @@ impl DiskUsageTracker {
+         self.refresh_webapp_cache();
+     }
+ 
++    /// The size last recorded for `key` by [`Self::record_state_write`] (or
++    /// the seed), or `None` if none is recorded.
++    pub(crate) fn committed_state_size(&self, key: &ContractKey) -> Option<u64> {
++        self.state_sizes.lock().get(key)
++    }
++
+     /// Apply a state-write at a chokepoint: set `key`'s tracked size to
+     /// `new_size` and adjust `state_bytes` by the signed delta against the
+     /// previous size for that key (0 if unseen).
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #6258** (2026-11-17): test(quic): pin the crash-breaker marker lock and correct its doc (@sanity)
-- **PR #6257** (2026-11-17): feat(telemetry): per-path QUIC srtt and send-rate bucket gauges in the transport snapshot (@sanity)
-- **PR #6256** (2026-11-17): fix(quic): keep a Windows endpoint-death record past the short-run clear (@sanity)
-- **PR #6255** (2026-11-17): fix(connect): one survivor rule for native and UDP connections to one peer (gates 18-19) (@sanity)
-- **PR #6254** (2026-11-17): fix(telemetry): fill peer_startup's commit and report auto-update state (#5975) (@sanity)
-- **PR #6253** (2026-11-17): fix(connect): native dial timing gates, a NAT model, and UDP dials beside native ones (@sanity)
+- **PR #6271** (2026-11-18): fix: run initiate_buffer and instance setup under the guest backstop (@sanity)
+- **PR #6269** (2026-11-18): fix(transport): keep transport-internal stream ids below the caller-named bit (@sanity)
+- **PR #6267** (2026-11-18): test(server): pin Host refusal on the permission event stream (@sanity)
+- **PR #6266** (2026-11-18): fix(broadcast): bound memory when broadcasting large contract states (@sanity)
+- **PR #6265** (2026-11-17): feat(telemetry): a native_setup_outcome event per native setup at each end (gate 22) (@sanity)
+- **PR #6262** (2026-11-17): fix(quic): breaker review carry-overs from #6259 (@sanity)
 
 ---
 
@@ -2535,52 +2659,65 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. test(quic): pin the crash-breaker marker lock and correct its doc
+## X. run initiate_buffer and instance setup under the guest backstop
 
 **RULE**:
-When implementing operations in `crates/core/src/transport/quic/breaker.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in freenet/freenet-core. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.claude/rules/contracts.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in freenet/freenet-core. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `01e05980`: test(quic): pin the crash-breaker marker lock and correct its doc. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0515d873`: run initiate_buffer and instance setup under the guest backstop. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/core/src/transport/quic/breaker.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/rules/contracts.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-/// Orders exactly two writers of this run's marker: the Windows short-run
-/// clear (`short_runs::clear_short_run`) and the endpoint-death record
-/// ([`note_endpoint_down_exit_with`]). Each holds it across its
-/// read-and-change, so in either order the death record survives: a clear
-/// that comes first is followed by the record written again, and a record
-/// written first makes the clear leave the marker. Pinned by
-/// `the_marker_update_lock_is_taken_by_the_clear_and_the_record`.
-///
-/// The other writers do not take it, and it does not order them:
-/// - arming ([`arm`]) runs under [`PENDING`], as does the record of a death
-///   before arming, so those two are ordered by that lock instead, and the
-///   clear timer starts only after arming;
-/// - the Windows panic hook (`short_runs::mark_quic_panic`) takes no lock,
-///   since it runs inside a panic. A caught socket-adapter panic marks the
-///   marker before the endpoint goes down, so its write lands before the
-///   death record; an unrelated QUIC panic on another thread at the same
-///   moment could overwrite the record, which then costs one free restart;
-/// - a clean exit's removal ([`clear_if_owned`]) does not run on 
+All guest entry points, including the allocator export and instance setup
+(module start function and `__frnt_set_id`), run under the wall-clock backstop
+and panic capture: on a blocking-pool thread (a plain thread on a
+`current_thread` runtime), with a host-side panic returned as an `Err`. The
+typed calls share ONE body, `call_typed_blocking` in
+`engine/wasmtime_engine.rs`; instance setup runs as one job of its own, whose
+wall-clock bound allows each of its two entries its own budget. Nothing should
+reintroduce a per-entry-point copy or an inline guest call.
+initiate_buffer()         — allocator export, contracts and delegates
+        ↓ all four
+call_typed_blocking()     — execute_wasm_blocking
+
+create_instance()         — module start function + __frnt_set_id
+        ↓ one job
+execute_wasm_blocking_within() — wall-clock backstop + panic capture
+`call_void` is the one inline entry left, and only a test calls it.
+
+  `GuestDelegateInstance`, not on the caller's. The allocator export gets no
+  `GuestDelegateInstance` (it is called with `delegate_instance: None`), so a
+  delegate's allocator cannot reach the delegate host functions. It has no use
+  for them.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-/// Held across each read-and-change of this run's marker by the Windows
-/// short-run clear ([`short_runs`]) and by [`note_endpoint_down_exit`], so
-/// in either order the death record survives: a clear that comes first is
-/// followed by the record written again, and a record written first makes
-/// the clear leave the marker.
+All three guest entry points share ONE body, `call_typed_blocking` in
+`engine/wasmtime_engine.rs`. Delegates ran "sync, on the calling thread" until
+#5480; they no longer do, and nothing should reintroduce a per-entry-point copy.
+        ↓ all three
+call_typed_blocking()     — spawn_blocking + wall-clock backstop + panic capture
+  `GuestDelegateInstance`, not on the caller's.
+
+  Scope that to `process()` and no further. Buffer setup and instantiation —
+  `initiate_buffer`, `call_void`, `instantiate_and_init` — still enter the guest
+  with `block_on_async(func.call_async(...))` INLINE on the calling thread, with
+  no `execute_wasm_blocking` and no `GuestDelegateInstance`. That is why
+  `exec_inbound_with_env` still sets `CURRENT_DELEGATE_INSTANCE` on the calling
+  thread at all, as `DelegateEnvGuard`'s rustdoc explains. "Nothing
+  delegate-related runs on the calling thread" is false and would produce a wrong
+  call about exactly those paths.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `01e05980` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0515d873` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

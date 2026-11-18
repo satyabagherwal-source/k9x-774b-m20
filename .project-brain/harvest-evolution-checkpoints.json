@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T02:42:50.286Z",
+  "last_updated": "2026-11-18T02:51:32.638Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-18T00:27:32.940Z",
@@ -603,7 +603,7 @@
       "staged_for_review": 1
     },
     "freenet-freenet-core-learnings.md": {
-      "processed_at": "2026-11-17T15:51:40.997Z",
+      "processed_at": "2026-11-18T02:51:32.020Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -783,7 +783,7 @@
       "staged_for_review": 1
     },
     "koderover-zadig-learnings.md": {
-      "processed_at": "2026-11-17T03:58:07.809Z",
+      "processed_at": "2026-11-18T02:51:31.296Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1908,8 +1908,8 @@
       "staged_for_review": 1
     },
     "hf-comfy-org-wan-2.2-learnings.md": {
-      "processed_at": "2026-11-13T15:19:16.383Z",
-      "promoted_canonical": 1,
+      "processed_at": "2026-11-18T02:51:30.931Z",
+      "promoted_canonical": 0,
       "staged_for_review": 0
     },
     "electron-electron-learnings.md": {
@@ -3368,7 +3368,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 1770,
+  "total_dossiers_evaluated": 1773,
   "total_canonical_promoted": 333,
-  "total_staged_for_review": 1373
+  "total_staged_for_review": 1375
 }

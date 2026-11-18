@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-18T02:42:50.061Z",
+  "last_updated": "2026-11-18T02:51:32.374Z",
   "total_records": 1745,
   "domains": {
     "A": {
@@ -7605,8 +7605,8 @@
       "title": "Research & Knowledge Intelligence: Comfy-Org/Wan-2.2 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-comfy-org-wan-2-2-research-knowledge-intelligence-comfy-org-wan-2-2-core-inva.md",
       "repository": "Comfy-Org/Wan-2.2",
-      "content_hash": "ca6d0b575ba26ab555ee4be708145bc052ec5ee86bd0853811d2ad6cdae6db88",
-      "created_at": "2026-11-13T15:18:24.716Z"
+      "content_hash": "3b7bf9a991c072df7345739e6a628c71d57bc399916cb4a66b8845619031954b",
+      "created_at": "2026-11-18T02:51:15.207Z"
     },
     "domain_intelligence-architecture-intelligence-electron-electron-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-electron-electron-core-invariants",
@@ -7692,8 +7692,8 @@
       "title": "Research & Knowledge Intelligence: hf-comfy-org-wan-2.2-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-comfy-org-wan-2-2-learnings-research-knowledge-intelligence-hf-comfy-org-wan-.md",
       "repository": "hf-comfy-org-wan-2.2-learnings",
-      "content_hash": "4b5aa898716f0c22c6e5b437524226c37742c462e2889b6bfdd62ceab3615537",
-      "created_at": "2026-11-13T15:19:16.538Z"
+      "content_hash": "4a2ac67b134de3633a5ad44170c96e8b62d281ae59319b978ca6d6ada34abd97",
+      "created_at": "2026-11-18T02:51:31.135Z"
     },
     "domain_intelligence-architecture-intelligence-electron-electron-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-electron-electron-learnings-core-invariants",
@@ -9111,8 +9111,8 @@
       "title": "Technical Construction Intelligence: freenet/freenet-core Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-freenet-freenet-core-technical-construction-intelligence-freenet-freenet-core-co.md",
       "repository": "freenet/freenet-core",
-      "content_hash": "ad2ad389ea51081ba7ae04c61dac0a26d951a3fd22375acf618966e600186b9c",
-      "created_at": "2026-11-17T19:45:01.388Z"
+      "content_hash": "ffd33a0cc40f4086502b1431e78c273620848e1831f5eadcd29a8407208c2467",
+      "created_at": "2026-11-18T02:51:27.974Z"
     },
     "domain_intelligence-research-knowledge-intelligence-topoteretes-cognee-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-topoteretes-cognee-core-invariants",
@@ -9189,8 +9189,8 @@
       "title": "Technical Construction Intelligence: freenet-freenet-core-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-freenet-freenet-core-learnings-technical-construction-intelligence-freenet-freen.md",
       "repository": "freenet-freenet-core-learnings",
-      "content_hash": "5b3184e9df02ccf1f98d277ae60dc98116deee62db08d421366139bad9d05cc2",
-      "created_at": "2026-11-17T15:51:41.316Z"
+      "content_hash": "3ae7ebadaec372eaa501ec9f9d195ba1a51d35170ebdaafe3db2f721643bc48d",
+      "created_at": "2026-11-18T02:51:32.374Z"
     },
     "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-c": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-c",
@@ -25379,8 +25379,8 @@
       "title": "Technical Construction Intelligence: koderover/zadig Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-koderover-zadig-technical-construction-intelligence-koderover-zadig-core-invaria.md",
       "repository": "koderover/zadig",
-      "content_hash": "8612301bac90e683c208713345645df6fd6ab3c00d2345f4cc2d81fc38493b16",
-      "created_at": "2026-11-17T03:58:00.400Z"
+      "content_hash": "acdeb6381dbb03e0e1cea0796ad8cb7926d3d71450501f3b8b76280297dcfd08",
+      "created_at": "2026-11-18T02:51:25.992Z"
     },
     "domain_intelligence-architecture-intelligence-solidjs-solid-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-solidjs-solid-learnings-core-invariants",
@@ -25406,8 +25406,8 @@
       "title": "Technical Construction Intelligence: koderover-zadig-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-koderover-zadig-learnings-technical-construction-intelligence-koderover-zadig-le.md",
       "repository": "koderover-zadig-learnings",
-      "content_hash": "cf7201c432bb7c39f7f4c294c8cdab573cbc98da8dfaf31c3b4fea36e0c8b704",
-      "created_at": "2026-11-17T03:58:08.202Z"
+      "content_hash": "02dad1ced52738c6b7f627a71eec5ed6c7122b41e54788f02d2515a161f2a5b4",
+      "created_at": "2026-11-18T02:51:31.701Z"
     },
     "domain_intelligence-technical-construction-intelligence-vitejs-vite-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-vitejs-vite-core-invariants",

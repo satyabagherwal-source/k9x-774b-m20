@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/Comfy-Org/Wan-2.2",
   "source_version": "hf-comfy-org-wan-2.2",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T15:18:24.716Z",
+  "timestamp": "2026-11-18T02:51:15.206Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-comfy-org-wan-2-2",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [Comfy-Org/Wan-2.2](https://huggingface.co/Comfy-Org/Wan-2.2) (Revision: `hf-comfy-o`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T15:18:24.716Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-18T02:51:15.206Z`  
 > **Learning ID**: `learn-huggingface-comfy-org-wan-2-2`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-comfy-org-wan-2.2-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/Comfy-Org/Wan-2.2](https://huggingface.co/Comfy-Org/Wan-2.2))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T15:18:24.138Z  
+> **Harvest Timestamp**: 2026-11-18T02:51:14.379Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: image-to-video
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 9743506 downloads | 1021 likes
+- **Stars / Engagement**: 9825742 downloads | 1038 likes
 
 ---
 

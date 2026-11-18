@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T02:42:45.678Z",
-  "total_cycles_completed": 10326,
-  "total_learnings_persisted": 10326,
-  "total_rules_promoted": 9857,
+  "last_updated": "2026-11-18T02:51:27.614Z",
+  "total_cycles_completed": 10329,
+  "total_learnings_persisted": 10329,
+  "total_rules_promoted": 9859,
   "history": [
-    {
-      "timestamp": "2026-11-17T14:41:22.373Z",
-      "repository": "Comfy-Org/MOSS-Image",
-      "learningId": "learn-huggingface-comfy-org-moss-image",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T14:41:26.519Z",
-      "repository": "dragonflydb/dragonfly",
-      "learningId": "learn-github-dragonflydb-dragonfly",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T14:49:49.632Z",
-      "repository": "Comfy-Org/Z-Image-Turbo",
-      "learningId": "learn-huggingface-comfy-org-z_image_turbo",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-17T14:50:01.854Z",
       "repository": "nolabs-ai/nono",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-18T02:42:45.678Z",
       "repository": "aleo-labs-protocol/snarkOS",
       "learningId": "learn-github-aleo-labs-protocol-snarkos",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T02:51:15.023Z",
+      "repository": "Comfy-Org/Wan-2.2",
+      "learningId": "learn-huggingface-comfy-org-wan-2-2",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T02:51:25.662Z",
+      "repository": "koderover/zadig",
+      "learningId": "learn-github-koderover-zadig",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T02:51:27.614Z",
+      "repository": "freenet/freenet-core",
+      "learningId": "learn-github-freenet-freenet-core",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

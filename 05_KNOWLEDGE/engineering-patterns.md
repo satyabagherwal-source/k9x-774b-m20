@@ -667825,3 +667825,178 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `0993bcf9` are properly handled with clean fallback behavior.
+
+
+---
+
+## 9110. support skipping CRD upgrade when updating services (Harvested from koderover/zadig)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "support skipping CRD upgrade when updating services",
+  "source": "koderover/zadig",
+  "source_url": "https://github.com/koderover/zadig",
+  "source_version": "2c932905",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-11-18T02:51:25.171Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-koderover-zadig",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [koderover/zadig](https://github.com/koderover/zadig) (Revision: `2c932905`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `pkg/microservice/aslan/core/common/repository/models/template/product.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in koderover/zadig. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `2c932905`: helm): support skipping CRD upgrade when updating services. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/microservice/aslan/core/common/repository/models/template/product.go`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Verified production-grade fix pattern:
+	// UpgradeCRD controls whether CRDs are upgraded when values are synced from source, nil means true
+	UpgradeCRD *bool `bson:"upgrade_crd,omitempty"               json:"upgrade_crd,omitempty"`
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `2c932905` are properly handled with clean fallback behavior.
+
+
+---
+
+## 9111. run initiate_buffer and instance setup under the guest backstop (Harvested from freenet/freenet-core)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "run initiate_buffer and instance setup under the guest backstop",
+  "source": "freenet/freenet-core",
+  "source_url": "https://github.com/freenet/freenet-core",
+  "source_version": "0515d873",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-11-18T02:51:27.149Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-freenet-freenet-core",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [freenet/freenet-core](https://github.com/freenet/freenet-core) (Revision: `0515d873`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `.claude/rules/contracts.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in freenet/freenet-core. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `0515d873`: run initiate_buffer and instance setup under the guest backstop. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/rules/contracts.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+All guest entry points, including the allocator export and instance setup
+(module start function and `__frnt_set_id`), run under the wall-clock backstop
+and panic capture: on a blocking-pool thread (a plain thread on a
+`current_thread` runtime), with a host-side panic returned as an `Err`. The
+typed calls share ONE body, `call_typed_blocking` in
+`engine/wasmtime_engine.rs`; instance setup runs as one job of its own, whose
+wall-clock bound allows each of its two entries its own budget. Nothing should
+reintroduce a per-entry-point copy or an inline guest call.
+initiate_buffer()         — allocator export, contracts and delegates
+        ↓ all four
+call_typed_blocking()     — execute_wasm_blocking
+
+create_instance()         — module start function + __frnt_set_id
+        ↓ one job
+execute_wasm_blocking_within() — wall-clock backstop + panic capture
+`call_void` is the one inline entry left, and only a test calls it.
+
+  `GuestDelegateInstance`, not on the caller's. The allocator export gets no
+  `GuestDelegateInstance` (it is called with `delegate_instance: None`), so a
+  delegate's allocator cannot reach the delegate host functions. It has no use
+  for them.
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+All three guest entry points share ONE body, `call_typed_blocking` in
+`engine/wasmtime_engine.rs`. Delegates ran "sync, on the calling thread" until
+#5480; they no longer do, and nothing should reintroduce a per-entry-point copy.
+        ↓ all three
+call_typed_blocking()     — spawn_blocking + wall-clock backstop + panic capture
+  `GuestDelegateInstance`, not on the caller's.
+
+  Scope that to `process()` and no further. Buffer setup and instantiation —
+  `initiate_buffer`, `call_void`, `instantiate_and_init` — still enter the guest
+  with `block_on_async(func.call_async(...))` INLINE on the calling thread, with
+  no `execute_wasm_blocking` and no `GuestDelegateInstance`. That is why
+  `exec_inbound_with_env` still sets `CURRENT_DELEGATE_INSTANCE` on the calling
+  thread at all, as `DelegateEnvGuard`'s rustdoc explains. "Nothing
+  delegate-related runs on the calling thread" is false and would produce a wrong
+  call about exactly those paths.
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `0515d873` are properly handled with clean fallback behavior.

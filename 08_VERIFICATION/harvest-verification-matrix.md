@@ -10781,3 +10781,6 @@
 | `CYCLE-20261118-NBMJ` | `2026-11-18T02:42:35.803Z` | `SupersonicLabs/Julia-1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-supersoniclabs-julia-1-learnings.md` | Yes (`4f5bb37b...`) |
 | `CYCLE-20261118-NH37` | `2026-11-18T02:42:42.883Z` | `PeerDB-io/peerdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9109` | Yes (`a107ca5a...`) |
 | `CYCLE-20261118-NJ8M` | `2026-11-18T02:42:45.670Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8012` | Yes (`b2d7e0d9...`) |
+| `CYCLE-20261118-YG92` | `2026-11-18T02:51:15.014Z` | `Comfy-Org/Wan-2.2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-comfy-org-wan-2.2-learnings.md` | Yes (`8fb992a5...`) |
+| `CYCLE-20261118-YOGL` | `2026-11-18T02:51:25.653Z` | `koderover/zadig` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9110` | Yes (`57a58c4c...`) |
+| `CYCLE-20261118-YPYT` | `2026-11-18T02:51:27.605Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9111` | Yes (`e8671784...`) |

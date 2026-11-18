@@ -10814,3 +10814,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-supersoniclabs-julia-1` | `https://huggingface.co/SupersonicLabs/Julia-1` | `hf-superso` | Multi-dimensional audit evidence | 2026-11-18T02:42:35.807Z |
 | `learn-github-peerdb-io-peerdb` | `https://github.com/PeerDB-io/peerdb` | `5868e6e7` | Multi-dimensional audit evidence | 2026-11-18T02:42:42.887Z |
 | `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/ProvableHQ/snarkOS` | `497534cd` | Multi-dimensional audit evidence | 2026-11-18T02:42:45.673Z |
+| `learn-huggingface-comfy-org-wan-2-2` | `https://huggingface.co/Comfy-Org/Wan-2.2` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-11-18T02:51:15.018Z |
+| `learn-github-koderover-zadig` | `https://github.com/koderover/zadig` | `2c932905` | Multi-dimensional audit evidence | 2026-11-18T02:51:25.657Z |
+| `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `0515d873` | Multi-dimensional audit evidence | 2026-11-18T02:51:27.609Z |

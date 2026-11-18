@@ -2853,10 +2853,10 @@
     "repository": "freenet/freenet-core",
     "platform": "github",
     "sourceUrl": "https://github.com/freenet/freenet-core",
-    "sourceVersion": "3bd9f72f",
+    "sourceVersion": "0515d873",
     "license": "NOASSERTION",
-    "contentHash": "b3c856d1e0d5a83e8a720cf40b3a9b3d075abc5668c7c7d9c48cb594fed68dc4",
-    "lastHarvestedAt": "2026-11-17T19:45:01.097Z",
+    "contentHash": "e86717841c864daf12d2385ff22f41ebe445981ec34519dc8f3a88c452b63cbe",
+    "lastHarvestedAt": "2026-11-18T02:51:27.609Z",
     "learningId": "learn-github-freenet-freenet-core"
   },
   "vearch-vearch": {
@@ -3633,10 +3633,10 @@
     "repository": "koderover/zadig",
     "platform": "github",
     "sourceUrl": "https://github.com/koderover/zadig",
-    "sourceVersion": "29b826e4",
+    "sourceVersion": "2c932905",
     "license": "NOASSERTION",
-    "contentHash": "8b4f6e71e9ecd0702c1f8db3bcdc10d6ad9bd9578f4cbe45aa82cddf196d95e7",
-    "lastHarvestedAt": "2026-11-17T03:58:00.092Z",
+    "contentHash": "57a58c4c06f9b0539dbe6b9d3c8890e3d0f72f5052b45faf16bb1a466d63481b",
+    "lastHarvestedAt": "2026-11-18T02:51:25.657Z",
     "learningId": "learn-github-koderover-zadig"
   },
   "trufflesecurity-trufflehog": {
@@ -11625,8 +11625,8 @@
     "sourceUrl": "https://huggingface.co/Comfy-Org/Wan-2.2",
     "sourceVersion": "hf-comfy-org-wan-2.2",
     "license": "Open-Source",
-    "contentHash": "d7d7e794f0f7cc2831e56d2800bf81bb11a18a3d8a473109fdd982c0532a012a",
-    "lastHarvestedAt": "2026-11-13T15:18:24.575Z",
+    "contentHash": "8fb992a5e474068d98c3acb4542787e58c24d4dccfae4449feac7a4952515bdd",
+    "lastHarvestedAt": "2026-11-18T02:51:15.018Z",
     "learningId": "learn-huggingface-comfy-org-wan-2-2"
   },
   "vercel-labs-agent-desktop": {

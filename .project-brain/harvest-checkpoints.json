@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-18T02:42:45.681Z",
+  "last_updated": "2026-11-18T02:51:27.618Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -4416,14 +4416,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-freenet-freenet-core",
-      "content_hash": "b3c856d1e0d5a83e8a720cf40b3a9b3d075abc5668c7c7d9c48cb594fed68dc4",
-      "verified_at": "2026-11-17T19:45:01.104Z",
+      "content_hash": "e86717841c864daf12d2385ff22f41ebe445981ec34519dc8f3a88c452b63cbe",
+      "verified_at": "2026-11-18T02:51:27.617Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T19:45:01.104Z"
+      "last_updated": "2026-11-18T02:51:27.617Z"
     },
     "vearch/vearch": {
       "repository": "vearch/vearch",
@@ -5571,14 +5571,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-koderover-zadig",
-      "content_hash": "8b4f6e71e9ecd0702c1f8db3bcdc10d6ad9bd9578f4cbe45aa82cddf196d95e7",
-      "verified_at": "2026-11-17T03:58:00.101Z",
+      "content_hash": "57a58c4c06f9b0539dbe6b9d3c8890e3d0f72f5052b45faf16bb1a466d63481b",
+      "verified_at": "2026-11-18T02:51:25.666Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T03:58:00.101Z"
+      "last_updated": "2026-11-18T02:51:25.666Z"
     },
     "trufflesecurity/trufflehog": {
       "repository": "trufflesecurity/trufflehog",
@@ -17496,14 +17496,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-comfy-org-wan-2-2",
-      "content_hash": "d7d7e794f0f7cc2831e56d2800bf81bb11a18a3d8a473109fdd982c0532a012a",
-      "verified_at": "2026-11-13T15:18:24.582Z",
+      "content_hash": "8fb992a5e474068d98c3acb4542787e58c24d4dccfae4449feac7a4952515bdd",
+      "verified_at": "2026-11-18T02:51:15.027Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T15:18:24.582Z"
+      "last_updated": "2026-11-18T02:51:15.027Z"
     },
     "vercel-labs/agent-desktop": {
       "repository": "vercel-labs/agent-desktop",
