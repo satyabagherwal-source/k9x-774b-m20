@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-18T14:48:48.389Z",
+  "last_updated": "2026-11-18T14:57:09.667Z",
   "total_verified_learnings": 9003,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 21323,
+  "total_items": 21328,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -114218,9 +114218,9 @@
       "title": "Research & Knowledge Intelligence: akatz-ai/MiniMax-H3-Character-Swap-LoRA Core Invariants",
       "repository": "akatz-ai/MiniMax-H3-Character-Swap-LoRA",
       "source_version": "hf-akatz-ai-minimax-h3-character-swap-lora",
-      "content_hash": "49ee40619ccc77066a0ad35f9121c26a7db07e929d7adb3b7be7e83ef393f4a2",
+      "content_hash": "a61a6c33d798defb656ac2840695a09302710a4a996d3885574767396c16ac74",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T05:27:40.887Z"
+      "persisted_at": "2026-11-18T14:56:51.731Z"
     },
     "candidate_directive-ecosystem-qa-redact-the-run-result-in-a-step-of-its-own-also-after-a-crash": {
       "item_id": "candidate_directive-ecosystem-qa-redact-the-run-result-in-a-step-of-its-own-also-after-a-crash",
@@ -114278,9 +114278,9 @@
       "title": "Research & Knowledge Intelligence: hf-akatz-ai-minimax-h3-character-swap-lora-learnings Core Invariants",
       "repository": "hf-akatz-ai-minimax-h3-character-swap-lora-learnings",
       "source_version": "HEAD",
-      "content_hash": "d8becec47734b472681199f8a7ac31dc41a8e91e74c7357d4178aab9bd9c5361",
+      "content_hash": "05c1215d9a7a9f04522b259fd96fe118e83ad8fd63a71090c6d3c8247d536350",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T05:36:04.055Z"
+      "persisted_at": "2026-11-18T14:57:07.772Z"
     },
     "domain_intelligence-technical-construction-intelligence-storybookjs-storybook-learnings-core-invaria": {
       "item_id": "domain_intelligence-technical-construction-intelligence-storybookjs-storybook-learnings-core-invaria",
@@ -262348,14 +262348,19 @@
       "slug": "karmada-io-karmada",
       "platform": "github",
       "source_url": "https://github.com/karmada-io/karmada",
-      "source_version": "a17d6e0a",
-      "content_hash": "382e5736c88ede1c56ecbd731d923782457eb5a6d859e6c4839a69f4daeccf2d",
+      "source_version": "12a8e01c",
+      "content_hash": "014721c6f6508fbdba8b08792f22c1bad015eca35fd39234fd40b985cf1f05d6",
       "dossier_path": "07_PROJECT_LEARNING/karmada-io-karmada-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/karmada-io-karmada-learnings.md",
       "promoted_rules": [
         {
           "number": 8830,
           "title": "build(deps): bump azure/setup-helm from 5.0.1 to 5.1.0",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9248,
+          "title": "allow initial cert provisioning on upgrade in auto cert mode",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -262364,7 +262369,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T01:34:01.208Z",
+      "verified_at": "2026-11-18T14:57:03.709Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -262418,10 +262423,10 @@
       "relative_path": "02_AGENT_INTELLIGENCE/karmada-io-karmada-agent-contract-karmada-io-karmada-autonomous-specialist-perso.md",
       "title": "Agent Contract: karmada-io/karmada Autonomous Specialist Persona",
       "repository": "karmada-io/karmada",
-      "source_version": "a17d6e0a",
-      "content_hash": "1ded553355b04477c3d484369a894914882020beb3a5852680c0304b5e7bf0db",
-      "domain_letter": "I",
-      "persisted_at": "2026-11-17T01:34:01.761Z"
+      "source_version": "12a8e01c",
+      "content_hash": "7d00fc640828faf1eeb345d7a2c1148bd26b9c87f4ce27d2785f0f55aa16ff75",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-18T14:57:04.523Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-karmada-io-karmada": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-karmada-io-karmada",
@@ -262430,10 +262435,10 @@
       "relative_path": "08_VERIFICATION/karmada-io-karmada-verification-protocol-empirical-defect-shield-for-karmada-io-.md",
       "title": "Verification Protocol: Empirical Defect Shield for karmada-io/karmada",
       "repository": "karmada-io/karmada",
-      "source_version": "a17d6e0a",
-      "content_hash": "834a88f86b39d1f80944707454f183dcd4036c83a90ef6c870dcb159db505b72",
+      "source_version": "12a8e01c",
+      "content_hash": "3e671952636123042694c2d5de26a9335725c8e088ebfae0d7352670683ae3d9",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T01:34:01.868Z"
+      "persisted_at": "2026-11-18T14:57:04.678Z"
     },
     "rule-8831": {
       "learning_id": "rule-8831",
@@ -262481,9 +262486,9 @@
       "title": "Agent Contract: karmada-io-karmada-learnings Autonomous Specialist Persona",
       "repository": "karmada-io-karmada-learnings",
       "source_version": "HEAD",
-      "content_hash": "3c508f669f64daca176ee72fc21cc03bb05f7a4ca2e2142c2f5937332e380c53",
-      "domain_letter": "I",
-      "persisted_at": "2026-11-17T01:34:13.691Z"
+      "content_hash": "4bc444b98d1a6bbdd3d6aeeae85423d2dd25212c15c3a348966abb2d5e5760e0",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-18T14:57:09.005Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-karmada-io-karmada-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-karmada-io-karmada-learnings",
@@ -262493,9 +262498,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for karmada-io-karmada-learnings",
       "repository": "karmada-io-karmada-learnings",
       "source_version": "HEAD",
-      "content_hash": "ebe2cf391d246f30bf2a6059c0138c7e6704e95fc1fb75743f6d92ae4b680845",
+      "content_hash": "ba4edb5c8b12b2f67297756b189a1213c09783134eff1c2b8f80dc9fa29cde20",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T01:34:13.793Z"
+      "persisted_at": "2026-11-18T14:57:09.164Z"
     },
     "learn-github-digitalbazaar-pyld": {
       "learning_id": "learn-github-digitalbazaar-pyld",
@@ -282119,7 +282124,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/akatz-ai/MiniMax-H3-Character-Swap-LoRA",
       "source_version": "hf-akatz-ai-minimax-h3-character-swap-lora",
-      "content_hash": "fb0c2d4485bcce354ea07941c54b5a2841a70fdd61b0291fb754b8c4afd39a42",
+      "content_hash": "b03275639391dd82384e34bea441b4e03dba5b822239747fabb31727e2b70a43",
       "dossier_path": "07_PROJECT_LEARNING/hf-akatz-ai-minimax-h3-character-swap-lora-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-akatz-ai-minimax-h3-character-swap-lora-learnings.md",
       "promoted_rules": [],
@@ -282128,7 +282133,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T05:27:40.462Z",
+      "verified_at": "2026-11-18T14:56:51.251Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -286456,9 +286461,9 @@
       "title": "Technical Construction Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "748152b76bbb94b4d22c3ee9a802fdd98e7f3ad9467755cf8af773e65cacabdc",
+      "content_hash": "2a164065acdab702024c992dbabe7f8902e038106c680d9a924d60fb81130237",
       "domain_letter": "H",
-      "persisted_at": "2026-11-18T14:32:21.061Z"
+      "persisted_at": "2026-11-18T14:57:09.667Z"
     },
     "learn-github-software-mansion-argent": {
       "learning_id": "learn-github-software-mansion-argent",
@@ -287746,6 +287751,68 @@
       "content_hash": "89a4eda404a3e50246c618a732ffe8c896447b015474a2ecd2b2e4683d6b03ae",
       "domain_letter": "I",
       "persisted_at": "2026-11-18T14:48:48.039Z"
+    },
+    "rule-9248": {
+      "learning_id": "rule-9248",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9248,
+      "title": "allow initial cert provisioning on upgrade in auto cert mode",
+      "source_url": "https://github.com/karmada-io/karmada",
+      "source_version": "12a8e01c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-18T14:57:03.709Z"
+    },
+    "candidate_directive-allow-initial-cert-provisioning-on-upgrade-in-auto-cert-mode": {
+      "item_id": "candidate_directive-allow-initial-cert-provisioning-on-upgrade-in-auto-cert-mode",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-VUZO-allow-initial-cert-provisioning-on-upgrade-in-auto-cert-mode.md",
+      "title": "allow initial cert provisioning on upgrade in auto cert mode",
+      "repository": "karmada-io/karmada",
+      "source_version": "12a8e01c",
+      "content_hash": "8792fa42de8f2b2f40c8caa5f788ee3694083822ca797233f71111aa2a4b13d9",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-18T14:57:04.170Z"
+    },
+    "domain_intelligence-architecture-intelligence-karmada-io-karmada-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-karmada-io-karmada-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-karmada-io-karmada-architecture-intelligence-karmada-io-karmada-core-invariants.md",
+      "title": "Architecture Intelligence: karmada-io/karmada Core Invariants",
+      "repository": "karmada-io/karmada",
+      "source_version": "12a8e01c",
+      "content_hash": "9af0c71f7d366e61482fd3e14078be0624a61679bbbc49f446aba48433b3dab4",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-18T14:57:04.349Z"
+    },
+    "candidate_directive-helm-allow-initial-cert-provisioning-on-upgrade-in-auto-cert-mode": {
+      "item_id": "candidate_directive-helm-allow-initial-cert-provisioning-on-upgrade-in-auto-cert-mode",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-VYG6-helm-allow-initial-cert-provisioning-on-upgrade-in-auto-cert-mode.md",
+      "title": "helm): allow initial cert provisioning on upgrade in auto cert mode",
+      "repository": "karmada-io-karmada-learnings",
+      "source_version": "HEAD",
+      "content_hash": "c5d63b9227a0927d053a5350e85e0b16c7c140d879b6deb6e24c288cf525f9db",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-18T14:57:08.651Z"
+    },
+    "domain_intelligence-architecture-intelligence-karmada-io-karmada-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-karmada-io-karmada-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-karmada-io-karmada-learnings-architecture-intelligence-karmada-io-karmada-learni.md",
+      "title": "Architecture Intelligence: karmada-io-karmada-learnings Core Invariants",
+      "repository": "karmada-io-karmada-learnings",
+      "source_version": "HEAD",
+      "content_hash": "30f5718ada17bdbad82386b870f4419aacdba7075d5fda8fc7d60afa6905e610",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-18T14:57:08.829Z"
     }
   },
   "ai-builder-brain": {

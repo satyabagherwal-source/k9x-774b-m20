@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T14:48:43.007Z",
-  "total_cycles_completed": 10535,
-  "total_learnings_persisted": 10535,
-  "total_rules_promoted": 10008,
+  "last_updated": "2026-11-18T14:57:03.938Z",
+  "total_cycles_completed": 10537,
+  "total_learnings_persisted": 10537,
+  "total_rules_promoted": 10009,
   "history": [
-    {
-      "timestamp": "2026-11-18T03:48:05.078Z",
-      "repository": "amir1376/ab-download-manager",
-      "learningId": "learn-github-amir1376-ab-download-manager",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-18T03:48:14.312Z",
-      "repository": "risingwavelabs/risingwave",
-      "learningId": "learn-github-risingwavelabs-risingwave",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-18T03:56:04.528Z",
       "repository": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-18T14:48:43.007Z",
       "repository": "nolabs-ai/nono",
       "learningId": "learn-github-nolabs-ai-nono",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T14:56:51.498Z",
+      "repository": "akatz-ai/MiniMax-H3-Character-Swap-LoRA",
+      "learningId": "learn-huggingface-akatz-ai-minimax-h3-character-swap-lora",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T14:57:03.938Z",
+      "repository": "karmada-io/karmada",
+      "learningId": "learn-github-karmada-io-karmada",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

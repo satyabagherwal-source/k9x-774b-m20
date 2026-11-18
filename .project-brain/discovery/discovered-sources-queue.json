@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-18T14:48:47.222Z",
+  "updated_at": "2026-11-18T14:57:08.414Z",
   "stats": {
-    "total_discovered": 5544,
-    "approved_pending_harvest": 5238,
+    "total_discovered": 5552,
+    "approved_pending_harvest": 5246,
     "harvested_count": 0,
     "rejected_count": 306,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 5221,
+      "COMMUNITY_AND_EXPERT": 5229,
       "OFFICIAL_DOCUMENTATION": 177,
       "STANDARDS_AND_SPECIFICATIONS": 110,
       "ENGINEERING_BLOGS": 4,
@@ -119847,6 +119847,182 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/invertase-react-native-firebase-learnings.md",
         "fileName": "invertase-react-native-firebase-learnings.md"
+      }
+    },
+    "SRC-DB3AFB27EFAC": {
+      "id": "SRC-DB3AFB27EFAC",
+      "url": "https://github.com/codecov/engineering-team/assets/152432831/e90313f4-9d3a-4b63-8b54-cfe14e7ec20d",
+      "title": "https://github.com/codecov/engineering-team/assets/152432831/e90313f4-9d3a-4b63-8b54-cfe14e7ec20d",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T14:57:08.077Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/karmada-io-karmada-learnings.md",
+        "fileName": "karmada-io-karmada-learnings.md"
+      }
+    },
+    "SRC-E65A5F4FC8E8": {
+      "id": "SRC-E65A5F4FC8E8",
+      "url": "https://app.codecov.io/gh/karmada-io/karmada/pull/8082?dropdown=coverage&src=pr&el=h1",
+      "title": "https://app.codecov.io/gh/karmada-io/karmada/pull/8082?dropdown=coverage&src=pr&el=h1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T14:57:08.124Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/karmada-io-karmada-learnings.md",
+        "fileName": "karmada-io-karmada-learnings.md"
+      }
+    },
+    "SRC-930EA427F6AE": {
+      "id": "SRC-930EA427F6AE",
+      "url": "https://app.codecov.io/gh/karmada-io/karmada/commit/758aeb182487444228f8657aed5d63e4e9d9dfd8?dropdown=coverage&el=desc",
+      "title": "https://app.codecov.io/gh/karmada-io/karmada/commit/758aeb182487444228f8657aed5d63e4e9d9dfd8?dropdown=coverage&el=desc",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T14:57:08.170Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/karmada-io-karmada-learnings.md",
+        "fileName": "karmada-io-karmada-learnings.md"
+      }
+    },
+    "SRC-82EA291B058B": {
+      "id": "SRC-82EA291B058B",
+      "url": "https://app.codecov.io/gh/karmada-io/karmada/commit/06bc3a2f24f971845004500025e7cd5e97d76cac?dropdown=coverage&el=desc",
+      "title": "https://app.codecov.io/gh/karmada-io/karmada/commit/06bc3a2f24f971845004500025e7cd5e97d76cac?dropdown=coverage&el=desc",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T14:57:08.215Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/karmada-io-karmada-learnings.md",
+        "fileName": "karmada-io-karmada-learnings.md"
+      }
+    },
+    "SRC-700BEAAFF5A8": {
+      "id": "SRC-700BEAAFF5A8",
+      "url": "https://app.codecov.io/gh/karmada-io/karmada/pull/8081?dropdown=coverage&src=pr&el=h1",
+      "title": "https://app.codecov.io/gh/karmada-io/karmada/pull/8081?dropdown=coverage&src=pr&el=h1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T14:57:08.266Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/karmada-io-karmada-learnings.md",
+        "fileName": "karmada-io-karmada-learnings.md"
+      }
+    },
+    "SRC-66308640D0F1": {
+      "id": "SRC-66308640D0F1",
+      "url": "https://app.codecov.io/gh/karmada-io/karmada/commit/6d63495bd99bbce8400f408c6daed3834bffa6c3?dropdown=coverage&el=desc",
+      "title": "https://app.codecov.io/gh/karmada-io/karmada/commit/6d63495bd99bbce8400f408c6daed3834bffa6c3?dropdown=coverage&el=desc",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T14:57:08.317Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/karmada-io-karmada-learnings.md",
+        "fileName": "karmada-io-karmada-learnings.md"
+      }
+    },
+    "SRC-2DB280115FD8": {
+      "id": "SRC-2DB280115FD8",
+      "url": "https://app.codecov.io/gh/karmada-io/karmada/commit/fc6d13ce27dac08b4fc7d72b96eacd9187e6fcfe?dropdown=coverage&el=desc",
+      "title": "https://app.codecov.io/gh/karmada-io/karmada/commit/fc6d13ce27dac08b4fc7d72b96eacd9187e6fcfe?dropdown=coverage&el=desc",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T14:57:08.368Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/karmada-io-karmada-learnings.md",
+        "fileName": "karmada-io-karmada-learnings.md"
+      }
+    },
+    "SRC-AA5FB953B9B0": {
+      "id": "SRC-AA5FB953B9B0",
+      "url": "https://github.com/karmada-io/karmada/blob/f2b734140bd0ba5fa399ffa1d08a3b31",
+      "title": "https://github.com/karmada-io/karmada/blob/f2b734140bd0ba5fa399ffa1d08a3b31",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T14:57:08.413Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/karmada-io-karmada-learnings.md",
+        "fileName": "karmada-io-karmada-learnings.md"
       }
     }
   }

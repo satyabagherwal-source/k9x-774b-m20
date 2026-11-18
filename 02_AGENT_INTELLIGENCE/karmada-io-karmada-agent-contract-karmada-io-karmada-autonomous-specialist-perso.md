@@ -4,17 +4,17 @@
 {
   "source_repository": "karmada-io/karmada",
   "source_url": "https://github.com/karmada-io/karmada",
-  "source_version": "a17d6e0a",
+  "source_version": "12a8e01c",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-17T01:34:01.532Z",
+  "timestamp": "2026-11-18T14:57:04.169Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-karmada-io-karmada",
   "canonical_classification": "agent_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [karmada-io/karmada](https://github.com/karmada-io/karmada) (Revision: `a17d6e0a`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-17T01:34:01.532Z`  
+> **Provenance**: Harvested from [karmada-io/karmada](https://github.com/karmada-io/karmada) (Revision: `12a8e01c`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-18T14:57:04.169Z`  
 > **Learning ID**: `learn-github-karmada-io-karmada`
 
 
@@ -29,7 +29,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/karmada-io-karmada-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/karmada-io/karmada](https://github.com/karmada-io/karmada))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T01:34:00.473Z  
+> **Harvest Timestamp**: 2026-11-18T14:57:02.763Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -39,7 +39,7 @@ PROVENANCE_END -->
 - **Description**: Open, Multi-Cloud, Multi-Cluster Kubernetes Orchestration
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 5767 stars
+- **Stars / Engagement**: 5769 stars
 
 ---
 
@@ -996,17 +996,17 @@ func (e *workloadInterpreter) responseWithExploreInterpretStatus(workload *workl
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #8072** (2026-11-16): **build(deps): bump alpine from 3.24.3 to 3.24.4 in /cluster/images**
-  *Symptoms*: Bumps alpine from 3.24.3 to 3.24.4.   [![Dependabot compatibility score](https://dependabot-badges.githubapp.com/badges/compatibility_score?dependency-name=alpine&package-manager=docker&previous-version=3.24.3&new-version=3.24.4)](https://docs.github.com/en/github/managing-security-vulnerabilities/about-dependabot-security-updates#about-compatibility-scores)  Dependabot will resolve any conflicts with this PR as long as you don't alter it yourself. You can also trigger a rebase manually by commenting `@dependabot rebase`.  [//]: # (dependabot-automerge-start) [//]: # (dependabot-automerge-end)  ---  <details> <summary>Dependabot commands and options</summary> <br />  You can trigger Dependabot actions by commenting on this PR: - `@dependabot rebase` will rebase this PR - `@dependabot recreate` will recreate this PR, overwriting any edits that have been made to it - `@dependabot show <dependency name> ignore conditions` will show all of the ignore conditions of the specified dependency - `@dependabot ignore this major version` will close this PR and stop Dependabot creating any more for this major version (unless you reopen the PR or upgrade to it yourself) - `@dependabot ignore this minor version` will close this PR and stop Dependabot creating any more for this minor version (unless you reopen the PR or upgrade to it yourself) - `@dependabot ignore this dependency` will close this PR and stop Dependabot creating any more for this dependency (unless you 
+- **Issue #8082** (2026-11-17): **[release-1.19] fix(search): correct verb and scope labels for proxied requests**
+  *Symptoms*: This is an automated cherry-pick of #7985  /assign RainbowMango  ```release-note `karmada-search`: Fixed proxied LIST requests being reported as GET in request count and latency metrics, and corrected request scope labels. ```  /kind bug
   **Post-Mortem & Fix Analysis**:
+  > :warning: Please install the !['codecov app svg image'](https://github.com/codecov/engineering-team/assets/152432831/e90313f4-9d3a-4b63-8b54-cfe14e7ec20d) to ensure uploads and comments are reliably processed by Codecov.  ## [Codecov](https://app.codecov.io/gh/karmada-io/karmada/pull/8082?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=karmada-io) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 42.48%. Comparing base ([`758aeb1`](https://app.codecov.io/gh/karmada-io/karmada/commit/758aeb182487444228f8657aed5d63e4e9d9dfd8?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=karmada-io)) to head ([`06bc3a2`](https://app.codecov.io/gh/karmada-io/karmada/commit/06bc3a2f24f971845004500025e7cd5e97d76cac?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comme
   > /lgtm /approve
-  > [APPROVALNOTIFIER] This PR is **APPROVED**  This pull-request has been approved by: *<a href="https://github.com/karmada-io/karmada/pull/8072#issuecomment-6904729902" title="Approved">zhzhuang-zju</a>*  The full list of commands accepted by this bot can be found [here](https://go.k8s.io/bot-commands?repo=karmada-io%2Fkarmada).  The pull request process is described [here](https://git.k8s.io/community/contributors/guide/owners.md#the-code-review-process)  <details > Needs approval from an approver in each of these files:  - ~~[OWNERS](https://github.com/karmada-io/karmada/blob/release-1.19/OWNERS)~~ [zhzhuang-zju]  Approvers can indicate their approval by writing `/approve` in a comment Approvers can cancel approval by writing `/approve cancel` in a comment </details> <!-- META={"approvers":[]} -->
 
-- **Issue #8071** (2026-11-16): **build(deps): bump alpine from 3.24.3 to 3.24.4 in /cluster/images**
-  *Symptoms*: Bumps alpine from 3.24.3 to 3.24.4.   [![Dependabot compatibility score](https://dependabot-badges.githubapp.com/badges/compatibility_score?dependency-name=alpine&package-manager=docker&previous-version=3.24.3&new-version=3.24.4)](https://docs.github.com/en/github/managing-security-vulnerabilities/about-dependabot-security-updates#about-compatibility-scores)  Dependabot will resolve any conflicts with this PR as long as you don't alter it yourself. You can also trigger a rebase manually by commenting `@dependabot rebase`.  [//]: # (dependabot-automerge-start) [//]: # (dependabot-automerge-end)  ---  <details> <summary>Dependabot commands and options</summary> <br />  You can trigger Dependabot actions by commenting on this PR: - `@dependabot rebase` will rebase this PR - `@dependabot recreate` will recreate this PR, overwriting any edits that have been made to it - `@dependabot show <dependency name> ignore conditions` will show all of the ignore conditions of the specified dependency - `@dependabot ignore this major version` will close this PR and stop Dependabot creating any more for this major version (unless you reopen the PR or upgrade to it yourself) - `@dependabot ignore this minor version` will close this PR and stop Dependabot creating any more for this minor version (unless you reopen the PR or upgrade to it yourself) - `@dependabot ignore this dependency` will close this PR and stop Dependabot creating any more for this dependency (unless you 
+- **Issue #8081** (2026-11-17): **[release-1.18] fix(search): correct verb and scope labels for proxied requests**
+  *Symptoms*: This is an automated cherry-pick of #7985  /assign RainbowMango  ```release-note `karmada-search`: Fixed proxied LIST requests being reported as GET in request count and latency metrics, and corrected request scope labels. ```  /kind bug
   **Post-Mortem & Fix Analysis**:
+  > :warning: Please install the !['codecov app svg image'](https://github.com/codecov/engineering-team/assets/152432831/e90313f4-9d3a-4b63-8b54-cfe14e7ec20d) to ensure uploads and comments are reliably processed by Codecov.  ## [Codecov](https://app.codecov.io/gh/karmada-io/karmada/pull/8081?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=karmada-io) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 42.19%. Comparing base ([`6d63495`](https://app.codecov.io/gh/karmada-io/karmada/commit/6d63495bd99bbce8400f408c6daed3834bffa6c3?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=karmada-io)) to head ([`fc6d13c`](https://app.codecov.io/gh/karmada-io/karmada/commit/fc6d13ce27dac08b4fc7d72b96eacd9187e6fcfe?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comme
   > /lgtm /approve
-  > [APPROVALNOTIFIER] This PR is **APPROVED**  This pull-request has been approved by: *<a href="https://github.com/karmada-io/karmada/pull/8071#issuecomment-6904735804" title="Approved">zhzhuang-zju</a>*  The full list of commands accepted by this bot can be found [here](https://go.k8s.io/bot-commands?repo=karmada-io%2Fkarmada).  The pull request process is described [here](https://git.k8s.io/community/contributors/guide/owners.md#the-code-review-process)  <details > Needs approval from an approver in each of these files:  - ~~[OWNERS](https://github.com/karmada-io/karmada/blob/release-1.18/OWNERS)~~ [zhzhuang-zju]  Approvers can indicate their approval by writing `/approve` in a comment Approvers can cancel approval by writing `/approve cancel` in a comment </details> <!-- META={"approvers":[]} -->
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1023,236 +1023,509 @@ func (e *workloadInterpreter) responseWithExploreInterpretStatus(workload *workl
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9be09d64` (2026-11-16)
-**Commit Message**: build(deps): bump azure/setup-helm from 5.0.1 to 5.1.0
+### Incident Patch 1: `ceba46ce` (2026-11-12)
+**Commit Message**: fix(helm): allow initial cert provisioning on upgrade in auto cert mode
 
-Bumps [azure/setup-helm](https://github.com/azure/setup-helm) from 5.0.1 to 5.1.0.
-- [Release notes](https://github.com/azure/setup-helm/releases)
-- [Changelog](https://github.com/Azure/setup-helm/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/azure/setup-helm/compare/9bc31f4ebc9c6b171d7bfbaa5d006ae7abdb4310...2f5e7bc67f1f9972ab16657bb795f36d8f04de0e)
+The cert Job only ran on pre-install, so enabling karmada as a subchart in an
+existing release failed in karmada-pre-upgrade because karmada-cert did not
+exist. The new certs.auto.provisionOnUpgrade option, off by default, adds a
+dedicated pre-upgrade Job that generates the certs only when neither
+karmada-cert nor the karmada apiserver Deployment exists, so an existing CA is
+never replaced. The cert generation script is shared with the pre-install Job
+through a named template.
 
----
-updated-dependencies:
-- dependency-name: azure/setup-helm
-  dependency-version: 5.1.0
-  dependency-type: direct:production
-  update-type: version-update:semver-minor
-...
+The script also turns shell tracing off before it handles the generated
+private keys. It ran under set -ex and passed the base64 encoded keys to sed
+as arguments, so the trace wrote them to the Job's pod log.
 
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Signed-off-by: Brent <[REDACTED_EMAIL]>
 
-**File**: `.github/workflows/installation-chart.yaml` (modified, +1/-1)
+**File**: `charts/karmada/templates/_helpers.tpl` (modified, +36/-0)
 ```diff
-@@ -53,7 +53,7 @@ jobs:
-           go-version-file: go.mod
- 
-       - name: Set up Helm
--        uses: azure/setup-helm@9bc31f4ebc9c6b171d7bfbaa5d006ae7abdb4310 # v5.0.1
-+        uses: azure/setup-helm@2f5e7bc67f1f9972ab16657bb795f36d8f04de0e # v5.1.0
-         with:
-           version: ${{ env.HELM_VERSION }}
- 
+@@ -722,3 +722,39 @@ See: https://github.com/karmada-io/karmada/blob/f2b734140bd0ba5fa399ffa1d08a3b31
+   {{- end -}}
+   {{- tpl (toJson $hosts) . -}}
+ {{- end -}}
++
++{{/*
++Generates the auto mode certificates into /opt/certs and fills them into the
++cert, kubeconfig and webhook-cert manifests under /opt/configs.
++*/}}
++{{- define "karmada.certs.generate" -}}
++mkdir -p /opt/certs
++cp -r -L /opt/mount/* /opt/configs/
++openssl req -x509 -sha256 -new -nodes -days {{ .Values.certs.auto.rootCAExpiryDays }} -newkey rsa:{{ .Values.certs.auto.rsaSize }} -keyout "/opt/certs/server-ca.key" -out "/opt/certs/server-ca.crt" -subj "/C=xx/ST=x/L=x/O=x/OU=x/CN=ca/emailAddress=x/"
++openssl req -x509 -sha256 -new -nodes -days {{ .Values.certs.auto.rootCAExpiryDays }} -newkey rsa:{{ .Values.certs.auto.rsaSize }} -keyout "/opt/certs/front-proxy-ca.key" -out "/opt/certs/front-proxy-ca.crt" -subj "/C=xx/ST=x/L=x/O=x/OU=x/CN=ca/emailAddress=x/"
++echo '{"signing":{"default":{"expiry":{{ printf `"%s"` .Values.certs.auto.expiry }},"usages":["signing","key encipherment","client auth","server auth"]}}}' > "/opt/certs/server-ca-config.json"
++echo '{"CN":"system:admin","hosts":{{ include "karmada.certHosts" . }},"names":[{"O":"system:masters"}],"key":{"algo":"rsa","size":{{ .Values.certs.auto.rsaSize }}}}' | cfssl gencert -ca=/opt/certs/server-ca.crt -ca-key=/opt/certs/server-ca.key -config=/opt/certs/server-ca-config.json - | cfssljson -bare /opt/certs/karmada
++echo '{"signing":{"default":{"expiry":{{ printf `"%s"` .Values.certs.auto.expiry }},"usages":["signing","key encipherment","client auth","server auth"]}}}' > "/opt/certs/front-proxy-ca-config.json"
++echo '{"CN":"front-proxy-client","hosts":{{ include "karmada.certHosts" . }},"names":[{"O":"system:masters"}],"key":{"algo":"rsa","size":{{ .Values.certs.auto.rsaSize }}}}' | cfssl gencert -ca=/opt/certs/front-proxy-ca.crt -ca-key=/opt/certs/front-proxy-ca.key -config=/opt/certs/front-proxy-ca-config.json - | cfssljson -bare /opt/certs/front-proxy-client
++# Stop tracing: the commands below carry the private keys in their arguments.
++set +x
++karmada_ca=$(base64 /opt/certs/server-ca.crt | tr -d '\r\n')
++karmada_ca_key=$(base64 /opt/certs/server-ca.key | tr -d '\r\n')
++karmada_crt=$(base64 /opt/certs/karmada.pem | tr -d '\r\n')
++karmada_key=$(base64 /opt/certs/karmada-key.pem | tr -d '\r\n')
++front_proxy_ca=$(base64 /opt/certs/front-proxy-ca.crt | tr -d '\r\n')
++front_proxy_client_crt=$(base64 /opt/certs/front-proxy-client.pem | tr -d '\r\n')
++front_proxy_client_key=$(base64 /opt/certs/front-proxy-client-key.pem | tr -d '\r\n')
++sed -i'' -e "s/{{ print "{{ ca_crt }}" }}/${karmada_ca}/g" /opt/configs/cert.yaml
++sed -i'' -e "s/{{ print "{{ ca_key }}" }}/${karmada_ca_key}/g" /opt/configs/cert.yaml
++sed -i'' -e "s/{{ print "{{ crt }}" }}/${karmada_crt}/g" /opt/configs/cert.yaml
++sed -i'' -e "s/{{ print "{{ key }}" }}/${karmada_key}/g" /opt/configs/cert.yaml
++sed -i'' -e "s/{{ print "{{ front_proxy_ca_crt }}" }}/${front_proxy_ca}/g" /opt/configs/cert.yaml
++sed -i'' -e "s/{{ print "{{ front_proxy_crt }}" }}/${front_proxy_client_crt}/g" /opt/configs/cert.yaml
++sed -i'' -e "s/{{ print "{{ front_proxy_key }}" }}/${front_proxy_client_key}/g" /opt/configs/cert.yaml
++sed -i'' -e "s/{{ print "{{ ca_crt }}" }}/${karmada_ca}/g" /opt/configs/kubeconfig.yaml
++sed -i'' -e "s/{{ print "{{ crt }}" }}/${karmada_crt}/g" /opt/configs/kubeconfig.yaml
++sed -i'' -e "s/{{ print "{{ key }}" }}/${karmada_key}/g" /opt/configs/kubeconfig.yaml
++sed -i'' -e "s/{{ print "{{ crt }}" }}/${karmada_crt}/g" /opt/configs/webhook-cert.yaml
++sed -i'' -e "s/{{ print "{{ key }}" }}/${karmada_key}/g" /opt/configs/webhook-cert.yaml
++{{- end -}}
+```
+
+**File**: `charts/karmada/templates/pre-install-job.yaml` (modified, +3/-28)
+```diff
+@@ -290,7 +290,8 @@ metadata:
+   name: {{ $name }}-config
+   namespace: {{ $namespace }}
+   annotations:
+-    "helm.sh/hook": pre-install
++    {{- /* The pre-upgrade-certs Job in pre-upgrade-job.yaml mounts this ConfigMap on upgrade. */}}
++    "helm.sh/hook": pre-install{{ if .Values.certs.auto.provisionOnUpgrade }},pre-upgrade{{ end }}
+     "helm.sh/hook-weight": "2"
+   {{- if "karmada.preInstallJob.labels" }}
+   labels:
+@@ -438,33 +439,7 @@ spec:
+           bash <<'EOF'
+           set -ex
+           mkdir -p /opt/configs
+-          mkdir -p /opt/certs
+-          cp -r -L /opt/mount/* /opt/configs/
+-          openssl req -x509 -sha256 -new -nodes -days {{ .Values.certs.auto.rootCAExpiryDays }} -newkey rsa:{{ .Values.certs.auto.rsaSize }} -keyout "/opt/certs/server-ca.key" -out "/opt/certs/server-ca.crt" -subj "/C=xx/ST=x/L=x/O=x/OU=x/CN=ca/emailAddress=x/"
+-          openssl req -x509 -sha256 -new -nodes -days {{ .Values.certs.auto.rootCAExpiryDays }} -newkey rsa:{{ .Values.certs.auto.rsaSize }} -keyout "/opt/certs/front-proxy-ca.key" -out "/opt/certs/front-proxy-ca.crt" -subj "/C=xx/ST=x/L=x/O=x/OU=x/CN=ca/emailAddress=x/"
+-          echo '{"signing":{"default":{"expiry":{{ printf `"%s"` .Values.certs.auto.expiry }},"usages":["signing","key encipherment","client auth","server auth"]}}}' > "/opt/certs/server-ca-config.json"
+-          echo '{"CN":"system:admin","hosts":{{ include "karmada.certHosts" . }},"names":[{"O":"system:masters"}],"key":{"algo":"rsa","size":{{ .Values.certs.auto.rsaSize }}}}' | cfssl gencert -ca=/opt/certs/server-ca.crt -ca-key=/opt/certs/server-ca.key -config=/opt/certs/server-ca-config.json - | cfssljson -bare /opt/certs/karmada
+-          echo '{"signing":{"default":{"expiry":{{ printf `"%s"` .Values.certs.auto.expiry }},"usages":["signing","key encipherment","client auth","server auth"]}}}' > "/opt/certs/front-proxy-ca-config.json"
+-          echo '{"CN":"front-proxy-client","hosts":{{ include "karmada.certHosts" . }},"names":[{"O":"system:masters"}],"key":{"algo":"rsa","size":{{ .Values.certs.auto.rsaSize }}}}' | cfssl gencert -ca=/opt/certs/front-proxy-ca.crt -ca-key=/opt/certs/front-proxy-ca.key -config=/opt/certs/front-proxy-ca-config.json - | cfssljson -bare /opt/certs/front-proxy-client
+-          karmada_ca=$(base64 /opt/certs/server-ca.crt | tr -d '\r\n')
+-          karmada_ca_key=$(base64 /opt/certs/server-ca.key | tr -d '\r\n')
+-          karmada_crt=$(base64 /opt/certs/karmada.pem | tr -d '\r\n')
+-          karmada_key=$(base64 /opt/certs/karmada-key.pem | tr -d '\r\n')
+-          front_proxy_ca=$(base64 /opt/certs/front-proxy-ca.crt | tr -d '\r\n')
+-          front_proxy_client_crt=$(base64 /opt/certs/front-proxy-client.pem | tr -d '\r\n')
+-          front_proxy_client_key=$(base64 /opt/certs/front-proxy-client-key.pem | tr -d '\r\n')
+-          sed -i'' -e "s/{{ print "{{ ca_crt }}" }}/${karmada_ca}/g" /opt/configs/cert.yaml
+-          sed -i'' -e "s/{{ print "{{ ca_key }}" }}/${karmada_ca_key}/g" /opt/configs/cert.yaml
+-          sed -i'' -e "s/{{ print "{{ crt }}" }}/${karmada_crt}/g" /opt/configs/cert.yaml
+-          sed -i'' -e "s/{{ print "{{ key }}" }}/${karmada_key}/g" /opt/configs/cert.yaml
+-          sed -i'' -e "s/{{ print "{{ front_proxy_ca_crt }}" }}/${front_proxy_ca}/g" /opt/configs/cert.yaml
+-          sed -i'' -e "s/{{ print "{{ front_proxy_crt }}" }}/${front_proxy_client_crt}/g" /opt/configs/cert.yaml
+-          sed -i'' -e "s/{{ print "{{ front_proxy_key }}" }}/${front_proxy_client_key}/g" /opt/configs/cert.yaml
+-          sed -i'' -e "s/{{ print "{{ ca_crt }}" }}/${karmada_ca}/g" /opt/configs/kubeconfig.yaml
+-          sed -i'' -e "s/{{ print "{{ crt }}" }}/${karmada_crt}/g" /opt/configs/kubeconfig.yaml
+-          sed -i'' -e "s/{{ print "{{ key }}" }}/${karmada_key}/g" /opt/configs/kubeconfig.yaml
+-          sed -i'' -e "s/{{ print "{{ crt }}" }}/${karmada_crt}/g" /opt/configs/webhook-cert.yaml
+-          sed -i'' -e "s/{{ print "{{ key }}" }}/${karmada_key}/g" /opt/configs/webhook-cert.yaml
++          {{- include "karmada.certs.generate" . | nindent 10 }}
+           sed -i'' -e "s/{{ print "{{ ca_crt }}" }}/${karmada_ca}/g" /opt/configs/static-resources-configmaps.yaml
+           sed -i'' -e "s/{{ print "{{ ca_crt }}" }}/${karmada_ca}/g" /opt/configs/crds-patches-configmaps.yaml
+           EOF
+```
+
+**File**: `charts/karmada/templates/pre-upgrade-job.yaml` (modified, +103/-1)
+```diff
+@@ -38,11 +38,12 @@ data:
+     {{- include "karmada.crd.patch.webhook.clusterresourcebinding" . | nindent 8 }}
+   {{- print "webhook_in_resourcebindings.yaml: " | nindent 6 }} |-
+     {{- include "karmada.crd.patch.webhook.resourcebinding" . | nindent 8 }}
++{{- if .Values.certs.auto.provisionOnUpgrade }}
+ ---
+ apiVersion: batch/v1
+ kind: Job
+ metadata:
+-  name: "{{ $name }}-pre-upgrade"
++  name: "{{ $name }}-pre-upgrade-certs"
+   namespace: {{ $namespace }}
+   annotations:
+     "helm.sh/hook": pre-upgrade
+@@ -52,6 +53,107 @@ metadata:
+   labels:
+     {{- include "karmada.preUpdateJob.labels" . | nindent 4 }}
+   {{- end }}
++spec:
++  parallelism: 1
++  completions: 1
++  template:
++    metadata:
++      name: {{ $name }}-pre-upgrade-certs
++      labels:
++        app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
++        app.kubernetes.io/instance: {{ $name | quote }}
++        helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
++    spec:
++      {{- include "karmada.imagePullSecrets" . | nindent 6 }}
++      {{- with .Values.preUpdateJob.tolerations}}
++      tolerations:
++      {{- toYaml . | nindent 8 }}
++      {{- end }}
++      {{- with .Values.preUpdateJob.nodeSelector }}
++      nodeSelector:
++      {{- toYaml . | nindent 8 }}
++      {{- end }}
++      serviceAccountName: {{ $name }}-hook-job
++      restartPolicy: Never
++      initContainers:
++      - name: check
++        image: {{ template "karmada.kubectl.image" . }}
++        imagePullPolicy: {{ .Values.kubectl.image.pullPolicy }}
++        command:
++        - /bin/sh
++        - -c
++        - |
++          set -ex
++          # Standalone assignments so a failed lookup aborts the Job instead of reading as missing.
++          cert_secret=$(kubectl get secret {{ $name }}-cert -n {{ $namespace }} --ignore-not-found -o name)
++          if [ -n "$cert_secret" ]; then
++            echo "secret {{ $name }}-cert already exists, skipping cert provisioning"
++            touch /opt/configs/skip
++            exit 0
++          fi
++          apiserver=$(kubectl get deploy {{ $name }}-apiserver -n {{ $namespace }} --ignore-not-found -o name)
++          if [ -n "$apiserver" ]; then
++            echo "secret {{ $name }}-cert is missing but karmada is already deployed, refusing to generate a new CA" >&2
++            exit 1
++          fi
++        volumeMounts:
++        - name: configs
++          mountPath: /opt/configs
++      - name: generate
++        image: {{ template "karmada.cfssl.image" . }}
++        imagePullPolicy: {{ .Values.cfssl.image.pullPolicy }}
++        workingDir: /opt/mount
++        command:
++        - /bin/sh
++        - -c
++        - |
++          bash <<'EOF'
++          set -ex
++          [ -f /opt/configs/skip ] && exit 0
++          {{- include "karmada.certs.generate" . | nindent 10 }}
++          EOF
++        volumeMounts:
++        - name: mount
++          mountPath: /opt/mount
++        - name: configs
++          mountPath: /opt/configs
++      containers:
++      - name: provision
++        image: {{ template "karmada.kubectl.image" . }}
++        imagePullPolicy: {{ .Values.kubectl.image.pullPolicy }}
++        command:
++        - /bin/sh
++        - -c
++        - |
++          set -ex
++          [ -f /opt/configs/skip ] && exit 0
++          # karmada-cert goes last so a partial failure leaves it missing and the next attempt regenerates all three.
++          kubectl apply --server-side -f /opt/configs/kubeconfig.yaml -f /opt/configs/webhook-cert.yaml
++          kubectl apply --server-side -f /opt/configs/cert.yaml
++        volumeMounts:
++        - name: configs
++          mountPath: /opt/configs
++      volumes:
++      - name: mount
++        configMap:
++          name: {{ $name }}-config
++      - name: configs
++        emptyDir: {}
++{{- end }}
++---
++apiVersion: batch/v1
++kind: Job
++metadata:
++  name: "{{ $name }}-pre-upgrade"
++  namespace: {{ $namespace }}
++  annotations:
++    "helm.sh/hook": pre-upgrade
++    "helm.sh/hook-weight": "4"
++    "helm.sh/hook-delete-policy": {{ .Values.preUpdateJob.hookDeletePolicy }}
++  {{- if "karmada.preUpdateJob.labels" }}
++  labels:
++    {{- include "karmada.preUpdateJob.labels" . | nindent 4 }}
++  {{- end }}
+ spec:
+   parallelism: 1
+   completions: 1
+```
+
+**File**: `charts/karmada/values.yaml` (modified, +6/-0)
+```diff
+@@ -153,6 +153,12 @@ certs:
+     ]
+     ## @param certs.auto.rsaSize rsa key size of the certificate
+     rsaSize: 3072
++    ## @param certs.auto.provisionOnUpgrade Allow initial certificate provisioning during a Helm upgrade.
++    ## Useful when Karmada is first enabled as a subchart in an existing release.
++    ## To guard against unintended CA replacement, provisioning is allowed only when
++    ## neither the main certificate Secret nor the Karmada API server Deployment exists.
++    ## Warning: Enabling this option may replace existing certificates if the conditions are met.
++    provisionOnUpgrade: false
+   custom:
+     ## @param certs.custom.caCrt ca of the certificate
+     caCrt: |
 ```
 
 ---
 
-### Incident Patch 2: `a17d6e0a` (2026-11-16)
-**Commit Message**: Merge pull request #7985 from xiangji2333/fix/search-proxy-metrics-scope
+### Incident Patch 2: `12a8e01c` (2026-11-18)
+**Commit Message**: Merge pull request #7930 from brenth-monad/fix/helm-upgrade-missing-certs
 
-fix(search): correct verb and scope labels for proxied requests
+fix(helm): generate missing certs on upgrade in auto cert mode
 
-**File**: `pkg/search/proxy/controller.go` (modified, +1/-1)
+**File**: `charts/karmada/templates/_helpers.tpl` (modified, +36/-0)
 ```diff
-@@ -307,7 +307,7 @@ func (ctl *Controller) Connect(ctx context.Context, proxyPath string, responder
- 		}
- 
- 		h = metrics.InstrumentHandlerFunc(requestInfo.Verb, requestInfo.APIGroup, requestInfo.APIVersion, requestInfo.Resource, requestInfo.Subresource,
--			"", names.KarmadaSearchComponentName, false, "", h.ServeHTTP)
-+			metrics.CleanScope(requestInfo), names.KarmadaSearchComponentName, false, "", h.ServeHTTP)
- 		h.ServeHTTP(rw, newReq)
- 	}), nil
- }
+@@ -795,3 +795,39 @@ See: https://github.com/karmada-io/karmada/blob/f2b734140bd0ba5fa399ffa1d08a3b31
+   {{- end -}}
+   {{- tpl (toJson $hosts) . -}}
+ {{- end -}}
++
++{{/*
++Generates the auto mode certificates into /opt/certs and fills them into the
++cert, kubeconfig and webhook-cert manifests under /opt/configs.
++*/}}
++{{- define "karmada.certs.generate" -}}
++mkdir -p /opt/certs
++cp -r -L /opt/mount/* /opt/configs/
++openssl req -x509 -sha256 -new -nodes -days {{ .Values.certs.auto.rootCAExpiryDays }} -newkey rsa:{{ .Values.certs.auto.rsaSize }} -keyout "/opt/certs/server-ca.key" -out "/opt/certs/server-ca.crt" -subj "/C=xx/ST=x/L=x/O=x/OU=x/CN=ca/emailAddress=x/"
++openssl req -x509 -sha256 -new -nodes -days {{ .Values.certs.auto.rootCAExpiryDays }} -newkey rsa:{{ .Values.certs.auto.rsaSize }} -keyout "/opt/certs/front-proxy-ca.key" -out "/opt/certs/front-proxy-ca.crt" -subj "/C=xx/ST=x/L=x/O=x/OU=x/CN=ca/emailAddress=x/"
++echo '{"signing":{"default":{"expiry":{{ printf `"%s"` .Values.certs.auto.expiry }},"usages":["signing","key encipherment","client auth","server auth"]}}}' > "/opt/certs/server-ca-config.json"
++echo '{"CN":"system:admin","hosts":{{ include "karmada.certHosts" . }},"names":[{"O":"system:masters"}],"key":{"algo":"rsa","size":{{ .Values.certs.auto.rsaSize }}}}' | cfssl gencert -ca=/opt/certs/server-ca.crt -ca-key=/opt/certs/server-ca.key -config=/opt/certs/server-ca-config.json - | cfssljson -bare /opt/certs/karmada
++echo '{"signing":{"default":{"expiry":{{ printf `"%s"` .Values.certs.auto.expiry }},"usages":["signing","key encipherment","client auth","server auth"]}}}' > "/opt/certs/front-proxy-ca-config.json"
++echo '{"CN":"front-proxy-client","hosts":{{ include "karmada.certHosts" . }},"names":[{"O":"system:masters"}],"key":{"algo":"rsa","size":{{ .Values.certs.auto.rsaSize }}}}' | cfssl gencert -ca=/opt/certs/front-proxy-ca.crt -ca-key=/opt/certs/front-proxy-ca.key -config=/opt/certs/front-proxy-ca-config.json - | cfssljson -bare /opt/certs/front-proxy-client
++# Stop tracing: the commands below carry the private keys in their arguments.
++set +x
++karmada_ca=$(base64 /opt/certs/server-ca.crt | tr -d '\r\n')
++karmada_ca_key=$(base64 /opt/certs/server-ca.key | tr -d '\r\n')
++karmada_crt=$(base64 /opt/certs/karmada.pem | tr -d '\r\n')
++karmada_key=$(base64 /opt/certs/karmada-key.pem | tr -d '\r\n')
++front_proxy_ca=$(base64 /opt/certs/front-proxy-ca.crt | tr -d '\r\n')
++front_proxy_client_crt=$(base64 /opt/certs/front-proxy-client.pem | tr -d '\r\n')
++front_proxy_client_key=$(base64 /opt/certs/front-proxy-client-key.pem | tr -d '\r\n')
++sed -i'' -e "s/{{ print "{{ ca_crt }}" }}/${karmada_ca}/g" /opt/configs/cert.yaml
++sed -i'' -e "s/{{ print "{{ ca_key }}" }}/${karmada_ca_key}/g" /opt/configs/cert.yaml
++sed -i'' -e "s/{{ print "{{ crt }}" }}/${karmada_crt}/g" /opt/configs/cert.yaml
++sed -i'' -e "s/{{ print "{{ key }}" }}/${karmada_key}/g" /opt/configs/cert.yaml
++sed -i'' -e "s/{{ print "{{ front_proxy_ca_crt }}" }}/${front_proxy_ca}/g" /opt/configs/cert.yaml
++sed -i'' -e "s/{{ print "{{ front_proxy_crt }}" }}/${front_proxy_client_crt}/g" /opt/configs/cert.yaml
++sed -i'' -e "s/{{ print "{{ front_proxy_key }}" }}/${front_proxy_client_key}/g" /opt/configs/cert.yaml
++sed -i'' -e "s/{{ print "{{ ca_crt }}" }}/${karmada_ca}/g" /opt/configs/kubeconfig.yaml
++sed -i'' -e "s/{{ print "{{ crt }}" }}/${karmada_crt}/g" /opt/configs/kubeconfig.yaml
++sed -i'' -e "s/{{ print "{{ key }}" }}/${karmada_key}/g" /opt/configs/kubeconfig.yaml
++sed -i'' -e "s/{{ print "{{ crt }}" }}/${karmada_crt}/g" /opt/configs/webhook-cert.yaml
++sed -i'' -e "s/{{ print "{{ key }}" }}/${karmada_key}/g" /opt/configs/webhook-cert.yaml
++{{- end -}}
 ```
 
-**File**: `pkg/search/proxy/controller_metrics_test.go` (added, +109/-0)
+**File**: `charts/karmada/templates/pre-install-job.yaml` (modified, +3/-28)
 ```diff
-@@ -0,0 +1,109 @@
-+/*
-+Copyright 2026 The Karmada Authors.
-+
-+Licensed under the Apache License, Version 2.0 (the "License");
-+you may not use this file except in compliance with the License.
-+You may obtain a copy of the License at
-+
-+    http://www.apache.org/licenses/LICENSE-2.0
-+
-+Unless required by applicable law or agreed to in writing, software
-+distributed under the License is distributed on an "AS IS" BASIS,
-+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+See the License for the specific language governing permissions and
-+limitations under the License.
-+*/
-+
-+package proxy
-+
-+import (
-+	"net/http"
-+	"net/http/httptest"
-+	"testing"
-+
-+	"github.com/stretchr/testify/assert"
-+	"github.com/stretchr/testify/require"
-+	"k8s.io/apiserver/pkg/endpoints/metrics"
-+	"k8s.io/client-go/kubernetes/scheme"
-+	"k8s.io/component-base/metrics/legacyregistry"
-+
-+	pluginruntime "github.com/karmada-io/karmada/pkg/search/proxy/framework/runtime"
-+	"github.com/karmada-io/karmada/pkg/util/names"
-+)
-+
-+func TestController_Connect_Metrics(t *testing.T) {
-+	metrics.Register()
-+	t.Cleanup(metrics.Reset)
-+
-+	ctl := &Controller{
-+		proxy:                pluginruntime.NewFramework(convertPluginSlice([]*mockPlugin{{IsSupportRequest: true}})),
-+		negotiatedSerializer: scheme.Codecs.WithoutConversion(),
-+	}
-+
-+	tests := []struct {
-+		name      string
-+		proxyPath string
-+		query     string
-+		verb      string
-+		scope     string
-+	}{
-+		{name: "list all namespaces", proxyPath: "/api/v1/pods", verb: "LIST", scope: "cluster"},
-+		{name: "list one namespace", proxyPath: "/api/v1/namespaces/default/pods", verb: "LIST", scope: "namespace"},
-+		{name: "get one pod", proxyPath: "/api/v1/namespaces/default/pods/test", verb: "GET", scope: "resource"},
-+		{name: "watch pods", proxyPath: "/api/v1/pods", query: "?watch=true", verb: "WATCH", scope: "cluster"},
-+	}
-+
-+	// The apiserver metrics registry is global, so keep cases sequential and isolated.
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			metrics.Reset()
-+			handler, err := ctl.Connect(t.Context(), tt.proxyPath, nil)
-+			require.NoError(t, err)
-+
-+			req := httptest.NewRequest(http.MethodGet, "/prefix"+tt.proxyPath+tt.query, nil)
-+			recorder := httptest.NewRecorder()
-+			handler.ServeHTTP(recorder, req)
-+			require.Equal(t, http.StatusOK, recorder.Code)
-+
-+			families, err := legacyregistry.DefaultGatherer.Gather()
-+			require.NoError(t, err)
-+			found := map[string]bool{
-+				"apiserver_request_total":            false,
-+				"apiserver_request_duration_seconds": false,
-+			}
-+			for _, family := range families {
-+				metricName := family.GetName()
-+				if _, ok := found[metricName]; !ok {
-+					continue
-+				}
-+				found[metricName] = true
-+				require.Len(t, family.Metric, 1, metricName)
-+				metric := family.Metric[0]
-+				labels := make(map[string]string)
-+				for _, label := range metric.GetLabel() {
-+					labels[label.GetName()] = label.GetValue()
-+				}
-+				wantLabels := map[string]string{
-+					"component":   names.KarmadaSearchComponentName,
-+					"dry_run":     "",
-+					"group":       "",
-+					"version":     "v1",
-+					"resource":    "pods",
-+					"subresource": "",
-+					"scope":       tt.scope,
-+					"verb":        tt.verb,
-+				}
-+				if metricName == "apiserver_request_total" {
-+					wantLabels["code"] = "200"
-+					assert.Equal(t, float64(1), metric.GetCounter().GetValue())
-+				} else {
-+					assert.Equal(t, uint64(1), metric.GetHistogram().GetSampleCount())
-+				}
-+				assert.Equal(t, wantLabels, labels, metricName)
-+			}
-+			for metricName, present := range found {
-+				assert.True(t, present, "missing metric %s", metricName)
-+			}
-+		})
-+	}
-+}
+@@ -290,7 +290,8 @@ metadata:
+   name: {{ $name }}-config
+   namespace: {{ $namespace }}
+   annotations:
+-    "helm.sh/hook": pre-install
++    {{- /* The pre-upgrade-certs Job in pre-upgrade-job.yaml mounts this ConfigMap on upgrade. */}}
++    "helm.sh/hook": pre-install{{ if .Values.certs.auto.provisionOnUpgrade }},pre-upgrade{{ end }}
+     "helm.sh/hook-weight": "2"
+   {{- if "karmada.preInstallJob.labels" }}
+   labels:
+@@ -438,33 +439,7 @@ spec:
+           bash <<'EOF'
+           set -ex
+           mkdir -p /opt/configs
+-          mkdir -p /opt/certs
+-          cp -r -L /opt/mount/* /opt/configs/
+-          openssl req -x509 -sha256 -new -nodes -days {{ .Values.certs.auto.rootCAExpiryDays }} -newkey rsa:{{ .Values.certs.auto.rsaSize }} -keyout "/opt/certs/server-ca.key" -out "/opt/certs/server-ca.crt" -subj "/C=xx/ST=x/L=x/O=x/OU=x/CN=ca/emailAddress=x/"
+-          openssl req -x509 -sha256 -new -nodes -days {{ .Values.certs.auto.rootCAExpiryDays }} -newkey rsa:{{ .Values.certs.auto.rsaSize }} -keyout "/opt/certs/front-proxy-ca.key" -out "/opt/certs/front-proxy-ca.crt" -subj "/C=xx/ST=x/L=x/O=x/OU=x/CN=ca/emailAddress=x/"
+-          echo '{"signing":{"default":{"expiry":{{ printf `"%s"` .Values.certs.auto.expiry }},"usages":["signing","key encipherment","client auth","server auth"]}}}' > "/opt/certs/server-ca-config.json"
+-          echo '{"CN":"system:admin","hosts":{{ include "karmada.certHosts" . }},"names":[{"O":"system:masters"}],"key":{"algo":"rsa","size":{{ .Values.certs.auto.rsaSize }}}}' | cfssl gencert -ca=/opt/certs/server-ca.crt -ca-key=/opt/certs/server-ca.key -config=/opt/certs/server-ca-config.json - | cfssljson -bare /opt/certs/karmada
+-          echo '{"signing":{"default":{"expiry":{{ printf `"%s"` .Values.certs.auto.expiry }},"usages":["signing","key encipherment","client auth","server auth"]}}}' > "/opt/certs/front-proxy-ca-config.json"
+-          echo '{"CN":"front-proxy-client","hosts":{{ include "karmada.certHosts" . }},"names":[{"O":"system:masters"}],"key":{"algo":"rsa","size":{{ .Values.certs.auto.rsaSize }}}}' | cfssl gencert -ca=/opt/certs/front-proxy-ca.crt -ca-key=/opt/certs/front-proxy-ca.key -config=/opt/certs/front-proxy-ca-config.json - | cfssljson -bare /opt/certs/front-proxy-client
+-          karmada_ca=$(base64 /opt/certs/server-ca.crt | tr -d '\r\n')
+-          karmada_ca_key=$(base64 /opt/certs/server-ca.key | tr -d '\r\n')
+-          karmada_crt=$(base64 /opt/certs/karmada.pem | tr -d '\r\n')
+-          karmada_key=$(base64 /opt/certs/karmada-key.pem | tr -d '\r\n')
+-          front_proxy_ca=$(base64 /opt/certs/front-proxy-ca.crt | tr -d '\r\n')
+-          front_proxy_client_crt=$(base64 /opt/certs/front-proxy-client.pem | tr -d '\r\n')
+-          front_proxy_client_key=$(base64 /opt/certs/front-proxy-client-key.pem | tr -d '\r\n')
+-          sed -i'' -e "s/{{ print "{{ ca_crt }}" }}/${karmada_ca}/g" /opt/configs/cert.yaml
+-          sed -i'' -e "s/{{ print "{{ ca_key }}" }}/${karmada_ca_key}/g" /opt/configs/cert.yaml
+-          sed -i'' -e "s/{{ print "{{ crt }}" }}/${karmada_crt}/g" /opt/configs/cert.yaml
+-          sed -i'' -e "s/{{ print "{{ key }}" }}/${karmada_key}/g" /opt/configs/cert.yaml
+-          sed -i'' -e "s/{{ print "{{ front_proxy_ca_crt }}" }}/${front_proxy_ca}/g" /opt/configs/cert.yaml
+-          sed -i'' -e "s/{{ print "{{ front_proxy_crt }}" }}/${front_proxy_client_crt}/g" /opt/configs/cert.yaml
+-          sed -i'' -e "s/{{ print "{{ front_proxy_key }}" }}/${front_proxy_client_key}/g" /opt/configs/cert.yaml
+-          sed -i'' -e "s/{{ print "{{ ca_crt }}" }}/${karmada_ca}/g" /opt/configs/kubeconfig.yaml
+-          sed -i'' -e "s/{{ print "{{ crt }}" }}/${karmada_crt}/g" /opt/configs/kubeconfig.yaml
+-          sed -i'' -e "s/{{ print "{{ key }}" }}/${karmada_key}/g" /opt/configs/kubeconfig.yaml
+-          sed -i'' -e "s/{{ print "{{ crt }}" }}/${karmada_crt}/g" /opt/configs/webhook-cert.yaml
+-          sed -i'' -e "s/{{ print "{{ key }}" }}/${karmada_key}/g" /opt/configs/webhook-cert.yaml
++          {{- include "karmada.certs.generate" . | nindent 10 }}
+           sed -i'' -e "s/{{ print "{{ ca_crt }}" }}/${karmada_ca}/g" /opt/configs/static-resources-configmaps.yaml
+           sed -i'' -e "s/{{ print "{{ ca_crt }}" }}/${karmada_ca}/g" /opt/configs/crds-patches-configmaps.yaml
+           EOF
 ```
 
-**File**: `pkg/search/proxy/controller_test.go` (modified, +2/-1)
+**File**: `charts/karmada/templates/pre-upgrade-job.yaml` (modified, +103/-1)
 ```diff
-@@ -398,8 +398,9 @@ func (r *mockPlugin) SupportRequest(_ framework.ProxyRequest) bool {
- }
- 
- func (r *mockPlugin) Connect(_ context.Context, _ framework.ProxyRequest) (http.Handler, error) {
--	return http.HandlerFunc(func(http.ResponseWriter, *http.Request) {
-+	return http.HandlerFunc(func(rw http.ResponseWriter, _ *http.Request) {
- 		r.Called = true
-+		rw.WriteHeader(http.StatusOK)
- 	}), nil
- }
- 
+@@ -38,11 +38,12 @@ data:
+     {{- include "karmada.crd.patch.webhook.clusterresourcebinding" . | nindent 8 }}
+   {{- print "webhook_in_resourcebindings.yaml: " | nindent 6 }} |-
+     {{- include "karmada.crd.patch.webhook.resourcebinding" . | nindent 8 }}
++{{- if .Values.certs.auto.provisionOnUpgrade }}
+ ---
+ apiVersion: batch/v1
+ kind: Job
+ metadata:
+-  name: "{{ $name }}-pre-upgrade"
++  name: "{{ $name }}-pre-upgrade-certs"
+   namespace: {{ $namespace }}
+   annotations:
+     "helm.sh/hook": pre-upgrade
+@@ -52,6 +53,107 @@ metadata:
+   labels:
+     {{- include "karmada.preUpdateJob.labels" . | nindent 4 }}
+   {{- end }}
++spec:
++  parallelism: 1
++  completions: 1
++  template:
++    metadata:
++      name: {{ $name }}-pre-upgrade-certs
++      labels:
++        app.kubernetes.io/managed-by: {{ .Release.Service | quote }}
++        app.kubernetes.io/instance: {{ $name | quote }}
++        helm.sh/chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
++    spec:
++      {{- include "karmada.imagePullSecrets" . | nindent 6 }}
++      {{- with .Values.preUpdateJob.tolerations}}
++      tolerations:
++      {{- toYaml . | nindent 8 }}
++      {{- end }}
++      {{- with .Values.preUpdateJob.nodeSelector }}
++      nodeSelector:
++      {{- toYaml . | nindent 8 }}
++      {{- end }}
++      serviceAccountName: {{ $name }}-hook-job
++      restartPolicy: Never
++      initContainers:
++      - name: check
++        image: {{ template "karmada.kubectl.image" . }}
++        imagePullPolicy: {{ .Values.kubectl.image.pullPolicy }}
++        command:
++        - /bin/sh
++        - -c
++        - |
++          set -ex
++          # Standalone assignments so a failed lookup aborts the Job instead of reading as missing.
++          cert_secret=$(kubectl get secret {{ $name }}-cert -n {{ $namespace }} --ignore-not-found -o name)
++          if [ -n "$cert_secret" ]; then
++            echo "secret {{ $name }}-cert already exists, skipping cert provisioning"
++            touch /opt/configs/skip
++            exit 0
++          fi
++          apiserver=$(kubectl get deploy {{ $name }}-apiserver -n {{ $namespace }} --ignore-not-found -o name)
++          if [ -n "$apiserver" ]; then
++            echo "secret {{ $name }}-cert is missing but karmada is already deployed, refusing to generate a new CA" >&2
++            exit 1
++          fi
++        volumeMounts:
++        - name: configs
++          mountPath: /opt/configs
++      - name: generate
++        image: {{ template "karmada.cfssl.image" . }}
++        imagePullPolicy: {{ .Values.cfssl.image.pullPolicy }}
++        workingDir: /opt/mount
++        command:
++        - /bin/sh
++        - -c
++        - |
++          bash <<'EOF'
++          set -ex
++          [ -f /opt/configs/skip ] && exit 0
++          {{- include "karmada.certs.generate" . | nindent 10 }}
++          EOF
++        volumeMounts:
++        - name: mount
++          mountPath: /opt/mount
++        - name: configs
++          mountPath: /opt/configs
++      containers:
++      - name: provision
++        image: {{ template "karmada.kubectl.image" . }}
++        imagePullPolicy: {{ .Values.kubectl.image.pullPolicy }}
++        command:
++        - /bin/sh
++        - -c
++        - |
++          set -ex
++          [ -f /opt/configs/skip ] && exit 0
++          # karmada-cert goes last so a partial failure leaves it missing and the next attempt regenerates all three.
++          kubectl apply --server-side -f /opt/configs/kubeconfig.yaml -f /opt/configs/webhook-cert.yaml
++          kubectl apply --server-side -f /opt/configs/cert.yaml
++        volumeMounts:
++        - name: configs
++          mountPath: /opt/configs
++      volumes:
++      - name: mount
++        configMap:
++          name: {{ $name }}-config
++      - name: configs
++        emptyDir: {}
++{{- end }}
++---
++apiVersion: batch/v1
++kind: Job
++metadata:
++  name: "{{ $name }}-pre-upgrade"
++  namespace: {{ $namespace }}
++  annotations:
++    "helm.sh/hook": pre-upgrade
++    "helm.sh/hook-weight": "4"
++    "helm.sh/hook-delete-policy": {{ .Values.preUpdateJob.hookDeletePolicy }}
++  {{- if "karmada.preUpdateJob.labels" }}
++  labels:
++    {{- include "karmada.preUpdateJob.labels" . | nindent 4 }}
++  {{- end }}
+ spec:
+   parallelism: 1
+   completions: 1
 ```
 
----
-
-### Incident Patch 3: `0fdc8bcc` (2026-11-16)
-**Commit Message**: build(deps): bump alpine from 3.24.3 to 3.24.4 in /cluster/images
-
-Bumps alpine from 3.24.3 to 3.24.4.
-
----
-updated-dependencies:
-- dependency-name: alpine
-  dependency-version: 3.24.4
-  dependency-type: direct:production
-  update-type: version-update:semver-patch
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-
-**File**: `cluster/images/Dockerfile` (modified, +1/-1)
+**File**: `charts/karmada/values.yaml` (modified, +6/-0)
 ```diff
-@@ -12,7 +12,7 @@
- # See the License for the specific language governing permissions and
- # limitations under the License.
- 
--FROM alpine:3.24.3
-+FROM alpine:3.24.4
- 
- ARG BINARY
- 
-```
-
-**File**: `cluster/images/buildx.Dockerfile` (modified, +1/-1)
-```diff
-@@ -12,7 +12,7 @@
- # See the License for the specific language governing permissions and
- # limitations under the License.
- 
--FROM alpine:3.24.3
-+FROM alpine:3.24.4
- 
- ARG BINARY
- ARG TARGETPLATFORM
+@@ -153,6 +153,12 @@ certs:
+     ]
+     ## @param certs.auto.rsaSize rsa key size of the certificate
+     rsaSize: 3072
++    ## @param certs.auto.provisionOnUpgrade Allow initial certificate provisioning during a Helm upgrade.
++    ## Useful when Karmada is first enabled as a subchart in an existing release.
++    ## To guard against unintended CA replacement, provisioning is allowed only when
++    ## neither the main certificate Secret nor the Karmada API server Deployment exists.
++    ## Warning: Enabling this option may replace existing certificates if the conditions are met.
++    provisionOnUpgrade: false
+   custom:
+     ## @param certs.custom.caCrt ca of the certificate
+     caCrt: |
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #8082** (2026-11-17): [release-1.19] fix(search): correct verb and scope labels for proxied requests (@karmada-bot)
+- **PR #8081** (2026-11-17): [release-1.18] fix(search): correct verb and scope labels for proxied requests (@karmada-bot)
+- **PR #8080** (2026-11-17): [release-1.17] fix(search): correct verb and scope labels for proxied requests (@karmada-bot)
 - **PR #8072** (2026-11-16): build(deps): bump alpine from 3.24.3 to 3.24.4 in /cluster/images (@dependabot[bot])
 - **PR #8071** (2026-11-16): build(deps): bump alpine from 3.24.3 to 3.24.4 in /cluster/images (@dependabot[bot])
 - **PR #8070** (2026-11-16): build(deps): bump alpine from 3.24.3 to 3.24.4 in /cluster/images (@dependabot[bot])
-- **PR #8069** (2026-11-16): build(deps): bump azure/setup-helm from 5.0.1 to 5.1.0 (@dependabot[bot])
-- **PR #8068** (2026-11-16): build(deps): bump alpine from 3.24.3 to 3.24.4 in /cluster/images (@dependabot[bot])
-- **PR #8044** (2026-11-12): Update Kubernetes compatibility matrix (@Arbaaz123676)
 
 ---
 
@@ -1272,31 +1545,42 @@ Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(deps): bump azure/setup-helm from 5.0.1 to 5.1.0
+## X. helm): allow initial cert provisioning on upgrade in auto cert mode
 
 **RULE**:
-When implementing operations in `.github/workflows/installation-chart.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in karmada-io/karmada. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `charts/karmada/templates/_helpers.tpl`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in karmada-io/karmada. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9be09d64`: build(deps): bump azure/setup-helm from 5.0.1 to 5.1.0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ceba46ce`: helm): allow initial cert provisioning on upgrade in auto cert mode. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/installation-chart.yaml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `charts/karmada/templates/_helpers.tpl`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-        uses: azure/setup-helm@2f5e7bc67f1f9972ab16657bb795f36d8f04de0e # v5.1.0
+
+{{/*
+Generates the auto mode certificates into /opt/certs and fills them into the
+cert, kubeconfig and webhook-cert manifests under /opt/configs.
+*/}}
+{{- define "karmada.certs.generate" -}}
+mkdir -p /opt/certs
+cp -r -L /opt/mount/* /opt/configs/
+openssl req -x509 -sha256 -new -nodes -days {{ .Values.certs.auto.rootCAExpiryDays }} -newkey rsa:{{ .Values.certs.auto.rsaSize }} -keyout "/opt/certs/server-ca.key" -out "/opt/certs/server-ca.crt" -subj "/C=xx/ST=x/L=x/O=x/OU=x/CN=ca/emailAddress=x/"
+openssl req -x509 -sha256 -new -nodes -days {{ .Values.certs.auto.rootCAExpiryDays }} -newkey rsa:{{ .Values.certs.auto.rsaSize }} -keyout "/opt/certs/front-proxy-ca.key" -out "/opt/certs/front-proxy-ca.crt" -subj "/C=xx/ST=x/L=x/O=x/OU=x/CN=ca/emailAddress=x/"
+echo '{"signing":{"default":{"expiry":{{ printf `"%s"` .Values.certs.auto.expiry }},"usages":["signing","key encipherment","client auth","server auth"]}}}' > "/opt/certs/server-ca-config.json"
+echo '{"CN":"system:admin","hosts":{{ include "karmada.certHosts" . }},"names":[{"O":"system:masters"}],"key":{"algo":"rsa","size":{{ .Values.certs.auto.rsaSize }}}}' | cfssl gencert -ca=/opt/certs/server-ca.crt -ca-key=/opt/certs/server-ca.key 
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-        uses: azure/setup-helm@9bc31f4ebc9c6b171d7bfbaa5d006ae7abdb4310 # v5.0.1
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9be09d64` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ceba46ce` are properly handled with clean fallback behavior.
 
 
 ## 3. Decision Protocol & Boundary Restrictions

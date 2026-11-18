@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-18T14:48:48.163Z",
-  "total_records": 1864,
+  "last_updated": "2026-11-18T14:57:09.667Z",
+  "total_records": 1866,
   "domains": {
     "A": {
       "total": 13,
@@ -913,7 +913,7 @@
       ]
     },
     "G": {
-      "total": 323,
+      "total": 325,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -1237,7 +1237,9 @@
         "domain_intelligence-architecture-intelligence-mattermost-mattermost-core-invariants",
         "domain_intelligence-architecture-intelligence-mattermost-mattermost-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-nervjs-taro-core-invariants",
-        "domain_intelligence-architecture-intelligence-nervjs-taro-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-nervjs-taro-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-karmada-io-karmada-core-invariants",
+        "domain_intelligence-architecture-intelligence-karmada-io-karmada-learnings-core-invariants"
       ]
     },
     "H": {
@@ -8960,8 +8962,8 @@
       "title": "Research & Knowledge Intelligence: akatz-ai/MiniMax-H3-Character-Swap-LoRA Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-akatz-ai-minimax-h3-character-swap-lora-research-knowledge-intelligence-akatz.md",
       "repository": "akatz-ai/MiniMax-H3-Character-Swap-LoRA",
-      "content_hash": "49ee40619ccc77066a0ad35f9121c26a7db07e929d7adb3b7be7e83ef393f4a2",
-      "created_at": "2026-11-18T05:27:40.887Z"
+      "content_hash": "a61a6c33d798defb656ac2840695a09302710a4a996d3885574767396c16ac74",
+      "created_at": "2026-11-18T14:56:51.731Z"
     },
     "domain_intelligence-technical-construction-intelligence-storybookjs-storybook-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-storybookjs-storybook-core-invariants",
@@ -9020,8 +9022,8 @@
       "title": "Research & Knowledge Intelligence: hf-akatz-ai-minimax-h3-character-swap-lora-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-akatz-ai-minimax-h3-character-swap-lora-learnings-research-knowledge-intellig.md",
       "repository": "hf-akatz-ai-minimax-h3-character-swap-lora-learnings",
-      "content_hash": "d8becec47734b472681199f8a7ac31dc41a8e91e74c7357d4178aab9bd9c5361",
-      "created_at": "2026-11-18T05:36:04.055Z"
+      "content_hash": "05c1215d9a7a9f04522b259fd96fe118e83ad8fd63a71090c6d3c8247d536350",
+      "created_at": "2026-11-18T14:57:07.772Z"
     },
     "domain_intelligence-technical-construction-intelligence-storybookjs-storybook-learnings-core-invaria": {
       "record_id": "domain_intelligence-technical-construction-intelligence-storybookjs-storybook-learnings-core-invaria",
@@ -30960,8 +30962,8 @@
       "title": "Technical Construction Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zulip-zulip-learnings-technical-construction-intelligence-zulip-zulip-learnings-.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "748152b76bbb94b4d22c3ee9a802fdd98e7f3ad9467755cf8af773e65cacabdc",
-      "created_at": "2026-11-18T14:32:21.061Z"
+      "content_hash": "2a164065acdab702024c992dbabe7f8902e038106c680d9a924d60fb81130237",
+      "created_at": "2026-11-18T14:57:09.667Z"
     },
     "domain_intelligence-product-intelligence-software-mansion-argent-core-invariants": {
       "record_id": "domain_intelligence-product-intelligence-software-mansion-argent-core-invariants",
@@ -31196,6 +31198,24 @@
       "repository": "smallstep-cli-learnings",
       "content_hash": "6de6a1d909c8460f307f6aff8d33dd567593738af8745bd0e3362bf6b135c305",
       "created_at": "2026-11-18T14:40:50.691Z"
+    },
+    "domain_intelligence-architecture-intelligence-karmada-io-karmada-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-karmada-io-karmada-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: karmada-io/karmada Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-karmada-io-karmada-architecture-intelligence-karmada-io-karmada-core-invariants.md",
+      "repository": "karmada-io/karmada",
+      "content_hash": "9af0c71f7d366e61482fd3e14078be0624a61679bbbc49f446aba48433b3dab4",
+      "created_at": "2026-11-18T14:57:04.349Z"
+    },
+    "domain_intelligence-architecture-intelligence-karmada-io-karmada-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-karmada-io-karmada-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: karmada-io-karmada-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-karmada-io-karmada-learnings-architecture-intelligence-karmada-io-karmada-learni.md",
+      "repository": "karmada-io-karmada-learnings",
+      "content_hash": "30f5718ada17bdbad82386b870f4419aacdba7075d5fda8fc7d60afa6905e610",
+      "created_at": "2026-11-18T14:57:08.829Z"
     }
   }
 }

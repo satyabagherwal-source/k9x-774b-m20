@@ -11047,3 +11047,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-deepseek-ai-deepseek-v4-1-flash` | `https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash` | `hf-deepsee` | Multi-dimensional audit evidence | 2026-11-18T14:48:30.009Z |
 | `learn-github-invertase-react-native-firebase` | `https://github.com/invertase/react-native-firebase` | `b278991e` | Multi-dimensional audit evidence | 2026-11-18T14:48:38.323Z |
 | `learn-github-nolabs-ai-nono` | `https://github.com/nolabs-ai/nono` | `b3794a06` | Multi-dimensional audit evidence | 2026-11-18T14:48:43.003Z |
+| `learn-huggingface-akatz-ai-minimax-h3-character-swap-lora` | `https://huggingface.co/akatz-ai/MiniMax-H3-Character-Swap-LoRA` | `hf-akatz-a` | Multi-dimensional audit evidence | 2026-11-18T14:56:51.492Z |
+| `learn-github-karmada-io-karmada` | `https://github.com/karmada-io/karmada` | `12a8e01c` | Multi-dimensional audit evidence | 2026-11-18T14:57:03.932Z |

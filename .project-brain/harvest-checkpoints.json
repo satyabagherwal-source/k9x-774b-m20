@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-18T14:48:43.010Z",
+  "last_updated": "2026-11-18T14:57:03.942Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -650,14 +650,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-akatz-ai-minimax-h3-character-swap-lora",
-      "content_hash": "fb0c2d4485bcce354ea07941c54b5a2841a70fdd61b0291fb754b8c4afd39a42",
-      "verified_at": "2026-11-18T05:27:40.700Z",
+      "content_hash": "b03275639391dd82384e34bea441b4e03dba5b822239747fabb31727e2b70a43",
+      "verified_at": "2026-11-18T14:56:51.502Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T05:27:40.700Z"
+      "last_updated": "2026-11-18T14:56:51.502Z"
     },
     "unsloth/Qwen-Image-2.1-GGUF": {
       "repository": "unsloth/Qwen-Image-2.1-GGUF",
@@ -4341,14 +4341,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-karmada-io-karmada",
-      "content_hash": "382e5736c88ede1c56ecbd731d923782457eb5a6d859e6c4839a69f4daeccf2d",
-      "verified_at": "2026-11-17T01:34:01.379Z",
+      "content_hash": "014721c6f6508fbdba8b08792f22c1bad015eca35fd39234fd40b985cf1f05d6",
+      "verified_at": "2026-11-18T14:57:03.942Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T01:34:01.379Z"
+      "last_updated": "2026-11-18T14:57:03.942Z"
     },
     "milvus-io/bootcamp": {
       "repository": "milvus-io/bootcamp",

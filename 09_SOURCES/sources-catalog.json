@@ -525,8 +525,8 @@
     "sourceUrl": "https://huggingface.co/akatz-ai/MiniMax-H3-Character-Swap-LoRA",
     "sourceVersion": "hf-akatz-ai-minimax-h3-character-swap-lora",
     "license": "Open-Source",
-    "contentHash": "fb0c2d4485bcce354ea07941c54b5a2841a70fdd61b0291fb754b8c4afd39a42",
-    "lastHarvestedAt": "2026-11-18T05:27:40.691Z",
+    "contentHash": "b03275639391dd82384e34bea441b4e03dba5b822239747fabb31727e2b70a43",
+    "lastHarvestedAt": "2026-11-18T14:56:51.492Z",
     "learningId": "learn-huggingface-akatz-ai-minimax-h3-character-swap-lora"
   },
   "hf-unsloth-qwen-image-2.1-gguf": {
@@ -2803,10 +2803,10 @@
     "repository": "karmada-io/karmada",
     "platform": "github",
     "sourceUrl": "https://github.com/karmada-io/karmada",
-    "sourceVersion": "a17d6e0a",
+    "sourceVersion": "12a8e01c",
     "license": "Apache-2.0",
-    "contentHash": "382e5736c88ede1c56ecbd731d923782457eb5a6d859e6c4839a69f4daeccf2d",
-    "lastHarvestedAt": "2026-11-17T01:34:01.372Z",
+    "contentHash": "014721c6f6508fbdba8b08792f22c1bad015eca35fd39234fd40b985cf1f05d6",
+    "lastHarvestedAt": "2026-11-18T14:57:03.932Z",
     "learningId": "learn-github-karmada-io-karmada"
   },
   "milvus-io-bootcamp": {

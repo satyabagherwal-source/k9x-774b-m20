@@ -11014,3 +11014,5 @@
 | `CYCLE-20261118-KU9H` | `2026-11-18T14:48:30.005Z` | `deepseek-ai/DeepSeek-V4.1-Flash` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4.1-flash-learnings.md` | Yes (`6ad69861...`) |
 | `CYCLE-20261118-L0OG` | `2026-11-18T14:48:38.320Z` | `invertase/react-native-firebase` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/invertase-react-native-firebase-learnings.md` | Yes (`04cbc77d...`) |
 | `CYCLE-20261118-L4AF` | `2026-11-18T14:48:42.999Z` | `nolabs-ai/nono` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9247` | Yes (`6e757196...`) |
+| `CYCLE-20261118-VL7J` | `2026-11-18T14:56:51.487Z` | `akatz-ai/MiniMax-H3-Character-Swap-LoRA` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-akatz-ai-minimax-h3-character-swap-lora-learnings.md` | Yes (`b0327563...`) |
+| `CYCLE-20261118-VUT3` | `2026-11-18T14:57:03.927Z` | `karmada-io/karmada` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9248` | Yes (`014721c6...`) |
