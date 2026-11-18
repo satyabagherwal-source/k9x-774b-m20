@@ -43,9 +43,9 @@
   "bitterbot-ai-bitterbot-desktop": {
     "name": "bitterbot-desktop",
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-    "lastChecked": "2026-11-18T13:34:21.620Z",
+    "lastChecked": "2026-11-18T14:15:55.329Z",
     "revisionIdentifier": "108f7135",
-    "lastVerified": "2026-11-18T13:34:21.620Z"
+    "lastVerified": "2026-11-18T14:15:55.329Z"
   },
   "hf-comfy-org-minimax-h3": {
     "name": "Comfy-Org/MiniMax-H3",
@@ -69,8 +69,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-18T14:08:11.147Z",
-    "lastVerified": "2026-11-18T14:08:11.147Z",
+    "lastChecked": "2026-11-18T14:16:02.101Z",
+    "lastVerified": "2026-11-18T14:16:02.101Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -137,9 +137,9 @@
   "microsoft-security-101": {
     "name": "Security-101",
     "officialUrl": "https://github.com/microsoft/Security-101",
-    "lastChecked": "2026-11-18T09:28:31.217Z",
+    "lastChecked": "2026-11-18T14:15:50.327Z",
     "revisionIdentifier": "b0a31ff7",
-    "lastVerified": "2026-11-18T09:28:31.217Z"
+    "lastVerified": "2026-11-18T14:15:50.327Z"
   },
   "meilisearch-meilisearch": {
     "name": "meilisearch",
@@ -2043,5 +2043,90 @@
     "lastChecked": "2026-11-18T14:04:53.705Z",
     "revisionIdentifier": "171c7a9e",
     "lastVerified": "2026-11-18T14:04:53.705Z"
+  },
+  "flox-flox": {
+    "name": "flox/flox",
+    "officialUrl": "https://github.com/flox/flox",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-11-18T14:15:46.662Z",
+    "lastVerified": "2026-11-18T14:15:46.662Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-flox-flox",
+    "contentHash": "5c3ce4eaeb86f56bb74b59a26fcfaf0732b0094532db2857e241b170c5bb848a",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 3,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-comfy-org-qwen-image-2.1": {
+    "name": "Comfy-Org/Qwen-Image-2.1",
+    "officialUrl": "https://huggingface.co/Comfy-Org/Qwen-Image-2.1",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-18T14:15:43.183Z",
+    "lastVerified": "2026-11-18T14:15:43.183Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-comfy-org-qwen-image-2-1",
+    "contentHash": "0674ed2f6662ba765dcd92641b15dfadae02dbfe8975d5acdf45ccc7eb03673e",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "openreplay-openreplay": {
+    "name": "openreplay/openreplay",
+    "officialUrl": "https://github.com/openreplay/openreplay",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-11-18T14:15:50.349Z",
+    "lastVerified": "2026-11-18T14:15:50.349Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-openreplay-openreplay",
+    "contentHash": "4df3d9e83e998cf6fd75d74eeb97e0f8ead113403aac0da4f7ac17102dadedca",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "authzed-spicedb": {
+    "name": "authzed/spicedb",
+    "officialUrl": "https://github.com/authzed/spicedb",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-11-18T14:15:53.748Z",
+    "lastVerified": "2026-11-18T14:15:53.748Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-authzed-spicedb",
+    "contentHash": "e3f1892ae5237f13ada073f57142622fc853f43333ec18ef95c27ec7af1d16ea",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 3,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "infiniflow-infinity": {
+    "name": "infiniflow/infinity",
+    "officialUrl": "https://github.com/infiniflow/infinity",
+    "sourceType": "github",
+    "technology": "C++",
+    "lastChecked": "2026-11-18T14:15:58.045Z",
+    "lastVerified": "2026-11-18T14:15:58.045Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-infiniflow-infinity",
+    "contentHash": "b823806aa857d013c921c19b82ac0b4f3b40da2f72d9d2deaf3268ac060650f0",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

@@ -11030,3 +11030,8 @@ Every entry in this ledger must capture:
 | `learn-github-paradedb-paradedb` | `https://github.com/paradedb/paradedb` | `b2eb4729` | Multi-dimensional audit evidence | 2026-11-18T13:57:03.169Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `9eeb878b` | Multi-dimensional audit evidence | 2026-11-18T14:05:01.681Z |
 | `learn-huggingface-taichuai-zdtaichu5-0-9b` | `https://huggingface.co/TaichuAI/ZDTaichu5.0-9B` | `hf-taichua` | Multi-dimensional audit evidence | 2026-11-18T14:08:08.271Z |
+| `learn-huggingface-comfy-org-qwen-image-2-1` | `https://huggingface.co/Comfy-Org/Qwen-Image-2.1` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-11-18T14:15:43.841Z |
+| `learn-github-flox-flox` | `https://github.com/flox/flox` | `49138841` | Multi-dimensional audit evidence | 2026-11-18T14:15:47.659Z |
+| `learn-github-openreplay-openreplay` | `https://github.com/openreplay/openreplay` | `42a68706` | Multi-dimensional audit evidence | 2026-11-18T14:15:51.315Z |
+| `learn-github-authzed-spicedb` | `https://github.com/authzed/spicedb` | `f060cbd7` | Multi-dimensional audit evidence | 2026-11-18T14:15:54.725Z |
+| `learn-github-infiniflow-infinity` | `https://github.com/infiniflow/infinity` | `583c8505` | Multi-dimensional audit evidence | 2026-11-18T14:15:58.994Z |

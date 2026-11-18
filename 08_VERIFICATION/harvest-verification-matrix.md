@@ -10997,3 +10997,8 @@
 | `CYCLE-20261118-QOFX` | `2026-11-18T13:57:03.165Z` | `paradedb/paradedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9237` | Yes (`312a6755...`) |
 | `CYCLE-20261118-0XNX` | `2026-11-18T14:05:01.677Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9238` | Yes (`d815b07f...`) |
 | `CYCLE-20261118-4XMZ` | `2026-11-18T14:08:08.267Z` | `TaichuAI/ZDTaichu5.0-9B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-taichuai-zdtaichu5.0-9b-learnings.md` | Yes (`9cb2ef41...`) |
+| `CYCLE-20261118-EP5P` | `2026-11-18T14:15:43.837Z` | `Comfy-Org/Qwen-Image-2.1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-comfy-org-qwen-image-2.1-learnings.md` | Yes (`0674ed2f...`) |
+| `CYCLE-20261118-ES3R` | `2026-11-18T14:15:47.655Z` | `flox/flox` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9239` | Yes (`5c3ce4ea...`) |
+| `CYCLE-20261118-EUXB` | `2026-11-18T14:15:51.311Z` | `openreplay/openreplay` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9240` | Yes (`4df3d9e8...`) |
+| `CYCLE-20261118-EXK1` | `2026-11-18T14:15:54.721Z` | `authzed/spicedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9241` | Yes (`e3f1892a...`) |
+| `CYCLE-20261118-F0UM` | `2026-11-18T14:15:58.990Z` | `infiniflow/infinity` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9242` | Yes (`b823806a...`) |

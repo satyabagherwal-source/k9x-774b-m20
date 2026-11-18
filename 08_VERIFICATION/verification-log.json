@@ -1,80 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261117-6EKR",
-    "timestamp": "2026-11-17T04:05:44.907Z",
-    "repository": "fabio-rovai/open-ontologies",
-    "learningId": "learn-github-fabio-rovai-open-ontologies",
-    "contentHash": "1644f758a7746bb0fdc2f5bf84c270d8eb6c5df89e85eecbeb4dad5efcd251cf",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261117-G4HK",
-    "timestamp": "2026-11-17T04:13:18.392Z",
-    "repository": "fujiapple852/trippy",
-    "learningId": "learn-github-fujiapple852-trippy",
-    "contentHash": "73432a9b46f68d257d167511b5358cce7c6e923736e1d930493df56e891b9b8f",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261117-G9AC",
-    "timestamp": "2026-11-17T04:13:24.612Z",
-    "repository": "webpack/webpack",
-    "learningId": "learn-github-webpack-webpack",
-    "contentHash": "118b98a3505d434a443b9ca9b7f67fa0e4d07c00063be19b1f6264b056f74f76",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261117-G9ZM",
-    "timestamp": "2026-11-17T04:13:25.522Z",
-    "repository": "electron/electron",
-    "learningId": "learn-github-electron-electron",
-    "contentHash": "f1d9f1fd930105489bfea33e157a716c8dab03ca5227a659e13b4ba79a52c0bc",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261117-3BDO",
-    "timestamp": "2026-11-17T04:31:20.412Z",
-    "repository": "rollup/rollup",
-    "learningId": "learn-github-rollup-rollup",
-    "contentHash": "5e4deee2ceb8967bb2bb9fb9cfd942833f0dd827fe1c28b770d44f53fec1ca24",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261117-3IMA",
     "timestamp": "2026-11-17T04:31:29.794Z",
     "repository": "typedb/typedb",
@@ -7492,6 +7417,81 @@
     "contentHash": "9cb2ef41af93c6916049f11a48d8bf36f9041b8aa5c628f439581bf8c4be0444",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-EP5P",
+    "timestamp": "2026-11-18T14:15:43.837Z",
+    "repository": "Comfy-Org/Qwen-Image-2.1",
+    "learningId": "learn-huggingface-comfy-org-qwen-image-2-1",
+    "contentHash": "0674ed2f6662ba765dcd92641b15dfadae02dbfe8975d5acdf45ccc7eb03673e",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-ES3R",
+    "timestamp": "2026-11-18T14:15:47.655Z",
+    "repository": "flox/flox",
+    "learningId": "learn-github-flox-flox",
+    "contentHash": "5c3ce4eaeb86f56bb74b59a26fcfaf0732b0094532db2857e241b170c5bb848a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-EUXB",
+    "timestamp": "2026-11-18T14:15:51.311Z",
+    "repository": "openreplay/openreplay",
+    "learningId": "learn-github-openreplay-openreplay",
+    "contentHash": "4df3d9e83e998cf6fd75d74eeb97e0f8ead113403aac0da4f7ac17102dadedca",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-EXK1",
+    "timestamp": "2026-11-18T14:15:54.721Z",
+    "repository": "authzed/spicedb",
+    "learningId": "learn-github-authzed-spicedb",
+    "contentHash": "e3f1892ae5237f13ada073f57142622fc853f43333ec18ef95c27ec7af1d16ea",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-F0UM",
+    "timestamp": "2026-11-18T14:15:58.990Z",
+    "repository": "infiniflow/infinity",
+    "learningId": "learn-github-infiniflow-infinity",
+    "contentHash": "b823806aa857d013c921c19b82ac0b4f3b40da2f72d9d2deaf3268ac060650f0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

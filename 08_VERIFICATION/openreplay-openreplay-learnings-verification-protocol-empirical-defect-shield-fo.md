@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-17T14:33:44.285Z",
+  "timestamp": "2026-11-18T14:16:03.288Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-openreplay-openreplay-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [openreplay-openreplay-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-17T14:33:44.285Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-18T14:16:03.288Z`  
 > **Learning ID**: `LEARN-EVO-openreplay-openreplay-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/openreplay-openreplay-learnings.md`  
 > **Source**: github ([https://github.com/openreplay/openreplay](https://github.com/openreplay/openreplay))  
-> **Source Version**: `9a554a54`  
+> **Source Version**: `42a68706`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-17T14:33:24.805Z  
+> **Timestamp**: 2026-11-18T14:15:50.354Z  
 > **Learning ID**: `learn-github-openreplay-openreplay`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/openreplay-openreplay-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/openreplay/openreplay](https://github.com/openreplay/openreplay))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T14:33:24.799Z  
+> **Harvest Timestamp**: 2026-11-18T14:15:50.349Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Session replay, cobrowsing and product analytics you can self-host. Best for reproducing issues and iterating on your product.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 13156 stars
+- **Stars / Engagement**: 13158 stars
 
 ---
 
@@ -1080,11 +1080,11 @@ def api_key_authorizer(token):
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #5177** (2026-11-18): **Replay drops DOM messages between ~15 s and ~30 s after session start**
+  *Symptoms*: ### Versions  Self-hosted 1.28.5 (helm), tracker 19.1.2, default `PROTOCOL_VERSION` (2) and `FILE_SPLIT_TIME` (15 s). The code below is the same on `main` and `tracker-19.x.x`.  ### What happens  When a page changes a lot of DOM in the first ~30 s of a session, the replay misses everything created between ~15 s and the end of that window. Elements stay missing for the rest of the page; a `<canvas>` created there stays empty (`CanvasManager: Node <id> not found`). The player console logs hundreds of:  ``` Trying to append message with the less time then the list tail: 16350 vs 29998 ```  ### Cause  1. **Tracker worker** (`BatchWriter.pushTo`): with protocol 2, URL-based messages (`SetNodeAttributeURLBased`, i.e. every `style`/`href`/`src` attribute, `SetCSSDataURLBased`, `AdoptedSS*URLBased`) go to `assetBuilder`, the rest to `playerBuilder`. When `assetBuilder` hits the soft budget, the player builder is flushed first. When `playerBuilder` hits it (every few seconds while a page renders), only the player builder is flushed, so `assetBuilder` keeps its messages until the next `finaliseBatch` (30 s `flushInterval`). One assets batch can span 0.9 s → 30 s. 2. **Sink** (`sessionwriter/mobwriter.go`, `HandleBatch`): a batch goes to `dom.mobs` if `DataTimestamp() - startTime <= FILE_SPLIT_TIME`, else to `dom.mobe`. `DataTimestamp` is the batch's first timestamp, so that assets batch lands in `dom.mobs` while ending at 30 s. 3. **Player** (`MessageLoader`): each file is sorted on it
+
 - **Issue #5136** (2026-11-06): **Canvas replay blank when canvas has no display style (follow-up to #4853 / #4854)**
   *Symptoms*: **Describe the issue** Canvas replay is still blank when the recorded canvas has no `display` style (follow-up to #4853 / #4854).  Since 1.28 the replay iframe is sandboxed without `allow-scripts`. With scripting disabled, the HTML spec says a `<canvas>` represents its fallback content, so it is laid out as a normal (non-replaced) element. #4854 handles this by painting recorded frames as the canvas's CSS `background-image`, but that only works if the canvas already has a size. A canvas without an explicit `display` stays `display: inline`, and CSS `width`/`height` don't apply to plain inline boxes. The canvas collapses to 0×0 and the replay shows a blank page, even though the frames are recorded and reach the player.  This affects any page that sizes its canvas only through inline `style.width`/`style.height`, which is common: PixiJS with `autoDensity: true` does exactly that, as do many other game engines and raw canvas apps.  **Steps to reproduce the issue** 1. Record a page whose canvas has no `display` rule and is sized by inline styles, e.g. `<canvas style="width: 800px; height: 600px">` drawn every frame (2D, or WebGL with `preserveDrawingBuffer: true`), with canvas recording enabled (`canvas: { disableCanvas: false }`). 2. Open the session in the player. 3. Inspect the replayed canvas inside the player iframe in DevTools: its computed size is 0×0 while its `background-image` keeps updating with frames.  **Expected behavior** The canvas replays at its recorded size and
-
-- **Issue #5126** (2026-11-05): **Switching project while a dashboard is open causes an endless redirect loop**
-  *Symptoms*: **Describe the issue** Opening a dashboard and then switching project from the project dropdown sends the UI into an endless redirect loop. The URL flips between `/<old>/dashboard` and `/<new>/dashboard` until a hard reload.  **Steps to reproduce the issue** 1. Have two projects, A and B. 2. In project A, open a dashboard: `/A/dashboard/<id>`. 3. Switch to project B from the project dropdown. 4. The URL keeps alternating between `/A/dashboard` and `/B/dashboard`, and the page keeps re-rendering.  **Expected behavior** Land on project B's dashboard list (`/B/dashboard`).  **Cause** - `withSiteIdUpdater` has two effects: URL -> store (`setSiteId(urlSiteId)`) and store -> URL (`history.push`). When the URL and the store disagree, both fire in the same commit, and the second one still reads the old `siteId`. Each one undoes the other, without end. - Trigger: after the switch, `DashboardView` is mounted with the old `siteId` from the URL. Its "dashboard not found" redirect runs only on `[dashboardId]`, so it pushes `/<old siteId>/dashboard`.  **OpenReplay Environment**  - OpenReplay version: 1.27.0 (self-hosted). The same code is on `main`, and `DashboardView` has the same stale redirect in 1.27 and 1.28.  **Additional context** I have a fix with a failing-then-passing unit test ready and will open a PR. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1101,756 +1101,364 @@ def api_key_authorizer(token):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9a554a54` (2026-11-16)
-**Commit Message**: Updated patch build from main 9095d39b01b72441a198f19c98c5b61e86139443 (#5173)
-
-* Increment sink chart version to v1.28.4
-
-* Increment assets chart version to v1.28.5
-
-* Increment ender chart version to v1.28.4
-
-* Increment http chart version to v1.28.6
-
-* Increment canvases chart version to v1.28.5
-
-* Increment images chart version to v1.28.5
-
----------
+### Incident Patch 1: `42a68706` (2026-11-18)
+**Commit Message**: Increment frontend chart version to v1.28.13 (#5181)
 
 Co-authored-by: GitHub Action <[REDACTED_EMAIL]>
 
-**File**: `scripts/helmcharts/openreplay/charts/assets/Chart.yaml` (modified, +1/-1)
+**File**: `scripts/helmcharts/openreplay/charts/frontend/Chart.yaml` (modified, +1/-1)
 ```diff
-@@ -18,4 +18,4 @@ version: 0.1.1
+@@ -18,4 +18,4 @@ version: 0.1.10
  # incremented each time you make changes to the application. Versions are not expected to
  # follow Semantic Versioning. They should reflect the version the application is using.
  # It is recommended to use it with quotes.
--AppVersion: "v1.28.4"
-+AppVersion: "v1.28.5"
-```
-
-**File**: `scripts/helmcharts/openreplay/charts/canvases/Chart.yaml` (modified, +1/-1)
-```diff
-@@ -18,4 +18,4 @@ version: 0.1.1
- # incremented each time you make changes to the application. Versions are not expected to
- # follow Semantic Versioning. They should reflect the version the application is using.
- # It is recommended to use it with quotes.
--AppVersion: "v1.28.4"
-+AppVersion: "v1.28.5"
-```
-
-**File**: `scripts/helmcharts/openreplay/charts/ender/Chart.yaml` (modified, +1/-1)
-```diff
-@@ -18,4 +18,4 @@ version: 0.1.1
- # incremented each time you make changes to the application. Versions are not expected to
- # follow Semantic Versioning. They should reflect the version the application is using.
- # It is recommended to use it with quotes.
--AppVersion: "v1.28.3"
-+AppVersion: "v1.28.4"
-```
-
-**File**: `scripts/helmcharts/openreplay/charts/http/Chart.yaml` (modified, +1/-1)
-```diff
-@@ -18,4 +18,4 @@ version: 0.1.1
- # incremented each time you make changes to the application. Versions are not expected to
- # follow Semantic Versioning. They should reflect the version the application is using.
- # It is recommended to use it with quotes.
--AppVersion: "v1.28.5"
-+AppVersion: "v1.28.6"
-```
-
-**File**: `scripts/helmcharts/openreplay/charts/images/Chart.yaml` (modified, +1/-1)
-```diff
-@@ -18,4 +18,4 @@ version: 0.1.1
- # incremented each time you make changes to the application. Versions are not expected to
- # follow Semantic Versioning. They should reflect the version the application is using.
- # It is recommended to use it with quotes.
--AppVersion: "v1.28.4"
-+AppVersion: "v1.28.5"
-```
-
-**File**: `scripts/helmcharts/openreplay/charts/sink/Chart.yaml` (modified, +1/-1)
-```diff
-@@ -18,4 +18,4 @@ version: 0.1.1
- # incremented each time you make changes to the application. Versions are not expected to
- # follow Semantic Versioning. They should reflect the version the application is using.
- # It is recommended to use it with quotes.
--AppVersion: "v1.28.3"
-+AppVersion: "v1.28.4"
+-AppVersion: "v1.28.12"
++AppVersion: "v1.28.13"
 ```
 
 ---
 
-### Incident Patch 2: `9095d39b` (2026-11-16)
-**Commit Message**: Patch/fix pseudo class rewrite + latest Kafka fixes (#5172)
+### Incident Patch 2: `66d79de4` (2026-11-18)
+**Commit Message**: Player patches 11 18 (#5180)
 
-* Survive Kafka broker restarts without losing sessionEnd (#5137)
+* player: insert out-of-order messages by time instead of dropping them
 
-* fix(ender): survive Kafka broker restarts without losing sessionEnd
+dom.mobs can end after dom.mobe starts (the sink files a batch by its first
+timestamp, and a protocol v2 assets batch can span until the next flush), so
+ListWalker.append dropped DOM messages older than the list tail.
 
-* fix(ender): confirm sessionEnd delivery before dropping recovery state
+Backport of the ListWalker/ListWalkerWithMarks part of a12bb10dc from dev.
 
-* fix(ender): keep reaper recovery record until the images send succeeds
+* player: same-time cross-file DOM messages keep create-before-modify order
 
-* Don't rewrite :hover/:focus in media queries and escaped class names (#5171)
+An asset message in dom.mobs (style, link href, CSS data) and the node it
+targets, created in dom.mobe in the same tracker commit, share a timestamp.
+Inserting after equal-time items applied the attribute before the node
+existed, so the element came back without its style. DOMManager breaks
+equal-time ties with the same priority fixMessageOrder uses within a file.
 
-* fix(assets): don't rewrite :hover/:focus in media queries and escaped class names
-
-* fix(assets): skip comments and escape pairs when rewriting :hover/:focus
-
-**File**: `backend/cmd/ender/main.go` (modified, +16/-7)
+**File**: `frontend/tests/unit/DOMManager.test.ts` (modified, +46/-0)
 ```diff
-@@ -57,7 +57,8 @@ func main() {
- 	projManager := projects.New(log, pgConn, redisClient, dbMetric)
- 	sessManager := sessions.New(log, pgConn, projManager, redisClient, dbMetric, sessions.IgnoreInactiveProjects)
+@@ -9,6 +9,7 @@ import {
+ import DOMManager from '../../../player/src/web/managers/DOM/DOMManager';
+ import { VElement } from '../../../player/src/web/managers/DOM/VirtualDOM';
+ import { MType } from '../../../player/src/web/messages/raw.gen';
++import { fixMessageOrder } from '../../../player/src/web/messages/messageOrder';
  
--	sessionEndGenerator, err := ender.New(log, enderMetric, ender.EVENTS_SESSION_END_TIMEOUT, cfg.PartitionsNumber)
-+	cleanupRegistry := registry.New(log, redisClient)
-+	sessionEndGenerator, err := ender.New(log, enderMetric, cleanupRegistry, ender.EVENTS_SESSION_END_TIMEOUT, cfg.PartitionsNumber)
- 	if err != nil {
- 		log.Fatal(ctx, "can't init ender service: %s", err)
- 	}
-@@ -69,7 +70,6 @@ func main() {
- 		return producer.Ping(ctx)
- 	})
- 
--	cleanupRegistry := registry.New(log, redisClient)
- 	cleanupDispatcher, err := cleanup.NewDispatcher(log, cfg, producer, pgConn, redisClient)
- 	if err != nil {
- 		log.Fatal(ctx, "can't init cleanup dispatcher: %s", err)
-@@ -119,20 +119,28 @@ func main() {
- 		case sig := <-sigchan:
- 			log.Info(ctx, "Caught signal %v: terminating", sig)
- 			producer.Close(cfg.ProducerTimeout)
--			if err := consumer.CommitBack(ender.EVENTS_BACK_COMMIT_GAP); err != nil {
-+			sessionEndGenerator.ApplyDeliveries()
-+			if pending := sessionEndGenerator.Pending(); pending > 0 {
-+				log.Warn(ctx, "%d sessions wait for sessionEnd delivery, offsets are not committed on shutdown", pending)
-+			} else if err := consumer.CommitBack(ender.EVENTS_BACK_COMMIT_GAP); err != nil {
- 				log.Error(ctx, "can't commit messages with offset: %s", err)
- 			}
- 			consumer.Close()
- 			cleanupDispatcher.Close()
- 			os.Exit(0)
- 		case <-tick:
- 			details := ender.NewLogDetails()
--			sessionEndGenerator.HandleEndedSessions(func(candidates map[uint64]uint64) map[uint64]bool {
--				return processEndedBatch(ctx, candidates, sessManager, producer, cfg, log, details, cleanupRegistry)
-+			sessionEndGenerator.HandleEndedSessions(func(candidates map[uint64]uint64, retry map[uint64]bool) map[uint64]bool {
-+				return processEndedBatch(ctx, candidates, retry, sessManager, producer, cfg, log, details, sessionEndGenerator)
- 			})
- 			details.Log(log, ctx)
- 			details.Record(enderMetric)
- 			producer.Flush(cfg.ProducerTimeout)
-+			sessionEndGenerator.ApplyDeliveries()
-+			if pending := sessionEndGenerator.Pending(); pending > 0 {
-+				log.Warn(ctx, "%d sessions wait for sessionEnd delivery, offsets are not committed", pending)
-+				continue
-+			}
- 			if err := consumer.CommitBack(ender.EVENTS_BACK_COMMIT_GAP); err != nil {
- 				log.Error(ctx, "can't commit messages with offset: %s", err)
- 			}
-@@ -147,12 +155,13 @@ func main() {
- func processEndedBatch(
- 	ctx context.Context,
- 	candidates map[uint64]uint64,
-+	retry map[uint64]bool,
- 	sessManager sessions.Sessions,
- 	producer types.Producer,
- 	cfg *config.Config,
- 	log logger.Logger,
- 	details *ender.LogDetails,
--	cleanupReg registry.Registry,
-+	tracker ender.DeliveryTracker,
- ) map[uint64]bool {
- 	if len(candidates) == 0 {
- 		return map[uint64]bool{}
-@@ -167,5 +176,5 @@ func processEndedBatch(
- 		log.Error(ctx, "can't get sessions from database: %s", err)
- 		return map[uint64]bool{}
- 	}
--	return ender.ProcessEndedSessions(ctx, candidates, loaded, sessManager, producer, cfg, log, details, cleanupReg)
-+	return ender.ProcessEndedSessions(ctx, candidates, retry, loaded, sessManager, producer, cfg, log, details, tracker)
- }
+ class FrameVElement extends VElement {
+   constructor(
+@@ -182,3 +183,48 @@ describe('SetInputValue rejections', () => {
+     expect(error).toHaveBeenCalled();
+   });
+ });
++
++// dom.mobs is cut by a batch's first timestamp, so an assets batch in it can end
++// after dom.mobe starts; the style below was set in the commit that created h1.
++describe('dom.mobs assets batch overlapping dom.mobe', () => {
++  const create = { tp: MType.CreateElementNode, id: 10, parentID: 5, index: 0, tag: 'H1', svg: false, time: 20 };
++  const style = { tp: MType.SetNodeAttribute, id: 10, name: 'style', value: 'color: red', time: 20 };
++
++  async function replay(mobs: any[], mobe: any[]) {
++    jest.spyOn(console, 'warn').mockImplementation(() => {});
++    jest.spyOn(console, 'error').mockImplementation(() => {});
++    mount('div', 5);
++    [...fixMessageOrder(mobs), ...fixMessageOrder(mobe)].forEach((m) => manager.append(m));
++    await manager.moveReady(40);
++    // @ts-ignore private access
++    const h1 = manager.vElements.get(10);
++    h1?.applyChanges();
++    return h1?.node as Element | undefined;
++  }
++
++  it('creates the node before its same-time attribute at the mobs tail', async () => {
++    const h1 = await replay([{ ...style }], [{ ...create }]);
++    expect(h1?.getAttribute('style')).toBe('color: red');
++  });
++
++  it('creates the node before its same-time attribute inside the mobs range', async () => {
++    const later = { tp: MType.SetNodeAttribute, id: 5, name: 'style', value: 'top: 0', time: 30 };
++    const h1 = await replay([{ ...style }, later], [{ ...create }]);
++    expect(h1?.getAttribute('style')).toBe('color: red');
++    expect(manager.list.map((m: any) => m.tp)).toEqual([
++      MType.CreateElementNode,
++      MType.SetNodeAttribute,
++      MType.SetNodeAttribute,
++    ]);
++  });
++
++  it('keeps a same-time removal after the attribute', async () => {
++    const remove = { tp: MType.RemoveNode, id: 10, time: 20 };
++    await replay([{ ...create }, { ...style }], [remove]);
++    expect(manager.list.map((m: any) => m.tp)).toEqual([
++      MType.CreateElementNode,
++      MType.SetNodeAttribute,
++      MType.RemoveNode,
++    ]);
++  });
++});
 ```
 
-**File**: `backend/internal/ender/ender.go` (modified, +89/-20)
+**File**: `frontend/tests/unit/ListWalker.test.ts` (modified, +65/-5)
 ```diff
-@@ -1,46 +1,107 @@
- package ender
+@@ -1,5 +1,6 @@
+-import { describe, test, expect, beforeEach, jest } from '@jest/globals';
++import { describe, test, expect, beforeEach, afterEach, jest } from '@jest/globals';
+ import ListWalker from '../../../player/src/common/ListWalker';
++import ListWalkerWithMarks from '../../../player/src/common/ListWalkerWithMarks';
+ import type { Timed } from '../../../player/src/common/types';
  
- import (
-+	"context"
-+	"fmt"
-+	"sync"
-+	"sync/atomic"
- 	"time"
+ interface Item extends Timed {
+@@ -11,17 +12,55 @@ describe('ListWalker', () => {
  
-+	"openreplay/backend/pkg/cleanup/registry"
- 	"openreplay/backend/pkg/logger"
- 	"openreplay/backend/pkg/messages"
- 	"openreplay/backend/pkg/metrics/ender"
- )
+   beforeEach(() => {
+     walker = new ListWalker<Item>([]);
+-    jest.spyOn(console, 'error').mockImplementation(() => {});
+   });
  
--type EndedSessionHandler func(map[uint64]uint64) map[uint64]bool
-+type EndedSessionHandler func(candidates map[uint64]uint64, retry map[uint64]bool) map[uint64]bool
- 
- // session holds information about user's session live status
- type session struct {
- 	lastTimestamp int64 // timestamp from message broker
- 	lastUpdate    int64 // local timestamp
- 	lastUserTime  uint64
- 	isEnded       bool
-+	emitPending   bool // sessionEnd was not delivered
-+}
+-  test('append maintains order and prevents out of order inserts', () => {
++  afterEach(() => {
++    jest.restoreAllMocks();
++  });
 +
-+type delivery struct {
-+	sessionID uint64
-+	timestamp uint64
-+	err       error
- }
++  test('append keeps order and inserts out-of-order items by time', () => {
++    const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+     walker.append({ time: 1 });
+     walker.append({ time: 3 });
+     expect(walker.list.map((i) => i.time)).toEqual([1, 3]);
  
- // SessionEnder updates timestamp of last message for each session
- type SessionEnder struct {
--	log      logger.Logger
--	metrics  ender.Ender
--	timeout  int64
--	sessions map[uint64]*session // map[sessionID]session
--	timeCtrl *timeController
--	parts    uint64
--	enabled  bool
-+	log        logger.Logger
-+	metrics    ender.Ender
-+	cleanupReg registry.Registry
-+	timeout    int64
-+	sessions   map[uint64]*session // map[sessionID]session
-+	timeCtrl   *timeController
-+	parts      uint64
-+	enabled    bool
+     walker.append({ time: 2 });
+-    expect(walker.list.map((i) => i.time)).toEqual([1, 3]);
+-    expect((console.error as jest.Mock).mock.calls.length).toBe(1);
++    walker.append({ time: 0 });
++    expect(walker.list.map((i) => i.time)).toEqual([0, 1, 2, 3]);
++    expect(warn.mock.calls.length).toBe(1);
++  });
 +
-+	inFlight atomic.Int64
-+	ackMu    sync.Mutex
-+	acks     []delivery
- }
- 
--func New(log logger.Logger, metrics ender.Ender, timeout int64, parts int) (*SessionEnder, error) {
-+func New(log logger.Logger, metrics ender.Ender, cleanupReg registry.Registry, timeout int64, parts int) (*SessionEnder, error) {
- 	return &SessionEnder{
--		log:      log,
--		metrics:  metrics,
--		timeout:  timeout,
--		sessions: make(map[uint64]*session),
--		timeCtrl: NewTimeController(parts),
--		parts:    uint64(parts), // ender uses all partitions by default
--		enabled:  true,
-+		log:        log,
-+		metrics:    metrics,
-+		cleanupReg: cleanupReg,
-+		timeout:    timeout,
-+		sessions:   make(map[uint64]*session),
-+		timeCtrl:   NewTimeController(parts),
-+		parts:      uint64(parts), // ender uses all partitions by default
-+		enabled:    true,
- 	}, nil
- }
- 
-+func (se *SessionEnder) Track(sessionID, timestamp uint64) func(error) {
-+	se.inFlight.Add(1)
-+	return func(err error) {
-+		se.ackMu.Lock()
-+		se.acks = append(se.acks, delivery{sessionID: sessionID, timestamp: timestamp, err: err})
-+		se.ackMu.Unlock()
-+	}
-+}
++  test('out-of-order item goes after items with equal time', () => {
++    jest.spyOn(console, 'warn').mockImplementation(() => {});
++    walker.append({ time: 1 });
++    walker.append({ time: 3, value: 'a' });
++    walker.append({ time: 5 });
++    walker.append({ time: 3, value: 'b' });
++    expect(walker.list.map((i) => `${i.time}${i.value ?? ''}`)).toEqual([
++      '1',
++      '3a',
++      '3b',
++      '5',
++    ]);
++  });
 +
-+func (se *SessionEnder) ApplyDeliveries() {
-+	se.ackMu.Lock()
-+	acks := se.acks
-+	se.acks = nil
-+	se.ackMu.Unlock()
-+	for _, d := range acks {
-+		se.inFlight.Add(-1)
-+		if d.err == nil {
-+			se.cleanupReg.Done(d.sessionID)
-+			continue
-+		}
-+		se.metrics.IncreaseEndErrors(ender.StageDeliver, 1)
-+		sessCtx := context.WithValue(context.Background(), "sessionID", fmt.Sprintf("%d", d.sessionID))
-+		se.log.Error(sessCtx, "sessionEnd was not delivered, will retry: %s", d.err)
-+		sess, ok := se.sessions[d.sessionID]
-+		if !ok {
-+			sess = &session{lastUserTime: d.timestamp, isEnded: true}
-+			se.sessions[d.sessionID] = sess
-+			se.metrics.IncreaseActiveSessions()
-+		}
-+		sess.emitPending = true
-+	}
-+}
++  test('overlapping files (dom.mobs tail after dom.mobe head) lose nothing', () => {
++    jest.spyOn(console, 'warn').mockImplementation(() => {});
++    const mobs = [{ time: 0 }, { time: 10 }, { time: 15 }, { time: 29 }];
++    const mobe = [{ time: 16 }, { time: 20 }, { time: 30 }];
++    [...mobs, ...mobe].forEach((m) => walker.append(m));
++    expect(walker.list.map((i) => i.time)).toEqual([0, 10, 15, 16, 20, 29, 30]);
++  });
 +
-+func (se *SessionEnder) Pending() int {
-+	n := int(se.inFlight.Load())
-+	for _, sess := range se.sessions {
-+		if sess.emitPending {
-+			n++
-+		}
-+	}
-+	return n
-+}
++  test('insert before the pointer keeps the current item', () => {
++    walker.append({ time: 1, value: 'a' });
++    walker.append({ time: 5, value: 'b' });
++    walker.moveGetLast(5);
++    expect(walker.current?.value).toBe('b');
++    walker.insert({ time: 3, value: 'c' });
++    expect(walker.current?.value).toBe('b');
++    expect(walker.countNow).toBe(3);
++    expect(walker.moveGetLast(5)).toBeNull();
+   });
+ 
+   test('unshift prepends items', () => {
+@@ -81,3 +120,24 @@ describe('ListWalker', () => {
+     expect(walker.countNow).toBe(1);
+   });
+ });
 +
- func (se *SessionEnder) Enable() {
- 	se.enabled = true
- }
-@@ -109,6 +170,7 @@ func (se *SessionEnder) UpdateSession(msg messages.Message) {
- }
- 
- func (se *SessionEnder) HandleEndedSessions(handler EndedSessionHandler) {
-+	se.ApplyDeliveries()
- 	if !se.enabled {
- 		return
- 	}
-@@ -132,19 +194,26 @@ func (se *SessionEnder) HandleEndedSessions(handler EndedSessionHandler) {
- 
- 	// Find ended sessions
- 	endedCandidates := make(map[uint64]uint64, len(se.sessions)/2) // [sessionID]lastUserTime
-+	retry := make(map[uint64]bool)
- 	for sessID, sess := range se.sessions {
- 		if !isSessionEnded(sessID, sess) {
- 			continue
- 		}
- 		sess.isEnded = true
- 		endedCandidates[sessID] = sess.lastUserTime
-+		if sess.emitPending {
-+			retry[sessID] = true
-+		}
- 	}
- 
- 	// Process ended sessions
--	for sessID, completed := range handler(endedCandidates) {
--		if completed {
--			delete(se.sessions, sessID)
--			se.metrics.DecreaseActiveSessions()
-+	completed := handler(endedCandidates, retry)
-+	for sessID := range endedCandidates {
-+		if !completed[sessID] {
-+			se.sessions[sessID].emitPending = true
-+			continue
- 		}
-+		delete(se.sessions, sessID)
-+		se.metrics.DecreaseActiveSessions()
- 	}
- }
++describe('ListWalkerWithMarks', () => {
++  test('marked counts stay consistent on insert behind the pointer', () => {
++    jest.spyOn(console, 'warn').mockImplementation(() => {});
++    const w = new ListWalkerWithMarks<{ time: number; red?: boolean }>(
++      (i) => !!i.red,
++    );
++    w.append({ time: 1, red: true });
++    w.append({ time: 10 });
++    w.moveGetLast(10);
++    expect(w.markedCountNow).toBe(1);
++    w.append({ time: 5, red: true });
++    w.insert({ time: 7, red: true });
++    w.append({ time: 12, red: true });
++    expect(w.markedCount).toBe(4);
++    expect(w.markedCountNow).toBe(3);
++    w.moveGetLast(12);
++    expect(w.markedCountNow).toBe(4);
++    jest.restoreAllMocks();
++  });
++});
 ```
 
-**File**: `backend/internal/ender/logdetails.go` (modified, +6/-0)
+**File**: `player/src/common/ListWalker.ts` (modified, +68/-15)
 ```diff
-@@ -28,6 +28,7 @@ type LogDetails struct {
- 	Diff                map[uint64]int64
- 	Updated             int
- 	New                 int
-+	Retried             int
- 	LoadErrors          int
- 	UpdateErrors        int
- 	ProduceErrors       int
-@@ -37,6 +38,7 @@ type LogDetails struct {
- func (l *LogDetails) Record(m ender.Ender) {
- 	m.IncreaseSessionEnds(ender.EndNew, float64(l.New))
- 	m.IncreaseSessionEnds(ender.EndUpdated, float64(l.Updated))
-+	m.IncreaseSessionEnds(ender.EndRetried, float64(l.Retried))
- 	m.IncreaseSessionEnds(ender.EndDuplicate, float64(len(l.Duplicated)))
- 	m.IncreaseSessionEnds(ender.EndShorter, float64(len(l.Shorter)))
- 	m.IncreaseSessionEnds(ender.EndNotFound, float64(len(l.NotFound)))
-@@ -96,6 +98,10 @@ func (l *LogDetails) Log(log logger.Logger, ctx context.Context) {
- 		logBuilder.WriteString("new: %d, ")
- 		logValues = append(logValues, l.New)
- 	}
-+	if l.Retried > 0 {
-+		logBuilder.WriteString("retried: %d, ")
-+		logValues = append(logValues, l.Retried)
-+	}
- 	if len(l.NotFound) > 0 {
- 		logBuilder.WriteString("not found: %d, ")
- 		logValues = append(logValues, len(l.NotFound))
+@@ -4,37 +4,90 @@ export default class ListWalker<T extends Timed> {
+   /* Pointer to the "current" item */
+   private p = 0;
+ 
++  private warnedOutOfOrder = false;
++
+   constructor(private _list: Array<T> = []) {}
+ 
++  /**
++   * Appends in time order. Out-of-order items (late batches, cross-file splits)
++   * are inserted at their sorted position instead of being dropped.
++   */
+   append(m: T): void {
+-    if (this.length > 0 && this.last && m.time < this.last.time) {
+-      console.error(
+-        'Trying to append message with the less time then the list tail:',
+-        m.time,
+-        'vs',
+-        this.last.time,
+-        m,
+-        this.last,
+-        this,
+-      );
++    const last = this.last;
++    if (last && !this.fitsAfter(m, last)) {
++      if (!this.warnedOutOfOrder) {
++        this.warnedOutOfOrder = true;
++        console.warn(
++          'ListWalker: out-of-order item inserted by time',
++          m.time,
++          'vs tail',
++          last.time,
++        );
++      }
++      this.insert(m);
+       return;
+     }
+     this.list.push(m);
++    this.onAdd(m);
+   }
+ 
+   unshift(m: T): void {
+     this.list.unshift(m);
+   }
+ 
++  /** Sorted insert (after items with equal time unless goesBefore). O(log n) search, O(1) for in-order items. */
+   insert(m: T): void {
+-    let index = this.list.findIndex((om) => om.time > m.time);
+-    if (index === -1) {
+-      index = this.length;
++    const list = this.list;
++    this.onAdd(m);
++    if (list.length === 0 || this.fitsAfter(m, list[list.length - 1])) {
++      list.push(m);
++      return;
++    }
++    let lo = 0;
++    let hi = list.length;
++    while (lo < hi) {
++      const mid = (lo + hi) >> 1;
++      if (list[mid].time <= m.time) {
++        lo = mid + 1;
++      } else {
++        hi = mid;
++      }
++    }
++    while (
++      lo > 0 &&
++      list[lo - 1].time === m.time &&
++      this.goesBefore(m, list[lo - 1])
++    ) {
++      lo--;
+     }
+-    const oldList = this.list;
+-    this._list = [...oldList.slice(0, index), m, ...oldList.slice(index)];
++    list.splice(lo, 0, m);
++    if (lo < this.p) {
++      // keep the pointer on the same "current" item; the new one counts as passed
++      this.p++;
++      this.onPassedInsert(m);
++    }
++  }
++
++  private fitsAfter(m: T, prev: T): boolean {
++    return !(
++      m.time < prev.time ||
++      (m.time === prev.time && this.goesBefore(m, prev))
++    );
+   }
+ 
++  /**
++   * Tie-break for items with equal time arriving out of order (e.g. an asset
++   * message in dom.mobs and the node it targets created in dom.mobe).
++   */
++  protected goesBefore(_m: T, _other: T): boolean {
++    return false;
++  }
++
++  /** Hooks for subclasses tracking per-item state. */
++  protected onAdd(_m: T): void {}
++
++  protected onPassedInsert(_m: T): void {}
++
+   reset(): void {
+     this.p = 0;
+   }
 ```
 
-**File**: `backend/internal/ender/processor.go` (modified, +49/-18)
+**File**: `player/src/common/ListWalkerWithMarks.ts` (modified, +7/-2)
 ```diff
-@@ -6,24 +6,28 @@ import (
- 	"strings"
+@@ -21,11 +21,16 @@ export default class ListWalkerWithMarks<
+     );
+   }
  
- 	config "openreplay/backend/internal/config/ender"
--	"openreplay/backend/pkg/cleanup/registry"
- 	"openreplay/backend/pkg/logger"
- 	"openreplay/backend/pkg/messages"
- 	"openreplay/backend/pkg/queue/types"
- 	"openreplay/backend/pkg/sessions"
- 	"openreplay/backend/pkg/storage"
- )
- 
-+type DeliveryTracker interface {
-+	Track(sessionID, timestamp uint64) func(error)
-+}
+-  append(item: T) {
++  protected onAdd(item: T) {
+     if (this.isMarked(item)) {
+       this._markCount++;
+     }
+-    super.append(item);
++  }
 +
- func ProcessEndedSessions(
- 	ctx context.Context,
- 	candidates map[uint64]uint64,
-+	retry map[uint64]bool,
- 	loaded map[uint64]*sessions.Session,
- 	sessManager sessions.Sessions,
- 	producer types.Producer,
- 	cfg *config.Config,
- 	log logger.Logger,
- 	details *LogDetails,
--	cleanupReg registry.Registry,
-+	tracker DeliveryTracker,
- ) map[uint64]bool {
- 	completed := make(map[uint64]bool, len(candidates))
- 	toUpdate := make(map[uint64]uint64, len(candidates)) // sessionID -> timestamp
-@@ -41,6 +45,14 @@ func ProcessEndedSessions(
- 			currDuration = *sess.Duration
- 		}
- 		newDur := timestamp - sess.Timestamp
-+		if retry[sessionID] && sess.Duration != nil && newDur <= currDuration {
-+			sessCtx := context.WithValue(ctx, "sessionID", fmt.Sprintf("%d", sessionID))
-+			if produceSessionEnd(sessCtx, sessionID, sess.Timestamp+currDuration, sess, sessManager, producer, cfg, log, details, tracker) {
-+				details.Retried++
-+				completed[sessionID] = true
-+			}
-+			continue
-+		}
- 		if currDuration == newDur {
- 			if sess.Duration != nil {
- 				details.Duplicated[sessionID] = currDuration
-@@ -67,7 +79,7 @@ func ProcessEndedSessions(
- 		log.Error(ctx, "batch duration update failed, falling back per-session: %s", err)
- 		for sessionID, timestamp := range toUpdate {
- 			sessCtx := context.WithValue(ctx, "sessionID", fmt.Sprintf("%d", sessionID))
--			if ProcessEndedSession(sessCtx, sessionID, timestamp, loaded[sessionID], sessManager, producer, cfg, log, details, cleanupReg) {
-+			if ProcessEndedSession(sessCtx, sessionID, timestamp, loaded[sessionID], sessManager, producer, cfg, log, details, tracker) {
- 				completed[sessionID] = true
- 			}
- 		}
-@@ -83,7 +95,7 @@ func ProcessEndedSessions(
- 			continue
- 		}
- 		sessCtx := context.WithValue(ctx, "sessionID", fmt.Sprintf("%d", sessionID))
--		if emitSessionEnd(sessCtx, sessionID, timestamp, loaded[sessionID], prevDur[sessionID], newDuration, sessManager, producer, cfg, log, details, cleanupReg) {
-+		if emitSessionEnd(sessCtx, sessionID, timestamp, loaded[sessionID], prevDur[sessionID], newDuration, sessManager, producer, cfg, log, details, tracker) {
- 			completed[sessionID] = true
- 		}
- 	}
-@@ -100,7 +112,7 @@ func ProcessEndedSession(
- 	cfg *config.Config,
- 	log logger.Logger,
- 	details *LogDetails,
--	cleanupReg registry.Registry,
-+	tracker DeliveryTracker,
- ) bool {
- 	if sess == nil {
- 		details.NotFound[sessionID] = timestamp
-@@ -141,7 +153,7 @@ func ProcessEndedSession(
- 		log.Error(ctx, "can't update session duration, err: %s", err)
- 		return false
- 	}
--	return emitSessionEnd(ctx, sessionID, timestamp, sess, currDuration, newDuration, sessManager, producer, cfg, log, details, cleanupReg)
-+	return emitSessionEnd(ctx, sessionID, timestamp, sess, currDuration, newDuration, sessManager, producer, cfg, log, details, tracker)
- }
++  protected onPassedInsert(item: T) {
++    if (this.isMarked(item)) {
++      this._markCountNow++;
++    }
+   }
  
- func emitSessionEnd(
-@@ -156,14 +168,39 @@ func emitSessionEnd(
- 	cfg *config.Config,
- 	log logger.Logger,
- 	details *LogDetails,
--	cleanupReg registry.Registry,
-+	tracker DeliveryTracker,
- ) bool {
- 	// Re-check after the update — could have raced with another path.
- 	if currDuration == newDuration && currDuration != 0 {
- 		details.Duplicated[sessionID] = currDuration
- 		return true
- 	}
- 
-+	if !produceSessionEnd(ctx, sessionID, timestamp, sess, sessManager, producer, cfg, log, details, tracker) {
-+		return false
-+	}
-+
-+	if currDuration != 0 {
-+		details.Diff[sessionID] = int64(newDuration) - int64(currDuration)
-+		details.Updated++
-+	} else {
-+		details.New++
-+	}
-+	return true
-+}
-+
-+func produceSessionEnd(
-+	ctx context.Context,
-+	sessionID uint64,
-+	timestamp uint64,
-+	sess *sessions.Session,
-+	sessManager sessions.Sessions,
-+	producer types.Producer,
-+	cfg *config.Config,
-+	log logger.Logger,
-+	details *LogDetails,
-+	tracker DeliveryTracker,
-+) bool {
- 	msg := &messages.SessionEnd{Timestamp: timestamp}
- 	if cfg.UseEncryption {
- 		if key := storage.GenerateEncryptionKey(); key != nil {
-@@ -175,36 +212,30 @@ func emitSessionEnd(
- 		}
- 	}
- 
-+	ack := tracker.Track(sessionID, timestamp)
- 	if sess.Platform == "ios" || sess.Platform == "android" {
- 		mobileMsg := &messages.MobileSessionEnd{Timestamp: timestamp}
--		if err := producer.Produce(cfg.TopicRawMobile, sessionID, mobileMsg.Encode()); err != nil {
-+		if err := producer.ProduceWithAck(cfg.TopicRawMobile, sessionID, mobileMsg.Encode(), ack); err != nil {
- 			details.ProduceErrors++
- 			log.Error(ctx, "can't send MobileSessionEnd to mobile topic: %s", err)
-+			ack(err)
- 			return false
- 		}
- 		if err := producer.Produce(cfg.TopicRawImages, sessionID, mobileMsg.Encode()); err != nil {
- 			details.P
+   protected moveNext() {
 ```
 
-**File**: `backend/pkg/cleanup/reaper/reaper.go` (modified, +70/-12)
+**File**: `player/src/web/managers/DOM/DOMManager.ts` (modified, +6/-0)
 ```diff
-@@ -18,12 +18,20 @@ type PendingStore interface {
- 	Remove(members ...string) error
- }
+@@ -30,6 +30,7 @@ import {
+   VText,
+ } from './VirtualDOM';
+ import { deleteRule, insertRule } from './safeCSSRules';
++import { getMsgPriority } from '../../messages/messageOrder';
+ import {
+   REPLAY_CSP,
+   REPLAY_IFRAME_SANDBOX,
+@@ -167,6 +168,11 @@ export default class DOMManager extends ListWalker<Message> {
+     super.append(m);
+   }
  
--type DurationSource interface {
--	Durations(sessionIDs []uint64) (map[uint64]*uint64, error)
-+type Session struct {
-+	StartTs  uint64
-+	Duration *uint64
-+	FileKey  string
-+}
++  // same CREATE -> MODIFY -> DELETE order fixMessageOrder gives a time group within one file
++  protected goesBefore(m: Message, other: Message): boolean {
++    return getMsgPriority(m.tp) < getMsgPriority(other.tp);
++  }
 +
-+type SessionSource interface {
-+	Load(sessionIDs []uint64) (map[uint64]Session, error)
- }
- 
- type Config struct {
- 	TopicTrigger      string
-+	TopicRawAssets    string
-+	TopicRawMobile    string
- 	TopicRawImages    string
- 	TopicCanvasImages string
- 	PartitionsNumber  uint64
-@@ -33,15 +41,18 @@ type Config struct {
- type Reaper struct {
- 	log      logger.Logger
- 	store    PendingStore
--	sessions DurationSource
-+	sessions SessionSource
- 	producer types.Producer
- 	cfg      Config
- 
- 	mu     sync.RWMutex
- 	active map[uint64]bool
-+
-+	ackMu     sync.Mutex
-+	delivered []string
- }
- 
--func New(log logger.Logger, store PendingStore, sessions DurationSource, producer types.Producer, cfg Config) *Reaper {
-+func New(log logger.Logger, store PendingStore, sessions SessionSource, producer types.Producer, cfg Config) *Reaper {
- 	return &Reaper{
- 		log:      log,
- 		store:    store,
-@@ -67,8 +78,22 @@ func (r *Reaper) owns(sessionID uint64) bool {
- 	return len(r.active) > 0 && r.active[sessionID%r.cfg.PartitionsNumber]
- }
- 
-+func (r *Reaper) removeDelivered(ctx context.Context) {
-+	r.ackMu.Lock()
-+	delivered := r.delivered
-+	r.delivered = nil
-+	r.ackMu.Unlock()
-+	if len(delivered) == 0 {
-+		return
-+	}
-+	if err := r.store.Remove(delivered...); err != nil {
-+		r.log.Warn(ctx, "reaper: can't remove delivered members: %s", err)
-+	}
-+}
-+
- func (r *Reaper) Tick(nowMs int64) {
- 	ctx := context.Background()
-+	r.removeDelivered(ctx)
- 	members, err := r.store.Due(nowMs, batchLimit)
- 	if err != nil {
- 		r.log.Error(ctx, "reaper: can't read pending sessions: %s", err)
-@@ -109,36 +134,69 @@ func (r *Reaper) Tick(nowMs int64) {
- 		return
- 	}
- 
--	durations, err := r.sessions.Durations(ids)
-+	loaded, err := r.sessions.Load(ids)
- 	if err != nil {
--		r.log.Error(ctx, "reaper: can't load session durations: %s", err)
-+		r.log.Error(ctx, "reaper: can't load sessions: %s", err)
- 		return
- 	}
- 
- 	toRemove := make([]string, 0, len(entries))
--	cleaned := 0
-+	sent := 0
- 	for _, e := range entries {
--		if dur, ok := durations[e.sessionID]; ok && dur != nil {
--			toRemove = append(toRemove, e.member)
-+		sessCtx := context.WithValue(ctx, "sessionID", fmt.Sprintf("%d", e.sessionID))
-+		if sess, ok := loaded[e.sessionID]; ok && sess.Duration != nil {
-+			if err := r.resend(e.member, e.sessionID, e.isMobile, sess); err != nil {
-+				r.log.Error(sessCtx, "reaper: can't resend sessionEnd, will retry: %s", err)
-+				continue
-+			}
-+			r.log.Info(sessCtx, "reaper: sessionEnd was never delivered, resent")
-+			sent++
- 			continue
- 		}
--		sessCtx := context.WithValue(ctx, "sessionID", fmt.Sprintf("%d", e.sessionID))
- 		if err := r.clean(e.sessionID, e.isMobile); err != nil {
- 			r.log.Error(sessCtx, "reaper: can't send CleanSession, will retry: %s", err)
- 			continue // keep the member for the next tick
- 		}
- 		r.log.Info(sessCtx, "reaper: session has no sessionEnd, dispatching EFS cleanup")
- 		toRemove = append(toRemove, e.member)
--		cleaned++
-+		sent++
- 	}
--	if cleaned > 0 {
-+	if sent > 0 {
- 		r.producer.Flush(r.cfg.ProducerTimeout)
- 	}
- 	if len(toRemove) > 0 {
- 		if err := r.store.Remove(toRemove...); err != nil {
- 			r.log.Warn(ctx, "reaper: can't remove processed members: %s", err)
- 		}
- 	}
-+	r.removeDelivered(ctx)
-+}
-+
-+func (r *Reaper) resend(member string, sessionID uint64, isMobile bool, sess Session) error {
-+	ack := func(err error) {
-+		if err != nil {
-+			sessCtx := context.WithValue(context.Background(), "sessionID", fmt.Sprintf("%d", sessionID))
-+			r.log.Error(sessCtx, "reaper: resent sessionEnd was not delivered, will retry: %s", err)
-+			return
-+		}
-+		r.ackMu.Lock()
-+		r.delivered = append(r.delivered, member)
-+		r.ackMu.Unlock()
-+	}
-+	// The images topic goes first
-+	endTs := sess.StartTs + *sess.Duration
-+	if isMobile {
-+		msg := (&messages.MobileSessionEnd{Timestamp: endTs}).Encode()
-+		if err := r.producer.Produce(r.cfg.TopicRawImages, sessionID, msg); err != nil {
-+			return err
-+		}
-+		return r.producer.ProduceWithAck(r.cfg.TopicRawMobile, sessionID, msg, ack)
-+	}
-+	msg := (&messages.SessionEnd{Timestamp: endTs, EncryptionKey: sess.FileKey}).Encode()
-+	if err := r.producer.Produce(r.cfg.TopicCanvasImages, sessionID, msg); err != nil {
-+		return err
-+	}
-+	return r.producer.ProduceWithAck(r.cfg.TopicRawAssets, sessionID, msg, ack)
- }
- 
- func (r *Reaper) clean(sessionID uint64, isMobile bool) error {
-```
-
-**File**: `backend/pkg/cleanup/reaper/store.go` (modified, +9/-7)
-```diff
-@@ -46,33 +46,35 @@ func (s *redisStore) Remove(members ...string) error {
- 	return s.redis.ZRem(ctx, registry.PendingKey, args...).Err()
- }
- 
--func NewPGSource(db pool.Pool) DurationSource {
-+func NewPGSource(db pool.Pool) SessionSource {
- 	return &pgSource{db: db}
- }
- 
- type pgSource struct {
- 	db pool.Pool
- }
- 
--func (s *pgSource) Durations(sessionIDs []uint64) (map[uint64]*uint64, error) {
-+func (s *pgSource) Load(sessionIDs []uint64) (map[uint64]Session, error) {
- 	rows, err := s.db.Query(`
--		SELECT session_id, duration
-+		SELECT session_id, start_ts, duration, COALESCE(file_key, '')
- 		FROM sessions
- 		WHERE session_id = ANY($1)`, sessionIDs)
- 	if err != nil {
- 		return nil, err
- 	}
- 	defer rows.Close()
--	res := make(map[uint64]*uint64, len(sessionIDs))
-+	res := make(map[uint64]Session, len(sessionIDs))
- 	for rows.Next() {
- 		var (
- 			sessionID uint64
--			duration  *uint64
-+			sess      Session
-+			fileKey   []byte
- 		)
--		if err := rows.Scan(&sessionID, &duration); err != nil {
-+		if err := rows.Scan(&sessionID, &sess.StartTs, &sess.Duration, &fileKey); err != nil {
- 			return nil, err
- 		}
--		res[sessionID] = duration
-+		sess.FileKey = string(fileKey)
-+		res[sessionID] = sess
- 	}
- 	return res, rows.Err()
- }
-```
-
-**File**: `backend/pkg/metrics/ender/metrics.go` (modified, +2/-0)
-```diff
-@@ -5,6 +5,7 @@ import "github.com/prometheus/client_golang/prometheus"
- const (
- 	EndNew             = "new"
- 	EndUpdated         = "updated"
-+	EndRetried         = "retried"
- 	EndDuplicate       = "duplicate"
- 	EndShorter         = "shorter"
- 	EndNotFound        = "not_found"
-@@ -13,6 +14,7 @@ const (
- 	StageLoad          = "load"
- 	StageUpdate        = "update"
- 	StageProduce       = "produce"
-+	StageDeliver       = "deliver"
- 	StageProduceCanvas = "produce_canvas"
- )
- 
-```
-
-**File**: `backend/pkg/queue/types/types.go` (modified, +1/-0)
-```diff
-@@ -37,6 +37,7 @@ type Consumer interface {
- // Producer sends batches of session data to queue (redis or kafka)
- type Producer interface {
- 	Produce(topic string, key uint64, value []byte) error
-+	ProduceWithAck(topic string, key uint64, value []byte, ack func(error)) error
- 	ProduceToPartition(topic string, partition, key uint64, value []byte) error
- 	Ping(ctx context.Context) error
- 	Flush(timeout int)
+   private removeBodyScroll(id: number, vElem: VElement): void {
+     if (this.isMobile && this.upperBodyId === id) {
+       // Need more type safety!
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5173** (2026-11-16): Updated patch build from main 9095d39b01b72441a198f19c98c5b61e86139443 (@estradino)
-- **PR #5172** (2026-11-16): Patch/fix pseudo class rewrite + latest Kafka fixes (@zavorotynskiy)
-- **PR #5171** (2026-11-16): Don't rewrite :hover/:focus in media queries and escaped class names (@zavorotynskiy)
-- **PR #5166** (2026-11-13): [CI Actions] Add otel-collector build and deploy workflow (@zavorotynskiy)
-- **PR #5165** (2026-11-12): Updated patch build from main f17fc4e840e24e8ac11282f8da18d0c0320dce50 (@estradino)
-- **PR #5164** (2026-11-12): ui: parse recorded sprite markup in an inert document (@nick-delirium)
+- **PR #5181** (2026-11-18): Updated patch build from main 66d79de4ae2573aa93f654c9ba3db19655deeb1f (@estradino)
+- **PR #5180** (2026-11-18): Player patches 11 18 (@nick-delirium)
+- **PR #5179** (closed): fix(player): keep messages older than the list tail (@iflyhere)
+- **PR #5178** (closed): fix(tracker): flush player and assets batches together (@iflyhere)
+- **PR #5176** (2026-11-17): Separate service for OTLP logs ingest (@zavorotynskiy)
+- **PR #5175** (2026-11-17): feat(scripts): changed secrets length (@tahayk)
 
 ---
 
@@ -1870,31 +1478,31 @@ Co-authored-by: GitHub Action <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Updated patch build from main 9095d39b01b72441a198f19c98c5b61e86139443
+## X. Increment frontend chart version to v1.28.13
 
 **RULE**:
-When implementing operations in `scripts/helmcharts/openreplay/charts/assets/Chart.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in openreplay/openreplay. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `scripts/helmcharts/openreplay/charts/frontend/Chart.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in openreplay/openreplay. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9a554a54`: Updated patch build from main 9095d39b01b72441a198f19c98c5b61e86139443. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `42a68706`: Increment frontend chart version to v1.28.13. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `scripts/helmcharts/openreplay/charts/assets/Chart.yaml`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `scripts/helmcharts/openreplay/charts/frontend/Chart.yaml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-AppVersion: "v1.28.5"
+AppVersion: "v1.28.13"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Induced defect failure mode:
-AppVersion: "v1.28.4"
+AppVersion: "v1.28.12"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9a554a54` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `42a68706` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

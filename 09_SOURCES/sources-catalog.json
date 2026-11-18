@@ -475,8 +475,8 @@
     "sourceUrl": "https://huggingface.co/Comfy-Org/Qwen-Image-2.1",
     "sourceVersion": "hf-comfy-org-qwen-image-2.1",
     "license": "Open-Source",
-    "contentHash": "0ac77fc50e183bdd5f7769d2010b87a7d0f5948b5b1637357115d5fa4542757a",
-    "lastHarvestedAt": "2026-11-18T04:20:41.288Z",
+    "contentHash": "0674ed2f6662ba765dcd92641b15dfadae02dbfe8975d5acdf45ccc7eb03673e",
+    "lastHarvestedAt": "2026-11-18T14:15:43.841Z",
     "learningId": "learn-huggingface-comfy-org-qwen-image-2-1"
   },
   "hf-akhilaaa3-jev-omni": {
@@ -2503,10 +2503,10 @@
     "repository": "authzed/spicedb",
     "platform": "github",
     "sourceUrl": "https://github.com/authzed/spicedb",
-    "sourceVersion": "c311f7a7",
+    "sourceVersion": "f060cbd7",
     "license": "Apache-2.0",
-    "contentHash": "9d70ceefd16bf89b2d50cddfb1b0cb4095ed72a79a5509bfd7620a454ee31636",
-    "lastHarvestedAt": "2026-11-17T00:10:52.176Z",
+    "contentHash": "e3f1892ae5237f13ada073f57142622fc853f43333ec18ef95c27ec7af1d16ea",
+    "lastHarvestedAt": "2026-11-18T14:15:54.725Z",
     "learningId": "learn-github-authzed-spicedb"
   },
   "hashicorp-boundary": {
@@ -3253,10 +3253,10 @@
     "repository": "flox/flox",
     "platform": "github",
     "sourceUrl": "https://github.com/flox/flox",
-    "sourceVersion": "83a6c49f",
+    "sourceVersion": "49138841",
     "license": "GPL-2.0",
-    "contentHash": "7d904f0988e35cf16a7fd2d05526556358bef532b626afd72b88f1251c4e054f",
-    "lastHarvestedAt": "2026-11-18T05:52:27.523Z",
+    "contentHash": "5c3ce4eaeb86f56bb74b59a26fcfaf0732b0094532db2857e241b170c5bb848a",
+    "lastHarvestedAt": "2026-11-18T14:15:47.659Z",
     "learningId": "learn-github-flox-flox"
   },
   "wix-react-native-navigation": {
@@ -3323,10 +3323,10 @@
     "repository": "openreplay/openreplay",
     "platform": "github",
     "sourceUrl": "https://github.com/openreplay/openreplay",
-    "sourceVersion": "9a554a54",
+    "sourceVersion": "42a68706",
     "license": "NOASSERTION",
-    "contentHash": "810b5c4bd0a0a4d4ab75bea981da13372d87ede252ecd6d5138d07f8b701cebe",
-    "lastHarvestedAt": "2026-11-17T14:33:25.947Z",
+    "contentHash": "4df3d9e83e998cf6fd75d74eeb97e0f8ead113403aac0da4f7ac17102dadedca",
+    "lastHarvestedAt": "2026-11-18T14:15:51.315Z",
     "learningId": "learn-github-openreplay-openreplay"
   },
   "kumahq-kuma": {
@@ -7613,10 +7613,10 @@
     "repository": "infiniflow/infinity",
     "platform": "github",
     "sourceUrl": "https://github.com/infiniflow/infinity",
-    "sourceVersion": "f16f3c56",
+    "sourceVersion": "583c8505",
     "license": "Apache-2.0",
-    "contentHash": "d81733dc2b032fcae2f7a1bd1097675f437803a4cf96a233c07383689fb5bdfd",
-    "lastHarvestedAt": "2026-11-17T20:25:38.841Z",
+    "contentHash": "b823806aa857d013c921c19b82ac0b4f3b40da2f72d9d2deaf3268ac060650f0",
+    "lastHarvestedAt": "2026-11-18T14:15:58.994Z",
     "learningId": "learn-github-infiniflow-infinity"
   },
   "astral-sh-ruff": {

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-18T14:08:08.281Z",
+  "last_updated": "2026-11-18T14:15:59.003Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -575,14 +575,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-comfy-org-qwen-image-2-1",
-      "content_hash": "0ac77fc50e183bdd5f7769d2010b87a7d0f5948b5b1637357115d5fa4542757a",
-      "verified_at": "2026-11-18T04:20:41.299Z",
+      "content_hash": "0674ed2f6662ba765dcd92641b15dfadae02dbfe8975d5acdf45ccc7eb03673e",
+      "verified_at": "2026-11-18T14:15:43.850Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T04:20:41.299Z"
+      "last_updated": "2026-11-18T14:15:43.850Z"
     },
     "akhilaaa3/Jev-Omni": {
       "repository": "akhilaaa3/Jev-Omni",
@@ -3891,14 +3891,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-authzed-spicedb",
-      "content_hash": "9d70ceefd16bf89b2d50cddfb1b0cb4095ed72a79a5509bfd7620a454ee31636",
-      "verified_at": "2026-11-17T00:10:52.183Z",
+      "content_hash": "e3f1892ae5237f13ada073f57142622fc853f43333ec18ef95c27ec7af1d16ea",
+      "verified_at": "2026-11-18T14:15:54.732Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T00:10:52.183Z"
+      "last_updated": "2026-11-18T14:15:54.732Z"
     },
     "hashicorp/boundary": {
       "repository": "hashicorp/boundary",
@@ -5001,14 +5001,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-flox-flox",
-      "content_hash": "7d904f0988e35cf16a7fd2d05526556358bef532b626afd72b88f1251c4e054f",
-      "verified_at": "2026-11-18T05:52:27.534Z",
+      "content_hash": "5c3ce4eaeb86f56bb74b59a26fcfaf0732b0094532db2857e241b170c5bb848a",
+      "verified_at": "2026-11-18T14:15:47.667Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T05:52:27.534Z"
+      "last_updated": "2026-11-18T14:15:47.667Z"
     },
     "wix/react-native-navigation": {
       "repository": "wix/react-native-navigation",
@@ -5106,14 +5106,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-openreplay-openreplay",
-      "content_hash": "810b5c4bd0a0a4d4ab75bea981da13372d87ede252ecd6d5138d07f8b701cebe",
-      "verified_at": "2026-11-17T14:33:25.957Z",
+      "content_hash": "4df3d9e83e998cf6fd75d74eeb97e0f8ead113403aac0da4f7ac17102dadedca",
+      "verified_at": "2026-11-18T14:15:51.323Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T14:33:25.957Z"
+      "last_updated": "2026-11-18T14:15:51.323Z"
     },
     "kumahq/kuma": {
       "repository": "kumahq/kuma",
@@ -11466,14 +11466,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-infiniflow-infinity",
-      "content_hash": "d81733dc2b032fcae2f7a1bd1097675f437803a4cf96a233c07383689fb5bdfd",
-      "verified_at": "2026-11-17T20:25:38.849Z",
+      "content_hash": "b823806aa857d013c921c19b82ac0b4f3b40da2f72d9d2deaf3268ac060650f0",
+      "verified_at": "2026-11-18T14:15:59.002Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T20:25:38.849Z"
+      "last_updated": "2026-11-18T14:15:59.002Z"
     },
     "astral-sh/ruff": {
       "repository": "astral-sh/ruff",

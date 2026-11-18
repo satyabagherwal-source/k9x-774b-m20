@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T14:08:12.847Z",
+  "last_updated": "2026-11-18T14:16:03.385Z",
   "directives": [
     {
       "id": "CD-001",
@@ -29656,6 +29656,68 @@
       "source_repo": "zvec-ai-zvec-grep",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-021CE4-rust-address-the-remaining-issues-in-418.md",
+      "staged_date": "2026-11-18"
+    },
+    {
+      "id": "CD-F3JD",
+      "directive_title": "resolve hosts path in sandbox allow-list test",
+      "source_repo": "flox-flox-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-F3JD-resolve-hosts-path-in-sandbox-allow-list-test.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-18",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-F48O",
+      "directive_title": "Increment frontend chart version to v1.28.13",
+      "source_repo": "openreplay-openreplay-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-F48O-increment-frontend-chart-version-to-v1-28-13.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-18",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-EXPJ",
+      "directive_title": "update grpc_health_probe to v0.4.63 for CVE-2026-97054",
+      "source_repo": "authzed/spicedb",
+      "source_commit": "f060cbd7",
+      "staged_file": "11_INBOX/candidate-directives/CD-EXPJ-update-grpc_health_probe-to-v0-4-63-for-cve-2026-97054.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-18",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-F0ZX",
+      "directive_title": "encode a block with the schema at its bound; key the append buffer b",
+      "source_repo": "infiniflow/infinity",
+      "source_commit": "583c8505",
+      "staged_file": "11_INBOX/candidate-directives/CD-F0ZX-encode-a-block-with-the-schema-at-its-bound-key-the-append-buffer-b.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-18",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-818BA0",
+      "directive_title": "resolve hosts path in sandbox allow-list test",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "flox-flox",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-818BA0-resolve-hosts-path-in-sandbox-allow-list.md",
+      "staged_date": "2026-11-18"
+    },
+    {
+      "id": "CD-REV-953998",
+      "directive_title": "Increment frontend chart version to v1.28.13",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "openreplay-openreplay",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-953998-increment-frontend-chart-version-to-v1-2.md",
       "staged_date": "2026-11-18"
     }
   ]

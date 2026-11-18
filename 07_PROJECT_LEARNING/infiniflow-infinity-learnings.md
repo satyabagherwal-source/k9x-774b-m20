@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/infiniflow-infinity-learnings.md`  
 > **Source**: github ([https://github.com/infiniflow/infinity](https://github.com/infiniflow/infinity))  
-> **Source Version**: `f16f3c56`  
+> **Source Version**: `583c8505`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-17T20:25:38.075Z  
+> **Timestamp**: 2026-11-18T14:15:58.050Z  
 > **Learning ID**: `learn-github-infiniflow-infinity`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/infiniflow-infinity-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/infiniflow/infinity](https://github.com/infiniflow/infinity))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T20:25:38.071Z  
+> **Harvest Timestamp**: 2026-11-18T14:15:58.045Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The AI-native database built for LLM applications, providing incredibly fast hybrid search of dense vector, sparse vector, tensor (multi-vector), and full-text.
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 4769 stars
+- **Stars / Engagement**: 4770 stars
 
 ---
 
@@ -1349,233 +1349,665 @@ export const isResponseListExist = (response: IResponseBody, filed: string) => {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `f16f3c56` (2026-11-17)
-**Commit Message**: rust_engine: spann index, filter push-down, unified maintenance accounting (#3571)
+### Incident Patch 1: `583c8505` (2026-11-18)
+**Commit Message**: checkpoint: encode a block with the schema at its bound; key the append buffer by column id (#3572)
 
-**File**: `CONTRIBUTING.md` (modified, +1/-1)
+## What
+
+Five commits that make a checkpoint's block write agree with the buffer
+it reads, and that key the append buffer by column id instead of by row
+position.
+
+### 1. `checkpoint: encode a block with the schema at its bound, not the
+live one`
+
+A checkpoint took the buffer's rows and `meta.at_ids(schema_ids_at(T))`
+in one pass. `TableMeta::at_ids` **silently skips** an id the live table
+no longer has, so a column dropped after the bound was left out of the
+encoding and every cell after it landed in its neighbour's file. `2.col`
+got the dropped `c2`'s value and the first row came back as
+`[["1","2","test"]]` instead of `[["1","test","tttt"]]`.
+
+`layout::schema_at` resolves the whole column set at a timestamp - id,
+order, type, default, sparse hint - by rebuilding the `TableMeta` from
+the `tbl|col|` record that was live then. The file sweep (`keep`) is
+driven by that same schema: it **deletes every file it does not name and
+runs before the write**, so a `keep` built from the live table would
+delete the pre-DROP column file this pass just produced.
+
+`checkpoint_ts` becomes `bound_ts
+
+**File**: `.github/workflows/rust_engine.yml` (modified, +75/-9)
 ```diff
-@@ -48,7 +48,7 @@ lefthook install   # once per clone; writes .git/hooks/pre-commit
- |---|---|
- | `clang-format` | `clang-format-20` (Clang 20+, see the build requirements) |
- | `rustfmt` | `cargo fmt` for the `rust_engine` workspace |
--| `ruff`, `ruff-format` | `uvx ruff` |
-+| `ruff`, `ruff-format` | `uvx ruff` (the generated Thrift bindings are excluded) |
- | `end-of-file-fixer`, `trailing-whitespace`, `mixed-line-ending` | `tools/hooks/check_files.py` |
- | `check-yaml`, `check-json`, `check-case-conflict`, `check-merge-conflict` | `tools/hooks/check_files.py` |
- 
+@@ -727,6 +727,24 @@ jobs:
+           ./scripts/wait_for_infinity.sh
+       - name: Python SDK suite
+         run: .venv/bin/python -m pytest -q python/test_pysdk -m "not complex and not slow" --tb=short
++      - name: Python SDK slow cases
++        # The reference's `reldeb_parallel_test` runs the same files with
++        # `-m "not complex"`, i.e. including `@pytest.mark.slow`: the cases that
++        # build 10k tables, 10k databases and long-abandoned rows. They are the
++        # ones a nightly needs and a PR does not, so they only run when the
++        # workflow is dispatched or scheduled.
++        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
++        continue-on-error: true
++        run: .venv/bin/python -m pytest -q python/test_pysdk -m "slow and not complex" --tb=short
++      - name: Parallel suite (Python)
++        # `python/parallel_test`: the reference's `debug_tsan_parallel_test`
++        # target. Its Go counterpart above drives the same engine from
++        # goroutines; this one keeps the Python form because the client-side
++        # behaviour it asserts (session handling under writers) only exists in
++        # the SDK.
++        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
++        continue-on-error: true
++        run: .venv/bin/python -m pytest -q python/parallel_test -m "not complex and not slow" --tb=short
+       - name: Stop the engine and show its log
+         if: always()
+         run: |
+@@ -935,20 +953,68 @@ jobs:
+           # sanitizer build (rustc rejects sanitizers for proc macros).
+           RUSTFLAGS="-Zsanitizer=address" cargo test --target x86_64-unknown-linux-gnu \
+             -p storage --lib
+-      - name: Ignored tests (perf probes, long replay loops)
++      - name: Ignored tests (every ignored case, reported)
+         # These mirror the reference's DISABLED_/SLOW_ gtests, which
+-        # slow_tests.yml runs nightly, plus the cases the unit lane drops for
+-        # its wall time: the ColBERT-SaR training ports and the `rabitq::tests::diag_*`
+-        # diagnostics. They are reported rather than gated for
+-        # now: at least `new_catalog_index_internal_ut::disabled_slow_test_populate_index`
+-        # fails on the port (fulltext_tail is None where the case expects
+-        # (0, 16384)), and that predates the current work. Flip this to a gate
+-        # once the set is triaged.
++        # slow_tests.yml runs nightly, plus the cases the unit lane drops for its
++        # wall time: the ColBERT-SaR training ports and the `rabitq::tests::diag_*`
++        # diagnostics. Each `#[ignore]` carries a category prefix, and the test's
++        # own body names the reference case it mirrors:
++        #
++        #   slow:         reference `DISABLED_SLOW_*`; a gate (next step)
++        #   bench:        timing/throughput probe, host dependent
++        #   diagnostic:   prints metrics, asserts nothing
++        #   external:     needs MinIO (`INFINITY_MINIO_*`)
++        #   golden:       needs the reference binary's output
++        #   known-defect: a located behaviour difference, see GAPS.md
++        #
++        # This step runs the lot and only reports: a `bench:` number on a shared
++        # runner pans out differently every night, so it cannot gate.
+         continue-on-error: true
+         working-directory: rust_engine
+         env:
+           UV_PYTHON: "3.13"
+-        run: cargo test --workspace -- --ignored
++        run: cargo test --workspace --no-fail-fast -- --ignored
++      - name: Slow reference cases (the gated half of --ignored)
++        # The `slow:` set alone, and this one gates. Everything else is skipped
++        # by name - `--skip` matches the test name, not the `#[ignore]` reason,
++        # so the categories above are spelled out here. Every `#[ignore]` carries
++        # one of those categories (`slow`/`bench`/`diagnostic`/`external`/
++        # `golden`/`stress`), so this list is exactly "everything but slow".
++        #
++        # Two names beyond the non-slow categories are skipped while their
++        # difference is open (both predate this lane and fail on main):
++        # `dump_index_task_row_cnt_exceed_memory_quota` and
++        # `a_large_corpus_is_byte_identical_to_the_reference`.
++        working-directory: rust_engine
++        env:
++          UV_PYTHON: "3.13"
++        run: |
++          skip=(
++            # bench:
++            probe_same_table_insert_concurrency probe_bulk_delete_journal_scan
++            hnsw_production_scale tensor_maxsim_throughput
++            flush_dump_wall_time_probe a_checkpoint_scaling_probe
++            dot_throughput position_lut_throughput maxsim_throughput
++            spann_bench_128d spann_vs_hnsw_at_equal_latency
++            # diagnostic:
++            diag_estimator_accuracy diag_ranking_quality diag_extra_bits
++            flat_rabitq hnsw_rabitq hnsw_lsg_rabitq
++            compress_hnsw_to_rabitq compress_lsg_to_rabitq
++            spa
 ```
 
-**File**: `go/index.go` (modified, +5/-0)
+**File**: `rust_engine/crates/catalog/src/layout.rs` (modified, +101/-0)
 ```diff
-@@ -30,6 +30,9 @@ const (
- 	IndexTypeDiskAnn             IndexType = 8
- 	IndexTypePLAID               IndexType = 9
- 	IndexTypeSMVE                IndexType = 10
-+	// IndexTypeCSPANN is the port's cluster-based vector index
-+	// (rust_engine/docs/CSPANN_DESIGN.md).
-+	IndexTypeCSPANN IndexType = 11
- )
+@@ -1476,6 +1476,107 @@ pub fn column_timeline(
+     Ok(out)
+ }
  
- func (it IndexType) String() string {
-@@ -54,6 +57,8 @@ func (it IndexType) String() string {
- 		return "PLAID"
- 	case IndexTypeSMVE:
- 		return "SMVE"
-+	case IndexTypeCSPANN:
-+		return "CSPANN"
- 	default:
- 		return "Unknown"
- 	}
-```
-
-**File**: `go/index_test.go` (added, +52/-0)
-```diff
-@@ -0,0 +1,52 @@
-+// Copyright 2024 The InfiniFlow Authors. All Rights Reserved.
-+//
-+// Licensed under the Apache License, Version 2.0 (the "License");
-+// you may not use this file except in compliance with the License.
-+// You may obtain a copy of the License at
-+//
-+//      http://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing, software
-+// distributed under the License is distributed on an "AS IS" BASIS,
-+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+// See the License for the specific language governing permissions and
-+// limitations under the License.
-+
-+package infinity
-+
-+import (
-+	"testing"
-+
-+	thriftapi "github.com/infiniflow/infinity-go-sdk/internal/thrift"
-+)
-+
-+// The SDK enum is 1-based and the thrift one is 0-based, so the two ordinals of a
-+// kind are deliberately different; only the *names* line up.
-+func TestIndexTypeCSPANNNamesMatchTheThriftEnum(t *testing.T) {
-+	if got := IndexTypeCSPANN.String(); got != "CSPANN" {
-+		t.Fatalf("IndexTypeCSPANN.String() = %q, want CSPANN", got)
-+	}
-+	if got := thriftapi.IndexType_CSPANN.String(); got != "CSPANN" {
-+		t.Fatalf("thrift IndexType_CSPANN.String() = %q, want CSPANN", got)
-+	}
-+	if int64(thriftapi.IndexType_CSPANN) != 10 {
-+		t.Fatalf("thrift CSPANN ordinal = %d, want 10 (appended to the IDL)", thriftapi.IndexType_CSPANN)
-+	}
-+	parsed, err := thriftapi.IndexTypeFromString("CSPANN")
-+	if err != nil {
-+		t.Fatalf("IndexTypeFromString(CSPANN): %v", err)
-+	}
-+	if parsed != thriftapi.IndexType_CSPANN {
-+		t.Fatalf("round trip = %v, want CSPANN", parsed)
-+	}
++/// One table's columns as of a timestamp: the schema a transaction whose
++/// `begin_ts` is `ts` would read.
++///
++/// `ids` alone is not enough to write a block: the writer needs the column's
++/// declared type, its layout and its default, and a `DROP COLUMN` retires the
++/// `tbl|col|` record from the *live* set without deleting it. Rebuilding the
++/// `TableMeta` from the record that was live at `ts` is what
++/// [`table_meta_of`] already does for "now" - this pins the same reconstruction
++/// to a timestamp.
++///
++/// The window rules are `column_timeline`'s (this is that function with the
++/// `ColumnDefValue` kept instead of only the id):
++///
++/// - a record lives from its create ts (the key carries it);
++/// - its `drop|tbl_col|…` marker - whose *value* is the DROP's commit ts -
++///   ends it at that ts, **inclusive**: a transaction whose `begin_ts` equals
++///   the drop ts already sees the column as gone (`begin_ts = current_ts + 1`
++///   and `current_ts` only advances past a finished commit), which is the same
++///   `<=` the `AppendView` predicate uses;
++/// - a name created again later is a new record with a new id; only the newest
++///   incarnation at or before `ts` is live.
++///
++/// A ts that predates every record yields an empty schema, not "the current
++/// one": an empty answer means "this table did not exist yet".
++pub fn schema_at(
++    store: &dyn MetaStore,
++    db_id: u64,
++    table_id: u64,
++    ts: u64,
++) -> Result<Vec<ColumnDefValue>> {
++    let db = db_id.to_string();
++    let table = table_id.to_string();
++    let prefix = key::table_column_prefix(&db, &table);
++    // `(record value, create ts)` per incarnation.
++    let mut records: Vec<(ColumnDefValue, u64)> = Vec::new();
++    for (k, v) in store.scan_prefix(prefix.as_bytes())? {
++        let key = String::from_utf8_lossy(&k).to_string();
++        let create_ts = key
++            .rsplit('|')
++            .next()
++            .and_then(|t| t.parse::<u64>().ok())
++            .unwrap_or(0);
++        if create_ts > ts {
++            continue;
++        }
++        let Some(col) = value_format::column_def_from_bytes(&v) else {
++            continue;
++        };
++        records.push((col, create_ts));
++    }
++    let drop_prefix = format!("drop|tbl_col|{db}/{table}/");
++    // `(name, create ts) -> drop ts`, only for the wins that ended a record.
++    let mut drops: Vec<(String, u64, u64)> = Vec::new();
++    for (k, v) in store.scan_prefix(drop_prefix.as_bytes())? {
++        let key = String::from_utf8_lossy(&k).to_string();
++        let Some(tail) = key.strip_prefix(&drop_prefix) else {
++            continue;
++        };
++        let Some((name, create)) = tail.rsplit_once('/') else {
++            continue;
++        };
++        let (Ok(create_ts), Ok(drop_ts)) = (
++            create.parse::<u64>(),
++            String::from_utf8_lossy(&v).parse::<u64>(),
++        ) else {
++            continue;
++        };
++        if drop_ts == crate::DDL_TS_SENTINEL {
++            continue;
++        }
++        drops.push((name.to_string(), create_ts, drop_ts));
++    }
++    // The newest incarnation of each name wins; the others are superseded.
++    let newest: std::collections::HashMap<String, u64> = records
++        .iter()
++        .map(|(col, create_ts)| (col.column_name.clone(), *create_ts))
++        .fold(std::collections::HashMap::new(), |mut acc, (name, ts)| {
++            acc.entry(name)
++                .and_modify(|seen| *seen = (*seen).max(ts))
++                .or_insert(ts);
++            acc
++        });
++    let mut live: Vec<ColumnDefValue> = Vec::new();
++    for (col, create_ts) in records {
++        let name = col.column_name.clone();
++        if newest.get(&name).is_some_and(|seen| *seen > create_ts) {
++            continue;
++        }
++        // Dropped at or before `ts`: not live any more.
++        if drops
++            .iter()
++            .any(|(other, c, d)| *other == name && *c == create_ts && *d <= ts)
++        {
++            continue;
++        }
++        live.push(col);
++    }
++    live.sort_by_key(|c| c.column_id);
++    Ok(live)
 +}
 +
-+// Every known thrift value has a name: a new enum entry that is missing from the
-+// String() switch shows up here rather than as "<UNSET>" in a SHOW INDEX row.
-+func TestEveryThriftIndexTypeHasAName(t *testing.T) {
-+	for value := range thriftapi.IndexTypeValues() {
-+		if name := value.String(); name == "<UNSET>" {
-+			t.Fatalf("thrift IndexType %d has no name", int64(value))
-+		}
-+	}
-+}
+ /// One table, resolved **by name**: its newest `catalog|tbl|` record and that
+ /// record's columns.
+ ///
 ```
 
-**File**: `go/internal/thrift/infinity.go` (modified, +6/-0)
+**File**: `rust_engine/crates/catalog/src/lib.rs` (modified, +263/-3)
 ```diff
-@@ -1166,6 +1166,7 @@ const (
- 	IndexType_DiskAnn             IndexType = 7
- 	IndexType_PLAID               IndexType = 8
- 	IndexType_SMVE                IndexType = 9
-+	IndexType_CSPANN              IndexType = 10
- )
+@@ -1671,6 +1671,50 @@ impl Catalog {
+             .unwrap_or_default())
+     }
  
- var knownIndexTypeValues = []IndexType{
-@@ -1179,6 +1180,7 @@ var knownIndexTypeValues = []IndexType{
- 	IndexType_DiskAnn,
- 	IndexType_PLAID,
- 	IndexType_SMVE,
-+	IndexType_CSPANN,
- }
- 
- func IndexTypeValues() iter.Seq[IndexType] {
-@@ -1212,6 +1214,8 @@ func (p IndexType) String() string {
- 		return "PLAID"
- 	case IndexType_SMVE:
- 		return "SMVE"
-+	case IndexType_CSPANN:
-+		return "CSPANN"
- 	}
- 	return "<UNSET>"
- }
-@@ -1238,6 +1242,8 @@ func IndexTypeFromString(s string) (IndexType, error) {
- 		return IndexType_PLAID, nil
- 	case "SMVE":
- 		return IndexType_SMVE, nil
-+	case "CSPANN":
-+		return IndexType_CSPANN, nil
- 	}
- 	return IndexType(0), fmt.Errorf("not a valid IndexType string")
- }
-```
-
-**File**: `go/table.go` (modified, +2/-0)
-```diff
-@@ -124,6 +124,8 @@ func (t *Table) CreateIndex(indexName string, indexInfo *IndexInfo, conflictType
- 		thriftIndexType = thriftapi.IndexType_PLAID
- 	case IndexTypeSMVE:
- 		thriftIndexType = thriftapi.IndexType_SMVE
-+	case IndexTypeCSPANN:
-+		thriftIndexType = thriftapi.IndexType_CSPANN
- 	default:
- 		return nil, NewInfinityException(int(ErrorCodeInvalidIndexType), "Invalid index type")
- 	}
-```
-
-**File**: `lefthook.yml` (modified, +8/-4)
-```diff
-@@ -112,23 +112,27 @@ pre-commit:
-     # --- Python: ruff + ruff-format (the configuration is in pyproject.toml) --
-     # `uvx` runs the project's pinned Python tooling without installing it into
-     # the SDK's virtualenv; `uv` is the only package manager this repo uses.
-+    # The Thrift-compiler output (`infinity_thrift_rpc/`) is excluded through
-+    # `[tool.ruff] extend-exclude`, and both jobs pass `--force-exclude` because
-+    # lefthook hands ruff an explicit file list, for which ruff otherwise
-+    # ignores `exclude`/`extend-exclude`.
-     - name: ruff
-       glob: "*.py"
-       stage_fixed: true
-       run: |
-         if [ "${LEFTHOOK_CHECK_ONLY:-}" = "1" ]; then
--          uvx ruff check {staged_files}
-+          uvx ruff check --force-exclude {staged_files}
-         else
--          uvx ruff check --fix {staged_files}
-+          uvx ruff check --force-exclude --fix {staged_files}
-         fi
-     - name: ruff-format
-       glob: "*.py"
-       stage_fixed: true
-       run: |
-         if [ "${LEFTHOOK_CHECK_ONLY:-}" = "1" ]; then
--          uvx ruff format --check {staged_files}
-+          uvx ruff format --force-exclude --check {staged_files}
-         else
--          uvx ruff format {staged_files}
-+          uvx ruff format --force-exclude {staged_files}
-         fi
- 
- # CI-only hook: the checks that cost a workspace compile and therefore do not
-```
-
-**File**: `pyproject.toml` (modified, +9/-0)
-```diff
-@@ -71,6 +71,15 @@ filterwarnings = [
-     'ignore:function ham\(\) is deprecated:DeprecationWarning',
- ]
- 
-+[tool.ruff]
-+# The Thrift compiler's Python output (`options string: py`) is checked in
-+# verbatim and regenerated by `tools/generate_rpc_code.py`; it is not ours to
-+# lint or reformat (`ruff check` reports UP004/PIE790/F401/I001 there and
-+# `ruff format` would rewrite all four files). Lefthook passes staged paths
-+# explicitly, so its ruff jobs also pass `--force-exclude`, without which ruff
-+# ignores exclusions for named paths.
-+extend-exclude = ["python/infinity_sdk/infinity/remote_thrift/infinity_thrift_rpc"]
++    /// The table's schema as of `ts`, complete enough to write a block.
++    ///
++    /// `schema_ids_at` answers "which ids", which is all a *reader* of the
++    /// buffer needs. A block writer also needs each column's declared type,
++    /// layout and default, and it must not take them from the **current**
++    /// table: a column dropped since `ts` is gone from there, and a column
++    /// added since `ts` has no cells in these rows. Rebuilding the `TableMeta`
++    /// from the record that was live at `ts` is what this returns.
++    ///
++    /// `None` when the table does not exist (no `catalog|tbl|` record), which
++    /// is distinct from "exists with no columns".
++    pub fn schema_at(&self, table: &str, ts: u64) -> Result<Option<TableMeta>> {
++        let (db_id, bare) = self.db_and_bare_name(table)?;
++        let Ok(db_id_num) = db_id.parse::<u64>() else {
++            return Ok(None);
++        };
++        let resolved = self.with_view(|store| {
++            let Some((table_id, _)) =
++                crate::layout::table_record(store, &db_id.to_string(), &bare)?
++            else {
++                return Ok(None);
++            };
++            let columns = crate::layout::schema_at(store, db_id_num, table_id, ts)?;
++            Ok(Some((table_id, columns)))
++        })?;
++        let Some((table_id, columns)) = resolved else {
++            return Ok(None);
++        };
++        if columns.is_empty() {
++            // The table existed but no column record is at or before `ts`:
++            // report it as "not yet", not as a schema-less table.
++            return Ok(None);
++        }
++        let layout = crate::layout::TableLayout {
++            db_name: String::new(),
++            db_id: db_id_num,
++            table_name: bare,
++            table_id,
++            columns,
++            next_column_id: 0,
++        };
++        Ok(Some(crate::layout::table_meta_of(&layout)))
++    }
 +
- [tool.ruff.lint]
- ignore = [
-     "RUF059",
+     pub fn column_timeline(&self, table: &str) -> Result<Vec<(u64, Vec<u64>)>> {
+         let (db_id, bare) = self.db_and_bare_name(table)?;
+         let Ok(db_id) = db_id.parse::<u64>() else {
+@@ -2040,11 +2084,20 @@ impl Catalog {
+     }
+ 
+     /// Writes the two system tags a C++-written directory always carries
+-    /// (`NewCatalog::Init`): the catalog version and the database counter. Both
+-    /// only when absent - a directory that already has them keeps its values.
++    /// (`NewCatalog::Init`): the catalog version and the database counter.
++    ///
++    /// The version is **upgraded** in place when it differs, not only written
++    /// when absent: the reference compares it with its own build version at
++    /// startup and runs its JSON-index conversion for anything older
++    /// (`Storage::ConvertJsonIndexFormat`), which aborts on a port-written
++    /// catalog. A directory this build opened must therefore carry its version
++    /// even when the open runs no DDL and no checkpoint - leaving an older value
++    /// behind would make the reference fail to start on it. The database
++    /// counter, unlike the version, is only initialised when absent: it is
++    /// real state, not a format stamp.
+     pub fn init_key_space(&self) -> Result<()> {
+         use storage::catalog_format::{CATALOG_VERSION, META_VERSION, NEXT_DATABASE_ID};
+-        if self.store.get(META_VERSION.as_bytes())?.is_none() {
++        if self.store.get(META_VERSION.as_bytes())?.as_deref() != Some(CATALOG_VERSION.as_bytes()) {
+             self.store
+                 .put(META_VERSION.as_bytes(), CATALOG_VERSION.as_bytes())?;
+         }
+@@ -3288,4 +3341,211 @@ mod tests {
+         let back = crate::layout::read_segments(store.as_ref()).unwrap();
+         assert_eq!(back, vec![shrunk]);
+     }
++
++    // ---- `Catalog::schema_at` -------------------------------------------
++    //
++    // The window rules are `column_timeline`'s, so these also pin that
++    // function's semantics - it had no test before.
++
++    /// Commits one DDL the way a statement does: capture its batch, restamp the
++    /// records to `ts`, apply them.
++    ///
++    /// `restamp` is what turns the sentinel a DDL writes into the
++    /// transaction's commit ts, so this is the only way to build a directory
++    /// whose column records carry several distinct timestamps.
++    fn ddl_at<F>(c: &Catalog, ts: u64, f: F)
++    where
++        F: FnOnce(&Catalog) -> Result<()>,
++    {
++        // The DDL has already run inside `capture`; only its batch is left.
++        let ((), mut batch) = c.capture(|| f(c)).unwrap();
++        Catalog::restamp(&mut batch, ts);
++        c.stage(&batch).unwrap();
++    }
++
++    fn schema_at_setup() -> (tempfile::TempDir, Catalog) {
++        let dir = tempdir().unwrap();
++        let store: Arc<dyn MetaStore> = Arc::new(RocksMetaStore::open(dir.path()).unwrap());
++        let c = Catalog::with_store_catalog_only(store);
++        c.create_database("db", false).unw
 ```
 
-**File**: `python/infinity_sdk/infinity/http_utils.py` (modified, +6/-0)
+**File**: `rust_engine/crates/executor/src/alter_ut.rs` (modified, +14/-8)
 ```diff
-@@ -299,6 +299,12 @@ def is_datetime(str_input):
-     5: "SECONDARYFUNCTIONAL",
-     6: "EMVB",
-     7: "BMP",
-+    8: "DISKANN",
-+    9: "PLAID",
-+    10: "SMVE",
-+    # `IndexType.CSPANN` in `infinity.index` (the SDK enum is 1-based; the thrift
-+    # one is 0-based, which is why this table is separate).
-+    11: "CSPANN",
+@@ -423,15 +423,21 @@ fn replay_of_the_test_alter_complex_sequence_around_a_checkpoint() {
+ /// `PeriodicTriggerThread` runs `checkpoint_wal()` + `flush()` on its own
+ /// thread; fifty rounds of `INSERT / ADD / DROP / ADD / INSERT` run against it.
+ ///
+-/// `#[ignore]`d: it still reproduces a residual hole on a slow machine (the
+-/// arm64 runner). After the restart a replayed row reads the old `c2` out of
+-/// `c3` - `[["1","2","test"]]` instead of `[["1","test","tttt"]]`. The
+-/// checkpoint writes no schema newer than its bound and an `ALTER` applies its
+-/// cells before the commit is published, so the mismatch is on the replay side
+-/// (`apply_replayed_rows` -> `ids_at` for a frame), which is tracked, not
+-/// closed. Run with `--ignored` when working on that path.
++/// This is the regression for the column shift `docs/ALTER_CHECKPOINT_RACE.md`
++/// documents: a checkpoint used to take the buffer's four-cell rows and the
++/// *live* three-column table in one pass, so `2.col` got the dropped `c2`'s
++/// value and `3.col` got `c3`'s - the first row read `[["1","2","test"]]`
++/// instead of `[["1","test","tttt"]]`.
++///
++/// The write now resolves the whole schema **at its bound** (`schema_at`,
++/// including the dropped column's type and default), and the file sweep is
++/// driven by that same schema instead of the live one, so the pre-DROP
++/// columns and the rows that still carry them agree.
++///
++/// Fifty rounds against a checkpointing thread, so it is a `slow:` case: run
++/// it with `--ignored`.
+ #[test]
+-#[ignore = "reproduces a replay-side column-time mismatch under a racing checkpoint"]
++#[ignore = "slow: a checkpoint racing ALTER TABLE must not shift a buffered row's columns"]
+ fn a_checkpoint_through_a_column_change_keeps_the_block_readable() {
+     for _ in 0..50 {
+         let dir = tempdir().unwrap();
+```
+
+**File**: `rust_engine/crates/executor/src/bg_task.rs` (modified, +54/-6)
+```diff
+@@ -53,10 +53,16 @@ struct Shared {
+ 
+ /// A background task processor (`BGTaskProcessor`).
+ pub struct BGTaskProcessor {
+-    /// `None` before `start` and after `stop`: dropping the last sender closes
+-    /// the channel, so the worker's `recv().await` returns `None` and it exits
+-    /// once the queue is drained.
++    /// Created in `new`, closed in `stop`. The reference's processor owns its
++    /// blocking queue from construction and `Start()` only takes the consumer
++    /// out of it (`BackgroundProcessor::Start`), so a task submitted before
++    /// `start` waits in the queue instead of being dropped: a quota breach can
++    /// arrive before the owner has started the pool (the tests rely on it - the
++    /// reference submits the dump from the append path and starts the processor
++    /// afterwards).
+     jobs: Mutex<Option<tokio::sync::mpsc::Sender<Box<dyn BgTask>>>>,
++    /// The queue's receiving half, parked here between `new` and `start`.
++    queue: Mutex<Option<tokio::sync::mpsc::Receiver<Box<dyn BgTask>>>>,
+     shared: Arc<Shared>,
+     /// The worker's `JoinHandle`. A runtime task, so `stop` waits by aborting
+     /// nothing - it closes the channel and parks until the worker's own
+@@ -71,8 +77,10 @@ impl BGTaskProcessor {
+         // tokio fan-out), so a second consumer would only let two dumps of one
+         // table race. The parameter stays so the call shape matches the
+         // reference's processor pool.
++        let (jobs, queue) = tokio::sync::mpsc::channel::<Box<dyn BgTask>>(QUEUE_CAPACITY);
+         Self {
+-            jobs: Mutex::new(None),
++            jobs: Mutex::new(Some(jobs)),
++            queue: Mutex::new(Some(queue)),
+             shared: Arc::new(Shared {
+                 outstanding: AtomicUsize::new(0),
+                 idle: Mutex::new(()),
+@@ -83,13 +91,18 @@ impl BGTaskProcessor {
+     }
+ 
+     /// Starts the worker task. Idempotent.
++    ///
++    /// The queue already exists (`new`), so this only attaches the consumer.
++    /// `start` is not what makes `submit` legal: a task submitted before it
++    /// waits in the same channel.
+     pub fn start(self: &Arc<Self>) {
+         let mut handles = self.handles.lock().unwrap();
+         if !handles.is_empty() {
+             return;
+         }
+-        let (jobs, mut queue) = tokio::sync::mpsc::channel::<Box<dyn BgTask>>(QUEUE_CAPACITY);
+-        *self.jobs.lock().unwrap() = Some(jobs);
++        let Some(mut queue) = self.queue.lock().unwrap().take() else {
++            return;
++        };
+         let shared = Arc::clone(&self.shared);
+         let handle = crate::scheduler::scheduler().spawn_task(async move {
+             while let Some(task) = queue.recv().await {
+@@ -122,6 +135,10 @@ impl BGTaskProcessor {
+     /// submitting must clear it again, or the flag stays set for the rest of
+     /// the process and stops new work from being proposed.
+     ///
++    /// A task submitted **before** `start` is queued, not rejected: the queue
++    /// exists from `new` (see the field comment), so `false` only ever means
++    /// "stopped" or "the queue is full".
++    ///
+     /// The send is `try_send`, not `blocking_send`: `submit` is called from
+     /// `enforce_memindex_quota`, which already runs on a **runtime worker**
+     /// (its callers are all async: `run_bottom`, `insert_literals_inner`,
+@@ -170,6 +187,21 @@ impl BGTaskProcessor {
+         // thread join: the worker is a runtime task and joining it from a
+         // non-async caller would need a `block_on` of its own.
+         self.jobs.lock().unwrap().take();
++        // A task submitted **before** `start` is queued in `queue` (`submit` is
++        // legal from `new`), and only the worker ever consumes that channel.
++        // Without a worker it would sit there with its `outstanding` count
++        // raised and `drain` below would wait forever - which is exactly what
++        // `Drop` does for a processor nobody started. Dropping the receiver
++        // discards those tasks, so their counts go with them.
++        if self.handles.lock().unwrap().is_empty() {
++            if let Some(queue) = self.queue.lock().unwrap().take() {
++                let queued = queue.len();
++                drop(queue);
++                if queued > 0 {
++                    self.shared.outstanding.fetch_sub(queued, Ordering::SeqCst);
++                }
++            }
++        }
+         let handles: Vec<tokio::task::JoinHandle<()>> =
+             std::mem::take(&mut *self.handles.lock().unwrap());
+         drop(handles);
+@@ -234,4 +266,20 @@ mod tests {
+         processor.stop();
+         assert_eq!(processor.running_task_count(), 0);
+     }
++
++    /// A task submitted before `start` is queued, so a pool that is dropped
++    /// without ever starting must not wait for a worker that does not exist:
++    /// without dropping that queue, `stop`'s `drain` parks on a task nothing can
++    /// consume.
++    #[test]
++    fn drop_before_start_does_not_hang() {
++        let count
+```
+
+**File**: `rust_engine/crates/executor/src/bg_task_ut.rs` (modified, +2/-2)
+```diff
+@@ -297,7 +297,7 @@ fn submit_after_stop_is_rejected() {
+ /// dumps both blocks as a single 16384-row chunk. The next append proposes
+ /// another dump, which starts at row 16384.
+ #[test]
+-#[ignore = "SLOW: the reference disables this test"]
++#[ignore = "slow: C++ DumpMemIndexTaskTest2.DISABLED_SLOW_row_cnt_exceed_memory_quota"]
+ fn dump_index_task_row_cnt_exceed_memory_quota() {
+     let dir = tempdir().unwrap();
+     let engine = Arc::new(Engine::open(dir.path()).unwrap());
+@@ -337,7 +337,7 @@ fn dump_index_task_row_cnt_exceed_memory_quota() {
+ /// `mem_index_capacity = 8192`: each append reaches the row bound and is
+ /// dumped at the end of its batch, so the second chunk starts at row 8192.
+ #[test]
+-#[ignore = "SLOW: the reference disables this test"]
++#[ignore = "slow: C++ DumpMemIndexTaskTest.DISABLED_SLOW_row_cnt_exceed_memindex_capacity"]
+ fn dump_index_task_row_cnt_exceed_memindex_capacity() {
+     let dir = tempdir().unwrap();
+     let engine = Engine::open(dir.path()).unwrap();
+```
+
+**File**: `rust_engine/crates/executor/src/blocks/chunk.rs` (modified, +116/-83)
+```diff
+@@ -117,80 +117,38 @@ pub(crate) fn publish_lowcard_chunks_from_dir(seg_dir: &Path, segment: u32) -> V
+     chunks
  }
  
- baseResponse = {
+-/// Rebuilds a sparse index's published chunks: one per block, from the rows.
++/// Publishes the chunks one BMP dump produced, from the memory index it sealed.
+ ///
+-/// The reference's chunk is the block, and every memory dump re-dumps the block
+-/// it touches (`BMPIndexInMem::Dump` hands the whole in-memory `BMPAlg` to the
+-/// chunk buffer), so two 100-row inserts into one block leave **one** chunk of
+-/// 200 rows. The port's spill files are per dump, so the merge happens here.
+-///
+-/// The chunk id is the catalog's, not the block number: `PopulateBMPIndexInner`
+-/// and `DumpMemIndex` both take one from `GetAndSetNextChunkID`, and that
+-/// counter only moves forward. `existing` maps a chunk's first row id to the id
+-/// a record already named, so a re-dump of the same block rewrites its own
+-/// chunk instead of appending a second one; `next_id` hands out the ones no
+-/// record names yet.
+-/// Where and how a sparse chunk is encoded: the column's `IdxWidth` and
+-/// declared term bound, the block size, the segment the chunk belongs to and
+-/// whether the whole segment folds into one chunk (an `IMPORT` does).
+-pub(crate) struct BmpChunkShape {
+-    pub(crate) width: storage::bmp::IdxWidth,
+-    pub(crate) term_bound: usize,
+-    pub(crate) block_size: usize,
+-    pub(crate) segment: u32,
+-    pub(crate) single_chunk: bool,
+-}
+-
++/// `pending` is the images `SparseIndex::seal` just encoded - **one per
++/// `ROW_ID` segment**, each holding exactly the documents that dump covered. The
++/// reference's `DumpSegmentMemIndex` dumps the segment's `BMPIndexInMem` once
++/// and records its `ChunkIndexMetaInfo`, so this is the chunk: the bytes are
++/// the index image (`BMPHandler::SaveToPtr`) and `base_row_id` is its first
++/// document. Rebuilding from the table's rows (`sparse_rows_by_block`) put
++/// every row of the segment in the chunk, so a second dump re-covered the first
++/// one's range and the two records overlapped.
+ pub(crate) fn publish_bmp_chunks(
+     seg_dir: &Path,
+-    by_block: std::collections::BTreeMap<u64, Vec<storage::bmp::SparseDoc>>,
+-    shape: &BmpChunkShape,
++    pending: &[crate::engine::PendingSparseChunk],
++    segment: u32,
+     existing: &std::collections::HashMap<u64, u32>,
+     next_id: &mut u32,
+-) -> Vec<IndexChunk> {
+-    let BmpChunkShape {
+-        width,
+-        term_bound,
+-        block_size,
+-        segment,
+-        single_chunk,
+-    } = *shape;
+-    // `PopulateBMPIndexInner` adds every block of the segment to one
+-    // `BMPIndexInMem` and dumps once, so an imported segment's sparse chunk
+-    // covers all of its blocks.
+-    let by_block: std::collections::BTreeMap<u64, Vec<storage::bmp::SparseDoc>> = match single_chunk
+-    {
+-        true => {
+-            let docs: Vec<storage::bmp::SparseDoc> = by_block.into_values().flatten().collect();
+-            if docs.is_empty() {
+-                Default::default()
+-            } else {
+-                [(0u64, docs)].into_iter().collect()
+-            }
+-        }
+-        false => by_block,
+-    };
++) -> (Vec<IndexChunk>, Vec<crate::engine::PendingSparseChunk>) {
+     let mut chunks = Vec::new();
+-    for (block, mut docs) in by_block {
++    let mut failed: Vec<(u64, Vec<u8>, u32, usize)> = Vec::new();
++    for (chunk_segment, bytes, first_doc, doc_count) in pending {
++        if *chunk_segment != u64::from(segment) {
++            continue;
++        }
+         if std::fs::create_dir_all(seg_dir).is_err() {
+-            break;
++            // Keep the image: the caller's queue was drained before this ran,
++            // and a chunk it never wrote has no record - the documents would be
++            // gone at the next restart. It is returned to the caller so the next
++            // publication can try again.
++            failed.push((*chunk_segment, bytes.clone(), *first_doc, *doc_count));
++            continue;
+         }
+-        docs.sort_by_key(|(row, _)| *row);
+-        // The term space is the column's declared bound, widened to the terms
+-        // this chunk actually holds (`BMPAlg` is constructed with the bound).
+-        let term_num = docs
+-            .iter()
+-            .flat_map(|(_, entries)| entries.iter().map(|(term, _)| *term + 1))
+-            .max()
+-            .unwrap_or(0)
+-            .max(1)
+-            .max(term_bound as i32) as usize;
+-        let bytes = storage::bmp::encode_bmp(block_size, width, &docs, term_num);
+-        // `block` is the index's own block ordinal, so its first row is
+-        // `block * block_size` (`BMPAlg`: `doc_id = block_id * block_size`).
+-        let base_row_id = (u64::from(segment) << 32) | (block * block_size as u64);
+-        // The id the record for **this block's** chunk already owns, else the
+-        // counter the catalog keeps. A block never reuses a retired id.
++        let base_row_id = (u64::from(segment) << 32) | u64:
+```
+
+**File**: `rust_engine/crates/executor/src/blocks/column.rs` (modified, +31/-5)
+```diff
+@@ -447,12 +447,38 @@ pub(crate) fn encode_value_with_shape(
+     Ok(Some(bytes))
+ }
+ 
+-/// The commit ts of the append that wrote row `offset`, from the append log.
++/// The commit ts of the append that wrote row `seq`, from the append log.
+ ///
+-/// `totals[i]` is the cumulative row count after append `i` and `ts[i]` its
+-/// commit ts; a row lands in the first append whose total passes it.
+-pub(crate) fn append_ts_of(offset: u64, totals: &[u64], ts: &[u64]) -> Option<u64> {
+-    let i = totals.partition_point(|total| *total <= offset);
++/// `totals[i]` is the cumulative **table-wide** row count after append `i` and
++/// `ts[i]` its commit ts; a row lands in the first append whose total passes
++/// its table-wide ordinal.
++///
++/// `seq` is a full row id (`segment << 32 | in-segment offset`), and the
++/// ordinal is what the segment map makes of it: the offset plus the rows every
++/// earlier segment holds. Comparing the raw in-segment offset against the
++/// table-wide totals read the *first* append's ts for any row whose offset is
++/// below it - every row of a second segment starts at offset 0 - so a
++/// checkpoint could stamp a block with a ts that predates its rows and skip it.
++///
++/// `segments` must be every segment the table has, ascending; a table with one
++/// segment has the same basis either way, which is why this went unnoticed.
++pub(crate) fn append_ts_of(
++    seq: u64,
++    segments: &[(u32, u64)],
++    totals: &[u64],
++    ts: &[u64],
++) -> Option<u64> {
++    let segment = (seq >> 32) as u32;
++    let offset = seq & 0xffff_ffff;
++    let mut before = 0u64;
++    for (id, rows) in segments {
++        if *id >= segment {
++            break;
++        }
++        before += rows;
++    }
++    let ordinal = before + offset;
++    let i = totals.partition_point(|total| *total <= ordinal);
+     ts.get(i).copied().filter(|t| *t != 0)
+ }
+ 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3572** (2026-11-18): checkpoint: encode a block with the schema at its bound; key the append buffer by column id (@yuzhichang)
 - **PR #3571** (2026-11-17): rust_engine: spann index, filter push-down, unified maintenance accounting (@yingfeng)
 - **PR #3570** (2026-11-16): executor: record each full-text chunk name once, and name the row a MATCH lost (@yingfeng)
 - **PR #3569** (closed): executor: record each full-text chunk name once, and name the row a MATCH lost (@yingfeng)
 - **PR #3568** (2026-11-16): executor: column-wise WHERE/ORDER BY, per-request panic bounds, night… (@yingfeng)
 - **PR #3566** (2026-11-16): executor: carry results as a columnar DataBlock instead of Value rows (@yingfeng)
-- **PR #3565** (2026-11-16): executor: fix the commit/dump deadlock and render insert cells once (@yingfeng)
 
 ---
 
@@ -1595,28 +2027,54 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. rust_engine: spann index, filter push-down, unified maintenance accounting
+## X. checkpoint: encode a block with the schema at its bound; key the append buffer b
 
 **RULE**:
-When implementing operations in `CONTRIBUTING.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in infiniflow/infinity. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/rust_engine.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in infiniflow/infinity. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `f16f3c56`: rust_engine: spann index, filter push-down, unified maintenance accounting. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `583c8505`: checkpoint: encode a block with the schema at its bound; key the append buffer by column id. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `CONTRIBUTING.md`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/rust_engine.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
-| `ruff`, `ruff-format` | `uvx ruff` (the generated Thrift bindings are excluded) |
+      - name: Python SDK slow cases
+        # The reference's `reldeb_parallel_test` runs the same files with
+        # `-m "not complex"`, i.e. including `@pytest.mark.slow`: the cases that
+        # build 10k tables, 10k databases and long-abandoned rows. They are the
+        # ones a nightly needs and a PR does not, so they only run when the
+        # workflow is dispatched or scheduled.
+        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+        continue-on-error: true
+        run: .venv/bin/python -m pytest -q python/test_pysdk -m "slow and not complex" --tb=short
+      - name: Parallel suite (Python)
+        # `python/parallel_test`: the reference's `debug_tsan_parallel_test`
+        # target. Its Go counterpart above drives the same engine from
+        # goroutines; this one keeps the Python form because the client-side
+        # behaviour it asserts (session handling under writers) only exists in
+        # the SDK.
+        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+        continue-on-error: true
+        run: .venv/bin/python -m pytest -q python/parallel_test -m "not complex and not slow" --tb=short
+  
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```c++
 // Induced defect failure mode:
-| `ruff`, `ruff-format` | `uvx ruff` |
+      - name: Ignored tests (perf probes, long replay loops)
+        # slow_tests.yml runs nightly, plus the cases the unit lane drops for
+        # its wall time: the ColBERT-SaR training ports and the `rabitq::tests::diag_*`
+        # diagnostics. They are reported rather than gated for
+        # now: at least `new_catalog_index_internal_ut::disabled_slow_test_populate_index`
+        # fails on the port (fulltext_tail is None where the case expects
+        # (0, 16384)), and that predates the current work. Flip this to a gate
+        # once the set is triaged.
+        run: cargo test --workspace -- --ignored
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `f16f3c56` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `583c8505` are properly handled with clean fallback behavior.

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-18T14:08:12.996Z",
+  "last_updated": "2026-11-18T14:16:03.525Z",
   "total_records": 1860,
   "domains": {
     "A": {
@@ -8419,8 +8419,8 @@
       "title": "Research & Knowledge Intelligence: Comfy-Org/Qwen-Image-2.1 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-comfy-org-qwen-image-2-1-research-knowledge-intelligence-comfy-org-qwen-image.md",
       "repository": "Comfy-Org/Qwen-Image-2.1",
-      "content_hash": "88fbdf304a51f3f439f8b7b1d91012e894dbc3dd9e6d0610011607b2ece6f45b",
-      "created_at": "2026-11-18T04:20:41.449Z"
+      "content_hash": "04ce3699536a2aa39722199a64f73a45fa362f1acf72c444f54b14da845e8c52",
+      "created_at": "2026-11-18T14:15:44.026Z"
     },
     "domain_intelligence-technical-construction-intelligence-makecindy-cindy-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-makecindy-cindy-core-invariants",
@@ -8488,8 +8488,8 @@
       "title": "Research & Knowledge Intelligence: hf-comfy-org-qwen-image-2.1-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-comfy-org-qwen-image-2-1-learnings-research-knowledge-intelligence-hf-comfy-o.md",
       "repository": "hf-comfy-org-qwen-image-2.1-learnings",
-      "content_hash": "81c7b7babff10a1346e119d78f2205c10959d33a82442ea77b44d1608a8df617",
-      "created_at": "2026-11-18T04:21:22.006Z"
+      "content_hash": "7c871cca9d52ed5befcd559e3fc3e51ab35347ffad6fc21a9ea1d5bc5af154b6",
+      "created_at": "2026-11-18T14:16:03.075Z"
     },
     "domain_intelligence-technical-construction-intelligence-makecindy-cindy-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-makecindy-cindy-learnings-core-invariants",
@@ -11146,8 +11146,8 @@
       "title": "Architecture Intelligence: infiniflow/infinity Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-infiniflow-infinity-architecture-intelligence-infiniflow-infinity-core-invariant.md",
       "repository": "infiniflow/infinity",
-      "content_hash": "b921b4b7a39d79c7116a15d2e225f8459ac38740657f8daf05ed44e4064dbe6f",
-      "created_at": "2026-11-17T20:25:39.112Z"
+      "content_hash": "f61a256522944fbaaa229ab2c2eec95f722066d4f5299db530a16146228d33fc",
+      "created_at": "2026-11-18T14:15:59.324Z"
     },
     "domain_intelligence-technical-construction-intelligence-bitterbot-ai-bitterbot-desktop-core-invarian": {
       "record_id": "domain_intelligence-technical-construction-intelligence-bitterbot-ai-bitterbot-desktop-core-invarian",
@@ -11278,8 +11278,8 @@
       "title": "Technical Construction Intelligence: openreplay/openreplay Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-openreplay-openreplay-technical-construction-intelligence-openreplay-openreplay-.md",
       "repository": "openreplay/openreplay",
-      "content_hash": "6c56fc4c9189c856ebe1d7ebea34079af34197139dded86af88bcf78f841dff0",
-      "created_at": "2026-11-17T14:33:26.354Z"
+      "content_hash": "29a2995ed1d99f0270658268c3a19741b329478d02bbac728665905574ff33fb",
+      "created_at": "2026-11-18T14:15:51.653Z"
     },
     "domain_intelligence-architecture-intelligence-crate-crate-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-crate-crate-core-invariants",
@@ -11356,8 +11356,8 @@
       "title": "Technical Construction Intelligence: openreplay-openreplay-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-openreplay-openreplay-learnings-technical-construction-intelligence-openreplay-o.md",
       "repository": "openreplay-openreplay-learnings",
-      "content_hash": "ad6734e8fa0ac7190af834140786bf7af51a7b3e7058922cbdf9be88debd517a",
-      "created_at": "2026-11-17T14:33:44.559Z"
+      "content_hash": "801d0f22ca789d86b7677f100b34fab8b7e9a8050fc2651482750d5d673d3170",
+      "created_at": "2026-11-18T14:16:03.525Z"
     },
     "domain_intelligence-research-knowledge-intelligence-meta-llama-meta-llama-3-8b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-meta-llama-meta-llama-3-8b-core-invariants",
@@ -19128,8 +19128,8 @@
       "title": "Architecture Intelligence: flox/flox Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-flox-flox-architecture-intelligence-flox-flox-core-invariants.md",
       "repository": "flox/flox",
-      "content_hash": "12255c19154b43ae8c39f8c8eaece70926b04d5ba4910638021b364d6a3c8fd5",
-      "created_at": "2026-11-18T05:52:27.972Z"
+      "content_hash": "a8bb3c593278b0ccfe58f311d0dd535819d71b936e918afa7d2b6019817d8129",
+      "created_at": "2026-11-18T14:15:48.004Z"
     },
     "domain_intelligence-architecture-intelligence-flox-flox-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-flox-flox-learnings-core-invariants",
@@ -19137,8 +19137,8 @@
       "title": "Architecture Intelligence: flox-flox-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-flox-flox-learnings-architecture-intelligence-flox-flox-learnings-core-invariant.md",
       "repository": "flox-flox-learnings",
-      "content_hash": "ac87a0879828c5c03b78138bdc8d65cfbba7cfd5c829073917d0593c2254b845",
-      "created_at": "2026-11-18T05:52:38.262Z"
+      "content_hash": "38c5133877ce500fa045a489fb370d0c5255dc901f232a8c66f9d12692ed7a5a",
+      "created_at": "2026-11-18T14:16:02.617Z"
     },
     "DOM-D-8240E8AC": {
       "record_id": "DOM-D-8240E8AC",
@@ -24772,8 +24772,8 @@
       "title": "Technical Construction Intelligence: authzed/spicedb Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-authzed-spicedb-technical-construction-intelligence-authzed-spicedb-core-invaria.md",
       "repository": "authzed/spicedb",
-      "content_hash": "b32cf2e63f3249273e7d04600b34d30ff083d0317a9d5c3f23f2239094edfa3f",
-      "created_at": "2026-11-17T00:10:52.452Z"
+      "content_hash": "9095baa4d5b8b76cada6a42ba9203a658bb8c354b7b7a5d06cfd2b7a11a13ea6",
+      "created_at": "2026-11-18T14:15:55.066Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xtools-at-deepseek-v4-pro-qwen3-5-9b-uncensored-": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xtools-at-deepseek-v4-pro-qwen3-5-9b-uncensored-",

@@ -1,45 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T14:08:08.277Z",
-  "total_cycles_completed": 10518,
-  "total_learnings_persisted": 10518,
-  "total_rules_promoted": 9997,
+  "last_updated": "2026-11-18T14:15:58.999Z",
+  "total_cycles_completed": 10523,
+  "total_learnings_persisted": 10523,
+  "total_rules_promoted": 10001,
   "history": [
-    {
-      "timestamp": "2026-11-18T02:16:10.406Z",
-      "repository": "max-sixty/worktrunk",
-      "learningId": "learn-github-max-sixty-worktrunk",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-18T02:16:18.266Z",
-      "repository": "okteto/okteto",
-      "learningId": "learn-github-okteto-okteto",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-18T02:28:20.732Z",
-      "repository": "open-ani/animeko",
-      "learningId": "learn-github-open-ani-animeko",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-18T02:28:22.845Z",
-      "repository": "dragonflyoss/dragonfly",
-      "learningId": "learn-github-dragonflyoss-dragonfly",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-18T02:33:18.018Z",
-      "repository": "XingChen-AGI/Xing4.0-29B-A4B",
-      "learningId": "learn-huggingface-xingchen-agi-xing4-0-29b-a4b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-18T02:42:35.811Z",
       "repository": "SupersonicLabs/Julia-1",
@@ -1403,6 +1368,41 @@
       "repository": "TaichuAI/ZDTaichu5.0-9B",
       "learningId": "learn-huggingface-taichuai-zdtaichu5-0-9b",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T14:15:43.847Z",
+      "repository": "Comfy-Org/Qwen-Image-2.1",
+      "learningId": "learn-huggingface-comfy-org-qwen-image-2-1",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T14:15:47.664Z",
+      "repository": "flox/flox",
+      "learningId": "learn-github-flox-flox",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T14:15:51.320Z",
+      "repository": "openreplay/openreplay",
+      "learningId": "learn-github-openreplay-openreplay",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T14:15:54.730Z",
+      "repository": "authzed/spicedb",
+      "learningId": "learn-github-authzed-spicedb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T14:15:58.999Z",
+      "repository": "infiniflow/infinity",
+      "learningId": "learn-github-infiniflow-infinity",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]
