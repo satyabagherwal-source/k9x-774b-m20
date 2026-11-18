@@ -69,8 +69,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-18T13:34:26.276Z",
-    "lastVerified": "2026-11-18T13:34:26.276Z",
+    "lastChecked": "2026-11-18T13:47:11.001Z",
+    "lastVerified": "2026-11-18T13:47:11.001Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -151,9 +151,9 @@
   "dathere-qsv": {
     "name": "qsv",
     "officialUrl": "https://github.com/dathere/qsv",
-    "lastChecked": "2026-11-18T13:09:02.216Z",
+    "lastChecked": "2026-11-18T13:47:04.105Z",
     "revisionIdentifier": "39c445bb",
-    "lastVerified": "2026-11-18T13:09:02.216Z"
+    "lastVerified": "2026-11-18T13:47:04.105Z"
   },
   "sxyazi-yazi": {
     "name": "yazi",
@@ -1854,5 +1854,77 @@
     "lastChecked": "2026-11-18T13:34:19.250Z",
     "revisionIdentifier": "d375c6d7",
     "lastVerified": "2026-11-18T13:34:19.250Z"
+  },
+  "unhappychoice-gitlogue": {
+    "name": "gitlogue",
+    "officialUrl": "https://github.com/unhappychoice/gitlogue",
+    "lastChecked": "2026-11-18T13:46:48.938Z",
+    "revisionIdentifier": "1f875b5b",
+    "lastVerified": "2026-11-18T13:46:48.938Z"
+  },
+  "hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf": {
+    "name": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
+    "officialUrl": "https://huggingface.co/ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-18T13:46:51.449Z",
+    "lastVerified": "2026-11-18T13:46:51.449Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-ista-daslab-qwen3-8-27b-gsq-rco-gguf",
+    "contentHash": "f1bcf5d292138c263765e075f786c382ea61bfe94664a8839de4c2783c7e4342",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "danilowoz-react-content-loader": {
+    "name": "react-content-loader",
+    "officialUrl": "https://github.com/danilowoz/react-content-loader",
+    "lastChecked": "2026-11-18T13:46:54.062Z",
+    "revisionIdentifier": "c8a6b6c6",
+    "lastVerified": "2026-11-18T13:46:54.062Z"
+  },
+  "chaos-mesh-chaos-mesh": {
+    "name": "chaos-mesh/chaos-mesh",
+    "officialUrl": "https://github.com/chaos-mesh/chaos-mesh",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-11-18T13:47:00.432Z",
+    "lastVerified": "2026-11-18T13:47:00.432Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-chaos-mesh-chaos-mesh",
+    "contentHash": "cbeca0b16f351cd8259c78ca2c1c2e3647d5666974cbe6c87487d81ada368208",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "mitmproxy-mitmproxy": {
+    "name": "mitmproxy",
+    "officialUrl": "https://github.com/mitmproxy/mitmproxy",
+    "lastChecked": "2026-11-18T13:46:58.975Z",
+    "revisionIdentifier": "f7701d5f",
+    "lastVerified": "2026-11-18T13:46:58.975Z"
+  },
+  "databendlabs-databend": {
+    "name": "databendlabs/databend",
+    "officialUrl": "https://github.com/databendlabs/databend",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-11-18T13:47:06.513Z",
+    "lastVerified": "2026-11-18T13:47:06.513Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-databendlabs-databend",
+    "contentHash": "7cf29f9be509c34ba7283affc17c75ec451f5ac27deba6cfebd425d9f81bcb4e",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 5,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

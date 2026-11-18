@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-18T13:34:28.085Z",
+  "last_updated": "2026-11-18T13:48:30.587Z",
   "total_verified_learnings": 9002,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 21277,
+  "total_items": 21285,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113090,9 +113090,9 @@
       "title": "Research & Knowledge Intelligence: ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF Core Invariants",
       "repository": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
       "source_version": "hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf",
-      "content_hash": "1ed1451be45d361f9868349fd0be08ec28f713a811d0b3750b4f2008e225f869",
+      "content_hash": "305e7eb6ebcdc12eef731c68271fe8a1c20d205dd2923e13ce9f67bbf0bd2f68",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T03:56:04.715Z"
+      "persisted_at": "2026-11-18T13:46:52.369Z"
     },
     "candidate_directive-swift-core-drop-theme-from-a-v1-0-createsurface-in-relaxed-mode-4099": {
       "item_id": "candidate_directive-swift-core-drop-theme-from-a-v1-0-createsurface-in-relaxed-mode-4099",
@@ -113174,9 +113174,9 @@
       "title": "Research & Knowledge Intelligence: hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf-learnings Core Invariants",
       "repository": "hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf-learnings",
       "source_version": "HEAD",
-      "content_hash": "3900588e82e10b658867361e2361b05c99f2b764493605521f826c8ccd78638e",
+      "content_hash": "fc6db90fc9bbfa15498ab7b8b110a62bddc2151b712d8043418ff0cfe2d1e5bd",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T03:56:26.030Z"
+      "persisted_at": "2026-11-18T13:47:11.405Z"
     },
     "domain_intelligence-architecture-intelligence-a2ui-project-a2ui-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-a2ui-project-a2ui-learnings-core-invariants",
@@ -217054,8 +217054,8 @@
       "slug": "databendlabs-databend",
       "platform": "github",
       "source_url": "https://github.com/databendlabs/databend",
-      "source_version": "58dd5893",
-      "content_hash": "c96e3ead7e09cfde07614ec7b0d5f8eb3f81f50972ab86eeae8e89ded75f5ea1",
+      "source_version": "6546196f",
+      "content_hash": "7cf29f9be509c34ba7283affc17c75ec451f5ac27deba6cfebd425d9f81bcb4e",
       "dossier_path": "07_PROJECT_LEARNING/databendlabs-databend-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/databendlabs-databend-learnings.md",
       "promoted_rules": [
@@ -217078,6 +217078,11 @@
           "number": 9044,
           "title": "finish queries correctly on the queries executor",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9235,
+          "title": "stream all-pairs joins with bounded memory",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -217085,7 +217090,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T19:53:45.457Z",
+      "verified_at": "2026-11-18T13:47:07.457Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -217139,10 +217144,10 @@
       "relative_path": "08_VERIFICATION/databendlabs-databend-verification-protocol-empirical-defect-shield-for-databend.md",
       "title": "Verification Protocol: Empirical Defect Shield for databendlabs/databend",
       "repository": "databendlabs/databend",
-      "source_version": "58dd5893",
-      "content_hash": "381aaef0e2ec4ef6c0558cff8ec629198ef1dcb53fd9aafb44175d861ea71bf5",
+      "source_version": "6546196f",
+      "content_hash": "a01e1b3b9a79963b196a7a3eea34ee7fc1315045d026d998a5195e5091898751",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T19:53:46.089Z"
+      "persisted_at": "2026-11-18T13:47:08.294Z"
     },
     "learn-huggingface-google-t5-t5-small": {
       "learning_id": "learn-huggingface-google-t5-t5-small",
@@ -244625,9 +244630,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for databendlabs-databend-learnings",
       "repository": "databendlabs-databend-learnings",
       "source_version": "HEAD",
-      "content_hash": "64ab751bb0d4ac2e976caafa1e1e05510c640f3026e8829340df6277e6f90d39",
+      "content_hash": "4ec5183f23314c9e749fd3777376d201852c132affabd25033e881a3393f4586",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T21:10:40.685Z"
+      "persisted_at": "2026-11-18T13:48:30.587Z"
     },
     "learn-huggingface-abiray-minimax-h3-image-gguf": {
       "learning_id": "learn-huggingface-abiray-minimax-h3-image-gguf",
@@ -260869,14 +260874,19 @@
       "slug": "chaos-mesh-chaos-mesh",
       "platform": "github",
       "source_url": "https://github.com/chaos-mesh/chaos-mesh",
-      "source_version": "a19f8762",
-      "content_hash": "9b46787c070c1565c08d548790b380aafbc7360e4f62b306e4c24200f2aa0826",
+      "source_version": "fc8e171f",
+      "content_hash": "cbeca0b16f351cd8259c78ca2c1c2e3647d5666974cbe6c87487d81ada368208",
       "dossier_path": "07_PROJECT_LEARNING/chaos-mesh-chaos-mesh-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/chaos-mesh-chaos-mesh-learnings.md",
       "promoted_rules": [
         {
           "number": 8812,
           "title": "upgrade chaos-tproxy to 0.6.0",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9234,
+          "title": "bump go.opentelemetry.io/otel/sdk from 1.45.0 to 1.47.0 in /e2e-test in the",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -260885,7 +260895,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-16T23:22:30.916Z",
+      "verified_at": "2026-11-18T13:47:01.371Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -260927,10 +260937,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-chaos-mesh-chaos-mesh-content-information-intelligence-chaos-mesh-chaos-mesh-cor.md",
       "title": "Content & Information Intelligence: chaos-mesh/chaos-mesh Core Invariants",
       "repository": "chaos-mesh/chaos-mesh",
-      "source_version": "a19f8762",
-      "content_hash": "285d8880af8e73ab0218109fadde955a1d19fbd2d40b5ed576e068e3ed11f22e",
+      "source_version": "fc8e171f",
+      "content_hash": "8c59bee6dd06840eaad318bf8e90e81bffca5e10e3229bd045c0d20c76ebdf59",
       "domain_letter": "I",
-      "persisted_at": "2026-11-16T23:22:31.328Z"
+      "persisted_at": "2026-11-18T13:47:02.080Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-chaos-mesh-chaos-mesh": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-chaos-mesh-chaos-mesh",
@@ -260939,10 +260949,10 @@
       "relative_path": "08_VERIFICATION/chaos-mesh-chaos-mesh-verification-protocol-empirical-defect-shield-for-chaos-me.md",
       "title": "Verification Protocol: Empirical Defect Shield for chaos-mesh/chaos-mesh",
       "repository": "chaos-mesh/chaos-mesh",
-      "source_version": "a19f8762",
-      "content_hash": "de1f15225d2903827d104b0c6f289568fa21e37a61c8b64e7d0652114919a4b6",
+      "source_version": "fc8e171f",
+      "content_hash": "ec92a82801cb7487d37f46fa20fca1c8403a08c032f5007c9425003995c71e9f",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T23:22:31.440Z"
+      "persisted_at": "2026-11-18T13:47:02.260Z"
     },
     "rule-8813": {
       "learning_id": "rule-8813",
@@ -261026,9 +261036,9 @@
       "title": "Content & Information Intelligence: chaos-mesh-chaos-mesh-learnings Core Invariants",
       "repository": "chaos-mesh-chaos-mesh-learnings",
       "source_version": "HEAD",
-      "content_hash": "76a6b98fc36be09c3a8eaa2cadae16fc82c41f642e759449d260f70c1c8e7c6e",
+      "content_hash": "95ec6c9fcb5077c07c8083c1e8acfe780d64936fd8156eca1598d42539c874a9",
       "domain_letter": "I",
-      "persisted_at": "2026-11-16T23:22:39.971Z"
+      "persisted_at": "2026-11-18T13:47:47.605Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-chaos-mesh-chaos-mesh-learning": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-chaos-mesh-chaos-mesh-learning",
@@ -261038,9 +261048,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for chaos-mesh-chaos-mesh-learnings",
       "repository": "chaos-mesh-chaos-mesh-learnings",
       "source_version": "HEAD",
-      "content_hash": "87054c30bfa22a171facfafb1427bf193732ac7325e7da80db7e7a641656f41a",
+      "content_hash": "ee46c99fbe675439e05ba1180426ae5c02b98b8175e03d5f902ee191c8d92fa0",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T23:22:40.083Z"
+      "persisted_at": "2026-11-18T13:47:47.799Z"
     },
     "learn-github-aio-libs-aiohttp": {
       "learning_id": "learn-github-aio-libs-aiohttp",
@@ -281040,7 +281050,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
       "source_version": "hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf",
-      "content_hash": "f7f836dcb6c4b39aeb607a81c9396acb1c2ca18bf2ae39538d41d0c123b431ec",
+      "content_hash": "f1bcf5d292138c263765e075f786c382ea61bfe94664a8839de4c2783c7e4342",
       "dossier_path": "07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf-learnings.md",
       "promoted_rules": [],
@@ -281049,7 +281059,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T03:56:04.327Z",
+      "verified_at": "2026-11-18T13:46:51.892Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -287075,6 +287085,106 @@
       "content_hash": "b4ae6cd5ddfd6aa43c07ebca6e1c2c33142ea1916f681f5b10412827dd442169",
       "domain_letter": "G",
       "persisted_at": "2026-11-18T13:34:27.793Z"
+    },
+    "rule-9234": {
+      "learning_id": "rule-9234",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9234,
+      "title": "bump go.opentelemetry.io/otel/sdk from 1.45.0 to 1.47.0 in /e2e-test in the",
+      "source_url": "https://github.com/chaos-mesh/chaos-mesh",
+      "source_version": "fc8e171f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-18T13:47:01.371Z"
+    },
+    "candidate_directive-bump-go-opentelemetry-io-otel-sdk-from-1-45-0-to-1-47-0-in-e2e-test-in-the": {
+      "item_id": "candidate_directive-bump-go-opentelemetry-io-otel-sdk-from-1-45-0-to-1-47-0-in-e2e-test-in-the",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-DSHZ-bump-go-opentelemetry-io-otel-sdk-from-1-45-0-to-1-47-0-in-e2e-test-in-the.md",
+      "title": "bump go.opentelemetry.io/otel/sdk from 1.45.0 to 1.47.0 in /e2e-test in the",
+      "repository": "chaos-mesh/chaos-mesh",
+      "source_version": "fc8e171f",
+      "content_hash": "6edd177dc64c5410aad4fb9c0b8d4e309a67c17f025c3906ce34417280aa4f79",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-18T13:47:01.896Z"
+    },
+    "rule-9235": {
+      "learning_id": "rule-9235",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9235,
+      "title": "stream all-pairs joins with bounded memory",
+      "source_url": "https://github.com/databendlabs/databend",
+      "source_version": "6546196f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-18T13:47:07.457Z"
+    },
+    "candidate_directive-stream-all-pairs-joins-with-bounded-memory": {
+      "item_id": "candidate_directive-stream-all-pairs-joins-with-bounded-memory",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-DX5O-stream-all-pairs-joins-with-bounded-memory.md",
+      "title": "stream all-pairs joins with bounded memory",
+      "repository": "databendlabs/databend",
+      "source_version": "6546196f",
+      "content_hash": "4ef0b8b935f2922c7918d845360e89fa5e221416460b9d6aae86cef05e39e5d6",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-18T13:47:07.938Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-databendlabs-databend-core-invariants": {
+      "item_id": "domain_intelligence-quality-verification-intelligence-databendlabs-databend-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-databendlabs-databend-quality-verification-intelligence-databendlabs-databend-co.md",
+      "title": "Quality & Verification Intelligence: databendlabs/databend Core Invariants",
+      "repository": "databendlabs/databend",
+      "source_version": "6546196f",
+      "content_hash": "13b294c50bba6d03d0f352018ead80899bce9900b0750a9e62041d451f93d1ef",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-18T13:47:08.117Z"
+    },
+    "candidate_directive-go-bump-go-opentelemetry-io-otel-sdk-from-1-45-0-to-1-47-0-in-e2e-test-in-the": {
+      "item_id": "candidate_directive-go-bump-go-opentelemetry-io-otel-sdk-from-1-45-0-to-1-47-0-in-e2e-test-in-the",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-ERM1-go-bump-go-opentelemetry-io-otel-sdk-from-1-45-0-to-1-47-0-in-e2e-test-in-the.md",
+      "title": "go: bump go.opentelemetry.io/otel/sdk from 1.45.0 to 1.47.0 in /e2e-test in the",
+      "repository": "chaos-mesh-chaos-mesh-learnings",
+      "source_version": "HEAD",
+      "content_hash": "7b2f38a53fcbca06e65a39d3aced7b2b232d78153156ec9361dd2e8a1792191f",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-18T13:47:47.401Z"
+    },
+    "candidate_directive-query-stream-all-pairs-joins-with-bounded-memory": {
+      "item_id": "candidate_directive-query-stream-all-pairs-joins-with-bounded-memory",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-FOLH-query-stream-all-pairs-joins-with-bounded-memory.md",
+      "title": "query): stream all-pairs joins with bounded memory",
+      "repository": "databendlabs-databend-learnings",
+      "source_version": "HEAD",
+      "content_hash": "7c3e4f6ba619bf3219fc0326774f64d4a47612da13175de13e2959c5b77a81d7",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-18T13:48:30.166Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-databendlabs-databend-learnings-core-invariant": {
+      "item_id": "domain_intelligence-quality-verification-intelligence-databendlabs-databend-learnings-core-invariant",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-databendlabs-databend-learnings-quality-verification-intelligence-databendlabs-d.md",
+      "title": "Quality & Verification Intelligence: databendlabs-databend-learnings Core Invariants",
+      "repository": "databendlabs-databend-learnings",
+      "source_version": "HEAD",
+      "content_hash": "88041435fc0a805d7f6a8948e6654e3d6ccc997d6fc1b14177e9b66cc07782e6",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-18T13:48:30.370Z"
     }
   },
   "ai-builder-brain": {

@@ -3,7 +3,7 @@
 > **Source Version**: `hf-ista-dasl`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-18T03:56:04.079Z  
+> **Timestamp**: 2026-11-18T13:46:51.597Z  
 > **Learning ID**: `learn-huggingface-ista-daslab-qwen3-8-27b-gsq-rco-gguf`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF](https://huggingface.co/ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T03:56:03.892Z  
+> **Harvest Timestamp**: 2026-11-18T13:46:51.449Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: image-text-to-text
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 1355691 downloads | 2934 likes
+- **Stars / Engagement**: 1354499 downloads | 2935 likes
 
 ---
 

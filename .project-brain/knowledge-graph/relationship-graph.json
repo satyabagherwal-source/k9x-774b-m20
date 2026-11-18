@@ -2,16 +2,16 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-18T13:26:20.145Z",
+  "updated_at": "2026-11-18T13:48:29.770Z",
   "statistics": {
-    "total_nodes": 353,
-    "total_edges": 163,
+    "total_nodes": 355,
+    "total_edges": 165,
     "domain_distribution": {
       "D": 241,
       "M": 1,
-      "H": 49,
+      "H": 50,
       "J": 13,
-      "K": 19,
+      "K": 20,
       "L": 5,
       "G": 1,
       "F": 17,
@@ -20,7 +20,7 @@
       "I": 4
     },
     "relation_distribution": {
-      "CONSTRAINED_BY_ARCHITECTURE": 162,
+      "CONSTRAINED_BY_ARCHITECTURE": 164,
       "VERIFIED_BY_TEST": 1
     }
   },
@@ -7890,6 +7890,52 @@
       ],
       "created_at": "2026-11-18T13:26:20.145Z",
       "updated_at": "2026-11-18T13:26:20.145Z"
+    },
+    "DOM-K-4C047582": {
+      "id": "DOM-K-4C047582",
+      "domain": "K",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "go: bump go.opentelemetry.io/otel/sdk from 1.45.0 to 1.47.0 in /e2e-test in the",
+      "summary": "Prevents defects observed in production commit `fc8e171f`: go: bump go.opentelemetry.io/otel/sdk from 1.45.0 to 1.47.0 in /e2e-test in the g -> When implementing operations in `e2e-test/go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/c",
+      "confidence": 0.75,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://chaos-mesh-chaos-mesh/chaos-mesh-chaos-mesh-learnings.md",
+        "source_version": "fc8e171f",
+        "observed_at": "2026-11-18T13:47:00.439Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (chaos-mesh-chaos-mesh)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "K",
+        "Quality & Verification Intelligence",
+        "G"
+      ],
+      "created_at": "2026-11-18T13:47:46.971Z",
+      "updated_at": "2026-11-18T13:47:46.971Z"
+    },
+    "DOM-H-41A8ED4B": {
+      "id": "DOM-H-41A8ED4B",
+      "domain": "H",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "query): stream all-pairs joins with bounded memory",
+      "summary": "Prevents defects observed in production commit `50f8ae1b`: query): stream all-pairs joins with bounded memory. Unvalidated execution paths c -> When implementing operations in `src/query/service/src/physical_plans/physical_hash_join.rs`, engineers MUST enforce rigorous boundary valid",
+      "confidence": 0.86,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://databendlabs-databend/databendlabs-databend-learnings.md",
+        "source_version": "6546196f",
+        "observed_at": "2026-11-18T13:47:06.520Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (databendlabs-databend)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "H",
+        "Technical Construction Intelligence",
+        "G"
+      ],
+      "created_at": "2026-11-18T13:48:29.770Z",
+      "updated_at": "2026-11-18T13:48:29.770Z"
     }
   },
   "edges": [
@@ -9522,6 +9568,26 @@
       "evidenceProvenance": null,
       "rationale": "Cross-domain classification links DOM-D-E01F5E82 [D] with Domain M",
       "created_at": "2026-11-18T11:55:41.795Z"
+    },
+    {
+      "id": "EDGE-E632D78FCDD2",
+      "sourceId": "DOM-K-4C047582",
+      "targetId": "NODE-G-domain-bridge-g",
+      "relationType": "CONSTRAINED_BY_ARCHITECTURE",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-K-4C047582 [K] with Domain G",
+      "created_at": "2026-11-18T13:47:46.972Z"
+    },
+    {
+      "id": "EDGE-0A6672821CE8",
+      "sourceId": "DOM-H-41A8ED4B",
+      "targetId": "NODE-G-domain-bridge-g",
+      "relationType": "CONSTRAINED_BY_ARCHITECTURE",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-H-41A8ED4B [H] with Domain G",
+      "created_at": "2026-11-18T13:48:29.770Z"
     }
   ]
 }

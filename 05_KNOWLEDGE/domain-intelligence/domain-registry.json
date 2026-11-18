@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-18T13:34:27.933Z",
-  "total_records": 1854,
+  "last_updated": "2026-11-18T13:48:30.370Z",
+  "total_records": 1858,
   "domains": {
     "A": {
       "total": 11,
@@ -1237,7 +1237,7 @@
       ]
     },
     "H": {
-      "total": 436,
+      "total": 437,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1674,7 +1674,8 @@
         "domain_intelligence-technical-construction-intelligence-zulip-zulip-learnings-core-invariants",
         "domain_intelligence-technical-construction-intelligence-ajeetdsouza-zoxide-core-invariants",
         "domain_intelligence-technical-construction-intelligence-ajeetdsouza-zoxide-learnings-core-invariants",
-        "DOM-H-50457654"
+        "DOM-H-50457654",
+        "DOM-H-41A8ED4B"
       ]
     },
     "I": {
@@ -1804,7 +1805,7 @@
       ]
     },
     "K": {
-      "total": 90,
+      "total": 93,
       "record_ids": [
         "DOM-K-353B93D6",
         "DOM-K-76C43650",
@@ -1895,7 +1896,10 @@
         "domain_intelligence-quality-verification-intelligence-hf-cross-encoder-ms-marco-minilm-l6-v2-learnin",
         "domain_intelligence-quality-verification-intelligence-sharkdp-fd-core-invariants",
         "domain_intelligence-quality-verification-intelligence-sharkdp-fd-learnings-core-invariants",
-        "domain_intelligence-quality-verification-intelligence-software-mansion-argent-learnings-core-invaria"
+        "domain_intelligence-quality-verification-intelligence-software-mansion-argent-learnings-core-invaria",
+        "domain_intelligence-quality-verification-intelligence-databendlabs-databend-core-invariants",
+        "DOM-K-4C047582",
+        "domain_intelligence-quality-verification-intelligence-databendlabs-databend-learnings-core-invariant"
       ]
     },
     "L": {
@@ -8143,8 +8147,8 @@
       "title": "Research & Knowledge Intelligence: ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-ista-daslab-qwen3-8-27b-gsq-rco-gguf-research-knowledge-intelligence-ista-das.md",
       "repository": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
-      "content_hash": "1ed1451be45d361f9868349fd0be08ec28f713a811d0b3750b4f2008e225f869",
-      "created_at": "2026-11-18T03:56:04.715Z"
+      "content_hash": "305e7eb6ebcdc12eef731c68271fe8a1c20d205dd2923e13ce9f67bbf0bd2f68",
+      "created_at": "2026-11-18T13:46:52.369Z"
     },
     "domain_intelligence-architecture-intelligence-a2ui-project-a2ui-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-a2ui-project-a2ui-core-invariants",
@@ -8212,8 +8216,8 @@
       "title": "Research & Knowledge Intelligence: hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-ista-daslab-qwen3-8-27b-gsq-rco-gguf-learnings-research-knowledge-intelligenc.md",
       "repository": "hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf-learnings",
-      "content_hash": "3900588e82e10b658867361e2361b05c99f2b764493605521f826c8ccd78638e",
-      "created_at": "2026-11-18T03:56:26.030Z"
+      "content_hash": "fc6db90fc9bbfa15498ab7b8b110a62bddc2151b712d8043418ff0cfe2d1e5bd",
+      "created_at": "2026-11-18T13:47:11.405Z"
     },
     "domain_intelligence-architecture-intelligence-a2ui-project-a2ui-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-a2ui-project-a2ui-learnings-core-invariants",
@@ -24676,8 +24680,8 @@
       "title": "Content & Information Intelligence: chaos-mesh/chaos-mesh Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-chaos-mesh-chaos-mesh-content-information-intelligence-chaos-mesh-chaos-mesh-cor.md",
       "repository": "chaos-mesh/chaos-mesh",
-      "content_hash": "285d8880af8e73ab0218109fadde955a1d19fbd2d40b5ed576e068e3ed11f22e",
-      "created_at": "2026-11-16T23:22:31.328Z"
+      "content_hash": "8c59bee6dd06840eaad318bf8e90e81bffca5e10e3229bd045c0d20c76ebdf59",
+      "created_at": "2026-11-18T13:47:02.080Z"
     },
     "domain_intelligence-content-information-intelligence-encode-httpx-learnings-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-encode-httpx-learnings-core-invariants",
@@ -24694,8 +24698,8 @@
       "title": "Content & Information Intelligence: chaos-mesh-chaos-mesh-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-chaos-mesh-chaos-mesh-learnings-content-information-intelligence-chaos-mesh-chao.md",
       "repository": "chaos-mesh-chaos-mesh-learnings",
-      "content_hash": "76a6b98fc36be09c3a8eaa2cadae16fc82c41f642e759449d260f70c1c8e7c6e",
-      "created_at": "2026-11-16T23:22:39.971Z"
+      "content_hash": "95ec6c9fcb5077c07c8083c1e8acfe780d64936fd8156eca1598d42539c874a9",
+      "created_at": "2026-11-18T13:47:47.605Z"
     },
     "domain_intelligence-technical-construction-intelligence-aio-libs-aiohttp-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-aio-libs-aiohttp-core-invariants",
@@ -31030,6 +31034,108 @@
       "confidence": 0.75,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-18T13:26:20.126Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-databendlabs-databend-core-invariants": {
+      "record_id": "domain_intelligence-quality-verification-intelligence-databendlabs-databend-core-invariants",
+      "domain_letter": "K",
+      "title": "Quality & Verification Intelligence: databendlabs/databend Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-databendlabs-databend-quality-verification-intelligence-databendlabs-databend-co.md",
+      "repository": "databendlabs/databend",
+      "content_hash": "13b294c50bba6d03d0f352018ead80899bce9900b0750a9e62041d451f93d1ef",
+      "created_at": "2026-11-18T13:47:08.117Z"
+    },
+    "DOM-K-4C047582": {
+      "record_id": "DOM-K-4C047582",
+      "domain_letter": "K",
+      "domain_id": "quality_verification",
+      "domain_name": "Quality & Verification Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "G",
+          "id": "architecture",
+          "name": "Architecture Intelligence"
+        }
+      ],
+      "title": "go: bump go.opentelemetry.io/otel/sdk from 1.45.0 to 1.47.0 in /e2e-test in the",
+      "content": "When implementing operations in `e2e-test/go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in chaos-mesh/chaos-mesh. All inputs crossing module boundaries must be explicitly verified before state persistence.",
+      "content_hash": "9e60cf5a9001b7a88af78d679753148b245d731112bde4b3d4fe5ead957c3687",
+      "summary": "Prevents defects observed in production commit `fc8e171f`: go: bump go.opentelemetry.io/otel/sdk from 1.45.0 to 1.47.0 in /e2e-test in the g -> When implementing operations in `e2e-test/go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/c",
+      "provenance": {
+        "source_uri": "project://chaos-mesh-chaos-mesh/chaos-mesh-chaos-mesh-learnings.md",
+        "source_version": "fc8e171f",
+        "observed_at": "2026-11-18T13:47:00.439Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (chaos-mesh-chaos-mesh)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of chaos-mesh-chaos-mesh"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "G"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-18T13:47:46.937Z"
+    },
+    "DOM-H-41A8ED4B": {
+      "record_id": "DOM-H-41A8ED4B",
+      "domain_letter": "H",
+      "domain_id": "technical_construction",
+      "domain_name": "Technical Construction Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "G",
+          "id": "architecture",
+          "name": "Architecture Intelligence"
+        }
+      ],
+      "title": "query): stream all-pairs joins with bounded memory",
+      "content": "When implementing operations in `src/query/service/src/physical_plans/physical_hash_join.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in databendlabs/databend. All inputs crossing module boundaries must be explicitly verified before state persistence.",
+      "content_hash": "288664d0f09aeff5cd726c313dea71218ce0f2b7a5d9060efac2107ec118b6c7",
+      "summary": "Prevents defects observed in production commit `50f8ae1b`: query): stream all-pairs joins with bounded memory. Unvalidated execution paths c -> When implementing operations in `src/query/service/src/physical_plans/physical_hash_join.rs`, engineers MUST enforce rigorous boundary valid",
+      "provenance": {
+        "source_uri": "project://databendlabs-databend/databendlabs-databend-learnings.md",
+        "source_version": "6546196f",
+        "observed_at": "2026-11-18T13:47:06.520Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (databendlabs-databend)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of databendlabs-databend"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "G"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.86,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-18T13:48:29.743Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-databendlabs-databend-learnings-core-invariant": {
+      "record_id": "domain_intelligence-quality-verification-intelligence-databendlabs-databend-learnings-core-invariant",
+      "domain_letter": "K",
+      "title": "Quality & Verification Intelligence: databendlabs-databend-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-databendlabs-databend-learnings-quality-verification-intelligence-databendlabs-d.md",
+      "repository": "databendlabs-databend-learnings",
+      "content_hash": "88041435fc0a805d7f6a8948e6654e3d6ccc997d6fc1b14177e9b66cc07782e6",
+      "created_at": "2026-11-18T13:48:30.370Z"
     }
   }
 }

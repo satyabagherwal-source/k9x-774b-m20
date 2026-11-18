@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T13:34:27.793Z",
+  "last_updated": "2026-11-18T13:48:30.166Z",
   "directives": [
     {
       "id": "CD-001",
@@ -29544,6 +29544,50 @@
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-18",
       "domain_letter": "G"
+    },
+    {
+      "id": "CD-DSHZ",
+      "directive_title": "bump go.opentelemetry.io/otel/sdk from 1.45.0 to 1.47.0 in /e2e-test in the",
+      "source_repo": "chaos-mesh/chaos-mesh",
+      "source_commit": "fc8e171f",
+      "staged_file": "11_INBOX/candidate-directives/CD-DSHZ-bump-go-opentelemetry-io-otel-sdk-from-1-45-0-to-1-47-0-in-e2e-test-in-the.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-18",
+      "domain_letter": "I"
+    },
+    {
+      "id": "CD-DX5O",
+      "directive_title": "stream all-pairs joins with bounded memory",
+      "source_repo": "databendlabs/databend",
+      "source_commit": "6546196f",
+      "staged_file": "11_INBOX/candidate-directives/CD-DX5O-stream-all-pairs-joins-with-bounded-memory.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-18",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-ERM1",
+      "directive_title": "go: bump go.opentelemetry.io/otel/sdk from 1.45.0 to 1.47.0 in /e2e-test in the",
+      "source_repo": "chaos-mesh-chaos-mesh-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-ERM1-go-bump-go-opentelemetry-io-otel-sdk-from-1-45-0-to-1-47-0-in-e2e-test-in-the.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-18",
+      "domain_letter": "I"
+    },
+    {
+      "id": "CD-FOLH",
+      "directive_title": "query): stream all-pairs joins with bounded memory",
+      "source_repo": "databendlabs-databend-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-FOLH-query-stream-all-pairs-joins-with-bounded-memory.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-18",
+      "domain_letter": "H"
     }
   ]
 }

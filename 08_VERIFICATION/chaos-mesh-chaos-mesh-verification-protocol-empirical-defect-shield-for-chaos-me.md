@@ -4,22 +4,22 @@
 {
   "source_repository": "chaos-mesh/chaos-mesh",
   "source_url": "https://github.com/chaos-mesh/chaos-mesh",
-  "source_version": "a19f8762",
+  "source_version": "fc8e171f",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-16T23:22:31.222Z",
+  "timestamp": "2026-11-18T13:47:01.896Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-chaos-mesh-chaos-mesh",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [chaos-mesh/chaos-mesh](https://github.com/chaos-mesh/chaos-mesh) (Revision: `a19f8762`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-16T23:22:31.222Z`  
+> **Provenance**: Harvested from [chaos-mesh/chaos-mesh](https://github.com/chaos-mesh/chaos-mesh) (Revision: `fc8e171f`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-18T13:47:01.896Z`  
 > **Learning ID**: `learn-github-chaos-mesh-chaos-mesh`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `chaos-mesh/chaos-mesh` (Commit: `a19f8762`)
+- **Target Repository**: `chaos-mesh/chaos-mesh` (Commit: `fc8e171f`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/chaos-mesh-chaos-mesh-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/chaos-mesh/chaos-mesh](https://github.com/chaos-mesh/chaos-mesh))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T23:22:30.212Z  
+> **Harvest Timestamp**: 2026-11-18T13:47:00.432Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: A Chaos Engineering Platform for Kubernetes.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 7991 stars
+- **Stars / Engagement**: 7992 stars
 
 ---
 
@@ -928,15 +928,13 @@ func init() {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #5244** (2026-11-17): **fix(build): use pnpm 10 for release-2.7 Dashboard**
+  *Symptoms*: Use pnpm 10 in the release-2.7 build image. This matches the Dashboard CI toolchain and lets release builds install the existing workspace lockfile with `--frozen-lockfile`. 
+
 - **Issue #5242** (2026-11-16): **fix(httpchaos): upgrade chaos-tproxy to 0.6.0**
   *Symptoms*: ## What problem does this PR solve?  External HTTP requests to the target Pod can keep timing out after HTTPChaos reports recovery.  ## What's changed and how does it work?  Upgrade the Chaos Daemon to [chaos-tproxy v0.6.0](https://github.com/chaos-mesh/chaos-tproxy/releases/tag/v0.6.0). The new version announces the restored MAC address so clients can reach the Pod again. Verified in the ARM64 Playground that requests through the Pod IP and Service recover after manual stop and experiment expiration.  ## Related changes  - [ ] This change also requires further updates to the [website](https://github.com/chaos-mesh/website) (e.g. docs) - [ ] This change also requires further updates to the `UI interface`  ## Cherry-pick to release branches (optional)  - [ ] release-2.8 - [ ] release-2.7  ## Checklist  ### CHANGELOG  - [x] I have updated the `CHANGELOG.md` - [ ] I have labeled this PR with "no-need-update-changelog"  ### Tests  - [ ] Unit test - [ ] E2E test - [x] Manual test  ### Side effects  - [ ] **Breaking backward compatibility**  ## DCO  All commits are signed off.
   **Post-Mortem & Fix Analysis**:
   > ## [Codecov](https://app.codecov.io/gh/chaos-mesh/chaos-mesh/pull/5242?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=chaos-mesh) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 34.47%. Comparing base ([`d60be9d`](https://app.codecov.io/gh/chaos-mesh/chaos-mesh/commit/d60be9d4a14ec1ca47efdd1b74d2315ae09f8ba3?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=chaos-mesh)) to head ([`2133238`](https://app.codecov.io/gh/chaos-mesh/chaos-mesh/commit/213323836aacf3b3a401fd62d05adcbf34c9500d?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=chaos-mesh)). :warning: Report is 1 commits behind head on master.  <details><summary>Additional details and impacted files</summary>    ```diff @@            Coverage Diff    
-
-- **Issue #5240** (2026-11-14): **chore: pull images from cr.chaos-mesh.dev on release-2.7**
-  *Symptoms*: ## Why  Backport #5227 so Helm installs on 2.7 pull images through the same registry proxy as 2.8.  ## What changed  - Default Helm and build environment image pulls to `cr.chaos-mesh.dev`. Helm users can set `images.registry=ghcr.io` to pull directly from GitHub Container Registry. - Pin E2E and integration installs to the registry used by their locally built images. - Preserve the registry and version placeholders in the 2.7 installation script generator.  ## Scope  The registry backport applies to `release-2.7` and retains its existing image versions.  ## Verification  Helm lint and rendering passed. The generated installer matches the regenerated 2.7 baseline.
-  **Post-Mortem & Fix Analysis**:
-  > ## [Codecov](https://app.codecov.io/gh/chaos-mesh/chaos-mesh/pull/5240?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=chaos-mesh) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 40.40%. Comparing base ([`5be7485`](https://app.codecov.io/gh/chaos-mesh/chaos-mesh/commit/5be7485c66cc32d4bdfb4dcac08c4bd3af87685d?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=chaos-mesh)) to head ([`a2a510c`](https://app.codecov.io/gh/chaos-mesh/chaos-mesh/commit/a2a510c80a518a4dcad3345436741612f3b14b2f?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=chaos-mesh)). :warning: Report is 2 commits behind head on release-2.7.  <details><summary>Additional details and impacted files</summary>    ```diff @@               Coverage 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -953,43 +951,77 @@ func init() {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a19f8762` (2026-11-16)
-**Commit Message**: fix(httpchaos): upgrade chaos-tproxy to 0.6.0 (#5242)
+### Incident Patch 1: `fc8e171f` (2026-11-18)
+**Commit Message**: go: bump go.opentelemetry.io/otel/sdk from 1.45.0 to 1.47.0 in /e2e-test in the go_modules group across 1 directory (#5237)
 
-Signed-off-by: Yue Yang <[REDACTED_EMAIL]>
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
 
-**File**: `CHANGELOG.md` (modified, +1/-0)
+**File**: `e2e-test/go.mod` (modified, +5/-4)
 ```diff
-@@ -74,6 +74,7 @@ For more information and how-to, see [RFC: Keep A Changelog](https://github.com/
- 
- ### Fixed
- 
-+- Upgrade chaos-tproxy to [v0.6.0](https://github.com/chaos-mesh/chaos-tproxy/releases/tag/v0.6.0) to fix delayed recovery of external HTTP requests after HTTPChaos stops. [#5242](https://github.com/chaos-mesh/chaos-mesh/pull/5242)
- - Fix PhysicalMachineChaos disk-fill requests to honor `fill-by-fallocate`. Setting it to `true` uses `fallocate`. Setting it to `false` or omitting it now uses `dd` [#5205](https://github.com/chaos-mesh/chaos-mesh/pull/5205)
- - Fix PhysicalMachineChaos Redis Sentinel `redisPath` to accept executable directories. Remove existing boolean values before upgrading [#5204](https://github.com/chaos-mesh/chaos-mesh/pull/5204)
- - Fix missing Kafka authentication, fill configuration, and IO broker settings in PhysicalMachineChaos, and keep Kafka credentials out of controller logs [#5203](https://github.com/chaos-mesh/chaos-mesh/pull/5203)
+@@ -105,12 +105,13 @@ require (
+ 	github.com/xlab/treeprint v1.2.0 // indirect
+ 	go.opentelemetry.io/auto/sdk v1.2.1 // indirect
+ 	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.69.0 // indirect
+-	go.opentelemetry.io/otel v1.45.0 // indirect
++	go.opentelemetry.io/otel v1.47.0 // indirect
+ 	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.45.0 // indirect
+ 	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.45.0 // indirect
+-	go.opentelemetry.io/otel/metric v1.45.0 // indirect
+-	go.opentelemetry.io/otel/sdk v1.45.0 // indirect
+-	go.opentelemetry.io/otel/trace v1.45.0 // indirect
++	go.opentelemetry.io/otel/log v1.47.0 // indirect
++	go.opentelemetry.io/otel/metric v1.47.0 // indirect
++	go.opentelemetry.io/otel/sdk v1.47.0 // indirect
++	go.opentelemetry.io/otel/trace v1.47.0 // indirect
+ 	go.opentelemetry.io/proto/otlp v1.11.0 // indirect
+ 	go.uber.org/multierr v1.11.0 // indirect
+ 	go.uber.org/zap v1.28.0 // indirect
 ```
 
-**File**: `images/chaos-daemon/Dockerfile` (modified, +1/-1)
+**File**: `e2e-test/go.sum` (modified, +12/-10)
 ```diff
-@@ -28,7 +28,7 @@ RUN case "$TARGET_PLATFORM" in \
-     *) echo >&2 "error: unsupported architecture '$TARGET_PLATFORM'"; exit 1 ;; \
-     esac; \
-     curl -L https://github.com/chaos-mesh/nsexec/releases/download/v0.1.7-r1/nsexec-$NSEXEC_ARCH-unknown-linux-gnu.tar.gz | tar xz -C /tmp/bin; \
--    curl -L https://github.com/chaos-mesh/chaos-tproxy/releases/download/v0.5.7/tproxy-$NSEXEC_ARCH.tar.gz | tar xz -C /tmp/bin; \
-+    curl -L https://github.com/chaos-mesh/chaos-tproxy/releases/download/v0.6.0/tproxy-$NSEXEC_ARCH.tar.gz | tar xz -C /tmp/bin; \
-     curl -L https://github.com/chaos-mesh/memStress/releases/download/v0.3.1/memStress_v0.3.1-$NSEXEC_ARCH-linux-gnu.tar.gz | tar xz -C /tmp/bin
- 
- # ---
+@@ -258,20 +258,22 @@ go.opentelemetry.io/auto/sdk v1.2.1 h1:jXsnJ4Lmnqd11kwkBV2LgLoFMZKizbCi5fNZ/ipaZ
+ go.opentelemetry.io/auto/sdk v1.2.1/go.mod h1:KRTj+aOaElaLi+wW1kO/DZRXwkF4C5xPbEe3ZiIhN7Y=
+ go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.69.0 h1:8tvICD4vSTOOsNrsI4Ljf6C+6UKvpTEH5XY3JMoyPoo=
+ go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.69.0/go.mod h1:z9+yiacE0IHRqM4qFfkbt/JYlmYXgss8GY/jXoNuPJI=
+-go.opentelemetry.io/otel v1.45.0 h1:pdrWmLHofpubmArBv1LgFSv1Z0Ie/ppdZzu+kUN5EeU=
+-go.opentelemetry.io/otel v1.45.0/go.mod h1:XZxIqPapzEYnhNSScF5DIqXhm/rYi0FzCe2XddAwZfQ=
++go.opentelemetry.io/otel v1.47.0 h1:j7ALJ/zgkS7Z6aeJW09p8VC9804bC+PpeTfCD4XPnOM=
++go.opentelemetry.io/otel v1.47.0/go.mod h1:8wS9O2qfXrYrzp6hIF/HOYJJf/wIhFPhR2xLuP+iXQU=
+ go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.45.0 h1:QRefszxJmfPdjXUUm3j6iDzY03mTPXMjqErFqQ67vUg=
+ go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.45.0/go.mod h1:Tiz03lTBVBrm7eWZBOidzEaYaJa8tjwGUGv6d8mlTyk=
+ go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.45.0 h1:fG5MCxGz8+2VtrN/WgqSpJFctVz24gpxj8CxkKmc8Ww=
+ go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.45.0/go.mod h1:BmAYTn+3ysbRe+IU2msxmf5Rx3g6DHvex+tWI3LdhYI=
+-go.opentelemetry.io/otel/metric v1.45.0 h1:7Eg1uH7CJ5cXv9is6tnBe1FI6rj1nwUdbFypRm3br/M=
+-go.opentelemetry.io/otel/metric v1.45.0/go.mod h1:HAPbm1nd3p1PmFH7v2dR+6BjXxw+Lq4a2+pndMAm08s=
+-go.opentelemetry.io/otel/sdk v1.45.0 h1:4VVSMgQ83dUgW2aoX5f6JgLvHwIvzcuLnF9lUdCSpCw=
+-go.opentelemetry.io/otel/sdk v1.45.0/go.mod h1:Sr40LgXV7DsKMMJMKOhUWOgMWTfAaqvm2kF0g7ilwuA=
+-go.opentelemetry.io/otel/sdk/metric v1.45.0 h1:oVFszMfyj1Am6s24Vtc7wBb8BKLcwepJjNEYILuiE3o=
+-go.opentelemetry.io/otel/sdk/metric v1.45.0/go.mod h1:vUWUxDZvu1WVRj8JA8S0AdhsPrZoDpA2DdZauIh4mDA=
+-go.opentelemetry.io/otel/trace v1.45.0 h1:l/mP6Uv7oNO7/TblbhpbgMidxhq1uO/rPsikOyVhxag=
+-go.opentelemetry.io/otel/trace v1.45.0/go.mod h1:qoJJA2xNMnxRrdISU/kLtfUH2wNeQbiv+jhs/CxI8bc=
++go.opentelemetry.io/otel/log v1.47.0 h1:cOTS1CcLbSQeZKanGJ+0JpF/+t4PELi3O3bbl2lqCcI=
++go.opentelemetry.io/otel/log v1.47.0/go.mod h1:9byitSQ5pLC6PpqwGXjqdMKya6ZTswHRZh2vvXT33nw=
++go.opentelemetry.io/otel/metric v1.47.0 h1:4PptaldXx3Eat1XjMZ68pPJEs5wrhlemctZE9a3UdWY=
++go.opentelemetry.io/otel/metric v1.47.0/go.mod h1:ADGSXxRrXM6bjbvLo535EstVFlPpPYZm4LBKixjDHwU=
++go.opentelemetry.io/otel/sdk v1.47.0 h1:zWXEr4j2lFefG87TU6Yg8a7ngfohIKFZHKp0Hf5hC6I=
++go.opentelemetry.io/otel/sdk v1.47.0/go.mod h1:VUc24kiOeoGsxG8G9ULx3fWKvB7jMhnGE8Oi607lgR0=
++go.opentelemetry.io/otel/sdk/metric v1.47.0 h1:lfISg2j93VT6yqdk9OfUaZmw/GfcZqCCV3jdXtsPnKw=
++go.opentelemetry.io/otel/sdk/metric v1.47.0/go.mod h1:ypLp+mW1Nt2x+Szt3b5/i1syodyts49lMOwxpDI3VGw=
++go.opentelemetry.io/otel/trace v1.47.0 h1:JOjX/Oci8K94QHddo+bbfya/Ai/nf6/dt9ZfrFNWSrM=
++go.opentelemetry.io/otel/trace v1.47.0/go.mod h1:jNaSLa2PZEYFG6fRjJABAu+bw4FS08uDmPg28lTghu0=
+ go.opentelemetry.io/proto/otlp v1.11.0 h1:5rrYs0Ykyj50sdU/JU0x8etU+LubXWb+gED6TbEdMIk=
+ go.opentelemetry.io/proto/otlp v1.11.0/go.mod h1:SmVizdCOAm3XBtG1g1NnOdhW6jtddT72hLMhv8VwA8E=
+ go.uber.org/goleak v1.3.0 h1:2K3zAYmnTNqV73imy9J1T3WC+gmCePx2hEGkimedGto=
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5244** (2026-11-17): fix(build): use pnpm 10 for release-2.7 Dashboard (@g1eny0ung)
 - **PR #5242** (2026-11-16): fix(httpchaos): upgrade chaos-tproxy to 0.6.0 (@g1eny0ung)
+- **PR #5241** (2026-11-17): chore(release): prepare v2.7.4 (@g1eny0ung)
 - **PR #5240** (2026-11-14): chore: pull images from cr.chaos-mesh.dev on release-2.7 (@g1eny0ung)
 - **PR #5239** (2026-11-14): fix(ui): backport dashboard dependency security updates to 2.7 (@g1eny0ung)
 - **PR #5238** (2026-11-14): fix(physicalmachinechaos): backport validation and UID fixes to 2.7 (@g1eny0ung)
-- **PR #5236** (2026-11-14): fix(chaos): backport experiment runtime fixes to 2.7 (@g1eny0ung)
-- **PR #5235** (2026-11-13): fix(workflow): backport workflow and dashboard fixes to 2.7 (@g1eny0ung)
 
 ---
 
@@ -1009,31 +1041,38 @@ Signed-off-by: Yue Yang <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. httpchaos): upgrade chaos-tproxy to 0.6.0
+## X. go: bump go.opentelemetry.io/otel/sdk from 1.45.0 to 1.47.0 in /e2e-test in the 
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in chaos-mesh/chaos-mesh. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `e2e-test/go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in chaos-mesh/chaos-mesh. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a19f8762`: httpchaos): upgrade chaos-tproxy to 0.6.0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `fc8e171f`: go: bump go.opentelemetry.io/otel/sdk from 1.45.0 to 1.47.0 in /e2e-test in the go_modules group across 1 directory. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `e2e-test/go.mod`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-- Upgrade chaos-tproxy to [v0.6.0](https://github.com/chaos-mesh/chaos-tproxy/releases/tag/v0.6.0) to fix delayed recovery of external HTTP requests after HTTPChaos stops. [#5242](https://github.com/chaos-mesh/chaos-mesh/pull/5242)
+	go.opentelemetry.io/otel v1.47.0 // indirect
+	go.opentelemetry.io/otel/log v1.47.0 // indirect
+	go.opentelemetry.io/otel/metric v1.47.0 // indirect
+	go.opentelemetry.io/otel/sdk v1.47.0 // indirect
+	go.opentelemetry.io/otel/trace v1.47.0 // indirect
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+	go.opentelemetry.io/otel v1.45.0 // indirect
+	go.opentelemetry.io/otel/metric v1.45.0 // indirect
+	go.opentelemetry.io/otel/sdk v1.45.0 // indirect
+	go.opentelemetry.io/otel/trace v1.45.0 // indirect
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a19f8762` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `fc8e171f` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

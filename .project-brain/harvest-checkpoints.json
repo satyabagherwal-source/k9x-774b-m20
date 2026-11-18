@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-18T13:34:23.184Z",
+  "last_updated": "2026-11-18T13:47:07.696Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -530,14 +530,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-ista-daslab-qwen3-8-27b-gsq-rco-gguf",
-      "content_hash": "f7f836dcb6c4b39aeb607a81c9396acb1c2ca18bf2ae39538d41d0c123b431ec",
-      "verified_at": "2026-11-18T03:56:04.531Z",
+      "content_hash": "f1bcf5d292138c263765e075f786c382ea61bfe94664a8839de4c2783c7e4342",
+      "verified_at": "2026-11-18T13:46:52.154Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T03:56:04.531Z"
+      "last_updated": "2026-11-18T13:46:52.154Z"
     },
     "orcarouter/OrcaSAQ-2-27B": {
       "repository": "orcarouter/OrcaSAQ-2-27B",
@@ -3651,14 +3651,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-chaos-mesh-chaos-mesh",
-      "content_hash": "9b46787c070c1565c08d548790b380aafbc7360e4f62b306e4c24200f2aa0826",
-      "verified_at": "2026-11-16T23:22:31.067Z",
+      "content_hash": "cbeca0b16f351cd8259c78ca2c1c2e3647d5666974cbe6c87487d81ada368208",
+      "verified_at": "2026-11-18T13:47:01.645Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-16T23:22:31.067Z"
+      "last_updated": "2026-11-18T13:47:01.645Z"
     },
     "nolabs-ai/nono": {
       "repository": "nolabs-ai/nono",
@@ -11286,14 +11286,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-databendlabs-databend",
-      "content_hash": "c96e3ead7e09cfde07614ec7b0d5f8eb3f81f50972ab86eeae8e89ded75f5ea1",
-      "verified_at": "2026-11-17T19:53:45.646Z",
+      "content_hash": "7cf29f9be509c34ba7283affc17c75ec451f5ac27deba6cfebd425d9f81bcb4e",
+      "verified_at": "2026-11-18T13:47:07.695Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T19:53:45.646Z"
+      "last_updated": "2026-11-18T13:47:07.695Z"
     },
     "atanunq/viu": {
       "repository": "atanunq/viu",

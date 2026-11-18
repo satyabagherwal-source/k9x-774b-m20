@@ -11020,3 +11020,8 @@ Every entry in this ledger must capture:
 | `learn-huggingface-altworld-hemmingway-1` | `https://huggingface.co/Altworld/Hemmingway-1` | `hf-altworl` | Multi-dimensional audit evidence | 2026-11-18T13:34:10.674Z |
 | `learn-github-faridsafi-react-native-gifted-chat` | `https://github.com/FaridSafi/react-native-gifted-chat` | `46a1ddbe` | Multi-dimensional audit evidence | 2026-11-18T13:34:17.810Z |
 | `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `87edd6b4` | Multi-dimensional audit evidence | 2026-11-18T13:34:23.177Z |
+| `learn-huggingface-ista-daslab-qwen3-8-27b-gsq-rco-gguf` | `https://huggingface.co/ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF` | `hf-ista-da` | Multi-dimensional audit evidence | 2026-11-18T13:46:52.144Z |
+| `learn-github-chaos-mesh-chaos-mesh` | `https://github.com/chaos-mesh/chaos-mesh` | `fc8e171f` | Multi-dimensional audit evidence | 2026-11-18T13:47:01.631Z |
+| `learn-github-databendlabs-databend` | `https://github.com/databendlabs/databend` | `6546196f` | Multi-dimensional audit evidence | 2026-11-18T13:47:07.685Z |
+| `learn-dom-k-4c047582` | `project://chaos-mesh-chaos-mesh` | `fc8e171f` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/chaos-mesh-chaos-mesh-learnings.md` | 2026-11-18T13:47:46.974Z |
+| `learn-dom-h-41a8ed4b` | `project://databendlabs-databend` | `6546196f` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/databendlabs-databend-learnings.md` | 2026-11-18T13:48:29.772Z |

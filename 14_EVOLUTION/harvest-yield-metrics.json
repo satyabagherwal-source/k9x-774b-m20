@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T13:34:23.182Z",
-  "total_cycles_completed": 10510,
-  "total_learnings_persisted": 10510,
-  "total_rules_promoted": 9992,
+  "last_updated": "2026-11-18T13:47:07.691Z",
+  "total_cycles_completed": 10513,
+  "total_learnings_persisted": 10513,
+  "total_rules_promoted": 9994,
   "history": [
-    {
-      "timestamp": "2026-11-18T01:38:27.943Z",
-      "repository": "Lightricks/LTX-2.5",
-      "learningId": "learn-huggingface-lightricks-ltx-2-5",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-18T01:38:29.536Z",
-      "repository": "iii-hq/iii",
-      "learningId": "learn-github-iii-hq-iii",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-18T01:38:37.082Z",
-      "repository": "kumahq/kuma",
-      "learningId": "learn-github-kumahq-kuma",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-18T01:38:42.468Z",
       "repository": "doobidoo/mcp-memory-service",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-18T13:34:23.182Z",
       "repository": "tailscale/tailscale",
       "learningId": "learn-github-tailscale-tailscale",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T13:46:52.150Z",
+      "repository": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
+      "learningId": "learn-huggingface-ista-daslab-qwen3-8-27b-gsq-rco-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T13:47:01.640Z",
+      "repository": "chaos-mesh/chaos-mesh",
+      "learningId": "learn-github-chaos-mesh-chaos-mesh",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T13:47:07.691Z",
+      "repository": "databendlabs/databend",
+      "learningId": "learn-github-databendlabs-databend",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

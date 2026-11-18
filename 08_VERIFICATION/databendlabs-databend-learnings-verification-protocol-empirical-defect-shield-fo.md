@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-16T21:10:40.371Z",
+  "timestamp": "2026-11-18T13:48:30.016Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-databendlabs-databend-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [databendlabs-databend-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-16T21:10:40.371Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-18T13:48:30.016Z`  
 > **Learning ID**: `LEARN-EVO-databendlabs-databend-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/databendlabs-databend-learnings.md`  
 > **Source**: github ([https://github.com/databendlabs/databend](https://github.com/databendlabs/databend))  
-> **Source Version**: `342ec629`  
+> **Source Version**: `6546196f`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-16T21:10:34.947Z  
+> **Timestamp**: 2026-11-18T13:47:06.520Z  
 > **Learning ID**: `learn-github-databendlabs-databend`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/databendlabs-databend-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/databendlabs/databend](https://github.com/databendlabs/databend))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T21:10:34.941Z  
+> **Harvest Timestamp**: 2026-11-18T13:47:06.513Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Data Agent Ready Warehouse : One for  Analytics, Search, AI, Python Sandbox.  — rebuilt from scratch. Unified architecture on your S3.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 9497 stars
+- **Stars / Engagement**: 9500 stars
 
 ---
 
@@ -1221,11 +1221,11 @@ unsafe impl<T: BitChunk> TrustedLen for BitChunks<'_, T> {}
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #21099** (2026-11-16): **fix(meta): decode BLOOM table index type; default cache.data_max_ratio to 0**
-  *Symptoms*: I hereby agree to the terms of the CLA available at: https://docs.databend.com/dev/policies/cla/  ## Summary  Two small, independent changes, one commit each.  **1. Default `cache.data_max_ratio` to 0.**  With the shared cache backend on by default (#21091), the data pool reserved 10% of `max_server_memory_usage` for deserialized column data (`memory_cache_table_data`). That pool is the first one reclaimed under memory pressure and re-reads are already served by the disk cache, so the memory is better left to queries. With a 0 cap `SharedStore::check_admissible` rejects every insert into the pool, so no column data is kept in memory; the meta and index pools (10% / 40%) and the disk cache (`cache.disk.*`) are unchanged. Users who want the pool back set `cache.data_max_ratio` explicitly. Legacy options such as `table_data_deserialized_data_bytes` were already ignored by the shared backend, so they do not re-enable it.  **2. Decode `TableIndexType::Bloom` written by newer releases.**  A page-index branch rolling out in production writes `TableIndex.index_type = 4` (`BLOOM`). `proto-conv` on `main` only knows values 0..=3 and returns `Incompatible("invalid IndexType: 4")`, which fails the whole `TableMeta`. `list_tables` then skips the table (or, before #20663, fails the database), so it disappears from the admin tables API and `SHOW CREATE TABLE`.  This adds the enum placeholders (`TableIndexType::Bloom = 4`, `MarkedDeletedIndexType::BLOOM = 6`, `Display` → `BLOOM`, the `mark_t
+- **Issue #21121** (2026-11-18): **refactor(query): remove dead code and leftovers of the aggregate rewrites**
+  *Symptoms*: I hereby agree to the terms of the CLA available at: https://docs.databend.com/dev/policies/cla/  ## Summary  The aggregate went through several rewrites (adaptive partial aggregation over the global shuffle, states kept in pages, the chunked hash index), which left formats, fields and helpers without callers. This PR removes them and simplifies what remains, one commit per step; it changes no query result.  - **Shuffle path**: partial and final aggregates now only meet through the global shuffle (`AggregateScatter`, `AggregateStatesMeta`). The merge-exchange serializer/deserializer, `AggregateSerdeMeta` and the `Serialized`/`AggregatePayload` variants of `AggregateMeta` had no producer: the serializer only accepted a variant nothing constructs. `AggregateMeta` now only carries the payload list; serialized and spilled states stay inside the final aggregate. The `serde/` module is folded into the aggregator. - **Planner**: the partial/final plan building no longer repeats itself; the plans it produces are unchanged. - **Hash table and index**: drop `ProbeState::row_count` (always overwritten before being read), test-only flush paths (tests now go through `into_payloads` + `Payload::merge_result`, the path the final aggregate runs), unused parameters, and name the chunk lanes once (`CHUNK_SLOTS`). `hash_index/` becomes one module with its sizing math. `ProbeState::new_boxed` no longer takes a reference to zeroed memory holding a `Vec`. - **Payloads**: scattering a payload count
 
-- **Issue #21093** (2026-11-15): **fix(query): link cosine HNSW graphs with normalized vectors**
-  *Symptoms*: I hereby agree to the terms of the CLA available at: https://docs.databend.com/dev/policies/cla/  ## Summary  - On main, `HNSWIndex::build` normalizes cosine vectors only for SQ8 and links the graph with the raw vectors (inner product), so non-unit-length data gets a poor graph and needs a much larger ef. Link the graph with the normalized vectors; L1/L2 are unchanged. - Test: `test_cosine_graph_ignores_vector_lengths` (recall 0.196 before, 0.904 after).  Cohere 1M (768d, cosine, top 100), aarch64 8 vCPU, warm cache, refine 2, single round. Both columns use the same binary (it also carries a separate aarch64 SQ8 kernel tweak, not part of this PR), so they differ only in how the index was built:  | | 18 blocks (default)<br>main | 18 blocks (default)<br>this PR | 4 × 250K rows<br>main | 4 × 250K rows<br>this PR | 1 × 1M rows<br>this PR | |---|---:|---:|---:|---:|---:| | ef | 200 | 200 | 800 | 200 | 400 | | Recall@100 | 0.9677 | 0.9858 | 0.9686 | 0.9767 | 0.9742 | | c1 QPS | 86.3 | 85.1 | 97.6 | 111.7 | 103.5 | | c8 QPS | 334.9 | 335.8 | 415.7 | 524.7 | 570.9 | | c80 QPS | 438.0 | 437.1 | 583.1 | **812.2** | **948.4** | | c80 P99 (ms) | 295.0 | 293.3 | 219.1 | 149.5 | 129.2 |  At Recall ≥ 0.9677, the best c80 goes from 583.1 QPS (main, 4 × 250K, ef 800) to 948.4 QPS (this PR, 1 × 1M, ef 400), **+63%**. main needs ef 800 on 4 blocks because ef 200 only reaches recall 0.8943.  Layouts: `CREATE TABLE t (id BIGINT, emb VECTOR(768), VECTOR INDEX vi (emb) distance='cosine' m=16 ef_con
+- **Issue #21118** (2026-11-18): **fix(query): abbreviate large SQL constants in INFO logs**
+  *Symptoms*: I hereby agree to the terms of the CLA available at: https://docs.databend.com/dev/policies/cla/  ## Summary  Fixes #21116. Mask secrets and abbreviate large constants in one token scan, keeping the first three items and the omitted count.  **HTTP and Fuse.** Before, the request, query creation, and initial response each logged the SQL, and the partition log dumped `PushDownInfo`. After, only `Creating new query` carries SQL. Example from a 1536-dimensional Top-K query (IDs shortened, fields shown inline):  ```text New query request  query_id=<query-id> Creating new query  query_id=<query-id>   sql=SELECT id FROM t ORDER BY cosine_distance(embedding,     [0.234567, -0.123456, 0.234567, ... (+1533 more)]::VECTOR(1536)) ASC LIMIT 1 Reading partitions for table t, snapshot: Some(<snapshot-id>) Initial response for query_id=<query-id>, state=Succeeded, rows=1, next_page=None ```  **Physical plan.** The INFO plan keeps the tree, sort direction, and limit; it abbreviates the vector rather than printing all 1536 values. Excerpt from the same query:  ```text Query physical plan: TopN(Final) ├── sort keys: [cosine_distance(embedding, [0.234567, -0.123456, 0.234567, ... (+1533 more)]::VECTOR(1536)) ASC NULLS LAST] ├── limit: 1 ```  **`VALUES`.** A 500-row insert counts omitted rows, not fields:  ```text INSERT INTO t VALUES (1, 'abc'), (1, 'abc'), (1, 'abc'), ... (+497 more); ```  `EXPLAIN`, query history, and query hashes are unchanged.  | Total INFO for HTTP Top-K on `db0-aws` | Befo
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1242,800 +1242,1348 @@ unsafe impl<T: BitChunk> TrustedLen for BitChunks<'_, T> {}
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a7a0a58b` (2026-11-16)
-**Commit Message**: fix(meta): decode BLOOM table index type; default cache.data_max_ratio to 0 (#21099)
+### Incident Patch 1: `50f8ae1b` (2026-11-18)
+**Commit Message**: fix(query): stream all-pairs joins with bounded memory (#20966)
 
-* chore(cache): turn the in-memory column data pool off by default
+* refactor(query): share constant-row block broadcasting
 
-Default cache.data_max_ratio to 0 so the shared cache backend reserves
-no server memory for deserialized column data; the disk cache and the
-meta and index pools are unchanged. Users who want the in-memory pool
-back set cache.data_max_ratio explicitly.
+Extract merge_with_constant_row and reuse it in the nested-loop join.
 
-* fix(meta): decode BLOOM table index type written by newer releases
+Keep repeated build values as constant columns without materializing their payload.
 
-Table metadata written by the page-index rollout carries
-TableIndexType::Bloom (index_type = 4). Without the variant, proto-conv
-rejects the whole TableMeta, so the table disappears from the admin
-tables API and SHOW CREATE TABLE.
+* fix(query): stream all-pairs joins with bounded memory
 
-Add the enum placeholder (and MarkedDeletedIndexType::BLOOM) so the
-metadata decodes and displays, while creating or refreshing a BLOOM
-index stays rejected in this release.
+Use a resumable, batch-bounded probe for cross joins and inner joins without hash keys. Count zero-column build rows without retaining their payload, and preserve interruption and early-output cancellation.
 
-* chore(cache): align tests with the data pool off by default
+Replay all probe spill files and retained buffers once per build round, including column-free probe blocks. Share the path across the legacy and experimental join settings.
 
-Tests that exercise the data pool set cache.data_max_ratio explicitly;
-the system.caches and system.configs golden files follow the default.
+Cover bounded batches, spill replay, multiple workers, zero-column inputs and LIMIT in Rust and SQL regressions. Make affected result tests independent of unspecified cross-join order and keep deterministic TPC-H spill checks.
 
-**File**: `src/meta/api/src/api_impl/schema_api.rs` (modified, +1/-0)
+* fix(query): rebuild window sorting after decorrelation
+
+Rebuild legacy window input sorting and partition exchange using the final decorrelated partition and ordering keys. Replace obsolete binder sorts without dropping limit or top truncation.
+
+Cover
+
+**File**: `src/query/service/src/physical_plans/physical_hash_join.rs` (modified, +111/-132)
 ```diff
-@@ -790,6 +790,7 @@ pub fn mark_table_index_as_deleted(
-         TableIndexType::Ngram => MarkedDeletedIndexType::NGRAM,
-         TableIndexType::Vector => MarkedDeletedIndexType::VECTOR,
-         TableIndexType::Spatial => MarkedDeletedIndexType::SPATIAL,
-+        TableIndexType::Bloom => MarkedDeletedIndexType::BLOOM,
-     };
-     let marked_deleted_table_index_meta = MarkedDeletedIndexMeta {
-         dropped_on: Utc::now(),
-```
-
-**File**: `src/meta/app/src/schema/index.rs` (modified, +1/-0)
-```diff
-@@ -74,6 +74,7 @@ pub enum MarkedDeletedIndexType {
-     NGRAM = 3,
-     VECTOR = 4,
-     SPATIAL = 5,
-+    BLOOM = 6,
+@@ -61,7 +61,6 @@ use crate::physical_plans::format::PhysicalFormat;
+ use crate::physical_plans::physical_plan::IPhysicalPlan;
+ use crate::physical_plans::physical_plan::PhysicalPlan;
+ use crate::physical_plans::physical_plan::PhysicalPlanMeta;
+-use crate::physical_plans::resolve_scalar;
+ use crate::physical_plans::runtime_filter::build_runtime_filter;
+ use crate::pipelines::HashJoinStateRef;
+ use crate::pipelines::PipelineBuilder;
+@@ -74,6 +73,7 @@ use crate::pipelines::processors::transforms::RuntimeFiltersDesc;
+ use crate::pipelines::processors::transforms::TransformHashJoin;
+ use crate::pipelines::processors::transforms::TransformHashJoinBuild;
+ use crate::pipelines::processors::transforms::TransformHashJoinProbe;
++use crate::pipelines::processors::transforms::probes_all_pairs;
+ use crate::sessions::QueryContext;
+ 
+ // Type aliases to simplify complex return types
+@@ -101,12 +101,6 @@ type MergedFieldsResult = (
+     Vec<(usize, (bool, bool))>,
+ );
+ 
+-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+-pub struct NestedLoopFilterInfo {
+-    pub predicates: Vec<RemoteExpr>,
+-    pub projection: Vec<usize>,
+-}
+-
+ #[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+ pub struct HashJoin {
+     pub meta: PhysicalPlanMeta,
+@@ -145,7 +139,6 @@ pub struct HashJoin {
+ 
+     pub runtime_filter: PhysicalRuntimeFilters,
+     pub broadcast_id: Option<u32>,
+-    pub nested_loop_filter: Option<NestedLoopFilterInfo>,
  }
  
- #[derive(Clone, Debug, Eq, PartialEq)]
-```
-
-**File**: `src/meta/app/src/schema/table/mod.rs` (modified, +8/-0)
-```diff
-@@ -290,6 +290,11 @@ pub enum TableIndexType {
-     Ngram = 1,
-     Vector = 2,
-     Spatial = 3,
-+    /// Granule-level Bloom index written by newer releases.
-+    ///
-+    /// This release only decodes the variant so table metadata that carries it
-+    /// remains readable; creating or refreshing such an index is rejected.
-+    Bloom = 4,
+ #[typetag::serde]
+@@ -266,7 +259,6 @@ impl IPhysicalPlan for HashJoin {
+             build_side_cache_info: self.build_side_cache_info.clone(),
+             runtime_filter: self.runtime_filter.clone(),
+             broadcast_id: self.broadcast_id,
+-            nested_loop_filter: self.nested_loop_filter.clone(),
+         })
+     }
+ 
+@@ -279,7 +271,9 @@ impl IPhysicalPlan for HashJoin {
+         let experimental_new_join = builder.settings.get_enable_experimental_new_join()?;
+         let (enable_optimization, _) = builder.merge_into_get_optimization_flag(self);
+ 
++        // Joins without anything to hash stream all pairs on this executor.
+         if desc.single_to_inner.is_none()
++            && !desc.probes_all_pairs()
+             && matches!(
+                 self.join_type,
+                 JoinType::Inner
+@@ -319,6 +313,28 @@ impl IPhysicalPlan for HashJoin {
  }
  
- #[derive(serde::Serialize, serde::Deserialize, Clone, Debug, Eq, PartialEq)]
-@@ -490,6 +495,9 @@ impl Display for TableIndexType {
-             TableIndexType::Spatial => {
-                 write!(f, "SPATIAL")
-             }
-+            TableIndexType::Bloom => {
-+                write!(f, "BLOOM")
-+            }
-         }
-     }
- }
-```
-
-**File**: `src/meta/proto-conv/tests/it/proto_conv.rs` (modified, +30/-0)
-```diff
-@@ -387,6 +387,36 @@ fn test_pb_from_to() -> anyhow::Result<()> {
-     Ok(())
- }
- 
-+/// Table metadata written by a newer release may carry a `BLOOM` table index
-+/// (`index_type = 4`). This release must still decode that metadata, so the
-+/// table remains visible to listing and `SHOW CREATE TABLE`, while any
-+/// unknown value is rejected as before.
-+#[test]
-+fn test_table_index_type_bloom_placeholder() -> anyhow::Result<()> {
-+    let mut index = new_table_index();
-+    index.index_type = TableIndexType::Bloom;
-+    index.options = btreemap! {s("filter_type") => s("binary_fuse32")};
-+
-+    let mut p = index.to_pb();
-+    assert_eq!(p.index_type, 4);
-+    let got = mt::TableIndex::from_pb(p.clone())?;
-+    assert_eq!(index, got);
-+    assert_eq!(got.index_type.to_string(), "BLOOM");
-+
-+    let mut tbl = new_table_meta();
-+    tbl.indexes.insert(index.name.clone(), index);
-+    let got = mt::TableMeta::from_pb(tbl.to_pb())?;
-+    assert_eq!(tbl, got);
-+
-+    p.index_type = 99;
-+    assert_eq!(
-+        Incompatible::new(s("invalid IndexType: 99")),
-+        mt::TableIndex::from_pb(p).unwrap_err()
-+    );
-+
-+    Ok(())
-+}
-+
- #[test]
- fn test_incompatible() -> anyhow::Result<()> {
-     let db_meta = new_db_meta();
-```
-
-**File**: `src/meta/schema-api-test-suite/src/schema_api_test_suite.rs` (modified, +4/-2)
-```diff
-@@ -7482,7 +7482,8 @@ impl SchemaApiTestSuite {
-                     ver: VER,
-                     min_reader_ver: MIN_READER_VER,
-                     name: "idx".to_string(),
--                    index_type: 4,
-+                    // No `TableIndexType` variant has this value.
-+                    index_type: 99,
-                     ..Default::default()
-                 });
-                 let table_key = TableId::new(table_id);
-@@ -7709,7 +7710,8 @@ impl SchemaApiTestSuite {
-                     ver: VER,
-                     min_reader_ver: MIN_READER_VER,
-                     name: "idx".to_string(),
--                    index_type: 4,
-+                    // No `TableIndexType` variant has this value.
-+                    index_type: 99,
-                     ..Default::default()
-                 });
-                 upsert_test_data(mt, &TableId::new(table_id), table_pb.encode_to_vec()).await?;
-```
-
-**File**: `src/query/config/src/config.rs` (modified, +4/-3)
-```diff
-@@ -3582,11 +3582,12 @@ pub struct CacheConfig {
-     )]
-     pub index_max_ratio: u64,
- 
--    /// Shared backend: percentage of the server memory limit for column data.
-+    /// Shared backend: percentage of the server memory limit for column data. 0 disables the
-+    /// in-memory column data pool.
-     #[clap(
-         long = "cache-data-max-ratio",
-         value_name = "VALUE",
--        default_value = "10"
-+        default_value = "0"
-     )]
-     pub data_max_ratio: u64,
- 
-@@ -3652,7 +3653,7 @@ impl Default for CacheConfig {
-             shared_memory_enabled: true,
-             meta_max_ratio: 10,
-             index_max_ratio: 40,
--            data_max_ratio: 10,
-+            data_max_ratio: 0,
-             kind_max_bytes: BTreeMap::new(),
- 
-             // ----- the following options/args are all deprecated               ----
-```
-
-**File**: `src/query/service/tests/it/configs.rs` (modified, +9/-0)
-```diff
-@@ -1030,6 +1030,15 @@ fn test_server_memory_limit_defaults() {
-     assert!(config.query.common.max_memory_limit_enabled);
-     assert!(config.cache.shared_memory_enabled);
-     assert_eq!(config.query.common.max_server_memory_usage, 0);
-+    // The in-memory column data pool is off by default; metadata and index pools stay on.
-+    assert_eq!(
-+        (
-+            config.cache.meta_max_ratio,
-+            config.cache.index_max_ratio,
-+            config.cache.data_max_ratio
-+        ),
-+        (10, 40, 0)
-+    );
- 
-     let mut system = sysinfo::System::new();
-     system.refresh_memory();
-```
-
-**File**: `src/query/service/tests/it/servers/admin/v1/mod.rs` (modified, +1/-0)
-```diff
-@@ -18,3 +18,4 @@ mod clustering_information;
- mod config;
- mod perf;
- mod status;
-+mod tenant_tables;
-```
-
----
-
-### Incident Patch 2: `342ec629` (2026-11-16)
-**Commit Message**: fix(query): hash equal bitmap, geometry and interval values consistently (#20971)
-
-* fix(query): preserve equality across group hash representations
-
-* fix(query): hash canonical bitmap containers without member expansion
-
-* fix(query): validate bitmap range hashing without a direct dependency
-
-* fix(query): compare bitmap members across roaring stores
-
-* test(query): focus value hash regressions and expand SQL coverage
-
----------
-
-Co-authored-by: kould <[REDACTED_EMAIL]>
-
-**File**: `src/query/expression/src/aggregate/group_hash.rs` (modified, +6/-47)
-```diff
-@@ -34,7 +34,6 @@ use crate::types::decimal::Decimal;
- use crate::types::i256;
- use crate::types::number::Number;
- use crate::types::*;
--use crate::utils::bitmap::normalize_bitmap_column;
- use crate::visitor::ValueVisitor;
- use crate::with_decimal_mapped_type;
- use crate::with_number_mapped_type;
-@@ -243,10 +242,7 @@ fn combine_group_hash_const_nonnull<const IS_FIRST: bool>(
-         Scalar::Date(value) => value.agg_hash(),
-         Scalar::Boolean(value) => value.agg_hash(),
-         Scalar::String(value) => value.as_bytes().agg_hash(),
--        Scalar::Binary(value)
--        | Scalar::Bitmap(value)
--        | Scalar::Variant(value)
--        | Scalar::Geometry(value) => value.agg_hash(),
-+        Scalar::Binary(value) | Scalar::Variant(value) => value.agg_hash(),
-         Scalar::Geography(value) => value.0.agg_hash(),
-         _ => scalar.as_ref().agg_hash(),
-     };
-@@ -366,8 +362,8 @@ impl<const IS_FIRST: bool> ValueVisitor for HashVisitor<'_, IS_FIRST> {
-     }
- 
-     fn visit_bitmap(&mut self, column: BinaryColumn) -> Result<()> {
--        let column = normalize_bitmap_column(&column);
--        self.combine_group_hash_string_column::<BitmapType>(column.as_ref());
-+        // Equal bitmaps can have different encodings, including within the hybrid format.
-+        self.combine_group_hash_type_column::<AnyType>(&Column::Bitmap(column));
-         Ok(())
-     }
- 
-@@ -377,7 +373,7 @@ impl<const IS_FIRST: bool> ValueVisitor for HashVisitor<'_, IS_FIRST> {
-     }
- 
-     fn visit_geometry(&mut self, column: BinaryColumn) -> Result<()> {
--        self.combine_group_hash_string_column::<GeometryType>(&column);
-+        self.combine_group_hash_type_column::<AnyType>(&Column::Geometry(column));
-         Ok(())
-     }
- 
-@@ -508,7 +504,6 @@ where I: Index
-             Scalar::Binary(v) => v.agg_hash(),
-             Scalar::String(v) => v.as_bytes().agg_hash(),
-             Scalar::Variant(v) => v.agg_hash(),
--            Scalar::Geometry(v) => v.agg_hash(),
-             Scalar::Geography(v) => v.0.agg_hash(),
-             Scalar::Opaque(v) => v.as_ref().agg_hash(),
-             v => v.as_ref().agg_hash(),
-@@ -575,11 +570,7 @@ where I: Index
-     }
- 
-     fn visit_bitmap(&mut self, column: crate::types::BinaryColumn) -> Result<()> {
--        let column = normalize_bitmap_column(&column);
--        self.visit_indices(|i| {
--            let value = column.as_ref().index(i.to_usize()).unwrap();
--            value.agg_hash()
--        })
-+        self.visit_typed_column::<BitmapType>(column, &DataType::Bitmap)
-     }
- 
-     fn visit_string(&mut self, column: crate::types::StringColumn) -> Result<()> {
-@@ -591,7 +582,7 @@ where I: Index
-     }
- 
-     fn visit_geometry(&mut self, column: crate::types::BinaryColumn) -> Result<()> {
--        self.visit_binary(column)
-+        self.visit_typed_column::<GeometryType>(column, &DataType::Geometry)
-     }
- 
-     fn visit_geography(&mut self, column: crate::types::GeographyColumn) -> Result<()> {
-@@ -794,8 +785,6 @@ mod tests {
-     use databend_common_column::bitmap::Bitmap;
-     use databend_common_column::types::months_days_micros;
-     use databend_common_column::types::timestamp_tz;
--    use databend_common_io::HybridBitmap;
--    use roaring::RoaringTreemap;
- 
-     use super::*;
-     use crate::BlockEntry;
-@@ -804,7 +793,6 @@ mod tests {
-     use crate::ProjectedBlock;
-     use crate::Value;
-     use crate::types::ArgType;
--    use crate::types::BitmapType;
-     use crate::types::DecimalSize;
-     use crate::types::Int32Type;
-     use crate::types::NullableColumn;
-@@ -1106,35 +1094,6 @@ mod tests {
-         Ok(())
-     }
- 
--    #[test]
--    fn test_bitmap_group_hash_legacy_bytes_normalized() -> Result<()> {
--        let values = [1_u64, 5, 42];
--
--        let mut hybrid = HybridBitmap::new();
--        for v in values {
--            hybrid.insert(v);
--        }
--        let mut hybrid_bytes = Vec::new();
--        hybrid.serialize_into(&mut hybrid_bytes).unwrap();
--
--        let mut tree = RoaringTreemap::new();
--        for v in values {
--            tree.insert(v);
--        }
--        let mut legacy_bytes = Vec::new();
--        tree.serialize_into(&mut legacy_bytes).unwrap();
--
--        let bitmap_column = BitmapType::from_data(vec![hybrid_bytes, legacy_bytes]);
--        let block = DataBlock::new(vec![bitmap_column.into()], 2);
--
--        let mut hashes = vec![0_u64; block.num_rows()];
--        group_hash_entries(ProjectedBlock::from(block.columns()), &mut hashes);
--
--        // Legacy-encoded bitmap should hash identically to hybrid-encoded bitmap.
--        assert_eq!(hashes[0], hashes[1]);
--        Ok(())
--    }
--
-     #[test]
-     fn test_dict_value_hashes_match_group_hash_entries() {
-         const ROWS: usize = 5000;
-```
-
-**File**: `src/query/expression/src/utils/bitmap.rs` (modified, +39/-0)
-```diff
-@@ -13,14 +13,53 @@
- // limitations under the License.
- 
- use std::borrow::Cow;
-+use std::hash::Hash;
-+use std::hash::Hasher;
-+use std::io;
- 
- use databend_common_column::binary::BinaryColumn;
- use databend_common_column::binary::BinaryColumnBuilder;
- use databend_common_io::HYBRID_KIND_LARGE;
- use databend_common_io::HYBRID_KIND_SMALL;
- use databend_common_io::HYBRID_MAGIC;
- use databend_common_io::HYBRID_VERSION;
-+use databend_common_io::HybridBitmap;
- use databend_common_io::deserialize_bitmap;
-+
-+/// Hash a canonical compressed representation, not every decoded member.
-+/// Small hybrid sets are bounded by their one-byte serialized length; large
-+/// bitmaps stay in Roaring's array/bitset containers throughout hashing.
-+pub fn hash_bitmap<H: Hasher>(bytes: &[u8], state: &mut H) {
-+    let mut tree = match deserialize_bitmap(bytes) {
-+        Ok(HybridBitmap::Small(values)) => values.into_iter().collect(),
-+        Ok(HybridBitmap::Large(tree)) => tree,
-+        Err(_) => {
-+            bytes.hash(state);
+ impl HashJoin {
++    /// When the probe streams all pairs, a side without required columns
++    /// contributes only its row count, which the build side keeps without
++    /// retaining or spilling any block. Build it from that side. The
++    /// zero-column side occupies no projected positions, so join conditions
++    /// and the output keep the same column offsets.
++    fn build_zero_column_side(&mut self) {
++        // Build-side caches consume the build state of the side the planner chose.
++        if !probes_all_pairs(
++            self.join_type,
++            !self.build_keys.is_empty(),
++            self.single_to_inner,
++        ) || !self.probe_projections.is_empty()
++            || self.build_projections.is_empty()
++            || self.build_side_cache_info.is_some()
++        {
 +            return;
 +        }
-+    };
-+    // Self-intersection preserves members while normalizing container stores by
-+    // cardinality and removing empty containers. In particular, decoding a run
-+    // can otherwise leave an array store at the array/bitset threshold.
-+    // This works on compressed containers, without enumerating the large set.
-+    tree &= tree.clone();
-+    // The writer only feeds a Hasher, so serialization cannot fail with I/O.
-+    tree.serialize_into(BitmapHashWriter(state)).unwrap();
-+}
-+
-+struct BitmapHashWriter<'a, H>(&'a mut H);
-+
-+impl<H: Hasher> io::Write for BitmapHashWriter<'_, H> {
-+    fn write(&mut self, bytes: &[u8]) -> io::Result<usize> {
-+        self.0.write(bytes);
-+        Ok(bytes.len())
++        debug_assert!(self.build_keys.is_empty() && self.probe_to_build.is_empty());
++        std::mem::swap(&mut self.probe, &mut self.build);
++        std::mem::swap(&mut self.probe_projections, &mut self.build_projections);
 +    }
 +
-+    fn flush(&mut self) -> io::Result<()> {
-+        Ok(())
-+    }
-+}
-+
- #[inline]
- pub fn is_hybrid_encoding(bytes: &[u8]) -> bool {
-     if bytes.is_empty() {
-```
-
-**File**: `src/query/expression/src/values.rs` (modified, +8/-11)
-```diff
-@@ -57,6 +57,7 @@ use string::StringColumnBuilder;
+     fn build_state(&self, builder: &mut PipelineBuilder) -> Result<Arc<HashJoinState>> {
+         let (enable_optimization, is_distributed) = builder.merge_into_get_optimization_flag(self);
+         HashJoinState::try_create(
+@@ -1195,71 +1211,6 @@ impl PhysicalPlanBuilder {
  
- use crate::BlockEntry;
- use crate::ColumnView;
-+use crate::bitmap::hash_bitmap;
- use crate::bitmap::is_hybrid_encoding;
- use crate::property::Domain;
- use crate::types::EncodedColumn;
-@@ -1038,7 +1039,11 @@ impl PartialOrd for Scalar {
-                 let Ok(map_2) = deserialize_bitmap(b2) else {
-                     return None;
-                 };
--                map_1.eq(&map_2).then_some(Ordering::Equal)
-+                // Roaring's equality distinguishes array and bitset stores.
-+                // Decoding a run can leave an oversized array at the threshold,
-+                // so compare members through compressed intersection instead.
-+                (map_1.len() == map_2.len() && map_1.intersection_len(&map_2) == map_1.len())
-+                    .then_some(Ordering::Equal)
-             }
-             (Scalar::Tuple(t1), Scalar::Tuple(t2)) => t1.partial_cmp(t2),
-             (Scalar::Variant(v1), Scalar::Variant(v2)) => {
-@@ -1160,7 +1165,7 @@ impl Hash for ScalarRef<'_> {
-             ScalarRef::Timestamp(v) => v.hash(state),
-             ScalarRef::TimestampTz(v) => v.hash(state),
-             ScalarRef::Date(v) => v.hash(state),
--            ScalarRef::Interval(v) => v.0.hash(state),
-+            ScalarRef::Interval(v) => v.hash(state),
-             ScalarRef::Array(v) | ScalarRef::Map(v) => {
-                 v.len().hash(state);
-                 for value in v.iter() {
-@@ -1170,15 +1175,7 @@ impl Hash for ScalarRef<'_> {
-             // `Scalar::eq` compares bitmaps by their decoded members, so the
-             // hash must not depend on the encoding. Undecodable payloads only
-             // compare equal bytewise and fall back to hashing the bytes.
--            ScalarRef::Bitmap(v) => match deserialize_bitmap(v) {
--                Ok(bitmap) => {
--                    bitmap.len().hash(state);
--                    for member in bitmap.iter() {
--                        member.hash(state);
--                    }
--                }
--                Err(_) => v.hash(state),
--            },
-+            ScalarRef::Bitmap(v) => hash_bitmap(v, state),
-             ScalarRef::Tuple(v) => {
-                 v.hash(state);
-             }
+         Ok(non_equi_conditions)
+     }
+-
+-    fn build_nested_loop_filter_info(
+-        &self,
+-        join: &Join,
+-        probe_schema: &DataSchema,
+-        build_schema: &DataSchema,
+-        target_schema: &DataSchema,
+-    ) -> Result<Option<NestedLoopFilterInfo>> {
+-        build_nested_loop_filter_info_for_join(join, probe_schema, build_schema, target_schema)
+-    }
+-}
+-
+-fn build_nested_loop_filter_info_for_join(
+-    join: &Join,
+-    probe_schema: &DataSchema,
+-    build_schema: &DataSchema,
+-    target_schema: &DataSchema,
+-) -> Result<Option<NestedLoopFilterInfo>> {
+-    if !matches!(join.join_type, JoinType::Inner) {
+-        return Ok(None);
+-    }
+-
+-    if !join.equi_conditions.is_empty() {
+-        // Inner joins with equality keys should still use the hash table even
+-        // when the build side is small. Falling back to nested-loop evaluates
+-        // the equality and residual predicates for every probe/build pair.
+-        return Ok(None);
+-    }
+-
+-    let merged = DataSchema::new(
+-        probe_schema
+-            .fields
+-            .iter()
+-            .cloned()
+-            .chain(build_schema.fields.iter().cloned())
+-            .collect(),
+-    );
+-
+-    let mut predicates =
+-        Vec::with_capacity(join.equi_conditions.len() + join.non_equi_conditio
 ```
 
-**File**: `src/query/expression/tests/it/group_hash.rs` (added, +356/-0)
+**File**: `src/query/service/src/pipelines/processors/transforms/hash_join/desc.rs` (modified, +40/-72)
 ```diff
-@@ -0,0 +1,356 @@
-+// Copyright 2021 Datafuse Labs
-+//
-+// Licensed under the Apache License, Version 2.0 (the "License");
-+// you may not use this file except in compliance with the License.
-+// You may obtain a copy of the License at
-+//
-+//     http://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing, software
-+// distributed under the License is distributed on an "AS IS" BASIS,
-+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+// See the License for the specific language governing permissions and
-+// limitations under the License.
-+
-+use std::collections::HashMap;
-+use std::hash::DefaultHasher;
-+use std::hash::Hash;
-+use std::hash::Hasher;
-+
-+use databend_common_expression::types::DictColumn;
-+use databend_common_expression::types::EncodedColumn;
-+use databend_common_expression::types::Int16Type;
-+use databend_common_expression::types::NarrowBuffer;
-+use databend_common_expression::types::StringType;
-+use databend_common_expression::*;
-+use databend_common_io::HybridBitmap;
-+use roaring::RoaringBitmap;
-+use roaring::RoaringTreemap;
-+
-+fn repeated(scalar: Scalar, rows: usize) -> BlockEntry {
-+    BlockEntry::new_const_column(scalar.as_ref().infer_data_type(), scalar, rows)
-+}
-+
-+fn scalar_hash(scalar: &impl Hash) -> u64 {
-+    let mut hasher = DefaultHasher::new();
-+    scalar.hash(&mut hasher);
-+    hasher.finish()
-+}
-+
-+// All rows in a class have the same logical value. No expected hash is derived
-+// from the hash implementation: compare representations and layouts instead.
-+fn assert_hash_class(scalars: &[Scalar]) -> databend_common_exception::Result<()> {
-+    let first = &scalars[0];
-+    let data_type = first.as_ref().infer_data_type();
-+    let mut map = HashMap::new();
-+    let mut builder = ColumnBuilder::with_capacity(&data_type, scalars.len() + 2);
-+    builder.push(first.as_ref());
-+    for scalar in scalars {
-+        // Check equality in both directions before diagnosing HashMap hashing.
-+        assert_eq!(scalar, first);
-+        assert_eq!(first, scalar);
-+        assert_eq!(scalar_hash(scalar), scalar_hash(first));
-+        map.insert(scalar.clone(), ());
-+        builder.push(scalar.as_ref());
+@@ -23,19 +23,15 @@ use databend_common_expression::DataSchemaRef;
+ use databend_common_expression::EvaluateOptions;
+ use databend_common_expression::Evaluator;
+ use databend_common_expression::Expr;
+-use databend_common_expression::FieldIndex;
+-use databend_common_expression::FilterExecutor;
+ use databend_common_expression::FunctionContext;
+ use databend_common_expression::RemoteExpr;
+ use databend_common_expression::arrow::and_validities;
+ use databend_common_expression::type_check::check_function;
+ use databend_common_functions::BUILTIN_FUNCTIONS;
+-use databend_common_settings::Settings;
+ use databend_common_sql::executor::cast_expr_to_non_null_boolean;
+ use parking_lot::RwLock;
+ 
+ use crate::physical_plans::HashJoin;
+-use crate::physical_plans::NestedLoopFilterInfo;
+ use crate::physical_plans::PhysicalRuntimeFilter;
+ use crate::physical_plans::PhysicalRuntimeFilters;
+ use crate::pipelines::processors::transforms::wrap_true_validity;
+@@ -72,7 +68,6 @@ pub struct HashJoinDesc {
+     pub(crate) probe_to_build: Vec<(usize, (bool, bool))>,
+     pub(crate) build_schema: DataSchemaRef,
+     pub(crate) probe_schema: DataSchemaRef,
+-    pub(crate) nested_loop_filter: Option<NestedLoopFilterInfo>,
+ }
+ 
+ #[derive(Debug, Clone)]
+@@ -117,7 +112,31 @@ impl From<&PhysicalRuntimeFilter> for RuntimeFilterDesc {
+     }
+ }
+ 
++/// Cross joins, and Inner joins without equi keys, have nothing to hash: the
++/// probe streams every build/probe pair through the Cross cursor, filtered by
++/// the non-equi conditions. A rewritten scalar subquery keeps the Inner hash
++/// join for its single-row check.
++pub(crate) fn probes_all_pairs(
++    join_type: JoinType,
++    has_keys: bool,
++    single_to_inner: Option<JoinType>,
++) -> bool {
++    match join_type {
++        JoinType::Cross => true,
++        JoinType::Inner => !has_keys && single_to_inner.is_none(),
++        _ => false,
 +    }
-+    assert_eq!(map.len(), 1);
-+    builder.push(first.as_ref());
-+    // Slice off padding so binary/array buffers and validity can have offsets.
-+    let column = builder.build().slice(1..scalars.len() + 1);
-+    let rows = scalars.len();
-+    let dictionary = Column::Encoded(Box::new(EncodedColumn::Dict(DictColumn::new(
-+        NarrowBuffer::pack((0..rows).rev().map(|index| index as u64), (rows - 1) as u64),
-+        column.clone(),
-+    ))));
-+    let suffix = Int16Type::from_data(vec![4_i16; rows]);
-+    let entries = [BlockEntry::Column(column), BlockEntry::Column(dictionary)]
-+        .into_iter()
-+        .chain(scalars.iter().cloned().flat_map(|value| {
-+            let entry = repeated(value.clone(), rows);
-+            let nullable =
-+                BlockEntry::new_const_column(data_type.clone().wrap_nullable(), value, rows);
-+            [entry, nullable]
-+        }))
-+        .collect::<Vec<_>>();
++}
 +
-+    for projection in [vec![0], vec![0, 1], vec![1, 0]] {
-+        let null_block = DataBlock::new(
-+            vec![
-+                BlockEntry::new_const_column(data_type.clone().wrap_nullable(), Scalar::Null, rows),
-+                suffix.clone().into(),
-+            ],
-+            rows,
-+        );
-+        let mut null_hashes = vec![0; rows];
-+        group_hash_entries(
-+            ProjectedBlock::project(&projection, &null_block),
-+            &mut null_hashes,
-+        );
-+        // Compare the same layouts both without NULLs and with actual masked
-+        // payloads. Indexed hashing selects a valid row and a NULL row.
-+        for nullable in [false, true] {
-+            let mut expected = None;
-+            for entry in &entries {
-+                let entry = if nullable {
-+                    entry
-+                        .to_column()
-+                        .remove_nullable()
-+                        .wrap_nullable(Some((0..rows).map(|row| row != rows - 1).collect()))
-+                        .into()
-+                } else {
-+                    entry.clone()
-+                };
-+                let block = DataBlock::new(vec![entry, suffix.clone().into()], rows);
-+                let mut hashes = vec![u64::MAX; rows];
-+                group_hash_entries(ProjectedBlock::project(&projection, &block), &mut hashes);
-+                let valid_rows = if nullable { rows - 1 } else { rows };
-+                assert!(hashes[..valid_rows].iter().all(|hash| *hash == hashes[0]));
-+                if nullable {
-+                    assert_eq!(hashes[rows - 1], null_hashes[rows - 1]);
-+                }
-+                if let Some(expected) = &expected {
-+                    assert_eq!(&hashes, expected);
-+                } else {
-+                    expected = Some(hashes.clone());
+ impl HashJoinDesc {
++    pub(crate) fn probes_all_pairs(&self) -> bool {
++        probes_all_pairs(
++            self.join_type,
++            !self.build_keys.is_empty(),
++            self.single_to_inner,
++        )
++    }
++
+     pub fn create(join: &HashJoin) -> Result<HashJoinDesc> {
+         let other_predicate = Self::join_predicate(&join.join_type, &join.non_equi_conditions)?;
+ 
+@@ -150,7 +169,6 @@ impl HashJoinDesc {
+             probe_projection: join.probe_projections.clone(),
+             build_schema: join.build.output_schema()?,
+             probe_schema: join.probe.output_schema()?,
+-            nested_loop_filter: join.nested_loop_filter.clone(),
+         })
+     }
+ 
+@@ -276,72 +294,22 @@ impl HashJoinDesc {
+             }
+         }
+     }
+-
+-    pub fn create_nested_loop_desc(
+-        &self,
+-        settings: &Settings,
+-        function_ctx: &FunctionContext,
+-    ) -> Result<Option<NestedLoopDesc>> {
+-        let nested_loop_join_threshold = settings.get_nested_loop_join_threshold()? as usize;
+-        let block_size = settings.get_max_block_size()? as usize;
+-        if nested_loop_join_threshold == 0 {
+-            return Ok(None);
+-        }
+-
+-        let Some(NestedLoopFilterInfo {
+-            predicates,
+-            projection,
+-        }) = &self.nested_loop_filter
+-        else {
+-            return Ok(None);
+-        };
+-
+-        let predicates = predicates
+-            .iter()
+-            .map(|x| Ok(x.as_expr(&BUILTIN_FUNCTIONS)))
+-            .reduce(|lhs, rhs| {
+-                check_function(None, "and_filters", &[], &[lhs?, rhs?], &BUILTIN_FUNCTIONS)
+-            })
+-            .transpose()?;
+-        let Some(predicates) = predicates else {
+-            return Ok(None);
+-        };
+-
+-        let projections = projection.iter().copied().collect::<BTreeSet<usize>>();
+-        let field_reorder = {
+-            let mapper = projections.iter().copied().collect::<Vec<_>>();
+-            debug_assert!(mapper.is_sorted());
+-            let reorder = projection
+-                .iter()
+-                .map(|a| mapper.iter().position(|b| a == b).unwrap())
+-                .collect::<Vec<_>>();
+-
+-            if reorder.iter().copied().enumerate().all(|(a, b)| a == b) {
+-                None
+-            } else {
+-                Some(reorder)
+-            }
+-        };
+-
+-        Ok(Some(NestedLoopDesc {
+-            filter: FilterExecutor::new(
+-                predicates,
+-                function_ctx.clone(),
+-                block_size,
+-                None,
+-                &BUILTIN_FUNCTIONS,
+-                false,
+-            ),
+-            projections,
+-            field_reorder,
+-            nested_loop_join_threshold,
+-        }))
+-    }
+ }
+ 
+-pub struct NestedLoopDesc {
+-    pub filter: FilterExecutor,
+-    pub projections: BTreeSet<usize>,
+-    pub field_reorder: Option<Vec<FieldIndex>>,
+-    pub nested_loop_join_threshold: usize,
++#[cfg(test)]
++mod tests {
++    use super::*;
++
++    #[test]
++    fn joins_without_keys_probe_all_pairs() {
++        assert!(probes_all_pairs(JoinType::Cross, false, No
+```
+
+**File**: `src/query/service/src/pipelines/processors/transforms/hash_join/hash_join_build_state.rs` (modified, +3/-10)
+```diff
+@@ -261,7 +261,7 @@ impl HashJoinBuildState {
+                 return Ok(());
+             }
+ 
+-            if self.hash_join_state.hash_join_desc.join_type == JoinType::Cross {
++            if self.hash_join_state.probes_all_pairs() {
+                 return Ok(());
+             }
+             let unique_entry = matches!(
+@@ -770,7 +770,6 @@ impl HashJoinBuildState {
+                     "Aborted query, because the hash table is uninitialized.",
+                 ));
+             }
+-            HashJoinHashTable::NestedLoop(_) => unreachable!(),
+             HashJoinHashTable::UniqueSerializer(table) => insert_binary_key! {
+               &mut table.hash_table, &table.hash_method, chunk, build_keys, valids, chunk_index as u32, entry_size, &mut local_raw_entry_spaces,
+             },
+@@ -817,9 +816,7 @@ impl HashJoinBuildState {
+         info!("finish build hash table with {} rows", build_num_rows);
+ 
+         let data_blocks = &mut build_state.generation_state.chunks;
+-        if !data_blocks.is_empty()
+-            && self.hash_join_state.hash_join_desc.join_type != JoinType::Cross
+-        {
++        if !data_blocks.is_empty() && !self.hash_join_state.probes_all_pairs() {
+             let num_columns = data_blocks[0].num_columns();
+             let columns_data_type: Vec<DataType> = (0..num_columns)
+                 .map(|index| data_blocks[0].data_type(index))
+@@ -843,7 +840,7 @@ impl HashJoinBuildState {
+         if self.finalize_counter.fetch_sub(1, Ordering::AcqRel) == 1 {
+             self.build_generation_state();
+             if self.hash_join_state.need_next_round.load(Ordering::Acquire) {
+-                let partition_id = if self.join_type() != JoinType::Cross {
++                let partition_id = if !self.hash_join_state.probes_all_pairs() {
+                     // If build side has spilled data, we need to wait build side to next round.
+                     // Set partition id to `HashJoinState`
+                     let mut spill_partitions = self.hash_join_state.spilled_partitions.write();
+@@ -915,10 +912,6 @@ impl HashJoinBuildState {
+         Ok(())
+     }
+ 
+-    pub(crate) fn join_type(&self) -> JoinType {
+-        self.hash_join_state.hash_join_desc.join_type
+-    }
+-
+     pub fn runtime_filter_desc(&self) -> &[RuntimeFilterDesc] {
+         &self.hash_join_state.hash_join_desc.runtime_filter.filters
+     }
+```
+
+**File**: `src/query/service/src/pipelines/processors/transforms/hash_join/hash_join_probe_state.rs` (modified, +15/-11)
+```diff
+@@ -43,6 +43,7 @@ use parking_lot::Mutex;
+ use parking_lot::RwLock;
+ use tokio::sync::Barrier;
+ 
++use super::PendingProbe;
+ use super::ProbeState;
+ use super::ProcessState;
+ use crate::pipelines::processors::HashJoinState;
+@@ -152,25 +153,29 @@ impl HashJoinProbeState {
+ 
+     /// Probe the hash table and retrieve matched rows as DataBlocks.
+     pub fn probe(&self, input: DataBlock, probe_state: &mut ProbeState) -> Result<Vec<DataBlock>> {
+-        match self.hash_join_state.hash_join_desc.join_type {
+-            JoinType::Cross => self.cross_join(input, probe_state),
+-            _ => self.probe_join(input, probe_state),
++        if self.hash_join_state.probes_all_pairs() {
++            self.cross_join(input, probe_state)
++        } else {
++            self.probe_join(input, probe_state)
+         }
+     }
+ 
+     pub fn next_probe(&self, probe_state: &mut ProbeState) -> Result<Vec<DataBlock>> {
+-        let process_state = probe_state.process_state.as_ref().unwrap();
++        let process_state = match probe_state.pending.take() {
++            Some(PendingProbe::Hash(process_state)) => process_state,
++            Some(PendingProbe::Cross(cursor)) => return self.next_cross_join(cursor, probe_state),
++            None => unreachable!("no pending probe"),
++        };
++        let keys_state = process_state.keys_state.clone();
++        probe_state.pending = Some(PendingProbe::Hash(process_state));
+         let hash_table = unsafe { &*self.hash_join_state.hash_table.get() };
+         with_join_hash_method!(|T| match hash_table {
+             HashJoinHashTable::T(table) => {
+                 // Build `keys` and get the hashes of `keys`.
+-                let keys = table
+-                    .hash_method
+-                    .build_keys_accessor(process_state.keys_state.clone())?;
++                let keys = table.hash_method.build_keys_accessor(keys_state)?;
+                 // Continue to probe hash table and process data blocks.
+                 self.result_blocks(probe_state, keys, &table.hash_table)
+             }
+-            HashJoinHashTable::NestedLoop(_) => unreachable!(),
+             HashJoinHashTable::Null => Err(ErrorCode::AbortedQuery(
+                 "Aborted query, because the hash table is uninitialized.",
+             )),
+@@ -328,12 +333,12 @@ impl HashJoinProbeState {
+                     .build_keys_hashes(&keys_state, &mut probe_state.hashes);
+                 let keys = table.hash_method.build_keys_accessor(keys_state.clone())?;
+ 
+-                probe_state.process_state = Some(ProcessState {
++                probe_state.pending = Some(PendingProbe::Hash(ProcessState {
+                     input,
+                     probe_has_null,
+                     keys_state,
+                     next_idx: 0,
+-                });
++                }));
+ 
+                 // Perform a round of hash table probe.
+                 probe_state.probe_with_selection = prefer_early_filtering;
+@@ -379,7 +384,6 @@ impl HashJoinProbeState {
+                 // Continue to probe hash table and process data blocks.
+                 self.result_blocks(probe_state, keys, &table.hash_table)
+             }
+-            HashJoinHashTable::NestedLoop(_) => unreachable!(),
+             HashJoinHashTable::Null => Err(ErrorCode::AbortedQuery(
+                 "Aborted query, because the hash table is uninitialized.",
+             )),
+```
+
+**File**: `src/query/service/src/pipelines/processors/transforms/hash_join/hash_join_spiller.rs` (modified, +26/-12)
+```diff
+@@ -45,6 +45,8 @@ pub struct HashJoinSpiller {
+     partition_buffer: PartitionBuffer,
+     partition_threshold: usize,
+     join_type: JoinType,
++    /// Spill and replay every pair in rounds rather than by hash partition.
++    probes_all_pairs: bool,
+     join_state: Arc<HashJoinState>,
+     is_build_side: bool,
+     func_ctx: FunctionContext,
+@@ -54,6 +56,9 @@ pub struct HashJoinSpiller {
+     hash_method: HashMethodKind,
+     /// Next restore file index, only used for cross join.
+     next_restore_file: usize,
++    /// The retained probe buffer must be replayed once per build round, even
++    /// when it has no columns and therefore no spill files advance the cursor.
++    replay_buffer_restored: bool,
+     block_partition_stream: BlockPartitionStream,
+ }
+ 
+@@ -100,6 +105,7 @@ impl HashJoinSpiller {
+         let partition_buffer = PartitionBuffer::create(num_partitions);
+ 
+         let join_type = join_state.join_type();
++        let probes_all_pairs = join_state.probes_all_pairs();
+         Ok(Self {
+             spiller,
+             partition_buffer,
+@@ -108,10 +114,12 @@ impl HashJoinSpiller {
+             hash_keys,
+             hash_method,
+             join_type,
++            probes_all_pairs,
+             join_state,
+             func_ctx: ctx.get_function_context()?,
+             is_build_side,
+             next_restore_file: 0,
++            replay_buffer_restored: false,
+             block_partition_stream: BlockPartitionStream::create(0, block_bytes, num_partitions),
+         })
+     }
+@@ -122,7 +130,7 @@ impl HashJoinSpiller {
+             return Ok(());
+         }
+ 
+-        if self.join_type == JoinType::Cross {
++        if self.probes_all_pairs {
+             return self.cross_buffer(data_blocks);
+         }
+ 
+@@ -167,7 +175,7 @@ impl HashJoinSpiller {
+         data_blocks: Vec<DataBlock>,
+         partition_need_to_spill: Option<&HashSet<usize>>,
+     ) -> Result<Vec<DataBlock>> {
+-        if self.join_type == JoinType::Cross {
++        if self.probes_all_pairs {
+             return self
+                 .cross_spill(&data_blocks, partition_need_to_spill)
+                 .await;
+@@ -271,11 +279,15 @@ impl HashJoinSpiller {
+                     unspilled_data_blocks.push(data_block);
+                     continue;
+                 }
++                // Parquet cannot preserve row counts without columns. Keep
++                // these blocks in the replay buffer even at a zero threshold.
++                let has_columns = data_block.num_columns() > 0;
+                 self.partition_buffer
+                     .add_data_block(partition_id, data_block);
+-                if let Some(data_blocks) = self
+-                    .partition_buffer
+-                    .fetch_data_blocks(partition_id, &fetch_option)
++                if has_columns
++                    && let Some(data_blocks) = self
++                        .partition_buffer
++                        .fetch_data_blocks(partition_id, &fetch_option)
+                 {
+                     self.spiller
+                         .spill_with_partition(partition_id, data_blocks)
+@@ -291,10 +303,11 @@ impl HashJoinSpiller {
+         let mut data_blocks = vec![];
+         if self.need_read_buffer() {
+             // 1. restore data from SpillBuffer.
+-            if self.join_type == JoinType::Cross {
++            if self.probes_all_pairs {
+                 if let Some(buffer_blocks) = self.restore_cross_buffer(partition_id)? {
+                     data_blocks.extend(buffer_blocks);
+                 }
++                self.replay_buffer_restored = true;
+             } else if let Some(buffer_block) = self.restore_buffer(partition_id) {
+                 data_blocks.push(buffer_block);
+             }
+@@ -310,7 +323,7 @@ impl HashJoinSpiller {
+                 }
+             }
+         } else {
+-            // Cross join.
++            // All-pairs probe.
+             let spilled_files = self.spiller.private_spilled_files();
+             let file_index = self.next_restore_file;
+ 
+@@ -350,7 +363,7 @@ impl HashJoinSpiller {
+         join_type: JoinType,
+         partition_bits: usize,
+     ) -> Result<Vec<DataBlock>> {
+-        if join_type == JoinType::Cross {
++        if self.probes_all_pairs {
+             Ok(vec![data_block.clone()])
+         } else {
+             let mut hashes = self.get_hashes(data_block, join_type)?;
+@@ -407,22 +420,23 @@ impl HashJoinSpiller {
+ 
+     pub fn has_next_restore_file(&self) -> bool {
+         self.next_restore_file < self.spiller.private_spilled_files().len()
+-            || (self.next_restore_file == 0 && !self.partition_buffer.is_partition_empty(0))
++            || (!self.replay_buffer_restored && !self.partition_buffer.is_partition_empty(0))
+     }
+ 
+     pub fn reset_next_restore_file(&mut self) {
+         self.next_restore_file = 0;
++        self.replay_buffer_restored = false;
+     }
+ 
+     pub fn need_read_buffer(&self) -> bool {
+-        self.join_type != JoinType::Cross || self.next_restore_file == 0
 + 
 ```
 
-**File**: `src/query/expression/tests/it/main.rs` (modified, +1/-0)
+**File**: `src/query/service/src/pipelines/processors/transforms/hash_join/hash_join_state.rs` (modified, +25/-1)
 ```diff
-@@ -40,6 +40,7 @@ mod filter_executor;
- mod fold_rules;
- mod function_factory;
- mod group_by;
-+mod group_hash;
- mod hilbert;
- mod kernel;
- mod meta_scalar;
+@@ -75,7 +75,6 @@ pub struct FixedKeyHashJoinHashTable<T: HashtableKeyable + FixedKey, const UNIQU
+ 
+ pub enum HashJoinHashTable {
+     Null,
+-    NestedLoop(Vec<DataBlock>),
+     Serializer(SerializerHashJoinHashTable),
+     UniqueSerializer(UniqueSerializerHashJoinHashTable),
+     SingleBinary(SingleBinaryHashJoinHashTable),
+@@ -234,6 +233,31 @@ impl HashJoinState {
+         self.hash_join_desc.join_type
+     }
+ 
++    /// See [`probes_all_pairs`]. Merge into tracks matches per build row, so it
++    /// keeps the hash join probe.
++    ///
++    /// [`probes_all_pairs`]: super::probes_all_pairs
++    pub(crate) fn probes_all_pairs(&self) -> bool {
++        self.hash_join_desc.probes_all_pairs() && self.merge_into_state.is_none()
++    }
++
++    /// The build side of an all-pairs probe without projected columns is only
++    /// a row count.
++    pub(crate) fn is_row_count_build(&self) -> bool {
++        self.probes_all_pairs() && self.hash_join_desc.build_projection.is_empty()
++    }
++
++    /// Whether probing updates build-side state that is read after the probe
++    /// output: the final scan, merge into, or the RightSingle row check.
++    pub(crate) fn probe_mutates_build_side(&self) -> bool {
++        self.need_final_scan()
++            || self.merge_into_state.is_some()
++            || matches!(
++                self.hash_join_desc.single_to_inner,
++                Some(JoinType::RightSingle)
++            )
++    }
++
+     pub fn need_outer_scan(&self) -> bool {
+         matches!(
+             self.hash_join_desc.join_type,
 ```
 
-**File**: `tests/sqllogictests/suites/mode/cluster/shuffle_value_hash.test` (added, +40/-0)
+**File**: `src/query/service/src/pipelines/processors/transforms/hash_join/mod.rs` (modified, +2/-1)
 ```diff
-@@ -0,0 +1,40 @@
-+# Integration smoke coverage for scalar/materialized bitmap shuffle inputs,
-+# single/composite keys and NULLs. to_bitmap canonicalizes member order, so
-+# these are not cross-encoding regressions; those require the Rust fixtures.
-+# Cross-encoding JOIN key serialization remains outside this hash-only fix.
-+
-+statement ok
-+set prefer_broadcast_join = 0
-+
-+statement ok
-+create or replace table shuffle_value_left(tag int not null, bits bitmap null)
-+
-+statement ok
-+create or replace table shuffle_value_right(tag int not null, bits bitmap null)
-+
-+statement ok
-+insert into shuffle_value_left values (1, to_bitmap('2,9')), (2, to_bitmap('4')), (3, null)
-+
-+statement ok
-+insert into shuffle_value_right values (1, to_bitmap('9,2')), (2, to_bitmap('4')), (3, null)
-+
-+query I
-+select count(*) from shuffle_value_left l join shuffle_value_right r on l.bits = r.bits and l.tag = r.tag
-+----
-+2
-+
-+query I
-+select count(*) from (select tag, to_bitmap('2,9') as bits from shuffle_value_left) l join shuffle_value_right r on l.bits = r.bits and l.tag = r.tag
-+----
-+1
-+
-+query I
-+select count(*) from shuffle_value_left l join shuffle_value_right r on l.bits = r.bits
-+----
-+2
-+
-+statement ok
-+drop table shuffle_value_left
-+
-+statement ok
-+drop table shuffle_value_right
+@@ -33,12 +33,13 @@ mod util;
+ pub use common::wrap_nullable_block;
+ pub use common::wrap_true_validity;
+ pub use desc::HashJoinDesc;
+-pub use desc::NestedLoopDesc;
+ pub use desc::RuntimeFilterDesc;
++pub(crate) use desc::probes_all_pairs;
+ pub use hash_join_build_state::HashJoinBuildState;
+ pub use hash_join_probe_state::HashJoinProbeState;
+ pub use hash_join_spiller::HashJoinSpiller;
+ pub use hash_join_state::*;
++pub(crate) use probe_state::PendingProbe;
+ pub use probe_state::ProbeState;
+ pub use probe_state::ProcessState;
+ pub use runtime_filter::*;
 ```
 
-**File**: `tests/sqllogictests/suites/query/functions/02_0087_function_interval_hash.test` (added, +52/-0)
+**File**: `src/query/service/src/pipelines/processors/transforms/hash_join/probe_join/cross_join.rs` (modified, +554/-40)
 ```diff
-@@ -0,0 +1,52 @@
-+# Scalar interval hashes must follow duration equality, including inside
-+# arrays, tuples and maps. Keep these SQL-visible cases here rather than
-+# duplicating them in the expression crate's group-hash layout tests.
+@@ -12,65 +12,579 @@
+ // See the License for the specific language governing permissions and
+ // limitations under the License.
+ 
++use std::collections::BTreeSet;
 +
-+# Establish the equality contract independently of hash-based deduplication.
-+skipif mysql
-+query BB
-+select to_interval('1 month') = to_interval('30 days'), to_interval('30 days') = to_interval('29 days 24 hours')
-+----
-+1 1
+ use databend_common_exception::Result;
++use databend_common_expression::BlockEntry;
++use databend_common_expression::ChunkIndex;
+ use databend_common_expression::DataBlock;
++use databend_common_expression::DataBlockVec;
++use databend_common_expression::FilterExecutor;
++use databend_common_pipeline::core::check_interrupt;
+ 
+ use crate::pipelines::processors::transforms::hash_join::HashJoinProbeState;
++use crate::pipelines::processors::transforms::hash_join::PendingProbe;
+ use crate::pipelines::processors::transforms::hash_join::ProbeState;
++use crate::pipelines::processors::transforms::merge_with_constant_row;
 +
-+# Constant folding: three storage representations of one duration.
-+skipif mysql
-+query I
-+select array_length(array_distinct([to_interval('1 month'), to_interval('30 days'), to_interval('29 days 24 hours')]))
-+----
-+1
++/// A cursor over one probe block and the current build round. Build chunks remain
++/// owned by the build state; only a bounded window, never an unbounded
++/// build concatenation or Cartesian product, may be retained.
++pub(crate) struct CrossJoinProbe {
++    probe: DataBlock,
++    build_block_index: usize,
++    build_row_index: usize,
++    probe_offset: usize,
++    remaining_build_rows: usize,
++    // Shared by every probe row before advancing to the next build window.
++    // Only small chunks need gathering; a single-chunk window is a slice.
++    window: Option<DataBlock>,
++}
 +
-+# Runtime evaluation: expose each row instead of hiding the result in a sum.
-+skipif mysql
-+query II
-+select number, array_length(array_distinct([to_interval(if(number % 2 = 0, '1 month', '30 days')), to_interval('30 days')])) from numbers(4) order by number
-+----
-+0 1
-+1 1
-+2 1
-+3 1
++impl CrossJoinProbe {
++    fn new(probe: DataBlock, build_rows: usize) -> Self {
++        Self {
++            probe,
++            build_block_index: 0,
++            build_row_index: 0,
++            probe_offset: 0,
++            remaining_build_rows: build_rows,
++            window: None,
++        }
++    }
 +
-+# Recursive scalar hashing must use the same duration semantics in every
-+# supported nested container, including a tuple with a NULL field.
-+skipif mysql
-+query III
-+select
-+    array_length(array_distinct([[to_interval('1 month')], [to_interval('30 days')]])),
-+    array_length(array_distinct([tuple(null, to_interval('1 month')), tuple(null, to_interval('30 days'))])),
-+    array_length(array_distinct([map(['key'], [to_interval('1 month')]), map(['key'], [to_interval('30 days')])]))
-+----
-+1 1 1
++    fn is_finished(&self, build_blocks: &[DataBlock]) -> bool {
++        self.probe.is_empty()
++            || (self.window.is_none() && self.build_block_index >= build_blocks.len())
++    }
 +
-+# Negative durations must canonicalize too, not only positive intervals.
-+skipif mysql
-+query I
-+select array_length(array_distinct([to_interval('-1 month'), to_interval('-30 days'), to_interval('-29 days -24 hours')]))
-+----
-+1
++    fn advance_build(&mut self, build_blocks: &[DataBlock], count: usize) {
++        self.build_row_index += count;
++        self.remaining_build_rows -= count;
++        if self.build_row_index == build_blocks[self.build_block_index].num_rows() {
++            self.build_block_index += 1;
++            self.build_row_index = 0;
++        }
++    }
 +
-+# Do not collapse a genuinely different duration; NULL is ignored by array_distinct.
-+skipif mysql
-+query I
-+select array_length(array_distinct([null, to_interval('1 month'), to_interval('30 days'), to_interval('31 days')]))
-+----
-+2
++    fn skip_empty_chunks(&mut self, build_blocks: &[DataBlock]) -> Result<()> {
++        while self.build_block_index < build_blocks.len()
++            && build_blocks[self.build_block_index].num_rows() == 0
++        {
++            check_interrupt()?;
++            self.build_block_index += 1;
++        }
++        Ok(())
++    }
++
++    fn build_window(
++        &mut self,
++        build_blocks: &[DataBlock],
++        build_projection: &BTreeSet<usize>,
++        max_block_size: usize,
++    ) -> Result<DataBlock> {
++        let build = &build_blocks[self.build_block_index];
++        let available = build.num_rows() - self.build_row_index;
++        if available >= max_block_size
++            || available == self.remaining_build_rows
++            || u32::try_from(max_block_size).is_err()
++        {
++            // A window fits in this chunk. Keep its shared representation,
++            // including a short final window; never gather a single range.
++            let count = available.min(max_block_size);
++            let block = build
++                .slice(self.build_row_index..self.build_row_index + count)
++                .project(build_projection);
++            self.advance_build(build_blocks, count);
++            return Ok(block);
++        }
++
++        // Many tiny chunks would otherwise cause tiny output blocks. Gather
++        // only this window, once, and reuse it for all rows of this probe.
++        let count = max_block_size.min(self.remaining_build_rows);
++        let mut blocks = DataBlockVec::default();
++        let mut indices = ChunkIndex::default();
++        while indices.num_rows() < count {
++            check_interrupt()?;
++            self.skip_empty_chunks(build_blocks)?;
++            let build = &build_blocks[self.build_block_index];
++            let rows = (count - indices.num_rows()).min(build.num_rows() - self.build_row_index);
++            // Both conversions fit: the window has <= u32::MAX rows and
++            // every registered block is a nonempty slice within that window.
++            let index = u32::try_from(blocks.block_rows().len()).unwrap();
++            let len = u32::try_from(rows).unwrap();
++            blocks.push(
++                build
++                    .slice(self.build_row_index..self.build_row_index + rows)
++                    .project(build_projection),
++            )?;
++            indices.push_merge_range(index, 0, len);
++            self.advance_build(build_blocks, rows);
++        }
++        Ok(blocks.take(&indices))
++    }
++
++    fn next_candidate(
++        &mut self,
++        build_blocks: &[DataBlock],
++        build_projection: &BTreeSet<usize>,
++        max_block_size: usize,
++    ) -> Result<Option<DataBlock>> {
++        check_interrupt()?;
++        if self.is_finished(b
 ```
 
 ---
 
-### Incident Patch 3: `3c30b0dd` (2026-11-16)
-**Commit Message**: fix(query): bind a CTE body in its definition's scope (#21076)
+### Incident Patch 2: `e6c0a8fb` (2026-11-18)
+**Commit Message**: fix(query): prevent scalar range integer overflow (#21115)
 
-* fix(query): bind a CTE body in its definition's scope
+* fix(query): prevent scalar range integer overflow
 
-A non-materialized CTE was rebound at every reference with the referencing
-context chained as its parent, so its body could bind columns that only the
-referencing query provides. `WITH t AS (SELECT x) ... , LATERAL (SELECT * FROM
-t)` therefore returned a row instead of rejecting `x`, and the meaning of the
-same CTE depended on where it was used.
+* refactor(query): keep scalar range arithmetic 64-bit
 
-Bind the body without the referencing scope, so an unknown column is reported
-where the CTE is defined. The context the CTE scan hands back still chains to
-the referencing query: a correlated subquery that reads the CTE has to reach
-the query it sits in.
-
-* test(query): cover CTE binding scope with a sqllogictest instead of a binder unit test
-
-**File**: `src/query/sql/src/planner/binder/table.rs` (modified, +10/-1)
+**File**: `src/query/functions/src/scalars/array.rs` (modified, +18/-16)
 ```diff
-@@ -179,7 +179,12 @@ impl Binder {
-         cte_info: &CteInfo,
-     ) -> Result<(SExpr, BindContext)> {
-         let mut new_bind_context = BindContext {
--            parent: Some(Box::new(bind_context.clone())),
-+            // A CTE definition is bound at the point of its `WITH` clause, not at the point
-+            // where it is referenced. Chaining the referencing context as a parent would let
-+            // the body bind its columns — a CTE referenced from a lateral subquery would
-+            // silently correlate with whatever the subquery's left side produces. Earlier
-+            // CTEs still resolve through the cloned `cte_context`.
-+            parent: None,
-             binding_depth: bind_context.next_depth()?,
-             bound_internal_columns: BTreeMap::new(),
-             bound_virtual_columns: BTreeMap::new(),
-@@ -207,6 +212,10 @@ impl Binder {
- 
-         let (s_expr, mut res_bind_context) =
-             self.bind_query(&mut new_bind_context, &cte_info.query)?;
-+        // The body above was bound without the referencing scope, but the scan it produced is
-+        // part of the referencing query: a correlated subquery that reads the CTE still has to
-+        // reach the columns of the query it sits in.
-+        res_bind_context.parent = Some(Box::new(bind_context.clone()));
-         let mut cols_alias = cte_info.columns_alias.clone();
-         if let Some(alias) = alias {
-             for (idx, col_alias) in alias.columns.iter().enumerate() {
+@@ -319,15 +319,18 @@ pub fn register(registry: &mut FunctionRegistry) {
+         "range",
+         |_, _, _| FunctionDomain::Full,
+         |start, end, ctx| {
+-            const MAX: i64 = 500000000;
+-            if end - start > MAX {
++            const MAX: u64 = 500000000;
++            if start >= end {
++                return vec![].into();
++            }
++            let len = start.abs_diff(end);
++            if len > MAX {
+                 // the same behavior as Clickhouse
+                 ctx.set_error(
+                     0,
+                     format!(
+                         "the allowed maximum values of range function is {}, but got {}",
+-                        MAX,
+-                        end - start
++                        MAX, len
+                     ),
+                 );
+                 return vec![].into();
+@@ -340,15 +343,18 @@ pub fn register(registry: &mut FunctionRegistry) {
+         "range",
+         |_, _, _, _| FunctionDomain::Full,
+         |start, end, step, ctx| {
+-            const MAX: i64 = 500000000;
++            const MAX: u64 = 500000000;
+             if step == 0 {
+                 ctx.set_error(
+                     0,
+                     "step cannot be zero".to_string()
+                 );
+                 return vec![].into();
+             }
+-            let len = ((end - start) / step).abs();
++            if (step > 0 && start >= end) || (step < 0 && start <= end) {
++                return vec![].into();
++            }
++            let len = start.abs_diff(end).div_ceil(step.unsigned_abs());
+             if len > MAX {
+                 // the same behavior as Clickhouse
+                 ctx.set_error(
+@@ -363,16 +369,12 @@ pub fn register(registry: &mut FunctionRegistry) {
+             }
+             let mut vals = Vec::with_capacity(len as usize);
+             let mut num = start;
+-            if step > 0 {
+-                while num < end {
+-                    vals.push(num);
+-                    num += step;
+-                }
+-            } else {
+-                while num > end {
+-                    vals.push(num);
+-                    num += step;
+-                }
++            while (step > 0 && num < end) || (step < 0 && num > end) {
++                vals.push(num);
++                let Some(next) = num.checked_add(step) else {
++                    break;
++                };
++                num = next;
+             }
+             vals.into()
+         },
 ```
 
-**File**: `tests/sqllogictests/suites/query/cte/cte_scope.test` (added, +46/-0)
+**File**: `src/query/functions/tests/it/scalars/array.rs` (modified, +46/-0)
 ```diff
-@@ -0,0 +1,46 @@
-+# A CTE body is bound where its WITH clause is, so it can never resolve a column
-+# that only the query referencing it provides. Issue #20983.
+@@ -130,6 +130,52 @@ fn test_range(file: &mut impl Write) {
+     run_ast(file, "range(-1, -10, -2)", &[]);
+ }
+ 
++#[test]
++fn test_range_overflow() {
++    let mut mint = Mint::new("tests/it/scalars/testdata");
++    let file = &mut mint.new_goldenfile("range_overflow.txt").unwrap();
 +
-+# The enclosing SELECT does not provide x.
-+statement error 1065
-+WITH t AS (SELECT x) SELECT * FROM t
++    for expr in [
++        "range(10, 20, 9223372036854775806)",
++        "range(10, 20, 9223372036854775798)",
++        "range(-10, -20, -9223372036854775806)",
++        "array_generate_range(10, 20, 9223372036854775806)",
++        "range(10, 20, 9223372036854775797)",
++        "range(10, 20, 100)",
++        "range(0, 9223372036854775807, 4611686018427387904)",
++        "range(0, -9223372036854775808, -4611686018427387904)",
++        "range(-9223372036854775808, 9223372036854775807, 9223372036854775807)",
++        "range(9223372036854775807, -9223372036854775808, -9223372036854775808)",
++        "range(0, -9223372036854775808, -9223372036854775808)",
++        "range(-9223372036854775808, 0, -1)",
++        "range(9223372036854775807, -9223372036854775808)",
++        "range(9223372036854775807, -9223372036854775808, 1)",
++        "range(1, 1, -9223372036854775808)",
++        "range(0, 1, 0)",
++        "range(-9223372036854775808, 9223372036854775807)",
++        "range(-9223372036854775808, 9223372036854775807, 1)",
++        "range(9223372036854775807, -9223372036854775808, -1)",
++        "range(-9223372036854775808, 0, 1)",
++        "range(0, -9223372036854775808, -1)",
++        // The limit applies to the actual length, not the truncated quotient.
++        "range(0, 1000000001, 2)",
++        "range(0, -1000000001, -2)",
++    ] {
++        run_ast(file, expr, &[]);
++    }
 +
-+# Another item of the referencing FROM does not provide x.
-+statement error 1065
-+WITH t AS (SELECT x) SELECT * FROM (SELECT 1 AS x) s, t
++    let columns = &[
++        ("a", Int64Type::from_data(vec![10, -10, i64::MIN, i64::MAX])),
++        ("b", Int64Type::from_data(vec![20, -20, i64::MAX, i64::MIN])),
++        (
++            "c",
++            Int64Type::from_data(vec![i64::MAX - 1, i64::MIN + 2, i64::MAX, i64::MIN]),
++        ),
++    ];
++    run_ast(file, "range(a, b, c)", columns);
++    run_ast(file, "array_generate_range(a, b, c)", columns);
++}
 +
-+# The left side of a LATERAL subquery used to leak into the CTE body and
-+# this query returned `1 1`.
-+statement error 1065
-+WITH t AS (SELECT x) SELECT * FROM (SELECT 1 AS x) s, LATERAL (SELECT * FROM t)
+ fn test_get(file: &mut impl Write) {
+     run_ast(file, "[1, 2]['a']", &[]);
+     run_ast(file, "[][1]", &[]);
+```
+
+**File**: `src/query/functions/tests/it/scalars/testdata/range_overflow.txt` (added, +249/-0)
+```diff
+@@ -0,0 +1,249 @@
++ast            : range(10, 20, 9223372036854775806)
++raw expr       : range(10, 20, 9223372036854775806)
++checked expr   : range<Int64, Int64, Int64>(CAST<UInt8>(10_u8 AS Int64), CAST<UInt8>(20_u8 AS Int64), CAST<UInt64>(9223372036854775806_u64 AS Int64))
++optimized expr : [10]
++output type    : Array(Int64)
++output domain  : [{10..=10}]
++output         : [10]
 +
-+# A self-contained CTE is still readable from a lateral subquery.
-+query II
-+WITH t AS (SELECT 1 AS x) SELECT * FROM (SELECT 1 AS x) s, LATERAL (SELECT * FROM t)
++
++ast            : range(10, 20, 9223372036854775798)
++raw expr       : range(10, 20, 9223372036854775798)
++checked expr   : range<Int64, Int64, Int64>(CAST<UInt8>(10_u8 AS Int64), CAST<UInt8>(20_u8 AS Int64), CAST<UInt64>(9223372036854775798_u64 AS Int64))
++optimized expr : [10]
++output type    : Array(Int64)
++output domain  : [{10..=10}]
++output         : [10]
++
++
++ast            : range(-10, -20, -9223372036854775806)
++raw expr       : range(-10, -20, -9223372036854775806)
++checked expr   : range<Int64, Int64, Int64>(CAST<Int8>(-10_i8 AS Int64), CAST<Int8>(-20_i8 AS Int64), -9223372036854775806_i64)
++optimized expr : [-10]
++output type    : Array(Int64)
++output domain  : [{-10..=-10}]
++output         : [-10]
++
++
++ast            : array_generate_range(10, 20, 9223372036854775806)
++raw expr       : array_generate_range(10, 20, 9223372036854775806)
++checked expr   : range<Int64, Int64, Int64>(CAST<UInt8>(10_u8 AS Int64), CAST<UInt8>(20_u8 AS Int64), CAST<UInt64>(9223372036854775806_u64 AS Int64))
++optimized expr : [10]
++output type    : Array(Int64)
++output domain  : [{10..=10}]
++output         : [10]
++
++
++ast            : range(10, 20, 9223372036854775797)
++raw expr       : range(10, 20, 9223372036854775797)
++checked expr   : range<Int64, Int64, Int64>(CAST<UInt8>(10_u8 AS Int64), CAST<UInt8>(20_u8 AS Int64), CAST<UInt64>(9223372036854775797_u64 AS Int64))
++optimized expr : [10]
++output type    : Array(Int64)
++output domain  : [{10..=10}]
++output         : [10]
++
++
++ast            : range(10, 20, 100)
++raw expr       : range(10, 20, 100)
++checked expr   : range<Int64, Int64, Int64>(CAST<UInt8>(10_u8 AS Int64), CAST<UInt8>(20_u8 AS Int64), CAST<UInt8>(100_u8 AS Int64))
++optimized expr : [10]
++output type    : Array(Int64)
++output domain  : [{10..=10}]
++output         : [10]
++
++
++ast            : range(0, 9223372036854775807, 4611686018427387904)
++raw expr       : range(0, 9223372036854775807, 4611686018427387904)
++checked expr   : range<Int64, Int64, Int64>(CAST<UInt8>(0_u8 AS Int64), CAST<UInt64>(9223372036854775807_u64 AS Int64), CAST<UInt64>(4611686018427387904_u64 AS Int64))
++optimized expr : [0, 4611686018427387904]
++output type    : Array(Int64)
++output domain  : [{0..=4611686018427387904}]
++output         : [0, 4611686018427387904]
++
++
++ast            : range(0, -9223372036854775808, -4611686018427387904)
++raw expr       : range(0, -9223372036854775808, -4611686018427387904)
++checked expr   : range<Int64, Int64, Int64>(CAST<UInt8>(0_u8 AS Int64), -9223372036854775808_i64, -4611686018427387904_i64)
++optimized expr : [0, -4611686018427387904]
++output type    : Array(Int64)
++output domain  : [{-4611686018427387904..=0}]
++output         : [0, -4611686018427387904]
++
++
++ast            : range(-9223372036854775808, 9223372036854775807, 9223372036854775807)
++raw expr       : range(-9223372036854775808, 9223372036854775807, 9223372036854775807)
++checked expr   : range<Int64, Int64, Int64>(-9223372036854775808_i64, CAST<UInt64>(9223372036854775807_u64 AS Int64), CAST<UInt64>(9223372036854775807_u64 AS Int64))
++optimized expr : [-9223372036854775808, -1, 9223372036854775806]
++output type    : Array(Int64)
++output domain  : [{-9223372036854775808..=9223372036854775806}]
++output         : [-9223372036854775808, -1, 9223372036854775806]
++
++
++ast            : range(9223372036854775807, -9223372036854775808, -9223372036854775808)
++raw expr       : range(9223372036854775807, -9223372036854775808, -9223372036854775808)
++checked expr   : range<Int64, Int64, Int64>(CAST<UInt64>(9223372036854775807_u64 AS Int64), -9223372036854775808_i64, -9223372036854775808_i64)
++optimized expr : [9223372036854775807, -1]
++output type    : Array(Int64)
++output domain  : [{-1..=9223372036854775807}]
++output         : [9223372036854775807, -1]
++
++
++ast            : range(0, -9223372036854775808, -9223372036854775808)
++raw expr       : range(0, -9223372036854775808, -9223372036854775808)
++checked expr   : range<Int64, Int64, Int64>(CAST<UInt8>(0_u8 AS Int64), -9223372036854775808_i64, -9223372036854775808_i64)
++optimized expr : [0]
++output type    : Array(Int64)
++output domain  : [{0..=0}]
++output         : [0]
++
++
++ast            : range(-9223372036854775808, 0, -1)
++raw expr       : range(-9223372036854775808, 0, -1)
++checked expr   : range<Int64, Int64, Int64>(-9223372036854775808_i64, CAST<UInt8>(0_u8 AS Int64), CAST<Int8>(-1_i8 AS Int64))
++optimized expr : []
++output type    : Array(Int64)
++output domain  : []
++output         : []
++
++
++ast            : range(9223372036854775807, -9223372036854775808)
++raw expr       : range(9223372036854775807, -922337203
+```
+
+**File**: `tests/sqllogictests/suites/query/functions/02_0061_function_array.test` (modified, +66/-0)
+```diff
+@@ -134,6 +134,72 @@ select range(-1, -20, -3)
+ statement error
+ select range(10, 5000000011)
+ 
++# Scalar range must stop before step addition overflows (issue #21109).
++query TTT
++select range(10, 20, 9223372036854775806), range(10, 20, 9223372036854775798), range(-10, -20, -9223372036854775806)
 +----
-+1 1
++[10] [10] [-10]
 +
-+# A CTE body may still reference a CTE defined earlier in the same WITH clause.
-+query I
-+WITH a AS (SELECT 1 AS x), b AS (SELECT x + 1 AS y FROM a) SELECT * FROM b
++query TTT
++select array_generate_range(10, 20, 9223372036854775806), range(10, 20, 9223372036854775797), range(10, 20, 100)
 +----
-+2
++[10] [10] [10]
 +
-+# A correlated subquery that reads a CTE still reaches the columns of the
-+# query it sits in (the TPC-DS Q1 shape).
-+statement ok
-+create or replace table cte_scope_t(k int, v int)
-+
-+statement ok
-+insert into cte_scope_t values (1, 10), (1, 30), (2, 5)
-+
-+query II
-+WITH c AS (SELECT k, v FROM cte_scope_t)
-+SELECT k, v FROM c c1
-+WHERE v > (SELECT avg(v) * 1.2 FROM c c2 WHERE c1.k = c2.k)
-+ORDER BY k
++query TT
++select range(0, 9223372036854775807, 4611686018427387904), range(0, -9223372036854775808, -4611686018427387904)
 +----
-+1 30
++[0,4611686018427387904] [0,-4611686018427387904]
 +
-+statement ok
-+drop table cte_scope_t
++# The distance and the absolute value of step need not fit in Int64.
++query TT
++select range(-9223372036854775808, 9223372036854775807, 9223372036854775807), range(9223372036854775807, -9223372036854775808, -9223372036854775808)
++----
++[-9223372036854775808,-1,9223372036854775806] [9223372036854775807,-1]
++
++query T
++select range(0, -9223372036854775808, -9223372036854775808)
++----
++[0]
++
++# Exercise vectorized evaluation, not just constant folding.
++query TT
++select range(10, 20, 9223372036854775806::int64 - number::int64), array_generate_range(10, 20, 9223372036854775806::int64 - number::int64) from numbers(2) order by number
++----
++[10] [10]
++[10] [10]
++
++# Equal endpoints and a step pointing away from the endpoint produce empty arrays.
++query TTTT
++select range(9223372036854775807, -9223372036854775808), range(9223372036854775807, -9223372036854775808, 1), range(-9223372036854775808, 0, -1), range(1, 1, -9223372036854775808)
++----
++[] [] [] []
++
++statement error step cannot be zero
++select range(0, 1, 0)
++
++# Reject oversized ranges before allocating, even when the distance overflows Int64.
++statement error the allowed maximum values of range function is 500000000, but got 18446744073709551615
++select range(-9223372036854775808, 9223372036854775807)
++
++statement error the allowed maximum values of range function is 500000000, but got 18446744073709551615
++select range(-9223372036854775808, 9223372036854775807, 1)
++
++statement error the allowed maximum values of range function is 500000000, but got 18446744073709551615
++select range(9223372036854775807, -9223372036854775808, -1)
++
++statement error the allowed maximum values of range function is 500000000, but got 9223372036854775808
++select range(-9223372036854775808, 0, 1)
++
++statement error the allowed maximum values of range function is 500000000, but got 9223372036854775808
++select range(0, -9223372036854775808, -1)
++
++# Non-divisible distances must round the element count up, not down.
++statement error the allowed maximum values of range function is 500000000, but got 500000001
++select range(0, 1000000001, 2)
++
++statement error the allowed maximum values of range function is 500000000, but got 500000001
++select range(0, -1000000001, -2)
++
+ statement ok
+ DROP DATABASE IF EXISTS array_func_test
+ 
+```
+
+---
+
+### Incident Patch 3: `169e5018` (2026-11-18)
+**Commit Message**: fix(query): check Decimal64 sum and avg overflow (#21114)
+
+**File**: `src/query/functions/src/aggregates/function_impl/avg.rs` (modified, +7/-15)
+```diff
+@@ -342,25 +342,17 @@ impl AvgBuilder {
+                     DecimalDataKind::DECIMAL => {
+                         let decimal_size =
+                             DecimalSize::new_unchecked(DECIMAL::MAX_PRECISION, size.scale().max(4));
+-                        let should_check_overflow = DECIMAL::MAX_PRECISION > i64::MAX_PRECISION
+-                            && size.precision() > i64::MAX_PRECISION;
+                         let scale_add = decimal_size.scale() - size.scale();
+                         let return_type = DataType::Decimal(decimal_size);
+                         let function_info = DecimalAvgData { scale_add };
+ 
+-                        if should_check_overflow {
+-                            Self::create_decimal::<AggregateDecimalAvgState<true, DECIMAL>, DECIMAL>(
+-                                build,
+-                                return_type,
+-                                function_info,
+-                            )
+-                        } else {
+-                            Self::create_decimal::<AggregateDecimalAvgState<false, DECIMAL>, DECIMAL>(
+-                                build,
+-                                return_type,
+-                                function_info,
+-                            )
+-                        }
++                        // Division cannot recover a sum that has already overflowed,
++                        // including when the input uses Decimal64 storage.
++                        Self::create_decimal::<AggregateDecimalAvgState<true, DECIMAL>, DECIMAL>(
++                            build,
++                            return_type,
++                            function_info,
++                        )
+                     }
+                 })
+             }
+```
+
+**File**: `src/query/functions/src/aggregates/function_impl/sum.rs` (modified, +24/-56)
+```diff
+@@ -737,34 +737,19 @@ impl SumBuilder {
+                         let decimal_size =
+                             DecimalSize::new_unchecked(DECIMAL::MAX_PRECISION, size.scale());
+                         let return_type = DataType::Decimal(decimal_size);
+-                        let should_check_overflow = DECIMAL::MAX_PRECISION > i64::MAX_PRECISION
+-                            && size.precision() > i64::MAX_PRECISION;
+-
+-                        if should_check_overflow {
+-                            build.create_unary_or_null::<
+-                                AggregateDecimalSumState<true, DECIMAL>,
+-                                DecimalType<DECIMAL>,
+-                                DecimalType<DECIMAL>,
+-                            >(
+-                                return_type.wrap_nullable(),
+-                                AggregateDecimalSumState::<true, DECIMAL>::state_description(
+-                                    return_type,
+-                                ),
+-                                (),
+-                            )
+-                        } else {
+-                            build.create_unary_or_null::<
+-                                AggregateDecimalSumState<false, DECIMAL>,
+-                                DecimalType<DECIMAL>,
+-                                DecimalType<DECIMAL>,
+-                            >(
+-                                return_type.wrap_nullable(),
+-                                AggregateDecimalSumState::<false, DECIMAL>::state_description(
+-                                    return_type,
+-                                ),
+-                                (),
+-                            )
+-                        }
++                        // Decimal64 has no wider accumulator: it needs the same
++                        // precision checks as the other decimal storage widths.
++                        build.create_unary_or_null::<
++                            AggregateDecimalSumState<true, DECIMAL>,
++                            DecimalType<DECIMAL>,
++                            DecimalType<DECIMAL>,
++                        >(
++                            return_type.wrap_nullable(),
++                            AggregateDecimalSumState::<true, DECIMAL>::state_description(
++                                return_type,
++                            ),
++                            (),
++                        )
+                     }
+                 })
+             }
+@@ -809,34 +794,17 @@ impl SumBuilder {
+                         let decimal_size =
+                             DecimalSize::new_unchecked(DECIMAL::MAX_PRECISION, size.scale());
+                         let return_type = DataType::Decimal(decimal_size);
+-                        let should_check_overflow = DECIMAL::MAX_PRECISION > i64::MAX_PRECISION
+-                            && size.precision() > i64::MAX_PRECISION;
+-
+-                        if should_check_overflow {
+-                            build.create_unary_distinct_or_null::<
+-                                AggregateDecimalSumState<true, DECIMAL>,
+-                                DecimalType<DECIMAL>,
+-                                DecimalType<DECIMAL>,
+-                            >(
+-                                return_type.wrap_nullable(),
+-                                AggregateDecimalSumState::<true, DECIMAL>::state_description(
+-                                    return_type,
+-                                ),
+-                                (),
+-                            )
+-                        } else {
+-                            build.create_unary_distinct_or_null::<
+-                                AggregateDecimalSumState<false, DECIMAL>,
+-                                DecimalType<DECIMAL>,
+-                                DecimalType<DECIMAL>,
+-                            >(
+-                                return_type.wrap_nullable(),
+-                                AggregateDecimalSumState::<false, DECIMAL>::state_description(
+-                                    return_type,
+-                                ),
+-                                (),
+-                            )
+-                        }
++                        build.create_unary_distinct_or_null::<
++                            AggregateDecimalSumState<true, DECIMAL>,
++                            DecimalType<DECIMAL>,
++                            DecimalType<DECIMAL>,
++                        >(
++                            return_type.wrap_nullable(),
++                            AggregateDecimalSumState::<true, DECIMAL>::state_description(
++                                return_type,
++                            ),
++                            (),
++                        )
+                     }
+                 })
+             }
+```
+
+**File**: `src/query/functions/tests/it/aggregates/sum.rs` (modified, +139/-0)
+```diff
+@@ -8,6 +8,7 @@ use databend_common_expression::ColumnBuilder;
+ use databend_common_expression::FromData;
+ use databend_common_expression::Scalar;
+ use databend_common_expression::ScalarRef;
++use databend_common_expression::StateSerdeItem;
+ use databend_common_expression::aggregate::aggregate_function::*;
+ use databend_common_expression::aggregate_function::AggregateStateWritePolicy;
+ use databend_common_expression::types::ArgType;
+@@ -16,6 +17,7 @@ use databend_common_expression::types::BooleanType;
+ use databend_common_expression::types::DataType;
+ use databend_common_expression::types::Decimal64Type;
+ use databend_common_expression::types::Decimal128Type;
++use databend_common_expression::types::DecimalScalar;
+ use databend_common_expression::types::DecimalSize;
+ use databend_common_expression::types::Float64Type;
+ use databend_common_expression::types::Int32Type;
+@@ -191,6 +193,143 @@ fn test_sum_group_by() {
+     run_sum_cases(file, simulate_two_groups_group_by);
+ }
+ 
++// Decimal64 aggregates retain Decimal64 states/results, so overflow must be
++// reported even when the average or a later cancellation would fit.
++#[test]
++fn test_decimal64_aggregate_overflow() -> Result<()> {
++    let max = 999_999_999_999_999_999_i64;
++    for name in ["sum", "sum_distinct", "avg", "avg_distinct"] {
++        for scale in [0, 17] {
++            for sign in [1, -1] {
++                let size = DecimalSize::new_unchecked(18, scale);
++                // The second value is distinct; both SUM variants must overflow.
++                let values = vec![sign * max, sign * (max - 1)];
++                let entries = [Decimal64Type::from_data_with_size(values, Some(size)).into()];
++                for serialized in [false, true] {
++                    let error = eval_v2_aggr(name, &entries, 2, serialized).unwrap_err();
++                    assert_eq!(error.code(), 1049, "{name}: {error}");
++                    assert!(error.message().contains("Decimal overflow"));
++                }
++            }
++        }
++    }
++
++    // Match the issue's ten-row native-i64 wraparound, including constants.
++    let size = DecimalSize::new_unchecked(18, 17);
++    for entry in [
++        Decimal64Type::from_data_with_size(vec![max; 10], Some(size)).into(),
++        BlockEntry::new_const_column(
++            DataType::Decimal(size),
++            Scalar::Decimal(DecimalScalar::Decimal64(max, size)),
++            10,
++        ),
++    ] {
++        for name in ["sum", "avg"] {
++            let error = eval_v2_aggr(name, std::slice::from_ref(&entry), 10, false).unwrap_err();
++            assert_eq!(error.code(), 1049);
++        }
++    }
++    Ok(())
++}
++
++#[test]
++fn test_decimal64_aggregate_boundaries_and_nulls() -> Result<()> {
++    let max = 999_999_999_999_999_999_i64;
++    let size = DecimalSize::new_unchecked(18, 17);
++    for name in ["sum", "sum_distinct", "avg", "avg_distinct"] {
++        for sign in [1, -1] {
++            // The masked-out value would overflow if it were accumulated.
++            let entries =
++                [
++                    Decimal64Type::from_data_with_size(vec![sign * max, sign * max], Some(size))
++                        .wrap_nullable(Some(Bitmap::from([true, false])))
++                        .into(),
++                ];
++            for serialized in [false, true] {
++                let (column, ty) = eval_v2_aggr(name, &entries, 2, serialized)?;
++                assert_eq!(ty, DataType::Decimal(size).wrap_nullable());
++                assert_eq!(
++                    column.index(0).unwrap(),
++                    ScalarRef::Decimal(DecimalScalar::Decimal64(sign * max, size))
++                );
++            }
++        }
++        for values in [vec![], vec![None, None]] {
++            let rows = values.len();
++            let entries = [Decimal64Type::from_opt_data_with_size(values, Some(size)).into()];
++            let (column, _) = eval_v2_aggr(name, &entries, rows, false)?;
++            assert_eq!(column.index(0).unwrap(), ScalarRef::Null);
++        }
++    }
++    Ok(())
++}
++
++#[test]
++fn test_decimal64_aggregate_row_and_merge_overflow() -> Result<()> {
++    let size = DecimalSize::new_unchecked(18, 17);
++    let value = 500_000_000_000_000_000_i64;
++    let entries = [Decimal64Type::from_data_with_size(vec![value, value], Some(size)).into()];
++    let args_type = [DataType::Decimal(size)];
++    for name in ["sum", "avg"] {
++        let function = AGGR_REGISTRY.resolve(RawAggregateCall {
++            name,
++            params: &[],
++            args_type: &args_type,
++            distinct: false,
++            order_by: &[],
++        })?;
++        let left = AggregateStateOwner::new(vec![function.clone()])?;
++        let right = AggregateStateOwner::new(vec![function.clone()])?;
++        function.accumulate_row(left.state(0), (&entries).into(), 0)?;
++        function.accumulate_row(right.state(0), (&entries).into(), 1)?;
++
++        // Both partial states fit; merging them must check the combined sum.
++    
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #21099** (2026-11-16): fix(meta): decode BLOOM table index type; default cache.data_max_ratio to 0 (@zhang2014)
-- **PR #21093** (2026-11-15): fix(query): link cosine HNSW graphs with normalized vectors (@bohutang)
-- **PR #21092** (2026-11-13): fix(query): truncate REPLACE statements in query logs (@TCeason)
-- **PR #21091** (2026-11-15): feat(query): enable the memory limit and the shared cache by default (@bohutang)
-- **PR #21090** (2026-11-13): refactor(query): scan only the rows matched by the inverted index (@bohutang)
-- **PR #21087** (2026-11-13): feat(query): support native charset conversion for binary strings (@sundy-li)
+- **PR #21121** (2026-11-18): refactor(query): remove dead code and leftovers of the aggregate rewrites (@dqhl76)
+- **PR #21118** (2026-11-18): fix(query): abbreviate large SQL constants in INFO logs (@bohutang)
+- **PR #21115** (2026-11-18): fix(query): prevent scalar range integer overflow (@KKould)
+- **PR #21114** (2026-11-18): fix(query): check Decimal64 sum and avg overflow (@KKould)
+- **PR #21113** (2026-11-18): fix(query): decouple grace join partition bits from hash table buckets (@dqhl76)
+- **PR #21111** (2026-11-17): fix(query): finish queries correctly on the queries executor (@bohutang)
 
 ---
 
@@ -2055,31 +2603,87 @@ the query it sits in.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. meta): decode BLOOM table index type; default cache.data_max_ratio to 0
+## X. query): stream all-pairs joins with bounded memory
 
 **RULE**:
-When implementing operations in `src/meta/api/src/api_impl/schema_api.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in databendlabs/databend. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/query/service/src/physical_plans/physical_hash_join.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in databendlabs/databend. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a7a0a58b`: meta): decode BLOOM table index type; default cache.data_max_ratio to 0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `50f8ae1b`: query): stream all-pairs joins with bounded memory. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/meta/api/src/api_impl/schema_api.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/query/service/src/physical_plans/physical_hash_join.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        TableIndexType::Bloom => MarkedDeletedIndexType::BLOOM,
+use crate::pipelines::processors::transforms::probes_all_pairs;
+        // Joins without anything to hash stream all pairs on this executor.
+            && !desc.probes_all_pairs()
+    /// When the probe streams all pairs, a side without required columns
+    /// contributes only its row count, which the build side keeps without
+    /// retaining or spilling any block. Build it from that side. The
+    /// zero-column side occupies no projected positions, so join conditions
+    /// and the output keep the same column offsets.
+    fn build_zero_column_side(&mut self) {
+        // Build-side caches consume the build state of the side the planner chose.
+        if !probes_all_pairs(
+            self.join_type,
+            !self.build_keys.is_empty(),
+            self.single_to_inner,
+        ) || !self.probe_projections.is_empty()
+            || self.build_projections.is_empty()
+            || self.build_side_cache_info.is_some()
+        {
+            return;
+        }
+        debug_assert!(self.build_keys.is_empty() && self.probe_to_build.is_empty());
+        std::mem::swap(&mut self.probe, &mut self.build);
+        std::mem::swap(&mut self.probe_projections, &mut self.build_projection
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+use crate::physical_plans::resolve_scalar;
+#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+pub struct NestedLoopFilterInfo {
+    pub predicates: Vec<RemoteExpr>,
+    pub projection: Vec<usize>,
+}
+
+    pub nested_loop_filter: Option<NestedLoopFilterInfo>,
+            nested_loop_filter: self.nested_loop_filter.clone(),
+
+    fn build_nested_loop_filter_info(
+        &self,
+        join: &Join,
+        probe_schema: &DataSchema,
+        build_schema: &DataSchema,
+        target_schema: &DataSchema,
+    ) -> Result<Option<NestedLoopFilterInfo>> {
+        build_nested_loop_filter_info_for_join(join, probe_schema, build_schema, target_schema)
+    }
+}
+
+fn build_nested_loop_filter_info_for_join(
+    join: &Join,
+    probe_schema: &DataSchema,
+    build_schema: &DataSchema,
+    target_schema: &DataSchema,
+) -> Result<Option<NestedLoopFilterInfo>> {
+    if !matches!(join.join_type, JoinType::Inner) {
+        return Ok(None);
+    }
+
+    if !join.equi_conditions.is_empty() {
+        // Inner joins with equality keys should still use the hash table even
+        // when the build side is small. Falling back to nested-loop evaluates
+        // the equality and residual predicates fo
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a7a0a58b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `50f8ae1b` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

@@ -10987,3 +10987,8 @@
 | `CYCLE-20261118-X9F2` | `2026-11-18T13:34:10.670Z` | `HemmingwayAI/Hemmingway-1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-altworld-hemmingway-1-learnings.md` | Yes (`390893a4...`) |
 | `CYCLE-20261118-XEXA` | `2026-11-18T13:34:17.806Z` | `FaridSafi/react-native-gifted-chat` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9232` | Yes (`71d64e35...`) |
 | `CYCLE-20261118-XJ2D` | `2026-11-18T13:34:23.173Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9233` | Yes (`790d4267...`) |
+| `CYCLE-20261118-DKYZ` | `2026-11-18T13:46:52.139Z` | `ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf-learnings.md` | Yes (`f1bcf5d2...`) |
+| `CYCLE-20261118-DSAH` | `2026-11-18T13:47:01.625Z` | `chaos-mesh/chaos-mesh` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9234` | Yes (`cbeca0b1...`) |
+| `CYCLE-20261118-DWYO` | `2026-11-18T13:47:07.680Z` | `databendlabs/databend` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9235` | Yes (`7cf29f9b...`) |
+| `CYCLE-2026-11-18-PROJ-EVOLVE` | `2026-11-18T13:47:46.974Z` | `chaos-mesh-chaos-mesh` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-K-4C047582` [Domain K] | Yes (`9e60cf5a...`) |
+| `CYCLE-2026-11-18-PROJ-EVOLVE` | `2026-11-18T13:48:29.772Z` | `databendlabs-databend` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-41A8ED4B` [Domain H] | Yes (`288664d0...`) |

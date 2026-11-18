@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/databendlabs-databend-learnings.md`  
 > **Source**: github ([https://github.com/databendlabs/databend](https://github.com/databendlabs/databend))  
-> **Source Version**: `58dd5893`  
+> **Source Version**: `6546196f`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-17T19:53:44.680Z  
+> **Timestamp**: 2026-11-18T13:47:06.520Z  
 > **Learning ID**: `learn-github-databendlabs-databend`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/databendlabs-databend-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/databendlabs/databend](https://github.com/databendlabs/databend))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T19:53:44.675Z  
+> **Harvest Timestamp**: 2026-11-18T13:47:06.513Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Data Agent Ready Warehouse : One for  Analytics, Search, AI, Python Sandbox.  — rebuilt from scratch. Unified architecture on your S3.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 9498 stars
+- **Stars / Engagement**: 9500 stars
 
 ---
 
@@ -1196,11 +1196,11 @@ unsafe impl<T: BitChunk> TrustedLen for BitChunks<'_, T> {}
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #21111** (2026-11-17): **fix(query): finish queries correctly on the queries executor**
-  *Symptoms*: I hereby agree to the terms of the CLA available at: https://docs.databend.com/dev/policies/cla/  ## Summary  Fixes how queries finish on the executor shared by all the queries (`enable_queries_executor`, off by default). It does not enable the executor; nothing changes when the switch is off.  | Bug | Case | main | This PR | |---|---|---|---| | Bug 1 | Client stops reading the result | The result sink blocks a shared worker; enough such queries hold every worker | The sink waits asynchronously, no worker is held | | Bug 2 | A query fails or is killed while its other processors run | Finish callbacks run concurrently with those processors | Finish callbacks run after no worker runs a task of the query | | Bug 3 | Tasks of a finished query still queued | Run | Dropped | | Bug 4 | The result is read right after a query fails | The finish flag is set before the error is stored, so the error can be missed | The error is stored before the flag | | Bug 5 | All processors finish in their first event | The query hangs | The query completes | | Bug 6 | Stopped early without an error, e.g. `finish(None)` | Returns `Ok` | Returns an error, as the per-query executor | | Bug 7 | Fails to start, or dropped without being executed | Finish callbacks are skipped | Finish callbacks run | | Bug 8 | Executor finishes with tasks queued | Tasks dropped with the executor, possibly after the global IO runtime (aborts in tests) | Tasks dropped in `finish`; none queued afterwards | | Bug 9 | A first e
+- **Issue #21121** (2026-11-18): **refactor(query): remove dead code and leftovers of the aggregate rewrites**
+  *Symptoms*: I hereby agree to the terms of the CLA available at: https://docs.databend.com/dev/policies/cla/  ## Summary  The aggregate went through several rewrites (adaptive partial aggregation over the global shuffle, states kept in pages, the chunked hash index), which left formats, fields and helpers without callers. This PR removes them and simplifies what remains, one commit per step; it changes no query result.  - **Shuffle path**: partial and final aggregates now only meet through the global shuffle (`AggregateScatter`, `AggregateStatesMeta`). The merge-exchange serializer/deserializer, `AggregateSerdeMeta` and the `Serialized`/`AggregatePayload` variants of `AggregateMeta` had no producer: the serializer only accepted a variant nothing constructs. `AggregateMeta` now only carries the payload list; serialized and spilled states stay inside the final aggregate. The `serde/` module is folded into the aggregator. - **Planner**: the partial/final plan building no longer repeats itself; the plans it produces are unchanged. - **Hash table and index**: drop `ProbeState::row_count` (always overwritten before being read), test-only flush paths (tests now go through `into_payloads` + `Payload::merge_result`, the path the final aggregate runs), unused parameters, and name the chunk lanes once (`CHUNK_SLOTS`). `hash_index/` becomes one module with its sizing math. `ProbeState::new_boxed` no longer takes a reference to zeroed memory holding a `Vec`. - **Payloads**: scattering a payload count
 
-- **Issue #21104** (2026-11-17): **fix(storage): bound fuse_page Thrift decoding and drop thrift dep**
-  *Symptoms*: I hereby agree to the terms of the CLA available at: https://docs.databend.com/dev/policies/cla/  ## Summary  `fuse_page` previously decoded Parquet `PageHeader` metadata through `thrift` 0.17's `TCompactInputProtocol` and the deprecated `parquet::format::PageHeader` API. Because `TCompactInputProtocol::read_bytes` eagerly allocates a `Vec<u8>` sized directly from the wire varint before reading payload bytes, a corrupted or crafted column chunk header could trigger multi-gigabyte allocations from a few bytes of input.  - Add reusable zero-allocation Parquet/Thrift helpers in `databend-storages-common-blocks`:   - `thrift_compact::ThriftCompactReader`: bounded Thrift Compact Protocol slice reader that checks binary and container lengths against remaining slice bytes before advancing, enforces a recursion depth budget (64), and validates field wire types.   - `parquet_page::{read_parquet_page_header, iter_parquet_page_headers, ParquetPageHeader}`: decodes Parquet v1/v2/dictionary/index page headers lazily over an in-memory column chunk slice without intermediate `Vec` materialization. - Simplify `fuse_page` to stream `iter_parquet_page_headers`, drop `#![allow(deprecated)]`, and remove the direct `thrift` dependency from `Cargo.toml` and `src/query/storages/fuse/Cargo.toml`. - Validated with unit tests in `databend_storages_common_blocks::parquet_page::tests` (`ArrowWriter` v1/v2 multi-page round-trips with page statistics, `u32::MAX` binary length prefixes, oversized/negative 
+- **Issue #21118** (2026-11-18): **fix(query): abbreviate large SQL constants in INFO logs**
+  *Symptoms*: I hereby agree to the terms of the CLA available at: https://docs.databend.com/dev/policies/cla/  ## Summary  Fixes #21116. Mask secrets and abbreviate large constants in one token scan, keeping the first three items and the omitted count.  **HTTP and Fuse.** Before, the request, query creation, and initial response each logged the SQL, and the partition log dumped `PushDownInfo`. After, only `Creating new query` carries SQL. Example from a 1536-dimensional Top-K query (IDs shortened, fields shown inline):  ```text New query request  query_id=<query-id> Creating new query  query_id=<query-id>   sql=SELECT id FROM t ORDER BY cosine_distance(embedding,     [0.234567, -0.123456, 0.234567, ... (+1533 more)]::VECTOR(1536)) ASC LIMIT 1 Reading partitions for table t, snapshot: Some(<snapshot-id>) Initial response for query_id=<query-id>, state=Succeeded, rows=1, next_page=None ```  **Physical plan.** The INFO plan keeps the tree, sort direction, and limit; it abbreviates the vector rather than printing all 1536 values. Excerpt from the same query:  ```text Query physical plan: TopN(Final) ├── sort keys: [cosine_distance(embedding, [0.234567, -0.123456, 0.234567, ... (+1533 more)]::VECTOR(1536)) ASC NULLS LAST] ├── limit: 1 ```  **`VALUES`.** A 500-row insert counts omitted rows, not fields:  ```text INSERT INTO t VALUES (1, 'abc'), (1, 'abc'), (1, 'abc'), ... (+497 more); ```  `EXPLAIN`, query history, and query hashes are unchanged.  | Total INFO for HTTP Top-K on `db0-aws` | Befo
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1217,1722 +1217,1348 @@ unsafe impl<T: BitChunk> TrustedLen for BitChunks<'_, T> {}
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `58dd5893` (2026-11-17)
-**Commit Message**: fix(query): finish queries correctly on the queries executor (#21111)
+### Incident Patch 1: `50f8ae1b` (2026-11-18)
+**Commit Message**: fix(query): stream all-pairs joins with bounded memory (#20966)
 
-* ci(query): let unit tests run on the queries executor
+* refactor(query): share constant-row block broadcasting
 
-ConfigBuilder::enable_queries_executor starts the executor shared by all the
-queries. The test guard finishes it and waits for its workers on teardown:
-they would outlive the test and look up the global instances of a dropped
-test.
+Extract merge_with_constant_row and reuse it in the nested-loop join.
 
-* fix(query): do not hold a shared worker for an unconsumed result
+Keep repeated build values as constant columns without materializing their payload.
 
-The sink of a pulling query blocks its thread when the result channel is
-full. On the queries executor that thread is a worker shared by all the
-queries, so a client that stops reading could hold every worker. The sink
-now waits asynchronously there; the per-query executor is unchanged.
+* fix(query): stream all-pairs joins with bounded memory
 
-* fix(query): drop the queued tasks when the queries executor finishes
+Use a resumable, batch-bounded probe for cross joins and inner joins without hash keys. Count zero-column build rows without retaining their payload, and preserve interruption and early-output cancellation.
 
-The queued tasks hold the graphs of the queries. They were dropped with the
-executor itself, which may outlive what the processors need to shut down,
-e.g. the global IO runtime that an async sink uses on drop. finish now takes
-them out of the queue and drops them out of the lock, and no task is queued
-once the executor is finished.
+Replay all probe spill files and retained buffers once per build round, including column-free probe blocks. Share the path across the legacy and experimental join settings.
 
-* fix(query): finish a query of the queries executor after its tasks stop
+Cover bounded batches, spill replay, multiple workers, zero-column inputs and LIMIT in Rust and SQL regressions. Make affected result tests independent of unspecified cross-join order and keep deterministic TPC-H spill checks.
 
+* fix(query): rebuild window sorting after decorrelation
 
+Rebuild legacy window input sorting and partition exchange using the final decorrelated partition and ordering keys. Replace obsolete binder sorts without dropping limit or top truncation.
 
-**File**: `src/query/pipeline/src/sinks/async_sink.rs` (modified, +18/-16)
+Cover
+
+**File**: `src/query/service/src/physical_plans/physical_hash_join.rs` (modified, +111/-132)
 ```diff
-@@ -73,22 +73,24 @@ impl<T: AsyncSink + 'static> AsyncSinker<T> {
- impl<T: AsyncSink + 'static> Drop for AsyncSinker<T> {
-     fn drop(&mut self) {
-         drop_guard(move || {
--            if !self.called_on_start || !self.called_on_finish {
--                if let Some(mut inner) = self.inner.take() {
--                    GlobalIORuntime::instance().spawn({
--                        let called_on_start = self.called_on_start;
--                        let called_on_finish = self.called_on_finish;
--                        async move {
--                            if !called_on_start && T::CALL_ON_START_ON_ERROR {
--                                let _ = inner.on_start().await;
--                            }
+@@ -61,7 +61,6 @@ use crate::physical_plans::format::PhysicalFormat;
+ use crate::physical_plans::physical_plan::IPhysicalPlan;
+ use crate::physical_plans::physical_plan::PhysicalPlan;
+ use crate::physical_plans::physical_plan::PhysicalPlanMeta;
+-use crate::physical_plans::resolve_scalar;
+ use crate::physical_plans::runtime_filter::build_runtime_filter;
+ use crate::pipelines::HashJoinStateRef;
+ use crate::pipelines::PipelineBuilder;
+@@ -74,6 +73,7 @@ use crate::pipelines::processors::transforms::RuntimeFiltersDesc;
+ use crate::pipelines::processors::transforms::TransformHashJoin;
+ use crate::pipelines::processors::transforms::TransformHashJoinBuild;
+ use crate::pipelines::processors::transforms::TransformHashJoinProbe;
++use crate::pipelines::processors::transforms::probes_all_pairs;
+ use crate::sessions::QueryContext;
+ 
+ // Type aliases to simplify complex return types
+@@ -101,12 +101,6 @@ type MergedFieldsResult = (
+     Vec<(usize, (bool, bool))>,
+ );
+ 
+-#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+-pub struct NestedLoopFilterInfo {
+-    pub predicates: Vec<RemoteExpr>,
+-    pub projection: Vec<usize>,
+-}
 -
--                            if !called_on_finish && T::CALL_ON_FINISH_ON_ERROR {
--                                let _ = inner.on_finish().await;
--                            }
--                        }
--                    });
--                }
-+            let run_on_start = !self.called_on_start && T::CALL_ON_START_ON_ERROR;
-+            let run_on_finish = !self.called_on_finish && T::CALL_ON_FINISH_ON_ERROR;
-+            // Nothing to run: do not touch the global runtime, which a sink
-+            // dropped late may outlive.
-+            if !run_on_start && !run_on_finish {
-+                return;
-+            }
-+
-+            if let Some(mut inner) = self.inner.take() {
-+                GlobalIORuntime::instance().spawn(async move {
-+                    if run_on_start {
-+                        let _ = inner.on_start().await;
-+                    }
-+
-+                    if run_on_finish {
-+                        let _ = inner.on_finish().await;
-+                    }
-+                });
-             }
+ #[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+ pub struct HashJoin {
+     pub meta: PhysicalPlanMeta,
+@@ -145,7 +139,6 @@ pub struct HashJoin {
+ 
+     pub runtime_filter: PhysicalRuntimeFilters,
+     pub broadcast_id: Option<u32>,
+-    pub nested_loop_filter: Option<NestedLoopFilterInfo>,
+ }
+ 
+ #[typetag::serde]
+@@ -266,7 +259,6 @@ impl IPhysicalPlan for HashJoin {
+             build_side_cache_info: self.build_side_cache_info.clone(),
+             runtime_filter: self.runtime_filter.clone(),
+             broadcast_id: self.broadcast_id,
+-            nested_loop_filter: self.nested_loop_filter.clone(),
          })
      }
-```
-
-**File**: `src/query/service/src/pipelines/executor/executor_graph.rs` (modified, +115/-15)
-```diff
-@@ -28,6 +28,7 @@ use std::time::SystemTime;
- use databend_common_base::base::WatchNotify;
- use databend_common_base::runtime::ExecutorStats;
- use databend_common_base::runtime::ExecutorStatsSnapshot;
-+use databend_common_base::runtime::LimitMemGuard;
- use databend_common_base::runtime::MemStat;
- use databend_common_base::runtime::ParentMemStat;
- use databend_common_base::runtime::PerfEvent;
-@@ -216,6 +217,8 @@ const DEFAULT_POINTS: u64 = 3;
  
- struct ExecutingGraph {
-     finished_nodes: AtomicUsize,
-+    /// The tasks of the graph running on a worker of the queries executor.
-+    running_tasks: AtomicUsize,
-     graph: StableGraph<Arc<Node>, EdgeInfo>,
-     /// points store two values
-     ///
-@@ -263,6 +266,7 @@ impl ExecutingGraph {
-         Ok(ExecutingGraph {
-             graph,
-             finished_nodes: AtomicUsize::new(0),
-+            running_tasks: AtomicUsize::new(0),
-             points: AtomicU64::new((DEFAULT_POINTS << 32) | init_epoch as u64),
-             max_points: AtomicU64::new(DEFAULT_POINTS),
-             query_id,
-@@ -312,6 +316,7 @@ impl ExecutingGraph {
-         let executor_stats = ExecutorStats::new();
-         Ok(ExecutingGraph {
-             finished_nodes: AtomicUsize::new(0),
-+            running_tasks: AtomicUsize::new(0),
-             graph,
-             points: AtomicU64::new((DEFAULT_POINTS << 32) | init_epoch as u64),
-             max_points: AtomicU64::new(DEFAULT_POINTS),
-@@ -965,31 +970,63 @@ impl RunningGraph {
-     }
+@@ -279,7 +271,9 @@ impl IPhysicalPlan for HashJoin {
+         let experimental_new_join = builder.settings.get_enable_experimental_new_join()?;
+         let (enable_optimization, _) = builder.merge_into_get_optimization_flag(self);
  
-     /// Flag the graph should finish and no more tasks should be scheduled.
-+    ///
-+    /// The first call decides the result of the graph. Its error is stored before
-+    /// the flag is set, so whoever sees the flag sees the error too. The waiter of
-+    /// the graph is woken once no worker runs a task of it.
-     pub fn should_finish<C>(&self, cause: Result<(), C>) -> Result<()> {
-         let cause = cause.with_context(|| "should finish");
++        // Joins without anything to hash stream all pairs on this executor.
+         if desc.single_to_inner.is_none()
++            && !desc.probes_all_pairs()
+             && matches!(
+                 self.join_type,
+                 JoinType::Inner
+@@ -319,6 +313,28 @@ impl IPhysicalPlan for HashJoin {
+ }
  
--        if self.0.should_finish.load(Ordering::SeqCst) {
--            return Ok(());
+ impl HashJoin {
++    /// When the probe streams all pairs, a side without required columns
++    /// contributes only its row count, which the build side keeps without
++    /// retaining or spilling any block. Build it from that side. The
++    /// zero-column side occupies no projected positions, so join conditions
++    /// and the output keep the same column offsets.
++    fn build_zero_column_side(&mut self) {
++        // Build-side caches consume the build state of the side the planner chose.
++        if !probes_all_pairs(
++            self.join_type,
++            !self.build_keys.is_empty(),
++            self.single_to_inner,
++        ) || !self.probe_projections.is_empty()
++            || self.build_projections.is_empty()
++            || self.build_side_cache_info.is_some()
 +        {
-+            let mut finished_error = self.0.finished_error.lock();
-+            if self.0.should_finish.load(Ordering::SeqCst) {
-+                return Ok(());
-+            }
-+            *finished_error = cause.as_ref().err().cloned();
-+            // It is also the interrupt flag of the processors.
-+            self.0.should_finish.store(true, Ordering::SeqCst);
-         }
--        self.0.should_finish.store(true, Ordering::SeqCst);
-+
-+        self.0.finished_notify.notify_waiters();
-+        self.notify_finished_if_idle();
-+
-+        // After the notifications: the diagnostics wait for locks that other
-+        // queries hold, e.g. the one of `DataExchangeManager::shutdown_query`,
-+        // and may run on a thread that exceeded its memory limit.
-         if let Err(cause) = &cause {
-+            let _guard = LimitMemGuard::enter_unlimited();
-             log_memory_limit_diagnostics(cause, "memory limit exceeded");
-         }
--        self.0.finished_notify.notify_waiters();
--        self.interrupt();
--        let mut finished_error = self.0.finished_error.lock();
--        if finished_error.is_none() {
--            *finished_error = cause.err();
--            drop(finished_error);
-+        Ok(())
-+    }
-+
-+    /// Counts a task of the graph as running until the guard is dropped.
-+    ///
-+    /// Check `is_should_finish` after this, not before: a graph that finishes in
-+    /// between has woken its waiter already, which then runs concurrently with
-+    /// the task.
-+    pub(crate) fn track_running_task(self: &Arc<Self>) -> RunningTaskGuard {
-+        self.0.running_tasks.fetch_add(1, Ordering::SeqCst);
-+        RunningTaskGuard {
-+            graph: self.clone(),
-+        }
-+    }
-+
-+    /// Wakes the waiter of the graph, which runs the finish callbacks of the
-+    /// query, once the graph should finish and no worker runs a task of it.
-+    ///
-+    /// The async tasks of the graph are not waited for: they are aborted by
-+    /// `finished_notify`, as on the per-query executor.
-+    fn notify_finished_if_idle(&self) {
-+        if !self.is_should_finish() || self.0.running_tasks.load(Ordering::SeqCst) != 0 {
 +            return;
-         }
- 
--        if let Some(notify) = self.0.finish_condvar_notify.clone() {
--            let (lock, cvar) = &*notify;
--            let mut started = lock.lock();
--            *started = true;
--            cvar.notify_one();
-+        if let Some(notify) = &self.0.finish_condvar_notify {
-+            let (lock, cvar) = &**notify;
-+            *lock.lock() = true;
-+            cvar.notify_all();
-         }
--        Ok(())
-     }
- 
-     /// Checks if the graph should finish and no more tasks should be scheduled.
-@@ -1194,6 +1231,18 @@ impl RunningGraph {
-     }
- }
- 
-+/// A task of a graph running on a worker of the queries executor.
-+pub(crate) struct RunningTaskGuard {
-+    graph: Arc<RunningGraph>,
-+}
++        }
++        debug_assert!(self.build_keys.is_empty() && self.probe_to_build.is_empty());
++        std::mem::swap(&mut self.probe, &mut self.build);
++        std::mem::swap(&mut self.probe_projections, &mut self.build_projections);
++    }
 +
-+impl Drop for RunningTaskGuard {
-+    fn drop(&mut self) {
-+       
+     fn build_state(&self, builder: &mut PipelineBuilder) -> Result<Arc<HashJoinState>> {
+         let (enable_optimization, is_distributed) = builder.merge_into_get_optimization_flag(self);
+         HashJoinState::try_create(
+@@ -1195,71 +1211,6 @@ impl PhysicalPlanBuilder {
+ 
+         Ok(non_equi_conditions)
+     }
+-
+-    fn build_nested_loop_filter_info(
+-        &self,
+-        join: &Join,
+-        probe_schema: &DataSchema,
+-        build_schema: &DataSchema,
+-        target_schema: &DataSchema,
+-    ) -> Result<Option<NestedLoopFilterInfo>> {
+-        build_nested_loop_filter_info_for_join(join, probe_schema, build_schema, target_schema)
+-    }
+-}
+-
+-fn build_nested_loop_filter_info_for_join(
+-    join: &Join,
+-    probe_schema: &DataSchema,
+-    build_schema: &DataSchema,
+-    target_schema: &DataSchema,
+-) -> Result<Option<NestedLoopFilterInfo>> {
+-    if !matches!(join.join_type, JoinType::Inner) {
+-        return Ok(None);
+-    }
+-
+-    if !join.equi_conditions.is_empty() {
+-        // Inner joins with equality keys should still use the hash table even
+-        // when the build side is small. Falling back to nested-loop evaluates
+-        // the equality and residual predicates for every probe/build pair.
+-        return Ok(None);
+-    }
+-
+-    let merged = DataSchema::new(
+-        probe_schema
+-            .fields
+-            .iter()
+-            .cloned()
+-            .chain(build_schema.fields.iter().cloned())
+-            .collect(),
+-    );
+-
+-    let mut predicates =
+-        Vec::with_capacity(join.equi_conditions.len() + join.non_equi_conditio
 ```
 
-**File**: `src/query/service/src/pipelines/executor/global_queries_executor.rs` (modified, +5/-0)
+**File**: `src/query/service/src/pipelines/processors/transforms/hash_join/desc.rs` (modified, +40/-72)
 ```diff
-@@ -38,4 +38,9 @@ impl GlobalQueriesExecutor {
-     pub fn instance() -> Arc<QueriesPipelineExecutor> {
-         GlobalInstance::get()
+@@ -23,19 +23,15 @@ use databend_common_expression::DataSchemaRef;
+ use databend_common_expression::EvaluateOptions;
+ use databend_common_expression::Evaluator;
+ use databend_common_expression::Expr;
+-use databend_common_expression::FieldIndex;
+-use databend_common_expression::FilterExecutor;
+ use databend_common_expression::FunctionContext;
+ use databend_common_expression::RemoteExpr;
+ use databend_common_expression::arrow::and_validities;
+ use databend_common_expression::type_check::check_function;
+ use databend_common_functions::BUILTIN_FUNCTIONS;
+-use databend_common_settings::Settings;
+ use databend_common_sql::executor::cast_expr_to_non_null_boolean;
+ use parking_lot::RwLock;
+ 
+ use crate::physical_plans::HashJoin;
+-use crate::physical_plans::NestedLoopFilterInfo;
+ use crate::physical_plans::PhysicalRuntimeFilter;
+ use crate::physical_plans::PhysicalRuntimeFilters;
+ use crate::pipelines::processors::transforms::wrap_true_validity;
+@@ -72,7 +68,6 @@ pub struct HashJoinDesc {
+     pub(crate) probe_to_build: Vec<(usize, (bool, bool))>,
+     pub(crate) build_schema: DataSchemaRef,
+     pub(crate) probe_schema: DataSchemaRef,
+-    pub(crate) nested_loop_filter: Option<NestedLoopFilterInfo>,
+ }
+ 
+ #[derive(Debug, Clone)]
+@@ -117,7 +112,31 @@ impl From<&PhysicalRuntimeFilter> for RuntimeFilterDesc {
      }
-+
-+    /// The executor, `None` if `enable_queries_executor` is off.
-+    pub fn try_instance() -> Option<Arc<QueriesPipelineExecutor>> {
-+        GlobalInstance::try_get()
-+    }
- }
-```
-
-**File**: `src/query/service/src/pipelines/executor/pipeline_executor.rs` (modified, +82/-29)
-```diff
-@@ -20,6 +20,8 @@ use std::time::Instant;
- use databend_common_base::base::WatchNotify;
- use databend_common_base::runtime::ExecutorStatsSnapshot;
- use databend_common_base::runtime::GlobalIORuntime;
-+use databend_common_base::runtime::LimitMemGuard;
-+use databend_common_base::runtime::ThreadTracker;
- use databend_common_base::runtime::catch_unwind;
- use databend_common_base::runtime::defer;
- use databend_common_exception::ErrorCode;
-@@ -32,6 +34,7 @@ use databend_common_pipeline::core::PlanProfile;
- use futures_util::future::Either;
- use futures_util::future::select;
- use log::info;
-+use log::warn;
- use parking_lot::Condvar;
- use parking_lot::Mutex;
- 
-@@ -55,6 +58,42 @@ pub struct QueryWrapper {
-     finished_notify: Arc<WatchNotify>,
  }
  
-+impl QueryWrapper {
-+    /// Runs the finish callbacks of the query with its result. Only the first
-+    /// call runs them.
-+    fn on_finished(&self, res: Result<()>) -> Result<()> {
-+        let mut on_finished_chain = self.on_finished_chain.lock();
-+
-+        // untracking for on finished
-+        let tracking_payload = ThreadTracker::new_tracking_payload();
-+        let _guard = ThreadTracker::tracking(tracking_payload);
-+        let profiling = self
-+            .graph
-+            .fetch_profiling(Some(self.settings.executor_node_id.clone()));
-+        on_finished_chain.apply(ExecutionInfo::create(res, profiling))
++/// Cross joins, and Inner joins without equi keys, have nothing to hash: the
++/// probe streams every build/probe pair through the Cross cursor, filtered by
++/// the non-equi conditions. A rewritten scalar subquery keeps the Inner hash
++/// join for its single-row check.
++pub(crate) fn probes_all_pairs(
++    join_type: JoinType,
++    has_keys: bool,
++    single_to_inner: Option<JoinType>,
++) -> bool {
++    match join_type {
++        JoinType::Cross => true,
++        JoinType::Inner => !has_keys && single_to_inner.is_none(),
++        _ => false,
 +    }
 +}
 +
-+/// Runs the finish callbacks of a query that never executed, as the per-query
-+/// executor does on drop. A no-op once `execute` has run them.
-+impl Drop for QueryWrapper {
-+    fn drop(&mut self) {
-+        let _guard = LimitMemGuard::enter_unlimited();
-+
-+        // Drops the tasks that the wakers of its processors may still queue.
-+        if let Err(cause) = self.graph.should_finish::<()>(Ok(())) {
-+            warn!("Shutdown failure: {:?}", cause);
-+        }
-+
-+        let cause = self.graph.get_error().unwrap_or_else(|| {
-+            ErrorCode::Internal("Pipeline illegal state: not successfully shutdown")
-+        });
-+        if let Err(cause) = self.on_finished(Err(cause)) {
-+            warn!("Shutdown failure: {:?}", cause);
-+        }
-+    }
-+}
-+
- pub enum PipelineExecutor {
-     QueryPipelineExecutor(Arc<QueryPipelineExecutor>),
-     QueriesPipelineExecutor(QueryWrapper),
-@@ -179,37 +218,51 @@ impl PipelineExecutor {
-         match self {
-             PipelineExecutor::QueryPipelineExecutor(executor) => executor.execute(),
-             PipelineExecutor::QueriesPipelineExecutor(query_wrapper) => {
--                Self::init(
--                    &query_wrapper.on_init_callback,
--                    &query_wrapper.settings.query_id,
--                )?;
--                GlobalQueriesExecutor::instance().send_graph(query_wrapper.graph.clone())?;
--                Self::start_executor_daemon(
--                    query_wrapper,
--                    query_wrapper.settings.max_execute_time_in_seconds,
--                )?;
--                let (lock, cvar) = &*query_wrapper.finish_condvar_wait;
--                let mut finished = lock.lock();
--                if !*finished {
--                    cvar.wait(&mut finished);
--                }
-+                let res = Self::run_on_queries_executor(query_wrapper);
-+                query_wrapper.on_finished(res.clone()).and(res)
-+            }
-+        }
-+    }
- 
--                query_wrapper.finished_notify.notify_waiters();
-+    /// Runs the graph of the query on the queries executor until it finishes.
-+    fn run_on_queries_executor(query_wrapper: &QueryWrapper) -> Result<()> {
-+        let graph = &query_wrapper.graph;
-+        let started = Self::init(
-+            &query_wrapper.on_init_callback,
-+            &query_wrapper.settings.query_id,
+ impl HashJoinDesc {
++    pub(crate) fn probes_all_pairs(&self) -> bool {
++        probes_all_pairs(
++            self.join_type,
++            !self.build_keys.is_empty(),
++            self.single_to_inner,
 +        )
-+        .and_then(|_| GlobalQueriesExecutor::instance().send_graph(graph.clone()));
-+        match &started {
-+            Ok(_) => Self::start_executor_daemon(
-+                query_wrapper,
-+                query_wrapper.settings.max_execute_time_in_seconds,
-+            )?,
-+            // A processor may have woken a worker from its first event before
-+            // another one failed, so a task of the graph may be running: wait
-+            // for it as well. The tasks still queued are dropped.
-+            Err(cause) => graph.should_finish(Err(cause.clone()))?,
-+        }
- 
--                let may_error = query_wrapper.graph.get_error();
--                match may_error {
--                    None => {
--                        let mut finished_chain = query_wrapper.on_finished_chain.lock();
--                        let info = ExecutionInfo::create(Ok(()), self.fetch_profiling(true));
--                        finished_chain.apply(info)
--                    }
--                    Some(cause) => {
--                        let mut finished_chain = query_wrapper.on_finished_chain.lock();
--                        let profiling = self.fetch_profiling(true);
--                        let info = ExecutionInfo::create(Err(cause.cl
-```
-
-**File**: `src/query/service/src/pipelines/executor/pipeline_pulling_executor.rs` (modified, +58/-17)
-```diff
-@@ -17,7 +17,9 @@ use std::sync::atomic::AtomicBool;
- use std::sync::atomic::Ordering;
- 
- use async_channel::Receiver;
-+use async_channel::SendError;
- use async_channel::Sender;
-+use async_trait::async_trait;
- use databend_common_base::base::Progress;
- use databend_common_base::base::ProgressValues;
- use databend_common_base::runtime::Thread;
-@@ -33,6 +35,8 @@ use databend_common_pipeline::core::Pipeline;
- use databend_common_pipeline::core::Processor;
- use databend_common_pipeline::core::ProcessorPtr;
- use databend_common_pipeline::core::basic_callback;
-+use databend_common_pipeline::sinks::AsyncSink;
-+use databend_common_pipeline::sinks::AsyncSinker;
- use databend_common_pipeline::sinks::Sink;
- use databend_common_pipeline::sinks::Sinker;
- use fastrace::func_path;
-@@ -105,6 +109,7 @@ impl PipelinePullingExecutor {
-         pipeline: &mut Pipeline,
-         tx: Sender<DataBlock>,
-         progress: Option<Arc<Progress>>,
-+        settings: &ExecutorSettings,
-     ) -> Result<()> {
-         if !pipeline.is_pulling_pipeline()? {
-             return Err(ErrorCode::Internal(
-@@ -117,6 +122,7 @@ impl PipelinePullingExecutor {
-                 tx.clone(),
-                 progress.clone(),
-                 input,
-+                settings.enable_queries_executor,
-             )))
-         })?;
- 
-@@ -137,7 +143,7 @@ impl PipelinePullingExecutor {
- 
-         let (sender, receiver) = async_channel::bounded(std::cmp::max(1, pipeline.output_len()));
- 
--        Self::wrap_pipeline(&mut pipeline, sender, None)?;
-+        Self::wrap_pipeline(&mut pipeline, sender, None, &settings)?;
-         let executor = PipelineExecutor::create(pipeline, settings)?;
- 
-         Ok(PipelinePullingExecutor {
-@@ -170,7 +176,7 @@ impl PipelinePullingExecutor {
-         let (sender, receiver) =
-             async_channel::bounded(std::cmp::max(1, main_pipeline.output_len()));
- 
--        Self::wrap_pipeline(&mut main_pipeline, sender, result_progress)?;
-+        Self::wrap_pipeline(&mut main_pipeline, sender, result_progress, &settings)?;
- 
-         let mut pipelines = build_res.sources_pipelines;
-         pipelines.push(main_pipeline);
-@@ -285,15 +291,39 @@ struct PullingSink {
- }
- 
- impl PullingSink {
-+    /// The sink waits for the consumer of the query when the channel is full. On
-+    /// the queries executor it waits asynchronously: blocking would hold a worker
-+    /// shared by all the queries for as long as the consumer does not read.
-     pub fn create(
-         tx: Sender<DataBlock>,
-         progress: Option<Arc<Progress>>,
-         input: Arc<InputPort>,
-+        enable_queries_executor: bool,
-     ) -> Box<dyn Processor> {
--        Sinker::create(input, PullingSink {
-+        let sink = PullingSink {
-             sender: Some(tx),
-             progress,
--        })
-+        };
-+        match enable_queries_executor {
-+            true => AsyncSinker::create(input, sink),
-+            false => Sinker::create(input, sink),
-+        }
 +    }
 +
-+    fn record_progress(&self, data_block: &DataBlock) {
-+        if let Some(progress) = &self.progress {
-+            progress.incr(&ProgressValues {
-+                rows: data_block.num_rows(),
-+                bytes: data_block.memory_size(),
-+            });
-+        }
-+    }
-+
-+    fn send_error(cause: SendError<DataBlock>) -> ErrorCode {
-+        ErrorCode::Internal(format!(
-+            "Logical error, cannot push data into SyncSender, cause {:?}",
-+            cause
-+        ))
-     }
- }
+     pub fn create(join: &HashJoin) -> Result<HashJoinDesc> {
+         let other_predicate = Self::join_predicate(&join.join_type, &join.non_equi_conditions)?;
  
-@@ -306,22 +336,33 @@ impl Sink for PullingSink {
+@@ -150,7 +169,6 @@ impl HashJoinDesc {
+             probe_projection: join.probe_projections.clone(),
+             build_schema: join.build.output_schema()?,
+             probe_schema: join.probe.output_schema()?,
+-            nested_loop_filter: join.nested_loop_filter.clone(),
+         })
      }
  
-     fn consume(&mut self, data_block: DataBlock) -> Result<()> {
--        if let Some(progress) = &self.progress {
--            progress.incr(&ProgressValues {
--                rows: data_block.num_rows(),
--                bytes: data_block.memory_size(),
--            });
+@@ -276,72 +294,22 @@ impl HashJoinDesc {
+             }
+         }
+     }
+-
+-    pub fn create_nested_loop_desc(
+-        &self,
+-        settings: &Settings,
+-        function_ctx: &FunctionContext,
+-    ) -> Result<Option<NestedLoopDesc>> {
+-        let nested_loop_join_threshold = settings.get_nested_loop_join_threshold()? as usize;
+-        let block_size = settings.get_max_block_size()? as usize;
+-        if nested_loop_join_threshold == 0 {
+-            return Ok(None);
 -        }
 -
-+        self.record_progress(&data_block);
-         if let Some(sender) = &self.sender {
--            if let Err(cause) = sender.send_blocking(data_block) {
--                return Err(ErrorCode::Internal(format!(
--                    "Logical error, cannot push data into SyncSender, cause {:?}",
--                    cause
--                )));
+-        let Some(NestedLoopFilterInfo {
+-            predicates,
+-            projection,
+-        }) = &self.nested_loop_filter
+-        else {
+-            return Ok(None);
+-        };
+-
+-        let predicates = predicates
+-            .iter()
+-            .map(|x| Ok(x.as_expr(&BUILTIN_FUNCTIONS)))
+-            .reduce(|lhs, rhs| {
+-                check_function(None, "and_filters", &[], &[lhs?, rhs?], &BUILTIN_FUNCTIONS)
+-            })
+-            .transpose()?;
+-        let Some(predicates) = predicates else {
+-            return Ok(None);
+-        };
+-
+-        let projections = projection.iter().copied().collect::<BTreeSet<usize>>();
+-        let field_reorder = {
+-            let mapper = projections.iter().copied().collect::<Vec<_>>();
+-            debug_assert!(mapper.is_sorted());
+-            let reorder = projection
+-                .iter()
+-                .map(|a| mapper.iter().position(|b| a == b).unwrap())
+-                .collect::<Vec<_>>();
+-
+-            if reorder.iter().copied().enumerate().all(|(a, b)| a == b) {
+-                None
+-            } else {
+-                Some(reorder)
 -            }
-+            sender.send_blocking(data_block).map_err(Self::send_error)?;
-         }
-+        Ok(())
-+    }
-+}
- 
-+#[async_trait]
-+impl AsyncSink for PullingSink {
-+    const NAME: &'static str = "PullingExecutorSink";
-+    // Nothing to run on drop: the sender is dropped with the sink. Running the
-+    // hooks there would need the global runtime, which a query dropped late
-+    // may outlive.
-+    const CALL_ON_START_ON_ERROR: bool = false;
-+    const CALL_ON_FINISH_ON_ERROR: bool = false;
-+
-+    async fn on_finish(&mut self) -> Result<()> {
-+        drop(self.sender.take());
-         Ok(())
-     }
-+
-+    async fn consume(&mut self, data_block: DataBlock) -> Result<bool> {
-+        self.record_progress(&data_block);
-+        if let Some(sender) = &self.sender {
-+            sender.send(data_block).
-```
-
-**File**: `src/query/service/src/pipelines/executor/queries_executor_tasks.rs` (modified, +29/-0)
-```diff
-@@ -46,6 +46,15 @@ impl WorkersTasks {
-         }
-     }
- 
-+    /// Takes all the queued tasks, so they are dropped out of the lock.
-+    pub fn take_tasks(&mut self) -> (ExecutorTasks, ExecutorTasks) {
-+        let workers_size = self.workers_waiting_status.total_size();
-+        (
-+            mem::replace(&mut self.current_tasks, ExecutorTasks::create(workers_size)),
-+            mem::replace(&mut self.next_tasks, ExecutorTasks::create(workers_size)),
-+        )
-+    }
-+
-     pub fn swap_tasks(&mut self) {
-         mem::swap(&mut self.current_tasks, &mut self.next_tasks);
-     }
-@@ -88,7 +97,14 @@ impl QueriesExecutorTasksQueue {
-             wakeup_workers.push(worker_id);
-         }
- 
-+        // No worker runs the queued tasks any more. They hold the graphs of the
-+        // queries, whose processors must not be dropped with the executor: it may
-+        // outlive what they need to shut down, e.g. the global runtimes. The flag
-+        // is set before the lock is taken, so no task is queued after this.
-+        let queued_tasks = workers_tasks.take_tasks();
-         drop(workers_tasks);
-+        drop(queued_tasks);
-+
-         for wakeup_worker in wakeup_workers {
-             workers_condvar.wakeup(wakeup_worker);
-         }
-@@ -165,6 +181,9 @@ impl QueriesExecutorTasksQueue {
- 
-     pub fn init_sync_tasks(&self, tasks: VecDeque<ProcessorWrapper>, condvar: Arc<WorkersCondvar>) {
-         let mut workers_tasks = self.workers_tasks.lock();
-+        if self.is_finished() {
-+            return;
-+        }
- 
-         let mut worker_id = 0;
-         for proc in tasks.into_iter() {
-@@ -191,6 +210,9 @@ impl QueriesExecutorTasksQueue {
-         condvar: Arc<WorkersCondvar>,
-     ) {
-         let mut workers_tasks = self.workers_tasks.lock();
-+        if self.is_finished() {
-+            return;
-+        }
- 
-         let mut worker_id = 0;
-         for proc in tasks.into_iter() {
-@@ -208,6 +230,10 @@ impl QueriesExecutorTasksQueue {
- 
-     pub fn completed_async_task(&self, condvar: Arc<WorkersCondvar>, task: CompletedAsyncTask) {
-         let mut workers_tasks = self.workers_tasks.lock();
-+        if self.is_finished() {
-+            condvar.dec_active_async_worker();
-+            return;
-+        }
-         // The worker id of a waker is not always the id of a worker of this
-         // executor, e.g. a fuse source passes its index among the sources.
-         let workers = workers_tasks.workers_waiting_status.total_size();
-@@ -248,6 +274,9 @@ impl QueriesExecutorTasksQueue {
-         mut next_tasks: VecDeque<ExecutorTask>,
-     ) {
-         let mut workers_tasks = self.workers_tasks.lock();
-+        if self.is_finished() {
-+            return;
-+        }
- 
-         if let Some(mut tasks) = current_tasks {
-             while let Some(task) = tasks.pop_front() {
-```
-
-**File**: `src/query/service/src/pipelines/executor/queries_pipeline_executor.rs` (modified, +19/-0)
-```diff
-@@ -118,6 +118,12 @@ impl QueriesPipelineExecutor {
-             let sync_queue = std::mem::take(&mut init_schedule_queue.sync_queue);
-             self.global_tasks_queue
-                 .init_sync_tasks(sync_queue, self.workers_condvar.clone());
-+
-+            // All its processors finished in their first event, so no worker runs
-+            // a task of the graph that would finish it.
-+            if graph.is_all_nodes_finished() {
-+                graph.should_finish::<()>(Ok(()))?;
-+            }
-             Ok(())
-         }
-     }
-@@ -222,6 +228,19 @@ impl QueriesPipelineExecutor {
- 
-                 while !self.global_tasks_queue.is_finished() && context.has_task() {
-                     let task_info = context.get_task_info();
-+                    // Counted before the check: a graph that finishes in between
-+                    // waits for this task before running its finish callbacks.
-+                    let _running_task = task_info
-+                        .as_ref()
-+                        .map(|(graph, _)| graph.track_running_task());
-+                    if task_info
-+                        .as_ref()
-+                        .is_some_and(|(graph, _)| graph.is_should_finish())
-+                    {
-+                        drop(context.take_task());
-+                        continue;
-+                    }
-+
-                     let execute_res = catch_unwind(|| context.execute_task(Some(self)));
-                     match execute_res {
-                         Ok(res) => {
-```
-
-**File**: `src/query/service/src/test_kits/config.rs` (modified, +6/-0)
-```diff
-@@ -167,6 +167,12 @@ ADDRESS = 'https://databend.com';"
-         self
-     }
- 
-+    /// Run the queries on the executor shared by all the queries.
-+    pub fn enable_queries_executor(mut self) -> ConfigBuilder {
-+        self.conf.query.common.enable_queries_executor = true;
-+        self
-+    }
-+
-     pub fn table_meta_segment_bytes(mut self, value: u64) -> ConfigBuilder {
-         self.conf.cache.table_meta_segment_bytes = value;
-         self
-```
-
----
-
-### Incident Patch 2: `db269224` (2026-11-17)
-**Commit Message**: fix(storage): bound fuse_page Thrift decoding and drop thrift dep (#21104)
-
-* fix(storage): bound fuse_page Thrift decoding and drop thrift dep
-
-* refactor(storage): extract bounded Thrift and Parquet page header readers
-
-**File**: `Cargo.lock` (modified, +0/-12)
-```diff
-@@ -4290,7 +4290,6 @@ dependencies = [
-  "tantivy",
-  "tantivy-jieba",
-  "tempfile",
-- "thrift",
-  "tokio",
-  "typetag",
-  "uuid",
-@@ -15084,15 +15083,6 @@ dependencies = [
-  "once_cell",
- ]
- 
--[[package]]
--name = "threadpool"
--version = "1.8.1"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "d050e60b33d41c19108b32cea32164033a9013fe3b46cbd4457559bfbf77afaa"
--dependencies = [
-- "num_cpus",
--]
+-        };
 -
- [[package]]
- name = "thrift"
- version = "0.17.0"
-@@ -15101,9 +15091,7 @@ checksum = "7e54bc85fc7faa8bc175c4bab5b92ba8d9a3ce893d0e9f42cc455c8ab16a9e09"
- dependencies = [
-  "byteorder",
-  "integer-encoding 3.0.4",
-- "log",
-  "ordered-float 2.10.1",
-- "threadpool",
- ]
- 
- [[package]]
-```
-
-**File**: `Cargo.toml` (modified, +0/-1)
-```diff
-@@ -477,7 +477,6 @@ terminal_size = "0.4.2"
- test-harness = "0.3.0"
- testcontainers = "0.23"
- thiserror = { version = "1" }
--thrift = "0.17.0"
- tikv-jemalloc-ctl = { version = "0.6.0", features = ["use_std", "stats"] }
- tikv-jemalloc-sys = "0.6.0"
- tokio = { version = "1.54.1", features = ["full"] }
-```
-
-**File**: `src/query/storages/common/blocks/src/lib.rs` (modified, +3/-0)
-```diff
-@@ -14,8 +14,11 @@
- 
- #![allow(clippy::collapsible_if, clippy::uninlined_format_args)]
- 
-+mod parquet_page;
- mod parquet_rs;
- mod parquet_writer;
-+pub mod thrift_compact;
-+pub use parquet_page::*;
- pub use parquet_rs::*;
- pub use parquet_writer::*;
- pub mod memory;
-```
-
-**File**: `src/query/storages/common/blocks/src/parquet_page.rs` (added, +564/-0)
-```diff
-@@ -0,0 +1,564 @@
-+// Copyright 2021 Datafuse Labs
-+//
-+// Licensed under the Apache License, Version 2.0 (the "License");
-+// you may not use this file except in compliance with the License.
-+// You may obtain a copy of the License at
-+//
-+//     http://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing, software
-+// distributed under the License is distributed on an "AS IS" BASIS,
-+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+// See the License for the specific language governing permissions and
-+// limitations under the License.
-+
-+use databend_common_exception::ErrorCode;
-+use databend_common_exception::Result;
-+
-+use crate::thrift_compact::CompactType;
-+use crate::thrift_compact::ThriftCompactReader;
-+
-+const PAGE_TYPE_DATA_PAGE: i32 = 0;
-+const PAGE_TYPE_INDEX_PAGE: i32 = 1;
-+const PAGE_TYPE_DICTIONARY_PAGE: i32 = 2;
-+const PAGE_TYPE_DATA_PAGE_V2: i32 = 3;
-+
-+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-+pub enum ParquetPageKind {
-+    DataPageV1 {
-+        num_values: u64,
-+        encoding: i32,
-+    },
-+    DataPageV2 {
-+        num_values: u64,
-+        num_rows: u64,
-+        encoding: i32,
-+    },
-+    DictionaryPage {
-+        num_values: u64,
-+        encoding: i32,
-+    },
-+    IndexPage,
-+    Unknown(i32),
-+}
-+
-+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-+pub struct ParquetPageHeader {
-+    pub kind: ParquetPageKind,
-+    pub compressed_size: u64,
-+    pub uncompressed_size: u64,
-+    pub header_size: u64,
-+    pub page_offset: u64,
-+}
-+
-+impl ParquetPageHeader {
-+    pub fn is_index_page(&self) -> bool {
-+        matches!(self.kind, ParquetPageKind::IndexPage)
-+    }
-+
-+    pub fn page_type_name(&self) -> &'static str {
-+        match self.kind {
-+            ParquetPageKind::DataPageV1 { .. } => "data_page_v1",
-+            ParquetPageKind::DataPageV2 { .. } => "data_page_v2",
-+            ParquetPageKind::DictionaryPage { .. } => "dictionary",
-+            ParquetPageKind::IndexPage => "index_page",
-+            ParquetPageKind::Unknown(_) => "unknown",
-+        }
-+    }
-+
-+    pub fn encoding_name(&self) -> &'static str {
-+        match self.kind {
-+            ParquetPageKind::DataPageV1 { encoding, .. }
-+            | ParquetPageKind::DataPageV2 { encoding, .. }
-+            | ParquetPageKind::DictionaryPage { encoding, .. } => parquet_encoding_name(encoding),
-+            ParquetPageKind::IndexPage | ParquetPageKind::Unknown(_) => "unknown",
-+        }
-+    }
-+
-+    pub fn num_values(&self) -> u64 {
-+        match self.kind {
-+            ParquetPageKind::DataPageV1 { num_values, .. }
-+            | ParquetPageKind::DataPageV2 { num_values, .. }
-+            | ParquetPageKind::DictionaryPage { num_values, .. } => num_values,
-+            ParquetPageKind::IndexPage | ParquetPageKind::Unknown(_) => 0,
-+        }
-+    }
-+
-+    pub fn num_rows(&self) -> Option<u64> {
-+        match self.kind {
-+            ParquetPageKind::DataPageV1 { num_values, .. } => Some(num_values),
-+            ParquetPageKind::DataPageV2 { num_rows, .. } => Some(num_rows),
-+            ParquetPageKind::DictionaryPage { .. }
-+            | ParquetPageKind::IndexPage
-+            | ParquetPageKind::Unknown(_) => None,
-+        }
-+    }
-+}
-+
-+pub fn parquet_encoding_name(encoding: i32) -> &'static str {
-+    match encoding {
-+        0 => "plain",
-+        2 => "plain_dictionary",
-+        3 => "rle",
-+        4 => "bit_packed",
-+        5 => "delta_binary_packed",
-+        6 => "delta_length_byte_array",
-+        7 => "delta_byte_array",
-+        8 => "rle_dictionary",
-+        9 => "byte_stream_split",
-+        _ => "unknown",
-+    }
-+}
-+
-+/// Decodes a single Parquet `PageHeader` from the start of `input` without allocating.
-+pub fn read_parquet_page_header(input: &[u8], page_offset: u64) -> Result<ParquetPageHeader> {
-+    let mut reader = ThriftCompactReader::new(input);
-+    let mut page_type = None;
-+    let mut uncompressed_size = None;
-+    let mut compressed_size = None;
-+    let mut data_v1 = None;
-+    let mut dict = None;
-+    let mut data_v2 = None;
-+
-+    reader.read_root_struct(|r, field_id, ty| {
-+        match field_id {
-+            1 => page_type = Some(r.read_i32(ty)?),
-+            2 => uncompressed_size = Some(r.read_i32(ty)?),
-+            3 => compressed_size = Some(r.read_i32(ty)?),
-+            4 => {
-+                let _ = r.read_i32(ty)?;
-+            }
-+            5 => data_v1 = Some(read_data_page_v1(r, ty)?),
-+            6 => r.read_struct(ty, |r, _, ty| r.skip_value(ty))?,
-+            7 => dict = Some(read_dictionary_page(r, ty)?),
-+            8 => data_v2 = Some(read_data_page_v2(r, ty)?),
-+            _ => r.skip_value(ty)?,
-+        }
-+        Ok(())
-+    })?;
-+
-+    let header_size = (input.len() - reader.remaining()) as u64;
-+    let page_type = required_field(page_type, "PageHeader.type")?;
-+    let uncompressed_size = non_negative_i32(
-+        required_field(uncompressed_size, "PageHead
-```
-
-**File**: `src/query/storages/common/blocks/src/thrift_compact.rs` (added, +319/-0)
-```diff
-@@ -0,0 +1,319 @@
-+// Copyright 2021 Datafuse Labs
-+//
-+// Licensed under the Apache License, Version 2.0 (the "License");
-+// you may not use this file except in compliance with the License.
-+// You may obtain a copy of the License at
-+//
-+//     http://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing, software
-+// distributed under the License is distributed on an "AS IS" BASIS,
-+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+// See the License for the specific language governing permissions and
-+// limitations under the License.
-+
-+use databend_common_exception::ErrorCode;
-+use databend_common_exception::Result;
-+
-+const MAX_VARINT32_BYTES: usize = 5;
-+const MAX_VARINT64_BYTES: usize = 10;
-+pub const DEFAULT_MAX_THRIFT_DEPTH: usize = 64;
-+
-+/// Wire types in the Thrift Compact Protocol.
-+#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-+pub enum CompactType {
-+    /// Struct boolean field whose value is encoded in the field header nibble.
-+    InlineBool(bool),
-+    /// Collection boolean element stored as a 1-byte value (`0x00..=0x02`).
-+    Bool,
-+    I8,
-+    I16,
-+    I32,
-+    I64,
-+    Double,
-+    Binary,
-+    List,
-+    Set,
-+    Map,
-+    Struct,
-+    Uuid,
-+}
-+
-+impl CompactType {
-+    fn from_common_nibble(nibble: u8) -> Result<Self> {
-+        match nibble {
-+            0x03 => Ok(Self::I8),
-+            0x04 => Ok(Self::I16),
-+            0x05 => Ok(Self::I32),
-+            0x06 => Ok(Self::I64),
-+            0x07 => Ok(Self::Double),
-+            0x08 => Ok(Self::Binary),
-+            0x09 => Ok(Self::List),
-+            0x0A => Ok(Self::Set),
-+            0x0B => Ok(Self::Map),
-+            0x0C => Ok(Self::Struct),
-+            0x0D => Ok(Self::Uuid),
-+            other => Err(thrift_err(format!(
-+                "unknown Thrift compact wire type {other}"
-+            ))),
-+        }
-+    }
-+
-+    fn from_field_nibble(nibble: u8) -> Result<Self> {
-+        match nibble {
-+            0x01 => Ok(Self::InlineBool(true)),
-+            0x02 => Ok(Self::InlineBool(false)),
-+            other => Self::from_common_nibble(other),
-+        }
-+    }
-+
-+    fn from_elem_nibble(nibble: u8) -> Result<Self> {
-+        match nibble {
-+            // Both 0x01 and 0x02 are valid for collection booleans per the Thrift compact spec.
-+            0x01 | 0x02 => Ok(Self::Bool),
-+            other => Self::from_common_nibble(other),
-+        }
-+    }
-+
-+    fn min_wire_size(self) -> usize {
-+        match self {
-+            Self::InlineBool(_) => 0,
-+            Self::Double => 8,
-+            Self::Uuid => 16,
-+            _ => 1,
-+        }
-+    }
-+}
-+
-+/// Bounded, zero-allocation Thrift Compact Protocol reader over an in-memory byte slice.
-+///
-+/// Binary and container lengths are validated against the remaining slice before advancing,
-+/// avoiding eager heap allocations from untrusted length prefixes.
-+pub struct ThriftCompactReader<'a> {
-+    buf: &'a [u8],
-+    depth_budget: usize,
-+}
-+
-+impl<'a> ThriftCompactReader<'a> {
-+    pub fn new(buf: &'a [u8]) -> Self {
-+        Self {
-+            buf,
-+            depth_budget: DEFAULT_MAX_THRIFT_DEPTH,
-+        }
-+    }
-+
-+    pub fn remaining(&self) -> usize {
-+        self.buf.len()
-+    }
-+
-+    pub fn read_byte(&mut self) -> Result<u8> {
-+        let (&b, rest) = self
-+            .buf
-+            .split_first()
-+            .ok_or_else(|| thrift_err("unexpected EOF"))?;
-+        self.buf = rest;
-+        Ok(b)
-+    }
-+
-+    pub fn read_slice(&mut self, len: usize) -> Result<&'a [u8]> {
-+        let (head, tail) = self
-+            .buf
-+            .split_at_checked(len)
-+            .ok_or_else(|| thrift_err("unexpected EOF"))?;
-+        self.buf = tail;
-+        Ok(head)
-+    }
-+
-+    pub fn read_varint32(&mut self) -> Result<u32> {
-+        let mut result = 0u32;
-+        let mut shift = 0u32;
-+        for _ in 0..MAX_VARINT32_BYTES {
-+            let b = self.read_byte()?;
-+            result |= u32::from(b & 0x7F) << shift;
-+            if b & 0x80 == 0 {
-+                return Ok(result);
-+            }
-+            shift += 7;
-+        }
-+        Err(thrift_err("varint32 exceeds 5 bytes"))
-+    }
-+
-+    pub fn read_zigzag_i32(&mut self) -> Result<i32> {
-+        let n = self.read_varint32()?;
-+        Ok(((n >> 1) as i32) ^ -(n as i32 & 1))
-+    }
-+
-+    pub fn read_bool(&mut self, ty: CompactType) -> Result<bool> {
-+        match ty {
-+            CompactType::InlineBool(v) => Ok(v),
-+            CompactType::Bool => match self.read_byte()? {
-+                0x01 => Ok(true),
-+                0x00 | 0x02 => Ok(false),
-+                other => Err(thrift_err(format!("invalid boolean value {other}"))),
-+            },
-+            other => Err(unexpected_type(other, "Bool")),
-+        }
-+    }
-+
-+    pub fn read_i32(&mut self, ty: CompactType) -> Result<i32> {
-+        if ty != CompactType::I32 {
-+            return Err(unexpected_type(ty, "I32"));
-+        }
-+
-```
-
-**File**: `src/query/storages/fuse/Cargo.toml` (modified, +0/-1)
-```diff
-@@ -80,7 +80,6 @@ siphasher = { workspace = true }
- tantivy = { workspace = true }
- tantivy-jieba = { workspace = true }
- tempfile = { workspace = true }
--thrift = { workspace = true }
- tokio = { workspace = true }
- typetag = { workspace = true }
- uuid = { workspace = true }
-```
-
-**File**: `src/query/storages/fuse/src/table_functions/fuse_page.rs` (modified, +18/-189)
-```diff
-@@ -1,5 +1,3 @@
--#![allow(deprecated)]
--
- // Copyright 2021 Datafuse Labs
- //
- // Licensed under the Apache License, Version 2.0 (the "License");
-@@ -14,7 +12,6 @@
- // See the License for the specific language governing permissions and
- // limitations under the License.
- 
--use std::io::Read;
- use std::sync::Arc;
- 
- use databend_common_catalog::table::Table;
-@@ -33,14 +30,11 @@ use databend_common_expression::types::StringType;
- use databend_common_expression::types::TimestampType;
- use databend_common_expression::types::UInt64Type;
- use databend_common_expression::types::string::StringColumnBuilder;
-+use databend_storages_common_blocks::iter_parquet_page_headers;
- use databend_storages_common_cache::CachePolicy;
- use databend_storages_common_table_meta::meta::SegmentInfo;
- use databend_storages_common_table_meta::meta::TableSnapshot;
- use opendal::Operator;
--use parquet::format::PageHeader;
--use parquet::format::PageType;
--use parquet::thrift::TSerializable;
--use thrift::protocol::TCompactInputProtocol;
- 
- use crate::FuseStorageFormat;
- use crate::FuseTable;
-@@ -52,18 +46,6 @@ use crate::table_functions::function_template::TableMetaFunc;
- pub struct FusePage;
- pub type FusePageFunc = TableMetaFuncTemplate<FusePage>;
- 
--struct PageMetaRow<'a> {
--    column_name: &'a str,
--    page_type: &'static str,
--    encoding: &'static str,
--    num_values: u64,
--    num_rows: Option<u64>,
--    compressed_size: u64,
--    uncompressed_size: u64,
--    header_size: u64,
--    page_offset: u64,
--}
--
- #[async_trait::async_trait]
- impl TableMetaFunc for FusePage {
-     fn schema() -> Arc<TableSchema> {
-@@ -164,26 +146,29 @@ impl TableMetaFunc for FusePage {
-                             parquet_meta.len,
-                         )
-                         .await?;
--                        for (page_ordinal_in_column, page) in parse_page_headers(
-+                        let mut page_ordinal_in_column = 0u64;
-+                        for page in iter_parquet_page_headers(
-                             field.name(),
-                             parquet_meta.offset,
--                            column_bytes.as_slice(),
--                        )?
--                        .into_iter()
--                        .enumerate()
--                        {
-+                            column_bytes.as_ref(),
-+                        ) {
-+                            let page = page?;
-+                            if page.is_index_page() {
-+                                continue;
-+                            }
-                             block_location.put_and_commit(&block.location.0);
--                            column_name.put_and_commit(page.column_name);
--                            page_type.put_and_commit(page.page_type);
--                            encoding.put_and_commit(page.encoding);
--                            page_ordinal.push(page_ordinal_in_column as u64);
--                            num_values.push(page.num_values);
--                            num_rows.push(page.num_rows);
-+                            column_name.put_and_commit(field.name());
-+                            page_type.put_and_commit(page.page_type_name());
-+                            encoding.put_and_commit(page.encoding_name());
-+                            page_ordinal.push(page_ordinal_in_column);
-+                            num_values.push(page.num_values());
-+                            num_rows.push(page.num_rows());
-                             compressed_size.push(page.compressed_size);
-                             uncompressed_size.push(page.uncompressed_size);
-                             header_size.push(page.header_size);
-                             page_offset.push(page.page_offset);
- 
-+                            page_ordinal_in_column += 1;
-                             rows += 1;
-                             if rows >= limit {
-                                 break 'FOR;
-@@ -220,7 +205,7 @@ async fn read_parquet_column_chunk(
-     location: &str,
-     offset: u64,
-     len: u64,
--) -> Result<Vec<u8>> {
-+) -> Result<bytes::Bytes> {
-     let end = offset.checked_add(len).ok_or_else(|| {
-         ErrorCode::ParquetFileInvalid(format!(
-             "invalid parquet file {}, column chunk length overflow",
-@@ -232,161 +217,5 @@ async fn read_parquet_column_chunk(
-         .range(offset..end)
-         .await
-         .map_err(|err| ErrorCode::StorageOther(err.to_string()))?;
--    Ok(buffer.to_vec())
--}
--
--fn parse_page_headers<'a>(
--    column_name: &'a str,
--    column_offset: u64,
--    column_bytes: &'a [u8],
--) -> Result<Vec<PageMetaRow<'a>>> {
--    let mut cursor = std::io::Cursor::new(column_bytes);
--    let total_len = column_bytes.len() as u64;
--    let mut pages = Vec::new();
--
--    while cursor.position() < total_len {
--        let header_offset = cursor.position();
--        let (header_len, header) = read_page_header_len(&mut cursor)?;
--        let compressed_size =
--            convert_i32_to_u64(header.compressed_page_size, "compresse
-```
-
----
-
-### Incident Patch 3: `9012edc8` (2026-11-17)
-**Commit Message**: fix(query): correct HNSW graph construction and SQ8 scoring in vector indexes (#21097)
-
-* fix(query): correct HNSW graph construction and SQ8 scoring in vector indexes
-
-* fix calibration_count = 0
-
-**File**: `src/query/service/tests/it/indexes/vector_index/pruning.rs` (modified, +30/-57)
-```diff
-@@ -741,13 +741,13 @@ async fn test_block_pruner() -> anyhow::Result<()> {
-         // Third query: l2_distance with query_values1
-         vec![
-             vec![
--                VectorScoreResult::new(0, 0, 0, 3.5187712),
--                VectorScoreResult::new(0, 0, 9, 3.5518785),
-+                VectorScoreResult::new(0, 0, 0, 0.0),
-+                VectorScoreResult::new(0, 0, 9, 0.4838298),
-+                VectorScoreResult::new(0, 0, 1, 0.59597003),
-             ],
-             vec![
--                VectorScoreResult::new(1, 3, 6, 3.4702706),
--                VectorScoreResult::new(1, 3, 7, 3.5206928),
--                VectorScoreResult::new(1, 3, 1, 3.556445),
-+                VectorScoreResult::new(1, 0, 9, 0.51379997),
-+                VectorScoreResult::new(1, 0, 5, 0.58313537),
-             ],
-         ],
-         // Fourth query: cosine_distance with query_values2
-@@ -771,12 +771,17 @@ async fn test_block_pruner() -> anyhow::Result<()> {
-             ],
-         ],
-         // Sixth query: l2_distance with query_values2
--        vec![vec![VectorScoreResult::new(1, 1, 8, 3.4763064)], vec![
--            VectorScoreResult::new(1, 3, 5, 3.4903116),
--            VectorScoreResult::new(1, 3, 9, 3.4926815),
--            VectorScoreResult::new(1, 3, 0, 3.527872),
--            VectorScoreResult::new(1, 3, 8, 3.560473),
--        ]],
-+        vec![
-+            vec![
-+                VectorScoreResult::new(0, 1, 6, 0.48633155),
-+                VectorScoreResult::new(0, 1, 5, 0.7715289),
-+            ],
-+            vec![VectorScoreResult::new(1, 1, 8, 0.0)],
-+            vec![
-+                VectorScoreResult::new(1, 4, 8, 0.47685158),
-+                VectorScoreResult::new(1, 4, 7, 0.71438366),
-+            ],
-+        ],
-     ];
- 
-     let mut extras = Vec::new();
-@@ -887,32 +892,17 @@ async fn test_block_pruner() -> anyhow::Result<()> {
-                 VectorScoreResult::new(1, 0, 9, 0.7167929),
-             ],
-         ],
--        // Third query: l2_distance with filter and query_values1
-+        // Third query: l2_distance with filter and query_values1. L2 scores are
-+        // small, so few rows pass `> 2.0`; these are the TopN rows themselves,
-+        // which `filtered_topn` leaves unchanged.
-         vec![
-+            vec![VectorScoreResult::new(0, 0, 7, 2.1106725)],
-             vec![
--                VectorScoreResult::new(0, 0, 0, 3.5187712),
--                VectorScoreResult::new(0, 0, 1, 3.5688834),
--                VectorScoreResult::new(0, 0, 2, 4.158467),
--                VectorScoreResult::new(0, 0, 3, 3.8972623),
--                VectorScoreResult::new(0, 0, 4, 3.9402654),
--                VectorScoreResult::new(0, 0, 5, 3.8295133),
--                VectorScoreResult::new(0, 0, 6, 4.16049),
--                VectorScoreResult::new(0, 0, 7, 4.1032534),
--                VectorScoreResult::new(0, 0, 8, 4.2184787),
--                VectorScoreResult::new(0, 0, 9, 3.5518785),
--            ],
--            vec![
--                VectorScoreResult::new(1, 3, 0, 3.9212408),
--                VectorScoreResult::new(1, 3, 1, 3.556445),
--                VectorScoreResult::new(1, 3, 2, 3.7241573),
--                VectorScoreResult::new(1, 3, 3, 4.1835504),
--                VectorScoreResult::new(1, 3, 4, 3.6078227),
--                VectorScoreResult::new(1, 3, 5, 3.5779395),
--                VectorScoreResult::new(1, 3, 6, 3.4702706),
--                VectorScoreResult::new(1, 3, 7, 3.5206928),
--                VectorScoreResult::new(1, 3, 8, 3.8251386),
--                VectorScoreResult::new(1, 3, 9, 3.616931),
-+                VectorScoreResult::new(0, 3, 6, 2.0039008),
-+                VectorScoreResult::new(0, 3, 1, 2.0506036),
-             ],
-+            vec![VectorScoreResult::new(1, 0, 6, 2.0104616)],
-+            vec![VectorScoreResult::new(1, 1, 4, 2.070966)],
-         ],
-         // Fourth query: cosine_distance with filter and query_values2
-         vec![],
-@@ -967,32 +957,15 @@ async fn test_block_pruner() -> anyhow::Result<()> {
-                 VectorScoreResult::new(1, 3, 9, 2.011335),
-             ],
-         ],
--        // Sixth query: l2_distance with filter and query_values2
-+        // Sixth query: l2_distance with filter and query_values2, TopN rows as above.
-         vec![
-             vec![
--                VectorScoreResult::new(1, 1, 0, 3.819309),
--                VectorScoreResult::new(1, 1, 1, 3.8105543),
--                VectorScoreResult::new(1, 1, 2, 3.8291273),
--                VectorScoreResult::new(1, 1, 3, 3.7389958),
--                VectorScoreResult::new(1, 1, 4, 3.5913217),
--                VectorScoreResult::new(1, 1, 5, 3.870244),
--                VectorScoreResult::new(1, 1, 6, 3.7941854),
--                VectorScoreResult::new(1, 1, 7, 3.585766),
--                VectorScoreResult::new(1, 1, 8, 3.4763064),
--                VectorScoreResult::new(1, 1, 9, 3.709784),
--            ],
--            vec![
--                VectorScoreResult::new(1,
-```
-
-**File**: `src/query/storages/common/index/src/hnsw_index/graph_layers_builder.rs` (modified, +59/-3)
-```diff
-@@ -248,13 +248,18 @@ impl GraphLayersBuilder {
- 
-     /// Map a uniform `[0, 1)` sample to a geometric level.
-     ///
-+    /// With `level_factor = 1 / ln(m)`, `floor` gives `P(level >= l) = m^-l`,
-+    /// the distribution from the HNSW paper: 1 in `m` points reaches level 1.
-+    /// Rounding instead would give `m^-(l - 0.5)`, putting 4x as many points on
-+    /// level 1 at `m = 16` and growing the upper layers with no search benefit.
-+    ///
-     /// `Uniform::new(0.0, 1.0)` is half-open, so `sample` can be exactly `0.0`.
--    /// `ln(0.0)` is `-inf`, and `(-(-inf) * factor).round() as usize` saturates
-+    /// `ln(0.0)` is `-inf`, and `(-(-inf) * factor).floor() as usize` saturates
-     /// to `usize::MAX`, which then makes `set_levels` allocate unboundedly.
-     /// Clamp to the smallest positive `f64` so the level stays bounded (qdrant#9959).
-     fn level_from_sample(sample: f64, level_factor: f64) -> usize {
-         let sample = sample.max(f64::MIN_POSITIVE);
--        (-sample.ln() * level_factor).round() as usize
-+        (-sample.ln() * level_factor).floor() as usize
-     }
- 
-     pub(crate) fn get_point_level(&self, point_id: PointOffsetType) -> usize {
-@@ -468,8 +473,13 @@ impl GraphLayersBuilder {
- 
- #[cfg(test)]
- mod tests {
-+    use rand::SeedableRng as _;
-+    use rand::rngs::SmallRng;
-+
-     use super::*;
- 
-+    const M: usize = 8;
-+
-     #[test]
-     fn test_level_from_sample() {
-         // A zero uniform sample used to make ln(0) = -inf and saturate the
-@@ -482,6 +492,52 @@ mod tests {
-         );
-         // Other samples keep their level.
-         assert_eq!(GraphLayersBuilder::level_from_sample(0.5, level_factor), 0);
--        assert_eq!(GraphLayersBuilder::level_from_sample(0.1, level_factor), 1);
-+        assert_eq!(GraphLayersBuilder::level_from_sample(0.05, level_factor), 1);
-+    }
-+
-+    #[test]
-+    fn level_from_sample_level_boundaries() {
-+        // A point reaches level `l` exactly when `sample <= m^-l`.
-+        let m = M as f64;
-+        let level_factor = 1.0 / m.ln();
-+        let level = |sample: f64| GraphLayersBuilder::level_from_sample(sample, level_factor);
-+
-+        assert_eq!(level(0.99), 0);
-+        assert_eq!(level(1.1 / m), 0);
-+        assert_eq!(level(0.9 / m), 1);
-+        assert_eq!(level(1.1 / (m * m)), 1);
-+        assert_eq!(level(0.9 / (m * m)), 2);
-+        // Rounding would put this sample on level 1 (`-ln(0.2) / ln(8) = 0.77`).
-+        assert_eq!(level(0.2), 0);
-+    }
-+
-+    #[test]
-+    fn get_random_layer_follows_geometric_distribution() {
-+        let level_factor = 1.0 / (M as f64).ln();
-+        let distribution = Uniform::new(0.0, 1.0);
-+        let mut rng = SmallRng::seed_from_u64(42);
-+        let samples: u32 = 1_000_000;
-+
-+        let mut at_or_above = [0usize; 4];
-+        for _ in 0..samples {
-+            let sample: f64 = rng.sample(distribution);
-+            let level = GraphLayersBuilder::level_from_sample(sample, level_factor);
-+            for (l, count) in at_or_above.iter_mut().enumerate() {
-+                if level >= l {
-+                    *count += 1;
-+                }
-+            }
-+        }
-+
-+        // `P(level >= l) = M^-l`
-+        for (l, &count) in at_or_above.iter().enumerate().skip(1) {
-+            let expected = f64::from(samples) * (M as f64).powi(-i32::try_from(l).unwrap());
-+            let observed = count as f64;
-+            let tolerance = 5.0 * expected.sqrt() + 1.0;
-+            assert!(
-+                (observed - expected).abs() <= tolerance,
-+                "level >= {l}: observed {observed}, expected {expected:.0} +- {tolerance:.0}",
-+            );
-+        }
-     }
- }
-```
-
-**File**: `src/query/storages/common/index/src/hnsw_index/hnsw.rs` (modified, +3/-0)
-```diff
-@@ -397,8 +397,11 @@ impl HNSWIndex {
-         };
- 
-         let builder = Vec::new();
-+        // NULL rows hold a placeholder vector: encode them to keep point ids as
-+        // block rows, but fit the value range on the real vectors only.
-         let encoded_vectors = EncodedVectorsU8::encode(
-             (0..params.count).map(|i| &data.as_ref()[i * params.dim..(i + 1) * params.dim]),
-+            (0..params.count).map(|i| validity.as_ref().is_none_or(|bitmap| bitmap.get_bit(i))),
-             builder,
-             &params,
-             None,
-```
-
-**File**: `src/query/storages/common/index/src/hnsw_index/links_container.rs` (modified, +83/-9)
-```diff
-@@ -14,9 +14,8 @@
- // limitations under the License.
- 
- // Ported from qdrant `lib/segment/src/index/hnsw_index/links_container.rs`
--// (v1.20.0, "Heuristic optimization", qdrant#6501). The redundancy test keeps the
--// strict comparison of the original heuristic, so the selected links are the same.
--// Unlike qdrant, the first link is also marked as processed.
-+// (v1.20.0, "Heuristic optimization", qdrant#6501), with the redundancy test of
-+// qdrant#10239. Unlike qdrant, the first link is also marked as processed.
- 
- use std::cell::Cell;
- use std::iter::Copied;
-@@ -25,11 +24,28 @@ use crate::hnsw_index::common::types::PointOffsetType;
- use crate::hnsw_index::common::types::ScoreType;
- use crate::hnsw_index::common::types::ScoredPointOffset;
- 
--/// Neighbour-selection ("not closer than base") test: a candidate is dropped when
--/// an already selected link is closer to it than the target is.
-+/// Neighbour-selection ("not closer than base") test.
-+///
-+/// A candidate is dropped when an already selected link is closer to it than the
-+/// target is. The comparison is strict, *except* between candidates that are
-+/// exactly equidistant from the target: without that exception a group of
-+/// byte-identical vectors is mutually non-pruning and fills every link slot,
-+/// turning the group into a sink with no edges leaving it.
-+///
-+/// Restricting the non-strict comparison to `candidate_score == existing_score`
-+/// keeps ordinary (non-duplicate) candidates unaffected: for them the equality
-+/// case has measure zero.
- #[inline]
--fn is_redundant(candidate_to_existing: ScoreType, candidate_score: ScoreType) -> bool {
--    candidate_to_existing > candidate_score
-+fn is_redundant(
-+    candidate_to_existing: ScoreType,
-+    candidate_score: ScoreType,
-+    existing_score: ScoreType,
-+) -> bool {
-+    if candidate_score == existing_score {
-+        candidate_to_existing >= candidate_score
-+    } else {
-+        candidate_to_existing > candidate_score
-+    }
+-        Ok(Some(NestedLoopDesc {
+-            filter: FilterExecutor::new(
+-                predicates,
+-                function_ctx.clone(),
+-                block_size,
+-                None,
+-                &BUILTIN_FUNCTIONS,
+-                false,
+-            ),
+-            projections,
+-            field_reorder,
+-            nested_loop_join_threshold,
+-        }))
+-    }
  }
  
- /// The links of a point on one level, sorted from the closest, and how many of
-@@ -85,13 +101,20 @@ impl LinksContainer {
-             self.processed_by_heuristic = 0;
-             return;
-         }
-+        // Scores of the already selected links, to detect exact ties (see `is_redundant`).
-+        let mut selected_scores: Vec<ScoreType> = Vec::with_capacity(level_m);
-         'outer: for candidate in candidates {
--            for &existing in &self.links {
--                if is_redundant(score(candidate.idx, existing), candidate.score) {
-+            for (&existing, &existing_score) in self.links.iter().zip(&selected_scores) {
-+                if is_redundant(
-+                    score(candidate.idx, existing),
-+                    candidate.score,
-+                    existing_score,
-+                ) {
-                     continue 'outer;
-                 }
-             }
-             self.links.push(candidate.idx);
-+            selected_scores.push(candidate.score);
-             if self.links.len() >= level_m {
-                 break;
-             }
-@@ -213,6 +236,7 @@ impl LinksContainer {
-                 if is_redundant(
-                     score(candidate.idx, existing.idx),
-                     candidate.cached_score(target_point_id, &mut score),
-+                    existing.cached_score(target_point_id, &mut score),
-                 ) {
-                     continue 'outer;
-                 }
-@@ -387,6 +411,56 @@ mod tests {
-         assert_eq!(links_container.links(), &[1, 2, 3, 4, 5, 6]);
-     }
- 
-+    /// A group of byte-identical vectors must not consume each other's whole link
-+    /// budget: every copy is equidistant from every other, so under a strictly
-+    /// greater comparison none of them prunes any other and the group ends up as a
-+    /// sink at level 0 with no edges leaving it.
-+    #[test]
-+    fn test_exact_duplicates_do_not_fill_the_link_list() {
-+        const M: usize = 6;
-+        const COPIES: usize = 8;
-+
-+        // Point 0 is the target. Points 1..=COPIES are byte-identical to it.
-+        // The remaining points are ordinary neighbours, all a little further away.
-+        let mut points: Vec<Vec<f32>> = vec![vec![0.0, 0.0]; COPIES + 1];
-+        points.extend([vec![1.0, 0.0], vec![0.0, 1.0], vec![-1.0, 0.0], vec![
-+            0.0, -1.0,
-+        ]]);
-+        let scorer = |a: PointOffsetType, b: PointOffsetType| {
-+            -((points[a as usize][0] - points[b as usize][0]).powi(2)
-+                + (points[a as usize][1] - points[b as usize][1]).powi(2))
-+            .sqrt()
-+        };
-+
-+        let mut candidates = FixedLengthPriorityQueue::new(points.len() - 1);
-+        for id in 1..points.len() as PointOffsetType {
-+            candidates.push(ScoredPointOffset {
-+                idx: id,
-+                score: scorer(0, id),
-+            });
-+        }
-+
-+        let mut container = LinksContainer::with_capacity(M);
-+        container.fill_from_sorted_with_heuristic(candidates.into_iter_sorted(),
-```
-
-**File**: `src/query/storages/common/index/src/hnsw_index/point_scorer.rs` (modified, +1/-0)
-```diff
-@@ -248,6 +248,7 @@ mod tests {
-         };
-         let encoded = EncodedVectorsU8::encode(
-             data.chunks(dim),
-+            std::iter::repeat_n(true, count),
-             Vec::new(),
-             &params,
-             None,
-```
-
-**File**: `src/query/storages/common/index/src/hnsw_index/quantization/encoded_vectors.rs` (modified, +50/-0)
-```diff
-@@ -79,6 +79,25 @@ impl DistanceType {
-     }
- }
- 
-+/// The vectors of `data` to fit the quantization parameters on, and how many there are.
-+///
-+/// `keep` holds one flag per vector of `data`, set for the vectors to fit on.
-+pub(crate) fn calibration_vectors<V>(
-+    data: impl Iterator<Item = V> + Clone,
-+    keep: impl Iterator<Item = bool> + Clone,
-+) -> (impl Iterator<Item = V> + Clone, usize) {
-+    debug_assert_eq!(
-+        keep.clone().count(),
-+        data.clone().count(),
-+        "calibration mask must have one flag per vector",
-+    );
-+    let count = keep.clone().filter(|&keep| keep).count();
-+    let vectors = data
-+        .zip(keep)
-+        .filter_map(|(vector, keep)| keep.then_some(vector));
-+    (vectors, count)
-+}
-+
- pub(crate) fn validate_vector_parameters<'a>(
-     data: impl Iterator<Item = impl AsRef<[f32]> + 'a> + Clone,
-     vector_parameters: &VectorParameters,
-@@ -103,3 +122,34 @@ pub(crate) fn validate_vector_parameters<'a>(
-     }
-     Ok(())
- }
-+
+-pub struct NestedLoopDesc {
+-    pub filter: FilterExecutor,
+-    pub projections: BTreeSet<usize>,
+-    pub field_reorder: Option<Vec<FieldIndex>>,
+-    pub nested_loop_join_threshold: usize,
 +#[cfg(test)]
 +mod tests {
 +    use super::*;
 +
 +    #[test]
-+    fn test_calibration_vectors() {
-+        let data = [[1.0f32], [2.0], [3.0]];
-+        let (vectors, count) = calibration_vectors(data.iter(), [true, false, true].into_iter());
-+        assert_eq!(count, 2);
-+        assert_eq!(vectors.collect::<Vec<_>>(), [&[1.0], &[3.0]]);
-+    }
-+
-+    #[test]
-+    #[cfg(debug_assertions)]
-+    #[should_panic(expected = "calibration mask must have one flag per vector")]
-+    fn test_calibration_vectors_rejects_short_mask() {
-+        let data = [[1.0f32], [2.0], [3.0]];
-+        let (vectors, _) = calibration_vectors(data.iter(), [true, true].into_iter());
-+        vectors.for_each(drop);
-+    }
-+
-+    #[test]
-+    #[cfg(debug_assertions)]
-+    #[should_panic(expected = "calibration mask must have one flag per vector")]
-+    fn test_calibration_vectors_rejects_long_mask() {
-+        let data = [[1.0f32], [2.0], [3.0]];
-+        let (vectors, _) = calibration_vectors(data.iter(), [true; 4].into_iter());
-+        vectors.for_each(drop);
-+    }
-+}
++    fn joins_without_keys_probe_all_pairs() {
++        assert!(probes_all_pairs(JoinType::Cross, false, No
 ```
 
-**File**: `src/query/storages/common/index/src/hnsw_index/quantization/encoded_vectors_u8.rs` (modified, +370/-46)
+**File**: `src/query/service/src/pipelines/processors/transforms/hash_join/hash_join_build_state.rs` (modified, +3/-10)
 ```diff
-@@ -31,10 +31,15 @@ use crate::hnsw_index::quantization::encoded_storage::EncodedStorageBuilder;
- use crate::hnsw_index::quantization::encoded_vectors::DistanceType;
- use crate::hnsw_index::quantization::encoded_vectors::EncodedVectors;
- use crate::hnsw_index::quantization::encoded_vectors::VectorParameters;
-+use crate::hnsw_index::quantization::encoded_vectors::calibration_vectors;
- use crate::hnsw_index::quantization::encoded_vectors::validate_vector_parameters;
- use crate::hnsw_index::quantization::quantile::find_min_max_from_iter;
- use crate::hnsw_index::quantization::quantile::find_quantile_interval;
+@@ -261,7 +261,7 @@ impl HashJoinBuildState {
+                 return Ok(());
+             }
  
-+// Ported from qdrant `lib/quantization/src/encoded_vectors_u8.rs`. Deviation: a
-+// constant range is widened in `alpha_offset_from_min_max`, qdrant quantizes it
-+// with `alpha = 0`.
-+
- pub const ALIGNMENT: usize = 16;
+-            if self.hash_join_state.hash_join_desc.join_type == JoinType::Cross {
++            if self.hash_join_state.probes_all_pairs() {
+                 return Ok(());
+             }
+             let unique_entry = matches!(
+@@ -770,7 +770,6 @@ impl HashJoinBuildState {
+                     "Aborted query, because the hash table is uninitialized.",
+                 ));
+             }
+-            HashJoinHashTable::NestedLoop(_) => unreachable!(),
+             HashJoinHashTable::UniqueSerializer(table) => insert_binary_key! {
+               &mut table.hash_table, &table.hash_method, chunk, build_keys, valids, chunk_index as u32, entry_size, &mut local_raw_entry_spaces,
+             },
+@@ -817,9 +816,7 @@ impl HashJoinBuildState {
+         info!("finish build hash table with {} rows", build_num_rows);
  
- pub struct EncodedVectorsU8<TStorage: EncodedStorage> {
-@@ -61,15 +66,59 @@ struct Metadata {
-     vector_parameters: VectorParameters,
- }
- 
-+impl Metadata {
-+    #[inline]
-+    fn postprocess_score(&self, score: f32, query_offset: f32, vector_offset: f32) -> f32 {
-+        self.multiplier * score + query_offset + vector_offset
-+    }
-+
-+    #[inline]
-+    fn postprocess_internal_score(
-+        &self,
-+        score: f32,
-+        vector_1_offset: f32,
-+        vector_2_offset: f32,
-+    ) -> f32 {
-+        let query_offset = vector_1_offset - self.get_shift();
-+        self.postprocess_score(score, query_offset, vector_2_offset)
-+    }
-+
-+    fn get_shift(&self) -> f32 {
-+        // Dotprod after shifting produces a number which is not related to vector and query
-+        // (x - a)(y - a) = xy - ax - ay + a^2
-+        // this a^2 is returned here
-+        let shift = match self.vector_parameters.distance_type {
-+            DistanceType::Dot => self.actual_dim as f32 * self.offset * self.offset,
-+            // L2 is computed from squared code differences. The common quantizer offset cancels
-+            // before squaring, so adding an absolute offset^2 shift would make scores depend on
-+            // translating all vectors and the query by the same constant.
-+            DistanceType::L1 | DistanceType::L2 => 0.0,
-+        };
-+        if self.vector_parameters.invert {
-+            -shift
-+        } else {
-+            shift
-+        }
-+    }
-+}
-+
- impl EncodedVectorsU8<HugePageBytes> {
-     pub(crate) fn memory_size(&self) -> usize {
-         std::mem::size_of::<Self>() + self.encoded_vectors.capacity()
+         let data_blocks = &mut build_state.generation_state.chunks;
+-        if !data_blocks.is_empty()
+-            && self.hash_join_state.hash_join_desc.join_type != JoinType::Cross
+-        {
++        if !data_blocks.is_empty() && !self.hash_join_state.probes_all_pairs() {
+             let num_columns = data_blocks[0].num_columns();
+             let columns_data_type: Vec<DataType> = (0..num_columns)
+                 .map(|index| data_blocks[0].data_type(index))
+@@ -843,7 +840,7 @@ impl HashJoinBuildState {
+         if self.finalize_counter.fetch_sub(1, Ordering::AcqRel) == 1 {
+             self.build_generation_state();
+             if self.hash_join_state.need_next_round.load(Ordering::Acquire) {
+-                let partition_id = if self.join_type() != JoinType::Cross {
++                let partition_id = if !self.hash_join_state.probes_all_pairs() {
+                     // If build side has spilled data, we need to wait build side to next round.
+                     // Set partition id to `HashJoinState`
+                     let mut spill_partitions = self.hash_join_state.spilled_partitions.write();
+@@ -915,10 +912,6 @@ impl HashJoinBuildState {
+         Ok(())
      }
+ 
+-    pub(crate) fn join_type(&self) -> JoinType {
+-        self.hash_join_state.hash_join_desc.join_type
+-    }
+-
+     pub fn runtime_filter_desc(&self) -> &[RuntimeFilterDesc] {
+         &self.hash_join_state.hash_join_desc.runtime_filter.filters
+     }
+```
+
+**File**: `src/query/service/src/pipelines/processors/transforms/hash_join/hash_join_probe_state.rs` (modified, +15/-11)
+```diff
+@@ -43,6 +43,7 @@ use parking_lot::Mutex;
+ use parking_lot::RwLock;
+ use tokio::sync::Barrier;
+ 
++use super::PendingProbe;
+ use super::ProbeState;
+ use super::ProcessState;
+ use crate::pipelines::processors::HashJoinState;
+@@ -152,25 +153,29 @@ impl HashJoinProbeState {
+ 
+     /// Probe the hash table and retrieve matched rows as DataBlocks.
+     pub fn probe(&self, input: DataBlock, probe_state: &mut ProbeState) -> Result<Vec<DataBlock>> {
+-        match self.hash_join_state.hash_join_desc.join_type {
+-            JoinType::Cross => self.cross_join(input, probe_state),
+-            _ => self.probe_join(input, probe_state),
++        if self.hash_join_state.probes_all_pairs() {
++            self.cross_join(input, probe_state)
++        } else {
++            self.probe_join(input, probe_state)
+         }
+     }
+ 
+     pub fn next_probe(&self, probe_state: &mut ProbeState) -> Result<Vec<DataBlock>> {
+-        let process_state = probe_state.process_state.as_ref().unwrap();
++        let process_state = match probe_state.pending.take() {
++            Some(PendingProbe::Hash(process_state)) => process_state,
++            Some(PendingProbe::Cross(cursor)) => return self.next_cross_join(cursor, probe_state),
++            None => unreachable!("no pending probe"),
++        };
++        let keys_state = process_state.keys_state.clone();
++        probe_state.pending = Some(PendingProbe::Hash(process_state));
+         let hash_table = unsafe { &*self.hash_join_state.hash_table.get() };
+         with_join_hash_method!(|T| match hash_table {
+             HashJoinHashTable::T(table) => {
+                 // Build `keys` and get the hashes of `keys`.
+-                let keys = table
+-                    .hash_method
+-                    .build_keys_accessor(process_state.keys_state.clone())?;
++                let keys = table.hash_method.build_keys_accessor(keys_state)?;
+                 // Continue to probe hash table and process data blocks.
+                 self.result_blocks(probe_state, keys, &table.hash_table)
+             }
+-            HashJoinHashTable::NestedLoop(_) => unreachable!(),
+             HashJoinHashTable::Null => Err(ErrorCode::AbortedQuery(
+                 "Aborted query, because the hash table is uninitialized.",
+             )),
+@@ -328,12 +333,12 @@ impl HashJoinProbeState {
+                     .build_keys_hashes(&keys_state, &mut probe_state.hashes);
+                 let keys = table.hash_method.build_keys_accessor(keys_state.clone())?;
+ 
+-                probe_state.process_state = Some(ProcessState {
++                probe_state.pending = Some(PendingProbe::Hash(ProcessState {
+                     input,
+                     probe_has_null,
+                     keys_state,
+                     next_idx: 0,
+-                });
++                }));
+ 
+                 // Perform a round of hash table probe.
+                 probe_state.probe_with_selection = prefer_early_filtering;
+@@ -379,7 +384,6 @@ impl HashJoinProbeState {
+                 // Continue to probe hash table and process data blocks.
+                 self.result_blocks(probe_state, keys, &table.hash_table)
+             }
+-            HashJoinHashTable::NestedLoop(_) => unreachable!(),
+             HashJoinHashTable::Null => Err(ErrorCode::AbortedQuery(
+                 "Aborted query, because the hash table is uninitialized.",
+             )),
+```
+
+**File**: `src/query/service/src/pipelines/processors/transforms/hash_join/hash_join_spiller.rs` (modified, +26/-12)
+```diff
+@@ -45,6 +45,8 @@ pub struct HashJoinSpiller {
+     partition_buffer: PartitionBuffer,
+     partition_threshold: usize,
+     join_type: JoinType,
++    /// Spill and replay every pair in rounds rather than by hash partition.
++    probes_all_pairs: bool,
+     join_state: Arc<HashJoinState>,
+     is_build_side: bool,
+     func_ctx: FunctionContext,
+@@ -54,6 +56,9 @@ pub struct HashJoinSpiller {
+     hash_method: HashMethodKind,
+     /// Next restore file index, only used for cross join.
+     next_restore_file: usize,
++    /// The retained probe buffer must be replayed once per build round, even
++    /// when it has no columns and therefore no spill files advance the cursor.
++    replay_buffer_restored: bool,
+     block_partition_stream: BlockPartitionStream,
  }
  
- impl<TStorage: EncodedStorage> EncodedVectorsU8<TStorage> {
-+    /// Encode vector data using scalar quantization.
-+    ///
-+    /// Every vector of `orig_data` is encoded, but the value range (min/max or quantile) is
-+    /// fitted only on the vectors whose flag in `keep` is set. `keep` holds one flag per vector;
-+    /// clear the flags of vectors that are not real (e.g. the placeholders of NULL vectors).
-+    /// If no flag is set while `orig_data` is not empty, no vector is real, so no score matters,
-+    /// and a zero range is used.
-     pub fn encode<'a>(
-         orig_data: impl Iterator<Item = impl AsRef<[f32]> + 'a> + Clone,
-+        keep: impl Iterator<Item = bool> + Clone,
-         mut storage_builder: impl EncodedStorageBuilder<TStorage>,
-         vector_parameters: &VectorParameters,
-         quantile: Option<f32>,
-@@ -92,12 +141,17 @@ impl<TStorage: EncodedStorage> EncodedVectorsU8<TStorage> {
+@@ -100,6 +105,7 @@ impl HashJoinSpiller {
+         let partition_buffer = PartitionBuffer::create(num_partitions);
+ 
+         let join_type = join_state.join_type();
++        let probes_all_pairs = join_state.probes_all_pairs();
+         Ok(Self {
+             spiller,
+             partition_buffer,
+@@ -108,10 +114,12 @@ impl HashJoinSpiller {
+             hash_keys,
+             hash_method,
+             join_type,
++            probes_all_pairs,
+             join_state,
+             func_ctx: ctx.get_function_context()?,
+             is_build_side,
+             next_restore_file: 0,
++            replay_buffer_restored: false,
+             block_partition_stream: BlockPartitionStream::create(0, block_bytes, num_partitions),
+         })
+     }
+@@ -122,7 +130,7 @@ impl HashJoinSpiller {
+             return Ok(());
          }
  
-         debug_assert!(validate_vector_parameters(orig_data.clone(), vector_parameters).is_ok());
--        let (alpha, offset) = Self::find_alpha_offset_size_dim(orig_data.clone());
-+        let (calibration_data, calibration_count) = calibration_vectors(orig_data.clone(), keep);
-+        let (alpha, offset) = if calibration_count == 0 {
-+            (0.0, 0.0)
-+        } else {
-+            Self::find_alpha_offset_size_dim(calibration_data.clone())
-+        };
-         let (alpha, offset) = if let Some(quantile) = quantile {
-             if let Some((min, max)) = find_quantile_interval(
--                orig_data.clone(),
-+                calibration_data,
-                 vector_parameters.dim,
--                vector_parameters.count,
-+                calibration_count,
-                 quantile,
-             ) {
-                 Self::alpha_offset_from_min_max(min, max)
-@@ -108,6 +162,30 @@ impl<TStorage: EncodedStorage> EncodedVectorsU8<TStorage> {
-             (alpha, offset)
-         };
+-        if self.join_type == JoinType::Cross {
++        if self.probes_all_pairs {
+             return self.cross_buffer(data_blocks);
+         }
  
-+        let multiplier = match vector_parameters.distance_type {
-+            // (alpha*x - offset) * (alpha*y - offset) = alpha^2*x*y - alpha*offset*x - alpha*offset*y + offset^2
-+            // multiplier is applied to xy term only, so we need to multiply score by alpha^2
-+            DistanceType::Dot => alpha * alpha,
-+            // |(alpha*x - offset) - (alpha*y - offset)| = alpha*|x - y|
-+            // multiplier is applied to |x - y| term only, so we need to multiply score by alpha
-+            DistanceType::L1 => alpha,
-+            // ((alpha*
+@@ -167,7 +175,7 @@ impl HashJoinSpiller {
+         data_blocks: Vec<DataBlock>,
+         partition_need_to_spill: Option<&HashSet<usize>>,
+     ) -> Result<Vec<DataBlock>> {
+-        if self.join_type == JoinType::Cross {
++        if self.probes_all_pairs {
+             return self
+                 .cross_spill(&data_blocks, partition_need_to_spill)
+                 .await;
+@@ -271,11 +279,15 @@ impl HashJoinSpiller {
+                     unspilled_data_blocks.push(data_block);
+                     continue;
+                 }
++                // Parquet cannot preserve row counts without columns. Keep
++                // these blocks in the replay buffer even at a zero threshold.
++                let has_columns = data_block.num_columns() > 0;
+                 self.partition_buffer
+                     .add_data_block(partition_id, data_block);
+-                if let Some(data_blocks) = self
+-                    .partition_buffer
+-                    .fetch_data_blocks(partition_id, &fetch_option)
++                if has_columns
++                    && let Some(data_blocks) = self
++                        .partition_buffer
++                        .fetch_data_blocks(partition_id, &fetch_option)
+                 {
+                     self.spiller
+                         .spill_with_partition(partition_id, data_blocks)
+@@ -291,10 +303,11 @@ impl HashJoinSpiller {
+         let mut data_blocks = vec![];
+         if self.need_read_buffer() {
+             // 1. restore data from SpillBuffer.
+-            if self.join_type == JoinType::Cross {
++            if self.probes_all_pairs {
+                 if let Some(buffer_blocks) = self.restore_cross_buffer(partition_id)? {
+                     data_blocks.extend(buffer_blocks);
+                 }
++                self.replay_buffer_restored = true;
+             } else if let Some(buffer_block) = self.restore_buffer(partition_id) {
+                 data_blocks.push(buffer_block);
+             }
+@@ -310,7 +323,7 @@ impl HashJoinSpiller {
+                 }
+             }
+         } else {
+-            // Cross join.
++            // All-pairs probe.
+             let spilled_files = self.spiller.private_spilled_files();
+             let file_index = self.next_restore_file;
+ 
+@@ -350,7 +363,7 @@ impl HashJoinSpiller {
+         join_type: JoinType,
+         partition_bits: usize,
+     ) -> Result<Vec<DataBlock>> {
+-        if join_type == JoinType::Cross {
++        if self.probes_all_pairs {
+             Ok(vec![data_block.clone()])
+         } else {
+             let mut hashes = self.get_hashes(data_block, join_type)?;
+@@ -407,22 +420,23 @@ impl HashJoinSpiller {
+ 
+     pub fn has_next_restore_file(&self) -> bool {
+         self.next_restore_file < self.spiller.private_spilled_files().len()
+-            || (self.next_restore_file == 0 && !self.partition_buffer.is_partition_empty(0))
++            || (!self.replay_buffer_restored && !self.partition_buffer.is_partition_empty(0))
+     }
+ 
+     pub fn reset_next_restore_file(&mut self) {
+         self.next_restore_file = 0;
++        self.replay_buffer_restored = false;
+     }
+ 
+     pub fn need_read_buffer(&self) -> bool {
+-        self.join_type != JoinType::Cross || self.next_restore_file == 0
++ 
 ```
 
-**File**: `tests/sqllogictests/suites/query/index/09_vector_index/09_0000_vector_index_base.test` (modified, +12/-10)
+**File**: `src/query/service/src/pipelines/processors/transforms/hash_join/hash_join_state.rs` (modified, +25/-1)
 ```diff
-@@ -177,14 +177,16 @@ SELECT id, l1_distance(embedding, [0.02559146, 0.38549544, 0.77889671, 0.3159103
- 2 1.8405688
- 11 1.8465419
+@@ -75,7 +75,6 @@ pub struct FixedKeyHashJoinHashTable<T: HashtableKeyable + FixedKey, const UNIQU
  
-+# Row 1 is the query vector: its SQ8 distance is the quantization error alone,
-+# not shifted by the quantizer offset of its block.
- query IR
- SELECT id, l2_distance(embedding, [0.50515236, 0.8561939, 0.87169914, 0.55843271, 0.73689797, 0.49985862, 0.64527255, 0.29313098]::vector(8)) AS similarity FROM t ORDER BY similarity ASC LIMIT 5;
- ----
--1 0.052975703
--10 0.73442644
--12 0.84724534
--8 0.92271036
--3 0.9368646
-+1 0.00069053395
-+10 0.6369769
-+12 0.764318
-+8 0.9160794
-+3 0.9353659
+ pub enum HashJoinHashTable {
+     Null,
+-    NestedLoop(Vec<DataBlock>),
+     Serializer(SerializerHashJoinHashTable),
+     UniqueSerializer(UniqueSerializerHashJoinHashTable),
+     SingleBinary(SingleBinaryHashJoinHashTable),
+@@ -234,6 +233,31 @@ impl HashJoinState {
+         self.hash_join_desc.join_type
+     }
  
- query IR
- SELECT id, l2_distance(embedding, [0.50515236, 0.8561939, 0.87169914, 0.55843271, 0.73689797, 0.49985862, 0.64527255, 0.29313098]::vector(8)) AS similarity FROM t1 ORDER BY similarity ASC LIMIT 5;
-@@ -198,11 +200,11 @@ SELECT id, l2_distance(embedding, [0.50515236, 0.8561939, 0.87169914, 0.55843271
- query IR
- SELECT id, l2_distance(embedding, [0.02559146, 0.38549544, 0.77889671, 0.31591033, 0.48453478, 0.51902057, 0.74154714, 0.75059576]::vector(8)) AS similarity FROM t ORDER BY similarity ASC LIMIT 5;
- ----
--4 0.41017252
--16 0.69951516
--6 0.73418504
--2 0.7379028
--11 0.8144757
-+4 0.4067377
-+16 0.6988953
-+6 0.72583383
-+11 0.7278242
-+2 0.73599905
++    /// See [`probes_all_pairs`]. Merge into tracks matches per build row, so it
++    /// keeps the hash join probe.
++    ///
++    /// [`probes_all_pairs`]: super::probes_all_pairs
++    pub(crate) fn probes_all_pairs(&self) -> bool {
++        self.hash_join_desc.probes_all_pairs() && self.merge_into_state.is_none()
++    }
++
++    /// The build side of an all-pairs probe without projected columns is only
++    /// a row count.
++    pub(crate) fn is_row_count_build(&self) -> bool {
++        self.probes_all_pairs() && self.hash_join_desc.build_projection.is_empty()
++    }
++
++    /// Whether probing updates build-side state that is read after the probe
++    /// output: the final scan, merge into, or the RightSingle row check.
++    pub(crate) fn probe_mutates_build_side(&self) -> bool {
++        self.need_final_scan()
++            || self.merge_into_state.is_some()
++            || matches!(
++                self.hash_join_desc.single_to_inner,
++                Some(JoinType::RightSingle)
++            )
++    }
++
+     pub fn need_outer_scan(&self) -> bool {
+         matches!(
+             self.hash_join_desc.join_type,
+```
+
+**File**: `src/query/service/src/pipelines/processors/transforms/hash_join/mod.rs` (modified, +2/-1)
+```diff
+@@ -33,12 +33,13 @@ mod util;
+ pub use common::wrap_nullable_block;
+ pub use common::wrap_true_validity;
+ pub use desc::HashJoinDesc;
+-pub use desc::NestedLoopDesc;
+ pub use desc::RuntimeFilterDesc;
++pub(crate) use desc::probes_all_pairs;
+ pub use hash_join_build_state::HashJoinBuildState;
+ pub use hash_join_probe_state::HashJoinProbeState;
+ pub use hash_join_spiller::HashJoinSpiller;
+ pub use hash_join_state::*;
++pub(crate) use probe_state::PendingProbe;
+ pub use probe_state::ProbeState;
+ pub use probe_state::ProcessState;
+ pub use runtime_filter::*;
+```
+
+**File**: `src/query/service/src/pipelines/processors/transforms/hash_join/probe_join/cross_join.rs` (modified, +554/-40)
+```diff
+@@ -12,65 +12,579 @@
+ // See the License for the specific language governing permissions and
+ // limitations under the License.
  
- query IR
- SELECT id, l2_distance(embedding, [0.02559146, 0.38549544, 0.77889671, 0.31591033, 0.48453478, 0.51902057, 0.74154714, 0.75059576]::vector(8)) AS similarity FROM t1 ORDER BY similarity ASC LIMIT 5;
++use std::collections::BTreeSet;
++
+ use databend_common_exception::Result;
++use databend_common_expression::BlockEntry;
++use databend_common_expression::ChunkIndex;
+ use databend_common_expression::DataBlock;
++use databend_common_expression::DataBlockVec;
++use databend_common_expression::FilterExecutor;
++use databend_common_pipeline::core::check_interrupt;
+ 
+ use crate::pipelines::processors::transforms::hash_join::HashJoinProbeState;
++use crate::pipelines::processors::transforms::hash_join::PendingProbe;
+ use crate::pipelines::processors::transforms::hash_join::ProbeState;
++use crate::pipelines::processors::transforms::merge_with_constant_row;
++
++/// A cursor over one probe block and the current build round. Build chunks remain
++/// owned by the build state; only a bounded window, never an unbounded
++/// build concatenation or Cartesian product, may be retained.
++pub(crate) struct CrossJoinProbe {
++    probe: DataBlock,
++    build_block_index: usize,
++    build_row_index: usize,
++    probe_offset: usize,
++    remaining_build_rows: usize,
++    // Shared by every probe row before advancing to the next build window.
++    // Only small chunks need gathering; a single-chunk window is a slice.
++    window: Option<DataBlock>,
++}
++
++impl CrossJoinProbe {
++    fn new(probe: DataBlock, build_rows: usize) -> Self {
++        Self {
++            probe,
++            build_block_index: 0,
++            build_row_index: 0,
++            probe_offset: 0,
++            remaining_build_rows: build_rows,
++            window: None,
++        }
++    }
++
++    fn is_finished(&self, build_blocks: &[DataBlock]) -> bool {
++        self.probe.is_empty()
++            || (self.window.is_none() && self.build_block_index >= build_blocks.len())
++    }
++
++    fn advance_build(&mut self, build_blocks: &[DataBlock], count: usize) {
++        self.build_row_index += count;
++        self.remaining_build_rows -= count;
++        if self.build_row_index == build_blocks[self.build_block_index].num_rows() {
++            self.build_block_index += 1;
++            self.build_row_index = 0;
++        }
++    }
++
++    fn skip_empty_chunks(&mut self, build_blocks: &[DataBlock]) -> Result<()> {
++        while self.build_block_index < build_blocks.len()
++            && build_blocks[self.build_block_index].num_rows() == 0
++        {
++            check_interrupt()?;
++            self.build_block_index += 1;
++        }
++        Ok(())
++    }
++
++    fn build_window(
++        &mut self,
++        build_blocks: &[DataBlock],
++        build_projection: &BTreeSet<usize>,
++        max_block_size: usize,
++    ) -> Result<DataBlock> {
++        let build = &build_blocks[self.build_block_index];
++        let available = build.num_rows() - self.build_row_index;
++        if available >= max_block_size
++            || available == self.remaining_build_rows
++            || u32::try_from(max_block_size).is_err()
++        {
++            // A window fits in this chunk. Keep its shared representation,
++            // including a short final window; never gather a single range.
++            let count = available.min(max_block_size);
++            let block = build
++                .slice(self.build_row_index..self.build_row_index + count)
++                .project(build_projection);
++            self.advance_build(build_blocks, count);
++            return Ok(block);
++        }
++
++        // Many tiny chunks would otherwise cause tiny output blocks. Gather
++        // only this window, once, and reuse it for all rows of this probe.
++        let count = max_block_size.min(self.remaining_build_rows);
++        let mut blocks = DataBlockVec::default();
++        let mut indices = ChunkIndex::default();
++        while indices.num_rows() < count {
++            check_interrupt()?;
++            self.skip_empty_chunks(build_blocks)?;
++            let build = &build_blocks[self.build_block_index];
++            let rows = (count - indices.num_rows()).min(build.num_rows() - self.build_row_index);
++            // Both conversions fit: the window has <= u32::MAX rows and
++            // every registered block is a nonempty slice within that window.
++            let index = u32::try_from(blocks.block_rows().len()).unwrap();
++            let len = u32::try_from(rows).unwrap();
++            blocks.push(
++                build
++                    .slice(self.build_row_index..self.build_row_index + rows)
++                    .project(build_projection),
++            )?;
++            indices.push_merge_range(index, 0, len);
++            self.advance_build(build_blocks, rows);
++        }
++        Ok(blocks.take(&indices))
++    }
++
++    fn next_candidate(
++        &mut self,
++        build_blocks: &[DataBlock],
++        build_projection: &BTreeSet<usize>,
++        max_block_size: usize,
++    ) -> Result<Option<DataBlock>> {
++        check_interrupt()?;
++        if self.is_finished(b
+```
+
+---
+
+### Incident Patch 2: `e6c0a8fb` (2026-11-18)
+**Commit Message**: fix(query): prevent scalar range integer overflow (#21115)
+
+* fix(query): prevent scalar range integer overflow
+
+* refactor(query): keep scalar range arithmetic 64-bit
+
+**File**: `src/query/functions/src/scalars/array.rs` (modified, +18/-16)
+```diff
+@@ -319,15 +319,18 @@ pub fn register(registry: &mut FunctionRegistry) {
+         "range",
+         |_, _, _| FunctionDomain::Full,
+         |start, end, ctx| {
+-            const MAX: i64 = 500000000;
+-            if end - start > MAX {
++            const MAX: u64 = 500000000;
++            if start >= end {
++                return vec![].into();
++            }
++            let len = start.abs_diff(end);
++            if len > MAX {
+                 // the same behavior as Clickhouse
+                 ctx.set_error(
+                     0,
+                     format!(
+                         "the allowed maximum values of range function is {}, but got {}",
+-                        MAX,
+-                        end - start
++                        MAX, len
+                     ),
+                 );
+                 return vec![].into();
+@@ -340,15 +343,18 @@ pub fn register(registry: &mut FunctionRegistry) {
+         "range",
+         |_, _, _, _| FunctionDomain::Full,
+         |start, end, step, ctx| {
+-            const MAX: i64 = 500000000;
++            const MAX: u64 = 500000000;
+             if step == 0 {
+                 ctx.set_error(
+                     0,
+                     "step cannot be zero".to_string()
+                 );
+                 return vec![].into();
+             }
+-            let len = ((end - start) / step).abs();
++            if (step > 0 && start >= end) || (step < 0 && start <= end) {
++                return vec![].into();
++            }
++            let len = start.abs_diff(end).div_ceil(step.unsigned_abs());
+             if len > MAX {
+                 // the same behavior as Clickhouse
+                 ctx.set_error(
+@@ -363,16 +369,12 @@ pub fn register(registry: &mut FunctionRegistry) {
+             }
+             let mut vals = Vec::with_capacity(len as usize);
+             let mut num = start;
+-            if step > 0 {
+-                while num < end {
+-                    vals.push(num);
+-                    num += step;
+-                }
+-            } else {
+-                while num > end {
+-                    vals.push(num);
+-                    num += step;
+-                }
++            while (step > 0 && num < end) || (step < 0 && num > end) {
++                vals.push(num);
++                let Some(next) = num.checked_add(step) else {
++                    break;
++                };
++                num = next;
+             }
+             vals.into()
+         },
+```
+
+**File**: `src/query/functions/tests/it/scalars/array.rs` (modified, +46/-0)
+```diff
+@@ -130,6 +130,52 @@ fn test_range(file: &mut impl Write) {
+     run_ast(file, "range(-1, -10, -2)", &[]);
+ }
+ 
++#[test]
++fn test_range_overflow() {
++    let mut mint = Mint::new("tests/it/scalars/testdata");
++    let file = &mut mint.new_goldenfile("range_overflow.txt").unwrap();
++
++    for expr in [
++        "range(10, 20, 9223372036854775806)",
++        "range(10, 20, 9223372036854775798)",
++        "range(-10, -20, -9223372036854775806)",
++        "array_generate_range(10, 20, 9223372036854775806)",
++        "range(10, 20, 9223372036854775797)",
++        "range(10, 20, 100)",
++        "range(0, 9223372036854775807, 4611686018427387904)",
++        "range(0, -9223372036854775808, -4611686018427387904)",
++        "range(-9223372036854775808, 9223372036854775807, 9223372036854775807)",
++        "range(9223372036854775807, -9223372036854775808, -9223372036854775808)",
++        "range(0, -9223372036854775808, -9223372036854775808)",
++        "range(-9223372036854775808, 0, -1)",
++        "range(9223372036854775807, -9223372036854775808)",
++        "range(9223372036854775807, -9223372036854775808, 1)",
++        "range(1, 1, -9223372036854775808)",
++        "range(0, 1, 0)",
++        "range(-9223372036854775808, 9223372036854775807)",
++        "range(-9223372036854775808, 9223372036854775807, 1)",
++        "range(9223372036854775807, -9223372036854775808, -1)",
++        "range(-9223372036854775808, 0, 1)",
++        "range(0, -9223372036854775808, -1)",
++        // The limit applies to the actual length, not the truncated quotient.
++        "range(0, 1000000001, 2)",
++        "range(0, -1000000001, -2)",
++    ] {
++        run_ast(file, expr, &[]);
++    }
++
++    let columns = &[
++        ("a", Int64Type::from_data(vec![10, -10, i64::MIN, i64::MAX])),
++        ("b", Int64Type::from_data(vec![20, -20, i64::MAX, i64::MIN])),
++        (
++            "c",
++            Int64Type::from_data(vec![i64::MAX - 1, i64::MIN + 2, i64::MAX, i64::MIN]),
++        ),
++    ];
++    run_ast(file, "range(a, b, c)", columns);
++    run_ast(file, "array_generate_range(a, b, c)", columns);
++}
++
+ fn test_get(file: &mut impl Write) {
+     run_ast(file, "[1, 2]['a']", &[]);
+     run_ast(file, "[][1]", &[]);
+```
+
+**File**: `src/query/functions/tests/it/scalars/testdata/range_overflow.txt` (added, +249/-0)
+```diff
+@@ -0,0 +1,249 @@
++ast            : range(10, 20, 9223372036854775806)
++raw expr       : range(10, 20, 9223372036854775806)
++checked expr   : range<Int64, Int64, Int64>(CAST<UInt8>(10_u8 AS Int64), CAST<UInt8>(20_u8 AS Int64), CAST<UInt64>(9223372036854775806_u64 AS Int64))
++optimized expr : [10]
++output type    : Array(Int64)
++output domain  : [{10..=10}]
++output         : [10]
++
++
++ast            : range(10, 20, 9223372036854775798)
++raw expr       : range(10, 20, 9223372036854775798)
++checked expr   : range<Int64, Int64, Int64>(CAST<UInt8>(10_u8 AS Int64), CAST<UInt8>(20_u8 AS Int64), CAST<UInt64>(9223372036854775798_u64 AS Int64))
++optimized expr : [10]
++output type    : Array(Int64)
++output domain  : [{10..=10}]
++output         : [10]
++
++
++ast            : range(-10, -20, -9223372036854775806)
++raw expr       : range(-10, -20, -9223372036854775806)
++checked expr   : range<Int64, Int64, Int64>(CAST<Int8>(-10_i8 AS Int64), CAST<Int8>(-20_i8 AS Int64), -9223372036854775806_i64)
++optimized expr : [-10]
++output type    : Array(Int64)
++output domain  : [{-10..=-10}]
++output         : [-10]
++
++
++ast            : array_generate_range(10, 20, 9223372036854775806)
++raw expr       : array_generate_range(10, 20, 9223372036854775806)
++checked expr   : range<Int64, Int64, Int64>(CAST<UInt8>(10_u8 AS Int64), CAST<UInt8>(20_u8 AS Int64), CAST<UInt64>(9223372036854775806_u64 AS Int64))
++optimized expr : [10]
++output type    : Array(Int64)
++output domain  : [{10..=10}]
++output         : [10]
++
++
++ast            : range(10, 20, 9223372036854775797)
++raw expr       : range(10, 20, 9223372036854775797)
++checked expr   : range<Int64, Int64, Int64>(CAST<UInt8>(10_u8 AS Int64), CAST<UInt8>(20_u8 AS Int64), CAST<UInt64>(9223372036854775797_u64 AS Int64))
++optimized expr : [10]
++output type    : Array(Int64)
++output domain  : [{10..=10}]
++output         : [10]
++
++
++ast            : range(10, 20, 100)
++raw expr       : range(10, 20, 100)
++checked expr   : range<Int64, Int64, Int64>(CAST<UInt8>(10_u8 AS Int64), CAST<UInt8>(20_u8 AS Int64), CAST<UInt8>(100_u8 AS Int64))
++optimized expr : [10]
++output type    : Array(Int64)
++output domain  : [{10..=10}]
++output         : [10]
++
++
++ast            : range(0, 9223372036854775807, 4611686018427387904)
++raw expr       : range(0, 9223372036854775807, 4611686018427387904)
++checked expr   : range<Int64, Int64, Int64>(CAST<UInt8>(0_u8 AS Int64), CAST<UInt64>(9223372036854775807_u64 AS Int64), CAST<UInt64>(4611686018427387904_u64 AS Int64))
++optimized expr : [0, 4611686018427387904]
++output type    : Array(Int64)
++output domain  : [{0..=4611686018427387904}]
++output         : [0, 4611686018427387904]
++
++
++ast            : range(0, -9223372036854775808, -4611686018427387904)
++raw expr       : range(0, -9223372036854775808, -4611686018427387904)
++checked expr   : range<Int64, Int64, Int64>(CAST<UInt8>(0_u8 AS Int64), -9223372036854775808_i64, -4611686018427387904_i64)
++optimized expr : [0, -4611686018427387904]
++output type    : Array(Int64)
++output domain  : [{-4611686018427387904..=0}]
++output         : [0, -4611686018427387904]
++
++
++ast            : range(-9223372036854775808, 9223372036854775807, 9223372036854775807)
++raw expr       : range(-9223372036854775808, 9223372036854775807, 9223372036854775807)
++checked expr   : range<Int64, Int64, Int64>(-9223372036854775808_i64, CAST<UInt64>(9223372036854775807_u64 AS Int64), CAST<UInt64>(9223372036854775807_u64 AS Int64))
++optimized expr : [-9223372036854775808, -1, 9223372036854775806]
++output type    : Array(Int64)
++output domain  : [{-9223372036854775808..=9223372036854775806}]
++output         : [-9223372036854775808, -1, 9223372036854775806]
++
++
++ast            : range(9223372036854775807, -9223372036854775808, -9223372036854775808)
++raw expr       : range(9223372036854775807, -9223372036854775808, -9223372036854775808)
++checked expr   : range<Int64, Int64, Int64>(CAST<UInt64>(9223372036854775807_u64 AS Int64), -9223372036854775808_i64, -9223372036854775808_i64)
++optimized expr : [9223372036854775807, -1]
++output type    : Array(Int64)
++output domain  : [{-1..=9223372036854775807}]
++output         : [9223372036854775807, -1]
++
++
++ast            : range(0, -9223372036854775808, -9223372036854775808)
++raw expr       : range(0, -9223372036854775808, -9223372036854775808)
++checked expr   : range<Int64, Int64, Int64>(CAST<UInt8>(0_u8 AS Int64), -9223372036854775808_i64, -9223372036854775808_i64)
++optimized expr : [0]
++output type    : Array(Int64)
++output domain  : [{0..=0}]
++output         : [0]
++
++
++ast            : range(-9223372036854775808, 0, -1)
++raw expr       : range(-9223372036854775808, 0, -1)
++checked expr   : range<Int64, Int64, Int64>(-9223372036854775808_i64, CAST<UInt8>(0_u8 AS Int64), CAST<Int8>(-1_i8 AS Int64))
++optimized expr : []
++output type    : Array(Int64)
++output domain  : []
++output         : []
++
++
++ast            : range(9223372036854775807, -9223372036854775808)
++raw expr       : range(9223372036854775807, -922337203
+```
+
+**File**: `tests/sqllogictests/suites/query/functions/02_0061_function_array.test` (modified, +66/-0)
+```diff
+@@ -134,6 +134,72 @@ select range(-1, -20, -3)
+ statement error
+ select range(10, 5000000011)
+ 
++# Scalar range must stop before step addition overflows (issue #21109).
++query TTT
++select range(10, 20, 9223372036854775806), range(10, 20, 9223372036854775798), range(-10, -20, -9223372036854775806)
++----
++[10] [10] [-10]
++
++query TTT
++select array_generate_range(10, 20, 9223372036854775806), range(10, 20, 9223372036854775797), range(10, 20, 100)
++----
++[10] [10] [10]
++
++query TT
++select range(0, 9223372036854775807, 4611686018427387904), range(0, -9223372036854775808, -4611686018427387904)
++----
++[0,4611686018427387904] [0,-4611686018427387904]
++
++# The distance and the absolute value of step need not fit in Int64.
++query TT
++select range(-9223372036854775808, 9223372036854775807, 9223372036854775807), range(9223372036854775807, -9223372036854775808, -9223372036854775808)
++----
++[-9223372036854775808,-1,9223372036854775806] [9223372036854775807,-1]
++
++query T
++select range(0, -9223372036854775808, -9223372036854775808)
++----
++[0]
++
++# Exercise vectorized evaluation, not just constant folding.
++query TT
++select range(10, 20, 9223372036854775806::int64 - number::int64), array_generate_range(10, 20, 9223372036854775806::int64 - number::int64) from numbers(2) order by number
++----
++[10] [10]
++[10] [10]
++
++# Equal endpoints and a step pointing away from the endpoint produce empty arrays.
++query TTTT
++select range(9223372036854775807, -9223372036854775808), range(9223372036854775807, -9223372036854775808, 1), range(-9223372036854775808, 0, -1), range(1, 1, -9223372036854775808)
++----
++[] [] [] []
++
++statement error step cannot be zero
++select range(0, 1, 0)
++
++# Reject oversized ranges before allocating, even when the distance overflows Int64.
++statement error the allowed maximum values of range function is 500000000, but got 18446744073709551615
++select range(-9223372036854775808, 9223372036854775807)
++
++statement error the allowed maximum values of range function is 500000000, but got 18446744073709551615
++select range(-9223372036854775808, 9223372036854775807, 1)
++
++statement error the allowed maximum values of range function is 500000000, but got 18446744073709551615
++select range(9223372036854775807, -9223372036854775808, -1)
++
++statement error the allowed maximum values of range function is 500000000, but got 9223372036854775808
++select range(-9223372036854775808, 0, 1)
++
++statement error the allowed maximum values of range function is 500000000, but got 9223372036854775808
++select range(0, -9223372036854775808, -1)
++
++# Non-divisible distances must round the element count up, not down.
++statement error the allowed maximum values of range function is 500000000, but got 500000001
++select range(0, 1000000001, 2)
++
++statement error the allowed maximum values of range function is 500000000, but got 500000001
++select range(0, -1000000001, -2)
++
+ statement ok
+ DROP DATABASE IF EXISTS array_func_test
+ 
+```
+
+---
+
+### Incident Patch 3: `169e5018` (2026-11-18)
+**Commit Message**: fix(query): check Decimal64 sum and avg overflow (#21114)
+
+**File**: `src/query/functions/src/aggregates/function_impl/avg.rs` (modified, +7/-15)
+```diff
+@@ -342,25 +342,17 @@ impl AvgBuilder {
+                     DecimalDataKind::DECIMAL => {
+                         let decimal_size =
+                             DecimalSize::new_unchecked(DECIMAL::MAX_PRECISION, size.scale().max(4));
+-                        let should_check_overflow = DECIMAL::MAX_PRECISION > i64::MAX_PRECISION
+-                            && size.precision() > i64::MAX_PRECISION;
+                         let scale_add = decimal_size.scale() - size.scale();
+                         let return_type = DataType::Decimal(decimal_size);
+                         let function_info = DecimalAvgData { scale_add };
+ 
+-                        if should_check_overflow {
+-                            Self::create_decimal::<AggregateDecimalAvgState<true, DECIMAL>, DECIMAL>(
+-                                build,
+-                                return_type,
+-                                function_info,
+-                            )
+-                        } else {
+-                            Self::create_decimal::<AggregateDecimalAvgState<false, DECIMAL>, DECIMAL>(
+-                                build,
+-                                return_type,
+-                                function_info,
+-                            )
+-                        }
++                        // Division cannot recover a sum that has already overflowed,
++                        // including when the input uses Decimal64 storage.
++                        Self::create_decimal::<AggregateDecimalAvgState<true, DECIMAL>, DECIMAL>(
++                            build,
++                            return_type,
++                            function_info,
++                        )
+                     }
+                 })
+             }
+```
+
+**File**: `src/query/functions/src/aggregates/function_impl/sum.rs` (modified, +24/-56)
+```diff
+@@ -737,34 +737,19 @@ impl SumBuilder {
+                         let decimal_size =
+                             DecimalSize::new_unchecked(DECIMAL::MAX_PRECISION, size.scale());
+                         let return_type = DataType::Decimal(decimal_size);
+-                        let should_check_overflow = DECIMAL::MAX_PRECISION > i64::MAX_PRECISION
+-                            && size.precision() > i64::MAX_PRECISION;
+-
+-                        if should_check_overflow {
+-                            build.create_unary_or_null::<
+-                                AggregateDecimalSumState<true, DECIMAL>,
+-                                DecimalType<DECIMAL>,
+-                                DecimalType<DECIMAL>,
+-                            >(
+-                                return_type.wrap_nullable(),
+-                                AggregateDecimalSumState::<true, DECIMAL>::state_description(
+-                                    return_type,
+-                                ),
+-                                (),
+-                            )
+-                        } else {
+-                            build.create_unary_or_null::<
+-                                AggregateDecimalSumState<false, DECIMAL>,
+-                                DecimalType<DECIMAL>,
+-                                DecimalType<DECIMAL>,
+-                            >(
+-                                return_type.wrap_nullable(),
+-                                AggregateDecimalSumState::<false, DECIMAL>::state_description(
+-                                    return_type,
+-                                ),
+-                                (),
+-                            )
+-                        }
++                        // Decimal64 has no wider accumulator: it needs the same
++                        // precision checks as the other decimal storage widths.
++                        build.create_unary_or_null::<
++                            AggregateDecimalSumState<true, DECIMAL>,
++                            DecimalType<DECIMAL>,
++                            DecimalType<DECIMAL>,
++                        >(
++                            return_type.wrap_nullable(),
++                            AggregateDecimalSumState::<true, DECIMAL>::state_description(
++                                return_type,
++                            ),
++                            (),
++                        )
+                     }
+                 })
+             }
+@@ -809,34 +794,17 @@ impl SumBuilder {
+                         let decimal_size =
+                             DecimalSize::new_unchecked(DECIMAL::MAX_PRECISION, size.scale());
+                         let return_type = DataType::Decimal(decimal_size);
+-                        let should_check_overflow = DECIMAL::MAX_PRECISION > i64::MAX_PRECISION
+-                            && size.precision() > i64::MAX_PRECISION;
+-
+-                        if should_check_overflow {
+-                            build.create_unary_distinct_or_null::<
+-                                AggregateDecimalSumState<true, DECIMAL>,
+-                                DecimalType<DECIMAL>,
+-                                DecimalType<DECIMAL>,
+-                            >(
+-                                return_type.wrap_nullable(),
+-                                AggregateDecimalSumState::<true, DECIMAL>::state_description(
+-                                    return_type,
+-                                ),
+-                                (),
+-                            )
+-                        } else {
+-                            build.create_unary_distinct_or_null::<
+-                                AggregateDecimalSumState<false, DECIMAL>,
+-                                DecimalType<DECIMAL>,
+-                                DecimalType<DECIMAL>,
+-                            >(
+-                                return_type.wrap_nullable(),
+-                                AggregateDecimalSumState::<false, DECIMAL>::state_description(
+-                                    return_type,
+-                                ),
+-                                (),
+-                            )
+-                        }
++                        build.create_unary_distinct_or_null::<
++                            AggregateDecimalSumState<true, DECIMAL>,
++                            DecimalType<DECIMAL>,
++                            DecimalType<DECIMAL>,
++                        >(
++                            return_type.wrap_nullable(),
++                            AggregateDecimalSumState::<true, DECIMAL>::state_description(
++                                return_type,
++                            ),
++                            (),
++                        )
+                     }
+                 })
+             }
+```
+
+**File**: `src/query/functions/tests/it/aggregates/sum.rs` (modified, +139/-0)
+```diff
+@@ -8,6 +8,7 @@ use databend_common_expression::ColumnBuilder;
+ use databend_common_expression::FromData;
+ use databend_common_expression::Scalar;
+ use databend_common_expression::ScalarRef;
++use databend_common_expression::StateSerdeItem;
+ use databend_common_expression::aggregate::aggregate_function::*;
+ use databend_common_expression::aggregate_function::AggregateStateWritePolicy;
+ use databend_common_expression::types::ArgType;
+@@ -16,6 +17,7 @@ use databend_common_expression::types::BooleanType;
+ use databend_common_expression::types::DataType;
+ use databend_common_expression::types::Decimal64Type;
+ use databend_common_expression::types::Decimal128Type;
++use databend_common_expression::types::DecimalScalar;
+ use databend_common_expression::types::DecimalSize;
+ use databend_common_expression::types::Float64Type;
+ use databend_common_expression::types::Int32Type;
+@@ -191,6 +193,143 @@ fn test_sum_group_by() {
+     run_sum_cases(file, simulate_two_groups_group_by);
+ }
+ 
++// Decimal64 aggregates retain Decimal64 states/results, so overflow must be
++// reported even when the average or a later cancellation would fit.
++#[test]
++fn test_decimal64_aggregate_overflow() -> Result<()> {
++    let max = 999_999_999_999_999_999_i64;
++    for name in ["sum", "sum_distinct", "avg", "avg_distinct"] {
++        for scale in [0, 17] {
++            for sign in [1, -1] {
++                let size = DecimalSize::new_unchecked(18, scale);
++                // The second value is distinct; both SUM variants must overflow.
++                let values = vec![sign * max, sign * (max - 1)];
++                let entries = [Decimal64Type::from_data_with_size(values, Some(size)).into()];
++                for serialized in [false, true] {
++                    let error = eval_v2_aggr(name, &entries, 2, serialized).unwrap_err();
++                    assert_eq!(error.code(), 1049, "{name}: {error}");
++                    assert!(error.message().contains("Decimal overflow"));
++                }
++            }
++        }
++    }
++
++    // Match the issue's ten-row native-i64 wraparound, including constants.
++    let size = DecimalSize::new_unchecked(18, 17);
++    for entry in [
++        Decimal64Type::from_data_with_size(vec![max; 10], Some(size)).into(),
++        BlockEntry::new_const_column(
++            DataType::Decimal(size),
++            Scalar::Decimal(DecimalScalar::Decimal64(max, size)),
++            10,
++        ),
++    ] {
++        for name in ["sum", "avg"] {
++            let error = eval_v2_aggr(name, std::slice::from_ref(&entry), 10, false).unwrap_err();
++            assert_eq!(error.code(), 1049);
++        }
++    }
++    Ok(())
++}
++
++#[test]
++fn test_decimal64_aggregate_boundaries_and_nulls() -> Result<()> {
++    let max = 999_999_999_999_999_999_i64;
++    let size = DecimalSize::new_unchecked(18, 17);
++    for name in ["sum", "sum_distinct", "avg", "avg_distinct"] {
++        for sign in [1, -1] {
++            // The masked-out value would overflow if it were accumulated.
++            let entries =
++                [
++                    Decimal64Type::from_data_with_size(vec![sign * max, sign * max], Some(size))
++                        .wrap_nullable(Some(Bitmap::from([true, false])))
++                        .into(),
++                ];
++            for serialized in [false, true] {
++                let (column, ty) = eval_v2_aggr(name, &entries, 2, serialized)?;
++                assert_eq!(ty, DataType::Decimal(size).wrap_nullable());
++                assert_eq!(
++                    column.index(0).unwrap(),
++                    ScalarRef::Decimal(DecimalScalar::Decimal64(sign * max, size))
++                );
++            }
++        }
++        for values in [vec![], vec![None, None]] {
++            let rows = values.len();
++            let entries = [Decimal64Type::from_opt_data_with_size(values, Some(size)).into()];
++            let (column, _) = eval_v2_aggr(name, &entries, rows, false)?;
++            assert_eq!(column.index(0).unwrap(), ScalarRef::Null);
++        }
++    }
++    Ok(())
++}
++
++#[test]
++fn test_decimal64_aggregate_row_and_merge_overflow() -> Result<()> {
++    let size = DecimalSize::new_unchecked(18, 17);
++    let value = 500_000_000_000_000_000_i64;
++    let entries = [Decimal64Type::from_data_with_size(vec![value, value], Some(size)).into()];
++    let args_type = [DataType::Decimal(size)];
++    for name in ["sum", "avg"] {
++        let function = AGGR_REGISTRY.resolve(RawAggregateCall {
++            name,
++            params: &[],
++            args_type: &args_type,
++            distinct: false,
++            order_by: &[],
++        })?;
++        let left = AggregateStateOwner::new(vec![function.clone()])?;
++        let right = AggregateStateOwner::new(vec![function.clone()])?;
++        function.accumulate_row(left.state(0), (&entries).into(), 0)?;
++        function.accumulate_row(right.state(0), (&entries).into(), 1)?;
++
++        // Both partial states fit; merging them must check the combined sum.
++    
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #21121** (2026-11-18): refactor(query): remove dead code and leftovers of the aggregate rewrites (@dqhl76)
+- **PR #21118** (2026-11-18): fix(query): abbreviate large SQL constants in INFO logs (@bohutang)
+- **PR #21115** (2026-11-18): fix(query): prevent scalar range integer overflow (@KKould)
+- **PR #21114** (2026-11-18): fix(query): check Decimal64 sum and avg overflow (@KKould)
+- **PR #21113** (2026-11-18): fix(query): decouple grace join partition bits from hash table buckets (@dqhl76)
 - **PR #21111** (2026-11-17): fix(query): finish queries correctly on the queries executor (@bohutang)
-- **PR #21104** (2026-11-17): fix(storage): bound fuse_page Thrift decoding and drop thrift dep (@sundy-li)
-- **PR #21102** (2026-11-17): refactor(storage): look up search pin ranges by start (@bohutang)
-- **PR #21101** (closed): [EXPERIMENTAL - DO NOT MERGE] feat(query): add /v1/data/search and speed up full-text top-k search (@bohutang)
-- **PR #21099** (2026-11-16): fix(meta): decode BLOOM table index type; default cache.data_max_ratio to 0 (@zhang2014)
-- **PR #21097** (2026-11-17): fix(query): correct HNSW graph construction and SQ8 scoring in vector indexes (@b41sh)
 
 ---
 
@@ -2952,60 +2578,84 @@ once the executor is finished.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. query): finish queries correctly on the queries executor
+## X. query): stream all-pairs joins with bounded memory
 
 **RULE**:
-When implementing operations in `src/query/pipeline/src/sinks/async_sink.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in databendlabs/databend. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/query/service/src/physical_plans/physical_hash_join.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in databendlabs/databend. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `58dd5893`: query): finish queries correctly on the queries executor. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `50f8ae1b`: query): stream all-pairs joins with bounded memory. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/query/pipeline/src/sinks/async_sink.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/query/service/src/physical_plans/physical_hash_join.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-            let run_on_start = !self.called_on_start && T::CALL_ON_START_ON_ERROR;
-            let run_on_finish = !self.called_on_finish && T::CALL_ON_FINISH_ON_ERROR;
-            // Nothing to run: do not touch the global runtime, which a sink
-            // dropped late may outlive.
-            if !run_on_start && !run_on_finish {
-                return;
-            }
-
-            if let Some(mut inner) = self.inner.take() {
-                GlobalIORuntime::instance().spawn(async move {
-                    if run_on_start {
-                        let _ = inner.on_start().await;
-                    }
-
-                    if run_on_finish {
-                        let _ = inner.on_finish().await;
-                    }
-                });
+use crate::pipelines::processors::transforms::probes_all_pairs;
+        // Joins without anything to hash stream all pairs on this executor.
+            && !desc.probes_all_pairs()
+    /// When the probe streams all pairs, a side without required columns
+    /// contributes only its row count, which the build side keeps without
+    /// retaining or spilling any block. Build it from that side. The
+    /// zero-column side occupies no projected positions, so join conditions
+    /// and the output keep the same column offsets.
+    fn build_zero_column_side(&mut self) {
+        // Build-side caches consume the build state of the side the planner chose.
+        if !probes_all_pairs(
+            self.join_type,
+            !self.build_keys.is_empty(),
+            self.single_to_inner,
+        ) || !self.probe_projections.is_empty()
+            || self.build_projections.is_empty()
+            || self.build_side_cache_info.is_some()
+        {
+            return;
+        }
+        debug_assert!(self.build_keys.is_empty() && self.probe_to_build.is_empty());
+        std::mem::swap(&mut self.probe, &mut self.build);
+        std::mem::swap(&mut self.probe_projections, &mut self.build_projection
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-            if !self.called_on_start || !self.called_on_finish {
-                if let Some(mut inner) = self.inner.take() {
-                    GlobalIORuntime::instance().spawn({
-                        let called_on_start = self.called_on_start;
-                        let called_on_finish = self.called_on_finish;
-                        async move {
-                            if !called_on_start && T::CALL_ON_START_ON_ERROR {
-                                let _ = inner.on_start().await;
-                            }
+use crate::physical_plans::resolve_scalar;
+#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]
+pub struct NestedLoopFilterInfo {
+    pub predicates: Vec<RemoteExpr>,
+    pub projection: Vec<usize>,
+}
 
-                            if !called_on_finish && T::CALL_ON_FINISH_ON_ERROR {
-                                let _ = inner.on_finish().await;
-                            }
-                        }
-                    });
-                }
+    pub nested_loop_filter: Option<NestedLoopFilterInfo>,
+            nested_loop_filter: self.nested_loop_filter.clone(),
+
+    fn build_nested_loop_filter_info(
+        &self,
+        join: &Join,
+        probe_schema: &DataSchema,
+        build_schema: &DataSchema,
+        target_schema: &DataSchema,
+    ) -> Result<Option<NestedLoopFilterInfo>> {
+        build_nested_loop_filter_info_for_join(join, probe_schema, build_schema, target_schema)
+    }
+}
+
+fn build_nested_loop_filter_info_for_join(
+    join: &Join,
+    probe_schema: &DataSchema,
+    build_schema: &DataSchema,
+    target_schema: &DataSchema,
+) -> Result<Option<NestedLoopFilterInfo>> {
+    if !matches!(join.join_type, JoinType::Inner) {
+        return Ok(None);
+    }
+
+    if !join.equi_conditions.is_empty() {
+        // Inner joins with equality keys should still use the hash table even
+        // when the build side is small. Falling back to nested-loop evaluates
+        // the equality and residual predicates fo
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `58dd5893` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `50f8ae1b` are properly handled with clean fallback behavior.

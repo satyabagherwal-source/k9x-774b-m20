@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261117-M9Q9",
-    "timestamp": "2026-11-17T03:50:05.505Z",
-    "repository": "sveltejs/svelte",
-    "learningId": "learn-github-sveltejs-svelte",
-    "contentHash": "b25680054919553309a7c0ba87e260552c84ad612b4203391bc31e5b438290ef",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261117-MH8Z",
-    "timestamp": "2026-11-17T03:50:15.251Z",
-    "repository": "MaterializeInc/materialize",
-    "learningId": "learn-github-materializeinc-materialize",
-    "contentHash": "20e890de299184242f7fde1e8e3b56fe6b1c5c3ca1cab4a5bda3be86a4964cec",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261117-W8YC",
-    "timestamp": "2026-11-17T03:57:51.060Z",
-    "repository": "solidjs/solid",
-    "learningId": "learn-github-solidjs-solid",
-    "contentHash": "6246d426bca1e65ce4e1ea35b7b3d423b428be4f9c006a8d14d7d72f2fe53c4a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261117-WB7R",
     "timestamp": "2026-11-17T03:57:53.991Z",
     "repository": "software-mansion/react-native-screens",
@@ -7490,6 +7445,51 @@
     "repository": "tailscale/tailscale",
     "learningId": "learn-github-tailscale-tailscale",
     "contentHash": "790d4267191d07f65311c82040128f2b3e3f49746c45d382adac51b88940066e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-DKYZ",
+    "timestamp": "2026-11-18T13:46:52.139Z",
+    "repository": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
+    "learningId": "learn-huggingface-ista-daslab-qwen3-8-27b-gsq-rco-gguf",
+    "contentHash": "f1bcf5d292138c263765e075f786c382ea61bfe94664a8839de4c2783c7e4342",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-DSAH",
+    "timestamp": "2026-11-18T13:47:01.625Z",
+    "repository": "chaos-mesh/chaos-mesh",
+    "learningId": "learn-github-chaos-mesh-chaos-mesh",
+    "contentHash": "cbeca0b16f351cd8259c78ca2c1c2e3647d5666974cbe6c87487d81ada368208",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-DWYO",
+    "timestamp": "2026-11-18T13:47:07.680Z",
+    "repository": "databendlabs/databend",
+    "learningId": "learn-github-databendlabs-databend",
+    "contentHash": "7cf29f9be509c34ba7283affc17c75ec451f5ac27deba6cfebd425d9f81bcb4e",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {
