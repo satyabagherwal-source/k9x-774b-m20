@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-18T04:29:24.859Z",
+  "last_updated": "2026-11-18T04:37:38.366Z",
   "total_records": 1757,
   "domains": {
     "A": {
@@ -8490,8 +8490,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "57616487077d61a67e7db7eff80f7ff2eb7a2d6de9aa0b56671152db36679dd8",
-      "created_at": "2026-11-18T04:04:05.798Z"
+      "content_hash": "6bae6b5672beb813d90237cdc909e5397c4ee9c31bc4f211effbe95eccb300d4",
+      "created_at": "2026-11-18T04:37:38.366Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -8499,8 +8499,8 @@
       "title": "Research & Knowledge Intelligence: XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-xiaomimimo-mimo-v2-6-distill-qwen-9b-research-knowledge-intelligence-xiaomimi.md",
       "repository": "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
-      "content_hash": "89e6f920861b10a99f7aa3d45e79ddf5dd0348b095e5578bc755f89c3d589423",
-      "created_at": "2026-11-13T17:10:52.491Z"
+      "content_hash": "7af4fe3b6be5369f505e393b96d25f2b691c678df4c14c38dd3aed6a74895622",
+      "created_at": "2026-11-18T04:37:22.266Z"
     },
     "domain_intelligence-architecture-intelligence-nolabs-ai-nono-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-nolabs-ai-nono-core-invariants",
@@ -8568,8 +8568,8 @@
       "title": "Research & Knowledge Intelligence: hf-xiaomimimo-mimo-v2.6-distill-qwen-9b-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-xiaomimimo-mimo-v2-6-distill-qwen-9b-learnings-research-knowledge-intelligenc.md",
       "repository": "hf-xiaomimimo-mimo-v2.6-distill-qwen-9b-learnings",
-      "content_hash": "7768ae249c731fb2594a9b531e181d0644806ebbeae57c46c91059d9e9990e8b",
-      "created_at": "2026-11-13T17:11:57.024Z"
+      "content_hash": "38e6a4bdef6b061bad51aeace1ba82ad9967dbb613045683a9d656fe40fd782c",
+      "created_at": "2026-11-18T04:37:37.123Z"
     },
     "domain_intelligence-architecture-intelligence-nolabs-ai-nono-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-nolabs-ai-nono-learnings-core-invariants",
@@ -15106,8 +15106,8 @@
       "title": "Architecture Intelligence: projectdiscovery/nuclei Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-projectdiscovery-nuclei-architecture-intelligence-projectdiscovery-nuclei-core-i.md",
       "repository": "projectdiscovery/nuclei",
-      "content_hash": "299d77f28d7be3179ffd0c7e22ca3ebf7cc3243653a737289e2609ffbb227a57",
-      "created_at": "2026-11-17T17:02:38.750Z"
+      "content_hash": "84386099f64a5184ac1b45281971ceb0a0de686e63e90ddd4958f2d43e80da8f",
+      "created_at": "2026-11-18T04:37:34.054Z"
     },
     "domain_intelligence-architecture-intelligence-agent-of-empires-agent-of-empires-learnings-core-invar": {
       "record_id": "domain_intelligence-architecture-intelligence-agent-of-empires-agent-of-empires-learnings-core-invar",
@@ -19655,8 +19655,8 @@
       "title": "Architecture Intelligence: projectdiscovery-nuclei-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-projectdiscovery-nuclei-learnings-architecture-intelligence-projectdiscovery-nuc.md",
       "repository": "projectdiscovery-nuclei-learnings",
-      "content_hash": "d9f052be60d3b09699604ccab683f4b8d2aa0d1c00a8cf1319edf2988008fc8d",
-      "created_at": "2026-11-17T17:02:42.966Z"
+      "content_hash": "1537324b4e3a112381cc781e1a4d3deb870d47350db9f697ca168fbc67929298",
+      "created_at": "2026-11-18T04:37:37.599Z"
     },
     "domain_intelligence-research-knowledge-intelligence-liquidai-lfm3-omni-2b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-liquidai-lfm3-omni-2b-core-invariants",

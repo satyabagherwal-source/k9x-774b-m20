@@ -10842,3 +10842,5 @@ Every entry in this ledger must capture:
 | `learn-github-kotest-kotest` | `https://github.com/kotest/kotest` | `9c81ef68` | Multi-dimensional audit evidence | 2026-11-18T04:29:11.361Z |
 | `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `e3f13487` | Multi-dimensional audit evidence | 2026-11-18T04:29:18.029Z |
 | `learn-github-trailbaseio-trailbase` | `https://github.com/trailbaseio/trailbase` | `f7a68cdf` | Multi-dimensional audit evidence | 2026-11-18T04:29:19.919Z |
+| `learn-huggingface-xiaomimimo-mimo-v2-6-distill-qwen-9b` | `https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B` | `hf-xiaomim` | Multi-dimensional audit evidence | 2026-11-18T04:37:22.097Z |
+| `learn-github-projectdiscovery-nuclei` | `https://github.com/projectdiscovery/nuclei` | `76040802` | Multi-dimensional audit evidence | 2026-11-18T04:37:33.737Z |

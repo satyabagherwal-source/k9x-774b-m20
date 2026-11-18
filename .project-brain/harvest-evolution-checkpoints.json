@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T04:29:25.109Z",
+  "last_updated": "2026-11-18T04:37:38.615Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-18T04:11:36.483Z",
@@ -88,7 +88,7 @@
       "staged_for_review": 0
     },
     "projectdiscovery-nuclei-learnings.md": {
-      "processed_at": "2026-11-17T17:02:42.511Z",
+      "processed_at": "2026-11-18T04:37:37.270Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -268,7 +268,7 @@
       "staged_for_review": 1
     },
     "zseven-w-openpencil-learnings.md": {
-      "processed_at": "2026-11-18T04:04:05.307Z",
+      "processed_at": "2026-11-18T04:37:37.883Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2003,8 +2003,8 @@
       "staged_for_review": 1
     },
     "hf-xiaomimimo-mimo-v2.6-distill-qwen-9b-learnings.md": {
-      "processed_at": "2026-11-13T17:11:56.809Z",
-      "promoted_canonical": 1,
+      "processed_at": "2026-11-18T04:37:36.950Z",
+      "promoted_canonical": 0,
       "staged_for_review": 0
     },
     "meilisearch-meilisearch-learnings.md": {
@@ -3378,7 +3378,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 1797,
+  "total_dossiers_evaluated": 1800,
   "total_canonical_promoted": 334,
-  "total_staged_for_review": 1390
+  "total_staged_for_review": 1392
 }

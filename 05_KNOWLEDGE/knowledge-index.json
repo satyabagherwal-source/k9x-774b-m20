@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-18T04:29:24.993Z",
-  "total_verified_learnings": 8976,
+  "last_updated": "2026-11-18T04:37:38.498Z",
+  "total_verified_learnings": 8977,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 20880,
+  "total_items": 20883,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113686,13 +113686,13 @@
       "item_id": "candidate_directive-editor-add-scoped-ios-account-deletion",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-K4NX-editor-add-scoped-ios-account-deletion.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-R9KQ-editor-add-scoped-ios-account-deletion.md",
       "title": "editor): add scoped ios account deletion",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "b32d4242db8c4e6c79e2041e50596c9c17574c42aae3caf519e660ccc61778bd",
+      "content_hash": "7cc72284af7e81489858eb2a531dfa17832d6aa5a9fbfb11f9acc0381c63791e",
       "domain_letter": "H",
-      "persisted_at": "2026-11-18T04:04:05.664Z"
+      "persisted_at": "2026-11-18T04:37:38.237Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant",
@@ -113702,9 +113702,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "57616487077d61a67e7db7eff80f7ff2eb7a2d6de9aa0b56671152db36679dd8",
+      "content_hash": "6bae6b5672beb813d90237cdc909e5397c4ee9c31bc4f211effbe95eccb300d4",
       "domain_letter": "H",
-      "persisted_at": "2026-11-18T04:04:05.798Z"
+      "persisted_at": "2026-11-18T04:37:38.366Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113714,9 +113714,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "6f42f0a8e0bb5471840a4706419747ce82e2984901e78bae5fccc605cc7f8b09",
+      "content_hash": "45c2a40782cba793c0daddb25f4908be405c472e00e9263d2789b281afa26266",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T04:04:05.934Z"
+      "persisted_at": "2026-11-18T04:37:38.498Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -113726,9 +113726,9 @@
       "title": "Research & Knowledge Intelligence: XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B Core Invariants",
       "repository": "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
       "source_version": "hf-xiaomimimo-mimo-v2.6-distill-qwen-9b",
-      "content_hash": "89e6f920861b10a99f7aa3d45e79ddf5dd0348b095e5578bc755f89c3d589423",
+      "content_hash": "7af4fe3b6be5369f505e393b96d25f2b691c678df4c14c38dd3aed6a74895622",
       "domain_letter": "D",
-      "persisted_at": "2026-11-13T17:10:52.491Z"
+      "persisted_at": "2026-11-18T04:37:22.266Z"
     },
     "candidate_directive-release-v0-82-0-2311": {
       "item_id": "candidate_directive-release-v0-82-0-2311",
@@ -113822,9 +113822,9 @@
       "title": "Research & Knowledge Intelligence: hf-xiaomimimo-mimo-v2.6-distill-qwen-9b-learnings Core Invariants",
       "repository": "hf-xiaomimimo-mimo-v2.6-distill-qwen-9b-learnings",
       "source_version": "HEAD",
-      "content_hash": "7768ae249c731fb2594a9b531e181d0644806ebbeae57c46c91059d9e9990e8b",
+      "content_hash": "38e6a4bdef6b061bad51aeace1ba82ad9967dbb613045683a9d656fe40fd782c",
       "domain_letter": "D",
-      "persisted_at": "2026-11-13T17:11:57.024Z"
+      "persisted_at": "2026-11-18T04:37:37.123Z"
     },
     "domain_intelligence-architecture-intelligence-nolabs-ai-nono-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-nolabs-ai-nono-learnings-core-invariants",
@@ -229093,8 +229093,8 @@
       "slug": "projectdiscovery-nuclei",
       "platform": "github",
       "source_url": "https://github.com/projectdiscovery/nuclei",
-      "source_version": "aaa21d53",
-      "content_hash": "af0f74cdd3c0aba6e0c002f7da77dc5bdcbd8f655330694bb1fb3abe6f0dce94",
+      "source_version": "76040802",
+      "content_hash": "47697e5c65ae02fa273eaa53f7f6bf22abd296377a83bd1e2fc24c366608b14f",
       "dossier_path": "07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/projectdiscovery-nuclei-learnings.md",
       "promoted_rules": [
@@ -229132,6 +229132,11 @@
           "number": 9014,
           "title": "Empirical Invariant Guard in SECURITY_CONTEXT.md",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9125,
+          "title": "Empirical Invariant Guard in Dockerfile",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -229139,7 +229144,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T17:02:38.320Z",
+      "verified_at": "2026-11-18T04:37:33.561Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -229181,10 +229186,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-projectdiscovery-nuclei-architecture-intelligence-projectdiscovery-nuclei-core-i.md",
       "title": "Architecture Intelligence: projectdiscovery/nuclei Core Invariants",
       "repository": "projectdiscovery/nuclei",
-      "source_version": "aaa21d53",
-      "content_hash": "299d77f28d7be3179ffd0c7e22ca3ebf7cc3243653a737289e2609ffbb227a57",
+      "source_version": "76040802",
+      "content_hash": "84386099f64a5184ac1b45281971ceb0a0de686e63e90ddd4958f2d43e80da8f",
       "domain_letter": "G",
-      "persisted_at": "2026-11-17T17:02:38.750Z"
+      "persisted_at": "2026-11-18T04:37:34.054Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-projectdiscovery-nuclei": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-projectdiscovery-nuclei",
@@ -229193,10 +229198,10 @@
       "relative_path": "08_VERIFICATION/projectdiscovery-nuclei-verification-protocol-empirical-defect-shield-for-projec.md",
       "title": "Verification Protocol: Empirical Defect Shield for projectdiscovery/nuclei",
       "repository": "projectdiscovery/nuclei",
-      "source_version": "aaa21d53",
-      "content_hash": "f3e487dd35bf496931c9f3fb8265447dff2616a8568391c6a660cdf884d37a49",
+      "source_version": "76040802",
+      "content_hash": "5dc42a452057372ff78c3f3fb19c603a8b010af3b6be90ebabce422ab28326e9",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T17:02:38.868Z"
+      "persisted_at": "2026-11-18T04:37:34.185Z"
     },
     "candidate_directive-tui-flash-deletion-cleanup-notes-instead-of-a-blocking-dialog": {
       "item_id": "candidate_directive-tui-flash-deletion-cleanup-notes-instead-of-a-blocking-dialog",
@@ -241809,9 +241814,9 @@
       "title": "Architecture Intelligence: projectdiscovery-nuclei-learnings Core Invariants",
       "repository": "projectdiscovery-nuclei-learnings",
       "source_version": "HEAD",
-      "content_hash": "d9f052be60d3b09699604ccab683f4b8d2aa0d1c00a8cf1319edf2988008fc8d",
+      "content_hash": "1537324b4e3a112381cc781e1a4d3deb870d47350db9f697ca168fbc67929298",
       "domain_letter": "G",
-      "persisted_at": "2026-11-17T17:02:42.966Z"
+      "persisted_at": "2026-11-18T04:37:37.599Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-projectdiscovery-nuclei-learni": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-projectdiscovery-nuclei-learni",
@@ -241821,9 +241826,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for projectdiscovery-nuclei-learnings",
       "repository": "projectdiscovery-nuclei-learnings",
       "source_version": "HEAD",
-      "content_hash": "8c756adfdf2ce153255c40eafe9b4ca22ac56b8db99346ca98fa090c6749cb16",
+      "content_hash": "da6e80f2a944f14589dcc1de2d8ff4f54a89348dab06ba7db604a832d2ee2381",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T17:02:43.082Z"
+      "persisted_at": "2026-11-18T04:37:37.758Z"
     },
     "learn-huggingface-liquidai-lfm3-omni-2b": {
       "learning_id": "learn-huggingface-liquidai-lfm3-omni-2b",
@@ -281102,6 +281107,59 @@
       "content_hash": "4f3bc29db19352d9575d921fa869ef3a51b36749dacbb0e3e79b9779ed13efae",
       "domain_letter": "K",
       "persisted_at": "2026-11-18T04:29:24.859Z"
+    },
+    "learn-huggingface-xiaomimimo-mimo-v2-6-distill-qwen-9b": {
+      "learning_id": "learn-huggingface-xiaomimimo-mimo-v2-6-distill-qwen-9b",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
+      "repository": "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
+      "slug": "hf-xiaomimimo-mimo-v2.6-distill-qwen-9b",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
+      "source_version": "hf-xiaomimimo-mimo-v2.6-distill-qwen-9b",
+      "content_hash": "ff89425170674d3178b4eeb60f076f3c1639fd3f54b3cd7f222f21cd56b264fb",
+      "dossier_path": "07_PROJECT_LEARNING/hf-xiaomimimo-mimo-v2.6-distill-qwen-9b-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-xiaomimimo-mimo-v2.6-distill-qwen-9b-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-18T04:37:21.898Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-9125": {
+      "learning_id": "rule-9125",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9125,
+      "title": "Empirical Invariant Guard in Dockerfile",
+      "source_url": "https://github.com/projectdiscovery/nuclei",
+      "source_version": "76040802",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-18T04:37:33.561Z"
+    },
+    "candidate_directive-empirical-invariant-guard-in-dockerfile": {
+      "item_id": "candidate_directive-empirical-invariant-guard-in-dockerfile",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-R8ZC-empirical-invariant-guard-in-dockerfile.md",
+      "title": "Empirical Invariant Guard in Dockerfile",
+      "repository": "projectdiscovery-nuclei-learnings",
+      "source_version": "HEAD",
+      "content_hash": "417cbe23520bd960683ff9759aedaa40f9e6d118b838854c4b63efa2ea0e7a25",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-18T04:37:37.465Z"
     }
   },
   "ai-builder-brain": {

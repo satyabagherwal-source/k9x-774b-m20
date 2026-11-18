@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
   "source_version": "hf-xiaomimimo-mimo-v2.6-distill-qwen-9b",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T17:10:52.490Z",
+  "timestamp": "2026-11-18T04:37:22.265Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-xiaomimimo-mimo-v2-6-distill-qwen-9b",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B](https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B) (Revision: `hf-xiaomim`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T17:10:52.490Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-18T04:37:22.265Z`  
 > **Learning ID**: `learn-huggingface-xiaomimimo-mimo-v2-6-distill-qwen-9b`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-xiaomimimo-mimo-v2.6-distill-qwen-9b-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B](https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T17:10:51.745Z  
+> **Harvest Timestamp**: 2026-11-18T04:37:21.439Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: image-text-to-text
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 22363 downloads | 704 likes
+- **Stars / Engagement**: 27278 downloads | 710 likes
 
 ---
 

@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-18T04:29:23.015Z",
-    "lastVerified": "2026-11-18T04:29:23.015Z",
+    "lastChecked": "2026-11-18T04:37:36.828Z",
+    "lastVerified": "2026-11-18T04:37:36.828Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -368,8 +368,8 @@
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-18T04:04:03.886Z",
-    "lastVerified": "2026-11-18T04:04:03.886Z",
+    "lastChecked": "2026-11-18T04:37:34.002Z",
+    "lastVerified": "2026-11-18T04:37:34.002Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-synalinks-synalinks-skills",
@@ -1975,8 +1975,8 @@
     "officialUrl": "https://github.com/Michael-A-Kuykendall/shimmy",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-16T22:34:04.706Z",
-    "lastVerified": "2026-11-16T22:34:04.706Z",
+    "lastChecked": "2026-11-18T04:37:18.645Z",
+    "lastVerified": "2026-11-18T04:37:18.645Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-michael-a-kuykendall-shimmy",
@@ -2143,22 +2143,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "projectdiscovery-nuclei": {
-    "name": "nuclei",
+    "name": "projectdiscovery/nuclei",
     "officialUrl": "https://github.com/projectdiscovery/nuclei",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-17T21:41:06.260Z",
-    "lastVerified": "2026-11-17T21:41:06.260Z",
+    "lastChecked": "2026-11-18T04:37:32.801Z",
+    "lastVerified": "2026-11-18T04:37:32.801Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-projectdiscovery-nuclei",
-    "contentHash": "af0f74cdd3c0aba6e0c002f7da77dc5bdcbd8f655330694bb1fb3abe6f0dce94",
+    "contentHash": "47697e5c65ae02fa273eaa53f7f6bf22abd296377a83bd1e2fc24c366608b14f",
     "promotedRulesCount": 1,
     "recentFixesCount": 1,
     "closedIssuesCount": 1,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "aaa21d53"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "zilliztech-claude-context": {
     "name": "claude-context",
@@ -2793,12 +2792,12 @@
     "officialUrl": "https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-13T17:10:51.745Z",
-    "lastVerified": "2026-11-13T17:10:51.745Z",
+    "lastChecked": "2026-11-18T04:37:21.439Z",
+    "lastVerified": "2026-11-18T04:37:21.439Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-xiaomimimo-mimo-v2-6-distill-qwen-9b",
-    "contentHash": "20ebe3d5f43459d3c157beb0502661f3dad8d421eb3c58dc429c9b4893aa8c4a",
+    "contentHash": "ff89425170674d3178b4eeb60f076f3c1639fd3f54b3cd7f222f21cd56b264fb",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -4552,9 +4551,9 @@
   "apptainer-singularity": {
     "name": "singularity",
     "officialUrl": "https://github.com/apptainer/singularity",
-    "lastChecked": "2026-11-17T06:09:53.386Z",
+    "lastChecked": "2026-11-18T04:37:26.099Z",
     "revisionIdentifier": "9dceb424",
-    "lastVerified": "2026-11-17T06:09:53.386Z"
+    "lastVerified": "2026-11-18T04:37:26.099Z"
   },
   "risingwavelabs-risingwave": {
     "name": "risingwavelabs/risingwave",
@@ -4976,9 +4975,9 @@
   "malisper-pgrust": {
     "name": "pgrust",
     "officialUrl": "https://github.com/malisper/pgrust",
-    "lastChecked": "2026-11-17T04:13:27.495Z",
+    "lastChecked": "2026-11-18T04:37:31.036Z",
     "revisionIdentifier": "38634b40",
-    "lastVerified": "2026-11-17T04:13:27.495Z"
+    "lastVerified": "2026-11-18T04:37:31.036Z"
   },
   "gitui-org-gitui": {
     "name": "gitui",
@@ -7446,9 +7445,9 @@
   "futurice-pepperoni-app-kit": {
     "name": "pepperoni-app-kit",
     "officialUrl": "https://github.com/futurice/pepperoni-app-kit",
-    "lastChecked": "2026-11-14T21:29:21.957Z",
+    "lastChecked": "2026-11-18T04:37:23.691Z",
     "revisionIdentifier": "f58c1410",
-    "lastVerified": "2026-11-14T21:29:21.957Z"
+    "lastVerified": "2026-11-18T04:37:23.691Z"
   },
   "kubeshark-kubeshark": {
     "name": "kubeshark",

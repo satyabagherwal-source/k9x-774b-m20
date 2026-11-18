@@ -10809,3 +10809,5 @@
 | `CYCLE-20261118-GEGT` | `2026-11-18T04:29:11.357Z` | `kotest/kotest` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9123` | Yes (`cf3f0130...`) |
 | `CYCLE-20261118-GJM2` | `2026-11-18T04:29:18.026Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9124` | Yes (`01938049...`) |
 | `CYCLE-20261118-GL2J` | `2026-11-18T04:29:19.915Z` | `trailbaseio/trailbase` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6477` | Yes (`f8849855...`) |
+| `CYCLE-20261118-QX4D` | `2026-11-18T04:37:22.093Z` | `XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-xiaomimimo-mimo-v2.6-distill-qwen-9b-learnings.md` | Yes (`ff894251...`) |
+| `CYCLE-20261118-R63Q` | `2026-11-18T04:37:33.734Z` | `projectdiscovery/nuclei` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9125` | Yes (`47697e5c...`) |
