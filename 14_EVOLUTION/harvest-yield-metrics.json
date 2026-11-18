@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T21:01:57.228Z",
-  "total_cycles_completed": 10608,
-  "total_learnings_persisted": 10608,
-  "total_rules_promoted": 10043,
+  "last_updated": "2026-11-18T21:23:15.835Z",
+  "total_cycles_completed": 10610,
+  "total_learnings_persisted": 10610,
+  "total_rules_promoted": 10044,
   "history": [
-    {
-      "timestamp": "2026-11-18T07:38:53.946Z",
-      "repository": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
-      "learningId": "learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-18T07:39:03.788Z",
-      "repository": "meshery/meshery",
-      "learningId": "learn-github-meshery-meshery",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-18T07:39:08.815Z",
       "repository": "arangodb/arangodb",
@@ -1403,6 +1389,20 @@
       "repository": "meta-llama/Meta-Llama-3-8B-Instruct",
       "learningId": "learn-huggingface-meta-llama-meta-llama-3-8b-instruct",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T21:23:13.400Z",
+      "repository": "zai-org/GLM-5.2",
+      "learningId": "learn-huggingface-zai-org-glm-5-2",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T21:23:15.835Z",
+      "repository": "actix/actix-web",
+      "learningId": "learn-github-actix-actix-web",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

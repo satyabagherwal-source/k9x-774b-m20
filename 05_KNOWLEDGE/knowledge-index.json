@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-18T21:02:10.291Z",
+  "last_updated": "2026-11-18T21:23:27.659Z",
   "total_verified_learnings": 9009,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 21462,
+  "total_items": 21464,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113686,13 +113686,13 @@
       "item_id": "candidate_directive-editor-add-scoped-ios-account-deletion",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-XDE6-editor-add-scoped-ios-account-deletion.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-OR9U-editor-add-scoped-ios-account-deletion.md",
       "title": "editor): add scoped ios account deletion",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "2a46445809af4968724d45eea48102dc657634b7fa1524081afbf8bab3752c70",
+      "content_hash": "0386a7e518446961a808950c9e33a187f5e2d51e30819066a86b7175ee7a2a84",
       "domain_letter": "H",
-      "persisted_at": "2026-11-18T21:02:09.681Z"
+      "persisted_at": "2026-11-18T21:23:27.381Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant",
@@ -113702,9 +113702,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "e909e94063e25e67e1e1574d8c3b180afff005d3beba64900e718600533da7a5",
+      "content_hash": "aa15ce07c06411c8d36350dbd5539af5099b163f813053619a8f8ef8e7b7cce8",
       "domain_letter": "H",
-      "persisted_at": "2026-11-18T21:02:09.804Z"
+      "persisted_at": "2026-11-18T21:23:27.521Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113714,9 +113714,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "e26728331a9e29d12f13f4302bef6c8b683f1bd823eb9709188246a1c1416756",
+      "content_hash": "5f3e995aeaa8a96d64fb36a8ee728d79aee85a179734439a0849a61a30232329",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T21:02:09.923Z"
+      "persisted_at": "2026-11-18T21:23:27.659Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -114925,10 +114925,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-actix-actix-web-technical-construction-intelligence-actix-actix-web-core-invaria.md",
       "title": "Technical Construction Intelligence: actix/actix-web Core Invariants",
       "repository": "actix/actix-web",
-      "source_version": "27cdad7b",
-      "content_hash": "57e2d0b98f72eb33dd54e8a3d3cf83a8b38fc621bb71ba75b4a785923081515e",
+      "source_version": "c795e295",
+      "content_hash": "423087bc1ccc73e95c7cd2ca394c81c5796ef038fc95a4b59921d52738c3a564",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T07:06:54.842Z"
+      "persisted_at": "2026-11-18T21:23:16.172Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-actix-actix-web": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-actix-actix-web",
@@ -114937,10 +114937,10 @@
       "relative_path": "08_VERIFICATION/actix-actix-web-verification-protocol-empirical-defect-shield-for-actix-actix-we.md",
       "title": "Verification Protocol: Empirical Defect Shield for actix/actix-web",
       "repository": "actix/actix-web",
-      "source_version": "27cdad7b",
-      "content_hash": "985aad10d63b149267a7405c44a5ce98afcbe461b8b6a2662412f7146f6402da",
+      "source_version": "c795e295",
+      "content_hash": "e3ed7edce068310bacb0d71bc3a698e8ffa7f5779b0dcb82b1d1bee4f2607c4f",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T07:06:54.975Z"
+      "persisted_at": "2026-11-18T21:23:16.320Z"
     },
     "candidate_directive-update-yt-music-now-a-native-swiftui-app-2523": {
       "item_id": "candidate_directive-update-yt-music-now-a-native-swiftui-app-2523",
@@ -115022,9 +115022,9 @@
       "title": "Technical Construction Intelligence: actix-actix-web-learnings Core Invariants",
       "repository": "actix-actix-web-learnings",
       "source_version": "HEAD",
-      "content_hash": "e21256d08d5bcdff6172d128377f70c494453b1fe02f6021cfee61f12e274f8d",
+      "content_hash": "7c49f72ea7fcdaacc6b09c40aa5bdfaa6f9db3a44c3e5e1a50ab8ddf7571f953",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T07:06:58.241Z"
+      "persisted_at": "2026-11-18T21:23:26.355Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-actix-actix-web-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-actix-actix-web-learnings",
@@ -115034,9 +115034,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for actix-actix-web-learnings",
       "repository": "actix-actix-web-learnings",
       "source_version": "HEAD",
-      "content_hash": "c00beccb956cb490737711ae73602fc9b3d7c7c10e25b93cbf1841d432fd9579",
+      "content_hash": "1d61b82ba5d1c2e11bcfebda76c0695903e71f7e4be769086b417e0ca31b8fd2",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T07:06:58.372Z"
+      "persisted_at": "2026-11-18T21:23:26.502Z"
     },
     "domain_intelligence-research-knowledge-intelligence-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf-core-i": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf-core-i",
@@ -221475,7 +221475,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/zai-org/GLM-5.2",
       "source_version": "hf-zai-org-glm-5.2",
-      "content_hash": "7bda3b84411b4cdd122bd89a9e0eb4f68b8b76a82fbf9935b87cffa3593fea55",
+      "content_hash": "eabb92caaf98d7924476a9999aee6dda906ba32743370f696f9040e24181ee7c",
       "dossier_path": "07_PROJECT_LEARNING/hf-zai-org-glm-5.2-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-zai-org-glm-5.2-learnings.md",
       "promoted_rules": [],
@@ -221484,7 +221484,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T03:01:47.156Z",
+      "verified_at": "2026-11-18T21:23:13.168Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -221501,9 +221501,9 @@
       "title": "Research & Knowledge Intelligence: zai-org/GLM-5.2 Core Invariants",
       "repository": "zai-org/GLM-5.2",
       "source_version": "hf-zai-org-glm-5.2",
-      "content_hash": "bfaedff000947afd5088faf028a35e4cf017f2bab5b926f896a9176d0485baf2",
+      "content_hash": "becc7c624817a11b017f3f9004f4e098d196cccd18f49cb292fdb51ab4adfe61",
       "domain_letter": "D",
-      "persisted_at": "2026-11-14T03:01:47.443Z"
+      "persisted_at": "2026-11-18T21:23:13.579Z"
     },
     "learn-github-loft-sh-vcluster": {
       "learning_id": "learn-github-loft-sh-vcluster",
@@ -221694,9 +221694,9 @@
       "title": "Research & Knowledge Intelligence: hf-zai-org-glm-5.2-learnings Core Invariants",
       "repository": "hf-zai-org-glm-5.2-learnings",
       "source_version": "HEAD",
-      "content_hash": "0fad32bde9e1fc5019ccd5ef8f9c9078777c2cce3ab6b5d2e33d7c90db1b5fdd",
+      "content_hash": "af132f3b39cd60c1490e141ed3ededf5cfd031147cddc036b97b4706829bfc24",
       "domain_letter": "D",
-      "persisted_at": "2026-11-14T03:02:22.801Z"
+      "persisted_at": "2026-11-18T21:23:26.817Z"
     },
     "candidate_directive-cli-deprecate-docker-login-instead-of-reading-image-pull-secrets": {
       "item_id": "candidate_directive-cli-deprecate-docker-login-instead-of-reading-image-pull-secrets",
@@ -246982,8 +246982,8 @@
       "slug": "actix-actix-web",
       "platform": "github",
       "source_url": "https://github.com/actix/actix-web",
-      "source_version": "27cdad7b",
-      "content_hash": "98c35604eb2a413404890bc23e83f2634343c9b16116d9127b9d71454ee19be2",
+      "source_version": "c795e295",
+      "content_hash": "4fa15a656fae7579273606790cab39137ddce2baaf601ca6a32ee1f3e921cf75",
       "dossier_path": "07_PROJECT_LEARNING/actix-actix-web-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/actix-actix-web-learnings.md",
       "promoted_rules": [
@@ -246996,6 +246996,11 @@
           "number": 8899,
           "title": "map PayloadError::Overflow to 413 Payload Too Large",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9282,
+          "title": "build(deps): bump useblacksmith/checkout from 1.8.2 to 1.8.3",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -247003,7 +247008,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T07:06:54.278Z",
+      "verified_at": "2026-11-18T21:23:15.640Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -289753,6 +289758,32 @@
       "content_hash": "ca4f0948d0f8e5f7f07169708bbfa1af8bd56a27243072fe7585f4b9a76cb1a1",
       "domain_letter": "K",
       "persisted_at": "2026-11-18T20:46:21.547Z"
+    },
+    "rule-9282": {
+      "learning_id": "rule-9282",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9282,
+      "title": "build(deps): bump useblacksmith/checkout from 1.8.2 to 1.8.3",
+      "source_url": "https://github.com/actix/actix-web",
+      "source_version": "c795e295",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-18T21:23:15.640Z"
+    },
+    "candidate_directive-build-deps-bump-useblacksmith-checkout-from-1-8-2-to-1-8-3": {
+      "item_id": "candidate_directive-build-deps-bump-useblacksmith-checkout-from-1-8-2-to-1-8-3",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-OQDD-build-deps-bump-useblacksmith-checkout-from-1-8-2-to-1-8-3.md",
+      "title": "build(deps): bump useblacksmith/checkout from 1.8.2 to 1.8.3",
+      "repository": "actix-actix-web-learnings",
+      "source_version": "HEAD",
+      "content_hash": "178839a825963e86bfdbd8bda3d70b13513d0872749eb510a51e6c0ee1ae406d",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-18T21:23:26.210Z"
     }
   },
   "ai-builder-brain": {

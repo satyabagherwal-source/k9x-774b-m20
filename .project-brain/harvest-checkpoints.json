@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-18T21:01:57.232Z",
+  "last_updated": "2026-11-18T21:23:15.838Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1205,14 +1205,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-zai-org-glm-5-2",
-      "content_hash": "7bda3b84411b4cdd122bd89a9e0eb4f68b8b76a82fbf9935b87cffa3593fea55",
-      "verified_at": "2026-11-14T03:01:47.301Z",
+      "content_hash": "eabb92caaf98d7924476a9999aee6dda906ba32743370f696f9040e24181ee7c",
+      "verified_at": "2026-11-18T21:23:13.402Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-14T03:01:47.301Z"
+      "last_updated": "2026-11-18T21:23:13.402Z"
     },
     "stabilityai/stable-diffusion-3-medium": {
       "repository": "stabilityai/stable-diffusion-3-medium",
@@ -7911,14 +7911,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-actix-actix-web",
-      "content_hash": "98c35604eb2a413404890bc23e83f2634343c9b16116d9127b9d71454ee19be2",
-      "verified_at": "2026-11-17T07:06:54.507Z",
+      "content_hash": "4fa15a656fae7579273606790cab39137ddce2baaf601ca6a32ee1f3e921cf75",
+      "verified_at": "2026-11-18T21:23:15.837Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T07:06:54.507Z"
+      "last_updated": "2026-11-18T21:23:15.837Z"
     },
     "wix/react-native-ui-lib": {
       "repository": "wix/react-native-ui-lib",

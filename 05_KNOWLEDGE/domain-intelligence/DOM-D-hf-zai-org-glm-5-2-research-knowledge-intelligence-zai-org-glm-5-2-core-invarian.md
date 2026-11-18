@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/zai-org/GLM-5.2",
   "source_version": "hf-zai-org-glm-5.2",
   "license": "Open-Source",
-  "timestamp": "2026-11-14T03:01:47.442Z",
+  "timestamp": "2026-11-18T21:23:13.578Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-zai-org-glm-5-2",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [zai-org/GLM-5.2](https://huggingface.co/zai-org/GLM-5.2) (Revision: `hf-zai-org`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-14T03:01:47.442Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-18T21:23:13.578Z`  
 > **Learning ID**: `learn-huggingface-zai-org-glm-5-2`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-zai-org-glm-5.2-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/zai-org/GLM-5.2](https://huggingface.co/zai-org/GLM-5.2))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-14T03:01:39.791Z  
+> **Harvest Timestamp**: 2026-11-18T21:23:12.785Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: text-generation
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 316008 downloads | 5206 likes
+- **Stars / Engagement**: 311347 downloads | 5209 likes
 
 ---
 

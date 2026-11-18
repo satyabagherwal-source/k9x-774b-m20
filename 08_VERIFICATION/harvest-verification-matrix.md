@@ -11096,3 +11096,5 @@
 | `CYCLE-2026-11-18-PROJ-EVOLVE` | `2026-11-18T20:46:21.116Z` | `clastix-kamaji` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-K-A46CD8EF` [Domain K] | Yes (`635863d1...`) |
 | `CYCLE-20261118-N0DK` | `2026-11-18T20:54:06.248Z` | `openai/gpt-oss-120b` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openai-gpt-oss-120b-learnings.md` | Yes (`127990fe...`) |
 | `CYCLE-20261118-X3S3` | `2026-11-18T21:01:57.219Z` | `meta-llama/Meta-Llama-3-8B-Instruct` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-meta-llama-meta-llama-3-8b-instruct-learnings.md` | Yes (`3f163f2f...`) |
+| `CYCLE-20261118-OGHB` | `2026-11-18T21:23:13.391Z` | `zai-org/GLM-5.2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-zai-org-glm-5.2-learnings.md` | Yes (`eabb92ca...`) |
+| `CYCLE-20261118-OICX` | `2026-11-18T21:23:15.825Z` | `actix/actix-web` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9282` | Yes (`4fa15a65...`) |

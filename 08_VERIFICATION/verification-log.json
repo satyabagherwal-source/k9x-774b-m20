@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261117-0JSQ",
-    "timestamp": "2026-11-17T12:25:04.826Z",
-    "repository": "ytsaurus/ytsaurus",
-    "learningId": "learn-github-ytsaurus-ytsaurus",
-    "contentHash": "a582e4fd73190db69e709fa985841dce2ac37c676bcab48ff9b5a359d67d0e35",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261117-LVS8",
-    "timestamp": "2026-11-17T12:41:40.136Z",
-    "repository": "fastify/fastify",
-    "learningId": "learn-github-fastify-fastify",
-    "contentHash": "15c6145e574d755721b215bff3ae8b2e0719924a0ea79be7dcfc70d4e24b424f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261117-RPU7",
     "timestamp": "2026-11-17T12:46:12.367Z",
     "repository": "NucleoidAI/Nucleoid",
@@ -7492,6 +7462,36 @@
     "contentHash": "3f163f2f188846f106fc86d8b1653ea2b20120f6031a2f6749553ffaff44a6f4",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-OGHB",
+    "timestamp": "2026-11-18T21:23:13.391Z",
+    "repository": "zai-org/GLM-5.2",
+    "learningId": "learn-huggingface-zai-org-glm-5-2",
+    "contentHash": "eabb92caaf98d7924476a9999aee6dda906ba32743370f696f9040e24181ee7c",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-OICX",
+    "timestamp": "2026-11-18T21:23:15.825Z",
+    "repository": "actix/actix-web",
+    "learningId": "learn-github-actix-actix-web",
+    "contentHash": "4fa15a656fae7579273606790cab39137ddce2baaf601ca6a32ee1f3e921cf75",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

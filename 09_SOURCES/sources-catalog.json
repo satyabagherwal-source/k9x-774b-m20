@@ -925,8 +925,8 @@
     "sourceUrl": "https://huggingface.co/zai-org/GLM-5.2",
     "sourceVersion": "hf-zai-org-glm-5.2",
     "license": "Open-Source",
-    "contentHash": "7bda3b84411b4cdd122bd89a9e0eb4f68b8b76a82fbf9935b87cffa3593fea55",
-    "lastHarvestedAt": "2026-11-14T03:01:47.294Z",
+    "contentHash": "eabb92caaf98d7924476a9999aee6dda906ba32743370f696f9040e24181ee7c",
+    "lastHarvestedAt": "2026-11-18T21:23:13.395Z",
     "learningId": "learn-huggingface-zai-org-glm-5-2"
   },
   "hf-stabilityai-stable-diffusion-3-medium": {
@@ -5193,10 +5193,10 @@
     "repository": "actix/actix-web",
     "platform": "github",
     "sourceUrl": "https://github.com/actix/actix-web",
-    "sourceVersion": "27cdad7b",
+    "sourceVersion": "c795e295",
     "license": "Apache-2.0",
-    "contentHash": "98c35604eb2a413404890bc23e83f2634343c9b16116d9127b9d71454ee19be2",
-    "lastHarvestedAt": "2026-11-17T07:06:54.498Z",
+    "contentHash": "4fa15a656fae7579273606790cab39137ddce2baaf601ca6a32ee1f3e921cf75",
+    "lastHarvestedAt": "2026-11-18T21:23:15.830Z",
     "learningId": "learn-github-actix-actix-web"
   },
   "wix-react-native-ui-lib": {

@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T21:02:10.037Z",
+  "last_updated": "2026-11-18T21:23:27.381Z",
   "directives": [
     {
       "id": "CD-001",
@@ -4835,11 +4835,11 @@
       "staged_date": "2026-11-11"
     },
     {
-      "id": "CD-XDE6",
+      "id": "CD-OR9U",
       "directive_title": "editor): add scoped ios account deletion",
       "source_repo": "zseven-w-openpencil-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-XDE6-editor-add-scoped-ios-account-deletion.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-OR9U-editor-add-scoped-ios-account-deletion.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-18",
@@ -30859,6 +30859,35 @@
       "source_repo": "zulip-zulip",
       "domain_letter": "A",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-55AB71-forensic-learning-record-deep-inspection.md",
+      "staged_date": "2026-11-18"
+    },
+    {
+      "id": "CD-OQDD",
+      "directive_title": "build(deps): bump useblacksmith/checkout from 1.8.2 to 1.8.3",
+      "source_repo": "actix-actix-web-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-OQDD-build-deps-bump-useblacksmith-checkout-from-1-8-2-to-1-8-3.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-18",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-ACAC7D",
+      "directive_title": "build(deps): bump useblacksmith/checkout from 1.8.2 to 1.8.3",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "actix-actix-web",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-ACAC7D-build-deps-bump-useblacksmith-checkout-f.md",
+      "staged_date": "2026-11-18"
+    },
+    {
+      "id": "CD-REV-866795",
+      "directive_title": "editor): add scoped ios account deletion",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zseven-w-openpencil",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-866795-editor-add-scoped-ios-account-deletion.md",
       "staged_date": "2026-11-18"
     }
   ]

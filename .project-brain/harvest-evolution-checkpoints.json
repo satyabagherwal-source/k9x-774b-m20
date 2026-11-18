@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T21:02:10.419Z",
+  "last_updated": "2026-11-18T21:23:27.784Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-18T21:02:10.043Z",
@@ -268,7 +268,7 @@
       "staged_for_review": 1
     },
     "zseven-w-openpencil-learnings.md": {
-      "processed_at": "2026-11-18T21:02:09.315Z",
+      "processed_at": "2026-11-18T21:23:26.982Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -868,7 +868,7 @@
       "staged_for_review": 1
     },
     "actix-actix-web-learnings.md": {
-      "processed_at": "2026-11-17T07:06:57.766Z",
+      "processed_at": "2026-11-18T21:23:25.260Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2343,8 +2343,8 @@
       "staged_for_review": 0
     },
     "hf-zai-org-glm-5.2-learnings.md": {
-      "processed_at": "2026-11-14T03:02:22.641Z",
-      "promoted_canonical": 1,
+      "processed_at": "2026-11-18T21:23:26.638Z",
+      "promoted_canonical": 0,
       "staged_for_review": 0
     },
     "neuron-core-neuron-ai-learnings.md": {
@@ -3473,7 +3473,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 2073,
+  "total_dossiers_evaluated": 2076,
   "total_canonical_promoted": 366,
-  "total_staged_for_review": 1563
+  "total_staged_for_review": 1565
 }

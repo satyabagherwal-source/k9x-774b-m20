@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-18T21:02:10.291Z",
+  "last_updated": "2026-11-18T21:23:27.521Z",
   "total_records": 1906,
   "domains": {
     "A": {
@@ -8639,8 +8639,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "e909e94063e25e67e1e1574d8c3b180afff005d3beba64900e718600533da7a5",
-      "created_at": "2026-11-18T21:02:09.804Z"
+      "content_hash": "aa15ce07c06411c8d36350dbd5539af5099b163f813053619a8f8ef8e7b7cce8",
+      "created_at": "2026-11-18T21:23:27.521Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -9422,8 +9422,8 @@
       "title": "Technical Construction Intelligence: actix/actix-web Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-actix-actix-web-technical-construction-intelligence-actix-actix-web-core-invaria.md",
       "repository": "actix/actix-web",
-      "content_hash": "57e2d0b98f72eb33dd54e8a3d3cf83a8b38fc621bb71ba75b4a785923081515e",
-      "created_at": "2026-11-17T07:06:54.842Z"
+      "content_hash": "423087bc1ccc73e95c7cd2ca394c81c5796ef038fc95a4b59921d52738c3a564",
+      "created_at": "2026-11-18T21:23:16.172Z"
     },
     "domain_intelligence-architecture-intelligence-dkhamsing-open-source-ios-apps-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-dkhamsing-open-source-ios-apps-core-invariants",
@@ -9491,8 +9491,8 @@
       "title": "Technical Construction Intelligence: actix-actix-web-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-actix-actix-web-learnings-technical-construction-intelligence-actix-actix-web-le.md",
       "repository": "actix-actix-web-learnings",
-      "content_hash": "e21256d08d5bcdff6172d128377f70c494453b1fe02f6021cfee61f12e274f8d",
-      "created_at": "2026-11-17T07:06:58.241Z"
+      "content_hash": "7c49f72ea7fcdaacc6b09c40aa5bdfaa6f9db3a44c3e5e1a50ab8ddf7571f953",
+      "created_at": "2026-11-18T21:23:26.355Z"
     },
     "domain_intelligence-research-knowledge-intelligence-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf-core-i": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf-core-i",
@@ -12506,8 +12506,8 @@
       "title": "Research & Knowledge Intelligence: zai-org/GLM-5.2 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-zai-org-glm-5-2-research-knowledge-intelligence-zai-org-glm-5-2-core-invarian.md",
       "repository": "zai-org/GLM-5.2",
-      "content_hash": "bfaedff000947afd5088faf028a35e4cf017f2bab5b926f896a9176d0485baf2",
-      "created_at": "2026-11-14T03:01:47.443Z"
+      "content_hash": "becc7c624817a11b017f3f9004f4e098d196cccd18f49cb292fdb51ab4adfe61",
+      "created_at": "2026-11-18T21:23:13.579Z"
     },
     "domain_intelligence-deployment-operations-intelligence-loft-sh-vcluster-core-invariants": {
       "record_id": "domain_intelligence-deployment-operations-intelligence-loft-sh-vcluster-core-invariants",
@@ -12575,8 +12575,8 @@
       "title": "Research & Knowledge Intelligence: hf-zai-org-glm-5.2-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-zai-org-glm-5-2-learnings-research-knowledge-intelligence-hf-zai-org-glm-5-2-.md",
       "repository": "hf-zai-org-glm-5.2-learnings",
-      "content_hash": "0fad32bde9e1fc5019ccd5ef8f9c9078777c2cce3ab6b5d2e33d7c90db1b5fdd",
-      "created_at": "2026-11-14T03:02:22.801Z"
+      "content_hash": "af132f3b39cd60c1490e141ed3ededf5cfd031147cddc036b97b4706829bfc24",
+      "created_at": "2026-11-18T21:23:26.817Z"
     },
     "domain_intelligence-deployment-operations-intelligence-loft-sh-vcluster-learnings-core-invariants": {
       "record_id": "domain_intelligence-deployment-operations-intelligence-loft-sh-vcluster-learnings-core-invariants",
