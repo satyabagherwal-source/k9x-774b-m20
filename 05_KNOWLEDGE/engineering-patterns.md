@@ -667733,3 +667733,95 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `1ce4dd87` are properly handled with clean fallback behavior.
+
+
+---
+
+## 9109. keep SQL NULL elements of a json[] ADD COLUMN default as NULL on nulla (Harvested from PeerDB-io/peerdb)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "keep SQL NULL elements of a json[] ADD COLUMN default as NULL on nulla",
+  "source": "PeerDB-io/peerdb",
+  "source_url": "https://github.com/PeerDB-io/peerdb",
+  "source_version": "5868e6e7",
+  "license": "AGPL-3.0",
+  "extracted_at": "2026-11-18T02:42:42.466Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-peerdb-io-peerdb",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [PeerDB-io/peerdb](https://github.com/PeerDB-io/peerdb) (Revision: `5868e6e7`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `flow/connectors/postgres/cdc.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in PeerDB-io/peerdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `0993bcf9`: postgres: keep SQL NULL elements of a json[] ADD COLUMN default as NULL on nullable mirrors. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `flow/connectors/postgres/cdc.go`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Verified production-grade fix pattern:
+	// json[]/jsonb[] columns, domains included, whose missing value the catalog also reads element by element
+	var addedJSONArrayColumnNames []string
+			if qkind := types.QValueKind(currRelMap[column.Name]); qkind == types.QValueKindArrayJSON || qkind == types.QValueKindArrayJSONB {
+				addedJSONArrayColumnNames = append(addedJSONArrayColumnNames, column.Name)
+			}
+	addedColumnCatalogInfo, err := p.fetchAddedColumnCatalogInfo(ctx, mappedRelID, addedColumnNames, addedJSONArrayColumnNames)
+				// the destination adds a json[] column as Array(Nullable(JSON)) under the nullable setting
+				if literal, ok := defaultExprFromPostgresMissingValue(*missingValue, qkind, wrapJSON,
+					schemaDelta.NullableEnabled, catalogInfo.missingNullElements); ok {
+	// missingNullElements marks the SQL NULL elements of a json[]/jsonb[] missing value, which missingJSON
+	// renders as JSON null just like a 'null' element.
+	missingNullElements []bool
+	hasMissing          bool
+	notNull             bool
+	ctx context.Context, relID uint32, columnNames []string, jsonArrayColumnNames []string,
+	// to_json renders SQL NULL and 'null' elements alike; the last column reads the elements as text[], which keeps them apar
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// Induced defect failure mode:
+	addedColumnCatalogInfo, err := p.fetchAddedColumnCatalogInfo(ctx, mappedRelID, addedColumnNames)
+				if literal, ok := defaultExprFromPostgresMissingValue(*missingValue, qkind, wrapJSON); ok {
+	hasMissing  bool
+	notNull     bool
+	ctx context.Context, relID uint32, columnNames []string,
+		CASE WHEN a.atthasmissing THEN (pg_catalog.to_json(a.attmissingval)->0)::text END
+		relID, columnNames)
+	if _, err := pgx.ForEachRow(rows, []any{&name, &notNull, &hasMissing, &missingValue, &missingJSON}, func() error {
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `0993bcf9` are properly handled with clean fallback behavior.

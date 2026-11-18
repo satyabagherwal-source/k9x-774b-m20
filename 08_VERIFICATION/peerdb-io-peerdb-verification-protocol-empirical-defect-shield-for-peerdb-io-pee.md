@@ -4,22 +4,22 @@
 {
   "source_repository": "PeerDB-io/peerdb",
   "source_url": "https://github.com/PeerDB-io/peerdb",
-  "source_version": "e0f79a20",
+  "source_version": "5868e6e7",
   "license": "AGPL-3.0",
-  "timestamp": "2026-11-14T12:04:15.586Z",
+  "timestamp": "2026-11-18T02:42:43.063Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-peerdb-io-peerdb",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [PeerDB-io/peerdb](https://github.com/PeerDB-io/peerdb) (Revision: `e0f79a20`).  
-> **License**: AGPL-3.0 | **Timestamp**: `2026-11-14T12:04:15.586Z`  
+> **Provenance**: Harvested from [PeerDB-io/peerdb](https://github.com/PeerDB-io/peerdb) (Revision: `5868e6e7`).  
+> **License**: AGPL-3.0 | **Timestamp**: `2026-11-18T02:42:43.063Z`  
 > **Learning ID**: `learn-github-peerdb-io-peerdb`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `PeerDB-io/peerdb` (Commit: `e0f79a20`)
+- **Target Repository**: `PeerDB-io/peerdb` (Commit: `5868e6e7`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/peerdb-io-peerdb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/PeerDB-io/peerdb](https://github.com/PeerDB-io/peerdb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-14T12:04:14.357Z  
+> **Harvest Timestamp**: 2026-11-18T02:42:41.987Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Fast, Simple and a cost effective tool to replicate data from Postgres to Data Warehouses, Queues and Storage
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 3321 stars
+- **Stars / Engagement**: 3324 stars
 
 ---
 
@@ -1890,1121 +1890,281 @@ func getChainedRoleSessionName() string {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e0f79a20` (2026-11-13)
-**Commit Message**: Optionally honor Postgres child table schema when PEERDB_SOURCE_SCHEMA_AS_DESTINATION_COLUMN is enabled (#5028)
+### Incident Patch 1: `0993bcf9` (2026-11-17)
+**Commit Message**: postgres: keep SQL NULL elements of a json[] ADD COLUMN default as NULL on nullable mirrors (#5081)
 
-Based on top of https://github.com/PeerDB-io/peerdb/pull/4992. 
+Fixes DBI-1327. Follows #5048.
 
-## Problem
+With `PEERDB_NULLABLE` on, SQL NULL elements of a `json[]`/`jsonb[]` ADD
+COLUMN default landed as `{}` in `Array(Nullable(JSON))`, while synced
+rows store NULL. The default is read through `to_json(attmissingval)`,
+which renders a SQL NULL element like a `'null'` one.
 
-With `PEERDB_SOURCE_SCHEMA_AS_DESTINATION_COLUMN`, rows of a Postgres
-inheritance child table carry the schema of the parent table. With all
-child tables replicated into one destination table in a
-schema-per-tenant setup, rows from different tenants with the same key
-collapse into one row, because `_peerdb_source_schema` is the first
-column of the sorting key.
+- The catalog query also reads the default's elements as `text[]`, which
+keeps SQL NULL apart.
+- On nullable mirrors the default writes those elements as `null` and
+parses with `Array(Nullable(JSON))`, the column's type.
+- Domains over `json[]`/`jsonb[]` are covered. 2-D defaults keep the old
+behaviour.
 
-## Change
+**Testing:** the `Test_JSON_CH_Array_AddColumnDefault*` e2e tests pass,
+including a new domain variant. `TestAddedColumnCatalogInfo` covers the
+query against a live Postgres.
 
-This PR introduces an opt-in feature when
-`PEERDB_POSTGRES_SOURCE_SCHEMA_FROM_INHERITANCE_CHILD` is enabled, and
-would otherwise no-op. It takes effect only when
-`PEERDB_SOURCE_SCHEMA_AS_DESTINATION_COLUMN` and
-`PEERDB_POSTGRES_CDC_HANDLE_INHERITANCE_FOR_NON_PARTITIONED_TABLES` are
-also enabled. With the settings enabled, each row of an inherited table
-carries its own schema instead of the root table's schema:
-- snapshot: when processing child range partitions, each `FROM ONLY`
-query adds the table's schema as a constant `_peerdb_source_schema`
-column.
-- cdc (pg-side): `getSourceSchemaForDestinationColumn` returns the
-schema of
-
-**File**: `flow/connectors/clickhouse/table_function.go` (modified, +5/-1)
+**File**: `flow/connectors/postgres/cdc.go` (modified, +42/-13)
 ```diff
-@@ -160,6 +160,7 @@ func buildInsertFromTableFunctionQuery(
- 	if err != nil {
- 		return "", err
- 	}
-+	sourceSchemaColExists := false
+@@ -1454,10 +1454,15 @@ func processRelationMessage[Items model.Items](
  
- 	selectedColumnNames := make([]string, 0, len(config.schema.Fields))
- 	insertedColumnNames := make([]string, 0, len(config.schema.Fields))
-@@ -172,6 +173,9 @@ func buildInsertFromTableFunctionQuery(
- 		if excluded {
- 			continue
- 		}
-+		if !sourceSchemaColExists && colName == sourceSchemaColName {
-+			sourceSchemaColExists = true
-+		}
- 
- 		sourceFieldName := colName
- 		if config.columnNameMap != nil {
-@@ -198,7 +202,7 @@ func buildInsertFromTableFunctionQuery(
- 	}
- 
- 	// Add source schema column if needed
--	if sourceSchemaAsDestinationColumn {
-+	if sourceSchemaAsDestinationColumn && !sourceSchemaColExists {
- 		qualifiedTable, err := common.ParseTableIdentifier(config.config.WatermarkTable)
- 		if err != nil {
- 			return "", err
-```
-
-**File**: `flow/connectors/clickhouse/table_function_test.go` (modified, +52/-0)
-```diff
-@@ -273,3 +273,55 @@ func TestBuildInsertFromTableFunctionQueryJSONOverride(t *testing.T) {
- 			"FROM s3('s3://bucket/key', 'Avro')",
- 		query)
- }
-+
-+// TestBuildInsertFromTableFunctionQuerySourceSchema checks who supplies _peerdb_source_schema:
-+// when the source projected the column, the insert copies it from the file; otherwise the insert
-+// adds the watermark table's schema.
-+func TestBuildInsertFromTableFunctionQuerySourceSchema(t *testing.T) {
-+	const tableFunctionExpr = "s3('s3://bucket/key', 'Avro')"
-+	settingOn := map[string]string{"PEERDB_SOURCE_SCHEMA_AS_DESTINATION_COLUMN": "true"}
-+	settingOff := map[string]string{"PEERDB_SOURCE_SCHEMA_AS_DESTINATION_COLUMN": "false"}
-+	projectedFields := types.QRecordSchema{Fields: []types.QField{
-+		{Name: "id", Type: types.QValueKindInt64},
-+		{Name: sourceSchemaColName, Type: types.QValueKindString},
-+	}}
-+	sourceFields := types.QRecordSchema{Fields: []types.QField{
-+		{Name: "id", Type: types.QValueKindInt64},
-+	}}
-+
-+	for _, tc := range []struct {
-+		name     string
-+		env      map[string]string
-+		schema   types.QRecordSchema
-+		expected string
-+	}{
-+		{
-+			name:     "setting on + projected",
-+			env:      settingOn,
-+			schema:   projectedFields,
-+			expected: "INSERT INTO `t1`(`id`,`_peerdb_source_schema`) SELECT `id`,`_peerdb_source_schema` FROM " + tableFunctionExpr,
-+		},
-+		{
-+			name:     "setting on + not projected",
-+			env:      settingOn,
-+			schema:   sourceFields,
-+			expected: "INSERT INTO `t1`(`id`,_peerdb_source_schema) SELECT `id`,'public' FROM " + tableFunctionExpr,
-+		},
-+		{
-+			name:     "setting off",
-+			env:      settingOff,
-+			schema:   sourceFields,
-+			expected: "INSERT INTO `t1`(`id`) SELECT `id` FROM " + tableFunctionExpr,
-+		},
-+	} {
-+		t.Run(tc.name, func(t *testing.T) {
-+			query, err := buildInsertFromTableFunctionQuery(t.Context(), &insertFromTableFunctionConfig{
-+				destinationTable: "t1",
-+				schema:           tc.schema,
-+				config:           &protos.QRepConfig{Env: tc.env, WatermarkTable: "public.parent"},
-+			}, tableFunctionExpr, nil)
-+			require.NoError(t, err)
-+			require.Equal(t, tc.expected, query)
-+		})
-+	}
-+}
-```
-
-**File**: `flow/connectors/postgres/cdc.go` (modified, +17/-7)
-```diff
-@@ -74,6 +74,7 @@ type PostgresCDCSource struct {
- 	flowJobName                              string
- 	fastProcessJsonColumns                   bool
- 	handleInheritanceForNonPartitionedTables bool
-+	sourceSchemaFromInheritanceChild         bool
- 	originMetadataAsDestinationColumn        bool
- 	internalVersion                          uint32
- 	flags                                    []string
-@@ -96,6 +97,7 @@ type PostgresCDCConfig struct {
- 	FastProcessJsonColumns                   bool
- 	HandleInheritanceForNonPartitionedTables bool
- 	SourceSchemaAsDestinationColumn          bool
-+	SourceSchemaFromInheritanceChild         bool
- 	OriginMetaAsDestinationColumn            bool
- 	InternalVersion                          uint32
- }
-@@ -195,25 +197,33 @@ func (c *PostgresConnector) NewPostgresCDCSource(ctx context.Context, cdcConfig
- 		flowJobName:                              cdcConfig.FlowJobName,
- 		fastProcessJsonColumns:                   cdcConfig.FastProcessJsonColumns,
- 		handleInheritanceForNonPartitionedTables: cdcConfig.HandleInheritanceForNonPartitionedTables,
-+		sourceSchemaFromInheritanceChild:         cdcConfig.SourceSchemaFromInheritanceChild,
- 		originMetadataAsDestinationColumn:        cdcConfig.OriginMetaAsDestinationColumn,
- 		internalVersion:                          cdcConfig.InternalVersion,
- 		flags:                                    cdcConfig.Flags,
- 		nativeJSONEnabled:                        cdcConfig.NativeJSONEnabled,
- 	}, nil
- }
- 
--func (p *PostgresCDCSource) getSourceSchemaForDestinationColumn(relID uint32, tableName string) (string, error) {
-+func (p *PostgresCDCSource) getSourceSchemaForDestinationColumn(
-+	mappedRelID uint32, tableName string, relNamespace string,
-+) (string, error) {
- 	if p.schemaNameForRelID == nil {
- 		return "", nil
--	} else if schema, ok := p.schemaNameForRelID[relID]; ok {
-+	}
-+	//  p.idToRelKindMap[mappedRelID] == 'r' ensures it's not a partitioned table
-+	if p.sourceSchemaFromInheritanceChild && p.idToRelKindMap[mappedRelID] == 'r' {
-+		return relNamespace, nil
-+	}
-+	if schema, ok := p.schemaNameForRelID[mappedRelID]; ok {
- 		return schema, nil
- 	}
- 
- 	schemaTable, err := common.ParseTableIdentifier(tableName)
- 	if err != nil {
- 		return "", err
- 	}
--	p.schemaNameForRelID[relID] = schemaTable.Namespace
-+	p.schemaNameForRelID[mappedRelID] = schemaTable.Namespace
- 	return schemaTable.Namespace, nil
- }
- 
-@@ -418,7 +428,7 @@ func processTuple[Items model.Items](
- 	}
- 
- 	if schemaName != "" {
--		processor.AddStringColumn(items, "_peerdb_source_schema", schemaName)
-+		processor.AddStringColumn(items, sourceSchemaColumnName, schemaName)
- 	}
- 
- 	if p.originMetadataAsDestinationColumn {
-@@ -1216,7 +1226,7 @@ func processInsertMessage[Items model.Items](
- 		return nil, err
- 	}
- 
--	schemaName, err := p.getSourceSchemaForDestinationColumn(relID, tableName)
-+	schemaName, err := p.getSourceSchemaForDestinationColumn(relID, tableName, rel.Namespace)
- 	if err != nil {
- 		return nil, err
- 	}
-@@ -1273,7 +1283,7 @@ func processUpdateMessage[Items model.Items](
- 		return nil, err
- 	}
- 
--	schemaName, err := p.getSourceSchemaForDestinationColumn(relID, tableName)
-+	schemaName, err := p.getSourceSchemaForDestinationColumn(relID, tableName, rel.Namespace)
- 	if err != nil {
- 		return nil, err
- 	}
-@@ -1336,7 +1346,7 @@ func processDeleteMessage[Items model.Items](
- 		return nil, err
- 	}
- 
--	schemaName, err := p.getSourceSchemaForDestinationColumn(relID, tableName)
-+	schemaName, err := p.getSourceSchemaForDestinationColumn(relID, tableName, rel.Namespace)
- 	if err != nil {
- 		return nil, err
- 	}
-```
-
-**File**: `flow/connectors/postgres/cdc_inheritance_test.go` (modified, +30/-0)
-```diff
-@@ -240,3 +240,33 @@ func TestInheritanceChildDDLsAreDeduped(t *testing.T) {
- 	require.Same(t, relA, p.relationMessageMapping[inhChildARelID])
- 	require.Same(t, relB, p.relationMessageMapping[inhChildBRelID])
- }
-+
-+func TestSourceSchemaFromInheritanceChild(t *testing.T) {
-+	t.Parallel()
-+	for name, tc := range map[string]struct {
-+		fromChild     bool
-+		parentRelKind byte
-+		expected      string
-+	}{
-+		"off => the root schema":                    {fromChild: false, parentRelKind: 'r', expected: "public"},
-+		"on => the child schema":                    {fromChild: true, parentRelKind: 'r', expected: "tenant_a"},
-+		"on + partitioned table => the root schema": {fromChild: true, parentRelKind: 'p', expected: "public"},
-+	} {
-+		t.Run(name, func(t *testing.T) {
-+			p := newInheritanceTestCDCSource(t)
-+			p.schemaNameForRelID = map[uint32]string{}
-+			p.handleInheritanceForNonPartitionedTables = true
-+			p.sourceSchemaFromInheritanceChild = tc.fromChild
-+			p.idToRelKindMap[inhParentRelID] = tc.parentRelKind
-+
-+			_, err := processRelationMessage[model.RecordItems](t.Context(), p, 1, childARelation(), inhParentRelID)
-+			require.NoError(t, err)
-+			insert, err := processInsertMessage(p, 2, &pglogrepl.InsertMessage{
-+				RelationID: inhChildARelID, Tuple: tuple(str("1"), str("alice"), str("a-val"), str("7")),
-+			}, qProcessor{}, p.customTypeMapping)
-+			require.NoError(t, err)
-+			require.Equal(t, types.QValueString{Val: tc.expected},
-+				insert.(*model.InsertRecord[model.RecordItems]).Items.GetColumnValue(sourceSchemaColumnName))
-+		})
-+	}
-+}
-```
-
-**File**: `flow/connectors/postgres/postgres_source.go` (modified, +5/-0)
-```diff
-@@ -330,6 +330,10 @@ func pullCore[Items model.Items](
- 	if err != nil {
- 		return fmt.Errorf("failed to get get setting for sourceSchemaAsDestinationColumn: %w", err)
- 	}
-+	sourceSchemaFromInheritanceChild, err := internal.PeerDBPostgresSourceSchemaFromInheritanceChild(ctx, req.Env)
-+	if err != nil {
-+		return fmt.Errorf("failed to get setting for sourceSchemaFromInheritanceChild: %w", err)
-+	}
- 	originMetaAsDestinationColumn, err := internal.PeerDBOriginMetaAsDestinationColumn(ctx, req.Env)
- 	if err != nil {
- 		return fmt.Errorf("failed to get get setting for originMetaAsDestinationColumn: %w", err)
-@@ -356,6 +360,7 @@ func pullCore[Items model.Items](
- 		FastProcessJsonColumns:                   fastProcessJsonColumns,
- 		HandleInheritanceForNonPartitionedTables: handleInheritanceForNonPartitionedTables,
- 		SourceSchemaAsDestinationColumn:          sourceSchemaAsDestinationColumn,
-+		SourceSchemaFromInheritanceChild:         sourceSchemaFromInheritanceChild,
- 		OriginMetaAsDestinationColumn:            originMetaAsDestinationColumn,
- 		InternalVersion:                          req.InternalVersion,
- 		Flags:                                    req.Flags,
-```
-
-**File**: `flow/connectors/postgres/qrep_source.go` (modified, +34/-3)
-```diff
-@@ -25,7 +25,10 @@ import (
- 	"github.com/PeerDB-io/peerdb/flow/shared/exceptions"
- )
- 
--const ctidColumnName = "ctid"
-+const (
-+	ctidColumnName         = "ctid"
-+	sourceSchemaColumnName = "_peerdb_source_schema"
-+)
- 
- type QRepPullSink interface {
- 	ExecuteQueryWithTx(context.Context, *QRepQueryExecutor, pgx.Tx, string, ...any) (int64, int64, error)
-@@ -398,7 +401,11 @@ func corePullQRepRecords(
- 	}
- 
- 	if len(partition.ChildTableRanges) > 0 {
--		return pullChildTableRanges(c, ctx, config, partition, sink, selectedColumns)
-+		projectChildSchema, err := c.shouldProjectChildSchema(ctx, config, parsedSrcTable)
-+		if err != nil {
-+			return 0, 0, err
-+		}
-+		return pullChildTableRanges(c, ctx, config, partition, sink, selectedColumns, projectChildSchema)
- 	}
- 
- 	c.logger.Info("Obtained ranges for partition for PullQRepStream", partitionIdLog)
-@@ -475,6 +482,23 @@ func corePullQRepRecords(
- 	return numRecords, numBytes, nil
- }
- 
-+func (c *PostgresConnector) shouldProjectChildSchema(
-+	ctx context.Context,
-+	config *protos.QRepConfig,
-+	table *common.QualifiedTable,
-+) (bool, error) {
-+	if enabled, err := internal.PeerDBPostgresSourceSchemaFromInheritanceChild(ctx, config.Env); err != nil || !enabled {
-+		return false, err
-+	}
-+	var isInheritanceParent bool
-+	if err := c.conn.QueryRow(ctx,
-+		"SELECT relkind = 'r' AND relhassubclass FROM pg_catalog.pg_class WHERE oid = $1::regclass", table.String(),
-+	).Scan(&isInheritanceParent); err != nil {
-+		return false, fmt.Errorf("failed to check whether %s is an inheritance parent: %w", table, err)
-+	}
-+	return isInheritanceParent, nil
-+}
-+
- // pullChildTableRanges executes one query per ChildTableRange entry,
- // building a query directly for each child table, and accumulates results.
- func pullChildTableRanges(
-@@ -484,6 +508,7 @@ func pullChildTableRanges(
- 	partition *protos.QRepPartition,
- 	sink QRepPullSink,
- 	selectedColumns string,
-+	shouldProjectChildSchema bool,
- ) (int64, int64, error) {
- 	partitionIdLog := slog.String(string(shared.PartitionIDKey), partition.PartitionId)
- 
-@@ -503,9 +528,15 @@ func pullChildTableRanges(
- 			return 0, 0, fmt.Errorf("failed to parse child table %s: %w", child.Table, err)
- 		}
- 
-+		childSelectedColumns := selectedColumns
-+		if shouldProjectChildSchema {
-+			childSelectedColumns += ", " + utils.QuoteLiteral(parsedChild.Namespace) + "::text AS " +
-+				common.QuoteIdentifier(sourceSchemaColumnName)
-+		}
-+
- 		// ONLY excludes rows from child tables, ensuring we don't double-count inherited rows.
- 		query := fmt.Sprintf("SELECT %s FROM ONLY %s WHERE %s BETWEEN $1 AND $2",
--			selectedColumns, parsedChild.String(), quotedWatermarkColumn)
-+			childSelectedColumns, parsedChild.String(), quotedWatermarkColumn)
- 
- 		rangeStart := pgtype.TID{
- 			BlockNumber:  child.Start,
-```
-
-**File**: `flow/e2e/clickhouse_inheritance_suite.go` (modified, +42/-0)
-```diff
-@@ -369,3 +369,45 @@ func (s ClickHouseSuite) Test_Partition_Divergent_Layout_Publish_Via_Root() {
- func (s ClickHouseSuite) Test_Partition_Divergent_Layout_Publish_Leaf() {
- 	s.inhPartitionDivergentLayout(false)
- }
-+
-+func (s ClickHouseSuite) Test_Inheritance_Child_Schema_As_Column() {
-+	s.inhRequirePostgres()
-+	pSchema := "e2e_test_" + s.suffix
-+	t1, t2 := s.inhTenantSchema("t1"), s.inhTenantSchema("t2")
-+	p, c1, c2 := s.attachSchemaSuffix("p"), t1+".c1", t2+".c2"
-+
-+	s.inhExec(`CREATE TABLE %s (id BIGINT PRIMARY KEY, val TEXT)`, p)
-+	s.inhExec(`INSERT INTO %s VALUES (1, 'root')`, p)
-+	for _, child := range []string{c1, c2} {
-+		s.inhExec(`CREATE TABLE %s () INHERITS (%s)`, child, p)
-+		s.inhExec(`ALTER TABLE %s ADD PRIMARY KEY (id)`, child)
-+	}
-+	s.inhExec(`INSERT INTO %s VALUES (2, 'c1')`, c1)
-+	s.inhExec(`INSERT INTO %s VALUES (3, 'c2')`, c2)
-+
-+	connectionGen := FlowConnectionGenerationConfig{
-+		FlowJobName:      s.attachSuffix("inh_cs"),
-+		TableNameMapping: map[string]string{p: "p_dst"},
-+		Destination:      s.Peer().Name,
-+	}
-+	flowConnConfig := connectionGen.GenerateFlowConnectionConfigs(s)
-+	flowConnConfig.DoInitialSnapshot = true
-+	flowConnConfig.Env = map[string]string{
-+		"PEERDB_SOURCE_SCHEMA_AS_DESTINATION_COLUMN":                        "true",
-+		"PEERDB_POSTGRES_CDC_HANDLE_INHERITANCE_FOR_NON_PARTITIONED_TABLES": "true",
-+		"PEERDB_POSTGRES_SOURCE_SCHEMA_FROM_INHERITANCE_CHILD":              "true",
-+	}
-+	tc := NewTemporalClient(s.t)
-+	env := ExecutePeerflow(s.t, tc, flowConnConfig)
-+	SetupCDCFlowStatusQuery(s.t, env, flowConnConfig)
-+
-+	EnvWaitForEqualTablesWithNames(env, s, "snapshot", "p", "p_dst", "id,val")
-+
-+	s.inhExec(`UPDATE %s SET val = 'c1_update' WHERE id = 2`, c1)
-+
-+	EnvWaitForEqualTablesWithNames(env, s, "cdc", "p", "p_dst", "id,val")
-+	s.inhWaitForColumn(env, "p_dst", "_peerdb_source_schema", map[int64]string{1: pSchema, 2: t1, 3: t2})
-+
-+	env.Cancel(s.t.Context())
-+	RequireEnvCanceled(s.t, env)
-+}
-```
-
-**File**: `flow/internal/dynamicconf.go` (modified, +22/-0)
-```diff
-@@ -474,6 +474,16 @@ var DynamicSettings = [...]*protos.DynamicSetting{
- 		ApplyMode:        protos.DynconfApplyMode_APPLY_MODE_NEW_MIRROR,
- 		TargetForSetting: protos.DynconfTarget_ALL,
- 	},
-+	{
-+		Name: "PEERDB_POSTGRES_SOURCE_SCHEMA_FROM_INHERITANCE_CHILD",
-+		Description: "Experimental. Effective only with PEERDB_SOURCE_SCHEMA_AS_DESTINATION_COLUMN and " +
-+			"PEERDB_POSTGRES_CDC_HANDLE_INHERITANCE_FOR_NON_PARTITIONED_TABLES enabled, rows of " +
-+			"inheritance child tables propagate their own table's schema instead of the root table's. ",
-+		DefaultValue:     "false",
-+		ValueType:        protos.DynconfValueType_BOOL,
-+		ApplyMode:        protos.DynconfApplyMode_APPLY_MODE_NEW_MIRROR,
-+		TargetForSetting: protos.DynconfTarget_CLICKHOUSE,
-+	},
- 	{
- 		Name:             "PEERDB_ORIGIN_METADATA_AS_DESTINATION_COLUMN",
- 		Description:      "Ingest additional metadata fields",
-@@ -1108,6 +1118,18 @@ func PeerDBSourceSchemaAsDestinationColumn(ctx context.Context, env map[string]s
- 	return dynamicConfBool(ctx, env, "PEERDB_SOURCE_SCHEMA_AS_DESTINATION_COLUMN")
- }
- 
-+func PeerDBPostgresSourceSchemaFromInheritanceChild(ctx context.Context, env map[string]string) (bool, error) {
-+	for _, required := range []func(context.Context, map[string]string) (bool, error){
-+		PeerDBSourceSchemaAsDestinationColumn,
-+		PeerDBPostgresCDCHandleInheritanceForNonPartitionedTables,
-+	} {
-+		if enabled, err := required(ctx, env); err != nil || !enabled {
-+			return false, err
-+		}
-+	}
-+	return dynamicConfBool(ctx, env, "PEERDB_POSTGRES_SOURCE_SCHEMA_FROM_INHERITANCE_CHILD")
-+}
-+
- func PeerDBOriginMetaAsDestinationColumn(ctx context.Context, env map[string]string) (bool, error) {
- 	return dynamicConfBool(ctx, env, "PEERDB_ORIGIN_METADATA_AS_DESTINATION_COLUMN")
- }
-```
-
----
-
-### Incident Patch 2: `563d209a` (2026-11-13)
-**Commit Message**: perf(avro): replace hamba/avro with twmb/avro (#4989)
-
-Replaces `hamba/avro` with `twmb/avro` for Avro OCF staging files. The
-main reason is encoding speed, which is a hot path for ClickHouse,
-Snowflake, BigQuery and S3 syncs. The changeset is kept small: records
-are still `map[string]any` and the converter logic is unchanged apart
-from two allocation cuts.
-
-## Commits
-1. **test(avro): add OCF write benchmark and Avro schema golden test.**
-Adds `BenchmarkWriteOCF`, which covers QRecord conversion plus OCF
-encoding through `NewPeerDBOCFWriter.WriteOCF` for a ClickHouse
-destination with size tracking. Also adds `TestAvroSchemaGolden`, which
-pins the OCF header schema JSON for every destination. The golden data
-was captured with hamba.
-2. **perf(avro): replace hamba/avro with twmb/avro.**
-- Schemas are built as `avro.SchemaNode`. `SchemaNode.Schema()`
-de-duplicates named types such as `int256`, so the manual `RefSchema`
-handling is gone.
-- Codecs are selected through `utils.AvroCompressionCodec` and created
-per file, because the twmb writer owns its codec and closes it.
-- twmb writes arrays as a single block with no byte-size header, so the
-Avro size estimate in `arraySize` is updated
-
-**File**: `flow/connectors/bigquery/qrep_avro_sync.go` (modified, +40/-52)
-```diff
-@@ -10,8 +10,8 @@ import (
- 	"time"
- 
- 	"cloud.google.com/go/bigquery"
--	"github.com/hamba/avro/v2"
--	"github.com/hamba/avro/v2/ocf"
-+	"github.com/twmb/avro"
-+	"github.com/twmb/avro/atype"
- 
- 	"github.com/PeerDB-io/peerdb/flow/connectors/utils"
- 	"github.com/PeerDB-io/peerdb/flow/generated/protos"
-@@ -227,7 +227,7 @@ func DefineAvroSchema(dstTableName string,
- 	syncedAtCol string,
- 	softDeleteCol string,
- ) (*model.QRecordAvroSchemaDefinition, error) {
--	avroFields := make([]*avro.Field, 0, len(dstTableMetadata.Schema))
-+	avroFields := make([]avro.SchemaField, 0, len(dstTableMetadata.Schema))
- 	qFields := make([]types.QField, 0, len(avroFields))
- 	for _, bqField := range dstTableMetadata.Schema {
- 		if bqField.Name == syncedAtCol || bqField.Name == softDeleteCol {
-@@ -241,7 +241,7 @@ func DefineAvroSchema(dstTableName string,
- 		qFields = append(qFields, BigQueryFieldToQField(bqField))
- 	}
- 
--	avroSchema, err := avro.NewRecordSchema(dstTableName, "", avroFields)
-+	avroSchema, err := (&avro.SchemaNode{Type: atype.Record, Name: dstTableName, Fields: avroFields}).Schema()
- 	if err != nil {
- 		return nil, fmt.Errorf("failed to create Avro schema: %w", err)
- 	}
-@@ -252,102 +252,90 @@ func DefineAvroSchema(dstTableName string,
- 	}, nil
- }
- 
--func GetAvroType(bqField *bigquery.FieldSchema) (avro.Schema, error) {
-+func GetAvroType(bqField *bigquery.FieldSchema) (avro.SchemaNode, error) {
- 	avroNumericPrecision, avroNumericScale := qvalue.DetermineNumericSettingForDWH(
- 		int16(bqField.Precision), int16(bqField.Scale), protos.DBType_BIGQUERY)
- 
--	considerRepeated := func(typ avro.Type, repeated bool) avro.Schema {
-+	considerRepeated := func(typ string, repeated bool) avro.SchemaNode {
- 		if repeated {
--			return avro.NewArraySchema(avro.NewPrimitiveSchema(typ, nil))
-+			return qvalue.AvroArraySchema(avro.SchemaNode{Type: typ})
- 		} else {
--			return avro.NewPrimitiveSchema(typ, nil)
-+			return avro.SchemaNode{Type: typ}
- 		}
- 	}
- 
- 	switch bqField.Type {
- 	case bigquery.StringFieldType, bigquery.GeographyFieldType, bigquery.JSONFieldType:
--		return considerRepeated(avro.String, bqField.Repeated), nil
-+		return considerRepeated(atype.String, bqField.Repeated), nil
- 	case bigquery.BytesFieldType:
--		return avro.NewPrimitiveSchema(avro.Bytes, nil), nil
-+		return avro.SchemaNode{Type: atype.Bytes}, nil
- 	case bigquery.IntegerFieldType:
--		return considerRepeated("long", bqField.Repeated), nil
-+		return considerRepeated(atype.Long, bqField.Repeated), nil
- 	case bigquery.FloatFieldType:
--		return considerRepeated("double", bqField.Repeated), nil
-+		return considerRepeated(atype.Double, bqField.Repeated), nil
- 	case bigquery.BooleanFieldType:
--		return considerRepeated("boolean", bqField.Repeated), nil
-+		return considerRepeated(atype.Boolean, bqField.Repeated), nil
- 	case bigquery.TimestampFieldType:
--		timestampSchema := avro.NewPrimitiveSchema(avro.Long, avro.NewPrimitiveLogicalSchema(avro.TimestampMicros))
-+		timestampSchema := avro.SchemaNode{Type: atype.Long, LogicalType: atype.TimestampMicros}
- 		if bqField.Repeated {
--			return avro.NewArraySchema(timestampSchema), nil
-+			return qvalue.AvroArraySchema(timestampSchema), nil
- 		}
- 		return timestampSchema, nil
- 	case bigquery.DateFieldType:
--		dateSchema := avro.NewPrimitiveSchema(avro.Int, avro.NewPrimitiveLogicalSchema(avro.Date))
-+		dateSchema := avro.SchemaNode{Type: atype.Int, LogicalType: atype.Date}
- 		if bqField.Repeated {
--			return avro.NewArraySchema(dateSchema), nil
-+			return qvalue.AvroArraySchema(dateSchema), nil
- 		}
- 		return dateSchema, nil
- 	case bigquery.TimeFieldType:
--		timeSchema := avro.NewPrimitiveSchema(avro.Long, avro.NewPrimitiveLogicalSchema(avro.TimeMicros))
-+		timeSchema := avro.SchemaNode{Type: atype.Long, LogicalType: atype.TimeMicros}
- 		if bqField.Repeated {
--			return avro.NewArraySchema(timeSchema), nil
-+			return qvalue.AvroArraySchema(timeSchema), nil
- 		}
- 		return timeSchema, nil
- 	case bigquery.DateTimeFieldType:
--		dateField, err := avro.NewField("date",
--			avro.NewPrimitiveSchema(avro.Int, avro.NewPrimitiveLogicalSchema(avro.Date)))
--		if err != nil {
--			return nil, err
--		}
--		timeField, err := avro.NewField("time",
--			avro.NewPrimitiveSchema(avro.Long, avro.NewPrimitiveLogicalSchema(avro.TimeMicros)))
--		if err != nil {
--			return nil, err
--		}
--		return avro.NewRecordSchema("datetime", "", []*avro.Field{dateField, timeField})
-+		return avro.SchemaNode{Type: atype.Record, Name: "datetime", Fields: []avro.SchemaField{
-+			{Name: "date", Type: avro.SchemaNode{Type: atype.Int, LogicalType: atype.Date}},
-+			{Name: "time", Type: avro.SchemaNode{Type: atype.Long, LogicalType: atype.TimeMicros}},
-+		}}, nil
- 	case bigquery.BigNumericFieldType:
--		bigNumericSchema := avro.NewPrimitiveSchema(avro.Bytes, avro.NewDecimalLogicalSchema(int(avroNumericPrecision), int(avroNumericScale)))
-+		bigNumericSchema := avro.SchemaNode{
-+			Type:        atype.Bytes,
-+			LogicalType: atype.Decimal,
-+			Precision:   int(avroNumericPrecision),
-
-```
-
-**File**: `flow/connectors/clickhouse/avro_sync.go` (modified, +1/-2)
-```diff
-@@ -11,7 +11,6 @@ import (
- 	"time"
- 
- 	"github.com/google/uuid"
--	"github.com/hamba/avro/v2/ocf"
- 
- 	"github.com/PeerDB-io/peerdb/flow/connectors/utils"
- 	"github.com/PeerDB-io/peerdb/flow/generated/protos"
-@@ -400,7 +399,7 @@ func (s *ClickHouseAvroSyncMethod) writeToAvroFile(
- 	typeConversions map[string]types.TypeConversion,
- 	numericTruncator model.SnapshotTableNumericTruncator,
- ) (utils.AvroFile, error) {
--	ocfWriter := utils.NewPeerDBOCFWriter(stream, avroSchema, ocf.ZStandard, protos.DBType_CLICKHOUSE, sizeTracker)
-+	ocfWriter := utils.NewPeerDBOCFWriter(stream, avroSchema, protos.AvroCodec_ZStandard, protos.DBType_CLICKHOUSE, sizeTracker)
- 	prefix := s.staging.KeyPrefix()
- 
- 	s3UuidPrefix, err := internal.PeerDBS3UuidPrefix(ctx, s.config.Env)
-```
-
-**File**: `flow/connectors/s3/qrep.go` (modified, +1/-16)
-```diff
-@@ -5,7 +5,6 @@ import (
- 	"fmt"
- 
- 	"github.com/google/uuid"
--	"github.com/hamba/avro/v2/ocf"
- 
- 	"github.com/PeerDB-io/peerdb/flow/connectors/utils"
- 	"github.com/PeerDB-io/peerdb/flow/generated/protos"
-@@ -79,21 +78,7 @@ func (c *S3Connector) writeToAvroFile(
- 		s3AvroFileKey = fmt.Sprintf("%s/%s/%s.avro", s3o.Prefix, jobName, partitionID)
- 	}
- 
--	var codec ocf.CodecName
--	switch c.codec {
--	case protos.AvroCodec_Null:
--		codec = ocf.Null
--	case protos.AvroCodec_Deflate:
--		codec = ocf.Deflate
--	case protos.AvroCodec_Snappy:
--		codec = ocf.Snappy
--	case protos.AvroCodec_ZStandard:
--		codec = ocf.ZStandard
--	default:
--		return 0, fmt.Errorf("unsupported codec %s", c.codec)
--	}
--
--	writer := utils.NewPeerDBOCFWriter(stream, avroSchema, codec, protos.DBType_S3, nil)
-+	writer := utils.NewPeerDBOCFWriter(stream, avroSchema, c.codec, protos.DBType_S3, nil)
- 	avroFile, err := writer.WriteRecordsToS3(ctx, env, s3o.Bucket, s3AvroFileKey, c.credentialsProvider, nil, nil)
- 	if err != nil {
- 		return 0, fmt.Errorf("failed to write records to S3: %w", err)
-```
-
-**File**: `flow/connectors/snowflake/avro_file_writer_test.go` (modified, +5/-6)
-```diff
-@@ -7,7 +7,6 @@ import (
- 	"time"
- 
- 	"github.com/google/uuid"
--	"github.com/hamba/avro/v2/ocf"
- 	"github.com/shopspring/decimal"
- 	"github.com/stretchr/testify/require"
- 
-@@ -157,7 +156,7 @@ func TestWriteRecordsToAvroFileHappyPath(t *testing.T) {
- 	t.Logf("[test] avroSchema: %v", avroSchema)
- 
- 	// Call function
--	writer := utils.NewPeerDBOCFWriter(records, avroSchema, ocf.Null, protos.DBType_SNOWFLAKE, nil)
-+	writer := utils.NewPeerDBOCFWriter(records, avroSchema, protos.AvroCodec_Null, protos.DBType_SNOWFLAKE, nil)
- 	_, err = writer.WriteRecordsToAvroFile(t.Context(), avroTestEnv, tmpfile.Name())
- 	require.NoError(t, err, "expected WriteRecordsToAvroFile to complete without errors")
- 
-@@ -184,7 +183,7 @@ func TestWriteRecordsToZstdAvroFileHappyPath(t *testing.T) {
- 	t.Logf("[test] avroSchema: %v", avroSchema)
- 
- 	// Call function
--	writer := utils.NewPeerDBOCFWriter(records, avroSchema, ocf.ZStandard, protos.DBType_SNOWFLAKE, nil)
-+	writer := utils.NewPeerDBOCFWriter(records, avroSchema, protos.AvroCodec_ZStandard, protos.DBType_SNOWFLAKE, nil)
- 	_, err = writer.WriteRecordsToAvroFile(t.Context(), avroTestEnv, tmpfile.Name())
- 	require.NoError(t, err, "expected WriteRecordsToAvroFile to complete without errors")
- 
-@@ -211,7 +210,7 @@ func TestWriteRecordsToDeflateAvroFileHappyPath(t *testing.T) {
- 	t.Logf("[test] avroSchema: %v", avroSchema)
- 
- 	// Call function
--	writer := utils.NewPeerDBOCFWriter(records, avroSchema, ocf.Deflate, protos.DBType_SNOWFLAKE, nil)
-+	writer := utils.NewPeerDBOCFWriter(records, avroSchema, protos.AvroCodec_Deflate, protos.DBType_SNOWFLAKE, nil)
- 	_, err = writer.WriteRecordsToAvroFile(t.Context(), avroTestEnv, tmpfile.Name())
- 	require.NoError(t, err, "expected WriteRecordsToAvroFile to complete without errors")
- 
-@@ -237,7 +236,7 @@ func TestWriteRecordsToAvroFileNonNull(t *testing.T) {
- 	t.Logf("[test] avroSchema: %v", avroSchema)
- 
- 	// Call function
--	writer := utils.NewPeerDBOCFWriter(records, avroSchema, ocf.Null, protos.DBType_SNOWFLAKE, nil)
-+	writer := utils.NewPeerDBOCFWriter(records, avroSchema, protos.AvroCodec_Null, protos.DBType_SNOWFLAKE, nil)
- 	_, err = writer.WriteRecordsToAvroFile(t.Context(), avroTestEnv, tmpfile.Name())
- 	require.NoError(t, err, "expected WriteRecordsToAvroFile to complete without errors")
- 
-@@ -264,7 +263,7 @@ func TestWriteRecordsToAvroFileAllNulls(t *testing.T) {
- 	t.Logf("[test] avroSchema: %v", avroSchema)
- 
- 	// Call function
--	writer := utils.NewPeerDBOCFWriter(records, avroSchema, ocf.Null, protos.DBType_SNOWFLAKE, nil)
-+	writer := utils.NewPeerDBOCFWriter(records, avroSchema, protos.AvroCodec_Null, protos.DBType_SNOWFLAKE, nil)
- 	_, err = writer.WriteRecordsToAvroFile(t.Context(), avroTestEnv, tmpfile.Name())
- 	require.NoError(t, err, "expected WriteRecordsToAvroFile to complete without errors")
- 
-```
-
-**File**: `flow/connectors/snowflake/qrep_avro_sync.go` (modified, +3/-4)
-```diff
-@@ -9,7 +9,6 @@ import (
- 	"strings"
- 	"time"
- 
--	"github.com/hamba/avro/v2/ocf"
- 	_ "github.com/snowflakedb/gosnowflake/v2"
- 
- 	"github.com/PeerDB-io/peerdb/flow/connectors/utils"
-@@ -154,12 +153,12 @@ func (s *SnowflakeAvroSyncHandler) writeToAvroFile(
- 	flowJobName string,
- ) (utils.AvroFile, error) {
- 	if s.config.StagingPath == "" {
--		compression := ocf.ZStandard
-+		compression := protos.AvroCodec_ZStandard
- 		skipCompression, err := internal.PeerDBSnowflakeSkipCompression(ctx, s.config.Env)
- 		if err != nil {
- 			s.logger.Warn("Failed to load PEERDB_SNOWFLAKE_SKIP_COMPRESSION, proceeding without", slog.Any("error", err))
- 		} else if skipCompression {
--			compression = ocf.Null
-+			compression = protos.AvroCodec_Null
- 		}
- 
- 		ocfWriter := utils.NewPeerDBOCFWriter(stream, avroSchema, compression, protos.DBType_SNOWFLAKE, nil)
-@@ -178,7 +177,7 @@ func (s *SnowflakeAvroSyncHandler) writeToAvroFile(
- 
- 		return avroFile, nil
- 	} else if strings.HasPrefix(s.config.StagingPath, "s3://") {
--		ocfWriter := utils.NewPeerDBOCFWriter(stream, avroSchema, ocf.ZStandard, protos.DBType_SNOWFLAKE, nil)
-+		ocfWriter := utils.NewPeerDBOCFWriter(stream, avroSchema, protos.AvroCodec_ZStandard, protos.DBType_SNOWFLAKE, nil)
- 		s3o, err := utils.NewS3BucketAndPrefix(s.config.StagingPath)
- 		if err != nil {
- 			return utils.AvroFile{}, fmt.Errorf("failed to parse staging path: %w", err)
-```
-
-**File**: `flow/connectors/utils/avro_writer.go` (modified, +33/-12)
-```diff
-@@ -1,6 +1,7 @@
- package utils
- 
- import (
-+	"compress/flate"
- 	"context"
- 	"errors"
- 	"fmt"
-@@ -13,7 +14,7 @@ import (
- 
- 	"github.com/aws/aws-sdk-go-v2/aws"
- 	"github.com/aws/aws-sdk-go-v2/feature/s3/transfermanager"
--	"github.com/hamba/avro/v2/ocf"
-+	"github.com/twmb/avro/ocf"
- 
- 	"github.com/PeerDB-io/peerdb/flow/generated/protos"
- 	"github.com/PeerDB-io/peerdb/flow/internal"
-@@ -33,11 +34,27 @@ const (
- 	AvroGCSStorage
- )
- 
-+// newOCFCodec returns a fresh codec, the OCF writer takes ownership and closes it
-+func newOCFCodec(c protos.AvroCodec) (ocf.Codec, error) {
-+	switch c {
-+	case protos.AvroCodec_Null:
-+		return nil, nil
-+	case protos.AvroCodec_Deflate:
-+		return ocf.DeflateCodec(flate.DefaultCompression), nil
-+	case protos.AvroCodec_Snappy:
-+		return ocf.SnappyCodec(), nil
-+	case protos.AvroCodec_ZStandard:
-+		return ocf.ZstdCodec(nil, nil)
-+	default:
-+		return nil, fmt.Errorf("unsupported Avro compression codec %s", c)
-+	}
-+}
-+
- type peerDBOCFWriter struct {
- 	stream               *model.QRecordStream
- 	avroSchema           *model.QRecordAvroSchemaDefinition
- 	sizeTracker          *model.QRecordAvroChunkSizeTracker
--	avroCompressionCodec ocf.CodecName
-+	avroCompressionCodec protos.AvroCodec
- 	targetDWH            protos.DBType
- }
- 
-@@ -58,7 +75,7 @@ func (l *AvroFile) Cleanup(ctx context.Context) {
- func NewPeerDBOCFWriter(
- 	stream *model.QRecordStream,
- 	avroSchema *model.QRecordAvroSchemaDefinition,
--	avroCompressionCodec ocf.CodecName,
-+	avroCompressionCodec protos.AvroCodec,
- 	targetDWH protos.DBType,
- 	sizeTracker *model.QRecordAvroChunkSizeTracker,
- ) *peerDBOCFWriter {
-@@ -78,9 +95,13 @@ func (p *peerDBOCFWriter) WriteOCF(
- 	typeConversions map[string]types.TypeConversion,
- 	numericTruncator model.SnapshotTableNumericTruncator,
- ) (int64, error) {
--	ocfWriter, err := ocf.NewEncoderWithSchema(
--		p.avroSchema.Schema, w, ocf.WithCodec(p.avroCompressionCodec),
--		ocf.WithBlockLength(8192), ocf.WithBlockSize(1<<26),
-+	codec, err := newOCFCodec(p.avroCompressionCodec)
-+	if err != nil {
-+		return 0, fmt.Errorf("failed to create OCF codec: %w", err)
-+	}
-+	ocfWriter, err := ocf.NewWriter(
-+		w, p.avroSchema.Schema, ocf.WithCodec(codec),
-+		ocf.WithBlockCount(8192), ocf.WithBlockBytes(1<<26),
- 	)
- 	if err != nil {
- 		return 0, fmt.Errorf("failed to create OCF writer: %w", err)
-@@ -196,18 +217,18 @@ func (p *peerDBOCFWriter) WriteRecordsToAvroFile(ctx context.Context, env map[st
- }
- 
- func (p *peerDBOCFWriter) getAvroFieldNamesFromSchema() []string {
--	fields := p.avroSchema.Schema.Fields()
-+	fields := p.avroSchema.Schema.Root().Fields
- 	avroFieldNames := make([]string, len(fields))
--	for i, field := range fields {
--		avroFieldNames[i] = field.Name()
-+	for i := range fields {
-+		avroFieldNames[i] = fields[i].Name
- 	}
- 	return avroFieldNames
- }
- 
- func (p *peerDBOCFWriter) writeRecordsToOCFWriter(
- 	ctx context.Context,
- 	env map[string]string,
--	ocfWriter *ocf.Encoder,
-+	ocfWriter *ocf.Writer,
- 	typeConversions map[string]types.TypeConversion,
- 	numericTruncator model.SnapshotTableNumericTruncator,
- ) (int64, error) {
-@@ -235,7 +256,7 @@ func (p *peerDBOCFWriter) writeRecordsToOCFWriter(
- 			slog.Int64("records", numRows.Load()),
- 			slog.Int("channelLen", len(p.stream.Records)),
- 			slog.Float64("elapsedMinutes", time.Since(writeStart).Minutes()),
--			slog.String("compression", string(p.avroCompressionCodec)))
-+			slog.String("compression", p.avroCompressionCodec.String()))
- 	})
- 	defer shutdown()
- 
-@@ -271,7 +292,7 @@ func (p *peerDBOCFWriter) writeRecordsToOCFWriter(
- 	logger.Info("finished writing records to OCF",
- 		slog.Int64("records", numRows.Load()),
- 		slog.Float64("elapsedMinutes", time.Since(writeStart).Minutes()),
--		slog.String("compression", string(p.avroCompressionCodec)),
-+		slog.String("compression", p.avroCompressionCodec.String()),
- 	)
- 
- 	if avroConverter.NullMismatchTracker != nil {
-```
-
-**File**: `flow/connectors/utils/avro_writer_bench_test.go` (added, +125/-0)
-```diff
-@@ -0,0 +1,125 @@
-+//nolint:gosec // deterministic test-only random data
-+package utils
-+
-+import (
-+	"io"
-+	"log/slog"
-+	"math/big"
-+	"math/rand/v2"
-+	"strconv"
-+	"testing"
-+	"time"
-+
-+	"github.com/google/uuid"
-+	"github.com/shopspring/decimal"
-+	"github.com/stretchr/testify/require"
-+
-+	"github.com/PeerDB-io/peerdb/flow/generated/protos"
-+	"github.com/PeerDB-io/peerdb/flow/model"
-+	"github.com/PeerDB-io/peerdb/flow/shared/types"
-+)
-+
-+const benchAvroNumRecords = 10_000
-+
-+var benchAvroEnv = map[string]string{
-+	"PEERDB_CLICKHOUSE_UNBOUNDED_NUMERIC_AS_STRING": "false",
-+	"PEERDB_CLICKHOUSE_BINARY_FORMAT":               "raw",
-+}
-+
-+// benchAvroSchema mimics a typical ClickHouse destination table
-+var benchAvroSchema = types.QRecordSchema{Fields: []types.QField{
-+	{Name: "id", Type: types.QValueKindInt64},
-+	{Name: "name", Type: types.QValueKindString, Nullable: true},
-+	{Name: "status", Type: types.QValueKindEnum},
-+	{Name: "qty", Type: types.QValueKindInt32, Nullable: true},
-+	{Name: "score", Type: types.QValueKindFloat64, Nullable: true},
-+	{Name: "active", Type: types.QValueKindBoolean},
-+	{Name: "created_at", Type: types.QValueKindTimestampTZ},
-+	{Name: "updated_at", Type: types.QValueKindTimestamp, Nullable: true},
-+	{Name: "birthday", Type: types.QValueKindDate, Nullable: true},
-+	{Name: "amount", Type: types.QValueKindNumeric, Nullable: true, Precision: 18, Scale: 4},
-+	{Name: "big_amount", Type: types.QValueKindNumeric, Nullable: true},
-+	{Name: "ext_id", Type: types.QValueKindUUID, Nullable: true},
-+	{Name: "payload", Type: types.QValueKindBytes, Nullable: true},
-+	{Name: "attrs", Type: types.QValueKindJSON, Nullable: true},
-+	{Name: "tags", Type: types.QValueKindArrayString, Nullable: true},
-+	{Name: "counters", Type: types.QValueKindArrayInt64, Nullable: true},
-+}}
-+
-+func benchAvroRecords() [][]types.QValue {
-+	rng := rand.New(rand.NewPCG(1, 2))
-+	base := time.Date(2026, 1, 1, 0, 0, 0, 0, time.UTC)
-+	records := make([][]types.QValue, benchAvroNumRecords)
-+	for i := range records {
-+		ts := base.Add(time.Duration(rng.Int64N(int64(365 * 24 * time.Hour))))
-+		var name types.QValue = types.QValueNull(types.QValueKindString)
-+		if rng.IntN(10) != 0 {
-+			name = types.QValueString{Val: "customer-" + strconv.FormatInt(rng.Int64N(1_000_000), 10)}
-+		}
-+		payload := make([]byte, 16+rng.IntN(48))
-+		for j := range payload {
-+			payload[j] = byte(rng.IntN(256))
-+		}
-+		records[i] = []types.QValue{
-+			types.QValueInt64{Val: int64(i)},
-+			name,
-+			types.QValueEnum{Val: []string{"new", "paid", "shipped", "cancelled"}[rng.IntN(4)]},
-+			types.QValueInt32{Val: rng.Int32N(10_000)},
-+			types.QValueFloat64{Val: rng.Float64() * 1000},
-+			types.QValueBoolean{Val: rng.IntN(2) == 0},
-+			types.QValueTimestampTZ{Val: ts},
-+			types.QValueTimestamp{Val: ts.Add(time.Hour)},
-+			types.QValueDate{Val: ts.Truncate(24 * time.Hour)},
-+			types.QValueNumeric{Val: decimal.New(rng.Int64N(1_000_000_000), -4)},
-+			types.QValueNumeric{Val: decimal.NewFromBigInt(new(big.Int).SetUint64(rng.Uint64()), -6)},
-+			types.QValueUUID{Val: uuid.UUID(rngBytes16(rng))},
-+			types.QValueBytes{Val: payload},
-+			types.QValueJSON{Val: `{"source":"web","visits":` + strconv.Itoa(rng.IntN(100)) + `,"flags":["a","b"]}`},
-+			types.QValueArrayString{Val: []string{"alpha", "beta", "gamma"}[:1+rng.IntN(3)]},
-+			types.QValueArrayInt64{Val: []int64{rng.Int64(), rng.Int64(), rng.Int64()}},
-+		}
-+	}
-+	return records
-+}
-+
-+func rngBytes16(rng *rand.Rand) [16]byte {
-+	var b [16]byte
-+	for i := range b {
-+		b[i] = byte(rng.IntN(256))
-+	}
-+	return b
-+}
-+
-+// BenchmarkWriteOCF measures QRecord to Avro conversion plus OCF encoding for a ClickHouse destination,
-+// including size tracking.
-+func BenchmarkWriteOCF(b *testing.B) {
-+	avroSchema, err := model.GetAvroSchemaDefinition(b.Context(), benchAvroEnv, "bench_table",
-+		benchAvroSchema, protos.DBType_CLICKHOUSE, model.ConstructColumnNameAvroFieldMap(benchAvroSchema.Fields))
-+	require.NoError(b, err)
-+	records := benchAvroRecords()
-+
-+	// keep WriteOCF progress logs out of the measurement and the benchmark output
-+	defaultLogger := slog.Default()
-+	slog.SetDefault(slog.New(slog.DiscardHandler))
-+	b.Cleanup(func() { slog.SetDefault(defaultLogger) })
-+
-+	for _, codec := range []protos.AvroCodec{protos.AvroCodec_ZStandard, protos.AvroCodec_Null} {
-+		b.Run(codec.String(), func(b *testing.B) {
-+			b.ReportAllocs()
-+			for b.Loop() {
-+				b.StopTimer()
-+				stream := model.NewQRecordStream(len(records))
-+				for _, record := range records {
-+					stream.Records <- record
-+				}
-+				stream.Close(nil)
-+				b.StartTimer()
-+
-+				writer := NewPeerDBOCFWriter(stream, avroSchema, codec, protos.DBType_CLICKHOUSE, &model.QRecordAvroChunkSizeTracker{})
-+				numRows, err := writer.WriteOCF(b.Context(), benchAvroEnv, io.Discard, nil, nil)
-+				require.NoError(b, err)
-+				require.Equal(b, int64(len(records)), numRows)
+ 	addedColumnNames := make([]string, 0)
+ 	addedColumnTypeOIDs := make([]uint32, 0)
++	// json[]/jsonb[] columns, domains included, whose missing value the catalog also reads element by element
++	var addedJSONArrayColumnNames []string
+ 	for _, column := range currRel.Columns {
+ 		if shouldAddColumn(column.Name) {
+ 			addedColumnNames = append(addedColumnNames, column.Name)
+ 			addedColumnTypeOIDs = append(addedColumnTypeOIDs, column.DataType)
++			if qkind := types.QValueKind(currRelMap[column.Name]); qkind == types.QValueKindArrayJSON || qkind == types.QValueKindArrayJSONB {
++				addedJSONArrayColumnNames = append(addedJSONArrayColumnNames, column.Name)
 +			}
-+		})
-+	}
-+}
+ 		}
+ 	}
+ 
+@@ -1471,7 +1476,7 @@ func processRelationMessage[Items model.Items](
+ 	// missing value before a delayed CDC reader observes this relation message.
+ 	// Read from the mirrored table (the parent, for an inheritance child): a column only some children have finds
+ 	// no row there and is added as nullable without a default, which fits a destination every child writes to.
+-	addedColumnCatalogInfo, err := p.fetchAddedColumnCatalogInfo(ctx, mappedRelID, addedColumnNames)
++	addedColumnCatalogInfo, err := p.fetchAddedColumnCatalogInfo(ctx, mappedRelID, addedColumnNames, addedJSONArrayColumnNames)
+ 	if err != nil {
+ 		return nil, err
+ 	}
+@@ -1492,7 +1497,9 @@ func processRelationMessage[Items model.Items](
+ 			if missingValue != nil && prevSchema.System == protos.TypeSystem_Q {
+ 				wrapJSON := shouldWrapJSONColumn(column.DataType, column.Name, customTypeMapping,
+ 					p.flags, p.internalVersion, p.nativeJSONEnabled, currRelDstInfo.Columns)
+-				if literal, ok := defaultExprFromPostgresMissingValue(*missingValue, qkind, wrapJSON); ok {
++				// the destination adds a json[] column as Array(Nullable(JSON)) under the nullable setting
++				if literal, ok := defaultExprFromPostgresMissingValue(*missingValue, qkind, wrapJSON,
++					schemaDelta.NullableEnabled, catalogInfo.missingNullElements); ok {
+ 					defaultExpr = &literal
+ 				}
+ 			}
+@@ -1578,8 +1585,11 @@ type addedColumnCatalogInfo struct {
+ 	// missingJSON is the same value as JSON text, which keeps a top-level JSON string quoted and a JSON
+ 	// null distinct from SQL NULL; only meaningful for json/jsonb and json[]/jsonb[] columns.
+ 	missingJSON *string
+-	hasMissing  bool
+-	notNull     bool
++	// missingNullElements marks the SQL NULL elements of a json[]/jsonb[] missing value, which missingJSON
++	// renders as JSON null just like a 'null' element.
++	missingNullElements []bool
++	hasMissing          bool
++	notNull             bool
+ }
+ 
+ // missingValueFor returns the stored missing value in the form defaultExprFromPostgresMissingValue
+@@ -1597,7 +1607,7 @@ func (info addedColumnCatalogInfo) missingValueFor(qkind types.QValueKind) *stri
+ // the named columns. pg_attrdef is deliberately not used: it describes the current default for new
+ // rows, which can differ from the value stored in pg_attribute.attmissingval for existing rows.
+ func (c *PostgresConnector) fetchAddedColumnCatalogInfo(
+-	ctx context.Context, relID uint32, columnNames []string,
++	ctx context.Context, relID uint32, columnNames []string, jsonArrayColumnNames []string,
+ ) (map[string]addedColumnCatalogInfo, error) {
+ 	if len(columnNames) == 0 {
+ 		return nil, nil
+@@ -1608,12 +1618,14 @@ func (c *PostgresConnector) fetchAddedColumnCatalogInfo(
+ 	// that element without having to parse PostgreSQL's array text format. ->> preserves an empty
+ 	// string while returning SQL NULL for a missing value of NULL. -> keeps the element as JSON text,
+ 	// which is what a json/jsonb column needs.
++	// to_json renders SQL NULL and 'null' elements alike; the last column reads the elements as text[], which keeps them apart.
+ 	rows, err := c.conn.Query(ctx, `SELECT a.attname, a.attnotnull, a.atthasmissing,
+ 		CASE WHEN a.atthasmissing THEN pg_catalog.to_json(a.attmissingval)->>0 END,
+-		CASE WHEN a.atthasmissing THEN (pg_catalog.to_json(a.attmissingval)->0)::text END
++		CASE WHEN a.atthasmissing THEN (pg_catalog.to_json(a.attmissingval)->0)::text END,
++		CASE WHEN a.atthasmissing AND a.attname = ANY($3) THEN ((a.attmissingval::text::text[])[1])::text[] END
+ 		FROM pg_catalog.pg_attribute a
+ 		WHERE a.attrelid = $1 AND a.attname = ANY($2) AND a.attnum > 0 AND NOT a.attisdropped`,
+-		relID, columnNames)
++		relID, columnNames, jsonArrayColumnNames)
+ 	if err != nil {
+ 		return nil, fmt.Errorf("error looking up added column info for schema change: %w", err)
+ 	}
+@@ -1623,8 +1635,16 @@ func (c *PostgresConnector) fetchAddedColumnCatalogInfo(
+ 	var notNull bool
+ 	var hasMissing bool
+ 	var missingValue, missingJSON pgtype.Text
+-	if _, err := pgx.ForEachRow(rows, []any{&name, &notNull, &hasMissing, &missingValue, &missingJSON}, func() error {
++	var missingElements pgtype.Array[*string]
++	if _, err := pgx.ForEachRow(rows, []any{&name, &notNull, &hasMissing, &missingValue, &missingJSON, &missi
 ```
 
-**File**: `flow/connectors/utils/avro_writer_test.go` (added, +133/-0)
+**File**: `flow/connectors/postgres/cdc_test.go` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,133 @@
-+package utils
+@@ -213,7 +213,7 @@ func TestDefaultExprFromPostgresMissingValue(t *testing.T) {
+ 		t.Run(tc.name, func(t *testing.T) {
+ 			t.Parallel()
+ 
+-			literal, ok := defaultExprFromPostgresMissingValue(tc.value, tc.qkind, tc.wrapNonObjectJSON)
++			literal, ok := defaultExprFromPostgresMissingValue(tc.value, tc.qkind, tc.wrapNonObjectJSON, false, nil)
+ 			require.Equal(t, tc.want != "", ok)
+ 			require.Equal(t, tc.want, literal)
+ 		})
+```
+
+**File**: `flow/connectors/postgres/postgres_schema_delta_test.go` (modified, +41/-3)
+```diff
+@@ -258,6 +258,9 @@ func (s PostgresSchemaDeltaTestSuite) TestAddedColumnCatalogInfo() {
+ 	enumType := s.schema + ".mood"
+ 	_, err := s.connector.conn.Exec(s.t.Context(), "CREATE TYPE "+enumType+" AS ENUM ('sad','ok')")
+ 	require.NoError(s.t, err)
++	jsonbArrayDomain := s.schema + ".jsonb_arr_domain"
++	_, err = s.connector.conn.Exec(s.t.Context(), "CREATE DOMAIN "+jsonbArrayDomain+" AS jsonb[]")
++	require.NoError(s.t, err)
+ 
+ 	// the case name doubles as the column name
+ 	for _, tc := range []struct {
+@@ -269,6 +272,10 @@ func (s PostgresSchemaDeltaTestSuite) TestAddedColumnCatalogInfo() {
+ 		wantWrapped  string // literal with non-object JSON wrapping on; empty means the same as want
+ 		wantNonEmpty bool
+ 		notNull      bool
 +
-+import (
-+	"bytes"
-+	"errors"
-+	"io"
-+	"testing"
-+	"time"
++		// literal for an Array(Nullable(JSON)) column, with the SQL NULL elements the catalog reports;
++		// empty means the catalog reports none
++		wantWrappedNullable string
+ 	}{
+ 		// Integer missing values are exposed directly in their text form.
+ 		{name: "c_int", colDef: "int DEFAULT 5", qkind: types.QValueKindInt32, want: "5"},
+@@ -321,6 +328,24 @@ func (s PostgresSchemaDeltaTestSuite) TestAddedColumnCatalogInfo() {
+ 			name: "c_jsonb_arr", colDef: `jsonb[] DEFAULT ARRAY['{"a": 1}'::jsonb, '"dark"'::jsonb, 'null'::jsonb, NULL]`,
+ 			qkind:       types.QValueKindArrayJSONB,
+ 			wantWrapped: `JSONExtract('[{"a": 1},{"_value":"dark"},{"_value":null},{"_value":null}]', 'Array(JSON)')`,
 +
-+	"github.com/google/uuid"
-+	"github.com/shopspring/decimal"
-+	"github.com/stretchr/testify/require"
-+	"github.com/twmb/avro/ocf"
++			wantWrappedNullable: `JSONExtract('[{"a": 1},{"_value":"dark"},{"_value":null},null]', 'Array(Nullable(JSON))')`,
++		},
++		// a domain over jsonb[] takes the same default
++		{
++			name: "c_jsonb_arr_domain", colDef: jsonbArrayDomain + ` DEFAULT ARRAY['{"a": 1}'::jsonb, NULL]`,
++			qkind:       types.QValueKindArrayJSONB,
++			wantWrapped: `JSONExtract('[{"a": 1},{"_value":null}]', 'Array(JSON)')`,
 +
-+	"github.com/PeerDB-io/peerdb/flow/generated/protos"
-+	"github.com/PeerDB-io/peerdb/flow/model"
-+	"github.com/PeerDB-io/peerdb/flow/shared/types"
-+)
++			wantWrappedNullable: `JSONExtract('[{"a": 1},null]', 'Array(Nullable(JSON))')`,
++		},
++		// the cells of a multidimensional value are not its top-level elements, so the catalog marks none:
++		// the NULL cell must not turn the first element, the array [null], into NULL
++		{
++			name: "c_json_arr_2d", colDef: `json[] DEFAULT '{{NULL},{1}}'`, qkind: types.QValueKindArrayJSON,
++			wantWrapped: `JSONExtract('[{"_value":[null]},{"_value":[1]}]', 'Array(JSON)')`,
 +
-+func writeTestOCF(t *testing.T, schema types.QRecordSchema, records [][]types.QValue) []byte {
-+	t.Helper()
-+	avroSchema, err := model.GetAvroSchemaDefinition(t.Context(), benchAvroEnv, "test_table",
-+		schema, protos.DBType_CLICKHOUSE, model.ConstructColumnNameAvroFieldMap(schema.Fields))
-+	require.NoError(t, err)
-+
-+	stream := model.NewQRecordStream(len(records))
-+	stream.SetSchema(schema)
-+	for _, record := range records {
-+		stream.Records <- record
-+	}
-+	stream.Close(nil)
-+
-+	var buf bytes.Buffer
-+	writer := NewPeerDBOCFWriter(stream, avroSchema, protos.AvroCodec_ZStandard, protos.DBType_CLICKHOUSE, nil)
-+	numRows, err := writer.WriteOCF(t.Context(), benchAvroEnv, &buf, nil, nil)
-+	require.NoError(t, err)
-+	require.Equal(t, int64(len(records)), numRows)
-+	return buf.Bytes()
++			wantWrappedNullable: `JSONExtract('[{"_value":[null]},{"_value":[1]}]', 'Array(Nullable(JSON))')`,
+ 		},
+ 		{
+ 			name: "c_json_arr_empty", colDef: `json[] DEFAULT ARRAY[]::json[]`, qkind: types.QValueKindArrayJSON,
+@@ -384,15 +409,28 @@ func (s PostgresSchemaDeltaTestSuite) TestAddedColumnCatalogInfo() {
+ 			var relID uint32
+ 			require.NoError(t, s.connector.conn.QueryRow(t.Context(), "SELECT $1::regclass::oid", tableName).Scan(&relID))
+ 
+-			catalogInfo, err := s.connector.fetchAddedColumnCatalogInfo(t.Context(), relID, []string{tc.name})
++			// the caller resolves domains to tell json[]/jsonb[] columns apart; the case's kind stands in for that
++			var jsonArrayColumnNames []string
++			if tc.qkind == types.QValueKindArrayJSON || tc.qkind == types.QValueKindArrayJSONB {
++				jsonArrayColumnNames = []string{tc.name}
++			}
++			catalogInfo, err := s.connector.fetchAddedColumnCatalogInfo(t.Context(), relID, []string{tc.name}, jsonArrayColumnNames)
+ 			require.NoError(t, err)
+ 			require.Len(t, catalogInfo, 1)
+ 			require.Equal(t, tc.notNull, catalogInfo[tc.name].notNull)
+ 
+ 			var literal, wrappedLiteral string
+ 			if missingValue := catalogInfo[tc.name].missingValueFor(tc.qkind); missingValue != nil {
+-				literal, _ = defaultExprFromPostgresMissingValue(*missingValue, tc.qkind, false)
+-				wrappedLiteral, _ = defaultExprFromPostgresMissingValue(*missingValue, tc.qkind, true)
++				literal, _ = defaultExprFromPostgresMissingValue(*missingValue, tc.qkind, false, false, nil)
++				wrappedLiteral, _ = defaultExprFromPostgresMissingValue(*missingValue, tc.qkind, true, false, nil)
++				if tc.wantWrappedNullable != "" {
++					nullableLiteral, _ := defaultExprFromPostgresMissingValue(*missingValue, tc.qkind, true, true,
++						catalogInfo[tc.name].missingNullElements)
++					require.Equal(t, tc.wantWrappedNullable, nullableLiteral)
++				}
++			}
++			if tc.wantWrappedNullable == "" {
++				require.Nil(t, catalogInfo[tc.name].missingNullElements)
+ 			}
+ 			if tc.wantNonEmpty {
+ 				require.NotEmpty(t, literal)
+```
+
+**File**: `flow/e2e/clickhouse_json_suite.go` (modified, +22/-8)
+```diff
+@@ -980,15 +980,20 @@ func destinationJSONArrayMatches(
+ 
+ // Test_JSON_CH_Array_AddColumnDefault: a jsonb[] column added with a default, older rows get the wrapped default.
+ func (s ClickHouseSuite) Test_JSON_CH_Array_AddColumnDefault() {
+-	s.testJSONArrayAddColumnDefault("test_json_arr_add_col_default", false)
++	s.testJSONArrayAddColumnDefault("test_json_arr_add_col_default", false, false)
+ }
+ 
+-// Test_JSON_CH_Array_AddColumnDefault_Nullable: the same with PEERDB_NULLABLE; a NULL element of the default lands as {}.
++// Test_JSON_CH_Array_AddColumnDefault_Nullable: the same with PEERDB_NULLABLE; a NULL element of the default stays NULL.
+ func (s ClickHouseSuite) Test_JSON_CH_Array_AddColumnDefault_Nullable() {
+-	s.testJSONArrayAddColumnDefault("test_json_arr_add_col_def_null", true)
++	s.testJSONArrayAddColumnDefault("test_json_arr_add_col_def_null", true, false)
+ }
+ 
+-func (s ClickHouseSuite) testJSONArrayAddColumnDefault(srcTableName string, nullable bool) {
++// Test_JSON_CH_Array_AddColumnDefault_NullableDomain: the same through a domain over jsonb[].
++func (s ClickHouseSuite) Test_JSON_CH_Array_AddColumnDefault_NullableDomain() {
++	s.testJSONArrayAddColumnDefault("test_json_arr_add_col_def_dom", true, true)
 +}
 +
-+func readTestOCF(t *testing.T, data []byte) []map[string]any {
-+	t.Helper()
-+	reader, err := ocf.NewReader(bytes.NewReader(data))
-+	require.NoError(t, err)
-+	defer reader.Close()
-+
-+	var records []map[string]any
-+	for {
-+		var record map[string]any
-+		if err := reader.Decode(&record); errors.Is(err, io.EOF) {
-+			return records
-+		} else {
-+			require.NoError(t, err)
-+		}
-+		records = append(records, record)
++func (s ClickHouseSuite) testJSONArrayAddColumnDefault(srcTableName string, nullable bool, domain bool) {
+ 	if _, ok := s.source.(*PostgresSource); !ok {
+ 		s.t.Skip("json arrays only exist on postgres")
+ 	}
+@@ -998,6 +1003,11 @@ func (s ClickHouseSuite) testJSONArrayAddColumnDefault(srcTableName string, null
+ 
+ 	require.NoError(s.t, s.source.Exec(s.t.Context(),
+ 		fmt.Sprintf("CREATE TABLE IF NOT EXISTS %s (id INT PRIMARY KEY)", srcFullName)))
++	columnType := "JSONB[]"
++	if domain {
++		columnType = s.attachSchemaSuffix(srcTableName + "_dom")
++		require.NoError(s.t, s.source.Exec(s.t.Context(), "CREATE DOMAIN "+columnType+" AS jsonb[]"))
 +	}
-+}
-+
-+// A typed nil slice in a nullable array column must be written as null, and an empty slice as an empty array
-+func TestWriteOCFNullableArrays(t *testing.T) {
-+	schema := types.QRecordSchema{Fields: []types.QField{
-+		{Name: "a_int16", Type: types.QValueKindArrayInt16, Nullable: true},
-+		{Name: "a_int32", Type: types.QValueKindArrayInt32, Nullable: true},
-+		{Name: "a_int64", Type: types.QValueKindArrayInt64, Nullable: true},
-+		{Name: "a_float32", Type: types.QValueKindArrayFloat32, Nullable: true},
-+		{Name: "a_float64", Type: types.QValueKindArrayFloat64, Nullable: true},
-+		{Name: "a_bool", Type: types.QValueKindArrayBoolean, Nullable: true},
-+		{Name: "a_string", Type: types.QValueKindArrayString, Nullable: true},
-+		{Name: "a_timestamp", Type: types.QValueKindArrayTimestamp, Nullable: true},
-+		{Name: "a_date", Type: types.QValueKindArrayDate, Nullable: true},
-+		{Name: "a_time", Type: types.QValueKindArrayTime, Nullable: true},
-+		{Name: "a_uuid", Type: types.QValueKindArrayUUID, Nullable: true},
-+		{Name: "a_numeric", Type: types.QValueKindArrayNumeric, Nullable: true, Precision: 18, Scale: 4},
-+	}}
-+	nilRecord := []types.QValue{
-+		types.QValueArrayInt16{Val: []int16(nil)},
-+		types.QValueArrayInt32{Val: []int32(nil)},
-+		types.QValueArrayInt64{Val: []int64(nil)},
-+		types.QValueArrayFloat32{Val: []float32(nil)},
-+		types.QValueArrayFloat64{Val: []float64(nil)},
-+		types.QValueArrayBoolean{Val: []bool(nil)},
-+		types.QValueArrayString{Val: []string(nil)},
-+		types.QValueArrayTimestamp{Val: []time.Time(nil)},
-+		types.QValueArrayDate{Val: []time.Time(nil)},
-+		types.QValueArrayTime{Val: []time.Duration(nil)},
-+		types.QValueArrayUUID{Val: []uuid.UUID(nil)},
-+		types.QValueArrayNumeric{Val: []decimal.Decimal(nil), Precision: 18, Scale: 4},
-+	}
-+	emptyRecord := []types.QValue{
-+		types.QValueArrayInt16{Val: []int16{}},
-+		types.QValueArrayInt32{Val: []int32{}},
-+		types.QValueArrayInt64{Val: []int64{}},
-+		types.QValueArrayFloat32{Val: []float32{}},
-+		types.QValueArrayFloat64{Val: []float64{}},
-+		types.QValueArrayBoolean{Val: []bool{}},
-+		types.QValueArrayString{Val: []string{}},
-+		types.QValueArrayTimestamp{Val: []time.Time{}},
-+		types.QValueArrayDate{Val: []time.Time{}},
-+		types.QValueArrayTime{Val: []time.Duration{}},
-+		types.QValueArrayUUID{Val: []uuid.UUID{}},
-+		types.QValueArrayNumeric{Val: []decimal.Decimal{}, Precision: 18, Scale: 4},
-+	}
-+
-+	records := readTestOCF(t, writeTestOCF(t, schema, [][]types.QValue{nilRecord, emptyRecord}))
-+	require.Len(t, records, 2)
-+	avroFieldNames := model.ConstructColumnNameAvroFieldMap(schema.Fields)
-+	for _, field := range schema.Fields {
-+		name := avroFieldNames[field.Name]
-+		require.Contains(t, records[0], name)
-+		if field.Type == types.QValueKindArrayNumeric {
-+			// FIXME: https://linear.app/clickhouse/issue/DBI-1307
-+			// processArrayNumeric lacks the nil guard the other array helpers have,
-+			// so a typed nil slice is written as an empty array instead of null.
-+			// We should align this with the behavior of the other array helpers but making sure
-+			// existing functionality doesn't rely on the current behavior.
-+			require.Equal(t, []any{}, records[0][name], "typed nil slice in %s", field.Name)
-+		} else {
-+			require.Nil(t, records[0][name], "typed nil slice in %s", field.Name)
-+		}
-+		require.Equal(t, []any{}, records[1][name], "empty slice in %s", field.Name)
-+	}
-+
+ 	require.NoError(s.t, s.source.Exec(s.t.Context(), fmt.Sprintf("INSERT INTO %s (id) VALUES (1)", srcFullName)))
+ 
+ 	connectionGen := FlowConnectionGenerationConfig{
+@@ -1022,15 +1032,19 @@ func (s ClickHouseSuite) testJSONArrayAddColumnDefault(srcTableName string, null
+ 	EnvWaitForEqualTablesWithNames(env, s, "waiting on initial", srcTableName, dstTableName, "id")
+ 
+ 	for _, stmt := range []string{
+-		`ALTER TABLE %s ADD COLUMN c_arr JSONB[] DEFAULT ARRAY['{"a": 1}'::jsonb, '"dark"'::jsonb, NULL, 'null'::jsonb]`,
+-		`INSERT INTO %s (id, c_arr) VALUES (2, ARRAY['[1, 2]'::jsonb, '{"b": 2}'::jsonb])`,
++		`ALTER TABLE %[1]s ADD COLUMN c_arr %[2]s DEFAULT ARRAY['{"a": 1}'::jsonb, '"dark"'::jsonb, NULL, 'null'::jsonb]`,
++		`INSERT INTO %[1]s (id, c_arr) VALUES (2, ARRAY['[1, 2]'::jsonb, '{"b": 2}'::jsonb])`,
+ 	} {
+-		require.NoError(s.t, s.source.Exec(s.t.Context(), fmt.Sprintf(stmt, srcFullName)))
++		require.NoError(s.t, s.source.Exec(s.t.Context(), fmt.Sprintf(stmt, srcFullName, columnType)))
+ 	}
+ 
+ 	// row 1 takes the column default, row 2 its own value
+ 	cases := []jsonArrayTestCase{
+-		{desc: "default", wantElements: []string{`{"a": 1}`, `{"_value":"dark"}`, `{}`, `{}`}},
++		{
++			desc:                 "default",
++			wantElements:         []string{`{"a": 1}`, `{"_value":"dark"}`, `{}`, `{}`},
++			wantNullableElements: []string{`{"a": 1}`, `{"_value":"dark"}`, `null`, `{}`},
++		},
+ 		{desc: "explicit", wantElements: []string{`{"_value":[1, 2]}`, `{"b": 2}`}},
+ 	}
+ 	rowsMatch := jsonColumnsMatch([]string{"c_arr"}, func(t *testing.T, label string, rowIdx int, _ types.QValue, dst types.QValue) bool {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5087** (2026-11-17): Update github-actions dependencies (@renovate[bot])
+- **PR #5086** (2026-11-17): Update dockerfile dependencies (@renovate[bot])
+- **PR #5085** (closed): fix(postgres): quote destination tables when resetting sequences (@colton-clickhouse)
+- **PR #5084** (2026-11-17): docs: describe native ClickHouse JSON (PEERDB_CLICKHOUSE_ENABLE_JSON) (@gheorghepucea)
 - **PR #5082** (2026-11-13): Move DNS error tests to .invalid TLD (@colton-clickhouse)
-- **PR #5077** (closed): Reshape mirror edit and overview screens (@jonathan-dualtech)
-- **PR #5075** (2026-11-12): Skip Claude dependency review when diff is unchanged (@dtunikov)
-- **PR #5071** (2026-11-12): perf(bigquery): read source table info from INFORMATION_SCHEMA and batch data-access checks (@dtunikov)
-- **PR #5070** (2026-11-11): ci: raise MySQL/MariaDB test max_connections to 1000 (@gheorghepucea)
-- **PR #5068** (2026-11-11): fix(clickhouse) DBI-1323: validate column types and key expressions structurally (@ilidemi)
+- **PR #5081** (2026-11-17): postgres: keep SQL NULL elements of a json[] ADD COLUMN default as NULL on nullable mirrors (@gheorghepucea)
 
 ---
 
@@ -3024,35 +2184,53 @@ Avro size estimate in `arraySize` is updated
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Optionally honor Postgres child table schema when PEERDB_SOURCE_SCHEMA_AS_DESTIN
+## X. postgres: keep SQL NULL elements of a json[] ADD COLUMN default as NULL on nulla
 
 **RULE**:
-When implementing operations in `flow/connectors/clickhouse/table_function.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in PeerDB-io/peerdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `flow/connectors/postgres/cdc.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in PeerDB-io/peerdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e0f79a20`: Optionally honor Postgres child table schema when PEERDB_SOURCE_SCHEMA_AS_DESTINATION_COLUMN is enabled. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0993bcf9`: postgres: keep SQL NULL elements of a json[] ADD COLUMN default as NULL on nullable mirrors. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `flow/connectors/clickhouse/table_function.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `flow/connectors/postgres/cdc.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	sourceSchemaColExists := false
-		if !sourceSchemaColExists && colName == sourceSchemaColName {
-			sourceSchemaColExists = true
-		}
-	if sourceSchemaAsDestinationColumn && !sourceSchemaColExists {
+	// json[]/jsonb[] columns, domains included, whose missing value the catalog also reads element by element
+	var addedJSONArrayColumnNames []string
+			if qkind := types.QValueKind(currRelMap[column.Name]); qkind == types.QValueKindArrayJSON || qkind == types.QValueKindArrayJSONB {
+				addedJSONArrayColumnNames = append(addedJSONArrayColumnNames, column.Name)
+			}
+	addedColumnCatalogInfo, err := p.fetchAddedColumnCatalogInfo(ctx, mappedRelID, addedColumnNames, addedJSONArrayColumnNames)
+				// the destination adds a json[] column as Array(Nullable(JSON)) under the nullable setting
+				if literal, ok := defaultExprFromPostgresMissingValue(*missingValue, qkind, wrapJSON,
+					schemaDelta.NullableEnabled, catalogInfo.missingNullElements); ok {
+	// missingNullElements marks the SQL NULL elements of a json[]/jsonb[] missing value, which missingJSON
+	// renders as JSON null just like a 'null' element.
+	missingNullElements []bool
+	hasMissing          bool
+	notNull             bool
+	ctx context.Context, relID uint32, columnNames []string, jsonArrayColumnNames []string,
+	// to_json renders SQL NULL and 'null' elements alike; the last column reads the elements as text[], which keeps them apar
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-	if sourceSchemaAsDestinationColumn {
+	addedColumnCatalogInfo, err := p.fetchAddedColumnCatalogInfo(ctx, mappedRelID, addedColumnNames)
+				if literal, ok := defaultExprFromPostgresMissingValue(*missingValue, qkind, wrapJSON); ok {
+	hasMissing  bool
+	notNull     bool
+	ctx context.Context, relID uint32, columnNames []string,
+		CASE WHEN a.atthasmissing THEN (pg_catalog.to_json(a.attmissingval)->0)::text END
+		relID, columnNames)
+	if _, err := pgx.ForEachRow(rows, []any{&name, &notNull, &hasMissing, &missingValue, &missingJSON}, func() error {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e0f79a20` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0993bcf9` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

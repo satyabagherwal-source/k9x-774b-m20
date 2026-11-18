@@ -6,16 +6,16 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T12:43:19.832Z",
+  "timestamp": "2026-11-18T02:42:49.249Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
-  "learning_id": "LEARN-REEXTRACT-peerdb-io-peerdb-learnings",
+  "learning_id": "LEARN-EVO-peerdb-io-peerdb-learnings",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [peerdb-io-peerdb-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T12:43:19.832Z`  
-> **Learning ID**: `LEARN-REEXTRACT-peerdb-io-peerdb-learnings`
+> **License**: Open-Source | **Timestamp**: `2026-11-18T02:42:49.249Z`  
+> **Learning ID**: `LEARN-EVO-peerdb-io-peerdb-learnings`
 
 
 ## 1. Scope & Verification Target
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/peerdb-io-peerdb-learnings.md`  
 > **Source**: github ([https://github.com/PeerDB-io/peerdb](https://github.com/PeerDB-io/peerdb))  
-> **Source Version**: `ca8ac478`  
+> **Source Version**: `5868e6e7`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-12T03:48:59.141Z  
+> **Timestamp**: 2026-11-18T02:42:41.993Z  
 > **Learning ID**: `learn-github-peerdb-io-peerdb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/peerdb-io-peerdb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/PeerDB-io/peerdb](https://github.com/PeerDB-io/peerdb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-12T03:48:36.102Z  
+> **Harvest Timestamp**: 2026-11-18T02:42:41.987Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Fast, Simple and a cost effective tool to replicate data from Postgres to Data Warehouses, Queues and Storage
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 3320 stars
+- **Stars / Engagement**: 3324 stars
 
 ---
 
@@ -1249,6 +1249,7 @@ func init() {
 package utils
 
 import (
+	"compress/flate"
 	"context"
 	"errors"
 	"fmt"
@@ -1261,7 +1262,7 @@ import (
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/feature/s3/transfermanager"
-	"github.com/hamba/avro/v2/ocf"
+	"github.com/twmb/avro/ocf"
 
 	"github.com/PeerDB-io/peerdb/flow/generated/protos"
 	"github.com/PeerDB-io/peerdb/flow/internal"
@@ -1281,11 +1282,27 @@ const (
 	AvroGCSStorage
 )
 
+// newOCFCodec returns a fresh codec, the OCF writer takes ownership and closes it
+func newOCFCodec(c protos.AvroCodec) (ocf.Codec, error) {
+	switch c {
+	case protos.AvroCodec_Null:
+		return nil, nil
+	case protos.AvroCodec_Deflate:
+		return ocf.DeflateCodec(flate.DefaultCompression), nil
+	case protos.AvroCodec_Snappy:
+		return ocf.SnappyCodec(), nil
+	case protos.AvroCodec_ZStandard:
+		return ocf.ZstdCodec(nil, nil)
+	default:
+		return nil, fmt.Errorf("unsupported Avro compression codec %s", c)
+	}
+}
+
 type peerDBOCFWriter struct {
 	stream               *model.QRecordStream
 	avroSchema           *model.QRecordAvroSchemaDefinition
 	sizeTracker          *model.QRecordAvroChunkSizeTracker
-	avroCompressionCodec ocf.CodecName
+	avroCompressionCodec protos.AvroCodec
 	targetDWH            protos.DBType
 }
 
@@ -1306,7 +1323,7 @@ func (l *AvroFile) Cleanup(ctx context.Context) {
 func NewPeerDBOCFWriter(
 	stream *model.QRecordStream,
 	avroSchema *model.QRecordAvroSchemaDefinition,
-	avroCompressionCodec ocf.CodecName,
+	avroCompressionCodec protos.AvroCodec,
 	targetDWH protos.DBType,
 	sizeTracker *model.QRecordAvroChunkSizeTracker,
 ) *peerDBOCFWriter {
@@ -1326,9 +1343,13 @@ func (p *peerDBOCFWriter) WriteOCF(
 	typeConversions map[string]types.TypeConversion,
 	numericTruncator model.SnapshotTableNumericTruncator,
 ) (int64, error) {
-	ocfWriter, err := ocf.NewEncoderWithSchema(
-		p.avroSchema.Schema, w, ocf.WithCodec(p.avroCompressionCodec),
-		ocf.WithBlockLength(8192), ocf.WithBlockSize(1<<26),
+	codec, err := newOCFCodec(p.avroCompressionCodec)
+	if err != nil {
+		return 0, fmt.Errorf("failed to create OCF codec: %w", err)
+	}
+	ocfWriter, err := ocf.NewWriter(
+		w, p.avroSchema.Schema, ocf.WithCodec(codec),
+		ocf.WithBlockCount(8192), ocf.WithBlockBytes(1<<26),
 	)
 	if err != nil {
 		return 0, fmt.Errorf("failed to create OCF writer: %w", err)
@@ -1444,10 +1465,10 @@ func (p *peerDBOCFWriter) WriteRecordsToAvroFile(ctx context.Context, env map[st
 }
 
 func (p *peerDBOCFWriter) getAvroFieldNamesFromSchema() []string {
-	fields := p.avroSchema.Schema.Fields()
+	fields := p.avroSchema.Schema.Root().Fields
 	avroFieldNames := make([]string, len(fields))
-	for i, field := range fields {
-		avroFieldNames[i] = field.Name()
+	for i := range fields {
+		avroFieldNames[i] = fields[i].Name
 	}
 	return avroFieldNames
 }
@@ -1455,7 +1476,7 @@ func (p *peerDBOCFWriter) getAvroFieldNamesFromSchema() []string {
 func (p *peerDBOCFWriter) writeRecordsToOCFWriter(
 	ctx context.Context,
 	env map[string]string,
-	ocfWriter *ocf.Encoder,
+	ocfWriter *ocf.Writer,
 	typeConversions map[string]types.TypeConversion,
 	numericTruncator model.SnapshotTableNumericTruncator,
 ) (int64, error) {
@@ -1483,7 +1504,7 @@ func (p *peerDBOCFWriter) writeRecordsToOCFWriter(
 			slog.Int64("records", numRows.Load()),
 			slog.Int("channelLen", len(p.stream.Records)),
 			slog.Float64("elapsedMinutes", time.Since(writeStart).Minutes()),
-			slog.String("compression", string(p.avroCompressionCodec)))
+			slog.String("compression", p.avroCompressionCodec.String()))
 	})
 	defer shutdown()
 
@@ -1519,7 +1540,7 @@ func (p *peerDBOCFWriter) writeRecordsToOCFWriter(
 	logger.Info("finished writing records to OCF",
 		slog.Int64("records", numRows.Load()),
 		slog.Float64("elapsedMinutes", time.Since(writeStart).Minutes()),
-		slog.String("compression", string(p.avroCompressionCodec)),
+		slog.String("compression", p.avroCompressionCodec.String()),
 	)
 
 	if avroConverter.NullMismatchTracker != nil {
@@ -1883,768 +1904,281 @@ func getChainedRoleSessionName() string {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6951b76b` (2026-11-09)
-**Commit Message**: fix(snapshot): skip child tables dropped after the snapshot in CTID partitioning (#5044)
+### Incident Patch 1: `0993bcf9` (2026-11-17)
+**Commit Message**: postgres: keep SQL NULL elements of a json[] ADD COLUMN default as NULL on nullable mirrors (#5081)
 
-Fixes
-[DBI-1316](https://linear.app/clickhouse/issue/DBI-1316/classify-unhandled-postgres-qrep-error-child-table-block-count-null)
+Fixes DBI-1327. Follows #5048.
 
-## Problem
+With `PEERDB_NULLABLE` on, SQL NULL elements of a `json[]`/`jsonb[]` ADD
+COLUMN default landed as `{}` in `Array(Nullable(JSON))`, while synced
+rows store NULL. The default is read through `to_json(attmissingval)`,
+which renders a SQL NULL element like a `'null'` one.
 
-CTID partitioning of partitioned/inherited tables lists children through
-the exported snapshot, then reads each child's size with
-`pg_relation_size(oid)`. That function checks the current catalog and
-returns NULL for a relation that no longer exists. A child dropped after
-the snapshot was exported (e.g. by partition retention during a long
-initial load) is still listed, its size comes back NULL, and the scan
-into `int64` fails:
+- The catalog query also reads the default's elements as `text[]`, which
+keeps SQL NULL apart.
+- On nullable mirrors the default writes those elements as `null` and
+parses with `Array(Nullable(JSON))`, the column's type.
+- Domains over `json[]`/`jsonb[]` are covered. 2-D defaults keep the old
+behaviour.
 
-```
-failed to get child partitioned tables: failed to scan child table: can't scan into dest[3] (col: int8): cannot scan NULL into *int64
-```
+**Testing:** the `Test_JSON_CH_Array_AddColumnDefault*` e2e tests pass,
+including a new domain variant. `TestAddedColumnCatalogInfo` covers the
+query against a live Postgres.
 
-The snapshot is fixed, so every retry fails the same way.
-
-## Fix
-
-`COALESCE` the block count to 0 in the child discovery queries. A
-dropped child is treated as empty and skipped, matching what a `SELECT`
-from the parent returns today.
-
-## Testing
-
-`TestCTIDPartitioningSkipsChildDroppedAfterSnapshot` (partitioned and
-inherited): export a snapshot, drop a child, run `GetQRepPartitions`
-wi
-
-**File**: `flow/connectors/postgres/qrep_partition.go` (modified, +6/-3)
+**File**: `flow/connectors/postgres/cdc.go` (modified, +42/-13)
 ```diff
-@@ -338,13 +338,16 @@ type tableBlockStats struct {
- 	blockCount   int64
+@@ -1454,10 +1454,15 @@ func processRelationMessage[Items model.Items](
+ 
+ 	addedColumnNames := make([]string, 0)
+ 	addedColumnTypeOIDs := make([]uint32, 0)
++	// json[]/jsonb[] columns, domains included, whose missing value the catalog also reads element by element
++	var addedJSONArrayColumnNames []string
+ 	for _, column := range currRel.Columns {
+ 		if shouldAddColumn(column.Name) {
+ 			addedColumnNames = append(addedColumnNames, column.Name)
+ 			addedColumnTypeOIDs = append(addedColumnTypeOIDs, column.DataType)
++			if qkind := types.QValueKind(currRelMap[column.Name]); qkind == types.QValueKindArrayJSON || qkind == types.QValueKindArrayJSONB {
++				addedJSONArrayColumnNames = append(addedJSONArrayColumnNames, column.Name)
++			}
+ 		}
+ 	}
+ 
+@@ -1471,7 +1476,7 @@ func processRelationMessage[Items model.Items](
+ 	// missing value before a delayed CDC reader observes this relation message.
+ 	// Read from the mirrored table (the parent, for an inheritance child): a column only some children have finds
+ 	// no row there and is added as nullable without a default, which fits a destination every child writes to.
+-	addedColumnCatalogInfo, err := p.fetchAddedColumnCatalogInfo(ctx, mappedRelID, addedColumnNames)
++	addedColumnCatalogInfo, err := p.fetchAddedColumnCatalogInfo(ctx, mappedRelID, addedColumnNames, addedJSONArrayColumnNames)
+ 	if err != nil {
+ 		return nil, err
+ 	}
+@@ -1492,7 +1497,9 @@ func processRelationMessage[Items model.Items](
+ 			if missingValue != nil && prevSchema.System == protos.TypeSystem_Q {
+ 				wrapJSON := shouldWrapJSONColumn(column.DataType, column.Name, customTypeMapping,
+ 					p.flags, p.internalVersion, p.nativeJSONEnabled, currRelDstInfo.Columns)
+-				if literal, ok := defaultExprFromPostgresMissingValue(*missingValue, qkind, wrapJSON); ok {
++				// the destination adds a json[] column as Array(Nullable(JSON)) under the nullable setting
++				if literal, ok := defaultExprFromPostgresMissingValue(*missingValue, qkind, wrapJSON,
++					schemaDelta.NullableEnabled, catalogInfo.missingNullElements); ok {
+ 					defaultExpr = &literal
+ 				}
+ 			}
+@@ -1578,8 +1585,11 @@ type addedColumnCatalogInfo struct {
+ 	// missingJSON is the same value as JSON text, which keeps a top-level JSON string quoted and a JSON
+ 	// null distinct from SQL NULL; only meaningful for json/jsonb and json[]/jsonb[] columns.
+ 	missingJSON *string
+-	hasMissing  bool
+-	notNull     bool
++	// missingNullElements marks the SQL NULL elements of a json[]/jsonb[] missing value, which missingJSON
++	// renders as JSON null just like a 'null' element.
++	missingNullElements []bool
++	hasMissing          bool
++	notNull             bool
  }
  
-+// pg_relation_size is NULL for a child dropped after the snapshot, which pg_inherits still lists; count it as empty.
-+const childBlockCountExpr = `COALESCE(pg_relation_size(c.oid) / current_setting('block_size')::int, 0)::bigint`
-+
- // getPartitionedTables returns a map of partitioned child table names to their block stats,
- // recursively handle multi-level partitioned tables.
- // Uses OID-based join to avoid to_regclass which lowercases unquoted mixed-case identifiers.
- func getPartitionedTables(ctx context.Context, tx pgx.Tx, parentOID uint32) (map[string]tableBlockStats, error) {
- 	rows, err := tx.Query(ctx, `
- 		SELECT c.oid, format('%s.%s', n.nspname, c.relname), c.relkind::text,
--			(pg_relation_size(c.oid) / current_setting('block_size')::int)::bigint,
-+			`+childBlockCountExpr+`,
- 			(CASE WHEN c.relpages > 0 THEN c.reltuples::float / c.relpages ELSE 0 END)::float
- 		FROM pg_inherits i
- 		JOIN pg_class c ON i.inhrelid = c.oid
-@@ -410,7 +413,7 @@ func getInheritedTables(
- 	var numBlocks int64
- 	var blockDensity float64
- 	if err := tx.QueryRow(ctx, `
--			SELECT (pg_relation_size($1) / current_setting('block_size')::int)::bigint,
-+			SELECT `+childBlockCountExpr+`,
- 				(CASE WHEN c.relpages > 0 THEN c.reltuples::float / c.relpages ELSE 0 END)::float
- 			FROM pg_class c WHERE c.oid = $1
- 		`, parentOID).Scan(&numBlocks, &blockDensity); err != nil {
-@@ -425,7 +428,7 @@ func getInheritedTables(
- 
- 	rows, err := tx.Query(ctx, `
- 		SELECT c.oid, format('%s.%s', n.nspname, c.relname), c.relhassubclass,
--			(pg_relation_size(c.oid) / current_setting('block_size')::int)::bigint,
-+			`+childBlockCountExpr+`,
- 			(CASE WHEN c.relpages > 0 THEN c.reltuples::float / c.relpages ELSE 0 END)::float
- 		FROM pg_inherits i
- 		JOIN pg_class c ON i.inhrelid = c.oid
+ // missingValueFor returns the stored missing value in the form defaultExprFromPostgresMissingValue
+@@ -1597,7 +1607,7 @@ func (info addedColumnCatalogInfo) missingValueFor(qkind types.QValueKind) *stri
+ // the named columns. pg_attrdef is deliberately not used: it describes the current default for new
+ // rows, which can differ from the value stored in pg_attribute.attmissingval for existing rows.
+ func (c *PostgresConnector) fetchAddedColumnCatalogInfo(
+-	ctx context.Context, relID uint32, columnNames []string,
++	ctx context.Context, relID uint32, columnNames []string, jsonArrayColumnNames []string,
+ ) (map[string]addedColumnCatalogInfo, error) {
+ 	if len(columnNames) == 0 {
+ 		return nil, nil
+@@ -1608,12 +1618,14 @@ func (c *PostgresConnector) fetchAddedColumnCatalogInfo(
+ 	// that element without having to parse PostgreSQL's array text format. ->> preserves an empty
+ 	// string while returning SQL NULL for a missing value of NULL. -> keeps the element as JSON text,
+ 	// which is what a json/jsonb column needs.
++	// to_json renders SQL NULL and 'null' elements alike; the last column reads the elements as text[], which keeps them apart.
+ 	rows, err := c.conn.Query(ctx, `SELECT a.attname, a.attnotnull, a.atthasmissing,
+ 		CASE WHEN a.atthasmissing THEN pg_catalog.to_json(a.attmissingval)->>0 END,
+-		CASE WHEN a.atthasmissing THEN (pg_catalog.to_json(a.attmissingval)->0)::text END
++		CASE WHEN a.atthasmissing THEN (pg_catalog.to_json(a.attmissingval)->0)::text END,
++		CASE WHEN a.atthasmissing AND a.attname = ANY($3) THEN ((a.attmissingval::text::text[])[1])::text[] END
+ 		FROM pg_catalog.pg_attribute a
+ 		WHERE a.attrelid = $1 AND a.attname = ANY($2) AND a.attnum > 0 AND NOT a.attisdropped`,
+-		relID, columnNames)
++		relID, columnNames, jsonArrayColumnNames)
+ 	if err != nil {
+ 		return nil, fmt.Errorf("error looking up added column info for schema change: %w", err)
+ 	}
+@@ -1623,8 +1635,16 @@ func (c *PostgresConnector) fetchAddedColumnCatalogInfo(
+ 	var notNull bool
+ 	var hasMissing bool
+ 	var missingValue, missingJSON pgtype.Text
+-	if _, err := pgx.ForEachRow(rows, []any{&name, &notNull, &hasMissing, &missingValue, &missingJSON}, func() error {
++	var missingElements pgtype.Array[*string]
++	if _, err := pgx.ForEachRow(rows, []any{&name, &notNull, &hasMissing, &missingValue, &missingJSON, &missi
 ```
 
-**File**: `flow/connectors/postgres/qrep_partition_test.go` (modified, +82/-0)
+**File**: `flow/connectors/postgres/cdc_test.go` (modified, +1/-1)
 ```diff
-@@ -3,6 +3,7 @@
- package connpostgres
+@@ -213,7 +213,7 @@ func TestDefaultExprFromPostgresMissingValue(t *testing.T) {
+ 		t.Run(tc.name, func(t *testing.T) {
+ 			t.Parallel()
  
- import (
-+	"context"
- 	"fmt"
- 	"log/slog"
- 	"strings"
-@@ -735,6 +736,87 @@ func TestCTIDPartitioningOnEmptyInheritedTable(t *testing.T) {
- 	require.Empty(t, partitions)
- }
+-			literal, ok := defaultExprFromPostgresMissingValue(tc.value, tc.qkind, tc.wrapNonObjectJSON)
++			literal, ok := defaultExprFromPostgresMissingValue(tc.value, tc.qkind, tc.wrapNonObjectJSON, false, nil)
+ 			require.Equal(t, tc.want != "", ok)
+ 			require.Equal(t, tc.want, literal)
+ 		})
+```
+
+**File**: `flow/connectors/postgres/postgres_schema_delta_test.go` (modified, +41/-3)
+```diff
+@@ -258,6 +258,9 @@ func (s PostgresSchemaDeltaTestSuite) TestAddedColumnCatalogInfo() {
+ 	enumType := s.schema + ".mood"
+ 	_, err := s.connector.conn.Exec(s.t.Context(), "CREATE TYPE "+enumType+" AS ENUM ('sad','ok')")
+ 	require.NoError(s.t, err)
++	jsonbArrayDomain := s.schema + ".jsonb_arr_domain"
++	_, err = s.connector.conn.Exec(s.t.Context(), "CREATE DOMAIN "+jsonbArrayDomain+" AS jsonb[]")
++	require.NoError(s.t, err)
  
-+// A child dropped after the snapshot was exported is still listed by the snapshot's
-+// pg_inherits, but pg_relation_size of it is NULL; it must be skipped, not fail the scan.
-+func TestCTIDPartitioningSkipsChildDroppedAfterSnapshot(t *testing.T) {
-+	t.Parallel()
+ 	// the case name doubles as the column name
+ 	for _, tc := range []struct {
+@@ -269,6 +272,10 @@ func (s PostgresSchemaDeltaTestSuite) TestAddedColumnCatalogInfo() {
+ 		wantWrapped  string // literal with non-object JSON wrapping on; empty means the same as want
+ 		wantNonEmpty bool
+ 		notNull      bool
 +
-+	for _, tc := range []struct {
-+		name        string
-+		createChild string
-+	}{
-+		{name: "partitioned", createChild: `CREATE TABLE %[1]s PARTITION OF %[2]s FOR VALUES FROM (%[3]d) TO (%[3]d + 100)`},
-+		{name: "inherited", createChild: `CREATE TABLE %[1]s () INHERITS (%[2]s)`},
-+	} {
-+		t.Run(tc.name, func(t *testing.T) {
-+			t.Parallel()
-+			ctx := t.Context()
-+			schemaName, conn, connStr := setupTestSchema(t)
++		// literal for an Array(Nullable(JSON)) column, with the SQL NULL elements the catalog reports;
++		// empty means the catalog reports none
++		wantWrappedNullable string
+ 	}{
+ 		// Integer missing values are exposed directly in their text form.
+ 		{name: "c_int", colDef: "int DEFAULT 5", qkind: types.QValueKindInt32, want: "5"},
+@@ -321,6 +328,24 @@ func (s PostgresSchemaDeltaTestSuite) TestAddedColumnCatalogInfo() {
+ 			name: "c_jsonb_arr", colDef: `jsonb[] DEFAULT ARRAY['{"a": 1}'::jsonb, '"dark"'::jsonb, 'null'::jsonb, NULL]`,
+ 			qkind:       types.QValueKindArrayJSONB,
+ 			wantWrapped: `JSONExtract('[{"a": 1},{"_value":"dark"},{"_value":null},{"_value":null}]', 'Array(JSON)')`,
 +
-+			parentTable := schemaName + ".parent"
-+			createParent := `CREATE TABLE %s (id SERIAL, partition_key INT NOT NULL, value TEXT)`
-+			if tc.name == "partitioned" {
-+				createParent += ` PARTITION BY RANGE (partition_key)`
++			wantWrappedNullable: `JSONExtract('[{"a": 1},{"_value":"dark"},{"_value":null},null]', 'Array(Nullable(JSON))')`,
++		},
++		// a domain over jsonb[] takes the same default
++		{
++			name: "c_jsonb_arr_domain", colDef: jsonbArrayDomain + ` DEFAULT ARRAY['{"a": 1}'::jsonb, NULL]`,
++			qkind:       types.QValueKindArrayJSONB,
++			wantWrapped: `JSONExtract('[{"a": 1},{"_value":null}]', 'Array(JSON)')`,
++
++			wantWrappedNullable: `JSONExtract('[{"a": 1},null]', 'Array(Nullable(JSON))')`,
++		},
++		// the cells of a multidimensional value are not its top-level elements, so the catalog marks none:
++		// the NULL cell must not turn the first element, the array [null], into NULL
++		{
++			name: "c_json_arr_2d", colDef: `json[] DEFAULT '{{NULL},{1}}'`, qkind: types.QValueKindArrayJSON,
++			wantWrapped: `JSONExtract('[{"_value":[null]},{"_value":[1]}]', 'Array(JSON)')`,
++
++			wantWrappedNullable: `JSONExtract('[{"_value":[null]},{"_value":[1]}]', 'Array(Nullable(JSON))')`,
+ 		},
+ 		{
+ 			name: "c_json_arr_empty", colDef: `json[] DEFAULT ARRAY[]::json[]`, qkind: types.QValueKindArrayJSON,
+@@ -384,15 +409,28 @@ func (s PostgresSchemaDeltaTestSuite) TestAddedColumnCatalogInfo() {
+ 			var relID uint32
+ 			require.NoError(t, s.connector.conn.QueryRow(t.Context(), "SELECT $1::regclass::oid", tableName).Scan(&relID))
+ 
+-			catalogInfo, err := s.connector.fetchAddedColumnCatalogInfo(t.Context(), relID, []string{tc.name})
++			// the caller resolves domains to tell json[]/jsonb[] columns apart; the case's kind stands in for that
++			var jsonArrayColumnNames []string
++			if tc.qkind == types.QValueKindArrayJSON || tc.qkind == types.QValueKindArrayJSONB {
++				jsonArrayColumnNames = []string{tc.name}
 +			}
-+			_, err := conn.Exec(ctx, fmt.Sprintf(createParent, parentTable))
-+			require.NoError(t, err)
-+
-+			childTables := make([]string, 3)
-+			for i := range childTables {
-+				childTables[i] = fmt.Sprintf("%s.child_%d", schemaName, i)
-+				_, err = conn.Exec(ctx, fmt.Sprintf(tc.createChild, childTables[i], parentTable, i*100))
-+				require.NoError(t, err)
-+				_, err = conn.Exec(ctx, fmt.Sprintf(
-+					`INSERT INTO %s (partition_key, value) SELECT %d + g, 'v' FROM generate_series(0, 49) g`,
-+					childTables[i], i*100))
-+				require.NoError(t, err)
-+			}
-+
-+			exporter, err := NewPostgresConnector(ctx, nil, internal.GetCatalogPostgresConfigFromEnv(ctx))
-+			require.NoError(t, err)
-+			t.Cleanup(func() { exporter.Close() })
-+			exportTx, err := exporter.conn.BeginTx(ctx, pgx.TxOptions{IsoLevel: pgx.RepeatableRead})
-+			require.NoError(t, err)
-+			t.Cleanup(func() { _ = exportTx.Rollback(context.Background()) })
-+			var snapshot string
-+			require.NoError(t, exportTx.QueryRow(ctx, "SELECT pg_export_snapshot()").Scan(&snapshot))
-+
-+			_, err = conn.Exec(ctx, "DROP TABLE "+childTables[1])
-+			require.NoError(t, err)
-+
-+			c := &PostgresConnector{
-+				connStr: connStr,
-+				Config:  &protos.PostgresConfig{},
-+				conn:    conn,
-+				logger:  log.NewStructuredLogger(slog.With(slog.String(string(shared.FlowNameKey), "testDroppedChild"))),
-+			}
-+			// NumPartitionsOverride exercises CTIDBlockPartitioningFunc directly; without it,
-+			// ComputeNumPartitions sums per-child estimates first.
-+			for _, numPartitionsOverride := range []uint32{4, 0} {
-+				partitions, err := c.GetQRepPartitions(ctx, &protos.QRepConfig{
-+					FlowJobName:           "test_ctid_dropped_child",
-+					NumRowsPerPartition:   10,
-+					NumPartitionsOverride: numPartitionsOverride,
-+					WatermarkTable:        parentTable,
-+					WatermarkColumn:       "ctid",
-+					SnapshotName:          snapshot,
-+					Env:                   map[string]string{"PEERDB_POSTGRES_APPLY_CTID_BLOCK_PARTITIONING_OVERRIDE": "true"},
-+				}, nil)
-+				require.NoError(t, err)
-+
-+				covered := make(map[string]bool)
-+				for _, p := range partitions {
-+					for _, ctr := range p.ChildTableRanges {
-+						covered[ctr.Table] = true
-+					}
++			catalogInfo, err := s.connector.fetchAddedColumnCatalogInfo(t.Context(), relID, []string{tc.name}, jsonArrayColumnNames)
+ 			require.NoError(t, err)
+ 			require.Len(t, catalogInfo, 1)
+ 			require.Equal(t, tc.notNull, catalogInfo[tc.name].notNull)
+ 
+ 			var literal, wrappedLiteral string
+ 			if missingValue := catalogInfo[tc.name].missingValueFor(tc.qkind); missingValue != nil {
+-				literal, _ = defaultExprFromPostgresMissingValue(*missingValue, tc.qkind, false)
+-				wrappedLiteral, _ = defaultExprFromPostgresMissingValue(*missingValue, tc.qkind, true)
++				literal, _ = defaultExprFromPostgresMissingValue(*missingValue, tc.qkind, false, false, nil)
++				wrappedLiteral, _ = defaultExprFromPostgresMissingValue(*missingValue, tc.qkind, true, false, nil)
++				if tc.wantWrappedNullable != "" {
++					nullableLiteral, _ := defaultExprFromPostgresMissingValue(*missingValue, tc.qkind, true, true,
++						catalogInfo[tc.name].missingNullElements)
++					require.Equal(t, tc.wantWrappedNullable, nullableLiteral)
 +				}
-+				require.Equal(t, map[string]bool{childTables[0]: true, childTables[2]: true}, covered,
-+					"numPartitionsOverride=%d", numPartitionsOverride)
 +			}
-+		})
-+	}
-+}
-+
- // analyzeTables runs ANALYZE on each table so that pg_class.reltuples/relpages are
- // populated; without this the density-based row estimate is 0 and ComputeNumPartitions
- // falls back to a precise COUNT(*) instead of exercising the estimation path.
-```
-
----
-
-### Incident Patch 2: `c9627d46` (2026-11-11)
-**Commit Message**: fix(clickhouse) DBI-1323: validate column types and key expressions structurally (#5068)
-
-DBI-1323
-
-Custom column types (`destination_type`), `partition_by_expr` and
-`sharding_key` are written into ClickHouse's `CREATE TABLE` as SQL.
-Column types were checked with a regex when a mirror was created or
-resynced, but not when tables were added to it, and the content of the
-two expressions was not checked.
-
-This adds two validators to `flow/pkg/clickhouse`:
-- `ValidateColumnType` parses a single type made of names, parentheses,
-commas and integers, like `Decimal(38,10)` or `Array(Nullable(String))`.
-It rejects whitespace and column-option keywords such as `DEFAULT`.
-- `ValidateExpression` accepts names, numbers, arithmetic, commas and
-parentheses, and checks that parentheses never close more than they
-open. It rejects string literals, comments, statement separators,
-subqueries and aliases.
-
-They run:
-- in the API, when a mirror is created or resynced and when tables are
-added to it. Destination-specific checks go through a new
-`DestinationTableValidationConnector`;
-- when ClickHouse destination tables are created, since stored configs
-may have skipped API validation. Failures are class
-
-**File**: `flow/alerting/classifier.go` (modified, +23/-36)
-```diff
-@@ -154,6 +154,10 @@ type ErrorInfo struct {
- 	Code                 string
- }
- 
-+func unknownErrorInfo(source ErrorSource) ErrorInfo {
-+	return ErrorInfo{Source: source, Code: "UNKNOWN"}
-+}
-+
- type ErrorClass struct {
- 	Class  string
- 	action ErrorAction
-@@ -399,10 +403,7 @@ func GetErrorClass(ctx context.Context, err error) (ErrorClass, ErrorInfo) {
- 			if pgErr != nil {
- 				return errorClass, pgErrorInfo
++			if tc.wantWrappedNullable == "" {
++				require.Nil(t, catalogInfo[tc.name].missingNullElements)
  			}
--			return errorClass, ErrorInfo{
--				Source: ErrorSourcePostgresCatalog,
--				Code:   "UNKNOWN",
--			}
-+			return errorClass, unknownErrorInfo(ErrorSourcePostgresCatalog)
- 		}
- 
- 		if _, ok := errors.AsType[*exceptions.DropFlowError](err); ok {
-@@ -411,21 +412,15 @@ func GetErrorClass(ctx context.Context, err error) (ErrorClass, ErrorInfo) {
- 				return errorClass, pgErrorInfo
- 			}
- 			// For now we are not making it as verbose, will take this up later
--			return errorClass, ErrorInfo{
--				Source: ErrorSourceOther,
--				Code:   "UNKNOWN",
--			}
-+			return errorClass, unknownErrorInfo(ErrorSourceOther)
- 		}
- 
- 		if _, ok := errors.AsType[*exceptions.PostgresSetupError](err); ok {
- 			errorClass := ErrorNotifyConnectivity
- 			if pgErr != nil {
- 				return errorClass, pgErrorInfo
- 			}
--			return errorClass, ErrorInfo{
--				Source: pgErrSource,
--				Code:   "UNKNOWN",
--			}
-+			return errorClass, unknownErrorInfo(pgErrSource)
- 		}
- 	}
- 
-@@ -588,10 +583,7 @@ func GetErrorClass(ctx context.Context, err error) (ErrorClass, ErrorInfo) {
- 	}
- 
- 	if _, ok := errors.AsType[*exceptions.SSHTunnelSetupError](err); ok {
--		return ErrorNotifyConnectivity, ErrorInfo{
--			Source: ErrorSourceSSH,
--			Code:   "UNKNOWN",
--		}
-+		return ErrorNotifyConnectivity, unknownErrorInfo(ErrorSourceSSH)
- 	}
- 
- 	if _, ok := errors.AsType[*net.DNSError](err); ok {
-@@ -645,10 +637,7 @@ func GetErrorClass(ctx context.Context, err error) (ErrorClass, ErrorInfo) {
- 	}
- 
- 	if _, ok := errors.AsType[*pgconn.ConnectError](err); ok {
--		return ErrorNotifyConnectivity, ErrorInfo{
--			Source: pgErrSource,
--			Code:   "UNKNOWN",
--		}
-+		return ErrorNotifyConnectivity, unknownErrorInfo(pgErrSource)
- 	}
- 
- 	// Consolidated PostgreSQL error handling
-@@ -1166,10 +1155,7 @@ func GetErrorClass(ctx context.Context, err error) (ErrorClass, ErrorInfo) {
- 	}
- 
- 	if _, ok := errors.AsType[*exceptions.BigQueryError](err); ok {
--		bqErrorInfo := ErrorInfo{
--			Source: ErrorSourceBigQuery,
--			Code:   "UNKNOWN",
--		}
-+		bqErrorInfo := unknownErrorInfo(ErrorSourceBigQuery)
- 		if apiErr, ok := errors.AsType[*googleapi.Error](err); ok {
- 			if apiErr.Code == 400 && strings.Contains(apiErr.Message, bigQueryChangeHistoryBeforeTimeTravel) {
- 				bqErrorInfo.Code = "CHANGE_HISTORY_BEFORE_TIME_TRAVEL"
-@@ -1210,10 +1196,7 @@ func GetErrorClass(ctx context.Context, err error) (ErrorClass, ErrorInfo) {
- 	}
- 
- 	if _, ok := errors.AsType[*exceptions.GCSError](err); ok {
--		gcsErrorInfo := ErrorInfo{
--			Source: ErrorSourceGCS,
--			Code:   "UNKNOWN",
--		}
-+		gcsErrorInfo := unknownErrorInfo(ErrorSourceGCS)
- 		// https://docs.cloud.google.com/storage/docs/retry-strategy#retryable
- 		gcsStatusErrorClass := func(statusCode int) ErrorClass {
- 			if statusCode == 408 || statusCode == 429 || statusCode >= 500 {
-@@ -1242,10 +1225,7 @@ func GetErrorClass(ctx context.Context, err error) (ErrorClass, ErrorInfo) {
- 
- 	if s3Err, ok := errors.AsType[*exceptions.S3Error](err); ok {
- 		s3ErrorClass := ErrorOther
--		s3ErrorInfo := ErrorInfo{
--			Source: ErrorSourceS3,
--			Code:   "UNKNOWN",
--		}
-+		s3ErrorInfo := unknownErrorInfo(ErrorSourceS3)
- 		if respErr, ok := errors.AsType[*awshttp.ResponseError](s3Err); ok {
- 			if _, ok := retry.DefaultRetryableHTTPStatusCodes[respErr.HTTPStatusCode()]; ok {
- 				s3ErrorClass = ErrorRetryRecoverable
-@@ -1434,6 +1414,16 @@ func GetErrorClass(ctx context.Context, err error) (ErrorClass, ErrorInfo) {
- 		return ErrorOther, chErrorInfo
- 	}
- 
-+	if _, ok := errors.AsType[*peerdb_clickhouse.InvalidFragmentError](err); ok {
-+		errInfo := unknownErrorInfo(ErrorSourceOther)
-+		if tableCreationErr, ok := errors.AsType[*exceptions.ClickHouseNormalizedTableCreationError](err); ok {
-+			errInfo.AdditionalAttributes = map[AdditionalErrorAttributeKey]string{
-+				ErrorAttributeKeyTable: tableCreationErr.DestinationTable,
-+			}
-+		}
-+		return ErrorNotifyInvalidDestinationTableDefinition, errInfo
-+	}
-+
- 	if numericOutOfRangeError, ok := errors.AsType[*exceptions.NumericOutOfRangeError](err); ok {
- 		return ErrorLossyConversion, ErrorInfo{
- 			Source: "typeConversion",
-@@ -1612,8 +1602,5 @@ func GetErrorClass(ctx context.Context, err error) (ErrorClass, ErrorInfo) {
- 		}
- 	}
- 
--	return ErrorOther, ErrorInfo{
--		Source: ErrorSourceOther,
--		Code:   "UNKNOWN",
--	}
-+	return ErrorOther, unknownErrorInfo(ErrorSourceOther)
- }
+ 			if tc.wantNonEmpty {
+ 				require.NotEmpty(t, literal)
 ```
 
-**File**: `flow/alerting/classifier_test.go` (modified, +15/-0)
+**File**: `flow/e2e/clickhouse_json_suite.go` (modified, +22/-8)
 ```diff
-@@ -1789,6 +1789,21 @@ func TestClickHouseTooManyTablesDuringTableCreationShouldNotifyUser(t *testing.T
- 	}, errInfo)
+@@ -980,15 +980,20 @@ func destinationJSONArrayMatches(
+ 
+ // Test_JSON_CH_Array_AddColumnDefault: a jsonb[] column added with a default, older rows get the wrapped default.
+ func (s ClickHouseSuite) Test_JSON_CH_Array_AddColumnDefault() {
+-	s.testJSONArrayAddColumnDefault("test_json_arr_add_col_default", false)
++	s.testJSONArrayAddColumnDefault("test_json_arr_add_col_default", false, false)
  }
  
-+func TestInvalidRawSQLSettingDuringTableCreationShouldNotifyUser(t *testing.T) {
-+	t.Parallel()
-+
-+	errorClass, errInfo := GetErrorClass(t.Context(), fmt.Errorf("error while generating create table sql: %w",
-+		exceptions.NewClickHouseNormalizedTableCreationError(peerdb_clickhouse.ValidateExpression("id) --"), "test")))
-+	assert.Equal(t, ErrorNotifyInvalidDestinationTableDefinition, errorClass)
-+	assert.Equal(t, ErrorInfo{
-+		Source: ErrorSourceOther,
-+		Code:   "UNKNOWN",
-+		AdditionalAttributes: map[AdditionalErrorAttributeKey]string{
-+			ErrorAttributeKeyTable: "test",
-+		},
-+	}, errInfo)
+-// Test_JSON_CH_Array_AddColumnDefault_Nullable: the same with PEERDB_NULLABLE; a NULL element of the default lands as {}.
++// Test_JSON_CH_Array_AddColumnDefault_Nullable: the same with PEERDB_NULLABLE; a NULL element of the default stays NULL.
+ func (s ClickHouseSuite) Test_JSON_CH_Array_AddColumnDefault_Nullable() {
+-	s.testJSONArrayAddColumnDefault("test_json_arr_add_col_def_null", true)
++	s.testJSONArrayAddColumnDefault("test_json_arr_add_col_def_null", true, false)
+ }
+ 
+-func (s ClickHouseSuite) testJSONArrayAddColumnDefault(srcTableName string, nullable bool) {
++// Test_JSON_CH_Array_AddColumnDefault_NullableDomain: the same through a domain over jsonb[].
++func (s ClickHouseSuite) Test_JSON_CH_Array_AddColumnDefault_NullableDomain() {
++	s.testJSONArrayAddColumnDefault("test_json_arr_add_col_def_dom", true, true)
 +}
 +
- func TestClickHouseTooManyPartsWithoutTableName(t *testing.T) {
- 	err := &clickhouse.Exception{
- 		Code: int32(chproto.ErrTooManyParts),
-```
-
-**File**: `flow/cmd/handler.go` (modified, +11/-0)
-```diff
-@@ -476,6 +476,17 @@ func (h *FlowRequestHandler) FlowStateChange(
- 		for _, tm := range tablesToNormalize {
- 			structured.NormalizeStructuredIngestionTypes(tm.StructuredIngestionConfig, tm.Columns)
- 		}
-+		if len(cdcUpdate.AdditionalTables) > 0 {
-+			config, err := h.getFlowConfigFromCatalog(ctx, req.FlowJobName)
-+			if err != nil {
-+				return nil, NewInternalApiError(fmt.Errorf("unable to get flow config: %w", err))
-+			}
-+			additionConfig := pconv.FlowConnectionConfigsToCore(config)
-+			additionConfig.TableMappings = cdcUpdate.AdditionalTables
-+			if apiErr := h.checkAdditionalTables(ctx, additionConfig); apiErr != nil {
-+				return nil, apiErr
-+			}
-+		}
- 		if len(cdcUpdate.ResyncTables) > 0 {
- 			if currState != protos.FlowStatus_STATUS_PAUSED {
- 				return nil, NewInvalidArgumentApiError(fmt.Errorf("table-level resync requires the mirror to be paused"))
-```
-
-**File**: `flow/cmd/validate_mirror.go` (modified, +33/-2)
-```diff
-@@ -13,6 +13,7 @@ import (
- 	"github.com/PeerDB-io/peerdb/flow/connectors/utils/structured"
- 	"github.com/PeerDB-io/peerdb/flow/generated/protos"
- 	"github.com/PeerDB-io/peerdb/flow/internal"
-+	chvalidate "github.com/PeerDB-io/peerdb/flow/pkg/clickhouse"
- 	"github.com/PeerDB-io/peerdb/flow/pkg/common"
- 	"github.com/PeerDB-io/peerdb/flow/proto_conversions"
- 	"github.com/PeerDB-io/peerdb/flow/shared"
-@@ -170,6 +171,12 @@ func (h *FlowRequestHandler) validateCDCMirrorImpl(
++func (s ClickHouseSuite) testJSONArrayAddColumnDefault(srcTableName string, nullable bool, domain bool) {
+ 	if _, ok := s.source.(*PostgresSource); !ok {
+ 		s.t.Skip("json arrays only exist on postgres")
  	}
- 	defer dstClose(ctx)
+@@ -998,6 +1003,11 @@ func (s ClickHouseSuite) testJSONArrayAddColumnDefault(srcTableName string, null
  
-+	if tableValidationConn, ok := dstConn.(connectors.DestinationTableValidationConnector); ok {
-+		if err := tableValidationConn.ValidateDestinationTables(ctx, connectionConfigs.TableMappings); err != nil {
-+			return nil, NewInvalidArgumentApiError(err)
-+		}
+ 	require.NoError(s.t, s.source.Exec(s.t.Context(),
+ 		fmt.Sprintf("CREATE TABLE IF NOT EXISTS %s (id INT PRIMARY KEY)", srcFullName)))
++	columnType := "JSONB[]"
++	if domain {
++		columnType = s.attachSchemaSuffix(srcTableName + "_dom")
++		require.NoError(s.t, s.source.Exec(s.t.Context(), "CREATE DOMAIN "+columnType+" AS jsonb[]"))
 +	}
-+
- 	var tableSchemaMap map[string]*protos.TableSchema
- 	if validateTableSettings {
- 		var getTableSchemaError error
-@@ -222,6 +229,27 @@ func (h *FlowRequestHandler) checkTableMappings(
- 	return nil
- }
+ 	require.NoError(s.t, s.source.Exec(s.t.Context(), fmt.Sprintf("INSERT INTO %s (id) VALUES (1)", srcFullName)))
  
-+// checkAdditionalTables validates the tables being added to a mirror, given as cfg's table mappings.
-+func (h *FlowRequestHandler) checkAdditionalTables(ctx context.Context, cfg *protos.FlowConnectionConfigsCore) APIError {
-+	if apiErr := h.checkTableMappings(ctx, cfg); apiErr != nil {
-+		return apiErr
-+	}
-+	dstConn, dstClose, err := connectors.GetByNameAs[connectors.DestinationTableValidationConnector](
-+		ctx, cfg.Env, h.pool, cfg.DestinationName,
-+	)
-+	if err != nil {
-+		if errors.Is(err, errors.ErrUnsupported) {
-+			return nil
-+		}
-+		return NewFailedPreconditionApiError(fmt.Errorf("failed to create destination connector: %w", err))
-+	}
-+	defer dstClose(ctx)
-+	if err := dstConn.ValidateDestinationTables(ctx, cfg.TableMappings); err != nil {
-+		return NewInvalidArgumentApiError(err)
-+	}
-+	return nil
-+}
-+
- // checkSourceTableConfig validates one table's columns.
- // If maybeStructuredIngestionConfig is non-nil, column types are validated too.
- func checkSourceTableConfig(
-@@ -244,8 +272,11 @@ func checkSourceTableConfig(
- 		return nil
+ 	connectionGen := FlowConnectionGenerationConfig{
+@@ -1022,15 +1032,19 @@ func (s ClickHouseSuite) testJSONArrayAddColumnDefault(srcTableName string, null
+ 	EnvWaitForEqualTablesWithNames(env, s, "waiting on initial", srcTableName, dstTableName, "id")
+ 
+ 	for _, stmt := range []string{
+-		`ALTER TABLE %s ADD COLUMN c_arr JSONB[] DEFAULT ARRAY['{"a": 1}'::jsonb, '"dark"'::jsonb, NULL, 'null'::jsonb]`,
+-		`INSERT INTO %s (id, c_arr) VALUES (2, ARRAY['[1, 2]'::jsonb, '{"b": 2}'::jsonb])`,
++		`ALTER TABLE %[1]s ADD COLUMN c_arr %[2]s DEFAULT ARRAY['{"a": 1}'::jsonb, '"dark"'::jsonb, NULL, 'null'::jsonb]`,
++		`INSERT INTO %[1]s (id, c_arr) VALUES (2, ARRAY['[1, 2]'::jsonb, '{"b": 2}'::jsonb])`,
+ 	} {
+-		require.NoError(s.t, s.source.Exec(s.t.Context(), fmt.Sprintf(stmt, srcFullName)))
++		require.NoError(s.t, s.source.Exec(s.t.Context(), fmt.Sprintf(stmt, srcFullName, columnType)))
  	}
- 	for _, col := range columns {
--		if !structured.ColumnTypeRegex.MatchString(col.DestinationType) {
--			return NewInvalidArgumentApiError(fmt.Errorf("invalid custom column type %s", col.DestinationType))
-+		if col.DestinationType == "" {
-+			continue
-+		}
-+		if err := chvalidate.ValidateColumnType(col.DestinationType); err != nil {
-+			return NewInvalidArgumentApiError(fmt.Errorf("table %s: column %s: %w", tableIdentifier, col.SourceName, err))
- 		}
- 	}
- 	return nil
-```
-
-**File**: `flow/connectors/clickhouse/normalize.go` (modified, +4/-3)
-```diff
-@@ -104,6 +104,9 @@ func (c *ClickHouseConnector) generateCreateTableSQLForNormalizedTable(
- 	if tableMapping != nil {
- 		tmEngine = tableMapping.Engine
- 	}
-+	if err := validateRawSQLSettings(tableMapping); err != nil {
-+		return nil, exceptions.NewClickHouseNormalizedTableCreationError(err, tableIdentifier)
-+	}
  
- 	isDeletedColumn := defaultIsDeletedColName
- 	isDeletedColumnPart := ""
-@@ -270,8 +273,7 @@ func (c *ClickHouseConnector) generateCreateTableSQLForNormalizedTable(
- 				peerdb_clickhouse.QuoteIdentifier(tableIdentifier+shardSuffix),
- 			)
- 			if tableMapping.ShardingKey != "" {
--				stmtBuilderDistributed.WriteByte(',')
--				stmtBuilderDistributed.WriteString(tableMapping.ShardingKey)
-+				fmt.Fprintf(&stmtBuilderDistributed, ",(%s)", tableMapping.ShardingKey)
- 				if tableMapping.PolicyName != "" {
- 					stmtBuilderDistributed.WriteByte(',')
- 					stmtBuilderDistributed.WriteString(peerdb_clickhouse.QuoteLiteral(tableMapping.PolicyName))
-@@ -737,7 +739,6 @@ func resolveClickHouseColumnType(
- 		return qvalue.ToDWHColumnType(ctx, colType, env, protos.DBType_CLICKHOUSE, chVersion, column, nullableEnabled, flags, version,
- 			sourceType)
- 	}
--	// TODO basic validation to avoid injection
- 	if nullableEnabled && column.Nullable && !colType.IsArray() && !strings.HasPrefix(clickHouseType, "Nullable(") {
- 		// a nullable-enabled column must be Nullable(...), or JSON nulls turn into the type's default value
- 		return fmt.Sprintf("Nullable(%s)", clickHouseType), nil
-```
-
-**File**: `flow/connectors/clickhouse/normalize_test.go` (modified, +84/-0)
-```diff
-@@ -7,7 +7,9 @@ import (
- 	"github.com/stretchr/testify/require"
- 
- 	"github.com/PeerDB-io/peerdb/flow/generated/protos"
-+	peerdb_clickhouse "github.com/PeerDB-io/peerdb/flow/pkg/clickhouse"
- 	"github.com/PeerDB-io/peerdb/flow/shared"
-+	"github.com/PeerDB-io/peerdb/flow/shared/exceptions"
- 	"github.com/PeerDB-io/peerdb/flow/shared/types"
- )
- 
-@@ -522,6 +524,88 @@ func TestGenerateCreateTableSQLForNormalizedTable(t *testing.T) {
- 	}
- }
- 
-+func TestGenerateCreateTableSQLForNormalizedTableRawSQLSettings(t *testing.T) {
-+	tableIdentifier := "tbl"
-+	tableSchema := &protos.TableSchema{
-+		Columns: []*protos.FieldDescription{
-+			{Name: "id", Type: string(types.QValueKindInt64)},
-+			{Name: "doc", Type: string(types.QValueKindJSON)},
-+		},
-+		PrimaryKeyColumns: []string{"id"},
-+	}
-+	chVersion := &chproto.Version{Major: 25, Minor: 8, Patch: 0}
-+
-+	generate := func(t *testing.T, cluster string, tableMapping *protos.TableMapping) ([]string, error) {
-+		t.Helper()
-+		tableMapping.SourceTableIdentifier = tableIdentifier
-+		tableMapping.DestinationTableIdentifier = tableIdentifier
-+		c := &ClickHouseConnector{
-+			Config:    &protos.ClickhouseConfig{Database: "db", Cluster: cluster},
-+			chVersion: chVersion,
-+		}
-+		config := &protos.SetupNormalizedTableBatchInput{
-+			Env:           map[string]string{"PEERDB_SOURCE_SCHEMA_AS_DESTINATION_COLUMN": "false"},
-+			TableMappings: []*protos.TableMapping{tableMapping},
-+		}
-+		return c.generateCreateTableSQLForNormalizedTable(t.Context(), config, tableIdentifier, tableSchema, chVersion, nil,
-+			protos.DBType_DBTYPE_UNKNOWN)
-+	}
-+
-+	t.Run("valid settings are written as is", func(t *testing.T) {
-+		result, err := generate(t, "cluster", &protos.TableMapping{
-+			Columns:         []*protos.ColumnSetting{{SourceName: "doc", DestinationType: "Nullable(String)"}},
-+			PartitionByExpr: "id % 4",
-+			ShardingKey:     "cityHash64(id)",
-+		})
-+		require.NoError(t, err)
-+		require.Len(t, result, 2)
-+		require.Contains(t, result[0], "`doc` Nullable(String),")
-+		require.Contains(t, result[0], "PARTITION BY (id % 4)")
-+		require.Contains(t, result[1], ",(cityHash64(id)))")
-+	})
-+
-+	for _, tc := range []struct {
-+		name         string
-+		tableMapping *protos.TableMapping
-+		wantErr      string
-+	}{
+ 	// row 1 takes the column default, row 2 its own value
+ 	cases := []jsonArrayTestCase{
+-		{desc: "default", wantElements: []string{`{"a": 1}`, `{"_value":"dark"}`, `{}`, `{}`}},
 +		{
-+			name:    "column type with extra column",
-+			wantErr: "column doc: invalid column type",
-+			tableMapping: &protos.TableMapping{Columns: []*protos.ColumnSetting{
-+				{SourceName: "doc", DestinationType: "JSON, extra String DEFAULT 'x'"},
-+			}},
++			desc:                 "default",
++			wantElements:         []string{`{"a": 1}`, `{"_value":"dark"}`, `{}`, `{}`},
++			wantNullableElements: []string{`{"a": 1}`, `{"_value":"dark"}`, `null`, `{}`},
 +		},
-+		{
-+			name:    "column type with column option",
-+			wantErr: "column doc: invalid column type",
-+			tableMapping: &protos.TableMapping{Columns: []*protos.ColumnSetting{
-+				{SourceName: "doc", DestinationType: "Nullable(String)DEFAULT(hostName())"},
-+			}},
-+		},
-+		{
-+			name:         "partition expression closing the clause",
-+			tableMapping: &protos.TableMapping{PartitionByExpr: "id) SETTINGS index_granularity = 1 --"},
-+			wantErr:      "partition_by_expr: invalid expression",
-+		},
-+		{
-+			name:         "sharding key with a string literal",
-+			tableMapping: &protos.TableMapping{ShardingKey: "rand(), 'policy'"},
-+			wantErr:      "sharding_key: invalid expression",
-+		},
-+	} {
-+		t.Run(tc.name, func(t *testing.T) {
-+			_, err := generate(t, "cluster", tc.tableMapping)
-+			require.ErrorContains(t, err, tc.wantErr)
-+			var tableCreationErr *exceptions.ClickHouseNormalizedTableCreationError
-+			require.ErrorAs(t, err, &tableCreationErr)
-+			require.Equal(t, tableIdentifier, tableCreationErr.DestinationTable)
-+			var fragmentErr *peerdb_clickhouse.InvalidFragmentError
-+			require.ErrorAs(t, err, &fragmentErr)
-+		})
-+	}
-+}
-+
- func TestResolveClickHouseColumnType(t *testing.T) {
- 	nullableInt := &protos.FieldDescription{Name: "id", Type: string(types.QValueKindInt64), Nullable: true}
- 	notNullInt := &protos.FieldDescription{Name: "id", Type: string(types.QValueKindInt64)}
-```
-
-**File**: `flow/connectors/clickhouse/validate.go` (modified, +36/-3)
-```diff
-@@ -83,9 +83,6 @@ func (c *ClickHouseConnector) ValidateMirrorDestination(
- 
- 	for _, tableMapping := range cfg.TableMappings {
- 		dstTableName := tableMapping.DestinationTableIdentifier
--		if dstTableName == "" {
--			return fmt.Errorf("destination table identifier is empty")
--		}
- 		processedSchema, ok := processedMapping[dstTableName]
- 		if !ok {
- 			// if destination table is not a key, that means source table was not a key in the original schema mapping(?)
-@@ -180,6 +177,42 @@ func (c *ClickHouseConnector) ValidateMirrorDestination(
- 	return nil
- }
- 
-+func (c *ClickHouseConnector) ValidateDestinationTables(_ context.Context, tableMappings []*protos.TableMapping) error {
-+	for _, tableMapping := range tableMappings {
-+		if tableMapping.DestinationTableIdentifier == "" {
-+			return fmt.Errorf("destination table identifier is empty for table %s", tableMapping.SourceTableIdentifier)
-+		}
-+		if err := validateRawSQLSettings(tableMapping); err != nil {
-+			return fmt.Errorf("table %s: %w", tableMapping.SourceTableIdentifier, err)
-+		}
-+	}
-+	return nil
-+}
-+
-+// validateRawSQLSettings checks the settings written unquoted into CREATE TABLE.
-+// Table creation checks them again, as stored configs may have skipped API validation.
-+func validateRawSQLSettings(tableMapping *protos.TableMapping) error {
-+	for _, col := range tableMapping.GetColumns() {
-+		if col.DestinationType == "" {
-+			continue
-+		}
-+		if err := chvalidate.ValidateColumnType(col.DestinationType); err != nil {
-+			return fmt.Errorf("column %s: %w", col.SourceName, err)
-+		}
-+	}
-+	if partitionByExpr := tableMapping.GetPartitionByExpr(); partitionByExpr != "" {
-+		if err := chvalidate.ValidateExpression(partitionByExpr); err != nil {
-+			return fmt.Errorf("partition_by_expr: %w", err)
-+		}
-+	}
-+	if shardingKey := tableMapping.GetShardingKey(); shardingKey != "" {
-+		if err := chvalidate.ValidateExpression(shardingKey); err != nil {
-+			return fmt.Errorf("sharding_key: %w", err)
-+		}
-+	}
-+	return nil
-+}
-+
- // checkNativeJSONSetting rejects a mirror that turns PEERDB_CLICKHOUSE_ENABLE_JSON on against a ClickHouse
- // without the native JSON type, which would otherwise silently fall back to String columns.
- func checkNativeJSONSetting(ctx context.Context, env map[string]string, chVersion *chproto.Version) error {
-```
-
-**File**: `flow/connectors/core.go` (modified, +9/-0)
-```diff
-@@ -57,6 +57,13 @@ type MirrorDestinationValidationConnector interface {
- 	ValidateMirrorDestination(context.Context, *protos.FlowConnectionConfigsCore, map[string]*protos.TableSchema) error
- }
- 
-+type DestinationTableValidationConnector interface {
-+	Connector
-+
-+	// ValidateDestinationTables checks table mapping settings that need neither the server nor source schemas.
-+	ValidateDestinationTables(context.Context, []*protos.TableMapping) error
-+}
-+
- type StatActivityConnector interface {
- 	Connector
- 
-@@ -887,6 +894,8 @@ var (
- 	_ MirrorDestinationValidationConnector = &connpostgres.PostgresConnector{}
- 	_ MirrorDestinationValidationConnector = &connbigquery.BigQueryConnector{}
- 
-+	_ DestinationTableValidationConnector = &connclickhouse.ClickHouseConnector{}
-+
- 	_ GetFlagsConnector = &connclickhouse.ClickHouseConnector{}
- 
- 	_ GetVersionConnector = &connclickhouse.ClickHouseConnector{}
-```
-
----
-
-### Incident Patch 3: `1805bda7` (2026-11-11)
-**Commit Message**: Update temporalio/ui Docker tag to v2.58.0 (#5056)
-
-This PR contains the following updates:
-
-| Package | Update | Change | Pending |
-|---|---|---|---|
-| [temporalio/ui](https://redirect.github.com/temporalio/ui-server) |
-minor | `2.57.0` → `2.58.0` | `2.58.1` |
-
----
-
-### Release Notes
-
-<details>
-<summary>temporalio/ui-server (temporalio/ui)</summary>
-
-###
-[`v2.58.0`](https://redirect.github.com/temporalio/ui-server/releases/tag/v2.58.0)
-
-[Compare
-Source](https://redirect.github.com/temporalio/ui-server/compare/v2.57.0...v2.58.0)
-
-Release synced from
-[ui@v2.58.0](https://redirect.github.com/temporalio/ui/releases/tag/v2.58.0)
-
-##### What's Changed
-
-- Read the Node version from the synced UI's package.json by
-[@&#8203;rossnelson](https://redirect.github.com/rossnelson) in
-[#&#8203;344](https://redirect.github.com/temporalio/ui-server/pull/344)
-
-**Full Changelog**:
-<https://github.com/temporalio/ui-server/compare/v2.57.0...v2.58.0>
-
-</details>
-
----
-
-### Configuration
-
-📅 **Schedule**: (in timezone Etc/UTC)
-
-- Branch creation
-  - "after 5pm on monday"
-- Automerge
-  - At any time (no schedule defined)
-
-🚦 **Automerge**: Enabled.
-
-♻ **Rebasing**: Whenever PR is behind base branch, or you
-
-**File**: `docker-compose-dev.yml` (modified, +1/-1)
-```diff
-@@ -144,7 +144,7 @@ services:
-       - TEMPORAL_ADDRESS=temporal:7233
-       - TEMPORAL_CORS_ORIGINS=http://localhost:3030
-       - TEMPORAL_CSRF_COOKIE_INSECURE=true
--    image: temporalio/ui:2.57.0@sha256:d944f959d0923c35cd991a17a0edbe087770eff843724b181933e0cfdd563ab2
-+    image: temporalio/ui:2.58.0@sha256:d36185e811d0ce1720b8d3ca4d9ac4dac504b67181e9b5e3d3ca72b2294f3590
-     ports:
-       - *temporal-ui-port
- 
-```
-
-**File**: `docker-compose.yml` (modified, +1/-1)
-```diff
-@@ -108,7 +108,7 @@ services:
-       - TEMPORAL_ADDRESS=temporal:7233
-       - TEMPORAL_CORS_ORIGINS=http://localhost:3000
-       - TEMPORAL_CSRF_COOKIE_INSECURE=true
--    image: temporalio/ui:2.57.0@sha256:d944f959d0923c35cd991a17a0edbe087770eff843724b181933e0cfdd563ab2
-+    image: temporalio/ui:2.58.0@sha256:d36185e811d0ce1720b8d3ca4d9ac4dac504b67181e9b5e3d3ca72b2294f3590
-     ports:
-       - 8085:8080
- 
+ 		{desc: "explicit", wantElements: []string{`{"_value":[1, 2]}`, `{"b": 2}`}},
+ 	}
+ 	rowsMatch := jsonColumnsMatch([]string{"c_arr"}, func(t *testing.T, label string, rowIdx int, _ types.QValue, dst types.QValue) bool {
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5077** (closed): Reshape mirror edit and overview screens (@jonathan-dualtech)
-- **PR #5070** (2026-11-11): ci: raise MySQL/MariaDB test max_connections to 1000 (@gheorghepucea)
-- **PR #5068** (2026-11-11): fix(clickhouse) DBI-1323: validate column types and key expressions structurally (@ilidemi)
-- **PR #5066** (2026-11-11): Drain pending state changes before setup/snapshot ContinueAsNew (@dtunikov)
-- **PR #5065** (2026-11-10): Renovate config: Enable self healing PRs on all updates (@pfcoperez)
-- **PR #5064** (closed): TEST DO NOT MERGE: Remove newline and add 'banana!' to flowable.go (@pfcoperez)
+- **PR #5087** (2026-11-17): Update github-actions dependencies (@renovate[bot])
+- **PR #5086** (2026-11-17): Update dockerfile dependencies (@renovate[bot])
+- **PR #5085** (closed): fix(postgres): quote destination tables when resetting sequences (@colton-clickhouse)
+- **PR #5084** (2026-11-17): docs: describe native ClickHouse JSON (PEERDB_CLICKHOUSE_ENABLE_JSON) (@gheorghepucea)
+- **PR #5082** (2026-11-13): Move DNS error tests to .invalid TLD (@colton-clickhouse)
+- **PR #5081** (2026-11-17): postgres: keep SQL NULL elements of a json[] ADD COLUMN default as NULL on nullable mirrors (@gheorghepucea)
 
 ---
 
@@ -2664,38 +2198,53 @@ Release synced from
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. snapshot): skip child tables dropped after the snapshot in CTID partitioning (#5
+## X. postgres: keep SQL NULL elements of a json[] ADD COLUMN default as NULL on nulla
 
 **RULE**:
-When implementing operations in `flow/connectors/postgres/qrep_partition.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in PeerDB-io/peerdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `flow/connectors/postgres/cdc.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in PeerDB-io/peerdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6951b76b`: snapshot): skip child tables dropped after the snapshot in CTID partitioning (#5044). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0993bcf9`: postgres: keep SQL NULL elements of a json[] ADD COLUMN default as NULL on nullable mirrors. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `flow/connectors/postgres/qrep_partition.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `flow/connectors/postgres/cdc.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-// pg_relation_size is NULL for a child dropped after the snapshot, which pg_inherits still lists; count it as empty.
-const childBlockCountExpr = `COALESCE(pg_relation_size(c.oid) / current_setting('block_size')::int, 0)::bigint`
-
-			`+childBlockCountExpr+`,
-			SELECT `+childBlockCountExpr+`,
-			`+childBlockCountExpr+`,
+	// json[]/jsonb[] columns, domains included, whose missing value the catalog also reads element by element
+	var addedJSONArrayColumnNames []string
+			if qkind := types.QValueKind(currRelMap[column.Name]); qkind == types.QValueKindArrayJSON || qkind == types.QValueKindArrayJSONB {
+				addedJSONArrayColumnNames = append(addedJSONArrayColumnNames, column.Name)
+			}
+	addedColumnCatalogInfo, err := p.fetchAddedColumnCatalogInfo(ctx, mappedRelID, addedColumnNames, addedJSONArrayColumnNames)
+				// the destination adds a json[] column as Array(Nullable(JSON)) under the nullable setting
+				if literal, ok := defaultExprFromPostgresMissingValue(*missingValue, qkind, wrapJSON,
+					schemaDelta.NullableEnabled, catalogInfo.missingNullElements); ok {
+	// missingNullElements marks the SQL NULL elements of a json[]/jsonb[] missing value, which missingJSON
+	// renders as JSON null just like a 'null' element.
+	missingNullElements []bool
+	hasMissing          bool
+	notNull             bool
+	ctx context.Context, relID uint32, columnNames []string, jsonArrayColumnNames []string,
+	// to_json renders SQL NULL and 'null' elements alike; the last column reads the elements as text[], which keeps them apar
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
-// Anti-pattern to NEVER write (induced failure mode):
-			(pg_relation_size(c.oid) / current_setting('block_size')::int)::bigint,
-			SELECT (pg_relation_size($1) / current_setting('block_size')::int)::bigint,
-			(pg_relation_size(c.oid) / current_setting('block_size')::int)::bigint,
+// Induced defect failure mode:
+	addedColumnCatalogInfo, err := p.fetchAddedColumnCatalogInfo(ctx, mappedRelID, addedColumnNames)
+				if literal, ok := defaultExprFromPostgresMissingValue(*missingValue, qkind, wrapJSON); ok {
+	hasMissing  bool
+	notNull     bool
+	ctx context.Context, relID uint32, columnNames []string,
+		CASE WHEN a.atthasmissing THEN (pg_catalog.to_json(a.attmissingval)->0)::text END
+		relID, columnNames)
+	if _, err := pgx.ForEachRow(rows, []any{&name, &notNull, &hasMissing, &missingValue, &missingJSON}, func() error {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6951b76b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0993bcf9` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

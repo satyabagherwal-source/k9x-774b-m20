@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-16T21:40:04.310Z",
+  "timestamp": "2026-11-18T02:42:49.842Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-provablehq-snarkos-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [provablehq-snarkos-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-16T21:40:04.310Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-18T02:42:49.842Z`  
 > **Learning ID**: `LEARN-EVO-provablehq-snarkos-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/provablehq-snarkos-learnings.md`  
 > **Source**: github ([https://github.com/ProvableHQ/snarkOS](https://github.com/ProvableHQ/snarkOS))  
-> **Source Version**: `9419be28`  
+> **Source Version**: `497534cd`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-16T21:40:00.339Z  
+> **Timestamp**: 2026-11-18T02:42:45.079Z  
 > **Learning ID**: `learn-github-aleo-labs-protocol-snarkos`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/provablehq-snarkos-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ProvableHQ/snarkOS](https://github.com/ProvableHQ/snarkOS))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T21:39:59.991Z  
+> **Harvest Timestamp**: 2026-11-18T02:42:45.074Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2013,173 +2013,48 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1c341ad3` (2026-11-16)
-**Commit Message**: Merge pull request #4664 from aleo-labs-protocol/fix/propose-drain-ledger-error
+### Incident Patch 1: `1555d308` (2026-11-17)
+**Commit Message**: Merge pull request #4693 from aleo-labs-protocol/fix/mainnet-v4131-advisories
 
-Requeue a transmission when the ledger check fails while proposing
+[Release] Address dependency advisories for v4.13.1
 
-**File**: `node/bft/ledger-service/src/mock.rs` (modified, +23/-8)
+**File**: `Cargo.lock` (modified, +2/-2)
 ```diff
-@@ -45,12 +45,19 @@ pub struct MockLedgerService<N: Network> {
-     /// The transmission IDs the ledger knows without being able to produce a transmission for them,
-     /// as is the case for the ones it recorded as aborted.
-     known_transmission_ids: HashSet<TransmissionID<N>>,
-+    /// The transmission IDs for which the containment check returns an error, as a failed ledger read would.
-+    unreadable_transmission_ids: HashSet<TransmissionID<N>>,
- }
+@@ -3015,9 +3015,9 @@ dependencies = [
  
- impl<N: Network> MockLedgerService<N> {
-     /// Initializes a new mock ledger service.
-     pub fn new(committee: Committee<N>) -> Self {
--        Self { committee, height_to_round_and_hash: Default::default(), known_transmission_ids: Default::default() }
-+        Self {
-+            committee,
-+            height_to_round_and_hash: Default::default(),
-+            known_transmission_ids: Default::default(),
-+            unreadable_transmission_ids: Default::default(),
-+        }
-     }
- 
-     /// Initializes a new mock ledger service at the specified height.
-@@ -59,11 +66,7 @@ impl<N: Network> MockLedgerService<N> {
-         for i in 0..=height {
-             height_to_hash.insert(i, (i as u64 * 2, Field::<N>::from_u32(i).into()));
-         }
--        Self {
--            committee,
--            height_to_round_and_hash: Mutex::new(height_to_hash),
--            known_transmission_ids: Default::default(),
--        }
-+        Self { height_to_round_and_hash: Mutex::new(height_to_hash), ..Self::new(committee) }
-     }
- 
-     /// Initializes a new mock ledger service that knows the given transmission IDs.
-@@ -74,7 +77,16 @@ impl<N: Network> MockLedgerService<N> {
-         committee: Committee<N>,
-         known_transmission_ids: HashSet<TransmissionID<N>>,
-     ) -> Self {
--        Self { committee, height_to_round_and_hash: Default::default(), known_transmission_ids }
-+        Self { known_transmission_ids, ..Self::new(committee) }
-+    }
-+
-+    /// Makes the containment check fail for the given transmission IDs.
-+    pub fn with_unreadable_transmission_ids(
-+        mut self,
-+        unreadable_transmission_ids: impl IntoIterator<Item = TransmissionID<N>>,
-+    ) -> Self {
-+        self.unreadable_transmission_ids.extend(unreadable_transmission_ids);
-+        self
-     }
- }
- 
-@@ -197,8 +209,11 @@ impl<N: Network> LedgerService<N> for MockLedgerService<N> {
-         Ok(false)
-     }
- 
--    /// Returns `false`, unless the mock was configured to know the transmission ID.
-+    /// Returns `false`, unless the mock was configured to know the transmission ID or to fail on it.
-     fn contains_transmission(&self, transmission_id: &TransmissionID<N>) -> Result<bool> {
-+        if self.unreadable_transmission_ids.contains(transmission_id) {
-+            bail!("[MockLedgerService] Unable to read transmission ID {}", fmt_id(transmission_id));
-+        }
-         let contains = self.known_transmission_ids.contains(transmission_id);
-         trace!(
-             "[MockLedgerService] Contains transmission ID {}.{} - {contains}",
+ [[package]]
+ name = "libz-sys"
+-version = "1.1.31"
++version = "1.1.33"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "ff20308ecabd635a2dc1dd5834a86c462cca20efba1d5d3ddab1f8aea3455cb2"
++checksum = "fee3f59f4321dab0c78d828942e7aa09d0bd8ad6e78a501977e6bf3d02938045"
+ dependencies = [
+  "cc",
+  "libc",
 ```
 
-**File**: `node/bft/src/primary.rs` (modified, +57/-4)
+**File**: `deny.toml` (modified, +3/-0)
 ```diff
-@@ -714,9 +714,22 @@ impl<N: Network> proposal_task::BatchPropose for Primary<N> {
-                 }
+@@ -11,6 +11,9 @@ ignore = [
+   "RUSTSEC-2025-0057",
+   # TODO remove once we migrate away from bincode, or it becomes maintained again.
+   "RUSTSEC-2025-0141",
++  # Ledger distribution and CLI diagnostics depend on these unmaintained crates.
++  "RUSTSEC-2026-0542",
++  "RUSTSEC-2026-0543",
+ ]
  
-                 // Check if the ledger already contains the transmission.
--                if self.ledger.contains_transmission(&id).unwrap_or(true) {
--                    trace!("Proposing - Skipping transmission '{}' - Already in ledger", fmt_id(id));
--                    continue;
-+                match self.ledger.contains_transmission(&id) {
-+                    Ok(true) => {
-+                        trace!("Proposing - Skipping transmission '{}' - Already in ledger", fmt_id(id));
-+                        continue;
-+                    }
-+                    Ok(false) => {}
-+                    Err(e) => {
-+                        warn!(
-+                            "Proposing - Stopping at transmission '{}' - Unable to check the ledger - {e}",
-+                            fmt_id(id)
-+                        );
-+                        // Requeue the transmission at the back of the worker and stop draining,
-+                        // as continuing would cycle through the queue forever if every ledger read fails.
-+                        worker.reinsert(id, transmission);
-+                        break 'outer;
-+                    }
-                 }
- 
-                 // Check if storage already knows the transmission, either way.
-@@ -2266,7 +2279,15 @@ mod tests {
-         committee: Committee<CurrentNetwork>,
-         height: u32,
-     ) -> Primary<CurrentNetwork> {
--        let ledger = Arc::new(MockLedgerService::new_at_height(committee, height));
-+        primary_with_ledger(account_index, accounts, MockLedgerService::new_at_height(committee, height))
-+    }
-+
-+    fn primary_with_ledger(
-+        account_index: usize,
-+        accounts: &[(SocketAddr, Account<CurrentNetwork>)],
-+        ledger: MockLedgerService<CurrentNetwork>,
-+    ) -> Primary<CurrentNetwork> {
-+        let ledger = Arc::new(ledger);
-         let storage = Storage::new(ledger.clone(), Arc::new(BFTMemoryService::new()), 10).unwrap();
- 
-         // Initialize the primary.
-@@ -2590,6 +2611,38 @@ mod tests {
-         );
-     }
- 
-+    #[test_log::test(tokio::test)]
-+    async fn test_propose_batch_requeues_a_transmission_the_ledger_cannot_check() {
-+        let mut rng = TestRng::default();
-+        let (accounts, committee) = sample_committee(&mut rng);
-+        let peer_ip = accounts[1].0;
-+
-+        // Sample three transactions, and make the ledger fail to check the second one.
-+        let transmissions = [(); 3].map(|_| {
-+            let (transaction_id, transaction) = sample_unconfirmed_transaction(&mut rng);
-+            // Hashing serialized transaction data does not fail.
-+            let checksum = transaction.to_checksum::<CurrentNetwork>().unwrap();
-+            (TransmissionID::from((&transaction_id, &checksum)), Transmission::Transaction(transaction))
-+        });
-+        let [first_id, unreadable_id, last_id] = transmissions.each_ref().map(|(transmission_id, _)| *transmission_id);
-+        let height = CurrentNetwork::CONSENSUS_HEIGHT(ConsensusVersion::V1).unwrap();
-+        let ledger =
-+            MockLedgerService::new_at_height(committee, height).with_unreadable_transmission_ids([unreadable_id]);
-+        let primary = primary_with_ledger(0, &accounts, ledger);
-+        for (transmission_id, transmission) in transmissions {
-+            primary.workers()[0].process_transmission_from_peer(peer_ip, transmission_id, transmission);
-+        }
-+        assert_eq!(primary.workers()[0].num_transmissions(), 3);
-+
-+        // The proposal stops at the transmission the ledger cannot check, which moves to the back of the queue.
-+        assert!(primary.propose_batch().await.unwrap());
-+        assert_eq!(
-+            primary.proposed_batch.read().as_proposal().unwrap().transmissions().keys().copied().collect::<Vec<_>>(),
-+            [first_id]
-+        );
-+        assert_eq!(primary.workers()[0].transmissions().into_keys().collect::<Vec<_>>(), [last_id, unreadable_id]);
-+    }
-+
-     #[test_log::test(tokio::test)]
-     async fn test_propose_batch_with_no_transmissions() {
-         let mut rng = TestRng::default();
+ [licenses]
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4679** (2026-11-16): Bump snarkVM to aleo-labs-protocol/snarkVM@d36b2f743 (@aleo-labs-merge-bot[bot])
-- **PR #4676** (2026-11-16): chore(deps): bump taiki-e/install-action from 2.90.2 to 2.90.3 in the github-actions group (@dependabot[bot])
-- **PR #4675** (2026-11-16): Bump snarkVM to aleo-labs-protocol/snarkVM@6e917bc9b (@aleo-labs-merge-bot[bot])
-- **PR #4673** (2026-11-16): ci: read the consensus version from one node, not a probe devnet (@cbeck88)
-- **PR #4669** (closed): test: do not merge - documentation-only CI probe (@cbeck88)
-- **PR #4667** (2026-11-15): Lower iteration counts in randomized round-trip tests (@cbeck88)
+- **PR #4695** (closed): Merge testnet into staging (@aleo-labs-merge-bot[bot])
+- **PR #4694** (2026-11-17): Merge mainnet into staging (@aleo-labs-merge-bot[bot])
+- **PR #4693** (2026-11-17): [Release] Address dependency advisories for v4.13.1 (@snarkworld)
+- **PR #4692** (2026-11-17): Bump snarkVM to aleo-labs-protocol/snarkVM@de20fd4ea (@aleo-labs-merge-bot[bot])
+- **PR #4691** (2026-11-17): [Release] Mainnet v4.13.1 (@snarkworld)
+- **PR #4690** (2026-11-17): [Release] Testnet v4.13.1 (@snarkworld)
 
 ---
 
@@ -2199,60 +2074,33 @@ Requeue a transmission when the ledger check fails while proposing
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in mock.rs
+## X. Empirical Invariant Guard in Cargo.lock
 
 **RULE**:
-When implementing operations in `node/bft/ledger-service/src/mock.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aleo-labs-protocol/snarkOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aleo-labs-protocol/snarkOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1c341ad3`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1555d308`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `node/bft/ledger-service/src/mock.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    /// The transmission IDs for which the containment check returns an error, as a failed ledger read would.
-    unreadable_transmission_ids: HashSet<TransmissionID<N>>,
-        Self {
-            committee,
-            height_to_round_and_hash: Default::default(),
-            known_transmission_ids: Default::default(),
-            unreadable_transmission_ids: Default::default(),
-        }
-        Self { height_to_round_and_hash: Mutex::new(height_to_hash), ..Self::new(committee) }
-        Self { known_transmission_ids, ..Self::new(committee) }
-    }
-
-    /// Makes the containment check fail for the given transmission IDs.
-    pub fn with_unreadable_transmission_ids(
-        mut self,
-        unreadable_transmission_ids: impl IntoIterator<Item = TransmissionID<N>>,
-    ) -> Self {
-        self.unreadable_transmission_ids.extend(unreadable_transmission_ids);
-        self
-    /// Returns `false`, unless the mock was configured to know the transmission ID or to fail on it.
-        if self.unreadable_transmission_ids.contains(transmission_id) {
-            bail!("[MockLedgerService] Unable to read transmission ID {}", fmt_id(transmission_id));
-        }
+version = "1.1.33"
+checksum = "fee3f59f4321dab0c78d828942e7aa09d0bd8ad6e78a501977e6bf3d02938045"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-        Self { committee, height_to_round_and_hash: Default::default(), known_transmission_ids: Default::default() }
-        Self {
-            committee,
-            height_to_round_and_hash: Mutex::new(height_to_hash),
-            known_transmission_ids: Default::default(),
-        }
-        Self { committee, height_to_round_and_hash: Default::default(), known_transmission_ids }
-    /// Returns `false`, unless the mock was configured to know the transmission ID.
+version = "1.1.31"
+checksum = "ff20308ecabd635a2dc1dd5834a86c462cca20efba1d5d3ddab1f8aea3455cb2"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1c341ad3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1555d308` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

@@ -10811,3 +10811,6 @@ Every entry in this ledger must capture:
 | `learn-github-open-ani-animeko` | `https://github.com/open-ani/animeko` | `42ef5d46` | Multi-dimensional audit evidence | 2026-11-18T02:28:20.727Z |
 | `learn-github-dragonflyoss-dragonfly` | `https://github.com/dragonflyoss/dragonfly` | `1ce4dd87` | Multi-dimensional audit evidence | 2026-11-18T02:28:22.841Z |
 | `learn-huggingface-xingchen-agi-xing4-0-29b-a4b` | `https://huggingface.co/XingChen-AGI/Xing4.0-29B-A4B` | `hf-xingche` | Multi-dimensional audit evidence | 2026-11-18T02:33:18.013Z |
+| `learn-huggingface-supersoniclabs-julia-1` | `https://huggingface.co/SupersonicLabs/Julia-1` | `hf-superso` | Multi-dimensional audit evidence | 2026-11-18T02:42:35.807Z |
+| `learn-github-peerdb-io-peerdb` | `https://github.com/PeerDB-io/peerdb` | `5868e6e7` | Multi-dimensional audit evidence | 2026-11-18T02:42:42.887Z |
+| `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/ProvableHQ/snarkOS` | `497534cd` | Multi-dimensional audit evidence | 2026-11-18T02:42:45.673Z |

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-18T02:33:22.396Z",
-  "total_records": 1743,
+  "last_updated": "2026-11-18T02:42:50.061Z",
+  "total_records": 1745,
   "domains": {
     "A": {
       "total": 11,
@@ -870,7 +870,7 @@
       ]
     },
     "G": {
-      "total": 301,
+      "total": 303,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -1172,7 +1172,9 @@
         "domain_intelligence-architecture-intelligence-emberstack-kubernetes-reflector-learnings-core-invaria",
         "domain_intelligence-architecture-intelligence-tanstack-router-core-invariants",
         "domain_intelligence-architecture-intelligence-tanstack-router-learnings-core-invariants",
-        "domain_intelligence-architecture-intelligence-matrixorigin-matrixone-core-invariants"
+        "domain_intelligence-architecture-intelligence-matrixorigin-matrixone-core-invariants",
+        "domain_intelligence-architecture-intelligence-peerdb-io-peerdb-core-invariants",
+        "domain_intelligence-architecture-intelligence-peerdb-io-peerdb-learnings-core-invariants"
       ]
     },
     "H": {
@@ -7567,8 +7569,8 @@
       "title": "Research & Knowledge Intelligence: SupersonicLabs/Julia-1 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-supersoniclabs-julia-1-research-knowledge-intelligence-supersoniclabs-julia-1.md",
       "repository": "SupersonicLabs/Julia-1",
-      "content_hash": "3ec05099bbbb7f24dca282eb79b571cd83c996235b0a255974a22a4debdb1722",
-      "created_at": "2026-11-13T15:10:49.410Z"
+      "content_hash": "9d72b7816548f221d9f72429e3a00c1bc437620853d16e9cad3f72daca12a4cd",
+      "created_at": "2026-11-18T02:42:35.979Z"
     },
     "domain_intelligence-technical-construction-intelligence-dragonflydb-dragonfly-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-dragonflydb-dragonfly-core-invariants",
@@ -7585,8 +7587,8 @@
       "title": "Research & Knowledge Intelligence: hf-supersoniclabs-julia-1-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-supersoniclabs-julia-1-learnings-research-knowledge-intelligence-hf-supersoni.md",
       "repository": "hf-supersoniclabs-julia-1-learnings",
-      "content_hash": "ca55f831113e3f33ebc4532bf522d0e07a3c2c51fca14e3ab0bb34db5b7563f2",
-      "created_at": "2026-11-13T15:11:06.929Z"
+      "content_hash": "df184cefd4c7ab2c9bb18a2babf7270ddda7df86e29db6e3858f36a53d21dd9e",
+      "created_at": "2026-11-18T02:42:49.008Z"
     },
     "domain_intelligence-technical-construction-intelligence-dragonflydb-dragonfly-learnings-core-invaria": {
       "record_id": "domain_intelligence-technical-construction-intelligence-dragonflydb-dragonfly-learnings-core-invaria",
@@ -7847,10 +7849,10 @@
       "record_id": "domain_intelligence-architecture-intelligence-aleo-labs-protocol-snarkos-core-invariants",
       "domain_letter": "G",
       "title": "Architecture Intelligence: aleo-labs-protocol/snarkOS Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-aleo-labs-protocol-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-provablehq-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-core-inv.md",
       "repository": "aleo-labs-protocol/snarkOS",
-      "content_hash": "c753818b02b2bdc3370fd27518dfac743b9b3fa4c28cb64209291a329faeaedd",
-      "created_at": "2026-11-17T22:40:00.513Z"
+      "content_hash": "4cf02ff8cc9b94605c9117387c7032b356de4b469a30a0f0a567d7ea8b91a9df",
+      "created_at": "2026-11-18T02:42:45.977Z"
     },
     "DOM-D-7123D3B0": {
       "record_id": "DOM-D-7123D3B0",
@@ -9082,8 +9084,8 @@
       "title": "Architecture Intelligence: provablehq-snarkos-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-provablehq-snarkos-learnings-architecture-intelligence-provablehq-snarkos-learni.md",
       "repository": "provablehq-snarkos-learnings",
-      "content_hash": "1ec7bf81cfa5d21556275e44244632239499f662ab991db836c82e3859e09781",
-      "created_at": "2026-11-16T21:40:04.542Z"
+      "content_hash": "4d812227d7ca1d3a4d3747188ede90216f7b609e80cae95d2be9bae27248bdd7",
+      "created_at": "2026-11-18T02:42:50.061Z"
     },
     "domain_intelligence-research-knowledge-intelligence-prithivmlmods-gender-classifier-mini-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-prithivmlmods-gender-classifier-mini-core-invari",
@@ -29274,6 +29276,24 @@
       "repository": "dragonflyoss-dragonfly-learnings",
       "content_hash": "cba5903ed51feafc71011f20ecab5d1cfee53b135d06492003891767bc6b4921",
       "created_at": "2026-11-18T02:33:22.396Z"
+    },
+    "domain_intelligence-architecture-intelligence-peerdb-io-peerdb-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-peerdb-io-peerdb-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: PeerDB-io/peerdb Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-peerdb-io-peerdb-architecture-intelligence-peerdb-io-peerdb-core-invariants.md",
+      "repository": "PeerDB-io/peerdb",
+      "content_hash": "634cd810fc6c030353306e5b04896f6cac885cd28f88a5b5dc5d990866cb4c07",
+      "created_at": "2026-11-18T02:42:43.188Z"
+    },
+    "domain_intelligence-architecture-intelligence-peerdb-io-peerdb-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-peerdb-io-peerdb-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: peerdb-io-peerdb-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-peerdb-io-peerdb-learnings-architecture-intelligence-peerdb-io-peerdb-learnings-.md",
+      "repository": "peerdb-io-peerdb-learnings",
+      "content_hash": "8e288dbb2b902f088882503627f66df889e6f3792457281ab760ad0282834bb9",
+      "created_at": "2026-11-18T02:42:49.473Z"
     }
   }
 }
