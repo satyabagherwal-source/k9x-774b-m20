@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/Edge0/Audio8-ASR-Infinite",
   "source_version": "hf-edge0-audio8-asr-infinite",
   "license": "Open-Source",
-  "timestamp": "2026-11-17T20:25:25.054Z",
+  "timestamp": "2026-11-18T09:48:15.243Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-edge0-audio8-asr-infinite",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [Edge0/Audio8-ASR-Infinite](https://huggingface.co/Edge0/Audio8-ASR-Infinite) (Revision: `hf-edge0-a`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-17T20:25:25.054Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-18T09:48:15.243Z`  
 > **Learning ID**: `learn-huggingface-edge0-audio8-asr-infinite`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-edge0-audio8-asr-infinite-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/Edge0/Audio8-ASR-Infinite](https://huggingface.co/Edge0/Audio8-ASR-Infinite))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T20:25:24.409Z  
+> **Harvest Timestamp**: 2026-11-18T09:43:13.770Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---

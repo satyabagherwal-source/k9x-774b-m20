@@ -69,8 +69,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-18T09:28:37.241Z",
-    "lastVerified": "2026-11-18T09:28:37.241Z",
+    "lastChecked": "2026-11-18T09:48:17.885Z",
+    "lastVerified": "2026-11-18T09:48:17.885Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -154,5 +154,64 @@
     "lastChecked": "2026-11-18T09:28:36.522Z",
     "revisionIdentifier": "39c445bb",
     "lastVerified": "2026-11-18T09:28:36.522Z"
+  },
+  "sxyazi-yazi": {
+    "name": "yazi",
+    "officialUrl": "https://github.com/sxyazi/yazi",
+    "lastChecked": "2026-11-18T09:43:10.935Z",
+    "revisionIdentifier": "d5e4beb6",
+    "lastVerified": "2026-11-18T09:43:10.935Z"
+  },
+  "hf-edge0-audio8-asr-infinite": {
+    "name": "Edge0/Audio8-ASR-Infinite",
+    "officialUrl": "https://huggingface.co/Edge0/Audio8-ASR-Infinite",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-18T09:43:13.770Z",
+    "lastVerified": "2026-11-18T09:43:13.770Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-edge0-audio8-asr-infinite",
+    "contentHash": "4e5fa2f829b1d50ab87ac578bb4775a6554c99c5c6b2c9972e3e63bafa57ec4f",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "justjavac-free-programming-books-zh_cn": {
+    "name": "free-programming-books-zh_CN",
+    "officialUrl": "https://github.com/justjavac/free-programming-books-zh_CN",
+    "lastChecked": "2026-11-18T09:43:15.933Z",
+    "revisionIdentifier": "cc1108ac",
+    "lastVerified": "2026-11-18T09:43:15.933Z"
+  },
+  "bitnami-sealed-secrets": {
+    "name": "sealed-secrets",
+    "officialUrl": "https://github.com/bitnami/sealed-secrets",
+    "lastChecked": "2026-11-18T09:43:18.446Z",
+    "revisionIdentifier": "53625dfe",
+    "lastVerified": "2026-11-18T09:43:18.446Z"
+  },
+  "microsoft-agent-governance-toolkit": {
+    "name": "agent-governance-toolkit",
+    "officialUrl": "https://github.com/microsoft/agent-governance-toolkit",
+    "lastChecked": "2026-11-18T09:43:20.964Z",
+    "revisionIdentifier": "3528751a",
+    "lastVerified": "2026-11-18T09:43:20.964Z"
+  },
+  "pathwaycom-llm-app": {
+    "name": "llm-app",
+    "officialUrl": "https://github.com/pathwaycom/llm-app",
+    "lastChecked": "2026-11-18T09:43:23.442Z",
+    "revisionIdentifier": "53c6382b",
+    "lastVerified": "2026-11-18T09:43:23.442Z"
+  },
+  "synalinks-synalinks-skills": {
+    "name": "synalinks-skills",
+    "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
+    "lastChecked": "2026-11-18T09:43:25.942Z",
+    "revisionIdentifier": "17532841",
+    "lastVerified": "2026-11-18T09:43:25.942Z"
   }
 }

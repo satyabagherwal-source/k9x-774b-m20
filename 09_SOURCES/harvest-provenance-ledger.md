@@ -10943,3 +10943,4 @@ Every entry in this ledger must capture:
 | `learn-github-rtk-ai-rtk` | `https://github.com/rtk-ai/rtk` | `eb710be4` | Multi-dimensional audit evidence | 2026-11-18T09:28:27.432Z |
 | `learn-github-react-react-native` | `https://github.com/react/react-native` | `cf7f3f39` | Multi-dimensional audit evidence | 2026-11-18T09:28:33.912Z |
 | `learn-dom-h-cc987e5f` | `project://react-react-native` | `cf7f3f39` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/react-react-native-learnings.md` | 2026-11-18T09:29:18.930Z |
+| `learn-huggingface-edge0-audio8-asr-infinite` | `https://huggingface.co/Edge0/Audio8-ASR-Infinite` | `hf-edge0-a` | Multi-dimensional audit evidence | 2026-11-18T09:48:15.071Z |

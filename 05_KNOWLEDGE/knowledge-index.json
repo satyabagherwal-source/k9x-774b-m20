@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-18T09:29:19.836Z",
+  "last_updated": "2026-11-18T09:48:19.540Z",
   "total_verified_learnings": 8996,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -112058,9 +112058,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "8dd74e6a04dd6912ea996c12c65773873e5f6b4caa86237b228eb26dbe815b30",
+      "content_hash": "fb8c154e80941c6639d0c95bb51e5458f68b5f2d05ade10277c049ac1d3ce05b",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T05:11:15.374Z"
+      "persisted_at": "2026-11-18T09:48:18.839Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112070,9 +112070,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "f8a1b9dfa734ab8f1c4c25d4fff8f9805f9d86048e4c3dea166b9e56bd538887",
+      "content_hash": "854e4b31c2aa28a35e1ce976e8240f6329f19455b46e35917740216438e97ccf",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T05:11:15.542Z"
+      "persisted_at": "2026-11-18T09:48:18.944Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -227399,13 +227399,13 @@
       "item_id": "candidate_directive-splash-screen-staying-visible-after-warm-start-on-android-12",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-G6VG-splash-screen-staying-visible-after-warm-start-on-android-12.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-UT3S-splash-screen-staying-visible-after-warm-start-on-android-12.md",
       "title": "splash screen staying visible after warm start on Android 12+",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "445fc81ca6cc270e759df679a43e8f94f8dc5a4d9ed2077ee1c470015f418a04",
+      "content_hash": "69c9f1f549d74117d9e3e9eead484f0b12ca3b4f1bd4b9701a398ebc22b13edd",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T19:37:08.812Z"
+      "persisted_at": "2026-11-18T09:48:19.288Z"
     },
     "domain_intelligence-technical-construction-intelligence-zoontek-react-native-bootsplash-learnings-co": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-bootsplash-learnings-co",
@@ -227415,9 +227415,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-bootsplash-learnings Core Invariants",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "dd5f3b4a67a9d689bf1bc9f01a887e8cef6ed891a6ae21b990c22e890d9841e2",
+      "content_hash": "c1c348976193a334a195be44f09859c1b0fa934f8311736971e00d0cf2e59f0c",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T19:37:08.926Z"
+      "persisted_at": "2026-11-18T09:48:19.417Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-bootsplas": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-bootsplas",
@@ -227427,9 +227427,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-bootsplash-learnings",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "a550292b4464eec3d58ae495552ecd34695622900d8ab009821d6ad7cd81c385",
+      "content_hash": "0dd0f39c421c50e8c302ff0f17ca2ab0c7a365c5f554a81a91d4d1c73bbf0cee",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T19:37:09.044Z"
+      "persisted_at": "2026-11-18T09:48:19.540Z"
     },
     "learn-github-onehumanbeing-esp32-iphone-agent": {
       "learning_id": "learn-github-onehumanbeing-esp32-iphone-agent",
@@ -252135,9 +252135,9 @@
       "title": "Research & Knowledge Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "d16c3883b2dd85c674e1f2d2e45a357adc5442bc4480b4bd264e50ffb067fecb",
+      "content_hash": "f6f50a1d5c9790a8f11bdcd9f92af345a42db30961eece34610c864a6ef43d70",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T05:11:15.184Z"
+      "persisted_at": "2026-11-18T09:48:18.711Z"
     },
     "learn-github-prof18-feed-flow": {
       "learning_id": "learn-github-prof18-feed-flow",
@@ -274757,13 +274757,13 @@
       "item_id": "candidate_directive-rust-address-the-remaining-issues-in-418",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-YHPI-rust-address-the-remaining-issues-in-418.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-USK3-rust-address-the-remaining-issues-in-418.md",
       "title": "rust): address the remaining issues in #418",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "5b30e359f97e548728c94d8201c0a0ab142b1d1bf3d521107c6583f3aa4b856f",
+      "content_hash": "52bb692e9be64cdd75ef36f3431e9e4bd9a1163a7f29ba8cc3184b5efeb65315",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T05:11:14.994Z"
+      "persisted_at": "2026-11-18T09:48:18.581Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-m3-1-flash-learnings-core-i": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-m3-1-flash-learnings-core-i",
@@ -277217,7 +277217,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Edge0/Audio8-ASR-Infinite",
       "source_version": "hf-edge0-audio8-asr-infinite",
-      "content_hash": "e5bd54e00e5904a7608f5f3febd67bb0163342beebf709b22d950505d144eb74",
+      "content_hash": "4e5fa2f829b1d50ab87ac578bb4775a6554c99c5c6b2c9972e3e63bafa57ec4f",
       "dossier_path": "07_PROJECT_LEARNING/hf-edge0-audio8-asr-infinite-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-edge0-audio8-asr-infinite-learnings.md",
       "promoted_rules": [],
@@ -277226,7 +277226,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T20:25:24.764Z",
+      "verified_at": "2026-11-18T09:48:14.891Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -277243,9 +277243,9 @@
       "title": "Research & Knowledge Intelligence: Edge0/Audio8-ASR-Infinite Core Invariants",
       "repository": "Edge0/Audio8-ASR-Infinite",
       "source_version": "hf-edge0-audio8-asr-infinite",
-      "content_hash": "27492e0d116ff69fc1060041e438bf06a243583aa8fbfebf3b014faacc5f0f46",
+      "content_hash": "c311e9aa2ee2e623c305192358fc2093a04a5e98fafa2385a6fcdbdf90906a8f",
       "domain_letter": "D",
-      "persisted_at": "2026-11-17T20:25:25.055Z"
+      "persisted_at": "2026-11-18T09:48:15.244Z"
     },
     "rule-9057": {
       "learning_id": "rule-9057",
@@ -277345,9 +277345,9 @@
       "title": "Research & Knowledge Intelligence: hf-edge0-audio8-asr-infinite-learnings Core Invariants",
       "repository": "hf-edge0-audio8-asr-infinite-learnings",
       "source_version": "HEAD",
-      "content_hash": "ccbb7193a512e5c79faa42730b7df3ee433409c1c36b85ac28a245397cba470f",
+      "content_hash": "f731129dd647914a5fe311ec8b74b7ea150f15a7afd97e0efa2af87da880d1ea",
       "domain_letter": "D",
-      "persisted_at": "2026-11-17T20:25:42.720Z"
+      "persisted_at": "2026-11-18T09:48:18.194Z"
     },
     "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-gguf": {
       "learning_id": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-gguf",
