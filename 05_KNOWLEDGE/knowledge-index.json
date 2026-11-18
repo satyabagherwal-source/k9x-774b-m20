@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-18T15:35:48.784Z",
+  "last_updated": "2026-11-18T15:43:05.993Z",
   "total_verified_learnings": 9003,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -112058,9 +112058,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "e4793acbdfa829211d1654b85684579c03323e88060518dc735dc2e50a686989",
+      "content_hash": "187b64aee47ad74b2c31ce1777ee0b0a98851dfcded6a43edcc8888f5c1d2011",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T15:14:26.654Z"
+      "persisted_at": "2026-11-18T15:43:05.835Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112070,9 +112070,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "7e92b3c46e040e2e25e35c919045d63c0e13896c0cc20f60c6976e40c22dafca",
+      "content_hash": "d31c4453a0f99266bd9ea5c2af8cb588122b87c6c3bfd99d5579443bdd58a0c8",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T15:14:26.787Z"
+      "persisted_at": "2026-11-18T15:43:05.993Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -115046,9 +115046,9 @@
       "title": "Research & Knowledge Intelligence: ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF Core Invariants",
       "repository": "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
       "source_version": "hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf",
-      "content_hash": "3b1b72aa53201c94df34244e2ce966c52da28025fa8ad6d2f3c927f588e523c7",
+      "content_hash": "c58160845b42efd40de422c4d5f5818b307eeedae8e3e02ce38a323b64f1fc32",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T06:23:24.084Z"
+      "persisted_at": "2026-11-18T15:42:52.366Z"
     },
     "candidate_directive-fix-reset-keep-mounted-field-names-with-keepfieldsref-so-later-resets-resto": {
       "item_id": "candidate_directive-fix-reset-keep-mounted-field-names-with-keepfieldsref-so-later-resets-resto",
@@ -252372,9 +252372,9 @@
       "title": "Research & Knowledge Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "478576a528bfc67ccdee41c564f198f4ae5c9096ed96d828c6e992419680ce3c",
+      "content_hash": "b51c0301af8c9117ea4ee6960e049fe8519cf4ecd5a80b5a151e383210a8f258",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T15:14:26.506Z"
+      "persisted_at": "2026-11-18T15:43:05.658Z"
     },
     "learn-github-prof18-feed-flow": {
       "learning_id": "learn-github-prof18-feed-flow",
@@ -275045,13 +275045,13 @@
       "item_id": "candidate_directive-rust-address-the-remaining-issues-in-418",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-I74W-rust-address-the-remaining-issues-in-418.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-J1MO-rust-address-the-remaining-issues-in-418.md",
       "title": "rust): address the remaining issues in #418",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "e0e4164b47f5ffef9a454930e118f87728e892b55538c28bcb3d2867c5242099",
+      "content_hash": "56a89a6032d66af45c2221a4b4588ec6067d013000c61f0d953985a7bdbc215b",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T15:14:26.341Z"
+      "persisted_at": "2026-11-18T15:43:05.478Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-m3-1-flash-learnings-core-i": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-m3-1-flash-learnings-core-i",
@@ -282718,7 +282718,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
       "source_version": "hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf",
-      "content_hash": "ceaa0f3ea69c80a612d2148b99bd10f7115c79ab57a773ab95c781900e598d25",
+      "content_hash": "cc3fcea5fecbd7dc5c382ab5178af05b652dae580364e74b8221d81ce5fc037e",
       "dossier_path": "07_PROJECT_LEARNING/hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf-learnings.md",
       "promoted_rules": [],
@@ -282727,7 +282727,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T06:23:23.692Z",
+      "verified_at": "2026-11-18T15:42:51.884Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -282744,9 +282744,9 @@
       "title": "Research & Knowledge Intelligence: hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf-learnings Core Invariants",
       "repository": "hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf-learnings",
       "source_version": "HEAD",
-      "content_hash": "76a916f25bda4483ea155712cb35d79f26538cbf4f2d1715721188582c53cedb",
+      "content_hash": "6e177afdbf955b32fd79559d0e9648ce1293af13a317317edaa31b42135ab0f3",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T06:23:36.013Z"
+      "persisted_at": "2026-11-18T15:43:04.386Z"
     },
     "candidate_directive-move-the-calendar-widget-to-ratatui-calendar": {
       "item_id": "candidate_directive-move-the-calendar-widget-to-ratatui-calendar",
@@ -286482,9 +286482,9 @@
       "title": "Technical Construction Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "a2ce3e587b2ece7c4aeb9b8d56e793d2c017f184faa8d2162e79c711380b13b2",
+      "content_hash": "2c22049c936a942b7fd9d46e5d996f9913014b7c16b9c38fb0654bc6a48c4274",
       "domain_letter": "H",
-      "persisted_at": "2026-11-18T15:22:22.131Z"
+      "persisted_at": "2026-11-18T15:43:04.933Z"
     },
     "learn-github-software-mansion-argent": {
       "learning_id": "learn-github-software-mansion-argent",

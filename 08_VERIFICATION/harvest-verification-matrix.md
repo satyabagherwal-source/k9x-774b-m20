@@ -11026,3 +11026,4 @@
 | `CYCLE-20261118-8X2G` | `2026-11-18T15:35:13.000Z` | `beclab/Olares` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9251` | Yes (`495028e1...`) |
 | `CYCLE-20261118-8ZMO` | `2026-11-18T15:35:16.320Z` | `xerj-org/xerj` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8545` | Yes (`b27cc1fb...`) |
 | `CYCLE-2026-11-18-PROJ-EVOLVE` | `2026-11-18T15:35:48.272Z` | `rustls-rustls` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-A606F2DF` [Domain D] | Yes (`b62223db...`) |
+| `CYCLE-20261118-IRBZ` | `2026-11-18T15:42:52.127Z` | `ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf-learnings.md` | Yes (`cc3fcea5...`) |

@@ -11059,3 +11059,4 @@ Every entry in this ledger must capture:
 | `learn-github-beclab-olares` | `https://github.com/beclab/Olares` | `a2fc3c1e` | Multi-dimensional audit evidence | 2026-11-18T15:35:13.004Z |
 | `learn-github-xerj-org-xerj` | `https://github.com/xerj-org/xerj` | `dc1a4622` | Multi-dimensional audit evidence | 2026-11-18T15:35:16.325Z |
 | `learn-dom-d-a606f2df` | `project://rustls-rustls` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rustls-rustls-learnings.md` | 2026-11-18T15:35:48.272Z |
+| `learn-huggingface-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf` | `https://huggingface.co/ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF` | `hf-ukisai-` | Multi-dimensional audit evidence | 2026-11-18T15:42:52.132Z |

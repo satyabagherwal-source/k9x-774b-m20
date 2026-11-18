@@ -1,14 +1,14 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T15:35:48.930Z",
+  "last_updated": "2026-11-18T15:43:06.157Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
-      "processed_at": "2026-11-18T15:22:21.877Z",
+      "processed_at": "2026-11-18T15:43:04.594Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
     "zvec-ai-zvec-grep-learnings.md": {
-      "processed_at": "2026-11-18T15:14:26.043Z",
+      "processed_at": "2026-11-18T15:43:05.138Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3398,7 +3398,7 @@
       "staged_for_review": 0
     },
     "hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf-learnings.md": {
-      "processed_at": "2026-11-18T06:23:35.816Z",
+      "processed_at": "2026-11-18T15:43:04.137Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -3443,7 +3443,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 1992,
+  "total_dossiers_evaluated": 1995,
   "total_canonical_promoted": 358,
-  "total_staged_for_review": 1511
+  "total_staged_for_review": 1513
 }

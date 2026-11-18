@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261117-Y059",
-    "timestamp": "2026-11-17T06:47:10.653Z",
-    "repository": "react/react-native",
-    "learningId": "learn-github-react-react-native",
-    "contentHash": "6ba781c2ffb21d5d689003f24ce4427f5a8d82ef493344ed53d8e2b318185e2d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261117-MLCV",
     "timestamp": "2026-11-17T07:06:17.887Z",
     "repository": "mswjs/msw",
@@ -7492,6 +7477,21 @@
     "contentHash": "b27cc1fb7edb3ca6881083d66ca5ea9b1d1ef802e1dd649eb310c8a7c94ca1f7",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-IRBZ",
+    "timestamp": "2026-11-18T15:42:52.127Z",
+    "repository": "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
+    "learningId": "learn-huggingface-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf",
+    "contentHash": "cc3fcea5fecbd7dc5c382ab5178af05b652dae580364e74b8221d81ce5fc037e",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-18T15:35:48.784Z",
+  "last_updated": "2026-11-18T15:43:05.658Z",
   "total_records": 1872,
   "domains": {
     "A": {
@@ -9466,8 +9466,8 @@
       "title": "Research & Knowledge Intelligence: ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf-research-knowledge-intelligence-uki.md",
       "repository": "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
-      "content_hash": "3b1b72aa53201c94df34244e2ce966c52da28025fa8ad6d2f3c927f588e523c7",
-      "created_at": "2026-11-18T06:23:24.084Z"
+      "content_hash": "c58160845b42efd40de422c4d5f5818b307eeedae8e3e02ce38a323b64f1fc32",
+      "created_at": "2026-11-18T15:42:52.366Z"
     },
     "domain_intelligence-technical-construction-intelligence-react-hook-form-react-hook-form-core-invaria": {
       "record_id": "domain_intelligence-technical-construction-intelligence-react-hook-form-react-hook-form-core-invaria",
@@ -9526,8 +9526,8 @@
       "title": "Research & Knowledge Intelligence: hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf-learnings-research-knowledge-intell.md",
       "repository": "hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf-learnings",
-      "content_hash": "76a916f25bda4483ea155712cb35d79f26538cbf4f2d1715721188582c53cedb",
-      "created_at": "2026-11-18T06:23:36.013Z"
+      "content_hash": "6e177afdbf955b32fd79559d0e9648ce1293af13a317317edaa31b42135ab0f3",
+      "created_at": "2026-11-18T15:43:04.386Z"
     },
     "domain_intelligence-research-knowledge-intelligence-psrben-visionhope-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-psrben-visionhope-core-invariants",
@@ -23043,8 +23043,8 @@
       "title": "Research & Knowledge Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-zvec-ai-zvec-grep-learnings-research-knowledge-intelligence-zvec-ai-zvec-grep-le.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "478576a528bfc67ccdee41c564f198f4ae5c9096ed96d828c6e992419680ce3c",
-      "created_at": "2026-11-18T15:14:26.506Z"
+      "content_hash": "b51c0301af8c9117ea4ee6960e049fe8519cf4ecd5a80b5a151e383210a8f258",
+      "created_at": "2026-11-18T15:43:05.658Z"
     },
     "domain_intelligence-technical-construction-intelligence-prof18-feed-flow-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-prof18-feed-flow-core-invariants",
@@ -30968,8 +30968,8 @@
       "title": "Technical Construction Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zulip-zulip-learnings-technical-construction-intelligence-zulip-zulip-learnings-.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "a2ce3e587b2ece7c4aeb9b8d56e793d2c017f184faa8d2162e79c711380b13b2",
-      "created_at": "2026-11-18T15:22:22.131Z"
+      "content_hash": "2c22049c936a942b7fd9d46e5d996f9913014b7c16b9c38fb0654bc6a48c4274",
+      "created_at": "2026-11-18T15:43:04.933Z"
     },
     "domain_intelligence-product-intelligence-software-mansion-argent-core-invariants": {
       "record_id": "domain_intelligence-product-intelligence-software-mansion-argent-core-invariants",
