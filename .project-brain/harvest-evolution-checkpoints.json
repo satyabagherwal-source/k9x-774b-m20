@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T07:30:58.744Z",
+  "last_updated": "2026-11-18T07:39:49.163Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-18T04:11:36.483Z",
@@ -1058,7 +1058,7 @@
       "staged_for_review": 0
     },
     "meshery-meshery-learnings.md": {
-      "processed_at": "2026-11-17T10:41:18.234Z",
+      "processed_at": "2026-11-18T07:39:48.176Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2148,7 +2148,7 @@
       "staged_for_review": 0
     },
     "hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-learnings.md": {
-      "processed_at": "2026-11-13T20:47:19.836Z",
+      "processed_at": "2026-11-18T07:39:47.698Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3406,9 +3406,14 @@
       "processed_at": "2026-11-18T07:05:49.017Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "hf-tencent-hy4-flash-learnings.md": {
+      "processed_at": "2026-11-18T07:39:47.190Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 1854,
-  "total_canonical_promoted": 339,
-  "total_staged_for_review": 1428
+  "total_dossiers_evaluated": 1857,
+  "total_canonical_promoted": 340,
+  "total_staged_for_review": 1430
 }

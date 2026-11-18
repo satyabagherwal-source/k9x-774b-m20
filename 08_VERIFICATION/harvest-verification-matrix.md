@@ -10868,3 +10868,8 @@
 | `CYCLE-20261118-Y01V` | `2026-11-18T07:30:50.179Z` | `crossplane/crossplane` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9154` | Yes (`c22bad2d...`) |
 | `CYCLE-20261118-Y1D1` | `2026-11-18T07:30:51.877Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9155` | Yes (`5c025fc1...`) |
 | `CYCLE-20261118-Y31I` | `2026-11-18T07:30:54.054Z` | `apple/foundationdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9156` | Yes (`c249dbd4...`) |
+| `CYCLE-20261118-8BJ4` | `2026-11-18T07:38:51.616Z` | `tencent/Hy4-flash` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-tencent-hy4-flash-learnings.md` | Yes (`bd9b7ab0...`) |
+| `CYCLE-20261118-8DBI` | `2026-11-18T07:38:53.934Z` | `sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-learnings.md` | Yes (`4d49da5c...`) |
+| `CYCLE-20261118-8KWX` | `2026-11-18T07:39:03.777Z` | `meshery/meshery` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9157` | Yes (`d0355ad5...`) |
+| `CYCLE-20261118-8OSK` | `2026-11-18T07:39:08.804Z` | `arangodb/arangodb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8545` | Yes (`b44c29a8...`) |
+| `CYCLE-2026-11-18-PROJ-EVOLVE` | `2026-11-18T07:39:47.190Z` | `hf-tencent-hy4-flash` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-C631C795` [Domain D] | Yes (`e2390809...`) |

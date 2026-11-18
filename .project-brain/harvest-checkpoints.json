@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-18T07:30:54.066Z",
+  "last_updated": "2026-11-18T07:39:08.819Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -890,14 +890,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
-      "content_hash": "835a087c5032db702f78c6c1e5d504286e43221638062c5a59e0997763b85c53",
-      "verified_at": "2026-11-13T20:47:01.799Z",
+      "content_hash": "4d49da5c404baf9b4a4c46a93df234f4c532be15d559cab70c37006f84921e20",
+      "verified_at": "2026-11-18T07:38:53.950Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T20:47:01.799Z"
+      "last_updated": "2026-11-18T07:38:53.950Z"
     },
     "google-bert/bert-base-uncased": {
       "repository": "google-bert/bert-base-uncased",
@@ -7626,14 +7626,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-meshery-meshery",
-      "content_hash": "e49f1f7783c088efe12444b2a30cb297ef3b87e9b594ee9db458c7b1bf32bdfa",
-      "verified_at": "2026-11-17T10:41:08.562Z",
+      "content_hash": "d0355ad593e57d3db150332483a191162893769f6018c89aacfbbbdf96c6370d",
+      "verified_at": "2026-11-18T07:39:03.791Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T10:41:08.562Z"
+      "last_updated": "2026-11-18T07:39:03.791Z"
     },
     "arangodb/arangodb": {
       "repository": "arangodb/arangodb",
@@ -7641,14 +7641,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-arangodb-arangodb",
-      "content_hash": "980bcf19564c75bd47e8bb7635c2c8f48b8a7b83b47c61e9fef8f377ff5b1f51",
-      "verified_at": "2026-11-17T08:31:09.592Z",
+      "content_hash": "b44c29a8a60f079d0b9ba63254a02a360bbc3c30b663ab759be2a965211600a6",
+      "verified_at": "2026-11-18T07:39:08.818Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T08:31:09.592Z"
+      "last_updated": "2026-11-18T07:39:08.818Z"
     },
     "chakra-ui/ark": {
       "repository": "chakra-ui/ark",
@@ -19364,6 +19364,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-18T05:10:29.066Z"
+    },
+    "tencent/Hy4-flash": {
+      "repository": "tencent/Hy4-flash",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-tencent-hy4-flash",
+      "content_hash": "bd9b7ab0567c463c614ca3507bd021c78a271a82057c1d563770ab42ec01a419",
+      "verified_at": "2026-11-18T07:38:51.632Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-18T07:38:51.632Z"
     }
   },
   "repos": {

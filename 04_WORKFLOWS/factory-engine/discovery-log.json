@@ -21490,5 +21490,17 @@
     "qualityScore": 2053,
     "verifiedOrg": false,
     "discoveredAt": "2026-11-18T05:07:08.993Z"
+  },
+  {
+    "name": "tencent/Hy4-flash",
+    "fullName": "tencent/Hy4-flash",
+    "url": "https://huggingface.co/tencent/Hy4-flash",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: tencent/Hy4-flash (95 likes, 0 downloads)",
+    "likes": 95,
+    "downloads": 0,
+    "qualityScore": 950,
+    "discoveredAt": "2026-11-18T07:36:36.629Z"
   }
 ]

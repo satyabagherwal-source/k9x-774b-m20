@@ -705,8 +705,8 @@
     "sourceUrl": "https://huggingface.co/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
     "sourceVersion": "hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
     "license": "Open-Source",
-    "contentHash": "835a087c5032db702f78c6c1e5d504286e43221638062c5a59e0997763b85c53",
-    "lastHarvestedAt": "2026-11-13T20:47:01.788Z",
+    "contentHash": "4d49da5c404baf9b4a4c46a93df234f4c532be15d559cab70c37006f84921e20",
+    "lastHarvestedAt": "2026-11-18T07:38:53.939Z",
     "learningId": "learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2"
   },
   "hf-google-bert-bert-base-uncased": {
@@ -5003,20 +5003,20 @@
     "repository": "meshery/meshery",
     "platform": "github",
     "sourceUrl": "https://github.com/meshery/meshery",
-    "sourceVersion": "d085ff5e",
+    "sourceVersion": "3a3c535f",
     "license": "Apache-2.0",
-    "contentHash": "e49f1f7783c088efe12444b2a30cb297ef3b87e9b594ee9db458c7b1bf32bdfa",
-    "lastHarvestedAt": "2026-11-17T10:41:08.554Z",
+    "contentHash": "d0355ad593e57d3db150332483a191162893769f6018c89aacfbbbdf96c6370d",
+    "lastHarvestedAt": "2026-11-18T07:39:03.781Z",
     "learningId": "learn-github-meshery-meshery"
   },
   "arangodb-arangodb": {
     "repository": "arangodb/arangodb",
     "platform": "github",
     "sourceUrl": "https://github.com/arangodb/arangodb",
-    "sourceVersion": "d0c81b64",
+    "sourceVersion": "38d9d57c",
     "license": "NOASSERTION",
-    "contentHash": "980bcf19564c75bd47e8bb7635c2c8f48b8a7b83b47c61e9fef8f377ff5b1f51",
-    "lastHarvestedAt": "2026-11-17T08:31:09.581Z",
+    "contentHash": "b44c29a8a60f079d0b9ba63254a02a360bbc3c30b663ab759be2a965211600a6",
+    "lastHarvestedAt": "2026-11-18T07:39:08.809Z",
     "learningId": "learn-github-arangodb-arangodb"
   },
   "chakra-ui-ark": {
@@ -12848,5 +12848,15 @@
     "contentHash": "602a537cab69eeb0eb234f5f08928eceb084d88b1b61b3a1ddb3479a01dbb00f",
     "lastHarvestedAt": "2026-11-18T05:10:29.055Z",
     "learningId": "learn-github-spartan-ng-spartan"
+  },
+  "hf-tencent-hy4-flash": {
+    "repository": "tencent/Hy4-flash",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/tencent/Hy4-flash",
+    "sourceVersion": "hf-tencent-hy4-flash",
+    "license": "Open-Source",
+    "contentHash": "bd9b7ab0567c463c614ca3507bd021c78a271a82057c1d563770ab42ec01a419",
+    "lastHarvestedAt": "2026-11-18T07:38:51.621Z",
+    "learningId": "learn-huggingface-tencent-hy4-flash"
   }
 }

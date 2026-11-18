@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261116-WS4C",
-    "timestamp": "2026-11-16T18:38:23.580Z",
-    "repository": "divagr1925/Qwen3.5-4B-Qwenputer",
-    "learningId": "learn-huggingface-divagr1925-qwen3-5-4b-qwenputer",
-    "contentHash": "6c1685141cd6ea6898d4cf22562c9e9d996f7faad6d646c4a716db22f6a43daa",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261116-WTE8",
-    "timestamp": "2026-11-16T18:38:25.232Z",
-    "repository": "iii-hq/iii",
-    "learningId": "learn-github-iii-hq-iii",
-    "contentHash": "8125f69c7cb5b15a0072be8ab3a31c73c8014a2fa1efe862ec46a0547281bebe",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261116-X1MR",
-    "timestamp": "2026-11-16T18:38:35.907Z",
-    "repository": "microsoft/agent-governance-toolkit",
-    "learningId": "learn-github-microsoft-agent-governance-toolkit",
-    "contentHash": "ce7994ccdb20e279edb574d37cf6d2f53c42a7e88da61501dab3e0249d8590a3",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261116-7I1E",
-    "timestamp": "2026-11-16T18:46:43.730Z",
-    "repository": "Automattic/harper",
-    "learningId": "learn-github-automattic-harper",
-    "contentHash": "4b52c9e957c4daa4b5c5e69ea2e2e4216f1511302f084639166daf59e91041db",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261116-7I98",
     "timestamp": "2026-11-16T18:46:44.012Z",
     "repository": "fb55/htmlparser2",
@@ -7490,6 +7430,66 @@
     "repository": "apple/foundationdb",
     "learningId": "learn-github-apple-foundationdb",
     "contentHash": "c249dbd439d0bf86e0c59e1b94794ea1f1b774cdc47bd75dc7883d319ef88b2f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-8BJ4",
+    "timestamp": "2026-11-18T07:38:51.616Z",
+    "repository": "tencent/Hy4-flash",
+    "learningId": "learn-huggingface-tencent-hy4-flash",
+    "contentHash": "bd9b7ab0567c463c614ca3507bd021c78a271a82057c1d563770ab42ec01a419",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-8DBI",
+    "timestamp": "2026-11-18T07:38:53.934Z",
+    "repository": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+    "learningId": "learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
+    "contentHash": "4d49da5c404baf9b4a4c46a93df234f4c532be15d559cab70c37006f84921e20",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-8KWX",
+    "timestamp": "2026-11-18T07:39:03.777Z",
+    "repository": "meshery/meshery",
+    "learningId": "learn-github-meshery-meshery",
+    "contentHash": "d0355ad593e57d3db150332483a191162893769f6018c89aacfbbbdf96c6370d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-8OSK",
+    "timestamp": "2026-11-18T07:39:08.804Z",
+    "repository": "arangodb/arangodb",
+    "learningId": "learn-github-arangodb-arangodb",
+    "contentHash": "b44c29a8a60f079d0b9ba63254a02a360bbc3c30b663ab759be2a965211600a6",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

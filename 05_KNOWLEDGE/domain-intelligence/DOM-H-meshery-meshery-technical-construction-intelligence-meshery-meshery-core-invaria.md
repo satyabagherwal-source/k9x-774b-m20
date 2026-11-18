@@ -4,24 +4,24 @@
 {
   "source_repository": "meshery/meshery",
   "source_url": "https://github.com/meshery/meshery",
-  "source_version": "424dd96c",
+  "source_version": "3a3c535f",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-16T03:37:13.974Z",
+  "timestamp": "2026-11-18T07:39:04.017Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-meshery-meshery",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [meshery/meshery](https://github.com/meshery/meshery) (Revision: `424dd96c`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-16T03:37:13.974Z`  
+> **Provenance**: Harvested from [meshery/meshery](https://github.com/meshery/meshery) (Revision: `3a3c535f`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-18T07:39:04.017Z`  
 > **Learning ID**: `learn-github-meshery-meshery`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), M (Feedback & Evolution Intelligence), F (Design Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence), I (Content & Information Intelligence)
-- **Confidence Rating**: 64%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), A (Human & Need Intelligence), M (Feedback & Evolution Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), J (Search & Distribution Intelligence), I (Content & Information Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 52%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from meshery/meshery:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/meshery-meshery-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/meshery/meshery](https://github.com/meshery/meshery))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T03:37:12.944Z  
+> **Harvest Timestamp**: 2026-11-18T07:39:02.590Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Meshery, the cloud native manager
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 12209 stars
+- **Stars / Engagement**: 12232 stars
 
 ---
 
@@ -818,11 +818,14 @@ if __name__ == "__main__":
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #23705** (2026-11-15): **[mesheryctl] Preserve followed Kubernetes log lines**
-  *Symptoms*: Buffer the Kubernetes log stream across reads, emitting complete lines and the final unterminated line at EOF.  Fixes #23704  Test: go test ./internal/cli/root/system -run TestPrintLogStreamPreservesLinesAcrossReads -count=1  <!-- This is an auto-generated comment: release notes by coderabbit.ai -->  <!-- coderabbit-ai-generated:v1 -->  ## Summary by CodeRabbit  * **Bug Fixes**   * Kubernetes logs in follow mode now display complete lines consistently, even when log data arrives in multiple chunks.   * Any final log content without a trailing newline is also shown, with the pod name and a newline for clear formatting. Non-follow Kubernetes logs and Docker log output remain unchanged.  <!-- end of auto-generated comment: release notes by coderabbit.ai -->
+- **Issue #23896** (2026-11-18): **Revert "[Server] Prevent MeshSync cache loss when the resync handler is unavailable"**
+  *Symptoms*: Reverts meshery/meshery#23878  Because:  1. Missing tests 2. Missing documentation
+  **Post-Mortem & Fix Analysis**:
+  > <!-- coderabbit-ai-generated:v1 -->  <!-- This is an auto-generated comment: summarize by coderabbit.ai --> <!-- review_stack_entry_start -->  <a href="https://app.coderabbit.ai/change-stack/meshery/meshery/pull/23896?scope=ghh_OusAJGA4HG8ljoOV0wJvVx8NmnZIjc2DdjmxOu0xZWA&amp;cs_source=review_comment"><picture><source media="(prefers-color-scheme: dark)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-stack-buttons-v1/explain-change-dark.svg"><source media="(prefers-color-scheme: light)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-stack-buttons-v1/explain-change.svg"><img src="https://storage.googleapis.com/coderabbit_public_assets/review-stack-buttons-v1/explain-change.svg" alt="Explain Change →" height="32"></picture></a>  <!-- review_stack_entry_end --> <!-- This is an auto-generated comment: failure by coderabbit.ai -->  > [!CAUTION] > ## Review failed >  > <!-- failure_reason_start --> > The pull request is closed. > <!-- failure_re
+  >            **Commit SHA:** `6bfeafd0f54f99e4f4247786e2542852b02848b5`      ### END-TO-END TESTS  - Testing started at: November 18th 2026, 6:48:17 am  **📦 Test Result Summary**  - ✅ 74 passed - ❌ 0 failed - ⚠️ 0 flaked - ⏩ 12 skipped  ⌛ _Duration: 5 minutes and 46 seconds_  **Overall Result**: 👍 All tests passed.    <details>     <summary>[Show/Hide] Test Result Details</summary>     <div markdown="1">  | Test | Provider | Browser | Test Case | Tags | Result | | :---: | :---: | :---: | :--- | :---: | :---: | | 1 | Local | chromium-local-provider | Aggregation Charts are displayed |  | ✅ | | 2 | Local | chromium-local-provider | alias resolution | relationship | ✅ | | 3 | Local | chromium-local-provider | alias resolution | relationship | ✅ | | 4 | Local | chromium-local-provider | alias resolution | relationship | ✅ | | 5 | Local | chromium-local-provider | alias resolution | relationship | ✅ | | 6 | Local | chromium-local-provider | alias resolution | relationship | ✅ | | 7 | Local 
 
-- **Issue #23704** (2026-11-15): **[mesheryctl] Followed Kubernetes logs split lines at stream read boundaries**
-  *Symptoms*: In `mesheryctl system logs --follow`, each arbitrary stream read is printed separately. A line such as `hello world` delivered in two reads can be printed as two separate log lines. A line larger than the read buffer is also split.  Expected: buffer across reads and print complete lines, retaining any final unterminated line when the stream ends.
+- **Issue #23891** (2026-11-18): **[Server] Guard nil provider, validate path UUIDs, and propagate status codes in pattern handlers**
+  *Symptoms*: ### Description Fixes #23890  This PR improves defensive error handling, input validation, and status code fidelity across several pattern/design HTTP handlers in `server/handlers/meshery_pattern_handler.go`:  1. **`GetMesheryPatternSourceHandler` (`/api/pattern/download/{id}/{sourcetype}`)**:    - Added `user == nil` guard returning `401 Unauthorized` (`writeJSONError(rw, "user unauthorized", http.StatusUnauthorized)`).    - Added `provider == nil` guard returning `500 Internal Server Error` with `ErrNilProvider` before calling `provider.GetDesignSourceContent(...)` to prevent nil pointer dereferences.    - Replaced unvalidated path extraction with `h.requirePathUUID(rw, r, "id")` to reject malformed UUIDs with `400 Bad Request`.    - Propagated real error status using `providerStatusOrInternal(err)` instead of hardcoded 404.    - Supported `"helmchart"` and `"helm-chart"` case variants alongside `models.HelmChart` for Content-Type headers (`application/x-tar`).    - Protected all logger invocations with `if h.log != nil`.  2. **`CloneMesheryPatternHandler` (`/api/pattern/clone/{id}`)**:    - Added `provider == nil` guard returning `500 Internal Server Error` with `ErrNilProvider`.    - Propagated clone error status using `providerStatusOrInternal(err)` instead of hardcoded 500.    - Protected logger invocations with `if h.log != nil`.  3. **`DownloadMesheryPatternHandler` (`/api/pattern/download/{id}`)**:    - Validated path UUID early with `h.requirePathUUID(rw, r, "id")` 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -839,362 +842,852 @@ if __name__ == "__main__":
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `44f1ee38` (2026-11-16)
-**Commit Message**: Merge pull request #23699 from antcybersec/fix/dashboard-selects-accessible-name
+### Incident Patch 1: `3a3c535f` (2026-11-18)
+**Commit Message**: Merge pull request #23861 from Amansingh0807/fix/23860-load-test-preferences-nil-guards
 
-[UI] Add accessible names to Dashboard Workload and HoneyComb dropdowns
+[Server] Guard unchecked nil provider dereferences, nil logger panics, and unbounded body reads in UserTestPreference handlers
 
-**File**: `ui/components/dashboard/charts/WorkloadChart.test.tsx` (modified, +4/-0)
+**File**: `docs/data/errorindex/meshery-server_errors_index.json` (modified, +16/-0)
 ```diff
-@@ -54,13 +54,16 @@ vi.mock('@sistent/sistent', () => ({
-     children,
-     value,
-     onChange,
-+    inputProps,
-   }: {
-     children?: React.ReactNode;
-     value?: string;
-     onChange?: (event: { target: { value: string } }) => void;
-+    inputProps?: { 'aria-label'?: string };
-   }) => (
-     <select
-       data-testid="namespace-select"
-+      aria-label={inputProps?.['aria-label']}
-       value={value}
-       onChange={(e) => onChange?.({ target: { value: e.target.value } } as never)}
-     >
-@@ -136,6 +139,7 @@ describe('WorkloadChart', () => {
-     );
-     const select = screen.getByTestId('namespace-select');
-     expect(select).toBeInTheDocument();
-+    expect(screen.getByRole('combobox', { name: 'Namespace' })).toBeInTheDocument();
-     fireEvent.change(select, { target: { value: 'kube-system' } });
-     expect(handleSetNamespace).toHaveBeenCalledWith('kube-system');
-   });
+@@ -7694,6 +7694,22 @@
+         "Reduce the response size, then retry.",
+         "For panel queries, shorten the time range or use more selective label matchers."
+       ]
++    },
++    {
++      "code": "meshery-server-1494",
++      "moniker": "ErrRequestTooLargeCode",
++      "component": {
++        "name": "meshery-server",
++        "type": "component"
++      },
++      "numericCode": "1494",
++      "severity": "alert",
++      "probableCause": [
++        "Request payload exceeds maximum allowed size"
++      ],
++      "suggestedRemediation": [
++        "Reduce request payload size to within acceptable limits"
++      ]
+     }
+   ],
+   "schemaVersion": 2
 ```
 
-**File**: `ui/components/dashboard/charts/WorkloadChart.tsx` (modified, +1/-0)
+**File**: `docs/data/errorref/meshery-server_errors_export.json` (modified, +9/-0)
 ```diff
-@@ -99,6 +99,7 @@ export default function WorkloadChart({
-           <Select
-             value={selectedNamespace}
-             onChange={(event) => handleSetNamespace(event.target.value)}
-+            inputProps={{ 'aria-label': 'Namespace' }}
-           >
-             {(namespaces || []).map((ns) => (
-               <MenuItem key={ns} value={ns}>
+@@ -4381,6 +4381,15 @@
+         "short_description": "Telemetry response exceeds Meshery's 16 MiB limit",
+         "probable_cause": "The upstream response contains more data than Meshery can return.",
+         "suggested_remediation": "Reduce the response size, then retry.\nFor panel queries, shorten the time range or use more selective label matchers."
++      },
++      "1494": {
++        "name": "ErrRequestTooLargeCode",
++        "code": "1494",
++        "severity": "Alert",
++        "long_description": "",
++        "short_description": "",
++        "probable_cause": "Request payload exceeds maximum allowed size",
++        "suggested_remediation": "Reduce request payload size to within acceptable limits"
+       }
+     }
+   }
 ```
 
-**File**: `ui/components/dashboard/widgets/HoneyComb/HoneyCombComponent.test.tsx` (modified, +4/-0)
+**File**: `server/handlers/error.go` (modified, +13/-0)
 ```diff
-@@ -107,13 +107,16 @@ vi.mock('@sistent/sistent', () => ({
-     children,
-     value,
-     onChange,
-+    inputProps,
-   }: {
-     children?: React.ReactNode;
-     value?: string;
-     onChange?: (event: { target: { value: string } }) => void;
-+    inputProps?: { 'aria-label'?: string };
-   }) => (
-     <select
-       data-testid="group-select"
-+      aria-label={inputProps?.['aria-label']}
-       value={value}
-       onChange={(e) => onChange?.({ target: { value: e.target.value } } as never)}
-     >
-@@ -177,6 +180,7 @@ describe('HoneycombComponent', () => {
-   it('renders the group-by select with the documented options', () => {
-     render(<HoneycombComponent kinds={[{ kind: 'Pod', count: 1 }]} />);
-     expect(screen.getByTestId('group-select')).toBeInTheDocument();
-+    expect(screen.getByRole('combobox', { name: 'Group by' })).toBeInTheDocument();
-     expect(screen.getByRole('option', { name: 'All Resources' })).toBeInTheDocument();
-     expect(screen.getByRole('option', { name: 'Workload' })).toBeInTheDocument();
-   });
+@@ -247,6 +247,7 @@ const (
+ 	ErrResetInProgressCode       = "meshery-server-1481"
+ 	ErrInvalidClientEventCode    = "meshery-server-1489"
+ 	ErrNilProviderCode           = "meshery-server-1492"
++	ErrRequestTooLargeCode       = "meshery-server-1494"
+ )
+ 
+ var (
+@@ -1315,3 +1316,15 @@ func ErrNilProvider() error {
+ 		[]string{"Ensure the provider is properly initialized before handling the request"},
+ 	)
+ }
++
++func ErrRequestTooLarge(maxSize int) error {
++	msg := fmt.Sprintf("request body exceeds maximum allowed size of %dMB", maxSize/(1024*1024))
++	return errors.New(
++		ErrRequestTooLargeCode,
++		errors.Alert,
++		[]string{msg},
++		[]string{msg},
++		[]string{"Request payload exceeds maximum allowed size"},
++		[]string{"Reduce request payload size to within acceptable limits"},
++	)
++}
 ```
 
-**File**: `ui/components/dashboard/widgets/HoneyComb/HoneyCombComponent.tsx` (modified, +6/-1)
+**File**: `server/handlers/load_test_preferences_handler.go` (modified, +78/-39)
 ```diff
-@@ -125,7 +125,12 @@ const HoneycombComponent = ({
-             Cluster Resource Overview
-           </Typography>
-           <ControlsContainer>
--            <Select value={groupBy} onChange={handleGroupChange} variant="standard">
-+            <Select
-+              value={groupBy}
-+              onChange={handleGroupChange}
-+              variant="standard"
-+              inputProps={{ 'aria-label': 'Group by' }}
-+            >
-               {groupOptions.map((option) => (
-                 <MenuItem key={option.value} value={option.value}>
-                   {option.label}
-```
-
----
-
-### Incident Patch 2: `d7ead8e6` (2026-11-15)
-**Commit Message**: Merge branch 'master' into fix/dashboard-selects-accessible-name
-
-**File**: `mesheryctl/internal/cli/root/design/import.go` (modified, +13/-0)
-```diff
-@@ -17,8 +17,11 @@ package design
+@@ -3,58 +3,87 @@ package handlers
+ 
  import (
- 	"bytes"
  	"encoding/json"
 +	"fmt"
  	"io"
-+	"net/url"
- 	"os"
-+	"path"
- 	"path/filepath"
+ 	"net/http"
  
- 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
-@@ -136,6 +139,16 @@ func importPattern(sourceType string, file string, patternURL string) (*models.M
- 	// use file name as default
- 	var patternName string
- 	fileName := filepath.Base(file)
-+	if utils.IsValidUrl(file) {
-+		parsed, err := url.Parse(file)
-+		if err != nil {
-+			return nil, utils.ErrParsingUrl(err)
-+		}
-+		fileName = path.Base(parsed.Path)
-+		if name == "" && (fileName == "." || fileName == "/") {
-+			return nil, utils.ErrParsingUrl(fmt.Errorf("URL %q has no file name in its path; pass --name to set the design name", file))
-+		}
-+	}
- 	if name == "" {
- 		patternName = fileName
- 	} else {
-```
-
-**File**: `mesheryctl/internal/cli/root/design/import_test.go` (modified, +35/-0)
-```diff
-@@ -213,3 +213,38 @@ func mapKeys(m map[string]interface{}) []string {
+ 	"github.com/meshery/meshery/server/models"
+ 	perfprofile "github.com/meshery/schemas/models/v1beta3/performance_profile"
+ )
+ 
++// maxPerformancePayloadSize defines the maximum permissible payload size for performance preference requests (4MB).
++const maxPerformancePayloadSize = 4 * 1024 * 1024
++
+ // UserTestPreferenceHandler is used for persisting load test preferences
+ func (h *Handler) UserTestPreferenceHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
+-	// if req.Method != http.MethodPost && req.Method != http.MethodGet && req.Method != http.MethodDelete {
+-	// 	w.WriteHeader(http.StatusNotFound)
+-	// 	return
+-	// }
+-
+-	if req.Method == http.MethodPost {
++	switch req.Method {
++	case http.MethodPost:
+ 		h.UserTestPreferenceStore(w, req, prefObj, user, provider)
+-		return
+-	}
+-	if req.Method == http.MethodDelete {
++	case http.MethodDelete:
+ 		h.UserTestPreferenceDelete(w, req, prefObj, user, provider)
+-		return
+-	}
+-	if req.Method == http.MethodGet {
++	case http.MethodGet:
+ 		h.UserTestPreferenceGet(w, req, prefObj, user, provider)
+-		return
++	default:
++		writeJSONError(w, "method not allowed", http.StatusMethodNotAllowed)
  	}
- 	return keys
  }
-+
-+func TestImportPatternURLDefaultNameExcludesQuery(t *testing.T) {
-+	testContext := utils.InitTestEnvironment(t)
-+	_ = utils.SetupMeshkitLoggerTesting(t, false)
-+	defer utils.StopMockery(t)
-+	defer resetVariables()
-+	utils.TokenFlag = utils.GetToken(t)
-+	var captured map[string]interface{}
-+	httpmock.RegisterResponder("POST", testContext.BaseURL+"/api/pattern/import", func(req *http.Request) (*http.Response, error) {
-+		if err := json.NewDecoder(req.Body).Decode(&captured); err != nil {
-+			return nil, err
-+		}
-+		return httpmock.NewStringResponse(200, `[{"id":"3817ec9a-1d83-4f6f-9154-0fd4408ba9f0","name":"sample"}]`), nil
-+	})
-+	_, err := importPattern("", "https://example.com/design.yaml?token=secret#fragment", testContext.BaseURL+"/api/pattern/import")
-+	if err != nil {
-+		t.Fatal(err)
+ 
+ // UserTestPreferenceStore is used for persisting load test preferences
+ func (h *Handler) UserTestPreferenceStore(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
+-	body, err := io.ReadAll(req.Body)
++	if !h.requireProvider(w, provider) {
++		return
 +	}
-+	assert.Equal(t, "design.yaml", captured["name"])
-+	assert.Equal(t, "https://example.com/design.yaml?token=secret#fragment", captured["url"])
-+}
 +
-+func TestImportPatternURLWithoutPathNameRequiresNameFlag(t *testing.T) {
-+	testContext := utils.InitTestEnvironment(t)
-+	_ = utils.SetupMeshkitLoggerTesting(t, false)
-+	defer utils.StopMockery(t)
-+	defer resetVariables()
-+	utils.TokenFlag = utils.GetToken(t)
-+	oldName := name
-+	name = ""
-+	defer func() { name = oldName }()
-+	_, err := importPattern("", "https://example.com?token=secret", testContext.BaseURL+"/api/pattern/import")
-+	assert.Error(t, err)
-+	assert.Contains(t, err.Error(), "--name")
-+}
++	defer func() {
++		_ = req.Body.Close()
++	}()
++
++	body, err := io.ReadAll(io.LimitReader(req.Body, maxPerformancePayloadSize+1))
+ 	if err != nil {
+-		h.log.Error(ErrRequestBody(err))
++		if h.log != nil {
++			h.log.Error(ErrRequestBody(err))
++		}
+ 		writeMeshkitError(w, ErrRequestBody(err), http.StatusBadRequest)
+ 		return
+ 	}
++	if len(body) > maxPerformancePayloadSize {
++		err := ErrRequestTooLarge(maxPerformancePayloadSize)
++		if h.log != nil {
++			h.log.Error(err)
++		}
++		writeMeshkitError(w, err, http.StatusRequestEntityTooLarge)
++		return
++	}
++	if len(body) == 0 {
++		if h.log != nil {
++			h.log.Error(ErrRequestBody(fmt.Errorf("empty request body")))
++		}
++		writeMeshkitError(w, ErrRequestBody(fmt.Errorf("empty request body")), http.StatusBadRequest)
++		return
++	}
++
+ 	perfTest := &perfprofile.PerformanceTestConfig{}
+ 	if err = json.Unmarshal(body, perfTest); err != nil {
+ 		obj := "the provided input"
+-		h.log.Error(models.ErrUnmarshal(err, obj))
++		if h.log != nil {
++			h.log.Error(models.ErrUnmarshal(err, obj))
++		}
+ 		writeMeshkitError(w, models.ErrUnmarshal(err, obj), http.StatusBadRequest)
+ 		return
+ 	}
+ 	if err = models.PerformanceTestConfigValidator(perfTest); err != nil {
+-		h.log.Error(ErrRecordPreferences(err))
++		if h.log != nil {
++			h.log.Error(ErrRecordPreferences(err))
++		}
+ 		writeMeshkitError(w, ErrRecordPreferences(err), http.StatusBadRequest)
+ 		return
+ 	}
+ 	tid, err := provider.SMPTestConfigStore(req, perfTest)
+ 	if err != nil {
+ 		obj := "user preference"
+-		h.log.Error(ErrFailToSave(err, obj))
++		if h.log != nil {
++			h.log.Error(ErrFailToSave(err, obj))
++		}
+ 		writeMeshkitError(w, ErrFailToSave(err, obj), http.StatusInternalServerError)
+ 		return
+ 	}
+@@ -63,63 +92,73 @@ func (h *Handler) UserTestPreferenceStore(w http.ResponseWriter, req *http.Reque
+ 
+ // UserTestPreferenceGet gets the PerformanceTestConfig object
+ func (h *Handler) UserTestPreferenceGet(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
++	if !h.requireProvider(w, provider) {
++		return
++	}
++
+ 	q := req.URL.Query()
+ 	testUUID := q.Get("uuid")
+-	h.log.Debug(testUUID)
++	if h.log != nil {
++		h.log.Debug(testUUID)
++	}
+ 	if testUUID == "" {
+ 		testPage := q.Get("page")
+ 		testPageSize := q.Get("pagesize")
+ 		testSearch := q.Get("search")
+ 		testOrder := q.Get("order")
+-		h.log.Debug(testPage, testPageSize)
++		if h.log != nil {
++			h.log.Debug(testPage, testPageSize)
++		}
+ 		testObjJSON, err := provider.SMPTestConfigFetch(req, testPage, testPageSize, testSearch, testOrder)
+ 		if err != nil {
+-			h.log.Error(ErrTestConfigs)
++			if h.log != nil {
++				h.log.Error(ErrTestConfigs)
++			}
+ 			writeMeshkitError(w, ErrTestConfigs, http.StatusInternalServerError)
+ 			return
+ 		}
++		w.Header().Set("Content-Type", "application/json; charset=utf-8")
+ 		_, _ = w.Write(testObjJSON)
+ 	} else {
+ 		testObj, err := provider.SMPTestConfigGet(req, testUUID)
+ 		if err != nil {
+-			h.log.Error(ErrTestConfigs)
++			if h.log != nil {
++				h.log.Error(ErrTestConfigs)
++			}
+ 			writeMeshkitError(w, ErrTestConfigs, http.StatusInternalServerError)
+ 			return
+ 		}
+ 		if testObj == nil {
+-			w.WriteHeader(http.StatusNotFound)
+-			return
+-		}
+-		data, err := json.Marshal(testObj)
+-		if err != nil {
+-			h.log.Error(ErrReadConfig(err))
+-			writeMeshkitError(w, ErrReadConfig(err), http.Status
 ```
 
-**File**: `mesheryctl/internal/cli/root/system/log_stream_test.go` (added, +20/-0)
+**File**: `server/handlers/load_test_preferences_handler_test.go` (added, +444/-0)
 ```diff
-@@ -0,0 +1,20 @@
-+package system
+@@ -0,0 +1,444 @@
++package handlers
 +
 +import (
-+	"io"
++	"bytes"
++	"encoding/json"
++	"errors"
++	"net/http"
++	"net/http/httptest"
 +	"strings"
 +	"testing"
 +
-+	"github.com/meshery/meshery/mesheryctl/pkg/utils"
++	"github.com/meshery/meshery/server/models"
++	perfprofile "github.com/meshery/schemas/models/v1beta3/performance_profile"
++	"github.com/stretchr/testify/assert"
++	"github.com/stretchr/testify/require"
 +)
 +
-+func TestPrintLogStreamPreservesLinesAcrossReads(t *testing.T) {
-+	b := utils.SetupMeshkitLoggerTesting(t, false)
-+	reader := io.MultiReader(strings.NewReader("hello "), strings.NewReader("world\nlast"))
-+	if err := printLogStream(reader, "pod"); err != nil {
-+		t.Fatal(err)
-+	}
-+	if got, want := b.String(), "pod\t|\thello world\npod\t|\tlast\n"; got != want {
-+		t.Fatalf("got %q want %q", got, want)
-+	}
-+}
-```
-
-**File**: `mesheryctl/internal/cli/root/system/logs.go` (modified, +20/-16)
-```diff
-@@ -15,6 +15,7 @@
- package system
- 
- import (
-+	"bufio"
- 	"context"
- 	"fmt"
- 	"io"
-@@ -53,14 +54,29 @@ func printLogs(logs string, podName string) {
- 	}
- }
- 
-+// printLogStream buffers across reads so a stream read boundary does not split a log line.
-+func printLogStream(stream io.Reader, podName string) error {
-+	reader := bufio.NewReader(stream)
-+	for {
-+		line, err := reader.ReadString('\n')
-+		if len(line) > 0 {
-+			printLogs(strings.TrimSuffix(line, "\n"), podName)
-+		}
-+		if err == io.EOF {
-+			return nil
-+		}
-+		if err != nil {
-+			return err
-+		}
-+	}
++type mockLoadTestPreferencesProvider struct {
++	*models.DefaultLocalProvider
++	storeFunc func(req *http.Request, perfConfig *perfprofile.PerformanceTestConfig) (string, error)
++	getFunc   func(req *http.Request, testUUID string) (*perfprofile.PerformanceTestConfig, error)
++	fetchFunc func(req *http.Request, page, pageSize, search, order string) ([]byte, error)
++	delFunc   func(req *http.Request, testUUID string) error
 +}
 +
- type cmdSystemLogsFlags struct {
- 	Follow bool `json:"follow" validate:"boolean"`
++func (m *mockLoadTestPreferencesProvider) SMPTestConfigStore(req *http.Request, perfConfig *perfprofile.PerformanceTestConfig) (string, error) {
++	if m.storeFunc != nil {
++		return m.storeFunc(req, perfConfig)
++	}
++	return "test-uuid-default", nil
++}
++
++func (m *mockLoadTestPreferencesProvider) SMPTestConfigGet(req *http.Request, testUUID string) (*perfprofile.PerformanceTestConfig, error) {
++	if m.getFunc != nil {
++		return m.getFunc(req, testUUID)
++	}
++	return &perfprofile.PerformanceTestConfig{ID: testUUID, Name: "TestConfig"}, nil
++}
++
++func (m *mockLoadTestPreferencesProvider) SMPTestConfigFetch(req *http.Request, page, pageSize, search, order string) ([]byte, error) {
++	if m.fetchFunc != nil {
++		return m.fetchFunc(req, page, pageSize, search, order)
++	}
++	return []byte(`[{"id":"test-uuid-default","name":"TestConfig"}]`), nil
++}
++
++func (m *mockLoadTestPreferencesProvider) SMPTestConfigDelete(req *http.Request, testUUID string) error {
++	if m.delFunc != nil {
++		return m.delFunc(req, testUUID)
++	}
++	return nil
++}
++
++func validPerformanceTestConfigJSON() string {
++	cfg := perfprofile.PerformanceTestConfig{
++		Name:     "Sample Load Test",
++		Duration: "10s",
++		Clients: []perfprofile.PerformanceTestClient{
++			{
++				Protocol:     "http",
++				EndpointUrls: []string{"https://meshery.io/api/health"},
++			},
++		},
++	}
++	b, _ := json.Marshal(cfg)
++	return string(b)
++}
++
++func TestUserTestPreferenceHandler_MethodDispatcher(t *testing.T) {
++	h := &Handler{log: newTestLogger(t)}
++	provider := &mockLoadTestPreferencesProvider{}
++
++	t.Run("POST dispatches to Store", func(t *testing.T) {
++		req := httptest.NewRequest(http.MethodPost, "/api/user/prefs/perf", strings.NewReader(validPerformanceTestConfigJSON()))
++		rec := httptest.NewRecorder()
++		h.UserTestPreferenceHandler(rec, req, nil, nil, provider)
++		assert.Equal(t, http.StatusOK, rec.Code)
++	})
++
++	t.Run("GET dispatches to Get", func(t *testing.T) {
++		req := httptest.NewRequest(http.MethodGet, "/api/user/prefs/perf?uuid=123", nil)
++		rec := httptest.NewRecorder()
++		h.UserTestPreferenceHandler(rec, req, nil, nil, provider)
++		assert.Equal(t, http.StatusOK, rec.Code)
++	})
++
++	t.Run("DELETE dispatches to Delete", func(t *testing.T) {
++		req := httptest.NewRequest(http.MethodDelete, "/api/user/prefs/perf?uuid=123", nil)
++		rec := httptest.NewRecorder()
++		h.UserTestPreferenceHandler(rec, req, nil, nil, provider)
++		assert.Equal(t, http.StatusOK, rec.Code)
++	})
++
++	t.Run("Unsupported method returns 405 MethodNotAllowed", func(t *testing.T) {
++		req := httptest.NewRequest(http.MethodPut, "/api/user/prefs/perf", nil)
++		rec := httptest.NewRecorder()
++		h.UserTestPreferenceHandler(rec, req, nil, nil, provider)
++		assert.Equal(t, http.StatusMethodNotAllowed, rec.Code)
++		assert.Contains(t, rec.Header().Get("Content-Type"), "application/json")
++		var body map[string]string
++		err := json.Unmarshal(rec.Body.Bytes(), &body)
++		require.NoError(t, err)
++		assert.Equal(t, "method not allowed", body["error"])
++	})
++}
++
++func TestUserTestPreferenceStore_NilProvider_ReturnsInternalServerError(t *testing.T) {
++	h := &Handler{log: newTestLogger(t)}
++	req := httptest.NewRequest(http.MethodPost, "/api/user/prefs/perf", strings.NewReader(validPerformanceTestConfigJSON()))
++	rec := httptest.NewRecorder()
++
++	h.UserTestPreferenceStore(rec, req, nil, nil, nil)
++
++	assert.Equal(t, http.StatusInternalServerError, rec.Code)
++	assert.Contains(t, rec.Header().Get("Content-Type"), "application/json")
++	errBody := decodeErrorBody(t, rec.Body.Bytes())
++	assert.Equal(t, ErrNilProviderCode, errBody.Code)
++}
++
++func TestUserTestPreferenceStore_TypedNilProvider_ReturnsInternalServerError(t *testing.T) {
++	h := &Handler{log: newTestLogger(t)}
++	req := httptest.NewRequest(http.MethodPost, "/api/user/prefs/perf", strings.NewReader(validPerformanceTestConfigJSON()))
++	rec := httptest.NewRecorder()
++	var typedNil *models.DefaultLocalProvider
++
++	h.UserTestPreferenceStore(rec, req, nil, nil, typedNil)
++
++	assert.Equal(t, http.StatusInternalServerError, rec.Code)
++	assert.Contains(t, rec.Header().Get("Content-Type"), "application/json")
++	errBody := decodeErrorBody(t, rec.Body.Bytes())
++	assert.Equal(t, ErrNilProviderCode, errBod
+```
+
+**File**: `server/helpers/component_info.json` (modified, +1/-1)
+```diff
+@@ -1,5 +1,5 @@
+ {
+   "name": "meshery-server",
+   "type": "component",
+-  "next_error_code": 1494
++  "next_error_code": 1495
  }
- 
- var systemLogsFlags cmdSystemLogsFlags
- 
--const BYTE_SIZE = 2000
--
- // logsCmd represents the logs command
- var logsCmd = &cobra.Command{
- 	Use:   "logs",
-@@ -240,20 +256,8 @@ mesheryctl system logs meshery-istio
- 						go func(stream io.ReadCloser, podName string) {
- 							defer wg.Done()
- 							defer func() { _ = stream.Close() }()
--							buf := make([]byte, BYTE_SIZE)
--							for {
--								numBytes, err := stream.Read(buf)
--								if numBytes > 0 {
--									logBuf := buf[0:numBytes]
--									printLogs(string(logBuf), podName)
--								}
--								if err == io.EOF {
--									break
--								}
--								if err != nil {
--									utils.Log.Errorf("error occurred while processing logs %v", err)
--									break
--								}
-+							if err := printLogStream(stream, podName); err != nil {
-+								utils.Log.Errorf("error occurred while processing logs %v", err)
- 							}
- 						}(logs, name)
- 					}
+\ No newline at end of file
 ```
 
 ---
 
-### Incident Patch 3: `a871123d` (2026-11-15)
-**Commit Message**: Merge pull request #23703 from 0xmaster7/fix/design-import-url-name
+### Incident Patch 2: `f5857bb8` (2026-11-18)
+**Commit Message**: Merge branch 'master' into fix/23860-load-test-preferences-nil-guards
 
-[mesheryctl] Exclude URL query from imported design name
 
-**File**: `mesheryctl/internal/cli/root/design/import.go` (modified, +13/-0)
+
+---
+
+### Incident Patch 3: `9818a0e6` (2026-11-18)
+**Commit Message**: Merge pull request #23896 from meshery/revert-23878-fix/meshsync-flush-nil-handler
+
+Revert "[Server] Prevent MeshSync cache loss when the resync handler is unavailable"
+
+**File**: `server/handlers/connection_action_handler.go` (modified, +13/-17)
 ```diff
-@@ -17,8 +17,11 @@ package design
- import (
- 	"bytes"
- 	"encoding/json"
-+	"fmt"
- 	"io"
-+	"net/url"
- 	"os"
-+	"path"
- 	"path/filepath"
+@@ -286,21 +286,17 @@ func (h *Handler) flushMeshsyncAction(
+ 		return
+ 	}
  
- 	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
-@@ -136,6 +139,16 @@ func importPattern(sourceType string, file string, patternURL string) (*models.M
- 	// use file name as default
- 	var patternName string
- 	fileName := filepath.Base(file)
-+	if utils.IsValidUrl(file) {
-+		parsed, err := url.Parse(file)
-+		if err != nil {
-+			return nil, utils.ErrParsingUrl(err)
-+		}
-+		fileName = path.Base(parsed.Path)
-+		if name == "" && (fileName == "." || fileName == "/") {
-+			return nil, utils.ErrParsingUrl(fmt.Errorf("URL %q has no file name in its path; pass --name to set the design name", file))
-+		}
-+	}
- 	if name == "" {
- 		patternName = fileName
- 	} else {
+-	// Keep the connection lifecycle stable while checking its state,
+-	// flushing cached resources, and requesting a MeshSync resync.
+-	var resyncErr error
++	// Keep the connection lifecycle stable while checking its state and
++	// clearing cached resources. The setup lock is released before the
++	// database operation; the lifecycle lock prevents a concurrent disconnect.
+ 	connected, flushErr := machineCtx.WithConnectedK8sContext(func(k8sCtx models.K8sContext) error {
+-		flushCallback := func() error {
+-			if serverID := k8sCtx.KubernetesServerID; serverID != nil {
+-				if perr := models.FlushMeshSyncResourcesForCluster(provider.GetGenericPersister(), serverID.String()); perr != nil {
+-					return models.ErrFlushMeshSyncData(perr, k8sCtx.Name, k8sCtx.Server)
+-				}
++		// Clear only this cluster's cached state, keyed by its Kubernetes server ID.
++		if serverID := k8sCtx.KubernetesServerID; serverID != nil {
++			if perr := models.FlushMeshSyncResourcesForCluster(provider.GetGenericPersister(), serverID.String()); perr != nil {
++				return models.ErrFlushMeshSyncData(perr, k8sCtx.Name, k8sCtx.Server)
+ 			}
+-			return nil
+ 		}
+-		operationFlushErr, operationResyncErr := mhelpers.FlushAndResyncResources(req.Context(), machine, machineCtx, flushCallback)
+-		resyncErr = operationResyncErr
+-		return operationFlushErr
++		return nil
+ 	})
+ 	if !connected {
+ 		writeJSONError(w, fmt.Sprintf("connection %s is disconnected; reconnect the cluster before flushing MeshSync", connectionID), http.StatusConflict)
+@@ -314,12 +310,12 @@ func (h *Handler) flushMeshsyncAction(
+ 		return
+ 	}
+ 
+-	// The cache flush and resync request have already been performed together.
+-	if resyncErr != nil {
+-		event := eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("MeshSync resync failed for connection %s", existing.Name)).WithMetadata(map[string]any{"error": resyncErr, "connectionId": connectionID}).Build()
++	// Repopulate from the live cluster. Fresh data streams back via the broker.
++	if rerr := mhelpers.ResyncResources(req.Context(), machine); rerr != nil {
++		event := eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("MeshSync data flushed but resync failed for connection %s", existing.Name)).WithMetadata(map[string]any{"error": rerr, "connectionId": connectionID}).Build()
+ 		h.persistAndPublish(provider, token, userID, event)
+-		h.log.Error(resyncErr)
+-		writeJSONError(w, fmt.Sprintf("failed to resync MeshSync data: %v", resyncErr), http.StatusInternalServerError)
++		h.log.Error(rerr)
++		writeJSONError(w, fmt.Sprintf("failed to resync MeshSync data: %v", rerr), http.StatusInternalServerError)
+ 		return
+ 	}
+ 
 ```
 
-**File**: `mesheryctl/internal/cli/root/design/import_test.go` (modified, +35/-0)
+**File**: `server/handlers/connection_action_handler_test.go` (modified, +0/-97)
 ```diff
-@@ -213,3 +213,38 @@ func mapKeys(m map[string]interface{}) []string {
+@@ -11,7 +11,6 @@ import (
+ 
+ 	k8smachine "github.com/meshery/meshery/server/machines/kubernetes"
+ 	"github.com/meshery/meshkit/database"
+-	"github.com/meshery/meshkit/models/controllers"
+ 	meshsyncmodel "github.com/meshery/meshsync/pkg/model"
+ 	"gorm.io/driver/sqlite"
+ 	"gorm.io/gorm"
+@@ -386,99 +385,3 @@ func TestPerformConnectionAction_FlushMeshsync_DisconnectedDoesNotDeleteCache(t
+ 		t.Errorf("cached MeshSync resource count = %d, want 1; disconnected flush must not delete cache", count)
  	}
- 	return keys
  }
-+
-+func TestImportPatternURLDefaultNameExcludesQuery(t *testing.T) {
-+	testContext := utils.InitTestEnvironment(t)
-+	_ = utils.SetupMeshkitLoggerTesting(t, false)
-+	defer utils.StopMockery(t)
-+	defer resetVariables()
-+	utils.TokenFlag = utils.GetToken(t)
-+	var captured map[string]interface{}
-+	httpmock.RegisterResponder("POST", testContext.BaseURL+"/api/pattern/import", func(req *http.Request) (*http.Response, error) {
-+		if err := json.NewDecoder(req.Body).Decode(&captured); err != nil {
-+			return nil, err
-+		}
-+		return httpmock.NewStringResponse(200, `[{"id":"3817ec9a-1d83-4f6f-9154-0fd4408ba9f0","name":"sample"}]`), nil
-+	})
-+	_, err := importPattern("", "https://example.com/design.yaml?token=secret#fragment", testContext.BaseURL+"/api/pattern/import")
-+	if err != nil {
-+		t.Fatal(err)
-+	}
-+	assert.Equal(t, "design.yaml", captured["name"])
-+	assert.Equal(t, "https://example.com/design.yaml?token=secret#fragment", captured["url"])
-+}
-+
-+func TestImportPatternURLWithoutPathNameRequiresNameFlag(t *testing.T) {
-+	testContext := utils.InitTestEnvironment(t)
-+	_ = utils.SetupMeshkitLoggerTesting(t, false)
-+	defer utils.StopMockery(t)
-+	defer resetVariables()
-+	utils.TokenFlag = utils.GetToken(t)
-+	oldName := name
-+	name = ""
-+	defer func() { name = oldName }()
-+	_, err := importPattern("", "https://example.com?token=secret", testContext.BaseURL+"/api/pattern/import")
-+	assert.Error(t, err)
-+	assert.Contains(t, err.Error(), "--name")
-+}
+-
+-func TestPerformConnectionAction_FlushMeshsync_NilHandlerPreservesCache(t *testing.T) {
+-	gdb, err := gorm.Open(sqlite.Open(":memory:"), &gorm.Config{})
+-	if err != nil {
+-		t.Fatalf("failed to open in-memory database: %v", err)
+-	}
+-	sqlDB, err := gdb.DB()
+-	if err != nil {
+-		t.Fatalf("failed to get SQL database: %v", err)
+-	}
+-	sqlDB.SetMaxOpenConns(1)
+-	t.Cleanup(func() { _ = sqlDB.Close() })
+-
+-	db := &database.Handler{DB: gdb}
+-	if err := db.AutoMigrate(
+-		&meshsyncmodel.KubernetesKeyValue{},
+-		&meshsyncmodel.KubernetesResource{},
+-		&meshsyncmodel.KubernetesResourceSpec{},
+-		&meshsyncmodel.KubernetesResourceStatus{},
+-		&meshsyncmodel.KubernetesResourceObjectMeta{},
+-	); err != nil {
+-		t.Fatalf("failed to migrate MeshSync tables: %v", err)
+-	}
+-
+-	serverID := uuid.Must(uuid.NewV4())
+-	resource := &meshsyncmodel.KubernetesResource{
+-		ID:         uuid.Must(uuid.NewV4()).String(),
+-		ClusterID:  serverID.String(),
+-		Kind:       "Service",
+-		APIVersion: "v1",
+-	}
+-	if err := db.Create(resource).Error; err != nil {
+-		t.Fatalf("failed to seed MeshSync resource: %v", err)
+-	}
+-
+-	baseProvider := newControllersConfigFakeProvider()
+-	connectionID := seedKubernetesConnection(baseProvider, nil)
+-	provider := &connectionActionFlushTestProvider{
+-		controllersConfigFakeProvider: baseProvider,
+-		db:                            db,
+-	}
+-
+-	h := newConnectionActionTestHandler(t)
+-	machine, err := k8smachine.New(connectionID.String(), uuid.Must(uuid.NewV4()), h.log)
+-	if err != nil {
+-		t.Fatalf("failed to create Kubernetes state machine: %v", err)
+-	}
+-
+-	mesheryCtrlsHelper := models.NewMesheryControllersHelper(
+-		h.log,
+-		controllers.OperatorDeploymentConfig{},
+-		nil,
+-		nil,
+-		nil,
+-		nil,
+-	)
+-	machine.Context = &k8smachine.MachineCtx{
+-		K8sContext: models.K8sContext{
+-			ID:                 "test-context",
+-			KubernetesServerID: &serverID,
+-		},
+-		MesheryCtrlsHelper: mesheryCtrlsHelper,
+-	}
+-
+-	h.ConnectionToStateMachineInstanceTracker = &machines.ConnectionToStateMachineInstanceTracker{
+-		ConnectToInstanceMap: make(map[core.Uuid]*machines.StateMachine),
+-	}
+-	h.ConnectionToStateMachineInstanceTracker.Add(connectionID, machine)
+-
+-	req := httptest.NewRequest(
+-		http.MethodPost,
+-		"/api/integrations/connections/"+connectionID.String()+"/actions",
+-		strings.NewReader(`{"action":"flushMeshsync"}`),
+-	)
+-	req = mux.SetURLVars(req, map[string]string{"connectionId": connectionID.String()})
+-	rec := httptest.NewRecorder()
+-
+-	h.PerformConnectionAction(rec, req, nil, &models.User{ID: uuid.Must(uuid.NewV4())}, provider)
+-
+-	if rec.Code != http.StatusInternalServerError {
+-		t.Fatalf("status = %d, want 500 for nil MeshSync handler; body: %s", rec.Code, rec.Body.String())
+-	}
+-	if !strings.Contains(rec.Body.String(), "MeshSync data handler is not initialized") {
+-		t.Errorf("expected resync-failure response, got: %s", rec.Body.String())
+-	}
+-
+-	var count int64
+-	if err := db.Model(&meshsyncmodel.KubernetesResource{}).
+-		Where("cluster_id = ?", serverID.String()).
+-		Count(&count).Error; err != nil {
+-		t.Fatalf("failed to count cached MeshSync resources: %v", err)
+-	}
+-	if count != 1 {
+-		t.Errorf("cached MeshSync resource count = %d, want 1; nil-handler flush must preserve cache", count)
+-	}
+-}
+```
+
+**File**: `server/machines/helpers/resync_resources.go` (modified, +0/-20)
+```diff
+@@ -8,26 +8,6 @@ import (
+ 	"github.com/meshery/meshery/server/machines/kubernetes"
+ )
+ 
+-// FlushAndResyncResources flushes cached resources and requests a resync
+-// for the specified machine type.
+-func FlushAndResyncResources(
+-	ctx context.Context,
+-	sm *machines.StateMachine,
+-	machineCtx *kubernetes.MachineCtx,
+-	flush func() error,
+-) (flushErr error, resyncErr error) {
+-	if sm.Name != "kubernetes" {
+-		return nil, ErrResyncResources(
+-			fmt.Errorf(
+-				"FlushAndResyncResources operation is not implemented for machine type %s",
+-				sm.Name,
+-			),
+-		)
+-	}
+-
+-	return kubernetes.FlushAndResyncResources(ctx, machineCtx, flush)
+-}
+-
+ func ResyncResources(ctx context.Context, sm *machines.StateMachine) error {
+ 	if sm.Name != "kubernetes" {
+ 		return ErrResyncResources(
+```
+
+**File**: `server/machines/helpers/resync_resources_test.go` (removed, +0/-33)
+```diff
+@@ -1,33 +0,0 @@
+-package helpers
+-
+-import (
+-	"context"
+-	"testing"
+-
+-	"github.com/meshery/meshery/server/machines"
+-)
+-
+-func TestFlushAndResyncResourcesRejectsUnsupportedMachine(t *testing.T) {
+-	sm := &machines.StateMachine{Name: "prometheus"}
+-
+-	flushCalled := false
+-	flushErr, resyncErr := FlushAndResyncResources(
+-		context.Background(),
+-		sm,
+-		nil,
+-		func() error {
+-			flushCalled = true
+-			return nil
+-		},
+-	)
+-
+-	if flushCalled {
+-		t.Fatal("flush callback must not run for an unsupported machine type")
+-	}
+-	if flushErr != nil {
+-		t.Fatalf("flush error = %v, want nil", flushErr)
+-	}
+-	if resyncErr == nil {
+-		t.Fatal("expected an error for an unsupported machine type")
+-	}
+-}
+```
+
+**File**: `server/machines/kubernetes/resync_resources.go` (modified, +0/-21)
+```diff
+@@ -8,27 +8,6 @@ import (
+ 	"github.com/meshery/meshery/server/machines"
+ )
+ 
+-// FlushAndResyncResources flushes cached resources and requests a MeshSync
+-// resync while serialized with MeshSync handler lifecycle changes.
+-func FlushAndResyncResources(
+-	ctx context.Context,
+-	machineCtx *MachineCtx,
+-	flush func() error,
+-) (flushErr error, resyncErr error) {
+-	if machineCtx == nil {
+-		return nil, ErrResyncK8SResources(fmt.Errorf("machine context is nil"))
+-	}
+-	mesheryCtrlsHelper := machineCtx.MesheryCtrlsHelper
+-	if mesheryCtrlsHelper == nil {
+-		return nil, ErrResyncK8SResources(fmt.Errorf("machine context does not contain reference to MesheryCtrlsHelper"))
+-	}
+-	flushErr, resyncErr = mesheryCtrlsHelper.FlushAndResyncMeshsync(flush)
+-	if resyncErr != nil {
+-		resyncErr = ErrResyncK8SResources(errors.Join(fmt.Errorf("error calling FlushAndResyncMeshsync"), resyncErr))
+-	}
+-	return flushErr, resyncErr
+-}
+-
+ func ResyncResources(ctx context.Context, sm *machines.StateMachine) error {
+ 	mashineCtx, err := GetMachineCtx(sm.GetContext(), nil)
+ 	if err != nil {
+```
+
+**File**: `server/machines/kubernetes/resync_resources_test.go` (removed, +0/-30)
+```diff
+@@ -1,30 +0,0 @@
+-package kubernetes
+-
+-import (
+-	"context"
+-	"testing"
+-)
+-
+-func TestFlushAndResyncResourcesDoesNotFlushWithoutMesheryHelper(t *testing.T) {
+-	machineCtx := &MachineCtx{}
+-
+-	flushCalled := false
+-	flushErr, resyncErr := FlushAndResyncResources(
+-		context.Background(),
+-		machineCtx,
+-		func() error {
+-			flushCalled = true
+-			return nil
+-		},
+-	)
+-
+-	if flushCalled {
+-		t.Fatal("flush callback must not run when MesheryCtrlsHelper is nil")
+-	}
+-	if flushErr != nil {
+-		t.Fatalf("flush error = %v, want nil", flushErr)
+-	}
+-	if resyncErr == nil {
+-		t.Fatal("expected an error when MesheryCtrlsHelper is nil")
+-	}
+-}
+```
+
+**File**: `server/models/meshery_controllers.go` (modified, +0/-23)
+```diff
+@@ -895,29 +895,6 @@ func (mch *MesheryControllersHelper) ResyncMeshsync(ctx context.Context) error {
+ 	return fmt.Errorf("MeshSync data handler is not initialized")
+ }
+ 
+-// FlushAndResyncMeshsync serializes a cache flush with MeshSync handler
+-// teardown and replacement. It only flushes while a connected handler is
+-// available to request repopulation.
+-func (mch *MesheryControllersHelper) FlushAndResyncMeshsync(flush func() error) (flushErr error, resyncErr error) {
+-	mch.meshsyncMutex.Lock()
+-	defer mch.meshsyncMutex.Unlock()
+-
+-	if mch.ctxMeshsyncDataHandler == nil {
+-		return nil, fmt.Errorf("MeshSync data handler is not initialized")
+-	}
+-	if !mch.ctxMeshsyncDataHandler.IsConnected() {
+-		return nil, fmt.Errorf("MeshSync broker is not connected")
+-	}
+-	if flush == nil {
+-		return fmt.Errorf("MeshSync cache flush callback is nil"), nil
+-	}
+-	if err := flush(); err != nil {
+-		return err, nil
+-	}
+-
+-	return nil, mch.ctxMeshsyncDataHandler.Resync()
+-}
+-
+ // AddCtxControllerHandlers attaches a MesheryController for each context if
+ // 1. the config is valid
+ // 2. if it is not already attached
+```
+
+**File**: `server/models/meshery_controllers_test.go` (modified, +0/-93)
+```diff
+@@ -193,96 +193,3 @@ func TestResyncMeshsyncReturnsErrorWhenHandlerIsNil(t *testing.T) {
+ 		t.Fatal("expected an error when MeshSync data handler is nil")
+ 	}
+ }
+-
+-func TestFlushAndResyncMeshsyncPreservesCacheWhenHandlerIsNil(t *testing.T) {
+-	log, _ := logger.New("test", logger.Options{})
+-
+-	mch := NewMesheryControllersHelper(
+-		log,
+-		controllers.OperatorDeploymentConfig{},
+-		nil,
+-		nil,
+-		nil,
+-		nil,
+-	)
+-
+-	flushCalled := false
+-	flushErr, resyncErr := mch.FlushAndResyncMeshsync(func() error {
+-		flushCalled = true
+-		return nil
+-	})
+-
+-	if flushCalled {
+-		t.Fatal("cache flush callback must not run when MeshSync handler is nil")
+-	}
+-	if flushErr != nil {
+-		t.Fatalf("flush error = %v, want nil", flushErr)
+-	}
+-	if resyncErr == nil {
+-		t.Fatal("expected an error when MeshSync data handler is nil")
+-	}
+-}
+-
+-func TestFlushAndResyncMeshsyncPreservesCacheWhenBrokerDisconnected(t *testing.T) {
+-	log, _ := logger.New("test", logger.Options{})
+-	mch := NewMesheryControllersHelper(log, controllers.OperatorDeploymentConfig{}, nil, nil, nil, nil)
+-
+-	testBroker := &testMeshsyncBroker{closed: true}
+-	mch.ctxMeshsyncDataHandler = newTestMeshsyncHandler(t, testBroker, nil)
+-
+-	flushCalled := false
+-	flushErr, resyncErr := mch.FlushAndResyncMeshsync(func() error {
+-		flushCalled = true
+-		return nil
+-	})
+-
+-	if flushCalled {
+-		t.Fatal("cache flush callback must not run when MeshSync broker is disconnected")
+-	}
+-	if flushErr != nil {
+-		t.Fatalf("flush error = %v, want nil", flushErr)
+-	}
+-	if resyncErr == nil {
+-		t.Fatal("expected an error when MeshSync broker is disconnected")
+-	}
+-}
+-
+-func TestFlushAndResyncMeshsyncFlushesAndPublishesResync(t *testing.T) {
+-	log, _ := logger.New("test", logger.Options{})
+-	mch := NewMesheryControllersHelper(log, controllers.OperatorDeploymentConfig{}, nil, nil, nil, nil)
+-
+-	testBroker := &testMeshsyncBroker{}
+-	mch.ctxMeshsyncDataHandler = newTestMeshsyncHandler(t, testBroker, nil)
+-
+-	flushCalled := false
+-	flushErr, resyncErr := mch.FlushAndResyncMeshsync(func() error {
+-		flushCalled = true
+-		return nil
+-	})
+-
+-	if !flushCalled {
+-		t.Fatal("expected cache flush callback to run")
+-	}
+-	if flushErr != nil {
+-		t.Fatalf("flush error = %v, want nil", flushErr)
+-	}
+-	if resyncErr != nil {
+-		t.Fatalf("resync error = %v, want nil", resyncErr)
+-	}
+-
+-	testBroker.mu.Lock()
+-	published := testBroker.published
+-	testBroker.mu.Unlock()
+-	if published != 1 {
+-		t.Fatalf("broker publish count = %d, want 1", published)
+-	}
+-}
+-
+-func TestMeshsyncDataHandlerResyncReturnsErrorWhenBrokerDisconnected(t *testing.T) {
+-	testBroker := &testMeshsyncBroker{closed: true}
+-	handler := newTestMeshsyncHandler(t, testBroker, nil)
+-
+-	if err := handler.Resync(); err == nil {
+-		t.Fatal("expected Resync to return an error when broker is disconnected")
+-	}
+-}
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #23705** (2026-11-15): [mesheryctl] Preserve followed Kubernetes log lines (@0xmaster7)
-- **PR #23703** (2026-11-15): [mesheryctl] Exclude URL query from imported design name (@0xmaster7)
-- **PR #23699** (2026-11-16): [UI] Add accessible names to Dashboard Workload and HoneyComb dropdowns (@antcybersec)
-- **PR #23697** (2026-11-15): [Server] Test undecodable provider response in filter save handler (@antcybersec)
-- **PR #23691** (2026-11-15): [Docs] Remove Bitcask from Meshery database docs (@Asheesh7298)
-- **PR #23688** (2026-11-15): [Server] Return 404 for a design that does not exist (@himanishpuri)
+- **PR #23896** (2026-11-18): Revert "[Server] Prevent MeshSync cache loss when the resync handler is unavailable" (@miacycle)
+- **PR #23891** (2026-11-18): [Server] Guard nil provider, validate path UUIDs, and propagate status codes in pattern handlers (@patelshivani2283-lab)
+- **PR #23878** (2026-11-18): [Server] Prevent MeshSync cache loss when the resync handler is unavailable (@Nixantsingh943)
+- **PR #23874** (2026-11-17): [Server] Restrict filter URL imports to public destinations (@itsCodeTide)
+- **PR #23868** (2026-11-17): [mesheryctl] Do not parse a registry summary when model generate skips registration (@Eternity0207)
+- **PR #23864** (2026-11-17): [Server] Bound request body size and guard against DoS in MeshModelGenerationHandler (@Supersaiyan101)
 
 ---
 
@@ -1214,24 +1707,36 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in WorkloadChart.test.tsx
+## X. Empirical Invariant Guard in meshery-server_errors_index.json
 
 **RULE**:
-When implementing operations in `ui/components/dashboard/charts/WorkloadChart.test.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meshery/meshery. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/data/errorindex/meshery-server_errors_index.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meshery/meshery. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `44f1ee38`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3a3c535f`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `ui/components/dashboard/charts/WorkloadChart.test.tsx`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/data/errorindex/meshery-server_errors_index.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-    inputProps,
-    inputProps?: { 'aria-label'?: string };
-      aria-label={inputProps?.['aria-label']}
-    expect(screen.getByRole('combobox', { name: 'Namespace' })).toBeInTheDocument();
+    },
+    {
+      "code": "meshery-server-1494",
+      "moniker": "ErrRequestTooLargeCode",
+      "component": {
+        "name": "meshery-server",
+        "type": "component"
+      },
+      "numericCode": "1494",
+      "severity": "alert",
+      "probableCause": [
+        "Request payload exceeds maximum allowed size"
+      ],
+      "suggestedRemediation": [
+        "Reduce request payload size to within acceptable limits"
+      ]
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1241,7 +1746,7 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `44f1ee38` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3a3c535f` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

@@ -10901,3 +10901,8 @@ Every entry in this ledger must capture:
 | `learn-github-crossplane-crossplane` | `https://github.com/crossplane/crossplane` | `ba22c621` | Multi-dimensional audit evidence | 2026-11-18T07:30:50.183Z |
 | `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `74fdd7b1` | Multi-dimensional audit evidence | 2026-11-18T07:30:51.880Z |
 | `learn-github-apple-foundationdb` | `https://github.com/apple/foundationdb` | `33871e2f` | Multi-dimensional audit evidence | 2026-11-18T07:30:54.058Z |
+| `learn-huggingface-tencent-hy4-flash` | `https://huggingface.co/tencent/Hy4-flash` | `hf-tencent` | Multi-dimensional audit evidence | 2026-11-18T07:38:51.621Z |
+| `learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2` | `https://huggingface.co/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2` | `hf-sentenc` | Multi-dimensional audit evidence | 2026-11-18T07:38:53.939Z |
+| `learn-github-meshery-meshery` | `https://github.com/meshery/meshery` | `3a3c535f` | Multi-dimensional audit evidence | 2026-11-18T07:39:03.781Z |
+| `learn-github-arangodb-arangodb` | `https://github.com/arangodb/arangodb` | `38d9d57c` | Multi-dimensional audit evidence | 2026-11-18T07:39:08.809Z |
+| `learn-dom-d-c631c795` | `project://hf-tencent-hy4-flash` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-tencent-hy4-flash-learnings.md` | 2026-11-18T07:39:47.190Z |

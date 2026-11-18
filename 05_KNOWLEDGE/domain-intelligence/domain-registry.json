@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-18T07:30:58.516Z",
-  "total_records": 1787,
+  "last_updated": "2026-11-18T07:39:48.793Z",
+  "total_records": 1790,
   "domains": {
     "A": {
       "total": 11,
@@ -48,7 +48,7 @@
       ]
     },
     "D": {
-      "total": 769,
+      "total": 772,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -818,7 +818,10 @@
         "domain_intelligence-research-knowledge-intelligence-hf-apple-fastframes-l-learnings-core-invariants",
         "DOM-D-5E75492A",
         "domain_intelligence-research-knowledge-intelligence-hf-alissonerdx-bfs-best-face-swap-learnings-core",
-        "DOM-D-45D6F650"
+        "DOM-D-45D6F650",
+        "domain_intelligence-research-knowledge-intelligence-tencent-hy4-flash-core-invariants",
+        "DOM-D-C631C795",
+        "domain_intelligence-research-knowledge-intelligence-hf-tencent-hy4-flash-learnings-core-invariants"
       ]
     },
     "E": {
@@ -7884,8 +7887,8 @@
       "title": "Technical Construction Intelligence: meshery/meshery Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-meshery-meshery-technical-construction-intelligence-meshery-meshery-core-invaria.md",
       "repository": "meshery/meshery",
-      "content_hash": "da9e72d31601aee0ff1aecd405c842566c5197d7aa3731fb9385480358d16e11",
-      "created_at": "2026-11-16T03:37:14.085Z"
+      "content_hash": "154e46100fb624a997f7c5f76c98b4a55fde59bf761e65eea68d2ff44bdb996a",
+      "created_at": "2026-11-18T07:39:04.205Z"
     },
     "domain_intelligence-architecture-intelligence-aleo-labs-protocol-snarkos-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-aleo-labs-protocol-snarkos-core-invariants",
@@ -7962,8 +7965,8 @@
       "title": "Technical Construction Intelligence: meshery-meshery-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-meshery-meshery-learnings-technical-construction-intelligence-meshery-meshery-le.md",
       "repository": "meshery-meshery-learnings",
-      "content_hash": "93106c1bd066e1c0cde5ac1ec8dee2b079775ae88d372358abbb0fa7924bee27",
-      "created_at": "2026-11-16T03:37:30.379Z"
+      "content_hash": "ff85531698f69dd0d555b43b5ec572bb252edcd181a1fa5f9a4fcefe87806f12",
+      "created_at": "2026-11-18T07:39:48.793Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hemmingwayai-hemmingway-1-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hemmingwayai-hemmingway-1-core-invariants",
@@ -10167,8 +10170,8 @@
       "title": "Research & Knowledge Intelligence: sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-research-knowledg.md",
       "repository": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
-      "content_hash": "2baf522771c0e929b0de3d6615ea687d2fa9936f91f4f36f9912e32259fc199a",
-      "created_at": "2026-11-13T20:47:01.989Z"
+      "content_hash": "3cb267727cbdfe5cc2be89461da5090627867190cb1dbd62c5e6144328b49e4b",
+      "created_at": "2026-11-18T07:38:54.173Z"
     },
     "domain_intelligence-content-information-intelligence-temporalio-temporal-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-temporalio-temporal-core-invariants",
@@ -10191,11 +10194,11 @@
     "domain_intelligence-research-knowledge-intelligence-hf-sentence-transformers-paraphrase-multilingual": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-sentence-transformers-paraphrase-multilingual",
       "domain_letter": "D",
-      "title": "Research & Knowledge Intelligence: hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-learnings Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-learnings-researc.md",
-      "repository": "hf-sentence-transformers-paraphrase-multilingual-mpnet-base-v2-learnings",
-      "content_hash": "cb40320332c7cafed7b7e205419ebf3f027624da76e50523795dbe02093d9373",
-      "created_at": "2026-11-14T14:40:20.033Z"
+      "title": "Research & Knowledge Intelligence: hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-learnings-researc.md",
+      "repository": "hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-learnings",
+      "content_hash": "233917508e6b8b533bad9a8eec1553c28bc9ef3dc3d519e2ddd17178e3ccdb16",
+      "created_at": "2026-11-18T07:39:47.959Z"
     },
     "domain_intelligence-content-information-intelligence-temporalio-temporal-learnings-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-temporalio-temporal-learnings-core-invariants",
@@ -15940,8 +15943,8 @@
       "title": "Technical Construction Intelligence: arangodb/arangodb Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-arangodb-arangodb-technical-construction-intelligence-arangodb-arangodb-core-inv.md",
       "repository": "arangodb/arangodb",
-      "content_hash": "d89a587b257e82691ff464627615f55fef2d24b674c9665308788862f8fd7836",
-      "created_at": "2026-11-17T08:31:10.131Z"
+      "content_hash": "d4771048045b5119af09ad8e3ea1fbb26e54479a9d72b520779653158b2fbbdf",
+      "created_at": "2026-11-18T07:39:09.232Z"
     },
     "domain_intelligence-architecture-intelligence-jithin-sabu-purge-app-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-jithin-sabu-purge-app-learnings-core-invariants",
@@ -29904,6 +29907,66 @@
       "repository": "apache-shardingsphere-learnings",
       "content_hash": "42f1db97f15f95d4adec4f191aff045b61f833674dfd4d842089cb07fa518ad6",
       "created_at": "2026-11-18T07:14:46.328Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-tencent-hy4-flash-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-tencent-hy4-flash-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: tencent/Hy4-flash Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-tencent-hy4-flash-research-knowledge-intelligence-tencent-hy4-flash-core-inva.md",
+      "repository": "tencent/Hy4-flash",
+      "content_hash": "9d0c999dce5a56a9871bc74a36e3c6c94734e928e026dd8a6fce72c03c344495",
+      "created_at": "2026-11-18T07:38:51.856Z"
+    },
+    "DOM-D-C631C795": {
+      "record_id": "DOM-D-C631C795",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): tencent/Hy4-flash",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-tencent-hy4-flash-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/tencent/Hy4-flash](https://huggingface.co/tencent/Hy4-flash))  \n> **Source Version**: `hf-tencent-h`  \n> **License**: Open-Source  \n> **Synthesized By**: ze",
+      "content_hash": "e2390809b284b700965023416e12f25fbb275d685f24eb997218676939982338",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-tencent-hy4-flash-learnings.md`  \n> **Source**: huggingface ([https://huggingface -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-tencent-hy4-flash-learnings.md`  \n> **Source**: huggingface ([https://huggingface",
+      "provenance": {
+        "source_uri": "project://hf-tencent-hy4-flash/hf-tencent-hy4-flash-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-18T07:39:12.250Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-tencent-hy4-flash)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-tencent-hy4-flash"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-18T07:39:47.153Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-tencent-hy4-flash-learnings-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-tencent-hy4-flash-learnings-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-tencent-hy4-flash-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-tencent-hy4-flash-learnings-research-knowledge-intelligence-hf-tencent-hy4-fl.md",
+      "repository": "hf-tencent-hy4-flash-learnings",
+      "content_hash": "5ade99399b31165df0d47caf9097d90f98ea6969169f56c6471ba74f0822553b",
+      "created_at": "2026-11-18T07:39:47.479Z"
     }
   }
 }
