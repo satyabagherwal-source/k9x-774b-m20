@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-18T17:52:02.669Z",
+  "updated_at": "2026-11-18T18:38:25.563Z",
   "stats": {
-    "total_discovered": 5607,
-    "approved_pending_harvest": 5300,
+    "total_discovered": 5615,
+    "approved_pending_harvest": 5308,
     "harvested_count": 0,
     "rejected_count": 307,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 5282,
+      "COMMUNITY_AND_EXPERT": 5290,
       "OFFICIAL_DOCUMENTATION": 178,
       "STANDARDS_AND_SPECIFICATIONS": 111,
       "ENGINEERING_BLOGS": 4,
@@ -121226,6 +121226,182 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
         "fileName": "tailscale-tailscale-learnings.md"
+      }
+    },
+    "SRC-52586A3C1DA9": {
+      "id": "SRC-52586A3C1DA9",
+      "url": "https://github.com/erkamyaman/rust-anything",
+      "title": "https://github.com/erkamyaman/rust-anything",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T18:38:25.144Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/erkamyaman-rust-anything-learnings.md",
+        "fileName": "erkamyaman-rust-anything-learnings.md"
+      }
+    },
+    "SRC-4D64360871E1": {
+      "id": "SRC-4D64360871E1",
+      "url": "https://app.coderabbit.ai/change-stack/erkamyaman/rust-anything/pull/83?scope=ghh_OusAJGA4HG8ljoOV0wJvVx8NmnZIjc2DdjmxOu0xZWA&amp%3Bcs_source=review_comment",
+      "title": "https://app.coderabbit.ai/change-stack/erkamyaman/rust-anything/pull/83?scope=ghh_OusAJGA4HG8ljoOV0wJvVx8NmnZIjc2DdjmxOu0xZWA&amp%3Bcs_source=review_comment",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T18:38:25.218Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/erkamyaman-rust-anything-learnings.md",
+        "fileName": "erkamyaman-rust-anything-learnings.md"
+      }
+    },
+    "SRC-202E0B263062": {
+      "id": "SRC-202E0B263062",
+      "url": "https://app.coderabbit.ai/change-stack/erkamyaman/rust-anything/pull/82?scope=ghh_OusAJGA4HG8ljoOV0wJvVx8NmnZIjc2DdjmxOu0xZWA&amp%3Bcs_source=review_comment",
+      "title": "https://app.coderabbit.ai/change-stack/erkamyaman/rust-anything/pull/82?scope=ghh_OusAJGA4HG8ljoOV0wJvVx8NmnZIjc2DdjmxOu0xZWA&amp%3Bcs_source=review_comment",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T18:38:25.315Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/erkamyaman-rust-anything-learnings.md",
+        "fileName": "erkamyaman-rust-anything-learnings.md"
+      }
+    },
+    "SRC-F88B1EAC2109": {
+      "id": "SRC-F88B1EAC2109",
+      "url": "https://github.com/user-attachments/files/35022897/README.md",
+      "title": "https://github.com/user-attachments/files/35022897/README.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T18:38:25.364Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/erkamyaman-rust-anything-learnings.md",
+        "fileName": "erkamyaman-rust-anything-learnings.md"
+      }
+    },
+    "SRC-7B6FD00321D6": {
+      "id": "SRC-7B6FD00321D6",
+      "url": "https://coderabbit.ai/integrations/schema.v2.json",
+      "title": "https://coderabbit.ai/integrations/schema.v2.json",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T18:38:25.414Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/erkamyaman-rust-anything-learnings.md",
+        "fileName": "erkamyaman-rust-anything-learnings.md"
+      }
+    },
+    "SRC-DF485109A35A": {
+      "id": "SRC-DF485109A35A",
+      "url": "https://github.com/erkamyaman/rust-anything/commit/e8ac243",
+      "title": "https://github.com/erkamyaman/rust-anything/commit/e8ac243",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T18:38:25.465Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/erkamyaman-rust-anything-learnings.md",
+        "fileName": "erkamyaman-rust-anything-learnings.md"
+      }
+    },
+    "SRC-54E4969ECBB3": {
+      "id": "SRC-54E4969ECBB3",
+      "url": "https://github.com/erkamyaman/rust-anything/commit/caea59a",
+      "title": "https://github.com/erkamyaman/rust-anything/commit/caea59a",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T18:38:25.514Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/erkamyaman-rust-anything-learnings.md",
+        "fileName": "erkamyaman-rust-anything-learnings.md"
+      }
+    },
+    "SRC-9952AD6C7027": {
+      "id": "SRC-9952AD6C7027",
+      "url": "https://github.com/erkamyaman",
+      "title": "https://github.com/erkamyaman",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T18:38:25.563Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/erkamyaman-rust-anything-learnings.md",
+        "fileName": "erkamyaman-rust-anything-learnings.md"
       }
     }
   }

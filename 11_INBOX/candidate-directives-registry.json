@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T18:14:54.417Z",
+  "last_updated": "2026-11-18T18:39:03.250Z",
   "directives": [
     {
       "id": "CD-001",
@@ -30547,6 +30547,48 @@
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-4CB58F--pxt-1788-fix-embed-function-name-in-err.md",
       "staged_date": "2026-11-18"
+    },
+    {
+      "id": "CD-SJ6E",
+      "directive_title": "Deep-dive lessons: doctor, MCP labels/progress/prompts, gate fixes, stall detect",
+      "source_repo": "erkamyaman-rust-anything-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-SJ6E-deep-dive-lessons-doctor-mcp-labels-progress-prompts-gate-fixes-stall-detect.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-18",
+      "domain_letter": "I"
+    },
+    {
+      "id": "CD-SG2S",
+      "directive_title": "honor `s3.iam_role_arn` in the storage catalog",
+      "source_repo": "risingwavelabs/risingwave",
+      "source_commit": "e3c035e0",
+      "staged_file": "11_INBOX/candidate-directives/CD-SG2S-honor-s3-iam_role_arn-in-the-storage-catalog.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-18",
+      "domain_letter": "I"
+    },
+    {
+      "id": "CD-REV-6ABAA9",
+      "directive_title": "Deep-dive lessons: doctor, MCP labels/progress/prompts, gate fixes, stall detect",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "erkamyaman-rust-anything",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-6ABAA9-deep-dive-lessons-doctor-mcp-labels-prog.md",
+      "staged_date": "2026-11-18"
+    },
+    {
+      "id": "CD-TC2A",
+      "directive_title": "iceberg): honor `s3.iam_role_arn` in the storage catalog",
+      "source_repo": "risingwavelabs-risingwave-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-TC2A-iceberg-honor-s3-iam_role_arn-in-the-storage-catalog.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-18",
+      "domain_letter": "I"
     }
   ]
 }

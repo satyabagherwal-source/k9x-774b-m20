@@ -11103,3 +11103,7 @@ Every entry in this ledger must capture:
 | `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/aleo-labs-protocol/snarkOS` | `7e65929d` | Multi-dimensional audit evidence | 2026-11-18T18:10:00.825Z |
 | `learn-github-pixeltable-pixeltable` | `https://github.com/pixeltable/pixeltable` | `6da45f64` | Multi-dimensional audit evidence | 2026-11-18T18:10:04.244Z |
 | `learn-huggingface-timm-mobilenetv3_small_100-lamb_in1k` | `https://huggingface.co/timm/mobilenetv3_small_100.lamb_in1k` | `hf-timm-mo` | Multi-dimensional audit evidence | 2026-11-18T18:14:49.094Z |
+| `learn-huggingface-compvis-stable-diffusion-v1-4` | `https://huggingface.co/CompVis/stable-diffusion-v1-4` | `hf-compvis` | Multi-dimensional audit evidence | 2026-11-18T18:38:05.829Z |
+| `learn-github-erkamyaman-rust-anything` | `https://github.com/erkamyaman/rust-anything` | `8a2e1d1f` | Multi-dimensional audit evidence | 2026-11-18T18:38:08.551Z |
+| `learn-github-risingwavelabs-risingwave` | `https://github.com/risingwavelabs/risingwave` | `e3c035e0` | Multi-dimensional audit evidence | 2026-11-18T18:38:21.568Z |
+| `learn-dom-d-70cb2061` | `project://hf-compvis-stable-diffusion-v1-4` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-compvis-stable-diffusion-v1-4-learnings.md` | 2026-11-18T18:39:02.365Z |

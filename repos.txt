@@ -5202,3 +5202,7 @@ https://huggingface.co/briaai/RMBG-3.0
 # --- Automatically Discovered by AI Scout Engine [2026-11-18T16:31:20.188Z] ---
 # [HUGGINGFACE-AI-MODELS] HuggingFaceTB/SmolVLM2-256M-Video-Instruct (4000 score) - Verified Hugging Face Model: HuggingFaceTB/SmolVLM2-256M-Video-Instruct (200 lik
 https://huggingface.co/HuggingFaceTB/SmolVLM2-256M-Video-Instruct
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-18T18:37:56.720Z] ---
+# [HIGH-PERF-SYSTEMS] erkamyaman/rust-anything (1854 score) - Rewrite your whole app in Rust, one piece at a time, checked against the origina
+https://github.com/erkamyaman/rust-anything

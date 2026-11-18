@@ -805,8 +805,8 @@
     "sourceUrl": "https://huggingface.co/CompVis/stable-diffusion-v1-4",
     "sourceVersion": "hf-compvis-stable-diffusion-v1-4",
     "license": "Open-Source",
-    "contentHash": "a8f964b2e2d54500fbc985e6abd2ada6b6999bdbf3bddca35fe72aa022e85bf8",
-    "lastHarvestedAt": "2026-11-13T22:45:42.286Z",
+    "contentHash": "5b4c18d781b4913e888ee23421cad7d40eb41b0fd5d194c9131b8922f7fe275e",
+    "lastHarvestedAt": "2026-11-18T18:38:05.829Z",
     "learningId": "learn-huggingface-compvis-stable-diffusion-v1-4"
   },
   "hf-meta-llama-meta-llama-3-8b": {
@@ -3773,10 +3773,10 @@
     "repository": "risingwavelabs/risingwave",
     "platform": "github",
     "sourceUrl": "https://github.com/risingwavelabs/risingwave",
-    "sourceVersion": "5d7a0e11",
+    "sourceVersion": "e3c035e0",
     "license": "Apache-2.0",
-    "contentHash": "1a515577a2ff7c4737743c309319433437b018d81aeda8f99f812498224f0ce0",
-    "lastHarvestedAt": "2026-11-18T03:48:14.308Z",
+    "contentHash": "86d871b48ad6bc71b94d668789081dae3bd28bb6334808402ded6462aeaf41e6",
+    "lastHarvestedAt": "2026-11-18T18:38:21.568Z",
     "learningId": "learn-github-risingwavelabs-risingwave"
   },
   "mertjf-tailblocks": {
@@ -12908,5 +12908,15 @@
     "contentHash": "5159fda85e55fb82a8aecf512688b78e8962bee711c40ab41214cd6c3a45231d",
     "lastHarvestedAt": "2026-11-18T16:31:26.936Z",
     "learningId": "learn-huggingface-huggingfacetb-smolvlm2-256m-video-instruct"
+  },
+  "erkamyaman-rust-anything": {
+    "repository": "erkamyaman/rust-anything",
+    "platform": "github",
+    "sourceUrl": "https://github.com/erkamyaman/rust-anything",
+    "sourceVersion": "8a2e1d1f",
+    "license": "MIT",
+    "contentHash": "03384e9e6475471326bd664a2df9cdfcf52e38f0ec1f6767fa3680f51901a84e",
+    "lastHarvestedAt": "2026-11-18T18:38:08.551Z",
+    "learningId": "learn-github-erkamyaman-rust-anything"
   }
 }

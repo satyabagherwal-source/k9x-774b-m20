@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-18T03:48:18.780Z",
+  "timestamp": "2026-11-18T18:39:03.128Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-risingwavelabs-risingwave-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [risingwavelabs-risingwave-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-18T03:48:18.780Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-18T18:39:03.128Z`  
 > **Learning ID**: `LEARN-EVO-risingwavelabs-risingwave-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/risingwavelabs-risingwave-learnings.md`  
 > **Source**: github ([https://github.com/risingwavelabs/risingwave](https://github.com/risingwavelabs/risingwave))  
-> **Source Version**: `5d7a0e11`  
+> **Source Version**: `e3c035e0`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-18T03:48:13.427Z  
+> **Timestamp**: 2026-11-18T18:38:20.371Z  
 > **Learning ID**: `learn-github-risingwavelabs-risingwave`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/risingwavelabs-risingwave-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/risingwavelabs/risingwave](https://github.com/risingwavelabs/risingwave))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T03:48:13.422Z  
+> **Harvest Timestamp**: 2026-11-18T18:38:20.365Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Event streaming platform for agentic AI. Continuously ingest, transform, and serve event streams in real time, at scale.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 9420 stars
+- **Stars / Engagement**: 9423 stars
 
 ---
 
@@ -1102,488 +1102,283 @@ pub(crate) use def_path_lookup;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5d7a0e11` (2026-11-17)
-**Commit Message**: fix(meta): send subscribe snapshots through the notification queue (#27834)
+### Incident Patch 1: `e3c035e0` (2026-11-18)
+**Commit Message**: fix(iceberg): honor `s3.iam_role_arn` in the storage catalog (#28035)
 
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `src/meta/src/manager/notification.rs` (modified, +58/-19)
+**File**: `src/connector/src/connector_common/iceberg/mod.rs` (modified, +1/-0)
 ```diff
-@@ -86,15 +86,20 @@ pub enum LocalNotification {
- }
- 
- #[derive(Debug)]
--struct Target {
--    subscribe_type: SubscribeType,
--    // `None` indicates sending to all subscribers of `subscribe_type`.
--    worker_key: Option<WorkerKey>,
-+enum Target {
-+    Subscribers {
-+        subscribe_type: SubscribeType,
-+        // `None` indicates sending to all subscribers of `subscribe_type`.
-+        worker_key: Option<WorkerKey>,
-+    },
-+    /// The sender of one subscribe call. By the time the task is delivered, the worker may have
-+    /// subscribed again and replaced its entry in the sender map.
-+    Sender(UnboundedSender<Notification>),
- }
- 
- impl From<SubscribeType> for Target {
-     fn from(value: SubscribeType) -> Self {
--        Self {
-+        Self::Subscribers {
-             subscribe_type: value,
-             worker_key: None,
-         }
-@@ -227,20 +232,18 @@ impl NotificationManager {
-         self.notify(target, operation, info, None);
-     }
- 
-+    /// Queue the snapshot behind every notification published before it was read. The observer
-+    /// manager filters out such notifications only if they arrive before the snapshot.
-     pub fn notify_snapshot(
-         &self,
-         sender: UnboundedSender<Notification>,
-         meta_snapshot: MetaSnapshot,
-     ) {
--        let response = SubscribeResponse {
--            status: None,
--            operation: Operation::Snapshot as i32,
--            info: Some(Info::Snapshot(meta_snapshot)),
--            version: Default::default(),
--        };
--        let _ = sender.send(Ok(response)).inspect_err(|err| {
--            tracing::warn!("Failed to notify direct subscriber: {}", err.as_report());
--        });
-+        self.notify_without_version(
-+            Target::Sender(sender),
-+            Operation::Snapshot,
-+            Info::Snapshot(meta_snapshot),
-+        );
-     }
- 
-     pub fn notify_all_without_version(&self, operation: Operation, info: Info) {
-@@ -281,7 +284,7 @@ impl NotificationManager {
- 
-     pub(crate) fn notify_hummock_targeted_update(&self, worker_key: WorkerKey, info: Info) {
-         self.notify_without_version(
--            Target {
-+            Target::Subscribers {
-                 subscribe_type: SubscribeType::Hummock,
-                 worker_key: Some(worker_key),
-             },
-@@ -419,13 +422,25 @@ impl NotificationManagerCore {
-             };
-         }
- 
--        let senders = self.senders_of(target.subscribe_type);
-+        let (subscribe_type, worker_key) = match target {
-+            Target::Subscribers {
-+                subscribe_type,
-+                worker_key,
-+            } => (subscribe_type, worker_key),
-+            Target::Sender(sender) => {
-+                let _ = sender.send(Ok(response)).inspect_err(|err| {
-+                    tracing::warn!("Failed to send snapshot: {}", err.as_report());
-+                });
-+                return;
-+            }
-+        };
-+        let senders = self.senders_of(subscribe_type);
- 
--        if let Some(worker_key) = target.worker_key {
-+        if let Some(worker_key) = worker_key {
-             match senders.entry(worker_key.clone()) {
-                 Entry::Occupied(entry) => {
-                     let _ = entry.get().send(Ok(response)).inspect_err(|err| {
--                        warn_send_failure!(target.subscribe_type, &worker_key, err.as_report());
-+                        warn_send_failure!(subscribe_type, &worker_key, err.as_report());
-                         entry.remove_entry();
-                     });
-                 }
-@@ -438,7 +453,7 @@ impl NotificationManagerCore {
-                 sender
-                     .send(Ok(response.clone()))
-                     .inspect_err(|err| {
--                        warn_send_failure!(target.subscribe_type, &worker_key, err.as_report());
-+                        warn_send_failure!(subscribe_type, &worker_key, err.as_report());
-                     })
-                     .is_ok()
-             });
-@@ -585,6 +600,30 @@ mod tests {
-         assert_eq!(mgr.current_version().await, version);
-     }
- 
-+    #[tokio::test]
-+    async fn test_snapshot_arrives_after_notification_it_covers() {
-+        let mgr = NotificationManager::new(SqlMetaStore::for_test().await).await;
-+        let worker_key = WorkerKey(HostAddress {
-+            host: "a".to_owned(),
-+            port: 1,
-+        });
-+        let (tx, mut rx) = mpsc::unbounded_channel();
-+        mgr.insert_sender(SubscribeType::Frontend, worker_key, tx.clone());
-+
-+        // The test runtime has one thread and `notify_frontend` does not yield after queueing, so
-+        // the notification is still in the queue when the snapshot is sent.
-+        let version = mgr
-+            .notify_frontend(Operation::Add, Info::Database(Default::default()))
-+            .await;
-+        mgr.notify_snapshot(tx, MetaSnapshot::default());
-+
-+        let first = rx.recv().await.unwrap().unwrap();
-+        assert!(matches!(first.info, Some(Info::Database(_))));
-+        asser
+@@ -632,6 +632,7 @@ impl IcebergCommon {
+                     .warehouse(warehouse)
+                     .access_key(self.s3_access_key.clone())
+                     .secret_key(self.s3_secret_key.clone())
++                    .iam_role_arn(self.s3_iam_role_arn.clone())
+                     .region(self.s3_region.clone())
+                     .endpoint(self.s3_endpoint.clone())
+                     .path_style_access(Some(self.effective_s3_path_style_access()))
 ```
 
----
-
-### Incident Patch 2: `3d5b9071` (2026-11-17)
-**Commit Message**: fix(frontend): allow kinesis with plain avro aws glue schema registry (#27611)
-
-**File**: `src/frontend/src/handler/create_source.rs` (modified, +4/-4)
+**File**: `src/connector/src/connector_common/iceberg/storage_catalog.rs` (modified, +6/-2)
 ```diff
-@@ -78,7 +78,7 @@ use risingwave_pb::plan_common::{EncodeType, FormatType, SourceRefreshMode};
- use risingwave_pb::stream_plan::PbStreamFragmentGraph;
- use risingwave_pb::telemetry::TelemetryDatabaseObject;
- use risingwave_sqlparser::ast::{
--    AstString, ColumnDef, ColumnOption, CreateSourceStatement, Encode, Format, FormatEncodeOptions,
-+    ColumnDef, ColumnOption, CreateSourceStatement, Encode, Format, FormatEncodeOptions,
-     ObjectName, SourceWatermark, SqlOptionValue, TableConstraint, Value, get_delimiter,
+@@ -26,8 +26,8 @@ use async_trait::async_trait;
+ use futures::TryStreamExt;
+ use iceberg::io::{
+     AZBLOB_ACCOUNT_KEY, AZBLOB_ACCOUNT_NAME, AZBLOB_ENDPOINT, FileIO, FileIOBuilder,
+-    GCS_CREDENTIALS_JSON, GCS_DISABLE_CONFIG_LOAD, S3_ACCESS_KEY_ID, S3_DISABLE_CONFIG_LOAD,
+-    S3_ENDPOINT, S3_PATH_STYLE_ACCESS, S3_REGION, S3_SECRET_ACCESS_KEY,
++    GCS_CREDENTIALS_JSON, GCS_DISABLE_CONFIG_LOAD, S3_ACCESS_KEY_ID, S3_ASSUME_ROLE_ARN,
++    S3_DISABLE_CONFIG_LOAD, S3_ENDPOINT, S3_PATH_STYLE_ACCESS, S3_REGION, S3_SECRET_ACCESS_KEY,
  };
- use risingwave_sqlparser::parser::{IncludeOption, IncludeOptionItem};
-@@ -143,8 +143,8 @@ fn non_generated_sql_columns(columns: &[ColumnDef]) -> Vec<ColumnDef> {
- fn try_consume_string_from_options(
-     format_encode_options: &mut BTreeMap<String, String>,
-     key: &str,
--) -> Option<AstString> {
--    format_encode_options.remove(key).map(AstString)
-+) -> Option<String> {
-+    format_encode_options.remove(key)
- }
- 
- fn try_consume_schema_registry_config_from_options(
-@@ -185,7 +185,7 @@ fn try_consume_pulsar_schema_config_from_options(
- fn consume_string_from_options(
-     format_encode_options: &mut BTreeMap<String, String>,
-     key: &str,
--) -> Result<AstString> {
-+) -> Result<String> {
-     try_consume_string_from_options(format_encode_options, key).ok_or(RwError::from(ProtocolError(
-         format!("missing field {} in options", key),
-     )))
-```
-
-**File**: `src/frontend/src/handler/create_source/external_schema.rs` (modified, +12/-14)
-```diff
-@@ -136,9 +136,7 @@ async fn bind_columns_from_source_for_non_cdc(
-     )?;
- 
-     fn get_key_message_name(options: &mut BTreeMap<String, String>) -> Option<String> {
--        consume_string_from_options(options, KEY_MESSAGE_NAME_KEY)
--            .map(|ele| Some(ele.0))
--            .unwrap_or(None)
-+        consume_string_from_options(options, KEY_MESSAGE_NAME_KEY).ok()
-     }
-     fn get_sr_name_strategy_check(
-         options: &mut BTreeMap<String, String>,
-@@ -188,10 +186,10 @@ async fn bind_columns_from_source_for_non_cdc(
-             stream_source_info.use_schema_registry = use_schema_registry;
-             stream_source_info
-                 .row_schema_location
--                .clone_from(&row_schema_location.0);
-+                .clone_from(&row_schema_location);
-             stream_source_info
-                 .proto_message_name
--                .clone_from(&message_name.0);
-+                .clone_from(&message_name);
-             stream_source_info.key_message_name =
-                 get_key_message_name(&mut format_encode_options_to_consume);
-             stream_source_info.name_strategy =
-@@ -217,7 +215,8 @@ async fn bind_columns_from_source_for_non_cdc(
-             {
-                 // Legacy logic that assumes either `schema.location` or confluent `schema.registry`.
-                 // The handling of newly added aws glue is centralized in `connector::parser`.
--                // TODO(xiangjinwu): move these option parsing to `connector::parser` as well.
-+                // TODO(xiangjinwu): move these option parsing to `connector::parser` as well,
-+                // together with schema registry logic in `validate::validate_compatibility`
- 
-                 let (row_schema_location, use_schema_registry) =
-                     get_schema_location(&mut format_encode_options_to_consume)?;
-@@ -240,9 +239,8 @@ async fn bind_columns_from_source_for_non_cdc(
-                 stream_source_info.use_schema_registry = use_schema_registry;
-                 stream_source_info
-                     .row_schema_location
--                    .clone_from(&row_schema_location.0);
--                stream_source_info.proto_message_name =
--                    message_name.unwrap_or(AstString("".into())).0;
-+                    .clone_from(&row_schema_location);
-+                stream_source_info.proto_message_name = message_name.unwrap_or_default();
-                 stream_source_info.key_message_name =
-                     get_key_message_name(&mut format_encode_options_to_consume);
-                 stream_source_info.name_strategy =
-@@ -261,13 +259,13 @@ async fn bind_columns_from_source_for_non_cdc(
-         }
-         (Format::Plain, Encode::Csv) => {
-             let chars =
--                consume_string_from_options(&mut format_encode_options_to_consume, "delimiter")?.0;
-+                consume_string_from_options(&mut format_encode_options_to_consume, "delimiter")?;
-             let delimiter = get_delimiter(chars.as_str()).context("failed to parse delimiter")?;
-             let has_header = try_consume_string_from_options(
-                 &mut format_encode_options_to_consume,
-                 "without_header",
-             )
--            .map(|s| s.0 == "false")
-+            .map(|s| s == "false")
-             .unwrap_or(true);
- 
-             if is_kafka && has_header {
-@@ -466,7 +464,7 @@ pub(super) fn row_encode_to_prost(row_encode: &Encode) -> EncodeType {
- 
- pub fn get_schema_location(
-     format_encode_options: &mut BTreeMap<String, String>,
--) -> Result<(AstString, bool)> {
-+) -> Result<(String, bool)> {
-     let schema_location = try_consume_string_from_options(format_encode_options, "schema.location");
-     let schema_registry = try_consume_string_from_options(format_encode_options, "schema.registry");
-     match (schema_location, schema_registry) {
-@@ -494,10 +492,10 @@ pub fn schema_has_schema_registry(schema: &FormatEncodeOptions) -> bool {
- }
- 
- #[inline]
--fn get_name_strategy_or_default(name_strategy: Option<AstString>) -> Result<Option<i32>> {
-+fn get_name_strategy_or_default(name_strategy: Option<String>) -> Result<Option<i32>> {
-     match name_strategy {
-         None => Ok(None),
--        Some(name) => Ok(Some(name_strategy_from_str(name.0.as_str())
-+        Some(name) => Ok(Some(name_strategy_from_str(name.as_str())
-             .ok_or_else(|| RwError::from(ProtocolError(format!("\
-             expect strategy name in topic_name_strategy, record_name_strategy and topic_record_name_strategy, but got {}", name))))? as i32)),
-     }
-```
-
-**File**: `src/frontend/src/handler/create_source/external_schema/json.rs` (modified, +4/-4)
-```diff
-@@ -14,7 +14,7 @@
- 
- use super::*;
- 
--pub fn json_schema_infer_use_schema_registry(schema_config: &Option<(AstString, bool)>) -> bool {
-+pub fn json_schema_infer_use_schema_registry(schema_config: &Option<(String, bool)>) -> bool {
-     match schema_config {
-         None => false,
-         Some((_, use_registry)) => *use_registry,
-@@ -23,7 +23,7 @@ pub fn json_schema_infer_use_schema_registry(schema_config: &Option<(AstString,
- 
- /// Map a JSON schema to a relational schema
- pub async fn extract_json_table_schema(
--    schema_config: &Option<(AstString, bool)>,
-+    schema_config: &Option<(String, bool)>,
-     with_properties: &BTreeMap<String, String>,
-     format_encode_options: &mut BTreeMap<String, String>,
- ) -> Result<Option<Vec<ColumnCatalog>>> {
-@@ -38,7 +38,7 @@ pub async fn extract_json_table_schema(
-             });
-             Ok(Some(
-                 fetch_json_schema_and_map_to_columns(
--                    &schema_location.0,
-+                    schema_location,
-                     schema_registry_auth,
-                     with_properties,
-                 )
-@@ -78,7 +78,7 @@ pub async fn extract_pulsar_json_table_schema(
- 
- pub fn get_json_schema_location(
-     format_encode_options: &mut BTreeMap<String, String>,
--) -> Result<Option<(AstString, bool)>> {
-+) -> Result<Option<(String, bool)>> {
-     let schema_location = try_consume_string_from_options(format_encode_options, "schema.location");
-     let schema_registry = try_consume_string_from_options(format_encode_options, "schema.registry");
-     match (schema_location, schema_registry) {
-```
-
-**File**: `src/frontend/src/handler/create_source/validate.rs` (modified, +13/-2)
-```diff
-@@ -175,9 +175,10 @@ pub fn validate_compatibility(
-         })?;
-     if connector != KAFKA_CONNECTOR && !uses_pulsar_schema {
-         let res = match (&format_encode.format, &format_encode.row_encode) {
--            (Format::Plain, Encode::Protobuf) | (Format::Plain, Encode::Avro) => {
-+            (Format::Plain | Format::Upsert, Encode::Protobuf | Encode::Avro) => {
-                 let mut options = WithOptions::try_from(format_encode.row_options())?;
--                let (_, use_schema_registry) = get_schema_location(options.inner_mut())?;
-+                let (_, use_schema_registry) =
-+                    get_schema_location(options.inner_mut()).unwrap_or_default();
-                 use_schema_registry
-             }
-             (Format::Debezium, Encode::Avro) => true,
-@@ -285,4 +286,14 @@ mod tests {
-         );
-         validate_compatibility(&format_encode, &mut source_options(KAFKA_CONNECTOR)).unwrap();
-     }
-+
-+    #[test]
-+    fn glue_schema_registry_non_kafka() {
-+        let format_encode = format_encode(
-+            Format::Plain,
-+            Encode::Avro,
-+            &[(AWS_GLUE_SCHEMA_ARN_KEY, "placeholder")],
-+        );
-+        validate_compatibility(&format_encode, &mut source_options(KINESIS_CONNECTOR)).unwrap();
-+    }
- }
+ use iceberg::spec::{TableMetadata, TableMetadataBuilder, TableProperties};
+ use iceberg::table::Table;
+@@ -52,6 +52,7 @@ pub struct StorageCatalogS3Config {
+     warehouse: String,
+     access_key: Option<String>,
+     secret_key: Option<String>,
++    iam_role_arn: Option<String>,
+     endpoint: Option<String>,
+     region: Option<String>,
+     path_style_access: Option<bool>,
+@@ -91,6 +92,9 @@ impl StorageCatalog {
+                 if let Some(secret_key) = &config.secret_key {
+                     file_io_builder = file_io_builder.with_prop(S3_SECRET_ACCESS_KEY, secret_key)
+                 };
++                if let Some(iam_role_arn) = &config.iam_role_arn {
++                    file_io_builder = file_io_builder.with_prop(S3_ASSUME_ROLE_ARN, iam_role_arn);
++                }
+                 if let Some(endpoint) = &config.endpoint {
+                     file_io_builder = file_io_builder.with_prop(S3_ENDPOINT, endpoint)
+                 }
 ```
 
 ---
 
-### Incident Patch 3: `1ee6e12c` (2026-11-17)
-**Commit Message**: fix(connector): exclude PostgreSQL INCLUDE columns from primary key (#27173)
+### Incident Patch 2: `4084d839` (2026-11-18)
+**Commit Message**: fix(optimizer): preserve LIKE filtering for trailing underscores (#28002)
 
-Co-authored-by: Xiaochong(Eddy) Wei <[REDACTED_EMAIL]>
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Signed-off-by: StandingMan <[REDACTED_EMAIL]>
 
-**File**: `e2e_test/source_inline/cdc/postgres/postgres_primary_key_include.slt` (added, +86/-0)
+**File**: `e2e_test/batch/functions/like.slt.part` (modified, +45/-0)
 ```diff
-@@ -0,0 +1,86 @@
-+# Verify that auto schema discovery excludes INCLUDE columns from the primary key
-+# while preserving the key-column order from the upstream PostgreSQL constraint.
-+
-+control substitution on
-+
-+statement ok
-+drop table if exists postgres_primary_key_include_rw;
-+
-+statement ok
-+drop source if exists postgres_primary_key_include_source cascade;
-+
-+system ok
-+PGDATABASE=${PGDATABASE:-postgres} psql -v ON_ERROR_STOP=1 -c "
-+    SELECT pg_terminate_backend(active_pid)
-+    FROM pg_replication_slots
-+    WHERE slot_name = 'postgres_primary_key_include_slot' AND active_pid IS NOT NULL;
-+    SELECT pg_sleep(1);
-+    SELECT pg_drop_replication_slot(slot_name)
-+    FROM pg_replication_slots
-+    WHERE slot_name = 'postgres_primary_key_include_slot';
-+    DROP PUBLICATION IF EXISTS postgres_primary_key_include_pub;
-+    DROP TABLE IF EXISTS public.postgres_primary_key_include CASCADE;
-+    CREATE TABLE public.postgres_primary_key_include (
-+        order_id int NOT NULL,
-+        tenant_id int NOT NULL,
-+        payload text,
-+        PRIMARY KEY (tenant_id, order_id) INCLUDE (payload)
-+    );
-+    CREATE PUBLICATION postgres_primary_key_include_pub
-+        FOR TABLE public.postgres_primary_key_include;
-+"
-+
-+statement ok
-+create source postgres_primary_key_include_source with (
-+    connector = 'postgres-cdc',
-+    hostname = '${PGHOST:localhost}',
-+    port = '${PGPORT:5432}',
-+    username = '${PGUSER:$USER}',
-+    password = '${PGPASSWORD:}',
-+    database.name = '${PGDATABASE:postgres}',
-+    schema.name = 'public',
-+    publication.name = 'postgres_primary_key_include_pub',
-+    publication.create.enable = 'false',
-+    slot.name = 'postgres_primary_key_include_slot'
-+);
-+
-+# Explicitly including the payload in the primary key must still fail validation.
-+statement error Primary key mismatch: the SQL schema defines 3 primary key columns, but the source table in Postgres has 2 columns.
-+create table postgres_primary_key_include_rw (
-+    order_id int,
-+    tenant_id int,
-+    payload varchar,
-+    primary key (tenant_id, order_id, payload)
-+)
-+from postgres_primary_key_include_source table 'public.postgres_primary_key_include';
-+
-+statement ok
-+create table postgres_primary_key_include_rw (*)
-+from postgres_primary_key_include_source table 'public.postgres_primary_key_include';
-+
-+query TTTT
-+describe postgres_primary_key_include_rw;
-+----
-+order_id integer false NULL
-+tenant_id integer false NULL
-+payload character varying false NULL
-+_rw_timestamp timestamp with time zone true NULL
-+primary key tenant_id, order_id NULL NULL
-+distribution key tenant_id, order_id NULL NULL
-+table description postgres_primary_key_include_rw NULL NULL
-+
-+statement ok
-+drop source postgres_primary_key_include_source cascade;
-+
-+system ok
-+PGDATABASE=${PGDATABASE:-postgres} psql -v ON_ERROR_STOP=1 -c "
-+    SELECT pg_terminate_backend(active_pid)
-+    FROM pg_replication_slots
-+    WHERE slot_name = 'postgres_primary_key_include_slot' AND active_pid IS NOT NULL;
-+    SELECT pg_sleep(1);
-+    SELECT pg_drop_replication_slot(slot_name)
-+    FROM pg_replication_slots
-+    WHERE slot_name = 'postgres_primary_key_include_slot';
-+    DROP PUBLICATION IF EXISTS postgres_primary_key_include_pub;
-+    DROP TABLE IF EXISTS public.postgres_primary_key_include CASCADE;
-+"
-```
-
-**File**: `java/connector-node/risingwave-connector-service/src/main/resources/validate_sql.properties` (modified, +2/-1)
-```diff
-@@ -8,7 +8,8 @@ mysql.grants=SHOW GRANTS FOR CURRENT_USER()
- mysql.check_db_exist=SELECT count(*) FROM information_schema.SCHEMATA WHERE SCHEMA_NAME = ?
- postgres.wal=show wal_level
- postgres.table=SELECT EXISTS ( SELECT FROM pg_tables WHERE schemaname = ? AND tablename = ?)
--postgres.pk=SELECT a.attname, format_type(a.atttypid, a.atttypmod) AS data_type FROM pg_index i JOIN pg_attribute a ON a.attrelid = i.indrelid AND a.attnum = ANY(i.indkey) WHERE i.indrelid = ?::regclass AND i.indisprimary
-+# conkey excludes non-key INCLUDE columns and is available on PostgreSQL 10.
-+postgres.pk=SELECT a.attname, format_type(a.atttypid, a.atttypmod) AS data_type FROM pg_constraint con JOIN pg_attribute a ON a.attrelid = con.conrelid AND a.attnum = ANY(con.conkey) WHERE con.conrelid = ?::regclass AND con.contype = 'p'
- postgres.table_schema=SELECT c.column_name, c.data_type, c.character_maximum_length, c.udt_name, a.atttypmod FROM information_schema.columns c JOIN pg_catalog.pg_namespace n ON n.nspname = c.table_schema JOIN pg_catalog.pg_class cls ON cls.relname = c.table_name AND cls.relnamespace = n.oid JOIN pg_catalog.pg_attribute a ON a.attrelid = cls.oid AND a.attname = c.column_name WHERE c.table_schema = ? AND c.table_name = ? AND a.attnum > 0 AND NOT a.attisdropped ORDER BY c.ordinal_position
- postgres.slot.check=SELECT slot_name FROM pg_replication_slots WHERE slot_name = ? and database = ?
- postgres.slot_limit.check=SELECT CASE WHEN (SELECT count(*) FROM pg_replication_slots) = (SELECT setting FROM pg_settings WHERE name='max_replication_slots')::int THEN 'true' ELSE 'false' END AS result;
-```
-
-**File**: `src/connector/src/connector_common/postgres.rs` (modified, +9/-5)
-```diff
-@@ -41,16 +41,20 @@ use crate::error::ConnectorResult;
- /// Match `pg_class` and `pg_namespace` by exact catalog names instead of casting a
- /// constructed string to `regclass`, as unquoted `regclass` input folds mixed-case
- /// table names to lower case.
-+/// `pg_constraint.conkey` contains only the constrained columns, excluding non-key
-+/// attributes from an `INCLUDE` clause, and is available on PostgreSQL 10.
- const DISCOVER_PRIMARY_KEY_QUERY: &str = r#"
-     SELECT a.attname as column_name
--    FROM pg_index i
--    JOIN pg_class c ON c.oid = i.indrelid
-+    FROM pg_constraint con
-+    JOIN pg_class c ON c.oid = con.conrelid
-     JOIN pg_namespace n ON n.oid = c.relnamespace
--    JOIN pg_attribute a ON a.attrelid = i.indrelid AND a.attnum = ANY(i.indkey)
-+    JOIN LATERAL unnest(con.conkey) WITH ORDINALITY AS key(attnum, ordinality)
-+      ON true
-+    JOIN pg_attribute a ON a.attrelid = con.conrelid AND a.attnum = key.attnum
-     WHERE n.nspname = $1
-       AND c.relname = $2
--      AND i.indisprimary = true
--    ORDER BY array_position(i.indkey, a.attnum)
-+      AND con.contype = 'p'
-+    ORDER BY key.ordinality
- "#;
+@@ -116,3 +116,48 @@ statement ok
+ drop table like_escape_trades;
  
- /// Discover pgvector columns with both `atttypmod` (dimension) and `format_type` text.
+ # End
++
++# A trailing underscore must retain LIKE filtering after prefix range rewriting.
++statement ok
++create table like_prefix_rewrite(v varchar);
++
++statement ok
++insert into like_prefix_rewrite values
++    ('ABC'), ('ABCx'), ('ABCxx'), ('ABC_'), ('ABC_x'), ('ABC_xx'),
++    ('ABD'), (NULL);
++
++query T rowsort
++select v from like_prefix_rewrite where v like 'ABC_';
++----
++ABC_
++ABCx
++
++query T rowsort
++select v from like_prefix_rewrite where v like 'ABC%';
++----
++ABC
++ABC_
++ABC_x
++ABC_xx
++ABCx
++ABCxx
++
++query T rowsort
++select v from like_prefix_rewrite where v like 'ABC\__';
++----
++ABC_x
++
++query T rowsort
++select v from like_prefix_rewrite where v like 'ABC\_%';
++----
++ABC_
++ABC_x
++ABC_xx
++
++query T rowsort
++select v from like_prefix_rewrite where v like 'ABC\_';
++----
++ABC_
++
++statement ok
++drop table like_prefix_rewrite;
+```
+
+**File**: `src/frontend/planner_test/tests/testdata/input/index_selection.yaml` (modified, +14/-0)
+```diff
+@@ -415,6 +415,20 @@
+     select * from t1 where a like 'ABC%'
+   expected_outputs:
+   - batch_plan
++- name: trailing underscore LIKE keeps residual filter with index range
++  sql: |
++    create table t1 (a varchar);
++    create index idx on t1(a);
++    select * from t1 where a like 'ABC_'
++  expected_outputs:
++  - batch_plan
++- name: escaped underscore prefix LIKE uses index range without residual filter
++  sql: |
++    create table t1 (a varchar);
++    create index idx on t1(a);
++    select * from t1 where a like 'ABC\_%'
++  expected_outputs:
++  - batch_plan
+ - sql: |
+     create table t1 (a varchar, b int, c int, d int);
+     create index idx on t1(a);
+```
+
+**File**: `src/frontend/planner_test/tests/testdata/output/index_selection.yaml` (modified, +17/-0)
+```diff
+@@ -743,6 +743,23 @@
+   batch_plan: |-
+     BatchExchange { order: [], dist: Single }
+     └─BatchScan { table: idx, columns: [idx.a, idx.b, idx.c, idx.d], scan_ranges: [idx.a >= Utf8("ABC") AND idx.a < Utf8("ABD")], distribution: UpstreamHashShard(idx.a) }
++- name: trailing underscore LIKE keeps residual filter with index range
++  sql: |
++    create table t1 (a varchar);
++    create index idx on t1(a);
++    select * from t1 where a like 'ABC_'
++  batch_plan: |-
++    BatchExchange { order: [], dist: Single }
++    └─BatchFilter { predicate: Like(idx.a, 'ABC_':Varchar) }
++      └─BatchScan { table: idx, columns: [idx.a], scan_ranges: [idx.a >= Utf8("ABC") AND idx.a < Utf8("ABD")], distribution: UpstreamHashShard(idx.a) }
++- name: escaped underscore prefix LIKE uses index range without residual filter
++  sql: |
++    create table t1 (a varchar);
++    create index idx on t1(a);
++    select * from t1 where a like 'ABC\_%'
++  batch_plan: |-
++    BatchExchange { order: [], dist: Single }
++    └─BatchScan { table: idx, columns: [idx.a], scan_ranges: [idx.a >= Utf8("ABC_") AND idx.a < Utf8("ABC`")], distribution: UpstreamHashShard(idx.a) }
+ - sql: |
+     create table t1 (a varchar, b int, c int, d int);
+     create index idx on t1(a);
+```
+
+**File**: `src/frontend/src/optimizer/rule/rewrite_like_expr_rule.rs` (modified, +2/-2)
+```diff
+@@ -24,6 +24,7 @@ use crate::optimizer::plan_node::{ExprRewritable, LogicalFilter};
+ /// `RewriteLikeExprRule` rewrites simple like expression, so that it can benefit from index selection.
+ /// col like 'ABC' => col = 'ABC'
+ /// col like 'ABC%' => col >= 'ABC' and col < 'ABD'
++/// col like 'ABC_' => col >= 'ABC' and col < 'ABD' and col like 'ABC_'
+ /// col like 'ABC%E' => col >= 'ABC' and col < 'ABD' and col like 'ABC%E'
+ pub struct RewriteLikeExprRule {}
+ impl Rule<Logical> for RewriteLikeExprRule {
+@@ -131,7 +132,6 @@ impl ExprRewriter for LikeExprRewriter {
+         };
+ 
+         let bytes = data.as_bytes();
+-        let len = bytes.len();
+ 
+         let (char_wildcard_idx, str_wildcard_idx, unescaped_bytes) =
+             Self::cal_index_and_unescape(bytes);
+@@ -204,7 +204,7 @@ impl ExprRewriter for LikeExprRewriter {
+             DataType::Boolean,
+         );
+ 
+-        if idx == len - 1 {
++        if str_wildcard_idx == Some(idx) && idx == unescaped_bytes.len() - 1 {
+             between.into()
+         } else {
+             FunctionCall::new_unchecked(
+```
+
+---
+
+### Incident Patch 3: `e0a6bd27` (2026-11-18)
+**Commit Message**: build(docker): provide additional -nodwp image (#27841)
+
+**File**: `ci/scripts/multi-arch-docker.sh` (modified, +21/-0)
+```diff
+@@ -31,6 +31,25 @@ fi
+ 
+ echo "--- arches: ${arches[*]}"
+ 
++# A docker config mounted from the CI agent is not readable inside the container.
++function regctl() {
++  DOCKER_AUTH_CONFIG=$(jq -n '{
++    auths: {
++      "ghcr.io": { username: $ENV.GHCR_USERNAME, password: $ENV.GHCR_TOKEN },
++      "docker.io": { username: "risingwavelabs", password: $ENV.DOCKER_TOKEN }
++    }
++  }') docker run --rm -e DOCKER_AUTH_CONFIG regclient/regctl:v0.11.7 "$@"
++}
++
++# Push `<tag>-nodwp`: the image `<tag>` without the layer of the split debug info `risingwave.dwp`.
++function pushNodwp() {
++  echo "push image tag: $1-nodwp"
++  if ! regctl image mod "$1" --create "$1-nodwp" --layer-rm-created-by 'risingwave\.dwp'; then
++    echo "^^^ +++"
++    echo "WARN: failed to push $1-nodwp; the image $1 is unaffected"
++  fi
++}
++
+ # push images to gchr
+ function pushGchr() {
+   GHCRTAG="${ghcraddr}:$1"
+@@ -42,6 +61,7 @@ function pushGchr() {
+   done
+   docker manifest create --insecure "$GHCRTAG" "${args[@]}"
+   docker manifest push --insecure "$GHCRTAG"
++  pushNodwp "$GHCRTAG"
+ }
+ 
+ # push images to dockerhub
+@@ -55,6 +75,7 @@ function pushDockerhub() {
+   done
+   docker manifest create --insecure "$DOCKERTAG" "${args[@]}"
+   docker manifest push --insecure "$DOCKERTAG"
++  pushNodwp "$DOCKERTAG"
+ }
+ 
+ function isStableVersion() {
+```
+
+**File**: `docker/Dockerfile` (modified, +5/-2)
+```diff
+@@ -123,7 +123,7 @@ RUN ./build-debezium.sh && \
+   mkdir -p /risingwave/bin/connector-node && \
+   tar -zxvf /risingwave/java/connector-node/assembly/target/risingwave-connector-1.0.0.tar.gz -C /risingwave/bin/connector-node
+ 
+-FROM base AS risingwave
++FROM base AS risingwave-nodwp
+ 
+ LABEL org.opencontainers.image.source https://github.com/risingwavelabs/risingwave
+ 
+@@ -141,7 +141,6 @@ RUN rustup show && sed -i '1s/^/default_toolchain = "stable"\n/' ~/.rustup/setti
+ RUN mkdir -p /risingwave/bin/connector-node && mkdir -p /risingwave/lib
+ 
+ COPY --from=rust-builder /risingwave/bin/risingwave /risingwave/bin/risingwave
+-COPY --from=rust-builder /risingwave/bin/risingwave.dwp /risingwave/bin/risingwave.dwp
+ COPY --from=java-builder /risingwave/bin/connector-node /risingwave/bin/connector-node
+ COPY --from=rust-builder /risingwave/bin/jeprof /usr/local/bin/jeprof
+ COPY --from=rust-base /root/.cargo/bin/flamegraph /usr/local/bin/flamegraph
+@@ -161,3 +160,7 @@ ENV LD_LIBRARY_PATH /risingwave/lib/adbc:${LD_LIBRARY_PATH}
+ 
+ ENTRYPOINT [ "/risingwave/bin/risingwave" ]
+ CMD [ "single_node" ]
++
++FROM risingwave-nodwp AS risingwave
++
++COPY --from=rust-builder /risingwave/bin/risingwave.dwp /risingwave/bin/risingwave.dwp
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #28025** (2026-11-17): fix(metrics): count visible rows in sink throughput (@zwang28)
-- **PR #28013** (2026-11-16): cherry-pick fix(sink): make BigQuery _CHANGE_SEQUENCE_NUMBER opt-in (#27978) to release-3.0 (@yuhao-su)
-- **PR #28012** (2026-11-17): feat(observability): support runtime log filters via risectl (@wenym1)
-- **PR #28011** (2026-11-16): cherry-pick fix(optimizer): keep the outer column type when eliminating a correlated apply (#28003) to release-3.1 (@chenzl25)
-- **PR #28008** (2026-11-16): fix(sink): make BigQuery _CHANGE_SEQUENCE_NUMBER opt-in (#27978) (@risingwave-ci)
-- **PR #28004** (2026-11-16): fix(connector): keep NULL for columns with a default in CDC change events (@anlowee)
+- **PR #28054** (2026-11-18): cherry-pick chore(deps): patch `chrono-tz` with 2026f (#27811) to release-3.0 (@maybe-vibe)
+- **PR #28053** (2026-11-18): cherry-pick fix(frontend): allow kinesis with plain avro aws glue schema registry (#27611) to release-3.0 (@maybe-vibe)
+- **PR #28052** (2026-11-18): cherry-pick chore(deps): patch `chrono-tz` with 2026f (#27811) to release-3.1 (@maybe-vibe)
+- **PR #28051** (2026-11-18): cherry-pick fix(frontend): allow kinesis with plain avro aws glue schema registry (#27611) to release-3.1 (@maybe-vibe)
+- **PR #28050** (2026-11-18): build(docker): provide additional -nodwp image (#27841) (@risingwave-ci)
+- **PR #28049** (2026-11-18): build(docker): provide additional -nodwp image (#27841) (@risingwave-ci)
 
 ---
 
@@ -1603,75 +1398,31 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. meta): send subscribe snapshots through the notification queue
+## X. iceberg): honor `s3.iam_role_arn` in the storage catalog
 
 **RULE**:
-When implementing operations in `src/meta/src/manager/notification.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in risingwavelabs/risingwave. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/connector/src/connector_common/iceberg/mod.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in risingwavelabs/risingwave. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5d7a0e11`: meta): send subscribe snapshots through the notification queue. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e3c035e0`: iceberg): honor `s3.iam_role_arn` in the storage catalog. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/meta/src/manager/notification.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/connector/src/connector_common/iceberg/mod.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-enum Target {
-    Subscribers {
-        subscribe_type: SubscribeType,
-        // `None` indicates sending to all subscribers of `subscribe_type`.
-        worker_key: Option<WorkerKey>,
-    },
-    /// The sender of one subscribe call. By the time the task is delivered, the worker may have
-    /// subscribed again and replaced its entry in the sender map.
-    Sender(UnboundedSender<Notification>),
-        Self::Subscribers {
-    /// Queue the snapshot behind every notification published before it was read. The observer
-    /// manager filters out such notifications only if they arrive before the snapshot.
-        self.notify_without_version(
-            Target::Sender(sender),
-            Operation::Snapshot,
-            Info::Snapshot(meta_snapshot),
-        );
-            Target::Subscribers {
-        let (subscribe_type, worker_key) = match target {
-            Target::Subscribers {
-                subscribe_type,
-                worker_key,
-            } => (subscribe_type, worker_key),
-            Target::Sender(sender) => {
-                let _ = sender.send(Ok(response)).inspect_err(|err| {
-                    tracing::warn!("Failed to send snapshot: {}", err.as_report());
- 
+                    .iam_role_arn(self.s3_iam_role_arn.clone())
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-struct Target {
-    subscribe_type: SubscribeType,
-    // `None` indicates sending to all subscribers of `subscribe_type`.
-    worker_key: Option<WorkerKey>,
-        Self {
-        let response = SubscribeResponse {
-            status: None,
-            operation: Operation::Snapshot as i32,
-            info: Some(Info::Snapshot(meta_snapshot)),
-            version: Default::default(),
-        };
-        let _ = sender.send(Ok(response)).inspect_err(|err| {
-            tracing::warn!("Failed to notify direct subscriber: {}", err.as_report());
-        });
-            Target {
-        let senders = self.senders_of(target.subscribe_type);
-        if let Some(worker_key) = target.worker_key {
-                        warn_send_failure!(target.subscribe_type, &worker_key, err.as_report());
-                        warn_send_failure!(target.subscribe_type, &worker_key, err.as_report());
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5d7a0e11` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e3c035e0` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

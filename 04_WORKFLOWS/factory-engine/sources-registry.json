@@ -19,9 +19,9 @@
   "gravitl-netmaker": {
     "name": "netmaker",
     "officialUrl": "https://github.com/gravitl/netmaker",
-    "lastChecked": "2026-11-18T14:04:51.203Z",
+    "lastChecked": "2026-11-18T18:38:12.528Z",
     "revisionIdentifier": "098d26a7",
-    "lastVerified": "2026-11-18T14:04:51.203Z"
+    "lastVerified": "2026-11-18T18:38:12.528Z"
   },
   "mintplex-labs-anything-llm": {
     "name": "Mintplex-Labs/anything-llm",
@@ -69,8 +69,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-18T18:14:52.043Z",
-    "lastVerified": "2026-11-18T18:14:52.043Z",
+    "lastChecked": "2026-11-18T18:38:24.957Z",
+    "lastVerified": "2026-11-18T18:38:24.957Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -221,9 +221,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-18T17:36:39.923Z",
+    "lastChecked": "2026-11-18T18:38:17.490Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-18T17:36:39.923Z"
+    "lastVerified": "2026-11-18T18:38:17.490Z"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -3562,6 +3562,71 @@
     "contentHash": "ae357ba55f4539d17b997644794f9996ae8e56965ca9fcb2fd8e57e731b7f3b7",
     "promotedRulesCount": 1,
     "recentFixesCount": 1,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-compvis-stable-diffusion-v1-4": {
+    "name": "CompVis/stable-diffusion-v1-4",
+    "officialUrl": "https://huggingface.co/CompVis/stable-diffusion-v1-4",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-18T18:38:05.058Z",
+    "lastVerified": "2026-11-18T18:38:05.058Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-compvis-stable-diffusion-v1-4",
+    "contentHash": "5b4c18d781b4913e888ee23421cad7d40eb41b0fd5d194c9131b8922f7fe275e",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "margelo-react-native-mmkv": {
+    "name": "react-native-mmkv",
+    "officialUrl": "https://github.com/margelo/react-native-mmkv",
+    "lastChecked": "2026-11-18T18:38:07.677Z",
+    "revisionIdentifier": "0ec4c963",
+    "lastVerified": "2026-11-18T18:38:07.677Z"
+  },
+  "erkamyaman-rust-anything": {
+    "name": "erkamyaman/rust-anything",
+    "officialUrl": "https://github.com/erkamyaman/rust-anything",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-11-18T18:38:07.275Z",
+    "lastVerified": "2026-11-18T18:38:07.275Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-erkamyaman-rust-anything",
+    "contentHash": "03384e9e6475471326bd664a2df9cdfcf52e38f0ec1f6767fa3680f51901a84e",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 2,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "krakend-krakend-ce": {
+    "name": "krakend-ce",
+    "officialUrl": "https://github.com/krakend/krakend-ce",
+    "lastChecked": "2026-11-18T18:38:10.164Z",
+    "revisionIdentifier": "b2187c50",
+    "lastVerified": "2026-11-18T18:38:10.164Z"
+  },
+  "risingwavelabs-risingwave": {
+    "name": "risingwavelabs/risingwave",
+    "officialUrl": "https://github.com/risingwavelabs/risingwave",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-11-18T18:38:20.365Z",
+    "lastVerified": "2026-11-18T18:38:20.365Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-risingwavelabs-risingwave",
+    "contentHash": "86d871b48ad6bc71b94d668789081dae3bd28bb6334808402ded6462aeaf41e6",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 4,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"

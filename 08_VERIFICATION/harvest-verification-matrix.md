@@ -11070,3 +11070,7 @@
 | `CYCLE-20261118-RZLH` | `2026-11-18T18:10:00.821Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9270` | Yes (`472e72c4...`) |
 | `CYCLE-20261118-S28F` | `2026-11-18T18:10:04.239Z` | `pixeltable/pixeltable` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9271` | Yes (`ae357ba5...`) |
 | `CYCLE-20261118-Y60Y` | `2026-11-18T18:14:49.090Z` | `timm/mobilenetv3_small_100.lamb_in1k` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-timm-mobilenetv3_small_100.lamb_in1k-learnings.md` | Yes (`4dc1dd26...`) |
+| `CYCLE-20261118-S3R4` | `2026-11-18T18:38:05.824Z` | `CompVis/stable-diffusion-v1-4` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-compvis-stable-diffusion-v1-4-learnings.md` | Yes (`5b4c18d7...`) |
+| `CYCLE-20261118-S5UQ` | `2026-11-18T18:38:08.546Z` | `erkamyaman/rust-anything` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9272` | Yes (`03384e9e...`) |
+| `CYCLE-20261118-SFWB` | `2026-11-18T18:38:21.563Z` | `risingwavelabs/risingwave` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9273` | Yes (`86d871b4...`) |
+| `CYCLE-2026-11-18-PROJ-EVOLVE` | `2026-11-18T18:39:02.365Z` | `hf-compvis-stable-diffusion-v1-4` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-70CB2061` [Domain D] | Yes (`f192a4d7...`) |

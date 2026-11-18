@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-18T18:14:54.593Z",
-  "total_records": 1886,
+  "last_updated": "2026-11-18T18:39:03.475Z",
+  "total_records": 1891,
   "domains": {
     "A": {
       "total": 13,
@@ -51,7 +51,7 @@
       ]
     },
     "D": {
-      "total": 796,
+      "total": 799,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -848,7 +848,10 @@
         "domain_intelligence-research-knowledge-intelligence-huggingfacetb-smolvlm2-256m-video-instruct-core-",
         "DOM-D-9D26CBBB",
         "domain_intelligence-research-knowledge-intelligence-hf-huggingfacetb-smolvlm2-256m-video-instruct-le",
-        "DOM-D-714854BB"
+        "DOM-D-714854BB",
+        "domain_intelligence-research-knowledge-intelligence-compvis-stable-diffusion-v1-4-core-invariants",
+        "DOM-D-70CB2061",
+        "domain_intelligence-research-knowledge-intelligence-hf-compvis-stable-diffusion-v1-4-learnings-core-"
       ]
     },
     "E": {
@@ -1702,7 +1705,7 @@
       ]
     },
     "I": {
-      "total": 93,
+      "total": 95,
       "record_ids": [
         "DOM-I-16F011E5",
         "DOM-I-BF0A22A6",
@@ -1796,7 +1799,9 @@
         "domain_intelligence-content-information-intelligence-codewhale-hq-codewhale-core-invariants",
         "domain_intelligence-content-information-intelligence-hmbown-codewhale-learnings-core-invariants",
         "domain_intelligence-content-information-intelligence-lioensky-vcptoolbox-core-invariants",
-        "domain_intelligence-content-information-intelligence-lioensky-vcptoolbox-learnings-core-invariants"
+        "domain_intelligence-content-information-intelligence-lioensky-vcptoolbox-learnings-core-invariants",
+        "domain_intelligence-content-information-intelligence-erkamyaman-rust-anything-core-invariants",
+        "domain_intelligence-content-information-intelligence-erkamyaman-rust-anything-learnings-core-invaria"
       ]
     },
     "J": {
@@ -29451,8 +29456,8 @@
       "title": "Content & Information Intelligence: risingwavelabs/risingwave Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-risingwavelabs-risingwave-content-information-intelligence-risingwavelabs-rising.md",
       "repository": "risingwavelabs/risingwave",
-      "content_hash": "fb05eb1f2a77b3aa9943737e9e7ba8be07d380ac43236cccdd764f0140e098be",
-      "created_at": "2026-11-18T03:48:14.605Z"
+      "content_hash": "2ae66295594f91ae44dfd52b25daa289af113d6a51f602d2da60020ddf5ab6c9",
+      "created_at": "2026-11-18T18:38:21.995Z"
     },
     "domain_intelligence-architecture-intelligence-amir1376-ab-download-manager-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-amir1376-ab-download-manager-learnings-core-invariants",
@@ -29469,8 +29474,8 @@
       "title": "Content & Information Intelligence: risingwavelabs-risingwave-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-risingwavelabs-risingwave-learnings-content-information-intelligence-risingwavel.md",
       "repository": "risingwavelabs-risingwave-learnings",
-      "content_hash": "417af97e71f2eef494db01874d931808456b98eb37b37ee97aa2d8a7c06110fc",
-      "created_at": "2026-11-18T03:48:19.001Z"
+      "content_hash": "6d29fdfae73449f3ea00b95d7eb677515962ab1934f04ef030bf5f60620686e4",
+      "created_at": "2026-11-18T18:39:03.475Z"
     },
     "domain_intelligence-research-knowledge-intelligence-dathere-qsv-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-dathere-qsv-core-invariants",
@@ -31581,6 +31586,84 @@
       "repository": "tailscale-tailscale-learnings",
       "content_hash": "2df913af3b6293b290f6f4fbcccd96517cd175f8692a353712b90d0705069356",
       "created_at": "2026-11-18T17:52:02.941Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-compvis-stable-diffusion-v1-4-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-compvis-stable-diffusion-v1-4-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: CompVis/stable-diffusion-v1-4 Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-compvis-stable-diffusion-v1-4-research-knowledge-intelligence-compvis-stable-.md",
+      "repository": "CompVis/stable-diffusion-v1-4",
+      "content_hash": "3589732bb9141c48d7f911b2d57b15be6053c673c1f48043962e30965ffef7ca",
+      "created_at": "2026-11-18T18:38:06.052Z"
+    },
+    "domain_intelligence-content-information-intelligence-erkamyaman-rust-anything-core-invariants": {
+      "record_id": "domain_intelligence-content-information-intelligence-erkamyaman-rust-anything-core-invariants",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: erkamyaman/rust-anything Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-erkamyaman-rust-anything-content-information-intelligence-erkamyaman-rust-anythi.md",
+      "repository": "erkamyaman/rust-anything",
+      "content_hash": "c8bcab42905d2936e49f691767fef8ee77ec09db0860b6839f8b0147f5b653fb",
+      "created_at": "2026-11-18T18:38:09.004Z"
+    },
+    "domain_intelligence-content-information-intelligence-erkamyaman-rust-anything-learnings-core-invaria": {
+      "record_id": "domain_intelligence-content-information-intelligence-erkamyaman-rust-anything-learnings-core-invaria",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: erkamyaman-rust-anything-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-erkamyaman-rust-anything-learnings-content-information-intelligence-erkamyaman-r.md",
+      "repository": "erkamyaman-rust-anything-learnings",
+      "content_hash": "f48a3ee1c2adb6fe01064a35e6f5fd2ec8aaecaf4d258ae96b78fade1dfd5ec8",
+      "created_at": "2026-11-18T18:38:26.058Z"
+    },
+    "DOM-D-70CB2061": {
+      "record_id": "DOM-D-70CB2061",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): CompVis/stable-diffusion-v1-4",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-compvis-stable-diffusion-v1-4-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/CompVis/stable-diffusion-v1-4](https://huggingface.co/CompVis/stable-diffusion-v1-4))  \n> **Source Version**: `hf-compvis-s`  \n> **License**: Op",
+      "content_hash": "f192a4d714e13df6edc145d7a98319922f8e99da5a6ed7c885027e6dc4c227be",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-compvis-stable-diffusion-v1-4-learnings.md`  \n> **Source**: huggingface ([https:/ -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-compvis-stable-diffusion-v1-4-learnings.md`  \n> **Source**: huggingface ([https:/",
+      "provenance": {
+        "source_uri": "project://hf-compvis-stable-diffusion-v1-4/hf-compvis-stable-diffusion-v1-4-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-18T18:38:26.453Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-compvis-stable-diffusion-v1-4)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-compvis-stable-diffusion-v1-4"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-18T18:39:02.333Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-compvis-stable-diffusion-v1-4-learnings-core-": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-compvis-stable-diffusion-v1-4-learnings-core-",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-compvis-stable-diffusion-v1-4-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-compvis-stable-diffusion-v1-4-learnings-research-knowledge-intelligence-hf-co.md",
+      "repository": "hf-compvis-stable-diffusion-v1-4-learnings",
+      "content_hash": "06943b1b54cf81e30ebc33bbf09749650a8fb5dcf6f6ec15def05039c1854045",
+      "created_at": "2026-11-18T18:39:02.634Z"
     }
   }
 }

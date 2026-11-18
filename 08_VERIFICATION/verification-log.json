@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261117-APD9",
-    "timestamp": "2026-11-17T10:41:00.141Z",
-    "repository": "mlua-rs/mlua",
-    "learningId": "learn-github-mlua-rs-mlua",
-    "contentHash": "a9d8cd26740afb9c57873e1dce414810164b569a65299152ac734ab1b8af0e60",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261117-AVUU",
-    "timestamp": "2026-11-17T10:41:08.550Z",
-    "repository": "meshery/meshery",
-    "learningId": "learn-github-meshery-meshery",
-    "contentHash": "e49f1f7783c088efe12444b2a30cb297ef3b87e9b594ee9db458c7b1bf32bdfa",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261117-B07W",
-    "timestamp": "2026-11-17T10:41:14.204Z",
-    "repository": "yugabyte/yugabyte-db",
-    "learningId": "learn-github-yugabyte-yugabyte-db",
-    "contentHash": "5150389181f4d9c684975448e7b5c559dff4f2ac67c4361a154b53229fb4fa3f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261117-O8X4",
     "timestamp": "2026-11-17T10:51:32.008Z",
     "repository": "zulip/zulip",
@@ -7492,6 +7447,51 @@
     "contentHash": "4dc1dd262380c342e51f248bc7105f6e50c9f954d8efc09b8d3639223086d8e1",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-S3R4",
+    "timestamp": "2026-11-18T18:38:05.824Z",
+    "repository": "CompVis/stable-diffusion-v1-4",
+    "learningId": "learn-huggingface-compvis-stable-diffusion-v1-4",
+    "contentHash": "5b4c18d781b4913e888ee23421cad7d40eb41b0fd5d194c9131b8922f7fe275e",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-S5UQ",
+    "timestamp": "2026-11-18T18:38:08.546Z",
+    "repository": "erkamyaman/rust-anything",
+    "learningId": "learn-github-erkamyaman-rust-anything",
+    "contentHash": "03384e9e6475471326bd664a2df9cdfcf52e38f0ec1f6767fa3680f51901a84e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-SFWB",
+    "timestamp": "2026-11-18T18:38:21.563Z",
+    "repository": "risingwavelabs/risingwave",
+    "learningId": "learn-github-risingwavelabs-risingwave",
+    "contentHash": "86d871b48ad6bc71b94d668789081dae3bd28bb6334808402ded6462aeaf41e6",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

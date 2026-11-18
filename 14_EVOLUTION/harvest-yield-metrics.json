@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T18:14:49.104Z",
-  "total_cycles_completed": 10586,
-  "total_learnings_persisted": 10586,
-  "total_rules_promoted": 10033,
+  "last_updated": "2026-11-18T18:38:21.575Z",
+  "total_cycles_completed": 10589,
+  "total_learnings_persisted": 10589,
+  "total_rules_promoted": 10035,
   "history": [
-    {
-      "timestamp": "2026-11-18T06:49:13.471Z",
-      "repository": "pulumi/pulumi",
-      "learningId": "learn-github-pulumi-pulumi",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-18T06:49:17.644Z",
-      "repository": "sqlpage/SQLPage",
-      "learningId": "learn-github-sqlpage-sqlpage",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-18T06:49:19.566Z",
-      "repository": "NucleoidAI/Nucleoid",
-      "learningId": "learn-github-nucleoidai-nucleoid",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-18T06:50:14.010Z",
       "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
@@ -1403,6 +1382,27 @@
       "repository": "timm/mobilenetv3_small_100.lamb_in1k",
       "learningId": "learn-huggingface-timm-mobilenetv3_small_100-lamb_in1k",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T18:38:05.836Z",
+      "repository": "CompVis/stable-diffusion-v1-4",
+      "learningId": "learn-huggingface-compvis-stable-diffusion-v1-4",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T18:38:08.558Z",
+      "repository": "erkamyaman/rust-anything",
+      "learningId": "learn-github-erkamyaman-rust-anything",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T18:38:21.575Z",
+      "repository": "risingwavelabs/risingwave",
+      "learningId": "learn-github-risingwavelabs-risingwave",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

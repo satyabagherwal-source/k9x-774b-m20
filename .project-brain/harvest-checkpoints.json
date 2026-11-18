@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-18T18:14:49.108Z",
+  "last_updated": "2026-11-18T18:38:21.579Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1040,14 +1040,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-compvis-stable-diffusion-v1-4",
-      "content_hash": "a8f964b2e2d54500fbc985e6abd2ada6b6999bdbf3bddca35fe72aa022e85bf8",
-      "verified_at": "2026-11-13T22:45:42.292Z",
+      "content_hash": "5b4c18d781b4913e888ee23421cad7d40eb41b0fd5d194c9131b8922f7fe275e",
+      "verified_at": "2026-11-18T18:38:05.840Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T22:45:42.292Z"
+      "last_updated": "2026-11-18T18:38:05.840Z"
     },
     "meta-llama/Meta-Llama-3-8B": {
       "repository": "meta-llama/Meta-Llama-3-8B",
@@ -5781,14 +5781,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-risingwavelabs-risingwave",
-      "content_hash": "1a515577a2ff7c4737743c309319433437b018d81aeda8f99f812498224f0ce0",
-      "verified_at": "2026-11-18T03:48:14.315Z",
+      "content_hash": "86d871b48ad6bc71b94d668789081dae3bd28bb6334808402ded6462aeaf41e6",
+      "verified_at": "2026-11-18T18:38:21.578Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T03:48:14.315Z"
+      "last_updated": "2026-11-18T18:38:21.578Z"
     },
     "mertJF/tailblocks": {
       "repository": "mertJF/tailblocks",
@@ -19454,6 +19454,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-18T16:31:26.948Z"
+    },
+    "erkamyaman/rust-anything": {
+      "repository": "erkamyaman/rust-anything",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-erkamyaman-rust-anything",
+      "content_hash": "03384e9e6475471326bd664a2df9cdfcf52e38f0ec1f6767fa3680f51901a84e",
+      "verified_at": "2026-11-18T18:38:08.562Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-18T18:38:08.562Z"
     }
   },
   "repos": {
