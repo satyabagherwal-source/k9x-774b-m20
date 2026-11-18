@@ -10792,3 +10792,5 @@
 | `CYCLE-20261118-ZEG4` | `2026-11-18T03:47:58.564Z` | `HemmingwayAI/Hemmingway-1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-altworld-hemmingway-1-learnings.md` | Yes (`8b3a444b...`) |
 | `CYCLE-20261118-ZJGT` | `2026-11-18T03:48:05.069Z` | `amir1376/ab-download-manager` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9114` | Yes (`ee89749e...`) |
 | `CYCLE-20261118-ZQLC` | `2026-11-18T03:48:14.304Z` | `risingwavelabs/risingwave` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9115` | Yes (`1a515577...`) |
+| `CYCLE-20261118-9TEV` | `2026-11-18T03:56:04.519Z` | `ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf-learnings.md` | Yes (`f7f836dc...`) |
+| `CYCLE-20261118-A792` | `2026-11-18T03:56:22.454Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9116` | Yes (`9f7b1be3...`) |

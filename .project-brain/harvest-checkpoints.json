@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-18T03:48:14.316Z",
+  "last_updated": "2026-11-18T03:56:22.467Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -530,14 +530,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-ista-daslab-qwen3-8-27b-gsq-rco-gguf",
-      "content_hash": "acd0a09f2f76db7b0fd77ac2e6d6fb79a9b1e65262ea4f64e28485d4e14b460e",
-      "verified_at": "2026-11-13T16:04:48.423Z",
+      "content_hash": "f7f836dcb6c4b39aeb607a81c9396acb1c2ca18bf2ae39538d41d0c123b431ec",
+      "verified_at": "2026-11-18T03:56:04.531Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T16:04:48.423Z"
+      "last_updated": "2026-11-18T03:56:04.531Z"
     },
     "orcarouter/OrcaSAQ-2-27B": {
       "repository": "orcarouter/OrcaSAQ-2-27B",
@@ -3681,14 +3681,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dathere-qsv",
-      "content_hash": "121b80ec33bd23938835e4bf48c44feda5c841aa2fb7d479385e69593ddacea1",
-      "verified_at": "2026-11-17T20:17:47.427Z",
+      "content_hash": "9f7b1be3a78afcbcc4477002f96d9c6348d39ec1da24f93378ae0cd9cc592b0d",
+      "verified_at": "2026-11-18T03:56:22.466Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T20:17:47.427Z"
+      "last_updated": "2026-11-18T03:56:22.467Z"
     },
     "assistant-ui/assistant-ui": {
       "repository": "assistant-ui/assistant-ui",

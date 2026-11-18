@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-18T03:48:19.001Z",
-  "total_records": 1749,
+  "last_updated": "2026-11-18T03:56:28.021Z",
+  "total_records": 1751,
   "domains": {
     "A": {
       "total": 11,
@@ -48,7 +48,7 @@
       ]
     },
     "D": {
-      "total": 761,
+      "total": 763,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -810,7 +810,9 @@
         "domain_intelligence-research-knowledge-intelligence-hf-lightricks-ltx-2-5-learnings-core-invariants",
         "DOM-D-B990E946",
         "domain_intelligence-research-knowledge-intelligence-prism-ml-ternary-bonsai-2-27b-gguf-core-invarian",
-        "domain_intelligence-research-knowledge-intelligence-hf-prism-ml-ternary-bonsai-2-27b-gguf-learnings-"
+        "domain_intelligence-research-knowledge-intelligence-hf-prism-ml-ternary-bonsai-2-27b-gguf-learnings-",
+        "domain_intelligence-research-knowledge-intelligence-dathere-qsv-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-dathere-qsv-learnings-core-invariants"
       ]
     },
     "E": {
@@ -8038,8 +8040,8 @@
       "title": "Research & Knowledge Intelligence: ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-ista-daslab-qwen3-8-27b-gsq-rco-gguf-research-knowledge-intelligence-ista-das.md",
       "repository": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
-      "content_hash": "c756213d8786c51e510a864f012bf5f47a715428b11cee23ec6959bc1679c3b1",
-      "created_at": "2026-11-13T16:04:48.542Z"
+      "content_hash": "1ed1451be45d361f9868349fd0be08ec28f713a811d0b3750b4f2008e225f869",
+      "created_at": "2026-11-18T03:56:04.715Z"
     },
     "domain_intelligence-architecture-intelligence-a2ui-project-a2ui-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-a2ui-project-a2ui-core-invariants",
@@ -8107,8 +8109,8 @@
       "title": "Research & Knowledge Intelligence: hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-ista-daslab-qwen3-8-27b-gsq-rco-gguf-learnings-research-knowledge-intelligenc.md",
       "repository": "hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf-learnings",
-      "content_hash": "b7dbb73e7031729beebe7a90297fb48de6a4a74e895245665c2b9af0bf17c456",
-      "created_at": "2026-11-13T16:05:40.976Z"
+      "content_hash": "3900588e82e10b658867361e2361b05c99f2b764493605521f826c8ccd78638e",
+      "created_at": "2026-11-18T03:56:26.030Z"
     },
     "domain_intelligence-architecture-intelligence-a2ui-project-a2ui-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-a2ui-project-a2ui-learnings-core-invariants",
@@ -8482,8 +8484,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "b013be5c0103390a5f321cf00435e50ba6b075b062fe37549c2cefb193b98920",
-      "created_at": "2026-11-18T01:19:00.706Z"
+      "content_hash": "aee30f70c6eab01e759b1b607881f76cc3d38a20663aa961724feaa850e28e0b",
+      "created_at": "2026-11-18T03:56:28.021Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -29334,6 +29336,24 @@
       "repository": "risingwavelabs-risingwave-learnings",
       "content_hash": "417af97e71f2eef494db01874d931808456b98eb37b37ee97aa2d8a7c06110fc",
       "created_at": "2026-11-18T03:48:19.001Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-dathere-qsv-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-dathere-qsv-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: dathere/qsv Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-dathere-qsv-research-knowledge-intelligence-dathere-qsv-core-invariants.md",
+      "repository": "dathere/qsv",
+      "content_hash": "eb6ddf7c329840712b635034eeef02677e4fe0795f2b58dda1cdcd5ba9d3d41a",
+      "created_at": "2026-11-18T03:56:22.857Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-dathere-qsv-learnings-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-dathere-qsv-learnings-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: dathere-qsv-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-dathere-qsv-learnings-research-knowledge-intelligence-dathere-qsv-learnings-core.md",
+      "repository": "dathere-qsv-learnings",
+      "content_hash": "f4a9606e0a48a03fd8e0eaa9eea1748c3682ce10b06ae080ce06a0d2571e2c74",
+      "created_at": "2026-11-18T03:56:27.167Z"
     }
   }
 }

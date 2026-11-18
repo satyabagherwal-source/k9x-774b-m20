@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261116-B170",
-    "timestamp": "2026-11-16T05:17:39.660Z",
-    "repository": "chrisbanes/skills",
-    "learningId": "learn-github-chrisbanes-skills",
-    "contentHash": "afe23c2005e11afd7b4fdd15076c6114289c1ab5a291b87e6a4a5a8803f28cc1",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261116-PJZ6",
-    "timestamp": "2026-11-16T05:28:57.186Z",
-    "repository": "agent-of-empires/agent-of-empires",
-    "learningId": "learn-github-agent-of-empires-agent-of-empires",
-    "contentHash": "080098fbce8d89028f6c18efa03cd78c57feb2b1a42e366b001e99aec84edcc0",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261116-PNOW",
     "timestamp": "2026-11-16T05:29:02.000Z",
     "repository": "kamgurgul/cpu-info",
@@ -7490,6 +7460,36 @@
     "repository": "risingwavelabs/risingwave",
     "learningId": "learn-github-risingwavelabs-risingwave",
     "contentHash": "1a515577a2ff7c4737743c309319433437b018d81aeda8f99f812498224f0ce0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-9TEV",
+    "timestamp": "2026-11-18T03:56:04.519Z",
+    "repository": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
+    "learningId": "learn-huggingface-ista-daslab-qwen3-8-27b-gsq-rco-gguf",
+    "contentHash": "f7f836dcb6c4b39aeb607a81c9396acb1c2ca18bf2ae39538d41d0c123b431ec",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-A792",
+    "timestamp": "2026-11-18T03:56:22.454Z",
+    "repository": "dathere/qsv",
+    "learningId": "learn-github-dathere-qsv",
+    "contentHash": "9f7b1be3a78afcbcc4477002f96d9c6348d39ec1da24f93378ae0cd9cc592b0d",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T03:48:14.312Z",
-  "total_cycles_completed": 10337,
-  "total_learnings_persisted": 10337,
-  "total_rules_promoted": 9863,
+  "last_updated": "2026-11-18T03:56:22.463Z",
+  "total_cycles_completed": 10339,
+  "total_learnings_persisted": 10339,
+  "total_rules_promoted": 9864,
   "history": [
-    {
-      "timestamp": "2026-11-17T15:16:34.733Z",
-      "repository": "juicedata/juicefs",
-      "learningId": "learn-github-juicedata-juicefs",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T15:16:42.509Z",
-      "repository": "tursodatabase/turso",
-      "learningId": "learn-github-tursodatabase-turso",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-17T15:16:54.352Z",
       "repository": "moonshotai/Kimi-K3.1-Pro",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-18T03:48:14.312Z",
       "repository": "risingwavelabs/risingwave",
       "learningId": "learn-github-risingwavelabs-risingwave",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T03:56:04.528Z",
+      "repository": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
+      "learningId": "learn-huggingface-ista-daslab-qwen3-8-27b-gsq-rco-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T03:56:22.463Z",
+      "repository": "dathere/qsv",
+      "learningId": "learn-github-dathere-qsv",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

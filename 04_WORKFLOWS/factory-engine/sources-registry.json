@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-18T03:48:17.381Z",
-    "lastVerified": "2026-11-18T03:48:17.381Z",
+    "lastChecked": "2026-11-18T03:56:25.675Z",
+    "lastVerified": "2026-11-18T03:56:25.675Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -252,22 +252,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "dathere-qsv": {
-    "name": "qsv",
+    "name": "dathere/qsv",
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-18T02:51:26.935Z",
-    "lastVerified": "2026-11-18T02:51:26.935Z",
+    "lastChecked": "2026-11-18T03:56:21.459Z",
+    "lastVerified": "2026-11-18T03:56:21.459Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
-    "contentHash": "121b80ec33bd23938835e4bf48c44feda5c841aa2fb7d479385e69593ddacea1",
+    "contentHash": "9f7b1be3a78afcbcc4477002f96d9c6348d39ec1da24f93378ae0cd9cc592b0d",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "d6fb6afa"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -1620,8 +1619,8 @@
     "officialUrl": "https://github.com/googleworkspace/cli",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-16T21:39:44.555Z",
-    "lastVerified": "2026-11-16T21:39:44.555Z",
+    "lastChecked": "2026-11-18T03:56:01.130Z",
+    "lastVerified": "2026-11-18T03:56:01.130Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-googleworkspace-cli",
@@ -1667,9 +1666,9 @@
   "lunasec-io-lunasec": {
     "name": "lunasec",
     "officialUrl": "https://github.com/lunasec-io/lunasec",
-    "lastChecked": "2026-11-17T20:25:31.842Z",
+    "lastChecked": "2026-11-18T03:56:11.160Z",
     "revisionIdentifier": "c6bb0762",
-    "lastVerified": "2026-11-17T20:25:31.842Z"
+    "lastVerified": "2026-11-18T03:56:11.160Z"
   },
   "valeriansaliou-sonic": {
     "name": "sonic",
@@ -2386,12 +2385,12 @@
     "officialUrl": "https://huggingface.co/ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-13T16:04:48.051Z",
-    "lastVerified": "2026-11-13T16:04:48.051Z",
+    "lastChecked": "2026-11-18T03:56:03.892Z",
+    "lastVerified": "2026-11-18T03:56:03.892Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-ista-daslab-qwen3-8-27b-gsq-rco-gguf",
-    "contentHash": "acd0a09f2f76db7b0fd77ac2e6d6fb79a9b1e65262ea4f64e28485d4e14b460e",
+    "contentHash": "f7f836dcb6c4b39aeb607a81c9396acb1c2ca18bf2ae39538d41d0c123b431ec",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -4209,9 +4208,9 @@
   "go-dev-frame-sponge": {
     "name": "sponge",
     "officialUrl": "https://github.com/go-dev-frame/sponge",
-    "lastChecked": "2026-11-17T04:43:48.883Z",
+    "lastChecked": "2026-11-18T03:56:08.689Z",
     "revisionIdentifier": "beef9eec",
-    "lastVerified": "2026-11-17T04:43:48.883Z"
+    "lastVerified": "2026-11-18T03:56:08.689Z"
   },
   "parthsarthi03-raptor": {
     "name": "raptor",
@@ -4643,9 +4642,9 @@
   "spacejam-sled": {
     "name": "sled",
     "officialUrl": "https://github.com/spacejam/sled",
-    "lastChecked": "2026-11-17T03:34:17.745Z",
+    "lastChecked": "2026-11-18T03:56:13.622Z",
     "revisionIdentifier": "e449d171",
-    "lastVerified": "2026-11-17T03:34:17.745Z"
+    "lastVerified": "2026-11-18T03:56:13.622Z"
   },
   "aome510-spotify-player": {
     "name": "spotify-player",
@@ -7075,8 +7074,8 @@
     "officialUrl": "https://github.com/InsertKoinIO/koin",
     "sourceType": "github",
     "technology": "Kotlin",
-    "lastChecked": "2026-11-14T19:59:29.848Z",
-    "lastVerified": "2026-11-14T19:59:29.848Z",
+    "lastChecked": "2026-11-18T03:56:06.275Z",
+    "lastVerified": "2026-11-18T03:56:06.275Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-insertkoinio-koin",

@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-18T03:48:19.123Z",
-  "total_verified_learnings": 8969,
+  "last_updated": "2026-11-18T03:56:28.162Z",
+  "total_verified_learnings": 8970,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 20841,
+  "total_items": 20847,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112117,10 +112117,10 @@
       "relative_path": "08_VERIFICATION/dathere-qsv-verification-protocol-empirical-defect-shield-for-dathere-qsv.md",
       "title": "Verification Protocol: Empirical Defect Shield for dathere/qsv",
       "repository": "dathere/qsv",
-      "source_version": "d6fb6afa",
-      "content_hash": "a09feb12293164eda915fa9d193c28a4d5b373aa3d887701ceb56d8c6d9b8585",
+      "source_version": "39c445bb",
+      "content_hash": "7f1b87661b00a1125a29ae4a8c046a486c2cfb42157bf872183e795dd497f189",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T20:17:47.888Z"
+      "persisted_at": "2026-11-18T03:56:23.000Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-xingchen-agi-xing4-0-29b-a4b-learnings-core-i": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-xingchen-agi-xing4-0-29b-a4b-learnings-core-i",
@@ -112154,9 +112154,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for dathere-qsv-learnings",
       "repository": "dathere-qsv-learnings",
       "source_version": "HEAD",
-      "content_hash": "723127bd1220340486c1e946aa1faee1176c57b6e27df3d03117f95dc5ed87a1",
+      "content_hash": "76312dd23db08a496e26b21538f7bfcd9bc235e88f3f1c495a4dc666f163a863",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T15:35:22.290Z"
+      "persisted_at": "2026-11-18T03:56:27.324Z"
     },
     "candidate_directive-export-fix-consent-of-former-subscribers-covering-private-channels": {
       "item_id": "candidate_directive-export-fix-consent-of-former-subscribers-covering-private-channels",
@@ -113090,9 +113090,9 @@
       "title": "Research & Knowledge Intelligence: ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF Core Invariants",
       "repository": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
       "source_version": "hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf",
-      "content_hash": "c756213d8786c51e510a864f012bf5f47a715428b11cee23ec6959bc1679c3b1",
+      "content_hash": "1ed1451be45d361f9868349fd0be08ec28f713a811d0b3750b4f2008e225f869",
       "domain_letter": "D",
-      "persisted_at": "2026-11-13T16:04:48.542Z"
+      "persisted_at": "2026-11-18T03:56:04.715Z"
     },
     "candidate_directive-swift-core-drop-theme-from-a-v1-0-createsurface-in-relaxed-mode-4099": {
       "item_id": "candidate_directive-swift-core-drop-theme-from-a-v1-0-createsurface-in-relaxed-mode-4099",
@@ -113174,9 +113174,9 @@
       "title": "Research & Knowledge Intelligence: hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf-learnings Core Invariants",
       "repository": "hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf-learnings",
       "source_version": "HEAD",
-      "content_hash": "b7dbb73e7031729beebe7a90297fb48de6a4a74e895245665c2b9af0bf17c456",
+      "content_hash": "3900588e82e10b658867361e2361b05c99f2b764493605521f826c8ccd78638e",
       "domain_letter": "D",
-      "persisted_at": "2026-11-13T16:05:40.976Z"
+      "persisted_at": "2026-11-18T03:56:26.030Z"
     },
     "domain_intelligence-architecture-intelligence-a2ui-project-a2ui-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-a2ui-project-a2ui-learnings-core-invariants",
@@ -113686,13 +113686,13 @@
       "item_id": "candidate_directive-editor-add-scoped-ios-account-deletion",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-NTUH-editor-add-scoped-ios-account-deletion.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-ABFK-editor-add-scoped-ios-account-deletion.md",
       "title": "editor): add scoped ios account deletion",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "1bae02aa2ff40dcc41da7ac290f0f4ceb5fc12df7532e0a63f6395fd829b7729",
+      "content_hash": "8960ba627f14382723c3e271938a09f1b8fe744528e69ef89fdaa7a3ffe83ddf",
       "domain_letter": "H",
-      "persisted_at": "2026-11-18T01:19:00.572Z"
+      "persisted_at": "2026-11-18T03:56:27.877Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant",
@@ -113702,9 +113702,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "b013be5c0103390a5f321cf00435e50ba6b075b062fe37549c2cefb193b98920",
+      "content_hash": "aee30f70c6eab01e759b1b607881f76cc3d38a20663aa961724feaa850e28e0b",
       "domain_letter": "H",
-      "persisted_at": "2026-11-18T01:19:00.706Z"
+      "persisted_at": "2026-11-18T03:56:28.021Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113714,9 +113714,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "327c8cc542e4c83058eec475b3fb1aea3d29878dd8bd336e9916349f89084f61",
+      "content_hash": "d9d628e6f3efdcf4adcfc9426da3bdabe7aa56ef4ae2d1f7cd0e9132934ebf0b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T01:19:00.856Z"
+      "persisted_at": "2026-11-18T03:56:28.162Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -219156,8 +219156,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "d6fb6afa",
-      "content_hash": "121b80ec33bd23938835e4bf48c44feda5c841aa2fb7d479385e69593ddacea1",
+      "source_version": "39c445bb",
+      "content_hash": "9f7b1be3a78afcbcc4477002f96d9c6348d39ec1da24f93378ae0cd9cc592b0d",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -219240,6 +219240,11 @@
           "number": 9056,
           "title": "trim numeric/date ranges and ordered gaps by --min-count",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9116,
+          "title": "add --report privacy summary (exact matches, suppression)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -219247,7 +219252,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T20:17:47.243Z",
+      "verified_at": "2026-11-18T03:56:22.259Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -280460,6 +280465,95 @@
       "content_hash": "417af97e71f2eef494db01874d931808456b98eb37b37ee97aa2d8a7c06110fc",
       "domain_letter": "I",
       "persisted_at": "2026-11-18T03:48:19.001Z"
+    },
+    "learn-huggingface-ista-daslab-qwen3-8-27b-gsq-rco-gguf": {
+      "learning_id": "learn-huggingface-ista-daslab-qwen3-8-27b-gsq-rco-gguf",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
+      "repository": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
+      "slug": "hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
+      "source_version": "hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf",
+      "content_hash": "f7f836dcb6c4b39aeb607a81c9396acb1c2ca18bf2ae39538d41d0c123b431ec",
+      "dossier_path": "07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-18T03:56:04.327Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-9116": {
+      "learning_id": "rule-9116",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9116,
+      "title": "add --report privacy summary (exact matches, suppression)",
+      "source_url": "https://github.com/dathere/qsv",
+      "source_version": "39c445bb",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-18T03:56:22.259Z"
+    },
+    "candidate_directive-add-report-privacy-summary-exact-matches-suppression": {
+      "item_id": "candidate_directive-add-report-privacy-summary-exact-matches-suppression",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-A7EU-add-report-privacy-summary-exact-matches-suppression.md",
+      "title": "add --report privacy summary (exact matches, suppression)",
+      "repository": "dathere/qsv",
+      "source_version": "39c445bb",
+      "content_hash": "2465e245d906175102ee7326a077eafe45fe9514c9997015ff8195e31b755244",
+      "domain_letter": "A",
+      "persisted_at": "2026-11-18T03:56:22.667Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-dathere-qsv-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-dathere-qsv-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-dathere-qsv-research-knowledge-intelligence-dathere-qsv-core-invariants.md",
+      "title": "Research & Knowledge Intelligence: dathere/qsv Core Invariants",
+      "repository": "dathere/qsv",
+      "source_version": "39c445bb",
+      "content_hash": "eb6ddf7c329840712b635034eeef02677e4fe0795f2b58dda1cdcd5ba9d3d41a",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-18T03:56:22.857Z"
+    },
+    "candidate_directive-synthesize-add-report-privacy-summary-exact-matches-suppression": {
+      "item_id": "candidate_directive-synthesize-add-report-privacy-summary-exact-matches-suppression",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-AARU-synthesize-add-report-privacy-summary-exact-matches-suppression.md",
+      "title": "synthesize): add --report privacy summary (exact matches, suppression)",
+      "repository": "dathere-qsv-learnings",
+      "source_version": "HEAD",
+      "content_hash": "a5307dd46b035a5f9403f095cfbc4b3fe139bd92919fa49556f2390b7feb8ed0",
+      "domain_letter": "A",
+      "persisted_at": "2026-11-18T03:56:27.022Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-dathere-qsv-learnings-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-dathere-qsv-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-dathere-qsv-learnings-research-knowledge-intelligence-dathere-qsv-learnings-core.md",
+      "title": "Research & Knowledge Intelligence: dathere-qsv-learnings Core Invariants",
+      "repository": "dathere-qsv-learnings",
+      "source_version": "HEAD",
+      "content_hash": "f4a9606e0a48a03fd8e0eaa9eea1748c3682ce10b06ae080ce06a0d2571e2c74",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-18T03:56:27.167Z"
     }
   },
   "ai-builder-brain": {
