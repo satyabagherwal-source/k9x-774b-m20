@@ -985,8 +985,8 @@
     "sourceUrl": "https://huggingface.co/mistralai/Mixtral-8x7B-Instruct-v0.1",
     "sourceVersion": "hf-mistralai-mixtral-8x7b-instruct-v0.1",
     "license": "Open-Source",
-    "contentHash": "9c27d54ebf4f4a2a2b8d742f71f409c06914f247d6cea5a939ab3564a2ce83e0",
-    "lastHarvestedAt": "2026-11-14T04:14:31.271Z",
+    "contentHash": "7f10036943f1f40fbc39bb7ed8d523a7ec4e48d8090bd4cf9e180b090345ac17",
+    "lastHarvestedAt": "2026-11-18T22:14:28.593Z",
     "learningId": "learn-huggingface-mistralai-mixtral-8x7b-instruct-v0-1"
   },
   "hf-deepseek-ai-deepseek-v3": {
@@ -4803,10 +4803,10 @@
     "repository": "aws/aws-cdk",
     "platform": "github",
     "sourceUrl": "https://github.com/aws/aws-cdk",
-    "sourceVersion": "12341707",
+    "sourceVersion": "0561d668",
     "license": "Apache-2.0",
-    "contentHash": "a8af8a186d4a937be91281a98585033fd9498584a3ef8f39a8e65a43805c08ac",
-    "lastHarvestedAt": "2026-11-18T07:05:45.801Z",
+    "contentHash": "5deac58d031a921fdb1e07055030d2496be7e0055db9bbe533ec5a9bdf420f81",
+    "lastHarvestedAt": "2026-11-18T22:14:39.242Z",
     "learningId": "learn-github-aws-aws-cdk"
   },
   "cockroachdb-cockroach": {
@@ -5493,10 +5493,10 @@
     "repository": "react/metro",
     "platform": "github",
     "sourceUrl": "https://github.com/react/metro",
-    "sourceVersion": "de511d56",
+    "sourceVersion": "3b7e1e1b",
     "license": "MIT",
-    "contentHash": "141043b03ef1c2c3f5c6596804c2ef83e5db0ca3b9843a103a94632ee1a0a7e3",
-    "lastHarvestedAt": "2026-11-17T21:22:23.144Z",
+    "contentHash": "46aa0fcd6106144a6dac30d8de76ec82c7460c2f88ca723b44d86f6c2c2a137f",
+    "lastHarvestedAt": "2026-11-18T22:14:35.782Z",
     "learningId": "learn-github-react-metro"
   },
   "checkmarx-kics": {

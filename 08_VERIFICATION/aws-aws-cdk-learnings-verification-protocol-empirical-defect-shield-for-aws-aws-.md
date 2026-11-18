@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-17T09:27:27.948Z",
+  "timestamp": "2026-11-18T22:14:43.673Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-aws-aws-cdk-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [aws-aws-cdk-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-17T09:27:27.948Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-18T22:14:43.673Z`  
 > **Learning ID**: `LEARN-EVO-aws-aws-cdk-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/aws-aws-cdk-learnings.md`  
 > **Source**: github ([https://github.com/aws/aws-cdk](https://github.com/aws/aws-cdk))  
-> **Source Version**: `4d6a58e6`  
+> **Source Version**: `0561d668`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-17T09:23:11.533Z  
+> **Timestamp**: 2026-11-18T22:14:38.326Z  
 > **Learning ID**: `learn-github-aws-aws-cdk`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/aws-aws-cdk-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/aws/aws-cdk](https://github.com/aws/aws-cdk))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T09:22:21.286Z  
+> **Harvest Timestamp**: 2026-11-18T22:14:38.321Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: The AWS Cloud Development Kit is a framework for defining cloud infrastructure in code
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 12980 stars
+- **Stars / Engagement**: 12986 stars
 
 ---
 
@@ -1204,11 +1204,11 @@ export abstract class OnlineEvaluationBase extends Resource implements IOnlineEv
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #39601** (2026-11-03): **fix(core): honor rounding for same-unit Size conversions**
-  *Symptoms*: Fixes #39600  ## Summary  When a `Size` is converted to the same unit, the early return currently bypasses an explicitly requested rounding mode. Apply the existing conversion logic for explicit `FLOOR` and `FAIL`, while preserving the same-unit identity behavior when rounding is omitted and when `NONE` is requested.  Added unit regression coverage for all four cases and a Core integration snapshot that synthesizes a Lambda function with `MemorySize: 128` from `Size.mebibytes(128.66)` using `FLOOR`.  ## Verification  - `NODE_OPTIONS=--max-old-space-size=8192 corepack yarn lerna run build --scope=aws-cdk-lib --stream` — passed. - `corepack yarn test core/test/size.test.ts --coverage=false` — 12 tests passed. - `NODE_OPTIONS=--max-old-space-size=8192 corepack yarn lerna run build --scope=@aws-cdk-testing/framework-integ --stream` — passed. - `corepack yarn integ core/test/integ.size-rounding.js --dry-run --update-on-failed` — snapshot passed; no deployment performed. - `git diff --check` — passed. 
+- **Issue #39793** (2026-11-18): **aws-cdk-lib: jest coverage instruments analytics-data-source/classes.ts, triggering a Babel size warning on every test run**
+  *Symptoms*: Packages that depend on `aws-cdk-lib` print a Babel warning during `jest --coverage` whenever a test touches an L2 construct, for example:  ``` [BABEL] Note: The code generator has deoptimised the styling of /codebuild/output/.../packages/aws-cdk-lib/core/lib/analytics-data-source/classes.ts as it exceeds the max of 500KB. ```  Seen in `@aws-cdk/aws-elasticache-alpha` CI, but it fires for any package whose tests exercise `metadata-resource.ts`, which almost all L2 construct tests do.  ### Current  `core/lib/analytics-data-source/classes.ts` is a generated data file (821KB) that cannot be edited by hand (enforced by `tools/@aws-cdk/prlint/lint.ts`). It isn't covered by `coveragePathIgnorePatterns` because that list only excludes `*.generated.ts`, not this file's name. Jest's coverage instrumenter (coverage provider `babel`) therefore instruments it on every test run that imports it, and Babel's generator warns once the instrumented output passes 500KB.  ### Expected  Generated files that can't be hand-edited, like `classes.ts` and `enums.ts` in `core/lib/analytics-data-source/`, are excluded from coverage instrumentation the same way `*.generated.ts` files already are, so the warning doesn't print and the file doesn't affect coverage numbers either way. 
 
-- **Issue #39600** (2026-11-03): **core: cdk.Size - rounding conditionally ignored**
-  *Symptoms*: ### Describe the bug  cdk.Size does not honour SizeConversionOptions when input and output units are the same.  https://github.com/aws/aws-cdk/blob/c1a53ab24a06355d7eb730df34adaf95618dcf88/packages/aws-cdk-lib/core/lib/size.ts#L261 ``` function convert(amount: number, fromUnit: StorageUnit, toUnit: StorageUnit, options: SizeConversionOptions = {}) {   const rounding = options.rounding ?? SizeRoundingBehavior.FAIL;   if (fromUnit.inBytes === toUnit.inBytes) { return amount; }  // BUG: returns float when options: { rounding: SizeRoundingBehavior.FLOOR } ```  ### Regression Issue  - [ ] Select this option if this issue appears to be a regression.  ### Last Known Working CDK Library Version  _No response_  ### Expected Behavior  When `options: { rounding: SizeRoundingBehavior.FLOOR }` it should always return an integer.  ### Current Behavior  It returns a float.  ### Reproduction Steps  const subject = cdk.size.mebibytes(42.66); subject.toMebibytes({ rounding: cdk.SizeRoundingBehavior.FLOOR }); // Should be 42 but is 42.66 instead.    ### Possible Solution  Replace `if (fromUnit.inBytes === toUnit.inBytes) { return amount; }`  With ``` if (fromUnit.inBytes === toUnit.inBytes   && (options.rounding === undefined || options.rounding === SizeRoundingBehavior.NONE)) { return amount; } ```  ### Additional Information/Context  _No response_  ### AWS CDK Library version (aws-cdk-lib)  2.275.0  ### AWS CDK CLI version  2.1147.0  ### Node.js Version  25.0.0  ### OS  Windows 11  ### Langua
+- **Issue #39778** (2026-11-18): **feat(core): build bundling images only when an asset is bundled**
+  *Symptoms*: ### Issue # (if applicable)  Closes #27991.  ### Reason for this change  `DockerImage.fromBuild()` builds the image as soon as it is called, which for PythonFunction means when the construct is created. The build happens even when the image is never used: when bundling is skipped, when the bundled output already exists in `cdk.out` from an earlier synth, or when the same asset was already staged in this app. Unit tests that create a stack with a PythonFunction pay for a Docker build on every run, and so does every synth on a CI runner without a warm Docker cache. Our synth telemetry shows the PythonFunction image build costing a median of 69 s in CI.  Every PythonFunction also runs its own `docker image inspect` (or build) for the same image tag, even though the tag is content-addressed from the build context and options.  ### Description of changes  - New `DockerImage.fromBuildOnDemand()`. It computes the same tag and hash as `fromBuild()`, so switching between the two doesn't change asset hashes, but it doesn't build yet. It keeps a copy of the build options it hashed, so later changes to the caller's object have no effect. - New `buildImage()`, which builds an on-demand image if it hasn't been built yet and does nothing for other images. `run()` and `cp()` call it, and asset staging calls it right before it sets up the bundling container. A failed build then leaves no helper containers or volumes behind, and the build time is recorded under its own counter instead of the c
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1225,67 +1225,469 @@ export abstract class OnlineEvaluationBase extends Resource implements IOnlineEv
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `88e01777` (2026-11-16)
-**Commit Message**: docs(bedrockagentcore): document Transaction Search prerequisite for Runtime tracing (#39754)
+### Incident Patch 1: `8b2487e6` (2026-11-18)
+**Commit Message**: feat(core): build bundling images only when an asset is bundled (#39778)
 
 ### Issue # (if applicable)
 
-No tracking issue.
+Closes #27991.
 
 ### Reason for this change
 
-Agents and users who copy the README tracing example hit a deploy failure on accounts where CloudWatch Transaction Search is off, and the docs do not mention the prerequisite. The deploy fails with:
+`DockerImage.fromBuild()` builds the image as soon as it is called, which for PythonFunction means when the construct is created. The build happens even when the image is never used: when bundling is skipped, when the bundled output already exists in `cdk.out` from an earlier synth, or when the same asset was already staged in this app. Unit tests that create a stack with a PythonFunction pay for a Docker build on every run, and so does every synth on a CI runner without a warm Docker cache. Our synth telemetry shows the PythonFunction image build costing a median of 69 s in CI.
 
-`X-Ray Delivery Destination is supported with CloudWatch Logs as a Trace Segment Destination`
-
-Runtime tracing delivers traces to X-Ray through CloudWatch Logs, and that delivery only works when Transaction Search is enabled in the account and Region.
+Every PythonFunction also runs its own `docker image inspect` (or build) for the same image tag, even though the tag is content-addressed from the build context and options.
 
 ### Description of changes
 
-Documentation only. No code behaviour change.
+- New `DockerImage.fromBuildOnDemand()`. It computes the same tag and hash as `fromBuild()`, so switching between the two doesn't change asset hashes, but it doesn't build yet. It keeps a copy of the build options it hashed, so later changes to the caller's objec
 
-- Added a docstring note on the `tracingEnabled` prop in `runtime.ts` explaining that tracing requires CloudWatch Transaction Search enabled in the account and Region (a one-time, account-wide setting), and that the deploy fails without it.
-- Added one note in the README observability section, after the tracing example, linking the `xray.CfnTransactionSearchConfig` API docs and the CloudWatch "Enable Transaction Search with CloudFormation" guide.
-
-There is no L2 construct for Transaction Search,
-
-**File**: `packages/aws-cdk-lib/aws-bedrockagentcore/README.md` (modified, +2/-0)
+**File**: `packages/@aws-cdk/aws-lambda-go-alpha/test/bundling.test.ts` (modified, +1/-0)
 ```diff
-@@ -877,6 +877,8 @@ new agentcore.Runtime(this, 'test-runtime', {
- });
- ```
+@@ -18,6 +18,7 @@ beforeEach(() => {
  
-+> **Note:** Tracing requires CloudWatch Transaction Search, enabled once per account and Region. Without it the deploy fails with `X-Ray Delivery Destination is supported with CloudWatch Logs as a Trace Segment Destination`. Turn it on in the CloudWatch console, or deploy [`xray.CfnTransactionSearchConfig`](https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_xray.CfnTransactionSearchConfig.html) in a stack you deploy once per account; see [Enable Transaction Search with CloudFormation](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Transaction-Search-Cloudformation.html).
-+
- ```typescript fixture=default
- const repository = new ecr.Repository(this, 'TestRepository', {
-   repositoryName: 'test-agent-runtime',
+   jest.spyOn(DockerImage, 'fromBuild').mockReturnValue({
+     image: 'built-image',
++    buildImage: () => { },
+     cp: () => 'built-image',
+     run: () => { },
+     toJSON: () => 'build-image',
 ```
 
-**File**: `packages/aws-cdk-lib/aws-bedrockagentcore/lib/runtime/runtime.ts` (modified, +5/-0)
+**File**: `packages/@aws-cdk/aws-lambda-python-alpha/lib/bundling.ts` (modified, +3/-6)
 ```diff
-@@ -160,7 +160,12 @@ export interface RuntimeProps {
-    * Whether to enable X-Ray tracing for this runtime.
-    * When enabled, traces will be delivered to AWS X-Ray.
-    *
-+   * Tracing requires CloudWatch Transaction Search to be enabled in the account and
-+   * Region, so that the X-Ray trace segment destination is CloudWatch Logs.
-+   * Without it the deploy fails. This is a one-time, account-wide setting.
-+   *
-    * @see https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/observability.html
-+   * @see https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/observability-get-started.html
-    * @default false
+@@ -4,7 +4,7 @@ import { Architecture, Code } from 'aws-cdk-lib/aws-lambda';
+ import type { BundlingFileAccess, BundlingOptions as CdkBundlingOptions, DockerVolume } from 'aws-cdk-lib/core';
+ import { AssetStaging, DockerImage, PERF_BUNDLING_SRC_SYM } from 'aws-cdk-lib/core';
+ import { UnscopedValidationError } from 'aws-cdk-lib/core/lib/errors';
+-import { lit, posixShellEscape, profileSpan } from 'aws-cdk-lib/core/lib/helpers-internal';
++import { lit, posixShellEscape } from 'aws-cdk-lib/core/lib/helpers-internal';
+ import { Packaging, DependenciesFile } from './packaging';
+ import type { BundlingOptions, ICommandHooks } from './types';
+ 
+@@ -110,11 +110,8 @@ export class Bundling implements CdkBundlingOptions {
+       // Use the user's image
+       this.image = image;
+     } else {
+-      // Build our own image to do the build in in. We do some counter trickery here: we do want to count
+-      // the time spent here as part of 'bundle:PythonFunction', but by default only the RUNNING of the Docker
+-      // image would count as that. So we add an additional timer span just for the building of the runner image.
+-      using _span = profileSpan(`bundle:${this[PERF_BUNDLING_SRC_SYM]}`, { telemetry: true, skipCount: true });
+-      this.image = DockerImage.fromBuild(path.join(__dirname, 'docker'), {
++      // Build our own image to do the build in, but only if and when the asset actually needs bundling.
++      this.image = DockerImage.fromBuildV2(path.join(__dirname, 'docker'), {
+         buildArgs: {
+           ...props.buildArgs,
+           IMAGE: runtime.bundlingImage.image,
+```
+
+**File**: `packages/@aws-cdk/aws-lambda-python-alpha/test/bundling.test.ts` (modified, +33/-9)
+```diff
+@@ -1,15 +1,18 @@
+ 
+ import * as fs from 'fs';
+ import * as path from 'path';
+-import { BundlingFileAccess, DockerImage } from 'aws-cdk-lib';
++import { AssetStaging, BundlingFileAccess, DockerImage, Stack } from 'aws-cdk-lib';
+ import { Architecture, Code, Runtime } from 'aws-cdk-lib/aws-lambda';
+ import { Bundling } from '../lib/bundling';
+ 
+ jest.spyOn(Code, 'fromAsset');
+-// Stub `DockerImage.fromBuild` so these unit tests never run a real `docker build`.
+-// (The `child_process` mock below is bypassed intermittently in CI.) The spy still
+-// records calls, so the argument/call-count assertions below are unaffected.
++// Stub `DockerImage.fromBuild` for the tests that build a custom bundling image with it, and
++// `buildImage()` for the bundling image that PythonFunction builds on demand, so these unit
++// tests never run a real `docker build`. (The `child_process` mock below is bypassed
++// intermittently in CI.) The spies still record calls, so the assertions below are unaffected.
+ jest.spyOn(DockerImage, 'fromBuild').mockReturnValue(new DockerImage('cdk-bundling-image-stub'));
++jest.spyOn(DockerImage, 'fromBuildV2');
++const buildImage = jest.spyOn(DockerImage.prototype, 'buildImage').mockImplementation(() => {});
+ 
+ jest.mock('child_process', () => ({
+   spawnSync: jest.fn(() => {
+@@ -47,7 +50,7 @@ test('Bundling a function without dependencies', () => {
+     }),
+   }));
+ 
+-  expect(DockerImage.fromBuild).toHaveBeenCalledWith(expect.stringMatching(path.join(__dirname, '..', 'lib')), expect.objectContaining({
++  expect(DockerImage.fromBuildV2).toHaveBeenCalledWith(expect.stringMatching(path.join(__dirname, '..', 'lib')), expect.objectContaining({
+     buildArgs: expect.objectContaining({
+       IMAGE: expect.stringMatching(/build-python/),
+     }),
+@@ -477,7 +480,7 @@ test('Bundling with custom build args', () => {
+     buildArgs: { PIP_INDEX_URL: testPypi },
+   });
+ 
+-  expect(DockerImage.fromBuild).toHaveBeenCalledWith(expect.stringMatching(path.join(__dirname, '..', 'lib')), expect.objectContaining({
++  expect(DockerImage.fromBuildV2).toHaveBeenCalledWith(expect.stringMatching(path.join(__dirname, '..', 'lib')), expect.objectContaining({
+     buildArgs: expect.objectContaining({
+       PIP_INDEX_URL: testPypi,
+     }),
+@@ -617,18 +620,39 @@ test('Do not build docker image when skipping bundling', () => {
+     skip: true,
+   });
+ 
+-  expect(DockerImage.fromBuild).not.toHaveBeenCalled();
++  expect(DockerImage.fromBuildV2).not.toHaveBeenCalled();
+ });
+ 
+-test('Build docker image when bundling is not skipped', () => {
++test('Does not build the docker image when the bundling options are created', () => {
+   const entry = path.join(__dirname, 'lambda-handler');
+   Bundling.bundle({
+     entry: entry,
+     runtime: Runtime.PYTHON_3_12,
+     skip: false,
+   });
+ 
+-  expect(DockerImage.fromBuild).toHaveBeenCalled();
++  expect(DockerImage.fromBuildV2).toHaveBeenCalled();
++  expect(buildImage).not.toHaveBeenCalled();
++});
++
++test('Builds the docker image when the asset is bundled', () => {
++  const run = jest.spyOn(DockerImage.prototype, 'run').mockImplementation((options) => {
++    const output = options?.volumes?.find(v => v.containerPath === AssetStaging.BUNDLING_OUTPUT_DIR);
++    if (!output) {
++      throw new Error('Expected an output volume');
++    }
++    fs.writeFileSync(path.join(output.hostPath, 'index.py'), '');
++  });
++
++  const code = Bundling.bundle({
++    entry: path.join(__dirname, 'lambda-handler'),
++    runtime: Runtime.PYTHON_3_12,
++    skip: false,
++  });
++  code.bind(new Stack());
++
++  expect(buildImage).toHaveBeenCalled();
++  run.mockRestore();
+ });
+ 
+ test('with command hooks', () => {
+```
+
+**File**: `packages/aws-cdk-lib/aws-lambda-nodejs/test/bundling.test.ts` (modified, +1/-0)
+```diff
+@@ -37,6 +37,7 @@ beforeEach(() => {
+ 
+   jest.spyOn(DockerImage, 'fromBuild').mockReturnValue({
+     image: 'built-image',
++    buildImage: () => { },
+     cp: () => 'dest-path',
+     run: () => { },
+     toJSON: () => 'built-image',
+```
+
+**File**: `packages/aws-cdk-lib/aws-lambda/README.md` (modified, +37/-35)
+```diff
+@@ -273,12 +273,12 @@ To use `applicationLogLevelV2` and/or `systemLogLevelV2` you must set `loggingFo
+ 
+ ### Log Group Creation Methods
+ 
+-| Method | Description | Tag Propagation | Prop Injection | Aspects | Notes |
+-|--------|-------------|-----------------|----------------|---------|-------|
+-| **logRetention prop** | Legacy approach using Custom Resource | False | False | False | Does not support TPA |
+-| **logGroup prop** | Explicitly supplied by user in CDK app | True | True | True | Full support for TPA |
+-| **Lazy creation** | Lambda service creates logGroup on first invocation | False | False | False | Occurs when both logRetention and logGroup are undefined and USE_CDK_MANAGED_LAMBDA_LOGGROUP is false |
+-| **USE_CDK_MANAGED_LAMBDA_LOGGROUP** | CDK Lambda function construct creates log group with default props | True | True | True | Feature flag must be enabled |
++| Method                              | Description                                                        | Tag Propagation | Prop Injection | Aspects | Notes                                                                                                 |
++| ----------------------------------- | ------------------------------------------------------------------ | --------------- | -------------- | ------- | ----------------------------------------------------------------------------------------------------- |
++| **logRetention prop**               | Legacy approach using Custom Resource                              | False           | False          | False   | Does not support TPA                                                                                  |
++| **logGroup prop**                   | Explicitly supplied by user in CDK app                             | True            | True           | True    | Full support for TPA                                                                                  |
++| **Lazy creation**                   | Lambda service creates logGroup on first invocation                | False           | False          | False   | Occurs when both logRetention and logGroup are undefined and USE_CDK_MANAGED_LAMBDA_LOGGROUP is false |
++| **USE_CDK_MANAGED_LAMBDA_LOGGROUP** | CDK Lambda function construct creates log group with default props | True            | True           | True    | Feature flag must be enabled                                                                          |
+ 
+ *TPA: Tag propagation, Prop Injection, Aspects*
+ 
+@@ -925,19 +925,19 @@ Note that once you use a capacity provider in a function, it cannot be removed,
+ 
+ #### CapacityProviderFunctionOptions (addFunction method)
+ 
+-| Name | Type | Required | Description |
+-|------|------|----------|-------------|
+-| perExecutionEnvironmentMaxConcurrency | number | No | Maximum concurrent invokes per execution environment. |
+-| executionEnvironmentMemoryGiBPerVCpu | number | No | Memory per VCPU in GiB. |
+-| publishToLatestPublished | boolean | No | Whether to automatically publish to $LATEST.PUBLISHED version. |
+-| latestPublishedScalingConfig | LatestPublishedScalingConfig | No | Scaling configuration for $LATEST.PUBLISHED version. |
++| Name                                  | Type                         | Required | Description                                                    |
++| ------------------------------------- | ---------------------------- | -------- | -------------------------------------------------------------- |
++| perExecutionEnvironmentMaxConcurrency | number                       | No       | Maximum concurrent invokes per execution environment.          |
++| executionEnvironmentMemoryGiBPerVCpu  | number                       | No       | Memory per VCPU in GiB.                                        |
++| publishToLatestPublished              | boolean                      | No       | Whether to automatically publish to $LATEST.PUBLISHED version. |
++| latestPublishedScalingConfig          | LatestPublishedScalingConfig | No       | Scaling configuration for $LATEST.PUBLISHED version.           |
+ 
+ #### LatestPublishedScalingConfig
+ 
+-| Name | Type | Required | Description |
+-|------|------|----------|-------------|
+-| minExecutionEnvironments | number | No | Minimum execution environments for $LATEST.PUBLISHED version. |
+-| maxExecutionEnvironments | number | No | Maximum execution environments for $LATEST.PUBLISHED version. |
++| Name                     | Type   | Required | Description                                                   |
++| ------------------------ | ------ | -------- | ------------------------------------------------------------- |
++| minExecutionEnvironments | number | No       | Minimum execution environments for $LATEST.PUBLISHED version. |
++| maxExecutionEnvironments | number | No       | Maximum execution environments for $LATEST.PUBLISHED version. |
+ 
+ ### Capacity Provider Versions
+ 
+@@ -976,10 +976,10 @@ capacityProvider.addFunction(fn, {
+ 
+ #### VersionOptions (Capacity Provide
+```
+
+**File**: `packages/aws-cdk-lib/aws-lambda/lib/code.ts` (modified, +2/-0)
+```diff
+@@ -10,6 +10,7 @@ import * as s3_assets from '../../aws-s3-assets';
+ import * as cdk from '../../core';
+ import { UnscopedValidationError, ValidationError } from '../../core/lib/errors';
+ import { lit } from '../../core/lib/private/literal-string';
++import { profileFn } from '../../core/lib/private/perf';
+ 
+ /**
+  * How Lambda manages the storage of your code package.
+@@ -153,6 +154,7 @@ export abstract class Code {
+    * @param path The path to the directory containing the Docker file
+    * @param options Docker build options
     */
-   readonly tracingEnabled?: boolean;
++  @profileFn('Code.fromDockerBuild', { telemetry: true })
+   public static fromDockerBuild(path: string, options: DockerBuildAssetOptions = {}): AssetCode {
+     let imagePath = options.imagePath ?? '/asset/.';
+ 
+```
+
+**File**: `packages/aws-cdk-lib/aws-lambda/test/code.test.ts` (modified, +1/-0)
+```diff
+@@ -547,6 +547,7 @@ describe('code', () => {
+     beforeEach(() => {
+       cpMock = jest.fn().mockReturnValue(path.join(__dirname, 'docker-build-lambda'));
+       fromBuildMock = jest.spyOn(cdk.DockerImage, 'fromBuild').mockImplementation(() => ({
++        buildImage: jest.fn(),
+         cp: cpMock,
+         image: 'tag',
+         run: jest.fn(),
+```
+
+**File**: `packages/aws-cdk-lib/aws-s3-assets/README.md` (modified, +7/-1)
+```diff
+@@ -75,7 +75,13 @@ The following example uses custom asset bundling to convert a markdown file to h
+ [Example of using asset bundling](./test/integ.assets.bundling.lit.ts).
+ 
+ The bundling docker image (`image`) can either come from a registry (`DockerImage.fromRegistry`)
+-or it can be built from a `Dockerfile` located inside your project (`DockerImage.fromBuild`).
++or it can be built from a `Dockerfile` located inside your project.
++
++We recommend to use `DockerImage.fromBuildV2` for images you build yourself.
++The image is only built when an asset actually needs bundling. This way, a synth
++that reuses existing bundling output, or skips bundling altogether, doesn't wait
++for a Docker build. If you need the image right away, for example to run your own
++`docker` commands with it, call `buildImage()` on it first.
+ 
+ You can set the `CDK_DOCKER` environment variable in order to provide a custom
+ docker program to execute. This may sometime be needed when building in
+```
+
+---
+
+### Incident Patch 2: `205ff79a` (2026-11-18)
+**Commit Message**: chore: build logs on GitHub Actions are too long to be useful (#39821)
+
+### Issue # (if applicable)
+
+N/A
+
+### Reason for this change
+
+The build logs on GitHub Actions are very long, because the output of every package is printed in one stream, interleaved with other packages running at the same time. Finding a failure means scrolling through thousands of lines, and test failures don't show up on the PR itself.
+
+### Description of changes
+
+`build.sh` no longer passes `--stream` to `lerna run` in CI. Without it, nx prints each task's output as one collapsible group when the task finishes, so the log shows one line per package and failures are easy to find. The downside is that a long task like the `aws-cdk-lib` build shows no output until it's done.
+
+The shared jest config in `cdk-build-tools` adds the `github-actions` reporter when `GITHUB_ACTIONS` is set, so test failures show up as annotations on the PR. It runs with `silent: true`, so it doesn't print its own per-file groups: GitHub can't nest groups inside the ones nx creates. The `default` and `jest-junit` reporters are unchanged. Previously the reporter wasn't active at all, because jest only adds it automatically when `report
+
+**File**: `build.sh` (modified, +1/-1)
+```diff
+@@ -114,7 +114,7 @@ fi
+ 
+ flags=""
+ if [ "$ci" == "true" ]; then
+-  flags="--stream --no-progress --skip-nx-cache"
++  flags="--no-progress --skip-nx-cache"
+   export FORCE_COLOR=false
+ fi
+ 
+```
+
+**File**: `tools/@aws-cdk/cdk-build-tools/config/jest.config.js` (modified, +7/-1)
+```diff
+@@ -19,6 +19,8 @@ process.env.CDK_CONTEXT_JSON = JSON.stringify({
+ // so we can more easily attach the debugger to the subprocesses.
+ const isVsCodeDebugTerminal = process.env.NODE_OPTIONS?.includes('ms-vscode.js-debug') ?? false;
+ 
++const jestJunitReporter = ['jest-junit', { suiteName: 'jest tests', outputDirectory: 'coverage', suiteNameTemplate: '{filepath}', classNameTemplate: '{classname}', titleTemplate: '{title}' }];
++
+ /** @type {import('ts-jest').JestConfigWithTsJest} */
+ module.exports = {
+   // The preset deals with preferring TS over JS
+@@ -58,7 +60,11 @@ module.exports = {
+   coveragePathIgnorePatterns: ['\\.generated\\.[jt]s$', '<rootDir>/test/', '.warnings.jsii.js$', '/node_modules/', '/analytics-data-source/'],
+   reporters: [
+     'default',
+-    ['jest-junit', { suiteName: 'jest tests', outputDirectory: 'coverage', suiteNameTemplate: '{filepath}', classNameTemplate: '{classname}', titleTemplate: '{title}' }]],
++    // Failure annotations on the PR. Not grouped per test file, because nx
++    // already groups each package's output and GitHub can't nest groups.
++    ...(process.env.GITHUB_ACTIONS ? [['github-actions', { silent: true }]] : []),
++    jestJunitReporter,
++  ],
+ 
+   setupFilesAfterEnv,
+ };
+```
+
+---
+
+### Incident Patch 3: `5fafec90` (2026-11-18)
+**Commit Message**: chore(workflows): docker image cache fills the cache budget without speeding up builds (#39831)
+
+### Issue # (if applicable)
+
+N/A
+
+### Reason for this change
+
+The Docker image cache (`docker-cache-Linux`) has grown to 10.8 GB, which is more than the repo's whole cache budget, so it evicts every other cache. Restoring it costs time on every PR build, and saving it on main took about 22 minutes on the [last run](https://github.com/aws/aws-cdk/actions/runs/44296115102). It doesn't help the builds either.
+
+The cache was added in #34841 to avoid the public ECR rate limit for unauthenticated pulls, by loading base images from the cache instead of pulling them. That doesn't work with how our builds run. `setup-buildx-action` creates a `docker-container` builder and makes it the default, so every `docker build`, including the ones CDK runs during tests, runs in that builder. The builder can't see the Docker image store, so `FROM public.ecr.aws/...` always resolves and downloads from the registry, and the builder starts empty on every run. The images that do end up in the image store are the ones the build produces, and each of them includes the layers of its base image, which is where the 
+
+**File**: `.github/workflows/codebuild-pr-build.yml` (modified, +0/-24)
+```diff
+@@ -53,18 +53,6 @@ jobs:
+       - name: Set up Docker
+         uses: docker/setup-buildx-action@v4
+ 
+-      - name: Load Docker images
+-        id: docker-cache
+-        uses: actions/cache/restore@v6
+-        with:
+-          path: |
+-            ~/.docker-images.tar
+-          key: docker-cache-${{ runner.os }}
+-
+-      - name: Restore Docker images
+-        if: ${{ steps.docker-cache.outputs.cache-hit }}
+-        run: docker image load --input ~/.docker-images.tar
+-
+       - name: Restore build artifacts
+         id: s3buildcache
+         uses: actions/cache/restore@v6
+@@ -102,18 +90,6 @@ jobs:
+             ~/.s3buildcache
+           key: s3buildcache-${{ runner.os }}
+ 
+-      - name: Export Docker images
+-        if: ${{ github.event_name == 'push' && github.ref_name == 'main' }}
+-        run: docker image save --output ~/.docker-images.tar $(docker image list --format '{{ if ne .Repository "<none>" }}{{ .Repository }}{{ if ne .Tag "<none>" }}:{{ .Tag }}{{ end }}{{ else }}{{ .ID }}{{ end }}')
+-
+-      - name: Cache Docker images
+-        if: ${{ github.event_name == 'push' && github.ref_name == 'main' }}
+-        uses: actions/cache/save@v6
+-        with:
+-          path: |
+-            ~/.docker-images.tar
+-          key: docker-cache-${{ runner.os }}
+-
+       - name: Save PR info for PR Linter
+         if: github.event_name == 'pull_request'
+         env:
+```
+
+**File**: `.github/workflows/integration-test-deployment.yml` (modified, +0/-24)
+```diff
+@@ -67,18 +67,6 @@ jobs:
+       - name: Set up Docker
+         uses: docker/setup-buildx-action@v4
+ 
+-      - name: Load Docker images
+-        id: docker-cache
+-        uses: actions/cache/restore@v6
+-        with:
+-          path: |
+-            ~/.docker-images.tar
+-          key: docker-cache-${{ runner.os }}
+-
+-      - name: Restore Docker images
+-        if: ${{ steps.docker-cache.outputs.cache-hit }}
+-        run: docker image load --input ~/.docker-images.tar
+-
+       - name: Restore build artifacts
+         uses: actions/cache/restore@v6
+         with:
+@@ -113,15 +101,3 @@ jobs:
+           CDK_ATMOSPHERE_BATCH_SIZE: ${{ vars.CDK_ATMOSPHERE_BATCH_SIZE }}
+           TARGET_BRANCH_COMMIT: ${{ github.event.pull_request.base.sha }}
+           SOURCE_BRANCH_COMMIT: ${{ github.event.pull_request.head.sha }}
+-          
+-      - name: Export Docker images
+-        if: ${{ github.event_name == 'push' && github.ref_name == 'main' }}
+-        run: docker image save --output ~/.docker-images.tar $(docker image list --format '{{ if ne .Repository "<none>" }}{{ .Repository }}{{ if ne .Tag "<none>" }}:{{ .Tag }}{{ end }}{{ else }}{{ .ID }}{{ end }}')
+-
+-      - name: Cache Docker images
+-        if: ${{ github.event_name == 'push' && github.ref_name == 'main' }}
+-        uses: actions/cache/save@v6
+-        with:
+-          path: |
+-            ~/.docker-images.tar
+-          key: docker-cache-${{ runner.os }}
+```
+
+**File**: `.github/workflows/pr-build.yml` (modified, +0/-24)
+```diff
+@@ -55,18 +55,6 @@ jobs:
+       - name: Set up Docker
+         uses: docker/setup-buildx-action@v4
+ 
+-      - name: Load Docker images
+-        id: docker-cache
+-        uses: actions/cache/restore@v6
+-        with:
+-          path: |
+-            ~/.docker-images.tar
+-          key: docker-cache-${{ runner.os }}
+-
+-      - name: Restore Docker images
+-        if: ${{ steps.docker-cache.outputs.cache-hit }}
+-        run: docker image load --input ~/.docker-images.tar
+-
+       - name: Restore build artifacts
+         id: s3buildcache
+         uses: actions/cache/restore@v6
+@@ -103,15 +91,3 @@ jobs:
+           path: |
+             ~/.s3buildcache
+           key: s3buildcache-${{ runner.os }}
+-
+-      - name: Export Docker images
+-        if: ${{ github.event_name == 'push' && github.ref_name == 'main' }}
+-        run: docker image save --output ~/.docker-images.tar $(docker image list --format '{{ if ne .Repository "<none>" }}{{ .Repository }}{{ if ne .Tag "<none>" }}:{{ .Tag }}{{ end }}{{ else }}{{ .ID }}{{ end }}')
+-
+-      - name: Cache Docker images
+-        if: ${{ github.event_name == 'push' && github.ref_name == 'main' }}
+-        uses: actions/cache/save@v6
+-        with:
+-          path: |
+-            ~/.docker-images.tar
+-          key: docker-cache-${{ runner.os }}
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #39755** (2026-11-16): docs(bedrockagentcore): document OpenTelemetry dependency for direct code deployment (@kumvprat)
-- **PR #39754** (2026-11-16): docs(bedrockagentcore): document Transaction Search prerequisite for Runtime tracing (@kumvprat)
-- **PR #39751** (closed): fix(bedrockagentcore): imported gateway target reports its status as its description (@laazyj)
-- **PR #39722** (2026-11-13): chore(merge-back): 2.277.0 (@aws-cdk-automation)
-- **PR #39712** (2026-11-12): feat(lambda-event-sources): support queue consumption mode for self-managed Kafka (@ainafee-amzn)
-- **PR #39711** (2026-11-12): chore(release): 2.277.0 (@aws-cdk-automation)
+- **PR #39831** (2026-11-18): chore(workflows): docker image cache fills the cache budget without speeding up builds (@mrgrain)
+- **PR #39830** (2026-11-18): chore: npm-check-updates && yarn upgrade (@aws-cdk-automation)
+- **PR #39829** (2026-11-18): chore(eslint-config): @cdklabs/eslint-plugin peer dependencies don't match eslint 9 (@mrgrain)
+- **PR #39827** (2026-11-18): chore(workflows): codeql overlay caches take up cache space for little gain (@mrgrain)
+- **PR #39826** (2026-11-18): chore: yarn install warns about unmet constructs peer dependencies (@mrgrain)
+- **PR #39825** (2026-11-18): chore(core): extracting test fixture tarballs prints tar header warnings (@mrgrain)
 
 ---
 
@@ -1305,22 +1707,21 @@ There is no L2 construct for Transaction Search,
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs(bedrockagentcore): document Transaction Search prerequisite for Runtime tra
+## X. core): build bundling images only when an asset is bundled
 
 **RULE**:
-When implementing operations in `packages/aws-cdk-lib/aws-bedrockagentcore/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aws/aws-cdk. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/@aws-cdk/aws-lambda-go-alpha/test/bundling.test.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aws/aws-cdk. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `88e01777`: docs(bedrockagentcore): document Transaction Search prerequisite for Runtime tracing. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8b2487e6`: core): build bundling images only when an asset is bundled. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/aws-cdk-lib/aws-bedrockagentcore/README.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/@aws-cdk/aws-lambda-go-alpha/test/bundling.test.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-> **Note:** Tracing requires CloudWatch Transaction Search, enabled once per account and Region. Without it the deploy fails with `X-Ray Delivery Destination is supported with CloudWatch Logs as a Trace Segment Destination`. Turn it on in the CloudWatch console, or deploy [`xray.CfnTransactionSearchConfig`](https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_xray.CfnTransactionSearchConfig.html) in a stack you deploy once per account; see [Enable Transaction Search with CloudFormation](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Transaction-Search-Cloudformation.html).
-
+    buildImage: () => { },
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1330,7 +1731,7 @@ Subsystems managing TypeScript data structures, boundary deserialization, API pa
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `88e01777` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8b2487e6` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

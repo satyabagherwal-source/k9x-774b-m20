@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-18T22:06:58.100Z",
+  "last_updated": "2026-11-18T22:14:43.903Z",
   "total_records": 1914,
   "domains": {
     "A": {
@@ -13026,8 +13026,8 @@
       "title": "Research & Knowledge Intelligence: mistralai/Mixtral-8x7B-Instruct-v0.1 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-mistralai-mixtral-8x7b-instruct-v0-1-research-knowledge-intelligence-mistrala.md",
       "repository": "mistralai/Mixtral-8x7B-Instruct-v0.1",
-      "content_hash": "9523d3fa2a71244e50b24ced2ef809ae41df26bab636efc8686210da1192e62c",
-      "created_at": "2026-11-14T04:14:31.459Z"
+      "content_hash": "a6c6333aa620d94ea1b3d947d604f9690da07edba7b384e4235e05415649f547",
+      "created_at": "2026-11-18T22:14:28.773Z"
     },
     "domain_intelligence-product-intelligence-domcyrus-rustnet-core-invariants": {
       "record_id": "domain_intelligence-product-intelligence-domcyrus-rustnet-core-invariants",
@@ -13104,8 +13104,8 @@
       "title": "Research & Knowledge Intelligence: hf-mistralai-mixtral-8x7b-instruct-v0.1-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-mistralai-mixtral-8x7b-instruct-v0-1-learnings-research-knowledge-intelligenc.md",
       "repository": "hf-mistralai-mixtral-8x7b-instruct-v0.1-learnings",
-      "content_hash": "2d2a9472822d47126c340294a4b4e4624cc27f90aaa2da9b37171e2cc670b898",
-      "created_at": "2026-11-14T04:15:16.140Z"
+      "content_hash": "04e9c1d781aa7250018f7044cc6c8c30993700c7a8272e131dea1254bf455eb2",
+      "created_at": "2026-11-18T22:14:42.639Z"
     },
     "DOM-K-F74DEC74": {
       "record_id": "DOM-K-F74DEC74",
@@ -15530,8 +15530,8 @@
       "title": "Technical Construction Intelligence: react/metro Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-react-metro-technical-construction-intelligence-react-metro-core-invariants.md",
       "repository": "react/metro",
-      "content_hash": "c5e3918c813dccfa204309d565c9dd22751e58ddc0e71f2507703782b2b03357",
-      "created_at": "2026-11-17T21:22:23.436Z"
+      "content_hash": "b0f1471c879afc1b8f5f67ca1c47bf1b13347c846a553e00bfd00b1263a80ed3",
+      "created_at": "2026-11-18T22:14:36.124Z"
     },
     "domain_intelligence-research-knowledge-intelligence-google-vit-base-patch16-224-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-google-vit-base-patch16-224-core-invariants",
@@ -15599,8 +15599,8 @@
       "title": "Technical Construction Intelligence: react-metro-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-react-metro-learnings-technical-construction-intelligence-react-metro-learnings-.md",
       "repository": "react-metro-learnings",
-      "content_hash": "6a75d8973276d6aa4c7a29c6615ff058d0205362e18ec1b5848d57a29eda9e63",
-      "created_at": "2026-11-17T21:22:35.528Z"
+      "content_hash": "8b3d56310bafa21d674dac77c31afa4df4e0b787f9a67305be60b25523f10a82",
+      "created_at": "2026-11-18T22:14:43.279Z"
     },
     "domain_intelligence-research-knowledge-intelligence-baai-bge-base-en-v1-5-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-baai-bge-base-en-v1-5-core-invariants",
@@ -17426,8 +17426,8 @@
       "title": "Technical Construction Intelligence: aws/aws-cdk Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-aws-aws-cdk-technical-construction-intelligence-aws-aws-cdk-core-invariants.md",
       "repository": "aws/aws-cdk",
-      "content_hash": "cac61691cd3597c8972acc565afaffd63a764be0dd6b451107d0a7dd0b24bf88",
-      "created_at": "2026-11-18T07:05:46.123Z"
+      "content_hash": "b9a6e184de8b58bee8d188382e5d6119124301d9c49cb0eee5f90ecbb9fdf323",
+      "created_at": "2026-11-18T22:14:39.562Z"
     },
     "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-4b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-4b-core-invariants",
@@ -17495,8 +17495,8 @@
       "title": "Technical Construction Intelligence: aws-aws-cdk-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-aws-aws-cdk-learnings-technical-construction-intelligence-aws-aws-cdk-learnings-.md",
       "repository": "aws-aws-cdk-learnings",
-      "content_hash": "459fc6eef9e2519f2528e1edbe3214bcd4a90198fd789c75201433e08462d47e",
-      "created_at": "2026-11-17T09:27:28.205Z"
+      "content_hash": "02e2eabcafd9ee40533db8d77d491755d790b53405196da0d5f8499248827264",
+      "created_at": "2026-11-18T22:14:43.903Z"
     },
     "domain_intelligence-research-knowledge-intelligence-conwayresearch-underdog-saluki-27b-1-0-core-inva": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-conwayresearch-underdog-saluki-27b-1-0-core-inva",

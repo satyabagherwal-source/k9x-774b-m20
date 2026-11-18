@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-18T22:06:57.787Z",
+  "updated_at": "2026-11-18T22:14:43.594Z",
   "stats": {
-    "total_discovered": 5704,
-    "approved_pending_harvest": 5395,
+    "total_discovered": 5705,
+    "approved_pending_harvest": 5396,
     "harvested_count": 0,
     "rejected_count": 309,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 5373,
+      "COMMUNITY_AND_EXPERT": 5374,
       "OFFICIAL_DOCUMENTATION": 184,
       "STANDARDS_AND_SPECIFICATIONS": 111,
       "ENGINEERING_BLOGS": 4,
@@ -123346,6 +123346,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gluesql-gluesql-learnings.md",
         "fileName": "gluesql-gluesql-learnings.md"
+      }
+    },
+    "SRC-DC25B34DD7AF": {
+      "id": "SRC-DC25B34DD7AF",
+      "url": "https://github.com/aws/aws-cdk/actions/runs/44296115102",
+      "title": "https://github.com/aws/aws-cdk/actions/runs/44296115102",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T22:14:43.594Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aws-aws-cdk-learnings.md",
+        "fileName": "aws-aws-cdk-learnings.md"
       }
     }
   }

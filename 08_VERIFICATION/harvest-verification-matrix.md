@@ -11112,3 +11112,6 @@
 | `CYCLE-20261118-43QN` | `2026-11-18T22:03:22.991Z` | `embassy-rs/embassy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9288` | Yes (`68e97b11...`) |
 | `CYCLE-20261118-4DGW` | `2026-11-18T22:03:35.600Z` | `gluesql/gluesql` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9289` | Yes (`ae05025b...`) |
 | `CYCLE-20261118-8MCA` | `2026-11-18T22:06:53.722Z` | `meta-llama/Llama-2-7b-chat-hf` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-meta-llama-llama-2-7b-chat-hf-learnings.md` | Yes (`4874b36c...`) |
+| `CYCLE-20261118-IDBH` | `2026-11-18T22:14:28.589Z` | `mistralai/Mixtral-8x7B-Instruct-v0.1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-mistralai-mixtral-8x7b-instruct-v0.1-learnings.md` | Yes (`7f100369...`) |
+| `CYCLE-20261118-IIV6` | `2026-11-18T22:14:35.778Z` | `react/metro` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9290` | Yes (`46aa0fcd...`) |
+| `CYCLE-20261118-ILJB` | `2026-11-18T22:14:39.239Z` | `aws/aws-cdk` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9291` | Yes (`5deac58d...`) |

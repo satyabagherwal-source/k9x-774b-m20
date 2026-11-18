@@ -11145,3 +11145,6 @@ Every entry in this ledger must capture:
 | `learn-github-embassy-rs-embassy` | `https://github.com/embassy-rs/embassy` | `b4d9d61a` | Multi-dimensional audit evidence | 2026-11-18T22:03:22.995Z |
 | `learn-github-gluesql-gluesql` | `https://github.com/gluesql/gluesql` | `3a730bf0` | Multi-dimensional audit evidence | 2026-11-18T22:03:35.604Z |
 | `learn-huggingface-meta-llama-llama-2-7b-chat-hf` | `https://huggingface.co/meta-llama/Llama-2-7b-chat-hf` | `hf-meta-ll` | Multi-dimensional audit evidence | 2026-11-18T22:06:53.726Z |
+| `learn-huggingface-mistralai-mixtral-8x7b-instruct-v0-1` | `https://huggingface.co/mistralai/Mixtral-8x7B-Instruct-v0.1` | `hf-mistral` | Multi-dimensional audit evidence | 2026-11-18T22:14:28.593Z |
+| `learn-github-react-metro` | `https://github.com/react/metro` | `3b7e1e1b` | Multi-dimensional audit evidence | 2026-11-18T22:14:35.782Z |
+| `learn-github-aws-aws-cdk` | `https://github.com/aws/aws-cdk` | `0561d668` | Multi-dimensional audit evidence | 2026-11-18T22:14:39.242Z |

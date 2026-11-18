@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261117-LO1U",
-    "timestamp": "2026-11-17T14:33:28.578Z",
-    "repository": "kcl-lang/kcl",
-    "learningId": "learn-github-kcl-lang-kcl",
-    "contentHash": "18e490d486daf599c19bc5c2080174397b2c01e2f1105f5e50d16ae686930a2d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261117-LRJ1",
-    "timestamp": "2026-11-17T14:33:33.085Z",
-    "repository": "RediSearch/RediSearch",
-    "learningId": "learn-github-redisearch-redisearch",
-    "contentHash": "9c2a15e614205b9a86d4338b55335630142b1a1412fea1d9c56a66b82f940087",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261117-LWPZ",
-    "timestamp": "2026-11-17T14:33:39.815Z",
-    "repository": "autogluon/chronos-2",
-    "learningId": "learn-huggingface-autogluon-chronos-2",
-    "contentHash": "619ab415cc212065470ef7cf2ad90d0664e2053df330b8f9441b80f836eb538b",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261117-VTMJ",
     "timestamp": "2026-11-17T14:41:22.363Z",
     "repository": "Comfy-Org/MOSS-Image",
@@ -7492,6 +7447,51 @@
     "contentHash": "4874b36c48dd43898245af8a4002df86cbf807098fd62070db7033af720eca5a",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-IDBH",
+    "timestamp": "2026-11-18T22:14:28.589Z",
+    "repository": "mistralai/Mixtral-8x7B-Instruct-v0.1",
+    "learningId": "learn-huggingface-mistralai-mixtral-8x7b-instruct-v0-1",
+    "contentHash": "7f10036943f1f40fbc39bb7ed8d523a7ec4e48d8090bd4cf9e180b090345ac17",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-IIV6",
+    "timestamp": "2026-11-18T22:14:35.778Z",
+    "repository": "react/metro",
+    "learningId": "learn-github-react-metro",
+    "contentHash": "46aa0fcd6106144a6dac30d8de76ec82c7460c2f88ca723b44d86f6c2c2a137f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-ILJB",
+    "timestamp": "2026-11-18T22:14:39.239Z",
+    "repository": "aws/aws-cdk",
+    "learningId": "learn-github-aws-aws-cdk",
+    "contentHash": "5deac58d031a921fdb1e07055030d2496be7e0055db9bbe533ec5a9bdf420f81",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

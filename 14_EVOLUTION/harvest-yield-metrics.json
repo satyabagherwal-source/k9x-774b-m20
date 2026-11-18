@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T22:06:53.730Z",
-  "total_cycles_completed": 10623,
-  "total_learnings_persisted": 10623,
-  "total_rules_promoted": 10052,
+  "last_updated": "2026-11-18T22:14:39.247Z",
+  "total_cycles_completed": 10626,
+  "total_learnings_persisted": 10626,
+  "total_rules_promoted": 10054,
   "history": [
-    {
-      "timestamp": "2026-11-18T08:21:35.314Z",
-      "repository": "StarRocks/starrocks",
-      "learningId": "learn-github-starrocks-starrocks",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-18T08:41:50.678Z",
-      "repository": "nvidia/NVIDIA-NemotronLabs-RE-USE",
-      "learningId": "learn-huggingface-nvidia-nvidia-nemotronlabs-re-use",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-18T08:50:44.128Z",
-      "repository": "apache/pinot",
-      "learningId": "learn-github-apache-pinot",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-18T08:51:35.085Z",
       "repository": "google-t5/t5-small",
@@ -1403,6 +1382,27 @@
       "repository": "meta-llama/Llama-2-7b-chat-hf",
       "learningId": "learn-huggingface-meta-llama-llama-2-7b-chat-hf",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T22:14:28.598Z",
+      "repository": "mistralai/Mixtral-8x7B-Instruct-v0.1",
+      "learningId": "learn-huggingface-mistralai-mixtral-8x7b-instruct-v0-1",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T22:14:35.787Z",
+      "repository": "react/metro",
+      "learningId": "learn-github-react-metro",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T22:14:39.247Z",
+      "repository": "aws/aws-cdk",
+      "learningId": "learn-github-aws-aws-cdk",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]
