@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-18T05:35:26.597Z",
+  "last_updated": "2026-11-18T05:44:16.107Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -665,14 +665,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-unsloth-qwen-image-2-1-gguf",
-      "content_hash": "ddfa54153e32b8814cb316daf58626e074e75de6a4525e8da6ebba6b1677cb07",
-      "verified_at": "2026-11-13T18:17:17.294Z",
+      "content_hash": "b05065a2aa7e08b53b8392ad3e59597aa6fdba5213fd6697adfe6fd60607bb7b",
+      "verified_at": "2026-11-18T05:44:05.495Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T18:17:17.294Z"
+      "last_updated": "2026-11-18T05:44:05.495Z"
     },
     "XiaomiMiMo/MiMo-V2.6-Pro-RL": {
       "repository": "XiaomiMiMo/MiMo-V2.6-Pro-RL",
@@ -4821,14 +4821,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-sayanarijit-xplr",
-      "content_hash": "f418fe0fe721707767d1fe9a1f7bd5d08b56071654ea9ddf9b7604ab0adbfa31",
-      "verified_at": "2026-10-26T12:13:27.408Z",
+      "content_hash": "8c819de374f9b45b7063f38642c83931c051e84c97cb05ebcc267fc623af423e",
+      "verified_at": "2026-11-18T05:44:07.525Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-10-26T12:13:27.408Z"
+      "last_updated": "2026-11-18T05:44:07.525Z"
     },
     "danilowoz/react-content-loader": {
       "repository": "danilowoz/react-content-loader",
@@ -6816,14 +6816,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zarf-dev-zarf",
-      "content_hash": "3c2c28cbfdd9ec310918ff52dc157739ea176ee8128c7ff74deb53c13f139186",
-      "verified_at": "2026-11-17T07:06:23.929Z",
+      "content_hash": "355630c8eba1069c50ecc75aed37018e666782ccbb715c66f2402b4e9b8773ce",
+      "verified_at": "2026-11-18T05:44:16.106Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T07:06:23.929Z"
+      "last_updated": "2026-11-18T05:44:16.106Z"
     },
     "vlcn-io/cr-sqlite": {
       "repository": "vlcn-io/cr-sqlite",

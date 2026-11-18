@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261116-76JM",
-    "timestamp": "2026-11-16T13:38:33.058Z",
-    "repository": "milvus-io/milvus",
-    "learningId": "learn-github-milvus-io-milvus",
-    "contentHash": "3c6ea005e2ab721b8da4303fea0c680522d51a77f3d3e33c96c5bd94d1ad7dd7",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261116-77CD",
-    "timestamp": "2026-11-16T13:38:34.093Z",
-    "repository": "dathere/qsv",
-    "learningId": "learn-github-dathere-qsv",
-    "contentHash": "0479026877786f038c012995b839832af1b5b035d593e9ded6ef947d13d27b35",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261116-7Q02",
-    "timestamp": "2026-11-16T14:06:57.890Z",
-    "repository": "apache/arrow",
-    "learningId": "learn-github-apache-arrow",
-    "contentHash": "ecedefc29c9af079a224ae5fdced58a2ae84c498b3d0e035dccd5a5719d7afaa",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261116-7DBE",
     "timestamp": "2026-11-16T14:34:41.066Z",
     "repository": "IFM/PAN2",
@@ -7492,6 +7447,51 @@
     "contentHash": "9160c1394a741411f47d59c6b0083fbc0b678df9c48c684a7ef012fa86118f8e",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-4Q5K",
+    "timestamp": "2026-11-18T05:44:05.480Z",
+    "repository": "unsloth/Qwen-Image-2.1-GGUF",
+    "learningId": "learn-huggingface-unsloth-qwen-image-2-1-gguf",
+    "contentHash": "b05065a2aa7e08b53b8392ad3e59597aa6fdba5213fd6697adfe6fd60607bb7b",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-4RPY",
+    "timestamp": "2026-11-18T05:44:07.510Z",
+    "repository": "sayanarijit/xplr",
+    "learningId": "learn-github-sayanarijit-xplr",
+    "contentHash": "8c819de374f9b45b7063f38642c83931c051e84c97cb05ebcc267fc623af423e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-4YCC",
+    "timestamp": "2026-11-18T05:44:16.092Z",
+    "repository": "zarf-dev/zarf",
+    "learningId": "learn-github-zarf-dev-zarf",
+    "contentHash": "355630c8eba1069c50ecc75aed37018e666782ccbb715c66f2402b4e9b8773ce",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

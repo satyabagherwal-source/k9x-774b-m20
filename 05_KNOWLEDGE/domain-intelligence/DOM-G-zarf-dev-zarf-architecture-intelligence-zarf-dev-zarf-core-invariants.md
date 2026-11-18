@@ -4,24 +4,24 @@
 {
   "source_repository": "zarf-dev/zarf",
   "source_url": "https://github.com/zarf-dev/zarf",
-  "source_version": "8942227e",
+  "source_version": "31862576",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-17T07:06:24.140Z",
+  "timestamp": "2026-11-18T05:44:16.348Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-zarf-dev-zarf",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [zarf-dev/zarf](https://github.com/zarf-dev/zarf) (Revision: `8942227e`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-17T07:06:24.140Z`  
+> **Provenance**: Harvested from [zarf-dev/zarf](https://github.com/zarf-dev/zarf) (Revision: `31862576`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-18T05:44:16.348Z`  
 > **Learning ID**: `learn-github-zarf-dev-zarf`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: L (Deployment & Operations Intelligence), D (Research & Knowledge Intelligence), H (Technical Construction Intelligence), J (Search & Distribution Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence)
-- **Confidence Rating**: 64%
+- **Secondary Corroborating Domains**: D (Research & Knowledge Intelligence), L (Deployment & Operations Intelligence), J (Search & Distribution Intelligence), H (Technical Construction Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence)
+- **Confidence Rating**: 79%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from zarf-dev/zarf:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zarf-dev-zarf-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zarf-dev/zarf](https://github.com/zarf-dev/zarf))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T07:06:22.874Z  
+> **Harvest Timestamp**: 2026-11-18T05:44:14.965Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: The Airgap Native Package Manager for Kubernetes
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 2097 stars
+- **Stars / Engagement**: 2100 stars
 
 ---
 
@@ -1473,13 +1473,14 @@ func mutateEphemeralContainers(ctx context.Context, cluster *cluster.Cluster, po
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #5676** (2026-11-16): **fix: paginate registry tag listings**
-  *Symptoms*: ## Description   - Discovered while running `uds zarf tools registry ls docker.io/envoyproxy/envoy`, which consistently failed with `unexpected EOF` error.  - Appears unpaginated tag responses exceed ORAS’s [default 4 MiB metadata limit.](https://github.com/zarf-dev/zarf/blob/e62a47c31c2a10854bd3f9d64f31345dffa26c68/vendor/oras.land/oras-go/v2/registry/remote/utils.go#L32-L35) (if I have that correct).     - Setting a 1,000-tag (matched crane's default) page size fixes the failure.  - Added a small pagination regression test. Verified with Go 1.26.11 against envoyproxy.  ## Related Issue  N/A  ## Checklist before merging  - [x] Test, docs, adr added or updated as needed - [x] [Contributor Guide Steps](https://github.com/zarf-dev/zarf/blob/main/CONTRIBUTING.md#developer-workflow) followed 
+- **Issue #5687** (2026-11-17): **Community membership request for @dwertent**
+  *Symptoms*: I'd like to become a Community Member of `zarf-dev`, following the [contributor ladder](https://github.com/zarf-dev/zarf/blob/main/CONTRIBUTOR_LADDER.md#community-members).  ### Merged contributions  I have authored six merged PRs:  - [#5644: Fix agent mutation policy defaults during Helm schema validation](https://github.com/zarf-dev/zarf/pull/5644) - [#5592: Hide the deprecated YOLO example from the docs and recommend connected mode](https://github.com/zarf-dev/zarf/pull/5592) - [#5601: Fix broken documentation links](https://github.com/zarf-dev/zarf/pull/5601) - [#5602: Update documentation-site dependencies to address vulnerabilities](https://github.com/zarf-dev/zarf/pull/5602) - [#5620: Update Brotli from v1.2.0 to v1.2.8](https://github.com/zarf-dev/zarf/pull/5620) - [#5629: Update klauspost/compress from v1.19.2 to v1.20.3](https://github.com/zarf-dev/zarf/pull/5629)  ### Issues and community participation  I have also opened:  - [#5559: Add a CI check for broken documentation links](https://github.com/zarf-dev/zarf/issues/5559) - [#5589: Standardize deployment logs](https://github.com/zarf-dev/zarf/issues/5589) - [#5678: Add missing Dependabot grouping rules for related dependencies](https://github.com/zarf-dev/zarf/issues/5678)  I attended the two most recent Zarf community meetings, and two-factor authentication is enabled on my GitHub account.  ### Sponsorship and approval  @AustinAbro321 @brandtkeller , would you be willing to provide the maintainer sponsorship an
 
-- **Issue #5675** (2026-11-16): **chore(deps): bump docker/login-action from 4.7.0 to 4.8.0**
-  *Symptoms*: Bumps [docker/login-action](https://github.com/docker/login-action) from 4.7.0 to 4.8.0. <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/docker/login-action/releases">docker/login-action's releases</a>.</em></p> <blockquote> <h2>v4.8.0</h2> <ul> <li>Set Docker Hub OIDC token lifetime default to 1 hour by <a href="https://github.com/crazy-max"><code>@​crazy-max</code></a> in <a href="https://redirect.github.com/docker/login-action/pull/1070">docker/login-action#1070</a></li> <li>Bump <code>@​aws-sdk/client-ecr</code> and <code>@​aws-sdk/client-ecr-public</code> to 3.1161.0 in <a href="https://redirect.github.com/docker/login-action/pull/1103">docker/login-action#1103</a></li> <li>Bump <code>@​docker/actions-toolkit</code> from 0.107.0 to 0.109.0 in <a href="https://redirect.github.com/docker/login-action/pull/1105">docker/login-action#1105</a></li> <li>Bump vite from 7.3.6 to 7.3.7 in <a href="https://redirect.github.com/docker/login-action/pull/1101">docker/login-action#1101</a></li> </ul> <p><strong>Full Changelog</strong>: <a href="https://github.com/docker/login-action/compare/v4.7.0...v4.8.0">https://github.com/docker/login-action/compare/v4.7.0...v4.8.0</a></p> </blockquote> </details> <details> <summary>Commits</summary> <ul> <li><a href="https://github.com/docker/login-action/commit/8aa5831fb8d48d8f76594c7ddde61ae58019f550"><code>8aa5831</code></a> Merge pull request <a href="https://redirect.github.com/docker/login-action/iss
+- **Issue #5685** (2026-11-17): **chore(docs): update AirGap link to IBM's website**
+  *Symptoms*: Old AirGap link is broken (https://ibm.github.io/kubernetes-networking/vpc/airgap/) add new link to IBMs website  ## Description  ...  ## Related Issue  Fixes # <!-- or --> Relates to #  ## Checklist before merging  - [ ] Test, docs, adr added or updated as needed - [ ] [Contributor Guide Steps](https://github.com/zarf-dev/zarf/blob/main/CONTRIBUTING.md#developer-workflow) followed 
   **Post-Mortem & Fix Analysis**:
-  > ### <span aria-hidden="true">✅</span> Deploy Preview for *zarf-docs* canceled.   |  Name | Link | |:-:|------------------------| |<span aria-hidden="true">🔨</span> Latest commit | 12072d4a55a8d8274445cc4ca4636706cdc3ff3b | |<span aria-hidden="true">🔍</span> Latest deploy log | https://app.netlify.com/projects/zarf-docs/deploys/6af9005149098bad7200edda |
+  > ### <span aria-hidden="true">👷</span> Deploy request for *zarf-docs* pending review. [Visit the deploys page to approve it](https://app.netlify.com/projects/zarf-docs/deploys)  |  Name | Link | |:-:|------------------------| |<span aria-hidden="true">🔨</span> Latest commit | 5600284507e5f3948412873b322a52fe497ac288 |
+  > ## [Codecov](https://app.codecov.io/gh/zarf-dev/zarf/pull/5685?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=zarf-dev) Report :white_check_mark: All modified and coverable lines are covered by tests. [see 197 files with indirect coverage changes](https://app.codecov.io/gh/zarf-dev/zarf/pull/5685/indirect-changes?src=pr&el=tree-more&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=zarf-dev) <details><summary> :rocket: New features to boost your workflow: </summary>  - :snowflake: [Test Analytics](https://docs.codecov.com/docs/test-analytics): Detect flaky tests, report on failures, and find test suite problems. - :package: [JS Bundle Analysis](https://docs.codecov.com/docs/javascript-bundle-analysis): Save yourself from yourself by tracking and limiting bundle sizes in JS merges. </details>
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1496,84 +1497,34 @@ func mutateEphemeralContainers(ctx context.Context, cluster *cluster.Cluster, po
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d9c2a2fe` (2026-11-16)
-**Commit Message**: fix: paginate registry tag listings (#5676)
+### Incident Patch 1: `6f444bd5` (2026-11-17)
+**Commit Message**: fix: count node items when sizing registry HPA replicas (#5641)
 
-Signed-off-by: Brian Watson <[REDACTED_EMAIL]>
+Signed-off-by: James Lanska <[REDACTED_EMAIL]>
 
-**File**: `src/cmd/registry_list.go` (modified, +3/-2)
+**File**: `packages/init/v1alpha1/zarf-registry/chart/templates/hpa.yaml` (modified, +3/-2)
 ```diff
-@@ -177,8 +177,9 @@ func listRegistryTags(ctx context.Context, out io.Writer, conn registryConnectio
- 	}
- 
- 	repo := &orasRemote.Repository{
--		Reference: ref,
--		Client:    conn.client,
-+		Reference:       ref,
-+		Client:          conn.client,
-+		TagListPageSize: 1000,
- 	}
- 
- 	switch {
-```
-
-**File**: `src/cmd/registry_list_test.go` (modified, +32/-0)
-```diff
-@@ -8,6 +8,7 @@ import (
- 	"bytes"
- 	"fmt"
- 	"net/http"
-+	"net/http/httptest"
- 	"strings"
- 	"testing"
- 
-@@ -82,6 +83,37 @@ func TestListRegistryTags(t *testing.T) {
- 	}
- }
- 
-+func TestListRegistryTagsPagination(t *testing.T) {
-+	t.Parallel()
-+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-+		var tag string
-+		switch r.URL.RawQuery {
-+		case "n=1000":
-+			tag = "first"
-+			w.Header().Set("Link", `</v2/test-repo/tags/list?last=first>; rel="next"`)
-+		case "last=first&n=1000":
-+			tag = "second"
-+		default:
-+			http.Error(w, "expected paginated tag request", http.StatusBadRequest)
-+			return
-+		}
-+		w.Header().Set("Content-Type", "application/json")
-+		if _, err := fmt.Fprintf(w, `{"name":"test-repo","tags":["%s"]}`, tag); err != nil {
-+			t.Errorf("writing tags: %v", err)
-+		}
-+	}))
-+	defer server.Close()
-+
-+	conn := registryConnection{
-+		ref:    strings.TrimPrefix(server.URL, "http://") + "/test-repo",
-+		client: &auth.Client{Client: server.Client()},
-+	}
-+	var buf bytes.Buffer
-+	err := listRegistryTags(testutil.TestContext(t), &buf, conn, true, false, false, false)
-+	require.NoError(t, err)
-+	require.Equal(t, "first\nsecond\n", buf.String())
-+}
-+
- func TestNormalizeRepoRef(t *testing.T) {
- 	t.Parallel()
- 	tests := []struct {
+@@ -14,8 +14,9 @@ spec:
+     kind: Deployment
+     name: {{ template "docker-registry.fullname" . }}
+ {{- if .Values.autoscaling.mapReplicasToNodes }}
+-  minReplicas: {{ len (lookup "v1" "Node" "" "") }}
+-  maxReplicas: {{ add (len (lookup "v1" "Node" "" "")) 4 }}
++{{- $nodeCount := max 1 (len ((lookup "v1" "Node" "" "").items | default list)) }}
++  minReplicas: {{ $nodeCount }}
++  maxReplicas: {{ add $nodeCount 4 }}
+ {{- else }}
+   minReplicas: {{ .Values.autoscaling.minReplicas }}
+   maxReplicas: {{ .Values.autoscaling.maxReplicas }}
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5685** (2026-11-17): chore(docs): update AirGap link to IBM's website (@BraedenOlney)
+- **PR #5683** (2026-11-17): docs: remove variables example (@AustinAbro321)
 - **PR #5676** (2026-11-16): fix: paginate registry tag listings (@briantwatson)
 - **PR #5675** (2026-11-16): chore(deps): bump docker/login-action from 4.7.0 to 4.8.0 (@dependabot[bot])
 - **PR #5674** (2026-11-16): chore(deps): bump the codeql group with 3 updates (@dependabot[bot])
 - **PR #5657** (closed): feat(git): remove external git shell-out fallback (#2772) (@Amankumar-10012004)
-- **PR #5648** (2026-11-11): chore(main): release 1.0.1 (@zarf-release-please[bot])
-- **PR #5645** (2026-11-11): chore(deps): update Go from 1.26.10 to 1.26.11 (@AustinAbro321)
 
 ---
 
@@ -1593,34 +1544,34 @@ Signed-off-by: Brian Watson <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. paginate registry tag listings
+## X. count node items when sizing registry HPA replicas
 
 **RULE**:
-When implementing operations in `src/cmd/registry_list.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zarf-dev/zarf. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/init/v1alpha1/zarf-registry/chart/templates/hpa.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zarf-dev/zarf. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d9c2a2fe`: paginate registry tag listings. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6f444bd5`: count node items when sizing registry HPA replicas. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/cmd/registry_list.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/init/v1alpha1/zarf-registry/chart/templates/hpa.yaml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-		Reference:       ref,
-		Client:          conn.client,
-		TagListPageSize: 1000,
+{{- $nodeCount := max 1 (len ((lookup "v1" "Node" "" "").items | default list)) }}
+  minReplicas: {{ $nodeCount }}
+  maxReplicas: {{ add $nodeCount 4 }}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-		Reference: ref,
-		Client:    conn.client,
+  minReplicas: {{ len (lookup "v1" "Node" "" "") }}
+  maxReplicas: {{ add (len (lookup "v1" "Node" "" "")) 4 }}
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d9c2a2fe` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6f444bd5` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

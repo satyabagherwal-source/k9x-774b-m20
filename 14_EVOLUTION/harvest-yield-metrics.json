@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T05:35:26.585Z",
-  "total_cycles_completed": 10366,
-  "total_learnings_persisted": 10366,
-  "total_rules_promoted": 9882,
+  "last_updated": "2026-11-18T05:44:16.102Z",
+  "total_cycles_completed": 10369,
+  "total_learnings_persisted": 10369,
+  "total_rules_promoted": 9884,
   "history": [
-    {
-      "timestamp": "2026-11-17T16:21:59.884Z",
-      "repository": "envoyproxy/envoy",
-      "learningId": "learn-github-envoyproxy-envoy",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T16:30:48.475Z",
-      "repository": "RecursiveSI/flint",
-      "learningId": "learn-huggingface-recursivesi-flint",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T16:30:51.251Z",
-      "repository": "medialab/xan",
-      "learningId": "learn-github-medialab-xan",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-17T16:30:55.701Z",
       "repository": "i18next/react-i18next",
@@ -1403,6 +1382,27 @@
       "repository": "fallow-rs/fallow",
       "learningId": "learn-github-fallow-rs-fallow",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T05:44:05.491Z",
+      "repository": "unsloth/Qwen-Image-2.1-GGUF",
+      "learningId": "learn-huggingface-unsloth-qwen-image-2-1-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T05:44:07.521Z",
+      "repository": "sayanarijit/xplr",
+      "learningId": "learn-github-sayanarijit-xplr",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T05:44:16.102Z",
+      "repository": "zarf-dev/zarf",
+      "learningId": "learn-github-zarf-dev-zarf",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

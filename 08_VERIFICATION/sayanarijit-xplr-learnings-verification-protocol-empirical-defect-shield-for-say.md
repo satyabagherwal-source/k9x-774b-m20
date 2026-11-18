@@ -6,16 +6,16 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T12:44:19.927Z",
+  "timestamp": "2026-11-18T05:44:19.820Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
-  "learning_id": "LEARN-REEXTRACT-sayanarijit-xplr-learnings",
+  "learning_id": "LEARN-EVO-sayanarijit-xplr-learnings",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [sayanarijit-xplr-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T12:44:19.927Z`  
-> **Learning ID**: `LEARN-REEXTRACT-sayanarijit-xplr-learnings`
+> **License**: Open-Source | **Timestamp**: `2026-11-18T05:44:19.820Z`  
+> **Learning ID**: `LEARN-EVO-sayanarijit-xplr-learnings`
 
 
 ## 1. Scope & Verification Target
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/sayanarijit-xplr-learnings.md`  
 > **Source**: github ([https://github.com/sayanarijit/xplr](https://github.com/sayanarijit/xplr))  
-> **Source Version**: `50824d0d`  
+> **Source Version**: `e91f74b1`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-10-26T12:13:27.147Z  
+> **Timestamp**: 2026-11-18T05:44:06.314Z  
 > **Learning ID**: `learn-github-sayanarijit-xplr`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/sayanarijit-xplr-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/sayanarijit/xplr](https://github.com/sayanarijit/xplr))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-10-26T12:13:26.168Z  
+> **Harvest Timestamp**: 2026-11-18T05:44:06.307Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: A hackable, minimal, fast TUI file explorer
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 4846 stars
+- **Stars / Engagement**: 4851 stars
 
 ---
 
@@ -2034,605 +2034,55 @@ pub fn get_current_dir() -> Result<PathBuf, std::io::Error> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `25574260` (2026-10-25)
-**Commit Message**: Fix tty crash when rendering graphics (#795)
+### Incident Patch 1: `e91f74b1` (2026-11-17)
+**Commit Message**: Markdown for LLMs
 
-* Fix tty crash when rendering graphics
-
-* TODO support rich graphics
-
-**File**: `Cargo.lock` (modified, +83/-220)
+**File**: `docs/en/theme/index.hbs` (modified, +11/-1)
 ```diff
-@@ -208,16 +208,6 @@ version = "0.22.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "72b3254f16251a8381aa12e40e3c4d2f0199f8c6508fbecb9d91f575e0fbb8c6"
+@@ -19,6 +19,10 @@
+         <meta name="viewport" content="width=device-width, initial-scale=1">
+         <meta name="theme-color" content="#ffffff">
  
--[[package]]
--name = "base64-simd"
--version = "0.8.0"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "339abbe78e73178762e23bea9dfd08e697eb3f3301cd4be981c0f78ba5859195"
--dependencies = [
-- "outref",
-- "vsimd",
--]
--
- [[package]]
- name = "bit-set"
- version = "0.5.3"
-@@ -318,20 +308,6 @@ name = "bytemuck"
- version = "1.25.2"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "95832e849adfb21180ccb6826a99da14e5d266ae5c2e668e1602cf234f153797"
--dependencies = [
-- "bytemuck_derive",
--]
--
--[[package]]
--name = "bytemuck_derive"
--version = "1.12.1"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "6a1f896587b6f2c069c73d2f0913e2d590c3990285cd2f0b6aa02b786b4c679c"
--dependencies = [
-- "proc-macro2",
-- "quote",
-- "syn 3.0.9",
--]
- 
- [[package]]
- name = "byteorder-lite"
-@@ -1095,17 +1071,6 @@ dependencies = [
-  "windows-link",
- ]
- 
--[[package]]
--name = "getrandom"
--version = "0.2.17"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "ff2abc00be7fca6ebc474524697ae276ad847ad0a6b3faa4bcb027e9a4614ad0"
--dependencies = [
-- "cfg-if",
-- "libc",
-- "wasi",
--]
--
- [[package]]
- name = "getrandom"
- version = "0.3.4"
-@@ -1129,6 +1094,16 @@ dependencies = [
-  "r-efi 6.0.0",
- ]
- 
-+[[package]]
-+name = "gif"
-+version = "0.13.3"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "4ae047235e33e2829703574b54fdec96bfbad892062d97fed2f76022287de61b"
-+dependencies = [
-+ "color_quant",
-+ "weezl",
-+]
++        <!-- Markdown for LLMs -->
++        <link rel="alternate" type="text/markdown" href="{{ path_to_root }}{{ path }}" title="Markdown version of this page">
++        <link rel="describedby" href="/llms.txt" />
 +
- [[package]]
- name = "gif"
- version = "0.14.2"
-@@ -1167,6 +1142,12 @@ version = "0.5.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "2304e00983f87ffb38b55b444b5e3b60a884b5d30c0fca7d82fe33449bbe55ea"
+         {{#if favicon_svg}}
+         <link rel="icon" href="{{ path_to_root }}favicon.svg">
+         {{/if}}
+@@ -223,7 +227,13 @@
  
-+[[package]]
-+name = "hermit-abi"
-+version = "0.5.3"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "e17592d60ebacc7d5e169f4663c5f84f9161cc90328abcfe8456f41e4dfcb284"
+                 <div id="content" class="content">
+                     <main>
+-                        {{{ content }}}
++                      <div style="text-align: center; font-size: 0.9em;">
++                        <a href="{{ path_to_root }}{{ path }}" title="Markdown version of this page" aria-label="Markdown version of this page">
++                          [ Markdown for LLMs ]
++                        </a>
++                      </div>
 +
- [[package]]
- name = "hex"
- version = "0.4.3"
-@@ -1270,16 +1251,6 @@ version = "2.4.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "913a7d294ad056474749152107309fdee3ec17d2482d1ab70fdc61a81c64b9a3"
++                      {{{ content }}}
+                     </main>
  
--[[package]]
--name = "icy_sixel"
--version = "0.5.1"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "4bfb5a63225620b59df34a235d1fb56ff7b766909c3212a8ff927511a22b181d"
--dependencies = [
-- "quantette",
-- "thiserror 2.0.21",
--]
--
- [[package]]
- name = "ident_case"
- version = "1.0.1"
-@@ -1296,7 +1267,7 @@ dependencies = [
-  "byteorder-lite",
-  "color_quant",
-  "exr",
-- "gif",
-+ "gif 0.14.2",
-  "image-webp",
-  "moxcms",
-  "num-traits",
-@@ -1320,6 +1291,22 @@ dependencies = [
-  "quick-error",
- ]
- 
-+[[package]]
-+name = "image_to_console_core"
-+version = "0.2.2"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "d02e2bb5d8b8a6dd125492e20d8d17783b1cfc6cab17600496ca454627198274"
-+dependencies = [
-+ "base64",
-+ "gif 0.13.3",
-+ "image",
-+ "nohash-hasher",
-+ "num_cpus",
-+ "quantette",
-+ "rayon",
-+ "terminal_size",
-+]
-+
- [[package]]
- name = "imgref"
- version = "1.12.3"
-@@ -1811,6 +1798,12 @@ dependencies = [
-  "memchr",
- ]
- 
-+[[package]]
-+name = "nohash-hasher"
-+version = "0.2.0"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "2bf50223579dc7cdcfb3bfcacf7069ff68243f8c363f62ffa99cf000a6b9c451"
-+
- [[package]]
- name = "nom"
- version = "7.1.3"
-@@ -1912,6 +1905,16 @@ dependencies = [
-  "libm",
- ]
- 
-+[[package]]
-+name = "num_cpus"
-+version = "1.17.0"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "91df4bbde75afed763b708b7eee1e8e7651e02d97f6d5dd763e89367e957b23b"
-+dependencies = [
-+ "hermit-abi",
-+ "libc",
-+]
-+
- [[package]]
- name = "num_threads"
- version = "0.1.8"
-@@ -1957,29 +1960,13 @@ dependencies = [
-  "num-traits",
- ]
- 
--[[package]]
--name = "ordered-float"
--version = "5.5.0"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "8c7c9e0d9b23589f26070720bac724174bfec1083e82f7854cdd0267518343c0"
--dependencies = [
-- "num-traits",
--]
--
--[[package]]
--name = "outref"
--version = "0.5.2"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "1a80800c0488c3a21695ea981a54918fbb37abf04f4d0720c453632255e2ff0e"
--
- [[package]]
- name = "palette"
- version = "0.7.7"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "ddeed8580d347d2abf3dcf06a5f0b3dc020258338526b277847cd4248a70fc64"
- dependencies = [
-  "approx",
-- "bytemuck",
-  "libm",
-  "palette_derive",
-  "palette_math",
-@@ -2362,19 +2349,19 @@ dependencies = [
- 
- [[package]]
- name = "quantette"
--version = "0.6.0"
-+version = "0.3.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "ba5d37e94c17b8870a5b936001d2845a6782a22ebdb1706c84294eca
-```
-
-**File**: `Cargo.toml` (modified, +4/-3)
-```diff
-@@ -47,9 +47,10 @@ jf = "1.0"
- xdg = "3.0"
- rayon = "1.12"
- image = "0.25"
--ratatui-image = { version = "11.1", default-features = false, features = [
--  "crossterm",
--  "image-defaults",
-+image_to_console_core = { version = "0.2", default-features = false, features = [
-+  "auto_select",
-+  "sixel",
-+  "gif",
- ] }
- 
- [dependencies.lscolors]
-```
-
-**File**: `src/ui.rs` (modified, +108/-102)
-```diff
-@@ -6,11 +6,12 @@ use crate::lua;
- use crate::permissions::Permissions;
- use crate::{app, path};
- use ansi_to_tui::IntoText;
-+use image::GenericImageView;
-+use image_to_console_core::processor::{ImageProcessor, ImageProcessorOptions};
-+use image_to_console_core::protocol::get_terminal_protocol;
-+use image_to_console_core::{CustomResizeOption, DisplayMode, ResizeMode};
- use indexmap::IndexSet;
- use lscolors::{Color as LsColorsColor, Style as LsColorsStyle};
--use ratatui_image::picker::Picker;
--use ratatui_image::thread::{ResizeRequest, ResizeResponse, ThreadProtocol};
--use ratatui_image::{Resize, StatefulImage};
- use serde::{Deserialize, Serialize};
- use std::cmp::Ordering;
- use std::collections::HashMap;
-@@ -168,84 +169,92 @@ enum CustomOutputEntry {
- }
- 
- struct CustomGraphicsState {
--    thread_protocol: ThreadProtocol,
--    rx_responses: Receiver<Result<ResizeResponse, ratatui_image::errors::Errors>>,
-+    text: Text<'static>,
- }
- 
- impl CustomGraphicsState {
-     fn from_image(
--        tx_msg_in: Sender<app::Task>,
--        picker: Picker,
-         image: image::DynamicImage,
--    ) -> Self {
--        let (tx_requests, rx_requests) = mpsc::channel::<ResizeRequest>();
--        let (tx_responses, rx_responses) =
--            mpsc::channel::<Result<ResizeResponse, ratatui_image::errors::Errors>>();
--        let tx_refresh = tx_msg_in.clone();
--
--        thread::spawn(move || {
--            while let Ok(request) = rx_requests.recv() {
--                let completed = request.resize_encode();
--                let _ = tx_responses.send(completed);
--                let _ = tx_refresh.send(app::Task::new(
--                    app::MsgIn::External(app::ExternalMsg::Refresh),
--                    None,
--                ));
--            }
--        });
-+        cols: u16,
-+        rows: u16,
-+        mode: DisplayMode,
-+    ) -> Result<Self, ()> {
-+        if cols == 0 || rows == 0 {
-+            return Err(());
-+        }
- 
--        Self {
--            thread_protocol: ThreadProtocol::new(
--                tx_requests,
--                Some(picker.new_resize_protocol(image)),
--            ),
--            rx_responses,
-+        let (img_width, img_height) = image.dimensions();
-+        if img_width == 0 || img_height == 0 {
-+            return Err(());
-         }
-+
-+        // "Full" display modes pack 2 vertical pixel rows into each terminal
-+        // row (half-block rendering), while "half" modes map 1 pixel row to 1
-+        // terminal row. Either way, each pixel column maps to 1 terminal
-+        // column, so the available "pixel" box is cols x (rows * row_ratio).
-+        let row_ratio = if mode.is_full() { 2.0 } else { 1.0 };
-+        let box_width = cols as f64;
-+        let box_height = rows as f64 * row_ratio;
-+        let scale = (box_width / img_width as f64).min(box_height / img_height as f64);
-+
-+        let target_width =
-+            ((img_width as f64 * scale).round() as u32).clamp(1, cols as u32);
-+        let target_height = ((img_height as f64 * scale).round() as u32)
-+            .clamp(1, (rows as f64 * row_ratio) as u32);
-+
-+        let options = ImageProcessorOptions {
-+            mode,
-+            resize_mode: ResizeMode::Custom(CustomResizeOption::new(
-+                target_width,
-+                target_height,
-+            )),
-+            center: false,
-+            ..ImageProcessorOptions::default()
-+        };
-+
-+        let result = ImageProcessor::new(image, options)
-+            .process()
-+            .map_err(|_| ())?;
-+
-+        Ok(Self {
-+            text: string_to_text_owned(result.lines.join("\n")),
-+        })
-     }
- 
-     fn spawn_loader(
-         tx_msg_in: Sender<app::Task>,
--        picker: Picker,
-         path: String,
-+        cols: u16,
-+        rows: u16,
-+        mode: DisplayMode,
-     ) -> Receiver<Result<Self, ()>> {
-         let (tx_ready, rx_ready) = mpsc::channel();
--        let tx_refresh = tx_msg_in.clone();
- 
-         thread::spawn(move || {
-             let state = image::ImageReader::open(&path)
-                 .ok()
-                 .and_then(|reader| reader.decode().ok())
--                .map(|image| Self::from_image(tx_msg_in, picker, image))
--                .ok_or(());
-+                .ok_or(())
-+                .and_then(|image| Self::from_image(image, cols, rows, mode));
- 
-             let _ = tx_ready.send(state);
--            let _ = tx_refresh.send(app::Task::new(
-+            let _ = tx_msg_in.send(app::Task::new(
-                 app::MsgIn::External(app::ExternalMsg::Refresh),
-                 None,
-             ));
-         });
- 
-         rx_ready
-     }
--
--    fn sync_updates(&mut self) {
--        while let Ok(completed) = self.rx_responses.try_recv() {
--            match completed {
--                Ok(completed) => {
--                    let _ = self.thread_protocol.update_resized_protocol(completed);
--                }
--                Err(_) => self.thread_protocol.empty_protocol(),
--            }
--        }
--    }
- }
- 
- i
+                     <nav class="nav-wrapper" aria-label="Page navigation">
 ```
 
 ---
 
-### Incident Patch 2: `50824d0d` (2026-10-26)
-**Commit Message**: Fix doc and bench
+### Incident Patch 2: `30634a4c` (2026-10-27)
+**Commit Message**: Cleanup readme
 
-**File**: `benches/criterion.rs` (modified, +7/-7)
+**File**: `README.md` (modified, +0/-2)
 ```diff
-@@ -80,12 +80,12 @@ fn navigation_benchmark(c: &mut Criterion) {
-                     app::MsgIn::External(app::ExternalMsg::Back),
-                     None,
-                 ))
--                .unwrap()
--                .handle_task(app::Task::new(
--                    app::MsgIn::External(app::ExternalMsg::Enter),
--                    None,
--                ))
--                .unwrap()
-+                .unwrap();
-+            app.handle_task(app::Task::new(
-+                app::MsgIn::External(app::ExternalMsg::Enter),
-+                None,
-+            ))
-+            .unwrap()
-         })
-     });
- }
-@@ -99,7 +99,7 @@ fn draw_benchmark(c: &mut Criterion) {
-     let (tx, _) = std::sync::mpsc::channel();
-     let lua = mlua::Lua::new();
-     let mut ui = ui::UI::new(tx);
--    let mut app =
-+    let app =
-         app::App::create("xplr".into(), None, PWD.into(), &lua, None, [].into(), true)
-             .expect("failed to create app");
+@@ -47,8 +47,6 @@ integration][15], enabling you to achieve insane terminal productivity.
  
-```
-
-**File**: `docs/en/src/awesome-hacks.md` (modified, +6/-10)
-```diff
-@@ -425,25 +425,21 @@ Preview text files or images in a native xplr pane.
- xplr.fn.custom.preview_pane = {}
- xplr.fn.custom.preview_pane.render = function(ctx)
-   local n = ctx.app.focused_node
--  if n and n.canonical then
--    n = n.canonical
--  end
+ - [[Article] What is a TUI file explorer & why would you need one? ~ xplr.stck.me](https://xplr.stck.me/post/25252/What-is-a-TUI-file-explorer-why-would-you-need-one)
+ 
+-- [[Article] FOSSPicks - Linux Magazine](<https://www.linux-magazine.com/Issues/2022/258/FOSSPicks/(offset)/6>)
 -
-   if n then
--    local fallback = xplr.util.to_yaml(xplr.util.node(n.absolute_path))
-+    local fallback = xplr.util.to_yaml(xplr.util.node(n.relative_path))
-     if n.is_dir then
-       return {
-         CustomOutput = {
-           ui = { title = { format = " 📁 " } },
--          command = { "tree", "-x", "-C", "-L", "2", n.absolute_path },
-+          command = { "tree", "-x", "-C", "-L", "2", n.relative_path },
-           fallback = fallback,
-         },
-       }
-     elseif n.mime_essence and n.mime_essence:match("^image/") then
-       return {
-         CustomGraphics = {
--          ui = { title = { format = " 🖼️ " } },
--          path = n.absolute_path,
-+          ui = { title = { format = " 🖼️ " .. n.relative_path .. " " } },
-+          path = n.relative_path,
-           fallback = fallback,
-         },
-       }
-@@ -457,7 +453,7 @@ xplr.fn.custom.preview_pane.render = function(ctx)
-             "--binary=as-text",
-             string.format("--line-range=:%s", ctx.layout_size.height),
-             string.format("--terminal-width=%s", ctx.layout_size.width),
--            n.absolute_path,
-+            n.relative_path,
-           },
-           fallback = fallback,
-         },
-@@ -567,4 +563,4 @@ xplr.config.modes.builtin.default.key_bindings.on_key['*'] = {
- [17]: https://sr.ht/~exec64/imv
- [18]: https://www.semicomplete.com/projects/xdotool
- [19]: https://github.com/mgunyho/tere
--[20]: https://github.com/sharkdp/bat
-\ No newline at end of file
-+[20]: https://github.com/sharkdp/bat
-```
-
----
-
-### Incident Patch 3: `6e66ad76` (2026-10-26)
-**Commit Message**: Revert "Fix output redirection"
-
-This reverts commit 0ab1350c94955875b04879d6a08538578c59ebe0.
-
-**File**: `Cargo.lock` (modified, +1/-1)
-```diff
-@@ -3939,7 +3939,7 @@ checksum = "2fb433233f2df9344722454bc7e96465c9d03bff9d77c248f9e7523fe79585b5"
+ ## Packaging
  
- [[package]]
- name = "xplr"
--version = "1.2.3"
-+version = "1.2.2"
- dependencies = [
-  "ansi-to-tui",
-  "anyhow",
-```
-
-**File**: `Cargo.toml` (modified, +1/-1)
-```diff
-@@ -8,7 +8,7 @@ path = './benches/criterion.rs'
- 
- [package]
- name = 'xplr'
--version = '1.2.3'
-+version = '1.2.2'
- authors = ['Arijit Basu <hi@arijitbasu.in>']
- edition = '2024'
- description = 'A hackable, minimal, fast TUI file explorer'
-```
-
-**File**: `benches/criterion.rs` (modified, +7/-7)
-```diff
-@@ -80,12 +80,12 @@ fn navigation_benchmark(c: &mut Criterion) {
-                     app::MsgIn::External(app::ExternalMsg::Back),
-                     None,
-                 ))
--                .unwrap();
--            app.handle_task(app::Task::new(
--                app::MsgIn::External(app::ExternalMsg::Enter),
--                None,
--            ))
--            .unwrap()
-+                .unwrap()
-+                .handle_task(app::Task::new(
-+                    app::MsgIn::External(app::ExternalMsg::Enter),
-+                    None,
-+                ))
-+                .unwrap()
-         })
-     });
- }
-@@ -99,7 +99,7 @@ fn draw_benchmark(c: &mut Criterion) {
-     let (tx, _) = std::sync::mpsc::channel();
-     let lua = mlua::Lua::new();
-     let mut ui = ui::UI::new(tx);
--    let app =
-+    let mut app =
-         app::App::create("xplr".into(), None, PWD.into(), &lua, None, [].into(), true)
-             .expect("failed to create app");
- 
-```
-
-**File**: `docs/en/src/upgrade-guide.md` (modified, +2/-2)
-```diff
-@@ -41,7 +41,7 @@ e.g.
- 
- ### Instructions
- 
--#### [v1.0.0][51] -> [v1.2.3][52]
-+#### [v1.0.0][51] -> [v1.2.2][52]
- 
- - No breaking changes.
- - Added a new keybinding in "create" mode. Press `:cc` to enter the
-@@ -555,4 +555,4 @@ Else do the following:
- [49]: https://github.com/sayanarijit/xplr/releases/tag/v0.21.10
- [50]: https://github.com/lotabout/skim#search-syntax
- [51]: https://github.com/sayanarijit/xplr/releases/tag/v1.0.0
--[52]: https://github.com/sayanarijit/xplr/releases/tag/v1.2.3
-+[52]: https://github.com/sayanarijit/xplr/releases/tag/v1.2.2
-```
-
-**File**: `src/lua/mod.rs` (modified, +7/-7)
-```diff
-@@ -152,24 +152,24 @@ mod tests {
-         assert!(check_version(VERSION, "foo path").is_ok());
- 
-         // Current release if OK
--        assert!(check_version("1.2.3", "foo path").is_ok());
-+        assert!(check_version("1.2.2", "foo path").is_ok());
- 
-         // Prev major release is ERR
--        assert!(check_version("0.20.5", "foo path").is_err());
-+        assert!(check_version("0.20.4", "foo path").is_err());
- 
-         // Prev minor release is OK
--        assert!(check_version("1.1.3", "foo path").is_ok());
-+        assert!(check_version("1.1.2", "foo path").is_ok());
- 
-         // Prev bugfix release is OK
--        assert!(check_version("1.2.2", "foo path").is_ok());
-+        assert!(check_version("1.2.1", "foo path").is_ok());
- 
-         // Next major release is ERR
--        assert!(check_version("2.0.3", "foo path").is_err());
-+        assert!(check_version("2.0.2", "foo path").is_err());
- 
-         // Next minor release is ERR
--        assert!(check_version("1.3.3", "foo path").is_err());
-+        assert!(check_version("1.3.2", "foo path").is_err());
- 
-         // Next bugfix release is OK
--        assert!(check_version("1.2.4", "foo path").is_ok());
-+        assert!(check_version("1.2.3", "foo path").is_ok());
-     }
- }
-```
-
-**File**: `src/terminal.rs` (modified, +1/-1)
-```diff
-@@ -43,10 +43,10 @@ pub fn stop(
- ) -> Result<()> {
-     clear(terminal)?;
-     execute!(terminal.backend_mut(), event::DisableMouseCapture).unwrap_or_default();
--    term::disable_raw_mode()?;
-     if leave_alt_screen {
-         execute!(terminal.backend_mut(), term::LeaveAlternateScreen)?;
-     }
-+    term::disable_raw_mode()?;
-     terminal.show_cursor()?;
-     Ok(())
- }
+ Package maintainers please refer to the [RELEASE.md](./RELEASE.md).
 ```
 
 #### Recent Merged Pull Requests:
@@ -2661,127 +2111,41 @@ This reverts commit 0ab1350c94955875b04879d6a08538578c59ebe0.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. tty crash when rendering graphics (#795)
+## X. Markdown for LLMs
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sayanarijit/xplr. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/en/theme/index.hbs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sayanarijit/xplr. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `25574260`: tty crash when rendering graphics (#795). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e91f74b1`: Markdown for LLMs. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/en/theme/index.hbs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-[[package]]
-name = "gif"
-version = "0.13.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4ae047235e33e2829703574b54fdec96bfbad892062d97fed2f76022287de61b"
-dependencies = [
- "color_quant",
- "weezl",
-]
+        <!-- Markdown for LLMs -->
+        <link rel="alternate" type="text/markdown" href="{{ path_to_root }}{{ path }}" title="Markdown version of this page">
+        <link rel="describedby" href="/llms.txt" />
 
-[[package]]
-name = "hermit-abi"
-version = "0.5.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e17592d60ebacc7d5e169f4663c5f84f9161cc90328abcfe8456f41e4dfcb284"
+                      <div style="text-align: center; font-size: 0.9em;">
+                        <a href="{{ path_to_root }}{{ path }}" title="Markdown version of this page" aria-label="Markdown version of this page">
+                          [ Markdown for LLMs ]
+                        </a>
+                      </div>
 
- "gif 0.14.2",
-[[package]]
-name = "image_to_console_core"
-version = "0.2.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d02e2bb5d8b8a6dd125492e20d8d17783b1cfc6cab17600496ca454627198274"
-dependencies = [
- "base64",
- "gif 0.13.3",
- "image",
- "nohash-hasher",
- "num_cpus",
- "quantette",
- "rayon",
- "terminal_size",
-]
-
-[[package]]
-name = "nohash-hasher"
-version = "0.2.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2bf50223579dc7cdcfb3bfcacf7069ff68243f8c363f62ffa99cf000a6b9c451"
-
-[[package]]
-name = "num_cpus"
-version = "1.17.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "91df4bbde75afed763b708b7eee1e8e7651e02d97f6d5dd763e89367e957b23b"
-dependencies = [
- "hermit-abi",
- "li
+                      {{{ content }}}
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Anti-pattern to NEVER write (induced failure mode):
-[[package]]
-name = "base64-simd"
-version = "0.8.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "339abbe78e73178762e23bea9dfd08e697eb3f3301cd4be981c0f78ba5859195"
-dependencies = [
- "outref",
- "vsimd",
-]
-
-dependencies = [
- "bytemuck_derive",
-]
-
-[[package]]
-name = "bytemuck_derive"
-version = "1.12.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6a1f896587b6f2c069c73d2f0913e2d590c3990285cd2f0b6aa02b786b4c679c"
-dependencies = [
- "proc-macro2",
- "quote",
- "syn 3.0.9",
-]
-[[package]]
-name = "getrandom"
-version = "0.2.17"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ff2abc00be7fca6ebc474524697ae276ad847ad0a6b3faa4bcb027e9a4614ad0"
-dependencies = [
- "cfg-if",
- "libc",
- "wasi",
-]
-
-[[package]]
-name = "icy_sixel"
-version = "0.5.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4bfb5a63225620b59df34a235d1fb56ff7b766909c3212a8ff927511a22b181d"
-dependencies = [
- "quantette",
- "thiserror 2.0.21",
-]
-
- "gif",
-[[package]]
-name = "ordered-float"
-version = "5.5.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8c7c9e0d9b23589f26070720bac724174bfec108
+// Induced defect failure mode:
+                        {{{ content }}}
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `25574260` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e91f74b1` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

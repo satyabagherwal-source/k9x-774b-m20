@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T05:36:05.037Z",
+  "last_updated": "2026-11-18T05:44:22.460Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-18T04:11:36.483Z",
@@ -918,7 +918,7 @@
       "staged_for_review": 0
     },
     "zarf-dev-zarf-learnings.md": {
-      "processed_at": "2026-11-17T07:06:59.700Z",
+      "processed_at": "2026-11-18T05:44:20.872Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2043,8 +2043,8 @@
       "staged_for_review": 1
     },
     "hf-unsloth-qwen-image-2.1-gguf-learnings.md": {
-      "processed_at": "2026-11-13T18:18:05.134Z",
-      "promoted_canonical": 1,
+      "processed_at": "2026-11-18T05:44:20.471Z",
+      "promoted_canonical": 0,
       "staged_for_review": 0
     },
     "hf-xiaomimimo-mimo-v2.6-pro-rl-learnings.md": {
@@ -3386,9 +3386,14 @@
       "processed_at": "2026-11-18T05:11:13.032Z",
       "promoted_canonical": 1,
       "staged_for_review": 0
+    },
+    "sayanarijit-xplr-learnings.md": {
+      "processed_at": "2026-11-18T05:44:19.567Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 1812,
+  "total_dossiers_evaluated": 1815,
   "total_canonical_promoted": 336,
-  "total_staged_for_review": 1398
+  "total_staged_for_review": 1400
 }

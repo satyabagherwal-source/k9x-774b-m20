@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-18T05:36:04.725Z",
-  "total_records": 1763,
+  "last_updated": "2026-11-18T05:44:22.136Z",
+  "total_records": 1765,
   "domains": {
     "A": {
       "total": 11,
@@ -1606,7 +1606,7 @@
       ]
     },
     "I": {
-      "total": 84,
+      "total": 86,
       "record_ids": [
         "DOM-I-16F011E5",
         "DOM-I-BF0A22A6",
@@ -1691,7 +1691,9 @@
         "domain_intelligence-content-information-intelligence-dragonflyoss-dragonfly-core-invariants",
         "domain_intelligence-content-information-intelligence-dragonflyoss-dragonfly-learnings-core-invariant",
         "domain_intelligence-content-information-intelligence-risingwavelabs-risingwave-core-invariants",
-        "domain_intelligence-content-information-intelligence-risingwavelabs-risingwave-learnings-core-invari"
+        "domain_intelligence-content-information-intelligence-risingwavelabs-risingwave-learnings-core-invari",
+        "domain_intelligence-content-information-intelligence-sayanarijit-xplr-core-invariants",
+        "domain_intelligence-content-information-intelligence-sayanarijit-xplr-learnings-core-invariants"
       ]
     },
     "J": {
@@ -8946,8 +8948,8 @@
       "title": "Research & Knowledge Intelligence: unsloth/Qwen-Image-2.1-GGUF Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-unsloth-qwen-image-2-1-gguf-research-knowledge-intelligence-unsloth-qwen-imag.md",
       "repository": "unsloth/Qwen-Image-2.1-GGUF",
-      "content_hash": "799bb4d4079d8073355913d68d3761e9c4dbf1e5db0b51246d6c9417b5eda67c",
-      "created_at": "2026-11-13T18:17:17.406Z"
+      "content_hash": "b0e3137fbd7165261aff4131335617ff94fb423ed560a0e0411308859af288b2",
+      "created_at": "2026-11-18T05:44:05.710Z"
     },
     "domain_intelligence-human-need-intelligence-foreactlabs-openexecutive-learnings-core-invariants": {
       "record_id": "domain_intelligence-human-need-intelligence-foreactlabs-openexecutive-learnings-core-invariants",
@@ -9006,8 +9008,8 @@
       "title": "Research & Knowledge Intelligence: hf-unsloth-qwen-image-2.1-gguf-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-unsloth-qwen-image-2-1-gguf-learnings-research-knowledge-intelligence-hf-unsl.md",
       "repository": "hf-unsloth-qwen-image-2.1-gguf-learnings",
-      "content_hash": "c7a667decdab45567b377ba7a5530c2a6c0a01ba095869f8c2c779fe6650768b",
-      "created_at": "2026-11-13T18:18:05.287Z"
+      "content_hash": "b07e2f370fe623457a4be90fdf2c6731c4bdc81549e3886114913857d454a622",
+      "created_at": "2026-11-18T05:44:20.685Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-pro-rl-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-pro-rl-core-invariants",
@@ -25857,8 +25859,8 @@
       "title": "Architecture Intelligence: zarf-dev/zarf Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zarf-dev-zarf-architecture-intelligence-zarf-dev-zarf-core-invariants.md",
       "repository": "zarf-dev/zarf",
-      "content_hash": "3dcebd5438d71d00dbbd17b59f420f7665d5ac30d861df11ddaad4af02732295",
-      "created_at": "2026-11-17T07:06:24.287Z"
+      "content_hash": "e43a67eb669566d96b554fec23b0ab98c595b7f1c478bcf655ea8cfce3fdd724",
+      "created_at": "2026-11-18T05:44:16.526Z"
     },
     "domain_intelligence-content-information-intelligence-sfu-db-connector-x-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-sfu-db-connector-x-core-invariants",
@@ -25884,8 +25886,8 @@
       "title": "Architecture Intelligence: zarf-dev-zarf-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zarf-dev-zarf-learnings-architecture-intelligence-zarf-dev-zarf-learnings-core-i.md",
       "repository": "zarf-dev-zarf-learnings",
-      "content_hash": "c874593ec2ab778201e8428a1efebf85acdcefea59c5654e1156c3f8a680c0ef",
-      "created_at": "2026-11-17T07:07:00.556Z"
+      "content_hash": "8f3022ecf9c0d18e1ca634a41fa52a191a8494c42f43719705a38d7d437b22b5",
+      "created_at": "2026-11-18T05:44:22.136Z"
     },
     "domain_intelligence-research-knowledge-intelligence-facebook-sam-3d-body-dinov3-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-facebook-sam-3d-body-dinov3-core-invariants",
@@ -29565,6 +29567,24 @@
       "confidence": 0.75,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-18T05:36:02.527Z"
+    },
+    "domain_intelligence-content-information-intelligence-sayanarijit-xplr-core-invariants": {
+      "record_id": "domain_intelligence-content-information-intelligence-sayanarijit-xplr-core-invariants",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: sayanarijit/xplr Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-sayanarijit-xplr-content-information-intelligence-sayanarijit-xplr-core-invarian.md",
+      "repository": "sayanarijit/xplr",
+      "content_hash": "b778ff2a1cbb7972ea725dc0c81474dcc4e0576ecbb854676fb49f703314db6f",
+      "created_at": "2026-11-18T05:44:07.930Z"
+    },
+    "domain_intelligence-content-information-intelligence-sayanarijit-xplr-learnings-core-invariants": {
+      "record_id": "domain_intelligence-content-information-intelligence-sayanarijit-xplr-learnings-core-invariants",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: sayanarijit-xplr-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-sayanarijit-xplr-learnings-content-information-intelligence-sayanarijit-xplr-lea.md",
+      "repository": "sayanarijit-xplr-learnings",
+      "content_hash": "a116a98b739001b7c1c62a4d3e7fe28ab925bdf9ea0efe8840e0bdbb52aa0f49",
+      "created_at": "2026-11-18T05:44:20.114Z"
     }
   }
 }

@@ -10857,3 +10857,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-akatz-ai-minimax-h3-character-swap-lora` | `https://huggingface.co/akatz-ai/MiniMax-H3-Character-Swap-LoRA` | `hf-akatz-a` | Multi-dimensional audit evidence | 2026-11-18T05:27:40.691Z |
 | `learn-github-fallow-rs-fallow` | `https://github.com/fallow-rs/fallow` | `548aba6d` | Multi-dimensional audit evidence | 2026-11-18T05:35:26.565Z |
 | `learn-dom-h-0137e2f6` | `project://fallow-rs-fallow` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fallow-rs-fallow-learnings.md` | 2026-11-18T05:36:02.550Z |
+| `learn-huggingface-unsloth-qwen-image-2-1-gguf` | `https://huggingface.co/unsloth/Qwen-Image-2.1-GGUF` | `hf-unsloth` | Multi-dimensional audit evidence | 2026-11-18T05:44:05.484Z |
+| `learn-github-sayanarijit-xplr` | `https://github.com/sayanarijit/xplr` | `e91f74b1` | Multi-dimensional audit evidence | 2026-11-18T05:44:07.514Z |
+| `learn-github-zarf-dev-zarf` | `https://github.com/zarf-dev/zarf` | `31862576` | Multi-dimensional audit evidence | 2026-11-18T05:44:16.096Z |

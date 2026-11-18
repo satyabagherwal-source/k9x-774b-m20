@@ -10824,3 +10824,6 @@
 | `CYCLE-20261118-JMA7` | `2026-11-18T05:27:40.687Z` | `akatz-ai/MiniMax-H3-Character-Swap-LoRA` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-akatz-ai-minimax-h3-character-swap-lora-learnings.md` | Yes (`fb0c2d44...`) |
 | `CYCLE-20261118-TLR5` | `2026-11-18T05:35:26.561Z` | `fallow-rs/fallow` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9130, Rule null, Rule 9131` | Yes (`9160c139...`) |
 | `CYCLE-2026-11-18-PROJ-EVOLVE` | `2026-11-18T05:36:02.550Z` | `fallow-rs-fallow` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-0137E2F6` [Domain H] | Yes (`26aad2be...`) |
+| `CYCLE-20261118-4Q5K` | `2026-11-18T05:44:05.480Z` | `unsloth/Qwen-Image-2.1-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-unsloth-qwen-image-2.1-gguf-learnings.md` | Yes (`b05065a2...`) |
+| `CYCLE-20261118-4RPY` | `2026-11-18T05:44:07.510Z` | `sayanarijit/xplr` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9132` | Yes (`8c819de3...`) |
+| `CYCLE-20261118-4YCC` | `2026-11-18T05:44:16.092Z` | `zarf-dev/zarf` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9133` | Yes (`355630c8...`) |

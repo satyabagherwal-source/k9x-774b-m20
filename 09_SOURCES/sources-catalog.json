@@ -535,8 +535,8 @@
     "sourceUrl": "https://huggingface.co/unsloth/Qwen-Image-2.1-GGUF",
     "sourceVersion": "hf-unsloth-qwen-image-2.1-gguf",
     "license": "Open-Source",
-    "contentHash": "ddfa54153e32b8814cb316daf58626e074e75de6a4525e8da6ebba6b1677cb07",
-    "lastHarvestedAt": "2026-11-13T18:17:17.287Z",
+    "contentHash": "b05065a2aa7e08b53b8392ad3e59597aa6fdba5213fd6697adfe6fd60607bb7b",
+    "lastHarvestedAt": "2026-11-18T05:44:05.484Z",
     "learningId": "learn-huggingface-unsloth-qwen-image-2-1-gguf"
   },
   "hf-xiaomimimo-mimo-v2.6-pro-rl": {
@@ -3133,10 +3133,10 @@
     "repository": "sayanarijit/xplr",
     "platform": "github",
     "sourceUrl": "https://github.com/sayanarijit/xplr",
-    "sourceVersion": "50824d0d",
+    "sourceVersion": "e91f74b1",
     "license": "MIT",
-    "contentHash": "f418fe0fe721707767d1fe9a1f7bd5d08b56071654ea9ddf9b7604ab0adbfa31",
-    "lastHarvestedAt": "2026-10-26T12:13:27.403Z",
+    "contentHash": "8c819de374f9b45b7063f38642c83931c051e84c97cb05ebcc267fc623af423e",
+    "lastHarvestedAt": "2026-11-18T05:44:07.514Z",
     "learningId": "learn-github-sayanarijit-xplr"
   },
   "danilowoz-react-content-loader": {
@@ -4463,10 +4463,10 @@
     "repository": "zarf-dev/zarf",
     "platform": "github",
     "sourceUrl": "https://github.com/zarf-dev/zarf",
-    "sourceVersion": "8942227e",
+    "sourceVersion": "31862576",
     "license": "Apache-2.0",
-    "contentHash": "3c2c28cbfdd9ec310918ff52dc157739ea176ee8128c7ff74deb53c13f139186",
-    "lastHarvestedAt": "2026-11-17T07:06:23.919Z",
+    "contentHash": "355630c8eba1069c50ecc75aed37018e666782ccbb715c66f2402b4e9b8773ce",
+    "lastHarvestedAt": "2026-11-18T05:44:16.096Z",
     "learningId": "learn-github-zarf-dev-zarf"
   },
   "vlcn-io-cr-sqlite": {
