@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261116-XIPM",
-    "timestamp": "2026-11-16T15:51:00.346Z",
-    "repository": "tw93/Pake",
-    "learningId": "learn-github-tw93-pake",
-    "contentHash": "82d2d7901fd831d2752a8b46c970d12d0f9366855ca56a0ac86562d799724d0f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261116-XLGY",
     "timestamp": "2026-11-16T15:51:03.922Z",
     "repository": "webrecorder/pywb",
@@ -7492,6 +7477,21 @@
     "contentHash": "77b78dcb961d240b56a4a377336c34e5af487a1bea9ab5cc981e625675d4439c",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-J9WU",
+    "timestamp": "2026-11-18T06:23:23.886Z",
+    "repository": "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
+    "learningId": "learn-huggingface-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf",
+    "contentHash": "ceaa0f3ea69c80a612d2148b99bd10f7115c79ab57a773ab95c781900e598d25",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

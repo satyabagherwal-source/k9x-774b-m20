@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T19:02:15.832Z",
+  "timestamp": "2026-11-18T06:23:35.924Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T19:02:15.832Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-18T06:23:35.924Z`  
 > **Learning ID**: `LEARN-EVO-hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf-learnings`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Source Version**: `hf-ukisai-sw`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T19:01:20.600Z  
+> **Timestamp**: 2026-11-18T06:23:23.448Z  
 > **Learning ID**: `learn-huggingface-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF](https://huggingface.co/ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T19:01:20.432Z  
+> **Harvest Timestamp**: 2026-11-18T06:23:23.299Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: text-generation
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 1604076 downloads | 518 likes
+- **Stars / Engagement**: 1578888 downloads | 528 likes
 
 ---
 

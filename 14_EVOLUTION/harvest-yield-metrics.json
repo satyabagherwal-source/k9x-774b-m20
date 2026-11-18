@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T06:15:27.630Z",
-  "total_cycles_completed": 10379,
-  "total_learnings_persisted": 10379,
+  "last_updated": "2026-11-18T06:23:23.895Z",
+  "total_cycles_completed": 10380,
+  "total_learnings_persisted": 10380,
   "total_rules_promoted": 9890,
   "history": [
-    {
-      "timestamp": "2026-11-17T16:46:44.913Z",
-      "repository": "sigstore/cosign",
-      "learningId": "learn-github-sigstore-cosign",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-17T16:46:48.103Z",
       "repository": "VectifyAI/PageIndex",
@@ -1403,6 +1396,13 @@
       "repository": "necolas/react-native-web",
       "learningId": "learn-github-necolas-react-native-web",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T06:23:23.895Z",
+      "repository": "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
+      "learningId": "learn-huggingface-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

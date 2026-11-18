@@ -10838,3 +10838,4 @@
 | `CYCLE-20261118-8YLM` | `2026-11-18T06:15:22.666Z` | `zeronsh/zeron` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9137` | Yes (`8d37abb0...`) |
 | `CYCLE-20261118-92FA` | `2026-11-18T06:15:27.622Z` | `necolas/react-native-web` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9138` | Yes (`77b78dcb...`) |
 | `CYCLE-2026-11-18-PROJ-EVOLVE` | `2026-11-18T06:16:00.434Z` | `hf-alissonerdx-bfs-best-face-swap` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-5E75492A` [Domain D] | Yes (`b5c9ec23...`) |
+| `CYCLE-20261118-J9WU` | `2026-11-18T06:23:23.886Z` | `ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf-learnings.md` | Yes (`ceaa0f3e...`) |

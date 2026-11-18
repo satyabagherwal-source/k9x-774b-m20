@@ -10871,3 +10871,4 @@ Every entry in this ledger must capture:
 | `learn-github-zeronsh-zeron` | `https://github.com/zeronsh/zeron` | `c58f65e8` | Multi-dimensional audit evidence | 2026-11-18T06:15:22.669Z |
 | `learn-github-necolas-react-native-web` | `https://github.com/necolas/react-native-web` | `06726fb2` | Multi-dimensional audit evidence | 2026-11-18T06:15:27.625Z |
 | `learn-dom-d-5e75492a` | `project://hf-alissonerdx-bfs-best-face-swap` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-alissonerdx-bfs-best-face-swap-learnings.md` | 2026-11-18T06:16:00.434Z |
+| `learn-huggingface-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf` | `https://huggingface.co/ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF` | `hf-ukisai-` | Multi-dimensional audit evidence | 2026-11-18T06:23:23.890Z |

@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
   "source_version": "hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T19:01:21.057Z",
+  "timestamp": "2026-11-18T06:23:24.083Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF](https://huggingface.co/ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF) (Revision: `hf-ukisai-`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T19:01:21.057Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-18T06:23:24.083Z`  
 > **Learning ID**: `learn-huggingface-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF](https://huggingface.co/ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T19:01:20.432Z  
+> **Harvest Timestamp**: 2026-11-18T06:23:23.299Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: text-generation
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 1604076 downloads | 518 likes
+- **Stars / Engagement**: 1578888 downloads | 528 likes
 
 ---
 

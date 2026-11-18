@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-18T06:16:01.353Z",
-  "total_verified_learnings": 8989,
+  "last_updated": "2026-11-18T06:23:37.577Z",
+  "total_verified_learnings": 8990,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 20942,
+  "total_items": 20944,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113686,13 +113686,13 @@
       "item_id": "candidate_directive-editor-add-scoped-ios-account-deletion",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-PMOD-editor-add-scoped-ios-account-deletion.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-JK99-editor-add-scoped-ios-account-deletion.md",
       "title": "editor): add scoped ios account deletion",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "4c2a0412a36a6fde5f3bfa2c2d61f5da2478c7eef5bff526f4a0be54770e6bfc",
+      "content_hash": "86ecaf931c709a81776f78ddb79ba43e1251d50dc1590991ed8343f82e042915",
       "domain_letter": "H",
-      "persisted_at": "2026-11-18T06:00:20.754Z"
+      "persisted_at": "2026-11-18T06:23:37.298Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant",
@@ -113702,9 +113702,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "9613a4b9cb584e6ae32388857e77e1b20b2975d86c0dd6d778f0a8ab68184e60",
+      "content_hash": "d60cd4d34617c31fd1374db9a1bfd0c945514f0728c151a29e1c1adf386eee1f",
       "domain_letter": "H",
-      "persisted_at": "2026-11-18T06:00:20.899Z"
+      "persisted_at": "2026-11-18T06:23:37.439Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113714,9 +113714,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "4f1fa0244907ae2697cedc39cd1814e7be35b29afd4d13ae8a9b7cb3d2615184",
+      "content_hash": "8009e8c775de1233331589bd5b28f52b5bf079f2d4c2e4f49585e0dca2dd6cc2",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T06:00:21.044Z"
+      "persisted_at": "2026-11-18T06:23:37.577Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -115046,9 +115046,9 @@
       "title": "Research & Knowledge Intelligence: ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF Core Invariants",
       "repository": "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
       "source_version": "hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf",
-      "content_hash": "8dda5931f22f6a58e923e2e49dccefb89f9726fe778ecaf8002d9d074c6d3492",
+      "content_hash": "3b1b72aa53201c94df34244e2ce966c52da28025fa8ad6d2f3c927f588e523c7",
       "domain_letter": "D",
-      "persisted_at": "2026-11-13T19:01:21.058Z"
+      "persisted_at": "2026-11-18T06:23:24.084Z"
     },
     "candidate_directive-fix-reset-keep-mounted-field-names-with-keepfieldsref-so-later-resets-resto": {
       "item_id": "candidate_directive-fix-reset-keep-mounted-field-names-with-keepfieldsref-so-later-resets-resto",
@@ -218248,13 +218248,13 @@
       "item_id": "candidate_directive-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-UCZU-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-JJLI-android-skip-explicit-kotlin-plugin-when-agp-registers-the-kotlin-extension.md",
       "title": "android): skip explicit Kotlin plugin when AGP registers the kotlin extension (#",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "86a44ad0ea7fb3f7996db47d9e00c4e9fea40b5143ec32be835ca2527aa7dbdf",
+      "content_hash": "0ce1743442fa8ef4b7f2734a9dd7e99f6d65919b82db8abbcfd22c930730e8e1",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T07:40:19.914Z"
+      "persisted_at": "2026-11-18T06:23:36.439Z"
     },
     "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-learnings-c": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-permissions-learnings-c",
@@ -218264,9 +218264,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-permissions-learnings Core Invariants",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "5c63e78e9995dbac95b49af5000a037cb412dc160baf90c6546bcfcce3c61e11",
+      "content_hash": "cdb581b3d0e15e7436e4c2b91dd05a50c70f85b20542ce375046b65051592f53",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T07:40:20.054Z"
+      "persisted_at": "2026-11-18T06:23:36.591Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-permissio",
@@ -218276,9 +218276,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-permissions-learnings",
       "repository": "zoontek-react-native-permissions-learnings",
       "source_version": "HEAD",
-      "content_hash": "17b328b0c9f6a03a624c49e628d618ae1136bf3a396b3c888f8010811acd8715",
+      "content_hash": "4dddb2587c691ab8b1274a47ee80f37265c913a59b1a4cc458f3065d88e8dde1",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T07:40:20.153Z"
+      "persisted_at": "2026-11-18T06:23:36.745Z"
     },
     "learn-huggingface-hexgrad-kokoro-82m": {
       "learning_id": "learn-huggingface-hexgrad-kokoro-82m",
@@ -282153,6 +282153,45 @@
       "content_hash": "813a70f8cc83d7b87a93e0551205a3bc9889c4684d8bbcdb72c395af18d9ac10",
       "domain_letter": "D",
       "persisted_at": "2026-11-18T06:16:00.661Z"
+    },
+    "learn-huggingface-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf": {
+      "learning_id": "learn-huggingface-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
+      "repository": "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
+      "slug": "hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
+      "source_version": "hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf",
+      "content_hash": "ceaa0f3ea69c80a612d2148b99bd10f7115c79ab57a773ab95c781900e598d25",
+      "dossier_path": "07_PROJECT_LEARNING/hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-18T06:23:23.692Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf-lea": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf-lea",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf-learnings-research-knowledge-intell.md",
+      "title": "Research & Knowledge Intelligence: hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf-learnings Core Invariants",
+      "repository": "hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf-learnings",
+      "source_version": "HEAD",
+      "content_hash": "76a916f25bda4483ea155712cb35d79f26538cbf4f2d1715721188582c53cedb",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-18T06:23:36.013Z"
     }
   },
   "ai-builder-brain": {
