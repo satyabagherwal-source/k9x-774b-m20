@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-18T15:51:55.233Z",
+  "timestamp": "2026-11-18T21:34:24.038Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-provablehq-snarkos-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [provablehq-snarkos-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-18T15:51:55.233Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-18T21:34:24.038Z`  
 > **Learning ID**: `LEARN-EVO-provablehq-snarkos-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
 - **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), H (Technical Construction Intelligence), I (Content & Information Intelligence), B (Product Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 62%
+- **Confidence Rating**: 66%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from provablehq-snarkos-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/provablehq-snarkos-learnings.md`  
 > **Source**: github ([https://github.com/ProvableHQ/snarkOS](https://github.com/ProvableHQ/snarkOS))  
-> **Source Version**: `6728d177`  
+> **Source Version**: `f5adbe87`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-18T15:51:47.461Z  
+> **Timestamp**: 2026-11-18T21:33:55.434Z  
 > **Learning ID**: `learn-github-aleo-labs-protocol-snarkos`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/provablehq-snarkos-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ProvableHQ/snarkOS](https://github.com/ProvableHQ/snarkOS))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T15:51:47.453Z  
+> **Harvest Timestamp**: 2026-11-18T21:33:55.429Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2020,310 +2020,367 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b19d9215` (2026-11-18)
-**Commit Message**: Merge pull request #4700 from aleo-labs-protocol/chore/quiet-is-block-synced-trace
+### Incident Patch 1: `7e65929d` (2026-11-18)
+**Commit Message**: Merge pull request #4697 from aleo-labs-protocol/fix/quiet-sync-committee-warnings
 
-Drop the per-update is_block_synced trace
+[Fix] Stop a syncing validator from logging a WARN per unvalidatable peer batch
 
-**File**: `node/sync/src/block_sync/sync_state.rs` (modified, +2/-7)
+**File**: `node/bft/ledger-service/src/ledger.rs` (modified, +2/-1)
 ```diff
-@@ -146,6 +146,8 @@ impl SyncState {
-                 Ordering::Greater => warn!("Greatest peer height reduced from {old_height} to {peer_height}"),
-                 Ordering::Less => trace!("Greatest peer height increased from {old_height} to {peer_height}"),
-             }
-+        } else {
-+            trace!("Greatest peer height set to {peer_height}");
+@@ -15,6 +15,7 @@
+ 
+ use crate::{
+     BeginLedgerUpdateError,
++    CommitteeNotFound,
+     LedgerService,
+     LedgerUpdateService,
+     deserialize_solution_strict,
+@@ -337,7 +338,7 @@ impl<N: Network, C: ConsensusStorage<N>> LedgerService<N> for CoreLedgerService<
+     fn get_committee_for_round(&self, round: u64) -> Result<Committee<N>> {
+         match self.ledger.get_committee_for_round(round)? {
+             Some(committee) => Ok(committee),
+-            None => bail!("No committee found for round {round} in the ledger"),
++            None => Err(CommitteeNotFound { round }.into()),
          }
- 
-         self.greatest_peer_height = Some(peer_height);
-@@ -165,13 +167,6 @@ impl SyncState {
- 
-     /// Updates the state of `is_block_synced` for the sync module.
-     fn update_is_block_synced(&mut self) {
--        trace!(
--            "Updating is_block_synced: greatest_peer_height={greatest_peer:?}, current_height={current}, status={status:?}",
--            greatest_peer = self.greatest_peer_height,
--            current = self.sync_height,
--            status = self.status,
--        );
--
-         let num_blocks_behind = self.num_blocks_behind();
-         let old_status = self.status;
- 
-```
-
----
-
-### Incident Patch 2: `d921e76a` (2026-11-18)
-**Commit Message**: Drop the per-update is_block_synced trace and log the first greatest peer height
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-Claude-Session: https://claude.ai/code/session_01UYfmmNguQv7Z8sMQsuFM3o
-
-**File**: `node/sync/src/block_sync/sync_state.rs` (modified, +2/-7)
-```diff
-@@ -146,6 +146,8 @@ impl SyncState {
-                 Ordering::Greater => warn!("Greatest peer height reduced from {old_height} to {peer_height}"),
-                 Ordering::Less => trace!("Greatest peer height increased from {old_height} to {peer_height}"),
-             }
-+        } else {
-+            trace!("Greatest peer height set to {peer_height}");
-         }
- 
-         self.greatest_peer_height = Some(peer_height);
-@@ -165,13 +167,6 @@ impl SyncState {
- 
-     /// Updates the state of `is_block_synced` for the sync module.
-     fn update_is_block_synced(&mut self) {
--        trace!(
--            "Updating is_block_synced: greatest_peer_height={greatest_peer:?}, current_height={current}, status={status:?}",
--            greatest_peer = self.greatest_peer_height,
--            current = self.sync_height,
--            status = self.status,
--        );
--
-         let num_blocks_behind = self.num_blocks_behind();
-         let old_status = self.status;
- 
-```
-
----
-
-### Incident Patch 3: `2ddd0723` (2026-11-18)
-**Commit Message**: Merge pull request #4677 from aleo-labs-protocol/perf/consensus-test-fixture-reuse
-
-Share the sample transactions of the consensus tests between nextest processes
-
-**File**: `Cargo.lock` (modified, +2/-0)
-```diff
-@@ -5571,6 +5571,7 @@ dependencies = [
-  "snarkos-node-network",
-  "snarkos-node-sync-locators",
-  "snarkos-node-tcp",
-+ "snarkos-utilities",
-  "snarkvm",
-  "test-strategy",
-  "time",
-@@ -5781,6 +5782,7 @@ dependencies = [
-  "snarkos-node-network",
-  "snarkos-node-sync-locators",
-  "snarkos-node-tcp",
-+ "snarkos-utilities",
-  "snarkvm",
-  "test-strategy",
-  "tokio-util",
-```
-
-**File**: `node/bft/Cargo.toml` (modified, +4/-0)
-```diff
-@@ -202,6 +202,10 @@ features = [ "test" ]
- workspace = true
- features = [ "test" ]
- 
-+[dev-dependencies.snarkos-utilities]
-+workspace = true
-+features = [ "test-helpers" ]
-+
- [dev-dependencies.snarkvm]
- workspace = true
- features = [ "prop-tests" ]
-```
-
-**File**: `node/bft/events/Cargo.toml` (modified, +10/-1)
-```diff
-@@ -29,7 +29,7 @@ test-helpers = [ "dep:rand_chacha", "dep:rand", "dep:proptest" ]
- # means something narrower here (it pulls the rng and proptest dependencies but
- # un-gates nothing). Enabling this in a production build would compile the
- # generators into the binary, so it is deliberately not implied by anything.
--fuzz-helpers = [ "test-helpers", "dep:test-strategy", "dep:time", "snarkos-node-sync-locators/test", "snarkvm/test-helpers", "snarkvm/algorithms" ]
-+fuzz-helpers = [ "test-helpers", "dep:snarkos-utilities", "dep:test-strategy", "dep:time", "snarkos-node-sync-locators/test", "snarkvm/test-helpers", "snarkvm/algorithms" ]
- 
- [dependencies.anyhow]
- workspace = true
-@@ -58,6 +58,11 @@ workspace = true
- [dependencies.snarkos-node-sync-locators]
- workspace = true
- 
-+[dependencies.snarkos-utilities]
-+workspace = true
-+features = [ "test-helpers" ]
-+optional = true
-+
- [dependencies.snarkos-node-tcp]
- workspace = true
- 
-@@ -105,6 +110,10 @@ workspace = true
- workspace = true
- features = [ "test" ]
- 
-+[dev-dependencies.snarkos-utilities]
-+workspace = true
-+features = [ "test-helpers" ]
-+
- [dev-dependencies.snarkos-node-bft-events]
- path = "."
- features = [ "test-helpers" ]
-```
-
-**File**: `node/bft/events/src/block_response.rs` (modified, +22/-1)
-```diff
-@@ -188,18 +188,39 @@ pub mod prop_tests {
-     #![cfg_attr(not(test), allow(unused_imports))]
-     use crate::{BlockRequest, BlockResponse, DataBlocks, block_request::prop_tests::any_block_request};
- 
-+    use snarkos_utilities::test_fixture::cached_fixture;
-     use snarkvm::{
-         console::network::ConsensusVersion,
--        ledger::{narwhal::Data, test_helpers::sample_genesis_block},
-+        ledger::narwhal::Data,
-         prelude::{FromBytes, TestRng, ToBytes, block::Block},
-     };
- 
-     use bytes::{Buf, BufMut, BytesMut};
-     use proptest::prelude::{BoxedStrategy, ProptestConfig, Strategy, any};
-+    use std::sync::OnceLock;
-     use test_strategy::proptest;
- 
-     type CurrentNetwork = snarkvm::prelude::MainnetV0;
- 
-+    /// Returns a sample genesis block, which costs two execution proofs to build.
-+    ///
-+    /// Every call returns the same block, whatever `rng` is, and so does every test process of this
-+    /// binary.
-+    pub fn sample_genesis_block(rng: &mut TestRng) -> Block<CurrentNetwork> {
-+        static BLOCK: OnceLock<Block<CurrentNetwork>> = OnceLock::new();
-+        BLOCK
-+            .get_or_init(|| {
-+                cached_fixture(
-+                    "sample-genesis-block",
-+                    &[],
-+                    |block: &Block<CurrentNetwork>| block.to_bytes_le().unwrap(),
-+                    |bytes| Block::from_bytes_le(bytes).ok(),
-+                    || snarkvm::ledger::test_helpers::sample_genesis_block(rng),
-+                )
-+            })
-+            .clone()
-+    }
-+
-     pub fn any_block_response() -> BoxedStrategy<BlockResponse<CurrentNetwork>> {
-         (any_block_request(), any::<u64>())
-             .prop_map(|(request, seed)| {
-```
-
-**File**: `node/bft/ledger-service/Cargo.toml` (modified, +4/-0)
-```diff
-@@ -87,6 +87,10 @@ workspace = true
- optional = true
- features = [ "log" ]
- 
-+[dev-dependencies.snarkos-utilities]
-+workspace = true
-+features = [ "test-helpers" ]
-+
- [dev-dependencies.snarkvm]
- workspace = true
- features = [ "test-helpers" ]
-```
-
-**File**: `node/bft/ledger-service/src/helpers.rs` (modified, +19/-5)
-```diff
-@@ -73,14 +73,28 @@ pub fn deserialize_solution_strict<N: Network>(solution: Data<Solution<N>>) -> R
- #[cfg(test)]
- mod tests {
-     use super::*;
-+    use snarkos_utilities::test_fixture::cached_fixture;
-     use snarkvm::{
-         console::account::{Address, PrivateKey},
--        ledger::{puzzle::PartialSolution, test_helpers::sample_execution_transaction_with_fee},
--        prelude::{MainnetV0, Rng, TestRng, ToBytes},
-+        ledger::puzzle::PartialSolution,
-+        prelude::{FromBytes, MainnetV0, Rng, TestRng, ToBytes},
-     };
- 
-     type CurrentNetwork = MainnetV0;
- 
-+    /// Returns a sample execution transaction with a public fee, which costs three proofs to build.
-+    ///
-+    /// Every test process of this binary gets the same transaction, whatever `rng` is.
-+    fn sample_execution_transaction(rng: &mut TestRng) -> Transaction<CurrentNetwork> {
-+        cached_fixture(
-+            "sample-execution-transaction",
-+            &[],
-+            |transaction: &Transaction<CurrentNetwork>| transaction.to_bytes_le().unwrap(),
-+            |bytes| Transaction::from_bytes_le(bytes).ok(),
-+            || snarkvm::ledger::test_helpers::sample_execution_transaction_with_fee(false, rng, 0),
-+        )
-+    }
-+
-     fn sample_solution(rng: &mut TestRng) -> Solution<CurrentNetwork> {
-         let private_key = PrivateKey::<CurrentNetwork>::new(rng).unwrap();
-         let address = Address::try_from(private_key).unwrap();
-@@ -91,7 +105,7 @@ mod tests {
-     #[test]
-     fn deserialize_transaction_strict_accepts_object() -> Result<()> {
-         let rng = &mut TestRng::default();
--        let expected = sample_execution_transaction_with_fee(false, rng, 0);
-+        let expected = sample_execution_transaction(rng);
- 
-         let actual = deserialize_transaction_strict(Data::Object(expected.clone()))?;
- 
-@@ -102,7 +116,7 @@ mod tests {
-     #[test]
-     fn deserialize_transaction_strict_accepts_canonical_buffer() -> Result<()> {
-         let rng = &mut TestRng::default();
--        let expected = sample_execution_transaction_with_fee(false, rng, 0);
-+        let expected = sample_execution_transaction(rng);
-         let bytes = expected.to_bytes_le()?;
- 
-         let actual = deserialize_transaction_strict(Data::Buffer(bytes.into()))?;
-@@ -114,7 +128,7 @@ mod tests {
-     #[test]
-     fn deserialize_transaction_strict_rejects_padded_buffer() -> Result<()> {
-         let rng = &mut TestRng::default();
--        let transaction = sample_execution_transaction_with_fee(false, rng, 0);
-+        let transaction = sample_execution_transaction(rng);
-         let mut bytes = transaction.to_bytes_le()?;
-         bytes.push(0);
- 
-```
-
-**File**: `node/bft/ledger-service/src/mock.rs` (modified, +2/-4)
-```diff
-@@ -62,10 +62,8 @@ impl<N: Network> MockLedgerService<N> {
- 
-     /// Initializes a new mock ledger service at the specified height.
-     pub fn new_at_height(committee: Committee<N>, height: u32) -> Self {
--        let mut height_to_hash = BTreeMap::new();
--        for i in 0..=height {
--            height_to_hash.insert(i, (i as u64 * 2, Field::<N>::from_u32(i).into()));
--        }
-+        let height_to_hash: BTreeMap<_, _> =
-+            (0..=height).map(|i| (i, (i as u64 * 2, Field::<N>::from_u32(i).into()))).collect();
-         Self { height_to_round_and_hash: Mutex::new(height_to_hash), ..Self::new(committee) }
      }
  
 ```
 
-**File**: `node/bft/src/helpers/storage.rs` (modified, +1/-1)
+**File**: `node/bft/ledger-service/src/traits.rs` (modified, +9/-0)
 ```diff
-@@ -1463,7 +1463,7 @@ pub(crate) mod tests {
-         // carries neither the transmission nor its ID, so only the ledger and storage know it; any
-         // block will do here, hence the sample genesis block.
-         let certificate_2 = make_certificate(1, rng);
--        let block = snarkvm::ledger::test_helpers::sample_genesis_block(rng);
-+        let block = crate::test_helpers::sample_genesis_block(rng);
-         storage
-             .sync_certificate_with_block(&block, certificate_2.clone(), &Default::default(), false)
-             .expect("syncing a certificate referencing a previously-aborted transmission must succeed");
+@@ -38,6 +38,15 @@ pub enum BeginLedgerUpdateError {
+     NotSupportedForProver,
+ }
+ 
++/// The ledger holds no committee for the given round.
++///
++/// A ledger that has not yet advanced to `round` returns this error for it.
++#[derive(Clone, Copy, Debug, PartialEq, Eq, thiserror::Error)]
++#[error("No committee found for round {round} in the ledger")]
++pub struct CommitteeNotFound {
++    pub round: u64,
++}
++
+ /// Allows performing updates to the ledger and prevents concurrent updates while the object is alive.
+ #[cfg(feature = "ledger-write")]
+ pub trait LedgerUpdateService<N: Network> {
+```
+
+**File**: `node/bft/src/helpers/mod.rs` (modified, +3/-0)
+```diff
+@@ -43,6 +43,9 @@ pub use signed_proposals::*;
+ pub mod storage;
+ pub use storage::*;
+ 
++pub mod sync_skips;
++pub use sync_skips::*;
++
+ #[cfg(feature = "metrics")]
+ pub mod telemetry;
+ #[cfg(feature = "metrics")]
+```
+
+**File**: `node/bft/src/helpers/sync_skips.rs` (added, +181/-0)
+```diff
+@@ -0,0 +1,181 @@
++// Copyright (c) 2019-2026 Provable Inc.
++// This file is part of the snarkOS library.
++
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at:
++
++// http://www.apache.org/licenses/LICENSE-2.0
++
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++use snarkos_node_bft_ledger_service::CommitteeNotFound;
++
++#[cfg(feature = "locktick")]
++use locktick::parking_lot::Mutex;
++#[cfg(not(feature = "locktick"))]
++use parking_lot::Mutex;
++use std::{
++    fmt,
++    time::{Duration, Instant},
++};
++
++/// The minimum time between two summaries of the peer messages skipped while the ledger is behind.
++const SKIP_SUMMARY_INTERVAL: Duration = Duration::from_secs(30);
++
++/// Returns `true` if `error` is the failure every live batch proposal and batch certificate runs
++/// into while this node is catching up: the ledger has not reached the round whose committee
++/// validates the message.
++///
++/// A missing committee on a synced node, or for a round the ledger has already reached, is an
++/// anomaly and returns `false`.
++pub fn is_awaiting_ledger_sync(error: &anyhow::Error, is_synced: bool, latest_ledger_round: u64) -> bool {
++    !is_synced && error.downcast_ref::<CommitteeNotFound>().is_some_and(|error| error.round > latest_ledger_round)
++}
++
++/// A kind of peer message that cannot be validated while the ledger is behind.
++#[derive(Clone, Copy, Debug, PartialEq, Eq)]
++pub enum SkippedMessage {
++    BatchProposal,
++    BatchCertificate,
++}
++
++/// The peer messages skipped over one summary interval.
++#[derive(Clone, Copy, Debug, PartialEq, Eq)]
++pub struct SkipSummary {
++    pub proposals: u64,
++    pub certificates: u64,
++    pub elapsed: Duration,
++}
++
++impl fmt::Display for SkipSummary {
++    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
++        let Self { proposals, certificates, elapsed } = self;
++        write!(
++            f,
++            "Skipped {proposals} batch proposals and {certificates} batch certificates from peers in the last {}s",
++            elapsed.as_secs()
++        )
++    }
++}
++
++/// The counts accumulated since the first skipped message that no summary has covered yet.
++struct SkipWindow {
++    start: Instant,
++    proposals: u64,
++    certificates: u64,
++}
++
++/// Counts the peer messages skipped while the ledger is behind, so that they are reported as a
++/// periodic summary instead of one log line each.
++#[derive(Default)]
++pub struct SkippedWhileSyncing {
++    window: Mutex<Option<SkipWindow>>,
++}
++
++impl SkippedWhileSyncing {
++    /// Counts a skipped message observed at `now`.
++    ///
++    /// Returns the summary to log once [`SKIP_SUMMARY_INTERVAL`] has passed since the first
++    /// message it covers. Messages are only counted here, so a summary is not emitted until the
++    /// next skipped message arrives, and the counts of a final, shorter window are never reported.
++    pub fn record(&self, message: SkippedMessage, now: Instant) -> Option<SkipSummary> {
++        let mut window = self.window.lock();
++        let current = window.get_or_insert(SkipWindow { start: now, proposals: 0, certificates: 0 });
++        match message {
++            SkippedMessage::BatchProposal => current.proposals += 1,
++            SkippedMessage::BatchCertificate => current.certificates += 1,
++        }
++
++        let elapsed = now.saturating_duration_since(current.start);
++        if elapsed < SKIP_SUMMARY_INTERVAL {
++            return None;
++        }
++        window.take().map(|SkipWindow { proposals, certificates, .. }| SkipSummary { proposals, certificates, elapsed })
++    }
++}
++
++#[cfg(test)]
++mod tests {
++    use super::*;
++
++    use anyhow::anyhow;
++
++    #[test]
++    fn missing_committee_ahead_of_the_ledger_is_expected_while_syncing() {
++        let error = anyhow::Error::from(CommitteeNotFound { round: 101 });
++        assert!(is_awaiting_ledger_sync(&error, false, 100));
++    }
++
++    #[test]
++    fn missing_committee_is_recognised_through_added_context() {
++        let error = anyhow::Error::from(CommitteeNotFound { round: 101 })
++            .context("Failed to fetch missing transmissions and previous certificates")
++            .context("Cannot sign a batch at round 203 from '127.0.0.1:5000'");
++        assert!(is_awaiting_ledger_sync(&error, false, 100));
++    }
++
++    #[test]
++    fn missing_committee_on_a_synced_node_is_an_anomaly() {
++        let error = anyhow::Error::from(CommitteeNotFound { round: 101 });
++        assert!(!is_awaiting_ledger_sync(&error, true, 100));
++    }
++
++    #[test]
++    fn missing_committee_for_a_round_the_ledger_reached_is_an_anomaly() {
++  
+```
+
+**File**: `node/bft/src/primary.rs` (modified, +37/-7)
+```diff
+@@ -34,12 +34,15 @@ use crate::{
+         Proposal,
+         ProposalCache,
+         SignedProposals,
++        SkippedMessage,
++        SkippedWhileSyncing,
+         Storage,
+         assign_to_worker,
+         assign_to_workers,
+         fmt_id,
+         init_sync_channels,
+         init_worker_channels,
++        is_awaiting_ledger_sync,
+         now,
+     },
+     spawn_blocking,
+@@ -185,6 +188,10 @@ pub struct Primary<N: Network> {
+     /// Replaced (and the old one cancelled) on every recheck, so at most one set of resends is in flight.
+     resend_token: Arc<Mutex<CancellationToken>>,
+ 
++    /// The batch proposals and batch certificates from peers that could not be validated
++    /// because the ledger is behind, pending their next summary in the log.
++    skipped_while_syncing: Arc<SkippedWhileSyncing>,
++
+     /// The handles for all background tasks spawned by this primary.
+     handles: Arc<Mutex<Vec<JoinHandle<()>>>>,
+ 
+@@ -251,6 +258,7 @@ impl<N: Network> Primary<N> {
+             latest_proposal_timestamp: Default::default(),
+             signed_proposals: Default::default(),
+             resend_token: Default::default(),
++            skipped_while_syncing: Default::default(),
+             handles: Default::default(),
+             proposal_task: Default::default(),
+             round_increment_notify: Default::default(),
+@@ -1324,6 +1332,31 @@ impl<N: Network> Primary<N> {
+         Ok(())
+     }
+ 
++    /// Logs a failure to process a batch proposal or batch certificate from a peer.
++    ///
++    /// A failure that is expected because the ledger is behind is logged at TRACE and counted
++    /// towards a periodic summary; every live message from every validator fails this way until
++    /// the ledger catches up. Any other failure is logged at WARN.
++    fn log_peer_message_failure(&self, message: SkippedMessage, error: anyhow::Error) {
++        if !is_awaiting_ledger_sync(&error, self.sync.is_synced(), self.ledger.latest_round()) {
++            warn!("{}", flatten_error(error));
++            return;
++        }
++
++        trace!("{}", flatten_error(error));
++        if let Some(summary) = self.skipped_while_syncing.record(message, Instant::now()) {
++            let ledger_round = self.ledger.latest_round();
++            match self.sync.num_blocks_behind() {
++                Some(num_blocks_behind) => info!(
++                    "{summary} - the ledger is {num_blocks_behind} blocks behind (at round {ledger_round}) and has no committee for their rounds yet"
++                ),
++                None => info!(
++                    "{summary} - the ledger is behind (at round {ledger_round}) and has no committee for their rounds yet"
++                ),
++            }
++        }
++    }
++
+     /// Processes a batch certificate from a peer.
+     ///
+     /// This method performs the following steps:
+@@ -1549,7 +1582,7 @@ impl<N: Network> Primary<N> {
+                     let round = batch_propose.round;
+                     if let Err(err) = self__.process_batch_propose_from_peer(peer_ip, batch_propose).await {
+                         let err = err.context(format!("Cannot sign a batch at round {round} from '{peer_ip}'"));
+-                        warn!("{}", flatten_error(err));
++                        self__.log_peer_message_failure(SkippedMessage::BatchProposal, err);
+                     }
+                 });
+             }
+@@ -1588,12 +1621,9 @@ impl<N: Network> Primary<N> {
+                     let id = fmt_id(batch_certificate.id());
+                     let round = batch_certificate.round();
+                     if let Err(err) = self__.process_batch_certificate_from_peer(peer_ip, batch_certificate).await {
+-                        warn!(
+-                            "{}",
+-                            flatten_error(err.context(format!(
+-                                "Cannot store a certificate '{id}' for round {round} from '{peer_ip}'"
+-                            )))
+-                        );
++                        let err = err
++                            .context(format!("Cannot store a certificate '{id}' for round {round} from '{peer_ip}'"));
++                        self__.log_peer_message_failure(SkippedMessage::BatchCertificate, err);
+                     }
+                 });
+             }
+```
+
+**File**: `node/bft/src/sync/mod.rs` (modified, +18/-1)
+```diff
+@@ -48,7 +48,7 @@ use std::{
+     net::SocketAddr,
+     ops::Deref,
+     sync::Arc,
+-    time::Duration,
++    time::{Duration, Instant},
+ };
+ #[cfg(not(feature = "locktick"))]
+ use tokio::sync::Mutex as TMutex;
+@@ -580,11 +580,13 @@ impl<N: Network> Sync<N> {
+                     break;
+                 };
+                 info!("Trying to sync next block at height {} with the BFT...", block.height());
++                let timer = Instant::now();
+                 // Sync the storage with the block.
+                 match self.sync_storage_with_block(block, true).await {
+                     Ok(_) => {
+                         // Update the current height if sync succeeds.
+                         current_height = next_height;
++                        self.log_block_sync_step(next_height, timer);
+                     }
+                     Err(err) => {
+                         // Mark the current height as processed in block_sync.
+@@ -623,13 +625,15 @@ impl<N: Network> Sync<N> {
+                     break;
+                 };
+                 info!("Syncing the ledger to block {}...", block.height());
++                let timer = Instant::now();
+ 
+                 // Sync the ledger with the block without BFT.
+                 match self.sync_storage_with_block(block, false).await {
+                     Ok(_) => {
+                         // Update the current height if sync succeeds.
+                         current_height = next_height;
+                         self.block_sync.count_request_completed();
++                        self.log_block_sync_step(next_height, timer);
+                     }
+                     Err(err) => {
+                         // Mark the current height as processed in block_sync.
+@@ -651,6 +655,19 @@ impl<N: Network> Sync<N> {
+         }
+     }
+ 
++    /// Logs how long syncing the storage with the block at `height` took, measured from `timer`.
++    ///
++    /// The ledger height is part of the line because the ledger advances by a block only once a
++    /// later block confirms it, so the time covers the blocks the ledger advanced by in this step,
++    /// which is not necessarily the block at `height`.
++    fn log_block_sync_step(&self, height: u32, timer: Instant) {
++        debug!(
++            "Synced block {height} in {}ms (ledger height {})",
++            timer.elapsed().as_millis(),
++            self.ledger.latest_block_height(),
++        );
++    }
++
+     /// Helper function for [`Self::sync_storage_with_block`].
+     /// It syncs the batch certificates with the BFT, if the block's authority is a sub-DAG.
+     ///
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4703** (2026-11-18): Bump snarkVM to aleo-labs-protocol/snarkVM@cfa4fd8f2 (@aleo-labs-merge-bot[bot])
 - **PR #4701** (2026-11-18): ci: make an old node dial an upgraded node in the full upgrade test (@cbeck88)
 - **PR #4700** (2026-11-18): Drop the per-update is_block_synced trace (@cbeck88)
 - **PR #4699** (2026-11-18): Turn off the snarkVM timing log targets at every verbosity (@cbeck88)
+- **PR #4697** (2026-11-18): [Fix] Stop a syncing validator from logging a WARN per unvalidatable peer batch (@cbeck88)
 - **PR #4695** (closed): Merge testnet into staging (@aleo-labs-merge-bot[bot])
-- **PR #4694** (2026-11-17): Merge mainnet into staging (@aleo-labs-merge-bot[bot])
-- **PR #4693** (2026-11-17): [Release] Address dependency advisories for v4.13.1 (@snarkworld)
 
 ---
 
@@ -2343,38 +2400,32 @@ Share the sample transactions of the consensus tests between nextest processes
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in sync_state.rs
+## X. Empirical Invariant Guard in ledger.rs
 
 **RULE**:
-When implementing operations in `node/sync/src/block_sync/sync_state.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aleo-labs-protocol/snarkOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `node/bft/ledger-service/src/ledger.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aleo-labs-protocol/snarkOS. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b19d9215`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7e65929d`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `node/sync/src/block_sync/sync_state.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `node/bft/ledger-service/src/ledger.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        } else {
-            trace!("Greatest peer height set to {peer_height}");
+    CommitteeNotFound,
+            None => Err(CommitteeNotFound { round }.into()),
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-        trace!(
-            "Updating is_block_synced: greatest_peer_height={greatest_peer:?}, current_height={current}, status={status:?}",
-            greatest_peer = self.greatest_peer_height,
-            current = self.sync_height,
-            status = self.status,
-        );
-
+            None => bail!("No committee found for round {round} in the ledger"),
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b19d9215` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7e65929d` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

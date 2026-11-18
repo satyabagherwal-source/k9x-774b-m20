@@ -955,8 +955,8 @@
     "sourceUrl": "https://huggingface.co/openai/gpt-oss-20b",
     "sourceVersion": "hf-openai-gpt-oss-20b",
     "license": "Open-Source",
-    "contentHash": "52ea2eb1583905ca240161dd3d4382dcfc64f89f98c5f2c2b110cc9507ebde58",
-    "lastHarvestedAt": "2026-11-14T03:15:21.650Z",
+    "contentHash": "b2b554a1a468b873f9811ce4c648d656c9ba9102cdb5f3c97e7b5b25d85b9d20",
+    "lastHarvestedAt": "2026-11-18T21:33:42.850Z",
     "learningId": "learn-huggingface-openai-gpt-oss-20b"
   },
   "hf-meta-llama-llama-2-7b-chat-hf": {
@@ -2923,10 +2923,10 @@
     "repository": "aleo-labs-protocol/snarkOS",
     "platform": "github",
     "sourceUrl": "https://github.com/ProvableHQ/snarkOS",
-    "sourceVersion": "6728d177",
+    "sourceVersion": "f5adbe87",
     "license": "Apache-2.0",
-    "contentHash": "527f0642aaa0c1d3597cda468a0238c875e18e0c22f2d01bfe16c1dc20afd30b",
-    "lastHarvestedAt": "2026-11-18T15:51:48.630Z",
+    "contentHash": "42462144ff1cb4122fc573c517bdee707bcf0dc18d4b7f329d9602ca2595eb3e",
+    "lastHarvestedAt": "2026-11-18T21:33:56.222Z",
     "learningId": "learn-github-aleo-labs-protocol-snarkos"
   },
   "vasu-devs-justhireme": {

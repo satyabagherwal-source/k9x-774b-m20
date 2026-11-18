@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-18T21:23:27.659Z",
+  "last_updated": "2026-11-18T21:34:25.245Z",
   "total_verified_learnings": 9009,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 21464,
+  "total_items": 21468,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112058,9 +112058,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "7caa3a15b9feaad3a573273eefc45fab5e9ba2f7286220cccbcd47fd7ccdeb45",
+      "content_hash": "48c7152dd1221f8e1013705ade0dc1c3a7603e4c76ef88683e0cf42b028339f3",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T20:54:19.184Z"
+      "persisted_at": "2026-11-18T21:34:25.132Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112070,9 +112070,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "85b7e034d10d519dc6997d2ee0fb966f971b8756b18174400abda28d0ff7ea35",
+      "content_hash": "706ec09f43b57b0d1750df5c7b9906dad1dce47ff64d4f9817a50b576e1590bf",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T20:54:19.302Z"
+      "persisted_at": "2026-11-18T21:34:25.245Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -112798,25 +112798,25 @@
       "item_id": "domain_intelligence-architecture-intelligence-aleo-labs-protocol-snarkos-core-invariants",
       "artifact_type": "domain_intelligence",
       "target_folder": "05_KNOWLEDGE",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-aleo-labs-protocol-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-provablehq-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-core-inv.md",
       "title": "Architecture Intelligence: aleo-labs-protocol/snarkOS Core Invariants",
       "repository": "aleo-labs-protocol/snarkOS",
-      "source_version": "7e65929d",
-      "content_hash": "68b43bca53553eef397fafabcb78978d5016667a10adaad0cdea9f8998d48785",
+      "source_version": "f5adbe87",
+      "content_hash": "e0f1644261cc5d79169255bac326ff54de74bc48e9eafbdc07bc3a2324dca034",
       "domain_letter": "G",
-      "persisted_at": "2026-11-18T18:10:01.265Z"
+      "persisted_at": "2026-11-18T21:33:56.504Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-aleo-labs-protocol-snarkos": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-aleo-labs-protocol-snarkos",
       "artifact_type": "verification_contract",
       "target_folder": "08_VERIFICATION",
-      "relative_path": "08_VERIFICATION/aleo-labs-protocol-snarkos-verification-protocol-empirical-defect-shield-for-ale.md",
+      "relative_path": "08_VERIFICATION/provablehq-snarkos-verification-protocol-empirical-defect-shield-for-aleo-labs-p.md",
       "title": "Verification Protocol: Empirical Defect Shield for aleo-labs-protocol/snarkOS",
       "repository": "aleo-labs-protocol/snarkOS",
-      "source_version": "7e65929d",
-      "content_hash": "75f624bdf3ea45b58fc0715932399fa67f630fa602d3ca880ba8a33d3946a7d8",
+      "source_version": "f5adbe87",
+      "content_hash": "9aeb59592a4d497cdcd34f769d28a6fd4a20f54231f5c910d1ac012dd19caf5a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T18:10:01.444Z"
+      "persisted_at": "2026-11-18T21:33:56.638Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-fastino-gliner2-5-decide-learnings-core-invar": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-fastino-gliner2-5-decide-learnings-core-invar",
@@ -114578,9 +114578,9 @@
       "title": "Architecture Intelligence: provablehq-snarkos-learnings Core Invariants",
       "repository": "provablehq-snarkos-learnings",
       "source_version": "HEAD",
-      "content_hash": "87199a267a5805ec69579e90ddae388937c8491f45a30c66944d187503046fd5",
+      "content_hash": "371365c3d494a947924c96bb740e12e62486c605f9673ad5030482df813ec2b2",
       "domain_letter": "G",
-      "persisted_at": "2026-11-18T15:51:55.539Z"
+      "persisted_at": "2026-11-18T21:34:24.271Z"
     },
     "candidate_directive-server-security-check-the-token-on-the-account-confirmation-page-when-confirm_": {
       "item_id": "candidate_directive-server-security-check-the-token-on-the-account-confirmation-page-when-confirm_",
@@ -215567,13 +215567,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "aleo-labs-protocol/snarkOS",
       "repository": "aleo-labs-protocol/snarkOS",
-      "slug": "aleo-labs-protocol-snarkos",
+      "slug": "provablehq-snarkos",
       "platform": "github",
-      "source_url": "https://github.com/aleo-labs-protocol/snarkOS",
-      "source_version": "7e65929d",
-      "content_hash": "472e72c44eee914e8404f908c5d5117c8238a50c1bac0e950985a02345cdb026",
-      "dossier_path": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/aleo-labs-protocol-snarkos-learnings.md",
+      "source_url": "https://github.com/ProvableHQ/snarkOS",
+      "source_version": "f5adbe87",
+      "content_hash": "42462144ff1cb4122fc573c517bdee707bcf0dc18d4b7f329d9602ca2595eb3e",
+      "dossier_path": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/provablehq-snarkos-learnings.md",
       "promoted_rules": [
         {
           "number": 8012,
@@ -215609,6 +215609,11 @@
           "number": 9270,
           "title": "Quiet expected committee-lookback failures while the ledger is behind",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9283,
+          "title": "Empirical Invariant Guard in ledger.rs",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -215616,7 +215621,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T18:10:00.600Z",
+      "verified_at": "2026-11-18T21:33:56.073Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -219515,9 +219520,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for provablehq-snarkos-learnings",
       "repository": "provablehq-snarkos-learnings",
       "source_version": "HEAD",
-      "content_hash": "7e264427101e6aef27b4dc4f11cb4f34754c1414c004c0eb0ee0c0f7eb8e6bf8",
+      "content_hash": "592c31a71330f5738a8950cca7d2c459e0ff769d9fcf49b9de9c62df800fab1e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T15:51:55.720Z"
+      "persisted_at": "2026-11-18T21:34:24.401Z"
     },
     "candidate_directive-viz-category-axis-tickvals-are-category-names-not-positions": {
       "item_id": "candidate_directive-viz-category-axis-tickvals-are-category-names-not-positions",
@@ -222144,7 +222149,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/openai/gpt-oss-20b",
       "source_version": "hf-openai-gpt-oss-20b",
-      "content_hash": "52ea2eb1583905ca240161dd3d4382dcfc64f89f98c5f2c2b110cc9507ebde58",
+      "content_hash": "b2b554a1a468b873f9811ce4c648d656c9ba9102cdb5f3c97e7b5b25d85b9d20",
       "dossier_path": "07_PROJECT_LEARNING/hf-openai-gpt-oss-20b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-openai-gpt-oss-20b-learnings.md",
       "promoted_rules": [
@@ -222169,7 +222174,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T03:15:21.477Z",
+      "verified_at": "2026-11-18T21:33:42.671Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -252497,9 +252502,9 @@
       "title": "Research & Knowledge Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "f71071369fc072bf66f70842fd710bab1e63486f606e06f84981d56a9c589214",
+      "content_hash": "4b23681492c337c00015317e7c94fe031bd9800ebecefad94a4b84c64038de28",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T20:54:19.054Z"
+      "persisted_at": "2026-11-18T21:34:25.005Z"
     },
     "learn-github-prof18-feed-flow": {
       "learning_id": "learn-github-prof18-feed-flow",
@@ -275176,13 +275181,13 @@
       "item_id": "candidate_directive-rust-address-the-remaining-issues-in-418",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-NA5E-rust-address-the-remaining-issues-in-418.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-2UL7-rust-address-the-remaining-issues-in-418.md",
       "title": "rust): address the remaining issues in #418",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "0e6bc4a3abd69e16ed8b38f2e5c65099b47c7d11470c0f7bab3d22edcacc7328",
+      "content_hash": "a92a4dd166d3d0a5b8c40d66606ec08ae9ae3efbf736c6708f38259a4e1ebfcd",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T20:54:18.918Z"
+      "persisted_at": "2026-11-18T21:34:24.874Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-m3-1-flash-learnings-core-i": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-m3-1-flash-learnings-core-i",
@@ -289784,6 +289789,56 @@
       "content_hash": "178839a825963e86bfdbd8bda3d70b13513d0872749eb510a51e6c0ee1ae406d",
       "domain_letter": "H",
       "persisted_at": "2026-11-18T21:23:26.210Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-openai-gpt-oss-20b-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-openai-gpt-oss-20b-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-openai-gpt-oss-20b-research-knowledge-intelligence-openai-gpt-oss-20b-core-in.md",
+      "title": "Research & Knowledge Intelligence: openai/gpt-oss-20b Core Invariants",
+      "repository": "openai/gpt-oss-20b",
+      "source_version": "hf-openai-gpt-oss-20b",
+      "content_hash": "199990a9c5f15c879ba47cbb45520d86f9f9d09fef7e6b3e9a45c976c4267a68",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-18T21:33:43.023Z"
+    },
+    "rule-9283": {
+      "learning_id": "rule-9283",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9283,
+      "title": "Empirical Invariant Guard in ledger.rs",
+      "source_url": "https://github.com/ProvableHQ/snarkOS",
+      "source_version": "f5adbe87",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-18T21:33:56.073Z"
+    },
+    "candidate_directive-empirical-invariant-guard-in-ledger-rs": {
+      "item_id": "candidate_directive-empirical-invariant-guard-in-ledger-rs",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-2U0U-empirical-invariant-guard-in-ledger-rs.md",
+      "title": "Empirical Invariant Guard in ledger.rs",
+      "repository": "provablehq-snarkos-learnings",
+      "source_version": "HEAD",
+      "content_hash": "3f0b6356770fe0dfa546ed78c63844b8bdb53f3eef6a86720e24dfdf0832ba48",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-18T21:34:24.140Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-openai-gpt-oss-20b-learnings-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-openai-gpt-oss-20b-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-openai-gpt-oss-20b-learnings-research-knowledge-intelligence-hf-openai-gpt-os.md",
+      "title": "Research & Knowledge Intelligence: hf-openai-gpt-oss-20b-learnings Core Invariants",
+      "repository": "hf-openai-gpt-oss-20b-learnings",
+      "source_version": "HEAD",
+      "content_hash": "a707f3a84979a99131eaf4277971dd09ee9ed3303b3eb16ad19b8a03017a10aa",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-18T21:34:23.646Z"
     }
   },
   "ai-builder-brain": {

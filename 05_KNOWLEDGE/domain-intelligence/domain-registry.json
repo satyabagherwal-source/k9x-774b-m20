@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-18T21:23:27.521Z",
-  "total_records": 1906,
+  "last_updated": "2026-11-18T21:34:25.005Z",
+  "total_records": 1909,
   "domains": {
     "A": {
       "total": 13,
@@ -51,7 +51,7 @@
       ]
     },
     "D": {
-      "total": 802,
+      "total": 805,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -854,7 +854,10 @@
         "domain_intelligence-research-knowledge-intelligence-hf-compvis-stable-diffusion-v1-4-learnings-core-",
         "domain_intelligence-research-knowledge-intelligence-openai-whisper-large-v3-core-invariants",
         "DOM-D-30CF6F55",
-        "domain_intelligence-research-knowledge-intelligence-hf-openai-whisper-large-v3-learnings-core-invari"
+        "domain_intelligence-research-knowledge-intelligence-hf-openai-whisper-large-v3-learnings-core-invari",
+        "domain_intelligence-research-knowledge-intelligence-openai-gpt-oss-20b-core-invariants",
+        "DOM-D-AE671E2B",
+        "domain_intelligence-research-knowledge-intelligence-hf-openai-gpt-oss-20b-learnings-core-invariants"
       ]
     },
     "E": {
@@ -8010,10 +8013,10 @@
       "record_id": "domain_intelligence-architecture-intelligence-aleo-labs-protocol-snarkos-core-invariants",
       "domain_letter": "G",
       "title": "Architecture Intelligence: aleo-labs-protocol/snarkOS Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-aleo-labs-protocol-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-provablehq-snarkos-architecture-intelligence-aleo-labs-protocol-snarkos-core-inv.md",
       "repository": "aleo-labs-protocol/snarkOS",
-      "content_hash": "68b43bca53553eef397fafabcb78978d5016667a10adaad0cdea9f8998d48785",
-      "created_at": "2026-11-18T18:10:01.265Z"
+      "content_hash": "e0f1644261cc5d79169255bac326ff54de74bc48e9eafbdc07bc3a2324dca034",
+      "created_at": "2026-11-18T21:33:56.504Z"
     },
     "DOM-D-7123D3B0": {
       "record_id": "DOM-D-7123D3B0",
@@ -9245,8 +9248,8 @@
       "title": "Architecture Intelligence: provablehq-snarkos-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-provablehq-snarkos-learnings-architecture-intelligence-provablehq-snarkos-learni.md",
       "repository": "provablehq-snarkos-learnings",
-      "content_hash": "87199a267a5805ec69579e90ddae388937c8491f45a30c66944d187503046fd5",
-      "created_at": "2026-11-18T15:51:55.539Z"
+      "content_hash": "371365c3d494a947924c96bb740e12e62486c605f9673ad5030482df813ec2b2",
+      "created_at": "2026-11-18T21:34:24.271Z"
     },
     "domain_intelligence-research-knowledge-intelligence-prithivmlmods-gender-classifier-mini-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-prithivmlmods-gender-classifier-mini-core-invari",
@@ -23077,8 +23080,8 @@
       "title": "Research & Knowledge Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-zvec-ai-zvec-grep-learnings-research-knowledge-intelligence-zvec-ai-zvec-grep-le.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "f71071369fc072bf66f70842fd710bab1e63486f606e06f84981d56a9c589214",
-      "created_at": "2026-11-18T20:54:19.054Z"
+      "content_hash": "4b23681492c337c00015317e7c94fe031bd9800ebecefad94a4b84c64038de28",
+      "created_at": "2026-11-18T21:34:25.005Z"
     },
     "domain_intelligence-technical-construction-intelligence-prof18-feed-flow-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-prof18-feed-flow-core-invariants",
@@ -31913,6 +31916,66 @@
       "repository": "clastix-kamaji-learnings",
       "content_hash": "ca4f0948d0f8e5f7f07169708bbfa1af8bd56a27243072fe7585f4b9a76cb1a1",
       "created_at": "2026-11-18T20:46:21.547Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-openai-gpt-oss-20b-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-openai-gpt-oss-20b-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: openai/gpt-oss-20b Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-openai-gpt-oss-20b-research-knowledge-intelligence-openai-gpt-oss-20b-core-in.md",
+      "repository": "openai/gpt-oss-20b",
+      "content_hash": "199990a9c5f15c879ba47cbb45520d86f9f9d09fef7e6b3e9a45c976c4267a68",
+      "created_at": "2026-11-18T21:33:43.023Z"
+    },
+    "DOM-D-AE671E2B": {
+      "record_id": "DOM-D-AE671E2B",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): openai/gpt-oss-20b",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-openai-gpt-oss-20b-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/openai/gpt-oss-20b](https://huggingface.co/openai/gpt-oss-20b))  \n> **Source Version**: `hf-openai-gp`  \n> **License**: Open-Source  \n> **Synthesized By**:",
+      "content_hash": "cea0eb8eca674f690639f6a77b04ac53b8c7f27dbfdbb500d359536a839b451b",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-openai-gpt-oss-20b-learnings.md`  \n> **Source**: huggingface ([https://huggingfac -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-openai-gpt-oss-20b-learnings.md`  \n> **Source**: huggingface ([https://huggingfac",
+      "provenance": {
+        "source_uri": "project://hf-openai-gpt-oss-20b/hf-openai-gpt-oss-20b-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-18T21:33:59.391Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-openai-gpt-oss-20b)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-openai-gpt-oss-20b"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-18T21:34:23.425Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-openai-gpt-oss-20b-learnings-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-openai-gpt-oss-20b-learnings-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-openai-gpt-oss-20b-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-openai-gpt-oss-20b-learnings-research-knowledge-intelligence-hf-openai-gpt-os.md",
+      "repository": "hf-openai-gpt-oss-20b-learnings",
+      "content_hash": "a707f3a84979a99131eaf4277971dd09ee9ed3303b3eb16ad19b8a03017a10aa",
+      "created_at": "2026-11-18T21:34:23.646Z"
     }
   }
 }

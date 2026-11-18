@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T21:23:27.784Z",
+  "last_updated": "2026-11-18T21:34:25.392Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-18T21:02:10.043Z",
@@ -8,7 +8,7 @@
       "staged_for_review": 1
     },
     "zvec-ai-zvec-grep-learnings.md": {
-      "processed_at": "2026-11-18T20:54:18.665Z",
+      "processed_at": "2026-11-18T21:34:24.538Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2058,7 +2058,7 @@
       "staged_for_review": 1
     },
     "provablehq-snarkos-learnings.md": {
-      "processed_at": "2026-11-18T15:51:54.984Z",
+      "processed_at": "2026-11-18T21:34:23.876Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2353,8 +2353,8 @@
       "staged_for_review": 1
     },
     "hf-openai-gpt-oss-20b-learnings.md": {
-      "processed_at": "2026-11-14T03:16:45.270Z",
-      "promoted_canonical": 2,
+      "processed_at": "2026-11-18T21:34:23.452Z",
+      "promoted_canonical": 1,
       "staged_for_review": 0
     },
     "i18next-react-i18next-learnings.md": {
@@ -3473,7 +3473,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 2076,
-  "total_canonical_promoted": 366,
-  "total_staged_for_review": 1565
+  "total_dossiers_evaluated": 2079,
+  "total_canonical_promoted": 367,
+  "total_staged_for_review": 1567
 }

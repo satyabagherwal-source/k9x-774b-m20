@@ -2,12 +2,12 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-18T20:46:21.114Z",
+  "updated_at": "2026-11-18T21:34:23.450Z",
   "statistics": {
-    "total_nodes": 364,
-    "total_edges": 167,
+    "total_nodes": 365,
+    "total_edges": 168,
     "domain_distribution": {
-      "D": 247,
+      "D": 248,
       "M": 1,
       "H": 51,
       "J": 13,
@@ -20,7 +20,7 @@
       "I": 4
     },
     "relation_distribution": {
-      "CONSTRAINED_BY_ARCHITECTURE": 166,
+      "CONSTRAINED_BY_ARCHITECTURE": 167,
       "VERIFIED_BY_TEST": 1
     }
   },
@@ -8136,6 +8136,29 @@
       ],
       "created_at": "2026-11-18T20:46:21.114Z",
       "updated_at": "2026-11-18T20:46:21.114Z"
+    },
+    "DOM-D-AE671E2B": {
+      "id": "DOM-D-AE671E2B",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): openai/gpt-oss-20b",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-openai-gpt-oss-20b-learnings.md`  \n> **Source**: huggingface ([https://huggingfac -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-openai-gpt-oss-20b-learnings.md`  \n> **Source**: huggingface ([https://huggingfac",
+      "confidence": 0.75,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-openai-gpt-oss-20b/hf-openai-gpt-oss-20b-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-18T21:33:59.391Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-openai-gpt-oss-20b)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence",
+        "M"
+      ],
+      "created_at": "2026-11-18T21:34:23.449Z",
+      "updated_at": "2026-11-18T21:34:23.449Z"
     }
   },
   "edges": [
@@ -9808,6 +9831,16 @@
       "evidenceProvenance": null,
       "rationale": "Cross-domain classification links DOM-D-30CF6F55 [D] with Domain M",
       "created_at": "2026-11-18T19:35:04.129Z"
+    },
+    {
+      "id": "EDGE-9E8EC1A3F013",
+      "sourceId": "DOM-D-AE671E2B",
+      "targetId": "NODE-M-domain-bridge-m",
+      "relationType": "CONSTRAINED_BY_ARCHITECTURE",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-D-AE671E2B [D] with Domain M",
+      "created_at": "2026-11-18T21:34:23.450Z"
     }
   ]
 }

@@ -11131,3 +11131,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-meta-llama-meta-llama-3-8b-instruct` | `https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct` | `hf-meta-ll` | Multi-dimensional audit evidence | 2026-11-18T21:01:57.223Z |
 | `learn-huggingface-zai-org-glm-5-2` | `https://huggingface.co/zai-org/GLM-5.2` | `hf-zai-org` | Multi-dimensional audit evidence | 2026-11-18T21:23:13.395Z |
 | `learn-github-actix-actix-web` | `https://github.com/actix/actix-web` | `c795e295` | Multi-dimensional audit evidence | 2026-11-18T21:23:15.830Z |
+| `learn-huggingface-openai-gpt-oss-20b` | `https://huggingface.co/openai/gpt-oss-20b` | `hf-openai-` | Multi-dimensional audit evidence | 2026-11-18T21:33:42.850Z |
+| `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/ProvableHQ/snarkOS` | `f5adbe87` | Multi-dimensional audit evidence | 2026-11-18T21:33:56.222Z |
+| `learn-dom-d-ae671e2b` | `project://hf-openai-gpt-oss-20b` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-openai-gpt-oss-20b-learnings.md` | 2026-11-18T21:34:23.452Z |

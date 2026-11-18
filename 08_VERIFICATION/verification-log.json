@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261117-RPU7",
-    "timestamp": "2026-11-17T12:46:12.367Z",
-    "repository": "NucleoidAI/Nucleoid",
-    "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "c5a693b4e972a1c73ccb481c5f8c866c21e7d0850ad6ac26c7c4ae4a3d16b430",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261117-GXFD",
-    "timestamp": "2026-11-17T13:05:48.601Z",
-    "repository": "streetwriters/notesnook",
-    "learningId": "learn-github-streetwriters-notesnook",
-    "contentHash": "add312a6ead69a8d9ef464f557349796ba249d3a4ebf3eab03d417656490bdc0",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261117-GYO0",
     "timestamp": "2026-11-17T13:05:50.208Z",
     "repository": "DNSControl/dnscontrol",
@@ -7490,6 +7460,36 @@
     "repository": "actix/actix-web",
     "learningId": "learn-github-actix-actix-web",
     "contentHash": "4fa15a656fae7579273606790cab39137ddce2baaf601ca6a32ee1f3e921cf75",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-1Y66",
+    "timestamp": "2026-11-18T21:33:42.846Z",
+    "repository": "openai/gpt-oss-20b",
+    "learningId": "learn-huggingface-openai-gpt-oss-20b",
+    "contentHash": "b2b554a1a468b873f9811ce4c648d656c9ba9102cdb5f3c97e7b5b25d85b9d20",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-28HN",
+    "timestamp": "2026-11-18T21:33:56.219Z",
+    "repository": "aleo-labs-protocol/snarkOS",
+    "learningId": "learn-github-aleo-labs-protocol-snarkos",
+    "contentHash": "42462144ff1cb4122fc573c517bdee707bcf0dc18d4b7f329d9602ca2595eb3e",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

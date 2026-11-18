@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T21:23:15.835Z",
-  "total_cycles_completed": 10610,
-  "total_learnings_persisted": 10610,
-  "total_rules_promoted": 10044,
+  "last_updated": "2026-11-18T21:33:56.227Z",
+  "total_cycles_completed": 10612,
+  "total_learnings_persisted": 10612,
+  "total_rules_promoted": 10045,
   "history": [
-    {
-      "timestamp": "2026-11-18T07:39:08.815Z",
-      "repository": "arangodb/arangodb",
-      "learningId": "learn-github-arangodb-arangodb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-18T07:47:49.770Z",
-      "repository": "google/electra-base-discriminator",
-      "learningId": "learn-huggingface-google-electra-base-discriminator",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-18T07:47:51.669Z",
       "repository": "o2sh/onefetch",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-18T21:23:15.835Z",
       "repository": "actix/actix-web",
       "learningId": "learn-github-actix-actix-web",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T21:33:42.854Z",
+      "repository": "openai/gpt-oss-20b",
+      "learningId": "learn-huggingface-openai-gpt-oss-20b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T21:33:56.227Z",
+      "repository": "aleo-labs-protocol/snarkOS",
+      "learningId": "learn-github-aleo-labs-protocol-snarkos",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

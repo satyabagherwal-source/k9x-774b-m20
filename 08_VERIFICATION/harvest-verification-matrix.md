@@ -11098,3 +11098,6 @@
 | `CYCLE-20261118-X3S3` | `2026-11-18T21:01:57.219Z` | `meta-llama/Meta-Llama-3-8B-Instruct` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-meta-llama-meta-llama-3-8b-instruct-learnings.md` | Yes (`3f163f2f...`) |
 | `CYCLE-20261118-OGHB` | `2026-11-18T21:23:13.391Z` | `zai-org/GLM-5.2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-zai-org-glm-5.2-learnings.md` | Yes (`eabb92ca...`) |
 | `CYCLE-20261118-OICX` | `2026-11-18T21:23:15.825Z` | `actix/actix-web` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9282` | Yes (`4fa15a65...`) |
+| `CYCLE-20261118-1Y66` | `2026-11-18T21:33:42.846Z` | `openai/gpt-oss-20b` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openai-gpt-oss-20b-learnings.md` | Yes (`b2b554a1...`) |
+| `CYCLE-20261118-28HN` | `2026-11-18T21:33:56.219Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9283` | Yes (`42462144...`) |
+| `CYCLE-2026-11-18-PROJ-EVOLVE` | `2026-11-18T21:34:23.452Z` | `hf-openai-gpt-oss-20b` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-AE671E2B` [Domain D] | Yes (`cea0eb8e...`) |
