@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/rustls-rustls-learnings.md`  
 > **Source**: github ([https://github.com/rustls/rustls](https://github.com/rustls/rustls))  
-> **Source Version**: `0d10aa47`  
+> **Source Version**: `836e411e`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-18T11:22:42.963Z  
+> **Timestamp**: 2026-11-18T15:35:10.303Z  
 > **Learning ID**: `learn-github-rustls-rustls`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/rustls-rustls-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/rustls/rustls](https://github.com/rustls/rustls))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T11:22:42.956Z  
+> **Harvest Timestamp**: 2026-11-18T15:35:10.299Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A modern TLS library in Rust
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 7760 stars
+- **Stars / Engagement**: 7762 stars
 
 ---
 
@@ -2248,14 +2248,17 @@ fn exec(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #3441** (2026-11-18): **Fix new clippy `empty_line_after_doc_comments`**
+  *Symptoms*: 
+  **Post-Mortem & Fix Analysis**:
+  > _Note: the comment has been truncated to respect GitHub's size limit of 65536 bytes._  # Benchmark results  ## Instruction counts    #### Significant differences    ⚠️ There are significant instruction count differences  <details> <summary>Click to expand</summary>  | Scenario | Baseline | Candidate | Diff | Threshold | | --- | ---: | ---: | ---: | ---: | | transfer_no_resume_ring_1.3_ecdsap384_aes_client | 25544708 | 47062314 | ⚠️ [21517606](https://bench.rustls.dev/comparisons/0d10aa47e82cf40ecabf677360b8276798a2039a:54bc60c6498f2187be34377fb63584a0d00c55e9/cachegrind-diff/transfer_no_resume_ring_1.3_ecdsap384_aes_client) (84.24%) | 0.20% | | transfer_no_resume_ring_1.3_ecdsap256_aes_client | 25544933 | 47062325 | ⚠️ [21517392](https://bench.rustls.dev/comparisons/0d10aa47e82cf40ecabf677360b8276798a2039a:54bc60c6498f2187be34377fb63584a0d00c55e9/cachegrind-diff/transfer_no_resume_ring_1.3_ecdsap256_aes_client) (84.23%) | 0.20% | | transfer_no_resume_ring_1.3_rsa_a
+  > ## [Codecov](https://app.codecov.io/gh/rustls/rustls/pull/3441?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 96.10%. Comparing base ([`53db4d1`](https://app.codecov.io/gh/rustls/rustls/commit/53db4d1398f16d5bac98eacf02f0dff4b242fd92?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)) to head ([`54bc60c`](https://app.codecov.io/gh/rustls/rustls/commit/54bc60c6498f2187be34377fb63584a0d00c55e9?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)). :warning: Report is 8 commits behind head on main.  <details><summary>Additional details and impacted files</summary>    ```diff @@           Coverage Diff           @@ ##             main    #3441 
+
 - **Issue #3438** (2026-11-18): **ci-bench: fix clippy lint; remove excess copies and dependencies**
   *Symptoms*: Fixes new nightly lint in https://github.com/rustls/rustls/actions/runs/43744462067/job/132904588856  Despite doing IO to/from memory buffers, this copied them into a `VecInput`. It can use `SliceInput` instead.  This will introduce a discontinuity in benchmarks, but the performance of ci-bench itself is not of interest. This discontinuity is why I've gone quite far in this one PR.  
   **Post-Mortem & Fix Analysis**:
   > ## [Codecov](https://app.codecov.io/gh/rustls/rustls/pull/3438?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 96.10%. Comparing base ([`53db4d1`](https://app.codecov.io/gh/rustls/rustls/commit/53db4d1398f16d5bac98eacf02f0dff4b242fd92?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)) to head ([`a7ca5ae`](https://app.codecov.io/gh/rustls/rustls/commit/a7ca5ae38209b6134a65ca482426f3d074eb642b?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=rustls)).  <details><summary>Additional details and impacted files</summary>    ```diff @@           Coverage Diff           @@ ##             main    #3438   +/-   ## ======================================= 
   > _Note: the comment has been truncated to respect GitHub's size limit of 65536 bytes._  # Benchmark results  ## Instruction counts    #### Significant differences    ⚠️ There are significant instruction count differences  <details> <summary>Click to expand</summary>  | Scenario | Baseline | Candidate | Diff | Threshold | | --- | ---: | ---: | ---: | ---: | | transfer_no_resume_ring_1.3_ecdsap384_aes_client | 47062314 | 25544798 | ✅ [-21517516](https://bench.rustls.dev/comparisons/53db4d1398f16d5bac98eacf02f0dff4b242fd92:a7ca5ae38209b6134a65ca482426f3d074eb642b/cachegrind-diff/transfer_no_resume_ring_1.3_ecdsap384_aes_client) (-45.72%) | 0.20% | | transfer_no_resume_ring_1.3_ecdsap256_aes_client | 47062325 | 25545023 | ✅ [-21517302](https://bench.rustls.dev/comparisons/53db4d1398f16d5bac98eacf02f0dff4b242fd92:a7ca5ae38209b6134a65ca482426f3d074eb642b/cachegrind-diff/transfer_no_resume_ring_1.3_ecdsap256_aes_client) (-45.72%) | 0.20% | | transfer_no_resume_ring_1.3_rsa
-
-- **Issue #3437** (2026-11-16): **Update Rust crate nix to 0.32**
-  *Symptoms*: This PR contains the following updates:  | Package | Type | Update | Change | |---|---|---|---| | [nix](https://redirect.github.com/nix-rust/nix) | dependencies | minor | `0.31` → `0.32` |  ---  ### Release Notes  <details> <summary>nix-rust/nix (nix)</summary>  ### [`v0.32.0`](https://redirect.github.com/nix-rust/nix/blob/HEAD/CHANGELOG.md#0320---2026-11-14)  [Compare Source](https://redirect.github.com/nix-rust/nix/compare/v0.31.3...v0.32.0)  ##### Added  - Add `SeekData` and `SeekHole` to `Whence` for Android   ([#&#8203;2676](https://redirect.github.com/nix-rust/nix/pull/2676)) - Added `getres` and `setres` for Redox OS   ([#&#8203;2767](https://redirect.github.com/nix-rust/nix/pull/2767)) - Add `nix::sys::socket::sockopt:TcpCork` on Linux.   ([#&#8203;2769](https://redirect.github.com/nix-rust/nix/pull/2769)) - Made the `sys::prctl` module available on Android the same as on other Linux   targets. ([#&#8203;2770](https://redirect.github.com/nix-rust/nix/pull/2770)) - Add the `sockopt::RcvMark` socket option (Linux 5.19+, `SO_RCVMARK`) and   decode the resulting `(SOL_SOCKET, SO_MARK)` ancillary message as a new   `ControlMessageOwned::SoMark(u32)` variant. Previously   the cmsg fell through to the catch-all `Unknown` arm, which forced a   per-recv `Vec<u8>` allocation for four bytes.   ([#&#8203;2785](https://redirect.github.com/nix-rust/nix/pull/2785)) - Enable module `ioctl` for Haiku   ([#&#8203;2792](https://redirect.github.com/nix-rust/nix/pull/2792))  ##### Changed
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2272,162 +2275,28 @@ fn exec(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0d10aa47` (2026-11-18)
-**Commit Message**: Update Rust crate crabgrind to 0.6
+### Incident Patch 1: `836e411e` (2026-11-18)
+**Commit Message**: Fix new clippy `empty_line_after_doc_comments`
 
-**File**: `Cargo.lock` (modified, +12/-3)
+**File**: `rustls-ring/src/tls13.rs` (modified, +0/-1)
 ```diff
-@@ -492,12 +492,12 @@ dependencies = [
- 
- [[package]]
- name = "crabgrind"
--version = "0.5.0"
-+version = "0.6.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "0e4dbe352d7240a1ef7b2f5d7d283cefa9405835974f7aabc59838b9d1a6acc6"
-+checksum = "54036bb8d52f1ad7f0a1e89d234073355e9d91d03b09ba59136a1e06e8cbbb34"
- dependencies = [
-- "bindgen",
-  "cc",
-+ "object",
-  "pkg-config",
-  "rustversion",
- ]
-@@ -1339,6 +1339,15 @@ dependencies = [
-  "autocfg",
- ]
- 
-+[[package]]
-+name = "object"
-+version = "0.39.1"
-+source = "registry+https://github.com/rust-lang/crates.io-index"
-+checksum = "2e5a6c098c7a3b6547378093f5cc30bc54fd361ce711e05293a5cc589562739b"
-+dependencies = [
-+ "memchr",
-+]
-+
- [[package]]
- name = "oid-registry"
- version = "0.8.1"
-```
-
-**File**: `Cargo.toml` (modified, +1/-1)
-```diff
-@@ -58,7 +58,7 @@ bencher = "0.1.5"
- brotli = { version = "9", default-features = false, features = ["std"] }
- brotli-decompressor = "6.0.0"
- clap = { version = "4.3.21", features = ["derive", "env"] }
--crabgrind = "0.5"
-+crabgrind = "0.6"
- criterion = "0.8"
- graviola = "0.4.5"
- hex = "0.4"
-```
-
----
-
-### Incident Patch 2: `203475bf` (2026-11-16)
-**Commit Message**: ci-bench: remove use of rustc-hash and `FxHashMap`
-
-This is only used outside the scope of the measured parts of the benchmarks,
-so performance/determinism doesn't have any effect.
-
-**File**: `Cargo.lock` (modified, +0/-1)
-```diff
-@@ -1778,7 +1778,6 @@ dependencies = [
-  "crabgrind",
-  "itertools 0.15.0",
-  "rayon",
-- "rustc-hash",
-  "rustls 0.24.0-dev.3",
-  "rustls-aws-lc-rs",
-  "rustls-fuzzing-provider",
-```
-
-**File**: `Cargo.toml` (modified, +0/-1)
-```diff
-@@ -73,7 +73,6 @@ rayon = "1.7"
- rcgen = { version = "0.14.10", features = ["pem", "aws_lc_rs"], default-features = false }
- regex = "1"
- ring = "0.17"
--rustc-hash = "2"
- rustls-fuzzing-provider = { path = "rustls-fuzzing-provider/" }
- rustls-graviola = { version = "0.4" }
- rustls-test = { path = "rustls-test/", default-features = false }
-```
-
-**File**: `ci-bench/Cargo.toml` (modified, +0/-1)
-```diff
-@@ -11,7 +11,6 @@ anyhow = { workspace = true }
- clap = { workspace = true }
- itertools = { workspace = true }
- rayon = { workspace = true }
--rustc-hash = { workspace = true }
- rustls = { path = "../rustls" }
- rustls-aws-lc-rs = { path = "../rustls-aws-lc-rs" }
- rustls-ring = { path = "../rustls-ring" }
-```
-
-**File**: `ci-bench/src/benchmark.rs` (modified, +2/-2)
-```diff
-@@ -1,8 +1,8 @@
- use core::borrow::Borrow;
- use core::cmp;
-+use std::collections::HashMap;
- use std::sync::Arc;
- 
--use rustc_hash::FxHashMap;
- use rustls::crypto::{CryptoProvider, TicketProducer};
- use rustls_test::KeyType;
- 
-@@ -12,7 +12,7 @@ use crate::valgrind::InstructionCounts;
- /// Get the reported instruction counts for the provided benchmark
- pub(crate) fn get_reported_instr_count(
-     bench: &Benchmark,
--    results: &FxHashMap<&str, InstructionCounts>,
-+    results: &HashMap<&str, InstructionCounts>,
- ) -> InstructionCounts {
-     results[&bench.name()]
- }
-```
-
-**File**: `ci-bench/src/main.rs` (modified, +2/-3)
-```diff
-@@ -16,7 +16,6 @@ use clap::{Parser, Subcommand, ValueEnum};
- use itertools::Itertools;
- use rayon::iter::Either;
- use rayon::prelude::*;
--use rustc_hash::FxHashMap;
- use rustls::client::Resumption;
- use rustls::crypto::{CipherSuite, CryptoProvider, GetRandomFailed, SecureRandom, TicketProducer};
- use rustls::enums::ProtocolVersion;
-@@ -611,7 +610,7 @@ fn run_all(
-         .collect();
- 
-     // Report possible errors
--    let (errors, cg_results): (Vec<_>, FxHashMap<_, _>) =
-+    let (errors, cg_results): (Vec<_>, HashMap<_, _>) =
-         cg_results
-             .into_iter()
-             .partition_map(|(bench, result)| match result {
-@@ -624,7 +623,7 @@ fn run_all(
-         // crashing
-         anyhow::bail!("One or more benchmarks crashed");
+@@ -365,7 +365,6 @@ mod tests {
      }
--    let (errors, dh_results): (Vec<_>, FxHashMap<_, _>) =
-+    let (errors, dh_results): (Vec<_>, HashMap<_, _>) =
-         dh_results
-             .into_iter()
-             .partition_map(|(bench, result)| match result {
+ 
+     /// Test cases from appendix A in the RFC, minus cases requiring SHA1.
+-
+     #[test]
+     fn test_case_1() {
+         let hkdf = HkdfUsingHmac(&hmac::HMAC_SHA256);
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3441** (2026-11-18): Fix new clippy `empty_line_after_doc_comments` (@ctz)
 - **PR #3438** (2026-11-18): ci-bench: fix clippy lint; remove excess copies and dependencies (@ctz)
 - **PR #3437** (2026-11-16): Update Rust crate nix to 0.32 (@renovate-bot)
 - **PR #3430** (2026-11-18): Update Rust crate crabgrind to 0.6 (@renovate-bot)
 - **PR #3429** (closed): Update dependency rust to 1.100 (@renovate-bot)
 - **PR #3427** (2026-11-12): Prepare 0.24.0-dev.3 (@ctz)
-- **PR #3426** (2026-11-12): Test coverage improvements (@ctz)
 
 ---
 
@@ -2441,47 +2310,3 @@ so performance/determinism doesn't have any effect.
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. Update Rust crate crabgrind to 0.6
-
-**RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rustls/rustls. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `0d10aa47`: Update Rust crate crabgrind to 0.6. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```rust
-// Verified production-grade fix pattern:
-version = "0.6.0"
-checksum = "54036bb8d52f1ad7f0a1e89d234073355e9d91d03b09ba59136a1e06e8cbbb34"
- "object",
-[[package]]
-name = "object"
-version = "0.39.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2e5a6c098c7a3b6547378093f5cc30bc54fd361ce711e05293a5cc589562739b"
-dependencies = [
- "memchr",
-]
-
-```
-
-**NEGATIVE CONSTRAINT**:
-```rust
-// Induced defect failure mode:
-version = "0.5.0"
-checksum = "0e4dbe352d7240a1ef7b2f5d7d283cefa9405835974f7aabc59838b9d1a6acc6"
- "bindgen",
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0d10aa47` are properly handled with clean fallback behavior.

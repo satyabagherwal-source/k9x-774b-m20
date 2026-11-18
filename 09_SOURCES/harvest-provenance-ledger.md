@@ -11054,3 +11054,8 @@ Every entry in this ledger must capture:
 | `learn-huggingface-xiaomimimo-mimo-v2-6-pro-rl` | `https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Pro-RL` | `hf-xiaomim` | Multi-dimensional audit evidence | 2026-11-18T15:14:13.850Z |
 | `learn-huggingface-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf` | `https://huggingface.co/orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF` | `hf-orcarou` | Multi-dimensional audit evidence | 2026-11-18T15:22:08.768Z |
 | `learn-github-software-mansion-react-native-reanimated` | `https://github.com/software-mansion/react-native-reanimated` | `8ec64786` | Multi-dimensional audit evidence | 2026-11-18T15:22:16.759Z |
+| `learn-huggingface-alissonerdx-bfs-best-face-swap` | `https://huggingface.co/Alissonerdx/BFS-Best-Face-Swap` | `hf-alisson` | Multi-dimensional audit evidence | 2026-11-18T15:34:57.901Z |
+| `learn-github-rustls-rustls` | `https://github.com/rustls/rustls` | `836e411e` | Multi-dimensional audit evidence | 2026-11-18T15:35:10.751Z |
+| `learn-github-beclab-olares` | `https://github.com/beclab/Olares` | `a2fc3c1e` | Multi-dimensional audit evidence | 2026-11-18T15:35:13.004Z |
+| `learn-github-xerj-org-xerj` | `https://github.com/xerj-org/xerj` | `dc1a4622` | Multi-dimensional audit evidence | 2026-11-18T15:35:16.325Z |
+| `learn-dom-d-a606f2df` | `project://rustls-rustls` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rustls-rustls-learnings.md` | 2026-11-18T15:35:48.272Z |

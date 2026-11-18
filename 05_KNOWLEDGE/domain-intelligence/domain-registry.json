@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-18T15:22:22.131Z",
-  "total_records": 1868,
+  "last_updated": "2026-11-18T15:35:48.784Z",
+  "total_records": 1872,
   "domains": {
     "A": {
       "total": 13,
@@ -51,7 +51,7 @@
       ]
     },
     "D": {
-      "total": 788,
+      "total": 789,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -840,7 +840,8 @@
         "domain_intelligence-research-knowledge-intelligence-qwen-qwen-image-2-1-core-invariants",
         "domain_intelligence-research-knowledge-intelligence-hf-qwen-qwen-image-2-1-learnings-core-invariants",
         "domain_intelligence-research-knowledge-intelligence-fallow-rs-fallow-core-invariants",
-        "domain_intelligence-research-knowledge-intelligence-fallow-rs-fallow-learnings-core-invariants"
+        "domain_intelligence-research-knowledge-intelligence-fallow-rs-fallow-learnings-core-invariants",
+        "DOM-D-A606F2DF"
       ]
     },
     "E": {
@@ -913,7 +914,7 @@
       ]
     },
     "G": {
-      "total": 325,
+      "total": 327,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -1239,11 +1240,13 @@
         "domain_intelligence-architecture-intelligence-nervjs-taro-core-invariants",
         "domain_intelligence-architecture-intelligence-nervjs-taro-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-karmada-io-karmada-core-invariants",
-        "domain_intelligence-architecture-intelligence-karmada-io-karmada-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-karmada-io-karmada-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-beclab-olares-core-invariants",
+        "domain_intelligence-architecture-intelligence-beclab-olares-learnings-core-invariants"
       ]
     },
     "H": {
-      "total": 439,
+      "total": 440,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1683,7 +1686,8 @@
         "DOM-H-50457654",
         "DOM-H-41A8ED4B",
         "domain_intelligence-technical-construction-intelligence-smallstep-cli-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-smallstep-cli-learnings-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-smallstep-cli-learnings-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-xerj-org-xerj-core-invariants"
       ]
     },
     "I": {
@@ -9375,8 +9379,8 @@
       "title": "Research & Knowledge Intelligence: Alissonerdx/BFS-Best-Face-Swap Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-alissonerdx-bfs-best-face-swap-research-knowledge-intelligence-alissonerdx-bf.md",
       "repository": "Alissonerdx/BFS-Best-Face-Swap",
-      "content_hash": "5a1f66b16bbc19db802f1302c9947a54d65b8cdb9dac34ec54af446b6d346ced",
-      "created_at": "2026-11-18T06:15:21.265Z"
+      "content_hash": "e02be345ab88ba6856d57e7765b525b4f6bec14df0f87568d6c30444d866dec4",
+      "created_at": "2026-11-18T15:34:58.086Z"
     },
     "domain_intelligence-technical-construction-intelligence-actix-actix-web-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-actix-actix-web-core-invariants",
@@ -24126,8 +24130,8 @@
       "title": "Technical Construction Intelligence: rustls/rustls Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-rustls-rustls-technical-construction-intelligence-rustls-rustls-core-invariants.md",
       "repository": "rustls/rustls",
-      "content_hash": "c4d7e39101755f48bbbbb538911ee2b0ec295297ba75b9acd8b088823ed2294a",
-      "created_at": "2026-11-18T11:22:44.540Z"
+      "content_hash": "cc0f5428132fabf8f925176f6b97d7c1619ff7c872850c4a6e0b815bdb9766d0",
+      "created_at": "2026-11-18T15:35:10.941Z"
     },
     "domain_intelligence-architecture-intelligence-nginx-kubernetes-ingress-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-nginx-kubernetes-ingress-learnings-core-invariants",
@@ -24144,8 +24148,8 @@
       "title": "Technical Construction Intelligence: rustls-rustls-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-rustls-rustls-learnings-technical-construction-intelligence-rustls-rustls-learni.md",
       "repository": "rustls-rustls-learnings",
-      "content_hash": "b535f65ea1365026cfed934848c8b704ac5b748789ee0a1c2f5b2a8c373736aa",
-      "created_at": "2026-11-18T11:22:48.962Z"
+      "content_hash": "e9d038f07cc9278a96eaf6e5ae5ed3ce4290a266065163fe2328ae200eb20a43",
+      "created_at": "2026-11-18T15:35:48.784Z"
     },
     "domain_intelligence-quality-verification-intelligence-lxml-lxml-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-lxml-lxml-core-invariants",
@@ -29746,8 +29750,8 @@
       "title": "Research & Knowledge Intelligence: hf-alissonerdx-bfs-best-face-swap-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-alissonerdx-bfs-best-face-swap-learnings-research-knowledge-intelligence-hf-a.md",
       "repository": "hf-alissonerdx-bfs-best-face-swap-learnings",
-      "content_hash": "813a70f8cc83d7b87a93e0551205a3bc9889c4684d8bbcdb72c395af18d9ac10",
-      "created_at": "2026-11-18T06:16:00.661Z"
+      "content_hash": "44716707b834e5e121e0adccc7056248a47cee397971d4747dc419fa0e7b8f6b",
+      "created_at": "2026-11-18T15:35:19.849Z"
     },
     "domain_intelligence-architecture-intelligence-tencent-tds-kuiklyui-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-tencent-tds-kuiklyui-core-invariants",
@@ -31236,6 +31240,75 @@
       "repository": "software-mansion-react-native-reanimated-learnings",
       "content_hash": "cc75a8001aa39a537aad4657b99b5dde1b3d648567aa0bd27d47742339d21019",
       "created_at": "2026-11-18T15:22:21.606Z"
+    },
+    "domain_intelligence-architecture-intelligence-beclab-olares-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-beclab-olares-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: beclab/Olares Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-beclab-olares-architecture-intelligence-beclab-olares-core-invariants.md",
+      "repository": "beclab/Olares",
+      "content_hash": "c67645cc27a6e9c82f86d1acd5eb2193f0614107872b554eacf32ccab959ed9b",
+      "created_at": "2026-11-18T15:35:13.326Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-xerj-org-xerj-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-xerj-org-xerj-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: xerj-org/xerj Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-xerj-org-xerj-technical-construction-intelligence-xerj-org-xerj-core-invariants.md",
+      "repository": "xerj-org/xerj",
+      "content_hash": "400cab4d47db433e51d753d94b67a11760ccaad84bac2b71f2c8ea25eafa7061",
+      "created_at": "2026-11-18T15:35:16.645Z"
+    },
+    "domain_intelligence-architecture-intelligence-beclab-olares-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-beclab-olares-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: beclab-olares-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-beclab-olares-learnings-architecture-intelligence-beclab-olares-learnings-core-i.md",
+      "repository": "beclab-olares-learnings",
+      "content_hash": "d0e897618d1bf283fe5b7d950a1ca656b2d4d10540d8486a88dce0d2ce21cc59",
+      "created_at": "2026-11-18T15:35:20.373Z"
+    },
+    "DOM-D-A606F2DF": {
+      "record_id": "DOM-D-A606F2DF",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): rustls/rustls",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/rustls-rustls-learnings.md`  \n> **Source**: github ([https://github.com/rustls/rustls](https://github.com/rustls/rustls))  \n> **Source Version**: `836e411e`  \n> **License**: NOASSERTION  \n> **Synthesized By**: zero-clone-structural-synthesizer",
+      "content_hash": "b62223dbd62b7a7a55bf812503e28cb893fb4aadd09765684ab27ba00e6cffd2",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/rustls-rustls-learnings.md`  \n> **Source**: github ([https://github.com/rustls/rustl -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/rustls-rustls-learnings.md`  \n> **Source**: github ([https://github.com/rustls/rustl",
+      "provenance": {
+        "source_uri": "project://rustls-rustls/rustls-rustls-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-18T15:35:20.751Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (rustls-rustls)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of rustls-rustls"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-18T15:35:48.251Z"
     }
   }
 }

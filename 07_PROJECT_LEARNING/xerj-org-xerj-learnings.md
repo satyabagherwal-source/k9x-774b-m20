@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/xerj-org-xerj-learnings.md`  
 > **Source**: github ([https://github.com/xerj-org/xerj](https://github.com/xerj-org/xerj))  
-> **Source Version**: `b7d38137`  
+> **Source Version**: `dc1a4622`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-17T22:40:03.215Z  
+> **Timestamp**: 2026-11-18T15:35:15.699Z  
 > **Learning ID**: `learn-github-xerj-org-xerj`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/xerj-org-xerj-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/xerj-org/xerj](https://github.com/xerj-org/xerj))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T22:40:03.209Z  
+> **Harvest Timestamp**: 2026-11-18T15:35:15.693Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: AI search engine and MCP server for bots and agents. One Rust binary indexes code, docs, logs, JSONL/CSV and PDFs for BM25 full-text, vector and hybrid search, code search without grep, agent memory and RAG. Elasticsearch-compatible API; Corpus Hub serves hundreds of reference memory corpora.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 19203 stars
+- **Stars / Engagement**: 19230 stars
 
 ---
 
@@ -1757,207 +1757,361 @@ impl EmbeddingProxy {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `27a37fd3` (2026-11-17)
-**Commit Message**: Merge pull request #3073 from jelbirt/fix/max-buckets-cluster-setting
+### Incident Patch 1: `444f347c` (2026-11-17)
+**Commit Message**: Merge pull request #2992 from xerj-org/fix/cluster-per-index-shard-routing
 
 # Conflicts:
 #	CHANGELOG.md
-#	engine/tests/es-compat-yaml/catch-lenient.txt
 
-**File**: `CHANGELOG.md` (modified, +21/-0)
+**File**: `CHANGELOG.md` (modified, +9/-0)
 ```diff
-@@ -15,6 +15,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
-   syntactic source-citation checks with stable line notes. This is a library
-   foundation; recipe-runner and MCP integration remain pending #2762.
+@@ -25,6 +25,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  
-+### Changed
-+
-+- With no `search.max_buckets` set, the node's `limits.max_buckets` (default
-+  65536) now also caps the total buckets a `_search` or `_msearch` response
-+  keeps across its whole aggregation tree, as Elasticsearch's default does.
-+  Before, it capped each aggregation on its own, so a response could keep
-+  more buckets in total.
-+
  ### Fixed
  
- - `xerj autoindex` and `xerj feedback` check the node identity before querying
-@@ -35,6 +43,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
-   identical to another indexed file. The existing content group keeps its
-   identity and gains the path as an alias; the superseded group is retired
-   instead of failing with conflicting content and path identities.
-+- `search.max_buckets` set through `PUT _cluster/settings` now caps the
-+  aggregation buckets of `_search` and `_msearch`, as in Elasticsearch 8. It
-+  was stored and returned by `GET _cluster/settings` but never read, so
-+  `_search` kept answering 200. The buckets the response keeps are counted
-+  across the whole aggregation tree, nested buckets included, with at most
-+  `size` counted for `terms`, `significant_terms`, `significant_text`,
-+  `multi_terms`, `composite` and the geo grids. A count over the limit is a
-+  400 `too_many_buckets_exception` carrying `max_buckets`; transient wins over
-+  persistent. A composite `size` over the limit (10 when not given) is
-+  refused, and an `_msearch` item over it fails on its own. The node's
-+  per-aggregation cap from `limits.max_buckets` still applies too, so a
-+  setting above it does not raise that cap. `_async_search`,
-+  `_search/template` and `_msearch/template` do not read the setting yet.
- 
- ## [1.0.0-rc.102] - 2026-11-06
- 
++- **Cluster: each index routes documents with its own shard count.** The shard
++  router used one hash width for the whole cluster, set to the widest plan, so
++  creating an index with more shards (for example after a fourth node joined)
++  re-bucketed every older index: acknowledged ids answered 404 and new writes
++  landed on a shard the older index's plan does not have. The width is now
++  per index, derived from that index's own plan. A write to a planned shard
++  that has no primary is refused with 503 `shard_not_assigned_exception`
++  instead of being stored on the node that received it. Documents already
++  misplaced on a running cluster are not moved by this fix.
+ - A newly elected cluster leader now appends a no-op entry of its own term
+   (Raft §5.4.2, §8), so a log tail left uncommitted by the previous leader
+   commits right after the election instead of waiting for the next client
 ```
 
-**File**: `engine/crates/xerj-api/src/es_compat.rs` (modified, +206/-14)
+**File**: `engine/crates/xerj-api/src/cluster_shard.rs` (modified, +98/-18)
 ```diff
-@@ -9291,11 +9291,18 @@ fn find_invalid_agg_order_path(aggs: Option<&Value>) -> Option<String> {
- ///   found duplicates: [..]`;
- /// * `missing_order` other than `default` without `missing_bucket: true` →
- ///   `missingOrder can only be set if missingBucket is true`;
--/// * `size` above `search.max_buckets` → ES's too-many-buckets message;
-+/// * `size` (default 10) above `search.max_buckets` → ES's too-many-buckets
-+///   message;
- /// * a parent other than `nested`, `reverse_nested` or `filter` (through any
- ///   chain of those) → `[composite] aggregation cannot be used with a parent
- ///   aggregation of type: [..AggregatorFactory]`.
- fn find_invalid_composite_agg(aggs: Option<&Value>) -> Option<String> {
-+    find_invalid_composite_agg_with_cap(aggs, xerj_engine::aggs::max_buckets() as u64)
-+}
-+
-+/// [`find_invalid_composite_agg`] with the `size` cap given: `_search` passes
-+/// the request's `search.max_buckets` from `_cluster/settings`.
-+fn find_invalid_composite_agg_with_cap(aggs: Option<&Value>, cap: u64) -> Option<String> {
-     fn sub_aggs(def: &Value) -> Option<&Value> {
-         def.get("aggs").or_else(|| def.get("aggregations"))
-     }
-@@ -9321,7 +9328,7 @@ fn find_invalid_composite_agg(aggs: Option<&Value>) -> Option<String> {
-             .collect();
-         format!("{camel}AggregatorFactory")
-     }
--    fn check(params: &Value, blocking_parent: Option<&str>) -> Option<String> {
-+    fn check(params: &Value, blocking_parent: Option<&str>, cap: u64) -> Option<String> {
-         let sources = match params.get("sources") {
-             None => return Some("Required [sources]".to_string()),
-             Some(Value::Array(a)) if !a.is_empty() => a,
-@@ -9359,8 +9366,20 @@ fn find_invalid_composite_agg(aggs: Option<&Value>) -> Option<String> {
-                 duplicates.join(", ")
-             ));
-         }
--        let cap = xerj_engine::aggs::max_buckets() as u64;
--        if let Some(size) = params.get("size").and_then(Value::as_u64) {
-+        // ES refuses a blocking parent when it builds the aggregation, before
-+        // it checks the size.
-+        if let Some(parent) = blocking_parent {
-+            return Some(format!(
-+                "[composite] aggregation cannot be used with a parent aggregation of type: [{}]",
-+                factory_name(parent)
-+            ));
-+        }
-+        // ES checks the `size` it will use, so a missing one is its default
-+        // of 10, and a numeric string counts as its number.
-+        let size = params.get("size").map_or(Some(10), |size| {
-+            size.as_u64().or_else(|| size.as_str()?.trim().parse().ok())
-+        });
-+        if let Some(size) = size {
-             if size > cap {
-                 return Some(format!(
-                     "Trying to create too many buckets. Must be less than or equal to: [{cap}] \
-@@ -9369,24 +9388,19 @@ fn find_invalid_composite_agg(aggs: Option<&Value>) -> Option<String> {
-                 ));
-             }
-         }
--        if let Some(parent) = blocking_parent {
--            return Some(format!(
--                "[composite] aggregation cannot be used with a parent aggregation of type: [{}]",
--                factory_name(parent)
--            ));
--        }
-         None
-     }
-     fn walk(
-         level: &serde_json::Map<String, Value>,
-         blocking_parent: Option<&str>,
-+        cap: u64,
-     ) -> Option<String> {
-         for def in level.values() {
-             let Some((kind, params)) = kind_of(def) else {
-                 continue;
-             };
-             if kind == "composite" {
--                if let Some(reason) = check(params, blocking_parent) {
-+                if let Some(reason) = check(params, blocking_parent, cap) {
-                     return Some(reason);
-                 }
-             }
-@@ -9398,14 +9412,14 @@ fn find_invalid_composite_agg(aggs: Option<&Value>) -> Option<String> {
-                 Some(kind)
-             };
-             if let Some(subs) = sub_aggs(def).and_then(Value::as_object) {
--                if let Some(reason) = walk(subs, below) {
-+                if let Some(reason) = walk(subs, below, cap) {
-                     return Some(reason);
-                 }
-             }
-         }
-         None
-     }
--    walk(aggs?.as_object()?, None)
-+    walk(aggs?.as_object()?, None, cap)
+@@ -45,6 +45,7 @@ use crate::es_compat::{
+ use crate::responses::{EsDeleteDocResponse, EsDocResponse, EsGetResponse};
+ use crate::state::AppState;
+ use crate::ApiError;
++use xerj_cluster::router::ShardUnassigned;
+ 
+ /// Per-shard `from + size` cap when a search is merged across owners.
+ const MAX_FANOUT_WINDOW: usize = 10_000;
+@@ -85,6 +86,36 @@ pub(crate) fn shard_not_ready_response(index: &str) -> Response {
+         .into_response()
  }
  
- #[cfg(test)]
-@@ -17802,6 +17816,13 @@ async fn search_impl(
-         .filter(|n| !value_type_failed_indices.contains(*n))
-         .collect();
- 
-+    // `search.max_buckets` from `_cluster/settings`, read once: it caps a
-+    // composite `size` here and the merged bucket count after the search.
-+    let max_buckets = effective_max_buckets(&state).await;
-+    if let Some(msg) = find_invalid_composite_agg_with_cap(aggs_value.as_ref(), max_buckets) {
-+        return ApiError::new(xerj_common::XerjError::invalid_query(msg)).into_response();
-+    }
++/// The index has a shard plan but `shard` has no primary. A write there is
++/// refused instead of being stored on the receiving node, where it would sit
++/// outside the plan and reads by id and search would never see it.
++pub(crate) fn shard_not_assigned_body(index: &str, shard: u32) -> Value {
++    json!({
++        "error": {
++            "type": "shard_not_assigned_exception",
++            "reason": format!("[{index}][{shard}] has no primary assigned in the shard plan"),
++            "index": index,
++            "shard": shard
++        },
++        "status": 503
++    })
++}
 +
-     let mut search_req = match build_search_request(&body, aggs_value) {
-         Ok(mut r) => {
-             /
++fn shard_not_assigned_response(index: &str, unassigned: ShardUnassigned) -> Response {
++    (
++        StatusCode::SERVICE_UNAVAILABLE,
++        Json(shard_not_assigned_body(index, unassigned.shard)),
++    )
++        .into_response()
++}
++
++fn shard_not_assigned_result(index: &str, unassigned: ShardUnassigned) -> ShardResult {
++    ShardResult::http(
++        503,
++        shard_not_assigned_body(index, unassigned.shard).to_string(),
++    )
++}
++
+ fn http_result(result: ShardResult) -> Response {
+     let status = StatusCode::from_u16(result.status).unwrap_or(StatusCode::BAD_GATEWAY);
+     let value: Value = serde_json::from_str(&result.body).unwrap_or(Value::Null);
+@@ -154,8 +185,12 @@ pub(crate) async fn dispatch_index(
+         .await;
+         return Dispatch::Done(http_result(result));
+     }
+-    let Some(owner) = state.engine.route_write(index, id) else {
+-        return Dispatch::Local;
++    let owner = match state.engine.route_write(index, id) {
++        Ok(Some(owner)) => owner,
++        Ok(None) => return Dispatch::Local,
++        Err(unassigned) => {
++            return Dispatch::Done(shard_not_assigned_response(index, unassigned));
++        }
+     };
+     let shard_op = ShardOp::IndexDoc {
+         index: index.to_string(),
+@@ -181,8 +216,12 @@ pub(crate) async fn dispatch_get(
+     if !state.engine.has_cluster() {
+         return Dispatch::Local;
+     }
+-    let Some((shard, owner)) = state.engine.primary_of(index, id) else {
+-        return Dispatch::Local;
++    let (shard, owner) = match state.engine.primary_of(index, id) {
++        Ok(Some(found)) => found,
++        Ok(None) => return Dispatch::Local,
++        Err(unassigned) => {
++            return Dispatch::Done(shard_not_assigned_response(index, unassigned));
++        }
+     };
+     if owner == state.engine.routing_node_id() {
+         return Dispatch::Local;
+@@ -248,8 +287,12 @@ pub(crate) async fn dispatch_delete(
+         let result = local_delete(state, index, id, if_seq_no, if_primary_term, false, 0).await;
+         return Dispatch::Done(http_result(result));
+     }
+-    let Some(owner) = state.engine.route_write(index, id) else {
+-        return Dispatch::Local;
++    let owner = match state.engine.route_write(index, id) {
++        Ok(Some(owner)) => owner,
++        Ok(None) => return Dispatch::Local,
++        Err(unassigned) => {
++            return Dispatch::Done(shard_not_assigned_response(index, unassigned));
++        }
+     };
+     let op = ShardOp::DeleteDoc {
+         index: index.to_string(),
+@@ -304,8 +347,12 @@ pub(crate) async fn dispatch_update(
+         let result = local_update(state, index, id, &body_json, &params_json).await;
+         return Dispatch::Done(http_result(result));
+     }
+-    let Some(owner) = state.engine.route_write(&concrete, id) else {
+-        return Dispatch::Local;
++    let owner = match state.engine.route_write(&concrete, id) {
++        Ok(Some(owner)) => owner,
++        Ok(None) => return Dispatch::Local,
++        Err(unassigned) => {
++            return Dispatch::Done(shard_not_assigned_response(&concrete, unassigned));
++        }
+     };
+     let op = ShardOp::UpdateDoc {
+         index: index.to_string(),
+@@ -675,8 +722,12 @@ impl xerj_cluster::ShardHandler for ApiShardHandler {
+                     return ShardResult::http(503, shard_not_ready_body(&index));
+                 }
+                 if !self.state.engine.owns_shard(&concrete, &id) {
+-                    if let Some(owner) = self.state.engine.route_write(&concrete, &id) {
+-                        return not_this_primary(&index, &owner);
++                    match self.state.engine.route_write(&concrete, &id) {
++                        Ok(Some(owner)) => return not_this_primary(&index, &owner),
++                        Ok(None) => {}
++                        Err(unassigned) => {
++                            return shard_not_assigned_result(&concrete, unassigned);
++                        }
+                     }
+       
 ```
 
-**File**: `engine/crates/xerj-api/tests/max_buckets_cluster_setting.rs` (added, +456/-0)
+**File**: `engine/crates/xerj-api/tests/cluster_metadata_replicates.rs` (modified, +34/-4)
 ```diff
-@@ -0,0 +1,456 @@
-+//! `search.max_buckets` set through `PUT /_cluster/settings` caps the
-+//! buckets a search's aggregations may return, as in Elasticsearch 8.
+@@ -557,6 +557,8 @@ async fn an_acknowledged_write_is_on_the_replica_and_readable_after_the_primary_
+         let (shard, _) = members[primary]
+             .engine
+             .primary_of("orders", &id)
++            .ok()
++            .flatten()
+             .expect("primary placement");
+         let replicas = members[primary].engine.replica_nodes("orders", shard);
+         assert_eq!(replicas.len(), 1, "one replica for shard {shard}");
+@@ -744,6 +746,8 @@ async fn a_quorum_of_copies_acks_when_one_of_two_replicas_does_not() {
+         let (shard, _) = members[primary]
+             .engine
+             .primary_of("orders", &id)
++            .ok()
++            .flatten()
+             .expect("primary placement");
+         let replicas = members[primary]
+             .engine
+@@ -1168,7 +1172,12 @@ async fn restart_reloads_the_shard_plan_and_still_routes_the_document() {
+     let owner_id = members[owner].handle.node_id().to_string();
+     let other = (0..3).find(|i| *i != owner).expect("a non-owner");
+     assert_eq!(
+-        members[other].engine.route_write("orders", "1").as_deref(),
++        members[other]
++            .engine
++            .route_write("orders", "1")
++            .ok()
++            .flatten()
++            .as_deref(),
+         Some(owner_id.as_str()),
+         "before restart the non-owner forwards"
+     );
+@@ -1186,7 +1195,12 @@ async fn restart_reloads_the_shard_plan_and_still_routes_the_document() {
+         "replay must put the primary back on {owner_id}"
+     );
+     assert_eq!(
+-        members[other].engine.route_write("orders", "1").as_deref(),
++        members[other]
++            .engine
++            .route_write("orders", "1")
++            .ok()
++            .flatten()
++            .as_deref(),
+         Some(owner_id.as_str()),
+         "restart must not treat the index as unassigned"
+     );
+@@ -1433,7 +1447,8 @@ async fn a_late_member_copies_documents_written_before_it_joined() {
+     let mut gone_id = None;
+     for n in 0..256 {
+         let id = format!("b{n}");
+-        let Some((shard, owner)) = members[0].engine.primary_of("orders", &id) else {
++        let Some((shard, owner)) = members[0].engine.primary_of("orders", &id).ok().flatten()
++        else {
+             continue;
+         };
+         if owner == "n3" {
+@@ -1606,6 +1621,8 @@ async fn a_replica_dropped_from_the_in_sync_set_copies_the_missed_write_and_rejo
+         let (shard, _) = members[primary]
+             .engine
+             .primary_of("orders", &id)
++            .ok()
++            .flatten()
+             .expect("placement");
+         let replicas = members[primary]
+             .engine
+@@ -1719,6 +1736,8 @@ async fn primary_shard_sources(primary: &Member, shard: u32) -> BTreeMap<String,
+         primary
+             .engine
+             .primary_of("orders", id)
++            .ok()
++            .flatten()
+             .is_some_and(|(doc_shard, _)| doc_shard == shard)
+     });
+     out
+@@ -1785,7 +1804,8 @@ fn shard_case(members: &[Member]) -> ShardCase {
+     let mut ids = Vec::new();
+     for n in 0..512 {
+         let id = format!("r{n}");
+-        let Some((shard, owner)) = members[0].engine.primary_of("orders", &id) else {
++        let Some((shard, owner)) = members[0].engine.primary_of("orders", &id).ok().flatten()
++        else {
+             continue;
+         };
+         let replicas = members[0].engine.placed_replica_nodes("orders", shard);
+@@ -2121,6 +2141,8 @@ async fn bulk_and_update_from_a_non_owner_write_the_primary_and_the_replica() {
+         let (shard, _) = members[primary]
+             .engine
+             .primary_of("orders", &id)
++            .ok()
++            .flatten()
+             .expect("placement");
+         let replicas = members[primary].engine.replica_nodes("orders", shard);
+         if replicas.len() != 1 {
+@@ -2252,6 +2274,8 @@ async fn bulk_and_update_from_a_non_owner_write_the_primary_and_the_replica() {
+     let (auto_shard, _) = members[auto_primary]
+         .engine
+         .primary_of("orders", &auto_id)
++        .ok()
++        .flatten()
+         .expect("auto placement");
+     let auto_replicas = members[auto_primary]
+         .engine
+@@ -2452,6 +2476,8 @@ async fn update_by_query_from_a_non_owner_updates_every_primary_and_replica() {
+         let (shard, _) = members[primary]
+             .engine
+             .primary_of("orders", &id)
++            .ok()
++            .flatten()
+             .expect("placement");
+         let replicas = members[primary].engine.replica_nodes("orders", shard);
+         if replicas.len() != 1 {
+@@ -2833,6 +2859,8 @@ async fn delete_by_query_from_a_non_owner_deletes_on_every_primary_and_replica()
+         let (shard, _) = members[primary]
+             .engine
+             .primary_of("orders", &id)
++            .ok()
++            .flatten()
+             .expect("placement");
+         let replicas = members[primary].engine.replica_nodes("orders", shard);
+         if replicas.len() != 1 {
+@@ -3169,6 +3197,8 @@ async fn native_doc
+```
+
+**File**: `engine/crates/xerj-api/tests/cluster_per_index_shard_width.rs` (added, +343/-0)
+```diff
+@@ -0,0 +1,343 @@
++//! Each index routes documents with its own shard count.
 +//!
-+//! ES counts every bucket the final reduce keeps, across the whole
-+//! aggregation tree (nested `terms` buckets add to their parent's), and
-+//! answers 400 `too_many_buckets_exception` once the count is over the
-+//! limit. Transient overrides persistent, and `null` restores the default.
-+//! Before this, XERJ stored the setting and kept answering 200.
++//! A ring creates `old` with three primaries and writes 2,000 documents.
++//! A later index `new` is created with a four-shard plan, which is what a
++//! node started with four members proposes. Before the fix the router used
++//! one hash width for the whole cluster, so creating `new` re-bucketed every
++//! `old` id: about a quarter of the acknowledged ids answered 404 and new
++//! writes landed on shard 3, which `old` does not have.
++
++use std::time::{Duration, Instant};
 +
 +use axum::body::Body;
 +use axum::http::{Request, StatusCode};
++use axum::Router;
 +use serde_json::{json, Value};
++use tokio::sync::watch;
 +use tower::ServiceExt;
++use xerj_api::cluster_shard::ApiShardHandler;
++use xerj_cluster::node::in_memory::{InMemoryBus, InMemoryTransport};
++use xerj_cluster::raft::ClusterCommand;
++use xerj_cluster::runner::ClusterRunner;
++use xerj_cluster::{ClusterHandle, ClusterNode};
++use xerj_engine::EngineMetadataApplier;
 +
-+async fn app() -> (axum::Router, tempfile::TempDir) {
-+    let dir = tempfile::tempdir().expect("tempdir");
-+    let mut config = xerj_common::config::Config::default();
-+    config.server.data_dir = dir.path().to_string_lossy().into_owned();
-+    let metrics = xerj_common::metrics::Metrics::new().expect("metrics");
-+    let engine = xerj_engine::Engine::new(config.clone()).expect("engine");
-+    let state = xerj_api::state::AppState::new(config, engine, metrics);
-+    (xerj_api::router::build_es_compat_router(state), dir)
++struct Member {
++    app: Router,
++    engine: std::sync::Arc<xerj_engine::Engine>,
++    shutdown: watch::Sender<bool>,
++    handle: ClusterHandle,
++    _runner: tokio::task::JoinHandle<()>,
++    _dir: tempfile::TempDir,
 +}
 +
-+async fn send(
-+    app: &axum::Router,
-+    method: &str,
-+    path: &str,
-+    content_type: &str,
-+    body: String,
-+) -> (StatusCode, Value) {
-+    let request = Request::builder()
-+        .method(method)
-+        .uri(path)
-+        .header("content-type", content_type)
-+        .body(Body::from(body))
-+        .expect("request");
-+    let response = app.clone().oneshot(request).await.expect("response");
++async fn ring() -> Vec<Member> {
++    let bus = InMemoryBus::new();
++    let ids = ["n1", "n2", "n3"];
++    let mut members = Vec::new();
++    for id in ids {
++        let dir = tempfile::tempdir().expect("tempdir");
++        let mut config = xerj_common::config::Config::default();
++        config.server.data_dir = dir.path().to_string_lossy().into_owned();
++        let metrics = xerj_common::metrics::Metrics::new().expect("metrics");
++        let engine = xerj_engine::Engine::new(config.clone()).expect("engine");
++        let state = xerj_api::state::AppState::new(config, engine, metrics);
++        let peers: Vec<String> = ids
++            .iter()
++            .filter(|peer| **peer != id)
++            .map(|peer| (*peer).to_string())
++            .collect();
++        let transport = InMemoryTransport::new(id.to_string(), bus.clone()).await;
++        let mut node = ClusterNode::new(id.to_string(), peers, Box::new(transport));
++        node.set_applier(std::sync::Arc::new(EngineMetadataApplier {
++            engine: std::sync::Arc::clone(&state.engine),
++        }));
++        let handle = node.handle();
++        state.engine.attach_cluster(handle.clone());
++        handle.set_shard_handler(std::sync::Arc::new(ApiShardHandler::new(state.clone())));
++        let engine = std::sync::Arc::clone(&state.engine);
++        let (shutdown, shutdown_rx) = watch::channel(false);
++        let mut runner = ClusterRunner::new(node, Duration::from_millis(5), shutdown_rx);
++        let task = tokio::spawn(async move {
++            runner.run().await;
++        });
++        let app = xerj_api::router::build_es_compat_router(state.clone());
++        members.push(Member {
++            app,
++            engine,
++            shutdown,
++            handle,
++            _runner: task,
++            _dir: dir,
++        });
++    }
++    members
++}
++
++async fn send(app: &Router, req: Request<Body>) -> (StatusCode, Value) {
++    let response = app.clone().oneshot(req).await.expect("response");
 +    let status = response.status();
 +    let bytes = axum::body::to_bytes(response.into_body(), usize::MAX)
 +        .await
@@ -1968,464 +2122,1153 @@ Observed empirical fixes and code patches:
 +    )
 +}
 +
-+async fn put_settings(app: &axum::Router, body: Value) {
-+    let (status, got) = send(
-+        app,
-+        "PUT",
-+        "/_cluster/settings",
-+        "application/json",
-+        body.to_string(),
-+    )
-+    .await;
-+    assert_eq!(status, StatusCode::OK, "{got}");
++async fn put_json(app: &Router, path: &str, body: Value) -> (StatusCode, Value) {
++    let req = Request::put(path)
++        .header("content-type", "application/json")
++        .body(Body::from(body.to_string()))
++        .expect("request");
++    send(app, req).await
 +}
 +
-+/// The eight documents of `aggregations/max_buckets.yml`: eight distinct
-+/// `keyword` values, each with its own `date`.
-+async fn seeded() -> (axum::Router, tempfile::TempDir) {
-+    let (app, dir) = app().await;
-+    let (status, got) = send(
-+        &app,
-+        "PUT",
-+        "/test",
-+        "application/json",
-+        json!({"mappings": {"properties": {
-+            "keyword": {"type": "keyword"},
-+            "date": {"type": "date"}
-+        }}})
-+        .to_string(),
-+    )
-+    .await;
-+    assert!(status.is_success(), "create: {status} {got}");
-+    let keywords = ["dgx", "dfs", "foobar", "foo", "bar", "baz", "qux", "quux"];
-+    let mut bulk = String::new();
-+    for (i, keyword) in keywords.iter().enumerate() {
-+        bulk.push_str(&format!("{{\"index\":{{\"_id\":\"{}\"}}}}\n", i + 1));
-+        bulk.push_str(&format!(
-+            "{{\"date\":\"{}-03-03T00:00:00\",\"keyword\":\"{keyword}\"}}\n",
-+            2014 + i
-+        ));
-+    }
-+    let (status, got) = send(
-+        &app,
-+        "POST",
-+        "/test/_bulk?refresh=true",
-+        "application/x-ndjson",
-+        bulk,
-+    )
-+    .await;
-+    assert_eq!(status, StatusCode::OK, "{got}");
-+    assert_eq!(got["errors"], false, "{got}");
-+    (app, dir)
++async fn post_json(app: &Router, path: &str, body: Value) -> (StatusCode, Value) {
++    let req = Request::post(path)
++        .header("content-type", "application/json")
++        .body(Body::from(body.to_string()))
++        .expect("request");
++    send(app, req).await
 +}
 +
-+/// Eight top-level buckets.
-+fn terms() -> Value {
-+    json!({"size": 0, "aggregations": {"test": {"terms": {"field": "keyword"}}}})
++async fn post_ndjson(app: &Router, path: &str, body: &str) -> (StatusCode, Value) {
++    let req = Request::post(path)
++        .header("content-type", "application/x-ndjson")
++        .body(Body::from(body.to_string()))
++        .expect("request");
++    send(app, req).await
 +}
 +
-+/// Eight top-level buckets, each holding one `date` bucket: sixteen in all.
-+fn nested_terms() -> Value {
-+    json!({"size": 0, "aggregations": {"test": {
-+        "terms": {"field": "keyword"},
-+        "aggs": {"2": {"terms": {"field": "date"}}}
-+    }}})
-+}
-+
-+async fn search(app: &axum::Router, body: Value) -> (StatusCode, Value) {
++async fn get(app: &Router, path: &str) -> (StatusCode, Value) {
 +    send(
 +        app,
-+        "POST",
-+        "/test/_search",
-+        "application/json",
-+        body.to_string(),
++        Request::get(path).body(Body::empty()).expect("request"),
 +    )
 +    .await
 +}
 +
-+fn too_many_buckets(status: StatusCode, body: &Value, limit: u64) {
-+    assert_eq!(status, StatusCode::BAD_REQUEST, "{body}");
-+    let cause = &body["error"]["caused_by"];
-+    assert_eq!(cause["type"], "too_many_buckets_exception", "{body}");
-+    assert_eq!(cause["max_buckets"], limit, "{body}");
-+    let reason = cause["reason"].as_str().unwrap_or("");
-+    assert!(
-+        reason.contains(&format!(
-+            "Trying to create too many buckets. Must be less than or equal to: [{limit}]"
-+        )),
-+        "{body}"
-+    );
++async fn wait_leader(members: &[Member]) -> usize {
++    let deadline = Instant::now() + Duration::from_secs(10);
++    loop {
++        let leaders: Vec<usize> = members
++            .iter()
++            .enumerate()
++            .filter(|(_, member)| member.handle.is_leader())
++            .map(|(i, _)| i)
++            .collect();
++        if leaders.len() == 1 {
++            return leaders[0];
++        }
++        assert!(Instant::now() < deadline, "no single raft leader");
++        t
+```
+
+**File**: `engine/crates/xerj-cluster/src/router.rs` (modified, +167/-29)
+```diff
+@@ -41,6 +41,36 @@ pub fn jump_hash(key: u64, num_buckets: u32) -> u32 {
+ 
+ // ── ShardRouter ───────────────────────────────────────────────────────────────
+ 
++/// Where a document of an index goes.
++#[derive(Debug, Clone, Copy, PartialEq, Eq)]
++pub enum Route<'a> {
++    /// The index has no shard plan (single-node, or created outside the
++    /// replicated plan). The receiving node stores the document.
++    NoPlan { shard: u32 },
++    /// The plan names `node` as the primary of `shard`.
++    Owned { shard: u32, node: &'a str },
++    /// The index has a plan, but no primary is assigned for `shard`. The
++    /// write must be refused: storing it locally puts it outside the plan,
++    /// where search and reads by id never look.
++    Unowned { shard: u32 },
 +}
 +
-+fn answered(status: StatusCode, body: &Value, top_buckets: usize) {
-+    assert_eq!(status, StatusCode::OK, "{body}");
-+    let buckets = body["aggregations"]["test"]["buckets"]
-+        .as_array()
-+        .unwrap_or_else(|| panic!("no buckets: {body}"));
-+    assert_eq!(buckets.len(), top_buckets, "{body}");
++impl Route<'_> {
++    pub fn shard(&self) -> u32 {
++        match self {
++            Route::NoPlan { shard } | Route::Owned { shard, .. } | Route::Unowned { shard } => {
++                *shard
++            }
++        }
++    }
 +}
 +
-+/// The vendored YAML case, step for step.
++/// The index has a shard plan but the document's shard has no primary.
++#[derive(Debug, Clone, Copy, PartialEq, Eq)]
++pub struct ShardUnassigned {
++    pub shard: u32,
++}
++
+ /// Routes documents and search queries to cluster nodes via consistent hashing.
+ ///
+ /// The routing table is a snapshot of [`ClusterMetadata::shard_assignments`] and
+@@ -49,8 +79,16 @@ pub fn jump_hash(key: u64, num_buckets: u32) -> u32 {
+ ///
+ /// [`update_from_metadata`]: ShardRouter::update_from_metadata
+ pub struct ShardRouter {
+-    /// Number of virtual shards per index (constant across the cluster lifetime).
++    /// Hash width for an index that has no plan. Never applied to an index
++    /// that has one: see `index_shards`.
+     num_shards: u32,
++    /// Hash width of each planned index: its highest assigned shard + 1.
++    ///
++    /// Per index, never cluster-wide. A single width shared by every index
++    /// meant that creating one index with more shards re-bucketed every
++    /// older index, so acknowledged ids routed to a shard that did not
++    /// hold them.
++    index_shards: HashMap<String, u32>,
+     /// `(index_name, shard_id)` → `node_id` (primary owner)
+     routing_table: HashMap<(String, u32), String>,
+     /// `(index_name, shard_id)` → list of replica node IDs (excluding primary)
+@@ -66,20 +104,25 @@ impl ShardRouter {
+         assert!(num_shards > 0, "num_shards must be > 0");
+         ShardRouter {
+             num_shards,
++            index_shards: HashMap::new(),
+             routing_table: HashMap::new(),
+             replica_table: HashMap::new(),
+             in_sync: HashMap::new(),
+         }
+     }
+ 
+-    /// The configured number of virtual shards.
++    /// Hash width used for an index with no shard plan.
+     pub fn num_shards(&self) -> u32 {
+         self.num_shards
+     }
+ 
+-    /// Widen or set the hash width. `route_doc` uses this for every index,
+-    /// so a plan that assigns shard `n` must set the width to at least `n + 1`
+-    /// or that shard is unreachable.
++    /// Hash width of `index`'s own plan, when it has one.
++    pub fn index_num_shards(&self, index: &str) -> Option<u32> {
++        self.index_shards.get(index).copied()
++    }
++
++    /// Set the hash width for indices that have no plan. A planned index
++    /// keeps the width of its own plan.
+     pub fn set_num_shards(&mut self, num_shards: u32) {
+         assert!(num_shards > 0, "num_shards must be > 0");
+         self.num_shards = num_shards;
+@@ -90,20 +133,37 @@ impl ShardRouter {
+         self.routing_table.retain(|(idx, _), _| idx != index);
+         self.replica_table.retain(|(idx, _), _| idx != index);
+         self.in_sync.retain(|(idx, _), _| idx != index);
++        self.index_shards.remove(index);
+     }
+ 
+     /// Route a document to its shard and owning node.
+     ///
+-    /// Returns `(shard_id, Option<node_id>)`. `node_id` is `None` when the
+-    /// shard has not yet been assigned to a node.
++    /// The shard comes from `index`'s own plan width, or from the fallback
++    /// width when the index has no plan. Returns `(shard_id, Option<node_id>)`;
++    /// `node_id` is `None` when no primary is assigned. Use [`Self::route`]
++    /// to tell "no plan" from "planned but unassigned".
+     pub fn route_doc(&self, index: &str, doc_id: &str) -> (u32, Option<&str>) {
+-        let hash = xxh3_64(doc_id.as_bytes());
+-        let shard = jump_hash(hash, self.num_shards);
+-        let node = self
+-            .routing_table
+-            .get(&(index.to_string(), shard))
+-            .map(|s| s.as_str());
+-        (shard, node)
++        let route = self.route(index, doc_id);
++        match route {
++            Route::Owned { shard, node } => (shard, Some(node)),
++            other => (other.shard(), None),
++        }
++    }
++
++    /// Route a document, distinguishing an unplanned index from a planned
++    /// shard that has no primary.
++    pub fn route(&self, index: &str, doc_id: &str) -> Route<'_> {
++        let planned = self.in
+```
+
+**File**: `engine/crates/xerj-engine/src/engine.rs` (modified, +42/-37)
+```diff
+@@ -994,9 +994,9 @@ pub struct Engine {
+     /// routing decision resolves to "this node" — so the write path is
+     /// 100 % backward compatible with single-node deployments.
+     pub node_id: Arc<String>,
+-    /// Shard router shared across all indices. For single-node clusters
+-    /// this has `num_shards = 1` and always routes to `node_id`, which
+-    /// is a no-op. In multi-node mode, populated via
++    /// Shard router shared across all indices. Each planned index routes
++    /// with its own shard count. For single-node clusters there is no plan,
++    /// so every write stays on `node_id`. In multi-node mode, populated via
+     /// `ShardRouter::update_from_metadata` whenever the Raft log
+     /// commits a new shard assignment.
+     pub shard_router: Arc<parking_lot::RwLock<xerj_cluster::router::ShardRouter>>,
+@@ -4024,29 +4024,38 @@ impl Engine {
+ 
+     /// V4 M5.2 — route a document to the node that owns its shard.
+     ///
+-    /// Returns `None` when this node should write the document itself:
+-    /// there is no shard assignment (single-node mode, and any index that
+-    /// was not created through the replicated shard plan), or the assigned
+-    /// owner is this node. Returns `Some(node_id)` when a peer owns the
+-    /// shard. Callers forward that write; they do not also store it here.
++    /// `Ok(None)` when this node should write the document itself: the
++    /// index has no shard plan (single-node mode, and any index that was
++    /// not created through the replicated shard plan), or the assigned
++    /// owner is this node. `Ok(Some(node_id))` when a peer owns the shard.
++    /// Callers forward that write; they do not also store it here.
++    ///
++    /// `Err` when the index has a plan but the document's shard has no
++    /// primary. That write must be refused, not stored here: a local copy
++    /// sits outside the plan, where reads by id and search never look.
+     ///
+     /// With no cluster handle the owner comparison uses `"local"`, which
+     /// no replicated plan names, and the empty routing table makes every
+-    /// call `None`.
+-    pub fn route_write(&self, index: &str, doc_id: &str) -> Option<String> {
++    /// call `Ok(None)`.
++    pub fn route_write(
++        &self,
++        index: &str,
++        doc_id: &str,
++    ) -> std::result::Result<Option<String>, xerj_cluster::router::ShardUnassigned> {
++        use xerj_cluster::router::{Route, ShardUnassigned};
+         let me = self.routing_node_id();
+         let router = self.shard_router.read();
+-        match router.route_doc(index, doc_id).1 {
+-            None => None,
+-            Some(owner) if owner == me => None,
+-            Some(owner) => Some(owner.to_string()),
++        match router.route(index, doc_id) {
++            Route::NoPlan { .. } => Ok(None),
++            Route::Owned { node, .. } if node == me => Ok(None),
++            Route::Owned { node, .. } => Ok(Some(node.to_string())),
++            Route::Unowned { shard } => Err(ShardUnassigned { shard }),
+         }
+     }
+ 
+     /// `true` when a replicated shard plan names this node as the primary
+-    /// for `doc_id`. An index with no plan is `false` — that is not the
+-    /// same as [`Engine::route_write`] returning `None`, which also covers
+-    /// the unassigned case.
++    /// for `doc_id`. An index with no plan is `false`, and so is a planned
++    /// shard with no primary.
+     pub fn owns_shard(&self, index: &str, doc_id: &str) -> bool {
+         let me = self.routing_node_id();
+         let router = self.shard_router.read();
+@@ -4070,21 +4079,13 @@ impl Engine {
+             .unwrap_or_else(|| self.node_id.to_string())
+     }
+ 
+-    /// Replace `index`'s primary assignments and widen the hash width so
+-    /// every shard in `plan` is reachable.
++    /// Replace `index`'s primary assignments. The index's hash width becomes
++    /// its own plan width (highest shard + 1); other indices keep theirs.
+     pub fn install_shard_plan(&self, index: &str, plan: &[xerj_cluster::ShardAssignment]) {
+         if plan.is_empty() {
+             return;
+         }
+         let mut router = self.shard_router.write();
+-        let width = plan
+-            .iter()
+-            .map(|assignment| assignment.shard.saturating_add(1))
+-            .max()
+-            .unwrap_or(1);
+-        if width > router.num_shards() {
+-            router.set_num_shards(width);
+-        }
+         router.clear_index(index);
+         for assignment in plan {
+             router.assign(index, assignment.shard, &assignment.node_id);
+@@ -4096,11 +4097,20 @@ impl Engine {
+         }
+     }
+ 
+-    /// `(shard, primary node)` for `doc_id`, when the index has a plan.
+-    pub fn primary_of(&self, index: &str, doc_id: &str) -> Option<(u32, String)> {
++    /// `(shard, primary node)` for `doc_id`. `Ok(None)` when the index has
++    /// no plan; `Err` when it has one but the shard has no primary.
++    pub fn primary_of(
++        &self,
++        index: &str,
++        doc_id: &str,
++  
+```
+
+**File**: `engine/crates/xerj-engine/tests/shard_router_write_path.rs` (modified, +41/-2)
+```diff
+@@ -33,7 +33,7 @@ async fn single_node_router_always_local() {
+     for id in &["1", "abc", "zebra-99", "🦓"] {
+         assert_eq!(
+             engine.route_write("my-index", id),
+-            None,
++            Ok(None),
+             "single-node router must resolve doc {id:?} to local"
+         );
+     }
+@@ -66,7 +66,9 @@ async fn router_forwards_remote_shards() {
+     let mut counts = std::collections::HashMap::<Option<String>, usize>::new();
+     for i in 0..1000 {
+         let id = format!("doc-{i}");
+-        let target = engine.route_write("my-index", &id);
++        let target = engine
++            .route_write("my-index", &id)
++            .expect("every planned shard has a primary");
+         *counts.entry(target).or_insert(0) += 1;
+     }
+     // Exactly three classifications: None (local), Some("peer-b"),
+@@ -102,3 +104,40 @@ async fn router_forwards_remote_shards() {
+     let total: usize = counts.values().sum();
+     assert_eq!(total, 1000);
+ }
++
++/// A planned index whose plan omits shard 2: an id that hashes to shard 2
++/// is refused (`Err`), not written locally, and `primary_of` agrees. An
++/// index with no plan still writes locally.
 +#[tokio::test]
-+async fn a_persistent_limit_refuses_aggregations_
-```
-
-**File**: `engine/tests/es-compat-yaml/catch-lenient.txt` (modified, +0/-1)
-```diff
-@@ -12,7 +12,6 @@ aggregations/bucket_script.yml · bad script
- aggregations/bucket_selector.yml · bad script
- aggregations/composite.yml · Composite aggregation with invalid format
- aggregations/composite.yml · Composite aggregation with lossy format
--aggregations/max_buckets.yml · Max bucket
- aggregations/scripted_metric_allow_list.yml · allowed inline scripts do not affect allowed stored scripts
- aggregations/scripted_metric_allow_list.yml · allowed stored scripts do not affect allowed inline scripts
- aggregations/scripted_metric_allow_list.yml · disallow all for empty allow lists
-```
-
----
-
-### Incident Patch 2: `803daf90` (2026-11-17)
-**Commit Message**: fix(bench): measure query cache hits per timed section, not across index deletes
-
-Review follow-up for #3020. xerj_query_cache_hits on /v1/metrics is not a
-process-lifetime counter: native.rs sets the gauge from
-Engine::query_cache_totals(), a sum of per-Index counters over the indexes
-open at scrape time, so it drops when an index is deleted. bench-matrix.mjs
-deletes /perf before each ingest, the read seed and the mixed load, and
-/perfvec before kNN, so a whole-run start/end difference dropped the read
-phase's hits under --mixed and could go to 0 or below on a second run against
-the same node, which the report then printed as "0 responses served from
-cache".
-
-The counter is now read right before and right after each timed read family,
-kNN probe loop and mixed op (after setup, before any later DELETE), and the
-per-section differences are added. A missing reading or a negative difference
-marks that section "not measured" in the log and in SCORECARD.md, never 0.
-
-The comments in bench-matrix.mjs and lib/repro.sh, CONTRIBUTING.md and
-scripts/bench/README.md now say the counter is per index and that a deleted
-index's hits are gone.
-
-Checked with a copy of bench-matrix.mjs that differs 
-
-**File**: `CONTRIBUTING.md` (modified, +5/-3)
-```diff
-@@ -158,9 +158,11 @@ XERJ caches whole search responses by default, so a repeated identical query is
- answered from memory instead of being executed (#3020: 0.70 ms cached against
- 7.80 ms executed). `request_cache=false` does not turn that cache off. Start
- the node with `XERJ_DISABLE_QUERY_CACHE=1`, or send only unique queries, for any
--latency you publish. The node counts the responses its cache served as
--`xerj_query_cache_hits` on `/v1/metrics`; `bench-matrix.mjs` and the
--[`scripts/bench`](./scripts/bench) repros print that count, and it should be 0.
-+latency you publish. `xerj_query_cache_hits` on `/v1/metrics` counts the
-+responses the cache served, per index, summed over the indexes open now (a
-+deleted index's hits are gone). `bench-matrix.mjs` reads it before and after
-+each timed section and the [`scripts/bench`](./scripts/bench) repros print it;
-+it should be 0.
- 
- Read latencies are measured with a lean keep-alive HTTP client applied identically to both engines (see the methodology note the harness emits). If your change touches a hot path, include before/after numbers in the commit body.
- 
-```
-
-**File**: `demo/playbooks/bench-matrix.mjs` (modified, +42/-20)
-```diff
-@@ -585,7 +585,8 @@ async function mixedBench(base, log) {
-   // flush/merge actually occurs during measurement and (b) p99 rests on enough
-   // tail samples to be trustworthy (index floor(0.99*3000)=2970 → ~30 tail obs).
-   for (const [label, body] of MIXED_OPS) {
--    out[label] = await safeTimed(base, S, body, { iters: 3000, warmup: 20, rate: 300 });
-+    out[label] = await meterXerjCache(base, `mixed: ${label}`,
-+      () => safeTimed(base, S, body, { iters: 3000, warmup: 20, rate: 300 }));
-     log(`     mixed ${label}: p99 ${f3(statVal(out[label], 'p99'))}ms max ${f3(statVal(out[label], 'max'))}ms (achieved ${out[label] && out[label].achievedRate != null ? out[label].achievedRate : '—'}/s, under write load)`);
-   }
-   // stop the writer and measure achieved background throughput
-@@ -665,7 +666,8 @@ async function knnBench(base, log, dims = 128, M = 50000) {
-   const ids = (one.j?.hits?.hits || []).map((h) => parseInt(h._id, 10));
-   const recall = ids.length ? ids.filter((id) => exact.has(id)).length / 10 : null;
-   // >=2000 samples so kNN p99/max aren't dominated by 1-2 tail observations.
--  const t = await safeTimed(base, '/perfvec/_search?request_cache=false', body, { iters: 2000, warmup: 15, rate: 200 });
-+  const t = await meterXerjCache(base, 'kNN k=10',
-+    () => safeTimed(base, '/perfvec/_search?request_cache=false', body, { iters: 2000, warmup: 15, rate: 200 }));
-   return { ...t, recall };
- }
- 
-@@ -772,13 +774,29 @@ function scoreRow(dim, xv, ev, higherBetter, fmt, xraw, eraw, tieBandMs = null)
- // XERJ answers a repeated identical _search from its whole-response cache unless
- // it was started with XERJ_DISABLE_QUERY_CACHE=1 (#3020: 0.70 ms cached against
- // 7.80 ms executed), and `request_cache=false` does not switch that cache off.
--// The node counts every response the cache served on /v1/metrics, so the run
--// checks the flag instead of trusting it. null = the counter could not be read.
-+// `xerj_query_cache_hits` on /v1/metrics is NOT a process-lifetime counter: it is
-+// the sum of per-index counters over the indexes open at scrape time, so it drops
-+// when an index is deleted (this harness DELETEs /perf before each ingest, the
-+// read seed and the mixed load, and /perfvec before kNN). The counter is read
-+// right before and right after each timed section, after its setup and before
-+// any later DELETE, and the per-section differences are added. A missing reading
-+// or a negative difference marks the section "not measured", never 0.
-+// null = the counter could not be read.
- async function xerjQueryCacheHits(base) {
-   const r = await req(base, 'GET', '/v1/metrics');
-   const m = /^xerj_query_cache_hits\s+(\d+)/m.exec(r.txt || '');
-   return m ? Number(m[1]) : null;
- }
-+const XERJ_CACHE = { base: null, hits: 0, measured: [], unmeasured: [] };
-+async function meterXerjCache(base, section, fn) {
-+  if (!XERJ_CACHE.base || base !== XERJ_CACHE.base) return fn();
-+  const before = await xerjQueryCacheHits(base);
-+  const out = await fn();
-+  const after = await xerjQueryCacheHits(base);
-+  if (before == null || after == null || after < before) XERJ_CACHE.unmeasured.push(section);
-+  else { XERJ_CACHE.hits += after - before; XERJ_CACHE.measured.push(section); }
-+  return out;
++async fn unowned_planned_shard_is_not_written_locally() {
++    let tmp = tempfile::tempdir().unwrap();
++    let mut config = Config::default();
++    config.server.data_dir = tmp.path().to_string_lossy().to_string();
++    let engine = Engine::new(config).unwrap();
++    {
++        let mut router = engine.shard_router.write();
++        router.assign("gap", 0, "local");
++        router.assign("gap", 1, "peer-b");
++        router.assign("gap", 3, "peer-c");
++    }
++    let mut unowned = 0;
++    for i in 0..1000 {
++        let id = format!("doc-{i}");
++        let shard = xerj_cluster::router::jump_hash(xxhash_rust::xxh3::xxh3_64(id.as_bytes()), 4);
++        let routed = engine.route_write("gap", &id);
++        if shard == 2 {
++            unowned += 1;
++            assert_eq!(
++                routed,
++                Err(xerj_cluster::router::ShardUnassigned { shard: 2 }),
++                "{id} hashes to unassigned shard 2"
++            );
++            assert!(engine.primary_of("gap", &id).is_err());
++            assert!(!engine.owns_shard("gap", &id));
++        } else {
++            assert!(routed.is_ok(), "{id} on shard {shard}: {routed:?}");
++        }
++        assert_eq!(engine.route_write("unplanned", &id), Ok(None));
++    }
++    assert!(unowned > 150, "about a quarter hash to shard 2: {unowned}");
 +}
- 
- async function main() {
-   const A = parseArgs(process.argv);
-@@ -805,7 +823,7 @@ async function main() {
-     catch (err) { alive[e.name] = false; log(`   ${e.name} (${e.url}) — UNREACHABLE: ${err.message}`); }
-   }
- 
--  const cacheHitsAtStart = alive.XERJ ? await xerjQueryCacheHits(A.xerj) : null;
-+  XERJ_CACHE.base = A.xerj;
- 
-   const R = { ingest: {}, reads: {}, mixed: {}, knn: {}, disk: {} };
- 
-@@ -868,7 +886,8 @@ async function main() {
-         // families with per-engine setup (e.g. search_after sort-value capture)
-         // build their body against THIS engine right before timing.
-         const body = fam.makeBody ? await fam.makeBody(e.url) : fam.body;
--        out[e.name] = await safeTimed(e.url, path, body, { iters: 1200, warmup: 60, ndjson: !!fam.ndjson });
-+        out[e.name] = await meterXerjCache(e.url, `read: ${fam.label}`,
-+          () => safeTimed(e.url, path, body, { iters: 1200, warmup: 60, ndjson: !!fam.ndjson }));
-       }
-       return out;
-     };
-@@ -1017,11 +1036,10 @@ async function main() {
-   rows.push(scoreRow('index on-disk size', R.disk.XERJ ?? null, R.disk.ES ?? null, false, mb));
- 
-   const loses = rows.filter((r) => r.verdict === 'LOSE');
--  const cacheHitsAtEnd = alive.XERJ ? await xerjQueryCacheHits(A.xerj) : null;
--  const cacheHits = cacheHitsAtStart == null || cacheHitsAtEnd == null ? null : cacheHitsAtEnd - cacheHitsAtStart;
--  if (cacheHits == null) log('   query cache: XERJ cache counter unreadable on /v1/metrics — cache-off not verified');
--  else if (cacheHits > 0) log(`   WARNING: XERJ served ${cacheHits} responses from its query cache — start it with XERJ_DISABLE_QUERY_CACHE=1`);
--  else log('   query cache: 0 XERJ responses served from cache');
-+  c
-```
-
-**File**: `scripts/bench/README.md` (modified, +3/-1)
-```diff
-@@ -20,7 +20,9 @@ measured 0.70 ms cached against 7.80 ms executed), so a timed loop would
- measure the cache, not search. `request_cache=false` does not turn that cache
- off. The `run environment` block at the end of each run prints the node's own
- `xerj_query_cache_hits` / `xerj_query_cache_misses` from `/v1/metrics`: both
--are 0 with the cache off, and a non-zero hit count prints a warning. The same
-+are 0 with the cache off, and a non-zero hit count prints a warning. The
-+counters are per index, summed over the indexes open at that moment, so a
-+deleted index's hits are gone: read them before deleting what you timed. The same
- rule holds for any latency measured outside these scripts: start the node
- with `XERJ_DISABLE_QUERY_CACHE=1`, or send only unique queries.
- 
-```
-
-**File**: `scripts/bench/lib/repro.sh` (modified, +6/-3)
-```diff
-@@ -184,9 +184,12 @@ repro_header() {
- }
- 
- # The node's own whole-response cache counters (xerj_query_cache_hits /
--# _misses on /v1/metrics, summed over every index). With the cache off both
--# stay 0: no request is even looked up. A non-zero hit count means some
--# measured responses were served from the cache, so it is printed as a warning.
-+# _misses on /v1/metrics). They are per-index counters summed over the indexes
-+# open at scrape time: a deleted index takes its hits with it, so a script that
-+# deletes the index it timed before calling this can read 0 with the cache on.
-+# The current scripts report while their timed index still exists. With the
-+# cache off both stay 0: no request is even looked up. A non-zero hit count
-+# means some measured responses were served from the cache: a warning.
- repro_query_cache_report() {
-   local metrics hits misses
-   metrics="$(curl -sf "http://127.0.0.1:$REPRO_PORT/v1/metrics" 2>/dev/null)" || {
 ```
 
 ---
 
-### Incident Patch 3: `a804022a` (2026-11-17)
-**Commit Message**: Merge pull request #3069 from jaromil/fix/autoindex-content-convergence
+### Incident Patch 2: `b48918bb` (2026-11-17)
+**Commit Message**: Merge pull request #2987 from xerj-org/fix/cluster-leader-noop-commit
 
 # Conflicts:
 #	CHANGELOG.md
 
-**File**: `CHANGELOG.md` (modified, +4/-0)
+**File**: `CHANGELOG.md` (modified, +16/-0)
 ```diff
-@@ -27,6 +27,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
-   node writes the rows instead of skipping them as unchanged, and escapes tabs,
-   newlines and backslashes in `doc_id` when writing and replaying `.journal`
-   files (#3130).
-+- Incremental autoindex and watch passes accept an edited file that becomes
-+  identical to another indexed file. The existing content group keeps its
-+  identity and gains the path as an alias; the superseded group is retired
-+  instead of failing with conflicting content and path identities.
+@@ -25,6 +25,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  
- ## [1.0.0-rc.102] - 2026-11-06
+ ### Fixed
  
++- A newly elected cluster leader now appends a no-op entry of its own term
++  (Raft §5.4.2, §8), so a log tail left uncommitted by the previous leader
++  commits right after the election instead of waiting for the next client
++  write; before this, a metadata write interrupted by an election stayed at
++  commit=0 and timed out. A leader that cannot persist the no-op steps down.
++  The rc.101 "Fixed" note that claimed this was premature: no such code
++  shipped in rc.101, and the fix lands here (#2987). The same bug was a main
++  cause of the `log_catchup` CI flake; those tests now re-propose a write only
++  when a leader change dropped it.
+ - `xerj autoindex` and `xerj feedback` check the node identity before querying
+   the autoindex catalog, so an unrelated HTTP service on the default port
+   does not trigger catalog retries. Feedback still drafts a report when catalog
+@@ -85,6 +94,13 @@ declines). Without `--facts-model-dir` a node is the node rc.101 was.
+ 
+ ### Upgrade notes
+ 
++- **Cluster: upgrade every member before restarting the ring.** The leader
++  no-op is a new Raft log entry type (`"Noop"`). A member still on an older
++  build cannot decode it and will not accept the log of a new-build leader,
++  so a mixed-version cluster must not run with a new-build leader. Stop and
++  upgrade all members, then start them. Once a new build has written a
++  no-op, an older build fails to open that data directory's Raft log
++  ("decode raft entry"), so there is no downgrade in place.
+ - **The rc.102 bundle needs an rc.102 binary.** rc.101 refuses its
+   `bundle.json` (unknown rule `decline_v2_r8`, model state `unavailable`).
+   The rc.102 binary still loads the rc.101 bundle and serves it under
 ```
 
-**File**: `README.md` (modified, +4/-0)
+**File**: `engine/crates/xerj-cluster/src/metadata.rs` (modified, +8/-1)
 ```diff
-@@ -773,6 +773,10 @@ editing a handful of files does work proportional to what changed, not to the wh
- common edit-and-rerun / CI case, typically over 95% unchanged. The full content hash still runs
- to detect changes, so total re-index time is floored by hashing, not parsing.
+@@ -167,6 +167,8 @@ impl ClusterMetadata {
+             ClusterCommand::ClientMetadata { .. } => {
+                 warn!("nested ClientMetadata wrapper; not applied");
+             }
++            // A leader's term-start entry carries no metadata.
++            ClusterCommand::Noop => {}
+         }
  
-+If an edit makes a file identical to another indexed file, the next incremental
-+or watch pass keeps the existing content group and records both paths in
-+`ax_paths`. The superseded content group is removed; a fresh index is not needed.
-+
- ## Build from source
+         self.last_applied_index = log_index;
+@@ -411,7 +413,12 @@ mod tests {
+         .unwrap();
  
- You need a stable Rust toolchain.
+         let entries: Vec<LogEntry> = node.ready();
+-        assert_eq!(entries.len(), 2, "two entries should be ready");
++        assert_eq!(
++            entries.len(),
++            3,
++            "the leader no-op and two entries should be ready"
++        );
++        assert_eq!(entries[0].command, ClusterCommand::Noop);
+ 
+         let mut meta = ClusterMetadata::new();
+         for entry in &entries {
 ```
 
-**File**: `engine/crates/xerj-autoindex/src/incremental_reconcile_http_tests.rs` (modified, +59/-0)
+**File**: `engine/crates/xerj-cluster/src/node.rs` (modified, +4/-0)
 ```diff
-@@ -6038,6 +6038,65 @@ impl Rng {
-     }
+@@ -336,6 +336,10 @@ impl ClusterNode {
+             "Applying committed entry"
+         );
+         self.metadata.apply(entry.index, &entry.command);
++        // The leader's term-start no-op has no engine effect and no waiter.
++        if matches!(entry.command, ClusterCommand::Noop) {
++            return;
++        }
+         let effect = if let Some(applier) = &self.applier {
+             applier.apply_metadata(&entry.command).await
+         } else {
+```
+
+**File**: `engine/crates/xerj-cluster/src/raft.rs` (modified, +86/-6)
+```diff
+@@ -111,6 +111,13 @@ pub enum ClusterCommand {
+         request_id: u64,
+         inner: Box<ClusterCommand>,
+     },
++    /// Entry a new leader appends at the start of its term.
++    ///
++    /// A leader only counts replicas for entries of its own term (§5.4.2).
++    /// Without one, entries left over from an earlier term stay uncommitted
++    /// until a client proposes something. Appliers ignore it. It is the last
++    /// variant so the serde encoding of every older variant is unchanged.
++    Noop,
  }
  
-+#[test]
-+fn a_watch_edit_can_join_an_existing_content_group() {
-+    watch_edit_joins_existing_content(false);
-+}
-+
-+#[test]
-+fn joining_an_existing_content_group_resumes_after_a_publish_failure() {
-+    watch_edit_joins_existing_content(true);
-+}
-+
-+fn watch_edit_joins_existing_content(fail_publish: bool) {
-+    let _guard = HTTP_E2E_LOCK.lock().unwrap_or_else(|p| p.into_inner());
-+    let corpus = tempfile::tempdir().unwrap();
-+    let state_dir = tempfile::tempdir().unwrap();
-+    let root = corpus.path().canonicalize().unwrap();
-+    fs::write(root.join("a.csv"), "id,value\n1,alpha\n").unwrap();
-+    fs::write(root.join("b.csv"), "id,value\n2,beta\n").unwrap();
-+    let endpoint = HttpEndpoint::start();
-+    let config = cfg(&root, state_dir.path(), &endpoint.url, false);
-+    let mut carry = crate::watch::Carry::default();
-+    crate::watch::one_pass(&config, &root, &mut carry, &crate::watch::ChangeSet::full())
-+        .0
-+        .unwrap();
-+
-+    fs::copy(root.join("b.csv"), root.join("a.csv")).unwrap();
-+    endpoint.state.lock().unwrap().fail_next_data_bulk = fail_publish;
-+    let burst = crate::watch::ChangeSet::from_paths(&[root.join("a.csv")]);
-+    let (outcome, _) = crate::watch::one_pass(&config, &root, &mut carry, &burst);
-+    if fail_publish {
-+        assert!(
-+            outcome.is_err(),
-+            "the injected publish failure must be observed"
-+        );
-+        let mut restarted = crate::watch::Carry::default();
-+        assert_eq!(
-+            crate::watch::one_pass(
-+                &config,
-+                &root,
-+                &mut restarted,
-+                &crate::watch::ChangeSet::full(),
-+            )
-+            .0
-+            .unwrap()
-+            .0,
-+            0
-+        );
-+    } else {
-+        assert_eq!(outcome.unwrap().0, 0);
+ impl ClusterCommand {
+@@ -636,6 +643,13 @@ impl RaftNode {
+                 self.leader_id
+             );
+         }
++        self.append_own(cmd)
 +    }
-+    let docs = endpoint.data_docs();
-+    assert_eq!(docs.len(), 1, "converged content must have one data record");
-+    assert_eq!(docs[0]["value"], "beta");
-+    assert_eq!(paths(&docs), vec!["a.csv"]);
-+    assert_eq!(docs[0]["ax_paths"], serde_json::json!(["a.csv", "b.csv"]));
-+    let (reference, _reference_state) = fresh_full_index(&root);
-+    assert_eq!(published(&endpoint), published(&reference));
-+    a_rerun_changes_nothing(&config, &endpoint, "edit joining existing content");
-+}
 +
- #[test]
- fn a_watch_pass_rehashes_only_what_changed_and_publishes_it() {
-     let _guard = HTTP_E2E_LOCK.lock().unwrap_or_else(|p| p.into_inner());
-```
-
-**File**: `engine/crates/xerj-autoindex/src/sync.rs` (modified, +42/-4)
-```diff
-@@ -739,10 +739,9 @@ pub fn reconcile_groups(
-             .map(|owner| owner.group_id.as_str())
-             .collect();
-         let group_id = if let Some(owner) = content_owner {
--            anyhow::ensure!(
--                path_owners.is_empty() || path_owners.contains(owner.group_id.as_str()),
--                "desired group has conflicting content and path identities"
--            );
-+            // A changed file may now equal already indexed content. Preserve
-+            // that content's group and let the operation planner retire its
-+            // former group; path ownership must not veto this normal merge.
-             owner.group_id.clone()
-         } else if path_owners.len() == 1 {
-             path_owners.pop_first().unwrap().to_string()
-@@ -1831,6 +1830,45 @@ mod tests {
-         );
++    /// Append `cmd` at the current term, durably, to this leader's log.
++    ///
++    /// Shared by [`RaftNode::propose`] and the no-op a new leader appends.
++    fn append_own(&mut self, cmd: ClusterCommand) -> Result<u64> {
+         let index = self.last_log_index() + 1;
+         let entry = LogEntry {
+             term: self.current_term,
+@@ -1090,7 +1104,12 @@ impl RaftNode {
+         self.last_heartbeat = Instant::now();
      }
  
-+    #[test]
-+    fn changed_file_can_join_surviving_content_group() {
-+        let previous = vec![
-+            group("retired", "old-content", path("61", false)),
-+            group("survivor", "existing-content", path("62", false)),
-+        ];
-+        let result = reconcile_groups(
-+            &previous,
-+            vec![desired(
-+                "existing-content",
-+                vec![path("61", false), path("62", false)],
-+            )],
-+        )
-+        .unwrap();
-+        assert_eq!(result.len(), 1);
-+        assert_eq!(result[0].group_id, "survivor");
-+        assert_eq!(result[0].canonical, path("61", false));
-+        assert_eq!(result[0].aliases, vec![path("62", false)]);
-+        let operations = plan_operations(&previous, &result);
-+        assert_eq!(operations.len(), 2);
-+        assert!(operations
-+            .iter()
-+            .any(|op| { op.group_id == "retired" && op.kind == SyncOperationKind::Delete }));
-+        assert!(operations
-+            .iter()
-+            .any(|op| { op.group_id == "survivor" && op.kind == SyncOperationKind::Metadata }));
-+        assert_eq!(
-+            reconcile_groups(
-+                &result,
-+                vec![desired(
-+                    "existing-content",
-+                    vec![path("61", false), path("62", false)],
-+                )]
-+            )
-+            .unwrap(),
-+            result
-+        );
+-    fn become_leader(&mut self) {
++    /// Take leadership and append this term's no-op entry.
++    ///
++    /// Returns false when the no-op could not be made durable. The node is a
++    /// follower again in that case, as after a failed vote write in
++    /// [`RaftNode::start_election`], and sends nothing.
++    fn become_leader(&mut self) -> bool {
+         info!(
+             node = %self.id,
+             term = self.current_term,
+@@ -1106,6 +1125,15 @@ impl RaftNode {
+             self.next_index.insert(peer.clone(), next);
+             self.match_index.insert(peer.clone(), 0);
+         }
++
++        // §5.4.2 / §8: commit an entry of this term so that entries from
++        // earlier terms commit with it, without waiting for a client write.
++        if let Err(e) = self.append_own(ClusterCommand::Noop) {
++            warn!(node = %self.id, error = %e, term = self.current_term, "persist leader no-op; stepping down");
++            self.become_follower(None);
++            return false;
++        }
++        true
+     }
+ 
+     fn start_election(&mut self) -> Vec<OutboundMessage> {
+@@ -1133,7 +1161,9 @@ impl RaftNode {
+ 
+         // Single-node cluster wins immediately.
+         if self.peers.is_empty() {
+-            self.become_leader();
++            if !self.become_leader() {
++                return vec![];
++            }
+             return self.send_heartbeats();
+         }
+ 
+@@ -1622,7 +1652,9 @@ impl RaftNode {
+                 "Received vote"
+             );
+             if self.votes_received >= self.majority() {
+-                self.become_leader();
++                if !self.become_leader() {
++                    return vec![];
++                }
+                 return self.send_heartbeats();
+             }
+         }
+@@ -1789,7 +1821,7 @@ mod tests {
+                 schema_json: "{}".to_string(),
+             })
+             .expect("propose should succeed on leader");
+-        assert_eq!(idx, 1);
++        assert_eq!(idx, 2, "index 1 is the leader's no-op");
+ 
+         // Replicate: a few rounds of simulation
+         simulate_rounds(&mut nodes, 20);
+@@ -1899,8 +1931,56 @@ mod tests {
+             })
+             .expect("propose on single-node leader should succeed");
+ 
+-        assert_eq!(idx, 1);
+-        assert_eq!(node.commit_index(), 1); // single node commits immediately
++        assert_eq!(idx, 2, "index 1 is the leader's no-op");
++        assert_eq!(node.commit_index(), 2); // single node commits immediately
 +    }
 +
-     #[test]
-     fn operation_planner_covers_add_delete_metadata_and_mixed() {
-         let unchanged = group("same", "same", path("01", false));
++    #[test]
++    fn a_new_leader_log_ends_with_a_noop_of_its_term() {
++        let peers = |exclude: &str| -> Vec<String> {
++            vec!["n1", "n2", "n3"]
++                .into_iter()
++                .filter(|&id| id != exclude)
++                .map(String::from)
++                .collect()
++        };
++        let mut nodes = vec![
++            RaftNode::new("n1".to_string(), peers("n1")),
++            RaftNode::new("n2".to_string(), peers("n2")),
++            RaftNode::new("n3".to_string(), peers("n3")),
++        ];
++        nodes[0].last_heartbeat = Instant::now() - Duration::from_millis(500);
++        drive_until_leader(&mut nodes, 100);
++        let leader = nodes.iter().find(|n| n.is_leader()).expect("leader");
++        let last = leader.log.last().expect("the leader appended an entry");
++        assert_eq!(last.command, ClusterCommand::Noop);
++        assert_eq!(last.term, leader.current_term());
++        assert_eq!(last.index, leader.last_log_index());
++    }
++
++    #[test]
++    fn a_leader_that_cannot_persist_its_noop_steps_down() {
++        let dir = tempfile::tempdir().expect("tempdir");
++        let mut n1 = RaftNode::with_storage("n1".to_string(), vec!["n2".to_string()], dir.path())
++            .expect("open log");
++        let mut n2 = RaftNode::new("n2".to_string(), vec!["n1".to_string()]);
++        n1.force_election_timeout();
++        let votes = n1.tick
+```
+
+**File**: `engine/crates/xerj-cluster/tests/log_catchup.rs` (modified, +130/-73)
+```diff
+@@ -62,19 +62,8 @@ fn fresh_dirs(n: usize) -> Vec<(TempDir, PathBuf)> {
+         .collect()
+ }
+ 
+-async fn pump_until(nodes: &mut [ClusterNode], mut done: impl FnMut(&[ClusterNode]) -> bool) {
+-    let deadline = Instant::now() + Duration::from_secs(10);
+-    while Instant::now() < deadline {
+-        for node in nodes.iter_mut() {
+-            node.step(Duration::from_millis(5))
+-                .await
+-                .expect("raft step");
+-        }
+-        if done(nodes) {
+-            return;
+-        }
+-    }
+-    let summary: Vec<String> = nodes
++fn summary(nodes: &[ClusterNode]) -> Vec<String> {
++    nodes
+         .iter()
+         .map(|node| {
+             format!(
+@@ -87,8 +76,109 @@ async fn pump_until(nodes: &mut [ClusterNode], mut done: impl FnMut(&[ClusterNod
+                 node.metadata.indices.keys().collect::<Vec<_>>()
+             )
+         })
+-        .collect();
+-    panic!("timed out: {summary:?}");
++        .collect()
++}
++
++/// One step on every member, run in parallel as separate machines would.
++///
++/// A step can block on fsync. Stepping members one after another adds those
++/// waits up, and a slow disk then reads as a missed heartbeat on the member
++/// that waits its turn, which a real cluster does not see.
++async fn step_all(nodes: &mut [ClusterNode]) {
++    tokio::task::block_in_place(|| {
++        std::thread::scope(|scope| {
++            for node in nodes.iter_mut() {
++                let rt = tokio::runtime::Handle::current();
++                scope.spawn(move || {
++                    rt.block_on(node.step(Duration::from_millis(5)))
++                        .expect("raft step");
++                });
++            }
++        });
++    });
++}
++
++async fn pump_until(nodes: &mut [ClusterNode], mut done: impl FnMut(&[ClusterNode]) -> bool) {
++    let deadline = Instant::now() + Duration::from_secs(10);
++    while Instant::now() < deadline {
++        step_all(nodes).await;
++        if done(nodes) {
++            return;
++        }
++    }
++    panic!("timed out: {:?}", summary(nodes));
++}
++
++/// Propose `cmd` on the current leader until `done` holds on every member.
++///
++/// A proposal is legitimately dropped when leadership moves before it
++/// commits. It is proposed again only once it is provably dead: some member
++/// has committed a different entry at its index. Re-proposing earlier (on a
++/// timer, or because the new leader lacks it) can commit it twice, since a
++/// later leader that does hold it would still commit it. The new leader's
++/// term-start no-op is what makes the dead case show up promptly.
++async fn propose_until(
++    nodes: &mut [ClusterNode],
++    cmd: ClusterCommand,
++    mut done: impl FnMut(&[ClusterNode]) -> bool,
++) {
++    let deadline = Instant::now() + Duration::from_secs(20);
++    // (index, term) of the last proposal that was accepted.
++    let mut pending: Option<(u64, u64)> = None;
++    while Instant::now() < deadline {
++        if done(nodes) {
++            return;
++        }
++        let leader = nodes
++            .iter()
++            .enumerate()
++            .filter(|(_, n)| n.is_leader())
++            .max_by_key(|(_, n)| n.raft.current_term())
++            .map(|(i, _)| i);
++        let dropped = match pending {
++            None => true,
++            Some((index, term)) => nodes.iter().any(|n| {
++                n.raft.commit_index() >= index
++                    && index > n.snapshot_index()
++                    && n.raft.entry_term(index) != Some(term)
++            }),
++        };
++        if let (true, Some(l)) = (dropped, leader) {
++            let term = nodes[l].raft.current_term();
++            if let Ok(index) = nodes[l].propose(cmd.clone()) {
++                pending = Some((index, term));
++            }
++        }
++        step_all(nodes).await;
++    }
++    panic!("proposal never applied: {:?}", summary(nodes));
++}
++
++fn has_index(node: &ClusterNode) -> bool {
++    node.metadata.indices.contains_key("orders")
++}
++
++/// Create `orders` and mark n2 in sync for shard 0, on every member.
++async fn create_orders(nodes: &mut [ClusterNode]) {
++    propose_until(
++        nodes,
++        ClusterCommand::CreateIndex {
++            name: "orders".into(),
++            schema_json: "{}".into(),
++        },
++        |nodes| nodes.iter().all(has_index),
++    )
++    .await;
++    propose_until(
++        nodes,
++        ClusterCommand::SetShardInSync {
++            index: "orders".into(),
++            shard: 0,
++            nodes: vec!["n2".into()],
++        },
++        |nodes| nodes.iter().all(has_orders),
++    )
++    .await;
+ }
+ 
+ fn has_orders(node: &ClusterNode) -> bool {
+@@ -101,7 +191,7 @@ fn has_orders(node: &ClusterNode) -> bool {
+             == Some("n2")
+ }
+ 
+-#[tokio::test]
++#[tokio::test(flavor = "multi_thread", worker_threads = 2)]
+ async fn restart_replays_the_committed_index_and_in_sync_set() {
+     let ids = ["n1", "n2", "n3"];
+     let held = fresh_dirs(3);
+@@ -112,21 +202,7 @@ async fn restart_replays_the_committed_index_a
+```
+
+**File**: `engine/crates/xerj-cluster/tests/persistent_raft_test.rs` (modified, +15/-7)
+```diff
+@@ -33,9 +33,10 @@ fn single_node_persistent_roundtrip() {
+             node.propose(cmd).unwrap();
+         }
+ 
+-        // Single-node clusters commit immediately in propose().
+-        assert_eq!(node.commit_index(), 50);
+-        assert_eq!(node.log_len(), 50);
++        // Single-node clusters commit immediately in propose(). Index 1 is
++        // the no-op the leader appended when it took term 1.
++        assert_eq!(node.commit_index(), 51);
++        assert_eq!(node.log_len(), 51);
+     }
+ 
+     // The file must have been fsynced to disk.
+@@ -49,22 +50,29 @@ fn single_node_persistent_roundtrip() {
+ 
+     // ── Phase 2: reopen and verify replay ────────────────────────────
+     {
+-        let node2 = RaftNode::with_storage("n1".into(), vec![], &path).unwrap();
++        let mut node2 = RaftNode::with_storage("n1".into(), vec![], &path).unwrap();
+         assert_eq!(
+             node2.log_len(),
+-            50,
+-            "all 50 entries must replay from disk on restart"
++            51,
++            "the no-op and all 50 entries must replay from disk on restart"
+         );
+         assert_eq!(
+             node2.commit_index(),
+-            50,
++            51,
+             "commit_index must survive restart"
+         );
+         assert_eq!(
+             node2.current_term(),
+             1,
+             "current_term must be at least the term of the replayed entries"
+         );
++        let replayed = node2.ready();
++        assert_eq!(replayed.len(), 51);
++        assert_eq!(
++            replayed[0].command,
++            ClusterCommand::Noop,
++            "the no-op decodes from the file log"
++        );
+     }
+ 
+     // ── Phase 3: reopening must be idempotent — size stays identical
+```
+
+**File**: `engine/crates/xerj-cluster/tests/prev_term_commit.rs` (added, +94/-0)
+```diff
+@@ -0,0 +1,94 @@
++//! A new leader must commit an entry it inherited from an earlier term
++//! without waiting for a client write (Raft §5.4.2, §8).
++//!
++//! The leader only counts replicas for entries of its own term, so it needs
++//! one of those in its log. Before the leader no-op existed, an entry that
++//! reached a majority under the old leader stayed at commit=0 until the next
++//! client proposal, and metadata writes after an election hung.
++
++use xerj_cluster::raft::{ClusterCommand, OutboundMessage, RaftNode};
++
++const IDS: [&str; 3] = ["n1", "n2", "n3"];
++
++fn peers(except: &str) -> Vec<String> {
++    IDS.iter()
++        .filter(|p| **p != except)
++        .map(|p| p.to_string())
++        .collect()
++}
++
++fn pos(nodes: &[RaftNode], id: &str) -> usize {
++    nodes.iter().position(|n| n.id == id).expect("known node")
++}
++
++/// Deliver messages, and every reply they cause, among `alive` only.
++fn deliver(nodes: &mut [RaftNode], alive: &[&str], msgs: Vec<OutboundMessage>) {
++    let mut queue = msgs;
++    while !queue.is_empty() {
++        let mut next = Vec::new();
++        for m in queue {
++            if !alive.contains(&m.to.as_str()) {
++                continue;
++            }
++            let i = pos(nodes, &m.to);
++            next.extend(nodes[i].handle_message(m.msg));
++        }
++        queue = next;
++    }
++}
++
++#[test]
++fn a_new_leader_commits_a_previous_term_entry_held_by_a_majority() {
++    let mut nodes: Vec<RaftNode> = IDS
++        .iter()
++        .map(|id| RaftNode::new(id.to_string(), peers(id)))
++        .collect();
++
++    // Term 1: n1 leads.
++    nodes[0].force_election_timeout();
++    let votes = nodes[0].tick();
++    deliver(&mut nodes, &IDS, votes);
++    assert!(nodes[0].is_leader());
++
++    // n1 appends an entry and only n2 stores it. n2's ack is lost, so n1
++    // never learns the entry is on a majority.
++    let idx = nodes[0]
++        .propose(ClusterCommand::UpdateConfig {
++            key: "k".into(),
++            value: "v".into(),
++        })
++        .expect("propose on the leader");
++    for m in nodes[0].force_heartbeat() {
++        if m.to == "n2" {
++            let _lost_ack = nodes[1].handle_message(m.msg);
++        }
++    }
++    assert!(nodes[1].log_len() as u64 >= idx, "n2 stores entry {idx}");
++    assert!(nodes[0].commit_index() < idx, "n1 never saw a majority");
++
++    // n1 goes away. n2 has the longer log and wins with n3's vote.
++    let alive = ["n2", "n3"];
++    nodes[1].force_election_timeout();
++    let votes = nodes[1].tick();
++    deliver(&mut nodes, &alive, votes);
++    assert!(nodes[1].is_leader(), "n2 wins term 2");
++
++    for _ in 0..20 {
++        let hb = nodes[1].force_heartbeat();
++        deliver(&mut nodes, &alive, hb);
++    }
++    assert!(
++        nodes[2].log_len() as u64 >= idx,
++        "n3 stores entry {idx}: it is on 2 of 3 members"
++    );
++    assert!(
++        nodes[1].commit_index() >= idx,
++        "entry {idx} on a majority is committed by the new leader (leader commit={})",
++        nodes[1].commit_index()
++    );
++    assert!(
++        nodes[2].commit_index() >= idx,
++        "the follower learns the commit too (n3 commit={})",
++        nodes[2].commit_index()
++    );
++}
+```
+
+---
+
+### Incident Patch 3: `df032438` (2026-11-17)
+**Commit Message**: Merge pull request #2993 from xerj-org/fix/cluster-stale-replica-insync-shrink
+
+Adapted to #2992 in this merge: #2992 made Engine::primary_of return
+Result<Option<..>, ShardUnassigned>. #2993's new mark_shard_copies_stale and
+its regression test used the old Option signature; both now unwrap the
+Result (an unassigned shard has no replica to mark stale, so it returns
+early). Without this the two PRs merge cleanly as text but xerj-api does
+not compile.
+
+**File**: `engine/crates/xerj-api/src/cluster_shard.rs` (modified, +141/-54)
+```diff
+@@ -1115,7 +1115,7 @@ fn replica_nack(index: &str, replica: &str, detail: &str) -> ShardResult {
+             "error": {
+                 "type": "replica_not_acknowledged",
+                 "reason": format!(
+-                    "primary applied the write on [{index}] but replica [{replica}] did not acknowledge it: {detail}. The primary has the write; retry the index so the copy can catch up"
++                    "primary applied the write on [{index}] but replica [{replica}] did not acknowledge it: {detail}. The primary has the write; the copy was marked stale and will be backfilled from the primary"
+                 )
+             },
+             "status": 503
+@@ -1124,6 +1124,100 @@ fn replica_nack(index: &str, replica: &str, detail: &str) -> ShardResult {
+     )
+ }
+ 
++/// Publish `nodes` as the in-sync replicas of `index` shard `shard`.
++///
++/// An empty list leaves the primary as the only in-sync copy. `Ok` means the
++/// entry committed and this node applied it with every id in `nodes`
++/// present. The caller holds `replica_sync_lock`.
++async fn publish_in_sync(
++    state: &AppState,
++    index: &str,
++    shard: u32,
++    mut nodes: Vec<String>,
++) -> Result<(), String> {
++    nodes.sort();
++    nodes.dedup();
++    let Some(handle) = state.engine.cluster_handle() else {
++        return Err("no cluster handle to publish the in-sync set".to_string());
++    };
++    match handle
++        .propose(ClusterCommand::SetShardInSync {
++            index: index.to_string(),
++            shard,
++            nodes: nodes.clone(),
++        })
++        .await
++    {
++        Ok(ApplyEffect::Applied) => {
++            let published = state.engine.replica_nodes(index, shard);
++            if nodes.iter().all(|id| published.iter().any(|got| got == id)) {
++                Ok(())
++            } else {
++                Err(
++                    "the in-sync set committed without the replicas that confirmed this write"
++                        .to_string(),
++                )
++            }
++        }
++        Ok(other) => Err(format!("in-sync update applied as {other:?}")),
++        Err(err) => Err(err.to_string()),
++    }
++}
++
++/// Drop every replica of `index` shard `shard` that is not in `keep` from
++/// the in-sync set. Used when the primary applied a write that some copies
++/// did not confirm. The caller holds `replica_sync_lock`.
++async fn mark_stale(
++    state: &AppState,
++    index: &str,
++    shard: u32,
++    targets: &[String],
++    keep: Vec<String>,
++) -> Result<(), String> {
++    let stale: Vec<&String> = targets.iter().filter(|id| !keep.contains(id)).collect();
++    if stale.is_empty() {
++        return Ok(());
++    }
++    match publish_in_sync(state, index, shard, keep).await {
++        Ok(()) => {
++            tracing::warn!(
++                index = %index,
++                shard,
++                stale = ?stale,
++                "replica did not confirm a write the primary applied; marked stale for backfill"
++            );
++            Ok(())
++        }
++        Err(detail) => {
++            tracing::error!(
++                index = %index,
++                shard,
++                stale = ?stale,
++                error = %detail,
++                "replica may be stale and is still in sync: the in-sync shrink did not commit"
++            );
++            Err(detail)
++        }
++    }
++}
++
++/// Drop every in-sync replica of the shard `id` routes to.
++///
++/// For a write the primary applied but could not copy at all (its own
++/// document could not be read back), so no replica has it.
++async fn mark_shard_copies_stale(state: &AppState, index: &str, id: &str) {
++    let Ok(Some((shard, _))) = state.engine.primary_of(index, id) else {
++        return;
++    };
++    if state.engine.placed_replica_nodes(index, shard).is_empty() {
++        return;
++    }
++    let sync = state.engine.replica_sync_lock(index, shard);
++    let _sync = sync.lock().await;
++    let targets = state.engine.replica_nodes(index, shard);
++    let _ = mark_stale(state, index, shard, &targets, Vec::new()).await;
++}
++
+ /// Copy `op` onto the in-sync replicas and wait for a quorum.
+ ///
+ /// The quorum is a majority of the copies placed at create (the primary,
+@@ -1132,9 +1226,10 @@ fn replica_nack(index: &str, replica: &str, detail: &str) -> ShardResult {
+ /// is an upsert or a delete without the caller's sequence check: the
+ /// replica's own sequence numbers are not the primary's.
+ ///
+-/// Every in-sync replica is asked. When enough confirm and some do not, the
+-/// ones that confirmed are published through the Raft log before the caller
+-/// is acknowledged, and later reads skip the rest until
++/// Every in-sync replica is asked. The primary has already applied the
++/// write, so any replica that does not confirm it is removed from the
++/// in-sync set through the Raft log before this returns, whether the
++/// caller gets a success or a 503. Later reads and failover skip it until
+ /// [`backfill_replica`] copies the primary's live
+```
+
+**File**: `engine/crates/xerj-api/tests/cluster_metadata_replicates.rs` (modified, +150/-1)
+```diff
+@@ -794,11 +794,19 @@ async fn a_quorum_of_copies_acks_when_one_of_two_replicas_does_not() {
+         "{body}"
+     );
+ 
++    // Neither replica confirmed a write the primary applied, so both left
++    // the in-sync set before the 503 returned.
++    wait_in_sync(&members, shard, &[]).await;
++
+     members[replica_b]
+         .handle
+         .set_shard_handler(std::sync::Arc::new(ApiShardHandler::new(
+             members[replica_b].state.clone(),
+         )));
++    // Backfill copies the refused write onto replica_b and publishes it
++    // again. Until then the primary has no in-sync replica to make a quorum.
++    let live_id = members[replica_b].handle.node_id().to_string();
++    wait_in_sync(&members, shard, std::slice::from_ref(&live_id)).await;
+ 
+     let (status, body) = put_json(
+         &members[writer].app,
+@@ -858,7 +866,6 @@ async fn a_quorum_of_copies_acks_when_one_of_two_replicas_does_not() {
+         "the replica that did not confirm does not have the document: {on_stale:?}"
+     );
+ 
+-    let live_id = members[replica_b].handle.node_id().to_string();
+     wait_in_sync(&members, shard, &[live_id]).await;
+     assert_eq!(
+         members[primary]
+@@ -3525,3 +3532,145 @@ async fn cluster_disabled_native_doc_stays_on_the_node_that_received_it() {
+     let (status, _) = get(&es_a, "/local/_doc/1").await;
+     assert_eq!(status, StatusCode::NOT_FOUND);
+ }
++
++/// With one replica, a write the replica does not confirm is refused, but the
++/// primary has already applied it. The replica must leave the in-sync set
++/// before the 503 returns, or it is never backfilled and a failover serves
++/// a copy that is missing those documents.
++#[tokio::test(flavor = "multi_thread", worker_threads = 4)]
++async fn a_replica_that_misses_a_refused_write_leaves_the_in_sync_set_and_is_backfilled() {
++    const DOCS: usize = 200;
++    let members = ring(true).await;
++    let _leader = wait_leader(&members, &[false, false, false]).await;
++
++    let (status, body) = put_json(
++        &members[0].app,
++        "/orders",
++        json!({ "settings": { "index": { "number_of_replicas": 1 } } }),
++    )
++    .await;
++    assert!(status.is_success(), "create: {status} {body}");
++    for member in &members {
++        wait_status(&member.app, "/orders", StatusCode::OK).await;
++    }
++
++    let mut target = None;
++    for n in 0..64 {
++        let id = format!("s{n}");
++        let Some(primary) = members
++            .iter()
++            .position(|member| member.engine.owns_shard("orders", &id))
++        else {
++            continue;
++        };
++        let (shard, _) = members[primary]
++            .engine
++            .primary_of("orders", &id)
++            .ok()
++            .flatten()
++            .expect("placement");
++        let replicas = members[primary]
++            .engine
++            .placed_replica_nodes("orders", shard);
++        if replicas.len() != 1 {
++            continue;
++        }
++        target = Some((primary, position_of(&members, &replicas[0]), shard));
++        break;
++    }
++    let (primary, replica, shard) = target.expect("a shard with one replica");
++    let other = (0..3)
++        .find(|n| *n != primary && *n != replica)
++        .expect("a third member");
++    let replica_id = members[replica].handle.node_id().to_string();
++
++    let mut ids = Vec::new();
++    let mut n = 0;
++    while ids.len() < DOCS {
++        let id = format!("doc{n}");
++        n += 1;
++        if members[primary]
++            .engine
++            .primary_of("orders", &id)
++            .ok()
++            .flatten()
++            .is_some_and(|(doc_shard, _)| doc_shard == shard)
++        {
++            ids.push(id);
++        }
++    }
++
++    members[replica].handle.clear_shard_handler();
++    for id in &ids {
++        let (status, body) = put_json(
++            &members[primary].app,
++            &format!("/orders/_doc/{id}"),
++            json!({ "title": id }),
++        )
++        .await;
++        assert_eq!(
++            status,
++            StatusCode::SERVICE_UNAVAILABLE,
++            "primary alone is not a quorum of two copies: {status} {body}"
++        );
++        assert_eq!(
++            body.pointer("/error/type").and_then(|v| v.as_str()),
++            Some("replica_not_acknowledged"),
++            "{body}"
++        );
++    }
++    assert_eq!(
++        primary_shard_sources(&members[primary], shard).await.len(),
++        DOCS,
++        "the primary applied every refused write"
++    );
++
++    for at in [primary, replica, other] {
++        let in_sync = members[at].engine.replica_nodes("orders", shard);
++        assert!(
++            !in_sync.iter().any(|id| id == &replica_id),
++            "member {at} still lists {replica_id} in sync for shard {shard} after it missed {DOCS} writes: {in_sync:?}"
++        );
++    }
++    assert!(
++        replica_sources(&members[replica], shard).await.len() < DOCS,
++        "the replica that refused copies does not have them"
++    );
++
++    restore_handler(&members[replica]);
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3257** (2026-11-18): hub: author-approved contribution candidates (13871 repos) (@xerj-team)
 - **PR #3256** (2026-11-17): hub: author-approved contribution candidates (13872 repos) (@xerj-team)
 - **PR #3255** (2026-11-17): docs(bench): switch the query cache off in benchmark recipes and report its hits (#3020) (@shu-chen-dot-ca)
 - **PR #3254** (2026-11-17): hub: author-approved contribution candidates (13876 repos) (@xerj-team)
 - **PR #3253** (2026-11-17): hub: author-approved contribution candidates (13877 repos) (@xerj-team)
-- **PR #3250** (2026-11-17): hub: author-approved contribution candidates (13887 repos) (@xerj-team)
-- **PR #3249** (2026-11-17): hub: author-approved contribution candidates (13887 repos) (@xerj-team)
+- **PR #3251** (2026-11-18): docs(readme): replace wide hero with two portrait cards that stack on phones (@xerj-team)
 
 ---
 
@@ -2451,7 +3294,7 @@ Checked with a copy of bench-matrix.mjs that differs
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in xerj-org/xerj. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `27a37fd3`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `444f347c`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -2459,26 +3302,15 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-### Changed
-
-- With no `search.max_buckets` set, the node's `limits.max_buckets` (default
-  65536) now also caps the total buckets a `_search` or `_msearch` response
-  keeps across its whole aggregation tree, as Elasticsearch's default does.
-  Before, it capped each aggregation on its own, so a response could keep
-  more buckets in total.
-
-- `search.max_buckets` set through `PUT _cluster/settings` now caps the
-  aggregation buckets of `_search` and `_msearch`, as in Elasticsearch 8. It
-  was stored and returned by `GET _cluster/settings` but never read, so
-  `_search` kept answering 200. The buckets the response keeps are counted
-  across the whole aggregation tree, nested buckets included, with at most
-  `size` counted for `terms`, `significant_terms`, `significant_text`,
-  `multi_terms`, `composite` and the geo grids. A count over the limit is a
-  400 `too_many_buckets_exception` carrying `max_buckets`; transient wins over
-  persistent. A composite `size` over the limit (10 when not given) is
-  refused, and an `_msearch` item over it fails on its own. The node's
-  per-aggregation cap from `limits.max_buckets` still applies too, so a
-  setting above it does not raise that cap. `_a
+- **Cluster: each index routes documents with its own shard count.** The shard
+  router used one hash width for the whole cluster, set to the widest plan, so
+  creating an index with more shards (for example after a fourth node joined)
+  re-bucketed every older index: acknowledged ids answered 404 and new writes
+  landed on a shard the older index's plan does not have. The width is now
+  per index, derived from that index's own plan. A write to a planned shard
+  that has no primary is refused with 503 `shard_not_assigned_exception`
+  instead of being stored on the node that received it. Documents already
+  misplaced on a running cluster are not moved by this fix.
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2488,4 +3320,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `27a37fd3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `444f347c` are properly handled with clean fallback behavior.

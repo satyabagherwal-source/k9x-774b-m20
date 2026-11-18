@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T15:22:21.870Z",
+  "last_updated": "2026-11-18T15:35:20.234Z",
   "directives": [
     {
       "id": "CD-001",
@@ -3678,13 +3678,13 @@
       "learning_id": "learn-github-prometheus-prometheus"
     },
     {
-      "id": "CD-52Q8",
+      "id": "CD-8ZRY",
       "directive_title": "Empirical Invariant Guard in CHANGELOG.md",
-      "source_repo": "sharkdp-fd-learnings",
-      "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-52Q8-empirical-invariant-guard-in-changelog-md.md",
-      "status": "QUARANTINED_REJECT",
-      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "source_repo": "xerj-org/xerj",
+      "source_commit": "dc1a4622",
+      "staged_file": "11_INBOX/candidate-directives/CD-8ZRY-empirical-invariant-guard-in-changelog-md.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
       "date_staged": "2026-11-18",
       "domain_letter": "D"
     },
@@ -29981,6 +29981,28 @@
       "domain_letter": "A",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-7C30C2-forensic-learning-record-deep-inspection.md",
       "staged_date": "2026-11-18"
+    },
+    {
+      "id": "CD-8X7N",
+      "directive_title": "page BLE AP list and notify wifi connect result immediately",
+      "source_repo": "beclab/Olares",
+      "source_commit": "a2fc3c1e",
+      "staged_file": "11_INBOX/candidate-directives/CD-8X7N-page-ble-ap-list-and-notify-wifi-connect-result-immediately.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-18",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-92ND",
+      "directive_title": "daemon): page BLE AP list and notify wifi connect result immediately",
+      "source_repo": "beclab-olares-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-92ND-daemon-page-ble-ap-list-and-notify-wifi-connect-result-immediately.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-18",
+      "domain_letter": "G"
     }
   ]
 }

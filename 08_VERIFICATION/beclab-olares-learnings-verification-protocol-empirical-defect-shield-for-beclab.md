@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-18T00:08:02.039Z",
+  "timestamp": "2026-11-18T15:35:20.127Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-beclab-olares-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [beclab-olares-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-18T00:08:02.039Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-18T15:35:20.127Z`  
 > **Learning ID**: `LEARN-EVO-beclab-olares-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/beclab-olares-learnings.md`  
 > **Source**: github ([https://github.com/beclab/Olares](https://github.com/beclab/Olares))  
-> **Source Version**: `139e4a83`  
+> **Source Version**: `a2fc3c1e`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-18T00:07:54.023Z  
+> **Timestamp**: 2026-11-18T15:35:12.061Z  
 > **Learning ID**: `learn-github-beclab-olares`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/beclab-olares-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/beclab/Olares](https://github.com/beclab/Olares))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T00:07:54.019Z  
+> **Harvest Timestamp**: 2026-11-18T15:35:12.055Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Open-Source Personal Cloud OS for Always-On Agents
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 5363 stars
+- **Stars / Engagement**: 5365 stars
 
 ---
 
@@ -1162,218 +1162,767 @@ export const formatPathtoUrl = (path: string) => {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `139e4a83` (2026-11-17)
-**Commit Message**: fix(cli): clean up full uninstall and verify installer release identity (#4457)
+### Incident Patch 1: `8293f92d` (2026-11-18)
+**Commit Message**: fix(daemon): page BLE AP list and notify wifi connect result immediately (#4461)
 
-Remove the running CLI and matching launch or installer symlinks only after uninstall --all succeeds. Preserve paths replaced during uninstall and keep internal node-join cleanup unchanged.
+* fix(daemon): page BLE AP list across five characteristics
 
-Reuse an installed CLI only when version and vendor match, also checking the release ID against the full Git commit when metadata is available. Fall back to version and vendor for missing or unknown commit metadata.
+The BLE ListAP characteristic is limited to 512 bytes, so only the strongest few APs were advertised. Keep 0x1200 as page 1 and add 0x1202-0x1205 for pages 2-5, filled in priority order.
 
-**File**: `build/base-package/install.sh` (modified, +24/-2)
+Co-authored-by: Cursor <[REDACTED_EMAIL]>
+
+* ci: update GOPRIVATE and GIT_CONFIG for backups-sdk integration (#4462)
+
+fix: update GOPRIVATE and GIT_CONFIG for backups-sdk integration
+
+* feat(rag): update component images for 1.12.9 (#4460)
+
+* chore(rag): update component images for 1.12.9
+
+* ci: keep owner prefix in release-cli insteadOf rewrite
+
+Co-authored-by: Cursor <[REDACTED_EMAIL]>
+
+---------
+
+Co-authored-by: eball <[REDACTED_EMAIL]>
+Co-authored-by: Cursor <[REDACTED_EMAIL]>
+
+* fix(daemon): notify BLE wifi connect result immediately
+
+The connect result was only pushed to the ConnectWifi characteristic on the periodic refresh, which backs off to 30s once the node is online. LarePass waits 15s, so it timed out while the state was already OK. Write the characteristic whenever the connect state changes. Also align ble_test.go with the OlaresServiceUUID re
+
+**File**: `daemon/docs/wifi-and-portal.md` (modified, +7/-3)
 ```diff
-@@ -7,6 +7,28 @@ function command_exists() {
- 	  command -v "$@" > /dev/null 2>&1
+@@ -55,9 +55,13 @@ capabilities; the strongest AP represents a group. HTTP additionally includes
+ status entirely (neither `connected` nor `co`). Its AP list contains only
+ `ss` (SSID), `st` (signal strength), and `se` (authentication types); `bs` and
+ `if` are omitted. Equivalent SSID/authentication entries across radios are merged,
+-keeping the strongest signal. Entries retain
+-the internal connection/signal priority order; an entry that does not fit is
+-skipped so a shorter later entry can use the remaining 512-byte capacity. Connection payloads exceeding 512 bytes are
++keeping the strongest signal. The BLE AP list is split across up to five
++characteristics, each a standalone JSON array of at most 512 bytes: page 1 is
++`0x1200` (unchanged, so clients reading only it keep working) and pages 2-5 are
++`0x1202`, `0x1203`, `0x1204`, and `0x1205`. Pages are filled in the internal
++connection/signal priority order; when the next entry does not fit, it starts
++the next page, so concatenating pages 1-5 preserves the order. Unused pages are
++`[]`, and entries beyond the fifth page are dropped. Connection payloads exceeding 512 bytes are
+ rejected by the BLE parser; no application-level fragmentation is implemented.
+ Bluetooth stacks may themselves reject an oversized write before it reaches the
+ server. Use HTTP for larger enterprise requests.
+```
+
+**File**: `daemon/internel/ble/ble_common.go` (modified, +38/-22)
+```diff
+@@ -73,15 +73,23 @@ func (s *service) SetUpdateApListCB(f func([]AccessPoint)) {
+ 	s.updateApListCB = f
  }
  
-+function installed_cli_matches() {
-+    local version_output current_version current_commit
-+    command_exists olares-cli || return 1
-+    version_output=$(olares-cli --version) || return 1
-+    current_version=$(awk 'NR==1{print $3}' <<< "$version_output")
-+    [[ "$current_version" == "$VERSION" ]] || return 1
-+    [[ "$(olares-cli --vendor)" == "$expected_vendor" ]] || return 1
-+
-+    if [[ -n "$RELEASE_ID_SUFFIX" ]]; then
-+        current_commit=$(awk '/^Git commit: /{print $3; exit}' <<< "$version_output")
-+        # Older or unstamped binaries can still be reused by version/vendor.
-+        if [[ -z "$current_commit" || "$current_commit" == "unknown" ]]; then
-+            return 0
-+        fi
-+        # Release workflows use git rev-parse --short=7 (at least 7 digits),
-+        # while GoReleaser stamps GitCommit with .FullCommit.
-+        [[ "$RELEASE_ID" =~ ^[0-9a-f]{7,40}$ ]] || return 1
-+        [[ "$current_commit" =~ ^[0-9a-f]{40}$ ]] || return 1
-+        [[ "$current_commit" == "$RELEASE_ID"* ]] || return 1
-+    fi
-+}
-+
- if [[ x"$REPO_PATH" == x"" ]]; then
-     export REPO_PATH="#__REPO_PATH__"
- fi
-@@ -100,9 +122,9 @@ else
-     if [[ "$(basename "$REPO_PATH")" == "olares-one" ]]; then
-         expected_vendor="OlaresOne"
-     fi
--    if command_exists olares-cli && [[ "$(olares-cli -v | awk 'NR==1{print $3}')" == "$VERSION" ]] && [[ "$(olares-cli --vendor)" == "$expected_vendor" ]]; then
-+    if installed_cli_matches; then
-         INSTALL_OLARES_CLI=$(which olares-cli)
--        echo "olares-cli already installed and is the expected version"
-+        echo "olares-cli already installed and matches the expected version, vendor and release"
-         echo ""
-     else
-         if [[ ! -f ${CLI_FILE} ]] || ! gzip -t ${CLI_FILE} 2>/dev/null; then
-```
-
-**File**: `cli/cmd/ctl/os/self_remove.go` (added, +111/-0)
-```diff
-@@ -0,0 +1,111 @@
-+package os
-+
-+import (
-+	"fmt"
-+	"os"
-+	"os/exec"
-+	"path/filepath"
-+	"runtime"
-+	"strings"
-+)
-+
-+// prepareSelfRemoval captures the running binary before uninstall starts, so
-+// cleanup cannot remove a replacement installed while the pipeline was running.
-+func prepareSelfRemoval() (func() error, error) {
-+	if runtime.GOOS == "windows" {
-+		// Windows does not allow unlinking a running executable.
-+		return nil, nil
-+	}
-+	executable, err := os.Executable()
-+	if err != nil {
-+		return nil, err
-+	}
-+	executable, err = filepath.EvalSymlinks(executable)
-+	if err != nil {
-+		return nil, err
-+	}
-+	runningPath := executable
-+	if runtime.GOOS == "linux" {
-+		runningPath = "/proc/self/exe"
-+	}
-+	running, err := os.Stat(runningPath)
-+	if err != nil {
-+		return nil, err
-+	}
-+	// os.Executable can already resolve the launch symlink. Check argv[0]
-+	// separately, plus the installer-managed entry point for direct launches
-+	// of the target binary. Only capture links to this running executable.
-+	return prepareExecutableRemoval(executable, running, os.Args[0], "/usr/local/bin/olares-cli"), nil
-+}
-+
-+func prepareExecutableRemoval(executable string, running os.FileInfo, entryPaths ...string) func() error {
-+	type removalFile struct {
-+		path string
-+		info os.FileInfo
-+	}
-+	var files []removalFile
-+	seen := map[string]bool{executable: true}
-+	for _, entry := range entryPaths {
-+		if !strings.ContainsRune(entry, os.PathSeparator) {
-+			var err error
-+			entry, err = exec.LookPath(entry)
-+			if err != nil {
-+				continue
-+			}
-+		}
-+		entry, err := filepath.Abs(entry)
-+		if err != nil || seen[entry] {
-+			continue
-+		}
-+		link, err := os.Lstat(entry)
-+		if err != nil || link.Mode()&os.ModeSymlink == 0 {
-+			continue
-+		}
-+		target, err := os.Stat(entry)
-+		if err != nil || !os.SameFile(running, target) {
-+			continue
-+		}
-+		files = append(files, removalFile{entry, link})
-+		seen[entry] = true
-+	}
-+	files = append(files, removalFile{executable, running})
-+	return func() error {
-+		// Validate all paths before removing anything: a replaced entry point
-+		// might still need the original target. Remove entry links first.
-+		for _, file := range files {
-+			if err := checkUnchangedExecutable(file.path, file.info); err != nil {
-+				return err
-+			}
-+		}
-+		for _, file := range files {
-+			if err := removeUnchangedExecutable(file.path, file.info); err != nil {
-+				return err
-+			}
-+		}
-+		return nil
++// setConnectState publishes the state to the ConnectWifi characteristic right
++// away; the periodic refresh can lag up to bleScanIntervalIdle once online,
++// which is longer than the client waits for a result.
++func (s *service) setConnectState(state ConnectState) {
++	s.wifiConnectState = state.String()
++	if s.notifyConnectState != nil {
++		s.notifyConnectState()
 +	}
 +}
 +
-+func checkUnchangedExecutable(path string, running os.FileInfo) error {
-+	current, err := os.Lstat(path)
-+	if os.IsNotExist(err) {
-+		return nil
-+	}
-+	if err != nil {
-+		return err
-+	}
-+	if !os.SameFile(running, current) {
-+		return fmt.Errorf("%s was replaced during uninstall; leaving the replacement in place", path)
-+	}
-+	return nil
-+}
-+
-+func removeUnchangedExecutable(path string, running os.FileInfo) error {
-+	if err := checkUnchangedExecutable(path, running); err != nil {
-+		return err
-+	}
-+	if err := os.Remove(path); !os.IsNotExist(err) {
-+		return err
-+	}
-+	return nil
-+}
-```
-
-**File**: `cli/cmd/ctl/os/uninstall.go` (modified, +14/-1)
-```diff
-@@ -16,10 +16,23 @@ func NewCmdUninstallOs() *cobra.Command {
- 		Use:   "uninstall",
- 		Short: "Uninstall Olares",
- 		Run: func(cmd *cobra.Command, args []string) {
-+			var removeSelf func() error
-+			if viper.GetBool(common.FlagUninstallAll) {
-+				var err error
-+				removeSelf, err = prepareSelfRemoval()
-+				if err != nil {
-+					log.Fatalf("cannot prepare olares-cli removal: %v", err)
-+				}
-+			}
- 			err := pipelines.UninstallTerminusPipeline(cmd.Context())
- 			if err != nil {
- 				log.Fatalf("error: %v", err)
- 			}
-+			if removeSelf != nil {
-+				if err := removeSelf(); err != nil {
-+					log.Fatalf("Olares was uninstalled, but could not remove olares-cli: %v", err)
-+				}
-+			}
- 		},
+ func (s *service) connectWifi(value []byte) {
+ 	cctx, err := s.parseConnectConext(value)
+ 	if err != nil {
+-		state := ConnectState{
++		s.setConnectState(ConnectState{
+ 			State:  ptr.To(Fail),
+ 			ErrMsg: ptr.To(err.Error()),
+-		}
+-
+-		s.wifiConnectState = state.String()
++		})
+ 		return
  	}
  
-@@ -31,7 +44,7 @@ func NewCmdUninstallOs() *cobra.Command {
+@@ -90,20 +98,16 @@ func (s *service) connectWifi(value []byte) {
+ 	cmd := connectwifi.New()
+ 	_, err = cmd.Execute(s.ctx, &param)
+ 	if err != nil {
+-		state := ConnectState{
++		s.setConnectState(ConnectState{
+ 			State:  ptr.To(Fail),
+ 			ErrMsg: ptr.To(err.Error()),
+-		}
+-
+-		s.wifiConnectState = state.String()
++		})
+ 		return
+ 	}
  
- 	// these two flags' names are too general, and only used in cmd options, so we manually bind them to the viper
- 	// inside the pipeline creator, it still uses the flag vars to get the values
--	cmd.Flags().Bool("all", false, "Uninstall Olares completely, including prepared dependencies")
-+	cmd.Flags().Bool("all", false, "Uninstall Olares completely, including prepared dependencies and the CLI itself on Linux/macOS")
- 	viper.BindPFlag(common.FlagUninstallAll, cmd.Flags().Lookup("all"))
- 	cmd.Flags().String("phase", cluster.PhaseInstall.String(), "Uninstall from a specified phase and revert to the previous one. For example, using --phase install will remove the tasks performed in the 'install' phase, effectively returning the system to the 'prepare' state.")
- 	viper.BindPFlag(common.FlagUninstallPhase, cmd.Flags().Lookup("phase"))
+-	state := ConnectState{
++	s.setConnectState(ConnectState{
+ 		State: ptr.To(OK),
+-	}
+-
+-	s.wifiConnectState = state.String()
++	})
+ }
+ 
+ func (s *service) parseConnectConext(value []byte) (*ConnectContext, error) {
+@@ -214,26 +218,38 @@ func (s *service) publishAPList(list []AccessPoint) {
+ 		positions[key] = len(compact)
+ 		compact = append(compact, advertisedAP{SSID: ap.SSID, Strength: ap.Strength, SecurityTypes: security})
+ 	}
+-	// Measure serialized bytes, including JSON punctuation and escaping. Skip
+-	// entries that cannot fit so shorter later entries can fill the capacity.
++	s.apPages = paginateAPs(compact)
++}
++
++// paginateAPs fills pages in order so concatenating them preserves priority.
++// Each page is a standalone JSON array of at most bleAPPageSize bytes, measured
++// including punctuation and escaping. Unused pages are "[]".
++func paginateAPs(aps []advertisedAP) [bleAPPageCount]string {
++	pages := emptyAPPages()
++	page := 0
+ 	data := []byte{'['}
+-	for _, ap := range compact {
++	for _, ap := range aps {
+ 		item, err := json.Marshal(ap)
+ 		if err != nil {
+ 			klog.Error("Failed to marshal wifi access point")
+ 			continue
+ 		}
+-		separator := 0
+-		if len(data) > 1 {
+-			separator = 1
+-		}
+-		if len(data)+separator+len(item)+1 > 512 {
++		if len(item)+2 > bleAPPageSize {
+ 			continue
+ 		}
+-		if separator != 0 {
++		if len(data) > 1 && len(data)+1+len(item)+1 > bleAPPageSize {
++			pages[page] = string(append(data, ']'))
++			page++
++			if page == bleAPPageCount {
++				return pages
++			}
++			data = []byte{'['}
++		}
++		if len(data) > 1 {
+ 			data = append(data, ',')
+ 		}
+ 		data = append(data, item...)
+ 	}
+-	s.apList = string(append(data, ']'))
++	pages[page] = string(append(data, ']'))
++	return pages
+ }
+```
+
+**File**: `daemon/internel/ble/ble_linux.go` (modified, +72/-58)
+```diff
+@@ -40,84 +40,98 @@ func NewBleService(ctx context.Context) (*service, error) {
+ 	adv := adapter.DefaultAdvertisement()
+ 	adv.Configure(bluetooth.AdvertisementOptions{
+ 		LocalName:    localName,
+-		ServiceUUIDs: []bluetooth.UUID{OlaersServiceUUID},
++		ServiceUUIDs: []bluetooth.UUID{OlaresServiceUUID},
+ 	})
+ 
+ 	klog.Info("starting adapter")
+ 	adv.Start()
+ 
+ 	// create a service
+ 	c, cancel := context.WithCancel(ctx)
+-	s := &service{ctx: c, cancel: cancel}
++	s := &service{ctx: c, cancel: cancel, apPages: emptyAPPages()}
+ 
+ 	var connectWifi bluetooth.Characteristic
+-	var listAp bluetooth.Characteristic
++	var listAp [bleAPPageCount]bluetooth.Characteristic
+ 	var terminusInfo bluetooth.Characteristic
+ 
+-	adapter.AddService(&bluetooth.Service{
+-		UUID: OlaersServiceUUID,
+-		Characteristics: []bluetooth.CharacteristicConfig{
+-			{
+-				Handle: &connectWifi,
+-				UUID:   ConnectWifiUUID,
+-				Value:  []byte(s.wifiConnectState),
+-				Flags: bluetooth.CharacteristicReadPermission |
+-					bluetooth.CharacteristicWritePermission |
+-					bluetooth.CharacteristicWriteWithoutResponsePermission |
+-					bluetooth.CharacteristicNotifyPermission,
+-				WriteEvent: func(client bluetooth.Connection, offset int, value []byte) {
+-					if offset != 0 || len(value) == 0 {
+-						klog.Info("ignore invalid wifi write at offset ", offset)
+-						return
+-					}
+-
+-					var state ConnectState
+-					if err := json.Unmarshal(value, &state); err == nil && state.State != nil {
+-						// write state value
++	characteristics := []bluetooth.CharacteristicConfig{
++		{
++			Handle: &connectWifi,
++			UUID:   ConnectWifiUUID,
++			Value:  []byte(s.wifiConnectState),
++			Flags: bluetooth.CharacteristicReadPermission |
++				bluetooth.CharacteristicWritePermission |
++				bluetooth.CharacteristicWriteWithoutResponsePermission |
++				bluetooth.CharacteristicNotifyPermission,
++			WriteEvent: func(client bluetooth.Connection, offset int, value []byte) {
++				if offset != 0 || len(value) == 0 {
++					klog.Info("ignore invalid wifi write at offset ", offset)
++					return
++				}
++
++				var state ConnectState
++				if err := json.Unmarshal(value, &state); err == nil && state.State != nil {
++					// write state value
++					return
++				}
++
++				klog.Info("start to connect wifi")
++
++				// connect
++				if err := json.Unmarshal([]byte(s.wifiConnectState), &state); err == nil {
++					if *state.State == Connecting {
++						// ignore redo connecting
+ 						return
+ 					}
++				}
+ 
+-					klog.Info("start to connect wifi")
+-
+-					// connect
+-					if err := json.Unmarshal([]byte(s.wifiConnectState), &state); err == nil {
+-						if *state.State == Connecting {
+-							// ignore redo connecting
+-							return
+-						}
+-					}
++				s.setConnectState(ConnectState{
++					State:  ptr.To(Connecting),
++					ErrMsg: ptr.To(fmt.Sprintf("start to connect wifi")),
++				})
+ 
+-					state = ConnectState{
+-						State:  ptr.To(Connecting),
+-						ErrMsg: ptr.To(fmt.Sprintf("start to connect wifi")),
+-					}
+-
+-					s.wifiConnectState = state.String()
+-					connectWifi.Write([]byte(s.wifiConnectState))
+-
+-					// connect wifi
+-					go s.connectWifi(value)
+-				},
+-			},
+-			{
+-				Handle: &listAp,
+-				UUID:   ListAPUUID,
+-				Value:  []byte(s.apList),
+-				Flags: bluetooth.CharacteristicReadPermission |
+-					bluetooth.CharacteristicNotifyPermission,
+-			},
+-			{
+-				Handle: &terminusInfo,
+-				UUID:   TerminusInfoUUID,
+-				Value:  []byte(s.wifiConnectState),
+-				Flags: bluetooth.CharacteristicReadPermission |
+-					bluetooth.CharacteristicNotifyPermission,
++				// connect wifi
++				go s.connectWifi(value)
+ 			},
+ 		},
++		{
++			Handle: &listAp[0],
++			UUID:   ListAPUUID,
++			Value:  []byte(s.apPages[0]),
++			Flags: bluetooth.CharacteristicReadPermission |
++				bluetooth.CharacteristicNotifyPermission,
++		},
++		{
++			Handle: &terminusInfo,
++			UUID:   TerminusInfoUUID,
++			Value:  []byte(s.wifiConnectState),
++			Flags: bluetooth.CharacteristicReadPermission |
++				bluetooth.CharacteristicNotifyPermission,
++		},
++	}
++	for i := 1; i < bleAPPageCount; i++ {
++		characteristics = append(characteristics, bluetooth.CharacteristicConfig{
++			Handle: &listAp[i],
++			UUID:   ListAPPageUUIDs[i],
++			Value:  []byte(s.apPages[i]),
++			Flags: bluetooth.CharacteristicReadPermission |
++				bluetooth.CharacteristicNotifyPermission,
++		})
++	}
++
++	adapter.AddService(&bluetooth.Service{
++		UUID:            OlaresServiceUUID,
++		Characteristics: characteristics,
+ 	})
+ 
++	s.notifyConnectState = func() {
++		connectWifi.Write([]byte(s.wifiConnectState))
++	}
++
+ 	s.update = func() {
+-		listAp.Write([]byte(s.apList))
++		for i := range listAp {
++			listAp[i].Write([]byte(s.apPages[i]))
++		}
+ 		terminusInfo.Write([]byte(s.terminusInfo))
+ 		connectWifi.Write([]byte(s.wifiConnectState))
+ 	}
+```
+
+**File**: `daemon/internel/ble/ble_page_test.go` (added, +91/-0)
+```diff
+@@ -0,0 +1,91 @@
++package ble
++
++import (
++	"encoding/json"
++	"fmt"
++	"testing"
++
++	"github.com/beclab/Olares/daemon/internel/wifi"
++)
++
++func makeAdvertisedAPs(n int) []advertisedAP {
++	aps := make([]advertisedAP, n)
++	for i := range aps {
++		aps[i] = advertisedAP{
++			SSID:          fmt.Sprintf("network-%03d", i),
++			Strength:      byte(100 - i%100),
++			SecurityTypes: []wifi.Security{},
++		}
++	}
++	return aps
++}
++
++func decodePages(t *testing.T, pages [bleAPPageCount]string) []advertisedAP {
++	t.Helper()
++	var all []advertisedAP
++	for i, page := range pages {
++		if len(page) > bleAPPageSize {
++			t.Fatalf("page %d is %d bytes, exceeds %d", i+1, len(page), bleAPPageSize)
++		}
++		var decoded []advertisedAP
++		if err := json.Unmarshal([]byte(page), &decoded); err != nil {
++			t.Fatalf("page %d is not valid JSON: %v", i+1, err)
++		}
++		all = append(all, decoded...)
++	}
++	return all
++}
++
++func TestPaginateAPsFewEntries(t *testing.T) {
++	pages := paginateAPs(makeAdvertisedAPs(3))
++	if got := decodePages(t, pages); len(got) != 3 {
++		t.Fatalf("expected 3 entries, got %d", len(got))
++	}
++	for i := 1; i < bleAPPageCount; i++ {
++		if pages[i] != "[]" {
++			t.Fatalf("page %d should be empty, got %s", i+1, pages[i])
++		}
++	}
++}
++
++func TestPaginateAPsEmpty(t *testing.T) {
++	for i, page := range paginateAPs(nil) {
++		if page != "[]" {
++			t.Fatalf("page %d should be empty, got %s", i+1, page)
++		}
++	}
++}
++
++func TestPaginateAPsPreservesOrderAcrossPages(t *testing.T) {
++	aps := makeAdvertisedAPs(40)
++	pages := paginateAPs(aps)
++	if pages[1] == "[]" {
++		t.Fatal("expected entries to spill into the second page")
++	}
++	got := decodePages(t, pages)
++	if len(got) != len(aps) {
++		t.Fatalf("expected %d entries, got %d", len(aps), len(got))
++	}
++	for i := range got {
++		if got[i].SSID != aps[i].SSID {
++			t.Fatalf("entry %d: expected %s, got %s", i, aps[i].SSID, got[i].SSID)
++		}
++	}
++}
++
++func TestPaginateAPsDropsOverflow(t *testing.T) {
++	aps := makeAdvertisedAPs(500)
++	pages := paginateAPs(aps)
++	got := decodePages(t, pages)
++	if len(got) == 0 || len(got) >= len(aps) {
++		t.Fatalf("expected overflow to be dropped, got %d of %d", len(got), len(aps))
++	}
++	for i := range got {
++		if got[i].SSID != aps[i].SSID {
++			t.Fatalf("entry %d: expected %s, got %s", i, aps[i].SSID, got[i].SSID)
++		}
++	}
++	if pages[bleAPPageCount-1] == "[]" {
++		t.Fatal("expected the last page to be used")
++	}
++}
+```
+
+**File**: `daemon/internel/ble/ble_test.go` (modified, +6/-4)
+```diff
+@@ -10,9 +10,11 @@ import (
+ )
+ 
+ func TestUUID(t *testing.T) {
+-	fmt.Printf("Service UUID: %s\n", OlaersServiceUUID.String())
++	fmt.Printf("Service UUID: %s\n", OlaresServiceUUID.String())
+ 	fmt.Printf("Connect Characteristic UUID: %s\n", ConnectWifiUUID.String())
+-	fmt.Printf("ListAP Characteristic UUID: %s\n", ListAPUUID.String())
++	for i, uuid := range ListAPPageUUIDs {
++		fmt.Printf("ListAP Page %d Characteristic UUID: %s\n", i+1, uuid.String())
++	}
+ 	fmt.Printf("TerminusInfo Characteristic UUID: %s\n", TerminusInfoUUID.String())
+ }
+ 
+@@ -26,7 +28,7 @@ func TestScan(t *testing.T) {
+ 	println("scanning....")
+ 	var deviceUUID bluetooth.Address
+ 	err := adapter.Scan(func(adapter *bluetooth.Adapter, device bluetooth.ScanResult) {
+-		if device.HasServiceUUID(OlaersServiceUUID) {
++		if device.HasServiceUUID(OlaresServiceUUID) {
+ 			// if device.LocalName() == "olares2" {
+ 			//if device.Address.String() == "46f0ed5c-8fd5-408d-b7c5-d4c2b43fec43" {
+ 			println("found device:", device.Address.String(), device.RSSI, device.LocalName())
+@@ -44,7 +46,7 @@ func TestScan(t *testing.T) {
+ 	println("connected to ", deviceUUID.String())
+ 
+ 	println("discovering services/characteristics")
+-	//srvcs, err := device.DiscoverServices([]bluetooth.UUID{OlaersServiceUUID})
++	//srvcs, err := device.DiscoverServices([]bluetooth.UUID{OlaresServiceUUID})
+ 	srvcs, err := device.DiscoverServices(nil)
+ 	must("discover services", err)
+ 
+```
+
+**File**: `daemon/internel/ble/ble_types.go` (modified, +30/-3)
+```diff
+@@ -14,18 +14,45 @@ type service struct {
+ 	cancel context.CancelFunc
+ 
+ 	wifiConnectState string
+-	apList           string
++	apPages          [bleAPPageCount]string
+ 	terminusInfo     string
+ 
+-	update func()
++	update             func()
++	notifyConnectState func()
+ 
+ 	updateApListCB func([]AccessPoint)
+ }
+ 
+-var OlaersServiceUUID = bluetooth.New16BitUUID(0x2345)
++var OlaresServiceUUID = bluetooth.New16BitUUID(0x2345)
+ var ConnectWifiUUID = bluetooth.New16BitUUID(0x1201)
+ var ListAPUUID = bluetooth.New16BitUUID(0x1200)
+ var TerminusInfoUUID = bluetooth.New16BitUUID(0x1199)
++var ListAPPage2UUID = bluetooth.New16BitUUID(0x1202)
++var ListAPPage3UUID = bluetooth.New16BitUUID(0x1203)
++var ListAPPage4UUID = bluetooth.New16BitUUID(0x1204)
++var ListAPPage5UUID = bluetooth.New16BitUUID(0x1205)
++
++const (
++	// bleAPPageCount is the number of ListAP characteristics; each carries one page.
++	bleAPPageCount = 5
++	// bleAPPageSize is the maximum serialized size of a single page.
++	bleAPPageSize = 512
++)
++
++// ListAPPageUUIDs maps page index to its characteristic. Page 1 is the
++// original ListAPUUID for compatibility with existing clients; pages 2-5 use
++// ListAPPage2UUID through ListAPPage5UUID.
++var ListAPPageUUIDs = [bleAPPageCount]bluetooth.UUID{
++	ListAPUUID, ListAPPage2UUID, ListAPPage3UUID, ListAPPage4UUID, ListAPPage5UUID,
++}
++
++func emptyAPPages() [bleAPPageCount]string {
++	var pages [bleAPPageCount]string
++	for i := range pages {
++		pages[i] = "[]"
++	}
++	return pages
++}
+ 
+ type ExecState int
+ 
+```
+
+**File**: `daemon/internel/ble/wifi_payload_test.go` (modified, +29/-12)
+```diff
+@@ -23,6 +23,20 @@ func TestWifiConnectionPayload(t *testing.T) {
+ 		t.Fatal("legacy payload changed")
+ 	}
+ }
++func TestWifiConnectResultNotifiesImmediately(t *testing.T) {
++	var notified []string
++	s := &service{}
++	s.notifyConnectState = func() { notified = append(notified, s.wifiConnectState) }
++	s.connectWifi([]byte(strings.Repeat(" ", 513)))
++	if len(notified) != 1 {
++		t.Fatalf("expected one immediate notification, got %d", len(notified))
++	}
++	var state ConnectState
++	if err := json.Unmarshal([]byte(notified[0]), &state); err != nil || state.State == nil || *state.State != Fail {
++		t.Fatalf("unexpected notified state: %s", notified[0])
++	}
++}
++
+ func TestWifiAPListKeepsHTTPComplete(t *testing.T) {
+ 	list := []AccessPoint{}
+ 	for i := 0; i < 20; i++ {
+@@ -36,18 +50,18 @@ func TestWifiAPListKeepsHTTPComplete(t *testing.T) {
+ 	if len(httpList) != 20 {
+ 		t.Fatal("HTTP scan list truncated")
+ 	}
+-	if len(s.apList) > 512 {
++	if len(s.apPages[0]) > 512 {
+ 		t.Fatal("BLE payload exceeds attribute limit")
+ 	}
+ 	var bleList []AccessPoint
+-	if err := json.Unmarshal([]byte(s.apList), &bleList); err != nil {
++	if err := json.Unmarshal([]byte(s.apPages[0]), &bleList); err != nil {
+ 		t.Fatal(err)
+ 	}
+ 	if len(bleList) == 0 || len(bleList) >= 20 || bleList[0].SecurityTypes[0] != wifi.EAP {
+ 		t.Fatal("incorrect BLE payload")
+ 	}
+ 	var wireList []map[string]any
+-	if err := json.Unmarshal([]byte(s.apList), &wireList); err != nil {
++	if err := json.Unmarshal([]byte(s.apPages[0]), &wireList); err != nil {
+ 		t.Fatal(err)
+ 	}
+ 	for _, ap := range wireList {
+@@ -72,7 +86,7 @@ func TestWifiAPListKeepsHTTPComplete(t *testing.T) {
+ 		t.Fatal("internal connection status was lost")
+ 	}
+ 	s.publishAPList([]AccessPoint{})
+-	if s.apList != "[]" {
++	if s.apPages != emptyAPPages() {
+ 		t.Fatal("empty list encoding changed")
+ 	}
+ }
+@@ -86,18 +100,18 @@ func TestWifiAPListDeduplicatesAcrossDevices(t *testing.T) {
+ 	s := &service{}
+ 	s.publishAPList(list)
+ 	var aps []advertisedAP
+-	if err := json.Unmarshal([]byte(s.apList), &aps); err != nil {
++	if err := json.Unmarshal([]byte(s.apPages[0]), &aps); err != nil {
+ 		t.Fatal(err)
+ 	}
+ 	if len(aps) != 2 || aps[0].Strength != 90 || aps[1].SecurityTypes[0] != wifi.EAP {
+-		t.Fatalf("incorrect network deduplication: %s", s.apList)
++		t.Fatalf("incorrect network deduplication: %s", s.apPages[0])
+ 	}
+ 	if list[1].SecurityTypes[0] != wifi.SAE {
+ 		t.Fatal("scan metadata was mutated")
+ 	}
+ }
+ 
+-func TestWifiAPListFitsEncodedBytesAndFillsRemainingSpace(t *testing.T) {
++func TestWifiAPListFitsEncodedBytesAndSpillsToNextPage(t *testing.T) {
+ 	list := []AccessPoint{}
+ 	// Escaped SSIDs must be measured as JSON bytes, not characters.
+ 	for i := 0; i < 3; i++ {
+@@ -106,15 +120,18 @@ func TestWifiAPListFitsEncodedBytesAndFillsRemainingSpace(t *testing.T) {
+ 	list = append(list, AccessPoint{AccessPoint: wifi.AccessPoint{SSID: "short", SecurityTypes: []wifi.Security{wifi.Open}}})
+ 	s := &service{}
+ 	s.publishAPList(list)
+-	var aps []advertisedAP
+-	if err := json.Unmarshal([]byte(s.apList), &aps); err != nil {
++	var page1, page2 []advertisedAP
++	if err := json.Unmarshal([]byte(s.apPages[0]), &page1); err != nil {
++		t.Fatal(err)
++	}
++	if err := json.Unmarshal([]byte(s.apPages[1]), &page2); err != nil {
+ 		t.Fatal(err)
+ 	}
+-	if len(s.apList) > 512 || len(aps) != 3 || aps[2].SSID != "short" {
+-		t.Fatalf("remaining capacity was not used correctly: %s", s.apList)
++	if len(s.apPages[0]) > 512 || len(page1) != 2 || len(page2) != 2 || page2[0].SSID != list[2].SSID || page2[1].SSID != "short" {
++		t.Fatalf("entries did not spill to the next page in order: %v", s.apPages)
+ 	}
+ 	s.publishAPList(nil)
+-	if s.apList != "[]" {
++	if s.apPages != emptyAPPages() {
+ 		t.Fatal("nil input must produce an empty array")
+ 	}
+ }
+```
+
+---
+
+### Incident Patch 2: `3fbe84ad` (2026-11-18)
+**Commit Message**: docs: fix dead links to retired connect-ai-apps page in Olares One FAQ (#4465)
+
+PR #4451 retired the connect-ai-apps guides but missed two references in
+the Olares One FAQ, breaking the VitePress build (2 dead links). Point
+them to the Router gateway use case, matching the redirects added in the
+same PR.
+
+**File**: `docs/one/faq.md` (modified, +1/-1)
+```diff
+@@ -207,7 +207,7 @@ Quantization reduces the memory needed for model weights by storing them at lowe
+ 
+ Yes. Install [OpenCode](../use-cases/opencode.md), [Claude Code](../use-cases/claude-code.md), or [Codex CLI](../use-cases/codex-cli.md) from Market and connect it to a local model through Router. The model generates responses and tool calls. The agent edits files and runs commands and tests in its development environment.
+ 
+-You can also run OpenCode CLI on your own computer and connect it to the model on Olares. In this setup, files and code execution stay on your computer, while model inference runs on Olares One. See [How AI apps connect to Olares models](../manual/best-practices/connect-ai-apps.md).
++You can also run OpenCode CLI on your own computer and connect it to the model on Olares. In this setup, files and code execution stay on your computer, while model inference runs on Olares One. See [Use Olares Router as your AI gateway](../use-cases/olares-router.md).
+ 
+ ### Which languages does Olares One support?
+ 
+```
+
+**File**: `docs/zh/one/faq.md` (modified, +1/-1)
+```diff
+@@ -212,7 +212,7 @@ Olares One 配备 24 GB 显存（VRAM）和 96 GB 系统内存（RAM），两者
+ 
+ 可以。从 Market 安装 [OpenCode](../use-cases/opencode.md)、[Claude Code](../use-cases/claude-code.md) 或 [Codex CLI](../use-cases/codex-cli.md)，通过 Router 连接本地模型。模型生成回复和工具调用，Agent 在自己的开发环境中修改文件、运行命令和测试。
+ 
+-你也可以在自己的电脑上运行 OpenCode CLI，连接 Olares 上的模型。此时，文件和代码执行都留在自己的电脑上，模型推理由 Olares One 完成。请参阅 [AI 应用如何连接 Olares 模型](../manual/best-practices/connect-ai-apps.md)。
++你也可以在自己的电脑上运行 OpenCode CLI，连接 Olares 上的模型。此时，文件和代码执行都留在自己的电脑上，模型推理由 Olares One 完成。请参阅 [使用 Olares Router 作为你的 AI 网关](../use-cases/olares-router.md)。
+ 
+ ### Olares One 支持哪些语言？
+ 
+```
+
+---
+
+### Incident Patch 3: `1ca9055a` (2026-11-18)
+**Commit Message**: docs: fix OpenClaw Router API key onboarding guidance (#4432)
+
+* docs: fix OpenClaw Router API key onboarding guidance
+
+* docs: clarify Router API key is a non-empty placeholder
+
+* docs: highlight OpenClaw API key requirement
+
+* docs: clarify OpenClaw API key placeholder instructions
+
+---------
+
+Co-authored-by: wangyajing <[REDACTED_EMAIL]>
+
+**File**: `docs/use-cases/openclaw.md` (modified, +12/-4)
+```diff
+@@ -8,9 +8,9 @@ head:
+   - - meta
+     - name: keywords
+       content: Olares, OpenClaw, self-hosted ai agent, personal ai agent, local ai agent, openclaw on olares
+-app_version: "1.0.44"
+-doc_version: "3.0"
+-doc_updated: "2026-09-24"
++app_version: "1.0.57"
++doc_version: "3.1"
++doc_updated: "2026-11-18"
+ ---
+ 
+ # Run OpenClaw as your self-hosted personal AI agent
+@@ -86,6 +86,8 @@ OpenClaw requires a large "context window" (that is the AI's short-term memory)
+ 
+ <!--@include: ../reusables/ai-service-connections.md#get-model-connection-details-->
+ 
++For OpenClaw, use `olares` as the API key placeholder.
++
+ ### Step 2: Run onboarding wizard
+ 
+ Set up OpenClaw using the step-by-step interactive wizard.
+@@ -109,6 +111,12 @@ Set up OpenClaw using the step-by-step interactive wizard.
+     To get you started quickly, this tutorial skips several advanced settings in the wizard. You can configure or modify them later.
+     :::
+ 
++    :::info API key required by OpenClaw
++    Enter `olares` in the API key field, even though the prompt says it can be left blank. OpenClaw 2026.11.3 requires a non-empty value for this connection. Apps in Olares do not need a Router API key.
++
++    If the live completion test reports `No API key found for provider "router"`, select **Fix model/auth setup**, enter `olares`, and retry.
++    :::
++
+     | Settings   | Option   |
+     |:-----------|:---------|
+     | Personal-by-default acknowledgment | Select **Yes**.  |
+@@ -117,7 +125,7 @@ Set up OpenClaw using the step-by-step interactive wizard.
+     | Model/auth provider | Select **Custom Provider**. |
+     | API Base URL | Paste the Router Base URL from Step 1, including `/v1`. |
+     | How do you want to provide this API key? | Select **Paste API key now** if this prompt appears. |
+-    | API Key (leave blank if not required) | Leave blank for this app in Olares. |
++    | API Key (leave blank if not required) | Enter a non-empty placeholder, such as `olares`. |
+     | Endpoint compatibility | Select **OpenAI-compatible**. |
+     | Model ID | Enter `default-chat`. The wizard may verify the endpoint before continuing. |
+     | Endpoint ID | Enter `router`. The model reference is `router/default-chat`. |
+```
+
+**File**: `docs/zh/use-cases/openclaw.md` (modified, +12/-4)
+```diff
+@@ -8,9 +8,9 @@ head:
+   - - meta
+     - name: keywords
+       content: Olares, OpenClaw, self-hosted ai agent, personal ai agent, local ai agent, openclaw on olares
+-app_version: "1.0.44"
+-doc_version: "3.0"
+-doc_updated: "2026-09-24"
++app_version: "1.0.57"
++doc_version: "3.1"
++doc_updated: "2026-11-18"
+ ---
+ 
+ :::warning
+@@ -90,6 +90,8 @@ OpenClaw 需要较大的"上下文窗口"（即 AI 的短期记忆）来处理
+ 
+ <!--@include: ../reusables/ai-service-connections.md#get-model-connection-details-->
+ 
++配置 OpenClaw 时，请使用 `olares` 作为 API 密钥占位值。
++
+ ### 步骤 2：运行安装向导
+ 
+ 使用交互式向导逐步配置 OpenClaw。
+@@ -113,6 +115,12 @@ OpenClaw 需要较大的"上下文窗口"（即 AI 的短期记忆）来处理
+     为便于快速上手，本教程会跳过向导中的部分高级设置。你可以稍后配置或修改它们。
+     :::
+ 
++    :::info OpenClaw 要求填写 API 密钥字段
++    在 API 密钥字段中填写 `olares`，即使向导提示可以留空。OpenClaw 2026.11.3 要求此连接填写非空值。Olares 内的应用无需 Router API 密钥。
++
++    如果实时对话测试提示 `No API key found for provider "router"`，选择 **Fix model/auth setup**，填写 `olares`，然后重新测试。
++    :::
++
+     | 配置   | 选项   |
+     |:-----------|:---------|
+     | Personal-by-default acknowledgment | 选择 **Yes**。  |
+@@ -121,7 +129,7 @@ OpenClaw 需要较大的"上下文窗口"（即 AI 的短期记忆）来处理
+     | Model/auth provider | 选择 **Custom Provider**。 |
+     | API Base URL | 粘贴步骤 1 中从 Router 复制的 Base URL，保留 `/v1`。 |
+     | How do you want to provide this API key? | 如果出现此提示，选择 **Paste API key now**。 |
+-    | API Key (leave blank if not required) | Olares 内的这个应用无需 Router API 密钥，留空。 |
++    | API Key (leave blank if not required) | 填写非空占位值，例如 `olares`。 |
+     | Endpoint compatibility | 选择 **OpenAI-compatible**。 |
+     | Model ID | 填写 `default-chat`。向导可能先验证端点，再进入下一项。 |
+     | Endpoint ID | 填写 `router`。模型引用为 `router/default-chat`。 |
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4457** (2026-11-17): fix(cli): clean up full uninstall and verify installer release identity (@dkeven)
-- **PR #4455** (2026-11-16): files: access per-user folders under .users (@aby913)
-- **PR #4454** (2026-11-16): market: sync, render improve, oac update (@aby913)
-- **PR #4453** (2026-11-16): system-frontend, login, wizard, vault: update images to v1.13.1 (@icebergtsn)
-- **PR #4452** (2026-11-16): docs: require a GeForce RTX 50-series GPU for YuE2 Studio (@fnalways)
-- **PR #4449** (2026-11-16): docs: retire NemoClaw documentation and redirect to OpenClaw (@fnalways)
+- **PR #4467** (2026-11-18): fix(appservice): apply custom entrance domains during upgrade (@hysyeah)
+- **PR #4465** (2026-11-18): docs: fix dead links to retired connect-ai-apps page in Olares One FAQ (@fnalways)
+- **PR #4463** (2026-11-18): docs: update iso image download address for 1.12.8 (@Power-One-2025)
+- **PR #4462** (2026-11-18): ci: update GOPRIVATE and GIT_CONFIG for backups-sdk integration (@eball)
+- **PR #4461** (2026-11-18): fix(daemon): page BLE AP list and notify wifi connect result immediately (@eball)
+- **PR #4460** (2026-11-18): feat(rag): update component images for 1.12.9 (@bleachzou3)
 
 ---
 
@@ -1393,55 +1942,39 @@ Reuse an installed CLI only when version and vendor match, also checking the rel
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. cli): clean up full uninstall and verify installer release identity
+## X. daemon): page BLE AP list and notify wifi connect result immediately
 
 **RULE**:
-When implementing operations in `build/base-package/install.sh`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in beclab/Olares. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `daemon/docs/wifi-and-portal.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in beclab/Olares. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `139e4a83`: cli): clean up full uninstall and verify installer release identity. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8293f92d`: daemon): page BLE AP list and notify wifi connect result immediately. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `build/base-package/install.sh`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `daemon/docs/wifi-and-portal.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-function installed_cli_matches() {
-    local version_output current_version current_commit
-    command_exists olares-cli || return 1
-    version_output=$(olares-cli --version) || return 1
-    current_version=$(awk 'NR==1{print $3}' <<< "$version_output")
-    [[ "$current_version" == "$VERSION" ]] || return 1
-    [[ "$(olares-cli --vendor)" == "$expected_vendor" ]] || return 1
-
-    if [[ -n "$RELEASE_ID_SUFFIX" ]]; then
-        current_commit=$(awk '/^Git commit: /{print $3; exit}' <<< "$version_output")
-        # Older or unstamped binaries can still be reused by version/vendor.
-        if [[ -z "$current_commit" || "$current_commit" == "unknown" ]]; then
-            return 0
-        fi
-        # Release workflows use git rev-parse --short=7 (at least 7 digits),
-        # while GoReleaser stamps GitCommit with .FullCommit.
-        [[ "$RELEASE_ID" =~ ^[0-9a-f]{7,40}$ ]] || return 1
-        [[ "$current_commit" =~ ^[0-9a-f]{40}$ ]] || return 1
-        [[ "$current_commit" == "$RELEASE_ID"* ]] || return 1
-    fi
-}
-
-    if installed_cli_matches; then
-        echo "olares-cli already installed and matches the expected version, vendor and release"
+keeping the strongest signal. The BLE AP list is split across up to five
+characteristics, each a standalone JSON array of at most 512 bytes: page 1 is
+`0x1200` (unchanged, so clients reading only it keep working) and pages 2-5 are
+`0x1202`, `0x1203`, `0x1204`, and `0x1205`. Pages are filled in the internal
+connection/signal priority order; when the next entry does not fit, it starts
+the next page, so concatenating pages 1-5 preserves the order. Unused pages are
+`[]`, and entries beyond the fifth page are dropped. Connection payloads exceeding 512 bytes are
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-    if command_exists olares-cli && [[ "$(olares-cli -v | awk 'NR==1{print $3}')" == "$VERSION" ]] && [[ "$(olares-cli --vendor)" == "$expected_vendor" ]]; then
-        echo "olares-cli already installed and is the expected version"
+keeping the strongest signal. Entries retain
+the internal connection/signal priority order; an entry that does not fit is
+skipped so a shorter later entry can use the remaining 512-byte capacity. Connection payloads exceeding 512 bytes are
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `139e4a83` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8293f92d` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261117-A0HB",
-    "timestamp": "2026-11-17T06:28:31.343Z",
-    "repository": "gluesql/gluesql",
-    "learningId": "learn-github-gluesql-gluesql",
-    "contentHash": "9a410d07cd3ae58d1a98aa7bb8cb743b9093ba9ce0914821bdc22255da13b128",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261117-JOCR",
-    "timestamp": "2026-11-17T06:36:02.187Z",
-    "repository": "webdriverio/webdriverio",
-    "learningId": "learn-github-webdriverio-webdriverio",
-    "contentHash": "9de65f89270e1eaed21bbc8fd9c02943ff57cc4ef5476b28375b4318d9a62e56",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261117-JR3H",
-    "timestamp": "2026-11-17T06:36:05.741Z",
-    "repository": "kirillzyusko/react-native-keyboard-controller",
-    "learningId": "learn-github-kirillzyusko-react-native-keyboard-controller",
-    "contentHash": "55208439477c7494916c1d9925034170a31eeacbe9bebb020d2d1c5c24516d0b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261117-XSHD",
-    "timestamp": "2026-11-17T06:47:00.721Z",
-    "repository": "mdiri-ai/SoduWork",
-    "learningId": "learn-github-mdiri-ai-soduwork",
-    "contentHash": "17dffa20af8991643068f9b147d57429e9c49848c8260ed08ba0988f4a950a1d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261117-Y059",
     "timestamp": "2026-11-17T06:47:10.653Z",
     "repository": "react/react-native",
@@ -7490,6 +7430,66 @@
     "repository": "software-mansion/react-native-reanimated",
     "learningId": "learn-github-software-mansion-react-native-reanimated",
     "contentHash": "874993902dd0e58e571ace67862012cb443caf4cbe33171ee601f2a12a8f10c7",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-8LEW",
+    "timestamp": "2026-11-18T15:34:57.896Z",
+    "repository": "Alissonerdx/BFS-Best-Face-Swap",
+    "learningId": "learn-huggingface-alissonerdx-bfs-best-face-swap",
+    "contentHash": "66ef68a8f65b3c97530ac6982c806f4caafc9b7cd24a67fb12e5a1d5db061a24",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-8VBW",
+    "timestamp": "2026-11-18T15:35:10.748Z",
+    "repository": "rustls/rustls",
+    "learningId": "learn-github-rustls-rustls",
+    "contentHash": "3fc19016a4a4f609307bae2e9dc6e82e906d8f400aa7eda2e7f49c52df240a39",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-8X2G",
+    "timestamp": "2026-11-18T15:35:13.000Z",
+    "repository": "beclab/Olares",
+    "learningId": "learn-github-beclab-olares",
+    "contentHash": "495028e18b48be5f87c5ece3bde7d3df281cd238d9d47dda38a1ad6c94e7b38d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-8ZMO",
+    "timestamp": "2026-11-18T15:35:16.320Z",
+    "repository": "xerj-org/xerj",
+    "learningId": "learn-github-xerj-org-xerj",
+    "contentHash": "b27cc1fb7edb3ca6881083d66ca5ea9b1d1ef802e1dd649eb310c8a7c94ca1f7",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

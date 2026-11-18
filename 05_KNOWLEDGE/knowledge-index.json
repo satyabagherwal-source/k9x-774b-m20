@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-18T15:22:22.131Z",
+  "last_updated": "2026-11-18T15:35:48.784Z",
   "total_verified_learnings": 9003,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 21335,
+  "total_items": 21343,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -114902,9 +114902,9 @@
       "title": "Research & Knowledge Intelligence: Alissonerdx/BFS-Best-Face-Swap Core Invariants",
       "repository": "Alissonerdx/BFS-Best-Face-Swap",
       "source_version": "hf-alissonerdx-bfs-best-face-swap",
-      "content_hash": "5a1f66b16bbc19db802f1302c9947a54d65b8cdb9dac34ec54af446b6d346ced",
+      "content_hash": "e02be345ab88ba6856d57e7765b525b4f6bec14df0f87568d6c30444d866dec4",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T06:15:21.265Z"
+      "persisted_at": "2026-11-18T15:34:58.086Z"
     },
     "candidate_directive-test-replace-actix-test-attributes-with-tokio-local-tests-4417": {
       "item_id": "candidate_directive-test-replace-actix-test-attributes-with-tokio-local-tests-4417",
@@ -219589,13 +219589,13 @@
       "item_id": "candidate_directive-empirical-invariant-guard-in-changelog-md",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-52Q8-empirical-invariant-guard-in-changelog-md.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-8ZRY-empirical-invariant-guard-in-changelog-md.md",
       "title": "Empirical Invariant Guard in CHANGELOG.md",
-      "repository": "sharkdp-fd-learnings",
-      "source_version": "HEAD",
-      "content_hash": "35244e27aa863510796633101fa1942542bdf0e8dbecee055969ea9d47008b01",
+      "repository": "xerj-org/xerj",
+      "source_version": "dc1a4622",
+      "content_hash": "d097a00a3fb585f543c4c79892961e0e9db10843effa500bf494bd598a0fb5a3",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T12:16:16.405Z"
+      "persisted_at": "2026-11-18T15:35:16.514Z"
     },
     "domain_intelligence-architecture-intelligence-yvgude-lean-ctx-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-yvgude-lean-ctx-core-invariants",
@@ -226641,8 +226641,8 @@
       "slug": "beclab-olares",
       "platform": "github",
       "source_url": "https://github.com/beclab/Olares",
-      "source_version": "139e4a83",
-      "content_hash": "c50fddb99a19fd4436eb607458cb023e5a69d6910f9184befdf5171c3e3be420",
+      "source_version": "a2fc3c1e",
+      "content_hash": "495028e18b48be5f87c5ece3bde7d3df281cd238d9d47dda38a1ad6c94e7b38d",
       "dossier_path": "07_PROJECT_LEARNING/beclab-olares-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/beclab-olares-learnings.md",
       "promoted_rules": [
@@ -226655,6 +226655,11 @@
           "number": 9086,
           "title": "clean up full uninstall and verify installer release identity",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9251,
+          "title": "page BLE AP list and notify wifi connect result immediately",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -226662,7 +226667,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T00:07:54.756Z",
+      "verified_at": "2026-11-18T15:35:12.817Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -226702,10 +226707,10 @@
       "relative_path": "08_VERIFICATION/beclab-olares-verification-protocol-empirical-defect-shield-for-beclab-olares.md",
       "title": "Verification Protocol: Empirical Defect Shield for beclab/Olares",
       "repository": "beclab/Olares",
-      "source_version": "139e4a83",
-      "content_hash": "a7cfda4e339aa4e8a12ca679fc98d95502560749fa5feb7a8eb22f1afebdecbe",
+      "source_version": "a2fc3c1e",
+      "content_hash": "4eae6cfd0fa8ecc1c7f1dcd45908f3f802ea967ee6bc035f9ed6a02c588c02b8",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T00:07:55.361Z"
+      "persisted_at": "2026-11-18T15:35:13.582Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-openai-clip-vit-base-patch32-learnings-core-i": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-openai-clip-vit-base-patch32-learnings-core-i",
@@ -226751,9 +226756,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for beclab-olares-learnings",
       "repository": "beclab-olares-learnings",
       "source_version": "HEAD",
-      "content_hash": "674ee7703b89baf6392a67e0b12c0c6b9ef9830f663edbe6a030a695aceb0299",
+      "content_hash": "0d904eb6978398d4f548b013dee97c1a112c151f08becf35dc3609e854023d33",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T00:08:02.379Z"
+      "persisted_at": "2026-11-18T15:35:20.629Z"
     },
     "learn-huggingface-sentence-transformers-all-mpnet-base-v2": {
       "learning_id": "learn-huggingface-sentence-transformers-all-mpnet-base-v2",
@@ -237564,14 +237569,14 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 8545,
       "title": "Empirical Invariant Guard in CHANGELOG.md",
-      "source_url": "https://github.com/sharkdp/fd",
-      "source_version": "b80cd53e",
+      "source_url": "https://github.com/xerj-org/xerj",
+      "source_version": "dc1a4622",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-18T12:15:59.455Z"
+      "verified_at": "2026-11-18T15:35:16.155Z"
     },
     "domain_intelligence-search-distribution-intelligence-sharkdp-fd-core-invariants": {
       "item_id": "domain_intelligence-search-distribution-intelligence-sharkdp-fd-core-invariants",
@@ -257580,8 +257585,8 @@
       "slug": "rustls-rustls",
       "platform": "github",
       "source_url": "https://github.com/rustls/rustls",
-      "source_version": "0d10aa47",
-      "content_hash": "9e6a9b0ce154695fd0fcc6b968ce8683ba4bb1c8ab70c5ce42f3fa22c6672b42",
+      "source_version": "836e411e",
+      "content_hash": "3fc19016a4a4f609307bae2e9dc6e82e906d8f400aa7eda2e7f49c52df240a39",
       "dossier_path": "07_PROJECT_LEARNING/rustls-rustls-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rustls-rustls-learnings.md",
       "promoted_rules": [
@@ -257601,7 +257606,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T11:22:43.904Z",
+      "verified_at": "2026-11-18T15:35:10.550Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -257643,10 +257648,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-rustls-rustls-technical-construction-intelligence-rustls-rustls-core-invariants.md",
       "title": "Technical Construction Intelligence: rustls/rustls Core Invariants",
       "repository": "rustls/rustls",
-      "source_version": "0d10aa47",
-      "content_hash": "c4d7e39101755f48bbbbb538911ee2b0ec295297ba75b9acd8b088823ed2294a",
+      "source_version": "836e411e",
+      "content_hash": "cc0f5428132fabf8f925176f6b97d7c1619ff7c872850c4a6e0b815bdb9766d0",
       "domain_letter": "H",
-      "persisted_at": "2026-11-18T11:22:44.540Z"
+      "persisted_at": "2026-11-18T15:35:10.941Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-rustls-rustls": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-rustls-rustls",
@@ -257718,9 +257723,9 @@
       "title": "Technical Construction Intelligence: rustls-rustls-learnings Core Invariants",
       "repository": "rustls-rustls-learnings",
       "source_version": "HEAD",
-      "content_hash": "b535f65ea1365026cfed934848c8b704ac5b748789ee0a1c2f5b2a8c373736aa",
+      "content_hash": "e9d038f07cc9278a96eaf6e5ae5ed3ce4290a266065163fe2328ae200eb20a43",
       "domain_letter": "H",
-      "persisted_at": "2026-11-18T11:22:48.962Z"
+      "persisted_at": "2026-11-18T15:35:48.784Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-rustls-rustls-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-rustls-rustls-learnings",
@@ -278706,17 +278711,23 @@
       "slug": "xerj-org-xerj",
       "platform": "github",
       "source_url": "https://github.com/xerj-org/xerj",
-      "source_version": "b7d38137",
-      "content_hash": "f4aaf7202a0405a07e463dfcd22f248212629dd25b476907a5a862a1319aa191",
+      "source_version": "dc1a4622",
+      "content_hash": "b27cc1fb7edb3ca6881083d66ca5ea9b1d1ef802e1dd649eb310c8a7c94ca1f7",
       "dossier_path": "07_PROJECT_LEARNING/xerj-org-xerj-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/xerj-org-xerj-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 8545,
+          "title": "Empirical Invariant Guard in CHANGELOG.md",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T22:40:03.461Z",
+      "verified_at": "2026-11-18T15:35:16.155Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -278744,10 +278755,10 @@
       "relative_path": "03_SKILLS/xerj-org-xerj-skill-operational-integration-playbook-for-xerj-org-xerj.md",
       "title": "Skill: Operational & Integration Playbook for xerj-org/xerj",
       "repository": "xerj-org/xerj",
-      "source_version": "b7d38137",
-      "content_hash": "698f531ee0d810b337adb2d23a5de5b03c0bf7f1a3147973e8ccfad746f4f9cf",
-      "domain_letter": "K",
-      "persisted_at": "2026-11-17T22:40:04.117Z"
+      "source_version": "dc1a4622",
+      "content_hash": "3994289cc0b24826e15167f9c867af4b7c4a6b369f4ef2e77f1d2a5133f55080",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-18T15:35:16.776Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-xerj-org-xerj": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-xerj-org-xerj",
@@ -278756,10 +278767,10 @@
       "relative_path": "08_VERIFICATION/xerj-org-xerj-verification-protocol-empirical-defect-shield-for-xerj-org-xerj.md",
       "title": "Verification Protocol: Empirical Defect Shield for xerj-org/xerj",
       "repository": "xerj-org/xerj",
-      "source_version": "b7d38137",
-      "content_hash": "0c1c6716b9068c03055b4e8202c0549a17ea5237479da0910abeb12c778cbc23",
+      "source_version": "dc1a4622",
+      "content_hash": "5d1677e7804a30893d630a11e75fd8e05552b02c6e0fdfed10411d4be355054b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T22:40:04.228Z"
+      "persisted_at": "2026-11-18T15:35:16.895Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-deepseek-ai-deepseek-r1-learnings-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-deepseek-ai-deepseek-r1-learnings-core-invari",
@@ -282604,7 +282615,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Alissonerdx/BFS-Best-Face-Swap",
       "source_version": "hf-alissonerdx-bfs-best-face-swap",
-      "content_hash": "8e137501a0e054ac96cd835e1927fa8e125cc839d7b79e98ea2f7d5dd8059d65",
+      "content_hash": "66ef68a8f65b3c97530ac6982c806f4caafc9b7cd24a67fb12e5a1d5db061a24",
       "dossier_path": "07_PROJECT_LEARNING/hf-alissonerdx-bfs-best-face-swap-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-alissonerdx-bfs-best-face-swap-learnings.md",
       "promoted_rules": [],
@@ -282613,7 +282624,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T06:15:20.909Z",
+      "verified_at": "2026-11-18T15:34:57.696Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -282694,9 +282705,9 @@
       "title": "Research & Knowledge Intelligence: hf-alissonerdx-bfs-best-face-swap-learnings Core Invariants",
       "repository": "hf-alissonerdx-bfs-best-face-swap-learnings",
       "source_version": "HEAD",
-      "content_hash": "813a70f8cc83d7b87a93e0551205a3bc9889c4684d8bbcdb72c395af18d9ac10",
+      "content_hash": "44716707b834e5e121e0adccc7056248a47cee397971d4747dc419fa0e7b8f6b",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T06:16:00.661Z"
+      "persisted_at": "2026-11-18T15:35:19.849Z"
     },
     "learn-huggingface-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf": {
       "learning_id": "learn-huggingface-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf",
@@ -287911,6 +287922,104 @@
       "content_hash": "cc75a8001aa39a537aad4657b99b5dde1b3d648567aa0bd27d47742339d21019",
       "domain_letter": "K",
       "persisted_at": "2026-11-18T15:22:21.606Z"
+    },
+    "rule-9251": {
+      "learning_id": "rule-9251",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9251,
+      "title": "page BLE AP list and notify wifi connect result immediately",
+      "source_url": "https://github.com/beclab/Olares",
+      "source_version": "a2fc3c1e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-18T15:35:12.817Z"
+    },
+    "candidate_directive-page-ble-ap-list-and-notify-wifi-connect-result-immediately": {
+      "item_id": "candidate_directive-page-ble-ap-list-and-notify-wifi-connect-result-immediately",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-8X7N-page-ble-ap-list-and-notify-wifi-connect-result-immediately.md",
+      "title": "page BLE AP list and notify wifi connect result immediately",
+      "repository": "beclab/Olares",
+      "source_version": "a2fc3c1e",
+      "content_hash": "08117351d67dcbe19ad3a20632518cc128ea7611e3a2bcb26d1be7ef2b1b4186",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-18T15:35:13.188Z"
+    },
+    "domain_intelligence-architecture-intelligence-beclab-olares-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-beclab-olares-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-beclab-olares-architecture-intelligence-beclab-olares-core-invariants.md",
+      "title": "Architecture Intelligence: beclab/Olares Core Invariants",
+      "repository": "beclab/Olares",
+      "source_version": "a2fc3c1e",
+      "content_hash": "c67645cc27a6e9c82f86d1acd5eb2193f0614107872b554eacf32ccab959ed9b",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-18T15:35:13.326Z"
+    },
+    "skill_playbook-skill-operational-integration-playbook-for-beclab-olares": {
+      "item_id": "skill_playbook-skill-operational-integration-playbook-for-beclab-olares",
+      "artifact_type": "skill_playbook",
+      "target_folder": "03_SKILLS",
+      "relative_path": "03_SKILLS/beclab-olares-skill-operational-integration-playbook-for-beclab-olares.md",
+      "title": "Skill: Operational & Integration Playbook for beclab/Olares",
+      "repository": "beclab/Olares",
+      "source_version": "a2fc3c1e",
+      "content_hash": "22fc12ba0e961e4795f7f9c8d08700604bc4fa33346f6decc66eeb3d95b9468d",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-18T15:35:13.464Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-xerj-org-xerj-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-xerj-org-xerj-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-xerj-org-xerj-technical-construction-intelligence-xerj-org-xerj-core-invariants.md",
+      "title": "Technical Construction Intelligence: xerj-org/xerj Core Invariants",
+      "repository": "xerj-org/xerj",
+      "source_version": "dc1a4622",
+      "content_hash": "400cab4d47db433e51d753d94b67a11760ccaad84bac2b71f2c8ea25eafa7061",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-18T15:35:16.645Z"
+    },
+    "candidate_directive-daemon-page-ble-ap-list-and-notify-wifi-connect-result-immediately": {
+      "item_id": "candidate_directive-daemon-page-ble-ap-list-and-notify-wifi-connect-result-immediately",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-92ND-daemon-page-ble-ap-list-and-notify-wifi-connect-result-immediately.md",
+      "title": "daemon): page BLE AP list and notify wifi connect result immediately",
+      "repository": "beclab-olares-learnings",
+      "source_version": "HEAD",
+      "content_hash": "990e089a2cf4f9f19d272052a2457b68a64d73000ddae495480dee70fa59242f",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-18T15:35:20.234Z"
+    },
+    "domain_intelligence-architecture-intelligence-beclab-olares-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-beclab-olares-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-beclab-olares-learnings-architecture-intelligence-beclab-olares-learnings-core-i.md",
+      "title": "Architecture Intelligence: beclab-olares-learnings Core Invariants",
+      "repository": "beclab-olares-learnings",
+      "source_version": "HEAD",
+      "content_hash": "d0e897618d1bf283fe5b7d950a1ca656b2d4d10540d8486a88dce0d2ce21cc59",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-18T15:35:20.373Z"
+    },
+    "skill_playbook-skill-operational-integration-playbook-for-beclab-olares-learnings": {
+      "item_id": "skill_playbook-skill-operational-integration-playbook-for-beclab-olares-learnings",
+      "artifact_type": "skill_playbook",
+      "target_folder": "03_SKILLS",
+      "relative_path": "03_SKILLS/beclab-olares-learnings-skill-operational-integration-playbook-for-beclab-olares.md",
+      "title": "Skill: Operational & Integration Playbook for beclab-olares-learnings",
+      "repository": "beclab-olares-learnings",
+      "source_version": "HEAD",
+      "content_hash": "558562e2bea9be748cc07899f979fee4d92116b1d4f4a0d420d4584c587a9335",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-18T15:35:20.509Z"
     }
   },
   "ai-builder-brain": {

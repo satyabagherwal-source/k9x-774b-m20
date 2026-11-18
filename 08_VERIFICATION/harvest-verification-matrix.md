@@ -11021,3 +11021,8 @@
 | `CYCLE-20261118-HXHY` | `2026-11-18T15:14:13.846Z` | `XiaomiMiMo/MiMo-V2.6-Pro-RL` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-xiaomimimo-mimo-v2.6-pro-rl-learnings.md` | Yes (`09997bb2...`) |
 | `CYCLE-20261118-S3Y4` | `2026-11-18T15:22:08.764Z` | `orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-learnings.md` | Yes (`6bf2d6be...`) |
 | `CYCLE-20261118-SA43` | `2026-11-18T15:22:16.755Z` | `software-mansion/react-native-reanimated` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9250` | Yes (`87499390...`) |
+| `CYCLE-20261118-8LEW` | `2026-11-18T15:34:57.896Z` | `Alissonerdx/BFS-Best-Face-Swap` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-alissonerdx-bfs-best-face-swap-learnings.md` | Yes (`66ef68a8...`) |
+| `CYCLE-20261118-8VBW` | `2026-11-18T15:35:10.748Z` | `rustls/rustls` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/rustls-rustls-learnings.md` | Yes (`3fc19016...`) |
+| `CYCLE-20261118-8X2G` | `2026-11-18T15:35:13.000Z` | `beclab/Olares` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9251` | Yes (`495028e1...`) |
+| `CYCLE-20261118-8ZMO` | `2026-11-18T15:35:16.320Z` | `xerj-org/xerj` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8545` | Yes (`b27cc1fb...`) |
+| `CYCLE-2026-11-18-PROJ-EVOLVE` | `2026-11-18T15:35:48.272Z` | `rustls-rustls` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-A606F2DF` [Domain D] | Yes (`b62223db...`) |

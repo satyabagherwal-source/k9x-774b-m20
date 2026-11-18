@@ -565,8 +565,8 @@
     "sourceUrl": "https://huggingface.co/Alissonerdx/BFS-Best-Face-Swap",
     "sourceVersion": "hf-alissonerdx-bfs-best-face-swap",
     "license": "Open-Source",
-    "contentHash": "8e137501a0e054ac96cd835e1927fa8e125cc839d7b79e98ea2f7d5dd8059d65",
-    "lastHarvestedAt": "2026-11-18T06:15:21.091Z",
+    "contentHash": "66ef68a8f65b3c97530ac6982c806f4caafc9b7cd24a67fb12e5a1d5db061a24",
+    "lastHarvestedAt": "2026-11-18T15:34:57.901Z",
     "learningId": "learn-huggingface-alissonerdx-bfs-best-face-swap"
   },
   "hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf": {
@@ -2693,10 +2693,10 @@
     "repository": "rustls/rustls",
     "platform": "github",
     "sourceUrl": "https://github.com/rustls/rustls",
-    "sourceVersion": "0d10aa47",
+    "sourceVersion": "836e411e",
     "license": "NOASSERTION",
-    "contentHash": "9e6a9b0ce154695fd0fcc6b968ce8683ba4bb1c8ab70c5ce42f3fa22c6672b42",
-    "lastHarvestedAt": "2026-11-18T11:22:44.122Z",
+    "contentHash": "3fc19016a4a4f609307bae2e9dc6e82e906d8f400aa7eda2e7f49c52df240a39",
+    "lastHarvestedAt": "2026-11-18T15:35:10.751Z",
     "learningId": "learn-github-rustls-rustls"
   },
   "liyupi-yu-ai-agent": {
@@ -2763,10 +2763,10 @@
     "repository": "xerj-org/xerj",
     "platform": "github",
     "sourceUrl": "https://github.com/xerj-org/xerj",
-    "sourceVersion": "b7d38137",
+    "sourceVersion": "dc1a4622",
     "license": "Apache-2.0",
-    "contentHash": "f4aaf7202a0405a07e463dfcd22f248212629dd25b476907a5a862a1319aa191",
-    "lastHarvestedAt": "2026-11-17T22:40:03.630Z",
+    "contentHash": "b27cc1fb7edb3ca6881083d66ca5ea9b1d1ef802e1dd649eb310c8a7c94ca1f7",
+    "lastHarvestedAt": "2026-11-18T15:35:16.325Z",
     "learningId": "learn-github-xerj-org-xerj"
   },
   "markmead-hyperui": {
@@ -2973,10 +2973,10 @@
     "repository": "beclab/Olares",
     "platform": "github",
     "sourceUrl": "https://github.com/beclab/Olares",
-    "sourceVersion": "139e4a83",
+    "sourceVersion": "a2fc3c1e",
     "license": "AGPL-3.0",
-    "contentHash": "c50fddb99a19fd4436eb607458cb023e5a69d6910f9184befdf5171c3e3be420",
-    "lastHarvestedAt": "2026-11-18T00:07:54.925Z",
+    "contentHash": "495028e18b48be5f87c5ece3bde7d3df281cd238d9d47dda38a1ad6c94e7b38d",
+    "lastHarvestedAt": "2026-11-18T15:35:13.004Z",
     "learningId": "learn-github-beclab-olares"
   },
   "cryfs-cryfs": {

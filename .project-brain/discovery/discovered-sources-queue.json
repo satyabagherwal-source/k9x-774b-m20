@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-18T15:22:21.291Z",
+  "updated_at": "2026-11-18T15:35:48.490Z",
   "stats": {
-    "total_discovered": 5553,
-    "approved_pending_harvest": 5247,
+    "total_discovered": 5557,
+    "approved_pending_harvest": 5251,
     "harvested_count": 0,
     "rejected_count": 306,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 5230,
+      "COMMUNITY_AND_EXPERT": 5234,
       "OFFICIAL_DOCUMENTATION": 177,
       "STANDARDS_AND_SPECIFICATIONS": 110,
       "ENGINEERING_BLOGS": 4,
@@ -120045,6 +120045,94 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/software-mansion-react-native-reanimated-learnings.md",
         "fileName": "software-mansion-react-native-reanimated-learnings.md"
+      }
+    },
+    "SRC-A394A50817E1": {
+      "id": "SRC-A394A50817E1",
+      "url": "https://bench.rustls.dev/comparisons/0d10aa47e82cf40ecabf677360b8276798a2039a:54bc60c6498f2187be34377fb63584a0d00c55e9/cachegrind-diff/transfer_no_resume_ring_1.3_ecdsap384_aes_client",
+      "title": "https://bench.rustls.dev/comparisons/0d10aa47e82cf40ecabf677360b8276798a2039a:54bc60c6498f2187be34377fb63584a0d00c55e9/cachegrind-diff/transfer_no_resume_ring_1.3_ecdsap384_aes_client",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T15:35:48.351Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rustls-rustls-learnings.md",
+        "fileName": "rustls-rustls-learnings.md"
+      }
+    },
+    "SRC-5D3C2F7789CB": {
+      "id": "SRC-5D3C2F7789CB",
+      "url": "https://bench.rustls.dev/comparisons/0d10aa47e82cf40ecabf677360b8276798a2039a:54bc60c6498f2187be34377fb63584a0d00c55e9/cachegrind-diff/transfer_no_resume_ring_1.3_ecdsap256_aes_client",
+      "title": "https://bench.rustls.dev/comparisons/0d10aa47e82cf40ecabf677360b8276798a2039a:54bc60c6498f2187be34377fb63584a0d00c55e9/cachegrind-diff/transfer_no_resume_ring_1.3_ecdsap256_aes_client",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T15:35:48.397Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rustls-rustls-learnings.md",
+        "fileName": "rustls-rustls-learnings.md"
+      }
+    },
+    "SRC-B881E77EDD48": {
+      "id": "SRC-B881E77EDD48",
+      "url": "https://app.codecov.io/gh/rustls/rustls/pull/3441?dropdown=coverage&src=pr&el=h1",
+      "title": "https://app.codecov.io/gh/rustls/rustls/pull/3441?dropdown=coverage&src=pr&el=h1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T15:35:48.430Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rustls-rustls-learnings.md",
+        "fileName": "rustls-rustls-learnings.md"
+      }
+    },
+    "SRC-97BFA8FD8674": {
+      "id": "SRC-97BFA8FD8674",
+      "url": "https://app.codecov.io/gh/rustls/rustls/commit/54bc60c6498f2187be34377fb63584a0d00c55e9?dropdown=coverage&el=desc",
+      "title": "https://app.codecov.io/gh/rustls/rustls/commit/54bc60c6498f2187be34377fb63584a0d00c55e9?dropdown=coverage&el=desc",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T15:35:48.490Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rustls-rustls-learnings.md",
+        "fileName": "rustls-rustls-learnings.md"
       }
     }
   }
