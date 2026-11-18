@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261116-M25X",
-    "timestamp": "2026-11-16T03:06:16.053Z",
-    "repository": "matthart1983/netwatch",
-    "learningId": "learn-github-matthart1983-netwatch",
-    "contentHash": "34a95334c1d3fed718ea61b7f3d6611ce8e1d1a9badfaa71b602948f5689dc76",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261116-7YQB",
-    "timestamp": "2026-11-16T03:23:18.035Z",
-    "repository": "CrawlCove/robots-txt-tester",
-    "learningId": "learn-github-crawlcove-robots-txt-tester",
-    "contentHash": "21c31f05a722525c6f7cc2a2baaa4b56dad769e29514be64805c29ae73ddbc1d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261116-829F",
-    "timestamp": "2026-11-16T03:23:22.611Z",
-    "repository": "crossplane/crossplane",
-    "learningId": "learn-github-crossplane-crossplane",
-    "contentHash": "1471699563cae90446ad648665c5cf64a38cdb463f5c9d433cf8da12c1b1efa2",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261116-PMLB",
     "timestamp": "2026-11-16T03:37:02.111Z",
     "repository": "baidu/ERNIE-5.5-Flash-Base",
@@ -7490,6 +7445,51 @@
     "repository": "skyhook-io/radar",
     "learningId": "learn-github-skyhook-io-radar",
     "contentHash": "368904eac464463ef5951111fb3638596a645e483171f11e83de781ca99f552c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-PBT9",
+    "timestamp": "2026-11-18T02:16:09.741Z",
+    "repository": "Viggle/Qwen-Image-2.1-viggle-turbo",
+    "learningId": "learn-huggingface-viggle-qwen-image-2-1-viggle-turbo",
+    "contentHash": "245e24b0025d0bb0ed8824e891a0d3f93ed0bc36fc1be1dd76388a872f027e9a",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-PCBH",
+    "timestamp": "2026-11-18T02:16:10.397Z",
+    "repository": "max-sixty/worktrunk",
+    "learningId": "learn-github-max-sixty-worktrunk",
+    "contentHash": "31bfa2e53325b5c473ba6fcc5d3f4c55791d745b9922f448119b149a8f52f69d",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-PIDT",
+    "timestamp": "2026-11-18T02:16:18.257Z",
+    "repository": "okteto/okteto",
+    "learningId": "learn-github-okteto-okteto",
+    "contentHash": "e6957a4af2dc9a7cba9230072fbdf392fef35ed3091e5c493333ec9394522025",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

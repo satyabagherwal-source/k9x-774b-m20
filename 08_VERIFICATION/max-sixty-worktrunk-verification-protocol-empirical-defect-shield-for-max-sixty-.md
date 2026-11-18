@@ -4,22 +4,22 @@
 {
   "source_repository": "max-sixty/worktrunk",
   "source_url": "https://github.com/max-sixty/worktrunk",
-  "source_version": "829610e8",
+  "source_version": "1bed6f84",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-16T18:55:51.027Z",
+  "timestamp": "2026-11-18T02:16:10.613Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-max-sixty-worktrunk",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [max-sixty/worktrunk](https://github.com/max-sixty/worktrunk) (Revision: `829610e8`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-16T18:55:51.027Z`  
+> **Provenance**: Harvested from [max-sixty/worktrunk](https://github.com/max-sixty/worktrunk) (Revision: `1bed6f84`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-18T02:16:10.613Z`  
 > **Learning ID**: `learn-github-max-sixty-worktrunk`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `max-sixty/worktrunk` (Commit: `829610e8`)
+- **Target Repository**: `max-sixty/worktrunk` (Commit: `1bed6f84`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/max-sixty-worktrunk-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/max-sixty/worktrunk](https://github.com/max-sixty/worktrunk))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T18:55:38.322Z  
+> **Harvest Timestamp**: 2026-11-18T02:16:09.177Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Worktrunk is a CLI for Git worktree management, designed for parallel AI agent workflows
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 12565 stars
+- **Stars / Engagement**: 12600 stars
 
 ---
 
@@ -2026,585 +2026,535 @@ fn no_matching_commands_error(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b200ed58` (2026-11-15)
-**Commit Message**: fix(hooks): fail a hook before it starts when its template error is already decided (#4787)
+### Incident Patch 1: `1bed6f84` (2026-11-17)
+**Commit Message**: fix(shell): read --source only as the wrapper's first argument (#4833)
 
-A hook with an unguarded `{{ branch }}` can't expand in a detached
-worktree, where `branch` is unset by design (#4009). In a background
-hook that failure was silent: the runner renders each step (#3042), so
-`wt remove` announced the `post-remove` hook, exited 0, and the error
-reached only `runner.log`. In a jj-colocated repo, where every worktree
-is detached, that happens on every removal.
+The bash, zsh, and fish shell wrappers treated every `--source` on the
+command line as their own dev flag: they dropped it and ran wt through
+`cargo run`. A `--source` meant for a command wt launches was taken too,
+so `wt step tether -- uv run leaf-dev preview --source page.html` failed
+with "could not find `Cargo.toml`" (exit 101). The wrappers now take
+`--source` only as the first argument (`wt --source switch …`) and pass
+everything after it to wt unchanged.
 
-Hook preparation already rejects a template that can't parse before any
-step runs. `PreparedPipeline::validated` now also rejects one whose
-render fails without reading anything an earlier step can change, which
-excludes `vars.*` on a branch and Worktrunk's template functions. Such a
-template gets the same error and exit status as a syntax error, in every
-hook, foreground and background. An error that depends on `vars` or a
-function still surfaces when its step runs. The hook help says so, and
-points a command that identifies the worktree at `worktree_name` or
-`worktree_path`.
+Stopping the scan at `--` would fix the reported command but still take
+the flag from custom `wt-<name>` subcommands, which receive their
+arguments verbatim without a `--`. wt itself has no `--source` flag, so
+a fixed leading position is the one place the wrapper can claim it. The
+cost is that `wt list --source` now errors with clap's "unexpected
+argument" instead of running from source. In completion mode the wrapper
+now passes the words unchanged, `--source` included, and the binary's
+completer already handles it (`test_complete_init_shell_all_variations`
+covers `wt --source config shell init <TAB>`). Nushell and PowerShell
+have no `--source` and are 
 
-Worth weighing: `wt remove` with such a `post-remove` hook now removes
-the worktree, prints the error and exits 1, as a syntax e
-
-**File**: `docs/src/content/docs/hook.md` (modified, +2/-2)
+**File**: `src/shell/snapshots/worktrunk__shell__tests__init_bash.snap` (modified, +7/-7)
 ```diff
-@@ -102,7 +102,7 @@ server = "npm run dev"
+@@ -10,16 +10,16 @@ if command -v wt >/dev/null 2>&1 || [[ -n "${WORKTRUNK_BIN:-}" ]]; then
+     # Override wt command so it can change the parent shell's directory.
+     # WORKTRUNK_BIN can override the binary path (for testing dev builds).
+     wt() {
++        # `wt --source ...` runs wt through `cargo run` in the current checkout.
++        # Only a leading --source is this wrapper's flag; every later argument
++        # belongs to wt or to a command it runs.
+         local use_source=false
+-        local args=()
+-        for arg in "$@"; do
+-            if [[ "$arg" == --source ]]; then use_source=true; else args+=("$arg"); fi
+-        done
++        if [[ "${1-}" == --source ]]; then use_source=true; shift; fi
+         # Completion mode: call binary directly, no directive files needed.
+         # This check MUST be here (not in the binary) because clap's completion
+         # handler runs before argument parsing.
+         if [[ -n "${COMPLETE:-}" ]]; then
+-            command "${WORKTRUNK_BIN:-wt}" "${args[@]}"
++            command "${WORKTRUNK_BIN:-wt}" "$@"
+             return
+         fi
  
- Here `install` runs first, then `build` and `server` run together.
+@@ -86,8 +86,8 @@ if command -v wt >/dev/null 2>&1 || [[ -n "${WORKTRUNK_BIN:-}" ]]; then
+         prompt_flags=${prompt_flags%% *}
  
--Templates are syntax-checked before the pipeline starts and rendered as each step runs, so a step can store [per-branch vars](/config/#wt-config-state-vars) that later steps read via `{{ vars.<key> }}`. Previews (`wt hook <type> --dry-run`, `wt hook show --expanded`) leave `{{ vars.* }}` references unexpanded for that reason.
-+Templates are checked before the pipeline starts. One that can't parse, or that fails to expand from values no earlier step can change, such as an unguarded `{{ branch }}` in a detached worktree, stops the hook before any step runs. Templates render as each step runs, so a step can store [per-branch vars](/config/#wt-config-state-vars) that later steps read via `{{ vars.<key> }}`. Previews (`wt hook <type> --dry-run`, `wt hook show --expanded`) leave `{{ vars.* }}` references unexpanded for that reason.
+         local exit_code=0
+-        local execution=("${WORKTRUNK_BIN:-wt}" "${args[@]}")
+-        if [[ "$use_source" == true ]]; then execution=(cargo run --bin wt --quiet -- "${args[@]}"); fi
++        local execution=("${WORKTRUNK_BIN:-wt}" "$@")
++        if [[ "$use_source" == true ]]; then execution=(cargo run --bin wt --quiet -- "$@"); fi
+         if [[ "$owns_exit" == true ]]; then
+             local exit_provider="$owner exit \"\$?\""
+             if [[ -n "$exit_trap" ]]; then
+```
+
+**File**: `src/shell/snapshots/worktrunk__shell__tests__init_fish.snap` (modified, +8/-7)
+```diff
+@@ -10,11 +10,13 @@ expression: output
+ # Override wt command so it can change the parent shell's directory.
+ # WORKTRUNK_BIN can override the binary path (for testing dev builds).
+ function wt
++    # `wt --source ...` runs wt through `cargo run` in the current checkout.
++    # Only a leading --source is this wrapper's flag; every later argument
++    # belongs to wt or to a command it runs.
+     set -l use_source false
+-    set -l args
+-
+-    for arg in $argv
+-        if test "$arg" = "--source"; set use_source true; else; set -a args $arg; end
++    if test "$argv[1]" = --source
++        set use_source true
++        set -e argv[1]
+     end
  
- Most hooks don't need `[[hook]]` blocks. Reach for them when there's a dependency chain — typically setup that must complete before later steps, like installing dependencies before running a build and dev server concurrently.
+     test -n "$WORKTRUNK_BIN"; or set -l WORKTRUNK_BIN (type -P wt 2>/dev/null)
+@@ -50,13 +52,12 @@ function wt
+         return $cd_exit
+     end
  
-@@ -179,7 +179,7 @@ Undefined variables error — use conditionals or defaults for optional behavior
- sync = "{% if upstream %}git fetch && git rebase {{ upstream }}{% endif %}"
- ```
- 
--A detached worktree has no branch, so `branch` — and a `base` or `target` that names that worktree — is undefined there; guard with `{% if branch %}`.
-+A detached worktree has no branch, so `branch` — and a `base` or `target` that names that worktree — is undefined there; guard with `{% if branch %}`. A command that identifies the worktree rather than its branch can use `worktree_name` or `worktree_path`, which every worktree has.
- 
- Run any hook-firing command with `-v` to see the resolved variables for the actual invocation — each hook prints a `template variables:` block showing every in-scope variable and its value (`(unset)` for conditional vars that didn't populate, like `target_worktree_path` during `wt switch -`). Aliases do the same under `-v`: `wt -v <alias>` prints the alias's in-scope variables before the pipeline runs.
+-    # --source: use cargo run (builds from source)
+     if test $use_source = true
+         $run_function env WORKTRUNK_DIRECTIVE_CD_FILE=$cd_file \
+-            cargo run --bin wt --quiet -- $args
++            cargo run --bin wt --quiet -- $argv
+     else
+         $run_function env WORKTRUNK_DIRECTIVE_CD_FILE=$cd_file \
+-            $WORKTRUNK_BIN $args
++            $WORKTRUNK_BIN $argv
+     end
+     set -l exit_code $status
  
 ```
 
-**File**: `plugins/worktrunk/skills/worktrunk/reference/hook.md` (modified, +2/-2)
+**File**: `src/shell/snapshots/worktrunk__shell__tests__init_zsh.snap` (modified, +7/-8)
 ```diff
-@@ -96,7 +96,7 @@ server = "npm run dev"
+@@ -13,27 +13,26 @@ if command -v wt >/dev/null 2>&1 || [[ -n "${WORKTRUNK_BIN:-}" ]]; then
+     # Override wt command so it can change the parent shell's directory.
+     # WORKTRUNK_BIN can override the binary path (for testing dev builds).
+     wt() {
++        # `wt --source ...` runs wt through `cargo run` in the current checkout.
++        # Only a leading --source is this wrapper's flag; every later argument
++        # belongs to wt or to a command it runs.
+         local use_source=false
+-        local -a args
+-
+-        for arg in "$@"; do
+-            if [[ "$arg" == "--source" ]]; then use_source=true; else args+=("$arg"); fi
+-        done
++        if [[ "${1-}" == --source ]]; then use_source=true; shift; fi
  
- Here `install` runs first, then `build` and `server` run together.
+         # Completion mode: call binary directly, no directive files needed.
+         # This check MUST be here (not in the binary) because clap's completion
+         # handler runs before argument parsing.
+         if [[ -n "${COMPLETE:-}" ]]; then
+-            command "${WORKTRUNK_BIN:-wt}" "${args[@]}"
++            command "${WORKTRUNK_BIN:-wt}" "$@"
+             return
+         fi
  
--Templates are syntax-checked before the pipeline starts and rendered as each step runs, so a step can store [per-branch vars](https://worktrunk.dev/config/#wt-config-state-vars) that later steps read via `{{ vars.<key> }}`. Previews (`wt hook <type> --dry-run`, `wt hook show --expanded`) leave `{{ vars.* }}` references unexpanded for that reason.
-+Templates are checked before the pipeline starts. One that can't parse, or that fails to expand from values no earlier step can change, such as an unguarded `{{ branch }}` in a detached worktree, stops the hook before any step runs. Templates render as each step runs, so a step can store [per-branch vars](https://worktrunk.dev/config/#wt-config-state-vars) that later steps read via `{{ vars.<key> }}`. Previews (`wt hook <type> --dry-run`, `wt hook show --expanded`) leave `{{ vars.* }}` references unexpanded for that reason.
+         local cd_file exit_code=0
+         cd_file="$(mktemp)"
  
- Most hooks don't need `[[hook]]` blocks. Reach for them when there's a dependency chain — typically setup that must complete before later steps, like installing dependencies before running a build and dev server concurrently.
+-        local -a execution=("${WORKTRUNK_BIN:-wt}" "${args[@]}")
++        local -a execution=("${WORKTRUNK_BIN:-wt}" "$@")
+         if [[ "$use_source" == true ]]; then
+-            execution=(cargo run --bin wt --quiet -- "${args[@]}")
++            execution=(cargo run --bin wt --quiet -- "$@")
+         fi
+         {
+             WORKTRUNK_DIRECTIVE_CD_FILE="$cd_file" command "${execution[@]}"
+```
+
+**File**: `src/shell/snapshots/worktrunk__shell__tests__shell_init_with_custom_prefix.snap` (modified, +7/-7)
+```diff
+@@ -10,16 +10,16 @@ if command -v custom >/dev/null 2>&1 || [[ -n "${WORKTRUNK_BIN:-}" ]]; then
+     # Override custom command so it can change the parent shell's directory.
+     # WORKTRUNK_BIN can override the binary path (for testing dev builds).
+     custom() {
++        # `custom --source ...` runs custom through `cargo run` in the current checkout.
++        # Only a leading --source is this wrapper's flag; every later argument
++        # belongs to custom or to a command it runs.
+         local use_source=false
+-        local args=()
+-        for arg in "$@"; do
+-            if [[ "$arg" == --source ]]; then use_source=true; else args+=("$arg"); fi
+-        done
++        if [[ "${1-}" == --source ]]; then use_source=true; shift; fi
+         # Completion mode: call binary directly, no directive files needed.
+         # This check MUST be here (not in the binary) because clap's completion
+         # handler runs before argument parsing.
+         if [[ -n "${COMPLETE:-}" ]]; then
+-            command "${WORKTRUNK_BIN:-custom}" "${args[@]}"
++            command "${WORKTRUNK_BIN:-custom}" "$@"
+             return
+         fi
  
-@@ -173,7 +173,7 @@ Undefined variables error — use conditionals or defaults for optional behavior
- sync = "{% if upstream %}git fetch && git rebase {{ upstream }}{% endif %}"
- ```
+@@ -86,8 +86,8 @@ if command -v custom >/dev/null 2>&1 || [[ -n "${WORKTRUNK_BIN:-}" ]]; then
+         prompt_flags=${prompt_flags%% *}
  
--A detached worktree has no branch, so `branch` — and a `base` or `target` that names that worktree — is undefined there; guard with `{% if branch %}`.
-+A detached worktree has no branch, so `branch` — and a `base` or `target` that names that worktree — is undefined there; guard with `{% if branch %}`. A command that identifies the worktree rather than its branch can use `worktree_name` or `worktree_path`, which every worktree has.
+         local exit_code=0
+-        local execution=("${WORKTRUNK_BIN:-custom}" "${args[@]}")
+-        if [[ "$use_source" == true ]]; then execution=(cargo run --bin custom --quiet -- "${args[@]}"); fi
++        local execution=("${WORKTRUNK_BIN:-custom}" "$@")
++        if [[ "$use_source" == true ]]; then execution=(cargo run --bin custom --quiet -- "$@"); fi
+         if [[ "$owns_exit" == true ]]; then
+             local exit_provider="$owner exit \"\$?\""
+             if [[ -n "$exit_trap" ]]; then
+```
+
+**File**: `templates/bash.sh` (modified, +7/-7)
+```diff
+@@ -6,16 +6,16 @@ if command -v {{ cmd }} >/dev/null 2>&1 || [[ -n "${WORKTRUNK_BIN:-}" ]]; then
+     # Override {{ cmd }} command so it can change the parent shell's directory.
+     # WORKTRUNK_BIN can override the binary path (for testing dev builds).
+     {{ cmd }}() {
++        # `{{ cmd }} --source ...` runs {{ cmd }} through `cargo run` in the current checkout.
++        # Only a leading --source is this wrapper's flag; every later argument
++        # belongs to {{ cmd }} or to a command it runs.
+         local use_source=false
+-        local args=()
+-        for arg in "$@"; do
+-            if [[ "$arg" == --source ]]; then use_source=true; else args+=("$arg"); fi
+-        done
++        if [[ "${1-}" == --source ]]; then use_source=true; shift; fi
+         # Completion mode: call binary directly, no directive files needed.
+         # This check MUST be here (not in the binary) because clap's completion
+         # handler runs before argument parsing.
+         if [[ -n "${COMPLETE:-}" ]]; then
+-            command "${WORKTRUNK_BIN:-{{ cmd }}}" "${args[@]}"
++            command "${WORKTRUNK_BIN:-{{ cmd }}}" "$@"
+             return
+         fi
  
- Run any hook-firing command with `-v` to see the resolved variables for the actual invocation — each hook prints a `template variables:` block showing every in-scope variable and its value (`(unset)` for conditional vars that didn't populate, like `target_worktree_path` during `wt switch -`). Aliases do the same under `-v`: `wt -v <alias>` prints the alias's in-scope variables before the pipeline runs.
+@@ -82,8 +82,8 @@ if command -v {{ cmd }} >/dev/null 2>&1 || [[ -n "${WORKTRUNK_BIN:-}" ]]; then
+         prompt_flags=${prompt_flags%% *}
+ 
+         local exit_code=0
+-        local execution=("${WORKTRUNK_BIN:-{{ cmd }}}" "${args[@]}")
+-        if [[ "$use_source" == true ]]; then execution=(cargo run --bin {{ cmd }} --quiet -- "${args[@]}"); fi
++        local execution=("${WORKTRUNK_BIN:-{{ cmd }}}" "$@")
++        if [[ "$use_source" == true ]]; then execution=(cargo run --bin {{ cmd }} --quiet -- "$@"); fi
+         if [[ "$owns_exit" == true ]]; then
+             local exit_provider="$owner exit \"\$?\""
+             if [[ -n "$exit_trap" ]]; then
+```
+
+**File**: `templates/fish.fish` (modified, +8/-7)
+```diff
+@@ -6,11 +6,13 @@
+ # Override {{ cmd }} command so it can change the parent shell's directory.
+ # WORKTRUNK_BIN can override the binary path (for testing dev builds).
+ function {{ cmd }}
++    # `{{ cmd }} --source ...` runs {{ cmd }} through `cargo run` in the current checkout.
++    # Only a leading --source is this wrapper's flag; every later argument
++    # belongs to {{ cmd }} or to a command it runs.
+     set -l use_source false
+-    set -l args
+-
+-    for arg in $argv
+-        if test "$arg" = "--source"; set use_source true; else; set -a args $arg; end
++    if test "$argv[1]" = --source
++        set use_source true
++        set -e argv[1]
+     end
+ 
+     test -n "$WORKTRUNK_BIN"; or set -l WORKTRUNK_BIN (type -P {{ cmd }} 2>/dev/null)
+@@ -46,13 +48,12 @@ function {{ cmd }}
+         return $cd_exit
+     end
+ 
+-    # --source: use cargo run (builds from source)
+     if test $use_source = true
+         $run_function env WORKTRUNK_DIRECTIVE_CD_FILE=$cd_file \
+-            cargo run --bin {{ cmd }} --quiet -- $args
++            cargo run --bin {{ cmd }} --quiet -- $argv
+     else
+         $run_function env WORKTRUNK_DIRECTIVE_CD_FILE=$cd_file \
+-            $WORKTRUNK_BIN $args
++            $WORKTRUNK_BIN $argv
+     end
+     set -l exit_code $status
  
 ```
 
-**File**: `skills/worktrunk/reference/hook.md` (modified, +2/-2)
+**File**: `templates/zsh.zsh` (modified, +7/-8)
 ```diff
-@@ -96,7 +96,7 @@ server = "npm run dev"
+@@ -9,27 +9,26 @@ if command -v {{ cmd }} >/dev/null 2>&1 || [[ -n "${WORKTRUNK_BIN:-}" ]]; then
+     # Override {{ cmd }} command so it can change the parent shell's directory.
+     # WORKTRUNK_BIN can override the binary path (for testing dev builds).
+     {{ cmd }}() {
++        # `{{ cmd }} --source ...` runs {{ cmd }} through `cargo run` in the current checkout.
++        # Only a leading --source is this wrapper's flag; every later argument
++        # belongs to {{ cmd }} or to a command it runs.
+         local use_source=false
+-        local -a args
+-
+-        for arg in "$@"; do
+-            if [[ "$arg" == "--source" ]]; then use_source=true; else args+=("$arg"); fi
+-        done
++        if [[ "${1-}" == --source ]]; then use_source=true; shift; fi
  
- Here `install` runs first, then `build` and `server` run together.
+         # Completion mode: call binary directly, no directive files needed.
+         # This check MUST be here (not in the binary) because clap's completion
+         # handler runs before argument parsing.
+         if [[ -n "${COMPLETE:-}" ]]; then
+-            command "${WORKTRUNK_BIN:-{{ cmd }}}" "${args[@]}"
++            command "${WORKTRUNK_BIN:-{{ cmd }}}" "$@"
+             return
+         fi
  
--Templates are syntax-checked before the pipeline starts and rendered as each step runs, so a step can store [per-branch vars](https://worktrunk.dev/config/#wt-config-state-vars) that later steps read via `{{ vars.<key> }}`. Previews (`wt hook <type> --dry-run`, `wt hook show --expanded`) leave `{{ vars.* }}` references unexpanded for that reason.
-+Templates are checked before the pipeline starts. One that can't parse, or that fails to expand from values no earlier step can change, such as an unguarded `{{ branch }}` in a detached worktree, stops the hook before any step runs. Templates render as each step runs, so a step can store [per-branch vars](https://worktrunk.dev/config/#wt-config-state-vars) that later steps read via `{{ vars.<key> }}`. Previews (`wt hook <type> --dry-run`, `wt hook show --expanded`) leave `{{ vars.* }}` references unexpanded for that reason.
+         local cd_file exit_code=0
+         cd_file="$(mktemp)"
  
- Most hooks don't need `[[hook]]` blocks. Reach for them when there's a dependency chain — typically setup that must complete before later steps, like installing dependencies before running a build and dev server concurrently.
- 
-@@ -173,7 +173,7 @@ Undefined variables error — use conditionals or defaults for optional behavior
- sync = "{% if upstream %}git fetch && git rebase {{ upstream }}{% endif %}"
- ```
- 
--A detached worktree has no branch, so `branch` — and a `base` or `target` that names that worktree — is undefined there; guard with `{% if branch %}`.
-+A detached worktree has no branch, so `branch` — and a `base` or `target` that names that worktree — is undefined there; guard with `{% if branch %}`. A command that identifies the worktree rather than its branch can use `worktree_name` or `worktree_path`, which every worktree has.
- 
- Run any hook-firing command with `-v` to see the resolved variables for the actual invocation — each hook prints a `template variables:` block showing every in-scope variable and its value (`(unset)` for conditional vars that didn't populate, like `target_worktree_path` during `wt switch -`). Aliases do the same under `-v`: `wt -v <alias>` prints the alias's in-scope variables before the pipeline runs.
- 
+-        local -a execution=("${WORKTRUNK_BIN:-{{ cmd }}}" "${args[@]}")
++        local -a execution=("${WORKTRUNK_BIN:-{{ cmd }}}" "$@")
+         if [[ "$use_source" == true ]]; then
+-            execution=(cargo run --bin {{ cmd }} --quiet -- "${args[@]}")
++            execution=(cargo run --bin {{ cmd }} --quiet -- "$@")
+         fi
+         {
+             WORKTRUNK_DIRECTIVE_CD_FILE="$cd_file" command "${execution[@]}"
 ```
 
-**File**: `src/cli/mod.rs` (modified, +2/-2)
+**File**: `tests/integration_tests/shell_wrapper.rs` (modified, +59/-5)
 ```diff
-@@ -1721,7 +1721,7 @@ server = "npm run dev"
- 
- Here `install` runs first, then `build` and `server` run together.
- 
--Templates are syntax-checked before the pipeline starts and rendered as each step runs, so a step can store [per-branch vars](/config/#wt-config-state-vars) that later steps read via `{{ vars.<key> }}`. Previews (`wt hook <type> --dry-run`, `wt hook show --expanded`) leave `{{ vars.* }}` references unexpanded for that reason.
-+Templates are checked before the pipeline starts. One that can't parse, or that fails to expand from values no earlier step can change, such as an unguarded `{{ branch }}` in a detached worktree, stops the hook before any step runs. Templates render as each step runs, so a step can store [per-branch vars](/config/#wt-config-state-vars) that later steps read via `{{ vars.<key> }}`. Previews (`wt hook <type> --dry-run`, `wt hook show --expanded`) leave `{{ vars.* }}` references unexpanded for that reason.
- 
- Most hooks don't need `[[hook]]` blocks. Reach for them when there's a dependency chain — typically setup that must complete before later steps, like installing dependencies before running a build and dev server concurrently.
- 
-@@ -1798,7 +1798,7 @@ Undefined variables error — use conditionals or defaults for optional behavior
- sync = "{% if upstream %}git fetch && git rebase {{ upstream }}{% endif %}"
- ```
- 
--A detached worktree has no branch, so `branch` — and a `base` or `target` that names that worktree — is undefined there; guard with `{% if branch %}`.
-+A detached worktree has no branch, so `branch` — and a `base` or `target` that names that worktree — is undefined there; guard with `{% if branch %}`. A command that identifies the worktree rather than its branch can use `worktree_name` or `worktree_path`, which every worktree has.
- 
- Run any hook-firing command with `-v` to see the resolved variables for the actual invocation — each hook prints a `template variables:` block showing every in-scope variable and its value (`(unset)` for conditional vars that didn't populate, like `target_worktree_path` during `wt switch -`). Aliases do the same under `-v`: `wt -v <alias>` prints the alias's in-scope variables before the pipeline runs.
- 
-```
-
-**File**: `src/commands/command_executor.rs` (modified, +24/-15)
-```diff
-@@ -34,9 +34,9 @@ use worktrunk::config::HookSource;
- pub struct PreparedCommand {
-     pub name: Option<String>,
-     /// Raw template, rendered against `context` when the command runs.
--    /// Execution paths validate syntax via [`PreparedPipeline::validated`];
--    /// rendering is deferred so `vars.*` set by earlier pipeline steps are
--    /// read fresh from git config.
-+    /// Execution paths reject what the frozen context already decides via
-+    /// [`PreparedPipeline::validated`]; rendering is deferred so `vars.*` set
-+    /// by earlier pipeline steps are read fresh from git config.
-     pub template: String,
-     /// Template variables, frozen at preparation. Serialized to JSON only at
-     /// the process boundary (the background pipeline spec).
-@@ -795,7 +795,7 @@ pub fn map_config_steps(
-         .collect()
- }
- 
--/// A prepared pipeline that has not yet chosen a syntax-error policy.
-+/// A prepared pipeline that has not yet chosen a template-error policy.
- ///
- /// [`prepare_steps`] returns this rather than the steps themselves so the
- /// choice is a method call the compiler demands: running hooks takes
-@@ -807,19 +807,29 @@ pub fn map_config_steps(
- pub struct PreparedPipeline(Vec<PreparedStep>);
- 
- impl PreparedPipeline {
--    /// The steps, rejected if any template cannot parse — so a pipeline that
--    /// cannot render in full never starts.
-+    /// The steps, rejected if any template fails in a way the frozen context
-+    /// already decides — so a pipeline that cannot render in full never
-+    /// starts, in the foreground or the background.
-     ///
--    /// Semantic errors (undefined variable, filter failure) are not checked:
--    /// rendering is deferred, so they surface at the failing step.
--    pub fn validated(self) -> Result<Vec<PreparedStep>> {
-+    /// Two failures are decided now: a template that cannot parse, and one
-+    /// whose render fails without reading anything an earlier step can change
-+    /// (see [`TemplateContext::known_expansion_error`]), such as an unguarded
-+    /// `{{ branch }}` in a detached worktree. A failure that depends on
-+    /// `vars.*` or a template function surfaces when its step runs.
-+    pub fn validated(self, repo: &Repository) -> Result<Vec<PreparedStep>> {
-         for cmd in self.0.iter().flat_map(PreparedStep::commands) {
-             validate_template_syntax(&cmd.template, &cmd.template_name)?;
-+            if let Some(err) =
-+                cmd.context
-+                    .known_expansion_error(&cmd.template, repo, &cmd.template_name)
-+            {
-+                return Err(err.into());
-+            }
-         }
-         Ok(self.0)
+@@ -1895,13 +1895,67 @@ approved-commands = ["echo 'fish background task'"]
      }
  
--    /// The steps with no syntax check, for `wt hook show --expanded`: a
-+    /// The steps with no template check, for `wt hook show --expanded`: a
-     /// listing annotates a broken template in place rather than blanking the
-     /// rest of the listing.
-     pub fn into_unvalidated(self) -> Vec<PreparedStep> {
-@@ -832,11 +842,10 @@ impl PreparedPipeline {
- /// and background) and the `wt hook show --expanded` listing come through here,
- /// so a context key added here reaches both with no second edit.
- ///
--/// Each command freezes its context and keeps its raw template;
--/// rendering happens when the command runs, so semantic errors (undefined
--/// variable, filter failure) surface at the failing step. The returned
--/// [`PreparedPipeline`] makes the caller choose what an unparsable template
--/// does.
-+/// Each command freezes its context and keeps its raw template; rendering
-+/// happens when the command runs, so `vars.*` set by an earlier step are read
-+/// fresh. The returned [`PreparedPipeline`] makes the caller choose what a
-+/// template that cannot render does.
- pub fn prepare_steps(
-     command_config: &CommandConfig,
-     ctx: &CommandContext<'_>,
-```
-
-**File**: `src/commands/hooks.rs` (modified, +2/-1)
-```diff
-@@ -138,7 +138,8 @@ pub(crate) fn prepare_selected(
- ) -> anyhow::Result<Vec<SourcedStep>> {
-     let mut out = Vec::new();
-     for (source, config) in entries {
--        let steps = prepare_steps(config, ctx, extra_vars, hook_type, *source)?.validated()?;
-+        let steps =
-+            prepare_steps(config, ctx, extra_vars, hook_type, *source)?.validated(ctx.repo)?;
-         out.extend(steps.into_iter().map(|step| SourcedStep {
-             step,
-             source: *source,
-```
-
-**File**: `src/config/expansion.rs` (modified, +181/-53)
-```diff
-@@ -166,12 +166,69 @@ impl TemplateContext {
-         name: &str,
-         vars_mode: VarsMode,
-     ) -> Result<String, TemplateExpandError> {
--        let vars: HashMap<&str, &str> = self
--            .0
-+        expand_template_with(
-+            template,
-+            &self.borrowed(),
-+            escape_mode,
-+            repo,
-+            name,
-+            vars_mode,
-+        )
-+    }
+     // ========================================================================
+-    // --source Flag Error Passthrough Tests
++    // --source Flag Tests
+     // ========================================================================
+-    //
+-    // These tests verify that actual error messages pass through correctly
+-    // when using the --source flag (instead of being hidden with generic
+-    // wrapper error messages like "Error: cargo build failed").
+ 
++    /// Only a leading `--source` routes the call through `cargo run`. A later
++    /// `--source` belongs to wt or to a command wt runs, as in
++    /// `wt step tether -- preview --source page.html`, and reaches it unchanged.
++    #[rstest]
++    #[case("bash", &["--norc", "--noprofile"])]
++    #[case("zsh", &["-f"])]
++    #[case("fish", &["--no-config"])]
++    fn test_source_flag_only_as_first_argument(
++        #[case] shell: &str,
++        #[case] isolation: &[&str],
++        repo: TestRepo,
++    ) {
++        use std::os::unix::fs::PermissionsExt;
 +
-+    /// The error [`Self::expand`] will return for `template` when it runs
-+    /// later, if this context already decides it.
-+    ///
-+    /// A pipeline freezes its context when it is prepared, so only two inputs
-+    /// can change before a step renders: `vars.*`, read from the branch's git
-+    /// config that an earlier step may write, and Worktrunk's template
-+    /// functions, which read the repository. Without a `branch` there is no
-+    /// git config to read, and `vars` is the empty map whenever the step runs.
-+    /// A template that reads no changing input renders now exactly as it will
-+    /// then, so this renders it, with no `-v` output; escaping can't make a
-+    /// render fail, so none is applied. `None` when it renders, when its
-+    /// outcome waits on that later state, or when it doesn't parse, which
-+    /// [`validate_template_syntax`] reports.
-+    ///
-+    /// Every read counts, a local's included, since `{% set f = f() %}`
-+    /// binds the name it calls and so hides the call from
-+    /// `undeclared_variables`.
-+    pub fn known_expansion_error(
-+        &self,
-+        template: &str,
-+        repo: &Repository,
-+        name: &str,
-+    ) -> Option<TemplateExpandError> {
-+        let analysis = TemplateVars::of(template)?;
-+        let env = template_environment(repo);
-+        // MiniJinja's own globals (`range`, `namespace`, …) read nothing, so
-+        // the changing ones are those a bare environment lacks.
-+        let builtins = Environment::new();
-+        let vars_can_change = self.get("branch").is_some();
-+        let reads_later_state = analysis.reads.iter().any(|(read, _)| {
-+            (*read == "vars" && vars_can_change)
-+                || (env.globals().any(|(global, _)| global == *read)
-+                    && builtins.globals().all(|(global, _)| global != *read))
-+        });
-+        if reads_later_state {
-+            return None;
++        // Each stub prints its name and the arguments it received.
++        let stub_dir = repo.root_path().join("stub-bin");
++        fs::create_dir_all(&stub_dir).unwrap();
++        let wt_stub = repo.root_path().join("wt-stub");
++        for (stub, name) in [(stub_dir.join("cargo"), "cargo"), (wt_stub.clone(), "wt")] {
++            fs::write(
++                &stub,
++                format!("#!/bin/sh\nprintf '{name}'\nprintf ' [%s]' \"$@\"\necho\n"),
++            )
++            .unwrap();
++            fs::set_permissions(&stub, fs::Permissions::from_mode(0o755)).unwrap();
 +        }
-+        render_template(
-+            template,
-+            &self.borrowed(),
-+            ShellEscapeMode::Literal,
-+            repo,
-+            name,
-+            VarsMode::Resolve,
++        let path = std::env::join_paths(
++            std::iter::once(stub_dir)
++                .chain(std::env::split_paths(&std::env::var_os("PATH").unwrap())),
 +        )
-+        .err()
-+    }
++        .unwrap();
 +
-+    fn borrowed(&self) -> HashMap<&str, &str> {
-+        self.0
-             .iter()
-             .map(|(k, v)| (k.as_str(), v.as_str()))
--            .collect();
--        expand_template_with(template, &vars, escape_mode, repo, name, vars_mode)
-+            .collect()
-     }
- 
-     /// The JSON form piped to a `wt step for-each` child's stdin.
-@@ -1069,10 +1126,10 @@ pub fn referenced_vars_for_config(
- ///
- /// Every path that runs hooks calls this on each template, via
- /// `PreparedPipeline::validated`, so syntax errors (e.g. `{{ vars..foo }}`) abort
--/// before the first pipeline step runs; rendering — and with it semantic errors
--/// like undefined variables — is deferred to execution time. Alias dispatch has
--/// already parsed each template for argument routing by then, so it skips the
--/// check. The error matches [`expand_template`]'s
-+/// before the first pipeline step runs, along with the render errors
-+/// [`TemplateContext::known_expansion_error`] already decides. Alias dispatch
-+/// has already parsed each template for argument routing by then, so it skips
-+/// the check. The error matches [`expand_template`]'s
- /// parse-failure shape so syntax errors render identically wherever they
- /// surface.
- pub fn validate_template_syntax(template: &str, name: &str) -> Result<(), TemplateExpandError> {
-@@ -1202,6 +1259,62 @@ pub fn expand_template_with(
-     repo: &Repository,
-     name: &str,
-     vars_mode: VarsMode,
-+) -> Result<String, TemplateExpandError> {
-+    // Cache verbosity level for consistent behavior within this call
-+    let verbose = verbosity();
++        let script = format!(
++            "{}\nwt step tether -- preview --source page.html\nwt --source list --source\n",
++            generate_wrapper(&repo, shell)
++        );
++        let mut command = Command::new(shell);
++        repo.configure_wt_cmd(&mut command);
++        let output = command
++            .args(isolation)
++            .args(["-c", &script])
++            .env("WORKTRUNK_BIN", &wt_stub)
++            .env("PATH", path)
++            .output()
++            .unwrap();
 +
-+    // -vv: Full debug logging with vars
-+    // Redact credentials from values to prevent leaking tokens in logs
-+    if verbose >= 2 {
-+        tracing::debug!(name = %name, template = ?template, "[template:{name}] template={template:?}");
-+        // Sort keys for deterministic output in tests
-+        let mut sorted_vars: Vec<_> = vars.iter().collect();
-+        sorted_vars.sort_by_key(|(k, _)| *k);
-+        tracing::debug!(
-+            name = %name,
-+            "[template:{name}] vars={{{}}}",
-+            sorted_vars
-+                .iter()
-+                .map(|(k, v)| format!("{k}={:?}", redact_credentials(v)))
-+                .collect::<Vec<_>>()
-+                .join(", ")
++        assert!(output.status.success(), "{shell}: {output:?}");
++        assert_eq!(
++            String::from_utf8_lossy(&output.stdout),
++            "wt [step] [tether] [--] [preview] [--source] [page.html]
++cargo [run] [--bin] [wt] [--quiet] [--] [list] [--source]
++",
++            "{shell}"
 +        );
 +    }
 +
-+    let result = render_template(template, vars, escape_mode, repo, name, vars_mode)?;
-+
-+    // -vv: Full debug logging with 
-```
-
-**File**: `tests/integration_tests/user_hooks.rs` (modified, +93/-32)
-```diff
-@@ -990,6 +990,53 @@ capture = "echo 'branch=[{% if branch %}{{ branch }}{% endif %}]' > ../postremov
-     );
- }
- 
-+/// An unguarded `{{ branch }}` can't expand in a detached worktree, and the
-+/// context frozen at preparation already decides that, so the hook fails
-+/// before it starts, as a syntax error does: no step runs, not even the one
-+/// before the broken step, and the command exits 1 with the error.
-+/// `post-remove` is prepared after the removal, so the worktree is gone. The
-+/// reported case was a `post-remove` running `jj workspace forget
-+/// {{ branch }}`, which was announced, never ran, and left its error only in
-+/// the background runner's log while `wt remove` exited 0.
-+#[rstest]
-+fn test_user_post_remove_unguarded_branch_fails_before_hook_starts(mut repo: TestRepo) {
-+    repo.add_worktree("feature");
-+    repo.detach_head_in_worktree("feature");
-+    let feature_wt_path = repo.worktree_path("feature").to_path_buf();
-+
-+    repo.write_test_config(
-+        r#"post-remove = [
-+    { first = "echo ran > ../postremove_first.txt" },
-+    { forget = "echo {{ branch }} > ../postremove_forget.txt" },
-+]
-+"#,
-+    );
-+
-+    snapshot_remove(
-+        "user_post_remove_unguarded_branch_fails_before_hook_starts",
-+        &repo,
-+        &[
-+            feature_wt_path.to_str().unwrap(),
-+            "--force",
-+            "--foreground",
-+            "--yes",
-+        ],
-+        None,
-+    );
-+
-+    assert!(!feature_wt_path.exists(), "the removal itself completes");
-+    thread::sleep(SLEEP_FOR_ABSENCE_CHECK);
-+    let first_marker = repo
-+        .root_path()
-+        .parent()
-+        .unwrap()
-+        .join("postremove_first.txt");
-+    assert!(
-+        !first_marker.exists(),
-+        "no step of a hook rejected at preparation runs"
-+    );
-+}
-+
- /// `target` names the branch the user lands on after removal — the primary
- /// worktree's — so a detached primary leaves it unset for the same reason
- /// `branch` is unset above. Both halves of one removal have to agree: the
-@@ -1329,10 +1376,10 @@ fn test_merge_drops_pending_hooks_when_post_merge_fails(mut repo: TestRepo) {
-     let post_merge_marker = temp_root.join("drop_postmerge_marker.txt");
- 
-     // post-merge has a template syntax error, so `register` errors after
--    // post-remove + post-switch are already pending in the announcer.
--    // (Semantic errors like undefined variables no longer fail prep — they
--    // surface when the runner renders the step; see
--    // test_background_hook_undefined_var_fails_in_runner.)
-+    // post-remove + post-switch are already pending in the announcer. (An
-+    // undefined variable the frozen context decides fails prep the same way;
-+    // one whose outcome depends on `vars` surfaces when the runner renders the
-+    // step — see test_background_hook_undefined_var_fails_in_runner.)
-     // Convert to forward slashes so the rendered shell command parses the same
-     // way under Windows Git Bash (where backslashes in unquoted paths get
-     // eaten as escape-of-next-char).
-@@ -1376,16 +1423,18 @@ sync = "echo POST_MERGE_RAN > {} {{{{ bad..syntax }}}}"
-     );
- }
- 
--/// A semantic template error (undefined variable) in a background hook does
--/// not fail the foreground command: templates render when each step runs, so
--/// the error surfaces in the detached runner and lands in its log. Only
--/// syntax errors abort at prep (see
-+/// A template error in a background hook whose outcome depends on `vars`,
-+/// which an earlier step could set, does not fail the foreground command:
-+/// templates render when each step runs, so the error surfaces in the
-+/// detached runner and lands in its log. An error the frozen context already
-+/// decides fails at prep instead (see
-+/// test_user_post_remove_unguarded_branch_fails_before_hook_starts and
- /// test_merge_drops_pending_hooks_when_post_merge_fails).
- #[rstest]
- fn test_background_hook_undefined_var_fails_in_runner(repo: TestRepo) {
-     repo.write_test_config(
-         r#"[post-start]
--broken = "echo {{ does_not_exist }} > should_not_exist.txt"
-+broken = "{% if not vars.ready %}echo {{ does_not_exist }} > should_not_exist.txt{% endif %}"
- "#,
-     );
- 
-@@ -1414,7 +1463,7 @@ broken = "echo {{ does_not_exist }} > should_not_exist.txt"
-     // Template errors identify the hook type, source, and command.
-     assert_snapshot!(log_content, @"
-     [31m✗[39m [31mFailed to expand post-start user:broken: undefined variable does_not_exist @ line 1[39m
--    [107m [0m echo {{ does_not_exist }} > should_not_exist.txt
-+    [107m [0m {% if not vars.ready %}echo {{ does_not_exist }} > should_not_exist.txt{% endif %}
-     [2m↳[22m [2mAvailable variables: [4margs[24m, [4mbase[24m, [4mbase_worktree_path[24m, [4mbranch[24m, [4mcommit[24m, [4mcwd[24m, [4mdefault_branch[24m, [4mhook_name[24m, [4mhook_type[24m, [4mprimary_worktree_path[24m, [4mremote[24m, [4mremote_url[24m, [4mrepo[24m, [4mrepo_path[24m, [4mshort_commit[2
++    // `--source` forwards wt's own error message rather than hiding it behind a
++    // generic wrapper message like "Error: cargo build failed".
+     // Note: Nushell not included - this test builds custom scripts with bash syntax
+     #[rstest]
+     #[case("bash")]
 ```
 
 ---
 
-### Incident Patch 2: `da19b76d` (2026-11-16)
-**Commit Message**: refactor(list): build the GitLab MR status once when MR details fail (#4819)
+### Incident Patch 2: `cd257cbb` (2026-11-17)
+**Commit Message**: fix(switch): accept Gitea PR source branches named pull/... (#4832)
 
-`detect_gitlab` built the same `PrStatus` twice: once after fetching MR
-details, and again, field for field, when `glab mr view` failed,
-differing only in `ci_status: CiStatus::Error`. The failure branch now
-yields `CiStatus::Error` and falls through to the shared construction,
-removing 17 duplicated lines. A future field added to `PrStatus` now
-needs one edit here instead of two that could drift.
+On a Gitea PR whose source branch name starts with `pull/` or `pulls/`,
+such as `pull/fix-login`, `wt switch pr:N` failed with "has no usable
+source branch … may be in an invalid state". The branch is valid; the
+fix lets wt check it out.
 
-Behavior is unchanged. `test_list_full_with_gitlab_mr_view_failure`
-exercises the failure path and its snapshot still matches; the 22 GitLab
-integration tests and clippy pass locally.
+The cause is `is_real_branch_name` in `src/git/remote_ref/gitea.rs`. It
+rejected every candidate with either prefix so it could filter out the
+`pulls/<n>/head` tracking ref Gitea reports for a deleted source branch,
+and that also caught real branches. It now rejects only the tracking-ref
+shape: `pull/` or `pulls/`, then a number, then `/head`. Fully qualified
+`refs/...` values and placeholders with whitespace are still rejected as
+before. The failing path is `remote_ref::fetch_pr_info` →
+`gitea::fetch_pr_info` → `extract_source_branch_from_parts`.
 
-Found in the nightly survey of `src/commands/list/ci_status/gitlab.rs`.
+The new unit test `test_extract_source_branch_accepts_branch_named_pull`
+failed before the change and passes after it. The existing tests for
+placeholders and deleted branches still pass. Found by the nightly
+survey.
 
 Co-authored-by: worktrunk-bot <[REDACTED_EMAIL]>
 
-**File**: `src/commands/list/ci_status/gitlab.rs` (modified, +4/-17)
+**File**: `src/git/remote_ref/gitea.rs` (modified, +24/-3)
 ```diff
-@@ -204,24 +204,11 @@ pub(super) fn detect_gitlab(
-         info.ci_status()
-     } else {
-         // Found MR but couldn't fetch details - treat as error so it surfaces
--        // (not NoCI, which would imply no MR exists). Carry the MR identity
--        // already in hand: the ⚠ stays clickable and the iid still feeds the
--        // CI column width ratchet.
-+        // (not NoCI, which would imply no MR exists). The MR identity already
-+        // in hand still goes out below: the ⚠ stays clickable and the iid
-+        // still feeds the CI column width ratchet.
-         tracing::debug!(iid = %mr_entry.iid, "Could not fetch MR details for !{}", mr_entry.iid);
--        return Some(PrStatus {
--            ci_status: CiStatus::Error,
--            source: CiSource::PullRequest,
--            is_stale: mr_entry.sha != local_head,
--            is_priming: false,
--            url: mr_entry.web_url.clone(),
--            number: Some(PrRef::mr(mr_entry.iid)),
--            review_state: mr_entry.review_state(),
--            title: mr_entry.title.clone(),
--            body: mr_entry.description.clone(),
--            author: mr_entry.author.as_ref().map(|a| a.username.clone()),
--            comment_count: mr_entry.comment_count(),
--            updated_at: None,
--        });
-+        CiStatus::Error
-     };
+@@ -297,13 +297,21 @@ fn extract_source_branch_from_parts(label: &str, ref_name: &str) -> Option<Strin
  
-     let is_stale = mr_entry.sha != local_head;
+ /// A branch name candidate is real when it's non-empty, has no whitespace
+ /// (placeholders like `"unknown repository"` carry a space), and isn't a
+-/// PR-tracking ref like `refs/pull/<n>/head` or `pulls/<n>/head`.
++/// fully-qualified ref or a PR-tracking ref like `pulls/<n>/head`. A branch
++/// merely named `pull/...` (e.g. `pull/fix-login`) is real.
+ fn is_real_branch_name(s: &str) -> bool {
+     !s.is_empty()
+         && !s.contains(char::is_whitespace)
+         && !s.starts_with("refs/")
+-        && !s.starts_with("pulls/")
+-        && !s.starts_with("pull/")
++        && !is_pr_tracking_ref(s)
++}
++
++/// Whether `s` has the shape `pull/<n>/head` or `pulls/<n>/head`.
++fn is_pr_tracking_ref(s: &str) -> bool {
++    s.strip_prefix("pulls/")
++        .or_else(|| s.strip_prefix("pull/"))
++        .and_then(|rest| rest.strip_suffix("/head"))
++        .is_some_and(|n| !n.is_empty() && n.bytes().all(|b| b.is_ascii_digit()))
+ }
+ 
+ /// Whether `tea` has a login configured for `host`.
+@@ -531,6 +539,19 @@ mod tests {
+         );
+     }
+ 
++    #[test]
++    fn test_extract_source_branch_accepts_branch_named_pull() {
++        // A same-repo PR from a branch whose name starts with `pull/` is a
++        // real branch, not a tracking ref.
++        for name in ["pull/fix-login", "pulls/cleanup", "pull/42/head-fix"] {
++            assert_eq!(
++                extract_source_branch_from_parts(name, name),
++                Some(name.to_string()),
++                "{name}"
++            );
++        }
++    }
++
+     #[test]
+     fn test_extract_source_branch_rejects_placeholders() {
+         // Deleted-source PRs: Gitea returns "unknown repository" as the label
 ```
 
 ---
 
-### Incident Patch 3: `2a820b28` (2026-11-16)
-**Commit Message**: fix(claude): resolve symlinks in the WorktreeCreate hook's path (#4814)
+### Incident Patch 3: `36e611bd` (2026-11-16)
+**Commit Message**: fix(wt-switch-create): drop the Scope sentence reserving commits for user permission (#4828)
 
-The Claude Code `WorktreeCreate` hook printed the `path` field from `wt
-switch --format=json` without changing it. For a new worktree, that is
-the templated `worktree-path`. When the template puts worktrees under a
-symlinked directory inside the repository, such as `{{ repo_path
-}}/.worktrees/…` with `.worktrees` linked elsewhere, the printed path
-goes through that link. Claude Code 2.1.325 refuses that kind of answer
-([CHANGELOG](https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md):
-"Changed EnterWorktree to refuse a `WorktreeCreate` hook path that goes
-through a symlink inside the project; have the hook print the real
-path"). The hook now resolves the path with `dunce::canonicalize` before
-printing it. `operational_worktree_path` in `switch.rs` already resolves
-paths for existing worktrees the same way.
+Deletes the sentence ending the `wt-switch-create` skill's Scope
+section, "Commits, pushes, and merges still each require explicit user
+permission." Sessions told elsewhere to commit finished work (a
+background session's system prompt, or the user's own instruction file)
+read it as the user reserving git, handed the work back uncommitted, and
+quoted it as the reason. Scope now states only the command's bounds: one
+worktree and the requested task in it. Whether to commit, push or merge
+falls back to the harness and the user's instructions, and Claude Code's
+default of committing only when asked keeps sessions with no other
+instruction unchanged.
 
-`test_claude_hook_worktree_create_resolves_symlink` links `.worktrees`
-to a directory outside the repository and checks the path the hook
-prints. It failed before the change (`…/repo/.worktrees/agent-task`) and
-passes after it (`…/real-worktrees/agent-task`). The existing
-`WorktreeCreate` tests 
+`rationale.md` gains a paragraph recording why Scope stays silent on git
+permissions, beside its existing note on keeping Scope to bounds rather
+than permission. The plugin mirror under `plugins/worktrunk/skills/` is
+regenerated; `test_docs_are_in_sync` passes. The behavioral effect is
+intermittent (about one session in seventeen, per the issue) and runs
+inside a live agent session, so CI can't exercise it.
 
-**File**: `src/commands/config/plugins.rs` (modified, +10/-5)
+Closes #4827 — automated triage
+
+Co-auth
+
+**File**: `plugins/worktrunk/skills/wt-switch-create/SKILL.md` (modified, +1/-2)
 ```diff
-@@ -152,10 +152,11 @@ struct PermissionRequest {
- ///   session 💬 while the dialog waits. One hook does both because Claude Code
- ///   runs every matching hook in parallel.
- /// - `WorktreeCreate` runs `wt switch --create` and prints the new worktree's
--///   path, which Claude Code reads as the hook's answer. A name whose branch
--///   already exists switches to it without `--create`, since Claude Code fires
--///   the hook again when `claude --worktree <name>` reopens a kept worktree
--///   (#4486). A failure exits nonzero with nothing on stdout (#3545).
-+///   path, resolved through symlinks, which Claude Code reads as the hook's
-+///   answer. A name whose branch already exists switches to it without
-+///   `--create`, since Claude Code fires the hook again when
-+///   `claude --worktree <name>` reopens a kept worktree (#4486). A failure
-+///   exits nonzero with nothing on stdout (#3545).
- /// - `WorktreeRemove` resolves against the worktree path Claude Code hands
- ///   over, never `CLAUDE_PROJECT_DIR`: the `claude agents` view spans
- ///   repositories, so no single project dir is right for every session
-@@ -203,7 +204,11 @@ pub fn handle_claude_hook() -> anyhow::Result<()> {
-             let path = created["path"]
-                 .as_str()
-                 .context("`wt switch --format=json` output has no `path`")?;
--            println!("{path}");
-+            // Claude Code refuses an answer that goes through a symlink inside
-+            // the project, and a templated `worktree-path` can (#4812).
-+            let path = dunce::canonicalize(path)
-+                .with_context(|| format!("Failed to resolve worktree path {path}"))?;
-+            println!("{}", path.display());
-             Ok(())
-         }
-         ClaudeHook::WorktreeRemove { worktree_path } => {
+@@ -157,5 +157,4 @@ those is always `wt remove <branch>`.
+ ## Scope
+ 
+ The command's mandate is ONE worktree (in the named repo, if one was given)
+-and the requested task inside it. Commits, pushes, and merges still each
+-require explicit user permission.
++and the requested task inside it.
 ```
 
-**File**: `tests/integration_tests/claude_hook.rs` (modified, +25/-0)
+**File**: `plugins/worktrunk/skills/wt-switch-create/rationale.md` (modified, +6/-0)
 ```diff
-@@ -221,3 +221,28 @@ fn test_claude_hook_worktree_remove(mut repo: TestRepo) {
-     let again = run_hook(&repo, &outside, &outside, &payload.to_string());
-     assert!(again.status.success());
- }
+@@ -77,6 +77,12 @@ the steps don't apply. So the lead makes the invocation the explicit request
+ itself, and Scope states bounds rather than permission. Don't reintroduce
+ either wording.
+ 
++Scope also stays silent on committing, pushing, and merging. A sentence there
++reserving them for explicit user permission read as the user's own rule and
++overrode harness or user instructions to commit finished work, so sessions
++handed work back uncommitted. Those permissions come from the harness and the
++user's instructions, as they would without the command.
 +
-+/// `WorktreeCreate` prints the worktree's resolved path. Claude Code refuses a
-+/// hook answer that goes through a symlink inside the project, so a
-+/// `worktree-path` under a symlinked directory in the repository must not
-+/// reach it in templated form (#4812).
-+#[cfg(unix)]
-+#[rstest]
-+fn test_claude_hook_worktree_create_resolves_symlink(repo: TestRepo) {
-+    let root = repo.root_path().to_path_buf();
-+    let target = repo.home_path().join("real-worktrees");
-+    std::fs::create_dir_all(&target).unwrap();
-+    std::os::unix::fs::symlink(&target, root.join(".worktrees")).unwrap();
-+    repo.write_test_config(
-+        r#"worktree-path = "{{ repo_path }}/.worktrees/{{ branch | sanitize }}"
-+"#,
-+    );
+ ## wt CLI and git behavior (all live-tested)
+ 
+ - `wt switch --create <branch>` exits 1 with `✗ Branch <branch> already
+```
+
+**File**: `skills/wt-switch-create/SKILL.md` (modified, +1/-2)
+```diff
+@@ -157,5 +157,4 @@ those is always `wt remove <branch>`.
+ ## Scope
+ 
+ The command's mandate is ONE worktree (in the named repo, if one was given)
+-and the requested task inside it. Commits, pushes, and merges still each
+-require explicit user permission.
++and the requested task inside it.
+```
+
+**File**: `skills/wt-switch-create/rationale.md` (modified, +6/-0)
+```diff
+@@ -77,6 +77,12 @@ the steps don't apply. So the lead makes the invocation the explicit request
+ itself, and Scope states bounds rather than permission. Don't reintroduce
+ either wording.
+ 
++Scope also stays silent on committing, pushing, and merging. A sentence there
++reserving them for explicit user permission read as the user's own rule and
++overrode harness or user instructions to commit finished work, so sessions
++handed work back uncommitted. Those permissions come from the harness and the
++user's instructions, as they would without the command.
 +
-+    let payload = r#"{"hook_event_name":"WorktreeCreate","name":"agent-task"}"#;
-+    let created = run_hook(&repo, &root, &root, payload);
-+    assert!(created.status.success(), "{created:?}");
-+    let printed = stdout(&created);
-+    let printed = Path::new(printed.trim_end());
-+    let expected = dunce::canonicalize(target.join("agent-task")).unwrap();
-+    assert_eq!(printed, expected);
-+}
+ ## wt CLI and git behavior (all live-tested)
+ 
+ - `wt switch --create <branch>` exits 1 with `✗ Branch <branch> already
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4833** (2026-11-17): fix(shell): read --source only as the wrapper's first argument (@max-sixty)
+- **PR #4832** (2026-11-17): fix(switch): accept Gitea PR source branches named pull/... (@worktrunk-bot)
+- **PR #4831** (2026-11-17): chore: correct stale comments and a FAQ claim about wt remove (@worktrunk-bot)
+- **PR #4828** (2026-11-16): fix(wt-switch-create): drop the Scope sentence reserving commits for user permission (@worktrunk-bot)
 - **PR #4826** (2026-11-16): chore: pre-commit autoupdate (@pre-commit-ci[bot])
 - **PR #4821** (2026-11-16): chore: update tend workflows (0.3.25 → 0.3.26) (@worktrunk-bot)
-- **PR #4820** (2026-11-16): chore(clawpatch): point the approvals-store spec at its own tests (@worktrunk-bot)
-- **PR #4819** (2026-11-16): refactor(list): build the GitLab MR status once when MR details fail (@worktrunk-bot)
-- **PR #4817** (2026-11-16): skills(running-tend): weekly digest raises themes from earlier digests (@max-sixty)
-- **PR #4814** (2026-11-16): fix(claude): resolve symlinks in the WorktreeCreate hook's path (@worktrunk-bot)
 
 ---
 
@@ -2624,33 +2574,43 @@ passes after it (`…/real-worktrees/agent-task`). The existing
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. hooks): fail a hook before it starts when its template error is already decided
+## X. shell): read --source only as the wrapper's first argument
 
 **RULE**:
-When implementing operations in `docs/src/content/docs/hook.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in max-sixty/worktrunk. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/shell/snapshots/worktrunk__shell__tests__init_bash.snap`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in max-sixty/worktrunk. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b200ed58`: hooks): fail a hook before it starts when its template error is already decided. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1bed6f84`: shell): read --source only as the wrapper's first argument. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/src/content/docs/hook.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/shell/snapshots/worktrunk__shell__tests__init_bash.snap`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-Templates are checked before the pipeline starts. One that can't parse, or that fails to expand from values no earlier step can change, such as an unguarded `{{ branch }}` in a detached worktree, stops the hook before any step runs. Templates render as each step runs, so a step can store [per-branch vars](/config/#wt-config-state-vars) that later steps read via `{{ vars.<key> }}`. Previews (`wt hook <type> --dry-run`, `wt hook show --expanded`) leave `{{ vars.* }}` references unexpanded for that reason.
-A detached worktree has no branch, so `branch` — and a `base` or `target` that names that worktree — is undefined there; guard with `{% if branch %}`. A command that identifies the worktree rather than its branch can use `worktree_name` or `worktree_path`, which every worktree has.
+        # `wt --source ...` runs wt through `cargo run` in the current checkout.
+        # Only a leading --source is this wrapper's flag; every later argument
+        # belongs to wt or to a command it runs.
+        if [[ "${1-}" == --source ]]; then use_source=true; shift; fi
+            command "${WORKTRUNK_BIN:-wt}" "$@"
+        local execution=("${WORKTRUNK_BIN:-wt}" "$@")
+        if [[ "$use_source" == true ]]; then execution=(cargo run --bin wt --quiet -- "$@"); fi
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-Templates are syntax-checked before the pipeline starts and rendered as each step runs, so a step can store [per-branch vars](/config/#wt-config-state-vars) that later steps read via `{{ vars.<key> }}`. Previews (`wt hook <type> --dry-run`, `wt hook show --expanded`) leave `{{ vars.* }}` references unexpanded for that reason.
-A detached worktree has no branch, so `branch` — and a `base` or `target` that names that worktree — is undefined there; guard with `{% if branch %}`.
+        local args=()
+        for arg in "$@"; do
+            if [[ "$arg" == --source ]]; then use_source=true; else args+=("$arg"); fi
+        done
+            command "${WORKTRUNK_BIN:-wt}" "${args[@]}"
+        local execution=("${WORKTRUNK_BIN:-wt}" "${args[@]}")
+        if [[ "$use_source" == true ]]; then execution=(cargo run --bin wt --quiet -- "${args[@]}"); fi
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b200ed58` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1bed6f84` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

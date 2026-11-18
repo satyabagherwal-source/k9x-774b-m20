@@ -10772,3 +10772,6 @@
 | `CYCLE-20261118-1W22` | `2026-11-18T01:57:56.234Z` | `Automattic/harper` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9103` | Yes (`bafe1042...`) |
 | `CYCLE-20261118-1XW6` | `2026-11-18T01:57:58.614Z` | `prism-ml/Ternary-Bonsai-2-27B-gguf` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-prism-ml-ternary-bonsai-2-27b-gguf-learnings.md` | Yes (`dbeb7164...`) |
 | `CYCLE-20261118-22FM` | `2026-11-18T01:58:04.498Z` | `skyhook-io/radar` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9104` | Yes (`368904ea...`) |
+| `CYCLE-20261118-PBT9` | `2026-11-18T02:16:09.741Z` | `Viggle/Qwen-Image-2.1-viggle-turbo` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-viggle-qwen-image-2.1-viggle-turbo-learnings.md` | Yes (`245e24b0...`) |
+| `CYCLE-20261118-PCBH` | `2026-11-18T02:16:10.397Z` | `max-sixty/worktrunk` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9105` | Yes (`31bfa2e5...`) |
+| `CYCLE-20261118-PIDT` | `2026-11-18T02:16:18.257Z` | `okteto/okteto` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9106` | Yes (`e6957a4a...`) |

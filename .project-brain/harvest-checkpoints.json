@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-18T01:58:04.510Z",
+  "last_updated": "2026-11-18T02:16:18.270Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -440,14 +440,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-viggle-qwen-image-2-1-viggle-turbo",
-      "content_hash": "f0ce52b240c556969f15a941b4659b564c9d25c3e31b96b56b72a9598dcb9db4",
-      "verified_at": "2026-11-13T14:55:30.245Z",
+      "content_hash": "245e24b0025d0bb0ed8824e891a0d3f93ed0bc36fc1be1dd76388a872f027e9a",
+      "verified_at": "2026-11-18T02:16:09.754Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T14:55:30.245Z"
+      "last_updated": "2026-11-18T02:16:09.754Z"
     },
     "XingChen-AGI/Xing4.0-29B-A4B": {
       "repository": "XingChen-AGI/Xing4.0-29B-A4B",
@@ -3621,14 +3621,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-max-sixty-worktrunk",
-      "content_hash": "06e2e5da6ee64e35e08acdf980021486f0114c3244b2059b1d13a79e2ced0f7f",
-      "verified_at": "2026-11-16T18:55:50.865Z",
+      "content_hash": "31bfa2e53325b5c473ba6fcc5d3f4c55791d745b9922f448119b149a8f52f69d",
+      "verified_at": "2026-11-18T02:16:10.410Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-16T18:55:50.865Z"
+      "last_updated": "2026-11-18T02:16:10.410Z"
     },
     "mattermost/mattermost": {
       "repository": "mattermost/mattermost",
@@ -5316,14 +5316,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-okteto-okteto",
-      "content_hash": "ab7f5d884ffb207daff2aad15968d43e1b73320a30836041c8540431c7c4f22c",
-      "verified_at": "2026-11-14T11:04:31.372Z",
+      "content_hash": "e6957a4af2dc9a7cba9230072fbdf392fef35ed3091e5c493333ec9394522025",
+      "verified_at": "2026-11-18T02:16:18.269Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-14T11:04:31.372Z"
+      "last_updated": "2026-11-18T02:16:18.269Z"
     },
     "supervc-stack/VectorChord": {
       "repository": "supervc-stack/VectorChord",

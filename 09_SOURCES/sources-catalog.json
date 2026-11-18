@@ -365,8 +365,8 @@
     "sourceUrl": "https://huggingface.co/Viggle/Qwen-Image-2.1-viggle-turbo",
     "sourceVersion": "hf-viggle-qwen-image-2.1-viggle-turbo",
     "license": "Open-Source",
-    "contentHash": "f0ce52b240c556969f15a941b4659b564c9d25c3e31b96b56b72a9598dcb9db4",
-    "lastHarvestedAt": "2026-11-13T14:55:30.235Z",
+    "contentHash": "245e24b0025d0bb0ed8824e891a0d3f93ed0bc36fc1be1dd76388a872f027e9a",
+    "lastHarvestedAt": "2026-11-18T02:16:09.745Z",
     "learningId": "learn-huggingface-viggle-qwen-image-2-1-viggle-turbo"
   },
   "hf-qwen-qwen-image-2.1-turbo": {
@@ -2323,10 +2323,10 @@
     "repository": "max-sixty/worktrunk",
     "platform": "github",
     "sourceUrl": "https://github.com/max-sixty/worktrunk",
-    "sourceVersion": "829610e8",
+    "sourceVersion": "1bed6f84",
     "license": "Apache-2.0",
-    "contentHash": "06e2e5da6ee64e35e08acdf980021486f0114c3244b2059b1d13a79e2ced0f7f",
-    "lastHarvestedAt": "2026-11-16T18:55:50.858Z",
+    "contentHash": "31bfa2e53325b5c473ba6fcc5d3f4c55791d745b9922f448119b149a8f52f69d",
+    "lastHarvestedAt": "2026-11-18T02:16:10.401Z",
     "learningId": "learn-github-max-sixty-worktrunk"
   },
   "mattermost-mattermost": {
@@ -3463,10 +3463,10 @@
     "repository": "okteto/okteto",
     "platform": "github",
     "sourceUrl": "https://github.com/okteto/okteto",
-    "sourceVersion": "cb2419f7",
+    "sourceVersion": "0c260262",
     "license": "Apache-2.0",
-    "contentHash": "ab7f5d884ffb207daff2aad15968d43e1b73320a30836041c8540431c7c4f22c",
-    "lastHarvestedAt": "2026-11-14T11:04:31.362Z",
+    "contentHash": "e6957a4af2dc9a7cba9230072fbdf392fef35ed3091e5c493333ec9394522025",
+    "lastHarvestedAt": "2026-11-18T02:16:18.261Z",
     "learningId": "learn-github-okteto-okteto"
   },
   "supervc-stack-vectorchord": {

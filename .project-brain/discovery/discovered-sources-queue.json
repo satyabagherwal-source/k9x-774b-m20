@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-18T01:58:09.000Z",
+  "updated_at": "2026-11-18T02:16:23.010Z",
   "stats": {
-    "total_discovered": 5208,
-    "approved_pending_harvest": 4908,
+    "total_discovered": 5211,
+    "approved_pending_harvest": 4911,
     "harvested_count": 0,
     "rejected_count": 300,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 4903,
+      "COMMUNITY_AND_EXPERT": 4906,
       "OFFICIAL_DOCUMENTATION": 164,
       "STANDARDS_AND_SPECIFICATIONS": 108,
       "ENGINEERING_BLOGS": 3,
@@ -112497,6 +112497,72 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/skyhook-io-radar-learnings.md",
         "fileName": "skyhook-io-radar-learnings.md"
+      }
+    },
+    "SRC-DCC412F69C55": {
+      "id": "SRC-DCC412F69C55",
+      "url": "https://okteto.example/internal/catalog/secret-variables",
+      "title": "https://okteto.example/internal/catalog/secret-variables",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T02:16:22.932Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/okteto-okteto-learnings.md",
+        "fileName": "okteto-okteto-learnings.md"
+      }
+    },
+    "SRC-B9969CD07A4D": {
+      "id": "SRC-B9969CD07A4D",
+      "url": "https://okteto.example/internal/catalog/secret-variables%60",
+      "title": "https://okteto.example/internal/catalog/secret-variables%60",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T02:16:22.974Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/okteto-okteto-learnings.md",
+        "fileName": "okteto-okteto-learnings.md"
+      }
+    },
+    "SRC-75C3B6AA1F47": {
+      "id": "SRC-75C3B6AA1F47",
+      "url": "https://okteto.example/$HOME",
+      "title": "https://okteto.example/$HOME",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T02:16:23.010Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/okteto-okteto-learnings.md",
+        "fileName": "okteto-okteto-learnings.md"
       }
     }
   }

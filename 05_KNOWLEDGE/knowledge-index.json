@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-18T01:58:09.586Z",
-  "total_verified_learnings": 8960,
+  "last_updated": "2026-11-18T02:16:23.501Z",
+  "total_verified_learnings": 8961,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 20787,
+  "total_items": 20796,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -111950,9 +111950,9 @@
       "title": "Research & Knowledge Intelligence: Viggle/Qwen-Image-2.1-viggle-turbo Core Invariants",
       "repository": "Viggle/Qwen-Image-2.1-viggle-turbo",
       "source_version": "hf-viggle-qwen-image-2.1-viggle-turbo",
-      "content_hash": "e2f02137387310e9182b04e0a64ab1acea21a525064199c09d49457cf885745a",
+      "content_hash": "1e406713798ad228c4410fed2536c56aa8621ebcabea6e2e28a9332f0cd26ff4",
       "domain_letter": "D",
-      "persisted_at": "2026-11-13T14:55:30.416Z"
+      "persisted_at": "2026-11-18T02:16:09.952Z"
     },
     "candidate_directive-ciliumenvoyconfig-clone-resources-retained-by-the-script-fixture": {
       "item_id": "candidate_directive-ciliumenvoyconfig-clone-resources-retained-by-the-script-fixture",
@@ -111998,9 +111998,9 @@
       "title": "Research & Knowledge Intelligence: hf-viggle-qwen-image-2.1-viggle-turbo-learnings Core Invariants",
       "repository": "hf-viggle-qwen-image-2.1-viggle-turbo-learnings",
       "source_version": "HEAD",
-      "content_hash": "2e7d8b7662c651a500d04021ef3064940ef954a77da8743b1f51df18f67dd2cf",
+      "content_hash": "daf9d17b96388f582c1ce403764e5f0d959dedc3913a7ddbb90dfa47639abb23",
       "domain_letter": "D",
-      "persisted_at": "2026-11-13T14:55:47.093Z"
+      "persisted_at": "2026-11-18T02:16:22.558Z"
     },
     "domain_intelligence-product-intelligence-cilium-cilium-learnings-core-invariants": {
       "item_id": "domain_intelligence-product-intelligence-cilium-cilium-learnings-core-invariants",
@@ -228009,14 +228009,19 @@
       "slug": "okteto-okteto",
       "platform": "github",
       "source_url": "https://github.com/okteto/okteto",
-      "source_version": "cb2419f7",
-      "content_hash": "ab7f5d884ffb207daff2aad15968d43e1b73320a30836041c8540431c7c4f22c",
+      "source_version": "0c260262",
+      "content_hash": "e6957a4af2dc9a7cba9230072fbdf392fef35ed3091e5c493333ec9394522025",
       "dossier_path": "07_PROJECT_LEARNING/okteto-okteto-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/okteto-okteto-learnings.md",
       "promoted_rules": [
         {
           "number": 8481,
           "title": "build(deps): bump renovatebot/github-action from 46.3.12 to 46.3.13",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9106,
+          "title": "shell-quote --name and --var values in remote deploy, destroy and test",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -228025,7 +228030,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T11:04:31.196Z",
+      "verified_at": "2026-11-18T02:16:18.077Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -228079,10 +228084,10 @@
       "relative_path": "08_VERIFICATION/okteto-okteto-verification-protocol-empirical-defect-shield-for-okteto-okteto.md",
       "title": "Verification Protocol: Empirical Defect Shield for okteto/okteto",
       "repository": "okteto/okteto",
-      "source_version": "cb2419f7",
-      "content_hash": "df8f7e6160b07d00f82bc1f191053cf738ecd4a4b238ae3572a74e6faa6123d3",
+      "source_version": "0c260262",
+      "content_hash": "ad5f2f39df5a7829b1ef2b2a67ed8867048d10c3c53dedcd5826cb908e815ff6",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T11:04:31.826Z"
+      "persisted_at": "2026-11-18T02:16:18.805Z"
     },
     "learn-github-slatedb-slatedb": {
       "learning_id": "learn-github-slatedb-slatedb",
@@ -228391,9 +228396,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for okteto-okteto-learnings",
       "repository": "okteto-okteto-learnings",
       "source_version": "HEAD",
-      "content_hash": "babfad1324b8853de2bc5946240df8b4c2f20268e2c811ba6af2de19a50a6a64",
+      "content_hash": "a18e99d71451f8f4b81c7be278c13b5f7ac8d6467582bf221f7dabcefc099e94",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T11:05:15.908Z"
+      "persisted_at": "2026-11-18T02:16:23.501Z"
     },
     "learn-huggingface-nomic-ai-nomic-embed-text-v1-5": {
       "learning_id": "learn-huggingface-nomic-ai-nomic-embed-text-v1-5",
@@ -236312,8 +236317,8 @@
       "slug": "max-sixty-worktrunk",
       "platform": "github",
       "source_url": "https://github.com/max-sixty/worktrunk",
-      "source_version": "829610e8",
-      "content_hash": "06e2e5da6ee64e35e08acdf980021486f0114c3244b2059b1d13a79e2ced0f7f",
+      "source_version": "1bed6f84",
+      "content_hash": "31bfa2e53325b5c473ba6fcc5d3f4c55791d745b9922f448119b149a8f52f69d",
       "dossier_path": "07_PROJECT_LEARNING/max-sixty-worktrunk-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/max-sixty-worktrunk-learnings.md",
       "promoted_rules": [
@@ -236326,6 +236331,11 @@
           "number": 8782,
           "title": "fail a hook before it starts when its template error is already decided",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9105,
+          "title": "read --source only as the wrapper's first argument",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -236333,7 +236343,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-16T18:55:50.711Z",
+      "verified_at": "2026-11-18T02:16:10.218Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -236375,10 +236385,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-max-sixty-worktrunk-research-knowledge-intelligence-max-sixty-worktrunk-core-inv.md",
       "title": "Research & Knowledge Intelligence: max-sixty/worktrunk Core Invariants",
       "repository": "max-sixty/worktrunk",
-      "source_version": "829610e8",
-      "content_hash": "61c3cd7b9fa62b4e6f01118c64992b75b64e921c1b7e217515b3e3b132e980ed",
+      "source_version": "1bed6f84",
+      "content_hash": "8371657b0493c80ab081705ac5750aae0cfc3d681becdfd2acc67f204e012576",
       "domain_letter": "D",
-      "persisted_at": "2026-11-16T18:55:51.132Z"
+      "persisted_at": "2026-11-18T02:16:10.753Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-max-sixty-worktrunk": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-max-sixty-worktrunk",
@@ -236387,10 +236397,10 @@
       "relative_path": "08_VERIFICATION/max-sixty-worktrunk-verification-protocol-empirical-defect-shield-for-max-sixty-.md",
       "title": "Verification Protocol: Empirical Defect Shield for max-sixty/worktrunk",
       "repository": "max-sixty/worktrunk",
-      "source_version": "829610e8",
-      "content_hash": "f2d5a182e09889acfc84e726d8878cac7db52ed1631be5b0aca867ec7c407b09",
+      "source_version": "1bed6f84",
+      "content_hash": "de20bea5c0b1ee1f72af269524f5cfefd87b4fe0c925bd9b10866c4c05d90a2d",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T18:55:51.237Z"
+      "persisted_at": "2026-11-18T02:16:10.896Z"
     },
     "candidate_directive-state-stop-a-branch-s-vars-from-including-a-dotted-branch-s-vars": {
       "item_id": "candidate_directive-state-stop-a-branch-s-vars-from-including-a-dotted-branch-s-vars",
@@ -236412,9 +236422,9 @@
       "title": "Research & Knowledge Intelligence: max-sixty-worktrunk-learnings Core Invariants",
       "repository": "max-sixty-worktrunk-learnings",
       "source_version": "HEAD",
-      "content_hash": "7f7393ee1237dee7d8b148a79fb410a5ec0113eb3e407ce9f665e86a5f1932f8",
+      "content_hash": "b263e63103397c119463efa323e74783a1f73b13f07aa8f222d655c9da2cfe3d",
       "domain_letter": "D",
-      "persisted_at": "2026-11-16T18:55:55.500Z"
+      "persisted_at": "2026-11-18T02:16:22.075Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-max-sixty-worktrunk-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-max-sixty-worktrunk-learnings",
@@ -236424,9 +236434,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for max-sixty-worktrunk-learnings",
       "repository": "max-sixty-worktrunk-learnings",
       "source_version": "HEAD",
-      "content_hash": "9eded9827fc4bf87aa99283bb7683d2bbb3dd0b43ca7575c71ff46edcfa8e332",
+      "content_hash": "3963a222ade1ae3ca523db9bb589af94ddd6d13ab198c2d89d18456d09804d29",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T18:55:55.603Z"
+      "persisted_at": "2026-11-18T02:16:22.234Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-microsoft-frognano-4b-2609-learnings-core-inv": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-microsoft-frognano-4b-2609-learnings-core-inv",
@@ -279598,6 +279608,133 @@
       "content_hash": "8f06751f649334a680c16cfc53378ddac9de66d34509fe7a40fd0fd3458a0d83",
       "domain_letter": "G",
       "persisted_at": "2026-11-18T01:58:09.474Z"
+    },
+    "learn-huggingface-viggle-qwen-image-2-1-viggle-turbo": {
+      "learning_id": "learn-huggingface-viggle-qwen-image-2-1-viggle-turbo",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "Viggle/Qwen-Image-2.1-viggle-turbo",
+      "repository": "Viggle/Qwen-Image-2.1-viggle-turbo",
+      "slug": "hf-viggle-qwen-image-2.1-viggle-turbo",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/Viggle/Qwen-Image-2.1-viggle-turbo",
+      "source_version": "hf-viggle-qwen-image-2.1-viggle-turbo",
+      "content_hash": "245e24b0025d0bb0ed8824e891a0d3f93ed0bc36fc1be1dd76388a872f027e9a",
+      "dossier_path": "07_PROJECT_LEARNING/hf-viggle-qwen-image-2.1-viggle-turbo-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-viggle-qwen-image-2.1-viggle-turbo-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-18T02:16:09.515Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-9105": {
+      "learning_id": "rule-9105",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9105,
+      "title": "read --source only as the wrapper's first argument",
+      "source_url": "https://github.com/max-sixty/worktrunk",
+      "source_version": "1bed6f84",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-18T02:16:10.218Z"
+    },
+    "candidate_directive-read-source-only-as-the-wrapper-s-first-argument": {
+      "item_id": "candidate_directive-read-source-only-as-the-wrapper-s-first-argument",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-PCHC-read-source-only-as-the-wrapper-s-first-argument.md",
+      "title": "read --source only as the wrapper's first argument",
+      "repository": "max-sixty/worktrunk",
+      "source_version": "1bed6f84",
+      "content_hash": "b2fbd159e929dac8d469f4b1a3de6a826d07ea77e4adcf8950dca483a2541b28",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-18T02:16:10.613Z"
+    },
+    "rule-9106": {
+      "learning_id": "rule-9106",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9106,
+      "title": "shell-quote --name and --var values in remote deploy, destroy and test",
+      "source_url": "https://github.com/okteto/okteto",
+      "source_version": "0c260262",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-18T02:16:18.077Z"
+    },
+    "candidate_directive-shell-quote-name-and-var-values-in-remote-deploy-destroy-and-test": {
+      "item_id": "candidate_directive-shell-quote-name-and-var-values-in-remote-deploy-destroy-and-test",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-PIJM-shell-quote-name-and-var-values-in-remote-deploy-destroy-and-test.md",
+      "title": "shell-quote --name and --var values in remote deploy, destroy and test",
+      "repository": "okteto/okteto",
+      "source_version": "0c260262",
+      "content_hash": "fd7e091fe8983c33c8b8c9e524da87597f7bbf75ceba512db779427e74f3b4c1",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-18T02:16:18.473Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-okteto-okteto-core-invariants": {
+      "item_id": "domain_intelligence-quality-verification-intelligence-okteto-okteto-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-okteto-okteto-quality-verification-intelligence-okteto-okteto-core-invariants.md",
+      "title": "Quality & Verification Intelligence: okteto/okteto Core Invariants",
+      "repository": "okteto/okteto",
+      "source_version": "0c260262",
+      "content_hash": "32077c5d6eeb956abe53ddcd985f6a3000ed4b3b2789effd61713e7280731a88",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-18T02:16:18.625Z"
+    },
+    "candidate_directive-shell-read-source-only-as-the-wrapper-s-first-argument": {
+      "item_id": "candidate_directive-shell-read-source-only-as-the-wrapper-s-first-argument",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-PL6K-shell-read-source-only-as-the-wrapper-s-first-argument.md",
+      "title": "shell): read --source only as the wrapper's first argument",
+      "repository": "max-sixty-worktrunk-learnings",
+      "source_version": "HEAD",
+      "content_hash": "01bb5412973a5343f7246fb8fbec186e23e0eae1cc88a5dcce9632d88e2f537e",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-18T02:16:21.891Z"
+    },
+    "candidate_directive-remote-shell-quote-name-and-var-values-in-remote-deploy-destroy-and-test": {
+      "item_id": "candidate_directive-remote-shell-quote-name-and-var-values-in-remote-deploy-destroy-and-test",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-PM7F-remote-shell-quote-name-and-var-values-in-remote-deploy-destroy-and-test.md",
+      "title": "remote): shell-quote --name and --var values in remote deploy, destroy and test",
+      "repository": "okteto-okteto-learnings",
+      "source_version": "HEAD",
+      "content_hash": "48f991849a9efc9083fed105fec19195810219ca85baaa3344fc624f99b3f66a",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-18T02:16:23.216Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-okteto-okteto-learnings-core-invariants": {
+      "item_id": "domain_intelligence-quality-verification-intelligence-okteto-okteto-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-okteto-okteto-learnings-quality-verification-intelligence-okteto-okteto-learning.md",
+      "title": "Quality & Verification Intelligence: okteto-okteto-learnings Core Invariants",
+      "repository": "okteto-okteto-learnings",
+      "source_version": "HEAD",
+      "content_hash": "b82cdd2b0280ed411c1ba3fad6ec8dcef1a59030a9db903efe302efdb06c8c92",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-18T02:16:23.359Z"
     }
   },
   "ai-builder-brain": {

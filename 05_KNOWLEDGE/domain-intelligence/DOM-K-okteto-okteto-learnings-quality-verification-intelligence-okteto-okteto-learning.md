@@ -1,0 +1,2452 @@
+# Domain K — Quality & Verification Intelligence: Quality & Verification Intelligence: okteto-okteto-learnings Core Invariants
+
+<!-- PROVENANCE_START
+{
+  "source_repository": "okteto-okteto-learnings",
+  "source_url": "unknown",
+  "source_version": "HEAD",
+  "license": "Open-Source",
+  "timestamp": "2026-11-18T02:16:23.112Z",
+  "ai_provider": "universal-multi-artifact-distributor",
+  "generator_version": "2.0.0-universal",
+  "learning_id": "LEARN-EVO-okteto-okteto-learnings",
+  "canonical_classification": "domain_intelligence"
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [okteto-okteto-learnings](unknown) (Revision: `HEAD`).  
+> **License**: Open-Source | **Timestamp**: `2026-11-18T02:16:23.112Z`  
+> **Learning ID**: `LEARN-EVO-okteto-okteto-learnings`
+
+
+## 1. Domain Taxonomy & Context
+- **Canonical Domain**: Domain K (Quality & Verification Intelligence)
+- **Secondary Corroborating Domains**: I (Content & Information Intelligence), G (Architecture Intelligence), H (Technical Construction Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), L (Deployment & Operations Intelligence), A (Human & Need Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 84%
+
+## 2. Core Domain Invariants & Discovered Laws
+The following architectural invariants have been empirically discovered and recorded from okteto-okteto-learnings:
+
+> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/okteto-okteto-learnings.md`  
+> **Source**: github ([https://github.com/okteto/okteto](https://github.com/okteto/okteto))  
+> **Source Version**: `0c260262`  
+> **License**: Apache-2.0  
+> **Synthesized By**: zero-clone-structural-synthesizer  
+> **Timestamp**: 2026-11-18T02:16:17.284Z  
+> **Learning ID**: `learn-github-okteto-okteto`  
+> **Pipeline Version**: `2.0.0`  
+> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
+> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
+> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
+
+---
+
+# Forensic Learning Record (Deep Inspection): okteto/okteto
+
+> **Canonical Artifact**: `07_PROJECT_LEARNING/okteto-okteto-learnings.md`  
+> **Source Platform**: GitHub ([https://github.com/okteto/okteto](https://github.com/okteto/okteto))  
+> **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
+> **Harvest Timestamp**: 2026-11-18T02:16:17.279Z  
+> **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
+
+---
+
+## 1. Context & Architectural Overview
+- **Repository / Resource**: `okteto/okteto`
+- **Description**: Develop your applications directly in your Kubernetes Cluster
+- **Primary Language / Ecosystem**: Go
+- **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
+- **Stars / Engagement**: 3558 stars
+
+---
+
+## 2. Multi-Dimensional 8-Axis Investigation & Real Code Patches
+
+### D1: Architecture & Structural Boundaries
+- Entry configurations inspected via direct stream: go.mod, README.md, Dockerfile.
+- Evaluated system abstractions and modular contracts.
+
+### Core Architecture Module: `cmd/context/utils.go`
+```
+// Copyright 2023 The Okteto Authors
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+package context
+
+import (
+	"fmt"
+	"net/url"
+	"strings"
+
+	"github.com/okteto/okteto/pkg/config"
+	"github.com/okteto/okteto/pkg/constants"
+	"github.com/okteto/okteto/pkg/k8s/kubeconfig"
+	oktetoLog "github.com/okteto/okteto/pkg/log"
+)
+
+type SelectItem struct {
+	Name   string
+	Enable bool
+}
+
+type ManifestOptions struct {
+	Name     string
+	Filename string
+}
+
+func getKubernetesContextList(filterOkteto bool) []string {
+	contextList := make([]string, 0)
+	kubeconfigFile := config.GetKubeconfigPath()
+	cfg := kubeconfig.Get(kubeconfigFile)
+	if cfg == nil {
+		return contextList
+	}
+	if !filterOkteto {
+		for name := range cfg.Contexts {
+			contextList = append(contextList, name)
+		}
+		return contextList
+	}
+	for name := range cfg.Contexts {
+		if _, ok := cfg.Contexts[name].Extensions[constants.OktetoExtension]; ok && filterOkteto {
+			continue
+		}
+		contextList = append(contextList, name)
+	}
+	return contextList
+}
+
+func getKubernetesContextNamespace(k8sContext string) string {
+	kubeconfigFile := config.GetKubeconfigPath()
+	cfg := kubeconfig.Get(kubeconfigFile)
+	if cfg == nil {
+		return ""
+	}
+	if cfg.Contexts[k8sContext].Namespace == "" {
+		return "default"
+	}
+	return cfg.Contexts[k8sContext].Namespace
+}
+
+func isCreateNewContextOption(option string) bool {
+	return option == newOEOption
+}
+
+func askForOktetoURL(message string) (string, error) {
+	err := oktetoLog.Question("%s", message)
+	if err != nil {
+		return "", err
+	}
+	var oktetoURL string
+	if _, err := fmt.Scanln(&oktetoURL); err != nil {
+		return "", err
+	}
+
+	url, err := url.Parse(oktetoURL)
+	if err != nil {
+		return "", nil
+	}
+	if url.Scheme == "" {
+		url.Scheme = "https"
+	}
+	return strings.TrimSuffix(url.String(), "/"), nil
+}
+
+func isValidCluster(cluster string) bool {
+	for _, c := range getKubernetesContextList(false) {
+		if cluster == c {
+			return true
+		}
+	}
+	return false
+}
+
+```
+
+### Core Architecture Module: `cmd/preview/deploy_utils.go`
+```
+// Copyright 2023 The Okteto Authors
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+package preview
+
+import (
+	"errors"
+	"fmt"
+	"strings"
+
+	"github.com/okteto/okteto/cmd/utils"
+	"github.com/okteto/okteto/pkg/env"
+	oktetoLog "github.com/okteto/okteto/pkg/log"
+	modelUtils "github.com/okteto/okteto/pkg/model/utils"
+	"github.com/okteto/okteto/pkg/okteto"
+	"github.com/okteto/okteto/pkg/validator"
+)
+
+var (
+	ErrNotValidPreviewScope = errors.New("value is invalid for flag 'scope'. Accepted values are ['global', 'personal']")
+)
+
+func optionsSetup(cwd string, opts *DeployOptions, args []string) error {
+	if err := validator.CheckReservedVariablesNameOption(opts.variables); err != nil {
+		return err
+	}
+
+	if len(args) == 0 {
+		opts.name = getRandomName(opts.scope)
+	} else {
+		opts.name = getExpandedName(args[0])
+	}
+
+	var err error
+	opts.repository, err = getRepository(cwd, opts.repository)
+	if err != nil {
+		return err
+	}
+	opts.branch, err = getBranch(cwd, opts.branch)
+	if err != nil {
+		return err
+	}
+
+	if err := validatePreviewType(opts.scope); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func validatePreviewType(previewType string) error {
+	if !(previewType == "global" || previewType == "personal") {
+		return fmt.Errorf("%s %w", previewType, ErrNotValidPreviewScope)
+	}
+	return nil
+}
+
+func getRepository(cwd string, repository string) (string, error) {
+	if repository != "" {
+		return repository, nil
+	}
+
+	oktetoLog.Info("inferring git repository URL")
+	return modelUtils.GetRepositoryURL(cwd)
+}
+
+func getBranch(cwd, branch string) (string, error) {
+	if branch != "" {
+		return branch, nil
+	}
+
+	oktetoLog.Info("inferring git repository branch")
+	return utils.GetBranch(cwd)
+}
+
+func getRandomName(scope string) string {
+	name := strings.ReplaceAll(GetRandomName(-1), "_", "-")
+	if scope == "personal" {
+		username := strings.ToLower(okteto.GetSanitizedUsername())
+		name = fmt.Sprintf("%s-%s", name, username)
+	}
+	return name
+}
+
+func getExpandedName(name string) string {
+	expandedName, err := env.ExpandEnv(name)
+	if err != nil {
+		return name
+	}
+	return expandedName
+}
+
+func getPreviewURL(name string) string {
+	oktetoURL := okteto.GetContext().Name
+	previewURL := fmt.Sprintf("%s/previews/%s", oktetoURL, name)
+	return previewURL
+}
+
+```
+
+### Core Architecture Module: `cmd/utils/args.go`
+```
+// Copyright 2023 The Okteto Authors
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+package utils
+
+import (
+	"fmt"
+
+	oktetoErrors "github.com/okteto/okteto/pkg/errors"
+	"github.com/spf13/cobra"
+)
+
+// NoArgsAccepted validates that the number of arguments given by the user is 0
+func NoArgsAccepted(url string) cobra.PositionalArgs {
+	return func(cmd *cobra.Command, args []string) error {
+		var hint string
+		if url != "" {
+			hint = fmt.Sprintf("Visit %s for more information.", url)
+		}
+		if len(args) > 0 {
+			return oktetoErrors.UserError{
+				E:    fmt.Errorf("arguments are not supported for command %q.", cmd.CommandPath()),
+				Hint: hint,
+			}
+		}
+		return nil
+	}
+}
+
+// MaximumNArgsAccepted returns an error if there are more than N args.
+func MaximumNArgsAccepted(n int, url string) cobra.PositionalArgs {
+	return func(cmd *cobra.Command, args []string) error {
+		return maxNArgs(cmd, n, url, args)
+	}
+}
+
+func maxNArgs(cmd *cobra.Command, n int, url string, args []string) error {
+	var hint string
+	if url != "" {
+		hint = fmt.Sprintf("Visit %s for more information.", url)
+	}
+	if len(args) > n {
+		return oktetoErrors.UserError{
+			E:    fmt.Errorf("%q accepts at most %d arg(s), but received %d", cmd.CommandPath(), n, len(args)),
+			Hint: hint,
+		}
+	}
+	return nil
+}
+
+// MinimumNArgsAccepted returns an error if there are less than N args.
+func MinimumNArgsAccepted(n int, url string) cobra.PositionalArgs {
+	return func(cmd *cobra.Command, args []string) error {
+		var hint string
+		if url != "" {
+			hint = fmt.Sprintf("Visit %s for more information.", url)
+		}
+		if len(args) < n {
+			return oktetoErrors.UserError{
+				E:    fmt.Errorf("%q requires at least %d arg(s), but only received %d", cmd.CommandPath(), n, len(args)),
+				Hint: hint,
+			}
+		}
+		return nil
+	}
+}
+
+// ExactArgsAccepted returns an error if there are not exactly n args.
+func ExactArgsAccepted(n int, url string) cobra.PositionalArgs {
+	return func(cmd *cobra.Command, args []string) error {
+		var hint string
+		if url != "" {
+			hint = fmt.Sprintf("Visit %s for more information.", url)
+		}
+		if len(args) != n {
+			return oktetoErrors.UserError{
+				E:    fmt.Errorf("%q accepts %d arg(s), but received %d", cmd.CommandPath(), n, len(args)),
+				Hint: hint,
+			}
+		}
+		return nil
+	}
+}
+
+```
+
+### Core Architecture Module: `cmd/utils/dev.go`
+```
+// Copyright 2023 The Okteto Authors
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+package utils
+
+import (
+	"context"
+	"errors"
+	"fmt"
+	"os"
+	"runtime"
+	"sort"
+	"strings"
+
+	"github.com/manifoldco/promptui"
+	oktetoErrors "github.com/okteto/okteto/pkg/errors"
+	"github.com/okteto/okteto/pkg/k8s/apps"
+	"github.com/okteto/okteto/pkg/k8s/deployments"
+	oktetoLog "github.com/okteto/okteto/pkg/log"
+	"github.com/okteto/okteto/pkg/model"
+	"k8s.io/client-go/kubernetes"
+)
+
+var (
+	// ErrNoDevSelected is raised when no development environment is selected
+	ErrNoDevSelected = errors.New("No Development Environment selected")
+)
+
+const (
+	// DefaultManifest default okteto manifest file
+	DefaultManifest = "okteto.yml"
+)
+
+// GetDevFromManifest gets a dev from a manifest by comparing the given dev name with the dev name in the manifest
+func GetDevFromManifest(manifest *model.Manifest, devName string) (*model.Dev, error) {
+	if len(manifest.Dev) == 0 {
+		return nil, oktetoErrors.ErrManifestNoDevSection
+	} else if len(manifest.Dev) == 1 {
+		for name, dev := range manifest.Dev {
+			if devName != "" {
+				if devName != name {
+					return nil, oktetoErrors.UserError{
+						E:    fmt.Errorf(oktetoErrors.ErrDevContainerNotExists, devName),
+						Hint: fmt.Sprintf("Available options are: [%s]", name),
+					}
+				}
+			}
+
+			return dev, nil
+		}
+	}
+
+	if devName == "" {
+		return nil, ErrNoDevSelected
+	}
+
+	var options []string
+	for name, dev := range manifest.Dev {
+		if name == devName {
+			return dev, nil
+		}
+		options = append(options, name)
+	}
+	return nil, oktetoErrors.UserError{
+		E:    fmt.Errorf(oktetoErrors.ErrDevContainerNotExists, devName),
+		Hint: fmt.Sprintf("Available options are: [%s]", strings.Join(options, ", ")),
+	}
+}
+
+// SelectDevFromManifest prompts the selector to choose a development container and returns the dev selected or error
+func SelectDevFromManifest(manifest *model.Manifest, selector OktetoSelectorInterface, devs []string) (*model.Dev, error) {
+	sort.Slice(devs, func(i, j int) bool {
+		l1, l2 := len(devs[i]), len(devs[j])
+		if l1 != l2 {
+			return l1 < l2
+		}
+		return devs[i] < devs[j]
+	})
+	var items []SelectorItem
+	for _, dev := range devs {
+		items = append(items, SelectorItem{
+			Name:   dev,
+			Label:  dev,
+			Enable: true,
+		})
+	}
+	devKey, err := selector.AskForOptionsOkteto(items, -1)
+	if err != nil {
+		return nil, err
+	}
+	dev := manifest.Dev[devKey]
+
+	dev.Name = devKey
+
+	if err := dev.Validate(); err != nil {
+		return nil, err
+	}
+
+	return manifest.Dev[devKey], nil
+}
+
+// YesNoDefault specifies what will be assumed when the user doesn't answer explicitly
+type YesNoDefault string
+
+const (
+	YesNoDefault_Unspecified = "[y/n]"
+	YesNoDefault_Yes         = "[Y/n]"
+	YesNoDefault_No          = "[y/N]"
+)
+
+// AskYesNo prompts for yes/no confirmation
+func AskYesNo(q string, d YesNoDefault) (bool, error) {
+	var answer string
+	for {
+		if err := oktetoLog.Question("%s %s: ", q, d); err != nil {
+			return false, err
+		}
+		if _, err := fmt.Scanln(&answer); err != nil && err.Error() != "unexpected newline" {
+			return false, err
+		}
+
+		if answer == "" && d != YesNoDefault_Unspecified {
+			answer = "y"
+			if d == YesNoDefault_No {
+				answer = "n"
+			}
+			break
+		}
+
+		if answer == "y" || answer == "Y" || answer == "n" || answer == "N" {
+			break
+		}
+
+		oktetoLog.Fail("input must be 'Y/y' or 'N/n'")
+	}
+
+	if answer == "y" || answer == "Y" {
+		return true, nil
+	}
+	return false, nil
+}
+
+func AskForOptions(options []string, label string) (string, error) {
+	selectedTemplate := `{{ " ✓ " | bgGreen | black }} {{ .Label | green }}`
+	activeTemplate := fmt.Sprintf("%s {{ . | oktetoblue }}", promptui.IconSelect)
+	inactiveTemplate := "  {{ . | oktetoblue }}"
+	if runtime.GOOS == "windows" {
+		selectedTemplate = " ✓  {{ . | blue }}"
+		activeTemplate = fmt.Sprintf("%s {{ . | blue }}", promptui.IconSelect)
+		inactiveTemplate = "  {{ . | blue }}"
+	}
+
+	prompt := promptui.Select{
+		Label: label,
+		Items: options,
+		Size:  len(options),
+		Templates: &promptui.SelectTemplates{
+			Label:    "{{ . }}",
+			Selected: selectedTemplate,
+			Active:   activeTemplate,
+			Inactive: inactiveTemplate,
+			FuncMap:  promptui.FuncMap,
+		},
+	}
+	prompt.Templates.FuncMap["oktetoblue"] = oktetoLog.BlueString
+
+	i, _, err := prompt.Run()
+	if err != nil {
+		oktetoLog.Infof("invalid option: %s", err)
+		return "", fmt.Errorf("invalid option")
+	}
+
+	return options[i], nil
+}
+
+// CheckIfDirectory checks if a path is a directory
+func CheckIfDirectory(path string) error {
+	fileInfo, err := os.Stat(path)
+	if err != nil {
+		oktetoLog.Infof("error on CheckIfDirectory: %s", err.Error())
+		return fmt.Errorf("'%s' does not exist", path)
+	}
+	if fileInfo.IsDir() {
+		return nil
+	}
+	return fmt.Errorf("'%s' is not a directory", path)
+}
+
+func GetDownCommand(devPath string) string {
+	okDownCommandHint := "okteto down -v"
+	if DefaultManifest != devPath && devPath != "" {
+		okDownCommandHint = fmt.Sprintf("okteto down -v -f %s", devPath)
+	}
+	return okDownCommandHint
+}
+
+func GetApp(ctx context.Context, dev *model.Dev, namespace string, c kubernetes.Interface, isRetry bool) (apps.App, bool, error) {
+	app, err := apps.Get(ctx, dev, namespace, c)
+	if err != nil {
+		if !oktetoErrors.IsNotFound(err) {
+			return nil, false, err
+		}
+		if dev.Autocreate {
+			if isRetry && !doesAutocreateAppExist(ctx, dev, namespace, c) {
+				return nil, false, fmt.Errorf("development container has been deactivated")
+			}
+			return apps.NewDeploymentApp(deployments.Sandbox(dev, namespace)), true, nil
+		}
+		if len(dev.Selector) > 0 {
+			if oktetoErrors.IsNotFound(err) {
+				err = oktetoErrors.UserError{
+					E:    fmt.Errorf("didn't find an application in namespace %s that matches the selector in your Okteto manifest", namespace),
+					Hint: "Update the selector or point your context to a different namespace and try again"}
+			}
+			return nil, false, err
+		}
+		return nil, false, oktetoErrors.UserError{
+			E: fmt.Errorf("application '%s' not found in namespace '%s'", dev.Name, namespace),
+			Hint: `Verify that your application is running and your okteto context is pointing to the right namespace
+    Or set the 'autocreate' field in your okteto manifest if you want to create a standalone development container
+    More information is available here: https://okteto.com/docs/reference/okteto-cli/#up`,
+		}
+	}
+	return app, false, nil
+}
+
+func doesAutocreateAppExist(ctx context.Context, dev *model.Dev, namespace string, c kubernetes.Interface) bool {
+	autocreateDev := *dev
+	autocreateDev.Name = model.DevCloneName(dev.Name)
+	_, err := apps.Get(ctx, &autocreateDev, namespace, c)
+	if err != nil && !oktetoErrors.IsNotFound(err) {
+		oktetoLog.Infof("getApp autocreate k8s error, retrying...")
+		_, err := apps.Get(ctx, &autocreateDev, namespace, c)
+		return err == nil
+	}
+	return err == nil
+}
+
+```
+
+### Core Architecture Module: `cmd/utils/displayer/collapse_tty.go`
+```
+// Copyright 2023 The Okteto Authors
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+package displayer
+
+import (
+	"bufio"
+	"bytes"
+	"context"
+	"errors"
+	"fmt"
+	"os"
+	"regexp"
+	"runtime"
+	"strings"
+	"sync"
+	"text/template"
+	"time"
+
+	"github.com/manifoldco/promptui"
+	"github.com/manifoldco/promptui/screenbuf"
+	oktetoLog "github.com/okteto/okteto/pkg/log"
+	"golang.org/x/term"
+)
+
+const ansi = "[\u001B\u009B][[\\]()#;?]*(?:(?:(?:[a-zA-Z\\d]*(?:;[a-zA-Z\\d]*)*)?\u0007)|(?:(?:\\d{1,4}(?:;\\d{0,4})*)?[\\dA-PRZcf-ntqry=><~]))"
+
+var (
+	spinnerChars = []string{"⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"}
+	cursorUp     = "\x1b[1A"
+	resetLine    = "\x1b[0G"
+	re           = regexp.MustCompile(ansi)
+)
+
+// TTYCollapseDisplayer displays with a screenbuf
+type TTYCollapseDisplayer struct {
+	err                   error
+	commandContext        context.Context
+	stdoutScanner         *bufio.Scanner
+	stderrScanner         *bufio.Scanner
+	screenbuf             *screenbuf.ScreenBuf
+	cancel                context.CancelFunc
+	command               string
+	linesToDisplay        []string
+	numberOfLines         int
+	buildingpreviousLines int
+	isBuilding            bool
+}
+
+// Display displays the command output
+func (d *TTYCollapseDisplayer) Display(commandName string) {
+	d.command = commandName
+
+	d.hideCursor()
+	d.commandContext, d.cancel = context.WithCancel(context.Background())
+	wg := &sync.WaitGroup{}
+	wgDelta := 0
+	if d.stdoutScanner != nil {
+		wgDelta++
+	}
+	if d.stderrScanner != nil {
+		wgDelta++
+	}
+	wg.Add(wgDelta)
+
+	commandChan := make(chan bool, 1)
+	go d.displayCommand(commandChan)
+	if d.stdoutScanner != nil {
+		go d.displayStdout(wg)
+	}
+	if d.stderrScanner != nil {
+		go d.displayStderr(wg)
+	}
+	wg.Wait()
+	d.cancel()
+	<-commandChan
+}
+
+func (d *TTYCollapseDisplayer) displayCommand(commandChan chan bool) {
+	t := time.NewTicker(50 * time.Millisecond)
+	shouldExit := false
+	for {
+		for i := 0; i < len(spinnerChars); i++ {
+			select {
+			case <-t.C:
+				width, _, err := term.GetSize(int(os.Stdout.Fd()))
+				if err != nil {
+					oktetoLog.Infof("Error getting terminal size: %s", err)
+				}
+				commandLines := renderCommand(spinnerChars[i], d.command, width)
+				for _, commandLine := range commandLines {
+					if _, err := d.screenbuf.Write(commandLine); err != nil {
+						oktetoLog.Infof("Error writing command line: %s", err)
+					}
+				}
+				lines := renderLines(d.linesToDisplay, width)
+				for _, line := range lines {
+					if _, err := d.screenbuf.Write(line); err != nil {
+						oktetoLog.Infof("Error writing line: %s", err)
+					}
+				}
+				d.screenbuf.Flush()
+			case <-d.commandContext.Done():
+				shouldExit = true
+			}
+			if shouldExit {
+				break
+			}
+		}
+		if shouldExit {
+			break
+		}
+	}
+	commandChan <- true
+}
+
+func (d *TTYCollapseDisplayer) displayStdout(wg *sync.WaitGroup) {
+	for d.stdoutScanner.Scan() {
+		select {
+		case <-d.commandContext.Done():
+		default:
+			line := strings.TrimSpace(d.stdoutScanner.Text())
+			if isTopDisplay(line) {
+				prevState := d.isBuilding
+				d.isBuilding = checkIfIsBuildingLine(line)
+				if d.isBuilding && d.isBuilding != prevState {
+					d.buildingpreviousLines = len(d.linesToDisplay)
+				}
+				sanitizedLine := strings.ReplaceAll(line, cursorUp, "")
+				sanitizedLine = strings.ReplaceAll(sanitizedLine, resetLine, "")
+				d.linesToDisplay = append(d.linesToDisplay[:d.buildingpreviousLines-1], sanitizedLine)
+			} else {
+				if len(d.linesToDisplay) >= d.numberOfLines {
+					d.linesToDisplay = d.linesToDisplay[1:]
+				}
+				d.linesToDisplay = append(d.linesToDisplay, line)
+			}
+			if os.Stdout == oktetoLog.GetOutput() {
+				oktetoLog.AddToBuffer(oktetoLog.InfoLevel, "%s", line)
+			}
+			continue
+		}
+		break
+	}
+	if d.stdoutScanner.Err() != nil {
+		oktetoLog.Infof("Error reading command output: %s", d.stdoutScanner.Err().Error())
+	}
+	wg.Done()
+}
+
+func checkIfIsBuildingLine(line string) bool {
+	if strings.Contains(line, "Building") {
+		return !strings.Contains(line, "FINISHED")
+	}
+	return false
+}
+
+func (d *TTYCollapseDisplayer) displayStderr(wg *sync.WaitGroup) {
+	for d.stderrScanner.Scan() {
+		select {
+		case <-d.commandContext.Done():
+		default:
+			line := strings.TrimSpace(d.stderrScanner.Text())
+			d.err = errors.New(line)
+			if len(d.linesToDisplay) >= d.numberOfLines {
+				d.linesToDisplay = d.linesToDisplay[1:]
+			}
+			d.linesToDisplay = append(d.linesToDisplay, line)
+			if os.Stdout == oktetoLog.GetOutput() {
+				oktetoLog.AddToBuffer(oktetoLog.WarningLevel, "%s", line)
+			}
+			continue
+		}
+		break
+	}
+	if d.stderrScanner.Err() != nil {
+		oktetoLog.Infof("Error reading command output: %s", d.stderrScanner.Err().Error())
+	}
+	wg.Done()
+}
+
+func isTopDisplay(line string) bool {
+	return strings.Contains(line, fmt.Sprintf("%s%s", cursorUp, resetLine))
+}
+
+// CleanUp collapses and stops displaying
+func (d *TTYCollapseDisplayer) CleanUp(err error) {
+	if d.screenbuf == nil {
+		return
+	}
+	if d.command == "" {
+		return
+	}
+
+	var message []byte
+	if err == nil {
+		message = renderSuccessCommand(d.command)
+		d.screenbuf.Reset()
+		if err := d.screenbuf.Clear(); err != nil {
+			oktetoLog.Infof("Error clearing screen: %s", err)
+		}
+		if err := d.screenbuf.Flush(); err != nil {
+			oktetoLog.Infof("Error flushing screen: %s", err)
+		}
+		if _, err := d.screenbuf.Write(message); err != nil {
+			oktetoLog.Infof("Error writing success message: %s", err)
+		}
+		d.screenbuf.Flush()
+	} else {
+		message = renderFailCommand(d.command, err)
+		d.screenbuf.Reset()
+		if err := d.screenbuf.Clear(); err != nil {
+			oktetoLog.Infof("Error clearing screen: %s", err)
+		}
+		if err := d.screenbuf.Flush(); err != nil {
+			oktetoLog.Infof("Error flushing screen: %s", err)
+		}
+		if _, err := d.screenbuf.Write(message); err != nil {
+			oktetoLog.Infof("Error writing fail message: %s", err)
+		}
+		width, _, err := term.GetSize(int(os.Stdout.Fd()))
+		if err != nil {
+			oktetoLog.Infof("Error getting terminal size: %s", err)
+		}
+		lines := renderLines(d.linesToDisplay, width)
+		for _, line := range lines {
+			if _, err := d.screenbuf.Write(line); err != nil {
+				oktetoLog.Infof("Error writing line: %s", err)
+			}
+		}
+		d.screenbuf.Flush()
+	}
+	d.cancel()
+	<-d.commandContext.Done()
+	d.reset()
+	d.showCursor()
+
+}
+
+func renderCommand(spinnerChar, command string, charsPerLine int) [][]byte {
+	firstLineCommandTemplate := fmt.Sprintf(` %s {{ . | oktetoblue }}`, spinnerChar)
+	otherLineCommandTemplate := `    {{ . | oktetoblue }}`
+	lastLineCommandTemplate := `    {{ . | oktetoblue }}:`
+	funcMap := promptui.FuncMap
+	funcMap["oktetoblue"] = oktetoLog.BlueString
+	firstLineTpl, err := template.New("").Funcs(funcMap).Parse(firstLineCommandTemplate)
+	if err != nil {
+		return [][]byte{}
+	}
+
+	otherLinesTpl, err := template.New("").Funcs(funcMap).Parse(otherLineCommandTemplate)
+	if err != nil {
+		return [][]byte{}
+	}
+
+	lastLineTpl, err := template.New("").Funcs(funcMap).Parse(lastLineCommandTemplate)
+	if err != nil {
+		return [][]byte{}
+	}
+
+	command = fmt.Sprintf(" Running '%s'", command)
+	result := [][]byte{}
+	if charsPerLine == 0 || charsPerLine < 5 {
+		result = append(result, render(firstLineTpl, command))
+		return result
+	}
+	iterations := (len(command) + 4) / charsPerLine
+	start := 0
+	end := charsPerLine - 5
+	for i := 0; i < iterations+1; i++ {
+		if i == iterations {
+			end = len(command) - 1
+		}
+		currentLine := command[start:end]
+		if i == 0 {
+			result = append(result, render(firstLineTpl, currentLine))
+		} else if i < iterations {
+			result = append(result, render(otherLinesTpl, currentLine))
+		} else {
+			result = append(result, render(lastLineTpl, currentLine))
+		}
+		start = end
+		end += charsPerLine - 5
+	}
+	return result
+}
+
+func renderSuccessCommand(command string) []byte {
+	commandTemplate := `{{ " ✓ " | bgGreen | black }} {{ . | green }}`
+	tpl, err := template.New("").Funcs(promptui.FuncMap).Parse(commandTemplate)
+	if err != nil {
+		return []byte{}
+	}
+
+	return render(tpl, command)
+}
+
+func renderFailCommand(command string, err error) []byte {
+	message := fmt.Sprintf("%s: %s", command, err.Error())
+	commandTemplate := `{{ " x " | bgRed | black }} {{ . | oktetored }}`
+	funcMap := promptui.FuncMap
+	funcMap["oktetored"] = oktetoLog.RedString
+	tpl, err := template.New("").Funcs(funcMap).Parse(commandTemplate)
+	if err != nil {
+		return []byte{}
+	}
+
+	return render(tpl, message)
+}
+
+func renderLines(queue []string, charsPerLine int) [][]byte {
+	lineTemplate := "{{ . | white }} "
+	tpl, err := template.New("").Funcs(promptui.FuncMap).Parse(lineTemplate)
+	if err != nil {
+		return [][]byte{}
+	}
+
+	result := [][]byte{}
+	for _, line := range queue {
+		lineWithoutColors := re.ReplaceAllString(line, "")
+		if len(line) == len(lineWithoutColors) {
+			result = append(result, renderLogWithoutColors(tpl, line, charsPerLine)...)
+		} else {
+			result = append(result, renderLogWithColors(tpl, line, charsPerLine)...)
+			continue
+		}
+	}
+	return result
+}
+
+func renderLogWithColors(tpl *template.Template, line string, charsPerLine int) [][]byte {
+	result := [][]byte{}
+	if charsPerLine > 4 && len(line)+2 > charsPerLine {
+		result = append(result, render(tpl, fmt.Sprintf("%s...", line[:charsPerLine-1])))
+	} else if line == "" {
+		result = append(result, []byte(""))
+	} else {
+		result = append(result, render(tpl, fmt.Sprintf("%s...", line)))
+	}
+	return result
+}
+
+func renderLogWithoutColors(tpl *template.Template, line string, charsPerLine int) [][]byte {
+	result := [][]byte{}
+	if line == "" {
+		result = append(result, []byte(""))
+	} else if charsPerLine == 0 {
+		line = strings.TrimSpace(lin
+```
+
+### Core Architecture Module: `cmd/utils/displayer/displayer.go`
+```
+// Copyright 2023 The Okteto Authors
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+package displayer
+
+import (
+	"io"
+
+	oktetoLog "github.com/okteto/okteto/pkg/log"
+)
+
+// Displayer displays the commands from another writer to stdout
+type Displayer interface {
+	Display(commandName string)
+	CleanUp(err error)
+}
+
+// NewDisplayer returns a new displayer
+func NewDisplayer(output string, stdout, stderr io.Reader) Displayer {
+	var displayer Displayer
+	switch output {
+	case oktetoLog.TTYFormat:
+		displayer = newTTYDisplayer(stdout, stderr)
+	case oktetoLog.PlainFormat:
+		displayer = newPlainDisplayer(stdout, stderr)
+	case oktetoLog.JSONFormat:
+		displayer = newJSONDisplayer(stdout, stderr)
+	default:
+		displayer = newTTYDisplayer(stdout, stderr)
+	}
+	return displayer
+}
+
+```
+
+### Core Architecture Module: `cmd/utils/displayer/json.go`
+```
+// Copyright 2023 The Okteto Authors
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+package displayer
+
+import (
+	"bufio"
+	"context"
+	"io"
+	"os"
+	"sync"
+
+	oktetoLog "github.com/okteto/okteto/pkg/log"
+)
+
+type jsonDisplayer struct {
+	stdoutScanner *bufio.Scanner
+	stderrScanner *bufio.Scanner
+
+	commandContext context.Context
+	cancel         context.CancelFunc
+}
+
+func newJSONDisplayer(stdout, stderr io.Reader) *jsonDisplayer {
+	var (
+		stdoutScanner *bufio.Scanner
+		stderrScanner *bufio.Scanner
+	)
+	if stdout != nil {
+		stdoutScanner = bufio.NewScanner(stdout)
+	}
+	if stderr != nil {
+		stderrScanner = bufio.NewScanner(stderr)
+	}
+
+	commandContext, cancel := context.WithCancel(context.Background())
+
+	return &jsonDisplayer{
+		stdoutScanner:  stdoutScanner,
+		stderrScanner:  stderrScanner,
+		commandContext: commandContext,
+		cancel:         cancel,
+	}
+}
+
+func (d *jsonDisplayer) Display(_ string) {
+	var wg sync.WaitGroup
+	wgDelta := 0
+	if d.stdoutScanner != nil {
+		wgDelta++
+	}
+	if d.stderrScanner != nil {
+		wgDelta++
+	}
+	wg.Add(wgDelta)
+	if d.stdoutScanner != nil {
+		go func() {
+			for d.stdoutScanner.Scan() {
+				select {
+				case <-d.commandContext.Done():
+				default:
+					line := d.stdoutScanner.Text()
+					oktetoLog.FPrintln(os.Stdout, line)
+					continue
+				}
+				break
+			}
+			wg.Done()
+		}()
+	}
+
+	if d.stderrScanner != nil {
+		go func() {
+			for d.stderrScanner.Scan() {
+				select {
+				case <-d.commandContext.Done():
+				default:
+					line := d.stderrScanner.Text()
+					oktetoLog.FPrintln(os.Stdout, line)
+					continue
+				}
+				break
+			}
+			wg.Done()
+		}()
+	}
+	wg.Wait()
+}
+
+// CleanUp stops displaying
+func (d *jsonDisplayer) CleanUp(_ error) {
+	d.cancel()
+	<-d.commandContext.Done()
+}
+
+```
+
+### Core Architecture Module: `cmd/utils/displayer/plain.go`
+```
+// Copyright 2023 The Okteto Authors
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+package displayer
+
+import (
+	"bufio"
+	"context"
+	"io"
+	"os"
+	"sync"
+
+	oktetoLog "github.com/okteto/okteto/pkg/log"
+)
+
+type plainDisplayer struct {
+	stdoutScanner *bufio.Scanner
+	stderrScanner *bufio.Scanner
+
+	commandContext context.Context
+	cancel         context.CancelFunc
+}
+
+func newPlainDisplayer(stdout, stderr io.Reader) *plainDisplayer {
+	var (
+		stdoutScanner *bufio.Scanner
+		stderrScanner *bufio.Scanner
+	)
+	if stdout != nil {
+		stdoutScanner = bufio.NewScanner(stdout)
+	}
+	if stderr != nil {
+		stderrScanner = bufio.NewScanner(stderr)
+	}
+
+	commandContext, cancel := context.WithCancel(context.Background())
+
+	return &plainDisplayer{
+		stdoutScanner:  stdoutScanner,
+		stderrScanner:  stderrScanner,
+		commandContext: commandContext,
+		cancel:         cancel,
+	}
+}
+
+func (d *plainDisplayer) Display(_ string) {
+	var wg sync.WaitGroup
+	wgDelta := 0
+	if d.stdoutScanner != nil {
+		wgDelta++
+	}
+	if d.stderrScanner != nil {
+		wgDelta++
+	}
+	wg.Add(wgDelta)
+	if d.stdoutScanner != nil {
+		go func() {
+			for d.stdoutScanner.Scan() {
+				select {
+				case <-d.commandContext.Done():
+				default:
+					line := d.stdoutScanner.Text()
+					oktetoLog.FPrintln(os.Stdout, line)
+					continue
+				}
+				break
+			}
+			wg.Done()
+		}()
+	}
+
+	if d.stderrScanner != nil {
+		go func() {
+			for d.stderrScanner.Scan() {
+				select {
+				case <-d.commandContext.Done():
+				default:
+					line := d.stderrScanner.Text()
+					oktetoLog.FWarning(os.Stdout, "%s", line)
+					continue
+				}
+				break
+			}
+			wg.Done()
+		}()
+	}
+	wg.Wait()
+}
+
+// CleanUp stops displaying
+func (d *plainDisplayer) CleanUp(_ error) {
+	d.cancel()
+	<-d.commandContext.Done()
+}
+
+```
+
+### Core Architecture Module: `cmd/utils/displayer/tty.go`
+```
+// Copyright 2023 The Okteto Authors
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+package displayer
+
+import (
+	"bufio"
+	"context"
+	"io"
+	"os"
+	"sync"
+
+	"github.com/manifoldco/promptui/screenbuf"
+	oktetoLog "github.com/okteto/okteto/pkg/log"
+)
+
+type ttyDisplayer struct {
+	stdoutScanner *bufio.Scanner
+	stderrScanner *bufio.Scanner
+	screenbuf     *screenbuf.ScreenBuf
+
+	commandContext context.Context
+	cancel         context.CancelFunc
+
+	linesToDisplay []string
+}
+
+func newTTYDisplayer(stdout, stderr io.Reader) *ttyDisplayer {
+	var (
+		stdoutScanner *bufio.Scanner
+		stderrScanner *bufio.Scanner
+	)
+	if stdout != nil {
+		stdoutScanner = bufio.NewScanner(stdout)
+	}
+	if stderr != nil {
+		stderrScanner = bufio.NewScanner(stderr)
+	}
+
+	commandContext, cancel := context.WithCancel(context.Background())
+
+	return &ttyDisplayer{
+		stdoutScanner:  stdoutScanner,
+		stderrScanner:  stderrScanner,
+		screenbuf:      screenbuf.New(os.Stdout),
+		commandContext: commandContext,
+		cancel:         cancel,
+
+		linesToDisplay: []string{},
+	}
+}
+
+func (d *ttyDisplayer) Display(_ string) {
+	var wg sync.WaitGroup
+	wgDelta := 0
+	if d.stdoutScanner != nil {
+		wgDelta++
+	}
+	if d.stderrScanner != nil {
+		wgDelta++
+	}
+	wg.Add(wgDelta)
+	if d.stdoutScanner != nil {
+		go func() {
+			for d.stdoutScanner.Scan() {
+				select {
+				case <-d.commandContext.Done():
+				default:
+					line := d.stdoutScanner.Text()
+					oktetoLog.Println(line)
+					continue
+				}
+				break
+			}
+			if d.stdoutScanner.Err() != nil {
+				oktetoLog.Infof("Error reading command output: %s", d.stdoutScanner.Err().Error())
+			}
+			wg.Done()
+		}()
+	}
+
+	if d.stderrScanner != nil {
+		go func() {
+			for d.stderrScanner.Scan() {
+				select {
+				case <-d.commandContext.Done():
+				default:
+					line := d.stderrScanner.Text()
+					oktetoLog.Println(line)
+					continue
+				}
+				break
+			}
+			wg.Done()
+		}()
+	}
+	wg.Wait()
+}
+
+// CleanUp stops displaying
+func (d *ttyDisplayer) CleanUp(_ error) {
+	d.cancel()
+	<-d.commandContext.Done()
+}
+
+```
+
+### Core Architecture Module: `cmd/utils/executor/executor.go`
+```
+// Copyright 2023 The Okteto Authors
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+package executor
+
+import (
+	"fmt"
+	"os"
+	"os/exec"
+
+	"github.com/okteto/okteto/pkg/constants"
+	"github.com/okteto/okteto/pkg/env"
+	oktetoLog "github.com/okteto/okteto/pkg/log"
+	"github.com/okteto/okteto/pkg/model"
+)
+
+// ManifestExecutor is the interface to execute a command
+type ManifestExecutor interface {
+	Execute(command model.DeployCommand, env []string) error
+	CleanUp(err error)
+}
+
+// Executor implements ManifestExecutor with an executor displayer
+type Executor struct {
+	displayer      executorDisplayer
+	outputMode     string
+	shell, dir     string
+	runWithoutBash bool
+}
+
+type executorDisplayer interface {
+	display(command string)
+	startCommand(cmd *exec.Cmd) error
+	cleanUp(err error)
+}
+
+// NewExecutor returns a new executor
+func NewExecutor(output string, runWithoutBash bool, dir string) *Executor {
+	var displayer executorDisplayer
+
+	switch output {
+	case oktetoLog.TTYFormat:
+		displayer = newTTYExecutor()
+	case oktetoLog.PlainFormat:
+		displayer = newPlainExecutor()
+	case oktetoLog.JSONFormat:
+		displayer = newJSONExecutor()
+	default:
+		displayer = newTTYExecutor()
+	}
+
+	shell := "bash"
+	if env.LoadBoolean(constants.OktetoDeployRemote) {
+		shell = "sh"
+	}
+
+	return &Executor{
+		outputMode:     output,
+		displayer:      displayer,
+		runWithoutBash: runWithoutBash,
+		shell:          shell,
+		dir:            dir,
+	}
+}
+
+// Execute executes the specified command adding `env` to the execution environment
+func (e *Executor) Execute(cmdInfo model.DeployCommand, env []string) error {
+
+	cmd := exec.Command(e.shell, "-c", cmdInfo.Command)
+	if e.runWithoutBash {
+		cmd = exec.Command(cmdInfo.Command)
+	}
+	cmd.Env = append(os.Environ(), env...)
+
+	if e.dir != "" {
+		cmd.Dir = e.dir
+	}
+
+	if err := e.displayer.startCommand(cmd); err != nil {
+		if execErr, ok := err.(*exec.Error); ok {
+			if execErr != nil && execErr.Name == e.shell {
+				return fmt.Errorf("%w: \"%s\" is a required dependency for executing the command", err, e.shell)
+			}
+		}
+		return err
+	}
+
+	e.displayer.display(cmdInfo.Name)
+
+	err := cmd.Wait()
+
+	e.CleanUp(err)
+	return err
+}
+
+// CleanUp cleans the execution lines
+func (e *Executor) CleanUp(err error) {
+	if e.displayer != nil {
+		e.displayer.cleanUp(err)
+	}
+}
+
+func startCommand(cmd *exec.Cmd) error {
+	return cmd.Start()
+}
+
+```
+
+
+### D2: Asynchronous State & Concurrency
+- Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
+
+### D3: Error Boundaries, Recovery & Rollbacks
+- Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #4940** (2026-03-13): **ci: deduplicate CircleCI e2e triggers with debounce and scoped cancellation**
+  *Symptoms*: ## Summary  - Extracts shared logic into a reusable workflow (`trigger-circleci-e2e.yml`) used by all three `run-e2e` jobs - Adds a 2-minute debounce via `concurrency` + `cancel-in-progress: true` to avoid duplicate runs on rapid pushes - Cancels active CircleCI pipelines for the branch before triggering a new one, scoped to the matching workflow name (e.g. `run-e2e` only cancels `run-e2e`, not `run-e2e-windows`) - Handles gracefully the case where no CircleCI pipelines exist for the branch  🤖 Generated with [Claude Code](https://claude.com/claude-code)
+  **Post-Mortem & Fix Analysis**:
+  > ## [Codecov](https://app.codecov.io/gh/okteto/okteto/pull/4940?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=okteto) Report :white_check_mark: All modified and coverable lines are covered by tests. :white_check_mark: Project coverage is 48.11%. Comparing base ([`ba7bdbd`](https://app.codecov.io/gh/okteto/okteto/commit/ba7bdbd8551a67d939f6635047588e33ea435e13?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=okteto)) to head ([`77cf93a`](https://app.codecov.io/gh/okteto/okteto/commit/77cf93adf9f24ef55228b917758ecf3f488def53?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=okteto)). :warning: Report is 6 commits behind head on master.  <details><summary>Additional details and impacted files</summary>    ```diff @@           Coverage Diff           @@ ##           master    #494
+  > > I guess that cancelling a running job will (or might) leave some "trash" in the okteto instance where is running, right? Like namespaces, deployments, etc....  Yes, it could leave some resources there. Should we then leave it running?
+
+- **Issue #4846** (2025-12-22): **fix(log): mask platform env vars (DEV-1266)**
+  *Symptoms*: # Proposed changes  Fixes [DEV-1266](https://okteto.atlassian.net/browse/DEV-1266)  This change ensures that all platform environment variables are always masked in logs during remote execution operations.  ## CLI Quality Reminders 🔧  For both authors and reviewers:  - Scrutinize for potential regressions - Ensure key automated tests are in place - Build the CLI and test using the validation steps - Assess Developer Experience impact (log messages, performances, etc) - If too broad, consider breaking into smaller PRs - Adhere to our [code style](https://github.com/okteto/okteto/blob/master/docs/code-style.md) and [code review](https://github.com/okteto/okteto/blob/master/docs/code-review.md) guidelines  [DEV-1266]: https://okteto.atlassian.net/browse/DEV-1266?atlOrigin=eyJpIjoiNWRkNTljNzYxNjVmNDY3MDlhMDU5Y2ZhYzA5YTRkZjUiLCJwIjoiZ2l0aHViLWNvbS1KU1cifQ
+
+### D4: Resource Lifecycle & Leak Defenses
+- Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
+
+### D5: Boundary Deserialization & Encoding
+- Schema deserialization, payload validation, and untrusted input guards.
+
+### D6: Cross-Platform & Runtime Gotchas
+- Platform variance, OS-specific gotchas, and environment discrepancies detected in issue reports.
+
+### D7: Build, CI/CD, Deployment & Tooling
+- Toolchain requirements, dependencies, and packaging specs verified against remote manifests.
+
+### D8: Forensic Bug Fixes & Real Production Code Patches
+Observed empirical fixes and code patches:
+
+### Incident Patch 1: `0c260262` (2026-11-17)
+**Commit Message**: fix(remote): shell-quote --name and --var values in remote deploy, destroy and test (#5265)
+
+* fix(remote): shell-quote --name and --var values in remote deploy, destroy and test
+
+The remote-run flags were formatted with %q inside a shell-form RUN, so
+/bin/sh in BuildKit expanded $(...), backticks and $VAR in their values.
+They are now single-quoted, and a newline still travels as \n so it can't
+end the instruction. The command-specific ENV values, which a --var can
+set, get the same quoting, and the cached-test log reads the test name
+with shell rules.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Signed-off-by: Javier Lopez <[REDACTED_EMAIL]>
+
+* test(build): avoid a codespell false positive in the logger test
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Signed-off-by: Javier Lopez <[REDACTED_EMAIL]>
+
+* test(remote): check what remote-run receives in the CommandFlag tests
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Signed-off-by: Javier Lopez <[REDACTED_EMAIL]>
+
+* chore: retrigger CI
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Signed-off-by: Javier Lopez <[REDACTED_EMAIL]>
+
+---------
+
+Signed-off-by: Javier Lopez <[REDACTED_EMAIL]>
+Co-authored-by: Claud
+
+**File**: `cmd/deploy/remote.go` (modified, +3/-2)
+```diff
+@@ -181,17 +181,18 @@ func (rd *remoteDeployer) Deploy(ctx context.Context, deployOptions *Options) er
+ 	return nil
+ }
+ 
++// GetCommandFlags returns the remote-run flags with the name and the variables, quoted for the shell
+ func GetCommandFlags(name string, vars []string) ([]string, error) {
+ 	var commandFlags []string
+-	commandFlags = append(commandFlags, fmt.Sprintf("--name %q", name))
++	commandFlags = append(commandFlags, remote.CommandFlag("name", name))
+ 	if len(vars) > 0 {
+ 		var varsToAddForDeploy []string
+ 		variables, err := env.Parse(vars)
+ 		if err != nil {
+ 			return nil, err
+ 		}
+ 		for _, v := range variables {
+-			varsToAddForDeploy = append(varsToAddForDeploy, fmt.Sprintf("--var %s=%q", v.Name, v.Value))
++			varsToAddForDeploy = append(varsToAddForDeploy, remote.CommandFlag("var", v.Name+"="+v.Value))
+ 		}
+ 		commandFlags = append(commandFlags, strings.Join(varsToAddForDeploy, " "))
+ 	}
+```
+
+**File**: `cmd/deploy/remote_test.go` (modified, +64/-15)
+```diff
+@@ -61,7 +61,7 @@ func TestGetCommandFlags(t *testing.T) {
+ 					Name:    "test",
+ 				},
+ 			},
+-			expected: []string{"--name \"test\""},
++			expected: []string{"--name test"},
+ 		},
+ 		{
+ 			name: "name set",
+@@ -71,7 +71,7 @@ func TestGetCommandFlags(t *testing.T) {
+ 					Timeout: 5 * time.Minute,
+ 				},
+ 			},
+-			expected: []string{"--name \"test\""},
++			expected: []string{"--name test"},
+ 		},
+ 		{
+ 			name: "name multiple words",
+@@ -81,7 +81,7 @@ func TestGetCommandFlags(t *testing.T) {
+ 					Timeout: 5 * time.Minute,
+ 				},
+ 			},
+-			expected: []string{"--name \"this is a test\""},
++			expected: []string{"--name 'this is a test'"},
+ 		},
+ 		{
+ 			name: "namespace is not set",
+@@ -92,7 +92,7 @@ func TestGetCommandFlags(t *testing.T) {
+ 					Timeout:   5 * time.Minute,
+ 				},
+ 			},
+-			expected: []string{"--name \"test\""},
++			expected: []string{"--name test"},
+ 		},
+ 		{
+ 			name: "manifest path is not set",
+@@ -104,7 +104,7 @@ func TestGetCommandFlags(t *testing.T) {
+ 					Timeout:          5 * time.Minute,
+ 				},
+ 			},
+-			expected: []string{"--name \"test\""},
++			expected: []string{"--name test"},
+ 		},
+ 		{
+ 			name: "variables set",
+@@ -118,7 +118,7 @@ func TestGetCommandFlags(t *testing.T) {
+ 					Timeout: 5 * time.Minute,
+ 				},
+ 			},
+-			expected: []string{"--name \"test\"", "--var a=\"b\" --var c=\"d\""},
++			expected: []string{"--name test", "--var a=b --var c=d"},
+ 		},
+ 		{
+ 			name: "wait is not set",
+@@ -129,7 +129,7 @@ func TestGetCommandFlags(t *testing.T) {
+ 					Timeout: 5 * time.Minute,
+ 				},
+ 			},
+-			expected: []string{"--name \"test\""},
++			expected: []string{"--name test"},
+ 		},
+ 		{
+ 			name: "multiword var value",
+@@ -139,7 +139,56 @@ func TestGetCommandFlags(t *testing.T) {
+ 					Variables: []string{"test=multi word value"},
+ 				},
+ 			},
+-			expected: []string{"--name \"test\"", "--var test=\"multi word value\""},
++			expected: []string{"--name test", "--var 'test=multi word value'"},
++		},
++		{
++			name: "name with command substitution",
++			config: config{
++				opts: &Options{
++					Name: "$(echo x)",
++				},
++			},
++			expected: []string{"--name '$(echo x)'"},
++		},
++		{
++			name: "var value with command substitution",
++			config: config{
++				opts: &Options{
++					Name:      "test",
++					Variables: []string{"A=$(echo x)"},
++				},
++			},
++			expected: []string{"--name test", "--var 'A=$(echo x)'"},
++		},
++		{
++			name: "var value with a newline",
++			config: config{
++				opts: &Options{
++					Name:      "test",
++					Variables: []string{"A=multi\nline"},
++				},
++			},
++			expected: []string{"--name test", `--var 'A=multi\nline'`},
++		},
++		{
++			name: "var name with command substitution",
++			config: config{
++				opts: &Options{
++					Name:      "test",
++					Variables: []string{"$(echo x)=y"},
++				},
++			},
++			expected: []string{"--name test", "--var '$(echo x)=y'"},
++		},
++		{
++			name: "empty var value",
++			config: config{
++				opts: &Options{
++					Name:      "test",
++					Variables: []string{"A="},
++				},
++			},
++			expected: []string{"--name test", "--var A="},
+ 		},
+ 		{
+ 			name: "wrong multiword var value",
+@@ -221,7 +270,7 @@ func TestDeployRemoteWithCtx(t *testing.T) {
+ 		BaseImage:           manifest.Deploy.Image,
+ 		ManifestPathFlag:    "/path/to/manifest/okteto.yml",
+ 		TemplateName:        templateName,
+-		CommandFlags:        []string{"--name \"test\""},
++		CommandFlags:        []string{"--name test"},
+ 		BuildEnvVars:        map[string]string{"BUILD_VAR_1": "value"},
+ 		DependenciesEnvVars: map[string]string{"DEP_VAR_1": "value"},
+ 		DockerfileName:      dockerfileTemporalName,
+@@ -323,7 +372,7 @@ func TestDeployRemote(t *testing.T) {
+ 		BaseImage:           manifest.Deploy.Image,
+ 		ManifestPathFlag:    "/path/to/manifest/okteto.yml",
+ 		TemplateName:        templateName,
+-		CommandFlags:        []string{"--name \"test\""},
++		CommandFlags:        []string{"--name test"},
+ 		BuildEnvVars:        map[string]string{"BUILD_VAR_1": "value"},
+ 		DependenciesEnvVars: map[string]string{"DEP_VAR_1": "value"},
+ 		DockerfileName:      dockerfileTemporalName,
+@@ -393,7 +442,7 @@ func TestDeployRemoteWithError(t *testing.T) {
+ 		BaseImage:           manifest.Deploy.Image,
+ 		ManifestPathFlag:    "/path/to/manifest/okteto.yml",
+ 		TemplateName:        templateName,
+-		CommandFlags:        []string{"--name \"test\""},
++		CommandFlags:        []string{"--name test"},
+ 		BuildEnvVars:        map[string]string{"BUILD_VAR_1": "value"},
+ 		DependenciesEnvVars: map[string]string{"DEP_VAR_1": "value"},
+ 		DockerfileName:      dockerfileTemporalName,
+@@ -503,10 +552,10 @@ func TestDeployRemoteForwardsTheCatalogSecretVariablesToRemoteRun(t *testing.T)
+ 
+ 	require.NoError(t, err)
+ 	expected := []string{
+-		`--name "test"`,
+-		`--var OKTETO_ACTION_NAME="stored-action"`,
+-		`--catalog-action "action-name"`,
+-		`--catalog-secret-variables-endpoint "https://okteto.example/internal/catalog/secret-variables"`,
++		`--name test`,
++		`--var OKTETO_ACTION_NAME
+```
+
+**File**: `cmd/destroy/remote.go` (modified, +3/-2)
+```diff
+@@ -182,9 +182,10 @@ func (rd *remoteDestroyCommand) Destroy(ctx context.Context, opts *Options) erro
+ 	return nil
+ }
+ 
++// getCommandFlags returns the remote-run flags for the destroy, with the values quoted for the shell
+ func getCommandFlags(opts *Options) ([]string, error) {
+ 	commandFlags := []string{
+-		fmt.Sprintf("--name \"%s\"", opts.Name),
++		remote.CommandFlag("name", opts.Name),
+ 	}
+ 
+ 	if opts.ForceDestroy {
+@@ -198,7 +199,7 @@ func getCommandFlags(opts *Options) ([]string, error) {
+ 			return nil, err
+ 		}
+ 		for _, v := range variables {
+-			varsToAddForDeploy = append(varsToAddForDeploy, fmt.Sprintf("--var %s=%q", v.Name, v.Value))
++			varsToAddForDeploy = append(varsToAddForDeploy, remote.CommandFlag("var", v.Name+"="+v.Value))
+ 		}
+ 		commandFlags = append(commandFlags, strings.Join(varsToAddForDeploy, " "))
+ 	}
+```
+
+**File**: `cmd/destroy/remote_test.go` (modified, +64/-15)
+```diff
+@@ -56,7 +56,7 @@ func TestGetCommandFlags(t *testing.T) {
+ 					Name: "test",
+ 				},
+ 			},
+-			expected: []string{"--name \"test\""},
++			expected: []string{"--name test"},
+ 		},
+ 		{
+ 			name: "name multiple words",
+@@ -65,7 +65,7 @@ func TestGetCommandFlags(t *testing.T) {
+ 					Name: "this is a test",
+ 				},
+ 			},
+-			expected: []string{"--name \"this is a test\""},
++			expected: []string{"--name 'this is a test'"},
+ 		},
+ 		{
+ 			name: "force destroy set",
+@@ -75,7 +75,7 @@ func TestGetCommandFlags(t *testing.T) {
+ 					ForceDestroy: true,
+ 				},
+ 			},
+-			expected: []string{"--name \"test\"", "--force-destroy"},
++			expected: []string{"--name test", "--force-destroy"},
+ 		},
+ 		{
+ 			name: "variables set",
+@@ -88,7 +88,7 @@ func TestGetCommandFlags(t *testing.T) {
+ 					},
+ 				},
+ 			},
+-			expected: []string{"--name \"test\"", "--var a=\"b\" --var c=\"d\""},
++			expected: []string{"--name test", "--var a=b --var c=d"},
+ 		},
+ 		{
+ 			name: "multiword var value",
+@@ -98,7 +98,56 @@ func TestGetCommandFlags(t *testing.T) {
+ 					Variables: []string{"test=multi word value"},
+ 				},
+ 			},
+-			expected: []string{"--name \"test\"", "--var test=\"multi word value\""},
++			expected: []string{"--name test", "--var 'test=multi word value'"},
++		},
++		{
++			name: "name with command substitution",
++			config: config{
++				opts: &Options{
++					Name: "$(echo x)",
++				},
++			},
++			expected: []string{"--name '$(echo x)'"},
++		},
++		{
++			name: "var value with command substitution",
++			config: config{
++				opts: &Options{
++					Name:      "test",
++					Variables: []string{"A=$(echo x)"},
++				},
++			},
++			expected: []string{"--name test", "--var 'A=$(echo x)'"},
++		},
++		{
++			name: "var value with a newline",
++			config: config{
++				opts: &Options{
++					Name:      "test",
++					Variables: []string{"A=multi\nline"},
++				},
++			},
++			expected: []string{"--name test", `--var 'A=multi\nline'`},
++		},
++		{
++			name: "var name with command substitution",
++			config: config{
++				opts: &Options{
++					Name:      "test",
++					Variables: []string{"$(echo x)=y"},
++				},
++			},
++			expected: []string{"--name test", "--var '$(echo x)=y'"},
++		},
++		{
++			name: "empty var value",
++			config: config{
++				opts: &Options{
++					Name:      "test",
++					Variables: []string{"A="},
++				},
++			},
++			expected: []string{"--name test", "--var A="},
+ 		},
+ 		{
+ 			// a stored variable with the same name travels as a --var, which remote-run doesn't read the action from
+@@ -111,10 +160,10 @@ func TestGetCommandFlags(t *testing.T) {
+ 				},
+ 			},
+ 			expected: []string{
+-				"--name \"test\"",
+-				"--var OKTETO_ACTION_NAME=\"stored-action\"",
+-				"--catalog-action \"action-name\"",
+-				"--catalog-secret-variables-endpoint \"https://okteto.example/internal/catalog/secret-variables\"",
++				"--name test",
++				"--var OKTETO_ACTION_NAME=stored-action",
++				"--catalog-action action-name",
++				"--catalog-secret-variables-endpoint https://okteto.example/internal/catalog/secret-variables",
+ 			},
+ 		},
+ 		{
+@@ -127,10 +176,10 @@ func TestGetCommandFlags(t *testing.T) {
+ 				},
+ 			},
+ 			expected: []string{
+-				"--name \"test\"",
++				"--name test",
+ 				"--force-destroy",
+-				"--catalog-action \"action-name\"",
+-				"--catalog-secret-variables-endpoint \"https://okteto.example/internal/catalog/secret-variables\"",
++				"--catalog-action action-name",
++				"--catalog-secret-variables-endpoint https://okteto.example/internal/catalog/secret-variables",
+ 			},
+ 		},
+ 	}
+@@ -183,7 +232,7 @@ func TestDestroyRemoteWithCtx(t *testing.T) {
+ 		BaseImage:        manifest.Destroy.Image,
+ 		ManifestPathFlag: "/path/to/manifest/okteto.yml",
+ 		TemplateName:     templateName,
+-		CommandFlags:     []string{"--name \"test\""},
++		CommandFlags:     []string{"--name test"},
+ 		DockerfileName:   dockerfileTemporalName,
+ 		Deployable: deployable.Entity{
+ 			Commands: manifest.Destroy.Commands,
+@@ -240,7 +289,7 @@ func TestDestroyRemote(t *testing.T) {
+ 		BaseImage:        manifest.Destroy.Image,
+ 		ManifestPathFlag: "/path/to/manifest/okteto.yml",
+ 		TemplateName:     templateName,
+-		CommandFlags:     []string{"--name \"test\""},
++		CommandFlags:     []string{"--name test"},
+ 		DockerfileName:   dockerfileTemporalName,
+ 		Deployable: deployable.Entity{
+ 			Commands: manifest.Destroy.Commands,
+@@ -295,7 +344,7 @@ func TestDestroyRemoteWithError(t *testing.T) {
+ 		BaseImage:        manifest.Destroy.Image,
+ 		ManifestPathFlag: "/path/to/manifest/okteto.yml",
+ 		TemplateName:     templateName,
+-		CommandFlags:     []string{"--name \"test\""},
++		CommandFlags:     []string{"--name test"},
+ 		DockerfileName:   dockerfileTemporalName,
+ 		Deployable: deployable.Entity{
+ 			Commands: manifest.Destroy.Commands,
+```
+
+**File**: `pkg/catalog/catalog.go` (modified, +3/-2)
+```diff
+@@ -25,6 +25,7 @@ import (
+ 	oktetoErrors "github.com/okteto/okteto/pkg/errors"
+ 	oktetoLog "github.com/okteto/okteto/pkg/log"
+ 	"github.com/okteto/okteto/pkg/model"
++	"github.com/okteto/okteto/pkg/remote"
+ )
+ 
+ const (
+@@ -103,8 +104,8 @@ func (s SecretVariables) RemoteRunFlags() []string {
+ 		return nil
+ 	}
+ 	return []string{
+-		fmt.Sprintf("--%s %q", ActionFlag, s.Action),
+-		fmt.Sprintf("--%s %q", SecretVariablesEndpointFlag, s.Endpoint),
++		remote.CommandFlag(ActionFlag, s.Action),
++		remote.CommandFlag(SecretVariablesEndpointFlag, s.Endpoint),
+ 	}
+ }
+ 
+```
+
+**File**: `pkg/catalog/catalog_test.go` (modified, +26/-13)
+```diff
+@@ -27,13 +27,13 @@ var testSecretVariables = SecretVariables{
+ 	Endpoint:   "https://okteto.example/internal/catalog/secret-variables",
+ }
+ 
+-// remote reports whether runsInRemote was called, and returns inRemote
+-type remote struct {
++// fakeRemote reports whether runsInRemote was called, and returns inRemote
++type fakeRemote struct {
+ 	inRemote bool
+ 	called   bool
+ }
+ 
+-func (r *remote) runsInRemote() bool {
++func (r *fakeRemote) runsInRemote() bool {
+ 	r.called = true
+ 	return r.inRemote
+ }
+@@ -56,19 +56,32 @@ func TestSecretVariablesFromEnvWithoutVariables(t *testing.T) {
+ 
+ func TestRemoteRunFlags(t *testing.T) {
+ 	expected := []string{
+-		`--catalog-action "action-name"`,
+-		`--catalog-secret-variables-endpoint "https://okteto.example/internal/catalog/secret-variables"`,
++		`--catalog-action action-name`,
++		`--catalog-secret-variables-endpoint https://okteto.example/internal/catalog/secret-variables`,
+ 	}
+ 
+ 	require.Equal(t, expected, testSecretVariables.RemoteRunFlags())
+ }
+ 
++func TestRemoteRunFlagsQuotesTheValuesForTheShell(t *testing.T) {
++	s := SecretVariables{
++		Action:   "$(echo x)",
++		Endpoint: "https://okteto.example/$HOME",
++	}
++	expected := []string{
++		`--catalog-action '$(echo x)'`,
++		`--catalog-secret-variables-endpoint 'https://okteto.example/$HOME'`,
++	}
++
++	require.Equal(t, expected, s.RemoteRunFlags())
++}
++
+ func TestRemoteRunFlagsWithoutAction(t *testing.T) {
+ 	require.Empty(t, SecretVariables{}.RemoteRunFlags())
+ }
+ 
+ func TestCheckSecretVariablesWithoutReferences(t *testing.T) {
+-	r := &remote{}
++	r := &fakeRemote{}
+ 
+ 	got, err := CheckSecretVariables(SecretVariables{Action: "action-name"}, DeployPhase, r.runsInRemote)
+ 
+@@ -78,7 +91,7 @@ func TestCheckSecretVariablesWithoutReferences(t *testing.T) {
+ }
+ 
+ func TestCheckSecretVariablesWithAnEmptyList(t *testing.T) {
+-	r := &remote{}
++	r := &fakeRemote{}
+ 	s := testSecretVariables
+ 	s.References = "[]"
+ 
+@@ -93,7 +106,7 @@ func TestCheckSecretVariablesInRemote(t *testing.T) {
+ 	phases := []Phase{DeployPhase, DestroyPhase}
+ 	for _, phase := range phases {
+ 		t.Run(string(phase), func(t *testing.T) {
+-			got, err := CheckSecretVariables(testSecretVariables, phase, (&remote{inRemote: true}).runsInRemote)
++			got, err := CheckSecretVariables(testSecretVariables, phase, (&fakeRemote{inRemote: true}).runsInRemote)
+ 
+ 			require.NoError(t, err)
+ 			require.Equal(t, testSecretVariables, got)
+@@ -102,7 +115,7 @@ func TestCheckSecretVariablesInRemote(t *testing.T) {
+ }
+ 
+ func TestCheckSecretVariablesFailsOnLocalDeploy(t *testing.T) {
+-	got, err := CheckSecretVariables(testSecretVariables, DeployPhase, (&remote{}).runsInRemote)
++	got, err := CheckSecretVariables(testSecretVariables, DeployPhase, (&fakeRemote{}).runsInRemote)
+ 
+ 	require.ErrorIs(t, err, ErrSecretVariablesNeedRemote)
+ 	require.EqualError(t, err, "catalog variables of type `secret` are only supported with deploy on remote. Enable remote execution and try again")
+@@ -113,7 +126,7 @@ func TestCheckSecretVariablesFailsOnLocalDeploy(t *testing.T) {
+ }
+ 
+ func TestCheckSecretVariablesFailsOnLocalDestroyPointingToForceDestroy(t *testing.T) {
+-	_, err := CheckSecretVariables(testSecretVariables, DestroyPhase, (&remote{}).runsInRemote)
++	_, err := CheckSecretVariables(testSecretVariables, DestroyPhase, (&fakeRemote{}).runsInRemote)
+ 
+ 	require.ErrorIs(t, err, ErrSecretVariablesNeedRemote)
+ 	var uErr oktetoErrors.UserError
+@@ -125,7 +138,7 @@ func TestCheckSecretVariablesFailsWithoutEndpoint(t *testing.T) {
+ 	s := testSecretVariables
+ 	s.Endpoint = ""
+ 
+-	got, err := CheckSecretVariables(s, DeployPhase, (&remote{inRemote: true}).runsInRemote)
++	got, err := CheckSecretVariables(s, DeployPhase, (&fakeRemote{inRemote: true}).runsInRemote)
+ 
+ 	require.ErrorIs(t, err, errSecretVariablesEndpointNotSet)
+ 	require.Equal(t, SecretVariables{}, got)
+@@ -135,7 +148,7 @@ func TestCheckSecretVariablesFailsWithoutAction(t *testing.T) {
+ 	s := testSecretVariables
+ 	s.Action = ""
+ 
+-	got, err := CheckSecretVariables(s, DeployPhase, (&remote{inRemote: true}).runsInRemote)
++	got, err := CheckSecretVariables(s, DeployPhase, (&fakeRemote{inRemote: true}).runsInRemote)
+ 
+ 	require.ErrorIs(t, err, errActionNotSet)
+ 	require.EqualError(t, err, "the development environment has catalog secret variables, but OKTETO_ACTION_NAME is not set")
+@@ -146,7 +159,7 @@ func TestCheckSecretVariablesFailsWithInvalidReferences(t *testing.T) {
+ 	phases := []Phase{DeployPhase, DestroyPhase}
+ 	for _, phase := range phases {
+ 		t.Run(string(phase), func(t *testing.T) {
+-			r := &remote{inRemote: true}
++			r := &fakeRemote{inRemote: true}
+ 			s := testSecretVariables
+ 			s.References = `{"name":`
+ 
+```
+
+**File**: `pkg/cmd/build/logger.go` (modified, +21/-8)
+```diff
+@@ -17,21 +17,17 @@ import (
+ 	"context"
+ 	"encoding/json"
+ 	"fmt"
+-	"regexp"
+ 	"strings"
+ 	"time"
+ 
++	"github.com/kballard/go-shellquote"
+ 	"github.com/moby/buildkit/client"
+ 	"github.com/okteto/okteto/pkg/build/buildkit"
+ 	oktetoLog "github.com/okteto/okteto/pkg/log"
+ 	"github.com/okteto/okteto/pkg/types"
+ 	"github.com/tonistiigi/units"
+ )
+ 
+-var (
+-	nameRegex = regexp.MustCompile(`--name\s+"([^"]+)"`)
+-)
+-
+ const (
+ 	// largeContextThreshold is the threshold (in bytes) by which a context is catalogued as large or not (50MB)
+ 	largeContextThreshold = 50000000
+@@ -223,9 +219,7 @@ func (t *trace) removeCompletedSteps() {
+ 		if v.completed {
+ 			// We need to specify the command test in order to not affect okteto deploy on remote
+ 			if strings.Contains(v.name, "remote-run test") && v.cached {
+-				match := nameRegex.FindStringSubmatch(v.name)
+-				if len(match) > 1 {
+-					name := match[1]
++				if name, ok := testNameFromStep(v.name); ok {
+ 					oktetoLog.Information("Skipping test container '%s', CACHED", name)
+ 				} else {
+ 					oktetoLog.Information("Skipping test container, CACHED")
+@@ -236,6 +230,25 @@ func (t *trace) removeCompletedSteps() {
+ 	}
+ }
+ 
++// testNameFromStep returns the --name flag of a `remote-run test` step. The step name is the RUN instruction, where
++// the flag values are quoted for the shell, so they are read back with the shell's rules
++func testNameFromStep(step string) (string, bool) {
++	_, args, found := strings.Cut(step, "remote-run test")
++	if !found {
++		return "", false
++	}
++	words, err := shellquote.Split(args)
++	if err != nil {
++		return "", false
++	}
++	for i := 0; i < len(words)-1; i++ {
++		if words[i] == "--name" {
++			return words[i+1], true
++		}
++	}
++	return "", false
++}
++
+ func hasCommandLogs(v *vertexInfo) bool {
+ 	return len(v.logs) != 0
+ }
+```
+
+**File**: `pkg/cmd/build/logger_test.go` (added, +89/-0)
+```diff
+@@ -0,0 +1,89 @@
++// Copyright 2026 The Okteto Authors
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++// http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++package build
++
++import (
++	"testing"
++
++	"github.com/stretchr/testify/assert"
++)
++
++// testStep returns the name BuildKit gives to the remote-run test step of the generated Dockerfile
++func testStep(flags string) string {
++	return `[runner 9/9] RUN --mount=type=secret,id=known_hosts mkdir -p $HOME/.ssh && ` +
++		`/okteto/bin/okteto remote-run test --log-output=json --server-name="$INTERNAL_SERVER_NAME" ` + flags + ` || true`
++}
++
++func TestTestNameFromStep(t *testing.T) {
++	tests := []struct {
++		name     string
++		step     string
++		expected string
++		found    bool
++	}{
++		{
++			name:     "plain name",
++			step:     testStep(`--name unit`),
++			expected: "unit",
++			found:    true,
++		},
++		{
++			name:     "name with spaces",
++			step:     testStep(`--name 'my test'`),
++			expected: "my test",
++			found:    true,
++		},
++		{
++			name:     "name with a variable",
++			step:     testStep(`--name '$HOME'`),
++			expected: "$HOME",
++			found:    true,
++		},
++		{
++			name:     "name with a single quote",
++			step:     testStep(`--name 'it'"'"'s'`),
++			expected: "it's",
++			found:    true,
++		},
++		{
++			name:     "name followed by a var that holds --name",
++			step:     testStep(`--name unit --var 'A=--name other'`),
++			expected: "unit",
++			found:    true,
++		},
++		{
++			name:  "no name",
++			step:  testStep(`--var A=b`),
++			found: false,
++		},
++		{
++			name:  "unterminated quote",
++			step:  `[runner 9/9] RUN /okteto/bin/okteto remote-run test --name 'my test`,
++			found: false,
++		},
++		{
++			name:  "not a test step",
++			step:  `[runner 9/9] RUN /okteto/bin/okteto remote-run deploy --name unit`,
++			found: false,
++		},
++	}
++
++	for _, tt := range tests {
++		t.Run(tt.name, func(t *testing.T) {
++			name, found := testNameFromStep(tt.step)
++			assert.Equal(t, tt.expected, name)
++			assert.Equal(t, tt.found, found)
++		})
++	}
++}
+```
+
+---
+
+### Incident Patch 2: `533d4362` (2026-11-17)
+**Commit Message**: fix: preserve escaped environment variables in compose stacks (#5253)
+
+* fix: preserve escaped environment variables in compose stacks
+
+Signed-off-by: Alex Castillo <[REDACTED_EMAIL]>
+
+* test: cover compose environment decoder edge cases
+
+Signed-off-by: Alex Castillo <[REDACTED_EMAIL]>
+
+---------
+
+Signed-off-by: Alex Castillo <[REDACTED_EMAIL]>
+
+**File**: `pkg/model/stack_expander_test.go` (modified, +27/-0)
+```diff
+@@ -17,6 +17,7 @@ import (
+ 	"testing"
+ 
+ 	"github.com/stretchr/testify/assert"
++	"github.com/stretchr/testify/require"
+ )
+ 
+ func Test_ExpandStackEnvs(t *testing.T) {
+@@ -168,3 +169,29 @@ volumes:
+ 		})
+ 	}
+ }
++
++func TestStackEscapedEnvironment(t *testing.T) {
++	t.Setenv("ESCAPED_TARGET", "host-value")
++	t.Setenv("EXPANSION_SOURCE", "${ESCAPED_TARGET}")
++	t.Setenv("UNSET_TARGET", "")
++	for name, environment := range map[string]string{
++		"map":  "      LITERAL: $${ESCAPED_TARGET}\n      INDIRECT: ${EXPANSION_SOURCE}\n      NORMAL: ${ESCAPED_TARGET}\n      UNSET: $${UNSET_TARGET}\n      MULTILINE: |\n        prefix\n        $${ESCAPED_TARGET}\n",
++		"list": "      - LITERAL=$${ESCAPED_TARGET}\n      - INDIRECT=${EXPANSION_SOURCE}\n      - NORMAL=${ESCAPED_TARGET}\n      - UNSET=$${UNSET_TARGET}\n      - |\n        MULTILINE=prefix\n        $${ESCAPED_TARGET}\n",
++	} {
++		for mode, compose := range map[string]bool{"compose": true, "stack": false} {
++			t.Run(name+"/"+mode, func(t *testing.T) {
++				s, err := ReadStack([]byte("services:\n  app:\n    image: nginx\n    environment:\n"+environment), compose)
++				require.NoError(t, err)
++				values := map[string]string{}
++				for _, variable := range s.Services["app"].Environment {
++					values[variable.Name] = variable.Value
++				}
++				assert.Equal(t, "${ESCAPED_TARGET}", values["LITERAL"])
++				assert.Equal(t, "${ESCAPED_TARGET}", values["INDIRECT"])
++				assert.Equal(t, "host-value", values["NORMAL"])
++				assert.Equal(t, "${UNSET_TARGET}", values["UNSET"])
++				assert.Equal(t, "prefix\n${ESCAPED_TARGET}\n", values["MULTILINE"])
++			})
++		}
++	}
++}
+```
+
+**File**: `pkg/model/stack_serializer.go` (modified, +31/-1)
+```diff
+@@ -20,6 +20,7 @@ import (
+ 	"path"
+ 	"path/filepath"
+ 	"regexp"
++	"sort"
+ 	"strconv"
+ 	"strings"
+ 	"time"
+@@ -162,7 +163,7 @@ type ServiceRaw struct {
+ 	EnvFilesSneakCase        env.Files              `yaml:"env_file,omitempty"`
+ 	Args                     ArgsStack              `yaml:"args,omitempty"`
+ 	Entrypoint               CommandStack           `yaml:"entrypoint,omitempty"`
+-	Environment              env.Environment        `yaml:"environment,omitempty"`
++	Environment              stackEnvironment       `yaml:"environment,omitempty"`
+ 	Expose                   []PortRaw              `yaml:"expose,omitempty"`
+ 	Ports                    []PortRaw              `yaml:"ports,omitempty"`
+ 	CapDrop                  []apiv1.Capability     `yaml:"capDrop,omitempty"`
+@@ -171,6 +172,35 @@ type ServiceRaw struct {
+ 	Public                   bool                   `yaml:"public,omitempty"`
+ }
+ 
++// stackEnvironment decodes values already expanded by ExpandStackEnvs.
++// The shared env.Environment decoder also expands values, which would consume
++// escaped dollars and interpolate variable contents a second time.
++type stackEnvironment []env.Var
++
++func (e *stackEnvironment) UnmarshalYAML(unmarshal func(interface{}) error) error {
++	values := make(map[string]string)
++	var list []string
++	if err := unmarshal(&list); err == nil {
++		for _, entry := range list {
++			parts := strings.SplitN(entry, "=", 2)
++			value := os.Getenv(parts[0])
++			if len(parts) == 2 {
++				value = parts[1]
++			}
++			values[parts[0]] = value
++		}
++	} else if err := unmarshal(&values); err != nil {
++		return err
++	}
++	result := make(stackEnvironment, 0, len(values))
++	for name, value := range values {
++		result = append(result, env.Var{Name: name, Value: value})
++	}
++	sort.SliceStable(result, func(i, j int) bool { return result[i].Name < result[j].Name })
++	*e = result
++	return nil
++}
++
+ // serviceAccountExtension is the compose service extension that sets the pod ServiceAccount
+ const serviceAccountExtension = "x-okteto-service-account"
+ 
+```
+
+**File**: `pkg/model/stack_serializer_test.go` (modified, +18/-5)
+```diff
+@@ -2048,10 +2048,21 @@ func Test_validateEnvFiles(t *testing.T) {
+ 
+ func Test_Environment(t *testing.T) {
+ 	tests := []struct {
+-		name        string
+-		manifest    []byte
+-		environment env.Environment
++		name          string
++		manifest      []byte
++		environment   env.Environment
++		expectedError bool
+ 	}{
++		{
++			name:          "invalid scalar environment",
++			manifest:      []byte("services:\n  app:\n    image: okteto/vote:1\n    environment: FOO=bar"),
++			expectedError: true,
++		},
++		{
++			name:        "duplicate list entry",
++			manifest:    []byte("services:\n  app:\n    image: okteto/vote:1\n    environment:\n      - A=1\n      - A=2"),
++			environment: env.Environment{env.Var{Name: "A", Value: "2"}},
++		},
+ 		{
+ 			name:        "envs",
+ 			manifest:    []byte("services:\n  app:\n    environment:\n        env: production\n    image: okteto/vote:1"),
+@@ -2084,9 +2095,11 @@ func Test_Environment(t *testing.T) {
+ 			t.Setenv("OKTETO_ENVTEST", "myvalue")
+ 
+ 			s, err := ReadStack(tt.manifest, false)
+-			if err != nil {
+-				t.Fatal(err)
++			if tt.expectedError {
++				require.Error(t, err)
++				return
+ 			}
++			require.NoError(t, err)
+ 			assert.Equal(t, tt.environment, s.Services["app"].Environment)
+ 			if len(s.Services["app"].Environment) != len(tt.environment) {
+ 				t.Fatalf("Bad unmarshal of envs")
+```
+
+#### Recent Merged Pull Requests:
+- **PR #5265** (2026-11-17): fix(remote): shell-quote --name and --var values in remote deploy, destroy and test (@jLopezbarb)
+- **PR #5264** (2026-11-13): chore(deps): Update module github.com/hashicorp/go-getter to v1.8.10 (@oktetobot)
+- **PR #5261** (2026-11-13): build(deps): bump renovatebot/github-action from 46.3.12 to 46.3.13 (@dependabot[bot])
+- **PR #5260** (2026-11-13): Upgrade buildkit dependency to v0.35.0-okteto1 (@devin-ai-integration[bot])
+- **PR #5256** (2026-11-11): chore(deps): Update module golang.org/x/crypto to v0.58.0 (@oktetobot)
+- **PR #5255** (2026-11-11): build(deps): bump rack from 3.2.6 to 3.2.8 in /samples/ruby (@dependabot[bot])
+
+---
+
+## 3. Empirical Evidence & Compliance Certification
+- **Evidence Provenance**: Fetched directly from verified official GitHub REST API.
+- **Zero Disk Footprint**: 0 bytes of unnecessary repository bloat stored locally.
+- **TOS & Free-Tier Adherence**: Request pace complied with public API guidelines without fee, penalty, or unauthorized scraping.
+
+---
+
+## 4. Promotion & Integration Status
+- **Status**: HARVESTED_DEEP_FORENSIC
+- **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. remote): shell-quote --name and --var values in remote deploy, destroy and test
+
+**RULE**:
+When implementing operations in `cmd/deploy/remote.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in okteto/okteto. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `0c260262`: remote): shell-quote --name and --var values in remote deploy, destroy and test. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cmd/deploy/remote.go`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Verified production-grade fix pattern:
+// GetCommandFlags returns the remote-run flags with the name and the variables, quoted for the shell
+	commandFlags = append(commandFlags, remote.CommandFlag("name", name))
+			varsToAddForDeploy = append(varsToAddForDeploy, remote.CommandFlag("var", v.Name+"="+v.Value))
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// Induced defect failure mode:
+	commandFlags = append(commandFlags, fmt.Sprintf("--name %q", name))
+			varsToAddForDeploy = append(varsToAddForDeploy, fmt.Sprintf("--var %s=%q", v.Name, v.Value))
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `0c260262` are properly handled with clean fallback behavior.
+
+
+## 3. Application to AI-Builder-Brain Project Construction
+- **Applied Blueprints**: `astro-tailwind-v4`, `fullstack-ai-saas`, `universal-native-factory`
+- **Regression Shield**: Prevents architectural drift across construction cycles.

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-18T01:58:09.344Z",
-  "total_records": 1739,
+  "last_updated": "2026-11-18T02:16:23.359Z",
+  "total_records": 1741,
   "domains": {
     "A": {
       "total": 11,
@@ -1704,7 +1704,7 @@
       ]
     },
     "K": {
-      "total": 75,
+      "total": 77,
       "record_ids": [
         "DOM-K-353B93D6",
         "DOM-K-76C43650",
@@ -1780,7 +1780,9 @@
         "domain_intelligence-quality-verification-intelligence-oxc-project-oxc-learnings-core-invariants",
         "domain_intelligence-quality-verification-intelligence-nats-io-nats-go-core-invariants",
         "domain_intelligence-quality-verification-intelligence-nats-io-nats-go-learnings-core-invariants",
-        "domain_intelligence-quality-verification-intelligence-xerj-org-xerj-core-invariants"
+        "domain_intelligence-quality-verification-intelligence-xerj-org-xerj-core-invariants",
+        "domain_intelligence-quality-verification-intelligence-okteto-okteto-core-invariants",
+        "domain_intelligence-quality-verification-intelligence-okteto-okteto-learnings-core-invariants"
       ]
     },
     "L": {
@@ -7473,8 +7475,8 @@
       "title": "Research & Knowledge Intelligence: Viggle/Qwen-Image-2.1-viggle-turbo Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-viggle-qwen-image-2-1-viggle-turbo-research-knowledge-intelligence-viggle-qwe.md",
       "repository": "Viggle/Qwen-Image-2.1-viggle-turbo",
-      "content_hash": "e2f02137387310e9182b04e0a64ab1acea21a525064199c09d49457cf885745a",
-      "created_at": "2026-11-13T14:55:30.416Z"
+      "content_hash": "1e406713798ad228c4410fed2536c56aa8621ebcabea6e2e28a9332f0cd26ff4",
+      "created_at": "2026-11-18T02:16:09.952Z"
     },
     "domain_intelligence-product-intelligence-cilium-cilium-core-invariants": {
       "record_id": "domain_intelligence-product-intelligence-cilium-cilium-core-invariants",
@@ -7491,8 +7493,8 @@
       "title": "Research & Knowledge Intelligence: hf-viggle-qwen-image-2.1-viggle-turbo-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-viggle-qwen-image-2-1-viggle-turbo-learnings-research-knowledge-intelligence-.md",
       "repository": "hf-viggle-qwen-image-2.1-viggle-turbo-learnings",
-      "content_hash": "2e7d8b7662c651a500d04021ef3064940ef954a77da8743b1f51df18f67dd2cf",
-      "created_at": "2026-11-13T14:55:47.093Z"
+      "content_hash": "daf9d17b96388f582c1ce403764e5f0d959dedc3913a7ddbb90dfa47639abb23",
+      "created_at": "2026-11-18T02:16:22.558Z"
     },
     "domain_intelligence-product-intelligence-cilium-cilium-learnings-core-invariants": {
       "record_id": "domain_intelligence-product-intelligence-cilium-cilium-learnings-core-invariants",
@@ -17696,8 +17698,8 @@
       "title": "Research & Knowledge Intelligence: max-sixty/worktrunk Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-max-sixty-worktrunk-research-knowledge-intelligence-max-sixty-worktrunk-core-inv.md",
       "repository": "max-sixty/worktrunk",
-      "content_hash": "61c3cd7b9fa62b4e6f01118c64992b75b64e921c1b7e217515b3e3b132e980ed",
-      "created_at": "2026-11-16T18:55:51.132Z"
+      "content_hash": "8371657b0493c80ab081705ac5750aae0cfc3d681becdfd2acc67f204e012576",
+      "created_at": "2026-11-18T02:16:10.753Z"
     },
     "domain_intelligence-research-knowledge-intelligence-max-sixty-worktrunk-learnings-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-max-sixty-worktrunk-learnings-core-invariants",
@@ -17705,8 +17707,8 @@
       "title": "Research & Knowledge Intelligence: max-sixty-worktrunk-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-max-sixty-worktrunk-learnings-research-knowledge-intelligence-max-sixty-worktrun.md",
       "repository": "max-sixty-worktrunk-learnings",
-      "content_hash": "7f7393ee1237dee7d8b148a79fb410a5ec0113eb3e407ce9f665e86a5f1932f8",
-      "created_at": "2026-11-16T18:55:55.500Z"
+      "content_hash": "b263e63103397c119463efa323e74783a1f73b13f07aa8f222d655c9da2cfe3d",
+      "created_at": "2026-11-18T02:16:22.075Z"
     },
     "DOM-D-88E5B240": {
       "record_id": "DOM-D-88E5B240",
@@ -29234,6 +29236,24 @@
       "repository": "hf-prism-ml-ternary-bonsai-2-27b-gguf-learnings",
       "content_hash": "37813d0e9c0270920fba94420b3f292d9ae3037cc13a98ec612de73af3b69ec8",
       "created_at": "2026-11-18T01:58:08.611Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-okteto-okteto-core-invariants": {
+      "record_id": "domain_intelligence-quality-verification-intelligence-okteto-okteto-core-invariants",
+      "domain_letter": "K",
+      "title": "Quality & Verification Intelligence: okteto/okteto Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-okteto-okteto-quality-verification-intelligence-okteto-okteto-core-invariants.md",
+      "repository": "okteto/okteto",
+      "content_hash": "32077c5d6eeb956abe53ddcd985f6a3000ed4b3b2789effd61713e7280731a88",
+      "created_at": "2026-11-18T02:16:18.625Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-okteto-okteto-learnings-core-invariants": {
+      "record_id": "domain_intelligence-quality-verification-intelligence-okteto-okteto-learnings-core-invariants",
+      "domain_letter": "K",
+      "title": "Quality & Verification Intelligence: okteto-okteto-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-okteto-okteto-learnings-quality-verification-intelligence-okteto-okteto-learning.md",
+      "repository": "okteto-okteto-learnings",
+      "content_hash": "b82cdd2b0280ed411c1ba3fad6ec8dcef1a59030a9db903efe302efdb06c8c92",
+      "created_at": "2026-11-18T02:16:23.359Z"
     }
   }
 }

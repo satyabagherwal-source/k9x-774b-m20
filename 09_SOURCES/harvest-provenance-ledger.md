@@ -10805,3 +10805,6 @@ Every entry in this ledger must capture:
 | `learn-github-automattic-harper` | `https://github.com/Automattic/harper` | `1d972352` | Multi-dimensional audit evidence | 2026-11-18T01:57:56.238Z |
 | `learn-huggingface-prism-ml-ternary-bonsai-2-27b-gguf` | `https://huggingface.co/prism-ml/Ternary-Bonsai-2-27B-gguf` | `hf-prism-m` | Multi-dimensional audit evidence | 2026-11-18T01:57:58.618Z |
 | `learn-github-skyhook-io-radar` | `https://github.com/skyhook-io/radar` | `495dc890` | Multi-dimensional audit evidence | 2026-11-18T01:58:04.502Z |
+| `learn-huggingface-viggle-qwen-image-2-1-viggle-turbo` | `https://huggingface.co/Viggle/Qwen-Image-2.1-viggle-turbo` | `hf-viggle-` | Multi-dimensional audit evidence | 2026-11-18T02:16:09.745Z |
+| `learn-github-max-sixty-worktrunk` | `https://github.com/max-sixty/worktrunk` | `1bed6f84` | Multi-dimensional audit evidence | 2026-11-18T02:16:10.401Z |
+| `learn-github-okteto-okteto` | `https://github.com/okteto/okteto` | `0c260262` | Multi-dimensional audit evidence | 2026-11-18T02:16:18.261Z |
