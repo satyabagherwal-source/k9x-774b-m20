@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T07:05:49.315Z",
+  "last_updated": "2026-11-18T07:14:46.171Z",
   "directives": [
     {
       "id": "CD-001",
@@ -27934,6 +27934,48 @@
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-95D7B5-upgrade-avt-to-0-21.md",
       "staged_date": "2026-11-18"
+    },
+    {
+      "id": "CD-CFFA",
+      "directive_title": "keep task probe and removal timeouts scoped to each task",
+      "source_repo": "tw93/Mole",
+      "source_commit": "a381d561",
+      "staged_file": "11_INBOX/candidate-directives/CD-CFFA-keep-task-probe-and-removal-timeouts-scoped-to-each-task.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-18",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-DC7K",
+      "directive_title": "Support PostgreSQL REPACK and classify external parser syntax negatives",
+      "source_repo": "apache-shardingsphere-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-DC7K-support-postgresql-repack-and-classify-external-parser-syntax-negatives.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-18",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-511CAD",
+      "directive_title": "Forensic Learning Record (Deep Inspection): DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "hf-davidau-qwen3.8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf",
+      "domain_letter": "M",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-511CAD-forensic-learning-record-deep-inspection.md",
+      "staged_date": "2026-11-18"
+    },
+    {
+      "id": "CD-CPGZ",
+      "directive_title": "optimize): keep task probe and removal timeouts scoped to each task",
+      "source_repo": "tw93-mole-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-CPGZ-optimize-keep-task-probe-and-removal-timeouts-scoped-to-each-task.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-18",
+      "domain_letter": "K"
     }
   ]
 }

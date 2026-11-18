@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261116-LMP5",
-    "timestamp": "2026-11-16T18:01:43.721Z",
-    "repository": "yazinsai/OpenOats",
-    "learningId": "learn-github-yazinsai-openoats",
-    "contentHash": "881024c9266959d0ab398fca49d0ec152cd8d704c1e5833003944c05f2d31fa2",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261116-LRLJ",
-    "timestamp": "2026-11-16T18:01:50.071Z",
-    "repository": "aleo-labs-protocol/snarkOS",
-    "learningId": "learn-github-aleo-labs-protocol-snarkos",
-    "contentHash": "63bf77338051da5f70ed160b031febc11d7ec911dc4b4730fd1178b83f707eef",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261116-XC81",
-    "timestamp": "2026-11-16T18:10:50.017Z",
-    "repository": "nginx/kubernetes-ingress",
-    "learningId": "learn-github-nginx-kubernetes-ingress",
-    "contentHash": "fd4f9f984e1b92755b47b0f0460247a8684a2df9f454752553ed025192d347db",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261116-XEA2",
     "timestamp": "2026-11-16T18:10:52.682Z",
     "repository": "rustls/rustls",
@@ -7490,6 +7445,51 @@
     "repository": "aws/aws-cdk",
     "learningId": "learn-github-aws-aws-cdk",
     "contentHash": "a8af8a186d4a937be91281a98585033fd9498584a3ef8f39a8e65a43805c08ac",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-CA96",
+    "timestamp": "2026-11-18T07:13:56.970Z",
+    "repository": "DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
+    "learningId": "learn-huggingface-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf",
+    "contentHash": "1e9a8abbfe815ee1ab247c83d9ab67fdcfb1e0a392925c981fda4261f8727188",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-CF9Q",
+    "timestamp": "2026-11-18T07:14:03.470Z",
+    "repository": "tw93/Mole",
+    "learningId": "learn-github-tw93-mole",
+    "contentHash": "513b09b71cbee1553e3c571844c4370bd2ee2a91bb4f329a418e1aacd89e76ce",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-CMHP",
+    "timestamp": "2026-11-18T07:14:12.829Z",
+    "repository": "apache/shardingsphere",
+    "learningId": "learn-github-apache-shardingsphere",
+    "contentHash": "d4616187f7ba720c291eb61164e2a65d27eb530abd14d1121d29fa6efbd40d20",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

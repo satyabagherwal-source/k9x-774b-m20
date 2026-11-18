@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-18T07:06:16.538Z",
+  "updated_at": "2026-11-18T07:14:45.945Z",
   "stats": {
-    "total_discovered": 5368,
-    "approved_pending_harvest": 5066,
+    "total_discovered": 5374,
+    "approved_pending_harvest": 5072,
     "harvested_count": 0,
     "rejected_count": 302,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 5048,
+      "COMMUNITY_AND_EXPERT": 5054,
       "OFFICIAL_DOCUMENTATION": 176,
       "STANDARDS_AND_SPECIFICATIONS": 108,
       "ENGINEERING_BLOGS": 4,
@@ -116003,6 +116003,138 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/arkivanov-decompose-learnings.md",
         "fileName": "arkivanov-decompose-learnings.md"
+      }
+    },
+    "SRC-6DD5599A7A5B": {
+      "id": "SRC-6DD5599A7A5B",
+      "url": "https://github.com/user-attachments/assets/8a530247-84d7-415c-8185-ca87d6b4d161",
+      "title": "https://github.com/user-attachments/assets/8a530247-84d7-415c-8185-ca87d6b4d161",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T07:14:16.458Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tw93-mole-learnings.md",
+        "fileName": "tw93-mole-learnings.md"
+      }
+    },
+    "SRC-376EB6FA6989": {
+      "id": "SRC-376EB6FA6989",
+      "url": "https://github.com/user-attachments/assets/8c6a672c-9cb7-4599-b4ea-d5dcb34c8176",
+      "title": "https://github.com/user-attachments/assets/8c6a672c-9cb7-4599-b4ea-d5dcb34c8176",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T07:14:16.493Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tw93-mole-learnings.md",
+        "fileName": "tw93-mole-learnings.md"
+      }
+    },
+    "SRC-361787BDC37D": {
+      "id": "SRC-361787BDC37D",
+      "url": "https://github.com/antlr/antlr4",
+      "title": "https://github.com/antlr/antlr4",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T07:14:45.819Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-shardingsphere-learnings.md",
+        "fileName": "apache-shardingsphere-learnings.md"
+      }
+    },
+    "SRC-BBEE3F1A05AD": {
+      "id": "SRC-BBEE3F1A05AD",
+      "url": "https://github.com/llbit/ow2-asm",
+      "title": "https://github.com/llbit/ow2-asm",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T07:14:45.869Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-shardingsphere-learnings.md",
+        "fileName": "apache-shardingsphere-learnings.md"
+      }
+    },
+    "SRC-0C3D1CA8A841": {
+      "id": "SRC-0C3D1CA8A841",
+      "url": "https://github.com/janino-compiler/janino",
+      "title": "https://github.com/janino-compiler/janino",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T07:14:45.905Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-shardingsphere-learnings.md",
+        "fileName": "apache-shardingsphere-learnings.md"
+      }
+    },
+    "SRC-1803F6C356BE": {
+      "id": "SRC-1803F6C356BE",
+      "url": "https://gitee.com/opengauss/openGauss-connector-jdbc",
+      "title": "https://gitee.com/opengauss/openGauss-connector-jdbc",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T07:14:45.945Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-shardingsphere-learnings.md",
+        "fileName": "apache-shardingsphere-learnings.md"
       }
     }
   }

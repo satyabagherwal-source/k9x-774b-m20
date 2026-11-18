@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-18T07:06:16.735Z",
-  "total_records": 1785,
+  "last_updated": "2026-11-18T07:14:46.328Z",
+  "total_records": 1787,
   "domains": {
     "A": {
       "total": 11,
@@ -1201,7 +1201,7 @@
       ]
     },
     "H": {
-      "total": 417,
+      "total": 419,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1619,7 +1619,9 @@
         "domain_intelligence-technical-construction-intelligence-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf-",
         "domain_intelligence-technical-construction-intelligence-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-gg",
         "domain_intelligence-technical-construction-intelligence-asciinema-asciinema-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-asciinema-asciinema-learnings-core-invariant"
+        "domain_intelligence-technical-construction-intelligence-asciinema-asciinema-learnings-core-invariant",
+        "DOM-H-75FCE7B9",
+        "domain_intelligence-technical-construction-intelligence-apache-shardingsphere-learnings-core-invaria"
       ]
     },
     "I": {
@@ -9895,8 +9897,8 @@
       "title": "Research & Knowledge Intelligence: DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-co.md",
       "repository": "DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
-      "content_hash": "13a629db26d4bb5ec1866e6eb38d8ae7fb09810941cec99ab2cb053319383a16",
-      "created_at": "2026-11-13T20:16:15.563Z"
+      "content_hash": "b7e24de5d85c39b63b5ef4c7b6eebfb5bcf8f90fffa5d204282ab21e32642812",
+      "created_at": "2026-11-18T07:13:57.156Z"
     },
     "domain_intelligence-technical-construction-intelligence-karakeep-app-karakeep-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-karakeep-app-karakeep-core-invariants",
@@ -9913,8 +9915,8 @@
       "title": "Research & Knowledge Intelligence: hf-davidau-qwen3.8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-co.md",
       "repository": "hf-davidau-qwen3.8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf-learnings",
-      "content_hash": "58f36ba4c7acfabe68ffda40c9fc098a954ec825dfb2898c85de0cee6dfd4660",
-      "created_at": "2026-11-13T20:16:27.388Z"
+      "content_hash": "aadcd3df259c421793b6650a9e0e1fd2f2370d2ae1b31a401260dd85317fbfb5",
+      "created_at": "2026-11-18T07:14:16.255Z"
     },
     "domain_intelligence-technical-construction-intelligence-karakeep-app-karakeep-learnings-core-invaria": {
       "record_id": "domain_intelligence-technical-construction-intelligence-karakeep-app-karakeep-learnings-core-invaria",
@@ -18966,8 +18968,8 @@
       "title": "Architecture Intelligence: tw93/Mole Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tw93-mole-architecture-intelligence-tw93-mole-core-invariants.md",
       "repository": "tw93/Mole",
-      "content_hash": "72c51c349ac38f072262eaea2465d69ee357efe4be346960023188025e659a37",
-      "created_at": "2026-11-15T03:13:34.247Z"
+      "content_hash": "4fa07cb4ac39aa6024c0305f6b8bcbec74ac80081aaa2ad62abf6a19db5258fc",
+      "created_at": "2026-11-18T07:14:03.810Z"
     },
     "domain_intelligence-technical-construction-intelligence-vectifyai-pageindex-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-vectifyai-pageindex-core-invariants",
@@ -19035,8 +19037,8 @@
       "title": "Architecture Intelligence: tw93-mole-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tw93-mole-learnings-architecture-intelligence-tw93-mole-learnings-core-invariant.md",
       "repository": "tw93-mole-learnings",
-      "content_hash": "56c54d2691a3b7620eedfcc046c3e7d19db838ea742f718a448565bf1224ee97",
-      "created_at": "2026-11-15T03:14:19.654Z"
+      "content_hash": "fd142af03d5fee5df00b94028ba11f14e23ca8bc72f08b1dc7ada5e52346c8d1",
+      "created_at": "2026-11-18T07:14:16.831Z"
     },
     "domain_intelligence-research-knowledge-intelligence-pyannote-speaker-diarization-community-1-core-in": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-pyannote-speaker-diarization-community-1-core-in",
@@ -26038,8 +26040,8 @@
       "title": "Technical Construction Intelligence: apache/shardingsphere Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-apache-shardingsphere-technical-construction-intelligence-apache-shardingsphere-.md",
       "repository": "apache/shardingsphere",
-      "content_hash": "51795728f3e7082b80df58e433127577d7a43100dbcdb6436af16c5a84b4ec64",
-      "created_at": "2026-11-17T07:55:59.621Z"
+      "content_hash": "2979bf4ed4f5d73fc8775b5d740ee5ed989cce98eca9a821f0235a73e041dd95",
+      "created_at": "2026-11-18T07:14:13.151Z"
     },
     "domain_intelligence-technical-construction-intelligence-embassy-rs-embassy-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-embassy-rs-embassy-core-invariants",
@@ -29851,6 +29853,57 @@
       "repository": "arkivanov-decompose-learnings",
       "content_hash": "9651a6ec7c1b8b2b9d1e3534634d0b9e8b26b9bc5658de506055ab70532982dc",
       "created_at": "2026-11-18T07:06:16.735Z"
+    },
+    "DOM-H-75FCE7B9": {
+      "record_id": "DOM-H-75FCE7B9",
+      "domain_letter": "H",
+      "domain_id": "technical_construction",
+      "domain_name": "Technical Construction Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "G",
+          "id": "architecture",
+          "name": "Architecture Intelligence"
+        }
+      ],
+      "title": "Support PostgreSQL REPACK and classify external parser syntax negatives",
+      "content": "When implementing operations in `parser/sql/engine/core/src/main/java/org/apache/shardingsphere/sql/parser/engine/core/database/visitor/SQLVisitorRule.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/shardingsphere. All inputs crossing module boundaries must be explicitly verified before state persistence.",
+      "content_hash": "ca902707944ae6e45ecca5ceb32bef09b100f3ce07e5ff69acc5d84cf275b79d",
+      "summary": "Prevents defects observed in production commit `d5de05ae`: Support PostgreSQL REPACK and classify external parser syntax negatives. Unvalida -> When implementing operations in `parser/sql/engine/core/src/main/java/org/apache/shardingsphere/sql/parser/engine/core/database/visitor/SQLV",
+      "provenance": {
+        "source_uri": "project://apache-shardingsphere/apache-shardingsphere-learnings.md",
+        "source_version": "d5de05ae",
+        "observed_at": "2026-11-18T07:14:11.892Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (apache-shardingsphere)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of apache-shardingsphere"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "G"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.81,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-18T07:14:45.735Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-apache-shardingsphere-learnings-core-invaria": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-apache-shardingsphere-learnings-core-invaria",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: apache-shardingsphere-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-apache-shardingsphere-learnings-technical-construction-intelligence-apache-shard.md",
+      "repository": "apache-shardingsphere-learnings",
+      "content_hash": "42f1db97f15f95d4adec4f191aff045b61f833674dfd4d842089cb07fa518ad6",
+      "created_at": "2026-11-18T07:14:46.328Z"
     }
   }
 }

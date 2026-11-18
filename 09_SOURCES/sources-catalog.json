@@ -645,8 +645,8 @@
     "sourceUrl": "https://huggingface.co/DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
     "sourceVersion": "hf-davidau-qwen3.8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf",
     "license": "Open-Source",
-    "contentHash": "80c44fb7e171b3a32083a856be3d7f49745174382a94c447fa3ba1d1df0ac2c5",
-    "lastHarvestedAt": "2026-11-13T20:16:15.355Z",
+    "contentHash": "1e9a8abbfe815ee1ab247c83d9ab67fdcfb1e0a392925c981fda4261f8727188",
+    "lastHarvestedAt": "2026-11-18T07:13:56.975Z",
     "learningId": "learn-huggingface-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf"
   },
   "hf-canberkkkkkk-ema-lightning": {
@@ -4873,10 +4873,10 @@
     "repository": "apache/shardingsphere",
     "platform": "github",
     "sourceUrl": "https://github.com/apache/shardingsphere",
-    "sourceVersion": "e2fb0b74",
+    "sourceVersion": "d5de05ae",
     "license": "Apache-2.0",
-    "contentHash": "e7042acc1a7711d949272b0ccbde2d98eb7df0a30b180947113ed07a9d98b164",
-    "lastHarvestedAt": "2026-11-17T07:55:59.355Z",
+    "contentHash": "d4616187f7ba720c291eb61164e2a65d27eb530abd14d1121d29fa6efbd40d20",
+    "lastHarvestedAt": "2026-11-18T07:14:12.834Z",
     "learningId": "learn-github-apache-shardingsphere"
   },
   "sharkdp-pastel": {
@@ -7373,10 +7373,10 @@
     "repository": "tw93/Mole",
     "platform": "github",
     "sourceUrl": "https://github.com/tw93/Mole",
-    "sourceVersion": "060fba8b",
+    "sourceVersion": "a381d561",
     "license": "GPL-3.0",
-    "contentHash": "de78d2df30c991193d302e15d62f62602889421ef758e42cc5c86b59735afa66",
-    "lastHarvestedAt": "2026-11-15T03:13:33.911Z",
+    "contentHash": "513b09b71cbee1553e3c571844c4370bd2ee2a91bb4f329a418e1aacd89e76ce",
+    "lastHarvestedAt": "2026-11-18T07:14:03.474Z",
     "learningId": "learn-github-tw93-mole"
   },
   "siderolabs-talos": {

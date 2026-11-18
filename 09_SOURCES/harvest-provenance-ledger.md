@@ -10890,3 +10890,7 @@ Every entry in this ledger must capture:
 | `learn-github-arkivanov-decompose` | `https://github.com/arkivanov/Decompose` | `4ab3eaec` | Multi-dimensional audit evidence | 2026-11-18T07:05:41.721Z |
 | `learn-github-aws-aws-cdk` | `https://github.com/aws/aws-cdk` | `12341707` | Multi-dimensional audit evidence | 2026-11-18T07:05:45.801Z |
 | `learn-dom-d-45d6f650` | `project://arkivanov-decompose` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/arkivanov-decompose-learnings.md` | 2026-11-18T07:06:16.401Z |
+| `learn-huggingface-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf` | `https://huggingface.co/DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF` | `hf-davidau` | Multi-dimensional audit evidence | 2026-11-18T07:13:56.975Z |
+| `learn-github-tw93-mole` | `https://github.com/tw93/Mole` | `a381d561` | Multi-dimensional audit evidence | 2026-11-18T07:14:03.474Z |
+| `learn-github-apache-shardingsphere` | `https://github.com/apache/shardingsphere` | `d5de05ae` | Multi-dimensional audit evidence | 2026-11-18T07:14:12.834Z |
+| `learn-dom-h-75fce7b9` | `project://apache-shardingsphere` | `d5de05ae` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/apache-shardingsphere-learnings.md` | 2026-11-18T07:14:45.755Z |

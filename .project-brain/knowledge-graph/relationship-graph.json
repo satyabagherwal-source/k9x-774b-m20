@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-18T07:06:16.399Z",
+  "updated_at": "2026-11-18T07:14:45.753Z",
   "statistics": {
-    "total_nodes": 335,
-    "total_edges": 158,
+    "total_nodes": 336,
+    "total_edges": 159,
     "domain_distribution": {
       "D": 236,
       "M": 1,
-      "H": 43,
+      "H": 44,
       "J": 12,
       "K": 17,
       "L": 5,
@@ -20,7 +20,7 @@
       "I": 2
     },
     "relation_distribution": {
-      "CONSTRAINED_BY_ARCHITECTURE": 157,
+      "CONSTRAINED_BY_ARCHITECTURE": 158,
       "VERIFIED_BY_TEST": 1
     }
   },
@@ -7498,6 +7498,29 @@
       ],
       "created_at": "2026-11-18T07:06:16.399Z",
       "updated_at": "2026-11-18T07:06:16.399Z"
+    },
+    "DOM-H-75FCE7B9": {
+      "id": "DOM-H-75FCE7B9",
+      "domain": "H",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Support PostgreSQL REPACK and classify external parser syntax negatives",
+      "summary": "Prevents defects observed in production commit `d5de05ae`: Support PostgreSQL REPACK and classify external parser syntax negatives. Unvalida -> When implementing operations in `parser/sql/engine/core/src/main/java/org/apache/shardingsphere/sql/parser/engine/core/database/visitor/SQLV",
+      "confidence": 0.81,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://apache-shardingsphere/apache-shardingsphere-learnings.md",
+        "source_version": "d5de05ae",
+        "observed_at": "2026-11-18T07:14:11.892Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (apache-shardingsphere)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "H",
+        "Technical Construction Intelligence",
+        "G"
+      ],
+      "created_at": "2026-11-18T07:14:45.753Z",
+      "updated_at": "2026-11-18T07:14:45.753Z"
     }
   },
   "edges": [
@@ -9080,6 +9103,16 @@
       "evidenceProvenance": null,
       "rationale": "Cross-domain classification links DOM-F-9E7BDB5E [F] with Domain G",
       "created_at": "2026-11-18T05:11:13.030Z"
+    },
+    {
+      "id": "EDGE-86D467568BBB",
+      "sourceId": "DOM-H-75FCE7B9",
+      "targetId": "NODE-G-domain-bridge-g",
+      "relationType": "CONSTRAINED_BY_ARCHITECTURE",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-H-75FCE7B9 [H] with Domain G",
+      "created_at": "2026-11-18T07:14:45.753Z"
     }
   ]
 }

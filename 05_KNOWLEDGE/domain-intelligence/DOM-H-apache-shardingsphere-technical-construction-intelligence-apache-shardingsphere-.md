@@ -4,24 +4,24 @@
 {
   "source_repository": "apache/shardingsphere",
   "source_url": "https://github.com/apache/shardingsphere",
-  "source_version": "e2fb0b74",
+  "source_version": "d5de05ae",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-17T07:55:59.518Z",
+  "timestamp": "2026-11-18T07:14:13.010Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-apache-shardingsphere",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [apache/shardingsphere](https://github.com/apache/shardingsphere) (Revision: `e2fb0b74`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-17T07:55:59.518Z`  
+> **Provenance**: Harvested from [apache/shardingsphere](https://github.com/apache/shardingsphere) (Revision: `d5de05ae`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-18T07:14:13.010Z`  
 > **Learning ID**: `learn-github-apache-shardingsphere`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), G (Architecture Intelligence), B (Product Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence)
-- **Confidence Rating**: 66%
+- **Secondary Corroborating Domains**: D (Research & Knowledge Intelligence), G (Architecture Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), B (Product Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 72%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from apache/shardingsphere:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/apache-shardingsphere-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/apache/shardingsphere](https://github.com/apache/shardingsphere))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T07:55:58.529Z  
+> **Harvest Timestamp**: 2026-11-18T07:14:11.886Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Empowering Data Intelligence with Distributed SQL for Sharding, Scalability, and Security Across All Databases.
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 20831 stars
+- **Stars / Engagement**: 20832 stars
 
 ---
 
@@ -1448,15 +1448,15 @@ def compare_github_files(local_paths: Iterable[str], github_files_path: str | No
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #40517** (2026-11-17): **Fix PostgreSQL IGNORE NULLS conversion**
+- **Issue #40522** (2026-11-17): **Upgrade ASM to 9.9.1**
   *Symptoms*: 
   **Post-Mortem & Fix Analysis**:
-  >  ### Summary   该 PR 保留 PostgreSQL IGNORE NULLS 状态，并贯穿解析、绑定和 Calcite 转换，修复语义丢失。方向正确，未扩展运行时执行能力。    ### Result   Review Result: Mergeable   未发现剩余代码阻塞项。    ### Evidence   8 个 Java 文件的 Spotless、Checkstyle 通过；聚焦测试 2,011 项通过。   完整 Unit/IT：31,321 项，0 失败、0 错误、124 跳过。    ### Coverage   公开 HEAD `26347371`，9 文件、21 个变更块全部覆盖。结论仅限代码，CI 未审查。   Calcite 1.42 Enumerable 仍明确拒绝 IGNORE NULLS；本 PR 防止静默按 RESPECT 处理，不代表已支持其执行。
+  > ### Summary  The root POM upgrades ASM from 9.7.1 to 9.9.1, with the Proxy LICENSE updated accordingly. Verification covers actual accessor generation, relevant consumer modules, and distribution archive contents.  ### Result  Review Result: Mergeable  No blocking issues or recommended changes remain.  ### Evidence  Two independent complete reviews and coordinator confirmation were completed; review-record validation passed. The archive contains ASM 9.9.1, and its LICENSE matches the current source file.  ### Coverage  Standalone local candidate, baseline 5386e61c2335, covering the complete cumulative two-file delta. Code correctness review only; CI was not reviewed. Full builds, E2E, and native-image checks were not run. Archive verification used unchanged cached application artifacts.
 
-- **Issue #40516** (2026-11-17): **Improve PostgreSQL JSON, window function and string literal parsing**
+- **Issue #40519** (2026-11-18): **Support PostgreSQL REPACK and classify external parser syntax negatives**
   *Symptoms*: 
   **Post-Mortem & Fix Analysis**:
-  >  ### Summary   补齐 PostgreSQL JSON FILTER/PLAN、NULLS 修饰符及注释间字符串续接。本地修复保留 NULLS 语义到 binder 和 Calcite AST。    ### Result   Review Result: Mergeable   本地候选无剩余代码阻塞项。    ### Evidence   完整 Unit/IT：31,278 项，0 失败、0 错误、124 跳过。   17 个 Java 文件的格式检查、许可证检查通过。   范围扫描的事务日志告警已核实为忽略的验证产物。    ### Coverage   公开 07f437c2 加 9 文件本地修正，共 23 文件；公开 PR 尚未包含这些修正。   CI 未审查，SQL E2E 未运行。Calcite 仍明确拒绝 Enumerable IGNORE NULLS 执行。
+  > ### Result    **Review Result: Mergeable**    **Reason:** 快照显示 REPACK 支持覆盖语法入口、visitor、专用 statement 和测试断言，并配套调整外部解析测试的语法负例分类，范围与 PR 目标一致。    ### Evidence    - 新增 PostgreSQLRepackStatement，并调整 PostgreSQL 关键字、DDL grammar 和解析入口。   - PostgreSQLDDLStatementVisitor 与 SQLVisitorRule 增加对应处理，测试侧新增 REPACK case 模型和断言。   - 增加 REPACK SQL/期望资源及外部测试加载器测试，同时补充 SELECT、EXPLAIN 回归资源。    ### Coverage    - **Reviewed Head:** #40519 — Support PostgreSQL REPACK and classify external parser syntax negatives；`93dd94353dd7b1cfb513ff93351eaae473bc9073`。   - **Change Scope:** PostgreSQL REPACK 解析与外部解析测试分类。   - **Files Accounted For:** 元数据列出 20 个文件；已读取文件清单及可见 patch。diff 与工具展示均有截断，仅覆盖可见内容；未执行测试。   - **CI Scope:** Not reviewed.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1473,796 +1473,380 @@ def compare_github_files(local_paths: Iterable[str], github_files_path: str | No
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `dcc642bb` (2026-11-17)
-**Commit Message**: Fix StackOverflowError when parsing long PostgreSQL and openGauss IN lists (#40450)
+### Incident Patch 1: `d5de05ae` (2026-11-18)
+**Commit Message**: Support PostgreSQL REPACK and classify external parser syntax negatives (#40519)
 
-* Fix StackOverflowError when parsing long PostgreSQL and openGauss IN lists
+* Preserve PostgreSQL composite row expressions
 
-The left-recursive exprList rule produced a parse tree as deep as the
-list was long, and visitExprList walked it recursively. A query with
-about 15,000 values in an IN list overflowed the default thread stack.
+* Limit PostgreSQL composite row changes to parser regression cases
 
-Make exprList an iterative rule, as funcArgList already is, and read
-its expressions in a loop.
+* Support PostgreSQL REPACK and classify external parser syntax negatives
 
-* Declare the expected IN list values as Collection
-
-**File**: `parser/sql/engine/dialect/opengauss/src/main/antlr4/imports/opengauss/BaseRule.g4` (modified, +1/-2)
+**File**: `parser/sql/engine/core/src/main/java/org/apache/shardingsphere/sql/parser/engine/core/database/visitor/SQLVisitorRule.java` (modified, +2/-0)
 ```diff
-@@ -826,8 +826,7 @@ constTypeName
-     ;
- 
- exprList
--    : aExpr
--    | exprList COMMA_ aExpr
-+    : aExpr (COMMA_ aExpr)*
-     ;
- 
- extractList
-```
-
-**File**: `parser/sql/engine/dialect/opengauss/src/main/java/org/apache/shardingsphere/sql/parser/engine/opengauss/visitor/statement/OpenGaussStatementVisitor.java` (modified, +4/-9)
-```diff
-@@ -613,14 +613,12 @@ private ExpressionSegment createInExpressionSegment(final InExprContext ctx) {
-         return result;
-     }
+@@ -841,6 +841,8 @@ public enum SQLVisitorRule {
      
--    @SuppressWarnings("unchecked")
-     @Override
-     public ASTNode visitExprList(final ExprListContext ctx) {
-         CollectionValue<ExpressionSegment> result = new CollectionValue<>();
--        if (null != ctx.exprList()) {
--            result.combine((CollectionValue<ExpressionSegment>) visitExprList(ctx.exprList()));
-+        for (AExprContext each : ctx.aExpr()) {
-+            result.getValue().add((ExpressionSegment) visit(each));
-         }
--        result.getValue().add((ExpressionSegment) visit(ctx.aExpr()));
-         return result;
-     }
+     CLUSTER("Cluster", SQLStatementType.DDL),
      
-@@ -903,12 +901,9 @@ private Collection<InsertValuesSegment> createInsertValuesSegments(final ValuesC
-     
-     private Collection<ExpressionSegment> createInsertValuesSegments(final ExprListContext ctx) {
-         Collection<ExpressionSegment> result = new LinkedList<>();
--        if (null != ctx.exprList()) {
--            Collection<ExpressionSegment> tmpResult = createInsertValuesSegments(ctx.exprList());
--            result.addAll(tmpResult);
-+        for (AExprContext each : ctx.aExpr()) {
-+            result.add((ExpressionSegment) visit(each));
-         }
--        ExpressionSegment expr = (ExpressionSegment) visit(ctx.aExpr());
--        result.add(expr);
-         return result;
-     }
-     
-```
-
-**File**: `parser/sql/engine/dialect/postgresql/src/main/antlr4/imports/postgresql/BaseRule.g4` (modified, +1/-2)
-```diff
-@@ -1363,8 +1363,7 @@ constTypeName
-     ;
- 
- exprList
--    : aExpr
--    | exprList COMMA_ aExpr
-+    : aExpr (COMMA_ aExpr)*
-     ;
- 
- extractList
-```
-
-**File**: `parser/sql/engine/dialect/postgresql/src/main/java/org/apache/shardingsphere/sql/parser/engine/postgresql/visitor/statement/PostgreSQLStatementVisitor.java` (modified, +4/-9)
-```diff
-@@ -1003,14 +1003,12 @@ private ExpressionSegment createInExpressionSegment(final InExprContext ctx) {
-         return result;
-     }
-     
--    @SuppressWarnings("unchecked")
-     @Override
-     public ASTNode visitExprList(final ExprListContext ctx) {
-         CollectionValue<ExpressionSegment> result = new CollectionValue<>();
--        if (null != ctx.exprList()) {
--            result.combine((CollectionValue<ExpressionSegment>) visitExprList(ctx.exprList()));
-+        for (AExprContext each : ctx.aExpr()) {
-+            result.getValue().add((ExpressionSegment) visit(each));
-         }
--        result.getValue().add((ExpressionSegment) visit(ctx.aExpr()));
-         return result;
-     }
-     
-@@ -1304,12 +1302,9 @@ private Collection<InsertValuesSegment> createInsertValuesSegments(final ValuesC
-     
-     private Collection<ExpressionSegment> createInsertValuesSegments(final ExprListContext ctx) {
-         Collection<ExpressionSegment> result = new LinkedList<>();
--        if (null != ctx.exprList()) {
--            Collection<ExpressionSegment> tmpResult = createInsertValuesSegments(ctx.exprList());
--            result.addAll(tmpResult);
-+        for (AExprContext each : ctx.aExpr()) {
-+            result.add((ExpressionSegment) visit(each));
-         }
--        ExpressionSegment expr = (ExpressionSegment) visit(ctx.aExpr());
--        result.add(expr);
-         return result;
-     }
-     
-```
-
-**File**: `test/it/parser/src/test/java/org/apache/shardingsphere/test/it/sql/parser/opengauss/InternalOpenGaussParserIT.java` (modified, +23/-0)
-```diff
-@@ -17,9 +17,32 @@
- 
- package org.apache.shardingsphere.test.it.sql.parser.opengauss;
- 
-+import org.apache.shardingsphere.sql.parser.engine.api.CacheOption;
-+import org.apache.shardingsphere.sql.parser.engine.api.SQLParserEngine;
-+import org.apache.shardingsphere.sql.parser.engine.api.SQLStatementVisitorEngine;
-+import org.apache.shardingsphere.sql.parser.statement.core.segment.dml.expr.InExpression;
-+import org.apache.shardingsphere.sql.parser.statement.core.segment.dml.expr.ListExpression;
-+import org.apache.shardingsphere.sql.parser.statement.core.statement.type.dml.SelectStatement;
- import org.apache.shardingsphere.test.it.sql.parser.internal.InternalSQLParserIT;
- import org.apache.shardingsphere.test.it.sql.parser.internal.InternalSQLParserITSettings;
-+import org.junit.jupiter.api.Test;
-+
-+import java.util.Collection;
-+import java.util.stream.Collectors;
-+import java.util.stream.IntStream;
-+
-+import static org.hamcrest.MatcherAssert.assertThat;
-+import static org.hamcrest.Matchers.is;
- 
- @InternalSQLParserITSettings("openGauss")
- class InternalOpenGaussParserIT extends InternalSQLParserIT {
++    REPACK("Repack", SQLStatementType.DDL),
 +    
-+    @Test
-+    void assertSelectWithLargeInList() {
-+        Collection<String> expectedValues = IntStream.rangeClosed(1, 100000).mapToObj(String::valueOf).collect(Collectors.toList());
-+        String sql = "SELECT * FROM foo_table WHERE foo_id IN (" + String.join(", ", expectedValues) + ")";
-+        SelectStatement actual = (SelectStatement) new SQLStatementVisitorEngine("openGauss").visit(new SQLParserEngine("openGauss", new CacheOption(128, 1024L)).parse(sql, false));
-+        ListExpression actualValues = (ListExpression) ((InExpression) actual.getWhere().get().getExpr()).getRight();
-+        assertThat(actualValues.getItems().stream().map(each -> sql.substring(each.getStartIndex(), each.getStopIndex() + 1)).collect(Collectors.toList()), is(expectedValues));
-+    }
- }
+     CREATE_ACCESS_METHOD("CreateAccessMethod", SQLStatementType.DDL),
+     
+     DO("DoStatement", SQLStatementType.DML),
 ```
 
-**File**: `test/it/parser/src/test/java/org/apache/shardingsphere/test/it/sql/parser/postgresql/InternalPostgreSQLParserIT.java` (modified, +11/-0)
+**File**: `parser/sql/engine/dialect/postgresql/src/main/antlr4/imports/postgresql/BaseRule.g4` (modified, +1/-0)
 ```diff
-@@ -33,6 +33,7 @@
- import org.apache.shardingsphere.sql.parser.statement.core.segment.dml.expr.CaseWhenExpression;
- import org.apache.shardingsphere.sql.parser.statement.core.segment.dml.expr.ExpressionSegment;
- import org.apache.shardingsphere.sql.parser.statement.core.segment.dml.expr.FunctionSegment;
-+import org.apache.shardingsphere.sql.parser.statement.core.segment.dml.expr.InExpression;
- import org.apache.shardingsphere.sql.parser.statement.core.segment.dml.expr.ListExpression;
- import org.apache.shardingsphere.sql.parser.statement.core.segment.dml.expr.TypeCastExpression;
- import org.apache.shardingsphere.sql.parser.statement.core.segment.dml.expr.simple.ParameterMarkerExpressionSegment;
-@@ -76,6 +77,7 @@
- import java.util.Comparator;
+@@ -374,6 +374,7 @@ unreservedWord
+     | RELATIVE
+     | RELEASE
+     | RENAME
++    | REPACK
+     | REPEATABLE
+     | REPLACE
+     | REPLICA
+```
+
+**File**: `parser/sql/engine/dialect/postgresql/src/main/antlr4/imports/postgresql/DDLStatement.g4` (modified, +12/-0)
+```diff
+@@ -1221,6 +1221,18 @@ close
+     : CLOSE (cursorName | ALL)
+     ;
+ 
++repack
++    : REPACK repackOptions? (qualifiedName (LP_ columnList RP_)? (USING INDEX indexName?)? | USING INDEX)?
++    ;
++
++repackOptions
++    : LP_ repackOption (COMMA_ repackOption)* RP_
++    ;
++
++repackOption
++    : (nonReservedWord | analyzeKeyword) (booleanOrString | numericOnly)?
++    ;
++
+ cluster
+     : CLUSTER clusterVerboseSpecification? (tableName clusterIndexSpecification? | indexName ON tableName)?
+     ;
+```
+
+**File**: `parser/sql/engine/dialect/postgresql/src/main/antlr4/imports/postgresql/PostgreSQLKeyword.g4` (modified, +4/-0)
+```diff
+@@ -171,6 +171,10 @@ CHARACTERISTICS
+     : C H A R A C T E R I S T I C S
+     ;
+ 
++REPACK
++    : R E P A C K
++    ;
++
+ CLUSTER
+     : C L U S T E R
+     ;
+```
+
+**File**: `parser/sql/engine/dialect/postgresql/src/main/antlr4/org/apache/shardingsphere/sql/parser/autogen/PostgreSQLStatementParser.g4` (modified, +1/-0)
+```diff
+@@ -161,6 +161,7 @@ execute
+     | move
+     | close
+     | cluster
++    | repack
+     | alterOperator
+     | createOperatorClass
+     | alterOperatorClass
+```
+
+**File**: `parser/sql/engine/dialect/postgresql/src/main/java/org/apache/shardingsphere/sql/parser/engine/postgresql/visitor/statement/type/PostgreSQLDDLStatementVisitor.java` (modified, +43/-0)
+```diff
+@@ -77,6 +77,7 @@
+ import org.apache.shardingsphere.sql.parser.autogen.PostgreSQLStatementParser.ClusterContext;
+ import org.apache.shardingsphere.sql.parser.autogen.PostgreSQLStatementParser.ColumnConstraintContext;
+ import org.apache.shardingsphere.sql.parser.autogen.PostgreSQLStatementParser.ColumnDefinitionContext;
++import org.apache.shardingsphere.sql.parser.autogen.PostgreSQLStatementParser.ColumnElemContext;
+ import org.apache.shardingsphere.sql.parser.autogen.PostgreSQLStatementParser.ColumnNameContext;
+ import org.apache.shardingsphere.sql.parser.autogen.PostgreSQLStatementParser.ColumnrefContext;
+ import org.apache.shardingsphere.sql.parser.autogen.PostgreSQLStatementParser.CommentContext;
+@@ -197,6 +198,8 @@
+ import org.apache.shardingsphere.sql.parser.autogen.PostgreSQLStatementParser.RelativeCountContext;
+ import org.apache.shardingsphere.sql.parser.autogen.PostgreSQLStatementParser.RenameColumnSpecificationContext;
+ import org.apache.shardingsphere.sql.parser.autogen.PostgreSQLStatementParser.RenameTableSpecificationContext;
++import org.apache.shardingsphere.sql.parser.autogen.PostgreSQLStatementParser.RepackContext;
++import org.apache.shardingsphere.sql.parser.autogen.PostgreSQLStatementParser.RepackOptionContext;
+ import org.apache.shardingsphere.sql.parser.autogen.PostgreSQLStatementParser.SecurityLabelStmtContext;
+ import org.apache.shardingsphere.sql.parser.autogen.PostgreSQLStatementParser.TableConstraintContext;
+ import org.apache.shardingsphere.sql.parser.autogen.PostgreSQLStatementParser.TableConstraintOptionContext;
+@@ -226,6 +229,8 @@
+ import org.apache.shardingsphere.sql.parser.statement.core.segment.ddl.cursor.DirectionSegment;
+ import org.apache.shardingsphere.sql.parser.statement.core.segment.ddl.index.IndexNameSegment;
+ import org.apache.shardingsphere.sql.parser.statement.core.segment.ddl.index.IndexSegment;
++import org.apache.shardingsphere.sql.parser.statement.core.segment.ddl.property.PropertiesSegment;
++import org.apache.shardingsphere.sql.parser.statement.core.segment.ddl.property.PropertySegment;
+ import org.apache.shardingsphere.sql.parser.statement.core.segment.ddl.routine.FunctionNameSegment;
+ import org.apache.shardingsphere.sql.parser.statement.core.segment.ddl.table.RenameTableDefinitionSegment;
+ import org.apache.shardingsphere.sql.parser.statement.core.segment.ddl.table.SetSchemaDefinitionSegment;
+@@ -323,6 +328,7 @@
+ import org.apache.shardingsphere.sql.parser.statement.postgresql.ddl.PostgreSQLListenStatement;
+ import org.apache.shardingsphere.sql.parser.statement.postgresql.ddl.PostgreSQLNotifyStmtStatement;
+ import org.apache.shardingsphere.sql.parser.statement.postgresql.ddl.PostgreSQLOpenStatement;
++import org.apache.shardingsphere.sql.parser.statement.postgresql.ddl.PostgreSQLRepackStatement;
+ import org.apache.shardingsphere.sql.parser.statement.postgresql.ddl.PostgreSQLSecurityLabelStmtStatement;
+ import org.apache.shardingsphere.sql.parser.statement.postgresql.ddl.PostgreSQLUnlistenStatement;
+ import org.apache.shardingsphere.sql.parser.statement.postgresql.ddl.accessmethod.PostgreSQLCreateAccessMethodStatement;
+@@ -380,6 +386,7 @@
+ import java.util.Iterator;
+ import java.util.LinkedList;
  import java.util.List;
++import java.util.Locale;
+ import java.util.Optional;
  import java.util.stream.Collectors;
-+import java.util.stream.IntStream;
+ 
+@@ -1454,6 +1461,42 @@ public ASTNode visitCursorName(final CursorNameContext ctx) {
+                 : new CursorNameSegment(ctx.start.getStartIndex(), ctx.stop.getStopIndex(), (IdentifierValue) visit(ctx.name()));
+     }
+     
++    @Override
++    public ASTNode visitRepack(final RepackContext ctx) {
++        List<ColumnSegment> columns = new LinkedList<>();
++        if (null != ctx.columnList()) {
++            for (ColumnElemContext each : ctx.columnList().columnElem()) {
++                columns.add(new ColumnSegment(each.start.getStartIndex(), each.stop.getStopIndex(), createIdentifierValue(each.colId().getText())));
++            }
++        }
++        PropertiesSegment options = null;
++        if (null != ctx.repackOptions()) {
++            options = new PropertiesSegment(ctx.repackOptions().start.getStartIndex(), ctx.repackOptions().stop.getStopIndex());
++            for (RepackOptionContext each : ctx.repackOptions().repackOption()) {
++                String key = getRepackOptionKey(each);
++                String value = getRepackOptionValue(each);
++                options.getProperties().add(new PropertySegment(each.start.getStartIndex(), each.stop.getStopIndex(), key, value));
++            }
++        }
++        return new PostgreSQLRepackStatement(getDatabaseType(), null == ctx.qualifiedName() ? null : (SimpleTableSegment) visit(ctx.qualifiedName()),
++                null == ctx.indexName() ? null : (IndexSegment) visit(ctx.indexName()), null != ctx.INDEX(), columns, options);
++    }
++    
++    private String getRepackOptionKey(final RepackOptionContext ctx) {
++        if (null != ctx.analyzeKeyword()) {
++            return "analyze";
++        }
+
+```
+
+**File**: `parser/sql/statement/dialect/postgresql/src/main/java/org/apache/shardingsphere/sql/parser/statement/postgresql/ddl/PostgreSQLRepackStatement.java` (added, +99/-0)
+```diff
+@@ -0,0 +1,99 @@
++/*
++ * Licensed to the Apache Software Foundation (ASF) under one or more
++ * contributor license agreements.  See the NOTICE file distributed with
++ * this work for additional information regarding copyright ownership.
++ * The ASF licenses this file to You under the Apache License, Version 2.0
++ * (the "License"); you may not use this file except in compliance with
++ * the License.  You may obtain a copy of the License at
++ *
++ *     http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ */
++
++package org.apache.shardingsphere.sql.parser.statement.postgresql.ddl;
++
++import lombok.Getter;
++import org.apache.shardingsphere.database.connector.core.type.DatabaseType;
++import org.apache.shardingsphere.sql.parser.statement.core.segment.ddl.index.IndexSegment;
++import org.apache.shardingsphere.sql.parser.statement.core.segment.ddl.property.PropertiesSegment;
++import org.apache.shardingsphere.sql.parser.statement.core.segment.dml.column.ColumnSegment;
++import org.apache.shardingsphere.sql.parser.statement.core.segment.generic.table.SimpleTableSegment;
++import org.apache.shardingsphere.sql.parser.statement.core.statement.attribute.SQLStatementAttributes;
++import org.apache.shardingsphere.sql.parser.statement.core.statement.attribute.type.TableSQLStatementAttribute;
++import org.apache.shardingsphere.sql.parser.statement.core.statement.type.ddl.DDLStatement;
++
++import java.util.Collections;
++import java.util.List;
++import java.util.Optional;
++
++/**
++ * Repack statement for PostgreSQL.
++ */
++@Getter
++public final class PostgreSQLRepackStatement extends DDLStatement {
++    
++    private final SimpleTableSegment table;
++    
++    private final IndexSegment index;
++    
++    private final boolean usingIndex;
++    
++    private final List<ColumnSegment> columns;
++    
++    private final PropertiesSegment options;
++    
++    private final SQLStatementAttributes attributes;
++    
++    /**
++     * Null targets and options represent omitted SQL clauses.
++     *
++     * @param databaseType database type
++     * @param table table, or null when no relation is specified
++     * @param index index, or null when no index name is specified
++     * @param usingIndex whether USING INDEX is present
++     * @param columns specified columns
++     * @param options options, or null when no options are specified
++     */
++    public PostgreSQLRepackStatement(final DatabaseType databaseType, final SimpleTableSegment table, final IndexSegment index, final boolean usingIndex,
++                                     final List<ColumnSegment> columns, final PropertiesSegment options) {
++        super(databaseType);
++        this.table = table;
++        this.index = index;
++        this.usingIndex = usingIndex;
++        this.columns = columns;
++        this.options = options;
++        attributes = new SQLStatementAttributes(new TableSQLStatementAttribute(null == table ? Collections.emptyList() : Collections.singletonList(table)));
++    }
++    
++    /**
++     * Get table.
++     *
++     * @return table
++     */
++    public Optional<SimpleTableSegment> getTable() {
++        return Optional.ofNullable(table);
++    }
++    
++    /**
++     * Get index.
++     *
++     * @return index
++     */
++    public Optional<IndexSegment> getIndex() {
++        return Optional.ofNullable(index);
++    }
++    
++    /**
++     * Get options.
++     *
++     * @return options
++     */
++    public Optional<PropertiesSegment> getOptions() {
++        return Optional.ofNullable(options);
++    }
++}
+```
+
+**File**: `test/it/parser/src/main/java/org/apache/shardingsphere/test/it/sql/parser/external/ExternalSQLParserIT.java` (modified, +20/-5)
+```diff
+@@ -23,6 +23,7 @@
+ import org.apache.shardingsphere.sql.parser.engine.api.SQLParserEngine;
+ import org.apache.shardingsphere.sql.parser.engine.api.SQLStatementVisitorEngine;
+ import org.apache.shardingsphere.sql.parser.engine.core.ParseASTNode;
++import org.apache.shardingsphere.sql.parser.engine.exception.SQLParsingException;
+ import org.apache.shardingsphere.test.it.sql.parser.external.env.SQLParserExternalITEnvironment;
+ import org.apache.shardingsphere.test.it.sql.parser.external.loader.ExternalTestParameterLoader;
+ import org.apache.shardingsphere.test.it.sql.parser.external.loader.strategy.ExternalTestParameterLoadStrategy;
+@@ -42,6 +43,7 @@
+ 
+ import java.io.IOException;
+ import java.net.URI;
++import java.util.Optional;
  import java.util.stream.Stream;
  
- import static org.hamcrest.MatcherAssert.assertThat;
-@@ -178,6 +180,15 @@ void assertAnalyzeQuotedTableRoundTrip() {
-         assertThat(actualRoundTrip.getTables().iterator().next().getTableName().getIdentifier().getValue(), is("foo\"\"table"));
+ public abstract class ExternalSQLParserIT {
+@@ -50,21 +52,34 @@ public abstract class ExternalSQLParserIT {
+     @EnabledIf("isEnabled")
+     @ArgumentsSource(TestCaseArgumentsProvider.class)
+     @Execution(ExecutionMode.CONCURRENT)
+-    void assertParseSQL(final String sqlCaseId, final String databaseType, final String sql, final String reportType) throws IOException {
++    void assertParseSQL(final String sqlCaseId, final String databaseType, final String sql, final String reportType, final boolean nativeSyntaxError) throws IOException {
+         boolean isSuccess = false;
+         try (
+                 SQLParseResultReporter resultReporter = TypedSPILoader.getService(SQLParseResultReporterCreator.class, reportType)
+                         .create(databaseType, SQLParserExternalITEnvironment.getInstance().getResultPath())) {
+             try {
+-                ParseASTNode parseASTNode = new SQLParserEngine(databaseType, new CacheOption(128, 1024L)).parse(sql, false);
+-                new SQLStatementVisitorEngine(databaseType).visit(parseASTNode);
+-                isSuccess = true;
++                Optional<ParseASTNode> parseASTNode = parseSQL(databaseType, sql, nativeSyntaxError);
++                if (parseASTNode.isPresent()) {
++                    new SQLStatementVisitorEngine(databaseType).visit(parseASTNode.get());
++                    isSuccess = true;
++                }
+             } finally {
+                 resultReporter.printResult(sqlCaseId, databaseType, isSuccess, sql);
+             }
+         }
      }
      
-+    @Test
-+    void assertSelectWithLargeInList() {
-+        Collection<String> expectedValues = IntStream.rangeClosed(1, 100000).mapToObj(String::valueOf).collect(Collectors.toList());
-+        String sql = "SELECT * FROM foo_table WHERE foo_id IN (" + String.join(", ", expectedValues) + ")";
-+        SelectStatement actual = (SelectStatement) new SQLStatementVisitorEngine("PostgreSQL").visit(new SQLParserEngine("PostgreSQL", new CacheOption(128, 1024L)).parse(sql, false));
-+        ListExpression actualValues = (ListExpression) ((InExpression) actual.getWhere().get().getExpr()).getRight();
-+        assertThat(actualValues.getItems().stream().map(each -> sql.substring(each.getStartIndex(), each.getStopIndex() + 1)).collect(Collectors.toList()), is(expectedValues));
++    private Optional<ParseASTNode> parseSQL(final String databaseType, final String sql, final boolean nativeSyntaxError) {
++        try {
++            return Optional.of(new SQLParserEngine(databaseType, new CacheOption(128, 1024L)).parse(sql, false));
++        } catch (final SQLParsingException ex) {
++            if (nativeSyntaxError) {
++                return Optional.empty();
++            }
++            throw ex;
++        }
 +    }
 +    
-     @ParameterizedTest(name = "{0}")
-     @MethodSource("getQuotedPrivilegeObjectCases")
-     void assertQuotedPrivilegeObjectRoundTrip(final String name, final String sqlPrefix, final String objectName, final String sqlSuffix, final Collection<String> expectedIdentifiers) {
+     private static boolean isEnabled() {
+         return SQLParserExternalITEnvironment.getInstance().isSqlParserITEnabled();
+     }
+@@ -75,7 +90,7 @@ private static final class TestCaseArgumentsProvider implements ArgumentsProvide
+         public Stream<? extends Arguments> provideArguments(final ParameterDeclarations parameters, final ExtensionContext context) throws ReflectiveOperationException {
+             ExternalCaseSettings settings = context.getRequiredTestClass().getAnnotation(ExternalCaseSettings.class);
+             Preconditions.checkNotNull(settings, "Annotation ExternalSQLParserITSettings is required.");
+-            return getTestParameters(settings).map(each -> Arguments.of(each.getSqlCaseId(), each.getDatabaseType(), each.getSql(), each.getReportType()));
++            return getTestParameters(settings).map(each -> Arguments.of(each.getSqlCaseId(), each.getDatabaseType(), each.getSql(), each.getReportType(), each.isNativeSyntaxError()));
+         }
+         
+         private Stream<ExternalSQLTestParameter> getTestParameters(final ExternalCaseSettings settings) throws ReflectiveOperationException {
 ```
 
 ---
 
-### Incident Patch 2: `e2fb0b74` (2026-11-17)
-**Commit Message**: Fix PostgreSQL IGNORE NULLS conversion (#40517)
+### Incident Patch 2: `9c0b6165` (2026-11-17)
+**Commit Message**: Upgrade ASM to 9.9.1 (#40522)
 
-**File**: `infra/binder/core/src/main/java/org/apache/shardingsphere/infra/binder/engine/segment/dml/expression/type/FunctionExpressionSegmentBinder.java` (modified, +3/-0)
-```diff
-@@ -22,6 +22,7 @@
- import com.google.common.collect.Multimap;
- import lombok.AccessLevel;
- import lombok.NoArgsConstructor;
-+import org.apache.shardingsphere.infra.annotation.HighFrequencyInvocation;
- import org.apache.shardingsphere.infra.binder.engine.segment.SegmentType;
- import org.apache.shardingsphere.infra.binder.engine.segment.dml.expression.ExpressionSegmentBinder;
- import org.apache.shardingsphere.infra.binder.engine.segment.dml.from.context.TableSegmentBinderContext;
-@@ -53,6 +54,7 @@ public final class FunctionExpressionSegmentBinder {
-      * @param outerTableBinderContexts outer table binder contexts
-      * @return bound function segment
-      */
-+    @HighFrequencyInvocation
-     public static FunctionSegment bind(final FunctionSegment segment, final SegmentType parentSegmentType, final SQLStatementBinderContext binderContext,
-                                        final Multimap<CaseInsensitiveString, TableSegmentBinderContext> tableBinderContexts,
-                                        final Multimap<CaseInsensitiveString, TableSegmentBinderContext> outerTableBinderContexts) {
-@@ -69,6 +71,7 @@ public static FunctionSegment bind(final FunctionSegment segment, final SegmentT
-         }
-         segment.getWindow().ifPresent(optional -> result.setWindow(WindowItemSegmentBinder.bind(optional, parentSegmentType, binderContext, tableBinderContexts, outerTableBinderContexts)));
-         segment.getFilter().ifPresent(filter -> result.setFilter(ExpressionSegmentBinder.bind(filter, parentSegmentType, binderContext, tableBinderContexts, outerTableBinderContexts)));
-+        result.setIgnoreNulls(segment.isIgnoreNulls());
-         return result;
-     }
- }
-```
+* Refine Codex Javadoc rules
 
-**File**: `infra/binder/core/src/test/java/org/apache/shardingsphere/infra/binder/engine/segment/dml/expression/type/FunctionExpressionSegmentBinderTest.java` (modified, +10/-0)
+* Upgrade ASM to 9.9.1
+
+**File**: `distribution/proxy/src/main/release-docs/LICENSE` (modified, +1/-1)
 ```diff
-@@ -41,6 +41,7 @@
+@@ -326,7 +326,7 @@ The following components are provided under a BSD license. See project link for
+ The text of each license is also included at licenses/LICENSE-[project].txt.
  
- import static org.hamcrest.MatcherAssert.assertThat;
- import static org.hamcrest.Matchers.is;
-+import static org.junit.jupiter.api.Assertions.assertFalse;
- import static org.junit.jupiter.api.Assertions.assertTrue;
- import static org.mockito.Mockito.mock;
- import static org.mockito.Mockito.when;
-@@ -49,6 +50,14 @@
- @StaticMockSettings({ExpressionSegmentBinder.class, OrderBySegmentBinder.class})
- class FunctionExpressionSegmentBinderTest {
-     
-+    @Test
-+    void assertBindIgnoreNulls() {
-+        FunctionSegment segment = new FunctionSegment(0, 0, "LAG", "LAG");
-+        segment.setIgnoreNulls(true);
-+        FunctionSegment actual = FunctionExpressionSegmentBinder.bind(segment, SegmentType.PROJECTION, mock(SQLStatementBinderContext.class), LinkedHashMultimap.create(), LinkedHashMultimap.create());
-+        assertTrue(actual.isIgnoreNulls());
-+    }
-+    
-     @Test
-     void assertBindWithFilter() {
-         FunctionSegment segment = new FunctionSegment(0, 50, "STRING_AGG", "STRING_AGG(col, comma) FILTER (WHERE condition)");
-@@ -61,6 +70,7 @@ void assertBindWithFilter() {
-         when(ExpressionSegmentBinder.bind(filter, SegmentType.PROJECTION, binderContext, tableBinderContexts, outerTableBinderContexts)).thenReturn(expectedFilter);
-         FunctionSegment actual = FunctionExpressionSegmentBinder.bind(segment, SegmentType.PROJECTION, binderContext, tableBinderContexts, outerTableBinderContexts);
-         assertThat(actual.getFilter().get(), is(expectedFilter));
-+        assertFalse(actual.isIgnoreNulls());
-         assertThat(actual.getStartIndex(), is(segment.getStartIndex()));
-         assertThat(actual.getStopIndex(), is(segment.getStopIndex()));
-     }
+     antlr4-runtime 4.13.2: https://github.com/antlr/antlr4, BSD-3-Clause
+-    asm 9.7.1: https://github.com/llbit/ow2-asm, BSD-3-Clause
++    asm 9.9.1: https://github.com/llbit/ow2-asm, BSD-3-Clause
+     commons-compiler 3.1.12: https://github.com/janino-compiler/janino, BSD-3-Clause
+     janino 3.1.12: https://github.com/janino-compiler/janino, BSD-3-Clause
+     opengauss-jdbc 3.1.0-og: https://gitee.com/opengauss/openGauss-connector-jdbc, BSD-2-Clause
 ```
 
-**File**: `kernel/sql-federation/compiler/src/main/java/org/apache/shardingsphere/sqlfederation/compiler/sql/ast/converter/segment/expression/impl/FunctionConverter.java` (modified, +11/-6)
+**File**: `pom.xml` (modified, +1/-1)
 ```diff
-@@ -31,6 +31,7 @@
- import org.apache.calcite.sql.fun.SqlStdOperatorTable;
- import org.apache.calcite.sql.parser.SqlParserPos;
- import org.apache.calcite.sql.validate.SqlNameMatchers;
-+import org.apache.shardingsphere.infra.annotation.HighFrequencyInvocation;
- import org.apache.shardingsphere.sql.parser.statement.core.segment.dml.expr.ExpressionSegment;
- import org.apache.shardingsphere.sql.parser.statement.core.segment.dml.expr.FunctionSegment;
- import org.apache.shardingsphere.sqlfederation.compiler.sql.ast.converter.segment.expression.ExpressionConverter;
-@@ -54,6 +55,7 @@ public final class FunctionConverter {
-      * @param segment function segment
-      * @return SQL node
-      */
-+    @HighFrequencyInvocation
-     public static SqlNode convert(final FunctionSegment segment) {
-         SqlIdentifier functionName = new SqlIdentifier(getQualifiedFunctionNames(segment), SqlParserPos.ZERO);
-         // TODO optimize SQL parse logic for select current_user
-@@ -71,15 +73,18 @@ public static SqlNode convert(final FunctionSegment segment) {
-         }
-         List<SqlOperator> functions = new LinkedList<>();
-         SqlStdOperatorTable.instance().lookupOperatorOverloads(functionName, null, SqlSyntax.FUNCTION, functions, SqlNameMatchers.withCaseSensitive(false));
--        if (!functions.isEmpty() && segment.getWindow().isPresent()) {
--            SqlBasicCall functionCall = new SqlBasicCall(functions.iterator().next(), getFunctionParameters(segment.getParameters()), SqlParserPos.ZERO);
--            SqlWindow sqlWindow = WindowConverter.convertWindowItem(segment.getWindow().get());
--            return new SqlBasicCall(SqlStdOperatorTable.OVER, new SqlNode[]{functionCall, sqlWindow}, SqlParserPos.ZERO);
--        }
-         SqlOperator operator = functions.isEmpty()
-                 ? new SqlUnresolvedFunction(functionName, null, null, null, null, SqlFunctionCategory.USER_DEFINED_FUNCTION)
-                 : functions.iterator().next();
--        return new SqlBasicCall(operator, getFunctionParameters(segment.getParameters()), SqlParserPos.ZERO);
-+        SqlNode result = new SqlBasicCall(operator, getFunctionParameters(segment.getParameters()), SqlParserPos.ZERO);
-+        if (segment.isIgnoreNulls()) {
-+            result = new SqlBasicCall(SqlStdOperatorTable.IGNORE_NULLS, new SqlNode[]{result}, SqlParserPos.ZERO);
-+        }
-+        if (!functions.isEmpty() && segment.getWindow().isPresent()) {
-+            SqlWindow sqlWindow = WindowConverter.convertWindowItem(segment.getWindow().get());
-+            return new SqlBasicCall(SqlStdOperatorTable.OVER, new SqlNode[]{result, sqlWindow}, SqlParserPos.ZERO);
-+        }
-+        return result;
-     }
-     
-     private static boolean isSystemDateTimeFunctionWithoutParentheses(final FunctionSegment segment) {
-```
-
-**File**: `kernel/sql-federation/compiler/src/test/java/org/apache/shardingsphere/sqlfederation/compiler/sql/ast/converter/segment/expression/impl/FunctionConverterTest.java` (modified, +23/-0)
-```diff
-@@ -47,6 +47,7 @@
- import static org.hamcrest.MatcherAssert.assertThat;
- import static org.hamcrest.Matchers.is;
- import static org.hamcrest.Matchers.isA;
-+import static org.hamcrest.Matchers.sameInstance;
- import static org.mockito.Mockito.mock;
- import static org.mockito.Mockito.when;
- 
-@@ -101,6 +102,28 @@ void assertConvertDelegatesToWindowFunctionConverter() {
-         assertThat(FunctionConverter.convert(segment), is(expected));
-     }
-     
-+    @Test
-+    void assertConvertIgnoreNullsWithWindow() {
-+        FunctionSegment segment = new FunctionSegment(0, 0, "LAG", "LAG");
-+        segment.setIgnoreNulls(true);
-+        ExpressionSegment param = new LiteralExpressionSegment(0, 0, 1);
-+        segment.getParameters().add(param);
-+        WindowItemSegment windowItemSegment = new WindowItemSegment(0, 0);
-+        segment.setWindow(windowItemSegment);
-+        SqlNode paramNode = mock(SqlNode.class);
-+        SqlWindow windowNode = mock(SqlWindow.class);
-+        when(ExpressionConverter.convert(param)).thenReturn(Optional.of(paramNode));
-+        when(WindowConverter.convertWindowItem(windowItemSegment)).thenReturn(windowNode);
-+        SqlBasicCall actual = (SqlBasicCall) FunctionConverter.convert(segment);
-+        assertThat(actual.getOperator(), sameInstance(SqlStdOperatorTable.OVER));
-+        SqlBasicCall actualNullTreatment = (SqlBasicCall) actual.getOperandList().get(0);
-+        assertThat(actualNullTreatment.getOperator(), sameInstance(SqlStdOperatorTable.IGNORE_NULLS));
-+        SqlBasicCall actualFunction = (SqlBasicCall) actualNullTreatment.getOperandList().get(0);
-+        assertThat(actualFunction.getOperator().getName(), is("LAG"));
-+        assertThat(actualFunction.getOperandList().get(0), sameInstance(paramNode));
-+        assertThat(actual.getOperandList().get(1), sameInstance(windowNode));
-+    }
-+    
-     @Test
-     void assertConvertResolvedFunctionWithWindow() {
-         FunctionSegment segment = new FunctionSegment(0, 0, "COUNT", "COUNT");
-```
-
-**File**: `parser/sql/engine/dialect/postgresql/src/main/java/org/apache/shardingsphere/sql/parser/engine/postgresql/visitor/statement/PostgreSQLStatementVisitor.java` (modified, +4/-0)
-```diff
-@@ -26,6 +26,7 @@
- import org.antlr.v4.runtime.tree.TerminalNode;
- import org.apache.shardingsphere.database.connector.core.metadata.database.enums.NullsOrderType;
- import org.apache.shardingsphere.database.connector.core.type.DatabaseType;
-+import org.apache.shardingsphere.infra.annotation.HighFrequencyInvocation;
- import org.apache.shardingsphere.infra.exception.ShardingSpherePreconditions;
- import org.apache.shardingsphere.sql.parser.api.ASTNode;
- import org.apache.shardingsphere.sql.parser.autogen.PostgreSQLStatementParser.AExprContext;
-@@ -327,6 +328,7 @@ private char getUnicodeEscapeCharacter(final String text) {
-         return 'b' == character ? '\b' : character;
-     }
-     
-+    @HighFrequencyInvocation
-     private String concatenateStringLiterals(final String text) {
-         StringBuilder result = new StringBuilder("'");
-         boolean escaped = 'E' == text.charAt(0) || 'e' == text.charAt(0);
-@@ -705,6 +707,7 @@ public ASTNode visitCaseExpr(final CaseExprContext ctx) {
-     }
-     
-     @Override
-+    @HighFrequencyInvocation
-     public ASTNode visitFuncExpr(final FuncExprContext ctx) {
-         if (null != ctx.functionExprCommonSubexpr()) {
-             return visit(ctx.functionExprCommonSubexpr());
-@@ -757,6 +760,7 @@ private FunctionSegment createFunctionSegment(final FuncExprContext ctx, final F
-         result.setOwner(segment.getOwner());
-         result.getParameters().addAll(segment.getParameters());
-         segment.getFilter().ifPresent(result::setFilter);
-+        result.setIgnoreNulls(null != ctx.nullTreatment() && null != ctx.nullTreatment().IGNORE());
-         result.setWindow(window);
-         return result;
-     }
-```
-
-**File**: `parser/sql/statement/core/src/main/java/org/apache/shardingsphere/sql/parser/statement/core/segment/dml/expr/FunctionSegment.java` (modified, +3/-0)
-```diff
-@@ -54,6 +54,9 @@ public final class FunctionSegment implements ComplexExpressionSegment {
-     @Setter
-     private ExpressionSegment filter;
-     
-+    @Setter
-+    private boolean ignoreNulls;
-+    
-     /**
-      * Get window.
-      *
-```
-
-**File**: `test/it/parser/src/main/java/org/apache/shardingsphere/test/it/sql/parser/internal/asserts/segment/expression/ExpressionAssert.java` (modified, +1/-0)
-```diff
-@@ -363,6 +363,7 @@ public static void assertBetweenExpression(final SQLCaseAssertContext assertCont
-     public static void assertFunction(final SQLCaseAssertContext assertContext, final FunctionSegment actual, final ExpectedFunction expected) {
-         SQLSegmentAssert.assertIs(assertContext, actual, expected);
-         assertThat(assertContext.getText("Function method name assertion error: "), actual.getFunctionName(), is(expected.getFunctionName()));
-+        assertTrue(actual.isIgnoreNulls() == expected.isIgnoreNulls(), assertContext.getText("Function ignore nulls assertion error: "));
-         String expectedText = SQLCaseType.LITERAL == assertContext.getCaseType() && null != expected.getLiteralText()
-                 ? expected.getLiteralText()
-                 : expected.getText();
-```
-
-**File**: `test/it/parser/src/main/java/org/apache/shardingsphere/test/it/sql/parser/internal/cases/parser/jaxb/segment/impl/function/ExpectedFunction.java` (modified, +3/-0)
-```diff
-@@ -55,6 +55,9 @@ public final class ExpectedFunction extends AbstractExpectedSQLSegment implement
-     @XmlElement(name = "filter")
-     private ExpectedExpression filter;
-     
-+    @XmlAttribute(name = "ignore-nulls")
-+    private boolean ignoreNulls;
-+    
-     @XmlElement(name = "window-item")
-     private ExpectedWindowItem windowItem;
- }
-```
-
----
-
-### Incident Patch 3: `569fcaca` (2026-11-17)
-**Commit Message**: Fix firebird system table schemas (#40477)
-
-* Fix Firebird system table schemas
-
-Add missing system tables and columns and correct the declared column types to match Firebird 5.0.4.
-
-* Move Firebird system table schema release note to 5.5.4 bug fixes (#40254)
-
-* Fix Firebird system table column length descriptions
-
-**File**: `RELEASE-NOTES.md` (modified, +1/-0)
-```diff
-@@ -98,6 +98,7 @@
- 1. Proxy: Add error handling for unknown or closed BLOB handles and ids in Firebird - [#39773](https://github.com/apache/shardingsphere/pull/39773)
- 1. Proxy: Preserve the SQL error code in Firebird invalid batch message length responses - [#40408](https://github.com/apache/shardingsphere/issues/40408)
- 1. Proxy: Fix startup failure when storage units set `dataSourceClassName` to `com.zaxxer.hikari.HikariDataSource` - [#40303](https://github.com/apache/shardingsphere/issues/40303)
-+1. Proxy: Fix Firebird system table schemas: add missing tables and columns and correct column types - [#40254](https://github.com/apache/shardingsphere/issues/40254)
- 1. JDBC & Proxy: Remove default MySQL prepared statement query properties when creating data sources - [#38593](https://github.com/apache/shardingsphere/pull/38593)
- 1. JDBC & Proxy: Reject ordinary pushdown SELECT statements routed to different storage database types - [#40385](https://github.com/apache/shardingsphere/pull/40385)
- 1. JDBC & Proxy: Reject ordinary pushdown DAL statements routed to different storage database types - [#40465](https://github.com/apache/shardingsphere/pull/40465)
-```
-
-**File**: `database/connector/dialect/firebird/src/main/java/org/apache/shardingsphere/database/connector/firebird/metadata/data/FirebirdNonFixedLengthColumnSizeRegistry.java` (modified, +25/-1)
-```diff
-@@ -19,13 +19,18 @@
- 
- import lombok.AccessLevel;
- import lombok.NoArgsConstructor;
-+import lombok.SneakyThrows;
-+import org.apache.shardingsphere.infra.annotation.HighFrequencyInvocation;
- 
-+import java.io.IOException;
-+import java.io.InputStream;
- import java.util.Collections;
- import java.util.HashMap;
- import java.util.Locale;
- import java.util.Map;
- import java.util.Map.Entry;
- import java.util.OptionalInt;
-+import java.util.Properties;
- import java.util.concurrent.ConcurrentHashMap;
- 
- /**
-@@ -36,6 +41,21 @@ public final class FirebirdNonFixedLengthColumnSizeRegistry {
-     
-     private static final Map<String, Map<String, Integer>> COLUMN_SIZES = new ConcurrentHashMap<>();
-     
-+    private static final Map<String, Integer> SYSTEM_COLUMN_SIZES = loadSystemColumnSizes();
-+    
-+    @SneakyThrows(IOException.class)
-+    private static Map<String, Integer> loadSystemColumnSizes() {
-+        Properties props = new Properties();
-+        try (InputStream inputStream = FirebirdNonFixedLengthColumnSizeRegistry.class.getResourceAsStream("/metadata/firebird/system-table-column-sizes.properties")) {
-+            props.load(inputStream);
-+        }
-+        Map<String, Integer> result = new HashMap<>(props.size(), 1F);
-+        for (String each : props.stringPropertyNames()) {
-+            result.put(each, Integer.parseInt(props.getProperty(each)));
-+        }
-+        return result;
-+    }
-+    
-     /**
-      * Refresh column sizes for a table.
-      *
-@@ -70,17 +90,21 @@ public static void refreshTable(final String schemaName, final String tableName,
-      * @param columnName column name
-      * @return column size
-      */
-+    @HighFrequencyInvocation
-     public static OptionalInt findColumnSize(final String schemaName, final String tableName, final String columnName) {
-         if (null == tableName || null == columnName) {
-             return OptionalInt.empty();
-         }
-         Integer columnSize = COLUMN_SIZES.getOrDefault(buildTableKey(schemaName, tableName), Collections.emptyMap()).get(toKey(columnName));
-+        if (null == columnSize) {
-+            columnSize = SYSTEM_COLUMN_SIZES.get(new StringBuilder(toKey(tableName)).append('.').append(toKey(columnName)).toString());
-+        }
-         return null == columnSize ? OptionalInt.empty() : OptionalInt.of(columnSize);
-     }
-     
-     private static String buildTableKey(final String schemaName, final String tableName) {
-         String schemaKey = null == schemaName ? "" : toKey(schemaName);
--        return schemaKey + "." + toKey(trimToLogicTableName(tableName));
-+        return new StringBuilder(schemaKey).append('.').append(toKey(trimToLogicTableName(tableName))).toString();
-     }
-     
-     private static String trimToLogicTableName(final String tableName) {
-```
-
-**File**: `database/connector/dialect/firebird/src/main/resources/metadata/firebird/system-table-column-sizes.properties` (added, +201/-0)
-```diff
-@@ -0,0 +1,201 @@
-+#
-+# Licensed to the Apache Software Foundation (ASF) under one or more
-+# contributor license agreements.  See the NOTICE file distributed with
-+# this work for additional information regarding copyright ownership.
-+# The ASF licenses this file to You under the Apache License, Version 2.0
-+# (the "License"); you may not use this file except in compliance with
-+# the License.  You may obtain a copy of the License at
-+#
-+#     http://www.apache.org/licenses/LICENSE-2.0
-+#
-+# Unless required by applicable law or agreed to in writing, software
-+# distributed under the License is distributed on an "AS IS" BASIS,
-+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+# See the License for the specific language governing permissions and
-+# limitations under the License.
-+#
-+
-+# Text lengths in characters for the existing Firebird protocol representation.
-+# Source: Firebird v5.0.4 src/jrd/relations.h, fields.h and constants.h.
-+
-+MON$ATTACHMENTS.MON$ATTACHMENT_NAME=255
-+MON$ATTACHMENTS.MON$AUTH_METHOD=255
-+MON$ATTACHMENTS.MON$CLIENT_VERSION=255
-+MON$ATTACHMENTS.MON$REMOTE_ADDRESS=255
-+MON$ATTACHMENTS.MON$REMOTE_HOST=255
-+MON$ATTACHMENTS.MON$REMOTE_OS_USER=255
-+MON$ATTACHMENTS.MON$REMOTE_PROCESS=255
-+MON$ATTACHMENTS.MON$REMOTE_PROTOCOL=10
-+MON$ATTACHMENTS.MON$REMOTE_VERSION=255
-+MON$ATTACHMENTS.MON$ROLE=63
-+MON$ATTACHMENTS.MON$SESSION_TIMEZONE=63
-+MON$ATTACHMENTS.MON$USER=63
-+MON$ATTACHMENTS.MON$WIRE_CRYPT_PLUGIN=63
-+MON$CALL_STACK.MON$OBJECT_NAME=63
-+MON$CALL_STACK.MON$PACKAGE_NAME=63
-+MON$COMPILED_STATEMENTS.MON$OBJECT_NAME=63
-+MON$COMPILED_STATEMENTS.MON$PACKAGE_NAME=63
-+MON$CONTEXT_VARIABLES.MON$VARIABLE_NAME=80
-+MON$CONTEXT_VARIABLES.MON$VARIABLE_VALUE=32765
-+MON$DATABASE.MON$DATABASE_NAME=255
-+MON$DATABASE.MON$FILE_ID=255
-+MON$DATABASE.MON$GUID=38
-+MON$DATABASE.MON$OWNER=63
-+MON$DATABASE.MON$SEC_DATABASE=7
-+MON$TABLE_STATS.MON$TABLE_NAME=63
-+RDB$AUTH_MAPPING.RDB$MAP_DB=63
-+RDB$AUTH_MAPPING.RDB$MAP_FROM=255
-+RDB$AUTH_MAPPING.RDB$MAP_FROM_TYPE=63
-+RDB$AUTH_MAPPING.RDB$MAP_NAME=63
-+RDB$AUTH_MAPPING.RDB$MAP_PLUGIN=63
-+RDB$AUTH_MAPPING.RDB$MAP_TO=63
-+RDB$AUTH_MAPPING.RDB$MAP_USING=1
-+RDB$BACKUP_HISTORY.RDB$FILE_NAME=255
-+RDB$BACKUP_HISTORY.RDB$GUID=38
-+RDB$CHARACTER_SETS.RDB$CHARACTER_SET_NAME=63
-+RDB$CHARACTER_SETS.RDB$DEFAULT_COLLATE_NAME=63
-+RDB$CHARACTER_SETS.RDB$FORM_OF_USE=63
-+RDB$CHARACTER_SETS.RDB$FUNCTION_NAME=63
-+RDB$CHARACTER_SETS.RDB$OWNER_NAME=63
-+RDB$CHARACTER_SETS.RDB$SECURITY_CLASS=63
-+RDB$CHECK_CONSTRAINTS.RDB$CONSTRAINT_NAME=63
-+RDB$CHECK_CONSTRAINTS.RDB$TRIGGER_NAME=63
-+RDB$COLLATIONS.RDB$BASE_COLLATION_NAME=63
-+RDB$COLLATIONS.RDB$COLLATION_NAME=63
-+RDB$COLLATIONS.RDB$FUNCTION_NAME=63
-+RDB$COLLATIONS.RDB$OWNER_NAME=63
-+RDB$COLLATIONS.RDB$SECURITY_CLASS=63
-+RDB$CONFIG.RDB$CONFIG_DEFAULT=255
-+RDB$CONFIG.RDB$CONFIG_NAME=63
-+RDB$CONFIG.RDB$CONFIG_SOURCE=255
-+RDB$CONFIG.RDB$CONFIG_VALUE=255
-+RDB$DATABASE.RDB$CHARACTER_SET_NAME=63
-+RDB$DATABASE.RDB$SECURITY_CLASS=63
-+RDB$DB_CREATORS.RDB$USER=63
-+RDB$DEPENDENCIES.RDB$DEPENDED_ON_NAME=63
-+RDB$DEPENDENCIES.RDB$DEPENDENT_NAME=63
-+RDB$DEPENDENCIES.RDB$FIELD_NAME=63
-+RDB$DEPENDENCIES.RDB$PACKAGE_NAME=63
-+RDB$EXCEPTIONS.RDB$EXCEPTION_NAME=63
-+RDB$EXCEPTIONS.RDB$MESSAGE=1023
-+RDB$EXCEPTIONS.RDB$OWNER_NAME=63
-+RDB$EXCEPTIONS.RDB$SECURITY_CLASS=63
-+RDB$FIELDS.RDB$EDIT_STRING=127
-+RDB$FIELDS.RDB$FIELD_NAME=63
-+RDB$FIELDS.RDB$OWNER_NAME=63
-+RDB$FIELDS.RDB$QUERY_NAME=63
-+RDB$FIELDS.RDB$SECURITY_CLASS=63
-+RDB$FIELD_DIMENSIONS.RDB$FIELD_NAME=63
-+RDB$FILES.RDB$FILE_NAME=255
-+RDB$FILTERS.RDB$ENTRYPOINT=255
-+RDB$FILTERS.RDB$FUNCTION_NAME=63
-+RDB$FILTERS.RDB$MODULE_NAME=255
-+RDB$FILTERS.RDB$OWNER_NAME=63
-+RDB$FILTERS.RDB$SECURITY_CLASS=63
-+RDB$FUNCTIONS.RDB$ENGINE_NAME=63
-+RDB$FUNCTIONS.RDB$ENTRYPOINT=255
-+RDB$FUNCTIONS.RDB$FUNCTION_NAME=63
-+RDB$FUNCTIONS.RDB$MODULE_NAME=255
-+RDB$FUNCTIONS.RDB$OWNER_NAME=63
-+RDB$FUNCTIONS.RDB$PACKAGE_NAME=63
-+RDB$FUNCTIONS.RDB$QUERY_NAME=63
-+RDB$FUNCTIONS.RDB$SECURITY_CLASS=63
-+RDB$FUNCTION_ARGUMENTS.RDB$ARGUMENT_NAME=63
-+RDB$FUNCTION_ARGUMENTS.RDB$FIELD_NAME=63
-+RDB$FUNCTION_ARGUMENTS.RDB$FIELD_SOURCE=63
-+RDB$FUNCTION_ARGUMENTS.RDB$FUNCTION_NAME=63
-+RDB$FUNCTION_ARGUMENTS.RDB$PACKAGE_NAME=63
-+RDB$FUNCTION_ARGUMENTS.RDB$RELATION_NAME=63
-+RDB$GENERATORS.RDB$GENERATOR_NAME=63
-+RDB$GENERATORS.RDB$OWNER_NAME=63
-+RDB$GENERATORS.RDB$SECURITY_CLASS=63
-+RDB$INDEX_SEGMENTS.RDB$FIELD_NAME=63
-+RDB$INDEX_SEGMENTS.RDB$INDEX_NAME=63
-+RDB$INDICES.RDB$FOREIGN_KEY=63
-+RDB$INDICES.RDB$INDEX_NAME=63
-+RDB$INDICES.RDB$RELATION_NAME=63
-+RDB$KEYWORDS.RDB$KEYWORD_NAME=63
-+RDB$LOG_FILES.RDB$FILE_NAME=255
-+RDB$PACKAGES.RDB$OWNER_NAME=63
-+RDB$PACKAGES.RDB$PACKAGE_NAME=63
-+RDB$PACKAGES.RDB$SECURITY_CLASS=63
-+RDB$PROCEDURES.RDB$ENGINE_NAME=63
-+RDB$PROCEDURES.RDB$ENTRYPOINT=255
-+RDB$PROCEDURES.RDB$OWNER_NAME=63
-+RDB$PROCEDURES.RDB$PACKAGE_NAME=63
-+RDB$PROCEDURES.RDB$PROCEDURE_NAME=63
-+RDB$PROCEDURES.RDB$SECURITY_CLASS=63
-+RDB$PROCEDURE_PARAMETERS.RDB$FIELD_NAME=63
-+RDB$PROCEDURE_PARAMETERS.RDB$FIELD_SOURCE=63
-+RDB$PROCEDURE_
-```
-
-**File**: `database/connector/dialect/firebird/src/main/resources/schema/firebird/system_tables/mon$attachments.yaml` (modified, +14/-0)
-```diff
-@@ -199,3 +199,17 @@ columns:
-     name: MON$WIRE_CRYPT_PLUGIN
-     primaryKey: false
-     visible: true
-+  MON$SESSION_TIMEZONE:
-+    caseSensitive: false
-+    dataType: 1
-+    generated: false
-+    name: MON$SESSION_TIMEZONE
-+    primaryKey: false
-+    visible: true
-+  MON$PARALLEL_WORKERS:
-+    caseSensitive: false
-+    dataType: 4
-+    generated: false
-+    name: MON$PARALLEL_WORKERS
-+    primaryKey: false
-+    visible: true
-```
-
-**File**: `database/connector/dialect/firebird/src/main/resources/schema/firebird/system_tables/mon$call_stack.yaml` (modified, +7/-0)
-```diff
-@@ -87,3 +87,10 @@ columns:
-     name: MON$PACKAGE_NAME
-     primaryKey: false
-     visible: true
-+  MON$COMPILED_STATEMENT_ID:
-+    caseSensitive: false
-+    dataType: -5
-+    generated: false
-+    name: MON$COMPILED_STATEMENT_ID
-+    primaryKey: false
-+    visible: true
-```
-
-**File**: `database/connector/dialect/firebird/src/main/resources/schema/firebird/system_tables/mon$compiled_statements.yaml` (added, +68/-0)
-```diff
-@@ -0,0 +1,68 @@
-+#
-+# Licensed to the Apache Software Foundation (ASF) under one or more
-+# contributor license agreements.  See the NOTICE file distributed with
-+# this work for additional information regarding copyright ownership.
-+# The ASF licenses this file to You under the Apache License, Version 2.0
-+# (the "License"); you may not use this file except in compliance with
-+# the License.  You may obtain a copy of the License at
-+#
-+#     http://www.apache.org/licenses/LICENSE-2.0
-+#
-+# Unless required by applicable law or agreed to in writing, software
-+# distributed under the License is distributed on an "AS IS" BASIS,
-+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+# See the License for the specific language governing permissions and
-+# limitations under the License.
-+#
-+
-+name: MON$COMPILED_STATEMENTS
-+columns:
-+  MON$COMPILED_STATEMENT_ID:
-+    caseSensitive: false
-+    dataType: -5
-+    generated: false
-+    name: MON$COMPILED_STATEMENT_ID
-+    primaryKey: false
-+    visible: true
-+  MON$SQL_TEXT:
-+    caseSensitive: false
-+    dataType: 2004
-+    generated: false
-+    name: MON$SQL_TEXT
-+    primaryKey: false
-+    visible: true
-+  MON$EXPLAINED_PLAN:
-+    caseSensitive: false
-+    dataType: 2004
-+    generated: false
-+    name: MON$EXPLAINED_PLAN
-+    primaryKey: false
-+    visible: true
-+  MON$OBJECT_NAME:
-+    caseSensitive: false
-+    dataType: 1
-+    generated: false
-+    name: MON$OBJECT_NAME
-+    primaryKey: false
-+    visible: true
-+  MON$OBJECT_TYPE:
-+    caseSensitive: false
-+    dataType: 5
-+    generated: false
-+    name: MON$OBJECT_TYPE
-+    primaryKey: false
-+    visible: true
-+  MON$PACKAGE_NAME:
-+    caseSensitive: false
-+    dataType: 1
-+    generated: false
-+    name: MON$PACKAGE_NAME
-+    primaryKey: false
-+    visible: true
-+  MON$STAT_ID:
-+    caseSensitive: false
-+    dataType: 4
-+    generated: false
-+    name: MON$STAT_ID
-+    primaryKey: false
-+    visible: true
-```
-
-**File**: `database/connector/dialect/firebird/src/main/resources/schema/firebird/system_tables/mon$database.yaml` (modified, +1/-1)
-```diff
-@@ -26,7 +26,7 @@ columns:
-     visible: true
-   MON$PAGE_SIZE:
-     caseSensitive: false
--    dataType: 5
-+    dataType: 4
-     generated: false
-     name: MON$PAGE_SIZE
-     primaryKey: false
-```
-
-**File**: `database/connector/dialect/firebird/src/main/resources/schema/firebird/system_tables/mon$statements.yaml` (modified, +7/-0)
-```diff
-@@ -87,3 +87,10 @@ columns:
-     name: MON$STATEMENT_TIMER
-     primaryKey: false
-     visible: true
-+  MON$COMPILED_STATEMENT_ID:
-+    caseSensitive: false
-+    dataType: -5
-+    generated: false
-+    name: MON$COMPILED_STATEMENT_ID
-+    primaryKey: false
-+    visible: true
+@@ -104,7 +104,7 @@
+         <json-path.version>2.10.0</json-path.version>
+         <json-smart.version>2.6.0</json-smart.version>
+         <accessors-smart.version>2.6.0</accessors-smart.version>
+-        <asm.version>9.7.1</asm.version>
++        <asm.version>9.9.1</asm.version>
+         <groovy.version>4.0.33</groovy.version>
+         <freemarker.version>2.3.35</freemarker.version>
+         <bytebuddy.version>1.18.8</bytebuddy.version>
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #40522** (2026-11-17): Upgrade ASM to 9.9.1 (@terrymanu)
+- **PR #40519** (2026-11-18): Support PostgreSQL REPACK and classify external parser syntax negatives (@FlyingZC)
+- **PR #40518** (2026-11-17): Preserve PostgreSQL EXECUTE details in CREATE TABLE AS (@FlyingZC)
 - **PR #40517** (2026-11-17): Fix PostgreSQL IGNORE NULLS conversion (@FlyingZC)
 - **PR #40516** (2026-11-17): Improve PostgreSQL JSON, window function and string literal parsing (@FlyingZC)
 - **PR #40515** (2026-11-17): Add Firebird debugging diagnostics (@makssent)
-- **PR #40512** (2026-11-15): Refine Codex Javadoc rules (@terrymanu)
-- **PR #40508** (2026-11-16): Add Firebird integer payload methods and document type mappings (@makssent)
-- **PR #40506** (2026-11-13): Restore query timeout readback for circuit breaker prepared statements (@sandynz)
 
 ---
 
@@ -2282,32 +1866,32 @@ Add missing system tables and columns and correct the declared column types to m
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. StackOverflowError when parsing long PostgreSQL and openGauss IN lists
+## X. Support PostgreSQL REPACK and classify external parser syntax negatives
 
 **RULE**:
-When implementing operations in `parser/sql/engine/dialect/opengauss/src/main/antlr4/imports/opengauss/BaseRule.g4`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/shardingsphere. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `parser/sql/engine/core/src/main/java/org/apache/shardingsphere/sql/parser/engine/core/database/visitor/SQLVisitorRule.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/shardingsphere. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `dcc642bb`: StackOverflowError when parsing long PostgreSQL and openGauss IN lists. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d5de05ae`: Support PostgreSQL REPACK and classify external parser syntax negatives. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `parser/sql/engine/dialect/opengauss/src/main/antlr4/imports/opengauss/BaseRule.g4`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `parser/sql/engine/core/src/main/java/org/apache/shardingsphere/sql/parser/engine/core/database/visitor/SQLVisitorRule.java`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-    : aExpr (COMMA_ aExpr)*
+    REPACK("Repack", SQLStatementType.DDL),
+    
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Induced defect failure mode:
-    : aExpr
-    | exprList COMMA_ aExpr
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `dcc642bb` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d5de05ae` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

@@ -10857,3 +10857,7 @@
 | `CYCLE-20261118-1O45` | `2026-11-18T07:05:41.717Z` | `arkivanov/Decompose` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/arkivanov-decompose-learnings.md` | Yes (`7606e757...`) |
 | `CYCLE-20261118-1R9H` | `2026-11-18T07:05:45.797Z` | `aws/aws-cdk` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9149` | Yes (`a8af8a18...`) |
 | `CYCLE-2026-11-18-PROJ-EVOLVE` | `2026-11-18T07:06:16.401Z` | `arkivanov-decompose` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-45D6F650` [Domain D] | Yes (`ffbbd7cc...`) |
+| `CYCLE-20261118-CA96` | `2026-11-18T07:13:56.970Z` | `DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-davidau-qwen3.8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf-learnings.md` | Yes (`1e9a8abb...`) |
+| `CYCLE-20261118-CF9Q` | `2026-11-18T07:14:03.470Z` | `tw93/Mole` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9150` | Yes (`513b09b7...`) |
+| `CYCLE-20261118-CMHP` | `2026-11-18T07:14:12.829Z` | `apache/shardingsphere` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9151` | Yes (`d4616187...`) |
+| `CYCLE-2026-11-18-PROJ-EVOLVE` | `2026-11-18T07:14:45.755Z` | `apache-shardingsphere` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-75FCE7B9` [Domain H] | Yes (`ca902707...`) |
