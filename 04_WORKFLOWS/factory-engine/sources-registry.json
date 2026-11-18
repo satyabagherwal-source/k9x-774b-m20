@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-18T05:52:37.619Z",
-    "lastVerified": "2026-11-18T05:52:37.619Z",
+    "lastChecked": "2026-11-18T06:00:19.124Z",
+    "lastVerified": "2026-11-18T06:00:19.124Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -231,9 +231,9 @@
   "microsoft-security-101": {
     "name": "Security-101",
     "officialUrl": "https://github.com/microsoft/Security-101",
-    "lastChecked": "2026-11-17T23:42:33.446Z",
+    "lastChecked": "2026-11-18T06:00:09.202Z",
     "revisionIdentifier": "b0a31ff7",
-    "lastVerified": "2026-11-17T23:42:33.446Z"
+    "lastVerified": "2026-11-18T06:00:09.202Z"
   },
   "meilisearch-meilisearch": {
     "name": "meilisearch/meilisearch",
@@ -257,8 +257,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-18T05:10:39.951Z",
-    "lastVerified": "2026-11-18T05:10:39.951Z",
+    "lastChecked": "2026-11-18T06:00:14.222Z",
+    "lastVerified": "2026-11-18T06:00:14.222Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -2568,8 +2568,8 @@
     "officialUrl": "https://github.com/tach-org/tach",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-16T23:34:51.450Z",
-    "lastVerified": "2026-11-16T23:34:51.450Z",
+    "lastChecked": "2026-11-18T05:59:59.236Z",
+    "lastVerified": "2026-11-18T05:59:59.236Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-tach-org-tach",
@@ -3294,12 +3294,12 @@
     "officialUrl": "https://huggingface.co/prithivMLmods/Gender-Classifier-Mini",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-13T18:34:42.767Z",
-    "lastVerified": "2026-11-13T18:34:42.767Z",
+    "lastChecked": "2026-11-18T06:00:01.786Z",
+    "lastVerified": "2026-11-18T06:00:01.786Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-prithivmlmods-gender-classifier-mini",
-    "contentHash": "aa1c9df342964035489069261a2122e725c1d4308bc85c7013982b3f259a9cb6",
+    "contentHash": "fae5a22d3022fd3b8de1017e7bcecab1cd88127cdf1671cf57c70804bf0c8168",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -5033,12 +5033,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "clastix-kamaji": {
-    "name": "clastix/kamaji",
+    "name": "kamaji",
     "officialUrl": "https://github.com/clastix/kamaji",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-17T07:28:14.584Z",
-    "lastVerified": "2026-11-17T07:28:14.584Z",
+    "lastChecked": "2026-11-18T06:00:06.701Z",
+    "lastVerified": "2026-11-18T06:00:06.701Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-clastix-kamaji",
@@ -5047,7 +5047,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "afdb6e7a"
   },
   "typedb-typedb": {
     "name": "typedb",
@@ -5458,22 +5459,21 @@
     "revisionIdentifier": "9dd4c570"
   },
   "slatedb-slatedb": {
-    "name": "slatedb",
+    "name": "slatedb/slatedb",
     "officialUrl": "https://github.com/slatedb/slatedb",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-17T06:09:58.476Z",
-    "lastVerified": "2026-11-17T06:09:58.476Z",
+    "lastChecked": "2026-11-18T06:00:14.917Z",
+    "lastVerified": "2026-11-18T06:00:14.917Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-slatedb-slatedb",
-    "contentHash": "b6e26128b73c0d3ba0ad621009c66c3cda67d54ce249b7ae341ba968b9c63b18",
+    "contentHash": "71964a4528888b62625ed2f45f250231b415ff49d55ab657a417c0468e74267a",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "8b688002"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "tokio-rs-console": {
     "name": "console",
@@ -8010,9 +8010,9 @@
   "hasaneyldrm-exercises-dataset": {
     "name": "exercises-dataset",
     "officialUrl": "https://github.com/hasaneyldrm/exercises-dataset",
-    "lastChecked": "2026-11-15T00:05:23.024Z",
+    "lastChecked": "2026-11-18T06:00:04.286Z",
     "revisionIdentifier": "7455efae",
-    "lastVerified": "2026-11-15T00:05:23.024Z"
+    "lastVerified": "2026-11-18T06:00:04.287Z"
   },
   "libsql-libsql": {
     "name": "libsql",

@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T05:52:27.530Z",
-  "total_cycles_completed": 10371,
-  "total_learnings_persisted": 10371,
-  "total_rules_promoted": 9885,
+  "last_updated": "2026-11-18T06:00:15.908Z",
+  "total_cycles_completed": 10373,
+  "total_learnings_persisted": 10373,
+  "total_rules_promoted": 9886,
   "history": [
-    {
-      "timestamp": "2026-11-17T16:38:38.318Z",
-      "repository": "XHToken/Spark-X2.6-4B",
-      "learningId": "learn-huggingface-xhtoken-spark-x2-6-4b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T16:38:40.885Z",
-      "repository": "restatedev/restate",
-      "learningId": "learn-github-restatedev-restate",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-17T16:38:47.969Z",
       "repository": "prometheus/prometheus",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-18T05:52:27.530Z",
       "repository": "flox/flox",
       "learningId": "learn-github-flox-flox",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T06:00:02.386Z",
+      "repository": "prithivMLmods/Gender-Classifier-Mini",
+      "learningId": "learn-huggingface-prithivmlmods-gender-classifier-mini",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T06:00:15.908Z",
+      "repository": "slatedb/slatedb",
+      "learningId": "learn-github-slatedb-slatedb",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

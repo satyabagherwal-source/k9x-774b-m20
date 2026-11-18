@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T18:35:48.010Z",
+  "timestamp": "2026-11-18T06:00:19.369Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-hf-prithivmlmods-gender-classifier-mini-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [hf-prithivmlmods-gender-classifier-mini-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T18:35:48.010Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-18T06:00:19.369Z`  
 > **Learning ID**: `LEARN-EVO-hf-prithivmlmods-gender-classifier-mini-learnings`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Source Version**: `hf-prithivml`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T18:34:42.991Z  
+> **Timestamp**: 2026-11-18T06:00:01.923Z  
 > **Learning ID**: `learn-huggingface-prithivmlmods-gender-classifier-mini`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-prithivmlmods-gender-classifier-mini-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/prithivMLmods/Gender-Classifier-Mini](https://huggingface.co/prithivMLmods/Gender-Classifier-Mini))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T18:34:42.767Z  
+> **Harvest Timestamp**: 2026-11-18T06:00:01.786Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: image-classification
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 6810513 downloads | 20 likes
+- **Stars / Engagement**: 5677331 downloads | 23 likes
 
 ---
 

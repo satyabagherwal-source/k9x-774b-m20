@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-18T05:52:39.907Z",
-  "total_verified_learnings": 8986,
+  "last_updated": "2026-11-18T06:00:21.044Z",
+  "total_verified_learnings": 8987,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 20927,
+  "total_items": 20931,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113686,13 +113686,13 @@
       "item_id": "candidate_directive-editor-add-scoped-ios-account-deletion",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-FQTE-editor-add-scoped-ios-account-deletion.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-PMOD-editor-add-scoped-ios-account-deletion.md",
       "title": "editor): add scoped ios account deletion",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "ff63f3ba13018815eed2da1085199d71ea54966a36c73de3217a5db6b7c6691d",
+      "content_hash": "4c2a0412a36a6fde5f3bfa2c2d61f5da2478c7eef5bff526f4a0be54770e6bfc",
       "domain_letter": "H",
-      "persisted_at": "2026-11-18T05:52:39.559Z"
+      "persisted_at": "2026-11-18T06:00:20.754Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant",
@@ -113702,9 +113702,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "67ca21e2ffcec1c2da6131861752caecc762eef7f57f1e75434100b389307cb0",
+      "content_hash": "9613a4b9cb584e6ae32388857e77e1b20b2975d86c0dd6d778f0a8ab68184e60",
       "domain_letter": "H",
-      "persisted_at": "2026-11-18T05:52:39.734Z"
+      "persisted_at": "2026-11-18T06:00:20.899Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113714,9 +113714,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "245027d0f96b0679ed0243e180e13f218e6f04b30f0b7fbc9f9da1267cd7217b",
+      "content_hash": "4f1fa0244907ae2697cedc39cd1814e7be35b29afd4d13ae8a9b7cb3d2615184",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T05:52:39.907Z"
+      "persisted_at": "2026-11-18T06:00:21.044Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -114698,9 +114698,9 @@
       "title": "Research & Knowledge Intelligence: hf-prithivmlmods-gender-classifier-mini-learnings Core Invariants",
       "repository": "hf-prithivmlmods-gender-classifier-mini-learnings",
       "source_version": "HEAD",
-      "content_hash": "5bcf798bce066dda76f8b466f950012759c8357fade896c3158f8048f32baaf3",
+      "content_hash": "41d7566a8e6c614e2a21a9fc03ce1e19ea02265f029ed789de0bb20747a70379",
       "domain_letter": "D",
-      "persisted_at": "2026-11-13T18:35:48.131Z"
+      "persisted_at": "2026-11-18T06:00:19.460Z"
     },
     "domain_intelligence-technical-construction-intelligence-laurent22-joplin-learnings-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-laurent22-joplin-learnings-core-invariants",
@@ -228137,8 +228137,8 @@
       "slug": "slatedb-slatedb",
       "platform": "github",
       "source_url": "https://github.com/slatedb/slatedb",
-      "source_version": "8b688002",
-      "content_hash": "b6e26128b73c0d3ba0ad621009c66c3cda67d54ce249b7ae341ba968b9c63b18",
+      "source_version": "ae4b403e",
+      "content_hash": "71964a4528888b62625ed2f45f250231b415ff49d55ab657a417c0468e74267a",
       "dossier_path": "07_PROJECT_LEARNING/slatedb-slatedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/slatedb-slatedb-learnings.md",
       "promoted_rules": [
@@ -228151,6 +228151,11 @@
           "number": 8661,
           "title": "Record object store metrics for Admin operations",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9135,
+          "title": "Add `AdminBuilder::with_object_store_max_retries`",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -228158,7 +228163,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-15T22:39:55.431Z",
+      "verified_at": "2026-11-18T06:00:15.716Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -228200,10 +228205,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-slatedb-slatedb-architecture-intelligence-slatedb-slatedb-core-invariants.md",
       "title": "Architecture Intelligence: slatedb/slatedb Core Invariants",
       "repository": "slatedb/slatedb",
-      "source_version": "8b688002",
-      "content_hash": "c8dfec1264e8b5494406395d937c5bb92a536f01a6bcc369ab608e9a25233cd3",
+      "source_version": "ae4b403e",
+      "content_hash": "a00d880c6785a66e0e6a3a02413800616bedd36cac14ecdd6eb8006d93974d4f",
       "domain_letter": "G",
-      "persisted_at": "2026-11-15T22:39:55.982Z"
+      "persisted_at": "2026-11-18T06:00:16.259Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-slatedb-slatedb": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-slatedb-slatedb",
@@ -228212,10 +228217,10 @@
       "relative_path": "08_VERIFICATION/slatedb-slatedb-verification-protocol-empirical-defect-shield-for-slatedb-slated.md",
       "title": "Verification Protocol: Empirical Defect Shield for slatedb/slatedb",
       "repository": "slatedb/slatedb",
-      "source_version": "8b688002",
-      "content_hash": "8684f77e6b89df570a5a416c26733ae7d406c6f46b9d1bb5dcd91ba6b1d2ba2f",
+      "source_version": "ae4b403e",
+      "content_hash": "1140e2c52cf5e051de4f9de47f59cd8c3eebc45f257c637c72a982a7286a9026",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T22:39:56.126Z"
+      "persisted_at": "2026-11-18T06:00:16.451Z"
     },
     "learn-github-nucleoidai-nucleoid": {
       "learning_id": "learn-github-nucleoidai-nucleoid",
@@ -249003,9 +249008,9 @@
       "title": "Architecture Intelligence: slatedb-slatedb-learnings Core Invariants",
       "repository": "slatedb-slatedb-learnings",
       "source_version": "HEAD",
-      "content_hash": "06ea5071e16adb346a08f3ab037dd1ad5379ed196302b48f7898fdb6c305a0d1",
+      "content_hash": "0ec2b5fd612b0a3e691569fd756794fc832b60f8d66f76569e03f0b51c200517",
       "domain_letter": "G",
-      "persisted_at": "2026-11-15T22:39:59.389Z"
+      "persisted_at": "2026-11-18T06:00:20.049Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-slatedb-slatedb-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-slatedb-slatedb-learnings",
@@ -249015,9 +249020,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for slatedb-slatedb-learnings",
       "repository": "slatedb-slatedb-learnings",
       "source_version": "HEAD",
-      "content_hash": "df6f31ad622a9bb63aaa3368855a3e24822e5182acb5f8887210b41146b29a17",
+      "content_hash": "c652f58e26b3ab470a5a8fd8db6238c4078e581bac0627b978ac7aeedec71d36",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T22:39:59.528Z"
+      "persisted_at": "2026-11-18T06:00:20.191Z"
     },
     "candidate_directive-hook-keep-regex-fragments-from-widening-bash-heredoc-dialects-skip-ci": {
       "item_id": "candidate_directive-hook-keep-regex-fragments-from-widening-bash-heredoc-dialects-skip-ci",
@@ -281900,6 +281905,71 @@
       "content_hash": "3e7901e7d4654af3ca70ee8b4182da21dc7c3f27f274a159b6942a55e4d65b24",
       "domain_letter": "K",
       "persisted_at": "2026-11-18T05:52:38.091Z"
+    },
+    "learn-huggingface-prithivmlmods-gender-classifier-mini": {
+      "learning_id": "learn-huggingface-prithivmlmods-gender-classifier-mini",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "prithivMLmods/Gender-Classifier-Mini",
+      "repository": "prithivMLmods/Gender-Classifier-Mini",
+      "slug": "hf-prithivmlmods-gender-classifier-mini",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/prithivMLmods/Gender-Classifier-Mini",
+      "source_version": "hf-prithivmlmods-gender-classifier-mini",
+      "content_hash": "fae5a22d3022fd3b8de1017e7bcecab1cd88127cdf1671cf57c70804bf0c8168",
+      "dossier_path": "07_PROJECT_LEARNING/hf-prithivmlmods-gender-classifier-mini-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-prithivmlmods-gender-classifier-mini-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-18T06:00:02.180Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-prithivmlmods-gender-classifier-mini-core-invari": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-prithivmlmods-gender-classifier-mini-core-invari",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-prithivmlmods-gender-classifier-mini-research-knowledge-intelligence-prithivm.md",
+      "title": "Research & Knowledge Intelligence: prithivMLmods/Gender-Classifier-Mini Core Invariants",
+      "repository": "prithivMLmods/Gender-Classifier-Mini",
+      "source_version": "hf-prithivmlmods-gender-classifier-mini",
+      "content_hash": "51a5895788c50eab02985867e69dd775df0491a34095fc1f85c097e666ab6699",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-18T06:00:02.579Z"
+    },
+    "rule-9135": {
+      "learning_id": "rule-9135",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9135,
+      "title": "Add `AdminBuilder::with_object_store_max_retries`",
+      "source_url": "https://github.com/slatedb/slatedb",
+      "source_version": "ae4b403e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-18T06:00:15.716Z"
+    },
+    "candidate_directive-add-adminbuilder-with_object_store_max_retries": {
+      "item_id": "candidate_directive-add-adminbuilder-with_object_store_max_retries",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-PM0T-add-adminbuilder-with_object_store_max_retries.md",
+      "title": "Add `AdminBuilder::with_object_store_max_retries`",
+      "repository": "slatedb-slatedb-learnings",
+      "source_version": "HEAD",
+      "content_hash": "081bab2e33b94e3ccc4848d28d9642a193263bad42c195ff27588142445ec35a",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-18T06:00:19.906Z"
     }
   },
   "ai-builder-brain": {

@@ -10862,3 +10862,5 @@ Every entry in this ledger must capture:
 | `learn-github-zarf-dev-zarf` | `https://github.com/zarf-dev/zarf` | `31862576` | Multi-dimensional audit evidence | 2026-11-18T05:44:16.096Z |
 | `learn-huggingface-xiaomimimo-mimo-v2-6-pro-rl` | `https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Pro-RL` | `hf-xiaomim` | Multi-dimensional audit evidence | 2026-11-18T05:52:25.844Z |
 | `learn-github-flox-flox` | `https://github.com/flox/flox` | `83a6c49f` | Multi-dimensional audit evidence | 2026-11-18T05:52:27.523Z |
+| `learn-huggingface-prithivmlmods-gender-classifier-mini` | `https://huggingface.co/prithivMLmods/Gender-Classifier-Mini` | `hf-prithiv` | Multi-dimensional audit evidence | 2026-11-18T06:00:02.381Z |
+| `learn-github-slatedb-slatedb` | `https://github.com/slatedb/slatedb` | `ae4b403e` | Multi-dimensional audit evidence | 2026-11-18T06:00:15.902Z |

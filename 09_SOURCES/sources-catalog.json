@@ -4573,10 +4573,10 @@
     "repository": "slatedb/slatedb",
     "platform": "github",
     "sourceUrl": "https://github.com/slatedb/slatedb",
-    "sourceVersion": "8b688002",
+    "sourceVersion": "ae4b403e",
     "license": "Apache-2.0",
-    "contentHash": "b6e26128b73c0d3ba0ad621009c66c3cda67d54ce249b7ae341ba968b9c63b18",
-    "lastHarvestedAt": "2026-11-15T22:39:55.617Z",
+    "contentHash": "71964a4528888b62625ed2f45f250231b415ff49d55ab657a417c0468e74267a",
+    "lastHarvestedAt": "2026-11-18T06:00:15.902Z",
     "learningId": "learn-github-slatedb-slatedb"
   },
   "react-component-slider": {
@@ -11405,8 +11405,8 @@
     "sourceUrl": "https://huggingface.co/prithivMLmods/Gender-Classifier-Mini",
     "sourceVersion": "hf-prithivmlmods-gender-classifier-mini",
     "license": "Open-Source",
-    "contentHash": "aa1c9df342964035489069261a2122e725c1d4308bc85c7013982b3f259a9cb6",
-    "lastHarvestedAt": "2026-11-13T18:34:43.390Z",
+    "contentHash": "fae5a22d3022fd3b8de1017e7bcecab1cd88127cdf1671cf57c70804bf0c8168",
+    "lastHarvestedAt": "2026-11-18T06:00:02.381Z",
     "learningId": "learn-huggingface-prithivmlmods-gender-classifier-mini"
   },
   "hf-openbmb-minicpm-ocr-1.0": {

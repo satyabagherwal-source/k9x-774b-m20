@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T05:52:39.559Z",
+  "last_updated": "2026-11-18T06:00:20.754Z",
   "directives": [
     {
       "id": "CD-001",
@@ -4835,11 +4835,11 @@
       "staged_date": "2026-11-11"
     },
     {
-      "id": "CD-FQTE",
+      "id": "CD-PMOD",
       "directive_title": "editor): add scoped ios account deletion",
       "source_repo": "zseven-w-openpencil-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-FQTE-editor-add-scoped-ios-account-deletion.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-PMOD-editor-add-scoped-ios-account-deletion.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-18",
@@ -27571,6 +27571,35 @@
       "source_repo": "zseven-w-openpencil",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-47D383-editor-add-scoped-ios-account-deletion.md",
+      "staged_date": "2026-11-18"
+    },
+    {
+      "id": "CD-PM0T",
+      "directive_title": "Add `AdminBuilder::with_object_store_max_retries`",
+      "source_repo": "slatedb-slatedb-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-PM0T-add-adminbuilder-with_object_store_max_retries.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-18",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-67A0D0",
+      "directive_title": "Add `AdminBuilder::with_object_store_max_retries`",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "slatedb-slatedb",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-67A0D0-add-adminbuilder-with-object-store-max-r.md",
+      "staged_date": "2026-11-18"
+    },
+    {
+      "id": "CD-REV-28EF47",
+      "directive_title": "editor): add scoped ios account deletion",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zseven-w-openpencil",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-28EF47-editor-add-scoped-ios-account-deletion.md",
       "staged_date": "2026-11-18"
     }
   ]

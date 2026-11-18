@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261116-7T09",
-    "timestamp": "2026-11-16T14:35:01.401Z",
-    "repository": "NucleoidAI/Nucleoid",
-    "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "6b2161ea2c06f0be829bedb522e5c7c3512c4ea2fc60df40e6a3b0f7337de4ba",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261116-4OXW",
-    "timestamp": "2026-11-16T15:00:35.780Z",
-    "repository": "meta/folly",
-    "learningId": "learn-github-meta-folly",
-    "contentHash": "5c94cdb4cbed2893091319ff761980656ef653c9a805d4cecc3ebf2b76127716",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261116-4S6W",
     "timestamp": "2026-11-16T15:00:39.992Z",
     "repository": "RevenueCat/purchases-ios",
@@ -7490,6 +7460,36 @@
     "repository": "flox/flox",
     "learningId": "learn-github-flox-flox",
     "contentHash": "7d904f0988e35cf16a7fd2d05526556358bef532b626afd72b88f1251c4e054f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-P8I1",
+    "timestamp": "2026-11-18T06:00:02.377Z",
+    "repository": "prithivMLmods/Gender-Classifier-Mini",
+    "learningId": "learn-huggingface-prithivmlmods-gender-classifier-mini",
+    "contentHash": "fae5a22d3022fd3b8de1017e7bcecab1cd88127cdf1671cf57c70804bf0c8168",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-PIXM",
+    "timestamp": "2026-11-18T06:00:15.898Z",
+    "repository": "slatedb/slatedb",
+    "learningId": "learn-github-slatedb-slatedb",
+    "contentHash": "71964a4528888b62625ed2f45f250231b415ff49d55ab657a417c0468e74267a",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

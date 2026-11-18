@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-18T05:52:27.535Z",
+  "last_updated": "2026-11-18T06:00:15.912Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -6981,14 +6981,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-slatedb-slatedb",
-      "content_hash": "b6e26128b73c0d3ba0ad621009c66c3cda67d54ce249b7ae341ba968b9c63b18",
-      "verified_at": "2026-11-15T22:39:55.627Z",
+      "content_hash": "71964a4528888b62625ed2f45f250231b415ff49d55ab657a417c0468e74267a",
+      "verified_at": "2026-11-18T06:00:15.911Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-15T22:39:55.627Z"
+      "last_updated": "2026-11-18T06:00:15.911Z"
     },
     "react-component/slider": {
       "repository": "react-component/slider",
@@ -17136,14 +17136,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-prithivmlmods-gender-classifier-mini",
-      "content_hash": "aa1c9df342964035489069261a2122e725c1d4308bc85c7013982b3f259a9cb6",
-      "verified_at": "2026-11-13T18:34:43.403Z",
+      "content_hash": "fae5a22d3022fd3b8de1017e7bcecab1cd88127cdf1671cf57c70804bf0c8168",
+      "verified_at": "2026-11-18T06:00:02.389Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T18:34:43.403Z"
+      "last_updated": "2026-11-18T06:00:02.389Z"
     },
     "openbmb/MiniCPM-OCR-1.0": {
       "repository": "openbmb/MiniCPM-OCR-1.0",
