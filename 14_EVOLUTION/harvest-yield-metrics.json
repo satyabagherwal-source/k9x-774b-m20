@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T15:14:13.856Z",
-  "total_cycles_completed": 10540,
-  "total_learnings_persisted": 10540,
-  "total_rules_promoted": 10010,
+  "last_updated": "2026-11-18T15:22:16.764Z",
+  "total_cycles_completed": 10542,
+  "total_learnings_persisted": 10542,
+  "total_rules_promoted": 10011,
   "history": [
-    {
-      "timestamp": "2026-11-18T04:03:54.506Z",
-      "repository": "cachix/devenv",
-      "learningId": "learn-github-cachix-devenv",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-18T04:11:15.550Z",
-      "repository": "TaichuAI/ZDTaichu5.0-9B",
-      "learningId": "learn-huggingface-taichuai-zdtaichu5-0-9b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-18T04:11:31.006Z",
       "repository": "MaterializeInc/materialize",
@@ -1403,6 +1389,20 @@
       "repository": "XiaomiMiMo/MiMo-V2.6-Pro-RL",
       "learningId": "learn-huggingface-xiaomimimo-mimo-v2-6-pro-rl",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T15:22:08.773Z",
+      "repository": "orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
+      "learningId": "learn-huggingface-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T15:22:16.764Z",
+      "repository": "software-mansion/react-native-reanimated",
+      "learningId": "learn-github-software-mansion-react-native-reanimated",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

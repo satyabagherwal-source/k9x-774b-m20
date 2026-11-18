@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-18T15:14:27.638Z",
+  "last_updated": "2026-11-18T15:22:22.131Z",
   "total_verified_learnings": 9003,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 21330,
+  "total_items": 21335,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -114758,9 +114758,9 @@
       "title": "Research & Knowledge Intelligence: orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF Core Invariants",
       "repository": "orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
       "source_version": "hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf",
-      "content_hash": "c012793fcc06e9449f20644ca7867e7307f07b6d830239c46d5ce498980eb080",
+      "content_hash": "70b689740c3ba605d10acaecbd0c58b0633aa8e7a10ff93b966f8a558f0a9edb",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T06:07:42.398Z"
+      "persisted_at": "2026-11-18T15:22:08.949Z"
     },
     "candidate_directive-deps-bump-rustix-to-1-1-6-for-rustsec-2026-0486": {
       "item_id": "candidate_directive-deps-bump-rustix-to-1-1-6-for-rustsec-2026-0486",
@@ -114866,9 +114866,9 @@
       "title": "Research & Knowledge Intelligence: hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-learnings Core Invariants",
       "repository": "hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-learnings",
       "source_version": "HEAD",
-      "content_hash": "022c0c8b0fe44c1f9f8c963a3646b0e60790b62f3b267d61dfcf947a8613aaa8",
+      "content_hash": "dcc58e3341f34976efacbb5a9a6b45e360eee20eb8d3758a3ff79aaee509ad61",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T06:07:49.071Z"
+      "persisted_at": "2026-11-18T15:22:21.076Z"
     },
     "domain_intelligence-technical-construction-intelligence-expo-expo-learnings-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-expo-expo-learnings-core-invariants",
@@ -220458,8 +220458,8 @@
       "slug": "software-mansion-react-native-reanimated",
       "platform": "github",
       "source_url": "https://github.com/software-mansion/react-native-reanimated",
-      "source_version": "d7d1bc3f",
-      "content_hash": "523c66bf909c6be0c70ed6926e663ea99d5b369c79ef0be1d7d916071aaf2113",
+      "source_version": "8ec64786",
+      "content_hash": "874993902dd0e58e571ace67862012cb443caf4cbe33171ee601f2a12a8f10c7",
       "dossier_path": "07_PROJECT_LEARNING/software-mansion-react-native-reanimated-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/software-mansion-react-native-reanimated-learnings.md",
       "promoted_rules": [
@@ -220472,6 +220472,11 @@
           "number": 8989,
           "title": "keep ancestor opacity and clipping during shared element tran",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9250,
+          "title": "don't crash when switching tabs before a shared element transition ends",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -220479,7 +220484,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T15:43:43.584Z",
+      "verified_at": "2026-11-18T15:22:16.594Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -220530,13 +220535,13 @@
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-software-mansion-react-native-",
       "artifact_type": "verification_contract",
       "target_folder": "08_VERIFICATION",
-      "relative_path": "08_VERIFICATION/software-mansion-react-native-gesture-handler-learnings-verification-protocol-em.md",
-      "title": "Verification Protocol: Empirical Defect Shield for software-mansion-react-native-gesture-handler-learnings",
-      "repository": "software-mansion-react-native-gesture-handler-learnings",
+      "relative_path": "08_VERIFICATION/software-mansion-react-native-reanimated-learnings-verification-protocol-empiric.md",
+      "title": "Verification Protocol: Empirical Defect Shield for software-mansion-react-native-reanimated-learnings",
+      "repository": "software-mansion-react-native-reanimated-learnings",
       "source_version": "HEAD",
-      "content_hash": "17bf25f903bce4438f667b0f91ee1ff89ed4e2276dc02fb102063d7489e68f6e",
+      "content_hash": "9f70e8288611c1ca16afed3ee7dce391e1e439f6b0e0c219b9d33b9f9bc352d6",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T19:45:05.003Z"
+      "persisted_at": "2026-11-18T15:22:21.747Z"
     },
     "learn-github-zeromicro-go-zero": {
       "learning_id": "learn-github-zeromicro-go-zero",
@@ -282560,7 +282565,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
       "source_version": "hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf",
-      "content_hash": "6b82e5af09e402283d74b57a5eb3778dfeb0513a3f97c4bb7a05d3e0505a250f",
+      "content_hash": "6bf2d6beaf579bc86a809500bdb48c1fa72c096ab1251daedb9308b4fc7ccbcf",
       "dossier_path": "07_PROJECT_LEARNING/hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-learnings.md",
       "promoted_rules": [],
@@ -282569,7 +282574,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T06:07:42.081Z",
+      "verified_at": "2026-11-18T15:22:08.579Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -286466,9 +286471,9 @@
       "title": "Technical Construction Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "2a164065acdab702024c992dbabe7f8902e038106c680d9a924d60fb81130237",
+      "content_hash": "a2ce3e587b2ece7c4aeb9b8d56e793d2c017f184faa8d2162e79c711380b13b2",
       "domain_letter": "H",
-      "persisted_at": "2026-11-18T14:57:09.667Z"
+      "persisted_at": "2026-11-18T15:22:22.131Z"
     },
     "learn-github-software-mansion-argent": {
       "learning_id": "learn-github-software-mansion-argent",
@@ -287844,6 +287849,68 @@
       "content_hash": "fba4483170651756e8cdd5e7e645c0fdcbe6f08a0abd7422b210861098a534c9",
       "domain_letter": "K",
       "persisted_at": "2026-11-18T15:06:14.424Z"
+    },
+    "rule-9250": {
+      "learning_id": "rule-9250",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9250,
+      "title": "don't crash when switching tabs before a shared element transition ends",
+      "source_url": "https://github.com/software-mansion/react-native-reanimated",
+      "source_version": "8ec64786",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-18T15:22:16.594Z"
+    },
+    "candidate_directive-don-t-crash-when-switching-tabs-before-a-shared-element-transition-ends": {
+      "item_id": "candidate_directive-don-t-crash-when-switching-tabs-before-a-shared-element-transition-ends",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-SA91-don-t-crash-when-switching-tabs-before-a-shared-element-transition-ends.md",
+      "title": "don't crash when switching tabs before a shared element transition ends",
+      "repository": "software-mansion/react-native-reanimated",
+      "source_version": "8ec64786",
+      "content_hash": "44dbee6cb4b0386b2521051e1bc234d5433a9c787191f4237f5b36a365483507",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-18T15:22:16.934Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-software-mansion-react-native-reanimated-core-": {
+      "item_id": "domain_intelligence-quality-verification-intelligence-software-mansion-react-native-reanimated-core-",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-software-mansion-react-native-reanimated-quality-verification-intelligence-softw.md",
+      "title": "Quality & Verification Intelligence: software-mansion/react-native-reanimated Core Invariants",
+      "repository": "software-mansion/react-native-reanimated",
+      "source_version": "8ec64786",
+      "content_hash": "633bdb95e28e7799fa31993cd2dcdbc8e46151a539c35176b22fec8f8f27817a",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-18T15:22:17.058Z"
+    },
+    "candidate_directive-set-don-t-crash-when-switching-tabs-before-a-shared-element-transition-ends": {
+      "item_id": "candidate_directive-set-don-t-crash-when-switching-tabs-before-a-shared-element-transition-ends",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-SDR5-set-don-t-crash-when-switching-tabs-before-a-shared-element-transition-ends.md",
+      "title": "SET): don't crash when switching tabs before a shared element transition ends",
+      "repository": "software-mansion-react-native-reanimated-learnings",
+      "source_version": "HEAD",
+      "content_hash": "de8dbfabd1c68a1bec9c1f39b581df405f2ecc2d87a74e179f001333a3772b8b",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-18T15:22:21.474Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-software-mansion-react-native-reanimated-learn": {
+      "item_id": "domain_intelligence-quality-verification-intelligence-software-mansion-react-native-reanimated-learn",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-software-mansion-react-native-reanimated-learnings-quality-verification-intellig.md",
+      "title": "Quality & Verification Intelligence: software-mansion-react-native-reanimated-learnings Core Invariants",
+      "repository": "software-mansion-react-native-reanimated-learnings",
+      "source_version": "HEAD",
+      "content_hash": "cc75a8001aa39a537aad4657b99b5dde1b3d648567aa0bd27d47742339d21019",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-18T15:22:21.606Z"
     }
   },
   "ai-builder-brain": {

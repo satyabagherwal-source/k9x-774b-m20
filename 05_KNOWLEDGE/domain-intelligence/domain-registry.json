@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-18T15:14:27.638Z",
-  "total_records": 1866,
+  "last_updated": "2026-11-18T15:22:22.131Z",
+  "total_records": 1868,
   "domains": {
     "A": {
       "total": 13,
@@ -1813,7 +1813,7 @@
       ]
     },
     "K": {
-      "total": 93,
+      "total": 95,
       "record_ids": [
         "DOM-K-353B93D6",
         "DOM-K-76C43650",
@@ -1907,7 +1907,9 @@
         "domain_intelligence-quality-verification-intelligence-software-mansion-argent-learnings-core-invaria",
         "domain_intelligence-quality-verification-intelligence-databendlabs-databend-core-invariants",
         "DOM-K-4C047582",
-        "domain_intelligence-quality-verification-intelligence-databendlabs-databend-learnings-core-invariant"
+        "domain_intelligence-quality-verification-intelligence-databendlabs-databend-learnings-core-invariant",
+        "domain_intelligence-quality-verification-intelligence-software-mansion-react-native-reanimated-core-",
+        "domain_intelligence-quality-verification-intelligence-software-mansion-react-native-reanimated-learn"
       ]
     },
     "L": {
@@ -9319,8 +9321,8 @@
       "title": "Research & Knowledge Intelligence: orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-research-knowledge-intelligenc.md",
       "repository": "orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
-      "content_hash": "c012793fcc06e9449f20644ca7867e7307f07b6d830239c46d5ce498980eb080",
-      "created_at": "2026-11-18T06:07:42.398Z"
+      "content_hash": "70b689740c3ba605d10acaecbd0c58b0633aa8e7a10ff93b966f8a558f0a9edb",
+      "created_at": "2026-11-18T15:22:08.949Z"
     },
     "domain_intelligence-technical-construction-intelligence-kucherenko-jscpd-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-kucherenko-jscpd-core-invariants",
@@ -9355,8 +9357,8 @@
       "title": "Research & Knowledge Intelligence: hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-learnings-research-knowledge-i.md",
       "repository": "hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-learnings",
-      "content_hash": "022c0c8b0fe44c1f9f8c963a3646b0e60790b62f3b267d61dfcf947a8613aaa8",
-      "created_at": "2026-11-18T06:07:49.071Z"
+      "content_hash": "dcc58e3341f34976efacbb5a9a6b45e360eee20eb8d3758a3ff79aaee509ad61",
+      "created_at": "2026-11-18T15:22:21.076Z"
     },
     "domain_intelligence-technical-construction-intelligence-expo-expo-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-expo-expo-learnings-core-invariants",
@@ -30962,8 +30964,8 @@
       "title": "Technical Construction Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zulip-zulip-learnings-technical-construction-intelligence-zulip-zulip-learnings-.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "2a164065acdab702024c992dbabe7f8902e038106c680d9a924d60fb81130237",
-      "created_at": "2026-11-18T14:57:09.667Z"
+      "content_hash": "a2ce3e587b2ece7c4aeb9b8d56e793d2c017f184faa8d2162e79c711380b13b2",
+      "created_at": "2026-11-18T15:22:22.131Z"
     },
     "domain_intelligence-product-intelligence-software-mansion-argent-core-invariants": {
       "record_id": "domain_intelligence-product-intelligence-software-mansion-argent-core-invariants",
@@ -31216,6 +31218,24 @@
       "repository": "karmada-io-karmada-learnings",
       "content_hash": "30f5718ada17bdbad82386b870f4419aacdba7075d5fda8fc7d60afa6905e610",
       "created_at": "2026-11-18T14:57:08.829Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-software-mansion-react-native-reanimated-core-": {
+      "record_id": "domain_intelligence-quality-verification-intelligence-software-mansion-react-native-reanimated-core-",
+      "domain_letter": "K",
+      "title": "Quality & Verification Intelligence: software-mansion/react-native-reanimated Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-software-mansion-react-native-reanimated-quality-verification-intelligence-softw.md",
+      "repository": "software-mansion/react-native-reanimated",
+      "content_hash": "633bdb95e28e7799fa31993cd2dcdbc8e46151a539c35176b22fec8f8f27817a",
+      "created_at": "2026-11-18T15:22:17.058Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-software-mansion-react-native-reanimated-learn": {
+      "record_id": "domain_intelligence-quality-verification-intelligence-software-mansion-react-native-reanimated-learn",
+      "domain_letter": "K",
+      "title": "Quality & Verification Intelligence: software-mansion-react-native-reanimated-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-software-mansion-react-native-reanimated-learnings-quality-verification-intellig.md",
+      "repository": "software-mansion-react-native-reanimated-learnings",
+      "content_hash": "cc75a8001aa39a537aad4657b99b5dde1b3d648567aa0bd27d47742339d21019",
+      "created_at": "2026-11-18T15:22:21.606Z"
     }
   }
 }

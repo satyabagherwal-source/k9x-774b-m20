@@ -11052,3 +11052,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-unsloth-qwen-image-2-1-gguf` | `https://huggingface.co/unsloth/Qwen-Image-2.1-GGUF` | `hf-unsloth` | Multi-dimensional audit evidence | 2026-11-18T15:06:02.204Z |
 | `learn-github-1jehuang-jcode` | `https://github.com/1jehuang/jcode` | `f3fc98fb` | Multi-dimensional audit evidence | 2026-11-18T15:06:04.295Z |
 | `learn-huggingface-xiaomimimo-mimo-v2-6-pro-rl` | `https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Pro-RL` | `hf-xiaomim` | Multi-dimensional audit evidence | 2026-11-18T15:14:13.850Z |
+| `learn-huggingface-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf` | `https://huggingface.co/orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF` | `hf-orcarou` | Multi-dimensional audit evidence | 2026-11-18T15:22:08.768Z |
+| `learn-github-software-mansion-react-native-reanimated` | `https://github.com/software-mansion/react-native-reanimated` | `8ec64786` | Multi-dimensional audit evidence | 2026-11-18T15:22:16.759Z |

@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261117-ZX3J",
-    "timestamp": "2026-11-17T06:20:40.399Z",
-    "repository": "vitest-dev/vitest",
-    "learningId": "learn-github-vitest-dev-vitest",
-    "contentHash": "ed46ab0772fe8babadd7efb22e058449319ae222859d2d8c8066ee26d7b97b07",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261117-9TVF",
-    "timestamp": "2026-11-17T06:28:22.779Z",
-    "repository": "cypress-io/cypress",
-    "learningId": "learn-github-cypress-io-cypress",
-    "contentHash": "6b3122ddcd6f579dbaded99a31809e867bfb43ac2e619dcb8602d817c00f2de7",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261117-A0HB",
     "timestamp": "2026-11-17T06:28:31.343Z",
     "repository": "gluesql/gluesql",
@@ -7492,6 +7462,36 @@
     "contentHash": "09997bb28065bd9c11131cb188e793dfceec98cf03a4e3e9ff8bfefad17141e9",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-S3Y4",
+    "timestamp": "2026-11-18T15:22:08.764Z",
+    "repository": "orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
+    "learningId": "learn-huggingface-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf",
+    "contentHash": "6bf2d6beaf579bc86a809500bdb48c1fa72c096ab1251daedb9308b4fc7ccbcf",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-SA43",
+    "timestamp": "2026-11-18T15:22:16.755Z",
+    "repository": "software-mansion/react-native-reanimated",
+    "learningId": "learn-github-software-mansion-react-native-reanimated",
+    "contentHash": "874993902dd0e58e571ace67862012cb443caf4cbe33171ee601f2a12a8f10c7",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

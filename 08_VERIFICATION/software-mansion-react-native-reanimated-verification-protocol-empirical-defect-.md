@@ -4,22 +4,22 @@
 {
   "source_repository": "software-mansion/react-native-reanimated",
   "source_url": "https://github.com/software-mansion/react-native-reanimated",
-  "source_version": "d7d1bc3f",
+  "source_version": "8ec64786",
   "license": "MIT",
-  "timestamp": "2026-11-17T15:43:44.051Z",
+  "timestamp": "2026-11-18T15:22:16.933Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-software-mansion-react-native-reanimated",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [software-mansion/react-native-reanimated](https://github.com/software-mansion/react-native-reanimated) (Revision: `d7d1bc3f`).  
-> **License**: MIT | **Timestamp**: `2026-11-17T15:43:44.051Z`  
+> **Provenance**: Harvested from [software-mansion/react-native-reanimated](https://github.com/software-mansion/react-native-reanimated) (Revision: `8ec64786`).  
+> **License**: MIT | **Timestamp**: `2026-11-18T15:22:16.933Z`  
 > **Learning ID**: `learn-github-software-mansion-react-native-reanimated`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `software-mansion/react-native-reanimated` (Commit: `d7d1bc3f`)
+- **Target Repository**: `software-mansion/react-native-reanimated` (Commit: `8ec64786`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/software-mansion-react-native-reanimated-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/software-mansion/react-native-reanimated](https://github.com/software-mansion/react-native-reanimated))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T15:43:42.636Z  
+> **Harvest Timestamp**: 2026-11-18T15:22:15.854Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: React Native's Animated library reimplemented
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 11077 stars
+- **Stars / Engagement**: 11080 stars
 
 ---
 
@@ -909,1218 +909,575 @@ export const getCodeWithOverrides = <C extends object, O extends object>(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2ab5c3a6` (2026-11-16)
-**Commit Message**: fix(LayoutAnimations): keep ancestor opacity and clipping during shared element transitions (#11045)
+### Incident Patch 1: `8a666116` (2026-11-17)
+**Commit Message**: fix(SET): don't crash when switching tabs before a shared element transition ends (#11371)
 
 > [!NOTE]
 > This pull request was authored by AI on behalf of @bartlomiejbloniarz.
 
 ## Summary
 
-During a shared element transition the moving view leaves its parents
-and is drawn under the root. Only the transforms of its ancestors went
-with it, so it lost their opacity and `overflow: hidden` clipping. A
-view inside a dimmed parent became fully opaque on the first frame of
-the push, and on the pop it stayed opaque until the last frame, then
-snapped back. A view inside a clipping parent flew unclipped and snapped
-back to its clipped shape at the end of the pop.
+In `[SET] Tab Navigator`, switching tabs back before the shared element
+transition ends crashed debug builds on iOS. The tab navigator hides the
+inactive tab with `display: none`, so React deletes the views of the tab
+you leave. The moving view is kept mounted until its transition ends.
+When you switch back early, React re-creates the source view with the
+same tag, and the proxy tears down the kept view. Since #11045, a view
+that an ancestor clips moves inside two clip views. Tearing it down also
+removes those clip views. The assertion in
+`LayoutAnimationsProxy::tearDown` expected exactly one Remove and one
+Delete per removed view, so it failed.
 
-Now the moving view takes the product of its ancestors' opacities at
-both ends, and the existing props diff animates it. With `fadeContent()`
-the children still fade on top of that. When an ancestor clips the view
-at either end, the view moves inside a clip view under the root. The
-clip rectangle is the intersection of the clipping ancestors' frames,
-and it animates from the source clip to the target clip as part of the
-view's own animation, so both move in step and the callback runs once.
-The moving view keeps its own coord
+The teardown itself was correct. The assertion now checks that the light
+tree lost exactly the removed views, instead of counting mutations.
+Release builds were not affected, because `react_native_assert` compiles
+out there.
 
-**File**: `apps/common-app/runtime-tests/reanimated/tests/layoutAnimations/sharedTransition.test.tsx` (modified, +338/-2)
+## Test plan
+
+- New runtime test in `sharedTransitionCarrier.test.tsx`: a source
+inside an `overflow: hidden` view is hidden with `
+
+**File**: `apps/common-app/runtime-tests/reanimated/tests/layoutAnimations/sharedTransitionCarrier.test.tsx` (modified, +57/-0)
 ```diff
-@@ -1,5 +1,6 @@
--import type { ViewStyle } from 'react-native';
--import { StyleSheet, Text, View } from 'react-native';
-+import { useEffect, type ReactNode } from 'react';
-+import type { StyleProp, ViewStyle } from 'react-native';
-+import { PixelRatio, StyleSheet, Text, View } from 'react-native';
- import type { SharedTransitionAnimationsValues } from 'react-native-reanimated';
- import Animated, {
-   FadeIn,
-@@ -8,6 +9,8 @@ import Animated, {
-   SharedTransition,
-   SharedTransitionBoundary,
-   SharedTransitionType,
-+  useAnimatedStyle,
-+  useSharedValue,
-   withTiming,
- } from 'react-native-reanimated';
- import { scheduleOnRN } from 'react-native-worklets';
-@@ -28,6 +31,11 @@ import {
-   waitForNotification,
- } from '../../../ReJest/RuntimeTestsApi';
- import { ComparisonMode } from '../../../ReJest/types';
-+import { runOnUIBlocking } from '../../../ReJest/utils/runOnUIBlocking';
-+
-+// Clip views take odd tags that end in 3, counting down from the largest tag.
-+const FIRST_CLIP_TAG = 2147483643;
-+const CLIP_TAG_RANGE = 10000;
- 
- function createTransition(
-   finished: boolean[],
-@@ -241,6 +249,118 @@ function ScreensWithoutReanimatedNativeID({
+@@ -212,6 +212,33 @@ function ChildContainer({
    );
  }
  
-+function ParentScreens({
-+  showTarget,
-+  transition,
-+  sourceParent,
-+  targetParent,
-+  targetChild = styles.fill,
-+  overflowingChild = false,
-+}: {
-+  showTarget: boolean;
-+  transition: SharedTransition;
-+  sourceParent: StyleProp<ViewStyle>;
-+  targetParent: StyleProp<ViewStyle>;
-+  targetChild?: StyleProp<ViewStyle>;
-+  overflowingChild?: boolean;
-+}) {
-+  const sourceRef = useTestRef('source');
-+  return (
-+    <View style={styles.container}>
-+      <SharedTransitionBoundary isActive={!showTarget}>
-+        <View style={sourceParent}>
-+          <Animated.View
-+            ref={sourceRef}
-+            sharedTransitionTag="box"
-+            sharedTransitionStyle={transition}
-+            style={styles.fill}>
-+            {overflowingChild && <View style={styles.overflowing} />}
-+          </Animated.View>
-+        </View>
-+      </SharedTransitionBoundary>
-+      {showTarget && (
-+        <SharedTransitionBoundary isActive>
-+          <View style={targetParent}>
-+            <Animated.View
-+              sharedTransitionTag="box"
-+              sharedTransitionStyle={transition}
-+              style={targetChild}
-+            />
-+          </View>
-+        </SharedTransitionBoundary>
-+      )}
-+    </View>
-+  );
-+}
-+
-+// The view that clips the moving view has no React ref. The view inside each clip follows it in tag order.
-+function mountedClips() {
-+  return runOnUIBlocking(() => {
-+    'worklet';
-+    const clips = [];
-+    for (let offset = 0; offset < CLIP_TAG_RANGE; offset += 10) {
-+      const props = global._obtainMountedViewProps(
-+        FIRST_CLIP_TAG - offset,
-+        false
-+      );
-+      if (props) {
-+        clips.push(props);
-+      }
-+    }
-+    return clips;
-+  });
-+}
-+
-+function FadingTargetScreens({
-+  showTarget,
++function HiddenClippedSourceScreens({
++  active,
 +  transition,
 +}: {
-+  showTarget: boolean;
++  active: boolean;
 +  transition: SharedTransition;
 +}) {
-+  const sourceRef = useTestRef('source');
++  const source = useTestRef('source');
 +  return (
 +    <View style={styles.container}>
-+      <SharedTransitionBoundary isActive={!showTarget}>
-+        <View style={styles.parent}>
++      <SharedTransitionBoundary isActive={!active}>
++        <View
++          collapsable={false}
++          style={[styles.clippingAncestor, active && { display: 'none' }]}>
 +          <Animated.View
-+            ref={sourceRef}
-+            sharedTransitionTag="box"
++            ref={source}
++            sharedTransitionTag="carrier"
 +            sharedTransitionStyle={transition}
-+            style={styles.fill}
++            style={styles.source}
 +          />
 +        </View>
 +      </SharedTransitionBoundary>
-+      {showTarget && (
-+        <SharedTransitionBoundary isActive>
-+          <FadingParent>
-+            <Animated.View
-+              sharedTransitionTag="box"
-+              sharedTransitionStyle={transition}
-+              style={styles.fill}
-+            />
-+          </FadingParent>
-+        </SharedTransitionBoundary>
-+      )}
++      <Target active={active} transition={transition} opacity={1} mounted />
 +    </View>
 +  );
 +}
 +
-+function FadingParent({ children }: { children: ReactNode }) {
-+  const opacity = useSharedValue(0);
-+  useEffect(() => {
-+    opacity.value = withTiming(1, { duration: 400 });
-+  }, [opacity]);
-+  const style = useAnimatedStyle(() => ({ opacity: opacity.value }));
-+  return (
-+    <Animated.View style={[styles.farParent, style]}>{children}</Animated.View>
-+  );
-+}
-+
-+async function mountedSourceOpacity() {
-+  return (await getTestComponent('source').getMountedViewProps())?.opacity;
-+}
-+
- async function expectMountedAtLayout(name: string, opacity: number) {
-   const component = getTestComponent(name);
-   await expectEventually(
-@@ -524,6 +644,204 @@ describe('Shared element transition between boundaries', () => {
-     ).toBe(true);
-     await expectMountedAtLayout('target', 1);
-   });
-+  test('carries the opacity of the source ancestors without a clip', async () => {
-+    const finished: boolean[] = [];
-+    const transition = createTransition(
-+      finished,
-+      SharedTransition.duration(1000)
-+    );
-+    const props = {
-+      transition,
-+      sourceParent: [styles.parent, styles.dimmed],
-+      targetParent: styles.parent,
-+    };
-+    await ren
-```
-
-**File**: `docs/docs-reanimated/docs/shared-element-transitions/custom-animations.mdx` (modified, +4/-1)
-```diff
-@@ -78,7 +78,7 @@ The worklet returns the animations directly. This is different from [custom layo
- | `currentOriginY`, `targetOriginY`             | The y coordinate of the top-left corner, in window coordinates.                                       |
- | `currentWidth`, `targetWidth`                 | The width of the view.                                                                                |
- | `currentHeight`, `targetHeight`               | The height of the view.                                                                               |
--| `currentOpacity`, `targetOpacity`             | The opacity of the view.                                                                              |
-+| `currentOpacity`, `targetOpacity`             | The opacity of the view, multiplied by the opacities of its ancestors.                                |
- | `currentBackgroundColor`, `targetBackgroundColor` | The background color.                                                                             |
- | `currentBorderRadius`, `targetBorderRadius`   | The border radius. Per-corner values, for example `currentBorderTopLeftRadius`, show when one of the views sets them. |
- | `currentBorderWidth`, `targetBorderWidth`     | The border width. Per-side values, for example `currentBorderLeftWidth`, show when one of the views sets them. |
-@@ -88,6 +88,7 @@ The worklet returns the animations directly. This is different from [custom layo
- | `currentBoxShadow`, `targetBoxShadow`         | The box shadows.                                                                                      |
- | `currentShadowColor`, `currentShadowOffset`, `currentShadowOpacity`, `currentShadowRadius` and the `target` values | The `shadow*` properties.                       |
- | `currentElevation`, `targetElevation`         | The elevation, on Android only.                                                                       |
-+| `currentClipOriginX`, `currentClipOriginY`, `currentClipWidth`, `currentClipHeight`, `currentClipBorderRadius` and the `target` values | The clip of the moving view in window coordinates: the bounds of the ancestors that clip their content, with `overflow: 'hidden'` or `'scroll'`. At an end without such an ancestor, the clip is the frame of the view, or the window when the view can draw outside its frame. They are present only when an ancestor clips either view. |
- | `windowWidth`, `windowHeight`                 | The size of the window.                                                                               |
- 
- ## Example
-@@ -126,6 +127,8 @@ const transition = SharedTransition.custom((values) => {
- 
- - The callback passed to `SharedTransition.custom` is automatically [workletized](../fundamentals/glossary.mdx#to-workletize) and runs on the [UI thread](../fundamentals/glossary.mdx#ui-thread).
- - Reanimated does not animate the properties that you do not return. Such a property keeps the value of the source view until the transition ends.
-+- The clip is an exception: when you do not return the `clip*` properties, they animate with the duration and the easing of the builder, in a straight line. If the view moves on a curve or with other timing, it can move outside of its clip. Return the `clip*` properties with the same animations as `originX`, `originY`, `width` and `height` to keep the view inside its clip.
-+- The clip uses the bounds of the clipping ancestors without their transforms, also in the default transition. If such an ancestor is transformed, the clip does not follow it on screen. For example, a rounded card scaled by a press animation gives the view corners that do not match the card, and a sheet moved with `translateY` moves away from its clip. Scale or move the shared view itself instead.
- - Animate the transform as a whole, with `transform: [{ matrix }]`. Separate transform operations, for example `transform: [{ scale: withTiming(2) }]`, are not supported.
- - The worklet controls the timing of each animation. The `.delay()` and `.withCallback()` modifiers of the builder still apply, for example `SharedTransition.custom(animation).delay(100)`.
- 
-```
-
-**File**: `packages/react-native-reanimated/Common/cpp/reanimated/LayoutAnimations/LayoutAnimationsManager.h` (modified, +12/-0)
-```diff
-@@ -24,11 +24,21 @@ using namespace facebook::react;
- using namespace worklets;
- using SharedTag = std::string;
- 
-+// The intersection of the frames of the ancestors that clip their content, in root coordinates.
-+struct AncestorClip {
-+  react::Rect frame;
-+  Float borderRadius = 0;
-+
-+  bool operator==(const AncestorClip &other) const = default;
-+};
-+
- // [0] is before and [1] is after (best to use BeforeOrAfter enum)
- struct Transition {
-   ShadowView snapshot[2];
-   Tag parentTag[2] = {0, 0};
-   std::optional<Transform> transform[2];
-+  Float ancestorOpacity[2] = {1, 1};
-+  AncestorClip clip[2];
- };
- 
- struct SharedTransitionManager {
-@@ -38,6 +48,8 @@ struct SharedTransitionManager {
-   std::unordered_map<Tag, std::string> nativeIDToName_;
-   // Odd tags that end in 7. React gives even tags to views and tags that end in 1 to surfaces.
-   Tag nextOverlayTag_{std::numeric_limits<Tag>::max()};
-+  // Odd tags that end in 3, with the content of each clip at the tag that ends in 5.
-+  Tag nextClipTag_{std::numeric_limits<Tag>::max() - 4};
-   // True while a shared transition config exists: set a name before its config, erase it after.
-   std::atomic<bool> hasNames_{false};
- 
-```
-
-**File**: `packages/react-native-reanimated/Common/cpp/reanimated/LayoutAnimations/LayoutAnimationsProxy.cpp` (modified, +8/-3)
-```diff
-@@ -473,7 +473,7 @@ void LayoutAnimationsProxy::reconcileContradictedRemovals(
-     auto update = ShadowViewMutation::UpdateMutation(
-         mounted,
-         recreated,
--        node->placement() == CarrierPlacement::AT_ROOT ? carrierHostTag(node)
-+        node->placement() == CarrierPlacement::AT_ROOT ? carrierParentTag(node)
-             : parent                                   ? parent->current.tag
-                                                        : surfaceId_);
-     if (node->state == LIVE) {
-@@ -1311,6 +1311,9 @@ void LayoutAnimationsProxy::addOngoingAnimations(TransactionMeta &transaction) c
-         layoutAnimation,
-         updateValues,
-         layoutAnimation.frameProps || layoutAnimation.type == LayoutAnimationType::EXITING));
-+    if (layoutAnimation.clip) {
-+      updateCarrierClip(tag, layoutAnimation, mutations, {surfaceId_, *contextContainer_});
-+    }
-     if (layoutAnimation.opacity &&
-         (updateValues.animatesOpacity ||
-          getViewProps(layoutAnimation.currentView).opacity == *layoutAnimation.opacity)) {
-@@ -1600,7 +1603,7 @@ void LayoutAnimationsProxy::releaseViewTransitionsOfMovedCarriers(const ShadowVi
-       const auto nodeIt = lightNodes_.find(tag);
-       if (removedFromParents.contains(tag) && nodeIt != lightNodes_.end() &&
-           nodeIt->second->placement() == CarrierPlacement::AT_ROOT &&
--          mutation.parentTag == carrierHostTag(nodeIt->second)) {
-+          mutation.parentTag == carrierParentTag(nodeIt->second)) {
-         movedToRoot.push_back(tag);
-       }
+ function observer() {
+   if (!RuntimeTestObserver) {
+     throw new Error('RuntimeTestObserver requires a runtime-test build');
+@@ -363,6 +390,35 @@ describe('Shared transition moves a real native view', () => {
      }
-@@ -1861,7 +1864,8 @@ void LayoutAnimationsProxy::startSharedTransition(
-     const ShadowView &after,
-     const Props::Shared &frameProps,
-     const std::shared_ptr<Serializable> &config,
--    const std::optional<ContentOpacityRange> contentOpacity) const {
-+    const std::optional<ContentOpacityRange> contentOpacity,
-+    const std::optional<AncestorClipRange> clip) const {
-   enqueueLayoutAnimation(ManagedLayoutAnimationStart{
-       .tag = carrier->current.tag,
-       .type = LayoutAnimationType::SHARED_ELEMENT_TRANSITION,
-@@ -1871,6 +1875,7 @@ void LayoutAnimationsProxy::startSharedTransition(
-       .parentTag = carrierParentTag(carrier),
-       .config = config,
-       .contentOpacity = contentOpacity,
-+      .clip = clip,
-   });
- }
+   );
  
-```
-
-**File**: `packages/react-native-reanimated/Common/cpp/reanimated/LayoutAnimations/LayoutAnimationsProxy.h` (modified, +76/-3)
-```diff
-@@ -87,8 +87,17 @@ enum class SharedTransitionLifecycle : std::uint8_t {
-   FINISHED,
- };
- 
-+// Clips the carrier like the ancestors of the shared views do. The content inside the clip cancels its offset, so the
-+// carrier keeps the frames of its host.
-+struct CarrierClip {
-+  ShadowView view;
-+  ShadowView content;
-+  AncestorClipRange range;
-+};
++  recreateChildTest(
++    'tears down a clipped carrier when React recreates its tag',
++    async () => {
++      await mockAnimationTimer({ autoAdvance: false });
++      const transition = transitionWithNotification(4000);
++      await render(
++        <HiddenClippedSourceScreens active={false} transition={transition} />
++      );
++      await waitForFrames();
++      const sourceTag = getTestComponent('source').getTag();
 +
- // The carrier is the view that the run animates, moved from its parent to the carrier layer of its layout root for the
- // time of the run. A new run moves its source. A run that reverses keeps its carrier, which is then its target.
-+// When an ancestor of either end clips the view, a carrier in a carrier layer moves inside a clip.
- struct SharedTransitionRun {
-   // The run reports this callback once, when it ends. It gets true only when the run lands.
-   std::shared_ptr<Serializable> callback;
-@@ -115,6 +124,10 @@ struct SharedTransitionRun {
-   std::optional<bool> targetPlacedNatively;
-   std::chrono::steady_clock::time_point targetWindowDeadline;
-   bool restoreCarrierOnFinish = false;
-+  std::optional<CarrierClip> clip;
-+  bool sourceDrawsWithinFrame = false;
-+  // The opacity of the ancestors of the target that the end of the run has. A built-in run follows its changes.
-+  Float targetAncestorOpacity = 1;
- 
-   bool holdsStart() const {
-     return targetOffWindow && !followsTarget;
-@@ -194,6 +207,9 @@ struct Ancestor {
-   Transform transform;
-   TransformOrigin origin;
-   react::Size ownSize;
-+  Float opacity = 1;
-+  bool clipsContent = false;
-+  Float borderRadius = 0;
-   // The rotation, scale and skew of the native views between the node and its React parent.
-   std::optional<Transform> nativeTransform;
- };
-@@ -349,7 +365,8 @@ struct LayoutAnimationsProxy : public LayoutAnimationsProxyCommon {
-       const ShadowView &after,
-       const Props::Shared &frameProps,
-       const std::shared_ptr<Serializable> &config,
--      std::optional<ContentOpacityRange> contentOpacity) const;
-+      std::optional<ContentOpacityRange> contentOpacity,
-+      std::optional<AncestorClipRange> clip = std::nullopt) const;
-   std::optional<ContentOpacityRange> restartContentFade(SharedTransitionRun &run) const;
-   double contentOpacityOnScreen(const SharedTransitionRun &run) const;
-   std::vector<std::shared_ptr<LightNode>> fadingChildren(
-@@ -605,6 +622,13 @@ struct LayoutAnimationsProxy : public LayoutAnimationsProxyCommon {
-       ShadowViewMutationList &rootMutations) const;
-   int carrierHostIndex(const std::shared_ptr<LightNode> &node) const;
-   Tag carrierHostTag(const std::shared_ptr<LightNode> &node) const;
-+  void insertCarrierIntoHost(const SharedTransitionRun &run, const ShadowView &view, ShadowViewMutationList &mutations)
-+      const;
-+  void removeCarrierFromHost(
-+      const SharedTransitionRun &run,
-+      const ShadowView &mounted,
-+      ShadowViewMutationList &removals,
-+      ShadowViewMutationList &deletes) const;
-   void ensureCarrierLayer(
-       const std::shared_ptr<LightNode> &host,
-       ShadowViewMutationList &mutations,
-@@ -621,11 +645,18 @@ struct LayoutAnimationsProxy : public LayoutAnimationsProxyCommon {
-       const SharedTag &sharedTag,
-       TransactionMeta &transaction,
-       const PropsParserContext &propsParserContext) const;
--  ShadowView targetOnScreen(const SharedTransitionRun &run, const PropsParserContext &propsParserContext) const;
-   ShadowView targetOnScreen(
-       const SharedTransitionRun &run,
-       const PropsParserContext &propsParserContext,
--      bool &placedNatively) const;
-+      AncestorClip *clip = nullptr) const;
-+  ShadowView targetOnScreen(
-+      const SharedTransitionRun &run,
-+      const PropsParserContext &propsParserContext,
-+      bool &placedNatively,
-+      AncestorClip *clip = nullptr,
-+      Float *ancestorOpacity = nullptr) const;
-+  AncestorClip fitTargetClip(const SharedTransitionRun &run, const ShadowView &target, const AncestorClip &clip) const;
-+  bool followsClipTarget(SharedTransitionRun &run, const AncestorClip &clip) const;
-   void followOffWindowTargets(TransactionMeta &transaction, const PropsParserContext &propsParserContext) const;
-   void followProgressTargets(const PropsParserContext &propsParserContext) const;
-   const LayoutAnimation &carrierAnimation(const SharedTransitionRun &run) const;
-@@ -662,8 +693,15 @@ struct LayoutAnimationsProxy : public LayoutAnimationsProxyCommon {
-       const std::shared_ptr<LightNode> &node,
-       bool useViewsOnScreen) const;
- 
-+  SharedTransitionRun *continueSharedTransitionRun(
-+      const SharedTag &sharedTag,
-+      const std::array<std::shared_ptr<LightNode>, 2> &nodes,
-+      TransactionMeta &transaction,
-+      const PropsParserContext &propsParserContext) const;
-   SharedTransitionRun &startSharedTransitionRun(
-       const ShadowView &before,
-+      const AncestorClip *clip,
-+      bool sourceDrawsWithinFrame,
-       const SharedTag &sharedTag,
-       const std::array<std::shared_ptr<LightNode>, 2> &nodes,
-       const std::shared_
-```
-
-**File**: `packages/react-native-reanimated/Common/cpp/reanimated/LayoutAnimations/LayoutAnimationsProxyCommon.cpp` (modified, +66/-9)
-```diff
-@@ -13,10 +13,13 @@
- #include <reanimated/LayoutAnimations/SharedTransitionValuesFactory.h>
- 
- #include <algorithm>
-+#include <array>
-+#include <cctype>
- #include <cstring>
- #include <iterator>
- #include <memory>
- #include <optional>
-+#include <string>
- #include <type_traits>
- #include <unordered_set>
- #include <utility>
-@@ -33,18 +36,57 @@ void assertUpdatesRegistryUnlocked() {
- namespace {
- constexpr auto kContentOpacity = "contentOpacity";
- constexpr auto kGeometryProgress = "sharedTransitionGeometryProgress";
-+constexpr std::array kClipKeys{"clipOriginX", "clipOriginY", "clipWidth", "clipHeight", "clipBorderRadius"};
++      await render(
++        <HiddenClippedSourceScreens active transition={transition} />
++      );
++      await waitForFrames(3);
++      await advanceAnimationTimer(500);
++      expect(await isViewMountedNatively(sourceTag)).toBe(true);
 +
-+// The values name each style key after the end, for example currentClipOriginX.
-+void setClip(jsi::Runtime &runtime, const jsi::Object &values, const std::string &end, const AncestorClip &clip) {
-+  const auto &[origin, size] = clip.frame;
-+  const std::array clipValues{origin.x, origin.y, size.width, size.height, clip.borderRadius};
-+  for (size_t i = 0; i < kClipKeys.size(); i++) {
-+    const std::string key = kClipKeys[i];
-+    const auto name = end + static_cast<char>(std::toupper(key[0])) + key.substr(1);
-+    values.setProperty(runtime, name.c_str(), clipValues[i]);
-+  }
-+}
-+
-+// A frame animates only the keys whose ends differ, so the other keys keep their values. A spring can overshoot below
-+// zero.
-+AncestorClip readClip(jsi::Runtime &runtime, const jsi::Object &style, const AncestorClip &clip) {
-+  const auto &[origin, size] = clip.frame;
-+  std::array<Float, kClipKeys.size()> clipValues{origin.x, origin.y, size.width, size.height, clip.borderRadius};
-+  for (size_t i = 0; i < kClipKeys.size(); i++) {
-+    if (style.hasProperty(runtime, kClipKeys[i])) {
-+      clipValues[i] = static_cast<Float>(style.getProperty(runtime, kClipKeys[i]).asNumber());
++      await render(
++        <HiddenClippedSourceScreens active={false} transition={transition} />
++      );
++      await waitForFrames(3);
++      expect(getTestComponent('source').getTag()).toBe(sourceTag);
++      await advanceAnimationTimer(4000);
++      await waitForNotification('carrier-finished');
++      await expectAtHome('source', 60, 1);
 +    }
-+  }
-+  const auto [x, y, width, height, borderRadius] = clipValues;
-+  return {
-+      .frame = {.origin = {x, y}, .size = {std::max<Float>(width, 0), std::max<Float>(height, 0)}},
-+      .borderRadius = std::max<Float>(borderRadius, 0),
-+  };
-+}
++  );
 +
-+bool isCarrierKey(const std::string &name) {
-+  return name == kContentOpacity || std::ranges::find(kClipKeys, name) != kClipKeys.end();
-+}
-+
-+SharedTransitionGeometry interpolateGeometryOf(const LayoutAnimation &animation) {
-+  const auto baseOpacity = std::static_pointer_cast<const ViewProps>(animation.framePropsBase())->opacity;
-+  return interpolateSharedTransitionGeometry(
-+      animation.startView, animation.finalView, *animation.geometryProgress, baseOpacity);
-+}
- 
- ShadowView withProps(ShadowView view, const Props::Shared &props) {
-   view.props = props;
-   return view;
- }
- 
--jsi::Object withoutProperty(jsi::Runtime &runtime, const jsi::Object &object, const std::string &excluded) {
-+jsi::Object withoutCarrierKeys(jsi::Runtime &runtime, const jsi::Object &object) {
-   jsi::Object copy(runtime);
-   const auto names = object.getPropertyNames(runtime);
-   for (size_t i = 0; i < names.size(runtime); i++) {
-     const auto name = names.getValueAtIndex(runtime, i).getString(runtime);
--    if (name.utf8(runtime) != excluded) {
-+    if (!isCarrierKey(name.utf8(runtime))) {
-       copy.setProperty(
-           runtime,
-           jsi::PropNameID::forString(runtime, name),
-@@ -55,6 +97,11 @@ jsi::Object withoutProperty(jsi::Runtime &runtime, const jsi::Object &object, co
- }
- } // namespace
- 
-+void setClipValues(jsi::Runtime &runtime, const jsi::Object &values, const AncestorClipRange &clip) {
-+  setClip(runtime, values, "current", clip.from);
-+  setClip(runtime, values, "target", clip.to);
-+}
-+
- #ifdef ANDROID
- namespace {
- const ShadowNode *findShadowNode(const ShadowNode &node, const Tag tag) {
-@@ -157,8 +204,12 @@ std::optional<SurfaceId> LayoutAnimationsProxyCommon::progressLayoutAnimation(
-   if (animatesContentOpacity) {
-     layoutAnimation.contentOpacity = std::clamp(newStyle.getProperty(uiRuntime_, kContentOpacity).asNumber(), 0.0, 1.0);
-   }
--  const auto viewStyle = animatesContentOpacity ? withoutProperty(uiRuntime_, newStyle, kContentOpacity)
--                                                : jsi::Value(uiRuntime_, newStyle).asObject(uiRuntime_);
-+  const bool animatesClip = layoutAnimation.clip.has_value();
-+  if (animatesClip) {
-+    layoutAnimation.clip = readClip(uiRuntime_, newStyle, *layoutAnimation.clip);
-+  }
-+  const auto viewStyle = animatesContentOpacity || animatesClip ? withoutCarrierKeys(uiRuntime_, newStyle)
-+                                                                : jsi::Value(uiRuntime_, newStyle).asObject(uiRuntime_);
- 
- #ifdef ANDROID
-   auto style = jsi::dynamicFromValue(uiRuntime_, jsi::Value(uiRuntime_, viewStyle));
-@@ -211,8 +262,7 @@ std::optional<SurfaceId> LayoutAnimationsProxyCommon::progressSharedTransitionGe
-   if (animation->opacity && !animatesOpacity) {
-     style["opacity"] = *animation->opacity;
-   }
--  auto geometry =
--      interpolateSharedTransitionGeometry(animation->startView, animation->finalView, *animation->geometryPro
+   test('moves the source with its untagged child and keeps the target hidden', async () => {
+     await mockAnimationTimer({ autoAdvance: false });
+     const transition = transitionWithNotification();
+@@ -881,4 +937,5 @@ const styles = StyleSheet.create({
+     backgroundColor: '#2277dd',
+   },
+   child: { width: 20, height: 15, backgroundColor: '#ffffff' },
++  clippingAncestor: { width: 40, height: 40, overflow: 'hidden' },
+ });
 ```
 
-**File**: `packages/react-native-reanimated/Common/cpp/reanimated/LayoutAnimations/LayoutAnimationsProxyCommon.h` (modified, +13/-1)
+**File**: `packages/react-native-reanimated/Common/cpp/reanimated/LayoutAnimations/LayoutAnimationsProxy.cpp` (modified, +2/-2)
 ```diff
-@@ -43,6 +43,15 @@ struct SentFrame {
- };
- #endif
- 
-+// The clip of a shared transition carrier moves with the carrier.
-+struct AncestorClipRange {
-+  AncestorClip from;
-+  AncestorClip to;
-+};
-+
-+// Writes currentClip* and targetClip* to the values of a shared transition.
-+void setClipValues(jsi::Runtime &runtime, const jsi::Object &values, const AncestorClipRange &clip);
-+
- struct LayoutAnimation {
-   // On Android, the props of currentView can hold only the props that the last frame changed. Read currentView with
-   // LayoutAnimationsProxyCommon::currentViewOf.
-@@ -60,6 +69,7 @@ struct LayoutAnimation {
- #ifdef ANDROID
-   std::optional<SentFrame> sentFrame;
- #endif
-+  std::optional<AncestorClip> clip;
-   LayoutAnimation &operator=(const LayoutAnimation &other) = default;
- 
-   const Props::Shared &framePropsBase() const {
-@@ -89,6 +99,7 @@ struct ManagedLayoutAnimationStart {
-   std::optional<double> opacity;
-   std::shared_ptr<Serializable> config;
-   std::optional<ContentOpacityRange> contentOpacity;
-+  std::optional<AncestorClipRange> clip;
-   // A shared transition content fade-in gets the target opacity of the view.
-   bool isContentFadeIn = false;
- };
-@@ -205,7 +216,8 @@ class LayoutAnimationsProxyCommon : public facebook::react::MountingOverrideDele
-       const ShadowView &finalView,
-       const Props::Shared &frameProps,
-       const std::shared_ptr<Serializable> &config = nullptr,
--      std::optional<ContentOpacityRange> contentOpacity = std::nullopt) const;
-+      std::optional<ContentOpacityRange> contentOpacity = std::nullopt,
-+      std::optional<AncestorClipRange> clip = std::nullopt) const;
-   std::shared_ptr<Serializable> getRetargetLayoutAnimationConfig(Tag tag) const;
-   bool updateEnteringAnimationTarget(Tag tag, const ShadowView &finalView) const;
-   std::optional<ShadowView> takeCompletedLayoutAnimationView(Tag tag) const;
+@@ -1237,12 +1237,12 @@ void LayoutAnimationsProxy::tearDown(const std::unordered_set<Tag> &removals, Sh
+       roots.push_back(node);
+     }
+   }
+-  [[maybe_unused]] const auto mutationCount = mutations.size();
++  [[maybe_unused]] const auto lightNodeCount = lightNodes_.size();
+   for (const auto &root : roots) {
+     endAnimationsRecursively(root, mutations, mutations);
+   }
+   react_native_assert(
+-      mutations.size() - mutationCount == 2 * removals.size() &&
++      lightNodeCount - lightNodes_.size() == removals.size() &&
+       std::ranges::none_of(removals, [this](const Tag tag) { return lightNodes_.contains(tag); }) &&
+       "The teardown must remove exactly the removals");
+ }
 ```
 
-**File**: `packages/react-native-reanimated/Common/cpp/reanimated/LayoutAnimations/SharedTransitionGeometry.cpp` (modified, +14/-8)
+**File**: `packages/react-native-reanimated/changelog/shared-transition-recreated-clipped-carrier.fix.md` (added, +1/-0)
 ```diff
-@@ -20,21 +20,27 @@ std::array<double, 3> transformOriginInPoints(const ShadowView &view);
- double interpolate(double from, double to, double progress);
- } // namespace
- 
--SharedTransitionGeometry
--interpolateSharedTransitionGeometry(const ShadowView &start, const ShadowView &target, const double progress) {
-+SharedTransitionGeometry interpolateSharedTransitionGeometry(
-+    const ShadowView &start,
-+    const ShadowView &target,
-+    const double progress,
-+    const Float baseOpacity) {
-   const auto matrix = interpolateMatrix(resolvedMatrix(start), resolvedMatrix(target), progress);
-   const auto startOrigin = transformOriginInPoints(start);
-   const auto targetOrigin = transformOriginInPoints(target);
-   auto origin = folly::dynamic::array();
-   for (size_t i = 0; i < startOrigin.size(); ++i) {
-     origin.push_back(interpolate(startOrigin[i], targetOrigin[i], progress));
-   }
--  return {
--      .frame = interpolateFrame(start, target, progress),
--      .props = folly::dynamic::object(
--          "transform", folly::dynamic::array(folly::dynamic::object("matrix", matrix.toDynamic())))(
--          "transformOrigin", std::move(origin)),
--  };
-+  folly::dynamic props =
-+      folly::dynamic::object("transform", folly::dynamic::array(folly::dynamic::object("matrix", matrix.toDynamic())))(
-+          "transformOrigin", std::move(origin));
-+  const auto startOpacity = getViewProps(start).opacity;
-+  const auto targetOpacity = getViewProps(target).opacity;
-+  if (startOpacity != targetOpacity || baseOpacity != targetOpacity) {
-+    props["opacity"] = std::clamp(interpolate(startOpacity, targetOpacity, progress), 0.0, 1.0);
-+  }
-+  return {.frame = interpolateFrame(start, target, progress), .props = std::move(props)};
- }
- 
- namespace {
+@@ -0,0 +1 @@
++Fix a debug assertion crash when React re-creates a shared view whose transition clips it, for example when switching tabs before the transition ends.
 ```
 
 ---
 
-### Incident Patch 2: `d7d1bc3f` (2026-11-17)
-**Commit Message**: fix(Worklets): use React Native's clock for performance.now on Worklet Runtimes (#11156)
+### Incident Patch 2: `2e763219` (2026-11-18)
+**Commit Message**: test(Worklets): run a headless suite in a process without an Activity on Android (#11405)
 
 > [!NOTE]
 > This pull request was authored by AI on behalf of @tjzel.
 
-## Human track
+## Summary
 
-### Why
+### Human track
 
-Bug fix. On Apple, `performance.now()` on Worklet Runtimes did not match
-`performance.now()` on the React Native Runtime. Worklets used
-`std::chrono::steady_clock`, which keeps counting while the device
-sleeps. React Native uses `mach_absolute_time()`, which stops during
-sleep. So the two values differed by the total sleep time since boot. On
-a test Mac the difference was about 162,000,000 ms (45 h). Android was
-not affected.
+#### Why
 
-### How
+No test runs the UI Runtime in a process that has no Activity. #11400
+changes what the frame queue does in such a process, and the tests of
+#11373 run inside the test app, which always has an Activity. A review
+of #11400 and #11373 named this as a coverage gap.
+
+#### How
+
+The driver gets the flag `--headless-task` (Android, `worklets` only):
 
 ```
-performance.now()       Apple: mach_absolute_time() × timebase   (same as React Native)
-                        other: std::chrono::steady_clock         (unchanged)
-
-UI setTimeout polyfill  Apple: wall clock      (same as RCTTiming, NSDate deadlines)
-                        other: steady_clock    (same as JavaTimerManager, System.nanoTime)
+driver: am force-stop, then am startservice RuntimeTestsHeadlessTaskService
+  -> the process starts with no Activity
+  -> the headless JS task runs the ReJest runner without a React root
+  -> the runner reports to the driver over the same WebSocket as a normal run
 ```
 
-- Worklets computes the clock itself, with the same steps as React
-Native's `HighResTimeStamp::now()`. It does not include React Native's
-timing header.
-- The UI Runtime `setTimeout` polyfill used `performance.now()`. With
+- The run uses a separate list of suites, `worklets/headlessSuites.ts`.
+It has one suite now, `headless cold start`, with two tests: the process
+has no Activity, and `requestAnimationFrame` and `setTimeout` fire on
+the UI Runtime.
+- Android refuses a service start for an app in the background. The
+driver gives the app a temporary power-save exemption (`cmd deviceidle
+tempwhitel
 
-
-**File**: `apps/common-app/runtime-tests/worklets/suites.ts` (modified, +1/-0)
+**File**: `.github/workflows/runtime-tests-android.yml` (modified, +1/-0)
 ```diff
-@@ -55,6 +55,7 @@ export const WORKLETS_TEST_SUITES: RuntimeTestSuite[] = [
-       require('./tests/runtimes/scheduleOnRuntimeWithId.test');
-       require('./tests/runtimes/microtaskDrains.test');
-       require('./tests/runtimes/weakRef.test');
-+      require('./tests/runtimes/performanceNow.test');
-     },
-   },
-   {
+@@ -145,6 +145,7 @@ jobs:
+             echo "::group::ReJest self-tests"; node --experimental-strip-types scripts/runtime-tests-server.mts $RUNTIME_TESTS_ARGS --library self-tests; status=$?; echo "::endgroup::"; exit $status
+             echo "::group::Verify CI catches failing tests"; if RUNTIME_TESTS_CI_REPORT=0 node --experimental-strip-types scripts/runtime-tests-server.mts $RUNTIME_TESTS_ARGS --library self-tests --only "intentional failures"; then echo "A failing suite did not fail the runner"; status=1; else echo "Failing tests correctly failed the runner"; status=0; fi; echo "::endgroup::"; exit $status
+             echo "::group::Worklets runtime tests"; node --experimental-strip-types scripts/runtime-tests-server.mts $RUNTIME_TESTS_ARGS --library worklets; status=$?; echo "::endgroup::"; exit $status
++            echo "::group::Worklets runtime tests in a headless JS task"; node --experimental-strip-types scripts/runtime-tests-server.mts $RUNTIME_TESTS_ARGS --library worklets --headless-task; status=$?; echo "::endgroup::"; exit $status
+             echo "::group::Reanimated runtime tests"; node --experimental-strip-types scripts/runtime-tests-server.mts $RUNTIME_TESTS_ARGS --library reanimated; status=$?; echo "::endgroup::"; exit $status
+ 
+       - name: Show disk usage
 ```
 
-**File**: `apps/common-app/runtime-tests/worklets/tests/runtimes/performanceNow.test.tsx` (added, +54/-0)
+**File**: `AGENTS.md` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,54 @@
-+import { Platform } from 'react-native';
-+import { runOnRuntimeSync, runOnUISync } from 'react-native-worklets';
+@@ -104,7 +104,7 @@ clang++ -std=c++20 -fsyntax-only -I Common/cpp -I $RN/ReactCommon/jsi -I $RN/Rea
+ yarn workspace fabric-example runtime-tests --library worklets --platform ios --udid <udid>
+ ```
+ 
+-- `--library` takes `reanimated`, `worklets` or `self-tests`. `--platform` takes `ios` or `android`, with the device given by `--udid`, `--serial` or `--avd`. `--configuration` takes `Debug` (the default, the same build as a normal Debug build) or `ReleaseRuntimeTests`. Other flags: `--only suiteA,suiteB`, `--skip-build`, `--metro-port N`, `--port N`, `--full`. Without `--full` a run uses the short variants that PR CI runs: fewer GC-loop iterations, a subset of the execution-order matrix and, in Legacy Eval, a subset of the Reanimated suites. The nightlies pass `--full`.
++- `--library` takes `reanimated`, `worklets` or `self-tests`. `--platform` takes `ios` or `android`, with the device given by `--udid`, `--serial` or `--avd`. `--configuration` takes `Debug` (the default, the same build as a normal Debug build) or `ReleaseRuntimeTests`. Other flags: `--only suiteA,suiteB`, `--skip-build`, `--metro-port N`, `--port N`, `--full`. `--headless-task` (Android, `worklets` only) runs the suites of `apps/common-app/runtime-tests/worklets/headlessSuites.ts` in a headless JS task of a process that has no Activity. Without `--full` a run uses the short variants that PR CI runs: fewer GC-loop iterations, a subset of the execution-order matrix and, in Legacy Eval, a subset of the Reanimated suites. The nightlies pass `--full`.
+ - The reporting port defaults to the Metro port plus one (8082 for Release, which embeds the bundle and runs no Metro). The driver hands the resulting `ws://127.0.0.1:<port>` to the app at launch as `RUNTIME_TESTS_WS_URL` (iOS process env, Android intent extra), so `--port` works for Release builds too. `--skip-build` installs whatever is already built for that configuration. iOS builds use the Derived Data location from Xcode's settings. A build for a simulator compiles only its architecture, and `--build-only` without `--udid` builds every simulator architecture. `--help` lists everything. Approximate durations: self-tests under a minute, worklets about 1 minute, reanimated about 2 minutes.
+ - ReJest semantics: `mockAnimationTimer()` advances 16 ms per real frame, `mockAnimationTimer(false)` holds a nonzero time until `advanceAnimationTimer(ms)` adds it and waits 3 frames (a spring takes at most 64 ms per frame), `wait()` is real time, `waitForNotification` is the idiom for "animation finished", `toThrow` matches substrings, `toMatchNativeSnapshots` compares against pixel-grid-rounded native metrics with a 0.5 dp tolerance. Suites are `__DEV__`-gated inconsistently, so a `__DEV__`-only assertion can fail only in the Release nightly. Android emulators need GPU acceleration (`hw.gpu.mode=host`) or mocked-clock tests time out.
+ - CI: `*-static-checks.yml`, `runtime-tests-{ios,android,nightly,sanitizers-nightly}.yml`, `{android,apple}-validation.yml`, `changelog-check.yml`, `yarn-validation.yml`, example build checks, docs build and publish, `npm-*-publish*.yml`.
+```
+
+**File**: `apps/common-app/runtime-tests/ReJest/AutoRunRuntimeTestsRunner.tsx` (modified, +3/-26)
+```diff
+@@ -9,6 +9,7 @@ import { setFullRun } from './utils/fullRun';
+ import { applyIsolationCheck } from './utils/isolationCheck';
+ import { runWithRemoteReporter } from './utils/remoteReporter';
+ import { RenderLock } from './utils/RenderLock';
++import { declareSuites, selectSuitesToRun } from './utils/suiteSelection';
+ 
+ // IMPORTANT: do not statically import `./RuntimeTestsApi` or anything else that pulls in
+ // react-native-reanimated. The framework is loaded lazily once the host sends `start`, so
+@@ -54,42 +55,18 @@ export default function AutoRunRuntimeTestsRunner({
+   useEffect(() => {
+     let cancelled = false;
+ 
+-    const declaredSuites = tests.map((test) => ({
+-      name: test.testSuiteName,
+-      skipByDefault: !!test.skipByDefault,
+-      fullRunOnly: !!test.fullRunOnly,
+-      disabled: !!test.disabled,
+-    }));
+-
+     const teardown = runWithRemoteReporter({
+       wsUrl: autoRun.wsUrl,
+       library,
+-      declaredSuites,
++      declaredSuites: declareSuites(tests),
+       onStatus: (message) => {
+         if (!cancelled) {
+           setStatus(message);
+         }
+       },
+       onStart: async ({ only, full, reportSuiteFinished, requestReload }) => {
+         setFullRun(!!full);
+-        const filterSet = only ? new Set(only) : null;
+-        const selected = tests.filter((test) => {
+-          if (test.disabled) {
+-            return false;
+-          }
+-          if (filterSet) {
+-            return filterSet.has(test.testSuiteName);
+-          }
+-          return !test.skipByDefault && (!!full || !test.fullRunOnly);
+-        });
+-
+-        const known = new Set(tests.map((test) => test.testSuiteName));
+-        const unknown = [...(filterSet ?? [])].filter(
+-          (name) => !known.has(name)
+-        );
+-        if (unknown.length > 0) {
+-          throw new Error(`Unknown test suites: ${unknown.join(', ')}`);
+-        }
++        const selected = selectSuitesToRun(tests, only, full);
+ 
+         const { configure, importRuntimeTestSuite, runTests } =
+           require('./RuntimeTestsApi') as {
+```
+
+**File**: `apps/common-app/runtime-tests/ReJest/HeadlessRuntimeTestsRunner.ts` (added, +89/-0)
+```diff
+@@ -0,0 +1,89 @@
++/* eslint-disable @typescript-eslint/no-var-requires */
++import { AppRegistry } from 'react-native';
 +
-+import {
-+  describe,
-+  expect,
-+  getWorkletRuntimesFromPool,
-+  test,
-+} from '../../../ReJest/RuntimeTestsApi';
++import type { RuntimeTestSuite } from '../types';
++import type { TestConfiguration, TestRunSummary } from './types';
++import { setFullRun } from './utils/fullRun';
++import { applyIsolationCheck } from './utils/isolationCheck';
++import { runWithRemoteReporter } from './utils/remoteReporter';
++import type { RenderLock } from './utils/RenderLock';
++import { deriveWsUrl, setWsUrlOverride } from './utils/serverUrl';
++import { declareSuites, selectSuitesToRun } from './utils/suiteSelection';
 +
-+describe('performance.now', () => {
-+  const [workletRuntime] = getWorkletRuntimesFromPool(1);
++const HEADLESS_RUN_TASK_KEY = 'RuntimeTestsHeadlessRun';
 +
-+  test('uses the same clock on the UI Runtime as on the RN Runtime', () => {
-+    const rnBefore = performance.now();
-+    const uiNow = runOnUISync(() => {
-+      'worklet';
-+      return performance.now();
++interface HeadlessRuntimeTestsOptions {
++  tests: RuntimeTestSuite[];
++  library: string;
++  forbidReanimated?: boolean;
++}
++
++interface HeadlessRunTaskData {
++  wsUrl?: string;
++}
++
++/**
++ * Registers the headless JS task that runs `tests` without a React root and
++ * reports to the runtime tests server. `RuntimeTestsHeadlessTaskService` of
++ * FabricExample starts it on Android.
++ *
++ * Like `AutoRunRuntimeTestsRunner`, this file must not statically import
++ * `./RuntimeTestsApi` or anything else that pulls in react-native-reanimated.
++ */
++export function registerHeadlessRuntimeTests(
++  options: HeadlessRuntimeTestsOptions
++) {
++  AppRegistry.registerHeadlessTask(
++    HEADLESS_RUN_TASK_KEY,
++    () => (data) =>
++      runHeadlessRuntimeTests(options, data as HeadlessRunTaskData)
++  );
++}
++
++function runHeadlessRuntimeTests(
++  { tests, library, forbidReanimated }: HeadlessRuntimeTestsOptions,
++  { wsUrl }: HeadlessRunTaskData
++): Promise<void> {
++  if (wsUrl) {
++    setWsUrlOverride(wsUrl);
++  }
++  return new Promise((resolve) => {
++    runWithRemoteReporter({
++      wsUrl: deriveWsUrl(),
++      library,
++      declaredSuites: declareSuites(tests),
++      onStatus: () => {},
++      onFinished: resolve,
++      onStart: async ({ only, full, reportSuiteFinished, requestReload }) => {
++        setFullRun(!!full);
++        const selected = selectSuitesToRun(tests, only, full);
++
++        const { configure, importRuntimeTestSuite, runTests } =
++          require('./RuntimeTestsApi') as {
++            configure: (config: TestConfiguration) => RenderLock;
++            importRuntimeTestSuite: (
++              name: string,
++              importTest: () => void
++            ) => void;
++            runTests: () => Promise<TestRunSummary>;
++          };
++
++        selected.forEach((test) =>
++          importRuntimeTestSuite(test.testSuiteName, test.importTest)
++        );
++        let renderLock: RenderLock | null = null;
++        renderLock = configure({
++          render: () => renderLock?.unlock(),
++          onProgress: () => {},
++          onSuiteFinished: reportSuiteFinished,
++          onReloadRequested: (resumeFromSuite, summarySoFar) =>
++            requestReload(
++              resumeFromSuite,
++              applyIsolationCheck(summarySoFar, !!forbidReanimated)
++            ),
++        });
++        return applyIsolationCheck(await runTests(), !!forbidReanimated);
++      },
 +    });
-+    const rnAfter = performance.now();
-+
-+    expect(uiNow).toBeWithinRange(rnBefore, rnAfter);
 +  });
-+
-+  test('uses the same clock on a Worker Runtime as on the RN Runtime', () => {
-+    const rnBefore = performance.now();
-+    const workerNow = runOnRuntimeSync(workletRuntime, () => {
-+      'worklet';
-+      return performance.now();
-+    });
-+    const rnAfter = performance.now();
-+
-+    expect(workerNow).toBeWithinRange(rnBefore, rnAfter);
-+  });
-+});
-+
-+describe('UI Runtime timer clock', () => {
-+  test('uses the clock of React Native timers on this platform', () => {
-+    const readRNClock =
-+      Platform.OS === 'android' ? () => performance.now() : () => Date.now();
-+    const rnBefore = Math.floor(readRNClock());
-+    const timerNow = runOnUISync(() => {
-+      'worklet';
-+      return globalThis._getTimerTimestamp();
-+    });
-+    const rnAfter = Math.floor(readRNClock()) + 1;
-+
-+    expect(timerNow).toBeWithinRange(rnBefore, rnAfter);
-+  });
-+});
-+
-+declare global {
-+  var _getTimerTimestamp: () => number;
 +}
 ```
 
-**File**: `packages/react-native-worklets/Common/cpp/worklets/WorkletRuntime/WorkletRuntimeDecorator.cpp` (modified, +29/-5)
+**File**: `apps/common-app/runtime-tests/ReJest/native/NativeRuntimeTestObserver.ts` (modified, +2/-0)
 ```diff
-@@ -20,6 +20,7 @@
- #endif
+@@ -84,6 +84,8 @@ export interface Spec extends TurboModule {
+   waitForHeadlessTaskFinish(taskId: CodegenTypes.Int32): Promise<void>;
  
- #if defined(__APPLE__)
-+#include <mach/mach_time.h>
- #include <os/trace_base.h>
- #if OS_LOG_TARGET_HAS_10_15_FEATURES
- #include <os/log.h>
-@@ -28,6 +29,7 @@
- #endif
- 
- #include <chrono>
-+#include <cstdint>
- #include <memory>
- #include <string>
- #include <utility>
-@@ -47,13 +49,32 @@ static os_log_t getWorkletsInstrumentsLogHandle() {
- 
- namespace worklets {
- 
-+#ifdef __APPLE__
-+static double getMachTimebaseConversionFactor() {
-+  mach_timebase_info_data_t info;
-+  mach_timebase_info(&info);
-+  return static_cast<double>(info.numer) / info.denom;
-+}
-+#endif
+   delay(milliseconds: CodegenTypes.Int32): Promise<void>;
 +
- static inline double performanceNow() {
--  // copied from JSExecutor.cpp
--  auto time = std::chrono::steady_clock::now();
--  auto duration = std::chrono::duration_cast<std::chrono::nanoseconds>(time.time_since_epoch()).count();
-+#ifdef __APPLE__
-+  static const double conversionFactor = getMachTimebaseConversionFactor();
-+  const auto nanoseconds = static_cast<int64_t>(static_cast<double>(mach_absolute_time()) * conversionFactor);
-+#else
-+  const auto nanoseconds =
-+      std::chrono::duration_cast<std::chrono::nanoseconds>(std::chrono::steady_clock::now().time_since_epoch()).count();
-+#endif
-+  return std::chrono::duration<double, std::milli>(std::chrono::nanoseconds(nanoseconds)).count();
-+}
- 
--  constexpr double NANOSECONDS_IN_MILLISECOND = 1000000.0;
--  return duration / NANOSECONDS_IN_MILLISECOND;
-+static inline double getTimerTimestamp() {
-+#ifdef __APPLE__
-+  const auto time = std::chrono::system_clock::now().time_since_epoch();
-+#else
-+  const auto time = std::chrono::steady_clock::now().time_since_epoch();
-+#endif
-+  return std::chrono::duration<double, std::milli>(time).count();
++  hasCurrentActivity(): Promise<boolean>;
  }
  
- void WorkletRuntimeDecorator::decorate(
-@@ -203,6 +224,9 @@ void WorkletRuntimeDecorator::decorate(
-           }));
-   rt.global().setProperty(rt, "performance", performance);
+ export default TurboModuleRegistry.get<Spec>('RuntimeTestObserver');
+```
+
+**File**: `apps/common-app/runtime-tests/ReJest/utils/remoteReporter.ts` (modified, +5/-0)
+```diff
+@@ -30,6 +30,8 @@ export interface RemoteReporterOptions {
+   library: string;
+   declaredSuites: DeclaredSuite[];
+   onStatus: (message: string) => void;
++  /** Called once, when the connection to the server has ended. */
++  onFinished?: () => void;
+   onStart: (params: {
+     only?: string[];
+     full?: boolean;
+@@ -74,6 +76,7 @@ export function runWithRemoteReporter({
+   library,
+   declaredSuites,
+   onStatus,
++  onFinished,
+   onStart,
+ }: RemoteReporterOptions): () => void {
+   let socket: WebSocket | null = null;
+@@ -83,6 +86,7 @@ export function runWithRemoteReporter({
+     socket = new WebSocket(wsUrl);
+   } catch (error) {
+     onStatus(`Failed to open WebSocket: ${(error as Error).message}`);
++    onFinished?.();
+     return () => {};
+   }
  
-+  jsi_utils::installJsiFunction(
-+      rt, "_getTimerTimestamp", [](jsi::Runtime &rt) { return jsi::Value(getTimerTimestamp()); });
+@@ -224,6 +228,7 @@ export function runWithRemoteReporter({
+     }
+     restoreConsole();
+     restoreGlobalErrorHandler();
++    onFinished?.();
+   };
+ 
+   ws.onmessage = (event) => {
+```
+
+**File**: `apps/common-app/runtime-tests/ReJest/utils/suiteSelection.ts` (added, +34/-0)
+```diff
+@@ -0,0 +1,34 @@
++import type { RuntimeTestSuite } from '../../types';
++import type { DeclaredSuite } from './remoteProtocol';
 +
-   rt.global().setProperty(
-       rt,
-       "_startProfiling",
++export function declareSuites(tests: RuntimeTestSuite[]): DeclaredSuite[] {
++  return tests.map((test) => ({
++    name: test.testSuiteName,
++    skipByDefault: !!test.skipByDefault,
++    fullRunOnly: !!test.fullRunOnly,
++    disabled: !!test.disabled,
++  }));
++}
++
++export function selectSuitesToRun(
++  tests: RuntimeTestSuite[],
++  only: string[] | undefined,
++  full: boolean | undefined
++): RuntimeTestSuite[] {
++  const filterSet = only ? new Set(only) : null;
++  const known = new Set(tests.map((test) => test.testSuiteName));
++  const unknown = [...(filterSet ?? [])].filter((name) => !known.has(name));
++  if (unknown.length > 0) {
++    throw new Error(`Unknown test suites: ${unknown.join(', ')}`);
++  }
++
++  return tests.filter((test) => {
++    if (test.disabled) {
++      return false;
++    }
++    if (filterSet) {
++      return filterSet.has(test.testSuiteName);
++    }
++    return !test.skipByDefault && (!!full || !test.fullRunOnly);
++  });
++}
 ```
 
-**File**: `packages/react-native-worklets/changelog/worklets-performance-now-clock.fix.md` (added, +1/-0)
+**File**: `apps/common-app/runtime-tests/worklets/headlessSuites.ts` (added, +10/-0)
 ```diff
-@@ -0,0 +1 @@
-+Fix `performance.now()` on Worklet Runtimes on iOS to use the same clock as the React Native Runtime.
-```
-
-**File**: `packages/react-native-worklets/src/privateGlobals.d.ts` (modified, +1/-0)
-```diff
-@@ -97,6 +97,7 @@ declare global {
-   var _beginSection: (name: string) => void;
-   var _endSection: () => void;
-   var _getAnimationTimestamp: () => number;
-+  var _getTimerTimestamp: () => number;
-   var _scheduleOnRuntime: (
-     runtime: WorkletRuntime,
-     worklet: SerializableRef<() => void>
-```
-
-**File**: `packages/react-native-worklets/src/runLoop/uiRuntime/setTimeoutPolyfill.ts` (modified, +2/-2)
-```diff
-@@ -10,11 +10,11 @@ export function setupSetTimeout() {
-     delay: number = 0,
-     ...args: unknown[]
-   ) => {
--    const start = performance.now();
-+    const start = globalThis._getTimerTimestamp();
-     let timeoutHandle = 0;
- 
-     const rafCallback = () => {
--      const now = performance.now();
-+      const now = globalThis._getTimerTimestamp();
-       if (now - start >= delay) {
-         callback(...args);
-         timeoutHandleToRafHandle.delete(timeoutHandle);
+@@ -0,0 +1,10 @@
++import type { RuntimeTestSuite } from '../types';
++
++export const WORKLETS_HEADLESS_TEST_SUITES: RuntimeTestSuite[] = [
++  {
++    testSuiteName: 'headless cold start',
++    importTest: () => {
++      require('./tests/headless/coldStart.test');
++    },
++  },
++];
 ```
 
 ---
 
-### Incident Patch 3: `f3f1296a` (2026-11-16)
-**Commit Message**: fix(SET): mount moving shared views in a non-touchable layer on Android (#11304)
+### Incident Patch 3: `86c2c97e` (2026-11-18)
+**Commit Message**: fix(SET): keep the content of a popped stack screen during its exit animation on Android (#11388)
 
 > [!NOTE]
 > This pull request was authored by AI on behalf of @pawicao.
 
+> [!CAUTION]
+> This PR needs react-native-screens 4.27 or newer in Android apps that
+run a layout animation or a shared element transition while React
+removes a stack screen. Only then does it reverse the child-first
+removal order of #10754 for that screen. With 4.26.2 or older, such an
+app can crash when React removes a stack screen that holds a nested
+stack with header buttons, for example on sign-out (#10620). The test
+[`removes a screen that holds a nested stack with header
+buttons`](https://github.com/software-mansion/react-native-reanimated/blob/af973351977b43012101bb921f46c3ab1eb1f508/apps/common-app/runtime-tests/reanimated/tests/layoutAnimations/nativeStackRemoval.test.tsx#L297)
+runs layout animations during sign-out, and with 4.26.2 it crashed in 3
+of 3 runs. When nothing animates, the order stays child-first, as on
+`main`: a local variant of that test without layout animations passed in
+3 of 3 runs with 4.26.2. The 4.8 release notes will tell users to use
+4.27 or newer.
+
 ## Summary
 
-On Android, a moving shared view was a direct child of its layout root
-(the surface root or a `Modal`), so it took touches: a tap on it ran the
-`onPress` of its source, also of a `Pressable` around a moving image or
-a pressed `Text`. I put the moving views of each layout root into one
-carrier layer, a `View` with `pointerEvents: "none"` and
-`importantForAccessibility: "no-hide-descendants"` that is the last
-child of that root, like the window overlay on iOS. The layer comes with
-the first moving view of its root and goes when the root goes, after the
-views in it; on iOS the layer is the existing window overlay. The host
-tag and index of a moving view are now the same code on all platforms,
-and the Android-only "after the children of the root" index is gone. I
-removed the Android touch limit from the limitations page.
+On Android, a stack
 
-| Before | After |
-| --- | --- |
-|
-https://github.com/user-attachments/assets/077f7f23-2409-47ba-b339-60b7968d7b23
-|
-https://github.com/user-attachments/assets/8b30bbe6-9e7b-4222-895a-7b8cecd1a34d
-|
-
-The
-
-**File**: `apps/common-app/runtime-tests/reanimated/tests/layoutAnimations/sharedTransitionCarrier.test.tsx` (modified, +14/-19)
+**File**: `packages/react-native-reanimated/Common/cpp/reanimated/LayoutAnimations/LayoutAnimationsProxy.cpp` (modified, +10/-3)
 ```diff
-@@ -406,25 +406,20 @@ describe('Shared transition moves a real native view', () => {
-     expect(source?.y).toBeWithinRange(home!.y - 0.5, home!.y + 0.5);
-   });
- 
--  // On Android, a carrier inside one window moves into the window root, not into an overlay.
--  const overlayTest = Platform.OS === 'ios' ? test : test.skip;
--  overlayTest(
--    'moves the source into an overlay with a tag that React does not give',
--    async () => {
--      await mockAnimationTimer({ autoAdvance: false });
--      const transition = transitionWithNotification();
--      await render(<Screens active={false} transition={transition} />);
--      await waitForFrames();
--      const sourceTag = getTestComponent('source').getTag();
--      await render(<Screens active transition={transition} />);
--      await waitForFrames(3);
--      await advanceAnimationTimer(500);
--      await expectMoving('source');
--      const overlayTag = (await observer().observeParent(sourceTag))!;
--      expect(overlayTag % 2).toBe(1);
--      expect(overlayTag % 10 === 1).toBe(false);
--    }
--  );
-+  test('moves the source into a carrier layer with a tag that React does not give', async () => {
-+    await mockAnimationTimer({ autoAdvance: false });
-+    const transition = transitionWithNotification();
-+    await render(<Screens active={false} transition={transition} />);
-+    await waitForFrames();
-+    const sourceTag = getTestComponent('source').getTag();
-+    await render(<Screens active transition={transition} />);
-+    await waitForFrames(3);
-+    await advanceAnimationTimer(500);
-+    await expectMoving('source');
-+    const layerTag = (await observer().observeParent(sourceTag))!;
-+    expect(layerTag % 2).toBe(1);
-+    expect(layerTag % 10 === 1).toBe(false);
-+  });
- 
-   test('ends the run when a screen without its tag covers the target', async () => {
-     await mockAnimationTimer({ autoAdvance: false });
-```
-
-**File**: `apps/common-app/runtime-tests/reanimated/tests/layoutAnimations/sharedTransitionWindow.test.tsx` (modified, +9/-1)
-```diff
-@@ -456,7 +456,11 @@ describe('Shared transitions inside one Android Modal', () => {
-       await getTestComponent('window-target').getMountedViewProps();
-     const modalHost = await modalHostOf(home.tag);
-     await renderInModal(transition, { active: true });
--    expect(await RuntimeTestObserver!.observeParent(home.tag)).toBe(modalHost);
-+    const layer = await RuntimeTestObserver!.observeParent(home.tag);
-+    expect(layer).not.toBe(home.parent);
-+    expect(await RuntimeTestObserver!.observeParent(layer ?? -1)).toBe(
-+      modalHost
-+    );
-     await expectCarrier(home.tag, SOURCE_IN_MODAL.x, SOURCE_IN_MODAL.y, 60);
-     await advanceAnimationTimer(600);
-     await expectCarrier(
-@@ -471,6 +475,10 @@ describe('Shared transitions inside one Android Modal', () => {
-     expect(results).toBe([true]);
-     await expectLandedAtHome(home);
-     await expectEndpoint('source', 60, 0);
-+    await renderInModal(transition, { active: true, open: false });
-+    await expectEventually(() =>
-+      RuntimeTestObserver!.observeParent(layer ?? -1)
-+    ).toBe(null);
-   });
- 
-   androidTest('flies back to the source in one Modal', async () => {
-```
-
-**File**: `docs/docs-reanimated/docs/shared-element-transitions/limitations.mdx` (modified, +0/-1)
-```diff
-@@ -49,7 +49,6 @@ A shared view does not move between the screen and a `Modal`, between two differ
- - On iOS, if the header of a covered screen changes, for example after a theme change, a view that goes back to this screen can stop at the old place and then jump.
- - Reanimated does not see screen animations that run with the native driver of React Native `Animated`, for example the screen animations of `@react-navigation/stack` or the `fade` animation of bottom tabs. A view that flies to such a screen goes to the place and the opacity where the screen starts its animation, for example off the screen or fully transparent, and then jumps when the animation ends. Use `@react-navigation/native-stack`, or bottom tabs without an animation.
- - A nested shared view does not follow a scroll or a layout animation of a view between it and its moving parent. A view between them keeps its source size and place during the move: its `overflow: hidden` clips the nested view to the source bounds, and its background shows at the source size. When the parent shrinks, the larger view can show outside of the parent. Give such a view its own `sharedTransitionTag`, so that it moves to its own match, or put the clipping and the background on the shared parent.
--- On Android, the moving view takes touches during the transition. A tap on it can run a press handler of the screen that it leaves, for example the `onPress` of a `Pressable` around the view. On iOS, the moving view does not take touches.
- - During development, a Fast Refresh can start a transition between the old and the new version of a view on the same screen. This does not happen in release builds.
- 
- ## Videos and media
-```
-
-**File**: `packages/react-native-reanimated/Common/cpp/reanimated/LayoutAnimations/LayoutAnimationsProxy.cpp` (modified, +10/-16)
-```diff
-@@ -1438,9 +1438,7 @@ void LayoutAnimationsProxy::clearSurfaceState() const {
-     deferredSharedTransitionConfigReleases_.clear();
-     sharedElements_.clear();
-     sharedTransitionRuns_.clear();
--#ifdef __APPLE__
--    react_native_assert(!carrierOverlay_ && "The last pull of a surface deletes its overlay");
--#endif
-+    react_native_assert(carrierLayers_.empty() && "The last pull of a surface removes its carrier layers");
-     heldEnterings_.clear();
-     snapshottedScreens_.clear();
-     transition_.reset();
-@@ -1553,9 +1551,8 @@ bool LayoutAnimationsProxy::hasPendingStructuralCleanup() const {
-       })) {
-     return true;
-   }
--  if (std::ranges::any_of(carrierDeletesAfterQueuedFrames_, [this](const auto &entry) {
--        return !hasUnqueuedCarrierFrame(entry.first);
--      })) {
-+  if (!carrierDeletesAfterQueuedFrames_.empty() &&
-+      !hasUnqueuedCarrierFrame(carrierDeletesAfterQueuedFrames_.front().first)) {
-     return true;
-   }
-   const auto coveringViews = viewsHiddenByContinuingRuns();
-@@ -1721,21 +1718,18 @@ void LayoutAnimationsProxy::keepCarriersDetachedUntilFramesAreQueued(const Shado
- void LayoutAnimationsProxy::removeCarrierBeforeQueuedFrames(
-     const std::shared_ptr<LightNode> &carrier,
-     ShadowViewMutationList &mutations) const {
--  const auto tag = carrier->current.tag;
--  ShadowViewMutationList deletes;
-+  auto &deletes = carrierDeletesAfterQueuedFrames_.emplace_back(carrier->current.tag, ShadowViewMutationList{}).second;
-   endAnimationsRecursively(carrier, deletes, mutations);
--  carrierDeletesAfterQueuedFrames_.emplace_back(tag, std::move(deletes));
- }
- 
-+// The deletes go in their order, so a carrier layer goes after the carriers that were in it.
- void LayoutAnimationsProxy::flushCarrierDeletesAfterQueuedFrames(ShadowViewMutationList &mutations) const {
--  std::erase_if(carrierDeletesAfterQueuedFrames_, [&](auto &entry) {
--    auto &[tag, deletes] = entry;
--    if (hasUnqueuedCarrierFrame(tag)) {
--      return false;
--    }
-+  const auto blocked = std::ranges::find_if(
-+      carrierDeletesAfterQueuedFrames_, [this](const auto &entry) { return hasUnqueuedCarrierFrame(entry.first); });
-+  for (auto &[_, deletes] : std::ranges::subrange(carrierDeletesAfterQueuedFrames_.begin(), blocked)) {
-     std::ranges::move(deletes, std::back_inserter(mutations));
--    return true;
--  });
-+  }
-+  carrierDeletesAfterQueuedFrames_.erase(carrierDeletesAfterQueuedFrames_.begin(), blocked);
- }
- 
- void LayoutAnimationsProxy::releaseCarriersOfQueuedFrames(const std::vector<Tag> &tags) const {
-```
-
-**File**: `packages/react-native-reanimated/Common/cpp/reanimated/LayoutAnimations/LayoutAnimationsProxy.h` (modified, +15/-8)
-```diff
-@@ -18,6 +18,7 @@
- #include <array>
- #include <chrono>
- #include <cstdint>
-+#include <deque>
- #include <memory>
- #include <optional>
- #include <ranges>
-@@ -80,8 +81,8 @@ enum class SharedTransitionLifecycle : std::uint8_t {
-   FINISHED,
- };
- 
--// The carrier is the view that the run animates, moved from its parent to its layout root for the time of the
--// run. A new run moves its source. A run that reverses keeps its carrier, which is then its target.
-+// The carrier is the view that the run animates, moved from its parent to the carrier layer of its layout root for the
-+// time of the run. A new run moves its source. A run that reverses keeps its carrier, which is then its target.
- struct SharedTransitionRun {
-   // The run reports this callback once, when it ends. It gets true only when the run lands.
-   std::shared_ptr<Serializable> callback;
-@@ -260,6 +261,9 @@ struct LayoutAnimationsProxy : public LayoutAnimationsProxyCommon {
-   // The runs by the tag of their carrier. A view carries one run, and a shared tag has one active run.
-   mutable std::unordered_map<Tag, SharedTransitionRun> sharedTransitionRuns_;
-   mutable CarrierPlacements carrierPlacements_;
-+  // The views that hold the carriers at the root, by their layout root. A layer takes no touches and hides its
-+  // carriers from accessibility.
-+  mutable std::unordered_map<std::shared_ptr<LightNode>, ShadowView> carrierLayers_;
-   // Entering animations of target children that wait until their run lands.
-   mutable std::vector<PendingNodeAnimation> heldEnterings_;
-   std::shared_ptr<SharedTransitionManager> sharedTransitionManager_;
-@@ -296,18 +300,16 @@ struct LayoutAnimationsProxy : public LayoutAnimationsProxyCommon {
-   mutable std::unordered_map<Tag, int> unqueuedBatchTags_;
-   // carriers whose last UI-thread frames are not in the mount queue yet
-   mutable std::unordered_map<Tag, int> unqueuedCarrierFrames_;
--  // deletes of carriers that left a removed layout root, until their last frames are in the mount queue
--  mutable std::vector<std::pair<Tag, ShadowViewMutationList>> carrierDeletesAfterQueuedFrames_;
-+  // deletes of carriers that left a removed layout root, until their last frames are in the mount queue, and of
-+  // the carrier layers that held them
-+  mutable std::deque<std::pair<Tag, ShadowViewMutationList>> carrierDeletesAfterQueuedFrames_;
- #endif
- 
- #ifdef __APPLE__
-   mutable std::vector<HeldModal> heldModals_;
-   ForceScreenSnapshotFunction forceScreenSnapshot_;
-   SetSharedTransitionOverlayFunction setSharedTransitionOverlay_;
-   NativeViewPlacementFunction nativeViewPlacement_;
--  // iOS presents modals above the root view, so detached carriers live in a view that the platform keeps on top of the
--  // window. It lives until its surface stops.
--  mutable std::shared_ptr<LightNode> carrierOverlay_;
- #endif
-   mutable StaleSynchronousPropsTracker staleSynchronousProps_;
-   // It starts above the initial LightNode::followedInSynchronousBatch, so a view that no batch marked never matches.
-@@ -584,7 +586,12 @@ struct LayoutAnimationsProxy : public LayoutAnimationsProxyCommon {
-       ShadowViewMutationList &rootMutations) const;
-   int carrierHostIndex(const std::shared_ptr<LightNode> &node) const;
-   Tag carrierHostTag(const std::shared_ptr<LightNode> &node) const;
--  void ensureCarrierOverlay(ShadowViewMutationList &mutations, const PropsParserContext &propsParserContext) const;
-+  void ensureCarrierLayer(
-+      const std::shared_ptr<LightNode> &host,
-+      ShadowViewMutationList &mutations,
-+      const PropsParserContext &propsParserContext) const;
-+  void removeCarrierLayersIn(const std::shared_ptr<LightNode> &node, ShadowViewMutationList &mutations) const;
-+  bool keepsCarrierLayerInWindow() const;
-   NativeViewPlacement::Kind nativePlacementKind(const std::shared_ptr<LightNode> &node) const;
-   NativeViewPlacement::Kind targetBoundaryPlacementKind(const std::shared_ptr<LightNode> &node) const;
-   bool isOffWindow(const std::shared_ptr<LightNode> &node) const;
-```
-
-**File**: `packages/react-native-reanimated/Common/cpp/reanimated/LayoutAnimations/LayoutAnimationsUtils.h` (modified, +6/-2)
-```diff
-@@ -85,7 +85,7 @@ struct MutationNode;
- enum class CarrierPlacement : std::uint8_t {
-   // The node is not a carrier and is mounted under its parent.
-   IN_PARENT,
--  // The carrier is mounted under its layout root, not under its parent.
-+  // The carrier is mounted in the carrier layer of its layout root, not under its parent.
-   AT_ROOT,
-   // The carrier is in a moving carrier. It stays under its parent and moves with it.
-   NESTED,
-@@ -327,7 +327,7 @@ struct LightNode {
- // the counts of carriers at the root in their parents in step with the placements.
- class CarrierPlacements {
-  public:
--  // In the order that the host tree mounts them, after the children of their hosts.
-+  // In the order that the host tree mounts them in the carrier layers of their hosts.
-   const std::vector<std::shared_ptr<LightNode>> &atRoot() const {
-     return atRoot_;
-   }
-@@ -336,6 +336,10 @@ class CarrierPlacements {
-     return hosts_[positionAtRoot(node)];
-   }
- 
-+  bool hostsCarriers(const std::shared_ptr<LightNode> &host) const {
-+    return std::ranges::find(hosts_, host) != hosts_.end();
-+  }
-+
-   int indexInHost(const std::shared_ptr<LightNode> &node) const {
-     const auto position = hosts_.begin() + static_cast<std::ptrdiff_t>(positionAtRoot(node));
-     return static_cast<int>(std::count(hosts_.begin(), position, *position));
-```
-
-**File**: `packages/react-native-reanimated/Common/cpp/reanimated/LayoutAnimations/SharedTransitions.cpp` (modified, +80/-48)
-```diff
-@@ -1012,7 +1012,7 @@ void LayoutAnimationsProxy::detachCarrier(
-   if (nested) {
-     mutations.push_back(ShadowViewMutation::UpdateMutation(mounted, run.carrierStartView, parent->current.tag));
-   } else {
--    ensureCarrierOverlay(mutations, propsParserContext);
-+    ensureCarrierLayer(carrierPlacements_.hostOf(node), mutations, propsParserContext);
-     mutations.push_back(
-         ShadowViewMutation::InsertMutation(carrierHostTag(node), run.carrierStartView, carrierHostIndex(node)));
-     mutations.push_back(ShadowViewMutation::UpdateMutation(mounted, run.carrierStartView, carrierHostTag(node)));
-@@ -1113,7 +1113,8 @@ void LayoutAnimationsProxy::retainRemovedCarriers(const std::shared_ptr<LightNod
-   }
- }
- 
--// A carrier stays in the layout root that mounts it, so it ends before React removes that layout root.
-+// A carrier stays in the layout root that mounts it, so it ends before React removes that layout root. The carrier
-+// layer of the layout root goes after it.
- void LayoutAnimationsProxy::removeCarriersHostedIn(const std::shared_ptr<LightNode> &node, TransactionMeta &transaction)
+@@ -1097,7 +1097,9 @@ std::optional<SurfaceId> LayoutAnimationsProxy::endLayoutAnimation(int tag, bool
+ // A subtree that animates keeps its place in the host tree, so nothing is emitted for its root.
+ // A subtree that does not animate is removed at its current host index after its descendants, like React
+ // removes it. On iOS a subtree that holds a screen React Native Screens snapshots is removed before its
+-// descendants instead, and their teardown mounts at the end of the transaction.
++// descendants instead, and their teardown mounts at the end of the transaction. On Android a stack screen is also
++// removed first while animations run. A UI-thread pull can then mount its Remove before React Native Screens starts
++// the exit transition. That transition keeps only the children that the screen still has.
+ void LayoutAnimationsProxy::handleSubtreeRemoval(const std::shared_ptr<LightNode> &node, TransactionMeta &transaction)
      const {
-   const auto carriers = carrierPlacements_.atRoot();
-@@ -1130,6 +1131,7 @@ void LayoutAnimationsProxy::removeCarriersHostedIn(const std::shared_ptr<LightNo
-       endAnimationsRecursively(carrier, transaction.filteredMutations, transaction.filteredMutations);
+   ReanimatedSystraceSection s("handleSubtreeRemoval");
+@@ -1112,6 +1114,7 @@ void LayoutAnimationsProxy::handleSubtreeRemoval(const std::shared_ptr<LightNode
      }
    }
-+  removeCarrierLayersIn(node, transaction.filteredMutations);
+   const bool defersTeardown = holdsSnapshottedScreen(node);
++  const bool removesRootFirst = defersTeardown || (startsExitTransitionOnRemove(node) && hasRunningAnimations());
+ #ifdef __APPLE__
+   if (!defersTeardown && holdsSourceInModal(node, transaction)) {
+     std::unordered_set<Tag> heldTags;
+@@ -1143,8 +1146,8 @@ void LayoutAnimationsProxy::handleSubtreeRemoval(const std::shared_ptr<LightNode
+     if (removals.contains(parent->current.tag)) {
+       continue;
+     }
+-    const bool removeBeforeChildren = defersTeardown && root == node;
+-    if (removeBeforeChildren && !transaction.screenSnapshotRemoval) {
++    const bool removeBeforeChildren = removesRootFirst && root == node;
++    if (defersTeardown && removeBeforeChildren && !transaction.screenSnapshotRemoval) {
+       transaction.screenSnapshotRemoval = transaction.filteredMutations.size();
+     }
+     endAnimationsRecursively(
+@@ -1170,6 +1173,10 @@ bool LayoutAnimationsProxy::holdsSnapshottedScreen([[maybe_unused]] const std::s
+   return false;
  }
  
- void LayoutAnimationsProxy::retainCarrierContent(const std::shared_ptr<LightNode> &node) const {
-@@ -1228,6 +1230,7 @@ void LayoutAnimationsProxy::moveNestedCarrierToRoot(
-   mutations.push_back(
-       ShadowViewMutation::RemoveMutation(parent->current.tag, mounted, parent->hostIndex(parent->positionOf(node))));
-   carrierPlacements_.detach(node, layoutRootOf(node));
-+  ensureCarrierLayer(carrierPlacements_.hostOf(node), mutations, propsParserContext);
-   run.carrierStartView.layoutMetrics.frame.origin += startOffset;
-   auto view = mounted;
-   view.layoutMetrics.frame.origin += offset;
-@@ -1236,7 +1239,6 @@ void LayoutAnimationsProxy::moveNestedCarrierToRoot(
-   if (const auto animationIt = layoutAnimations_.find(tag); animationIt != layoutAnimations_.end()) {
-     animationIt->second.startView.layoutMetrics.frame.origin += startOffset - offset;
-   }
--  ensureCarrierOverlay(mutations, propsParserContext);
-   mutations.push_back(ShadowViewMutation::InsertMutation(carrierHostTag(node), view, carrierHostIndex(node)));
- }
- 
-@@ -1538,58 +1540,98 @@ void LayoutAnimationsProxy::removeFromParent(
-   cancelLayoutAnimation(node->current.tag);
- }
- 
--// Detached carriers follow the children of their layout root, or live in the overlay on iOS.
- int LayoutAnimationsProxy::carrierHostIndex(const std::shared_ptr<LightNode> &node) const {
--  const auto index = carrierPlacements_.indexInHost(node);
--#ifdef __APPLE__
--  if (carrierOverlay_) {
--    return index;
--  }
--#endif
--  const auto &host = carrierPlacements_.hostOf(node);
--  return host->hostIndex(static_cast<int>(host->children.size())) + index;
-+  return carrierPlacements_.indexInHost(node);
- }
- 
- Tag LayoutAnimationsProxy::carrierHostTag(const std::shared_ptr<LightNode> &node) const {
--#ifdef __APPLE__
--  if (carrierOverlay_) {
--    return carrierOverlay_->current.tag;
--  }
--#endif
--  return carrierPlacements_.hostOf(node)->current.tag;
-+  return carrierLayers_.at(carrierPlacements_.hostOf(node)).tag;
- }
- 
--// iOS presents modals above the root view, so the overlay that holds the carriers is created with the first carrier
--// and kept on top of the window until the surface stops.
--void LayoutAnimationsProxy::ensureCarrierOverlay(
-+// The layer is the last child of its layout root, so React's indices of the other children do not change. On iOS,
-+// modals show above the root view, so the layer of the surface is attached to the window instead. A layer lives until
-+// its layout root goes away, so a transition that lands in the pull that starts it does not create and delete it.
-+void LayoutAnimationsProxy::ensureCarrierLayer(
-+    const std::shared_ptr<LightNode> &host,
-     ShadowViewMutationList &mutations,
-     const PropsParserContext &propsParserContext) const {
--#ifdef __APPLE__
--  if (!setSharedTransitionOverlay_ || carrierOverlay_) {
-+  if (carrierLayers_.contains(host)) {
-     return;
-   }
-   const auto &descriptor = componentDescriptorRegistry_->at("View");
--  ShadowView overlay;
--  overlay.componentName = descriptor.getComponentName();
--  overlay.componentHandle = descriptor.getComponentHandle();
--  overlay.surfaceId = surfaceId_;
-+  ShadowView layer;
-+  layer.componentName = descriptor.getComponentName();
-+  layer.componentHandle = descriptor.getComponentHandle();
-+  layer.surfaceId = surfaceId_;
-   {
-     auto lock = std::unique_lock<std::mutex>(sharedTransitionManager_->mutex_);
--    overlay.tag = sharedTransitionManager_->nextOverlayTag_;
-+    layer.tag = sharedTransitionManager_->nextOverlayTag_;
-     sharedTransit
++bool LayoutAnimationsProxy::hasRunningAnimations() const {
++  return hasLayoutAnimationRecords() || !std::ranges::empty(activeSharedTransitionRuns());
++}
++
+ #ifdef __APPLE__
+ // React Native animates a modal that it removes while presented from a snapshot of what the screen shows, which lags a
+ // mount by up to two frames. A modal that holds the source of a transition stays mounted until 34 ms, two frames of a
 ```
 
-**File**: `packages/react-native-reanimated/changelog/set-android-carrier-layer.fix.md` (added, +1/-0)
+**File**: `packages/react-native-reanimated/Common/cpp/reanimated/LayoutAnimations/LayoutAnimationsProxy.h` (modified, +1/-0)
+```diff
+@@ -845,6 +845,7 @@ struct LayoutAnimationsProxy : public LayoutAnimationsProxyCommon {
+ 
+   void handleSubtreeRemoval(const std::shared_ptr<LightNode> &node, TransactionMeta &transaction) const;
+   bool holdsSnapshottedScreen(const std::shared_ptr<LightNode> &node) const;
++  bool hasRunningAnimations() const;
+ #ifdef __APPLE__
+   bool holdsSourceInModal(const std::shared_ptr<LightNode> &node, const TransactionMeta &transaction) const;
+ #endif
+```
+
+**File**: `packages/react-native-reanimated/Common/cpp/reanimated/LayoutAnimations/LayoutAnimationsUtils.h` (modified, +9/-0)
+```diff
+@@ -456,6 +456,15 @@ static inline bool isRNSScreen(const std::shared_ptr<LightNode> &node) {
+   return !std::strcmp(componentName, "RNSScreen") || !std::strcmp(componentName, "RNSModalScreen");
+ }
+ 
++static inline bool startsExitTransitionOnRemove([[maybe_unused]] const std::shared_ptr<LightNode> &node) {
++#ifdef ANDROID
++  const auto parent = node->parent.lock();
++  return isRNSScreen(node) && parent && !std::strcmp(parent->current.componentName, "RNSScreenStack");
++#else
++  return false;
++#endif
++}
++
+ static inline std::shared_ptr<LightNode> findParentRNSScreen(const std::shared_ptr<LightNode> &node) {
+   auto current = node->parent.lock();
+   while (current && !isRNSScreen(current)) {
+```
+
+**File**: `packages/react-native-reanimated/changelog/android-set-pop-keeps-screen-content.fix.md` (added, +1/-0)
 ```diff
 @@ -0,0 +1 @@
-+Stop a moving shared view on Android from taking touches and accessibility focus during its transition, as on iOS.
++Fix a popped stack screen on Android losing its content at the start of its exit animation during a shared element transition, which briefly showed only the shared views.
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #11365** (2026-11-17): fix(SET): follow a target that a scroll view scrolls during the transition (@pawicao)
-- **PR #11364** (2026-11-17): fix(SET): measure an iOS modal target at its settled frame during a flip (@pawicao)
-- **PR #11363** (2026-11-17): fix(SET): reverse a transition to its source in an iOS modal (@pawicao)
-- **PR #11356** (2026-11-17): release(Reanimated): 4.7.2 (@tjzel)
-- **PR #11355** (2026-11-16): docs(SET): say that the withCallback callback is workletized automatically (@pawicao)
-- **PR #11353** (2026-11-17): test(Reanimated): drive the Animated.Text and animation tests with a mocked clock (@bartlomiejbloniarz)
+- **PR #11408** (2026-11-18): test(Reanimated): give the nested inner view a size change in the pending boundary test (@pawicao)
+- **PR #11407** (2026-11-18): chore(Worklets): rename the Metro 0.87.0 patches changelog fragment to a valid slug (@tjzel)
+- **PR #11405** (2026-11-18): test(Worklets): run a headless suite in a process without an Activity on Android (@tjzel)
+- **PR #11404** (2026-11-18): ci: run changelog-check on the pull request head, not on its merge with the current base (@tjzel)
+- **PR #11400** (2026-11-18): fix(Worklets): run the Android frame queue only while the host is resumed or a headless JS task is active (@tjzel)
+- **PR #11398** (2026-11-18): chore: bump react-native-gesture-handler to 3.5.0 in the example apps (@bartlomiejbloniarz)
 
 ---
 
@@ -2140,67 +1497,70 @@ The
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. LayoutAnimations): keep ancestor opacity and clipping during shared element tran
+## X. SET): don't crash when switching tabs before a shared element transition ends
 
 **RULE**:
-When implementing operations in `apps/common-app/runtime-tests/reanimated/tests/layoutAnimations/sharedTransition.test.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in software-mansion/react-native-reanimated. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `apps/common-app/runtime-tests/reanimated/tests/layoutAnimations/sharedTransitionCarrier.test.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in software-mansion/react-native-reanimated. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2ab5c3a6`: LayoutAnimations): keep ancestor opacity and clipping during shared element transitions. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8a666116`: SET): don't crash when switching tabs before a shared element transition ends. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/common-app/runtime-tests/reanimated/tests/layoutAnimations/sharedTransition.test.tsx`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/common-app/runtime-tests/reanimated/tests/layoutAnimations/sharedTransitionCarrier.test.tsx`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-import { useEffect, type ReactNode } from 'react';
-import type { StyleProp, ViewStyle } from 'react-native';
-import { PixelRatio, StyleSheet, Text, View } from 'react-native';
-  useAnimatedStyle,
-  useSharedValue,
-import { runOnUIBlocking } from '../../../ReJest/utils/runOnUIBlocking';
-
-// Clip views take odd tags that end in 3, counting down from the largest tag.
-const FIRST_CLIP_TAG = 2147483643;
-const CLIP_TAG_RANGE = 10000;
-function ParentScreens({
-  showTarget,
+function HiddenClippedSourceScreens({
+  active,
   transition,
-  sourceParent,
-  targetParent,
-  targetChild = styles.fill,
-  overflowingChild = false,
 }: {
-  showTarget: boolean;
+  active: boolean;
   transition: SharedTransition;
-  sourceParent: StyleProp<ViewStyle>;
-  targetParent: StyleProp<ViewStyle>;
-  targetChild?: StyleProp<ViewStyle>;
-  overflowingChild?: boolean;
 }) {
-  const sourceRef = useTestRef('source');
+  const source = useTestRef('source');
   return (
     <View style={styles.container}>
-      <SharedTransitionBoundary isActive={!showTarget}>
-        <View style={sourceParent}>
+      <SharedTransitionBoundary isActive={!active}>
+        <View
+          collapsable={false}
+          style={[styles.clippingAncestor, active && { display: 'none' }]}>
           <Animated.View
-            ref={sourceRef}
-            sharedTransitionTag="box"
+            ref={source}
+            sharedTransitionTag="carrier"
             sharedTransitionStyle={transition}
-            style={styles.fill}>
-            {overflowingChild && <View style={styles.overflowing}
+            style={styles.source}
+          />
+        </View>
+      </SharedTransitionBoundary>
+      <Target active={active} transition={transition} opacity={1} mounted />
+    </View>
+  );
+}
+
+  recreateChildTest(
+    'tears down a clipped carrier when React recreates its tag',
+    async () => {
+      await mockAnimationTimer({ autoAdvance: false });
+      const transition = transitionWithNotification(4000);
+      await render(
+        <HiddenClippedSourceScreens active={false} transition={transition} />
+      );
+      await waitForFrames();
+      const sourceTag = getTestComponent('source').getTag();
+
+      await render(
+        <HiddenClippedSourceScreens active transi
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Induced defect failure mode:
-import type { ViewStyle } from 'react-native';
-import { StyleSheet, Text, View } from 'react-native';
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2ab5c3a6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8a666116` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

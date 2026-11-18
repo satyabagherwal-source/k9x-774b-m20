@@ -1,9 +1,9 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T15:14:27.791Z",
+  "last_updated": "2026-11-18T15:22:22.270Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
-      "processed_at": "2026-11-18T14:57:09.341Z",
+      "processed_at": "2026-11-18T15:22:21.877Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2073,7 +2073,7 @@
       "staged_for_review": 1
     },
     "hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-learnings.md": {
-      "processed_at": "2026-11-18T06:07:48.920Z",
+      "processed_at": "2026-11-18T15:22:20.900Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2303,7 +2303,7 @@
       "staged_for_review": 0
     },
     "software-mansion-react-native-reanimated-learnings.md": {
-      "processed_at": "2026-11-17T15:43:54.244Z",
+      "processed_at": "2026-11-18T15:22:21.227Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3443,7 +3443,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 1986,
+  "total_dossiers_evaluated": 1989,
   "total_canonical_promoted": 357,
-  "total_staged_for_review": 1507
+  "total_staged_for_review": 1510
 }

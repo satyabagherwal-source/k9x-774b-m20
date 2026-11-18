@@ -555,8 +555,8 @@
     "sourceUrl": "https://huggingface.co/orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
     "sourceVersion": "hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf",
     "license": "Open-Source",
-    "contentHash": "6b82e5af09e402283d74b57a5eb3778dfeb0513a3f97c4bb7a05d3e0505a250f",
-    "lastHarvestedAt": "2026-11-18T06:07:42.229Z",
+    "contentHash": "6bf2d6beaf579bc86a809500bdb48c1fa72c096ab1251daedb9308b4fc7ccbcf",
+    "lastHarvestedAt": "2026-11-18T15:22:08.768Z",
     "learningId": "learn-huggingface-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf"
   },
   "hf-alissonerdx-bfs-best-face-swap": {
@@ -3803,10 +3803,10 @@
     "repository": "software-mansion/react-native-reanimated",
     "platform": "github",
     "sourceUrl": "https://github.com/software-mansion/react-native-reanimated",
-    "sourceVersion": "d7d1bc3f",
+    "sourceVersion": "8ec64786",
     "license": "MIT",
-    "contentHash": "523c66bf909c6be0c70ed6926e663ea99d5b369c79ef0be1d7d916071aaf2113",
-    "lastHarvestedAt": "2026-11-17T15:43:43.801Z",
+    "contentHash": "874993902dd0e58e571ace67862012cb443caf4cbe33171ee601f2a12a8f10c7",
+    "lastHarvestedAt": "2026-11-18T15:22:16.759Z",
     "learningId": "learn-github-software-mansion-react-native-reanimated"
   },
   "liftbridge-io-liftbridge": {

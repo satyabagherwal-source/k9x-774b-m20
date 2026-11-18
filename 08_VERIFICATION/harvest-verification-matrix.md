@@ -11019,3 +11019,5 @@
 | `CYCLE-20261118-7E54` | `2026-11-18T15:06:02.200Z` | `unsloth/Qwen-Image-2.1-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-unsloth-qwen-image-2.1-gguf-learnings.md` | Yes (`7961d7ab...`) |
 | `CYCLE-20261118-7FR7` | `2026-11-18T15:06:04.291Z` | `1jehuang/jcode` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9249` | Yes (`a3b13afe...`) |
 | `CYCLE-20261118-HXHY` | `2026-11-18T15:14:13.846Z` | `XiaomiMiMo/MiMo-V2.6-Pro-RL` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-xiaomimimo-mimo-v2.6-pro-rl-learnings.md` | Yes (`09997bb2...`) |
+| `CYCLE-20261118-S3Y4` | `2026-11-18T15:22:08.764Z` | `orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-learnings.md` | Yes (`6bf2d6be...`) |
+| `CYCLE-20261118-SA43` | `2026-11-18T15:22:16.755Z` | `software-mansion/react-native-reanimated` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9250` | Yes (`87499390...`) |

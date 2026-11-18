@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-18T14:57:08.414Z",
+  "updated_at": "2026-11-18T15:22:21.291Z",
   "stats": {
-    "total_discovered": 5552,
-    "approved_pending_harvest": 5246,
+    "total_discovered": 5553,
+    "approved_pending_harvest": 5247,
     "harvested_count": 0,
     "rejected_count": 306,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 5229,
+      "COMMUNITY_AND_EXPERT": 5230,
       "OFFICIAL_DOCUMENTATION": 177,
       "STANDARDS_AND_SPECIFICATIONS": 110,
       "ENGINEERING_BLOGS": 4,
@@ -120023,6 +120023,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/karmada-io-karmada-learnings.md",
         "fileName": "karmada-io-karmada-learnings.md"
+      }
+    },
+    "SRC-B274066FB4F7": {
+      "id": "SRC-B274066FB4F7",
+      "url": "https://github.com/software-mansion/react-native-reanimated/blob/af973351977b43012101bb921f46c3ab1eb1f508/apps/common-app/runtime-tests/reanimated/tests/layoutAnimations/nativeStackRemoval.test.tsx",
+      "title": "https://github.com/software-mansion/react-native-reanimated/blob/af973351977b43012101bb921f46c3ab1eb1f508/apps/common-app/runtime-tests/reanimated/tests/layoutAnimations/nativeStackRemoval.test.tsx",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T15:22:21.291Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/software-mansion-react-native-reanimated-learnings.md",
+        "fileName": "software-mansion-react-native-reanimated-learnings.md"
       }
     }
   }
