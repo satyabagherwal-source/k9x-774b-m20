@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T11:33:20.509Z",
-  "total_cycles_completed": 10468,
-  "total_learnings_persisted": 10468,
-  "total_rules_promoted": 9966,
+  "last_updated": "2026-11-18T11:45:15.867Z",
+  "total_cycles_completed": 10471,
+  "total_learnings_persisted": 10471,
+  "total_rules_promoted": 9968,
   "history": [
-    {
-      "timestamp": "2026-11-17T21:03:24.724Z",
-      "repository": "Ontos-AI/knowhere",
-      "learningId": "learn-github-ontos-ai-knowhere",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T21:22:17.232Z",
-      "repository": "BAAI/bge-small-en-v1.5",
-      "learningId": "learn-huggingface-baai-bge-small-en-v1-5",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T21:22:18.887Z",
-      "repository": "astral-sh/uv",
-      "learningId": "learn-github-astral-sh-uv",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-17T21:22:23.149Z",
       "repository": "react/metro",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-18T11:33:20.509Z",
       "repository": "mattermost/mattermost",
       "learningId": "learn-github-mattermost-mattermost",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T11:45:00.565Z",
+      "repository": "meta-llama/Llama-3.1-8B-Instruct",
+      "learningId": "learn-huggingface-meta-llama-llama-3-1-8b-instruct",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T11:45:09.501Z",
+      "repository": "NervJS/taro",
+      "learningId": "learn-github-nervjs-taro",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T11:45:15.867Z",
+      "repository": "clockworklabs/SpacetimeDB",
+      "learningId": "learn-github-clockworklabs-spacetimedb",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

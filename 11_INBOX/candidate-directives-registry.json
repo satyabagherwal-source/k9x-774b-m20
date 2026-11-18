@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T11:33:27.264Z",
+  "last_updated": "2026-11-18T11:45:21.870Z",
   "directives": [
     {
       "id": "CD-001",
@@ -29019,6 +29019,48 @@
       "source_repo": "mattermost-mattermost",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-24E76F--mm-72003-stop-the-latest-release-check-.md",
+      "staged_date": "2026-11-18"
+    },
+    {
+      "id": "CD-12EP",
+      "directive_title": "支持创建 Web Audio 上下文",
+      "source_repo": "NervJS/taro",
+      "source_commit": "a48d43e3",
+      "staged_file": "11_INBOX/candidate-directives/CD-12EP-web-audio.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-18",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-1BRH",
+      "directive_title": "TS SDK cache: build indexes on first lookup, and use a flat map for unique singl",
+      "source_repo": "clockworklabs-spacetimedb-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-1BRH-ts-sdk-cache-build-indexes-on-first-lookup-and-use-a-flat-map-for-unique-singl.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-18",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-1B29",
+      "directive_title": "h5): 支持创建 Web Audio 上下文",
+      "source_repo": "nervjs-taro-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-1B29-h5-web-audio.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-18",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-0A9B3F",
+      "directive_title": "TS SDK cache: build indexes on first lookup, and use a flat map for unique singl",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "clockworklabs-spacetimedb",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-0A9B3F-ts-sdk-cache-build-indexes-on-first-look.md",
       "staged_date": "2026-11-18"
     }
   ]

@@ -43,9 +43,9 @@
   "bitterbot-ai-bitterbot-desktop": {
     "name": "bitterbot-desktop",
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-    "lastChecked": "2026-11-18T10:55:19.788Z",
+    "lastChecked": "2026-11-18T11:45:11.954Z",
     "revisionIdentifier": "108f7135",
-    "lastVerified": "2026-11-18T10:55:19.788Z"
+    "lastVerified": "2026-11-18T11:45:11.954Z"
   },
   "hf-comfy-org-minimax-h3": {
     "name": "Comfy-Org/MiniMax-H3",
@@ -69,8 +69,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-18T11:33:24.858Z",
-    "lastVerified": "2026-11-18T11:33:24.858Z",
+    "lastChecked": "2026-11-18T11:45:19.226Z",
+    "lastVerified": "2026-11-18T11:45:19.226Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -899,5 +899,77 @@
     "lastChecked": "2026-11-18T11:33:22.482Z",
     "revisionIdentifier": "1a3ac2c7",
     "lastVerified": "2026-11-18T11:33:22.482Z"
+  },
+  "burntsushi-ripgrep": {
+    "name": "ripgrep",
+    "officialUrl": "https://github.com/BurntSushi/ripgrep",
+    "lastChecked": "2026-11-18T11:44:56.847Z",
+    "revisionIdentifier": "178cc027",
+    "lastVerified": "2026-11-18T11:44:56.847Z"
+  },
+  "hf-meta-llama-llama-3.1-8b-instruct": {
+    "name": "meta-llama/Llama-3.1-8B-Instruct",
+    "officialUrl": "https://huggingface.co/meta-llama/Llama-3.1-8B-Instruct",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-18T11:44:59.665Z",
+    "lastVerified": "2026-11-18T11:44:59.665Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-meta-llama-llama-3-1-8b-instruct",
+    "contentHash": "09adff2d5b60d198b13ace486367b7efbfb210a39f126723833e1a6f5e000a18",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "nervjs-taro": {
+    "name": "NervJS/taro",
+    "officialUrl": "https://github.com/NervJS/taro",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-11-18T11:45:08.175Z",
+    "lastVerified": "2026-11-18T11:45:08.175Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-nervjs-taro",
+    "contentHash": "c892a62cb9f9c21d53e37cc9169cd899b20081bb0774bc2004644b5b7ba301c5",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "flux-iac-tofu-controller": {
+    "name": "tofu-controller",
+    "officialUrl": "https://github.com/flux-iac/tofu-controller",
+    "lastChecked": "2026-11-18T11:45:04.270Z",
+    "revisionIdentifier": "aaa5de9c",
+    "lastVerified": "2026-11-18T11:45:04.270Z"
+  },
+  "provablehq-snarkos": {
+    "name": "snarkOS",
+    "officialUrl": "https://github.com/ProvableHQ/snarkOS",
+    "lastChecked": "2026-11-18T11:45:06.775Z",
+    "revisionIdentifier": "497534cd",
+    "lastVerified": "2026-11-18T11:45:06.775Z"
+  },
+  "clockworklabs-spacetimedb": {
+    "name": "clockworklabs/SpacetimeDB",
+    "officialUrl": "https://github.com/clockworklabs/SpacetimeDB",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-11-18T11:45:14.636Z",
+    "lastVerified": "2026-11-18T11:45:14.636Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-clockworklabs-spacetimedb",
+    "contentHash": "0b7d29fa6e40c61310fce08c56891233a37c2bfbb9de50d7ec72c5f33aab211d",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 1,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

@@ -10943,3 +10943,6 @@
 | `CYCLE-20261118-LMVO` | `2026-11-18T11:33:09.780Z` | `eclipse-theia/theia` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9209` | Yes (`ca7f2236...`) |
 | `CYCLE-20261118-LPDY` | `2026-11-18T11:33:13.030Z` | `stabilityai/stable-diffusion-xl-base-1.0` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-stabilityai-stable-diffusion-xl-base-1.0-learnings.md` | Yes (`82d20587...`) |
 | `CYCLE-20261118-LV5E` | `2026-11-18T11:33:20.498Z` | `mattermost/mattermost` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9210` | Yes (`97d693fb...`) |
+| `CYCLE-20261118-0VBD` | `2026-11-18T11:45:00.553Z` | `meta-llama/Llama-3.1-8B-Instruct` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-meta-llama-llama-3.1-8b-instruct-learnings.md` | Yes (`09adff2d...`) |
+| `CYCLE-20261118-127K` | `2026-11-18T11:45:09.488Z` | `NervJS/taro` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9211` | Yes (`c892a62c...`) |
+| `CYCLE-20261118-174F` | `2026-11-18T11:45:15.855Z` | `clockworklabs/SpacetimeDB` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9212` | Yes (`0b7d29fa...`) |

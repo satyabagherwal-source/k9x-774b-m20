@@ -295,8 +295,8 @@
     "sourceUrl": "https://huggingface.co/meta-llama/Llama-3.1-8B-Instruct",
     "sourceVersion": "hf-meta-llama-llama-3.1-8b-instruct",
     "license": "Open-Source",
-    "contentHash": "73705fcb5e70ba62e592e49ed43367593869164980aa67d378639d0dc811c393",
-    "lastHarvestedAt": "2026-11-17T23:42:26.691Z",
+    "contentHash": "09adff2d5b60d198b13ace486367b7efbfb210a39f126723833e1a6f5e000a18",
+    "lastHarvestedAt": "2026-11-18T11:45:00.558Z",
     "learningId": "learn-huggingface-meta-llama-llama-3-1-8b-instruct"
   },
   "hf-xingchen-agi-teleocr": {
@@ -2393,10 +2393,10 @@
     "repository": "NervJS/taro",
     "platform": "github",
     "sourceUrl": "https://github.com/NervJS/taro",
-    "sourceVersion": "b6eaa4ef",
+    "sourceVersion": "a48d43e3",
     "license": "NOASSERTION",
-    "contentHash": "0f8fd1278d4a84993ae32a650c10746c475b9e1d755749320550fb578d47d8c9",
-    "lastHarvestedAt": "2026-11-17T09:27:23.354Z",
+    "contentHash": "c892a62cb9f9c21d53e37cc9169cd899b20081bb0774bc2004644b5b7ba301c5",
+    "lastHarvestedAt": "2026-11-18T11:45:09.493Z",
     "learningId": "learn-github-nervjs-taro"
   },
   "kubeedge-kubeedge": {
@@ -7053,10 +7053,10 @@
     "repository": "clockworklabs/SpacetimeDB",
     "platform": "github",
     "sourceUrl": "https://github.com/clockworklabs/SpacetimeDB",
-    "sourceVersion": "7082c5ea",
+    "sourceVersion": "ab502c61",
     "license": "NOASSERTION",
-    "contentHash": "5beb8c10c469d7d81be00adbe7ff467bca2944250c82e23fd65afce6e34ad9e2",
-    "lastHarvestedAt": "2026-11-17T17:57:56.072Z",
+    "contentHash": "0b7d29fa6e40c61310fce08c56891233a37c2bfbb9de50d7ec72c5f33aab211d",
+    "lastHarvestedAt": "2026-11-18T11:45:15.860Z",
     "learningId": "learn-github-clockworklabs-spacetimedb"
   },
   "apollographql-apollo-kotlin": {

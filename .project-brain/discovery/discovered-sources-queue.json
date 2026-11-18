@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-18T11:33:27.019Z",
+  "updated_at": "2026-11-18T11:45:20.719Z",
   "stats": {
-    "total_discovered": 5460,
-    "approved_pending_harvest": 5155,
+    "total_discovered": 5475,
+    "approved_pending_harvest": 5170,
     "harvested_count": 0,
     "rejected_count": 305,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 5139,
+      "COMMUNITY_AND_EXPERT": 5154,
       "OFFICIAL_DOCUMENTATION": 176,
       "STANDARDS_AND_SPECIFICATIONS": 109,
       "ENGINEERING_BLOGS": 4,
@@ -118006,6 +118006,336 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/mattermost-mattermost-learnings.md",
         "fileName": "mattermost-mattermost-learnings.md"
+      }
+    },
+    "SRC-B44A8C9B8F47": {
+      "id": "SRC-B44A8C9B8F47",
+      "url": "https://developers.weixin.qq.com/miniprogram/dev/api/media/audio/AudioBuffer.copyFromChannel.html",
+      "title": "https://developers.weixin.qq.com/miniprogram/dev/api/media/audio/AudioBuffer.copyFromChannel.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T11:45:20.040Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nervjs-taro-learnings.md",
+        "fileName": "nervjs-taro-learnings.md"
+      }
+    },
+    "SRC-0B7E0283ED43": {
+      "id": "SRC-0B7E0283ED43",
+      "url": "https://developers.weixin.qq.com/miniprogram/dev/api/media/audio/WebAudioContext.html",
+      "title": "https://developers.weixin.qq.com/miniprogram/dev/api/media/audio/WebAudioContext.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T11:45:20.089Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nervjs-taro-learnings.md",
+        "fileName": "nervjs-taro-learnings.md"
+      }
+    },
+    "SRC-6CC9DB8D59ED": {
+      "id": "SRC-6CC9DB8D59ED",
+      "url": "https://developers.weixin.qq.com/miniprogram/dev/api/media/audio/WebAudioContext.resume.html",
+      "title": "https://developers.weixin.qq.com/miniprogram/dev/api/media/audio/WebAudioContext.resume.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T11:45:20.137Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nervjs-taro-learnings.md",
+        "fileName": "nervjs-taro-learnings.md"
+      }
+    },
+    "SRC-2F628FBD754C": {
+      "id": "SRC-2F628FBD754C",
+      "url": "https://developers.weixin.qq.com/miniprogram/dev/api/media/audio/WebAudioContext.suspend.html",
+      "title": "https://developers.weixin.qq.com/miniprogram/dev/api/media/audio/WebAudioContext.suspend.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T11:45:20.185Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nervjs-taro-learnings.md",
+        "fileName": "nervjs-taro-learnings.md"
+      }
+    },
+    "SRC-41B6B097B221": {
+      "id": "SRC-41B6B097B221",
+      "url": "https://developers.weixin.qq.com/miniprogram/dev/api/media/audio/WebAudioContext.createWaveShaper.html",
+      "title": "https://developers.weixin.qq.com/miniprogram/dev/api/media/audio/WebAudioContext.createWaveShaper.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T11:45:20.232Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nervjs-taro-learnings.md",
+        "fileName": "nervjs-taro-learnings.md"
+      }
+    },
+    "SRC-B760042E6338": {
+      "id": "SRC-B760042E6338",
+      "url": "https://developers.weixin.qq.com/miniprogram/dev/api/media/audio/WebAudioContext.createConstantSource.html",
+      "title": "https://developers.weixin.qq.com/miniprogram/dev/api/media/audio/WebAudioContext.createConstantSource.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T11:45:20.284Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nervjs-taro-learnings.md",
+        "fileName": "nervjs-taro-learnings.md"
+      }
+    },
+    "SRC-7E5BA36190FE": {
+      "id": "SRC-7E5BA36190FE",
+      "url": "https://developers.weixin.qq.com/miniprogram/dev/api/media/audio/WebAudioContext.createOscillator.html",
+      "title": "https://developers.weixin.qq.com/miniprogram/dev/api/media/audio/WebAudioContext.createOscillator.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T11:45:20.334Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nervjs-taro-learnings.md",
+        "fileName": "nervjs-taro-learnings.md"
+      }
+    },
+    "SRC-2F7A261179BF": {
+      "id": "SRC-2F7A261179BF",
+      "url": "https://developers.weixin.qq.com/miniprogram/dev/api/media/audio/WebAudioContext.createGain.html",
+      "title": "https://developers.weixin.qq.com/miniprogram/dev/api/media/audio/WebAudioContext.createGain.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T11:45:20.383Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nervjs-taro-learnings.md",
+        "fileName": "nervjs-taro-learnings.md"
+      }
+    },
+    "SRC-DA39C774DECC": {
+      "id": "SRC-DA39C774DECC",
+      "url": "https://developers.weixin.qq.com/miniprogram/dev/api/media/audio/WebAudioContext.createPeriodicWave.html",
+      "title": "https://developers.weixin.qq.com/miniprogram/dev/api/media/audio/WebAudioContext.createPeriodicWave.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T11:45:20.431Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nervjs-taro-learnings.md",
+        "fileName": "nervjs-taro-learnings.md"
+      }
+    },
+    "SRC-0F3CB00FDDFE": {
+      "id": "SRC-0F3CB00FDDFE",
+      "url": "https://developers.weixin.qq.com/miniprogram/dev/api/media/audio/WebAudioContext.createBiquadFilter.html",
+      "title": "https://developers.weixin.qq.com/miniprogram/dev/api/media/audio/WebAudioContext.createBiquadFilter.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T11:45:20.480Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nervjs-taro-learnings.md",
+        "fileName": "nervjs-taro-learnings.md"
+      }
+    },
+    "SRC-50F1FA34E359": {
+      "id": "SRC-50F1FA34E359",
+      "url": "https://developers.weixin.qq.com/miniprogram/dev/api/media/audio/WebAudioContext.createBufferSource.html",
+      "title": "https://developers.weixin.qq.com/miniprogram/dev/api/media/audio/WebAudioContext.createBufferSource.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T11:45:20.530Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nervjs-taro-learnings.md",
+        "fileName": "nervjs-taro-learnings.md"
+      }
+    },
+    "SRC-63B5B5A86C2D": {
+      "id": "SRC-63B5B5A86C2D",
+      "url": "https://developers.weixin.qq.com/miniprogram/dev/api/storage/wx.batchGetStorageSync.html",
+      "title": "https://developers.weixin.qq.com/miniprogram/dev/api/storage/wx.batchGetStorageSync.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T11:45:20.579Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nervjs-taro-learnings.md",
+        "fileName": "nervjs-taro-learnings.md"
+      }
+    },
+    "SRC-466AA9C2E160": {
+      "id": "SRC-466AA9C2E160",
+      "url": "https://developers.weixin.qq.com/miniprogram/dev/api/storage/wx.batchSetStorageSync.html",
+      "title": "https://developers.weixin.qq.com/miniprogram/dev/api/storage/wx.batchSetStorageSync.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T11:45:20.624Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nervjs-taro-learnings.md",
+        "fileName": "nervjs-taro-learnings.md"
+      }
+    },
+    "SRC-F9DB77D01BC7": {
+      "id": "SRC-F9DB77D01BC7",
+      "url": "https://developers.weixin.qq.com/miniprogram/dev/api/storage/wx.batchGetStorage.html",
+      "title": "https://developers.weixin.qq.com/miniprogram/dev/api/storage/wx.batchGetStorage.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T11:45:20.673Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nervjs-taro-learnings.md",
+        "fileName": "nervjs-taro-learnings.md"
+      }
+    },
+    "SRC-BFA4979DA507": {
+      "id": "SRC-BFA4979DA507",
+      "url": "https://developers.weixin.qq.com/miniprogram/dev/api/storage/wx.batchSetStorage.html",
+      "title": "https://developers.weixin.qq.com/miniprogram/dev/api/storage/wx.batchSetStorage.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T11:45:20.719Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/nervjs-taro-learnings.md",
+        "fileName": "nervjs-taro-learnings.md"
       }
     }
   }

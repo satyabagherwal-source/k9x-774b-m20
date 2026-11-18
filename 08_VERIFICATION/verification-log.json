@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261117-SFX3",
-    "timestamp": "2026-11-17T00:10:56.535Z",
-    "repository": "lioensky/VCPToolBox",
-    "learningId": "learn-github-lioensky-vcptoolbox",
-    "contentHash": "2e7d28a8e31e3cd40c916f70f8d770975829ebff293c9b71eb691430fe0280a1",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261117-SYWL",
-    "timestamp": "2026-11-17T00:11:21.141Z",
-    "repository": "xtools-at/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic",
-    "learningId": "learn-huggingface-xtools-at-deepseek-v4-pro-qwen3-5-9b-uncensored-heretic",
-    "contentHash": "568622441e630b7d63b2a7f0a57df5dd7f184462df5895840c3c99e6524f06d1",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261117-9AZ0",
-    "timestamp": "2026-11-17T00:24:03.276Z",
-    "repository": "nats-io/nats.go",
-    "learningId": "learn-github-nats-io-nats-go",
-    "contentHash": "54f1469449ceb0c3d47d42f5933ebb440e4c3f90b9590c9c02e029b04b0d102f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261117-D4VN",
     "timestamp": "2026-11-17T00:27:02.003Z",
     "repository": "NousResearch/Arete-27B",
@@ -7490,6 +7445,51 @@
     "repository": "mattermost/mattermost",
     "learningId": "learn-github-mattermost-mattermost",
     "contentHash": "97d693fb4ebfe7f2d913dfeb6b69cbde1ce033ff53ef15ab7c8c06c972f8cbd1",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-0VBD",
+    "timestamp": "2026-11-18T11:45:00.553Z",
+    "repository": "meta-llama/Llama-3.1-8B-Instruct",
+    "learningId": "learn-huggingface-meta-llama-llama-3-1-8b-instruct",
+    "contentHash": "09adff2d5b60d198b13ace486367b7efbfb210a39f126723833e1a6f5e000a18",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-127K",
+    "timestamp": "2026-11-18T11:45:09.488Z",
+    "repository": "NervJS/taro",
+    "learningId": "learn-github-nervjs-taro",
+    "contentHash": "c892a62cb9f9c21d53e37cc9169cd899b20081bb0774bc2004644b5b7ba301c5",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-174F",
+    "timestamp": "2026-11-18T11:45:15.855Z",
+    "repository": "clockworklabs/SpacetimeDB",
+    "learningId": "learn-github-clockworklabs-spacetimedb",
+    "contentHash": "0b7d29fa6e40c61310fce08c56891233a37c2bfbb9de50d7ec72c5f33aab211d",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

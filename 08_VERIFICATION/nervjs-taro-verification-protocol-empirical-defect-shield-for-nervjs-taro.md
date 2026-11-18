@@ -4,22 +4,22 @@
 {
   "source_repository": "NervJS/taro",
   "source_url": "https://github.com/NervJS/taro",
-  "source_version": "b6eaa4ef",
+  "source_version": "a48d43e3",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-17T09:27:23.584Z",
+  "timestamp": "2026-11-18T11:45:09.745Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-nervjs-taro",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [NervJS/taro](https://github.com/NervJS/taro) (Revision: `b6eaa4ef`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-17T09:27:23.584Z`  
+> **Provenance**: Harvested from [NervJS/taro](https://github.com/NervJS/taro) (Revision: `a48d43e3`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-18T11:45:09.745Z`  
 > **Learning ID**: `learn-github-nervjs-taro`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `NervJS/taro` (Commit: `b6eaa4ef`)
+- **Target Repository**: `NervJS/taro` (Commit: `a48d43e3`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nervjs-taro-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NervJS/taro](https://github.com/NervJS/taro))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T09:22:18.739Z  
+> **Harvest Timestamp**: 2026-11-18T11:45:08.175Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: 开放式跨端跨框架解决方案，支持使用 React/Vue 等框架来开发微信/京东/百度/支付宝/字节跳动/ QQ 小程序/H5/React Native 等应用。
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 37753 stars
+- **Stars / Engagement**: 37755 stars
 
 ---
 
@@ -1232,304 +1232,639 @@ pub fn init_git(project_name: &str, project_path: &str) -> anyhow::Result<()> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b6eaa4ef` (2026-11-17)
-**Commit Message**: fix(h5): report video picture-in-picture state (#19662)
+### Incident Patch 1: `a48d43e3` (2026-11-18)
+**Commit Message**: feat(h5): 支持创建 Web Audio 上下文 (#19664)
 
-**File**: `packages/taro-h5/__tests__/ui/window.test.ts` (modified, +24/-1)
+* feat(h5): support creating a Web Audio context
+
+* fix(h5): make audio decode callbacks optional
+
+* fix(h5): align web audio types with native context
+
+**File**: `packages/taro-h5/__tests__/media/webAudioContext.test.ts` (added, +30/-0)
 ```diff
-@@ -1,5 +1,5 @@
- import { getWindowInfo } from '../../src/api/base/system'
--import { offWindowResize, onWindowResize } from '../../src/api/ui/window'
-+import { checkIsPictureInPictureActive, offWindowResize, onWindowResize } from '../../src/api/ui/window'
- 
- test('reports the updated viewport dimensions to resize listeners', () => {
-   const callback = jest.fn()
-@@ -30,3 +30,26 @@ test('reports the updated viewport dimensions to resize listeners', () => {
-     jest.restoreAllMocks()
-   }
- })
+@@ -0,0 +1,30 @@
++import { createWebAudioContext } from '@tarojs/taro-h5'
 +
-+test('reports the current video picture-in-picture state synchronously', () => {
-+  let activeVideo: HTMLVideoElement | null = null
-+  const original = Object.getOwnPropertyDescriptor(document, 'pictureInPictureElement')
-+  Object.defineProperty(document, 'pictureInPictureElement', {
-+    configurable: true,
-+    get: () => activeVideo,
++describe('createWebAudioContext', () => {
++  const original = Object.getOwnPropertyDescriptor(window, 'AudioContext')
++
++  afterEach(() => {
++    if (original) {
++      Object.defineProperty(window, 'AudioContext', original)
++    } else {
++      Reflect.deleteProperty(window, 'AudioContext')
++    }
 +  })
 +
-+  try {
-+    expect(checkIsPictureInPictureActive()).toBe(false)
-+    activeVideo = document.createElement('video')
-+    expect(checkIsPictureInPictureActive()).toBe(true)
-+    activeVideo = null
-+    expect(checkIsPictureInPictureActive()).toBe(false)
-+  } finally {
-+    if (original) {
-+      Object.defineProperty(document, 'pictureInPictureElement', original)
-+    } else {
-+      Reflect.deleteProperty(document, 'pictureInPictureElement')
-+    }
-+  }
++  it('returns a new native context for each call', () => {
++    const resume = jest.fn()
++    const AudioContext = jest.fn().mockImplementation(() => ({ resume }))
++    Object.defineProperty(window, 'AudioContext', { configurable: true, value: AudioContext })
++
++    const first = createWebAudioContext()
++    expect(first).not.toBe(createWebAudioContext())
++    expect(AudioContext).toHaveBeenCalledTimes(2)
++    first.resume()
++    expect(resume).toHaveBeenCalledTimes(1)
++  })
++
++  it('throws synchronously when AudioContext is unavailable', () => {
++    Object.defineProperty(window, 'AudioContext', { configurable: true, value: undefined })
++    expect(() => createWebAudioContext()).toThrow('AudioContext is not supported')
++  })
 +})
 ```
 
-**File**: `packages/taro-h5/src/api/ui/window.ts` (modified, +2/-1)
+**File**: `packages/taro-h5/src/api/media/audio/index.ts` (modified, +6/-1)
 ```diff
-@@ -37,4 +37,5 @@ export const offWindowResize: typeof Taro.offWindowResize = callback => {
+@@ -10,7 +10,12 @@ export const setInnerAudioOption = /* @__PURE__ */ temporarilyNotSupport('setInn
+ export const playVoice = /* @__PURE__ */ temporarilyNotSupport('playVoice')
+ export const pauseVoice = /* @__PURE__ */ temporarilyNotSupport('pauseVoice')
+ export const getAvailableAudioSources = /* @__PURE__ */ temporarilyNotSupport('getAvailableAudioSources')
+-export const createWebAudioContext = /* @__PURE__ */ temporarilyNotSupport('createWebAudioContext')
++export const createWebAudioContext: typeof Taro.createWebAudioContext = () => {
++  if (typeof AudioContext === 'undefined') {
++    throw new Error('createWebAudioContext:fail AudioContext is not supported')
++  }
++  return new AudioContext()
++}
+ export const createMediaAudioPlayer = /* @__PURE__ */ temporarilyNotSupport('createMediaAudioPlayer')
+ 
+ /**
+```
+
+**File**: `packages/taro/types/api/media/audio.d.ts` (modified, +37/-36)
+```diff
+@@ -141,7 +141,7 @@ declare module '../../index' {
+      * ```
+      * @see https://developers.weixin.qq.com/miniprogram/dev/api/media/audio/AudioBuffer.copyFromChannel.html
+      */
+-    copyFromChannel(): void
++    copyFromChannel(destination: Float32Array, channelNumber: number, startInChannel?: number): void
+ 
+     /** 从指定数组复制样本到 audioBuffer 的特定通道
+      * @supported weapp
+@@ -153,7 +153,7 @@ declare module '../../index' {
+       /** 需要复制到的目的通道号 */
+       channelNumber: number,
+       /** 复制偏移数据量 */
+-      startInChannel: number
++      startInChannel?: number
+     ): void
+   }
+ 
+@@ -461,7 +461,7 @@ declare module '../../index' {
+   }
+ 
+   /** WebAudioContext 实例，通过 [Taro.createWebAudioContext](./createWebAudioContext) 接口获取该实例。
+-   * @supported weapp
++   * @supported weapp, h5
+    * @example
+    * 监听状态
+    *
+@@ -475,22 +475,22 @@ declare module '../../index' {
+    * ```
+    * @see https://developers.weixin.qq.com/miniprogram/dev/api/media/audio/WebAudioContext.html
+    */
+-  interface WebAudioContext {
++  interface WebAudioContext extends BaseAudioContext {
+     /** 当前 WebAudio 上下文的状态。
+      *
+      * 可能的值如下：suspended（暂停）、running（正在运行）、closed（已关闭）。
+      * 需要注意的是，不要在 audioContext close 后再访问 state 属性
+      */
+-    state: string
++    state: BaseAudioContext['state']
+ 
+     /** 可写属性，开发者可以对该属性设置一个监听函数，当 WebAudio 状态改变的时候，会触发开发者设置的监听函数。 */
+-    onstatechange: () => void
++    onstatechange: BaseAudioContext['onstatechange']
+ 
+     /** 获取当前上下文的时间戳。 */
+     currentTime: number
+ 
+     /** 当前上下文的最终目标节点，一般是音频渲染设备。 */
+-    destination: WebAudioContextNode
++    destination: AudioDestinationNode
+ 
+     /** 空间音频监听器。 */
+     listener: AudioListener
+@@ -502,7 +502,7 @@ declare module '../../index' {
+      *
+      * **注意事项**
+      * 同步关闭对应的 WebAudio 上下文。close 后会立即释放当前上下文的资源，**不要在 close 后再次访问 state 属性**。
+-     * @supported weapp
++     * @supported weapp, h5
+      * @example
+      * ```tsx
+      * const audioCtx = Taro.createWebAudioContext()
+@@ -515,19 +515,19 @@ declare module '../../index' {
+     close(): Promise<void>
+ 
+     /** 同步恢复已经被暂停的 WebAudioContext 上下文
+-     * @supported weapp
++     * @supported weapp, h5
+      * @see https://developers.weixin.qq.com/miniprogram/dev/api/media/audio/WebAudioContext.resume.html
+      */
+     resume(): Promise<void>
+ 
+     /** 同步暂停 WebAudioContext 上下文
+-     * @supported weapp
++     * @supported weapp, h5
+      * @see https://developers.weixin.qq.com/miniprogram/dev/api/media/audio/WebAudioContext.suspend.html
+      */
+     suspend(): Promise<void>
+ 
+     /** 创建一个 IIRFilterNode
+-     * @supported weapp
++     * @supported weapp, h5
+      * @example
+      * ```tsx
+      * let lowPassCoefs = [
+@@ -567,25 +567,25 @@ declare module '../../index' {
+     ): IIRFilterNode
+ 
+     /** 创建一个 WaveShaperNode
+-     * @supported weapp
++     * @supported weapp, h5
+      * @see https://developers.weixin.qq.com/miniprogram/dev/api/media/audio/WebAudioContext.createWaveShaper.html
+      */
+     createWaveShaper(): WaveShaperNode
+ 
+     /** 创建一个 ConstantSourceNode
+-     * @supported weapp
++     * @supported weapp, h5
+      * @see https://developers.weixin.qq.com/miniprogram/dev/api/media/audio/WebAudioContext.createConstantSource.html
+      */
+     createConstantSource(): ConstantSourceNode
+ 
+     /** 创建一个 OscillatorNode
+-     * @supported weapp
++     * @supported weapp, h5
+      * @see https://developers.weixin.qq.com/miniprogram/dev/api/media/audio/WebAudioContext.createOscillator.html
+      */
+     createOscillator(): OscillatorNode
+ 
+     /** 创建一个 GainNode
+-     * @supported weapp
++     * @supported weapp, h5
+      * @see https://developers.weixin.qq.com/miniprogram/dev/api/media/audio/WebAudioContext.createGain.html
+      */
+     createGain(): GainNode
+@@ -605,7 +605,7 @@ declare module '../../index' {
+      *
+      * const waveNode = audioContext.createPeriodicWave(real, imag, {disableNormalization: true})
+      * ```
+-     * @supported weapp
++     * @supported weapp, h5
+      * @see https://developers.weixin.qq.com/miniprogram/dev/api/media/audio/WebAudioContext.createPeriodicWave.html
+      */
+     createPeriodicWave(
+@@ -614,41 +614,41 @@ declare module '../../index' {
+       /** 一组余弦项(传统上是A项) */
+       imag: Float32Array,
+       /** 一个字典对象，它指定是否应该禁用规范化(默认启用规范化) */
+-      constraints: WebAudioContext.createPeriodicWave.Constraints
++      constraints?: WebAudioContext.createPeriodicWave.Constraints
+     ): PeriodicWave
+ 
+     /** 创建一个BiquadFilterNode
+-     * @supported weapp
++     * @supported weapp, h5
+      * @see https://developers.weixin.qq.com/miniprogram/dev/api/media/audio/WebAudioContext.createBiquadFilter.html
+      */
+     createBiquadFilter(): BiquadFilterNode
+ 
+     /** 创建一个 BufferSourceNode 实例，通过 AudioBuffer 对象来播放音频数据。
+-     * @supported weapp
++     * @supported weapp, h5
+      * @see https://developers.weixin.qq.com/miniprogram/dev/api/media/audio/WebAudioContext.createBufferSource.html
+      */
+     createBufferSource(): AudioBufferSourceNode
+ 
+     /** 创建一个ChannelMergerNode
+-     * @
+```
+
+---
+
+### Incident Patch 2: `2b04520c` (2026-11-18)
+**Commit Message**: feat(h5): support batch storage APIs on H5 (#19654)
+
+* feat(h5): support batch storage APIs on H5
+
+batchSetStorage, batchSetStorageSync, batchGetStorage and
+batchGetStorageSync were temporarilyNotSupport placeholders on H5, so
+code that reads or writes several cache entries at once in mini programs
+could not run in the browser without platform-specific fallbacks.
+
+Implement them on top of the existing localStorage-based storage APIs:
+
+- Entries are stored in the same format as setStorage, so data written
+  by the batch APIs can be read by getStorage and vice versa.
+- All values are serialized before anything is written, so a value that
+  cannot be serialized (e.g. a circular object) does not leave the batch
+  half written. The async API reports serialization and browser errors
+  (e.g. QuotaExceededError) through fail/complete; the sync API throws,
+  matching setStorageSync.
+- Missing keys, and keys not written by Taro, resolve to '' like
+  getStorageSync. Results keep the order of keyList, and batchGetStorage
+  returns them as dataList, matching WeChat.
+- kvList/keyList are validated like the other H5 storage APIs.
+
+Update the type declarations: mark the four APIs as supported on h
+
+**File**: `packages/taro-h5/__tests__/storage/batch.test.ts` (added, +273/-0)
+```diff
+@@ -0,0 +1,273 @@
++import * as Taro from '@tarojs/taro-h5'
++
++const mockConsole = require('jest-mock-console')
++
++describe('batch storage', () => {
++  beforeEach(() => {
++    localStorage.clear()
++    mockConsole()
++  })
++
++  afterEach(() => jest.restoreAllMocks())
++
++  describe('batchSetStorageSync', () => {
++    test('should save every item to localStorage', () => {
++      const data = { env: 'h5', mixArr: [1, { bar: '_bar' }, 'test'] }
++
++      Taro.batchSetStorageSync([
++        { key: 'foo', value: 'bar' },
++        { key: 'obj', value: data },
++        { key: 'empty', value: undefined }
++      ])
++
++      expect(localStorage.foo).toBe(JSON.stringify({ data: 'bar' }))
++      expect(localStorage.obj).toBe(JSON.stringify({ data }))
++      expect(localStorage.empty).toBe(JSON.stringify({ data: '' }))
++      expect(Taro.getStorageSync('obj')).toEqual(data)
++    })
++
++    test('should overwrite existing values', () => {
++      Taro.setStorageSync('foo', 'old')
++
++      Taro.batchSetStorageSync([{ key: 'foo', value: 'new' }])
++
++      expect(Taro.getStorageSync('foo')).toBe('new')
++    })
++
++    test('kvList should be an array', () => {
++      Taro.batchSetStorageSync()
++
++      expect(console.error).toHaveBeenCalledWith('batchSetStorageSync:fail parameter error: parameter.kvList should be Array instead of Undefined')
++    })
++
++    test('every key should be a string and nothing is written otherwise', () => {
++      Taro.batchSetStorageSync([{ key: 'foo', value: 'bar' }, { value: 'baz' }])
++
++      expect(console.error).toHaveBeenCalledWith('batchSetStorageSync:fail parameter error: parameter.kvList[1].key should be String instead of Undefined')
++      expect(localStorage.length).toBe(0)
++    })
++
++    test('should not write any item when a value cannot be serialized', () => {
++      const data: Record<string, unknown> = {}
++      data.self = data
++
++      expect(() => Taro.batchSetStorageSync([
++        { key: 'foo', value: 'bar' },
++        { key: 'circular', value: data }
++      ])).toThrow(TypeError)
++      expect(localStorage.length).toBe(0)
++    })
++
++    test('should restore earlier items when a write fails part way', () => {
++      Taro.setStorageSync('foo', 'old')
++      const setItem = Storage.prototype.setItem
++      jest.spyOn(Storage.prototype, 'setItem').mockImplementation(function (this: Storage, key: string, value: string) {
++        if (key === 'big') throw new DOMException('quota exceeded', 'QuotaExceededError')
++        return setItem.call(this, key, value)
++      })
++
++      expect(() => Taro.batchSetStorageSync([
++        { key: 'foo', value: 'new' },
++        { key: 'bar', value: 'baz' },
++        { key: 'big', value: 'x' }
++      ])).toThrow('quota exceeded')
++      expect(Taro.getStorageSync('foo')).toBe('old')
++      expect(localStorage.getItem('bar')).toBeNull()
++      expect(localStorage.getItem('big')).toBeNull()
++    })
++
++    test('should free the space used by the batch before restoring old values', () => {
++      const limit = 120
++      const used = (skip?: string) => Object.keys(localStorage).reduce((n, k) => k === skip ? n : n + (localStorage.getItem(k) as string).length, 0)
++      Taro.setStorageSync('foo', 'o'.repeat(80))
++      const setItem = Storage.prototype.setItem
++      jest.spyOn(Storage.prototype, 'setItem').mockImplementation(function (this: Storage, key: string, value: string) {
++        if (used(key) + value.length > limit) throw new DOMException('quota exceeded', 'QuotaExceededError')
++        return setItem.call(this, key, value)
++      })
++
++      expect(() => Taro.batchSetStorageSync([
++        { key: 'foo', value: 'n' },
++        { key: 'bar', value: 'b'.repeat(80) },
++        { key: 'big', value: 'x'.repeat(200) }
++      ])).toThrow('quota exceeded')
++      expect(Taro.getStorageSync('foo')).toBe('o'.repeat(80))
++      expect(localStorage.getItem('bar')).toBeNull()
++      expect(localStorage.getItem('big')).toBeNull()
++    })
++
++    test('should leave keys untouched when the first write fails', () => {
++      Taro.setStorageSync('foo', 'old')
++      const setItem = Storage.prototype.setItem
++      const removeItem = jest.spyOn(Storage.prototype, 'removeItem')
++      jest.spyOn(Storage.prototype, 'setItem').mockImplementation(function (this: Storage, key: string, value: string) {
++        if (key === 'big') throw new DOMException('quota exceeded', 'QuotaExceededError')
++        return setItem.call(this, key, value)
++      })
++
++      expect(() => Taro.batchSetStorageSync([
++        { key: 'big', value: 'x' },
++        { key: 'foo', value: 'new' }
++      ])).toThrow('quota exceeded')
++      expect(removeItem).not.toHaveBeenCalled()
++      expect(Taro.getStorageSync('foo')).toBe('old')
++    })
++  })
++
++  describe('batchSetStorage', () => {
++    test('options should be object', () => {
++      expect.assertions(2)
++      return Taro.batchSetStorage()
++        .catch(err => {
++          const expectErrMsg = 'batchSetStorage:fail parameter error: parameter shou
+```
+
+**File**: `packages/taro-h5/src/api/storage/index.ts` (modified, +143/-16)
+```diff
+@@ -1,22 +1,91 @@
+ import Taro from '@tarojs/api'
+ 
+-import { getParameterError, shouldBeObject, temporarilyNotSupport } from '../../utils'
++import { getParameterError, shouldBeObject } from '../../utils'
+ import { MethodHandler } from '../../utils/handler'
+ 
+ function getItem (key) {
++  let raw
++  try {
++    raw = localStorage.getItem(key)
++  } catch (e) {} // eslint-disable-line no-empty
++  return parseItem(raw)
++}
++
++function parseItem (raw: string | null | undefined) {
+   let item
+   try {
+-    item = JSON.parse(localStorage.getItem(key) || '')
++    item = JSON.parse(raw || '')
+   } catch (e) {} // eslint-disable-line no-empty
+ 
+   // 只返回使用 Taro.setStorage API 存储的数据
+-  if (item && typeof item === 'object' && item.hasOwnProperty('data')) {
++  if (item && typeof item === 'object' && Object.prototype.hasOwnProperty.call(item, 'data')) {
+     return { result: true, data: item.data }
+   } else {
+     return { result: false }
    }
  }
  
--export const checkIsPictureInPictureActive = /* @__PURE__ */ temporarilyNotSupport('checkIsPictureInPictureActive')
-+export const checkIsPictureInPictureActive: typeof Taro.checkIsPictureInPictureActive = () =>
-+  typeof document !== 'undefined' && Boolean(document.pictureInPictureElement)
-```
-
-**File**: `packages/taro/types/api/ui/window.d.ts` (modified, +2/-1)
-```diff
-@@ -63,7 +63,8 @@ declare module '../../index' {
- 
-     /**
-      * 返回当前是否存在小窗播放（小窗在 video/live-player/live-pusher 下可用）
--     * @supported weapp
-+     * H5 查询当前文档中使用标准画中画 API 的视频。
-+     * @supported weapp, h5
-      * @see https://developers.weixin.qq.com/miniprogram/dev/api/ui/window/wx.checkIsPictureInPictureActive.html
-      */
-     checkIsPictureInPictureActive(): boolean
-```
-
----
-
-### Incident Patch 2: `cc23bc48` (2026-11-17)
-**Commit Message**: fix(vite-runner): await mini modifyBuildAssets hook (#19658)
-
-* fix(vite-runner): await mini modifyBuildAssets hook
-
-* test(vite-runner): cover async asset additions
-
-**File**: `packages/taro-vite-runner/src/mini/emit.ts` (modified, +1/-1)
-```diff
-@@ -215,7 +215,7 @@ export default function (viteCompilerContext: ViteMiniCompilerContext): PluginOp
-               return true
-             },
-           })
--          taroConfig.modifyBuildAssets(
-+          await taroConfig.modifyBuildAssets(
-             assetsProxy,
-             {
-               pages: viteCompilerContext.pages,
-```
-
-**File**: `packages/taro-vite-runner/tests/mini/emit.spec.ts` (modified, +39/-15)
-```diff
-@@ -6,19 +6,13 @@ import emitPlugin from '../../src/mini/emit'
- import type { ViteMiniCompilerContext } from '@tarojs/taro/types/compile/viteCompilerContext'
- import type { Plugin } from 'rollup'
- 
--test('emits new assets added by modifyBuildAssets', async () => {
--  const fileName = '.browserslistrc'
--  const source = 'defaults and fully supports es6-module'
-+function buildWithAssetHook (modifyBuildAssets: (assets: Record<string, { source: () => string }>) => void | Promise<void>) {
-   const plugins = emitPlugin({
--    taroConfig: {
--      modifyBuildAssets (assets) {
--        assets[fileName] = { source: () => source }
--      }
--    }
-+    taroConfig: { modifyBuildAssets }
-   } as unknown as ViteMiniCompilerContext) as Plugin[]
- 
--  const entry = '\0app'
--  const bundle = await rollup({
-+  const entry = 'app.js'
-+  return rollup({
-     input: entry,
-     plugins: [
-       {
-@@ -29,15 +23,45 @@ test('emits new assets added by modifyBuildAssets', async () => {
-       plugins.find(plugin => plugin.name === 'taro:vite-mini-emit-post'),
-     ],
-   })
++function serializeItem (data: unknown = '') {
++  return JSON.stringify(typeof data === 'symbol' ? { data: '' } : { data })
 +}
 +
-+test.each([false, true])('applies synchronous additions and asynchronous updates (async: %s)', async asynchronous => {
-+  const fileName = '.browserslistrc'
-+  const source = 'defaults and fully supports es6-module'
-+  const bundle = await buildWithAssetHook(assets => {
-+    const addAsset = () => { assets[fileName] = { source: () => source } }
-+    if (asynchronous) {
-+      return new Promise<void>(resolve => {
-+        setTimeout(() => {
-+          addAsset()
-+          assets['app.js'] = { source: () => 'export default 2' }
-+          resolve()
-+        }, 0)
-+      })
-+    }
-+    addAsset()
-+  })
- 
-   try {
-     const { output } = await bundle.generate({ format: 'es' })
- 
--    expect(output).toContainEqual(expect.objectContaining({
--      fileName,
--      source,
--      type: 'asset',
--    }))
-+    expect(output).toContainEqual(expect.objectContaining({ fileName, source, type: 'asset' }))
-+    if (asynchronous) {
-+      expect(output).toContainEqual(expect.objectContaining({ fileName: 'app.js', code: 'export default 2', type: 'chunk' }))
-+    }
-+  } finally {
-+    await bundle.close()
++function getKvListError (kvList: unknown, name?: string) {
++  if (!Array.isArray(kvList)) {
++    return getParameterError({ name, para: 'kvList', correct: 'Array', wrong: kvList })
 +  }
-+})
++  for (let i = 0; i < kvList.length; i++) {
++    const key = kvList[i]?.key
++    if (typeof key !== 'string') {
++      return getParameterError({ name, para: `kvList[${i}].key`, correct: 'String', wrong: key })
++    }
++  }
++}
 +
-+test('propagates a rejected modifyBuildAssets promise', async () => {
-+  const error = new Error('asset transformation failed')
-+  const hook = Promise.reject(error)
-+  hook.catch(() => {})
-+  const bundle = await buildWithAssetHook(() => hook)
++function getKeyListError (keyList: unknown, name?: string) {
++  if (!Array.isArray(keyList)) {
++    return getParameterError({ name, para: 'keyList', correct: 'Array', wrong: keyList })
++  }
++  for (let i = 0; i < keyList.length; i++) {
++    if (typeof keyList[i] !== 'string') {
++      return getParameterError({ name, para: `keyList[${i}]`, correct: 'String', wrong: keyList[i] })
++    }
++  }
++}
++
++function setItems (kvList: Taro.batchSetStorage.kv[]) {
++  // 先序列化全部数据，避免部分数据无法序列化时只写入了一部分
++  const items = kvList.map(({ key, value }) => [key, serializeItem(value)])
++  // 写入失败（如超出存储配额）时恢复已写入的旧值，保证批量写入要么全部成功要么不改变数据
++  const previous = items.map(([key]) => [key, localStorage.getItem(key)] as const)
++  let written = 0
++  try {
++    items.forEach(([key, item]) => {
++      localStorage.setItem(key, item)
++      written++
++    })
++  } catch (e) {
++    // 只回滚已经写入的 key：先移除以释放空间，再恢复旧值；单项恢复失败不应中断其余恢复
++    const touched = previous.slice(0, written)
++    touched.forEach(([key]) => localStorage.removeItem(key))
++    touched.forEach(([key, item]) => {
++      if (item === null) return
++      try {
++        localStorage.setItem(key, item)
++      } catch (err) {} // eslint-disable-line no-empty
++    })
++    throw e
++  }
++}
++
++function getItems (keyList: string[]) {
++  // 先读取原始数据，使存储不可用（如浏览器禁止访问）时抛出异常，而不是当作 key 不存在
++  const rawList = keyList.map(key => localStorage.getItem(key))
++  return rawList.map(raw => {
++    const { result, data } = parseItem(raw)
++    return result ? data : ''
++  })
++}
++
+ // 数据缓存
+ export const setStorageSync: typeof Taro.setStorageSync = (key, data = '') => {
+   if (typeof key !== 'string') {
+@@ -28,15 +97,7 @@ export const setStorageSync: typeof Taro.setStorageSync = (key, data = '') => {
+     return
+   }
+ 
+-  const type = typeof data
+-  let obj = {}
+-
+-  if (type === 'symbol') {
+-    obj = { data: '' }
+-  } else {
+-    obj = { data }
+-  }
+-  localStorage.setItem(key, JSON.stringify(obj))
++  localStorage.setItem(key, serializeItem(data))
+ }
+ 
+ export const setStorage: typeof Taro.setStorage = (options) => {
+@@ -204,10 +265,76 @@ export const clearStorage: typeof Taro.clearStorage = ({ success, fail, complete
+   return handle.success()
+ }
+ 
+-export const batchSetStorageSync = /* @__PURE__ */ temporarilyNotSupport('batchSetStorageSync')
+-export const batchSetStorage = /* @__PURE__ */ temporarilyNotSupport('batchSetStorage')
+-export const batchGetStorageSync = /* @__PURE__ */ temporarilyNotSupport('batchGetStorageSync')
+-export const batchGetStorage = /* @__PURE__ */ temporarilyNotSupport('batchGetStorage')
++export const batchSetStorageSync: typeof Taro.batchSetStorageSync = (kvList) => {
++  const errMsg = getKvListError(kvList, 'batchSetStorageSync')
++  if (errMsg) {
++    console.error(errMsg)
++    return
++  }
++
++  setItems(kvList)
++}
++
++export const batchSetStorage: typeof Taro.batchSetStorage = (options) => {
++  // options must be an Object
++  const isObject = shouldBeObject(options)
++  if (!isObject.flag) {
++    const res = { errMsg: `batchSetStorage:fail ${isObject.msg}` }
++    console.error(res.errMsg)
++    return Promise.reject(res)
++  }
++
++  const { kvList, success, fail, complete } = options
++  const handle = new MethodHandler({ name: 'batchSetStorage', success, fail, complete })
++
++  const errMsg = getKvListError(kvList)
++  if (errMsg) {
++    return handle.fail({ errMsg })
++  }
 +
 +  try {
-+    await expect(bundle.generate({ format: 'es' })).rejects.toThrow('asset transformation failed')
-   } finally {
-     await bundle.close()
-   }
-```
-
----
-
-### Incident Patch 3: `e8444c72` (2026-11-16)
-**Commit Message**: fix(h5): expose response headers as objects for file transfers (#19639)
-
-* fix(h5): expose response headers as objects for file transfers
-
-* refactor(h5): keep response header parsing separate from transfer setup
-
-**File**: `packages/taro-h5/__tests__/network/transfer-headers.test.ts` (added, +49/-0)
-```diff
-@@ -0,0 +1,49 @@
-+import { downloadFile } from '../../src/api/network/download'
-+import { uploadFile } from '../../src/api/network/upload'
-+import * as networkUtils from '../../src/api/network/utils'
-+
-+describe.each([
-+  ['download', () => downloadFile({ url: '/download' })],
-+  ['upload', () => uploadFile({ url: '/upload', filePath: 'blob:file', name: 'file' })],
-+] as const)('%s response headers', (kind, start) => {
-+  afterEach(() => {
-+    jest.restoreAllMocks()
-+    jest.useRealTimers()
-+  })
-+
-+  test.each([
-+    ['', {}],
-+    ['__proto__: value\r\n', { ['__proto__']: 'value' }],
-+    ['content-type: text/plain\r\nx-custom: key: value\r\n', { 'content-type': 'text/plain', 'x-custom': 'key: value' }],
-+  ])('returns a header object for %j', async (raw, expected) => {
-+    jest.useFakeTimers()
-+    const xhr = new XMLHttpRequest()
-+    jest.spyOn(window, 'XMLHttpRequest').mockReturnValue(xhr)
-+    jest.spyOn(xhr, 'send').mockImplementation(() => {})
-+    jest.spyOn(networkUtils, 'convertObjectUrlToBlob').mockResolvedValue(new File(['test'], 'example.txt'))
-+    const task = start()
-+    const result = task.catch(error => error)
-+    const listener = jest.fn()
-+    task.onHeadersReceived(listener)
-+
-+    jest.spyOn(xhr, 'readyState', 'get').mockReturnValue(xhr.HEADERS_RECEIVED)
-+    jest.spyOn(xhr, 'getAllResponseHeaders').mockReturnValue(raw)
-+    xhr.dispatchEvent(new Event('readystatechange'))
-+    expect(listener).toHaveBeenCalledWith({ header: expected })
-+    const { header } = listener.mock.calls[0][0]
-+    expect(Object.getPrototypeOf(header)).toBe(Object.prototype)
-+    expect(typeof header.hasOwnProperty).toBe('function')
-+    expect(Object.prototype.hasOwnProperty.call(header, '__proto__')).toBe(
-+      Object.prototype.hasOwnProperty.call(expected, '__proto__')
-+    )
-+
-+    task.offHeadersReceived(listener)
-+    xhr.dispatchEvent(new Event('readystatechange'))
-+    expect(listener).toHaveBeenCalledTimes(1)
-+
-+    await Promise.resolve()
-+    if (kind === 'upload') task.abort()
-+    else xhr.dispatchEvent(new ProgressEvent('abort'))
-+    await result
-+  })
-+})
-```
-
-**File**: `packages/taro-h5/src/api/network/download.ts` (modified, +2/-1)
-```diff
-@@ -1,6 +1,7 @@
- import Taro from '@tarojs/api'
- 
- import { CallbackManager } from '../../utils/handler'
-+import { parseResponseHeaders } from './response-headers'
- import { inactiveTransferTask, NETWORK_TIMEOUT, setHeader, XHR_STATS } from './utils'
- 
- const createDownloadTask = ({ url, header, withCredentials = true, timeout, success, error }): Taro.DownloadTask => {
-@@ -29,7 +30,7 @@ const createDownloadTask = ({ url, header, withCredentials = true, timeout, succ
-   xhr.onreadystatechange = () => {
-     if (xhr.readyState !== XHR_STATS.HEADERS_RECEIVED) return
-     callbackManager.headersReceived.trigger({
--      header: xhr.getAllResponseHeaders()
-+      header: parseResponseHeaders(xhr.getAllResponseHeaders())
-     })
-   }
- 
-```
-
-**File**: `packages/taro-h5/src/api/network/response-headers.ts` (added, +14/-0)
-```diff
-@@ -0,0 +1,14 @@
-+export const parseResponseHeaders = (rawHeaders: string) => {
-+  const headers: Record<string, string> = {}
-+  for (const line of rawHeaders.split(/\r?\n/)) {
-+    const separator = line.indexOf(':')
-+    if (separator <= 0) continue
-+    Object.defineProperty(headers, line.slice(0, separator).trim(), {
-+      value: line.slice(separator + 1).trim(),
-+      configurable: true,
-+      enumerable: true,
-+      writable: true
-+    })
++    setItems(kvList)
++  } catch (e) {
++    return handle.fail({ errMsg: e?.message || String(e) })
 +  }
-+  return headers
++  return handle.success()
 +}
++
++export c
 ```
 
-**File**: `packages/taro-h5/src/api/network/upload.ts` (modified, +2/-1)
+**File**: `packages/taro/types/api/storage/index.d.ts` (modified, +19/-15)
 ```diff
-@@ -1,6 +1,7 @@
- import Taro from '@tarojs/api'
- 
- import { CallbackManager } from '../../utils/handler'
-+import { parseResponseHeaders } from './response-headers'
- import {
-   convertObjectUrlToBlob,
-   inactiveTransferTask,
-@@ -58,7 +59,7 @@ const createUploadTask = ({ url, filePath, formData = {}, name, header, timeout,
-   xhr.onreadystatechange = () => {
-     if (xhr.readyState !== XHR_STATS.HEADERS_RECEIVED) return
-     callbackManager.headersReceived.trigger({
--      header: xhr.getAllResponseHeaders()
-+      header: parseResponseHeaders(xhr.getAllResponseHeaders())
-     })
+@@ -133,15 +133,19 @@ declare module '../../index' {
    }
  
+   namespace batchGetStorage {
+-    interface Option {
++    interface Option<T = any> {
+       /** 本地缓存中指定的 keyList */
+       keyList: string[]
+       /** 接口调用结束的回调函数（调用成功、失败都会执行） */
+       complete?: (res: TaroGeneral.CallbackResult) => void
+       /** 接口调用失败的回调函数 */
+       fail?: (res: TaroGeneral.CallbackResult) => void
+       /** 接口调用成功的回调函数 */
+-      success?: (res: TaroGeneral.CallbackResult) => void
++      success?: (res: SuccessCallbackResult<T>) => void
++    }
++    interface SuccessCallbackResult<T = any> extends TaroGeneral.CallbackResult {
++      /** keyList 中各个 key 对应的内容，顺序与 keyList 一致 */
++      dataList: T[]
+     }
+   }
+ 
+@@ -333,14 +337,14 @@ declare module '../../index' {
+     /** 将数据批量存储在本地缓存中指定的 key 中。
+      * 会覆盖掉原来该 key 对应的内容。除非用户主动删除或因存储空间原因被系统清理，否则数据都一直可用。
+      * 单个 key 允许存储的最大数据长度为 1MB，所有数据存储上限为 10MB。
+-     * @supported weapp
++     * @supported weapp, h5
+      * @example
+      * ```tsx
+      * try {
+      *   Taro.batchSetStorageSync([{key: 'key', value: 'value'}])
+      * } catch (e) { }
+      * ```
+-     * @see https://developers.weixin.qq.com/miniprogram/dev/api/storage/wx.batchGetStorageSync.html
++     * @see https://developers.weixin.qq.com/miniprogram/dev/api/storage/wx.batchSetStorageSync.html
+      */
+     batchSetStorageSync(option: {
+       /** key 本地缓存中指定的 key */
+@@ -352,22 +356,22 @@ declare module '../../index' {
+     /** 将数据批量存储在本地缓存中指定的 key 中。会覆盖掉原来该 key 对应的内容。
+      * 除非用户主动删除或因存储空间原因被系统清理，否则数据都一直可用。
+      * 单个 key 允许存储的最大数据长度为 1MB，所有数据存储上限为 10MB。
+-     * @supported weapp
++     * @supported weapp, h5
+      * @example
+      * ```tsx
+-     * Taro.batchGetStorage({
+-     *   keyList: ['key']
+-     *   success(res) {
+-     *     console.log(res)
+-     *   }
++     * Taro.batchSetStorage({
++     *   kvList: [{
++     *     key: 'key',
++     *     value: 'value'
++     *   }]
+      * })
+      * ```
+-     * @see https://developers.weixin.qq.com/miniprogram/dev/api/storage/wx.batchGetStorage.html
++     * @see https://developers.weixin.qq.com/miniprogram/dev/api/storage/wx.batchSetStorage.html
+      */
+     batchSetStorage(option: batchSetStorage.Option): Promise<TaroGeneral.CallbackResult>
+ 
+     /** 从本地缓存中同步批量获取指定 key 的内容。
+-     * @supported weapp
++     * @supported weapp, h5
+      * @example
+      * ```tsx
+      * try {
+@@ -387,18 +391,18 @@ declare module '../../index' {
+     ): T[]
+ 
+     /** 从本地缓存中异步批量获取指定 key 的内容。
+-     * @supported weapp
++     * @supported weapp, h5
+      * @example
+      * ```tsx
+      * Taro.batchGetStorage({
+      *   keyList: ['key'],
+      *   success(res) {
+-     *     console.log(res)
++     *     console.log(res.dataList)
+      *   }
+      * })
+      * ```
+      * @see https://developers.weixin.qq.com/miniprogram/dev/api/storage/wx.batchGetStorage.html
+      */
+-    batchGetStorage(option: batchGetStorage.Option): Promise<TaroGeneral.CallbackResult>
++    batchGetStorage<T = any>(option: batchGetStorage.Option<T>): Promise<batchGetStorage.SuccessCallbackResult<T>>
+   }
+ }
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #19664** (2026-11-18): feat(h5): 支持创建 Web Audio 上下文 (@Jarvis636431)
 - **PR #19662** (2026-11-17): fix(h5): 支持同步查询视频画中画状态 (@Jarvis636431)
 - **PR #19660** (2026-11-16): feat(h5): support creating and revoking buffer URLs (@Jarvis636431)
 - **PR #19658** (2026-11-17): fix(vite-runner): await mini modifyBuildAssets hook (@Jarvis636431)
 - **PR #19656** (2026-11-16): feat(h5): support hideKeyboard on H5 (@officialasishkumar)
-- **PR #19652** (2026-11-13): chore(release): publish 4.3.3 (@Single-Dancer)
-- **PR #19651** (2026-11-13): fix(water-flow): 修复 H5 动态切列后的布局错位 (@Adamlyu-hub)
+- **PR #19654** (2026-11-18): feat(h5): support batch storage APIs on H5 (@officialasishkumar)
 
 ---
 
@@ -1549,54 +1884,60 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. h5): report video picture-in-picture state
+## X. h5): 支持创建 Web Audio 上下文
 
 **RULE**:
-When implementing operations in `packages/taro-h5/__tests__/ui/window.test.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NervJS/taro. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/taro-h5/__tests__/media/webAudioContext.test.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NervJS/taro. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b6eaa4ef`: h5): report video picture-in-picture state. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a48d43e3`: h5): 支持创建 Web Audio 上下文. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/taro-h5/__tests__/ui/window.test.ts`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/taro-h5/__tests__/media/webAudioContext.test.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-import { checkIsPictureInPictureActive, offWindowResize, onWindowResize } from '../../src/api/ui/window'
+import { createWebAudioContext } from '@tarojs/taro-h5'
 
-test('reports the current video picture-in-picture state synchronously', () => {
-  let activeVideo: HTMLVideoElement | null = null
-  const original = Object.getOwnPropertyDescriptor(document, 'pictureInPictureElement')
-  Object.defineProperty(document, 'pictureInPictureElement', {
-    configurable: true,
-    get: () => activeVideo,
+describe('createWebAudioContext', () => {
+  const original = Object.getOwnPropertyDescriptor(window, 'AudioContext')
+
+  afterEach(() => {
+    if (original) {
+      Object.defineProperty(window, 'AudioContext', original)
+    } else {
+      Reflect.deleteProperty(window, 'AudioContext')
+    }
   })
 
-  try {
-    expect(checkIsPictureInPictureActive()).toBe(false)
-    activeVideo = document.createElement('video')
-    expect(checkIsPictureInPictureActive()).toBe(true)
-    activeVideo = null
-    expect(checkIsPictureInPictureActive()).toBe(false)
-  } finally {
-    if (original) {
-      Object.defineProperty(document, 'pictureInPictureElement', original)
-    } else {
-      Reflect.deleteProperty(document, 'pictureInPictureElement')
-    }
-  }
+  it('returns a new native context for each call', () => {
+    const resume = jest.fn()
+    const AudioContext = jest.fn().mockImplementation(() => ({ resume }))
+    Object.defineProperty(window, 'AudioContext', { configurable: true, value: AudioContext })
+
+    const first = createWebAudioContext()
+    expect(first).not.toBe(createWebAudioContext())
+    expect(AudioContext).toHaveBeenCalledTimes(2)
+    first.resume()
+    expect(resume).toHaveBeenCalledTimes(1)
+  })
+
+  it('throws synchronously when AudioContext is unavailable', () => {
+    Object.defineProperty(window, 'AudioContext', { configurable: true, value: undefined })
+    expect(() => createWebAudioContext()).toThrow('AudioContext is not supported')
+  })
 })
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Induced defect failure mode:
-import { offWindowResize, onWindowResize } from '../../src/api/ui/window'
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b6eaa4ef` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a48d43e3` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

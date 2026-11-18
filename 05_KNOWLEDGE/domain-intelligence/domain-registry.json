@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-18T11:33:27.444Z",
-  "total_records": 1836,
+  "last_updated": "2026-11-18T11:45:22.100Z",
+  "total_records": 1838,
   "domains": {
     "A": {
       "total": 11,
@@ -903,7 +903,7 @@
       ]
     },
     "G": {
-      "total": 321,
+      "total": 323,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -1225,7 +1225,9 @@
         "domain_intelligence-architecture-intelligence-kubernetes-sigs-aws-load-balancer-controller-core-inva",
         "domain_intelligence-architecture-intelligence-kubernetes-sigs-aws-load-balancer-controller-learnings",
         "domain_intelligence-architecture-intelligence-mattermost-mattermost-core-invariants",
-        "domain_intelligence-architecture-intelligence-mattermost-mattermost-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-mattermost-mattermost-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-nervjs-taro-core-invariants",
+        "domain_intelligence-architecture-intelligence-nervjs-taro-learnings-core-invariants"
       ]
     },
     "H": {
@@ -28110,8 +28112,8 @@
       "title": "Technical Construction Intelligence: clockworklabs/SpacetimeDB Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-clockworklabs-spacetimedb-technical-construction-intelligence-clockworklabs-spac.md",
       "repository": "clockworklabs/SpacetimeDB",
-      "content_hash": "12234fe4e46544e267a43d0673a4dbd5aa8faa47a75377acf971e7dd7d66b3ed",
-      "created_at": "2026-11-17T17:57:56.428Z"
+      "content_hash": "0f4e3b7875cc4a09d85e788bd507d7048de2b60fd1e255d0258d58d7b95ffb5d",
+      "created_at": "2026-11-18T11:45:16.313Z"
     },
     "domain_intelligence-technical-construction-intelligence-clockworklabs-spacetimedb-learnings-core-inv": {
       "record_id": "domain_intelligence-technical-construction-intelligence-clockworklabs-spacetimedb-learnings-core-inv",
@@ -28119,8 +28121,8 @@
       "title": "Technical Construction Intelligence: clockworklabs-spacetimedb-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-clockworklabs-spacetimedb-learnings-technical-construction-intelligence-clockwor.md",
       "repository": "clockworklabs-spacetimedb-learnings",
-      "content_hash": "feb2e7dd99d783fc57f1d063fc69ec6c50700a8199f8c5c97168b10d6427fdff",
-      "created_at": "2026-11-17T17:58:00.872Z"
+      "content_hash": "9ccbe59a8a08d0dce921b87b30e8bb5aa7627c6976ef3d0fb80ad85440fb5fd2",
+      "created_at": "2026-11-18T11:45:22.100Z"
     },
     "domain_intelligence-research-knowledge-intelligence-ornith-ai-ornith-1-5-122b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-ornith-ai-ornith-1-5-122b-core-invariants",
@@ -28989,8 +28991,8 @@
       "title": "Research & Knowledge Intelligence: meta-llama/Llama-3.1-8B-Instruct Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-meta-llama-llama-3-1-8b-instruct-research-knowledge-intelligence-meta-llama-l.md",
       "repository": "meta-llama/Llama-3.1-8B-Instruct",
-      "content_hash": "b089db7751f0bb2990e1d5929b465731ba47c60977ebce8dd8612ae79942d9b5",
-      "created_at": "2026-11-17T23:42:26.925Z"
+      "content_hash": "3299768a561c28a6747e0f876f097fda488a2b36a39ec58e1bae9c033c845185",
+      "created_at": "2026-11-18T11:45:00.808Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-meta-llama-llama-3-1-8b-instruct-learnings-co": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-meta-llama-llama-3-1-8b-instruct-learnings-co",
@@ -28998,8 +29000,8 @@
       "title": "Research & Knowledge Intelligence: hf-meta-llama-llama-3.1-8b-instruct-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-meta-llama-llama-3-1-8b-instruct-learnings-research-knowledge-intelligence-hf.md",
       "repository": "hf-meta-llama-llama-3.1-8b-instruct-learnings",
-      "content_hash": "c241d945f90395dc0046599b6025207baf7d2d1b449e306f0a7439192b25ce56",
-      "created_at": "2026-11-17T23:42:38.847Z"
+      "content_hash": "b559e35a3b240926bd5e8fe09cb8db0ebf64bb3dcbe88299f6834509e51bd56a",
+      "created_at": "2026-11-18T11:45:19.637Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-teleocr-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-teleocr-core-invariants",
@@ -30784,6 +30786,24 @@
       "repository": "mattermost-mattermost-learnings",
       "content_hash": "06687b4771c3cc6777fe8929a1119cf9bc87ff68c0d079411c209c137e22bfac",
       "created_at": "2026-11-18T11:33:27.444Z"
+    },
+    "domain_intelligence-architecture-intelligence-nervjs-taro-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-nervjs-taro-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: NervJS/taro Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nervjs-taro-architecture-intelligence-nervjs-taro-core-invariants.md",
+      "repository": "NervJS/taro",
+      "content_hash": "308301120ceef46dedbf39a669f827933161e100e09e440120e0fe00fee6a464",
+      "created_at": "2026-11-18T11:45:09.944Z"
+    },
+    "domain_intelligence-architecture-intelligence-nervjs-taro-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-nervjs-taro-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: nervjs-taro-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nervjs-taro-learnings-architecture-intelligence-nervjs-taro-learnings-core-invar.md",
+      "repository": "nervjs-taro-learnings",
+      "content_hash": "21c710eee487cb1dc553199968885dab5f7a867ce437648d5b78313aec19f798",
+      "created_at": "2026-11-18T11:45:21.173Z"
     }
   }
 }
