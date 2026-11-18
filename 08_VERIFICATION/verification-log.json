@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261117-GX1H",
-    "timestamp": "2026-11-17T14:01:47.333Z",
-    "repository": "gravitl/netmaker",
-    "learningId": "learn-github-gravitl-netmaker",
-    "contentHash": "40d5bd4500aefafe945ab9fd418e17583ec277d064d80e1f85d1bd2f2206d9a1",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261117-H0PV",
-    "timestamp": "2026-11-17T14:01:52.099Z",
-    "repository": "vespa-engine/vespa",
-    "learningId": "learn-github-vespa-engine-vespa",
-    "contentHash": "ed8694ce56ce5e85ad3d84dbc8789b3cd6c5b2397612b1744d0d1b2b4f74ca1f",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261117-Y5S0",
-    "timestamp": "2026-11-17T14:15:11.808Z",
-    "repository": "xtools-at/DeepSeek-V4-Pro-Qwen3.5-4B-UNCENSORED-heretic",
-    "learningId": "learn-huggingface-xtools-at-deepseek-v4-pro-qwen3-5-4b-uncensored-heretic",
-    "contentHash": "977b6dc83e944d84500297c4da4e31b0ade7fe4b109693a7fb517145b76bf2f6",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261117-80UI",
     "timestamp": "2026-11-17T14:22:51.978Z",
     "repository": "meta/docusaurus",
@@ -7492,6 +7447,51 @@
     "contentHash": "a9a7abe4eaeed6cc4b77e47f94646cdc67cddb6c28a84ddfbcd373312471c8d2",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-N1AF",
+    "timestamp": "2026-11-18T21:50:06.663Z",
+    "repository": "stabilityai/stable-diffusion-3-medium",
+    "learningId": "learn-huggingface-stabilityai-stable-diffusion-3-medium",
+    "contentHash": "fc468bf53611226ce5659bf4365bb2dc5734cfc78ef8bda7a07d9374e430212a",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-N3O8",
+    "timestamp": "2026-11-18T21:50:09.752Z",
+    "repository": "grpc/grpc-rust",
+    "learningId": "learn-github-grpc-grpc-rust",
+    "contentHash": "9f8fa370cbee3b0c7e46dcc359b8b6d1f61eb43684af3fdc6fd40203755bc1c0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-N9Z5",
+    "timestamp": "2026-11-18T21:50:17.921Z",
+    "repository": "pulumi/pulumi",
+    "learningId": "learn-github-pulumi-pulumi",
+    "contentHash": "0c38759b968b7bf74ea28c50e40ee5086797cf4febc408e07aceb1675aa31fa1",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

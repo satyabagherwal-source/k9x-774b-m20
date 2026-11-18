@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-18T21:42:26.393Z",
+  "last_updated": "2026-11-18T21:50:17.934Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1220,14 +1220,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-stabilityai-stable-diffusion-3-medium",
-      "content_hash": "0209ed0502b8de79f952cf6389e730548b381e71af57e209810a466d61a58d3d",
-      "verified_at": "2026-11-14T03:49:04.831Z",
+      "content_hash": "fc468bf53611226ce5659bf4365bb2dc5734cfc78ef8bda7a07d9374e430212a",
+      "verified_at": "2026-11-18T21:50:06.674Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-14T03:49:04.831Z"
+      "last_updated": "2026-11-18T21:50:06.674Z"
     },
     "bigscience/bloom": {
       "repository": "bigscience/bloom",
@@ -7191,14 +7191,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-pulumi-pulumi",
-      "content_hash": "a1d392b6b9502f97193f5d3fa593f41c2f46db97a5567088935e93c7a013673e",
-      "verified_at": "2026-11-18T06:49:13.474Z",
+      "content_hash": "0c38759b968b7bf74ea28c50e40ee5086797cf4febc408e07aceb1675aa31fa1",
+      "verified_at": "2026-11-18T21:50:17.933Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T06:49:13.474Z"
+      "last_updated": "2026-11-18T21:50:17.933Z"
     },
     "sqlpage/SQLPage": {
       "repository": "sqlpage/SQLPage",
@@ -8211,14 +8211,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-grpc-grpc-rust",
-      "content_hash": "1b06bc95f50cbc0458d2f21b63575d36a1035d8b66925be702b6907c3732daa8",
-      "verified_at": "2026-11-13T19:27:19.377Z",
+      "content_hash": "9f8fa370cbee3b0c7e46dcc359b8b6d1f61eb43684af3fdc6fd40203755bc1c0",
+      "verified_at": "2026-11-18T21:50:09.764Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T19:27:19.377Z"
+      "last_updated": "2026-11-18T21:50:09.764Z"
     },
     "crazycodeboy/react-native-splash-screen": {
       "repository": "crazycodeboy/react-native-splash-screen",

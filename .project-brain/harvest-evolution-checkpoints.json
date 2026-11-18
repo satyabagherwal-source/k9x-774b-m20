@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T21:42:31.458Z",
+  "last_updated": "2026-11-18T21:50:23.265Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-18T21:02:10.043Z",
@@ -898,7 +898,7 @@
       "staged_for_review": 1
     },
     "grpc-grpc-rust-learnings.md": {
-      "processed_at": "2026-11-13T19:27:34.722Z",
+      "processed_at": "2026-11-18T21:50:21.153Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -998,7 +998,7 @@
       "staged_for_review": 1
     },
     "pulumi-pulumi-learnings.md": {
-      "processed_at": "2026-11-18T06:50:18.097Z",
+      "processed_at": "2026-11-18T21:50:22.163Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2368,8 +2368,8 @@
       "staged_for_review": 0
     },
     "hf-stabilityai-stable-diffusion-3-medium-learnings.md": {
-      "processed_at": "2026-11-14T03:49:58.389Z",
-      "promoted_canonical": 1,
+      "processed_at": "2026-11-18T21:50:21.844Z",
+      "promoted_canonical": 0,
       "staged_for_review": 0
     },
     "sceneview-sceneview-learnings.md": {
@@ -3473,7 +3473,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 2082,
+  "total_dossiers_evaluated": 2085,
   "total_canonical_promoted": 367,
-  "total_staged_for_review": 1569
+  "total_staged_for_review": 1571
 }

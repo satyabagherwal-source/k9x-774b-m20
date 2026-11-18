@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T21:42:26.390Z",
-  "total_cycles_completed": 10617,
-  "total_learnings_persisted": 10617,
-  "total_rules_promoted": 10048,
+  "last_updated": "2026-11-18T21:50:17.930Z",
+  "total_cycles_completed": 10620,
+  "total_learnings_persisted": 10620,
+  "total_rules_promoted": 10050,
   "history": [
-    {
-      "timestamp": "2026-11-18T07:56:33.522Z",
-      "repository": "apache/zookeeper",
-      "learningId": "learn-github-apache-zookeeper",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-18T08:05:59.956Z",
-      "repository": "GitoxideLabs/gitoxide",
-      "learningId": "learn-github-gitoxidelabs-gitoxide",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-18T08:06:01.637Z",
-      "repository": "CrossPaste/crosspaste-desktop",
-      "learningId": "learn-github-crosspaste-crosspaste-desktop",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-18T08:06:05.908Z",
       "repository": "gocd/gocd",
@@ -1403,6 +1382,27 @@
       "repository": "NucleoidAI/Nucleoid",
       "learningId": "learn-github-nucleoidai-nucleoid",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T21:50:06.672Z",
+      "repository": "stabilityai/stable-diffusion-3-medium",
+      "learningId": "learn-huggingface-stabilityai-stable-diffusion-3-medium",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T21:50:09.761Z",
+      "repository": "grpc/grpc-rust",
+      "learningId": "learn-github-grpc-grpc-rust",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T21:50:17.930Z",
+      "repository": "pulumi/pulumi",
+      "learningId": "learn-github-pulumi-pulumi",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

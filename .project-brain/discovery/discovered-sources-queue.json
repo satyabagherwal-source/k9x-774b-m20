@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-18T21:42:30.878Z",
+  "updated_at": "2026-11-18T21:50:22.640Z",
   "stats": {
-    "total_discovered": 5689,
-    "approved_pending_harvest": 5380,
+    "total_discovered": 5700,
+    "approved_pending_harvest": 5391,
     "harvested_count": 0,
     "rejected_count": 309,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 5358,
+      "COMMUNITY_AND_EXPERT": 5369,
       "OFFICIAL_DOCUMENTATION": 184,
       "STANDARDS_AND_SPECIFICATIONS": 111,
       "ENGINEERING_BLOGS": 4,
@@ -123016,6 +123016,248 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aquasecurity-trivy-learnings.md",
         "fileName": "aquasecurity-trivy-learnings.md"
+      }
+    },
+    "SRC-26FD8415A448": {
+      "id": "SRC-26FD8415A448",
+      "url": "https://doc.rust-lang.org/std/any/trait.Any.html",
+      "title": "https://doc.rust-lang.org/std/any/trait.Any.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T21:50:21.189Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/grpc-grpc-rust-learnings.md",
+        "fileName": "grpc-grpc-rust-learnings.md"
+      }
+    },
+    "SRC-37AFFBBD498B": {
+      "id": "SRC-37AFFBBD498B",
+      "url": "https://github.com/grpc/proposal/blob/master/A50-xds-outlier-detection.md",
+      "title": "https://github.com/grpc/proposal/blob/master/A50-xds-outlier-detection.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T21:50:21.226Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/grpc-grpc-rust-learnings.md",
+        "fileName": "grpc-grpc-rust-learnings.md"
+      }
+    },
+    "SRC-095FF36A9842": {
+      "id": "SRC-095FF36A9842",
+      "url": "https://github.com/pulumi/pulumi/actions/runs/44299627865",
+      "title": "https://github.com/pulumi/pulumi/actions/runs/44299627865",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T21:50:22.326Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pulumi-pulumi-learnings.md",
+        "fileName": "pulumi-pulumi-learnings.md"
+      }
+    },
+    "SRC-03983D1F5019": {
+      "id": "SRC-03983D1F5019",
+      "url": "https://github.com/pulumi/pulumi/actions/runs/44299627865/job/134789658824",
+      "title": "https://github.com/pulumi/pulumi/actions/runs/44299627865/job/134789658824",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T21:50:22.361Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pulumi-pulumi-learnings.md",
+        "fileName": "pulumi-pulumi-learnings.md"
+      }
+    },
+    "SRC-AECE0AFA8782": {
+      "id": "SRC-AECE0AFA8782",
+      "url": "https://github.com/pulumi/pulumi/actions/runs/44299627865/job/134808207147",
+      "title": "https://github.com/pulumi/pulumi/actions/runs/44299627865/job/134808207147",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T21:50:22.396Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pulumi-pulumi-learnings.md",
+        "fileName": "pulumi-pulumi-learnings.md"
+      }
+    },
+    "SRC-49E1857A8802": {
+      "id": "SRC-49E1857A8802",
+      "url": "https://github.com/pulumi/pulumi/actions/runs/44299627865/job/134811642959",
+      "title": "https://github.com/pulumi/pulumi/actions/runs/44299627865/job/134811642959",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T21:50:22.434Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pulumi-pulumi-learnings.md",
+        "fileName": "pulumi-pulumi-learnings.md"
+      }
+    },
+    "SRC-D41E99D2D3FB": {
+      "id": "SRC-D41E99D2D3FB",
+      "url": "https://github.com/pulumi/pulumi/actions/runs/44276089322",
+      "title": "https://github.com/pulumi/pulumi/actions/runs/44276089322",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T21:50:22.468Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pulumi-pulumi-learnings.md",
+        "fileName": "pulumi-pulumi-learnings.md"
+      }
+    },
+    "SRC-A62A38D46A78": {
+      "id": "SRC-A62A38D46A78",
+      "url": "https://github.com/pulumi/pulumi/actions/runs/44276089322/job/134706250293",
+      "title": "https://github.com/pulumi/pulumi/actions/runs/44276089322/job/134706250293",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T21:50:22.502Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pulumi-pulumi-learnings.md",
+        "fileName": "pulumi-pulumi-learnings.md"
+      }
+    },
+    "SRC-E60DCC81EC4B": {
+      "id": "SRC-E60DCC81EC4B",
+      "url": "https://github.com/pulumi/pulumi/actions/runs/44283698799",
+      "title": "https://github.com/pulumi/pulumi/actions/runs/44283698799",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T21:50:22.539Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pulumi-pulumi-learnings.md",
+        "fileName": "pulumi-pulumi-learnings.md"
+      }
+    },
+    "SRC-B6B067B7028A": {
+      "id": "SRC-B6B067B7028A",
+      "url": "https://developer.mend.io/api/mc/badges/age/go/go.opentelemetry.io%2fotel%2fsdk%2flog/v1.47.0?slim=true",
+      "title": "https://developer.mend.io/api/mc/badges/age/go/go.opentelemetry.io%2fotel%2fsdk%2flog/v1.47.0?slim=true",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T21:50:22.606Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pulumi-pulumi-learnings.md",
+        "fileName": "pulumi-pulumi-learnings.md"
+      }
+    },
+    "SRC-2298CAE6E252": {
+      "id": "SRC-2298CAE6E252",
+      "url": "https://developer.mend.io/api/mc/badges/confidence/go/go.opentelemetry.io%2fotel%2fsdk%2flog/v0.21.0/v1.47.0?slim=true",
+      "title": "https://developer.mend.io/api/mc/badges/confidence/go/go.opentelemetry.io%2fotel%2fsdk%2flog/v0.21.0/v1.47.0?slim=true",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T21:50:22.640Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pulumi-pulumi-learnings.md",
+        "fileName": "pulumi-pulumi-learnings.md"
       }
     }
   }

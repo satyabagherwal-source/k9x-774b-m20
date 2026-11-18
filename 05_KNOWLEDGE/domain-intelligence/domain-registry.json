@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-18T21:42:31.198Z",
-  "total_records": 1911,
+  "last_updated": "2026-11-18T21:50:22.998Z",
+  "total_records": 1912,
   "domains": {
     "A": {
       "total": 13,
@@ -932,7 +932,7 @@
       ]
     },
     "G": {
-      "total": 337,
+      "total": 338,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -1270,7 +1270,8 @@
         "domain_intelligence-architecture-intelligence-malisper-pgrust-core-invariants",
         "domain_intelligence-architecture-intelligence-malisper-pgrust-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-aome510-spotify-player-core-invariants",
-        "domain_intelligence-architecture-intelligence-aome510-spotify-player-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-aome510-spotify-player-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-pulumi-pulumi-core-invariants"
       ]
     },
     "H": {
@@ -9661,8 +9662,8 @@
       "title": "Architecture Intelligence: grpc/grpc-rust Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-grpc-grpc-rust-architecture-intelligence-grpc-grpc-rust-core-invariants.md",
       "repository": "grpc/grpc-rust",
-      "content_hash": "f26560168df36de67d88e6c6f4eff2597b4fe54dbb2308d98a5b1e662d9563de",
-      "created_at": "2026-11-13T19:27:19.608Z"
+      "content_hash": "7c439baa2c358df5db39288e9aa713135e48f43145e0366f191613c29011b6c6",
+      "created_at": "2026-11-18T21:50:10.095Z"
     },
     "domain_intelligence-content-information-intelligence-mattermost-mattermost-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-mattermost-mattermost-core-invariants",
@@ -9697,8 +9698,8 @@
       "title": "Architecture Intelligence: grpc-grpc-rust-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-grpc-grpc-rust-learnings-architecture-intelligence-grpc-grpc-rust-learnings-core.md",
       "repository": "grpc-grpc-rust-learnings",
-      "content_hash": "6321332034df83677aff4bf1f4cbf8fb081f4ade8016a15472061359323fbc83",
-      "created_at": "2026-11-13T19:27:34.961Z"
+      "content_hash": "93e6dbffe80e6f4a73403ab855617021c85bb25f56468db5058147cef8975b58",
+      "created_at": "2026-11-18T21:50:21.568Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-",
@@ -12834,8 +12835,8 @@
       "title": "Research & Knowledge Intelligence: stabilityai/stable-diffusion-3-medium Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-stabilityai-stable-diffusion-3-medium-research-knowledge-intelligence-stabili.md",
       "repository": "stabilityai/stable-diffusion-3-medium",
-      "content_hash": "10296bbc3553fb447a4f3b3d2615dc87ec4382bf690875fc9d27972ed70c5540",
-      "created_at": "2026-11-14T03:49:05.014Z"
+      "content_hash": "8c1b540a7dd52555e1f34a8c17a6d3a6611201e2a95a7a7708970b41f5c6dea6",
+      "created_at": "2026-11-18T21:50:06.851Z"
     },
     "domain_intelligence-quality-verification-intelligence-sceneview-sceneview-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-sceneview-sceneview-core-invariants",
@@ -12912,8 +12913,8 @@
       "title": "Research & Knowledge Intelligence: hf-stabilityai-stable-diffusion-3-medium-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-stabilityai-stable-diffusion-3-medium-learnings-research-knowledge-intelligen.md",
       "repository": "hf-stabilityai-stable-diffusion-3-medium-learnings",
-      "content_hash": "5a53bd1a31e482a30a8267255b1a00e5bb59ccd99c43b5d43384a5498c93ca2e",
-      "created_at": "2026-11-14T03:49:58.630Z"
+      "content_hash": "256be0d12ca52f05f76117191bf8a1f8c38b3ff9468b5763a05e071ecf808fca",
+      "created_at": "2026-11-18T21:50:22.008Z"
     },
     "domain_intelligence-quality-verification-intelligence-sceneview-sceneview-learnings-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-sceneview-sceneview-learnings-core-invariants",
@@ -26696,8 +26697,8 @@
       "title": "Architecture Intelligence: pulumi-pulumi-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-pulumi-pulumi-learnings-architecture-intelligence-pulumi-pulumi-learnings-core-i.md",
       "repository": "pulumi-pulumi-learnings",
-      "content_hash": "020165c3156b2823e6ac9c217728012016650a5ae3a16de28015085dd267c410",
-      "created_at": "2026-11-17T08:46:52.426Z"
+      "content_hash": "1c4d798b2fbbd8d7ac0a94e212ea912deaf5691a39f17061782d4f25ef55e817",
+      "created_at": "2026-11-18T21:50:22.998Z"
     },
     "domain_intelligence-architecture-intelligence-faker-js-faker-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-faker-js-faker-core-invariants",
@@ -31996,6 +31997,15 @@
       "repository": "transact-rs-sqlx-learnings",
       "content_hash": "1c0be7bbf46c135ec9f71b07b8f73dbb78c3a30eb57f82a9ba2fd0c52cc9b509",
       "created_at": "2026-11-18T21:42:29.965Z"
+    },
+    "domain_intelligence-architecture-intelligence-pulumi-pulumi-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-pulumi-pulumi-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: pulumi/pulumi Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-pulumi-pulumi-architecture-intelligence-pulumi-pulumi-core-invariants.md",
+      "repository": "pulumi/pulumi",
+      "content_hash": "a97efa7b7e9411915847a6e1918217bd2e413aa65993165bbc012a10f04ad700",
+      "created_at": "2026-11-18T21:50:18.259Z"
     }
   }
 }

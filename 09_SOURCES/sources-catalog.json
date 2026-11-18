@@ -935,8 +935,8 @@
     "sourceUrl": "https://huggingface.co/stabilityai/stable-diffusion-3-medium",
     "sourceVersion": "hf-stabilityai-stable-diffusion-3-medium",
     "license": "Open-Source",
-    "contentHash": "0209ed0502b8de79f952cf6389e730548b381e71af57e209810a466d61a58d3d",
-    "lastHarvestedAt": "2026-11-14T03:49:04.821Z",
+    "contentHash": "fc468bf53611226ce5659bf4365bb2dc5734cfc78ef8bda7a07d9374e430212a",
+    "lastHarvestedAt": "2026-11-18T21:50:06.667Z",
     "learningId": "learn-huggingface-stabilityai-stable-diffusion-3-medium"
   },
   "hf-bigscience-bloom": {
@@ -4713,10 +4713,10 @@
     "repository": "pulumi/pulumi",
     "platform": "github",
     "sourceUrl": "https://github.com/pulumi/pulumi",
-    "sourceVersion": "bc509bd5",
+    "sourceVersion": "e61ba774",
     "license": "Apache-2.0",
-    "contentHash": "a1d392b6b9502f97193f5d3fa593f41c2f46db97a5567088935e93c7a013673e",
-    "lastHarvestedAt": "2026-11-18T06:49:13.467Z",
+    "contentHash": "0c38759b968b7bf74ea28c50e40ee5086797cf4febc408e07aceb1675aa31fa1",
+    "lastHarvestedAt": "2026-11-18T21:50:17.925Z",
     "learningId": "learn-github-pulumi-pulumi"
   },
   "sqlpage-sqlpage": {
@@ -5393,10 +5393,10 @@
     "repository": "grpc/grpc-rust",
     "platform": "github",
     "sourceUrl": "https://github.com/grpc/grpc-rust",
-    "sourceVersion": "eee0da29",
+    "sourceVersion": "9205207e",
     "license": "MIT",
-    "contentHash": "1b06bc95f50cbc0458d2f21b63575d36a1035d8b66925be702b6907c3732daa8",
-    "lastHarvestedAt": "2026-11-13T19:27:19.370Z",
+    "contentHash": "9f8fa370cbee3b0c7e46dcc359b8b6d1f61eb43684af3fdc6fd40203755bc1c0",
+    "lastHarvestedAt": "2026-11-18T21:50:09.756Z",
     "learningId": "learn-github-grpc-grpc-rust"
   },
   "crazycodeboy-react-native-splash-screen": {

@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-14T03:49:58.515Z",
+  "timestamp": "2026-11-18T21:50:21.915Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-hf-stabilityai-stable-diffusion-3-medium-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [hf-stabilityai-stable-diffusion-3-medium-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-14T03:49:58.515Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-18T21:50:21.915Z`  
 > **Learning ID**: `LEARN-EVO-hf-stabilityai-stable-diffusion-3-medium-learnings`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Source Version**: `hf-stability`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-14T03:49:04.417Z  
+> **Timestamp**: 2026-11-18T21:50:06.232Z  
 > **Learning ID**: `learn-huggingface-stabilityai-stable-diffusion-3-medium`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-stabilityai-stable-diffusion-3-medium-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/stabilityai/stable-diffusion-3-medium](https://huggingface.co/stabilityai/stable-diffusion-3-medium))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-14T03:49:04.208Z  
+> **Harvest Timestamp**: 2026-11-18T21:50:06.094Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: text-to-image
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 2212 downloads | 5070 likes
+- **Stars / Engagement**: 1867 downloads | 5071 likes
 
 ---
 

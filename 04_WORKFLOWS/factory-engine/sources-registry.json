@@ -45,8 +45,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-18T21:02:08.871Z",
-    "lastVerified": "2026-11-18T21:02:08.871Z",
+    "lastChecked": "2026-11-18T21:50:18.262Z",
+    "lastVerified": "2026-11-18T21:50:18.262Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -80,8 +80,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-18T21:42:29.485Z",
-    "lastVerified": "2026-11-18T21:42:29.485Z",
+    "lastChecked": "2026-11-18T21:50:21.032Z",
+    "lastVerified": "2026-11-18T21:50:21.032Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -1159,9 +1159,9 @@
   "cryfs-cryfs": {
     "name": "cryfs",
     "officialUrl": "https://github.com/cryfs/cryfs",
-    "lastChecked": "2026-11-18T16:14:20.743Z",
+    "lastChecked": "2026-11-18T21:50:13.203Z",
     "revisionIdentifier": "e2da97b1",
-    "lastVerified": "2026-11-18T16:14:20.743Z"
+    "lastVerified": "2026-11-18T21:50:13.203Z"
   },
   "neondatabase-neon": {
     "name": "neon",
@@ -4339,5 +4339,70 @@
     "lastChecked": "2026-11-18T21:42:18.009Z",
     "revisionIdentifier": "ae4b403e",
     "lastVerified": "2026-11-18T21:42:18.009Z"
+  },
+  "grpc-grpc-rust": {
+    "name": "grpc/grpc-rust",
+    "officialUrl": "https://github.com/grpc/grpc-rust",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-11-18T21:50:08.796Z",
+    "lastVerified": "2026-11-18T21:50:08.796Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-grpc-grpc-rust",
+    "contentHash": "9f8fa370cbee3b0c7e46dcc359b8b6d1f61eb43684af3fdc6fd40203755bc1c0",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-stabilityai-stable-diffusion-3-medium": {
+    "name": "stabilityai/stable-diffusion-3-medium",
+    "officialUrl": "https://huggingface.co/stabilityai/stable-diffusion-3-medium",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-18T21:50:06.094Z",
+    "lastVerified": "2026-11-18T21:50:06.094Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-stabilityai-stable-diffusion-3-medium",
+    "contentHash": "fc468bf53611226ce5659bf4365bb2dc5734cfc78ef8bda7a07d9374e430212a",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "crazycodeboy-react-native-splash-screen": {
+    "name": "react-native-splash-screen",
+    "officialUrl": "https://github.com/crazycodeboy/react-native-splash-screen",
+    "lastChecked": "2026-11-18T21:50:08.300Z",
+    "revisionIdentifier": "b4719762",
+    "lastVerified": "2026-11-18T21:50:08.300Z"
+  },
+  "pulumi-pulumi": {
+    "name": "pulumi/pulumi",
+    "officialUrl": "https://github.com/pulumi/pulumi",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-11-18T21:50:17.283Z",
+    "lastVerified": "2026-11-18T21:50:17.283Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-pulumi-pulumi",
+    "contentHash": "0c38759b968b7bf74ea28c50e40ee5086797cf4febc408e07aceb1675aa31fa1",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 2,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "tako8ki-gobang": {
+    "name": "gobang",
+    "officialUrl": "https://github.com/TaKO8Ki/gobang",
+    "lastChecked": "2026-11-18T21:50:15.677Z",
+    "revisionIdentifier": "7b1b5f7e",
+    "lastVerified": "2026-11-18T21:50:15.677Z"
   }
 }

@@ -4,22 +4,22 @@
 {
   "source_repository": "pulumi/pulumi",
   "source_url": "https://github.com/pulumi/pulumi",
-  "source_version": "bc509bd5",
+  "source_version": "e61ba774",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-18T06:49:13.676Z",
+  "timestamp": "2026-11-18T21:50:18.123Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-pulumi-pulumi",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [pulumi/pulumi](https://github.com/pulumi/pulumi) (Revision: `bc509bd5`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-18T06:49:13.676Z`  
+> **Provenance**: Harvested from [pulumi/pulumi](https://github.com/pulumi/pulumi) (Revision: `e61ba774`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-18T21:50:18.123Z`  
 > **Learning ID**: `learn-github-pulumi-pulumi`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `pulumi/pulumi` (Commit: `bc509bd5`)
+- **Target Repository**: `pulumi/pulumi` (Commit: `e61ba774`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/pulumi-pulumi-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/pulumi/pulumi](https://github.com/pulumi/pulumi))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T06:49:12.488Z  
+> **Harvest Timestamp**: 2026-11-18T21:50:17.283Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Pulumi - Infrastructure as Code in any programming language 🚀
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 25911 stars
+- **Stars / Engagement**: 25913 stars
 
 ---
 
@@ -1699,13 +1699,15 @@ func marshalVerbatimCheckpointRequest(req apitype.PatchUpdateVerbatimCheckpointR
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #25731** (2026-11-17): **Python codegen emits deprecated `[project.license]` table in pyproject.toml**
-  *Symptoms*: ### What happened?  Generated Python SDKs write the license as a TOML table in `pyproject.toml`:  ```toml [project.license]   text = "Apache-2.0" ```  Building the SDK with setuptools >= 77 prints a deprecation warning:  ``` WARNING `project.license` as a TOML table is deprecated !!         ********************************************************************************         Please use a simple string containing a SPDX expression for `project.license`. You can also use `project.license-files`. (Both options available on setuptools>=77.0.0).          By 2027-Feb-18, you need to update your project and remove deprecated calls         or your builds will no longer be supported.          See https://packaging.python.org/en/latest/guides/writing-pyproject-toml/#license for details.         ******************************************************************************** !! ```  Once this deprecation is enforced, setuptools will no longer accept these builds, so every generated Python SDK will stop building.  ### Where it comes from  - `pkg/codegen/python/pyproject.go:80` defines `License` as a struct containing `Text` - `pkg/codegen/python/gen.go:3757-3759` sets `schema.Project.License = &License{Text: pkg.License}`  ### Expected  Emit the license as a plain SPDX string, per PEP 639:  ```toml [project]   license = "Apache-2.0" ```  The string form needs setuptools >= 77, but the generated `[build-system]` currently has `requires = ["setuptools>=61.0"]`. That minimum needs raisin
-
-- **Issue #25715** (2026-11-17): **Workflow failure: Run full language matrix of tests daily**
-  *Symptoms*: ## Workflow Failure  [Run full language matrix of tests daily](https://github.com/pulumi/pulumi/blob/master/.github/workflows/cron-test-all.yml) has failed. See the list of failures below:  - [2026-11-16T06:09:17.000Z](https://github.com/pulumi/pulumi/actions/runs/43810512870)
+- **Issue #25756** (2026-11-18): **Workflow failure: On Push at dev-release / nodejs-dev-sdk-release**
+  *Symptoms*: ## Workflow Failure  [On Push](<https://github.com/pulumi/pulumi/blob/master/.github/workflows/on-push.yml>) has failed. See the list of failures below:  * [2026-11-18T12:13:57.000Z](<https://github.com/pulumi/pulumi/actions/runs/44299627865>)   * ❌ [dev-release / nodejs-dev-sdk-release](<https://github.com/pulumi/pulumi/actions/runs/44299627865/job/134789658824>): Publish nodejs release (failure) * [2026-11-18T12:41:01.000Z](<https://github.com/pulumi/pulumi/actions/runs/44299627865>)   * ❌ [dev-release / nodejs-dev-sdk-release](<https://github.com/pulumi/pulumi/actions/runs/44299627865/job/134808207147>): Publish nodejs release (failure)   * [2026-11-18T12:47:17.000Z](<https://github.com/pulumi/pulumi/actions/runs/44299627865>)   * ❌ [dev-release / nodejs-dev-sdk-release](<https://github.com/pulumi/pulumi/actions/runs/44299627865/job/134811642959>): Publish nodejs release (failure)
   **Post-Mortem & Fix Analysis**:
-  > This issue has been automatically closed because the workflow succeeded.  Successful run: [2026-11-17T06:09:29.000Z](https://github.com/pulumi/pulumi/actions/runs/44024381435)
+  > This issue has been automatically closed because the workflow succeeded.  Successful run: [2026-11-18T13:01:42.000Z](https://github.com/pulumi/pulumi/actions/runs/44299627865)
+
+- **Issue #25753** (2026-11-18): **Workflow failure: On Push at dev-release / nodejs-dev-sdk-release**
+  *Symptoms*: ## Workflow Failure  [On Push](https://github.com/pulumi/pulumi/blob/master/.github/workflows/on-push.yml) has failed. See the list of failures below:  - [2026-11-18T09:37:16.000Z](https://github.com/pulumi/pulumi/actions/runs/44276089322)   - ❌ [dev-release / nodejs-dev-sdk-release](https://github.com/pulumi/pulumi/actions/runs/44276089322/job/134706250293): Publish nodejs release (failure)
+  **Post-Mortem & Fix Analysis**:
+  > This issue has been automatically closed because the workflow succeeded.  Successful run: [2026-11-18T10:32:01.000Z](https://github.com/pulumi/pulumi/actions/runs/44283698799)
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1722,8 +1724,8 @@ func marshalVerbatimCheckpointRequest(req apitype.PatchUpdateVerbatimCheckpointR
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `00c00449` (2026-11-17)
-**Commit Message**: Update vulnerable dependencies [SECURITY] (#25672)
+### Incident Patch 1: `ea985d67` (2026-11-18)
+**Commit Message**: Update module go.opentelemetry.io/otel/sdk/log to v1 [SECURITY] (#25710)
 
 > ℹ️ **Note**
 > 
@@ -1736,487 +1738,424 @@ This PR contains the following updates:
 [Confidence](https://docs.renovatebot.com/merge-confidence/) |
 |---|---|---|---|
 |
-[go.opentelemetry.io/otel/sdk](https://redirect.github.com/open-telemetry/opentelemetry-go)
-| `v1.45.0` → `v1.47.0` |
-![age](https://developer.mend.io/api/mc/badges/age/go/go.opentelemetry.io%2fotel%2fsdk/v1.47.0?slim=true)
+[go.opentelemetry.io/otel/sdk/log](https://redirect.github.com/open-telemetry/opentelemetry-go)
+| `v0.21.0` → `v1.47.0` |
+![age](https://developer.mend.io/api/mc/badges/age/go/go.opentelemetry.io%2fotel%2fsdk%2flog/v1.47.0?slim=true)
 |
-![confidence](https://developer.mend.io/api/mc/badges/confidence/go/go.opentelemetry.io%2fotel%2fsdk/v1.45.0/v1.47.0?slim=true)
+![confidence](https://developer.mend.io/api/mc/badges/confidence/go/go.opentelemetry.io%2fotel%2fsdk%2flog/v0.21.0/v1.47.0?slim=true)
 |
-|
-[go.opentelemetry.io/otel/trace](https://redirect.github.com/open-telemetry/opentelemetry-go)
-| `v1.45.0` → `v1.47.0` |
-![age](https://developer.mend.io/api/mc/badges/age/go/go.opentelemetry.io%2fotel%2ftrace/v1.47.0?slim=true)
-|
-![confidence](https://developer.mend.io/api/mc/badges/confidence/go/go.opentelemetry.io%2fotel%2ftrace/v1.45.0/v1.47.0?slim=true)
-|
-| [golang.org/x/crypto](https://pkg.go.dev/golang.org/x/crypto) |
-[`v0.58.0` →
-`v0.59.0`](https://cs.opensource.google/go/x/crypto/+/refs/tags/v0.58.0...ref
 
-**File**: `pkg/go.mod` (modified, +5/-5)
-```diff
-@@ -36,10 +36,10 @@ require (
- 	github.com/zclconf/go-cty v1.16.3
- 	gocloud.dev v0.46.1-0.20260810195832-b5401c07b5f1
- 	gocloud.dev/secrets/hashivault v0.46.0
--	golang.org/x/crypto v0.58.0 // indirect
-+	golang.org/x/crypto v0.59.0 // indirect
- 	golang.org/x/net v0.62.0
- 	golang.org/x/oauth2 v0.36.0
--	golang.org/x/sync v0.24.0
-+	golang.org/x/sync v0.25.0
- 	google.golang.org/api v0.290.0
- 	google.golang.org/genproto v0.0.0-20260724162435-b2f20204f0df // indirect
- 	google.golang.org/grpc v1.85.0
-@@ -114,9 +114,9 @@ require (
- 	go.uber.org/automaxprocs v1.6.0
- 	go.yaml.in/yaml/v4 v4.0.0-rc.4
- 	golang.org/x/mod v0.42.0
--	golang.org/x/sys v0.49.0
--	golang.org/x/term v0.47.0
--	golang.org/x/text v0.43.0
-+	golang.org/x/sys v0.50.0
-+	golang.org/x/term v0.48.0
-+	golang.org/x/text v0.44.0
- 	google.golang.org/protobuf v1.36.12
- 	gopkg.in/yaml.v2 v2.4.0
- 	lukechampine.com/frand v1.5.1
-```
+---
 
-**File**: `pkg/go.sum` (modified, +10/-10)
-```diff
-@@ -673,8 +673,8 @@ golang.org/x/crypto v0.0.0-20190308221718-c2843e01d9a2/go.mod h1:djNgcEr1/C05ACk
- golang.org/x/crypto v0.0.0-20191011191535-87dc89f01550/go.mod h1:yigFU9vqHzYiE8UmvKecakEJjdnWj3jj499lnFckfCI=
- golang.org/x/crypto v0.0.0-20200622213623-75b288015ac9/go.mod h1:LzIPMQfyMNhhGPhUkYOs5KpL4U8rLKemX1yGLhDgUto=
- golang.org/x/crypto v0.0.0-20210921155107-089bfa567519/go.mod h1:GvvjBRRGRdwPK5ydBHafDWAxML/pGHZbMvKqRZ5+Abc=
--golang.org/x/crypto v0.58.0 h1:COkYLr4k7nDI4r6QtMML2AfzeIswWHAJthLS6K/M/54=
--golang.org/x/crypto v0.58.0/go.mod h1:Xh+kl5A+M0gMiWDytH2Hhr5Z7WbNCpv/eB/EFgfSk+w=
-+golang.org/x/crypto v0.59.0 h1:xS2jhqYbzNrpvkWP2YTDf4TJwBy3ykR03i8vFDxEc7c=
-+golang.org/x/crypto v0.59.0/go.mod h1:veDyUwATGs3c+vN3VfTbzViMGXeTBk3WyhBOkn+F/4U=
- golang.org/x/lint v0.0.0-20200302205851-738671d3881b/go.mod h1:3xt1FjdF8hUf6vQPIChWIBhFzV8gjjsPE/fR3IyQdNY=
- golang.org/x/mod v0.1.1-0.20191105210325-c90efee705ee/go.mod h1:QqPTAvyqsEbceGzBzNggFXnrqF1CaUcvgkdR5Ot7KZg=
- golang.org/x/mod v0.2.0/go.mod h1:s0Qsj1ACt9ePp/hMypM3fl4fZqREWJwdYDEqhRiZZUA=
-@@ -699,8 +699,8 @@ golang.org/x/sync v0.0.0-20190423024810-112230192c58/go.mod h1:RxMgew5VJxzue5/jJ
- golang.org/x/sync v0.0.0-20190911185100-cd5d95a43a6e/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
- golang.org/x/sync v0.0.0-20201020160332-67f06af15bc9/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
- golang.org/x/sync v0.0.0-20220722155255-886fb9371eb4/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
--golang.org/x/sync v0.24.0 h1:iqiDrGoDgyuvAKrhLQthUEzU/R378N78gXbBjxed7oA=
--golang.org/x/sync v0.24.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
-+golang.org/x/sync v0.25.0 h1:dJnifr0nMV8/SBnBvdo4eSGGnrc3O4FFx6IqvtLcmRs=
-+golang.org/x/sync v0.25.0/go.mod h1:sUUOizhqBxiL6pEWpqNLUiaJn1ShEbZ6BBqskPbjZm0=
- golang.org/x/sys v0.0.0-20190215142949-d0b11bdaac8a/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
- golang.org/x/sys v0.0.0-20190222072716-a9d3bda3a223/go.mod h1:STP8DvDyc/dI5b8T5hshtkjS+E42TnysNCUPdjciGhY=
- golang.org/x/sys v0.0.0-20190412213103-97732733099d/go.mod h1:h1NjWce9XRLGQEsW7wpKNCjG9DtNlClVuFLEZdDNbEs=
-@@ -720,18 +720,18 @@ golang.org/x/sys v0.0.0-20220722155257-8c9f86f7a55f/go.mod h1:oPkhp1MJrh7nUepCBc
- golang.org/x/sys v0.0.0-20220728004956-3c1f35247d10/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
- golang.org/x/sys v0.0.0-20220811171246-fbc7d0a398ab/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
- golang.org/x/sys v0.1.0/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
--golang.org/x/sys v0.49.0 h1:XbzkgYJHdqh/8m2Uu0W/dQv8nktxx4BFHp1M0gROTXA=
--golang.org/x/sys v0.49.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
-+golang.org/x/sys v0.50.0 h1:dkKZEFTEKaLr1sjhs0WiKqoi8Jj5nHbS3Njmx1UoMJs=
-+golang.org/x/sys v0.50.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
- golang.org/x/term v0.0.0-20201126162022-7de9c90e9dd1/go.mod h1:bj7SfCRtBDWHUb9snDiAeCFNEtKQo2Wmx5Cou7ajbmo=
- golang.org/x/term v0.0.0-20210927222741-03fcf44c2211/go.mod h1:jbD1KX2456YbFQfuXm/mYQcufACuNUgVhRMnK/tPxf8=
--golang.org/x/term v0.47.0 h1:cpyOwQkr2Nzxe2p6KnrTG7Ei2wtzjsuSjhpXXepZ/BM=
--golang.org/x/term v0.47.0/go.mod h1:efAfAuG6RKABvg1ArGebRkvX6LXul14SM67o2e4mUCY=
-+golang.org/x/term v0.48.0 h1:G6UU1eiSB8nl3DzeUGt7Mg+2SctI8tPS6Z5/mBt6cOk=
-+golang.org/x/term v0.48.0/go.mod h1:BRDLHCZr2SUjIeBHHpRyQeC9xzSAVbzY2rvKgafnHf4=
- golang.org/x/text v0.3.0/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=
- golang.org/x/text v0.3.3/go.mod h1:5Zoc/QRtKVWzQhOtBMvqHzDpF6irO9z98xDceosuGiQ=
- golang.org/x/text v0.3.7/go.mod h1:u+2+/6zg+i71rQMx5EYifcz6MCKuco9NR6JIITiCfzQ=
- golang.org/x/text v0.4.0/go.mod h1:mrYo+phRRbMaCq/xk9113O4dZlRixOauAjOtrjsXDZ8=
--golang.org/x/text v0.43.0 h1:1QivrlhwAsnMOcqgOdl9my7s9OyZl8O5/UGUTJVXoWc=
--golang.org/x/text v0.43.0/go.mod h1:hbSIYA/amXcRXTFSZqh8tWHEoqRvvbKPJ2uz/KU+a+s=
-+golang.org/x/text v0.44.0 h1:YItdp/mQNGnsmrgpcdA5yQ3bnRxCfo/Tj/iByGW9GGo=
-+golang.org/x/text v0.44.0/go.mod h1:S4FR1waQ9LbjQTls97SyRjDaUUVkaM+cXwwuG/G+MwY=
- golang.org/x/time v0.15.0 h1:bbrp8t3bGUeFOx08pvsMYRTCVSMk89u4tKbNOZbp88U=
- golang.org/x/time v0.15.0/go.mod h1:Y4YMaQmXwGQZoFaVFk4YpCt4FLQMYKZe9oeV/f4MSno=
- golang.org/x/tools v0.0.0-20180917221912-90fa682c2a6e/go.mod h1:n7NCudcB/nEzxVGmLbDWY5pfWTLqBcC2KZ6jyYvM4mQ=
-```
+> [!WARNING]
+> Some dependencies could not be looked up. Check the [Dependency
+Dashboard](../issues/21045) for more information.
 
-**File**: `sdk/go.mod` (modified, +12/-12)
+---
+
+### opentelemetry-go: AttributeValueLengthLimit is fully bypassed by
+attribute values composed of valid U+FFFD runes
+[CVE-2026-128085](https://nvd.nist.gov/vuln/detail/CVE-2026-128085) /
+[GHSA-q7gw-24fr-5p69](https://redirect.github.com/advisories/GHSA-q7gw-24fr-5p69)
+
+<details>
+<summary>More information</summary>
+
+#### Details
+##### Summa
+
+**File**: `sdk/go.mod` (modified, +1/-1)
 ```diff
-@@ -24,11 +24,11 @@ require (
- 	github.com/stretchr/testify v1.12.1
- 	github.com/texttheater/golang-levenshtein v1.0.1
- 	github.com/uber/jaeger-client-go v2.30.0+incompatible
--	go.opentelemetry.io/otel/bridge/opentracing v1.45.0
--	golang.org/x/crypto v0.58.0
-+	go.opentelemetry.io/otel/bridge/opentracing v1.47.0
-+	golang.org/x/crypto v0.59.0
- 	golang.org/x/mod v0.40.0 // indirect
- 	golang.org/x/net v0.62.0
--	golang.org/x/sys v0.49.0
-+	golang.org/x/sys v0.50.0
- 	google.golang.org/grpc v1.83.2
- 	gopkg.in/yaml.v2 v2.4.0
- 	gopkg.in/yaml.v3 v3.0.1
-@@ -62,15 +62,15 @@ require (
- 	github.com/zalando/go-keyring v0.2.8
- 	go.opentelemetry.io/collector/pdata v1.53.0
- 	go.opentelemetry.io/contrib/bridges/otelslog v0.20.0
--	go.opentelemetry.io/otel v1.45.0
-+	go.opentelemetry.io/otel v1.47.0
+@@ -66,7 +66,7 @@ require (
  	go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploggrpc v0.21.0
  	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.45.0
--	go.opentelemetry.io/otel/sdk v1.45.0
-+	go.opentelemetry.io/otel/sdk v1.47.0
- 	go.opentelemetry.io/otel/sdk/log v0.21.0
--	go.opentelemetry.io/otel/trace v1.45.0
-+	go.opentelemetry.io/otel/trace v1.47.0
+ 	go.opentelemetry.io/otel/sdk v1.47.0
+-	go.opentelemetry.io/otel/sdk/log v0.21.0
++	go.opentelemetry.io/otel/sdk/log v1.47.0
+ 	go.opentelemetry.io/otel/trace v1.47.0
  	go.opentelemetry.io/proto/otlp v1.11.0
  	golang.org/x/sync v0.23.0
--	golang.org/x/term v0.47.0
-+	golang.org/x/term v0.48.0
- 	lukechampine.com/frand v1.4.2
- )
- 
-@@ -121,14 +121,14 @@ require (
- 	go.opentelemetry.io/auto/sdk v1.2.1 // indirect
- 	go.opentelemetry.io/collector/featuregate v1.53.0 // indirect
- 	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.45.0 // indirect
--	go.opentelemetry.io/otel/log v0.21.0 // indirect
--	go.opentelemetry.io/otel/metric v1.45.0 // indirect
-+	go.opentelemetry.io/otel/log v1.47.0 // indirect
-+	go.opentelemetry.io/otel/metric v1.47.0 // indirect
- 	go.uber.org/multierr v1.11.0 // indirect
- 	go.yaml.in/yaml/v3 v3.0.5 // indirect
- 	golang.org/x/exp v0.0.0-20260410095643-746e56fc9e2f // indirect
- 	golang.org/x/tools v0.49.0 // indirect
- 	google.golang.org/genproto/googleapis/api v0.0.0-20260803160001-6ac0973c030d // indirect
--	google.golang.org/genproto/googleapis/rpc v0.0.0-20260803160001-6ac0973c030d // indirect
-+	google.golang.org/genproto/googleapis/rpc v0.0.0-20260928230214-8a89bd6388cc // indirect
- )
- 
- require (
-@@ -144,8 +144,8 @@ require (
- 	github.com/spf13/pflag v1.0.10 // indirect
- 	github.com/uber/jaeger-lib v2.4.1+incompatible // indirect
- 	go.uber.org/atomic v1.11.0 // indirect
--	golang.org/x/text v0.43.0
--	google.golang.org/protobuf v1.36.11
-+	golang.org/x/text v0.44.0
-+	google.golang.org/protobuf v1.36.12
- 	gopkg.in/tomb.v1 v1.0.0-20141024135613-dd632973f1e7
- )
- 
 ```
 
-**File**: `sdk/go.sum` (modified, +26/-26)
+**File**: `sdk/go.sum` (modified, +2/-2)
 ```diff
-@@ -185,8 +185,8 @@ github.com/nxadm/tail v1.4.11 h1:8feyoE3OzPrcshW5/MJ4sGESc5cqmGkGCWlco4l0bqY=
- github.com/nxadm/tail v1.4.11/go.mod h1:OTaG3NK980DZzxbRq6lEuzgU+mug70nY11sMd4JXXHc=
- github.com/opentracing-contrib/go-grpc v0.1.4 h1:m9VukGYQ+tfcgtwdsifjjFtAoWRqmcbnGhgRQcZ+ZQA=
- github.com/opentracing-contrib/go-grpc v0.1.4/go.mod h1:xP8rkWX/qdQJVTkf01D6Fc002zN0WUMKsvuKg7Tf93E=
--github.com/opentracing-contrib/go-grpc/test v0.0.0-20260727233914-064b4d2bcbbf h1:xfFA+XblffDh3LsTrbSG1MHpmrXsY/9GQI4sbCnY+kI=
--github.com/opentracing-contrib/go-grpc/test v0.0.0-20260727233914-064b4d2bcbbf/go.mod h1:AYO7D5MbvWwD7/UggkDbqyW0pDt7KZyQkHCn4IC2i/w=
-+github.com/opentracing-contrib/go-grpc/test v0.0.0-20260921214634-c4b381826b81 h1:OTbhGHT9+eMbYR7J0zJw741aJHsDo4SZrecanjdSFiQ=
-+github.com/opentracing-contrib/go-grpc/test v0.0.0-20260921214634-c4b381826b81/go.mod h1:EgSh6JmUwxmDnsxBVhxd1UjP+jOJPo7O/3zPWO9kiPo=
- github.com/opentracing/basictracer-go v1.1.0 h1:Oa1fTSBvAl8pa3U+IJYqrKm0NALwH9OsgwOqDv4xJW0=
- github.com/opentracing/basictracer-go v1.1.0/go.mod h1:V2HZueSJEp879yv285Aap1BS69fQMD+MNP1mRs6mBQc=
- github.com/opentracing/opentracing-go v1.1.0/go.mod h1:UkNAQd3GIcIGf0SeVgPpRdFStlNbqXla1AfSYxPUl2o=
-@@ -265,30 +265,30 @@ go.opentelemetry.io/collector/pdata v1.53.0 h1:DlYDbRwammEZaxDZHINx5v0n8SEOVNniP
- go.opentelemetry.io/collector/pdata v1.53.0/go.mod h1:LRSYGNjKXaUrZEwZv3Yl+8/zV2HmRGKXW62zB2bysms=
- go.opentelemetry.io/contrib/bridges/otelslog v0.20.0 h1:oEl2Pw/i4OQwhAuda2pAHFAcOMivA+Xa+iTccBfab/g=
- go.opentelemetry.io/contrib/bridges/otelslog v0.20.0/go.mod h1:yMSQaiiq5dpfrSJCYLBcqFeJkFFI67seT4ngvx6jfVo=
--go.opentelemetry.io/otel v1.45.0 h1:pdrWmLHofpubmArBv1LgFSv1Z0Ie/ppdZzu+kUN5EeU=
--go.opentelemetry.io/otel v1.45.0/go.mod h1:XZxIqPapzEYnhNSScF5DIqXhm/rYi0FzCe2XddAwZfQ=
--go.opentelemetry.io/otel/bridge/opentracing v1.45.0 h1:hFf959SYHZpFc8ZWlqiYlnH3Ke5w4fcWZh7He+CmqXk=
--go.opentelemetry.io/otel/bridge/opentracing v1.45.0/go.mod h1:etOoQoentzhTX0XTaRJmwlsiQx8TXD7mHo76YxNeBYg=
-+go.opentelemetry.io/otel v1.47.0 h1:j7ALJ/zgkS7Z6aeJW09p8VC9804bC+PpeTfCD4XPnOM=
-+go.opentelemetry.io/otel v1.47.0/go.mod h1:8wS9O2qfXrYrzp6hIF/HOYJJf/wIhFPhR2xLuP+iXQU=
-+go.opentelemetry.io/otel/bridge/opentracing v1.47.0 h1:s3CJ/gi1BywMOOKLvu9m6nNDf26x8+Cf+OkNKtTIRPY=
-+go.opentelemetry.io/otel/bridge/opentracing v1.47.0/go.mod h1:sSsj7slxZdcL7gtBnE7IT1T2yr0Zk85Ynf52xWRnfes=
- go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploggrpc v0.21.0 h1:WseeVYf5dJZTsyPiyW5L14k5qsSibqXAMTSiFEDiWr0=
- go.opentelemetry.io/otel/exporters/otlp/otlplog/otlploggrpc v0.21.0/go.mod h1:SiLZnQS6Qk2eCpvr2CH/XMAOa64TWGXxEZJZCpD2Lmc=
- go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.45.0 h1:QRefszxJmfPdjXUUm3j6iDzY03mTPXMjqErFqQ67vUg=
- go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.45.0/go.mod h1:Tiz03lTBVBrm7eWZBOidzEaYaJa8tjwGUGv6d8mlTyk=
- go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.45.0 h1:fG5MCxGz8+2VtrN/WgqSpJFctVz24gpxj8CxkKmc8Ww=
- go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.45.0/go.mod h1:BmAYTn+3ysbRe+IU2msxmf5Rx3g6DHvex+tWI3LdhYI=
--go.opentelemetry.io/otel/log v0.21.0 h1:SLsVDGmtyBrdw8/a2Z0bOIxou/+bN4z56GebH7T0LvA=
--go.opentelemetry.io/otel/log v0.21.0/go.mod h1:iReetQrZL9Wyg84cCkOoCmqDHS5RCFfyxC7J+r8fn8g=
--go.opentelemetry.io/otel/metric v1.45.0 h1:7Eg1uH7CJ5cXv9is6tnBe1FI6rj1nwUdbFypRm3br/M=
--go.opentelemetry.io/otel/metric v1.45.0/go.mod h1:HAPbm1nd3p1PmFH7v2dR+6BjXxw+Lq4a2+pndMAm08s=
--go.opentelemetry.io/otel/sdk v1.45.0 h1:4VVSMgQ83dUgW2aoX5f6JgLvHwIvzcuLnF9lUdCSpCw=
--go.opentelemetry.io/otel/sdk v1.45.0/go.mod h1:Sr40LgXV7DsKMMJMKOhUWOgMWTfAaqvm2kF0g7ilwuA=
-+go.opentelemetry.io/otel/log v1.47.0 h1:cOTS1CcLbSQeZKanGJ+0JpF/+t4PELi3O3bbl2lqCcI=
-+go.opentelemetry.io/otel/log v1.47.0/go.mod h1:9byitSQ5pLC6PpqwGXjqdMKya6ZTswHRZh2vvXT33nw=
-+go.opentelemetry.io/otel/metric v1.47.0 h1:4PptaldXx3Eat1XjMZ68pPJEs5wrhlemctZE9a3UdWY=
-+go.opentelemetry.io/otel/metric v1.47.0/go.mod h1:ADGSXxRrXM6bjbvLo535EstVFlPpPYZm4LBKixjDHwU=
-+go.opentelemetry.io/otel/sdk v1.47.0 h1:zWXEr4j2lFefG87TU6Yg8a7ngfohIKFZHKp0Hf5hC6I=
-+go.opentelemetry.io/otel/sdk v1.47.0/go.mod h1:VUc24kiOeoGsxG8G9ULx3fWKvB7jMhnGE8Oi607lgR0=
- go.opentelemetry.io/otel/sdk/log v0.21.0 h1:QsE7XSR0ktQdKmRKGnR+f1ObGF32WG+7MER/P9KgmYc=
- go.opentelemetry.io/otel/sdk/log v0.21.0/go.mod h1:m9mApjCoD2/1QuKCAptjv+BrG9WKOvQLVdNx+iBldTo=
+@@ -281,8 +281,8 @@ go.opentelemetry.io/otel/metric v1.47.0 h1:4PptaldXx3Eat1XjMZ68pPJEs5wrhlemctZE9
+ go.opentelemetry.io/otel/metric v1.47.0/go.mod h1:ADGSXxRrXM6bjbvLo535EstVFlPpPYZm4LBKixjDHwU=
+ go.opentelemetry.io/otel/sdk v1.47.0 h1:zWXEr4j2lFefG87TU6Yg8a7ngfohIKFZHKp0Hf5hC6I=
+ go.opentelemetry.io/otel/sdk v1.47.0/go.mod h1:VUc24kiOeoGsxG8G9ULx3fWKvB7jMhnGE8Oi607lgR0=
+-go.opentelemetry.io/otel/sdk/log v0.21.0 h1:QsE7XSR0ktQdKmRKGnR+f1ObGF32WG+7MER/P9KgmYc=
+-go.opentelemetry.io/otel/sdk/log v0.21.0/go.mod h1:m9mApjCoD2/1QuKCAptjv+BrG9WKOvQLVdNx+iBldTo=
++go.opentelemetry.io/otel/sdk/log v1.47.0 h1:W4N/ZfgpkRRnmARnqYoQ6BrWA0mrj8IzVDNLlpmUJZY=
++go.opentelemetry.io/otel/sdk/log v1.47.0/go.mod h1:Wu74Z2EmOKXi2FleSNAb0Hyau2G+r5kubSEMJw5aAMs=
  go.opentelemetry.io/otel/sdk/log/logtest v0.21.0 h1:X+JBBgKlswCGYsmgL0CnoUUtlE//VB345c84jYAYkdQ=
  go.opentelemetry.io/otel/sdk/log/logtest v0.21.0/go.mod h1:HD1575K8e6sIFBBDd5tZB3t9DlMytWXq9FuR+Y4rfjE=
--go.opentelemetry.io/otel/sdk/metric v1.45.0 h1:oVFszMfyj1Am6s24Vtc7wBb8BKLcwepJjNEYILuiE3o=
--go.opentelemetry.io/otel/sdk/metric v1.45.0/go.mod h1:vUWUxDZvu1WVRj8JA8S0AdhsPrZoDpA2DdZauIh4mDA=
--go.opentelemetry.io/otel/trace v1.45.0 h1:l/mP6Uv7oNO7/TblbhpbgMidxhq1uO/rPsikOyVhxag=
--go.opentelemetry.io/otel/trace v1.45.0/go.mod h1:qoJJA2xNMnxRrdISU/kLtfUH2wNeQbiv+jhs/CxI8bc=
-+go.opentelemetry.io/otel/sdk/metric v1.47.0 h1:lfISg2j93VT6
+ go.opentelemetry.io/otel/sdk/metric v1.47.0 h1:lfISg2j93VT6yqdk9OfUaZmw/GfcZqCCV3jdXtsPnKw=
 ```
 
-**File**: `sdk/go/auto/test/errors/compilation_error/go/go.mod` (modified, +12/-11)
+**File**: `tests/integration/construct_component_provider_propagation/go/go.mod` (modified, +1/-1)
 ```diff
-@@ -89,24 +89,25 @@ require (
- 	go.opentelemetry.io/auto/sdk v1.2.1 // indirect
- 	go.opentelemetry.io/collector/featuregate v1.58.0 // indirect
- 	go.opentelemetry.io/collector/pdata v1.58.0 // indirect
--	go.opentelemetry.io/otel v1.45.0 // indirect
-+	go.opentelemetry.io/otel v1.47.0 // indirect
- 	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.45.0 // indirect
- 	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.45.0 // indirect
--	go.opentelemetry.io/otel/metric v1.45.0 // indirect
--	go.opentelemetry.io/otel/sdk v1.45.0 // indirect
--	go.opentelemetry.io/otel/trace v1.45.0 // indirect
-+	go.opentelemetry.io/otel/log v1.47.0 // indirect
-+	go.opentelemetry.io/otel/metric v1.47.0 // indirect
-+	go.opentelemetry.io/otel/sdk v1.47.0 // indirect
-+	go.opentelemetry.io/otel/trace v1.47.0 // indirect
+@@ -98,7 +98,7 @@ require (
+ 	go.opentelemetry.io/otel/log v1.47.0 // indirect
+ 	go.opentelemetry.io/otel/metric v1.47.0 // indirect
+ 	go.opentelemetry.io/otel/sdk v1.47.0 // indirect
+-	go.opentelemetry.io/otel/sdk/log v0.21.0 // indirect
++	go.opentelemetry.io/otel/sdk/log v1.47.0 // indirect
+ 	go.opentelemetry.io/otel/trace v1.47.0 // indirect
  	go.opentelemetry.io/proto/otlp v1.11.0 // indirect
  	go.uber.org/atomic v1.11.0 // indirect
- 	go.uber.org/multierr v1.11.0 // indirect
--	golang.org/x/crypto v0.58.0 // indirect
-+	golang.org/x/crypto v0.59.0 // indirect
- 	golang.org/x/exp v0.0.0-20260410095643-746e56fc9e2f // indirect
--	golang.org/x/mod v0.41.0 // indirect
-+	golang.org/x/mod v0.42.0 // indirect
- 	golang.org/x/net v0.62.0 // indirect
--	golang.org/x/sync v0.24.0 // indirect
--	golang.org/x/sys v0.49.0 // indirect
--	golang.org/x/term v0.47.0 // indirect
--	golang.org/x/text v0.43.0 // indirect
--	golang.org/x/tools v0.51.0 // indirect
-+	golang.org/x/sync v0.25.0 // indirect
-+	golang.org/x/sys v0.50.0 // indirect
-+	golang.org/x/term v0.48.0 // indirect
-+	golang.org/x/text v0.44.0 // indirect
-+	golang.org/x/tools v0.52.0 // indirect
- 	google.golang.org/genproto/googleapis/api v0.0.0-20260803160001-6ac0973c030d // indirect
- 	google.golang.org/genproto/googleapis/rpc v0.0.0-20260803160001-6ac0973c030d // indirect
- 	google.golang.org/grpc v1.83.2 // indirect
 ```
 
-**File**: `sdk/go/auto/test/errors/compilation_error/go/go.sum` (modified, +30/-27)
+**File**: `tests/integration/construct_component_provider_propagation/go/go.sum` (modified, +2/-2)
 ```diff
-@@ -177,7 +177,6 @@ github.com/pkg/errors v0.9.1 h1:FEBLx1zS214owpjy7qsBeixbURkuhQAwrK5UwLGTwt4=
- github.com/pkg/errors v0.9.1/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINEl0=
- github.com/pkg/term v1.1.0 h1:xIAAdCMh3QIAy+5FrE8Ad8XoDhEU4ufwbaSozViP9kk=
- github.com/pkg/term v1.1.0/go.mod h1:E25nymQcrSllhX42Ok8MRm1+hyBdHY0dCeiKZ9jpNGw=
--github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
- github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
- github.com/pulumi/appdash v0.0.0-20231130102222-75f619a67231 h1:vkHw5I/plNdTr435cARxCW6q9gc0S/Yxz7Mkd38pOb0=
- github.com/pulumi/appdash v0.0.0-20231130102222-75f619a67231/go.mod h1:murToZ2N9hNJzewjHBgfFdXhZKjY3z5cYC1VXk+lbFE=
-@@ -209,8 +208,8 @@ github.com/stretchr/testify v1.2.2/go.mod h1:a8OnRcib4nhh0OaRAV+Yts87kKdq0PP7pXf
- github.com/stretchr/testify v1.3.0/go.mod h1:M5WIy9Dh21IEIfnGCwXGc5bZfKNJtfHm1UVUgZn+9EI=
- github.com/stretchr/testify v1.4.0/go.mod h1:j7eGeouHqKxXV5pUuKE4zz7dFj8WfuZ+81PSLYec5m4=
- github.com/stretchr/testify v1.5.1/go.mod h1:5W2xD1RspED5o8YsWQXVCued0rvSQ+mT+I5cxcmMvtA=
--github.com/stretchr/testify v1.11.1 h1:7s2iGBzp5EwR7/aIZr8ao5+dra3wiQyKjjFuvgVKu7U=
--github.com/stretchr/testify v1.11.1/go.mod h1:wZwfW3scLgRK+23gO65QZefKpKQRnfz6sD981Nm4B6U=
-+github.com/stretchr/testify v1.12.1 h1:EuwCh5fleGS7H32xRwO3wRGT7DxrDhLAT6FF8MpWDWE=
-+github.com/stretchr/testify v1.12.1/go.mod h1:MDEgiDPPsNp5cuIrHPPCyornHKgEVbtFUmoNlxoYthg=
- github.com/texttheater/golang-levenshtein v1.0.1 h1:+cRNoVrfiwufQPhoMzB6N0Yf/Mqajr6t1lOv8GyGE2U=
- github.com/texttheater/golang-levenshtein v1.0.1/go.mod h1:PYAKrbF5sAiq9wd+H82hs7gNaen0CplQ9uvm6+enD/8=
- github.com/uber/jaeger-client-go v2.30.0+incompatible h1:D6wyKGCecFaSRUpo8lCVbaOOb6ThwMmTEbhRwtKR97o=
-@@ -233,20 +232,22 @@ go.opentelemetry.io/collector/internal/testutil v0.152.0 h1:8LGwekR7mLcUDhT1ofLm
- go.opentelemetry.io/collector/internal/testutil v0.152.0/go.mod h1:Jkjs6rkqs973LqgZ0Fe3zrokQRKULYXPIf4HuqStiEE=
- go.opentelemetry.io/collector/pdata v1.58.0 h1:5Lxut3NxKp87066Pzt+3q7+JUuFI5B3teCyLZIF8wIs=
- go.opentelemetry.io/collector/pdata v1.58.0/go.mod h1:4vZtODINbC/JF3eGocnatdImzbRHseOywIcr+aULjCg=
--go.opentelemetry.io/otel v1.45.0 h1:pdrWmLHofpubmArBv1LgFSv1Z0Ie/ppdZzu+kUN5EeU=
--go.opentelemetry.io/otel v1.45.0/go.mod h1:XZxIqPapzEYnhNSScF5DIqXhm/rYi0FzCe2XddAwZfQ=
-+go.opentelemetry.io/otel v1.47.0 h1:j7ALJ/zgkS7Z6aeJW09p8VC9804bC+PpeTfCD4XPnOM=
-+go.opentelemetry.io/otel v1.47.0/go.mod h1:8wS9O2qfXrYrzp6hIF/HOYJJf/wIhFPhR2xLuP+iXQU=
- go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.45.0 h1:QRefszxJmfPdjXUUm3j6iDzY03mTPXMjqErFqQ67vUg=
- go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.45.0/go.mod h1:Tiz03lTBVBrm7eWZBOidzEaYaJa8tjwGUGv6d8mlTyk=
- go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.45.0 h1:fG5MCxGz8+2VtrN/WgqSpJFctVz24gpxj8CxkKmc8Ww=
- go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.45.0/go.mod h1:BmAYTn+3ysbRe+IU2msxmf5Rx3g6DHvex+tWI3LdhYI=
--go.opentelemetry.io/otel/metric v1.45.0 h1:7Eg1uH7CJ5cXv9is6tnBe1FI6rj1nwUdbFypRm3br/M=
--go.opentelemetry.io/otel/metric v1.45.0/go.mod h1:HAPbm1nd3p1PmFH7v2dR+6BjXxw+Lq4a2+pndMAm08s=
--go.opentelemetry.io/otel/sdk v1.45.0 h1:4VVSMgQ83dUgW2aoX5f6JgLvHwIvzcuLnF9lUdCSpCw=
--go.opentelemetry.io/otel/sdk v1.45.0/go.mod h1:Sr40LgXV7DsKMMJMKOhUWOgMWTfAaqvm2kF0g7ilwuA=
--go.opentelemetry.io/otel/sdk/metric v1.45.0 h1:oVFszMfyj1Am6s24Vtc7wBb8BKLcwepJjNEYILuiE3o=
--go.opentelemetry.io/otel/sdk/metric v1.45.0/go.mod h1:vUWUxDZvu1WVRj8JA8S0AdhsPrZoDpA2DdZauIh4mDA=
--go.opentelemetry.io/otel/trace v1.45.0 h1:l/mP6Uv7oNO7/TblbhpbgMidxhq1uO/rPsikOyVhxag=
--go.opentelemetry.io/otel/trace v1.45.0/go.mod h1:qoJJA2xNMnxRrdISU/kLtfUH2wNeQbiv+jhs/CxI8bc=
-+go.opentelemetry.io/otel/log v1.47.0 h1:cOTS1CcLbSQeZKanGJ+0JpF/+t4PELi3O3bbl2lqCcI=
-+go.opentelemetry.io/otel/log v1.47.0/go.mod h1:9byitSQ5pLC6PpqwGXjqdMKya6ZTswHRZh2vvXT33nw=
-+go.opentelemetry.io/otel/metric v1.47.0 h1:4PptaldXx3Eat1XjMZ68pPJEs5wrhlemctZE9a3UdWY=
-+go.opentelemetry.io/otel/metric v1.47.0/go.mod h1:ADGSXxRrXM6bjbvLo535EstVFlPpPYZm4LBKixjDHwU=
-+go.opentelemetry.io/otel/sdk v1.47.0 h1:zWXEr4j2lFefG87TU6Yg8a7ngfohIKFZHKp0Hf5hC6I=
-+go.opentelemetry.io/otel/sdk v1.47.0/go.mod h1:VUc24kiOeoGsxG8G9ULx3fWKvB7jMhnGE8Oi607lgR0=
-+go.opentelemetry.io/otel/sdk/metric v1.47.0 h1:lfISg2j93VT6yqdk9OfUaZmw/GfcZqCCV3jdXtsPnKw=
-+go.opentelemetry.io/otel/sdk/metric v1.47.0/go.mod h1:ypLp+mW1Nt2x+Szt3b5/i1syodyts49lMOwxpDI3VGw=
-+go.opentelemetry.io/otel/trace v1.47.0 h1:JOjX/Oci8K94QHddo+bbfya/Ai/nf6/dt9ZfrFNWSrM=
-+go.opentelemetry.io/otel/trace v1.47.0/go.mod h1:jNaSLa2PZEYFG6fRjJABAu+bw4FS08uDmPg28lTghu0=
- go.opentelemetry.io/proto/otlp v1.11.0 h1:5rrYs0Ykyj50sdU/JU0x8etU+LubXWb+gED6TbEdMIk=
- go.opentelemetry.io/proto/otlp v1.11.0/go.mod h1:SmVizdCOAm3XBtG1g1NnOdhW6jtddT72hLMhv8VwA8E=
- go.opentelemetry.io/proto/slim/otlp v1.10.0 h1:iR97Vs/ZDR+y9TfuP9b1XBtdPWeC+OMslIBmhcLU7jM=
-@@ -262,20 +263,22 @@ go.uber.org/goleak v1.3.0/go.mod h1:CoHD4
+@@ -229,8 +229,8 @@ go.opentelemetry.io/otel/metric v1.47.0 h1:4PptaldXx3Eat1XjMZ68pPJEs5wrhlemctZE9
+ go.opentelemetry.io/otel/metric v1.47.0/go.mod h1:ADGSXxRrXM6bjbvLo535EstVFlPpPYZm4LBKixjDHwU=
+ go.opentelemetry.io/otel/sdk v1.47.0 h1:zWXEr4j2lFefG87TU6Yg8a7ngfohIKFZHKp0Hf5hC6I=
+ go.opentelemetry.io/otel/sdk v1.47.0/go.mod h1:VUc24kiOeoGsxG8G9ULx3fWKvB7jMhnGE8Oi607lgR0=
+-go.opentelemetry.io/otel/sdk/log v0.21.0 h1:QsE7XSR0ktQdKmRKGnR+f1ObGF32WG+7MER/P9KgmYc=
+-go.opentelemetry.io/otel/sdk/log v0.21.0/go.mod h1:m9mApjCoD2/1QuKCAptjv+BrG9WKOvQLVdNx+iBldTo=
++go.opentelemetry.io/otel/sdk/log v1.47.0 h1:W4N/ZfgpkRRnmARnqYoQ6BrWA0mrj8IzVDNLlpmUJZY=
++go.opentelemetry.io/otel/sdk/log v1.47.0/go.mod h1:Wu74Z2EmOKXi2FleSNAb0Hyau2G+r5kubSEMJw5aAMs=
+ go.opentelemetry.io/otel/sdk/log/logtest v0.21.0 h1:X+JBBgKlswCGYsmgL0CnoUUtlE//VB345c84jYAYkdQ=
+ go.opentelemetry.io/otel/sdk/log/logtest v0.21.0/go.mod h1:HD1575K8e6sIFBBDd5tZB3t9DlMytWXq9FuR+Y4rfjE=
+ go.opentelemetry.io/otel/sdk/metric v1.47.0 h1:lfISg2j93VT6yqdk9OfUaZmw/GfcZqCCV3jdXtsPnKw=
 ```
 
-**File**: `sdk/go/auto/test/errors/conflict_error/go.mod` (modified, +12/-11)
+**File**: `tests/integration/construct_component_resource_options/go/go.mod` (modified, +1/-1)
 ```diff
-@@ -89,24 +89,25 @@ require (
- 	go.opentelemetry.io/auto/sdk v1.2.1 // indirect
- 	go.opentelemetry.io/collector/featuregate v1.58.0 // indirect
- 	go.opentelemetry.io/collector/pdata v1.58.0 // indirect
--	go.opentelemetry.io/otel v1.45.0 // indirect
-+	go.opentelemetry.io/otel v1.47.0 // indirect
- 	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.45.0 // indirect
- 	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.45.0 // indirect
--	go.opentelemetry.io/otel/metric v1.45.0 // indirect
--	go.opentelemetry.io/otel/sdk v1.45.0 // indirect
--	go.opentelemetry.io/otel/trace v1.45.0 // indirect
-+	go.opentelemetry.io/otel/log v1.47.0 // indirect
-+	go.opentelemetry.io/otel/metric v1.47.0 // indirect
-+	go.opentelemetry.io/otel/sdk v1.47.0 // indirect
-+	go.opentelemetry.io/otel/trace v1.47.0 // indirect
+@@ -98,7 +98,7 @@ require (
+ 	go.opentelemetry.io/otel/log v1.47.0 // indirect
+ 	go.opentelemetry.io/otel/metric v1.47.0 // indirect
+ 	go.opentelemetry.io/otel/sdk v1.47.0 // indirect
+-	go.opentelemetry.io/otel/sdk/log v0.21.0 // indirect
++	go.opentelemetry.io/otel/sdk/log v1.47.0 // indirect
+ 	go.opentelemetry.io/otel/trace v1.47.0 // indirect
  	go.opentelemetry.io/proto/otlp v1.11.0 // indirect
  	go.uber.org/atomic v1.11.0 // indirect
- 	go.uber.org/multierr v1.11.0 // indirect
--	golang.org/x/crypto v0.58.0 // indirect
-+	golang.org/x/crypto v0.59.0 // indirect
- 	golang.org/x/exp v0.0.0-20260410095643-746e56fc9e2f // indirect
--	golang.org/x/mod v0.41.0 // indirect
-+	golang.org/x/mod v0.42.0 // indirect
- 	golang.org/x/net v0.62.0 // indirect
--	golang.org/x/sync v0.24.0 // indirect
--	golang.org/x/sys v0.49.0 // indirect
--	golang.org/x/term v0.47.0 // indirect
--	golang.org/x/text v0.43.0 // indirect
--	golang.org/x/tools v0.51.0 // indirect
-+	golang.org/x/sync v0.25.0 // indirect
-+	golang.org/x/sys v0.50.0 // indirect
-+	golang.org/x/term v0.48.0 // indirect
-+	golang.org/x/text v0.44.0 // indirect
-+	golang.org/x/tools v0.52.0 // indirect
- 	google.golang.org/genproto/googleapis/api v0.0.0-20260803160001-6ac0973c030d // indirect
- 	google.golang.org/genproto/googleapis/rpc v0.0.0-20260803160001-6ac0973c030d // indirect
- 	google.golang.org/grpc v1.83.2 // indirect
 ```
 
-**File**: `sdk/go/auto/test/errors/conflict_error/go.sum` (modified, +30/-27)
+**File**: `tests/integration/construct_component_resource_options/go/go.sum` (modified, +2/-2)
 ```diff
-@@ -177,7 +177,6 @@ github.com/pkg/errors v0.9.1 h1:FEBLx1zS214owpjy7qsBeixbURkuhQAwrK5UwLGTwt4=
- github.com/pkg/errors v0.9.1/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINEl0=
- github.com/pkg/term v1.1.0 h1:xIAAdCMh3QIAy+5FrE8Ad8XoDhEU4ufwbaSozViP9kk=
- github.com/pkg/term v1.1.0/go.mod h1:E25nymQcrSllhX42Ok8MRm1+hyBdHY0dCeiKZ9jpNGw=
--github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZbAQM=
- github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
- github.com/pulumi/appdash v0.0.0-20231130102222-75f619a67231 h1:vkHw5I/plNdTr435cARxCW6q9gc0S/Yxz7Mkd38pOb0=
- github.com/pulumi/appdash v0.0.0-20231130102222-75f619a67231/go.mod h1:murToZ2N9hNJzewjHBgfFdXhZKjY3z5cYC1VXk+lbFE=
-@@ -209,8 +208,8 @@ github.com/stretchr/testify v1.2.2/go.mod h1:a8OnRcib4nhh0OaRAV+Yts87kKdq0PP7pXf
- github.com/stretchr/testify v1.3.0/go.mod h1:M5WIy9Dh21IEIfnGCwXGc5bZfKNJtfHm1UVUgZn+9EI=
- github.com/stretchr/testify v1.4.0/go.mod h1:j7eGeouHqKxXV5pUuKE4zz7dFj8WfuZ+81PSLYec5m4=
- github.com/stretchr/testify v1.5.1/go.mod h1:5W2xD1RspED5o8YsWQXVCued0rvSQ+mT+I5cxcmMvtA=
--github.com/stretchr/testify v1.11.1 h1:7s2iGBzp5EwR7/aIZr8ao5+dra3wiQyKjjFuvgVKu7U=
--github.com/stretchr/testify v1.11.1/go.mod h1:wZwfW3scLgRK+23gO65QZefKpKQRnfz6sD981Nm4B6U=
-+github.com/stretchr/testify v1.12.1 h1:EuwCh5fleGS7H32xRwO3wRGT7DxrDhLAT6FF8MpWDWE=
-+github.com/stretchr/testify v1.12.1/go.mod h1:MDEgiDPPsNp5cuIrHPPCyornHKgEVbtFUmoNlxoYthg=
- github.com/texttheater/golang-levenshtein v1.0.1 h1:+cRNoVrfiwufQPhoMzB6N0Yf/Mqajr6t1lOv8GyGE2U=
- github.com/texttheater/golang-levenshtein v1.0.1/go.mod h1:PYAKrbF5sAiq9wd+H82hs7gNaen0CplQ9uvm6+enD/8=
- github.com/uber/jaeger-client-go v2.30.0+incompatible h1:D6wyKGCecFaSRUpo8lCVbaOOb6ThwMmTEbhRwtKR97o=
-@@ -233,20 +232,22 @@ go.opentelemetry.io/collector/internal/testutil v0.152.0 h1:8LGwekR7mLcUDhT1ofLm
- go.opentelemetry.io/collector/internal/testutil v0.152.0/go.mod h1:Jkjs6rkqs973LqgZ0Fe3zrokQRKULYXPIf4HuqStiEE=
- go.opentelemetry.io/collector/pdata v1.58.0 h1:5Lxut3NxKp87066Pzt+3q7+JUuFI5B3teCyLZIF8wIs=
- go.opentelemetry.io/collector/pdata v1.58.0/go.mod h1:4vZtODINbC/JF3eGocnatdImzbRHseOywIcr+aULjCg=
--go.opentelemetry.io/otel v1.45.0 h1:pdrWmLHofpubmArBv1LgFSv1Z0Ie/ppdZzu+kUN5EeU=
--go.opentelemetry.io/otel v1.45.0/go.mod h1:XZxIqPapzEYnhNSScF5DIqXhm/rYi0FzCe2XddAwZfQ=
-+go.opentelemetry.io/otel v1.47.0 h1:j7ALJ/zgkS7Z6aeJW09p8VC9804bC+PpeTfCD4XPnOM=
-+go.opentelemetry.io/otel v1.47.0/go.mod h1:8wS9O2qfXrYrzp6hIF/HOYJJf/wIhFPhR2xLuP+iXQU=
- go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.45.0 h1:QRefszxJmfPdjXUUm3j6iDzY03mTPXMjqErFqQ67vUg=
- go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.45.0/go.mod h1:Tiz03lTBVBrm7eWZBOidzEaYaJa8tjwGUGv6d8mlTyk=
- go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.45.0 h1:fG5MCxGz8+2VtrN/WgqSpJFctVz24gpxj8CxkKmc8Ww=
- go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.45.0/go.mod h1:BmAYTn+3ysbRe+IU2msxmf5Rx3g6DHvex+tWI3LdhYI=
--go.opentelemetry.io/otel/metric v1.45.0 h1:7Eg1uH7CJ5cXv9is6tnBe1FI6rj1nwUdbFypRm3br/M=
--go.opentelemetry.io/otel/metric v1.45.0/go.mod h1:HAPbm1nd3p1PmFH7v2dR+6BjXxw+Lq4a2+pndMAm08s=
--go.opentelemetry.io/otel/sdk v1.45.0 h1:4VVSMgQ83dUgW2aoX5f6JgLvHwIvzcuLnF9lUdCSpCw=
--go.opentelemetry.io/otel/sdk v1.45.0/go.mod h1:Sr40LgXV7DsKMMJMKOhUWOgMWTfAaqvm2kF0g7ilwuA=
--go.opentelemetry.io/otel/sdk/metric v1.45.0 h1:oVFszMfyj1Am6s24Vtc7wBb8BKLcwepJjNEYILuiE3o=
--go.opentelemetry.io/otel/sdk/metric v1.45.0/go.mod h1:vUWUxDZvu1WVRj8JA8S0AdhsPrZoDpA2DdZauIh4mDA=
--go.opentelemetry.io/otel/trace v1.45.0 h1:l/mP6Uv7oNO7/TblbhpbgMidxhq1uO/rPsikOyVhxag=
--go.opentelemetry.io/otel/trace v1.45.0/go.mod h1:qoJJA2xNMnxRrdISU/kLtfUH2wNeQbiv+jhs/CxI8bc=
-+go.opentelemetry.io/otel/log v1.47.0 h1:cOTS1CcLbSQeZKanGJ+0JpF/+t4PELi3O3bbl2lqCcI=
-+go.opentelemetry.io/otel/log v1.47.0/go.mod h1:9byitSQ5pLC6PpqwGXjqdMKya6ZTswHRZh2vvXT33nw=
-+go.opentelemetry.io/otel/metric v1.47.0 h1:4PptaldXx3Eat1XjMZ68pPJEs5wrhlemctZE9a3UdWY=
-+go.opentelemetry.io/otel/metric v1.47.0/go.mod h1:ADGSXxRrXM6bjbvLo535EstVFlPpPYZm4LBKixjDHwU=
-+go.opentelemetry.io/otel/sdk v1.47.0 h1:zWXEr4j2lFefG87TU6Yg8a7ngfohIKFZHKp0Hf5hC6I=
-+go.opentelemetry.io/otel/sdk v1.47.0/go.mod h1:VUc24kiOeoGsxG8G9ULx3fWKvB7jMhnGE8Oi607lgR0=
-+go.opentelemetry.io/otel/sdk/metric v1.47.0 h1:lfISg2j93VT6yqdk9OfUaZmw/GfcZqCCV3jdXtsPnKw=
-+go.opentelemetry.io/otel/sdk/metric v1.47.0/go.mod h1:ypLp+mW1Nt2x+Szt3b5/i1syodyts49lMOwxpDI3VGw=
-+go.opentelemetry.io/otel/trace v1.47.0 h1:JOjX/Oci8K94QHddo+bbfya/Ai/nf6/dt9ZfrFNWSrM=
-+go.opentelemetry.io/otel/trace v1.47.0/go.mod h1:jNaSLa2PZEYFG6fRjJABAu+bw4FS08uDmPg28lTghu0=
- go.opentelemetry.io/proto/otlp v1.11.0 h1:5rrYs0Ykyj50sdU/JU0x8etU+LubXWb+gED6TbEdMIk=
- go.opentelemetry.io/proto/otlp v1.11.0/go.mod h1:SmVizdCOAm3XBtG1g1NnOdhW6jtddT72hLMhv8VwA8E=
- go.opentelemetry.io/proto/slim/otlp v1.10.0 h1:iR97Vs/ZDR+y9TfuP9b1XBtdPWeC+OMslIBmhcLU7jM=
-@@ -262,20 +263,22 @@ go.uber.org/goleak v1.3.0/go.mod h1:CoHD4
+@@ -229,8 +229,8 @@ go.opentelemetry.io/otel/metric v1.47.0 h1:4PptaldXx3Eat1XjMZ68pPJEs5wrhlemctZE9
+ go.opentelemetry.io/otel/metric v1.47.0/go.mod h1:ADGSXxRrXM6bjbvLo535EstVFlPpPYZm4LBKixjDHwU=
+ go.opentelemetry.io/otel/sdk v1.47.0 h1:zWXEr4j2lFefG87TU6Yg8a7ngfohIKFZHKp0Hf5hC6I=
+ go.opentelemetry.io/otel/sdk v1.47.0/go.mod h1:VUc24kiOeoGsxG8G9ULx3fWKvB7jMhnGE8Oi607lgR0=
+-go.opentelemetry.io/otel/sdk/log v0.21.0 h1:QsE7XSR0ktQdKmRKGnR+f1ObGF32WG+7MER/P9KgmYc=
+-go.opentelemetry.io/otel/sdk/log v0.21.0/go.mod h1:m9mApjCoD2/1QuKCAptjv+BrG9WKOvQLVdNx+iBldTo=
++go.opentelemetry.io/otel/sdk/log v1.47.0 h1:W4N/ZfgpkRRnmARnqYoQ6BrWA0mrj8IzVDNLlpmUJZY=
++go.opentelemetry.io/otel/sdk/log v1.47.0/go.mod h1:Wu74Z2EmOKXi2FleSNAb0Hyau2G+r5kubSEMJw5aAMs=
+ go.opentelemetry.io/otel/sdk/log/logtest v0.21.0 h1:X+JBBgKlswCGYsmgL0CnoUUtlE//VB345c84jYAYkdQ=
+ go.opentelemetry.io/otel/sdk/log/logtest v0.21.0/go.mod h1:HD1575K8e6sIFBBDd5tZB3t9DlMytWXq9FuR+Y4rfjE=
+ go.opentelemetry.io/otel/sdk/metric v1.47.0 h1:lfISg2j93VT6yqdk9OfUaZmw/GfcZqCCV3jdXtsPnKw=
+```
+
+**File**: `tests/integration/construct_nested_component/go/go.mod` (modified, +1/-1)
+```diff
+@@ -99,7 +99,7 @@ require (
+ 	go.opentelemetry.io/otel/log v1.47.0 // indirect
+ 	go.opentelemetry.io/otel/metric v1.47.0 // indirect
+ 	go.opentelemetry.io/otel/sdk v1.47.0 // indirect
+-	go.opentelemetry.io/otel/sdk/log v0.21.0 // indirect
++	go.opentelemetry.io/otel/sdk/log v1.47.0 // indirect
+ 	go.opentelemetry.io/otel/trace v1.47.0 // indirect
+ 	go.opentelemetry.io/proto/otlp v1.11.0 // indirect
+ 	go.uber.org/atomic v1.11.0 // indirect
+```
+
+**File**: `tests/integration/construct_nested_component/go/go.sum` (modified, +2/-2)
+```diff
+@@ -229,8 +229,8 @@ go.opentelemetry.io/otel/metric v1.47.0 h1:4PptaldXx3Eat1XjMZ68pPJEs5wrhlemctZE9
+ go.opentelemetry.io/otel/metric v1.47.0/go.mod h1:ADGSXxRrXM6bjbvLo535EstVFlPpPYZm4LBKixjDHwU=
+ go.opentelemetry.io/otel/sdk v1.47.0 h1:zWXEr4j2lFefG87TU6Yg8a7ngfohIKFZHKp0Hf5hC6I=
+ go.opentelemetry.io/otel/sdk v1.47.0/go.mod h1:VUc24kiOeoGsxG8G9ULx3fWKvB7jMhnGE8Oi607lgR0=
+-go.opentelemetry.io/otel/sdk/log v0.21.0 h1:QsE7XSR0ktQdKmRKGnR+f1ObGF32WG+7MER/P9KgmYc=
+-go.opentelemetry.io/otel/sdk/log v0.21.0/go.mod h1:m9mApjCoD2/1QuKCAptjv+BrG9WKOvQLVdNx+iBldTo=
++go.opentelemetry.io/otel/sdk/log v1.47.0 h1:W4N/ZfgpkRRnmARnqYoQ6BrWA0mrj8IzVDNLlpmUJZY=
++go.opentelemetry.io/otel/sdk/log v1.47.0/go.mod h1:Wu74Z2EmOKXi2FleSNAb0Hyau2G+r5kubSEMJw5aAMs=
+ go.opentelemetry.io/otel/sdk/log/logtest v0.21.0 h1:X+JBBgKlswCGYsmgL0CnoUUtlE//VB345c84jYAYkdQ=
+ go.opentelemetry.io/otel/sdk/log/logtest v0.21.0/go.mod h1:HD1575K8e6sIFBBDd5tZB3t9DlMytWXq9FuR+Y4rfjE=
+ go.opentelemetry.io/otel/sdk/metric v1.47.0 h1:lfISg2j93VT6yqdk9OfUaZmw/GfcZqCCV3jdXtsPnKw=
 ```
 
 ---
 
-### Incident Patch 2: `1a526082` (2026-11-17)
-**Commit Message**: cli: Fix formatting in pulumi convert help text (#22559)
+### Incident Patch 2: `c61f7647` (2026-11-18)
+**Commit Message**: Preserve caller stack traces in component providers. (#25754)
 
-### Proposed changes
+We need to pass through the parentStackTraceHandle on construct calls so
+the engine can stitch the traces together.
 
-The `Long` description string for `pulumi convert` was missing a newline
-between the "Valid target languages" line and the "Example command
-usage:" section. Every other paragraph break in this string uses `"\n" +
-"\n"` to produce a blank line; this one had only a single `\n`, so the
-two sections ran together in both `pulumi convert --help` and the
-generated CLI reference docs on pulumi.com.
+We can test this in the `provider-resource-component` conformance test
+by checking that the resource's stack trace contains a stack frame for
+the parent component.
 
-### Credit
+Fixes #25749
 
-Originally spotted and fixed by @absurdlylongusername in
-pulumi/docs#18431. That PR patched the generated markdown file directly;
-this PR applies the equivalent fix at the source so it survives the next
-docs regeneration.
-
-cc @jkodroff
-
-### Related issues
-
-Closes pulumi/docs#18431 (superseded)
-
----------
-
-Co-authored-by: absurdlylongusername <[REDACTED_EMAIL]>
-Co-authored-by: Fraser Ashyggton <[REDACTED_EMAIL]>
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `changelog/pending/cli-convert-fix-20260409-190700.yaml` (added, +4/-0)
+**File**: `changelog/pending/sdk-fix-construct-stack-trace-handles.yaml` (added, +4/-0)
 ```diff
 @@ -0,0 +1,4 @@
-+component: cli/convert
++component: sdk
 +kind: fix
-+body: Fix missing blank line in `pulumi convert --help` output between the target languages list and the example usage section
-+time: 2026-04-09T19:07:00.000000+00:00
++body: Preserve caller registration stacks for child resources created or read by Python, Node.js, and Go component providers
++time: 2026-11-18T10:14:19Z
 ```
 
-**File**: `pkg/cmd/pulumi/convert/convert.go` (modified, +2/-2)
+**File**: `pkg/testing/pulumi-test-language/tests/provider_resource_component.go` (modified, +4/-0)
 ```diff
-@@ -82,9 +82,9 @@ func NewConvertCmd(lm cmdBackend.LoginManager, ws pkgWorkspace.Context) *cobra.C
- 			"\n" +
- 			"Valid source languages: yaml, terraform, bicep, arm, kubernetes\n" +
- 			"\n" +
--			"Valid target languages: typescript, python, csharp, go, java, yaml" +
-+			"Valid target languages: typescript, python, csharp, go, java, yaml\n" +
- 			"\n" +
--			"Example command usage:" +
-+			"Example command usage:\n" +
- 			"\n" +
- 			"    pulumi convert --from yaml --language java --out . \n" +
- 			"\n\n" +
+@@ -57,6 +57,10 @@ func init() {
+ 					assert.Equal(l, simple.Inputs, simple.Outputs, "expected inputs and outputs to match")
+ 
+ 					assert.Equal(l, component.URN, simple.Parent, "expected component to be parent of simple resource")
++
++					require.NotEmpty(l, component.StackTrace, "expected a caller stack for the component")
++					assert.Contains(l, simple.StackTrace, component.StackTrace[0],
++						"expected the child resource's stack to include the component's caller")
+ 				},
+ 			},
+ 		},
+```
+
+**File**: `sdk/go/pulumi/context.go` (modified, +12/-9)
+```diff
+@@ -60,15 +60,16 @@ var disableResourceReferences = cmdutil.IsTruthy(os.Getenv("PULUMI_DISABLE_RESOU
+ type workGroup = internal.WorkGroup
+ 
+ type contextState struct {
+-	info          RunInfo
+-	stack         Resource
+-	exports       map[string]Input
+-	monitor       pulumirpc.ResourceMonitorClient
+-	monitorConn   *grpc.ClientConn
+-	engine        pulumirpc.EngineClient
+-	engineConn    *grpc.ClientConn
+-	callbacksLock sync.Mutex
+-	callbacks     *callbackServer
++	parentStackTraceHandle string
++	info                   RunInfo
++	stack                  Resource
++	exports                map[string]Input
++	monitor                pulumirpc.ResourceMonitorClient
++	monitorConn            *grpc.ClientConn
++	engine                 pulumirpc.EngineClient
++	engineConn             *grpc.ClientConn
++	callbacksLock          sync.Mutex
++	callbacks              *callbackServer
+ 
+ 	keepResources            bool         // true if resources should be marshaled as strongly-typed references.
+ 	keepOutputValues         bool         // true if outputs should be marshaled as strongly-type output values.
+@@ -1500,6 +1501,7 @@ func (ctx *Context) readPackageResource(
+ 			AdditionalSecretOutputs: inputs.additionalSecretOutputs,
+ 			SourcePosition:          sourcePosition,
+ 			StackTrace:              stackTrace,
++			ParentStackTraceHandle:  ctx.state.parentStackTraceHandle,
+ 			PackageRef:              packageRef,
+ 		})
+ 		if err != nil {
+@@ -2081,6 +2083,7 @@ func (ctx *Context) registerResource(
+ 				HideDiffs:                  inputs.hideDiffs,
+ 				SourcePosition:             sourcePosition,
+ 				StackTrace:                 stackTrace,
++				ParentStackTraceHandle:     ctx.state.parentStackTraceHandle,
+ 				Transforms:                 transforms,
+ 				StateMigrations:            stateMigrations,
+ 				SupportsResultReporting:    true,
+```
+
+**File**: `sdk/go/pulumi/provider.go` (modified, +1/-0)
+```diff
+@@ -57,6 +57,7 @@ func construct(ctx context.Context, req *pulumirpc.ConstructRequest, engineConn
+ 	if err != nil {
+ 		return nil, fmt.Errorf("constructing run context: %w", err)
+ 	}
++	pulumiCtx.state.parentStackTraceHandle = req.GetStackTraceHandle()
+ 
+ 	// Deserialize the inputs and apply appropriate dependencies.
+ 	inputDependencies := req.GetInputDependencies()
+```
+
+**File**: `sdk/nodejs/provider/server.ts` (modified, +1/-0)
+```diff
+@@ -384,6 +384,7 @@ class Server implements grpc.UntypedServiceImplementation {
+             this._callbacks.set(callbackId, callback);
+             try {
+                 const req: provproto.ConstructRequest = call.request;
++                localState.setParentStackTraceHandle(req.getStackTraceHandle());
+                 const type = req.getType();
+                 const name = req.getName();
+ 
+```
+
+**File**: `sdk/nodejs/runtime/resource.ts` (modified, +5/-0)
+```diff
+@@ -42,6 +42,7 @@ import { gatherExplicitDependencies, getAllTransitivelyReferencedResourceURNs }
+ import { invoke } from "./invoke";
+ import {
+     failPendingRegistration,
++    getParentStackTraceHandle,
+     getPendingResourceRegistrations,
+     getStore,
+     PendingResourceRegistration,
+@@ -346,6 +347,7 @@ export function readResource(
+     if (!opts.id) {
+         throw new Error("Cannot read resource whose options are lacking an ID value");
+     }
++    const parentStackTraceHandle = getParentStackTraceHandle();
+     const id: Promise<Input<ID>> = output(opts.id).promise(true);
+ 
+     const label = `resource:${name}[${t}]#...`;
+@@ -391,6 +393,7 @@ export function readResource(
+                 req.setAdditionalsecretoutputsList((<any>opts).additionalSecretOutputs || []);
+                 req.setSourceposition(marshalSourcePosition(sourcePosition));
+                 req.setStacktrace(marshalStackTrace(stackTrace));
++                req.setParentstacktracehandle(parentStackTraceHandle || "");
+                 req.setPackageref(packageRefStr || "");
+ 
+                 // Now run the operation, serializing the invocation if necessary.
+@@ -676,6 +679,7 @@ export function registerResource(
+     stackTrace?: (SourcePosition | undefined)[],
+     packageRef?: Promise<string | undefined>,
+ ): void {
++    const parentStackTraceHandle = getParentStackTraceHandle();
+     const label = `resource:${name}[${t}]`;
+     log.debug(`Registering resource: t=${t}, name=${name}, custom=${custom}, remote=${remote}`);
+ 
+@@ -826,6 +830,7 @@ export function registerResource(
+                 req.setAliasspecs(true);
+                 req.setSourceposition(marshalSourcePosition(sourcePosition));
+                 req.setStacktrace(marshalStackTrace(stackTrace));
++                req.setParentstacktracehandle(parentStackTraceHandle || "");
+                 req.setTransformsList(callbacks);
+                 req.setStateMigrationsList(stateMigrations);
+                 req.setSupportsresultreporting(true);
+```
+
+**File**: `sdk/nodejs/runtime/state.ts` (modified, +23/-0)
+```diff
+@@ -128,6 +128,9 @@ export interface Store {
+     logErrorCount: number;
+     terminated: boolean;
+ 
++    /** The caller's registration stack for the current Construct request. */
++    parentStackTraceHandle?: string;
++
+     /**
+      * Tells us if the resource monitor we are connected to is able to support
+      * secrets across its RPC interface. When it does, we marshal outputs marked
+@@ -332,6 +335,8 @@ export class LocalStore implements Store {
+     /* Tracks whether the monitor was terminated while we were waiting for an operation to complete */
+     terminated = false;
+ 
++    parentStackTraceHandle?: string;
++
+     supportsSecrets = false;
+     supportsResourceReferences = false;
+     supportsOutputValues = false;
+@@ -362,6 +367,24 @@ export function getStackResource(): Stack | undefined {
+     return stackResource;
+ }
+ 
++/**
++ * Get the caller's registration stack handle for the current Construct request.
++ *
++ * @internal
++ */
++export function getParentStackTraceHandle(): string | undefined {
++    return getStore().parentStackTraceHandle;
++}
++
++/**
++ * Set the caller's registration stack handle for the current Construct request.
++ *
++ * @internal
++ */
++export function setParentStackTraceHandle(handle?: string): void {
++    getStore().parentStackTraceHandle = handle;
++}
++
+ /**
+  * Get the resource package map for the current stack deployment.
+  *
+```
+
+**File**: `sdk/python/lib/pulumi/provider/server.py` (modified, +29/-25)
+```diff
+@@ -37,6 +37,7 @@
+     _parse_resource_reference,
+ )
+ from pulumi.runtime import known_types, proto, rpc
++from pulumi.runtime._registration_context import _registration_context
+ from pulumi.runtime.proto import (
+     provider_pb2_grpc,
+     ResourceProviderServicer,
+@@ -120,32 +121,35 @@ def create_grpc_invalid_properties_status(
+     async def Construct(
+         self, request: proto.ConstructRequest, context
+     ) -> proto.ConstructResponse:
+-        try:
+-            return await self._construct(request, context)
+-        except Exception as e:  # noqa
+-            if isinstance(e, RunError):
+-                raise
+-            if isinstance(e, InputPropertiesError):
+-                status = self.create_grpc_invalid_properties_status(e.message, e.errors)
+-                await context.abort_with_status(status)
+-                # We already aborted at this point
+-                raise
+-            elif isinstance(e, InputPropertyError):
+-                status = self.create_grpc_invalid_properties_status(
+-                    "", [{"property_path": e.property_path, "reason": e.reason}]
+-                )
+-                await context.abort_with_status(status)
+-                # We already aborted at this point
+-                raise
+-            else:
+-                if isinstance(e, ComponentInitError):
+-                    stack = traceback.extract_tb(e.inner.__traceback__)[:]
+-                    # Drop the internal frame for `self._construct`.
+-                    stack = stack[1:]
++        with _registration_context(request.stack_trace_handle):
++            try:
++                return await self._construct(request, context)
++            except Exception as e:  # noqa
++                if isinstance(e, RunError):
++                    raise
++                if isinstance(e, InputPropertiesError):
++                    status = self.create_grpc_invalid_properties_status(
++                        e.message, e.errors
++                    )
++                    await context.abort_with_status(status)
++                    # We already aborted at this point
++                    raise
++                elif isinstance(e, InputPropertyError):
++                    status = self.create_grpc_invalid_properties_status(
++                        "", [{"property_path": e.property_path, "reason": e.reason}]
++                    )
++                    await context.abort_with_status(status)
++                    # We already aborted at this point
++                    raise
+                 else:
+-                    stack = traceback.extract_tb(e.__traceback__)[:]
+-                pretty_stack = "".join(traceback.format_list(stack))
+-                raise Exception(f"{str(e)}:\n{pretty_stack}")
++                    if isinstance(e, ComponentInitError):
++                        stack = traceback.extract_tb(e.inner.__traceback__)[:]
++                        # Drop the internal frame for `self._construct`.
++                        stack = stack[1:]
++                    else:
++                        stack = traceback.extract_tb(e.__traceback__)[:]
++                    pretty_stack = "".join(traceback.format_list(stack))
++                    raise Exception(f"{str(e)}:\n{pretty_stack}")
+ 
+     async def _construct(
+         self, request: proto.ConstructRequest, context
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #25735** (2026-11-17): Emit Python SDK license as an SPDX string in pyproject.toml (@pierskarsenbarg)
-- **PR #25729** (2026-11-17): Add a preview pulumi delivery register command (@flostadler)
-- **PR #25718** (2026-11-16): Add Cast helpers for string-typed slices and iterators (@Frassle)
-- **PR #25716** (2026-11-16): Note in AGENTS.md that sdk/go/common/resource/plugin is deprecated (@VenelinMartinov)
-- **PR #25714** (2026-11-16): docs(go): correct helper function comments (@unixglo)
-- **PR #25712** (2026-11-16): Add Keys method to property.Map (@Frassle)
+- **PR #25759** (2026-11-18): Align Go stack capture skip counts (@julienp)
+- **PR #25758** (2026-11-18): Changelog for v3.277.0 (@pulumi-bot)
+- **PR #25754** (2026-11-18): Preserve caller stack traces in component providers. (@julienp)
+- **PR #25751** (2026-11-18): Update first-party Pulumi language runtimes (@i-am-tom)
+- **PR #25750** (2026-11-18): Freeze v3.277.0 (@pulumi-bot)
+- **PR #25739** (2026-11-18): Regenerate automation APIs (@pulumi-bot)
 
 ---
 
@@ -2236,39 +2175,31 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Update vulnerable dependencies [SECURITY]
+## X. Update module go.opentelemetry.io/otel/sdk/log to v1 [SECURITY]
 
 **RULE**:
-When implementing operations in `pkg/go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pulumi/pulumi. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `sdk/go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pulumi/pulumi. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `00c00449`: Update vulnerable dependencies [SECURITY]. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ea985d67`: Update module go.opentelemetry.io/otel/sdk/log to v1 [SECURITY]. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/go.mod`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `sdk/go.mod`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	golang.org/x/crypto v0.59.0 // indirect
-	golang.org/x/sync v0.25.0
-	golang.org/x/sys v0.50.0
-	golang.org/x/term v0.48.0
-	golang.org/x/text v0.44.0
+	go.opentelemetry.io/otel/sdk/log v1.47.0
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-	golang.org/x/crypto v0.58.0 // indirect
-	golang.org/x/sync v0.24.0
-	golang.org/x/sys v0.49.0
-	golang.org/x/term v0.47.0
-	golang.org/x/text v0.43.0
+	go.opentelemetry.io/otel/sdk/log v0.21.0
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `00c00449` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ea985d67` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

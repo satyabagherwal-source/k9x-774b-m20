@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T19:27:34.779Z",
+  "timestamp": "2026-11-18T21:50:21.315Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-grpc-grpc-rust-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [grpc-grpc-rust-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T19:27:34.779Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-18T21:50:21.315Z`  
 > **Learning ID**: `LEARN-EVO-grpc-grpc-rust-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 54%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 61%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from grpc-grpc-rust-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/grpc-grpc-rust-learnings.md`  
 > **Source**: github ([https://github.com/grpc/grpc-rust](https://github.com/grpc/grpc-rust))  
-> **Source Version**: `eee0da29`  
+> **Source Version**: `9205207e`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T19:27:18.589Z  
+> **Timestamp**: 2026-11-18T21:50:08.801Z  
 > **Learning ID**: `learn-github-grpc-grpc-rust`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/grpc-grpc-rust-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/grpc/grpc-rust](https://github.com/grpc/grpc-rust))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T19:27:18.583Z  
+> **Harvest Timestamp**: 2026-11-18T21:50:08.796Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: A native gRPC client & server implementation with async/await support.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 12537 stars
+- **Stars / Engagement**: 12545 stars
 
 ---
 
@@ -293,26 +293,73 @@ impl WorkerService for WorkerServer {
 
 use std::sync::Arc;
 
+use xds_client::ProcessingDone;
+use xds_client::ResourceEvent;
+
 /// The latest known state of one watched resource or DNS target.
 ///
 /// Follows gRFC A88: a *resource error* (the resource itself is bad) drops
 /// the cached value, while an *ambient error* (such as a broken stream) keeps
 /// it and only adds a note.
-#[derive(Debug, Clone, PartialEq, Eq)]
-pub(super) enum WatchState<T> {
+///
+/// `T` may be unsized so that DNS watches can hold `[EndpointAddress]`
+/// (`Arc<[EndpointAddress]>`).
+#[derive(Debug, PartialEq, Eq)]
+pub(super) enum WatchState<T: ?Sized> {
     /// The watch has started but nothing has been received yet.
     Pending,
     /// A usable value. `note` holds the latest ambient error, if any; the next
     /// valid update clears it.
-    Ready { value: T, note: Option<Arc<str>> },
+    Ready {
+        value: Arc<T>,
+        note: Option<Arc<str>>,
+    },
     /// Nothing usable: the resource does not exist, is invalid, or an error
     /// arrived before the first valid value.
     Failed(Arc<str>),
 }
 
-impl<T> WatchState<T> {
+// Manual `Clone` avoids `#[derive(Clone)]`'s `T: Clone` bound, which unsized
+// values like `[EndpointAddress]` cannot satisfy even though `Arc<T>: Clone`.
+impl<T: ?Sized> Clone for WatchState<T> {
+    fn clone(&self) -> Self {
+        match self {
+            Self::Pending => Self::Pending,
+            Self::Ready { value, note } => Self::Ready {
+                value: Arc::clone(value),
+                note: note.clone(),
+            },
+            Self::Failed(reason) => Self::Failed(Arc::clone(reason)),
+        }
+    }
+}
+
+impl<T: ?Sized> WatchState<T> {
+    /// Applies an XdsClient event, and returns its flow-control token.
+    ///
+    /// `describe` turns the event's error into the reason or note to store.
+    pub(super) fn apply(
+        &mut self,
+        event: ResourceEvent<T>,
+        describe: impl FnOnce(xds_client::Error) -> Arc<str>,
+    ) -> ProcessingDone
+    where
+        T: Sized,
+    {
+        match event {
+            ResourceEvent::ResourceChanged { result, done } => {
+                self.on_changed(result.map_err(describe));
+                done
+            }
+            ResourceEvent::AmbientError { error, done } => {
+                self.on_ambient_error(describe(error));
+                done
+            }
+        }
+    }
+
     /// Applies a `ResourceChanged` event. An `Err` discards any cached value.
-    fn on_changed(&mut self, result: Result<T, Arc<str>>) {
+    fn on_changed(&mut self, result: Result<Arc<T>, Arc<str>>) {
         *self = match result {
             Ok(value) => Self::Ready { value, note: None },
             Err(reason) => Self::Failed(reason),
@@ -344,7 +391,7 @@ mod tests {
 
     fn ready(value: u32, note: Option<&str>) -> WatchState<u32> {
         WatchState::Ready {
-            value,
+            value: Arc::new(value),
             note: note.map(Arc::from),
         }
     }
@@ -381,11 +428,27 @@ mod tests {
         ] {
             let mut state = start.clone();
             match &event {
-                Changed(result) => state.on_changed(result.map_err(Arc::from)),
+                Changed(result) => state.on_changed((*result).map(Arc::new).map_err(Arc::from)),
                 Ambient(reason) => state.on_ambient_error(Arc::from(*reason)),
             }
             assert_eq!(state, expected, "{start:?} after {event:?}");
         }
+    }
+
+    #[test]
+    fn supports_unsized_slice_values() {
+        let mut state: WatchState<[u32]> = WatchState::Pending;
+        state.on_changed(Ok(Arc::from([1, 2])));
+        state.on_ambient_error(Arc::from("stale"));
+
+        let cloned = state.clone();
+        assert_eq!(
+            cloned,
+            WatchState::Ready {
+                value: Arc::from([1, 2]),
+                note: Some(Arc::from("stale")),
+            }
+        );
     }
 }
 
@@ -1459,6 +1522,12 @@ impl OutlierChannelState {
             });
     }
 
+    /// Clear the multiplier. Only meant for the sweep task, which is the sole
+    /// writer that raises it, so the plain store can't lose an ejection.
+    pub(crate) fn reset_multiplier(&self) {
+        self.ejection_multiplier.store(0, Ordering::Relaxed);
+    }
+
     /// Test-only multiplier setter for driving housekeeping without
     /// going through `try_eject`.
     #[cfg(test)]
@@ -1497,13 +1566,7 @@ pub(crate) struct IdleChannel {
 
 impl IdleChannel {
     #[cfg(test)]
-    pub(crate) fn new(endpoint: impl Into<XdsEndpoint>) -> Self {
-        Arc::new(endpoint.into()).into()
-    }
-
-    /// Start connecting to the endpoint. Consumes the idle channel.
-    /// The resolved [`ReadyChannel`] will carry the
-    /// `Arc<OutlierChannelState
+  
 ```
 
 ### Core Architecture Module: `tonic-xds/src/common/async_util.rs`
@@ -1978,11 +2041,11 @@ enum SubscriptionMode {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #3033** (2026-11-13): **grpc-xds: Rename bootstrap.rs to bootstrap/mod.rs**
-  *Symptoms*: The mod.rs convention is used by the rest of the code.
+- **Issue #3043** (2026-11-18): **grpc: make WorkData a struct instead of a boxed trait object**
+  *Symptoms*: Similar to the reworking of the other Dyn* traits, it's better to have a type encapsulate the desired behavior of the WorkData instead of a blanket-implemented trait and an `impl dyn` block.  cc @arjan-bal @murgatroid99 @nathanielford as heads-up for this (pretty small) change in case it impacts in-flight work.
 
-- **Issue #3031** (2026-11-12): **grpc/load_balancing: Invoke Pick::on_complete when RPCs complete**
-  *Symptoms*: Change `CompletionCallback` to a `FnOnce` receiving a `CallOutcome` (final status and trailing metadata), and have the channel wrap the `RecvStream` of picked RPCs in a `CompletionRecvStream` that invokes the callback exactly once when trailers are received, the stream closes, or the RPC is abandoned.  This change is extracted out of #3001
+- **Issue #3037** (2026-11-17): **tonic-xds: drop cluster clients when removed from route config**
+  *Symptoms*: ## Motivation  `ClusterClientRegistry` kept every `ClusterClient` for the life of the channel. Removed clusters leaked their channels and tasks, and re-added clusters reused stale clients whose `XdsCache` watches had closed.  ## Solution  Move cluster client ownership from `XdsLbService` to `XdsRouter`:  ```text BEFORE: LB-Owned (Grow-Only)            AFTER: Router-Owned (Reconciled) ============================            ================================             +------------+                          +------------+            |  XdsCache  |                          |  XdsCache  |            +-----+------+                          +-----+------+                  | RDS only                              | RDS + CDS/EDS watch                  v                                       v  (detects stale) +----------------------------------+    +----------------------------------+ | XdsRouter                        |    | XdsRouter (owns ClusterSet)      | |                                  |    |  reconciles: drop gone/stale     | |  RoutingSnapshot {               |    |  RoutingSnapshot {               | |    routes, retry                 |    |    routes, retry, clusters       | |  }                               |    |  }                               | +----------------+-----------------+    +----------------+-----------------+                  | RouteDecision                         | RouteDecision                  |  cluster: "A"                 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1999,89 +2062,682 @@ enum SubscriptionMode {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `eee0da29` (2026-11-13)
-**Commit Message**: grpc-xds: Rename bootstrap.rs to bootstrap/mod.rs (#3033)
+### Incident Patch 1: `9205207e` (2026-11-18)
+**Commit Message**: grpc: make WorkData a struct instead of a boxed trait object (#3043)
 
-The mod.rs convention is used by the rest of the code.
+Similar to the reworking of the other Dyn* traits, it's better to have a
+type encapsulate the desired behavior of the WorkData instead of a
+blanket-implemented trait and an `impl dyn` block.
 
+**File**: `grpc/src/client/load_balancing/child_manager.rs` (modified, +8/-7)
+```diff
+@@ -34,7 +34,6 @@
+ //! them.  Use this when the children are a pure function of the most recent
+ //! update (e.g. round robin, which creates one child per endpoint).
+ 
+-use std::any::TypeId;
+ use std::collections::HashMap;
+ use std::error::Error;
+ use std::fmt::Debug;
+@@ -169,12 +168,14 @@ impl<P: LbPolicy> Child<P> {
+         data: WorkData,
+         channel_controller: &mut dyn ChannelController,
+     ) -> Result<(), WorkData> {
+-        debug_assert_eq!(data.type_id(), TypeId::of::<ChildWorkItem>());
+-        let item = data.downcast::<ChildWorkItem>()?;
+-        if item.handle != self.handle {
+-            // This work item belongs to another child.
+-            return Err(item);
++        debug_assert!(data.is::<ChildWorkItem>());
++        if data
++            .downcast_ref::<ChildWorkItem>()
++            .is_none_or(|item| item.handle != self.handle)
++        {
++            return Err(data);
+         }
++        let item = data.downcast::<ChildWorkItem>().expect("checked above");
+         self.work_item(item.data, channel_controller);
+         Ok(())
+     }
+@@ -503,7 +504,7 @@ struct ChildWorkScheduler {
+ 
+ impl WorkScheduler for ChildWorkScheduler {
+     fn schedule_work(&self, data: Option<WorkData>) {
+-        let wrapped: Option<WorkData> = Some(Box::new(ChildWorkItem {
++        let wrapped: Option<WorkData> = Some(WorkData::new(ChildWorkItem {
+             handle: self.handle.clone(),
+             data,
+         }));
+```
 
+**File**: `grpc/src/client/load_balancing/mod.rs` (modified, +50/-26)
+```diff
+@@ -144,45 +144,54 @@ pub struct LbPolicyOptions {
+     pub runtime: GrpcRuntime,
+ }
+ 
+-/// A trait to add `Debug` to an `Any` for [`WorkData`] to allow debugging data
+-/// to be printed more readily.  Blanket implemented on all types that are Any +
+-/// Send + Debug.  `dyn WorkDataTrait` also implements downcast methods like
+-/// [`Any`] for convenience.
+-pub trait WorkDataTrait: Any + Send + Debug {}
++/// A dynamic payload passed between [`WorkScheduler::schedule_work`] and its
++/// associated policy's [`work`](crate::client::load_balancing::LbPolicy::work)
++/// method.
++pub struct WorkData(Box<dyn WorkDataTrait>);
++
++/// What a WorkData holds: `Any` for downcasting, `Send` for passing through a
++/// [`WorkScheduler`], and `Debug` for printing.
++trait WorkDataTrait: Any + Send + Debug {}
+ 
+ impl<T: Any + Send + Debug> WorkDataTrait for T {}
+ 
+-impl dyn WorkDataTrait {
+-    /// Like [`Box<dyn Any>::downcast`] but for this wrapper trait.
+-    pub fn downcast<T: Any>(self: Box<Self>) -> Result<Box<T>, Box<Self>> {
+-        // If we directly call downcast then we can't return `Self` anymore
+-        // (only a Box<dyn Any + Send>), so we first have to check `is` and only
+-        // downcast when we know it will succeed.
+-        if (&*self as &(dyn Any + Send)).is::<T>() {
+-            Ok((self as Box<dyn Any + Send>).downcast().unwrap())
+-        } else {
+-            Err(self)
++impl WorkData {
++    /// Creates a WorkData holding `data`.
++    pub fn new<T: Any + Send + Debug>(data: T) -> Self {
++        Self(Box::new(data))
++    }
++
++    /// Returns true if this holds a `T`.
++    pub fn is<T: Any>(&self) -> bool {
++        (&*self.0 as &dyn Any).is::<T>()
++    }
++
++    /// Returns the `T` this holds, or this WorkData unchanged if it holds
++    /// something else.
++    pub fn downcast<T: Any>(self) -> Result<T, Self> {
++        if !self.is::<T>() {
++            return Err(self);
+         }
++        let data = self.0 as Box<dyn Any>;
++        Ok(*data.downcast::<T>().expect("checked by is"))
+     }
+ 
+-    /// Like
+-    /// [`downcast_ref`](https://doc.rust-lang.org/std/any/trait.Any.html#method.downcast_ref)
+-    /// implemented on [`dyn Any`](Any), but for this wrapper trait.
++    /// Returns a reference to the `T` this holds, if it holds one.
+     pub fn downcast_ref<T: Any>(&self) -> Option<&T> {
+-        (self as &(dyn Any + Send)).downcast_ref::<T>()
++        (&*self.0 as &dyn Any).downcast_ref::<T>()
+     }
+ 
+-    /// Like
+-    /// [`downcast_mut`](https://doc.rust-lang.org/std/any/trait.Any.html#method.downcast_mut)
+-    /// implemented on [`dyn Any`](Any), but for this wrapper trait.
++    /// Returns a mutable reference to the `T` this holds, if it holds one.
+     pub fn downcast_mut<T: Any>(&mut self) -> Option<&mut T> {
+-        (self as &mut (dyn Any + Send)).downcast_mut::<T>()
++        (&mut *self.0 as &mut dyn Any).downcast_mut::<T>()
+     }
+ }
+ 
+-/// A dynamic payload passed between [`WorkScheduler::schedule_work`] and its
+-/// associated policy's [`work`](LbPolicy::work) method.
+-pub type WorkData = Box<dyn WorkDataTrait>;
++impl Debug for WorkData {
++    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
++        self.0.fmt(f)
++    }
++}
+ 
+ /// Used to asynchronously request a call into the LbPolicy's work method if
+ /// the LbPolicy needs to provide an update without waiting for an update
+@@ -723,4 +732,19 @@ mod tests {
+         assert_eq!(parsed.child_policy.builder.name(), "round_robin");
+         assert_eq!(parsed.fallback_policy.builder.name(), "pick_first");
+     }
++
++    #[test]
++    fn work_data_downcasts() {
++        let mut data = WorkData::new(5u32);
++        assert!(data.is::<u32>());
++        assert!(!data.is::<i32>());
++        assert_eq!(data.downcast_ref::<u32>(), Some(&5));
++        assert_eq!(data.downcast_ref::<i32>(), None);
++        *data.downcast_mut::<u32>().unwrap() = 6;
++        assert_eq!(format!("{data:?}"), "6");
++
++        // A failed downcast returns the data unchanged.
++        let data = data.downcast::<i32>().unwrap_err();
++        assert_eq!(data.downcast::<u32>().unwrap(), 6);
++    }
+ }
+```
+
+**File**: `grpc/src/client/load_balancing/priority/mod.rs` (modified, +2/-2)
+```diff
+@@ -286,7 +286,7 @@ impl Timer {
+         let task_handle = rt.spawn(Box::pin(async move {
+             rt_clone.sleep(duration).await;
+             expired_clone.store(true, Ordering::Release);
+-            work_scheduler.schedule_work(Some(Box::new(PriorityTimerWork)));
++            work_scheduler.schedule_work(Some(WorkData::new(PriorityTimerWork)));
+         }));
+         Timer {
+             expired,
+@@ -527,7 +527,7 @@ impl LbPolicy for PriorityPolicy {
+         // Work items scheduled by PriorityPolicy's own timers only trigger
+         // reconciliation; all other work items belong to a child policy.
+         if let Some(mut data) = data
+-            && data.downcast_ref::<PriorityTimerWork>().is_none()
++            && !data.is::<PriorityTimerWork>()
+         {
+             // Offer the item to each child until one claims it.  Items
+             // belonging to deleted children are dropped.
+```
+
+**File**: `grpc/src/client/load_balancing/priority/test.rs` (modified, +1/-1)
+```diff
+@@ -879,7 +879,7 @@ async fn work_item_filtering_drops_timer_work_and_forwards_child_work() {
+ 
+     // Deliver a PriorityTimerWork item: it should be consumed by PriorityPolicy
+     // and NOT forwarded to the child policy.
+-    let timer_work: WorkData = Box::new(PriorityTimerWork);
++    let timer_work = WorkData::new(PriorityTimerWork);
+     env.policy.work(Some(timer_work), &mut env.tcc);
+     assert!(
+         !*child_work_called.lock().unwrap(),
+```
+
+**File**: `grpc/src/client/load_balancing/subchannel_sharing.rs` (modified, +7/-5)
+```diff
+@@ -89,7 +89,7 @@ impl<T> SubchannelSharing<T> {
+             let Some(ext_subchannel) = weak.upgrade() else {
+                 continue;
+             };
+-            work_scheduler.schedule_work(Some(Box::new(SubchannelUpdate::new(
++            work_scheduler.schedule_work(Some(WorkData::new(SubchannelUpdate::new(
+                 ext_subchannel,
+                 update.state.clone(),
+             ))));
+@@ -172,7 +172,7 @@ impl<T: LbPolicy> LbPolicy for SubchannelSharing<T> {
+         // is only ever touched from the channel's work loop.
+         let data = match data.map(|d| d.downcast::<SharingWork>()) {
+             Some(Ok(work)) => {
+-                return match *work {
++                return match work {
+                     SharingWork::InternalUpdate(u) => self.deliver_subchannel_update(u),
+                     SharingWork::Released(sc) => self.release_subchannel(&sc),
+                 };
+@@ -235,7 +235,9 @@ impl Drop for SharedSubchannel {
+         // instead.  The cloned delegate identifies the entry to clean up, and
+         // keeps the internal subchannel alive until that happens.
+         self.work_scheduler
+-            .schedule_work(Some(Box::new(SharingWork::Released(self.delegate.clone()))));
++            .schedule_work(Some(WorkData::new(SharingWork::Released(
++                self.delegate.clone(),
++            ))));
+     }
+ }
+ 
+@@ -264,7 +266,7 @@ impl WorkScheduler for SubchannelUpdateForwarder {
+             }
+         };
+         self.work_scheduler
+-            .schedule_work(Some(Box::new(SharingWork::InternalUpdate(*update))));
++            .schedule_work(Some(WorkData::new(SharingWork::InternalUpdate(update))));
+     }
+ }
+ 
+@@ -921,7 +923,7 @@ mod tests {
+                 .send(TestEvent::NewSubchannel(subchannel.clone()))
+                 .unwrap();
+             // Report the initial state before returning.
+-            work_scheduler.schedule_work(Some(Box::new(SubchannelUpdate::new(
++            work_scheduler.schedule_work(Some(WorkData::new(SubchannelUpdate::new(
+                 subchannel.clone(),
+                 SubchannelState::idle(),
+             ))));
+```
+
+**File**: `grpc/src/client/load_balancing/test_utils.rs` (modified, +1/-1)
+```diff
+@@ -108,7 +108,7 @@ pub fn schedule_subchannel_update(subchannel: &Arc<dyn Subchannel>, state: Subch
+         .work_scheduler
+         .as_ref()
+         .expect("subchannel has no work scheduler");
+-    work_scheduler.schedule_work(Some(Box::new(SubchannelUpdate::new(
++    work_scheduler.schedule_work(Some(WorkData::new(SubchannelUpdate::new(
+         subchannel.clone(),
+         state,
+     ))));
+```
+
+**File**: `grpc/src/client/subchannel.rs` (modified, +4/-1)
+```diff
+@@ -45,6 +45,7 @@ use crate::client::RequestHeaders;
+ use crate::client::boxed::BoxInvoker;
+ use crate::client::boxed::BoxRecvStream;
+ use crate::client::boxed::BoxSendStream;
++use crate::client::load_balancing::WorkData;
+ use crate::client::load_balancing::WorkScheduler;
+ use crate::client::load_balancing::subchannel::Subchannel;
+ use crate::client::load_balancing::subchannel::SubchannelState;
+@@ -273,7 +274,9 @@ impl InternalSubchannelData {
+ 
+         // Send the update directly to the subchannel's work scheduler.
+         self.work_scheduler
+-            .schedule_work(Some(Box::new(SubchannelUpdate::new(subchannel, state))));
++            .schedule_work(Some(WorkData::new(SubchannelUpdate::new(
++                subchannel, state,
++            ))));
+     }
+ }
+ 
+```
 
 ---
 
-### Incident Patch 2: `c5757bc8` (2026-11-13)
-**Commit Message**: interop: Update server.rs to run in the vanilla interop harness. (#3018)
+### Incident Patch 2: `4072cd4d` (2026-11-17)
+**Commit Message**: feat(tonic-xds): drive outlier detection from CDS (#3035)
 
 ## Motivation
 
-Achieve vanilla interop server support.
+The A50 config type and the ejection engine exist, but nothing connected
+them to the control plane: `ClusterResource` had no `outlier_detection`
+field and `cluster_factory` hardcoded the disabled default.
 
 ## Solution
 
-Add a port and tls flags.
+Parse `Cluster.outlier_detection` into `ClusterResource` and send it
+from the connector's CDS watch over a `watch` channel that the
+balancer's ejection sweep listens to. A cluster can enable, retune or
+disable detection without the balancer being rebuilt.
 
-## Notes
-This is stacked on and requires #3017 to land first.
+* The config is sent only after the same update's connector is
+published, and only if it changed.
+* The sweep task is spawned up front and parks while detection is
+disabled.
+* The balancer skips outcome classification while detection is off, so a
+disabled cluster pays one relaxed load per RPC.
+* Enabling starts from clean counters. Disabling clears every
+multiplier. A config update does not restart the interval timer, and the
+interval is floored at 1ms.
 
-**File**: `interop/src/bin/server.rs` (modified, +17/-3)
+**File**: `tonic-xds/src/client/channel.rs` (modified, +1/-0)
 ```diff
-@@ -22,6 +22,9 @@
-  *
-  */
- 
-+use std::ffi::OsString;
-+use std::net::Ipv6Addr;
-+use std::net::SocketAddr;
- use std::str::FromStr;
- use std::sync::Arc;
- 
-@@ -41,6 +44,7 @@ use tonic::transport::ServerTlsConfig as TonicServerTlsConfig;
- 
- #[derive(Debug)]
- struct Opts {
-+    port: u16,
-     use_tls: bool,
-     codec: Codec,
- }
-@@ -65,9 +69,19 @@ impl FromStr for Codec {
- 
- impl Opts {
-     fn parse() -> Result<Self, pico_args::Error> {
--        let mut pargs = pico_args::Arguments::from_env();
-+        // interop/test.sh passes `--use_tls` bare; gRPC's interop harness
-+        // passes it with a value (`--use_tls=true`).
-+        let args: Vec<OsString> = std::env::args_os()
-+            .skip(1)
-+            .map(|arg| match arg.to_str() {
-+                Some("--use_tls") => OsString::from("--use_tls=true"),
-+                _ => arg,
-+            })
-+            .collect();
-+        let mut pargs = pico_args::Arguments::from_vec(args);
-         Ok(Self {
--            use_tls: pargs.contains("--use_tls"),
-+            port: pargs.opt_value_from_str("--port")?.unwrap_or(10000),
-+            use_tls: pargs.opt_value_from_str("--use_tls")?.unwrap_or(false),
-             codec: pargs.value_from_str("--codec")?,
+@@ -1445,6 +1445,7 @@ mod tests {
+             lb_policy: LbPolicy::RoundRobin,
+             security: None,
+             circuit_breaking,
++            outlier_detection: Default::default(),
          })
      }
-@@ -79,7 +93,7 @@ async fn main() -> std::result::Result<(), Box<dyn std::error::Error>> {
  
-     let matches = Opts::parse()?;
+```
+
+**File**: `tonic-xds/src/client/circuit_breaking.rs` (modified, +1/-0)
+```diff
+@@ -1285,6 +1285,7 @@ mod tests {
+             lb_policy: LbPolicy::RoundRobin,
+             security: None,
+             circuit_breaking: CircuitBreakingConfig { max_requests },
++            outlier_detection: Default::default(),
+         };
+         #[cfg(feature = "_tls-any")]
+         let registry = crate::xds::cert_provider::CertProviderRegistry::from_bootstrap(
+```
+
+**File**: `tonic-xds/src/client/loadbalance/channel_state.rs` (modified, +9/-7)
+```diff
+@@ -225,6 +225,12 @@ impl OutlierChannelState {
+             });
+     }
  
--    let addr = "127.0.0.1:10000".parse().unwrap();
-+    let addr = SocketAddr::from((Ipv6Addr::UNSPECIFIED, matches.port));
++    /// Clear the multiplier. Only meant for the sweep task, which is the sole
++    /// writer that raises it, so the plain store can't lose an ejection.
++    pub(crate) fn reset_multiplier(&self) {
++        self.ejection_multiplier.store(0, Ordering::Relaxed);
++    }
++
+     /// Test-only multiplier setter for driving housekeeping without
+     /// going through `try_eject`.
+     #[cfg(test)]
+@@ -543,15 +549,11 @@ mod tests {
+     }
  
-     match matches.codec {
-         Codec::Prost => {
+     /// Throwaway registry for tests that don't observe ejection
+-    /// state — defaults to the disabled config, so the housekeeping
+-    /// actor would never run anyway.
++    /// state; defaults to the disabled config.
+     fn test_registry() -> Arc<OutlierStatsRegistry> {
+         use crate::xds::resource::outlier_detection::OutlierDetectionConfig;
+-        use arc_swap::ArcSwap;
+-        OutlierStatsRegistry::new(Arc::new(ArcSwap::from_pointee(
+-            OutlierDetectionConfig::default(),
+-        )))
+-        .0
++        let (_tx, rx) = tokio::sync::watch::channel(OutlierDetectionConfig::default());
++        OutlierStatsRegistry::new(rx).0
+     }
+ 
+     #[tokio::test]
+```
+
+**File**: `tonic-xds/src/client/loadbalance/cluster_factory.rs` (modified, +11/-15)
+```diff
+@@ -34,7 +34,6 @@
+ 
+ use std::sync::Arc;
+ 
+-use arc_swap::ArcSwap;
+ use tower::{BoxError, Service, load::Load};
+ 
+ use crate::client::cluster::{ClusterChannel, ClusterChannelFactory};
+@@ -50,7 +49,6 @@ use crate::xds::cache::XdsCache;
+ use crate::xds::cert_provider::CertProviderRegistry;
+ use crate::xds::connector::ClusterConnector;
+ use crate::xds::endpoint_manager::discover_addresses;
+-use crate::xds::resource::outlier_detection::OutlierDetectionConfig;
+ 
+ /// Builds one [`LoadBalancer`] per cluster, fed by the xDS cache.
+ pub(crate) struct XdsLbClusterChannelFactory<MC> {
+@@ -115,33 +113,30 @@ where
+             #[cfg(feature = "_tls-any")]
+             self.cert_registry.clone(),
+         ));
++        let outlier_detection = connector.outlier_detection();
+         let discovery = discover_addresses(self.cache.watch_endpoints(cluster_name));
+ 
+         // TODO: apply CDS updates in place rather than rebuilding this channel.
+         // The balancer owns the live connections, and the ejection counters are
+         // `Arc`s shared with each `ReadyChannel`, so rebuilding drops both — and
+         // a fresh discovery stream replays every endpoint as a `Change::Insert`,
+         // which `poll_discover` handles by dropping the ready channel and
+-        // reconnecting. The shape that fits: a per-cluster config watch drained
+-        // by `LoadBalancer::poll_ready` alongside discovery, applying
+-        //   * picker — seed the replacement via `on_members_changed(&members)`
+-        //     before swapping, since ring-hash builds its ring from that set.
+-        //     Blocked on `ClusterResource.lb_policy` modelling anything past
+-        //     round-robin / least-request.
+-        //   * outlier detection — `config.store` covers most fields because the
+-        //     sweep re-reads them, but `interval` is captured by `spawn_actor`
+-        //     and the actor only exists when the config was enabled at
+-        //     construction, so both need an actor respawn or drop on change.
++        // reconnecting. Outlier detection is already applied in place: the
++        // connector's CDS watch sends its config over a `watch` channel the
++        // sweep listens to. The picker still needs a per-cluster config watch
++        // drained by `LoadBalancer::poll_ready` alongside discovery, seeding
++        // the replacement via `on_members_changed(&members)` before swapping,
++        // since ring-hash builds its ring from that set. Blocked on
++        // `ClusterResource.lb_policy` modelling anything past round-robin /
++        // least-request.
+         let picker: Arc<dyn ChannelPicker<ReadyChannel<MC::Service>, Req> + Send + Sync> =
+             Arc::new(P2cPicker);
+-        // `default()` is the disabled config, so no ejection actor is spawned.
+-        let config = Arc::new(ArcSwap::from_pointee(OutlierDetectionConfig::default()));
+ 
+         let lb = LoadBalancer::new(
+             discovery,
+             connector,
+             picker,
+-            config,
++            outlier_detection,
+             self.outcome_classifier.clone(),
+         );
+         ClusterChannel::from_service(ClusterChannelAdapter::new(lb))
+@@ -172,6 +167,7 @@ mod tests {
+             lb_policy: LbPolicy::RoundRobin,
+             security: None,
+             circuit_breaking: Default::default(),
++            outlier_detection: Default::default(),
+         })
+     }
+ 
+```
+
+**File**: `tonic-xds/src/client/loadbalance/loadbalancer.rs` (modified, +53/-37)
+```diff
+@@ -28,24 +28,23 @@
+ //! manages the connection lifecycle via the channel state machine,
+ //! and routes requests to ready endpoints via a [`ChannelPicker`].
+ //!
+-//! Outlier detection (gRFC A50) is integrated via [`OutlierDetector`],
+-//! which is always present. The actor inside is conditionally spawned
+-//! based on the [`OutlierDetectionConfig`] passed at construction —
+-//! `OutlierDetectionConfig::default()` is the disabled config, in
+-//! which case the sweep never runs and no ejections fire. When
+-//! enabled, the sweep broadcasts the current ejected-address set on a
+-//! `watch` channel each time the set changes; the LB consumes the
+-//! latest snapshot, consumes the matching [`ReadyChannel`] via
+-//! [`ReadyChannel::eject`], and tracks the resulting
+-//! [`EjectedChannel`] in `ejected`. When the timer fires, the
+-//! resolved [`UnejectedChannel`] is routed back into `ready` or
+-//! `connecting`.
++//! Outlier detection (gRFC A50) is integrated via [`OutlierDetector`].
++//! CDS sends the cluster's [`OutlierDetectionConfig`] over a `watch`
++//! channel the sweep listens to, so detection can be turned on,
++//! retuned or turned off without the LB being rebuilt. The sweep
++//! broadcasts the current ejected-address set on a `watch` channel
++//! each time the set changes; the LB consumes the latest snapshot,
++//! consumes the matching [`ReadyChannel`] via [`ReadyChannel::eject`],
++//! and tracks the resulting [`EjectedChannel`] in `ejected`. When the
++//! timer fires, the resolved [`UnejectedChannel`] is routed back into
++//! `ready` or `connecting`.
+ //!
+-//! TODO: wire dynamic outlier-detection config updates from xDS
+-//! (`ArcSwap::store` on the config + A50 §7 disable transition
+-//! handling). The actor will pick up new configs by reading the
+-//! `ArcSwap` on each tick — no restart needed. To land in a
+-//! follow-up PR.
++//! TODO: A50 §7 asks that removing outlier detection from CDS un-eject
++//! every address at once. Today removal stops new ejections
++//! immediately, but addresses already ejected return when their own
++//! `EjectedChannel` timer expires (bounded by `max_ejection_time`)
++//! rather than instantly. Forcing them back early needs a way to
++//! resolve those timers ahead of their deadline.
+ //!
+ //! [`EjectedChannel`]: crate::client::loadbalance::channel_state::EjectedChannel
+ //! [`UnejectedChannel`]: crate::client::loadbalance::channel_state::UnejectedChannel
+@@ -57,11 +56,10 @@ use std::task::{Context, Poll};
+ use std::time::{Duration, Instant};
+ 
+ use indexmap::{IndexMap, IndexSet};
++use tokio::sync::watch;
+ use tower::Service;
+ use tower::discover::{Change, Discover};
+ 
+-use arc_swap::ArcSwap;
+-
+ use crate::client::endpoint::{Connector, EndpointAddress};
+ use crate::client::loadbalance::channel_state::{
+     EjectionConfig, IdleChannel, ReadyChannel, UnejectedChannel,
+@@ -146,11 +144,6 @@ pub(crate) struct LoadBalancer<D, C: Connector, Req> {
+     /// `EjectedChannel` whose `Sleep` fires when the ejection
+     /// window expires.
+     ejected: KeyedFutures<EndpointAddress, UnejectedChannel<C::Service>>,
+-    /// Per-LB outlier-detection plumbing. Always present; the
+-    /// housekeeping actor inside is conditionally spawned based on
+-    /// whether the config had an algorithm enabled at construction.
+-    /// When disabled, the data path's `record_outcome` short-circuits
+-    /// and nothing reads from `eject_rx`.
+     outlier: OutlierDetector,
+     picker: Arc<dyn ChannelPicker<ReadyChannel<C::Service>, Req> + Send + Sync>,
+     /// Transport-specific mapping of each call's result to an outlier-detection
+@@ -167,18 +160,14 @@ where
+     C: Connector + Send + Sync + 'static,
+     C::Service: Clone + Send + 'static,
+ {
+-    /// Construct a load balancer driven by `config`. Wrapping the
+-    /// config in `ArcSwap` lets future xDS subscription updates
+-    /// reconfigure detection without rebuilding the LB; until that
+-    /// wiring lands, the value is effectively read-once at
+-    /// construction. `OutlierDetectionConfig::default()` is the
+-    /// disabled config — both algorithms `None` ⇒ no actor, no
+-    /// ejection.
++    /// Construct a load balancer driven by `config`, the channel CDS updates
++    /// are sent over. `OutlierDetectionConfig::default()` is the disabled
++    /// config.
+     pub(crate) fn new(
+         discovery: D,
+         connector: Arc<C>,
+         picker: Arc<dyn ChannelPicker<ReadyChannel<C::Service>, Req> + Send + Sync>,
+-        config: Arc<ArcSwap<OutlierDetectionConfig>>,
++        config: watch::Receiver<OutlierDetectionConfig>,
+         outcome_classifier: Arc<dyn OutcomeClassifier>,
+     ) -> Self {
+         let (registry, eject_rx) = OutlierStatsRegistry::new(config);
+@@ -421,13 +410,21 @@ where
+         // Cheap clone (all Arc-shared internals) so the async block
+         // can take ownership without holding the picker borrow.
+         let mut svc = picked.clone();
+-        let classifier = Arc::clone(&self.outcome_classifier);
++      
+```
+
+**File**: `tonic-xds/src/client/loadbalance/outlier_detection.rs` (modified, +314/-56)
+```diff
+@@ -27,22 +27,25 @@
+ //! Work is split across three sites:
+ //!
+ //! - **Data path** (`ReadyChannel::record_outcome`): runs inline per
+-//!   RPC. Updates per-channel counters only; ejection decisions are
+-//!   deferred to the sweep.
++//!   RPC. Updates per-channel counters only, and only while outlier
++//!   detection is enabled for the cluster; otherwise it is a single
++//!   relaxed load. Ejection decisions are deferred to the sweep.
+ //! - **Load balancer**: drains the ejected-set snapshot broadcast by
+ //!   the sweep on a `watch` channel, consumes the matching
+ //!   [`ReadyChannel`] via [`ReadyChannel::eject`], and tracks the
+ //!   resulting [`EjectedChannel`] in a `KeyedFutures`. Each ejected
+ //!   channel's sleep fires at `base × multiplier` (capped by
+ //!   `max_ejection_time`); the LB then routes the resolved
+ //!   [`UnejectedChannel`] back into the ready set.
+-//! - **Housekeeping actor** ([`spawn_actor`]): on each
+-//!   `config.interval` tick, snapshots and resets every channel's
+-//!   counters, runs the success-rate and failure-percentage algorithms
+-//!   over that snapshot, ejects qualifying channels, and decrements
+-//!   multipliers for non-ejected channels. When the ejected-set membership changes,
++//! - **Housekeeping actor** ([`spawn_actor`]): parked while the config
++//!   is disabled. Once enabled, on each `config.interval` tick it
++//!   snapshots and resets every channel's counters, runs the
++//!   success-rate and failure-percentage algorithms over that
++//!   snapshot, ejects qualifying channels, and decrements multipliers
++//!   for non-ejected channels. When the ejected-set membership changes,
+ //!   broadcasts a fresh snapshot on the `watch` channel; quiet ticks
+-//!   skip the broadcast via an O(1) version compare.
++//!   skip the broadcast via an O(1) version compare. A config update
++//!   wakes it immediately and restarts the interval.
+ //!
+ //! [gRFC A50]: https://github.com/grpc/proposal/blob/master/A50-xds-outlier-detection.md
+ //! [`ReadyChannel`]: crate::client::loadbalance::channel_state::ReadyChannel
+@@ -53,11 +56,10 @@
+ use std::collections::HashSet;
+ use std::pin::Pin;
+ use std::sync::Arc;
+-use std::sync::atomic::{AtomicU64, Ordering};
++use std::sync::atomic::{AtomicBool, AtomicU64, Ordering};
+ use std::task::{Context, Poll};
+ use std::time::{Duration, Instant};
+ 
+-use arc_swap::ArcSwap;
+ use dashmap::DashMap;
+ use tokio::sync::watch;
+ 
+@@ -86,11 +88,13 @@ pub(crate) struct OutlierStatsRegistry {
+     /// [`Self::ejected_snapshot_tx`]. Single-writer (the sweep), so
+     /// `Relaxed` is enough.
+     last_broadcast_version: AtomicU64,
+-    /// Shared config, hot-swappable. Readers `.load()` per call;
+-    /// future xDS integration `.store()`s new configs on cluster
+-    /// updates. `interval` changes also require an actor restart —
+-    /// see [`spawn_actor`].
+-    config: Arc<ArcSwap<OutlierDetectionConfig>>,
++    /// Live config, published by the CDS watch. Read on the ejection
++    /// path and by the actor, which also waits on it for changes.
++    config: watch::Receiver<OutlierDetectionConfig>,
++    /// Whether RPC outcomes are being counted. Mirrors the config's
++    /// `is_enabled()`; written only by the actor and read per RPC by the
++    /// balancer, which skips outcome classification when detection is off.
++    counting_enabled: AtomicBool,
+     /// Broadcasts the snapshot of currently-ejected addresses at the
+     /// end of each sweep that mutated the set. The LB's
+     /// [`OutlierDetector`] holds the matching `watch::Receiver` and
+@@ -103,20 +107,27 @@ impl OutlierStatsRegistry {
+     /// Construct the registry and the paired snapshot receiver.
+     /// The LB owns the receiver; the registry owns the sender.
+     pub(crate) fn new(
+-        config: Arc<ArcSwap<OutlierDetectionConfig>>,
++        config: watch::Receiver<OutlierDetectionConfig>,
+     ) -> (Arc<Self>, watch::Receiver<Arc<HashSet<EndpointAddress>>>) {
+         let (tx, rx) = watch::channel(Arc::new(HashSet::new()));
++        let counting_enabled = AtomicBool::new(config.borrow().is_enabled());
+         let registry = Arc::new(Self {
+             channels: DashMap::new(),
+             ejected_count: AtomicU64::new(0),
+             ejected_set_version: AtomicU64::new(0),
+             last_broadcast_version: AtomicU64::new(0),
+             config,
++            counting_enabled,
+             ejected_snapshot_tx: tx,
+         });
+         (registry, rx)
+     }
+ 
++    /// Whether RPC outcomes should currently be recorded.
++    pub(crate) fn is_counting_enabled(&self) -> bool {
++        self.counting_enabled.load(Ordering::Relaxed)
++    }
++
+     /// Get or create the state for `addr`. Idempotent — existing
+     /// state is preserved across reconnect.
+     pub(crate) fn add_channel(&self, addr: EndpointAddress) -> Arc<OutlierChannelState> {
+@@ -168,16 +179,32 @@ impl OutlierStatsRegistry {
+     ) -> Option<Duration> {
+         let elapsed = state.ejected_duration(now)?;
+         let mu
+```
+
+**File**: `tonic-xds/src/xds/cache.rs` (modified, +1/-0)
+```diff
+@@ -233,6 +233,7 @@ mod tests {
+             lb_policy: lb,
+             security: None,
+             circuit_breaking: CircuitBreakingConfig::default(),
++            outlier_detection: Default::default(),
+         })
+     }
+ 
+```
+
+**File**: `tonic-xds/src/xds/cluster_discovery.rs` (modified, +2/-0)
+```diff
+@@ -334,6 +334,7 @@ mod tests {
+             lb_policy: LbPolicy::RoundRobin,
+             security: None,
+             circuit_breaking: CircuitBreakingConfig::default(),
++            outlier_detection: Default::default(),
+         }
+     }
+ 
+@@ -345,6 +346,7 @@ mod tests {
+             lb_policy: LbPolicy::RoundRobin,
+             security: Some(security),
+             circuit_breaking: CircuitBreakingConfig::default(),
++            outlier_detection: Default::default(),
+         }
+     }
+ 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3043** (2026-11-18): grpc: make WorkData a struct instead of a boxed trait object (@dfawley)
+- **PR #3037** (2026-11-17): tonic-xds: drop cluster clients when removed from route config (@YutaoMa)
+- **PR #3035** (2026-11-17): feat(tonic-xds): drive outlier detection from CDS (@LYZJU2019)
 - **PR #3033** (2026-11-13): grpc-xds: Rename bootstrap.rs to bootstrap/mod.rs (@ejona86)
 - **PR #3031** (2026-11-12): grpc/load_balancing: Invoke Pick::on_complete when RPCs complete (@murgatroid99)
 - **PR #3029** (closed): tonic/codec: Set END_STREAM on a unary request's message frame (@azeemshaik025)
-- **PR #3026** (2026-11-12): grpc/load_balancing: Weighted Target accepts empty target list and fails (@nathanielford)
-- **PR #3021** (2026-11-10): grpc-xds: Fix import for new protobuf-generated module (@ejona86)
-- **PR #3019** (2026-11-11): tonic-xds: stop per-cluster tasks when the channel is dropped (@YutaoMa)
 
 ---
 
@@ -2101,49 +2757,44 @@ This is stacked on and requires #3017 to land first.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. interop: Update server.rs to run in the vanilla interop harness.
+## X. grpc: make WorkData a struct instead of a boxed trait object
 
 **RULE**:
-When implementing operations in `interop/src/bin/server.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in grpc/grpc-rust. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `grpc/src/client/load_balancing/child_manager.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in grpc/grpc-rust. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c5757bc8`: interop: Update server.rs to run in the vanilla interop harness.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9205207e`: grpc: make WorkData a struct instead of a boxed trait object. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `interop/src/bin/server.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `grpc/src/client/load_balancing/child_manager.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-use std::ffi::OsString;
-use std::net::Ipv6Addr;
-use std::net::SocketAddr;
-    port: u16,
-        // interop/test.sh passes `--use_tls` bare; gRPC's interop harness
-        // passes it with a value (`--use_tls=true`).
-        let args: Vec<OsString> = std::env::args_os()
-            .skip(1)
-            .map(|arg| match arg.to_str() {
-                Some("--use_tls") => OsString::from("--use_tls=true"),
-                _ => arg,
-            })
-            .collect();
-        let mut pargs = pico_args::Arguments::from_vec(args);
-            port: pargs.opt_value_from_str("--port")?.unwrap_or(10000),
-            use_tls: pargs.opt_value_from_str("--use_tls")?.unwrap_or(false),
-    let addr = SocketAddr::from((Ipv6Addr::UNSPECIFIED, matches.port));
+        debug_assert!(data.is::<ChildWorkItem>());
+        if data
+            .downcast_ref::<ChildWorkItem>()
+            .is_none_or(|item| item.handle != self.handle)
+        {
+            return Err(data);
+        let item = data.downcast::<ChildWorkItem>().expect("checked above");
+        let wrapped: Option<WorkData> = Some(WorkData::new(ChildWorkItem {
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-        let mut pargs = pico_args::Arguments::from_env();
-            use_tls: pargs.contains("--use_tls"),
-    let addr = "127.0.0.1:10000".parse().unwrap();
+use std::any::TypeId;
+        debug_assert_eq!(data.type_id(), TypeId::of::<ChildWorkItem>());
+        let item = data.downcast::<ChildWorkItem>()?;
+        if item.handle != self.handle {
+            // This work item belongs to another child.
+            return Err(item);
+        let wrapped: Option<WorkData> = Some(Box::new(ChildWorkItem {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c5757bc8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9205207e` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

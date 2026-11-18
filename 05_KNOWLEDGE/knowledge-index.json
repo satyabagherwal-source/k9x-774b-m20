@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-18T21:42:31.337Z",
+  "last_updated": "2026-11-18T21:50:23.148Z",
   "total_verified_learnings": 9009,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 21478,
+  "total_items": 21482,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -212549,14 +212549,19 @@
       "slug": "grpc-grpc-rust",
       "platform": "github",
       "source_url": "https://github.com/grpc/grpc-rust",
-      "source_version": "eee0da29",
-      "content_hash": "1b06bc95f50cbc0458d2f21b63575d36a1035d8b66925be702b6907c3732daa8",
+      "source_version": "9205207e",
+      "content_hash": "9f8fa370cbee3b0c7e46dcc359b8b6d1f61eb43684af3fdc6fd40203755bc1c0",
       "dossier_path": "07_PROJECT_LEARNING/grpc-grpc-rust-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/grpc-grpc-rust-learnings.md",
       "promoted_rules": [
         {
           "number": 8361,
           "title": "Update server.rs to run in the vanilla interop harness.",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9287,
+          "title": "make WorkData a struct instead of a boxed trait object",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -212565,7 +212570,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-13T19:27:19.249Z",
+      "verified_at": "2026-11-18T21:50:09.576Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -212607,10 +212612,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-grpc-grpc-rust-architecture-intelligence-grpc-grpc-rust-core-invariants.md",
       "title": "Architecture Intelligence: grpc/grpc-rust Core Invariants",
       "repository": "grpc/grpc-rust",
-      "source_version": "eee0da29",
-      "content_hash": "f26560168df36de67d88e6c6f4eff2597b4fe54dbb2308d98a5b1e662d9563de",
+      "source_version": "9205207e",
+      "content_hash": "7c439baa2c358df5db39288e9aa713135e48f43145e0366f191613c29011b6c6",
       "domain_letter": "G",
-      "persisted_at": "2026-11-13T19:27:19.608Z"
+      "persisted_at": "2026-11-18T21:50:10.095Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-grpc-grpc-rust": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-grpc-grpc-rust",
@@ -212619,10 +212624,10 @@
       "relative_path": "08_VERIFICATION/grpc-grpc-rust-verification-protocol-empirical-defect-shield-for-grpc-grpc-rust.md",
       "title": "Verification Protocol: Empirical Defect Shield for grpc/grpc-rust",
       "repository": "grpc/grpc-rust",
-      "source_version": "eee0da29",
-      "content_hash": "ebe12647bee8c9c12d7348f7c7931040bdb9cedd2325d2a2bebd79c7b10a76b1",
+      "source_version": "9205207e",
+      "content_hash": "7b376e228398d818677ae69956fe525c975eb5a96b01d53a5af94b2b69ffb033",
       "domain_letter": "K",
-      "persisted_at": "2026-11-13T19:27:19.691Z"
+      "persisted_at": "2026-11-18T21:50:10.230Z"
     },
     "learn-github-mattermost-mattermost": {
       "learning_id": "learn-github-mattermost-mattermost",
@@ -212923,9 +212928,9 @@
       "title": "Architecture Intelligence: grpc-grpc-rust-learnings Core Invariants",
       "repository": "grpc-grpc-rust-learnings",
       "source_version": "HEAD",
-      "content_hash": "6321332034df83677aff4bf1f4cbf8fb081f4ade8016a15472061359323fbc83",
+      "content_hash": "93e6dbffe80e6f4a73403ab855617021c85bb25f56468db5058147cef8975b58",
       "domain_letter": "G",
-      "persisted_at": "2026-11-13T19:27:34.961Z"
+      "persisted_at": "2026-11-18T21:50:21.568Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-grpc-grpc-rust-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-grpc-grpc-rust-learnings",
@@ -212935,9 +212940,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for grpc-grpc-rust-learnings",
       "repository": "grpc-grpc-rust-learnings",
       "source_version": "HEAD",
-      "content_hash": "d471256ddeb17288cad10694e40875f7efdd6d7ad133c5ef185b7cab80be3051",
+      "content_hash": "f2a94fac36577c771025a5cfa16089067a81dde2e24924244a5101b5fd5b12ae",
       "domain_letter": "K",
-      "persisted_at": "2026-11-13T19:27:35.039Z"
+      "persisted_at": "2026-11-18T21:50:21.714Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-",
@@ -222713,7 +222718,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/stabilityai/stable-diffusion-3-medium",
       "source_version": "hf-stabilityai-stable-diffusion-3-medium",
-      "content_hash": "0209ed0502b8de79f952cf6389e730548b381e71af57e209810a466d61a58d3d",
+      "content_hash": "fc468bf53611226ce5659bf4365bb2dc5734cfc78ef8bda7a07d9374e430212a",
       "dossier_path": "07_PROJECT_LEARNING/hf-stabilityai-stable-diffusion-3-medium-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-stabilityai-stable-diffusion-3-medium-learnings.md",
       "promoted_rules": [],
@@ -222722,7 +222727,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T03:49:04.651Z",
+      "verified_at": "2026-11-18T21:50:06.462Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -222739,9 +222744,9 @@
       "title": "Research & Knowledge Intelligence: stabilityai/stable-diffusion-3-medium Core Invariants",
       "repository": "stabilityai/stable-diffusion-3-medium",
       "source_version": "hf-stabilityai-stable-diffusion-3-medium",
-      "content_hash": "10296bbc3553fb447a4f3b3d2615dc87ec4382bf690875fc9d27972ed70c5540",
+      "content_hash": "8c1b540a7dd52555e1f34a8c17a6d3a6611201e2a95a7a7708970b41f5c6dea6",
       "domain_letter": "D",
-      "persisted_at": "2026-11-14T03:49:05.014Z"
+      "persisted_at": "2026-11-18T21:50:06.851Z"
     },
     "learn-github-sceneview-sceneview": {
       "learning_id": "learn-github-sceneview-sceneview",
@@ -223116,9 +223121,9 @@
       "title": "Research & Knowledge Intelligence: hf-stabilityai-stable-diffusion-3-medium-learnings Core Invariants",
       "repository": "hf-stabilityai-stable-diffusion-3-medium-learnings",
       "source_version": "HEAD",
-      "content_hash": "5a53bd1a31e482a30a8267255b1a00e5bb59ccd99c43b5d43384a5498c93ca2e",
+      "content_hash": "256be0d12ca52f05f76117191bf8a1f8c38b3ff9468b5763a05e071ecf808fca",
       "domain_letter": "D",
-      "persisted_at": "2026-11-14T03:49:58.630Z"
+      "persisted_at": "2026-11-18T21:50:22.008Z"
     },
     "candidate_directive-demo-3d-scan-shows-a-result-at-once-on-a-real-example-with-its-film-back": {
       "item_id": "candidate_directive-demo-3d-scan-shows-a-result-at-once-on-a-real-example-with-its-film-back",
@@ -235056,8 +235061,8 @@
       "slug": "pulumi-pulumi",
       "platform": "github",
       "source_url": "https://github.com/pulumi/pulumi",
-      "source_version": "bc509bd5",
-      "content_hash": "a1d392b6b9502f97193f5d3fa593f41c2f46db97a5567088935e93c7a013673e",
+      "source_version": "e61ba774",
+      "content_hash": "0c38759b968b7bf74ea28c50e40ee5086797cf4febc408e07aceb1675aa31fa1",
       "dossier_path": "07_PROJECT_LEARNING/pulumi-pulumi-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pulumi-pulumi-learnings.md",
       "promoted_rules": [
@@ -235075,6 +235080,11 @@
           "number": "EXISTING",
           "title": "Update vulnerable dependencies [SECURITY]",
           "status": "ALREADY_PRESENT_VERIFIED"
+        },
+        {
+          "number": 9025,
+          "title": "Update module go.opentelemetry.io/otel/sdk/log to v1 [SECURITY]",
+          "status": "ALREADY_PRESENT_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -235082,7 +235092,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T06:49:13.296Z",
+      "verified_at": "2026-11-18T21:50:17.747Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -235136,10 +235146,10 @@
       "relative_path": "08_VERIFICATION/pulumi-pulumi-verification-protocol-empirical-defect-shield-for-pulumi-pulumi.md",
       "title": "Verification Protocol: Empirical Defect Shield for pulumi/pulumi",
       "repository": "pulumi/pulumi",
-      "source_version": "bc509bd5",
-      "content_hash": "7393a9abb783c70dbf288d73fa37401900ec6d8d98022600f0978a6a940015f7",
+      "source_version": "e61ba774",
+      "content_hash": "d14931ae2a05119b8fd9874e148bf350f2703cbba6c8af468359ea3d173c00f0",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T06:49:13.937Z"
+      "persisted_at": "2026-11-18T21:50:18.392Z"
     },
     "learn-github-ytsaurus-ytsaurus": {
       "learning_id": "learn-github-ytsaurus-ytsaurus",
@@ -235266,9 +235276,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for pulumi-pulumi-learnings",
       "repository": "pulumi-pulumi-learnings",
       "source_version": "HEAD",
-      "content_hash": "f6e76b11b2a97930e321382d1d8a42a09991b0c9d57d51d89bd1891d727a6f6e",
+      "content_hash": "d574c61864ee604d023ca0c0a3f8cf847397b043f08297ff684f9ee4f88b397a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T06:50:18.922Z"
+      "persisted_at": "2026-11-18T21:50:23.148Z"
     },
     "domain_intelligence-architecture-intelligence-ytsaurus-ytsaurus-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-ytsaurus-ytsaurus-learnings-core-invariants",
@@ -269671,9 +269681,9 @@
       "title": "Architecture Intelligence: pulumi-pulumi-learnings Core Invariants",
       "repository": "pulumi-pulumi-learnings",
       "source_version": "HEAD",
-      "content_hash": "020165c3156b2823e6ac9c217728012016650a5ae3a16de28015085dd267c410",
+      "content_hash": "1c4d798b2fbbd8d7ac0a94e212ea912deaf5691a39f17061782d4f25ef55e817",
       "domain_letter": "G",
-      "persisted_at": "2026-11-17T08:46:52.426Z"
+      "persisted_at": "2026-11-18T21:50:22.998Z"
     },
     "candidate_directive-release-1-2-1": {
       "item_id": "candidate_directive-release-1-2-1",
@@ -275652,26 +275662,26 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 9025,
       "title": "Update module go.opentelemetry.io/otel/sdk/log to v1 [SECURITY]",
-      "source_url": "https://github.com/gardener/gardener",
-      "source_version": "5b4079a6",
+      "source_url": "https://github.com/pulumi/pulumi",
+      "source_version": "e61ba774",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-17T18:05:35.995Z"
+      "verified_at": "2026-11-18T21:50:17.747Z"
     },
     "candidate_directive-update-module-go-opentelemetry-io-otel-sdk-log-to-v1-security": {
       "item_id": "candidate_directive-update-module-go-opentelemetry-io-otel-sdk-log-to-v1-security",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-6NGJ-update-module-go-opentelemetry-io-otel-sdk-log-to-v1-security.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-NDSD-update-module-go-opentelemetry-io-otel-sdk-log-to-v1-security.md",
       "title": "Update module go.opentelemetry.io/otel/sdk/log to v1 [SECURITY]",
-      "repository": "gardener-gardener-learnings",
+      "repository": "pulumi-pulumi-learnings",
       "source_version": "HEAD",
-      "content_hash": "3373d1fc0d0789b77b5db4f362bc8265f91af4ba083f385c6180e5013dc1bf14",
-      "domain_letter": "L",
-      "persisted_at": "2026-11-17T18:05:44.899Z"
+      "content_hash": "3869fa67ef4f3417a83f5cf35b2ee6927bc679096300c26db5822194b35714c4",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-18T21:50:22.864Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-ornith-ai-ornith-1-5-122b-learnings-core-inva": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-ornith-ai-ornith-1-5-122b-learnings-core-inva",
@@ -289980,6 +289990,56 @@
       "content_hash": "2c171f91e606336f0ff797d513088e567414a3d241de06b09584117eb99061bb",
       "domain_letter": "H",
       "persisted_at": "2026-11-18T21:42:31.054Z"
+    },
+    "rule-9287": {
+      "learning_id": "rule-9287",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9287,
+      "title": "make WorkData a struct instead of a boxed trait object",
+      "source_url": "https://github.com/grpc/grpc-rust",
+      "source_version": "9205207e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-18T21:50:09.576Z"
+    },
+    "candidate_directive-make-workdata-a-struct-instead-of-a-boxed-trait-object": {
+      "item_id": "candidate_directive-make-workdata-a-struct-instead-of-a-boxed-trait-object",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-N3TT-make-workdata-a-struct-instead-of-a-boxed-trait-object.md",
+      "title": "make WorkData a struct instead of a boxed trait object",
+      "repository": "grpc/grpc-rust",
+      "source_version": "9205207e",
+      "content_hash": "2d2e1b55eccca60323f7d916f8c061020d922ce0da260ebf8c1f404b714fee74",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-18T21:50:09.956Z"
+    },
+    "domain_intelligence-architecture-intelligence-pulumi-pulumi-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-pulumi-pulumi-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-pulumi-pulumi-architecture-intelligence-pulumi-pulumi-core-invariants.md",
+      "title": "Architecture Intelligence: pulumi/pulumi Core Invariants",
+      "repository": "pulumi/pulumi",
+      "source_version": "e61ba774",
+      "content_hash": "a97efa7b7e9411915847a6e1918217bd2e413aa65993165bbc012a10f04ad700",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-18T21:50:18.259Z"
+    },
+    "candidate_directive-grpc-make-workdata-a-struct-instead-of-a-boxed-trait-object": {
+      "item_id": "candidate_directive-grpc-make-workdata-a-struct-instead-of-a-boxed-trait-object",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-NCOH-grpc-make-workdata-a-struct-instead-of-a-boxed-trait-object.md",
+      "title": "grpc: make WorkData a struct instead of a boxed trait object",
+      "repository": "grpc-grpc-rust-learnings",
+      "source_version": "HEAD",
+      "content_hash": "9f446091bd59b1d20c2cd2c02cb408f59111772eff80ebf83985e4d763400c42",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-18T21:50:21.429Z"
     }
   },
   "ai-builder-brain": {

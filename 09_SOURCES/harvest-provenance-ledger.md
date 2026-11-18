@@ -11139,3 +11139,6 @@ Every entry in this ledger must capture:
 | `learn-github-aquasecurity-trivy` | `https://github.com/aquasecurity/trivy` | `b12cc963` | Multi-dimensional audit evidence | 2026-11-18T21:42:19.070Z |
 | `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `b7ba2671` | Multi-dimensional audit evidence | 2026-11-18T21:42:22.728Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `f1c29264` | Multi-dimensional audit evidence | 2026-11-18T21:42:26.362Z |
+| `learn-huggingface-stabilityai-stable-diffusion-3-medium` | `https://huggingface.co/stabilityai/stable-diffusion-3-medium` | `hf-stabili` | Multi-dimensional audit evidence | 2026-11-18T21:50:06.667Z |
+| `learn-github-grpc-grpc-rust` | `https://github.com/grpc/grpc-rust` | `9205207e` | Multi-dimensional audit evidence | 2026-11-18T21:50:09.756Z |
+| `learn-github-pulumi-pulumi` | `https://github.com/pulumi/pulumi` | `e61ba774` | Multi-dimensional audit evidence | 2026-11-18T21:50:17.925Z |

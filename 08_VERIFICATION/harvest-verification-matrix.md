@@ -11106,3 +11106,6 @@
 | `CYCLE-20261118-D0HM` | `2026-11-18T21:42:19.066Z` | `aquasecurity/trivy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9285` | Yes (`11a0b870...`) |
 | `CYCLE-20261118-D3B8` | `2026-11-18T21:42:22.724Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9286` | Yes (`00cf6fc5...`) |
 | `CYCLE-20261118-D646` | `2026-11-18T21:42:26.358Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md` | Yes (`a9a7abe4...`) |
+| `CYCLE-20261118-N1AF` | `2026-11-18T21:50:06.663Z` | `stabilityai/stable-diffusion-3-medium` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-stabilityai-stable-diffusion-3-medium-learnings.md` | Yes (`fc468bf5...`) |
+| `CYCLE-20261118-N3O8` | `2026-11-18T21:50:09.752Z` | `grpc/grpc-rust` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9287` | Yes (`9f8fa370...`) |
+| `CYCLE-20261118-N9Z5` | `2026-11-18T21:50:17.921Z` | `pulumi/pulumi` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9025` | Yes (`0c38759b...`) |
