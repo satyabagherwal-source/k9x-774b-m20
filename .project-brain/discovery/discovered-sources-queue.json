@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-18T16:00:41.185Z",
+  "updated_at": "2026-11-18T16:22:33.146Z",
   "stats": {
-    "total_discovered": 5563,
-    "approved_pending_harvest": 5256,
+    "total_discovered": 5589,
+    "approved_pending_harvest": 5282,
     "harvested_count": 0,
     "rejected_count": 307,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 5240,
+      "COMMUNITY_AND_EXPERT": 5266,
       "OFFICIAL_DOCUMENTATION": 177,
       "STANDARDS_AND_SPECIFICATIONS": 110,
       "ENGINEERING_BLOGS": 4,
@@ -120258,6 +120258,578 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-briaai-rmbg-3.0-learnings.md",
         "fileName": "hf-briaai-rmbg-3.0-learnings.md"
+      }
+    },
+    "SRC-D011C7A709DF": {
+      "id": "SRC-D011C7A709DF",
+      "url": "https://github.com/RustCrypto/hashes",
+      "title": "https://github.com/RustCrypto/hashes",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T16:22:32.272Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rustcrypto-hashes-learnings.md",
+        "fileName": "rustcrypto-hashes-learnings.md"
+      }
+    },
+    "SRC-A7ECD528D751": {
+      "id": "SRC-A7ECD528D751",
+      "url": "https://raw.githubusercontent.com/RustCrypto/meta/master/logo.svg",
+      "title": "https://raw.githubusercontent.com/RustCrypto/meta/master/logo.svg",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T16:22:32.307Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rustcrypto-hashes-learnings.md",
+        "fileName": "rustcrypto-hashes-learnings.md"
+      }
+    },
+    "SRC-E792279EF3C6": {
+      "id": "SRC-E792279EF3C6",
+      "url": "https://raw.githubusercontent.com/RustCrypto/media/6ee8e381/logo.svg",
+      "title": "https://raw.githubusercontent.com/RustCrypto/media/6ee8e381/logo.svg",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T16:22:32.345Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rustcrypto-hashes-learnings.md",
+        "fileName": "rustcrypto-hashes-learnings.md"
+      }
+    },
+    "SRC-718C1324B2FF": {
+      "id": "SRC-718C1324B2FF",
+      "url": "https://github.com/RustCrypto/hashes/blob/0b22f1004e7840c32c52305a2fb9cf8cbd486573/skein/src/lib.rs",
+      "title": "https://github.com/RustCrypto/hashes/blob/0b22f1004e7840c32c52305a2fb9cf8cbd486573/skein/src/lib.rs",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T16:22:32.380Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rustcrypto-hashes-learnings.md",
+        "fileName": "rustcrypto-hashes-learnings.md"
+      }
+    },
+    "SRC-0C042FEDF74C": {
+      "id": "SRC-0C042FEDF74C",
+      "url": "https://xmpp.rs/",
+      "title": "https://xmpp.rs/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T16:22:32.413Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rustcrypto-hashes-learnings.md",
+        "fileName": "rustcrypto-hashes-learnings.md"
+      }
+    },
+    "SRC-244F0BE2EDBB": {
+      "id": "SRC-244F0BE2EDBB",
+      "url": "https://gitlab.com/xmpp-rs/xmpp-rs/-/blob/main/parsers/src/ecaps2.rs",
+      "title": "https://gitlab.com/xmpp-rs/xmpp-rs/-/blob/main/parsers/src/ecaps2.rs",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T16:22:32.449Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rustcrypto-hashes-learnings.md",
+        "fileName": "rustcrypto-hashes-learnings.md"
+      }
+    },
+    "SRC-BD063F1F534C": {
+      "id": "SRC-BD063F1F534C",
+      "url": "https://gitlab.com/xmpp-rs/xmpp-rs/-/commit/1a03588bdbac685d4e0c0ecf17f6fd8888569d41",
+      "title": "https://gitlab.com/xmpp-rs/xmpp-rs/-/commit/1a03588bdbac685d4e0c0ecf17f6fd8888569d41",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T16:22:32.482Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rustcrypto-hashes-learnings.md",
+        "fileName": "rustcrypto-hashes-learnings.md"
+      }
+    },
+    "SRC-E5DE678A6BAB": {
+      "id": "SRC-E5DE678A6BAB",
+      "url": "https://rust.godbolt.org/z/784781hhE",
+      "title": "https://rust.godbolt.org/z/784781hhE",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T16:22:32.515Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rustcrypto-hashes-learnings.md",
+        "fileName": "rustcrypto-hashes-learnings.md"
+      }
+    },
+    "SRC-8F9C22E3373A": {
+      "id": "SRC-8F9C22E3373A",
+      "url": "https://rust.godbolt.org/z/MabKT4ssW",
+      "title": "https://rust.godbolt.org/z/MabKT4ssW",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T16:22:32.551Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rustcrypto-hashes-learnings.md",
+        "fileName": "rustcrypto-hashes-learnings.md"
+      }
+    },
+    "SRC-0D2AA3906648": {
+      "id": "SRC-0D2AA3906648",
+      "url": "https://rust.godbolt.org/z/5Gb6rTzqM",
+      "title": "https://rust.godbolt.org/z/5Gb6rTzqM",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T16:22:32.583Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rustcrypto-hashes-learnings.md",
+        "fileName": "rustcrypto-hashes-learnings.md"
+      }
+    },
+    "SRC-F885E994A3C7": {
+      "id": "SRC-F885E994A3C7",
+      "url": "https://rust.godbolt.org/z/1ccjaeEYE",
+      "title": "https://rust.godbolt.org/z/1ccjaeEYE",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T16:22:32.616Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rustcrypto-hashes-learnings.md",
+        "fileName": "rustcrypto-hashes-learnings.md"
+      }
+    },
+    "SRC-493FD199DDB6": {
+      "id": "SRC-493FD199DDB6",
+      "url": "https://rust.godbolt.org/z/4TPoG98j1",
+      "title": "https://rust.godbolt.org/z/4TPoG98j1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T16:22:32.652Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rustcrypto-hashes-learnings.md",
+        "fileName": "rustcrypto-hashes-learnings.md"
+      }
+    },
+    "SRC-DF0A2218163C": {
+      "id": "SRC-DF0A2218163C",
+      "url": "https://rust.godbolt.org/z/T14dovc6s",
+      "title": "https://rust.godbolt.org/z/T14dovc6s",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T16:22:32.684Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rustcrypto-hashes-learnings.md",
+        "fileName": "rustcrypto-hashes-learnings.md"
+      }
+    },
+    "SRC-9AD5914D2015": {
+      "id": "SRC-9AD5914D2015",
+      "url": "https://rust.godbolt.org/z/1sGrKjxE8",
+      "title": "https://rust.godbolt.org/z/1sGrKjxE8",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T16:22:32.717Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rustcrypto-hashes-learnings.md",
+        "fileName": "rustcrypto-hashes-learnings.md"
+      }
+    },
+    "SRC-3DD93D519EF2": {
+      "id": "SRC-3DD93D519EF2",
+      "url": "https://rust.godbolt.org/z/3nffnb15T",
+      "title": "https://rust.godbolt.org/z/3nffnb15T",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T16:22:32.754Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rustcrypto-hashes-learnings.md",
+        "fileName": "rustcrypto-hashes-learnings.md"
+      }
+    },
+    "SRC-A442428BE731": {
+      "id": "SRC-A442428BE731",
+      "url": "https://github.com/RustCrypto/hashes/pull/929",
+      "title": "https://github.com/RustCrypto/hashes/pull/929",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T16:22:32.803Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rustcrypto-hashes-learnings.md",
+        "fileName": "rustcrypto-hashes-learnings.md"
+      }
+    },
+    "SRC-84BB71B21661": {
+      "id": "SRC-84BB71B21661",
+      "url": "https://github.com/RustCrypto/hashes/pull/935",
+      "title": "https://github.com/RustCrypto/hashes/pull/935",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T16:22:32.838Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rustcrypto-hashes-learnings.md",
+        "fileName": "rustcrypto-hashes-learnings.md"
+      }
+    },
+    "SRC-6B3E547E7F9D": {
+      "id": "SRC-6B3E547E7F9D",
+      "url": "https://github.com/RustCrypto/hashes/pull/940",
+      "title": "https://github.com/RustCrypto/hashes/pull/940",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T16:22:32.871Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rustcrypto-hashes-learnings.md",
+        "fileName": "rustcrypto-hashes-learnings.md"
+      }
+    },
+    "SRC-1124E5F08A18": {
+      "id": "SRC-1124E5F08A18",
+      "url": "https://github.com/RustCrypto/hashes/pull/943",
+      "title": "https://github.com/RustCrypto/hashes/pull/943",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T16:22:32.904Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rustcrypto-hashes-learnings.md",
+        "fileName": "rustcrypto-hashes-learnings.md"
+      }
+    },
+    "SRC-6647E8E316B1": {
+      "id": "SRC-6647E8E316B1",
+      "url": "https://rust.godbolt.org/z/bf7sf1zEe",
+      "title": "https://rust.godbolt.org/z/bf7sf1zEe",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T16:22:32.940Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rustcrypto-hashes-learnings.md",
+        "fileName": "rustcrypto-hashes-learnings.md"
+      }
+    },
+    "SRC-F906DA1EE7A7": {
+      "id": "SRC-F906DA1EE7A7",
+      "url": "https://rust.godbolt.org/z/s61sP3GKj",
+      "title": "https://rust.godbolt.org/z/s61sP3GKj",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T16:22:32.976Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rustcrypto-hashes-learnings.md",
+        "fileName": "rustcrypto-hashes-learnings.md"
+      }
+    },
+    "SRC-8B6DC7C85183": {
+      "id": "SRC-8B6DC7C85183",
+      "url": "https://rust.godbolt.org/z/Y71ovfh8P",
+      "title": "https://rust.godbolt.org/z/Y71ovfh8P",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T16:22:33.010Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rustcrypto-hashes-learnings.md",
+        "fileName": "rustcrypto-hashes-learnings.md"
+      }
+    },
+    "SRC-453C3AB65561": {
+      "id": "SRC-453C3AB65561",
+      "url": "https://rust.godbolt.org/z/8axxnoYds",
+      "title": "https://rust.godbolt.org/z/8axxnoYds",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T16:22:33.045Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rustcrypto-hashes-learnings.md",
+        "fileName": "rustcrypto-hashes-learnings.md"
+      }
+    },
+    "SRC-5DC605E35CBA": {
+      "id": "SRC-5DC605E35CBA",
+      "url": "https://rust.godbolt.org/z/ncxzYrMPh",
+      "title": "https://rust.godbolt.org/z/ncxzYrMPh",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T16:22:33.077Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rustcrypto-hashes-learnings.md",
+        "fileName": "rustcrypto-hashes-learnings.md"
+      }
+    },
+    "SRC-E45108F1B1D6": {
+      "id": "SRC-E45108F1B1D6",
+      "url": "https://rust.godbolt.org/z/8v9x5fo8q",
+      "title": "https://rust.godbolt.org/z/8v9x5fo8q",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T16:22:33.110Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rustcrypto-hashes-learnings.md",
+        "fileName": "rustcrypto-hashes-learnings.md"
+      }
+    },
+    "SRC-5FB9D3BABC59": {
+      "id": "SRC-5FB9D3BABC59",
+      "url": "https://github.com/RustCrypto/hashes/pull/948",
+      "title": "https://github.com/RustCrypto/hashes/pull/948",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T16:22:33.146Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rustcrypto-hashes-learnings.md",
+        "fileName": "rustcrypto-hashes-learnings.md"
       }
     }
   }

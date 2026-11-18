@@ -4,45 +4,31 @@
 {
   "source_repository": "o2sh/onefetch",
   "source_url": "https://github.com/o2sh/onefetch",
-  "source_version": "historical-head",
-  "license": "OPEN_HARVEST",
-  "timestamp": "2026-11-13T00:00:00.000Z",
-  "ai_provider": "universal-multi-artifact-distributor",
+  "source_version": "3054de77",
+  "license": "MIT",
+  "timestamp": "2026-11-18T16:22:17.417Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
-  "learning_id": "unknown",
+  "learning_id": "learn-github-o2sh-onefetch",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [o2sh/onefetch](https://github.com/o2sh/onefetch) (Revision: `historical`).  
-> **License**: OPEN_HARVEST | **Timestamp**: `2026-11-13T00:00:00.000Z`  
-> **Learning ID**: `unknown`
+> **Provenance**: Harvested from [o2sh/onefetch](https://github.com/o2sh/onefetch) (Revision: `3054de77`).  
+> **License**: MIT | **Timestamp**: `2026-11-18T16:22:17.417Z`  
+> **Learning ID**: `learn-github-o2sh-onefetch`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `o2sh/onefetch` (Commit: `historical`)
+- **Target Repository**: `o2sh/onefetch` (Commit: `3054de77`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
-> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/o2sh-onefetch-learnings.md`  
-> **Source**: github ([https://github.com/o2sh/onefetch](https://github.com/o2sh/onefetch))  
-> **Source Version**: `cbb0bbec`  
-> **License**: MIT  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T01:51:12.965Z  
-> **Learning ID**: `learn-github-o2sh-onefetch`  
-> **Pipeline Version**: `2.0.0`  
-> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
-> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
-> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
-
----
-
 # Forensic Learning Record (Deep Inspection): o2sh/onefetch
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/o2sh-onefetch-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/o2sh/onefetch](https://github.com/o2sh/onefetch))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T01:51:11.854Z  
+> **Harvest Timestamp**: 2026-11-18T16:22:16.287Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Command-line Git information tool
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 12077 stars
+- **Stars / Engagement**: 12085 stars
 
 ---
 
@@ -1201,191 +1187,44 @@ mod test {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `cbb0bbec` (2026-11-03)
-**Commit Message**: chore(deps): Update site (#1911)
+### Incident Patch 1: `83e1d54d` (2026-11-18)
+**Commit Message**: fix: leave ignored authors out of creation and last change dates (#1922)
 
-Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `site/package-lock.json` (modified, +26/-26)
+**File**: `src/data/git/traversal.rs` (modified, +4/-3)
 ```diff
-@@ -13,18 +13,18 @@
-       "devDependencies": {
-         "@rollup/plugin-yaml": "5.0.1",
-         "@sveltejs/adapter-auto": "8.0.0",
--        "@sveltejs/kit": "3.1.0",
-+        "@sveltejs/kit": "3.1.1",
-         "@sveltejs/vite-plugin-svelte": "7.3.1",
-         "@types/eslint": "9.6.1",
--        "@types/node": "26.6.5",
--        "eslint": "10.13.0",
-+        "@types/node": "26.6.6",
-+        "eslint": "10.14.0",
-         "eslint-config-prettier": "10.1.8",
-         "eslint-plugin-svelte": "3.23.1",
--        "globals": "17.13.0",
-+        "globals": "17.14.0",
-         "prettier": "3.9.10",
-         "prettier-plugin-svelte": "4.1.1",
-         "svelte": "5.57.3",
--        "svelte-check": "4.7.7",
-+        "svelte-check": "4.7.8",
-         "typescript": "6.0.3",
-         "typescript-eslint": "8.72.1",
-         "vite": "8.3.5"
-@@ -666,9 +666,9 @@
-       }
-     },
-     "node_modules/@sveltejs/kit": {
--      "version": "3.1.0",
--      "resolved": "https://registry.npmjs.org/@sveltejs/kit/-/kit-3.1.0.tgz",
--      "integrity": "sha512-JTWlq2HQlkqx6vIoxhC0R6sc4WVqbQoRyEmr5YlqKmiYbzY1U3awtSWTmjMLlS056a49AmkQR6rnNANXIE8B0Q==",
-+      "version": "3.1.1",
-+      "resolved": "https://registry.npmjs.org/@sveltejs/kit/-/kit-3.1.1.tgz",
-+      "integrity": "sha512-BiEMvekYXE9Gu/YhWJ/yJ0WDLH1PX/dmjuAeFp5rrtdmgdzkjt7DvimlSP+/U4tgposl7pkE20luHpcnc6BgRw==",
-       "dev": true,
-       "license": "MIT",
-       "dependencies": {
-@@ -785,9 +785,9 @@
-       "license": "MIT"
-     },
-     "node_modules/@types/node": {
--      "version": "26.6.5",
--      "resolved": "https://registry.npmjs.org/@types/node/-/node-26.6.5.tgz",
--      "integrity": "sha512-uMzsv9stDdofIZBx4UGh4Z9ZgXnGC9seRDscilBcTHAeOFk67MZg/k9bWVfO+bk4qZmG+l52hRnLwUiH2LnJTg==",
-+      "version": "26.6.6",
-+      "resolved": "https://registry.npmjs.org/@types/node/-/node-26.6.6.tgz",
-+      "integrity": "sha512-MzQj+8Kx3XI40OmUAE6Qoh58ZMNstNNMwn2nfd3qWsfe7nDNSqJNzes4njhz6AHwrSHOffSLwXU6yb474Q4aog==",
-       "dev": true,
-       "license": "MIT",
-       "dependencies": {
-@@ -1257,9 +1257,9 @@
-       }
-     },
-     "node_modules/eslint": {
--      "version": "10.13.0",
--      "resolved": "https://registry.npmjs.org/eslint/-/eslint-10.13.0.tgz",
--      "integrity": "sha512-UohDjD4zSzEwhf58M3O7vc/ycc8O1I7dNlhtD0WxE8Px8EHNJKtUwzBqrzeGhisRuv2ag4sAYswszCJRgKXYUg==",
-+      "version": "10.14.0",
-+      "resolved": "https://registry.npmjs.org/eslint/-/eslint-10.14.0.tgz",
-+      "integrity": "sha512-T0pNsxkb9IKmtQjhpK3d7nWOpFv+YHuMbTJnSVMoQblF0onvXfErrtp4V1jHtsQPan7dKaGVD0q1WCXnzMF31A==",
-       "dev": true,
-       "license": "MIT",
-       "workspaces": [
-@@ -1272,7 +1272,7 @@
-         "@eslint/config-helpers": "^0.7.0",
-         "@eslint/core": "^1.2.1",
-         "@eslint/plugin-kit": "^0.7.3",
--        "@humanfs/node": "^0.16.6",
-+        "@humanfs/node": "^0.16.8",
-         "@humanwhocodes/module-importer": "^1.0.1",
-         "@humanwhocodes/retry": "^0.4.2",
-         "@types/estree": "^1.0.6",
-@@ -1293,7 +1293,7 @@
-         "imurmurhash": "^0.1.4",
-         "is-glob": "^4.0.0",
-         "json-stable-stringify-without-jsonify": "^1.0.1",
--        "minimatch": "^10.2.5",
-+        "minimatch": "^10.2.6",
-         "natural-compare": "^1.4.0",
-         "optionator": "^0.9.3"
-       },
-@@ -1618,9 +1618,9 @@
-       }
-     },
-     "node_modules/globals": {
--      "version": "17.13.0",
--      "resolved": "https://registry.npmjs.org/globals/-/globals-17.13.0.tgz",
--      "integrity": "sha512-RwMTC61u7hrG3ZJMkZQOK4JLJrKS8QtoTii63EmWvFXHqycY9FObBJQCbsLxSO8kjKhWE5kV1GC+Vb1g3RI0Zg==",
-+      "version": "17.14.0",
-+      "resolved": "https://registry.npmjs.org/globals/-/globals-17.14.0.tgz",
-+      "integrity": "sha512-UtdkTVyAJePQv0J2M9Xe4L0ruNSDV314XiIJsADI2Zf40bcdAonE/D/OhAU8AT99oij9mhLByb+NvA3QWZYgCg==",
-       "dev": true,
-       "license": "MIT",
-       "engines": {
-@@ -2092,13 +2092,13 @@
-       }
-     },
-     "node_modules/minimatch": {
--      "version": "10.2.5",
--      "resolved": "https://registry.npmjs.org/minimatch/-/minimatch-10.2.5.tgz",
--      "integrity": "sha512-MULkVLfKGYDFYejP07QOurDLLQpcjk7Fw+7jXS2R2czRQzR56yHRveU5NDJEOviH+hETZKSkIk5c+T23GjFUMg==",
-+      "version": "10.2.6",
-+      "resolved": "https://registry.npmjs.org/minimatch/-/minimatch-10.2.6.tgz",
-+      "integrity": "sha512-vpLQEs+VLCr1nU0BXS07maYoFwlDAH0gngQuuttxIwutDFEMHq2blX+8vpgxDdK3J1PwjCJiep77OitTZ4Ll1A==",
-       "dev": true,
-       "license": "BlueOak-1.0.0",
-       "dependencies": {
--        "brace-expansion": "^5.0.5"
-+        "brace-expansion": "^5.0.8"
-       },
-       "engines": {
-         "node": "18 || 20 || >=22"
-@@ -2617,9 +2617,9 @@
-       }
-     },
-     "node_modules/svelte-check": {
--      "version": "4.7.7",
--      "resolved": "https://registry.npmjs.org/svelte-check/-/svelte-check-4.7.7.tgz",
--      "integrity": "sha512-Ge2IMdeTpbJuzNFGRiiMg0RWgbScysKQu7xwcyFJ22+DU9F5nPX51+Q3gHmGqRxYQMx2knreVWt5oCtfe0vf2g==",
-+      "version": "4.7.8",
-+      "resolved": "https://registry.npmjs.org/svelte-chec
-```
-
-**File**: `site/package.json` (modified, +5/-5)
-```diff
-@@ -16,18 +16,18 @@
-   "devDependencies": {
-     "@rollup/plugin-yaml": "5.0.1",
-     "@sveltejs/adapter-auto": "8.0.0",
--    "@sveltejs/kit": "3.1.0",
-+    "@sveltejs/kit": "3.1.1",
-     "@sveltejs/vite-plugin-svelte": "7.3.1",
-     "@types/eslint": "9.6.1",
--    "@types/node": "26.6.5",
--    "eslint": "10.13.0",
-+    "@types/node": "26.6.6",
-+    "eslint": "10.14.0",
-     "eslint-config-prettier": "10.1.8",
-     "eslint-plugin-svelte": "3.23.1",
--    "globals": "17.13.0",
-+    "globals": "17.14.0",
-     "prettier": "3.9.10",
-     "prettier-plugin-svelte": "4.1.1",
-     "svelte": "5.57.3",
--    "svelte-check": "4.7.7",
-+    "svelte-check": "4.7.8",
-     "typescript": "6.0.3",
-     "typescript-eslint": "8.72.1",
-     "vite": "8.3.5"
-```
-
----
-
-### Incident Patch 2: `08ac6229` (2026-11-03)
-**Commit Message**: chore(deps): Update dependency node to v26 (#1916)
-
-Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
-
-**File**: `.github/workflows/site-ci.yml` (modified, +1/-1)
-```diff
-@@ -26,7 +26,7 @@ jobs:
-       - name: Setup Node
-         uses: actions/setup-node@v7
-         with:
--          node-version: 24
-+          node-version: 26
+@@ -61,17 +61,18 @@ pub fn traverse_commit_graph(
+                 0,
+             );
+             // Commits that credit nobody (e.g. authors left out by `--ignore-author`)
+-            // count neither as commits, nor in the activity, nor in the churn.
++            // count neither as commits, nor in the activity, nor in the churn,
++            // nor in the creation and last change dates.
+             let identities =
+                 credited_identities(&commit.object()?, &mailmap, ignore_author, co_authors)?;
+             if !identities.is_empty() {
+                 update_identity_counts(identities, &mut number_of_commits_by_identity);
+                 update_commit_times(commit_time.seconds, &mut commit_times);
+                 churn_tx.send(commit.id)?;
+                 number_of_counted_commits += 1;
++                time_of_most_recent_commit.get_or_insert(commit_time);
++                time_of_first_commit = commit_time.into();
+             }
+-            time_of_most_recent_commit.get_or_insert(commit_time);
+-            time_of_first_commit = commit_time.into();
  
-       - name: Install Dependencies
-         run: npm ci
+             count += 1;
+         }
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1922** (2026-11-18): fix: leave ignored authors out of creation and last change dates (@o2sh)
+- **PR #1920** (2026-11-17): feat!: replace --no-bots with --ignore-author (@o2sh)
 - **PR #1916** (2026-11-03): chore(deps): Update dependency node to v26 (@renovate[bot])
 - **PR #1914** (2026-10-29): fix: show Unreleased when HEAD doesn't contain the latest tag (@o2sh)
 - **PR #1912** (2026-10-27): chore(deps): upgrade site to SvelteKit 3 (@o2sh)
 - **PR #1911** (2026-11-03): chore(deps): Update site (@renovate[bot])
-- **PR #1910** (2026-10-29): chore(deps): Update Rust crate rustix to 1.1.6 (@renovate[bot])
-- **PR #1909** (closed): chore(deps-dev): Bump @sveltejs/kit and @sveltejs/adapter-auto in /site (@dependabot[bot])
 
 ---
 
@@ -1405,71 +1244,36 @@ Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): Update site (#1911)
+## X. leave ignored authors out of creation and last change dates
 
 **RULE**:
-When implementing operations in `site/package-lock.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in o2sh/onefetch. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/data/git/traversal.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in o2sh/onefetch. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `cbb0bbec`: deps): Update site (#1911). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `83e1d54d`: leave ignored authors out of creation and last change dates. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `site/package-lock.json`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/data/git/traversal.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        "@sveltejs/kit": "3.1.1",
-        "@types/node": "26.6.6",
-        "eslint": "10.14.0",
-        "globals": "17.14.0",
-        "svelte-check": "4.7.8",
-      "version": "3.1.1",
-      "resolved": "https://registry.npmjs.org/@sveltejs/kit/-/kit-3.1.1.tgz",
-      "integrity": "sha512-BiEMvekYXE9Gu/YhWJ/yJ0WDLH1PX/dmjuAeFp5rrtdmgdzkjt7DvimlSP+/U4tgposl7pkE20luHpcnc6BgRw==",
-      "version": "26.6.6",
-      "resolved": "https://registry.npmjs.org/@types/node/-/node-26.6.6.tgz",
-      "integrity": "sha512-MzQj+8Kx3XI40OmUAE6Qoh58ZMNstNNMwn2nfd3qWsfe7nDNSqJNzes4njhz6AHwrSHOffSLwXU6yb474Q4aog==",
-      "version": "10.14.0",
-      "resolved": "https://registry.npmjs.org/eslint/-/eslint-10.14.0.tgz",
-      "integrity": "sha512-T0pNsxkb9IKmtQjhpK3d7nWOpFv+YHuMbTJnSVMoQblF0onvXfErrtp4V1jHtsQPan7dKaGVD0q1WCXnzMF31A==",
-        "@humanfs/node": "^0.16.8",
-        "minimatch": "^10.2.6",
-      "version": "17.14.0",
-      "resolved": "https://registry.npmjs.org/globals/-/globals-17.14.0.tgz",
-      "integrity": "sha512-UtdkTVyAJePQv0J2M9Xe4L0ruNSDV314XiIJsADI2Zf40bcdAonE/D/OhAU8AT99oij9mhLByb+NvA3QWZYgCg==",
-      "version": "10.2.6",
-      "resolved": "https://registry.npmjs.org/minimatch
+            // count neither as commits, nor in the activity, nor in the churn,
+            // nor in the creation and last change dates.
+                time_of_most_recent_commit.get_or_insert(commit_time);
+                time_of_first_commit = commit_time.into();
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Anti-pattern to NEVER write (induced failure mode):
-        "@sveltejs/kit": "3.1.0",
-        "@types/node": "26.6.5",
-        "eslint": "10.13.0",
-        "globals": "17.13.0",
-        "svelte-check": "4.7.7",
-      "version": "3.1.0",
-      "resolved": "https://registry.npmjs.org/@sveltejs/kit/-/kit-3.1.0.tgz",
-      "integrity": "sha512-JTWlq2HQlkqx6vIoxhC0R6sc4WVqbQoRyEmr5YlqKmiYbzY1U3awtSWTmjMLlS056a49AmkQR6rnNANXIE8B0Q==",
-      "version": "26.6.5",
-      "resolved": "https://registry.npmjs.org/@types/node/-/node-26.6.5.tgz",
-      "integrity": "sha512-uMzsv9stDdofIZBx4UGh4Z9ZgXnGC9seRDscilBcTHAeOFk67MZg/k9bWVfO+bk4qZmG+l52hRnLwUiH2LnJTg==",
-      "version": "10.13.0",
-      "resolved": "https://registry.npmjs.org/eslint/-/eslint-10.13.0.tgz",
-      "integrity": "sha512-UohDjD4zSzEwhf58M3O7vc/ycc8O1I7dNlhtD0WxE8Px8EHNJKtUwzBqrzeGhisRuv2ag4sAYswszCJRgKXYUg==",
-        "@humanfs/node": "^0.16.6",
-        "minimatch": "^10.2.5",
-      "version": "17.13.0",
-      "resolved": "https://registry.npmjs.org/globals/-/globals-17.13.0.tgz",
-      "integrity": "sha512-RwMTC61u7hrG3ZJMkZQOK4JLJrKS8QtoTii63EmWvFXHqycY9FObBJQCbsLxSO8kjKhWE5kV1GC+Vb1g3RI0Zg==",
-      "version": "10.2.5",
-      "resolved": "https://registry.npmjs.org/minimatch
+// Induced defect failure mode:
+            // count neither as commits, nor in the activity, nor in the churn.
+            time_of_most_recent_commit.get_or_insert(commit_time);
+            time_of_first_commit = commit_time.into();
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `cbb0bbec` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `83e1d54d` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

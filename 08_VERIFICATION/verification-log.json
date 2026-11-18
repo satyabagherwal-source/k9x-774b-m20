@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261117-EO7F",
-    "timestamp": "2026-11-17T07:28:07.947Z",
-    "repository": "transact-rs/sqlx",
-    "learningId": "learn-github-transact-rs-sqlx",
-    "contentHash": "ae5f9fba7cba7e9f9c47f59e5fe443d05695fb4273facf02b5f53dff048985d4",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261117-EUAE",
-    "timestamp": "2026-11-17T07:28:15.830Z",
-    "repository": "clastix/kamaji",
-    "learningId": "learn-github-clastix-kamaji",
-    "contentHash": "1401fba93be506cc52c648c838b7c5a3ea4d1d964800352712326260d85f50ec",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261117-EY8T",
-    "timestamp": "2026-11-17T07:28:20.957Z",
-    "repository": "etcd-io/etcd",
-    "learningId": "learn-github-etcd-io-etcd",
-    "contentHash": "f64ed31cfcc354bd2fa132c566b7e8701614d016379bc0b48745be07c01b4cf7",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261117-U8LU",
     "timestamp": "2026-11-17T07:40:14.226Z",
     "repository": "appwrite/appwrite",
@@ -7492,6 +7447,51 @@
     "contentHash": "af3ea9ca00f8ec42d0142f86959ff4353322d8ce65541aa11ae0980b7d2a4b31",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-XEBU",
+    "timestamp": "2026-11-18T16:22:14.730Z",
+    "repository": "unsloth/Qwen3.8-27B-GGUF",
+    "learningId": "learn-huggingface-unsloth-qwen3-8-27b-gguf",
+    "contentHash": "afb0b908294a98014d43abc67ec99052e762bb102e3125986b2c9f27f9ef1baf",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-XG9A",
+    "timestamp": "2026-11-18T16:22:17.230Z",
+    "repository": "o2sh/onefetch",
+    "learningId": "learn-github-o2sh-onefetch",
+    "contentHash": "61de0617b387c479256c3688125f7e09fe8866bf84ebda641fbc0c5c657f2826",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-XOMO",
+    "timestamp": "2026-11-18T16:22:28.080Z",
+    "repository": "RustCrypto/hashes",
+    "learningId": "learn-github-rustcrypto-hashes",
+    "contentHash": "bf7f1dde2e83ec32c5f0719d666a3fee95dca07c3b00af5da19c2dea74461e24",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

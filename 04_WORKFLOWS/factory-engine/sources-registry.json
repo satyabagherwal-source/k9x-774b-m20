@@ -69,8 +69,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-18T16:14:25.728Z",
-    "lastVerified": "2026-11-18T16:14:25.728Z",
+    "lastChecked": "2026-11-18T16:22:31.176Z",
+    "lastVerified": "2026-11-18T16:22:31.176Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -221,9 +221,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-18T15:43:03.965Z",
+    "lastChecked": "2026-11-18T16:22:26.304Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-18T15:43:03.965Z"
+    "lastVerified": "2026-11-18T16:22:26.304Z"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -1206,11 +1206,21 @@
     "lastVerified": "2026-11-18T12:16:02.295Z"
   },
   "rustcrypto-hashes": {
-    "name": "hashes",
+    "name": "RustCrypto/hashes",
     "officialUrl": "https://github.com/RustCrypto/hashes",
-    "lastChecked": "2026-11-18T12:16:04.586Z",
-    "revisionIdentifier": "c50eeb46",
-    "lastVerified": "2026-11-18T12:16:04.586Z"
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-11-18T16:22:27.109Z",
+    "lastVerified": "2026-11-18T16:22:27.109Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-rustcrypto-hashes",
+    "contentHash": "bf7f1dde2e83ec32c5f0719d666a3fee95dca07c3b00af5da19c2dea74461e24",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "t8y2-dbx": {
     "name": "t8y2/dbx",
@@ -2875,5 +2885,60 @@
     "lastChecked": "2026-11-18T16:14:23.254Z",
     "revisionIdentifier": "accdcdb5",
     "lastVerified": "2026-11-18T16:14:23.254Z"
+  },
+  "o2sh-onefetch": {
+    "name": "o2sh/onefetch",
+    "officialUrl": "https://github.com/o2sh/onefetch",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-11-18T16:22:16.287Z",
+    "lastVerified": "2026-11-18T16:22:16.287Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-o2sh-onefetch",
+    "contentHash": "61de0617b387c479256c3688125f7e09fe8866bf84ebda641fbc0c5c657f2826",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 1,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-unsloth-qwen3.8-27b-gguf": {
+    "name": "unsloth/Qwen3.8-27B-GGUF",
+    "officialUrl": "https://huggingface.co/unsloth/Qwen3.8-27B-GGUF",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-18T16:22:14.082Z",
+    "lastVerified": "2026-11-18T16:22:14.082Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-unsloth-qwen3-8-27b-gguf",
+    "contentHash": "afb0b908294a98014d43abc67ec99052e762bb102e3125986b2c9f27f9ef1baf",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "i18next-react-i18next": {
+    "name": "react-i18next",
+    "officialUrl": "https://github.com/i18next/react-i18next",
+    "lastChecked": "2026-11-18T16:22:16.629Z",
+    "revisionIdentifier": "96a8573c",
+    "lastVerified": "2026-11-18T16:22:16.629Z"
+  },
+  "kumahq-kuma": {
+    "name": "kuma",
+    "officialUrl": "https://github.com/kumahq/kuma",
+    "lastChecked": "2026-11-18T16:22:18.988Z",
+    "revisionIdentifier": "053b67f7",
+    "lastVerified": "2026-11-18T16:22:18.988Z"
+  },
+  "tensorchord-pgvecto.rs": {
+    "name": "pgvecto.rs",
+    "officialUrl": "https://github.com/tensorchord/pgvecto.rs",
+    "lastChecked": "2026-11-18T16:22:23.787Z",
+    "revisionIdentifier": "2b290b34",
+    "lastVerified": "2026-11-18T16:22:23.787Z"
   }
 }

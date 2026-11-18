@@ -635,8 +635,8 @@
     "sourceUrl": "https://huggingface.co/unsloth/Qwen3.8-27B-GGUF",
     "sourceVersion": "hf-unsloth-qwen3.8-27b-gguf",
     "license": "Open-Source",
-    "contentHash": "72ae56f254a398c94de0a687923389368a422cd0fda647d855d6906bf8c4d3b4",
-    "lastHarvestedAt": "2026-11-18T07:05:36.370Z",
+    "contentHash": "afb0b908294a98014d43abc67ec99052e762bb102e3125986b2c9f27f9ef1baf",
+    "lastHarvestedAt": "2026-11-18T16:22:14.734Z",
     "learningId": "learn-huggingface-unsloth-qwen3-8-27b-gguf"
   },
   "hf-davidau-qwen3.8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf": {
@@ -3053,10 +3053,10 @@
     "repository": "RustCrypto/hashes",
     "platform": "github",
     "sourceUrl": "https://github.com/RustCrypto/hashes",
-    "sourceVersion": "c50eeb46",
+    "sourceVersion": "50a7ea68",
     "license": "PERMISSIVE_OPEN_SOURCE",
-    "contentHash": "d73b31e0435e2ecf7b08c679ea5cc1af76fc7d501d52c91199f23dcc091b6b1c",
-    "lastHarvestedAt": "2026-11-09T15:12:49.080Z",
+    "contentHash": "bf7f1dde2e83ec32c5f0719d666a3fee95dca07c3b00af5da19c2dea74461e24",
+    "lastHarvestedAt": "2026-11-18T16:22:28.084Z",
     "learningId": "learn-github-rustcrypto-hashes"
   },
   "onlook-dev-onlook": {
@@ -3993,10 +3993,10 @@
     "repository": "o2sh/onefetch",
     "platform": "github",
     "sourceUrl": "https://github.com/o2sh/onefetch",
-    "sourceVersion": "0b742098",
+    "sourceVersion": "3054de77",
     "license": "MIT",
-    "contentHash": "7ec93d6b9fc43cb9fc7b0585a9f54be115c9aca3666bb58bd930f8102696cb15",
-    "lastHarvestedAt": "2026-11-18T07:47:51.664Z",
+    "contentHash": "61de0617b387c479256c3688125f7e09fe8866bf84ebda641fbc0c5c657f2826",
+    "lastHarvestedAt": "2026-11-18T16:22:17.234Z",
     "learningId": "learn-github-o2sh-onefetch"
   },
   "runanywhereai-runanywhere-sdks": {

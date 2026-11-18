@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-18T16:14:27.383Z",
-  "total_records": 1878,
+  "last_updated": "2026-11-18T16:22:33.452Z",
+  "total_records": 1880,
   "domains": {
     "A": {
       "total": 13,
@@ -917,7 +917,7 @@
       ]
     },
     "G": {
-      "total": 327,
+      "total": 329,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -1245,7 +1245,9 @@
         "domain_intelligence-architecture-intelligence-karmada-io-karmada-core-invariants",
         "domain_intelligence-architecture-intelligence-karmada-io-karmada-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-beclab-olares-core-invariants",
-        "domain_intelligence-architecture-intelligence-beclab-olares-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-beclab-olares-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-rustcrypto-hashes-core-invariants",
+        "domain_intelligence-architecture-intelligence-rustcrypto-hashes-learnings-core-invariants"
       ]
     },
     "H": {
@@ -9901,8 +9903,8 @@
       "title": "Research & Knowledge Intelligence: unsloth/Qwen3.8-27B-GGUF Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-unsloth-qwen3-8-27b-gguf-research-knowledge-intelligence-unsloth-qwen3-8-27b-.md",
       "repository": "unsloth/Qwen3.8-27B-GGUF",
-      "content_hash": "88b54bca967bd933d46bb3c52d79ab83b839befba8b21b79e2cc9fd734d50e73",
-      "created_at": "2026-11-18T07:05:36.543Z"
+      "content_hash": "8e70837f75baaf122f343b1ed9d8dcf9ad43b556797824ad76c3b6d6ac52d21d",
+      "created_at": "2026-11-18T16:22:14.908Z"
     },
     "domain_intelligence-technical-construction-intelligence-open-policy-agent-opa-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-open-policy-agent-opa-core-invariants",
@@ -9970,8 +9972,8 @@
       "title": "Research & Knowledge Intelligence: hf-unsloth-qwen3.8-27b-gguf-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-unsloth-qwen3-8-27b-gguf-learnings-research-knowledge-intelligence-hf-unsloth.md",
       "repository": "hf-unsloth-qwen3.8-27b-gguf-learnings",
-      "content_hash": "28763a15988ff6260a8abdbab039906ef76b21d851e454b60cfc3eeb3de56df0",
-      "created_at": "2026-11-18T07:05:49.859Z"
+      "content_hash": "617485d2bb6d1804a29f1e8709f8f75a1ea4a5f610088447d4605b59dbb7a26c",
+      "created_at": "2026-11-18T16:22:32.102Z"
     },
     "domain_intelligence-technical-construction-intelligence-open-policy-agent-opa-learnings-core-invaria": {
       "record_id": "domain_intelligence-technical-construction-intelligence-open-policy-agent-opa-learnings-core-invaria",
@@ -30062,8 +30064,8 @@
       "title": "Design Intelligence: o2sh/onefetch Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-o2sh-onefetch-design-intelligence-o2sh-onefetch-core-invariants.md",
       "repository": "o2sh/onefetch",
-      "content_hash": "7664853b1fc87a2140cf89443dd6797964b54a42671c456527eed06aace26ba9",
-      "created_at": "2026-11-18T07:47:51.875Z"
+      "content_hash": "6da9ef5447d91f0afd84f8d0479f8b550a94395ceeb5f3a163fbff365d5a97ab",
+      "created_at": "2026-11-18T16:22:17.554Z"
     },
     "DOM-D-E33EA755": {
       "record_id": "DOM-D-E33EA755",
@@ -30113,8 +30115,8 @@
       "title": "Design Intelligence: o2sh-onefetch-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-o2sh-onefetch-learnings-design-intelligence-o2sh-onefetch-learnings-core-invaria.md",
       "repository": "o2sh-onefetch-learnings",
-      "content_hash": "37e77cc988fcc47b30a5d549b9938ad73b6e9249b8a7a32a946f87021b830b86",
-      "created_at": "2026-11-18T07:48:42.265Z"
+      "content_hash": "159cbfe52dceaffdd6e58b0361f00e5fbe7cdc8982694649dcd342fb1eb53a19",
+      "created_at": "2026-11-18T16:22:31.649Z"
     },
     "domain_intelligence-architecture-intelligence-crosspaste-crosspaste-desktop-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-crosspaste-crosspaste-desktop-core-invariants",
@@ -31435,6 +31437,24 @@
       "confidence": 0.64,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-18T16:01:20.939Z"
+    },
+    "domain_intelligence-architecture-intelligence-rustcrypto-hashes-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-rustcrypto-hashes-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: RustCrypto/hashes Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-rustcrypto-hashes-architecture-intelligence-rustcrypto-hashes-core-invariants.md",
+      "repository": "RustCrypto/hashes",
+      "content_hash": "a6dc494171cf464e3a71242936c0b49b5bb79587788f4c43438547f23ec2d21d",
+      "created_at": "2026-11-18T16:22:28.400Z"
+    },
+    "domain_intelligence-architecture-intelligence-rustcrypto-hashes-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-rustcrypto-hashes-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: rustcrypto-hashes-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-rustcrypto-hashes-learnings-architecture-intelligence-rustcrypto-hashes-learning.md",
+      "repository": "rustcrypto-hashes-learnings",
+      "content_hash": "ffda71d7e8e5f2681dcd951f93a224376947df23cc4547cd5b7dc894808a67af",
+      "created_at": "2026-11-18T16:22:33.452Z"
     }
   }
 }

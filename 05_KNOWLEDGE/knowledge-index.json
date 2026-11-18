@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-18T16:14:27.538Z",
-  "total_verified_learnings": 9004,
+  "last_updated": "2026-11-18T16:22:33.604Z",
+  "total_verified_learnings": 9005,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 21355,
+  "total_items": 21367,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -213915,7 +213915,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/unsloth/Qwen3.8-27B-GGUF",
       "source_version": "hf-unsloth-qwen3.8-27b-gguf",
-      "content_hash": "72ae56f254a398c94de0a687923389368a422cd0fda647d855d6906bf8c4d3b4",
+      "content_hash": "afb0b908294a98014d43abc67ec99052e762bb102e3125986b2c9f27f9ef1baf",
       "dossier_path": "07_PROJECT_LEARNING/hf-unsloth-qwen3.8-27b-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-unsloth-qwen3.8-27b-gguf-learnings.md",
       "promoted_rules": [],
@@ -213924,7 +213924,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T07:05:36.176Z",
+      "verified_at": "2026-11-18T16:22:14.526Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -213941,9 +213941,9 @@
       "title": "Research & Knowledge Intelligence: unsloth/Qwen3.8-27B-GGUF Core Invariants",
       "repository": "unsloth/Qwen3.8-27B-GGUF",
       "source_version": "hf-unsloth-qwen3.8-27b-gguf",
-      "content_hash": "88b54bca967bd933d46bb3c52d79ab83b839befba8b21b79e2cc9fd734d50e73",
+      "content_hash": "8e70837f75baaf122f343b1ed9d8dcf9ad43b556797824ad76c3b6d6ac52d21d",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T07:05:36.543Z"
+      "persisted_at": "2026-11-18T16:22:14.908Z"
     },
     "learn-github-open-policy-agent-opa": {
       "learning_id": "learn-github-open-policy-agent-opa",
@@ -214258,9 +214258,9 @@
       "title": "Research & Knowledge Intelligence: hf-unsloth-qwen3.8-27b-gguf-learnings Core Invariants",
       "repository": "hf-unsloth-qwen3.8-27b-gguf-learnings",
       "source_version": "HEAD",
-      "content_hash": "28763a15988ff6260a8abdbab039906ef76b21d851e454b60cfc3eeb3de56df0",
+      "content_hash": "617485d2bb6d1804a29f1e8709f8f75a1ea4a5f610088447d4605b59dbb7a26c",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T07:05:49.859Z"
+      "persisted_at": "2026-11-18T16:22:32.102Z"
     },
     "candidate_directive-ast-fix-negative-number-location-text-for": {
       "item_id": "candidate_directive-ast-fix-negative-number-location-text-for",
@@ -283805,17 +283805,23 @@
       "slug": "o2sh-onefetch",
       "platform": "github",
       "source_url": "https://github.com/o2sh/onefetch",
-      "source_version": "0b742098",
-      "content_hash": "7ec93d6b9fc43cb9fc7b0585a9f54be115c9aca3666bb58bd930f8102696cb15",
+      "source_version": "3054de77",
+      "content_hash": "61de0617b387c479256c3688125f7e09fe8866bf84ebda641fbc0c5c657f2826",
       "dossier_path": "07_PROJECT_LEARNING/o2sh-onefetch-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/o2sh-onefetch-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 9255,
+          "title": "leave ignored authors out of creation and last change dates",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T07:47:51.422Z",
+      "verified_at": "2026-11-18T16:22:17.048Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -283831,10 +283837,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-o2sh-onefetch-design-intelligence-o2sh-onefetch-core-invariants.md",
       "title": "Design Intelligence: o2sh/onefetch Core Invariants",
       "repository": "o2sh/onefetch",
-      "source_version": "0b742098",
-      "content_hash": "7664853b1fc87a2140cf89443dd6797964b54a42671c456527eed06aace26ba9",
+      "source_version": "3054de77",
+      "content_hash": "6da9ef5447d91f0afd84f8d0479f8b550a94395ceeb5f3a163fbff365d5a97ab",
       "domain_letter": "F",
-      "persisted_at": "2026-11-18T07:47:51.875Z"
+      "persisted_at": "2026-11-18T16:22:17.554Z"
     },
     "rule-9158": {
       "learning_id": "rule-9158",
@@ -283870,9 +283876,9 @@
       "title": "Design Intelligence: o2sh-onefetch-learnings Core Invariants",
       "repository": "o2sh-onefetch-learnings",
       "source_version": "HEAD",
-      "content_hash": "37e77cc988fcc47b30a5d549b9938ad73b6e9249b8a7a32a946f87021b830b86",
+      "content_hash": "159cbfe52dceaffdd6e58b0361f00e5fbe7cdc8982694649dcd342fb1eb53a19",
       "domain_letter": "F",
-      "persisted_at": "2026-11-18T07:48:42.265Z"
+      "persisted_at": "2026-11-18T16:22:31.649Z"
     },
     "rule-9159": {
       "learning_id": "rule-9159",
@@ -288200,6 +288206,175 @@
       "content_hash": "5ec3a31e359c12de8464f4e4dce453f68f7ce2168c2d85fe98a7eaf51b019e48",
       "domain_letter": "L",
       "persisted_at": "2026-11-18T16:01:21.216Z"
+    },
+    "rule-9255": {
+      "learning_id": "rule-9255",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9255,
+      "title": "leave ignored authors out of creation and last change dates",
+      "source_url": "https://github.com/o2sh/onefetch",
+      "source_version": "3054de77",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-18T16:22:17.048Z"
+    },
+    "candidate_directive-leave-ignored-authors-out-of-creation-and-last-change-dates": {
+      "item_id": "candidate_directive-leave-ignored-authors-out-of-creation-and-last-change-dates",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-XR9Y-leave-ignored-authors-out-of-creation-and-last-change-dates.md",
+      "title": "leave ignored authors out of creation and last change dates",
+      "repository": "o2sh-onefetch-learnings",
+      "source_version": "HEAD",
+      "content_hash": "35a4a74916b506975fe96b5f4c50c1df3581e81e9b6c3af1e581006f8d5e5a54",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-18T16:22:31.511Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-o2sh-onefetch": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-o2sh-onefetch",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/o2sh-onefetch-verification-protocol-empirical-defect-shield-for-o2sh-onefetch.md",
+      "title": "Verification Protocol: Empirical Defect Shield for o2sh/onefetch",
+      "repository": "o2sh/onefetch",
+      "source_version": "3054de77",
+      "content_hash": "71fd6de96d424ec28f082177d86ab957c126429edc02b9d82e57238690cd9131",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-18T16:22:17.694Z"
+    },
+    "learn-github-rustcrypto-hashes": {
+      "learning_id": "learn-github-rustcrypto-hashes",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "RustCrypto/hashes",
+      "repository": "RustCrypto/hashes",
+      "slug": "rustcrypto-hashes",
+      "platform": "github",
+      "source_url": "https://github.com/RustCrypto/hashes",
+      "source_version": "50a7ea68",
+      "content_hash": "bf7f1dde2e83ec32c5f0719d666a3fee95dca07c3b00af5da19c2dea74461e24",
+      "dossier_path": "07_PROJECT_LEARNING/rustcrypto-hashes-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/rustcrypto-hashes-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 9256,
+          "title": "refactor `riscv_zknh` backends",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-18T16:22:27.902Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-9256": {
+      "learning_id": "rule-9256",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9256,
+      "title": "refactor `riscv_zknh` backends",
+      "source_url": "https://github.com/RustCrypto/hashes",
+      "source_version": "50a7ea68",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-18T16:22:27.902Z"
+    },
+    "candidate_directive-refactor-riscv_zknh-backends": {
+      "item_id": "candidate_directive-refactor-riscv_zknh-backends",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-XORS-refactor-riscv_zknh-backends.md",
+      "title": "refactor `riscv_zknh` backends",
+      "repository": "RustCrypto/hashes",
+      "source_version": "50a7ea68",
+      "content_hash": "e1ea39242fd8d2b927893f28aab33d7dc8f57f569cce615e9dcbf8e38c7d097f",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-18T16:22:28.265Z"
+    },
+    "domain_intelligence-architecture-intelligence-rustcrypto-hashes-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-rustcrypto-hashes-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-rustcrypto-hashes-architecture-intelligence-rustcrypto-hashes-core-invariants.md",
+      "title": "Architecture Intelligence: RustCrypto/hashes Core Invariants",
+      "repository": "RustCrypto/hashes",
+      "source_version": "50a7ea68",
+      "content_hash": "a6dc494171cf464e3a71242936c0b49b5bb79587788f4c43438547f23ec2d21d",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-18T16:22:28.400Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-rustcrypto-hashes": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-rustcrypto-hashes",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/rustcrypto-hashes-verification-protocol-empirical-defect-shield-for-rustcrypto-h.md",
+      "title": "Verification Protocol: Empirical Defect Shield for RustCrypto/hashes",
+      "repository": "RustCrypto/hashes",
+      "source_version": "50a7ea68",
+      "content_hash": "b1ab30635c03c7c3533af400626ac5a68b211721e0282b91dbf6e45ba4079302",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-18T16:22:28.531Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-o2sh-onefetch-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-o2sh-onefetch-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/o2sh-onefetch-learnings-verification-protocol-empirical-defect-shield-for-o2sh-o.md",
+      "title": "Verification Protocol: Empirical Defect Shield for o2sh-onefetch-learnings",
+      "repository": "o2sh-onefetch-learnings",
+      "source_version": "HEAD",
+      "content_hash": "a105c80bf758487da202bca832d5e9c34c8b94ca48ef74fde267aff1e9ae8385",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-18T16:22:31.799Z"
+    },
+    "candidate_directive-sha2-refactor-riscv_zknh-backends": {
+      "item_id": "candidate_directive-sha2-refactor-riscv_zknh-backends",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-XSO2-sha2-refactor-riscv_zknh-backends.md",
+      "title": "sha2: refactor `riscv_zknh` backends",
+      "repository": "rustcrypto-hashes-learnings",
+      "source_version": "HEAD",
+      "content_hash": "6a90933da61d5d74045629212e21ded1e21ddcd5dffb2968dbe6617b0fdfc667",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-18T16:22:33.314Z"
+    },
+    "domain_intelligence-architecture-intelligence-rustcrypto-hashes-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-rustcrypto-hashes-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-rustcrypto-hashes-learnings-architecture-intelligence-rustcrypto-hashes-learning.md",
+      "title": "Architecture Intelligence: rustcrypto-hashes-learnings Core Invariants",
+      "repository": "rustcrypto-hashes-learnings",
+      "source_version": "HEAD",
+      "content_hash": "ffda71d7e8e5f2681dcd951f93a224376947df23cc4547cd5b7dc894808a67af",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-18T16:22:33.452Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-rustcrypto-hashes-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-rustcrypto-hashes-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/rustcrypto-hashes-learnings-verification-protocol-empirical-defect-shield-for-ru.md",
+      "title": "Verification Protocol: Empirical Defect Shield for rustcrypto-hashes-learnings",
+      "repository": "rustcrypto-hashes-learnings",
+      "source_version": "HEAD",
+      "content_hash": "eafb3f18c35e36dc95f910dcaadf99df353f2d70475dd9c96e2afd30f88c2984",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-18T16:22:33.604Z"
     }
   },
   "ai-builder-brain": {

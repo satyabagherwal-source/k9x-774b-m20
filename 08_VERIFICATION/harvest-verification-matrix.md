@@ -11036,3 +11036,6 @@
 | `CYCLE-2026-11-18-PROJ-EVOLVE` | `2026-11-18T16:00:41.165Z` | `hf-briaai-rmbg-3.0` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-EE4276B2` [Domain D] | Yes (`b06a1691...`) |
 | `CYCLE-2026-11-18-PROJ-EVOLVE` | `2026-11-18T16:01:20.959Z` | `freenet-freenet-core` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-L-902F756C` [Domain L] | Yes (`23d0ef54...`) |
 | `CYCLE-20261118-N4IT` | `2026-11-18T16:14:15.461Z` | `ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf-learnings.md` | Yes (`af3ea9ca...`) |
+| `CYCLE-20261118-XEBU` | `2026-11-18T16:22:14.730Z` | `unsloth/Qwen3.8-27B-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-unsloth-qwen3.8-27b-gguf-learnings.md` | Yes (`afb0b908...`) |
+| `CYCLE-20261118-XG9A` | `2026-11-18T16:22:17.230Z` | `o2sh/onefetch` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9255` | Yes (`61de0617...`) |
+| `CYCLE-20261118-XOMO` | `2026-11-18T16:22:28.080Z` | `RustCrypto/hashes` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9256` | Yes (`bf7f1dde...`) |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-18T16:14:15.474Z",
+  "last_updated": "2026-11-18T16:22:28.092Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -785,14 +785,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-unsloth-qwen3-8-27b-gguf",
-      "content_hash": "72ae56f254a398c94de0a687923389368a422cd0fda647d855d6906bf8c4d3b4",
-      "verified_at": "2026-11-18T07:05:36.378Z",
+      "content_hash": "afb0b908294a98014d43abc67ec99052e762bb102e3125986b2c9f27f9ef1baf",
+      "verified_at": "2026-11-18T16:22:14.742Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T07:05:36.378Z"
+      "last_updated": "2026-11-18T16:22:14.742Z"
     },
     "DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF": {
       "repository": "DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
@@ -4701,14 +4701,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-rustcrypto-hashes",
-      "content_hash": "d73b31e0435e2ecf7b08c679ea5cc1af76fc7d501d52c91199f23dcc091b6b1c",
-      "verified_at": "2026-11-09T15:12:49.089Z",
+      "content_hash": "bf7f1dde2e83ec32c5f0719d666a3fee95dca07c3b00af5da19c2dea74461e24",
+      "verified_at": "2026-11-18T16:22:28.092Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T15:12:49.089Z"
+      "last_updated": "2026-11-18T16:22:28.092Z"
     },
     "onlook-dev/onlook": {
       "repository": "onlook-dev/onlook",
@@ -6111,14 +6111,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-o2sh-onefetch",
-      "content_hash": "7ec93d6b9fc43cb9fc7b0585a9f54be115c9aca3666bb58bd930f8102696cb15",
-      "verified_at": "2026-11-18T07:47:51.673Z",
+      "content_hash": "61de0617b387c479256c3688125f7e09fe8866bf84ebda641fbc0c5c657f2826",
+      "verified_at": "2026-11-18T16:22:17.242Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T07:47:51.673Z"
+      "last_updated": "2026-11-18T16:22:17.242Z"
     },
     "RunanywhereAI/runanywhere-sdks": {
       "repository": "RunanywhereAI/runanywhere-sdks",

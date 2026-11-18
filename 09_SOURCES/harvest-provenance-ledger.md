@@ -11069,3 +11069,6 @@ Every entry in this ledger must capture:
 | `learn-dom-d-ee4276b2` | `project://hf-briaai-rmbg-3.0` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-briaai-rmbg-3.0-learnings.md` | 2026-11-18T16:00:41.165Z |
 | `learn-dom-l-902f756c` | `project://freenet-freenet-core` | `9811972d` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/freenet-freenet-core-learnings.md` | 2026-11-18T16:01:20.959Z |
 | `learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf` | `https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF` | `hf-ista-da` | Multi-dimensional audit evidence | 2026-11-18T16:14:15.465Z |
+| `learn-huggingface-unsloth-qwen3-8-27b-gguf` | `https://huggingface.co/unsloth/Qwen3.8-27B-GGUF` | `hf-unsloth` | Multi-dimensional audit evidence | 2026-11-18T16:22:14.734Z |
+| `learn-github-o2sh-onefetch` | `https://github.com/o2sh/onefetch` | `3054de77` | Multi-dimensional audit evidence | 2026-11-18T16:22:17.234Z |
+| `learn-github-rustcrypto-hashes` | `https://github.com/RustCrypto/hashes` | `50a7ea68` | Multi-dimensional audit evidence | 2026-11-18T16:22:28.084Z |
