@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-18T10:32:40.813Z",
-  "total_verified_learnings": 8997,
+  "last_updated": "2026-11-18T10:45:17.920Z",
+  "total_verified_learnings": 8998,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 21151,
+  "total_items": 21160,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -114817,10 +114817,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-expo-expo-technical-construction-intelligence-expo-expo-core-invariants.md",
       "title": "Technical Construction Intelligence: expo/expo Core Invariants",
       "repository": "expo/expo",
-      "source_version": "b32f30a4",
-      "content_hash": "eec3b0b94d19245f61f5a5094a01ecbe63a3956a6336d317ac3f8e920a87d6da",
+      "source_version": "9eed7a5a",
+      "content_hash": "7951931963b61f2f0f8e5ea766fe42ebb0b501df09bf3e95a029d2fa4bc1da81",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T08:07:59.028Z"
+      "persisted_at": "2026-11-18T10:45:10.925Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-expo-expo": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-expo-expo",
@@ -114829,10 +114829,10 @@
       "relative_path": "08_VERIFICATION/expo-expo-verification-protocol-empirical-defect-shield-for-expo-expo.md",
       "title": "Verification Protocol: Empirical Defect Shield for expo/expo",
       "repository": "expo/expo",
-      "source_version": "b32f30a4",
-      "content_hash": "34680b80b19dee365db5ff465e1f1e78227fcb497b39f541f8adff5e294ac5ec",
+      "source_version": "9eed7a5a",
+      "content_hash": "b902034e3ce5402097ff609d3e17d97752e7493bdc33819c62c65c417dfa0fe7",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T08:07:59.147Z"
+      "persisted_at": "2026-11-18T10:45:11.082Z"
     },
     "domain_intelligence-technical-construction-intelligence-kucherenko-jscpd-learnings-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-kucherenko-jscpd-learnings-core-invariants",
@@ -114878,9 +114878,9 @@
       "title": "Technical Construction Intelligence: expo-expo-learnings Core Invariants",
       "repository": "expo-expo-learnings",
       "source_version": "HEAD",
-      "content_hash": "009f9b0a280da94593fc7b50638ae45a61ad9f094f2a0e806d9f411afecf7426",
+      "content_hash": "79e59a406773cd80f1049832423d2c76d17957abc50c25ded5fe1a2dd07d082e",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T08:09:16.836Z"
+      "persisted_at": "2026-11-18T10:45:16.529Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-expo-expo-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-expo-expo-learnings",
@@ -114890,9 +114890,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for expo-expo-learnings",
       "repository": "expo-expo-learnings",
       "source_version": "HEAD",
-      "content_hash": "6096b4144d3f922b48d22a082f17f8125e3afdb750de09edbb249675bd8c7007",
+      "content_hash": "56e3011c46d30708267dddea1855864e2841ce2e5888b28ce4a8ce683f633216",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T08:09:16.947Z"
+      "persisted_at": "2026-11-18T10:45:16.702Z"
     },
     "domain_intelligence-research-knowledge-intelligence-alissonerdx-bfs-best-face-swap-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-alissonerdx-bfs-best-face-swap-core-invariants",
@@ -268031,14 +268031,19 @@
       "slug": "expo-expo",
       "platform": "github",
       "source_url": "https://github.com/expo/expo",
-      "source_version": "b32f30a4",
-      "content_hash": "6a5debd9f94c1207a30698ce53a7dfb48412997767da2ab24b57eab4bafe6a89",
+      "source_version": "9eed7a5a",
+      "content_hash": "25e42ed8bc9714a448da4963d7dba05691bf633fadb63202cd5c66311b1c8c68",
       "dossier_path": "07_PROJECT_LEARNING/expo-expo-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/expo-expo-learnings.md",
       "promoted_rules": [
         {
           "number": 8910,
           "title": "[docs] Fix the DownloadSlide card link in the generated Markdown",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9200,
+          "title": "[expo-glass-effect] Build from a checked-in Package.swift",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -268047,7 +268052,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T08:07:58.581Z",
+      "verified_at": "2026-11-18T10:45:10.358Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -277941,7 +277946,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Qwen/Qwen3.8-27B",
       "source_version": "hf-qwen-qwen3.8-27b",
-      "content_hash": "6e1945aae3517f8d761398f06c00577c9a68649a66b6879c82580e983e7877af",
+      "content_hash": "299a5f5bb41bd28ecc555dd284df87b1ffd2433060d6ef1eb380be83f60d2dcd",
       "dossier_path": "07_PROJECT_LEARNING/hf-qwen-qwen3.8-27b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-qwen-qwen3.8-27b-learnings.md",
       "promoted_rules": [],
@@ -277950,7 +277955,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T21:40:59.482Z",
+      "verified_at": "2026-11-18T10:45:01.907Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -277967,9 +277972,9 @@
       "title": "Research & Knowledge Intelligence: Qwen/Qwen3.8-27B Core Invariants",
       "repository": "Qwen/Qwen3.8-27B",
       "source_version": "hf-qwen-qwen3.8-27b",
-      "content_hash": "8cf85efadf4830636f547242ad436c29b321acd33038c4ee302f7e51694e6e11",
+      "content_hash": "25e083339c634117fde65441af6ac9fd52300f7d0fd5db1d423731365548995a",
       "domain_letter": "D",
-      "persisted_at": "2026-11-17T21:40:59.856Z"
+      "persisted_at": "2026-11-18T10:45:02.341Z"
     },
     "rule-9071": {
       "learning_id": "rule-9071",
@@ -278069,9 +278074,9 @@
       "title": "Research & Knowledge Intelligence: hf-qwen-qwen3.8-27b-learnings Core Invariants",
       "repository": "hf-qwen-qwen3.8-27b-learnings",
       "source_version": "HEAD",
-      "content_hash": "a0ac12d1149a172fc5581c71e4f71811de90e85d6805a36436871a07cebc9180",
+      "content_hash": "a342811fd53a30bc6a149bb0ad3c4b60a624d5cdc8867a56e58a67d25bcab4fb",
       "domain_letter": "D",
-      "persisted_at": "2026-11-17T21:41:21.049Z"
+      "persisted_at": "2026-11-18T10:45:15.979Z"
     },
     "domain_intelligence-quality-verification-intelligence-nats-io-nats-go-learnings-core-invariants": {
       "item_id": "domain_intelligence-quality-verification-intelligence-nats-io-nats-go-learnings-core-invariants",
@@ -285239,6 +285244,139 @@
       "content_hash": "b9c7e555a947498263c79b73f11745c9084a3d6c76386aa9c9cef9ef55fb4cb3",
       "domain_letter": "G",
       "persisted_at": "2026-11-18T10:32:39.939Z"
+    },
+    "rule-9200": {
+      "learning_id": "rule-9200",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9200,
+      "title": "[expo-glass-effect] Build from a checked-in Package.swift",
+      "source_url": "https://github.com/expo/expo",
+      "source_version": "9eed7a5a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-18T10:45:10.358Z"
+    },
+    "candidate_directive-expo-glass-effect-build-from-a-checked-in-package-swift": {
+      "item_id": "candidate_directive-expo-glass-effect-build-from-a-checked-in-package-swift",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-W1QZ-expo-glass-effect-build-from-a-checked-in-package-swift.md",
+      "title": "[expo-glass-effect] Build from a checked-in Package.swift",
+      "repository": "expo-expo-learnings",
+      "source_version": "HEAD",
+      "content_hash": "c0ae356633fd6a8dc19a9a6acc235f770ad45b26255a327afd66acf4cc9a2931",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-18T10:45:16.382Z"
+    },
+    "learn-github-projectcontour-contour": {
+      "learning_id": "learn-github-projectcontour-contour",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "projectcontour/contour",
+      "repository": "projectcontour/contour",
+      "slug": "projectcontour-contour",
+      "platform": "github",
+      "source_url": "https://github.com/projectcontour/contour",
+      "source_version": "5344f432",
+      "content_hash": "d458c7169346da25b9a83ca0aefda8c6f99e2aedd5bfac4d6fdc2725db57963f",
+      "dossier_path": "07_PROJECT_LEARNING/projectcontour-contour-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/projectcontour-contour-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 9201,
+          "title": "build(deps): bump golang.org/x/oauth2 from 0.37.0 to 0.38.0",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-18T10:45:12.303Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-9201": {
+      "learning_id": "rule-9201",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9201,
+      "title": "build(deps): bump golang.org/x/oauth2 from 0.37.0 to 0.38.0",
+      "source_url": "https://github.com/projectcontour/contour",
+      "source_version": "5344f432",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-18T10:45:12.303Z"
+    },
+    "candidate_directive-build-deps-bump-golang-org-x-oauth2-from-0-37-0-to-0-38-0": {
+      "item_id": "candidate_directive-build-deps-bump-golang-org-x-oauth2-from-0-37-0-to-0-38-0",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-W2PM-build-deps-bump-golang-org-x-oauth2-from-0-37-0-to-0-38-0.md",
+      "title": "build(deps): bump golang.org/x/oauth2 from 0.37.0 to 0.38.0",
+      "repository": "projectcontour-contour-learnings",
+      "source_version": "HEAD",
+      "content_hash": "1b02f894d603df01b7c20f37428c82381bfa391d58da208a001e4cd4ac649873",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-18T10:45:17.629Z"
+    },
+    "domain_intelligence-content-information-intelligence-projectcontour-contour-core-invariants": {
+      "item_id": "domain_intelligence-content-information-intelligence-projectcontour-contour-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-projectcontour-contour-content-information-intelligence-projectcontour-contour-c.md",
+      "title": "Content & Information Intelligence: projectcontour/contour Core Invariants",
+      "repository": "projectcontour/contour",
+      "source_version": "5344f432",
+      "content_hash": "9eafd953b08fdb6c0470c90a25ce30699b7230fc96a7fb3ce643d487671247b5",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-18T10:45:12.852Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-projectcontour-contour": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-projectcontour-contour",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/projectcontour-contour-verification-protocol-empirical-defect-shield-for-project.md",
+      "title": "Verification Protocol: Empirical Defect Shield for projectcontour/contour",
+      "repository": "projectcontour/contour",
+      "source_version": "5344f432",
+      "content_hash": "0af56c6cb30d232ad9428f87aaea2685edb9f2bafc45c14ac8beb09b017b1f67",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-18T10:45:13.008Z"
+    },
+    "domain_intelligence-content-information-intelligence-projectcontour-contour-learnings-core-invariant": {
+      "item_id": "domain_intelligence-content-information-intelligence-projectcontour-contour-learnings-core-invariant",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-projectcontour-contour-learnings-content-information-intelligence-projectcontour.md",
+      "title": "Content & Information Intelligence: projectcontour-contour-learnings Core Invariants",
+      "repository": "projectcontour-contour-learnings",
+      "source_version": "HEAD",
+      "content_hash": "f18250cc9fdbb70025769c28b845270c0ccc5e416ad15ace1770f2536dca6730",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-18T10:45:17.774Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-projectcontour-contour-learnin": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-projectcontour-contour-learnin",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/projectcontour-contour-learnings-verification-protocol-empirical-defect-shield-f.md",
+      "title": "Verification Protocol: Empirical Defect Shield for projectcontour-contour-learnings",
+      "repository": "projectcontour-contour-learnings",
+      "source_version": "HEAD",
+      "content_hash": "3022c9cce1bbeda06f9bd3e879b5e698ac4db216810c4d3399d349c0b7afb40d",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-18T10:45:17.920Z"
     }
   },
   "ai-builder-brain": {

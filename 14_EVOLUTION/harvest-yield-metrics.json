@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T10:32:36.165Z",
-  "total_cycles_completed": 10452,
-  "total_learnings_persisted": 10452,
-  "total_rules_promoted": 9955,
+  "last_updated": "2026-11-18T10:45:12.509Z",
+  "total_cycles_completed": 10455,
+  "total_learnings_persisted": 10455,
+  "total_rules_promoted": 9957,
   "history": [
-    {
-      "timestamp": "2026-11-17T20:17:47.424Z",
-      "repository": "dathere/qsv",
-      "learningId": "learn-github-dathere-qsv",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T20:25:24.915Z",
-      "repository": "Edge0/Audio8-ASR-Infinite",
-      "learningId": "learn-huggingface-edge0-audio8-asr-infinite",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T20:25:26.819Z",
-      "repository": "zed-industries/zed",
-      "learningId": "learn-github-zed-industries-zed",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-17T20:25:33.113Z",
       "repository": "czy0729/Bangumi",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-18T10:32:36.165Z",
       "repository": "open-policy-agent/gatekeeper",
       "learningId": "learn-github-open-policy-agent-gatekeeper",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T10:45:02.148Z",
+      "repository": "Qwen/Qwen3.8-27B",
+      "learningId": "learn-huggingface-qwen-qwen3-8-27b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T10:45:10.560Z",
+      "repository": "expo/expo",
+      "learningId": "learn-github-expo-expo",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T10:45:12.509Z",
+      "repository": "projectcontour/contour",
+      "learningId": "learn-github-projectcontour-contour",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

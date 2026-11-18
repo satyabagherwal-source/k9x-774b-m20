@@ -10927,3 +10927,6 @@
 | `CYCLE-20261118-FJWD` | `2026-11-18T10:32:26.749Z` | `BAAI/bge-small-en-v1.5` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baai-bge-small-en-v1.5-learnings.md` | Yes (`1280dd32...`) |
 | `CYCLE-20261118-FQ5S` | `2026-11-18T10:32:34.864Z` | `laurent22/joplin` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9198` | Yes (`27a43e26...`) |
 | `CYCLE-20261118-FR5O` | `2026-11-18T10:32:36.156Z` | `open-policy-agent/gatekeeper` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9199` | Yes (`3cedc4bf...`) |
+| `CYCLE-20261118-VQRD` | `2026-11-18T10:45:02.137Z` | `Qwen/Qwen3.8-27B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3.8-27b-learnings.md` | Yes (`299a5f5b...`) |
+| `CYCLE-20261118-VX93` | `2026-11-18T10:45:10.551Z` | `expo/expo` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9200` | Yes (`25e42ed8...`) |
+| `CYCLE-20261118-VYR6` | `2026-11-18T10:45:12.498Z` | `projectcontour/contour` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9201` | Yes (`d458c716...`) |

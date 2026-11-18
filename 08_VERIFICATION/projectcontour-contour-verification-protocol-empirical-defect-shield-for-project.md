@@ -4,45 +4,31 @@
 {
   "source_repository": "projectcontour/contour",
   "source_url": "https://github.com/projectcontour/contour",
-  "source_version": "historical-head",
-  "license": "OPEN_HARVEST",
-  "timestamp": "2026-11-13T00:00:00.000Z",
-  "ai_provider": "universal-multi-artifact-distributor",
+  "source_version": "5344f432",
+  "license": "Apache-2.0",
+  "timestamp": "2026-11-18T10:45:12.701Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
-  "learning_id": "unknown",
+  "learning_id": "learn-github-projectcontour-contour",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [projectcontour/contour](https://github.com/projectcontour/contour) (Revision: `historical`).  
-> **License**: OPEN_HARVEST | **Timestamp**: `2026-11-13T00:00:00.000Z`  
-> **Learning ID**: `unknown`
+> **Provenance**: Harvested from [projectcontour/contour](https://github.com/projectcontour/contour) (Revision: `5344f432`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-18T10:45:12.701Z`  
+> **Learning ID**: `learn-github-projectcontour-contour`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `projectcontour/contour` (Commit: `historical`)
+- **Target Repository**: `projectcontour/contour` (Commit: `5344f432`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
-> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/projectcontour-contour-learnings.md`  
-> **Source**: github ([https://github.com/projectcontour/contour](https://github.com/projectcontour/contour))  
-> **Source Version**: `bb06ab91`  
-> **License**: Apache-2.0  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-11T14:16:45.308Z  
-> **Learning ID**: `learn-github-projectcontour-contour`  
-> **Pipeline Version**: `2.0.0`  
-> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
-> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
-> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
-
----
-
 # Forensic Learning Record (Deep Inspection): projectcontour/contour
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/projectcontour-contour-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/projectcontour/contour](https://github.com/projectcontour/contour))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-11T14:16:45.300Z  
+> **Harvest Timestamp**: 2026-11-18T10:45:11.483Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Contour is a Kubernetes ingress controller using Envoy proxy.
 - **Primary Language / Ecosystem**: HTML
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 3954 stars
+- **Stars / Engagement**: 3967 stars
 
 ---
 
@@ -1617,11 +1603,13 @@ const (
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #7825** (2026-11-09): **build(deps): bump docker/login-action from 4.7.0 to 4.8.0**
-  *Symptoms*: Bumps [docker/login-action](https://github.com/docker/login-action) from 4.7.0 to 4.8.0. <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/docker/login-action/releases">docker/login-action's releases</a>.</em></p> <blockquote> <h2>v4.8.0</h2> <ul> <li>Set Docker Hub OIDC token lifetime default to 1 hour by <a href="https://github.com/crazy-max"><code>@​crazy-max</code></a> in <a href="https://redirect.github.com/docker/login-action/pull/1070">docker/login-action#1070</a></li> <li>Bump <code>@​aws-sdk/client-ecr</code> and <code>@​aws-sdk/client-ecr-public</code> to 3.1161.0 in <a href="https://redirect.github.com/docker/login-action/pull/1103">docker/login-action#1103</a></li> <li>Bump <code>@​docker/actions-toolkit</code> from 0.107.0 to 0.109.0 in <a href="https://redirect.github.com/docker/login-action/pull/1105">docker/login-action#1105</a></li> <li>Bump vite from 7.3.6 to 7.3.7 in <a href="https://redirect.github.com/docker/login-action/pull/1101">docker/login-action#1101</a></li> </ul> <p><strong>Full Changelog</strong>: <a href="https://github.com/docker/login-action/compare/v4.7.0...v4.8.0">https://github.com/docker/login-action/compare/v4.7.0...v4.8.0</a></p> </blockquote> </details> <details> <summary>Commits</summary> <ul> <li><a href="https://github.com/docker/login-action/commit/8aa5831fb8d48d8f76594c7ddde61ae58019f550"><code>8aa5831</code></a> Merge pull request <a href="https://redirect.github.com/docker/login-action/iss
+- **Issue #7834** (2026-11-17): **build(deps): bump golang.org/x/oauth2 from 0.37.0 to 0.38.0**
+  *Symptoms*: Bumps [golang.org/x/oauth2](https://github.com/golang/oauth2) from 0.37.0 to 0.38.0. <details> <summary>Commits</summary> <ul> <li><a href="https://github.com/golang/oauth2/commit/0f01e8215572819016fac21b005f5f32ba407798"><code>0f01e82</code></a> oauth2: prevent NewTicker panic</li> <li>See full diff in <a href="https://github.com/golang/oauth2/compare/v0.37.0...v0.38.0">compare view</a></li> </ul> </details> <br />   [![Dependabot compatibility score](https://dependabot-badges.githubapp.com/badges/compatibility_score?dependency-name=golang.org/x/oauth2&package-manager=go_modules&previous-version=0.37.0&new-version=0.38.0)](https://docs.github.com/en/github/managing-security-vulnerabilities/about-dependabot-security-updates#about-compatibility-scores)  Dependabot will resolve any conflicts with this PR as long as you don't alter it yourself. You can also trigger a rebase manually by commenting `@dependabot rebase`.  [//]: # (dependabot-automerge-start) [//]: # (dependabot-automerge-end)  ---  <details> <summary>Dependabot commands and options</summary> <br />  You can trigger Dependabot actions by commenting on this PR: - `@dependabot rebase` will rebase this PR - `@dependabot recreate` will recreate this PR, overwriting any edits that have been made to it - `@dependabot show <dependency name> ignore conditions` will show all of the ignore conditions of the specified dependency - `@dependabot ignore this major version` will close this PR and stop Dependabot creating any more 
 
-- **Issue #7824** (2026-11-09): **build(deps): bump the codeql-action group with 4 updates**
-  *Symptoms*: Bumps the codeql-action group with 4 updates: [github/codeql-action/init](https://github.com/github/codeql-action), [github/codeql-action/autobuild](https://github.com/github/codeql-action), [github/codeql-action/analyze](https://github.com/github/codeql-action) and [github/codeql-action/upload-sarif](https://github.com/github/codeql-action).  Updates `github/codeql-action/init` from 4.39.1 to 4.39.3 <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/github/codeql-action/releases">github/codeql-action/init's releases</a>.</em></p> <blockquote> <h2>v4.39.3</h2> <ul> <li>Fixed diff-informed alert filtering incorrectly removing alerts in changed files whose paths contain spaces, special characters, or non-ASCII characters. <a href="https://redirect.github.com/github/codeql-action/pull/4283">#4283</a></li> </ul> <h2>v4.39.2</h2> <ul> <li>Update default CodeQL bundle version to <a href="https://github.com/github/codeql-action/releases/tag/codeql-bundle-v2.27.4">2.27.4</a>. <a href="https://redirect.github.com/github/codeql-action/pull/4284">#4284</a></li> <li><em>Upcoming breaking change</em>: CodeQL version 2.22.3 and earlier were discontinued on 16 October 2026 alongside GitHub Enterprise Server 3.18, and will be unsupported by the next minor release of the CodeQL Action. Added a deprecation warning for customers using these versions of CodeQL. <a href="https://redirect.github.com/github/codeql-action/pull/4266">#4266</a></li> <li>Starting
+- **Issue #7832** (2026-11-12): **Treat invalid health check policy as a warning, not an error**
+  *Symptoms*: This PR follows up on #7777, which added a check for invalid health check ranges.   Instead of marking the `HTTPProxy` invalid, it now sets a warning as defined in the [conflict resolution design doc](https://github.com/projectcontour/contour/blob/main/design/httpproxy-conflict.md?plain=1#L104).  The route is served without a health check, and the `HTTPProxy` stays valid.  With #7777, an included `HTTPProxy` with an invalid range was dropped, so its requests could be routed to the parent's backend. This is now avoided.
+  **Post-Mortem & Fix Analysis**:
+  > ## [Codecov](https://app.codecov.io/gh/projectcontour/contour/pull/7832?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=projectcontour) Report :x: Patch coverage is `90.90909%` with `1 line` in your changes missing coverage. Please review. :white_check_mark: Project coverage is 84.39%. Comparing base ([`f383e83`](https://app.codecov.io/gh/projectcontour/contour/commit/f383e833efeeaa45871348505c26a9220e1c9d55?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=projectcontour)) to head ([`c564bcc`](https://app.codecov.io/gh/projectcontour/contour/commit/c564bcc9cacc56ca34698ab37eae94971f3f17b5?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=projectcontour)).  | [Files with missing lines](https://app.codecov.io/gh/projectcontour/contour/pull/7832?dropdown=coverage&src=pr&el=tree&ut
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1638,18 +1626,16 @@ const (
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `27b02e00` (2026-11-09)
-**Commit Message**: build(deps): bump github.com/onsi/ginkgo/v2 from 2.33.1 to 2.34.0 (#7822)
+### Incident Patch 1: `5344f432` (2026-11-17)
+**Commit Message**: build(deps): bump golang.org/x/oauth2 from 0.37.0 to 0.38.0 (#7834)
 
-Bumps [github.com/onsi/ginkgo/v2](https://github.com/onsi/ginkgo) from 2.33.1 to 2.34.0.
-- [Release notes](https://github.com/onsi/ginkgo/releases)
-- [Changelog](https://github.com/onsi/ginkgo/blob/master/CHANGELOG.md)
-- [Commits](https://github.com/onsi/ginkgo/compare/v2.33.1...v2.34.0)
+Bumps [golang.org/x/oauth2](https://github.com/golang/oauth2) from 0.37.0 to 0.38.0.
+- [Commits](https://github.com/golang/oauth2/compare/v0.37.0...v0.38.0)
 
 ---
 updated-dependencies:
-- dependency-name: github.com/onsi/ginkgo/v2
-  dependency-version: 2.34.0
+- dependency-name: golang.org/x/oauth2
+  dependency-version: 0.38.0
   dependency-type: direct:production
   update-type: version-update:semver-minor
 ...
@@ -1659,205 +1645,39 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 **File**: `go.mod` (modified, +1/-1)
 ```diff
-@@ -16,7 +16,7 @@ require (
- 	github.com/google/go-github/v48 v48.2.0
- 	github.com/google/uuid v1.6.0
- 	github.com/grpc-ecosystem/go-grpc-prometheus v1.2.0
--	github.com/onsi/ginkgo/v2 v2.33.1
-+	github.com/onsi/ginkgo/v2 v2.34.0
- 	github.com/onsi/gomega v1.44.0
- 	github.com/pkg/errors v0.9.1
- 	github.com/prometheus/client_golang v1.25.0
+@@ -27,7 +27,7 @@ require (
+ 	github.com/tsaarni/certyaml v0.13.0
+ 	go.uber.org/automaxprocs v1.6.0
+ 	golang.org/x/net v0.62.0
+-	golang.org/x/oauth2 v0.37.0
++	golang.org/x/oauth2 v0.38.0
+ 	gonum.org/v1/plot v0.17.0
+ 	google.golang.org/genproto/googleapis/rpc v0.0.0-20260817212433-ac3dfec99bb1
+ 	google.golang.org/grpc v1.85.0
 ```
 
 **File**: `go.sum` (modified, +2/-2)
 ```diff
-@@ -166,8 +166,8 @@ github.com/modern-go/reflect2 v1.0.3-0.20250322232337-35a7c28c31ee h1:W5t00kpgFd
- github.com/modern-go/reflect2 v1.0.3-0.20250322232337-35a7c28c31ee/go.mod h1:yWuevngMOJpCy52FWWMvUC8ws7m/LJsjYzDa0/r8luk=
- github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 h1:C3w9PqII01/Oq1c1nUAm88MOHcQC9l5mIlSMApZMrHA=
- github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822/go.mod h1:+n7T8mK8HuQTcFwEeznm/DIxMOiR9yIdICNftLE1DvQ=
--github.com/onsi/ginkgo/v2 v2.33.1 h1:62XfWJbEIjPSCSDYrsCPP/SHcmH7O0M8ne8zfqQ2iz4=
--github.com/onsi/ginkgo/v2 v2.33.1/go.mod h1:+aXOY+vzZ5mu2iI2HpTZUPmM//oQfsNFX6gU9kNcA44=
-+github.com/onsi/ginkgo/v2 v2.34.0 h1:aN3Us823mHHTSWMIi8WIQTdYuSPhl2lWY46E/w3SiAk=
-+github.com/onsi/ginkgo/v2 v2.34.0/go.mod h1:+aXOY+vzZ5mu2iI2HpTZUPmM//oQfsNFX6gU9kNcA44=
- github.com/onsi/gomega v1.44.0 h1:eAiGl3Pw5jz5GQdDff0BcxYpAX1JxW8xD7mFUuwNfZQ=
- github.com/onsi/gomega v1.44.0/go.mod h1:e/C2HwaZ1DhvjzXXuFhcR7hY7Sh9pl7MmoWKEjzwcdA=
- github.com/opencontainers/go-digest v1.0.0 h1:apOUWs51W5PlhuyGyz9FCeeBIOUDA/6nW8Oi/yOhh5U=
-```
-
----
-
-### Incident Patch 2: `09f6e30a` (2026-11-09)
-**Commit Message**: build(deps): bump github.com/prometheus/common from 0.73.0 to 0.73.1 (#7823)
-
-Bumps [github.com/prometheus/common](https://github.com/prometheus/common) from 0.73.0 to 0.73.1.
-- [Release notes](https://github.com/prometheus/common/releases)
-- [Changelog](https://github.com/prometheus/common/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/prometheus/common/compare/v0.73.0...v0.73.1)
-
----
-updated-dependencies:
-- dependency-name: github.com/prometheus/common
-  dependency-version: 0.73.1
-  dependency-type: direct:production
-  update-type: version-update:semver-patch
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `go.mod` (modified, +2/-3)
-```diff
-@@ -21,7 +21,7 @@ require (
- 	github.com/pkg/errors v0.9.1
- 	github.com/prometheus/client_golang v1.25.0
- 	github.com/prometheus/client_model v0.6.3
--	github.com/prometheus/common v0.73.0
-+	github.com/prometheus/common v0.73.1
- 	github.com/sirupsen/logrus v1.10.2
- 	github.com/stretchr/testify v1.12.1
- 	github.com/tsaarni/certyaml v0.13.0
-@@ -83,15 +83,14 @@ require (
- 	github.com/google/go-querystring v1.1.0 // indirect
- 	github.com/google/pprof v0.0.0-20260402051712-545e8a4df936 // indirect
- 	github.com/gorilla/websocket v1.5.4-0.20250319132907-e064f32e3674 // indirect
--	github.com/hashicorp/go-uuid v1.0.3 // indirect
- 	github.com/json-iterator/go v1.1.12 // indirect
- 	github.com/miekg/dns v1.1.65 // indirect
- 	github.com/moby/spdystream v0.5.1 // indirect
- 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
- 	github.com/modern-go/reflect2 v1.0.3-0.20250322232337-35a7c28c31ee // indirect
- 	github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 // indirect
- 	github.com/opencontainers/go-digest v1.0.0 // indirect
--	github.com/pandatix/go-abnf v0.5.1 // indirect
-+	github.com/pandatix/go-abnf v0.5.3 // indirect
- 	github.com/planetscale/vtprotobuf v0.6.1-0.20240319094008-0393e58bdf10 // indirect
- 	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 // indirect
- 	github.com/prometheus/procfs v0.22.0 // indirect
-```
-
-**File**: `go.sum` (modified, +4/-6)
-```diff
-@@ -137,8 +137,6 @@ github.com/gorilla/websocket v1.5.4-0.20250319132907-e064f32e3674 h1:JeSE6pjso5T
- github.com/gorilla/websocket v1.5.4-0.20250319132907-e064f32e3674/go.mod h1:r4w70xmWCQKmi1ONH4KIaBptdivuRPyosB9RmPlGEwA=
- github.com/grpc-ecosystem/go-grpc-prometheus v1.2.0 h1:Ovs26xHkKqVztRpIrF/92BcuyuQ/YW4NSIpoGtfXNho=
- github.com/grpc-ecosystem/go-grpc-prometheus v1.2.0/go.mod h1:8NvIoxWQoOIhqOTXgfV/d3M/q6VIi02HzZEHgUlZvzk=
--github.com/hashicorp/go-uuid v1.0.3 h1:2gKiV6YVmrJ1i2CKKa9obLvRieoRGviZFL26PcT/Co8=
--github.com/hashicorp/go-uuid v1.0.3/go.mod h1:6SBZvOh/SIDV7/2o3Jml5SYk/TvGqwFJ/bN7x4byOro=
- github.com/joshdk/go-junit v1.0.0 h1:S86cUKIdwBHWwA6xCmFlf3RTLfVXYQfvanM5Uh+K6GE=
- github.com/joshdk/go-junit v1.0.0/go.mod h1:TiiV0PqkaNfFXjEiyjWM3XXrhVyCa1K4Zfga6W52ung=
- github.com/json-iterator/go v1.1.12 h1:PV8peI4a0ysnczrg+LtxykD8LfKY9ML6u2jnxaEnrnM=
-@@ -174,8 +172,8 @@ github.com/onsi/gomega v1.44.0 h1:eAiGl3Pw5jz5GQdDff0BcxYpAX1JxW8xD7mFUuwNfZQ=
- github.com/onsi/gomega v1.44.0/go.mod h1:e/C2HwaZ1DhvjzXXuFhcR7hY7Sh9pl7MmoWKEjzwcdA=
- github.com/opencontainers/go-digest v1.0.0 h1:apOUWs51W5PlhuyGyz9FCeeBIOUDA/6nW8Oi/yOhh5U=
- github.com/opencontainers/go-digest v1.0.0/go.mod h1:0JzlMkj0TRzQZfJkVvzbP0HBR3IKzErnv2BNG4W4MAM=
--github.com/pandatix/go-abnf v0.5.1 h1:iyLvSu2Aq12iE0r4n948Qw21BHDuckLq/8WIXAAF+HI=
--github.com/pandatix/go-abnf v0.5.1/go.mod h1:VBmbtpFgQNEaQpyAvmi+Ecd9wAYJKzA3TmiB3L93sVg=
-+github.com/pandatix/go-abnf v0.5.3 h1:LA9AaxAqwzdxfDe7+HIGUB6tzx2N6wYVEAChmfsoPgo=
-+github.com/pandatix/go-abnf v0.5.3/go.mod h1:AE0KD3/VNoCjGzc1gqetRKshbI4SYErXQ/8kPenR5mc=
- github.com/pkg/errors v0.9.1 h1:FEBLx1zS214owpjy7qsBeixbURkuhQAwrK5UwLGTwt4=
- github.com/pkg/errors v0.9.1/go.mod h1:bwawxfHBFNV+L2hUp1rHADufV3IMtnDRdf1r5NINEl0=
- github.com/planetscale/vtprotobuf v0.6.1-0.20240319094008-0393e58bdf10 h1:GFCKgmp0tecUJ0sJuv4pzYCqS9+RGSn52M3FUwPs+uo=
-@@ -189,8 +187,8 @@ github.com/prometheus/client_golang v1.25.0 h1:cDtW1TcFsMi1RJc8khwCKB4VhzwV04aKq
- github.com/prometheus/client_golang v1.25.0/go.mod h1:j2X/4/kaQHLPnmyEU8zjmkndo1T317VpCIQEml8LTKk=
- github.com/prometheus/client_model v0.6.3 h1:O0jaTVAYNxTHYInEPFJt5I3+sN8zqBtVMPTB1qyxiEo=
- github.com/prometheus/client_model v0.6.3/go.mod h1:gpN5P9S7Rr6Yr92PiQ+Ixvhf6JZEkF1dnxsYL2aPBEM=
--github.com/prometheus/common v0.73.0 h1:NGIOmVi8jrgiiPQgXxD6rP0FfxFsuZxnMQkel0qBy/g=
--github.com/prometheus/common v0.73.0/go.mod h1:Nt+CsVkf/mj4wDAmtSwq1HTPohHSX6fMr6+/f9B5UqM=
-+github.com/prometheus/common v0.73.1 h1:SZWh/j4AvhCdhX8jvYSnxvPxhWlC9QZkjJ+tOrEr7kU=
-+github.com/prometheus/common v0.73.1/go.mod h1:I9aA/Ukz9s1olOobh8KtCkU7B1mQPQsB9UvQPsUQ1Dk=
- github.com/prometheus/procfs v0.22.0 h1:6q9+/JL9IKAPbCmBrv9n5O5Ty3NKnciV5X7YGw0oics=
- github.com/prometheus/procfs v0.22.0/go.mod h1:CvmFr/GVhIjIvWJZW3tgkODBQMRIf0EyWMQLHCHab58=
- github.com/rogpeppe/go-internal v1.14.1 h1:UQB4HGPB6osV0SQTLymcB4TgvyWu6ZyliaW0tI/otEQ=
-```
-
----
-
-### Incident Patch 3: `28e66586` (2026-11-09)
-**Commit Message**: build(deps): bump the codeql-action group with 4 updates (#7824)
-
-Bumps the codeql-action group with 4 updates: [github/codeql-action/init](https://github.com/github/codeql-action), [github/codeql-action/autobuild](https://github.com/github/codeql-action), [github/codeql-action/analyze](https://github.com/github/codeql-action) and [github/codeql-action/upload-sarif](https://github.com/github/codeql-action).
-
-
-Updates `github/codeql-action/init` from 4.39.1 to 4.39.3
-- [Release notes](https://github.com/github/codeql-action/releases)
-- [Changelog](https://github.com/github/codeql-action/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/github/codeql-action/compare/9b3254085494b55a0f7c4c2b3d2d52cc712ce370...33d7b85da1a04171e211befe2c739303b9a4c066)
-
-Updates `github/codeql-action/autobuild` from 4.39.1 to 4.39.3
-- [Release notes](https://github.com/github/codeql-action/releases)
-- [Changelog](https://github.com/github/codeql-action/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/github/codeql-action/compare/9b3254085494b55a0f7c4c2b3d2d52cc712ce370...33d7b85da1a04171e211befe2c739303b9a4c066)
-
-Updates `github/codeql-action/analyze` from 4.39.1 to 4.39.3
-- [Release notes](htt
-
-**File**: `.github/workflows/codeql-analysis.yml` (modified, +5/-5)
-```diff
-@@ -45,14 +45,14 @@ jobs:
-         cache: false
-     # Initializes the CodeQL tools for scanning.
-     - name: Initialize CodeQL
--      uses: github/codeql-action/init@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4.39.1
-+      uses: github/codeql-action/init@33d7b85da1a04171e211befe2c739303b9a4c066 # v4.39.3
-       with:
-         languages: go
-     # Autobuild attempts to build any compiled languages  (C/C++, C#, or Java).
-     - name: Autobuild
--      uses: github/codeql-action/autobuild@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4.39.1
-+      uses: github/codeql-action/autobuild@33d7b85da1a04171e211befe2c739303b9a4c066 # v4.39.3
-     - name: Perform CodeQL Analysis
--      uses: github/codeql-action/analyze@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4.39.1
-+      uses: github/codeql-action/analyze@33d7b85da1a04171e211befe2c739303b9a4c066 # v4.39.3
-       with:
-         category: /language:go
- 
-@@ -65,10 +65,10 @@ jobs:
-       with:
-         persist-credentials: false
-     - name: Initialize CodeQL
--      uses: github/codeql-action/init@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4.39.1
-+      uses: github/codeql-action/init@33d7b85da1a04171e211befe2c739303b9a4c066 # v4.39.3
-       with:
-         languages: actions
-     - name: Perform CodeQL Analysis
--      uses: github/codeql-action/analyze@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4.39.1
-+      uses: github/codeql-action/analyze@33d7b85da1a04171e211befe2c739303b9a4c066 # v4.39.3
-       with:
-         category: /language:actions
-```
-
-**File**: `.github/workflows/openssf-scorecard.yaml` (modified, +1/-1)
-```diff
-@@ -37,6 +37,6 @@ jobs:
-         name: SARIF file
-         path: results.sarif
-     - name: "Upload to code-scanning"
--      uses: github/codeql-action/upload-sarif@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4.39.1
-+      uses: github/codeql-action/upload-sarif@33d7b85da1a04171e211befe2c739303b9a4c066 # v4.39.3
-       with:
-         sarif_file: results.sarif
-```
-
-**File**: `.github/workflows/trivy-scan.yaml` (modified, +1/-1)
-```diff
-@@ -33,6 +33,6 @@ jobs:
-           output: 'trivy-results.sarif'
-           ignore-unfixed: true
-           severity: 'HIGH,CRITICAL'
--      - uses: github/codeql-action/upload-sarif@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4.39.1
-+      - uses: github/codeql-action/upload-sarif@33d7b85da1a04171e211befe2c739303b9a4c066 # v4.39.3
-         with:
-           sarif_file: 'trivy-results.sarif'
+@@ -254,8 +254,8 @@ golang.org/x/net v0.0.0-20190620200207-3b0461eec859/go.mod h1:z5CRVTTTmAJ677TzLL
+ golang.org/x/net v0.0.0-20201021035429-f5854403a974/go.mod h1:sp8m0HH+o8qH0wwXwYZr8TS3Oi6o0r6Gce1SSxlDquU=
+ golang.org/x/net v0.62.0 h1:18ELalfM5+XNRwzM2nYqXsZQ9ByS1uhj2O/U7+5jqRY=
+ golang.org/x/net v0.62.0/go.mod h1:WgDCOTH8iwtB66T4/GfI94AHo/hhdb7Hah9NDseQfiI=
+-golang.org/x/oauth2 v0.37.0 h1:JUlcxA8oAtauLfiH8FX2/FkAWHAdi0QtGCGc+hofE98=
+-golang.org/x/oauth2 v0.37.0/go.mod h1:IxwZNxUULJmpBFf9K/9NTMSIfZZuvuTy1gGxhigP/58=
++golang.org/x/oauth2 v0.38.0 h1:uW7XQbcu1eoiQS7uMJvLOjPMl04bTbmY1VeRPxvbspI=
++golang.org/x/oauth2 v0.38.0/go.mod h1:IxwZNxUULJmpBFf9K/9NTMSIfZZuvuTy1gGxhigP/58=
+ golang.org/x/sync v0.0.0-20190423024810-112230192c58/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
+ golang.org/x/sync v0.0.0-20201020160332-67f06af15bc9/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
+ golang.org/x/sync v0.24.0 h1:iqiDrGoDgyuvAKrhLQthUEzU/R378N78gXbBjxed7oA=
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #7834** (2026-11-17): build(deps): bump golang.org/x/oauth2 from 0.37.0 to 0.38.0 (@dependabot[bot])
+- **PR #7832** (2026-11-12): Treat invalid health check policy as a warning, not an error (@tsaarni)
 - **PR #7825** (2026-11-09): build(deps): bump docker/login-action from 4.7.0 to 4.8.0 (@dependabot[bot])
 - **PR #7824** (2026-11-09): build(deps): bump the codeql-action group with 4 updates (@dependabot[bot])
 - **PR #7823** (2026-11-09): build(deps): bump github.com/prometheus/common from 0.73.0 to 0.73.1 (@dependabot[bot])
 - **PR #7822** (2026-11-09): build(deps): bump github.com/onsi/ginkgo/v2 from 2.33.1 to 2.34.0 (@dependabot[bot])
-- **PR #7821** (2026-11-09): Set alt_stat_name for DNS name clusters (@lbarrosby)
-- **PR #7818** (2026-11-05): internal/dag: reject IP filter policy when any CIDR is invalid (@RaphaelFakhri)
 
 ---
 
@@ -1877,13 +1697,13 @@ Updates `github/codeql-action/analyze` from 4.39.1 to 4.39.3
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(deps): bump github.com/onsi/ginkgo/v2 from 2.33.1 to 2.34.0 (#7822)
+## X. build(deps): bump golang.org/x/oauth2 from 0.37.0 to 0.38.0
 
 **RULE**:
 When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in projectcontour/contour. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `27b02e00`: build(deps): bump github.com/onsi/ginkgo/v2 from 2.33.1 to 2.34.0 (#7822). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5344f432`: build(deps): bump golang.org/x/oauth2 from 0.37.0 to 0.38.0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing HTML data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
@@ -1891,17 +1711,17 @@ Subsystems managing HTML data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```html
 // Verified production-grade fix pattern:
-	github.com/onsi/ginkgo/v2 v2.34.0
+	golang.org/x/oauth2 v0.38.0
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```html
-// Anti-pattern to NEVER write (induced failure mode):
-	github.com/onsi/ginkgo/v2 v2.33.1
+// Induced defect failure mode:
+	golang.org/x/oauth2 v0.37.0
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `27b02e00` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5344f432` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

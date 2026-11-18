@@ -10960,3 +10960,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-baai-bge-small-en-v1-5` | `https://huggingface.co/BAAI/bge-small-en-v1.5` | `hf-baai-bg` | Multi-dimensional audit evidence | 2026-11-18T10:32:26.753Z |
 | `learn-github-laurent22-joplin` | `https://github.com/laurent22/joplin` | `a96f8bd5` | Multi-dimensional audit evidence | 2026-11-18T10:32:34.868Z |
 | `learn-github-open-policy-agent-gatekeeper` | `https://github.com/open-policy-agent/gatekeeper` | `fbbf865c` | Multi-dimensional audit evidence | 2026-11-18T10:32:36.160Z |
+| `learn-huggingface-qwen-qwen3-8-27b` | `https://huggingface.co/Qwen/Qwen3.8-27B` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-11-18T10:45:02.142Z |
+| `learn-github-expo-expo` | `https://github.com/expo/expo` | `9eed7a5a` | Multi-dimensional audit evidence | 2026-11-18T10:45:10.555Z |
+| `learn-github-projectcontour-contour` | `https://github.com/projectcontour/contour` | `5344f432` | Multi-dimensional audit evidence | 2026-11-18T10:45:12.502Z |

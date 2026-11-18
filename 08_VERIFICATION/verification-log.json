@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261116-SBMY",
-    "timestamp": "2026-11-16T23:14:51.754Z",
-    "repository": "sigstore/cosign",
-    "learningId": "learn-github-sigstore-cosign",
-    "contentHash": "b48d6dd2de5357c2d3a1d7c98cadd337494fbc408867a42c1cca3db96dd83aa3",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261116-SF24",
-    "timestamp": "2026-11-16T23:14:56.188Z",
-    "repository": "dathere/qsv",
-    "learningId": "learn-github-dathere-qsv",
-    "contentHash": "6e580b3c63515018b52a9be2bde514e883ef39d69d05c91d33628e2fd758343a",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261116-20EP",
-    "timestamp": "2026-11-16T23:22:23.761Z",
-    "repository": "flox/flox",
-    "learningId": "learn-github-flox-flox",
-    "contentHash": "a82641ff8a6bb5107bad9bd2368df5ea21c9d7cf0b29668ac9e4f0503e36b323",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261116-21AC",
     "timestamp": "2026-11-16T23:22:24.900Z",
     "repository": "encode/httpx",
@@ -7490,6 +7445,51 @@
     "repository": "open-policy-agent/gatekeeper",
     "learningId": "learn-github-open-policy-agent-gatekeeper",
     "contentHash": "3cedc4bf1281daf9216e58d41244d1aa6780ed8de52bf9644bf2259a6bde1ae1",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-VQRD",
+    "timestamp": "2026-11-18T10:45:02.137Z",
+    "repository": "Qwen/Qwen3.8-27B",
+    "learningId": "learn-huggingface-qwen-qwen3-8-27b",
+    "contentHash": "299a5f5bb41bd28ecc555dd284df87b1ffd2433060d6ef1eb380be83f60d2dcd",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-VX93",
+    "timestamp": "2026-11-18T10:45:10.551Z",
+    "repository": "expo/expo",
+    "learningId": "learn-github-expo-expo",
+    "contentHash": "25e42ed8bc9714a448da4963d7dba05691bf633fadb63202cd5c66311b1c8c68",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-VYR6",
+    "timestamp": "2026-11-18T10:45:12.498Z",
+    "repository": "projectcontour/contour",
+    "learningId": "learn-github-projectcontour-contour",
+    "contentHash": "d458c7169346da25b9a83ca0aefda8c6f99e2aedd5bfac4d6fdc2725db57963f",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

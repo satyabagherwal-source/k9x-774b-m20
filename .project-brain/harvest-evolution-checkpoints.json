@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T10:32:40.926Z",
+  "last_updated": "2026-11-18T10:45:18.050Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-18T08:41:54.992Z",
@@ -333,7 +333,7 @@
       "staged_for_review": 1
     },
     "projectcontour-contour-learnings.md": {
-      "processed_at": "2026-11-11T14:17:01.738Z",
+      "processed_at": "2026-11-18T10:45:16.847Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1748,7 +1748,7 @@
       "staged_for_review": 1
     },
     "hf-qwen-qwen3.8-27b-learnings.md": {
-      "processed_at": "2026-11-17T21:41:20.892Z",
+      "processed_at": "2026-11-18T10:45:15.785Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -2078,7 +2078,7 @@
       "staged_for_review": 1
     },
     "expo-expo-learnings.md": {
-      "processed_at": "2026-11-17T08:09:16.420Z",
+      "processed_at": "2026-11-18T10:45:16.147Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3418,7 +3418,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 1899,
+  "total_dossiers_evaluated": 1902,
   "total_canonical_promoted": 353,
-  "total_staged_for_review": 1454
+  "total_staged_for_review": 1456
 }

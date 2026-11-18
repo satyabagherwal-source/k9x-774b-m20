@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/projectcontour-contour-learnings.md`  
 > **Source**: github ([https://github.com/projectcontour/contour](https://github.com/projectcontour/contour))  
-> **Source Version**: `32f4c211`  
+> **Source Version**: `5344f432`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T00:23:45.812Z  
+> **Timestamp**: 2026-11-18T10:45:11.488Z  
 > **Learning ID**: `learn-github-projectcontour-contour`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/projectcontour-contour-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/projectcontour/contour](https://github.com/projectcontour/contour))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T00:23:45.803Z  
+> **Harvest Timestamp**: 2026-11-18T10:45:11.483Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Contour is a Kubernetes ingress controller using Envoy proxy.
 - **Primary Language / Ecosystem**: HTML
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 3955 stars
+- **Stars / Engagement**: 3967 stars
 
 ---
 
@@ -1592,13 +1592,13 @@ const (
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #7834** (2026-11-17): **build(deps): bump golang.org/x/oauth2 from 0.37.0 to 0.38.0**
+  *Symptoms*: Bumps [golang.org/x/oauth2](https://github.com/golang/oauth2) from 0.37.0 to 0.38.0. <details> <summary>Commits</summary> <ul> <li><a href="https://github.com/golang/oauth2/commit/0f01e8215572819016fac21b005f5f32ba407798"><code>0f01e82</code></a> oauth2: prevent NewTicker panic</li> <li>See full diff in <a href="https://github.com/golang/oauth2/compare/v0.37.0...v0.38.0">compare view</a></li> </ul> </details> <br />   [![Dependabot compatibility score](https://dependabot-badges.githubapp.com/badges/compatibility_score?dependency-name=golang.org/x/oauth2&package-manager=go_modules&previous-version=0.37.0&new-version=0.38.0)](https://docs.github.com/en/github/managing-security-vulnerabilities/about-dependabot-security-updates#about-compatibility-scores)  Dependabot will resolve any conflicts with this PR as long as you don't alter it yourself. You can also trigger a rebase manually by commenting `@dependabot rebase`.  [//]: # (dependabot-automerge-start) [//]: # (dependabot-automerge-end)  ---  <details> <summary>Dependabot commands and options</summary> <br />  You can trigger Dependabot actions by commenting on this PR: - `@dependabot rebase` will rebase this PR - `@dependabot recreate` will recreate this PR, overwriting any edits that have been made to it - `@dependabot show <dependency name> ignore conditions` will show all of the ignore conditions of the specified dependency - `@dependabot ignore this major version` will close this PR and stop Dependabot creating any more 
+
 - **Issue #7832** (2026-11-12): **Treat invalid health check policy as a warning, not an error**
   *Symptoms*: This PR follows up on #7777, which added a check for invalid health check ranges.   Instead of marking the `HTTPProxy` invalid, it now sets a warning as defined in the [conflict resolution design doc](https://github.com/projectcontour/contour/blob/main/design/httpproxy-conflict.md?plain=1#L104).  The route is served without a health check, and the `HTTPProxy` stays valid.  With #7777, an included `HTTPProxy` with an invalid range was dropped, so its requests could be routed to the parent's backend. This is now avoided.
   **Post-Mortem & Fix Analysis**:
   > ## [Codecov](https://app.codecov.io/gh/projectcontour/contour/pull/7832?dropdown=coverage&src=pr&el=h1&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=projectcontour) Report :x: Patch coverage is `90.90909%` with `1 line` in your changes missing coverage. Please review. :white_check_mark: Project coverage is 84.39%. Comparing base ([`f383e83`](https://app.codecov.io/gh/projectcontour/contour/commit/f383e833efeeaa45871348505c26a9220e1c9d55?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=projectcontour)) to head ([`c564bcc`](https://app.codecov.io/gh/projectcontour/contour/commit/c564bcc9cacc56ca34698ab37eae94971f3f17b5?dropdown=coverage&el=desc&utm_medium=referral&utm_source=github&utm_content=comment&utm_campaign=pr+comments&utm_term=projectcontour)).  | [Files with missing lines](https://app.codecov.io/gh/projectcontour/contour/pull/7832?dropdown=coverage&src=pr&el=tree&ut
-
-- **Issue #7825** (2026-11-09): **build(deps): bump docker/login-action from 4.7.0 to 4.8.0**
-  *Symptoms*: Bumps [docker/login-action](https://github.com/docker/login-action) from 4.7.0 to 4.8.0. <details> <summary>Release notes</summary> <p><em>Sourced from <a href="https://github.com/docker/login-action/releases">docker/login-action's releases</a>.</em></p> <blockquote> <h2>v4.8.0</h2> <ul> <li>Set Docker Hub OIDC token lifetime default to 1 hour by <a href="https://github.com/crazy-max"><code>@​crazy-max</code></a> in <a href="https://redirect.github.com/docker/login-action/pull/1070">docker/login-action#1070</a></li> <li>Bump <code>@​aws-sdk/client-ecr</code> and <code>@​aws-sdk/client-ecr-public</code> to 3.1161.0 in <a href="https://redirect.github.com/docker/login-action/pull/1103">docker/login-action#1103</a></li> <li>Bump <code>@​docker/actions-toolkit</code> from 0.107.0 to 0.109.0 in <a href="https://redirect.github.com/docker/login-action/pull/1105">docker/login-action#1105</a></li> <li>Bump vite from 7.3.6 to 7.3.7 in <a href="https://redirect.github.com/docker/login-action/pull/1101">docker/login-action#1101</a></li> </ul> <p><strong>Full Changelog</strong>: <a href="https://github.com/docker/login-action/compare/v4.7.0...v4.8.0">https://github.com/docker/login-action/compare/v4.7.0...v4.8.0</a></p> </blockquote> </details> <details> <summary>Commits</summary> <ul> <li><a href="https://github.com/docker/login-action/commit/8aa5831fb8d48d8f76594c7ddde61ae58019f550"><code>8aa5831</code></a> Merge pull request <a href="https://redirect.github.com/docker/login-action/iss
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1615,266 +1615,58 @@ const (
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `32f4c211` (2026-11-12)
-**Commit Message**: Treat invalid health check policy as a warning, not an error (#7832)
+### Incident Patch 1: `5344f432` (2026-11-17)
+**Commit Message**: build(deps): bump golang.org/x/oauth2 from 0.37.0 to 0.38.0 (#7834)
 
-* Treat invalid health check policy as a warning, not an error
-
-Signed-off-by: Tero Saarni <[REDACTED_EMAIL]>
-
-**File**: `changelogs/unreleased/7777-NopeCharon-small.md` (modified, +1/-1)
-```diff
-@@ -1 +1 @@
--HTTPProxy health check `expectedStatuses` ranges whose start is not less than their end are now rejected with a `HealthCheckPolicyInvalid` error, instead of being passed through to Envoy, which rejects the resulting cluster.
-+HTTPProxy health check `expectedStatuses` ranges whose start is not less than their end are now ignored with a warning in the HTTPProxy status, instead of being passed through to Envoy, which rejects the resulting cluster.
-```
-
-**File**: `internal/dag/httpproxy_processor.go` (modified, +2/-2)
-```diff
-@@ -989,8 +989,8 @@ func (p *HTTPProxyProcessor) computeRoutes(
- 
- 		healthPolicy, err := httpHealthCheckPolicy(route.HealthCheckPolicy)
- 		if err != nil {
--			validCond.AddError(contour_v1.ConditionTypeRouteError, "HealthCheckPolicyInvalid", err.Error())
--			return nil
-+			validCond.AddWarningf(contour_v1.ConditionTypeSpecError, "IgnoredField",
-+				"ignoring field %q; %s", "Spec.Routes.HealthCheckPolicy", err)
- 		}
- 
- 		for _, service := range route.Services {
-```
-
-**File**: `internal/featuretests/v3/cluster_test.go` (modified, +28/-8)
-```diff
-@@ -1103,8 +1103,13 @@ func TestClusterWithHealthChecks(t *testing.T) {
- 	})
- 
- 	rh.OnUpdate(proxy2, proxy3)
--	c.Status(proxy3).HasError(contour_v1.ConditionTypeRouteError, "HealthCheckPolicyInvalid", "invalid expected status range: end must be in the range [101, 600]")
--	c.Request(clusterType).Equals(&envoy_service_discovery_v3.DiscoveryResponse{})
-+	c.Status(proxy3).HasWarning(contour_v1.ConditionTypeSpecError, "IgnoredField", `ignoring field "Spec.Routes.HealthCheckPolicy"; invalid expected status range: end must be in the range [101, 600]`)
-+	c.Request(clusterType).Equals(&envoy_service_discovery_v3.DiscoveryResponse{
-+		Resources: resources(t,
-+			cluster("default/kuard/80/da39a3ee5e", "default/kuard", "default_kuard_80"),
-+		),
-+		TypeUrl: clusterType,
-+	})
- 
- 	// proxy4 has an invalid expected status range (start is too small).
- 	proxy4 := fixture.NewProxy("default/simple").WithSpec(contour_v1.HTTPProxySpec{
-@@ -1129,8 +1134,13 @@ func TestClusterWithHealthChecks(t *testing.T) {
- 	})
- 
- 	rh.OnUpdate(proxy3, proxy4)
--	c.Status(proxy4).HasError(contour_v1.ConditionTypeRouteError, "HealthCheckPolicyInvalid", "invalid expected status range: start must be in the range [100, 599]")
--	c.Request(clusterType).Equals(&envoy_service_discovery_v3.DiscoveryResponse{})
-+	c.Status(proxy4).HasWarning(contour_v1.ConditionTypeSpecError, "IgnoredField", `ignoring field "Spec.Routes.HealthCheckPolicy"; invalid expected status range: start must be in the range [100, 599]`)
-+	c.Request(clusterType).Equals(&envoy_service_discovery_v3.DiscoveryResponse{
-+		Resources: resources(t,
-+			cluster("default/kuard/80/da39a3ee5e", "default/kuard", "default_kuard_80"),
-+		),
-+		TypeUrl: clusterType,
-+	})
- 
- 	// proxy5 has an invalid expected status range (start is greater than end).
- 	proxy5 := fixture.NewProxy("default/simple").WithSpec(contour_v1.HTTPProxySpec{
-@@ -1155,8 +1165,13 @@ func TestClusterWithHealthChecks(t *testing.T) {
- 	})
- 
- 	rh.OnUpdate(proxy4, proxy5)
--	c.Status(proxy5).HasError(contour_v1.ConditionTypeRouteError, "HealthCheckPolicyInvalid", "invalid expected status range: start must be less than end")
--	c.Request(clusterType).Equals(&envoy_service_discovery_v3.DiscoveryResponse{})
-+	c.Status(proxy5).HasWarning(contour_v1.ConditionTypeSpecError, "IgnoredField", `ignoring field "Spec.Routes.HealthCheckPolicy"; invalid expected status range: start must be less than end`)
-+	c.Request(clusterType).Equals(&envoy_service_discovery_v3.DiscoveryResponse{
-+		Resources: resources(t,
-+			cluster("default/kuard/80/da39a3ee5e", "default/kuard", "default_kuard_80"),
-+		),
-+		TypeUrl: clusterType,
-+	})
- 
- 	// proxy6 has an invalid expected status range (start is equal to end).
- 	proxy6 := fixture.NewProxy("default/simple").WithSpec(contour_v1.HTTPProxySpec{
-@@ -1180,8 +1195,13 @@ func TestClusterWithHealthChecks(t *testing.T) {
- 	})
- 
- 	rh.OnUpdate(proxy5, proxy6)
--	c.Status(proxy6).HasError(contour_v1.ConditionTypeRouteError, "HealthCheckPolicyInvalid", "invalid expected status range: start must be less than end")
--	c.Request(clusterType).Equals(&envoy_service_discovery_v3.DiscoveryResponse{})
-+	c.Status(proxy6).HasWarning(contour_v1.ConditionTypeSpecError, "IgnoredField", `ignoring field "Spec.Routes.HealthCheckPolicy"; invalid expected status range: start must be less than end`)
-+	c.Request(clusterType).Equals(&envoy_service_discovery_v3.DiscoveryResponse{
-+		Resources: resources(t,
-+			cluster("default/kuard/80/da39a3ee5e", "default/kuard", "default_kuard_80"),
-+		),
-+		TypeUrl: clusterType,
-+	})
- }
- 
- // Test processing a service that exists but is not referenced
-```
-
-**File**: `internal/featuretests/v3/featuretests.go` (modified, +17/-0)
-```diff
-@@ -340,6 +340,23 @@ func (s *StatusResult) HasError(condType, reason, message string) *Contour {
- 	return s.Contour
- }
- 
-+// HasWarning asserts that the proxy is valid and there is a warning on the
-+// Valid Condition that matches the given values.
-+func (s *StatusResult) HasWarning(condType, reason, message string) *Contour {
-+	assert.Equal(s.T, string(status.ProxyStatusValid), s.Have.CurrentStatus)
-+	validCond := s.Have.GetConditionFor(contour_v1.ValidConditionType)
-+	assert.NotNil(s.T, validCond)
-+
-+	subCond, ok := validCond.GetWarning(condType)
-+	if !ok {
-+		s.Fatalf("Did not find warning %s", condType)
-+	}
-+	assert.Equal(s.T, reason, subCond.Reason)
-+	assert.Equal(s.T, message, subCond.Message)
-+
-+	return s.Contour
-+}
-+
- // IsValid asserts that the proxy's CurrentStatus field is equal to "valid".
- func (s *StatusResult) IsValid() *Contour {
- 	s.Helper()
-```
-
-**File**: `site/content/docs/main/config/health-checks.md` (modified, +1/-0)
-```diff
-@@ -52,6 +52,7 @@ By default, only responses with a 200 status code will be considered healthy.
- The set of response codes considered healthy can be customized by specifying ranges in `expectedStatuses`.
- Ranges follow half-open semantics, meaning the start is inclusive and the end is exclusive. 
- Statuses must be between 100 (inclusive) and 600 (exclusive).
-+If a range is invalid, the health check policy is ignored, and the HTTPProxy status reports a warning.
- For example:
- 
- ```yaml
-```
+Bumps [golang.org/x/oauth2](https://github.com/golang/oauth2) from 0.37.0 to 0.38.0.
+- [Commits](https://github.com/golang/oauth2/compare/v0.37.0...v0.38.0)
 
 ---
+updated-dependencies:
+- dependency-name: golang.org/x/oauth2
+  dependency-version: 0.38.0
+  dependency-type: direct:production
+  update-type: version-update:semver-minor
+...
 
-### Incident Patch 2: `f383e833` (2026-11-11)
-**Commit Message**: internal/dag: reject health check status ranges with start >= end (#7777)
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
 
-httpHealthCheckPolicy validated the bounds of each expectedStatuses
-range individually but never checked that start is less than end.
-Reversed or empty ranges such as {start: 500, end: 400} or
-{start: 200, end: 200} were therefore accepted, the HTTPProxy was
-reported as valid, and the range was passed through to Envoy, which
-rejects the cluster with "Invalid http expected status range:
-expecting start < end". The route then has no cluster and returns
-503s with nothing on the HTTPProxy status to explain why.
-
-Reject such ranges with a HealthCheckPolicyInvalid error condition,
-like the existing out-of-bounds checks, and document the requirement.
-
-Fixes #7776
-
-Signed-off-by: NopeCharon <[REDACTED_EMAIL]>
-
-**File**: `changelogs/unreleased/7777-NopeCharon-small.md` (added, +1/-0)
+**File**: `go.mod` (modified, +1/-1)
 ```diff
-@@ -0,0 +1 @@
-+HTTPProxy health check `expectedStatuses` ranges whose start is not less than their end are now rejected with a `HealthCheckPolicyInvalid` error, instead of being passed through to Envoy, which rejects the resulting cluster.
+@@ -27,7 +27,7 @@ require (
+ 	github.com/tsaarni/certyaml v0.13.0
+ 	go.uber.org/automaxprocs v1.6.0
+ 	golang.org/x/net v0.62.0
+-	golang.org/x/oauth2 v0.37.0
++	golang.org/x/oauth2 v0.38.0
+ 	gonum.org/v1/plot v0.17.0
+ 	google.golang.org/genproto/googleapis/rpc v0.0.0-20260817212433-ac3dfec99bb1
+ 	google.golang.org/grpc v1.85.0
 ```
 
-**File**: `internal/dag/policy.go` (modified, +3/-0)
+**File**: `go.sum` (modified, +2/-2)
 ```diff
-@@ -518,6 +518,9 @@ func httpHealthCheckPolicy(hc *contour_v1.HTTPHealthCheckPolicy) (*HTTPHealthChe
- 		if statusRange.End < 101 || statusRange.End > 600 {
- 			return nil, fmt.Errorf("invalid expected status range: end must be in the range [101, 600]")
- 		}
-+		if statusRange.Start >= statusRange.End {
-+			return nil, fmt.Errorf("invalid expected status range: start must be less than end")
-+		}
- 
- 		expectedStatuses = append(expectedStatuses, HTTPStatusRange{
- 			Start: statusRange.Start,
-```
-
-**File**: `internal/featuretests/v3/cluster_test.go` (modified, +51/-0)
-```diff
-@@ -1131,6 +1131,57 @@ func TestClusterWithHealthChecks(t *testing.T) {
- 	rh.OnUpdate(proxy3, proxy4)
- 	c.Status(proxy4).HasError(contour_v1.ConditionTypeRouteError, "HealthCheckPolicyInvalid", "invalid expected status range: start must be in the range [100, 599]")
- 	c.Request(clusterType).Equals(&envoy_service_discovery_v3.DiscoveryResponse{})
-+
-+	// proxy5 has an invalid expected status range (start is greater than end).
-+	proxy5 := fixture.NewProxy("default/simple").WithSpec(contour_v1.HTTPProxySpec{
-+		VirtualHost: &contour_v1.VirtualHost{Fqdn: "www.example.com"},
-+		Routes: []contour_v1.Route{{
-+			Conditions: []contour_v1.MatchCondition{{
-+				Prefix: "/a",
-+			}},
-+			HealthCheckPolicy: &contour_v1.HTTPHealthCheckPolicy{
-+				Path: "/healthz",
-+				ExpectedStatuses: []contour_v1.HTTPStatusRange{
-+					{Start: 200, End: 300},
-+					{Start: 500, End: 400},
-+				},
-+			},
-+			Services: []contour_v1.Service{{
-+				Name:   "kuard",
-+				Port:   80,
-+				Weight: 90,
-+			}},
-+		}},
-+	})
-+
-+	rh.OnUpdate(proxy4, proxy5)
-+	c.Status(proxy5).HasError(contour_v1.ConditionTypeRouteError, "HealthCheckPolicyInvalid", "invalid expected status range: start must be less than end")
-+	c.Request(clusterType).Equals(&envoy_service_discovery_v3.DiscoveryResponse{})
-+
-+	// proxy6 has an invalid expected status range (start is equal to end).
-+	proxy6 := fixture.NewProxy("default/simple").WithSpec(contour_v1.HTTPProxySpec{
-+		VirtualHost: &contour_v1.VirtualHost{Fqdn: "www.example.com"},
-+		Routes: []contour_v1.Route{{
-+			Conditions: []contour_v1.MatchCondition{{
-+				Prefix: "/a",
-+			}},
-+			HealthCheckPolicy: &contour_v1.HTTPHealthCheckPolicy{
-+				Path: "/healthz",
-+				ExpectedStatuses: []contour_v1.HTTPStatusRange{
-+					{Start: 200, End: 200},
-+				},
-+			},
-+			Services: []contour_v1.Service{{
-+				Name:   "kuard",
-+				Port:   80,
-+				Weight: 90,
-+			}},
-+		}},
-+	})
-+
-+	rh.OnUpdate(proxy5, proxy6)
-+	c.Status(proxy6).HasError(contour_v1.ConditionTypeRouteError, "HealthCheckPolicyInvalid", "invalid expected status range: start must be less than end")
-+	c.Request(clusterType).Equals(&envoy_service_discovery_v3.DiscoveryResponse{})
- }
- 
- // Test processing a service that exists but is not referenced
-```
-
-**File**: `site/content/docs/main/config/health-checks.md` (modified, +1/-1)
-```diff
-@@ -44,7 +44,7 @@ Health check configuration parameters:
- - `timeoutSeconds`: The time to wait (seconds) for a health check response. If the timeout is reached the health check attempt will be considered a failure. Defaults to 2 seconds if not set.
- - `unhealthyThresholdCount`: The number of unhealthy health checks required before a host is marked unhealthy. Note that for http health checking if a host responds with 503 this threshold is ignored and the host is considered unhealthy immediately. Defaults to 3 if not defined.
- - `healthyThresholdCount`: The number of healthy health checks required before a host is marked healthy. Note that during startup, only a single successful health check is required to mark a host healthy.
--- `expectedStatuses`: An optional list of HTTP status ranges that are considered healthy. Ranges follow half-open semantics, meaning the start is inclusive and the end is exclusive. Statuses must be between 100 (inclusive) and 600 (exclusive).
-+- `expectedStatuses`: An optional list of HTTP status ranges that are considered healthy. Ranges follow half-open semantics, meaning the start is inclusive and the end is exclusive. Statuses must be between 100 (inclusive) and 600 (exclusive), and each range's start must be less than its end.
- 
- ### Non-default expected statuses
- 
+@@ -254,8 +254,8 @@ golang.org/x/net v0.0.0-20190620200207-3b0461eec859/go.mod h1:z5CRVTTTmAJ677TzLL
+ golang.org/x/net v0.0.0-20201021035429-f5854403a974/go.mod h1:sp8m0HH+o8qH0wwXwYZr8TS3Oi6o0r6Gce1SSxlDquU=
+ golang.org/x/net v0.62.0 h1:18ELalfM5+XNRwzM2nYqXsZQ9ByS1uhj2O/U7+5jqRY=
+ golang.org/x/net v0.62.0/go.mod h1:WgDCOTH8iwtB66T4/GfI94AHo/hhdb7Hah9NDseQfiI=
+-golang.org/x/oauth2 v0.37.0 h1:JUlcxA8oAtauLfiH8FX2/FkAWHAdi0QtGCGc+hofE98=
+-golang.org/x/oauth2 v0.37.0/go.mod h1:IxwZNxUULJmpBFf9K/9NTMSIfZZuvuTy1gGxhigP/58=
++golang.org/x/oauth2 v0.38.0 h1:uW7XQbcu1eoiQS7uMJvLOjPMl04bTbmY1VeRPxvbspI=
++golang.org/x/oauth2 v0.38.0/go.mod h1:IxwZNxUULJmpBFf9K/9NTMSIfZZuvuTy1gGxhigP/58=
+ golang.org/x/sync v0.0.0-20190423024810-112230192c58/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
+ golang.org/x/sync v0.0.0-20201020160332-67f06af15bc9/go.mod h1:RxMgew5VJxzue5/jJTE5uejpjVlOe/izrB70Jof72aM=
+ golang.org/x/sync v0.24.0 h1:iqiDrGoDgyuvAKrhLQthUEzU/R378N78gXbBjxed7oA=
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #7834** (2026-11-17): build(deps): bump golang.org/x/oauth2 from 0.37.0 to 0.38.0 (@dependabot[bot])
 - **PR #7832** (2026-11-12): Treat invalid health check policy as a warning, not an error (@tsaarni)
 - **PR #7825** (2026-11-09): build(deps): bump docker/login-action from 4.7.0 to 4.8.0 (@dependabot[bot])
 - **PR #7824** (2026-11-09): build(deps): bump the codeql-action group with 4 updates (@dependabot[bot])
 - **PR #7823** (2026-11-09): build(deps): bump github.com/prometheus/common from 0.73.0 to 0.73.1 (@dependabot[bot])
 - **PR #7822** (2026-11-09): build(deps): bump github.com/onsi/ginkgo/v2 from 2.33.1 to 2.34.0 (@dependabot[bot])
-- **PR #7821** (2026-11-09): Set alt_stat_name for DNS name clusters (@lbarrosby)
 
 ---
 
@@ -1894,28 +1686,28 @@ Signed-off-by: NopeCharon <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Treat invalid health check policy as a warning, not an error (#7832)
+## X. build(deps): bump golang.org/x/oauth2 from 0.37.0 to 0.38.0
 
 **RULE**:
-When implementing operations in `changelogs/unreleased/7777-NopeCharon-small.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in projectcontour/contour. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in projectcontour/contour. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `32f4c211`: Treat invalid health check policy as a warning, not an error (#7832). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5344f432`: build(deps): bump golang.org/x/oauth2 from 0.37.0 to 0.38.0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing HTML data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelogs/unreleased/7777-NopeCharon-small.md`.
+Subsystems managing HTML data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```html
 // Verified production-grade fix pattern:
-HTTPProxy health check `expectedStatuses` ranges whose start is not less than their end are now ignored with a warning in the HTTPProxy status, instead of being passed through to Envoy, which rejects the resulting cluster.
+	golang.org/x/oauth2 v0.38.0
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```html
-// Anti-pattern to NEVER write (induced failure mode):
-HTTPProxy health check `expectedStatuses` ranges whose start is not less than their end are now rejected with a `HealthCheckPolicyInvalid` error, instead of being passed through to Envoy, which rejects the resulting cluster.
+// Induced defect failure mode:
+	golang.org/x/oauth2 v0.37.0
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `32f4c211` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5344f432` are properly handled with clean fallback behavior.

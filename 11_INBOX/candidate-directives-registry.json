@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T10:32:40.548Z",
+  "last_updated": "2026-11-18T10:45:17.629Z",
   "directives": [
     {
       "id": "CD-001",
@@ -28811,6 +28811,46 @@
       "source_repo": "open-policy-agent-gatekeeper",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-A6EB8E-bump-the-all-group-across-1-directory-wi.md",
+      "staged_date": "2026-11-18"
+    },
+    {
+      "id": "CD-W1QZ",
+      "directive_title": "[expo-glass-effect] Build from a checked-in Package.swift",
+      "source_repo": "expo-expo-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-W1QZ-expo-glass-effect-build-from-a-checked-in-package-swift.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-18",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-W2PM",
+      "directive_title": "build(deps): bump golang.org/x/oauth2 from 0.37.0 to 0.38.0",
+      "source_repo": "projectcontour-contour-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-W2PM-build-deps-bump-golang-org-x-oauth2-from-0-37-0-to-0-38-0.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-18",
+      "domain_letter": "I"
+    },
+    {
+      "id": "CD-REV-6F59E9",
+      "directive_title": "[expo-glass-effect] Build from a checked-in Package.swift",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "expo-expo",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-6F59E9--expo-glass-effect-build-from-a-checked-.md",
+      "staged_date": "2026-11-18"
+    },
+    {
+      "id": "CD-REV-117842",
+      "directive_title": "build(deps): bump golang.org/x/oauth2 from 0.37.0 to 0.38.0",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "projectcontour-contour",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-117842-build-deps-bump-golang-org-x-oauth2-from.md",
       "staged_date": "2026-11-18"
     }
   ]

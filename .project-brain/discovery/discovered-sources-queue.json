@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-18T10:32:39.757Z",
+  "updated_at": "2026-11-18T10:45:17.420Z",
   "stats": {
-    "total_discovered": 5397,
-    "approved_pending_harvest": 5095,
+    "total_discovered": 5412,
+    "approved_pending_harvest": 5110,
     "harvested_count": 0,
     "rejected_count": 302,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 5076,
+      "COMMUNITY_AND_EXPERT": 5091,
       "OFFICIAL_DOCUMENTATION": 176,
       "STANDARDS_AND_SPECIFICATIONS": 109,
       "ENGINEERING_BLOGS": 4,
@@ -116641,6 +116641,336 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/laurent22-joplin-learnings.md",
         "fileName": "laurent22-joplin-learnings.md"
+      }
+    },
+    "SRC-BB8D8C1F465E": {
+      "id": "SRC-BB8D8C1F465E",
+      "url": "https://github.com/projectcontour/contour",
+      "title": "https://github.com/projectcontour/contour",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T10:45:16.868Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/projectcontour-contour-learnings.md",
+        "fileName": "projectcontour-contour-learnings.md"
+      }
+    },
+    "SRC-8D7E25191986": {
+      "id": "SRC-8D7E25191986",
+      "url": "https://github.com/kubernetes/apimachinery/blob/02cfb53916346d085a6c6c7c66f882e3c6b0eca6/pkg/util/validation/validation.go",
+      "title": "https://github.com/kubernetes/apimachinery/blob/02cfb53916346d085a6c6c7c66f882e3c6b0eca6/pkg/util/validation/validation.go",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T10:45:16.922Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/projectcontour-contour-learnings.md",
+        "fileName": "projectcontour-contour-learnings.md"
+      }
+    },
+    "SRC-90E39C31EF9C": {
+      "id": "SRC-90E39C31EF9C",
+      "url": "https://github.com/kubernetes/apimachinery/blob/02cfb53916346d085a6c6c7c66f882e3c6b0eca6/pkg/api/validation/generic.go",
+      "title": "https://github.com/kubernetes/apimachinery/blob/02cfb53916346d085a6c6c7c66f882e3c6b0eca6/pkg/api/validation/generic.go",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T10:45:16.963Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/projectcontour-contour-learnings.md",
+        "fileName": "projectcontour-contour-learnings.md"
+      }
+    },
+    "SRC-155879F03E51": {
+      "id": "SRC-155879F03E51",
+      "url": "https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces",
+      "title": "https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T10:45:16.999Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/projectcontour-contour-learnings.md",
+        "fileName": "projectcontour-contour-learnings.md"
+      }
+    },
+    "SRC-B55629CA8311": {
+      "id": "SRC-B55629CA8311",
+      "url": "https://kubernetes.io/docs/concepts/overview/working-with-objects/names",
+      "title": "https://kubernetes.io/docs/concepts/overview/working-with-objects/names",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T10:45:17.034Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/projectcontour-contour-learnings.md",
+        "fileName": "projectcontour-contour-learnings.md"
+      }
+    },
+    "SRC-DD4DB77A3352": {
+      "id": "SRC-DD4DB77A3352",
+      "url": "https://www.envoyproxy.io/docs/envoy/latest/api-v3/service/auth/v3/external_auth.proto",
+      "title": "https://www.envoyproxy.io/docs/envoy/latest/api-v3/service/auth/v3/external_auth.proto",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T10:45:17.073Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/projectcontour-contour-learnings.md",
+        "fileName": "projectcontour-contour-learnings.md"
+      }
+    },
+    "SRC-4B8D23848C05": {
+      "id": "SRC-4B8D23848C05",
+      "url": "https://github.com/golang/oauth2",
+      "title": "https://github.com/golang/oauth2",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T10:45:17.109Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/projectcontour-contour-learnings.md",
+        "fileName": "projectcontour-contour-learnings.md"
+      }
+    },
+    "SRC-B897433E9D7A": {
+      "id": "SRC-B897433E9D7A",
+      "url": "https://github.com/golang/oauth2/commit/0f01e8215572819016fac21b005f5f32ba407798",
+      "title": "https://github.com/golang/oauth2/commit/0f01e8215572819016fac21b005f5f32ba407798",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T10:45:17.145Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/projectcontour-contour-learnings.md",
+        "fileName": "projectcontour-contour-learnings.md"
+      }
+    },
+    "SRC-5BD98019A390": {
+      "id": "SRC-5BD98019A390",
+      "url": "https://github.com/golang/oauth2/compare/v0.37.0...v0.38.0",
+      "title": "https://github.com/golang/oauth2/compare/v0.37.0...v0.38.0",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T10:45:17.183Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/projectcontour-contour-learnings.md",
+        "fileName": "projectcontour-contour-learnings.md"
+      }
+    },
+    "SRC-C6E694CCE7E3": {
+      "id": "SRC-C6E694CCE7E3",
+      "url": "https://dependabot-badges.githubapp.com/badges/compatibility_score?dependency-name=golang.org%2Fx%2Foauth2&package-manager=go_modules&previous-version=0.37.0&new-version=0.38.0",
+      "title": "https://dependabot-badges.githubapp.com/badges/compatibility_score?dependency-name=golang.org%2Fx%2Foauth2&package-manager=go_modules&previous-version=0.37.0&new-version=0.38.0",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T10:45:17.219Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/projectcontour-contour-learnings.md",
+        "fileName": "projectcontour-contour-learnings.md"
+      }
+    },
+    "SRC-CB03944646DE": {
+      "id": "SRC-CB03944646DE",
+      "url": "https://github.com/projectcontour/contour/blob/main/design/httpproxy-conflict.md?plain=1",
+      "title": "https://github.com/projectcontour/contour/blob/main/design/httpproxy-conflict.md?plain=1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T10:45:17.274Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/projectcontour-contour-learnings.md",
+        "fileName": "projectcontour-contour-learnings.md"
+      }
+    },
+    "SRC-9A392853BA96": {
+      "id": "SRC-9A392853BA96",
+      "url": "https://app.codecov.io/gh/projectcontour/contour/pull/7832?dropdown=coverage&src=pr&el=h1",
+      "title": "https://app.codecov.io/gh/projectcontour/contour/pull/7832?dropdown=coverage&src=pr&el=h1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T10:45:17.311Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/projectcontour-contour-learnings.md",
+        "fileName": "projectcontour-contour-learnings.md"
+      }
+    },
+    "SRC-EA75C9552ACA": {
+      "id": "SRC-EA75C9552ACA",
+      "url": "https://app.codecov.io/gh/projectcontour/contour/commit/f383e833efeeaa45871348505c26a9220e1c9d55?dropdown=coverage&el=desc",
+      "title": "https://app.codecov.io/gh/projectcontour/contour/commit/f383e833efeeaa45871348505c26a9220e1c9d55?dropdown=coverage&el=desc",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T10:45:17.346Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/projectcontour-contour-learnings.md",
+        "fileName": "projectcontour-contour-learnings.md"
+      }
+    },
+    "SRC-9EF69559CDCF": {
+      "id": "SRC-9EF69559CDCF",
+      "url": "https://app.codecov.io/gh/projectcontour/contour/commit/c564bcc9cacc56ca34698ab37eae94971f3f17b5?dropdown=coverage&el=desc",
+      "title": "https://app.codecov.io/gh/projectcontour/contour/commit/c564bcc9cacc56ca34698ab37eae94971f3f17b5?dropdown=coverage&el=desc",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T10:45:17.384Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/projectcontour-contour-learnings.md",
+        "fileName": "projectcontour-contour-learnings.md"
+      }
+    },
+    "SRC-AADB392DD5DC": {
+      "id": "SRC-AADB392DD5DC",
+      "url": "https://app.codecov.io/gh/projectcontour/contour/pull/7832?dropdown=coverage&src=pr&el=tree&ut=",
+      "title": "https://app.codecov.io/gh/projectcontour/contour/pull/7832?dropdown=coverage&src=pr&el=tree&ut=",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T10:45:17.420Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/projectcontour-contour-learnings.md",
+        "fileName": "projectcontour-contour-learnings.md"
       }
     }
   }
