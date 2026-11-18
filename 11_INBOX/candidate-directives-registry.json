@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T03:17:21.630Z",
+  "last_updated": "2026-11-18T03:39:42.823Z",
   "directives": [
     {
       "id": "CD-001",
@@ -27046,6 +27046,57 @@
       "source_repo": "zvec-ai-zvec-grep",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-FEE0E0-rust-address-the-remaining-issues-in-418.md",
+      "staged_date": "2026-11-18"
+    },
+    {
+      "id": "CD-OQOZ",
+      "directive_title": "build(release): publish codewhale-ratatui 0.2.0 as a workspace member (§213)",
+      "source_repo": "hmbown-codewhale-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-OQOZ-build-release-publish-codewhale-ratatui-0-2-0-as-a-workspace-member-213.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-18",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-ORXD",
+      "directive_title": "Run every ffmpeg invocation with -nostdin and stdin=DEVNULL",
+      "source_repo": "pixeltable-pixeltable-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-ORXD-run-every-ffmpeg-invocation-with-nostdin-and-stdin-devnull.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-18",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-ONQV",
+      "directive_title": "NUC 115 Count-Controlled Repeat Loops",
+      "source_repo": "NucleoidAI/Nucleoid",
+      "source_commit": "7bc9f013",
+      "staged_file": "11_INBOX/candidate-directives/CD-ONQV-nuc-115-count-controlled-repeat-loops.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-18",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-3D1227",
+      "directive_title": "build(release): publish codewhale-ratatui 0.2.0 as a workspace member (§213)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "hmbown-codewhale",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-3D1227-build-release-publish-codewhale-ratatui-.md",
+      "staged_date": "2026-11-18"
+    },
+    {
+      "id": "CD-REV-F25334",
+      "directive_title": "Run every ffmpeg invocation with -nostdin and stdin=DEVNULL",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "pixeltable-pixeltable",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-F25334-run-every-ffmpeg-invocation-with-nostdin.md",
       "staged_date": "2026-11-18"
     }
   ]

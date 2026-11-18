@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-18T03:17:21.958Z",
-  "total_verified_learnings": 8966,
+  "last_updated": "2026-11-18T03:39:43.326Z",
+  "total_verified_learnings": 8967,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 20822,
+  "total_items": 20828,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112730,9 +112730,9 @@
       "title": "Research & Knowledge Intelligence: fastino/GLiNER2.5-Decide Core Invariants",
       "repository": "fastino/GLiNER2.5-Decide",
       "source_version": "hf-fastino-gliner2.5-decide",
-      "content_hash": "baabde56fc3fcd69f479e29b43be3cb9962a403da609bf62b6ddb1940e95f64a",
+      "content_hash": "ed55932c4210337928048fbfa478837e8f870432f58b550645cac9ef8db73a79",
       "domain_letter": "D",
-      "persisted_at": "2026-11-13T15:38:05.722Z"
+      "persisted_at": "2026-11-18T03:39:20.827Z"
     },
     "candidate_directive-mac-sai-website-in-13-languages-on-github-pages-275": {
       "item_id": "candidate_directive-mac-sai-website-in-13-languages-on-github-pages-275",
@@ -112826,9 +112826,9 @@
       "title": "Research & Knowledge Intelligence: hf-fastino-gliner2.5-decide-learnings Core Invariants",
       "repository": "hf-fastino-gliner2.5-decide-learnings",
       "source_version": "HEAD",
-      "content_hash": "7d7d429dd19ffb18985ffe296929bc1e69295ce35eadef9120c0b753a229de60",
+      "content_hash": "a46c5ed31997379689559d043002ba74f0a5579f4f619129edb22067f6b178d5",
       "domain_letter": "D",
-      "persisted_at": "2026-11-13T15:39:02.473Z"
+      "persisted_at": "2026-11-18T03:39:42.140Z"
     },
     "domain_intelligence-content-information-intelligence-iliyami-macsai-learnings-core-invariants": {
       "item_id": "domain_intelligence-content-information-intelligence-iliyami-macsai-learnings-core-invariants",
@@ -224505,8 +224505,8 @@
       "slug": "pixeltable-pixeltable",
       "platform": "github",
       "source_url": "https://github.com/pixeltable/pixeltable",
-      "source_version": "9c30a9a6",
-      "content_hash": "34482e4587bbf435f05efc8a983a2d7f3c04df87be35d67055574e3adb060605",
+      "source_version": "b7363f1f",
+      "content_hash": "6782c64d387accb1089638fca9761e10bff7459ec3accec33e2a7171a47e2c4f",
       "dossier_path": "07_PROJECT_LEARNING/pixeltable-pixeltable-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pixeltable-pixeltable-learnings.md",
       "promoted_rules": [
@@ -224534,6 +224534,11 @@
           "number": 8848,
           "title": "CI/CD Marker-Based Test Orthogonalization Matrix",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9113,
+          "title": "Run every ffmpeg invocation with -nostdin and stdin=DEVNULL",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -224541,7 +224546,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T03:16:59.996Z",
+      "verified_at": "2026-11-18T03:39:35.692Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -224583,10 +224588,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-pixeltable-pixeltable-technical-construction-intelligence-pixeltable-pixeltable-.md",
       "title": "Technical Construction Intelligence: pixeltable/pixeltable Core Invariants",
       "repository": "pixeltable/pixeltable",
-      "source_version": "9c30a9a6",
-      "content_hash": "5c51240aae5bdcae35fd39446ba1cd467b86a6c4c7aa6d3543e267b1dcf28fd9",
+      "source_version": "b7363f1f",
+      "content_hash": "7071f11715307edbf06462b344adcc25fa4a9295acb6b76d8ec6beb5e7c600ce",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T03:17:00.601Z"
+      "persisted_at": "2026-11-18T03:39:36.355Z"
     },
     "agent_contract-agent-contract-pixeltable-pixeltable-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-pixeltable-pixeltable-autonomous-specialist-persona",
@@ -224595,10 +224600,10 @@
       "relative_path": "02_AGENT_INTELLIGENCE/pixeltable-pixeltable-agent-contract-pixeltable-pixeltable-autonomous-specialist.md",
       "title": "Agent Contract: pixeltable/pixeltable Autonomous Specialist Persona",
       "repository": "pixeltable/pixeltable",
-      "source_version": "9c30a9a6",
-      "content_hash": "cece74cc6de22c63361cf115272ca75d9d2095952435c80d449d0a84ae51e753",
+      "source_version": "b7363f1f",
+      "content_hash": "8c1c385ee0109f9e9b517a6aaeeedbfb8b21e859bd4511f0a7a8e02d47e16f26",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T03:17:00.705Z"
+      "persisted_at": "2026-11-18T03:39:36.540Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-pixeltable-pixeltable": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-pixeltable-pixeltable",
@@ -224656,9 +224661,9 @@
       "title": "Technical Construction Intelligence: pixeltable-pixeltable-learnings Core Invariants",
       "repository": "pixeltable-pixeltable-learnings",
       "source_version": "HEAD",
-      "content_hash": "8330ce0326b725eb69e49d5a7c0b2811cdd4e2a19167e1521f0f94932716f438",
+      "content_hash": "3500e0887fb9849c5d915083de186a9dc785ee9c635ee8f3233290bca23aec2b",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T03:18:01.575Z"
+      "persisted_at": "2026-11-18T03:39:43.002Z"
     },
     "agent_contract-agent-contract-pixeltable-pixeltable-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-pixeltable-pixeltable-learnings-autonomous-specialist-persona",
@@ -224668,9 +224673,9 @@
       "title": "Agent Contract: pixeltable-pixeltable-learnings Autonomous Specialist Persona",
       "repository": "pixeltable-pixeltable-learnings",
       "source_version": "HEAD",
-      "content_hash": "5a7d7c90297d51a2b5ef6f723c50563f6e128a6a88c71cf499cf1645d79208a8",
+      "content_hash": "2bb5639ee7015729f094eb2b8f225c11f8b4019b714b200b6ae794722ca30176",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T03:18:01.717Z"
+      "persisted_at": "2026-11-18T03:39:43.173Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-pixeltable-pixeltable-learning": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-pixeltable-pixeltable-learning",
@@ -224680,9 +224685,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for pixeltable-pixeltable-learnings",
       "repository": "pixeltable-pixeltable-learnings",
       "source_version": "HEAD",
-      "content_hash": "cf610ef3aa7f07ca6f5af661e793fd75927c38ce8f8d23be2472642787535c38",
+      "content_hash": "3a694a3e8564d5355f8f8d8b35e417f06ae1446129ad9059e87a5c134f07a5fd",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T03:18:01.846Z"
+      "persisted_at": "2026-11-18T03:39:43.326Z"
     },
     "learn-huggingface-fermionresearch-phonon-2": {
       "learning_id": "learn-huggingface-fermionresearch-phonon-2",
@@ -228190,8 +228195,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "62b0d320",
-      "content_hash": "1c88aadc9610f33f6dbd4866e6f2ab8d6c62c08259fdea116b52fc72909b38de",
+      "source_version": "7bc9f013",
+      "content_hash": "215d9286690704e8c272e1b9fdb337e8a26658b367511443917a4c3f5db9d338",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -228286,7 +228291,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T21:41:16.892Z",
+      "verified_at": "2026-11-18T03:39:36.865Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -228328,10 +228333,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-architecture-intelligence-nucleoidai-nucleoid-core-invariant.md",
       "title": "Architecture Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "repository": "NucleoidAI/Nucleoid",
-      "source_version": "62b0d320",
-      "content_hash": "e982db34b0fe50ea3ab65f1087d6e4c063f4ec00bfcf11421fb9b85ecc541a87",
+      "source_version": "7bc9f013",
+      "content_hash": "8e2a688ff5836e1d9e32a2a5d9e9687fe2e85ef18441dcc75aac9657339c2cba",
       "domain_letter": "G",
-      "persisted_at": "2026-11-17T21:41:17.372Z"
+      "persisted_at": "2026-11-18T03:39:37.580Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid",
@@ -228340,10 +228345,10 @@
       "relative_path": "08_VERIFICATION/nucleoidai-nucleoid-verification-protocol-empirical-defect-shield-for-nucleoidai.md",
       "title": "Verification Protocol: Empirical Defect Shield for NucleoidAI/Nucleoid",
       "repository": "NucleoidAI/Nucleoid",
-      "source_version": "62b0d320",
-      "content_hash": "d78de3bad2338ab7534e5076a70fa6322fd3035f738ea911527015f75875562a",
+      "source_version": "7bc9f013",
+      "content_hash": "329bc2f6ccf7251b97eff841065d744b626cfbfb6af92708fd0d0934acf314da",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T21:41:17.508Z"
+      "persisted_at": "2026-11-18T03:39:37.754Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -229916,13 +229921,13 @@
       "category": "HARVESTED_INTELLIGENCE_DOSSIER",
       "source": "codewhale-hq/Codewhale",
       "repository": "codewhale-hq/Codewhale",
-      "slug": "codewhale-hq-codewhale",
+      "slug": "hmbown-codewhale",
       "platform": "github",
-      "source_url": "https://github.com/codewhale-hq/Codewhale",
-      "source_version": "9c7cb976",
-      "content_hash": "21a5665e7451f82569e44ffe06d682e90adba0fce494dbd826227174fb63fbc4",
-      "dossier_path": "07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md",
-      "dossier_file": "07_PROJECT_LEARNING/codewhale-hq-codewhale-learnings.md",
+      "source_url": "https://github.com/Hmbown/Codewhale",
+      "source_version": "af6fc33a",
+      "content_hash": "5cc29110976d575534b3a66db1ffc9c9915bab97364f67a3e226ed1b0db6def7",
+      "dossier_path": "07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hmbown-codewhale-learnings.md",
       "promoted_rules": [
         {
           "number": 8492,
@@ -229953,6 +229958,11 @@
           "number": 9048,
           "title": "Capability Non-Escalation Derivation via Bounded Monotonicity",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9112,
+          "title": "build(release): publish codewhale-ratatui 0.2.0 as a workspace member (§213)",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -229960,7 +229970,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T19:54:42.713Z",
+      "verified_at": "2026-11-18T03:39:24.221Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -230002,34 +230012,34 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-hmbown-codewhale-architecture-intelligence-codewhale-hq-codewhale-core-invariant.md",
       "title": "Architecture Intelligence: codewhale-hq/Codewhale Core Invariants",
       "repository": "codewhale-hq/Codewhale",
-      "source_version": "554cb1b7",
-      "content_hash": "ad2a1036b7fb47e45982ff223d6ec25741c973b87dcd863e7a7aae59eb261aae",
+      "source_version": "af6fc33a",
+      "content_hash": "627bb814a1600982f113c030a8ed95c96930602913ec406d8d00060a4651593e",
       "domain_letter": "G",
-      "persisted_at": "2026-11-16T21:10:24.822Z"
+      "persisted_at": "2026-11-18T03:39:24.885Z"
     },
     "agent_contract-agent-contract-codewhale-hq-codewhale-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-codewhale-hq-codewhale-autonomous-specialist-persona",
       "artifact_type": "agent_contract",
       "target_folder": "02_AGENT_INTELLIGENCE",
-      "relative_path": "02_AGENT_INTELLIGENCE/codewhale-hq-codewhale-agent-contract-codewhale-hq-codewhale-autonomous-speciali.md",
+      "relative_path": "02_AGENT_INTELLIGENCE/hmbown-codewhale-agent-contract-codewhale-hq-codewhale-autonomous-specialist-per.md",
       "title": "Agent Contract: codewhale-hq/Codewhale Autonomous Specialist Persona",
       "repository": "codewhale-hq/Codewhale",
-      "source_version": "9c7cb976",
-      "content_hash": "390a022bf87b6b6c09938f3643573026dc65da433ed42f73c530bf67ae26f13d",
-      "domain_letter": "H",
-      "persisted_at": "2026-11-17T19:54:43.593Z"
+      "source_version": "af6fc33a",
+      "content_hash": "0f2a077cff7cc2ee6a4aafab0c1d57ab1d148488e2fd654466bb8b2d234df275",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-18T03:39:25.061Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-codewhale-hq-codewhale": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-codewhale-hq-codewhale",
       "artifact_type": "verification_contract",
       "target_folder": "08_VERIFICATION",
-      "relative_path": "08_VERIFICATION/codewhale-hq-codewhale-verification-protocol-empirical-defect-shield-for-codewha.md",
+      "relative_path": "08_VERIFICATION/hmbown-codewhale-verification-protocol-empirical-defect-shield-for-codewhale-hq-.md",
       "title": "Verification Protocol: Empirical Defect Shield for codewhale-hq/Codewhale",
       "repository": "codewhale-hq/Codewhale",
-      "source_version": "9c7cb976",
-      "content_hash": "597f371cb728b43b5fc2a3c43f76c9d1eea798a2385a0335f09e0656d1f36b2a",
+      "source_version": "af6fc33a",
+      "content_hash": "233ed47c58f426ccd2f26d6f06ec8dba531dcd0946977c3d4de3029fb2d51bc9",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T19:54:43.716Z"
+      "persisted_at": "2026-11-18T03:39:25.216Z"
     },
     "candidate_directive-extension-host-fill-the-dsh-broker-llm-arm-on-the-engine-s-own-auxiliary-model": {
       "item_id": "candidate_directive-extension-host-fill-the-dsh-broker-llm-arm-on-the-engine-s-own-auxiliary-model",
@@ -237608,9 +237618,9 @@
       "title": "Architecture Intelligence: hmbown-codewhale-learnings Core Invariants",
       "repository": "hmbown-codewhale-learnings",
       "source_version": "HEAD",
-      "content_hash": "fbbbba9720b0534abcb3bee37885ceacc5ccbcd9a53bdff498dfaa3f5a6fca00",
+      "content_hash": "9195b29e7314557ff548409d8436c638793a4838217a88773c303a91c2f5dc6c",
       "domain_letter": "G",
-      "persisted_at": "2026-11-16T21:10:39.421Z"
+      "persisted_at": "2026-11-18T03:39:41.403Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-hmbown-codewhale-learnings": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-hmbown-codewhale-learnings",
@@ -237632,9 +237642,9 @@
       "title": "Agent Contract: hmbown-codewhale-learnings Autonomous Specialist Persona",
       "repository": "hmbown-codewhale-learnings",
       "source_version": "HEAD",
-      "content_hash": "0d6f26f0afc7f5f5459b00a153c0143315b81ebfa10198acb0435f76d40d4f10",
+      "content_hash": "7f910191b8412f2de5ca722e9fd135555a5c0012add0413ef08bd7f587241a67",
       "domain_letter": "G",
-      "persisted_at": "2026-11-16T21:10:39.529Z"
+      "persisted_at": "2026-11-18T03:39:41.577Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-hmbown-codewhale-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-hmbown-codewhale-learnings",
@@ -237644,9 +237654,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for hmbown-codewhale-learnings",
       "repository": "hmbown-codewhale-learnings",
       "source_version": "HEAD",
-      "content_hash": "72350965a34f090a3c40b62ec728c94ffdfbded450b908db1af83564ef290056",
+      "content_hash": "ad094616f197422408beec9aa52f7bc1e91b8b5b02f4f147499339a59e5f928d",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T21:10:39.628Z"
+      "persisted_at": "2026-11-18T03:39:41.732Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-speridlabs-iris-3b-learnings-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-speridlabs-iris-3b-learnings-core-invariants",
@@ -280158,6 +280168,97 @@
         "rules_verified": true,
         "index_read_back_verified": true
       }
+    },
+    "learn-huggingface-fastino-gliner2-5-decide": {
+      "learning_id": "learn-huggingface-fastino-gliner2-5-decide",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "fastino/GLiNER2.5-Decide",
+      "repository": "fastino/GLiNER2.5-Decide",
+      "slug": "hf-fastino-gliner2.5-decide",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/fastino/GLiNER2.5-Decide",
+      "source_version": "hf-fastino-gliner2.5-decide",
+      "content_hash": "dfdc2f8ffe7f740f2f43b1a7479bf9415494333a8c6766d6b299b182f29f63c0",
+      "dossier_path": "07_PROJECT_LEARNING/hf-fastino-gliner2.5-decide-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-fastino-gliner2.5-decide-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-18T03:39:20.332Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-9112": {
+      "learning_id": "rule-9112",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9112,
+      "title": "build(release): publish codewhale-ratatui 0.2.0 as a workspace member (§213)",
+      "source_url": "https://github.com/Hmbown/Codewhale",
+      "source_version": "af6fc33a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-18T03:39:24.221Z"
+    },
+    "candidate_directive-build-release-publish-codewhale-ratatui-0-2-0-as-a-workspace-member-213": {
+      "item_id": "candidate_directive-build-release-publish-codewhale-ratatui-0-2-0-as-a-workspace-member-213",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-OQOZ-build-release-publish-codewhale-ratatui-0-2-0-as-a-workspace-member-213.md",
+      "title": "build(release): publish codewhale-ratatui 0.2.0 as a workspace member (§213)",
+      "repository": "hmbown-codewhale-learnings",
+      "source_version": "HEAD",
+      "content_hash": "70674c533a159d7230b3d2d79637487f45bd65afd3727530655c51be946de72d",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-18T03:39:41.226Z"
+    },
+    "rule-9113": {
+      "learning_id": "rule-9113",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9113,
+      "title": "Run every ffmpeg invocation with -nostdin and stdin=DEVNULL",
+      "source_url": "https://github.com/pixeltable/pixeltable",
+      "source_version": "b7363f1f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-18T03:39:35.692Z"
+    },
+    "candidate_directive-run-every-ffmpeg-invocation-with-nostdin-and-stdin-devnull": {
+      "item_id": "candidate_directive-run-every-ffmpeg-invocation-with-nostdin-and-stdin-devnull",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-ORXD-run-every-ffmpeg-invocation-with-nostdin-and-stdin-devnull.md",
+      "title": "Run every ffmpeg invocation with -nostdin and stdin=DEVNULL",
+      "repository": "pixeltable-pixeltable-learnings",
+      "source_version": "HEAD",
+      "content_hash": "953108f36c78777e7462ba4aaa4716705690319a11be884850b30e96718546eb",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-18T03:39:42.823Z"
+    },
+    "candidate_directive-nuc-115-count-controlled-repeat-loops": {
+      "item_id": "candidate_directive-nuc-115-count-controlled-repeat-loops",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-ONQV-nuc-115-count-controlled-repeat-loops.md",
+      "title": "NUC 115 Count-Controlled Repeat Loops",
+      "repository": "NucleoidAI/Nucleoid",
+      "source_version": "7bc9f013",
+      "content_hash": "f273e51fc4865e3c9ea693cac9c9c3998c454eacd390af5ca1c23563845ce6d1",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-18T03:39:37.405Z"
     }
   },
   "ai-builder-brain": {

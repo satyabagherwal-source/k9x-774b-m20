@@ -4,24 +4,24 @@
 {
   "source_repository": "codewhale-hq/Codewhale",
   "source_url": "https://github.com/Hmbown/Codewhale",
-  "source_version": "554cb1b7",
+  "source_version": "af6fc33a",
   "license": "MIT",
-  "timestamp": "2026-11-16T21:10:24.708Z",
+  "timestamp": "2026-11-18T03:39:24.705Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-codewhale-hq-codewhale",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [codewhale-hq/Codewhale](https://github.com/Hmbown/Codewhale) (Revision: `554cb1b7`).  
-> **License**: MIT | **Timestamp**: `2026-11-16T21:10:24.708Z`  
+> **Provenance**: Harvested from [codewhale-hq/Codewhale](https://github.com/Hmbown/Codewhale) (Revision: `af6fc33a`).  
+> **License**: MIT | **Timestamp**: `2026-11-18T03:39:24.705Z`  
 > **Learning ID**: `learn-github-codewhale-hq-codewhale`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), F (Design Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 60%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), F (Design Intelligence), C (Market & Business Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 52%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from codewhale-hq/Codewhale:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hmbown-codewhale-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Hmbown/Codewhale](https://github.com/Hmbown/Codewhale))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T21:10:23.569Z  
+> **Harvest Timestamp**: 2026-11-18T03:39:23.216Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: An open-source coding agent for your terminal, written in Rust. It works with any model, can split one task across several agents, and every line of it is yours to read.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 41184 stars
+- **Stars / Engagement**: 41188 stars
 
 ---
 
@@ -1980,13 +1980,11 @@ pub use codewhale_protocol::request::*;
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #7353** (2026-11-16): **fix(engine): log safe provider failure diagnostics**
-  *Symptoms*: Provider timeouts and transport failures can end a turn without leaving their cause in the default diagnostic log. Emit a structured warning from the existing `envelope_for_llm_error` boundary, shared by stream opening, stream reading, and context-recovery failures.  The warning records the existing error code/category and typed transmission state, plus an HTTP status or timeout duration only when the error retains that evidence. Untyped failures stay `OutcomeUnknown`; a zero timeout means the duration was not recorded. Raw errors, display messages, response bodies, URLs, and authentication context are not logged. Envelope conversion and retry/recovery decisions are unchanged.  Refs #7328 (partial). This slice adds diagnostic cause fields; provider/model/stage context, error-card presentation, and structured receipt fields remain outside its scope. Thanks to @7jrxt42BxFZo4iAnN4CX for the log/session analysis and measured timeout examples.  Validation:  - One regression captures warnings through an `info` filter across six failure cases, including an anyhow-wrapped timeout, unknown duration, pre-dispatch connection failure, 503 unknown outcome, 413 rejection, and an untyped network failure. It checks that raw error/context/secret fixtures are absent and the returned display message/recovery contract is preserved. - `CODEWHALE_DEV_NEXTEST=0 bash scripts/dev-test.sh crates/engine/src/llm_error_envelope.rs` (repository-pinned Rust 1.100.0, Linux): `test result: ok. 7 passed; 0 fa
+- **Issue #7361** (2026-11-17): **fix(tui): bound completed-turn session snapshot waits**
+  *Symptoms*: ## Status  Closed as a duplicate of the earlier #7360, which already has maintainer review. Thank you @deosiree for carrying the fix and @7jrxt42BxFZo4iAnN4CX for the diagnosis; I missed the new PR while this branch was building. This branch and its test evidence remain available, including the full-mailbox and held-reply regression. This closure is about duplicate scope, not CI status.  ## What and why  When a queued turn starts before the preceding completion handler receives its Engine snapshot, the TUI can wait for the entire new turn without polling terminal input or rendering.  Bound the completed-turn snapshot request, including mailbox capacity and reply waits, to the existing two-second session confirmation budget. A timeout reports a localized pending-snapshot reason and leaves the recovery checkpoint in place. The existing source, owner, session, workspace and message guards still gate the completed-session commit. Snapshot read failures no longer also log an unverified source mismatch.  This bounds the snapshot wait to two seconds; snapshots are still served between Engine turns. The provider stream failures described in the report remain separate.  ## Where this came from  Refs #7357.  Thanks @7jrxt42BxFZo4iAnN4CX for the session timelines, control comparison and diagnosis of the unbounded snapshot wait.  ## How I tested it  - Five focused TUI regressions passed on the final commit (**5 passed, 0 failed**): the new busy-Engine regression plus four existing startu
 
-- **Issue #7352** (2026-11-16): **fix(app-server): preserve named provider in web picker**
-  *Symptoms*: ## 做了什么，为什么  修复了 Web 客户端新建线程时无法正确使用命名自定义 Provider 的问题。多个自定义路由在 API 中都标记为 `custom`，客户端原先没有保留精确的路由 ID，导致模型列表请求失败。现在会按精确路由加载模型并创建线程。  ## 问题来源  Bug 修复：使用命名自定义 Provider（例如 `seer`）时，Web 客户端提示 `custom` 不是命名 Provider 的通配符，原报错： “ Could not load models: an explicit provider pin must name the configured provider 'seer'; custom is not a wildcard for a named provider”。  ## 测试方式  - `node --test crates/app-server/tests/runtime_web_client.test.mjs`：44 项测试通过。 - `cargo build --offline -p codewhale-cli`：构建成功。  ## 检查清单  - [x] 单一聚焦改动，基于当前 `main` 创建分支。 - [x] 增加测试覆盖改动行为；相关测试通过。 - [x] 已更新英文和简体中文 Web 文档；本次不是新增用户功能，无需修改 `docs/features.toml`。
-  **Post-Mortem & Fix Analysis**:
-  > Thank you @Gyuke, and welcome: this is your first merged contribution. Making the web client's new-thread dialog route to a named custom provider fixes a real gap for people running more than one custom endpoint. Both independent reviews approved the code with no changes.  Squash-merged as a508d8d3f8 (your branch is untouched). It is on `main` for the 0.10.3 candidate and is not in a published release yet. One maintainer credit commit follows with the CHANGELOG line, your CONTRIBUTORS entry and an `.github/AUTHOR_MAP` entry so your commit email links to your GitHub account; you do not need to do anything. 
+- **Issue #7359** (2026-11-17): **fix(subagent): inherit the session's reviewed memory in child prompts**
+  *Symptoms*: ## What and why  A sub-agent's system prompt now carries the session's reviewed native-memory packet and its `## Memory Hygiene` guidance, the same bytes the root session's prompt carries.  Today a child gets neither: `Engine::new_child_admitted` clears `memory_enabled`, and `host_owned_system_prompt()` returns the child's role prompt before the memory block is ever composed. So a rule the user pinned in Context Lens — "cloud deploys need your approval", "edit code in the dev directory, not the runtime directory" — binds the orchestrator and silently not the agent that actually edits files. The memory tools still work in a child, but `memory_search` is lexical and explicit pins only enter through the packet path, so pins never surface there either.  The fix is one seam: `build_subagent_system_prompt_with_skills` composes the packet from the inherited `ToolContext.memory_path` and appends it after the role contract, before the skill catalog. A shared helper `memory_prompt_section` (extracted from the root prompt's inline formatting, byte-identical output) guarantees parent and child never ship the packet without its guidance.  Design notes: - The packet is re-composed, not copied out of the parent prompt: a memory edited mid-session reaches a later spawn, and an isolated worktree still resolves to the same workspace scope through its shared git remote. - No `memory_enabled` flip: enabling it on the child would run session-start reconciliation under the root session id, duplica
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2003,1118 +2001,1442 @@ pub use codewhale_protocol::request::*;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3c4317c9` (2026-11-16)
-**Commit Message**: fix(client): decide the reasoning dialect by endpoint, not by model id (#7349)
+### Incident Patch 1: `a41695c4` (2026-11-17)
+**Commit Message**: build(release): publish codewhale-ratatui 0.2.0 as a workspace member (§213)
 
-* fix(client): stop sending DeepSeek thinking toggle to compatible gateways
+vendor/codewhale-ratatui joins the workspace (exclude removed) and the release
+order right after codewhale-protocol. validate-crate-publish-order.py lets it
+keep its own version (0.2.0) while every other crate stays on the workspace
+version, and emits it as own-version; publish-crates.sh uses the per-crate
+version for the reuse guard and the already-published check. RELEASE_RUNBOOK
+notes the exception. check-versions.sh already exempted the 0.2.0 pin.
 
-A `custom` route carrying a DeepSeek model id was handed DeepSeek's native
-`thinking` object on /v1/chat/completions. The promotion in
-apply_route_reasoning_controls looked only at the model name, never at the
-endpoint, so an OpenAI-compatible gateway received a field it rejects:
+Cargo.lock: only the new dev-dependency records (insta 1.49.0, similar 2.7.0,
+sha2 edge); the windows-sys/getrandom re-resolution cargo offers is not taken.
 
-  400 invalid_request_error  param: "thinking"  code: "unsupported_parameter"
-  "thinking" is not supported on /v1/chat/completions and was not applied.
+Checks: check-versions.sh and --require-dated-release OK (same as main);
+validate-crate-publish-order.test.sh (new independent-version case) OK;
+publish-crates.test.py 6 tests OK; cargo metadata --locked OK; validator on
+the live graph OK; cargo package --locked of app-server-protocol, protocol and
+ratatui with verification (builds from the tarball) OK. No CHANGELOG line: no
+user-visible change.
 
-Every other gateway identity in reasoning_effort.rs (telecomjs, zenmux, edenai,
-csdn, custom) already writes neither field, because a compatible endpoint's
-request dialect is not knowable from the model id. The custom row escaped that
-policy through this one promotion.
+check-published.sh reads the same own-version inventory and checks
+codewhale-ratatui at 0.2.0 instead of th
 
-Keep the promotion for what 008d21d69 added it for - forwarding the configured
-effort, which custom DeepSeek routes silently dropped - and drop the
-DeepSeek-native toggle from that path. reasoning_effort is the standard
-compatibility field these gateways document. Direct deepseek routes keep their
-full dialect; the DS4 local route is 
-
-**File**: `crates/engine/src/client.rs` (modified, +1/-1)
+**File**: `.gitattributes` (modified, +5/-0)
 ```diff
-@@ -4009,7 +4009,7 @@ impl CodewhaleClient {
-         });
-         chat::apply_route_reasoning_controls(
-             &mut body,
--            self.api_provider,
-+            self.chat_shape_provider(&model),
-             &self.base_url,
-             &model,
-             Some("off"),
+@@ -27,6 +27,11 @@ pet/ios/Resources/demo.jsonl text eol=lf
+ # always join rows with LF (golden_harness.rs::render_golden_text), so a
+ # CRLF checkout failed all eight Windows golden tests with a pure \r\n diff.
+ crates/tui/src/tui/goldens/*.txt text eol=lf
++vendor/codewhale-ratatui/tests/**/*.txt text eol=lf
++vendor/codewhale-ratatui/tests/**/*.json text eol=lf
++vendor/codewhale-ratatui/assets/**/*.json text eol=lf
++vendor/codewhale-ratatui/assets/**/*.js text eol=lf
++vendor/codewhale-ratatui/assets/*.scenes text eol=lf
+ # FEAT-025 baseline export goldens (crates/tui/src/commands/fixtures/*.md) are
+ # include_str!()'d and compared byte for byte against a document the exporter
+ # builds with LF, so a CRLF checkout failed the four Windows golden tests with a
 ```
 
-**File**: `crates/engine/src/client/chat.rs` (modified, +63/-8)
+**File**: `Cargo.lock` (modified, +22/-2)
 ```diff
-@@ -585,22 +585,67 @@ fn modelstudio_reasoning_effort_for_model(effort: &str) -> Option<&'static str>
-     }
- }
+@@ -1253,7 +1253,7 @@ dependencies = [
+  "shell-words",
+  "shellexpand",
+  "shlex 2.0.1",
+- "similar",
++ "similar 3.2.1",
+  "syn 3.0.10",
+  "tar",
+  "tempfile",
+@@ -1540,11 +1540,13 @@ version = "0.2.0"
+ dependencies = [
+  "codewhale-protocol",
+  "crossterm",
++ "insta",
+  "libc",
+  "ratatui",
+  "ratatui-core",
+  "serde",
+  "serde_json",
++ "sha2 0.10.9",
+  "unicode-segmentation",
+  "unicode-width",
+ ]
+@@ -1915,7 +1917,7 @@ dependencies = [
+  "codewhale-sanitize",
+  "crossterm",
+  "ratatui",
+- "similar",
++ "similar 3.2.1",
+  "syntect",
+  "unicode-segmentation",
+  "unicode-width",
+@@ -4322,6 +4324,18 @@ dependencies = [
+  "generic-array",
+ ]
  
-+/// Whether `base_url` points at one of DeepSeek's own Chat Completions hosts.
-+///
-+/// The decision is the host's, not the path's: `https://api.deepseek.com/openai`
-+/// is still DeepSeek, and treating a non-canonical path as a gateway would send
-+/// `reasoning_effort: "none"` to the real endpoint, which documents no such tier
-+/// on this wire. Scheme stays exact so an http downgrade cannot claim the
-+/// dialect.
-+///
-+/// The host set deliberately includes the legacy typo host `api.deepseeki.com`,
-+/// which `docs/REBRAND.md` records as not an official endpoint and kept only for
-+/// existing configs (#1079). `deepseek_base_url_supports_strict_tools`, the beta
-+/// path guard, and the Responses dialect all accept it too; excluding it here
-+/// would make the same host DeepSeek for strict tools and Responses but not for
-+/// reasoning, silently dropping the toggle those configs rely on.
-+fn is_deepseek_chat_host(base_url: &str) -> bool {
-+    reqwest::Url::parse(base_url.trim()).is_ok_and(|url| {
-+        url.scheme() == "https"
-+            && matches!(
-+                url.host_str(),
-+                Some("api.deepseek.com" | "api.deepseeki.com")
-+            )
-+    })
-+}
++[[package]]
++name = "insta"
++version = "1.49.0"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "b67d3d2e287e4b86c10b3f3b641033d1f89b74bdb39d05f34952e2b9a6fe21cd"
++dependencies = [
++ "console",
++ "once_cell",
++ "similar 2.7.0",
++ "tempfile",
++]
 +
- /// Final reasoning-control pass shared by streaming and non-streaming Chat
--/// Completions requests. Route-specific shapers run after the generic provider
--/// layer so they can remove fields that are invalid for their exact endpoint.
-+/// Completions requests. Route-specific shapers run first so they can remove
-+/// fields that are invalid for their exact endpoint; the gateway cleanup below
-+/// runs last, so nothing in this function can re-add what it removes.
-+///
-+/// Which dialect a route speaks is decided by the endpoint, not by the model id.
-+/// A route labeled `deepseek` speaks DeepSeek's, and so does a `custom` row
-+/// pointed at DeepSeek's own host. A `custom` row pointed anywhere else may
-+/// still carry a DeepSeek model id, but the endpoint's dialect is unknown: it
-+/// keeps the documented `reasoning_effort` spelling and loses the native
-+/// `thinking` object, which the gateway this was reproduced against rejects
-+/// outright on `/v1/chat/completions`.
-+///
-+/// `off` is expressed as `reasoning_effort: "none"` on such a route, the OpenAI
-+/// compatibility spelling this repository already maps `off` to for other
-+/// compatible routes. On the gateway this was verified against, `none` stopped
-+/// thinking (`reasoning_tokens: 0`, no reasoning field) rather than merely
-+/// omitting the control. A gateway that validates the field fails loudly; one
-+/// that silently ignores unknown values would fall back to its own default
-+/// while the replay gate skips `reasoning_content` for `off` — which is why this
-+/// mapping is only self-consistent on gateways that implement `none`.
- pub(super) fn apply_route_reasoning_controls(
-     body: &mut Value,
-     provider: ProviderKind,
-     base_url: &str,
-     model: &str,
-     effort: Option<&str>,
- ) {
--    let reasoning_provider =
--        if provider == ProviderKind::Custom && requires_reasoning_content(model) {
--            ProviderKind::Deepseek
--        } else {
--            provider
--        };
-+    let custom_claims_deepseek_model =
-+        provider == ProviderKind::Custom && requires_reasoning_content(model);
-+    let gateway_drops_deepseek_dialect =
-+        custom_claims_deepseek_model && !is_deepseek_chat_host(base_url);
-+    let reasoning_provider = if provider == ProviderKind::Deepseek || custom_claims_deepseek_model {
-+        ProviderKind::Deepseek
-+    } else {
-+        provider
-+    };
-     apply_reasoning_effort(body, effort, reasoning_provider);
-     codewhale_config::local_reasoning::apply_local_reasoning_controls(
-         body, provider, model, effort,
-@@ -615,6 +660,16 @@ pub(super) fn apply_route_reasoning_controls(
-     apply_zai_route_reasoning_controls(body, provider, base_url, model, effort);
-     apply_mistral_route_reasoning_controls(body, provider, base_url, model, effort);
-     apply_google_reasoning_effort(body, base_url, model, effort);
-+    if gateway_drops_deepseek_dialect {
-+        if let Some(object) = body.as_object_mut() {
-+            object.remove("thinking");
-+        }
-+        if effort.is_some_and(|effort| !reasoning_effort_enables_thinking(Some(effort)))
-+            && body.get("reasoning_effort").is_none()
-+        {
-+            body["reasoning_effort"] = json!("none");
-+        }
-+    }
- }
+ [[package]]
+ name = "instability"
+ version = "0.3.14"
+@@ -7017,6 +7031,12 @@ version = "0.1.5"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "e3a9fe34e3e7a50316060351f37187a3f546bce95496156754b601a5fa71b76e"
  
- /// Mistral's polymorphic reasoning-content contract is only proven on its
++[[package]]
++name = "similar"
++version = "2.7.0"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "bbbb5d9659141646ae647b42fe094daf6c6192d1620870b449d9557f748b2daa"
++
+ [[package]]
+ name = "similar"
+ version = "3.2.1"
 ```
 
-**File**: `crates/engine/src/client/ds4_tests.rs` (modified, +128/-0)
+**File**: `Cargo.toml` (modified, +1/-1)
 ```diff
-@@ -5,6 +5,8 @@ use codewhale_models::Role;
- use codewhale_models::{ContentBlock, Delta, Message, MessageRequest, StreamEvent, Tool};
- use codewhale_runtime::config::{Config, ProviderConfig, ProvidersConfig};
- use serde_json::{Value, json};
-+use wiremock::matchers::method;
-+use wiremock::{Mock, MockServer, ResponseTemplate};
+@@ -45,11 +45,11 @@ members = [
+     "crates/repl",
+     "crates/workflow",
+     "crates/workflow-js",
++    "vendor/codewhale-ratatui",
+     "tests/portable-session",
+     "tests/portable-config",
+     "tests/portable-core-navigation",
+ ]
+-exclude = ["vendor/codewhale-ratatui"]
+ default-members = ["crates/cli"]
+ resolver = "2"
  
- fn ds4_client() -> CodewhaleClient {
-     let mut providers = ProvidersConfig::default();
-@@ -30,6 +32,132 @@ fn ds4_client() -> CodewhaleClient {
-     .expect("DS4 client")
- }
- 
-+/// The same named `ds4` identity, bound to a mock endpoint. DS4 is identified by
-+/// the identity key plus a local host, so a loopback mock server is a real DS4
-+/// route as far as the client is concerned.
-+fn ds4_client_at(server: &MockServer) -> CodewhaleClient {
-+    let mut providers = ProvidersConfig::default();
-+    providers.custom.insert(
-+        "ds4".to_string(),
-+        ProviderConfig {
-+            kind: Some("openai-compatible".to_string()),
-+            base_url: Some(format!("{}/v1", server.uri())),
-+            model: Some("deepseek-v4-flash".to_string()),
-+            context_window: Some(100_000),
-+            auth_mode: Some("none".to_string()),
-+            ..Default::default()
-+        },
-+    );
-+    CodewhaleClient::new(&{
-+        let __cw_config_init_1_0 = Some("ds4".to_string());
-+        let __cw_config_init_1_1 = Some(providers);
-+        let mut __cw_config_init_1_value: Config = Default::default();
-+        __cw_config_init_1_value.provider = __cw_config_init_1_0;
-+        __cw_config_init_1_value.providers = __cw_config_init_1_1;
-+        __cw_config_init_1_value
-+    })
-+    .expect("DS4 client")
-+}
-+
-+/// DS4 is a named `openai-compatible` route, so its `api_provider` is `Custom`.
-+/// It implements the first-party DeepSeek dialect, which means the helper paths
-+/// that bypass `chat_shape_provider` must still send the thinking toggle.
-+/// Translation is one of those paths and always requests `off`.
-+#[tokio::test]
-+async fn named_ds4_translation_keeps_the_disabled_thinking_toggle() -> Result<()> {
-+    let server = MockServer::start().await;
-+    Mock::given(method("POST"))
-+        .respond_with(ResponseTemplate::new(200).set_body_json(json!({
-+            "id": "chatcmpl-ds4-translate",
-+            "object": "chat.completion",
-+            "model": "deepseek-v4-flash",
-+            "choices": [{
-+                "index": 0,
-+                "message": {"role": "assistant", "content": "Hola"},
-+                "finish_reason": "stop"
-+            }],
-+            "usage": {"prompt_tokens": 3, "completion_tokens": 1, "total_tokens": 4}
-+        })))
-+        .expect(1)
-+        .mount(&server)
-+        .await;
-+
-+    let client = ds4_client_at(&server);
-+    client
-+        .translate_with_usage(
-+            "hello",
-+            "deepseek-v4-flash",
-+            "Spanish",
-+            &crate::cost_status::NativeUsageSource::capture(
-+                format!("ds4-translate-test:{}", uuid::Uuid::new_v4()),
-+                crate::cost_status::UsageSpendOwner::Auxiliary,
-+            ),
-+        )
-+        .await?;
-+
-+    let requests = server.received_requests().await.expect("recorded request");
-+    assert_eq!(requests.len(), 1);
-+    let body: Value = serde_json::from_slice(&requests[0].body)?;
-+    assert_eq!(
-+        body.pointer("/thinking/type").and_then(Value::as_str),
-+        Some("disabled"),
-+        "DS4 speaks the first-party DeepSeek dialect: {body}"
-+    );
-+    Ok(())
-+}
-+
-+/// The mirror of the test above on an ordinary compatible gateway. Translation
-+/// always asks for `off`; on a gateway that must arrive as `none` with no
-+/// `thinking` object, because the object is what such an endpoint rejects.
-+/// Without this case a future shaper could re-add the toggle on the translation
-+/// path and only the gateway would notice.
-+#[tokio::test]
-+async fn a_gateway_translation_asks_for_none_instead_of_the_thinking_toggle() -> Result<()> {
-+    let server = MockServer::start().await;
-+    Mock::given(method("POST"))
-+        .respond_with(ResponseTemplate::new(200).set_body_json(json!({
-+            "id": "chatcmpl-gateway-translate",
-+            "object": "chat.completion",
-+            "model": "DeepSeek-V4.1-Flash",
-+            "choices": [{
-+                "index": 0,
-+                "message": {"role": "assistant", "content": "Hola"},
-+                "finish_reason": "stop"
-+            }],
-+            "usage": {"prompt_tokens": 3, "completion_tokens": 1, "total_tokens": 4}
-+        })))
-+        .expect(1)
-+        .mount(&server)
-+        .await;
-+
-+    let client = super::tests::custom_mock_client_for_identity(&server, "aicraft");
-+    client
-+        .translate_with_usage(
-+            "hello",
-+            "DeepSeek-V4.1-Flash",
-+            "Spanish",
-+            &crate::cost_status::NativeUsageSource::capture(
-+                format!("gateway-translate-test:{}", uuid::Uuid::new_v4()),
-+                crate::cost_status::UsageSpendOw
 ```
 
-**File**: `crates/engine/src/client/test_cases_05.rs` (modified, +171/-13)
+**File**: `docs/RELEASE_CHECKLIST.md` (modified, +2/-2)
 ```diff
-@@ -147,30 +147,33 @@
-     }
+@@ -286,8 +286,8 @@ authority.
+       codewhale`, `curl .../install.sh | sh`); Homebrew is labeled as legacy
+       compatibility; the shell installer uses codewhale-native names as documented
+       in `docs/REBRAND.md#homebrew`.
+-- [ ] Every release crate has the new version on crates.io; there is no
+-      automated Cargo publish job. Partial publication is incomplete.
++- [ ] Every release crate has the new version on crates.io (`codewhale-ratatui`
++      has its own version); there is no automated Cargo publish job. Partial publication is incomplete.
+ - [ ] `ghcr.io/codewhale-hq/codewhale:vX.Y.Z` and `:latest` are updated.
+ - [ ] The CNB release tag and approved downstream results are verified
+       separately; a successful GitHub Release does not prove them.
+```
+
+**File**: `docs/RELEASE_RUNBOOK.md` (modified, +12/-1)
+```diff
+@@ -39,6 +39,16 @@ The complete supporting-crate list and dependency order live in
+ the locked workspace graph by the publish helper. Do not maintain a second
+ handwritten list here.
  
-     /// Request-body capture per effort level on direct and custom DeepSeek chat
--    /// route: the wire must carry the documented low/high/max ladder and the
--    /// thinking toggle, never an invented value (#52).
-+    /// route: the wire must carry the documented low/high/max ladder, never an
-+    /// invented value (#52). Only the `deepseek`-shaped route carries the
-+    /// `thinking` toggle; a gateway borrows the effort spelling and expresses
-+    /// `off` as `none`.
-     #[tokio::test]
-     async fn deepseek_chat_wire_body_tracks_the_documented_effort_ladder() {
--        for (effort, expected_effort, expected_thinking) in [
--            (Some("low"), Some("low"), Some("enabled")),
--            (Some("medium"), Some("high"), Some("enabled")),
--            (Some("high"), Some("high"), Some("enabled")),
--            (Some("max"), Some("max"), Some("enabled")),
--            (Some("off"), None, Some("disabled")),
--            (None, None, None),
-+        for (effort, expected_effort, expected_thinking, gateway_effort) in [
-+            (Some("low"), Some("low"), Some("enabled"), Some("low")),
-+            (Some("medium"), Some("high"), Some("enabled"), Some("high")),
-+            (Some("high"), Some("high"), Some("enabled"), Some("high")),
-+            (Some("max"), Some("max"), Some("enabled"), Some("max")),
-+            (Some("off"), None, Some("disabled"), Some("none")),
-+            (None, None, None, None),
-         ] {
-             for (custom, stream) in [(false, false), (false, true), (true, false), (true, true)] {
-                 let body = capture_deepseek_chat_body_for_effort(effort, custom, stream).await;
-                 assert_eq!(body["max_tokens"], 64);
-                 assert_eq!(
-                     body.get("reasoning_effort").and_then(Value::as_str),
--                    expected_effort,
--                    "reasoning_effort on the wire for {effort:?}: {body}"
-+                    if custom { gateway_effort } else { expected_effort },
-+                    "reasoning_effort on the wire for {effort:?} (custom={custom}): {body}"
-                 );
-+                let expected_toggle = if custom { None } else { expected_thinking };
-                 assert_eq!(
-                     body.pointer("/thinking/type").and_then(Value::as_str),
--                    expected_thinking,
--                    "thinking on the wire for {effort:?}: {body}"
-+                    expected_toggle,
-+                    "thinking on the wire for {effort:?} (custom={custom}): {body}"
-                 );
-             }
-         }
-@@ -1708,3 +1711,158 @@
-             );
-         }
-     }
++`codewhale-ratatui` (`vendor/codewhale-ratatui`) is a workspace member with its
++own version, `0.2.0`, independent of the workspace version (CURRENT_DECISIONS
++§213). It publishes right after `codewhale-protocol`, which it depends on,
++and before the crates that depend on it. `check-versions.sh` exempts only its
++own `0.2.0` pin from the workspace-version rule; its `codewhale-protocol` pin
++still follows the workspace version. Bumping the crate means changing its
++manifest version and the `0.2.0` pins in `codewhale-engine`,
++`codewhale-tui-kit` and `codewhale-tui`, and the exception line in
++`check-versions.sh`, together.
 +
-+    #[test]
-+    fn openai_compatible_gateway_gets_no_deepseek_thinking_dialect_from_a_model_name() {
-+        for (effort, expected_effort) in [
-+            ("off", Some("none")),
-+            ("low", Some("low")),
-+            ("high", Some("high")),
-+            ("max", Some("max")),
-+            ("auto", None),
-+            ("no-such-tier", None),
-+        ] {
-+            let mut body = json!({});
-+            chat::apply_route_reasoning_controls(
-+                &mut body,
-+                ProviderKind::Custom,
-+                "https://api.freeshare.tech:8443/v1",
-+                "DeepSeek-V4.1-Flash",
-+                Some(effort),
-+            );
-+            assert!(
-+                body.get("thinking").is_none(),
-+                "a gateway rejects DeepSeek's toggle object ({effort}): {body}"
-+            );
-+            assert_eq!(
-+                body.get("reasoning_effort").and_then(Value::as_str),
-+                expected_effort,
-+                "the compatibility wire expresses the tier in its own spelling ({effort}): {body}"
-+            );
-+        }
-+    }
+ ## Version Coordination
+ 
+ - Rust crates inherit the shared workspace version from [Cargo.toml](../Cargo.toml).
+@@ -348,7 +358,8 @@ After publishing, prove the release is visible in both registries:
+ ```
+ 
+ Do not mark a Rust release complete until that command sees `codewhale@X.Y.Z`
+-on npm and every `codewhale-*` crate at `X.Y.Z` on crates.io. For a rare
++on npm and every `codewhale-*` crate at `X.Y.Z` on crates.io, except
++`codewhale-ratatui`, which it checks at its own version. For a rare
+ npm packaging-only release, run with `--allow-npm-binary-mismatch` and keep the
+ release notes explicit that no new Rust binary version shipped.
+ 
+```
+
+**File**: `scripts/release/check-published.sh` (modified, +15/-3)
+```diff
+@@ -105,12 +105,24 @@ else
+   fail=1
+ fi
+ 
++own_versions="$(
++  python3 "${script_dir}/validate-crate-publish-order.py" "${release_crates[@]}" |
++    awk -F'\t' '$1 == "own-version" { print $2 "=" $3 }'
++)"
 +
-+    /// A `custom` row pointed at DeepSeek's own host is DeepSeek: it keeps the
-+    /// native toggle, so `off` still disables thinking there rather than
-+    /// degrading to the compatibility spelling. The host decides, so a
-+    /// non-canonical path is still DeepSeek, and a trailing slash, surrounding
-+    /// whitespace, userinfo or an explicit port does not change the answer.
-+    #[test]
-+    fn a_custom_row_on_the_official_deepseek_host_keeps_the_thinking_toggle() {
-+        for base_url in [
-+            "https://api.deepseek.com/v1",
-+            "https://api.deepseek.com",
-+            "https://api.deepseek.com/beta",
-+            "https://api.deepseek.com/v1/",
-+            "https://api.deepseek.com/openai",
-+            "  https://API.DeepSeek.com/v1  ",
-+            "https://user:pw@api.deepseek.com/v1",
-+            "https://api.deepseek.com:443/v1",
-+        ] {
-+            for (effort, thinking, wire_effort) in [
-+                ("off", "disabled", None),
-+                ("max", "enabled", Some("max")),
-+            ] {
-+                let mut body = json!({});
-+                chat::apply_route_reasoning_controls(
-+                    &mut body,
-+                    ProviderKind::Custo
++crate_version() {
++  local own
++  own="$(awk -F= -v name="$1" '$1 == name { print $2 }' <<<"${own_versions}")"
++  echo "${own:-${version}}"
++}
++
+ crates_user_agent="CodeWhale release check (https://github.com/codewhale-hq/CodeWhale)"
+ for crate in "${release_crates[@]}"; do
+-  if curl -fsSL -A "${crates_user_agent}" "https://crates.io/api/v1/crates/${crate}/${version}" >/dev/null 2>&1; then
+-    echo "crates.io ${crate}@${version} is published."
++  crate_release_version="$(crate_version "${crate}")"
++  if curl -fsSL -A "${crates_user_agent}" "https://crates.io/api/v1/crates/${crate}/${crate_release_version}" >/dev/null 2>&1; then
++    echo "crates.io ${crate}@${crate_release_version} is published."
+   else
+-    echo "crates.io ${crate}@${version} is not published." >&2
++    echo "crates.io ${crate}@${crate_release_version} is not published." >&2
+     fail=1
+   fi
+ done
+```
+
+**File**: `scripts/release/crates.sh` (modified, +1/-0)
+```diff
+@@ -7,6 +7,7 @@ release_crates=(
+   codewhale-paths
+   codewhale-app-server-protocol
+   codewhale-protocol
++  codewhale-ratatui
+   codewhale-sanitize
+   codewhale-release
+   codewhale-secrets
+```
+
+**File**: `scripts/release/publish-crates.sh` (modified, +23/-8)
+```diff
+@@ -28,6 +28,7 @@ crates_user_agent="CodeWhale release publish check (https://github.com/codewhale
+ 
+ workspace_version=""
+ build_dir=""
++own_versions=""
+ 
+ metadata_inventory="$(
+   python3 "${script_dir}/validate-crate-publish-order.py" "${packages[@]}"
+@@ -40,6 +41,9 @@ while IFS=$'\t' read -r kind name value; do
+     build-dir)
+       build_dir="${name}"
+       ;;
++    own-version)
++      own_versions+="${name}=${value}"$'\n'
++      ;;
+   esac
+ done <<<"${metadata_inventory}"
+ 
+@@ -52,12 +56,18 @@ if [[ -z "${build_dir}" ]]; then
+   exit 1
+ fi
+ 
++crate_version() {
++  local own
++  own="$(sed -n "s/^$1=//p" <<<"${own_versions}")"
++  echo "${own:-${workspace_version}}"
++}
++
+ echo "Crate publication order OK: ${#packages[@]} workspace crates."
+ 
+ cargo_home="${CARGO_HOME:-${HOME}/.cargo}"
+ reused=()
+ for package in "${packages[@]}"; do
+-  for extracted in "${cargo_home}"/registry/src/*/"${package}-${workspace_version}"; do
++  for extracted in "${cargo_home}"/registry/src/*/"${package}-$(crate_version "${package}")"; do
+     if [[ -e "${extracted}" && "${extracted}" != "${cargo_home}"/registry/src/index.crates.io-*/* ]]; then
+       reused+=("extracted source ${extracted}")
+     fi
+@@ -69,11 +79,15 @@ if [[ -d "${deps_dirs[0]}" ]]; then
+   for package in "${packages[@]}"; do
+     include_args+=("--include=${package//-/_}-*.d")
+   done
+-  crate_pattern="$(IFS='|'; echo "${packages[*]}")"
+-  version_pattern="${workspace_version//./\\.}"
+-  version_pattern="${version_pattern//+/\\+}"
++  crate_pattern=""
++  for package in "${packages[@]}"; do
++    package_version="$(crate_version "${package}")"
++    package_version="${package_version//./\\.}"
++    package_version="${package_version//+/\\+}"
++    crate_pattern+="${crate_pattern:+|}${package}-${package_version}"
++  done
+   units="$(
+-    grep -rHoE "${include_args[@]}" -- "[^ ]*/registry/src/[^/ ]+/(${crate_pattern})-${version_pattern}/" "${deps_dirs[@]}" ||
++    grep -rHoE "${include_args[@]}" -- "[^ ]*/registry/src/[^/ ]+/(${crate_pattern})/" "${deps_dirs[@]}" ||
+       [[ $? -eq 1 ]]
+   )" || {
+     echo "Could not scan ${build_dir} for compiled release crates." >&2
+@@ -156,11 +170,12 @@ wait_for_crate_version() {
+ 
+ for package in "${packages[@]}"; do
+   echo "::group::${mode} ${package}"
+-  if crate_version_exists "${package}" "${workspace_version}"; then
+-    echo "Skipping ${package} ${workspace_version}; already published."
++  package_version="$(crate_version "${package}")"
++  if crate_version_exists "${package}" "${package_version}"; then
++    echo "Skipping ${package} ${package_version}; already published."
+   else
+     cargo publish --locked --registry crates-io -p "${package}"
+-    wait_for_crate_version "${package}" "${workspace_version}"
++    wait_for_crate_version "${package}" "${package_version}"
+   fi
+   echo "::endgroup::"
+ done
 ```
 
 ---
 
-### Incident Patch 2: `a44078cc` (2026-11-16)
-**Commit Message**: fix(test): route engine test temp dirs through a per-process scratch root (CW-8203)
+### Incident Patch 2: `af6fc33a` (2026-11-18)
+**Commit Message**: fix(app-server): forward isolated desktop browser owner to attached runtime listeners (CW-8240)
 
-Engine, app-server, runtime and TUI test helpers created uuid-, pid- or
-nanos-suffixed directories directly under the system temp dir and never
-removed them, leaking thousands of folders per test run.
+When another Codewhale process (terminal or `codewhale serve`) already holds
+`CODEWHALE_HOME`, a desktop-spawned `codewhale serve` attaches a Runtime API
+listener to the existing host over the authenticated local owner channel.
+Previously `RuntimeListenerSelection` carried `auth_token` and `workspace`
+without the desktop's `CODEWHALE_BROWSER_OWNER_PUBLIC_KEY`, so
+`POST /v1/apps/mcp/desktop-browser` checked the Ed25519 registration signature
+against the host process's own environment and failed with HTTP 400
+(`Desktop browser owner is unavailable`).
 
-Add codewhale_runtime::test_support::test_scratch_dir(prefix) returning a
-unique, not-yet-created path under one codewhale-test-scratch-<pid>-<nonce>
-root per test process, removed at exit by the existing atexit hook
-(registered once via std::sync::Once alongside isolated_test_state_root).
-
-Migrate helper-level leak sites across runtime (config_persistence,
-workspace_lease), engine (core approval store, runtime_threads,
-task_manager, subagent approval store), app-server (runtime_api server
-roots, thread_snapshot_ownership, control_socket_selection) and TUI
-(config_main_host, network command tests, views create_test_app).
-
-Checks (Boat Linux): cargo fmt --all -- --check passed; cargo clippy
---locked -p codewhale-runtime -p codewhale-engine -p codewhale-app-server
--p codewhale-tui --all-targets -- -D warnings 0 warnings; hermetic cargo
-nextest: codewhale-runtime 38 passed, codewhale-engine 713 passed,
-
-
-**File**: `crates/app-server/src/runtime_api/tests.rs` (modified, +6/-6)
-```diff
-@@ -1583,7 +1583,7 @@ async fn spawn_test_server() -> Result<
-         tokio::task::JoinHandle<()>,
-     )>,
- > {
--    let root = std::env::temp_dir().join(format!("deepseek-runtime-api-{}", Uuid::new_v4()));
-+    let root = codewhale_engine::test_support::test_scratch_dir("deepseek-runtime-api");
-     let sessions_dir = root.join("sessions");
-     spawn_test_server_with_root(root, sessions_dir).await
- }
-@@ -1597,7 +1597,7 @@ async fn spawn_test_server_with_config_path(
-         tokio::task::JoinHandle<()>,
-     )>,
- > {
--    let root = std::env::temp_dir().join(format!("codewhale-config-api-{}", Uuid::new_v4()));
-+    let root = codewhale_engine::test_support::test_scratch_dir("codewhale-config-api");
-     let sessions_dir = root.join("sessions");
-     let workspace = root.join("workspace");
-     fs::create_dir_all(&root)?;
-@@ -1625,7 +1625,7 @@ async fn spawn_test_server_with_config_path_and_profile(
-         tokio::task::JoinHandle<()>,
-     )>,
- > {
--    let root = std::env::temp_dir().join(format!("codewhale-config-api-{}", Uuid::new_v4()));
-+    let root = codewhale_engine::test_support::test_scratch_dir("codewhale-config-api");
-     let sessions_dir = root.join("sessions");
-     let workspace = root.join("workspace");
-     fs::create_dir_all(&root)?;
-@@ -2162,7 +2162,7 @@ async fn mcp_tools_endpoint_is_passive_until_connect_requested() -> Result<()> {
- 
- #[tokio::test]
- async fn runtime_token_guard_protects_v1_routes() -> Result<()> {
--    let root = std::env::temp_dir().join(format!("deepseek-runtime-api-{}", Uuid::new_v4()));
-+    let root = codewhale_engine::test_support::test_scratch_dir("deepseek-runtime-api");
-     let sessions_dir = root.join("sessions");
-     let token = "local-test-token".to_string();
-     let Some((addr, _runtime_threads, handle)) =
-@@ -9515,7 +9515,7 @@ fn snapshots_endpoint_lists_workspace_snapshots() -> Result<()> {
- async fn spawn_server_with_saved_sessions(
-     sessions: &[(&str, &str, bool)],
- ) -> Result<Option<(SocketAddr, PathBuf, tokio::task::JoinHandle<()>)>> {
--    let root = std::env::temp_dir().join(format!("codewhale-session-routes-{}", Uuid::new_v4()));
-+    let root = codewhale_engine::test_support::test_scratch_dir("codewhale-session-routes");
-     let sessions_dir = root.join("sessions");
-     let workspace = root.join("workspace");
-     fs::create_dir_all(&workspace)?;
-@@ -26588,7 +26588,7 @@ mod thread_snapshot_ownership {
-     }
- 
-     fn test_root(name: &str) -> PathBuf {
--        std::env::temp_dir().join(format!("codewhale-6621-{name}-{}", Uuid::new_v4()))
-+        codewhale_engine::test_support::test_scratch_dir(&format!("codewhale-6621-{name}"))
-     }
- 
-     /// A session save must not be refused because a finished turn still lists
-```
-
-**File**: `crates/app-server/src/runtime_api/tests/control_socket_selection.rs` (modified, +2/-1)
-```diff
-@@ -22,7 +22,8 @@ fn default_socket() -> PathBuf {
- }
- 
- fn temp_root(tag: &str) -> PathBuf {
--    let root = std::env::temp_dir().join(format!("cw-control-socket-{tag}-{}", std::process::id()));
-+    let root =
-+        codewhale_engine::test_support::test_scratch_dir(&format!("cw-control-socket-{tag}"));
-     std::fs::create_dir_all(&root).expect("fixture root");
-     root
- }
-```
-
-**File**: `crates/engine/src/core/engine.rs` (modified, +3/-3)
-```diff
-@@ -2751,9 +2751,9 @@ impl Engine {
-                 }
-                 #[cfg(any(test, feature = "test-support"))]
-                 {
--                    Ok(ApprovalReceiptStore::new(std::env::temp_dir().join(
--                        format!("codewhale-approval-tests-{}", uuid::Uuid::new_v4()),
--                    )))
-+                    Ok(ApprovalReceiptStore::new(
-+                        crate::test_support::test_scratch_dir("codewhale-approval-tests"),
-+                    ))
-                 }
-             },
-             EngineHostSetup::approval_store,
-```
-
-**File**: `crates/engine/src/runtime_threads/tests.rs` (modified, +2/-2)
-```diff
-@@ -2396,7 +2396,7 @@ mod recovery {
- }
- 
- fn test_runtime_dir() -> PathBuf {
--    std::env::temp_dir().join(format!("deepseek-runtime-threads-{}", Uuid::new_v4()))
-+    crate::test_support::test_scratch_dir("deepseek-runtime-threads")
- }
- 
- const EVENT_PROCESS_ROLE_ENV: &str = "CODEWHALE_TEST_EVENT_PROCESS_ROLE";
-@@ -11164,7 +11164,7 @@ async fn update_thread_workspace_rejects_empty_path() -> Result<()> {
- #[tokio::test]
- async fn workspace_restore_guard_rejects_overlapping_active_turns() -> Result<()> {
-     let manager = test_manager(test_runtime_dir())?;
--    let root = std::env::temp_dir().join(format!("codewhale-restore-guard-{}", Uuid::new_v4()));
-+    let root = crate::test_support::test_scratch_dir("codewhale-restore-guard");
-     let busy = root.join("busy");
-     let nested = busy.join("nested");
-     let idle = root.join("idle");
-```
-
-**File**: `crates/engine/src/task_manager.rs` (modified, +28/-29)
-```diff
-@@ -5196,7 +5196,7 @@ mod tests {
- 
-     #[tokio::test]
-     async fn persists_and_recovers_task_records() -> Result<()> {
--        let root = std::env::temp_dir().join(format!("deepseek-task-test-{}", Uuid::new_v4()));
-+        let root = crate::test_support::test_scratch_dir("deepseek-task-test");
-         let manager =
-             TaskManager::start_with_executor(test_config(root.clone()), Arc::new(MockExecutor))
-                 .await?;
-@@ -5419,7 +5419,7 @@ mod tests {
- 
-     #[tokio::test]
-     async fn preallocated_task_ids_are_validated_and_collision_safe() -> Result<()> {
--        let root = std::env::temp_dir().join(format!("deepseek-task-test-{}", Uuid::new_v4()));
-+        let root = crate::test_support::test_scratch_dir("deepseek-task-test");
-         let manager =
-             TaskManager::start_with_executor(test_config(root), Arc::new(MockExecutor)).await?;
-         let request = NewTaskRequest::from_prompt("preallocated owner identity");
-@@ -5454,7 +5454,7 @@ mod tests {
- 
-     #[tokio::test]
-     async fn failed_queue_write_leaves_no_replayable_task_record() -> Result<()> {
--        let root = std::env::temp_dir().join(format!("deepseek-task-test-{}", Uuid::new_v4()));
-+        let root = crate::test_support::test_scratch_dir("deepseek-task-test");
-         let manager =
-             TaskManager::start_with_executor(test_config(root.clone()), Arc::new(MockExecutor))
-                 .await?;
-@@ -5487,7 +5487,7 @@ mod tests {
- 
-     #[tokio::test]
-     async fn list_tasks_scopes_results_to_workspace_before_limit() -> Result<()> {
--        let root = std::env::temp_dir().join(format!("deepseek-task-test-{}", Uuid::new_v4()));
-+        let root = crate::test_support::test_scratch_dir("deepseek-task-test");
-         let manager =
-             TaskManager::start_with_executor(test_config(root), Arc::new(MockExecutor)).await?;
- 
-@@ -5516,7 +5516,7 @@ mod tests {
- 
-     #[tokio::test]
-     async fn task_controls_are_session_owned_and_legacy_records_fail_closed() -> Result<()> {
--        let root = std::env::temp_dir().join(format!("deepseek-task-test-{}", Uuid::new_v4()));
-+        let root = crate::test_support::test_scratch_dir("deepseek-task-test");
-         let manager =
-             TaskManager::start_with_executor(test_config(root), Arc::new(MockExecutor)).await?;
- 
-@@ -5767,7 +5767,7 @@ mod tests {
-         // #3757 boot-persist narrowing: TaskManager::start must persist only
-         // the reconciled queue and the running->failed recoveries — a
-         // completed task's file must be byte-identical across a restart.
--        let root = std::env::temp_dir().join(format!("deepseek-task-test-{}", Uuid::new_v4()));
-+        let root = crate::test_support::test_scratch_dir("deepseek-task-test");
-         let manager =
-             TaskManager::start_with_executor(test_config(root.clone()), Arc::new(MockExecutor))
-                 .await?;
-@@ -5799,7 +5799,7 @@ mod tests {
- 
-     #[test]
-     fn legacy_running_tasks_are_preserved_without_assuming_owner_death() -> Result<()> {
--        let root = std::env::temp_dir().join(format!("deepseek-task-test-{}", Uuid::new_v4()));
-+        let root = crate::test_support::test_scratch_dir("deepseek-task-test");
-         let tasks_dir = root.join("tasks");
-         fs::create_dir_all(&tasks_dir)?;
-         let queue_path = root.join("queue.json");
-@@ -5892,9 +5892,8 @@ mod tests {
- 
-     #[tokio::test]
-     async fn default_workspace_updates_for_future_tasks() -> Result<()> {
--        let root = std::env::temp_dir().join(format!("deepseek-task-test-{}", Uuid::new_v4()));
--        let new_workspace =
--            std::env::temp_dir().join(format!("deepseek-workspace-{}", Uuid::new_v4()));
-+        let root = crate::test_support::test_scratch_dir("deepseek-task-test");
-+        let new_workspace = crate::test_support::test_scratch_dir("deepseek-workspace");
-         let manager =
-             TaskManager::start_with_executor(test_config(root), Arc::new(MockExecutor)).await?;
- 
-@@ -5910,7 +5909,7 @@ mod tests {
- 
-     #[tokio::test]
-     async fn record_tool_metadata_updates_explicit_task() -> Result<()> {
--        let root = std::env::temp_dir().join(format!("deepseek-task-test-{}", Uuid::new_v4()));
-+        let root = crate::test_support::test_scratch_dir("deepseek-task-test");
-         let manager =
-             TaskManager::start_with_executor(test_config(root), Arc::new(MockExecutor)).await?;
- 
-@@ -5966,7 +5965,7 @@ mod tests {
- 
-     #[tokio::test]
-     async fn cancel_running_task_marks_canceled() -> Result<()> {
--        let root = std::env::temp_dir().join(format!("deepseek-task-test-{}", Uuid::new_v4()));
-+        let root = crate::test_support::test_scratch_dir("deepseek-task-test");
-         let manager = TaskManager::start_with_executor(
-             test_config(root),
-             Arc::new(CooperativeIdleCancelExecutor),
-@@ -5987,7 +5986,7 @@ mod tests {
- 
-     #[tokio::test]
-     async fn cancel_finished_task_returns_atomic_already_finish
-```
-
-**File**: `crates/engine/src/tools/subagent/tests.rs` (modified, +1/-4)
-```diff
-@@ -16445,10 +16445,7 @@ pub fn stub_runtime() -> SubAgentRuntime {
-         parent_pinned_project_instructions: std::sync::Arc::default(),
-         parent_auto_review_state: None,
-         approval_receipt_store: Some(Ok(crate::approval_log::ApprovalReceiptStore::new(
--            std::env::temp_dir().join(format!(
--                "codewhale-child-approval-tests-{}",
--                uuid::Uuid::new_v4()
--            )),
-+            crate::test_support::test_scratch_dir("codewhale-child-approval-tests"),
-         ))),
-         mcp_pool: None,
-         mcp_auth_context: crate::mcp::process_mcp_auth_context(),
-```
-
-**File**: `crates/runtime/src/config_persistence.rs` (modified, +1/-8)
-```diff
-@@ -607,10 +607,7 @@ mod tests {
- 
-     use std::path::Path;
- 
--    use std::time::SystemTime;
--
-     use super::test_support::*;
--    use std::time::UNIX_EPOCH;
- 
-     struct EnvGuard {
-         _home: crate::test_support::EnvVarGuard,
-@@ -642,11 +639,7 @@ mod tests {
-     }
- 
-     fn temp_root(prefix: &str) -> std::path::PathBuf {
--        let nanos = SystemTime::now()
--            .duration_since(UNIX_EPOCH)
--            .unwrap()
--            .as_nanos();
--        env::temp_dir().join(format!("{prefix}-{}-{nanos}", std::process::id()))
-+        crate::test_support::test_scratch_dir(prefix)
-     }
- 
-     #[test]
-```
-
-**File**: `crates/runtime/src/test_support.rs` (modified, +72/-11)
-```diff
-@@ -45,30 +45,62 @@ pub fn isolated_test_state_root() -> &'static Path {
-                 root.display()
-             )
-         });
--        remove_isolated_test_state_root_at_exit();
-+        remove_test_roots_at_exit();
-         // Match resolvers that canonicalize their root (macOS aliases /var to
-         // /private/var). Every fence must name the same physical test store.
-         root.canonicalize().expect("canonical test state root")
-     })
- }
- 
-+pub fn test_scratch_dir(prefix: &str) -> PathBuf {
-+    let root = TEST_SCRATCH_ROOT.get_or_init(|| {
-+        let nonce = SystemTime::now()
-+            .duration_since(UNIX_EPOCH)
-+            .unwrap_or_default()
-+            .as_nanos();
-+        let root = std::env::temp_dir().join(format!(
-+            "codewhale-test-scratch-{}-{nonce}",
-+            std::process::id()
-+        ));
-+        std::fs::create_dir_all(&root).unwrap_or_else(|error| {
-+            panic!(
-+                "failed to create unit-test scratch root {}: {error}",
-+                root.display()
-+            )
-+        });
-+        remove_test_roots_at_exit();
-+        root
-+    });
-+    root.join(format!("{prefix}-{}", uuid::Uuid::new_v4()))
-+}
-+
- static ISOLATED_TEST_STATE_ROOT: OnceLock<PathBuf> = OnceLock::new();
-+static TEST_SCRATCH_ROOT: OnceLock<PathBuf> = OnceLock::new();
- 
--fn remove_isolated_test_state_root_at_exit() {
-+fn remove_test_roots_at_exit() {
-     unsafe extern "C" {
-         fn atexit(callback: extern "C" fn()) -> std::ffi::c_int;
-     }
--    extern "C" fn remove_root() {
--        let Some(root) = ISOLATED_TEST_STATE_ROOT.get() else {
--            return;
--        };
--        if std::fs::remove_dir_all(root).is_err() {
--            #[cfg(unix)]
--            make_directories_writable(root);
--            let _ = std::fs::remove_dir_all(root);
-+    extern "C" fn remove_roots() {
-+        for root in [ISOLATED_TEST_STATE_ROOT.get(), TEST_SCRATCH_ROOT.get()]
-+            .into_iter()
-+            .flatten()
-+        {
-+            remove_test_root(root);
-         }
-     }
--    unsafe { atexit(remove_root) };
-+    static REGISTERED: std::sync::Once = std::sync::Once::new();
-+    REGISTERED.call_once(|| unsafe {
-+        atexit(remove_roots);
-+    });
-+}
-+
-+fn remove_test_root(root: &Path) {
-+    if std::fs::remove_dir_all(root).is_err() {
-+        #[cfg(unix)]
-+        make_directories_writable(root);
-+        let _ = std::fs::remove_dir_all(root);
-+    }
- }
- 
- #[cfg(unix)]
-@@ -468,6 +500,35 @@ pub fn future_test_jwt(label: &str) -> String {
- mod tests {
-     use super::*;
- 
-+    #[test]
-+    fn test_scratch_dirs_are_distinct_under_the_process_root_and_removable() {
-+        let first = test_scratch_dir("codewhale-scratch-probe");
-+        let second = test_scratch_dir("codewhale-scratch-probe");
-+        let root = TEST_SCRATCH_ROOT.get().expect("scratch root initialized");
-+
-+        assert_ne!(first, second);
-+        assert!(root.is_dir());
-+        for dir in [&first, &second] {
-+            assert_eq!(dir.parent(), Some(root.as_path()));
-+            assert!(!dir.exists());
-+        }
-+
-+        let nested = first.join("nested");
-+        std::fs::create_dir_all(&nested).expect("create scratch dir");
-+        std::fs::write(nested.join("file"), b"x").expect("write scratch file");
-+        #[cfg(unix)]
-+        {
-+            use std::os::unix::fs::PermissionsExt;
-+            std::fs::set_permissions(&nested, std::fs::Permissions::from_mode(0o500))
-+                .expect("make scratch dir read-only");
-+        }
-+
-+        remove_test_root(&first);
-+
-+        assert!(!first.exists());
-+        assert!(root.is_dir());
-+    }
-+
-     #[test]
-     fn ambient_codewhale_home_is_not_a_test_seal() {
-         let _lock = lock_test_env();
-```
-
----
-
-### Incident Patch 3: `2c1a20af` (2026-11-16)
-**Commit Message**: fix(tui): re-vendor the terminal kit's data-display and ocean fixes
-
-show_data painted and described numbers with a vendored chart.rs that
-could disagree with the data. Take five source files byte for byte from
-codewhale-hq/codewhale-ratatui e8c2746 (tip of its main, hosted CI green):
-
-- src/components/chart.rs: data_number no longer prints a small non-zero
-  value as "0" or "-0" and rounds across a unit (999950 is "1M"); a
-  DataTrend with more points than dot columns draws each column from its
-  lowest to highest value so spikes are kept; a DataBars value above zero
-  draws at least an eighth of a cell; a narrow row cuts the label before
-  the value. describe() carries the same numbers back to the model.
-- src/ocean.rs: OceanRamp::for_theme records Hint and Dim and eases the
-  waiting, approval and failure tints until they keep 4.5:1 and 3:1.
-- src/color.rs, src/components/motion.rs: crate-private is_truecolor;
-  motion.rs also gains the standalone's three-line module doc.
-- src/gallery/chart.rs: names DataDisplayView.
-
-Before overwriting, each vendored file was diffed against standalone
-1d06170 (the last sync): identical except the motion.rs doc header, so no
-Engine adaptation w
+Forward and isolate each listener's desktop browser-owner public key across the
+local owner channel without loosening browser pairing or breaking older hosts:
+- Keep `RuntimeListenerSelection` wire-compatible with unpatched hosts that
+  enforce `#[serde(deny_unknown_fields)]`: mark
+  `RuntimeListenerSelection::desktop_browser_owner` with
+  `#[serde(default, skip_serializing)]` and carry optional top-level
+  `desktop_browser_owner` on `AttachParams` (which does not set
+  `deny_unknown_fields`), admitted only when `frontend == AttachFrontend::
 
 **File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- 
+@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  ## [Unreleased]
  
-+- **`show_data` charts tell the truth at the edges:** a small value such as `0.004` is no longer shown, or reported back to the model, as `0`; a trend with more points than the chart is wide keeps its spikes and dips instead of skipping them; a bar for any value above zero is always visible; and on a narrow terminal the label is shortened before the number is.
- - **Worktree-side renames in the Runtime API:** `GET /v1/git` and `GET /v1/changes` now show the source of a rename in the worktree column that leaves the workspace as a `deleted` row, as they already did for a staged rename; a copy is still never shown that way. Thanks [@SparkofSpike](https://github.com/SparkofSpike) (#7325).
- - **Multiline XML tool arguments:** a text-fallback tool call whose parameter value, in either the `<parameter name=...>` or the `<key>` form, contains a newline, such as multiline `write_file` content, no longer arrives with empty arguments. Thanks [@Ricardo-M-L](https://github.com/Ricardo-M-L) (#7341).
- - **Assignments inside CLI argument values:** the fallback tool-call parser no longer invents an extra parameter from text inside a `--argument` value, so `--command "MODE=dev node app.js"` stays one command. Thanks [@Ricardo-M-L](https://github.com/Ricardo-M-L) (#7342).
+ - **Signed `registry` channel on the cloud-facts relay and publisher:** `GET` and `HEAD /api/facts/v1/registry`, `web/scripts/facts-publish.mjs`, and the Supabase `facts_release` migration (`20261117000114_registry_channel_publication.sql`) now verify and serve `codewhale.registry.v1` envelopes up to 8 MiB, binding `facts_version` to `revision`, `published_at` to `generated_at`, and `not_after` inside the signed bytes, requiring a founder signature when any provider carries an admission record, and bounding automation-signed model/offering updates to a seven-day `not_after` window while keeping all non-`registry` channels at 512 KiB. Source only: channel creation, signing and deployment remain founder actions. (CW-8253)
++- **Desktop browser tools when another Codewhale session is already open:** starting the desktop app while a terminal or `codewhale serve` session already holds `~/.codewhale` no longer fails browser-tool registration with a 400 (`Desktop browser owner is unavailable`). An attached Runtime API listener now carries its own validated Ed25519 browser-owner public key over the local owner channel without inheriting another listener's key or breaking attachment to an older host. (CW-8240)
+ - **Standing-instruction receipt over the Runtime API:** `GET /v1/threads/{id}/context/standing` (capability `thread_standing_context`) returns the receipt the Engine already computes for a live thread: per-item estimated tokens kept and dropped, the action taken (kept, trimmed, skipped, refused) and the limit that caused it, scope budgets and totals, relative paths only, the 65,536-byte delivery cap with whether the delivered message was truncated, and a `not_measured` list (skills, agents, MCP tool schemas, memory) so a client does not show zero. Read-only; prompts and the cached prefix are unchanged.
+ - **Signed model and provider registry, ready to pull (off until it is published):** Codewhale can now fetch the signed models-and-providers list (`registry.json`, `codewhale.registry.v1`) over the existing signed cloud facts channel, check it against the same pinned key, and keep the last good copy on disk. A list is used only when its founder signature verifies, its schema is `codewhale.registry.v1`, it parses, and it is not older than the copy already held; a failed or rejected pull keeps the copy already in use (or the bundled lists when there is none) and never delays startup. A provider added by the list must be new, use HTTPS on a public host name and speak the OpenAI-compatible API; it can never change a built-in provider's address, key or protocol, and it takes a key only from its own saved slot or its own `<ID>_API_KEY` variable. Nothing is fetched by default: there is no published list or default address yet, and pulled providers are not yet shown in the picker. `CODEWHALE_REGISTRY_URL` or `CODEWHALE_REGISTRY_PATH`, with cloud facts turned on, points it at a source. See `docs/CLOUD_FACTS.md`. (CW-8246)
+ - **Gemini 4 Hydrogen:** Google's `gemini-4-hydrogen` is in the catalog and the Google model list, with a 1,048,576-token context window and 65,536 output tokens. The shut-down `gemini-3-pro-preview` leaves the Google list.
+```
+
+**File**: `crates/app-server/src/daemon_client.rs` (modified, +11/-4)
+```diff
+@@ -707,13 +707,20 @@ mod platform {
+         let (read, mut write) = tokio::io::split(transport);
+         let mut replies = BoundedLines::new(BufReader::new(read));
+         let attach_id = uuid::Uuid::new_v4().to_string();
++        let desktop_browser_owner = listener
++            .as_ref()
++            .and_then(|selection| selection.desktop_browser_owner.clone());
++        let mut attach_params = json!({
++            "client":{"name":"codewhale-stdio","version":env!("CARGO_PKG_VERSION"),"pid":std::process::id()},
++            "mode":"attach","frontend":frontend,"native_runtime":native,"listener":listener,"scope":scope,"acp_model":acp_model,"expect_daemon_version":env!("CARGO_PKG_VERSION"),"expect_owner":receipt
++        });
++        if let Some(owner) = desktop_browser_owner {
++            attach_params["desktop_browser_owner"] = json!(owner);
++        }
+         let attach = json!(RpcCall {
+             id: Some(RequestId::String(attach_id.clone())),
+             method: "daemon/attach".into(),
+-            params: json!({
+-                "client":{"name":"codewhale-stdio","version":env!("CARGO_PKG_VERSION"),"pid":std::process::id()},
+-                "mode":"attach","frontend":frontend,"native_runtime":native,"listener":listener,"scope":scope,"acp_model":acp_model,"expect_daemon_version":env!("CARGO_PKG_VERSION"),"expect_owner":receipt
+-            }),
++            params: attach_params,
+             trace: None
+         });
+         tokio::time::timeout(
+```
+
+**File**: `crates/app-server/src/daemon_socket.rs` (modified, +12/-2)
+```diff
+@@ -112,6 +112,8 @@ pub struct AttachParams {
+     pub expect_daemon_version: Option<String>,
+     #[serde(default)]
+     pub expect_owner: Option<RuntimeOwnerReceipt>,
++    #[serde(default)]
++    pub desktop_browser_owner: Option<String>,
+ }
+ 
+ /// The typed refusal every non-unix entry point returns. Unused in the unix
+@@ -346,7 +348,12 @@ async fn attach(
+     context: &ConnectionContext,
+     params: Value,
+ ) -> Result<(Value, ConnectionGuard), DispatchError> {
+-    let params: AttachParams = parse_params(params_or_object(params))?;
++    let mut params: AttachParams = parse_params(params_or_object(params))?;
++    if params.desktop_browser_owner.is_some() && params.frontend != AttachFrontend::Listener {
++        return Err(DispatchError::invalid_params(
++            "desktop browser owner requires listener frontend",
++        ));
++    }
+     if params.frontend == AttachFrontend::Acp
+         && (context.state.owner_frontend.is_none()
+             || !context
+@@ -364,7 +371,10 @@ async fn attach(
+             "listener selection does not match frontend",
+         ));
+     }
+-    if let Some(listener) = params.listener.as_ref() {
++    if let Some(listener) = params.listener.as_mut() {
++        if let Some(owner) = params.desktop_browser_owner.take() {
++            listener.desktop_browser_owner = Some(owner);
++        }
+         listener.validate_bounds().map_err(|_| {
+             DispatchError::invalid_params("selected frontend input exceeds its bounds")
+         })?;
+```
+
+**File**: `crates/app-server/src/lib.rs` (modified, +19/-1)
+```diff
+@@ -137,6 +137,16 @@ pub struct RuntimeListenerSelection {
+     pub insecure_no_auth: bool,
+     pub mobile: bool,
+     pub web: bool,
++    #[serde(default, skip_serializing)]
++    pub desktop_browser_owner: Option<String>,
++}
++
++pub fn is_valid_desktop_browser_owner_key(key: &str) -> bool {
++    use base64::{Engine as _, engine::general_purpose::URL_SAFE_NO_PAD};
++    key.len() == 43
++        && URL_SAFE_NO_PAD
++            .decode(key)
++            .is_ok_and(|bytes| bytes.len() == 32 && URL_SAFE_NO_PAD.encode(&bytes) == key)
+ }
+ 
+ impl std::fmt::Debug for RuntimeListenerSelection {
+@@ -150,6 +160,10 @@ impl std::fmt::Debug for RuntimeListenerSelection {
+             )
+             .field("mobile", &self.mobile)
+             .field("web", &self.web)
++            .field(
++                "desktop_browser_owner",
++                &self.desktop_browser_owner.as_ref().map(|_| "<present>"),
++            )
+             .finish_non_exhaustive()
+     }
+ }
+@@ -172,7 +186,11 @@ impl RuntimeListenerSelection {
+                 && self
+                     .auth_token
+                     .as_ref()
+-                    .is_none_or(|token| token.len() <= 8192),
++                    .is_none_or(|token| token.len() <= 8192)
++                && self
++                    .desktop_browser_owner
++                    .as_deref()
++                    .is_none_or(is_valid_desktop_browser_owner_key),
+             "selected frontend input exceeds its bounds"
+         );
+         Ok(())
+```
+
+**File**: `crates/app-server/src/runtime_api.rs` (modified, +23/-2)
+```diff
+@@ -175,6 +175,15 @@ struct RuntimeTokenEnvironment {
+     legacy_alias_used: bool,
+ }
+ 
++const DESKTOP_BROWSER_OWNER_ENV: &str = "CODEWHALE_BROWSER_OWNER_PUBLIC_KEY";
++
++fn desktop_browser_owner_env() -> Option<String> {
++    std::env::var(DESKTOP_BROWSER_OWNER_ENV)
++        .ok()
++        .map(|key| key.trim().to_string())
++        .filter(|key| crate::is_valid_desktop_browser_owner_key(key))
++}
++
+ fn runtime_token_environment(lookup: &dyn Fn(&str) -> Option<String>) -> RuntimeTokenEnvironment {
+     let nonblank = |name| {
+         lookup(name)
+@@ -225,6 +234,7 @@ pub struct RuntimeApiState {
+     automations: SharedAutomationManager,
+     sub_agent_manager: SharedSubAgentManager,
+     runtime_token: Option<String>,
++    desktop_browser_owner: Option<String>,
+     skill_state: Arc<Mutex<SkillStateStore>>,
+     auth_required: bool,
+     bind_host: String,
+@@ -989,6 +999,7 @@ impl crate::RuntimeOwnerFrontend for CapturedRuntimeFrontend {
+                 "immutable ACP-base owner cannot admit ordinary listener turns"
+             );
+             let workspace = selection.workspace;
++            let selection_browser_owner = selection.desktop_browser_owner;
+             let options = RuntimeApiOptions {
+                 host: selection.host,
+                 port: selection.port,
+@@ -1030,6 +1041,7 @@ impl crate::RuntimeOwnerFrontend for CapturedRuntimeFrontend {
+                 && options.cors_origins == self.state.cors_origins
+                 && workspace == self.state.workspace
+                 && same_auth
++                && selection_browser_owner == self.state.desktop_browser_owner
+             {
+                 let ready = RuntimeFrontendReady {
+                     endpoint: original_addr,
+@@ -1055,6 +1067,7 @@ impl crate::RuntimeOwnerFrontend for CapturedRuntimeFrontend {
+             state.workspace = workspace.clone();
+             state.workspace_scope = workspace_scope;
+             state.runtime_token = resolved.token.clone();
++            state.desktop_browser_owner = selection_browser_owner;
+             state.auth_required = resolved.token.is_some();
+             state.bind_host = options.host;
+             state.bind_port = endpoint.port();
+@@ -2358,6 +2371,7 @@ pub async fn run_http_server(
+                     insecure_no_auth: options.insecure_no_auth,
+                     mobile: options.mobile,
+                     web: options.web,
++                    desktop_browser_owner: desktop_browser_owner_env(),
+                 };
+                 drop(control);
+                 crate::daemon_client::connect_listener_if_published(
+@@ -2494,6 +2508,7 @@ pub async fn run_http_server(
+         automations,
+         sub_agent_manager,
+         runtime_token: runtime_token.clone(),
++        desktop_browser_owner: desktop_browser_owner_env(),
+         skill_state: Arc::new(Mutex::new(skill_state)),
+         auth_required: auth_enabled,
+         bind_host: options.host.clone(),
+@@ -8148,8 +8163,13 @@ async fn register_desktop_browser_config(
+             "MCP configuration changed; reload it before registering desktop tools",
+         ));
+     }
+-    pool.add_desktop_browser_server_config(name, config, proof)
+-        .map_err(ApiError::bad_request)?;
++    pool.add_desktop_browser_server_config_for_owner(
++        name,
++        config,
++        proof,
++        state.desktop_browser_owner.as_deref(),
++    )
++    .map_err(ApiError::bad_request)?;
+     Ok(())
+ }
+ 
+@@ -15905,6 +15925,7 @@ base_url = "http://127.0.0.1:9/v1"
+             )?)),
+             sub_agent_manager,
+             runtime_token: None,
++            desktop_browser_owner: None,
+             skill_state: Arc::new(Mutex::new(SkillStateStore::load_from(
+                 root.join("skills_state.toml"),
+             )?)),
+```
+
+**File**: `crates/app-server/src/runtime_api/tests.rs` (modified, +1/-0)
+```diff
+@@ -1532,6 +1532,7 @@ async fn build_test_server(
+         automations,
+         sub_agent_manager,
+         runtime_token,
++        desktop_browser_owner: super::desktop_browser_owner_env(),
+         skill_state: Arc::new(Mutex::new(
+             SkillStateStore::load_from(root.join("skills_state.toml")).unwrap(),
+         )),
+```
+
+**File**: `crates/app-server/src/runtime_api/tests/runtime_store_convergence.rs` (modified, +214/-0)
+```diff
+@@ -262,6 +262,7 @@ fn listener_selection(
+         insecure_no_auth: false,
+         mobile: false,
+         web: false,
++        desktop_browser_owner: None,
+     }
+ }
+ fn authenticated_http(token: &str) -> Result<reqwest::Client> {
+@@ -2774,3 +2775,216 @@ async fn native_fork_copy_refusal_never_publishes_a_shared_session_thread() -> R
+     assert!(fixture.model.captured_requests().is_empty());
+     Ok(())
+ }
++
++#[tokio::test]
++async fn attached_listener_forwards_isolated_desktop_browser_owner_and_preserves_legacy_wire_shape()
++-> Result<()> {
++    let _env = lock_test_env();
++    let temporary = tempfile::tempdir()?;
++    let root = temporary.path().canonicalize()?;
++    let _home = EnvVarGuard::set("CODEWHALE_HOME", root.join("home"));
++
++    let host_pkcs8 = codewhale_engine::mcp::generate_desktop_browser_owner_keypair_for_test();
++    let host_pubkey = codewhale_engine::mcp::desktop_browser_owner_public_key_for_test(&host_pkcs8);
++    let guest_pkcs8 = codewhale_engine::mcp::generate_desktop_browser_owner_keypair_for_test();
++    let guest_pubkey =
++        codewhale_engine::mcp::desktop_browser_owner_public_key_for_test(&guest_pkcs8);
++    let _host_owner_env = EnvVarGuard::set("CODEWHALE_BROWSER_OWNER_PUBLIC_KEY", &host_pubkey);
++
++    #[derive(serde::Deserialize)]
++    #[serde(deny_unknown_fields)]
++    struct LegacyListenerSelection {
++        workers: usize,
++        workspace: PathBuf,
++        config_profile: Option<String>,
++        #[serde(default)]
++        config_source: Option<PathBuf>,
++        host: String,
++        port: u16,
++        cors_origins: Vec<String>,
++        auth_token: Option<String>,
++        insecure_no_auth: bool,
++        mobile: bool,
++        web: bool,
++    }
++
++    let workspace = root.join("workspace");
++    fs::create_dir_all(&workspace)?;
++    let mut probe_selection = listener_selection(workspace.clone(), 0, "cwrt_probe".into());
++    probe_selection.desktop_browser_owner = Some(guest_pubkey.clone());
++    probe_selection.validate_bounds()?;
++    let wire_json = serde_json::to_string(&probe_selection)?;
++    let legacy_ok: LegacyListenerSelection = serde_json::from_str(&wire_json)?;
++    assert_eq!(
++        (
++            legacy_ok.workers,
++            &legacy_ok.workspace,
++            &legacy_ok.config_profile,
++            &legacy_ok.config_source,
++            legacy_ok.host.as_str(),
++            legacy_ok.port,
++            legacy_ok.cors_origins.len(),
++            legacy_ok.auth_token.as_deref(),
++            legacy_ok.insecure_no_auth,
++            legacy_ok.mobile,
++            legacy_ok.web,
++        ),
++        (
++            1,
++            &workspace,
++            &None,
++            &None,
++            "127.0.0.1",
++            0,
++            0,
++            Some("cwrt_probe"),
++            false,
++            false,
++            false,
++        )
++    );
++
++    let mut invalid_selection = listener_selection(workspace.clone(), 0, "cwrt_bad".into());
++    invalid_selection.desktop_browser_owner = Some("not-a-32-byte-ed25519-key".into());
++    assert!(invalid_selection.validate_bounds().is_err());
++
++    #[cfg(unix)]
++    let socket = root.join("private-run").join("browser-owner.sock");
++    #[cfg(windows)]
++    let socket = PathBuf::from(format!(r"\\.\pipe\browser-owner-{}", Uuid::new_v4()));
++    let host_token = "cwrt_host_owner_token";
++    let desktop_token = "cwrt_attached_desktop_token";
++    let cli_token = "cwrt_attached_cli_token";
++    let config = Config::default().with_legacy_root(
++        Some("fixture-key".into()),
++        Some("http://127.0.0.1:1/v1".into()),
++    );
++    let (host_addr, _manager, server) =
++        spawn_test_server_with_root_token_mobile_workspace_and_overrides(
++            root.clone(),
++            root.join("sessions"),
++            Some(host_token.into()),
++            false,
++            workspace.clone(),
++            TestServerOverrides {
++                config: Some(config),
++                owner_socket: Some(socket.clone()),
++                ..Default::default()
++            },
++        )
++        .await?
++        .context("real listener required")?;
++    let _abort = AbortOnDrop(server.abort_handle());
++
++    let control = crate::daemon_client::connect(None, Some(socket.clone())).await?;
++    let receipt = control.receipt().clone();
++    validate_selected_owner(&control, receipt.data_dir.clone()).await?;
++    drop(control);
++
++    let desktop_ws = root.join("desktop-workspace");
++    fs::create_dir_all(&desktop_ws)?;
++    let mut desktop_selection = listener_selection(desktop_ws.clone(), 0, desktop_token.into());
++    desktop_selection.desktop_browser_owner = Some(guest_pubkey.clone());
++    let mut desktop_guest = crate::daemon_client::connect_listener_if_published(
++        None,
++        Some(socket.clone()),
++        desktop_selection,
++        receipt.clone(),
++    )
++    .await?
++    .context("published owner for desktop")?;
++    let desktop_ready = frontend_ready(&mut desktop_guest).await?;
+```
+
+**File**: `crates/engine/src/mcp.rs` (modified, +47/-3)
+```diff
+@@ -6973,10 +6973,21 @@ impl McpPool {
+     }
+ 
+     pub fn add_desktop_browser_server_config(
++        &mut self,
++        name: String,
++        config: McpServerConfig,
++        proof: Option<(&str, &str)>,
++    ) -> Result<(), String> {
++        let owner = self.auth_context.env("CODEWHALE_BROWSER_OWNER_PUBLIC_KEY");
++        self.add_desktop_browser_server_config_for_owner(name, config, proof, owner.as_deref())
++    }
++
++    pub fn add_desktop_browser_server_config_for_owner(
+         &mut self,
+         name: String,
+         mut config: McpServerConfig,
+         proof: Option<(&str, &str)>,
++        owner_public_key: Option<&str>,
+     ) -> Result<(), String> {
+         use base64::{Engine as _, engine::general_purpose::URL_SAFE_NO_PAD};
+         if !is_desktop_browser_server(&name, &config) {
+@@ -6989,10 +7000,9 @@ impl McpPool {
+             .ok_or_else(|| "Invalid desktop browser endpoint".to_string())?;
+         match proof {
+             Some((bearer, signature)) if url.path() != "/mcp" => {
+-                let public_key = self
+-                    .auth_context
+-                    .env("CODEWHALE_BROWSER_OWNER_PUBLIC_KEY")
++                let public_key = owner_public_key
+                     .and_then(|key| URL_SAFE_NO_PAD.decode(key).ok())
++                    .filter(|bytes| bytes.len() == 32)
+                     .ok_or_else(|| "Desktop browser owner is unavailable".to_string())?;
+                 let signature = URL_SAFE_NO_PAD
+                     .decode(signature)
+@@ -7833,6 +7843,40 @@ fn launches_computer_use_plugin(server: &McpServerConfig) -> Option<String> {
+     })
+ }
+ 
++#[cfg(any(test, feature = "test-support"))]
++pub fn generate_desktop_browser_owner_keypair_for_test() -> Vec<u8> {
++    ring::signature::Ed25519KeyPair::generate_pkcs8(&ring::rand::SystemRandom::new())
++        .expect("ed25519 pkcs8")
++        .as_ref()
++        .to_vec()
++}
++
++#[cfg(any(test, feature = "test-support"))]
++pub fn desktop_browser_owner_public_key_for_test(pkcs8: &[u8]) -> String {
++    use base64::{Engine as _, engine::general_purpose::URL_SAFE_NO_PAD};
++    use ring::signature::KeyPair as _;
++    let pair = ring::signature::Ed25519KeyPair::from_pkcs8(pkcs8).expect("ed25519 pair");
++    URL_SAFE_NO_PAD.encode(pair.public_key().as_ref())
++}
++
++#[cfg(any(test, feature = "test-support"))]
++pub fn sign_desktop_browser_registration_for_test(
++    pkcs8: &[u8],
++    workspace: &Path,
++    url: &str,
++    bearer: &str,
++) -> String {
++    use base64::{Engine as _, engine::general_purpose::URL_SAFE_NO_PAD};
++    let pair = ring::signature::Ed25519KeyPair::from_pkcs8(pkcs8).expect("ed25519 pair");
++    let raw_ws = workspace.to_str().expect("utf8 workspace");
++    let normalized_ws = raw_ws
++        .strip_prefix(r"\\?\UNC\")
++        .map(|tail| format!(r"\\{tail}"))
++        .unwrap_or_else(|| raw_ws.strip_prefix(r"\\?\").unwrap_or(raw_ws).to_owned());
++    let data = format!("codewhale-browser-v2\0{normalized_ws}\0{url}\0{bearer}");
++    URL_SAFE_NO_PAD.encode(pair.sign(data.as_bytes()).as_ref())
++}
++
+ pub fn is_desktop_browser_server(name: &str, server: &McpServerConfig) -> bool {
+     name == "codewhale-browser"
+         && server.is_enabled()
+```
+
+---
+
+### Incident Patch 3: `dd70c8e7` (2026-11-18)
+**Commit Message**: fix(sessions): add workspace migration command and canonical symlink matching (CW-8256)
+
+Renaming or moving a workspace directory stranded saved sessions across two
+surfaces: SessionManager had no coordinated migration across session JSON,
+recovery checkpoints, and Runtime thread stores, while thread_history and
+mounted TUI session loading compared workspace paths lexically instead of
+canonically.
+
+Add `codewhale sessions migrate --old-path <PATH> --new-path <PATH> [--session
+<ID>] [--dry-run]` backed by SessionManager::migrate_workspace,
+HeldRuntimeStore::migrate_session_workspace, and
+RuntimeStoreBinding::preview_migrate_session_workspace:
+- Confine migration stores strictly to `<sessions>/<id>/runtime*` or
+  `<state>/tasks/runtime` with symlink rejection at `sessions/<id>`, `tasks`,
+  `tasks/runtime`, and `data_dir` both during discovery (before canonicalizing
+  store bindings, blocking both external and intra-root symlink redirection)
+  and again before/after lock acquisition and store open.
+- Keep `--dry-run` free of file creation and mutations: probe live session
+  leases via `is_session_live_anywhere`, probe existing Runtime owner locks
+  read-only with `O_NOFOLLOW` / `FILE_
+
+**File**: `CHANGELOG.md` (modified, +1/-0)
+```diff
+@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ - **One reading of a model id:** the model picker, requests, pricing and the context window now read a model id the same way, from one set of per-provider naming rules, so a short name or alternate spelling no longer resolves to one model in the picker and a different model, or a 128K fallback window, in the request.
+ - **Model id fixes:** Google ids written as Google's model list spells them (`models/gemini-4-hydrogen`) now resolve to the bare id with its real limits; Moonshot `kimi` and Xiaomi MiMo short names such as `mimo` and `asr` are now sent as the model they name instead of unchanged; extra spaces around a model id are ignored; and an unknown model id on official DeepSeek or OpenCode Go is refused the same way by every path instead of being accepted by some. Legacy DeepSeek names (`deepseek-chat`, `deepseek-reasoner`) are now sent as the model they map to.
+ - **Side-repo snapshot lock fairness:** rapid snapshot and prune operations poll every 5 ms and yield for up to 50 ms on immediate same-process re-acquisition after releasing the side-repo write lock, preventing back-to-back acquires from starving waiting writers past the 30-second lock timeout, and skip redundant `git rev-parse` calls when rebuilding survivor chains. (CW-7957)
++- **Migrate saved sessions when a workspace directory moves:** renaming or moving a project folder no longer strands its sessions. Run `codewhale sessions migrate --old-path <old> --new-path <new>` (`--dry-run` to preview, `--session <id>` for one session) to update saved sessions, recovery checkpoints, and Runtime thread bindings together. A dry run creates and changes no files, sessions in use are skipped, Runtime stores reached through a symlink are refused, one unreadable session is reported without stopping the rest, and overlapping old/new paths are refused. Workspace-mismatch errors print the scoped `--session <id> --dry-run` command, and symlinked workspace paths resolve consistently on resume and fork. (CW-8256)
+ - **Thread events under heavy disk load:** reading or appending a thread's runtime events no longer fails with "Runtime event lock timed out after 5s" while another write is still flushing to disk; the event-store lock now waits up to 25 seconds for in-progress writes before giving up. (CW-7957)
+ - **Fewer false task idle timeouts while progress is being saved:** when a supervised task's idle deadline passes while the task supervisor is busy saving its previous progress, the supervisor now polls the task once, without waiting, before applying the deadline, so progress the task can report on that single poll is counted. Progress that needs more than one poll to be sent can still end in `idle_timeout`, and a task that is genuinely idle times out as before. (CW-7957)
+ - **Timed-out hooks on Windows report the timeout:** on a busy Windows machine, a hook that hits its time limit now reports "Hook timed out" instead of "hook could not be reaped after its timeout". CodeWhale now waits up to 10 seconds, rather than 2, for Windows to finish tearing down the hook's process tree. (CW-7957)
+```
+
+**File**: `crates/app-server/src/runtime_api/thread_history.rs` (modified, +85/-48)
+```diff
+@@ -22,11 +22,21 @@ use codewhale_engine::runtime_threads::{
+     RuntimeHistoryOperation, RuntimeHistoryWitness, manager::CreateThreadRequest,
+     manager::RuntimeThreadManager, manager::ThreadListFilter,
+ };
+-use codewhale_engine::session_manager::{SavedSession, SessionManager};
++use codewhale_engine::session_manager::{
++    SavedSession, SessionManager, paths_equivalent, shell_quote_path,
++};
+ use codewhale_runtime::session_tree::{
+     SessionEntry, SessionEntryKind, SessionImportContainer, SessionJournal,
+ };
+ 
++async fn paths_equivalent_async(lhs: &Path, rhs: &Path) -> bool {
++    let lhs = lhs.to_path_buf();
++    let rhs = rhs.to_path_buf();
++    history_owner_work(move || Ok(paths_equivalent(&lhs, &rhs)))
++        .await
++        .unwrap_or(false)
++}
++
+ /// Validate every branch before traversing the active projection or creating a
+ /// canonical record. The existing journal validator alone does not reject cycles
+ /// or duplicate IDs, so this boundary must establish those stronger invariants.
+@@ -237,7 +247,7 @@ async fn import_into_owner(
+     let target = if let Some(id) = request.target_runtime_thread_id.as_deref() {
+         let thread = runtime.get_thread(id).await?;
+         ensure!(
+-            request.workspace == thread.workspace,
++            paths_equivalent_async(&request.workspace, &thread.workspace).await,
+             "existing canonical target belongs to a different selected workspace"
+         );
+         let session = thread.session_id.ok_or_else(|| {
+@@ -489,7 +499,7 @@ async fn import_into_owner(
+                 ensure!(
+                     observed.metadata.runtime_store.as_ref().is_none_or(
+                         |binding| Some(binding) == session.metadata.runtime_store.as_ref()
+-                    ) && observed.metadata.workspace == session.metadata.workspace,
++                    ) && paths_equivalent(&observed.metadata.workspace, &session.metadata.workspace),
+                     "canonical target store binding changed before merge"
+                 );
+                 let publication = manager.publish_session(&session)?;
+@@ -579,7 +589,7 @@ fn verify_import_checkpoint_under_lease(
+     let observed = manager.load_session_snapshot_bounded(id, MAX_CANONICAL_HISTORY_BYTES)?;
+     ensure!(
+         observed.metadata.runtime_store.as_ref() == Some(binding)
+-            && observed.metadata.workspace == thread.workspace,
++            && paths_equivalent(&observed.metadata.workspace, &thread.workspace),
+         "committed history session binding changed; recovery required"
+     );
+     let checkpoint = thread
+@@ -665,7 +675,7 @@ pub(super) async fn snapshot_in_runtime(
+                 let document = manager
+                     .load_session_snapshot_bounded(&session_id, MAX_CANONICAL_HISTORY_BYTES)?;
+                 ensure!(
+-                    document.metadata.workspace == workspace,
++                    paths_equivalent(&document.metadata.workspace, &workspace),
+                     "saved history workspace differs from its held thread"
+                 );
+                 if let Some(saved_binding) = document.metadata.runtime_store.as_ref() {
+@@ -948,7 +958,7 @@ fn verify_operation_checkpoint(
+     let observed = manager.load_session_snapshot_bounded(id, MAX_CANONICAL_HISTORY_BYTES)?;
+     ensure!(
+         observed.metadata.runtime_store.as_ref() == Some(binding)
+-            && observed.metadata.workspace == thread.workspace,
++            && paths_equivalent(&observed.metadata.workspace, &thread.workspace),
+         "canonical operation document binding changed"
+     );
+     let checkpoint = thread
+@@ -1007,7 +1017,7 @@ async fn settle_prepared_history_operation(
+         .as_ref()
+         .ok_or_else(|| anyhow!("prepared operation lacks its full graph witness"))?;
+     ensure!(
+-        witness.workspace == workspace,
++        paths_equivalent_async(&witness.workspace, workspace).await,
+         "operation selected workspace changed"
+     );
+     let captured = Arc::clone(runtime);
+@@ -1018,7 +1028,7 @@ async fn settle_prepared_history_operation(
+     };
+ 
+     ensure!(
+-        thread.workspace == workspace,
++        paths_equivalent_async(&thread.workspace, workspace).await,
+         "reserved target workspace changed"
+     );
+     let detail = runtime.get_thread_detail(&thread.id).await?;
+@@ -1050,7 +1060,7 @@ async fn settle_prepared_history_operation(
+         verification_runtime.verify_prepared_history_publication(&expected, &saved)?;
+         ensure!(
+             saved.metadata.runtime_store.as_ref() == Some(&binding)
+-                && saved.metadata.workspace == selected_workspace,
++                && paths_equivalent(&saved.metadata.workspace, &selected_workspace),
+             "reserved saved document binding changed"
+         );
+         if let Some(digest) = expected.session_goal_target_digest.as_ref() {
+@@ -1154,7 +1164,7 @@ async fn mutate_in_owner(
+             anyhow!("operation scope witness absent; recover the retained intent")
+         }
+```
+
+**File**: `crates/app-server/tests/integration/acp_journey.rs` (modified, +2/-2)
+```diff
+@@ -170,7 +170,7 @@ async fn journey() -> Result<()> {
+                 "result":{"outcome":{"outcome":"selected","optionId":"allow-once"}}}))
+             .await?;
+         let (done, after) = client.until_response(prompt_id).await?;
+-        assert_eq!(done["result"]["stopReason"], "end_turn");
++        assert_eq!(done["result"]["stopReason"], "end_turn", "{done}");
+         assert_eq!(
+             std::fs::read_to_string(workspace.join("allowed.txt"))?,
+             "approved"
+@@ -274,7 +274,7 @@ async fn journey() -> Result<()> {
+                 json!({"sessionId":session,"prompt":"continue"}),
+             )
+             .await?;
+-        assert_eq!(resumed["result"]["stopReason"], "end_turn");
++        assert_eq!(resumed["result"]["stopReason"], "end_turn", "{resumed}");
+         assert_eq!(
+             text_of(&frames, "agent_message_chunk"),
+             "resumed in the real session"
+```
+
+**File**: `crates/engine/src/runtime_threads.rs` (modified, +228/-12)
+```diff
+@@ -75,7 +75,7 @@ pub const MAX_RUNTIME_TURN_OPERATION_KEY_BYTES: usize = 128;
+ const EVENT_TRANSACTION_LOCK_TIMEOUT: Duration = Duration::from_secs(25);
+ const EVENT_TRANSACTION_LOCK_POLL: Duration = Duration::from_millis(5);
+ const EVENT_TRANSACTION_LOCK_FILE: &str = "events.lock";
+-const RUNTIME_PROCESS_OWNER_LOCK_FILE: &str = "runtime-process.owner.lock";
++pub(crate) const RUNTIME_PROCESS_OWNER_LOCK_FILE: &str = "runtime-process.owner.lock";
+ const RUNTIME_PROCESS_OWNER_LOCK_HELD: &str = "This runtime is already active in another process. Close the other Codewhale session and try again, or set CODEWHALE_RUNTIME_DIR to a different directory.";
+ const AGENT_MAIL_OWNER_FILE: &str = "owner.json";
+ /// Every directory `RuntimeThreadStore::open` creates to hold work. Emptiness
+@@ -4582,11 +4582,10 @@ pub struct RuntimeStoreBinding {
+ 
+ impl RuntimeStoreBinding {
+     /// The confinement shared by every store-recovery predicate: the bound
+-    /// store must sit at `<state>/sessions/<session-id>/runtime` (or a
++    /// store must sit at `<sessions>/<session-id>/runtime` (or a
+     /// `runtime-recovered-*` sibling) with no symlink on the way down. Wrong
+     /// owner, symlinks and external paths fail closed for all callers.
+-    fn is_confined_session_store(&self) -> Result<bool> {
+-        let sessions = codewhale_config::resolve_state_dir("sessions")?;
++    fn is_confined_to_sessions_root(&self, sessions: &Path) -> Result<bool> {
+         let Some(session_dir) = self.data_dir.parent() else {
+             return Ok(false);
+         };
+@@ -4608,9 +4607,9 @@ impl RuntimeStoreBinding {
+         // via `prepare_canonical_sessions_root`; only a caller that never
+         // warmed it (synchronous tests and tools) resolves it here.
+         let parent = session_dir.parent();
+-        let under_sessions = parent == Some(sessions.as_path())
+-            || cached_canonical_sessions_root(&sessions)
+-                .or_else(|| resolve_canonical_sessions_root(&sessions))
++        let under_sessions = parent == Some(sessions)
++            || cached_canonical_sessions_root(sessions)
++                .or_else(|| resolve_canonical_sessions_root(sessions))
+                 .is_some_and(|canonical| parent == Some(canonical.as_path()));
+         if !under_sessions
+             || !(store_name == "runtime" || store_name.starts_with("runtime-recovered-"))
+@@ -4621,12 +4620,45 @@ impl RuntimeStoreBinding {
+         {
+             return Ok(false);
+         }
+-        for path in [&sessions, session_dir, &self.data_dir] {
++        for path in [sessions, session_dir, &self.data_dir] {
+             reject_symlinked_store_dir(path)?;
+         }
+         Ok(true)
+     }
+ 
++    fn is_confined_session_store(&self) -> Result<bool> {
++        let sessions = codewhale_config::resolve_state_dir("sessions")?;
++        self.is_confined_to_sessions_root(&sessions)
++    }
++
++    fn is_confined_migration_store(&self, sessions_dir: &Path) -> Result<bool> {
++        if self.is_confined_to_sessions_root(sessions_dir)? || self.is_confined_session_store()? {
++            return Ok(true);
++        }
++        let mut tasks_roots = vec![crate::task_manager::default_tasks_dir()];
++        if sessions_dir.file_name().and_then(|n| n.to_str()) == Some("sessions")
++            && let Some(state_root) = sessions_dir.parent()
++        {
++            tasks_roots.push(state_root.join("tasks"));
++        }
++        for tasks_dir in tasks_roots {
++            let runtime_dir = tasks_dir.join("runtime");
++            let matches = self.data_dir == runtime_dir
++                || cached_canonical_sessions_root(&tasks_dir)
++                    .or_else(|| resolve_canonical_sessions_root(&tasks_dir))
++                    .is_some_and(|canonical_tasks| {
++                        self.data_dir == canonical_tasks.join("runtime")
++                    });
++            if matches {
++                for path in [&tasks_dir, &runtime_dir, &self.data_dir] {
++                    reject_symlinked_store_dir(path)?;
++                }
++                return Ok(true);
++            }
++        }
++        Ok(false)
++    }
++
+     /// Only a missing, confined session store can recover from its transcript.
+     /// Existing stores with a wrong owner, symlinks and external paths fail closed.
+     pub fn is_missing_session_store(&self) -> Result<bool> {
+@@ -4960,26 +4992,102 @@ impl RuntimeStoreBinding {
+             "Runtime store {} is outside the sessions directory",
+             self.data_dir.display()
+         );
++        self.try_hold_verified_store(None)
++    }
++
++    pub fn try_hold_for_sessions_dir(
++        &self,
++        sessions_dir: &Path,
++    ) -> Result<Option<HeldRuntimeStore>> {
++        anyhow::ensure!(
++            self.is_confined_migration_store(sessions_dir)?,
++            "Runtime store {} is outside the sessions or tasks runtime directories",
++            self.data_dir.display()
++        );
++        self.try_hold_verified_store(Some(sessions_dir.to_path_buf()))
+```
+
+**File**: `crates/engine/src/session_manager.rs` (modified, +898/-2)
+```diff
+@@ -82,6 +82,10 @@ pub struct SessionObservation {
+ }
+ 
+ impl SessionObservation {
++    pub(crate) fn same_session_target(&self, other: &Self) -> bool {
++        self.sessions_dir == other.sessions_dir && self.session_id == other.session_id
++    }
++
+     pub(crate) fn same_checkpoint(&self, other: &Self) -> bool {
+         self.sessions_dir == other.sessions_dir
+             && self.session_id == other.session_id
+@@ -6459,6 +6463,718 @@ impl SessionManager {
+             .filter(|s| s.title.to_lowercase().contains(&query_lower))
+             .collect())
+     }
++
++    pub fn missing_workspace_session_hint(&self, current_workspace: &Path) -> Option<PathBuf> {
++        let catalog = self.scan_session_records().ok()?;
++        let current_abs = make_absolute_lexical(current_workspace).ok();
++        let current_parent = current_abs
++            .as_deref()
++            .and_then(Path::parent)
++            .or_else(|| current_workspace.parent())
++            .map(canonicalize_existing_prefix);
++        let current_name = current_workspace.file_name();
++        catalog.records.into_iter().find_map(|(_, session)| {
++            if session.archived
++                || is_empty_auto_created_session(&session)
++                || workspace_scope_matches(&session.workspace, current_workspace)
++                || session.workspace.exists()
++            {
++                return None;
++            }
++            let same_parent = session
++                .workspace
++                .parent()
++                .map(canonicalize_existing_prefix)
++                .zip(current_parent.as_ref())
++                .is_some_and(|(lhs, rhs)| lhs == *rhs);
++            let same_leaf = session
++                .workspace
++                .file_name()
++                .zip(current_name)
++                .is_some_and(|(lhs, rhs)| lhs == rhs);
++            (same_parent || same_leaf).then_some(session.workspace)
++        })
++    }
++
++    pub fn migrate_workspace(
++        &self,
++        options: &WorkspaceMigrationOptions,
++    ) -> std::io::Result<WorkspaceMigrationReport> {
++        struct MigrationCheckpointEntry {
++            path: PathBuf,
++            legacy: bool,
++            metadata: Option<SessionMetadata>,
++            error: Option<String>,
++        }
++
++        let old_abs = make_absolute_lexical(&options.old_path)?;
++        let new_abs = make_absolute_lexical(&options.new_path)?;
++        let old_is_symlink =
++            fs::symlink_metadata(&old_abs).is_ok_and(|meta| meta.file_type().is_symlink());
++        let resolved_old = if old_is_symlink {
++            old_abs
++                .parent()
++                .zip(old_abs.file_name())
++                .map(|(parent, name)| canonicalize_existing_prefix(parent).join(name))
++                .unwrap_or_else(|| old_abs.clone())
++        } else {
++            canonicalize_existing_prefix(&old_abs)
++        };
++        let resolved_new = if new_abs.exists() {
++            if !new_abs.is_dir() {
++                return Err(io::Error::new(
++                    io::ErrorKind::InvalidInput,
++                    format!(
++                        "New workspace path {} is not a directory",
++                        options.new_path.display()
++                    ),
++                ));
++            }
++            fs::canonicalize(&new_abs)?
++        } else if options.dry_run {
++            canonicalize_existing_prefix(&new_abs)
++        } else {
++            return Err(io::Error::new(
++                io::ErrorKind::NotFound,
++                format!(
++                    "New workspace directory {} does not exist",
++                    options.new_path.display()
++                ),
++            ));
++        };
++        let old_norm = normalize_workspace_path_for_compare(&old_abs);
++        let new_norm = normalize_workspace_path_for_compare(&resolved_new);
++        if old_norm == new_norm {
++            return Err(io::Error::new(
++                io::ErrorKind::InvalidInput,
++                "Old and new workspace paths are identical",
++            ));
++        }
++        let resolved_old_cmp = normalize_workspace_path_for_compare(&resolved_old);
++        if resolved_old_cmp == new_norm
++            || strip_workspace_prefix(&old_abs, &new_abs).is_some()
++            || strip_workspace_prefix(&new_abs, &old_abs).is_some()
++            || strip_workspace_prefix(&old_abs, &resolved_new).is_some()
++            || strip_workspace_prefix(&resolved_new, &old_abs).is_some()
++            || strip_workspace_prefix(&resolved_old, &resolved_new).is_some()
++            || strip_workspace_prefix(&resolved_new, &resolved_old).is_some()
++        {
++            return Err(io::Error::new(
++                io::ErrorKind::InvalidInput,
++                "Old and new workspace paths cannot overlap",
++            ));
++        }
++
++        let remap = |workspace: &Path| {
++            let mapped =
++                remap_workspace_path(workspace, &old_abs, &resolved_new).or_else(|| {
++                   
+```
+
+**File**: `crates/engine/src/session_manager/test_cases_04.rs` (modified, +447/-0)
+```diff
+@@ -384,3 +384,450 @@
+             assert_eq!(loaded.agent_preset, expected);
+         }
+     }
++
++    #[test]
++    fn migrate_workspace_updates_session_checkpoint_and_runtime_thread() {
++        let _lock = crate::test_support::lock_test_env();
++        let tmp = tempdir().expect("tempdir");
++        let _codewhale_home = crate::test_support::EnvVarGuard::set("CODEWHALE_HOME", tmp.path());
++        let old_dir = tmp.path().join("Project_A");
++        let new_dir = tmp.path().join("Project_B");
++        std::fs::create_dir_all(&old_dir).expect("mkdir old");
++        let sessions_dir = tmp.path().join("sessions");
++        let manager = SessionManager::new(sessions_dir.clone()).expect("manager");
++
++        let mut session = create_saved_session(&[], "test-model", &old_dir, 0, None);
++        let id = session.metadata.id.clone();
++        let store_dir = sessions_dir.join(&id).join("runtime");
++        let store = crate::runtime_threads::RuntimeThreadStore::open(store_dir.clone())
++            .expect("create runtime store");
++        let thread = migration_test_thread("thr_test_1", &id, &old_dir);
++        let binding = crate::runtime_threads::RuntimeStoreBinding::for_store_dir(&store_dir)
++            .expect("binding");
++        session.metadata.runtime_store = Some(binding);
++        manager.save_session(&session).expect("save session");
++        manager.save_checkpoint(&session).expect("save checkpoint");
++        std::fs::copy(
++            manager.checkpoints_dir().join(format!("{id}.json")),
++            manager.checkpoints_dir().join("latest.json"),
++        )
++        .expect("copy legacy checkpoint");
++        let initial_obs = manager
++            .with_session_write_admission(&id, || manager.observe_session_admitted(&id))
++            .expect("observe pre")
++            .expect("pre obs");
++        let mut thread = thread;
++        thread.saved_session_checkpoint = Some(crate::runtime_threads::SavedSessionCheckpoint {
++            publication_observation: Some(initial_obs),
++            covered_turn_id: None,
++            messages_sha256: "abc".to_string(),
++            messages_len: Some(0),
++            retained_messages: None,
++        });
++        store.save_thread(&thread).expect("save thread");
++
++        std::fs::rename(&old_dir, &new_dir).expect("rename workspace");
++        assert!(
++            manager
++                .get_latest_session_for_workspace(&new_dir)
++                .expect("query")
++                .is_none()
++        );
++
++        let before_dry = migration_test_tree(&sessions_dir);
++        let dry = manager
++            .migrate_workspace(&WorkspaceMigrationOptions {
++                old_path: old_dir.clone(),
++                new_path: new_dir.clone(),
++                session_id: None,
++                dry_run: true,
++            })
++            .expect("dry run");
++        assert_eq!(migration_test_tree(&sessions_dir), before_dry);
++        assert_eq!(dry.migrated_sessions, vec![id.clone()]);
++        assert_eq!(dry.migrated_checkpoints, vec![id.clone()]);
++        assert_eq!(dry.migrated_threads, vec!["thr_test_1".to_string()]);
++        assert!(
++            !store_dir
++                .join(crate::runtime_threads::RUNTIME_PROCESS_OWNER_LOCK_FILE)
++                .exists()
++        );
++        assert_eq!(
++            manager.load_session(&id).expect("still old").metadata.workspace,
++            old_dir
++        );
++
++        let applied = manager
++            .migrate_workspace(&WorkspaceMigrationOptions {
++                old_path: old_dir.clone(),
++                new_path: new_dir.clone(),
++                session_id: None,
++                dry_run: false,
++            })
++            .expect("apply migration");
++        assert_eq!(applied.migrated_sessions, vec![id.clone()]);
++        assert_eq!(applied.migrated_checkpoints, vec![id.clone()]);
++        assert_eq!(applied.migrated_threads, vec!["thr_test_1".to_string()]);
++
++        let canonical_new = std::fs::canonicalize(&new_dir).expect("canonical new");
++        assert_eq!(
++            manager.load_session(&id).expect("updated").metadata.workspace,
++            canonical_new
++        );
++        assert_eq!(
++            manager
++                .load_recovery_checkpoint(&id)
++                .expect("ckpt")
++                .expect("present")
++                .metadata
++                .workspace,
++            canonical_new
++        );
++        assert_eq!(
++            manager
++                .load_legacy_checkpoint()
++                .expect("legacy ckpt")
++                .expect("legacy present")
++                .metadata
++                .workspace,
++            canonical_new
++        );
++        let expected_post_obs = manager
++            .with_session_write_admission(&id, || manager.observe_session_admitted(&id))
++            .expect("observe post")
++            .expect("post obs");
++        let reloaded_thread = store.load_thread("thr_test_1").expect("thread");
++        assert_eq!(reloaded_thr
 ```
 
 **File**: `crates/tui/CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- 
- ## [Unreleased]
- 
-+- **`show_data` charts tell the truth at the edges:** a small value such as `0.004` is no longer shown, or reported back to the model, as `0`; a trend with more points than the chart is wide keeps its spikes and dips instead of skipping them; a bar for any value above zero is always visible; and on a narrow terminal the label is shortened before the number is.
- - **Worktree-side renames in the Runtime API:** `GET /v1/git` and `GET /v1/changes` now show the source of a rename in the worktree column that leaves the workspace as a `deleted` row, as they already did for a staged rename; a copy is still never shown that way. Thanks [@SparkofSpike](https://github.com/SparkofSpike) (#7325).
- - **Multiline XML tool arguments:** a text-fallback tool call whose parameter value, in either the `<parameter name=...>` or the `<key>` form, contains a newline, such as multiline `write_file` content, no longer arrives with empty arguments. Thanks [@Ricardo-M-L](https://github.com/Ricardo-M-L) (#7341).
- - **Assignments inside CLI argument values:** the fallback tool-call parser no longer invents an extra parameter from text inside a `--argument` value, so `--command "MODE=dev node app.js"` stays one command. Thanks [@Ricardo-M-L](https://github.com/Ricardo-M-L) (#7342).
+@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ - **One reading of a model id:** the model picker, requests, pricing and the context window now read a model id the same way, from one set of per-provider naming rules, so a short name or alternate spelling no longer resolves to one model in the picker and a different model, or a 128K fallback window, in the request.
+ - **Model id fixes:** Google ids written as Google's model list spells them (`models/gemini-4-hydrogen`) now resolve to the bare id with its real limits; Moonshot `kimi` and Xiaomi MiMo short names such as `mimo` and `asr` are now sent as the model they name instead of unchanged; extra spaces around a model id are ignored; and an unknown model id on official DeepSeek or OpenCode Go is refused the same way by every path instead of being accepted by some. Legacy DeepSeek names (`deepseek-chat`, `deepseek-reasoner`) are now sent as the model they map to.
+ - **Side-repo snapshot lock fairness:** rapid snapshot and prune operations poll every 5 ms and yield for up to 50 ms on immediate same-process re-acquisition after releasing the side-repo write lock, preventing back-to-back acquires from starving waiting writers past the 30-second lock timeout, and skip redundant `git rev-parse` calls when rebuilding survivor chains. (CW-7957)
++- **Migrate saved sessions when a workspace directory moves:** renaming or moving a project folder no longer strands its sessions. Run `codewhale sessions migrate --old-path <old> --new-path <new>` (`--dry-run` to preview, `--session <id>` for one session) to update saved sessions, recovery checkpoints, and Runtime thread bindings together. A dry run creates and changes no files, sessions in use are skipped, Runtime stores reached through a symlink are refused, one unreadable session is reported without stopping the rest, and overlapping old/new paths are refused. Workspace-mismatch errors print the scoped `--session <id> --dry-run` command, and symlinked workspace paths resolve consistently on resume and fork. (CW-8256)
+ - **Thread events under heavy disk load:** reading or appending a thread's runtime events no longer fails with "Runtime event lock timed out after 5s" while another write is still flushing to disk; the event-store lock now waits up to 25 seconds for in-progress writes before giving up. (CW-7957)
+ - **Fewer false task idle timeouts while progress is being saved:** when a supervised task's idle deadline passes while the task supervisor is busy saving its previous progress, the supervisor now polls the task once, without waiting, before applying the deadline, so progress the task can report on that single poll is counted. Progress that needs more than one poll to be sent can still end in `idle_timeout`, and a task that is genuinely idle times out as before. (CW-7957)
+ - **Timed-out hooks on Windows report the timeout:** on a busy Windows machine, a hook that hits its time limit now reports "Hook timed out" instead of "hook could not be reaped after its timeout". CodeWhale now waits up to 10 seconds, rather than 2, for Windows to finish tearing down the hook's process tree. (CW-7957)
 ```
 
-**File**: `vendor/codewhale-ratatui/CHANGELOG.md` (modified, +9/-0)
+**File**: `crates/tui/src/lib.rs` (modified, +297/-13)
 ```diff
-@@ -2,6 +2,15 @@
- 
- ## Unreleased — 0.2.0
- 
-+- The Ocean column's waiting, approval and failure tints now ease off near the
-+  surface where they would push `Hint` below 4.5:1 or `Dim` below 3:1, for a
-+  ramp built with `OceanRamp::for_theme`; deeper rows keep the full warm tint.
-+- Data displays stay honest at the edges. `data_number` no longer prints a
-+  small value as `0` or `-0` (`0.0042`, `4.2e-7`) and rounds across a unit
-+  (`999950` is `1M`, with a `T` tier). A `DataTrend` with more points than
-+  dot columns draws each column from its lowest to its highest value, so a
-+  spike is never dropped. A `DataBars` value above zero always draws at least
-+  an eighth of a cell, and a narrow row cuts the label before the value.
- - Add data displays: `DataSparkline`, `DataBars` and `DataTrend` (a braille
-   line chart). The words carry every value; the ink draws in from a caller
-   progress (`MotionStep::drawn`) and is at its end state under reduced or
-```
-
-**File**: `vendor/codewhale-ratatui/UPSTREAM.json` (modified, +8/-6)
-```diff
-@@ -260,8 +260,8 @@
-     }
-   },
-   "runtime_update": {
--    "commit": "1d061703691c9130724f58eebfe7060a5fc019ca",
--    "scope": "Selected generic widget fixes, measured ocean themes and caller-clock water drift from standalone; chart, roles and theme verified already matching. Standalone tooling, gallery export and repository-only tests are outside this source synchronization.",
-+    "commit": "e8c2746e4b93070ebeac41a064dde3d362cb975d",
-+    "scope": "Selected generic widget fixes, measured ocean themes and caller-clock water drift from standalone; roles and theme verified already matching; data-display honesty fixes (chart), Ocean quiet-ink floors in for_theme, and the crate-private is_truecolor used by motion. Standalone tooling, gallery export and repository-only tests are outside this source synchronization.",
-     "files": {
-       "src/components/instrument.rs": "468280c9c5be4d1244ef1601784d11d9956b2e1d36c9f671618404fbb010c77a",
-       "src/components/list.rs": "8f4b8d7220202b49e6a6fb17e4d587123e538ce90d03fbe0c16c3776765a0e34",
-@@ -270,13 +270,15 @@
-       "src/components/segmented.rs": "a148c79c1d6d214c6b28ed0ac5ab7f669805d0d6a41250efc56632da9b39eb62",
-       "src/components/tabs.rs": "2e18bc604786f5403e1491e50322e0bf771fa70389ef34347528ae8bef6afa44",
-       "src/components/surface.rs": "fcdec44734d0bdc2db69dad41dd9c88f018003b128927f9d59c4d7536cb9e6c0",
--      "src/ocean.rs": "194a7ade34b6fac7d8ad471f4bfcb04d3ae88a9c4f63f51bc4627c5edfc0183e",
-+      "src/ocean.rs": "62eff5da97dab3e5939e7e425ac6922bf2cd309be3caaa128052f89c4bcbd4ff",
-       "src/ombre.rs": "7356cc1c7b9af444f8272817d57cbaaa8133bfd2689220a1a794dfaf0d897fda",
--      "src/components/chart.rs": "77759af13c4d2b7ffadee5dae8e4849ec3ed637741cf9dd29764edcff625cc82",
--      "src/gallery/chart.rs": "98e3c20e26e06744e09750209bc627b3c21204d6fb9022883ac5b5f856953175",
-+      "src/components/chart.rs": "692f3f8725ca467df27fe16545ed39573c8ad8bd597dafe6596c61bd75e117b4",
-+      "src/gallery/chart.rs": "dc0832242654174b36f90e35a761900d2b28156ba463bdd00a52741f1f467eda",
-       "examples/data.rs": "633ee3f3786ec5053b98a50cc72b2b44d68ba41a9eedba56a58504f04881670a",
-       "src/roles.rs": "2ac8760785aa0a83daeb89c32e7dec259dbae358e9a80426900c83e606f8fa79",
--      "src/theme.rs": "ac3851f676511b494bfb3a9e680d016daff1c85a20ced8ff4b4eba6f115f9f21"
-+      "src/theme.rs": "ac3851f676511b494bfb3a9e680d016daff1c85a20ced8ff4b4eba6f115f9f21",
-+      "src/color.rs": "e63bfde21ec7197d6d955f689eea8790797a1df9fdb43c25950e6d82534eb551",
-+      "src/components/motion.rs": "7b41b6616ff61513d098cd2710a5912d8bece9704d8fdc6c0e8dbb5a5f158251"
+@@ -421,6 +421,35 @@ enum SessionsCommand {
+         #[arg(long, default_value_t = false)]
+         force: bool,
      },
-     "retained_engine_adaptations": {
-       "src/components/workbar.rs": {
-```
-
-**File**: `vendor/codewhale-ratatui/src/color.rs` (modified, +5/-0)
-```diff
-@@ -170,6 +170,11 @@ pub fn indexed_rgb(index: u8) -> Option<(u8, u8, u8)> {
-     }
++    #[command(
++        about = "Update saved sessions and Runtime stores after a workspace directory was renamed or moved"
++    )]
++    Migrate {
++        #[arg(
++            long = "old-path",
++            value_name = "PATH",
++            help = "Previous workspace directory path recorded on the sessions"
++        )]
++        old_path: PathBuf,
++        #[arg(
++            long = "new-path",
++            value_name = "PATH",
++            help = "New workspace directory path"
++        )]
++        new_path: PathBuf,
++        #[arg(
++            long,
++            value_name = "SESSION_ID",
++            help = "Only migrate this session id (or unique prefix)"
++        )]
++        session: Option<String>,
++        #[arg(
++            long,
++            default_value_t = false,
++            help = "Report what would change without creating or modifying any files"
++        )]
++        dry_run: bool,
++    },
  }
  
-+#[must_use]
-+pub(crate) const fn is_truecolor(color: Color) -> bool {
-+    matches!(color, Color::Rgb(..))
+ #[derive(Args, Debug, Clone)]
+@@ -2862,6 +2891,12 @@ async fn run_async_main_dispatch(
+                 }) => {
+                     run_sessions_export(&id, output.as_deref(), skip_artifacts, compression, force)
+                 }
++                Some(SessionsCommand::Migrate {
++                    old_path,
++                    new_path,
++                    session,
++                    dry_run,
++                }) => run_sessions_migrate(old_path, new_path, session, dry_run).await,
+             },
+             Commands::Receipts {
+                 id,
+@@ -3392,10 +3427,23 @@ async fn run_async_main_dispatch(
+     let mut startup_notice = None;
+     let resume_session_id = if cli.continue_session {
+         let workspace = resolve_workspace(&cli);
+-        resolve_continue_session_id(
++        let resolved = resolve_continue_session_id(
+             &workspace,
+             io::stdin().is_terminal() && io::stdout().is_terminal(),
+-        )
++        );
++        if resolved.is_none()
++            && let Ok(manager) = SessionManager::default_location()
++            && let Some(missing) = manager.missing_workspace_session_hint(&workspace)
++        {
++            startup_notice = Some(format!(
++                "No saved sessions found for {}. If you renamed {}, preview the move with `codewhale sessions migrate --old-path {} --new-path {} --dry-run`.",
++                workspace.display(),
++                missing.display(),
++                session_manager::shell_quote_path(&missing),
++                session_manager::shell_quote_path(&workspace),
++            ));
++        }
++        resolved
+     } else if let Some(id) = cli.resume.clone() {
+         Some(id)
+     } else if !cli.fresh {
+@@ -10456,6 +10504,95 @@ fn run_sessions_export(
+     Ok(())
+ }
+ 
++async fn run_sessions_migrate(
++    old_path: PathBuf,
++    new_path: PathBuf,
++    session_id: Option<String>,
++    dry_run: bool,
++) -> Result<()> {
++    #[cfg(test)]
++    let ticket = crate::test_support::env_scope_ticket();
++    tokio::task::spawn_blocking(move || {
++        #[cfg(test)]
++        let _membership = crate::test_support::join_env_scope(ticket);
++        run_sessions_migrate_blocking(old_path, new_path, session_id, dry_run)
++    })
++    .await?
 +}
 +
- /// The RGB a color is *known* to render as, or `None` when the terminal owns
- /// the decision (`Reset`, named colors, indices 0..=15).
- #[must_use]
-```
-
-**File**: `vendor/codewhale-ratatui/src/components/chart.rs` (modified, +140/-46)
-```diff
-@@ -71,38 +71,58 @@ impl Default for DataWords {
-     }
- }
- 
--/// A short form of `value`: `42`, `3.14`, `12.4k`, `1.2M`.
-+/// A short form of `value`: `42`, `3.14`, `0.0042`, `12.4k`, `1.2M`.
-+///
-+/// A value that is not zero never reads as `0`: small values keep two
-+/// significant digits and the smallest and largest use an exponent.
- #[must_use]
- pub fn data_number(value: f64) -> String {
-+    const TIERS: [(f64, f64, &str); 5] = [
-+        (1.0, 1e4, ""),
-+        (1e3, 1e6, "k"),
-+        (1e6, 1e9, "M"),
-+        (1e9, 1e12, "B"),
-+        (1e12, 1e15, "T"),
-+    ];
-     if !value.is_finite() {
-         return "?".to_owned();
-     }
-     if value == 0.0 {
-         return "0".to_owned();
-     }
-     let a = value.abs();
--    let (scaled, suffix) = if a >= 1e9 {
--        (value / 1e9, "B")
--    } else if a >= 1e6 {
--        (value / 1e6, "M")
--    } else if a >= 1e4 {
--        (value / 1e3, "k")
--    } else {
--        (value, "")
--    };
--    let s = if scaled.abs() >= 100.0 {
--        format!("{scaled:.0}")
--    } else if scaled.abs() >= 10.0 {
--        format!("{scaled:.1}")
--    } else {
--        format!("{scaled:.2}")
--    };
--    let s = if s.contains('.') {
--        s.trim_end_matches('0').trim_end_matches('.').to_owned()
--    } else {
--        s
-+    if a < 1e-4 {
-+        return format!("{value:.1e}").replace(".0e", "e");
++fn run_sessions_migrate_blocking(
++    old_path: PathBuf,
++    new_path: PathBuf,
++    session_id: Option<String>,
++    dry_run: bool,
++) -> Result<()> {
++    let manager = SessionManager::default_location()?;
++    let session_arg = session_id
++        .as_deref()
++        .map(|id| {
++            format!(
++                " --session {}",
++                session_manager::shell_quote_path(Path::new(id))
++            )
++        })
++        .unwrap_or_default();
++    let report = manager.migrate_workspace(&session_manager::WorkspaceMigrationOptions {
++        old_path,
++        new_path,
++        session_id,
++        dry_run,
++    })?;
++    let total = report.migrated_sessions.len()
++        + report.migrated_checkpoints.len()
++        + report.migrated_threads.len();
++    if total == 0 && report.busy_sessions.is_empty() && report.unreadable.is_empty() {
++        println!(
++            "No saved sessions or Runtime threads matched workspace {}.",
++            report.old_path.display()
++        );
++        return Ok(());
 +    }
-+    let trim = |s: String| {
-+        if s.contains('.') {
-+            s.trim_end_matches('0').trim_end_matches('.').to_owned()
-+        } else {
-+            s
-+        }
-     };
--    format!("{s}{suffix}")
-+    if a < 0.1 {
-+        let decimals = (1.0 - a.log10().floor()) as usize;
-+        return trim(format!("{value:.decimals$}"));
++    let verb = if dry_run { "Would migrate" } else { "Migrated" };
++    println!(
++        "{verb} {} session(s), {} checkpoint(s), and {} Runtime thread(s) from {} to {}.",
++        report.migrated_sessions.len(),
++        report.migrated_checkpoints.len(),
++        report.migrated_threads.len(),
++        report.old_path.display(),
++        report.new_path.display(),
++    );
++    for id in &report.migrated_sessions {
++        println!("  session {id}");
 +    }
-+    let mut tier = TIERS.iter().position(|t| a < t.1).unwrap_or(TIERS.len());
-+    while let Some((unit, next, suffix)) = TIERS.get(tier).copied() {
-+        let scaled = value / unit;
-+        let s = if scaled.abs() >= 100.0 {
-+            format!("{scaled:.0}")
-+        } else if scaled.abs() >= 10.0 {
-+            format!("{scaled:.1}")
-+        } else {
-+            format!("{scaled:.2}")
-+        };
-+        let rounded = s.parse::<f64>().map_or(a, |r| r.abs() * unit);
-+        if rounded >= next {
-+            tier += 1;
-+            continue;
-+        }
-+        return format!("{}{suffix}", trim(s));
-+    }
-+    format!("{value:.1e}").replace(".0e", "e")
- }
- 
- fn with_unit(value: f64, unit: &str) -> String {
-@@ -273,7 +293,7 @@ impl Paint for DataSparkline<'_> {
-             let ramp = if theme.ascii() { SPARK_ASCII } else { SPARK };
-             let mut line = String::with_capacity(cells * 3);
-             for (i, v) in window.iter().enumerate() {
--                line.push_str(if i < shown {
-+                line.push_str(if i < shown && v.is_finite() {
-                     ramp[level(*v, lo, hi, ramp.len())]
-                 } else {
-                     " "
-@@ -313,8 +333,10 @@ impl DataBarItem {
- ///
- /// Bars scale to the largest value and fill in eighths of a cell. While
- /// `drawn` is below one each bar grows from its `previous` value (or zero)
--/// to its value, a little after the bar above it. A negative value draws no
--/// bar; its words keep the real number.
-+/// to its value, a little after the bar above it. A value above zero always
-+/// draws at least an eighth of a cell, so it never looks like zero. A
-+/// negative value draws no bar; its words keep the real number. On a narrow
-+/// row the label gives way before the value does.
- #[derive(Clone, Debug)]
- pub struct DataBars<'a> {
-     pub label: Cow<'a, str>,
-@@ -426,7 +448,8 @@ impl Paint for DataBars<'_> {
-             .map(|l| text::width(l))
-             .max()
-             .unwrap_or(0)
--            .min((width / 3).max(4));
-+            .min((width / 3).max(4))
-+            .min(width.saturating_sub(value_w + 2));
-         let cells = width.saturating_sub(label_w + 2 + 2 + value_w);
-         let peak = self
-             .items
-@@ -440,13 +463,14 @@ impl Paint for DataBars<'_> {
-             if y >= area.height {
-                 break;
-             }
--            let mut spans = vec![
--                Span::styled(
-+            let mut spans = Vec::new();
-+            if label_w > 0 {
-+                spans.push(Span::styled(
-                     text::pad(&labels[i], label_w, ascii),
-                     theme.fg(Role::Foreground),
--                ),
--                Span::raw("  "),
--            ];
-+                ));
-+                spans.push(Span::raw("  "));
-+            }
-             if cells >= MIN_BAR {
-                 let from = self
-                     .previous
-@@ -465,7 +489,8 @@ impl Paint for DataBars<'_> {
-                 } else {
-                     0.0
-                 };
--                let eighths = (frac * cells as f64 * 8.0).round() as usize;
-+                let eighths =
-+                    ((frac * cells as f64 * 8.0).round() as usize).max(usize::from(frac > 0.0));
-                 let bar = self.bar(eighths, as
-```
-
-**File**: `vendor/codewhale-ratatui/src/components/motion.rs` (modified, +11/-7)
-```diff
-@@ -1,5 +1,8 @@
- //! Motion: the few things that move, and the promise that nothing else does.
- //!
-+//! Motion is allowed for a change of state, work in progress or spatial
-+//! continuity. This module is that layer without an animation dependency.
-+//!
- //! - A [`MotionStep`] eases a value from where it is to a target in `0..=1`,
- //!   sampled at an instant the caller passes in. Nothing here reads a clock,
- //!   spawns a thread or waits.
-@@ -28,7 +31,7 @@ use unicode_segmentation::UnicodeSegmentation;
- 
- use crate::{
-     MotionMode, Paint, Role, Theme,
--    color::{ColorDepth, blend, contrast_ratio},
-+    color::{ColorDepth, blend, contrast_ratio, is_truecolor},
-     glyphs, text, tokens,
- };
- 
-@@ -185,8 +188,8 @@ pub fn paint_working_glow(
- ) {
-     if !policy.allows(MotionChannel::Tint)
-         || elapsed < crate::spin::EARN_DELAY
--        || !matches!(highlight, Color::Rgb(..))
--        || !matches!(background, Color::Rgb(..))
-+        || !is_truecolor(highlight)
-+        || !is_truecolor(background)
-     {
-         return;
-     }
-@@ -217,11 +220,12 @@ pub fn paint_working_glow(
-         if strength > 0.0
-             && cell.symbol() == grapheme
-             && !grapheme.chars().all(char::is_whitespace)
--            && matches!(cell.fg, Color::Rgb(..))
-+            && is_truecolor(cell.fg)
-         {
--            let ground = match cell.bg {
--                Color::Rgb(..) => cell.bg,
--                _ => background,
-+            let ground = if is_truecolor(cell.bg) {
-+                cell.bg
-+            } else {
-+                background
-             };
-             let ink = blend(highlight, cell.fg, strength);
-             if let (Some(before), Some(after)) =
-```
-
-**File**: `vendor/codewhale-ratatui/src/gallery/chart.rs` (modified, +5/-2)
-```diff
-@@ -3,7 +3,9 @@
- use ratatui::{buffer::Buffer, layout::Rect};
- 
- use super::Entry;
--use crate::{DataBarItem, DataBars, DataDisplay, DataSparkline, DataTrend, Paint, Theme};
-+use crate::{
-+    DataBarItem, DataBars, DataDisplay, DataDisplayView, DataSparkline, DataTrend, Paint, Theme,
-+};
- 
- fn series() -> Vec<f64> {
-     (0..64)
-@@ -73,7 +75,8 @@ fn from_agent(area: Rect, buf: &mut Buffer, theme: &Theme) {
-                      {"label":"cached","value":61000}]}"#,
-     )
-     .expect("gallery fixture is a valid data display");
--    shown.view().paint(area, buf, theme);
-+    let view: DataDisplayView<'_> = shown.view();
-+    view.paint(area, buf, theme);
- }
- 
- pub(crate) fn entries() -> Vec<Entry> {
++    if !report.busy_sessions.is_empty() {
++        println!(
++            "{} session(s) were skipped because another Codewhale process is using them (close open sessions and re-run):",
++ 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #7361** (closed): fix(tui): bound completed-turn session snapshot waits (@laozidabo)
+- **PR #7359** (2026-11-17): fix(subagent): inherit the session's reviewed memory in child prompts (@gaord)
+- **PR #7358** (closed): ci(cw-8178): sharded PR CI proof run (draft, will be closed) (@Hmbown)
 - **PR #7353** (2026-11-16): fix(engine): log safe provider failure diagnostics (@laozidabo)
 - **PR #7352** (2026-11-16): fix(app-server): preserve named provider in web picker (@Gyuke)
 - **PR #7351** (closed): fix(engine): honor native usage journal capacity fallback (@laozidabo)
-- **PR #7349** (2026-11-16): fix(client): decide the reasoning dialect by endpoint, not by model id (@SparkofSpike)
-- **PR #7346** (2026-11-16): docs: illustrate hybrid claude bundle and host hook boundary (@vshulcz)
-- **PR #7342** (2026-11-16): fix(core): keep assignments inside CLI argument values literal (@Ricardo-M-L)
 
 ---
 
@@ -3134,31 +3456,35 @@ Engine adaptation w
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. client): decide the reasoning dialect by endpoint, not by model id
+## X. build(release): publish codewhale-ratatui 0.2.0 as a workspace member (§213)
 
 **RULE**:
-When implementing operations in `crates/engine/src/client.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in codewhale-hq/Codewhale. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.gitattributes`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in codewhale-hq/Codewhale. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3c4317c9`: client): decide the reasoning dialect by endpoint, not by model id. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a41695c4`: build(release): publish codewhale-ratatui 0.2.0 as a workspace member (§213). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/engine/src/client.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.gitattributes`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-            self.chat_shape_provider(&model),
+vendor/codewhale-ratatui/tests/**/*.txt text eol=lf
+vendor/codewhale-ratatui/tests/**/*.json text eol=lf
+vendor/codewhale-ratatui/assets/**/*.json text eol=lf
+vendor/codewhale-ratatui/assets/**/*.js text eol=lf
+vendor/codewhale-ratatui/assets/*.scenes text eol=lf
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-            self.api_provider,
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3c4317c9` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a41695c4` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

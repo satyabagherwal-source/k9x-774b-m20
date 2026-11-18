@@ -3,7 +3,7 @@
 > **Source Version**: `hf-fastino-g`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T15:38:05.187Z  
+> **Timestamp**: 2026-11-18T03:39:20.013Z  
 > **Learning ID**: `learn-huggingface-fastino-gliner2-5-decide`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-fastino-gliner2.5-decide-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/fastino/GLiNER2.5-Decide](https://huggingface.co/fastino/GLiNER2.5-Decide))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T15:38:04.980Z  
+> **Harvest Timestamp**: 2026-11-18T03:39:19.797Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: text-classification
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 86709 downloads | 457 likes
+- **Stars / Engagement**: 79754 downloads | 458 likes
 
 ---
 

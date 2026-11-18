@@ -4,24 +4,24 @@
 {
   "source_repository": "NucleoidAI/Nucleoid",
   "source_url": "https://github.com/NucleoidAI/Nucleoid",
-  "source_version": "62b0d320",
+  "source_version": "7bc9f013",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-17T21:41:17.245Z",
+  "timestamp": "2026-11-18T03:39:37.399Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-nucleoidai-nucleoid",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid) (Revision: `62b0d320`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-17T21:41:17.245Z`  
+> **Provenance**: Harvested from [NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid) (Revision: `7bc9f013`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-18T03:39:37.399Z`  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), B (Product Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), F (Design Intelligence)
-- **Confidence Rating**: 66%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), B (Product Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), F (Design Intelligence)
+- **Confidence Rating**: 53%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from NucleoidAI/Nucleoid:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T21:41:16.127Z  
+> **Harvest Timestamp**: 2026-11-18T03:39:36.515Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -114,9 +114,8 @@ pub fn generate(statement: &Stmt) -> String {
             iterable,
             ..
         } => format!("for {key},{value} of {iterable}"),
-        Stmt::While { condition, body } => {
-            format!("while({condition}){{{}}}", generate_all(body))
-        }
+        Stmt::While { condition, body } => loop_key("while", condition, body),
+        Stmt::Repeat { count, body } => loop_key("repeat", count, body),
         Stmt::Try { .. } => "try".to_string(),
         Stmt::Declaration { name, type_name } => format!("{name}:{type_name}"),
         Stmt::Pass => "pass".to_string(),
@@ -128,6 +127,14 @@ pub fn generate(statement: &Stmt) -> String {
             )
         }
     }
+}
+
+fn loop_key(word: &str, header: &Expr, body: &[Stmt]) -> String {
+    format!("{word}({header}){{{}}}", generate_all(body))
+}
+
+fn loop_suite(word: &str, header: &Expr, body: &[Stmt]) -> String {
+    format!("{word} {header}:\n{}", indent(&source_all(body)))
 }
 
 fn assignment_source(target: &Expr, value: &Expr) -> String {
@@ -239,9 +246,8 @@ fn source(statement: &Stmt) -> String {
             "for {key},{value} of {iterable}:\n{}",
             indent(&source_all(body))
         ),
-        Stmt::While { condition, body } => {
-            format!("while {condition}:\n{}", indent(&source_all(body)))
-        }
+        Stmt::While { condition, body } => loop_suite("while", condition, body),
+        Stmt::Repeat { count, body } => loop_suite("repeat", count, body),
         Stmt::Try {
             body,
             parameter,
@@ -426,6 +432,11 @@ impl Parser {
             return Ok(Stmt::While { condition, body });
         }
 
+        if let Some(count) = self.repeat_count() {
+            let body = self.suite()?;
+            return Ok(Stmt::Repeat { count, body });
+        }
+
         if let Some(name) = self.enum_header() {
             return self.enum_declaration(name);
         }
@@ -573,14 +584,7 @@ impl Parser {
         let end = outcome.as_ref()?.end;
         if self.words
             && self.accepted(Self::attempt_suppose_premise).is_none()
-            && self.separates(start, end)
-        {
-            return None;
-        }
-        outcome
-    }
-
-    pub(super) fn accepted<T>(&mut self, parse: impl FnOnce(&mut Self) -> T)
+            && self.separates(sta
 ```
 
 ### Core Architecture Module: `src/state.rs`
@@ -1528,135 +1532,406 @@ export { document } from "./dataset";
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `62b0d320` (2026-11-17)
-**Commit Message**: Draft NUC 115 Count-Controlled Repeat Loops
+### Incident Patch 1: `c3a013a9` (2026-11-18)
+**Commit Message**: NUC 115 Count-Controlled Repeat Loops
 
-Category: Runtime features, drawn uniformly at random (index 1 of the
-five eligible categories in NUC 1's registry, p = 1/5, no redraw) for a
-continuous /nuc-proposal cycle. Counted repetition is an existing
-comparable feature, written today with a while loop and its own counter
-or with a string loop, so the token non-regression gate is required.
+Accepted under the automatic acceptance rule, in a continuous
+/nuc-proposal cycle (Runtime features, existing comparable feature): the
+frozen candidate meets every hard criterion and passes every policy
+check, including the required token non-regression gate; the
+counterparts are fair, with a finding that leaves the gate's verdict
+unchanged. The cycle found no stale Draft, drew Runtime features
+uniformly from the five eligible categories, allocated NUC 115 in
+62b0d320, and completed it with fresh baselines, candidate, proposer,
+Rust improvement pass and evaluator.
 
-Requested change: repeat COUNT: followed by a suite runs the suite COUNT
-times, the count-controlled sibling of NUC 63's while loop. COUNT is
-evaluated once, before the first iteration, and converted as the count
-of the string method repeat: fractions truncate, and NaN and negative
-numbers give 0. The body runs as a while body does, in the enclosing
-scope with no loop variable and no scope frame; return, errors, thrown
-values and rollback behave as in while, and a count above 100,000 raises
-TypeError("Repeat count is too large") before the first iteration. At
-the accepted revision every such statement raises
-SyntaxError("Unexpected ':'"). repeat stays an ordinary name elsewhere,
-and the four spellings that NUC 63 keeps for while keep their accepted
-readings for repeat.
+repeat COUNT: followed by a suite runs the suite COUNT times. COUNT is
+evaluated once, before the first iteration, and converted as the string
+method repeat converts its count: to a number, NaN and negative numbers
+give 0 and fractions truncate. The body runs as a while body does,
+imperatively in the enclosing scope with no frame and no loop variable,
+return leaves the enclosing function, errors roll back through the
+existing transaction, and a completed loop yields null and files nothing
+in the graph. A count that converts to more than 100,000, the bound of
+while, raises TypeError(
 
-This allocation changes 
-
-**File**: `docs/nuc-0000.md` (modified, +2/-0)
+**File**: `README.md` (modified, +32/-0)
 ```diff
-@@ -95,6 +95,7 @@ Created: 31-Jul-2026
+@@ -2409,6 +2409,38 @@ assert(trip, 0.28125)
+   class gives `1`. See the
+   [root contract](nucleoid.spec.md#list-and-population-products).
+ 
++## Repeat loops
++
++**Repeat loops advance a world model a counted number of steps**
++
++```nuc
++class Cup(temp):
++    this.temp = temp
++tea = Cup(90)
++room = 20
++cool = tea.temp < 40
++minutes = 3
++repeat minutes:
++    tea.temp = tea.temp - (tea.temp - room) / 2
++assert(tea.temp, 28.75)
++assert(cool, true)
++```
++
++- [NUC 115](docs/nuc-0115.md) adds `repeat COUNT:` with an indented or
++  same-line body, the count-controlled sibling of `while`. The count is read
++  once, before the first iteration, and each iteration's changes, with what
++  they propagate to standing rules such as `cool`, are live before the next
++  iteration runs.
++- Each minute the tea loses half of its difference from the room, so three
++  minutes take it from `90` to `28.75`. The loop runs once, imperatively: it
++  leaves no standing rule and does not run again when `minutes` changes
++  later. A fraction truncates, a count of zero or less runs nothing, and a
++  count of more than 100,000 iterations raises
++  `TypeError("Repeat count is too large")` before the first one.
++  `repeat` stays an ordinary name everywhere else, and `"ab".repeat(2)` is
++  still `"abab"`. See the
++  [root contract](nucleoid.spec.md#count-controlled-repeat-loops).
++
+ ## Reactive list flattening
+ 
+ **Flat turns nested lists into one live list**
+```
+
+**File**: `dataset/nucleoid.spec.jsonl` (modified, +20/-16)
+```diff
+@@ -775,19 +775,23 @@
+ {"id":"spec-0775","description":"Nucleoid multiplies class instance populations with product","code":"class Part(name, works):\n    this.name = name\n    this.works = works\npump = Part(\"pump\", 0.5)\nPart(\"valve\", 0.75)\nchance = Part.product(part -> part.works)\nnewest = Part[-1:].product(part -> part.works)\nassert([chance, newest], [0.375, 0.75])\nPart(\"seal\", 0.5)\nassert([chance, newest], [0.1875, 0.5])\npump.works = 1\nassert(chance, 0.375)\nclass Day(dry): this.dry = dry\nstaysDry = Day.product(day -> day.dry)\nassert(staysDry, 1)\nDay(0.5)\nDay(0.25)\nassert(staysDry, 0.125)","return":null}
+ {"id":"spec-0776","description":"Nucleoid keeps products live in class level rules","code":"class Box(sides): this.sides = sides\n$Box.volume = $Box.sides.product()\ncrate = Box([2, 3, 4])\ncube = Box([3, 3, 3])\nassert([crate.volume, cube.volume], [24, 27])\ncrate.sides.push(0.5)\ncube.sides = []\nassert([crate.volume, cube.volume], [12, 1])\nclass Route(name): this.name = name\nclass Leg(route, onTime):\n    this.route = route\n    this.onTime = onTime\n$Route.chance = Leg.filter(leg -> leg.route == $Route).product(leg -> leg.onTime)\nnorth = Route(\"north\")\nsouth = Route(\"south\")\nLeg(north, 0.5)\nslow = Leg(north, 0.5)\nLeg(south, 0.75)\nnetwork = Route.product(route -> route.chance)\nassert([north.chance, south.chance, network], [0.25, 0.75, 0.1875])\nslow.onTime = 1\nLeg(south, 0.5)\nassert([north.chance, south.chance, network], [0.5, 0.375, 0.1875])\nwest = Route(\"west\")\nassert([west.chance, network], [1, 0.1875])\nLeg(west, 0.5)\nassert(network, 0.09375)","return":null}
+ {"id":"spec-0777","description":"Nucleoid rolls back failed product updates","code":"def checked(chance):\n    if chance > 1:\n        throw \"NOT_A_CHANCE\"\n    return chance\nchances = [0.5, 0.5]\nboth = chances.product(checked)\nfailure = \"\"\ntry:\n    chances.push(2)\ncatch error:\n    failure = error\nassert([failure, chances, both], [\"NOT_A_CHANCE\", [0.5, 0.5], 0.25])\ntry:\n    chances.push(0.5)\n    assert(both, 0.125)\n    throw \"UNDO\"\ncatch error:\n    assert(error, \"UNDO\")\nassert([chances, both], [[0.5, 0.5], 0.25])\nclass Stage(chance): this.chance = chance\nStage(0.5)\npasses = Stage.product(stage -> checked(stage.chance))\nfailure = \"\"\ntry:\n    Stage(4)\ncatch error:\n    failure = error\nassert([failure, Stage.length, passes], [\"NOT_A_CHANCE\", 1, 0.5])\nStage(0.25)\npasses","return":"0.125"}
+-{"id":"spec-0778","description":"Nucleoid flattens nested lists by one level","code":"nested = [[1, 2], 2, [[3, [4]]], [], \"ab\"]\nonce = nested.flat()\ntwice = once.flat(1)\nassert(once, [1, 2, 2, [3, [4]], \"ab\"])\nassert(twice, [1, 2, 2, 3, [4], \"ab\"])\nassert(nested, [[1, 2], 2, [[3, [4]]], [], \"ab\"])\nnested.push([[5]], 6)\nassert(once, [1, 2, 2, [3, [4]], \"ab\", [5], 6])\nassert(twice, [1, 2, 2, 3, [4], \"ab\", 5, 6])\ntwice.length","return":"8"}
+-{"id":"spec-0779","description":"Nucleoid flattens lists to a given depth","code":"deep = [1, [2, [3, [4, [5]]]], [[6]]]\ntwo = deep.flat(2)\nthree = deep.flat(3)\nsame = deep.flat(0)\nassert(two, [1, 2, 3, [4, [5]], 6])\nassert(three, [1, 2, 3, 4, [5], 6])\nassert(same, [1, [2, [3, [4, [5]]]], [[6]]])\ndeep.push([[7, [8]]])\nassert(two, [1, 2, 3, [4, [5]], 6, 7, [8]])\nassert(three, [1, 2, 3, 4, [5], 6, 7, 8])\nassert(same, deep)\nthree.length","return":"8"}
+-{"id":"spec-0780","description":"Nucleoid keeps flattened lists live","code":"shifts = [[\"ana\", \"bo\"], [\"cy\"]]\nstaff = shifts.flat()\nsize = staff.length\nassert([staff, size], [[\"ana\", \"bo\", \"cy\"], 3])\nshifts.push([\"di\"])\nassert([staff, size], [[\"ana\", \"bo\", \"cy\", \"di\"], 4])\nshifts = [[\"eve\"], [], [\"fay\", \"gus\"]]\nassert([staff, size], [[\"eve\", \"fay\", \"gus\"], 3])\nshifts.shift()\nassert([staff, size], [[\"fay\", \"gus\"], 2])\nsize","return":"2"}
+-{"id":"spec-0781","description":"Nucleoid flattens lists in class level rules","code":"class Team(squads):\n    this.squads = squads\n$Team.members = $Team.squads.flat()\nred = Team([[\"ana\", \"bo\"], [\"cy\"]])\nblue = Team([[\"di\"]])\nassert([red.members, blue.members], [[\"ana\", \"bo\", \"cy\"], [\"di\"]])\nred.squads.push([\"ed\"])\nblue.squads = [[\"fay\"], [\"gus\", \"hal\"]]\nassert([red.members, blue.members], [[\"ana\", \"bo\", \"cy\", \"ed\"], [\"fay\", \"gus\", \"hal\"]])\nred.members.length","return":"4"}
+-{"id":"spec-0782","description":"Nucleoid queries the cells of flattened grids","code":"grid = [[1, 0, 2], [0, 3, 2]]\ncells = grid.flat()\ntotal = cells.sum()\ncolors = cells.distinct()\nfilled = cells.count(cell => cell > 0)\nassert([total, colors, filled], [8, [1, 0, 2, 3], 4])\ngrid.push([5, 0, 0])\nassert([total, colors, filled], [13, [1, 0, 2, 3, 5], 5])\ngrid = [[4, 4], [0]]\n[total, colors, filled]","return":"[8,[4,0],2]"}
+-{"id":"spec-0783","description":"Nucleoid rolls back failed flattening updates","code":"rows = [[1, [2]], [3]]\ncells = rows.flat()\ntry:\n    
+```
+
+**File**: `dataset/nucleoid.synth.79.jsonl` (added, +12/-0)
+```diff
+@@ -0,0 +1,12 @@
++{"id":"synth-79-0001","description":"A repeat loop runs its body a counted number of times","code":"steps = 0\nrepeat 4:\n    steps = steps + 1\nsteps","return":"4"}
++{"id":"synth-79-0002","description":"A balance compounds once a year for a counted number of years","code":"balance = 100\nyears = 2\nrepeat years:\n    balance = balance * 1.5\nbalance","return":"225"}
++{"id":"synth-79-0003","description":"A repeat count is read once even when the body grows what it reads","code":"queue = [1, 2]\nsize = queue.length\nrepeat size:\n    queue.push(0)\n[queue.length, size]","return":"[4,4]"}
++{"id":"synth-79-0004","description":"A fractional count truncates and a negative count runs nothing","code":"n = 0\nrepeat 3.7: n = n + 1\nrepeat 2 - 5: n = n + 100\nn","return":"3"}
++{"id":"synth-79-0005","description":"A function accumulates a local across the iterations of a repeat loop","code":"def power(base, exponent):\n    result = 1\n    repeat exponent:\n        result = result * base\n    return result\n[power(2, 10), power(5, 0)]","return":"[1024,1]"}
++{"id":"synth-79-0006","description":"A constructor builds a counted number of parts","code":"class Wheel(car):\n    this.car = car\nclass Car(wheels):\n    repeat wheels:\n        Wheel(this)\nbike = Car(2)\ntrike = Car(3)\nWheel.filter(w -> w.car == trike).length","return":"3"}
++{"id":"synth-79-0007","description":"A method returns from inside a repeat loop","code":"class Stack(items):\n    this.items = items\n    def drop(count):\n        repeat count:\n            if this.items.length == 0:\n                return \"empty\"\n            this.items.pop()\n        return this.items.length\nstack = Stack([1, 2, 3])\n[stack.drop(2), stack.drop(5)]","return":"[1,\"empty\"]"}
++{"id":"synth-79-0008","description":"Nested repeat loops fill a grid of cells","code":"class Cell(row, col):\n    this.row = row\n    this.col = col\nrow = 0\nrepeat 2:\n    col = 0\n    repeat 3:\n        Cell(row, col)\n        col = col + 1\n    row = row + 1\nCell.map(c -> c.row * 10 + c.col)","return":"[0,1,2,10,11,12]"}
++{"id":"synth-79-0009","description":"A thrown value rolls back every iteration of a repeat loop","code":"class Box\nfilled = 0\ntry:\n    repeat 3:\n        Box()\n        filled = filled + 1\n        if filled == 2:\n            throw \"FULL\"\ncatch error:\n    reason = error\n[reason, Box.length, filled]","return":"[\"FULL\",0,0]"}
++{"id":"synth-79-0010","description":"A repeat loop inside a standing rule runs again when the rule runs","code":"class Meter\nmeter = Meter()\nmeter.ticks = 2\nmeter.total = 0\nif meter.ticks > 0:\n    repeat meter.ticks: meter.total = meter.total + 1\nmeter.ticks = 3\nmeter.total","return":"5"}
++{"id":"synth-79-0011","description":"A count above the bound raises before the first iteration","code":"ran = 0\ntry:\n    repeat 100001: ran = ran + 1\ncatch error:\n    problem = error\n[problem, ran]","return":"[\"TypeError: Repeat count is too large\",0]"}
++{"id":"synth-79-0012","description":"Repeat stays an ordinary name beside repeat loops","code":"repeat = 3\nn = 0\nrepeat repeat: n = n + repeat\n[\"ab\".repeat(2), n]","return":"[\"abab\",9]"}
+```
+
+**File**: `docs/README.md` (modified, +49/-0)
+```diff
+@@ -1882,6 +1882,51 @@ while savings.balance < 150:
+ 
+ Normative detail: [while loops](../nucleoid.spec.md#while-loops).
+ 
++### repeat
++
++```
++class Account(balance):
++    this.balance = balance
++savings = Account(100)
++years = 3
++repeat years:
++    savings.balance = savings.balance * 1.5
++assert(savings.balance, 337.5)
++years = 10
++savings.balance
++```
++
++- This is the complete
++  `Nucleoid repeats statements a counted number of times` program in
++  `tests/reference.md`, without its title and expected-return metadata; it
++  returns `337.5`, and setting `years` later does not run the loop again.
++- `repeat <count>:` runs its body `count` times, under
++  [NUC 115](nuc-0115.md). The body is an indented block, or statements on
++  the same line separated by `;`.
++- The count is evaluated once, before the first iteration. It converts to a
++  number and then as the count of the string method `repeat` does: NaN and
++  negative numbers give 0 and fractions truncate, so `2.9` runs the body
++  twice, `"3"` three times, and `0`, `-1` and `null` not at all. What the body
++  changes never changes the count.
++- The body runs as a `while` body does: once per iteration, imperatively, in
++  the enclosing scope, with no scope frame and no loop variable. A local that
++  the enclosing function or loop body assigned accumulates, where a `for`
++  loop over a string of the count's length would leave it unchanged.
++  `return` leaves the enclosing function, as from a `while` body.
++- The loop runs once, like `while`: nothing is filed in the graph, and the
++  loop does not run again when its count or its inputs change later.
++- Each run of a loop runs its body at most 100,000 times. A count that
++  converts to more than 100,000 raises
++  `TypeError("Repeat count is too large")` before the first iteration, and
++  the transaction rolls back.
++- `repeat` is not reserved. `repeat NAME: TYPE`, `repeat assert: ...`, a
++  count whose last token is a bare `lambda`, a `suppose` count, and colon-free
++  or braced headers keep their accepted readings as separate statements, and
++  names, calls and properties named `repeat` and the string method
++  `"ab".repeat(2)` keep working.
++
++Normative detail: [count-controlled repeat loops](../nucleoid.spec.md#count-controlled-repeat-loops).
++
+ ---
+ 
+ ## 9. Functions
+@@ -4482,6 +4527,7 @@ Messages are exact and are part of the observable behaviour of the language.
+ | Repeated string output is too large to represent or allocate | `Repeated string is too large` |
+ | Padded string output of `padStart` or `padEnd` is too large to represent or allocate | `Padded string is too large` |
+ | A `while` loop whose condition still holds after 100,000 iterations of one run | `Loop did not terminate` |
++| A `repeat` loop whose count converts to more than 100,000, `Infinity` included, raised before the first iteration | `Repeat count is too large` |
+ | An undeclared constructor label | `Unknown constructor argument '<name>' for <class>` |
+ | A repeated constructor binding, including positional plus named | `Duplicate constructor argument '<name>' for <class>` |
+ | A positional constructor argument following a label | `Positional constructor argument after named arguments for <class>` |
+@@ -4653,6 +4699,9 @@ for source:                            indented iteration with local it
+ while condition:                       repeat while the condition holds (NUC 63)
+     statement
+ while condition: statement             same loop with a same-line body
++repeat count:                          run the body count times; count is read once (NUC 115)
++    statement
++repeat count: statement                same loop with a same-line body
+ 
+ value => expression                    anonymous arrow; also (a, b) => expression
+ value => { statement }                 anonymous arrow with a statement body
+```
+
+**File**: `docs/examples.md` (modified, +30/-0)
+```diff
+@@ -3931,6 +3931,36 @@ opened.rates.push(1)
+   updates only that account's balance. See [NUC 114](nuc-0114.md) and the
+   [root contract](../nucleoid.spec.md#list-and-population-products).
+ 
++## Repeat loops
++
++**Repeat loops build the cars of every train**
++
++```nuc
++class Car(train):
++    this.train = train
++    this.seats = 40
++class Train(cars):
++    repeat cars:
++        Car(this)
++$Train.capacity = Car.filter(car -> car.train == $Train).sum(car -> car.seats)
++local = Train(2)
++express = Train(3)
++assert([local.capacity, express.capacity], [80, 120])
++Car(local)
++[local.capacity, express.capacity]
++# return: [120,120]
++```
++
++- Each train's constructor builds as many cars as it is given:
++  `repeat cars:` runs `Car(this)` that many times, and `this` is the train
++  being built. The loop needs no counter and leaves none behind, where
++  accepted syntax writes `for _ of "a".repeat(cars):` or a `while` loop that
++  counts `cars` down.
++- The class-level rule keeps each train's capacity live over its cars, so a
++  car added to the local train later updates that train alone, and the loop
++  in the constructor does not run again. See [NUC 115](nuc-0115.md) and the
++  [root contract](../nucleoid.spec.md#count-controlled-repeat-loops).
++
+ ## Reactive list flattening
+ 
+ **Flattening keeps the dirty tiles of every room counted**
+```
+
+**File**: `docs/nuc-0000.md` (modified, +2/-2)
+```diff
+@@ -95,7 +95,7 @@ Created: 31-Jul-2026
  | [81](nuc-0081.md) | Object Spread Entries | Accepted |
  | [85](nuc-0085.md) | Fixed Cross-Property Class Anchors | Automatic-Accepted: independent evaluation rejected it because fixed-only cycles whose rules build fresh objects never settle; `$Pair.a = {v: $Pair.b@first}` with `$Pair.b = {v: $Pair.a@first}` reaches the 100,000-step propagation limit instead of settling as the proposal claims |
  | [90](nuc-0090.md) | Enum Declarations | Accepted |
-+| [115](nuc-0115.md) | Count-Controlled Repeat Loops | Draft |
+-| [115](nuc-0115.md) | Count-Controlled Repeat Loops | Draft |
++| [115](nuc-0115.md) | Count-Controlled Repeat Loops | Accepted |
  
  ### Utility enhancement
  
-@@ -283,6 +284,7 @@ Created: 31-Jul-2026
+@@ -284,7 +284,7 @@ Created: 31-Jul-2026
  | [112](nuc-0112.md) | Node Names of Reasoning Selections | Standards Track | Reasoning enhancement | Accepted |
  | [113](nuc-0113.md) | Implicit Receivers in Method Bodies | Standards Track | Syntax enhancement | Accepted |
  | [114](nuc-0114.md) | List and Population Products | Standards Track | Utility enhancement | Accepted |
-+| [115](nuc-0115.md) | Count-Controlled Repeat Loops | Standards Track | Runtime features | Draft |
+-| [115](nuc-0115.md) | Count-Controlled Repeat Loops | Standards Track | Runtime features | Draft |
++| [115](nuc-0115.md) | Count-Controlled Repeat Loops | Standards Track | Runtime features | Accepted |
  
  ## Copyright
  
 ```
 
-**File**: `docs/nuc-0115.md` (added, +82/-0)
+**File**: `docs/nuc-0115.md` (modified, +1430/-21)
 ```diff
-@@ -0,0 +1,82 @@
-+# NUC 115 -- Count-Controlled Repeat Loops
+@@ -4,10 +4,11 @@
+ NUC: 115
+ Title: Count-Controlled Repeat Loops
+ Author: Can Mingir <canmingir@gmail.com>
+-Status: Draft
++Status: Accepted
+ Type: Standards Track
+ Category: Runtime features
+ Created: 17-Nov-2026
++Requires: 10, 63, 86, 93
+ ```
+ 
+ ## Abstract
+@@ -28,14 +29,17 @@ Created: 17-Nov-2026
+   cause, are visible to the next. `return` leaves the enclosing function,
+   errors and thrown values roll back through the existing transaction, and
+   a completed loop yields `null` and files nothing in the graph.
+-- The bound of `while` keeps every loop finite: a count above 100,000 raises
+-  `TypeError("Repeat count is too large")` before the first iteration.
+-- At the accepted revision every such statement raises
+-  `SyntaxError("Unexpected ':'")`. No keyword or lexer token is added.
+-  `repeat` stays an ordinary name everywhere else, in variables, functions,
+-  `repeat(...)` calls and the string method `repeat`, and the four
+-  spellings that NUC 63 keeps for `while`, such as `repeat NAME: TYPE`, keep
+-  their accepted readings for `repeat`.
++- The bound of `while` keeps every loop finite: a count that converts to
++  more than 100,000 raises `TypeError("Repeat count is too large")` before
++  the first iteration.
++- At the accepted revision every such statement is a `SyntaxError`, usually
++  `SyntaxError("Unexpected ':'")` at its colon. No keyword or lexer token is
++  added. `repeat` stays an ordinary name everywhere else, in variables,
++  functions, `repeat(...)` calls and the string method `repeat`, and the
++  four spellings that NUC 63 keeps for `while`, such as `repeat NAME: TYPE`,
++  keep their accepted readings for `repeat`.
++- The authoritative contract is
++  [Count-controlled repeat loops](../nucleoid.spec.md#count-controlled-repeat-loops).
+ 
+ ## Motivation
+ 
+@@ -46,33 +50,1438 @@ Created: 17-Nov-2026
+ - The accepted spellings count by hand. A `while` loop needs its own
+   counter, initialized, tested and incremented around the body, and leaves
+   it behind: `i = 0`, `while i < years:` and `i = i + 1` are 15 lexer
+-  tokens with their newlines, where `repeat years:` is 3. A string loop
+-  turns the count into characters: `for _ of "a".repeat(years):` is 10
+-  tokens, and `for _ of "aaa":` is 5 for a literal count.
+-- The string loop is also wrong in most bodies. A `for` loop pushes a scope
+-  frame for each iteration, and inside a function, method, loop or block
+-  body that frame turns a name the enclosing body already assigned into a
+-  local, so `for _ of "a".repeat(k): total = total + 1` leaves `total` at
+-  `0` there. Only the hand-counted `while` loop accumulates.
++  tokens with their newlines, where `repeat years:` is 3, and with
++  `i += 1` they are still 13. A `while` loop that counts the count itself
++  down, `while years:` with `years -= 1`, adds 4 tokens and destroys the
++  count. A string loop turns the count into characters:
++  `for _ of "a".repeat(years):` is 10 tokens, and `for _ of "aaa":` is 5
++  for a literal count.
++- The string loop is also wrong for local accumulators. A `for` loop pushes
++  a scope frame for each iteration, and inside a function, method, loop or
++  block body that frame turns a name the enclosing body already assigned
++  into a local of the iteration, so `for _ of "a".repeat(k):` with the body
++  `total = total + 1` leaves `total` at `0` there. Property writes, pushes,
++  parameters and top-level names still work, but only a `while` loop with
++  its own counter accumulates a local.
+ - Kotlin's `repeat(n)`, Logo's and Scratch's `repeat n`, Smalltalk's
+   `timesRepeat:`, Ruby's `n.times` and Python's `for _ in range(n)` give the
+   operation a name.
++- Each of the seven new executable cases uses 4 to 13 fewer lexer tokens
++  than the most compact fair accepted spelling found, one that runs any
++  count the case could give its loops, and 2 to 6 fewer than every excluded
++  spelling found, which hardcode a count, write the body out, recurse or
++  rewrite other lines, as [Counterparts](#counterparts) records.
+ 
+ ## Rationale
+ 
+-- Pending: the proposer completes this section.
++- **Category and mode.** The caller drew Runtime features with one
++  tool-backed uniform draw over the five categories that NUC 1's registry
++  marks eligible for automatic selection: index 1, with probability 1/5, at
++  15:42:53 on 17-Nov-2026, and no redraw. This is a continuous cycle, so the
++  token non-regression gate is required. Runtime applicability is
++  `existing_comparable`: counted repetition is written today with a `while`
++  loop and its own counter, with a `while` loop that counts a variable down,
++  or with a string loop such as `for _ of "a".repeat(n):`, and every case of
++  this proposal is paired with such an accepted-syntax program.
++- **Selection.** Within the category the caller chose one bounded
++  enhancement, `repeat COUNT:`, the count-controlled sibling of NUC 63's
++  condition-controlled loop, which no NUC proposes. It set aside, after
++  probing the accepted revis
+```
+
+**File**: `docs/nucleoid.g4` (modified, +18/-8)
+```diff
+@@ -102,11 +102,12 @@ block
+ 
+ // Statements need no separator where the preceding production ends.
+ // At statement start, '{' is a block or pattern, never an object literal.
+-// Destructuring and whileStmt are tentative; other recognized statement
+-// headers commit even if a later token fails to match.
++// Destructuring, whileStmt and repeatStmt are tentative; other recognized
++// statement headers commit even if a later token fails to match.
+ statement
+     : destructuring
+     | whileStmt
++    | repeatStmt
+     | enumStmt
+     | ifStmt
+     | forStmt
+@@ -301,6 +302,12 @@ whileStmt
+     : WHILE clauseExpression suite      // Stmt::While
+     ;
+ 
++// The tentative count follows the whileStmt rules above, through one shared
++// header test. It is evaluated once, before the first iteration.
++repeatStmt
++    : REPEAT clauseExpression suite     // Stmt::Repeat
++    ;
 +
-+```
-+NUC: 115
-+Title: Count-Controlled Repeat Loops
-+Author: Can Mingir <canmingir@gmail.com>
-+Status: Draft
-+Type: Standards Track
-+Category: Runtime features
-+Created: 17-Nov-2026
-+```
-+
-+## Abstract
-+
-+- `repeat COUNT:` followed by a suite, an indented block or statements on
-+  the same line separated by `;`, runs the suite `COUNT` times: `repeat 3:`
-+  runs its body three times and `repeat years:` once a year. It is the
-+  count-controlled sibling of [NUC 63](nuc-0063.md)'s `while CONDITION:`
-+  loop.
-+- `COUNT` is evaluated once, before the first iteration, and converted to a
-+  number and then as the count of the string method `repeat` converts it:
-+  fractions truncate, and NaN and negative numbers give 0. So `"3"` runs
-+  the body three times, `2.9` twice, and `null` or `-1` not at all. What the
-+  body changes does not change how many times it runs.
-+- The body runs as a `while` body does: in the enclosing scope, with no loop
-+  variable and no new scope frame, carried out rather than filed as
-+  standing rules. Each iteration's assignments, and the propagation they
-+  cause, are visible to the next. `return` leaves the enclosing function,
-+  errors and thrown values roll back through the existing transaction, and
-+  a completed loop yields `null` and files nothing in the graph.
-+- The bound of `while` keeps every loop finite: a count above 100,000 raises
-+  `TypeError("Repeat count is too large")` before the first iteration.
-+- At the accepted revision every such statement raises
-+  `SyntaxError("Unexpected ':'")`. No keyword or lexer token is added.
-+  `repeat` stays an ordinary name everywhere else, in variables, functions,
-+  `repeat(...)` calls and the string method `repeat`, and the four
-+  spellings that NUC 63 keeps for `while`, such as `repeat NAME: TYPE`, keep
-+  their accepted readings for `repeat`.
-+
-+## Motivation
-+
-+- World models often advance in steps: a simulation ticks its clock, a
-+  balance compounds once a year, a population grows each generation, and a
-+  constructor builds a fixed number of parts. Each runs a block a known
-+  number of times.
-+- The accepted spellings count by hand. A `while` loop needs its own
-+  counter, initialized, tested and incremented around the body, and leaves
-+  it behind: `i = 0`, `while i < years:` and `i = i + 1` are 15 lexer
-+  tokens with their newlines, where `repeat years:` is 3. A string loop
-+  turns the count into characters: `for _ of "a".repeat(years):` is 10
-+  tokens, and `for _ of "aaa":` is 5 for a literal count.
-+- The string loop is also wrong in most bodies. A `for` loop pushes a scope
-+  frame for each iteration, and inside a function, method, loop or block
-+  body that frame turns a name the enclosing body already assigned into a
-+  local, so `for _ of "a".repeat(k): total = total + 1` leaves `total` at
-+  `0` there. Only the hand-counted `while` loop accumulates.
-+- Kotlin's `repeat(n)`, Logo's and Scratch's `repeat n`, Smalltalk's
-+  `timesRepeat:`, Ruby's `n.times` and Python's `for _ in range(n)` give the
-+  operation a name.
-+
-+## Rationale
-+
-+- Pending: the proposer completes this section.
-+
-+## Specification
-+
-+- Pending: the proposer completes this section.
-+
-+## Errors
-+
-+- Pending: the proposer completes this section.
-+
-+## Reference Implementation
-+
-+- Pending: the proposer completes this section.
-+
-+## Copyright
-+
-+Copyright 2020 Nucleoid
-+
-+This document is licensed under the Apache License, Version 2.0. See
-+[LICENSE](../LICENSE) for the full text.
+ tryStmt
+     : TRY body lineSeparator* CATCH (LPAREN name RPAREN | name)? body
+     ;
+@@ -748,9 +755,9 @@ atVariable
+  *   of a comprehension have no THIS receiver, so their reads keep the
+  *   accepted error; a comprehension's source and a quantified condition
+  *   keep THIS. A classBody inside such a body has THIS again.
+- * - The NUC 93 probes of whileStmt and supposeStmt headers read THIS
+- *   receivers but no assignment receivers, as the accepted probes read the
+- *   written-out 'THIS DOT property'.
++ * - The NUC 93 probes of whileStmt, repeatStmt and supposeStmt headers read
++ *   THIS receivers but no assignment receivers, as the accepted probes read
++ *   the written-out 'THIS DOT property'.
+  */
+ receiverRead
+     : DOT property                      // Expr::Member over the receiver path
+@@ -790,9 +797,10 @@ quantified
+  *   "Use all instead of every inside if" at the EVERY (NUC 98 revision 2).
+  *   The other two words are unchanged there. The rule decides no parse: it
+  *   is checked on the reading the parser keeps, so a tentative
+- *   destructuring value, whileStmt condition, premise or Python conditional
+- *   that holds such an EVERY and is dropped, or a parse pass that fails,
+- *   leaves every decision as before; see the parse-pass contract.
++ *   destructuring value, whileStmt condition, repeatStmt count, premise or
++ *   Python conditional that holds such an EVERY and is dropped, or a parse
++ *   pass that fails, leaves every decision as before; see the parse-pass
++ *   contract.
+  */
+ spelledClass
+     : (ANY | ALL) name                  // Expr::ClassRef
+@@ -869,6 +877,7 @@ name
+ enumName
+     : NAME
+     | WHILE
++    | REPEAT
+     | ENUM
+     | EXTENDS
+     | IS
+@@ -952,6 +961,7 @@ TRY              : 'try';
+ TYPEOF           : 'typeof';
+ 
+ WHILE            : 'while';
++REPEAT           : 'repeat';
+ ENUM             : 'enum';
+ EXTENDS          : 'extends';
+ ASSERT           : 'assert';
 ```
 
 #### Recent Merged Pull Requests:
@@ -1685,22 +1960,52 @@ This allocation changes
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Draft NUC 115 Count-Controlled Repeat Loops
+## X. NUC 115 Count-Controlled Repeat Loops
 
 **RULE**:
-When implementing operations in `docs/nuc-0000.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `62b0d320`: Draft NUC 115 Count-Controlled Repeat Loops. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `c3a013a9`: NUC 115 Count-Controlled Repeat Loops. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/nuc-0000.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-| [115](nuc-0115.md) | Count-Controlled Repeat Loops | Draft |
-| [115](nuc-0115.md) | Count-Controlled Repeat Loops | Standards Track | Runtime features | Draft |
+## Repeat loops
+
+**Repeat loops advance a world model a counted number of steps**
+
+```nuc
+class Cup(temp):
+    this.temp = temp
+tea = Cup(90)
+room = 20
+cool = tea.temp < 40
+minutes = 3
+repeat minutes:
+    tea.temp = tea.temp - (tea.temp - room) / 2
+assert(tea.temp, 28.75)
+assert(cool, true)
+```
+
+- [NUC 115](docs/nuc-0115.md) adds `repeat COUNT:` with an indented or
+  same-line body, the count-controlled sibling of `while`. The count is read
+  once, before the first iteration, and each iteration's changes, with what
+  they propagate to standing rules such as `cool`, are live before the next
+  iteration runs.
+- Each minute the tea loses half of its difference from the room, so three
+  minutes take it from `90` to `28.75`. The loop runs once, imperatively: it
+  leaves no standing rule and does not run again when `minutes` changes
+  later. A fraction truncates, a count of zero or less runs nothing, and a
+  count of more than 100,000 iterations raises
+  `TypeError("Repeat count is too large")` before the first one.
+  `repeat` stays an ordinary name everywhere else, and `"ab".repeat(2)` is
+  still `"abab"`. See the
+  [root contract](nucleoid.spec.md#count-controlled-repeat-loops).
+
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1710,7 +2015,7 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `62b0d320` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `c3a013a9` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

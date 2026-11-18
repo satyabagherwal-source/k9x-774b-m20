@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T03:17:08.880Z",
-  "total_cycles_completed": 10330,
-  "total_learnings_persisted": 10330,
-  "total_rules_promoted": 9859,
+  "last_updated": "2026-11-18T03:39:37.138Z",
+  "total_cycles_completed": 10334,
+  "total_learnings_persisted": 10334,
+  "total_rules_promoted": 9861,
   "history": [
-    {
-      "timestamp": "2026-11-17T14:50:05.867Z",
-      "repository": "duckdb/duckdb",
-      "learningId": "learn-github-duckdb-duckdb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T14:57:50.440Z",
-      "repository": "nvidia/NVIDIA-Nemotron-3.5-Super-VL-120B-A12B-NVFP4",
-      "learningId": "learn-huggingface-nvidia-nvidia-nemotron-3-5-super-vl-120b-a12b-nvfp4",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T14:58:07.755Z",
-      "repository": "ClickHouse/ClickHouse",
-      "learningId": "learn-github-clickhouse-clickhouse",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T14:58:08.269Z",
-      "repository": "dathere/qsv",
-      "learningId": "learn-github-dathere-qsv",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-17T15:06:11.882Z",
       "repository": "mistralai/Timestral-209M",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-11-18T03:17:08.880Z",
       "repository": "apple/LensVLM-9B",
       "learningId": "learn-huggingface-apple-lensvlm-9b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T03:39:20.592Z",
+      "repository": "fastino/GLiNER2.5-Decide",
+      "learningId": "learn-huggingface-fastino-gliner2-5-decide",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T03:39:24.457Z",
+      "repository": "codewhale-hq/Codewhale",
+      "learningId": "learn-github-codewhale-hq-codewhale",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T03:39:35.924Z",
+      "repository": "pixeltable/pixeltable",
+      "learningId": "learn-github-pixeltable-pixeltable",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T03:39:37.138Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

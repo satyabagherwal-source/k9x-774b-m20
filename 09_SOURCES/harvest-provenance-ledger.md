@@ -10818,3 +10818,7 @@ Every entry in this ledger must capture:
 | `learn-github-koderover-zadig` | `https://github.com/koderover/zadig` | `2c932905` | Multi-dimensional audit evidence | 2026-11-18T02:51:25.657Z |
 | `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `0515d873` | Multi-dimensional audit evidence | 2026-11-18T02:51:27.609Z |
 | `learn-huggingface-apple-lensvlm-9b` | `https://huggingface.co/apple/LensVLM-9B` | `hf-apple-l` | Multi-dimensional audit evidence | 2026-11-18T03:17:08.875Z |
+| `learn-huggingface-fastino-gliner2-5-decide` | `https://huggingface.co/fastino/GLiNER2.5-Decide` | `hf-fastino` | Multi-dimensional audit evidence | 2026-11-18T03:39:20.586Z |
+| `learn-github-codewhale-hq-codewhale` | `https://github.com/Hmbown/Codewhale` | `af6fc33a` | Multi-dimensional audit evidence | 2026-11-18T03:39:24.450Z |
+| `learn-github-pixeltable-pixeltable` | `https://github.com/pixeltable/pixeltable` | `b7363f1f` | Multi-dimensional audit evidence | 2026-11-18T03:39:35.917Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `7bc9f013` | Multi-dimensional audit evidence | 2026-11-18T03:39:37.112Z |

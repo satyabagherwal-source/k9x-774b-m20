@@ -10785,3 +10785,7 @@
 | `CYCLE-20261118-YOGL` | `2026-11-18T02:51:25.653Z` | `koderover/zadig` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9110` | Yes (`57a58c4c...`) |
 | `CYCLE-20261118-YPYT` | `2026-11-18T02:51:27.605Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9111` | Yes (`e8671784...`) |
 | `CYCLE-20261118-VR7R` | `2026-11-18T03:17:08.871Z` | `apple/LensVLM-9B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-apple-lensvlm-9b-learnings.md` | Yes (`39fcf5d7...`) |
+| `CYCLE-20261118-OARP` | `2026-11-18T03:39:20.581Z` | `fastino/GLiNER2.5-Decide` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-fastino-gliner2.5-decide-learnings.md` | Yes (`dfdc2f8f...`) |
+| `CYCLE-20261118-ODR2` | `2026-11-18T03:39:24.446Z` | `codewhale-hq/Codewhale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9112` | Yes (`5cc29110...`) |
+| `CYCLE-20261118-OMLL` | `2026-11-18T03:39:35.913Z` | `pixeltable/pixeltable` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9113` | Yes (`6782c64d...`) |
+| `CYCLE-20261118-ONIR` | `2026-11-18T03:39:37.107Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md` | Yes (`215d9286...`) |

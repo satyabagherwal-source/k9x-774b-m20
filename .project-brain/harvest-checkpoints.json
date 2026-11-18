@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-18T03:17:08.883Z",
+  "last_updated": "2026-11-18T03:39:37.152Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -515,14 +515,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-fastino-gliner2-5-decide",
-      "content_hash": "e73e53caa7c1e562197c9777f671bd00b329604d7f5dee5cc599796b24c1f71a",
-      "verified_at": "2026-11-13T15:38:05.539Z",
+      "content_hash": "dfdc2f8ffe7f740f2f43b1a7479bf9415494333a8c6766d6b299b182f29f63c0",
+      "verified_at": "2026-11-18T03:39:20.596Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T15:38:05.539Z"
+      "last_updated": "2026-11-18T03:39:20.596Z"
     },
     "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF": {
       "repository": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "1c88aadc9610f33f6dbd4866e6f2ab8d6c62c08259fdea116b52fc72909b38de",
-      "verified_at": "2026-11-17T21:41:17.076Z",
+      "content_hash": "215d9286690704e8c272e1b9fdb337e8a26658b367511443917a4c3f5db9d338",
+      "verified_at": "2026-11-18T03:39:37.151Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T21:41:17.076Z"
+      "last_updated": "2026-11-18T03:39:37.151Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -4041,14 +4041,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-codewhale-hq-codewhale",
-      "content_hash": "21a5665e7451f82569e44ffe06d682e90adba0fce494dbd826227174fb63fbc4",
-      "verified_at": "2026-11-17T19:54:42.900Z",
+      "content_hash": "5cc29110976d575534b3a66db1ffc9c9915bab97364f67a3e226ed1b0db6def7",
+      "verified_at": "2026-11-18T03:39:24.461Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T19:54:42.900Z"
+      "last_updated": "2026-11-18T03:39:24.461Z"
     },
     "zulip/zulip": {
       "repository": "zulip/zulip",
@@ -5691,14 +5691,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-pixeltable-pixeltable",
-      "content_hash": "34482e4587bbf435f05efc8a983a2d7f3c04df87be35d67055574e3adb060605",
-      "verified_at": "2026-11-17T03:17:00.147Z",
+      "content_hash": "6782c64d387accb1089638fca9761e10bff7459ec3accec33e2a7171a47e2c4f",
+      "verified_at": "2026-11-18T03:39:35.928Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T03:17:00.147Z"
+      "last_updated": "2026-11-18T03:39:35.928Z"
     },
     "honojs/hono": {
       "repository": "honojs/hono",

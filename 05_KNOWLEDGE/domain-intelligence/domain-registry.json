@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-18T03:17:21.746Z",
+  "last_updated": "2026-11-18T03:39:43.002Z",
   "total_records": 1745,
   "domains": {
     "A": {
@@ -7824,8 +7824,8 @@
       "title": "Research & Knowledge Intelligence: fastino/GLiNER2.5-Decide Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-fastino-gliner2-5-decide-research-knowledge-intelligence-fastino-gliner2-5-de.md",
       "repository": "fastino/GLiNER2.5-Decide",
-      "content_hash": "baabde56fc3fcd69f479e29b43be3cb9962a403da609bf62b6ddb1940e95f64a",
-      "created_at": "2026-11-13T15:38:05.722Z"
+      "content_hash": "ed55932c4210337928048fbfa478837e8f870432f58b550645cac9ef8db73a79",
+      "created_at": "2026-11-18T03:39:20.827Z"
     },
     "domain_intelligence-content-information-intelligence-iliyami-macsai-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-iliyami-macsai-core-invariants",
@@ -7902,8 +7902,8 @@
       "title": "Research & Knowledge Intelligence: hf-fastino-gliner2.5-decide-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-fastino-gliner2-5-decide-learnings-research-knowledge-intelligence-hf-fastino.md",
       "repository": "hf-fastino-gliner2.5-decide-learnings",
-      "content_hash": "7d7d429dd19ffb18985ffe296929bc1e69295ce35eadef9120c0b753a229de60",
-      "created_at": "2026-11-13T15:39:02.473Z"
+      "content_hash": "a46c5ed31997379689559d043002ba74f0a5579f4f619129edb22067f6b178d5",
+      "created_at": "2026-11-18T03:39:42.140Z"
     },
     "domain_intelligence-content-information-intelligence-iliyami-macsai-learnings-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-iliyami-macsai-learnings-core-invariants",
@@ -13444,8 +13444,8 @@
       "title": "Technical Construction Intelligence: pixeltable/pixeltable Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-pixeltable-pixeltable-technical-construction-intelligence-pixeltable-pixeltable-.md",
       "repository": "pixeltable/pixeltable",
-      "content_hash": "5c51240aae5bdcae35fd39446ba1cd467b86a6c4c7aa6d3543e267b1dcf28fd9",
-      "created_at": "2026-11-17T03:17:00.601Z"
+      "content_hash": "7071f11715307edbf06462b344adcc25fa4a9295acb6b76d8ec6beb5e7c600ce",
+      "created_at": "2026-11-18T03:39:36.355Z"
     },
     "DOM-D-2C3ED23B": {
       "record_id": "DOM-D-2C3ED23B",
@@ -13513,8 +13513,8 @@
       "title": "Technical Construction Intelligence: pixeltable-pixeltable-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-pixeltable-pixeltable-learnings-technical-construction-intelligence-pixeltable-p.md",
       "repository": "pixeltable-pixeltable-learnings",
-      "content_hash": "8330ce0326b725eb69e49d5a7c0b2811cdd4e2a19167e1521f0f94932716f438",
-      "created_at": "2026-11-17T03:18:01.575Z"
+      "content_hash": "3500e0887fb9849c5d915083de186a9dc785ee9c635ee8f3233290bca23aec2b",
+      "created_at": "2026-11-18T03:39:43.002Z"
     },
     "domain_intelligence-research-knowledge-intelligence-fermionresearch-phonon-2-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-fermionresearch-phonon-2-core-invariants",
@@ -14824,8 +14824,8 @@
       "title": "Architecture Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-architecture-intelligence-nucleoidai-nucleoid-core-invariant.md",
       "repository": "NucleoidAI/Nucleoid",
-      "content_hash": "e982db34b0fe50ea3ab65f1087d6e4c063f4ec00bfcf11421fb9b85ecc541a87",
-      "created_at": "2026-11-17T21:41:17.372Z"
+      "content_hash": "8e2a688ff5836e1d9e32a2a5d9e9687fe2e85ef18441dcc75aac9657339c2cba",
+      "created_at": "2026-11-18T03:39:37.580Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -15586,8 +15586,8 @@
       "title": "Architecture Intelligence: codewhale-hq/Codewhale Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-hmbown-codewhale-architecture-intelligence-codewhale-hq-codewhale-core-invariant.md",
       "repository": "codewhale-hq/Codewhale",
-      "content_hash": "ad2a1036b7fb47e45982ff223d6ec25741c973b87dcd863e7a7aae59eb261aae",
-      "created_at": "2026-11-16T21:10:24.822Z"
+      "content_hash": "627bb814a1600982f113c030a8ed95c96930602913ec406d8d00060a4651593e",
+      "created_at": "2026-11-18T03:39:24.885Z"
     },
     "domain_intelligence-architecture-intelligence-codewhale-hq-codewhale-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-codewhale-hq-codewhale-learnings-core-invariants",
@@ -18077,8 +18077,8 @@
       "title": "Architecture Intelligence: hmbown-codewhale-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-hmbown-codewhale-learnings-architecture-intelligence-hmbown-codewhale-learnings-.md",
       "repository": "hmbown-codewhale-learnings",
-      "content_hash": "fbbbba9720b0534abcb3bee37885ceacc5ccbcd9a53bdff498dfaa3f5a6fca00",
-      "created_at": "2026-11-16T21:10:39.421Z"
+      "content_hash": "9195b29e7314557ff548409d8436c638793a4838217a88773c303a91c2f5dc6c",
+      "created_at": "2026-11-18T03:39:41.403Z"
     },
     "DOM-D-D6B073D5": {
       "record_id": "DOM-D-D6B073D5",
