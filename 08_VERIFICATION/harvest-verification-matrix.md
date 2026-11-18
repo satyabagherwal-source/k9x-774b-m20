@@ -10965,3 +10965,7 @@
 | `CYCLE-20261118-316W` | `2026-11-18T12:42:40.712Z` | `ajeetdsouza/zoxide` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9219` | Yes (`bb162008...`) |
 | `CYCLE-20261118-36R8` | `2026-11-18T12:42:47.924Z` | `nats-io/nats-server` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9220` | Yes (`8b1b5086...`) |
 | `CYCLE-20261118-3RHM` | `2026-11-18T12:43:14.794Z` | `prism-ml/Ternary-Bonsai-2-27B-gguf` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-prism-ml-ternary-bonsai-2-27b-gguf-learnings.md` | Yes (`022f5de1...`) |
+| `CYCLE-20261118-DJCT` | `2026-11-18T12:50:50.813Z` | `Viggle/Qwen-Image-2.1-viggle-turbo` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-viggle-qwen-image-2.1-viggle-turbo-learnings.md` | Yes (`63b95653...`) |
+| `CYCLE-20261118-DPZO` | `2026-11-18T12:50:59.412Z` | `pubkey/rxdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9221` | Yes (`1c8ae383...`) |
+| `CYCLE-20261118-DTLR` | `2026-11-18T12:51:04.095Z` | `zama-ai/tfhe-rs` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9222` | Yes (`58e2276e...`) |
+| `CYCLE-20261118-DVJ0` | `2026-11-18T12:51:06.588Z` | `alibaba/zvec` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9223` | Yes (`0c7a359e...`) |

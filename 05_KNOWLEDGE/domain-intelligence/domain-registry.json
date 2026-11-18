@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-18T12:43:19.284Z",
+  "last_updated": "2026-11-18T12:51:11.676Z",
   "total_records": 1853,
   "domains": {
     "A": {
@@ -7587,8 +7587,8 @@
       "title": "Research & Knowledge Intelligence: Viggle/Qwen-Image-2.1-viggle-turbo Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-viggle-qwen-image-2-1-viggle-turbo-research-knowledge-intelligence-viggle-qwe.md",
       "repository": "Viggle/Qwen-Image-2.1-viggle-turbo",
-      "content_hash": "1e406713798ad228c4410fed2536c56aa8621ebcabea6e2e28a9332f0cd26ff4",
-      "created_at": "2026-11-18T02:16:09.952Z"
+      "content_hash": "3d98073c3770ecfa2cdbf746b19d3473844a2498aeca525b9919a76b409ef960",
+      "created_at": "2026-11-18T12:50:50.989Z"
     },
     "domain_intelligence-product-intelligence-cilium-cilium-core-invariants": {
       "record_id": "domain_intelligence-product-intelligence-cilium-cilium-core-invariants",
@@ -7605,8 +7605,8 @@
       "title": "Research & Knowledge Intelligence: hf-viggle-qwen-image-2.1-viggle-turbo-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-viggle-qwen-image-2-1-viggle-turbo-learnings-research-knowledge-intelligence-.md",
       "repository": "hf-viggle-qwen-image-2.1-viggle-turbo-learnings",
-      "content_hash": "daf9d17b96388f582c1ce403764e5f0d959dedc3913a7ddbb90dfa47639abb23",
-      "created_at": "2026-11-18T02:16:22.558Z"
+      "content_hash": "8740826c4995e2a5cdeefca642fbf0646e7cb9c4d395f6dfc2768a69967a88e6",
+      "created_at": "2026-11-18T12:51:09.993Z"
     },
     "domain_intelligence-product-intelligence-cilium-cilium-learnings-core-invariants": {
       "record_id": "domain_intelligence-product-intelligence-cilium-cilium-learnings-core-invariants",
@@ -9702,8 +9702,8 @@
       "title": "Technical Construction Intelligence: zama-ai/tfhe-rs Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zama-ai-tfhe-rs-technical-construction-intelligence-zama-ai-tfhe-rs-core-invaria.md",
       "repository": "zama-ai/tfhe-rs",
-      "content_hash": "243a764ffa6402d5e849305f9e5ebeb4344289fe81aa9e501a3b4898aacba52c",
-      "created_at": "2026-11-17T20:45:38.695Z"
+      "content_hash": "f229253e57fa14ecd7133d701b4710076c3f8ccefd7f9299dd6b67f6aecd91a5",
+      "created_at": "2026-11-18T12:51:04.427Z"
     },
     "domain_intelligence-architecture-intelligence-embassy-rs-embassy-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-embassy-rs-embassy-learnings-core-invariants",
@@ -10443,8 +10443,8 @@
       "title": "Technical Construction Intelligence: pubkey/rxdb Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-pubkey-rxdb-technical-construction-intelligence-pubkey-rxdb-core-invariants.md",
       "repository": "pubkey/rxdb",
-      "content_hash": "c791071e31aecd6c92b767e1b519789307dec765649582fa753bc479080cd6a4",
-      "created_at": "2026-11-17T12:09:28.456Z"
+      "content_hash": "5fd2627813eda4b0b7cde2b6a39c3564b5f6c9c5cd4c067c3864ae15b43ade23",
+      "created_at": "2026-11-18T12:50:59.748Z"
     },
     "domain_intelligence-architecture-intelligence-k3s-io-k3s-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-k3s-io-k3s-core-invariants",
@@ -10554,8 +10554,8 @@
       "title": "Technical Construction Intelligence: pubkey-rxdb-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-pubkey-rxdb-learnings-technical-construction-intelligence-pubkey-rxdb-learnings-.md",
       "repository": "pubkey-rxdb-learnings",
-      "content_hash": "a87c45a6ec6d77e4081988ff983339906b30c3154018e7b379f314b82ceb2adb",
-      "created_at": "2026-11-17T12:09:37.529Z"
+      "content_hash": "b732537b8fed516d82425a9c9c3c59e85677585877e871b600e21f14847efc96",
+      "created_at": "2026-11-18T12:51:10.937Z"
     },
     "domain_intelligence-architecture-intelligence-k3s-io-k3s-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-k3s-io-k3s-learnings-core-invariants",
@@ -24228,8 +24228,8 @@
       "title": "Technical Construction Intelligence: alibaba/zvec Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-alibaba-zvec-technical-construction-intelligence-alibaba-zvec-core-invariants.md",
       "repository": "alibaba/zvec",
-      "content_hash": "464f15db9dcef4e762be5246b48d823f21f2b1dc4cce06d5461482c0531f6c1a",
-      "created_at": "2026-11-16T18:46:55.134Z"
+      "content_hash": "510d4ff7784010a4aaa6fcab4c25b2d1368ae1adca1aa291a45b1ab947b9a4eb",
+      "created_at": "2026-11-18T12:51:06.920Z"
     },
     "domain_intelligence-technical-construction-intelligence-fb55-htmlparser2-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-fb55-htmlparser2-learnings-core-invariants",
@@ -26849,8 +26849,8 @@
       "title": "Technical Construction Intelligence: zama-ai-tfhe-rs-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zama-ai-tfhe-rs-learnings-technical-construction-intelligence-zama-ai-tfhe-rs-le.md",
       "repository": "zama-ai-tfhe-rs-learnings",
-      "content_hash": "cbda81037bcaa502de095098b97ef0b9fb763f4895a6fdb9f530610acfedaee5",
-      "created_at": "2026-11-17T11:10:01.836Z"
+      "content_hash": "2354fa36c377c3928f6bc23f8f7622f2e9ef60a42778810be18de6f414d27944",
+      "created_at": "2026-11-18T12:51:11.676Z"
     },
     "domain_intelligence-research-knowledge-intelligence-meituan-longcat-longcat-video-avatar-1-6-core-in": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-meituan-longcat-longcat-video-avatar-1-6-core-in",

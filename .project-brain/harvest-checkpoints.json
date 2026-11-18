@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-18T12:43:14.804Z",
+  "last_updated": "2026-11-18T12:51:06.600Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -440,14 +440,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-viggle-qwen-image-2-1-viggle-turbo",
-      "content_hash": "245e24b0025d0bb0ed8824e891a0d3f93ed0bc36fc1be1dd76388a872f027e9a",
-      "verified_at": "2026-11-18T02:16:09.754Z",
+      "content_hash": "63b956533972654358fef3cb41d11e695f3763db80c9d761331152841bb2730f",
+      "verified_at": "2026-11-18T12:50:50.825Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T02:16:09.754Z"
+      "last_updated": "2026-11-18T12:50:50.825Z"
     },
     "XingChen-AGI/Xing4.0-29B-A4B": {
       "repository": "XingChen-AGI/Xing4.0-29B-A4B",
@@ -4326,14 +4326,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-pubkey-rxdb",
-      "content_hash": "b9197e92f652a260a4f3b9c4f8c3a6cf4c010cbb312d9eedb77c2efc9589ede9",
-      "verified_at": "2026-11-17T12:09:28.078Z",
+      "content_hash": "1c8ae383120a18ade4500af9b7c044fab906fd0bc483c199a8a32816d60ca7bf",
+      "verified_at": "2026-11-18T12:50:59.426Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T12:09:28.078Z"
+      "last_updated": "2026-11-18T12:50:59.426Z"
     },
     "karmada-io/karmada": {
       "repository": "karmada-io/karmada",
@@ -5046,14 +5046,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zama-ai-tfhe-rs",
-      "content_hash": "9a7d93fbafbbf85871099d1e0fd8ed6478f1da61803b19d2a14624bcde427f3c",
-      "verified_at": "2026-11-17T20:45:38.363Z",
+      "content_hash": "58e2276eeb83e870e99b98c8c14fe092002aa7d7dda2f0a3de648528c1fe141f",
+      "verified_at": "2026-11-18T12:51:04.107Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T20:45:38.363Z"
+      "last_updated": "2026-11-18T12:51:04.107Z"
     },
     "doobidoo/mcp-memory-service": {
       "repository": "doobidoo/mcp-memory-service",
@@ -10986,14 +10986,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-alibaba-zvec",
-      "content_hash": "9f54aec430989b8733a5130cbd53a7e335fd15c78d73c538913a3467865c783e",
-      "verified_at": "2026-11-16T18:46:54.719Z",
+      "content_hash": "0c7a359e6205e5c53fa3d204b526df419ba834fc0da34c4b1e66519feca8366f",
+      "verified_at": "2026-11-18T12:51:06.599Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-16T18:46:54.719Z"
+      "last_updated": "2026-11-18T12:51:06.599Z"
     },
     "zenbu-labs/terminal-browser": {
       "repository": "zenbu-labs/terminal-browser",

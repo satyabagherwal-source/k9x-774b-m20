@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-18T12:43:17.912Z",
+  "updated_at": "2026-11-18T12:51:10.611Z",
   "stats": {
-    "total_discovered": 5489,
-    "approved_pending_harvest": 5184,
+    "total_discovered": 5500,
+    "approved_pending_harvest": 5195,
     "harvested_count": 0,
     "rejected_count": 305,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 5168,
+      "COMMUNITY_AND_EXPERT": 5179,
       "OFFICIAL_DOCUMENTATION": 176,
       "STANDARDS_AND_SPECIFICATIONS": 109,
       "ENGINEERING_BLOGS": 4,
@@ -118644,6 +118644,248 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ajeetdsouza-zoxide-learnings.md",
         "fileName": "ajeetdsouza-zoxide-learnings.md"
+      }
+    },
+    "SRC-EDECB63F71BA": {
+      "id": "SRC-EDECB63F71BA",
+      "url": "https://the-guild.dev/graphql/ws",
+      "title": "https://the-guild.dev/graphql/ws",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T12:51:10.272Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pubkey-rxdb-learnings.md",
+        "fileName": "pubkey-rxdb-learnings.md"
+      }
+    },
+    "SRC-F6811827A93A": {
+      "id": "SRC-F6811827A93A",
+      "url": "https://redirect.github.com/enisdenjo/graphql-ws",
+      "title": "https://redirect.github.com/enisdenjo/graphql-ws",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T12:51:10.309Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pubkey-rxdb-learnings.md",
+        "fileName": "pubkey-rxdb-learnings.md"
+      }
+    },
+    "SRC-99FC5DBDF19F": {
+      "id": "SRC-99FC5DBDF19F",
+      "url": "https://renovatebot.com/diffs/npm/graphql-ws/6.4.1/6.4.2",
+      "title": "https://renovatebot.com/diffs/npm/graphql-ws/6.4.1/6.4.2",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T12:51:10.342Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pubkey-rxdb-learnings.md",
+        "fileName": "pubkey-rxdb-learnings.md"
+      }
+    },
+    "SRC-DF06B1B27E0D": {
+      "id": "SRC-DF06B1B27E0D",
+      "url": "https://developer.mend.io/api/mc/badges/age/npm/graphql-ws/6.4.2?slim=true",
+      "title": "https://developer.mend.io/api/mc/badges/age/npm/graphql-ws/6.4.2?slim=true",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T12:51:10.375Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pubkey-rxdb-learnings.md",
+        "fileName": "pubkey-rxdb-learnings.md"
+      }
+    },
+    "SRC-A9CB29ACA733": {
+      "id": "SRC-A9CB29ACA733",
+      "url": "https://developer.mend.io/api/mc/badges/confidence/npm/graphql-ws/6.4.1/6.4.2?slim=true",
+      "title": "https://developer.mend.io/api/mc/badges/confidence/npm/graphql-ws/6.4.1/6.4.2?slim=true",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T12:51:10.411Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pubkey-rxdb-learnings.md",
+        "fileName": "pubkey-rxdb-learnings.md"
+      }
+    },
+    "SRC-CDF4D09CD670": {
+      "id": "SRC-CDF4D09CD670",
+      "url": "https://redirect.github.com/enisdenjo/graphql-ws/blob/HEAD/CHANGELOG.md",
+      "title": "https://redirect.github.com/enisdenjo/graphql-ws/blob/HEAD/CHANGELOG.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T12:51:10.443Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pubkey-rxdb-learnings.md",
+        "fileName": "pubkey-rxdb-learnings.md"
+      }
+    },
+    "SRC-952970D6BC45": {
+      "id": "SRC-952970D6BC45",
+      "url": "https://redirect.github.com/enisdenjo/graphql-ws/compare/v6.4.1...v6.4.2",
+      "title": "https://redirect.github.com/enisdenjo/graphql-ws/compare/v6.4.1...v6.4.2",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T12:51:10.475Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pubkey-rxdb-learnings.md",
+        "fileName": "pubkey-rxdb-learnings.md"
+      }
+    },
+    "SRC-5B2F38AF450B": {
+      "id": "SRC-5B2F38AF450B",
+      "url": "https://redirect.github.com/enisdenjo/graphql-ws/pull/705",
+      "title": "https://redirect.github.com/enisdenjo/graphql-ws/pull/705",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T12:51:10.511Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pubkey-rxdb-learnings.md",
+        "fileName": "pubkey-rxdb-learnings.md"
+      }
+    },
+    "SRC-151EB0CBBBBA": {
+      "id": "SRC-151EB0CBBBBA",
+      "url": "https://redirect.github.com/enisdenjo/graphql-ws/commit/f86ce7e64edd0de3bc0fb81121c2ab687d467a69",
+      "title": "https://redirect.github.com/enisdenjo/graphql-ws/commit/f86ce7e64edd0de3bc0fb81121c2ab687d467a69",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T12:51:10.543Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pubkey-rxdb-learnings.md",
+        "fileName": "pubkey-rxdb-learnings.md"
+      }
+    },
+    "SRC-C1446287946B": {
+      "id": "SRC-C1446287946B",
+      "url": "https://redirect.github.com/mattkrick",
+      "title": "https://redirect.github.com/mattkrick",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T12:51:10.576Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pubkey-rxdb-learnings.md",
+        "fileName": "pubkey-rxdb-learnings.md"
+      }
+    },
+    "SRC-FFC337CC5DEB": {
+      "id": "SRC-FFC337CC5DEB",
+      "url": "https://claude.ai/code/session_015P6w6go1qTWCKtGAY4H3BE",
+      "title": "https://claude.ai/code/session_015P6w6go1qTWCKtGAY4H3BE",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T12:51:10.611Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pubkey-rxdb-learnings.md",
+        "fileName": "pubkey-rxdb-learnings.md"
       }
     }
   }

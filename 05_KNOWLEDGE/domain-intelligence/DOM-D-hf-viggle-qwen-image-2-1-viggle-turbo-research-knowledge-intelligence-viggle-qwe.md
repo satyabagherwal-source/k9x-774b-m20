@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/Viggle/Qwen-Image-2.1-viggle-turbo",
   "source_version": "hf-viggle-qwen-image-2.1-viggle-turbo",
   "license": "Open-Source",
-  "timestamp": "2026-11-18T02:16:09.951Z",
+  "timestamp": "2026-11-18T12:50:50.988Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-viggle-qwen-image-2-1-viggle-turbo",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [Viggle/Qwen-Image-2.1-viggle-turbo](https://huggingface.co/Viggle/Qwen-Image-2.1-viggle-turbo) (Revision: `hf-viggle-`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-18T02:16:09.951Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-18T12:50:50.988Z`  
 > **Learning ID**: `learn-huggingface-viggle-qwen-image-2-1-viggle-turbo`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-viggle-qwen-image-2.1-viggle-turbo-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/Viggle/Qwen-Image-2.1-viggle-turbo](https://huggingface.co/Viggle/Qwen-Image-2.1-viggle-turbo))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T02:16:06.631Z  
+> **Harvest Timestamp**: 2026-11-18T12:50:50.179Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: text-to-image
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 192793 downloads | 820 likes
+- **Stars / Engagement**: 190204 downloads | 820 likes
 
 ---
 

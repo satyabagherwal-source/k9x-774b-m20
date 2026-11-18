@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T12:43:14.802Z",
-  "total_cycles_completed": 10489,
-  "total_learnings_persisted": 10489,
-  "total_rules_promoted": 9978,
+  "last_updated": "2026-11-18T12:51:06.597Z",
+  "total_cycles_completed": 10493,
+  "total_learnings_persisted": 10493,
+  "total_rules_promoted": 9981,
   "history": [
-    {
-      "timestamp": "2026-11-17T22:56:28.380Z",
-      "repository": "jithin-sabu/purge-app",
-      "learningId": "learn-github-jithin-sabu-purge-app",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T22:56:48.553Z",
-      "repository": "moonshotai/Kimi-K3",
-      "learningId": "learn-huggingface-moonshotai-kimi-k3",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T23:17:27.090Z",
-      "repository": "tw93/Pake",
-      "learningId": "learn-github-tw93-pake",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T23:17:37.600Z",
-      "repository": "gravitl/netmaker",
-      "learningId": "learn-github-gravitl-netmaker",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-17T23:17:40.580Z",
       "repository": "lioensky/VCPToolBox",
@@ -1403,6 +1375,34 @@
       "repository": "prism-ml/Ternary-Bonsai-2-27B-gguf",
       "learningId": "learn-huggingface-prism-ml-ternary-bonsai-2-27b-gguf",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T12:50:50.822Z",
+      "repository": "Viggle/Qwen-Image-2.1-viggle-turbo",
+      "learningId": "learn-huggingface-viggle-qwen-image-2-1-viggle-turbo",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T12:50:59.422Z",
+      "repository": "pubkey/rxdb",
+      "learningId": "learn-github-pubkey-rxdb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T12:51:04.104Z",
+      "repository": "zama-ai/tfhe-rs",
+      "learningId": "learn-github-zama-ai-tfhe-rs",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T12:51:06.597Z",
+      "repository": "alibaba/zvec",
+      "learningId": "learn-github-alibaba-zvec",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

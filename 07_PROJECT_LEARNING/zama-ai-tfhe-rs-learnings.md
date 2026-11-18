@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md`  
 > **Source**: github ([https://github.com/zama-ai/tfhe-rs](https://github.com/zama-ai/tfhe-rs))  
-> **Source Version**: `935a8e49`  
+> **Source Version**: `ecc40009`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-17T20:45:37.383Z  
+> **Timestamp**: 2026-11-18T12:51:03.157Z  
 > **Learning ID**: `learn-github-zama-ai-tfhe-rs`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zama-ai/tfhe-rs](https://github.com/zama-ai/tfhe-rs))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T20:45:37.378Z  
+> **Harvest Timestamp**: 2026-11-18T12:51:03.151Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1934,471 +1934,265 @@ public:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `935a8e49` (2026-11-17)
-**Commit Message**: chore(deps): bump compression and serve in /tfhe/web_wasm_parallel_tests (#4172)
+### Incident Patch 1: `ecc40009` (2026-11-18)
+**Commit Message**: chore(bench): fix issue between key size and pbs count
 
-Bumps [compression](https://github.com/expressjs/compression) to 1.8.2 and updates ancestor dependency [serve](https://github.com/vercel/serve). These dependencies need to be updated together.
-
-
-Updates `compression` from 1.8.1 to 1.8.2
-- [Release notes](https://github.com/expressjs/compression/releases)
-- [Changelog](https://github.com/expressjs/compression/blob/master/HISTORY.md)
-- [Commits](https://github.com/expressjs/compression/compare/v1.8.1...v1.8.2)
-
-Updates `serve` from 14.2.6 to 14.2.8
-- [Release notes](https://github.com/vercel/serve/releases)
-- [Changelog](https://github.com/vercel/serve/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/vercel/serve/compare/v14.2.6...v14.2.8)
-
----
-updated-dependencies:
-- dependency-name: compression
-  dependency-version: 1.8.2
-  dependency-type: indirect
-- dependency-name: serve
-  dependency-version: 14.2.8
-  dependency-type: direct:development
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `tfhe/web_wasm_parallel_tests/package-lock.json` (modified, +52/-210)
+**File**: `.github/workflows/benchmark_cpu_common.yml` (modified, +2/-8)
 ```diff
-@@ -14,7 +14,7 @@
-       },
-       "devDependencies": {
-         "prettier": "^3.3.3",
--        "serve": "^14.2.5",
-+        "serve": "^14.2.8",
-         "webpack": "^5.105.0",
-         "webpack-cli": "^5.1.4"
-       }
-@@ -470,27 +470,6 @@
-         "node": ">=8"
-       }
-     },
--    "node_modules/arch": {
--      "version": "2.2.0",
--      "resolved": "https://registry.npmjs.org/arch/-/arch-2.2.0.tgz",
--      "integrity": "sha512-Of/R0wqp83cgHozfIYLbBMnej79U/SVGOOyuB3VVFv1NRM/PSFMK12x9KVtiYzJqmnU5WR2qp0Z5rHb7sWGnFQ==",
--      "dev": true,
--      "funding": [
--        {
--          "type": "github",
--          "url": "https://github.com/sponsors/feross"
--        },
--        {
--          "type": "patreon",
--          "url": "https://www.patreon.com/feross"
--        },
--        {
--          "type": "consulting",
--          "url": "https://feross.org/support"
--        }
--      ],
--      "license": "MIT"
--    },
-     "node_modules/arg": {
-       "version": "5.0.2",
-       "resolved": "https://registry.npmjs.org/arg/-/arg-5.0.2.tgz",
-@@ -778,24 +757,6 @@
-         "url": "https://github.com/sponsors/sindresorhus"
-       }
-     },
--    "node_modules/clipboardy": {
--      "version": "3.0.0",
--      "resolved": "https://registry.npmjs.org/clipboardy/-/clipboardy-3.0.0.tgz",
--      "integrity": "sha512-Su+uU5sr1jkUy1sGRpLKjKrvEOVXgSgiSInwa/qeID6aJ07yh+5NWc3h2QfjHjBnfX4LhtFcuAWKUsJ3r+fjbg==",
--      "dev": true,
--      "license": "MIT",
--      "dependencies": {
--        "arch": "^2.2.0",
--        "execa": "^5.1.1",
--        "is-wsl": "^2.2.0"
--      },
--      "engines": {
--        "node": "^12.20.0 || ^14.13.1 || >=16.0.0"
--      },
--      "funding": {
--        "url": "https://github.com/sponsors/sindresorhus"
--      }
--    },
-     "node_modules/clone-deep": {
-       "version": "4.0.1",
-       "resolved": "https://registry.npmjs.org/clone-deep/-/clone-deep-4.0.1.tgz",
-@@ -845,41 +806,29 @@
-       }
-     },
-     "node_modules/compression": {
--      "version": "1.8.1",
--      "resolved": "https://registry.npmjs.org/compression/-/compression-1.8.1.tgz",
--      "integrity": "sha512-9mAqGPHLakhCLeNyxPkK4xVo746zQ/czLH1Ky+vkitMnWfWZps8r0qXuwhwizagCRttsL4lfG4pIOvaWLpAP0w==",
-+      "version": "1.8.2",
-+      "resolved": "https://registry.npmjs.org/compression/-/compression-1.8.2.tgz",
-+      "integrity": "sha512-o8vI5RE5A6EVVOd9o41jKp41aJom+QTEO/Bx8MYNjexMo/Bv2WOjUfZr+aL0WnYSgymUy6zeguqLTsIhV0gMvQ==",
-       "dev": true,
-       "license": "MIT",
-       "dependencies": {
-         "bytes": "3.1.2",
-         "compressible": "~2.0.18",
-         "debug": "2.6.9",
-+        "destroy": "1.2.0",
-         "negotiator": "~0.6.4",
-         "on-headers": "~1.1.0",
-         "safe-buffer": "5.2.1",
-         "vary": "~1.1.2"
-       },
-       "engines": {
-         "node": ">= 0.8.0"
-+      },
-+      "funding": {
-+        "type": "opencollective",
-+        "url": "https://opencollective.com/express"
-       }
-     },
--    "node_modules/compression/node_modules/debug": {
--      "version": "2.6.9",
--      "resolved": "https://registry.npmjs.org/debug/-/debug-2.6.9.tgz",
--      "integrity": "sha512-bC7ElrdJaJnPbAP+1EotYvqZsb3ecl5wi6Bfi6BJTUcNowp6cvspg0jXznRTKDjm/E7AdgFBVeAPVMNcKGsHMA==",
--      "dev": true,
--      "license": "MIT",
--      "dependencies": {
--        "ms": "2.0.0"
--      }
--    },
--    "node_modules/compression/node_modules/ms": {
--      "version": "2.0.0",
--      "resolved": "https://registry.npmjs.org/ms/-/ms-2.0.0.tgz",
--      "integrity": "sha512-Tpp60P6IUJDTuOq/5Z8cdskzJujfwqfOTkrwIwj7IRISpnkJnT6SyJ4PCPnGMoFjC9ddhal5KVIYtAt97ix05A==",
--      "dev": true,
--      "license": "MIT"
--    },
-     "node_modules/concat-map": {
-       "version": "0.0.1",
-       "resolved": "https://registry.npmjs.org/concat-map/-/concat-map-0.0.1.tgz",
-@@ -912,6 +861,16 @@
-         "node": ">= 8"
-       }
-     },
-+    "node_modules/debug": {
-+      "version": "2.6.9",
-+      "resolved": "https://registry.npmjs.org/debug/-/debug-2.6.9.tgz",
-+      "integrity": "sha512-bC7ElrdJaJnPbAP+1EotYvqZsb3ecl5wi6Bfi6BJTUcNowp6cvspg0jXznRTKDjm/E7AdgFBVeAPVMNcKGsHMA==",
-+      "dev": true,
-+      "license": "MIT",
-+      "dependencies": {
-+        "ms": "2.0.0"
-+      }
-+    },
-     "node_modules/deep-extend": {
-       "version": "0.6.0",
-       "resolved": "https://registry.npmjs.org/deep-extend/-/deep-extend-0.6.0.tgz",
-@@ -922,6 +881,17 @@
-         "node": ">=4.0.0"
-       }
-     },
-+    "node_modules/destroy": {
-+      "version": "1.2.0",
-+      "resolved": "https://registry.npmjs.org/destroy/-/destroy-1.2.0.tgz",
-+      "integrity": "sha512-2sJGJTaXIIaR1w4iJSNoN0hnMY7Gpc/n8D4qSCJw8QqFWXf7cuAgnEHxBpweaVcPevC2l3KpjYCx3NypQQgaJg==",
-+      "dev": true,
-+      "license": "MIT",
-+      "engines": {
-+        "node": ">= 0.8",
-+        "npm": "1.2.8000 || >= 1.4.16"
-+      }
-+    },
-     "node_modules/eastasianwidth": {
-       "version": "0.2.0",
-       "resolved": "https://registry.npmjs.org/eastasianwidth/-/eastasianwidth-0.2.0.tgz",
-@@ -1054,30 +1024,6 @@
-         "no
-```
-
-**File**: `tfhe/web_wasm_parallel_tests/package.json` (modified, +1/-1)
-```diff
-@@ -15,7 +15,7 @@
-   "license": "BSD-3-Clause-Clear",
-   "devDependencies": {
-     "prettier": "^3.3.3",
--    "serve": "^14.2.5",
-+    "serve": "^14.2.8",
-     "webpack": "^5.105.0",
-     "webpack-cli": "^5.1.4"
-   },
-```
-
----
-
-### Incident Patch 2: `0d4e9c9d` (2026-11-17)
-**Commit Message**: chore(integer): add test profiles to the radix test harness (#4155)
-
-* chore(integer): add test profiles to the radix test harness
-
-TFHE_RS_TEST_PROFILE selects how extensively the harness tests: the
-profile sets the block counts and the number of random cases.
-
-There's an OpCost enum as not all operation have the same cost
-and so operation can give a hint of their cost allowing the profile
-to adjust or not. For example, the division is very costly so some
-profiles might want to reduce tested block counts, but other (like fhevm
-profile) can choose to still test all their block counts.
-
-Parameters are not taken into account (i.e profile do not adapt to the
-msg-mod/carry-mod) as the preferred way for now is to select a more or less
-intensive profile
-
-Each backend has its profile(s) as CI costs differ.
-The CPU defines cpu_light, cpu_baseline, cpu_extensive, cpu_fhevm.
-The fhevm profiles test the widths FHEVM exposes,
-up to 128 bits for now (the clear models are u128).
-
-Vector operations keep their own sizes until we know
-how to parameterize them.
-
-* chore(integer): rename SizeRequirements to RadixInputSize
-
-**File**: `.github/workflows/aws_tfhe_fast_tests.yml` (modified, +3/-1)
-```diff
-@@ -259,10 +259,12 @@ jobs:
-         run: |
-           BIG_TESTS_INSTANCE=TRUE FAST_TESTS=TRUE make test_shortint_ci
- 
-+      # Only the default operations of tier 0, every tier 0 test runs on approval (see
-+      # aws_tfhe_integer_tests) and on a schedule (see aws_tfhe_integer_tests_tier_0)
-       - name: Run integer tests
-         if: needs.should-run.outputs.integer_test == 'true'
-         run: |
--          BIG_TESTS_INSTANCE=TRUE FAST_TESTS=TRUE make test_integer_ci
-+          BIG_TESTS_INSTANCE=TRUE FAST_TESTS=TRUE TIERS=0 TFHE_RS_TEST_PROFILE=cpu_light make test_integer_ci
- 
-       - name: Run transciphering tests
-         if: needs.should-run.outputs.transciphering_test == 'true'
-```
-
-**File**: `.github/workflows/aws_tfhe_integer_tests.yml` (modified, +4/-2)
-```diff
-@@ -58,8 +58,9 @@ jobs:
-               - .github/workflows/aws_tfhe_integer_tests_tier_*.yml
-               - .config/nextest.toml
- 
--  # Tier 0 (prod params) on approval and on each merge to main, the other tiers run on a schedule
--  # in aws_tfhe_integer_tests_tier_N
-+  # Tier 0 (prod params) on the FHEVM widths, on approval and on each merge to main.
-+  # Tiers 1 to 3, and tier 0 on the baseline profile, run on a schedule in
-+  # aws_tfhe_integer_tests_tier_N
-   integer-tests:
-     name: aws_tfhe_integer_tests/integer-tests
-     needs: should-run
-@@ -74,6 +75,7 @@ jobs:
-     uses: ./.github/workflows/aws_tfhe_integer_tests_common.yml
-     with:
-       tiers: "0"
-+      profile: cpu_fhevm
-     secrets:
-       REPO_CHECKOUT_TOKEN: ${{ secrets.REPO_CHECKOUT_TOKEN }}
-       SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
-```
-
-**File**: `.github/workflows/aws_tfhe_integer_tests_common.yml` (modified, +8/-2)
-```diff
-@@ -1,4 +1,5 @@
--# Run the CPU integer tests of some parameter tiers, unsigned and signed tests in parallel
-+# Run the CPU integer tests of some parameter tiers with a test profile, unsigned and signed tests
-+# in parallel
- name: aws_tfhe_integer_tests_common
- 
- on:
-@@ -8,6 +9,10 @@ on:
-         description: "Comma separated parameter tiers to test, e.g. 0 or 1,2"
-         type: string
-         required: true
-+      profile:
-+        description: "Test profile of the radix test harness, e.g. cpu_light or cpu_baseline"
-+        type: string
-+        required: true
+@@ -32,9 +32,6 @@ on:
+         type: string # Use comma separated values to generate an array
+       additional_file_to_parse: # Other files to parse, located under tfhe-benchmark/ directory
+         type: string # Use comma separated values to generate an array
+-      additional_results_type:
+-        type: string
+-        default: object-sizes
      secrets:
        REPO_CHECKOUT_TOKEN:
-         required: false
-@@ -52,6 +57,7 @@ jobs:
-     env:
-       SIGN: ${{ matrix.sign }}
-       TIERS: ${{ inputs.tiers }}
-+      TFHE_RS_TEST_PROFILE: ${{ inputs.profile }}
-     steps:
-       - name: Checkout tfhe-rs
-         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
-@@ -91,4 +97,4 @@ jobs:
-         uses: rtCamp/action-slack-notify@33ca3be66c6f378fe1610fd1d5258632dbed5e58
+         required: true
+@@ -209,12 +206,10 @@ jobs:
+           --commit-date "${COMMIT_DATE}" \
+           --bench-date "${BENCH_DATE}" \
+           --walk-subdirs \
+-          --name-suffix avx512 \
+-          --bench-type "${BENCH_TYPE}"
++          --name-suffix avx512
          env:
-           SLACK_COLOR: ${{ job.status }}
--          SLACK_MESSAGE: "Integer tests (${{ matrix.sign }}, tiers ${{ inputs.tiers }}) finished with status: ${{ job.status }}. (${{ env.PULL_REQUEST_MD_LINK }}[action run](${{ env.ACTION_RUN_URL }}))"
-+          SLACK_MESSAGE: "Integer tests (${{ matrix.sign }}, tiers ${{ inputs.tiers }}, profile ${{ inputs.profile }}) finished with status: ${{ job.status }}. (${{ env.PULL_REQUEST_MD_LINK }}[action run](${{ env.ACTION_RUN_URL }}))"
-```
-
-**File**: `.github/workflows/aws_tfhe_integer_tests_tier_0.yml` (added, +44/-0)
-```diff
-@@ -0,0 +1,44 @@
-+# CPU integer tests of the tier 0 parameters (prod params, see CPU_INTEGER_TIERS in
-+# scripts/test_filtering.py) on the baseline profile.
-+# Tier 0 also runs in aws_tfhe_fast_tests on each pull request (light profile) and in
-+# aws_tfhe_integer_tests on approval and on each merge to main (FHEVM profile).
-+name: aws_tfhe_integer_tests_tier_0
-+
-+on:
-+  # Run tier 0 on any branch
-+  workflow_dispatch:
-+    inputs:
-+      profile:
-+        description: "Test profile of the radix test harness"
-+        type: choice
-+        options:
-+          - cpu_light
-+          - cpu_baseline
-+          - cpu_extensive
-+          - cpu_fhevm
-+        default: cpu_baseline
-+  schedule:
-+    # Tier 0, nightly after each work day
-+    - cron: "0 1 * * MON-FRI"
-+
-+permissions:
-+  contents: read
-+
-+jobs:
-+  integer-tests:
-+    name: aws_tfhe_integer_tests_tier_0/integer-tests
-+    if: github.event_name == 'workflow_dispatch' || github.repository == 'zama-ai/tfhe-rs'
-+    # Runs on main are not cancelled by the next one
-+    concurrency:
-+      group: ${{ github.workflow_ref }}
-+      cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
-+    uses: ./.github/workflows/aws_tfhe_integer_tests_common.yml
-+    with:
-+      tiers: "0"
-+      # Scheduled runs have no inputs
-+      profile: ${{ inputs.profile || 'cpu_baseline' }}
-+    secrets:
-+      REPO_CHECKOUT_TOKEN: ${{ secrets.REPO_CHECKOUT_TOKEN }}
-+      SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
-+      BOT_USERNAME: ${{ secrets.BOT_USERNAME }}
-+      SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
-```
-
-**File**: `.github/workflows/aws_tfhe_integer_tests_tier_1.yml` (modified, +12/-0)
-```diff
-@@ -5,6 +5,16 @@ name: aws_tfhe_integer_tests_tier_1
- on:
-   # Run tier 1 on any branch
-   workflow_dispatch:
-+    inputs:
-+      profile:
-+        description: "Test profile of the radix test harness"
-+        type: choice
-+        options:
-+          - cpu_light
-+          - cpu_baseline
-+          - cpu_extensive
-+          - cpu_fhevm
-+        default: cpu_baseline
-   schedule:
-     # Tier 1, nightly after each work day
-     - cron: "0 2 * * MON-FRI"
-@@ -23,6 +33,8 @@ jobs:
-     uses: ./.github/workflows/aws_tfhe_integer_tests_common.yml
-     with:
-       tiers: "1"
-+      # Scheduled runs have no inputs
-+      profile: ${{ inputs.profile || 'cpu_baseline' }}
-     secrets:
-       REPO_CHECKOUT_TOKEN: ${{ secrets.REPO_CHECKOUT_TOKEN }}
-       SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
-```
-
-**File**: `.github/workflows/aws_tfhe_integer_tests_tier_2.yml` (modified, +12/-0)
-```diff
-@@ -5,6 +5,16 @@ name: aws_tfhe_integer_tests_tier_2
- on:
-   # Run tier 2 on any branch, e.g. before merging a change to multi-bit
-   workflow_dispatch:
-+    inputs:
-+      profile:
-+        description: "Test profile of the radix test harness"
-+        type: choice
-+        options:
-+          - cpu_light
-+          - cpu_baseline
-+          - cpu_extensive
-+          - cpu_fhevm
-+        default: cpu_baseline
-   schedule:
-     # Tier 2, every other day
-     - cron: "0 3 * * MON,WED,FRI"
-@@ -23,6 +33,8 @@ jobs:
-     uses: ./.github/workflows/aws_tfhe_integer_tests_common.yml
-     with:
-       tiers: "2"
-+      # Scheduled runs have no inputs
-+      profile: ${{ inputs.profile || 'cpu_baseline' }}
-     secrets:
-       REPO_CHECKOUT_TOKEN: ${{ secrets.REPO_CHECKOUT_TOKEN }}
-       SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
-```
-
-**File**: `.github/workflows/aws_tfhe_integer_tests_tier_3.yml` (modified, +12/-0)
-```diff
-@@ -5,6 +5,16 @@ name: aws_tfhe_integer_tests_tier_3
- on:
-   # Run tier 3 on any branch
-   workflow_dispatch:
-+    inputs:
-+      profile:
-+        description: "Test profile of the radix test harness"
-+        type: choice
-+        options:
-+          - cpu_light
-+          - cpu_baseline
-+          - cpu_extensive
-+          - cpu_fhevm
-+        default: cpu_light
-   schedule:
-     # Tier 3, weekly
-     - cron: "0 4 * * SAT"
-@@ -23,6 +33,8 @@ jobs:
-     uses: ./.github/workflows/aws_tfhe_integer_tests_common.yml
-     with:
-       tiers: "3"
-+      # Scheduled runs have no inputs
-+      profile: ${{ inputs.profile || 'cpu_light' }}
-     secrets:
-       REPO_CHECKOUT_TOKEN: ${{ secrets.REPO_CHECKOUT_TOKEN }}
-       SLACK_CHANNEL: ${{ secrets.SLACK_CHANNEL }}
-```
-
-**File**: `.github/workflows/m1_tests.yml` (modified, +2/-1)
-```diff
-@@ -173,9 +173,10 @@ jobs:
-         run: |
-           make test_shortint_ci
+           INPUTS_HARDWARE_NAME: ${{ inputs.hardware_name }}
+           REF_NAME: ${{ github.ref_name }}
+-          BENCH_TYPE: ${{ matrix.bench_type }}
  
-+      # Only the default operations of tier 0 (FAST_TESTS is set for the whole job)
-       - name: Run integer tests
-         run: |
--          make test_integer_ci
-+          TIERS=0 TFHE_RS_TEST_PROFILE=cpu_light make test_integer_ci
+       - name: Run additional benchmarks
+         if: ${{ inputs.additional_recipe }}
+@@ -234,13 +229,12 @@ jobs:
+           IFS=','
+           for filename in $filenames_list; do
+             cargo run --release -p tfhe-benchmark-parser -- -i "tfhe-benchmark/${filename}" -o "${RESULTS_FILENAME}" \
+-            --"${results_type}" \
++            --csv \
+             --backend cpu \
+             --append-results
+           done
+         env:
+           filenames: ${{ inputs.additional_file_to_parse }}
+-          results_type: ${{ inputs.additional_results_type }}
  
-       - name: Gen Keys if required
+       - name: Download protocol results table of the other bench type
+         if: ${{ contains(matrix.command, 'protocol') }}
+```
+
+**File**: `.github/workflows/benchmark_ct_key_sizes.yml` (modified, +2/-2)
+```diff
+@@ -83,7 +83,7 @@ jobs:
+           --branch "${REF_NAME}" \
+           --commit-date "${COMMIT_DATE}" \
+           --bench-date "${BENCH_DATE}" \
+-          --object-sizes
++          --csv
+         env:
+           REF_NAME: ${{ github.ref_name }}
+ 
+@@ -94,7 +94,7 @@ jobs:
+       - name: Parse key sizes results
          run: |
+           cargo run --release -p tfhe-benchmark-parser -- -i tfhe-benchmark/shortint_key_sizes.csv -o "${RESULTS_FILENAME}" \
+-          --object-sizes \
++          --csv \
+           --backend cpu \
+           --append-results
+ 
+```
+
+**File**: `.github/workflows/benchmark_gpu_common.yml` (modified, +3/-6)
+```diff
+@@ -256,11 +256,9 @@ jobs:
+           --commit-date "${COMMIT_DATE}" \
+           --bench-date "${BENCH_DATE}" \
+           --walk-subdirs \
+-          --name-suffix avx512 \
+-          --bench-type "${BENCH_TYPE}"
++          --name-suffix avx512
+         env:
+           REF_NAME: ${{ github.ref_name }}
+-          BENCH_TYPE: ${{ matrix.bench_type }}
+ 
+       - name: Setup Python venv
+         run: |
+@@ -280,8 +278,7 @@ jobs:
+             --branch "${REF_NAME}" \
+             --commit-date "${COMMIT_DATE}" \
+             --bench-date "${BENCH_DATE}" \
+-            --walk-subdirs \
+-            --bench-type "${BENCH_TYPE}"
++            --walk-subdirs
+             group_results+=("${group_result}")
+           done
+           venv/bin/python ./ci/merge_multi_group_results.py --bench-type "${BENCH_TYPE}" --output "${RESULTS_FILENAME}" "${group_results[@]}"
+@@ -296,7 +293,7 @@ jobs:
+           IFS=','
+           for filename in $filenames_list; do
+             cargo run --release -p tfhe-benchmark-parser -- -i "tfhe-benchmark/${filename}" -o "${RESULTS_FILENAME}" \
+-            --object-sizes \
++            --csv \
+             --backend cuda \
+             --append-results
+           done
+```
+
+**File**: `.github/workflows/benchmark_hpu_common.yml` (modified, +1/-3)
+```diff
+@@ -187,11 +187,9 @@ jobs:
+           --branch "${REF_NAME}" \
+           --commit-date "${COMMIT_DATE}" \
+           --bench-date "${BENCH_DATE}" \
+-          --walk-subdirs \
+-          --bench-type "${BENCH_TYPE}"
++          --walk-subdirs
+         env:
+           REF_NAME: ${{ github.ref_name }}
+-          BENCH_TYPE: ${{ matrix.bench_type }}
+ 
+       - name: Upload parsed results artifact
+         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+```
+
+**File**: `.github/workflows/benchmark_perf_regression.yml` (modified, +1/-3)
+```diff
+@@ -247,13 +247,11 @@ jobs:
+           --commit-date "${COMMIT_DATE}" \
+           --bench-date "${BENCH_DATE}" \
+           --walk-subdirs \
+-          --name-suffix regression \
+-          --bench-type "${BENCH_TYPE}"
++          --name-suffix regression
+         env:
+           HARDWARE_NAME: ${{ needs.prepare-benchmarks.outputs.hardware-name }}
+           TFHE_BACKEND: ${{ needs.prepare-benchmarks.outputs.tfhe-backend }}
+           REF_NAME: ${{ github.head_ref || github.ref_name }}
+-          BENCH_TYPE: ${{ env.__TFHE_RS_BENCH_TYPE }}
+ 
+       - name: Upload parsed results artifact
+         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+```
+
+**File**: `.github/workflows/benchmark_wasm_client_common.yml` (modified, +1/-1)
+```diff
+@@ -187,7 +187,7 @@ jobs:
+           --branch "${REF_NAME}" \
+           --commit-date "${COMMIT_DATE}" \
+           --bench-date "${BENCH_DATE}" \
+-          --key-gen
++          --csv
+           rm tfhe-benchmark/wasm_pk_gen.csv
+         env:
+           REF_NAME: ${{ github.ref_name }}
+```
+
+**File**: `utils/tfhe-benchmark-parser/src/cli.rs` (modified, +5/-23)
+```diff
+@@ -1,4 +1,4 @@
+-use benchmark_spec::{Backend, BenchmarkMetric};
++use benchmark_spec::Backend;
+ use clap::Parser;
+ use std::path::PathBuf;
+ 
+@@ -9,7 +9,7 @@ use std::path::PathBuf;
+ )]
+ pub struct Cli {
+     /// Location of criterion benchmark results directory.
+-    /// If --object-sizes or --key-gen is used, this must point to a CSV file.
++    /// If --csv is used, this must point to a CSV file.
+     #[arg(short = 'i', long)]
+     pub input_results_file: PathBuf,
+ 
+@@ -62,34 +62,16 @@ pub struct Cli {
+     #[arg(long = "walk-subdirs")]
+     pub walk_subdirs: bool,
+ 
+-    /// Parse only the results regarding keys size measurements.
+-    #[arg(long = "object-sizes", conflicts_with = "key_gen")]
+-    pub object_sizes: bool,
+-
+-    /// Parse only the results regarding keys generation time measurements.
+-    #[arg(long = "key-gen")]
+-    pub key_gen: bool,
+-
+-    /// Fetch results for latency or throughput benchmarks.
+-    #[arg(long = "bench-type",value_parser = parse_cli_bench_metric,default_value = "latency")]
+-    pub bench_type: BenchmarkMetric,
++    /// Parse a CSV of `id,value` rows instead of a criterion directory.
++    #[arg(long = "csv")]
++    pub csv: bool,
+ 
+     /// Backend on which benchmarks have run.
+     /// Required even with --append-results, as it is stamped on every parsed point.
+     #[arg(long, value_parser = parse_cli_backend)]
+     pub backend: Backend,
+ }
+ 
+-fn parse_cli_bench_metric(s: &str) -> Result<BenchmarkMetric, String> {
+-    let m: BenchmarkMetric = s
+-        .parse()
+-        .map_err(|_| format!("unknown benchmark type: {s}"))?;
+-    match m {
+-        BenchmarkMetric::Latency | BenchmarkMetric::Throughput => Ok(m),
+-        _ => Err(format!("--bench-type does not support {m:?}")),
+-    }
+-}
+-
+ fn parse_cli_backend(s: &str) -> Result<Backend, String> {
+     s.parse().map_err(|_| format!("unknown backend: {s}"))
+ }
+```
+
+**File**: `utils/tfhe-benchmark-parser/src/main.rs` (modified, +4/-15)
+```diff
+@@ -2,33 +2,22 @@ mod cli;
+ mod dump;
+ mod parse;
+ 
+-use benchmark_spec::BenchmarkMetric;
+ use clap::Parser;
+ use cli::Cli;
+ use dump::{append_points, write_series};
+-use parse::{ParseOutcome, parse_key_gen_time, parse_object_sizes, recursive_parse};
++use parse::{ParseOutcome, parse_csv_results, recursive_parse};
+ use std::process::ExitCode;
+ use tfhe_benchmark_parser::model::{Point, Series};
+ 
+ fn run_parse(args: &Cli) -> anyhow::Result<ParseOutcome> {
+-    if args.object_sizes {
+-        println!("Parsing key sizes results... ");
+-        return parse_object_sizes(&args.input_results_file, &args.params_dirs, args.backend);
+-    }
+-
+-    if args.key_gen {
+-        println!("Parsing key generation time results... ");
+-        return parse_key_gen_time(&args.input_results_file, &args.params_dirs, args.backend);
++    if args.csv {
++        println!("Parsing CSV results... ");
++        return parse_csv_results(&args.input_results_file, &args.params_dirs, args.backend);
+     }
+ 
+     println!("Parsing benchmark results... ");
+-    if args.bench_type == BenchmarkMetric::Throughput {
+-        println!("Throughput computation enabled");
+-    }
+-
+     recursive_parse(
+         &args.input_results_file,
+-        args.bench_type,
+         args.walk_subdirs,
+         &args.name_suffix,
+         &args.params_dirs,
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #4183** (2026-11-17): chore: simpler CODEOWNERS while still respecting guidelines (@IceTDrinker)
 - **PR #4181** (2026-11-17): chore: make pip timeout longer to avoid problem with potentially safe… (@IceTDrinker)
+- **PR #4175** (2026-11-18): chore(deps): bump docker/login-action from 4.7.0 to 4.8.0 (@dependabot[bot])
+- **PR #4174** (2026-11-18): chore(deps): bump zizmorcore/zizmor-action from 0.8.0 to 0.8.1 (@dependabot[bot])
+- **PR #4173** (2026-11-18): chore(deps): bump zgosalvez/github-actions-ensure-sha-pinned-actions from 5.0.10 to 5.0.11 (@dependabot[bot])
 - **PR #4172** (2026-11-17): chore(deps): bump compression and serve in /tfhe/web_wasm_parallel_tests (@dependabot[bot])
-- **PR #4163** (2026-11-12): chore: make codeowners more flexible (@IceTDrinker)
-- **PR #4162** (2026-11-12): chore: bump rustix to 1.1.6 (@nsarlin-zama)
-- **PR #4158** (closed): fix(gpu): wide sums, scalar max/min, shift amounts, match_value and compact lists (@pdroalves)
 
 ---
 
@@ -2418,94 +2212,36 @@ how to parameterize them.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): bump compression and serve in /tfhe/web_wasm_parallel_tests
+## X. bench): fix issue between key size and pbs count
 
 **RULE**:
-When implementing operations in `tfhe/web_wasm_parallel_tests/package-lock.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zama-ai/tfhe-rs. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/benchmark_cpu_common.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zama-ai/tfhe-rs. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `935a8e49`: deps): bump compression and serve in /tfhe/web_wasm_parallel_tests. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ecc40009`: bench): fix issue between key size and pbs count. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `tfhe/web_wasm_parallel_tests/package-lock.json`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/benchmark_cpu_common.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        "serve": "^14.2.8",
-      "version": "1.8.2",
-      "resolved": "https://registry.npmjs.org/compression/-/compression-1.8.2.tgz",
-      "integrity": "sha512-o8vI5RE5A6EVVOd9o41jKp41aJom+QTEO/Bx8MYNjexMo/Bv2WOjUfZr+aL0WnYSgymUy6zeguqLTsIhV0gMvQ==",
-        "destroy": "1.2.0",
-      },
-      "funding": {
-        "type": "opencollective",
-        "url": "https://opencollective.com/express"
-    "node_modules/debug": {
-      "version": "2.6.9",
-      "resolved": "https://registry.npmjs.org/debug/-/debug-2.6.9.tgz",
-      "integrity": "sha512-bC7ElrdJaJnPbAP+1EotYvqZsb3ecl5wi6Bfi6BJTUcNowp6cvspg0jXznRTKDjm/E7AdgFBVeAPVMNcKGsHMA==",
-      "dev": true,
-      "license": "MIT",
-      "dependencies": {
-        "ms": "2.0.0"
-      }
-    },
-    "node_modules/destroy": {
-      "version": "1.2.0",
-      "resolved": "https://registry.npmjs.org/destroy/-/destroy-1.2.0.tgz",
-      "integrity": "sha512-2sJGJTaXIIaR1w4iJSNoN0hnMY7Gpc/n8D4qSCJw8QqFWXf7cuAgnEHxBpweaVcPevC2l3KpjYCx3NypQQgaJg==",
-      "dev": true,
-      "license": "MIT",
-      "engines": {
-        "node": ">= 0.8",
-        "npm": "1.2.8000 || >= 1.4.16"
-      }
-    },
+          --name-suffix avx512
+            --csv \
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-        "serve": "^14.2.5",
-    "node_modules/arch": {
-      "version": "2.2.0",
-      "resolved": "https://registry.npmjs.org/arch/-/arch-2.2.0.tgz",
-      "integrity": "sha512-Of/R0wqp83cgHozfIYLbBMnej79U/SVGOOyuB3VVFv1NRM/PSFMK12x9KVtiYzJqmnU5WR2qp0Z5rHb7sWGnFQ==",
-      "dev": true,
-      "funding": [
-        {
-          "type": "github",
-          "url": "https://github.com/sponsors/feross"
-        },
-        {
-          "type": "patreon",
-          "url": "https://www.patreon.com/feross"
-        },
-        {
-          "type": "consulting",
-          "url": "https://feross.org/support"
-        }
-      ],
-      "license": "MIT"
-    },
-    "node_modules/clipboardy": {
-      "version": "3.0.0",
-      "resolved": "https://registry.npmjs.org/clipboardy/-/clipboardy-3.0.0.tgz",
-      "integrity": "sha512-Su+uU5sr1jkUy1sGRpLKjKrvEOVXgSgiSInwa/qeID6aJ07yh+5NWc3h2QfjHjBnfX4LhtFcuAWKUsJ3r+fjbg==",
-      "dev": true,
-      "license": "MIT",
-      "dependencies": {
-        "arch": "^2.2.0",
-        "execa": "^5.1.1",
-        "is-wsl": "^2.2.0"
-      },
-      "engines": {
-        "node": "^12.20.0 || ^14.13.1 || >=16.0.0"
-      },
-      "funding": {
-        "url": "https://github.com/spons
+      additional_results_type:
+        type: string
+        default: object-sizes
+          --name-suffix avx512 \
+          --bench-type "${BENCH_TYPE}"
+          BENCH_TYPE: ${{ matrix.bench_type }}
+            --"${results_type}" \
+          results_type: ${{ inputs.additional_results_type }}
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `935a8e49` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ecc40009` are properly handled with clean fallback behavior.

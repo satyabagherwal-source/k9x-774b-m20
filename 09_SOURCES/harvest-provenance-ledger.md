@@ -10998,3 +10998,7 @@ Every entry in this ledger must capture:
 | `learn-github-ajeetdsouza-zoxide` | `https://github.com/ajeetdsouza/zoxide` | `2f4bceba` | Multi-dimensional audit evidence | 2026-11-18T12:42:40.716Z |
 | `learn-github-nats-io-nats-server` | `https://github.com/nats-io/nats-server` | `ea28ae77` | Multi-dimensional audit evidence | 2026-11-18T12:42:47.928Z |
 | `learn-huggingface-prism-ml-ternary-bonsai-2-27b-gguf` | `https://huggingface.co/prism-ml/Ternary-Bonsai-2-27B-gguf` | `hf-prism-m` | Multi-dimensional audit evidence | 2026-11-18T12:43:14.797Z |
+| `learn-huggingface-viggle-qwen-image-2-1-viggle-turbo` | `https://huggingface.co/Viggle/Qwen-Image-2.1-viggle-turbo` | `hf-viggle-` | Multi-dimensional audit evidence | 2026-11-18T12:50:50.817Z |
+| `learn-github-pubkey-rxdb` | `https://github.com/pubkey/rxdb` | `1135a741` | Multi-dimensional audit evidence | 2026-11-18T12:50:59.416Z |
+| `learn-github-zama-ai-tfhe-rs` | `https://github.com/zama-ai/tfhe-rs` | `ecc40009` | Multi-dimensional audit evidence | 2026-11-18T12:51:04.099Z |
+| `learn-github-alibaba-zvec` | `https://github.com/alibaba/zvec` | `018b1eb3` | Multi-dimensional audit evidence | 2026-11-18T12:51:06.592Z |

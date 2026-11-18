@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-18T12:43:19.407Z",
+  "last_updated": "2026-11-18T12:51:11.809Z",
   "total_verified_learnings": 9002,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 21244,
+  "total_items": 21251,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -111950,9 +111950,9 @@
       "title": "Research & Knowledge Intelligence: Viggle/Qwen-Image-2.1-viggle-turbo Core Invariants",
       "repository": "Viggle/Qwen-Image-2.1-viggle-turbo",
       "source_version": "hf-viggle-qwen-image-2.1-viggle-turbo",
-      "content_hash": "1e406713798ad228c4410fed2536c56aa8621ebcabea6e2e28a9332f0cd26ff4",
+      "content_hash": "3d98073c3770ecfa2cdbf746b19d3473844a2498aeca525b9919a76b409ef960",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T02:16:09.952Z"
+      "persisted_at": "2026-11-18T12:50:50.989Z"
     },
     "candidate_directive-ciliumenvoyconfig-clone-resources-retained-by-the-script-fixture": {
       "item_id": "candidate_directive-ciliumenvoyconfig-clone-resources-retained-by-the-script-fixture",
@@ -111998,9 +111998,9 @@
       "title": "Research & Knowledge Intelligence: hf-viggle-qwen-image-2.1-viggle-turbo-learnings Core Invariants",
       "repository": "hf-viggle-qwen-image-2.1-viggle-turbo-learnings",
       "source_version": "HEAD",
-      "content_hash": "daf9d17b96388f582c1ce403764e5f0d959dedc3913a7ddbb90dfa47639abb23",
+      "content_hash": "8740826c4995e2a5cdeefca642fbf0646e7cb9c4d395f6dfc2768a69967a88e6",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T02:16:22.558Z"
+      "persisted_at": "2026-11-18T12:51:09.993Z"
     },
     "domain_intelligence-product-intelligence-cilium-cilium-learnings-core-invariants": {
       "item_id": "domain_intelligence-product-intelligence-cilium-cilium-learnings-core-invariants",
@@ -213351,8 +213351,8 @@
       "slug": "zama-ai-tfhe-rs",
       "platform": "github",
       "source_url": "https://github.com/zama-ai/tfhe-rs",
-      "source_version": "935a8e49",
-      "content_hash": "9a7d93fbafbbf85871099d1e0fd8ed6478f1da61803b19d2a14624bcde427f3c",
+      "source_version": "ecc40009",
+      "content_hash": "58e2276eeb83e870e99b98c8c14fe092002aa7d7dda2f0a3de648528c1fe141f",
       "dossier_path": "07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md",
       "promoted_rules": [
@@ -213375,6 +213375,11 @@
           "number": 9064,
           "title": "bump compression and serve in /tfhe/web_wasm_parallel_tests",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9222,
+          "title": "fix issue between key size and pbs count",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -213382,7 +213387,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T20:45:38.174Z",
+      "verified_at": "2026-11-18T12:51:03.924Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -213424,10 +213429,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zama-ai-tfhe-rs-technical-construction-intelligence-zama-ai-tfhe-rs-core-invaria.md",
       "title": "Technical Construction Intelligence: zama-ai/tfhe-rs Core Invariants",
       "repository": "zama-ai/tfhe-rs",
-      "source_version": "935a8e49",
-      "content_hash": "243a764ffa6402d5e849305f9e5ebeb4344289fe81aa9e501a3b4898aacba52c",
+      "source_version": "ecc40009",
+      "content_hash": "f229253e57fa14ecd7133d701b4710076c3f8ccefd7f9299dd6b67f6aecd91a5",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T20:45:38.695Z"
+      "persisted_at": "2026-11-18T12:51:04.427Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zama-ai-tfhe-rs": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zama-ai-tfhe-rs",
@@ -213436,10 +213441,10 @@
       "relative_path": "08_VERIFICATION/zama-ai-tfhe-rs-verification-protocol-empirical-defect-shield-for-zama-ai-tfhe-r.md",
       "title": "Verification Protocol: Empirical Defect Shield for zama-ai/tfhe-rs",
       "repository": "zama-ai/tfhe-rs",
-      "source_version": "935a8e49",
-      "content_hash": "1b6875c18deeb8a68ad041c1a45cfbebd8b71bf482928596d3ec64d63ec0da6b",
+      "source_version": "ecc40009",
+      "content_hash": "b7f5b0901f05ad00cbacd825a453d8bf03c4a3a523e6a257014932f62a2be38c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T20:45:38.856Z"
+      "persisted_at": "2026-11-18T12:51:04.560Z"
     },
     "learn-github-tursodatabase-turso": {
       "learning_id": "learn-github-tursodatabase-turso",
@@ -215165,8 +215170,8 @@
       "slug": "alibaba-zvec",
       "platform": "github",
       "source_url": "https://github.com/alibaba/zvec",
-      "source_version": "0c63ea4e",
-      "content_hash": "9f54aec430989b8733a5130cbd53a7e335fd15c78d73c538913a3467865c783e",
+      "source_version": "018b1eb3",
+      "content_hash": "0c7a359e6205e5c53fa3d204b526df419ba834fc0da34c4b1e66519feca8366f",
       "dossier_path": "07_PROJECT_LEARNING/alibaba-zvec-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/alibaba-zvec-learnings.md",
       "promoted_rules": [
@@ -215179,6 +215184,11 @@
           "number": 8778,
           "title": "protect Snowball code generation on MSVC ARM64",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9223,
+          "title": "set policy minimum for CMake 4 compatibility",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -215186,7 +215196,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-16T18:46:54.476Z",
+      "verified_at": "2026-11-18T12:51:06.414Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -215240,10 +215250,10 @@
       "relative_path": "08_VERIFICATION/alibaba-zvec-verification-protocol-empirical-defect-shield-for-alibaba-zvec.md",
       "title": "Verification Protocol: Empirical Defect Shield for alibaba/zvec",
       "repository": "alibaba/zvec",
-      "source_version": "0c63ea4e",
-      "content_hash": "4f99f794fac47e05d485cba6d78592d84899a21ac5351fdf05839b7347ceb145",
+      "source_version": "018b1eb3",
+      "content_hash": "212ebdd62c52c8e33d73b62f95fa7c2cbff480770d2ad4d83273a368d91106e3",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T18:46:55.309Z"
+      "persisted_at": "2026-11-18T12:51:07.056Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-sentence-transformers-paraphrase-multilingual": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-sentence-transformers-paraphrase-multilingual",
@@ -215804,8 +215814,8 @@
       "slug": "pubkey-rxdb",
       "platform": "github",
       "source_url": "https://github.com/pubkey/rxdb",
-      "source_version": "08f29f57",
-      "content_hash": "b9197e92f652a260a4f3b9c4f8c3a6cf4c010cbb312d9eedb77c2efc9589ede9",
+      "source_version": "1135a741",
+      "content_hash": "1c8ae383120a18ade4500af9b7c044fab906fd0bc483c199a8a32816d60ca7bf",
       "dossier_path": "07_PROJECT_LEARNING/pubkey-rxdb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/pubkey-rxdb-learnings.md",
       "promoted_rules": [
@@ -215818,6 +215828,11 @@
           "number": 8961,
           "title": "limit 0 returns no documents and a negative limit throws (QU23)",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9221,
+          "title": "query result is wrong when the event of another instance arrives after a later o",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -215825,7 +215840,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T12:09:27.843Z",
+      "verified_at": "2026-11-18T12:50:59.240Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -215867,10 +215882,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-pubkey-rxdb-technical-construction-intelligence-pubkey-rxdb-core-invariants.md",
       "title": "Technical Construction Intelligence: pubkey/rxdb Core Invariants",
       "repository": "pubkey/rxdb",
-      "source_version": "08f29f57",
-      "content_hash": "c791071e31aecd6c92b767e1b519789307dec765649582fa753bc479080cd6a4",
+      "source_version": "1135a741",
+      "content_hash": "5fd2627813eda4b0b7cde2b6a39c3564b5f6c9c5cd4c067c3864ae15b43ade23",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T12:09:28.456Z"
+      "persisted_at": "2026-11-18T12:50:59.748Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-pubkey-rxdb": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-pubkey-rxdb",
@@ -215879,10 +215894,10 @@
       "relative_path": "12_DECISIONS/ADR-pubkey-rxdb-adr-subsystem-boundary-modular-decoupling-in-pubkey-rxdb.md",
       "title": "ADR: Subsystem Boundary & Modular Decoupling in pubkey/rxdb",
       "repository": "pubkey/rxdb",
-      "source_version": "08f29f57",
-      "content_hash": "dc2b7988beaaee60c52fa6161dfd0bbb75c0115f92f5123322c8c90566a56062",
+      "source_version": "1135a741",
+      "content_hash": "179afb1bd5da063cfa939c2d70ba33f2929ce1278bbd41cb0e2ab4386e997f54",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T12:09:28.629Z"
+      "persisted_at": "2026-11-18T12:50:59.884Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-pubkey-rxdb": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-pubkey-rxdb",
@@ -215891,10 +215906,10 @@
       "relative_path": "08_VERIFICATION/pubkey-rxdb-verification-protocol-empirical-defect-shield-for-pubkey-rxdb.md",
       "title": "Verification Protocol: Empirical Defect Shield for pubkey/rxdb",
       "repository": "pubkey/rxdb",
-      "source_version": "08f29f57",
-      "content_hash": "58e67c38acef8c92334211e8cba821080660240265d0c6f6e66425fd7bd55aec",
+      "source_version": "1135a741",
+      "content_hash": "8fd656fa1983571993ef41b6b1934fd316339ee57ef666af27f6b7d0782f8b17",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T12:09:28.776Z"
+      "persisted_at": "2026-11-18T12:50:59.996Z"
     },
     "learn-github-k3s-io-k3s": {
       "learning_id": "learn-github-k3s-io-k3s",
@@ -216016,9 +216031,9 @@
       "title": "Technical Construction Intelligence: pubkey-rxdb-learnings Core Invariants",
       "repository": "pubkey-rxdb-learnings",
       "source_version": "HEAD",
-      "content_hash": "a87c45a6ec6d77e4081988ff983339906b30c3154018e7b379f314b82ceb2adb",
+      "content_hash": "b732537b8fed516d82425a9c9c3c59e85677585877e871b600e21f14847efc96",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T12:09:37.529Z"
+      "persisted_at": "2026-11-18T12:51:10.937Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-pubkey-rxdb-learnings": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-pubkey-rxdb-learnings",
@@ -216028,9 +216043,9 @@
       "title": "ADR: Subsystem Boundary & Modular Decoupling in pubkey-rxdb-learnings",
       "repository": "pubkey-rxdb-learnings",
       "source_version": "HEAD",
-      "content_hash": "a65ccd95ba4e08a56c40b54c8cb8c914b222dcc7b0d26e2063c85589bd70d2e0",
+      "content_hash": "9fd9c978bad9b9205ba2463beaf23ffe8ca6cab58773aa4c03b2e4db45a26ccd",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T12:09:37.695Z"
+      "persisted_at": "2026-11-18T12:51:11.081Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-pubkey-rxdb-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-pubkey-rxdb-learnings",
@@ -216040,9 +216055,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for pubkey-rxdb-learnings",
       "repository": "pubkey-rxdb-learnings",
       "source_version": "HEAD",
-      "content_hash": "89e76bb58ca75058a9069ac4bf30c90f70a91ee303b354226eff57a1ee94966d",
+      "content_hash": "1d233ff87144172792e52188f68c5cede94fc0282155c24cca029b006011ab28",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T12:09:37.843Z"
+      "persisted_at": "2026-11-18T12:51:11.202Z"
     },
     "domain_intelligence-architecture-intelligence-k3s-io-k3s-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-k3s-io-k3s-learnings-core-invariants",
@@ -258314,10 +258329,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-alibaba-zvec-technical-construction-intelligence-alibaba-zvec-core-invariants.md",
       "title": "Technical Construction Intelligence: alibaba/zvec Core Invariants",
       "repository": "alibaba/zvec",
-      "source_version": "0c63ea4e",
-      "content_hash": "464f15db9dcef4e762be5246b48d823f21f2b1dc4cce06d5461482c0531f6c1a",
+      "source_version": "018b1eb3",
+      "content_hash": "510d4ff7784010a4aaa6fcab4c25b2d1368ae1adca1aa291a45b1ab947b9a4eb",
       "domain_letter": "H",
-      "persisted_at": "2026-11-16T18:46:55.134Z"
+      "persisted_at": "2026-11-18T12:51:06.920Z"
     },
     "domain_intelligence-technical-construction-intelligence-fb55-htmlparser2-learnings-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-fb55-htmlparser2-learnings-core-invariants",
@@ -270306,9 +270321,9 @@
       "title": "Technical Construction Intelligence: zama-ai-tfhe-rs-learnings Core Invariants",
       "repository": "zama-ai-tfhe-rs-learnings",
       "source_version": "HEAD",
-      "content_hash": "cbda81037bcaa502de095098b97ef0b9fb763f4895a6fdb9f530610acfedaee5",
+      "content_hash": "2354fa36c377c3928f6bc23f8f7622f2e9ef60a42778810be18de6f414d27944",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T11:10:01.836Z"
+      "persisted_at": "2026-11-18T12:51:11.676Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zama-ai-tfhe-rs-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zama-ai-tfhe-rs-learnings",
@@ -270318,9 +270333,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zama-ai-tfhe-rs-learnings",
       "repository": "zama-ai-tfhe-rs-learnings",
       "source_version": "HEAD",
-      "content_hash": "f53fdde4028a04ce62e8703456f3424096d3de8fd14158e12363010a4e1dc719",
+      "content_hash": "2a1f52627343d858df12698054990a9a4cf78a34abdf503f3a9123ff0bc29879",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T11:10:01.945Z"
+      "persisted_at": "2026-11-18T12:51:11.809Z"
     },
     "learn-huggingface-meituan-longcat-longcat-video-avatar-1-6": {
       "learning_id": "learn-huggingface-meituan-longcat-longcat-video-avatar-1-6",
@@ -280156,7 +280171,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Viggle/Qwen-Image-2.1-viggle-turbo",
       "source_version": "hf-viggle-qwen-image-2.1-viggle-turbo",
-      "content_hash": "245e24b0025d0bb0ed8824e891a0d3f93ed0bc36fc1be1dd76388a872f027e9a",
+      "content_hash": "63b956533972654358fef3cb41d11e695f3763db80c9d761331152841bb2730f",
       "dossier_path": "07_PROJECT_LEARNING/hf-viggle-qwen-image-2.1-viggle-turbo-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-viggle-qwen-image-2.1-viggle-turbo-learnings.md",
       "promoted_rules": [],
@@ -280165,7 +280180,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T02:16:09.515Z",
+      "verified_at": "2026-11-18T12:50:50.616Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -286586,6 +286601,96 @@
       "content_hash": "85963665645438d2eb185f24f58bf188be316559ed3b95a480bda57d97bbdf3a",
       "domain_letter": "K",
       "persisted_at": "2026-11-18T12:43:18.371Z"
+    },
+    "rule-9221": {
+      "learning_id": "rule-9221",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9221,
+      "title": "query result is wrong when the event of another instance arrives after a later o",
+      "source_url": "https://github.com/pubkey/rxdb",
+      "source_version": "1135a741",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-18T12:50:59.240Z"
+    },
+    "candidate_directive-query-result-is-wrong-when-the-event-of-another-instance-arrives-after-a-later-o": {
+      "item_id": "candidate_directive-query-result-is-wrong-when-the-event-of-another-instance-arrives-after-a-later-o",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-DYS1-query-result-is-wrong-when-the-event-of-another-instance-arrives-after-a-later-o.md",
+      "title": "query result is wrong when the event of another instance arrives after a later o",
+      "repository": "pubkey-rxdb-learnings",
+      "source_version": "HEAD",
+      "content_hash": "bc790ec6bd828cbafe2192b5eabc732e32ca93403b4593dc55aeacb9700cee80",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-18T12:51:10.802Z"
+    },
+    "rule-9222": {
+      "learning_id": "rule-9222",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9222,
+      "title": "fix issue between key size and pbs count",
+      "source_url": "https://github.com/zama-ai/tfhe-rs",
+      "source_version": "ecc40009",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-18T12:51:03.924Z"
+    },
+    "candidate_directive-fix-issue-between-key-size-and-pbs-count": {
+      "item_id": "candidate_directive-fix-issue-between-key-size-and-pbs-count",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-DTR4-fix-issue-between-key-size-and-pbs-count.md",
+      "title": "fix issue between key size and pbs count",
+      "repository": "zama-ai/tfhe-rs",
+      "source_version": "ecc40009",
+      "content_hash": "e4cee07082c368cbf84b7bdea969d3e2acb181be7ce0d859ed2ffa881b49c342",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-18T12:51:04.292Z"
+    },
+    "rule-9223": {
+      "learning_id": "rule-9223",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9223,
+      "title": "set policy minimum for CMake 4 compatibility",
+      "source_url": "https://github.com/alibaba/zvec",
+      "source_version": "018b1eb3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-18T12:51:06.414Z"
+    },
+    "candidate_directive-set-policy-minimum-for-cmake-4-compatibility": {
+      "item_id": "candidate_directive-set-policy-minimum-for-cmake-4-compatibility",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-DVOF-set-policy-minimum-for-cmake-4-compatibility.md",
+      "title": "set policy minimum for CMake 4 compatibility",
+      "repository": "alibaba/zvec",
+      "source_version": "018b1eb3",
+      "content_hash": "07da4d51f840ee1ebfb9997c46446282368f4c535d4f2dcfdbf2444b3fafcc59",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-18T12:51:06.786Z"
+    },
+    "candidate_directive-bench-fix-issue-between-key-size-and-pbs-count": {
+      "item_id": "candidate_directive-bench-fix-issue-between-key-size-and-pbs-count",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-DZCG-bench-fix-issue-between-key-size-and-pbs-count.md",
+      "title": "bench): fix issue between key size and pbs count",
+      "repository": "zama-ai-tfhe-rs-learnings",
+      "source_version": "HEAD",
+      "content_hash": "6546fca1118d3b29d1123217c6fe0a8a34c505de4286a74bffde2c6ab8f6e4f1",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-18T12:51:11.539Z"
     }
   },
   "ai-builder-brain": {

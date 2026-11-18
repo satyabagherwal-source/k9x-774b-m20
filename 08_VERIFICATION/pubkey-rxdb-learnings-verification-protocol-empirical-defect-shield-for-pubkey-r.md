@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-17T12:09:37.252Z",
+  "timestamp": "2026-11-18T12:51:10.700Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-pubkey-rxdb-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [pubkey-rxdb-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-17T12:09:37.252Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-18T12:51:10.700Z`  
 > **Learning ID**: `LEARN-EVO-pubkey-rxdb-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/pubkey-rxdb-learnings.md`  
 > **Source**: github ([https://github.com/pubkey/rxdb](https://github.com/pubkey/rxdb))  
-> **Source Version**: `08f29f57`  
+> **Source Version**: `1135a741`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-17T12:09:26.919Z  
+> **Timestamp**: 2026-11-18T12:50:58.486Z  
 > **Learning ID**: `learn-github-pubkey-rxdb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/pubkey-rxdb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/pubkey/rxdb](https://github.com/pubkey/rxdb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T12:09:26.752Z  
+> **Harvest Timestamp**: 2026-11-18T12:50:58.481Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: The local-first database that runs on every JS runtime and replicates with your existing backend - no vendor, no lock-in - https://rxdb.info/
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 23439 stars
+- **Stars / Engagement**: 23441 stars
 
 ---
 
@@ -807,7 +807,19 @@ export async function cleanupRxState(
                     return true;
                 }
                 await rxDatabase.requestIdlePromise();
-                return state._cleanup();
+                if (rxCollection.closed) {
+                    return true;
+                }
+                return state._cleanup().catch(err => {
+                    /**
+                     * The collection can be closed while the cleanup is running.
+                     * Then the cleanup run ends without an error.
+                     */
+                    if (rxCollection.closed) {
+                        return true;
+                    }
+                    throw err;
+                });
             });
         isDone = await RXSTATE_CLEANUP_QUEUE;
     }
@@ -908,11 +920,11 @@ export function getRxStorageIpcRenderer(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #9747** (2026-11-17): **chore(deps): update dependency fake-indexeddb to v6.2.8**
-  *Symptoms*: This PR contains the following updates:  | Package | Change | [Age](https://docs.renovatebot.com/merge-confidence/) | [Confidence](https://docs.renovatebot.com/merge-confidence/) | |---|---|---|---| | [fake-indexeddb](https://redirect.github.com/dumbmatter/fakeIndexedDB) | [`6.2.7` → `6.2.8`](https://renovatebot.com/diffs/npm/fake-indexeddb/6.2.7/6.2.8) | ![age](https://developer.mend.io/api/mc/badges/age/npm/fake-indexeddb/6.2.8?slim=true) | ![confidence](https://developer.mend.io/api/mc/badges/confidence/npm/fake-indexeddb/6.2.7/6.2.8?slim=true) |  ---  ### Release Notes  <details> <summary>dumbmatter/fakeIndexedDB (fake-indexeddb)</summary>  ### [`v6.2.8`](https://redirect.github.com/dumbmatter/fakeIndexedDB/blob/HEAD/CHANGELOG.md#628-2026-11-08)  [Compare Source](https://redirect.github.com/dumbmatter/fakeIndexedDB/compare/v6.2.7...v6.2.8)  - Fixed regression in v6.2.6 when calling `transaction.abort()` in a request error handler ([#&#8203;174](https://redirect.github.com/dumbmatter/fakeIndexedDB/issues/174) by [@&#8203;nolanlawson](https://redirect.github.com/nolanlawson))  - Fixed conversion of inline typed array keys to ArrayBuffers when storing records ([#&#8203;176](https://redirect.github.com/dumbmatter/fakeIndexedDB/issues/176) by [@&#8203;Huyvux12](https://redirect.github.com/Huyvux12))  </details>  ---  ### Configuration  📅 **Schedule**: (UTC)  - Branch creation   - At any time (no schedule defined) - Automerge   - At any time (no schedule defined)  🚦 **Automer
+- **Issue #9755** (2026-11-18): **fix(deps): update dependency graphql-ws to v6.4.2**
+  *Symptoms*: This PR contains the following updates:  | Package | Change | [Age](https://docs.renovatebot.com/merge-confidence/) | [Confidence](https://docs.renovatebot.com/merge-confidence/) | |---|---|---|---| | [graphql-ws](https://the-guild.dev/graphql/ws) ([source](https://redirect.github.com/enisdenjo/graphql-ws)) | [`6.4.1` → `6.4.2`](https://renovatebot.com/diffs/npm/graphql-ws/6.4.1/6.4.2) | ![age](https://developer.mend.io/api/mc/badges/age/npm/graphql-ws/6.4.2?slim=true) | ![confidence](https://developer.mend.io/api/mc/badges/confidence/npm/graphql-ws/6.4.1/6.4.2?slim=true) |  ---  ### Release Notes  <details> <summary>enisdenjo/graphql-ws (graphql-ws)</summary>  ### [`v6.4.2`](https://redirect.github.com/enisdenjo/graphql-ws/blob/HEAD/CHANGELOG.md#642)  [Compare Source](https://redirect.github.com/enisdenjo/graphql-ws/compare/v6.4.1...v6.4.2)  ##### Patch Changes  - [#&#8203;705](https://redirect.github.com/enisdenjo/graphql-ws/pull/705) [`f86ce7e`](https://redirect.github.com/enisdenjo/graphql-ws/commit/f86ce7e64edd0de3bc0fb81121c2ab687d467a69) Thanks [@&#8203;mattkrick](https://redirect.github.com/mattkrick)! - Wait for each uWebSockets.js socket's own backpressure to drain, and complete the operations of a socket that closes while backpressured. Sockets used to share one drain callback, so an operation on a backpressured socket could stall until that socket closed  </details>  ---  ### Configuration  📅 **Schedule**: (UTC)  - Branch creation   - At any time (no schedule def
 
-- **Issue #9746** (2026-11-16): **Orga: link five related closed pull requests in the next-major todos**
-  *Symptoms*: ## This PR contains:  - SOMETHING ELSE: links in `orga/before-next-major.md`  ## Describe the problem you have without this PR Five more pull requests are closed because they are the same change as, or a part of, a change that already has a todo entry for the next major release. This pull request adds one sentence to each of these four entries that names the closed pull request and what it contains, so that the implementations are found when the entry is worked on.  | Entry | Closed pull requests that are linked now | |---|---| | Storage wrappers must not transform inline attachment data twice | [pubkey/rxdb#9603](https://github.com/pubkey/rxdb/pull/9603), [pubkey/rxdb#9556](https://github.com/pubkey/rxdb/pull/9556) | | A write that waits in an async pre-hook must not reach the storage after close or remove | [pubkey/rxdb#9673](https://github.com/pubkey/rxdb/pull/9673) | | `remove()` must run all `onRemove` handlers and remove the data when one handler throws | [pubkey/rxdb#9578](https://github.com/pubkey/rxdb/pull/9578) | | GraphQL replication must reopen the pull stream after the websocket client gave up | [pubkey/rxdb#9621](https://github.com/pubkey/rxdb/pull/9621) |  No changelog entry, because only an orga file changes.  Changed files: - `orga/before-next-major.md`  ## Todos - [x] Documentation  ## Assisted by YES, CLAUDE CODE  --- _Generated by [Claude Code](https://claude.ai/code/session_015P6w6hnnyVPXwotts6YQ2F)_
+- **Issue #9754** (2026-11-17): **Remove "From" prefix from premium prices**
+  *Symptoms*: ## This PR contains: - IMPROVED DOCS  ## Describe the problem you have without this PR The Pro and Pro Plus tiers on the premium pricing page showed a "From" prefix before the price. That suggested the price can vary, but prices are exactly the same for all customers. This PR removes the prefix. The empty prefix slot still renders `&nbsp;`, so the tier cards stay aligned.  ## Assisted by YES, CLAUDE CODE  --- _Generated by [Claude Code](https://claude.ai/code/session_015P6w6go1qTWCKtGAY4H3BE)_
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -929,565 +941,407 @@ export function getRxStorageIpcRenderer(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d1768ea6` (2026-11-16)
-**Commit Message**: Fix: limit 0 returns no documents and a negative limit throws (QU23) (#9718)
+### Incident Patch 1: `1135a741` (2026-11-18)
+**Commit Message**: Fix: query result is wrong when the event of another instance arrives after a later own write (#9629)
 
-* fix: limit 0 returns no documents and a negative limit throws
+* fix: query result is wrong when the event of another instance arrives after a later own write
 
-Decision of the maintainer: Setting "limit: 0" makes the query return
-zero documents. This behavior is equal to SQL databases. A limit that
-is calculated from variables in user logic can be 0, and then fetching
-zero documents is right and fetching all documents is not. Setting the
-limit to a negative value must throw, also without dev-mode.
+Co-Authored-By: Claude Fable 5.2 <[REDACTED_EMAIL]>
+Claude-Session: https://claude.ai/code/session_015P6w6hnnyVPXwotts6YQ2F
 
-Changes:
-- RxQuery: a find() query with limit 0 returns an empty result without
-  asking the RxStorage. Before, a find() by primary key (also with $in)
-  ignored limit 0 and returned documents.
-- Live queries with limit 0 emit an empty array once and are not
-  recalculated on change events. Before, the live query by primary key
-  emitted documents and grew on inserts.
-- query-builder: limit(0) is kept when more building steps are chained.
-- createRxQuery() throws the new RxError QU23 for a negative limit, for
-  find(), count() and the query-builder limit(), with and without
-  dev-mode. Before, exec() threw a plain Error of event-reduce, a live
-  query ended the process with an uncaught exception and a qu
+* test: use the storage of the test config
 
-**File**: `docs-src/docs/query-builder.md` (modified, +2/-0)
-```diff
-@@ -220,6 +220,8 @@ const results = await myDatabase.todos.find()
- // > [RxDocument[todo2], RxDocument[todo4]]
- ```
- 
-+`limit(0)` makes the query return zero documents and a negative value like `limit(-1)` throws [`QU23`](./errors.md#QU23).
-+
- The chained methods also work with `findOne()`:
- 
- ```ts
-```
+The test created its own Dexie storage on fake-indexeddb because the bug
+needs change events of another instance that arrive late.
+It now runs on config.storage.getStorage(). A wrapper that only holds back
+the change events of one instance makes the order of the events the same
+on every storage with multiInstance support.
 
-**File**: `docs-src/docs/rx-query-examples.md` (modified, +4/-1)
-```diff
-@@ -20,7 +20,7 @@ A Mango query is an object with these fields:
- | `selector` | The conditions a document must match. An empty selector `{}` matches all documents. |
- | `sort` | An array of `{ field: 'asc' \| 'desc' }` objects. |
- | `skip` | The number of documents to skip. |
--| `limit` | The maximum number of documents to return. |
-+| `limit` | The maximum number of documents to return. `limit: 0` returns zero documents. |
- | `index` | Forces the query to use a specific index. See [setting a specific index](./rx-query.md#setting-a-specific-index). |
- 
- ```ts
-@@ -356,6 +356,8 @@ const results = await myDatabase.todos.find({
- // > [RxDocument[todo3], RxDocument[todo4]]
- ```
- 
-+Same as in SQL databases, `limit: 0` returns zero documents and not all documents. A negative `limit` throws [`QU23`](./errors.md#QU23).
-+
- `findOne()` sets `limit: 1` by itself and returns the first document of the sorted result, or `null`:
- 
- ```ts
-@@ -377,6 +379,7 @@ RxDB validates queries in [dev-mode](./dev-mode.md) to catch mistakes early:
- - **No `undefined` values**: A query must not contain fields with the value `undefined`, because JSON serialization would drop them silently and change the meaning of the query. This throws [`QU19`](./errors.md#QU19).
- - **No `RegExp` instances**: Use a `$regex` string instead. This throws [`QU16`](./errors.md#QU16).
- - **Only JSON values**: A query must not contain values that `JSON.stringify()` drops or changes, like `NaN`, `Infinity`, `-Infinity`, `bigint`, functions, or `Date` objects. This throws [`QU22`](./errors.md#QU22).
-+- **No negative limit**: The `limit` must be `0` or greater, where `limit: 0` returns zero documents. A negative `limit` throws [`QU23`](./errors.md#QU23). This check is part of the RxDB core and also runs without dev-mode.
- - **Only the known query fields**: The query object may only contain `selector`, `sort`, `skip`, `limit` and `index`. This throws [`QU11`](./errors.md#QU11).
- 
- RxDB supports the operators `$eq`, `$ne`, `$gt`, `$gte`, `$lt`, `$lte`, `$in`, `$nin`, `$exists`, `$type`, `$regex` (with `$options`), `$size`, `$mod`, `$elemMatch`, `$and`, `$or`, `$nor` and `$not`. Queries always return full documents. There are no projections or aggregations, because the documents are already in the same JavaScript process as your application code. Read more in the [RxQuery FAQ](./rx-query.md#faq).
-```
+Co-Authored-By: Claude Fable 5.2 <[REDACTED_EMAIL]>
+Claude-Session: https://claude.ai/code/session_015P6w6hnnyVPXwotts6YQ2F
 
-**File**: `docs-src/docs/rx-query.md` (modified, +7/-0)
-```diff
-@@ -501,6 +501,13 @@ await myDatabase.addCollections({
- 
- 
- <Faq>
-+<FaqItem question="What does limit: 0 return in an RxDB query?">
-+
-+<div>
-+  A query with `limit: 0` returns zero documents, same as `LIMIT 0` in SQL databases. The limit is often calculated from variables in your own code, and when that calculation ends at `0`, fetching zero documents is the expected result instead of all documents of the collection. To get all documents, leave out the `limit`. A negative `limit` throws the error [`QU23`](./errors.md#QU23), also when [dev-mode](./dev-mode.md) is not used.
-+</div>
-+
-+</FaqItem>
- <FaqItem question="Why does RxDB use the Mango query syntax instead of SQL?">
- 
- <div>
-```
+* Simplify hasNewerState() of the ChangeEventBuffer to stay inside the bundle size limit
 
-**File**: `orga/changelog/fix-limit-zero-and-negative-limit.json` (added, +6/-0)
+The test-builds job failed in "npm run test:bundle-size": memory-minimal
+had 146950 bytes minified with a limit of 146885 bytes.
+
+hasNewerState() now uses events.some() and builds the map of the newest
+lwt per document with Math.max(). The behavior is the same: events of own
+writes are skip
+
+**File**: `orga/changelog/query-stale-event-of-other-instance.json` (added, +6/-0)
 ```diff
 @@ -0,0 +1,6 @@
 +{
 +    "$schema": "./schema.json",
-+    "text": "FIX a query with `limit: 0` now returns zero documents everywhere, like in SQL databases. Before, `find()` by primary key (also with `$in`) and its live query ignored `limit: 0` and returned documents, and the query-builder dropped `limit(0)` when more building steps were chained. A negative `limit` now throws the new error `QU23` when the query is created, also without dev-mode. Before, it threw a plain `Error` of event-reduce on `exec()`, ended the process with an uncaught exception on live queries, or was ignored for queries by primary key",
++    "text": "FIX With `multiInstance: true`, the results of `find().$`, `find().exec()`, and `count().$` contained a document twice or with an outdated state when the event of a write from another instance arrived after the event of a later own write to the same document. The query now runs again over the storage when such an event arrives",
 +    "links": [],
-+    "priority": 6
++    "priority": 5
 +}
 ```
 
-**File**: `src/plugins/dev-mode/error-messages.ts` (modified, +6/-0)
+**File**: `src/change-event-buffer.ts` (modified, +39/-0)
 ```diff
-@@ -194,6 +194,12 @@ export const ERROR_MESSAGES = {
-         fix: 'Use only values that are valid JSON: strings, finite numbers, booleans, null, arrays and plain objects. Leave out the limit to get all documents and store dates as strings or numbers.',
-         docs: 'https://rxdb.info/rx-query-examples.html?console=errors&code=QU22#query-rules'
-     },
-+    QU23: {
-+        message: 'The limit of a query must not be negative.',
-+        cause: 'A query was created with a negative limit. There is no result set with a negative amount of documents, so RxDB does not guess what was meant.',
-+        fix: 'Use a limit of 0 or more. A limit of 0 returns no documents. Leave out the limit to get all documents. When the limit is calculated, check its boundaries before the query is created, for example with Math.max(0, limit).',
-+        docs: 'https://rxdb.info/rx-query.html?console=errors&code=QU23#faq'
-+    },
+@@ -41,6 +41,13 @@ export class ChangeEventBuffer<RxDocType> {
+     */
+     private buffer: RxStorageChangeEvent<RxDocType>[] = [];
  
-     // mquery.js
-     MQ1: {
-```
-
-**File**: `src/plugins/query-builder/mquery/nosql-query-builder.ts` (modified, +1/-1)
-```diff
-@@ -49,7 +49,7 @@ export class NoSqlQueryBuilderClass<DocType> {
-             if (mangoQuery.selector) {
-                 queryBuilder.find(mangoQuery.selector);
-             }
--            if (mangoQuery.limit) {
-+            if (typeof mangoQuery.limit === 'number') {
-                 queryBuilder.limit(mangoQuery.limit);
-             }
-             if (mangoQuery.skip) {
-```
-
-**File**: `src/rx-query.ts` (modified, +22/-7)
-```diff
-@@ -301,10 +301,6 @@ export class RxQueryBase<
-         counter: number;
-     }> {
-         this._execOverDatabaseCount = this._execOverDatabaseCount + 1;
--        let result: {
--            result: RxDocumentData<RxDocType>[] | number;
--            counter: number;
--        };
- 
-         /**
-          * Snapshot the counter before running the query.
-@@ -313,6 +309,18 @@ export class RxQueryBase<
-          */
-         const counterBefore = this.collection._changeEventBuffer.getCounter();
- 
-+        /**
-+         * Starts as the empty result of a query with limit 0,
-+         * which never returns documents so that the storage is not asked.
-+         */
-+        let result: {
-+            result: RxDocumentData<RxDocType>[] | number;
-+            counter: number;
-+        } = {
-+            result: [],
-+            counter: counterBefore
-+        };
++    /**
++     * Pointers lower than this value are out of bounds,
++     * so that queries which have not processed these events
++     * re-execute over the storage instead of using the buffer.
++     */
++    private minPointer: number = 0;
 +
-         if (this.op === 'findByIds') {
-             const ids: string[] = ensureNotFalsy(this.mangoQuery.selector as any)[this.collection.schema.primaryPath].$in;
-             const docsData: RxDocumentData<RxDocType>[] = [];
-@@ -354,7 +362,7 @@ export class RxQueryBase<
-                     counter: this.collection._changeEventBuffer.getCounter()
-                 };
-             }
--        } else {
-+        } else if (this.mangoQuery.limit !== 0) {
-             const resultWindowBuffer = getResultWindowBuffer<RxDocType>(this as any);
-             if (resultWindowBuffer) {
-                 /**
-@@ -722,6 +730,13 @@ export function createRxQuery<RxDocType>(
-         other
-     });
+     public limit: number = 100;
  
-+    if ((queryObj.limit as number) < 0) {
-+        throw newRxError('QU23', {
-+            collection: collection.name,
-+            query: queryObj
+ 
+@@ -76,6 +83,9 @@ export class ChangeEventBuffer<RxDocType> {
+     private _handleChangeEvents(events: RxStorageChangeEvent<RxDocType>[]) {
+         const counterBefore = this.counter;
+         this.counter = this.counter + events.length;
++        if (this.hasNewerState(events)) {
++            this.minPointer = this.counter + 1;
++        }
+         if (events.length > this.limit) {
+             this.buffer = events.slice(events.length * -1);
+         } else {
+@@ -90,6 +100,32 @@ export class ChangeEventBuffer<RxDocType> {
+         }
+     }
+ 
++    /**
++     * Events of other instances arrive asynchronously,
++     * so they can arrive after the event of a later write to the same document.
++     * Applying such an event on top of the newer state gives a wrong query result.
++     * The revision ends with the token of the instance that has written it,
++     * so events of own writes are skipped which keeps this check cheap.
++     * @return true if the buffer contains a newer state of one of the event documents
++     */
++    private hasNewerState(events: RxStorageChangeEvent<RxDocType>[]): boolean {
++        const ownRevisionEnd = '-' + this.collection.database.token;
++        let lwtByDocId: Map<string, number> | undefined;
++        return events.some(event => {
++            if (event.documentData._rev.endsWith(ownRevisionEnd)) {
++                return false;
++            }
++            if (!lwtByDocId) {
++                const map = lwtByDocId = new Map<string, number>();
++                this.buffer.forEach(buffered => map.set(
++                    buffered.documentId,
++                    Math.max(map.get(buffered.documentId) || 0, buffered.documentData._meta.lwt)
++                ));
++            }
++            return (lwtByDocId.get(event.documentId) as number) > event.documentData._meta.lwt;
 +        });
 +    }
 +
-     let ret = new RxQueryBase<RxDocType, any>(op, queryObj, collection, other);
- 
-     // ensure when created with same params, only one is created
-@@ -849,8 +864,8 @@ function __ensureEqual<RxDocType>(
-                     ret = true; // true because results changed
-                     rxQuery._setResultData(newCount as any);
-                 }
--            } else {
--                // 'find' or 'findOne' query
-+            } else if (rxQuery.mangoQuery.limit !== 0) {
-+                // 'find' or 'findOne' query, with limit 0 no event can change the empty result
-                 const resultWindowBuffer = getResultWindowBuffer<RxDocType>(rxQuery as any);
-                 const eventReduceResult = resultWindowBuffer ? calculateNewResultsWithResultWindowBuffer(
-                     resultWindowBuffer,
-```
-
-**File**: `src/types/rx-storage.interface.d.ts` (modified, +6/-0)
-```diff
-@@ -96,6 +96,12 @@ export type FilledMangoQuery<RxDocType> = {
+     getCounter() {
+         this.processTasks();
+         return this.counter;
+@@ -105,6 +141,9 @@ export class ChangeEventBuffer<RxDocType> {
       */
-     skip: number;
- 
-+    /**
-+     * The maximum amount of returned documents.
-+     * With limit: 0 the RxStorage must return zero documents,
-+     * only a query without a limit returns all matching documents.
-+     * RxDB never sends a negative limit to the RxStorage.
-+     */
-     limit?: number;
- };
- 
-```
-
----
-
-### Incident Patch 2: `6f588c51` (2026-11-16)
-**Commit Message**: fix: RxQuery.exec() waits for all queued runs of an observed query under steady writes (#9736)
-
-The test "exec() must resolve in bounded time and stay correct while other
-writes are running on a slow storage" of #9476 failed intermittently in the
-windows CI job. It was not a too tight time bound. An observed query gets one
-_ensureEqual() call queued for each change event. While writes keep running,
-each of these calls runs the query over the database up to 4 times and ends
-with the counter -1, so the next call runs it again. On windows the timers
-only fire each ~15 ms, a run takes longer than it takes for the next event to
-arrive, the queue grows and an exec() at its end waits for all of it.
-
-A queued call now returns when a run over the database was started after the
-call was queued, because that run already contains all writes that were
-finished when the call was made.
-
-The test now also counts the runs over the database during a single exec(),
-which does not depend on the speed of the timers.
-
-
-Claude-Session: https://claude.ai/code/session_015P6w6hnnyVPXwotts6YQ2F
-
-Co-authored-by: Claude <[REDACTED_EMAIL]>
-
-**File**: `orga/changelog/fix-rx-query-exec-waits-for-queued-runs-of-observed-query.json` (added, +11/-0)
-```diff
-@@ -0,0 +1,11 @@
-+{
-+    "$schema": "./schema.json",
-+    "text": "FIX `RxQuery.exec()` on a query that is also observed via `.$` did not resolve in bounded time while other writes kept running on a slow storage. Each change event queued one more run of the query and the `exec()` had to wait for all of them. A queued call now uses the result of a run over the database that was started after the call was queued.",
-+    "links": [
-+        {
-+            "url": "https://github.com/pubkey/rxdb/pull/9476",
-+            "linkText": "#9476"
+     getArrayIndexByPointer(pointer: number): number | null {
+         this.processTasks();
++        if (pointer < this.minPointer) {
++            return null;
 +        }
-+    ],
-+    "priority": 5
-+}
+         const oldestEvent = this.buffer[0];
+         const oldestCounter = this.eventCounterMap.get(
+             oldestEvent
 ```
 
-**File**: `src/rx-query.ts` (modified, +22/-8)
+**File**: `test/unit/cross-instance.test.ts` (modified, +64/-0)
 ```diff
-@@ -758,23 +758,27 @@ function _isResultsInSync(rxQuery: RxQueryBase<any, any>): boolean {
- function _ensureEqual(rxQuery: RxQueryBase<any, any>): Promise<boolean> {
-     if (rxQuery.collection.awaitBeforeReads.size > 0) {
-         return Promise.all(Array.from(rxQuery.collection.awaitBeforeReads).map(fn => fn()))
--            .then(() => {
--                rxQuery._ensureEqualQueue = rxQuery._ensureEqualQueue
--                    .then(() => __ensureEqual(rxQuery));
--                return rxQuery._ensureEqualQueue;
--            });
-+            .then(() => _enqueueEnsureEqual(rxQuery));
-     }
-+    return _enqueueEnsureEqual(rxQuery);
-+}
+@@ -140,6 +140,70 @@ describe('cross-instance.test.js', () => {
+     });
  
-+function _enqueueEnsureEqual(rxQuery: RxQueryBase<any, any>): Promise<boolean> {
-+    const execCountWhenQueued = rxQuery._execOverDatabaseCount;
-     rxQuery._ensureEqualQueue = rxQuery._ensureEqualQueue
--        .then(() => __ensureEqual(rxQuery));
-+        .then(() => __ensureEqual(rxQuery, execCountWhenQueued));
-     return rxQuery._ensureEqualQueue;
- }
- 
- /**
-  * ensures that the results of this query is equal to the results which a query over the database would give
-+ * @param execCountWhenQueued the value of RxQuery._execOverDatabaseCount at the time when this call was added to the queue
-  * @return true if results have changed
-  */
--function __ensureEqual<RxDocType>(rxQuery: RxQueryBase<RxDocType, any>): Promise<boolean> {
-+function __ensureEqual<RxDocType>(
-+    rxQuery: RxQueryBase<RxDocType, any>,
-+    execCountWhenQueued: number
-+): Promise<boolean> {
-     /**
-      * @performance
-      * Use a counter instead of Date.now() since _lastEnsureEqual
-@@ -790,7 +794,17 @@ function __ensureEqual<RxDocType>(rxQuery: RxQueryBase<RxDocType, any>): Promise
-         // db is closed
-         rxQuery.collection.database.closed ||
-         // nothing happened since last run
--        _isResultsInSync(rxQuery)
-+        _isResultsInSync(rxQuery) ||
-+        /**
-+         * While writes keep running, each run over the database ends with the counter -1
-+         * and each change event adds one more call to the queue. Running the query
-+         * for each of these calls takes longer than it takes for the next event to arrive,
-+         * so the queue would grow and an exec() at its end would not resolve.
-+         * A run over the database that was started after this call was queued
-+         * already contains all writes that were finished when this call was made.
-+         * So its result is used instead of running the query again.
-+         */
-+        rxQuery._execOverDatabaseCount > execCountWhenQueued
-     ) {
-         return PROMISE_RESOLVE_FALSE;
-     }
-```
-
-**File**: `test/unit/rx-query.test.ts` (modified, +14/-0)
-```diff
-@@ -1672,6 +1672,15 @@ describe('rx-query.test.ts', () => {
-                 return result;
-             };
- 
-+            /**
-+             * The observed queries get one more run queued by each change event.
-+             * An exec() must not wait for all of them, so the number of runs over the database
-+             * during a single exec() is counted. This does not depend on the speed of the timers.
-+             * At most, the queued run that is already running finishes its 4 runs
-+             * and the run of the exec() itself does 4 more.
-+             */
-+            const observedQueries = [findQuery, limitQuery, countQuery];
-+            let maxRunsPerExec = 0;
-             let timedOut = false;
-             try {
-                 for (let i = 0; i < 3 && !timedOut; i++) {
-@@ -1682,10 +1691,14 @@ describe('rx-query.test.ts', () => {
-                         () => c.find({ selector: { age: { $gt: i } } }).exec()
-                     ];
-                     for (const run of runs) {
-+                        const runsBefore = observedQueries.map(q => q._execOverDatabaseCount);
-                         if (await execInTime<unknown>(run) === 'timeout') {
-                             timedOut = true;
-                             break;
-                         }
-+                        observedQueries.forEach((q, idx) => {
-+                            maxRunsPerExec = Math.max(maxRunsPerExec, q._execOverDatabaseCount - runsBefore[idx]);
-+                        });
-                     }
-                 }
-             } finally {
-@@ -1694,6 +1707,7 @@ describe('rx-query.test.ts', () => {
-             }
-             assert.strictEqual(timedOut, false, 'exec() did not resolve while writes are running');
-             assert.ok(writeCount > 5, 'writes must have been running, got ' + writeCount);
-+            assert.ok(maxRunsPerExec <= 8, 'a single exec() must not wait for more than 8 runs over the database, got ' + maxRunsPerExec);
- 
-             const expectedSorted = Array.from(expectedIds).sort();
-             const findResult = await findQuery.exec();
+     describe('RxQuery', () => {
++        it('should have the correct query results when the event of another instance arrives after the event of a later own write', async () => {
++            const name = randomToken(10);
++            async function createInstance(storage: RxStorage<any, any>): Promise<RxCollection<HumanDocumentType>> {
++                const db = await createRxDatabase<{ human: RxCollection<HumanDocumentType>; }>({
++                    name,
++                    storage,
++                    multiInstance: true,
++                    ignoreDuplicate: true
++                });
++                const collections = await db.addCollections({
++                    human: {
++                        schema: schemas.human
++                    }
++                });
++                return collections.human;
++            }
++            const heldEventsStorage = getStorageWithHeldEvents();
++            const c1 = await createInstance(heldEventsStorage.storage);
++            const c2 = await createInstance(config.storage.getStorage());
++            const query = c1.find({ sort: [{ passportId: 'asc' }] });
++            const toState = (docs: RxDocument<HumanDocumentType>[]) => docs.map(d => d.passportId + '|' + d.firstName);
++
++            let lastEmitted: string[] = [];
++            let lastCount = -1;
++            const eventsByDocId = new Map<string, number>();
++            const subs = [
++                query.$.subscribe(docs => lastEmitted = toState(docs)),
++                c1.count().$.subscribe(count => lastCount = count),
++                c1.$.subscribe(event => eventsByDocId.set(
++                    event.documentId,
++                    (eventsByDocId.get(event.documentId) ?? 0) + 1
++                ))
++            ];
++
++            const iterations = 3;
++            for (let i = 0; i < iterations; i++) {
++                const id = 'doc' + i;
++                /**
++                 * The upsert of c1 writes on top of the state of c2
++                 * and c1 gets its own event before the insert event of c2 arrives.
++                 */
++                heldEventsStorage.holdEvents = true;
++                await c2.insert(schemaObjects.humanData(id, 20, 'other'));
++                await waitUntil(() => heldEventsStorage.heldEvents() > 0);
++                heldEventsStorage.holdEvents = false;
++                await c1.upsert(schemaObjects.humanData(id, 20, 'own'));
++                await waitUntil(() => eventsByDocId.get(id) === 1);
++                heldEventsStorage.releaseEvents();
++                await waitUntil(() => eventsByDocId.get(id) === 2);
++
++                const storageState = toState(await c2.find({ sort: [{ passportId: 'asc' }] }).exec());
++                assert.strictEqual(storageState.length, i + 1);
++                assert.strictEqual(storageState[i], id + '|own');
++                assert.deepStrictEqual(toState(await query.exec()), storageState, 'exec() in iteration ' + i);
++                await waitUntil(() => lastEmitted.length === storageState.length, 1000).catch(() => { });
++                assert.deepStrictEqual(lastEmitted, storageState, 'find().$ in iteration ' + i);
++                assert.strictEqual(await c1.count().exec(), i + 1, 'count().exec() in iteration ' + i);
++                assert.strictEqual(lastCount, i + 1, 'count().$ in iteration ' + i);
++            }
++
++            subs.forEach(sub => sub.unsubscribe());
++            await c1.database.close();
++            await c2.database.close();
++        });
+         it('should not apply a write of another instance twice when the query result already contains it', async () => {
+             const name = randomToken(10);
+             const createCollection = async (storage: RxStorage<any, any>) => {
 ```
 
 ---
 
-### Incident Patch 3: `7b2b1675` (2026-11-17)
-**Commit Message**: fix: CouchDB replication skips changes between the checkpoint pull and the first long polling request (#9672)
+### Incident Patch 2: `bafa39cc` (2026-11-18)
+**Commit Message**: fix: cancel() and close() hang on non-live replication with failing handler (#9524)
 
 Claude-Session: https://claude.ai/code/session_015P6w6hnnyVPXwotts6YQ2F
 
 Co-authored-by: Claude <[REDACTED_EMAIL]>
 
-**File**: `orga/changelog/fix-couchdb-longpoll-since-now-skips-changes.json` (added, +6/-0)
+**File**: `orga/changelog/fix-non-live-replication-cancel-hang.json` (added, +6/-0)
 ```diff
 @@ -0,0 +1,6 @@
 +{
 +    "$schema": "./schema.json",
-+    "text": "FIX the live CouchDB replication skipped a server change forever when it happened after the checkpoint pull and before the first long polling request with `since=now` reached the server",
++    "text": "FIX `cancel()`, `remove()`, `collection.close()` and `database.close()` never resolved on a replication with `live: false` while the pull or push handler kept failing",
 +    "links": [],
 +    "priority": 5
 +}
 ```
 
-**File**: `src/plugins/replication-couchdb/index.ts` (modified, +13/-0)
+**File**: `src/plugins/replication/index.ts` (modified, +19/-4)
 ```diff
-@@ -351,8 +351,21 @@ export function replicateCouchDB<RxDocType>(
-                     }
-                     const documents: WithDeleted<RxDocType>[] = jsonResponse.results
-                         .map(row => couchDBDocToRxDocData(collection.schema.primaryPath, ensureNotFalsy(row.doc)));
-+                    const requestedSince = since;
-                     since = jsonResponse.last_seq;
+@@ -168,11 +168,21 @@ export class RxReplicationState<RxDocType, CheckpointType> {
+         const startPromiseWithResolvers = createPromiseWithResolvers<void>();
+         this.callOnStart = startPromiseWithResolvers.resolve;
+         this.startPromise = startPromiseWithResolvers.promise;
++        const stopRequestedPromiseWithResolvers = createPromiseWithResolvers<void>();
++        this.callOnStopRequested = stopRequestedPromiseWithResolvers.resolve;
++        this.stopRequestedPromise = stopRequestedPromiseWithResolvers.promise;
+     }
  
-+                    if (requestedSince === 'now') {
-+                        /**
-+                         * The server resolves 'now' when the request arrives,
-+                         * so changes between the last pulled checkpoint and
-+                         * that moment are not part of this response.
-+                         * Emitting its last_seq as checkpoint would skip them,
-+                         * so a RESYNC runs the checkpoint based pull instead.
-+                         */
-+                        pullStream$.next('RESYNC');
-+                        continue;
-+                    }
-+
-                     pullStream$.next({
-                         documents,
-                         checkpoint: {
-```
-
-**File**: `test/unit.test.ts` (modified, +1/-0)
-```diff
-@@ -62,6 +62,7 @@ import './unit/replication-multiinstance.test.ts';
- import './unit/replication-graphql.test.ts';
- import './unit/replication-websocket.test.ts';
- import './unit/replication-webrtc.test.ts';
-+import './unit/replication-couchdb.test.ts';
- import './unit/encryption.test.ts';
- import './unit/rx-state.test.ts';
- import './unit/migration-schema.test.ts';
-```
-
-**File**: `test/unit/replication-couchdb.test.ts` (added, +165/-0)
-```diff
-@@ -0,0 +1,165 @@
-+/**
-+ * These tests run the CouchDB replication against a custom fetch method
-+ * so that they do not require a CouchDB server.
-+ * The tests that require a CouchDB server are in test/replication-couchdb.test.ts
-+ */
-+import assert from 'assert';
-+import {
-+    wait,
-+    waitUntil
-+} from 'async-test-util';
-+import config from './config.ts';
-+import {
-+    schemaObjects,
-+    humansCollection
-+} from '../../plugins/test-utils/index.mjs';
-+import {
-+    replicateCouchDB,
-+    FetchMethodType
-+} from '../../plugins/replication-couchdb/index.mjs';
-+import {
-+    randomToken
-+} from '../../plugins/core/index.mjs';
-+
-+describe('replication-couchdb.test.ts (custom fetch, changes feed sequence)', () => {
-+    if (!config.storage.hasReplication) {
-+        return;
-+    }
-+    const SERVER_URL = 'http://localhost/couchdb-custom-fetch-sequence/';
-+
-+    type ServerDoc = {
-+        _id: string;
-+        _rev: string;
-+        firstName: string;
-+        lastName: string;
-+        age: number;
-+    };
-+    type ChangesResponseBody = {
-+        results: {
-+            id: string;
-+            seq: number;
-+            changes: { rev: string; }[];
-+            doc: ServerDoc;
-+        }[];
-+        last_seq: number;
-+    };
-+
+     private callOnStart: () => void = undefined as any;
+     private cancelOnCollectionClose = () => this.cancel();
+ 
 +    /**
-+     * Answers requests to the _changes endpoint like a CouchDB server
-+     * with an update sequence that increases by one on each write.
++     * Resolves as soon as cancel() or remove() is called,
++     * before these calls are processed in the startQueue.
 +     */
-+    function createChangesFeedServer() {
-+        const rows: ChangesResponseBody['results'] = [];
-+        let waitingLongpollRequests = 0;
-+        function changesSince(since: number, limit: number): ChangesResponseBody {
-+            const results = rows.filter(row => row.seq > since).slice(0, limit);
-+            return {
-+                results,
-+                last_seq: results.length > 0 ? results[results.length - 1].seq : rows.length
++    private stopRequestedPromise: Promise<void>;
++    private callOnStopRequested: () => void = undefined as any;
++
+     public internalReplicationState?: RxStorageInstanceReplicationState<RxDocType>;
+     public metaInstance?: RxStorageInstance<RxStorageReplicationMeta<RxDocType, CheckpointType>, any, {}, any>;
+     public remoteEvents$: Subject<RxReplicationPullStreamItem<RxDocType, CheckpointType>> = new Subject();
+@@ -539,20 +549,24 @@ export class RxReplicationState<RxDocType, CheckpointType> {
+      * the waiting, otherwise it would not resolve while a handler keeps failing.
+      * A paused non-live replication is not canceled,
+      * the run goes on when start() is called again.
++     * cancel() and remove() are queued behind the run too,
++     * so the waiting also ends when a stop is requested.
++     * The queued cancel() or remove() then stops the replication.
+      */
+     private async awaitNonLiveDone(runQueued: Promise<any>): Promise<void> {
+         const internalState = this.internalReplicationState;
+         if (!this.live && internalState) {
+-            const gotPaused = await Promise.race([
++            const hasFinished = await Promise.race([
+                 firstValueFrom(
+                     this.pendingPauses$.pipe(filter(pending => pending > 0))
+-                ).then(() => true),
++                ).then(() => false),
++                this.stopRequestedPromise.then(() => false),
+                 runQueued
+                     .then(() => awaitRxStorageReplicationFirstInSync(internalState))
+                     .then(() => awaitRxStorageReplicationInSync(internalState))
+-                    .then(() => false)
++                    .then(() => true)
+             ]);
+-            if (gotPaused) {
++            if (!hasFinished) {
+                 return;
+             }
+             await this._cancel();
+@@ -773,6 +787,7 @@ export class RxReplicationState<RxDocType, CheckpointType> {
+ 
+ 
+     async cancel() {
++        this.callOnStopRequested();
+         this.startQueue = this.startQueue.catch(() => { }).then(async () => {
+             await this._cancel(this.removeRequested);
+         });
+```
+
+**File**: `test/unit/replication.test.ts` (modified, +45/-0)
+```diff
+@@ -851,6 +851,51 @@ describe('replication.test.ts', () => {
+             localCollection.database.close();
+             remoteCollection.database.close();
+         });
++        it('cancel() and database.close() must resolve while the handler of a non-live replication keeps failing', async () => {
++            const startFailingReplication = async () => {
++                const collection = await humansCollection.createHumanWithTimestamp(0, randomToken(10), false);
++                let handlerCalls = 0;
++                const replicationState = replicateRxCollection<HumanWithTimestampDocumentType, any>({
++                    collection,
++                    replicationIdentifier: REPLICATION_IDENTIFIER_TEST,
++                    live: false,
++                    retryTime: 20,
++                    pull: {
++                        handler: async () => {
++                            handlerCalls++;
++                            await wait(0);
++                            throw new Error('server is offline');
++                        }
++                    }
++                });
++                await waitUntil(() => handlerCalls >= 2);
++                return {
++                    collection,
++                    replicationState,
++                    getHandlerCalls: () => handlerCalls
++                };
 +            };
-+        }
-+        return {
-+            write(id: string) {
-+                const human = schemaObjects.humanData(id);
-+                rows.push({
-+                    id,
-+                    seq: rows.length + 1,
-+                    changes: [{ rev: '1-abc' }],
-+                    doc: {
-+                        _id: id,
-+                        _rev: '1-abc',
-+                        firstName: human.firstName,
-+                        lastName: human.lastName,
-+                        age: 30
-+                    }
-+                });
-+            },
-+            getWaitingLongpollRequests() {
-+                return waitingLongpollRequests;
-+            },
-+            async handleRequest(requestUrl: string): Promise<Response> {
-+                const params = new URL(requestUrl).searchParams;
-+                const sinceParam = params.get('since');
-+                const since = sinceParam === 'now' ? rows.length : Number(sinceParam);
-+                const limit = Number(params.get('limit'));
-+                if (params.get('feed') === 'longpoll') {
-+                    /**
-+                     * Keep the request open until a change
-+                     * happens or the timeout is reached.
-+                     */
-+                    waitingLongpollRequests = waitingLongpollRequests + 1;
-+                    let waited = 0;
-+                    while (rows.length <= since && waited < 100) {
-+                        await wait(5);
-+                        waited = waited + 5;
-+                    }
-+                    waitingLongpollRequests = waitingLongpollRequests - 1;
-+                }
-+                return new Response(JSON.stringify(changesSince(since, limit)), {
-+                    status: 200,
-+                    headers: {
-+                        'content-type': 'application/json'
-+                    }
-+                });
-+            }
-+        };
-+    }
-+    function getRequestUrl(input: Parameters<FetchMethodType>[0]): string {
-+        if (typeof input === 'string') {
-+            return input;
-+        } else if (input instanceof URL) {
-+            return input.href;
-+        } else {
-+            return input.url;
-+        }
-+    }
++            const resolvesInTime = (promise: Promise<any>) => Promise.race([
++                promise.then(() => true),
++                wait(2000).then(() => false)
++            ]);
 +
-+    describe('live pull stream', () => {
-+        it('should not skip a change that happens before the long polling request reaches the server', async () => {
-+            const collection = await humansCollection.create(0);
-+            const server = createChangesFeedServer();
++            // cancel()
++            const first = await startFailingReplication();
++            const cancelResolved = await resolvesInTime(first.replicationState.cancel());
++            assert.strictEqual(cancelResolved, true, 'cancel() must resolve');
++            assert.strictEqual(first.replicationState.isStopped(), true);
++            const callsAfterCancel = first.getHandlerCalls();
++            await wait(100);
++            assert.strictEqual(first.getHandlerCalls(), callsAfterCancel, 'handler must not be retried after cancel()');
++            await first.collection.database.close();
 +
++            // database.close()
++            const second = await startFailingReplication();
++            const closeResolved = await resolvesInTime(second.collection.database.close());
++            assert.strictEqual(closeResolved, true, 'database.close() must resolve');
++            assert.strictEqual(second.replicationState.isStopped(), true);
++        });
+     });
+     describe('live replication', () => {
+         it('should replicate all writes', async () => {
+```
+
+---
+
+### Incident Patch 3: `98d3309e` (2026-11-17)
+**Commit Message**: Fix failing CI on Deno KV and Windows: two tests waited for the wrong thing (#9752)
+
+* test: wait for the local documents state of the second instance in the getLocal() read race test
+
+The test hung on Deno KV in `await eventArrived`. The local documents state
+of a database is created in the background after createRxDatabase(). On
+Deno KV the state of db2 did not exist yet when db wrote the first
+document, so the change event of that write was never emitted on db2.$
+and the test waited for it until the mocha timeout.
+
+The test now calls db2.getLocal() once before the loop, which awaits the
+local documents state of db2 before the first write of db.
+
+Co-Authored-By: Claude Fable 5.2 <[REDACTED_EMAIL]>
+Claude-Session: https://claude.ai/code/session_015P6w6hnnyVPXwotts6YQ2F
+
+* test: wait for the write events in the failed backup run test
+
+The test "live backup must continue after a failed run and emit the
+error" waited until the files of both documents existed and then asserted
+that the write events were emitted. The event is emitted after the file
+was written, so on Windows the assertion ran before the event. The wait
+now covers the files and the events.
+
+Co-Authored-By: Claude Fable 
+
+**File**: `test/unit/backup.test.ts` (modified, +5/-4)
+```diff
+@@ -402,13 +402,14 @@ describe('backup.test.ts', () => {
+             // the backup directory is reachable again
+             fs.renameSync(movedDirectory, directory);
+             const doc3 = await collection.insert(schemaObjects.humanData());
 +            /**
-+             * The long polling request needs time to reach the server.
++             * The write event is emitted after the file was written,
++             * so both must be awaited.
 +             */
-+            let longpollRequestArrives = false;
-+            const customFetch: FetchMethodType = async (input) => {
-+                const requestUrl = getRequestUrl(input);
-+                if (requestUrl.includes('feed=longpoll')) {
-+                    await waitUntil(() => longpollRequestArrives);
-+                }
-+                return server.handleRequest(requestUrl);
-+            };
-+            const replicationState = replicateCouchDB({
-+                replicationIdentifier: randomToken(10),
-+       
+             await waitUntil(() => {
+                 return [doc2, doc3].every(doc => fs.existsSync(
+                     path.join(directory, toFileName(doc.primary), 'document.json')
+-                ));
+-            });
+-            [doc2, doc3].forEach(doc => {
+-                assert.ok(emitted.find(ev => ev.documentId === doc.primary && !ev.deleted));
++                ) && emitted.find(ev => ev.documentId === doc.primary && !ev.deleted));
+             });
+ 
+             /**
+```
+
+**File**: `test/unit/local-documents.test.ts` (modified, +7/-0)
+```diff
+@@ -797,6 +797,13 @@ describe('local-documents.test.ts', () => {
+                     localDocuments: true
+                 });
+ 
++                /**
++                 * The local documents state of a database is created in the background.
++                 * Events of writes that are done by another instance before that state exists,
++                 * are not emitted on db2.$, so the state must exist before the first write.
++                 */
++                await db2.getLocal('foobar');
++
+                 for (let i = 0; i < runs; i++) {
+                     const id = 'foobar' + i;
+                     await db.insertLocal<TestDocType>(id, { foo: 'bar' });
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #9747** (2026-11-17): chore(deps): update dependency fake-indexeddb to v6.2.8 (@renovate[bot])
-- **PR #9746** (2026-11-16): Orga: link five related closed pull requests in the next-major todos (@pubkey)
-- **PR #9745** (2026-11-16): Chore: raise the bundle size limits to 5 percent above the measured size (@pubkey)
-- **PR #9744** (2026-11-16): Fix: remove the circular import of rx-document in rx-collection-helper (test:circular fails on master) (@pubkey)
-- **PR #9743** (2026-11-16): Orga: plan 28 more fixes with behavior changes for the next major (@pubkey)
-- **PR #9742** (2026-11-16): Redesign premium page to match the landing page (@pubkey)
+- **PR #9755** (2026-11-18): fix(deps): update dependency graphql-ws to v6.4.2 (@renovate[bot])
+- **PR #9754** (2026-11-17): Remove "From" prefix from premium prices (@pubkey)
+- **PR #9752** (2026-11-17): Fix failing CI on Deno KV and Windows: two tests waited for the wrong thing (@pubkey)
+- **PR #9751** (2026-11-17): Fix failing master CI: webmcp changes test used an old tool name (@pubkey)
+- **PR #9750** (2026-11-18): fix(deps): update dependency ws to v8.22.2 (@renovate[bot])
+- **PR #9749** (2026-11-17): Docs: add rule about valid bugs to CLAUDE.md (@pubkey)
 
 ---
 
@@ -1507,22 +1361,26 @@ Co-authored-by: Claude <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. limit 0 returns no documents and a negative limit throws (QU23)
+## X. query result is wrong when the event of another instance arrives after a later o
 
 **RULE**:
-When implementing operations in `docs-src/docs/query-builder.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pubkey/rxdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `orga/changelog/query-stale-event-of-other-instance.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in pubkey/rxdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d1768ea6`: limit 0 returns no documents and a negative limit throws (QU23). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1135a741`: query result is wrong when the event of another instance arrives after a later own write. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs-src/docs/query-builder.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `orga/changelog/query-stale-event-of-other-instance.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-`limit(0)` makes the query return zero documents and a negative value like `limit(-1)` throws [`QU23`](./errors.md#QU23).
-
+{
+    "$schema": "./schema.json",
+    "text": "FIX With `multiInstance: true`, the results of `find().$`, `find().exec()`, and `count().$` contained a document twice or with an outdated state when the event of a write from another instance arrived after the event of a later own write to the same document. The query now runs again over the storage when such an event arrives",
+    "links": [],
+    "priority": 5
+}
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1532,7 +1390,7 @@ Subsystems managing TypeScript data structures, boundary deserialization, API pa
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d1768ea6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1135a741` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-17T11:10:01.659Z",
+  "timestamp": "2026-11-18T12:51:11.431Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-zama-ai-tfhe-rs-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [zama-ai-tfhe-rs-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-17T11:10:01.659Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-18T12:51:11.431Z`  
 > **Learning ID**: `LEARN-EVO-zama-ai-tfhe-rs-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md`  
 > **Source**: github ([https://github.com/zama-ai/tfhe-rs](https://github.com/zama-ai/tfhe-rs))  
-> **Source Version**: `723320f2`  
+> **Source Version**: `ecc40009`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-17T11:09:50.080Z  
+> **Timestamp**: 2026-11-18T12:51:03.157Z  
 > **Learning ID**: `learn-github-zama-ai-tfhe-rs`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zama-ai/tfhe-rs](https://github.com/zama-ai/tfhe-rs))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T11:09:50.075Z  
+> **Harvest Timestamp**: 2026-11-18T12:51:03.151Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1959,470 +1959,265 @@ public:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `723320f2` (2026-11-17)
-**Commit Message**: refactor!: remove ShortintParameterSet and PublicKey (#4126)
+### Incident Patch 1: `ecc40009` (2026-11-18)
+**Commit Message**: chore(bench): fix issue between key size and pbs count
 
-* refactor(hlapi)!: remove PublicKey and CompressedPublicKey
-
-Remove the classical (non-compact) public keys from the high-level API,
-along with their C and JS bindings. CompactPublicKey and
-CompressedCompactPublicKey remain the way to do public key encryption.
-
-Backward compatibility tests for the legacy public keys are skipped.
-
-* refactor(integer)!: remove PublicKey and CompressedPublicKey
-
-Remove the classical (non-compact) integer public keys. CompactPublicKey
-and CompressedCompactPublicKey remain the way to do public key
-encryption.
-
-* refactor(shortint)!: remove PublicKey and CompressedPublicKey
-
-Remove the classical (non-compact) shortint public keys, along with their
-C and JS bindings. CompactPublicKey and CompressedCompactPublicKey remain
-the way to do public key encryption.
-
-* refactor(boolean)!: remove PublicKey and CompressedPublicKey
-
-Remove the boolean public keys, along with their C and JS bindings.
-
-* feat(shortint): add parameter accessors to AtomicPatternParameters
-
-Add pbs_parameters, ks32_parameters, encryption_lwe_dimension and
-noise_distribution_for_key_choice, matching the ShortintParameterSet API
-
-**File**: `tests/backward_compatibility/high_level_api.rs` (modified, +20/-27)
+**File**: `.github/workflows/benchmark_cpu_common.yml` (modified, +2/-8)
 ```diff
-@@ -26,13 +26,12 @@ use tfhe::{
-     set_server_key, AesFheKey, ClientKey, CompactCiphertextList, CompactCiphertextListBuilder,
-     CompactPublicKey, CompressedCiphertextList, CompressedCiphertextListBuilder,
-     CompressedCompactPublicKey, CompressedFheBool, CompressedFheInt8, CompressedFheUint8,
--    CompressedKVStore, CompressedPublicKey, CompressedServerKey,
--    CompressedSquashedNoiseCiphertextList, CompressedSquashedNoiseCiphertextListBuilder,
--    CompressedSquashedNoiseOneTimePadFheSecretMask, FheBool, FheInt8, FheUint32, FheUint64,
--    FheUint8, HlStreamCipher, HlTranscipherer, KreyviumFheKey, OneTimePadFheSecretMask,
--    ReRandomizationContext, ReRandomizationMode, ReRandomizationSupport, Seed, ServerKey,
--    SquashedNoiseFheBool, SquashedNoiseFheInt, SquashedNoiseFheUint, StreamCiphertext,
--    TranscipherSession,
-+    CompressedKVStore, CompressedServerKey, CompressedSquashedNoiseCiphertextList,
-+    CompressedSquashedNoiseCiphertextListBuilder, CompressedSquashedNoiseOneTimePadFheSecretMask,
-+    FheBool, FheInt8, FheUint32, FheUint64, FheUint8, HlStreamCipher, HlTranscipherer,
-+    KreyviumFheKey, OneTimePadFheSecretMask, ReRandomizationContext, ReRandomizationMode,
-+    ReRandomizationSupport, Seed, ServerKey, SquashedNoiseFheBool, SquashedNoiseFheInt,
-+    SquashedNoiseFheUint, StreamCiphertext, TranscipherSession,
- };
- use tfhe_backward_compat_data::load::{
-     load_versioned_auxiliary, DataFormat, TestFailure, TestResult, TestSuccess,
-@@ -474,28 +473,18 @@ pub fn test_hl_pubkey(
+@@ -32,9 +32,6 @@ on:
+         type: string # Use comma separated values to generate an array
+       additional_file_to_parse: # Other files to parse, located under tfhe-benchmark/ directory
+         type: string # Use comma separated values to generate an array
+-      additional_results_type:
+-        type: string
+-        default: object-sizes
+     secrets:
+       REPO_CHECKOUT_TOKEN:
+         required: true
+@@ -209,12 +206,10 @@ jobs:
+           --commit-date "${COMMIT_DATE}" \
+           --bench-date "${BENCH_DATE}" \
+           --walk-subdirs \
+-          --name-suffix avx512 \
+-          --bench-type "${BENCH_TYPE}"
++          --name-suffix avx512
+         env:
+           INPUTS_HARDWARE_NAME: ${{ inputs.hardware_name }}
+           REF_NAME: ${{ github.ref_name }}
+-          BENCH_TYPE: ${{ matrix.bench_type }}
  
-     let value = 113u8;
+       - name: Run additional benchmarks
+         if: ${{ inputs.additional_recipe }}
+@@ -234,13 +229,12 @@ jobs:
+           IFS=','
+           for filename in $filenames_list; do
+             cargo run --release -p tfhe-benchmark-parser -- -i "tfhe-benchmark/${filename}" -o "${RESULTS_FILENAME}" \
+-            --"${results_type}" \
++            --csv \
+             --backend cpu \
+             --append-results
+           done
+         env:
+           filenames: ${{ inputs.additional_file_to_parse }}
+-          results_type: ${{ inputs.additional_results_type }}
  
--    let encrypted = if test.compact {
--        let public_key = if test.compressed {
--            let compressed: CompressedCompactPublicKey = load_and_unversionize(dir, test, format)?;
--            compressed.decompress()
--        } else {
--            load_and_unversionize(dir, test, format)?
--        };
--        set_server_key(client_key.generate_server_key());
--
--        let ct_list = CompactCiphertextList::builder(&public_key)
--            .push(value)
--            .build();
--        ct_list.expand().unwrap().get(0).unwrap().unwrap()
-+    let public_key = if test.compressed {
-+        let compressed: CompressedCompactPublicKey = load_and_unversionize(dir, test, format)?;
-+        compressed.decompress()
-     } else {
--        let public_key = if test.compressed {
--            let compressed: CompressedPublicKey = load_and_unversionize(dir, test, format)?;
--            compressed.decompress()
--        } else {
--            load_and_unversionize(dir, test, format)?
--        };
--        FheUint8::encrypt(value, &public_key)
-+        load_and_unversionize(dir, test, format)?
-     };
-+    set_server_key(client_key.generate_server_key());
-+
-+    let ct_list = CompactCiphertextList::builder(&public_key)
-+        .push(value)
-+        .build();
-+    let encrypted: FheUint8 = ct_list.expand().unwrap().get(0).unwrap().unwrap();
- 
-     let decrypted: u8 = encrypted.decrypt(&client_key);
- 
-@@ -1308,6 +1297,10 @@ impl TestedModule for Hl {
-             TestMetadata::HlClientKey(test) => {
-                 test_hl_clientkey(test_dir.as_ref(), test, format).into()
-             }
-+            // Only compact public keys can be loaded by this version of TFHE-rs
-+            TestMetadata::HlPublicKey(test) if !test.compact => {
-+                TestResult::Skipped(testcase.skip())
-+            }
-             TestMetadata::HlPublicKey(test) => {
-                 test_hl_pubkey(test_dir.as_ref(), test, format).into()
-             }
+       - name: Download protocol results table of the other bench type
+         if: ${{ contains(matrix.command, 'protocol') }}
 ```
 
-**File**: `tests/backward_compatibility/shortint.rs` (modified, +1/-6)
+**File**: `.github/workflows/benchmark_ct_key_sizes.yml` (modified, +2/-2)
 ```diff
-@@ -21,7 +21,6 @@ use tfhe::shortint::parameters::{
- use tfhe::shortint::{
-     AtomicPatternParameters, CarryModulus, Ciphertext, CiphertextModulus, ClassicPBSParameters,
-     ClientKey, EncryptionKeyChoice, MaxNoiseLevel, MessageModulus, MultiBitPBSParameters,
--    ShortintParameterSet,
- };
+@@ -83,7 +83,7 @@ jobs:
+           --branch "${REF_NAME}" \
+           --commit-date "${COMMIT_DATE}" \
+           --bench-date "${BENCH_DATE}" \
+-          --object-sizes
++          --csv
+         env:
+           REF_NAME: ${{ github.ref_name }}
  
- use crate::{load_and_unversionize, load_client_key, TestedModule};
-@@ -204,10 +203,6 @@ fn convert_distribution<T: UnsignedInteger>(value: &TestDistribution) -> Dynamic
+@@ -94,7 +94,7 @@ jobs:
+       - name: Parse key sizes results
+         run: |
+           cargo run --release -p tfhe-benchmark-parser -- -i tfhe-benchmark/shortint_key_sizes.csv -o "${RESULTS_FILENAME}" \
+-          --object-sizes \
++          --csv \
+           --backend cpu \
+           --append-results
+ 
+```
+
+**File**: `.github/workflows/benchmark_gpu_common.yml` (modified, +3/-6)
+```diff
+@@ -256,11 +256,9 @@ jobs:
+           --commit-date "${COMMIT_DATE}" \
+           --bench-date "${BENCH_DATE}" \
+           --walk-subdirs \
+-          --name-suffix avx512 \
+-          --bench-type "${BENCH_TYPE}"
++          --name-suffix avx512
+         env:
+           REF_NAME: ${{ github.ref_name }}
+-          BENCH_TYPE: ${{ matrix.bench_type }}
+ 
+       - name: Setup Python venv
+         run: |
+@@ -280,8 +278,7 @@ jobs:
+             --branch "${REF_NAME}" \
+             --commit-date "${COMMIT_DATE}" \
+             --bench-date "${BENCH_DATE}" \
+-            --walk-subdirs \
+-            --bench-type "${BENCH_TYPE}"
++            --walk-subdirs
+             group_results+=("${group_result}")
+           done
+           venv/bin/python ./ci/merge_multi_group_results.py --bench-type "${BENCH_TYPE}" --output "${RESULTS_FILENAME}" "${group_results[@]}"
+@@ -296,7 +293,7 @@ jobs:
+           IFS=','
+           for filename in $filenames_list; do
+             cargo run --release -p tfhe-benchmark-parser -- -i "tfhe-benchmark/${filename}" -o "${RESULTS_FILENAME}" \
+-            --object-sizes \
++            --csv \
+             --backend cuda \
+             --append-results
+           done
+```
+
+**File**: `.github/workflows/benchmark_hpu_common.yml` (modified, +1/-3)
+```diff
+@@ -187,11 +187,9 @@ jobs:
+           --branch "${REF_NAME}" \
+           --commit-date "${COMMIT_DATE}" \
+           --bench-date "${BENCH_DATE}" \
+-          --walk-subdirs \
+-          --bench-type "${BENCH_TYPE}"
++          --walk-subdirs
+         env:
+           REF_NAME: ${{ github.ref_name }}
+-          BENCH_TYPE: ${{ matrix.bench_type }}
+ 
+       - name: Upload parsed results artifact
+         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+```
+
+**File**: `.github/workflows/benchmark_perf_regression.yml` (modified, +1/-3)
+```diff
+@@ -247,13 +247,11 @@ jobs:
+           --commit-date "${COMMIT_DATE}" \
+           --bench-date "${BENCH_DATE}" \
+           --walk-subdirs \
+-          --name-suffix regression \
+-          --bench-type "${BENCH_TYPE}"
++          --name-suffix regression
+         env:
+           HARDWARE_NAME: ${{ needs.prepare-benchmarks.outputs.hardware-name }}
+           TFHE_BACKEND: ${{ needs.prepare-benchmarks.outputs.tfhe-backend }}
+           REF_NAME: ${{ github.head_ref || github.ref_name }}
+-          BENCH_TYPE: ${{ env.__TFHE_RS_BENCH_TYPE }}
+ 
+       - name: Upload parsed results artifact
+         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9
+```
+
+**File**: `.github/workflows/benchmark_wasm_client_common.yml` (modified, +1/-1)
+```diff
+@@ -187,7 +187,7 @@ jobs:
+           --branch "${REF_NAME}" \
+           --commit-date "${COMMIT_DATE}" \
+           --bench-date "${BENCH_DATE}" \
+-          --key-gen
++          --csv
+           rm tfhe-benchmark/wasm_pk_gen.csv
+         env:
+           REF_NAME: ${{ github.ref_name }}
+```
+
+**File**: `utils/tfhe-benchmark-parser/src/cli.rs` (modified, +5/-23)
+```diff
+@@ -1,4 +1,4 @@
+-use benchmark_spec::{Backend, BenchmarkMetric};
++use benchmark_spec::Backend;
+ use clap::Parser;
+ use std::path::PathBuf;
+ 
+@@ -9,7 +9,7 @@ use std::path::PathBuf;
+ )]
+ pub struct Cli {
+     /// Location of criterion benchmark results directory.
+-    /// If --object-sizes or --key-gen is used, this must point to a CSV file.
++    /// If --csv is used, this must point to a CSV file.
+     #[arg(short = 'i', long)]
+     pub input_results_file: PathBuf,
+ 
+@@ -62,34 +62,16 @@ pub struct Cli {
+     #[arg(long = "walk-subdirs")]
+     pub walk_subdirs: bool,
+ 
+-    /// Parse only the results regarding keys size measurements.
+-    #[arg(long = "object-sizes", conflicts_with = "key_gen")]
+-    pub object_sizes: bool,
+-
+-    /// Parse only the results regarding keys generation time measurements.
+-    #[arg(long = "key-gen")]
+-    pub key_gen: bool,
+-
+-    /// Fetch results for latency or throughput benchmarks.
+-    #[arg(long = "bench-type",value_parser = parse_cli_bench_metric,default_value = "latency")]
+-    pub bench_type: BenchmarkMetric,
++    /// Parse a CSV of `id,value` rows instead of a criterion directory.
++    #[arg(long = "csv")]
++    pub csv: bool,
+ 
+     /// Backend on which benchmarks have run.
+     /// Required even with --append-results, as it is stamped on every parsed point.
+     #[arg(long, value_parser = parse_cli_backend)]
+     pub backend: Backend,
+ }
+ 
+-fn parse_cli_bench_metric(s: &str) -> Result<BenchmarkMetric, String> {
+-    let m: BenchmarkMetric = s
+-        .parse()
+-        .map_err(|_| format!("unknown benchmark type: {s}"))?;
+-    match m {
+-        BenchmarkMetric::Latency | BenchmarkMetric::Throughput => Ok(m),
+-        _ => Err(format!("--bench-type does not support {m:?}")),
+-    }
+-}
+-
+ fn parse_cli_backend(s: &str) -> Result<Backend, String> {
+     s.parse().map_err(|_| format!("unknown backend: {s}"))
+ }
+```
+
+**File**: `utils/tfhe-benchmark-parser/src/main.rs` (modified, +4/-15)
+```diff
+@@ -2,33 +2,22 @@ mod cli;
+ mod dump;
+ mod parse;
+ 
+-use benchmark_spec::BenchmarkMetric;
+ use clap::Parser;
+ use cli::Cli;
+ use dump::{append_points, write_series};
+-use parse::{ParseOutcome, parse_key_gen_time, parse_object_sizes, recursive_parse};
++use parse::{ParseOutcome, parse_csv_results, recursive_parse};
+ use std::process::ExitCode;
+ use tfhe_benchmark_parser::model::{Point, Series};
+ 
+ fn run_parse(args: &Cli) -> anyhow::Result<ParseOutcome> {
+-    if args.object_sizes {
+-        println!("Parsing key sizes results... ");
+-        return parse_object_sizes(&args.input_results_file, &args.params_dirs, args.backend);
+-    }
+-
+-    if args.key_gen {
+-        println!("Parsing key generation time results... ");
+-        return parse_key_gen_time(&args.input_results_file, &args.params_dirs, args.backend);
++    if args.csv {
++        println!("Parsing CSV results... ");
++        return parse_csv_results(&args.input_results_file, &args.params_dirs, args.backend);
      }
- }
  
--fn load_shortint_params(test_params: &TestParameterSet) -> ShortintParameterSet {
--    load_params(test_params).into()
--}
+     println!("Parsing benchmark results... ");
+-    if args.bench_type == BenchmarkMetric::Throughput {
+-        println!("Throughput computation enabled");
+-    }
 -
- pub fn test_shortint_ciphertext(
-     dir: &Path,
-     test: &ShortintCiphertextTest,
-@@ -236,7 +231,7 @@ pub fn test_shortint_clientkey(
-     test: &ShortintClientKeyTest,
-     format: DataFormat,
- ) -> Result<TestSuccess, TestFailure> {
--    let test_params = load_shortint_params(&test.parameters);
-+    let test_params = load_params(&test.parameters);
- 
-     let key: ClientKey = load_and_unversionize(dir, test, format)?;
- 
-```
-
-**File**: `tfhe-benchmark/src/bin/wasm_benchmarks_parser.rs` (modified, +3/-2)
-```diff
-@@ -5,7 +5,7 @@ use std::collections::HashMap;
- use std::fs;
- use std::path::Path;
- use tfhe::keycache::NamedParam;
--use tfhe::shortint::keycache::get_shortint_parameter_set_from_name;
-+use tfhe::shortint::keycache::get_atomic_pattern_parameters_from_name;
- 
- #[derive(Parser, Debug)]
- #[command(author, version, about, long_about = None)]
-@@ -33,7 +33,8 @@ pub fn parse_wasm_benchmarks(results_file: &Path, raw_results_file: &Path) {
-         };
-         benchmark_test_result.write_result(&measured.to_string(), value);
- 
--        let params_alias = get_shortint_parameter_set_from_name(measured.spec.param_name()).name();
-+        let params_alias =
-+            get_atomic_pattern_parameters_from_name(measured.spec.param_name()).name();
- 
-         write_to_json_measured(
-             &measured,
-```
-
-**File**: `tfhe/c_api_tests/test_boolean_keygen.c` (modified, +0/-28)
-```diff
-@@ -125,37 +125,9 @@ void test_custom_keygen(void) {
-   boolean_destroy_server_key(sks);
- }
- 
--void test_public_keygen(void) {
--  BooleanClientKey *cks = NULL;
--  BooleanPublicKey *pks = NULL;
--  BooleanCiphertext *ct = NULL;
--
--  int gen_keys_ok = boolean_gen_client_key(BOOLEAN_PARAMETERS_SET_DEFAULT_PARAMETERS, &cks);
--  assert(gen_keys_ok == 0);
--
--  int gen_pks = boolean_gen_public_key(cks, &pks);
--  assert(gen_pks == 0);
--
--  bool msg = true;
--
--  int encrypt_ok = boolean_public_key_encrypt(pks, msg, &ct);
--  assert(encrypt_ok == 0);
--
--  bool result = false;
--  int decrypt_ok = boolean_client_key_decrypt(cks, ct, &result);
--  assert(decrypt_ok == 0);
--
--  assert(result == true);
--
--  boolean_destroy_client_key(cks);
--  boolean_destroy_public_key(pks);
--  boolean_destroy_ciphertext(ct);
--}
--
- int main(void) {
-   test_default_keygen_w_serde();
-   test_predefined_keygen_w_serde();
-   test_custom_keygen();
--  test_public_keygen();
-   return EXIT_SUCCESS;
- }
-```
-
-**File**: `tfhe/c_api_tests/test_high_level_128_bits.c` (modified, +0/-34)
-```diff
-@@ -64,36 +64,6 @@ int uint128_encrypt_trivial(const ClientKey *client_key) {
-   return ok;
- }
- 
--int uint128_public_key(const ClientKey *client_key, const PublicKey *public_key) {
--  int ok;
--  FheUint128 *lhs = NULL;
--  FheUint128 *rhs = NULL;
--  FheUint128 *result = NULL;
--  U128 lhs_clear = {10, 20};
--  U128 rhs_clear = {1, 2};
--  U128 result_clear = {0};
--
--  ok = fhe_uint128_try_encrypt_with_public_key_u128(lhs_clear, public_key, &lhs);
--  assert(ok == 0);
--
--  ok = fhe_uint128_try_encrypt_with_public_key_u128(rhs_clear, public_key, &rhs);
--  assert(ok == 0);
--
--  ok = fhe_uint128_add(lhs, rhs, &result);
--  assert(ok == 0);
--
--  ok = fhe_uint128_decrypt(result, client_key, &result_clear);
--  assert(ok == 0);
--
--  assert(result_clear.w0 == 11);
--  assert(result_clear.w1 == 22);
--
--  fhe_uint128_destroy(lhs);
--  fhe_uint128_destroy(rhs);
--  fhe_uint128_destroy(result);
--  return ok;
--}
--
- int main(void) {
-   int ok = 0;
-   ConfigBuilder *builder;
-@@ -104,19 +74,15 @@ int main(void) {
- 
-   ClientKey *client_key = NULL;
-   ServerKey *server_key = NULL;
--  PublicKey *public_key = NULL;
- 
-   generate_keys(config, &client_key, &server_key);
--  public_key_new(client_key, &public_key);
- 
-   set_server_key(server_key);
- 
-   uint128_client_key(client_key);
-   uint128_encrypt_trivial(client_key);
--  uint128_public_key(client_key, public_key);
- 
-   client_key_destroy(client_key);
--  public_key_destroy(public_key);
-   server_key_destroy(server_key);
-   unset_server_key();
-   return ok;
-```
-
-**File**: `tfhe/c_api_tests/test_high_level_2048.c` (modified, +0/-3)
-```diff
-@@ -49,17 +49,14 @@ int main(void) {
- 
-   ClientKey *client_key = NULL;
-   ServerKey *server_key = NULL;
--  PublicKey *public_key = NULL;
- 
-   generate_keys(config, &client_key, &server_key);
--  public_key_new(client_key, &public_key);
- 
-   set_server_key(server_key);
- 
-   uint2048_client_key(client_key);
- 
-   client_key_destroy(client_key);
--  public_key_destroy(public_key);
-   server_key_destroy(server_key);
-   unset_server_key();
- 
-```
-
-**File**: `tfhe/c_api_tests/test_high_level_256_bits.c` (modified, +0/-72)
-```diff
-@@ -78,38 +78,6 @@ int uint256_encrypt_trivial(const ClientKey *client_key) {
-   return ok;
- }
- 
--int uint256_public_key(const ClientKey *client_key, const PublicKey *public_key) {
--  int ok;
--  FheUint256 *lhs = NULL;
--  FheUint256 *rhs = NULL;
--  FheUint256 *result = NULL;
--  U256 lhs_clear = {5, 6, 7, 8};
--  U256 rhs_clear = {1, 2, 3, 4};
--  U256 result_clear = {0};
--
--  ok = fhe_uint256_try_encrypt_with_public_key_u256(lhs_clear, public_key, &lhs);
--  assert(ok == 0);
--
--  ok = fhe_uint256_try_encrypt_with_public_key_u256(rhs_clear, public_key, &rhs);
--  assert(ok == 0);
--
--  ok = fhe_uint256_sub(lhs, rhs, &result);
--  assert(ok == 0);
--
--  ok = fhe_uint256_decrypt(result, client_key, &result_clear);
--  assert(ok == 0);
--
--  assert(result_clear.w0 == 4);
--  assert(result_clear.w1 == 4);
--  assert(result_clear.w2 == 4);
--  assert(result_clear.w3 == 4);
--
--  fhe_uint256_destroy(lhs);
--  fhe_uint256_destroy(rhs);
--  fhe_uint256_destroy(result);
--  return ok;
--}
--
- int int256_client_key(const ClientKey *client_key) {
-   int ok;
-   FheInt256 *lhs = NULL;
-@@ -200,41 +168,6 @@ int int256_encrypt_trivial(const ClientKey *client_key) {
-   return ok;
- }
- 
--int int256_public_key(const ClientKey *client_key, const PublicKey *public_key) {
--  int ok;
--  FheInt256 *lhs = NULL;
--  FheInt256 *rhs = NULL;
--  FheInt256 *result = NULL;
--  // This is +1
--  I256 lhs_clear = {1, 0, 0, 0};
--  // This is -1
--  I256 rhs_clear = {UINT64_MAX, UINT64_MAX, UINT64_MAX, UINT64_MAX};
--  I256 result_clear = {0};
--
--  ok = fhe_int256_try_encrypt_with_public_key_i256(lhs_clear, public_key, &lhs);
--  assert(ok == 0);
--
--  ok = fhe_int256_try_encrypt_with_public_key_i256(rhs_clear, public_key, &rhs);
--  assert(ok == 0);
--
--  ok = fhe_int256_sub(lhs, rhs, &result);
--  assert(ok == 0);
--
--  ok = fhe_int256_decrypt(result, client_key, &result_clear);
--  assert(ok == 0);
--
--  // We did 1 - (-1), so we expect 2
--  assert(result_clear.w0 == 2);
--  assert(result_clear.w1 == 0);
--  assert(result_clear.w2 == 0);
--  assert(result_clear.w3 == 0);
--
--  fhe_int256_destroy(lhs);
--  fhe_int256_destroy(rhs);
--  fhe_int256_destroy(result);
--  return ok;
--}
--
- int main(void) {
-   int ok = 0;
-   ConfigBuilder *builder;
-@@ -245,23 +178,18 @@ int main(void) {
- 
-   ClientKey *client_key = NULL;
-   ServerKey *server_key = NULL;
--  PublicKey *public_key = NULL;
- 
-   generate_keys(config, &client_key, &server_key);
--  public_key_new(client_key, &public_key);
- 
-   set_server_key(server_key);
- 
-   uint256_client_key(client_key);
-   uint256_encrypt_trivial(client_key);
--  uint256_public_key(client_key, public_key);
- 
-   int256_client_key(client_key);
-   int256_encrypt_trivial(client_key);
--  int256_public_key(client_key, public_key);
- 
-   client_key_destroy(client_key);
--  public_key_destroy(public_key);
-   server_key_destroy(server_key);
-   unset_server_key();
-   
-```
-
-**File**: `tfhe/c_api_tests/test_high_level_boolean.c` (modified, +0/-35)
-```diff
-@@ -35,37 +35,6 @@ int client_key_test(const ClientKey *client_key) {
-   return ok;
- }
- 
--int public_key_test(const ClientKey *client_key, const PublicKey *public_key) {
--  int ok;
--  FheBool *lhs = NULL;
--  FheBool *rhs = NULL;
--  FheBool *result = NULL;
--
--  bool lhs_clear = 0;
--  bool rhs_clear = 1;
--
--  ok = fhe_bool_try_encrypt_with_public_key_bool(lhs_clear, public_key, &lhs);
--  assert(ok == 0);
--
--  ok = fhe_bool_try_encrypt_with_public_key_bool(rhs_clear, public_key, &rhs);
--  assert(ok == 0);
--
--  ok = fhe_bool_bitand(lhs, rhs, &result);
--  assert(ok == 0);
--
--  bool clear;
--  ok = fhe_bool_decrypt(result, client_key, &clear);
--  assert(ok == 0);
--
--  assert(clear == (lhs_clear & rhs_clear));
--
--  fhe_bool_destroy(lhs);
--  fhe_bool_destroy(rhs);
--  fhe_bool_destroy(result);
--
--  return ok;
--}
--
- int trivial_encrypt_test(const ClientKey *client_key) {
-   int ok;
-   FheBool *lhs = NULL;
-@@ -107,19 +76,15 @@ int main(void) {
- 
-   ClientKey *client_key = NULL;
-   ServerKey *server_key = NULL;
--  PublicKey *public_key = NULL;
- 
-   generate_keys(config, &client_key, &server_key);
--  public_key_new(client_key, &public_key);
- 
-   set_server_key(server_key);
- 
-   client_key_test(client_key);
--  public_key_test(client_key, public_key);
-   trivial_encrypt_test(client_key);
- 
-   client_key_destroy(client_key);
--  public_key_destroy(public_key);
-   server_key_destroy(server_key);
-   unset_server_key();
- 
+     recursive_parse(
+         &args.input_results_file,
+-        args.bench_type,
+         args.walk_subdirs,
+         &args.name_suffix,
+         &args.params_dirs,
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4163** (2026-11-12): chore: make codeowners more flexible (@IceTDrinker)
-- **PR #4162** (2026-11-12): chore: bump rustix to 1.1.6 (@nsarlin-zama)
-- **PR #4157** (2026-11-12): fix(integer): reject unexpected last block in modulus switched radix … (@mayeul-zama)
-- **PR #4156** (2026-11-13): fix(integer): signed radix squashing could pack unclean ciphertexts (@IceTDrinker)
-- **PR #4154** (2026-11-12): chore(integer): add filering before cleaning noise (@tmontaigu)
-- **PR #4153** (2026-11-09): Am/chore/lock cargo installs (@IceTDrinker)
+- **PR #4183** (2026-11-17): chore: simpler CODEOWNERS while still respecting guidelines (@IceTDrinker)
+- **PR #4181** (2026-11-17): chore: make pip timeout longer to avoid problem with potentially safe… (@IceTDrinker)
+- **PR #4175** (2026-11-18): chore(deps): bump docker/login-action from 4.7.0 to 4.8.0 (@dependabot[bot])
+- **PR #4174** (2026-11-18): chore(deps): bump zizmorcore/zizmor-action from 0.8.0 to 0.8.1 (@dependabot[bot])
+- **PR #4173** (2026-11-18): chore(deps): bump zgosalvez/github-actions-ensure-sha-pinned-actions from 5.0.10 to 5.0.11 (@dependabot[bot])
+- **PR #4172** (2026-11-17): chore(deps): bump compression and serve in /tfhe/web_wasm_parallel_tests (@dependabot[bot])
 
 ---
 
@@ -2442,71 +2237,39 @@ noise_distribution_for_key_choice, matching the ShortintParameterSet API
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. refactor!: remove ShortintParameterSet and PublicKey
+## X. bench): fix issue between key size and pbs count
 
 **RULE**:
-When implementing operations in `tests/backward_compatibility/high_level_api.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zama-ai/tfhe-rs. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/benchmark_cpu_common.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zama-ai/tfhe-rs. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `723320f2`: refactor!: remove ShortintParameterSet and PublicKey. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ecc40009`: bench): fix issue between key size and pbs count. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `tests/backward_compatibility/high_level_api.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/benchmark_cpu_common.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    CompressedKVStore, CompressedServerKey, CompressedSquashedNoiseCiphertextList,
-    CompressedSquashedNoiseCiphertextListBuilder, CompressedSquashedNoiseOneTimePadFheSecretMask,
-    FheBool, FheInt8, FheUint32, FheUint64, FheUint8, HlStreamCipher, HlTranscipherer,
-    KreyviumFheKey, OneTimePadFheSecretMask, ReRandomizationContext, ReRandomizationMode,
-    ReRandomizationSupport, Seed, ServerKey, SquashedNoiseFheBool, SquashedNoiseFheInt,
-    SquashedNoiseFheUint, StreamCiphertext, TranscipherSession,
-    let public_key = if test.compressed {
-        let compressed: CompressedCompactPublicKey = load_and_unversionize(dir, test, format)?;
-        compressed.decompress()
-        load_and_unversionize(dir, test, format)?
-    set_server_key(client_key.generate_server_key());
-
-    let ct_list = CompactCiphertextList::builder(&public_key)
-        .push(value)
-        .build();
-    let encrypted: FheUint8 = ct_list.expand().unwrap().get(0).unwrap().unwrap();
-            // Only compact public keys can be loaded by this version of TFHE-rs
-            TestMetadata::HlPublicKey(test) if !test.compact => {
-                TestResult::Skipped(testcase.skip())
-            }
+          --name-suffix avx512
+            --csv \
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-    CompressedKVStore, CompressedPublicKey, CompressedServerKey,
-    CompressedSquashedNoiseCiphertextList, CompressedSquashedNoiseCiphertextListBuilder,
-    CompressedSquashedNoiseOneTimePadFheSecretMask, FheBool, FheInt8, FheUint32, FheUint64,
-    FheUint8, HlStreamCipher, HlTranscipherer, KreyviumFheKey, OneTimePadFheSecretMask,
-    ReRandomizationContext, ReRandomizationMode, ReRandomizationSupport, Seed, ServerKey,
-    SquashedNoiseFheBool, SquashedNoiseFheInt, SquashedNoiseFheUint, StreamCiphertext,
-    TranscipherSession,
-    let encrypted = if test.compact {
-        let public_key = if test.compressed {
-            let compressed: CompressedCompactPublicKey = load_and_unversionize(dir, test, format)?;
-            compressed.decompress()
-        } else {
-            load_and_unversionize(dir, test, format)?
-        };
-        set_server_key(client_key.generate_server_key());
-
-        let ct_list = CompactCiphertextList::builder(&public_key)
-            .push(value)
-            .build();
-        ct_list.expand().unwrap().get(0).unwrap().unwrap()
-        let public_key = if test.compressed {
-            let compressed: CompressedPublicKey = load_and_unversionize(dir, test, for
+      additional_results_type:
+        type: string
+        default: object-sizes
+          --name-suffix avx512 \
+          --bench-type "${BENCH_TYPE}"
+          BENCH_TYPE: ${{ matrix.bench_type }}
+            --"${results_type}" \
+          results_type: ${{ inputs.additional_results_type }}
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `723320f2` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ecc40009` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

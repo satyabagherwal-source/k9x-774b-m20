@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261117-RR78",
-    "timestamp": "2026-11-17T02:02:22.964Z",
-    "repository": "SeekStorm/SeekStorm",
-    "learningId": "learn-github-seekstorm-seekstorm",
-    "contentHash": "388d54b5705baa38a53ba4388d3d6e29bf76e8539c245041b70782d4bea85b4c",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261117-ACCX",
-    "timestamp": "2026-11-17T02:16:50.193Z",
-    "repository": "beclab/Olares",
-    "learningId": "learn-github-beclab-olares",
-    "contentHash": "37ddf0e1c7f8c8bb675959bfa37c98c88124d75ef9c421c2d30c5546ca1dd462",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261117-U8UF",
-    "timestamp": "2026-11-17T02:32:18.759Z",
-    "repository": "Viggle/Viggle-Remake",
-    "learningId": "learn-huggingface-viggle-viggle-remake",
-    "contentHash": "4352be78a027a98f14822feae47a4827ec00b58b84b7efe8d301a4e02d2ee27c",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261117-U8XQ",
-    "timestamp": "2026-11-17T02:32:18.878Z",
-    "repository": "tuist/tuist",
-    "learningId": "learn-github-tuist-tuist",
-    "contentHash": "f9ca6a7c116d49980779144281529540e801df5311cdaa26d9db004158a89f06",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261117-UCFR",
     "timestamp": "2026-11-17T02:32:23.415Z",
     "repository": "TypeWhisper/typewhisper-mac",
@@ -7492,6 +7432,66 @@
     "contentHash": "022f5de1c0e20818b725aaa60462c14d28aa273a6e6bb51171185dacaeefaa21",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-DJCT",
+    "timestamp": "2026-11-18T12:50:50.813Z",
+    "repository": "Viggle/Qwen-Image-2.1-viggle-turbo",
+    "learningId": "learn-huggingface-viggle-qwen-image-2-1-viggle-turbo",
+    "contentHash": "63b956533972654358fef3cb41d11e695f3763db80c9d761331152841bb2730f",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-DPZO",
+    "timestamp": "2026-11-18T12:50:59.412Z",
+    "repository": "pubkey/rxdb",
+    "learningId": "learn-github-pubkey-rxdb",
+    "contentHash": "1c8ae383120a18ade4500af9b7c044fab906fd0bc483c199a8a32816d60ca7bf",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-DTLR",
+    "timestamp": "2026-11-18T12:51:04.095Z",
+    "repository": "zama-ai/tfhe-rs",
+    "learningId": "learn-github-zama-ai-tfhe-rs",
+    "contentHash": "58e2276eeb83e870e99b98c8c14fe092002aa7d7dda2f0a3de648528c1fe141f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-DVJ0",
+    "timestamp": "2026-11-18T12:51:06.588Z",
+    "repository": "alibaba/zvec",
+    "learningId": "learn-github-alibaba-zvec",
+    "contentHash": "0c7a359e6205e5c53fa3d204b526df419ba834fc0da34c4b1e66519feca8366f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
