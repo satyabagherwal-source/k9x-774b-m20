@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-18T16:22:28.092Z",
+  "last_updated": "2026-11-18T16:31:42.401Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -800,14 +800,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf",
-      "content_hash": "1e9a8abbfe815ee1ab247c83d9ab67fdcfb1e0a392925c981fda4261f8727188",
-      "verified_at": "2026-11-18T07:13:56.983Z",
+      "content_hash": "a3619a143602689e56e5775e8fe793e43c2cb78e19e9068b5980170fd04f1321",
+      "verified_at": "2026-11-18T16:31:29.414Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T07:13:56.983Z"
+      "last_updated": "2026-11-18T16:31:29.414Z"
     },
     "canberkkkkkk/ema-lightning": {
       "repository": "canberkkkkkk/ema-lightning",
@@ -5211,14 +5211,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-skyhook-io-radar",
-      "content_hash": "368904eac464463ef5951111fb3638596a645e483171f11e83de781ca99f552c",
-      "verified_at": "2026-11-18T01:58:04.509Z",
+      "content_hash": "c17403fb063e4f1753bfe4f6c25d2256a023a2385a7fdc6c9400399e6054250e",
+      "verified_at": "2026-11-18T16:31:42.400Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T01:58:04.509Z"
+      "last_updated": "2026-11-18T16:31:42.400Z"
     },
     "mitmproxy/mitmproxy": {
       "repository": "mitmproxy/mitmproxy",
@@ -19439,6 +19439,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-18T16:00:07.223Z"
+    },
+    "HuggingFaceTB/SmolVLM2-256M-Video-Instruct": {
+      "repository": "HuggingFaceTB/SmolVLM2-256M-Video-Instruct",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-huggingfacetb-smolvlm2-256m-video-instruct",
+      "content_hash": "5159fda85e55fb82a8aecf512688b78e8962bee711c40ab41214cd6c3a45231d",
+      "verified_at": "2026-11-18T16:31:26.948Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-18T16:31:26.948Z"
     }
   },
   "repos": {

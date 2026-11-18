@@ -11039,3 +11039,7 @@
 | `CYCLE-20261118-XEBU` | `2026-11-18T16:22:14.730Z` | `unsloth/Qwen3.8-27B-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-unsloth-qwen3.8-27b-gguf-learnings.md` | Yes (`afb0b908...`) |
 | `CYCLE-20261118-XG9A` | `2026-11-18T16:22:17.230Z` | `o2sh/onefetch` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9255` | Yes (`61de0617...`) |
 | `CYCLE-20261118-XOMO` | `2026-11-18T16:22:28.080Z` | `RustCrypto/hashes` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9256` | Yes (`bf7f1dde...`) |
+| `CYCLE-20261118-98EP` | `2026-11-18T16:31:26.929Z` | `HuggingFaceTB/SmolVLM2-256M-Video-Instruct` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-huggingfacetb-smolvlm2-256m-video-instruct-learnings.md` | Yes (`5159fda8...`) |
+| `CYCLE-20261118-9ABA` | `2026-11-18T16:31:29.398Z` | `DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-davidau-qwen3.8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf-learnings.md` | Yes (`a3619a14...`) |
+| `CYCLE-20261118-9KC0` | `2026-11-18T16:31:42.384Z` | `skyhook-io/radar` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9257` | Yes (`c17403fb...`) |
+| `CYCLE-2026-11-18-PROJ-EVOLVE` | `2026-11-18T16:32:22.482Z` | `hf-huggingfacetb-smolvlm2-256m-video-instruct` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-9D26CBBB` [Domain D] | Yes (`055cb7c2...`) |

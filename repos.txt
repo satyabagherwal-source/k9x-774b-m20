@@ -5198,3 +5198,7 @@ https://github.com/software-mansion/argent
 # --- Automatically Discovered by AI Scout Engine [2026-11-18T15:59:30.648Z] ---
 # [HUGGINGFACE-AI-MODELS] briaai/RMBG-3.0 (912 score) - Verified Hugging Face Model: briaai/RMBG-3.0 (87 likes, 42 downloads)
 https://huggingface.co/briaai/RMBG-3.0
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-18T16:31:20.188Z] ---
+# [HUGGINGFACE-AI-MODELS] HuggingFaceTB/SmolVLM2-256M-Video-Instruct (4000 score) - Verified Hugging Face Model: HuggingFaceTB/SmolVLM2-256M-Video-Instruct (200 lik
+https://huggingface.co/HuggingFaceTB/SmolVLM2-256M-Video-Instruct

@@ -21556,5 +21556,17 @@
     "downloads": 42,
     "qualityScore": 912,
     "discoveredAt": "2026-11-18T15:57:22.434Z"
+  },
+  {
+    "name": "HuggingFaceTB/SmolVLM2-256M-Video-Instruct",
+    "fullName": "HuggingFaceTB/SmolVLM2-256M-Video-Instruct",
+    "url": "https://huggingface.co/HuggingFaceTB/SmolVLM2-256M-Video-Instruct",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: HuggingFaceTB/SmolVLM2-256M-Video-Instruct (200 likes, 43594 downloads)",
+    "likes": 200,
+    "downloads": 43594,
+    "qualityScore": 4000,
+    "discoveredAt": "2026-11-18T16:29:11.207Z"
   }
 ]

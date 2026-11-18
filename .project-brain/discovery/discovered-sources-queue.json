@@ -2,16 +2,16 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-18T16:22:33.146Z",
+  "updated_at": "2026-11-18T16:32:23.842Z",
   "stats": {
-    "total_discovered": 5589,
-    "approved_pending_harvest": 5282,
+    "total_discovered": 5592,
+    "approved_pending_harvest": 5285,
     "harvested_count": 0,
     "rejected_count": 307,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 5266,
+      "COMMUNITY_AND_EXPERT": 5268,
       "OFFICIAL_DOCUMENTATION": 177,
-      "STANDARDS_AND_SPECIFICATIONS": 110,
+      "STANDARDS_AND_SPECIFICATIONS": 111,
       "ENGINEERING_BLOGS": 4,
       "SECURITY_ADVISORIES": 24,
       "LEGAL_AND_REGULATORY": 2,
@@ -120830,6 +120830,72 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rustcrypto-hashes-learnings.md",
         "fileName": "rustcrypto-hashes-learnings.md"
+      }
+    },
+    "SRC-6DF78CBFF478": {
+      "id": "SRC-6DF78CBFF478",
+      "url": "https://huggingface.co/HuggingFaceTB/SmolVLM2-256M-Video-Instruct",
+      "title": "https://huggingface.co/HuggingFaceTB/SmolVLM2-256M-Video-Instruct",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T16:32:22.513Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-huggingfacetb-smolvlm2-256m-video-instruct-learnings.md",
+        "fileName": "hf-huggingfacetb-smolvlm2-256m-video-instruct-learnings.md"
+      }
+    },
+    "SRC-BC59EAE10A68": {
+      "id": "SRC-BC59EAE10A68",
+      "url": "https://raw.githubusercontent.com/DenysSamoiliuk/radar/refs/head",
+      "title": "https://raw.githubusercontent.com/DenysSamoiliuk/radar/refs/head",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T16:32:23.725Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/skyhook-io-radar-learnings.md",
+        "fileName": "skyhook-io-radar-learnings.md"
+      }
+    },
+    "SRC-5CE1293791E5": {
+      "id": "SRC-5CE1293791E5",
+      "url": "https://www.rfc-editor.org/rfc/rfc7386",
+      "title": "IETF RFC 7386",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "STANDARDS_AND_SPECIFICATIONS",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.98,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T16:32:23.842Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/skyhook-io-radar-learnings.md",
+        "fileName": "skyhook-io-radar-learnings.md"
       }
     }
   }

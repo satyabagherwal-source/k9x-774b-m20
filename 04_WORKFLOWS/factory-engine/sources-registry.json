@@ -69,8 +69,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-18T16:22:31.176Z",
-    "lastVerified": "2026-11-18T16:22:31.176Z",
+    "lastChecked": "2026-11-18T16:31:45.763Z",
+    "lastVerified": "2026-11-18T16:31:45.763Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -292,8 +292,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-18T15:51:44.652Z",
-    "lastVerified": "2026-11-18T15:51:44.652Z",
+    "lastChecked": "2026-11-18T16:31:41.005Z",
+    "lastVerified": "2026-11-18T16:31:41.005Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -1310,9 +1310,9 @@
   "build-trust-ockam": {
     "name": "ockam",
     "officialUrl": "https://github.com/build-trust/ockam",
-    "lastChecked": "2026-11-18T12:23:56.465Z",
+    "lastChecked": "2026-11-18T16:31:36.075Z",
     "revisionIdentifier": "0435d8d7",
-    "lastVerified": "2026-11-18T12:23:56.465Z"
+    "lastVerified": "2026-11-18T16:31:36.075Z"
   },
   "valeriansaliou-sonic": {
     "name": "sonic",
@@ -2940,5 +2940,70 @@
     "lastChecked": "2026-11-18T16:22:23.787Z",
     "revisionIdentifier": "2b290b34",
     "lastVerified": "2026-11-18T16:22:23.787Z"
+  },
+  "hf-huggingfacetb-smolvlm2-256m-video-instruct": {
+    "name": "HuggingFaceTB/SmolVLM2-256M-Video-Instruct",
+    "officialUrl": "https://huggingface.co/HuggingFaceTB/SmolVLM2-256M-Video-Instruct",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-18T16:31:26.068Z",
+    "lastVerified": "2026-11-18T16:31:26.068Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-huggingfacetb-smolvlm2-256m-video-instruct",
+    "contentHash": "5159fda85e55fb82a8aecf512688b78e8962bee711c40ab41214cd6c3a45231d",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-davidau-qwen3.8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf": {
+    "name": "DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
+    "officialUrl": "https://huggingface.co/DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-18T16:31:28.764Z",
+    "lastVerified": "2026-11-18T16:31:28.764Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf",
+    "contentHash": "a3619a143602689e56e5775e8fe793e43c2cb78e19e9068b5980170fd04f1321",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "oblador-react-native-animatable": {
+    "name": "react-native-animatable",
+    "officialUrl": "https://github.com/oblador/react-native-animatable",
+    "lastChecked": "2026-11-18T16:31:31.119Z",
+    "revisionIdentifier": "dfd74137",
+    "lastVerified": "2026-11-18T16:31:31.119Z"
+  },
+  "skyhook-io-radar": {
+    "name": "skyhook-io/radar",
+    "officialUrl": "https://github.com/skyhook-io/radar",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-11-18T16:31:41.087Z",
+    "lastVerified": "2026-11-18T16:31:41.087Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-skyhook-io-radar",
+    "contentHash": "c17403fb063e4f1753bfe4f6c25d2256a023a2385a7fdc6c9400399e6054250e",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 3,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "neuron-core-neuron-ai": {
+    "name": "neuron-ai",
+    "officialUrl": "https://github.com/neuron-core/neuron-ai",
+    "lastChecked": "2026-11-18T16:31:38.529Z",
+    "revisionIdentifier": "c2b9a03e",
+    "lastVerified": "2026-11-18T16:31:38.529Z"
   }
 }

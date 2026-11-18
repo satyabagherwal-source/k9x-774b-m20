@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T16:22:28.089Z",
-  "total_cycles_completed": 10557,
-  "total_learnings_persisted": 10557,
-  "total_rules_promoted": 10018,
+  "last_updated": "2026-11-18T16:31:42.397Z",
+  "total_cycles_completed": 10560,
+  "total_learnings_persisted": 10560,
+  "total_rules_promoted": 10019,
   "history": [
-    {
-      "timestamp": "2026-11-18T04:57:14.984Z",
-      "repository": "deepseek-ai/DeepSeek-V4.1-Flash",
-      "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-18T04:57:17.194Z",
-      "repository": "unhappychoice/gitlogue",
-      "learningId": "learn-github-unhappychoice-gitlogue",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-18T04:57:23.082Z",
-      "repository": "onejs/one",
-      "learningId": "learn-github-onejs-one",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-18T04:57:26.934Z",
       "repository": "tailscale/tailscale",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-18T16:22:28.089Z",
       "repository": "RustCrypto/hashes",
       "learningId": "learn-github-rustcrypto-hashes",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T16:31:26.944Z",
+      "repository": "HuggingFaceTB/SmolVLM2-256M-Video-Instruct",
+      "learningId": "learn-huggingface-huggingfacetb-smolvlm2-256m-video-instruct",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T16:31:29.410Z",
+      "repository": "DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
+      "learningId": "learn-huggingface-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T16:31:42.397Z",
+      "repository": "skyhook-io/radar",
+      "learningId": "learn-github-skyhook-io-radar",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-18T16:22:33.452Z",
-  "total_records": 1880,
+  "last_updated": "2026-11-18T16:32:24.350Z",
+  "total_records": 1883,
   "domains": {
     "A": {
       "total": 13,
@@ -51,7 +51,7 @@
       ]
     },
     "D": {
-      "total": 792,
+      "total": 795,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -844,7 +844,10 @@
         "DOM-D-A606F2DF",
         "domain_intelligence-research-knowledge-intelligence-briaai-rmbg-3-0-core-invariants",
         "DOM-D-EE4276B2",
-        "domain_intelligence-research-knowledge-intelligence-hf-briaai-rmbg-3-0-learnings-core-invariants"
+        "domain_intelligence-research-knowledge-intelligence-hf-briaai-rmbg-3-0-learnings-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-huggingfacetb-smolvlm2-256m-video-instruct-core-",
+        "DOM-D-9D26CBBB",
+        "domain_intelligence-research-knowledge-intelligence-hf-huggingfacetb-smolvlm2-256m-video-instruct-le"
       ]
     },
     "E": {
@@ -9990,8 +9993,8 @@
       "title": "Research & Knowledge Intelligence: DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-co.md",
       "repository": "DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
-      "content_hash": "b7e24de5d85c39b63b5ef4c7b6eebfb5bcf8f90fffa5d204282ab21e32642812",
-      "created_at": "2026-11-18T07:13:57.156Z"
+      "content_hash": "2b592139179f8c5a545d29a1c5ebb804d262e7124563eba633e45405bbed0b03",
+      "created_at": "2026-11-18T16:31:29.636Z"
     },
     "domain_intelligence-technical-construction-intelligence-karakeep-app-karakeep-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-karakeep-app-karakeep-core-invariants",
@@ -10008,8 +10011,8 @@
       "title": "Research & Knowledge Intelligence: hf-davidau-qwen3.8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-co.md",
       "repository": "hf-davidau-qwen3.8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf-learnings",
-      "content_hash": "aadcd3df259c421793b6650a9e0e1fd2f2370d2ae1b31a401260dd85317fbfb5",
-      "created_at": "2026-11-18T07:14:16.255Z"
+      "content_hash": "6a99074fdc608b8f3297f467dba8f432fdf2918d119a8388710f4c3b526b5388",
+      "created_at": "2026-11-18T16:32:23.316Z"
     },
     "domain_intelligence-technical-construction-intelligence-karakeep-app-karakeep-learnings-core-invaria": {
       "record_id": "domain_intelligence-technical-construction-intelligence-karakeep-app-karakeep-learnings-core-invaria",
@@ -14803,8 +14806,8 @@
       "title": "Architecture Intelligence: skyhook-io/radar Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-skyhook-io-radar-architecture-intelligence-skyhook-io-radar-core-invariants.md",
       "repository": "skyhook-io/radar",
-      "content_hash": "813a3fbd8af521ad1150eea3579da36ba41a5cf91b9033f04b16a89daf5fde04",
-      "created_at": "2026-11-18T01:58:04.829Z"
+      "content_hash": "f0a84ee02245f30c2963995b21ef50eca4b40b3d493ff9f5bb0c71efa1b871e9",
+      "created_at": "2026-11-18T16:31:42.845Z"
     },
     "DOM-D-694FEEFE": {
       "record_id": "DOM-D-694FEEFE",
@@ -14914,8 +14917,8 @@
       "title": "Architecture Intelligence: skyhook-io-radar-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-skyhook-io-radar-learnings-architecture-intelligence-skyhook-io-radar-learnings-.md",
       "repository": "skyhook-io-radar-learnings",
-      "content_hash": "ef83d19be169ee6be16fe4913f222adda604fd4198c0727577b2fdb680e7c063",
-      "created_at": "2026-11-18T01:58:09.344Z"
+      "content_hash": "a2c4f9280cabe8184f3481473b6347414da0308c1d048d717775bc77b712a309",
+      "created_at": "2026-11-18T16:32:24.350Z"
     },
     "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-vl-8b-instruct-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-vl-8b-instruct-core-invariants",
@@ -31455,6 +31458,66 @@
       "repository": "rustcrypto-hashes-learnings",
       "content_hash": "ffda71d7e8e5f2681dcd951f93a224376947df23cc4547cd5b7dc894808a67af",
       "created_at": "2026-11-18T16:22:33.452Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-huggingfacetb-smolvlm2-256m-video-instruct-core-": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-huggingfacetb-smolvlm2-256m-video-instruct-core-",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: HuggingFaceTB/SmolVLM2-256M-Video-Instruct Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-huggingfacetb-smolvlm2-256m-video-instruct-research-knowledge-intelligence-hu.md",
+      "repository": "HuggingFaceTB/SmolVLM2-256M-Video-Instruct",
+      "content_hash": "3401310cbfe282e31959228db3ce65e4f234c019d8ee9e65c228df13742577f9",
+      "created_at": "2026-11-18T16:31:27.159Z"
+    },
+    "DOM-D-9D26CBBB": {
+      "record_id": "DOM-D-9D26CBBB",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): HuggingFaceTB/SmolVLM2-256M-Video-Instruct",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-huggingfacetb-smolvlm2-256m-video-instruct-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/HuggingFaceTB/SmolVLM2-256M-Video-Instruct](https://huggingface.co/HuggingFaceTB/SmolVLM2-256M-Video-Instruct))  \n> **Source Versio",
+      "content_hash": "055cb7c23a14c09c978f29cbfd5eb4bf85692c4ee31b8b2b9238ea9e29c713d6",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-huggingfacetb-smolvlm2-256m-video-instruct-learnings.md`  \n> **Source**: huggingf -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-huggingfacetb-smolvlm2-256m-video-instruct-learnings.md`  \n> **Source**: huggingf",
+      "provenance": {
+        "source_uri": "project://hf-huggingfacetb-smolvlm2-256m-video-instruct/hf-huggingfacetb-smolvlm2-256m-video-instruct-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-18T16:31:45.909Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-huggingfacetb-smolvlm2-256m-video-instruct)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-huggingfacetb-smolvlm2-256m-video-instruct"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-18T16:32:22.439Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-huggingfacetb-smolvlm2-256m-video-instruct-le": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-huggingfacetb-smolvlm2-256m-video-instruct-le",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-huggingfacetb-smolvlm2-256m-video-instruct-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-huggingfacetb-smolvlm2-256m-video-instruct-learnings-research-knowledge-intel.md",
+      "repository": "hf-huggingfacetb-smolvlm2-256m-video-instruct-learnings",
+      "content_hash": "05e1ea7f6b84377eb9eb9bc8763c9093335793363ef300869c6b0df716567efd",
+      "created_at": "2026-11-18T16:32:22.797Z"
     }
   }
 }

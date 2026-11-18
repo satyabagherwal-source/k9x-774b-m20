@@ -645,8 +645,8 @@
     "sourceUrl": "https://huggingface.co/DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
     "sourceVersion": "hf-davidau-qwen3.8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf",
     "license": "Open-Source",
-    "contentHash": "1e9a8abbfe815ee1ab247c83d9ab67fdcfb1e0a392925c981fda4261f8727188",
-    "lastHarvestedAt": "2026-11-18T07:13:56.975Z",
+    "contentHash": "a3619a143602689e56e5775e8fe793e43c2cb78e19e9068b5980170fd04f1321",
+    "lastHarvestedAt": "2026-11-18T16:31:29.403Z",
     "learningId": "learn-huggingface-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf"
   },
   "hf-canberkkkkkk-ema-lightning": {
@@ -3393,10 +3393,10 @@
     "repository": "skyhook-io/radar",
     "platform": "github",
     "sourceUrl": "https://github.com/skyhook-io/radar",
-    "sourceVersion": "495dc890",
+    "sourceVersion": "e02bbdaa",
     "license": "Apache-2.0",
-    "contentHash": "368904eac464463ef5951111fb3638596a645e483171f11e83de781ca99f552c",
-    "lastHarvestedAt": "2026-11-18T01:58:04.502Z",
+    "contentHash": "c17403fb063e4f1753bfe4f6c25d2256a023a2385a7fdc6c9400399e6054250e",
+    "lastHarvestedAt": "2026-11-18T16:31:42.390Z",
     "learningId": "learn-github-skyhook-io-radar"
   },
   "mitmproxy-mitmproxy": {
@@ -12898,5 +12898,15 @@
     "contentHash": "e77b39b820a82a7ace5cc1769a28eb54b5238ccead3d077e901088995200009d",
     "lastHarvestedAt": "2026-11-18T16:00:07.214Z",
     "learningId": "learn-huggingface-briaai-rmbg-3-0"
+  },
+  "hf-huggingfacetb-smolvlm2-256m-video-instruct": {
+    "repository": "HuggingFaceTB/SmolVLM2-256M-Video-Instruct",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/HuggingFaceTB/SmolVLM2-256M-Video-Instruct",
+    "sourceVersion": "hf-huggingfacetb-smolvlm2-256m-video-instruct",
+    "license": "Open-Source",
+    "contentHash": "5159fda85e55fb82a8aecf512688b78e8962bee711c40ab41214cd6c3a45231d",
+    "lastHarvestedAt": "2026-11-18T16:31:26.936Z",
+    "learningId": "learn-huggingface-huggingfacetb-smolvlm2-256m-video-instruct"
   }
 }

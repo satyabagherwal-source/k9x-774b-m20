@@ -2,12 +2,12 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-18T16:01:20.957Z",
+  "updated_at": "2026-11-18T16:32:22.479Z",
   "statistics": {
-    "total_nodes": 358,
+    "total_nodes": 359,
     "total_edges": 166,
     "domain_distribution": {
-      "D": 243,
+      "D": 244,
       "M": 1,
       "H": 50,
       "J": 13,
@@ -8003,6 +8003,28 @@
       ],
       "created_at": "2026-11-18T16:01:20.957Z",
       "updated_at": "2026-11-18T16:01:20.957Z"
+    },
+    "DOM-D-9D26CBBB": {
+      "id": "DOM-D-9D26CBBB",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): HuggingFaceTB/SmolVLM2-256M-Video-Instruct",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-huggingfacetb-smolvlm2-256m-video-instruct-learnings.md`  \n> **Source**: huggingf -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-huggingfacetb-smolvlm2-256m-video-instruct-learnings.md`  \n> **Source**: huggingf",
+      "confidence": 0.6,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-huggingfacetb-smolvlm2-256m-video-instruct/hf-huggingfacetb-smolvlm2-256m-video-instruct-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-18T16:31:45.909Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-huggingfacetb-smolvlm2-256m-video-instruct)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence"
+      ],
+      "created_at": "2026-11-18T16:32:22.479Z",
+      "updated_at": "2026-11-18T16:32:22.479Z"
     }
   },
   "edges": [

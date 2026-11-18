@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261117-U8LU",
-    "timestamp": "2026-11-17T07:40:14.226Z",
-    "repository": "appwrite/appwrite",
-    "learningId": "learn-github-appwrite-appwrite",
-    "contentHash": "3c10f5fcf7d8a649cc2ad8e4de9fb007f305f0513484135004ab4a8670ef3be2",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261117-E5TC",
-    "timestamp": "2026-11-17T07:55:43.728Z",
-    "repository": "Qwen/Qwen3-Embedding-0.6B",
-    "learningId": "learn-huggingface-qwen-qwen3-embedding-0-6b",
-    "contentHash": "7a13aacdd3b7d03446dcb66b88728e210f2414530d8db92ca566a8bdcacccbad",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261117-E8KK",
-    "timestamp": "2026-11-17T07:55:47.300Z",
-    "repository": "laurent22/joplin",
-    "learningId": "learn-github-laurent22-joplin",
-    "contentHash": "40dd56d96f8998769f331935cff58def95ff427aa2596ad66221922c5ed73360",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261117-EHVC",
     "timestamp": "2026-11-17T07:55:59.352Z",
     "repository": "apache/shardingsphere",
@@ -7490,6 +7445,51 @@
     "repository": "RustCrypto/hashes",
     "learningId": "learn-github-rustcrypto-hashes",
     "contentHash": "bf7f1dde2e83ec32c5f0719d666a3fee95dca07c3b00af5da19c2dea74461e24",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-98EP",
+    "timestamp": "2026-11-18T16:31:26.929Z",
+    "repository": "HuggingFaceTB/SmolVLM2-256M-Video-Instruct",
+    "learningId": "learn-huggingface-huggingfacetb-smolvlm2-256m-video-instruct",
+    "contentHash": "5159fda85e55fb82a8aecf512688b78e8962bee711c40ab41214cd6c3a45231d",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-9ABA",
+    "timestamp": "2026-11-18T16:31:29.398Z",
+    "repository": "DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
+    "learningId": "learn-huggingface-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf",
+    "contentHash": "a3619a143602689e56e5775e8fe793e43c2cb78e19e9068b5980170fd04f1321",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-9KC0",
+    "timestamp": "2026-11-18T16:31:42.384Z",
+    "repository": "skyhook-io/radar",
+    "learningId": "learn-github-skyhook-io-radar",
+    "contentHash": "c17403fb063e4f1753bfe4f6c25d2256a023a2385a7fdc6c9400399e6054250e",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

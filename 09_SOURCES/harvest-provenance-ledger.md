@@ -11072,3 +11072,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-unsloth-qwen3-8-27b-gguf` | `https://huggingface.co/unsloth/Qwen3.8-27B-GGUF` | `hf-unsloth` | Multi-dimensional audit evidence | 2026-11-18T16:22:14.734Z |
 | `learn-github-o2sh-onefetch` | `https://github.com/o2sh/onefetch` | `3054de77` | Multi-dimensional audit evidence | 2026-11-18T16:22:17.234Z |
 | `learn-github-rustcrypto-hashes` | `https://github.com/RustCrypto/hashes` | `50a7ea68` | Multi-dimensional audit evidence | 2026-11-18T16:22:28.084Z |
+| `learn-huggingface-huggingfacetb-smolvlm2-256m-video-instruct` | `https://huggingface.co/HuggingFaceTB/SmolVLM2-256M-Video-Instruct` | `hf-hugging` | Multi-dimensional audit evidence | 2026-11-18T16:31:26.936Z |
+| `learn-huggingface-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf` | `https://huggingface.co/DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF` | `hf-davidau` | Multi-dimensional audit evidence | 2026-11-18T16:31:29.403Z |
+| `learn-github-skyhook-io-radar` | `https://github.com/skyhook-io/radar` | `e02bbdaa` | Multi-dimensional audit evidence | 2026-11-18T16:31:42.390Z |
+| `learn-dom-d-9d26cbbb` | `project://hf-huggingfacetb-smolvlm2-256m-video-instruct` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-huggingfacetb-smolvlm2-256m-video-instruct-learnings.md` | 2026-11-18T16:32:22.482Z |
