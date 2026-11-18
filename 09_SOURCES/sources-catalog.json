@@ -725,8 +725,8 @@
     "sourceUrl": "https://huggingface.co/google/electra-base-discriminator",
     "sourceVersion": "hf-google-electra-base-discriminator",
     "license": "Open-Source",
-    "contentHash": "17cabb2282f539644c4277f05eea3da557265ea07fb657bfaa5806314d65ff68",
-    "lastHarvestedAt": "2026-11-18T07:47:49.765Z",
+    "contentHash": "71bd56a6cae7020c20e8f7230884fc1ae72addb3581bc75812bea43581e1bf08",
+    "lastHarvestedAt": "2026-11-18T17:10:16.059Z",
     "learningId": "learn-huggingface-google-electra-base-discriminator"
   },
   "hf-baai-bge-m3": {
@@ -3633,10 +3633,10 @@
     "repository": "koderover/zadig",
     "platform": "github",
     "sourceUrl": "https://github.com/koderover/zadig",
-    "sourceVersion": "2c932905",
+    "sourceVersion": "39229c91",
     "license": "NOASSERTION",
-    "contentHash": "57a58c4c06f9b0539dbe6b9d3c8890e3d0f72f5052b45faf16bb1a466d63481b",
-    "lastHarvestedAt": "2026-11-18T02:51:25.657Z",
+    "contentHash": "d07a9983748708a44297f2d71f55e15080e49f76f1e44e223faba3709cf86226",
+    "lastHarvestedAt": "2026-11-18T17:10:26.499Z",
     "learningId": "learn-github-koderover-zadig"
   },
   "trufflesecurity-trufflehog": {

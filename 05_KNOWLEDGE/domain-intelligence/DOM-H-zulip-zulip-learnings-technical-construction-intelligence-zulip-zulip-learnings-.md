@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-18T16:49:41.819Z",
+  "timestamp": "2026-11-18T17:10:31.538Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-zulip-zulip-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [zulip-zulip-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-18T16:49:41.819Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-18T17:10:31.538Z`  
 > **Learning ID**: `LEARN-EVO-zulip-zulip-learnings`
 
 

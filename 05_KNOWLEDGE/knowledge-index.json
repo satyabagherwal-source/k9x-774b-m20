@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-18T17:02:01.381Z",
+  "last_updated": "2026-11-18T17:10:31.653Z",
   "total_verified_learnings": 9006,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 21386,
+  "total_items": 21389,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -215346,7 +215346,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/google/electra-base-discriminator",
       "source_version": "hf-google-electra-base-discriminator",
-      "content_hash": "17cabb2282f539644c4277f05eea3da557265ea07fb657bfaa5806314d65ff68",
+      "content_hash": "71bd56a6cae7020c20e8f7230884fc1ae72addb3581bc75812bea43581e1bf08",
       "dossier_path": "07_PROJECT_LEARNING/hf-google-electra-base-discriminator-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-google-electra-base-discriminator-learnings.md",
       "promoted_rules": [],
@@ -215355,7 +215355,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T07:47:49.566Z",
+      "verified_at": "2026-11-18T17:10:15.817Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -215372,9 +215372,9 @@
       "title": "Research & Knowledge Intelligence: google/electra-base-discriminator Core Invariants",
       "repository": "google/electra-base-discriminator",
       "source_version": "hf-google-electra-base-discriminator",
-      "content_hash": "797af4af623aa396aa6df422792289b0b0dabd4f428254680c997454d7d79080",
+      "content_hash": "72319707006574942220ac0235bb4132bd84b5367b806902b513fba71fe84f0c",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T07:47:49.953Z"
+      "persisted_at": "2026-11-18T17:10:16.298Z"
     },
     "learn-github-react-navigation-react-navigation": {
       "learning_id": "learn-github-react-navigation-react-navigation",
@@ -215747,9 +215747,9 @@
       "title": "Research & Knowledge Intelligence: hf-google-electra-base-discriminator-learnings Core Invariants",
       "repository": "hf-google-electra-base-discriminator-learnings",
       "source_version": "HEAD",
-      "content_hash": "79e685f1f39ce0593693d1de63252cfca276c7b911c2331f34247799da96b70f",
+      "content_hash": "266a1a40a7edf1c8822578c91cb7dab2f502114038ac2c18db8602e562ac05be",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T07:48:42.675Z"
+      "persisted_at": "2026-11-18T17:10:30.190Z"
     },
     "domain_intelligence-architecture-intelligence-react-navigation-react-navigation-learnings-core-invar": {
       "item_id": "domain_intelligence-architecture-intelligence-react-navigation-react-navigation-learnings-core-invar",
@@ -229269,8 +229269,8 @@
       "slug": "koderover-zadig",
       "platform": "github",
       "source_url": "https://github.com/koderover/zadig",
-      "source_version": "2c932905",
-      "content_hash": "57a58c4c06f9b0539dbe6b9d3c8890e3d0f72f5052b45faf16bb1a466d63481b",
+      "source_version": "39229c91",
+      "content_hash": "d07a9983748708a44297f2d71f55e15080e49f76f1e44e223faba3709cf86226",
       "dossier_path": "07_PROJECT_LEARNING/koderover-zadig-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/koderover-zadig-learnings.md",
       "promoted_rules": [
@@ -229288,6 +229288,11 @@
           "number": 9110,
           "title": "support skipping CRD upgrade when updating services",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9263,
+          "title": "update service labels in GitHub Actions configuration.",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -229295,7 +229300,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T02:51:25.453Z",
+      "verified_at": "2026-11-18T17:10:26.275Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -229361,10 +229366,10 @@
       "relative_path": "08_VERIFICATION/koderover-zadig-verification-protocol-empirical-defect-shield-for-koderover-zadi.md",
       "title": "Verification Protocol: Empirical Defect Shield for koderover/zadig",
       "repository": "koderover/zadig",
-      "source_version": "2c932905",
-      "content_hash": "903f6013acbacc809768d551a5b3574fa6b0597e5c0484e0afb09252d60231c2",
+      "source_version": "39229c91",
+      "content_hash": "988abffce81b456bb05f7d17d86f3c734ddb610d5e4a9ab78de53bdc8c9d7c92",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T02:51:26.165Z"
+      "persisted_at": "2026-11-18T17:10:27.085Z"
     },
     "learn-github-projectdiscovery-nuclei": {
       "learning_id": "learn-github-projectdiscovery-nuclei",
@@ -229552,9 +229557,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for koderover-zadig-learnings",
       "repository": "koderover-zadig-learnings",
       "source_version": "HEAD",
-      "content_hash": "75e73e2654e456790b2e68d42e8cad0a42c36b34eb690495c46d525cb0d5b100",
+      "content_hash": "1e28e359e7f44c74817158226283e67f135a27b12e1d1e90e68b325e4d6bda83",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T02:51:31.845Z"
+      "persisted_at": "2026-11-18T17:10:31.128Z"
     },
     "learn-huggingface-argmaxinc-whisperkit-coreml": {
       "learning_id": "learn-huggingface-argmaxinc-whisperkit-coreml",
@@ -264697,10 +264702,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-koderover-zadig-technical-construction-intelligence-koderover-zadig-core-invaria.md",
       "title": "Technical Construction Intelligence: koderover/zadig Core Invariants",
       "repository": "koderover/zadig",
-      "source_version": "2c932905",
-      "content_hash": "acdeb6381dbb03e0e1cea0796ad8cb7926d3d71450501f3b8b76280297dcfd08",
+      "source_version": "39229c91",
+      "content_hash": "4251c6444948a3c4a687a6d00131bd798416858459d4c41e31c5d99d56f64adc",
       "domain_letter": "H",
-      "persisted_at": "2026-11-18T02:51:25.992Z"
+      "persisted_at": "2026-11-18T17:10:26.903Z"
     },
     "domain_intelligence-architecture-intelligence-solidjs-solid-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-solidjs-solid-learnings-core-invariants",
@@ -264770,9 +264775,9 @@
       "title": "Technical Construction Intelligence: koderover-zadig-learnings Core Invariants",
       "repository": "koderover-zadig-learnings",
       "source_version": "HEAD",
-      "content_hash": "02dad1ced52738c6b7f627a71eec5ed6c7122b41e54788f02d2515a161f2a5b4",
+      "content_hash": "eae233bc65813fbc5f342a79568413801008b8a00c5568cbe2adb395d9266197",
       "domain_letter": "H",
-      "persisted_at": "2026-11-18T02:51:31.701Z"
+      "persisted_at": "2026-11-18T17:10:30.914Z"
     },
     "learn-github-vitejs-vite": {
       "learning_id": "learn-github-vitejs-vite",
@@ -286533,9 +286538,9 @@
       "title": "Technical Construction Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "32b581d2f98d8bf7658ea2b4a1b79056f6a9a3a5c11238cd87a4e868d216dad8",
+      "content_hash": "d7d91e4e7cf16fa55cd139f0e68d73e1b2bde796c29cfcf0c05743ced105a2c6",
       "domain_letter": "H",
-      "persisted_at": "2026-11-18T16:49:41.930Z"
+      "persisted_at": "2026-11-18T17:10:31.653Z"
     },
     "learn-github-software-mansion-argent": {
       "learning_id": "learn-github-software-mansion-argent",
@@ -288660,6 +288665,44 @@
       "content_hash": "e27918aa4c343f62914030ff2b84aab1a076fc6c00f057a55309933d25f0646e",
       "domain_letter": "H",
       "persisted_at": "2026-11-18T17:02:00.981Z"
+    },
+    "rule-9263": {
+      "learning_id": "rule-9263",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9263,
+      "title": "update service labels in GitHub Actions configuration.",
+      "source_url": "https://github.com/koderover/zadig",
+      "source_version": "39229c91",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-18T17:10:26.275Z"
+    },
+    "candidate_directive-update-service-labels-in-github-actions-configuration": {
+      "item_id": "candidate_directive-update-service-labels-in-github-actions-configuration",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-NDT6-update-service-labels-in-github-actions-configuration.md",
+      "title": "update service labels in GitHub Actions configuration.",
+      "repository": "koderover/zadig",
+      "source_version": "39229c91",
+      "content_hash": "0cd5da5f7b96a8dd28fb76ffbb80ec859a2f4d1e53d4093951252eb96a1bd804",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-18T17:10:26.731Z"
+    },
+    "candidate_directive-labeler-update-service-labels-in-github-actions-configuration": {
+      "item_id": "candidate_directive-labeler-update-service-labels-in-github-actions-configuration",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-NGWA-labeler-update-service-labels-in-github-actions-configuration.md",
+      "title": "labeler): update service labels in GitHub Actions configuration.",
+      "repository": "koderover-zadig-learnings",
+      "source_version": "HEAD",
+      "content_hash": "3618501e9243b6db390c32757da735e5bd0b93b5f7ef5e87d3081df1616e9adb",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-18T17:10:30.731Z"
     }
   },
   "ai-builder-brain": {

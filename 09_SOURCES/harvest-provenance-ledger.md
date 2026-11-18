@@ -11085,3 +11085,5 @@ Every entry in this ledger must capture:
 | `learn-github-peerdb-io-peerdb` | `https://github.com/PeerDB-io/peerdb` | `5f74e0ef` | Multi-dimensional audit evidence | 2026-11-18T17:01:47.541Z |
 | `learn-github-doobidoo-mcp-memory-service` | `https://github.com/doobidoo/mcp-memory-service` | `7957cfe5` | Multi-dimensional audit evidence | 2026-11-18T17:01:52.870Z |
 | `learn-github-zama-ai-tfhe-rs` | `https://github.com/zama-ai/tfhe-rs` | `ab04f563` | Multi-dimensional audit evidence | 2026-11-18T17:01:55.700Z |
+| `learn-huggingface-google-electra-base-discriminator` | `https://huggingface.co/google/electra-base-discriminator` | `hf-google-` | Multi-dimensional audit evidence | 2026-11-18T17:10:16.059Z |
+| `learn-github-koderover-zadig` | `https://github.com/koderover/zadig` | `39229c91` | Multi-dimensional audit evidence | 2026-11-18T17:10:26.499Z |

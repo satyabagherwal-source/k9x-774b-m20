@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261117-NQ4P",
-    "timestamp": "2026-11-17T08:31:09.577Z",
-    "repository": "arangodb/arangodb",
-    "learningId": "learn-github-arangodb-arangodb",
-    "contentHash": "980bcf19564c75bd47e8bb7635c2c8f48b8a7b83b47c61e9fef8f377ff5b1f51",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261117-NRMV",
-    "timestamp": "2026-11-17T08:31:11.527Z",
-    "repository": "aquasecurity/trivy",
-    "learningId": "learn-github-aquasecurity-trivy",
-    "contentHash": "08f64fddef4e2d5deddfdc9a5a8bc545a1acd944836b38e1aa39973384ed754c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261117-2CSK",
     "timestamp": "2026-11-17T08:42:32.132Z",
     "repository": "dubzzz/fast-check",
@@ -7490,6 +7460,36 @@
     "repository": "zama-ai/tfhe-rs",
     "learningId": "learn-github-zama-ai-tfhe-rs",
     "contentHash": "1f812a45f823227f9c1a0a729b4c1c91dcabdfc5d50f548aa478f86fe54851c6",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-N5KM",
+    "timestamp": "2026-11-18T17:10:16.054Z",
+    "repository": "google/electra-base-discriminator",
+    "learningId": "learn-huggingface-google-electra-base-discriminator",
+    "contentHash": "71bd56a6cae7020c20e8f7230884fc1ae72addb3581bc75812bea43581e1bf08",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-NDMN",
+    "timestamp": "2026-11-18T17:10:26.495Z",
+    "repository": "koderover/zadig",
+    "learningId": "learn-github-koderover-zadig",
+    "contentHash": "d07a9983748708a44297f2d71f55e15080e49f76f1e44e223faba3709cf86226",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

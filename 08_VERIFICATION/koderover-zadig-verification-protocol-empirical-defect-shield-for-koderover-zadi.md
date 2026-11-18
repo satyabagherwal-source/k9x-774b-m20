@@ -4,22 +4,22 @@
 {
   "source_repository": "koderover/zadig",
   "source_url": "https://github.com/koderover/zadig",
-  "source_version": "2c932905",
+  "source_version": "39229c91",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-18T02:51:25.859Z",
+  "timestamp": "2026-11-18T17:10:26.730Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-koderover-zadig",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [koderover/zadig](https://github.com/koderover/zadig) (Revision: `2c932905`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-18T02:51:25.859Z`  
+> **Provenance**: Harvested from [koderover/zadig](https://github.com/koderover/zadig) (Revision: `39229c91`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-18T17:10:26.730Z`  
 > **Learning ID**: `learn-github-koderover-zadig`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `koderover/zadig` (Commit: `2c932905`)
+- **Target Repository**: `koderover/zadig` (Commit: `39229c91`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/koderover-zadig-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/koderover/zadig](https://github.com/koderover/zadig))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T02:51:24.659Z  
+> **Harvest Timestamp**: 2026-11-18T17:10:25.358Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1215,254 +1215,209 @@ func isSubdirectory(rootDir, subDir string) bool {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2c932905` (2026-11-17)
-**Commit Message**: feat(helm): support skipping CRD upgrade when updating services (#5082)
+### Incident Patch 1: `39229c91` (2026-11-18)
+**Commit Message**: chore(labeler): update service labels in GitHub Actions configuration. (#5102)
 
-* feat(helm): support skipping CRD upgrade when updating services
+Signed-off-by: leozhang2018 <[REDACTED_EMAIL]>
 
-Signed-off-by: huanghongbo-hhb <[REDACTED_EMAIL]>
-
-* fix(helm): honor CRD upgrade option for standalone charts
-
-Forward the CRD upgrade option through single and batch standalone chart updates. Reuse boolptr.IsFalse for the existing optional-boolean conversion.
-
-Signed-off-by: huanghongbo-hhb <[REDACTED_EMAIL]>
-
-* feat(helm): add CRD upgrade options for env updates, rollback and values sync
-
-- Default values update and service version rollback accept upgradeCRD.
-- Updating service images skips CRD upgrade by default.
-- Values source config persists upgrade_crd and sync applies it per service.
-- Omitted upgrade_crd keeps the existing policy; OpenAPI reads and writes it.
-- Standalone chart updates keep upgrading CRDs.
-
-Signed-off-by: huanghongbo-hhb <[REDACTED_EMAIL]>
-
-* fix(helm): guard empty install param and unify render keys
-
-- Skip services whose install param is empty instead of dereferencing nil.
-- Share one helper for helm render keys in values sync.
-
-Signed-off-by: huanghongbo-hhb <[REDACTED_EMAIL]>
-
-* feat(openapi): support CRD upgrade 
-
-**File**: `pkg/microservice/aslan/core/common/repository/models/template/product.go` (modified, +2/-0)
+**File**: `.github/labeler.yml` (modified, +20/-7)
 ```diff
-@@ -134,6 +134,8 @@ type CustomYaml struct {
- 	AutoSyncYaml      string                          `bson:"auto_sync_yaml"                    json:"auto_sync_yaml"`
- 	SourceDetail      interface{}                     `bson:"source_detail"                     json:"source_detail"`
- 	SourceID          string                          `bson:"source_id"                         json:"source_id"`
-+	// UpgradeCRD controls whether CRDs are upgraded when values are synced from source, nil means true
-+	UpgradeCRD *bool `bson:"upgrade_crd,omitempty"               json:"upgrade_crd,omitempty"`
- }
- 
- // ServiceRender used for helm product service ...
-```
-
-**File**: `pkg/microservice/aslan/core/common/repository/models/wokflow_task_v4.go` (modified, +1/-0)
-```diff
-@@ -322,6 +322,7 @@ type JobTaskHelmDeploySpec struct {
- 	ReplaceResources             []Resource                `bson:"replace_resources"                json:"replace_resources"                   yaml:"replace_resources"`
- 	OriginRevision               int64                     `bson:"origin_revision"                  json:"origin_revision"                     yaml:"origin_revision"`
- 	ValueMergeStrategy           config.ValueMergeStrategy `bson:"value_merge_strategy"             json:"value_merge_strategy"                yaml:"value_merge_strategy"`
-+	SkipUpgradeCRDs              bool                      `bson:"skip_upgrade_crds"                json:"skip_upgrade_crds"                   yaml:"skip_upgrade_crds"`
- }
- 
- func (j *JobTaskHelmDeploySpec) GetDeployImages() []string {
-```
-
-**File**: `pkg/microservice/aslan/core/common/repository/models/workflow_v4.go` (modified, +2/-0)
-```diff
-@@ -651,6 +651,8 @@ type DeployServiceVariableConfig struct {
- 
- 	// VariableConfigs used to determine if a variable is visible to the workflow user.
- 	VariableConfigs []*DeployVariableConfig `bson:"variable_configs"                 yaml:"variable_configs,omitempty"          json:"variable_configs,omitempty"`
-+	// UpgradeCRD controls whether CRDs in the helm chart are upgraded, nil means true
-+	UpgradeCRD *bool `bson:"upgrade_crd,omitempty"              yaml:"upgrade_crd,omitempty"               json:"upgrade_crd,omitempty"`
- }
- 
- type DeployServiceVariableConfigList []*DeployServiceVariableConfig
-```
-
-**File**: `pkg/microservice/aslan/core/common/repository/mongodb/product.go` (modified, +1/-0)
-```diff
-@@ -534,6 +534,7 @@ func (c *ProductColl) UpdateServiceValuesSource(productName, envName string, pro
- 		valuesPath + ".source_detail":  sourceData.SourceDetail,
- 		valuesPath + ".auto_sync":      sourceData.AutoSync,
- 		valuesPath + ".auto_sync_yaml": sourceData.AutoSyncYaml,
-+		valuesPath + ".upgrade_crd":    sourceData.UpgradeCRD,
- 	}}
- 	arrayFilters := options.ArrayFilters{Filters: []interface{}{serviceFilter}}
- 	updateOptions := options.UpdateOptions{ArrayFilters: &arrayFilters}
-```
-
-**File**: `pkg/microservice/aslan/core/common/service/kube/helm.go` (modified, +31/-12)
-```diff
-@@ -80,6 +80,19 @@ type ReleaseInstallParam struct {
- 	DryRun         bool
- 	Production     bool
- 	MaxHistory     int
-+	// SkipUpgradeCRDs skips upgrading the CRDs in the chart's crds/ directory; zero value keeps the default behavior.
-+	SkipUpgradeCRDs bool
-+}
+@@ -1,11 +1,20 @@
+ # Add 'service' label to any change to microservice files within the source dir
+ service/aslan:
+ - pkg/microservice/aslan/**/*
+-- pkg/microservice/picket/**/*
+-- pkg/microservice/user/**/*
+-- pkg/microservice/policy/**/*
 +
-+// SkipUpgradeCRDsFunc decides per service whether to skip upgrading CRDs; nil keeps upgrading CRDs.
-+type SkipUpgradeCRDsFunc func(render *templatemodels.ServiceRender) bool
++service/config:
+ - pkg/microservice/systemconfig/**/*
+ 
++service/user:
++- pkg/microservice/user/**/*
 +
-+// SkipUpgradeCRDsForAll applies the same CRD upgrade decision to every service.
-+func SkipUpgradeCRDsForAll(skip bool) SkipUpgradeCRDsFunc {
-+	if !skip {
-+		return nil
-+	}
-+	return func(*templatemodels.ServiceRender) bool { return true }
- }
++service/halman:
++- pkg/microservice/halman/**/*
++
++service/init:
++- cmd/init/**/*
++- pkg/cli/initconfig/**/*
++
+ service/cron:
+ - pkg/microservice/cron/**/*
  
- func InstallOrUpgradeHelmChartWithValues(param *ReleaseInstallParam, isRetry bool, helmClient *helmtool.HelmClient) error {
-@@ -99,7 +112,7 @@ func InstallOrUpgradeHelmChartWithValues(param *ReleaseInstallParam, isRetry boo
- 		Namespace:     namespace,
- 		Version:       renderChart.ChartVersion,
- 		ValuesYaml:    valuesYaml,
--		UpgradeCRDs:   true,
-+		UpgradeCRDs:   !param.SkipUpgradeCRDs,
- 		CleanupOnFail: true,
- 		MaxHistory:    param.MaxHistory,
- 	}
-@@ -652,7 +665,7 @@ func EnsureDeleteZadigServiceBySvcName(ctx context.Context, env *commonmodels.Pr
- 	return nil
- }
- func DeploySingleHelmRelease(product *commonmodels.Product, productSvc *commonmodels.ProductService,
--	svcTemp *commonmodels.Service, images []string, maxHistory, timeout int, user string) error {
-+	svcTemp *commonmodels.Service, images []string, maxHistory, timeout int, user string, skipUpgradeCRDs bool) error {
- 	chartInfo := productSvc.GetServiceRender()
+@@ -16,17 +25,21 @@ service/reaper:
+ - pkg/microservice/reaper/**/*
+ - pkg/microservice/jobexecutor/**/*
  
- 	var (
-@@ -707,15 +720,16 @@ func DeploySingleHelmRelease(product *commonmodels.Product, productSvc *commonmo
- 	}
+-service/warpdrive:
+-- pkg/microservice/warpdrive/**/*
+-
+ service/hubserver:
+ - pkg/microservice/hubserver/**/*
  
- 	param := &ReleaseInstallParam{
--		ProductName:  svcTemp.ProductName,
--		Namespace:    product.Namespace,
--		ReleaseName:  releaseName,
--		MergedValues: replacedMergedValuesYaml,
--		RenderChart:  chartInfo,
--		ServiceObj:   svcTemp,
--		Timeout:      timeout,
--		Production:   product.Production,
--		MaxHistory:   maxHistory,
-+		ProductName:     svcTemp.ProductName,
-+		Namespace:       product.Namespace,
-+		ReleaseName:     releaseName,
-+		MergedValues:    replacedMergedValuesYaml,
-+		RenderChart:     chartInfo,
-+		ServiceObj:      svcTemp,
-+		Timeout:         timeout,
-+		Production:      product.Production,
-+		MaxHistory:      maxHistory,
-+		SkipUpgradeCRDs: skipUpgradeCRDs,
- 	}
- 	if !productSvc.FromZadig() {
- 		param.IsChartInstall = true
-@@ -788,7 +802,7 @@ func DownloadInstantiateChart(projectName, chartRepo, chartName, chartVersion, r
- 	return nil
- }
+ service/hubagent:
+ - pkg/microservice/hubagent/**/*
  
--func DeployMultiHelmRelease(productResp *commonmodels.Product, helmClient *helmtool.HelmClient, filter DeploySvcFilter, user string, log *zap.SugaredLogger) error {
-+func DeployMultiHelmRelease(productResp *commonmodels.Product, helmClient *helmtool.HelmClient, filter DeploySvcFilter, user string, skipUpgradeCRDs SkipUpgradeCRDsFunc, log *zap.SugaredLogger) error {
- 	productName, envName := productResp.ProductName, productResp.EnvName
++service/picket:
++- pkg/microservice/picket/**/*
++
++service/podexec:
++- pkg/microservice/podexec/**/*
++
+ service/upgradeassistant:
+-- pkg/microservice/upgradeassistant/**/*
++- cmd/ua/**/*
++- pkg/cli/upgradeassistant/**/*
  
- 	session := mongotool.Session()
-@@ -893,6 +907,11 @@ func DeployMultiHelmRelease(productResp *commonmodels.Product, helmClient *helmt
- 				mongotool.AbortTransaction(session)
- 				return err
- 			}
-+			if param == nil {
-+				log.Warnf("skip deploying service %s in namespace %s: install param is empty", prodSvc.ServiceName, productResp.Namespace)
-+				continue
-+			}
-+			param.SkipUpgradeCRDs = skipUpgradeCRDs != nil && skipUpgradeCRDs(chartInfo)
- 			prodSvc.Render = chartInfo
- 			prodSvc.UpdateTime = time.Now().Unix()
- 			installParamList = append(installParamList, param)
+ common:
+   - pkg/config/**/*
 ```
 
-**File**: `pkg/microservice/aslan/core/common/service/render.go` (modified, +9/-1)
-```diff
-@@ -49,6 +49,8 @@ type ValuesDataArgs struct {
- 	AutoSyncYaml  string         `json:"autoSyncYaml"`
- 	GitRepoConfig *RepoConfig    `json:"gitRepoConfig"`
- 	Commit        *models.Commit `json:"-"`
-+	// UpgradeCRD controls whether CRDs are upgraded when values are synced from source, nil means true
-+	UpgradeCRD *bool `json:"upgradeCRD,omitempty"`
- }
- 
- type HelmSvcRenderArg struct {
-@@ -118,6 +120,7 @@ func (args *HelmSvcRenderArg) toCustomValuesYaml() *templatemodels.CustomYaml {
- 		ret.Source = args.ValuesData.YamlSource
- 		ret.AutoSync = args.ValuesData.AutoSync
- 		ret.AutoSyncYaml = args.ValuesData.AutoSyncYaml
-+		ret.UpgradeCRD = args.ValuesData.UpgradeCRD
- 
- 		if args.ValuesData.GitRepoConfig != nil {
- 			repoData := &models.CreateFromRepo{
-@@ -153,7 +156,12 @@ func (args *HelmSvcRenderArg) FillRenderChartModel(chart *templatemodels.Service
- 	chart.ChartVersion = version
- 	// chart.ValuesYaml = valuesYaml
- 	chart.OverrideValues = args.ToOverrideValueString()
--	chart.OverrideYaml = args.toCustomValuesYaml()
-+	newOverrideYaml := args.toCustomValuesYaml()
-+	if newOverrideYaml.UpgradeCRD == nil && chart.OverrideYaml != nil {
-+		// keep the configured CRD policy when the request omits it
-+		newOverrideYaml.UpgradeCRD = chart.OverrideYaml.UpgradeCRD
-+	}
-+	chart.OverrideYaml = newOverrideYaml
- }
- 
- // LoadFromRenderChartModel load from render chart model
-```
+---
 
-**File**: `pkg/microservice/aslan/core/common/service/version.go` (modified, +2/-2)
-```diff
-@@ -444,7 +444,7 @@ func CheckRollbackEnvServiceVersion(projectName, envName, serviceName string, re
- 	}, nil
- }
- 
--func RollbackEnvServiceVersion(ctx *internalhandler.Context, projectName, envName, serviceName string, revision int64, isHelmChart, isProduction, overrideResource bool, detail string, log *zap.SugaredLogger) (*RollbackEnvServiceVersionData, error) {
-+func RollbackEnvServiceVersion(ctx *internalhandler.Context, projectName, envName, serviceName string, revision int64, isHelmChart, isProduction, overrideResource, skipUpgradeCRDs bool, detail string, log *zap.SugaredLogger) (*RollbackEnvServiceVersionData, error) {
- 	envSvcVersion, err := mongodb.NewEnvServiceVersionColl().Find(projectName, envName, serviceName, isHelmChart, isProduction, revision)
- 	if err != nil {
- 		if mongodb.IsErrNoDocuments(err) {
-@@ -783,7 +783,7 @@ func RollbackEnvServiceVersion(ctx *internalhandler.Context, projectName, envNam
- 				// buffered so the deploy goroutine never blocks when the caller does not wait for the result
- 				rollbackStatus.HelmDeployStatusChan = make(chan bool, 1)
- 				go func(done chan<- bool) {
--					err := kube.DeploySingleHelmRelease(env, envSvcVersion.Service, svcTmpl, nil, templateProduct.ReleaseMaxHistory, 0, ctx.UserName)
-+					err := kube.DeploySingleHelmRelease(env, envSvcVersion.Service, svcTmpl, nil, templateProduct.ReleaseMaxHistory, 0, ctx.UserName, skipUpgradeCRDs)
- 					if err != nil {
- 						title := fmt.Sprintf("回滚 %s/%s 环境 %s 服务失败", projectName, envName, serviceName)
- 						notify.SendErrorMessage(ctx.UserName, title, ctx.RequestID, err, log)
-```
+### Incident Patch 2: `b38da57c` (2026-11-18)
+**Commit Message**: docs(ua): rotate encryption key without Helm upgrades (#5096)
 
-**File**: `pkg/microservice/aslan/core/common/service/workflowcontroller/jobcontroller/job_helm_chart_deploy.go` (modified, +1/-1)
+* docs(ua): rotate encryption key without Helm upgrades
+
+The v5.1.0 chart now always keeps the key in secret zadig-aes-key on
+upgrade, so restore the stopped services with kubectl instead of two
+Helm upgrades, and restart other deployments that read the secret.
+
+Signed-off-by: huanghongbo-hhb <[REDACTED_EMAIL]>
+
+* docs(ua): change the Dex client secret after key rotation
+
+Old installs share both the public AES key and the public Dex client
+secret. After the AES key is switched and accepted, change the Dex
+secret with a normal Helm upgrade and check that no default secret
+warning remains.
+
+Signed-off-by: huanghongbo-hhb <[REDACTED_EMAIL]>
+
+---------
+
+Signed-off-by: huanghongbo-hhb <[REDACTED_EMAIL]>
+
+**File**: `examples/encryption-key-rotation/README.md` (modified, +87/-92)
 ```diff
-@@ -135,7 +135,7 @@ func (c *HelmChartDeployJobCtl) Run(ctx context.Context) {
+@@ -1,12 +1,12 @@
+ # 加密密钥轮换
  
- 	done := make(chan bool)
- 	go func(chan bool) {
--		if err = kube.DeploySingleHelmRelease(productInfo, productChartService, nil, nil, c.jobTaskSpec.MaxHistory, timeOut, c.workflowCtx.WorkflowTaskCreatorUsername); err != nil {
-+		if err = kube.DeploySingleHelmRelease(productInfo, productChartService, nil, nil, c.jobTaskSpec.MaxHistory, timeOut, c.workflowCtx.WorkflowTaskCreatorUsername, false); err != nil {
- 			err = errors.WithMessagef(
- 				err,
- 				"failed to upgrade helm chart %s/%s",
+-本文说明如何更换 Zadig 的 AES 加密密钥。
++本文说明如何更换 Zadig 的 AES 加密密钥和 Dex 客户端密钥。适用于仍在使用公开默认密钥的环境，或怀疑密钥已经泄露的环境。
+ 
+-UA 的 `rotate-encryption-key` 命令以 Kubernetes Job 的形式在维护窗口内单独运行，它会做两件事：把数据库中已有的密文改用新密钥重新加密，并更新代码源上 Webhook 的 Secret。集群中的密钥 Secret 和 Dex 配置不由这个命令修改，需要按下文步骤手动切换。
++UA 的 `rotate-encryption-key` 命令以 Kubernetes Job 的形式在维护窗口内单独运行，它会做两件事：把数据库中已有的密文改用新密钥重新加密，并更新代码源上 Webhook 的 Secret。集群中的密钥 Secret 不由这个命令修改，需要按下文步骤用 kubectl 手动切换，这部分不需要执行 Helm upgrade。AES 密钥切换并验收后，再用一次普通 Helm upgrade 更换 Dex 客户端密钥。
+ 
+ ## 前提
+ 
+-- 已先升级到兼容的业务镜像和 Chart，仍使用原 AES/Dex Secret。配套 Chart 必须为 Zadig v5.1.0 及以上版本，该版本起包含密钥保留及校验逻辑；不能使用 v5.1.0 之前的 Chart。
++- 已先升级到兼容的业务镜像和 Chart，仍使用原 AES/Dex Secret。配套 Chart 必须为 Zadig v5.1.0 及以上版本，该版本起升级时始终沿用集群 Secret 中的密钥、忽略 values 中的 `global.encryption.key`；不能使用 v5.1.0 之前的 Chart，否则后续升级可能用 values 中的旧密钥覆盖 Secret。
+ - 关闭业务入口、工作流/定时触发/Webhook 消费，结束运行任务，停止 user、aslan、hub-server、cron 等密文读写服务；同时暂停会恢复副本数的 HPA/GitOps 等外部控制器。
+ - 停写后完成 MongoDB、MySQL 用户库和 Dex 库、当前 AES Secret、Helm values、Dex Secret、Webhook 清单和 Agent YAML 的最终备份。
+ - 本工具只支持 MySQL。代码源 OAuth Token 须在维护前确认有效；dry-run 不刷新 Token、不写数据库或 Redis。
+@@ -33,21 +33,21 @@ dry-run Job ──► 报告 phase: validated、failed 为 0，处理 manual_web
+ 创建 zadig-aes-key-previous（旧密钥），当前 Secret 切到新密钥 ──► 指纹校验
+   │
+   ▼
+-第二次 Helm upgrade：Dex 新 Secret，四个服务保持 0，--no-hooks ──► 再次指纹校验
++kubectl 恢复四个服务的原副本数，重启其他引用该 Secret 的服务 ──► 验收 ──► 恢复业务触发、入口和外部控制器
+   │
+   ▼
+-第三次 Helm upgrade：四个服务恢复到原副本数 ──► 验收 ──► 恢复业务触发、入口和外部控制器
++删除 zadig-aes-key-next
+   │
+   ▼
+-删除 zadig-aes-key-next
++普通 Helm upgrade 更换 Dex 客户端密钥 ──► 确认 Helm 输出无默认密钥警告
+   │
+   ▼
+ 全部 Agent 升级完成后，尽快删除 zadig-aes-key-previous
+ ```
+ 
+ ## 执行
+ 
+-以下命令使用当前 kubectl context。先确认目标集群和安装命名空间；命名空间、release、Chart 路径和镜像地址需要替换。以下命令需安装 kubectl、Helm、Python 3 和 OpenSSL，不需要其他组件；后文用到的 `kubectl kustomize` 是 kubectl 自带的子命令，无需单独安装 kustomize。
++以下命令使用当前 kubectl context。先确认目标集群和安装命名空间；命名空间、release 和镜像地址需要替换。以下命令需安装 kubectl、Helm、Python 3 和 OpenSSL，不需要其他组件；Helm 用于查看 release、备份 values，以及最后更换 Dex 客户端密钥。
+ 
+ 下面这段确认当前集群，并设置后续命令共用的变量。
+ 
+@@ -57,17 +57,16 @@ helm list -A
+ ZADIG_CONTEXT=$(kubectl config current-context)
+ ZADIG_NAMESPACE='<安装命名空间>'
+ ZADIG_RELEASE='<现有 Helm release>'
+-ZADIG_CHART='<阶段一已部署的同一份 Chart 目录或 tgz 的绝对路径>'
+ helm history "$ZADIG_RELEASE" --kube-context "$ZADIG_CONTEXT" -n "$ZADIG_NAMESPACE"
+ ```
+ 
+-第二次及后续 upgrade 必须使用阶段一的同一份 Chart（v5.1.0 及以上），同时核对 `helm history` 中的版本；相同版本号不保证包内容一致。更换 Chart 可能改变依赖 `.Chart.AppVersion` 的镜像，`--reuse-values` 不能保证镜像不变。
++核对 `helm history` 中当前部署的 Chart 为 v5.1.0 及以上。
+ 
+ 关闭业务入口和触发、结束运行任务后，先记录副本数，再停服务。以下目录包含密钥，按客户密钥管理要求保管；不要开启 shell 的 `set -x`。命令中的 Deployment 名称为 Chart 默认名称，自定义部署先核对名称。
+ 
+ 脚本作用：
+ 1. 创建权限为 700 的维护目录，把上面的变量写入 `session.sh`，终端断开后可以恢复。
+-2. 导出四个 Deployment 的当前定义，从中读出原副本数，写入 `replicas.before-values.json`，最后恢复服务时使用。
++2. 导出四个 Deployment 的当前定义，从中读出原副本数，写入 `replicas.before.json`，最后恢复服务时使用。
+ 3. 把四个服务缩到 0，并等待 Pod 全部退出。
+ 
+ ```bash
+@@ -76,12 +75,12 @@ ROTATION_DIR=$(mktemp -d "$PWD/zadig-key-rotation.XXXXXX")
+ printf '维护目录（请记录绝对路径）: %s\n' "$ROTATION_DIR"
+ (
+ set -eu
+-python3 - "$ROTATION_DIR" "$ZADIG_CONTEXT" "$ZADIG_NAMESPACE" "$ZADIG_RELEASE" "$ZADIG_CHART" <<'PY'
++python3 - "$ROTATION_DIR" "$ZADIG_CONTEXT" "$ZADIG_NAMESPACE" "$ZADIG_RELEASE" <<'PY'
+ import shlex
+ import sys
+ from pathlib import Path
+ 
+-names = ("ROTATION_DIR", "ZADIG_CONTEXT", "ZADIG_NAMESPACE", "ZADIG_RELEASE", "ZADIG_CHART")
++names = ("ROTATION_DIR", "ZADIG_CONTEXT", "ZADIG_NAMESPACE", "ZADIG_RELEASE")
+ Path(sys.argv[1], "session.sh").write_text("umask 077\n" + "".join(
+     f"{name}={shlex.quote(value)}\n" for name, value in zip(names, sys.argv[1:])))
+ PY
+@@ -92,11 +91,11 @@ import sys
+ from pathlib import Path
+ 
+ folder = Path(sys.argv[1])
+-names = {"user": "user", "aslan": "aslan", "hub-server": "hubServer", "cron": "cron"}
++names = {"user", "aslan", "hub-server", "cron"}
+ items = json.loads((folder / "deployments.before.json").read_text())["items"]
+-replicas = {names[item["metadata"]["name"]]: {"replicas": str(item["spec"]["replicas"])} for item in items}
+-assert set(replicas) == set(names.values()), "missing maintenance deployment"
+-(folder / "replicas.before-values.json").write_text(json.dumps({"microservice": replicas}))
++replicas = {item["metadata"]["name"]: item["spec"]["replicas"] for item in items}
++assert set(replicas) == names, "missing maintenance deployment"
++(folder / "replicas.before.json").write_text(json.dumps(replicas))
+ PY
+ kubectl --context "$ZADIG_CONTEXT" -n "$ZADIG_NAMESPACE" scale deployment/user deployment/aslan deployment/hub-server deployment/cron --replicas=0
+ for service in user aslan hub-server cron; do
+@@ -107,7 +106,7 @@ done
+ 
+ 确认整个命令块成功，核对相关 Pod 已退出、没有其他写入者后，完成前述数据库等最终备份，再保存当前 Secret 和完整 Helm values。备份失败时不得继续迁移。
+ 
+-下面这段把当前 `zadig-aes-key` 和 release 的全部 values 导出到维护目录，后面构造旧密钥 Secret 和 Dex values 时会用到。
++下面这段把当前 `zadig-aes-key` 和 release 的全部 values 导出到维护目录，前者用于构造旧密钥 Secret，后者作为备份。
+ 
+ ```bash
+ (
+@@ -196,7 +195,7 @@ kubectl --context "$ZADIG_CONTEXT" -n "$ZADIG_NAMESPACE" patch secret zadig-aes-
+ )
+ ```
+ 
+-Secret 切换成功后，先校验当前 Se
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5102** (2026-11-18): chore(labeler): update service labels in GitHub Actions configuration. (@leozhang2018)
+- **PR #5096** (2026-11-18): docs(ua): rotate encryption key without Helm upgrades (@huanghongbo-hhb)
 - **PR #5092** (2026-11-16): fix(zgctl): launch trusted syncthing binary for local sync (@PetrusZ)
 - **PR #5091** (2026-11-16): fix(auth): authorize Kubernetes cluster resource queries (@PetrusZ)
 - **PR #5090** (2026-11-16): fix: skip dind injection when unavailable (@Cynthia-0203)
 - **PR #5089** (2026-11-16): fix: preserve cluster registry on Redis read failure (@Cynthia-0203)
-- **PR #5088** (closed): test: AI review sample with intentional issues (@huanghongbo-hhb)
-- **PR #5087** (2026-11-13): fix: strengthen deployment rollout readiness checks (@Cynthia-0203)
 
 ---
 
@@ -1482,32 +1437,56 @@ Signed-off-by: huanghongbo-hhb <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. helm): support skipping CRD upgrade when updating services
+## X. labeler): update service labels in GitHub Actions configuration.
 
 **RULE**:
-When implementing operations in `pkg/microservice/aslan/core/common/repository/models/template/product.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in koderover/zadig. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/labeler.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in koderover/zadig. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2c932905`: helm): support skipping CRD upgrade when updating services. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `39229c91`: labeler): update service labels in GitHub Actions configuration.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/microservice/aslan/core/common/repository/models/template/product.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/labeler.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	// UpgradeCRD controls whether CRDs are upgraded when values are synced from source, nil means true
-	UpgradeCRD *bool `bson:"upgrade_crd,omitempty"               json:"upgrade_crd,omitempty"`
+
+service/config:
+service/user:
+- pkg/microservice/user/**/*
+
+service/halman:
+- pkg/microservice/halman/**/*
+
+service/init:
+- cmd/init/**/*
+- pkg/cli/initconfig/**/*
+
+service/picket:
+- pkg/microservice/picket/**/*
+
+service/podexec:
+- pkg/microservice/podexec/**/*
+
+- cmd/ua/**/*
+- pkg/cli/upgradeassistant/**/*
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+- pkg/microservice/picket/**/*
+- pkg/microservice/user/**/*
+- pkg/microservice/policy/**/*
+service/warpdrive:
+- pkg/microservice/warpdrive/**/*
+
+- pkg/microservice/upgradeassistant/**/*
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2c932905` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `39229c91` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

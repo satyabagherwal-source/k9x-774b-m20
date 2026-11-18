@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-18T17:02:01.162Z",
+  "last_updated": "2026-11-18T17:10:31.653Z",
   "total_records": 1883,
   "domains": {
     "A": {
@@ -10317,8 +10317,8 @@
       "title": "Research & Knowledge Intelligence: google/electra-base-discriminator Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-google-electra-base-discriminator-research-knowledge-intelligence-google-elec.md",
       "repository": "google/electra-base-discriminator",
-      "content_hash": "797af4af623aa396aa6df422792289b0b0dabd4f428254680c997454d7d79080",
-      "created_at": "2026-11-18T07:47:49.953Z"
+      "content_hash": "72319707006574942220ac0235bb4132bd84b5367b806902b513fba71fe84f0c",
+      "created_at": "2026-11-18T17:10:16.298Z"
     },
     "domain_intelligence-architecture-intelligence-react-navigation-react-navigation-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-react-navigation-react-navigation-core-invariants",
@@ -10395,8 +10395,8 @@
       "title": "Research & Knowledge Intelligence: hf-google-electra-base-discriminator-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-google-electra-base-discriminator-learnings-research-knowledge-intelligence-h.md",
       "repository": "hf-google-electra-base-discriminator-learnings",
-      "content_hash": "79e685f1f39ce0593693d1de63252cfca276c7b911c2331f34247799da96b70f",
-      "created_at": "2026-11-18T07:48:42.675Z"
+      "content_hash": "266a1a40a7edf1c8822578c91cb7dab2f502114038ac2c18db8602e562ac05be",
+      "created_at": "2026-11-18T17:10:30.190Z"
     },
     "DOM-H-169AAD95": {
       "record_id": "DOM-H-169AAD95",
@@ -25517,8 +25517,8 @@
       "title": "Technical Construction Intelligence: koderover/zadig Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-koderover-zadig-technical-construction-intelligence-koderover-zadig-core-invaria.md",
       "repository": "koderover/zadig",
-      "content_hash": "acdeb6381dbb03e0e1cea0796ad8cb7926d3d71450501f3b8b76280297dcfd08",
-      "created_at": "2026-11-18T02:51:25.992Z"
+      "content_hash": "4251c6444948a3c4a687a6d00131bd798416858459d4c41e31c5d99d56f64adc",
+      "created_at": "2026-11-18T17:10:26.903Z"
     },
     "domain_intelligence-architecture-intelligence-solidjs-solid-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-solidjs-solid-learnings-core-invariants",
@@ -25544,8 +25544,8 @@
       "title": "Technical Construction Intelligence: koderover-zadig-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-koderover-zadig-learnings-technical-construction-intelligence-koderover-zadig-le.md",
       "repository": "koderover-zadig-learnings",
-      "content_hash": "02dad1ced52738c6b7f627a71eec5ed6c7122b41e54788f02d2515a161f2a5b4",
-      "created_at": "2026-11-18T02:51:31.701Z"
+      "content_hash": "eae233bc65813fbc5f342a79568413801008b8a00c5568cbe2adb395d9266197",
+      "created_at": "2026-11-18T17:10:30.914Z"
     },
     "domain_intelligence-technical-construction-intelligence-vitejs-vite-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-vitejs-vite-core-invariants",
@@ -30979,8 +30979,8 @@
       "title": "Technical Construction Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zulip-zulip-learnings-technical-construction-intelligence-zulip-zulip-learnings-.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "32b581d2f98d8bf7658ea2b4a1b79056f6a9a3a5c11238cd87a4e868d216dad8",
-      "created_at": "2026-11-18T16:49:41.930Z"
+      "content_hash": "d7d91e4e7cf16fa55cd139f0e68d73e1b2bde796c29cfcf0c05743ced105a2c6",
+      "created_at": "2026-11-18T17:10:31.653Z"
     },
     "domain_intelligence-product-intelligence-software-mansion-argent-core-invariants": {
       "record_id": "domain_intelligence-product-intelligence-software-mansion-argent-core-invariants",

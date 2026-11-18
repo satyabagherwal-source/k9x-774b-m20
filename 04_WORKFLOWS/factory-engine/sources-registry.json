@@ -69,8 +69,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-18T17:01:59.065Z",
-    "lastVerified": "2026-11-18T17:01:59.065Z",
+    "lastChecked": "2026-11-18T17:10:29.805Z",
+    "lastVerified": "2026-11-18T17:10:29.805Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -292,8 +292,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-18T16:31:41.005Z",
-    "lastVerified": "2026-11-18T16:31:41.005Z",
+    "lastChecked": "2026-11-18T17:10:27.733Z",
+    "lastVerified": "2026-11-18T17:10:27.733Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -1578,9 +1578,9 @@
   "sigstore-cosign": {
     "name": "cosign",
     "officialUrl": "https://github.com/sigstore/cosign",
-    "lastChecked": "2026-11-18T12:58:27.214Z",
+    "lastChecked": "2026-11-18T17:10:22.457Z",
     "revisionIdentifier": "0743bfcf",
-    "lastVerified": "2026-11-18T12:58:27.214Z"
+    "lastVerified": "2026-11-18T17:10:22.457Z"
   },
   "langchain4j-langchain4j": {
     "name": "langchain4j/langchain4j",
@@ -3190,5 +3190,60 @@
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "sigoden-aichat": {
+    "name": "aichat",
+    "officialUrl": "https://github.com/sigoden/aichat",
+    "lastChecked": "2026-11-18T17:10:12.489Z",
+    "revisionIdentifier": "82976d34",
+    "lastVerified": "2026-11-18T17:10:12.489Z"
+  },
+  "hf-google-electra-base-discriminator": {
+    "name": "google/electra-base-discriminator",
+    "officialUrl": "https://huggingface.co/google/electra-base-discriminator",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-18T17:10:15.402Z",
+    "lastVerified": "2026-11-18T17:10:15.402Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-google-electra-base-discriminator",
+    "contentHash": "71bd56a6cae7020c20e8f7230884fc1ae72addb3581bc75812bea43581e1bf08",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "keybase-client": {
+    "name": "client",
+    "officialUrl": "https://github.com/keybase/client",
+    "lastChecked": "2026-11-18T17:10:17.632Z",
+    "revisionIdentifier": "0d1e3966",
+    "lastVerified": "2026-11-18T17:10:17.632Z"
+  },
+  "koderover-zadig": {
+    "name": "koderover/zadig",
+    "officialUrl": "https://github.com/koderover/zadig",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-11-18T17:10:25.358Z",
+    "lastVerified": "2026-11-18T17:10:25.358Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-koderover-zadig",
+    "contentHash": "d07a9983748708a44297f2d71f55e15080e49f76f1e44e223faba3709cf86226",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "seekstorm-seekstorm": {
+    "name": "SeekStorm",
+    "officialUrl": "https://github.com/SeekStorm/SeekStorm",
+    "lastChecked": "2026-11-18T17:10:24.965Z",
+    "revisionIdentifier": "c4888cbb",
+    "lastVerified": "2026-11-18T17:10:24.965Z"
   }
 }

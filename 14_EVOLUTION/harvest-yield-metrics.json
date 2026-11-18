@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T17:01:55.707Z",
-  "total_cycles_completed": 10569,
-  "total_learnings_persisted": 10569,
-  "total_rules_promoted": 10024,
+  "last_updated": "2026-11-18T17:10:26.505Z",
+  "total_cycles_completed": 10571,
+  "total_learnings_persisted": 10571,
+  "total_rules_promoted": 10025,
   "history": [
-    {
-      "timestamp": "2026-11-18T05:52:25.850Z",
-      "repository": "XiaomiMiMo/MiMo-V2.6-Pro-RL",
-      "learningId": "learn-huggingface-xiaomimimo-mimo-v2-6-pro-rl",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-18T05:52:27.530Z",
-      "repository": "flox/flox",
-      "learningId": "learn-github-flox-flox",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-18T06:00:02.386Z",
       "repository": "prithivMLmods/Gender-Classifier-Mini",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-18T17:01:55.707Z",
       "repository": "zama-ai/tfhe-rs",
       "learningId": "learn-github-zama-ai-tfhe-rs",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T17:10:16.065Z",
+      "repository": "google/electra-base-discriminator",
+      "learningId": "learn-huggingface-google-electra-base-discriminator",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T17:10:26.505Z",
+      "repository": "koderover/zadig",
+      "learningId": "learn-github-koderover-zadig",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
