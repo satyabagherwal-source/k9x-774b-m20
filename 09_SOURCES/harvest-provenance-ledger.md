@@ -11002,3 +11002,5 @@ Every entry in this ledger must capture:
 | `learn-github-pubkey-rxdb` | `https://github.com/pubkey/rxdb` | `1135a741` | Multi-dimensional audit evidence | 2026-11-18T12:50:59.416Z |
 | `learn-github-zama-ai-tfhe-rs` | `https://github.com/zama-ai/tfhe-rs` | `ecc40009` | Multi-dimensional audit evidence | 2026-11-18T12:51:04.099Z |
 | `learn-github-alibaba-zvec` | `https://github.com/alibaba/zvec` | `018b1eb3` | Multi-dimensional audit evidence | 2026-11-18T12:51:06.592Z |
+| `learn-huggingface-xingchen-agi-xing4-0-29b-a4b` | `https://huggingface.co/XingChen-AGI/Xing4.0-29B-A4B` | `hf-xingche` | Multi-dimensional audit evidence | 2026-11-18T12:58:20.277Z |
+| `learn-github-langchain4j-langchain4j` | `https://github.com/langchain4j/langchain4j` | `8d519498` | Multi-dimensional audit evidence | 2026-11-18T12:58:34.894Z |

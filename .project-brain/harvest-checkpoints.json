@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-18T12:51:06.600Z",
+  "last_updated": "2026-11-18T12:58:34.904Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -455,14 +455,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-xingchen-agi-xing4-0-29b-a4b",
-      "content_hash": "f0f9574cb97fd74b750db3e2b3135dc64b7a0de650b9aaf8d2264fdc7b817ffe",
-      "verified_at": "2026-11-18T02:33:18.020Z",
+      "content_hash": "518d40b7701bb1eb87de89af7c6055597833e8bf44f7fb2919df9c9a79e4cba6",
+      "verified_at": "2026-11-18T12:58:20.284Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T02:33:18.020Z"
+      "last_updated": "2026-11-18T12:58:20.284Z"
     },
     "SupersonicLabs/Julia-1": {
       "repository": "SupersonicLabs/Julia-1",
@@ -11076,14 +11076,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-langchain4j-langchain4j",
-      "content_hash": "3721ca6fa07af895eea61b5e31c18ecff95f1b1f2da98eafd247b2bf359bd341",
-      "verified_at": "2026-11-17T19:12:32.193Z",
+      "content_hash": "1ae4ac9fc3564f685d60012f8733c9f10d0bb9af0ed6776b8d33490e6688391b",
+      "verified_at": "2026-11-18T12:58:34.903Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T19:12:32.193Z"
+      "last_updated": "2026-11-18T12:58:34.903Z"
     },
     "railwayapp/nixpacks": {
       "repository": "railwayapp/nixpacks",

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/langchain4j-langchain4j-learnings.md`  
 > **Source**: github ([https://github.com/langchain4j/langchain4j](https://github.com/langchain4j/langchain4j))  
-> **Source Version**: `698c89f6`  
+> **Source Version**: `8d519498`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-17T19:12:31.381Z  
+> **Timestamp**: 2026-11-18T12:58:34.108Z  
 > **Learning ID**: `learn-github-langchain4j-langchain4j`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/langchain4j-langchain4j-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/langchain4j/langchain4j](https://github.com/langchain4j/langchain4j))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T19:12:31.377Z  
+> **Harvest Timestamp**: 2026-11-18T12:58:34.103Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: LangChain4j is an idiomatic, open-source Java library for building LLM-powered applications on the JVM. It offers a unified API over popular LLM providers and vector stores, and makes implementing tool calling (including MCP support), agents and RAG easy. It integrates seamlessly with enterprise Java frameworks like Quarkus and Spring Boot.
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 13413 stars
+- **Stars / Engagement**: 13419 stars
 
 ---
 
@@ -838,157 +838,173 @@ public class TokenStreamToStringFlowAdapter : TokenStreamAdapter {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `32bec62b` (2026-11-16)
-**Commit Message**: Fix race in AiServiceCaptureTest.should_rethrow_error_of_failed_token_stream
+### Incident Patch 1: `0d6c0ff8` (2026-11-18)
+**Commit Message**: fix(agentic): convert a number to a BigDecimal or BigInteger agent argument (#7163)
 
-A failed TokenStream invocation reports its end before the AI Service
-calls the onError handler. capture(...) returns as soon as the end is
-reported, so it could rethrow the error before the handler had added it
-to the list the test checks. The test now waits for the handler first.
+## Issue
+Closes #7161
 
-The Javadoc of AiServiceCapture already warned that the onCompleteResponse
-handler may still be running when capture(...) returns. It now says the
-same about the onError handler.
+## Change
+A planner like the supervisor reads the arguments of an agent from JSON,
+so a number reaches the agentic scope as an `Integer`, a `Long` or a
+`Double`. `AgentUtil.adaptValueToType` converted such a value to every
+primitive numeric type and its wrapper, but passed it unchanged to an
+argument declared as `BigDecimal` or `BigInteger`, so the agent failed
+with `argument type mismatch`. The same happened invoking an untyped
+agent with a number for such an argument.
 
-**File**: `langchain4j-test/src/main/java/dev/langchain4j/test/service/AiServiceCapture.java` (modified, +4/-3)
+The `Number` branch of `adaptValueToType` now also converts to:
+- `BigDecimal`, through the decimal string of the number, so that a
+`double` like `0.1` becomes `0.1` and not its binary approximation, and
+a `BigInteger` keeps all its digits;
+- `BigInteger`, through the same `BigDecimal`, taking the integer part,
+as an `int` argument already does.
+
+Strings were already converted correctly through the JSON reader; a test
+now pins that too.
+
+Tests added to `AgentArgumentConversionTest`: conversion of `Integer`,
+`Double` (including `0.1`) and a large `BigInteger` to `BigDecimal`; of
+`Integer`, `Long` and a large `
+
+**File**: `langchain4j-agentic/src/main/java/dev/langchain4j/agentic/internal/AgentUtil.java` (modified, +5/-0)
 ```diff
-@@ -114,9 +114,10 @@
-  * {@link InvocationContext#parentInvocationId()}).
-  * <p>
-  * Pay attention to what the invocation captured rather than to the side effects of your own handlers: for a
-- * {@code TokenStream}, the invocation finishes before the {@code onCompleteResponse} handler you gave it has run, so
-- * when {@code capture(...)} returns, that handler may still be running. {@link AiServiceInvocation#outputText()} has
-- * the final text in any case.
-+ * {@code TokenStream}, the invocation finishes before the {@code onCompleteResponse} or {@code onError} handler you
-+ * gave it has run, so when {@code capture(...)} returns or throws, that handler may still be running.
-+ * {@link AiServiceInvocation#outputText()} has the final text and {@link AiServiceInvocation#error()} the error in any
-+ * case.
-  *
-  * <h2>Threads</h2>
-  * An invocation is captured when it starts on the thread that runs the lambda, or when it is started while a
+@@ -43,6 +43,7 @@
+ import java.lang.reflect.ParameterizedType;
+ import java.lang.reflect.Proxy;
+ import java.lang.reflect.Type;
++import java.math.BigDecimal;
+ import java.util.ArrayList;
+ import java.util.Arrays;
+ import java.util.Collection;
+@@ -532,6 +533,10 @@ private static Object adaptValueToType(Object value, Class<?> type, String argum
+                 case "float", "java.lang.Float" -> n.floatValue();
+                 case "short", "java.lang.Short" -> n.shortValue();
+                 case "byte", "java.lang.Byte" -> n.byteValue();
++                // through the decimal string of the number, so that a double like 0.1 becomes 0.1 and not its
++                // binary approximation, and a BigInteger or BigDecimal keeps all its digits
++                case "java.math.BigDecimal" -> new BigDecimal(n.toString());
++                case "java.math.BigInteger" -> new BigDecimal(n.toString()).toBigInteger();
+                 default -> value;
+             };
+         }
 ```
 
-**File**: `langchain4j-test/src/test/java/dev/langchain4j/test/service/AiServiceCaptureTest.java` (modified, +10/-2)
+**File**: `langchain4j-agentic/src/test/java/dev/langchain4j/agentic/AgentArgumentConversionTest.java` (modified, +53/-1)
 ```diff
-@@ -1828,9 +1828,17 @@ void should_rethrow_error_of_failed_token_stream() {
-                     .streamingChatModel(MockStreamingChatModel.thatFails(new RuntimeException("stream failed")).thenRepeats())
-                     .build();
-             List<Throwable> errors = new CopyOnWriteArrayList<>();
--
--            assertThatThrownBy(() -> capture(() -> assistant.chat("Hi").onError(errors::add).start()))
-+            CountDownLatch errorHandled = new CountDownLatch(1);
-+
-+            assertThatThrownBy(() -> capture(() -> assistant.chat("Hi")
-+                            .onError(error -> {
-+                                errors.add(error);
-+                                errorHandled.countDown();
-+                            })
-+                            .start()))
-                     .hasMessage("stream failed");
-+            // the invocation finishes before the onError handler has run, so capture(...) can return before it
-+            await(errorHandled);
-             assertThat(errors).singleElement().satisfies(error -> assertThat(error).hasMessage("stream failed"));
+@@ -8,6 +8,8 @@
+ import dev.langchain4j.agentic.scope.DefaultAgenticScope;
+ import dev.langchain4j.service.V;
+ import java.lang.reflect.Method;
++import java.math.BigDecimal;
++import java.math.BigInteger;
+ import java.util.Map;
+ import org.junit.jupiter.api.Test;
  
-             AiServiceInvocation invocation = captureExpectingFailure(() -> assistant.chat("Hi").ignoreErrors().start())
+@@ -42,6 +44,56 @@ interface RecordAgent {
+         String register(@V("doc") Constructible doc);
+     }
+ 
++    interface PaymentAgent {
++        @Agent("pays an amount")
++        String pay(@V("doc") BigDecimal amount);
++    }
++
++    interface CountingAgent {
++        @Agent("counts something")
++        String count(@V("doc") BigInteger count);
++    }
++
++    @Test
++    void a_number_from_the_planner_is_converted_to_a_big_decimal_argument() {
++        assertThat(arguments(PaymentAgent.class, 12)).isEqualTo(new BigDecimal("12"));
++        assertThat(arguments(PaymentAgent.class, 12.5)).isEqualTo(new BigDecimal("12.5"));
++        assertThat(arguments(PaymentAgent.class, 0.1)).isEqualTo(new BigDecimal("0.1"));
++        assertThat(arguments(PaymentAgent.class, new BigInteger("123456789012345678901234567890")))
++                .isEqualTo(new BigDecimal("123456789012345678901234567890"));
++    }
++
++    @Test
++    void a_number_from_the_planner_is_converted_to_a_big_integer_argument() {
++        assertThat(arguments(CountingAgent.class, 12)).isEqualTo(BigInteger.valueOf(12));
++        assertThat(arguments(CountingAgent.class, 12L)).isEqualTo(BigInteger.valueOf(12));
++        assertThat(arguments(CountingAgent.class, new BigDecimal("123456789012345678901234567890")))
++                .isEqualTo(new BigInteger("123456789012345678901234567890"));
++    }
++
++    @Test
++    void a_string_from_the_planner_is_converted_to_a_big_number_argument() {
++        assertThat(arguments(PaymentAgent.class, "12.5")).isEqualTo(new BigDecimal("12.5"));
++        assertThat(arguments(CountingAgent.class, "12")).isEqualTo(BigInteger.valueOf(12));
++    }
++
++    public static class Payer {
++        @Agent(description = "pays an amount", outputKey = "receipt")
++        public String pay(@V("amount") BigDecimal amount) {
++            return "paid " + amount.toPlainString();
++        }
++    }
++
++    @Test
++    void an_agent_with_a_big_decimal_argument_can_be_invoked_with_a_number() {
++        UntypedAgent agent = AgenticServices.sequenceBuilder()
++                .subAgents(new Payer())
++                .outputKey("receipt")
++                .build();
++
++        assertThat(agent.invoke(Map.of("amount", 12.5))).isEqualTo("paid 12.5");
++    }
++
+     @Test
+     void a_type_the_planner_cannot_build_names_the_argument_and_the_remedy() {
+         assertThatThrownBy(() -> arguments(RegistrationAgent.class, Map.of("author", "Mario")))
+@@ -66,7 +118,7 @@ void a_record_argument_is_built_from_the_planners_map() {
+         assertThat(((Constructible) argument).author()).isEqualTo("Mario");
+     }
+ 
+-    private static Object arguments(Class<?> agentClass, Map<String, Object> plannerValue) {
++    private static Object arguments(Class<?> agentClass, Object plannerValue) {
+         DefaultAgenticScope scope = new AgenticScopeRegistry("test-agent").create("test-memory");
+         scope.writeState("doc", plannerValue);
+         Method method = agentClass.getDeclaredMethods()[0];
 ```
 
 ---
 
-### Incident Patch 2: `2f3a9b97` (2026-11-16)
-**Commit Message**: Fix DockerResultCallbackTest failing with maven-surefire-plugin 3.6.1
+### Incident Patch 2: `8d519498` (2026-11-18)
+**Commit Message**: Release: exclude only the integration test modules of the default build
 
-DockerResultCallbackTest mocks LoggerFactory statically, which only worked
-while DockerResultCallback was still uninitialized, because the class
-resolved its logger in a static field. The module pinned
-runOrder=alphabetical to run the test before any other test that
-instantiates DockerResultCallback. Since surefire 3.6, runOrder also orders
-test methods, so shouldDecodeDockerFramesAsUtf8 now runs first, initializes
-the class with the real logger, and shouldLabelDockerStderrFramesAsStderr
-fails.
+The "Release the rest of the modules" step excluded every directory under
+integration-tests that has a pom.xml. The Spring starter and Quarkus
+extension test apps are only added to the build by the
+test-assertions-frameworks profile, and Maven fails on an exclusion of a
+module that is not in the reactor. The exclusions now come from the default
+<modules> of integration-tests/pom.xml.
 
-Resolve the logger per instance, as ProcessStderrHandler already does for
-the stdio transport, so the test no longer depends on the order of test
-classes or methods. Remove the runOrder workaround and the note about it,
-which are no longer needed.
-
-**File**: `langchain4j-mcp-docker/pom.xml` (modified, +0/-20)
+**File**: `.github/workflows/release.yaml` (modified, +4/-2)
 ```diff
-@@ -56,24 +56,4 @@
+@@ -154,8 +154,10 @@ jobs:
+             EXCLUDES="$EXCLUDES,$EMBEDDING_MODULES_EXCLUDES"
+           fi
  
-     </dependencies>
- 
--    <build>
--        <plugins>
--            <plugin>
--                <groupId>org.apache.maven.plugins</groupId>
--                <artifactId>maven-surefire-plugin</artifactId>
--                <configuration>
--                    <!--
--                        DockerResultCallbackTest mocks LoggerFactory statically and relies on the
--                        DockerResultCallback class still being uninitialized when it runs. The default
--                        "filesystem" run order is not deterministic across environments, so any test
--                        that executes DockerMcpTransport.execute() (which instantiates
--                        DockerResultCallback) could run before it and break the mock. Alphabetical
--                        order pins DockerResultCallbackTest (R) before such tests (T).
--                    -->
--                    <runOrder>alphabetical</runOrder>
--                </configuration>
--            </plugin>
--        </plugins>
--    </build>
--
- </project>
-```
-
-**File**: `langchain4j-mcp-docker/src/main/java/dev/langchain4j/mcp/client/transport/docker/DockerResultCallback.java` (modified, +2/-2)
-```diff
-@@ -14,10 +14,10 @@
- import org.slf4j.LoggerFactory;
- 
- class DockerResultCallback extends ResultCallback.Adapter<Frame> {
--    private static final Logger LOG = LoggerFactory.getLogger(DockerResultCallback.class);
-     private static final Logger DEFAULT_TRAFFIC_LOG = LoggerFactory.getLogger("MCP");
-     private static final Pattern NEWLINE_PATTERN = Pattern.compile("([^\\r\\n]+)[\\r\\n]+");
- 
-+    private final Logger log = LoggerFactory.getLogger(DockerResultCallback.class);
-     private final boolean logEvents;
-     private final Logger trafficLog;
-     private final McpOperationHandler messageHandler;
-@@ -39,7 +39,7 @@ public DockerResultCallback(boolean logEvents, Logger logger, McpOperationHandle
-     public void onNext(Frame frame) {
-         String frameStr = new String(frame.getPayload(), StandardCharsets.UTF_8);
-         if (frame.getStreamType() == StreamType.STDERR) {
--            LOG.debug("[STDERR] {}", frameStr);
-+            log.debug("[STDERR] {}", frameStr);
-         } else if (frame.getStreamType() == StreamType.STDOUT) {
-             this.send(frameStr);
-         }
-```
-
-**File**: `langchain4j-mcp-docker/src/test/java/dev/langchain4j/mcp/client/transport/docker/DockerTransportExecuteInterruptTest.java` (modified, +0/-6)
-```diff
-@@ -36,12 +36,6 @@
-  * issues the real blocking calls. The interrupt flag is observed on the calling thread right after
-  * {@code sendMessage} returns, which is exactly when {@code execute} has finished its
-  * catch/finally processing on that same thread.
-- *
-- * <p>Note on the class name: these tests execute the real {@link DockerResultCallback} code path,
-- * which binds its static {@code LOG} field on first use. {@code DockerResultCallbackTest} relies on
-- * mocking {@code LoggerFactory} while the class is still uninitialized, so it must run first — and
-- * with the default class-name ordering, "DockerTransport..." sorts after "DockerResultCallback..."
-- * while "DockerMcpTransport..." would not.
-  */
- class DockerTransportExecuteInterruptTest {
- 
+-          # Exclude integration-tests and all its submodules
+-          INTEGRATION_TEST_MODULES=$(find integration-tests -mindepth 1 -maxdepth 2 -type d -exec test -f "{}/pom.xml" \; -print | paste -sd , -)
++          # Exclude integration-tests and all its submodules. Only the modules of the default build are listed:
++          # modules added by a profile (e.g. test-assertions-frameworks) are not in this reactor, and Maven
++          # fails on an exclusion of a module it does not know.
++          INTEGRATION_TEST_MODULES=$(awk '/<modules>/ { in_modules = 1 } in_modules && /<module>/ { gsub(/.*<module>|<\/module>.*/, ""); print "integration-tests/" $0 } /<\/modules>/ { exit }' integration-tests/pom.xml | paste -sd , -)
+           EXCLUDES="$EXCLUDES,!integration-tests"
+           if [ -n "$INTEGRATION_TEST_MODULES" ]; then
+             INTEGRATION_TEST_EXCLUDES=$(echo "$INTEGRATION_TEST_MODULES" | sed 's/[^,]*/!\0/g')
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #7167** (2026-11-18): In-process models: warn to load only ONNX model files you trust (@dliubarskyi)
+- **PR #7164** (2026-11-17): Google GenAI TTS IT: transcribe the audio with gemini-3.8-flash (@dliubarskyi)
+- **PR #7163** (2026-11-18): fix(agentic): convert a number to a BigDecimal or BigInteger agent argument (@Ayomipo18)
+- **PR #7159** (2026-11-18): MCP Streamable HTTP: fail on an error status without reading the response body (@dliubarskyi)
 - **PR #7154** (2026-11-17): Renovate: keep kotlinx-coroutines and the Kotlin compiler compatible with Kotlin 1.9 (@dliubarskyi)
 - **PR #7153** (2026-11-17): Azure: azure-sdk-bom 1.3.10 and Netty 4.2 in the Azure modules (@dliubarskyi)
-- **PR #7150** (closed): Update dependency org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm to v1.11.0 (@renovate[bot])
-- **PR #7149** (2026-11-17): Update dependency org.jetbrains.kotlin:kotlin-stdlib to v2.4.21 (@renovate[bot])
-- **PR #7143** (closed): test: stabilize Docker logging and capture error tests (@CryoThrust)
-- **PR #7139** (2026-11-17): Mask credentials in logs and error messages (@dliubarskyi)
 
 ---
 
@@ -1008,33 +1024,32 @@ which are no longer needed.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. race in AiServiceCaptureTest.should_rethrow_error_of_failed_token_stream
+## X. agentic): convert a number to a BigDecimal or BigInteger agent argument
 
 **RULE**:
-When implementing operations in `langchain4j-test/src/main/java/dev/langchain4j/test/service/AiServiceCapture.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in langchain4j/langchain4j. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `langchain4j-agentic/src/main/java/dev/langchain4j/agentic/internal/AgentUtil.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in langchain4j/langchain4j. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `32bec62b`: race in AiServiceCaptureTest.should_rethrow_error_of_failed_token_stream. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0d6c0ff8`: agentic): convert a number to a BigDecimal or BigInteger agent argument. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `langchain4j-test/src/main/java/dev/langchain4j/test/service/AiServiceCapture.java`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `langchain4j-agentic/src/main/java/dev/langchain4j/agentic/internal/AgentUtil.java`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
- * {@code TokenStream}, the invocation finishes before the {@code onCompleteResponse} or {@code onError} handler you
- * gave it has run, so when {@code capture(...)} returns or throws, that handler may still be running.
- * {@link AiServiceInvocation#outputText()} has the final text and {@link AiServiceInvocation#error()} the error in any
- * case.
+import java.math.BigDecimal;
+                // through the decimal string of the number, so that a double like 0.1 becomes 0.1 and not its
+                // binary approximation, and a BigInteger or BigDecimal keeps all its digits
+                case "java.math.BigDecimal" -> new BigDecimal(n.toString());
+                case "java.math.BigInteger" -> new BigDecimal(n.toString()).toBigInteger();
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Induced defect failure mode:
- * {@code TokenStream}, the invocation finishes before the {@code onCompleteResponse} handler you gave it has run, so
- * when {@code capture(...)} returns, that handler may still be running. {@link AiServiceInvocation#outputText()} has
- * the final text in any case.
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `32bec62b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0d6c0ff8` are properly handled with clean fallback behavior.

@@ -10969,3 +10969,5 @@
 | `CYCLE-20261118-DPZO` | `2026-11-18T12:50:59.412Z` | `pubkey/rxdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9221` | Yes (`1c8ae383...`) |
 | `CYCLE-20261118-DTLR` | `2026-11-18T12:51:04.095Z` | `zama-ai/tfhe-rs` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9222` | Yes (`58e2276e...`) |
 | `CYCLE-20261118-DVJ0` | `2026-11-18T12:51:06.588Z` | `alibaba/zvec` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9223` | Yes (`0c7a359e...`) |
+| `CYCLE-20261118-N65T` | `2026-11-18T12:58:20.273Z` | `XingChen-AGI/Xing4.0-29B-A4B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-xingchen-agi-xing4.0-29b-a4b-learnings.md` | Yes (`518d40b7...`) |
+| `CYCLE-20261118-NHFV` | `2026-11-18T12:58:34.891Z` | `langchain4j/langchain4j` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9224` | Yes (`1ae4ac9f...`) |

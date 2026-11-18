@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T12:51:06.597Z",
-  "total_cycles_completed": 10493,
-  "total_learnings_persisted": 10493,
-  "total_rules_promoted": 9981,
+  "last_updated": "2026-11-18T12:58:34.900Z",
+  "total_cycles_completed": 10495,
+  "total_learnings_persisted": 10495,
+  "total_rules_promoted": 9982,
   "history": [
-    {
-      "timestamp": "2026-11-17T23:17:40.580Z",
-      "repository": "lioensky/VCPToolBox",
-      "learningId": "learn-github-lioensky-vcptoolbox",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T23:19:23.232Z",
-      "repository": "stabilityai/stable-diffusion-xl-base-1.0",
-      "learningId": "learn-huggingface-stabilityai-stable-diffusion-xl-base-1-0",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-17T23:42:26.697Z",
       "repository": "meta-llama/Llama-3.1-8B-Instruct",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-18T12:51:06.597Z",
       "repository": "alibaba/zvec",
       "learningId": "learn-github-alibaba-zvec",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T12:58:20.281Z",
+      "repository": "XingChen-AGI/Xing4.0-29B-A4B",
+      "learningId": "learn-huggingface-xingchen-agi-xing4-0-29b-a4b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T12:58:34.900Z",
+      "repository": "langchain4j/langchain4j",
+      "learningId": "learn-github-langchain4j-langchain4j",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

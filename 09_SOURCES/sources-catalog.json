@@ -385,8 +385,8 @@
     "sourceUrl": "https://huggingface.co/XingChen-AGI/Xing4.0-29B-A4B",
     "sourceVersion": "hf-xingchen-agi-xing4.0-29b-a4b",
     "license": "Open-Source",
-    "contentHash": "f0f9574cb97fd74b750db3e2b3135dc64b7a0de650b9aaf8d2264fdc7b817ffe",
-    "lastHarvestedAt": "2026-11-18T02:33:18.013Z",
+    "contentHash": "518d40b7701bb1eb87de89af7c6055597833e8bf44f7fb2919df9c9a79e4cba6",
+    "lastHarvestedAt": "2026-11-18T12:58:20.277Z",
     "learningId": "learn-huggingface-xingchen-agi-xing4-0-29b-a4b"
   },
   "hf-supersoniclabs-julia-1": {
@@ -7353,10 +7353,10 @@
     "repository": "langchain4j/langchain4j",
     "platform": "github",
     "sourceUrl": "https://github.com/langchain4j/langchain4j",
-    "sourceVersion": "698c89f6",
+    "sourceVersion": "8d519498",
     "license": "Apache-2.0",
-    "contentHash": "3721ca6fa07af895eea61b5e31c18ecff95f1b1f2da98eafd247b2bf359bd341",
-    "lastHarvestedAt": "2026-11-17T19:12:32.187Z",
+    "contentHash": "1ae4ac9fc3564f685d60012f8733c9f10d0bb9af0ed6776b8d33490e6688391b",
+    "lastHarvestedAt": "2026-11-18T12:58:34.894Z",
     "learningId": "learn-github-langchain4j-langchain4j"
   },
   "railwayapp-nixpacks": {

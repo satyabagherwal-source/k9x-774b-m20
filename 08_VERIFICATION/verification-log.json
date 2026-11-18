@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261117-UCFR",
-    "timestamp": "2026-11-17T02:32:23.415Z",
-    "repository": "TypeWhisper/typewhisper-mac",
-    "learningId": "learn-github-typewhisper-typewhisper-mac",
-    "contentHash": "3b21acf597db42e932a34a840e3a91c50320e2c58c977f34873728783d3dc204",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261117-I9SS",
-    "timestamp": "2026-11-17T02:50:59.740Z",
-    "repository": "GitoxideLabs/gitoxide",
-    "learningId": "learn-github-gitoxidelabs-gitoxide",
-    "contentHash": "559ecc8d64813df2fb55dbabf7c2655dc5f5471a26e77352f565013f0aa72f8b",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261117-EJ34",
     "timestamp": "2026-11-17T03:16:04.768Z",
     "repository": "NucleoidAI/Nucleoid",
@@ -7490,6 +7460,36 @@
     "repository": "alibaba/zvec",
     "learningId": "learn-github-alibaba-zvec",
     "contentHash": "0c7a359e6205e5c53fa3d204b526df419ba834fc0da34c4b1e66519feca8366f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-N65T",
+    "timestamp": "2026-11-18T12:58:20.273Z",
+    "repository": "XingChen-AGI/Xing4.0-29B-A4B",
+    "learningId": "learn-huggingface-xingchen-agi-xing4-0-29b-a4b",
+    "contentHash": "518d40b7701bb1eb87de89af7c6055597833e8bf44f7fb2919df9c9a79e4cba6",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-NHFV",
+    "timestamp": "2026-11-18T12:58:34.891Z",
+    "repository": "langchain4j/langchain4j",
+    "learningId": "learn-github-langchain4j-langchain4j",
+    "contentHash": "1ae4ac9fc3564f685d60012f8733c9f10d0bb9af0ed6776b8d33490e6688391b",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

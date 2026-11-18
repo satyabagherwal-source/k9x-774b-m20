@@ -43,9 +43,9 @@
   "bitterbot-ai-bitterbot-desktop": {
     "name": "bitterbot-desktop",
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-    "lastChecked": "2026-11-18T12:24:01.560Z",
+    "lastChecked": "2026-11-18T12:58:32.158Z",
     "revisionIdentifier": "108f7135",
-    "lastVerified": "2026-11-18T12:24:01.560Z"
+    "lastVerified": "2026-11-18T12:58:32.158Z"
   },
   "hf-comfy-org-minimax-h3": {
     "name": "Comfy-Org/MiniMax-H3",
@@ -69,8 +69,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-18T12:51:09.695Z",
-    "lastVerified": "2026-11-18T12:51:09.695Z",
+    "lastChecked": "2026-11-18T12:58:37.936Z",
+    "lastVerified": "2026-11-18T12:58:37.936Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -1482,6 +1482,68 @@
     "contentHash": "0c7a359e6205e5c53fa3d204b526df419ba834fc0da34c4b1e66519feca8366f",
     "promotedRulesCount": 1,
     "recentFixesCount": 3,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "cachix-devenv": {
+    "name": "devenv",
+    "officialUrl": "https://github.com/cachix/devenv",
+    "lastChecked": "2026-11-18T12:58:17.232Z",
+    "revisionIdentifier": "8efcb88c",
+    "lastVerified": "2026-11-18T12:58:17.232Z"
+  },
+  "hf-xingchen-agi-xing4.0-29b-a4b": {
+    "name": "XingChen-AGI/Xing4.0-29B-A4B",
+    "officialUrl": "https://huggingface.co/XingChen-AGI/Xing4.0-29B-A4B",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-18T12:58:19.768Z",
+    "lastVerified": "2026-11-18T12:58:19.768Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-xingchen-agi-xing4-0-29b-a4b",
+    "contentHash": "518d40b7701bb1eb87de89af7c6055597833e8bf44f7fb2919df9c9a79e4cba6",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "infinitered-reactotron": {
+    "name": "reactotron",
+    "officialUrl": "https://github.com/infinitered/reactotron",
+    "lastChecked": "2026-11-18T12:58:22.243Z",
+    "revisionIdentifier": "acdd7c73",
+    "lastVerified": "2026-11-18T12:58:22.243Z"
+  },
+  "loft-sh-vcluster": {
+    "name": "vcluster",
+    "officialUrl": "https://github.com/loft-sh/vcluster",
+    "lastChecked": "2026-11-18T12:58:24.739Z",
+    "revisionIdentifier": "92186138",
+    "lastVerified": "2026-11-18T12:58:24.739Z"
+  },
+  "sigstore-cosign": {
+    "name": "cosign",
+    "officialUrl": "https://github.com/sigstore/cosign",
+    "lastChecked": "2026-11-18T12:58:27.214Z",
+    "revisionIdentifier": "0743bfcf",
+    "lastVerified": "2026-11-18T12:58:27.214Z"
+  },
+  "langchain4j-langchain4j": {
+    "name": "langchain4j/langchain4j",
+    "officialUrl": "https://github.com/langchain4j/langchain4j",
+    "sourceType": "github",
+    "technology": "Java",
+    "lastChecked": "2026-11-18T12:58:34.103Z",
+    "lastVerified": "2026-11-18T12:58:34.103Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-langchain4j-langchain4j",
+    "contentHash": "1ae4ac9fc3564f685d60012f8733c9f10d0bb9af0ed6776b8d33490e6688391b",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"

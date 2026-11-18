@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-18T12:51:11.809Z",
+  "last_updated": "2026-11-18T12:58:39.493Z",
   "total_verified_learnings": 9002,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 21251,
+  "total_items": 21254,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112082,9 +112082,9 @@
       "title": "Research & Knowledge Intelligence: XingChen-AGI/Xing4.0-29B-A4B Core Invariants",
       "repository": "XingChen-AGI/Xing4.0-29B-A4B",
       "source_version": "hf-xingchen-agi-xing4.0-29b-a4b",
-      "content_hash": "e1a7b9e5410241b7454ae5a05bfdcb10521419500d29e76ccc19fcbfb60e57a1",
+      "content_hash": "45a5f19f8c8cc208a716fe61f9605ed561355ad37c03f81d9b5ca9806f4fd123",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T02:33:18.186Z"
+      "persisted_at": "2026-11-18T12:58:20.432Z"
     },
     "candidate_directive-docs-fix-sqlp-and-polars-schema-file-name-in-usage-5046": {
       "item_id": "candidate_directive-docs-fix-sqlp-and-polars-schema-file-name-in-usage-5046",
@@ -112130,9 +112130,9 @@
       "title": "Research & Knowledge Intelligence: hf-xingchen-agi-xing4.0-29b-a4b-learnings Core Invariants",
       "repository": "hf-xingchen-agi-xing4.0-29b-a4b-learnings",
       "source_version": "HEAD",
-      "content_hash": "1ec76adf97a2ec8534687f44c8f255be8cfb6d62014f4756abb1ec9ce127777d",
+      "content_hash": "1d753c7895fd347717ed630b976024548cac264ee7e1f2a9e10f6040512b972c",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T02:33:21.147Z"
+      "persisted_at": "2026-11-18T12:58:38.230Z"
     },
     "domain_intelligence-content-information-intelligence-dathere-qsv-learnings-core-invariants": {
       "item_id": "domain_intelligence-content-information-intelligence-dathere-qsv-learnings-core-invariants",
@@ -113686,13 +113686,13 @@
       "item_id": "candidate_directive-editor-add-scoped-ios-account-deletion",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-RBVF-editor-add-scoped-ios-account-deletion.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-NKT7-editor-add-scoped-ios-account-deletion.md",
       "title": "editor): add scoped ios account deletion",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "83b6865a4b3d01aeec7e8bc44c76393db51eca033b3d68b3f0678709757ce9dc",
+      "content_hash": "cc697f4b31ef33e5f6a2deaa6de6ed6dde81a94e2302a4d96591944f4f5be256",
       "domain_letter": "H",
-      "persisted_at": "2026-11-18T12:33:34.687Z"
+      "persisted_at": "2026-11-18T12:58:39.264Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant",
@@ -113702,9 +113702,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "2b747e7a1a918711d1e2b9eff658418329a29416babbf10548117b084466aa20",
+      "content_hash": "d956cfcb09406919250b45405a2dfc6539ddfca23dbf810784f6cca0eb0fbeaa",
       "domain_letter": "H",
-      "persisted_at": "2026-11-18T12:33:34.866Z"
+      "persisted_at": "2026-11-18T12:58:39.380Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113714,9 +113714,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "7c038ec23781010fe4dfa3552ad81c48c28f355d56447a75cdb94814ee51c734",
+      "content_hash": "c3d68a53f3551073d94d0ea61e6fc298018301bd6d66c1a9b69e1f2732cf9e18",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T12:33:35.043Z"
+      "persisted_at": "2026-11-18T12:58:39.493Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -215634,8 +215634,8 @@
       "slug": "langchain4j-langchain4j",
       "platform": "github",
       "source_url": "https://github.com/langchain4j/langchain4j",
-      "source_version": "698c89f6",
-      "content_hash": "3721ca6fa07af895eea61b5e31c18ecff95f1b1f2da98eafd247b2bf359bd341",
+      "source_version": "8d519498",
+      "content_hash": "1ae4ac9fc3564f685d60012f8733c9f10d0bb9af0ed6776b8d33490e6688391b",
       "dossier_path": "07_PROJECT_LEARNING/langchain4j-langchain4j-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/langchain4j-langchain4j-learnings.md",
       "promoted_rules": [
@@ -215653,6 +215653,11 @@
           "number": 9036,
           "title": "race in AiServiceCaptureTest.should_rethrow_error_of_failed_token_stream",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9224,
+          "title": "convert a number to a BigDecimal or BigInteger agent argument",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -215660,7 +215665,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T19:12:31.984Z",
+      "verified_at": "2026-11-18T12:58:34.732Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -215702,10 +215707,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-langchain4j-langchain4j-technical-construction-intelligence-langchain4j-langchai.md",
       "title": "Technical Construction Intelligence: langchain4j/langchain4j Core Invariants",
       "repository": "langchain4j/langchain4j",
-      "source_version": "698c89f6",
-      "content_hash": "c41bfa3c44f0015570e8ccfe8e08d990a8868a355131864bf9c1f4f17ddaad35",
+      "source_version": "8d519498",
+      "content_hash": "a6195b0220a011c9152542ea39fa1678482542fb6f6d8d38bf77bbfacc3edd76",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T19:12:32.436Z"
+      "persisted_at": "2026-11-18T12:58:35.165Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-langchain4j-langchain4j": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-langchain4j-langchain4j",
@@ -215714,10 +215719,10 @@
       "relative_path": "08_VERIFICATION/langchain4j-langchain4j-verification-protocol-empirical-defect-shield-for-langch.md",
       "title": "Verification Protocol: Empirical Defect Shield for langchain4j/langchain4j",
       "repository": "langchain4j/langchain4j",
-      "source_version": "698c89f6",
-      "content_hash": "72bb62b148bc9fb29df9216463145916146630b8ae45fc3c10f3a29231efee36",
+      "source_version": "8d519498",
+      "content_hash": "629b4ff489549670a7203d6e239ae86c0f68ae02e397eb12064ceb09d64aab30",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T19:12:32.573Z"
+      "persisted_at": "2026-11-18T12:58:35.311Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-google-electra-base-discriminator-learnings-c": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-google-electra-base-discriminator-learnings-c",
@@ -276328,9 +276333,9 @@
       "title": "Technical Construction Intelligence: langchain4j-langchain4j-learnings Core Invariants",
       "repository": "langchain4j-langchain4j-learnings",
       "source_version": "HEAD",
-      "content_hash": "3e1ca443225d853790006641cfed473b88b5d1166cd82da45c850c757f38b960",
+      "content_hash": "6b6a978fbf44529345db8cb2af3c399aa684bf6c69fbe1098894d6b8bd9417bc",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T19:12:35.899Z"
+      "persisted_at": "2026-11-18T12:58:38.690Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-langchain4j-langchain4j-learni": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-langchain4j-langchain4j-learni",
@@ -276340,9 +276345,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for langchain4j-langchain4j-learnings",
       "repository": "langchain4j-langchain4j-learnings",
       "source_version": "HEAD",
-      "content_hash": "8cb6563a477816085e9c022de56f34cc375e9591bf321e330a504cb8414f1fbf",
+      "content_hash": "6c162274805beee4f6d7c0ef5833d9f43fe7922dec7035fbabd21ea8488beeb9",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T19:12:36.012Z"
+      "persisted_at": "2026-11-18T12:58:38.819Z"
     },
     "learn-huggingface-fastvideo-fasth3-omni-comfy": {
       "learning_id": "learn-huggingface-fastvideo-fasth3-omni-comfy",
@@ -280407,7 +280412,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/XingChen-AGI/Xing4.0-29B-A4B",
       "source_version": "hf-xingchen-agi-xing4.0-29b-a4b",
-      "content_hash": "f0f9574cb97fd74b750db3e2b3135dc64b7a0de650b9aaf8d2264fdc7b817ffe",
+      "content_hash": "518d40b7701bb1eb87de89af7c6055597833e8bf44f7fb2919df9c9a79e4cba6",
       "dossier_path": "07_PROJECT_LEARNING/hf-xingchen-agi-xing4.0-29b-a4b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-xingchen-agi-xing4.0-29b-a4b-learnings.md",
       "promoted_rules": [],
@@ -280416,7 +280421,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T02:33:17.839Z",
+      "verified_at": "2026-11-18T12:58:20.108Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -286691,6 +286696,44 @@
       "content_hash": "6546fca1118d3b29d1123217c6fe0a8a34c505de4286a74bffde2c6ab8f6e4f1",
       "domain_letter": "H",
       "persisted_at": "2026-11-18T12:51:11.539Z"
+    },
+    "rule-9224": {
+      "learning_id": "rule-9224",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9224,
+      "title": "convert a number to a BigDecimal or BigInteger agent argument",
+      "source_url": "https://github.com/langchain4j/langchain4j",
+      "source_version": "8d519498",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-18T12:58:34.732Z"
+    },
+    "candidate_directive-convert-a-number-to-a-bigdecimal-or-biginteger-agent-argument": {
+      "item_id": "candidate_directive-convert-a-number-to-a-bigdecimal-or-biginteger-agent-argument",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-NHKB-convert-a-number-to-a-bigdecimal-or-biginteger-agent-argument.md",
+      "title": "convert a number to a BigDecimal or BigInteger agent argument",
+      "repository": "langchain4j/langchain4j",
+      "source_version": "8d519498",
+      "content_hash": "7a248739d1cdf8f8705c2168d5766f974957819d6993a6993b46b3f9e010a054",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-18T12:58:35.052Z"
+    },
+    "candidate_directive-agentic-convert-a-number-to-a-bigdecimal-or-biginteger-agent-argument": {
+      "item_id": "candidate_directive-agentic-convert-a-number-to-a-bigdecimal-or-biginteger-agent-argument",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-NK9D-agentic-convert-a-number-to-a-bigdecimal-or-biginteger-agent-argument.md",
+      "title": "agentic): convert a number to a BigDecimal or BigInteger agent argument",
+      "repository": "langchain4j-langchain4j-learnings",
+      "source_version": "HEAD",
+      "content_hash": "943e3dd0fe1a09ba5da37b68b29c3647250428ba76ae17b406e3e060426771ab",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-18T12:58:38.545Z"
     }
   },
   "ai-builder-brain": {
