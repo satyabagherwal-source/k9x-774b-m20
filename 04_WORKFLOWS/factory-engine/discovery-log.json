@@ -21475,5 +21475,20 @@
     "downloads": 0,
     "qualityScore": 780,
     "discoveredAt": "2026-11-18T04:18:24.138Z"
+  },
+  {
+    "name": "spartan",
+    "fullName": "spartan-ng/spartan",
+    "url": "https://github.com/spartan-ng/spartan",
+    "type": "github",
+    "domain": "fullstack-ui",
+    "description": "Cutting-edge tools powering Angular full-stack development.",
+    "stars": 3001,
+    "forks": 341,
+    "openIssues": 115,
+    "language": "TypeScript",
+    "qualityScore": 2053,
+    "verifiedOrg": false,
+    "discoveredAt": "2026-11-18T05:07:08.993Z"
   }
 ]

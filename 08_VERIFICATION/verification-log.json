@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261116-MYR3",
-    "timestamp": "2026-11-16T13:22:49.839Z",
-    "repository": "astral-sh/uv",
-    "learningId": "learn-github-astral-sh-uv",
-    "contentHash": "b3d76c426cd06712b30fab6b6563fb948d2fbdf4f62eac186f9a6c5d7ac8e9a1",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261116-N26Y",
-    "timestamp": "2026-11-16T13:22:54.298Z",
-    "repository": "scrapy/scrapy",
-    "learningId": "learn-github-scrapy-scrapy",
-    "contentHash": "d7f4ffa83df09fdcefa3706bf74e41392558d17c5d4e04bee9576bd33ef3af3a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261116-6W2F",
     "timestamp": "2026-11-16T13:38:19.479Z",
     "repository": "pola-rs/polars",
@@ -7490,6 +7460,36 @@
     "repository": "tailscale/tailscale",
     "learningId": "learn-github-tailscale-tailscale",
     "contentHash": "d0aa2ee39eee9bd432f48f6057a72354b483d9540a1a84b8a2edfa1cb2017e4e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-XHRD",
+    "timestamp": "2026-11-18T05:10:28.393Z",
+    "repository": "Efficient-Large-Model/Open-H3-Regenerate-2K",
+    "learningId": "learn-huggingface-efficient-large-model-open-h3-regenerate-2k",
+    "contentHash": "a5f8019fe86ddacce16ae95f2ed717abf00fecb6d6623494774b3c3f6114f106",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-XI9N",
+    "timestamp": "2026-11-18T05:10:29.051Z",
+    "repository": "spartan-ng/spartan",
+    "learningId": "learn-github-spartan-ng-spartan",
+    "contentHash": "602a537cab69eeb0eb234f5f08928eceb084d88b1b61b3a1ddb3479a01dbb00f",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

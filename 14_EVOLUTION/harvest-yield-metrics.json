@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T04:57:26.934Z",
-  "total_cycles_completed": 10361,
-  "total_learnings_persisted": 10361,
-  "total_rules_promoted": 9877,
+  "last_updated": "2026-11-18T05:10:29.062Z",
+  "total_cycles_completed": 10363,
+  "total_learnings_persisted": 10363,
+  "total_rules_promoted": 9878,
   "history": [
-    {
-      "timestamp": "2026-11-17T16:14:03.062Z",
-      "repository": "domcyrus/rustnet",
-      "learningId": "learn-github-domcyrus-rustnet",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T16:14:10.330Z",
-      "repository": "temporalio/temporal",
-      "learningId": "learn-github-temporalio-temporal",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-17T16:14:17.034Z",
       "repository": "SynaLinks/synalinks-skills",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-18T04:57:26.934Z",
       "repository": "tailscale/tailscale",
       "learningId": "learn-github-tailscale-tailscale",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T05:10:28.404Z",
+      "repository": "Efficient-Large-Model/Open-H3-Regenerate-2K",
+      "learningId": "learn-huggingface-efficient-large-model-open-h3-regenerate-2k",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T05:10:29.062Z",
+      "repository": "spartan-ng/spartan",
+      "learningId": "learn-github-spartan-ng-spartan",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-18T04:57:30.215Z",
+  "updated_at": "2026-11-18T05:11:13.348Z",
   "stats": {
-    "total_discovered": 5279,
-    "approved_pending_harvest": 4977,
+    "total_discovered": 5285,
+    "approved_pending_harvest": 4983,
     "harvested_count": 0,
     "rejected_count": 302,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 4969,
+      "COMMUNITY_AND_EXPERT": 4975,
       "OFFICIAL_DOCUMENTATION": 166,
       "STANDARDS_AND_SPECIFICATIONS": 108,
       "ENGINEERING_BLOGS": 4,
@@ -114045,6 +114045,138 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/unhappychoice-gitlogue-learnings.md",
         "fileName": "unhappychoice-gitlogue-learnings.md"
+      }
+    },
+    "SRC-0FD596C144E7": {
+      "id": "SRC-0FD596C144E7",
+      "url": "https://github.com/spartan-ng/spartan",
+      "title": "https://github.com/spartan-ng/spartan",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T05:11:13.060Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/spartan-ng-spartan-learnings.md",
+        "fileName": "spartan-ng-spartan-learnings.md"
+      }
+    },
+    "SRC-3CEF977F8E4C": {
+      "id": "SRC-3CEF977F8E4C",
+      "url": "https://stackblitz.com/edit/stackblitz-starters-mjd5yosy?file=src%2Fmain.ts",
+      "title": "https://stackblitz.com/edit/stackblitz-starters-mjd5yosy?file=src%2Fmain.ts",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T05:11:13.124Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/spartan-ng-spartan-learnings.md",
+        "fileName": "spartan-ng-spartan-learnings.md"
+      }
+    },
+    "SRC-C109CD56EE3C": {
+      "id": "SRC-C109CD56EE3C",
+      "url": "https://github.com/spartan-ng/spartan/blob/4f6dba69f14a9c94c03bd0dda88b0cf6a1480c17/libs/brain/tabs/src/lib/brn-tabs-list.ts",
+      "title": "https://github.com/spartan-ng/spartan/blob/4f6dba69f14a9c94c03bd0dda88b0cf6a1480c17/libs/brain/tabs/src/lib/brn-tabs-list.ts",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T05:11:13.182Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/spartan-ng-spartan-learnings.md",
+        "fileName": "spartan-ng-spartan-learnings.md"
+      }
+    },
+    "SRC-5F1BD23782EF": {
+      "id": "SRC-5F1BD23782EF",
+      "url": "https://www.npmjs.com/package/@spartan-ng/brain",
+      "title": "https://www.npmjs.com/package/@spartan-ng/brain",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T05:11:13.259Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/spartan-ng-spartan-learnings.md",
+        "fileName": "spartan-ng-spartan-learnings.md"
+      }
+    },
+    "SRC-30045530A1EE": {
+      "id": "SRC-30045530A1EE",
+      "url": "https://www.npmjs.com/package/@spartan-ng/cli",
+      "title": "https://www.npmjs.com/package/@spartan-ng/cli",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T05:11:13.303Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/spartan-ng-spartan-learnings.md",
+        "fileName": "spartan-ng-spartan-learnings.md"
+      }
+    },
+    "SRC-81201233D8E5": {
+      "id": "SRC-81201233D8E5",
+      "url": "https://www.spartan.ng/",
+      "title": "https://www.spartan.ng/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T05:11:13.348Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/spartan-ng-spartan-learnings.md",
+        "fileName": "spartan-ng-spartan-learnings.md"
       }
     }
   }

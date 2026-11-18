@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-18T04:57:31.479Z",
-  "total_verified_learnings": 8980,
+  "last_updated": "2026-11-18T05:11:15.542Z",
+  "total_verified_learnings": 8982,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 20895,
+  "total_items": 20903,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112058,9 +112058,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "c9e4d11f8c2d963a31c84f312256f3e1f62bf7d1f2004a07f151a19b1cc43b78",
+      "content_hash": "8dd74e6a04dd6912ea996c12c65773873e5f6b4caa86237b228eb26dbe815b30",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T03:17:21.858Z"
+      "persisted_at": "2026-11-18T05:11:15.374Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112070,9 +112070,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "8a93e2edd56c6f61a3419ccb7786c962a7e0b795881220768f4078a518886325",
+      "content_hash": "f8a1b9dfa734ab8f1c4c25d4fff8f9805f9d86048e4c3dea166b9e56bd538887",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T03:17:21.958Z"
+      "persisted_at": "2026-11-18T05:11:15.542Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -114182,9 +114182,9 @@
       "title": "Research & Knowledge Intelligence: hf-efficient-large-model-open-h3-regenerate-2k-learnings Core Invariants",
       "repository": "hf-efficient-large-model-open-h3-regenerate-2k-learnings",
       "source_version": "HEAD",
-      "content_hash": "f44da53b35f7cdc5ebf8b117b9278368f3b9ef9b36b21d58884115b7b09864b9",
+      "content_hash": "c2a8fc2f80f9727c743dd7e73f9f49019d6430bb02c6ddb076cf2c4eaf3bb17d",
       "domain_letter": "D",
-      "persisted_at": "2026-11-13T17:55:47.280Z"
+      "persisted_at": "2026-11-18T05:11:14.435Z"
     },
     "domain_intelligence-technical-construction-intelligence-milvus-io-milvus-learnings-core-invariants": {
       "item_id": "domain_intelligence-technical-construction-intelligence-milvus-io-milvus-learnings-core-invariants",
@@ -251864,9 +251864,9 @@
       "title": "Research & Knowledge Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "fb1c124af925df6eb5b7a28d929ecff64a94984139009532d431acff3fa005f1",
+      "content_hash": "d16c3883b2dd85c674e1f2d2e45a357adc5442bc4480b4bd264e50ffb067fecb",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T03:17:21.746Z"
+      "persisted_at": "2026-11-18T05:11:15.184Z"
     },
     "learn-github-prof18-feed-flow": {
       "learning_id": "learn-github-prof18-feed-flow",
@@ -274461,13 +274461,13 @@
       "item_id": "candidate_directive-rust-address-the-remaining-issues-in-418",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-W124-rust-address-the-remaining-issues-in-418.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-YHPI-rust-address-the-remaining-issues-in-418.md",
       "title": "rust): address the remaining issues in #418",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "ada610daa96226edaa25042e291c225ea8651ecc0d837e377edf3fa431c73dfb",
+      "content_hash": "5b30e359f97e548728c94d8201c0a0ab142b1d1bf3d521107c6583f3aa4b856f",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T03:17:21.630Z"
+      "persisted_at": "2026-11-18T05:11:14.994Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-m3-1-flash-learnings-core-i": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-m3-1-flash-learnings-core-i",
@@ -281369,6 +281369,140 @@
       "content_hash": "3dbd6beeecc2bfedba58f14f0cb00083b33544cb41f30950c931ca016aa64c0a",
       "domain_letter": "K",
       "persisted_at": "2026-11-18T04:57:30.652Z"
+    },
+    "learn-huggingface-efficient-large-model-open-h3-regenerate-2k": {
+      "learning_id": "learn-huggingface-efficient-large-model-open-h3-regenerate-2k",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "Efficient-Large-Model/Open-H3-Regenerate-2K",
+      "repository": "Efficient-Large-Model/Open-H3-Regenerate-2K",
+      "slug": "hf-efficient-large-model-open-h3-regenerate-2k",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/Efficient-Large-Model/Open-H3-Regenerate-2K",
+      "source_version": "hf-efficient-large-model-open-h3-regenerate-2k",
+      "content_hash": "a5f8019fe86ddacce16ae95f2ed717abf00fecb6d6623494774b3c3f6114f106",
+      "dossier_path": "07_PROJECT_LEARNING/hf-efficient-large-model-open-h3-regenerate-2k-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-efficient-large-model-open-h3-regenerate-2k-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-18T05:10:28.129Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-github-spartan-ng-spartan": {
+      "learning_id": "learn-github-spartan-ng-spartan",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "spartan-ng/spartan",
+      "repository": "spartan-ng/spartan",
+      "slug": "spartan-ng-spartan",
+      "platform": "github",
+      "source_url": "https://github.com/spartan-ng/spartan",
+      "source_version": "9ae9e339",
+      "content_hash": "602a537cab69eeb0eb234f5f08928eceb084d88b1b61b3a1ddb3479a01dbb00f",
+      "dossier_path": "07_PROJECT_LEARNING/spartan-ng-spartan-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/spartan-ng-spartan-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 9128,
+          "title": "compile hlm-tailwind-preset with a tailwind prefix",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-18T05:10:28.841Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-9128": {
+      "learning_id": "rule-9128",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9128,
+      "title": "compile hlm-tailwind-preset with a tailwind prefix",
+      "source_url": "https://github.com/spartan-ng/spartan",
+      "source_version": "9ae9e339",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-18T05:10:28.841Z"
+    },
+    "candidate_directive-compile-hlm-tailwind-preset-with-a-tailwind-prefix": {
+      "item_id": "candidate_directive-compile-hlm-tailwind-preset-with-a-tailwind-prefix",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-YGNQ-compile-hlm-tailwind-preset-with-a-tailwind-prefix.md",
+      "title": "compile hlm-tailwind-preset with a tailwind prefix",
+      "repository": "spartan-ng-spartan-learnings",
+      "source_version": "HEAD",
+      "content_hash": "03e61eeb94bd69fa4e5093af62df8426109ffe01729718057d8873e639689971",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-18T05:11:13.623Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-spartan-ng-spartan-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-spartan-ng-spartan-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-spartan-ng-spartan-technical-construction-intelligence-spartan-ng-spartan-core-i.md",
+      "title": "Technical Construction Intelligence: spartan-ng/spartan Core Invariants",
+      "repository": "spartan-ng/spartan",
+      "source_version": "9ae9e339",
+      "content_hash": "a339d700340c6aaacf44451ee189cbdca4d0e6ab4536e5b9ef6f206b9030d633",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-18T05:10:29.479Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-spartan-ng-spartan": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-spartan-ng-spartan",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/spartan-ng-spartan-verification-protocol-empirical-defect-shield-for-spartan-ng-.md",
+      "title": "Verification Protocol: Empirical Defect Shield for spartan-ng/spartan",
+      "repository": "spartan-ng/spartan",
+      "source_version": "9ae9e339",
+      "content_hash": "e44b753eb4d24b331cad8a709cb24261740f98f7866d2135a5c225032aeb3070",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-18T05:10:29.665Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-spartan-ng-spartan-learnings-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-spartan-ng-spartan-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-spartan-ng-spartan-learnings-technical-construction-intelligence-spartan-ng-spar.md",
+      "title": "Technical Construction Intelligence: spartan-ng-spartan-learnings Core Invariants",
+      "repository": "spartan-ng-spartan-learnings",
+      "source_version": "HEAD",
+      "content_hash": "c5cdfb195fa9de7f6e2581fbb7815dda3c35ebe8daea40117be13adb3119344f",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-18T05:11:13.822Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-spartan-ng-spartan-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-spartan-ng-spartan-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/spartan-ng-spartan-learnings-verification-protocol-empirical-defect-shield-for-s.md",
+      "title": "Verification Protocol: Empirical Defect Shield for spartan-ng-spartan-learnings",
+      "repository": "spartan-ng-spartan-learnings",
+      "source_version": "HEAD",
+      "content_hash": "1ab0151f5866c7d0cfc45809a625eacfcf23f2832b5a45d32b443a5eb0889dbc",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-18T05:11:14.007Z"
     }
   },
   "ai-builder-brain": {

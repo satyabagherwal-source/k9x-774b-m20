@@ -10850,3 +10850,6 @@ Every entry in this ledger must capture:
 | `learn-github-unhappychoice-gitlogue` | `https://github.com/unhappychoice/gitlogue` | `1f875b5b` | Multi-dimensional audit evidence | 2026-11-18T04:57:17.190Z |
 | `learn-github-onejs-one` | `https://github.com/onejs/one` | `aaba81ee` | Multi-dimensional audit evidence | 2026-11-18T04:57:23.077Z |
 | `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `075e6403` | Multi-dimensional audit evidence | 2026-11-18T04:57:26.930Z |
+| `learn-huggingface-efficient-large-model-open-h3-regenerate-2k` | `https://huggingface.co/Efficient-Large-Model/Open-H3-Regenerate-2K` | `hf-efficie` | Multi-dimensional audit evidence | 2026-11-18T05:10:28.397Z |
+| `learn-github-spartan-ng-spartan` | `https://github.com/spartan-ng/spartan` | `9ae9e339` | Multi-dimensional audit evidence | 2026-11-18T05:10:29.055Z |
+| `learn-dom-f-9e7bdb5e` | `project://spartan-ng-spartan` | `9ae9e339` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/spartan-ng-spartan-learnings.md` | 2026-11-18T05:11:13.032Z |

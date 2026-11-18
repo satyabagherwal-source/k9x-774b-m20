@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T04:57:31.584Z",
+  "last_updated": "2026-11-18T05:11:15.710Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-18T04:11:36.483Z",
@@ -8,7 +8,7 @@
       "staged_for_review": 1
     },
     "zvec-ai-zvec-grep-learnings.md": {
-      "processed_at": "2026-11-18T03:17:21.398Z",
+      "processed_at": "2026-11-18T05:11:14.632Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2023,8 +2023,8 @@
       "staged_for_review": 1
     },
     "hf-efficient-large-model-open-h3-regenerate-2k-learnings.md": {
-      "processed_at": "2026-11-13T17:55:47.130Z",
-      "promoted_canonical": 1,
+      "processed_at": "2026-11-18T05:11:14.183Z",
+      "promoted_canonical": 0,
       "staged_for_review": 0
     },
     "hf-akatz-ai-minimax-h3-character-swap-lora-learnings.md": {
@@ -3381,9 +3381,14 @@
       "processed_at": "2026-11-18T04:57:30.769Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
+    },
+    "spartan-ng-spartan-learnings.md": {
+      "processed_at": "2026-11-18T05:11:13.032Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 1806,
-  "total_canonical_promoted": 334,
-  "total_staged_for_review": 1396
+  "total_dossiers_evaluated": 1809,
+  "total_canonical_promoted": 335,
+  "total_staged_for_review": 1397
 }

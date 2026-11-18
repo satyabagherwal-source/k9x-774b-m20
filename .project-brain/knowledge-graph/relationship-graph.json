@@ -2,10 +2,10 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-18T04:21:21.432Z",
+  "updated_at": "2026-11-18T05:11:13.030Z",
   "statistics": {
-    "total_nodes": 331,
-    "total_edges": 157,
+    "total_nodes": 332,
+    "total_edges": 158,
     "domain_distribution": {
       "D": 234,
       "M": 1,
@@ -14,13 +14,13 @@
       "K": 17,
       "L": 5,
       "G": 1,
-      "F": 14,
+      "F": 15,
       "B": 2,
       "E": 1,
       "I": 2
     },
     "relation_distribution": {
-      "CONSTRAINED_BY_ARCHITECTURE": 156,
+      "CONSTRAINED_BY_ARCHITECTURE": 157,
       "VERIFIED_BY_TEST": 1
     }
   },
@@ -7409,6 +7409,29 @@
       ],
       "created_at": "2026-11-18T04:21:21.432Z",
       "updated_at": "2026-11-18T04:21:21.432Z"
+    },
+    "DOM-F-9E7BDB5E": {
+      "id": "DOM-F-9E7BDB5E",
+      "domain": "F",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "compile hlm-tailwind-preset with a tailwind prefix",
+      "summary": "Prevents defects observed in production commit `f5bb9357`: compile hlm-tailwind-preset with a tailwind prefix. Unvalidated execution paths c -> When implementing operations in `libs/brain/hlm-tailwind-preset.css`, engineers MUST enforce rigorous boundary validation, safe state transi",
+      "confidence": 1,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://spartan-ng-spartan/spartan-ng-spartan-learnings.md",
+        "source_version": "9ae9e339",
+        "observed_at": "2026-11-18T05:10:27.832Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (spartan-ng-spartan)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "F",
+        "Design Intelligence",
+        "G"
+      ],
+      "created_at": "2026-11-18T05:11:13.029Z",
+      "updated_at": "2026-11-18T05:11:13.029Z"
     }
   },
   "edges": [
@@ -8981,6 +9004,16 @@
       "evidenceProvenance": null,
       "rationale": "Cross-domain classification links DOM-D-AD9F2297 [D] with Domain M",
       "created_at": "2026-11-18T04:21:21.432Z"
+    },
+    {
+      "id": "EDGE-3405581464F8",
+      "sourceId": "DOM-F-9E7BDB5E",
+      "targetId": "NODE-G-domain-bridge-g",
+      "relationType": "CONSTRAINED_BY_ARCHITECTURE",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-F-9E7BDB5E [F] with Domain G",
+      "created_at": "2026-11-18T05:11:13.030Z"
     }
   ]
 }

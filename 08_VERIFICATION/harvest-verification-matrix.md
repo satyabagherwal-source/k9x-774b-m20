@@ -10817,3 +10817,6 @@
 | `CYCLE-20261118-GJ9E` | `2026-11-18T04:57:17.186Z` | `unhappychoice/gitlogue` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8012` | Yes (`4eff7a10...`) |
 | `CYCLE-20261118-GNSY` | `2026-11-18T04:57:23.074Z` | `onejs/one` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9126` | Yes (`c859c2c3...`) |
 | `CYCLE-20261118-GQRZ` | `2026-11-18T04:57:26.927Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9127` | Yes (`d0aa2ee3...`) |
+| `CYCLE-20261118-XHRD` | `2026-11-18T05:10:28.393Z` | `Efficient-Large-Model/Open-H3-Regenerate-2K` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-efficient-large-model-open-h3-regenerate-2k-learnings.md` | Yes (`a5f8019f...`) |
+| `CYCLE-20261118-XI9N` | `2026-11-18T05:10:29.051Z` | `spartan-ng/spartan` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9128` | Yes (`602a537c...`) |
+| `CYCLE-2026-11-18-PROJ-EVOLVE` | `2026-11-18T05:11:13.032Z` | `spartan-ng-spartan` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-F-9E7BDB5E` [Domain F] | Yes (`abb7146c...`) |

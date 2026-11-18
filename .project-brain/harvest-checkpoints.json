@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-18T04:57:26.938Z",
+  "last_updated": "2026-11-18T05:10:29.067Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -17526,14 +17526,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-efficient-large-model-open-h3-regenerate-2k",
-      "content_hash": "47e6732abc0f83f5dac087ae583a12777c70d6972c97f175fa41ccc7fa536812",
-      "verified_at": "2026-11-13T17:54:56.158Z",
+      "content_hash": "a5f8019fe86ddacce16ae95f2ed717abf00fecb6d6623494774b3c3f6114f106",
+      "verified_at": "2026-11-18T05:10:28.408Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T17:54:56.158Z"
+      "last_updated": "2026-11-18T05:10:28.408Z"
     },
     "AtomicChat/LFM3-1.7B-Uncensored-GGUF": {
       "repository": "AtomicChat/LFM3-1.7B-Uncensored-GGUF",
@@ -19349,6 +19349,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-18T04:20:38.913Z"
+    },
+    "spartan-ng/spartan": {
+      "repository": "spartan-ng/spartan",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-github-spartan-ng-spartan",
+      "content_hash": "602a537cab69eeb0eb234f5f08928eceb084d88b1b61b3a1ddb3479a01dbb00f",
+      "verified_at": "2026-11-18T05:10:29.066Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-18T05:10:29.066Z"
     }
   },
   "repos": {

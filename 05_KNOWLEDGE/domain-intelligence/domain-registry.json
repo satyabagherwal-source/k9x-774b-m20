@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-18T04:57:31.346Z",
-  "total_records": 1759,
+  "last_updated": "2026-11-18T05:11:15.184Z",
+  "total_records": 1762,
   "domains": {
     "A": {
       "total": 11,
@@ -826,7 +826,7 @@
       ]
     },
     "F": {
-      "total": 46,
+      "total": 47,
       "record_ids": [
         "DOM-F-C060CCE1",
         "DOM-F-83D565C2",
@@ -873,7 +873,8 @@
         "DOM-F-F03E14A5",
         "DOM-F-B4186028",
         "domain_intelligence-design-intelligence-unhappychoice-gitlogue-core-invariants",
-        "domain_intelligence-design-intelligence-unhappychoice-gitlogue-learnings-core-invariants"
+        "domain_intelligence-design-intelligence-unhappychoice-gitlogue-learnings-core-invariants",
+        "DOM-F-9E7BDB5E"
       ]
     },
     "G": {
@@ -1187,7 +1188,7 @@
       ]
     },
     "H": {
-      "total": 410,
+      "total": 412,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1598,7 +1599,9 @@
         "domain_intelligence-technical-construction-intelligence-shoutem-ui-core-invariants",
         "domain_intelligence-technical-construction-intelligence-hf-mradermacher-deepseek-v4-pro-qwen3-5-9b-u",
         "domain_intelligence-technical-construction-intelligence-shoutem-ui-learnings-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-trailbaseio-trailbase-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-trailbaseio-trailbase-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-spartan-ng-spartan-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-spartan-ng-spartan-learnings-core-invariants"
       ]
     },
     "I": {
@@ -8777,8 +8780,8 @@
       "title": "Research & Knowledge Intelligence: Efficient-Large-Model/Open-H3-Regenerate-2K Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-efficient-large-model-open-h3-regenerate-2k-research-knowledge-intelligence-e.md",
       "repository": "Efficient-Large-Model/Open-H3-Regenerate-2K",
-      "content_hash": "a828375ac87cfea0acd3516b08d6d121388992bba710c4fb87607e04d2eb9c07",
-      "created_at": "2026-11-13T17:54:56.287Z"
+      "content_hash": "26b2852f2bd4aaa8c0aea3c384cbc824c63081cab11b7cbfdc2d8a424ee55b07",
+      "created_at": "2026-11-18T05:10:28.637Z"
     },
     "domain_intelligence-technical-construction-intelligence-milvus-io-milvus-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-milvus-io-milvus-core-invariants",
@@ -8837,8 +8840,8 @@
       "title": "Research & Knowledge Intelligence: hf-efficient-large-model-open-h3-regenerate-2k-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-efficient-large-model-open-h3-regenerate-2k-learnings-research-knowledge-inte.md",
       "repository": "hf-efficient-large-model-open-h3-regenerate-2k-learnings",
-      "content_hash": "f44da53b35f7cdc5ebf8b117b9278368f3b9ef9b36b21d58884115b7b09864b9",
-      "created_at": "2026-11-13T17:55:47.280Z"
+      "content_hash": "c2a8fc2f80f9727c743dd7e73f9f49019d6430bb02c6ddb076cf2c4eaf3bb17d",
+      "created_at": "2026-11-18T05:11:14.435Z"
     },
     "domain_intelligence-technical-construction-intelligence-milvus-io-milvus-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-milvus-io-milvus-learnings-core-invariants",
@@ -22930,8 +22933,8 @@
       "title": "Research & Knowledge Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-zvec-ai-zvec-grep-learnings-research-knowledge-intelligence-zvec-ai-zvec-grep-le.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "fb1c124af925df6eb5b7a28d929ecff64a94984139009532d431acff3fa005f1",
-      "created_at": "2026-11-18T03:17:21.746Z"
+      "content_hash": "d16c3883b2dd85c674e1f2d2e45a357adc5442bc4480b4bd264e50ffb067fecb",
+      "created_at": "2026-11-18T05:11:15.184Z"
     },
     "domain_intelligence-technical-construction-intelligence-prof18-feed-flow-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-prof18-feed-flow-core-invariants",
@@ -29467,6 +29470,66 @@
       "repository": "unhappychoice-gitlogue-learnings",
       "content_hash": "5f0aac9ae39465a9c976d5e29d97d8445ba341ee78aa7edebf2387a8d1608164",
       "created_at": "2026-11-18T04:57:30.523Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-spartan-ng-spartan-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-spartan-ng-spartan-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: spartan-ng/spartan Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-spartan-ng-spartan-technical-construction-intelligence-spartan-ng-spartan-core-i.md",
+      "repository": "spartan-ng/spartan",
+      "content_hash": "a339d700340c6aaacf44451ee189cbdca4d0e6ab4536e5b9ef6f206b9030d633",
+      "created_at": "2026-11-18T05:10:29.479Z"
+    },
+    "DOM-F-9E7BDB5E": {
+      "record_id": "DOM-F-9E7BDB5E",
+      "domain_letter": "F",
+      "domain_id": "design",
+      "domain_name": "Design Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "G",
+          "id": "architecture",
+          "name": "Architecture Intelligence"
+        }
+      ],
+      "title": "compile hlm-tailwind-preset with a tailwind prefix",
+      "content": "When implementing operations in `libs/brain/hlm-tailwind-preset.css`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in spartan-ng/spartan. All inputs crossing module boundaries must be explicitly verified before state persistence.",
+      "content_hash": "abb7146c4679768e40fb3cc08877a080ad2f1a86c8e3bc76961ab18bb225b6bd",
+      "summary": "Prevents defects observed in production commit `f5bb9357`: compile hlm-tailwind-preset with a tailwind prefix. Unvalidated execution paths c -> When implementing operations in `libs/brain/hlm-tailwind-preset.css`, engineers MUST enforce rigorous boundary validation, safe state transi",
+      "provenance": {
+        "source_uri": "project://spartan-ng-spartan/spartan-ng-spartan-learnings.md",
+        "source_version": "9ae9e339",
+        "observed_at": "2026-11-18T05:10:27.832Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (spartan-ng-spartan)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of spartan-ng-spartan"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "G"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 1,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-18T05:11:13.005Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-spartan-ng-spartan-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-spartan-ng-spartan-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: spartan-ng-spartan-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-spartan-ng-spartan-learnings-technical-construction-intelligence-spartan-ng-spar.md",
+      "repository": "spartan-ng-spartan-learnings",
+      "content_hash": "c5cdfb195fa9de7f6e2581fbb7815dda3c35ebe8daea40117be13adb3119344f",
+      "created_at": "2026-11-18T05:11:13.822Z"
     }
   }
 }
