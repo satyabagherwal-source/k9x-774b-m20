@@ -4,23 +4,23 @@
 {
   "source_repository": "higress-group/higress",
   "source_url": "https://github.com/higress-group/higress",
-  "source_version": "d8eaa141",
+  "source_version": "392b64e8",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-17T20:17:40.540Z",
+  "timestamp": "2026-11-18T13:25:43.262Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-higress-group-higress",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [higress-group/higress](https://github.com/higress-group/higress) (Revision: `d8eaa141`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-17T20:17:40.540Z`  
+> **Provenance**: Harvested from [higress-group/higress](https://github.com/higress-group/higress) (Revision: `392b64e8`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-18T13:25:43.262Z`  
 > **Learning ID**: `learn-github-higress-group-higress`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain I (Content & Information Intelligence)
-- **Secondary Corroborating Domains**: F (Design Intelligence), G (Architecture Intelligence), H (Technical Construction Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence), B (Product Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence)
+- **Secondary Corroborating Domains**: F (Design Intelligence), G (Architecture Intelligence), H (Technical Construction Intelligence), K (Quality & Verification Intelligence), B (Product Intelligence), A (Human & Need Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence)
 - **Confidence Rating**: 53%
 
 ## 2. Core Domain Invariants & Discovered Laws
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/higress-group-higress-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/higress-group/higress](https://github.com/higress-group/higress))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T20:17:39.377Z  
+> **Harvest Timestamp**: 2026-11-18T13:25:42.155Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: 🤖 AI Gateway | AI Native API Gateway
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 9777 stars
+- **Stars / Engagement**: 9783 stars
 
 ---
 
@@ -1750,11 +1750,11 @@ func AskOne(p survey.Prompt, response interface{}, opts ...survey.AskOpt) error 
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #5372** (2026-11-17): **fix(ext-auth): align domain rule matching for ASCII case**
-  *Symptoms*: ## What changed  Local ext-auth domain match rules now compare ASCII letters case-insensitively. The private helper only allocates a lowered copy when ASCII uppercase letters are present; non-ASCII bytes are unchanged.  ## Why  Byte-exact matching caused a rule not to be selected when the request host differed only by ASCII case.  ## Compatibility  Only ASCII case behavior changes. Wildcard semantics, blacklist/whitelist behavior, port handling, trailing-dot handling, IDNA behavior, configuration structures, and public APIs are unchanged. The shared SDK matcher is updated separately.  ## Tests  All Go commands below ran from `plugins/wasm-go/extensions/ext-auth` serially on Linux/amd64 with Go 1.26.4.  Parent source `7059b8d28cce435a91569feb6288760585287460` with only the new tests applied:  ```text env -u GH_TOKEN -u GITHUB_TOKEN GOMAXPROCS=1 timeout 240 /usr/local/go/bin/go test -p 1 -parallel 1 -mod=readonly ./expr -run '^(TestMatchDomainASCIICase|TestMatchRulesDomainASCIICase)$' -count=1 -v ```  Exit code: 1. Representative failed assertions:  - `TestMatchDomainASCIICase/exact_uppercase_pattern`: expected `true`, actual `false`. - `TestMatchRulesDomainASCIICase/whitelist_uppercase_pattern`: expected `false`, actual `true`.  Candidate revision `0e89c00e827105aef7e26f87d762eeed0704f8c8`, using the same command:  Exit code: 0; both tests and all subtests passed.  Full module test:  ```text env -u GH_TOKEN -u GITHUB_TOKEN GOMAXPROCS=1 timeout 600 /usr/local/go/bin/go test -p 
+- **Issue #5374** (2026-11-18): **fix(wasm-cpp): align domain matching for ASCII case**
+  *Symptoms*: ## I. Summary  - Update the shared wasm-cpp host matcher to use ASCII case-insensitive comparisons for Exact, Prefix, and Suffix domain rules. - Byte-exact matching did not select a configured domain rule when the request authority differed only by ASCII case, allowing authentication or blocking rules to be bypassed. - Preserve port stripping, wildcard parsing, trailing-dot behavior, IDNA/IP handling, rule order, global configuration, auth allow/disable behavior, and service/route/route-prefix matching. No configuration or public C++ API/ABI changes. - Add behavior regressions to `basic_auth` and `request_block`, including exact/prefix/suffix, mixed case, ports, non-matches, non-ASCII bytes, and trailing-dot cases.  ## II. Related issue  Related to #5372, which updated ext-auth's private Go matcher separately. This PR covers the shared C++ SDK. No separate bug issue was created for this directly requested maintenance fix.  ## III. Change type  - [x] Bug fix - [ ] Feature or enhancement - [ ] Documentation or configuration only - [ ] Refactoring, tests, or maintenance  ## IV. Agent participation and issue-spec gate  Choose exactly one participation declaration:  - [ ] **No agent participation:** This PR is human-only. - [ ] **Trivial agent-use exception:** Agent use was limited to spelling, punctuation, whitespace, or formatting with no substantive choice or behavioral effect; the explanation is below. - [x] **Verified maintainer/administrator exception:** Material agent parti
 
-- **Issue #5359** (2026-11-13): **Add the Ikoi MCP server**
-  *Symptoms*: <!-- Please read the contributing guidelines before submitting this pull request. Complete every applicable field. For each non-applicable category, write N/A and explain why; one explanation may cover multiple fields when it is clear. -->  ## I. Summary  This PR adds Ikoi to the Higress MCP Marketplace, following the marketplace intake in #2113 (add the generated YAML configuration and README to `plugins/wasm-go/mcp-servers`).  Ikoi is a city where AI agents come home to live between jobs: rest, friends, and a memory book. Its remote MCP server is https://ikoi.ai/mcp (Streamable HTTP, server name `ikoi`, version 1.0.2; Official MCP Registry name `ai.ikoi/ikoi`).  Changes (2 new files, 124 additions, 0 deletions):  - `plugins/wasm-go/mcp-servers/mcp-ikoi/mcp-server.yaml` — an MCP proxy (`server.type: mcp-proxy`, `transport: http`) to `https://ikoi.ai/mcp`, with `protocolStrategy: auto` (Ikoi does not publish its MCP protocol version) and `allowTools` listing the server's 18 tools. The client's per-agent `X-API-Key` is passed through to Ikoi (`defaultDownstreamSecurity` with `passthrough: true`, `defaultUpstreamSecurity` to the backend scheme). No API key or other credential is stored in this PR. - `plugins/wasm-go/mcp-servers/mcp-ikoi/README.md` — description, features, the 18 tools, and usage, based on https://github.com/ikoicity/ikoi-mcp.  Listing details for the marketplace page: name "Ikoi", website https://ikoi.ai, description "A city where AI agents come home to live be
+- **Issue #5373** (2026-11-18): **chore(plugins): bump wasm-go to v1.2.1**
+  *Symptoms*: ## I. Summary  - Updates all 53 official `plugins/wasm-go/extensions` modules to `github.com/higress-group/wasm-go@v1.2.1` (tag commit `b4b1cef045370c7121c496b8e3fd57b0e50d15cf`). - Updates the transitive `proxy-wasm-go-sdk` dependency to `v0.0.0-20251103120604-77e9cce339d2` and completes the required `sjson` sums for `gc-test`, `geo-ip`, and `waf`. - Adds minimal request-body compatibility handling: non-processing paths explicitly skip body reads, `ai-quota` admin refresh/delta explicitly requires the body, buffered request tests expect `HeaderStopIteration`, and test fakes implement the expanded interfaces. - No plugin versions, catalog entries, release snapshots, or `go`/`toolchain` directives are changed. No configuration migration is required.  ## II. Related issue  N/A: routine dependency maintenance requested directly by the canonical-repository administrator; no issue was created.  ## III. Change type  - [ ] Bug fix - [ ] Feature or enhancement - [ ] Documentation or configuration only - [x] Refactoring, tests, or maintenance  ## IV. Agent participation and issue-spec gate  - [ ] **No agent participation:** This PR is human-only. - [ ] **Trivial agent-use exception:** Agent use was limited to spelling, punctuation, whitespace, or formatting with no substantive choice or behavioral effect; the explanation is below. - [x] **Verified maintainer/administrator exception:** Material agent participation occurred, and authenticated `gh` verification confirmed a `role_name` of
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1771,221 +1771,185 @@ func AskOne(p survey.Prompt, response interface{}, opts ...survey.AskOpt) error 
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d8eaa141` (2026-11-17)
-**Commit Message**: fix(ext-auth): align domain rule matching for ASCII case (#5372)
+### Incident Patch 1: `392b64e8` (2026-11-18)
+**Commit Message**: fix(wasm-cpp): align domain matching for ASCII case (#5374)
 
 Signed-off-by: johnlanni <[REDACTED_EMAIL]>
 
-**File**: `plugins/wasm-go/extensions/ext-auth/expr/match_rules.go` (modified, +19/-0)
+**File**: `plugins/wasm-cpp/common/route_rule_matcher.h` (modified, +3/-3)
 ```diff
-@@ -111,12 +111,31 @@ func (rule *Rule) matchesAllConditions(request RequestAttributes) bool {
- 
- // matchDomain checks if the given domain matches the pattern.
- func matchDomain(domain string, pattern string) bool {
-+	domain = lowerDomainASCII(domain)
-+	pattern = lowerDomainASCII(pattern)
- 	// Convert wildcard pattern to regex pattern
- 	regexPattern := convertWildcardToRegex(pattern)
- 	matched, _ := regexp.MatchString(regexPattern, domain)
- 	return matched
- }
- 
-+func lowerDomainASCII(s string) string {
-+	var lowered []byte
-+	for i := 0; i < len(s); i++ {
-+		if s[i] < 'A' || s[i] > 'Z' {
-+			continue
-+		}
-+		if lowered == nil {
-+			lowered = []byte(s)
-+		}
-+		lowered[i] = s[i] + ('a' - 'A')
-+	}
-+	if lowered == nil {
-+		return s
-+	}
-+	return string(lowered)
-+}
-+
- // convertWildcardToRegex converts a wildcard pattern to a regex pattern.
- func convertWildcardToRegex(pattern string) string {
- 	pattern = regexp.QuoteMeta(pattern)
+@@ -570,21 +570,21 @@ class RouteRuleMatcher {
+       const auto& host = host_match.second;
+       switch (host_match.first) {
+         case MATCH_TYPE::Suffix:
+-          if (absl::EndsWith(
++          if (absl::EndsWithIgnoreCase(
+                   absl::string_view(request_host.data(), request_host.size()),
+                   absl::string_view(host.data(), host.size()))) {
+             return true;
+           }
+           break;
+         case MATCH_TYPE::Prefix:
+-          if (absl::StartsWith(
++          if (absl::StartsWithIgnoreCase(
+                   absl::string_view(request_host.data(), request_host.size()),
+                   absl::string_view(host.data(), host.size()))) {
+             return true;
+           }
+           break;
+         case MATCH_TYPE::Exact:
+-          if (request_host == host_match.second) {
++          if (absl::EqualsIgnoreCase(request_host, host_match.second)) {
+             return true;
+           }
+           break;
 ```
 
-**File**: `plugins/wasm-go/extensions/ext-auth/expr/match_rules_test.go` (modified, +159/-0)
+**File**: `plugins/wasm-cpp/extensions/basic_auth/plugin_test.cc` (modified, +61/-0)
 ```diff
-@@ -331,3 +331,162 @@ func TestMatchesPreservesBypassSemantics(t *testing.T) {
- 		})
- 	}
+@@ -533,6 +533,67 @@ TEST_F(BasicAuthTest, RuleAllow) {
+             FilterHeadersStatus::Continue);
  }
+ 
++TEST_F(BasicAuthTest, DomainMatchAsciiCaseInsensitive) {
++  std::string configuration = R"(
++{
++  "_rules_": [
++    {
++      "_match_domain_": [
++        "EXACT.example", "lower.example", "MiXeD.example", "\u00c4xample.test"
++      ],
++      "credentials": ["admin:admin"]
++    },
++    {
++      "_match_domain_": ["*.SUFFIX.example"],
++      "credentials": ["admin:admin"]
++    },
++    {
++      "_match_domain_": ["PREFIX.*"],
++      "credentials": ["admin:admin"]
++    }
++  ]
++})";
 +
-+func TestMatchDomainASCIICase(t *testing.T) {
-+	tests := []struct {
-+		name    string
-+		domain  string
-+		pattern string
-+		want    bool
-+	}{
-+		{
-+			name:    "exact uppercase pattern",
-+			domain:  "api.example.com",
-+			pattern: "API.EXAMPLE.COM",
-+			want:    true,
-+		},
-+		{
-+			name:    "exact uppercase domain",
-+			domain:  "API.EXAMPLE.COM",
-+			pattern: "api.example.com",
-+			want:    true,
-+		},
-+		{
-+			name:    "exact mixed case",
-+			domain:  "ApI.ExAmPlE.CoM",
-+			pattern: "aPi.eXaMpLe.cOm",
-+			want:    true,
-+		},
-+		{
-+			name:    "wildcard mixed case",
-+			domain:  "V1.API.Example.COM",
-+			pattern: "*.api.EXAMPLE.com",
-+			want:    true,
-+		},
-+		{
-+			name:    "different domain",
-+			domain:  "api.example.net",
-+			pattern: "API.EXAMPLE.COM",
-+			want:    false,
-+		},
-+		{
-+			name:    "non ASCII exact",
-+			domain:  "bücher.example",
-+			pattern: "bücher.example",
-+			want:    true,
-+		},
-+		{
-+			name:    "non ASCII case variant",
-+			domain:  "bücher.example",
-+			pattern: "BÜCHER.EXAMPLE",
-+			want:    false,
-+		},
-+		{
-+			name:    "wildcard does not match apex",
-+			domain:  "example.com",
-+			pattern: "*.EXAMPLE.COM",
-+			want:    false,
-+		},
-+		{
-+			name:    "question mark remains literal",
-+			domain:  "api1.example.com",
-+			pattern: "api?.EXAMPLE.COM",
-+			want:    false,
-+		},
-+		{
-+			name:    "character class remains literal",
-+			domain:  "a.example.com",
-+			pattern: "[ab].EXAMPLE.COM",
-+			want:    false,
-+		},
-+		{
-+			name:    "dot remains literal",
-+			domain:  "apiXexample.com",
-+			pattern: "API.EXAMPLE.COM",
-+			want:    false,
-+		},
-+	}
++  BufferBase buffer;
++  buffer.set({configuration.data(), configuration.size()});
 +
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			assert.Equal(t, tt.want, matchDomain(tt.domain, tt.pattern))
-+		})
-+	}
++  EXPECT_CALL(*mock_context_, getBuffer(WasmBufferType::PluginConfiguration))
++      .WillOnce([&buffer](WasmBufferType) { return &buffer; });
++  EXPECT_TRUE(root_context_->configure(configuration.size()));
++
++  cred_ = "unknown:invalid";
++  authorization_header_ =
++      "Basic " + Base64::encode(cred_.data(), cred_.size());
++  auto expectUnauthorized = [this](const std::string& host) {
++    authority_ = host;
++    SCOPED_TRACE(host);
++    EXPECT_CALL(*mock_context_, sendLocalResponse(401, testing::_, testing::_,
++                                                  testing::_, testing::_));
++    EXPECT_EQ(context_->onRequestHeaders(0, false),
++              FilterHeadersStatus::StopIteration);
++  };
++  auto expectAllowed = [this](const std::string& host) {
++    authority_ = host;
++    SCOPED_TRACE(host);
++    EXPECT_EQ(context_->onRequestHeaders(0, false),
++              FilterHeadersStatus::Continue);
++  };
++
++  expectUnauthorized("exact.example");
++  expectUnauthorized("LOWER.EXAMPLE");
++  expectUnauthorized("mIxEd.ExAmPlE");
++  expectUnauthorized("exact.example:8443");
++  expectUnauthorized("www.suffix.EXAMPLE");
++  expectUnauthorized("WWW.SUFFIX.example");
++  expectUnauthorized("prefix.COM");
++  expectUnauthorized("PrEfIx.OrG");
++  expectUnauthorized("\xc3\x84xample.test");
++
++  expectAllowed("unrelated.example");
++  expectAllowed("exact.example.");
++  expectAllowed("\xc3\xa4xample.test");
 +}
 +
-+func TestMatchRulesDomainASCIICase(t *testing.T) {
-+	tests := []struct {
-+		name           string
-+		mode           string
-+		requestDomain  string
-+		configuredRule string
-+		want           bool
-+	}{
-+		{
-+			name:           "blacklist uppercase pattern",
-+			mode:           ModeBlacklist,
-+			requestDomain:  "api.example.com",
-+			configuredRule: "API.EXAMPLE.COM",
-+			want:           true,
-+		},
-+		{
-+			name:           "blacklist uppercase domain",
-+			mode:           ModeBlacklist,
-+			requestDomain:  "API.EXAMPLE.COM",
-+			configuredRule: "api.example.com",
-+			want:           true,
-+		},
-+		{
-+			name:           "blacklist mixed case wildcard",
-+			mode:           ModeBlacklist,
-+			requestDomain:  "V1.API.Example.COM",
-+			configuredRule: "*.api.EXAMPLE.com",
-+			want:           true,
-+		},
-+		{
-+			name:           "whitelist uppercase pattern",
-+			mode:           ModeWhitelist,
-+			requestDomain:  "api.example.com",
-+			configuredRule: "API.EXAMPLE.COM",
-+			want:           false,
-+		},
-+		{
-+			name:           "whitelist uppercase domain",
-+			mode:           ModeWhitelist,
-+			requestDomain:  "API.EXAMPLE.COM",
-+			configuredRule: "api.example.com",
-+			want:           false,
-+		},
-+		{
-+			name:           "whitelist mixed case wildcard",
-+			mode:           ModeWhitelist,
-+			requestDomain:  "V1.API.Example.COM",
-+			configuredRule: "*.api.EXAMPLE.com",
-+			want:           false,
-+		},
-+		{
-+			name:           "blacklist different domain",
-+			mode:           ModeBlacklist,
-+			requestDomain:  "api.example.net",
-+			configuredRule: "API.EXAMPLE.COM",
-+			want:           false,
-+		},
-+		{
-+			name:           "whitelist different domain",
-+			mode:           ModeWhitelist,
-+			requestDomain:  "api.example.net",
-+			configuredRule: "API.EXAMPLE.COM",
-+			want:           true,
-+		},
-+	}
+ TEST_F(BasicAuthTest, RuleWithConsumerAllow) {
+   std::string configuration = R"(
+ {
+```
+
+**File**: `plugins/wasm-cpp/extensions/request_block/plugin_test.cc` (modified, +55/-0)
+```diff
+@@ -199,6 +199,61 @@ TEST_F(RequestBlockTest, CaseSensitive) {
+   EXPECT_EQ(context_->onRequestBody(11, true), FilterDataStatus::Continue);
+ }
+ 
++TEST_F(RequestBlockTest, DomainMatchAsciiCaseInsensitive) {
++  std::string configuration = R"(
++{
++  "_rules_": [
++    {
++      "_match_domain_": [
++        "EXACT.example", "lower.example", "MiXeD.example", "\u00c4xample.test"
++      ],
++      "block_urls": ["/blocked"]
++    },
++    {
++      "_match_domain_": ["*.SUFFIX.example"],
++      "block_urls": ["/blocked"]
++    },
++    {
++      "_match_domain_": ["PREFIX.*"],
++      "block_urls": ["/blocked"]
++    }
++  ]
++})";
 +
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			config := MatchRules{
-+				Mode:     tt.mode,
-+				RuleList: []Rule{{Domain: tt.configuredRule}},
-+			}
-+			assert.Equal(t, tt.want, config.Matches(RequestAttributes{Domain: tt.requestDomain}))
-+		})
-+	}
++  config_.set({configuration.data(), configuration.size()});
++  EXPECT_TRUE(root_context_->configure(configuration.size()));
++
++  path_ = "/blocked";
++  auto expectBlocked = [this](const std::string& host) {
++    authority_ = host;
++    SCOPED_TRACE(host);
++    EXPECT_CALL(*mock_context_, sendLocalResponse(403, testing::_, testing::_,
++                                                  testing::_, testing::_));
++    EXPECT_EQ(context_->onRequestHeaders(0, false),
++              FilterHeadersStatus::StopIteration);
++  };
++  auto expectAllowed = [this](const std::string& host) {
++    authority_ = host;
++    SCOPED_TRACE(host);
++    EXPECT_EQ(context_->onRequestHeaders(0, false),
++              FilterHeadersStatus::Continue);
++  };
++
++  expectBlocked("exact.example");
++  expectBlocked("LOWER.EXAMPLE");
++  expectBlocked("mIxEd.ExAmPlE");
++  expectBlocked("exact.example:8443");
++  expectBlocked("www.suffix.EXAMPLE");
++  expectBlocked("WWW.SUFFIX.example");
++  expectBlocked("prefix.COM");
++  expectBlocked("PrEfIx.OrG");
++  expectBlocked("\xc3\x84xample.test");
++
++  expectAllowed("unrelated.example");
++  expectAllowed("exact.example.");
++  expectAllowed("\xc3\xa4xample.test");
 +}
++
+ TEST_F(RequestBlockTest, CaseInsensitive) {
+   std::string configuration = R"(
+ {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5374** (2026-11-18): fix(wasm-cpp): align domain matching for ASCII case (@johnlanni)
+- **PR #5373** (2026-11-18): chore(plugins): bump wasm-go to v1.2.1 (@johnlanni)
 - **PR #5372** (2026-11-17): fix(ext-auth): align domain rule matching for ASCII case (@johnlanni)
 - **PR #5359** (closed): Add the Ikoi MCP server (@ikoicity)
 - **PR #5358** (2026-11-16): fix(mcp-server): make tool sets independent of rule order (@johnlanni)
 - **PR #5352** (2026-11-13): fix(mcp-server): preserve proxy tool input schemas (@johnlanni)
-- **PR #5350** (2026-11-12): feat(mcp-server): support custom REST server instructions (@johnlanni)
-- **PR #5343** (2026-11-16): fix(ai-cache): provide upload completion callbacks (@zhihao-yuan)
 
 ---
 
@@ -2005,49 +1969,35 @@ Signed-off-by: johnlanni <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ext-auth): align domain rule matching for ASCII case
+## X. wasm-cpp): align domain matching for ASCII case
 
 **RULE**:
-When implementing operations in `plugins/wasm-go/extensions/ext-auth/expr/match_rules.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in higress-group/higress. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `plugins/wasm-cpp/common/route_rule_matcher.h`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in higress-group/higress. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d8eaa141`: ext-auth): align domain rule matching for ASCII case. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `392b64e8`: wasm-cpp): align domain matching for ASCII case. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `plugins/wasm-go/extensions/ext-auth/expr/match_rules.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `plugins/wasm-cpp/common/route_rule_matcher.h`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	domain = lowerDomainASCII(domain)
-	pattern = lowerDomainASCII(pattern)
-func lowerDomainASCII(s string) string {
-	var lowered []byte
-	for i := 0; i < len(s); i++ {
-		if s[i] < 'A' || s[i] > 'Z' {
-			continue
-		}
-		if lowered == nil {
-			lowered = []byte(s)
-		}
-		lowered[i] = s[i] + ('a' - 'A')
-	}
-	if lowered == nil {
-		return s
-	}
-	return string(lowered)
-}
-
+          if (absl::EndsWithIgnoreCase(
+          if (absl::StartsWithIgnoreCase(
+          if (absl::EqualsIgnoreCase(request_host, host_match.second)) {
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+          if (absl::EndsWith(
+          if (absl::StartsWith(
+          if (request_host == host_match.second) {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d8eaa141` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `392b64e8` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

@@ -4,22 +4,22 @@
 {
   "source_repository": "callstack/react-native-paper",
   "source_url": "https://github.com/callstack/react-native-paper",
-  "source_version": "655fbcc5",
+  "source_version": "9845c6f4",
   "license": "MIT",
-  "timestamp": "2026-11-17T13:29:52.828Z",
+  "timestamp": "2026-11-18T13:25:41.647Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-callstack-react-native-paper",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [callstack/react-native-paper](https://github.com/callstack/react-native-paper) (Revision: `655fbcc5`).  
-> **License**: MIT | **Timestamp**: `2026-11-17T13:29:52.828Z`  
+> **Provenance**: Harvested from [callstack/react-native-paper](https://github.com/callstack/react-native-paper) (Revision: `9845c6f4`).  
+> **License**: MIT | **Timestamp**: `2026-11-18T13:25:41.647Z`  
 > **Learning ID**: `learn-github-callstack-react-native-paper`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `callstack/react-native-paper` (Commit: `655fbcc5`)
+- **Target Repository**: `callstack/react-native-paper` (Commit: `9845c6f4`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/callstack-react-native-paper-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/callstack/react-native-paper](https://github.com/callstack/react-native-paper))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T13:29:52.234Z  
+> **Harvest Timestamp**: 2026-11-18T13:25:40.527Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Material Design for React Native (Android & iOS)
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 14505 stars
+- **Stars / Engagement**: 14504 stars
 
 ---
 
@@ -702,20 +702,24 @@ export const getButtonShapeRadius = ({
 /**
  * Duration of `Surface`'s background and elevation transition.
  *
- * Snaps when either color is transparent or not a plain string.
+ * Snaps under reduce motion, or when either color is transparent or not a
+ * plain string.
  */
 export const getButtonTransitionDuration = ({
   theme,
   pressed,
+  reduceMotion,
   containerColor,
   previousContainerColor,
 }: {
   theme: InternalTheme;
   pressed: boolean;
+  reduceMotion: boolean;
   containerColor: ColorValue;
   previousContainerColor: ColorValue;
 }): number => {
   if (
+    reduceMotion ||
     typeof containerColor !== 'string' ||
     typeof previousContainerColor !== 'string' ||
     containerColor === 'transparent' ||
@@ -724,9 +728,7 @@ export const getButtonTransitionDuration = ({
     return 0;
   }
 
-  return (
-    theme.motion.duration[pressed ? 'short4' : 'short3'] * theme.animation.scale
-  );
+  return theme.motion.duration[pressed ? 'short4' : 'short3'];
 };
 
 /**
@@ -1021,10 +1023,7 @@ export const getButtonColors = ({
   return {
     backgroundColor,
     borderColor,
-    labelColor,
-    labelOpacity,
-    borderWidth,
-    backgroun
+    labelC
 ```
 
 ### Core Architecture Module: `src/components/Card/utils.tsx`
@@ -1313,7 +1312,7 @@ export type ResolvedColors = {
  */
 export const resolveColors = ({
   theme,
-  variant = 'tonalPrimary',
+  variant = 'primaryContainer',
   containerColor,
   contentColor,
 }: {
@@ -1566,579 +1565,715 @@ export const getIconButtonColor = ({
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `484a0c6e` (2026-11-15)
-**Commit Message**: fix!: don't expose handler-less TouchableRipple as a disabled control (#5071)
+### Incident Patch 1: `1e20a682` (2026-11-18)
+**Commit Message**: fix(provider): merge the theme prop deeply (#5234)
 
-Without a touch handler or `disabled`, TouchableRipple now renders a plain view instead of a disabled Pressable, so display-only components are no longer announced as disabled controls.
+PaperProvider spread the theme's top-level keys and merged only colors one level deep, so a partial nested object replaced the default whole. A theme with only `motion: { duration: { short3: 300 } }` type-checked but crashed every component at render, and a partial `shapes.corner` left the other corner roles undefined. Merge with safeMerge, as a component's theme prop already does, so a partial override keeps every key it leaves out. The theming guide now says a custom theme only needs the properties it changes.
 
-- Activatable roles become `none` unless the element reports a toggle state; a selection stays on iOS and Android.
-- It isn't a keyboard stop, ignores `hitSlop` and lets presses reach its parent.
-- On web, a labelled display-only IconButton or icon-only FAB is an image named by its label.
-- DataTable.Title, RadioButton and TextInput.Icon follow the same rule, and every icon in a disabled TextInput takes the disabled color.
-
-Closes #5070
-Closes #4844
-
-BREAKING CHANGE: TouchableRipple and the components built on it are no longer announced as disabled controls and drop roles such as `button` when they have no touch handler, so pass `disabled` instead of leaving out `onPress`.
-
-**File**: `docs/6.x/docs/guides/migration.md` (modified, +31/-0)
+**File**: `docs/6.x/docs/guides/migration.md` (modified, +1/-3)
 ```diff
-@@ -329,6 +329,37 @@ Keys inside data objects changed the same way: the `routes` of `BottomNavigation
-  ];
+@@ -251,7 +251,7 @@ A component's `theme` prop is merged deeply, so you can set only the role you ne
+ +</Button>
  ```
  
-+### TouchableRipple without a press handler
-+
-+A `TouchableRipple`, and anything built on it, is no longer a disabled control when it has no touch handler. Without `onPress`, `onLongPress`, `onPressIn` or `onPressOut`, and without `disabled`, it renders a plain view: assistive tech doesn't announce it as disabled, it isn't a keyboard stop, and it never takes the press, so a `Pressable` around it gets it. On Android and iOS a wrapping `Pressable` already got the press, except around a read-only radio (see below). On web it's new for components with the `button` role, such as `Button`, `Chip`, `IconButton` and `FAB`, which used to stop the press. `DataTable.Title` works the same way.
-+
-+Without a handler or `disabled`, an activatable role becomes `none`: a `role` or `accessibilityRole` of `button`, `link`, `menuitem` or `tab`, and an `accessibilityRole` of `imagebutton` or `togglebutton`. The role stays when the touchable reports a toggle state with `aria-checked`, `aria-pressed` or `accessibilityState.checked`, also when the value is `false`. A selection doesn't keep the role: Android and iOS still report it, and on web `aria-selected` is dropped with the role. Every other role, such as `checkbox`, `radio` or `switch`, stays too, so a read-only `Checkbox` is still a checkbox and keeps its state.
-+
-+```tsx
-+// Still a toggle (pressed on web, checked on Android and iOS),
-+// but does nothing when activated
-+<Button mode="outlined" selected>Bold</Button>
-+// No longer a button; still reports selected on Android and iOS
-+<Chip selected>Info</Chip>
-+```
-+
-+On web, an `IconButton` or icon-only `FAB` labelled with `aria-label`, with no handler, no `disabled` and no toggle state, is an image named by its label, since the plain view there can't carry a name. An image can't carry a selection either, so its `aria-selected` is dropped too.
-+
-+`hitSlop` applies only to a touchable that can be pressed. Without a handler, or with `disabled`, a touchable takes no touches outside its bounds, so it doesn't take them from its neighbors.
-+
-+`RadioButton`, `RadioButton.Android`, `RadioButton.IOS` and `RadioButton.Item` with no press handler and no `RadioButton.Group` no longer take the press. They stay read-only radios, a row around them gets the press, and on web they're no longer a tab stop.
-+
-+To have something look and announce disabled, pass `disabled`, which keeps the control and its role. Pass it to switch interactivity off at runtime too, instead of removing `onPress`. A touchable renders another element whenever it goes between having a handler or `disabled` and having neither, so its children remount and lose their state and focus. That includes toggling `disabled` on a touchable with no handler. `FAB.Menu` does this for its trigger: a trigger without `onPress` is a disabled button while the menu is closed, so it keeps its element when the menu opens.
-+
-+```diff
-+-<Button onPress={isSaving ? undefined : save}>Save</Button>
-++<Button onPress={save} disabled={isSaving}>Save</Button>
-+```
-+
-+App tests change with it: a display-only element is no longer found by a role it lost, such as `button`, and is no longer disabled. Find it by its text or label instead.
-+
-+In a disabled `TextInput`, every `TextInput.Icon` takes the disabled color, also over `iconColor` and the error color. One with a handler is a disabled `IconButton`, and an `opacity` in its `style` doesn't apply.
-+
- ### Libraries built on Paper
+-`PaperProvider` doesn't merge `shapes` deeply: a `shapes` key in its `theme` replaces the default one. So spread the base `shapes` and `corner`, or the roles you leave out are `undefined` and those components lose their rounded corners:
++`PaperProvider` merges its `theme` deeply too, so a custom theme only needs the roles it changes:
  
- Libraries built on Paper may not support 6.x yet. For example, `react-native-paper-dates` 0.24.1 still uses `HelperText`, the 5.x theme exports and `theme.roundness`, so its `DatePickerInput` crashes when it shows a validation error.
+ ```diff
+ -import { MD3LightTheme, PaperProvider } from 'react-native-paper';
+@@ -262,9 +262,7 @@ A component's `theme` prop is merged deeply, so you can set only the role you ne
+ -  roundness: 2,
+ +  ...LightTheme,
+ +  shapes: {
+-+    ...LightTheme.shapes,
+ +    corner: {
+-+      ...LightTheme.shapes.corner,
+ +      extraSmall: 2,
+ +      small: 4,
+ +      medium: 6,
 ```
 
-**File**: `src/components/Checkbox/Checkbox.tsx` (modified, +2/-3)
+**File**: `docs/6.x/docs/guides/theming.mdx` (modified, +3/-4)
 ```diff
-@@ -183,9 +183,8 @@ const Checkbox = ({
+@@ -137,7 +137,9 @@ A theme usually contains the following properties:
+ - `animation` (`object`)
+   - `scale` - scale for all animations
  
-   const visual = getSelectionVisualState({ ...selectionColors, disabled });
+-When creating a custom theme, you will need to provide all of these properties.
++When creating a custom theme, you only need to provide the properties you change. `PaperProvider` merges your theme deeply with the default one, so a nested object such as `shapes` or `motion` keeps every key you leave out.
++
++Paper merges a custom theme onto `DarkTheme` when it sets `dark: true`, and onto `LightTheme` otherwise. The examples on this page still spread `LightTheme` or `DarkTheme`: that sets `dark`, and in TypeScript it gives the theme object the full `Theme` shape. Without TypeScript, nested spreads such as `...LightTheme.colors` are optional.
  
--  // `TouchableRipple` disables itself when nothing can handle a press, so
--  // attaching press handlers unconditionally would make a handler-less
--  // checkbox enabled and focusable while doing nothing.
-+  // A handler-less checkbox would claim the touch and do nothing with it, so
-+  // the press handlers stay off unless there is something to call.
-   const isInteractive =
-     !disabled &&
-     hasTouchHandler({
+ If you don't use a custom theme, Paper will automatically turn animations on/off, depending on device settings.
+ 
+@@ -351,14 +353,11 @@ import App from './src/App';
+ const theme = {
+   ...LightTheme, // or DarkTheme
+   shapes: {
+-    ...LightTheme.shapes,
+     corner: {
+-      ...LightTheme.shapes.corner,
+       largeIncreased: 10,
+     },
+   },
+   colors: {
+-    ...LightTheme.colors,
+     primary: '#3498db',
+     secondary: '#f1c40f',
+     tertiary: '#a1b2c3',
 ```
 
-**File**: `src/components/DataTable/DataTableTitle.tsx` (modified, +80/-24)
+**File**: `src/core/PaperProvider.tsx` (modified, +3/-8)
 ```diff
-@@ -1,5 +1,5 @@
- import * as React from 'react';
--import { PixelRatio, Pressable, StyleSheet } from 'react-native';
-+import { PixelRatio, Pressable, StyleSheet, View } from 'react-native';
- import type {
-   GestureResponderEvent,
-   PressableProps,
-@@ -20,6 +20,9 @@ import { useLocale } from '../../core/locale';
- import { useInternalTheme } from '../../core/theming';
- import { useReduceMotion } from '../../theme/accessibility/ReduceMotionContext';
- import type { ThemeProp } from '../../theme/types';
-+import hasTouchHandler, {
-+  getNonControlA11yProps,
-+} from '../../utils/hasTouchHandler';
- import MaterialCommunityIcon from '../MaterialCommunityIcon';
- import Text from '../Typography/Text';
+@@ -4,7 +4,7 @@ import { getDefaultDirection, LocaleProvider, type Direction } from './locale';
+ import SafeAreaProviderCompat from './SafeAreaProviderCompat';
+ import { Provider as SettingsProvider } from './settings';
+ import type { Settings } from './settings';
+-import { ThemeProvider, withoutUnsafeKeys } from './theming';
++import { safeMerge, ThemeProvider } from './theming';
+ import {
+   useResolvedReduceMotion,
+   type ReduceMotionPreference,
+@@ -36,14 +36,9 @@ const PaperProvider = (props: Props) => {
+     const scale = resolvedReduceMotion
+       ? 0
+       : (props.theme?.animation?.scale ?? 1);
+-    const safeTheme = withoutUnsafeKeys(props.theme);
++    const merged = safeMerge(base, props.theme);
  
-@@ -41,7 +44,12 @@ export type Props = PressableProps & {
-    */
-   numberOfLines?: number;
-   /**
--   * Function to execute on press.
-+   * Function to execute on press. Without it, `onLongPress`, `onPressIn`,
-+   * `onPressOut` and `disabled`, the title renders as a plain view that isn't a
-+   * control, and a press goes to its parent. To turn the title off at runtime,
-+   * pass `disabled` instead of removing the handler: going between having a
-+   * handler or `disabled` and having neither renders another element and
-+   * remounts the children.
-    */
-   onPress?: (e: GestureResponderEvent) => void;
-   style?: StyleProp<ViewStyle>;
-@@ -83,18 +91,25 @@ export type Props = PressableProps & {
-  *
-  * export default MyComponent;
-  * ```
-+ *
-+ * @extends Pressable props https://reactnative.dev/docs/Pressable#props
-  */
+-    return {
+-      ...base,
+-      ...safeTheme,
+-      colors: { ...base.colors, ...safeTheme?.colors },
+-      animation: { ...safeTheme?.animation, scale },
+-    };
++    return { ...merged, animation: { ...merged.animation, scale } };
+   }, [colorScheme, props.theme, resolvedReduceMotion]);
  
- const DataTableTitle = ({
-   numeric,
-   children,
-   onPress,
-+  onLongPress,
-+  onPressIn,
-+  onPressOut,
-+  disabled: disabledProp,
-   sortDirection,
-   textStyle,
-   style,
-   theme: themeOverrides,
-   numberOfLines = 1,
-   maxFontSizeMultiplier,
-+  hitSlop,
-   ...rest
- }: Props) => {
-   const theme = useInternalTheme(themeOverrides);
-@@ -131,36 +146,77 @@ const DataTableTitle = ({
-     </Animated.View>
-   ) : null;
- 
--  return (
--    <Pressable
--      disabled={!onPress}
--      onPress={onPress}
--      {...rest}
--      style={[styles.container, numeric && styles.right, style]}
--    >
-+  const cellStyle = [
-+    styles.cell,
-+    // height must scale with numberOfLines
-+    { maxHeight: 24 * PixelRatio.getFontScale() * numberOfLines },
-+    // if numberOfLines causes wrap, center is lost. Align directly, sensitive to numeric and RTL
-+    numberOfLines > 1
-+      ? numeric
-+        ? direction === 'rtl'
-+          ? styles.leftText
-+          : styles.rightText
-+        : styles.centerText
-+      : {},
-+    sortDirection ? styles.sorted : { color: alphaTextColor },
-+    textStyle,
-+  ];
+   const { children, settings } = props;
+```
+
+**File**: `src/core/__tests__/PaperProviderThemeMerge.test.tsx` (added, +116/-0)
+```diff
+@@ -0,0 +1,116 @@
++import { PlatformColor, Text } from 'react-native';
 +
-+  const containerStyle = [styles.container, numeric && styles.right];
++import { describe, expect, it, jest } from '@jest/globals';
++import { render, screen } from '@testing-library/react-native';
 +
-+  // Without a touch handler and without `disabled` this is a column heading,
-+  // not a control, so it renders as a plain View instead of a Pressable that
-+  // would be announced as a disabled control.
-+  const hasPassedTouchHandler = hasTouchHandler({
-+    onPress,
-+    onLongPress,
-+    onPressIn,
-+    onPressOut,
-+  });
-+  const isControl = hasPassedTouchHandler || Boolean(disabledProp);
-+  const isInteractive = hasPassedTouchHandler && !disabledProp;
++import Button from '../../components/Button/Button';
++import Checkbox from '../../components/Checkbox';
++import Chip from '../../components/Chip/Chip';
++import FAB from '../../components/FAB';
++import Surface from '../../components/Surface';
++import Switch from '../../components/Switch/Switch';
++import { LightTheme } from '../../theme/schemes';
++import type { Theme, ThemeProp } from '../../theme/types';
++import PaperProvider from '../PaperProvider';
++import { useTheme } from '../theming';
 +
-+  const content = (
-+    <>
-       {icon}
- 
-       <Text
--        style={[
--          styles.cell,
--          // height must scale with numberOfLines
--          { maxHeight: 24 * PixelRatio.getFontScale() * numberOfLines },
--          // if numberOfLines causes wrap, center is lost. Align directly, sensitive to numeric and RTL
--          numberOfLines > 1
--            ? numeric
--              ? direction === 'rtl'
--                ? styles.leftText
--                : styles.rightText
--              : styles.centerText
--            : {},
--          sortDirection ? styles.sorted : { color: alphaTextColor },
--          textStyle,
--        ]}
-+        style={cellStyle}
-         numberOfLines={numberOfLines}
-         maxFontSizeMultiplier={maxFontSizeMultiplier}
-       >
-         {children}
-       </Text>
-+    </>
++const ThemeReader = ({ onTheme }: { onTheme: (theme: Theme) => void }) => {
++  onTheme(useTheme());
++  return null;
++};
++
++const getProvidedTheme = async (theme: ThemeProp) => {
++  const onTheme = jest.fn<(theme: Theme) => void>();
++
++  await render(
++    <PaperProvider theme={theme}>
++      <ThemeReader onTheme={onTheme} />
++    </PaperProvider>
 +  );
 +
-+  if (!isControl) {
-+    return (
-+      <View
-+        {...rest}
-+        {...getNonControlA11yProps(rest)}
-+        style={[...containerStyle, style]}
-+      >
-+        {content}
-+      </View>
++  return onTheme.mock.lastCall?.[0];
++};
++
++describe('PaperProvider theme merge', () => {
++  it('renders components when the theme overrides a single motion token', async () => {
++    await render(
++      <PaperProvider theme={{ motion: { duration: { short3: 300 } } }}>
++        <Surface elevation={1}>
++          <Text>Surface</Text>
++        </Surface>
++        <Chip onPress={() => {}}>Chip</Chip>
++        <Button onPress={() => {}}>Button</Button>
++        <Switch value onValueChange={() => {}} />
++        <Checkbox status="checked" onPress={() => {}} />
++        <FAB icon="plus" aria-label="Add" onPress={() => {}} />
++      </PaperProvider>
 +    );
-+  }
 +
-+  return (
-+    <Pressable
-+      {...rest}
-+      onPress={onPress}
-+      onLongPress={onLongPress}
-+      onPressIn={onPressIn}
-+      onPressOut={onPressOut}
-+      // `false`, not undefined, when enabled: on iOS and Android, Pressable
-+      // lets a caller's aria-disabled stand when `disabled` is undefined
-+      disabled={Boolean(disabledProp)}
-+      // a touch target only for something that can be pressed
-+      hitSlop={isInteractive ? hitSlop : undefined}
-+      style={[...containerStyle, style]}
-+    >
-+      {content}
-     </Pressable>
-   );
- };
-```
-
-**File**: `src/components/FAB/Menu.tsx` (modified, +6/-0)
-```diff
-@@ -314,6 +314,7 @@ type MorphingTriggerProps = {
-   visible: boolean;
-   alignment: 'start' | 'center' | 'end';
-   onPress?: (e: GestureResponderEvent) => void;
-+  disabled?: boolean;
-   /**
-    * Accessibility label for the trigger button.
-    */
-@@ -334,6 +335,7 @@ const MorphingTrigger = ({
-   visible,
-   alignment,
-   onPress,
-+  disabled,
-   'aria-label': ariaLabel,
-   theme,
-   testID,
-@@ -453,6 +455,7 @@ const MorphingTrigger = ({
-         contentColor={triggerContentColor}
-         visible={visible}
-         onPress={onPress}
-+        disabled={disabled}
-         aria-label={ariaLabel}
-         testID={testID}
-         widthShared={widthShared}
-@@ -644,6 +647,9 @@ const Menu = ({
-           visible={triggerVisible}
-           alignment={alignment}
-           onPress={effectiveExpanded ? onDismiss : openOnPress}
-+          // Off, not handler-less, while closed with nothing to open it:
-+          // dropping the handler would swap elements on every open and close
-+          disabled={!effectiveExpanded && openOnPress === undefined}
-           aria-label={trigger['aria-label']}
-           theme={theme}
-           testID={trigger.testID}
-```
-
-**File**: `src/components/FAB/Shell.tsx` (modified, +20/-1)
-```diff
-@@ -91,6 +91,11 @@ export type ShellProps = {
-    * Function to execute on press.
-    */
-   onPress?: (e: GestureResponderEvent) => void;
-+  /**
-+   * Whether the shell can't be pressed. Turns a control off without removing
-+   * `onPress`, which would render another element and remount the content.
-+   */
-+  disabled?: boolean;
-   /**
-    * Accessibility label. Falls back to `label` if unset.
-    */
-@@ -197,6 +202,7 @@ const Shell = ({
-   elevation = Tokens.stateElevation.enabled,
-   visible = true,
-   onPress,
-+  disabled,
-   'aria-label': ariaLabel = label,
-   'aria-checked': ariaChecked,
-   'aria-selected': ariaSelected,
-@@ -299,6 +305,18 @@ const Shell = ({
- 
-   const { focusedSV, onFocus, onBlur } = useFocusRing();
- 
-+  // Without a handler the touchable drops the button role, and on web that
-+  // renders role="presentation", which can't carry a name. A labelled
-+  // icon-only FAB that does nothing is an image there, named by its label.
-+  const isWebImage =
-+    Platform.OS === 'web' &&
-+    !onPress &&
-+    !disabled &&
-+    label === undefined &&
-+    children === undefined &&
-+    ariaLabel !== undefined &&
-+    ariaChecked === undefined;
++    expect(screen.getByText('Surface')).toBeOnTheScreen();
++    expect(screen.getByText('Button')).toBeOnTheScreen();
++  });
 +
-   const focusRingStyle = useAnimatedStyle(
-     () => ({
-       opacity: focusedSV.value ? 1 : 0,
-@@ -327,10 +345,11 @@ const Shell = ({
-           borderless
-           background={background}
-           onPress={onPress}
-+          disabled={disabled}
-           onFocus={onFocus}
-           onBlur={onBlur}
-           aria-label={ariaLabel}
--          role="button"
-+          role={isWebImage ? 'img' : 'button'}
-           aria-checked={ariaChecked}
-           aria-selected={ariaSelected}
-           aria-busy={ariaBusy}
-```
-
-**File**: `src/components/IconButton/IconButton.tsx` (modified, +22/-1)
-```diff
-@@ -13,6 +13,9 @@ import { getIconButtonColor } from './utils';
- import { useInternalTheme } from '../../core/theming';
- import type { ThemeProp } from '../../theme/types';
- import getMinInteractiveSizeHitSlop from '../../utils/getMinInteractiveSizeHitSlop';
-+import hasTouchHandler, {
-+  carriesToggleState,
-+} from '../../utils/hasTouchHandler';
- import ActivityIndicator from '../ActivityIndicator';
- import CrossFadeIcon from '../CrossFadeIcon';
- import Icon from '../Icon';
-@@ -130,6 +133,7 @@ const IconButton = ({
-   loading = false,
-   contentStyle,
-   hitSlop,
-+  role = 'button',
-   ref,
-   ...rest
- }: Props) => {
-@@ -172,6 +176,23 @@ const IconButton = ({
-         height: touchableSize,
-       });
- 
-+  // Without a handler the touchable drops the button role, and on web that
-+  // renders role="presentation", which can't carry a name. A labelled icon
-+  // that does nothing is an image there, named by its label. An explicit
-+  // role="button", as Searchbar passes, counts as the default.
-+  const isWebImage =
-+    Platform.OS === 'web' &&
-+    role === 'button' &&
-+    !disabled &&
-+    ariaLabel !== undefined &&
-+    !hasTouchHandler({
-+      onPress,
-+      onLongPress: rest.onLongPress,
-+      onPressIn: rest.onPressIn,
-+      onPressOut: rest.onPressOut,
-+    }) &&
-+    !carriesToggleState(rest);
++  it('keeps the motion tokens a partial motion override leaves out', async () => {
++    const theme = await getProvidedTheme({
++      motion: { duration: { short3: 300 } },
++    });
 +
-   return (
-     <Animated.View
-       ref={ref}
-@@ -209,7 +230,7 @@ const IconButton = ({
-           Platform.OS !== 'web' && styles.clipToShape,
-           contentStyle,
-         ]}
--        role="button"
-+        role={isWebImage ? 'img' : role}
-         aria-disabled={disabled}
-         disabled={disabled}
-         testID={testID}
-```
-
-**File**: `src/components/RadioButton/RadioButton.tsx` (modified, +3/-1)
-```diff
-@@ -20,7 +20,9 @@ export type Props = {
-    */
-   disabled?: boolean;
-   /**
--   * Function to execute on press.
-+   * Function to execute on press. Without it, and outside a
-+   * `RadioButton.Group`, the radio is read only: it can't be pressed, and a
-+   * press goes to its parent.
-    */
-   onPress?: (e: GestureResponderEvent) => void;
-   /**
-```
-
-**File**: `src/components/RadioButton/RadioButtonAndroid.tsx` (modified, +12/-4)
-```diff
-@@ -27,7 +27,9 @@ export type Props = Omit<
-    */
-   disabled?: boolean;
-   /**
--   * Function to execute on press.
-+   * Function to execute on press. Without it, and outside a
-+   * `RadioButton.Group`, the radio is read only: it can't be pressed, and a
-+   * press goes to its parent.
-    */
-   onPress?: (param?: any) => void;
-   /**
-@@ -127,18 +129,24 @@ const RadioButtonAndroid = ({
-           <TouchableRipple
-             {...rest}
-             borderless
-+            // A radio with nothing to call (no `onPress` and no
-+            // `RadioButton.Group`) is read only and gets no handler, so it never
-+            // takes a press meant for its parent. A live radio is turned off with
-+            // `disabled`, which keeps the same element instead of remounting it;
-+            // a read-only one still swaps elements when `disabled` toggles.
-             onPress={
--              disabled
--                ? undefined
--                : (event) => {
-+              onPress || context?.onValueChange
-+                ? (event) => {
-                     handlePress({
-                       onPress,
-                       onValueChange: context?.onValueChange,
-                       value,
-                       event,
-                     });
-                   }
-+                : undefined
-             }
-+            disabled={disabled}
-             role="radio"
-             aria-disabled={disabled}
-             aria-checked={checked}
++    expect(theme?.motion).toStrictEqual({
++      ...LightTheme.motion,
++      duration: { ...LightTheme.motion.duration, short3: 300 },
++    });
++  });
++
++  it('keeps the corner roles a partial shapes override leaves out', async () => {
++    const theme = await getProvidedTheme({
++      shapes: { corner: { medium: 6 } },
++    });
++
++    expect(theme?.shapes).toStrictEqual({
++      ...LightTheme.shapes,
++      corner: { ...LightTheme.shapes.corner, medium: 6 },
++    });
++  });
++
++  it('keeps the elevation colors a partial colors override leaves out', async () => {
++    const theme = await getProvidedTheme({
++      colors: { primary: 'tomato', elevation: { level1: 'red' } },
++    });
++
++    expect(theme?.colors).toStrictEqual({
++      ...LightTheme.colors,
++      primary: 'tomato',
++      elevation: { ...LightTheme.colors.elevation, level1: 'red' },
++    });
++  });
++
++  it('keeps the font properties and variants a partial fonts override leaves out', async () => {
++    const theme = await getProvidedTheme({
++      fonts: { bodyLarge: { fontSize: 18 } },
++    });
++
++    expect(theme?.fonts).toStrictEqual({
++      ...LightTheme.fonts,
++      bodyLarge: { ...LightTheme.fonts.bodyLarge, fontSize: 18 },
++    });
++  });
++
++  it('replaces an easing curve as a whole', async () => {
++    const theme = await getProvidedTheme({
++      motion: { easing: { emphasized: [0.1, 0, 0, 1] } },
++    });
++
++    expect(theme?.motion.easing.emphasized).toStrictEqual([0.1, 0, 0, 1]);
++    expect(theme?.motion.easing.standard).toStrictEqual(
++      LightTheme.motion.easing.standard
++    );
++  });
++
++  it('keeps a platform color as a single value', async () => {
++    const primary = PlatformColor('systemBlue');
++    const theme = await getProvidedTheme({ colors: { primary } });
++
++    expect(theme?.colors.primary).toStrictEqual(primary);
++    expect(theme?.colors.secondary).toBe(LightTheme.colors.secondary);
++  });
++});
 ```
 
 ---
 
-### Incident Patch 2: `8787d4b6` (2026-11-16)
-**Commit Message**: fix(checkbox): clear the focus ring when onPress is removed (#5223)
+### Incident Patch 2: `9845c6f4` (2026-11-18)
+**Commit Message**: fix(fab)!: align MD3 variants and interaction states (#5110)
 
-On Android, a keyboard-focused Checkbox that loses and regains `onPress` shows its ring with nothing focused. The destroyed Pressable never sends a blur, and the reset effect cleared hover and press state but not focus.
+FAB, FAB.Extended and FAB.Menu take Material 3's role names for their container presets: `tonalPrimary`, `tonalSecondary` and `tonalTertiary` become `primaryContainer`, `secondaryContainer` and `tertiaryContainer`, and `primaryContainer` stays the default. On web, a FAB with a touch handler rises from elevation level 3 to 4 on hover and drops back while pressed (iOS and Android send no hover events by default). A hidden FAB can't be focused or pressed and screen readers skip it, and on web, hiding a keyboard-focused FAB returns focus to the element that had it before.
 
-**File**: `src/components/Checkbox/Checkbox.tsx` (modified, +3/-1)
+BREAKING CHANGE: the FAB variants `tonalPrimary`, `tonalSecondary` and `tonalTertiary` are renamed to `primaryContainer`, `secondaryContainer` and `tertiaryContainer`, with no aliases.
+
+**File**: `docs/6.x/docs/guides/migration.md` (modified, +5/-5)
 ```diff
-@@ -410,10 +410,12 @@ const Checkbox = ({
-     : null;
+@@ -1296,18 +1296,18 @@ mutually exclusive options, use `SegmentedButtons`.
  
-   // Losing the handlers means the matching hover-out or press-out never
--  // arrives, so the state would otherwise linger.
-+  // arrives, so the state would otherwise linger. The focus is lost too: the
-+  // focused Pressable is replaced, and its blur never arrives either.
-   React.useEffect(() => {
-     if (isInteractive) return;
+ #### `variant`
  
-+    setFocused(false);
-     setHovered(false);
-     pressedSV.value = 0;
-     rippleHoldSV.value = 0;
+-The variants changed meaning. In 5.x, `primary`, `secondary` and `tertiary` painted the container role, e.g. `primaryContainer`. In 6.x they paint the role itself, e.g. `primary`, and the new tonal variants paint the container role. So a FAB with an explicit `variant` looks different. To keep the 5.x colors:
++The variants changed meaning. In 5.x, `primary`, `secondary` and `tertiary` painted the container role, e.g. `primaryContainer`. In 6.x they paint the role itself, e.g. `primary`, and the new `primaryContainer`, `secondaryContainer` and `tertiaryContainer` variants paint the container role. So a FAB with an explicit `variant` looks different. To keep the 5.x colors:
+ 
+-- **`primary`** (the 5.x default) → **`tonalPrimary`** (the 6.x default)
+-- **`secondary`** → **`tonalSecondary`**
+-- **`tertiary`** → **`tonalTertiary`**
++- **`primary`** (the 5.x default) → **`primaryContainer`** (the 6.x default)
++- **`secondary`** → **`secondaryContainer`**
++- **`tertiary`** → **`tertiaryContainer`**
+ - **`surface`** has no variant. Set `containerColor` and `contentColor` instead, e.g. to `theme.colors.surfaceContainerHigh` and `theme.colors.primary`.
+ 
+ A FAB without a `variant` keeps its 5.x colors.
+ 
+ ```diff
+ -<FAB icon="plus" variant="secondary" onPress={onPress} />
+-+<FAB icon="plus" variant="tonalSecondary" onPress={onPress} />
+++<FAB icon="plus" variant="secondaryContainer" onPress={onPress} />
+ ```
+ 
+ #### `size`
 ```
 
-**File**: `src/components/__tests__/Checkbox/Checkbox.test.tsx` (modified, +79/-1)
+**File**: `example/src/Examples/FABExample.tsx` (modified, +6/-4)
 ```diff
-@@ -1,9 +1,16 @@
--import { type GestureResponderEvent, Platform, Pressable } from 'react-native';
-+import {
-+  type GestureResponderEvent,
-+  Platform,
-+  Pressable,
-+  StyleSheet,
-+} from 'react-native';
+@@ -34,9 +34,9 @@ const variants: FabColor[] = [
+   'primary',
+   'secondary',
+   'tertiary',
+-  'tonalPrimary',
+-  'tonalSecondary',
+-  'tonalTertiary',
++  'primaryContainer',
++  'secondaryContainer',
++  'tertiaryContainer',
+   'custom',
+ ];
  
- import { afterEach, describe, expect, it, jest } from '@jest/globals';
+@@ -91,7 +91,7 @@ const FABExample = () => {
+   const { colors } = useTheme();
+   const insets = useSafeAreaInsets();
  
- import { fireEvent, render, screen, userEvent } from '../../../test-utils';
-+import { tokens } from '../../../theme/tokens';
- import Checkbox from '../../Checkbox';
-+import { CheckboxTokens } from '../../Checkbox/tokens';
- import TouchableRipple from '../../TouchableRipple/TouchableRipple';
+-  const [variant, setVariant] = React.useState<FabColor>('tonalPrimary');
++  const [variant, setVariant] = React.useState<FabColor>('primaryContainer');
+   const activeVariant = variant === 'custom' ? undefined : variant;
+   const activeContainerColor =
+     variant === 'custom' ? CUSTOM_CONTAINER_COLOR : undefined;
+@@ -187,6 +187,7 @@ const FABExample = () => {
+         {type === 'icon' && (
+           <FAB
+             icon="pencil"
++            aria-label="Compose"
+             variant={activeVariant}
+             containerColor={activeContainerColor}
+             size={size}
+@@ -214,6 +215,7 @@ const FABExample = () => {
+           alignment={position}
+           trigger={{
+             icon: 'pencil',
++            'aria-label': 'Compose',
+             variant: activeVariant,
+             containerColor: activeContainerColor,
+             size,
+```
+
+**File**: `src/components/FAB/Extended.tsx` (modified, +2/-2)
+```diff
+@@ -39,7 +39,7 @@ export type Props = {
+    */
+   label: string;
+   /**
+-   * Role-color preset. Defaults to `tonalPrimary`.
++   * Role-color preset. Defaults to `primaryContainer`.
+    */
+   variant?: Variant;
+   /**
+@@ -167,7 +167,7 @@ export type Props = {
+ const Extended = ({
+   icon,
+   label,
+-  variant = 'tonalPrimary',
++  variant = 'primaryContainer',
+   containerColor,
+   contentColor,
+   size = 'default',
+```
+
+**File**: `src/components/FAB/FAB.tsx` (modified, +2/-2)
+```diff
+@@ -21,7 +21,7 @@ export type Props = {
+    */
+   icon: IconSource;
+   /**
+-   * Role-color preset. Defaults to `tonalPrimary`.
++   * Role-color preset. Defaults to `primaryContainer`.
+    */
+   variant?: Variant;
+   /**
+@@ -130,7 +130,7 @@ export type Props = {
+  */
+ const FAB = ({
+   icon,
+-  variant = 'tonalPrimary',
++  variant = 'primaryContainer',
+   size = 'default',
+   visible = true,
+   onPress,
+```
+
+**File**: `src/components/FAB/Menu.tsx` (modified, +14/-8)
+```diff
+@@ -117,23 +117,29 @@ export type MenuProps = {
+  * tonal (container) role color.
+  */
+ const getCloseVariant = (triggerVariant: Variant): Variant => {
+-  if (triggerVariant === 'primary' || triggerVariant === 'tonalPrimary') {
++  if (triggerVariant === 'primary' || triggerVariant === 'primaryContainer') {
+     return 'primary';
+   }
+-  if (triggerVariant === 'secondary' || triggerVariant === 'tonalSecondary') {
++  if (
++    triggerVariant === 'secondary' ||
++    triggerVariant === 'secondaryContainer'
++  ) {
+     return 'secondary';
+   }
+   return 'tertiary';
+ };
  
- afterEach(() => {
-@@ -376,6 +383,77 @@ describe('Checkbox Space key', () => {
+ const getItemsVariant = (triggerVariant: Variant): Variant => {
+-  if (triggerVariant === 'primary' || triggerVariant === 'tonalPrimary') {
+-    return 'tonalPrimary';
++  if (triggerVariant === 'primary' || triggerVariant === 'primaryContainer') {
++    return 'primaryContainer';
+   }
+-  if (triggerVariant === 'secondary' || triggerVariant === 'tonalSecondary') {
+-    return 'tonalSecondary';
++  if (
++    triggerVariant === 'secondary' ||
++    triggerVariant === 'secondaryContainer'
++  ) {
++    return 'secondaryContainer';
+   }
+-  return 'tonalTertiary';
++  return 'tertiaryContainer';
+ };
+ 
+ // Per-item delay used by the stagger. Compose uses a single SlowEffects-driven
+@@ -551,7 +557,7 @@ const Menu = ({
+   const isRTL = direction === 'rtl';
+   const insets = useSafeAreaInsets();
+ 
+-  const triggerVariant: Variant = trigger.variant ?? 'tonalPrimary';
++  const triggerVariant: Variant = trigger.variant ?? 'primaryContainer';
+   const size: Size = trigger.size ?? 'default';
+   const openIcon: IconSource = trigger.icon;
+   const openOnPress = trigger.onPress;
+```
+
+**File**: `src/components/FAB/Shell.tsx` (modified, +122/-18)
+```diff
+@@ -24,7 +24,7 @@ import { getDimensions, resolveColors } from './utils';
+ import { useInternalTheme } from '../../core/theming';
+ import { useReduceMotion } from '../../theme/accessibility/ReduceMotionContext';
+ import { toRawSpring } from '../../theme/tokens/sys/motion';
+-import type { Elevation, ThemeProp } from '../../theme/types';
++import type { ThemeProp } from '../../theme/types';
+ import type { ShapeToken } from '../../theme/utils/shape';
+ import hasTouchHandler from '../../utils/hasTouchHandler';
+ import { useFocusRing } from '../../utils/useFocusRing';
+@@ -43,7 +43,7 @@ export type ShellProps = {
+    */
+   label?: string;
+   /**
+-   * Role-color preset. Defaults to `tonalPrimary`.
++   * Role-color preset. Defaults to `primaryContainer`.
+    */
+   variant?: Variant;
+   /**
+@@ -74,11 +74,6 @@ export type ShellProps = {
+    * Trailing-padding override.
+    */
+   trailing?: number;
+-  /**
+-   * Resting elevation level. Defaults to the FAB's enabled-state elevation.
+-   * Pass `0` to disable the shadow entirely.
+-   */
+-  elevation?: Elevation;
+   /**
+    * When `false`, the shell animates out (scale + alpha) and stops accepting
+    * touches.
+@@ -200,15 +195,14 @@ export type ShellProps = {
+ const Shell = ({
+   icon,
+   label,
+-  variant = 'tonalPrimary',
++  variant = 'primaryContainer',
+   size = 'default',
+   containerColor,
+   contentColor,
+   shape,
+   iconSize,
+   leading,
+   trailing,
+-  elevation = Tokens.stateElevation.enabled,
+   visible = true,
+   onPress,
+   onLongPress,
+@@ -235,6 +229,23 @@ const Shell = ({
+   ref,
+ }: ShellProps) => {
+   const theme = useInternalTheme(themeOverrides);
++  const [hovered, setHovered] = React.useState(false);
++  const [pressed, setPressed] = React.useState(false);
++  const touchableRef = React.useRef<React.ComponentRef<typeof View>>(null);
++  const previousFocusedElement = React.useRef<HTMLElement | null>(null);
++  const hoveredRef = React.useRef(false);
++  const pressingRef = React.useRef(false);
++
++  const hasHandler = hasTouchHandler({ onPress, onLongPress, onPressOut });
++
++  const resolvedElevation =
++    visible && hasHandler
++      ? pressed
++        ? Tokens.stateElevation.pressed
++        : hovered
++          ? Tokens.stateElevation.hover
++          : Tokens.stateElevation.enabled
++      : Tokens.stateElevation.enabled;
+ 
+   const dimensions = React.useMemo(
+     () => getDimensions({ theme, size, shape, iconSize, leading, trailing }),
+@@ -315,8 +326,6 @@ const Shell = ({
+     [borderRadius, containerBg]
    );
- });
  
-+describe('Checkbox focus ring', () => {
-+  const { thickness, outerOffset } = tokens.md.sys.state.focusIndicator;
-+  const ringSize =
-+    CheckboxTokens.stateLayerSize + 2 * (outerOffset + thickness);
+-  const hasHandler = hasTouchHandler({ onPress, onLongPress, onPressOut });
+-
+   // `scope: 'within'`: the ring is drawn on the clip view below, not the
+   // inner `TouchableRipple` that actually receives focus. On web the shared
+   // stylesheet hides the browser's own outline there, so only the clip view's
+@@ -325,14 +334,82 @@ const Shell = ({
+   // Off when `disabled` or without a touch handler: the inner TouchableRipple
+   // is then a plain View, and a focused one unmounts without a blur reaching
+   // the hook. The public FAB has no `disabled`, so dropping the handlers is how
+-  // an app turns it off.
++  // an app turns it off. Also off while hidden, which clears the focus state on
++  // native when the FAB hides while focused.
+   const { target: focusTarget, ring: focusRing } = useFocusRing(
+-    disabled || !hasHandler,
++    disabled || !hasHandler || !visible,
+     theme.colors.secondary,
+     'outward',
+     'within'
+   );
+ 
++  React.useEffect(() => {
++    if (!visible) {
++      if (Platform.OS === 'web') {
++        const target: unknown = touchableRef.current;
++        if (
++          target instanceof HTMLElement &&
++          target === document.activeElement
++        ) {
++          const previous = previousFocusedElement.current;
++          // Only restore keyboard focus. A mouse click or tap also focuses the
++          // FAB, and moving focus back could jump into an earlier text field.
++          if (
++            target.matches(':focus-visible') &&
++            previous?.isConnected &&
++            !previous.closest('[aria-hidden="true"], [inert]')
++          ) {
++            previous.focus({ preventScroll: true });
++          }
++          // Blur when focus didn't move back, e.g. after a mouse click or when
++          // the previous element is gone or can't take focus.
++          if (target === document.activeElement) target.blur();
++        }
++      }
++      hoveredRef.current = false;
++      pressingRef.current = false;
++      setHovered(false);
++      setPressed(false);
++    }
++  }, [visible]);
 +
-+  /* eslint-disable testing-library/no-node-access, no-restricted-syntax --
-+     Checkbox draws its ring as an unnamed view beside the pressable, with no
-+     role or testID to query it by, so the outer container's children have to
-+     be read to count it. */
-+  const ringCount = () =>
-+    (screen.root?.children ?? []).filter((child) => {
-+      if (typeof child === 'string') return false;
-+      const { width, height, borderWidth } =
-+        StyleSheet.flatten(child.props.style) ?? {};
-+      return (
-+        width === ringSize && height === ringSize && borderWidth === thickness
++  React.useEffect(() => {
++    if (!hasHandler) {
++      hoveredRef.current = false;
++      pressingRef.current = false;
++      setHovered(false);
++      setPressed(false);
++    }
++  }, [hasHandler]);
++
++  // The pressed elevation matches the resting one, so a press only shows on a
++  // hovered FAB, and `pressed` is set only then. iOS and Android send no hover
++  // events by default, so a tap there doesn't re-render the 
+```
+
+**File**: `src/components/FAB/tokens.ts` (modified, +6/-6)
+```diff
+@@ -9,9 +9,9 @@ export type Variant =
+   | 'primary'
+   | 'secondary'
+   | 'tertiary'
+-  | 'tonalPrimary'
+-  | 'tonalSecondary'
+-  | 'tonalTertiary';
++  | 'primaryContainer'
++  | 'secondaryContainer'
++  | 'tertiaryContainer';
+ 
+ export type Size = 'default' | 'medium' | 'large';
+ 
+@@ -68,15 +68,15 @@ const variants = {
+   primary: { container: 'primary', content: 'onPrimary' },
+   secondary: { container: 'secondary', content: 'onSecondary' },
+   tertiary: { container: 'tertiary', content: 'onTertiary' },
+-  tonalPrimary: {
++  primaryContainer: {
+     container: 'primaryContainer',
+     content: 'onPrimaryContainer',
+   },
+-  tonalSecondary: {
++  secondaryContainer: {
+     container: 'secondaryContainer',
+     content: 'onSecondaryContainer',
+   },
+-  tonalTertiary: {
++  tertiaryContainer: {
+     container: 'tertiaryContainer',
+     content: 'onTertiaryContainer',
+   },
+```
+
+**File**: `src/components/FAB/utils.ts` (modified, +1/-1)
+```diff
+@@ -19,7 +19,7 @@ export type ResolvedColors = {
+  */
+ export const resolveColors = ({
+   theme,
+-  variant = 'tonalPrimary',
++  variant = 'primaryContainer',
+   containerColor,
+   contentColor,
+ }: {
+```
+
+---
+
+### Incident Patch 3: `dd4ea6ef` (2026-11-18)
+**Commit Message**: fix(drawer): expand the collapsed item indicator when it becomes active (#5233)
+
+The indicator only expanded on press out, so an item made active without a press (for example by a route change) kept the half-width indicator. Animate it to full size whenever active turns true. After a press the indicator is already at full size or on its way there, and the new animation carries on from its current value.
+
+**File**: `src/components/Drawer/DrawerCollapsedItem.tsx` (modified, +15/-9)
+```diff
+@@ -15,6 +15,7 @@ import Animated, {
+   useSharedValue,
+   withTiming,
+ } from 'react-native-reanimated';
++import useLatestCallback from 'use-latest-callback';
+ 
+ import { useInternalTheme } from '../../core/theming';
+ import { tokens } from '../../theme/tokens';
+@@ -141,19 +142,24 @@ const DrawerCollapsedItem = ({
+ 
+   const outlineScale = useSharedValue(active ? 1 : 0.5);
+ 
+-  React.useEffect(() => {
+-    if (!active) {
+-      outlineScale.value = 0.5;
+-    }
+-  }, [active, outlineScale]);
+-
+-  const handlePressOut = () => {
++  const expandOutline = useLatestCallback(() => {
+     outlineScale.value = withTiming(1, {
+       duration: 150 * scale,
+       easing: Easing.inOut(Easing.ease),
+       reduceMotion: ReduceMotion.Never,
+     });
+-  };
++  });
++
++  React.useEffect(() => {
++    if (active) {
++      // The item can become active without a press, for example when the
++      // current route changes. After a press the indicator is already at full
++      // size or on its way there, and this carries on from where it is.
++      expandOutline();
++    } else {
++      outlineScale.value = 0.5;
++    }
++  }, [active, expandOutline, outlineScale]);
+ 
+   const iconPadding = ((!label ? itemSize : outlineHeight) - iconSize) / 2;
+ 
+@@ -196,7 +202,7 @@ const DrawerCollapsedItem = ({
+     <View {...rest}>
+       <Pressable
+         onPress={onPress}
+-        onPressOut={onPress ? handlePressOut : undefined}
++        onPressOut={onPress ? expandOutline : undefined}
+         disabled={disabled}
+         role="button"
+         aria-selected={active}
+```
+
+**File**: `src/components/__tests__/Drawer/DrawerCollapsedItem.test.tsx` (modified, +53/-2)
+```diff
+@@ -1,6 +1,9 @@
+-import { describe, expect, it } from '@jest/globals';
++import * as React from 'react';
+ 
+-import { render } from '../../../test-utils';
++import { describe, expect, it, jest } from '@jest/globals';
++import { getAnimatedStyle } from 'react-native-reanimated';
++
++import { act, render, screen, userEvent } from '../../../test-utils';
+ import DrawerCollapsedItem from '../../Drawer/DrawerCollapsedItem';
+ 
+ describe('DrawerCollapsedItem', () => {
+@@ -59,4 +62,52 @@ describe('DrawerCollapsedItem', () => {
+ 
+     expect(tree).toMatchSnapshot();
+   });
++
++  describe('active indicator', () => {
++    const indicatorStyle = () => {
++      const [indicator] = screen
++        .getByRole('button')
++        .queryAll((node) => 'transform' in getAnimatedStyle(node));
++      return getAnimatedStyle(indicator);
++    };
++
++    it('expands to full size when the item becomes active without a press', async () => {
++      await render(
++        <DrawerCollapsedItem label="Inbox" focusedIcon="inbox" active={false} />
 +      );
-+    }).length;
-+  /* eslint-enable testing-library/no-node-access, no-restricted-syntax */
 +
-+  // A display-only checkbox is not exposed as a checkbox, so it is found by
-+  // testID.
-+  const Box = ({ onPress }: { onPress?: () => void }) => (
-+    <Checkbox
-+      status="unchecked"
-+      onPress={onPress}
-+      aria-label="Notify me"
-+      testID="checkbox"
-+    />
-+  );
++      await screen.rerender(
++        <DrawerCollapsedItem label="Inbox" focusedIcon="inbox" active />
++      );
++      await act(() => jest.advanceTimersByTimeAsync(300));
 +
-+  // On Android a TouchableRipple without a handler renders a plain View, so
-+  // the focused Pressable is destroyed and its blur never reaches JS.
-+  const renderOnAndroid = async (onPress?: () => void) => {
-+    jest.replaceProperty(Platform, 'OS', 'android');
-+    jest.replaceProperty(TouchableRipple, 'supported', true);
-+    await render(<Box onPress={onPress} />);
-+  };
++      expect(indicatorStyle().transform).toEqual([{ scaleX: 1 }]);
++    });
 +
-+  it('draws one ring on keyboard focus', async () => {
-+    await renderOnAndroid(() => {});
-+    await fireEvent(screen.getByTestId('checkbox'), 'focus');
++    it('animates the expansion when a press makes the item active', async () => {
++      const Item = () => {
++        const [active, setActive] = React.useState(false);
++        return (
++          <DrawerCollapsedItem
++            label="Inbox"
++            focusedIcon="inbox"
++            active={active}
++            onPress={() => setActive(true)}
++          />
++        );
++      };
++      await render(<Item />);
++      const collapsed = indicatorStyle().transform;
 +
-+    expect(ringCount()).toBe(1);
++      await userEvent.press(screen.getByRole('button'));
++      await act(() => jest.advanceTimersByTimeAsync(75));
++      const midway = indicatorStyle().transform;
++      await act(() => jest.advanceTimersByTimeAsync(300));
++      const expanded = indicatorStyle().transform;
++
++      expect(expanded).toEqual([{ scaleX: 1 }]);
++      expect(midway).not.toEqual(collapsed);
++      expect(midway).not.toEqual(expanded);
++    });
 +  });
-+
-+  it('drops the ring when onPress is removed', async () => {
-+    const onPress = () => {};
-+    await renderOnAndroid(onPress);
-+    const pressable = screen.getByTestId('checkbox');
-+    await fireEvent(screen.getByTestId('checkbox'), 'focus');
-+
-+    await screen.rerender(<Box />);
-+
-+    // The focused Pressable was replaced, not just left without a handler.
-+    expect(screen.getByTestId('checkbox')).not.toBe(pressable);
-+    expect(ringCount()).toBe(0);
-+  });
-+
-+  it('shows no ring when onPress comes back until it is focused again', async () => {
-+    const onPress = () => {};
-+    await renderOnAndroid(onPress);
-+    await fireEvent(screen.getByTestId('checkbox'), 'focus');
-+
-+    await screen.rerender(<Box />);
-+    await screen.rerender(<Box onPress={onPress} />);
-+
-+    expect(ringCount()).toBe(0);
-+  });
-+});
-+
- describe('Checkbox touch target', () => {
-   it('meets the 48dp minimum', async () => {
-     await render(
+ });
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5228** (closed): fix!: MD3 deviations for TextInput (@kachmashk)
-- **PR #5223** (2026-11-16): fix(checkbox): clear the focus ring when onPress is removed (@Doberjohn)
-- **PR #5213** (2026-11-12): docs(getting-started): remove outdated version notes (@Doberjohn)
-- **PR #5212** (2026-11-12): fix(icon)!: type the source prop as IconSource (@Doberjohn)
-- **PR #5211** (2026-11-12): chore: drop old React Native fallbacks and needless lint suppressions (@Doberjohn)
-- **PR #5210** (2026-11-12): docs(getting-started): create the Expo babel config with expo customize (@Doberjohn)
+- **PR #5235** (2026-11-18): feat(theme)!: remove animation.scale and export useReduceMotion (@Doberjohn)
+- **PR #5234** (2026-11-18): fix(provider): merge the theme prop deeply (@Doberjohn)
+- **PR #5233** (2026-11-18): fix(drawer): expand the collapsed item indicator when it becomes active (@Doberjohn)
+- **PR #5232** (2026-11-18): fix(menu): scale the menu in on every open, not only the first (@Doberjohn)
+- **PR #5231** (2026-11-18): fix(fab): honour reduceMotion="off" over the device setting (@Doberjohn)
+- **PR #5230** (2026-11-17): chore: review draft PRs with Apex Sentinel only once they're ready (@Doberjohn)
 
 ---
 
@@ -2158,13 +2293,13 @@ On Android, a keyboard-focused Checkbox that loses and regains `onPress` shows i
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. fix!: don't expose handler-less TouchableRipple as a disabled control
+## X. provider): merge the theme prop deeply
 
 **RULE**:
 When implementing operations in `docs/6.x/docs/guides/migration.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in callstack/react-native-paper. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `484a0c6e`: fix!: don't expose handler-less TouchableRipple as a disabled control. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1e20a682`: provider): merge the theme prop deeply. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/6.x/docs/guides/migration.md`.
@@ -2172,21 +2307,19 @@ Subsystems managing TypeScript data structures, boundary deserialization, API pa
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-### TouchableRipple without a press handler
-
-A `TouchableRipple`, and anything built on it, is no longer a disabled control when it has no touch handler. Without `onPress`, `onLongPress`, `onPressIn` or `onPressOut`, and without `disabled`, it renders a plain view: assistive tech doesn't announce it as disabled, it isn't a keyboard stop, and it never takes the press, so a `Pressable` around it gets it. On Android and iOS a wrapping `Pressable` already got the press, except around a read-only radio (see below). On web it's new for components with the `button` role, such as `Button`, `Chip`, `IconButton` and `FAB`, which used to stop the press. `DataTable.Title` works the same way.
-
-Without a handler or `disabled`, an activatable role becomes `none`: a `role` or `accessibilityRole` of `button`, `link`, `menuitem` or `tab`, and an `accessibilityRole` of `imagebutton` or `togglebutton`. The role stays when the touchable reports a toggle state with `aria-checked`, `aria-pressed` or `accessibilityState.checked`, also when the value is `false`. A selection doesn't keep the role: Android and iOS still report it, and on web `aria-selected` is dropped with the role. Every other role, such as
+`PaperProvider` merges its `theme` deeply too, so a custom theme only needs the roles it changes:
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+`PaperProvider` doesn't merge `shapes` deeply: a `shapes` key in its `theme` replaces the default one. So spread the base `shapes` and `corner`, or the roles you leave out are `undefined` and those components lose their rounded corners:
++    ...LightTheme.shapes,
++      ...LightTheme.shapes.corner,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `484a0c6e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1e20a682` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

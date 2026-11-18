@@ -425,8 +425,8 @@
     "sourceUrl": "https://huggingface.co/fastino/GLiNER2.5-Decide",
     "sourceVersion": "hf-fastino-gliner2.5-decide",
     "license": "Open-Source",
-    "contentHash": "dfdc2f8ffe7f740f2f43b1a7479bf9415494333a8c6766d6b299b182f29f63c0",
-    "lastHarvestedAt": "2026-11-18T03:39:20.586Z",
+    "contentHash": "a85d1e50c61df38aae1efdbe0479557b9eaa6794fd056b986e004b917cbab18b",
+    "lastHarvestedAt": "2026-11-18T13:25:32.969Z",
     "learningId": "learn-huggingface-fastino-gliner2-5-decide"
   },
   "hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf": {
@@ -2203,10 +2203,10 @@
     "repository": "higress-group/higress",
     "platform": "github",
     "sourceUrl": "https://github.com/higress-group/higress",
-    "sourceVersion": "d8eaa141",
+    "sourceVersion": "392b64e8",
     "license": "Apache-2.0",
-    "contentHash": "18e94ac678ac716a0039a7366ba95cc4b0bad48adfc59779f596ef55c8e11034",
-    "lastHarvestedAt": "2026-11-17T20:17:40.348Z",
+    "contentHash": "5dfb608a55a8d83b389a93e389e63019179462d2409f4a92ce3604453eef4934",
+    "lastHarvestedAt": "2026-11-18T13:25:43.080Z",
     "learningId": "learn-github-higress-group-higress"
   },
   "openziti-zrok": {
@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "266b9114",
+    "sourceVersion": "b8abe89e",
     "license": "Apache-2.0",
-    "contentHash": "da3514bcbe6892f81195fc280b67fe8f43097401c35857bf7cb35b7a61839ed7",
-    "lastHarvestedAt": "2026-11-18T09:57:29.140Z",
+    "contentHash": "d98d374004dc259ee1628ff333ab7ea828dbc043c5d786d397a9be2ccd4318f9",
+    "lastHarvestedAt": "2026-11-18T13:25:50.327Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -3033,10 +3033,10 @@
     "repository": "callstack/react-native-paper",
     "platform": "github",
     "sourceUrl": "https://github.com/callstack/react-native-paper",
-    "sourceVersion": "655fbcc5",
+    "sourceVersion": "9845c6f4",
     "license": "MIT",
-    "contentHash": "40659ff18d941994ef45b324a3d4e0060261977289ed9675fde2baf55ca35366",
-    "lastHarvestedAt": "2026-11-17T13:29:52.616Z",
+    "contentHash": "dfec6b028aa2a4129bbea22ae7f6327fb2f2a1070573434deeb9e59eb684ff7e",
+    "lastHarvestedAt": "2026-11-18T13:25:41.456Z",
     "learningId": "learn-github-callstack-react-native-paper"
   },
   "tensorchord-pgvecto.rs": {

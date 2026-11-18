@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-18T03:39:42.031Z",
+  "timestamp": "2026-11-18T13:25:53.626Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-hf-fastino-gliner2.5-decide-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [hf-fastino-gliner2.5-decide-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-18T03:39:42.031Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-18T13:25:53.626Z`  
 > **Learning ID**: `LEARN-EVO-hf-fastino-gliner2.5-decide-learnings`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Source Version**: `hf-fastino-g`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-18T03:39:20.013Z  
+> **Timestamp**: 2026-11-18T13:25:32.544Z  
 > **Learning ID**: `learn-huggingface-fastino-gliner2-5-decide`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-fastino-gliner2.5-decide-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/fastino/GLiNER2.5-Decide](https://huggingface.co/fastino/GLiNER2.5-Decide))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T03:39:19.797Z  
+> **Harvest Timestamp**: 2026-11-18T13:25:32.305Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: text-classification
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 79754 downloads | 458 likes
+- **Stars / Engagement**: 70656 downloads | 458 likes
 
 ---
 

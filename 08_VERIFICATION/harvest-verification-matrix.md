@@ -10979,3 +10979,8 @@
 | `CYCLE-20261118-BROB` | `2026-11-18T13:17:27.899Z` | `moby/buildkit` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9228` | Yes (`03ffaaa4...`) |
 | `CYCLE-20261118-BSWQ` | `2026-11-18T13:17:29.498Z` | `projectdiscovery/nuclei` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9014` | Yes (`8f889f8f...`) |
 | `CYCLE-20261118-BV0S` | `2026-11-18T13:17:32.236Z` | `lancedb/lancedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9229` | Yes (`4b1bdec0...`) |
+| `CYCLE-20261118-M5YD` | `2026-11-18T13:25:32.965Z` | `fastino/GLiNER2.5-Decide` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-fastino-gliner2.5-decide-learnings.md` | Yes (`a85d1e50...`) |
+| `CYCLE-20261118-MCI4` | `2026-11-18T13:25:41.452Z` | `callstack/react-native-paper` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9230` | Yes (`dfec6b02...`) |
+| `CYCLE-20261118-MDR8` | `2026-11-18T13:25:43.076Z` | `higress-group/higress` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9231` | Yes (`5dfb608a...`) |
+| `CYCLE-20261118-MJCJ` | `2026-11-18T13:25:50.323Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md` | Yes (`d98d3740...`) |
+| `CYCLE-2026-11-18-PROJ-EVOLVE` | `2026-11-18T13:26:20.147Z` | `higress-group-higress` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-50457654` [Domain H] | Yes (`8975fd96...`) |

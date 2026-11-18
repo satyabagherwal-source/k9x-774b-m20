@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-18T13:17:32.251Z",
+  "last_updated": "2026-11-18T13:25:50.358Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -515,14 +515,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-fastino-gliner2-5-decide",
-      "content_hash": "dfdc2f8ffe7f740f2f43b1a7479bf9415494333a8c6766d6b299b182f29f63c0",
-      "verified_at": "2026-11-18T03:39:20.596Z",
+      "content_hash": "a85d1e50c61df38aae1efdbe0479557b9eaa6794fd056b986e004b917cbab18b",
+      "verified_at": "2026-11-18T13:25:32.977Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T03:39:20.596Z"
+      "last_updated": "2026-11-18T13:25:32.977Z"
     },
     "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF": {
       "repository": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
@@ -3441,14 +3441,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-higress-group-higress",
-      "content_hash": "18e94ac678ac716a0039a7366ba95cc4b0bad48adfc59779f596ef55c8e11034",
-      "verified_at": "2026-11-17T20:17:40.357Z",
+      "content_hash": "5dfb608a55a8d83b389a93e389e63019179462d2409f4a92ce3604453eef4934",
+      "verified_at": "2026-11-18T13:25:43.088Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T20:17:40.357Z"
+      "last_updated": "2026-11-18T13:25:43.088Z"
     },
     "openziti/zrok": {
       "repository": "openziti/zrok",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "da3514bcbe6892f81195fc280b67fe8f43097401c35857bf7cb35b7a61839ed7",
-      "verified_at": "2026-11-18T09:57:29.150Z",
+      "content_hash": "d98d374004dc259ee1628ff333ab7ea828dbc043c5d786d397a9be2ccd4318f9",
+      "verified_at": "2026-11-18T13:25:50.358Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T09:57:29.150Z"
+      "last_updated": "2026-11-18T13:25:50.358Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -4671,14 +4671,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-callstack-react-native-paper",
-      "content_hash": "40659ff18d941994ef45b324a3d4e0060261977289ed9675fde2baf55ca35366",
-      "verified_at": "2026-11-17T13:29:52.636Z",
+      "content_hash": "dfec6b028aa2a4129bbea22ae7f6327fb2f2a1070573434deeb9e59eb684ff7e",
+      "verified_at": "2026-11-18T13:25:41.463Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T13:29:52.636Z"
+      "last_updated": "2026-11-18T13:25:41.463Z"
     },
     "tensorchord/pgvecto.rs": {
       "repository": "tensorchord/pgvecto.rs",

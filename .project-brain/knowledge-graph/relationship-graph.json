@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-18T11:55:41.795Z",
+  "updated_at": "2026-11-18T13:26:20.145Z",
   "statistics": {
-    "total_nodes": 352,
+    "total_nodes": 353,
     "total_edges": 163,
     "domain_distribution": {
       "D": 241,
       "M": 1,
-      "H": 48,
+      "H": 49,
       "J": 13,
       "K": 19,
       "L": 5,
@@ -7868,6 +7868,28 @@
       ],
       "created_at": "2026-11-18T11:55:41.795Z",
       "updated_at": "2026-11-18T11:55:41.795Z"
+    },
+    "DOM-H-50457654": {
+      "id": "DOM-H-50457654",
+      "domain": "H",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "wasm-cpp): align domain matching for ASCII case",
+      "summary": "Prevents defects observed in production commit `392b64e8`: wasm-cpp): align domain matching for ASCII case. Unvalidated execution paths caus -> When implementing operations in `plugins/wasm-cpp/common/route_rule_matcher.h`, engineers MUST enforce rigorous boundary validation, safe st",
+      "confidence": 0.75,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://higress-group-higress/higress-group-higress-learnings.md",
+        "source_version": "392b64e8",
+        "observed_at": "2026-11-18T13:25:42.160Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (higress-group-higress)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "H",
+        "Technical Construction Intelligence"
+      ],
+      "created_at": "2026-11-18T13:26:20.145Z",
+      "updated_at": "2026-11-18T13:26:20.145Z"
     }
   },
   "edges": [

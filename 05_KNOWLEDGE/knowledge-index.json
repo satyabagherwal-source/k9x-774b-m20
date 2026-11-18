@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-18T13:17:38.002Z",
+  "last_updated": "2026-11-18T13:26:20.729Z",
   "total_verified_learnings": 9002,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 21264,
+  "total_items": 21271,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112730,9 +112730,9 @@
       "title": "Research & Knowledge Intelligence: fastino/GLiNER2.5-Decide Core Invariants",
       "repository": "fastino/GLiNER2.5-Decide",
       "source_version": "hf-fastino-gliner2.5-decide",
-      "content_hash": "ed55932c4210337928048fbfa478837e8f870432f58b550645cac9ef8db73a79",
+      "content_hash": "4a5317524a98a3fdc0a25296b0d7435f65246a46470923a62582488b6c308579",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T03:39:20.827Z"
+      "persisted_at": "2026-11-18T13:25:33.146Z"
     },
     "candidate_directive-mac-sai-website-in-13-languages-on-github-pages-275": {
       "item_id": "candidate_directive-mac-sai-website-in-13-languages-on-github-pages-275",
@@ -112826,9 +112826,9 @@
       "title": "Research & Knowledge Intelligence: hf-fastino-gliner2.5-decide-learnings Core Invariants",
       "repository": "hf-fastino-gliner2.5-decide-learnings",
       "source_version": "HEAD",
-      "content_hash": "a46c5ed31997379689559d043002ba74f0a5579f4f619129edb22067f6b178d5",
+      "content_hash": "6060f92cdd8a5a7a40ba9445e4dbdf16477aa380e014600f118a55e8e85a8a80",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T03:39:42.140Z"
+      "persisted_at": "2026-11-18T13:25:53.722Z"
     },
     "domain_intelligence-content-information-intelligence-iliyami-macsai-learnings-core-invariants": {
       "item_id": "domain_intelligence-content-information-intelligence-iliyami-macsai-learnings-core-invariants",
@@ -216985,17 +216985,23 @@
       "slug": "callstack-react-native-paper",
       "platform": "github",
       "source_url": "https://github.com/callstack/react-native-paper",
-      "source_version": "655fbcc5",
-      "content_hash": "40659ff18d941994ef45b324a3d4e0060261977289ed9675fde2baf55ca35366",
+      "source_version": "9845c6f4",
+      "content_hash": "dfec6b028aa2a4129bbea22ae7f6327fb2f2a1070573434deeb9e59eb684ff7e",
       "dossier_path": "07_PROJECT_LEARNING/callstack-react-native-paper-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/callstack-react-native-paper-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 9230,
+          "title": "merge the theme prop deeply",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T13:29:52.466Z",
+      "verified_at": "2026-11-18T13:25:41.285Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -217023,10 +217029,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-callstack-react-native-paper-design-intelligence-callstack-react-native-paper-co.md",
       "title": "Design Intelligence: callstack/react-native-paper Core Invariants",
       "repository": "callstack/react-native-paper",
-      "source_version": "655fbcc5",
-      "content_hash": "706434536955310672c71a6cbfa841b2e2629fc5c4b9ad3ede66c36c6a8e01e5",
+      "source_version": "9845c6f4",
+      "content_hash": "d53fb5a81f4acb6ace0c6f35569bf017a051cfb7d35ae7a476c3dabb9c4729d5",
       "domain_letter": "F",
-      "persisted_at": "2026-11-17T13:29:52.952Z"
+      "persisted_at": "2026-11-18T13:25:41.785Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-callstack-react-native-paper": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-callstack-react-native-paper",
@@ -217035,10 +217041,10 @@
       "relative_path": "08_VERIFICATION/callstack-react-native-paper-verification-protocol-empirical-defect-shield-for-c.md",
       "title": "Verification Protocol: Empirical Defect Shield for callstack/react-native-paper",
       "repository": "callstack/react-native-paper",
-      "source_version": "655fbcc5",
-      "content_hash": "20acf0d3207fe837c517b738a23485bdbd23eed638966ab33219bcb26156d9f2",
+      "source_version": "9845c6f4",
+      "content_hash": "2c8b53956b24767ed0c59503ecaaef6b70bd5ac116c79024a9c84b84ab497ba3",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T13:29:53.093Z"
+      "persisted_at": "2026-11-18T13:25:41.927Z"
     },
     "learn-github-databendlabs-databend": {
       "learning_id": "learn-github-databendlabs-databend",
@@ -217232,9 +217238,9 @@
       "title": "Design Intelligence: callstack-react-native-paper-learnings Core Invariants",
       "repository": "callstack-react-native-paper-learnings",
       "source_version": "HEAD",
-      "content_hash": "e36bf80a7d28c03542b5062d63f19c9fa385d784bfc896a36067c39376d602d1",
+      "content_hash": "c1e7f70e9ddcfe1928926daddf25297d88b4a52c53b29cb84e780c4c015f2f4d",
       "domain_letter": "F",
-      "persisted_at": "2026-11-17T13:29:57.528Z"
+      "persisted_at": "2026-11-18T13:25:54.215Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-callstack-react-native-paper-l": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-callstack-react-native-paper-l",
@@ -217244,9 +217250,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for callstack-react-native-paper-learnings",
       "repository": "callstack-react-native-paper-learnings",
       "source_version": "HEAD",
-      "content_hash": "60bbdec65e043f4eb8966522865bbcd3fc4294f4736e0d7ccdc5aca949a183ca",
+      "content_hash": "e7c4dc5892f48630d6f185b4f82e5289bb25fdd05df01adea5f36abb682cf2d9",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T13:29:57.651Z"
+      "persisted_at": "2026-11-18T13:25:54.358Z"
     },
     "learn-github-xudong-huang-may": {
       "learning_id": "learn-github-xudong-huang-may",
@@ -222737,8 +222743,8 @@
       "slug": "higress-group-higress",
       "platform": "github",
       "source_url": "https://github.com/higress-group/higress",
-      "source_version": "d8eaa141",
-      "content_hash": "18e94ac678ac716a0039a7366ba95cc4b0bad48adfc59779f596ef55c8e11034",
+      "source_version": "392b64e8",
+      "content_hash": "5dfb608a55a8d83b389a93e389e63019179462d2409f4a92ce3604453eef4934",
       "dossier_path": "07_PROJECT_LEARNING/higress-group-higress-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/higress-group-higress-learnings.md",
       "promoted_rules": [
@@ -222756,6 +222762,11 @@
           "number": 9055,
           "title": "align domain rule matching for ASCII case",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9231,
+          "title": "align domain matching for ASCII case",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -222763,7 +222774,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T20:17:40.171Z",
+      "verified_at": "2026-11-18T13:25:42.897Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -222805,10 +222816,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-higress-group-higress-content-information-intelligence-higress-group-higress-cor.md",
       "title": "Content & Information Intelligence: higress-group/higress Core Invariants",
       "repository": "higress-group/higress",
-      "source_version": "d8eaa141",
-      "content_hash": "3b9d2da66d4deec4558063aacda7b8aa92ca823137a6ec4101d7dcaf9bdb9d36",
+      "source_version": "392b64e8",
+      "content_hash": "03a949d0c329088e09c769339b97a10e38c4ad9ad3f659c743914acd2dcc089c",
       "domain_letter": "I",
-      "persisted_at": "2026-11-17T20:17:40.668Z"
+      "persisted_at": "2026-11-18T13:25:43.398Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-higress-group-higress": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-higress-group-higress",
@@ -222817,10 +222828,10 @@
       "relative_path": "08_VERIFICATION/higress-group-higress-verification-protocol-empirical-defect-shield-for-higress-.md",
       "title": "Verification Protocol: Empirical Defect Shield for higress-group/higress",
       "repository": "higress-group/higress",
-      "source_version": "d8eaa141",
-      "content_hash": "c57acef55627d033772c0b0b39356badf68fb222433f1826761b0eb16b9dc1a7",
+      "source_version": "392b64e8",
+      "content_hash": "f1be677ecc7fd03e8c0d50822c070f9dc4e94435a4699dd190a1dcb0e5ff2b6f",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T20:17:40.810Z"
+      "persisted_at": "2026-11-18T13:25:43.527Z"
     },
     "learn-github-mitmproxy-mitmproxy": {
       "learning_id": "learn-github-mitmproxy-mitmproxy",
@@ -223064,9 +223075,9 @@
       "title": "Content & Information Intelligence: higress-group-higress-learnings Core Invariants",
       "repository": "higress-group-higress-learnings",
       "source_version": "HEAD",
-      "content_hash": "93bca0c9e3201bfd16d5aa1e6d0ac1986273ff5cfa889b77bb0ffbea5b36b37b",
+      "content_hash": "f6eda72ed447d72fe5fe6658ddbd09728ff43902825f68e8ed0268331d676b83",
       "domain_letter": "I",
-      "persisted_at": "2026-11-17T20:17:52.798Z"
+      "persisted_at": "2026-11-18T13:26:20.583Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-higress-group-higress-learning": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-higress-group-higress-learning",
@@ -223076,9 +223087,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for higress-group-higress-learnings",
       "repository": "higress-group-higress-learnings",
       "source_version": "HEAD",
-      "content_hash": "b233acf9028eceaf51b48ec74dffb3858ac84a9d657bc7940ee51e8c1d4200be",
+      "content_hash": "17f60867dfd734d956dd43d5f563e41583d518e8d50506746008a48a1034a9ca",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T20:17:52.941Z"
+      "persisted_at": "2026-11-18T13:26:20.729Z"
     },
     "learn-huggingface-chatrlabs-qwen-image-2-1-uncensored-omni-quantized": {
       "learning_id": "learn-huggingface-chatrlabs-qwen-image-2-1-uncensored-omni-quantized",
@@ -228379,8 +228390,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "266b9114",
-      "content_hash": "da3514bcbe6892f81195fc280b67fe8f43097401c35857bf7cb35b7a61839ed7",
+      "source_version": "b8abe89e",
+      "content_hash": "d98d374004dc259ee1628ff333ab7ea828dbc043c5d786d397a9be2ccd4318f9",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -228485,7 +228496,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T09:57:28.900Z",
+      "verified_at": "2026-11-18T13:25:50.142Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -228527,10 +228538,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-architecture-intelligence-nucleoidai-nucleoid-core-invariant.md",
       "title": "Architecture Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "repository": "NucleoidAI/Nucleoid",
-      "source_version": "266b9114",
-      "content_hash": "fa3f593996022a837be72a92b6bbaa6ec476d0e849f7b0c0d064739471086248",
+      "source_version": "b8abe89e",
+      "content_hash": "d46d6a234505efde3698c5c8a31037e0f2ea6ec04321a5e873026a09700422cc",
       "domain_letter": "G",
-      "persisted_at": "2026-11-18T09:57:29.576Z"
+      "persisted_at": "2026-11-18T13:25:50.678Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid",
@@ -228539,10 +228550,10 @@
       "relative_path": "08_VERIFICATION/nucleoidai-nucleoid-verification-protocol-empirical-defect-shield-for-nucleoidai.md",
       "title": "Verification Protocol: Empirical Defect Shield for NucleoidAI/Nucleoid",
       "repository": "NucleoidAI/Nucleoid",
-      "source_version": "266b9114",
-      "content_hash": "a3bdaed2155a5a7f7ad1a298f9ba67f39f0f038f07eba7ae96b38dd2b8397096",
+      "source_version": "b8abe89e",
+      "content_hash": "13385bcc945255276b4980d1863b748004128ded2b4ccaf4fda7b401707cfee2",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T09:57:29.755Z"
+      "persisted_at": "2026-11-18T13:25:50.804Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -280731,7 +280742,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/fastino/GLiNER2.5-Decide",
       "source_version": "hf-fastino-gliner2.5-decide",
-      "content_hash": "dfdc2f8ffe7f740f2f43b1a7479bf9415494333a8c6766d6b299b182f29f63c0",
+      "content_hash": "a85d1e50c61df38aae1efdbe0479557b9eaa6794fd056b986e004b917cbab18b",
       "dossier_path": "07_PROJECT_LEARNING/hf-fastino-gliner2.5-decide-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-fastino-gliner2.5-decide-learnings.md",
       "promoted_rules": [],
@@ -280740,7 +280751,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T03:39:20.332Z",
+      "verified_at": "2026-11-18T13:25:32.769Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -286889,6 +286900,94 @@
       "content_hash": "7d38b21c40ddd77f771aac595c5b621b91521125edbed5c1b360d218cd92b4c7",
       "domain_letter": "H",
       "persisted_at": "2026-11-18T13:17:32.484Z"
+    },
+    "rule-9230": {
+      "learning_id": "rule-9230",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9230,
+      "title": "merge the theme prop deeply",
+      "source_url": "https://github.com/callstack/react-native-paper",
+      "source_version": "9845c6f4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-18T13:25:41.285Z"
+    },
+    "candidate_directive-merge-the-theme-prop-deeply": {
+      "item_id": "candidate_directive-merge-the-theme-prop-deeply",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-MCNG-merge-the-theme-prop-deeply.md",
+      "title": "merge the theme prop deeply",
+      "repository": "callstack/react-native-paper",
+      "source_version": "9845c6f4",
+      "content_hash": "34a67060202986ec70316e2db15d85bf8192bcd7445eaf42c806f653f4b3f9c5",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-18T13:25:41.647Z"
+    },
+    "rule-9231": {
+      "learning_id": "rule-9231",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9231,
+      "title": "align domain matching for ASCII case",
+      "source_url": "https://github.com/higress-group/higress",
+      "source_version": "392b64e8",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-18T13:25:42.897Z"
+    },
+    "candidate_directive-align-domain-matching-for-ascii-case": {
+      "item_id": "candidate_directive-align-domain-matching-for-ascii-case",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-MDWE-align-domain-matching-for-ascii-case.md",
+      "title": "align domain matching for ASCII case",
+      "repository": "higress-group/higress",
+      "source_version": "392b64e8",
+      "content_hash": "3b89fcce2a89e5cededb583ddab014d7a9f430bfe8eec51daa24893b0819b1f8",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-18T13:25:43.263Z"
+    },
+    "candidate_directive-nuc-118-case-conversion-method-aliases": {
+      "item_id": "candidate_directive-nuc-118-case-conversion-method-aliases",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-MJIO-nuc-118-case-conversion-method-aliases.md",
+      "title": "NUC 118 Case Conversion Method Aliases",
+      "repository": "NucleoidAI/Nucleoid",
+      "source_version": "b8abe89e",
+      "content_hash": "174abb7bcfb6a5404c08a2507719bd1a0113c87f6b47b391d59eaf0e4b5a79ca",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-18T13:25:50.547Z"
+    },
+    "candidate_directive-provider-merge-the-theme-prop-deeply": {
+      "item_id": "candidate_directive-provider-merge-the-theme-prop-deeply",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-MM8W-provider-merge-the-theme-prop-deeply.md",
+      "title": "provider): merge the theme prop deeply",
+      "repository": "callstack-react-native-paper-learnings",
+      "source_version": "HEAD",
+      "content_hash": "6fa87211a5fc75bdd0b3456aa2f75890752f3b96ba171049b08fcf5d87400569",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-18T13:25:54.083Z"
+    },
+    "candidate_directive-wasm-cpp-align-domain-matching-for-ascii-case": {
+      "item_id": "candidate_directive-wasm-cpp-align-domain-matching-for-ascii-case",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-N6KP-wasm-cpp-align-domain-matching-for-ascii-case.md",
+      "title": "wasm-cpp): align domain matching for ASCII case",
+      "repository": "higress-group-higress-learnings",
+      "source_version": "HEAD",
+      "content_hash": "dc93e1b7a74b1aed29bb187b7f2727b19eb7ee2c9b1aa640acc681f05bff5cd6",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-18T13:26:20.426Z"
     }
   },
   "ai-builder-brain": {

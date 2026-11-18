@@ -11012,3 +11012,8 @@ Every entry in this ledger must capture:
 | `learn-github-moby-buildkit` | `https://github.com/moby/buildkit` | `bfe7dac5` | Multi-dimensional audit evidence | 2026-11-18T13:17:27.905Z |
 | `learn-github-projectdiscovery-nuclei` | `https://github.com/projectdiscovery/nuclei` | `91c2a7cf` | Multi-dimensional audit evidence | 2026-11-18T13:17:29.504Z |
 | `learn-github-lancedb-lancedb` | `https://github.com/lancedb/lancedb` | `a6d7d02f` | Multi-dimensional audit evidence | 2026-11-18T13:17:32.241Z |
+| `learn-huggingface-fastino-gliner2-5-decide` | `https://huggingface.co/fastino/GLiNER2.5-Decide` | `hf-fastino` | Multi-dimensional audit evidence | 2026-11-18T13:25:32.969Z |
+| `learn-github-callstack-react-native-paper` | `https://github.com/callstack/react-native-paper` | `9845c6f4` | Multi-dimensional audit evidence | 2026-11-18T13:25:41.456Z |
+| `learn-github-higress-group-higress` | `https://github.com/higress-group/higress` | `392b64e8` | Multi-dimensional audit evidence | 2026-11-18T13:25:43.080Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `b8abe89e` | Multi-dimensional audit evidence | 2026-11-18T13:25:50.327Z |
+| `learn-dom-h-50457654` | `project://higress-group-higress` | `392b64e8` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/higress-group-higress-learnings.md` | 2026-11-18T13:26:20.147Z |

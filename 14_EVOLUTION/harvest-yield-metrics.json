@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T13:17:32.247Z",
-  "total_cycles_completed": 10503,
-  "total_learnings_persisted": 10503,
-  "total_rules_promoted": 9988,
+  "last_updated": "2026-11-18T13:25:50.355Z",
+  "total_cycles_completed": 10507,
+  "total_learnings_persisted": 10507,
+  "total_rules_promoted": 9990,
   "history": [
-    {
-      "timestamp": "2026-11-18T00:43:42.441Z",
-      "repository": "neuron-core/neuron-ai",
-      "learningId": "learn-github-neuron-core-neuron-ai",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-18T00:59:27.518Z",
-      "repository": "nolabs-ai/nono",
-      "learningId": "learn-github-nolabs-ai-nono",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-18T00:59:31.275Z",
-      "repository": "matrixorigin/matrixone",
-      "learningId": "learn-github-matrixorigin-matrixone",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-18T01:02:29.316Z",
-      "repository": "mradermacher/DeepSeek-V4-Pro-Qwen3.5-9B-UNCENSORED-heretic-i1-GGUF",
-      "learningId": "learn-huggingface-mradermacher-deepseek-v4-pro-qwen3-5-9b-uncensored-heretic-i1-gguf",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-18T01:02:34.339Z",
       "repository": "shoutem/ui",
@@ -1403,6 +1375,34 @@
       "repository": "lancedb/lancedb",
       "learningId": "learn-github-lancedb-lancedb",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T13:25:32.974Z",
+      "repository": "fastino/GLiNER2.5-Decide",
+      "learningId": "learn-huggingface-fastino-gliner2-5-decide",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T13:25:41.460Z",
+      "repository": "callstack/react-native-paper",
+      "learningId": "learn-github-callstack-react-native-paper",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T13:25:43.085Z",
+      "repository": "higress-group/higress",
+      "learningId": "learn-github-higress-group-higress",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T13:25:50.355Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]
