@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T02:51:32.230Z",
+  "last_updated": "2026-11-18T02:59:42.881Z",
   "directives": [
     {
       "id": "CD-001",
@@ -4835,11 +4835,11 @@
       "staged_date": "2026-11-11"
     },
     {
-      "id": "CD-NTUH",
+      "id": "CD-9BF3",
       "directive_title": "editor): add scoped ios account deletion",
       "source_repo": "zseven-w-openpencil-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-NTUH-editor-add-scoped-ios-account-deletion.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-9BF3-editor-add-scoped-ios-account-deletion.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-18",
@@ -23628,11 +23628,11 @@
       "domain_letter": "G"
     },
     {
-      "id": "CD-TNNR",
+      "id": "CD-9C4B",
       "directive_title": "portico: Fix typos on development community and security pages.",
       "source_repo": "zulip-zulip-learnings",
       "source_commit": "HEAD",
-      "staged_file": "11_INBOX/candidate-directives/CD-TNNR-portico-fix-typos-on-development-community-and-security-pages.md",
+      "staged_file": "11_INBOX/candidate-directives/CD-9C4B-portico-fix-typos-on-development-community-and-security-pages.md",
       "status": "QUARANTINED_REJECT",
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-18",
@@ -27028,6 +27028,24 @@
       "source_repo": "freenet-freenet-core",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-B7F7E8-run-initiate-buffer-and-instance-setup-u.md",
+      "staged_date": "2026-11-18"
+    },
+    {
+      "id": "CD-REV-3C79E7",
+      "directive_title": "editor): add scoped ios account deletion",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zseven-w-openpencil",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-3C79E7-editor-add-scoped-ios-account-deletion.md",
+      "staged_date": "2026-11-18"
+    },
+    {
+      "id": "CD-REV-9FEED1",
+      "directive_title": "portico: Fix typos on development community and security pages.",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zulip-zulip",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-9FEED1-portico-fix-typos-on-development-communi.md",
       "staged_date": "2026-11-18"
     }
   ]

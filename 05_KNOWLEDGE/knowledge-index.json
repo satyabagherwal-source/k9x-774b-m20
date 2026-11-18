@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-18T02:51:32.513Z",
-  "total_verified_learnings": 8965,
+  "last_updated": "2026-11-18T02:59:43.223Z",
+  "total_verified_learnings": 8966,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 20821,
+  "total_items": 20822,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112190,9 +112190,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zulip-zulip-learnings",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "fea0d40ec29bca54a2ff12e7afe4a4f4235e50dd595f48b7547b633dd7ea7f28",
+      "content_hash": "e21efab513173f68a07ef06c5a89775c5b59aac893b57e63d2826c122dedaeb3",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T00:27:33.551Z"
+      "persisted_at": "2026-11-18T02:59:43.223Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -112526,9 +112526,9 @@
       "title": "Research & Knowledge Intelligence: apple/LensVLM-9B Core Invariants",
       "repository": "apple/LensVLM-9B",
       "source_version": "hf-apple-lensvlm-9b",
-      "content_hash": "a544068c4ba8e9216a702284b80127a010d87cfed2c643489db4d5598bd6e45e",
+      "content_hash": "5ff0a203782d5fe7fdec10f813c4807366466890d632e17adb514a945f5d3165",
       "domain_letter": "D",
-      "persisted_at": "2026-11-13T15:29:23.798Z"
+      "persisted_at": "2026-11-18T02:59:29.494Z"
     },
     "candidate_directive-deps-update-go-dependencies": {
       "item_id": "candidate_directive-deps-update-go-dependencies",
@@ -112658,9 +112658,9 @@
       "title": "Research & Knowledge Intelligence: hf-apple-lensvlm-9b-learnings Core Invariants",
       "repository": "hf-apple-lensvlm-9b-learnings",
       "source_version": "HEAD",
-      "content_hash": "eb40089e83cd8e69036fcf84e4b2a84c3f272a83824e7d18fc9ea3f347e69cb6",
+      "content_hash": "291ca0a32980189f7ce4dcc4942f065f1b8adc585aecba4d9dce05846f8e7206",
       "domain_letter": "D",
-      "persisted_at": "2026-11-13T15:30:24.377Z"
+      "persisted_at": "2026-11-18T02:59:41.276Z"
     },
     "domain_intelligence-content-information-intelligence-crossplane-crossplane-learnings-core-invariants": {
       "item_id": "domain_intelligence-content-information-intelligence-crossplane-crossplane-learnings-core-invariants",
@@ -113686,13 +113686,13 @@
       "item_id": "candidate_directive-editor-add-scoped-ios-account-deletion",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-NTUH-editor-add-scoped-ios-account-deletion.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-9BF3-editor-add-scoped-ios-account-deletion.md",
       "title": "editor): add scoped ios account deletion",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "1bae02aa2ff40dcc41da7ac290f0f4ceb5fc12df7532e0a63f6395fd829b7729",
+      "content_hash": "2ebb1d27ba3ec764b871a195ffec6ebc613ab8c49d179ca0506b7438574e26be",
       "domain_letter": "H",
-      "persisted_at": "2026-11-18T01:19:00.572Z"
+      "persisted_at": "2026-11-18T02:59:41.972Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant",
@@ -113702,9 +113702,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "b013be5c0103390a5f321cf00435e50ba6b075b062fe37549c2cefb193b98920",
+      "content_hash": "016434d3fb80d898748befc8bd31706bd219b70454b04492600b9d047a0df739",
       "domain_letter": "H",
-      "persisted_at": "2026-11-18T01:19:00.706Z"
+      "persisted_at": "2026-11-18T02:59:42.146Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113714,9 +113714,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "327c8cc542e4c83058eec475b3fb1aea3d29878dd8bd336e9916349f89084f61",
+      "content_hash": "640eff98dbc8cfeef3091aedd29df891467c84d2c3e05621b994fd9782ccdac2",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T01:19:00.856Z"
+      "persisted_at": "2026-11-18T02:59:42.334Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -269700,13 +269700,13 @@
       "item_id": "candidate_directive-portico-fix-typos-on-development-community-and-security-pages",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-TNNR-portico-fix-typos-on-development-community-and-security-pages.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-9C4B-portico-fix-typos-on-development-community-and-security-pages.md",
       "title": "portico: Fix typos on development community and security pages.",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "f0fc9bbef8dd6651babb2a56f7f7ed03fc244c5082752a4b77da1855fa94ba88",
+      "content_hash": "2c1617e4940f9a091d98302fa525b4d5813342c9e40c588b8621b6544f493545",
       "domain_letter": "L",
-      "persisted_at": "2026-11-18T00:27:33.266Z"
+      "persisted_at": "2026-11-18T02:59:42.881Z"
     },
     "domain_intelligence-human-need-intelligence-zulip-zulip-learnings-core-invariants": {
       "item_id": "domain_intelligence-human-need-intelligence-zulip-zulip-learnings-core-invariants",
@@ -269716,9 +269716,9 @@
       "title": "Human & Need Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "932891e8e1ac5c29f5c5608f6f8ecfdbeb82651fac5c06b5d483ef04da02f3b3",
+      "content_hash": "c081f8765299d923d4fd6d1605f11db3df42e64e4b147e369e491dab95dabe51",
       "domain_letter": "A",
-      "persisted_at": "2026-11-18T00:27:33.403Z"
+      "persisted_at": "2026-11-18T02:59:43.050Z"
     },
     "candidate_directive-mito2-wait-for-a-stopped-region-s-checkpoint-before-reopening-it": {
       "item_id": "candidate_directive-mito2-wait-for-a-stopped-region-s-checkpoint-before-reopening-it",
@@ -280131,6 +280131,33 @@
       "content_hash": "6101e755cbae40354c0ddca1b252a2d461fe81471aafbc3af8120cbfff85dfd0",
       "domain_letter": "H",
       "persisted_at": "2026-11-18T02:51:31.565Z"
+    },
+    "learn-huggingface-apple-lensvlm-9b": {
+      "learning_id": "learn-huggingface-apple-lensvlm-9b",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "apple/LensVLM-9B",
+      "repository": "apple/LensVLM-9B",
+      "slug": "hf-apple-lensvlm-9b",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/apple/LensVLM-9B",
+      "source_version": "hf-apple-lensvlm-9b",
+      "content_hash": "5ed56bfefdda08cbe056556f65d89f0f9d05ac832968decc56de8ec727a20ddb",
+      "dossier_path": "07_PROJECT_LEARNING/hf-apple-lensvlm-9b-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-apple-lensvlm-9b-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-18T02:59:29.016Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
     }
   },
   "ai-builder-brain": {

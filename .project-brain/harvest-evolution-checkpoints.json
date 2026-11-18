@@ -1,9 +1,9 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T02:51:32.638Z",
+  "last_updated": "2026-11-18T02:59:43.374Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
-      "processed_at": "2026-11-18T00:27:32.940Z",
+      "processed_at": "2026-11-18T02:59:42.508Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -268,7 +268,7 @@
       "staged_for_review": 1
     },
     "zseven-w-openpencil-learnings.md": {
-      "processed_at": "2026-11-18T01:19:00.233Z",
+      "processed_at": "2026-11-18T02:59:41.477Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1918,8 +1918,8 @@
       "staged_for_review": 1
     },
     "hf-apple-lensvlm-9b-learnings.md": {
-      "processed_at": "2026-11-13T15:30:24.171Z",
-      "promoted_canonical": 1,
+      "processed_at": "2026-11-18T02:59:41.051Z",
+      "promoted_canonical": 0,
       "staged_for_review": 0
     },
     "crossplane-crossplane-learnings.md": {
@@ -3368,7 +3368,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 1773,
+  "total_dossiers_evaluated": 1776,
   "total_canonical_promoted": 333,
-  "total_staged_for_review": 1375
+  "total_staged_for_review": 1377
 }

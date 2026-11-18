@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-18T02:51:30.815Z",
-    "lastVerified": "2026-11-18T02:51:30.815Z",
+    "lastChecked": "2026-11-18T02:59:40.895Z",
+    "lastVerified": "2026-11-18T02:59:40.895Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -368,8 +368,8 @@
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-18T02:16:19.096Z",
-    "lastVerified": "2026-11-18T02:16:19.096Z",
+    "lastChecked": "2026-11-18T02:59:40.881Z",
+    "lastVerified": "2026-11-18T02:59:40.881Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-synalinks-synalinks-skills",
@@ -1339,8 +1339,8 @@
     "officialUrl": "https://github.com/sharkdp/fd",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-16T20:32:30.096Z",
-    "lastVerified": "2026-11-16T20:32:30.096Z",
+    "lastChecked": "2026-11-18T02:59:25.931Z",
+    "lastVerified": "2026-11-18T02:59:25.931Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-sharkdp-fd",
@@ -1408,8 +1408,8 @@
     "officialUrl": "https://github.com/cryfs/cryfs",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-17T19:53:37.706Z",
-    "lastVerified": "2026-11-17T19:53:37.706Z",
+    "lastChecked": "2026-11-18T02:59:35.942Z",
+    "lastVerified": "2026-11-18T02:59:35.942Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-cryfs-cryfs",
@@ -2095,12 +2095,12 @@
     "officialUrl": "https://huggingface.co/apple/LensVLM-9B",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-13T15:29:23.088Z",
-    "lastVerified": "2026-11-13T15:29:23.088Z",
+    "lastChecked": "2026-11-18T02:59:28.506Z",
+    "lastVerified": "2026-11-18T02:59:28.506Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-apple-lensvlm-9b",
-    "contentHash": "6f1d39f942c7d43c507bb7b95c4ed506b8a6125479852d1b7209e013ef78f9ee",
+    "contentHash": "5ed56bfefdda08cbe056556f65d89f0f9d05ac832968decc56de8ec727a20ddb",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -4415,9 +4415,9 @@
   "neural-maze-ava-whatsapp-agent-course": {
     "name": "ava-whatsapp-agent-course",
     "officialUrl": "https://github.com/neural-maze/ava-whatsapp-agent-course",
-    "lastChecked": "2026-11-17T03:08:03.145Z",
+    "lastChecked": "2026-11-18T02:59:38.359Z",
     "revisionIdentifier": "338fd687",
-    "lastVerified": "2026-11-17T03:08:03.145Z"
+    "lastVerified": "2026-11-18T02:59:38.359Z"
   },
   "chmln-sd": {
     "name": "sd",
@@ -6907,9 +6907,9 @@
   "hungps-flutter_pokedex": {
     "name": "flutter_pokedex",
     "officialUrl": "https://github.com/hungps/flutter_pokedex",
-    "lastChecked": "2026-11-14T19:20:35.176Z",
+    "lastChecked": "2026-11-18T02:59:30.967Z",
     "revisionIdentifier": "7e2b6d49",
-    "lastVerified": "2026-11-14T19:20:35.176Z"
+    "lastVerified": "2026-11-18T02:59:30.967Z"
   },
   "cycloidio-terracognita": {
     "name": "terracognita",
@@ -9856,12 +9856,12 @@
     "lastVerified": "2026-11-15T17:22:42.716Z"
   },
   "fabio-rovai-open-ontologies": {
-    "name": "fabio-rovai/open-ontologies",
+    "name": "open-ontologies",
     "officialUrl": "https://github.com/fabio-rovai/open-ontologies",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-17T04:05:44.018Z",
-    "lastVerified": "2026-11-17T04:05:44.018Z",
+    "lastChecked": "2026-11-18T02:59:33.370Z",
+    "lastVerified": "2026-11-18T02:59:33.370Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-fabio-rovai-open-ontologies",
@@ -9870,7 +9870,8 @@
     "recentFixesCount": 4,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "1ed99ac1"
   },
   "serpapi-google-search-results-nodejs": {
     "name": "google-search-results-nodejs",

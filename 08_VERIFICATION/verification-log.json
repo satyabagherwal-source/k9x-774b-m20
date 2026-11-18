@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261116-M1XS",
-    "timestamp": "2026-11-16T04:30:14.608Z",
-    "repository": "Folkbench/folkbench",
-    "learningId": "learn-github-folkbench-folkbench",
-    "contentHash": "120330440dcabef98f5238b386e4581ce12823fe3ec42635b89117e1f8d639d9",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261116-MA3F",
     "timestamp": "2026-11-16T04:30:25.179Z",
     "repository": "tailscale/tailscale",
@@ -7492,6 +7477,21 @@
     "contentHash": "e86717841c864daf12d2385ff22f41ebe445981ec34519dc8f3a88c452b63cbe",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-91LX",
+    "timestamp": "2026-11-18T02:59:29.253Z",
+    "repository": "apple/LensVLM-9B",
+    "learningId": "learn-huggingface-apple-lensvlm-9b",
+    "contentHash": "5ed56bfefdda08cbe056556f65d89f0f9d05ac832968decc56de8ec727a20ddb",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

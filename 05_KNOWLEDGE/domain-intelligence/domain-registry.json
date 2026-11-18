@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-18T02:51:32.374Z",
+  "last_updated": "2026-11-18T02:59:43.050Z",
   "total_records": 1745,
   "domains": {
     "A": {
@@ -7719,8 +7719,8 @@
       "title": "Research & Knowledge Intelligence: apple/LensVLM-9B Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-apple-lensvlm-9b-research-knowledge-intelligence-apple-lensvlm-9b-core-invari.md",
       "repository": "apple/LensVLM-9B",
-      "content_hash": "a544068c4ba8e9216a702284b80127a010d87cfed2c643489db4d5598bd6e45e",
-      "created_at": "2026-11-13T15:29:23.798Z"
+      "content_hash": "5ff0a203782d5fe7fdec10f813c4807366466890d632e17adb514a945f5d3165",
+      "created_at": "2026-11-18T02:59:29.494Z"
     },
     "domain_intelligence-content-information-intelligence-crossplane-crossplane-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-crossplane-crossplane-core-invariants",
@@ -7797,8 +7797,8 @@
       "title": "Research & Knowledge Intelligence: hf-apple-lensvlm-9b-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-apple-lensvlm-9b-learnings-research-knowledge-intelligence-hf-apple-lensvlm-9.md",
       "repository": "hf-apple-lensvlm-9b-learnings",
-      "content_hash": "eb40089e83cd8e69036fcf84e4b2a84c3f272a83824e7d18fc9ea3f347e69cb6",
-      "created_at": "2026-11-13T15:30:24.377Z"
+      "content_hash": "291ca0a32980189f7ce4dcc4942f065f1b8adc585aecba4d9dce05846f8e7206",
+      "created_at": "2026-11-18T02:59:41.276Z"
     },
     "domain_intelligence-content-information-intelligence-crossplane-crossplane-learnings-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-crossplane-crossplane-learnings-core-invariants",
@@ -8478,8 +8478,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "b013be5c0103390a5f321cf00435e50ba6b075b062fe37549c2cefb193b98920",
-      "created_at": "2026-11-18T01:19:00.706Z"
+      "content_hash": "016434d3fb80d898748befc8bd31706bd219b70454b04492600b9d047a0df739",
+      "created_at": "2026-11-18T02:59:42.146Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -26732,8 +26732,8 @@
       "title": "Human & Need Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-A-zulip-zulip-learnings-human-need-intelligence-zulip-zulip-learnings-core-invaria.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "932891e8e1ac5c29f5c5608f6f8ecfdbeb82651fac5c06b5d483ef04da02f3b3",
-      "created_at": "2026-11-18T00:27:33.403Z"
+      "content_hash": "c081f8765299d923d4fd6d1605f11db3df42e64e4b147e369e491dab95dabe51",
+      "created_at": "2026-11-18T02:59:43.050Z"
     },
     "domain_intelligence-technical-construction-intelligence-zama-ai-tfhe-rs-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-zama-ai-tfhe-rs-learnings-core-invariants",
