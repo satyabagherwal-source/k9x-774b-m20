@@ -11155,3 +11155,6 @@ Every entry in this ledger must capture:
 | `learn-github-zama-ai-tfhe-rs` | `https://github.com/zama-ai/tfhe-rs` | `fbc8b20d` | Multi-dimensional audit evidence | 2026-11-18T22:57:59.256Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `2a905004` | Multi-dimensional audit evidence | 2026-11-18T22:58:04.629Z |
 | `learn-huggingface-baidu-unlimited-ocr` | `https://huggingface.co/baidu/Unlimited-OCR` | `hf-baidu-u` | Multi-dimensional audit evidence | 2026-11-18T23:02:48.456Z |
+| `learn-huggingface-aleph-alpha-kolibri-1` | `https://huggingface.co/Aleph-Alpha/Kolibri-1` | `hf-aleph-a` | Multi-dimensional audit evidence | 2026-11-18T23:10:18.116Z |
+| `learn-github-meshery-meshery` | `https://github.com/meshery/meshery` | `208e516e` | Multi-dimensional audit evidence | 2026-11-18T23:10:28.166Z |
+| `learn-github-etcd-io-etcd` | `https://github.com/etcd-io/etcd` | `87101a35` | Multi-dimensional audit evidence | 2026-11-18T23:10:32.870Z |

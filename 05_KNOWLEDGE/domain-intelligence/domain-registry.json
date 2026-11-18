@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-18T23:02:52.626Z",
+  "last_updated": "2026-11-18T23:10:38.702Z",
   "total_records": 1917,
   "domains": {
     "A": {
@@ -8014,8 +8014,8 @@
       "title": "Technical Construction Intelligence: meshery/meshery Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-meshery-meshery-technical-construction-intelligence-meshery-meshery-core-invaria.md",
       "repository": "meshery/meshery",
-      "content_hash": "154e46100fb624a997f7c5f76c98b4a55fde59bf761e65eea68d2ff44bdb996a",
-      "created_at": "2026-11-18T07:39:04.205Z"
+      "content_hash": "230b76935bbb6d16d979547155d98f37d6e58ea81f3844c3a1bb9be55b3253d2",
+      "created_at": "2026-11-18T23:10:28.579Z"
     },
     "domain_intelligence-architecture-intelligence-aleo-labs-protocol-snarkos-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-aleo-labs-protocol-snarkos-core-invariants",
@@ -8092,8 +8092,8 @@
       "title": "Technical Construction Intelligence: meshery-meshery-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-meshery-meshery-learnings-technical-construction-intelligence-meshery-meshery-le.md",
       "repository": "meshery-meshery-learnings",
-      "content_hash": "ff85531698f69dd0d555b43b5ec572bb252edcd181a1fa5f9a4fcefe87806f12",
-      "created_at": "2026-11-18T07:39:48.793Z"
+      "content_hash": "bc5f0dd7d615ade71ab251cdda91e72106b16ff9db3c7c41a39ba7bb254fdc9b",
+      "created_at": "2026-11-18T23:10:37.083Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hemmingwayai-hemmingway-1-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hemmingwayai-hemmingway-1-core-invariants",
@@ -13598,8 +13598,8 @@
       "title": "Research & Knowledge Intelligence: Aleph-Alpha/Kolibri-1 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-aleph-alpha-kolibri-1-research-knowledge-intelligence-aleph-alpha-kolibri-1-c.md",
       "repository": "Aleph-Alpha/Kolibri-1",
-      "content_hash": "9fa938fc35c477f17fabbf2e4b1e912c0fe6ce53148aa3e725d07dd51545986f",
-      "created_at": "2026-11-14T05:46:26.754Z"
+      "content_hash": "f15c2e5ad9f6cabef8b1b94ca3ff5be61d027ab2feb3dd4c3cb80bc72cf188e8",
+      "created_at": "2026-11-18T23:10:18.310Z"
     },
     "domain_intelligence-architecture-intelligence-builderio-builder-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-builderio-builder-core-invariants",
@@ -13667,8 +13667,8 @@
       "title": "Research & Knowledge Intelligence: hf-aleph-alpha-kolibri-1-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-aleph-alpha-kolibri-1-learnings-research-knowledge-intelligence-hf-aleph-alph.md",
       "repository": "hf-aleph-alpha-kolibri-1-learnings",
-      "content_hash": "c1775df68f139561fa0abf74aff2a34d361f7661677c9693f1245bfbf811c62e",
-      "created_at": "2026-11-14T05:47:17.303Z"
+      "content_hash": "35e93c9e12b8e15ee2f648955778dbbcb9e772b8733e787d2be689e5eb539112",
+      "created_at": "2026-11-18T23:10:36.444Z"
     },
     "domain_intelligence-architecture-intelligence-builderio-builder-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-builderio-builder-learnings-core-invariants",
@@ -22551,8 +22551,8 @@
       "title": "Content & Information Intelligence: etcd-io/etcd Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-etcd-io-etcd-content-information-intelligence-etcd-io-etcd-core-invariants.md",
       "repository": "etcd-io/etcd",
-      "content_hash": "50f42800a10917a58af0c4fbf9f563e2fd2e28d62e7de73609abd8ed9155be17",
-      "created_at": "2026-11-17T07:28:21.244Z"
+      "content_hash": "afdb86035f450c5de0a43567d4111dffc9929e37612c77dcd1d3372aff0f18bc",
+      "created_at": "2026-11-18T23:10:33.254Z"
     },
     "DOM-D-CB5F7DEE": {
       "record_id": "DOM-D-CB5F7DEE",
@@ -22653,8 +22653,8 @@
       "title": "Content & Information Intelligence: etcd-io-etcd-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-etcd-io-etcd-learnings-content-information-intelligence-etcd-io-etcd-learnings-c.md",
       "repository": "etcd-io-etcd-learnings",
-      "content_hash": "36c01378c7b1a69fc8efa3f75f7fe77ff5fe0511ffe725a18634ceb7456125aa",
-      "created_at": "2026-11-17T07:28:25.806Z"
+      "content_hash": "62e91b85d02faea91360e7ac69d62387d01e224a100f9097d5cf3e6de8464b41",
+      "created_at": "2026-11-18T23:10:38.702Z"
     },
     "domain_intelligence-architecture-intelligence-metrolistgroup-metrolist-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-metrolistgroup-metrolist-core-invariants",

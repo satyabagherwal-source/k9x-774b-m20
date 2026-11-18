@@ -11122,3 +11122,6 @@
 | `CYCLE-20261118-2BPX` | `2026-11-18T22:57:59.253Z` | `zama-ai/tfhe-rs` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9293` | Yes (`7f4067d9...`) |
 | `CYCLE-20261118-2FV7` | `2026-11-18T22:58:04.627Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9294` | Yes (`88afe478...`) |
 | `CYCLE-20261118-8IV9` | `2026-11-18T23:02:48.453Z` | `baidu/Unlimited-OCR` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baidu-unlimited-ocr-learnings.md` | Yes (`033a860a...`) |
+| `CYCLE-20261118-I5TS` | `2026-11-18T23:10:18.112Z` | `Aleph-Alpha/Kolibri-1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-aleph-alpha-kolibri-1-learnings.md` | Yes (`4b821d4e...`) |
+| `CYCLE-20261118-IDKY` | `2026-11-18T23:10:28.162Z` | `meshery/meshery` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9295` | Yes (`46504042...`) |
+| `CYCLE-20261118-IH7M` | `2026-11-18T23:10:32.866Z` | `etcd-io/etcd` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9295` | Yes (`d6562afd...`) |

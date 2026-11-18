@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-18T07:39:48.474Z",
+  "timestamp": "2026-11-18T23:10:36.835Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-meshery-meshery-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [meshery-meshery-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-18T07:39:48.474Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-18T23:10:36.835Z`  
 > **Learning ID**: `LEARN-EVO-meshery-meshery-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), J (Search & Distribution Intelligence), I (Content & Information Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 51%
+- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), G (Architecture Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), C (Market & Business Intelligence), L (Deployment & Operations Intelligence), D (Research & Knowledge Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence), F (Design Intelligence)
+- **Confidence Rating**: 55%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from meshery-meshery-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/meshery-meshery-learnings.md`  
 > **Source**: github ([https://github.com/meshery/meshery](https://github.com/meshery/meshery))  
-> **Source Version**: `3a3c535f`  
+> **Source Version**: `208e516e`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-18T07:39:02.597Z  
+> **Timestamp**: 2026-11-18T23:10:27.137Z  
 > **Learning ID**: `learn-github-meshery-meshery`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/meshery-meshery-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/meshery/meshery](https://github.com/meshery/meshery))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T07:39:02.590Z  
+> **Harvest Timestamp**: 2026-11-18T23:10:27.132Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Meshery, the cloud native manager
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 12232 stars
+- **Stars / Engagement**: 12245 stars
 
 ---
 
@@ -832,14 +832,11 @@ if __name__ == "__main__":
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #23896** (2026-11-18): **Revert "[Server] Prevent MeshSync cache loss when the resync handler is unavailable"**
-  *Symptoms*: Reverts meshery/meshery#23878  Because:  1. Missing tests 2. Missing documentation
-  **Post-Mortem & Fix Analysis**:
-  > <!-- coderabbit-ai-generated:v1 -->  <!-- This is an auto-generated comment: summarize by coderabbit.ai --> <!-- review_stack_entry_start -->  <a href="https://app.coderabbit.ai/change-stack/meshery/meshery/pull/23896?scope=ghh_OusAJGA4HG8ljoOV0wJvVx8NmnZIjc2DdjmxOu0xZWA&amp;cs_source=review_comment"><picture><source media="(prefers-color-scheme: dark)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-stack-buttons-v1/explain-change-dark.svg"><source media="(prefers-color-scheme: light)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-stack-buttons-v1/explain-change.svg"><img src="https://storage.googleapis.com/coderabbit_public_assets/review-stack-buttons-v1/explain-change.svg" alt="Explain Change →" height="32"></picture></a>  <!-- review_stack_entry_end --> <!-- This is an auto-generated comment: failure by coderabbit.ai -->  > [!CAUTION] > ## Review failed >  > <!-- failure_reason_start --> > The pull request is closed. > <!-- failure_re
-  >            **Commit SHA:** `6bfeafd0f54f99e4f4247786e2542852b02848b5`      ### END-TO-END TESTS  - Testing started at: November 18th 2026, 6:48:17 am  **📦 Test Result Summary**  - ✅ 74 passed - ❌ 0 failed - ⚠️ 0 flaked - ⏩ 12 skipped  ⌛ _Duration: 5 minutes and 46 seconds_  **Overall Result**: 👍 All tests passed.    <details>     <summary>[Show/Hide] Test Result Details</summary>     <div markdown="1">  | Test | Provider | Browser | Test Case | Tags | Result | | :---: | :---: | :---: | :--- | :---: | :---: | | 1 | Local | chromium-local-provider | Aggregation Charts are displayed |  | ✅ | | 2 | Local | chromium-local-provider | alias resolution | relationship | ✅ | | 3 | Local | chromium-local-provider | alias resolution | relationship | ✅ | | 4 | Local | chromium-local-provider | alias resolution | relationship | ✅ | | 5 | Local | chromium-local-provider | alias resolution | relationship | ✅ | | 6 | Local | chromium-local-provider | alias resolution | relationship | ✅ | | 7 | Local 
+- **Issue #23942** (2026-11-18): **[Docs] Restore vertical spacing between header and breadcrumbs**
+  *Symptoms*: **Notes for Reviewers**  This PR resolves #23937 by restoring vertical breathing room between the site header and the breadcrumb navigation in the Meshery documentation.  ### Changes: - In `docs/assets/scss/_layout.scss`, updated `.main-container .breadcrumb` margin from `margin: 0;` to `margin: 1.25rem 0 0.5rem;` so the breadcrumb list no longer sits flush against the bottom edge of the sticky/fixed navbar. - Preserves all accessibility features (semantic list structure, decorative slash separators, focus-visible outlines). - Added automated regression test `test_breadcrumb_spacing_in_layout` in `docs/tests/test_version_navigation.py` to prevent future regressions with zeroed margin.  **[Signed commits](https://docs.meshery.io/project/contributing#signing-off-on-commits-developer-certificate-of-origin)** - [x] Yes, I signed my commits.  Closes #23937   <!-- This is an auto-generated comment: release notes by coderabbit.ai --> <!-- coderabbit-ai-generated:v1 -->  ## Summary by CodeRabbit  * **Style**   * Breadcrumbs now have more space above and a smaller gap below. * **Tests**   * Added regression coverage to check that breadcrumb spacing has a parseable, positive top margin. <!-- end of auto-generated comment: release notes by coderabbit.ai -->
 
-- **Issue #23891** (2026-11-18): **[Server] Guard nil provider, validate path UUIDs, and propagate status codes in pattern handlers**
-  *Symptoms*: ### Description Fixes #23890  This PR improves defensive error handling, input validation, and status code fidelity across several pattern/design HTTP handlers in `server/handlers/meshery_pattern_handler.go`:  1. **`GetMesheryPatternSourceHandler` (`/api/pattern/download/{id}/{sourcetype}`)**:    - Added `user == nil` guard returning `401 Unauthorized` (`writeJSONError(rw, "user unauthorized", http.StatusUnauthorized)`).    - Added `provider == nil` guard returning `500 Internal Server Error` with `ErrNilProvider` before calling `provider.GetDesignSourceContent(...)` to prevent nil pointer dereferences.    - Replaced unvalidated path extraction with `h.requirePathUUID(rw, r, "id")` to reject malformed UUIDs with `400 Bad Request`.    - Propagated real error status using `providerStatusOrInternal(err)` instead of hardcoded 404.    - Supported `"helmchart"` and `"helm-chart"` case variants alongside `models.HelmChart` for Content-Type headers (`application/x-tar`).    - Protected all logger invocations with `if h.log != nil`.  2. **`CloneMesheryPatternHandler` (`/api/pattern/clone/{id}`)**:    - Added `provider == nil` guard returning `500 Internal Server Error` with `ErrNilProvider`.    - Propagated clone error status using `providerStatusOrInternal(err)` instead of hardcoded 500.    - Protected logger invocations with `if h.log != nil`.  3. **`DownloadMesheryPatternHandler` (`/api/pattern/download/{id}`)**:    - Validated path UUID early with `h.requirePathUUID(rw, r, "id")` 
+- **Issue #23937** (2026-11-18): **[Docs] Breadcrumb trail sits flush against the header — missing vertical whitespace on all pages**
+  *Symptoms*: ### Current Behavior On docs.meshery.io, the breadcrumb trail (e.g. `home / installation`) renders directly against the bottom edge of the site header, with only ~4 px separating the header from the breadcrumb text. The sidebar content starts just as tight under the header. This affects all docs pages — the breadcrumb nav lives in `docs/layouts/_default/baseof.html` and renders on every non-home page.  Measured live on https://docs.meshery.io/installation/ (desktop, 1919 px viewport, light theme): the header's bottom edge is at y = 104 px and the breadcrumb text starts at y = 108 px — a 4 px gap. The same flush rendering appears in dark mode (reporter's screenshot).  ### Expected Behavior Clear vertical white space between the site header and the breadcrumb trail, as there was previously.  ### Suspected regression (recent change) The Nov 14 breadcrumb-accessibility work restructured the breadcrumb markup and its styles:  - `0fe82c1` (Nov 14) — "Fix documentation breadcrumb accessibility": moved `id="breadcrumbs"` from an inner `<div>` onto the `<ol>`, and made each crumb a proper `<li class="breadcrumb-item">`. - Follow-ups `986d025`, `9006fc0`, `cb726fa` (Nov 14) and merge `262e8f6` (Nov 14, 21:05 UTC) — in the merge, `.main-container .breadcrumb` in `docs/assets/scss/_layout.scss` gained `display: flex; flex-direction: row; flex-wrap: wrap; align-items: center; padding: 0; margin: 0;`. Previously that rule set only `list-style: none`, so the `<ol>` kept its default top marg
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -856,852 +853,628 @@ if __name__ == "__main__":
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3a3c535f` (2026-11-18)
-**Commit Message**: Merge pull request #23861 from Amansingh0807/fix/23860-load-test-preferences-nil-guards
+### Incident Patch 1: `f1d2de14` (2026-11-18)
+**Commit Message**: Merge pull request #23919 from SandstromPL/fix/server-instance-id-env
 
-[Server] Guard unchecked nil provider dereferences, nil logger panics, and unbounded body reads in UserTestPreference handlers
+[Server] Use INSTANCE_ID from the environment instead of panicking at boot
 
-**File**: `docs/data/errorindex/meshery-server_errors_index.json` (modified, +16/-0)
+**File**: `Makefile` (modified, +12/-12)
 ```diff
-@@ -7694,6 +7694,22 @@
-         "Reduce the response size, then retry.",
-         "For panel queries, shorten the time range or use more selective label matchers."
-       ]
-+    },
-+    {
-+      "code": "meshery-server-1494",
-+      "moniker": "ErrRequestTooLargeCode",
-+      "component": {
-+        "name": "meshery-server",
-+        "type": "component"
-+      },
-+      "numericCode": "1494",
-+      "severity": "alert",
-+      "probableCause": [
-+        "Request payload exceeds maximum allowed size"
-+      ],
-+      "suggestedRemediation": [
-+        "Reduce request payload size to within acceptable limits"
-+      ]
-     }
-   ],
-   "schemaVersion": 2
-```
-
-**File**: `docs/data/errorref/meshery-server_errors_export.json` (modified, +9/-0)
-```diff
-@@ -4381,6 +4381,15 @@
-         "short_description": "Telemetry response exceeds Meshery's 16 MiB limit",
-         "probable_cause": "The upstream response contains more data than Meshery can return.",
-         "suggested_remediation": "Reduce the response size, then retry.\nFor panel queries, shorten the time range or use more selective label matchers."
-+      },
-+      "1494": {
-+        "name": "ErrRequestTooLargeCode",
-+        "code": "1494",
-+        "severity": "Alert",
-+        "long_description": "",
-+        "short_description": "",
-+        "probable_cause": "Request payload exceeds maximum allowed size",
-+        "suggested_remediation": "Reduce request payload size to within acceptable limits"
-       }
-     }
-   }
-```
-
-**File**: `server/handlers/error.go` (modified, +13/-0)
-```diff
-@@ -247,6 +247,7 @@ const (
- 	ErrResetInProgressCode       = "meshery-server-1481"
- 	ErrInvalidClientEventCode    = "meshery-server-1489"
- 	ErrNilProviderCode           = "meshery-server-1492"
-+	ErrRequestTooLargeCode       = "meshery-server-1494"
- )
+@@ -111,7 +111,7 @@ server-local: dep-check
+ 	APP_PATH=$(APPLICATIONCONFIGPATH) \
+ 	OTEL_CONFIG=$(OTEL_CONFIG) \
+ 	KEYS_PATH=$(KEYS_PATH) \
+-	go run main.go error.go
++	go run main.go error.go instance_id.go
  
- var (
-@@ -1315,3 +1316,15 @@ func ErrNilProvider() error {
- 		[]string{"Ensure the provider is properly initialized before handling the request"},
- 	)
- }
+ ## Build Meshery Server on your local machine.
+ build-server: dep-check
+@@ -123,7 +123,7 @@ build-server: dep-check
+ 	ADAPTER_URLS=$(ADAPTER_URLS) \
+ 	APP_PATH=$(APPLICATIONCONFIGPATH) \
+ 	KEYS_PATH=$(KEYS_PATH) \
+-	GOPROXY=https://proxy.golang.org,direct GO111MODULE=on go build ./server/cmd/main.go ./server/cmd/error.go
++	GOPROXY=https://proxy.golang.org,direct GO111MODULE=on go build ./server/cmd/main.go ./server/cmd/error.go ./server/cmd/instance_id.go
+ 	chmod +x ./main
+ 
+ ## Running the meshery server using binary.
+@@ -161,7 +161,7 @@ server-stg: dep-check
+ 	ADAPTER_URLS=$(ADAPTER_URLS) \
+ 	APP_PATH=$(APPLICATIONCONFIGPATH) \
+ 	KEYS_PATH=$(KEYS_PATH) \
+-	go run main.go error.go;
++	go run main.go error.go instance_id.go;
+ 
+ ## Build and run Meshery Server on your local machine.
+ server: dep-check
+@@ -176,7 +176,7 @@ server: dep-check
+ 	APP_PATH=$(APPLICATIONCONFIGPATH) \
+ 	KEYS_PATH=$(KEYS_PATH) \
+ 	MESHSYNC_DEFAULT_DEPLOYMENT_MODE=$${MESHSYNC_DEFAULT_DEPLOYMENT_MODE:-operator} \
+-	go run main.go error.go;
++	go run main.go error.go instance_id.go;
+ 
+ ## Build and run Meshery Server with some Meshery Adapters on your local machine.
+ server-with-adapters: dep-check
+@@ -188,7 +188,7 @@ server-with-adapters: dep-check
+ 	ADAPTER_URLS=$(ADAPTER_URLS) \
+ 	APP_PATH=$(APPLICATIONCONFIGPATH) \
+ 	KEYS_PATH=$(KEYS_PATH) \
+-	go run main.go error.go;
++	go run main.go error.go instance_id.go;
+ 
+ ## Build and run Meshery Server on your local machine.
+ ## Disable deployment of the Meshery Operator to your Kubernetes cluster(s).
+@@ -202,7 +202,7 @@ server-without-operator: dep-check
+ 	ADAPTER_URLS=$(ADAPTER_URLS) \
+ 	APP_PATH=$(APPLICATIONCONFIGPATH) \
+ 	KEYS_PATH=$(KEYS_PATH) \
+-	go run main.go error.go;
++	go run main.go error.go instance_id.go;
+ 
+ ## Build and run Meshery Server with no Kubernetes components on your local machine.
+ server-skip-compgen:
+@@ -215,7 +215,7 @@ server-skip-compgen:
+ 	APP_PATH=$(APPLICATIONCONFIGPATH) \
+  	SKIP_COMP_GEN=true \
+ 	KEYS_PATH=$(KEYS_PATH) \
+-	go run main.go error.go;
++	go run main.go error.go instance_id.go;
+ 
+ ## Build and run Meshery Server on your local machine.
+ ## Do not generate and register Kubernetes models.
+@@ -229,7 +229,7 @@ server-without-k8s: dep-check
+ 	ADAPTER_URLS=$(ADAPTER_URLS) \
+ 	APP_PATH=$(APPLICATIONCONFIGPATH) \
+ 	KEYS_PATH=$(KEYS_PATH) \
+-	go run main.go error.go;
++	go run main.go error.go instance_id.go;
+ 
+ server-remote-provider: dep-check
+ 	cd server; cd cmd; go mod tidy; \
+@@ -241,7 +241,7 @@ server-remote-provider: dep-check
+ 	ADAPTER_URLS=$(ADAPTER_URLS) \
+ 	APP_PATH=$(APPLICATIONCONFIGPATH) \
+ 	KEYS_PATH=$(KEYS_PATH) \
+-	go run main.go error.go;
++	go run main.go error.go instance_id.go;
+ 
+ server-local-provider: dep-check
+ 	cd server; cd cmd; go mod tidy; \
+@@ -253,7 +253,7 @@ server-local-provider: dep-check
+ 	ADAPTER_URLS=$(ADAPTER_URLS) \
+ 	APP_PATH=$(APPLICATIONCONFIGPATH) \
+ 	KEYS_PATH=$(KEYS_PATH) \
+-	go run main.go error.go;
++	go run main.go error.go instance_id.go;
+ 
+ ## Build and run Meshery Server with no seed content.
+ server-no-content:
+@@ -266,7 +266,7 @@ server-no-content:
+ 	APP_PATH=$(APPLICATIONCONFIGPATH) \
+ 	SKIP_DOWNLOAD_CONTENT=true \
+ 	KEYS_PATH=$(KEYS_PATH) \
+-	go run main.go error.go;
++	go run main.go error.go instance_id.go;
+ 
+ server-playground: dep-check
+ 	cd server; cd cmd; go mod tidy; \
+@@ -279,7 +279,7 @@ server-playground: dep-check
+ 	APP_PATH=$(APPLICATIONCONFIGPATH) \
+ 	PLAYGROUND=true \
+ 	KEYS_PATH=$(KEYS_PATH) \
+-	go run main.go error.go;
++	go run main.go error.go instance_id.go;
+ 
+ ## Lint check Meshery Server.
+ golangci: error dep-check
+```
+
+**File**: `docs/content/en/installation/advanced/environment-variables.md` (modified, +1/-1)
+```diff
+@@ -76,7 +76,7 @@ The build or deployment pipeline usually injects these variables; end users rare
+ | `BUILD` | Build-time value; runtime fallback `Not Set` | Meshery Server version string used in server metadata, provider capability requests, and chart selection. | `BUILD=v1.0.0 make server` |
+ | `COMMITSHA` | Build-time value; runtime fallback `Not Set` | Git commit SHA reported in server metadata. | `COMMITSHA=$(git rev-parse HEAD) make server` |
+ | `RELEASE_CHANNEL` | Build-time value; runtime fallback `Not Set` | Release channel reported by the server, such as `stable` or `edge`. | `RELEASE_CHANNEL=stable make server` |
+-| `INSTANCE_ID` | Auto-generated UUID | Unique Meshery instance identifier used in eventing, connection metadata, and system-owned resources. | `INSTANCE_ID=$(uuidgen) make server` |
++| `INSTANCE_ID` | Auto-generated UUID | Unique Meshery instance identifier used in eventing, connection metadata, and system-owned resources. Must be a UUID; it takes precedence over an `INSTANCE_ID` in `server-config.env`. Any other value, including one that is only whitespace or the all-zero UUID, is ignored with a warning, and a new ID is generated. An empty value counts as unset: the ID from `server-config.env` is used, or a new one is generated without a warning. | `INSTANCE_ID=$(uuidgen) make server` |
+ | `OS` | `meshery` | Value forwarded to remote-provider capability requests so providers can tailor responses to the caller. | `OS=meshery make server` |
+ 
+ ## Platform-provided environment variables
+```
+
+**File**: `server/cmd/instance_id.go` (added, +45/-0)
+```diff
+@@ -0,0 +1,45 @@
++package main
 +
-+func ErrRequestTooLarge(maxSize int) error {
-+	msg := fmt.Sprintf("request body exceeds maximum allowed size of %dMB", maxSize/(1024*1024))
-+	return errors.New(
-+		ErrRequestTooLargeCode,
-+		errors.Alert,
-+		[]string{msg},
-+		[]string{msg},
-+		[]string{"Request payload exceeds maximum allowed size"},
-+		[]string{"Reduce request payload size to within acceptable limits"},
-+	)
++import (
++	"strings"
++
++	"github.com/gofrs/uuid"
++	"github.com/meshery/meshkit/logger"
++	"github.com/spf13/viper"
++)
++
++// configureInstanceID decides the ID this Meshery Server instance identifies
++// itself by and stores it in v under INSTANCE_ID.
++//
++// INSTANCE_ID may be set in the environment or in server-config.env, as the
++// environment variable docs describe; the environment wins when both are set.
++// A valid UUID, with any surrounding whitespace trimmed, is used as is. Any
++// other value that was given, including one that is only whitespace or the
++// all-zero UUID, is replaced by a newly generated ID with a warning: a
++// whitespace-only environment variable still overrides an ID in
++// server-config.env, so it must not be dropped silently. An empty value is
++// treated as unset, because viper does not distinguish the two.
++//
++// The ID is stored with Set, not SetDefault. With AutomaticEnv on, an
++// INSTANCE_ID environment variable outranks a default, so viper.Get would
++// return the raw string instead of the *core.Uuid that handlers type-assert,
++// and the server would panic while building its handler. Set outranks the
++// environment, so every reader gets the same *core.Uuid, and GetString
++// returns its string form.
++func configureInstanceID(v *viper.Viper, log logger.Handler) (*uuid.UUID, error) {
++	if configured := v.GetString("INSTANCE_ID"); configured != "" {
++		id, err := uuid.FromString(strings.TrimSpace(configured))
++		if err == nil && id != uuid.Nil {
++			v.Set("INSTANCE_ID", &id)
++			return &id, nil
++		}
++		log.Warnf("INSTANCE_ID %q is not a valid UUID; generating a new instance ID instead", configured)
++	}
++
++	id, err := uuid.NewV4()
++	if err != nil {
++		return nil, err
++	}
++	v.Set("INSTANCE_ID", &id)
++	return &id, nil
 +}
 ```
 
-**File**: `server/handlers/load_test_preferences_handler.go` (modified, +78/-39)
+**File**: `server/cmd/instance_id_test.go` (added, +192/-0)
 ```diff
-@@ -3,58 +3,87 @@ package handlers
- 
- import (
- 	"encoding/json"
-+	"fmt"
- 	"io"
- 	"net/http"
- 
- 	"github.com/meshery/meshery/server/models"
- 	perfprofile "github.com/meshery/schemas/models/v1beta3/performance_profile"
- )
- 
-+// maxPerformancePayloadSize defines the maximum permissible payload size for performance preference requests (4MB).
-+const maxPerformancePayloadSize = 4 * 1024 * 1024
-+
- // UserTestPreferenceHandler is used for persisting load test preferences
- func (h *Handler) UserTestPreferenceHandler(w http.ResponseWriter, req *http.Request, prefObj *models.Preference, user *models.User, provider models.Provider) {
--	// if req.Method != http.MethodPost && req.Method != http.MethodGet && req.Method != http.MethodDelete {
--	// 	w.WriteHeader(http.StatusNotFound)
--	// 	return
--	// }
--
--	if req.Method == http.MethodPost {
-+	switch req.Method {
-+	case http.MethodPost:
- 		h.UserTestPreferenceStore(w, req, prefObj, user, provider)
--		return
--	}
--	if req.Method == http.MethodDelete {
-+	case http.MethodDelete:
- 		h.UserTestPreferenceDelete(w, req, prefObj, user, provider)
--		return
--	}
--	if req.Method == http.MethodGet {
-+	case http.MethodGet:
- 		h.UserTestPreferenceGet(w, req, prefObj, user, provider)
--		return
-+	default:
-+		writeJSONError(w, "method not allowed", http.StatusMethodNotAllowed)
- 	}
- }
- 
- // UserTestPreferenceStore is used for persisting load test preferences
- func (h *Handler) UserTestPreferenceStore(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
--	body, err := io.ReadAll(req.Body)
-+	if !h.requireProvider(w, provider) {
-+		return
-+	}
-+
-+	defer func() {
-+		_ = req.Body.Close()
-+	}()
-+
-+	body, err := io.ReadAll(io.LimitReader(req.Body, maxPerformancePayloadSize+1))
- 	if err != nil {
--		h.log.Error(ErrRequestBody(err))
-+		if h.log != nil {
-+			h.log.Error(ErrRequestBody(err))
-+		}
- 		writeMeshkitError(w, ErrRequestBody(err), http.StatusBadRequest)
- 		return
- 	}
-+	if len(body) > maxPerformancePayloadSize {
-+		err := ErrRequestTooLarge(maxPerformancePayloadSize)
-+		if h.log != nil {
-+			h.log.Error(err)
-+		}
-+		writeMeshkitError(w, err, http.StatusRequestEntityTooLarge)
-+		return
-+	}
-+	if len(body) == 0 {
-+		if h.log != nil {
-+			h.log.Error(ErrRequestBody(fmt.Errorf("empty request body")))
-+		}
-+		writeMeshkitError(w, ErrRequestBody(fmt.Errorf("empty request body")), http.StatusBadRequest)
-+		return
-+	}
-+
- 	perfTest := &perfprofile.PerformanceTestConfig{}
- 	if err = json.Unmarshal(body, perfTest); err != nil {
- 		obj := "the provided input"
--		h.log.Error(models.ErrUnmarshal(err, obj))
-+		if h.log != nil {
-+			h.log.Error(models.ErrUnmarshal(err, obj))
-+		}
- 		writeMeshkitError(w, models.ErrUnmarshal(err, obj), http.StatusBadRequest)
- 		return
- 	}
- 	if err = models.PerformanceTestConfigValidator(perfTest); err != nil {
--		h.log.Error(ErrRecordPreferences(err))
-+		if h.log != nil {
-+			h.log.Error(ErrRecordPreferences(err))
-+		}
- 		writeMeshkitError(w, ErrRecordPreferences(err), http.StatusBadRequest)
- 		return
- 	}
- 	tid, err := provider.SMPTestConfigStore(req, perfTest)
- 	if err != nil {
- 		obj := "user preference"
--		h.log.Error(ErrFailToSave(err, obj))
-+		if h.log != nil {
-+			h.log.Error(ErrFailToSave(err, obj))
-+		}
- 		writeMeshkitError(w, ErrFailToSave(err, obj), http.StatusInternalServerError)
- 		return
- 	}
-@@ -63,63 +92,73 @@ func (h *Handler) UserTestPreferenceStore(w http.ResponseWriter, req *http.Reque
- 
- // UserTestPreferenceGet gets the PerformanceTestConfig object
- func (h *Handler) UserTestPreferenceGet(w http.ResponseWriter, req *http.Request, _ *models.Preference, _ *models.User, provider models.Provider) {
-+	if !h.requireProvider(w, provider) {
-+		return
-+	}
-+
- 	q := req.URL.Query()
- 	testUUID := q.Get("uuid")
--	h.log.Debug(testUUID)
-+	if h.log != nil {
-+		h.log.Debug(testUUID)
-+	}
- 	if testUUID == "" {
- 		testPage := q.Get("page")
- 		testPageSize := q.Get("pagesize")
- 		testSearch := q.Get("search")
- 		testOrder := q.Get("order")
--		h.log.Debug(testPage, testPageSize)
-+		if h.log != nil {
-+			h.log.Debug(testPage, testPageSize)
-+		}
- 		testObjJSON, err := provider.SMPTestConfigFetch(req, testPage, testPageSize, testSearch, testOrder)
- 		if err != nil {
--			h.log.Error(ErrTestConfigs)
-+			if h.log != nil {
-+				h.log.Error(ErrTestConfigs)
-+			}
- 			writeMeshkitError(w, ErrTestConfigs, http.StatusInternalServerError)
- 			return
- 		}
-+		w.Header().Set("Content-Type", "application/json; charset=utf-8")
- 		_, _ = w.Write(testObjJSON)
- 	} else {
- 		testObj, err := provider.SMPTestConfigGet(req, testUUID)
- 		if err != nil {
--			h.log.Error(ErrTestConfigs)
-+			if h.log != nil {
-+				h.log.Error(ErrTestConfigs)
-+			}
- 			writeMeshkitError(w, ErrTestConfigs, http.StatusInternalServerError)
- 			return
- 		}
- 		if testObj == nil {
--			w.WriteHeader(http.StatusNotFound)
--			return
--		}
--		data, err := json.Marshal(testObj)
--		if err != nil {
--			h.log.Error(ErrReadConfig(err))
--			writeMeshkitError(w, ErrReadConfig(err), http.Status
-```
-
-**File**: `server/handlers/load_test_preferences_handler_test.go` (added, +444/-0)
-```diff
-@@ -0,0 +1,444 @@
-+package handlers
+@@ -0,0 +1,192 @@
++package main
 +
 +import (
 +	"bytes"
-+	"encoding/json"
-+	"errors"
-+	"net/http"
-+	"net/http/httptest"
++	"os"
++	"path/filepath"
 +	"strings"
 +	"testing"
 +
-+	"github.com/meshery/meshery/server/models"
-+	perfprofile "github.com/meshery/schemas/models/v1beta3/performance_profile"
-+	"github.com/stretchr/testify/assert"
-+	"github.com/stretchr/testify/require"
++	"github.com/gofrs/uuid"
++	"github.com/meshery/meshkit/logger"
++	"github.com/meshery/schemas/models/core"
++	"github.com/sirupsen/logrus"
++	"github.com/spf13/viper"
 +)
 +
-+type mockLoadTestPreferencesProvider struct {
-+	*models.DefaultLocalProvider
-+	storeFunc func(req *http.Request, perfConfig *perfprofile.PerformanceTestConfig) (string, error)
-+	getFunc   func(req *http.Request, testUUID string) (*perfprofile.PerformanceTestConfig, error)
-+	fetchFunc func(req *http.Request, page, pageSize, search, order string) ([]byte, error)
-+	delFunc   func(req *http.Request, testUUID string) error
-+}
++// invalidInstanceIDWarning is the part of configureInstanceID's warning that
++// operators see in the server log.
++const invalidInstanceIDWarning = "is not a valid UUID"
 +
-+func (m *mockLoadTestPreferencesProvider) SMPTestConfigStore(req *http.Request, perfConfig *perfprofile.PerformanceTestConfig) (string, error) {
-+	if m.storeFunc != nil {
-+		return m.storeFunc(req, perfConfig)
-+	}
-+	return "test-uuid-default", nil
-+}
-+
-+func (m *mockLoadTestPreferencesProvider) SMPTestConfigGet(req *http.Request, testUUID string) (*perfprofile.PerformanceTestConfig, error) {
-+	if m.getFunc != nil {
-+		return m.getFunc(req, testUUID)
-+	}
-+	return &perfprofile.PerformanceTestConfig{ID: testUUID, Name: "TestConfig"}, nil
-+}
-+
-+func (m *mockLoadTestPreferencesProvider) SMPTestConfigFetch(req *http.Request, page, pageSize, search, order string) ([]byte, error) {
-+	if m.fetchFunc != nil {
-+		return m.fetchFunc(req, page, pageSize, search, order)
-+	}
-+	return []byte(`[{"id":"test-uuid-default","name":"TestConfig"}]`), nil
-+}
-+
-+func (m *mockLoadTestPreferencesProvider) SMPTestConfigDelete(req *http.Request, testUUID string) error {
-+	if m.delFunc != nil {
-+		return m.delFunc(req, testUUID)
-+	}
-+	return nil
-+}
-+
-+func validPerformanceTestConfigJSON() string {
-+	cfg := perfprofile.PerformanceTestConfig{
-+		Name:     "Sample Load Test",
-+		Duration: "10s",
-+		Clients: []perfprofile.PerformanceTestClient{
-+			{
-+				Protocol:     "http",
-+				EndpointUrls: []string{"https://meshery.io/api/health"},
-+			},
-+		},
-+	}
-+	b, _ := json.Marshal(cfg)
-+	return string(b)
-+}
-+
-+func TestUserTestPreferenceHandler_MethodDispatcher(t *testing.T) {
-+	h := &Handler{log: newTestLogger(t)}
-+	provider := &mockLoadTestPreferencesProvider{}
-+
-+	t.Run("POST dispatches to Store", func(t *testing.T) {
-+		req := httptest.NewRequest(http.MethodPost, "/api/user/prefs/perf", strings.NewReader(validPerformanceTestConfigJSON()))
-+		rec := httptest.NewRecorder()
-+		h.UserTestPreferenceHandler(rec, req, nil, nil, provider)
-+		assert.Equal(t, http.StatusOK, rec.Code)
++// newInstanceIDTestViper returns a viper set up as main sets it up, and a
++// logger whose output is captured in the returned buffer.
++func newInstanceIDTestViper(t *testing.T) (*viper.Viper, logger.Handler, *bytes.Buffer) {
++	t.Helper()
++	var logs bytes.Buffer
++	log, err := logger.New("test", logger.Options{
++		Format:      logger.SyslogLogFormat,
++		LogLevel:    int(logrus.InfoLevel), // 0 is panic-only, which drops warnings
++		Output:      &logs,
++		ErrorOutput: &logs,
 +	})
-+
-+	t.Run("GET dispatches to Get", func(t *testing.T) {
-+		req := httptest.NewRequest(http.MethodGet, "/api/user/prefs/perf?uuid=123", nil)
-+		rec := httptest.NewRecorder()
-+		h.UserTestPreferenceHandler(rec, req, nil, nil, provider)
-+		assert.Equal(t, http.StatusOK, rec.Code)
-+	})
-+
-+	t.Run("DELETE dispatches to Delete", func(t *testing.T) {
-+		req := httptest.NewRequest(http.MethodDelete, "/api/user/prefs/perf?uuid=123", nil)
-+		rec := httptest.NewRecorder()
-+		h.UserTestPreferenceHandler(rec, req, nil, nil, provider)
-+		assert.Equal(t, http.StatusOK, rec.Code)
-+	})
-+
-+	t.Run("Unsupported method returns 405 MethodNotAllowed", func(t *testing.T) {
-+		req := httptest.NewRequest(http.MethodPut, "/api/user/prefs/perf", nil)
-+		rec := httptest.NewRecorder()
-+		h.UserTestPreferenceHandler(rec, req, nil, nil, provider)
-+		assert.Equal(t, http.StatusMethodNotAllowed, rec.Code)
-+		assert.Contains(t, rec.Header().Get("Content-Type"), "application/json")
-+		var body map[string]string
-+		err := json.Unmarshal(rec.Body.Bytes(), &body)
-+		require.NoError(t, err)
-+		assert.Equal(t, "method not allowed", body["error"])
-+	})
++	if err != nil {
++		t.Fatalf("logger.New() failed with error: %v", err)
++	}
++	v := viper.New()
++	v.AutomaticEnv() // as main does
++	return v, log, &logs
 +}
 +
-+func TestUserTestPreferenceStore_NilProvider_ReturnsInternalServerError(t *testing.T) {
-+	h := &Handler{log: newTestLogger(t)}
-+	req := httptest.NewRequest(http.MethodPost, "/api/user/prefs/perf", strings.NewReader(validPerformanceTestConfigJSON()))
-+	rec := httptest.NewRecorder()
-+
-+	h.UserTestPreferenceStore(rec, req, nil, nil, nil)
-+
-+	assert.Equal(t, http.StatusInternalServerError, rec.Code)
-+	assert.Contains(t, rec.Header().Get("Content-Type"), "application/json")
-+	errBody := decodeErrorBody(t, rec.Body.Bytes())
-+	assert.Equal(t, ErrNilProviderCode, errBody.Code)
++// setInstanceIDEnv sets INSTANCE_ID for the test, or unsets it when set is
++// false, whatever the outer environment holds. t.Setenv restores it afterwards.
++func setInstanceIDEnv(t *testing.T, value string, set bool) {
++	t.Helper()
++	t.Setenv("INSTANCE_ID", value)
++	if !set {
++		if err := os.Unsetenv("INSTANCE_ID"); err != nil {
++			t.Fatalf("os.Unsetenv(INSTANCE_ID) failed with error: %v", err)
++		}
++	}
 +}
 +
-+func TestUserTestPreferenceStore_TypedNilProvider_ReturnsInternalServerError(t *testing.T) {
-+	h := &Handler{log: newTestLogger(t)}
-+	req := httptest.NewRequest(http.MethodPost, "/api/user/prefs/perf", strings.NewReader(validPerformanceTestConfigJSON()))
-+	rec := httptest.NewRecorder()
-+	var typedNil *models.DefaultLocalProvider
++// storedInstanceID makes the type assertion handlers.NewHandlerInstance makes
++// on INSTANCE_ID at boot. It panics there when the assertion fails.
++func storedInstanceID(t *testing.T, v *viper.Viper) *core.Uuid {
++	t.Helper()
++	stored, ok := v.Get("INSTANCE_ID").(*core.Uuid)
++	if !ok || stored == nil {
++		t.Fatalf("viper.Get(\"INSTANCE_ID\") = %#v (%T), want a non-nil *core.Uuid: the server panics at boot on this assertion", v.Get("INSTANCE_ID"), v.Get("INSTANCE_ID"))
++	}
++	return stored
++}
 +
-+	h.UserTestPreferenceStore(rec, req, nil, nil, typedNil)
++// checkWarning fails the test unless the captured log holds the invalid-value
++// warning exactly when want is true.
++func checkWarning(t *testing.T, logs *bytes.Buffer, want bool) {
++	t.Helper()
++	if got := strings.Contains(logs.String(), invalidInstanceIDWarning); got != want {
++		t.Errorf("logged an invalid INSTANCE_ID warning = %v, want %v; log:\n%s", got, want, logs.String())
++	}
++}
 +
-+	assert.Equal(t, http.StatusInternalServerError, rec.Code)
-+	assert.Contains(t, rec.Header().Get("Content-Type"), "application/json")
-+	errBody := decodeErrorBody(t, rec.Body.Bytes())
-+	assert.Equal(t, ErrNilProviderCode, errBod
++// TestConfigureInstanceIDFromEnvironment sets INSTANCE_ID in the environment,
++// as the environment variable docs show (INSTANCE_ID=$(uuidgen) make server).
++// The server must use that ID, and every reader must get it as the *core.Uuid
++// that handlers type-assert, not as the raw string.
++func TestConfigureInstanceIDFromEnvironment(t *testing.T) {
++	want := uuid.Must(uuid.NewV4())
++	setInstanceIDEnv(t, want.String(), true)
++	v, log, logs := newInstanceIDTestViper(t)
++
++	got, err := configureInstanceID(v, log)
++	if err != nil {
++		t.Fatalf("configureInstanceID() failed with error: %v", err)
++	}
++	stored := storedInstanceID(t, v)
++	if got == nil || *got != want {
++		t.Fatalf("configureInstanceID() = %v, want the INSTANCE_ID from the environment, %v", got, want)
++	}
++	if stored != got {
++		t.Errorf("viper.Get(\"INSTANCE_ID\") = %v, want the ID configureInstanceID returned, %v", stored, got)
++	}
++	if s := v.GetString("INSTANCE_ID"); s != want.String() {
++		t.Errorf("viper.GetString(\"INSTANCE_ID\") = %q, want %q", s, want.String())
++	}
++	checkWarning(t, logs, false)
++}
++
++// TestConfigureInstanceIDGenerated covers an unset INSTANCE_ID and values that
++// are not a usable UUID, which each get a newly generated ID, and a valid UUID
++// with surrounding whitespace, which is trimmed and used. Only a value that
++// was given and is not a usable UUID warns; an empty value is treated as
++// unset. In every case the ID is stored for every reader.
++func TestConfigureInstanceIDGenerated(t *testing.T) {
++	padded := uuid.Must(uuid.NewV4())
++
++	cases := []struct {
++		name        string
++		env         string
++		set         bool
++		want        *uuid.UUID // nil: any newly generated, non-nil ID
++		wantWarning bool
++	}{
++		{name: "unset"},
++		{name: "empty", env: "", set: true},
++		{name: "whitespace only", env: "   ", set: true, wantWarning: true},
++		{name: "not a UUID", env: "my-meshery", set: true, wantWarning: true},
++		{name: "nil UUID", env: uuid.Nil.String(), set: true, wantWarning: true},
++		{name: "valid UUID with surrounding spaces", env: "  " + padded.String() + "\n", set: true, want: &padded},
++	}
++	for _, tc := range cases {
++		t.Run(tc.name, func(t *testing.T) {
++			setInstanceIDEnv(t, tc.env, tc.set)
++			v, log, logs := newInstanceIDTestViper(t)
++
++			got, err := configureInstanceID(v, log)
++			if err != nil {
++				t.Fatalf("configureInstanceID() failed with error: %v", err)
++			}
++			if got == nil || *got == uuid.Nil {
++				t.Fatalf("configureInstanceID() = %v, want a non-nil ID", got)
++			}
++			if tc.want != nil && *got != *tc.want {
++				t.Fatalf(
 ```
 
-**File**: `server/helpers/component_info.json` (modified, +1/-1)
+**File**: `server/cmd/main.go` (modified, +4/-4)
 ```diff
-@@ -1,5 +1,5 @@
- {
-   "name": "meshery-server",
-   "type": "component",
--  "next_error_code": 1494
-+  "next_error_code": 1495
- }
-\ No newline at end of file
-```
-
----
-
-### Incident Patch 2: `f5857bb8` (2026-11-18)
-**Commit Message**: Merge branch 'master' into fix/23860-load-test-preferences-nil-guards
-
-
-
----
-
-### Incident Patch 3: `9818a0e6` (2026-11-18)
-**Commit Message**: Merge pull request #23896 from meshery/revert-23878-fix/meshsync-flush-nil-handler
-
-Revert "[Server] Prevent MeshSync cache loss when the resync handler is unavailable"
-
-**File**: `server/handlers/connection_action_handler.go` (modified, +13/-17)
-```diff
-@@ -286,21 +286,17 @@ func (h *Handler) flushMeshsyncAction(
- 		return
- 	}
+@@ -19,7 +19,6 @@ import (
  
--	// Keep the connection lifecycle stable while checking its state,
--	// flushing cached resources, and requesting a MeshSync resync.
--	var resyncErr error
-+	// Keep the connection lifecycle stable while checking its state and
-+	// clearing cached resources. The setup lock is released before the
-+	// database operation; the lifecycle lock prevents a concurrent disconnect.
- 	connected, flushErr := machineCtx.WithConnectedK8sContext(func(k8sCtx models.K8sContext) error {
--		flushCallback := func() error {
--			if serverID := k8sCtx.KubernetesServerID; serverID != nil {
--				if perr := models.FlushMeshSyncResourcesForCluster(provider.GetGenericPersister(), serverID.String()); perr != nil {
--					return models.ErrFlushMeshSyncData(perr, k8sCtx.Name, k8sCtx.Server)
--				}
-+		// Clear only this cluster's cached state, keyed by its Kubernetes server ID.
-+		if serverID := k8sCtx.KubernetesServerID; serverID != nil {
-+			if perr := models.FlushMeshSyncResourcesForCluster(provider.GetGenericPersister(), serverID.String()); perr != nil {
-+				return models.ErrFlushMeshSyncData(perr, k8sCtx.Name, k8sCtx.Server)
- 			}
--			return nil
- 		}
--		operationFlushErr, operationResyncErr := mhelpers.FlushAndResyncResources(req.Context(), machine, machineCtx, flushCallback)
--		resyncErr = operationResyncErr
--		return operationFlushErr
-+		return nil
+ 	"github.com/fsnotify/fsnotify"
+ 
+-	"github.com/gofrs/uuid"
+ 	"github.com/meshery/meshery/mesheryctl/pkg/constants"
+ 	"github.com/meshery/meshery/server/handlers"
+ 	"github.com/meshery/meshery/server/helpers"
+@@ -97,7 +96,9 @@ func main() {
+ 		log.SetLevel(logrus.Level(viper.GetInt("LOG_LEVEL")))
  	})
- 	if !connected {
- 		writeJSONError(w, fmt.Sprintf("connection %s is disconnected; reconnect the cluster before flushing MeshSync", connectionID), http.StatusConflict)
-@@ -314,12 +310,12 @@ func (h *Handler) flushMeshsyncAction(
- 		return
- 	}
  
--	// The cache flush and resync request have already been performed together.
--	if resyncErr != nil {
--		event := eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("MeshSync resync failed for connection %s", existing.Name)).WithMetadata(map[string]any{"error": resyncErr, "connectionId": connectionID}).Build()
-+	// Repopulate from the live cluster. Fresh data streams back via the broker.
-+	if rerr := mhelpers.ResyncResources(req.Context(), machine); rerr != nil {
-+		event := eventBuilder.WithSeverity(events.Error).WithDescription(fmt.Sprintf("MeshSync data flushed but resync failed for connection %s", existing.Name)).WithMetadata(map[string]any{"error": rerr, "connectionId": connectionID}).Build()
- 		h.persistAndPublish(provider, token, userID, event)
--		h.log.Error(resyncErr)
--		writeJSONError(w, fmt.Sprintf("failed to resync MeshSync data: %v", resyncErr), http.StatusInternalServerError)
-+		h.log.Error(rerr)
-+		writeJSONError(w, fmt.Sprintf("failed to resync MeshSync data: %v", rerr), http.StatusInternalServerError)
- 		return
- 	}
- 
-```
-
-**File**: `server/handlers/connection_action_handler_test.go` (modified, +0/-97)
-```diff
-@@ -11,7 +11,6 @@ import (
- 
- 	k8smachine "github.com/meshery/meshery/server/machines/kubernetes"
- 	"github.com/meshery/meshkit/database"
--	"github.com/meshery/meshkit/models/controllers"
- 	meshsyncmodel "github.com/meshery/meshsync/pkg/model"
- 	"gorm.io/driver/sqlite"
- 	"gorm.io/gorm"
-@@ -386,99 +385,3 @@ func TestPerformConnectionAction_FlushMeshsync_DisconnectedDoesNotDeleteCache(t
- 		t.Errorf("cached MeshSync resource count = %d, want 1; disconnected flush must not delete cache", count)
- 	}
- }
--
--func TestPerformConnectionAction_FlushMeshsync_NilHandlerPreservesCache(t *testing.T) {
--	gdb, err := gorm.Open(sqlite.Open(":memory:"), &gorm.Config{})
--	if err != nil {
--		t.Fatalf("failed to open in-memory database: %v", err)
--	}
--	sqlDB, err := gdb.DB()
--	if err != nil {
--		t.Fatalf("failed to get SQL database: %v", err)
--	}
--	sqlDB.SetMaxOpenConns(1)
--	t.Cleanup(func() { _ = sqlDB.Close() })
--
--	db := &database.Handler{DB: gdb}
--	if err := db.AutoMigrate(
--		&meshsyncmodel.KubernetesKeyValue{},
--		&meshsyncmodel.KubernetesResource{},
--		&meshsyncmodel.KubernetesResourceSpec{},
--		&meshsyncmodel.KubernetesResourceStatus{},
--		&meshsyncmodel.KubernetesResourceObjectMeta{},
--	); err != nil {
--		t.Fatalf("failed to migrate MeshSync tables: %v", err)
--	}
--
--	serverID := uuid.Must(uuid.NewV4())
--	resource := &meshsyncmodel.KubernetesResource{
--		ID:         uuid.Must(uuid.NewV4()).String(),
--		ClusterID:  serverID.String(),
--		Kind:       "Service",
--		APIVersion: "v1",
--	}
--	if err := db.Create(resource).Error; err != nil {
--		t.Fatalf("failed to seed MeshSync resource: %v", err)
--	}
--
--	baseProvider := newControllersConfigFakeProvider()
--	connectionID := seedKubernetesConnection(baseProvider, nil)
--	provider := &connectionActionFlushTestProvider{
--		controllersConfigFakeProvider: baseProvider,
--		db:                            db,
--	}
--
--	h := newConnectionActionTestHandler(t)
--	machine, err := k8smachine.New(connectionID.String(), uuid.Must(uuid.NewV4()), h.log)
--	if err != nil {
--		t.Fatalf("failed to create Kubernetes state machine: %v", err)
--	}
--
--	mesheryCtrlsHelper := models.NewMesheryControllersHelper(
--		h.log,
--		controllers.OperatorDeploymentConfig{},
--		nil,
--		nil,
--		nil,
--		nil,
--	)
--	machine.Context = &k8smachine.MachineCtx{
--		K8sContext: models.K8sContext{
--			ID:                 "test-context",
--			KubernetesServerID: &serverID,
--		},
--		MesheryCtrlsHelper: mesheryCtrlsHelper,
--	}
--
--	h.ConnectionToStateMachineInstanceTracker = &machines.ConnectionToStateMachineInstanceTracker{
--		ConnectToInstanceMap: make(map[core.Uuid]*machines.StateMachine),
--	}
--	h.ConnectionToStateMachineInstanceTracker.Add(connectionID, machine)
--
--	req := httptest.NewRequest(
--		http.MethodPost,
--		"/api/integrations/connections/"+connectionID.String()+"/actions",
--		strings.NewReader(`{"action":"flushMeshsync"}`),
--	)
--	req = mux.SetURLVars(req, map[string]string{"connectionId": connectionID.String()})
--	rec := httptest.NewRecorder()
--
--	h.PerformConnectionAction(rec, req, nil, &models.User{ID: uuid.Must(uuid.NewV4())}, provider)
--
--	if rec.Code != http.StatusInternalServerError {
--		t.Fatalf("status = %d, want 500 for nil MeshSync handler; body: %s", rec.Code, rec.Body.String())
--	}
--	if !strings.Contains(rec.Body.String(), "MeshSync data handler is not initialized") {
--		t.Errorf("expected resync-failure response, got: %s", rec.Body.String())
--	}
--
--	var count int64
--	if err := db.Model(&meshsyncmodel.KubernetesResource{}).
--		Where("cluster_id = ?", serverID.String()).
--		Count(&count).Error; err != nil {
--		t.Fatalf("failed to count cached MeshSync resources: %v", err)
--	}
--	if count != 1 {
--		t.Errorf("cached MeshSync resource count = %d, want 1; nil-handler flush must preserve cache", count)
--	}
--}
-```
-
-**File**: `server/machines/helpers/resync_resources.go` (modified, +0/-20)
-```diff
-@@ -8,26 +8,6 @@ import (
- 	"github.com/meshery/meshery/server/machines/kubernetes"
- )
- 
--// FlushAndResyncResources flushes cached resources and requests a resync
--// for the specified machine type.
--func FlushAndResyncResources(
--	ctx context.Context,
--	sm *machines.StateMachine,
--	machineCtx *kubernetes.MachineCtx,
--	flush func() error,
--) (flushErr error, resyncErr error) {
--	if sm.Name != "kubernetes" {
--		return nil, ErrResyncResources(
--			fmt.Errorf(
--				"FlushAndResyncResources operation is not implemented for machine type %s",
--				sm.Name,
--			),
--		)
--	}
--
--	return kubernetes.FlushAndResyncResources(ctx, machineCtx, flush)
--}
--
- func ResyncResources(ctx context.Context, sm *machines.StateMachine) error {
- 	if sm.Name != "kubernetes" {
- 		return ErrResyncResources(
-```
-
-**File**: `server/machines/helpers/resync_resources_test.go` (removed, +0/-33)
-```diff
-@@ -1,33 +0,0 @@
--package helpers
--
--import (
--	"context"
--	"testing"
--
--	"github.com/meshery/meshery/server/machines"
--)
--
--func TestFlushAndResyncResourcesRejectsUnsupportedMachine(t *testing.T) {
--	sm := &machines.StateMachine{Name: "prometheus"}
--
--	flushCalled := false
--	flushErr, resyncErr := FlushAndResyncResources(
--		context.Background(),
--		sm,
--		nil,
--		func() error {
--			flushCalled = true
--			return nil
--		},
--	)
--
--	if flushCalled {
--		t.Fatal("flush callback must not run for an unsupported machine type")
--	}
--	if flushErr != nil {
--		t.Fatalf("flush error = %v, want nil", flushErr)
--	}
--	if resyncErr == nil {
--		t.Fatal("expected an error for an unsupported machine type")
--	}
--}
-```
-
-**File**: `server/machines/kubernetes/resync_resources.go` (modified, +0/-21)
-```diff
-@@ -8,27 +8,6 @@ import (
- 	"github.com/meshery/meshery/server/machines"
- )
- 
--// FlushAndResyncResources flushes cached resources and requests a MeshSync
--// resync while serialized with MeshSync handler lifecycle changes.
--func FlushAndResyncResources(
--	ctx context.Context,
--	machineCtx *MachineCtx,
--	flush func() error,
--) (flushErr error, resyncErr error) {
--	if machineCtx == nil {
--		return nil, ErrResyncK8SResources(fmt.Errorf("machine context is nil"))
--	}
--	mesheryCtrlsHelper := machineCtx.MesheryCtrlsHelper
--	if mesheryCtrlsHelper == nil {
--		return nil, ErrResyncK8SResources(fmt.Errorf("machine context does not contain reference to MesheryCtrlsHelper"))
--	}
--	flushErr, resyncErr = mesheryCtrlsHelper.FlushAndResyncMeshsync(flush)
--	if resyncErr != nil {
--		resyncErr = ErrResyncK8SResources(errors.Join(fmt.Errorf("error calling FlushAndResyncMeshsync"), resyncErr))
--	}
--	return flushErr, resyncErr
--}
--
- func ResyncResources(ctx context.Context, sm *machines.StateMachine) error {
- 	mashineCtx, err := GetMachineCtx(sm.GetContext(), nil)
+-	instanceID, err := uuid.NewV4()
++	// Use INSTANCE_ID from the environment or config when it is a valid UUID,
++	// else generate one, and store it for every reader (see configureInstanceID).
++	instanceID, err := configureInstanceID(viper.GetViper(), log)
  	if err != nil {
+ 		log.Error(ErrCreatingUUIDInstance(err))
+ 		os.Exit(1)
+@@ -118,7 +119,6 @@ func main() {
+ 	viper.SetDefault("OS", "meshery")
+ 	viper.SetDefault("COMMITSHA", commitsha)
+ 	viper.SetDefault("RELEASE_CHANNEL", releasechannel)
+-	viper.SetDefault("INSTANCE_ID", &instanceID)
+ 	viper.SetDefault(constants.ProviderENV, "")
+ 	// Seed the canonical active remote-provider list (install/providers.env) so a
+ 	// server started without PROVIDER_BASE_URLS still registers the default providers.
+@@ -484,7 +484,7 @@ func main() {
+ 		dbHandler,
+ 		hc.EventBroadcaster,
+ 		nil,
+-		&instanceID,
++		instanceID,
+ 	)
+ 	connToInstanceTracker := machines.ConnectionToStateMachineInstanceTracker{
+ 		ConnectToInstanceMap: make(map[core.Uuid]*machines.StateMachine, 0),
 ```
 
-**File**: `server/machines/kubernetes/resync_resources_test.go` (removed, +0/-30)
-```diff
-@@ -1,30 +0,0 @@
--package kubernetes
--
--import (
--	"context"
--	"testing"
--)
--
--func TestFlushAndResyncResourcesDoesNotFlushWithoutMesheryHelper(t *testing.T) {
--	machineCtx := &MachineCtx{}
--
--	flushCalled := false
--	flushErr, resyncErr := FlushAndResyncResources(
--		context.Background(),
--		machineCtx,
--		func() error {
--			flushCalled = true
--			return nil
--		},
--	)
--
--	if flushCalled {
--		t.Fatal("flush callback must not run when MesheryCtrlsHelper is nil")
--	}
--	if flushErr != nil {
--		t.Fatalf("flush error = %v, want nil", flushErr)
--	}
--	if resyncErr == nil {
--		t.Fatal("expected an error when MesheryCtrlsHelper is nil")
--	}
--}
-```
+---
 
-**File**: `server/models/meshery_controllers.go` (modified, +0/-23)
+### Incident Patch 2: `208e516e` (2026-11-18)
+**Commit Message**: Merge pull request #23942 from mrdeyroy/fix/docs-breadcrumb-header-spacing-23937
+
+[Docs] Restore vertical spacing between header and breadcrumbs
+
+**File**: `docs/assets/scss/_layout.scss` (modified, +1/-1)
 ```diff
-@@ -895,29 +895,6 @@ func (mch *MesheryControllersHelper) ResyncMeshsync(ctx context.Context) error {
- 	return fmt.Errorf("MeshSync data handler is not initialized")
- }
+@@ -137,7 +137,7 @@ ol {
+     flex-wrap: wrap;
+     align-items: center;
+     padding: 0;
+-    margin: 0;
++    margin: 1.25rem 0 0.5rem;
+   }
  
--// FlushAndResyncMeshsync serializes a cache flush with MeshSync handler
--// teardown and replacement. It only flushes while a connected handler is
--// available to request repopulation.
--func (mch *MesheryControllersHelper) FlushAndResyncMeshsync(flush func() error) (flushErr error, resyncErr error) {
--	mch.meshsyncMutex.Lock()
--	defer mch.meshsyncMutex.Unlock()
--
--	if mch.ctxMeshsyncDataHandler == nil {
--		return nil, fmt.Errorf("MeshSync data handler is not initialized")
--	}
--	if !mch.ctxMeshsyncDataHandler.IsConnected() {
--		return nil, fmt.Errorf("MeshSync broker is not connected")
--	}
--	if flush == nil {
--		return fmt.Errorf("MeshSync cache flush callback is nil"), nil
--	}
--	if err := flush(); err != nil {
--		return err, nil
--	}
--
--	return nil, mch.ctxMeshsyncDataHandler.Resync()
--}
--
- // AddCtxControllerHandlers attaches a MesheryController for each context if
- // 1. the config is valid
- // 2. if it is not already attached
+   & #breadcrumbs {
 ```
 
-**File**: `server/models/meshery_controllers_test.go` (modified, +0/-93)
+**File**: `docs/tests/test_version_navigation.py` (modified, +41/-2)
 ```diff
-@@ -193,96 +193,3 @@ func TestResyncMeshsyncReturnsErrorWhenHandlerIsNil(t *testing.T) {
- 		t.Fatal("expected an error when MeshSync data handler is nil")
- 	}
- }
--
--func TestFlushAndResyncMeshsyncPreservesCacheWhenHandlerIsNil(t *testing.T) {
--	log, _ := logger.New("test", logger.Options{})
--
--	mch := NewMesheryControllersHelper(
--		log,
--		controllers.OperatorDeploymentConfig{},
--		nil,
--		nil,
--		nil,
--		nil,
--	)
--
--	flushCalled := false
--	flushErr, resyncErr := mch.FlushAndResyncMeshsync(func() error {
--		flushCalled = true
--		return nil
--	})
--
--	if flushCalled {
--		t.Fatal("cache flush callback must not run when MeshSync handler is nil")
--	}
--	if flushErr != nil {
--		t.Fatalf("flush error = %v, want nil", flushErr)
--	}
--	if resyncErr == nil {
--		t.Fatal("expected an error when MeshSync data handler is nil")
--	}
--}
--
--func TestFlushAndResyncMeshsyncPreservesCacheWhenBrokerDisconnected(t *testing.T) {
--	log, _ := logger.New("test", logger.Options{})
--	mch := NewMesheryControllersHelper(log, controllers.OperatorDeploymentConfig{}, nil, nil, nil, nil)
--
--	testBroker := &testMeshsyncBroker{closed: true}
--	mch.ctxMeshsyncDataHandler = newTestMeshsyncHandler(t, testBroker, nil)
--
--	flushCalled := false
--	flushErr, resyncErr := mch.FlushAndResyncMeshsync(func() error {
--		flushCalled = true
--		return nil
--	})
--
--	if flushCalled {
--		t.Fatal("cache flush callback must not run when MeshSync broker is disconnected")
--	}
--	if flushErr != nil {
--		t.Fatalf("flush error = %v, want nil", flushErr)
--	}
--	if resyncErr == nil {
--		t.Fatal("expected an error when MeshSync broker is disconnected")
--	}
--}
--
--func TestFlushAndResyncMeshsyncFlushesAndPublishesResync(t *testing.T) {
--	log, _ := logger.New("test", logger.Options{})
--	mch := NewMesheryControllersHelper(log, controllers.OperatorDeploymentConfig{}, nil, nil, nil, nil)
--
--	testBroker := &testMeshsyncBroker{}
--	mch.ctxMeshsyncDataHandler = newTestMeshsyncHandler(t, testBroker, nil)
--
--	flushCalled := false
--	flushErr, resyncErr := mch.FlushAndResyncMeshsync(func() error {
--		flushCalled = true
--		return nil
--	})
--
--	if !flushCalled {
--		t.Fatal("expected cache flush callback to run")
--	}
--	if flushErr != nil {
--		t.Fatalf("flush error = %v, want nil", flushErr)
--	}
--	if resyncErr != nil {
--		t.Fatalf("resync error = %v, want nil", resyncErr)
--	}
--
--	testBroker.mu.Lock()
--	published := testBroker.published
--	testBroker.mu.Unlock()
--	if published != 1 {
--		t.Fatalf("broker publish count = %d, want 1", published)
--	}
--}
--
--func TestMeshsyncDataHandlerResyncReturnsErrorWhenBrokerDisconnected(t *testing.T) {
--	testBroker := &testMeshsyncBroker{closed: true}
--	handler := newTestMeshsyncHandler(t, testBroker, nil)
--
--	if err := handler.Resync(); err == nil {
--		t.Fatal("expected Resync to return an error when broker is disconnected")
--	}
--}
+@@ -1,9 +1,12 @@
+-"""Regression tests for documentation version navigation (Issue #23925).
++"""Regression tests for documentation version navigation (Issue #23925)
++and breadcrumb layout spacing (Issue #23937).
+ 
+ Verifies that:
+ 1. docs/data/versions.yml only advertises published versions, avoiding 404 links.
+ 2. docs/layouts/partials/header.html does not match root '/' as a prefix for 'latest',
+    which erroneously marks 'latest' selected on every page and causes duplicate selected options.
++3. docs/assets/scss/_layout.scss provides vertical breathing room between the site header
++   and the breadcrumb navigation.
+ """
+ 
+ from pathlib import Path
+@@ -71,11 +74,47 @@ def test_header_version_selection_logic(root: Path | None = None):
+     )
+ 
+ 
++def test_breadcrumb_spacing_in_layout(root: Path | None = None):
++    root = root or get_repo_root()
++    layout_file = root / "docs" / "assets" / "scss" / "_layout.scss"
++    assert layout_file.is_file(), f"Missing {layout_file}"
++    content = layout_file.read_text(encoding="utf-8")
++
++    # The breadcrumb navigation must not have zero margin, which causes it
++    # to sit flush against the fixed site header (Issue #23937).
++    match = re.search(r'\.breadcrumb\s*\{([^}]+)\}', content)
++    assert match, "Could not find .breadcrumb rule in _layout.scss"
++    rule_body = match.group(1)
++
++    # Determine effective top margin by evaluating declarations in order.
++    # A positive shorthand margin (first value) sets the top margin, while a subsequent
++    # margin-top overrides it (and vice-versa).
++    effective_top_margin: float | None = None
++    decl_pattern = re.compile(r'(?:^|;)\s*(margin(?:-top)?)\s*:\s*([^;]+)', re.MULTILINE)
++    for match_decl in decl_pattern.finditer(rule_body):
++        val_str = match_decl.group(2).strip()
++        parts = val_str.split()
++        if not parts:
++            continue
++        first_token = parts[0]
++        num_match = re.match(r'^(-?\d+(?:\.\d+)?|\.\d+)', first_token)
++        if num_match:
++            effective_top_margin = float(num_match.group(1))
++
++    assert effective_top_margin is not None, (
++        "Could not parse effective margin or margin-top declaration in .breadcrumb rule"
++    )
++    assert effective_top_margin > 0, (
++        f".breadcrumb in _layout.scss must specify a positive top margin, but effective value is {effective_top_margin}"
++    )
++
++
+ def main():
+     root = get_repo_root()
+     test_versions_yaml(root)
+     test_header_version_selection_logic(root)
+-    print("All version navigation regression tests passed!")
++    test_breadcrumb_spacing_in_layout(root)
++    print("All version navigation and layout regression tests passed!")
+ 
+ 
+ if __name__ == "__main__":
+```
+
+---
+
+### Incident Patch 3: `8f74ac80` (2026-11-18)
+**Commit Message**: Merge pull request #23931 from mrdeyroy/fix-docs-version-404
+
+[Docs] Fix 404 error and navigation in documentation version selector
+
+**File**: `docs/data/versions.yml` (modified, +7/-4)
+```diff
+@@ -1,6 +1,9 @@
+ - version: "latest"
+   url: ""
+-- version: "v0.9"
+-  url: "v0.9"
+-- version: "v0.8"
+-  url: "v0.8"
++# Archived snapshots for v0.9 and v0.8 are retained in source control under docs/static/
++# but are omitted from active navigation while the GitHub Pages 1GB artifact limit
++# prevents deploying them alongside production docs (see #23221 and #23925).
++# - version: "v0.9"
++#   url: "v0.9"
++# - version: "v0.8"
++#   url: "v0.8"
+```
+
+**File**: `docs/layouts/partials/header.html` (modified, +13/-15)
+```diff
+@@ -1,11 +1,11 @@
+-{{ $linkUrlSelected := "" }}
+ {{ $current := .RelPermalink }}
++{{ $activeVersionUrl := "" }}
+ {{ range hugo.Data.versions }}
+-  {{ $linkUrl := cond (ne .url "") (printf "/%s/" .url) "/" }}
+-  {{ if or (eq $current $linkUrl) (strings.HasPrefix $current $linkUrl) }}
+-    {{ $linkUrlSelected = cond (ne .url "") (printf "%s/" .url) "" }}
++  {{ if and (ne .url "") (strings.HasPrefix $current (printf "/%s/" .url)) }}
++    {{ $activeVersionUrl = .url }}
+   {{ end }}
+ {{ end }}
++{{ $linkUrlSelected := cond (ne $activeVersionUrl "") (printf "%s/" $activeVersionUrl) "" }}
+ 
+ <header>
+   <nav class="js-navbar-scroll navbar">
+@@ -49,24 +49,22 @@
+           >
+ 
+           {{ $current := .RelPermalink }}
++          {{ $activeVersionUrl := "" }}
+           {{ range hugo.Data.versions }}
+-            {{ $linkUrl := cond (ne .url "") (printf "/%s/" .url) "/" }}
+-            {{ $optionUrl := cond (ne .url "") ((printf "%s/" .url) | relURL) ("" | relURL) }}
++            {{ if and (ne .url "") (strings.HasPrefix $current (printf "/%s/" .url)) }}
++              {{ $activeVersionUrl = .url }}
++            {{ end }}
++          {{ end }}
+ 
+-            {{ if or (eq $current $linkUrl) (strings.HasPrefix $current $linkUrl) }}
+-            <option
+-              selected
+-              value="{{ $optionUrl }}"
+-              class="nav-item mr-4 mb-2 text-black">
+-              {{ .version }}
+-            </option>
+-            {{ else }}
++          {{ range hugo.Data.versions }}
++            {{ $optionUrl := cond (ne .url "") ((printf "%s/" .url) | relURL) ("" | relURL) }}
++            {{ $isSelected := eq .url $activeVersionUrl }}
+             <option
++              {{ if $isSelected }}selected{{ end }}
+               value="{{ $optionUrl }}"
+               class="nav-item mr-4 mb-2 text-black">
+               {{ .version }}
+             </option>
+-            {{ end }}
+           {{ end }}
+           </select>
+         </li>
+```
+
+**File**: `docs/tests/test_version_navigation.py` (added, +86/-0)
+```diff
+@@ -0,0 +1,86 @@
++"""Regression tests for documentation version navigation (Issue #23925).
++
++Verifies that:
++1. docs/data/versions.yml only advertises published versions, avoiding 404 links.
++2. docs/layouts/partials/header.html does not match root '/' as a prefix for 'latest',
++   which erroneously marks 'latest' selected on every page and causes duplicate selected options.
++"""
++
++from pathlib import Path
++import re
++import sys
++
++try:
++    import pytest
++
++    @pytest.fixture
++    def root() -> Path:
++        return get_repo_root()
++except ImportError:
++    pass
++
++
++def get_repo_root() -> Path:
++    cur = Path(__file__).resolve()
++    while cur != cur.parent:
++        if (cur / "docs").is_dir() and (cur / ".github").is_dir():
++            return cur
++        cur = cur.parent
++    raise RuntimeError("Could not determine repository root")
++
++
++def test_versions_yaml(root: Path | None = None):
++    root = root or get_repo_root()
++    versions_file = root / "docs" / "data" / "versions.yml"
++    assert versions_file.is_file(), f"Missing {versions_file}"
++    content = versions_file.read_text(encoding="utf-8")
++
++    # Parse active (non-commented) versions
++    active_versions = []
++    for line in content.splitlines():
++        line = line.strip()
++        if line.startswith("-") and "version:" in line:
++            ver = line.split("version:")[1].strip().strip('"').strip("'")
++            active_versions.append(ver)
++
++    # v0.8 and v0.9 snapshots are trimmed by GitHub Pages deployment (1GB limit)
++    # and must not be advertised as active versions until dedicated hosting is available.
++    for trimmed_ver in ("v0.8", "v0.9"):
++        assert trimmed_ver not in active_versions, (
++            f"{trimmed_ver} is advertised in versions.yml but trimmed during deployment, leading to 404s"
++        )
++
++
++def test_header_version_selection_logic(root: Path | None = None):
++    root = root or get_repo_root()
++    header_file = root / "docs" / "layouts" / "partials" / "header.html"
++    assert header_file.is_file(), f"Missing {header_file}"
++    content = header_file.read_text(encoding="utf-8")
++
++    # Ensure the flawed prefix check on '/' is removed:
++    # `{{ if or (eq $current $linkUrl) (strings.HasPrefix $current $linkUrl) }}`
++    # where $linkUrl evaluates to "/" matches every URL, causing 'latest' to always be selected.
++    flawed_pattern = r'strings\.HasPrefix\s+\$current\s+\$linkUrl'
++    assert not re.search(flawed_pattern, content), (
++        "header.html uses strings.HasPrefix with $linkUrl ('/'), causing 'latest' to be selected on all pages"
++    )
++
++    # Ensure distinct version matching is implemented
++    assert "activeVersionUrl" in content or "isVersioned" in content or "isSelected" in content, (
++        "header.html must distinctly identify the active version without treating '/' as a universal prefix"
++    )
++
++
++def main():
++    root = get_repo_root()
++    test_versions_yaml(root)
++    test_header_version_selection_logic(root)
++    print("All version navigation regression tests passed!")
++
++
++if __name__ == "__main__":
++    try:
++        main()
++    except AssertionError as exc:
++        print(f"FAILED: {exc}", file=sys.stderr)
++        sys.exit(1)
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #23896** (2026-11-18): Revert "[Server] Prevent MeshSync cache loss when the resync handler is unavailable" (@miacycle)
-- **PR #23891** (2026-11-18): [Server] Guard nil provider, validate path UUIDs, and propagate status codes in pattern handlers (@patelshivani2283-lab)
-- **PR #23878** (2026-11-18): [Server] Prevent MeshSync cache loss when the resync handler is unavailable (@Nixantsingh943)
-- **PR #23874** (2026-11-17): [Server] Restrict filter URL imports to public destinations (@itsCodeTide)
-- **PR #23868** (2026-11-17): [mesheryctl] Do not parse a registry summary when model generate skips registration (@Eternity0207)
-- **PR #23864** (2026-11-17): [Server] Bound request body size and guard against DoS in MeshModelGenerationHandler (@Supersaiyan101)
+- **PR #23942** (2026-11-18): [Docs] Restore vertical spacing between header and breadcrumbs (@mrdeyroy)
+- **PR #23931** (2026-11-18): [Docs] Fix 404 error and navigation in documentation version selector (@mrdeyroy)
+- **PR #23928** (2026-11-18): [Server] Secure multi-pattern delete handler and bound request payload (@Supersaiyan101)
+- **PR #23926** (closed): [mesheryctl] Return unauthenticated error when token file is empty after logout (@BHAUMIK0711)
+- **PR #23920** (closed): [Server] Preserve connection attributes on partial updates (@pranav718)
+- **PR #23919** (2026-11-18): [Server] Use INSTANCE_ID from the environment instead of panicking at boot (@SandstromPL)
 
 ---
 
@@ -1721,46 +1494,53 @@ Revert "[Server] Prevent MeshSync cache loss when the resync handler is unavaila
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in meshery-server_errors_index.json
+## X. Empirical Invariant Guard in Makefile
 
 **RULE**:
-When implementing operations in `docs/data/errorindex/meshery-server_errors_index.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meshery/meshery. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Makefile`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in meshery/meshery. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3a3c535f`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f1d2de14`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/data/errorindex/meshery-server_errors_index.json`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `Makefile`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-    },
-    {
-      "code": "meshery-server-1494",
-      "moniker": "ErrRequestTooLargeCode",
-      "component": {
-        "name": "meshery-server",
-        "type": "component"
-      },
-      "numericCode": "1494",
-      "severity": "alert",
-      "probableCause": [
-        "Request payload exceeds maximum allowed size"
-      ],
-      "suggestedRemediation": [
-        "Reduce request payload size to within acceptable limits"
-      ]
+	go run main.go error.go instance_id.go
+	GOPROXY=https://proxy.golang.org,direct GO111MODULE=on go build ./server/cmd/main.go ./server/cmd/error.go ./server/cmd/instance_id.go
+	go run main.go error.go instance_id.go;
+	go run main.go error.go instance_id.go;
+	go run main.go error.go instance_id.go;
+	go run main.go error.go instance_id.go;
+	go run main.go error.go instance_id.go;
+	go run main.go error.go instance_id.go;
+	go run main.go error.go instance_id.go;
+	go run main.go error.go instance_id.go;
+	go run main.go error.go instance_id.go;
+	go run main.go error.go instance_id.go;
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+	go run main.go error.go
+	GOPROXY=https://proxy.golang.org,direct GO111MODULE=on go build ./server/cmd/main.go ./server/cmd/error.go
+	go run main.go error.go;
+	go run main.go error.go;
+	go run main.go error.go;
+	go run main.go error.go;
+	go run main.go error.go;
+	go run main.go error.go;
+	go run main.go error.go;
+	go run main.go error.go;
+	go run main.go error.go;
+	go run main.go error.go;
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3a3c535f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f1d2de14` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

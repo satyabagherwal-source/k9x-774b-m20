@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-18T23:02:48.463Z",
+  "last_updated": "2026-11-18T23:10:32.880Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1340,14 +1340,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-aleph-alpha-kolibri-1",
-      "content_hash": "e50f0c4bbffc10169da00d7df4b7fb2a0c2d85da4efa1ed6e2677ee555efbb8f",
-      "verified_at": "2026-11-14T05:46:26.563Z",
+      "content_hash": "4b821d4ee420437b6e219470c6ec2521f38f9d976b7a2830eb2007f4c9625c56",
+      "verified_at": "2026-11-18T23:10:18.125Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-14T05:46:26.563Z"
+      "last_updated": "2026-11-18T23:10:18.125Z"
     },
     "Qwen/Qwen3-4B": {
       "repository": "Qwen/Qwen3-4B",
@@ -7281,14 +7281,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-etcd-io-etcd",
-      "content_hash": "f57b142b2a97d9ea82d6d62fb98d790c457a2131061646746a930a4b8de09961",
-      "verified_at": "2026-11-18T06:57:56.161Z",
+      "content_hash": "d6562afddb983ccf1da679a4b113d46562df8a4b494b8147f12aade08a85fe14",
+      "verified_at": "2026-11-18T23:10:32.879Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T06:57:56.161Z"
+      "last_updated": "2026-11-18T23:10:32.879Z"
     },
     "wasm-bindgen/wasm-pack": {
       "repository": "wasm-bindgen/wasm-pack",
@@ -7626,14 +7626,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-meshery-meshery",
-      "content_hash": "d0355ad593e57d3db150332483a191162893769f6018c89aacfbbbdf96c6370d",
-      "verified_at": "2026-11-18T07:39:03.791Z",
+      "content_hash": "46504042afddbd1b9dac41f3b8630e3c2ee60312613c5691bd03b1de3a2a6496",
+      "verified_at": "2026-11-18T23:10:28.175Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T07:39:03.791Z"
+      "last_updated": "2026-11-18T23:10:28.175Z"
     },
     "arangodb/arangodb": {
       "repository": "arangodb/arangodb",

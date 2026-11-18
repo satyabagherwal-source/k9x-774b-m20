@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T23:02:52.839Z",
+  "last_updated": "2026-11-18T23:10:38.978Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-18T22:22:52.966Z",
@@ -683,7 +683,7 @@
       "staged_for_review": 0
     },
     "etcd-io-etcd-learnings.md": {
-      "processed_at": "2026-11-18T06:58:00.725Z",
+      "processed_at": "2026-11-18T23:10:37.438Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1058,7 +1058,7 @@
       "staged_for_review": 0
     },
     "meshery-meshery-learnings.md": {
-      "processed_at": "2026-11-18T07:39:48.176Z",
+      "processed_at": "2026-11-18T23:10:36.622Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2423,8 +2423,8 @@
       "staged_for_review": 0
     },
     "hf-aleph-alpha-kolibri-1-learnings.md": {
-      "processed_at": "2026-11-14T05:47:17.078Z",
-      "promoted_canonical": 1,
+      "processed_at": "2026-11-18T23:10:36.238Z",
+      "promoted_canonical": 0,
       "staged_for_review": 0
     },
     "builderio-builder-learnings.md": {
@@ -3473,7 +3473,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 2100,
+  "total_dossiers_evaluated": 2103,
   "total_canonical_promoted": 368,
-  "total_staged_for_review": 1581
+  "total_staged_for_review": 1583
 }

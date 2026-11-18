@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261117-HDDV",
-    "timestamp": "2026-11-17T14:58:07.747Z",
-    "repository": "ClickHouse/ClickHouse",
-    "learningId": "learn-github-clickhouse-clickhouse",
-    "contentHash": "06e2bd229839c159eac737450a1883888cd21599196d488de2a126c0daf6146c",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261117-HDS5",
-    "timestamp": "2026-11-17T14:58:08.261Z",
-    "repository": "dathere/qsv",
-    "learningId": "learn-github-dathere-qsv",
-    "contentHash": "cc1b52540a2b37380326851cca5b41421b896c440e12a7ac93db45e23fa06691",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261117-RQXS",
-    "timestamp": "2026-11-17T15:06:11.872Z",
-    "repository": "mistralai/Timestral-209M",
-    "learningId": "learn-huggingface-mistralai-timestral-209m",
-    "contentHash": "1b3d9b2c978dd7c2257b0d006d0f536574f9f7a9da9ebe17c7ed171d149fcbf2",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261117-RY65",
     "timestamp": "2026-11-17T15:06:21.245Z",
     "repository": "invertase/react-native-firebase",
@@ -7492,6 +7447,51 @@
     "contentHash": "033a860aa6f7e15ad16e4f8cf91359eed1be8496a6bd9fe93b8360b15f917e55",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-I5TS",
+    "timestamp": "2026-11-18T23:10:18.112Z",
+    "repository": "Aleph-Alpha/Kolibri-1",
+    "learningId": "learn-huggingface-aleph-alpha-kolibri-1",
+    "contentHash": "4b821d4ee420437b6e219470c6ec2521f38f9d976b7a2830eb2007f4c9625c56",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-IDKY",
+    "timestamp": "2026-11-18T23:10:28.162Z",
+    "repository": "meshery/meshery",
+    "learningId": "learn-github-meshery-meshery",
+    "contentHash": "46504042afddbd1b9dac41f3b8630e3c2ee60312613c5691bd03b1de3a2a6496",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-IH7M",
+    "timestamp": "2026-11-18T23:10:32.866Z",
+    "repository": "etcd-io/etcd",
+    "learningId": "learn-github-etcd-io-etcd",
+    "contentHash": "d6562afddb983ccf1da679a4b113d46562df8a4b494b8147f12aade08a85fe14",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

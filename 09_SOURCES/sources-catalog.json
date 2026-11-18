@@ -1015,8 +1015,8 @@
     "sourceUrl": "https://huggingface.co/Aleph-Alpha/Kolibri-1",
     "sourceVersion": "hf-aleph-alpha-kolibri-1",
     "license": "Open-Source",
-    "contentHash": "e50f0c4bbffc10169da00d7df4b7fb2a0c2d85da4efa1ed6e2677ee555efbb8f",
-    "lastHarvestedAt": "2026-11-14T05:46:26.554Z",
+    "contentHash": "4b821d4ee420437b6e219470c6ec2521f38f9d976b7a2830eb2007f4c9625c56",
+    "lastHarvestedAt": "2026-11-18T23:10:18.116Z",
     "learningId": "learn-huggingface-aleph-alpha-kolibri-1"
   },
   "hf-speridlabs-iris-3b": {
@@ -4773,10 +4773,10 @@
     "repository": "etcd-io/etcd",
     "platform": "github",
     "sourceUrl": "https://github.com/etcd-io/etcd",
-    "sourceVersion": "dd2c518f",
+    "sourceVersion": "87101a35",
     "license": "Apache-2.0",
-    "contentHash": "f57b142b2a97d9ea82d6d62fb98d790c457a2131061646746a930a4b8de09961",
-    "lastHarvestedAt": "2026-11-18T06:57:56.152Z",
+    "contentHash": "d6562afddb983ccf1da679a4b113d46562df8a4b494b8147f12aade08a85fe14",
+    "lastHarvestedAt": "2026-11-18T23:10:32.870Z",
     "learningId": "learn-github-etcd-io-etcd"
   },
   "wasm-bindgen-wasm-pack": {
@@ -5003,10 +5003,10 @@
     "repository": "meshery/meshery",
     "platform": "github",
     "sourceUrl": "https://github.com/meshery/meshery",
-    "sourceVersion": "3a3c535f",
+    "sourceVersion": "208e516e",
     "license": "Apache-2.0",
-    "contentHash": "d0355ad593e57d3db150332483a191162893769f6018c89aacfbbbdf96c6370d",
-    "lastHarvestedAt": "2026-11-18T07:39:03.781Z",
+    "contentHash": "46504042afddbd1b9dac41f3b8630e3c2ee60312613c5691bd03b1de3a2a6496",
+    "lastHarvestedAt": "2026-11-18T23:10:28.166Z",
     "learningId": "learn-github-meshery-meshery"
   },
   "arangodb-arangodb": {

@@ -80,8 +80,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-18T23:02:51.245Z",
-    "lastVerified": "2026-11-18T23:02:51.245Z",
+    "lastChecked": "2026-11-18T23:10:36.105Z",
+    "lastVerified": "2026-11-18T23:10:36.105Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -231,9 +231,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-18T22:14:40.311Z",
+    "lastChecked": "2026-11-18T23:10:29.666Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-18T22:14:40.311Z"
+    "lastVerified": "2026-11-18T23:10:29.666Z"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -1592,9 +1592,9 @@
   "sigstore-cosign": {
     "name": "cosign",
     "officialUrl": "https://github.com/sigstore/cosign",
-    "lastChecked": "2026-11-18T17:10:22.457Z",
+    "lastChecked": "2026-11-18T23:10:24.519Z",
     "revisionIdentifier": "0743bfcf",
-    "lastVerified": "2026-11-18T17:10:22.457Z"
+    "lastVerified": "2026-11-18T23:10:24.519Z"
   },
   "langchain4j-langchain4j": {
     "name": "langchain4j/langchain4j",
@@ -4680,5 +4680,70 @@
     "lastChecked": "2026-11-18T22:57:56.653Z",
     "revisionIdentifier": "1fe252ca",
     "lastVerified": "2026-11-18T22:57:56.653Z"
+  },
+  "salvo-rs-salvo": {
+    "name": "salvo",
+    "officialUrl": "https://github.com/salvo-rs/salvo",
+    "lastChecked": "2026-11-18T23:10:14.596Z",
+    "revisionIdentifier": "6e2ee81a",
+    "lastVerified": "2026-11-18T23:10:14.596Z"
+  },
+  "hf-aleph-alpha-kolibri-1": {
+    "name": "Aleph-Alpha/Kolibri-1",
+    "officialUrl": "https://huggingface.co/Aleph-Alpha/Kolibri-1",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-18T23:10:17.475Z",
+    "lastVerified": "2026-11-18T23:10:17.475Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-aleph-alpha-kolibri-1",
+    "contentHash": "4b821d4ee420437b6e219470c6ec2521f38f9d976b7a2830eb2007f4c9625c56",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "apsl-react-native-keyboard-aware-scroll-view": {
+    "name": "react-native-keyboard-aware-scroll-view",
+    "officialUrl": "https://github.com/APSL/react-native-keyboard-aware-scroll-view",
+    "lastChecked": "2026-11-18T23:10:19.817Z",
+    "revisionIdentifier": "9eee405f",
+    "lastVerified": "2026-11-18T23:10:19.817Z"
+  },
+  "meshery-meshery": {
+    "name": "meshery/meshery",
+    "officialUrl": "https://github.com/meshery/meshery",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-11-18T23:10:27.132Z",
+    "lastVerified": "2026-11-18T23:10:27.132Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-meshery-meshery",
+    "contentHash": "46504042afddbd1b9dac41f3b8630e3c2ee60312613c5691bd03b1de3a2a6496",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 13,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "etcd-io-etcd": {
+    "name": "etcd-io/etcd",
+    "officialUrl": "https://github.com/etcd-io/etcd",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-11-18T23:10:32.160Z",
+    "lastVerified": "2026-11-18T23:10:32.160Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-etcd-io-etcd",
+    "contentHash": "d6562afddb983ccf1da679a4b113d46562df8a4b494b8147f12aade08a85fe14",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }
