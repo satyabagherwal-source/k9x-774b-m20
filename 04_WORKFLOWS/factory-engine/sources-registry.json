@@ -43,9 +43,9 @@
   "bitterbot-ai-bitterbot-desktop": {
     "name": "bitterbot-desktop",
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-    "lastChecked": "2026-11-18T10:08:51.137Z",
+    "lastChecked": "2026-11-18T10:55:19.788Z",
     "revisionIdentifier": "108f7135",
-    "lastVerified": "2026-11-18T10:08:51.137Z"
+    "lastVerified": "2026-11-18T10:55:19.788Z"
   },
   "hf-comfy-org-minimax-h3": {
     "name": "Comfy-Org/MiniMax-H3",
@@ -69,8 +69,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-18T10:45:15.673Z",
-    "lastVerified": "2026-11-18T10:45:15.673Z",
+    "lastChecked": "2026-11-18T10:55:19.792Z",
+    "lastVerified": "2026-11-18T10:55:19.792Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -601,5 +601,77 @@
     "lastChecked": "2026-11-18T10:45:11.191Z",
     "revisionIdentifier": "5870f15d",
     "lastVerified": "2026-11-18T10:45:11.191Z"
+  },
+  "automattic-harper": {
+    "name": "Automattic/harper",
+    "officialUrl": "https://github.com/Automattic/harper",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-11-18T10:55:09.757Z",
+    "lastVerified": "2026-11-18T10:55:09.757Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-automattic-harper",
+    "contentHash": "10b8af0e53bfe340208d9df7b8346732d5c7293d0ca4352720885683546a05d1",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-black-forest-labs-flux.1-dev": {
+    "name": "black-forest-labs/FLUX.1-dev",
+    "officialUrl": "https://huggingface.co/black-forest-labs/FLUX.1-dev",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-18T10:55:07.562Z",
+    "lastVerified": "2026-11-18T10:55:07.562Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-black-forest-labs-flux-1-dev",
+    "contentHash": "b73a827b7343ea08d77b40bdbd703275ec8efd217da7ca94c6388e5e752a9251",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "dkhamsing-open-source-ios-apps": {
+    "name": "dkhamsing/open-source-ios-apps",
+    "officialUrl": "https://github.com/dkhamsing/open-source-ios-apps",
+    "sourceType": "github",
+    "technology": "Multi-language",
+    "lastChecked": "2026-11-18T10:55:15.321Z",
+    "lastVerified": "2026-11-18T10:55:15.321Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-dkhamsing-open-source-ios-apps",
+    "contentHash": "daa288c651d549c01207fd824b3334fdd2046fd8a9917334b237273ca7f27d54",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "kube-rs-kube": {
+    "name": "kube",
+    "officialUrl": "https://github.com/kube-rs/kube",
+    "lastChecked": "2026-11-18T10:55:12.326Z",
+    "revisionIdentifier": "fc801fba",
+    "lastVerified": "2026-11-18T10:55:12.326Z"
+  },
+  "chrispybacon-dev-dockflare": {
+    "name": "DockFlare",
+    "officialUrl": "https://github.com/ChrispyBacon-dev/DockFlare",
+    "lastChecked": "2026-11-18T10:55:14.705Z",
+    "revisionIdentifier": "9c7bed82",
+    "lastVerified": "2026-11-18T10:55:14.705Z"
+  },
+  "nirdiamant-rag_techniques": {
+    "name": "RAG_Techniques",
+    "officialUrl": "https://github.com/NirDiamant/RAG_Techniques",
+    "lastChecked": "2026-11-18T10:55:17.322Z",
+    "revisionIdentifier": "2fd7bd0f",
+    "lastVerified": "2026-11-18T10:55:17.322Z"
   }
 }

@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-18T10:45:17.920Z",
+  "last_updated": "2026-11-18T10:55:22.277Z",
   "total_verified_learnings": 8998,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 21160,
+  "total_items": 21169,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -114974,9 +114974,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for dkhamsing-open-source-ios-apps-learnings",
       "repository": "dkhamsing-open-source-ios-apps-learnings",
       "source_version": "HEAD",
-      "content_hash": "88bcada1ad93f65bf7a665edca0e242dbd6b08f050a6e542550291f2c3aced0a",
+      "content_hash": "695111ede01f91f6380a6378860a1b3b0fb18bcc0e391931aa3f1198ecbb9dcf",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T08:20:27.482Z"
+      "persisted_at": "2026-11-18T10:55:22.277Z"
     },
     "candidate_directive-merge-pull-request-13862-from-weaviate-jose-fix-named-vector-index-type-change": {
       "item_id": "candidate_directive-merge-pull-request-13862-from-weaviate-jose-fix-named-vector-index-type-change",
@@ -236130,8 +236130,8 @@
       "slug": "automattic-harper",
       "platform": "github",
       "source_url": "https://github.com/Automattic/harper",
-      "source_version": "1d972352",
-      "content_hash": "bafe1042649aa500f142add0a7dc245f5b1433e49f242fc21e0e4cecb2dc5196",
+      "source_version": "6db1d6fb",
+      "content_hash": "10b8af0e53bfe340208d9df7b8346732d5c7293d0ca4352720885683546a05d1",
       "dossier_path": "07_PROJECT_LEARNING/automattic-harper-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/automattic-harper-learnings.md",
       "promoted_rules": [
@@ -236144,6 +236144,11 @@
           "number": 9103,
           "title": "darken background letters beneath text in dark mode",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9202,
+          "title": "split long/complex Weir alternatives over multiple lines",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -236151,7 +236156,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T01:57:56.057Z",
+      "verified_at": "2026-11-18T10:55:10.522Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -236205,10 +236210,10 @@
       "relative_path": "08_VERIFICATION/automattic-harper-verification-protocol-empirical-defect-shield-for-automattic-h.md",
       "title": "Verification Protocol: Empirical Defect Shield for Automattic/harper",
       "repository": "Automattic/harper",
-      "source_version": "1d972352",
-      "content_hash": "b44d56fe1c3e8eb1f4d716e06fda801e707fa3e68f84e8011b84e674a9fdc224",
+      "source_version": "6db1d6fb",
+      "content_hash": "133663c67a30f7a39dbf4da3e29a865a1f3b1f500d093584b0e71b02cb4de7b2",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T01:57:56.707Z"
+      "persisted_at": "2026-11-18T10:55:11.141Z"
     },
     "learn-github-kotest-kotest": {
       "learning_id": "learn-github-kotest-kotest",
@@ -236439,9 +236444,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for automattic-harper-learnings",
       "repository": "automattic-harper-learnings",
       "source_version": "HEAD",
-      "content_hash": "6b7fb4f710fe2224fdaa1871320e8e7fc055812f2777320565ff764f1d95bf3f",
+      "content_hash": "d9b353be76eed74586f76e3d9fcc9f980a65e275e584c980a9e4660e525e4a4e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T01:58:08.320Z"
+      "persisted_at": "2026-11-18T10:55:20.392Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-phocinae-phocinae-largha-150m-v1-learnings-co": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-phocinae-phocinae-largha-150m-v1-learnings-co",
@@ -268527,14 +268532,19 @@
       "slug": "dkhamsing-open-source-ios-apps",
       "platform": "github",
       "source_url": "https://github.com/dkhamsing/open-source-ios-apps",
-      "source_version": "f50676d2",
-      "content_hash": "87d0001dfdf1d96e79bf751bba822a4610682fc0b3cdc542df96ea0afe632962",
+      "source_version": "bba77685",
+      "content_hash": "daa288c651d549c01207fd824b3334fdd2046fd8a9917334b237273ca7f27d54",
       "dossier_path": "07_PROJECT_LEARNING/dkhamsing-open-source-ios-apps-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dkhamsing-open-source-ios-apps-learnings.md",
       "promoted_rules": [
         {
           "number": 8922,
           "title": "Tail-Append Single-File Serialization Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9203,
+          "title": "Add Termphin",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -268543,7 +268553,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T08:19:30.478Z",
+      "verified_at": "2026-11-18T10:55:16.110Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -278354,7 +278364,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/black-forest-labs/FLUX.1-dev",
       "source_version": "hf-black-forest-labs-flux.1-dev",
-      "content_hash": "7a79a84e98554862117d050289b05a26da4f77a4b4968def00b328e7406e186e",
+      "content_hash": "b73a827b7343ea08d77b40bdbd703275ec8efd217da7ca94c6388e5e752a9251",
       "dossier_path": "07_PROJECT_LEARNING/hf-black-forest-labs-flux.1-dev-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-black-forest-labs-flux.1-dev-learnings.md",
       "promoted_rules": [],
@@ -278363,7 +278373,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T22:27:14.047Z",
+      "verified_at": "2026-11-18T10:55:08.002Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -278380,9 +278390,9 @@
       "title": "Research & Knowledge Intelligence: black-forest-labs/FLUX.1-dev Core Invariants",
       "repository": "black-forest-labs/FLUX.1-dev",
       "source_version": "hf-black-forest-labs-flux.1-dev",
-      "content_hash": "74d6aba5182e1a0242bab341ff55894cc344661697e57cc115c883d0c2a3e8e0",
+      "content_hash": "719e3e9c5598c9f3f741bb4f91d153a174a964519b83cfa5006e891b5410d6f5",
       "domain_letter": "D",
-      "persisted_at": "2026-11-17T22:27:14.515Z"
+      "persisted_at": "2026-11-18T10:55:08.353Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-black-forest-labs-flux-1-dev-learnings-core-i": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-black-forest-labs-flux-1-dev-learnings-core-i",
@@ -278392,9 +278402,9 @@
       "title": "Research & Knowledge Intelligence: hf-black-forest-labs-flux.1-dev-learnings Core Invariants",
       "repository": "hf-black-forest-labs-flux.1-dev-learnings",
       "source_version": "HEAD",
-      "content_hash": "b8ce4919fb65a7cea586a4524eb645de7d8ee95b579ff0ae0a1c3c3119ab7729",
+      "content_hash": "87c4ca23eb130dcb67109d7b595d34210a8b217502eedece79d9549c963ee173",
       "domain_letter": "D",
-      "persisted_at": "2026-11-17T22:27:26.468Z"
+      "persisted_at": "2026-11-18T10:55:20.682Z"
     },
     "learn-huggingface-deepseek-ai-deepseek-r1": {
       "learning_id": "learn-huggingface-deepseek-ai-deepseek-r1",
@@ -285377,6 +285387,118 @@
       "content_hash": "3022c9cce1bbeda06f9bd3e879b5e698ac4db216810c4d3399d349c0b7afb40d",
       "domain_letter": "K",
       "persisted_at": "2026-11-18T10:45:17.920Z"
+    },
+    "rule-9202": {
+      "learning_id": "rule-9202",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9202,
+      "title": "split long/complex Weir alternatives over multiple lines",
+      "source_url": "https://github.com/Automattic/harper",
+      "source_version": "6db1d6fb",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-18T10:55:10.522Z"
+    },
+    "candidate_directive-split-long-complex-weir-alternatives-over-multiple-lines": {
+      "item_id": "candidate_directive-split-long-complex-weir-alternatives-over-multiple-lines",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-8SGU-split-long-complex-weir-alternatives-over-multiple-lines.md",
+      "title": "split long/complex Weir alternatives over multiple lines",
+      "repository": "Automattic/harper",
+      "source_version": "6db1d6fb",
+      "content_hash": "8ac3d994684f2ac909b432d15874bd21430aab224e02a7ed5bf16a501a478ec8",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-18T10:55:10.879Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-automattic-harper-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-automattic-harper-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-automattic-harper-research-knowledge-intelligence-automattic-harper-core-invaria.md",
+      "title": "Research & Knowledge Intelligence: Automattic/harper Core Invariants",
+      "repository": "Automattic/harper",
+      "source_version": "6db1d6fb",
+      "content_hash": "9fd53d5156cfc3a7a25676a840c45af3b77bf4b6946ae51ec9828ca76236ec14",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-18T10:55:11.009Z"
+    },
+    "rule-9203": {
+      "learning_id": "rule-9203",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9203,
+      "title": "Add Termphin",
+      "source_url": "https://github.com/dkhamsing/open-source-ios-apps",
+      "source_version": "bba77685",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-18T10:55:16.110Z"
+    },
+    "candidate_directive-add-termphin": {
+      "item_id": "candidate_directive-add-termphin",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-9115-add-termphin.md",
+      "title": "Add Termphin",
+      "repository": "dkhamsing-open-source-ios-apps-learnings",
+      "source_version": "HEAD",
+      "content_hash": "90e868eebb1ab3aa5dca352351e96bb4a971949d526f1ebde61a5e22e432e660",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-18T10:55:21.977Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-dkhamsing-open-source-ios-apps-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-dkhamsing-open-source-ios-apps-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-dkhamsing-open-source-ios-apps-research-knowledge-intelligence-dkhamsing-open-so.md",
+      "title": "Research & Knowledge Intelligence: dkhamsing/open-source-ios-apps Core Invariants",
+      "repository": "dkhamsing/open-source-ios-apps",
+      "source_version": "bba77685",
+      "content_hash": "5ac1215568d5d3f3067cca45ebce50191ea8b097f78cd8e6b2c25ea99af7652e",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-18T10:55:16.600Z"
+    },
+    "candidate_directive-style-split-long-complex-weir-alternatives-over-multiple-lines": {
+      "item_id": "candidate_directive-style-split-long-complex-weir-alternatives-over-multiple-lines",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-8ZLD-style-split-long-complex-weir-alternatives-over-multiple-lines.md",
+      "title": "style: split long/complex Weir alternatives over multiple lines",
+      "repository": "automattic-harper-learnings",
+      "source_version": "HEAD",
+      "content_hash": "bdb2f873f1194702cbbf35e2a9e4c2e3cadaf025dfb2d19df890c062eb647070",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-18T10:55:20.114Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-automattic-harper-learnings-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-automattic-harper-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-automattic-harper-learnings-research-knowledge-intelligence-automattic-harper-le.md",
+      "title": "Research & Knowledge Intelligence: automattic-harper-learnings Core Invariants",
+      "repository": "automattic-harper-learnings",
+      "source_version": "HEAD",
+      "content_hash": "46b598d5b62bd6132194695b2f318320549eae7e670c309140ce0e53d2b0fa0b",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-18T10:55:20.247Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-dkhamsing-open-source-ios-apps-learnings-core-in": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-dkhamsing-open-source-ios-apps-learnings-core-in",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-dkhamsing-open-source-ios-apps-learnings-research-knowledge-intelligence-dkhamsi.md",
+      "title": "Research & Knowledge Intelligence: dkhamsing-open-source-ios-apps-learnings Core Invariants",
+      "repository": "dkhamsing-open-source-ios-apps-learnings",
+      "source_version": "HEAD",
+      "content_hash": "054909ee144f5288039df4b0cb6962007f50f4390a5b5a4f97cfce32809c605f",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-18T10:55:22.117Z"
     }
   },
   "ai-builder-brain": {

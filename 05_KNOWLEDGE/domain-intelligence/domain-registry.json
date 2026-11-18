@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-18T10:45:17.774Z",
-  "total_records": 1826,
+  "last_updated": "2026-11-18T10:55:22.117Z",
+  "total_records": 1830,
   "domains": {
     "A": {
       "total": 11,
@@ -48,7 +48,7 @@
       ]
     },
     "D": {
-      "total": 775,
+      "total": 779,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -824,7 +824,11 @@
         "domain_intelligence-research-knowledge-intelligence-hf-tencent-hy4-flash-learnings-core-invariants",
         "DOM-D-E33EA755",
         "DOM-D-C539E7DA",
-        "DOM-D-42C4A146"
+        "DOM-D-42C4A146",
+        "domain_intelligence-research-knowledge-intelligence-automattic-harper-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-dkhamsing-open-source-ios-apps-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-automattic-harper-learnings-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-dkhamsing-open-source-ios-apps-learnings-core-in"
       ]
     },
     "E": {
@@ -28812,8 +28816,8 @@
       "title": "Research & Knowledge Intelligence: black-forest-labs/FLUX.1-dev Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-black-forest-labs-flux-1-dev-research-knowledge-intelligence-black-forest-lab.md",
       "repository": "black-forest-labs/FLUX.1-dev",
-      "content_hash": "74d6aba5182e1a0242bab341ff55894cc344661697e57cc115c883d0c2a3e8e0",
-      "created_at": "2026-11-17T22:27:14.515Z"
+      "content_hash": "719e3e9c5598c9f3f741bb4f91d153a174a964519b83cfa5006e891b5410d6f5",
+      "created_at": "2026-11-18T10:55:08.353Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-black-forest-labs-flux-1-dev-learnings-core-i": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-black-forest-labs-flux-1-dev-learnings-core-i",
@@ -28821,8 +28825,8 @@
       "title": "Research & Knowledge Intelligence: hf-black-forest-labs-flux.1-dev-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-black-forest-labs-flux-1-dev-learnings-research-knowledge-intelligence-hf-bla.md",
       "repository": "hf-black-forest-labs-flux.1-dev-learnings",
-      "content_hash": "b8ce4919fb65a7cea586a4524eb645de7d8ee95b579ff0ae0a1c3c3119ab7729",
-      "created_at": "2026-11-17T22:27:26.468Z"
+      "content_hash": "87c4ca23eb130dcb67109d7b595d34210a8b217502eedece79d9549c963ee173",
+      "created_at": "2026-11-18T10:55:20.682Z"
     },
     "domain_intelligence-research-knowledge-intelligence-deepseek-ai-deepseek-r1-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-deepseek-ai-deepseek-r1-core-invariants",
@@ -30684,6 +30688,42 @@
       "repository": "projectcontour-contour-learnings",
       "content_hash": "f18250cc9fdbb70025769c28b845270c0ccc5e416ad15ace1770f2536dca6730",
       "created_at": "2026-11-18T10:45:17.774Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-automattic-harper-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-automattic-harper-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: Automattic/harper Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-automattic-harper-research-knowledge-intelligence-automattic-harper-core-invaria.md",
+      "repository": "Automattic/harper",
+      "content_hash": "9fd53d5156cfc3a7a25676a840c45af3b77bf4b6946ae51ec9828ca76236ec14",
+      "created_at": "2026-11-18T10:55:11.009Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-dkhamsing-open-source-ios-apps-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-dkhamsing-open-source-ios-apps-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: dkhamsing/open-source-ios-apps Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-dkhamsing-open-source-ios-apps-research-knowledge-intelligence-dkhamsing-open-so.md",
+      "repository": "dkhamsing/open-source-ios-apps",
+      "content_hash": "5ac1215568d5d3f3067cca45ebce50191ea8b097f78cd8e6b2c25ea99af7652e",
+      "created_at": "2026-11-18T10:55:16.600Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-automattic-harper-learnings-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-automattic-harper-learnings-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: automattic-harper-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-automattic-harper-learnings-research-knowledge-intelligence-automattic-harper-le.md",
+      "repository": "automattic-harper-learnings",
+      "content_hash": "46b598d5b62bd6132194695b2f318320549eae7e670c309140ce0e53d2b0fa0b",
+      "created_at": "2026-11-18T10:55:20.247Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-dkhamsing-open-source-ios-apps-learnings-core-in": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-dkhamsing-open-source-ios-apps-learnings-core-in",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: dkhamsing-open-source-ios-apps-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-dkhamsing-open-source-ios-apps-learnings-research-knowledge-intelligence-dkhamsi.md",
+      "repository": "dkhamsing-open-source-ios-apps-learnings",
+      "content_hash": "054909ee144f5288039df4b0cb6962007f50f4390a5b5a4f97cfce32809c605f",
+      "created_at": "2026-11-18T10:55:22.117Z"
     }
   }
 }

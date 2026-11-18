@@ -10930,3 +10930,6 @@
 | `CYCLE-20261118-VQRD` | `2026-11-18T10:45:02.137Z` | `Qwen/Qwen3.8-27B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3.8-27b-learnings.md` | Yes (`299a5f5b...`) |
 | `CYCLE-20261118-VX93` | `2026-11-18T10:45:10.551Z` | `expo/expo` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9200` | Yes (`25e42ed8...`) |
 | `CYCLE-20261118-VYR6` | `2026-11-18T10:45:12.498Z` | `projectcontour/contour` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9201` | Yes (`d458c716...`) |
+| `CYCLE-20261118-8QE6` | `2026-11-18T10:55:08.190Z` | `black-forest-labs/FLUX.1-dev` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-black-forest-labs-flux.1-dev-learnings.md` | Yes (`b73a827b...`) |
+| `CYCLE-20261118-8SBO` | `2026-11-18T10:55:10.692Z` | `Automattic/harper` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9202` | Yes (`10b8af0e...`) |
+| `CYCLE-20261118-8WMZ` | `2026-11-18T10:55:16.283Z` | `dkhamsing/open-source-ios-apps` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9203` | Yes (`daa288c6...`) |

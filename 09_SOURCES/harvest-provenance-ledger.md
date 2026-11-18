@@ -10963,3 +10963,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-qwen-qwen3-8-27b` | `https://huggingface.co/Qwen/Qwen3.8-27B` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-11-18T10:45:02.142Z |
 | `learn-github-expo-expo` | `https://github.com/expo/expo` | `9eed7a5a` | Multi-dimensional audit evidence | 2026-11-18T10:45:10.555Z |
 | `learn-github-projectcontour-contour` | `https://github.com/projectcontour/contour` | `5344f432` | Multi-dimensional audit evidence | 2026-11-18T10:45:12.502Z |
+| `learn-huggingface-black-forest-labs-flux-1-dev` | `https://huggingface.co/black-forest-labs/FLUX.1-dev` | `hf-black-f` | Multi-dimensional audit evidence | 2026-11-18T10:55:08.194Z |
+| `learn-github-automattic-harper` | `https://github.com/Automattic/harper` | `6db1d6fb` | Multi-dimensional audit evidence | 2026-11-18T10:55:10.696Z |
+| `learn-github-dkhamsing-open-source-ios-apps` | `https://github.com/dkhamsing/open-source-ios-apps` | `bba77685` | Multi-dimensional audit evidence | 2026-11-18T10:55:16.286Z |

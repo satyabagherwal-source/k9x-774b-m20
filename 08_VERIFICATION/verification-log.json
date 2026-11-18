@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261116-21AC",
-    "timestamp": "2026-11-16T23:22:24.900Z",
-    "repository": "encode/httpx",
-    "learningId": "learn-github-encode-httpx",
-    "contentHash": "aec9bac2d1aafe35f41854225907f6b93058cdbd9d11c3ddb01ad356f6bd1f39",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261116-261D",
-    "timestamp": "2026-11-16T23:22:31.057Z",
-    "repository": "chaos-mesh/chaos-mesh",
-    "learningId": "learn-github-chaos-mesh-chaos-mesh",
-    "contentHash": "9b46787c070c1565c08d548790b380aafbc7360e4f62b306e4c24200f2aa0826",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261116-28P2",
-    "timestamp": "2026-11-16T23:22:34.502Z",
-    "repository": "cilium/cilium",
-    "learningId": "learn-github-cilium-cilium",
-    "contentHash": "bd2c8928cff24ae7f81b68894ed8f57a18e0eeeebf9d9bb1341709bec35e633a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261116-I6FZ",
     "timestamp": "2026-11-16T23:34:58.079Z",
     "repository": "aio-libs/aiohttp",
@@ -7490,6 +7445,51 @@
     "repository": "projectcontour/contour",
     "learningId": "learn-github-projectcontour-contour",
     "contentHash": "d458c7169346da25b9a83ca0aefda8c6f99e2aedd5bfac4d6fdc2725db57963f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-8QE6",
+    "timestamp": "2026-11-18T10:55:08.190Z",
+    "repository": "black-forest-labs/FLUX.1-dev",
+    "learningId": "learn-huggingface-black-forest-labs-flux-1-dev",
+    "contentHash": "b73a827b7343ea08d77b40bdbd703275ec8efd217da7ca94c6388e5e752a9251",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-8SBO",
+    "timestamp": "2026-11-18T10:55:10.692Z",
+    "repository": "Automattic/harper",
+    "learningId": "learn-github-automattic-harper",
+    "contentHash": "10b8af0e53bfe340208d9df7b8346732d5c7293d0ca4352720885683546a05d1",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-8WMZ",
+    "timestamp": "2026-11-18T10:55:16.283Z",
+    "repository": "dkhamsing/open-source-ios-apps",
+    "learningId": "learn-github-dkhamsing-open-source-ios-apps",
+    "contentHash": "daa288c651d549c01207fd824b3334fdd2046fd8a9917334b237273ca7f27d54",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

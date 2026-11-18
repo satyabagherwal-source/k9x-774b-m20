@@ -215,8 +215,8 @@
     "sourceUrl": "https://huggingface.co/black-forest-labs/FLUX.1-dev",
     "sourceVersion": "hf-black-forest-labs-flux.1-dev",
     "license": "Open-Source",
-    "contentHash": "7a79a84e98554862117d050289b05a26da4f77a4b4968def00b328e7406e186e",
-    "lastHarvestedAt": "2026-11-17T22:27:14.284Z",
+    "contentHash": "b73a827b7343ea08d77b40bdbd703275ec8efd217da7ca94c6388e5e752a9251",
+    "lastHarvestedAt": "2026-11-18T10:55:08.194Z",
     "learningId": "learn-huggingface-black-forest-labs-flux-1-dev"
   },
   "hf-francisring-prism": {
@@ -2103,10 +2103,10 @@
     "repository": "dkhamsing/open-source-ios-apps",
     "platform": "github",
     "sourceUrl": "https://github.com/dkhamsing/open-source-ios-apps",
-    "sourceVersion": "f50676d2",
+    "sourceVersion": "bba77685",
     "license": "CC0-1.0",
-    "contentHash": "87d0001dfdf1d96e79bf751bba822a4610682fc0b3cdc542df96ea0afe632962",
-    "lastHarvestedAt": "2026-11-17T08:19:30.627Z",
+    "contentHash": "daa288c651d549c01207fd824b3334fdd2046fd8a9917334b237273ca7f27d54",
+    "lastHarvestedAt": "2026-11-18T10:55:16.286Z",
     "learningId": "learn-github-dkhamsing-open-source-ios-apps"
   },
   "moby-buildkit": {
@@ -2253,10 +2253,10 @@
     "repository": "Automattic/harper",
     "platform": "github",
     "sourceUrl": "https://github.com/Automattic/harper",
-    "sourceVersion": "1d972352",
+    "sourceVersion": "6db1d6fb",
     "license": "Apache-2.0",
-    "contentHash": "bafe1042649aa500f142add0a7dc245f5b1433e49f242fc21e0e4cecb2dc5196",
-    "lastHarvestedAt": "2026-11-18T01:57:56.238Z",
+    "contentHash": "10b8af0e53bfe340208d9df7b8346732d5c7293d0ca4352720885683546a05d1",
+    "lastHarvestedAt": "2026-11-18T10:55:10.696Z",
     "learningId": "learn-github-automattic-harper"
   },
   "sudheerj-reactjs-interview-questions": {

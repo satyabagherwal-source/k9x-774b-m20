@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T10:45:12.509Z",
-  "total_cycles_completed": 10455,
-  "total_learnings_persisted": 10455,
-  "total_rules_promoted": 9957,
+  "last_updated": "2026-11-18T10:55:16.291Z",
+  "total_cycles_completed": 10458,
+  "total_learnings_persisted": 10458,
+  "total_rules_promoted": 9959,
   "history": [
-    {
-      "timestamp": "2026-11-17T20:25:33.113Z",
-      "repository": "czy0729/Bangumi",
-      "learningId": "learn-github-czy0729-bangumi",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T20:25:38.846Z",
-      "repository": "infiniflow/infinity",
-      "learningId": "learn-github-infiniflow-infinity",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T20:33:06.548Z",
-      "repository": "abenzerps/Qwen-Image-2.1-Turbo-Quantized",
-      "learningId": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-17T20:33:09.216Z",
       "repository": "astral-sh/ruff",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-18T10:45:12.509Z",
       "repository": "projectcontour/contour",
       "learningId": "learn-github-projectcontour-contour",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T10:55:08.199Z",
+      "repository": "black-forest-labs/FLUX.1-dev",
+      "learningId": "learn-huggingface-black-forest-labs-flux-1-dev",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T10:55:10.701Z",
+      "repository": "Automattic/harper",
+      "learningId": "learn-github-automattic-harper",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T10:55:16.291Z",
+      "repository": "dkhamsing/open-source-ios-apps",
+      "learningId": "learn-github-dkhamsing-open-source-ios-apps",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
