@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T03:56:22.463Z",
-  "total_cycles_completed": 10339,
-  "total_learnings_persisted": 10339,
-  "total_rules_promoted": 9864,
+  "last_updated": "2026-11-18T04:03:54.506Z",
+  "total_cycles_completed": 10341,
+  "total_learnings_persisted": 10341,
+  "total_rules_promoted": 9865,
   "history": [
-    {
-      "timestamp": "2026-11-17T15:16:54.352Z",
-      "repository": "moonshotai/Kimi-K3.1-Pro",
-      "learningId": "learn-huggingface-moonshotai-kimi-k3-1-pro",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T15:23:49.611Z",
-      "repository": "nvidia/DeepSeek-V4.1-Flash-1017-NVFP4",
-      "learningId": "learn-huggingface-nvidia-deepseek-v4-1-flash-1017-nvfp4",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-17T15:23:59.630Z",
       "repository": "rook/rook",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-18T03:56:22.463Z",
       "repository": "dathere/qsv",
       "learningId": "learn-github-dathere-qsv",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T04:03:52.435Z",
+      "repository": "orcarouter/OrcaSAQ-2-27B",
+      "learningId": "learn-huggingface-orcarouter-orcasaq-2-27b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T04:03:54.506Z",
+      "repository": "cachix/devenv",
+      "learningId": "learn-github-cachix-devenv",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

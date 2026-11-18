@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-18T03:56:25.675Z",
-    "lastVerified": "2026-11-18T03:56:25.675Z",
+    "lastChecked": "2026-11-18T04:04:03.895Z",
+    "lastVerified": "2026-11-18T04:04:03.895Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -367,8 +367,8 @@
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
     "sourceType": "github",
     "technology": "Python",
-    "lastChecked": "2026-11-18T03:17:20.322Z",
-    "lastVerified": "2026-11-18T03:17:20.322Z",
+    "lastChecked": "2026-11-18T04:04:03.886Z",
+    "lastVerified": "2026-11-18T04:04:03.886Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-synalinks-synalinks-skills",
@@ -1693,14 +1693,14 @@
     "officialUrl": "https://github.com/cachix/devenv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-16T21:55:23.144Z",
-    "lastVerified": "2026-11-16T21:55:23.144Z",
+    "lastChecked": "2026-11-18T04:03:53.529Z",
+    "lastVerified": "2026-11-18T04:03:53.529Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-cachix-devenv",
-    "contentHash": "741a4829d66bc4ba0fab4a2357650985d6c17b38b0e6c545ef82ea365aaee1c2",
+    "contentHash": "e4b061e5e08c32aae65c45f38b0ae1e4e37fc76544f6ad644611107a3cea36d3",
     "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "recentFixesCount": 2,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -1759,9 +1759,9 @@
   "nexus-xyz-nexus-zkvm": {
     "name": "nexus-zkvm",
     "officialUrl": "https://github.com/nexus-xyz/nexus-zkvm",
-    "lastChecked": "2026-11-17T20:33:12.874Z",
+    "lastChecked": "2026-11-18T04:03:58.942Z",
     "revisionIdentifier": "f2ad1265",
-    "lastVerified": "2026-11-17T20:33:12.874Z"
+    "lastVerified": "2026-11-18T04:03:58.942Z"
   },
   "seaql-sea-orm": {
     "name": "SeaQL/sea-orm",
@@ -2480,12 +2480,12 @@
     "officialUrl": "https://huggingface.co/orcarouter/OrcaSAQ-2-27B",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-13T16:25:38.473Z",
-    "lastVerified": "2026-11-13T16:25:38.473Z",
+    "lastChecked": "2026-11-18T04:03:51.778Z",
+    "lastVerified": "2026-11-18T04:03:51.778Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-orcarouter-orcasaq-2-27b",
-    "contentHash": "7bccaede06ed3cd6aee194f79157de103045c52ef198137ae5c7809ff280620d",
+    "contentHash": "6ff1635d662be2b7507b89d9ecd2833d64c77729be5c6e9882b32b9bea20d52f",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -4274,9 +4274,9 @@
   "liftbridge-io-liftbridge": {
     "name": "liftbridge",
     "officialUrl": "https://github.com/liftbridge-io/liftbridge",
-    "lastChecked": "2026-11-17T04:56:44.178Z",
+    "lastChecked": "2026-11-18T04:03:56.474Z",
     "revisionIdentifier": "af2a6626",
-    "lastVerified": "2026-11-17T04:56:44.178Z"
+    "lastVerified": "2026-11-18T04:03:56.474Z"
   },
   "llphant-llphant": {
     "name": "LLPhant",
@@ -4709,9 +4709,9 @@
   "erikgrinaker-toydb": {
     "name": "toydb",
     "officialUrl": "https://github.com/erikgrinaker/toydb",
-    "lastChecked": "2026-11-17T03:42:00.314Z",
+    "lastChecked": "2026-11-18T04:04:01.439Z",
     "revisionIdentifier": "2d7cd32e",
-    "lastVerified": "2026-11-17T03:42:00.314Z"
+    "lastVerified": "2026-11-18T04:04:01.439Z"
   },
   "sharkdp-pastel": {
     "name": "pastel",
@@ -7161,8 +7161,8 @@
     "officialUrl": "https://github.com/lysine-dev/okio",
     "sourceType": "github",
     "technology": "Kotlin",
-    "lastChecked": "2026-11-14T20:09:34.276Z",
-    "lastVerified": "2026-11-14T20:09:34.276Z",
+    "lastChecked": "2026-11-18T04:03:54.091Z",
+    "lastVerified": "2026-11-18T04:03:54.091Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-lysine-dev-okio",

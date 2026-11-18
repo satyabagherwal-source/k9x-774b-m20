@@ -445,8 +445,8 @@
     "sourceUrl": "https://huggingface.co/orcarouter/OrcaSAQ-2-27B",
     "sourceVersion": "hf-orcarouter-orcasaq-2-27b",
     "license": "Open-Source",
-    "contentHash": "7bccaede06ed3cd6aee194f79157de103045c52ef198137ae5c7809ff280620d",
-    "lastHarvestedAt": "2026-11-13T16:26:01.282Z",
+    "contentHash": "6ff1635d662be2b7507b89d9ecd2833d64c77729be5c6e9882b32b9bea20d52f",
+    "lastHarvestedAt": "2026-11-18T04:03:52.430Z",
     "learningId": "learn-huggingface-orcarouter-orcasaq-2-27b"
   },
   "hf-taichuai-zdtaichu5.0-9b": {
@@ -2783,10 +2783,10 @@
     "repository": "cachix/devenv",
     "platform": "github",
     "sourceUrl": "https://github.com/cachix/devenv",
-    "sourceVersion": "fa46b707",
+    "sourceVersion": "8efcb88c",
     "license": "Apache-2.0",
-    "contentHash": "741a4829d66bc4ba0fab4a2357650985d6c17b38b0e6c545ef82ea365aaee1c2",
-    "lastHarvestedAt": "2026-11-16T21:55:24.454Z",
+    "contentHash": "e4b061e5e08c32aae65c45f38b0ae1e4e37fc76544f6ad644611107a3cea36d3",
+    "lastHarvestedAt": "2026-11-18T04:03:54.501Z",
     "learningId": "learn-github-cachix-devenv"
   },
   "pubkey-rxdb": {

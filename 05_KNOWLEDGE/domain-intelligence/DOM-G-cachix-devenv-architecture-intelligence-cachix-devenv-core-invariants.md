@@ -4,24 +4,24 @@
 {
   "source_repository": "cachix/devenv",
   "source_url": "https://github.com/cachix/devenv",
-  "source_version": "6c954cc1",
+  "source_version": "8efcb88c",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-15T00:50:36.718Z",
+  "timestamp": "2026-11-18T04:03:54.694Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-cachix-devenv",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [cachix/devenv](https://github.com/cachix/devenv) (Revision: `6c954cc1`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-15T00:50:36.718Z`  
+> **Provenance**: Harvested from [cachix/devenv](https://github.com/cachix/devenv) (Revision: `8efcb88c`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-18T04:03:54.694Z`  
 > **Learning ID**: `learn-github-cachix-devenv`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), F (Design Intelligence), B (Product Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 61%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence), B (Product Intelligence), F (Design Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 59%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from cachix/devenv:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/cachix-devenv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/cachix/devenv](https://github.com/cachix/devenv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-15T00:50:35.462Z  
+> **Harvest Timestamp**: 2026-11-18T04:03:53.529Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Fast, Declarative, Reproducible, and Composable Developer Environments using Nix
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 7834 stars
+- **Stars / Engagement**: 7839 stars
 
 ---
 
@@ -1714,104 +1714,470 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e080f001` (2026-11-13)
-**Commit Message**: fix(opencode): write opencode.jsonc to .opencode/ (#3366)
+### Incident Patch 1: `8efcb88c` (2026-11-17)
+**Commit Message**: fix(python): rerun uv sync when uv.lock changes (#3373)
 
-**File**: `src/modules/integrations/opencode.nix` (modified, +4/-4)
+**File**: `src/modules/languages/python/default.nix` (modified, +1/-1)
 ```diff
-@@ -24,7 +24,7 @@ in
-     settings = lib.mkOption {
-       type = lib.types.attrsOf lib.types.anything;
-       default = { };
--      description = "Attributes written to opencode.jsonc.";
-+      description = "Attributes written to .opencode/opencode.jsonc.";
-       example = lib.literalExpression ''
-         {
-           editor = "nvim";
-@@ -41,7 +41,7 @@ in
-       type = lib.types.attrsOf lib.types.anything;
-       default = { };
-       description = ''
--        MCP servers written to `opencode.jsonc` under `mcp`.
-+        MCP servers written to `.opencode/opencode.jsonc` under `mcp`.
+@@ -223,7 +223,7 @@ let
  
-         This option mirrors OpenCode's MCP configuration shape directly
-         (`local`/`remote`, `command`, `environment`, `url`, `headers`,
-@@ -240,7 +240,7 @@ in
- 
-     files = lib.mkMerge [
-       {
--        "opencode.jsonc".json = {
-+        ".opencode/opencode.jsonc".json = {
-           "$schema" = "https://opencode.ai/config.json";
-         }
-         // settingsWithMcp;
-@@ -352,7 +352,7 @@ in
-     };
- 
-     infoSections."OpenCode" = [
--      "Settings: opencode.jsonc"
-+      "Settings: .opencode/opencode.jsonc"
-     ]
-     ++ lib.optional (cfg.commands != { }) (
-       if builtins.isAttrs cfg.commands then
+       # Avoid running "uv sync" for every shell.
+       # Only run it when the "pyproject.toml" file or Python interpreter has changed.
+-      local ACTUAL_UV_CHECKSUM="${cfg.package.interpreter}:${config.lib._fileChecksum "pyproject.toml"}:''${UV_SYNC_COMMAND[@]}"
++      local ACTUAL_UV_CHECKSUM="${cfg.package.interpreter}:${config.lib._fileChecksum "pyproject.toml"}:${config.lib._fileChecksum "uv.lock"}:''${UV_SYNC_COMMAND[@]}"
+       local UV_CHECKSUM_FILE="$VENV_PATH/uv.sync.checksum"
+       if [ -f "$UV_CHECKSUM_FILE" ]
+       then
 ```
 
-**File**: `tests/opencode/devenv.nix` (modified, +15/-15)
+---
+
+### Incident Patch 2: `ea49c021` (2026-11-17)
+**Commit Message**: fix(tasks): reuse running process manager when running tasks (#3152)
+
+* fix(tasks): let a running process manager own task process deps
+
+`devenv tasks run` started `devenv:processes:*` dependencies in its own
+runner even when `devenv up` already supervised them, crash-looping
+services such as postgres.
+
+When a native manager is running, hand process tasks to it instead.
+Process tasks stay in the run's schedule, so selection (after, before,
+wantedBy, run modes) is the scheduler's own, and their typed dependency
+edges are kept. Once a process node's prerequisites are met, the owner
+starts it unless it already has a live process or a terminal result
+there; dependents are judged with the usual @started/@ready/@completed
+rules against the owner's dependency phase, exposed through a new
+DependencyStatus API request. Owned processes are never registered with
+the local runner, so finishing or cancelling the run leaves them running.
+
+Fixes #3137
+
+* fix(tasks): simplify process ownership and retain lifecycle notifications
+
+---------
+
+Co-authored-by: Domen Kožar <[REDACTED_EMAIL]>
+
+**File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -78,19 +78,19 @@
-   enterTest = ''
-     echo "=== Testing OpenCode Configuration ==="
+@@ -34,6 +34,7 @@
+ - Fixed rapid process restarts failing because a stopped process still held its ownership claim.
+ - Starting a process on demand now starts never-started, enabled process dependencies. Explicitly stopped and disabled dependencies stay off ([#3229](https://github.com/cachix/devenv/issues/3229)).
+ - Fixed `devenv machines install` hanging while uploading store paths when no SSH connection was already open ([#3254](https://github.com/cachix/devenv/issues/3254)).
++- Fixed `devenv tasks run` starting a second copy of processes that `devenv up` already supervises, which crash-looped services such as PostgreSQL. Task runs now reuse that manager without repeating setup tasks or stopping its processes, and process dependency waits observe its current state without missing readiness or exit changes ([#3137](https://github.com/cachix/devenv/issues/3137)).
+ - Nushell hot reload no longer breaks commands that use structured environment variables and now removes variables that disappeared after a reload ([#3230](https://github.com/cachix/devenv/issues/3230)).
+ - MySQL now creates configured databases and users when started with `devenv up`, including `devenv up mysql` ([#2843](https://github.com/cachix/devenv/issues/2843)).
+ - fish auto-activation no longer hangs when `env` is a fish function, such as grc's wrapper; `cat`, `rm` and `devenv` functions are bypassed too ([#3222](https://github.com/cachix/devenv/issues/3222)).
+```
+
+**File**: `devenv-processes/src/lib.rs` (modified, +3/-3)
+```diff
+@@ -70,9 +70,9 @@ pub use devenv_mailbox::ProcessCommand;
+ pub use external_manager::ExternalManager;
+ pub use force_exit_registry::{kill_process_scopes, track_process_scope, tracked_process_scopes};
+ pub use manager::{
+-    ApiRequest, ApiResponse, AttachEvent, AttachStream, JobHandle, LogStream, ManagerResidence,
+-    NativeManagerClient, OnIdle, PortInfo, ProcessInfo, ProcessPhase, ProcessResources,
+-    ProcessRunner, ProcessState, StartOutcome,
++    ApiRequest, ApiResponse, AttachEvent, AttachStream, DependencyInfo, JobHandle, LogStream,
++    ManagerResidence, NativeManagerClient, OnIdle, PortInfo, ProcessInfo, ProcessPhase,
++    ProcessResources, ProcessRunner, ProcessState, StartOutcome,
+ };
+ pub use manager_capabilities::{
+     DeclarationSource, ManagerAdapter, ManagerCapabilities, ManagerClient, ManagerDescriptor,
+```
+
+**File**: `devenv-processes/src/manager.rs` (modified, +25/-0)
+```diff
+@@ -44,6 +44,16 @@ pub enum ApiRequest {
+     /// manager (the client resolves the up-enabled default set before
+     /// sending) and by `devenv processes start`.
+     Start { names: Vec<String> },
++    /// Launch a process whose prerequisites the requesting task run has already
++    /// satisfied. Reuse live and scheduled processes, and preserve terminal
++    /// results unless `restart` is true. Does not traverse task dependencies.
++    EnsureStarted { name: String, restart: bool },
++    /// Report the state that dependents of the named processes are judged
++    /// against: the dependency phase (which, unlike the display phase,
++    /// preserves a terminal result across an explicit stop) and the exit
++    /// result. Used by `devenv tasks run` to evaluate typed process
++    /// dependency edges against a manager it does not own.
++    DependencyStatus { names: Vec<String> },
+     /// Stop a running process.
+     Stop { name: String },
+     /// Query all port allocations from running processes.
+@@ -113,6 +123,9 @@ pub enum ApiResponse {
+     PortAllocations { ports: Vec<PortInfo> },
+     /// Result of a `Start` request: how each requested name was classified.
+     Start { outcome: StartOutcome },
++    /// Dependency state for each name of a `DependencyStatus` request, in
++    /// request order.
++    DependencyStatus { processes: Vec<DependencyInfo> },
+     /// Where the running manager resides.
+     #[serde(rename = "mode")]
+     Residence {
+@@ -121,6 +134,18 @@ pub enum ApiResponse {
+     },
+ }
  
--    # Test 1: opencode.jsonc exists and has correct content
--    echo "Testing opencode.jsonc..."
--    test -f opencode.jsonc || { echo "❌ opencode.jsonc not found"; exit 1; }
--    ${pkgs.jq}/bin/jq -e '."$schema" == "https://opencode.ai/config.json"' opencode.jsonc > /dev/null || { echo "❌ Schema incorrect"; exit 1; }
--    ${pkgs.jq}/bin/jq -e '.editor == "nvim"' opencode.jsonc > /dev/null || { echo "❌ Custom settings not applied"; exit 1; }
--    ${pkgs.jq}/bin/jq -e '.theme == "dark"' opencode.jsonc > /dev/null || { echo "❌ Theme setting not applied"; exit 1; }
--    ${pkgs.jq}/bin/jq -e '.features.autocomplete == true' opencode.jsonc > /dev/null || { echo "❌ Feature settings not applied"; exit 1; }
--    ${pkgs.jq}/bin/jq -e '.mcp."local-dev".enabled == true' opencode.jsonc > /dev/null || { echo "❌ MCP enabled flag missing"; exit 1; }
--    ${pkgs.jq}/bin/jq -e '.mcp."local-dev".type == "local"' opencode.jsonc > /dev/null || { echo "❌ MCP local type wrong"; exit 1; }
--    ${pkgs.jq}/bin/jq -e '.mcp."local-dev".command[0] == "devenv"' opencode.jsonc > /dev/null || { echo "❌ MCP local command wrong"; exit 1; }
--    ${pkgs.jq}/bin/jq -e '.mcp."local-dev".environment.DEVENV_ROOT == "test-root"' opencode.jsonc > /dev/null || { echo "❌ MCP local environment wrong"; exit 1; }
--    ${pkgs.jq}/bin/jq -e '.mcp.docs.url == "https://override.example.com"' opencode.jsonc > /dev/null || { echo "❌ settings.mcp did not override opencode.mcp"; exit 1; }
--    echo "✅ opencode.jsonc OK"
-+    # Test 1: .opencode/opencode.jsonc exists and has correct content
-+    echo "Testing .opencode/opencode.jsonc..."
-+    test -f .opencode/opencode.jsonc || { echo "❌ .opencode/opencode.jsonc not found"; exit 1; }
-+    ${pkgs.jq}/bin/jq -e '."$schema" == "https://opencode.ai/config.json"' .opencode/opencode.jsonc > /dev/null || { echo "❌ Schema incorrect"; exit 1; }
-+    ${pkgs.jq}/bin/jq -e '.editor == "nvim"' .opencode/opencode.jsonc > /dev/null || { echo "❌ Custom settings not applied"; exit 1; }
-+    ${pkgs.jq}/bin/jq -e '.theme == "dark"' .opencode/opencode.jsonc > /dev/null || { echo "❌ Theme setting not applied"; exit 1; }
-+    ${pkgs.jq}/bin/jq -e '.features.autocomplete == true' .opencode/opencode.jsonc > /dev/null || { echo "❌ Feature settings not applied"; exit 1; }
-+    ${pkgs.jq}/bin/jq -e '.mcp."local-dev".enabled == true' .opencode/opencode.jsonc > /dev/null || { echo "❌ MCP enabled flag missing"; exit 1; }
-+    ${pkgs.jq}/bin/jq -e '.mcp."local-dev".type == "local"' .opencode/opencode.jsonc > /dev/null || { echo "❌ MCP local type wrong"; exit 1; }
-+    ${pkgs.jq}/bin/jq -e '.mcp."local-dev".command[0] == "devenv"' .opencode/opencode.jsonc > /dev/null || { echo "❌ MCP local command wrong"; exit 1; }
-+    ${pkgs.jq}/bin/jq -e '.mcp."local-dev".environment.DEVENV_ROOT == "test-root"' .opencode/opencode.jsonc > /dev/null || { echo "❌ MCP local environment wrong"; exit 1; }
-+    ${pkgs.jq}/bin/jq -e '.mcp.docs.url == "https://override.example.com"' .opencode/opencode.jsonc > /dev/null || { echo "❌ settings.mcp did not override opencode.mcp"; exit 1; }
-+    echo "✅ .opencode/opencode.jsonc OK"
++/// The state a dependent is judged against for one managed process.
++#[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
++pub struct DependencyInfo {
++    pub name: String,
++    /// [`ProcessRunner::get_dependency_phase`]; `None` when the manager has
++    /// no entry for the name.
++    pub phase: Option<ProcessPhase>,
++    /// [`ProcessRunner::get_exit_status`] for a terminal child exit.
++    #[serde(default)]
++    pub exit_status: Option<crate::supervisor_state::ExitStatus>,
++}
++
+ /// Outcome of starting a set of processes via the owning scheduler.
+ /// Each requested name lands in exactly one bucket.
+ #[derive(Debug, Clone, Default, PartialEq, Serialize, Deserialize)]
+```
+
+**File**: `devenv-processes/src/supervisor_state.rs` (modified, +2/-1)
+```diff
+@@ -19,7 +19,8 @@ pub enum SupervisorPhase {
+     GaveUp,
+ }
  
-     # Test 2: AGENTS.md exists and has content
-     echo "Testing AGENTS.md..."
-@@ -138,8 +138,8 @@
+-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
++#[derive(Debug, Clone, Copy, PartialEq, Eq, serde::Serialize, serde::Deserialize)]
++#[serde(rename_all = "snake_case")]
+ pub enum ExitStatus {
+     Success,
+     Failure,
+```
+
+**File**: `devenv-tasks/src/lib.rs` (modified, +2/-0)
+```diff
+@@ -3,6 +3,7 @@ mod error;
+ pub mod executor;
+ mod native_manager;
+ mod privileges;
++mod process_owner;
+ mod task_cache;
+ mod task_state;
+ mod tasks;
+@@ -14,6 +15,7 @@ pub use error::Error;
+ pub use executor::{ExecutionContext, ExecutionResult, OutputCallback};
+ pub use native_manager::{NativeApiServer, NativeProcessManager};
+ pub use privileges::SudoContext;
++pub use process_owner::ProcessOwner;
+ pub use tasks::{Tasks, TasksBuilder, compute_display_hierarchy};
+ pub use types::{
+     DependencyKind, Outputs, PROCESS_TASK_PREFIX, TaskCompleted, TaskOutputs, TaskStatus, TaskType,
+```
+
+**File**: `devenv-tasks/src/native_manager.rs` (modified, +22/-2)
+```diff
+@@ -1,8 +1,8 @@
+ use crate::Tasks;
+ use devenv_mailbox::{FrontendEvent, ProcessCommand};
+ use devenv_processes::{
+-    ApiRequest, ApiResponse, AttachEvent, LogStream, ManagerResidence, OnIdle, ProcessInfo,
+-    ProcessPhase, ProcessRunner,
++    ApiRequest, ApiResponse, AttachEvent, DependencyInfo, LogStream, ManagerResidence, OnIdle,
++    ProcessInfo, ProcessPhase, ProcessRunner,
+ };
+ use miette::{IntoDiagnostic, Result, WrapErr};
+ use std::collections::BTreeMap;
+@@ -272,6 +272,26 @@ impl NativeProcessManager {
+             Ok(ApiRequest::Start { names }) => ApiResponse::Start {
+                 outcome: manager.tasks.start_with_deps(names).await,
+             },
++            Ok(ApiRequest::EnsureStarted { name, restart }) => {
++                match manager.tasks.ensure_started(&name, restart).await {
++                    Ok(()) => ApiResponse::Ok,
++                    Err(error) => ApiResponse::Error {
++                        message: error.to_string(),
++                    },
++                }
++            }
++            Ok(ApiRequest::DependencyStatus { names }) => {
++                let runner = manager.process_runner();
++                let mut processes = Vec::with_capacity(names.len());
++                for name in names {
++                    processes.push(DependencyInfo {
++                        phase: runner.get_dependency_phase(&name).await,
++                        exit_status: runner.get_exit_status(&name).await,
++                        name,
++                    });
++                }
++                ApiResponse::DependencyStatus { processes }
++            }
+             Ok(ApiRequest::Residence) => ApiResponse::Residence {
+                 residence: manager.residence(),
+             },
+```
+
+**File**: `devenv-tasks/src/process_owner.rs` (added, +1064/-0)
+```diff
+@@ -0,0 +1,1064 @@
++//! Processes supervised by an existing native manager.
++//!
++//! The task runner orders dependencies; the manager only launches processes
++//! whose prerequisites this run has already satisfied. Status is queried while
++//! waiting, so there is no replica of the manager's lifecycle state to maintain.
++
++use devenv_processes::{ApiRequest, ApiResponse, AttachEvent, DependencyInfo, NativeManagerClient};
++use miette::{Result, bail, miette};
++use std::collections::HashSet;
++use std::path::{Path, PathBuf};
++use std::sync::Arc;
++use std::time::Duration;
++use tokio::sync::{Notify, RwLock, watch};
++use tokio::task::JoinHandle;
++
++const REQUEST_TIMEOUT: Duration = Duration::from_secs(10);
++
++/// A manager that owns process lifetimes, while this task run owns ordering.
++#[derive(Debug)]
++pub struct ProcessOwner {
++    socket_path: PathBuf,
++    /// Until a node's prerequisites are satisfied in this run, dependents must
++    /// wait even if its process is already running in the manager.
++    handed_over: RwLock<HashSet<String>>,
++    /// Events are invalidations only. Each waiter has its own watch cursor, so
++    /// a change during a status query remains pending until that waiter sees it.
++    /// False means the subscription was lost, even if status queries still work.
++    changes: watch::Receiver<bool>,
++    watcher: JoinHandle<()>,
++}
++
++impl Drop for ProcessOwner {
++    fn drop(&mut self) {
++        self.watcher.abort();
++    }
++}
++
++impl ProcessOwner {
++    /// Establish the subscription before reading status. Receiving its initial
++    /// snapshot confirms that subsequent transitions will be delivered.
++    pub async fn connect(socket_path: &Path) -> Result<Arc<Self>> {
++        let mut stream = tokio::time::timeout(
++            REQUEST_TIMEOUT,
++            NativeManagerClient::attach_stream(socket_path),
++        )
++        .await
++        .map_err(|_| miette!("process manager did not respond in time"))??;
++        match tokio::time::timeout(REQUEST_TIMEOUT, stream.next())
++            .await
++            .map_err(|_| miette!("process manager did not respond in time"))?
++        {
++            Some(Ok(AttachEvent::Snapshot { .. })) => {}
++            Some(Err(error)) => return Err(error),
++            other => bail!("Expected a process manager subscription snapshot, received {other:?}"),
++        }
++        let (events, changes) = watch::channel(true);
++        let watcher = tokio::spawn(async move {
++            while let Some(event) = stream.next().await {
++                match event {
++                    Ok(AttachEvent::Snapshot { .. } | AttachEvent::Status { .. }) => {
++                        events.send_replace(true);
++                    }
++                    Ok(AttachEvent::Log { .. }) => {}
++                    Err(error) => {
++                        tracing::debug!(%error, "process manager subscription failed");
++                        break;
++                    }
++                }
++            }
++            events.send_replace(false);
++        });
++        let owner = Arc::new(Self {
++            socket_path: socket_path.to_path_buf(),
++            handed_over: RwLock::new(HashSet::new()),
++            changes,
++            watcher,
++        });
++        owner.query(&[]).await?;
++        Ok(owner)
++    }
++
++    pub(crate) fn subscribe(&self) -> watch::Receiver<bool> {
++        let mut changes = self.changes.clone();
++        changes.borrow_and_update();
++        changes
++    }
++
++    fn check_subscription(&self) -> Result<()> {
++        if !*self.changes.borrow() || self.changes.has_changed().is_err() {
++            bail!("Lost the running process manager subscription; retry the task run");
++        }
++        Ok(())
++    }
++
++    pub(crate) async fn query(&self, names: &[String]) -> Result<Vec<DependencyInfo>> {
++        self.check_subscription()?;
++        let request = ApiRequest::DependencyStatus {
++            names: names.to_vec(),
++        };
++        let mut subscription = self.changes.clone();
++        let response = tokio::select! {
++            biased;
++            _ = subscription.wait_for(|connected| !*connected) => {
++                bail!("Lost the running process manager subscription; retry the task run");
++            }
++            response = tokio::time::timeout(
++                REQUEST_TIMEOUT,
++                NativeManagerClient::api_request(&self.socket_path, &request),
++            ) => response.map_err(|_| miette!("process manager did not respond in time"))??,
++        };
++        self.check_subscription()?;
++        match response {
++            ApiResponse::DependencyStatus { processes } => Ok(processes),
++            ApiResponse::Error { message } => bail!("{message}"),
++            other => bail!("Unexpected response to dependency status request: {other:?}"),
++        }
++    }
++
++    /// Launch without resolving dependencies a second time. The daemon decides
++    /// atomically whether the process is already live or has a terminal result
+```
+
+**File**: `devenv-tasks/src/tasks.rs` (modified, +337/-25)
+```diff
+@@ -1,5 +1,6 @@
+ use crate::config::{Config, RunMode, parse_dependency};
+ use crate::error::Error;
++use crate::process_owner::ProcessOwner;
+ use crate::task_cache::TaskCache;
+ use crate::task_state::TaskState;
+ use crate::types::{
+@@ -28,6 +29,7 @@ pub struct TasksBuilder {
+     db_path: Option<PathBuf>,
+     shutdown: Arc<tokio_shutdown::Shutdown>,
+     refresh_task_cache: bool,
++    process_owner: Option<Arc<ProcessOwner>>,
+ }
  
-     # Test 9: Verify minimal config works (edge case)
-     echo "Testing minimal configuration support..."
--    # At minimum, opencode.jsonc should always be created when enabled
--    test -f opencode.jsonc || { echo "❌ Minimal config didn't create opencode.jsonc"; exit 1; }
-+    # At minimum, .opencode/opencode.jsonc should always be created when enabled
-+    test -f .opencode/opencode.jsonc || { echo "❌ Minimal config didn't create .opencode/opencode.jsonc"; exit 1; }
-     echo "✅ Minimal config OK"
+ impl TasksBuilder {
+@@ -43,6 +45,7 @@ impl TasksBuilder {
+             db_path: None,
+             shutdown,
+             refresh_task_cache: false,
++            process_owner: None,
+         }
+     }
  
-     echo ""
+@@ -58,6 +61,16 @@ impl TasksBuilder {
+         self
+     }
+ 
++    /// Hand process tasks to an already-running native manager instead of
++    /// launching them in this runner. Process nodes stay in the schedule and
++    /// keep their typed dependency edges; the owner starts them, and edges on
++    /// them are judged against the owner's live dependency state. Nothing the
++    /// owner runs is registered with, or stopped by, this runner.
++    pub fn with_process_owner(mut self, owner: Arc<ProcessOwner>) -> Self {
++        self.process_owner = Some(owner);
++        self
++    }
++
+     /// Build the Tasks instance
+     pub async fn build(self) -> Result<Tasks, Error> {
+         let supervisor = self.config.supervisor;
+@@ -92,6 +105,12 @@ impl TasksBuilder {
+         pm.set_task_notify(Arc::clone(&notify_finished));
+         let process_runner = Arc::new(pm);
+ 
++        // External managers launch every process themselves, one wrapper per
++        // process, so there is nothing to hand to an owner.
++        let process_owner = self
++            .process_owner
++            .filter(|_| supervisor == SupervisionMode::Native);
++
+         let mut graph = DiGraph::new();
+         let mut task_indices = HashMap::new();
+         for task in self.config.tasks {
+@@ -144,6 +163,7 @@ impl TasksBuilder {
+             outputs: Arc::new(Mutex::new(Outputs::new())),
+             exit_on_idle,
+             supervisor,
++            process_owner,
+         };
+ 
+         tasks.resolve_dependencies(task_indices).await?;
+@@ -206,6 +226,27 @@ pub struct Tasks {
+     pub(crate) exit_on_idle: bool,
+     /// Selects native or external lifecycle policy for registered processes.
+     pub(crate) supervisor: devenv_processes::SupervisionMode,
++    /// Running manager that owns process tasks for this run, if any.
++    pub(crate) process_owner: Option<Arc<ProcessOwner>>,
++}
++
++/// Where dependency edges on process tasks are evaluated: the runner that
++/// launched them, or the running manager that owns them.
++#[derive(Clone)]
++pub(crate) struct ProcessStates {
++    runner: Arc<ProcessRunner>,
++    owner: Option<Arc<ProcessOwner>>,
++}
++
++#[cfg(test)]
++impl ProcessStates {
++    /// Edges judged against a runner that launched its own processes.
++    fn local(runner: &Arc<ProcessRunner>) -> Self {
++        Self {
++            runner: Arc::clone(runner),
++            owner: None,
++        }
++    }
+ }
+ 
+ /// Shared dependency evaluation for waiting and parked-state checks.
+@@ -242,6 +283,13 @@ impl Tasks {
+         &self.process_runner
+     }
+ 
++    fn process_states(&self) -> ProcessStates {
++        ProcessStates {
++            runner: Arc::clone(&self.process_runner),
++            owner: self.process_owner.clone(),
++        }
++    }
++
+     /// Connect a capability broker before the task runner is shared or run.
+     /// This lets callers validate the task graph before prompting for sudo.
+     pub fn set_capability_broker(&mut self, path: &Path) -> miette::Result<()> {
+@@ -271,14 +319,26 @@ impl Tasks {
+                 // always wins below: it is the graph-owned launch outcome.
+                 TaskStatus::Pending if task_state.task.r#type == TaskType::Process => {
+                     let pname = crate::types::process_name(&task_state.task.name);
+-                    match self.process_runner.get_phase(pname).await {
++                    let (phase, exit_status) = match &self.process_owner {
++                        Some(owner) => match owner.state(pname).await {
++                            Ok(Some(info)) => (info.phase, info.exit_status),
++                            Ok(None) => (None, None),
++                            Err(_) => {
++                                status.failed += 1;
++                                continue;
++                            }
++                        },
++                        None => (
++                            self.process_runner.get_phase(pname).await,
++                            self.process_runner.get_exit_status(pname).await,
++                        ),
++                    };
++                    match phase {
+                         Some(ProcessPhase::NotStarted | ProcessPhase::Stopped) => {
+                             status.skipped += 1
+                         }
+                         Some(ProcessPhase::Exited) => {
+-                            if self.process_
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3374** (2026-11-16): docs: stop the home page from blinking on load (@vimjoyer)
+- **PR #3373** (2026-11-17): fix(python): rerun uv sync when uv.lock changes (@tonyd33)
+- **PR #3372** (2026-11-15): feat(languages): Added the Groovy language, LSP, and docs. (@givikuna)
+- **PR #3370** (2026-11-16): chore(deps): bump astro from 7.1.6 to 7.4.12 in /docs (@dependabot[bot])
 - **PR #3366** (2026-11-13): fix(opencode): write opencode.jsonc to .opencode/ (@sand4rt)
 - **PR #3365** (2026-11-13): feat(dotnet): add languages.dotnet.version option (@SVendittelli)
-- **PR #3362** (2026-11-11): chore(deps): bump fast-xml-parser from 5.10.1 to 5.12.0 in /docs (@dependabot[bot])
-- **PR #3361** (2026-11-11): chore(deps): bump nokogiri from 1.18.10 to 1.19.5 in /src/modules/lib/ruby-lsp (@dependabot[bot])
-- **PR #3354** (2026-11-10): feat(elixir): per-project MIX_HOME, mix deps task and versionFile (@nelsonmestevao)
-- **PR #3353** (2026-11-10): feat(elixir): add version option (@nelsonmestevao)
 
 ---
 
@@ -1831,37 +2197,31 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. opencode): write opencode.jsonc to .opencode/
+## X. python): rerun uv sync when uv.lock changes
 
 **RULE**:
-When implementing operations in `src/modules/integrations/opencode.nix`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cachix/devenv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/modules/languages/python/default.nix`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cachix/devenv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e080f001`: opencode): write opencode.jsonc to .opencode/. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8efcb88c`: python): rerun uv sync when uv.lock changes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/modules/integrations/opencode.nix`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/modules/languages/python/default.nix`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-      description = "Attributes written to .opencode/opencode.jsonc.";
-        MCP servers written to `.opencode/opencode.jsonc` under `mcp`.
-        ".opencode/opencode.jsonc".json = {
-      "Settings: .opencode/opencode.jsonc"
+      local ACTUAL_UV_CHECKSUM="${cfg.package.interpreter}:${config.lib._fileChecksum "pyproject.toml"}:${config.lib._fileChecksum "uv.lock"}:''${UV_SYNC_COMMAND[@]}"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-      description = "Attributes written to opencode.jsonc.";
-        MCP servers written to `opencode.jsonc` under `mcp`.
-        "opencode.jsonc".json = {
-      "Settings: opencode.jsonc"
+      local ACTUAL_UV_CHECKSUM="${cfg.package.interpreter}:${config.lib._fileChecksum "pyproject.toml"}:''${UV_SYNC_COMMAND[@]}"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e080f001` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8efcb88c` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

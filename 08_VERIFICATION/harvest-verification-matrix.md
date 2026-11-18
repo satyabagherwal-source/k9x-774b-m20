@@ -10794,3 +10794,5 @@
 | `CYCLE-20261118-ZQLC` | `2026-11-18T03:48:14.304Z` | `risingwavelabs/risingwave` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9115` | Yes (`1a515577...`) |
 | `CYCLE-20261118-9TEV` | `2026-11-18T03:56:04.519Z` | `ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-27b-gsq-rco-gguf-learnings.md` | Yes (`f7f836dc...`) |
 | `CYCLE-20261118-A792` | `2026-11-18T03:56:22.454Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9116` | Yes (`9f7b1be3...`) |
+| `CYCLE-20261118-JUGA` | `2026-11-18T04:03:52.426Z` | `orcarouter/OrcaSAQ-2-27B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-orcarouter-orcasaq-2-27b-learnings.md` | Yes (`6ff1635d...`) |
+| `CYCLE-20261118-JW1T` | `2026-11-18T04:03:54.497Z` | `cachix/devenv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9117` | Yes (`e4b061e5...`) |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-18T03:56:28.021Z",
+  "last_updated": "2026-11-18T04:04:05.798Z",
   "total_records": 1751,
   "domains": {
     "A": {
@@ -8154,8 +8154,8 @@
       "title": "Research & Knowledge Intelligence: orcarouter/OrcaSAQ-2-27B Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-orcarouter-orcasaq-2-27b-research-knowledge-intelligence-orcarouter-orcasaq-2.md",
       "repository": "orcarouter/OrcaSAQ-2-27B",
-      "content_hash": "414258617cf27834170394163e9fc778f48d81528cac5c945de582a1636517a8",
-      "created_at": "2026-11-13T16:26:01.480Z"
+      "content_hash": "e8ac13b1d9fe42d627c661681c37f2703953e80e60ab6ff270ab7ac7b38ac4ef",
+      "created_at": "2026-11-18T04:03:52.612Z"
     },
     "DOM-D-1FD73085": {
       "record_id": "DOM-D-1FD73085",
@@ -8205,8 +8205,8 @@
       "title": "Research & Knowledge Intelligence: hf-orcarouter-orcasaq-2-27b-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-orcarouter-orcasaq-2-27b-learnings-research-knowledge-intelligence-hf-orcarou.md",
       "repository": "hf-orcarouter-orcasaq-2-27b-learnings",
-      "content_hash": "a4b0a45669c4044057c8c35427fe475e9f68d86db8be3d5e90016c62d3884eb1",
-      "created_at": "2026-11-13T16:26:52.313Z"
+      "content_hash": "7346149267d47ef41e2b01b9fe943cf1da14cea2e2fa375356e41b20dd170ff4",
+      "created_at": "2026-11-18T04:04:05.150Z"
     },
     "domain_intelligence-architecture-intelligence-gauthierpiarrette-highball-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-gauthierpiarrette-highball-learnings-core-invariants",
@@ -8484,8 +8484,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "aee30f70c6eab01e759b1b607881f76cc3d38a20663aa961724feaa850e28e0b",
-      "created_at": "2026-11-18T03:56:28.021Z"
+      "content_hash": "57616487077d61a67e7db7eff80f7ff2eb7a2d6de9aa0b56671152db36679dd8",
+      "created_at": "2026-11-18T04:04:05.798Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -18401,8 +18401,8 @@
       "title": "Architecture Intelligence: cachix/devenv Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-cachix-devenv-architecture-intelligence-cachix-devenv-core-invariants.md",
       "repository": "cachix/devenv",
-      "content_hash": "bdf2d7571e77b0da40d43be973d264bbc6433f1b6707b286e6e42d232f1ff55b",
-      "created_at": "2026-11-15T00:50:36.841Z"
+      "content_hash": "015d92d76cc12dcb46abf65e4c02eedff5403b346b3f96a1c8bd4f6fd081e11e",
+      "created_at": "2026-11-18T04:03:54.832Z"
     },
     "domain_intelligence-technical-construction-intelligence-necolas-react-native-web-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-necolas-react-native-web-core-invariants",
@@ -18419,8 +18419,8 @@
       "title": "Architecture Intelligence: cachix-devenv-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-cachix-devenv-learnings-architecture-intelligence-cachix-devenv-learnings-core-i.md",
       "repository": "cachix-devenv-learnings",
-      "content_hash": "b5023f5ce040855f2a8b0c0ad7859a92c21110c357f470eb5aced95225d491b5",
-      "created_at": "2026-11-15T00:50:57.332Z"
+      "content_hash": "306f29f6b5c6ec9e7742fe3fd72db2e62274b90da65b17732dbe5cf0a7fc4a8b",
+      "created_at": "2026-11-18T04:04:04.722Z"
     },
     "DOM-D-B43360BC": {
       "record_id": "DOM-D-B43360BC",

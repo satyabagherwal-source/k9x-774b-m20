@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-18T03:56:26.532Z",
+  "updated_at": "2026-11-18T04:04:04.389Z",
   "stats": {
-    "total_discovered": 5234,
-    "approved_pending_harvest": 4932,
+    "total_discovered": 5240,
+    "approved_pending_harvest": 4938,
     "harvested_count": 0,
     "rejected_count": 302,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 4929,
+      "COMMUNITY_AND_EXPERT": 4935,
       "OFFICIAL_DOCUMENTATION": 164,
       "STANDARDS_AND_SPECIFICATIONS": 108,
       "ENGINEERING_BLOGS": 3,
@@ -113055,6 +113055,138 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dathere-qsv-learnings.md",
         "fileName": "dathere-qsv-learnings.md"
+      }
+    },
+    "SRC-B816830C7A73": {
+      "id": "SRC-B816830C7A73",
+      "url": "https://github.com/cachix/devenv/issues/3229",
+      "title": "https://github.com/cachix/devenv/issues/3229",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T04:04:04.188Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cachix-devenv-learnings.md",
+        "fileName": "cachix-devenv-learnings.md"
+      }
+    },
+    "SRC-CCA4D4FBE9E4": {
+      "id": "SRC-CCA4D4FBE9E4",
+      "url": "https://github.com/cachix/devenv/issues/3254",
+      "title": "https://github.com/cachix/devenv/issues/3254",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T04:04:04.228Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cachix-devenv-learnings.md",
+        "fileName": "cachix-devenv-learnings.md"
+      }
+    },
+    "SRC-E49C1E361CFC": {
+      "id": "SRC-E49C1E361CFC",
+      "url": "https://github.com/cachix/devenv/issues/3137",
+      "title": "https://github.com/cachix/devenv/issues/3137",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T04:04:04.268Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cachix-devenv-learnings.md",
+        "fileName": "cachix-devenv-learnings.md"
+      }
+    },
+    "SRC-934DD77022A5": {
+      "id": "SRC-934DD77022A5",
+      "url": "https://github.com/cachix/devenv/issues/3230",
+      "title": "https://github.com/cachix/devenv/issues/3230",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T04:04:04.303Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cachix-devenv-learnings.md",
+        "fileName": "cachix-devenv-learnings.md"
+      }
+    },
+    "SRC-FD87D16CFA5B": {
+      "id": "SRC-FD87D16CFA5B",
+      "url": "https://github.com/cachix/devenv/issues/2843",
+      "title": "https://github.com/cachix/devenv/issues/2843",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T04:04:04.341Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cachix-devenv-learnings.md",
+        "fileName": "cachix-devenv-learnings.md"
+      }
+    },
+    "SRC-A053BDBF68C0": {
+      "id": "SRC-A053BDBF68C0",
+      "url": "https://github.com/cachix/devenv/issues/3222",
+      "title": "https://github.com/cachix/devenv/issues/3222",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T04:04:04.389Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cachix-devenv-learnings.md",
+        "fileName": "cachix-devenv-learnings.md"
       }
     }
   }

@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-18T03:56:28.162Z",
-  "total_verified_learnings": 8970,
+  "last_updated": "2026-11-18T04:04:05.934Z",
+  "total_verified_learnings": 8971,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 20847,
+  "total_items": 20851,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113294,9 +113294,9 @@
       "title": "Research & Knowledge Intelligence: orcarouter/OrcaSAQ-2-27B Core Invariants",
       "repository": "orcarouter/OrcaSAQ-2-27B",
       "source_version": "hf-orcarouter-orcasaq-2-27b",
-      "content_hash": "414258617cf27834170394163e9fc778f48d81528cac5c945de582a1636517a8",
+      "content_hash": "e8ac13b1d9fe42d627c661681c37f2703953e80e60ab6ff270ab7ac7b38ac4ef",
       "domain_letter": "D",
-      "persisted_at": "2026-11-13T16:26:01.480Z"
+      "persisted_at": "2026-11-18T04:03:52.612Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-orcarouter-orcasaq-2-27b-learnings-core-invar": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-orcarouter-orcasaq-2-27b-learnings-core-invar",
@@ -113306,9 +113306,9 @@
       "title": "Research & Knowledge Intelligence: hf-orcarouter-orcasaq-2-27b-learnings Core Invariants",
       "repository": "hf-orcarouter-orcasaq-2-27b-learnings",
       "source_version": "HEAD",
-      "content_hash": "a4b0a45669c4044057c8c35427fe475e9f68d86db8be3d5e90016c62d3884eb1",
+      "content_hash": "7346149267d47ef41e2b01b9fe943cf1da14cea2e2fa375356e41b20dd170ff4",
       "domain_letter": "D",
-      "persisted_at": "2026-11-13T16:26:52.313Z"
+      "persisted_at": "2026-11-18T04:04:05.150Z"
     },
     "domain_intelligence-architecture-intelligence-gauthierpiarrette-highball-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-gauthierpiarrette-highball-learnings-core-invariants",
@@ -113686,13 +113686,13 @@
       "item_id": "candidate_directive-editor-add-scoped-ios-account-deletion",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-ABFK-editor-add-scoped-ios-account-deletion.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-K4NX-editor-add-scoped-ios-account-deletion.md",
       "title": "editor): add scoped ios account deletion",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "8960ba627f14382723c3e271938a09f1b8fe744528e69ef89fdaa7a3ffe83ddf",
+      "content_hash": "b32d4242db8c4e6c79e2041e50596c9c17574c42aae3caf519e660ccc61778bd",
       "domain_letter": "H",
-      "persisted_at": "2026-11-18T03:56:27.877Z"
+      "persisted_at": "2026-11-18T04:04:05.664Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant",
@@ -113702,9 +113702,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "aee30f70c6eab01e759b1b607881f76cc3d38a20663aa961724feaa850e28e0b",
+      "content_hash": "57616487077d61a67e7db7eff80f7ff2eb7a2d6de9aa0b56671152db36679dd8",
       "domain_letter": "H",
-      "persisted_at": "2026-11-18T03:56:28.021Z"
+      "persisted_at": "2026-11-18T04:04:05.798Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113714,9 +113714,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "d9d628e6f3efdcf4adcfc9426da3bdabe7aa56ef4ae2d1f7cd0e9132934ebf0b",
+      "content_hash": "6f42f0a8e0bb5471840a4706419747ce82e2984901e78bae5fccc605cc7f8b09",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T03:56:28.162Z"
+      "persisted_at": "2026-11-18T04:04:05.934Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -238277,8 +238277,8 @@
       "slug": "cachix-devenv",
       "platform": "github",
       "source_url": "https://github.com/cachix/devenv",
-      "source_version": "fa46b707",
-      "content_hash": "741a4829d66bc4ba0fab4a2357650985d6c17b38b0e6c545ef82ea365aaee1c2",
+      "source_version": "8efcb88c",
+      "content_hash": "e4b061e5e08c32aae65c45f38b0ae1e4e37fc76544f6ad644611107a3cea36d3",
       "dossier_path": "07_PROJECT_LEARNING/cachix-devenv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cachix-devenv-learnings.md",
       "promoted_rules": [
@@ -238291,6 +238291,11 @@
           "number": 8794,
           "title": "bump astro from 7.1.6 to 7.4.12 in /docs",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9117,
+          "title": "rerun uv sync when uv.lock changes",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -238298,7 +238303,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-16T21:55:24.256Z",
+      "verified_at": "2026-11-18T04:03:54.319Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -238340,10 +238345,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-cachix-devenv-architecture-intelligence-cachix-devenv-core-invariants.md",
       "title": "Architecture Intelligence: cachix/devenv Core Invariants",
       "repository": "cachix/devenv",
-      "source_version": "6c954cc1",
-      "content_hash": "bdf2d7571e77b0da40d43be973d264bbc6433f1b6707b286e6e42d232f1ff55b",
+      "source_version": "8efcb88c",
+      "content_hash": "015d92d76cc12dcb46abf65e4c02eedff5403b346b3f96a1c8bd4f6fd081e11e",
       "domain_letter": "G",
-      "persisted_at": "2026-11-15T00:50:36.841Z"
+      "persisted_at": "2026-11-18T04:03:54.832Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-cachix-devenv": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-cachix-devenv",
@@ -238352,10 +238357,10 @@
       "relative_path": "08_VERIFICATION/cachix-devenv-verification-protocol-empirical-defect-shield-for-cachix-devenv.md",
       "title": "Verification Protocol: Empirical Defect Shield for cachix/devenv",
       "repository": "cachix/devenv",
-      "source_version": "fa46b707",
-      "content_hash": "ebdfab3fc66cb8cd98f3298c1cde815b6ba0beee1817e79829886ef8edce2445",
+      "source_version": "8efcb88c",
+      "content_hash": "4d8dd5cdf677988a3f3d3615190c8a8b28c7a566799022f27e0e7fda6f8b01a3",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T21:55:24.982Z"
+      "persisted_at": "2026-11-18T04:03:54.969Z"
     },
     "learn-github-necolas-react-native-web": {
       "learning_id": "learn-github-necolas-react-native-web",
@@ -238531,9 +238536,9 @@
       "title": "Architecture Intelligence: cachix-devenv-learnings Core Invariants",
       "repository": "cachix-devenv-learnings",
       "source_version": "HEAD",
-      "content_hash": "b5023f5ce040855f2a8b0c0ad7859a92c21110c357f470eb5aced95225d491b5",
+      "content_hash": "306f29f6b5c6ec9e7742fe3fd72db2e62274b90da65b17732dbe5cf0a7fc4a8b",
       "domain_letter": "G",
-      "persisted_at": "2026-11-15T00:50:57.332Z"
+      "persisted_at": "2026-11-18T04:04:04.722Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-cachix-devenv-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-cachix-devenv-learnings",
@@ -238543,9 +238548,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for cachix-devenv-learnings",
       "repository": "cachix-devenv-learnings",
       "source_version": "HEAD",
-      "content_hash": "027d0f43551a25491b7dfd6c82681a9f3393e106876e302ed360d1267a5074b9",
+      "content_hash": "844d6fe36cf9941254cf695f82189153b48c74474dd96d0f570ae5747b95f9e0",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T21:55:42.392Z"
+      "persisted_at": "2026-11-18T04:04:04.856Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-openbmb-minicpm-v-4-7-1b-learnings-core-invar": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-openbmb-minicpm-v-4-7-1b-learnings-core-invar",
@@ -280554,6 +280559,71 @@
       "content_hash": "f4a9606e0a48a03fd8e0eaa9eea1748c3682ce10b06ae080ce06a0d2571e2c74",
       "domain_letter": "D",
       "persisted_at": "2026-11-18T03:56:27.167Z"
+    },
+    "learn-huggingface-orcarouter-orcasaq-2-27b": {
+      "learning_id": "learn-huggingface-orcarouter-orcasaq-2-27b",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "orcarouter/OrcaSAQ-2-27B",
+      "repository": "orcarouter/OrcaSAQ-2-27B",
+      "slug": "hf-orcarouter-orcasaq-2-27b",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/orcarouter/OrcaSAQ-2-27B",
+      "source_version": "hf-orcarouter-orcasaq-2-27b",
+      "content_hash": "6ff1635d662be2b7507b89d9ecd2833d64c77729be5c6e9882b32b9bea20d52f",
+      "dossier_path": "07_PROJECT_LEARNING/hf-orcarouter-orcasaq-2-27b-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-orcarouter-orcasaq-2-27b-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-18T04:03:52.228Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-9117": {
+      "learning_id": "rule-9117",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9117,
+      "title": "rerun uv sync when uv.lock changes",
+      "source_url": "https://github.com/cachix/devenv",
+      "source_version": "8efcb88c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-18T04:03:54.319Z"
+    },
+    "candidate_directive-rerun-uv-sync-when-uv-lock-changes": {
+      "item_id": "candidate_directive-rerun-uv-sync-when-uv-lock-changes",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-JW7A-rerun-uv-sync-when-uv-lock-changes.md",
+      "title": "rerun uv sync when uv.lock changes",
+      "repository": "cachix/devenv",
+      "source_version": "8efcb88c",
+      "content_hash": "cf6d04f6e56b8081dbf6ceea5208c4b228fe84908828ba58ca364575eb087937",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-18T04:03:54.697Z"
+    },
+    "candidate_directive-python-rerun-uv-sync-when-uv-lock-changes": {
+      "item_id": "candidate_directive-python-rerun-uv-sync-when-uv-lock-changes",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-K3TZ-python-rerun-uv-sync-when-uv-lock-changes.md",
+      "title": "python): rerun uv sync when uv.lock changes",
+      "repository": "cachix-devenv-learnings",
+      "source_version": "HEAD",
+      "content_hash": "cc9eeae982774c21df34453be956bd274a7d3d6d63a4b9bd8d26c6610d1c5316",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-18T04:04:04.586Z"
     }
   },
   "ai-builder-brain": {

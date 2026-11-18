@@ -10827,3 +10827,5 @@ Every entry in this ledger must capture:
 | `learn-github-risingwavelabs-risingwave` | `https://github.com/risingwavelabs/risingwave` | `5d7a0e11` | Multi-dimensional audit evidence | 2026-11-18T03:48:14.308Z |
 | `learn-huggingface-ista-daslab-qwen3-8-27b-gsq-rco-gguf` | `https://huggingface.co/ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF` | `hf-ista-da` | Multi-dimensional audit evidence | 2026-11-18T03:56:04.523Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `39c445bb` | Multi-dimensional audit evidence | 2026-11-18T03:56:22.458Z |
+| `learn-huggingface-orcarouter-orcasaq-2-27b` | `https://huggingface.co/orcarouter/OrcaSAQ-2-27B` | `hf-orcarou` | Multi-dimensional audit evidence | 2026-11-18T04:03:52.430Z |
+| `learn-github-cachix-devenv` | `https://github.com/cachix/devenv` | `8efcb88c` | Multi-dimensional audit evidence | 2026-11-18T04:03:54.501Z |

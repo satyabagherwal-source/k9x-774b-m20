@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-18T03:56:22.467Z",
+  "last_updated": "2026-11-18T04:03:54.510Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -545,14 +545,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-orcarouter-orcasaq-2-27b",
-      "content_hash": "7bccaede06ed3cd6aee194f79157de103045c52ef198137ae5c7809ff280620d",
-      "verified_at": "2026-11-13T16:26:01.292Z",
+      "content_hash": "6ff1635d662be2b7507b89d9ecd2833d64c77729be5c6e9882b32b9bea20d52f",
+      "verified_at": "2026-11-18T04:03:52.438Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T16:26:01.292Z"
+      "last_updated": "2026-11-18T04:03:52.438Z"
     },
     "TaichuAI/ZDTaichu5.0-9B": {
       "repository": "TaichuAI/ZDTaichu5.0-9B",
@@ -4311,14 +4311,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-cachix-devenv",
-      "content_hash": "741a4829d66bc4ba0fab4a2357650985d6c17b38b0e6c545ef82ea365aaee1c2",
-      "verified_at": "2026-11-16T21:55:24.464Z",
+      "content_hash": "e4b061e5e08c32aae65c45f38b0ae1e4e37fc76544f6ad644611107a3cea36d3",
+      "verified_at": "2026-11-18T04:03:54.509Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-16T21:55:24.464Z"
+      "last_updated": "2026-11-18T04:03:54.509Z"
     },
     "pubkey/rxdb": {
       "repository": "pubkey/rxdb",
