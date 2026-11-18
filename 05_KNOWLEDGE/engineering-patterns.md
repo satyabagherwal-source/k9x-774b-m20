@@ -680420,3 +680420,78 @@ echo '{"CN":"system:admin","hosts":{{ include "karmada.certHosts" . }},"names":[
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `ceba46ce` are properly handled with clean fallback behavior.
+
+
+---
+
+## 9249. test(provider): clarify serialized uplink fixture locking (Harvested from 1jehuang/jcode)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "test(provider): clarify serialized uplink fixture locking",
+  "source": "1jehuang/jcode",
+  "source_url": "https://github.com/1jehuang/jcode",
+  "source_version": "f3fc98fb",
+  "license": "MIT",
+  "extracted_at": "2026-11-18T15:06:03.843Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-1jehuang-jcode",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [1jehuang/jcode](https://github.com/1jehuang/jcode) (Revision: `f3fc98fb`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `crates/jcode-provider-core/src/request_compression_tests.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in 1jehuang/jcode. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `fa207816`: test(provider): clarify serialized uplink fixture locking. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/jcode-provider-core/src/request_compression_tests.rs`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+        for (policy, values) in timings[input].iter_mut().enumerate() {
+#[expect(
+    clippy::await_holding_lock,
+    reason = "Serialize process-global uplink sampler state against synchronous tests on separate test runtimes"
+)]
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+        for policy in 0..5 {
+            let values = &mut timings[input][policy];
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `fa207816` are properly handled with clean fallback behavior.

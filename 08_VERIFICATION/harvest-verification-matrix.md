@@ -11016,3 +11016,5 @@
 | `CYCLE-20261118-L4AF` | `2026-11-18T14:48:42.999Z` | `nolabs-ai/nono` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9247` | Yes (`6e757196...`) |
 | `CYCLE-20261118-VL7J` | `2026-11-18T14:56:51.487Z` | `akatz-ai/MiniMax-H3-Character-Swap-LoRA` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-akatz-ai-minimax-h3-character-swap-lora-learnings.md` | Yes (`b0327563...`) |
 | `CYCLE-20261118-VUT3` | `2026-11-18T14:57:03.927Z` | `karmada-io/karmada` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9248` | Yes (`014721c6...`) |
+| `CYCLE-20261118-7E54` | `2026-11-18T15:06:02.200Z` | `unsloth/Qwen-Image-2.1-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-unsloth-qwen-image-2.1-gguf-learnings.md` | Yes (`7961d7ab...`) |
+| `CYCLE-20261118-7FR7` | `2026-11-18T15:06:04.291Z` | `1jehuang/jcode` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9249` | Yes (`a3b13afe...`) |

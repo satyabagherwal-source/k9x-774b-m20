@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T14:57:03.938Z",
-  "total_cycles_completed": 10537,
-  "total_learnings_persisted": 10537,
-  "total_rules_promoted": 10009,
+  "last_updated": "2026-11-18T15:06:04.300Z",
+  "total_cycles_completed": 10539,
+  "total_learnings_persisted": 10539,
+  "total_rules_promoted": 10010,
   "history": [
-    {
-      "timestamp": "2026-11-18T03:56:04.528Z",
-      "repository": "ISTA-DASLab/Qwen3.8-27B-GSQ-RCO-GGUF",
-      "learningId": "learn-huggingface-ista-daslab-qwen3-8-27b-gsq-rco-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-18T03:56:22.463Z",
-      "repository": "dathere/qsv",
-      "learningId": "learn-github-dathere-qsv",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-18T04:03:52.435Z",
       "repository": "orcarouter/OrcaSAQ-2-27B",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-18T14:57:03.938Z",
       "repository": "karmada-io/karmada",
       "learningId": "learn-github-karmada-io-karmada",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T15:06:02.209Z",
+      "repository": "unsloth/Qwen-Image-2.1-GGUF",
+      "learningId": "learn-huggingface-unsloth-qwen-image-2-1-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T15:06:04.300Z",
+      "repository": "1jehuang/jcode",
+      "learningId": "learn-github-1jehuang-jcode",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

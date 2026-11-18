@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-18T14:57:09.667Z",
+  "last_updated": "2026-11-18T15:06:15.788Z",
   "total_records": 1866,
   "domains": {
     "A": {
@@ -9049,8 +9049,8 @@
       "title": "Research & Knowledge Intelligence: unsloth/Qwen-Image-2.1-GGUF Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-unsloth-qwen-image-2-1-gguf-research-knowledge-intelligence-unsloth-qwen-imag.md",
       "repository": "unsloth/Qwen-Image-2.1-GGUF",
-      "content_hash": "b0e3137fbd7165261aff4131335617ff94fb423ed560a0e0411308859af288b2",
-      "created_at": "2026-11-18T05:44:05.710Z"
+      "content_hash": "663adb9151363b8f88607a08fdb8a2c1972e50641f5681045e2f2a40070ff273",
+      "created_at": "2026-11-18T15:06:02.382Z"
     },
     "domain_intelligence-human-need-intelligence-foreactlabs-openexecutive-learnings-core-invariants": {
       "record_id": "domain_intelligence-human-need-intelligence-foreactlabs-openexecutive-learnings-core-invariants",
@@ -9109,8 +9109,8 @@
       "title": "Research & Knowledge Intelligence: hf-unsloth-qwen-image-2.1-gguf-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-unsloth-qwen-image-2-1-gguf-learnings-research-knowledge-intelligence-hf-unsl.md",
       "repository": "hf-unsloth-qwen-image-2.1-gguf-learnings",
-      "content_hash": "b07e2f370fe623457a4be90fdf2c6731c4bdc81549e3886114913857d454a622",
-      "created_at": "2026-11-18T05:44:20.685Z"
+      "content_hash": "394bab814e028a18e460548c736e57d66a0327bcbc683710e4326a558942ed63",
+      "created_at": "2026-11-18T15:06:15.262Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-pro-rl-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-pro-rl-core-invariants",
@@ -23037,8 +23037,8 @@
       "title": "Research & Knowledge Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-zvec-ai-zvec-grep-learnings-research-knowledge-intelligence-zvec-ai-zvec-grep-le.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "35a2539aea34ed5f0eb07d51e12b5df9e1002dee16d3a3cf8b3d57f8ec1be1a1",
-      "created_at": "2026-11-18T14:08:12.996Z"
+      "content_hash": "ded1c30ac312dd1107a9c38d4cf180b5d2bc551dc769071f8bc89d1102d73c13",
+      "created_at": "2026-11-18T15:06:15.788Z"
     },
     "domain_intelligence-technical-construction-intelligence-prof18-feed-flow-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-prof18-feed-flow-core-invariants",
@@ -29771,8 +29771,8 @@
       "title": "Architecture Intelligence: 1jehuang/jcode Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-1jehuang-jcode-architecture-intelligence-1jehuang-jcode-core-invariants.md",
       "repository": "1jehuang/jcode",
-      "content_hash": "a2c39aa23a130a8b4ce554c8f13e366d31e47c4ff9554900d530a6704f515558",
-      "created_at": "2026-11-18T06:41:17.644Z"
+      "content_hash": "1ae143d0afa030f7a5498835bf4e79f11a84e69eff953f11e251e689f6bea4c5",
+      "created_at": "2026-11-18T15:06:04.623Z"
     },
     "domain_intelligence-architecture-intelligence-1jehuang-jcode-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-1jehuang-jcode-learnings-core-invariants",
@@ -29780,8 +29780,8 @@
       "title": "Architecture Intelligence: 1jehuang-jcode-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-1jehuang-jcode-learnings-architecture-intelligence-1jehuang-jcode-learnings-core.md",
       "repository": "1jehuang-jcode-learnings",
-      "content_hash": "fc531969db28f8db46126d4d18f68805ea9aabb0065e6fd7e7ef171dce85738e",
-      "created_at": "2026-11-18T06:41:27.138Z"
+      "content_hash": "29dbe0caa0c7fcbb1a0adccd91225965cf7f1ff62ee130c17311c4464cb3d72c",
+      "created_at": "2026-11-18T15:06:14.566Z"
     },
     "domain_intelligence-architecture-intelligence-sqlpage-sqlpage-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-sqlpage-sqlpage-core-invariants",

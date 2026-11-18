@@ -11049,3 +11049,5 @@ Every entry in this ledger must capture:
 | `learn-github-nolabs-ai-nono` | `https://github.com/nolabs-ai/nono` | `b3794a06` | Multi-dimensional audit evidence | 2026-11-18T14:48:43.003Z |
 | `learn-huggingface-akatz-ai-minimax-h3-character-swap-lora` | `https://huggingface.co/akatz-ai/MiniMax-H3-Character-Swap-LoRA` | `hf-akatz-a` | Multi-dimensional audit evidence | 2026-11-18T14:56:51.492Z |
 | `learn-github-karmada-io-karmada` | `https://github.com/karmada-io/karmada` | `12a8e01c` | Multi-dimensional audit evidence | 2026-11-18T14:57:03.932Z |
+| `learn-huggingface-unsloth-qwen-image-2-1-gguf` | `https://huggingface.co/unsloth/Qwen-Image-2.1-GGUF` | `hf-unsloth` | Multi-dimensional audit evidence | 2026-11-18T15:06:02.204Z |
+| `learn-github-1jehuang-jcode` | `https://github.com/1jehuang/jcode` | `f3fc98fb` | Multi-dimensional audit evidence | 2026-11-18T15:06:04.295Z |

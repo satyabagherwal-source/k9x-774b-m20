@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-18T14:57:03.942Z",
+  "last_updated": "2026-11-18T15:06:04.303Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -665,14 +665,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-unsloth-qwen-image-2-1-gguf",
-      "content_hash": "b05065a2aa7e08b53b8392ad3e59597aa6fdba5213fd6697adfe6fd60607bb7b",
-      "verified_at": "2026-11-18T05:44:05.495Z",
+      "content_hash": "7961d7abaa45a1931dcf4a6a0ad61da21f49987ad8662b430864a1005f9724e9",
+      "verified_at": "2026-11-18T15:06:02.212Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T05:44:05.495Z"
+      "last_updated": "2026-11-18T15:06:02.212Z"
     },
     "XiaomiMiMo/MiMo-V2.6-Pro-RL": {
       "repository": "XiaomiMiMo/MiMo-V2.6-Pro-RL",
@@ -5541,14 +5541,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-1jehuang-jcode",
-      "content_hash": "622293821c3ff5011de823d90752674844b2c35a6e8d9e5c4d65091eef18228b",
-      "verified_at": "2026-11-18T06:41:17.233Z",
+      "content_hash": "a3b13afedd3805f26e955e69fa02958887f546b7f5c1d3b4dc34567b91c7e8b0",
+      "verified_at": "2026-11-18T15:06:04.302Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T06:41:17.233Z"
+      "last_updated": "2026-11-18T15:06:04.302Z"
     },
     "wix/Detox": {
       "repository": "wix/Detox",

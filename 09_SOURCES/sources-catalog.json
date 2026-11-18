@@ -535,8 +535,8 @@
     "sourceUrl": "https://huggingface.co/unsloth/Qwen-Image-2.1-GGUF",
     "sourceVersion": "hf-unsloth-qwen-image-2.1-gguf",
     "license": "Open-Source",
-    "contentHash": "b05065a2aa7e08b53b8392ad3e59597aa6fdba5213fd6697adfe6fd60607bb7b",
-    "lastHarvestedAt": "2026-11-18T05:44:05.484Z",
+    "contentHash": "7961d7abaa45a1931dcf4a6a0ad61da21f49987ad8662b430864a1005f9724e9",
+    "lastHarvestedAt": "2026-11-18T15:06:02.204Z",
     "learningId": "learn-huggingface-unsloth-qwen-image-2-1-gguf"
   },
   "hf-xiaomimimo-mimo-v2.6-pro-rl": {
@@ -3613,10 +3613,10 @@
     "repository": "1jehuang/jcode",
     "platform": "github",
     "sourceUrl": "https://github.com/1jehuang/jcode",
-    "sourceVersion": "44c58e8c",
+    "sourceVersion": "f3fc98fb",
     "license": "MIT",
-    "contentHash": "622293821c3ff5011de823d90752674844b2c35a6e8d9e5c4d65091eef18228b",
-    "lastHarvestedAt": "2026-11-18T06:41:17.223Z",
+    "contentHash": "a3b13afedd3805f26e955e69fa02958887f546b7f5c1d3b4dc34567b91c7e8b0",
+    "lastHarvestedAt": "2026-11-18T15:06:04.295Z",
     "learningId": "learn-github-1jehuang-jcode"
   },
   "wix-detox": {

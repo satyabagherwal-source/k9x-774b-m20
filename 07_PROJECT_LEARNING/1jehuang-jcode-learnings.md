@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/1jehuang-jcode-learnings.md`  
 > **Source**: github ([https://github.com/1jehuang/jcode](https://github.com/1jehuang/jcode))  
-> **Source Version**: `44c58e8c`  
+> **Source Version**: `f3fc98fb`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-18T06:41:16.045Z  
+> **Timestamp**: 2026-11-18T15:06:03.359Z  
 > **Learning ID**: `learn-github-1jehuang-jcode`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/1jehuang-jcode-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/1jehuang/jcode](https://github.com/1jehuang/jcode))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T06:41:16.037Z  
+> **Harvest Timestamp**: 2026-11-18T15:06:03.354Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: High performance coding agent harness written in Rust, built for heavy multi-agent dev workflows
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 21871 stars
+- **Stars / Engagement**: 21882 stars
 
 ---
 
@@ -161,6 +161,324 @@ fn main() {
             new[5] as f64 / old[5] as f64
         );
         assert!(new[5] <= old[5], "CPU regression in {name}");
+    }
+}
+
+```
+
+### Core Architecture Module: `crates/jcode-app-core/examples/search_projection_probe.rs`
+```
+//! `justrust run --release -p jcode-app-core --example search_projection_probe`
+//! Actual Linux thread CPU, cumulative allocation traffic, not RSS.
+//! Hosted optimized 16-round alternating probe, 2026-11-18: small 50 -> 24 ns,
+//! many text blocks 4344 -> 1829 ns; 1.5 MB single text allocated 3,000,096
+//! -> 96 bytes and 1.95 MB result 3,900,096 -> 96 bytes. Every one of eleven
+//! fixture shapes improved CPU, including tool JSON, intent and nested todos.
+//! Fixture setup is excluded, projection result destruction is included.
+//! A narrower plain-single-block followup eliminated the remaining 96 bytes:
+//! small 54 -> 3 ns, many blocks 3306 -> 1183 ns, empty separators 72 -> 56 ns.
+//! A generic first/second iterator-chain version was rejected because the
+//! empty-separator case regressed 108 -> 144 ns despite fewer allocations.
+use jcode_message_types::ContentBlock;
+use jcode_session_types::StoredMessage;
+#[path = "../src/tool/session_search/searchable_text_fixtures.rs"]
+mod fixtures;
+#[path = "../src/tool/session_search/searchable_text_legacy.rs"]
+mod oracle;
+#[path = "../src/tool/session_search/searchable_text.rs"]
+mod projection;
+use std::alloc::{GlobalAlloc, Layout, System};
+use std::hint::black_box;
+use std::sync::atomic::{AtomicBool, AtomicUsize, Ordering::Relaxed};
+struct Counting;
+static ENABLE: AtomicBool = AtomicBool::new(false);
+static CALLS: AtomicUsize = AtomicUsize::new(0);
+static BYTES: AtomicUsize = AtomicUsize::new(0);
+#[global_allocator]
+static ALLOCATOR: Counting = Counting;
+unsafe impl GlobalAlloc for Counting {
+    unsafe fn alloc(&self, layout: Layout) -> *mut u8 {
+        if ENABLE.load(Relaxed) {
+            CALLS.fetch_add(1, Relaxed);
+            BYTES.fetch_add(layout.size(), Relaxed);
+        }
+        unsafe { System.alloc(layout) }
+    }
+    unsafe fn realloc(&self, ptr: *mut u8, layout: Layout, size: usize) -> *mut u8 {
+        if ENABLE.load(Relaxed) {
+            CALLS.fetch_add(1, Relaxed);
+            BYTES.fetch_add(size, Relaxed);
+        }
+        unsafe { System.realloc(ptr, layout, size) }
+    }
+    unsafe fn dealloc(&self, ptr: *mut u8, layout: Layout) {
+        unsafe { System.dealloc(ptr, layout) }
+    }
+}
+fn cpu_ns() -> u128 {
+    let mut time = libc::timespec {
+        tv_sec: 0,
+        tv_nsec: 0,
+    };
+    assert_eq!(
+        unsafe { libc::clock_gettime(libc::CLOCK_THREAD_CPUTIME_ID, &mut time) },
+        0
+    );
+    time.tv_sec as u128 * 1_000_000_000 + time.tv_nsec as u128
+}
+fn execute(msg: &StoredMessage, tools: bool, new: bool) {
+    if new {
+        black_box(projection::searchable_message_text(black_box(msg), tools));
+    } else {
+        black_box(oracle::legacy(black_box(msg), tools));
+    }
+}
+fn main() {
+    for (name, msg, tools) in fixtures::cases() {
+        assert_eq!(
+            projection::searchable_message_text(&msg, tools),
+            oracle::legacy(&msg, tools)
+        );
+        let mut allocations = vec![];
+        for new in [false, true] {
+            CALLS.store(0, Relaxed);
+            BYTES.store(0, Relaxed);
+            ENABLE.store(true, Relaxed);
+            execute(&msg, tools, new);
+            ENABLE.store(false, Relaxed);
+            allocations.push((CALLS.load(Relaxed), BYTES.load(Relaxed)));
+        }
+        let bytes = msg
+            .content
+            .iter()
+            .map(|b| match b {
+                ContentBlock::Text { text, .. } => text.len(),
+                ContentBlock::ToolResult { content, .. } => content.len(),
+                _ => 0,
+            })
+            .sum::<usize>();
+        let rounds = 16;
+        let iterations = (2_000_000 / bytes.max(1)).clamp(16, 20_000);
+        let mut samples = [vec![], vec![]];
+        for round in 0..rounds {
+            for index in [round % 2, 1 - round % 2] {
+                let start = cpu_ns();
+                for _ in 0..iterations {
+                    execute(&msg, tools, index == 1);
+                }
+                samples[index].push((cpu_ns() - start) / iterations as u128);
+            }
+        }
+        for samples in &mut samples {
+            samples.sort_unstable();
+        }
+        println!(
+            "{name}: CPU ns {} -> {}, allocation calls/bytes {:?} -> {:?}",
+            samples[0][rounds / 2],
+            samples[1][rounds / 2],
+            allocations[0],
+            allocations[1]
+        );
+    }
+}
+
+```
+
+### Core Architecture Module: `crates/jcode-app-core/examples/tool_projection_probe.rs`
+```
+//! Tool JSON-only frozen baseline versus production, alternating thread CPU samples.
+//! Run: justrust run --release -p jcode-app-core --example tool_projection_probe
+use jcode_message_types::ContentBlock;
+use jcode_session_types::StoredMessage;
+#[path = "../src/tool/session_search/searchable_text_fixtures.rs"]
+mod fixtures;
+#[path = "../src/tool/session_search/searchable_text.rs"]
+mod projection;
+use std::alloc::{GlobalAlloc, Layout, System};
+use std::borrow::Cow;
+use std::hint::black_box;
+use std::sync::atomic::{AtomicBool, AtomicUsize, Ordering::Relaxed};
+struct Counting;
+static ENABLE: AtomicBool = AtomicBool::new(false);
+static CALLS: AtomicUsize = AtomicUsize::new(0);
+static BYTES: AtomicUsize = AtomicUsize::new(0);
+#[global_allocator]
+static ALLOCATOR: Counting = Counting;
+unsafe impl GlobalAlloc for Counting {
+    unsafe fn alloc(&self, layout: Layout) -> *mut u8 {
+        if ENABLE.load(Relaxed) {
+            CALLS.fetch_add(1, Relaxed);
+            BYTES.fetch_add(layout.size(), Relaxed);
+        }
+        unsafe { System.alloc(layout) }
+    }
+    unsafe fn realloc(&self, ptr: *mut u8, layout: Layout, size: usize) -> *mut u8 {
+        if ENABLE.load(Relaxed) {
+            CALLS.fetch_add(1, Relaxed);
+            BYTES.fetch_add(size, Relaxed);
+        }
+        unsafe { System.realloc(ptr, layout, size) }
+    }
+    unsafe fn dealloc(&self, ptr: *mut u8, layout: Layout) {
+        unsafe { System.dealloc(ptr, layout) }
+    }
+}
+// Frozen pre-change include_tools projection. All fixtures contain only ToolUse.
+fn baseline(msg: &StoredMessage) -> Cow<'_, str> {
+    let mut parts: Vec<Cow<'_, str>> = msg
+        .content
+        .iter()
+        .filter_map(|block| match block {
+            ContentBlock::ToolUse { name, input, .. } => {
+                let input = input.to_string();
+                Some(Cow::Owned(if input == "null" {
+                    format!("[tool call: {name}]")
+                } else {
+                    format!("[tool call: {name}] {input}")
+                }))
+            }
+            _ => None,
+        })
+        .collect();
+    match parts.len() {
+        0 => Cow::Borrowed(""),
+        1 => parts.pop().unwrap(),
+        _ => Cow::Owned(parts.join("\n")),
+    }
+}
+fn cpu_ns() -> u128 {
+    let mut time = libc::timespec {
+        tv_sec: 0,
+        tv_nsec: 0,
+    };
+    assert_eq!(
+        unsafe { libc::clock_gettime(libc::CLOCK_THREAD_CPUTIME_ID, &mut time) },
+        0
+    );
+    time.tv_sec as u128 * 1_000_000_000 + time.tv_nsec as u128
+}
+fn execute(msg: &StoredMessage, new: bool) {
+    if new {
+        black_box(projection::searchable_message_text(black_box(msg), true));
+    } else {
+        black_box(baseline(black_box(msg)));
+    }
+}
+fn cases() -> Vec<(&'static str, StoredMessage)> {
+    use serde_json::{Value, json};
+    let call = |name: &str, input: Value| ContentBlock::ToolUse {
+        id: "call".into(),
+        name: name.into(),
+        input,
+        thought_signature: None,
+    };
+    vec![
+        ("null", fixtures::message(vec![call("bash", Value::Null)])),
+        ("tiny-bool", fixtures::message(vec![call("b", json!(true))])),
+        (
+            "tiny-number",
+            fixtures::message(vec![call("bash", json!(12))]),
+        ),
+        (
+            "tiny-object",
+            fixtures::message(vec![call("bash", json!({"x":1}))]),
+        ),
+        (
+            "null-string",
+            fixtures::message(vec![call("bash", json!("null"))]),
+        ),
+        (
+            "escaped",
+            fixtures::message(vec![call("東京\n\"", json!({"x":"\"\\\n\t\u{0000}東京"}))]),
+        ),
+        (
+            "nested",
+            fixtures::message(vec![call(
+                "todo",
+                json!({"a":[null,true,1,{"x":["東京",false]}],"b":{"c":{"d":"payload"}}}),
+            )]),
+        ),
+        (
+            "large",
+            fixtures::message(vec![call(
+                "bash",
+                json!({"command":"abc東京\n".repeat(100_000)}),
+            )]),
+        ),
+        (
+            "large-array",
+            fixtures::message(vec![call(
+                "todo",
+                json!(
+                    (0..10_000)
+                        .map(|i| json!({"name":format!("task {i}"),"done":false}))
+                        .collect::<Vec<_>>()
+                ),
+            )]),
+        ),
+        (
+            "multiple",
+            fixtures::message(vec![
+                call("a", Value::Null),
+                call("b", json!({"x":"\""})),
+                call("c", json!(42)),
+            ]),
+        ),
+    ]
+}
+fn main() {
+    for (name, msg) in cases() {
+        assert_eq!(
+            projection::searchable_message_text(&msg, true),
+            baseline(&msg),
+            "{name}"
+        );
+        let mut allocations = vec![];
+        for new in [false, true] {
+            CALLS.store(0, Relaxed);
+            BYTES.store(0, Relaxed);
+            ENABLE.store(true, Relaxed);
+            execute(&msg, new);
+            ENABLE.store(false, Relaxed);
+            allocations.push((CALLS.load(Relaxed), BYTES.load(Relaxed)));
+        }
+        let size = baseline(&msg).len();
+        let rounds = 24;
+        let iterations = (8_000_000 / size.max(1)).clamp(16, 100_000);
+        let mut samples = [vec![], vec![]];
+        for _ in 0..100 {
+            execute(&msg, false);
+            execute(&msg, true);
+        }
+        for round in 0..rounds {
+            for index in [round % 2, 1 - round % 2] {
+                let start = cpu_ns();
+                for _ in 0..iterations {
+                    execute(&msg, index == 1);
+                }
+                samples[index].push((cpu_ns() - start) / iterations as u128);
+            }
+        }
+        for samples in &mut samples {
+            samples.sort_unstable();
+        }
+        println!(
+            "{name}: CPU ns {} -> {}, allocation calls/bytes {:?} -> {:?}",
+            samples[0][rounds / 2],
+            samples[1][rounds / 2],
+            allocations[0],
+            allocations[1]
+        );
+    }
+}
+#[test]
+fn tool_serialization_matches_frozen_oracle() {
+    for (name, msg) in cases() {
+        assert_eq!(
+            projection::searchable_message_text(&msg, true),
+            baseline(&msg),
+            "{name}"
+        );
     }
 }
 
@@ -1696,572 +2014,6 @@ mod tests {
         tail.se
 ```
 
-### Core Architecture Module: `crates/jcode-app-core/src/agent/interrupts.rs`
-```
-use super::Agent;
-use crate::logging;
-use crate::message::{ContentBlock, Role};
-use crate::protocol::ServerEvent;
-use crate::session::StoredDisplayRole;
-use anyhow::Result;
-use jcode_agent_runtime::{
-    InterruptSignal, SoftInterruptMessage, SoftInterruptQueue, SoftInterruptSource,
-};
-use std::sync::Arc;
-
-fn frozen_snapshot_memory_profile(
-    locked_tools: Option<&[crate::message::ToolDefinition]>,
-    agents_md: Option<&String>,
-    skills: &[crate::prompt::SkillInfo],
-) -> serde_json::Value {
-    // Serialized schemas are an attribution proxy, not an allocation bound or
-    // capacity. The prompt strings report capacity without copying their text.
-    serde_json::json!({
-        "locked_tools_count": locked_tools.map_or(0, <[_]>::len),
-        "locked_tools_json_bytes": locked_tools
-            .map_or(0, |tools| crate::process_memory::estimate_json_bytes(&tools)),
-        "agents_md_snapshot_capacity_bytes": agents_md.map_or(0, String::capacity),
-        "prompt_skills_snapshot_count": skills.len(),
-        "prompt_skills_snapshot_capacity_bytes": skills.iter()
-            .map(|skill| skill.name.capacity().saturating_add(skill.description.capacity()))
-            .fold(0usize, usize::saturating_add),
-    })
-}
-
-fn soft_interrupt_session_display_role(source: SoftInterruptSource) -> Option<StoredDisplayRole> {
-    match source {
-        SoftInterruptSource::User => None,
-        SoftInterruptSource::System => Some(StoredDisplayRole::System),
-        SoftInterruptSource::FileActivity => Some(StoredDisplayRole::FileActivity),
-        SoftInterruptSource::BackgroundTask => Some(StoredDisplayRole::BackgroundTask),
-    }
-}
-
-fn soft_interrupt_protocol_display_role(source: SoftInterruptSource) -> Option<String> {
-    match source {
-        SoftInterruptSource::User => None,
-        SoftInterruptSource::System => Some("system".to_string()),
-        SoftInterruptSource::BackgroundTask => Some("background_task".to_string()),
-        SoftInterruptSource::FileActivity => Some("file_activity".to_string()),
-    }
-}
-
-#[derive(Debug, Clone)]
-pub(super) struct InjectedSoftInterrupt {
-    pub(super) content: String,
-    pub(super) source: SoftInterruptSource,
-    /// Caller ids of the queued messages combined into this injection, in
-    /// queue order. Messages queued without an id contribute nothing.
-    pub(super) client_ids: Vec<String>,
-}
-
-pub(super) enum NoToolCallOutcome {
-    Break,
-    ContinueWithoutEvent,
-    ContinueWithSoftInterrupt {
-        injected: Vec<InjectedSoftInterrupt>,
-        point: &'static str,
-    },
-}
-
-pub(super) enum PostToolInterruptOutcome {
-    NoInterrupt,
-    SoftInterrupt {
-        injected: Vec<InjectedSoftInterrupt>,
-        point: &'static str,
-    },
-}
-
-impl Agent {
-    pub fn restore_persisted_soft_interrupts(&self) -> usize {
-        let restored = match crate::soft_interrupt_store::take(self.session_id()) {
-            Ok(items) => items,
-            Err(err) => {
-                logging::warn(&format!(
-                    "Failed to restore persisted soft interrupts for {}: {}",
-                    self.session_id(),
-                    err
-                ));
-                return 0;
-            }
-        };
-
-        if restored.is_empty() {
-            return 0;
-        }
-
-        let restored_count = restored.len();
-        if let Ok(mut queue) = self.soft_interrupt_queue.lock() {
-            queue.extend(restored);
-        } else {
-            logging::warn(&format!(
-                "Failed to restore persisted soft interrupts for {} because queue lock was poisoned",
-                self.session_id()
-            ));
-            return 0;
-        }
-
-        logging::info(&format!(
-            "Restored {} persisted soft interrupt(s) for session {}",
-            restored_count,
-            self.session_id()
-        ));
-        restored_count
-    }
-
-    pub fn persist_soft_interrupt_snapshot(&self) {
-        let pending = match self.soft_interrupt_queue.lock() {
-            Ok(queue) => queue.clone(),
-            Err(_) => {
-                logging::warn(&format!(
-                    "Failed to snapshot soft interrupts for {} because queue lock was poisoned",
-                    self.session_id()
-                ));
-                return;
-            }
-        };
-
-        if let Err(err) = crate::soft_interrupt_store::overwrite(self.session_id(), &pending) {
-            logging::warn(&format!(
-                "Failed to persist {} soft interrupt(s) for {}: {}",
-                pending.len(),
-                self.session_id(),
-                err
-            ));
-        }
-    }
-
-    /// Add a swarm alert to be injected into the next turn
-    pub fn push_alert(&mut self, alert: String) {
-        self.pending_alerts.push(alert);
-    }
-
-    /// Take all pending alerts (clears the queue)
-    pub fn take_alerts(&mut self) -> Vec<String> {
-        std::mem::take(&mut self.pending_alerts)
-    }
-
-    /// Queue a soft interrupt message to be injected at the next safe point.
-    /// This method can be called even while the agent is processing (uses separate lock).
-    pub fn queue_soft_interrupt(
-        &self,
-        content: String,
-        images: Vec<(String, String)>,
-        urgent: bool,
-        source: SoftInterruptSource,
-    ) {
-        self.queue_soft_interrupt_with_id(content, images, urgent, source, None);
-    }
-
-    /// Like [`queue_soft_interrupt`](Self::queue_soft_interrupt), with an
-    /// opaque caller id echoed back in `SoftInterruptInjected`.
-    pub fn queue_soft_interrupt_with_id(
-        &self,
-        content: String,
-        images: Vec<(String, String)>,
-        urgent: bool,
-        source: SoftInterruptSource,
-        client_id: Option<String>,
-    ) {
-        let content_bytes = content.len();
-        let content_chars = content.chars().count();
-        let image_count = images.len();
-        if let Ok(mut queue) = self.soft_interrupt_queue.lock() {
-            let pending_before = queue.len();
-            queue.push(SoftInterruptMessage {
-                content,
-                images,
-                urgent,
-                source,
-                client_id,
-            });
-            logging::info(&format!(
-                "AGENT_SOFT_INTERRUPT_QUEUE_PUSH session={} source={:?} urgent={} content_bytes={} content_chars={} image_count={} pending_before={} pending_after={}",
-                self.session_id(),
-                source,
-                urgent,
-                content_bytes,
-                content_chars,
-                image_count,
-                pending_before,
-                queue.len()
-            ));
-        } else {
-            logging::warn(&format!(
-                "AGENT_SOFT_INTERRUPT_QUEUE_PUSH_FAILED session={} source={:?} urgent={} content_bytes={} content_chars={} image_count={} reason=queue_lock_poisoned",
-                self.session_id(),
-                source,
-                urgent,
-                content_bytes,
-                content_chars,
-                image_count
-            ));
-        }
-    }
-
-    /// Get a handle to the soft interrupt queue.
-    /// The server can use this to queue interrupts without holding the agent lock.
-    pub fn soft_interrupt_queue(&self) -> SoftInterruptQueue {
-        Arc::clone(&self.soft_interrupt_queue)
-    }
-
-    /// Get a handle to the background tool signal.
-    /// The server can use this to signal "move tool to background" without holding the agent lock.
-    pub fn background_tool_signal(&self) -> InterruptSignal {
-        self.background_tool_signal.clone()
-    }
-
-    pub fn graceful_shutdown_signal(&self) -> InterruptSignal {
-        self.graceful_shutdown.clone()
-    }
-
-    pub fn request_graceful_shutdown(&self) {
-        self.graceful_shutdown.fire();
-    }
-
-    pub(super) fn is_graceful_shutdown(&self) -> bool {
-        self.graceful_shutdown.is_set()
-    }
-
-    /// Check if there are pending soft interrupts
-    pub fn has_soft_interrupts(&self) -> bool {
-        self.soft_interrupt_queue
-            .lock()
-            .map(|q| !q.is_empty())
-            .unwrap_or(false)
-    }
-
-    /// Check if there's an urgent soft interrupt that should skip remaining tools
-    pub fn has_urgent_interrupt(&self) -> bool {
-        self.soft_interrupt_queue
-            .lock()
-            .map(|q| q.iter().any(|m| m.urgent))
-            .unwrap_or(false)
-    }
-
-    /// Get count of queued soft interrupts
-    pub fn soft_interrupt_count(&self) -> usize {
-        self.soft_interrupt_queue
-            .lock()
-            .map(|q| q.len())
-            .unwrap_or(0)
-    }
-
-    /// Get count of pending alerts
-    pub fn pending_alert_count(&self) -> usize {
-        self.pending_alerts.len()
-    }
-
-    /// Get pending alerts (for debug visibility)
-    pub fn pending_alerts_preview(&self) -> Vec<String> {
-        self.pending_alerts
-            .iter()
-            .take(10)
-            .map(|s| {
-                if s.len() > 100 {
-                    format!("{}...", crate::util::truncate_str(s, 100))
-                } else {
-                    s.clone()
-                }
-            })
-            .collect()
-    }
-
-    /// Get comprehensive debug info about agent internal state
-    pub fn debug_info(&self) -> serde_json::Value {
-        serde_json::json!({
-            "provider": self.provider.name(),
-            "model": self.provider.model(),
-            "provider_session_id": self.provider_session_id,
-            "last_upstream_provider": self.last_upstream_provider,
-            "last_connection_type": self.last_connection_type,
-            "active_skill": self.active_skill,
-            "allowed_tools": self.allowed_tools,
-            "disabled_tools": self.disabled_tools,
-            "session": {
-                "id": self.session.id,
-                "is_canary": self.session.is_canary,
-                "model": self.session.model,
-                "working_dir": self.session.working_dir,
-                "message_count": self.session.messages.len(),
-            },
-            "interrupts":
-```
-
-### Core Architecture Module: `crates/jcode-app-core/src/agent/messages.rs`
-```
-use super::*;
-
-impl Agent {
-    /// Keep failed turns visible after reconnect without adding diagnostic text
-    /// to the provider's conversation context.
-    pub(crate) fn persist_turn_error(&mut self, message: &str) -> anyhow::Result<()> {
-        self.session
-            .record_replay_display_message("error", None, message);
-        self.persist_session_now()
-    }
-
-    pub(crate) fn add_message(
-        &mut self,
-        role: Role,
-        content: impl Into<crate::message::SharedContent>,
-    ) -> String {
-        let id = self.session.add_message(role, content);
-        let compaction = self.registry.compaction();
-        if let Ok(mut manager) = compaction.try_write() {
-            if let Some(message) = self.session.messages.last() {
-                manager.notify_message_added_blocks(&message.content);
-            } else {
-                manager.notify_message_added();
-            }
-        }
-        id
-    }
-
-    pub(crate) fn add_message_with_display_role(
-        &mut self,
-        role: Role,
-        content: impl Into<crate::message::SharedContent>,
-        display_role: Option<StoredDisplayRole>,
-    ) -> String {
-        let id = self
-            .session
-            .add_message_with_display_role(role, content, display_role);
-        let compaction = self.registry.compaction();
-        if let Ok(mut manager) = compaction.try_write() {
-            if let Some(message) = self.session.messages.last() {
-                manager.notify_message_added_blocks(&message.content);
-            } else {
-                manager.notify_message_added();
-            }
-        }
-        id
-    }
-
-    pub(crate) fn add_message_with_duration(
-        &mut self,
-        role: Role,
-        content: impl Into<crate::message::SharedContent>,
-        duration_ms: Option<u64>,
-    ) -> String {
-        let id = self
-            .session
-            .add_message_with_duration(role, content, duration_ms);
-        let compaction = self.registry.compaction();
-        if let Ok(mut manager) = compaction.try_write() {
-            if let Some(message) = self.session.messages.last() {
-                manager.notify_message_added_blocks(&message.content);
-            } else {
-                manager.notify_message_added();
-            }
-        }
-        id
-    }
-
-    pub(crate) fn add_message_ext(
-        &mut self,
-        role: Role,
-        content: impl Into<crate::message::SharedContent>,
-        duration_ms: Option<u64>,
-        token_usage: Option<crate::session::StoredTokenUsage>,
-    ) -> String {
-        let id = self
-            .session
-            .add_message_ext(role, content, duration_ms, token_usage);
-        let compaction = self.registry.compaction();
-        if let Ok(mut manager) = compaction.try_write() {
-            if let Some(message) = self.session.messages.last() {
-                manager.notify_message_added_blocks(&message.content);
-            } else {
-                manager.notify_message_added();
-            }
-        }
-        id
-    }
-}
-
-impl Agent {
-    /// Export the full conversation as a markdown transcript.
-    pub fn export_conversation_markdown(&self) -> String {
-        let mut md = String::new();
-        for msg in &self.session.messages {
-            let role_label = match msg.role {
-                Role::User => "User",
-                Role::Assistant => "Assistant",
-            };
-            md.push_str(&format!("### {}\n\n", role_label));
-            for block in &msg.content {
-                match block {
-                    ContentBlock::Text { text, .. } => {
-                        md.push_str(text);
-                        md.push_str("\n\n");
-                    }
-                    ContentBlock::Reasoning { text } => {
-                        md.push_str(&format!("*Thinking:* {}\n\n", text));
-                    }
-                    ContentBlock::ReasoningTrace { text } => {
-                        md.push_str(&format!("*Thinking:* {}\n\n", text));
-                    }
-                    ContentBlock::AnthropicThinking { thinking, .. } => {
-                        md.push_str(&format!("*Thinking:* {}\n\n", thinking));
-                    }
-                    ContentBlock::OpenAIReasoning { summary, .. } => {
-                        if !summary.is_empty() {
-                            md.push_str(&format!("*Thinking:* {}\n\n", summary.join("\n")));
-                        }
-                    }
-                    ContentBlock::ToolUse { name, input, .. } => {
-                        let input_str = serde_json::to_string_pretty(input)
-                            .unwrap_or_else(|_| input.to_string());
-                        md.push_str(&format!(
-                            "**Tool: `{}`**\n```json\n{}\n```\n\n",
-                            name, input_str
-                        ));
-                    }
-                    ContentBlock::ToolResult {
-                        content, is_error, ..
-                    } => {
-                        let label = if is_error == &Some(true) {
-                            "Error"
-                        } else {
-                            "Result"
-                        };
-                        // Truncate very long results
-                        let display = if content.len() > 2000 {
-                            format!(
-                                "{}... (truncated, {} chars total)",
-                                crate::util::truncate_str(content, 2000),
-                                content.len()
-                            )
-                        } else {
-                            content.clone()
-                        };
-                        md.push_str(&format!("**{}:**\n```\n{}\n```\n\n", label, display));
-                    }
-                    ContentBlock::Image { .. } => {
-                        md.push_str("[Image]\n\n");
-                    }
-                    ContentBlock::OpenAICompaction { .. } => {
-                        md.push_str("[OpenAI native compaction]\n\n");
-                    }
-                    ContentBlock::ToolReference { .. } | ContentBlock::ProviderNative { .. } => {}
-                }
-            }
-        }
-        md
-    }
-}
-
-impl Agent {
-    pub(super) fn messages_end_with_tool_result(messages: &[Message]) -> bool {
-        messages.iter().rev().any(|message| {
-            if !matches!(message.role, Role::User) {
-                return false;
-            }
-            if message
-                .content
-                .iter()
-                .any(|block| matches!(block, ContentBlock::ToolResult { .. }))
-            {
-                return true;
-            }
-            message.content.iter().any(|block| match block {
-                ContentBlock::Text { text, .. } => {
-                    let trimmed = text.trim();
-                    trimmed.starts_with("<system-reminder>")
-                        // The empty-post-tool continuation is itself a
-                        // User-role `<system-reminder>`. Counting it would let the
-                        // injected instruction keep this predicate true on its own,
-                        // so every later whitespace-only response appends another
-                        // continuation and spends another call, with no tool result
-                        // anywhere near.
-                        && !trimmed.starts_with(
-                            Self::EMPTY_POST_TOOL_CONTINUATION_PREFIX
-                        )
-                }
-                _ => false,
-            })
-        })
-    }
-}
-
-#[cfg(test)]
-mod durable_error_tests {
-    use super::*;
-
-    struct NoNetworkProvider;
-
-    #[async_trait::async_trait]
-    impl crate::provider::Provider for NoNetworkProvider {
-        async fn complete(
-            &self,
-            _: &[crate::message::Message],
-            _: &[crate::message::ToolDefinition],
-            _: &str,
-            _: Option<&str>,
-        ) -> anyhow::Result<crate::provider::EventStream> {
-            anyhow::bail!("test must not call provider")
-        }
-
-        fn name(&self) -> &str {
-            "mock"
-        }
-
-        fn fork(&self) -> Arc<dyn crate::provider::Provider> {
-            Arc::new(Self)
-        }
-    }
-
-    #[test]
-    fn message_insertion_retains_shared_payload_storage() {
-        let _lock = crate::storage::lock_test_env();
-        let mut agent = Agent::new_provisional_with_initial_working_dir(
-            Arc::new(NoNetworkProvider),
-            Registry::empty(),
-            None,
-        );
-        let message = Message::user("shared payload");
-        agent.add_message(Role::User, message.content.clone());
-        assert!(
-            agent
-                .session
-                .messages
-                .last()
-                .unwrap()
-                .content
-                .shares_storage_with(&message.content)
-        );
-    }
-
-    #[test]
-    fn failed_wake_error_is_saved_without_an_assistant_message() {
-        let _lock = crate::storage::lock_test_env();
-        let home = tempfile::tempdir().unwrap();
-        struct RestoreHome(Option<std::ffi::OsString>);
-        impl Drop for RestoreHome {
-            fn drop(&mut self) {
-                match self.0.take() {
-                    Some(value) => crate::env::set_var("JCODE_HOME", value),
-                    None => crate::env::remove_var("JCODE_HOME"),
-                }
-            }
-        }
-        let _restore = RestoreHome(std::env::var_os("JCODE_HOME"));
-        crate::env::set_var("JCODE_HOME", home.path());
-        let mut agent = Agent::new(Arc::new(NoNetworkProvider), Registry::empty());
-        agent.add_message_with_display_role(
-            Role::User,
-            vec![ContentBlock::Text {
-                text: "wake".into(),
-                cache_control: None,
-            }],
-            Some(StoredDisplayRole::System),
-        );
-        let error = anyhow::anyhow!("invalid_request_error: missing call_id")
-            .context("provider rejected wake");
-        let message = c
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
@@ -2292,427 +2044,104 @@ mod durable_error_tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `fcb98e73` (2026-11-18)
-**Commit Message**: perf: avoid discarded per-agent server memory diagnostics
+### Incident Patch 1: `fa207816` (2026-11-18)
+**Commit Message**: test(provider): clarify serialized uplink fixture locking
 
-Read identical full session attribution directly, since the compact snapshot omits compaction capacities. Borrow profile subobjects and preserve try_lock busy-session behavior and standalone agent profiling.
-
-Remove N process samples, interrupt queue scans/locks, frozen snapshot profiles, full-agent JSON allocations, and session/subobject clones per server memory request. One server process snapshot remains. History intentionally loses synthetic per-agent agent:memory entries and no longer evicts N older entries.
-
-Validated hosted justrust check -p jcode-app-core --tests and 12 filtered server::debug_server_state tests. Private no-LLM fixture, 8 populated sessions x 8 passes: legacy 26.312158ms versus session-only 3.418760ms, process samples 64 versus 0. Two local runs also improved 32.205/33.733ms to 5.258/5.255ms. Full session JSON equivalence, compaction totals, and busy skipping covered.
-
-**File**: `crates/jcode-app-core/src/server/debug_server_memory_efficiency_tests.rs` (added, +222/-0)
+**File**: `crates/jcode-provider-core/src/request_compression_tests.rs` (modified, +5/-2)
 ```diff
-@@ -0,0 +1,222 @@
-+//! No-LLM fixtures for the server memory diagnostic's session-only fast path.
-+use super::*;
-+
-+struct PrivateHome {
-+    _dir: tempfile::TempDir,
-+    home: Option<std::ffi::OsString>,
-+    test_session: Option<std::ffi::OsString>,
-+}
-+
-+impl PrivateHome {
-+    fn new() -> Self {
-+        let dir = tempfile::tempdir().unwrap();
-+        let home = std::env::var_os("JCODE_HOME");
-+        let test_session = std::env::var_os("JCODE_TEST_SESSION");
-+        crate::env::set_var("JCODE_HOME", dir.path());
-+        crate::env::set_var("JCODE_TEST_SESSION", "1");
-+        Self {
-+            _dir: dir,
-+            home,
-+            test_session,
-+        }
-+    }
-+}
-+
-+impl Drop for PrivateHome {
-+    fn drop(&mut self) {
-+        for (name, value) in [
-+            ("JCODE_HOME", self.home.take()),
-+            ("JCODE_TEST_SESSION", self.test_session.take()),
-+        ] {
-+            match value {
-+                Some(value) => crate::env::set_var(name, value),
-+                None => crate::env::remove_var(name),
-+            }
-+        }
-+    }
-+}
-+
-+struct NoRequests;
-+
-+#[async_trait::async_trait]
-+impl crate::provider::Provider for NoRequests {
-+    async fn complete(
-+        &self,
-+        _: &[crate::message::Message],
-+        _: &[crate::message::ToolDefinition],
-+        _: &str,
-+        _: Option<&str>,
-+    ) -> Result<crate::provider::EventStream> {
-+        anyhow::bail!("memory diagnostics must never call a provider")
-+    }
-+
-+    fn name(&self) -> &str {
-+        "memory-diagnostic-test"
-+    }
-+
-+    fn fork(&self) -> Arc<dyn crate::provider::Provider> {
-+        Arc::new(Self)
-+    }
-+}
-+
-+fn populated_agent(index: usize) -> Agent {
-+    let mut session =
-+        crate::session::Session::create_with_id(format!("memory-diagnostic-{index}"), None, None);
-+    for turn in 0..8 {
-+        session.add_message(
-+            crate::message::Role::User,
-+            vec![crate::message::ContentBlock::Text {
-+                text: format!("turn {turn}: {}", "escaped\n\"界".repeat(512)),
-+                cache_control: None,
-+            }],
-+        );
-+    }
-+    session.compaction = Some(Arc::new(crate::session::StoredCompactionState {
-+        summary_text: "summary\n\"界".repeat(128),
-+        openai_encrypted_content: Some("encrypted".repeat(1024).into()),
-+        covers_up_to_turn: 2,
-+        original_turn_count: 8,
-+        compacted_count: 2,
-+    }));
-+    Agent::new_with_session(
-+        Arc::new(NoRequests),
-+        crate::tool::Registry::empty(),
-+        session,
-+        None,
-+    )
-+}
-+
-+#[test]
-+fn session_only_profile_matches_full_agent_profile_and_removes_repeated_process_samples() {
-+    // The private home and test-session flag isolate this fixture on either
-+    // the local or hosted test runner. No model requests or daemon are needed.
-+    let _env = crate::storage::lock_test_env();
-+    let _home = PrivateHome::new();
-+    let agents: Vec<_> = (0..8).map(populated_agent).collect();
-+    let expected: Vec<_> = agents
-+        .iter()
-+        .map(|agent| agent.debug_memory_profile()["session"].clone())
-+        .collect();
-+    let old_start = Instant::now();
-+    for _ in 0..8 {
-+        for agent in &agents {
-+            std::hint::black_box(agent.debug_memory_profile()["session"].clone());
-+        }
-+    }
-+    let old_elapsed = old_start.elapsed();
-+    let history_before = crate::process_memory::history(128);
-+    assert_eq!(
-+        history_before
-+            .iter()
-+            .take(64)
-+            .filter(|entry| entry.source == "agent:memory")
-+            .count(),
-+        64,
-+        "the legacy 8-session, 8-pass loop records one process sample per profile"
-+    );
-+
-+    let new_start = Instant::now();
-+    for _ in 0..8 {
-+        for agent in &agents {
-+            std::hint::black_box(agent.session_for_split().debug_memory_profile());
-+        }
-+    }
-+    let new_elapsed = new_start.elapsed();
-+    for (agent, expected) in agents.iter().zip(&expected) {
-+        let actual = agent.session_for_split().debug_memory_profile();
-+        assert_eq!(&actual, expected);
-+        // In particular, compact snapshots cannot substitute for these
-+        // capacity and encrypted-payload fields in server:memory.
-+        assert!(
-+            actual["compaction"]["encrypted_content_bytes"]
-+                .as_u64()
-+                .unwrap()
-+                > 0
-+        );
-+        let mut borrowed = CompactionMemoryTotals::default();
-+        borrowed.observe("fixture", &actual);
-+        let mut legacy = CompactionMemoryTotals::default();
-+        legacy.observe("fixture", expected);
-+        assert_eq!(borrowed.into_json(), legacy.into_json());
-+    }
-+    let history_after = crate::process_memory::history(128);
-+    assert_eq!(
-+        serde_json::to_value(history_before).unwrap(),
-+        serde_json::to_value(history_after).unwrap(),
-+        "session-only profiling must not sample or append process history"
-+    );
-+    e
-```
-
-**File**: `crates/jcode-app-core/src/server/debug_server_state.rs` (modified, +11/-8)
-```diff
-@@ -785,17 +785,16 @@ async fn build_server_memory_payload(
-     for (session_id, agent_arc) in sessions_guard.iter() {
-         if let Ok(agent) = agent_arc.try_lock() {
-             locked_session_count += 1;
--            let profile = agent.debug_memory_profile();
--            let session_profile = profile.get("session").cloned().unwrap_or_default();
-+            // The compact snapshot omits compaction capacity attribution. Read
-+            // the same session profile as agent:memory without its discarded
-+            // process, interrupt, and frozen-snapshot diagnostics.
-+            let session_profile = agent.session_for_split().debug_memory_profile();
-             // Only profiles obtained through try_lock contribute. Capacity is
-             // attribution, not serialized length or an estimate of RSS savings.
-             compaction_memory.observe(session_id, &session_profile);
--            let totals = session_profile.get("totals").cloned().unwrap_or_default();
--            let messages = session_profile.get("messages").cloned().unwrap_or_default();
--            let provider_cache = session_profile
--                .get("provider_messages_cache")
--                .cloned()
--                .unwrap_or_default();
-+            let totals = &session_profile["totals"];
-+            let messages = &session_profile["messages"];
-+            let provider_cache = &session_profile["provider_messages_cache"];
-             let json_bytes = totals
-                 .get("json_bytes")
-                 .and_then(|value| value.as_u64())
-@@ -1253,3 +1252,7 @@ fn path_len(path: &std::path::Path) -> usize {
- #[cfg(test)]
- #[path = "debug_server_state_tests.rs"]
- mod tests;
-+
-+#[cfg(test)]
-+#[path = "debug_server_memory_efficiency_tests.rs"]
-+mod efficiency_tests;
-```
-
----
-
-### Incident Patch 2: `1dfdbd8c` (2026-11-18)
-**Commit Message**: fix(provider): compact only selected compressed request bodies
-
-Move final shrink after ratio and expansion-limit checks, covering both gzip and zstd without reallocating rejected compressed bodies. Verify exact accepted bytes, capacity bounds, large gzip roundtrips and gzip/zstd low-ratio plus zstd expansion-limit fallbacks.
-
-Hosted check and full package tests passed (209 passed, 3 ignored). Extended alternating benchmark: accepted 8388740-byte conversation zstd retained capacity 8421508 to 2059758 bytes, median encode latency 68.818 to 68.855 ms over 12 measured rounds. Gzip retained capacity 4194370 to 2367473 bytes, median 24.743 to 24.555 ms (noise-level change). Peak codec allocation unchanged; selected bodies may incur a realloc/copy, rejected bodies no longer do.
-
-**File**: `crates/jcode-provider-core/src/request_compression.rs` (modified, +6/-8)
-```diff
-@@ -200,7 +200,7 @@ fn decide(
-         BodyEncoding::Gzip => gzip_fast(raw),
-         BodyEncoding::Zstd => zstd_fast(raw),
-     };
--    let Some(compressed) = compressed else {
-+    let Some(mut compressed) = compressed else {
-         return (Decision::Raw("encode-error"), None);
-     };
-     if encoding == BodyEncoding::Zstd && raw.len() > compressed.len() * MAX_ZSTD_EXPANSION {
-@@ -213,6 +213,10 @@ fn decide(
-     if !worth_it {
-         return (Decision::Raw("low-ratio"), None);
-     }
-+    // Only the selected wire body survives until upload completes. Release
-+    // raw-size estimates and codec growth slack for both encodings, but avoid
-+    // a realloc/copy for bodies rejected by ratio or expansion-limit checks.
-+    compressed.shrink_to_fit();
-     let compressed_len = compressed.len();
-     let decision = match encoding {
-         BodyEncoding::Gzip => Decision::Gzip { compressed_len },
-@@ -232,13 +236,7 @@ fn gzip_fast(raw: &[u8]) -> Option<Vec<u8>> {
-         flate2::Compression::fast(),
-     );
-     encoder.write_all(raw).ok()?;
--    let mut compressed = encoder.finish().ok()?;
--    // The wire body owns this Vec until upload completes. Do not retain the
--    // raw-size estimate (or growth slack) for that entire time. Shrinking once
--    // also handles moderately compressible bodies, unlike capping only the
--    // initial allocation, without changing the encoded bytes or encode policy.
--    compressed.shrink_to_fit();
--    Some(compressed)
-+    encoder.finish().ok()
- }
- 
- /// Conservative compression ratio assumed when a decision must be made before
-```
-
-**File**: `crates/jcode-provider-core/src/request_compression_tests.rs` (modified, +66/-13)
-```diff
-@@ -22,35 +22,54 @@ fn deterministic_noise(len: usize) -> Vec<u8> {
- }
- 
- #[test]
--fn large_gzip_bodies_roundtrip_with_bounded_spare_capacity() {
-+fn large_gzip_bodies_roundtrip_and_selected_bodies_have_bounded_capacity() {
-     for raw in [
-         jsonish(8 * 1024 * 1024),
-         vec![b'a'; 8 * 1024 * 1024],
-         deterministic_noise(8 * 1024 * 1024),
-     ] {
-         let compressed = gzip_fast(&raw).unwrap();
--        assert!(
--            compressed.capacity() <= compressed.len() + 64 * 1024,
--            "len={} capacity={}",
--            compressed.len(),
--            compressed.capacity()
--        );
-         let mut decoded = Vec::new();
-         flate2::read::GzDecoder::new(compressed.as_slice())
-             .read_to_end(&mut decoded)
-             .unwrap();
-         assert_eq!(decoded, raw);
-+        let (decision, selected) =
-+            decide(&raw, CompressionMode::Always, Some(BodyEncoding::Gzip), 1e6);
-+        if compressed.len() < raw.len() {
-+            assert_eq!(
-+                decision,
-+                Decision::Gzip {
-+                    compressed_len: compressed.len()
-+                }
-+            );
-+            let selected = selected.unwrap();
-+            assert_eq!(selected, compressed);
-+            assert!(selected.capacity() <= selected.len() + 64 * 1024);
-+        } else {
-+            assert_eq!(decision, Decision::Raw("low-ratio"));
-+            assert!(selected.is_none());
-+        }
-     }
- }
- 
- /// Run explicitly with --ignored --nocapture. Compare on the same host and
- /// alternate input and policy order to reduce warm-cache/order bias.
- /// Policies: 0 = original half-raw allocation, 1 = 64 KiB initial cap,
--/// 2 = original allocation followed by final shrink (production).
-+/// 2 = original allocation followed by final shrink (accepted gzip bodies).
-+/// 3/4 = zstd before/after final shrink. Noise and repeated zstd bodies are
-+/// codec-only controls: rejected bodies do not pay shrink cost in production.
- #[test]
- #[ignore = "allocation and latency benchmark"]
- fn gzip_allocation_benchmark() {
-     fn encode(raw: &[u8], policy: usize) -> Vec<u8> {
-+        if policy >= 3 {
-+            let mut bytes = zstd_fast(raw).unwrap();
-+            if policy == 4 {
-+                bytes.shrink_to_fit();
-+            }
-+            return bytes;
-+        }
-         let capacity = if policy == 1 {
-             (raw.len() / 2).min(64 * 1024)
-         } else {
-@@ -89,13 +108,13 @@ fn gzip_allocation_benchmark() {
-         ("conversation", conversation),
-         ("noise", noise),
-     ];
--    let mut timings = vec![vec![Vec::new(); 3]; inputs.len()];
-+    let mut timings = vec![vec![Vec::new(); 5]; inputs.len()];
-     for round in 0..13 {
-         for offset in 0..inputs.len() {
-             let input = (round + offset) % inputs.len();
-             let (name, raw) = &inputs[input];
--            for offset in 0..3 {
--                let policy = (round + offset) % 3;
-+            for offset in 0..5 {
-+                let policy = (round + offset) % 5;
-                 let started = Instant::now();
-                 let bytes = std::hint::black_box(encode(std::hint::black_box(raw), policy));
-                 let elapsed = started.elapsed().as_secs_f64() * 1000.0;
-@@ -106,15 +125,32 @@ fn gzip_allocation_benchmark() {
-                         bytes.len(),
-                         bytes.capacity()
-                     );
--                    assert_eq!(bytes, gzip_fast(raw).unwrap());
-+                    let expected = if policy >= 3 {
-+                        zstd_fast(raw).unwrap()
-+                    } else {
-+                        gzip_fast(raw).unwrap()
-+                    };
-+                    assert_eq!(bytes, expected);
-+                    if *name == "conversation" && matches!(policy, 2 | 4) {
-+                        let encoding = if policy == 4 {
-+                            BodyEncoding::Zstd
-+                        } else {
-+                            BodyEncoding::Gzip
-+                        };
-+                        let (_, selected) =
-+                            decide(raw, CompressionMode::Always, Some(encoding), 1e6);
-+                        let selected = selected.expect("conversation must be accepted");
-+                        assert_eq!(selected, bytes);
-+                        assert!(selected.capacity() <= selected.len() + 64 * 1024);
-+                    }
-                 } else {
-                     timings[input][policy].push(elapsed);
-                 }
-             }
+@@ -150,8 +150,7 @@ fn gzip_allocation_benchmark() {
          }
      }
      for (input, (name, _)) in inputs.iter().enumerate() {
--        for policy in 0..3 {
-+        for policy in 0..5 {
-             let values = &mut timings[input][policy];
+-        for policy in 0..5 {
+-            let values = &mut timings[input][policy];
++        for (policy, values) in timings[input].iter_mut().enumerate() {
              values.sort_by(f64::total_cmp);
              eprintln!(
-@@ -423,6 +459,10 @@ fn zstd_roundtrips_and_beats_gzip_ratio() {
-     };
-     let bytes = bytes.unwrap();
-     assert_eq!(bytes.len(), compressed_len);
-+    let unshrunk = zstd_fast(&big).unwrap();
-+ 
+                 "{name} policy={policy} median_ms={:.3} min_ms={:.3} max_ms={:.3} n={}",
+@@ -165,6 +164,10 @@ fn gzip_allocation_benchmark() {
+ }
+ 
+ #[tokio::test(flavor = "current_thread")]
++#[expect(
++    clippy::await_holding_lock,
++    reason = "Serialize process-global uplink sampler state against synchronous tests on separate test runtimes"
++)]
+ async fn json_uploads_match_original_wire_bytes_and_headers() {
+     use tokio::io::{AsyncReadExt, AsyncWriteExt};
+     let _guard = UPLINK_TEST_LOCK
 ```
 
 ---
 
-### Incident Patch 3: `398d454d` (2026-11-18)
-**Commit Message**: fix(jarvis): separate passive screen ACKs from client registration
+### Incident Patch 2: `224324ab` (2026-11-18)
+**Commit Message**: docs: distinguish repeated executable residency from heap savings
 
-**File**: `crates/jcode-tui/src/tui/backend_screen.rs` (modified, +13/-3)
+**File**: `docs/benchmarks/server-fresh-daemon-memory-2026-11-18.md` (modified, +1/-1)
 ```diff
-@@ -5,7 +5,7 @@ use std::sync::atomic::{AtomicU64, Ordering};
- use tokio::sync::watch;
+@@ -45,5 +45,5 @@ The normal daemon reports the **system allocator**. `MALLOC_CONF=prof:false` is
  
- // Kept separate from ordinary request IDs. Acks carry no turn semantics.
--static NEXT_SCREEN_ID: AtomicU64 = AtomicU64::new(1 << 62);
-+static NEXT_SCREEN_ID: AtomicU64 = AtomicU64::new(1 << 63);
- fn request(session: &str, action: ScreenContextAction) -> Request {
-     Request::ScreenContext {
-         id: NEXT_SCREEN_ID.fetch_add(1, Ordering::Relaxed),
-@@ -151,13 +151,13 @@ impl RemoteConnection {
-     /// settle an observer turn whose current request ID is unknown locally.
-     pub(crate) fn handle_screen_control_event(&mut self, event: &ServerEvent) -> bool {
-         match event {
--            ServerEvent::Ack { id } if *id >= (1 << 62) => {
-+            ServerEvent::Ack { id } if *id >= (1 << 63) => {
-                 if let Some(feed) = &self.screen_feed {
-                     feed.acknowledged.send_replace(*id);
-                 }
-                 true
-             }
--            ServerEvent::Error { id, message, .. } if *id >= (1 << 62) => {
-+            ServerEvent::Error { id, message, .. } if *id >= (1 << 63) => {
-                 if let Some(feed) = &self.screen_feed {
-                     feed.task.abort();
-                 }
-@@ -232,6 +232,16 @@ mod tests {
-             message: "expired".into(),
-             retry_after_secs: None
-         }));
-+        // Ordinary request IDs deliberately occupy the 01 high-bit range.
-+        // They must reach tool-registration handling, not passive ACK handling.
-+        for ordinary in [7, 1_u64 << 62, (1_u64 << 63) - 1] {
-+            assert!(!remote.handle_screen_control_event(&ServerEvent::Ack { id: ordinary }));
-+            assert!(!remote.handle_screen_control_event(&ServerEvent::Error {
-+                id: ordinary,
-+                message: "ordinary control failure".into(),
-+                retry_after_secs: None,
-+            }));
-+        }
-         assert!(!remote.handle_screen_control_event(&ServerEvent::Ack { id: 7 }));
-         assert!(!remote.handle_screen_control_event(&ServerEvent::Error {
-             id: 7,
+ - Shared mobile transport is accepted as `bbd9a2d66`, with exact local wire/pooling/auth/cookie coverage, 18 relevant tests and optimized actual thread-CPU/separate allocator measurements. Its 47.4% CPU and 4.64 MiB cumulative-allocation savings describe **the duplicate client-construction primitive**, not the entire daemon or its retained heap. See `startup-mobile-http-2026-11-18.md`.
+ - Same-source parser-dependency optimization was investigated with experimental `clap_builder`/`clap_lex` opt-level 3 overrides, without changing default profiles. Exact CLI exit/stdout/stderr parity passed five fixtures in two optimized release runs (16 alternating pairs per fixture). Release `serve --help` CPU ratios were 1.0667 and 1.0423, so the experiment is **not accepted as a pure efficiency**. Selfdev CPU results were better, but do not override release nonregression evidence.
+-- A release startup sample showed 46.91 MiB RSS for the variant versus 66.83 MiB for its control, while live heaps were effectively equal (~2.4 MB). Total executable sections differed by only 29,035 bytes. The apparent ~20 MiB resident difference is therefore not a demonstrated removal of 20 MiB of required state. File-page residency/layout requires further attribution before any RAM claim. Raw controls: `startup-release-cli-final-20261118`, `startup-release-cli-repeat-20261118`, `fresh-release-clap3-final1-20261118`, `fresh-release-control-final1-20261118`. No default optimization settings changed.
++- A release startup sample showed 46.91 MiB RSS for the variant versus 66.83 MiB for its control, while live heaps were effectively equal (~2.4 MB). Total executable sections differed by only 29,035 bytes. The apparent ~20 MiB resident difference is therefore not a demonstrated removal of 20 MiB of required state. File-page residency/layout requires further attribution before any RAM claim. Raw controls: `startup-release-cli-final-20261118`, `startup-release-cli-repeat-20261118`, `fresh-release-clap3-final1-20261118`, `fresh-release-control-final1-20261118`. Reverse-order repeats (`fresh-release-control-reverse2-20261118`, `fresh-release-clap3-reverse2-20261118`) measured 65.82 / 47.98 MiB RSS, with live heaps 2,416,480 / 2,414,432 bytes. Thus the residency difference repeats in these controls, but is not a heap saving: first-pair `smaps` attributes 18,684 KiB of the difference to clean executable instructions and 1,592 KiB to clean read-only pages, with effectively equal anonymous state. This does not pass the CPU gate or establish its cause. No default optimization settings changed.
+ - Revisit concrete remaining owners after changes. Do not claim global exhaustion or lower total RSS from microbenchmarks alone.
+```
+
+---
+
+### Incident Patch 3: `887ec469` (2026-11-18)
+**Commit Message**: docs: record startup memory controls and reject parser CPU tradeoff
+
+**File**: `docs/benchmarks/server-fresh-daemon-memory-2026-11-18.md` (modified, +16/-4)
+```diff
+@@ -27,11 +27,23 @@ An installed older stable executable was measured only as a reference: `fresh-st
+ 
+ A separate `jemalloc-prof` executable, digest `3d312fee01b1ada46dab7863a26f16a042600068b4ecf7132a6652f881b605b1`, produced an exit profile without creating a synthetic session: `fresh-prof3-20261118/startup-final.2591502.0.f.heap`. `prof_final:true` captures after orderly shutdown, so its retained 2.3 MiB is **not** a live idle-heap measurement.
+ 
+-Cumulative allocation was 28.9 MiB. Native certificate loading accounted for 13.2 MiB across startup client creation. Two daemon loops independently construct identical default `reqwest::Client` instances: mobile transcript sync (4.5 MiB cumulative attribution) and local mobile command delivery (4.9 MiB). Sharing those identical clients is under implementation and validation. Provider HTTP clients have different settings and are not substituted. No TLS trust, authentication, timeout or cookie settings may be weakened.
++Cumulative allocation was 28.9 MiB. Native certificate loading accounted for 13.2 MiB across startup client creation. Two daemon loops independently construct identical default `reqwest::Client` instances: mobile transcript sync (4.5 MiB cumulative attribution) and local mobile command delivery (4.9 MiB). Sharing those identical clients was implemented and accepted as `bbd9a2d66` after exact request-policy tests and optimized CPU/allocation checks. Provider HTTP clients have different settings and are not substituted. No TLS trust, authentication, timeout or cookie settings may be weakened.
++
++## Broader controls and caveats
++
++The first harness inherited the shared temporary background-task registry. Subsequent acceptance controls set a private `TMPDIR=<work>/tmp` as well. No global task files were modified. Use `fresh-isolated-before1-20261118` and `fresh-isolated-before2-20261118` for that stricter old-runtime control, and `fresh-isolated-opt1-20261118` for the optimized current executable. Exact binary digests and all raw memory samples remain alongside each fixture.
++
++A completed hosted optimized executable was pinned only after artifact delivery: SHA-256 `553b2fca0e4ca7ac1550c1ba69a6e30ef7352ac245008b3d9a1ea59713361ded`. A premature earlier copy, `fresh-release-opt1-20261118`, had a different digest and is excluded from current-build evidence. These controls include the newly shared mobile client and other integrated code, so they are not a strict build-profile-only comparison against d103e8a62.
++
++A distribution-profile control (`release-lto`, hosted build completed in about 199 seconds) was also warranted because executable pages dominate the target. Pinned digest `c0961cf3ff65bc79a79a6dc45d05ad0feac796066982d3416330e31e17d3f8a4`, private regular-daemon runs `fresh-distribution1-20261118` and `fresh-distribution2-20261118`: final RSS **69.60 / 68.93 MiB**, anonymous PSS **7.95 / 7.39 MiB**, live allocator bytes **2,392,224 / 2,398,272**. This supports an approximately 70 MiB observation for that build, not a 20–50 MiB achievement. It does not change the user's selected runtime or default build profile.
++
++The layout probe measured an 82,896-byte entry future, 82,912 bytes with the original await-only wrapper, and a 312-byte `BusEvent`. Removing the wrapper was considered but withdrawn without claiming a measured startup benefit. Boxing by itself is not a demonstrated memory reduction.
++
++The normal daemon reports the **system allocator**. `MALLOC_CONF=prof:false` is a fixture setting, not evidence that the ordinary executable uses jemalloc. Only the explicitly profiled build uses sampled jemalloc data. Allocation counters, RSS, PSS, executable mappings and post-shutdown sampled retention describe different quantities.
+ 
+ ## Open gates
+ 
+-- Measure the same source under an optimized build before attributing executable-page overhead to application logic.
+-- Measure CLI future layout before attempting stack changes. Boxing merely moves memory and is not automatically an improvement.
+-- Validate shared mobile transport exact behavior, optimized CPU and allocation costs, then repeat startup and first-request acceptance.
++- Shared mobile transport is accepted as `bbd9a2d66`, with exact local wire/pooling/auth/cookie coverage, 18 relevant tests and optimized actual thread-CPU/separate allocator measurements. Its 47.4% CPU and 4.64 MiB cumulative-allocation savings describe **the duplicate client-construction primitive**, not the entire daemon or its retained heap. See `startup-mobile-http-2026-11-18.md`.
++- Same-source parser-dependency optimization was investigated with experimental `clap_builder`/`clap_lex` opt-level 3 overrides, without changing default profiles. Exact CLI exit/stdout/stderr parity passed five fixtures in two optimized release runs (16 alternating pairs per fixture). Release `serve --help` CPU ratios were 1.0667 and 1.0423, so the experiment is **not accepted as a pure efficiency**. Selfdev CPU results were better, but do no
+```
+
+**File**: `examples/startup_layout_probe.rs` (modified, +12/-2)
+```diff
+@@ -1,4 +1,14 @@
+ fn main() {
+-    println!("entry_future_bytes={}", std::mem::size_of_val(&jcode::run()));
+-    println!("bus_event_bytes={}", std::mem::size_of::<jcode::bus::BusEvent>());
++    println!(
++        "entry_future_bytes={}",
++        std::mem::size_of_val(&jcode::run())
++    );
++    println!(
++        "wrapped_entry_future_bytes={}",
++        std::mem::size_of_val(&async { jcode::run().await })
++    );
++    println!(
++        "bus_event_bytes={}",
++        std::mem::size_of::<jcode::bus::BusEvent>()
++    );
+ }
 ```
 
 #### Recent Merged Pull Requests:
@@ -2741,72 +2170,33 @@ Hosted check and full package tests passed (209 passed, 3 ignored). Extended alt
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. avoid discarded per-agent server memory diagnostics
+## X. test(provider): clarify serialized uplink fixture locking
 
 **RULE**:
-When implementing operations in `crates/jcode-app-core/src/server/debug_server_memory_efficiency_tests.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in 1jehuang/jcode. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/jcode-provider-core/src/request_compression_tests.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in 1jehuang/jcode. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `fcb98e73`: avoid discarded per-agent server memory diagnostics. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `fa207816`: test(provider): clarify serialized uplink fixture locking. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/jcode-app-core/src/server/debug_server_memory_efficiency_tests.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/jcode-provider-core/src/request_compression_tests.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-//! No-LLM fixtures for the server memory diagnostic's session-only fast path.
-use super::*;
-
-struct PrivateHome {
-    _dir: tempfile::TempDir,
-    home: Option<std::ffi::OsString>,
-    test_session: Option<std::ffi::OsString>,
-}
-
-impl PrivateHome {
-    fn new() -> Self {
-        let dir = tempfile::tempdir().unwrap();
-        let home = std::env::var_os("JCODE_HOME");
-        let test_session = std::env::var_os("JCODE_TEST_SESSION");
-        crate::env::set_var("JCODE_HOME", dir.path());
-        crate::env::set_var("JCODE_TEST_SESSION", "1");
-        Self {
-            _dir: dir,
-            home,
-            test_session,
-        }
-    }
-}
-
-impl Drop for PrivateHome {
-    fn drop(&mut self) {
-        for (name, value) in [
-            ("JCODE_HOME", self.home.take()),
-            ("JCODE_TEST_SESSION", self.test_session.take()),
-        ] {
-            match value {
-                Some(value) => crate::env::set_var(name, value),
-                None => crate::env::remove_var(name),
-            }
-        }
-    }
-}
-
-struct NoRequests;
-
-#[async_trait::async_trait]
-impl crate::provider::Provider for NoRequests {
-    async fn complete(
-        &self,
-        _: &[crate::message::Mess
+        for (policy, values) in timings[input].iter_mut().enumerate() {
+#[expect(
+    clippy::await_holding_lock,
+    reason = "Serialize process-global uplink sampler state against synchronous tests on separate test runtimes"
+)]
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+        for policy in 0..5 {
+            let values = &mut timings[input][policy];
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `fcb98e73` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `fa207816` are properly handled with clean fallback behavior.

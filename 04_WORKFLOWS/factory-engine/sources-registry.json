@@ -69,8 +69,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-18T14:57:07.385Z",
-    "lastVerified": "2026-11-18T14:57:07.385Z",
+    "lastChecked": "2026-11-18T15:06:14.081Z",
+    "lastVerified": "2026-11-18T15:06:14.081Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -221,9 +221,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-18T14:32:11.984Z",
+    "lastChecked": "2026-11-18T15:06:14.076Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-18T14:32:11.984Z"
+    "lastVerified": "2026-11-18T15:06:14.076Z"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -612,9 +612,9 @@
   "defguard-defguard": {
     "name": "defguard",
     "officialUrl": "https://github.com/DefGuard/defguard",
-    "lastChecked": "2026-11-18T10:45:08.523Z",
+    "lastChecked": "2026-11-18T15:06:09.066Z",
     "revisionIdentifier": "a0570118",
-    "lastVerified": "2026-11-18T10:45:08.523Z"
+    "lastVerified": "2026-11-18T15:06:09.066Z"
   },
   "topoteretes-cognee": {
     "name": "cognee",
@@ -2435,5 +2435,60 @@
     "lastChecked": "2026-11-18T14:57:00.447Z",
     "revisionIdentifier": "d51e1c78",
     "lastVerified": "2026-11-18T14:57:00.447Z"
+  },
+  "1jehuang-jcode": {
+    "name": "1jehuang/jcode",
+    "officialUrl": "https://github.com/1jehuang/jcode",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-11-18T15:06:03.354Z",
+    "lastVerified": "2026-11-18T15:06:03.354Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-1jehuang-jcode",
+    "contentHash": "a3b13afedd3805f26e955e69fa02958887f546b7f5c1d3b4dc34567b91c7e8b0",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 8,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-unsloth-qwen-image-2.1-gguf": {
+    "name": "unsloth/Qwen-Image-2.1-GGUF",
+    "officialUrl": "https://huggingface.co/unsloth/Qwen-Image-2.1-GGUF",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-18T15:06:01.636Z",
+    "lastVerified": "2026-11-18T15:06:01.636Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-unsloth-qwen-image-2-1-gguf",
+    "contentHash": "7961d7abaa45a1931dcf4a6a0ad61da21f49987ad8662b430864a1005f9724e9",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "nozbe-watermelondb": {
+    "name": "WatermelonDB",
+    "officialUrl": "https://github.com/Nozbe/WatermelonDB",
+    "lastChecked": "2026-11-18T15:06:04.173Z",
+    "revisionIdentifier": "5c463222",
+    "lastVerified": "2026-11-18T15:06:04.173Z"
+  },
+  "kgateway-dev-kgateway": {
+    "name": "kgateway",
+    "officialUrl": "https://github.com/kgateway-dev/kgateway",
+    "lastChecked": "2026-11-18T15:06:06.694Z",
+    "revisionIdentifier": "74f2e098",
+    "lastVerified": "2026-11-18T15:06:06.694Z"
+  },
+  "pinecone-io-examples": {
+    "name": "examples",
+    "officialUrl": "https://github.com/pinecone-io/examples",
+    "lastChecked": "2026-11-18T15:06:11.583Z",
+    "revisionIdentifier": "db002421",
+    "lastVerified": "2026-11-18T15:06:11.583Z"
   }
 }

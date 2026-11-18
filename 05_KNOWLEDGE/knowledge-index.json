@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-18T14:57:09.667Z",
+  "last_updated": "2026-11-18T15:06:16.039Z",
   "total_verified_learnings": 9003,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 21328,
+  "total_items": 21330,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112058,9 +112058,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "27c5fe36ebc4228317d193d7b35aa643e9d439684beee8762dae4969be5e002a",
+      "content_hash": "c90ea0c45859384a09a45588c0649d8adec24e6644952cc2198186a2c8ddb972",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T14:08:13.143Z"
+      "persisted_at": "2026-11-18T15:06:15.921Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112070,9 +112070,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "b87762424281fcfec832775611dd676c5426a6a31e8e9dccc04043f4a6f388f3",
+      "content_hash": "1392f4e93648ba9314f6c0c7f8c6112d20a06c0127a917eaf0ef322674beaeb2",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T14:08:13.273Z"
+      "persisted_at": "2026-11-18T15:06:16.039Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -114386,9 +114386,9 @@
       "title": "Research & Knowledge Intelligence: unsloth/Qwen-Image-2.1-GGUF Core Invariants",
       "repository": "unsloth/Qwen-Image-2.1-GGUF",
       "source_version": "hf-unsloth-qwen-image-2.1-gguf",
-      "content_hash": "b0e3137fbd7165261aff4131335617ff94fb423ed560a0e0411308859af288b2",
+      "content_hash": "663adb9151363b8f88607a08fdb8a2c1972e50641f5681045e2f2a40070ff273",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T05:44:05.710Z"
+      "persisted_at": "2026-11-18T15:06:02.382Z"
     },
     "domain_intelligence-human-need-intelligence-foreactlabs-openexecutive-learnings-core-invariants": {
       "item_id": "domain_intelligence-human-need-intelligence-foreactlabs-openexecutive-learnings-core-invariants",
@@ -114446,9 +114446,9 @@
       "title": "Research & Knowledge Intelligence: hf-unsloth-qwen-image-2.1-gguf-learnings Core Invariants",
       "repository": "hf-unsloth-qwen-image-2.1-gguf-learnings",
       "source_version": "HEAD",
-      "content_hash": "b07e2f370fe623457a4be90fdf2c6731c4bdc81549e3886114913857d454a622",
+      "content_hash": "394bab814e028a18e460548c736e57d66a0327bcbc683710e4326a558942ed63",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T05:44:20.685Z"
+      "persisted_at": "2026-11-18T15:06:15.262Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-pro-rl-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-pro-rl-core-invariants",
@@ -241912,8 +241912,8 @@
       "slug": "1jehuang-jcode",
       "platform": "github",
       "source_url": "https://github.com/1jehuang/jcode",
-      "source_version": "44c58e8c",
-      "content_hash": "622293821c3ff5011de823d90752674844b2c35a6e8d9e5c4d65091eef18228b",
+      "source_version": "f3fc98fb",
+      "content_hash": "a3b13afedd3805f26e955e69fa02958887f546b7f5c1d3b4dc34567b91c7e8b0",
       "dossier_path": "07_PROJECT_LEARNING/1jehuang-jcode-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/1jehuang-jcode-learnings.md",
       "promoted_rules": [
@@ -241926,6 +241926,11 @@
           "number": 9141,
           "title": "avoid discarded per-agent server memory diagnostics",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9249,
+          "title": "test(provider): clarify serialized uplink fixture locking",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -241933,7 +241938,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T06:41:17.003Z",
+      "verified_at": "2026-11-18T15:06:04.118Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -241987,10 +241992,10 @@
       "relative_path": "02_AGENT_INTELLIGENCE/1jehuang-jcode-agent-contract-1jehuang-jcode-autonomous-specialist-persona.md",
       "title": "Agent Contract: 1jehuang/jcode Autonomous Specialist Persona",
       "repository": "1jehuang/jcode",
-      "source_version": "44c58e8c",
-      "content_hash": "7bf4d68b79c06b3daaf69f83266f71c17513640683d79727d7b51b3cb1e4988d",
+      "source_version": "f3fc98fb",
+      "content_hash": "145cd87ec5e3d1f76a70c87883a501114a57e85a121f45efc43095b0d5b8fe82",
       "domain_letter": "G",
-      "persisted_at": "2026-11-18T06:41:17.973Z"
+      "persisted_at": "2026-11-18T15:06:04.877Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-1jehuang-jcode": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-1jehuang-jcode",
@@ -241999,10 +242004,10 @@
       "relative_path": "08_VERIFICATION/1jehuang-jcode-verification-protocol-empirical-defect-shield-for-1jehuang-jcode.md",
       "title": "Verification Protocol: Empirical Defect Shield for 1jehuang/jcode",
       "repository": "1jehuang/jcode",
-      "source_version": "44c58e8c",
-      "content_hash": "9f5fe0ab4e092017a4974d309dbcca080216a21960a30084b4456bc818c88521",
+      "source_version": "f3fc98fb",
+      "content_hash": "57304cdec212d42a6eca54be868a7e460e85d63a40c16e1687af53b1407dcbed",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T06:41:18.130Z"
+      "persisted_at": "2026-11-18T15:06:04.992Z"
     },
     "candidate_directive-update-all-go-dependencies-main": {
       "item_id": "candidate_directive-update-all-go-dependencies-main",
@@ -242087,9 +242092,9 @@
       "title": "Agent Contract: 1jehuang-jcode-learnings Autonomous Specialist Persona",
       "repository": "1jehuang-jcode-learnings",
       "source_version": "HEAD",
-      "content_hash": "bfffceb9acd8c5e39f7c279b5496959b7e13a068dae87de0f34134fcf515727a",
+      "content_hash": "6e78de65fc725c31f822a63325e86221177676f3a475b4e9b5e2067a318411a0",
       "domain_letter": "G",
-      "persisted_at": "2026-11-18T06:41:27.483Z"
+      "persisted_at": "2026-11-18T15:06:14.839Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-1jehuang-jcode-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-1jehuang-jcode-learnings",
@@ -242099,9 +242104,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for 1jehuang-jcode-learnings",
       "repository": "1jehuang-jcode-learnings",
       "source_version": "HEAD",
-      "content_hash": "0405cefadceebf47c5f1802ea58a1b38e4c1250f7f854291f277235a5d5e5bbf",
+      "content_hash": "7fafa69e0d639713e9de2526fea2c417b1581713ad6a0d5ca40bcf948eb613ce",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T06:41:27.639Z"
+      "persisted_at": "2026-11-18T15:06:14.957Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-openmoss-team-moss-image-sft-learnings-core-i": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-openmoss-team-moss-image-sft-learnings-core-i",
@@ -252357,9 +252362,9 @@
       "title": "Research & Knowledge Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "35a2539aea34ed5f0eb07d51e12b5df9e1002dee16d3a3cf8b3d57f8ec1be1a1",
+      "content_hash": "ded1c30ac312dd1107a9c38d4cf180b5d2bc551dc769071f8bc89d1102d73c13",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T14:08:12.996Z"
+      "persisted_at": "2026-11-18T15:06:15.788Z"
     },
     "learn-github-prof18-feed-flow": {
       "learning_id": "learn-github-prof18-feed-flow",
@@ -275030,13 +275035,13 @@
       "item_id": "candidate_directive-rust-address-the-remaining-issues-in-418",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-5162-rust-address-the-remaining-issues-in-418.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-7OIS-rust-address-the-remaining-issues-in-418.md",
       "title": "rust): address the remaining issues in #418",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "0a7dbf20f6439f424b2fab268b75f6ca8d3612a9f384ac05c62156439751dff0",
+      "content_hash": "4648e7ba45e78e53aa7727ef4b7b6a011f922f94890da47db165bffe6308e0d1",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T14:08:12.847Z"
+      "persisted_at": "2026-11-18T15:06:15.656Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-m3-1-flash-learnings-core-i": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-m3-1-flash-learnings-core-i",
@@ -282251,7 +282256,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/unsloth/Qwen-Image-2.1-GGUF",
       "source_version": "hf-unsloth-qwen-image-2.1-gguf",
-      "content_hash": "b05065a2aa7e08b53b8392ad3e59597aa6fdba5213fd6697adfe6fd60607bb7b",
+      "content_hash": "7961d7abaa45a1931dcf4a6a0ad61da21f49987ad8662b430864a1005f9724e9",
       "dossier_path": "07_PROJECT_LEARNING/hf-unsloth-qwen-image-2.1-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-unsloth-qwen-image-2.1-gguf-learnings.md",
       "promoted_rules": [],
@@ -282260,7 +282265,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T05:44:05.248Z",
+      "verified_at": "2026-11-18T15:06:02.006Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -282872,10 +282877,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-1jehuang-jcode-architecture-intelligence-1jehuang-jcode-core-invariants.md",
       "title": "Architecture Intelligence: 1jehuang/jcode Core Invariants",
       "repository": "1jehuang/jcode",
-      "source_version": "44c58e8c",
-      "content_hash": "a2c39aa23a130a8b4ce554c8f13e366d31e47c4ff9554900d530a6704f515558",
+      "source_version": "f3fc98fb",
+      "content_hash": "1ae143d0afa030f7a5498835bf4e79f11a84e69eff953f11e251e689f6bea4c5",
       "domain_letter": "G",
-      "persisted_at": "2026-11-18T06:41:17.644Z"
+      "persisted_at": "2026-11-18T15:06:04.623Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-1jehuang-jcode": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-1jehuang-jcode",
@@ -282884,10 +282889,10 @@
       "relative_path": "12_DECISIONS/ADR-1jehuang-jcode-adr-subsystem-boundary-modular-decoupling-in-1jehuang-jcode.md",
       "title": "ADR: Subsystem Boundary & Modular Decoupling in 1jehuang/jcode",
       "repository": "1jehuang/jcode",
-      "source_version": "44c58e8c",
-      "content_hash": "4d15d45b92a075f087acfd9f00e3448bb8416e4056e61c73f228386e2ca5a056",
+      "source_version": "f3fc98fb",
+      "content_hash": "b52b37e40deb599667addd84e2a3d5a132accd5638d85c4bb5cf8e43adde3456",
       "domain_letter": "G",
-      "persisted_at": "2026-11-18T06:41:17.816Z"
+      "persisted_at": "2026-11-18T15:06:04.760Z"
     },
     "domain_intelligence-architecture-intelligence-1jehuang-jcode-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-1jehuang-jcode-learnings-core-invariants",
@@ -282897,9 +282902,9 @@
       "title": "Architecture Intelligence: 1jehuang-jcode-learnings Core Invariants",
       "repository": "1jehuang-jcode-learnings",
       "source_version": "HEAD",
-      "content_hash": "fc531969db28f8db46126d4d18f68805ea9aabb0065e6fd7e7ef171dce85738e",
+      "content_hash": "29dbe0caa0c7fcbb1a0adccd91225965cf7f1ff62ee130c17311c4464cb3d72c",
       "domain_letter": "G",
-      "persisted_at": "2026-11-18T06:41:27.138Z"
+      "persisted_at": "2026-11-18T15:06:14.566Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-1jehuang-jcode-learnings": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-1jehuang-jcode-learnings",
@@ -282909,9 +282914,9 @@
       "title": "ADR: Subsystem Boundary & Modular Decoupling in 1jehuang-jcode-learnings",
       "repository": "1jehuang-jcode-learnings",
       "source_version": "HEAD",
-      "content_hash": "a68a934f3bb5b8f01e6449fb8d415eb86ee853252cf83d048b62640fe7b2d671",
+      "content_hash": "860ab600bb14dfdcbc90decaa0257a57ab8e3f9d10efc79393c2890e649125b5",
       "domain_letter": "G",
-      "persisted_at": "2026-11-18T06:41:27.328Z"
+      "persisted_at": "2026-11-18T15:06:14.717Z"
     },
     "learn-github-sqlpage-sqlpage": {
       "learning_id": "learn-github-sqlpage-sqlpage",
@@ -287813,6 +287818,32 @@
       "content_hash": "30f5718ada17bdbad82386b870f4419aacdba7075d5fda8fc7d60afa6905e610",
       "domain_letter": "G",
       "persisted_at": "2026-11-18T14:57:08.829Z"
+    },
+    "rule-9249": {
+      "learning_id": "rule-9249",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9249,
+      "title": "test(provider): clarify serialized uplink fixture locking",
+      "source_url": "https://github.com/1jehuang/jcode",
+      "source_version": "f3fc98fb",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-18T15:06:04.118Z"
+    },
+    "candidate_directive-test-provider-clarify-serialized-uplink-fixture-locking": {
+      "item_id": "candidate_directive-test-provider-clarify-serialized-uplink-fixture-locking",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-7NKJ-test-provider-clarify-serialized-uplink-fixture-locking.md",
+      "title": "test(provider): clarify serialized uplink fixture locking",
+      "repository": "1jehuang-jcode-learnings",
+      "source_version": "HEAD",
+      "content_hash": "fba4483170651756e8cdd5e7e645c0fdcbe6f08a0abd7422b210861098a534c9",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-18T15:06:14.424Z"
     }
   },
   "ai-builder-brain": {
