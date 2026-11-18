@@ -2,12 +2,12 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-18T07:39:47.187Z",
+  "updated_at": "2026-11-18T07:48:41.795Z",
   "statistics": {
-    "total_nodes": 337,
+    "total_nodes": 338,
     "total_edges": 160,
     "domain_distribution": {
-      "D": 237,
+      "D": 238,
       "M": 1,
       "H": 44,
       "J": 12,
@@ -7544,6 +7544,28 @@
       ],
       "created_at": "2026-11-18T07:39:47.187Z",
       "updated_at": "2026-11-18T07:39:47.187Z"
+    },
+    "DOM-D-E33EA755": {
+      "id": "DOM-D-E33EA755",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): o2sh/onefetch",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/o2sh-onefetch-learnings.md`  \n> **Source**: github ([https://github.com/o2sh/onefetc -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/o2sh-onefetch-learnings.md`  \n> **Source**: github ([https://github.com/o2sh/onefetc",
+      "confidence": 0.6,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://o2sh-onefetch/o2sh-onefetch-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-18T07:48:12.016Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (o2sh-onefetch)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence"
+      ],
+      "created_at": "2026-11-18T07:48:41.795Z",
+      "updated_at": "2026-11-18T07:48:41.795Z"
     }
   },
   "edges": [

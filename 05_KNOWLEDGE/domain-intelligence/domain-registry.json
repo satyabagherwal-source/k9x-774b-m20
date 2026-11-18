@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-18T07:39:48.793Z",
-  "total_records": 1790,
+  "last_updated": "2026-11-18T07:48:43.452Z",
+  "total_records": 1793,
   "domains": {
     "A": {
       "total": 11,
@@ -48,7 +48,7 @@
       ]
     },
     "D": {
-      "total": 772,
+      "total": 773,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -821,7 +821,8 @@
         "DOM-D-45D6F650",
         "domain_intelligence-research-knowledge-intelligence-tencent-hy4-flash-core-invariants",
         "DOM-D-C631C795",
-        "domain_intelligence-research-knowledge-intelligence-hf-tencent-hy4-flash-learnings-core-invariants"
+        "domain_intelligence-research-knowledge-intelligence-hf-tencent-hy4-flash-learnings-core-invariants",
+        "DOM-D-E33EA755"
       ]
     },
     "E": {
@@ -832,7 +833,7 @@
       ]
     },
     "F": {
-      "total": 47,
+      "total": 49,
       "record_ids": [
         "DOM-F-C060CCE1",
         "DOM-F-83D565C2",
@@ -880,7 +881,9 @@
         "DOM-F-B4186028",
         "domain_intelligence-design-intelligence-unhappychoice-gitlogue-core-invariants",
         "domain_intelligence-design-intelligence-unhappychoice-gitlogue-learnings-core-invariants",
-        "DOM-F-9E7BDB5E"
+        "DOM-F-9E7BDB5E",
+        "domain_intelligence-design-intelligence-o2sh-onefetch-core-invariants",
+        "domain_intelligence-design-intelligence-o2sh-onefetch-learnings-core-invariants"
       ]
     },
     "G": {
@@ -10224,8 +10227,8 @@
       "title": "Research & Knowledge Intelligence: google/electra-base-discriminator Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-google-electra-base-discriminator-research-knowledge-intelligence-google-elec.md",
       "repository": "google/electra-base-discriminator",
-      "content_hash": "902047deaa7186f0d7bc1e746615e2e2a683ee8effef4e90061ca1af41d97e0e",
-      "created_at": "2026-11-13T20:54:19.579Z"
+      "content_hash": "797af4af623aa396aa6df422792289b0b0dabd4f428254680c997454d7d79080",
+      "created_at": "2026-11-18T07:47:49.953Z"
     },
     "domain_intelligence-architecture-intelligence-react-navigation-react-navigation-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-react-navigation-react-navigation-core-invariants",
@@ -10302,8 +10305,8 @@
       "title": "Research & Knowledge Intelligence: hf-google-electra-base-discriminator-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-google-electra-base-discriminator-learnings-research-knowledge-intelligence-h.md",
       "repository": "hf-google-electra-base-discriminator-learnings",
-      "content_hash": "d8659980b0d03c072e23e596bde8b0bd2d52e75242b8a0cf3ba22413b091e2f9",
-      "created_at": "2026-11-13T20:55:05.171Z"
+      "content_hash": "79e685f1f39ce0593693d1de63252cfca276c7b911c2331f34247799da96b70f",
+      "created_at": "2026-11-18T07:48:42.675Z"
     },
     "DOM-H-169AAD95": {
       "record_id": "DOM-H-169AAD95",
@@ -16048,8 +16051,8 @@
       "title": "Architecture Intelligence: trinodb/trino Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-trinodb-trino-architecture-intelligence-trinodb-trino-core-invariants.md",
       "repository": "trinodb/trino",
-      "content_hash": "01fa92c2892e290daacc9980268ed34bebe32e58d65f6e2de23fa7906194c0bd",
-      "created_at": "2026-11-16T00:56:42.584Z"
+      "content_hash": "26d19c8aa2cf4c05b7b88aef2aa4a04b27e74bae0bf491572ca4e55f30aa98a0",
+      "created_at": "2026-11-18T07:48:09.073Z"
     },
     "domain_intelligence-architecture-intelligence-oxc-project-oxc-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-oxc-project-oxc-learnings-core-invariants",
@@ -22730,8 +22733,8 @@
       "title": "Architecture Intelligence: trinodb-trino-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-trinodb-trino-learnings-architecture-intelligence-trinodb-trino-learnings-core-i.md",
       "repository": "trinodb-trino-learnings",
-      "content_hash": "7781ab38622b6d4ae432e12614f2b6f1fd5a77af8e4b724375620e25f1625d3f",
-      "created_at": "2026-11-16T00:56:55.956Z"
+      "content_hash": "32863553eb0e92c33d3799d40fe34934131b9b8597aa36d8f6d8f0a585a0f6bf",
+      "created_at": "2026-11-18T07:48:43.452Z"
     },
     "domain_intelligence-content-information-intelligence-adobe-structured-data-validator-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-adobe-structured-data-validator-core-invariants",
@@ -29967,6 +29970,66 @@
       "repository": "hf-tencent-hy4-flash-learnings",
       "content_hash": "5ade99399b31165df0d47caf9097d90f98ea6969169f56c6471ba74f0822553b",
       "created_at": "2026-11-18T07:39:47.479Z"
+    },
+    "domain_intelligence-design-intelligence-o2sh-onefetch-core-invariants": {
+      "record_id": "domain_intelligence-design-intelligence-o2sh-onefetch-core-invariants",
+      "domain_letter": "F",
+      "title": "Design Intelligence: o2sh/onefetch Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-o2sh-onefetch-design-intelligence-o2sh-onefetch-core-invariants.md",
+      "repository": "o2sh/onefetch",
+      "content_hash": "7664853b1fc87a2140cf89443dd6797964b54a42671c456527eed06aace26ba9",
+      "created_at": "2026-11-18T07:47:51.875Z"
+    },
+    "DOM-D-E33EA755": {
+      "record_id": "DOM-D-E33EA755",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): o2sh/onefetch",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/o2sh-onefetch-learnings.md`  \n> **Source**: github ([https://github.com/o2sh/onefetch](https://github.com/o2sh/onefetch))  \n> **Source Version**: `0b742098`  \n> **License**: MIT  \n> **Synthesized By**: zero-clone-structural-synthesizer  \n> **Ti",
+      "content_hash": "d0a57eaa3bf4f7f13346895f4f54c6a76031db85bf2fb399bd84e52fe4ff7ac3",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/o2sh-onefetch-learnings.md`  \n> **Source**: github ([https://github.com/o2sh/onefetc -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/o2sh-onefetch-learnings.md`  \n> **Source**: github ([https://github.com/o2sh/onefetc",
+      "provenance": {
+        "source_uri": "project://o2sh-onefetch/o2sh-onefetch-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-18T07:48:12.016Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (o2sh-onefetch)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of o2sh-onefetch"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-18T07:48:41.775Z"
+    },
+    "domain_intelligence-design-intelligence-o2sh-onefetch-learnings-core-invariants": {
+      "record_id": "domain_intelligence-design-intelligence-o2sh-onefetch-learnings-core-invariants",
+      "domain_letter": "F",
+      "title": "Design Intelligence: o2sh-onefetch-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-o2sh-onefetch-learnings-design-intelligence-o2sh-onefetch-learnings-core-invaria.md",
+      "repository": "o2sh-onefetch-learnings",
+      "content_hash": "37e77cc988fcc47b30a5d549b9938ad73b6e9249b8a7a32a946f87021b830b86",
+      "created_at": "2026-11-18T07:48:42.265Z"
     }
   }
 }

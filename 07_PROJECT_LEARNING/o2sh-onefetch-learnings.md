@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/o2sh-onefetch-learnings.md`  
 > **Source**: github ([https://github.com/o2sh/onefetch](https://github.com/o2sh/onefetch))  
-> **Source Version**: `cbb0bbec`  
+> **Source Version**: `0b742098`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-04T01:51:12.965Z  
+> **Timestamp**: 2026-11-18T07:47:51.148Z  
 > **Learning ID**: `learn-github-o2sh-onefetch`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/o2sh-onefetch-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/o2sh/onefetch](https://github.com/o2sh/onefetch))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-04T01:51:11.854Z  
+> **Harvest Timestamp**: 2026-11-18T07:47:51.142Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Command-line Git information tool
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 12077 stars
+- **Stars / Engagement**: 12085 stars
 
 ---
 
@@ -1176,191 +1176,29 @@ mod test {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `cbb0bbec` (2026-11-03)
-**Commit Message**: chore(deps): Update site (#1911)
+### Incident Patch 1: `eb97aa6f` (2026-11-17)
+**Commit Message**: fix
 
-Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
-
-**File**: `site/package-lock.json` (modified, +26/-26)
+**File**: `src/data/git/metrics.rs` (modified, +0/-2)
 ```diff
-@@ -13,18 +13,18 @@
-       "devDependencies": {
-         "@rollup/plugin-yaml": "5.0.1",
-         "@sveltejs/adapter-auto": "8.0.0",
--        "@sveltejs/kit": "3.1.0",
-+        "@sveltejs/kit": "3.1.1",
-         "@sveltejs/vite-plugin-svelte": "7.3.1",
-         "@types/eslint": "9.6.1",
--        "@types/node": "26.6.5",
--        "eslint": "10.13.0",
-+        "@types/node": "26.6.6",
-+        "eslint": "10.14.0",
-         "eslint-config-prettier": "10.1.8",
-         "eslint-plugin-svelte": "3.23.1",
--        "globals": "17.13.0",
-+        "globals": "17.14.0",
-         "prettier": "3.9.10",
-         "prettier-plugin-svelte": "4.1.1",
-         "svelte": "5.57.3",
--        "svelte-check": "4.7.7",
-+        "svelte-check": "4.7.8",
-         "typescript": "6.0.3",
-         "typescript-eslint": "8.72.1",
-         "vite": "8.3.5"
-@@ -666,9 +666,9 @@
-       }
-     },
-     "node_modules/@sveltejs/kit": {
--      "version": "3.1.0",
--      "resolved": "https://registry.npmjs.org/@sveltejs/kit/-/kit-3.1.0.tgz",
--      "integrity": "sha512-JTWlq2HQlkqx6vIoxhC0R6sc4WVqbQoRyEmr5YlqKmiYbzY1U3awtSWTmjMLlS056a49AmkQR6rnNANXIE8B0Q==",
-+      "version": "3.1.1",
-+      "resolved": "https://registry.npmjs.org/@sveltejs/kit/-/kit-3.1.1.tgz",
-+      "integrity": "sha512-BiEMvekYXE9Gu/YhWJ/yJ0WDLH1PX/dmjuAeFp5rrtdmgdzkjt7DvimlSP+/U4tgposl7pkE20luHpcnc6BgRw==",
-       "dev": true,
-       "license": "MIT",
-       "dependencies": {
-@@ -785,9 +785,9 @@
-       "license": "MIT"
-     },
-     "node_modules/@types/node": {
--      "version": "26.6.5",
--      "resolved": "https://registry.npmjs.org/@types/node/-/node-26.6.5.tgz",
--      "integrity": "sha512-uMzsv9stDdofIZBx4UGh4Z9ZgXnGC9seRDscilBcTHAeOFk67MZg/k9bWVfO+bk4qZmG+l52hRnLwUiH2LnJTg==",
-+      "version": "26.6.6",
-+      "resolved": "https://registry.npmjs.org/@types/node/-/node-26.6.6.tgz",
-+      "integrity": "sha512-MzQj+8Kx3XI40OmUAE6Qoh58ZMNstNNMwn2nfd3qWsfe7nDNSqJNzes4njhz6AHwrSHOffSLwXU6yb474Q4aog==",
-       "dev": true,
-       "license": "MIT",
-       "dependencies": {
-@@ -1257,9 +1257,9 @@
-       }
-     },
-     "node_modules/eslint": {
--      "version": "10.13.0",
--      "resolved": "https://registry.npmjs.org/eslint/-/eslint-10.13.0.tgz",
--      "integrity": "sha512-UohDjD4zSzEwhf58M3O7vc/ycc8O1I7dNlhtD0WxE8Px8EHNJKtUwzBqrzeGhisRuv2ag4sAYswszCJRgKXYUg==",
-+      "version": "10.14.0",
-+      "resolved": "https://registry.npmjs.org/eslint/-/eslint-10.14.0.tgz",
-+      "integrity": "sha512-T0pNsxkb9IKmtQjhpK3d7nWOpFv+YHuMbTJnSVMoQblF0onvXfErrtp4V1jHtsQPan7dKaGVD0q1WCXnzMF31A==",
-       "dev": true,
-       "license": "MIT",
-       "workspaces": [
-@@ -1272,7 +1272,7 @@
-         "@eslint/config-helpers": "^0.7.0",
-         "@eslint/core": "^1.2.1",
-         "@eslint/plugin-kit": "^0.7.3",
--        "@humanfs/node": "^0.16.6",
-+        "@humanfs/node": "^0.16.8",
-         "@humanwhocodes/module-importer": "^1.0.1",
-         "@humanwhocodes/retry": "^0.4.2",
-         "@types/estree": "^1.0.6",
-@@ -1293,7 +1293,7 @@
-         "imurmurhash": "^0.1.4",
-         "is-glob": "^4.0.0",
-         "json-stable-stringify-without-jsonify": "^1.0.1",
--        "minimatch": "^10.2.5",
-+        "minimatch": "^10.2.6",
-         "natural-compare": "^1.4.0",
-         "optionator": "^0.9.3"
-       },
-@@ -1618,9 +1618,9 @@
-       }
-     },
-     "node_modules/globals": {
--      "version": "17.13.0",
--      "resolved": "https://registry.npmjs.org/globals/-/globals-17.13.0.tgz",
--      "integrity": "sha512-RwMTC61u7hrG3ZJMkZQOK4JLJrKS8QtoTii63EmWvFXHqycY9FObBJQCbsLxSO8kjKhWE5kV1GC+Vb1g3RI0Zg==",
-+      "version": "17.14.0",
-+      "resolved": "https://registry.npmjs.org/globals/-/globals-17.14.0.tgz",
-+      "integrity": "sha512-UtdkTVyAJePQv0J2M9Xe4L0ruNSDV314XiIJsADI2Zf40bcdAonE/D/OhAU8AT99oij9mhLByb+NvA3QWZYgCg==",
-       "dev": true,
-       "license": "MIT",
-       "engines": {
-@@ -2092,13 +2092,13 @@
-       }
-     },
-     "node_modules/minimatch": {
--      "version": "10.2.5",
--      "resolved": "https://registry.npmjs.org/minimatch/-/minimatch-10.2.5.tgz",
--      "integrity": "sha512-MULkVLfKGYDFYejP07QOurDLLQpcjk7Fw+7jXS2R2czRQzR56yHRveU5NDJEOviH+hETZKSkIk5c+T23GjFUMg==",
-+      "version": "10.2.6",
-+      "resolved": "https://registry.npmjs.org/minimatch/-/minimatch-10.2.6.tgz",
-+      "integrity": "sha512-vpLQEs+VLCr1nU0BXS07maYoFwlDAH0gngQuuttxIwutDFEMHq2blX+8vpgxDdK3J1PwjCJiep77OitTZ4Ll1A==",
-       "dev": true,
-       "license": "BlueOak-1.0.0",
-       "dependencies": {
--        "brace-expansion": "^5.0.5"
-+        "brace-expansion": "^5.0.8"
-       },
-       "engines": {
-         "node": "18 || 20 || >=22"
-@@ -2617,9 +2617,9 @@
-       }
-     },
-     "node_modules/svelte-check": {
--      "version": "4.7.7",
--      "resolved": "https://registry.npmjs.org/svelte-check/-/svelte-check-4.7.7.tgz",
--      "integrity": "sha512-Ge2IMdeTpbJuzNFGRiiMg0RWgbScysKQu7xwcyFJ22+DU9F5nPX51+Q3gHmGqRxYQMx2knreVWt5oCtfe0vf2g==",
-+      "version": "4.7.8",
-+      "resolved": "https://registry.npmjs.org/svelte-chec
-```
-
-**File**: `site/package.json` (modified, +5/-5)
-```diff
-@@ -16,18 +16,18 @@
-   "devDependencies": {
-     "@rollup/plugin-yaml": "5.0.1",
-     "@sveltejs/adapter-auto": "8.0.0",
--    "@sveltejs/kit": "3.1.0",
-+    "@sveltejs/kit": "3.1.1",
-     "@sveltejs/vite-plugin-svelte": "7.3.1",
-     "@types/eslint": "9.6.1",
--    "@types/node": "26.6.5",
--    "eslint": "10.13.0",
-+    "@types/node": "26.6.6",
-+    "eslint": "10.14.0",
-     "eslint-config-prettier": "10.1.8",
-     "eslint-plugin-svelte": "3.23.1",
--    "globals": "17.13.0",
-+    "globals": "17.14.0",
-     "prettier": "3.9.10",
-     "prettier-plugin-svelte": "4.1.1",
-     "svelte": "5.57.3",
--    "svelte-check": "4.7.7",
-+    "svelte-check": "4.7.8",
-     "typescript": "6.0.3",
-     "typescript-eslint": "8.72.1",
-     "vite": "8.3.5"
-```
-
----
-
-### Incident Patch 2: `08ac6229` (2026-11-03)
-**Commit Message**: chore(deps): Update dependency node to v26 (#1916)
-
-Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
-
-**File**: `.github/workflows/site-ci.yml` (modified, +1/-1)
-```diff
-@@ -26,7 +26,7 @@ jobs:
-       - name: Setup Node
-         uses: actions/setup-node@v7
-         with:
--          node-version: 24
-+          node-version: 26
- 
-       - name: Install Dependencies
-         run: npm ci
+@@ -9,8 +9,6 @@ pub struct GitMetrics {
+     pub total_number_of_authors: usize,
+     pub total_number_of_commits: usize,
+     pub churn_pool_size: usize,
+-    /// The commit time of each counted commit (bots left out by `--no-bots`
+-    /// aren't), newest first, in seconds since the Unix epoch.
+     pub commit_times: Vec<gix::date::SecondsSinceUnixEpoch>,
+     pub time_of_most_recent_commit: gix::date::Time,
+     pub time_of_first_commit: gix::date::Time,
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1920** (2026-11-17): feat!: replace --no-bots with --ignore-author (@o2sh)
 - **PR #1916** (2026-11-03): chore(deps): Update dependency node to v26 (@renovate[bot])
 - **PR #1914** (2026-10-29): fix: show Unreleased when HEAD doesn't contain the latest tag (@o2sh)
 - **PR #1912** (2026-10-27): chore(deps): upgrade site to SvelteKit 3 (@o2sh)
 - **PR #1911** (2026-11-03): chore(deps): Update site (@renovate[bot])
 - **PR #1910** (2026-10-29): chore(deps): Update Rust crate rustix to 1.1.6 (@renovate[bot])
-- **PR #1909** (closed): chore(deps-dev): Bump @sveltejs/kit and @sveltejs/adapter-auto in /site (@dependabot[bot])
 
 ---
 
@@ -1374,74 +1212,3 @@ Co-authored-by: renovate[bot] <29139614+renovate[bot]@users.noreply.github.com>
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
-
-
----
-
-## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
-
-## X. deps): Update site (#1911)
-
-**RULE**:
-When implementing operations in `site/package-lock.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in o2sh/onefetch. All inputs crossing module boundaries must be explicitly verified before state persistence.
-
-**WHY**:
-Prevents defects observed in production commit `cbb0bbec`: deps): Update site (#1911). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
-
-**WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `site/package-lock.json`.
-
-**VERIFIED IMPLEMENTATION PATTERN**:
-```rust
-// Verified production-grade fix pattern:
-        "@sveltejs/kit": "3.1.1",
-        "@types/node": "26.6.6",
-        "eslint": "10.14.0",
-        "globals": "17.14.0",
-        "svelte-check": "4.7.8",
-      "version": "3.1.1",
-      "resolved": "https://registry.npmjs.org/@sveltejs/kit/-/kit-3.1.1.tgz",
-      "integrity": "sha512-BiEMvekYXE9Gu/YhWJ/yJ0WDLH1PX/dmjuAeFp5rrtdmgdzkjt7DvimlSP+/U4tgposl7pkE20luHpcnc6BgRw==",
-      "version": "26.6.6",
-      "resolved": "https://registry.npmjs.org/@types/node/-/node-26.6.6.tgz",
-      "integrity": "sha512-MzQj+8Kx3XI40OmUAE6Qoh58ZMNstNNMwn2nfd3qWsfe7nDNSqJNzes4njhz6AHwrSHOffSLwXU6yb474Q4aog==",
-      "version": "10.14.0",
-      "resolved": "https://registry.npmjs.org/eslint/-/eslint-10.14.0.tgz",
-      "integrity": "sha512-T0pNsxkb9IKmtQjhpK3d7nWOpFv+YHuMbTJnSVMoQblF0onvXfErrtp4V1jHtsQPan7dKaGVD0q1WCXnzMF31A==",
-        "@humanfs/node": "^0.16.8",
-        "minimatch": "^10.2.6",
-      "version": "17.14.0",
-      "resolved": "https://registry.npmjs.org/globals/-/globals-17.14.0.tgz",
-      "integrity": "sha512-UtdkTVyAJePQv0J2M9Xe4L0ruNSDV314XiIJsADI2Zf40bcdAonE/D/OhAU8AT99oij9mhLByb+NvA3QWZYgCg==",
-      "version": "10.2.6",
-      "resolved": "https://registry.npmjs.org/minimatch
-```
-
-**NEGATIVE CONSTRAINT**:
-```rust
-// Anti-pattern to NEVER write (induced failure mode):
-        "@sveltejs/kit": "3.1.0",
-        "@types/node": "26.6.5",
-        "eslint": "10.13.0",
-        "globals": "17.13.0",
-        "svelte-check": "4.7.7",
-      "version": "3.1.0",
-      "resolved": "https://registry.npmjs.org/@sveltejs/kit/-/kit-3.1.0.tgz",
-      "integrity": "sha512-JTWlq2HQlkqx6vIoxhC0R6sc4WVqbQoRyEmr5YlqKmiYbzY1U3awtSWTmjMLlS056a49AmkQR6rnNANXIE8B0Q==",
-      "version": "26.6.5",
-      "resolved": "https://registry.npmjs.org/@types/node/-/node-26.6.5.tgz",
-      "integrity": "sha512-uMzsv9stDdofIZBx4UGh4Z9ZgXnGC9seRDscilBcTHAeOFk67MZg/k9bWVfO+bk4qZmG+l52hRnLwUiH2LnJTg==",
-      "version": "10.13.0",
-      "resolved": "https://registry.npmjs.org/eslint/-/eslint-10.13.0.tgz",
-      "integrity": "sha512-UohDjD4zSzEwhf58M3O7vc/ycc8O1I7dNlhtD0WxE8Px8EHNJKtUwzBqrzeGhisRuv2ag4sAYswszCJRgKXYUg==",
-        "@humanfs/node": "^0.16.6",
-        "minimatch": "^10.2.5",
-      "version": "17.13.0",
-      "resolved": "https://registry.npmjs.org/globals/-/globals-17.13.0.tgz",
-      "integrity": "sha512-RwMTC61u7hrG3ZJMkZQOK4JLJrKS8QtoTii63EmWvFXHqycY9FObBJQCbsLxSO8kjKhWE5kV1GC+Vb1g3RI0Zg==",
-      "version": "10.2.5",
-      "resolved": "https://registry.npmjs.org/minimatch
-```
-
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `cbb0bbec` are properly handled with clean fallback behavior.

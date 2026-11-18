@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-18T07:39:08.819Z",
+  "last_updated": "2026-11-18T07:48:08.679Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -920,14 +920,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-google-electra-base-discriminator",
-      "content_hash": "33f20a731b98c267520413e8f57747afdfe135a44018393c3efcc138aa0174dd",
-      "verified_at": "2026-11-13T20:54:19.424Z",
+      "content_hash": "17cabb2282f539644c4277f05eea3da557265ea07fb657bfaa5806314d65ff68",
+      "verified_at": "2026-11-18T07:47:49.773Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T20:54:19.424Z"
+      "last_updated": "2026-11-18T07:47:49.773Z"
     },
     "BAAI/bge-m3": {
       "repository": "BAAI/bge-m3",
@@ -6111,14 +6111,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-o2sh-onefetch",
-      "content_hash": "48f4cee93fef4f5f6c65ea6323ef42c1d22c1fa742523b543de68be119bd61e4",
-      "verified_at": "2026-11-04T01:51:13.623Z",
+      "content_hash": "7ec93d6b9fc43cb9fc7b0585a9f54be115c9aca3666bb58bd930f8102696cb15",
+      "verified_at": "2026-11-18T07:47:51.673Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-04T01:51:13.623Z"
+      "last_updated": "2026-11-18T07:47:51.673Z"
     },
     "RunanywhereAI/runanywhere-sdks": {
       "repository": "RunanywhereAI/runanywhere-sdks",
@@ -7731,14 +7731,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-trinodb-trino",
-      "content_hash": "01a0096592c1741dc2e64f7acda30c4b8cbd1db2d8ddb063a929c5be2d1465de",
-      "verified_at": "2026-11-17T08:43:37.739Z",
+      "content_hash": "5c6100d4e4b9daf6ef60c257029905aa9c5d1abf601662799b87114c2753722c",
+      "verified_at": "2026-11-18T07:48:08.678Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T08:43:37.739Z"
+      "last_updated": "2026-11-18T07:48:08.678Z"
     },
     "pinterest/gestalt": {
       "repository": "pinterest/gestalt",

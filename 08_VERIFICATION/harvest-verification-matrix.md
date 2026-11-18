@@ -10873,3 +10873,7 @@
 | `CYCLE-20261118-8KWX` | `2026-11-18T07:39:03.777Z` | `meshery/meshery` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9157` | Yes (`d0355ad5...`) |
 | `CYCLE-20261118-8OSK` | `2026-11-18T07:39:08.804Z` | `arangodb/arangodb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8545` | Yes (`b44c29a8...`) |
 | `CYCLE-2026-11-18-PROJ-EVOLVE` | `2026-11-18T07:39:47.190Z` | `hf-tencent-hy4-flash` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-C631C795` [Domain D] | Yes (`e2390809...`) |
+| `CYCLE-20261118-JURL` | `2026-11-18T07:47:49.761Z` | `google/electra-base-discriminator` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-electra-base-discriminator-learnings.md` | Yes (`17cabb22...`) |
+| `CYCLE-20261118-JW8C` | `2026-11-18T07:47:51.660Z` | `o2sh/onefetch` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/o2sh-onefetch-learnings.md` | Yes (`7ec93d6b...`) |
+| `CYCLE-20261118-K9CP` | `2026-11-18T07:48:08.665Z` | `trinodb/trino` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9158` | Yes (`5c6100d4...`) |
+| `CYCLE-2026-11-18-PROJ-EVOLVE` | `2026-11-18T07:48:41.899Z` | `o2sh-onefetch` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-E33EA755` [Domain D] | Yes (`d0a57eaa...`) |

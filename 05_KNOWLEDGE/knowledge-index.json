@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-18T07:39:48.994Z",
-  "total_verified_learnings": 8994,
+  "last_updated": "2026-11-18T07:48:43.613Z",
+  "total_verified_learnings": 8995,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 21021,
+  "total_items": 21026,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -215301,7 +215301,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/google/electra-base-discriminator",
       "source_version": "hf-google-electra-base-discriminator",
-      "content_hash": "33f20a731b98c267520413e8f57747afdfe135a44018393c3efcc138aa0174dd",
+      "content_hash": "17cabb2282f539644c4277f05eea3da557265ea07fb657bfaa5806314d65ff68",
       "dossier_path": "07_PROJECT_LEARNING/hf-google-electra-base-discriminator-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-google-electra-base-discriminator-learnings.md",
       "promoted_rules": [],
@@ -215310,7 +215310,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-13T20:54:19.264Z",
+      "verified_at": "2026-11-18T07:47:49.566Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -215327,9 +215327,9 @@
       "title": "Research & Knowledge Intelligence: google/electra-base-discriminator Core Invariants",
       "repository": "google/electra-base-discriminator",
       "source_version": "hf-google-electra-base-discriminator",
-      "content_hash": "902047deaa7186f0d7bc1e746615e2e2a683ee8effef4e90061ca1af41d97e0e",
+      "content_hash": "797af4af623aa396aa6df422792289b0b0dabd4f428254680c997454d7d79080",
       "domain_letter": "D",
-      "persisted_at": "2026-11-13T20:54:19.579Z"
+      "persisted_at": "2026-11-18T07:47:49.953Z"
     },
     "learn-github-react-navigation-react-navigation": {
       "learning_id": "learn-github-react-navigation-react-navigation",
@@ -215692,9 +215692,9 @@
       "title": "Research & Knowledge Intelligence: hf-google-electra-base-discriminator-learnings Core Invariants",
       "repository": "hf-google-electra-base-discriminator-learnings",
       "source_version": "HEAD",
-      "content_hash": "d8659980b0d03c072e23e596bde8b0bd2d52e75242b8a0cf3ba22413b091e2f9",
+      "content_hash": "79e685f1f39ce0593693d1de63252cfca276c7b911c2331f34247799da96b70f",
       "domain_letter": "D",
-      "persisted_at": "2026-11-13T20:55:05.171Z"
+      "persisted_at": "2026-11-18T07:48:42.675Z"
     },
     "domain_intelligence-architecture-intelligence-react-navigation-react-navigation-learnings-core-invar": {
       "item_id": "domain_intelligence-architecture-intelligence-react-navigation-react-navigation-learnings-core-invar",
@@ -231391,8 +231391,8 @@
       "slug": "trinodb-trino",
       "platform": "github",
       "source_url": "https://github.com/trinodb/trino",
-      "source_version": "d97ac24e",
-      "content_hash": "01a0096592c1741dc2e64f7acda30c4b8cbd1db2d8ddb063a929c5be2d1465de",
+      "source_version": "5b9767ab",
+      "content_hash": "5c6100d4e4b9daf6ef60c257029905aa9c5d1abf601662799b87114c2753722c",
       "dossier_path": "07_PROJECT_LEARNING/trinodb-trino-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/trinodb-trino-learnings.md",
       "promoted_rules": [
@@ -231420,6 +231420,11 @@
           "number": 8939,
           "title": "Idempotent Precondition Retries on Storage Boundaries",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9158,
+          "title": "Parquet column index with only null pages",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -231427,7 +231432,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T08:43:37.474Z",
+      "verified_at": "2026-11-18T07:48:08.442Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -231469,10 +231474,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-trinodb-trino-architecture-intelligence-trinodb-trino-core-invariants.md",
       "title": "Architecture Intelligence: trinodb/trino Core Invariants",
       "repository": "trinodb/trino",
-      "source_version": "9fe067c6",
-      "content_hash": "01fa92c2892e290daacc9980268ed34bebe32e58d65f6e2de23fa7906194c0bd",
+      "source_version": "5b9767ab",
+      "content_hash": "26d19c8aa2cf4c05b7b88aef2aa4a04b27e74bae0bf491572ca4e55f30aa98a0",
       "domain_letter": "G",
-      "persisted_at": "2026-11-16T00:56:42.584Z"
+      "persisted_at": "2026-11-18T07:48:09.073Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-trinodb-trino": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-trinodb-trino",
@@ -231481,10 +231486,10 @@
       "relative_path": "08_VERIFICATION/trinodb-trino-verification-protocol-empirical-defect-shield-for-trinodb-trino.md",
       "title": "Verification Protocol: Empirical Defect Shield for trinodb/trino",
       "repository": "trinodb/trino",
-      "source_version": "d97ac24e",
-      "content_hash": "ab1fbebc9436a7f77c3d99bf655d7eaddc950d192aa5dbb4af87887a011f6404",
+      "source_version": "5b9767ab",
+      "content_hash": "b98882b24051e27542ef7e4b7300c408cbf122ab14626e1e388d45e2b142e11c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T08:43:38.637Z"
+      "persisted_at": "2026-11-18T07:48:09.216Z"
     },
     "candidate_directive-semantic-preserve-catch-and-var-binding-identities": {
       "item_id": "candidate_directive-semantic-preserve-catch-and-var-binding-identities",
@@ -250882,9 +250887,9 @@
       "title": "Architecture Intelligence: trinodb-trino-learnings Core Invariants",
       "repository": "trinodb-trino-learnings",
       "source_version": "HEAD",
-      "content_hash": "7781ab38622b6d4ae432e12614f2b6f1fd5a77af8e4b724375620e25f1625d3f",
+      "content_hash": "32863553eb0e92c33d3799d40fe34934131b9b8597aa36d8f6d8f0a585a0f6bf",
       "domain_letter": "G",
-      "persisted_at": "2026-11-16T00:56:55.956Z"
+      "persisted_at": "2026-11-18T07:48:43.452Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-trinodb-trino-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-trinodb-trino-learnings",
@@ -250894,9 +250899,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for trinodb-trino-learnings",
       "repository": "trinodb-trino-learnings",
       "source_version": "HEAD",
-      "content_hash": "3497ed03508c9040c11bdaed0973b126e880e2f47cf55a00bfee8154594ac709",
+      "content_hash": "0cd63b551023bb9b645a016552c4e5de90a6a2215ce464de60e1aee88b20e0ef",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T08:45:50.058Z"
+      "persisted_at": "2026-11-18T07:48:43.613Z"
     },
     "learn-github-adobe-structured-data-validator": {
       "learning_id": "learn-github-adobe-structured-data-validator",
@@ -283323,6 +283328,83 @@
       "content_hash": "5ade99399b31165df0d47caf9097d90f98ea6969169f56c6471ba74f0822553b",
       "domain_letter": "D",
       "persisted_at": "2026-11-18T07:39:47.479Z"
+    },
+    "learn-github-o2sh-onefetch": {
+      "learning_id": "learn-github-o2sh-onefetch",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "o2sh/onefetch",
+      "repository": "o2sh/onefetch",
+      "slug": "o2sh-onefetch",
+      "platform": "github",
+      "source_url": "https://github.com/o2sh/onefetch",
+      "source_version": "0b742098",
+      "content_hash": "7ec93d6b9fc43cb9fc7b0585a9f54be115c9aca3666bb58bd930f8102696cb15",
+      "dossier_path": "07_PROJECT_LEARNING/o2sh-onefetch-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/o2sh-onefetch-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-18T07:47:51.422Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-design-intelligence-o2sh-onefetch-core-invariants": {
+      "item_id": "domain_intelligence-design-intelligence-o2sh-onefetch-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-o2sh-onefetch-design-intelligence-o2sh-onefetch-core-invariants.md",
+      "title": "Design Intelligence: o2sh/onefetch Core Invariants",
+      "repository": "o2sh/onefetch",
+      "source_version": "0b742098",
+      "content_hash": "7664853b1fc87a2140cf89443dd6797964b54a42671c456527eed06aace26ba9",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-18T07:47:51.875Z"
+    },
+    "rule-9158": {
+      "learning_id": "rule-9158",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9158,
+      "title": "Parquet column index with only null pages",
+      "source_url": "https://github.com/trinodb/trino",
+      "source_version": "5b9767ab",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-18T07:48:08.442Z"
+    },
+    "candidate_directive-parquet-column-index-with-only-null-pages": {
+      "item_id": "candidate_directive-parquet-column-index-with-only-null-pages",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-L025-parquet-column-index-with-only-null-pages.md",
+      "title": "Parquet column index with only null pages",
+      "repository": "trinodb-trino-learnings",
+      "source_version": "HEAD",
+      "content_hash": "9f17dc0ee38b2d448ca37aebf55c66cac1291ba7e81930e05d3fb2d11c257861",
+      "domain_letter": "L",
+      "persisted_at": "2026-11-18T07:48:43.291Z"
+    },
+    "domain_intelligence-design-intelligence-o2sh-onefetch-learnings-core-invariants": {
+      "item_id": "domain_intelligence-design-intelligence-o2sh-onefetch-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-o2sh-onefetch-learnings-design-intelligence-o2sh-onefetch-learnings-core-invaria.md",
+      "title": "Design Intelligence: o2sh-onefetch-learnings Core Invariants",
+      "repository": "o2sh-onefetch-learnings",
+      "source_version": "HEAD",
+      "content_hash": "37e77cc988fcc47b30a5d549b9938ad73b6e9249b8a7a32a946f87021b830b86",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-18T07:48:42.265Z"
     }
   },
   "ai-builder-brain": {

@@ -725,8 +725,8 @@
     "sourceUrl": "https://huggingface.co/google/electra-base-discriminator",
     "sourceVersion": "hf-google-electra-base-discriminator",
     "license": "Open-Source",
-    "contentHash": "33f20a731b98c267520413e8f57747afdfe135a44018393c3efcc138aa0174dd",
-    "lastHarvestedAt": "2026-11-13T20:54:19.416Z",
+    "contentHash": "17cabb2282f539644c4277f05eea3da557265ea07fb657bfaa5806314d65ff68",
+    "lastHarvestedAt": "2026-11-18T07:47:49.765Z",
     "learningId": "learn-huggingface-google-electra-base-discriminator"
   },
   "hf-baai-bge-m3": {
@@ -3993,10 +3993,10 @@
     "repository": "o2sh/onefetch",
     "platform": "github",
     "sourceUrl": "https://github.com/o2sh/onefetch",
-    "sourceVersion": "cbb0bbec",
+    "sourceVersion": "0b742098",
     "license": "MIT",
-    "contentHash": "48f4cee93fef4f5f6c65ea6323ef42c1d22c1fa742523b543de68be119bd61e4",
-    "lastHarvestedAt": "2026-11-04T01:51:13.615Z",
+    "contentHash": "7ec93d6b9fc43cb9fc7b0585a9f54be115c9aca3666bb58bd930f8102696cb15",
+    "lastHarvestedAt": "2026-11-18T07:47:51.664Z",
     "learningId": "learn-github-o2sh-onefetch"
   },
   "runanywhereai-runanywhere-sdks": {
@@ -5073,10 +5073,10 @@
     "repository": "trinodb/trino",
     "platform": "github",
     "sourceUrl": "https://github.com/trinodb/trino",
-    "sourceVersion": "d97ac24e",
+    "sourceVersion": "5b9767ab",
     "license": "Apache-2.0",
-    "contentHash": "01a0096592c1741dc2e64f7acda30c4b8cbd1db2d8ddb063a929c5be2d1465de",
-    "lastHarvestedAt": "2026-11-17T08:43:37.729Z",
+    "contentHash": "5c6100d4e4b9daf6ef60c257029905aa9c5d1abf601662799b87114c2753722c",
+    "lastHarvestedAt": "2026-11-18T07:48:08.669Z",
     "learningId": "learn-github-trinodb-trino"
   },
   "pinterest-gestalt": {

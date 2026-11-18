@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T07:39:48.587Z",
+  "last_updated": "2026-11-18T07:48:43.291Z",
   "directives": [
     {
       "id": "CD-001",
@@ -28101,6 +28101,26 @@
       "source_repo": "meshery-meshery",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-76522B-empirical-invariant-guard-in-meshery-ser.md",
+      "staged_date": "2026-11-18"
+    },
+    {
+      "id": "CD-L025",
+      "directive_title": "Parquet column index with only null pages",
+      "source_repo": "trinodb-trino-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-L025-parquet-column-index-with-only-null-pages.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-18",
+      "domain_letter": "L"
+    },
+    {
+      "id": "CD-REV-9C8C2E",
+      "directive_title": "Parquet column index with only null pages",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "trinodb-trino",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-9C8C2E-parquet-column-index-with-only-null-page.md",
       "staged_date": "2026-11-18"
     }
   ]

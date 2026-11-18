@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-16T00:56:55.749Z",
+  "timestamp": "2026-11-18T07:48:43.179Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-trinodb-trino-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [trinodb-trino-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-16T00:56:55.749Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-18T07:48:43.179Z`  
 > **Learning ID**: `LEARN-EVO-trinodb-trino-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), B (Product Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), J (Search & Distribution Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), F (Design Intelligence), L (Deployment & Operations Intelligence)
-- **Confidence Rating**: 75%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), F (Design Intelligence), J (Search & Distribution Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), L (Deployment & Operations Intelligence), A (Human & Need Intelligence)
+- **Confidence Rating**: 74%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from trinodb-trino-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/trinodb-trino-learnings.md`  
 > **Source**: github ([https://github.com/trinodb/trino](https://github.com/trinodb/trino))  
-> **Source Version**: `9fe067c6`  
+> **Source Version**: `5b9767ab`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-16T00:56:41.419Z  
+> **Timestamp**: 2026-11-18T07:48:07.662Z  
 > **Learning ID**: `learn-github-trinodb-trino`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/trinodb-trino-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/trinodb/trino](https://github.com/trinodb/trino))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T00:56:41.280Z  
+> **Harvest Timestamp**: 2026-11-18T07:48:07.656Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Official repository of Trino, the distributed SQL query engine for big data, formerly known as PrestoSQL (https://trino.io)
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 13513 stars
+- **Stars / Engagement**: 13523 stars
 
 ---
 
@@ -1882,169 +1882,489 @@ export const SqlBlock = ({ language, code }) => {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9fe067c6` (2026-11-14)
-**Commit Message**: Fix IN with simple CASE in value list
+### Incident Patch 1: `2ccbcc61` (2026-11-17)
+**Commit Message**: Fix Parquet column index with only null pages
 
-InCodeGenerator allocated its temp variables after generating the
-IN-list items, so a simple CASE (Match) item reused the same local slots
-for its operand and operand null flag. Evaluating the CASE clobbered the
-searched value and the null-tracking flag, returning wrong results.
+Null counts are optional, so such an index failed as corrupted.
 
-**File**: `core/trino-main/src/main/java/io/trino/sql/gen/InCodeGenerator.java` (modified, +10/-16)
+**File**: `lib/trino-parquet/src/main/java/io/trino/parquet/predicate/TupleDomainParquetPredicate.java` (modified, +4/-0)
 ```diff
-@@ -144,6 +144,12 @@ public BytecodeNode generateExpression(BytecodeGeneratorContext generatorContext
-         MethodHandle hashCodeMethodHandle = generatorContext.getScalarFunctionImplementation(resolvedHashCodeFunction, simpleConvention(FAIL_ON_NULL, NEVER_NULL)).getMethodHandle();
-         MethodHandle indeterminateMethodHandle = generatorContext.getScalarFunctionImplementation(resolvedIsIndeterminate, simpleConvention(FAIL_ON_NULL, NEVER_NULL)).getMethodHandle();
- 
-+        // Allocate before generating the IN-list items: an item's code must not reuse these slots
-+        Scope scope = generatorContext.getScope();
-+        Variable value = scope.getOrCreateTempVariable(javaType);
-+        Variable expression = scope.getOrCreateTempVariable(int.class);
-+        Variable caseWasNull = scope.getOrCreateTempVariable(boolean.class);
-+
-         ImmutableListMultimap.Builder<Integer, BytecodeNode> hashBucketsBuilder = ImmutableListMultimap.builder();
-         ImmutableList.Builder<BytecodeNode> defaultBucket = ImmutableList.builder();
-         ImmutableSet.Builder<Object> constantValuesBuilder = ImmutableSet.builder();
-@@ -181,11 +187,7 @@ public BytecodeNode generateExpression(BytecodeGeneratorContext generatorContext
- 
-         LabelNode defaultLabel = new LabelNode("default");
- 
--        Scope scope = generatorContext.getScope();
--        Variable value = scope.getOrCreateTempVariable(javaType);
--
-         BytecodeNode switchBlock;
--        Variable expression = scope.getOrCreateTempVariable(int.class);
-         SwitchBuilder switchBuilder = new SwitchBuilder().expression(expression);
- 
-         switch (switchGenerationCase) {
-@@ -208,13 +210,13 @@ public BytecodeNode generateExpression(BytecodeGeneratorContext generatorContext
-                     Collection<BytecodeNode> testValues = bucket.getValue();
-                     BytecodeBlock caseBlock = buildInCase(
-                             generatorContext,
--                            scope,
-                             resolvedEqualsFunction,
-                             match,
-                             defaultLabel,
-                             value,
-                             testValues,
-                             false,
-+                            caseWasNull,
-                             resolvedIsIndeterminate);
-                     switchBuilder.addCase(bucket.getKey(), caseBlock);
-                 }
-@@ -250,13 +252,13 @@ public BytecodeNode generateExpression(BytecodeGeneratorContext generatorContext
- 
-         BytecodeBlock defaultCaseBlock = buildInCase(
-                 generatorContext,
--                scope,
-                 resolvedEqualsFunction,
-                 match,
-                 noMatch,
-                 value,
-                 defaultBucket.build(),
-                 true,
-+                caseWasNull,
-                 resolvedIsIndeterminate)
-                 .setDescription("default");
- 
-@@ -286,6 +288,7 @@ public BytecodeNode generateExpression(BytecodeGeneratorContext generatorContext
- 
-         block.visitLabel(end);
- 
-+        scope.releaseTempVariableForReuse(caseWasNull);
-         scope.releaseTempVariableForReuse(expression);
-         scope.releaseTempVariableForReuse(value);
- 
-@@ -299,20 +302,15 @@ public static boolean isInteger(long value)
- 
-     private static BytecodeBlock buildInCase(
-             BytecodeGeneratorContext generatorContext,
--            Scope scope,
-             ResolvedFunction equals,
-             LabelNode matchLabel,
-             LabelNode noMatchLabel,
-             Variable value,
-             Collection<BytecodeNode> testValues,
-             boolean checkForNulls,
-+            Variable caseWasNull, // with checkForNulls, set to true the first time a null in `testValues` is encountered
-             ResolvedFunction isIndeterminateFunction)
-     {
--        Variable caseWasNull = null; // caseWasNull is set to true the first time a null in `testValues` is encountered
--        if (checkForNulls) {
--            caseWasNull = scope.getOrCreateTempVariable(boolean.class);
--        }
--
-         BytecodeBlock caseBlock = new BytecodeBlock();
- 
-         if (checkForNulls) {
-@@ -371,10 +369,6 @@ private static BytecodeBlock buildInCase(
-             elseLabel = testLabel;
+@@ -592,6 +592,10 @@ public static Domain getDomain(
+         if (maxValues.isEmpty()) {
+             return Domain.all(type);
          }
-         caseBlock.append(elseNode);
--
--        if (checkForNulls) {
--            scope.releaseTempVariableForReuse(caseWasNull);
--        }
-         return caseBlock;
-     }
++        if (nullPages.stream().allMatch(isNullPage -> isNullPage)) {
++            // Null counts are optional, so only null pages tell that every value is null
++            return Domain.onlyNull(type);
++        }
  
+         boolean hasNullValue = true;
+         if (nullCounts.isPresent()) {
 ```
 
-**File**: `core/trino-main/src/test/java/io/trino/sql/query/TestExpressions.java` (modified, +37/-0)
+**File**: `lib/trino-parquet/src/test/java/io/trino/parquet/TestTupleDomainParquetPredicate.java` (modified, +16/-0)
 ```diff
-@@ -95,6 +95,43 @@ FROM UNNEST(ARRAY[NULL, 0, 1, 2, 3]) t(x)
-                         """);
+@@ -929,6 +929,22 @@ public void testColumnIndexWithNoNullsCount()
+                         true));
      }
  
 +    @Test
-+    public void testInWithSimpleCaseInValueList()
++    public void testColumnIndexWithOnlyNullPagesAndNoNullsCount()
++            throws Exception
 +    {
-+        assertThat(assertions.query(
-+                """
-+                SELECT
-+                    x,
-+                    1 IN (CASE x WHEN 0 THEN 2 ELSE 3 END, 4),
-+                    6 IN (x, CASE x WHEN 0 THEN 2 ELSE 3 END),
-+                    5 IN (x + 5, CASE x WHEN 0 THEN 2 ELSE 3 END)
-+                FROM UNNEST(ARRAY[NULL, 0, 5]) t(x)
-+                """))
-+                .matches(
-+                        """
-+                        VALUES
-+                            (NULL, false, NULL, NULL),
-+                            (0, false, false, true),
-+                            (5, false, false, false)
-+                        """);
++        ColumnIndex columnIndex = ColumnIndexBuilder.build(
++                Types.required(INT64).named("test_int64"),
++                BoundaryOrder.UNORDERED,
++                asList(true, true, true),
++                null,
++                toByteBufferList(null, null, null),
++                toByteBufferList(null, null, null));
++        ColumnDescriptor column = new ColumnDescriptor(new String[] {"path"}, Types.optional(INT64).named("Test column"), 0, 0);
++        assertThat(getDomain(BIGINT, 200, columnIndex, new ParquetDataSourceId("test"), column, UTC))
++                .isEqualTo(Domain.onlyNull(BIGINT));
++    }
 +
-+        assertThat(assertions.query(
-+                """
-+                SELECT
-+                    x,
-+                    BIGINT '1' IN (CASE x WHEN 0 THEN BIGINT '2' ELSE BIGINT '3' END, BIGINT '4'),
-+                    BIGINT '6' IN (x, CASE x WHEN 0 THEN BIGINT '2' ELSE BIGINT '3' END)
-+                FROM UNNEST(ARRAY[NULL, BIGINT '0', BIGINT '5']) t(x)
-+                """))
-+                .matches(
-+                        """
-+                        VALUES
-+                            (NULL, false, NULL),
-+                            (BIGINT '0', false, false),
-+                            (BIGINT '5', false, false)
-+                        """);
+     private ColumnDescriptor createColumnDescriptor(PrimitiveTypeName typeName, String columnName)
+     {
+         return new ColumnDescriptor(new String[] {}, new PrimitiveType(REQUIRED, typeName, columnName), 0, 0);
+```
+
+---
+
+### Incident Patch 2: `d54888f4` (2026-11-17)
+**Commit Message**: Fix caching of expressions with trim characters
+
+**File**: `core/trino-main/src/main/java/io/trino/operator/scalar/StringFunctions.java` (modified, +14/-13)
+```diff
+@@ -34,6 +34,7 @@
+ import io.trino.spi.function.SqlType;
+ import io.trino.spi.type.Chars;
+ import io.trino.spi.type.StandardTypes;
++import io.trino.type.CodePoints;
+ import io.trino.type.CodePointsType;
+ import io.trino.util.Soundex;
+ import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
+@@ -575,17 +576,17 @@ public static Slice charTrim(@SqlType("char(x)") Slice slice)
+     @ScalarFunction(value = "ltrim", neverFails = true)
+     @LiteralParameters("x")
+     @SqlType("varchar(x)")
+-    public static Slice leftTrim(@SqlType("varchar(x)") Slice slice, @SqlType(CodePointsType.NAME) int[] codePointsToTrim)
++    public static Slice leftTrim(@SqlType("varchar(x)") Slice slice, @SqlType(CodePointsType.NAME) CodePoints codePointsToTrim)
+     {
+-        return SliceUtf8.leftTrim(slice, codePointsToTrim);
++        return SliceUtf8.leftTrim(slice, codePointsToTrim.codePoints());
+     }
+ 
+     // TODO remove once legacy_varchar_to_char_coercion is gone https://github.com/trinodb/trino/issues/31297
+     @Description("Remove the longest string containing only given characters from the beginning of a string")
+     @ScalarFunction(value = "ltrim", neverFails = true)
+     @LiteralParameters("x")
+     @SqlType("varchar(x)")
+-    public static Slice charLeftTrim(@SqlType("char(x)") Slice slice, @SqlType(CodePointsType.NAME) int[] codePointsToTrim)
++    public static Slice charLeftTrim(@SqlType("char(x)") Slice slice, @SqlType(CodePointsType.NAME) CodePoints codePointsToTrim)
+     {
+         return leftTrim(slice, codePointsToTrim);
+     }
+@@ -594,17 +595,17 @@ public static Slice charLeftTrim(@SqlType("char(x)") Slice slice, @SqlType(CodeP
+     @ScalarFunction(value = "rtrim", neverFails = true)
+     @LiteralParameters("x")
+     @SqlType("varchar(x)")
+-    public static Slice rightTrim(@SqlType("varchar(x)") Slice slice, @SqlType(CodePointsType.NAME) int[] codePointsToTrim)
++    public static Slice rightTrim(@SqlType("varchar(x)") Slice slice, @SqlType(CodePointsType.NAME) CodePoints codePointsToTrim)
+     {
+-        return SliceUtf8.rightTrim(slice, codePointsToTrim);
++        return SliceUtf8.rightTrim(slice, codePointsToTrim.codePoints());
+     }
+ 
+     // TODO remove once legacy_varchar_to_char_coercion is gone https://github.com/trinodb/trino/issues/31297
+     @Description("Remove the longest string containing only given characters from the end of a string")
+     @ScalarFunction(value = "rtrim", neverFails = true)
+     @LiteralParameters("x")
+     @SqlType("varchar(x)")
+-    public static Slice charRightTrim(@SqlType("char(x)") Slice slice, @SqlType(CodePointsType.NAME) int[] codePointsToTrim)
++    public static Slice charRightTrim(@SqlType("char(x)") Slice slice, @SqlType(CodePointsType.NAME) CodePoints codePointsToTrim)
+     {
+         return rightTrim(slice, codePointsToTrim);
+     }
+@@ -613,35 +614,35 @@ public static Slice charRightTrim(@SqlType("char(x)") Slice slice, @SqlType(Code
+     @ScalarFunction(value = "trim", neverFails = true)
+     @LiteralParameters("x")
+     @SqlType("varchar(x)")
+-    public static Slice trim(@SqlType("varchar(x)") Slice slice, @SqlType(CodePointsType.NAME) int[] codePointsToTrim)
++    public static Slice trim(@SqlType("varchar(x)") Slice slice, @SqlType(CodePointsType.NAME) CodePoints codePointsToTrim)
+     {
+-        return SliceUtf8.trim(slice, codePointsToTrim);
++        return SliceUtf8.trim(slice, codePointsToTrim.codePoints());
+     }
+ 
+     // TODO remove once legacy_varchar_to_char_coercion is gone https://github.com/trinodb/trino/issues/31297
+     @Description("Remove the longest string containing only given characters from the beginning and end of a string")
+     @ScalarFunction(value = "trim", neverFails = true)
+     @LiteralParameters("x")
+     @SqlType("varchar(x)")
+-    public static Slice charTrim(@SqlType("char(x)") Slice slice, @SqlType(CodePointsType.NAME) int[] codePointsToTrim)
++    public static Slice charTrim(@SqlType("char(x)") Slice slice, @SqlType(CodePointsType.NAME) CodePoints codePointsToTrim)
+     {
+         return trim(slice, codePointsToTrim);
+     }
+ 
+     @ScalarOperator(OperatorType.CAST)
+     @LiteralParameters("x")
+     @SqlType(CodePointsType.NAME)
+-    public static int[] castVarcharToCodePoints(@SqlType("varchar(x)") Slice slice)
++    public static CodePoints castVarcharToCodePoints(@SqlType("varchar(x)") Slice slice)
+     {
+-        return castToCodePoints(slice);
++        return new CodePoints(castToCodePoints(slice));
+     }
+ 
+     @ScalarOperator(OperatorType.CAST)
+     @SqlType(CodePointsType.NAME)
+     @LiteralParameters("x")
+-    public static int[] castCharToCodePoints(@LiteralParameter("x") int x, @SqlType("char(x)") Slice slice)
++    public static CodePoints castCharToCodePoints(@LiteralParameter("x") int x, @SqlType("char(x)") Slice slice)
+     {
+-        return castToCodePoints(padSpaces(slice, x));
++        return new CodePoints(castToCodePoints(padSpaces(slice, x)));
+     }
+ 
+     private static int[] castToCodePoints(Slice slice)
+```
+
+**File**: `core/trino-main/src/main/java/io/trino/operator/scalar/VarcharMethods.java` (modified, +4/-3)
+```diff
+@@ -23,6 +23,7 @@
+ import io.trino.spi.function.SqlType;
+ import io.trino.spi.function.StaticMethod;
+ import io.trino.spi.type.StandardTypes;
++import io.trino.type.CodePoints;
+ import io.trino.type.CodePointsType;
+ 
+ public final class VarcharMethods
+@@ -143,7 +144,7 @@ public static Slice trim(@SqlType("varchar(x)") Slice slice)
+     @InstanceMethod
+     @LiteralParameters("x")
+     @SqlType("varchar(x)")
+-    public static Slice trim(@SqlType("varchar(x)") Slice slice, @SqlType(CodePointsType.NAME) int[] codePointsToTrim)
++    public static Slice trim(@SqlType("varchar(x)") Slice slice, @SqlType(CodePointsType.NAME) CodePoints codePointsToTrim)
+     {
+         return StringFunctions.trim(slice, codePointsToTrim);
+     }
+@@ -163,7 +164,7 @@ public static Slice leftTrim(@SqlType("varchar(x)") Slice slice)
+     @InstanceMethod
+     @LiteralParameters("x")
+     @SqlType("varchar(x)")
+-    public static Slice leftTrim(@SqlType("varchar(x)") Slice slice, @SqlType(CodePointsType.NAME) int[] codePointsToTrim)
++    public static Slice leftTrim(@SqlType("varchar(x)") Slice slice, @SqlType(CodePointsType.NAME) CodePoints codePointsToTrim)
+     {
+         return StringFunctions.leftTrim(slice, codePointsToTrim);
+     }
+@@ -183,7 +184,7 @@ public static Slice rightTrim(@SqlType("varchar(x)") Slice slice)
+     @InstanceMethod
+     @LiteralParameters("x")
+     @SqlType("varchar(x)")
+-    public static Slice rightTrim(@SqlType("varchar(x)") Slice slice, @SqlType(CodePointsType.NAME) int[] codePointsToTrim)
++    public static Slice rightTrim(@SqlType("varchar(x)") Slice slice, @SqlType(CodePointsType.NAME) CodePoints codePointsToTrim)
+     {
+         return StringFunctions.rightTrim(slice, codePointsToTrim);
+     }
+```
+
+**File**: `core/trino-main/src/main/java/io/trino/type/CodePoints.java` (added, +58/-0)
+```diff
+@@ -0,0 +1,58 @@
++/*
++ * Licensed under the Apache License, Version 2.0 (the "License");
++ * you may not use this file except in compliance with the License.
++ * You may obtain a copy of the License at
++ *
++ *     http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ */
++package io.trino.type;
++
++import java.util.Arrays;
++
++import static java.util.Objects.requireNonNull;
++
++public final class CodePoints
++{
++    private final int[] codePoints;
++
++    public CodePoints(int[] codePoints)
++    {
++        this.codePoints = requireNonNull(codePoints, "codePoints is null");
++    }
++
++    public int[] codePoints()
++    {
++        return codePoints;
++    }
++
++    @Override
++    public boolean equals(Object obj)
++    {
++        if (this == obj) {
++            return true;
++        }
++        if (obj == null || getClass() != obj.getClass()) {
++            return false;
++        }
++        CodePoints other = (CodePoints) obj;
++        return Arrays.equals(codePoints, other.codePoints);
++    }
++
++    @Override
++    public int hashCode()
++    {
++        return Arrays.hashCode(codePoints);
++    }
++
++    @Override
++    public String toString()
++    {
++        return new String(codePoints, 0, codePoints.length);
++    }
++}
+```
+
+**File**: `core/trino-main/src/main/java/io/trino/type/CodePointsType.java` (modified, +3/-3)
+```diff
+@@ -30,7 +30,7 @@ public class CodePointsType
+ 
+     private CodePointsType()
+     {
+-        super(new TypeDescriptor(NAME), int[].class);
++        super(new TypeDescriptor(NAME), CodePoints.class);
+     }
+ 
+     @Override
+@@ -57,13 +57,13 @@ public Object getObject(Block block, int position)
+         Slice slice = valueBlock.getSlice(valuePosition);
+         int[] codePoints = new int[slice.length() / Integer.BYTES];
+         slice.getInts(0, codePoints);
+-        return codePoints;
++        return new CodePoints(codePoints);
+     }
+ 
+     @Override
+     public void writeObject(BlockBuilder blockBuilder, Object value)
+     {
+-        int[] codePoints = (int[]) value;
++        int[] codePoints = ((CodePoints) value).codePoints();
+         Slice slice = Slices.allocate(codePoints.length * Integer.BYTES);
+         slice.setInts(0, codePoints);
+         ((VariableWidthBlockBuilder) blockBuilder).writeEntry(slice);
+```
+
+**File**: `core/trino-main/src/test/java/io/trino/sql/gen/TestPageFunctionCompiler.java` (modified, +14/-0)
+```diff
+@@ -97,6 +97,7 @@
+ import static io.trino.block.BlockAssertions.createStringsBlock;
+ import static io.trino.operator.scalar.ArrayTransformFunction.ARRAY_TRANSFORM_NAME;
+ import static io.trino.operator.scalar.JoniRegexpCasts.joniRegexp;
++import static io.trino.operator.scalar.StringFunctions.castVarcharToCodePoints;
+ import static io.trino.spi.StandardErrorCode.NUMERIC_VALUE_OUT_OF_RANGE;
+ import static io.trino.spi.function.InvocationConvention.InvocationArgumentConvention.NEVER_NULL;
+ import static io.trino.spi.function.InvocationConvention.InvocationReturnConvention.FAIL_ON_NULL;
+@@ -115,6 +116,7 @@
+ import static io.trino.testing.assertions.TrinoExceptionAssert.assertTrinoExceptionThrownBy;
+ import static io.trino.transaction.InMemoryTransactionManager.createTestTransactionManager;
+ import static io.trino.type.CharVarcharCoercion.SQL_STANDARD;
++import static io.trino.type.CodePointsType.CODE_POINTS;
+ import static io.trino.type.JoniRegexpType.JONI_REGEXP;
+ import static io.trino.type.JsonPathType.JSON_PATH;
+ import static io.trino.type.JsonType.JSON;
+@@ -653,6 +655,7 @@ public void testProjectionCacheWithConstant()
+         PageFunctionCompiler cacheCompiler = FUNCTION_RESOLUTION.getPageFunctionCompiler(100);
+         ResolvedFunction jsonExtractScalar = FUNCTION_RESOLUTION.resolveFunction("json_extract_scalar", fromTypes(VARCHAR, JSON_PATH));
+         ResolvedFunction joniRegexpLike = FUNCTION_RESOLUTION.resolveFunction("regexp_like", fromTypes(VARCHAR, JONI_REGEXP));
++        ResolvedFunction leftTrim = FUNCTION_RESOLUTION.resolveFunction("ltrim", fromTypes(VARCHAR, CODE_POINTS));
+         Reference input = new Reference(VARCHAR, "c");
+         Map<Symbol, Integer> layout = ImmutableMap.of(new Symbol(VARCHAR, "c"), 0);
+ 
+@@ -677,6 +680,17 @@ public void testProjectionCacheWithConstant()
+         cacheCompiler.compileProjection(call(joniRegexpLike, input, new Constant(JONI_REGEXP, joniRegexp(utf8Slice("b.*")))), layout, SQL_STANDARD, Optional.empty());
+         assertThat(cacheCompiler.getProjectionCache().getRequestCount()).isEqualTo(6);
+         assertThat(cacheCompiler.getProjectionCache().getLoadCount()).isEqualTo(4);
++
++        // Separately created code points with the same content: cache hit
++        cacheCompiler.compileProjection(call(leftTrim, input, new Constant(CODE_POINTS, castVarcharToCodePoints(utf8Slice("ab")))), layout, SQL_STANDARD, Optional.empty());
++        cacheCompiler.compileProjection(call(leftTrim, input, new Constant(CODE_POINTS, castVarcharToCodePoints(utf8Slice("ab")))), layout, SQL_STANDARD, Optional.empty());
++        assertThat(cacheCompiler.getProjectionCache().getRequestCount()).isEqualTo(8);
++        assertThat(cacheCompiler.getProjectionCache().getLoadCount()).isEqualTo(5);
++
++        // Different code points: cache miss
++        cacheCompiler.compileProjection(call(leftTrim, input, new Constant(CODE_POINTS, castVarcharToCodePoints(utf8Slice("ac")))), layout, SQL_STANDARD, Optional.empty());
++        assertThat(cacheCompiler.getProjectionCache().getRequestCount()).isEqualTo(9);
++        assertThat(cacheCompiler.getProjectionCache().getLoadCount()).isEqualTo(6);
+     }
+ 
+     @Test
+```
+
+---
+
+### Incident Patch 3: `5e25d2a1` (2026-11-16)
+**Commit Message**: Fix caching of expressions with JSON path or regexp
+
+Compare JsonPath and JoniRegexp by pattern, so equal patterns share
+PageFunctionCompiler cache entries.
+
+**File**: `core/trino-main/src/main/java/io/trino/operator/scalar/JsonPath.java` (modified, +19/-0)
+```diff
+@@ -90,6 +90,25 @@ public JsonExtract.JsonExtractor<Long> getSizeExtractor()
+         return sizeExtractor;
+     }
+ 
++    @Override
++    public boolean equals(Object obj)
++    {
++        if (this == obj) {
++            return true;
++        }
++        if (obj == null || getClass() != obj.getClass()) {
++            return false;
++        }
++        JsonPath other = (JsonPath) obj;
++        return pattern.equals(other.pattern);
++    }
++
++    @Override
++    public int hashCode()
++    {
++        return pattern.hashCode();
++    }
++
+     @Override
+     public String toString()
+     {
+```
+
+**File**: `core/trino-main/src/main/java/io/trino/type/JoniRegexp.java` (modified, +20/-0)
+```diff
+@@ -45,6 +45,26 @@ public Matcher matcher(byte[] bytes)
+         return regex.matcher(bytes);
+     }
+ 
++    // regex is always compiled from pattern with the same options (see JoniRegexpCasts), so the pattern identifies it
++    @Override
++    public boolean equals(Object obj)
++    {
++        if (this == obj) {
++            return true;
++        }
++        if (obj == null || getClass() != obj.getClass()) {
++            return false;
++        }
++        JoniRegexp other = (JoniRegexp) obj;
++        return pattern.equals(other.pattern);
++    }
++
++    @Override
++    public int hashCode()
++    {
++        return pattern.hashCode();
++    }
++
+     @Override
+     public String toString()
+     {
+```
+
+**File**: `core/trino-main/src/main/java/io/trino/type/Re2JRegexp.java` (modified, +2/-0)
+```diff
+@@ -29,6 +29,8 @@
+ import static java.lang.Math.toIntExact;
+ import static java.lang.String.format;
+ 
++// Identity equality is deliberate: RE2 keeps mutable matching state (NFA fallback, DFA state cache), so an
++// instance must not be reused across queries by a cache keyed on expression equality
+ public final class Re2JRegexp
+ {
+     private static final Logger log = Logger.get(Re2JRegexp.class);
+```
+
+**File**: `core/trino-main/src/test/java/io/trino/sql/gen/TestPageFunctionCompiler.java` (modified, +36/-0)
+```diff
+@@ -31,6 +31,7 @@
+ import io.trino.operator.project.PageProjection;
+ import io.trino.operator.project.SelectedPositions;
+ import io.trino.operator.scalar.ChoicesSpecializedSqlScalarFunction;
++import io.trino.operator.scalar.JsonPath;
+ import io.trino.operator.scalar.SpecializedSqlScalarFunction;
+ import io.trino.spi.Page;
+ import io.trino.spi.block.ArrayBlockBuilder;
+@@ -95,6 +96,7 @@
+ import static io.trino.block.BlockAssertions.createRepeatedValuesBlock;
+ import static io.trino.block.BlockAssertions.createStringsBlock;
+ import static io.trino.operator.scalar.ArrayTransformFunction.ARRAY_TRANSFORM_NAME;
++import static io.trino.operator.scalar.JoniRegexpCasts.joniRegexp;
+ import static io.trino.spi.StandardErrorCode.NUMERIC_VALUE_OUT_OF_RANGE;
+ import static io.trino.spi.function.InvocationConvention.InvocationArgumentConvention.NEVER_NULL;
+ import static io.trino.spi.function.InvocationConvention.InvocationReturnConvention.FAIL_ON_NULL;
+@@ -113,6 +115,8 @@
+ import static io.trino.testing.assertions.TrinoExceptionAssert.assertTrinoExceptionThrownBy;
+ import static io.trino.transaction.InMemoryTransactionManager.createTestTransactionManager;
+ import static io.trino.type.CharVarcharCoercion.SQL_STANDARD;
++import static io.trino.type.JoniRegexpType.JONI_REGEXP;
++import static io.trino.type.JsonPathType.JSON_PATH;
+ import static io.trino.type.JsonType.JSON;
+ import static io.trino.util.CompilerUtils.makeClassName;
+ import static io.trino.util.Reflection.constructorMethodHandle;
+@@ -643,6 +647,38 @@ public void testJsonProjectionCache()
+         assertThat(compiler.getProjectionTemplateCache().getHitRate()).isEqualTo(0.5);
+     }
+ 
++    @Test
++    public void testProjectionCacheWithConstant()
++    {
++        PageFunctionCompiler cacheCompiler = FUNCTION_RESOLUTION.getPageFunctionCompiler(100);
++        ResolvedFunction jsonExtractScalar = FUNCTION_RESOLUTION.resolveFunction("json_extract_scalar", fromTypes(VARCHAR, JSON_PATH));
++        ResolvedFunction joniRegexpLike = FUNCTION_RESOLUTION.resolveFunction("regexp_like", fromTypes(VARCHAR, JONI_REGEXP));
++        Reference input = new Reference(VARCHAR, "c");
++        Map<Symbol, Integer> layout = ImmutableMap.of(new Symbol(VARCHAR, "c"), 0);
++
++        // Separately created JSON paths with the same pattern: cache hit
++        cacheCompiler.compileProjection(call(jsonExtractScalar, input, new Constant(JSON_PATH, new JsonPath("$.a"))), layout, SQL_STANDARD, Optional.empty());
++        cacheCompiler.compileProjection(call(jsonExtractScalar, input, new Constant(JSON_PATH, new JsonPath("$.a"))), layout, SQL_STANDARD, Optional.empty());
++        assertThat(cacheCompiler.getProjectionCache().getRequestCount()).isEqualTo(2);
++        assertThat(cacheCompiler.getProjectionCache().getLoadCount()).isEqualTo(1);
++
++        // Different JSON path: cache miss
++        cacheCompiler.compileProjection(call(jsonExtractScalar, input, new Constant(JSON_PATH, new JsonPath("$.b"))), layout, SQL_STANDARD, Optional.empty());
++        assertThat(cacheCompiler.getProjectionCache().getRequestCount()).isEqualTo(3);
++        assertThat(cacheCompiler.getProjectionCache().getLoadCount()).isEqualTo(2);
++
++        // Separately created Joni regexps with the same pattern: cache hit
++        cacheCompiler.compileProjection(call(joniRegexpLike, input, new Constant(JONI_REGEXP, joniRegexp(utf8Slice("a.*")))), layout, SQL_STANDARD, Optional.empty());
++        cacheCompiler.compileProjection(call(joniRegexpLike, input, new Constant(JONI_REGEXP, joniRegexp(utf8Slice("a.*")))), layout, SQL_STANDARD, Optional.empty());
++        assertThat(cacheCompiler.getProjectionCache().getRequestCount()).isEqualTo(5);
++        assertThat(cacheCompiler.getProjectionCache().getLoadCount()).isEqualTo(3);
++
++        // Different Joni regexp: cache miss
++        cacheCompiler.compileProjection(call(joniRegexpLike, input, new Constant(JONI_REGEXP, joniRegexp(utf8Slice("b.*")))), layout, SQL_STANDARD, Optional.empty());
++        assertThat(cacheCompiler.getProjectionCache().getRequestCount()).isEqualTo(6);
++        assertThat(cacheCompiler.getProjectionCache().getLoadCount()).isEqualTo(4);
 +    }
 +
      @Test
-     public void testInShortCircuit()
+     public void testJsonTemplateAliasedLiterals()
      {
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #32151** (2026-11-14): Enable error-prone Finally check (@findepi)
-- **PR #32149** (2026-11-14): Fix IN with simple CASE in value list (@findepi)
-- **PR #32146** (closed): Fix temporary variable reuse in IN predicates (@ViktorBystrov72)
-- **PR #32139** (2026-11-13): Use signed year instead of year-of-era for hive dates (@JohnFitzpatrick44)
-- **PR #32135** (closed): Use signed year instead of year-of-era for Hive partition values (@chenjian2664)
-- **PR #32134** (2026-11-14): Remove JSON representation from PlanFragment (@wendigo)
+- **PR #32199** (2026-11-18): Bump software.amazon.awssdk:bom from 2.57.12 to 2.57.13 (@dependabot[bot])
+- **PR #32196** (2026-11-18): Use Amazon Corretto in the Trino Docker image (@electrum)
+- **PR #32188** (2026-11-18): Fix Parquet column index with only null pages (@nanjeshramesh)
+- **PR #32187** (2026-11-17): Test JWT signing key file lookup (@chenjian2664)
+- **PR #32186** (2026-11-17): Bump software.amazon.awssdk:bom from 2.57.11 to 2.57.12 (@dependabot[bot])
+- **PR #32184** (closed): Add Iceberg GPU connector (@foosekis4j)
 
 ---
 
@@ -2064,55 +2384,34 @@ searched value and the null-tracking flag, returning wrong results.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. IN with simple CASE in value list
+## X. Parquet column index with only null pages
 
 **RULE**:
-When implementing operations in `core/trino-main/src/main/java/io/trino/sql/gen/InCodeGenerator.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trinodb/trino. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `lib/trino-parquet/src/main/java/io/trino/parquet/predicate/TupleDomainParquetPredicate.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trinodb/trino. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9fe067c6`: IN with simple CASE in value list. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2ccbcc61`: Parquet column index with only null pages. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/trino-main/src/main/java/io/trino/sql/gen/InCodeGenerator.java`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `lib/trino-parquet/src/main/java/io/trino/parquet/predicate/TupleDomainParquetPredicate.java`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-        // Allocate before generating the IN-list items: an item's code must not reuse these slots
-        Scope scope = generatorContext.getScope();
-        Variable value = scope.getOrCreateTempVariable(javaType);
-        Variable expression = scope.getOrCreateTempVariable(int.class);
-        Variable caseWasNull = scope.getOrCreateTempVariable(boolean.class);
-
-                            caseWasNull,
-                caseWasNull,
-        scope.releaseTempVariableForReuse(caseWasNull);
-            Variable caseWasNull, // with checkForNulls, set to true the first time a null in `testValues` is encountered
+        if (nullPages.stream().allMatch(isNullPage -> isNullPage)) {
+            // Null counts are optional, so only null pages tell that every value is null
+            return Domain.onlyNull(type);
+        }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Induced defect failure mode:
-        Scope scope = generatorContext.getScope();
-        Variable value = scope.getOrCreateTempVariable(javaType);
-
-        Variable expression = scope.getOrCreateTempVariable(int.class);
-                            scope,
-                scope,
-            Scope scope,
-        Variable caseWasNull = null; // caseWasNull is set to true the first time a null in `testValues` is encountered
-        if (checkForNulls) {
-            caseWasNull = scope.getOrCreateTempVariable(boolean.class);
-        }
-
-
-        if (checkForNulls) {
-            scope.releaseTempVariableForReuse(caseWasNull);
-        }
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9fe067c6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2ccbcc61` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction
