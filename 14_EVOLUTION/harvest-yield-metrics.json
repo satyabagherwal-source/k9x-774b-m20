@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T05:44:16.102Z",
-  "total_cycles_completed": 10369,
-  "total_learnings_persisted": 10369,
-  "total_rules_promoted": 9884,
+  "last_updated": "2026-11-18T05:52:27.530Z",
+  "total_cycles_completed": 10371,
+  "total_learnings_persisted": 10371,
+  "total_rules_promoted": 9885,
   "history": [
-    {
-      "timestamp": "2026-11-17T16:30:55.701Z",
-      "repository": "i18next/react-i18next",
-      "learningId": "learn-github-i18next-react-i18next",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T16:31:05.448Z",
-      "repository": "milvus-io/milvus",
-      "learningId": "learn-github-milvus-io-milvus",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-17T16:38:38.318Z",
       "repository": "XHToken/Spark-X2.6-4B",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-18T05:44:16.102Z",
       "repository": "zarf-dev/zarf",
       "learningId": "learn-github-zarf-dev-zarf",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T05:52:25.850Z",
+      "repository": "XiaomiMiMo/MiMo-V2.6-Pro-RL",
+      "learningId": "learn-huggingface-xiaomimimo-mimo-v2-6-pro-rl",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T05:52:27.530Z",
+      "repository": "flox/flox",
+      "learningId": "learn-github-flox-flox",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

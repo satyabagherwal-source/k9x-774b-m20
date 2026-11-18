@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-18T05:44:19.412Z",
-    "lastVerified": "2026-11-18T05:44:19.412Z",
+    "lastChecked": "2026-11-18T05:52:37.619Z",
+    "lastVerified": "2026-11-18T05:52:37.619Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -115,12 +115,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "gravitl-netmaker": {
-    "name": "gravitl/netmaker",
+    "name": "netmaker",
     "officialUrl": "https://github.com/gravitl/netmaker",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-17T23:17:36.334Z",
-    "lastVerified": "2026-11-17T23:17:36.334Z",
+    "lastChecked": "2026-11-18T05:52:32.588Z",
+    "lastVerified": "2026-11-18T05:52:32.588Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-gravitl-netmaker",
@@ -129,7 +129,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "098d26a7"
   },
   "mintplex-labs-anything-llm": {
     "name": "anything-llm",
@@ -154,8 +155,8 @@
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-18T04:57:26.488Z",
-    "lastVerified": "2026-11-18T04:57:26.488Z",
+    "lastChecked": "2026-11-18T05:52:37.607Z",
+    "lastVerified": "2026-11-18T05:52:37.607Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -2474,14 +2475,14 @@
     "officialUrl": "https://github.com/flox/flox",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-16T23:22:22.659Z",
-    "lastVerified": "2026-11-16T23:22:22.659Z",
+    "lastChecked": "2026-11-18T05:52:26.343Z",
+    "lastVerified": "2026-11-18T05:52:26.343Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-flox-flox",
-    "contentHash": "a82641ff8a6bb5107bad9bd2368df5ea21c9d7cf0b29668ac9e4f0503e36b323",
+    "contentHash": "7d904f0988e35cf16a7fd2d05526556358bef532b626afd72b88f1251c4e054f",
     "promotedRulesCount": 1,
-    "recentFixesCount": 5,
+    "recentFixesCount": 4,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
@@ -3185,12 +3186,12 @@
     "officialUrl": "https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Pro-RL",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-13T18:25:45.312Z",
-    "lastVerified": "2026-11-13T18:25:45.312Z",
+    "lastChecked": "2026-11-18T05:52:25.179Z",
+    "lastVerified": "2026-11-18T05:52:25.179Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-xiaomimimo-mimo-v2-6-pro-rl",
-    "contentHash": "1d1d4dd679ea45780d448aede1963e64d86a616ea676bb4cab39ef8aff42bd37",
+    "contentHash": "0480348388e0a3242399dada683ece5c8ccf2625889b015321ac1216fa03e0e4",
     "promotedRulesCount": 0,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
@@ -4979,9 +4980,9 @@
   "gocrane-crane": {
     "name": "crane",
     "officialUrl": "https://github.com/gocrane/crane",
-    "lastChecked": "2026-11-17T07:20:07.664Z",
+    "lastChecked": "2026-11-18T05:52:30.200Z",
     "revisionIdentifier": "2b0ddae8",
-    "lastVerified": "2026-11-17T07:20:07.664Z"
+    "lastVerified": "2026-11-18T05:52:30.200Z"
   },
   "malisper-pgrust": {
     "name": "pgrust",
@@ -5403,9 +5404,9 @@
   "amrdeveloper-gql": {
     "name": "GQL",
     "officialUrl": "https://github.com/AmrDeveloper/GQL",
-    "lastChecked": "2026-11-17T05:58:11.966Z",
+    "lastChecked": "2026-11-18T05:52:35.087Z",
     "revisionIdentifier": "3a76cfee",
-    "lastVerified": "2026-11-17T05:58:11.966Z"
+    "lastVerified": "2026-11-18T05:52:35.087Z"
   },
   "smol-rs-smol": {
     "name": "smol",
@@ -7934,9 +7935,9 @@
   "vercel-swr": {
     "name": "swr",
     "officialUrl": "https://github.com/vercel/swr",
-    "lastChecked": "2026-11-14T23:43:06.367Z",
+    "lastChecked": "2026-11-18T05:52:27.821Z",
     "revisionIdentifier": "8148ef01",
-    "lastVerified": "2026-11-14T23:43:06.367Z"
+    "lastVerified": "2026-11-18T05:52:27.821Z"
   },
   "prometheus-prometheus": {
     "name": "prometheus/prometheus",

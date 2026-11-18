@@ -10827,3 +10827,5 @@
 | `CYCLE-20261118-4Q5K` | `2026-11-18T05:44:05.480Z` | `unsloth/Qwen-Image-2.1-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-unsloth-qwen-image-2.1-gguf-learnings.md` | Yes (`b05065a2...`) |
 | `CYCLE-20261118-4RPY` | `2026-11-18T05:44:07.510Z` | `sayanarijit/xplr` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9132` | Yes (`8c819de3...`) |
 | `CYCLE-20261118-4YCC` | `2026-11-18T05:44:16.092Z` | `zarf-dev/zarf` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9133` | Yes (`355630c8...`) |
+| `CYCLE-20261118-FG8G` | `2026-11-18T05:52:25.840Z` | `XiaomiMiMo/MiMo-V2.6-Pro-RL` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-xiaomimimo-mimo-v2.6-pro-rl-learnings.md` | Yes (`04803483...`) |
+| `CYCLE-20261118-FHJ2` | `2026-11-18T05:52:27.518Z` | `flox/flox` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9134` | Yes (`7d904f09...`) |

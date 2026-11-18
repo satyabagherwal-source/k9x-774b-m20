@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T05:44:22.460Z",
+  "last_updated": "2026-11-18T05:52:40.060Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-18T04:11:36.483Z",
@@ -268,7 +268,7 @@
       "staged_for_review": 1
     },
     "zseven-w-openpencil-learnings.md": {
-      "processed_at": "2026-11-18T04:49:56.997Z",
+      "processed_at": "2026-11-18T05:52:39.031Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -468,7 +468,7 @@
       "staged_for_review": 1
     },
     "flox-flox-learnings.md": {
-      "processed_at": "2026-11-16T23:22:37.603Z",
+      "processed_at": "2026-11-18T05:52:37.773Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2048,8 +2048,8 @@
       "staged_for_review": 0
     },
     "hf-xiaomimimo-mimo-v2.6-pro-rl-learnings.md": {
-      "processed_at": "2026-11-13T18:26:51.023Z",
-      "promoted_canonical": 1,
+      "processed_at": "2026-11-18T05:52:38.621Z",
+      "promoted_canonical": 0,
       "staged_for_review": 0
     },
     "appwrite-appwrite-learnings.md": {
@@ -3393,7 +3393,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 1815,
+  "total_dossiers_evaluated": 1818,
   "total_canonical_promoted": 336,
-  "total_staged_for_review": 1400
+  "total_staged_for_review": 1402
 }

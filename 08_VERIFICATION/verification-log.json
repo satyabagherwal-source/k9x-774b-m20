@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261116-7DBE",
-    "timestamp": "2026-11-16T14:34:41.066Z",
-    "repository": "IFM/PAN2",
-    "learningId": "learn-huggingface-ifm-pan2",
-    "contentHash": "46281bc9b876236b9be7cb1d3d133f5ce3f422f0a218b6523b8413f4a01adef2",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261116-7QQS",
-    "timestamp": "2026-11-16T14:34:58.468Z",
-    "repository": "VectifyAI/PageIndex",
-    "learningId": "learn-github-vectifyai-pageindex",
-    "contentHash": "1b41c5586786a0798db6391e609849129596f004728a7084b07e88fe0eb1e904",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261116-7T09",
     "timestamp": "2026-11-16T14:35:01.401Z",
     "repository": "NucleoidAI/Nucleoid",
@@ -7490,6 +7460,36 @@
     "repository": "zarf-dev/zarf",
     "learningId": "learn-github-zarf-dev-zarf",
     "contentHash": "355630c8eba1069c50ecc75aed37018e666782ccbb715c66f2402b4e9b8773ce",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-FG8G",
+    "timestamp": "2026-11-18T05:52:25.840Z",
+    "repository": "XiaomiMiMo/MiMo-V2.6-Pro-RL",
+    "learningId": "learn-huggingface-xiaomimimo-mimo-v2-6-pro-rl",
+    "contentHash": "0480348388e0a3242399dada683ece5c8ccf2625889b015321ac1216fa03e0e4",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-FHJ2",
+    "timestamp": "2026-11-18T05:52:27.518Z",
+    "repository": "flox/flox",
+    "learningId": "learn-github-flox-flox",
+    "contentHash": "7d904f0988e35cf16a7fd2d05526556358bef532b626afd72b88f1251c4e054f",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

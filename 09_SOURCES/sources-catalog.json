@@ -545,8 +545,8 @@
     "sourceUrl": "https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Pro-RL",
     "sourceVersion": "hf-xiaomimimo-mimo-v2.6-pro-rl",
     "license": "Open-Source",
-    "contentHash": "1d1d4dd679ea45780d448aede1963e64d86a616ea676bb4cab39ef8aff42bd37",
-    "lastHarvestedAt": "2026-11-13T18:25:45.801Z",
+    "contentHash": "0480348388e0a3242399dada683ece5c8ccf2625889b015321ac1216fa03e0e4",
+    "lastHarvestedAt": "2026-11-18T05:52:25.844Z",
     "learningId": "learn-huggingface-xiaomimimo-mimo-v2-6-pro-rl"
   },
   "hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf": {
@@ -3253,10 +3253,10 @@
     "repository": "flox/flox",
     "platform": "github",
     "sourceUrl": "https://github.com/flox/flox",
-    "sourceVersion": "3f4570ec",
+    "sourceVersion": "83a6c49f",
     "license": "GPL-2.0",
-    "contentHash": "a82641ff8a6bb5107bad9bd2368df5ea21c9d7cf0b29668ac9e4f0503e36b323",
-    "lastHarvestedAt": "2026-11-16T23:22:23.765Z",
+    "contentHash": "7d904f0988e35cf16a7fd2d05526556358bef532b626afd72b88f1251c4e054f",
+    "lastHarvestedAt": "2026-11-18T05:52:27.523Z",
     "learningId": "learn-github-flox-flox"
   },
   "wix-react-native-navigation": {

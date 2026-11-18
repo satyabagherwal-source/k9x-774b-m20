@@ -10860,3 +10860,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-unsloth-qwen-image-2-1-gguf` | `https://huggingface.co/unsloth/Qwen-Image-2.1-GGUF` | `hf-unsloth` | Multi-dimensional audit evidence | 2026-11-18T05:44:05.484Z |
 | `learn-github-sayanarijit-xplr` | `https://github.com/sayanarijit/xplr` | `e91f74b1` | Multi-dimensional audit evidence | 2026-11-18T05:44:07.514Z |
 | `learn-github-zarf-dev-zarf` | `https://github.com/zarf-dev/zarf` | `31862576` | Multi-dimensional audit evidence | 2026-11-18T05:44:16.096Z |
+| `learn-huggingface-xiaomimimo-mimo-v2-6-pro-rl` | `https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Pro-RL` | `hf-xiaomim` | Multi-dimensional audit evidence | 2026-11-18T05:52:25.844Z |
+| `learn-github-flox-flox` | `https://github.com/flox/flox` | `83a6c49f` | Multi-dimensional audit evidence | 2026-11-18T05:52:27.523Z |

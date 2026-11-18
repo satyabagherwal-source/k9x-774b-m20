@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-16T23:22:37.742Z",
+  "timestamp": "2026-11-18T05:52:37.965Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-flox-flox-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [flox-flox-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-16T23:22:37.742Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-18T05:52:37.965Z`  
 > **Learning ID**: `LEARN-EVO-flox-flox-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/flox-flox-learnings.md`  
 > **Source**: github ([https://github.com/flox/flox](https://github.com/flox/flox))  
-> **Source Version**: `3f4570ec`  
+> **Source Version**: `83a6c49f`  
 > **License**: GPL-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-16T23:22:22.911Z  
+> **Timestamp**: 2026-11-18T05:52:26.351Z  
 > **Learning ID**: `learn-github-flox-flox`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/flox-flox-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/flox/flox](https://github.com/flox/flox))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T23:22:22.659Z  
+> **Harvest Timestamp**: 2026-11-18T05:52:26.343Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: The Deterministic Foundation for your SDLC
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 4211 stars
+- **Stars / Engagement**: 4210 stars
 
 ---
 
@@ -1471,881 +1471,451 @@ impl ActivateEnvironmentRef {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3f4570ec` (2026-11-16)
-**Commit Message**: feat(build): configure the catalog nixpkgs fetcher (#4888)
+### Incident Patch 1: `e6d5a4e1` (2026-11-17)
+**Commit Message**: docs(show): align --help with the man page, test multi-failure rendering (#4895)
 
 ## Proposed Changes
 
-First PR in a two-part stack. NEF support-source decoupling follows in
-#4881.
+Follow-up to DEV-366 (flox#4875, merged). Two non-blocking cleanups a
+reviewer flagged; no behavior change.
 
-Configure the nixpkgs fetcher for `flox build` and `flox publish` with
-`catalog_flake_fetcher` / `FLOX_CATALOG_FLAKE_FETCHER`. Shallow Git is
-the default, and native GitHub and self-hosted GitLab references are
-supported, including GitLab subgroups.
+- **`flox show --help`** now matches the man page. The `--all` entry
+reads "Show additional metadata about each version, including
+stabilities that provide each version. Ignored with --json." and
+`--json` reads "Display available versions as a JSON array with all
+available metadata about each version." The man page already carried
+this wording; only the source doc comments (which bpaf renders into
+`--help`) lagged.
+- **New test**
+`unavailable_at_stability_renders_inside_multiple_failures_bullets`
+covers the previously-unasserted multi-failure path, where an
+`UnavailableAtStability` guidance block renders inside a `- ` bullet
+with its indented `[pkg-groups.*]` snippet. It fails if the inner
+indentation is dropped.
 
-`BaseCatalogUrl::as_flake_ref(fetcher)` derives the fetch reference from
-the canonical URL and selected revision. The publish builder accepts
-`&BaseCatalogUrl` and the fetcher choice. Publish records canonical
-`base_url?rev=<sha>` in `locked_base_catalog_url`.
+The `pkg-path` positional stays the last field so the bpaf parser
+doesn't panic; the `show_parser_satisfies_bpaf_invariants` guard still
+passes.
 
-Native forge fetching on non-default ports remains limited by the pinned
-Nix parser. The Git fetcher supports these canonical URLs.
+## Testing
 
-The fetcher is a concrete three-variant enum. Configuration defaults to
-`git` during deserialization and rejects unsupported values. Native
-conversion filters Git-only query parameters and preserves the selected
-pinned revision.
+- `just unit-tests` show scope 20/20 (incl. the bpaf-invariant guard)
+and lock_manifest scope 73/73; the n
 
-## Verification
-
-- All 152 catalog-client tests, 30 config tests, and 26 build-command
-tests pass.
-- CLI compilation, SDK test compilation with `extra-tests`, and a
-
-**File**: `Cargo.lock` (modified, +1/-0)
+**File**: `cli/flox-rust-sdk/src/providers/lock_manifest.rs` (modified, +30/-0)
 ```diff
-@@ -1677,6 +1677,7 @@ dependencies = [
-  "anyhow",
-  "config",
-  "flox-core",
-+ "floxhub-client",
-  "glob",
-  "indoc",
-  "itertools 0.14.0",
-```
-
-**File**: `cli/flox-config/Cargo.toml` (modified, +1/-0)
-```diff
-@@ -7,6 +7,7 @@ edition.workspace = true
- anyhow.workspace = true
- config.workspace = true
- flox-core.workspace = true
-+floxhub-client.workspace = true
- glob.workspace = true
- itertools.workspace = true
- serde.workspace = true
-```
-
-**File**: `cli/flox-config/src/config.rs` (modified, +5/-0)
-```diff
-@@ -8,6 +8,7 @@ use flox_core::activate::context::AutoActivateFishMode;
- use flox_core::data::environment_ref::RemoteEnvironmentRef;
- use flox_core::features::Features;
- use flox_core::floxhub::Floxhub;
-+use floxhub_client::CatalogFlakeFetcher;
- use glob::{MatchOptions, Pattern};
- use serde::{Deserialize, Serialize};
- use toml_edit::Key;
-@@ -132,6 +133,10 @@ pub struct FloxConfig {
-     // Manually setting derived urls should be an internal knob (see _FLOX_FLOXHUB_GIT_URL).
-     pub catalog_url: Option<Url>,
+@@ -4934,6 +4934,36 @@ mod tests {
+         assert_eq!(guidance, expected);
+     }
  
-+    /// Nixpkgs fetcher for build and publish: git (default), github, or gitlab.
-+    #[serde(default)]
-+    pub catalog_flake_fetcher: CatalogFlakeFetcher,
++    /// Inside a `- ` bullet, the guidance's blank lines and `[table]` block
++    /// keep their indentation, so the whole block reads as one list item.
++    #[test]
++    fn unavailable_at_stability_renders_inside_multiple_failures_bullets() {
++        let failures = ResolutionFailures(vec![
++            ResolutionFailure::UnavailableAtStability(unavailable_at_stability(
++                "legacy",
++                StabilitySetting::PkgGroup("legacy".to_string()),
++                false,
++            )),
++            ResolutionFailure::FallbackMessage {
++                msg: "Something else failed.".to_string(),
++            },
++        ]);
 +
-     /// Authentication mode for FloxHub.
-     /// Unset means the consumer's compiled-in default.
-     pub floxhub_authn_mode: Option<AuthnMode>,
++        let expected = indoc! {r#"
++            multiple resolution failures:
++            - Package 'python3@>=3.12' has no build at stability 'lts'.
++              It has builds at: stable, unstable.
++              Use 'flox edit' to set a stability that has it:
++
++                [pkg-groups.legacy]
++                stability = "stable"
++
++              This applies to every package in pkg-group 'legacy'.
++            - Something else failed."#};
++
++        assert_eq!(failures.to_string(), expected);
++    }
++
+     /// The suggested table must parse as a manifest, which a bare dotted
+     /// group name wouldn't.
+     #[test]
 ```
 
-**File**: `cli/flox-rust-sdk/src/providers/publish.rs` (modified, +11/-1)
+**File**: `cli/flox/src/commands/show.rs` (modified, +4/-2)
 ```diff
-@@ -11,6 +11,7 @@ use floxhub_client::{
-     BaseCatalogUrlError,
-     BuildType,
-     CatalogClientTrait,
-+    CatalogFlakeFetcher,
-     CatalogStoreConfig,
-     CatalogStoreConfigNixCopy,
-     DeepOverridesItemItem,
-@@ -1053,6 +1054,7 @@ fn convert_build_result_to_build_metadata(
- pub fn check_build_metadata(
-     flox: &Flox,
-     base_nixpkgs_url: &BaseCatalogUrl,
-+    fetcher: CatalogFlakeFetcher,
-     system_override: Option<String>,
-     env_metadata: &CheckedEnvironmentMetadata,
-     pkg: &PackageTarget,
-@@ -1078,7 +1080,7 @@ pub fn check_build_metadata(
-     );
+@@ -16,11 +16,13 @@ use crate::utils::tracing::sentry_set_tag;
+ // Show detailed package information
+ #[derive(Debug, Bpaf, Clone)]
+ pub struct Show {
+-    /// Display available versions as a JSON array
++    /// Display available versions as a JSON array with all available
++    /// metadata about each version.
+     #[bpaf(long)]
+     pub json: bool,
  
-     let build_results = builder.build(
--        Some(&base_nixpkgs_url.as_flake_ref()?),
-+        Some(&base_nixpkgs_url.as_flake_ref(fetcher)?),
-         &built_environments.dev,
-         &[pkg.name()],
-         // The catalog lock the CLI created for this publish; its subset is
-@@ -2165,6 +2167,7 @@ pub mod tests {
-         let meta = check_build_metadata(
-             &flox,
-             env_metadata.toplevel_catalog_ref.as_ref().unwrap(),
-+            CatalogFlakeFetcher::Git,
-             None,
-             &env_metadata,
-             &EXAMPLE_MANIFEST_PACKAGE_TARGET,
-@@ -2212,6 +2215,7 @@ pub mod tests {
-         let meta = check_build_metadata(
-             &flox,
-             env_metadata.toplevel_catalog_ref.as_ref().unwrap(),
-+            CatalogFlakeFetcher::Git,
-             None,
-             &env_metadata,
-             &EXAMPLE_MANIFEST_PACKAGE_TARGET_MISSING_FIELDS,
-@@ -2269,6 +2273,7 @@ pub mod tests {
-         let meta = check_build_metadata(
-             &flox,
-             env_metadata.toplevel_catalog_ref.as_ref().unwrap(),
-+            CatalogFlakeFetcher::Git,
-             None,
-             &env_metadata,
-             &pure_pkg,
-@@ -2322,6 +2327,7 @@ pub mod tests {
-         let build_metadata = check_build_metadata(
-             &flox,
-             env_metadata.toplevel_catalog_ref.as_ref().unwrap(),
-+            CatalogFlakeFetcher::Git,
-             None,
-             &env_metadata,
-             &package_metadata.package,
-@@ -2394,6 +2400,7 @@ pub mod tests {
-         let build_metadata = check_build_metadata(
-             &flox,
-             env_metadata.toplevel_catalog_ref.as_ref().unwrap(),
-+            CatalogFlakeFetcher::Git,
-             None,
-             &env_metadata,
-             &package_metadata.package,
-@@ -2461,6 +2468,7 @@ pub mod tests {
-         let build_metadata = check_build_metadata(
-             &flox,
-             env_metadata.toplevel_catalog_ref.as_ref().unwrap(),
-+            CatalogFlakeFetcher::Git,
-             None,
-             &env_metadata,
-             &package_metadata.package,
-@@ -2816,6 +2824,7 @@ pub mod tests {
-         let build_metadata = check_build_metadata(
-             &flox,
-             env_metadata.toplevel_catalog_ref.as_ref().unwrap(),
-+            CatalogFlakeFetcher::Git,
-             None,
-             &env_metadata,
-             &package_metadata.package,
-@@ -3983,6 +3992,7 @@ pub mod tests {
-             let build_metadata = check_build_metadata(
-                 &flox,
-                 env_metadata.toplevel_catalog_ref.as_ref().unwrap(),
-+                CatalogFlakeFetcher::Git,
-                 None,
-                 &env_metadata,
-                 &package_metadata.package,
-```
-
-**File**: `cli/flox/src/commands/build.rs` (modified, +21/-9)
-```diff
-@@ -9,6 +9,7 @@ use std::time::Instant;
- use ::nix::sys::signal::Signal;
- use anyhow::{Context, Result, anyhow, bail};
- use bpaf::Bpaf;
-+use flox_config::Config;
- use flox_core::data::CanonicalPath;
- use flox_events::{CliBuildPayload, EventKind, EventsHub, Outcome};
- use flox_manifest::lockfile::Lockfile;
-@@ -30,7 +31,7 @@ use flox_rust_sdk::providers::catalog::base_catalog_url_for_stability_arg;
- use flox_rust_sdk::providers::git::{GitCommandProvider, GitProvider};
- use flox_rust_sdk::providers::nix;
- use flox_rust_sdk::utils::{CommandExt, FLOX_INTERPRETER};
--use floxhub_client::{BaseCatalogUrl, CatalogClientTrait, FloxhubClientError};
-+use floxhub_client::{BaseCatalogUrl, CatalogClientTrait, CatalogFlakeFetcher, FloxhubClientError};
- use indoc::formatdoc;
- use itertools::Itertools;
- use nef_lock_catalog::{
-@@ -214,7 +215,7 @@ impl Build {
-         }
-     }
+-    /// Show the stabilities that have each version
++    /// Show additional metadata about each version, including stabilities
++    /// that provide each version. Ignored with --json.
+     #[bpaf(short, long)]
+     pub all: bool,
  
--    pub async fn handle(self, mut flox: Flox) -> Result<()> {
-+    pub async fn handle(self, config: &Config, mut flox: Flox) -> Result<()> {
-         match self.subcommand_or_targets {
-             SubcommandOrBuildTargets::Clean { targets } => {
-                 let env = self
-@@ -260,6 +261,7 @@ impl Build {
-                     env,
-                     targets,
-                     base_catalog_url_select,
-+                    config.flox.catalog_flake_fetcher,
-                     system_override.into_inner(),
-                     override_inputs,
-                 )
-@@ -317,6 +319,7 @@ impl Build {
-         mut env: ConcreteEnvironment,
-         packages: Vec<String>,
-         nixpkgs_url_select: Option<BaseCatalogUrlSelect>,
-+        fetcher: CatalogFlakeFetcher,
-         system_override: Option<String>,
-         override_inputs: Vec<OverrideInput>,
-     ) -> Result<()> {
-@@ -398,6 +401,11 @@ impl Build {
-             expression_rel_paths(&packages_to_build)
-         };
- 
-+        let fetcher = match &nixpkgs_url_select {
-+            Some(BaseCatalogUrlSelect::NixpkgsUrl(_)) => CatalogFlakeFetcher::Git,
-+            _ if !has_expression_build => CatalogFlakeFetcher::Git,
-+            _ => fetcher,
-+        };
-         let expression_nixpkgs = if expression_lock_rel_paths.is_empty() {
-             None
-         }
-@@ -413,7 +421,7 @@ impl Build {
- 
-         let expression_nixpkgs_flakeref = match &expression_nixpkgs {
-             Some(nixpkgs) => {
--                let flakeref = nixpkgs.as_flake_ref()?;
-+                let flakeref = nixpkgs.as_flake_ref(fetcher)?;
-                 prefetch_expression_build_flake_ref(&packages_to_build, &flakeref)?;
-                 message::plain(format!(
-                     "Nix expression builds use nixpkgs {}.",
-@@ -568,7 +576,9 @@ impl Build {
-                 );
-             }
-             let base_nixpkgs_url = base_nixpkgs_url_from_url_select(flox, Some(sel)).await?;
--            Ok(base_nixpkgs_url.as_flake_ref()?.to_string())
-+            Ok(base_nixpkgs_url
-+                .as_flake_ref(CatalogFlakeFetcher::Git)?
-+                .to_string())
-         } else {
-             Ok(parsed_flake_ref)
-         }
-@@ -1755,8 +1765,8 @@ mod test {
-     }
- 
-     /// `NixpkgsUrl` pass-through: passing a raw URL returns it as a
--    /// `BaseCatalogUrl` without any catalog call, and `.as_flake_ref()` adds
--    /// the `git+` prefix and `?shallow=1` query parameter.
-+    /// `BaseCatalogUrl` without any catalog call. The Git fetcher adds the
-+    /// `git+` prefix and `?shallow=1` query parameter.
-     #[tokio::test]
-     async fn base_nixpkgs_url_from_url_select_nixpkgs_url_passthrough() {
-         let (flox, _temp_dir) = flox_instance();
-@@ -1774,7 +1784,9 @@ mod test {
-         assert_eq!(result, expected, "URL must be passed through unchanged");
- 
-         // Verify that as_flake_ref() produces the expected git+…?shallow=1 form.
--        let flake_ref = result.as_flake_ref().expect("should convert to flake ref");
-+        let flake_ref = result
-+            .as_flake_ref(CatalogFlakeFetcher::Git)
-+            .expect("should convert to flake ref");
-         assert_eq!(
-             flake_ref.as_str(),
-             "git+https://github.com/NixOS/nixpkgs?shallow=1"
-@@ -1815,7 +1827,7 @@ mod test {
-             .url_for_latest_page_with_stability("not-default")
-             .expect("fixture must have not-default stability");
-         let expected = base_url
--            .as_flake_ref()
-+            .as_flake_ref(CatalogFlakeFetcher::Git)
-             .expect("should convert to flake ref")
-             .to_string();
- 
-@@ -1862,7 +1874,7 @@ mod test {
-             .url_for_latest_page_with_stability("not-default")
-             .expect("fixture must have not-default stability");
-         let expected = base_url
--            .as_flake_ref()
-+            .as_flake_ref(CatalogFlakeFetcher::Git)
-             .expect("should convert to flake ref")
-             .to_string();
- 
-```
-
-**File**: `cli/flox/src/commands/develop.rs` (modified, +2/-1)
-```diff
-@@ -19,6 +19,7 @@ use flox_rust_sdk::providers::build::{
-     PackageTargetKind,
- };
- use flox_rust_sdk::providers::nix;
-+use floxhub_client::CatalogFlakeFetcher;
- use indoc::{formatdoc, indoc};
- use nef_lock_catalog::NixFlakeref;
- use tempfile::{NamedTempFile, TempDir};
-@@ -178,7 +179,7 @@ impl Develop {
- 
-         let expression_nixpkgs =
-             base_nixpkgs_url_from_url_select(&flox, base_catalog_url_select).await?;
--        let base_nixpkgs_url = expression_nixpkgs.as_flake_ref()?;
-+        let base_nixpkgs_url = expression_nixpkgs.as_flake_ref(CatalogFlakeFetcher::Git)?;
- 
-         message::plain(format!(
-             "Nix expression builds use nixpkgs {}.",
-```
-
-**File**: `cli/flox/src/commands/mod.rs` (modified, +1/-1)
-```diff
-@@ -1044,7 +1044,7 @@ enum ShareCommands {
- impl ShareCommands {
-     async fn handle(self, config: Config, flox: Flox) -> Result<()> {
-         match self {
--            ShareCommands::Build(args) => args.handle(flox).await?,
-+            ShareCommands::Build(args) => args.handle(&config, flox).await?,
-             ShareCommands::Publish(args) => args.handle(config, flox).await?,
-             ShareCommands::Push(args) => args.handle(flox).await?,
-             ShareCommands::Pull(args) => args.handle(flox).await?,
-```
-
-**File**: `cli/flox/src/commands/publish.rs` (modified, +10/-9)
-```diff
-@@ -29,6 +29,7 @@ use flox_rust_sdk::providers::publish::{
- };
- use floxhub_client::{
-     CatalogClientTrait,
-+    CatalogFlakeFetcher,
-     CheckBuildQuery,
-     CheckBuildResponse,
-     FloxhubClientError,
-@@ -444,6 +445,12 @@ impl Publish {
-             [&package],
-             publish_config.base_catalog_url_select.as_ref(),
-         )?;
-+        let has_manifest_build = package.kind().is_manifest_build();
-+        let fetcher = match &publish_config.base_catalog_url_select {
-+            Some(BaseCatalogUrlSelect::NixpkgsUrl(_)) => CatalogFlakeFetcher::Git,
-+            _ if has_manifest_build => CatalogFlakeFetcher::Git,
-+            _ => config.flox.catalog_flake_fetcher,
-+        };
- 
-         // Check the environment for appropriate state to build and publish
-         let env_metadata = check_environment_metadata(&flox, &path_env)?;
-@@ -468,11 +475,9 @@ impl Publish {
-         // The page the package is recorded against is the page it is built
-         // against, so there is one value rather than two to keep in step.
-         let selected_base_nixpkgs_url = package_metadata.base_catalog_ref.clone();
-+        let selected_flake_ref = selected_base_nixpkgs_url.as_flake_ref(fetcher)?;
- 
--        prefetch_expression_build_flake_ref(
--            [&package_metadata.package],
--            &selected_base_nixpkgs_url.as_flake_ref()?,
--        )?;
-+        prefetch_expression_build_flake_ref([&package_metadata.package], &selected_flake_ref)?;
- 
-         let auth = NixAuth::from_flox(&flox)?;
-         let publish_provider = PublishProvider::new(env_metadata, package_metadata, auth);
-@@ -485,11 +490,6 @@ impl Publish {
-             .package
-             .kind()
-             .is_expression_build();
--        let has_manifest_build = publish_provider
--            .package_metadata
--            .package
--            .kind()
--            .is_manifest_build();
-         subcommand_metric!(
-             "publish",
-             "has_expression_build" = has_expression_build,
-@@ -633,6 +633,7 @@ impl Publish {
-         let build_metadata = check_build_metadata(
-             &flox,
-             &selected_base_nixpkgs_url,
-+            fetcher,
-             system_override_inner,
-             &publish_provider.env_metadata,
-             &publish_provider.package_metadata.package,
 ```
 
 ---
 
-### Incident Patch 2: `70febae5` (2026-11-16)
-**Commit Message**: fix(cli): more consistent subcommand help (#4886)
+### Incident Patch 2: `72df6167` (2026-11-17)
+**Commit Message**: docs(show): align --help with the man page; test multi-failure stability rendering
 
-- **fix(cli): unify command-group help output**
-  Use fallback_to_usage for bare auth, extension, services, include,
-  generations and factory commands.
+The `flox show` field doc comments, which bpaf renders in --help, still
+carried the wording from before review, while flox-show(1) had been
+updated. They now match the man page.
 
-Previously, bare services, include, generations and factory commands and
-  existing explicit help commands printed help to stderr; bare auth and
-extension commands printed errors to stderr. --help already used stdout.
-Bare commands, --help and existing help subcommands now all print help
-to
-stdout. Include 'flox' in explicit-help usage lines and preserve
-existing
-  help aliases.
+The multi-failure path of UnavailableAtStability (a `- ` bullet around
+guidance with blank lines and an indented table block) had no
+assertion. A new unit test pins the exact bulleted output.
 
-  Bare help exits 0 before command dispatch and lifecycle telemetry.
-  Extension help works without beta; its subcommands still require it.
+TDD: new test passed against existing behavior; it fails when the
+bullet indentation is removed, confirming it discriminates.
 
-Without argument normalization, only two of 'command --help', 'command'
-and 'command help' can share a control path. fallback_to_usage pairs the
-  first two; falling back to Help would pair the last two. Keep
-  fallback_to_usage and share rendering across all three; explicit help
-  still runs through dispatch and lifecycle telemetry.
+Forge-Agent: implementation-worker (a3d78d59)
+Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
 
-  Representative before/after output, captured with isolated config and
-  metrics disabled. The before output matches main (3ee0d1d68)
-
-**File**: `.agents/skills/bpaf/SKILL.md` (added, +10/-0)
+**File**: `cli/flox-rust-sdk/src/providers/lock_manifest.rs` (modified, +30/-0)
 ```diff
-@@ -0,0 +1,10 @@
-+---
-+name: bpaf
-+description: Use when adding, changing, or reviewing CLI commands parsed with bpaf.
-+---
+@@ -4934,6 +4934,36 @@ mod tests {
+         assert_eq!(guidance, expected);
+     }
+ 
++    /// Inside a `- ` bullet, the guidance's blank lines and `[table]` block
++    /// keep their indentation, so the whole block reads as one list item.
++    #[test]
++    fn unavailable_at_stability_renders_inside_multiple_failures_bullets() {
++        let failures = ResolutionFailures(vec![
++            ResolutionFailure::UnavailableAtStability(unavailable_at_stability(
++                "legacy",
++                StabilitySetting::PkgGroup("legacy".to_string()),
++                false,
++            )),
++            ResolutionFailure::FallbackMessage {
++                msg: "Something else failed.".to_string(),
++            },
++        ]);
 +
-+# bpaf
++        let expected = indoc! {r#"
++            multiple resolution failures:
++            - Package 'python3@>=3.12' has no build at stability 'lts'.
++              It has builds at: stable, unstable.
++              Use 'flox edit' to set a stability that has it:
 +
-+For commands with subcommands whose bare invocation does nothing useful,
-+use `fallback_to_usage` on `#[bpaf(command, ...)]` and provide a `help`
-+subcommand.
++                [pkg-groups.legacy]
++                stability = "stable"
++
++              This applies to every package in pkg-group 'legacy'.
++            - Something else failed."#};
++
++        assert_eq!(failures.to_string(), expected);
++    }
++
+     /// The suggested table must parse as a manifest, which a bare dotted
+     /// group name wouldn't.
+     #[test]
 ```
 
-**File**: `AGENTS.md` (modified, +5/-0)
+**File**: `cli/flox/src/commands/show.rs` (modified, +4/-2)
 ```diff
-@@ -185,6 +185,11 @@ PR titles and descriptions, commit messages, code comments, branch
- names, test names, and test data. Refer to "a customer" and link the
- internal Linear issue instead.
- 
-+## CLI parsing
-+
-+Use [bpaf](.agents/skills/bpaf/SKILL.md) when adding CLI subcommands or
-+changing command argument parsing with bpaf.
-+
- ## Beta commands
- 
- For new beta commands, use
-```
-
-**File**: `cli/flox/src/beta/extensions/commands/mod.rs` (modified, +10/-0)
-```diff
-@@ -4,6 +4,8 @@ use anyhow::Result;
- use bpaf::Bpaf;
- use flox_rust_sdk::flox::Flox;
- 
-+use crate::commands::display_command_help;
-+
- mod format;
- mod install;
- mod list;
-@@ -12,6 +14,10 @@ mod remove;
- /// Manage flox extensions
+@@ -16,11 +16,13 @@ use crate::utils::tracing::sentry_set_tag;
+ // Show detailed package information
  #[derive(Debug, Bpaf, Clone)]
- pub enum ExtensionCommands {
-+    /// Print help information
-+    #[bpaf(command, hide)]
-+    Help,
-+
-     /// Install an extension
-     #[bpaf(command)]
-     Install(#[bpaf(external(install::install))] install::Install),
-@@ -28,6 +34,10 @@ pub enum ExtensionCommands {
- impl ExtensionCommands {
-     pub async fn handle(self, flox: Flox) -> Result<()> {
-         match self {
-+            ExtensionCommands::Help => {
-+                display_command_help(Some("extension".to_string()));
-+                Ok(())
-+            },
-             ExtensionCommands::Install(args) => args.handle(flox).await,
-             ExtensionCommands::List(args) => args.handle(flox).await,
-             ExtensionCommands::Remove(args) => args.handle(flox).await,
-```
-
-**File**: `cli/flox/src/commands/auth.rs` (modified, +9/-0)
-```diff
-@@ -36,6 +36,7 @@ use serde::Serialize;
- use tracing::{debug, instrument};
- use url::Url;
+ pub struct Show {
+-    /// Display available versions as a JSON array
++    /// Display available versions as a JSON array with all available
++    /// metadata about each version.
+     #[bpaf(long)]
+     pub json: bool,
  
-+use crate::commands::display_command_help;
- use crate::commands::general::update_config;
- use crate::utils::credential_store::{CredentialSource, CredentialStores, TokenStorage};
- use crate::utils::dialog::{Checkpoint, Dialog, WaitResult};
-@@ -295,6 +296,10 @@ fn calculate_expiry(expires_in: i64) -> String {
- // FloxHub authentication commands
- #[derive(Clone, Debug, Bpaf)]
- pub enum Auth {
-+    /// Print help information
-+    #[bpaf(command, hide)]
-+    Help,
-+
-     /// Login to FloxHub
-     #[bpaf(command)]
-     Login {
-@@ -329,6 +334,10 @@ impl Auth {
-         subcommand_metric!("auth2");
+-    /// Show the stabilities that have each version
++    /// Show additional metadata about each version, including stabilities
++    /// that provide each version. Ignored with --json.
+     #[bpaf(short, long)]
+     pub all: bool,
  
-         match self {
-+            Auth::Help => {
-+                display_command_help(Some("auth".to_string()));
-+                Ok(())
-+            },
-             Auth::Login {
-                 token_file,
-                 insecure_storage,
-```
-
-**File**: `cli/flox/src/commands/beta.rs` (modified, +1/-1)
-```diff
-@@ -12,7 +12,7 @@ pub enum BetaCommands {
-     BetaEnabled(#[bpaf(external(beta_enabled::beta_enabled))] beta_enabled::BetaEnabled),
- 
-     /// Manage flox extensions
--    #[bpaf(command("extension"), hide)]
-+    #[bpaf(command("extension"), hide, fallback_to_usage)]
-     Extension(#[bpaf(external(extension::extension_commands))] extension::ExtensionCommands),
- }
- 
-```
-
-**File**: `cli/flox/src/commands/factory/mod.rs` (modified, +2/-2)
-```diff
-@@ -16,7 +16,7 @@ use floxhub_client::{BuildResponse, BuildTrigger, EffectiveBuildStatus, FactoryC
- use indoc::indoc;
- use tracing::instrument;
- 
--use crate::commands::display_help;
-+use crate::commands::display_command_help;
- 
- /// Compute the effective status label for a build from its server-computed
- /// `status`.
-@@ -121,7 +121,7 @@ impl FactoryCommands {
-         // factory-specific override is needed.
-         match self {
-             FactoryCommands::Help => {
--                display_help(Some("factory".to_string()));
-+                display_command_help(Some("factory".to_string()));
-                 Ok(())
-             },
-             FactoryCommands::Status(args) => args.handle(&flox.floxhub_client).await,
-```
-
-**File**: `cli/flox/src/commands/generations/mod.rs` (modified, +2/-2)
-```diff
-@@ -4,7 +4,7 @@ use flox_config::Config;
- use flox_rust_sdk::flox::Flox;
- use tracing::instrument;
- 
--use super::display_help;
-+use super::display_command_help;
- 
- mod history;
- mod list;
-@@ -40,7 +40,7 @@ impl GenerationsCommands {
-     pub async fn handle(self, _config: Config, flox: Flox) -> Result<()> {
-         match self {
-             GenerationsCommands::Help => {
--                display_help(Some("generations".to_string()));
-+                display_command_help(Some("generations".to_string()));
-             },
-             GenerationsCommands::List(args) => args.handle(flox).await?,
-             GenerationsCommands::History(args) => args.handle(flox).await?,
-```
-
-**File**: `cli/flox/src/commands/include.rs` (modified, +2/-2)
-```diff
-@@ -7,7 +7,7 @@ use indoc::indoc;
- use tracing::{debug, info_span, instrument};
- 
- use super::EnvironmentSelect;
--use crate::commands::{display_help, environment_description, environment_select};
-+use crate::commands::{display_command_help, environment_description, environment_select};
- use crate::environment_subcommand_metric;
- use crate::utils::events::env_detail_from_concrete;
- use crate::utils::message::{self, print_overridden_manifest_fields};
-@@ -48,7 +48,7 @@ impl IncludeCommands {
-     pub async fn handle(self, flox: Flox) -> Result<()> {
-         match self {
-             IncludeCommands::Help => {
--                display_help(Some("include".to_string()));
-+                display_command_help(Some("include".to_string()));
-             },
-             IncludeCommands::Upgrade(args) => args.handle(flox).await?,
-         }
 ```
 
 ---
 
-### Incident Patch 3: `deb0e300` (2026-11-12)
-**Commit Message**: fix(cli): unify command-group help output
+### Incident Patch 3: `771dc944` (2026-11-16)
+**Commit Message**: fix(lock): keep non-stability failures and correct the stability edit
 
-Use fallback_to_usage for bare auth, extension, services, include,
-generations and factory commands.
+A package that failed on one system for a reason other than stability
+had its message dropped when another system's message named stabilities:
+the merged stability advice replaced both, and 'stability = "stable"'
+would not fix the first system. Any unannotated version_not_found for a
+package now leaves every message for it as the catalog sent it.
 
-Previously, bare services, include, generations and factory commands and
-existing explicit help commands printed help to stderr; bare auth and
-extension commands printed errors to stderr. --help already used stdout.
-Bare commands, --help and existing help subcommands now all print help to
-stdout. Include 'flox' in explicit-help usage lines and preserve existing
-help aliases.
+The suggested edit also named '[pkg-groups.<group>]' with the raw group
+name, so a dotted name such as 'v1.2' produced a table the manifest
+rejects, and it ignored that the stability can come from
+'options.stability' or an included environment. The failure now carries
+the StabilitySetting and in_include flag that the unknown-stability error
+uses, and both messages share their location and include wording.
 
-Bare help exits 0 before command dispatch and lifecycle telemetry.
-Extension help works without beta; its subcommands still require it.
+The floxhub-client test now asserts each parsed message in full.
 
-Without argument normalization, only two of 'command --help', 'command'
-and 'command help' can share a control path. fallback_to_usage pairs the
-first two; falling back to Help would pair the last two. Keep
-fallback_to_usage and share rendering across all three; explicit help
-still runs through dispatch and lifecycle telemetry.
+TDD: the mixed annotated and unannotated test failed before the fix.
 
-Representative before/after output, captured with isolated config and
-metrics disabled. The before output matches main (3ee0d1d68).
+Refs: DEV-366
+Forge-Agent: implementation-worker (a3d78d59)
+Co-Authored-By: Claude Sonnet 5.5 <[REDACTED_EMAIL]>
 
-$ flox auth
-
-Before (exit 1):
-stdout: (empty)
-stderr:
-✘ ERROR: expected `CO
-
-**File**: `cli/flox/src/commands/beta.rs` (modified, +1/-1)
+**File**: `cli/flox-rust-sdk/src/providers/lock_manifest.rs` (modified, +393/-58)
 ```diff
-@@ -12,7 +12,7 @@ pub enum BetaCommands {
-     BetaEnabled(#[bpaf(external(beta_enabled::beta_enabled))] beta_enabled::BetaEnabled),
- 
-     /// Manage flox extensions
--    #[bpaf(command("extension"), hide)]
-+    #[bpaf(command("extension"), hide, fallback_to_usage)]
-     Extension(#[bpaf(external(extension::extension_commands))] extension::ExtensionCommands),
+@@ -131,7 +131,7 @@ pub enum ResolveError {
  }
  
-```
-
-**File**: `cli/flox/src/commands/factory/mod.rs` (modified, +2/-2)
-```diff
-@@ -16,7 +16,7 @@ use floxhub_client::{BuildResponse, BuildTrigger, EffectiveBuildStatus, FactoryC
- use indoc::indoc;
- use tracing::instrument;
- 
--use crate::commands::display_help;
-+use crate::commands::display_command_help;
- 
- /// Compute the effective status label for a build from its server-computed
- /// `status`.
-@@ -121,7 +121,7 @@ impl FactoryCommands {
-         // factory-specific override is needed.
-         match self {
-             FactoryCommands::Help => {
--                display_help(Some("factory".to_string()));
-+                display_command_help(Some("factory".to_string()));
-                 Ok(())
-             },
-             FactoryCommands::Status(args) => args.handle(&flox.floxhub_client).await,
-```
-
-**File**: `cli/flox/src/commands/generations/mod.rs` (modified, +2/-2)
-```diff
-@@ -4,7 +4,7 @@ use flox_config::Config;
- use flox_rust_sdk::flox::Flox;
- use tracing::instrument;
- 
--use super::display_help;
-+use super::display_command_help;
- 
- mod history;
- mod list;
-@@ -40,7 +40,7 @@ impl GenerationsCommands {
-     pub async fn handle(self, _config: Config, flox: Flox) -> Result<()> {
-         match self {
-             GenerationsCommands::Help => {
--                display_help(Some("generations".to_string()));
-+                display_command_help(Some("generations".to_string()));
-             },
-             GenerationsCommands::List(args) => args.handle(flox).await?,
-             GenerationsCommands::History(args) => args.handle(flox).await?,
-```
-
-**File**: `cli/flox/src/commands/include.rs` (modified, +2/-2)
-```diff
-@@ -7,7 +7,7 @@ use indoc::indoc;
- use tracing::{debug, info_span, instrument};
- 
- use super::EnvironmentSelect;
--use crate::commands::{display_help, environment_description, environment_select};
-+use crate::commands::{display_command_help, environment_description, environment_select};
- use crate::environment_subcommand_metric;
- use crate::utils::events::env_detail_from_concrete;
- use crate::utils::message::{self, print_overridden_manifest_fields};
-@@ -48,7 +48,7 @@ impl IncludeCommands {
-     pub async fn handle(self, flox: Flox) -> Result<()> {
-         match self {
-             IncludeCommands::Help => {
--                display_help(Some("include".to_string()));
-+                display_command_help(Some("include".to_string()));
-             },
-             IncludeCommands::Upgrade(args) => args.handle(flox).await?,
-         }
-```
-
-**File**: `cli/flox/src/commands/mod.rs` (modified, +23/-36)
-```diff
-@@ -42,7 +42,7 @@ use std::path::PathBuf;
- use std::{env, fmt, mem};
- 
- use anyhow::{Context, Result, bail};
--use bpaf::{Args, Bpaf, ParseFailure, Parser, ShellComp};
-+use bpaf::{Args, Bpaf, Doc, ParseFailure, Parser, ShellComp};
- use flox_config::{Config, EnvironmentTrust, FLOX_DIR_NAME, TokenStorageMode};
- use flox_core::data::environment_ref::{self, DEFAULT_NAME, RemoteEnvironmentRef};
- use flox_core::floxhub::{DEFAULT_FLOXHUB_URL, Floxhub};
-@@ -746,14 +746,8 @@ enum Commands {
-     Beta(#[bpaf(external(beta::beta_commands))] beta::BetaCommands),
- 
-     /// Flox Factory operator commands (hidden; see operator runbook)
--    #[bpaf(command, hide)]
--    Factory(
--        #[bpaf(
--            external(factory::factory_commands),
--            fallback(factory::FactoryCommands::Help)
--        )]
--        factory::FactoryCommands,
--    ),
-+    #[bpaf(command, hide, fallback_to_usage)]
-+    Factory(#[bpaf(external(factory::factory_commands))] factory::FactoryCommands),
+ /// Where a pkg-group's stability is set.
+-#[derive(Debug, Clone, PartialEq)]
++#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+ pub enum StabilitySetting {
+     /// `pkg-groups.<group>.stability`
+     PkgGroup(String),
+@@ -140,6 +140,49 @@ pub enum StabilitySetting {
+     Options,
  }
  
- #[derive(Debug, Bpaf, Clone)]
-@@ -763,8 +757,13 @@ struct Help {
-     cmd: Option<String>,
- }
- 
-+/// Render generated help consistently for flags, bare groups, and help commands.
-+pub fn display_help(doc: &Doc) {
-+    print!("{doc:80}");
++impl StabilitySetting {
++    /// The setting that decides the stability of `group` in `manifest`.
++    fn for_group(manifest: &ManifestLatest, group: &str) -> Self {
++        if manifest.group_stability_override(group).is_some() {
++            Self::PkgGroup(group.to_string())
++        } else {
++            Self::Options
++        }
++    }
++
++    /// The table of the manifest that holds the setting, with the group name
++    /// quoted if it isn't a bare key, e.g. `pkg-groups."v1.2"`.
++    fn table(&self) -> String {
++        match self {
++            Self::PkgGroup(group) => PkgGroups::key_path(group),
++            Self::Options => "options".to_string(),
++        }
++    }
++
++    /// Whether an included environment, rather than `composer`, sets this
++    /// setting to `stability`. The composer's settings win over its
++    /// includes', so it sets the stability if it has any value for the
++    /// setting.
++    fn is_set_by_include(&self, stability: &str, composer: &ManifestLatest) -> bool {
++        let composer_stability = match self {
++            Self::PkgGroup(group) => composer.group_stability_override(group),
++            Self::Options => composer.options.stability.as_deref(),
++        };
++        composer_stability != Some(stability)
++    }
 +}
 +
- /// Force `--help` output for `flox` with a given command
--pub fn display_help(cmd: Option<String>) {
-+pub fn display_command_help(cmd: Option<String>) {
-     // `flox run` uses an unconditional catchall that consumes `--help`, so
-     // running `flox_cli().run_inner(["run", "--help"])` would parse OK and
-     // hit the `unreachable!()` arm below — a panic. Route to the hand-written
-@@ -777,16 +776,16 @@ pub fn display_help(cmd: Option<String>) {
-     let mut args = Vec::from_iter(cmd.as_deref());
-     args.push("--help");
- 
--    match flox_cli().run_inner(&*args) {
-+    match flox_cli().run_inner(Args::from(&*args).set_name("flox")) {
-         Ok(_) => unreachable!(),
-         Err(ParseFailure::Completion(comp)) => print!("{comp:80}"),
--        Err(ParseFailure::Stdout(doc, _)) => message::plain(format!("{doc:80}")),
-+        Err(ParseFailure::Stdout(doc, _)) => display_help(&doc),
-         Err(ParseFailure::Stderr(err)) => message::error(err),
++/// What to do about a stability that an included environment sets, ending
++/// without punctuation so that the caller can continue the sentence.
++///
++/// The composer's settings win over its includes', so it can override a
++/// stability that an include sets.
++fn included_stability_step(location: &str) -> String {
++    formatdoc! {"
++        An included environment sets {location}.
++        Change it in that environment, or override it with 'flox edit'"}
++}
++
+ fn unknown_stability_message(
+     setting: &StabilitySetting,
+     stability: &str,
+@@ -156,12 +199,8 @@ fn unknown_stability_message(
+             "'options.stability'".to_string(),
+         ),
+     };
+-    // The composer's settings win over its includes', so it can override a
+-    // stability that an include sets.
+     let next_step = if in_include {
+-        formatdoc! {"
+-            An included environment sets {location}.
+-            Change it in that environment, or override it with 'flox edit'."}
++        format!("{}.", included_stability_step(&location))
+     } else {
+         format!("Change {location} with 'flox edit'.")
+     };
+@@ -753,12 +792,10 @@ impl LockManifest {
+                 .iter()
+                 .filter_map(|group| {
+                     let stability = group.stability.clone()?;
+-                    let setting = if manifest.group_stability_override(&group.name).is_some() {
+-                        StabilitySetting::PkgGroup(group.name.clone())
+-                    } else {
+-                        StabilitySetting::Options
+-                    };
+-                    Some((setting, stability))
++                    Some((
++                        StabilitySetting::for_group(manifest, &group.name),
++                        stability,
++                    ))
+                 })
+                 .collect::<Vec<_>>();
+             match client.resolve(groups_to_lock).await {
+@@ -853,22 +890,27 @@ impl LockManifest {
+             .unwrap_or(ResolveError::CatalogResolve(err))
      }
- }
- impl Help {
-     fn handle(self) {
--        display_help(self.cmd);
-+        display_command_help(self.cmd);
-     }
- }
  
-@@ -862,14 +861,8 @@ enum UseCommands {
-     Run(#[bpaf(external(run::run))] run::Run),
- 
-     /// Manage services in an environment
--    #[bpaf(command, long("service"))]
--    Services(
--        #[bpaf(
--            external(services::services_commands),
--            fallback(services::ServicesCommands::Help)
--        )]
--        services::ServicesCommands,
--    ),
-+    #[bpaf(command, long("service"), fallback_to_usage)]
-+    Services(#[bpaf(external(services::services_commands))] services::ServicesCommands),
- }
- 
- impl UseCommands {
-@@ -948,14 +941,8 @@ enum ModifyCommands {
-     Edit(#[bpaf(external(edit::edit))] edit::Edit),
- 
-     /// Compose environments together
--    #[bpaf(command)]
--    Include(
--        #[bpaf(
--            external(include::include_commands),
--            fallback(include::IncludeCommands::Help)
--        )]
--        include::IncludeCommands,
--    ),
-+    #[bpaf(command, fallback_to_usage)]
-+    Include(#[bpaf(external(include::include_commands))] include::IncludeCommands),
- 
-     /// Upgrade packages in an environment
-     #[bpaf(command, long("update"), footer("Run 'man flox-upgrade' for more details."), header(indoc! {"
-@@ -985,13 +972,9 @@ enum ModifyCommands {
-     Uninstall(#[bpaf(external(uninstall::uninstall))] uninstall::Uninstall),
- 
-     /// Version control for environments pushed to FloxHub
--    #[bpaf(command, long("generations"), long("generation"))]
-+    #[bpaf(command, long("generations"), long("generation"), fallback_to_usage)]
-     Generations(
--        #[bpaf(
--            external(generations::generations_commands),
--            fallback(generations::GenerationsCommands::Help)
--        )]
--        generations::GenerationsCommands,
-+        #[bpaf(external(generations::generations_commands))] generations::GenerationsCommands,
-     ),
- }
- 
-@@ -1085,7 +1068,11 @@ impl ShareCommands {
- #[derive(Bpaf, Clone)]
- enum AdminCommands {
-     /// FloxHub authentication commands
--    #[bpaf(command, footer("Run 'man flox-auth' for more details."))]
-+    #[bpaf(
-+        command,
-+        fallback_to_usage,
-+        footer("Run 'man flox-auth' for more details.")
-+    )]
-     Auth(#[bpaf(external(auth::auth))] auth::Auth),
- 
-     /// View and set configuration options
+-    /// Mark an unknown stability that `composer` doesn't set as coming from
+-    /// an included environment, so that the error points to the manifest
+-    /// that sets it.
++    /// Mark a stability that `composer` doesn't set as coming from an
++    /// included environment, so that the error points to the manifest that
++    /// sets it.
+     fn mark_included_stability(mut err: ResolveError, composer: &ManifestLatest) -> ResolveError {
+-        if let ResolveError::UnknownStability {
+-            setting,
+-            stability,
+-            in_include,
+-            ..
+-        } = &mut err
+-        {
+-            let composer_stability = match setting {
+-                StabilitySetting::PkgGroup(group) => composer.group_stability_override(group),
+-                StabilitySetting::Options => composer.options.stability.as_deref(),
+-            };
+-            *in_include = composer_stability != Some(stability.as_str());
++        match &mut err {
++            ResolveError::UnknownStability {
++                setting,
++                stability,
++                in_include,
++                ..
++            } => *in_include = setting.is_set_by_include(stability, composer),
++            ResolveError::ResolutionFailed(ResolutionFailures(failures)) => {
++                for failure in failures {
++                    if let ResolutionFailure::UnavailableAt
 ```
 
-**File**: `cli/flox/src/commands/services/mod.rs` (modified, +2/-2)
+**File**: `cli/floxhub-client/src/client.rs` (modified, +43/-36)
 ```diff
-@@ -27,7 +27,7 @@ use super::{
-     activated_environments,
- };
- use crate::commands::activate::{ActivateOptions, CommandSelect};
--use crate::commands::display_help;
-+use crate::commands::display_command_help;
- use crate::utils::message;
+@@ -1232,43 +1232,50 @@ pub mod tests {
+             .await
+             .unwrap();
  
- mod logs;
-@@ -120,7 +120,7 @@ impl ServicesCommands {
-     pub async fn handle(self, config: Config, flox: Flox) -> Result<()> {
-         match self {
-             ServicesCommands::Help => {
--                display_help(Some("services".to_string()));
-+                display_command_help(Some("services".to_string()));
-             },
-             ServicesCommands::Restart(args) => args.handle(config, flox).await?,
-             ServicesCommands::Start(args) => args.handle(config, flox).await?,
+-        let availabilities = res[0]
+-            .msgs
+-            .iter()
+-            .map(|msg| match msg {
+-                ResolutionMessage::VersionNotFound(msg) => {
+-                    ("version_not_found", msg.stability_availability.clone())
+-                },
+-                ResolutionMessage::AttrPathNotFoundNotOnCurrentStability(msg) => (
+-                    "not_on_current_stability",
+-                    Some(msg.stability_availability.clone()),
+-                ),
+-                ResolutionMessage::AttrPathNotFoundNotInCatalog(_) => ("not_in_catalog", None),
+-                other => panic!("unexpected message: {other:?}"),
+-            })
+-            .collect::<Vec<_>>();
+-        assert_eq!(availabilities, vec![
+-            (
+-                "version_not_found",
+-                Some(StabilityAvailability {
+-                    stability: "lts".to_string(),
+-                    available: vec![
+-                        "stable".to_string(),
+-                        "staging".to_string(),
+-                        "unstable".to_string()
+-                    ],
+-                })
+-            ),
+-            (
+-                "not_on_current_stability",
+-                Some(StabilityAvailability {
+-                    stability: "lts".to_string(),
+-                    available: vec!["unstable".to_string()],
+-                })
++        let lts = |available: &[&str]| StabilityAvailability {
++            stability: "lts".to_string(),
++            available: available.iter().map(|s| s.to_string()).collect(),
++        };
++        assert_eq!(res[0].msgs, vec![
++            ResolutionMessage::VersionNotFound(MsgVersionNotFound {
++                level: MessageLevel::Error,
++                msg: "no 3.12 at lts".to_string(),
++                attr_path: "python3".to_string(),
++                install_id: "python3".to_string(),
++                system: "x86_64-linux".to_string(),
++                stability_availability: Some(lts(&["stable", "staging", "unstable"])),
++            }),
++            ResolutionMessage::AttrPathNotFoundNotOnCurrentStability(
++                MsgAttrPathNotFoundNotOnCurrentStability {
++                    level: MessageLevel::Error,
++                    msg: "hello is not at lts".to_string(),
++                    attr_path: "hello".to_string(),
++                    install_id: "hello".to_string(),
++                    stability_availability: lts(&["unstable"]),
++                }
+             ),
+-            ("not_in_catalog", None),
+-            ("not_in_catalog", None),
+-            ("version_not_found", None),
++            // `not_on_current_stability` without stabilities is read as
++            // `not_in_catalog`, keeping the catalog's message.
++            ResolutionMessage::AttrPathNotFoundNotInCatalog(MsgAttrPathNotFoundNotInCatalog {
++                level: MessageLevel::Error,
++                msg: "no context".to_string(),
++                attr_path: "hello".to_string(),
++                install_id: "hello".to_string(),
++            }),
++            ResolutionMessage::AttrPathNotFoundNotInCatalog(MsgAttrPathNotFoundNotInCatalog {
++                level: MessageLevel::Error,
++                msg: "no nope".to_string(),
++                attr_path: "nope".to_string(),
++                install_id: "nope".to_string(),
++            }),
++            ResolutionMessage::VersionNotFound(MsgVersionNotFound {
++                level: MessageLevel::Error,
++                msg: "no 3.12".to_string(),
++                attr_path: "python3".to_string(),
++                install_id: "python3".to_string(),
++                system: "x86_64-linux".to_string(),
++                stability_availability: None,
++            }),
+         ]);
+         mock.assert();
+     }
 ```
 
-**File**: `cli/flox/src/main.rs` (modified, +1/-1)
+**File**: `cli/floxhub-client/src/types.rs` (modified, +2/-2)
 ```diff
-@@ -196,7 +196,7 @@ fn main() -> ExitCode {
-         }
-         match parse_err {
-             bpaf::ParseFailure::Stdout(m, _) => {
--                print!("{m:80}");
-+                commands::display_help(m);
-                 return ExitCode::from(0);
-             },
-             bpaf::ParseFailure::Stderr(m) => {
+@@ -132,7 +132,7 @@ impl From<PackageBuildResponse> for PublishReceipt {
+ }
+ 
+ /// The content of a generic message.
+-#[derive(Debug, Clone, Serialize, Deserialize)]
++#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+ pub struct MsgGeneral {
+     pub level: MessageLevel,
+     pub msg: String,
+@@ -222,7 +222,7 @@ pub struct MsgUnknown {
+ ///
+ /// Constructed from [`ResolutionMessageGeneral`] by matching on `type_` and
+ /// interpreting the `context` field.
+-#[derive(Debug, Clone, Serialize, Deserialize)]
++#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+ pub enum ResolutionMessage {
+     General(MsgGeneral),
+     AttrPathNotFoundNotInCatalog(MsgAttrPathNotFoundNotInCatalog),
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4895** (2026-11-17): docs(show): align --help with the man page, test multi-failure rendering (@stephenyeargin)
 - **PR #4888** (2026-11-16): feat(build): configure the catalog nixpkgs fetcher (@gilmishal)
 - **PR #4886** (2026-11-16): fix(cli): more consistent subcommand help (@mkenigs)
+- **PR #4885** (2026-11-17): chore: Release v1.20.0 (@imkarrer)
 - **PR #4882** (2026-11-13): chore(agents): factor out skills from AGENTS.md (@mkenigs)
 - **PR #4880** (closed): fix(cli): show help for auth and extension without subcommands (@smorin)
-- **PR #4876** (2026-11-10): fix(show): clarify when no builds are available (@mkenigs)
-- **PR #4873** (2026-11-12): Community ci (@ysndr)
 
 ---
 
@@ -2365,21 +1935,50 @@ stderr:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build): configure the catalog nixpkgs fetcher
+## X. docs(show): align --help with the man page, test multi-failure rendering
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in flox/flox. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `cli/flox-rust-sdk/src/providers/lock_manifest.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in flox/flox. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3f4570ec`: build): configure the catalog nixpkgs fetcher. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e6d5a4e1`: docs(show): align --help with the man page, test multi-failure rendering. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `cli/flox-rust-sdk/src/providers/lock_manifest.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
- "floxhub-client",
+    /// Inside a `- ` bullet, the guidance's blank lines and `[table]` block
+    /// keep their indentation, so the whole block reads as one list item.
+    #[test]
+    fn unavailable_at_stability_renders_inside_multiple_failures_bullets() {
+        let failures = ResolutionFailures(vec![
+            ResolutionFailure::UnavailableAtStability(unavailable_at_stability(
+                "legacy",
+                StabilitySetting::PkgGroup("legacy".to_string()),
+                false,
+            )),
+            ResolutionFailure::FallbackMessage {
+                msg: "Something else failed.".to_string(),
+            },
+        ]);
+
+        let expected = indoc! {r#"
+            multiple resolution failures:
+            - Package 'python3@>=3.12' has no build at stability 'lts'.
+              It has builds at: stable, unstable.
+              Use 'flox edit' to set a stability that has it:
+
+                [pkg-groups.legacy]
+                stability = "stable"
+
+              This applies to every package in pkg-group 'legacy'.
+            - Something else failed."#};
+
+        assert_eq!(failures.to_string(), expected);
+    }
+
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2389,7 +1988,7 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3f4570ec` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e6d5a4e1` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-18T05:44:22.136Z",
+  "last_updated": "2026-11-18T05:52:39.734Z",
   "total_records": 1765,
   "domains": {
     "A": {
@@ -8498,8 +8498,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "a8f0828b88814ed6c2b42500de786c7e85f4156923a576badb52038578d496f0",
-      "created_at": "2026-11-18T04:49:57.467Z"
+      "content_hash": "67ca21e2ffcec1c2da6131861752caecc762eef7f57f1e75434100b389307cb0",
+      "created_at": "2026-11-18T05:52:39.734Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -9017,8 +9017,8 @@
       "title": "Research & Knowledge Intelligence: XiaomiMiMo/MiMo-V2.6-Pro-RL Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-xiaomimimo-mimo-v2-6-pro-rl-research-knowledge-intelligence-xiaomimimo-mimo-v.md",
       "repository": "XiaomiMiMo/MiMo-V2.6-Pro-RL",
-      "content_hash": "5db92a726d5b8fb292ead3bf4da572800e21831411432aded9a3528cc9fb66fd",
-      "created_at": "2026-11-13T18:25:45.995Z"
+      "content_hash": "3c62fa31daec30814667a9216f4185af4397ea7d09d31456c4d68642f2c5978d",
+      "created_at": "2026-11-18T05:52:26.071Z"
     },
     "domain_intelligence-architecture-intelligence-appwrite-appwrite-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-appwrite-appwrite-core-invariants",
@@ -9086,8 +9086,8 @@
       "title": "Research & Knowledge Intelligence: hf-xiaomimimo-mimo-v2.6-pro-rl-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-xiaomimimo-mimo-v2-6-pro-rl-learnings-research-knowledge-intelligence-hf-xiao.md",
       "repository": "hf-xiaomimimo-mimo-v2.6-pro-rl-learnings",
-      "content_hash": "f9fad0b0a85494f32fc6924a18e31b7f529d490744d7f32ce6b62dd12bf57a54",
-      "created_at": "2026-11-13T18:26:51.238Z"
+      "content_hash": "27133e3dd4b19ce9a54a23b2881bf842aa14b4b0adf0ea4a0cdb1219dfb04821",
+      "created_at": "2026-11-18T05:52:38.841Z"
     },
     "domain_intelligence-architecture-intelligence-appwrite-appwrite-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-appwrite-appwrite-learnings-core-invariants",
@@ -19033,8 +19033,8 @@
       "title": "Architecture Intelligence: flox/flox Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-flox-flox-architecture-intelligence-flox-flox-core-invariants.md",
       "repository": "flox/flox",
-      "content_hash": "9aad80b8c9c94dae9ef5535b147147cedfc92bd5d793fa7b7ecc7fc71c31bc56",
-      "created_at": "2026-11-16T23:22:24.047Z"
+      "content_hash": "12255c19154b43ae8c39f8c8eaece70926b04d5ba4910638021b364d6a3c8fd5",
+      "created_at": "2026-11-18T05:52:27.972Z"
     },
     "domain_intelligence-architecture-intelligence-flox-flox-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-flox-flox-learnings-core-invariants",
@@ -19042,8 +19042,8 @@
       "title": "Architecture Intelligence: flox-flox-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-flox-flox-learnings-architecture-intelligence-flox-flox-learnings-core-invariant.md",
       "repository": "flox-flox-learnings",
-      "content_hash": "1717b980a460c9310985ceaba4395085f1051db8fd379fd68a04f2a11059151b",
-      "created_at": "2026-11-16T23:22:37.962Z"
+      "content_hash": "ac87a0879828c5c03b78138bdc8d65cfbba7cfd5c829073917d0593c2254b845",
+      "created_at": "2026-11-18T05:52:38.262Z"
     },
     "DOM-D-8240E8AC": {
       "record_id": "DOM-D-8240E8AC",
