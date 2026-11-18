@@ -11044,3 +11044,6 @@ Every entry in this ledger must capture:
 | `learn-github-zeronsh-zeron` | `https://github.com/zeronsh/zeron` | `b1064c1b` | Multi-dimensional audit evidence | 2026-11-18T14:40:33.832Z |
 | `learn-github-smallstep-cli` | `https://github.com/smallstep/cli` | `537c15c1` | Multi-dimensional audit evidence | 2026-11-18T14:40:42.477Z |
 | `learn-github-ontos-ai-knowhere` | `https://github.com/Ontos-AI/knowhere` | `87ea9514` | Multi-dimensional audit evidence | 2026-11-18T14:40:45.178Z |
+| `learn-huggingface-deepseek-ai-deepseek-v4-1-flash` | `https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash` | `hf-deepsee` | Multi-dimensional audit evidence | 2026-11-18T14:48:30.009Z |
+| `learn-github-invertase-react-native-firebase` | `https://github.com/invertase/react-native-firebase` | `b278991e` | Multi-dimensional audit evidence | 2026-11-18T14:48:38.323Z |
+| `learn-github-nolabs-ai-nono` | `https://github.com/nolabs-ai/nono` | `b3794a06` | Multi-dimensional audit evidence | 2026-11-18T14:48:43.003Z |

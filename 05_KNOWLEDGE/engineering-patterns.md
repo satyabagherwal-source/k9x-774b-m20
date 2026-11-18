@@ -680238,3 +680238,104 @@ RUN printf '%s\n' \
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `d771e355` are properly handled with clean fallback behavior.
+
+
+---
+
+## 9247. retain hooks as inert bundle content (Harvested from nolabs-ai/nono)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "retain hooks as inert bundle content",
+  "source": "nolabs-ai/nono",
+  "source_url": "https://github.com/nolabs-ai/nono",
+  "source_version": "b3794a06",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-18T14:48:42.575Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-nolabs-ai-nono",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [nolabs-ai/nono](https://github.com/nolabs-ai/nono) (Revision: `b3794a06`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `crates/nono-cli/src/profile/bundle.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nolabs-ai/nono. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `b3794a06`: platform): retain hooks as inert bundle content. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/nono-cli/src/profile/bundle.rs`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+    resolve_extends_with,
+    let mut profile = resolve_extends_with(root, &mut Vec::new(), 0, None, None, &mut loader)?;
+    disable_hooks(&mut profile);
+/// Delivered hook declarations and files are retained as authenticated content.
+/// Keep them out of the runtime profile until managed hook execution and wiring
+/// have their own activation contract. This never changes the signed sources.
+fn disable_hooks(profile: &mut Profile) {
+    profile.hooks = Default::default();
+    profile.session_hooks = Default::default();
+    if let Some(overrides) = &mut profile.platform_overrides {
+        for item in [
+            &mut overrides.macos,
+            &mut overrides.linux,
+            &mut overrides.windows,
+        ]
+        .into_iter()
+        .flatten()
+        {
+            disable_hooks(&mut item.0);
+        }
+    }
+}
+
+    #[test]
+    fn delivered_hooks_are_retained_in_sources_but_disabled_for_managed_launches() {
+        let _lock = crate::test_env::ENV_LOCK.lock().expect("environment lock");
+        let hooks = json!({"claude":{"event":"PreToolUse","matcher":"Bash","script":"hook.sh"}});
+        let session_hooks = json!({
+            "before":{"script":"$PACK_DIR/bin/before.s
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+    resolve_extends_with, validate_delivered_profile,
+        validate_delivered_profile(&raw)?;
+    let profile = resolve_extends_with(root, &mut Vec::new(), 0, None, None, &mut loader)?;
+    validate_delivered_profile(&profile)?;
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `b3794a06` are properly handled with clean fallback behavior.

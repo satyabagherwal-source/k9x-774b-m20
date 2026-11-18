@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-18T14:40:50.277Z",
+  "updated_at": "2026-11-18T14:48:47.222Z",
   "stats": {
-    "total_discovered": 5528,
-    "approved_pending_harvest": 5223,
+    "total_discovered": 5544,
+    "approved_pending_harvest": 5238,
     "harvested_count": 0,
-    "rejected_count": 305,
+    "rejected_count": 306,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 5205,
+      "COMMUNITY_AND_EXPERT": 5221,
       "OFFICIAL_DOCUMENTATION": 177,
       "STANDARDS_AND_SPECIFICATIONS": 110,
       "ENGINEERING_BLOGS": 4,
@@ -119502,6 +119502,351 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/smallstep-cli-learnings.md",
         "fileName": "smallstep-cli-learnings.md"
+      }
+    },
+    "SRC-E9C3D44A3DC7": {
+      "id": "SRC-E9C3D44A3DC7",
+      "url": "https://cla-assistant.io/invertase/react-native-firebase?pullRequest=9495",
+      "title": "https://cla-assistant.io/invertase/react-native-firebase?pullRequest=9495",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T14:48:46.697Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/invertase-react-native-firebase-learnings.md",
+        "fileName": "invertase-react-native-firebase-learnings.md"
+      }
+    },
+    "SRC-DA6729EF225C": {
+      "id": "SRC-DA6729EF225C",
+      "url": "https://cla-assistant.io/check/invertase/react-native-firebase?pullRequest=9495",
+      "title": "https://cla-assistant.io/check/invertase/react-native-firebase?pullRequest=9495",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T14:48:46.734Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/invertase-react-native-firebase-learnings.md",
+        "fileName": "invertase-react-native-firebase-learnings.md"
+      }
+    },
+    "SRC-C62209BC1FA5": {
+      "id": "SRC-C62209BC1FA5",
+      "url": "https://app.codecov.io/gh/invertase/react-native-firebase/pull/9495?dropdown=coverage&src=pr&el=h1",
+      "title": "https://app.codecov.io/gh/invertase/react-native-firebase/pull/9495?dropdown=coverage&src=pr&el=h1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T14:48:46.774Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/invertase-react-native-firebase-learnings.md",
+        "fileName": "invertase-react-native-firebase-learnings.md"
+      }
+    },
+    "SRC-623549BEE7CF": {
+      "id": "SRC-623549BEE7CF",
+      "url": "https://app.codecov.io/gh/invertase/react-native-firebase/commit/bfddcf25cc3be90cfadd4bef80e89385e42671f8?dropdown=coverage&el=desc",
+      "title": "https://app.codecov.io/gh/invertase/react-native-firebase/commit/bfddcf25cc3be90cfadd4bef80e89385e42671f8?dropdown=coverage&el=desc",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T14:48:46.808Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/invertase-react-native-firebase-learnings.md",
+        "fileName": "invertase-react-native-firebase-learnings.md"
+      }
+    },
+    "SRC-617F49A03C2F": {
+      "id": "SRC-617F49A03C2F",
+      "url": "https://app.codecov.io/gh/invertase/react-native-firebase/commit/5074f75d48a5477bc788466085e55f194205c3a1?dropdown=coverage&el=desc",
+      "title": "https://app.codecov.io/gh/invertase/react-native-firebase/commit/5074f75d48a5477bc788466085e55f194205c3a1?dropdown=coverage&el=desc",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T14:48:46.842Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/invertase-react-native-firebase-learnings.md",
+        "fileName": "invertase-react-native-firebase-learnings.md"
+      }
+    },
+    "SRC-C495D7E4A93C": {
+      "id": "SRC-C495D7E4A93C",
+      "url": "https://github.com/invertase/react-native-firebase/blob/main/CONTRIBUTING.md",
+      "title": "https://github.com/invertase/react-native-firebase/blob/main/CONTRIBUTING.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T14:48:46.878Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/invertase-react-native-firebase-learnings.md",
+        "fileName": "invertase-react-native-firebase-learnings.md"
+      }
+    },
+    "SRC-F6815CDD628F": {
+      "id": "SRC-F6815CDD628F",
+      "url": "http://${gete2eemulatorhost(/",
+      "title": "http://${gete2eemulatorhost(/",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-18T14:48:46.912Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/invertase-react-native-firebase-learnings.md",
+        "fileName": "invertase-react-native-firebase-learnings.md"
+      }
+    },
+    "SRC-ECB5FB0D5C0D": {
+      "id": "SRC-ECB5FB0D5C0D",
+      "url": "https://github.com/expo/expo/tree/HEAD/packages/expo-router",
+      "title": "https://github.com/expo/expo/tree/HEAD/packages/expo-router",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T14:48:46.947Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/invertase-react-native-firebase-learnings.md",
+        "fileName": "invertase-react-native-firebase-learnings.md"
+      }
+    },
+    "SRC-F656AAF0B73D": {
+      "id": "SRC-F656AAF0B73D",
+      "url": "https://github.com/expo/expo/releases",
+      "title": "https://github.com/expo/expo/releases",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T14:48:46.983Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/invertase-react-native-firebase-learnings.md",
+        "fileName": "invertase-react-native-firebase-learnings.md"
+      }
+    },
+    "SRC-76A0481BD2C8": {
+      "id": "SRC-76A0481BD2C8",
+      "url": "https://github.com/expo/expo/blob/expo-router@58.0.29/packages/expo-router/CHANGELOG.md",
+      "title": "https://github.com/expo/expo/blob/expo-router@58.0.29/packages/expo-router/CHANGELOG.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T14:48:47.016Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/invertase-react-native-firebase-learnings.md",
+        "fileName": "invertase-react-native-firebase-learnings.md"
+      }
+    },
+    "SRC-ED13B0112E32": {
+      "id": "SRC-ED13B0112E32",
+      "url": "https://github.com/expo/expo/commits/expo-router@58.0.29/packages/expo-router",
+      "title": "https://github.com/expo/expo/commits/expo-router@58.0.29/packages/expo-router",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T14:48:47.050Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/invertase-react-native-firebase-learnings.md",
+        "fileName": "invertase-react-native-firebase-learnings.md"
+      }
+    },
+    "SRC-F92939FDB7D3": {
+      "id": "SRC-F92939FDB7D3",
+      "url": "https://github.com/software-mansion/react-native-reanimated/tree/HEAD/packages/react-native-reanimated",
+      "title": "https://github.com/software-mansion/react-native-reanimated/tree/HEAD/packages/react-native-reanimated",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T14:48:47.087Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/invertase-react-native-firebase-learnings.md",
+        "fileName": "invertase-react-native-firebase-learnings.md"
+      }
+    },
+    "SRC-1A31B2C11605": {
+      "id": "SRC-1A31B2C11605",
+      "url": "https://github.com/software-mansion/react-native-reanimated/releases",
+      "title": "https://github.com/software-mansion/react-native-reanimated/releases",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T14:48:47.120Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/invertase-react-native-firebase-learnings.md",
+        "fileName": "invertase-react-native-firebase-learnings.md"
+      }
+    },
+    "SRC-3CDEBDE3F860": {
+      "id": "SRC-3CDEBDE3F860",
+      "url": "https://github.com/software-mansion/react-native-reanimated/blob/4.7.1/packages/react-native-reanimated/CHANGELOG.md",
+      "title": "https://github.com/software-mansion/react-native-reanimated/blob/4.7.1/packages/react-native-reanimated/CHANGELOG.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T14:48:47.154Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/invertase-react-native-firebase-learnings.md",
+        "fileName": "invertase-react-native-firebase-learnings.md"
+      }
+    },
+    "SRC-C1DC1B042181": {
+      "id": "SRC-C1DC1B042181",
+      "url": "https://github.com/software-mansion/react-native-reanimate",
+      "title": "https://github.com/software-mansion/react-native-reanimate",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T14:48:47.189Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/invertase-react-native-firebase-learnings.md",
+        "fileName": "invertase-react-native-firebase-learnings.md"
+      }
+    },
+    "SRC-DF2BC775BAF5": {
+      "id": "SRC-DF2BC775BAF5",
+      "url": "https://github.com/invertase/react-native-firebase/blob/main/test-expo/app/messaging.tsx",
+      "title": "https://github.com/invertase/react-native-firebase/blob/main/test-expo/app/messaging.tsx",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T14:48:47.222Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/invertase-react-native-firebase-learnings.md",
+        "fileName": "invertase-react-native-firebase-learnings.md"
       }
     }
   }

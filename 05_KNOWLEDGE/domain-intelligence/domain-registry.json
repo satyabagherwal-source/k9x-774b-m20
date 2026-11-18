@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-18T14:40:50.691Z",
+  "last_updated": "2026-11-18T14:48:48.163Z",
   "total_records": 1864,
   "domains": {
     "A": {
@@ -8615,8 +8615,8 @@
       "title": "Architecture Intelligence: nolabs-ai/nono Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nolabs-ai-nono-architecture-intelligence-nolabs-ai-nono-core-invariants.md",
       "repository": "nolabs-ai/nono",
-      "content_hash": "0eecc2cbd07bf0daf0e388ae79e7623292a8dbde9b9058206bb1d20c062b6ba7",
-      "created_at": "2026-11-18T10:18:52.662Z"
+      "content_hash": "ebe90f7e8db3b13796f9e63f3b96b556574746d1c7ab5cd2140b2643acf752b7",
+      "created_at": "2026-11-18T14:48:43.307Z"
     },
     "domain_intelligence-technical-construction-intelligence-meilisearch-meilisearch-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-meilisearch-meilisearch-core-invariants",
@@ -8684,8 +8684,8 @@
       "title": "Architecture Intelligence: nolabs-ai-nono-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nolabs-ai-nono-learnings-architecture-intelligence-nolabs-ai-nono-learnings-core.md",
       "repository": "nolabs-ai-nono-learnings",
-      "content_hash": "dd7c7b47cf6f52863429edde4b74373ba2fac2b7883c3e339d434457c52b6013",
-      "created_at": "2026-11-18T01:04:24.352Z"
+      "content_hash": "d35247c1207f46b86ffcd70c2d7b2faa13484d93708b77409da15543d267c41f",
+      "created_at": "2026-11-18T14:48:48.163Z"
     },
     "domain_intelligence-technical-construction-intelligence-meilisearch-meilisearch-learnings-core-invar": {
       "record_id": "domain_intelligence-technical-construction-intelligence-meilisearch-meilisearch-learnings-core-invar",
@@ -8804,8 +8804,8 @@
       "title": "Research & Knowledge Intelligence: deepseek-ai/DeepSeek-V4.1-Flash Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-deepseek-ai-deepseek-v4-1-flash-research-knowledge-intelligence-deepseek-ai-d.md",
       "repository": "deepseek-ai/DeepSeek-V4.1-Flash",
-      "content_hash": "50e55bec262241e7b8eb0afb347af1ef06c68f5885ec0955006ae704178f67d9",
-      "created_at": "2026-11-18T04:57:15.154Z"
+      "content_hash": "d556ff21c770b0cffeb36e43979e0f77e1a73f5438d998713d6167a1ec9ca586",
+      "created_at": "2026-11-18T14:48:30.174Z"
     },
     "domain_intelligence-technical-construction-intelligence-react-react-native-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-react-react-native-core-invariants",
@@ -8873,8 +8873,8 @@
       "title": "Research & Knowledge Intelligence: hf-deepseek-ai-deepseek-v4.1-flash-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-deepseek-ai-deepseek-v4-1-flash-learnings-research-knowledge-intelligence-hf-.md",
       "repository": "hf-deepseek-ai-deepseek-v4.1-flash-learnings",
-      "content_hash": "d759bd1cab125fa7ff5331ba0d7cc0380f24740544b049d64e8e66c6f9fb0af7",
-      "created_at": "2026-11-18T04:57:30.919Z"
+      "content_hash": "954b7c50cde93acb5d3cbfeceeabacd62e3df04cd2f5dacae9b3b9bf2513249d",
+      "created_at": "2026-11-18T14:48:46.449Z"
     },
     "domain_intelligence-research-knowledge-intelligence-efficient-large-model-open-h3-regenerate-2k-core": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-efficient-large-model-open-h3-regenerate-2k-core",
@@ -11653,8 +11653,8 @@
       "title": "Technical Construction Intelligence: invertase/react-native-firebase Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-invertase-react-native-firebase-technical-construction-intelligence-invertase-re.md",
       "repository": "invertase/react-native-firebase",
-      "content_hash": "0a6dec0de3ac670f118c1e244be66ac2689dfa19838250ff7cfb95b134c9e83c",
-      "created_at": "2026-11-17T15:06:21.550Z"
+      "content_hash": "2a037e014cbd367314d7c3a27b40677e98bbe5b402522deab9158a4e50e0d56b",
+      "created_at": "2026-11-18T14:48:38.662Z"
     },
     "domain_intelligence-architecture-intelligence-yvgude-lean-ctx-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-yvgude-lean-ctx-learnings-core-invariants",
@@ -11756,8 +11756,8 @@
       "title": "Technical Construction Intelligence: invertase-react-native-firebase-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-invertase-react-native-firebase-learnings-technical-construction-intelligence-in.md",
       "repository": "invertase-react-native-firebase-learnings",
-      "content_hash": "61f484088207028ae77d20feecf85862250975708c305209b3b0eee749134fd7",
-      "created_at": "2026-11-17T15:06:28.261Z"
+      "content_hash": "8d21b12018abda0a8fa532a67ca07b552f6c7bd228036bab558d3f7aefa1e9ca",
+      "created_at": "2026-11-18T14:48:47.534Z"
     },
     "domain_intelligence-research-knowledge-intelligence-black-forest-labs-flux-1-schnell-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-black-forest-labs-flux-1-schnell-core-invariants",

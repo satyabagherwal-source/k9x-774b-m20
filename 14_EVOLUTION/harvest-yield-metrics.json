@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T14:40:45.184Z",
-  "total_cycles_completed": 10532,
-  "total_learnings_persisted": 10532,
-  "total_rules_promoted": 10007,
+  "last_updated": "2026-11-18T14:48:43.007Z",
+  "total_cycles_completed": 10535,
+  "total_learnings_persisted": 10535,
+  "total_rules_promoted": 10008,
   "history": [
-    {
-      "timestamp": "2026-11-18T03:39:35.924Z",
-      "repository": "pixeltable/pixeltable",
-      "learningId": "learn-github-pixeltable-pixeltable",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-18T03:39:37.138Z",
-      "repository": "NucleoidAI/Nucleoid",
-      "learningId": "learn-github-nucleoidai-nucleoid",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-18T03:47:58.573Z",
-      "repository": "HemmingwayAI/Hemmingway-1",
-      "learningId": "learn-huggingface-altworld-hemmingway-1",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-18T03:48:05.078Z",
       "repository": "amir1376/ab-download-manager",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-18T14:40:45.184Z",
       "repository": "Ontos-AI/knowhere",
       "learningId": "learn-github-ontos-ai-knowhere",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T14:48:30.013Z",
+      "repository": "deepseek-ai/DeepSeek-V4.1-Flash",
+      "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T14:48:38.348Z",
+      "repository": "invertase/react-native-firebase",
+      "learningId": "learn-github-invertase-react-native-firebase",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T14:48:43.007Z",
+      "repository": "nolabs-ai/nono",
+      "learningId": "learn-github-nolabs-ai-nono",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

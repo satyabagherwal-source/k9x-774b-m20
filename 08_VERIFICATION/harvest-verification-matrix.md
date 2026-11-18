@@ -11011,3 +11011,6 @@
 | `CYCLE-20261118-AMUB` | `2026-11-18T14:40:33.827Z` | `zeronsh/zeron` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9245` | Yes (`2c669cee...`) |
 | `CYCLE-20261118-ATIG` | `2026-11-18T14:40:42.472Z` | `smallstep/cli` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8879` | Yes (`f75b8123...`) |
 | `CYCLE-20261118-AVLH` | `2026-11-18T14:40:45.173Z` | `Ontos-AI/knowhere` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9246` | Yes (`fee64303...`) |
+| `CYCLE-20261118-KU9H` | `2026-11-18T14:48:30.005Z` | `deepseek-ai/DeepSeek-V4.1-Flash` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4.1-flash-learnings.md` | Yes (`6ad69861...`) |
+| `CYCLE-20261118-L0OG` | `2026-11-18T14:48:38.320Z` | `invertase/react-native-firebase` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/invertase-react-native-firebase-learnings.md` | Yes (`04cbc77d...`) |
+| `CYCLE-20261118-L4AF` | `2026-11-18T14:48:42.999Z` | `nolabs-ai/nono` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9247` | Yes (`6e757196...`) |

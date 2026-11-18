@@ -515,8 +515,8 @@
     "sourceUrl": "https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash",
     "sourceVersion": "hf-deepseek-ai-deepseek-v4.1-flash",
     "license": "Open-Source",
-    "contentHash": "a1cbf683a1d0386b29cb0f11acac0f9b77151bf621623c4d669d0e820473d69d",
-    "lastHarvestedAt": "2026-11-18T04:57:14.979Z",
+    "contentHash": "6ad69861f0aa451f0eebc9b1a7de1d696cd9a2e1215d35c1a751f16ef3cae024",
+    "lastHarvestedAt": "2026-11-18T14:48:30.009Z",
     "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash"
   },
   "hf-akatz-ai-minimax-h3-character-swap-lora": {
@@ -2353,10 +2353,10 @@
     "repository": "nolabs-ai/nono",
     "platform": "github",
     "sourceUrl": "https://github.com/nolabs-ai/nono",
-    "sourceVersion": "9ae5c5d3",
+    "sourceVersion": "b3794a06",
     "license": "Apache-2.0",
-    "contentHash": "25982e132fe987ca83e96b1a8d73f133dcd3214736c0eea7a713d15442045619",
-    "lastHarvestedAt": "2026-11-18T10:18:52.348Z",
+    "contentHash": "6e757196989ad344350fbba2b3d9b92a4f1b372805e0c880a12606e907e0cb45",
+    "lastHarvestedAt": "2026-11-18T14:48:43.003Z",
     "learningId": "learn-github-nolabs-ai-nono"
   },
   "dathere-qsv": {
@@ -3563,10 +3563,10 @@
     "repository": "invertase/react-native-firebase",
     "platform": "github",
     "sourceUrl": "https://github.com/invertase/react-native-firebase",
-    "sourceVersion": "0d426fe3",
+    "sourceVersion": "b278991e",
     "license": "NOASSERTION",
-    "contentHash": "218425efa60557f1862a9b3d45e2a4bcb0d0444a1ed5c133a4ac148c88acc49c",
-    "lastHarvestedAt": "2026-11-17T15:06:21.249Z",
+    "contentHash": "04cbc77dba470fef4e2d6018cb475b8461f9e25a8c1da607559a27ead1a2eef2",
+    "lastHarvestedAt": "2026-11-18T14:48:38.323Z",
     "learningId": "learn-github-invertase-react-native-firebase"
   },
   "peerdb-io-peerdb": {

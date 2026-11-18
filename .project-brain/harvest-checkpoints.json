@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-18T14:40:45.189Z",
+  "last_updated": "2026-11-18T14:48:43.010Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -635,14 +635,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash",
-      "content_hash": "a1cbf683a1d0386b29cb0f11acac0f9b77151bf621623c4d669d0e820473d69d",
-      "verified_at": "2026-11-18T04:57:14.987Z",
+      "content_hash": "6ad69861f0aa451f0eebc9b1a7de1d696cd9a2e1215d35c1a751f16ef3cae024",
+      "verified_at": "2026-11-18T14:48:30.016Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T04:57:14.987Z"
+      "last_updated": "2026-11-18T14:48:30.016Z"
     },
     "akatz-ai/MiniMax-H3-Character-Swap-LoRA": {
       "repository": "akatz-ai/MiniMax-H3-Character-Swap-LoRA",
@@ -3666,14 +3666,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nolabs-ai-nono",
-      "content_hash": "25982e132fe987ca83e96b1a8d73f133dcd3214736c0eea7a713d15442045619",
-      "verified_at": "2026-11-18T10:18:52.355Z",
+      "content_hash": "6e757196989ad344350fbba2b3d9b92a4f1b372805e0c880a12606e907e0cb45",
+      "verified_at": "2026-11-18T14:48:43.010Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T10:18:52.355Z"
+      "last_updated": "2026-11-18T14:48:43.010Z"
     },
     "dathere/qsv": {
       "repository": "dathere/qsv",
@@ -5466,14 +5466,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-invertase-react-native-firebase",
-      "content_hash": "218425efa60557f1862a9b3d45e2a4bcb0d0444a1ed5c133a4ac148c88acc49c",
-      "verified_at": "2026-11-17T15:06:21.256Z",
+      "content_hash": "04cbc77dba470fef4e2d6018cb475b8461f9e25a8c1da607559a27ead1a2eef2",
+      "verified_at": "2026-11-18T14:48:38.350Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T15:06:21.256Z"
+      "last_updated": "2026-11-18T14:48:38.350Z"
     },
     "PeerDB-io/peerdb": {
       "repository": "PeerDB-io/peerdb",
