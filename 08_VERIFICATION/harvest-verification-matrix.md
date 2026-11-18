@@ -11035,3 +11035,4 @@
 | `CYCLE-20261118-4Y0A` | `2026-11-18T16:00:07.210Z` | `briaai/RMBG-3.0` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-briaai-rmbg-3.0-learnings.md` | Yes (`e77b39b8...`) |
 | `CYCLE-2026-11-18-PROJ-EVOLVE` | `2026-11-18T16:00:41.165Z` | `hf-briaai-rmbg-3.0` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-EE4276B2` [Domain D] | Yes (`b06a1691...`) |
 | `CYCLE-2026-11-18-PROJ-EVOLVE` | `2026-11-18T16:01:20.959Z` | `freenet-freenet-core` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-L-902F756C` [Domain L] | Yes (`23d0ef54...`) |
+| `CYCLE-20261118-N4IT` | `2026-11-18T16:14:15.461Z` | `ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf-learnings.md` | Yes (`af3ea9ca...`) |

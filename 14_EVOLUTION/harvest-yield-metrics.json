@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T16:00:07.220Z",
-  "total_cycles_completed": 10553,
-  "total_learnings_persisted": 10553,
+  "last_updated": "2026-11-18T16:14:15.471Z",
+  "total_cycles_completed": 10554,
+  "total_learnings_persisted": 10554,
   "total_rules_promoted": 10016,
   "history": [
-    {
-      "timestamp": "2026-11-18T04:37:22.102Z",
-      "repository": "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
-      "learningId": "learn-huggingface-xiaomimimo-mimo-v2-6-distill-qwen-9b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-18T04:37:33.742Z",
       "repository": "projectdiscovery/nuclei",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-18T16:00:07.220Z",
       "repository": "briaai/RMBG-3.0",
       "learningId": "learn-huggingface-briaai-rmbg-3-0",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T16:14:15.471Z",
+      "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
+      "learningId": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

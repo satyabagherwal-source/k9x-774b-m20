@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261117-4MTD",
-    "timestamp": "2026-11-17T07:20:19.585Z",
-    "repository": "NucleoidAI/Nucleoid",
-    "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "d8cf873c8778e59d3e419f78c566e6b6b1cc179ebb966371c35c67942691c59e",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261117-EO7F",
     "timestamp": "2026-11-17T07:28:07.947Z",
     "repository": "transact-rs/sqlx",
@@ -7490,6 +7475,21 @@
     "repository": "briaai/RMBG-3.0",
     "learningId": "learn-huggingface-briaai-rmbg-3-0",
     "contentHash": "e77b39b820a82a7ace5cc1769a28eb54b5238ccead3d077e901088995200009d",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-N4IT",
+    "timestamp": "2026-11-18T16:14:15.461Z",
+    "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
+    "learningId": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf",
+    "contentHash": "af3ea9ca00f8ec42d0142f86959ff4353322d8ce65541aa11ae0980b7d2a4b31",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

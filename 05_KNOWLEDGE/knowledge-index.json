@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-18T16:01:21.555Z",
+  "last_updated": "2026-11-18T16:14:27.538Z",
   "total_verified_learnings": 9004,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -112058,9 +112058,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "187b64aee47ad74b2c31ce1777ee0b0a98851dfcded6a43edcc8888f5c1d2011",
+      "content_hash": "89926492ec9ca1a2199c22af7d9a22ef7b9449ebfe8a81da639285f80cf0933d",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T15:43:05.835Z"
+      "persisted_at": "2026-11-18T16:14:26.736Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112070,9 +112070,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "d31c4453a0f99266bd9ea5c2af8cb588122b87c6c3bfd99d5579443bdd58a0c8",
+      "content_hash": "8f335de0d6607a37a4f1b373086d5e2409d77572554483a5c80bc67a1aed6547",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T15:43:05.993Z"
+      "persisted_at": "2026-11-18T16:14:26.860Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -213099,7 +213099,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
       "source_version": "hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf",
-      "content_hash": "40be959b3c633a7efccc512fc51becd1101035b727c5a6a5e3d56ffb9429e4a4",
+      "content_hash": "af3ea9ca00f8ec42d0142f86959ff4353322d8ce65541aa11ae0980b7d2a4b31",
       "dossier_path": "07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf-learnings.md",
       "promoted_rules": [
@@ -213119,7 +213119,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T06:50:13.833Z",
+      "verified_at": "2026-11-18T16:14:15.249Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -213136,9 +213136,9 @@
       "title": "Research & Knowledge Intelligence: ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF Core Invariants",
       "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
       "source_version": "hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf",
-      "content_hash": "fe795df0bbbb26c63d6269eca97c256f5890ddca6dc9c6bc56ee3086dd0d9634",
+      "content_hash": "02c64d78d5b608de5aa7b6b1340af9cc2fd4ba1b3e0d2b7323a78b4b9a212082",
       "domain_letter": "D",
-      "persisted_at": "2026-11-13T19:39:54.624Z"
+      "persisted_at": "2026-11-18T16:14:15.660Z"
     },
     "learn-github-nervjs-taro": {
       "learning_id": "learn-github-nervjs-taro",
@@ -213562,9 +213562,9 @@
       "title": "Research & Knowledge Intelligence: hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf-learnings Core Invariants",
       "repository": "hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf-learnings",
       "source_version": "HEAD",
-      "content_hash": "7bfba192207e4dbf24fbea71e589b4ca725d8891430b9c611229ea7b2e82bd16",
+      "content_hash": "2c95ab231c54892e009bc1ac75fa54aacb55c4f190d7f6c29159e9eda788c518",
       "domain_letter": "D",
-      "persisted_at": "2026-11-13T19:40:46.434Z"
+      "persisted_at": "2026-11-18T16:14:26.028Z"
     },
     "candidate_directive-taro-components-advanced-avoid-updating-state-while-virtualwaterfall-virtualli": {
       "item_id": "candidate_directive-taro-components-advanced-avoid-updating-state-while-virtualwaterfall-virtualli",
@@ -227571,13 +227571,13 @@
       "item_id": "candidate_directive-splash-screen-staying-visible-after-warm-start-on-android-12",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-UT3S-splash-screen-staying-visible-after-warm-start-on-android-12.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-NDM4-splash-screen-staying-visible-after-warm-start-on-android-12.md",
       "title": "splash screen staying visible after warm start on Android 12+",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "69c9f1f549d74117d9e3e9eead484f0b12ca3b4f1bd4b9701a398ebc22b13edd",
+      "content_hash": "ff8cee14533f03545a7f07e3e1cbf24f9dcdf560f52136701d8ac18c4180608f",
       "domain_letter": "H",
-      "persisted_at": "2026-11-18T09:48:19.288Z"
+      "persisted_at": "2026-11-18T16:14:27.244Z"
     },
     "domain_intelligence-technical-construction-intelligence-zoontek-react-native-bootsplash-learnings-co": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zoontek-react-native-bootsplash-learnings-co",
@@ -227587,9 +227587,9 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-bootsplash-learnings Core Invariants",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "c1c348976193a334a195be44f09859c1b0fa934f8311736971e00d0cf2e59f0c",
+      "content_hash": "9cadf78e2e28c996719c6d2de997957212ec6ae2d2d6e26e98b4ccb767c9fcfd",
       "domain_letter": "H",
-      "persisted_at": "2026-11-18T09:48:19.417Z"
+      "persisted_at": "2026-11-18T16:14:27.383Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-bootsplas": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zoontek-react-native-bootsplas",
@@ -227599,9 +227599,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zoontek-react-native-bootsplash-learnings",
       "repository": "zoontek-react-native-bootsplash-learnings",
       "source_version": "HEAD",
-      "content_hash": "0dd0f39c421c50e8c302ff0f17ca2ab0c7a365c5f554a81a91d4d1c73bbf0cee",
+      "content_hash": "65e40f7591cf21f7305a819ea1822c7f370fd421ef60faac45d5ec0e6f5f2090",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T09:48:19.540Z"
+      "persisted_at": "2026-11-18T16:14:27.538Z"
     },
     "learn-github-onehumanbeing-esp32-iphone-agent": {
       "learning_id": "learn-github-onehumanbeing-esp32-iphone-agent",
@@ -252387,9 +252387,9 @@
       "title": "Research & Knowledge Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "b51c0301af8c9117ea4ee6960e049fe8519cf4ecd5a80b5a151e383210a8f258",
+      "content_hash": "07fbadbbe63dff951f6bf50809b82d469d8b98b1e1bdaa4e42cf0ad724715e61",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T15:43:05.658Z"
+      "persisted_at": "2026-11-18T16:14:26.596Z"
     },
     "learn-github-prof18-feed-flow": {
       "learning_id": "learn-github-prof18-feed-flow",
@@ -275060,13 +275060,13 @@
       "item_id": "candidate_directive-rust-address-the-remaining-issues-in-418",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-J1MO-rust-address-the-remaining-issues-in-418.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-ND03-rust-address-the-remaining-issues-in-418.md",
       "title": "rust): address the remaining issues in #418",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "56a89a6032d66af45c2221a4b4588ec6067d013000c61f0d953985a7bdbc215b",
+      "content_hash": "8f2dfc45a1a0b398353f23865fb9d7097c10ec0add81f1c5a42e6485c5645fe5",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T15:43:05.478Z"
+      "persisted_at": "2026-11-18T16:14:26.454Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-m3-1-flash-learnings-core-i": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-m3-1-flash-learnings-core-i",
