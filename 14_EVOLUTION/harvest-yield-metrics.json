@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T20:45:48.472Z",
-  "total_cycles_completed": 10606,
-  "total_learnings_persisted": 10606,
+  "last_updated": "2026-11-18T20:54:06.256Z",
+  "total_cycles_completed": 10607,
+  "total_learnings_persisted": 10607,
   "total_rules_promoted": 10043,
   "history": [
-    {
-      "timestamp": "2026-11-18T07:30:54.063Z",
-      "repository": "apple/foundationdb",
-      "learningId": "learn-github-apple-foundationdb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-18T07:38:51.628Z",
       "repository": "tencent/Hy4-flash",
@@ -1403,6 +1396,13 @@
       "repository": "clastix/kamaji",
       "learningId": "learn-github-clastix-kamaji",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T20:54:06.256Z",
+      "repository": "openai/gpt-oss-120b",
+      "learningId": "learn-huggingface-openai-gpt-oss-120b",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

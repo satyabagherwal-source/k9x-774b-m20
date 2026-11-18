@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-18T20:46:22.171Z",
+  "last_updated": "2026-11-18T20:54:19.054Z",
   "total_records": 1906,
   "domains": {
     "A": {
@@ -12311,8 +12311,8 @@
       "title": "Research & Knowledge Intelligence: openai/gpt-oss-120b Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-openai-gpt-oss-120b-research-knowledge-intelligence-openai-gpt-oss-120b-core-.md",
       "repository": "openai/gpt-oss-120b",
-      "content_hash": "aa358701a6456e3e18e906183af16051dbf89e36a9b8ed2bb08d272f7653c54b",
-      "created_at": "2026-11-14T02:36:58.365Z"
+      "content_hash": "7dd4cfcf1c55cb9f45aab9ab2c5cb47e58398ede2ab8f1080f444d7152482ddd",
+      "created_at": "2026-11-18T20:54:06.424Z"
     },
     "domain_intelligence-technical-construction-intelligence-nats-io-nats-server-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-nats-io-nats-server-core-invariants",
@@ -12422,8 +12422,8 @@
       "title": "Research & Knowledge Intelligence: hf-openai-gpt-oss-120b-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-openai-gpt-oss-120b-learnings-research-knowledge-intelligence-hf-openai-gpt-o.md",
       "repository": "hf-openai-gpt-oss-120b-learnings",
-      "content_hash": "1d249e226415a5fadab3dda1f0decfc5792d44b487cb5b3b3039f3a96f52b74c",
-      "created_at": "2026-11-14T02:38:23.757Z"
+      "content_hash": "3ff9f015b5986b5e84aa9ebb8bbd4d90c10ccc56e8d9782ee260eac66aa93c4c",
+      "created_at": "2026-11-18T20:54:18.113Z"
     },
     "domain_intelligence-technical-construction-intelligence-nats-io-nats-server-learnings-core-invariant": {
       "record_id": "domain_intelligence-technical-construction-intelligence-nats-io-nats-server-learnings-core-invariant",
@@ -23077,8 +23077,8 @@
       "title": "Research & Knowledge Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-zvec-ai-zvec-grep-learnings-research-knowledge-intelligence-zvec-ai-zvec-grep-le.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "ca53e35fb772f8244ecc4366e6548908bab5acc1627d05a53204fb86a7bd1ce1",
-      "created_at": "2026-11-18T19:10:14.678Z"
+      "content_hash": "f71071369fc072bf66f70842fd710bab1e63486f606e06f84981d56a9c589214",
+      "created_at": "2026-11-18T20:54:19.054Z"
     },
     "domain_intelligence-technical-construction-intelligence-prof18-feed-flow-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-prof18-feed-flow-core-invariants",
@@ -31002,8 +31002,8 @@
       "title": "Technical Construction Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zulip-zulip-learnings-technical-construction-intelligence-zulip-zulip-learnings-.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "f79306526621dbeb26f5789147f04db5eab31c337ec5fd9ad08d312355168472",
-      "created_at": "2026-11-18T20:46:22.171Z"
+      "content_hash": "bdd3b77167c975d386c93724af84177351c4271986a8e9c2523550502f4f231b",
+      "created_at": "2026-11-18T20:54:18.517Z"
     },
     "domain_intelligence-product-intelligence-software-mansion-argent-core-invariants": {
       "record_id": "domain_intelligence-product-intelligence-software-mansion-argent-core-invariants",

@@ -79,8 +79,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-18T20:45:51.583Z",
-    "lastVerified": "2026-11-18T20:45:51.583Z",
+    "lastChecked": "2026-11-18T20:54:17.803Z",
+    "lastVerified": "2026-11-18T20:54:17.803Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -302,8 +302,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-18T19:52:07.772Z",
-    "lastVerified": "2026-11-18T19:52:07.772Z",
+    "lastChecked": "2026-11-18T20:54:17.796Z",
+    "lastVerified": "2026-11-18T20:54:17.796Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -778,9 +778,9 @@
   "bee-san-ciphey": {
     "name": "Ciphey",
     "officialUrl": "https://github.com/bee-san/Ciphey",
-    "lastChecked": "2026-11-18T15:22:15.751Z",
+    "lastChecked": "2026-11-18T20:54:12.806Z",
     "revisionIdentifier": "c500baff",
-    "lastVerified": "2026-11-18T15:22:15.751Z"
+    "lastVerified": "2026-11-18T20:54:12.806Z"
   },
   "weaviate-weaviate": {
     "name": "weaviate/weaviate",
@@ -4083,5 +4083,50 @@
     "lastChecked": "2026-11-18T20:45:47.283Z",
     "revisionIdentifier": "5504db91",
     "lastVerified": "2026-11-18T20:45:47.283Z"
+  },
+  "mtkennerly-ludusavi": {
+    "name": "ludusavi",
+    "officialUrl": "https://github.com/mtkennerly/ludusavi",
+    "lastChecked": "2026-11-18T20:54:02.806Z",
+    "revisionIdentifier": "c4c2ca99",
+    "lastVerified": "2026-11-18T20:54:02.806Z"
+  },
+  "hf-openai-gpt-oss-120b": {
+    "name": "openai/gpt-oss-120b",
+    "officialUrl": "https://huggingface.co/openai/gpt-oss-120b",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-18T20:54:05.647Z",
+    "lastVerified": "2026-11-18T20:54:05.647Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-openai-gpt-oss-120b",
+    "contentHash": "127990feb86ae2639790499317290303fc8e89458b70685c8d8d48e5afd95444",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "react-native-device-info-react-native-device-info": {
+    "name": "react-native-device-info",
+    "officialUrl": "https://github.com/react-native-device-info/react-native-device-info",
+    "lastChecked": "2026-11-18T20:54:07.900Z",
+    "revisionIdentifier": "06a9ed6d",
+    "lastVerified": "2026-11-18T20:54:07.900Z"
+  },
+  "nitrictech-nitric": {
+    "name": "nitric",
+    "officialUrl": "https://github.com/nitrictech/nitric",
+    "lastChecked": "2026-11-18T20:54:10.320Z",
+    "revisionIdentifier": "8b1be250",
+    "lastVerified": "2026-11-18T20:54:10.320Z"
+  },
+  "skyzh-mini-lsm": {
+    "name": "mini-lsm",
+    "officialUrl": "https://github.com/skyzh/mini-lsm",
+    "lastChecked": "2026-11-18T20:54:15.271Z",
+    "revisionIdentifier": "df2120d7",
+    "lastVerified": "2026-11-18T20:54:15.271Z"
   }
 }

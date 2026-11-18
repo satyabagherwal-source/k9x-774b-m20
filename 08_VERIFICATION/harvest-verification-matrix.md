@@ -11094,3 +11094,4 @@
 | `CYCLE-20261118-C4BR` | `2026-11-18T20:45:38.151Z` | `Tongyi-MAI/Z-Image-Turbo` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-tongyi-mai-z-image-turbo-learnings.md` | Yes (`910f2381...`) |
 | `CYCLE-20261118-CCA7` | `2026-11-18T20:45:48.463Z` | `clastix/kamaji` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9281` | Yes (`b4f259c2...`) |
 | `CYCLE-2026-11-18-PROJ-EVOLVE` | `2026-11-18T20:46:21.116Z` | `clastix-kamaji` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-K-A46CD8EF` [Domain K] | Yes (`635863d1...`) |
+| `CYCLE-20261118-N0DK` | `2026-11-18T20:54:06.248Z` | `openai/gpt-oss-120b` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openai-gpt-oss-120b-learnings.md` | Yes (`127990fe...`) |

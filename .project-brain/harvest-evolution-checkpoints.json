@@ -1,14 +1,14 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T20:46:22.328Z",
+  "last_updated": "2026-11-18T20:54:19.430Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
-      "processed_at": "2026-11-18T20:46:21.858Z",
+      "processed_at": "2026-11-18T20:54:18.265Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
     "zvec-ai-zvec-grep-learnings.md": {
-      "processed_at": "2026-11-18T19:10:14.178Z",
+      "processed_at": "2026-11-18T20:54:18.665Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2333,8 +2333,8 @@
       "staged_for_review": 0
     },
     "hf-openai-gpt-oss-120b-learnings.md": {
-      "processed_at": "2026-11-14T02:38:23.554Z",
-      "promoted_canonical": 1,
+      "processed_at": "2026-11-18T20:54:17.930Z",
+      "promoted_canonical": 0,
       "staged_for_review": 0
     },
     "hf-meta-llama-meta-llama-3-8b-instruct-learnings.md": {
@@ -3473,7 +3473,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 2067,
+  "total_dossiers_evaluated": 2070,
   "total_canonical_promoted": 366,
-  "total_staged_for_review": 1559
+  "total_staged_for_review": 1561
 }

@@ -11127,3 +11127,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-tongyi-mai-z-image-turbo` | `https://huggingface.co/Tongyi-MAI/Z-Image-Turbo` | `hf-tongyi-` | Multi-dimensional audit evidence | 2026-11-18T20:45:38.155Z |
 | `learn-github-clastix-kamaji` | `https://github.com/clastix/kamaji` | `d25aada2` | Multi-dimensional audit evidence | 2026-11-18T20:45:48.467Z |
 | `learn-dom-k-a46cd8ef` | `project://clastix-kamaji` | `d25aada2` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/clastix-kamaji-learnings.md` | 2026-11-18T20:46:21.116Z |
+| `learn-huggingface-openai-gpt-oss-120b` | `https://huggingface.co/openai/gpt-oss-120b` | `hf-openai-` | Multi-dimensional audit evidence | 2026-11-18T20:54:06.252Z |
