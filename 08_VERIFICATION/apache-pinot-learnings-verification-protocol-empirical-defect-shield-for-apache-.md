@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-17T10:11:14.584Z",
+  "timestamp": "2026-11-18T08:53:21.516Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-apache-pinot-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [apache-pinot-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-17T10:11:14.584Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-18T08:53:21.516Z`  
 > **Learning ID**: `LEARN-EVO-apache-pinot-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/apache-pinot-learnings.md`  
 > **Source**: github ([https://github.com/apache/pinot](https://github.com/apache/pinot))  
-> **Source Version**: `5edf0f12`  
+> **Source Version**: `05c81927`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-17T10:11:08.750Z  
+> **Timestamp**: 2026-11-18T08:50:43.129Z  
 > **Learning ID**: `learn-github-apache-pinot`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/apache-pinot-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/apache/pinot](https://github.com/apache/pinot))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T10:11:08.745Z  
+> **Harvest Timestamp**: 2026-11-18T08:50:37.597Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2018,300 +2018,1008 @@ const syncTableSchemaData = (data, showFieldType) => {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a9192dc3` (2026-11-17)
-**Commit Message**: Fix Kafka startup script race in schema registry tests (#20281)
+### Incident Patch 1: `f5641918` (2026-11-17)
+**Commit Message**: Fix MSE literal folding regressions for INT values beyond the INT range, arrays and timestamp casts (#20277)
 
-**File**: `pinot-integration-tests/src/test/java/org/apache/pinot/integration/tests/kafka/schemaregistry/SchemaRegistryStarter.java` (modified, +23/-1)
+**File**: `pinot-query-planner/src/main/java/org/apache/pinot/calcite/rel/rules/PinotEvaluateLiteralRule.java` (modified, +106/-6)
 ```diff
-@@ -18,6 +18,7 @@
-  */
- package org.apache.pinot.integration.tests.kafka.schemaregistry;
+@@ -67,6 +67,8 @@
+ /// The function gets each literal as the Java value that the runtime passes for it, so that the result is the same as
+ /// the result of the call at runtime.
+ public class PinotEvaluateLiteralRule {
++  private static final BigDecimal MIN_INT = BigDecimal.valueOf(Integer.MIN_VALUE);
++  private static final BigDecimal MAX_INT = BigDecimal.valueOf(Integer.MAX_VALUE);
  
-+import com.github.dockerjava.api.command.InspectContainerResponse;
- import java.util.HashMap;
- import java.util.Map;
- import org.slf4j.Logger;
-@@ -26,6 +27,7 @@
- import org.testcontainers.containers.KafkaContainer;
- import org.testcontainers.containers.Network;
- import org.testcontainers.containers.wait.strategy.Wait;
-+import org.testcontainers.images.builder.Transferable;
- import org.testcontainers.utility.DockerImageName;
+   public static class Project extends RelOptRule {
+     public static final Project INSTANCE = new Project(PinotRuleUtils.PINOT_REL_FACTORY, null);
+@@ -190,9 +192,11 @@ private static RexNode evaluateLiteralOnlyFunction(RexCall rexCall, RexBuilder r
+         return rexCall;
+       }
+       argumentTypes[i] = RelToPlanNodeConverter.convertToColumnDataType(rexNode.getType());
+-      if (TransformFunctionType.isJsonExtractScalar(canonicalName) && i == 3) {
+-        argumentTypes[i] = RexExpressionUtils.fromJsonExtractScalarDefaultLiteral((RexLiteral) rexNode).getDataType();
+-      }
++    }
++    widenIntArgumentTypes(operands, argumentTypes);
++    if (TransformFunctionType.isJsonExtractScalar(canonicalName) && numArguments > 3) {
++      argumentTypes[3] =
++          RexExpressionUtils.fromJsonExtractScalarDefaultLiteral((RexLiteral) operands.get(3)).getDataType();
+     }
  
- 
-@@ -82,7 +84,7 @@ public void start() {
- 
-       _network = Network.newNetwork();
- 
--      _kafkaContainer = new KafkaContainer(KAFKA_DOCKER_IMAGE_NAME)
-+      _kafkaContainer = new KafkaContainerWithStartupBarrier()
-           .withNetwork(_network).withNetworkAliases("kafka")
-           .withCreateContainerCmdModifier(it -> it.withHostName("kafka")).waitingFor(Wait.forListeningPort());
-       _kafkaContainer.start();
-@@ -147,4 +149,24 @@ private static Throwable appendCleanupFailure(Throwable cleanupFailure, Throwabl
-       return cleanupFailure;
+     if (isDatetimeIntervalArithmetic(rexCall)) {
+@@ -201,13 +205,13 @@ private static RexNode evaluateLiteralOnlyFunction(RexCall rexCall, RexBuilder r
+     if (isIntervalArithmetic(rexCall)) {
+       return evaluateIntervalArithmetic(rexCall, rexBuilder);
+     }
+-    String castTargetType = null;
++    ColumnDataType castTargetType = null;
+     if (rexCall.getKind() == SqlKind.CAST) {
+       // Handle separately because the CAST operator only has one operand (the value to be cast) and the type to be cast
+       // to is determined by the operator's return type. Pinot's CAST function implementation requires two arguments:
+       // the value to be cast and the target type.
+       argumentTypes = new ColumnDataType[]{argumentTypes[0], ColumnDataType.STRING};
+-      castTargetType = RelToPlanNodeConverter.convertToColumnDataType(rexCall.getType()).name();
++      castTargetType = RelToPlanNodeConverter.convertToColumnDataType(rexCall.getType());
+     }
+     FunctionInfo functionInfo = FunctionRegistry.lookupFunctionInfo(canonicalName, argumentTypes);
+     if (functionInfo == null || !functionInfo.isDeterministic()) {
+@@ -227,7 +231,11 @@ private static RexNode evaluateLiteralOnlyFunction(RexCall rexCall, RexBuilder r
+       }
+     }
+     if (castTargetType != null) {
+-      arguments[1] = castTargetType;
++      arguments[0] = getCastValue(arguments[0], castTargetType);
++      arguments[1] = castTargetType.name();
++    }
++    if (rexCall.getKind() == SqlKind.ARRAY_VALUE_CONSTRUCTOR) {
++      keepExactArrayElements(operands, arguments);
+     }
+     RelDataType rexNodeType = rexCall.getType();
+     if (rexNodeType.getSqlTypeName() == SqlTypeName.DECIMAL) {
+@@ -426,6 +434,71 @@ private static boolean isUnsignedIntegerType(SqlTypeName sqlTypeName) {
      }
    }
+ 
++  /// Makes the INT arguments of a call LONG if one of them is an integer literal beyond the INT range.
++  ///
++  /// This rule makes such a literal. Calcite gives INT arithmetic the type INTEGER, but Pinot evaluates it as LONG, so
++  /// the literal for `3600000 * 100000` has the type INTEGER and the value 360000000000. A call on that literal (for
++  /// example `NOW() - 3600000 * 100000`) must get the full value, not the value that wraps around as an INT. All the
++  /// INT arguments change, so that the arguments of one type (for example the elements of an array) keep one Java
++  /// class.
++  private static void widenIntArgumentTypes(List<RexNode> operands, ColumnDataType[] argumentTypes) {
++    int numArguments = argumentTypes.length;
++    boolean beyondIntRange = false;
++    for (int i = 0; i < numArguments; i++) {
++      if (isIntegerLiteral((RexLiteral) operands.get(i), argumentTypes[i])) {
++        BigDecimal value = (BigDecimal) ((RexLiteral) operands.get(i)).getValue();
++        if (value.compareTo(MIN_INT) < 0 || value.compareTo(MAX_INT) > 0) {
++          beyondIntRange = true;
++          break;
++        }
++      }
++    }
++    if (!beyondIntRange) {
++      return;
++    }
++    for (int i = 0; i < numArguments; i++) {
++      if (isIntegerLiteral((RexLiteral) operands.get(i), argumentTypes[i])) {
++        argumentTypes[i] = ColumnDataType.LONG;
++      }
++    }
++  }
 +
-+  /// Waits for the startup script upload to complete before executing it. Used by a single fixture startup thread.
-+  // Keep the existing ZooKeeper-based Confluent fixture while working around Testcontainers' startup race.
-+  @SuppressWarnings("deprecation")
-+  private static class KafkaContainerWithStartupBarrier extends KafkaContainer {
-+    private static final String STARTUP_READY_FILE = "/tmp/pinot_kafka_startup_ready";
++  /// Returns whether the literal is a number with an integer type (for example INTEGER or SMALLINT) that the planner
++  /// maps to INT. A DECIMAL is not an integer type here, see [#canExceedArgumentType]. A NULL literal is not a number.
++  /// A literal that is not a value (for example the Sarg of a SEARCH on INTEGER values) is not a number.
++  private static boolean isIntegerLiteral(RexLiteral rexLiteral, ColumnDataType literalType) {
++    return literalType == ColumnDataType.INT && rexLiteral.getValue() instanceof BigDecimal
++      
+```
+
+**File**: `pinot-query-planner/src/test/resources/queries/LiteralEvaluationPlans.json` (modified, +92/-0)
+```diff
+@@ -310,6 +310,98 @@
+           "\n"
+         ]
+       },
++      {
++        "description": "INT arithmetic with a result beyond the INT range, which Pinot evaluates as LONG, keeps its value as the argument of BIGINT arithmetic",
++        "sql": "EXPLAIN PLAN FOR SELECT CAST(1 AS BIGINT) + 1000 * 60 * 60 * 100000, 1000 * 60 * 60 * 100000 * 2 FROM a",
++        "output": [
++          "Execution Plan",
++          "\nLogicalProject(EXPR$0=[360000000001:BIGINT], EXPR$1=[720000000000])",
++          "\n  PinotLogicalTableScan(table=[[default, a]])",
++          "\n"
++        ]
++      },
++      {
++        "description": "INT arithmetic with a result beyond the INT range keeps its value in a filter that is evaluated to TRUE",
++        "sql": "EXPLAIN PLAN FOR SELECT col1 FROM a WHERE 1500000000000 - 1000 * 60 * 60 * 100000 < 1200000000000",
++        "output": [
++          "Execution Plan",
++          "\nLogicalProject(col1=[$0])",
++          "\n  PinotLogicalTableScan(table=[[default, a]])",
++          "\n"
++        ]
++      },
++      {
++        "description": "INT arithmetic with a result beyond the INT range keeps its value as the argument of CAST and ABS, and as an array element with an INT literal",
++        "sql": "EXPLAIN PLAN FOR SELECT CAST(1000 * 60 * 60 * 100000 AS VARCHAR), ABS(-1000 * 60 * 60 * 100000), ARRAY[1000 * 60 * 60 * 100000, 1] FROM a",
++        "output": [
++          "Execution Plan",
++          "\nLogicalProject(EXPR$0=[_UTF-8'360000000000':VARCHAR CHARACTER SET \"UTF-8\"], EXPR$1=[360000000000], EXPR$2=[ARRAY(360000000000, 1)])",
++          "\n  PinotLogicalTableScan(table=[[default, a]])",
++          "\n"
++        ]
++      },
++      {
++        "description": "INT arithmetic at the limits of the INT range",
++        "sql": "EXPLAIN PLAN FOR SELECT 2147483647 + 1 - 1, -2147483648 - 1 + 1, 2147483647 + 0 FROM a",
++        "output": [
++          "Execution Plan",
++          "\nLogicalProject(EXPR$0=[2147483647], EXPR$1=[-2147483648], EXPR$2=[2147483647])",
++          "\n  PinotLogicalTableScan(table=[[default, a]])",
++          "\n"
++        ]
++      },
++      {
++        "description": "an evaluated INT literal with IN on INT literals, which becomes a SEARCH whose Sarg literal has the type INTEGER",
++        "sql": "EXPLAIN PLAN FOR SELECT col1 FROM a WHERE LENGTH('abc') IN (1, 2, 3)",
++        "output": [
++          "Execution Plan",
++          "\nLogicalProject(col1=[$0])",
++          "\n  LogicalFilter(condition=[SEARCH(3, Sarg[1, 2, 3])])",
++          "\n    PinotLogicalTableScan(table=[[default, a]])",
++          "\n"
++        ]
++      },
++      {
++        "description": "array literal with a NULL element",
++        "sql": "EXPLAIN PLAN FOR SELECT ARRAY[1, NULL], ARRAY[CAST(1 AS BIGINT), NULL], ARRAY[1.5, NULL], ARRAY[1000 * 60 * 60 * 100000, CAST(NULL AS INT)] FROM a",
++        "output": [
++          "Execution Plan",
++          "\nLogicalProject(EXPR$0=[ARRAY(1, null:INTEGER)], EXPR$1=[ARRAY(1:BIGINT, null:BIGINT)], EXPR$2=[ARRAY(1.5:DECIMAL(2, 1), null:DECIMAL(2, 1))], EXPR$3=[ARRAY(360000000000, null:INTEGER)])",
++          "\n  PinotLogicalTableScan(table=[[default, a]])",
++          "\n"
++        ]
++      },
++      {
++        "description": "array literal of an evaluated integer and a DECIMAL literal that keeps its exact value, which share a DECIMAL type",
++        "sql": "EXPLAIN PLAN FOR SELECT ARRAY[1 + 1, CAST(5 AS DECIMAL(10, 0))], ARRAY[99999999999999999999, 1 + 1] FROM a",
++        "output": [
++          "Execution Plan",
++          "\nLogicalProject(EXPR$0=[ARRAY(2, 5:DECIMAL(10, 0))], EXPR$1=[ARRAY(99999999999999999999:DECIMAL(20, 0), 2:BIGINT)])",
++          "\n  PinotLogicalTableScan(table=[[default, a]])",
++          "\n"
++        ]
++      },
++      {
++        "description": "CAST between TIMESTAMP and INT or REAL of an evaluated literal",
++        "sql": "EXPLAIN PLAN FOR SELECT CAST(86400 * 1000 AS TIMESTAMP), CAST(CAST(1.5 AS REAL) + 1 AS TIMESTAMP), CAST(fromDateTime('1970-01-02', 'yyyy-MM-dd') AS INT), CAST(fromDateTime('1970-01-02', 'yyyy-MM-dd') AS REAL) FROM a",
++        "output": [
++          "Execution Plan",
++          "\nLogicalProject(EXPR$0=[1970-01-02 00:00:00:TIMESTAMP(3)], EXPR$1=[1970-01-01 00:00:00.002:TIMESTAMP(3)], EXPR$2=[86400000], EXPR$3=[8.64E7:REAL])",
++          "\n  PinotLogicalTableScan(table=[[default, a]])",
++          "\n"
++        ]
++      },
++      {
++        "description": "filter that compares a TIMESTAMP column with INT arithmetic, which is evaluated and cast to TIMESTAMP",
++        "sql": "EXPLAIN PLAN FOR SELECT col1 FROM a WHERE ts_timestamp > 86400 * 1000",
++        "output": [
++          "Execution Plan",
++          "\nLogicalProject(col1=[$0])",
++          "\n  LogicalFilter(condition=[>($8, 1970-01-02 00:00:00)])",
++          "\n    PinotLogicalTableScan(table=[[default, a]])",
++          "\n"
++        ]
++      },
+       {
+         "description": "a DECIMAL literal with a scale is evaluated as a DOUBLE value, as at runtime, so json
+```
+
+**File**: `pinot-query-runtime/src/test/resources/queries/LiteralExpressions.json` (modified, +89/-1)
+```diff
+@@ -69,5 +69,93 @@
+         "h2Sql": "SELECT doubleCol, doubleCol = 1.5 FROM (SELECT doubleCol FROM {tbl} GROUP BY doubleCol) t"
+       }
+     ]
++  },
++  "literal_int_arithmetic_beyond_int_range": {
++    "comments": "Calcite gives INT arithmetic the type INTEGER, but Pinot evaluates it as LONG. The planner must pass the full result to the call around it, not the value that wraps around as an INT.",
++    "tables": {
++      "tbl": {
++        "schema": [
++          {"name": "intCol", "type": "INT"}
++        ],
++        "inputs": [
++          [1],
++          [5]
++        ]
++      }
++    },
++    "queries": [
++      {
++        "description": "INT product beyond the INT range as the argument of BIGINT arithmetic",
++        "sql": "SELECT CAST(1 AS BIGINT) + 1000 * 60 * 60 * 100000 FROM {tbl} LIMIT 1",
++        "outputs": [[360000000001]]
++      },
++      {
++        "description": "INT product beyond the INT range in a filter on literals",
++        "sql": "SELECT intCol FROM {tbl} WHERE 1500000000000 - 1000 * 60 * 60 * 100000 < 1200000000000 ORDER BY intCol",
++        "outputs": [[1], [5]]
++      },
++      {
++        "description": "INT product beyond the INT range subtracted from NOW(), which must give a time in the past",
++        "sql": "SELECT intCol FROM {tbl} WHERE NOW() - 1000 * 60 * 60 * 100000 < NOW() ORDER BY intCol",
++        "outputs": [[1], [5]]
++      },
++      {
++        "description": "evaluated INT literal with IN on INT literals, which becomes a SEARCH with only literal operands",
++        "sql": "SELECT intCol FROM {tbl} WHERE LENGTH('abc') IN (1, 2, 3) ORDER BY intCol",
++        "outputs": [[1], [5]]
++      }
++    ]
++  },
++  "literal_array_elements": {
++    "comments": "The planner evaluates an array constructor on literals. It must accept a NULL element, and elements that the planner gives different Java classes.",
++    "tables": {
++      "tbl": {
++        "schema": [
++          {"name": "intCol", "type": "INT"}
++        ],
++        "inputs": [
++          [1]
++        ]
++      }
++    },
++    "queries": [
++      {
++        "description": "array literal with a NULL element, which becomes the default value",
++        "sql": "SELECT ARRAY[1, NULL], ARRAY[1 + 1, 3, CAST(NULL AS INT)] FROM {tbl}",
++        "outputs": [[[1, 0], [2, 3, 0]]]
++      },
++      {
++        "description": "array literal of an evaluated integer and a DECIMAL(10, 0) literal",
++        "sql": "SELECT ARRAY[1 + 1, CAST(5 AS DECIMAL(10, 0))], ARRAY[CAST(5 AS DECIMAL(10, 0)), 1 + 1] FROM {tbl}",
++        "outputs": [[[2, 5], [5, 2]]]
++      }
++    ]
++  },
++  "literal_cast_between_timestamp_and_int": {
++    "comments": "The planner evaluates a CAST on a literal. It must also evaluate a CAST between TIMESTAMP and INT, as the leaf stage does.",
++    "tables": {
++      "tbl": {
++        "schema": [
++          {"name": "intCol", "type": "INT"},
++          {"name": "tsCol", "type": "TIMESTAMP"}
++        ],
++        "inputs": [
++          [1, "2020-01-01 00:00:00"],
++          [5, "1970-01-01 00:00:00"]
++        ]
++      }
++    },
++    "queries": [
++      {
++        "description": "evaluated INT literal cast to TIMESTAMP, and evaluated TIMESTAMP literal cast to INT",
++        "sql": "SELECT CAST(CAST(86400 * 1000 AS TIMESTAMP) AS BIGINT), CAST(fromDateTime('1970-01-02', 'yyyy-MM-dd') AS INT) FROM {tbl} LIMIT 1",
++        "outputs": [[86400000, 86400000]]
++      },
++      {
++        "description": "TIMESTAMP column compared with INT arithmetic, which is evaluated and cast to TIMESTAMP",
++        "sql": "SELECT intCol FROM {tbl} WHERE tsCol > 86400 * 1000",
++        "outputs": [[1]]
++      }
++    ]
+   }
+-}
+\ No newline at end of file
++}
+```
+
+---
+
+### Incident Patch 2: `5b256646` (2026-11-18)
+**Commit Message**: Fix offline upsert integration test readiness (#20282)
+
+**File**: `pinot-integration-tests/src/test/java/org/apache/pinot/integration/tests/custom/OfflineUpsertTableTest.java` (modified, +22/-14)
+```diff
+@@ -19,10 +19,12 @@
+ package org.apache.pinot.integration.tests.custom;
+ 
+ import java.io.File;
++import java.time.Duration;
+ import java.util.ArrayList;
+ import java.util.HashMap;
+ import java.util.List;
+ import java.util.Map;
++import java.util.concurrent.atomic.AtomicInteger;
+ import org.apache.pinot.client.ResultSet;
+ import org.apache.pinot.common.utils.TarCompressionUtils;
+ import org.apache.pinot.common.utils.config.TagNameUtils;
+@@ -143,13 +145,7 @@ protected void setUpTable()
+   @Override
+   protected void waitForAllDocsLoaded(long timeoutMs)
+       throws Exception {
+-    TestUtils.waitForCondition(aVoid -> {
+-      try {
+-        return queryCountStarWithoutUpsert() == TOTAL_RAW_RECORDS;
+-      } catch (Exception e) {
+-        return null;
+-      }
+-    }, 100L, timeoutMs, "Failed to load all documents");
++    waitForAllDocsLoaded(TOTAL_RAW_RECORDS, timeoutMs);
+     assertEquals(getCurrentCountStarResult(), getCountStarResult());
+   }
+ 
+@@ -199,13 +195,7 @@ public void testUpsertAfterAdditionalSegmentUpload()
+     buildSegment(tableConfig, schema, "segment_update_0", rows, newSegmentDir, newTarDir);
+     uploadSegments(TABLE_NAME, newTarDir);
+ 
+-    TestUtils.waitForCondition(aVoid -> {
+-      try {
+-        return queryCountStarWithoutUpsert() == TOTAL_RAW_RECORDS + 1;
+-      } catch (Exception e) {
+-        return null;
+-      }
+-    }, 100L, 600_000L, "Failed to load updated segment");
++    waitForAllDocsLoaded(TOTAL_RAW_RECORDS + 1, 600_000L);
+ 
+     assertEquals(getCurrentCountStarResult(), UNIQUE_PRIMARY_KEYS);
+ 
+@@ -215,6 +205,24 @@ public void testUpsertAfterAdditionalSegmentUpload()
+     assertEquals(rs.getFloat(0, 0), 9999.0f, 0.01f);
+   }
+ 
++  private void waitForAllDocsLoaded(int expectedRawRecords, long timeoutMs) {
++    int numServers = getSharedServerStarters().size();
++    AtomicInteger consecutiveSuccesses = new AtomicInteger();
++    TestUtils.waitForCondition(() -> {
++      try {
++        if (queryCountStarWithoutUpsert() != expectedRawRecords) {
++          consecutiveSuccesses.set(0);
++          return false;
++        }
++        return consecutiveSuccesses.incrementAndGet() >= numServers;
++      } catch (Exception e) {
++        consecutiveSuccesses.set(0);
++        throw e;
++      }
++    }, 100L, timeoutMs, "Failed to load " + expectedRawRecords + " documents on all servers",
++        Duration.ofMillis(timeoutMs / 10));
++  }
 +
-+    private KafkaContainerWithStartupBarrier() {
-+      super(KAFKA_DOCKER_IMAGE_NAME);
-+      withCommand("-c", "while [ ! -f " + STARTUP_READY_FILE
-+          + " ]; do sleep 0.1; done; exec /tmp/testcontainers_start.sh");
+   private void buildAndUploadTestSegments(TableConfig tableConfig, Schema schema)
+       throws Exception {
+     List<GenericRow> segment1Rows = new ArrayList<>();
+```
+
+---
+
+### Incident Patch 3: `ba2f01e0` (2026-11-17)
+**Commit Message**: Add dictionary-based TEXT index option (buildOnDictionary) (#18758)
+
+Add the opt-in buildOnDictionary setting for single-value STRING text indexes. It indexes each distinct value once and maps TEXT_MATCH results back to rows. Consuming segments continue to index each row.
+After upgrading all servers, set indexes.text.buildOnDictionary to true in the dictionary-encoded column's fieldConfigList entry and reload existing segments. Before downgrading, disable the setting and rebuild the text indexes.
+Validated with focused JDK 25 tests, including reordered Lucene documents and index reload, plus all 13 GitHub checks.
+
+**File**: `pinot-core/src/main/java/org/apache/pinot/core/operator/filter/predicate/PredicateEvaluatorProvider.java` (modified, +2/-1)
+```diff
+@@ -144,7 +144,7 @@ private static PredicateEvaluator buildEvaluator(Predicate predicate, @Nullable
+   ///   dict-encoded forward index, so it cannot apply here.) Furthermore, the range index must be exact —
+   ///   non-exact (legacy) range readers fall back to `ScanBasedFilterOperator` for partial matches, which feeds
+   ///   raw forward-index values into the predicate evaluator and breaks if the evaluator is dict-based.
+-  /// - `REGEXP_LIKE / NOT_EQ / IN / NOT_IN`: only the inverted-index path consumes the dictionary on a RAW
++  /// - `REGEXP_LIKE / TEXT_MATCH / NOT_EQ / IN / NOT_IN`: only the inverted-index path consumes the dictionary on a RAW
+   ///   column. FST/IFST handle their own evaluators upstream of this method.
+   /// - `EQ`: inverted index, plus exact range index (see `RangeIndexBasedFilterOperator#canEvaluate`).
+   ///
+@@ -176,6 +176,7 @@ static Dictionary getDictionaryUsableForFiltering(DataSource dataSource, @Nullab
+       case EQ:
+         return (invertedAvailable || exactRangeAvailable) ? dictionary : null;
+       case REGEXP_LIKE:
++      case TEXT_MATCH:
+       case NOT_EQ:
+       case IN:
+       case NOT_IN:
+```
+
+**File**: `pinot-core/src/main/java/org/apache/pinot/core/operator/filter/predicate/TextMatchDictIdPredicateEvaluatorFactory.java` (added, +121/-0)
+```diff
+@@ -0,0 +1,121 @@
++/**
++ * Licensed to the Apache Software Foundation (ASF) under one
++ * or more contributor license agreements.  See the NOTICE file
++ * distributed with this work for additional information
++ * regarding copyright ownership.  The ASF licenses this file
++ * to you under the Apache License, Version 2.0 (the
++ * "License"); you may not use this file except in compliance
++ * with the License.  You may obtain a copy of the License at
++ *
++ *   http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing,
++ * software distributed under the License is distributed on an
++ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
++ * KIND, either express or implied.  See the License for the
++ * specific language governing permissions and limitations
++ * under the License.
++ */
++package org.apache.pinot.core.operator.filter.predicate;
++
++import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
++import java.util.Set;
++import org.apache.pinot.common.request.context.predicate.TextMatchPredicate;
++import org.apache.pinot.core.query.request.context.QueryContext;
++import org.apache.pinot.segment.spi.datasource.DataSource;
++import org.apache.pinot.segment.spi.index.reader.Dictionary;
++import org.apache.pinot.segment.spi.index.reader.TextIndexReader;
++import org.apache.pinot.spi.data.FieldSpec.DataType;
++import org.roaringbitmap.buffer.ImmutableRoaringBitmap;
++
++
++/// Factory for TEXT_MATCH predicate evaluators backed by a dictionary-based text index (see
++/// [TextIndexReader#isBuildOnDictionary()]). The text index returns the matching dictionary ids, which the
++/// standard dictionary-based filter operators (inverted index / scan) resolve to document ids. This mirrors
++/// [FSTBasedRegexpPredicateEvaluatorFactory].
++public class TextMatchDictIdPredicateEvaluatorFactory {
++  private TextMatchDictIdPredicateEvaluatorFactory() {
++  }
++
++  /// Creates a predicate evaluator that matches the TEXT_MATCH query using the dictionary-based text index.
++  /// Uses raw string membership when no allowed index can resolve dictionary ids over a raw forward index.
++  ///
++  /// @param textMatchPredicate TEXT_MATCH predicate to evaluate
++  /// @param textIndexReader dictionary-based text index reader
++  /// @param dataSource data source for the column
++  /// @param queryContext query context, including which indexes may be used
++  /// @return predicate evaluator
++  public static PredicateEvaluator newPredicateEvaluator(TextMatchPredicate textMatchPredicate,
++      TextIndexReader textIndexReader, DataSource dataSource, QueryContext queryContext) {
++    Dictionary dictionary = dataSource.getDictionary();
++    PredicateEvaluator evaluator =
++        new TextMatchDictIdPredicateEvaluator(textMatchPredicate, textIndexReader, dictionary, queryContext);
++    if (!evaluator.isAlwaysTrue() && !evaluator.isAlwaysFalse()
++        && PredicateEvaluatorProvider.getDictionaryUsableForFiltering(dataSource, queryContext, textMatchPredicate)
++        == null) {
++      return newRawValueBasedEvaluator(evaluator, dictionary);
++    }
++    return evaluator;
++  }
++
++  /// Adapts dictionary matches to a scan over raw forward values when the column has a standalone dictionary.
++  private static BaseRawValueBasedPredicateEvaluator newRawValueBasedEvaluator(PredicateEvaluator dictionaryEvaluator,
++      Dictionary dictionary) {
++    int[] matchingDictIds = dictionaryEvaluator.getMatchingDictIds();
++    Set<String> matchingValues = new ObjectOpenHashSet<>(matchingDictIds.length);
++    for (int dictId : matchingDictIds) {
++      matchingValues.add(dictionary.getStringValue(dictId));
++    }
++    return new BaseRawValueBasedPredicateEvaluator(dictionaryEvaluator.getPredicate()) {
++      @Override
++      public DataType getDataType() {
++        return DataType.STRING;
++      }
++
++      @Override
++      public boolean applySV(String value) {
++        return matchingValues.contains(value);
++      }
++    };
++  }
++
++  private static class TextMatchDictIdPredicateEvaluator extends BaseDictionaryBasedPredicateEvaluator {
++    final ImmutableRoaringBitmap _matchingDictIdBitmap;
++
++    public TextMatchDictIdPredicateEvaluator(TextMatchPredicate textMatchPredicate, TextIndexReader textIndexReader,
++        Dictionary dictionary, QueryContext queryContext) {
++      super(textMatchPredicate, dictionary);
++      _matchingDictIdBitmap =
++          textIndexReader.getDictIds(textMatchPredicate.getValue(), textMatchPredicate.getOptions(), queryContext);
++      int numMatchingDictIds = _matchingDictIdBitmap.getCardinality();
++      if (numMatchingDictIds == 0) {
++        _alwaysFalse = true;
++      } else if (dictionary.length() == numMatchingDictIds) {
++        _alwaysTrue = true;
++      }
 +    }
 +
 +    @Override
-+    protected void containerIsStarting(InspectContainerResponse containerInfo) {
-+      // The script becomes visible before Docker closes its write handle. Executing it then can fail with ETXTBSY.
-+      super.containerIsStarting(containerInfo);
-+      copyFileToContainer(Transferable.of(new byte[0]), STARTUP_READY_FILE);
++    protected int[] calculateMatchingDictIds() {
++      return _matchingDictIdBitmap.toArray();
 +    }
-+  }
- }
++
++    @Override
++    public boolean applySV(int dictId) {
++      return _matchingDictIdBitmap.contains(dic
 ```
 
----
-
-### Incident Patch 2: `73878da7` (2026-11-17)
-**Commit Message**: Fix flaky latency assertions in QueryRoutingTest (#20278)
-
-**File**: `pinot-core/src/test/java/org/apache/pinot/core/transport/QueryRoutingTest.java` (modified, +20/-46)
+**File**: `pinot-core/src/main/java/org/apache/pinot/core/operator/transform/function/TextMatchTransformFunction.java` (modified, +68/-13)
 ```diff
-@@ -54,6 +54,7 @@
- import java.util.concurrent.Future;
- import java.util.concurrent.TimeUnit;
- import java.util.concurrent.atomic.AtomicReference;
+@@ -18,16 +18,24 @@
+  */
+ package org.apache.pinot.core.operator.transform.function;
+ 
++import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
++import java.util.Arrays;
+ import java.util.List;
+ import java.util.Map;
++import java.util.Set;
 +import javax.annotation.Nullable;
- import org.apache.pinot.common.datatable.DataTable;
- import org.apache.pinot.common.datatable.DataTable.MetadataKey;
- import org.apache.pinot.common.metrics.BrokerMeter;
-@@ -77,6 +78,7 @@
- import org.apache.pinot.spi.metrics.PinotMetricsRegistry;
- import org.apache.pinot.spi.utils.ByteArray;
- import org.apache.pinot.spi.utils.CommonConstants;
-+import org.apache.pinot.spi.utils.CommonConstants.Broker.AdaptiveServerSelector;
- import org.apache.pinot.sql.parsers.CalciteSqlCompiler;
- import org.apache.pinot.util.TestUtils;
- import org.apache.thrift.TDeserializer;
-@@ -113,6 +115,8 @@ public class QueryRoutingTest {
-   public void setUp() {
-     Map<String, Object> properties = new HashMap<>();
-     properties.put(CommonConstants.Broker.AdaptiveServerSelector.CONFIG_OF_ENABLE_STATS_COLLECTION, true);
-+    // Keep the latency average stable between taking its snapshot and checking the update.
-+    properties.put(AdaptiveServerSelector.CONFIG_OF_AUTODECAY_WINDOW_MS, 0L);
-     PinotConfiguration cfg = new PinotConfiguration(properties);
-     _serverRoutingStatsManager = new ServerRoutingStatsManager(cfg, mock(BrokerMetrics.class));
-     _serverRoutingStatsManager.init();
-@@ -378,20 +382,7 @@ public void testLatencyForQueryServerException()
+ import org.apache.pinot.core.operator.ColumnContext;
+ import org.apache.pinot.core.operator.blocks.ValueBlock;
+ import org.apache.pinot.core.operator.transform.TransformResultMetadata;
++import org.apache.pinot.core.query.request.context.QueryContext;
+ import org.apache.pinot.segment.spi.datasource.DataSource;
++import org.apache.pinot.segment.spi.index.reader.Dictionary;
+ import org.apache.pinot.segment.spi.index.reader.MultiColumnTextIndexReader;
++import org.apache.pinot.segment.spi.index.reader.QueryScopedCache;
+ import org.apache.pinot.segment.spi.index.reader.TextIndexReader;
+-import org.apache.pinot.spi.data.FieldSpec;
+-import org.roaringbitmap.buffer.MutableRoaringBitmap;
++import org.apache.pinot.spi.data.FieldSpec.DataType;
++import org.roaringbitmap.IntIterator;
++import org.roaringbitmap.buffer.ImmutableRoaringBitmap;
  
-     _requestCount += 2;
-     waitForStatsUpdate(_requestCount);
--    Double latencyAfter = _serverRoutingStatsManager.fetchEMALatencyForServer(serverId);
--
--    if (latencyBefore == null) {
--      // This means that no queries were run before this test. So we can just make sure that latencyAfter is equal to
--      //666.334.
--      // This corresponds to the EWMA value when a latency timeout value of 1000 is set. Latency set to timeout value
--      //when server side exception occurs.
--      double serverEWMALatency = 666.334;
--      // Leaving an error budget of 2%
--      double delta = 13.32;
--      assertEquals(latencyAfter, serverEWMALatency, delta);
--    } else {
--      assertTrue(latencyAfter > latencyBefore, latencyAfter + " should be greater than " + latencyBefore);
--    }
-+    assertLatencyUpdate(serverId, latencyBefore, 1_000L);
+ 
+ /*
+@@ -38,13 +46,27 @@ public class TextMatchTransformFunction extends BaseTransformFunction {
+   private String _predicate;
+   private String _options;
+   private TextIndexReader _textIndexReader;
++  private TransformFunction _columnArg;
++  private Dictionary _dictionary;
++  private Set<String> _matchingRawValues;
++  private ImmutableRoaringBitmap _matchingDictIds;
++  private int _numMatchingValues;
++  @Nullable
++  private QueryScopedCache _queryScopedCache;
+   private String _column;
+ 
+   @Override
+   public String getName() {
+     return FUNCTION_NAME;
    }
  
-   @Test
-@@ -419,17 +410,7 @@ public void testLatencyForClientException()
- 
-     _requestCount += 2;
-     waitForStatsUpdate(_requestCount);
--
--    Double latencyAfter = _serverRoutingStatsManager.fetchEMALatencyForServer(serverId);
--
--    if (latencyBefore == null) {
--      // Latency for the server with client side exception is assigned as serverResponse.getResponseDelayMs() and the
--      //calculated
--      // EWMLatency for the server will be less than serverResponse.getResponseDelayMs()
--      assertTrue(latencyAfter <= serverResponse.getResponseDelayMs());
--    } else {
--      assertTrue(latencyAfter < latencyBefore, latencyAfter + " should be lesser than " + latencyBefore);
--    }
-+    assertLatencyUpdate(serverId, latencyBefore, serverResponse.getResponseDelayMs());
-   }
- 
-   @Test
-@@ -457,19 +438,7 @@ public void testLatencyForMultipleExceptions()
- 
-     _requestCount += 2;
-     waitForStatsUpdate(_requestCount);
--    Double latencyAfter = _serverRoutingStatsManager.fetchEMALatencyForServer(serverId);
--
--    if (latencyBefore == null) {
--      // This means that no queries where run before this test. So we can just make sure that latencyAfter is equal
--      //to 666.334.
--      // This corresponds to the EWMA value when a latency timeout value of 1000 is set.
--      double serverEWMALatency = 666.334;
--      // Leaving an error budget of 2%
--      double delta = 13.32;
--      assertEquals(latencyAfter, serverEWMALatency, delta);
--    } else {
--      assertTrue(latencyAfter > latencyBefore, latencyAfter + " should be greater than " + latencyBefore);
--    }
-+    assertLatencyUpdate(serverId, latencyBefore, 1_000L);
-   }
- 
-   @Test
-@@ -495,15 +464,20 @@ public void testLatencyForNoException()
- 
-     _requestCount += 2;
-     waitForStatsUpdate(_requestCount);
--    Double latencyAfter = _serverRoutingStatsManager.fetchEMALatencyForServer(serverId);
-+    assertLatencyUpdate(serverId, latencyBefore, serverResponse.getResponseDelayMs());
++  @Override
++  public void init(List<TransformFunction> arguments, Map<String, ColumnContext> columnContextMap,
++      QueryContext queryContext) {
++    super.init(arguments, columnContextMap, queryContext.isNullHandlingEnabled());
++    _queryScopedCache = queryContext;
 +  }
++
+   @Override
+   public void init(List<TransformFunction> arguments, Map<String, ColumnContext> columnContextMap) {
+     super.init(arguments, columnContextMap);
+@@ -76,7 +98,7 @@ public void init(List<TransformFunction> arguments, Map<String, ColumnContext> c
  
--    if (latencyBefore == null) {
--      // Latency for the server with no exceptions is assigned as serverResponse.getResponseDelayMs() and the calculated
--      // EWMLatency for the server will be less than serverResponse.getResponseDelayMs()
--      assertTrue(latencyAfter <= serverResponse.getResponseDelayMs());
--    } else {
--      assertTrue(latencyAfter < latencyBefore, latencyAfter + " should be lesser than " + latencyBefore);
--    }
-+  private void assertLatencyUpdate(String serverId, @Nullable Double latencyBefore, long latencyMs) {
-+    double previousAverage =
-+        latencyBefore != null ? latencyBefore : AdaptiveServerSelector.DEFAULT_AVG_INITIALIZATION_VAL;
-+    double alpha = AdaptiveServerSelect
+     // Verify that the second parameter is actually a string literal
+     LiteralTransformFunction literalPredicate = (LiteralTransformFunction) predicate;
+-    if (literalPredicate.getResultMetadata().getDataType() != FieldSpec.DataType.STRING) {
++    if (literalPredicate.getResultMetadata().getDataType() != DataType.STRING) {
+       throw new IllegalArgumentException(
+           "The second argument of TEXT_MATCH transform function must be a string literal, got: "
+               + literalPredicate.getResultMetadata().getDataType());
+@@ -94,7 +116,7 @@ public void init(List<TransformFunction> arguments, Map<String, ColumnContext> c
+ 
+       // Verify that the third parameter is actually a string literal
+       LiteralTransformFunction literalOptions = (LiteralTransformFunction) options;
+-      if (literalOptions.getResultMetadata().getDataType() != FieldSpec.DataType.STRING) {
++      if (literalOptions.getResultMetadata().getDataType() != DataType.STRING) {
+         throw new IllegalArgumentException(
+             "The third argument of TEXT_MATCH transform function must be a string literal, got: "
+                 + literalOptions.getResultMetadata().getDataType());
+@@ -106,21 +128,54 @@ public void init(List<TransformFunction> arguments, Map<String, ColumnContext> c
+     }
+ 
+     _textIndexReader = indexReader;
++    _columnArg = columnArg;
++    _dictionary = dataSource.getDictionary();
++    _matchingRawValues = null;
++    _matchingDictIds = null;
++    _queryScopedCache = null;
+   }
+ 
+   public int[] transformToIntValuesSV(ValueBlock valueBlock) {
+     int length = valueBlock.getNumDocs();
+-    initZeroFillingIntValuesSV(length);
+-
+-    int[] docIds = valueBlock.getDocIds();
+-    MutableRoaringBitmap indexDocIds = _textIndexReader.isMultiColumn()
+-        ? ((MultiColumnTextIndexReader) _textIndexReader).getDocIds(_column, _predicate, _options)
+-        : _textIndexReader.getDocIds(_predicate, _options);
++    initIntValuesSV(length);
++
++    int[] ids;
++    ImmutableRoaringBitmap matchingIds;
++    if (_textIndexReader.isBuildOnDictionary()) {
++      if (_matchingDictIds == null) {
++        _matchingDictIds = _textIndexReader.getDictIds(_predicate, _options, _queryScopedCache);
++        _numMatchingValues = _matchingDictIds.getCardinality();
++      }
++      if (_numMatchingValues == 0 || _numMatchingValues == _dictionary.length()) {
++        Arrays.fill(_intValuesSV, 0, length, _numMatchingValues == 0 ? 0 : 1);
++        return _intValuesSV;
++      }
++      matchingIds = _matchingDictIds;
++      if (_columnArg.getDictionary() == null) {
++        // A standalone dictionary can coexist with a raw forward index.
++        if (_matchingRawValues == null) {
++          _matchingRawValues = new ObjectOpenHashSet<>(_numMatchingValue
 ```
 
----
-
-### Incident Patch 3: `1b7c1f3c` (2026-11-17)
-**Commit Message**: Keep FORCE_OVERWRITE partial-upsert columns null when the update is null (#20261)
-
-**File**: `pinot-segment-local/src/main/java/org/apache/pinot/segment/local/upsert/merger/PartialUpsertColumnarMerger.java` (modified, +5/-3)
+**File**: `pinot-core/src/main/java/org/apache/pinot/core/plan/FilterPlanNode.java` (modified, +12/-0)
 ```diff
-@@ -70,9 +70,11 @@ public void merge(LazyRow previousRow, GenericRow newRow, Map<String, Object> re
-       PartialUpsertColumnMerger merger = _column2Mergers.getOrDefault(column, _defaultColumnValueMerger);
-       if (merger instanceof ForceOverwriteMerger) {
-         // Force Overwrite mergers
--        // If the merge strategy is Force Overwrite merger and prevValue is always overwritten by newValue
--        Object prevValue = previousRow.getValue(column);
--        resultHolder.put(column, merger.merge(prevValue, newRow.getValue(column)));
-+        // The new row already holds the result: the new value, or for a null value the placeholder that ingestion
-+        // put in the row together with its null marker. Leave the column untouched so both are kept; putting a
-+        // value in the result holder would clear the null marker or replace an ingestion-normalized placeholder
-+        // (e.g. a time column's default) with the schema default.
-+        continue;
-       } else if (!(merger instanceof OverwriteMerger)) {
-         // Non-overwrite mergers
-         // (1) If the value of the previous is null value, skip merging and use the new value
+@@ -56,6 +56,7 @@
+ import org.apache.pinot.core.operator.filter.VectorSimilarityFilterOperator;
+ import org.apache.pinot.core.operator.filter.predicate.PredicateEvaluator;
+ import org.apache.pinot.core.operator.filter.predicate.PredicateEvaluatorProvider;
++import org.apache.pinot.core.operator.filter.predicate.TextMatchDictIdPredicateEvaluatorFactory;
+ import org.apache.pinot.core.operator.transform.function.ItemTransformFunction;
+ import org.apache.pinot.core.query.request.context.QueryContext;
+ import org.apache.pinot.segment.spi.IndexSegment;
+@@ -334,6 +335,17 @@ private BaseFilterOperator constructPhysicalOperator(FilterContext filter, int n
+               Preconditions.checkState(textIndexReader != null,
+                   "Cannot apply TEXT_MATCH on column: %s without text index", column);
+ 
++              if (textIndexReader.isBuildOnDictionary()) {
++                // Dictionary-based text index: search returns matching dictIds, resolved to docIds by the standard
++                // dictionary-based filter operators (inverted index / scan), exactly like FST/REGEXP_LIKE.
++                TextMatchPredicate textMatchPredicate = (TextMatchPredicate) predicate;
++                predicateEvaluator = TextMatchDictIdPredicateEvaluatorFactory.newPredicateEvaluator(
++                    textMatchPredicate, textIndexReader, dataSource, _queryContext);
++                _predicateEvaluators.add(Pair.of(predicate, predicateEvaluator));
++                return FilterOperatorUtils.getLeafFilterOperator(_queryContext, predicateEvaluator, dataSource,
++                    numDocs);
++              }
++
+               if (textIndexReader.isMultiColumn()) {
+                 return new TextMatchFilterOperator(column, textIndexReader, (TextMatchPredicate) predicate, numDocs,
+                     _queryContext);
 ```
 
-**File**: `pinot-segment-local/src/test/java/org/apache/pinot/segment/local/upsert/PartialUpsertHandlerTest.java` (modified, +65/-4)
+**File**: `pinot-core/src/test/java/org/apache/pinot/queries/DictionaryBasedTextIndexQueriesTest.java` (added, +579/-0)
 ```diff
-@@ -49,6 +49,7 @@
- import static org.testng.Assert.assertEquals;
- import static org.testng.Assert.assertFalse;
- import static org.testng.Assert.assertNotNull;
+@@ -0,0 +1,579 @@
++/**
++ * Licensed to the Apache Software Foundation (ASF) under one
++ * or more contributor license agreements.  See the NOTICE file
++ * distributed with this work for additional information
++ * regarding copyright ownership.  The ASF licenses this file
++ * to you under the Apache License, Version 2.0 (the
++ * "License"); you may not use this file except in compliance
++ * with the License.  You may obtain a copy of the License at
++ *
++ *   http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing,
++ * software distributed under the License is distributed on an
++ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
++ * KIND, either express or implied.  See the License for the
++ * specific language governing permissions and limitations
++ * under the License.
++ */
++package org.apache.pinot.queries;
++
++import com.fasterxml.jackson.databind.node.ObjectNode;
++import java.io.File;
++import java.nio.charset.StandardCharsets;
++import java.util.ArrayList;
++import java.util.List;
++import java.util.Map;
++import org.apache.commons.io.FileUtils;
++import org.apache.commons.lang3.exception.ExceptionUtils;
++import org.apache.pinot.common.response.broker.BrokerResponseNative;
++import org.apache.pinot.core.common.Operator;
++import org.apache.pinot.core.operator.blocks.results.AggregationResultsBlock;
++import org.apache.pinot.core.operator.blocks.results.SelectionResultsBlock;
++import org.apache.pinot.segment.local.indexsegment.immutable.ImmutableSegmentLoader;
++import org.apache.pinot.segment.local.segment.creator.impl.SegmentIndexCreationDriverImpl;
++import org.apache.pinot.segment.local.segment.index.loader.IndexLoadingConfig;
++import org.apache.pinot.segment.local.segment.readers.GenericRowRecordReader;
++import org.apache.pinot.segment.local.utils.TableConfigUtils;
++import org.apache.pinot.segment.spi.ImmutableSegment;
++import org.apache.pinot.segment.spi.IndexSegment;
++import org.apache.pinot.segment.spi.creator.SegmentGeneratorConfig;
++import org.apache.pinot.spi.config.table.FieldConfig;
++import org.apache.pinot.spi.config.table.FieldConfig.EncodingType;
++import org.apache.pinot.spi.config.table.FieldConfig.IndexType;
++import org.apache.pinot.spi.config.table.TableConfig;
++import org.apache.pinot.spi.config.table.TableType;
++import org.apache.pinot.spi.data.FieldSpec;
++import org.apache.pinot.spi.data.Schema;
++import org.apache.pinot.spi.data.readers.GenericRow;
++import org.apache.pinot.spi.data.readers.RecordReader;
++import org.apache.pinot.spi.utils.JsonUtils;
++import org.apache.pinot.spi.utils.builder.TableConfigBuilder;
++import org.testng.annotations.AfterClass;
++import org.testng.annotations.BeforeClass;
++import org.testng.annotations.DataProvider;
++import org.testng.annotations.Test;
++
++import static org.testng.Assert.assertEquals;
++import static org.testng.Assert.assertFalse;
++import static org.testng.Assert.assertNull;
 +import static org.testng.Assert.assertTrue;
++import static org.testng.Assert.fail;
++
++
++/// Verifies that a dictionary-based TEXT index (`buildOnDictionary = true`) returns the same `TEXT_MATCH`
++/// results as the default per-row TEXT index for single-value STRING columns, while multi-value columns retain
++/// the per-row index. The dictionary-based index returns matching dictIds resolved to docIds by dictionary-based
++/// filter operators; this test confirms that resolution is correct end-to-end.
++public class DictionaryBasedTextIndexQueriesTest extends BaseQueriesTest {
++  private static final File INDEX_DIR =
++      new File(FileUtils.getTempDirectory(), DictionaryBasedTextIndexQueriesTest.class.getSimpleName());
++  private static final String TABLE_NAME = "testTable";
++  private static final String SV_COL = "SV_TEXT";
++  private static final String MV_COL = "MV_TEXT";
++  private static final String INT_COL = "INT_COL";
++  private static final int NUM_ROWS = 1000;
++
++  // SV value cycles over 5 distinct tokens; MV value pairs a constant token with a cycling token.
++  private static final String[] SV_TOKENS = {"apple", "banana", "cherry", "date", "elderberry"};
++  private static final String[] MV_TOKENS = {"red", "green", "blue"};
++
++  private static final Schema SCHEMA = new Schema.SchemaBuilder().setSchemaName(TABLE_NAME)
++      .addSingleValueDimension(SV_COL, FieldSpec.DataType.STRING)
++      .addMultiValueDimension(MV_COL, FieldSpec.DataType.STRING)
++      .addMetric(INT_COL, FieldSpec.DataType.INT)
++      .build();
++
++  private IndexSegment _indexSegment;
++  private List<IndexSegment> _indexSegments;
++
++  @Override
++  protected String getFilter() {
++    return "";
++  }
++
++  @Override
++  protected IndexSegment getIndexSegment() {
++    return _indexSegment;
++  }
++
++  @Override
++  protected List<IndexSegment> getIndexSegments() {
++    return _indexSegments;
++  }
++
++  @BeforeClass
++  public void setUp() {
++    FileUtils.deleteQuietly(INDEX_DIR);
++  }
++
++  @AfterClass
++  public void tearDown() {
++    if (_indexSegment != 
+```
+
+**File**: `pinot-core/src/test/java/org/apache/pinot/queries/TextMatchTransformFunctionTest.java` (modified, +70/-0)
+```diff
+@@ -23,21 +23,41 @@
+ import java.io.UncheckedIOException;
+ import java.nio.file.Files;
+ import java.util.List;
++import java.util.Map;
+ import org.apache.commons.io.FileUtils;
++import org.apache.pinot.core.operator.ColumnContext;
++import org.apache.pinot.core.operator.blocks.ValueBlock;
++import org.apache.pinot.core.operator.transform.TransformResultMetadata;
++import org.apache.pinot.core.operator.transform.function.IdentifierTransformFunction;
++import org.apache.pinot.core.operator.transform.function.LiteralTransformFunction;
++import org.apache.pinot.core.operator.transform.function.TextMatchTransformFunction;
++import org.apache.pinot.core.operator.transform.function.TransformFunction;
++import org.apache.pinot.core.query.request.context.QueryContext;
++import org.apache.pinot.segment.spi.datasource.DataSource;
++import org.apache.pinot.segment.spi.index.reader.Dictionary;
++import org.apache.pinot.segment.spi.index.reader.TextIndexReader;
+ import org.apache.pinot.spi.config.table.FieldConfig;
+ import org.apache.pinot.spi.config.table.MultiColumnTextIndexConfig;
+ import org.apache.pinot.spi.config.table.TableConfig;
+ import org.apache.pinot.spi.config.table.TableType;
+ import org.apache.pinot.spi.data.FieldSpec;
++import org.apache.pinot.spi.data.FieldSpec.DataType;
+ import org.apache.pinot.spi.data.Schema;
+ import org.apache.pinot.spi.exception.BadQueryRequestException;
+ import org.apache.pinot.spi.utils.builder.TableConfigBuilder;
++import org.roaringbitmap.buffer.MutableRoaringBitmap;
+ import org.testng.Assert;
+ import org.testng.annotations.AfterClass;
+ import org.testng.annotations.BeforeClass;
+ import org.testng.annotations.DataProvider;
+ import org.testng.annotations.Test;
  
++import static org.mockito.Mockito.mock;
++import static org.mockito.Mockito.times;
++import static org.mockito.Mockito.verify;
++import static org.mockito.Mockito.when;
++import static org.testng.Assert.assertEquals;
++
  
- public class PartialUpsertHandlerTest {
-@@ -63,12 +64,60 @@ public void testOverwrite() {
+ public class TextMatchTransformFunctionTest {
  
-   @Test
-   public void testForceOverwrite() {
--    testMerge(true, 0, true, 0, "field4", 0, true);
-+    testMerge(true, 0, true, 0L, "field4", 0L, true);
-     testMerge(true, 0, false, 1, "field4", 1, false);
--    testMerge(false, 0, true, 1, "field4", 1, true);
-+    // A null new value stays null (with the schema default) instead of overwriting with the default value
-+    testMerge(false, 3, true, 0L, "field4", 0L, true);
-     testMerge(false, 3, false, 5, "field4", 5, false);
+@@ -80,6 +100,56 @@ void destroyBaseDir()
+     }
    }
  
 +  @Test
-+  public void testForceOverwriteStringAndMultiValue() {
-+    // STRING: a null new value keeps the column null with the "null" default
-+    testMerge(false, "a", true, "null", "field5", "null", true);
-+    testMerge(false, "a", false, "b", "field5", "b", false);
-+    // Multi-value: a null new value keeps the column null with the Object[]{default} default
-+    testMerge(false, new Object[]{1}, true, new Object[]{Integer.MIN_VALUE}, "field6",
-+        new Object[]{Integer.MIN_VALUE}, true);
-+    testMerge(false, new Object[]{1}, false, new Object[]{2}, "field6", new Object[]{2}, false);
-+  }
-+
-+  @Test
-+  public void testForceOverwriteAsDefaultStrategy() {
-+    // field2 has no per-column strategy, so it takes FORCE_OVERWRITE from the default strategy
-+    testMerge(UpsertConfig.Strategy.FORCE_OVERWRITE, false, 3, true, 0L, "field2", 0L, true);
-+    testMerge(UpsertConfig.Strategy.FORCE_OVERWRITE, false, 3, false, 5, "field2", 5, false);
-+  }
-+
-+  @Test
-+  public void testForceOverwriteKeepsNormalizedTimePlaceholder() {
-+    // The comparison column is not the time column, so the time column takes FORCE_OVERWRITE from the default
-+    // strategy. For a missing time value, realtime ingestion puts a valid timestamp in the row and marks it null;
-+    // the merge must keep both instead of replacing the timestamp with the schema default ("null").
-+    Schema schema = new Schema.SchemaBuilder().setSchemaName("testTable")
-+        .addSingleValueDimension("pk", FieldSpec.DataType.STRING).addMetric("version", FieldSpec.DataType.LONG)
-+        .addDateTime("day", FieldSpec.DataType.STRING, "1:DAYS:SIMPLE_DATE_FORMAT:yyyyMMdd", "1:DAYS")
-+        .setPrimaryKeyColumns(List.of("pk")).build();
-+    UpsertConfig upsertConfig = new UpsertConfig(UpsertConfig.Mode.PARTIAL);
-+    upsertConfig.setDefaultPartialUpsertStrategy(UpsertConfig.Strategy.FORCE_OVERWRITE);
-+    upsertConfig.setComparisonColumns(List.of("version"));
-+    TableConfig tableConfig = new TableConfigBuilder(TableType.REALTIME).setTableName("testTable")
-+        .setTimeColumnName("day").setNullHandlingEnabled(true).setUpsertConfig(upsertConfig).build();
-+    PartialUpsertHandler handler = new PartialUpsertHandler(tableConfig, schema, List.of("version"), upsertConfig);
-+    LazyRow prevRecord = mockLazyRow(mock(LazyRow.class), Map.of("pk", "pk1", "version", 1L, "day", "20261101"));
-+
-+    GenericRow missingDay = initGenericRow(new GenericRow(), Map.of("pk", "pk1", "version", 2L));
-+    missingDay.putDefaultNullValue("day", "20261113");
-+    handler.merge(prevRecord, missingDay, new HashMap<>());
-+    assertEquals(missingDay.getValue("day"), "20261113");
-+    assertTrue(missingDay.isNullValue("day"));
-+
-+    GenericRow newDay = initGenericRow(new GenericRow(), Map.of("pk", "pk1", "version", 2L, "day", "20261112"));
-+    handler.merge(prevRecord, newDay, new HashMap<>());
-+    assertEquals(newDay.getValue("day"), "20261112");
-+    assertFalse(newDay.isNullValue("day"));
-+  }
-+
-   @Test
-   public void testNonOverwrite() {
-     testMerge(true, 2, true, 2, "field2", 2, true);
-@@ -173,13 +222,24 @@ public void testPostUpsertTransformRunsAfterMerge() {
++  public void testDictionaryMatchesAreCachedUntilInit() {
++    for (boolean rawForward : new boolean[]{false, true}) {
++      TextIndexReader reader = mock(TextIndexReader.class);
++      when(reader.isBuildOnDictionary()).thenReturn(true);
++      QueryContext queryContext = mock(QueryContext.class);
++      when(reader.getDictIds("alpha", null, queryContext)).thenReturn(MutableRoaringBitmap.bitmapOf(0));
++      when(reader.getDictIds("alpha", null, null)).thenReturn(MutableRoaringBitmap.bitmapOf(1),
++          MutableRoaringBitmap.bitmapOf(0, 1), new MutableRoaringBitmap());
++      Dictionary dictionary = mock(Dictionary.class);
++      when(dictionary.length()).thenReturn(2);
++      when(dictionary.getStringValue(0)).thenReturn("alpha");
++      when(dictionary.getStringValue(1)).thenReturn("beta");
++      DataSource dataSource = mock(DataSource.class);
++      when(dataSource.getTextIndex()).thenReturn(reader);
++      when(dataSource.getDictionary()).thenReturn(dictionary);
++      ColumnContext columnContext = mock(ColumnContext.class);
++      when(columnContext.getDataSource()).thenReturn(dataSource);
++      IdentifierTransformFunction column = mock(IdentifierTransformFunction.class);
++      when(column.getColumnName()).thenReturn("skills");
++      when(column.getResultMetadata()).thenReturn(new TransformResultMetadata(DataType.STRING, true, true));
++      when(column.getDictionary()).thenReturn(rawForward ? null : dictionary);
++      LiteralTransformFunction predicate = mock(LiteralTransformFunction.class);
++      when(predicate.getResultMetadata()).thenReturn(
++          new TransformResultMetadata(DataType.STRING, true, false));
++      when(predicate.getStringLiteral()).thenReturn("alpha");
++      ValueBlock block = mock(ValueBlock.class);
++      when(block.getNumDocs()).thenReturn(2);
++      when(column.transformToDictIdsSV(block)).thenReturn(new int[]{0, 1});
++      when(column.transformToStringValuesSV(block)).thenReturn(new String[]{"alpha", "beta"});
++      List<TransformFunction> arguments = List.of(column, predicate);
++      Map<String, ColumnContext> contexts = Map.of("skills", columnContext);
++      TextMatchTransformFunction function = new TextMatchTransformFunction();
++      function.init(arguments, contexts, queryContext);
++      assertEquals(function.transformToIntValuesSV(block), new int[]{1, 0});
++      assertEquals(function.transformToIntValuesSV(block), new int[]{1, 0});
++      verify(reader).getDictIds("alpha", null, queryContext);
++      function.init(arguments, contexts);
++      assertEquals(function.transformToIntValuesSV(block), new int[]{0, 1});
++      function.init(arguments, contexts);
++      assertEquals(function.transformToIntValuesSV(block), new int[]{1, 1});
++      function.init(arguments, contexts);
++      assertEquals(function.transformToIntValuesSV(block), new int[]{0, 0});
++      verify(reader, times(3)).getDictIds("alpha", null, null);
++      // The all/none results do not 
+```
+
+**File**: `pinot-segment-local/src/main/java/org/apache/pinot/segment/local/indexsegment/mutable/MutableSegmentImpl.java` (modified, +5/-2)
+```diff
+@@ -89,6 +89,7 @@
+ import org.apache.pinot.segment.spi.index.IndexService;
+ import org.apache.pinot.segment.spi.index.IndexType;
+ import org.apache.pinot.segment.spi.index.StandardIndexes;
++import org.apache.pinot.segment.spi.index.TextIndexConfig;
+ import org.apache.pinot.segment.spi.index.VectorIndexConfigProvider;
+ import org.apache.pinot.segment.spi.index.creator.VectorIndexConfig;
+ import org.apache.pinot.segment.spi.index.metadata.SegmentMetadataImpl;
+@@ -424,10 +425,12 @@ public MultiColumnTextMetadata getMultiColumnTextMetadata() {
+       // If the raw value is provided, use it for the forward/dictionary index of this column by wrapping the
+       // already created MutableIndex with a SameValue implementation. This optimization can only be done when
+       // the mutable index is being reused
+-      boolean reuseMutableIndex = indexConfigs.getConfig(StandardIndexes.text()).isReuseMutableIndex();
++      // Dictionary-based text indexes rebuild at sealing and require the original dictionary values.
++      TextIndexConfig textIndexConfig = indexConfigs.getConfig(StandardIndexes.text());
++      boolean reuseMutableIndex = textIndexConfig.isReuseMutableIndex() && !textIndexConfig.isBuildOnDictionary();
+       if (reuseMutableIndex) {
+         hasColumnWithReuseMutableTextIndex = true;
+-        Object rawValueForTextIndex = indexConfigs.getConfig(StandardIndexes.text()).getRawValueForTextIndex();
++        Object rawValueForTextIndex = textIndexConfig.getRawValueForTextIndex();
+         if (rawValueForTextIndex != null) {
+           if (dictionary == null) {
+             MutableIndex forwardIndex = mutableIndexes.get(StandardIndexes.forward());
+```
+
+**File**: `pinot-segment-local/src/main/java/org/apache/pinot/segment/local/segment/creator/impl/text/LuceneTextIndexCreator.java` (modified, +41/-4)
+```diff
+@@ -40,6 +40,7 @@
+ import org.apache.lucene.store.Directory;
+ import org.apache.lucene.store.FSDirectory;
+ import org.apache.lucene.store.NRTCachingDirectory;
++import org.apache.lucene.util.IOUtils;
+ import org.apache.pinot.segment.local.realtime.impl.invertedindex.LuceneNRTCachingMergePolicy;
+ import org.apache.pinot.segment.local.segment.index.text.AbstractTextIndexCreator;
+ import org.apache.pinot.segment.local.segment.index.text.TextIndexConfigBuilder;
+@@ -64,7 +65,7 @@ public class LuceneTextIndexCreator extends AbstractTextIndexCreator {
+   public static final String PINOT_DOC_ID_STORED_FIELD_NAME = "DocID";
  
-   public void testMerge(boolean isPreviousNull, Object previousValue, boolean isNewNull, Object newValue,
-       String columnName, Object expectedValue, boolean isExpectedNull) {
-+    testMerge(UpsertConfig.Strategy.IGNORE, isPreviousNull, previousValue, isNewNull, newValue, columnName,
-+        expectedValue, isExpectedNull);
+   /// Preferred numeric doc-values field holding the Pinot document ID in freshly built immutable indexes.
+-  /// Used to build the Lucene-to-Pinot mapping; omitted when explicitly configured with Skip.
++  /// Used to build the Lucene-to-Pinot mapping; omitted for per-row indexes explicitly configured with Skip.
+   public static final String PINOT_DOC_ID_DOC_VALUES_FIELD_NAME = "PinotDocID";
+ 
+   private final String _textColumn;
+@@ -74,6 +75,9 @@ public class LuceneTextIndexCreator extends AbstractTextIndexCreator {
+   private final TextIndexConfig _config;
+   private final File _indexFile;
+   private final boolean _reuseMutableIndex;
++  // When true, the index is built over the column dictionary (one document per distinct value, fed via add(String)),
++  // so the per-row IndexCreator entry points (add(Object, int) / add(Object[], int[])) are no-ops.
++  private final boolean _buildOnDictionary;
+   private Directory _indexDirectory;
+   private IndexWriter _indexWriter;
+   private int _nextDocId = 0;
+@@ -123,6 +127,10 @@ public LuceneTextIndexCreator(String column, File segmentIndexDir, boolean commi
+     _combineAndCleanupFiles = combineAndCleanupFiles;
+     _segmentDirectory = segmentIndexDir;
+     _config = config;
++    // Dictionary-based indexing only applies to immutable segments (commit == true): offline creation and the
++    // realtime-to-offline conversion. A consuming (mutable) segment has no immutable dictionary, so it always builds
++    // the per-row index regardless of the flag.
++    _buildOnDictionary = config.isBuildOnDictionary() && commit;
+     String luceneAnalyzerClass = config.getLuceneAnalyzerClass();
+     try {
+       // segment generation is always in V1 and later we convert (as part of post creation processing)
+@@ -153,7 +161,10 @@ public LuceneTextIndexCreator(String column, File segmentIndexDir, boolean commi
+       // 1. Not the realtime index, i.e. commit is set to true
+       // 2. Happens during realtime segment conversion
+       // 3. Mutable segment not compacted
+-      _reuseMutableIndex = config.isReuseMutableIndex() && commit && realtimeConversion && !mutableSegmentCompacted;
++      // 4. Not a dictionary-based index: the mutable index is per-row, so a dictionary-based immutable index must be
++      //    rebuilt from the sealed dictionary rather than reusing the mutable index.
++      _reuseMutableIndex = config.isReuseMutableIndex() && commit && realtimeConversion && !mutableSegmentCompacted
++          && !_buildOnDictionary;
+       if (_reuseMutableIndex) {
+         LOGGER.info("Reusing the realtime lucene index for segment {} and column {}", segmentIndexDir, column);
+         indexWriterConfig.setOpenMode(IndexWriterConfig.OpenMode.CREATE_OR_APPEND);
+@@ -261,7 +272,7 @@ private void convertMutableSegment(File segmentIndexDir, File consumerDir, @Null
+   private void buildMappingFile(File segmentIndexDir, String column, Directory directory,
+       @Nullable int[] mutableToImmutableDocIdMap)
+       throws IOException {
+-    if (_config.getDocIdTranslatorMode() == DocIdTranslatorMode.Skip) {
++    if (!_buildOnDictionary && _config.getDocIdTranslatorMode() == DocIdTranslatorMode.Skip) {
+       return;
+     }
+     try (IndexReader indexReader = DirectoryReader.open(directory)) {
+@@ -289,6 +300,23 @@ private void buildMappingFile(File segmentIndexDir, String column, Directory dir
+     }
+   }
+ 
++  @Override
++  public void add(Object value, int dictId) {
++    // In dictionary mode the index is built once from the dictionary (via add(String)); ignore the per-row callbacks.
++    if (_buildOnDictionary) {
++      return;
++    }
++    super.add(value, dictId);
 +  }
 +
-+  private void testMerge(UpsertConfig.Strategy defaultStrategy, boolean isPreviousNull, Object previousValue,
-+      boolean isNewNull, Object newValue, String columnName, Object expectedValue, boolean isExpectedNull) {
-     Schema schema = new Schema.SchemaBuilder().addSingleValueDimension("pk", FieldSpec.DataType.STRING)
-         .addSingleValueDimension("field1", FieldSpec.DataType.LONG).addMetric("field2", FieldSpec.DataType.LONG)
-+        .addMetric("field4", FieldSpec.DataType.LONG)
-+        .addSingleValueDimension("field5", FieldSpec.DataType.STRING)
-+        .addMultiValueDimension("field6", FieldSpec.DataType.INT)
-         .addDateTime("hoursSinceEpoch", FieldSpec.DataType.LONG, "1:HO
++  @Override
++  public void add(Object[] values, @Nullable int[] dictIds) {
++    if (_buildOnDictionary) {
++      return;
++    }
++    super.add(values, dictIds);
++  }
++
+   @Override
+   public void add(String document) {
+     if (_reuseMutableIndex) {
+@@ -336,7 +364,8 @@ private void addDocIdFields(Document document) {
+     if (!_commitOnClose) {
+       // Mutable indexes retain the stored field for existing readers and segment conversion.
+       document.add(new StoredField(PINOT_DOC_ID_STORED_FIELD_NAME, docId));
+-    } else if (_config.getDocIdTranslatorMode() != DocIdTranslatorMode.Skip) {
++    } else if (_buildOnDictionary || _config.getDocIdTranslatorMode() != DocIdTranslatorMode.Skip) {
++      // Dicti
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #20289** (2026-11-17): Bump org.codehaus.mojo:versions-maven-plugin from 2.25.1 to 2.25.2 (@dependabot[bot])
+- **PR #20288** (2026-11-17): Bump com.github.luben:zstd-jni from 1.5.7-26 to 1.5.7-28 (@dependabot[bot])
+- **PR #20287** (2026-11-17): Bump io.github.hakky54:ayza-bom from 10.1.0 to 10.1.1 (@dependabot[bot])
+- **PR #20286** (2026-11-17): Bump software.amazon.awssdk:bom from 2.59.0 to 2.59.1 (@dependabot[bot])
+- **PR #20282** (2026-11-18): Fix offline upsert integration test readiness (@Jackie-Jiang)
 - **PR #20281** (2026-11-17): Fix Kafka startup script race in schema registry tests (@Jackie-Jiang)
-- **PR #20278** (2026-11-17): Fix flaky latency assertions in QueryRoutingTest (@Jackie-Jiang)
-- **PR #20274** (2026-11-16): Bump software.amazon.awssdk:bom from 2.57.12 to 2.59.0 (@dependabot[bot])
-- **PR #20273** (2026-11-16): Bump com.azure:azure-sdk-bom from 1.3.9 to 1.3.10 (@dependabot[bot])
-- **PR #20272** (2026-11-16): Bump org.apache.fory:fory-json from 1.7.7 to 1.7.8 (@dependabot[bot])
-- **PR #20271** (2026-11-16): Bump org.apache.maven:maven-core from 3.10.0 to 3.10.1 (@dependabot[bot])
 
 ---
 
@@ -2331,53 +3039,54 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Kafka startup script race in schema registry tests
+## X. MSE literal folding regressions for INT values beyond the INT range, arrays and 
 
 **RULE**:
-When implementing operations in `pinot-integration-tests/src/test/java/org/apache/pinot/integration/tests/kafka/schemaregistry/SchemaRegistryStarter.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/pinot. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pinot-query-planner/src/main/java/org/apache/pinot/calcite/rel/rules/PinotEvaluateLiteralRule.java`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/pinot. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a9192dc3`: Kafka startup script race in schema registry tests. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f5641918`: MSE literal folding regressions for INT values beyond the INT range, arrays and timestamp casts. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `pinot-integration-tests/src/test/java/org/apache/pinot/integration/tests/kafka/schemaregistry/SchemaRegistryStarter.java`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `pinot-query-planner/src/main/java/org/apache/pinot/calcite/rel/rules/PinotEvaluateLiteralRule.java`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-import com.github.dockerjava.api.command.InspectContainerResponse;
-import org.testcontainers.images.builder.Transferable;
-      _kafkaContainer = new KafkaContainerWithStartupBarrier()
-
-  /// Waits for the startup script upload to complete before executing it. Used by a single fixture startup thread.
-  // Keep the existing ZooKeeper-based Confluent fixture while working around Testcontainers' startup race.
-  @SuppressWarnings("deprecation")
-  private static class KafkaContainerWithStartupBarrier extends KafkaContainer {
-    private static final String STARTUP_READY_FILE = "/tmp/pinot_kafka_startup_ready";
-
-    private KafkaContainerWithStartupBarrier() {
-      super(KAFKA_DOCKER_IMAGE_NAME);
-      withCommand("-c", "while [ ! -f " + STARTUP_READY_FILE
-          + " ]; do sleep 0.1; done; exec /tmp/testcontainers_start.sh");
+  private static final BigDecimal MIN_INT = BigDecimal.valueOf(Integer.MIN_VALUE);
+  private static final BigDecimal MAX_INT = BigDecimal.valueOf(Integer.MAX_VALUE);
     }
-
-    @Override
-    protected void containerIsStarting(InspectContainerResponse containerInfo) {
-      // The script becomes visible before Docker closes its write handle. Executing it then can fail with ETXTBSY.
-      super.containerIsStarting(containerInfo);
-      copyFileToContainer(Transferable.of(new byte[0]), STARTUP_READY_FILE);
+    widenIntArgumentTypes(operands, argumentTypes);
+    if (TransformFunctionType.isJsonExtractScalar(canonicalName) && numArguments > 3) {
+      argumentTypes[3] =
+          RexExpressionUtils.fromJsonExtractScalarDefaultLiteral((RexLiteral) operands.get(3)).getDataType();
+    ColumnDataType castTargetType = null;
+      castTargetType = RelToPlanNodeConverter.convertToColumnDataType(rexCall.getType());
+      arguments[0] = getCastValue(arguments[0], castTargetType);
+      arguments[1] = castTargetType.name();
     }
-  }
+    if (rexCall.getKind() == SqlKind.ARRAY_VALUE_CONSTRUCTOR) {
+      keepExactArrayElements(operands, arguments);
+  /// Makes the INT arguments of a call LONG if one of them is an integer literal beyond the INT range.
+  ///
+  /// This rule makes such a literal. Calcite gives INT arithmetic the type INTEGER, but Pinot evaluates it as LONG, so
+  /// the literal for `3600000 * 100000` has the type INTEGER and the value 360000000000. A call on that literal (for
+  /// example `NOW() - 3600000 * 100000`) m
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Induced defect failure mode:
-      _kafkaContainer = new KafkaContainer(KAFKA_DOCKER_IMAGE_NAME)
+      if (TransformFunctionType.isJsonExtractScalar(canonicalName) && i == 3) {
+        argumentTypes[i] = RexExpressionUtils.fromJsonExtractScalarDefaultLiteral((RexLiteral) rexNode).getDataType();
+      }
+    String castTargetType = null;
+      castTargetType = RelToPlanNodeConverter.convertToColumnDataType(rexCall.getType()).name();
+      arguments[1] = castTargetType;
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a9192dc3` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f5641918` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

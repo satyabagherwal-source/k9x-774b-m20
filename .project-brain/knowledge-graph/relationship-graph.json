@@ -2,25 +2,25 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-18T08:22:06.099Z",
+  "updated_at": "2026-11-18T08:53:20.092Z",
   "statistics": {
-    "total_nodes": 343,
-    "total_edges": 160,
+    "total_nodes": 347,
+    "total_edges": 161,
     "domain_distribution": {
       "D": 239,
       "M": 1,
-      "H": 46,
+      "H": 47,
       "J": 13,
-      "K": 17,
+      "K": 18,
       "L": 5,
       "G": 1,
-      "F": 15,
+      "F": 16,
       "B": 2,
       "E": 1,
-      "I": 3
+      "I": 4
     },
     "relation_distribution": {
-      "CONSTRAINED_BY_ARCHITECTURE": 159,
+      "CONSTRAINED_BY_ARCHITECTURE": 160,
       "VERIFIED_BY_TEST": 1
     }
   },
@@ -7676,6 +7676,86 @@
       ],
       "created_at": "2026-11-18T08:22:06.099Z",
       "updated_at": "2026-11-18T08:22:06.099Z"
+    },
+    "DOM-K-590BAEAB": {
+      "id": "DOM-K-590BAEAB",
+      "domain": "K",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Cross-Entropy Gradient Collapse on Shared Token Index 0 (BUG-T5-01)",
+      "summary": "Failure to remap `labels == pad_token_id` to PyTorch's default `ignore_index = -100` before the forward pass. -> Special tokens sharing index 0 require invariant remapping to non-negative target boundaries outside the vocabulary set (`-100`) before ente",
+      "confidence": 1,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-google-t5-t5-small/hf-google-t5-t5-small-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-18T08:51:39.581Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-google-t5-t5-small)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "K",
+        "Quality & Verification Intelligence"
+      ],
+      "created_at": "2026-11-18T08:52:06.585Z",
+      "updated_at": "2026-11-18T08:52:06.585Z"
+    },
+    "DOM-F-8389708E": {
+      "id": "DOM-F-8389708E",
+      "domain": "F",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Unbounded Read Mutation Churn and Recomposition Thrashing",
+      "summary": "`onVisiblePostsChanged` performed a set difference (`previousVisibleItems.keys - visiblePosts.keys`) and immediately invoked `markPostsAsRea -> High-frequency UI gestures must be isolated from persistence layers using bounded buffer channels or debouncing state machines.",
+      "confidence": 0.75,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://msasikanth-twine/msasikanth-twine-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-18T08:52:07.429Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (msasikanth-twine)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "F",
+        "Design Intelligence"
+      ],
+      "created_at": "2026-11-18T08:52:41.144Z",
+      "updated_at": "2026-11-18T08:52:41.144Z"
+    },
+    "DOM-H-CA56AD1F": {
+      "id": "DOM-H-CA56AD1F",
+      "domain": "H",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Coil Markdown Memory Cache Key Collision and Async Painter Leak",
+      "summary": "Unbounded memory allocation from `Size.ORIGINAL` and state listener thrash in `intrinsicSize()`. -> Remote inline content requires explicit image size caps and dedicated memory cache namespaces to prevent eviction of UI thumbnails.",
+      "confidence": 0.82,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://msasikanth-twine/msasikanth-twine-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-18T08:52:07.429Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (msasikanth-twine)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "H",
+        "Technical Construction Intelligence",
+        "I"
+      ],
+      "created_at": "2026-11-18T08:53:20.092Z",
+      "updated_at": "2026-11-18T08:53:20.092Z"
+    },
+    "NODE-I-domain-bridge-i": {
+      "id": "NODE-I-domain-bridge-i",
+      "domain": "I",
+      "type": "DOMAIN_CONCEPT_BRIDGE",
+      "title": "Domain I Concept Space",
+      "summary": "",
+      "confidence": 1,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {},
+      "tags": [],
+      "created_at": "2026-11-18T08:53:20.092Z",
+      "updated_at": "2026-11-18T08:53:20.092Z"
     }
   },
   "edges": [
@@ -9278,6 +9358,16 @@
       "evidenceProvenance": null,
       "rationale": "Cross-domain classification links DOM-D-C631C795 [D] with Domain M",
       "created_at": "2026-11-18T07:39:47.187Z"
+    },
+    {
+      "id": "EDGE-74FFB04BF34D",
+      "sourceId": "DOM-H-CA56AD1F",
+      "targetId": "NODE-I-domain-bridge-i",
+      "relationType": "CONSTRAINED_BY_ARCHITECTURE",
+      "weight": 0.9,
+      "evidenceProvenance": null,
+      "rationale": "Cross-domain classification links DOM-H-CA56AD1F [H] with Domain I",
+      "created_at": "2026-11-18T08:53:20.092Z"
     }
   ]
 }

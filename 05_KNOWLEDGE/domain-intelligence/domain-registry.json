@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-18T08:41:55.479Z",
-  "total_records": 1804,
+  "last_updated": "2026-11-18T08:53:21.809Z",
+  "total_records": 1811,
   "domains": {
     "A": {
       "total": 11,
@@ -834,7 +834,7 @@
       ]
     },
     "F": {
-      "total": 53,
+      "total": 56,
       "record_ids": [
         "DOM-F-C060CCE1",
         "DOM-F-83D565C2",
@@ -888,7 +888,10 @@
         "domain_intelligence-design-intelligence-baai-bge-m3-core-invariants",
         "domain_intelligence-design-intelligence-hf-baai-bge-m3-learnings-core-invariants",
         "domain_intelligence-design-intelligence-qwen-qwen3-0-6b-core-invariants",
-        "domain_intelligence-design-intelligence-hf-qwen-qwen3-0-6b-learnings-core-invariants"
+        "domain_intelligence-design-intelligence-hf-qwen-qwen3-0-6b-learnings-core-invariants",
+        "domain_intelligence-design-intelligence-google-t5-t5-small-core-invariants",
+        "domain_intelligence-design-intelligence-hf-google-t5-t5-small-learnings-core-invariants",
+        "DOM-F-8389708E"
       ]
     },
     "G": {
@@ -1214,7 +1217,7 @@
       ]
     },
     "H": {
-      "total": 421,
+      "total": 424,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1636,7 +1639,10 @@
         "DOM-H-75FCE7B9",
         "domain_intelligence-technical-construction-intelligence-apache-shardingsphere-learnings-core-invaria",
         "DOM-H-2B4F8699",
-        "DOM-H-7DF498D3"
+        "DOM-H-7DF498D3",
+        "domain_intelligence-technical-construction-intelligence-msasikanth-twine-core-invariants",
+        "DOM-H-CA56AD1F",
+        "domain_intelligence-technical-construction-intelligence-msasikanth-twine-learnings-core-invariants"
       ]
     },
     "I": {
@@ -1762,7 +1768,7 @@
       ]
     },
     "K": {
-      "total": 82,
+      "total": 83,
       "record_ids": [
         "DOM-K-353B93D6",
         "DOM-K-76C43650",
@@ -1845,7 +1851,8 @@
         "domain_intelligence-quality-verification-intelligence-kotest-kotest-learnings-core-invariants",
         "domain_intelligence-quality-verification-intelligence-shifthackz-sdai-kmp-learnings-core-invariants",
         "domain_intelligence-quality-verification-intelligence-etcd-io-etcd-core-invariants",
-        "domain_intelligence-quality-verification-intelligence-etcd-io-etcd-learnings-core-invariants"
+        "domain_intelligence-quality-verification-intelligence-etcd-io-etcd-learnings-core-invariants",
+        "DOM-K-590BAEAB"
       ]
     },
     "L": {
@@ -16599,8 +16606,8 @@
       "title": "Content & Information Intelligence: apache/pinot Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-apache-pinot-content-information-intelligence-apache-pinot-core-invariants.md",
       "repository": "apache/pinot",
-      "content_hash": "21e6a330e2a5c058f529fdc8a057bb4e0fa3f6d5edd07355bb42dc9351aaa764",
-      "created_at": "2026-11-17T10:11:10.096Z"
+      "content_hash": "996d5445fa82136b5d9130990f04959eabf0f205de0236e73e624f69d1d44e76",
+      "created_at": "2026-11-18T08:50:44.464Z"
     },
     "domain_intelligence-architecture-intelligence-astral-sh-uv-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-astral-sh-uv-learnings-core-invariants",
@@ -26728,8 +26735,8 @@
       "title": "Content & Information Intelligence: apache-pinot-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-apache-pinot-learnings-content-information-intelligence-apache-pinot-learnings-c.md",
       "repository": "apache-pinot-learnings",
-      "content_hash": "5d43d428c00abdcc2f1c3ff736397172a51de56b174d91a21ba2d7e8a6e244dd",
-      "created_at": "2026-11-17T10:11:14.807Z"
+      "content_hash": "0585ffe1685b7ff8f70fe46720ed8d372718403013e39dc2395f4d9c42a993f0",
+      "created_at": "2026-11-18T08:53:21.809Z"
     },
     "domain_intelligence-research-knowledge-intelligence-speridlabs-idol-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-speridlabs-idol-core-invariants",
@@ -30265,6 +30272,152 @@
       "repository": "hf-qwen-qwen3-0.6b-learnings",
       "content_hash": "4223fba40f0c0dda209ed79beaa25328d222d992f866c192704f0a253b71ff33",
       "created_at": "2026-11-18T08:22:06.777Z"
+    },
+    "domain_intelligence-design-intelligence-google-t5-t5-small-core-invariants": {
+      "record_id": "domain_intelligence-design-intelligence-google-t5-t5-small-core-invariants",
+      "domain_letter": "F",
+      "title": "Design Intelligence: google-t5/t5-small Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-hf-google-t5-t5-small-design-intelligence-google-t5-t5-small-core-invariants.md",
+      "repository": "google-t5/t5-small",
+      "content_hash": "3bab109a78afa98b0cc758cad1507975b536532b08deb72930f4eb319a2d6c5f",
+      "created_at": "2026-11-18T08:51:35.435Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-msasikanth-twine-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-msasikanth-twine-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: msasikanth/twine Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-msasikanth-twine-technical-construction-intelligence-msasikanth-twine-core-invar.md",
+      "repository": "msasikanth/twine",
+      "content_hash": "3e4e9fc03f55fa47de32293e93faf90455ab4750270c57b207816b8edc1a6181",
+      "created_at": "2026-11-18T08:51:36.549Z"
+    },
+    "DOM-K-590BAEAB": {
+      "record_id": "DOM-K-590BAEAB",
+      "domain_letter": "K",
+      "domain_id": "quality_verification",
+      "domain_name": "Quality & Verification Intelligence",
+      "secondary_domains": [],
+      "title": "Cross-Entropy Gradient Collapse on Shared Token Index 0 (BUG-T5-01)",
+      "content": "Special tokens sharing index 0 require invariant remapping to non-negative target boundaries outside the vocabulary set (`-100`) before entering the cross-entropy computation layer.",
+      "content_hash": "bb60537ee2122c8b4b32574c86270e364e7298571aacb354d52e70fe0824f067",
+      "summary": "Failure to remap `labels == pad_token_id` to PyTorch's default `ignore_index = -100` before the forward pass. -> Special tokens sharing index 0 require invariant remapping to non-negative target boundaries outside the vocabulary set (`-100`) before ente",
+      "provenance": {
+        "source_uri": "project://hf-google-t5-t5-small/hf-google-t5-t5-small-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-18T08:51:39.581Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-google-t5-t5-small)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "`config.json` explicitly specifies:"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 1,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-18T08:52:06.565Z"
+    },
+    "domain_intelligence-design-intelligence-hf-google-t5-t5-small-learnings-core-invariants": {
+      "record_id": "domain_intelligence-design-intelligence-hf-google-t5-t5-small-learnings-core-invariants",
+      "domain_letter": "F",
+      "title": "Design Intelligence: hf-google-t5-t5-small-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-hf-google-t5-t5-small-learnings-design-intelligence-hf-google-t5-t5-small-learni.md",
+      "repository": "hf-google-t5-t5-small-learnings",
+      "content_hash": "aa868457e6e2ccf1e4d6f2843da894736b0afe9a6e655a81a12470d46f5cea40",
+      "created_at": "2026-11-18T08:52:07.125Z"
+    },
+    "DOM-F-8389708E": {
+      "record_id": "DOM-F-8389708E",
+      "domain_letter": "F",
+      "domain_id": "design",
+      "domain_name": "Design Intelligence",
+      "secondary_domains": [],
+      "title": "Unbounded Read Mutation Churn and Recomposition Thrashing",
+      "content": "High-frequency UI gestures must be isolated from persistence layers using bounded buffer channels or debouncing state machines.",
+      "content_hash": "3cb31341f42e59d76a5469e4051cb304003575a1845081de8d5034921104aea3",
+      "summary": "`onVisiblePostsChanged` performed a set difference (`previousVisibleItems.keys - visiblePosts.keys`) and immediately invoked `markPostsAsRea -> High-frequency UI gestures must be isolated from persistence layers using bounded buffer channels or debouncing state machines.",
+      "provenance": {
+        "source_uri": "project://msasikanth-twine/msasikanth-twine-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-18T08:52:07.429Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (msasikanth-twine)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Commit `50bc6d7a`, Issue `#1991`."
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-18T08:52:41.126Z"
+    },
+    "DOM-H-CA56AD1F": {
+      "record_id": "DOM-H-CA56AD1F",
+      "domain_letter": "H",
+      "domain_id": "technical_construction",
+      "domain_name": "Technical Construction Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "I",
+          "id": "content_information",
+          "name": "Content & Information Intelligence"
+        }
+      ],
+      "title": "Coil Markdown Memory Cache Key Collision and Async Painter Leak",
+      "content": "Remote inline content requires explicit image size caps and dedicated memory cache namespaces to prevent eviction of UI thumbnails.",
+      "content_hash": "828d82872a1a7da6366d4586de5e162c79703406a1fe1f6707fd2bf241be2f47",
+      "summary": "Unbounded memory allocation from `Size.ORIGINAL` and state listener thrash in `intrinsicSize()`. -> Remote inline content requires explicit image size caps and dedicated memory cache namespaces to prevent eviction of UI thumbnails.",
+      "provenance": {
+        "source_uri": "project://msasikanth-twine/msasikanth-twine-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-18T08:52:07.429Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (msasikanth-twine)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Commit `50bc6d7a`."
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "I"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.82,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-18T08:53:20.075Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-msasikanth-twine-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-msasikanth-twine-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: msasikanth-twine-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-msasikanth-twine-learnings-technical-construction-intelligence-msasikanth-twine-.md",
+      "repository": "msasikanth-twine-learnings",
+      "content_hash": "79fc2895bec3e4fbb7d2479913f0f8d920fecb33e3820e8d1a88d4fb9da7524f",
+      "created_at": "2026-11-18T08:53:20.868Z"
     }
   }
 }

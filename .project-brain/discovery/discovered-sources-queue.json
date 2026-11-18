@@ -2,16 +2,16 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-18T07:56:37.901Z",
+  "updated_at": "2026-11-18T08:53:20.159Z",
   "stats": {
-    "total_discovered": 5392,
-    "approved_pending_harvest": 5090,
+    "total_discovered": 5393,
+    "approved_pending_harvest": 5091,
     "harvested_count": 0,
     "rejected_count": 302,
     "category_distribution": {
       "COMMUNITY_AND_EXPERT": 5072,
       "OFFICIAL_DOCUMENTATION": 176,
-      "STANDARDS_AND_SPECIFICATIONS": 108,
+      "STANDARDS_AND_SPECIFICATIONS": 109,
       "ENGINEERING_BLOGS": 4,
       "SECURITY_ADVISORIES": 24,
       "LEGAL_AND_REGULATORY": 2,
@@ -116531,6 +116531,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/microsoft-react-native-windows-learnings.md",
         "fileName": "microsoft-react-native-windows-learnings.md"
+      }
+    },
+    "SRC-BE0B3EB7F748": {
+      "id": "SRC-BE0B3EB7F748",
+      "url": "https://www.rfc-editor.org/rfc/rfc4287",
+      "title": "IETF RFC 4287",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "STANDARDS_AND_SPECIFICATIONS",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.98,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T08:53:20.159Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/msasikanth-twine-learnings.md",
+        "fileName": "msasikanth-twine-learnings.md"
       }
     }
   }

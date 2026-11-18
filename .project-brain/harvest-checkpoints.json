@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-18T08:41:50.682Z",
+  "last_updated": "2026-11-18T08:51:35.977Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -965,14 +965,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-google-t5-t5-small",
-      "content_hash": "da3282fae4b163e86cce4ffecee66fb870984d625505162de2c0bc37ff9dcbe5",
-      "verified_at": "2026-11-13T21:50:21.315Z",
+      "content_hash": "2a34ef3cf0c79795dc42ce6297a5d7ea2655d2d5e1aa05840aec44836ef836a1",
+      "verified_at": "2026-11-18T08:51:35.088Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T21:50:21.315Z"
+      "last_updated": "2026-11-18T08:51:35.088Z"
     },
     "maxrave-dev/kotlin-footguns": {
       "repository": "maxrave-dev/kotlin-footguns",
@@ -11526,14 +11526,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-msasikanth-twine",
-      "content_hash": "d94b7d64276a6db563b26697af250ebefe477a5faa96688813de9223e258a9c7",
-      "verified_at": "2026-11-11T18:28:49.930Z",
+      "content_hash": "cd707b53e4ae23530f9bf0b837ad8806a7b5c586307947914b487924933396f6",
+      "verified_at": "2026-11-18T08:51:35.976Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-11T18:28:49.930Z"
+      "last_updated": "2026-11-18T08:51:35.976Z"
     },
     "facebook/folly": {
       "repository": "facebook/folly",
@@ -18006,14 +18006,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-apache-pinot",
-      "content_hash": "48263a6dd89c0f2b747b976764daf9a3826bed5057073def9c34bc5656109612",
-      "verified_at": "2026-11-17T10:11:09.737Z",
+      "content_hash": "0d401d41d0dd82faba6bb2f4b901851f42181b96f75b91e7cfa56fc2e6842ea7",
+      "verified_at": "2026-11-18T08:50:44.131Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T10:11:09.737Z"
+      "last_updated": "2026-11-18T08:50:44.131Z"
     },
     "N1nEmAn/sapper-v2": {
       "repository": "N1nEmAn/sapper-v2",

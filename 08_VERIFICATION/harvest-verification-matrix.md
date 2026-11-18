@@ -10893,3 +10893,9 @@
 | `CYCLE-20261118-R9OB` | `2026-11-18T08:21:35.291Z` | `StarRocks/starrocks` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule 9176` | Yes (`8a95280c...`) |
 | `CYCLE-2026-11-18-PROJ-EVOLVE` | `2026-11-18T08:22:06.101Z` | `hf-qwen-qwen3-0.6b` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-J-3AB0ED35` [Domain J] | Yes (`2ee3bd10...`) |
 | `CYCLE-20261118-HBGS` | `2026-11-18T08:41:50.668Z` | `nvidia/NVIDIA-NemotronLabs-RE-USE` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotronlabs-re-use-learnings.md` | Yes (`b8c020b3...`) |
+| `CYCLE-20261118-SR2V` | `2026-11-18T08:50:44.119Z` | `apache/pinot` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9177` | Yes (`0d401d41...`) |
+| `CYCLE-20261118-TUEC` | `2026-11-18T08:51:35.076Z` | `google-t5/t5-small` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9178, Rule 9180` | Yes (`2a34ef3c...`) |
+| `CYCLE-20261118-TV30` | `2026-11-18T08:51:35.964Z` | `msasikanth/twine` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9179, Rule 9181, Rule 9182` | Yes (`cd707b53...`) |
+| `CYCLE-2026-11-18-PROJ-EVOLVE` | `2026-11-18T08:52:06.587Z` | `hf-google-t5-t5-small` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-K-590BAEAB` [Domain K] | Yes (`bb60537e...`) |
+| `CYCLE-2026-11-18-PROJ-EVOLVE` | `2026-11-18T08:52:41.146Z` | `msasikanth-twine` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-F-8389708E` [Domain F] | Yes (`3cb31341...`) |
+| `CYCLE-2026-11-18-PROJ-EVOLVE` | `2026-11-18T08:53:20.094Z` | `msasikanth-twine` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-CA56AD1F` [Domain H] | Yes (`828d8287...`) |

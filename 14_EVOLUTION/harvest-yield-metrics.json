@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T08:41:50.678Z",
-  "total_cycles_completed": 10425,
-  "total_learnings_persisted": 10425,
-  "total_rules_promoted": 9932,
+  "last_updated": "2026-11-18T08:51:35.973Z",
+  "total_cycles_completed": 10428,
+  "total_learnings_persisted": 10428,
+  "total_rules_promoted": 9938,
   "history": [
-    {
-      "timestamp": "2026-11-17T19:04:52.037Z",
-      "repository": "agent-of-empires/agent-of-empires",
-      "learningId": "learn-github-agent-of-empires-agent-of-empires",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T19:12:16.975Z",
-      "repository": "nvidia/NVIDIA-Nemotron-3.5-Bolt-E4B-4GB",
-      "learningId": "learn-huggingface-nvidia-nvidia-nemotron-3-5-bolt-e4b-4gb",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T19:12:32.191Z",
-      "repository": "langchain4j/langchain4j",
-      "learningId": "learn-github-langchain4j-langchain4j",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-17T19:19:33.146Z",
       "repository": "FastVideo/FastH3-Omni-Comfy",
@@ -1403,6 +1382,27 @@
       "repository": "nvidia/NVIDIA-NemotronLabs-RE-USE",
       "learningId": "learn-huggingface-nvidia-nvidia-nemotronlabs-re-use",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T08:50:44.128Z",
+      "repository": "apache/pinot",
+      "learningId": "learn-github-apache-pinot",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T08:51:35.085Z",
+      "repository": "google-t5/t5-small",
+      "learningId": "learn-huggingface-google-t5-t5-small",
+      "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T08:51:35.973Z",
+      "repository": "msasikanth/twine",
+      "learningId": "learn-github-msasikanth-twine",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

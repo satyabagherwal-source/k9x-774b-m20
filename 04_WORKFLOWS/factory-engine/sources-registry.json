@@ -39,8 +39,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-18T08:41:53.555Z",
-    "lastVerified": "2026-11-18T08:41:53.555Z",
+    "lastChecked": "2026-11-18T08:51:39.458Z",
+    "lastVerified": "2026-11-18T08:51:39.458Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -472,8 +472,8 @@
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-18T07:56:30.074Z",
-    "lastVerified": "2026-11-18T07:56:30.074Z",
+    "lastChecked": "2026-11-18T08:50:33.471Z",
+    "lastVerified": "2026-11-18T08:50:33.471Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -1941,12 +1941,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "sigstore-cosign": {
-    "name": "sigstore/cosign",
+    "name": "cosign",
     "officialUrl": "https://github.com/sigstore/cosign",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-18T04:20:52.726Z",
-    "lastVerified": "2026-11-18T04:20:52.726Z",
+    "lastChecked": "2026-11-18T08:50:28.506Z",
+    "lastVerified": "2026-11-18T08:50:28.506Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-sigstore-cosign",
@@ -1955,7 +1955,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "0743bfcf"
   },
   "alibaba-zvec": {
     "name": "zvec",
@@ -3740,9 +3741,9 @@
   "sigoden-aichat": {
     "name": "aichat",
     "officialUrl": "https://github.com/sigoden/aichat",
-    "lastChecked": "2026-11-17T03:26:03.492Z",
+    "lastChecked": "2026-11-18T08:50:18.458Z",
     "revisionIdentifier": "82976d34",
-    "lastVerified": "2026-11-17T03:26:03.492Z"
+    "lastVerified": "2026-11-18T08:50:18.458Z"
   },
   "hf-cloudflare-clef": {
     "name": "Cloudflare/clef",
@@ -4258,13 +4259,13 @@
     "officialUrl": "https://huggingface.co/google-t5/t5-small",
     "sourceType": "hugging face",
     "technology": "ai-model",
-    "lastChecked": "2026-11-13T21:45:05.463Z",
-    "lastVerified": "2026-11-13T21:45:05.463Z",
+    "lastChecked": "2026-11-18T08:50:21.279Z",
+    "lastVerified": "2026-11-18T08:50:21.279Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-huggingface-google-t5-t5-small",
-    "contentHash": "da3282fae4b163e86cce4ffecee66fb870984d625505162de2c0bc37ff9dcbe5",
-    "promotedRulesCount": 0,
+    "contentHash": "2a34ef3cf0c79795dc42ce6297a5d7ea2655d2d5e1aa05840aec44836ef836a1",
+    "promotedRulesCount": 2,
     "recentFixesCount": 0,
     "closedIssuesCount": 0,
     "verificationMethod": "public-api-audit",
@@ -6275,12 +6276,12 @@
     "lastVerified": "2026-11-18T00:43:29.500Z"
   },
   "diggerhq-digger": {
-    "name": "diggerhq/digger",
+    "name": "digger",
     "officialUrl": "https://github.com/diggerhq/digger",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-17T12:24:55.789Z",
-    "lastVerified": "2026-11-17T12:24:55.789Z",
+    "lastChecked": "2026-11-18T08:50:25.994Z",
+    "lastVerified": "2026-11-18T08:50:25.994Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-diggerhq-digger",
@@ -6289,7 +6290,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "3dc1c51e"
   },
   "arangodb-arangodb": {
     "name": "arangodb/arangodb",
@@ -8840,22 +8842,21 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "msasikanth-twine": {
-    "name": "twine",
+    "name": "msasikanth/twine",
     "officialUrl": "https://github.com/msasikanth/twine",
     "sourceType": "github",
     "technology": "Kotlin",
-    "lastChecked": "2026-11-15T06:18:12.367Z",
-    "lastVerified": "2026-11-15T06:18:12.367Z",
+    "lastChecked": "2026-11-18T08:50:28.516Z",
+    "lastVerified": "2026-11-18T08:50:28.516Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-msasikanth-twine",
-    "contentHash": "d94b7d64276a6db563b26697af250ebefe477a5faa96688813de9223e258a9c7",
-    "promotedRulesCount": 1,
-    "recentFixesCount": 0,
+    "contentHash": "cd707b53e4ae23530f9bf0b837ad8806a7b5c586307947914b487924933396f6",
+    "promotedRulesCount": 3,
+    "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT",
-    "revisionIdentifier": "15d06cbe"
+    "compliance": "FREE_TIER_COMPLIANT"
   },
   "zed-industries-zed": {
     "name": "zed-industries/zed",
@@ -14520,14 +14521,14 @@
     "officialUrl": "https://github.com/apache/pinot",
     "sourceType": "github",
     "technology": "Java",
-    "lastChecked": "2026-11-17T10:11:08.745Z",
-    "lastVerified": "2026-11-17T10:11:08.745Z",
+    "lastChecked": "2026-11-18T08:50:37.597Z",
+    "lastVerified": "2026-11-18T08:50:37.597Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-apache-pinot",
-    "contentHash": "48263a6dd89c0f2b747b976764daf9a3826bed5057073def9c34bc5656109612",
+    "contentHash": "0d401d41d0dd82faba6bb2f4b901851f42181b96f75b91e7cfa56fc2e6842ea7",
     "promotedRulesCount": 1,
-    "recentFixesCount": 7,
+    "recentFixesCount": 4,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"

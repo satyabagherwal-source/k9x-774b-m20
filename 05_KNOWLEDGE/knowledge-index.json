@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-18T08:41:55.622Z",
-  "total_verified_learnings": 8995,
+  "last_updated": "2026-11-18T08:53:21.964Z",
+  "total_verified_learnings": 8996,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 21076,
+  "total_items": 21099,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -217092,16 +217092,27 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/google-t5/t5-small",
       "source_version": "hf-google-t5-t5-small",
-      "content_hash": "da3282fae4b163e86cce4ffecee66fb870984d625505162de2c0bc37ff9dcbe5",
+      "content_hash": "2a34ef3cf0c79795dc42ce6297a5d7ea2655d2d5e1aa05840aec44836ef836a1",
       "dossier_path": "07_PROJECT_LEARNING/hf-google-t5-t5-small-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-google-t5-t5-small-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 9178,
+          "title": "Dual-Identity Token Index Disambiguation",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9180,
+          "title": "Relative Position Logarithmic Bucket Boundary Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-13T21:50:21.159Z",
+      "verified_at": "2026-11-18T08:51:34.885Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -232751,8 +232762,8 @@
       "slug": "apache-pinot",
       "platform": "github",
       "source_url": "https://github.com/apache/pinot",
-      "source_version": "5edf0f12",
-      "content_hash": "48263a6dd89c0f2b747b976764daf9a3826bed5057073def9c34bc5656109612",
+      "source_version": "05c81927",
+      "content_hash": "0d401d41d0dd82faba6bb2f4b901851f42181b96f75b91e7cfa56fc2e6842ea7",
       "dossier_path": "07_PROJECT_LEARNING/apache-pinot-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/apache-pinot-learnings.md",
       "promoted_rules": [
@@ -232765,6 +232776,11 @@
           "number": 8951,
           "title": "Kafka startup script race in schema registry tests",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9177,
+          "title": "MSE literal folding regressions for INT values beyond the INT range, arrays and",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -232772,7 +232788,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T10:11:09.521Z",
+      "verified_at": "2026-11-18T08:50:43.923Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -232814,10 +232830,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-apache-pinot-content-information-intelligence-apache-pinot-core-invariants.md",
       "title": "Content & Information Intelligence: apache/pinot Core Invariants",
       "repository": "apache/pinot",
-      "source_version": "5edf0f12",
-      "content_hash": "21e6a330e2a5c058f529fdc8a057bb4e0fa3f6d5edd07355bb42dc9351aaa764",
+      "source_version": "05c81927",
+      "content_hash": "996d5445fa82136b5d9130990f04959eabf0f205de0236e73e624f69d1d44e76",
       "domain_letter": "I",
-      "persisted_at": "2026-11-17T10:11:10.096Z"
+      "persisted_at": "2026-11-18T08:50:44.464Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-apache-pinot": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-apache-pinot",
@@ -232826,10 +232842,10 @@
       "relative_path": "08_VERIFICATION/apache-pinot-verification-protocol-empirical-defect-shield-for-apache-pinot.md",
       "title": "Verification Protocol: Empirical Defect Shield for apache/pinot",
       "repository": "apache/pinot",
-      "source_version": "5edf0f12",
-      "content_hash": "3ae4b0436dd21518efd68e37ad0a60586be9409e079597cec5a6e58266ea381a",
+      "source_version": "05c81927",
+      "content_hash": "40b38bafe548bf440da4c8e7af70807bd1ff0c80d0cc1bec1ee4260a0c91614c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T10:11:10.233Z"
+      "persisted_at": "2026-11-18T08:50:44.605Z"
     },
     "domain_intelligence-architecture-intelligence-astral-sh-uv-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-astral-sh-uv-learnings-core-invariants",
@@ -269769,9 +269785,9 @@
       "title": "Content & Information Intelligence: apache-pinot-learnings Core Invariants",
       "repository": "apache-pinot-learnings",
       "source_version": "HEAD",
-      "content_hash": "5d43d428c00abdcc2f1c3ff736397172a51de56b174d91a21ba2d7e8a6e244dd",
+      "content_hash": "0585ffe1685b7ff8f70fe46720ed8d372718403013e39dc2395f4d9c42a993f0",
       "domain_letter": "I",
-      "persisted_at": "2026-11-17T10:11:14.807Z"
+      "persisted_at": "2026-11-18T08:53:21.809Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-apache-pinot-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-apache-pinot-learnings",
@@ -269781,9 +269797,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for apache-pinot-learnings",
       "repository": "apache-pinot-learnings",
       "source_version": "HEAD",
-      "content_hash": "7765cd097c49fb7380ec9a5426950b39af07ef82f0f932c24087e453e83332a1",
+      "content_hash": "ff487c314fb3419d524dc85a870942b11c691b4fe3a6cedd867feb852c95c948",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T10:11:14.948Z"
+      "persisted_at": "2026-11-18T08:53:21.964Z"
     },
     "learn-huggingface-speridlabs-idol": {
       "learning_id": "learn-huggingface-speridlabs-idol",
@@ -284143,6 +284159,325 @@
       "content_hash": "b024e3493e612b2332137169bc3f7feeecf55798fd290e06aa53807b895c5322",
       "domain_letter": "K",
       "persisted_at": "2026-11-18T08:22:06.926Z"
+    },
+    "rule-9177": {
+      "learning_id": "rule-9177",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9177,
+      "title": "MSE literal folding regressions for INT values beyond the INT range, arrays and",
+      "source_url": "https://github.com/apache/pinot",
+      "source_version": "05c81927",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-18T08:50:43.923Z"
+    },
+    "candidate_directive-mse-literal-folding-regressions-for-int-values-beyond-the-int-range-arrays-and": {
+      "item_id": "candidate_directive-mse-literal-folding-regressions-for-int-values-beyond-the-int-range-arrays-and",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-W4MG-mse-literal-folding-regressions-for-int-values-beyond-the-int-range-arrays-and.md",
+      "title": "MSE literal folding regressions for INT values beyond the INT range, arrays and",
+      "repository": "apache-pinot-learnings",
+      "source_version": "HEAD",
+      "content_hash": "2571e07dfd5cf6f5afaec2c00233c532905e4154fc34ad56bbacbfcab568361c",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-18T08:53:21.656Z"
+    },
+    "rule-9178": {
+      "learning_id": "rule-9178",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9178,
+      "title": "Dual-Identity Token Index Disambiguation",
+      "source_url": "https://huggingface.co/google-t5/t5-small",
+      "source_version": "hf-google-t5-t5-small",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-18T08:51:34.885Z"
+    },
+    "rule-9180": {
+      "learning_id": "rule-9180",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9180,
+      "title": "Relative Position Logarithmic Bucket Boundary Invariant",
+      "source_url": "https://huggingface.co/google-t5/t5-small",
+      "source_version": "hf-google-t5-t5-small",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-18T08:51:34.885Z"
+    },
+    "domain_intelligence-design-intelligence-google-t5-t5-small-core-invariants": {
+      "item_id": "domain_intelligence-design-intelligence-google-t5-t5-small-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-hf-google-t5-t5-small-design-intelligence-google-t5-t5-small-core-invariants.md",
+      "title": "Design Intelligence: google-t5/t5-small Core Invariants",
+      "repository": "google-t5/t5-small",
+      "source_version": "hf-google-t5-t5-small",
+      "content_hash": "3bab109a78afa98b0cc758cad1507975b536532b08deb72930f4eb319a2d6c5f",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-18T08:51:35.435Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-google-t5-t5-small": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-google-t5-t5-small",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/hf-google-t5-t5-small-verification-protocol-empirical-defect-shield-for-google-t.md",
+      "title": "Verification Protocol: Empirical Defect Shield for google-t5/t5-small",
+      "repository": "google-t5/t5-small",
+      "source_version": "hf-google-t5-t5-small",
+      "content_hash": "c953fd4299018199fcac9ae74d99c88e577abcd31a9be05ad68edc77aae6f2e6",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-18T08:51:35.582Z"
+    },
+    "learn-github-msasikanth-twine": {
+      "learning_id": "learn-github-msasikanth-twine",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "msasikanth/twine",
+      "repository": "msasikanth/twine",
+      "slug": "msasikanth-twine",
+      "platform": "github",
+      "source_url": "https://github.com/msasikanth/twine",
+      "source_version": "a741d94b",
+      "content_hash": "cd707b53e4ae23530f9bf0b837ad8806a7b5c586307947914b487924933396f6",
+      "dossier_path": "07_PROJECT_LEARNING/msasikanth-twine-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/msasikanth-twine-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 9179,
+          "title": "Viewport-Driven Mutation Coalescing Rule",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9181,
+          "title": "Downscaled Proxy RenderEffect Layout Rule",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9182,
+          "title": "XML Content Sniffing and XHTML Tree Extraction Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-18T08:51:35.785Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-9179": {
+      "learning_id": "rule-9179",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9179,
+      "title": "Viewport-Driven Mutation Coalescing Rule",
+      "source_url": "https://github.com/msasikanth/twine",
+      "source_version": "a741d94b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-18T08:51:35.785Z"
+    },
+    "rule-9181": {
+      "learning_id": "rule-9181",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9181,
+      "title": "Downscaled Proxy RenderEffect Layout Rule",
+      "source_url": "https://github.com/msasikanth/twine",
+      "source_version": "a741d94b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-18T08:51:35.785Z"
+    },
+    "rule-9182": {
+      "learning_id": "rule-9182",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9182,
+      "title": "XML Content Sniffing and XHTML Tree Extraction Invariant",
+      "source_url": "https://github.com/msasikanth/twine",
+      "source_version": "a741d94b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-18T08:51:35.785Z"
+    },
+    "candidate_directive-viewport-driven-mutation-coalescing-rule": {
+      "item_id": "candidate_directive-viewport-driven-mutation-coalescing-rule",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-W3N9-viewport-driven-mutation-coalescing-rule.md",
+      "title": "Viewport-Driven Mutation Coalescing Rule",
+      "repository": "msasikanth-twine-learnings",
+      "source_version": "HEAD",
+      "content_hash": "fafb46cda17a8e873a64c4693fc67e600f22ec4f9f5f56c7f0521c08c24a80e7",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-18T08:53:20.374Z"
+    },
+    "candidate_directive-downscaled-proxy-rendereffect-layout-rule": {
+      "item_id": "candidate_directive-downscaled-proxy-rendereffect-layout-rule",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-W3NA-downscaled-proxy-rendereffect-layout-rule.md",
+      "title": "Downscaled Proxy RenderEffect Layout Rule",
+      "repository": "msasikanth-twine-learnings",
+      "source_version": "HEAD",
+      "content_hash": "2b0f68a7dfb396c18383bf557bc732a4362687926470d747875ccf3ffb9c0cfd",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-18T08:53:20.547Z"
+    },
+    "candidate_directive-xml-content-sniffing-and-xhtml-tree-extraction-invariant": {
+      "item_id": "candidate_directive-xml-content-sniffing-and-xhtml-tree-extraction-invariant",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-W3NA-xml-content-sniffing-and-xhtml-tree-extraction-invariant.md",
+      "title": "XML Content Sniffing and XHTML Tree Extraction Invariant",
+      "repository": "msasikanth-twine-learnings",
+      "source_version": "HEAD",
+      "content_hash": "5f353745a15de949940b680272e85911491c05b08ada395263e1870795d0abd7",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-18T08:53:20.699Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-msasikanth-twine-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-msasikanth-twine-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-msasikanth-twine-technical-construction-intelligence-msasikanth-twine-core-invar.md",
+      "title": "Technical Construction Intelligence: msasikanth/twine Core Invariants",
+      "repository": "msasikanth/twine",
+      "source_version": "a741d94b",
+      "content_hash": "3e4e9fc03f55fa47de32293e93faf90455ab4750270c57b207816b8edc1a6181",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-18T08:51:36.549Z"
+    },
+    "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-msasikanth-twine": {
+      "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-msasikanth-twine",
+      "artifact_type": "architecture_decision",
+      "target_folder": "12_DECISIONS",
+      "relative_path": "12_DECISIONS/ADR-msasikanth-twine-adr-subsystem-boundary-modular-decoupling-in-msasikanth-twine.md",
+      "title": "ADR: Subsystem Boundary & Modular Decoupling in msasikanth/twine",
+      "repository": "msasikanth/twine",
+      "source_version": "a741d94b",
+      "content_hash": "c5750dc8ca237561567f74469264af158957d268054f0079db6127d696e9889f",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-18T08:51:36.684Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-msasikanth-twine": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-msasikanth-twine",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/msasikanth-twine-verification-protocol-empirical-defect-shield-for-msasikanth-tw.md",
+      "title": "Verification Protocol: Empirical Defect Shield for msasikanth/twine",
+      "repository": "msasikanth/twine",
+      "source_version": "a741d94b",
+      "content_hash": "8350753d3d1fbc907ff116ec5e3a7faccf847ba88450fd96d6063ffbfae80a73",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-18T08:51:36.803Z"
+    },
+    "candidate_directive-dual-identity-token-index-disambiguation": {
+      "item_id": "candidate_directive-dual-identity-token-index-disambiguation",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-UIVV-dual-identity-token-index-disambiguation.md",
+      "title": "Dual-Identity Token Index Disambiguation",
+      "repository": "hf-google-t5-t5-small-learnings",
+      "source_version": "HEAD",
+      "content_hash": "2f8197297eba47958486da93cec2f6c90be0f42ce07d6d4b15f2c3b65d18795e",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-18T08:52:06.813Z"
+    },
+    "candidate_directive-relative-position-logarithmic-bucket-boundary-invariant": {
+      "item_id": "candidate_directive-relative-position-logarithmic-bucket-boundary-invariant",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-UIVW-relative-position-logarithmic-bucket-boundary-invariant.md",
+      "title": "Relative Position Logarithmic Bucket Boundary Invariant",
+      "repository": "hf-google-t5-t5-small-learnings",
+      "source_version": "HEAD",
+      "content_hash": "33fd2f0ac0d6d1f6afcd0025854a376c3691d35bfbf1a1d5707ffb59fcd99e54",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-18T08:52:06.980Z"
+    },
+    "domain_intelligence-design-intelligence-hf-google-t5-t5-small-learnings-core-invariants": {
+      "item_id": "domain_intelligence-design-intelligence-hf-google-t5-t5-small-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-hf-google-t5-t5-small-learnings-design-intelligence-hf-google-t5-t5-small-learni.md",
+      "title": "Design Intelligence: hf-google-t5-t5-small-learnings Core Invariants",
+      "repository": "hf-google-t5-t5-small-learnings",
+      "source_version": "HEAD",
+      "content_hash": "aa868457e6e2ccf1e4d6f2843da894736b0afe9a6e655a81a12470d46f5cea40",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-18T08:52:07.125Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-hf-google-t5-t5-small-learning": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-hf-google-t5-t5-small-learning",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/hf-google-t5-t5-small-learnings-verification-protocol-empirical-defect-shield-fo.md",
+      "title": "Verification Protocol: Empirical Defect Shield for hf-google-t5-t5-small-learnings",
+      "repository": "hf-google-t5-t5-small-learnings",
+      "source_version": "HEAD",
+      "content_hash": "0c40e40be5aa7883553f82dc8eb9cb7c3b9af26ce4e0c01433826d845a213276",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-18T08:52:07.289Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-msasikanth-twine-learnings-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-msasikanth-twine-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-msasikanth-twine-learnings-technical-construction-intelligence-msasikanth-twine-.md",
+      "title": "Technical Construction Intelligence: msasikanth-twine-learnings Core Invariants",
+      "repository": "msasikanth-twine-learnings",
+      "source_version": "HEAD",
+      "content_hash": "79fc2895bec3e4fbb7d2479913f0f8d920fecb33e3820e8d1a88d4fb9da7524f",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-18T08:53:20.868Z"
+    },
+    "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-msasikanth-twine-learnings": {
+      "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-msasikanth-twine-learnings",
+      "artifact_type": "architecture_decision",
+      "target_folder": "12_DECISIONS",
+      "relative_path": "12_DECISIONS/ADR-msasikanth-twine-learnings-adr-subsystem-boundary-modular-decoupling-in-msasikan.md",
+      "title": "ADR: Subsystem Boundary & Modular Decoupling in msasikanth-twine-learnings",
+      "repository": "msasikanth-twine-learnings",
+      "source_version": "HEAD",
+      "content_hash": "a45eae4359b1872bc49800f490b1fa4ed26cf23b322701b1c53a419f889e6200",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-18T08:53:21.025Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-msasikanth-twine-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-msasikanth-twine-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/msasikanth-twine-learnings-verification-protocol-empirical-defect-shield-for-msa.md",
+      "title": "Verification Protocol: Empirical Defect Shield for msasikanth-twine-learnings",
+      "repository": "msasikanth-twine-learnings",
+      "source_version": "HEAD",
+      "content_hash": "afd835dad056073d1d5cbba64cba483bc83945489fc55123408ada2d4b0f1eb9",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-18T08:53:21.162Z"
     }
   },
   "ai-builder-brain": {

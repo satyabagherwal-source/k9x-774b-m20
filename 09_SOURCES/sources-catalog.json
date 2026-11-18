@@ -755,8 +755,8 @@
     "sourceUrl": "https://huggingface.co/google-t5/t5-small",
     "sourceVersion": "hf-google-t5-t5-small",
     "license": "Open-Source",
-    "contentHash": "da3282fae4b163e86cce4ffecee66fb870984d625505162de2c0bc37ff9dcbe5",
-    "lastHarvestedAt": "2026-11-13T21:50:21.308Z",
+    "contentHash": "2a34ef3cf0c79795dc42ce6297a5d7ea2655d2d5e1aa05840aec44836ef836a1",
+    "lastHarvestedAt": "2026-11-18T08:51:35.080Z",
     "learningId": "learn-huggingface-google-t5-t5-small"
   },
   "hf-comfy-org-minimax-h3": {
@@ -7653,10 +7653,10 @@
     "repository": "msasikanth/twine",
     "platform": "github",
     "sourceUrl": "https://github.com/msasikanth/twine",
-    "sourceVersion": "15d06cbe",
+    "sourceVersion": "a741d94b",
     "license": "GPL-3.0",
-    "contentHash": "d94b7d64276a6db563b26697af250ebefe477a5faa96688813de9223e258a9c7",
-    "lastHarvestedAt": "2026-11-11T18:28:49.921Z",
+    "contentHash": "cd707b53e4ae23530f9bf0b837ad8806a7b5c586307947914b487924933396f6",
+    "lastHarvestedAt": "2026-11-18T08:51:35.968Z",
     "learningId": "learn-github-msasikanth-twine"
   },
   "facebook-folly": {
@@ -11963,10 +11963,10 @@
     "repository": "apache/pinot",
     "platform": "github",
     "sourceUrl": "https://github.com/apache/pinot",
-    "sourceVersion": "5edf0f12",
+    "sourceVersion": "05c81927",
     "license": "Apache-2.0",
-    "contentHash": "48263a6dd89c0f2b747b976764daf9a3826bed5057073def9c34bc5656109612",
-    "lastHarvestedAt": "2026-11-17T10:11:09.728Z",
+    "contentHash": "0d401d41d0dd82faba6bb2f4b901851f42181b96f75b91e7cfa56fc2e6842ea7",
+    "lastHarvestedAt": "2026-11-18T08:50:44.123Z",
     "learningId": "learn-github-apache-pinot"
   },
   "n1neman-sapper-v2": {

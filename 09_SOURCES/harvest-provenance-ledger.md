@@ -10926,3 +10926,9 @@ Every entry in this ledger must capture:
 | `learn-github-starrocks-starrocks` | `https://github.com/StarRocks/starrocks` | `37e75d93` | Multi-dimensional audit evidence | 2026-11-18T08:21:35.295Z |
 | `learn-dom-j-3ab0ed35` | `project://hf-qwen-qwen3-0.6b` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-qwen-qwen3-0.6b-learnings.md` | 2026-11-18T08:22:06.101Z |
 | `learn-huggingface-nvidia-nvidia-nemotronlabs-re-use` | `https://huggingface.co/nvidia/NVIDIA-NemotronLabs-RE-USE` | `hf-nvidia-` | Multi-dimensional audit evidence | 2026-11-18T08:41:50.671Z |
+| `learn-github-apache-pinot` | `https://github.com/apache/pinot` | `05c81927` | Multi-dimensional audit evidence | 2026-11-18T08:50:44.123Z |
+| `learn-huggingface-google-t5-t5-small` | `https://huggingface.co/google-t5/t5-small` | `hf-google-` | Multi-dimensional audit evidence | 2026-11-18T08:51:35.080Z |
+| `learn-github-msasikanth-twine` | `https://github.com/msasikanth/twine` | `a741d94b` | Multi-dimensional audit evidence | 2026-11-18T08:51:35.968Z |
+| `learn-dom-k-590baeab` | `project://hf-google-t5-t5-small` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-google-t5-t5-small-learnings.md` | 2026-11-18T08:52:06.587Z |
+| `learn-dom-f-8389708e` | `project://msasikanth-twine` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/msasikanth-twine-learnings.md` | 2026-11-18T08:52:41.146Z |
+| `learn-dom-h-ca56ad1f` | `project://msasikanth-twine` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/msasikanth-twine-learnings.md` | 2026-11-18T08:53:20.094Z |
