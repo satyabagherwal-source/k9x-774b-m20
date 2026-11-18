@@ -305,8 +305,8 @@
     "sourceUrl": "https://huggingface.co/XingChen-AGI/TeleOCR",
     "sourceVersion": "hf-xingchen-agi-teleocr",
     "license": "Open-Source",
-    "contentHash": "f2b1ff8ab0b6f333c48ed67bf043d9100ff9a360425690ff1e52b60bfede0044",
-    "lastHarvestedAt": "2026-11-13T13:02:24.669Z",
+    "contentHash": "e80710b4dbdb9f76cd1d866971c00a59f4bb366c546424250280fdc9d4786529",
+    "lastHarvestedAt": "2026-11-18T00:07:46.264Z",
     "learningId": "learn-huggingface-xingchen-agi-teleocr"
   },
   "hf-qwen-qwen-image-2.1": {
@@ -2123,10 +2123,10 @@
     "repository": "microsoft/agent-governance-toolkit",
     "platform": "github",
     "sourceUrl": "https://github.com/microsoft/agent-governance-toolkit",
-    "sourceVersion": "5bcf1daa",
+    "sourceVersion": "3528751a",
     "license": "MIT",
-    "contentHash": "ce7994ccdb20e279edb574d37cf6d2f53c42a7e88da61501dab3e0249d8590a3",
-    "lastHarvestedAt": "2026-11-16T18:38:35.911Z",
+    "contentHash": "71595d7aa1e571c48e6b66c362b4ac61e9abcd8794655a210a056ae9a6435fc2",
+    "lastHarvestedAt": "2026-11-18T00:07:57.594Z",
     "learningId": "learn-github-microsoft-agent-governance-toolkit"
   },
   "synalinks-synalinks-skills": {
@@ -2973,10 +2973,10 @@
     "repository": "beclab/Olares",
     "platform": "github",
     "sourceUrl": "https://github.com/beclab/Olares",
-    "sourceVersion": "7d8af245",
+    "sourceVersion": "139e4a83",
     "license": "AGPL-3.0",
-    "contentHash": "37ddf0e1c7f8c8bb675959bfa37c98c88124d75ef9c421c2d30c5546ca1dd462",
-    "lastHarvestedAt": "2026-11-17T02:16:50.196Z",
+    "contentHash": "c50fddb99a19fd4436eb607458cb023e5a69d6910f9184befdf5171c3e3be420",
+    "lastHarvestedAt": "2026-11-18T00:07:54.925Z",
     "learningId": "learn-github-beclab-olares"
   },
   "cryfs-cryfs": {
@@ -7843,10 +7843,10 @@
     "repository": "rtk-ai/rtk",
     "platform": "github",
     "sourceUrl": "https://github.com/rtk-ai/rtk",
-    "sourceVersion": "8bb6096b",
+    "sourceVersion": "6c94fc51",
     "license": "Apache-2.0",
-    "contentHash": "d2495af9aff15a251a96c84e8e55e357e634ce62222b41f1d1f21373038c1087",
-    "lastHarvestedAt": "2026-11-16T16:21:40.100Z",
+    "contentHash": "eba5a86bd33898fea41f3bbd595d192dc4aaeb07218f11607e76e95f29786297",
+    "lastHarvestedAt": "2026-11-18T00:07:47.068Z",
     "learningId": "learn-github-rtk-ai-rtk"
   },
   "gao-sun-eul": {

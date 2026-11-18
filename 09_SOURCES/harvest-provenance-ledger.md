@@ -10779,3 +10779,7 @@ Every entry in this ledger must capture:
 | `learn-dom-h-d0f5c3d5` | `project://hf-stabilityai-stable-diffusion-xl-base-1.0` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-stabilityai-stable-diffusion-xl-base-1.0-learnings.md` | 2026-11-17T23:20:03.425Z |
 | `learn-dom-f-deb23ba9` | `project://hf-stabilityai-stable-diffusion-xl-base-1.0` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-stabilityai-stable-diffusion-xl-base-1.0-learnings.md` | 2026-11-17T23:20:46.643Z |
 | `learn-huggingface-meta-llama-llama-3-1-8b-instruct` | `https://huggingface.co/meta-llama/Llama-3.1-8B-Instruct` | `hf-meta-ll` | Multi-dimensional audit evidence | 2026-11-17T23:42:26.691Z |
+| `learn-huggingface-xingchen-agi-teleocr` | `https://huggingface.co/XingChen-AGI/TeleOCR` | `hf-xingche` | Multi-dimensional audit evidence | 2026-11-18T00:07:46.264Z |
+| `learn-github-rtk-ai-rtk` | `https://github.com/rtk-ai/rtk` | `6c94fc51` | Multi-dimensional audit evidence | 2026-11-18T00:07:47.068Z |
+| `learn-github-beclab-olares` | `https://github.com/beclab/Olares` | `139e4a83` | Multi-dimensional audit evidence | 2026-11-18T00:07:54.925Z |
+| `learn-github-microsoft-agent-governance-toolkit` | `https://github.com/microsoft/agent-governance-toolkit` | `3528751a` | Multi-dimensional audit evidence | 2026-11-18T00:07:57.594Z |

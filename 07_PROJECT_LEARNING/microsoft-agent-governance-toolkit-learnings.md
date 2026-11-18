@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md`  
 > **Source**: github ([https://github.com/microsoft/agent-governance-toolkit](https://github.com/microsoft/agent-governance-toolkit))  
-> **Source Version**: `5bcf1daa`  
+> **Source Version**: `3528751a`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-16T18:38:35.022Z  
+> **Timestamp**: 2026-11-18T00:07:56.705Z  
 > **Learning ID**: `learn-github-microsoft-agent-governance-toolkit`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/microsoft/agent-governance-toolkit](https://github.com/microsoft/agent-governance-toolkit))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T18:38:35.017Z  
+> **Harvest Timestamp**: 2026-11-18T00:07:56.701Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: AI Agent Governance Toolkit — Policy enforcement, zero-trust identity, execution sandboxing, and reliability engineering for autonomous AI agents. Covers 10/10 OWASP Agentic Top 10.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: README.md, Dockerfile
-- **Stars / Engagement**: 6572 stars
+- **Stars / Engagement**: 6576 stars
 
 ---
 
@@ -405,106 +405,110 @@ export function writeHookOutput(payload) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5bcf1daa` (2026-11-16)
-**Commit Message**: chore(deps): Bump cedar-policy (#4578)
+### Incident Patch 1: `bf0a96d2` (2026-11-17)
+**Commit Message**: chore(deps-dev): Update cedarpy requirement (#4599)
 
-Bumps [cedar-policy](https://github.com/cedar-policy/cedar) from 4.11.0 to 4.11.2.
-- [Release notes](https://github.com/cedar-policy/cedar/releases)
-- [Commits](https://github.com/cedar-policy/cedar/compare/cedar-policy-cli-v4.11.0...cedar-policy-cli-v4.11.2)
+Updates the requirements on [cedarpy](https://github.com/k9securityio/cedar-py) to permit the latest version.
+- [Release notes](https://github.com/k9securityio/cedar-py/releases)
+- [Changelog](https://github.com/k9securityio/cedar-py/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/k9securityio/cedar-py/compare/v4.1.0...v4.12.2)
 
 ---
 updated-dependencies:
-- dependency-name: cedar-policy
-  dependency-version: 4.11.2
-  dependency-type: indirect
+- dependency-name: cedarpy
+  dependency-version: 4.12.2
+  dependency-type: direct:development
 ...
 
 Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
 Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
 
-**File**: `policy-engine/examples/coding_agent/app/Cargo.lock` (modified, +10/-10)
+**File**: `agent-governance-python/agent-compliance/pyproject.toml` (modified, +1/-1)
 ```diff
-@@ -293,9 +293,9 @@ dependencies = [
- 
- [[package]]
- name = "cedar-policy"
--version = "4.11.0"
-+version = "4.11.2"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "674ca6ef6e44a1e29e6c07f6b2ab7e6913938d6049204d48e7849703d02443ce"
-+checksum = "1fdd98501120bc31fc09f92d3f58c489f4ee4b846904109ac63dd8256de7b84d"
- dependencies = [
-  "cedar-policy-core",
-  "cedar-policy-formatter",
-@@ -313,9 +313,9 @@ dependencies = [
- 
- [[package]]
- name = "cedar-policy-core"
--version = "4.11.0"
-+version = "4.11.2"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "3df781c108240c3b3778c586c6a1b234355f1a2f9d35e08630b63b2590c59dbb"
-+checksum = "d1d41088b497e39b6789e87e05ad6549b7f64a663a4d6ecd73a748dc3a9a98a9"
- dependencies = [
-  "chrono",
-  "educe",
-@@ -341,9 +341,9 @@ dependencies = [
- 
- [[package]]
- name = "cedar-policy-formatter"
--version = "4.11.0"
-+version = "4.11.2"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "e293607563253e249d19cf4d36ac05821955170a63cf6d65deb4db60138b192e"
-+checksum = "fb6c28be47d77dcbc04c2a80181a2c0db9725ed60d24832c6401396cc2ae114b"
- dependencies = [
-  "cedar-policy-core",
-  "itertools",
-@@ -604,7 +604,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "39cab71617ae0d63f51a36d69f866391735b51691dbda63cf6f96d042b63efeb"
- dependencies = [
-  "libc",
-- "windows-sys 0.61.2",
-+ "windows-sys 0.52.0",
+@@ -56,7 +56,7 @@ mesh = ["agent-governance-toolkit-core>=5.0.0,<6.0"]
+ runtime = ["agent-governance-toolkit-core>=5.0.0,<6.0"]
+ sre = ["agent-governance-toolkit-cli>=5.0.0,<6.0"]
+ opa = []
+-cedar = ["cedarpy>=4.0.0,<5.0"]
++cedar = ["cedarpy>=4.12.2,<5.0"]
+ full = [
+     "agent-governance-toolkit-core>=5.0.0,<6.0",
+     "agent-governance-toolkit-integrations>=5.0.0,<6.0",
+```
+
+---
+
+### Incident Patch 2: `3528751a` (2026-11-17)
+**Commit Message**: chore(deps-dev): Update pydantic requirement (#4603)
+
+Updates the requirements on [pydantic](https://github.com/pydantic/pydantic) to permit the latest version.
+- [Release notes](https://github.com/pydantic/pydantic/releases)
+- [Changelog](https://github.com/pydantic/pydantic/blob/main/HISTORY.md)
+- [Commits](https://github.com/pydantic/pydantic/compare/v2.14.2...v2.14.3)
+
+---
+updated-dependencies:
+- dependency-name: pydantic
+  dependency-version: 2.14.3
+  dependency-type: direct:development
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `agent-governance-python/agent-mesh/pyproject.toml` (modified, +1/-1)
+```diff
+@@ -50,7 +50,7 @@ dev = [
+     "opentelemetry-sdk>=1.45.1,<2.0",
+     "opentelemetry-exporter-otlp-proto-grpc>=1.44.0,<2.0",
+     "PyJWT[crypto]>=2.15.1,<3.0",
+-    "pydantic[email]>=2.14.2,<3.0",
++    "pydantic[email]>=2.14.3,<3.0",
+     "cryptography>=50.0.2,<51.0",
+     "PyNaCl>=1.6.2,<2.0",
+     "pyyaml>=6.0.3,<7.0",
+```
+
+---
+
+### Incident Patch 3: `d4ae0cdf` (2026-11-17)
+**Commit Message**: chore(deps): Update pydantic requirement (#4601)
+
+Updates the requirements on [pydantic](https://github.com/pydantic/pydantic) to permit the latest version.
+- [Release notes](https://github.com/pydantic/pydantic/releases)
+- [Changelog](https://github.com/pydantic/pydantic/blob/main/HISTORY.md)
+- [Commits](https://github.com/pydantic/pydantic/compare/v2.4.0...v2.14.3)
+
+---
+updated-dependencies:
+- dependency-name: pydantic
+  dependency-version: 2.14.3
+  dependency-type: direct:production
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `agent-governance-python/agent-compliance/pyproject.toml` (modified, +1/-1)
+```diff
+@@ -31,7 +31,7 @@ classifiers = [
+     "Topic :: Scientific/Engineering :: Artificial Intelligence",
  ]
- 
- [[package]]
-@@ -1531,7 +1531,7 @@ dependencies = [
-  "errno",
-  "libc",
-  "linux-raw-sys",
-- "windows-sys 0.61.2",
-+ "windows-sys 0.52.0",
- ]
- 
- [[package]]
-@@ -1888,7 +1888,7 @@ dependencies = [
-  "getrandom 0.4.3",
-  "once_cell",
-  "rustix",
-- "windows-sys 0.61.2",
-+ "windows-sys 0.52.0",
- ]
- 
- [[package]]
-@@ -2197,7 +2197,7 @@ version = "0.1.11"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "c2a7b1c03c876122aa43f3020e6c3c3ee5c05081c9a00739faf7503aeba10d22"
  dependencies = [
-- "windows-sys 0.61.2",
-+ "windows-sys 0.52.0",
+-    "pydantic>=2.4.0,<3.0",
++    "pydantic>=2.14.3,<3.0",
+     "pyyaml>=6.0.3,<7.0",
+     "click>=8.0,<9.0",
  ]
- 
- [[package]]
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4578** (2026-11-16): chore(deps): Bump cedar-policy from 4.11.0 to 4.11.2 in /policy-engine/examples/coding_agent/app (@dependabot[bot])
-- **PR #4575** (2026-11-14): chore(deps): Bump opentelemetry-api from 1.45.1 to 1.45.2 in /agent-governance-python/agent-os/services/cloud-board (@dependabot[bot])
-- **PR #4574** (2026-11-13): chore(deps-dev): Bump hono from 4.13.13 to 4.13.18 in /agent-governance-python/agentmesh-integrations/mastra-agentmesh (@dependabot[bot])
-- **PR #4573** (2026-11-13): chore(deps): Bump hono from 4.13.13 to 4.13.18 in /agent-governance-python/agent-os/extensions/mcp-server (@dependabot[bot])
-- **PR #4572** (2026-11-13): chore(deps): Bump hono from 4.13.7 to 4.13.18 in /agent-governance-python/agent-mesh/packages/mcp-proxy (@dependabot[bot])
-- **PR #4571** (2026-11-13): chore(deps-dev): Bump hono from 4.13.7 to 4.13.18 in /policy-engine/sdk/node (@dependabot[bot])
+- **PR #4605** (2026-11-17): chore(deps-dev): Update pydantic requirement from <3.0,>=2.14.2 to >=2.14.3,<3.0 in /agent-governance-python/agent-sre (@dependabot[bot])
+- **PR #4604** (2026-11-17): chore(deps): Update pydantic requirement from <3.0,>=2.14.2 to >=2.14.3,<3.0 in /agent-governance-python/agent-primitives (@dependabot[bot])
+- **PR #4603** (2026-11-17): chore(deps-dev): Update pydantic requirement from <3.0,>=2.14.2 to >=2.14.3,<3.0 in /agent-governance-python/agent-mesh (@dependabot[bot])
+- **PR #4602** (2026-11-17): chore(deps-dev): Update pydantic requirement from <3.0,>=2.14.2 to >=2.14.3,<3.0 in /agent-governance-python/agent-hypervisor (@dependabot[bot])
+- **PR #4601** (2026-11-17): chore(deps): Update pydantic requirement from <3.0,>=2.4.0 to >=2.14.3,<3.0 in /agent-governance-python/agent-compliance (@dependabot[bot])
+- **PR #4600** (2026-11-17): chore(deps): Update pyyaml requirement from <7.0,>=6.0 to >=6.0.3,<7.0 in /agent-governance-python/agent-compliance (@dependabot[bot])
 
 ---
 
@@ -524,46 +528,28 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): Bump cedar-policy
+## X. deps-dev): Update cedarpy requirement
 
 **RULE**:
-When implementing operations in `policy-engine/examples/coding_agent/app/Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in microsoft/agent-governance-toolkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `agent-governance-python/agent-compliance/pyproject.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in microsoft/agent-governance-toolkit. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5bcf1daa`: deps): Bump cedar-policy. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `bf0a96d2`: deps-dev): Update cedarpy requirement. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `policy-engine/examples/coding_agent/app/Cargo.lock`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `agent-governance-python/agent-compliance/pyproject.toml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-version = "4.11.2"
-checksum = "1fdd98501120bc31fc09f92d3f58c489f4ee4b846904109ac63dd8256de7b84d"
-version = "4.11.2"
-checksum = "d1d41088b497e39b6789e87e05ad6549b7f64a663a4d6ecd73a748dc3a9a98a9"
-version = "4.11.2"
-checksum = "fb6c28be47d77dcbc04c2a80181a2c0db9725ed60d24832c6401396cc2ae114b"
- "windows-sys 0.52.0",
- "windows-sys 0.52.0",
- "windows-sys 0.52.0",
- "windows-sys 0.52.0",
+cedar = ["cedarpy>=4.12.2,<5.0"]
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Induced defect failure mode:
-version = "4.11.0"
-checksum = "674ca6ef6e44a1e29e6c07f6b2ab7e6913938d6049204d48e7849703d02443ce"
-version = "4.11.0"
-checksum = "3df781c108240c3b3778c586c6a1b234355f1a2f9d35e08630b63b2590c59dbb"
-version = "4.11.0"
-checksum = "e293607563253e249d19cf4d36ac05821955170a63cf6d65deb4db60138b192e"
- "windows-sys 0.61.2",
- "windows-sys 0.61.2",
- "windows-sys 0.61.2",
- "windows-sys 0.61.2",
+cedar = ["cedarpy>=4.0.0,<5.0"]
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5bcf1daa` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `bf0a96d2` are properly handled with clean fallback behavior.

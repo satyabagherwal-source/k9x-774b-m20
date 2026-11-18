@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-17T23:42:40.792Z",
-  "total_verified_learnings": 8952,
+  "last_updated": "2026-11-18T00:08:02.379Z",
+  "total_verified_learnings": 8953,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 20710,
+  "total_items": 20720,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113389,10 +113389,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-microsoft-agent-governance-toolkit-architecture-intelligence-microsoft-agent-gov.md",
       "title": "Architecture Intelligence: microsoft/agent-governance-toolkit Core Invariants",
       "repository": "microsoft/agent-governance-toolkit",
-      "source_version": "5bcf1daa",
-      "content_hash": "d6921948c46c0823f69dba681356ffb9081063ad35a82b07d728a946376e48c7",
+      "source_version": "3528751a",
+      "content_hash": "f6d8ea8cae0eac4f8a3f04b0dab82c8284011bff5cd17a5d1e7f3404ae203eb6",
       "domain_letter": "G",
-      "persisted_at": "2026-11-16T18:38:36.210Z"
+      "persisted_at": "2026-11-18T00:07:57.899Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-microsoft-agent-governance-toolkit": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-microsoft-agent-governance-toolkit",
@@ -113401,22 +113401,22 @@
       "relative_path": "12_DECISIONS/ADR-microsoft-agent-governance-toolkit-adr-subsystem-boundary-modular-decoupling-in-.md",
       "title": "ADR: Subsystem Boundary & Modular Decoupling in microsoft/agent-governance-toolkit",
       "repository": "microsoft/agent-governance-toolkit",
-      "source_version": "5bcf1daa",
-      "content_hash": "4312cfc7464064301e549b4d96d2fc759402e83dfa81cfdddb27056abdfc3a2d",
+      "source_version": "3528751a",
+      "content_hash": "049c03677a41df8cfa7686d176122d9fdbbf23c5486d1199aee22aba84d37756",
       "domain_letter": "G",
-      "persisted_at": "2026-11-16T18:38:36.330Z"
+      "persisted_at": "2026-11-18T00:07:58.039Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-microsoft-agent-governance-too": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-microsoft-agent-governance-too",
       "artifact_type": "verification_contract",
       "target_folder": "08_VERIFICATION",
-      "relative_path": "08_VERIFICATION/microsoft-agent-governance-toolkit-learnings-verification-protocol-empirical-def.md",
-      "title": "Verification Protocol: Empirical Defect Shield for microsoft-agent-governance-toolkit-learnings",
-      "repository": "microsoft-agent-governance-toolkit-learnings",
-      "source_version": "HEAD",
-      "content_hash": "5cd4eeff0ce23d4766231818ff9af06b71d75043467c1738082ec1b51dd940b6",
+      "relative_path": "08_VERIFICATION/microsoft-agent-governance-toolkit-verification-protocol-empirical-defect-shield.md",
+      "title": "Verification Protocol: Empirical Defect Shield for microsoft/agent-governance-toolkit",
+      "repository": "microsoft/agent-governance-toolkit",
+      "source_version": "3528751a",
+      "content_hash": "222fb9c152404c624a9dd04dfe756bbf5a71c8790c8b0a25e9ba8cd1a031d2d1",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T18:38:41.153Z"
+      "persisted_at": "2026-11-18T00:07:58.160Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-taichuai-zdtaichu5-0-9b-learnings-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-taichuai-zdtaichu5-0-9b-learnings-core-invari",
@@ -216684,8 +216684,8 @@
       "slug": "microsoft-agent-governance-toolkit",
       "platform": "github",
       "source_url": "https://github.com/microsoft/agent-governance-toolkit",
-      "source_version": "5bcf1daa",
-      "content_hash": "ce7994ccdb20e279edb574d37cf6d2f53c42a7e88da61501dab3e0249d8590a3",
+      "source_version": "3528751a",
+      "content_hash": "71595d7aa1e571c48e6b66c362b4ac61e9abcd8794655a210a056ae9a6435fc2",
       "dossier_path": "07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/microsoft-agent-governance-toolkit-learnings.md",
       "promoted_rules": [
@@ -216703,6 +216703,11 @@
           "number": 8774,
           "title": "Bump cedar-policy",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9087,
+          "title": "Update cedarpy requirement",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -216710,7 +216715,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-16T18:38:35.749Z",
+      "verified_at": "2026-11-18T00:07:57.430Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -226370,14 +226375,19 @@
       "slug": "beclab-olares",
       "platform": "github",
       "source_url": "https://github.com/beclab/Olares",
-      "source_version": "7d8af245",
-      "content_hash": "37ddf0e1c7f8c8bb675959bfa37c98c88124d75ef9c421c2d30c5546ca1dd462",
+      "source_version": "139e4a83",
+      "content_hash": "c50fddb99a19fd4436eb607458cb023e5a69d6910f9184befdf5171c3e3be420",
       "dossier_path": "07_PROJECT_LEARNING/beclab-olares-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/beclab-olares-learnings.md",
       "promoted_rules": [
         {
           "number": 8836,
           "title": "sync, render improve, oac update",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9086,
+          "title": "clean up full uninstall and verify installer release identity",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -226386,7 +226396,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T02:16:50.046Z",
+      "verified_at": "2026-11-18T00:07:54.756Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -226414,10 +226424,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-beclab-olares-technical-construction-intelligence-beclab-olares-core-invariants.md",
       "title": "Technical Construction Intelligence: beclab/Olares Core Invariants",
       "repository": "beclab/Olares",
-      "source_version": "7d8af245",
-      "content_hash": "7beda1936be6b880d61d2612e8899f6dc8be85ee096d4145e81169de5c57aa58",
+      "source_version": "139e4a83",
+      "content_hash": "9803fc07f8fbe9a4495e5e7c403780f93edd5e4353d4146def172e326523b9e0",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T02:16:50.458Z"
+      "persisted_at": "2026-11-18T00:07:55.230Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-beclab-olares": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-beclab-olares",
@@ -226426,10 +226436,10 @@
       "relative_path": "08_VERIFICATION/beclab-olares-verification-protocol-empirical-defect-shield-for-beclab-olares.md",
       "title": "Verification Protocol: Empirical Defect Shield for beclab/Olares",
       "repository": "beclab/Olares",
-      "source_version": "7d8af245",
-      "content_hash": "e029d2b4bb61409b36c0761a6fdd234f47f36851f0d0b60fa4e3f98b33776970",
+      "source_version": "139e4a83",
+      "content_hash": "a7cfda4e339aa4e8a12ca679fc98d95502560749fa5feb7a8eb22f1afebdecbe",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T02:16:50.562Z"
+      "persisted_at": "2026-11-18T00:07:55.361Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-openai-clip-vit-base-patch32-learnings-core-i": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-openai-clip-vit-base-patch32-learnings-core-i",
@@ -226463,9 +226473,9 @@
       "title": "Technical Construction Intelligence: beclab-olares-learnings Core Invariants",
       "repository": "beclab-olares-learnings",
       "source_version": "HEAD",
-      "content_hash": "5ed3298260f712b33da1f5c0699957f733c59a650387ad61b008a06c1f1f03be",
+      "content_hash": "80356cf05c250bf04c859a2406a640513c8922241e09414d493ea011c208cc46",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T02:16:53.614Z"
+      "persisted_at": "2026-11-18T00:08:02.253Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-beclab-olares-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-beclab-olares-learnings",
@@ -226475,9 +226485,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for beclab-olares-learnings",
       "repository": "beclab-olares-learnings",
       "source_version": "HEAD",
-      "content_hash": "d7b56de35dbe3e7a45db7d29707559fbae84f49f9e3e393a2841f17ca45578fb",
+      "content_hash": "674ee7703b89baf6392a67e0b12c0c6b9ef9830f663edbe6a030a695aceb0299",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T02:16:53.729Z"
+      "persisted_at": "2026-11-18T00:08:02.379Z"
     },
     "learn-huggingface-sentence-transformers-all-mpnet-base-v2": {
       "learning_id": "learn-huggingface-sentence-transformers-all-mpnet-base-v2",
@@ -256359,14 +256369,19 @@
       "slug": "rtk-ai-rtk",
       "platform": "github",
       "source_url": "https://github.com/rtk-ai/rtk",
-      "source_version": "8bb6096b",
-      "content_hash": "d2495af9aff15a251a96c84e8e55e357e634ce62222b41f1d1f21373038c1087",
+      "source_version": "6c94fc51",
+      "content_hash": "eba5a86bd33898fea41f3bbd595d192dc4aaeb07218f11607e76e95f29786297",
       "dossier_path": "07_PROJECT_LEARNING/rtk-ai-rtk-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/rtk-ai-rtk-learnings.md",
       "promoted_rules": [
         {
           "number": 8760,
           "title": "docs(guide): bring the embedding page in line with rtk 1.2.0",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9085,
+          "title": "Empirical Invariant Guard in cargo_cmd.rs",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -256375,7 +256390,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-16T16:21:39.944Z",
+      "verified_at": "2026-11-18T00:07:46.902Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -256417,10 +256432,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-rtk-ai-rtk-quality-verification-intelligence-rtk-ai-rtk-core-invariants.md",
       "title": "Quality & Verification Intelligence: rtk-ai/rtk Core Invariants",
       "repository": "rtk-ai/rtk",
-      "source_version": "8bb6096b",
-      "content_hash": "549031f99d46a4a038452484a6bdefdb2d4538f9908fcea19245a5b5cbbfe4ff",
+      "source_version": "6c94fc51",
+      "content_hash": "bc0ae11dde8dc8f32ec45f825fc3ffed5faa3004fc09de08fafb91befe7e10e9",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T16:21:40.377Z"
+      "persisted_at": "2026-11-18T00:07:47.374Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-rtk-ai-rtk": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-rtk-ai-rtk",
@@ -256429,10 +256444,10 @@
       "relative_path": "08_VERIFICATION/rtk-ai-rtk-verification-protocol-empirical-defect-shield-for-rtk-ai-rtk.md",
       "title": "Verification Protocol: Empirical Defect Shield for rtk-ai/rtk",
       "repository": "rtk-ai/rtk",
-      "source_version": "8bb6096b",
-      "content_hash": "ad6f1e47c12ba7adcef10d8b987cd41daf36fb7b1ff3129186886315c432acfb",
+      "source_version": "6c94fc51",
+      "content_hash": "aadd3b9727ac343dcf0ff462f0d5329b6c19c7253de8b95928c0faf76c157665",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T16:21:40.494Z"
+      "persisted_at": "2026-11-18T00:07:47.507Z"
     },
     "rule-8761": {
       "learning_id": "rule-8761",
@@ -256468,9 +256483,9 @@
       "title": "Quality & Verification Intelligence: rtk-ai-rtk-learnings Core Invariants",
       "repository": "rtk-ai-rtk-learnings",
       "source_version": "HEAD",
-      "content_hash": "c90d9be4e2baed405353c5ef13ae70c4d28e380a4fef4c40bbb6b3c7508687c4",
+      "content_hash": "43cdab992de237188dd269dce508731185222b2d139f2f3ccbc1e9338c683203",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T16:21:54.226Z"
+      "persisted_at": "2026-11-18T00:08:01.396Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-rtk-ai-rtk-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-rtk-ai-rtk-learnings",
@@ -256480,9 +256495,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for rtk-ai-rtk-learnings",
       "repository": "rtk-ai-rtk-learnings",
       "source_version": "HEAD",
-      "content_hash": "a82a850c9ce7066f8707debe164f410e8c2b3ee53b2bdcd9a7895f3b7bd9b08b",
+      "content_hash": "561cb583a02242e1615f861611a37068fbf06db775656555b7fd6aff9b404301",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T16:21:54.341Z"
+      "persisted_at": "2026-11-18T00:08:01.521Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-liquidai-lfm3-audio-2b-learnings-core-invaria": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-liquidai-lfm3-audio-2b-learnings-core-invaria",
@@ -278411,6 +278426,147 @@
       "content_hash": "c241d945f90395dc0046599b6025207baf7d2d1b449e306f0a7439192b25ce56",
       "domain_letter": "D",
       "persisted_at": "2026-11-17T23:42:38.847Z"
+    },
+    "learn-huggingface-xingchen-agi-teleocr": {
+      "learning_id": "learn-huggingface-xingchen-agi-teleocr",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "XingChen-AGI/TeleOCR",
+      "repository": "XingChen-AGI/TeleOCR",
+      "slug": "hf-xingchen-agi-teleocr",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/XingChen-AGI/TeleOCR",
+      "source_version": "hf-xingchen-agi-teleocr",
+      "content_hash": "e80710b4dbdb9f76cd1d866971c00a59f4bb366c546424250280fdc9d4786529",
+      "dossier_path": "07_PROJECT_LEARNING/hf-xingchen-agi-teleocr-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-xingchen-agi-teleocr-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-18T00:07:46.056Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-xingchen-agi-teleocr-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-teleocr-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-xingchen-agi-teleocr-research-knowledge-intelligence-xingchen-agi-teleocr-cor.md",
+      "title": "Research & Knowledge Intelligence: XingChen-AGI/TeleOCR Core Invariants",
+      "repository": "XingChen-AGI/TeleOCR",
+      "source_version": "hf-xingchen-agi-teleocr",
+      "content_hash": "85683e49c7c409f4577cdb043504c5aaf636574719b26ec4e5c8a845a4e19aef",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-18T00:07:46.444Z"
+    },
+    "rule-9085": {
+      "learning_id": "rule-9085",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9085,
+      "title": "Empirical Invariant Guard in cargo_cmd.rs",
+      "source_url": "https://github.com/rtk-ai/rtk",
+      "source_version": "6c94fc51",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-18T00:07:46.902Z"
+    },
+    "candidate_directive-empirical-invariant-guard-in-cargo_cmd-rs": {
+      "item_id": "candidate_directive-empirical-invariant-guard-in-cargo_cmd-rs",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-4JCM-empirical-invariant-guard-in-cargo_cmd-rs.md",
+      "title": "Empirical Invariant Guard in cargo_cmd.rs",
+      "repository": "rtk-ai-rtk-learnings",
+      "source_version": "HEAD",
+      "content_hash": "523baba74f60586cafd1a8981ccdb7f098708cef257cd8b8c46a9298299585bd",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-18T00:08:01.273Z"
+    },
+    "rule-9086": {
+      "learning_id": "rule-9086",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9086,
+      "title": "clean up full uninstall and verify installer release identity",
+      "source_url": "https://github.com/beclab/Olares",
+      "source_version": "139e4a83",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-18T00:07:54.756Z"
+    },
+    "candidate_directive-clean-up-full-uninstall-and-verify-installer-release-identity": {
+      "item_id": "candidate_directive-clean-up-full-uninstall-and-verify-installer-release-identity",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-4ELE-clean-up-full-uninstall-and-verify-installer-release-identity.md",
+      "title": "clean up full uninstall and verify installer release identity",
+      "repository": "beclab/Olares",
+      "source_version": "139e4a83",
+      "content_hash": "42b81737230e29af555903a851907aa0204a0acf94551364e21ad14b1ca9b807",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-18T00:07:55.107Z"
+    },
+    "rule-9087": {
+      "learning_id": "rule-9087",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9087,
+      "title": "Update cedarpy requirement",
+      "source_url": "https://github.com/microsoft/agent-governance-toolkit",
+      "source_version": "3528751a",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-18T00:07:57.430Z"
+    },
+    "candidate_directive-update-cedarpy-requirement": {
+      "item_id": "candidate_directive-update-cedarpy-requirement",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-4GNF-update-cedarpy-requirement.md",
+      "title": "Update cedarpy requirement",
+      "repository": "microsoft/agent-governance-toolkit",
+      "source_version": "3528751a",
+      "content_hash": "34ca3f7460fd5b7d445a555ee152b833af4988f53259301d685dfc04feb2de24",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-18T00:07:57.772Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-xingchen-agi-teleocr-learnings-core-invariant": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-xingchen-agi-teleocr-learnings-core-invariant",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-xingchen-agi-teleocr-learnings-research-knowledge-intelligence-hf-xingchen-ag.md",
+      "title": "Research & Knowledge Intelligence: hf-xingchen-agi-teleocr-learnings Core Invariants",
+      "repository": "hf-xingchen-agi-teleocr-learnings",
+      "source_version": "HEAD",
+      "content_hash": "acedf32634e439f75f35498af5f1c50cedebf89c65bd4f572ae86b464d88140e",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-18T00:08:01.807Z"
+    },
+    "candidate_directive-cli-clean-up-full-uninstall-and-verify-installer-release-identity": {
+      "item_id": "candidate_directive-cli-clean-up-full-uninstall-and-verify-installer-release-identity",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-4K0K-cli-clean-up-full-uninstall-and-verify-installer-release-identity.md",
+      "title": "cli): clean up full uninstall and verify installer release identity",
+      "repository": "beclab-olares-learnings",
+      "source_version": "HEAD",
+      "content_hash": "62e48dd44b002480ccaee40d5660405f8084cdbf45c95d7444dedb23a5d0920b",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-18T00:08:02.133Z"
     }
   },
   "ai-builder-brain": {

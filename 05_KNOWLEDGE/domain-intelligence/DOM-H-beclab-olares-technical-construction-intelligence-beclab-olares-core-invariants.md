@@ -4,24 +4,24 @@
 {
   "source_repository": "beclab/Olares",
   "source_url": "https://github.com/beclab/Olares",
-  "source_version": "7d8af245",
+  "source_version": "139e4a83",
   "license": "AGPL-3.0",
-  "timestamp": "2026-11-17T02:16:50.351Z",
+  "timestamp": "2026-11-18T00:07:55.106Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-beclab-olares",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [beclab/Olares](https://github.com/beclab/Olares) (Revision: `7d8af245`).  
-> **License**: AGPL-3.0 | **Timestamp**: `2026-11-17T02:16:50.351Z`  
+> **Provenance**: Harvested from [beclab/Olares](https://github.com/beclab/Olares) (Revision: `139e4a83`).  
+> **License**: AGPL-3.0 | **Timestamp**: `2026-11-18T00:07:55.106Z`  
 > **Learning ID**: `learn-github-beclab-olares`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: I (Content & Information Intelligence), G (Architecture Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), C (Market & Business Intelligence), K (Quality & Verification Intelligence), L (Deployment & Operations Intelligence), A (Human & Need Intelligence), F (Design Intelligence)
-- **Confidence Rating**: 69%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), K (Quality & Verification Intelligence), L (Deployment & Operations Intelligence), A (Human & Need Intelligence), F (Design Intelligence)
+- **Confidence Rating**: 71%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from beclab/Olares:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/beclab-olares-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/beclab/Olares](https://github.com/beclab/Olares))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T02:11:48.700Z  
+> **Harvest Timestamp**: 2026-11-18T00:07:54.019Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1151,118 +1151,218 @@ export const formatPathtoUrl = (path: string) => {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `c0a1a6ae` (2026-11-16)
-**Commit Message**: market: sync, render improve, oac update (#4454)
+### Incident Patch 1: `139e4a83` (2026-11-17)
+**Commit Message**: fix(cli): clean up full uninstall and verify installer release identity (#4457)
 
-**File**: `framework/market/.olares/config/cluster/deploy/market_deploy.yaml` (modified, +1/-1)
+Remove the running CLI and matching launch or installer symlinks only after uninstall --all succeeds. Preserve paths replaced during uninstall and keep internal node-join cleanup unchanged.
+
+Reuse an installed CLI only when version and vendor match, also checking the release ID against the full Git commit when metadata is available. Fall back to version and vendor for missing or unknown commit metadata.
+
+**File**: `build/base-package/install.sh` (modified, +24/-2)
 ```diff
-@@ -155,7 +155,7 @@ spec:
-           name: check-appservice
-       containers:
-       - name: appstore-backend
--        image: beclab/market-backend:v0.6.134
-+        image: beclab/market-backend:v0.6.137
-         imagePullPolicy: IfNotPresent
-         ports:
-           - containerPort: 81
+@@ -7,6 +7,28 @@ function command_exists() {
+ 	  command -v "$@" > /dev/null 2>&1
+ }
+ 
++function installed_cli_matches() {
++    local version_output current_version current_commit
++    command_exists olares-cli || return 1
++    version_output=$(olares-cli --version) || return 1
++    current_version=$(awk 'NR==1{print $3}' <<< "$version_output")
++    [[ "$current_version" == "$VERSION" ]] || return 1
++    [[ "$(olares-cli --vendor)" == "$expected_vendor" ]] || return 1
++
++    if [[ -n "$RELEASE_ID_SUFFIX" ]]; then
++        current_commit=$(awk '/^Git commit: /{print $3; exit}' <<< "$version_output")
++        # Older or unstamped binaries can still be reused by version/vendor.
++        if [[ -z "$current_commit" || "$current_commit" == "unknown" ]]; then
++            return 0
++        fi
++        # Release workflows use git rev-parse --short=7 (at least 7 digits),
++        # while GoReleaser stamps GitCommit with .FullCommit.
++        [[ "$RELEASE_ID" =~ ^[0-9a-f]{7,40}$ ]] || return 1
++        [[ "$current_commit" =~ ^[0-9a-f]{40}$ ]] || return 1
++        [[ "$current_commit" == "$RELEASE_ID"* ]] || return 1
++    fi
++}
++
+ if [[ x"$REPO_PATH" == x"" ]]; then
+     export REPO_PATH="#__REPO_PATH__"
+ fi
+@@ -100,9 +122,9 @@ else
+     if [[ "$(basename "$REPO_PATH")" == "olares-one" ]]; then
+         expected_vendor="OlaresOne"
+     fi
+-    if command_exists olares-cli && [[ "$(olares-cli -v | awk 'NR==1{print $3}')" == "$VERSION" ]] && [[ "$(olares-cli --vendor)" == "$expected_vendor" ]]; then
++    if installed_cli_matches; then
+         INSTALL_OLARES_CLI=$(which olares-cli)
+-        echo "olares-cli already installed and is the expected version"
++        echo "olares-cli already installed and matches the expected version, vendor and release"
+         echo ""
+     else
+         if [[ ! -f ${CLI_FILE} ]] || ! gzip -t ${CLI_FILE} 2>/dev/null; then
 ```
 
----
-
-### Incident Patch 2: `7fa07c55` (2026-11-16)
-**Commit Message**: docs: require a GeForce RTX 50-series GPU for YuE2 Studio (#4452)
-
-* docs: require a GeForce RTX 50-series GPU for YuE2 Studio
-
-The published prerequisite listed any NVIDIA GPU. YuE2 Studio runs only on RTX 50-series cards, so the guide states that limit without compute-capability or driver details.
-
-Co-authored-by: Cursor <[REDACTED_EMAIL]>
-
-* docs: drop the redundant YuE2 GPU exclusion
-
-The RTX 50-series requirement already states which GPU the app uses.
-
-Co-authored-by: Cursor <[REDACTED_EMAIL]>
-
----------
-
-Co-authored-by: Cursor <[REDACTED_EMAIL]>
-
-**File**: `docs/use-cases/yue2-studio.md` (modified, +4/-3)
+**File**: `cli/cmd/ctl/os/self_remove.go` (added, +111/-0)
 ```diff
-@@ -6,8 +6,8 @@ head:
-     - name: keywords
-       content: Olares, YuE2 Studio, AI music, Q8, BF16, quantization, piano roll, ABC, MIDI, covers, instrumental music
- app_version: "0.0.7"
--doc_version: "2.6"
--doc_updated: "2026-11-07"
-+doc_version: "2.7"
-+doc_updated: "2026-11-16"
- ---
- 
- # Create and edit a song with YuE2 Studio
-@@ -30,7 +30,8 @@ In this guide, you will learn how to:
- 
- ## Prerequisites
- 
--- Olares 1.12.7 or later on an amd64 device with an NVIDIA GPU and at least 5 GiB of available GPU memory.
-+- Olares 1.12.7 or later on an amd64 device.
-+- A GeForce RTX 50-series GPU with at least 5 GiB of available GPU memory.
- - A Hugging Face account.
- 
- ## Install YuE2 Studio
+@@ -0,0 +1,111 @@
++package os
++
++import (
++	"fmt"
++	"os"
++	"os/exec"
++	"path/filepath"
++	"runtime"
++	"strings"
++)
++
++// prepareSelfRemoval captures the running binary before uninstall starts, so
++// cleanup cannot remove a replacement installed while the pipeline was running.
++func prepareSelfRemoval() (func() error, error) {
++	if runtime.GOOS == "windows" {
++		// Windows does not allow unlinking a running executable.
++		return nil, nil
++	}
++	executable, err := os.Executable()
++	if err != nil {
++		return nil, err
++	}
++	executable, err = filepath.EvalSymlinks(executable)
++	if err != nil {
++		return nil, err
++	}
++	runningPath := executable
++	if runtime.GOOS == "linux" {
++		runningPath = "/proc/self/exe"
++	}
++	running, err := os.Stat(runningPath)
++	if err != nil {
++		return nil, err
++	}
++	// os.Executable can already resolve the launch symlink. Check argv[0]
++	// separately, plus the installer-managed entry point for direct launches
++	// of the target binary. Only capture links to this running executable.
++	return prepareExecutableRemoval(executable, running, os.Args[0], "/usr/local/bin/olares-cli"), nil
++}
++
++func prepareExecutableRemoval(executable string, running os.FileInfo, entryPaths ...string) func() error {
++	type removalFile struct {
++		path string
++		info os.FileInfo
++	}
++	var files []removalFile
++	seen := map[string]bool{executable: true}
++	for _, entry := range entryPaths {
++		if !strings.ContainsRune(entry, os.PathSeparator) {
++			var err error
++			entry, err = exec.LookPath(entry)
++			if err != nil {
++				continue
++			}
++		}
++		entry, err := filepath.Abs(entry)
++		if err != nil || seen[entry] {
++			continue
++		}
++		link, err := os.Lstat(entry)
++		if err != nil || link.Mode()&os.ModeSymlink == 0 {
++			continue
++		}
++		target, err := os.Stat(entry)
++		if err != nil || !os.SameFile(running, target) {
++			continue
++		}
++		files = append(files, removalFile{entry, link})
++		seen[entry] = true
++	}
++	files = append(files, removalFile{executable, running})
++	return func() error {
++		// Validate all paths before removing anything: a replaced entry point
++		// might still need the original target. Remove entry links first.
++		for _, file := range files {
++			if err := checkUnchangedExecutable(file.path, file.info); err != nil {
++				return err
++			}
++		}
++		for _, file := range files {
++			if err := removeUnchangedExecutable(file.path, file.info); err != nil {
++				return err
++			}
++		}
++		return nil
++	}
++}
++
++func checkUnchangedExecutable(path string, running os.FileInfo) error {
++	current, err := os.Lstat(path)
++	if os.IsNotExist(err) {
++		return nil
++	}
++	if err != nil {
++		return err
++	}
++	if !os.SameFile(running, current) {
++		return fmt.Errorf("%s was replaced during uninstall; leaving the replacement in place", path)
++	}
++	return nil
++}
++
++func removeUnchangedExecutable(path string, running os.FileInfo) error {
++	if err := checkUnchangedExecutable(path, running); err != nil {
++		return err
++	}
++	if err := os.Remove(path); !os.IsNotExist(err) {
++		return err
++	}
++	return nil
++}
 ```
 
-**File**: `docs/zh/use-cases/yue2-studio.md` (modified, +4/-3)
+**File**: `cli/cmd/ctl/os/uninstall.go` (modified, +14/-1)
 ```diff
-@@ -6,8 +6,8 @@ head:
-     - name: keywords
-       content: Olares, YuE2 Studio, AI 音乐, Q8, BF16, 量化, 钢琴卷帘, ABC, MIDI, 翻唱, 纯音乐
- app_version: "0.0.7"
--doc_version: "2.6"
--doc_updated: "2026-11-07"
-+doc_version: "2.7"
-+doc_updated: "2026-11-16"
- ---
+@@ -16,10 +16,23 @@ func NewCmdUninstallOs() *cobra.Command {
+ 		Use:   "uninstall",
+ 		Short: "Uninstall Olares",
+ 		Run: func(cmd *cobra.Command, args []string) {
++			var removeSelf func() error
++			if viper.GetBool(common.FlagUninstallAll) {
++				var err error
++				removeSelf, err = prepareSelfRemoval()
++				if err != nil {
++					log.Fatalf("cannot prepare olares-cli removal: %v", err)
++				}
++			}
+ 			err := pipelines.UninstallTerminusPipeline(cmd.Context())
+ 			if err != nil {
+ 				log.Fatalf("error: %v", err)
+ 			}
++			if removeSelf != nil {
++				if err := removeSelf(); err != nil {
++					log.Fatalf("Olares was uninstalled, but could not remove olares-cli: %v", err)
++				}
++			}
+ 		},
+ 	}
  
- :::warning
-@@ -34,7 +34,8 @@ YuE2 Studio 是一款本地 AI 音乐应用，可根据音乐风格和歌词生
+@@ -31,7 +44,7 @@ func NewCmdUninstallOs() *cobra.Command {
  
- ## 前提条件
- 
--- 一台运行 Olares 1.12.7 或更高版本的 amd64 设备，配备 NVIDIA GPU，并有至少 5 GiB 可用显存。
-+- 一台运行 Olares 1.12.7 或更高版本的 amd64 设备。
-+- 一块 GeForce RTX 50 系 GPU，可用显存至少 5 GiB。
- - 一个 Hugging Face 账号。
- 
- ## 安装 YuE2 Studio
-```
-
----
-
-### Incident Patch 3: `e45ccaf1` (2026-11-16)
-**Commit Message**: fix(workflow): update lint-test job to use ubuntu-24.04
-
-**File**: `.github/workflows/check.yaml` (modified, +1/-1)
-```diff
-@@ -40,7 +40,7 @@ jobs:
- 
-   lint-test:
-     needs: check-permission
--    runs-on: ubuntu-latest
-+    runs-on: ubuntu-24.04
-     steps:
-       - name: Checkout
-         uses: actions/checkout@v3
+ 	// these two flags' names are too general, and only used in cmd options, so we manually bind them to the viper
+ 	// inside the pipeline creator, it still uses the flag vars to get the values
+-	cmd.Flags().Bool("all", false, "Uninstall Olares completely, including prepared dependencies")
++	cmd.Flags().Bool("all", false, "Uninstall Olares completely, including prepared dependencies and the CLI itself on Linux/macOS")
+ 	viper.BindPFlag(common.FlagUninstallAll, cmd.Flags().Lookup("all"))
+ 	cmd.Flags().String("phase", cluster.PhaseInstall.String(), "Uninstall from a specified phase and revert to the previous one. For example, using --phase install will remove the tasks performed in the 'install' phase, effectively returning the system to the 'prepare' state.")
+ 	viper.BindPFlag(common.FlagUninstallPhase, cmd.Flags().Lookup("phase"))
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4457** (2026-11-17): fix(cli): clean up full uninstall and verify installer release identity (@dkeven)
 - **PR #4455** (2026-11-16): files: access per-user folders under .users (@aby913)
 - **PR #4454** (2026-11-16): market: sync, render improve, oac update (@aby913)
 - **PR #4453** (2026-11-16): system-frontend, login, wizard, vault: update images to v1.13.1 (@icebergtsn)
 - **PR #4452** (2026-11-16): docs: require a GeForce RTX 50-series GPU for YuE2 Studio (@fnalways)
 - **PR #4449** (2026-11-16): docs: retire NemoClaw documentation and redirect to OpenClaw (@fnalways)
-- **PR #4448** (2026-11-16): fix(gpu): improve memory eviction in time-slice mode (@dkeven)
 
 ---
 
@@ -1282,31 +1382,55 @@ Co-authored-by: Cursor <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. market: sync, render improve, oac update
+## X. cli): clean up full uninstall and verify installer release identity
 
 **RULE**:
-When implementing operations in `framework/market/.olares/config/cluster/deploy/market_deploy.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in beclab/Olares. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `build/base-package/install.sh`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in beclab/Olares. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `c0a1a6ae`: market: sync, render improve, oac update. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `139e4a83`: cli): clean up full uninstall and verify installer release identity. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `framework/market/.olares/config/cluster/deploy/market_deploy.yaml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `build/base-package/install.sh`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-        image: beclab/market-backend:v0.6.137
+function installed_cli_matches() {
+    local version_output current_version current_commit
+    command_exists olares-cli || return 1
+    version_output=$(olares-cli --version) || return 1
+    current_version=$(awk 'NR==1{print $3}' <<< "$version_output")
+    [[ "$current_version" == "$VERSION" ]] || return 1
+    [[ "$(olares-cli --vendor)" == "$expected_vendor" ]] || return 1
+
+    if [[ -n "$RELEASE_ID_SUFFIX" ]]; then
+        current_commit=$(awk '/^Git commit: /{print $3; exit}' <<< "$version_output")
+        # Older or unstamped binaries can still be reused by version/vendor.
+        if [[ -z "$current_commit" || "$current_commit" == "unknown" ]]; then
+            return 0
+        fi
+        # Release workflows use git rev-parse --short=7 (at least 7 digits),
+        # while GoReleaser stamps GitCommit with .FullCommit.
+        [[ "$RELEASE_ID" =~ ^[0-9a-f]{7,40}$ ]] || return 1
+        [[ "$current_commit" =~ ^[0-9a-f]{40}$ ]] || return 1
+        [[ "$current_commit" == "$RELEASE_ID"* ]] || return 1
+    fi
+}
+
+    if installed_cli_matches; then
+        echo "olares-cli already installed and matches the expected version, vendor and release"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-        image: beclab/market-backend:v0.6.134
+    if command_exists olares-cli && [[ "$(olares-cli -v | awk 'NR==1{print $3}')" == "$VERSION" ]] && [[ "$(olares-cli --vendor)" == "$expected_vendor" ]]; then
+        echo "olares-cli already installed and is the expected version"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `c0a1a6ae` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `139e4a83` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

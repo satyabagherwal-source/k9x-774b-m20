@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-17T23:42:40.792Z",
-  "total_records": 1717,
+  "last_updated": "2026-11-18T00:08:02.253Z",
+  "total_records": 1719,
   "domains": {
     "A": {
       "total": 11,
@@ -48,7 +48,7 @@
       ]
     },
     "D": {
-      "total": 750,
+      "total": 752,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -799,7 +799,9 @@
         "domain_intelligence-research-knowledge-intelligence-moonshotai-kimi-k3-core-invariants",
         "domain_intelligence-research-knowledge-intelligence-hf-moonshotai-kimi-k3-learnings-core-invariants",
         "domain_intelligence-research-knowledge-intelligence-meta-llama-llama-3-1-8b-instruct-core-invariants",
-        "domain_intelligence-research-knowledge-intelligence-hf-meta-llama-llama-3-1-8b-instruct-learnings-co"
+        "domain_intelligence-research-knowledge-intelligence-hf-meta-llama-llama-3-1-8b-instruct-learnings-co",
+        "domain_intelligence-research-knowledge-intelligence-xingchen-agi-teleocr-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-hf-xingchen-agi-teleocr-learnings-core-invariant"
       ]
     },
     "E": {
@@ -8207,8 +8209,8 @@
       "title": "Architecture Intelligence: microsoft/agent-governance-toolkit Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-microsoft-agent-governance-toolkit-architecture-intelligence-microsoft-agent-gov.md",
       "repository": "microsoft/agent-governance-toolkit",
-      "content_hash": "d6921948c46c0823f69dba681356ffb9081063ad35a82b07d728a946376e48c7",
-      "created_at": "2026-11-16T18:38:36.210Z"
+      "content_hash": "f6d8ea8cae0eac4f8a3f04b0dab82c8284011bff5cd17a5d1e7f3404ae203eb6",
+      "created_at": "2026-11-18T00:07:57.899Z"
     },
     "DOM-D-21095CB7": {
       "record_id": "DOM-D-21095CB7",
@@ -14101,8 +14103,8 @@
       "title": "Technical Construction Intelligence: beclab/Olares Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-beclab-olares-technical-construction-intelligence-beclab-olares-core-invariants.md",
       "repository": "beclab/Olares",
-      "content_hash": "7beda1936be6b880d61d2612e8899f6dc8be85ee096d4145e81169de5c57aa58",
-      "created_at": "2026-11-17T02:16:50.458Z"
+      "content_hash": "9803fc07f8fbe9a4495e5e7c403780f93edd5e4353d4146def172e326523b9e0",
+      "created_at": "2026-11-18T00:07:55.230Z"
     },
     "DOM-D-01385688": {
       "record_id": "DOM-D-01385688",
@@ -14161,8 +14163,8 @@
       "title": "Technical Construction Intelligence: beclab-olares-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-beclab-olares-learnings-technical-construction-intelligence-beclab-olares-learni.md",
       "repository": "beclab-olares-learnings",
-      "content_hash": "5ed3298260f712b33da1f5c0699957f733c59a650387ad61b008a06c1f1f03be",
-      "created_at": "2026-11-17T02:16:53.614Z"
+      "content_hash": "80356cf05c250bf04c859a2406a640513c8922241e09414d493ea011c208cc46",
+      "created_at": "2026-11-18T00:08:02.253Z"
     },
     "domain_intelligence-research-knowledge-intelligence-sentence-transformers-all-mpnet-base-v2-core-inv": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-sentence-transformers-all-mpnet-base-v2-core-inv",
@@ -23834,8 +23836,8 @@
       "title": "Quality & Verification Intelligence: rtk-ai/rtk Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-rtk-ai-rtk-quality-verification-intelligence-rtk-ai-rtk-core-invariants.md",
       "repository": "rtk-ai/rtk",
-      "content_hash": "549031f99d46a4a038452484a6bdefdb2d4538f9908fcea19245a5b5cbbfe4ff",
-      "created_at": "2026-11-16T16:21:40.377Z"
+      "content_hash": "bc0ae11dde8dc8f32ec45f825fc3ffed5faa3004fc09de08fafb91befe7e10e9",
+      "created_at": "2026-11-18T00:07:47.374Z"
     },
     "domain_intelligence-quality-verification-intelligence-rtk-ai-rtk-learnings-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-rtk-ai-rtk-learnings-core-invariants",
@@ -23843,8 +23845,8 @@
       "title": "Quality & Verification Intelligence: rtk-ai-rtk-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-rtk-ai-rtk-learnings-quality-verification-intelligence-rtk-ai-rtk-learnings-core.md",
       "repository": "rtk-ai-rtk-learnings",
-      "content_hash": "c90d9be4e2baed405353c5ef13ae70c4d28e380a4fef4c40bbb6b3c7508687c4",
-      "created_at": "2026-11-16T16:21:54.226Z"
+      "content_hash": "43cdab992de237188dd269dce508731185222b2d139f2f3ccbc1e9338c683203",
+      "created_at": "2026-11-18T00:08:01.396Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-liquidai-lfm3-audio-2b-learnings-core-invaria": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-liquidai-lfm3-audio-2b-learnings-core-invaria",
@@ -28881,6 +28883,24 @@
       "repository": "hf-meta-llama-llama-3.1-8b-instruct-learnings",
       "content_hash": "c241d945f90395dc0046599b6025207baf7d2d1b449e306f0a7439192b25ce56",
       "created_at": "2026-11-17T23:42:38.847Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-xingchen-agi-teleocr-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-teleocr-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: XingChen-AGI/TeleOCR Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-xingchen-agi-teleocr-research-knowledge-intelligence-xingchen-agi-teleocr-cor.md",
+      "repository": "XingChen-AGI/TeleOCR",
+      "content_hash": "85683e49c7c409f4577cdb043504c5aaf636574719b26ec4e5c8a845a4e19aef",
+      "created_at": "2026-11-18T00:07:46.444Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-xingchen-agi-teleocr-learnings-core-invariant": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-xingchen-agi-teleocr-learnings-core-invariant",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-xingchen-agi-teleocr-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-xingchen-agi-teleocr-learnings-research-knowledge-intelligence-hf-xingchen-ag.md",
+      "repository": "hf-xingchen-agi-teleocr-learnings",
+      "content_hash": "acedf32634e439f75f35498af5f1c50cedebf89c65bd4f572ae86b464d88140e",
+      "created_at": "2026-11-18T00:08:01.807Z"
     }
   }
 }

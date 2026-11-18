@@ -2,15 +2,15 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-17T23:20:48.226Z",
+  "updated_at": "2026-11-18T00:08:01.087Z",
   "stats": {
-    "total_discovered": 5182,
-    "approved_pending_harvest": 4893,
+    "total_discovered": 5187,
+    "approved_pending_harvest": 4898,
     "harvested_count": 0,
     "rejected_count": 289,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 4878,
-      "OFFICIAL_DOCUMENTATION": 163,
+      "COMMUNITY_AND_EXPERT": 4882,
+      "OFFICIAL_DOCUMENTATION": 164,
       "STANDARDS_AND_SPECIFICATIONS": 108,
       "ENGINEERING_BLOGS": 3,
       "SECURITY_ADVISORIES": 22,
@@ -112002,6 +112002,116 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gravitl-netmaker-learnings.md",
         "fileName": "gravitl-netmaker-learnings.md"
+      }
+    },
+    "SRC-0E23927C0124": {
+      "id": "SRC-0E23927C0124",
+      "url": "https://rust-lang.github.io/rustup/overrides.html",
+      "title": "https://rust-lang.github.io/rustup/overrides.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T00:08:00.959Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rtk-ai-rtk-learnings.md",
+        "fileName": "rtk-ai-rtk-learnings.md"
+      }
+    },
+    "SRC-E8BC30222103": {
+      "id": "SRC-E8BC30222103",
+      "url": "https://doc.rust-lang.org/cargo/reference/config.html",
+      "title": "https://doc.rust-lang.org/cargo/reference/config.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T00:08:00.991Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rtk-ai-rtk-learnings.md",
+        "fileName": "rtk-ai-rtk-learnings.md"
+      }
+    },
+    "SRC-8941E41BCB9E": {
+      "id": "SRC-8941E41BCB9E",
+      "url": "https://docs.rs/clap/latest/clap/struct.Arg.html",
+      "title": "https://docs.rs/clap/latest/clap/struct.Arg.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T00:08:01.024Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rtk-ai-rtk-learnings.md",
+        "fileName": "rtk-ai-rtk-learnings.md"
+      }
+    },
+    "SRC-7CF461D2CCAE": {
+      "id": "SRC-7CF461D2CCAE",
+      "url": "https://doc.rust-lang.org/cargo/commands/cargo.html",
+      "title": "https://doc.rust-lang.org/cargo/commands/cargo.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T00:08:01.057Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rtk-ai-rtk-learnings.md",
+        "fileName": "rtk-ai-rtk-learnings.md"
+      }
+    },
+    "SRC-0F2F870231E0": {
+      "id": "SRC-0F2F870231E0",
+      "url": "https://www.gnu.org/software/bash/manual/html_node/Definitions.html",
+      "title": "https://www.gnu.org/software/bash/manual/html_node/Definitions.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T00:08:01.087Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/rtk-ai-rtk-learnings.md",
+        "fileName": "rtk-ai-rtk-learnings.md"
       }
     }
   }

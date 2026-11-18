@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-17T23:42:26.702Z",
+  "last_updated": "2026-11-18T00:07:57.603Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -350,14 +350,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-xingchen-agi-teleocr",
-      "content_hash": "f2b1ff8ab0b6f333c48ed67bf043d9100ff9a360425690ff1e52b60bfede0044",
-      "verified_at": "2026-11-13T13:02:24.677Z",
+      "content_hash": "e80710b4dbdb9f76cd1d866971c00a59f4bb366c546424250280fdc9d4786529",
+      "verified_at": "2026-11-18T00:07:46.272Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T13:02:24.677Z"
+      "last_updated": "2026-11-18T00:07:46.272Z"
     },
     "Qwen/Qwen-Image-2.1": {
       "repository": "Qwen/Qwen-Image-2.1",
@@ -3321,14 +3321,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-microsoft-agent-governance-toolkit",
-      "content_hash": "ce7994ccdb20e279edb574d37cf6d2f53c42a7e88da61501dab3e0249d8590a3",
-      "verified_at": "2026-11-16T18:38:35.919Z",
+      "content_hash": "71595d7aa1e571c48e6b66c362b4ac61e9abcd8794655a210a056ae9a6435fc2",
+      "verified_at": "2026-11-18T00:07:57.602Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-16T18:38:35.919Z"
+      "last_updated": "2026-11-18T00:07:57.602Z"
     },
     "SynaLinks/synalinks-skills": {
       "repository": "SynaLinks/synalinks-skills",
@@ -4581,14 +4581,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-beclab-olares",
-      "content_hash": "37ddf0e1c7f8c8bb675959bfa37c98c88124d75ef9c421c2d30c5546ca1dd462",
-      "verified_at": "2026-11-17T02:16:50.203Z",
+      "content_hash": "c50fddb99a19fd4436eb607458cb023e5a69d6910f9184befdf5171c3e3be420",
+      "verified_at": "2026-11-18T00:07:54.933Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T02:16:50.203Z"
+      "last_updated": "2026-11-18T00:07:54.933Z"
     },
     "cryfs/cryfs": {
       "repository": "cryfs/cryfs",
@@ -11796,14 +11796,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-rtk-ai-rtk",
-      "content_hash": "d2495af9aff15a251a96c84e8e55e357e634ce62222b41f1d1f21373038c1087",
-      "verified_at": "2026-11-16T16:21:40.107Z",
+      "content_hash": "eba5a86bd33898fea41f3bbd595d192dc4aaeb07218f11607e76e95f29786297",
+      "verified_at": "2026-11-18T00:07:47.075Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-16T16:21:40.107Z"
+      "last_updated": "2026-11-18T00:07:47.075Z"
     },
     "gao-sun/eul": {
       "repository": "gao-sun/eul",

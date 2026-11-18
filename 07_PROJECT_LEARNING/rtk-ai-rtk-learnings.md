@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/rtk-ai-rtk-learnings.md`  
 > **Source**: github ([https://github.com/rtk-ai/rtk](https://github.com/rtk-ai/rtk))  
-> **Source Version**: `8bb6096b`  
+> **Source Version**: `6c94fc51`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-16T16:21:39.226Z  
+> **Timestamp**: 2026-11-18T00:07:46.138Z  
 > **Learning ID**: `learn-github-rtk-ai-rtk`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/rtk-ai-rtk-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/rtk-ai/rtk](https://github.com/rtk-ai/rtk))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T16:21:39.220Z  
+> **Harvest Timestamp**: 2026-11-18T00:07:46.132Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: CLI proxy that reduces LLM token consumption by 60-90% on common dev commands. Single Rust binary, zero dependencies
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 86747 stars
+- **Stars / Engagement**: 86940 stars
 
 ---
 
@@ -1743,430 +1743,571 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `61de0133` (2026-11-16)
-**Commit Message**: docs(guide): bring the embedding page in line with rtk 1.2.0
+### Incident Patch 1: `6c94fc51` (2026-11-17)
+**Commit Message**: Merge pull request #5056 from milyin/fix/cargo-toolchain-filtering
 
-- Call `rtk rewrite -- "<command>"`: without `--`, a command string such
-  as `--help` or `-h` makes rtk print its own help on stdout with exit 0,
-  and the sketch handed that text back as the command to run.
-- The sketch now caches its version probe, checks `RTK_DISABLED` and
-  `rtk_ready()` before spawning, and fails open on `ValueError` (an
-  embedded NUL), as the page's own rules ask.
-- `rtk gain --format json` has carried `oversized_excluded` since 1.0.0;
-  a command above the 30,000-byte cap only increments it, so a
-  per-command database reads all zeros for a large output.
-- The exit-code table names partial allow rules, shell wrappers and an
-  unparseable settings file (exit 3), a deny inside a wrapper's script
-  (exit 1) and an inherited `RTK_REWRITE_HOST`; the settings paths
-  follow the nearest `.claude/` and `$CLAUDE_CONFIG_DIR`.
-- OpenCode now runs `rtk hook opencode`, not `rtk rewrite`; the Hermes
-  plugin's timeout is 5 s; `rtk bypass` is the escape hatch's name since
-  1.0.0; Linux caps a single argument at 32 pages; the
-  `exclude_commands` example uses commands rtk rewrites.
-- Version references move to
+fix(cargo): filter toolchain and global-prefix invocations
 
-**File**: `docs/guide/getting-started/embedding.md` (modified, +42/-31)
+**File**: `src/cmds/rust/cargo_cmd.rs` (modified, +132/-53)
 ```diff
-@@ -7,46 +7,46 @@ sidebar:
+@@ -1,36 +1,131 @@
+ //! Filters cargo output — build errors, test results, clippy warnings.
  
- # Embedding rtk in your own agent harness
+-use crate::core::args_utils;
++use crate::core::arg_tokenizer::{self, Dialect, TokenKind, ValueSpec};
+ use crate::core::runner;
+-use crate::core::shell::display_args;
+ use crate::core::stream::{BlockHandler, BlockStreamFilter, StreamFilter};
++use crate::core::tracking;
+ use crate::core::truncate::{CAP_ERRORS, CAP_LIST, CAP_WARNINGS};
+ use crate::core::utils::{join_with_overflow, resolved_command, truncate};
+ use anyhow::Result;
+ use serde::Deserialize;
+ use std::cmp::Ordering;
+ use std::collections::HashMap;
+-use std::ffi::OsString;
++use std::ffi::{OsStr, OsString};
+ use std::sync::LazyLock;
  
--This page is for people who build an agent harness and want the rewrite step inside their own bash tool, rather than installing one of the hooks listed in [Supported Agents](supported-agents.md). The Pi, OpenCode and Hermes plugins and the legacy shell hooks are thin delegates around one binary call, `rtk rewrite`; the Rust-binary hooks that `rtk init` installs today (`rtk hook claude` and friends) run the same registry in-process. For a host of your own, `rtk rewrite` is the whole integration surface. Everything below was verified against rtk 0.48.0.
-+This page is for people who build an agent harness and want the rewrite step inside their own bash tool, rather than installing one of the hooks listed in [Supported Agents](supported-agents.md). The Pi and Hermes plugins and the legacy shell hooks are thin delegates around one binary call, `rtk rewrite`; the Rust-binary hooks that `rtk init` installs today (`rtk hook claude`, `rtk hook opencode` and friends) run the same registry in-process. For a host of your own, `rtk rewrite` is the whole integration surface. Everything below was verified against rtk 1.2.0.
- 
- ## What `rtk rewrite` returns
- 
--`rtk rewrite "<command>"` prints the rewritten command to stdout (no trailing newline) and reports its decision in the exit code. The contract is defined in [`src/hooks/rewrite_cmd.rs`](https://github.com/rtk-ai/rtk/blob/master/src/hooks/rewrite_cmd.rs):
-+`rtk rewrite -- "<command>"` prints the rewritten command to stdout (no trailing newline) and reports its decision in the exit code. Pass `--` before the command: without it, a command string that reads as an option of `rtk rewrite` itself (`--help`, `-h`) prints rtk's help on stdout with exit 0. The contract is defined in [`src/hooks/rewrite_cmd.rs`](https://github.com/rtk-ai/rtk/blob/master/src/hooks/rewrite_cmd.rs):
- 
- | Exit | Stdout | Meaning | What your host should do |
- |------|--------|---------|--------------------------|
--| 0 | rewritten command | Rewrite, and an explicit Claude Code allow rule matched | Run the rewritten command |
--| 1 | empty | No RTK equivalent | Run the original command |
-+| 0 | rewritten command | Rewrite, and Claude Code allow rules cover every command in it | Run the rewritten command |
-+| 1 | empty | No RTK equivalent, or a Claude Code deny rule matched inside a shell wrapper's script (`bash -c '…'`) | Run the original command |
- | 2 | empty | A Claude Code deny rule matched | Your call. The rule comes from Claude Code's settings, so the usual choice is to run the original command and let your own policy decide |
--| 3 | rewritten command | Rewrite, with an "ask" rule matched or no rule matched at all | Run the rewritten command |
-+| 3 | rewritten command | Rewrite, with an "ask" rule matched, allow rules covering only part of the command, a shell wrapper (`bash -c '…'`), a settings file that cannot be parsed, or no rule matched at all | Run the rewritten command |
- 
--The exit code carries a permission verdict read from Claude Code's settings files (`.claude/settings.json` in the project and `~/.claude/settings.json`, plus their `.local` variants). Outside Claude Code those files usually do not exist, so no rule matches, the verdict is `Default`, and **exit 3 is the ordinary answer for every rewritable command**:
-+The exit code carries a permission verdict read from Claude Code's settings files (`settings.json` and `settings.local.json` in the nearest `.claude/` directory above the working directory, and in `~/.claude`, or in `$CLAUDE_CONFIG_DIR` when it is set to a non-empty path; for a project under your home with no `.claude/` of its own, the nearest one is usually `~/.claude` itself). Outside Claude Code those files usually do not exist, so no rule matches, the verdict is `Default`, and **exit 3 is the ordinary answer for every rewritable command**:
- 
- ```bash
--$ rtk rewrite "git status"; echo " -> exit $?"
-+$ rtk rewrite -- "git status"; echo " -> exit $?"
- rtk git status -> exit 3
--$ rtk rewrite "htop"; echo " -> exit $?"
-+$ rtk rewrite -- "htop"; echo " -> exit $?"
-  -> exit 1
- ```
- 
--A host that treats 3 as anything other than 0 has RTK silently switched off. Treat 0 and 3 identically: when stdout is non-empty, that is the command to run. On a machine that also has Claude Code installed, its allow and deny rules show up as 0 and 2; treating 0 and 3 alike keeps your host indifferent to that.
-+A host that treats 3 as anything other than 0 has RTK silently switched off. Treat 0 and 3 identically: when stdout is non-empty, that is the command to run. On a machine that also has Claude Code installed, its allow and deny rules show up as 0 and 2, and an `RTK_REWRITE_HOST=openclaw` inherited from the environment turns the ordinary 3 into 0; treating 0 and 3 alike keeps your host indifferent to both.
- 
- Three more details of the call:
- 
--- **Read stdout only.** Stderr can carry advisory lines: a once-a-day "No
-```
-
----
-
-### Incident Patch 2: `8bb6096b` (2026-11-16)
-**Commit Message**: Merge pull request #3918 from zerone0x/docs/embedding-guide
-
-docs(guide): add a guide for embedding rtk in a custom agent harness
-
-**File**: `docs/guide/getting-started/embedding.md` (added, +186/-0)
-```diff
-@@ -0,0 +1,186 @@
-+---
-+title: Embedding rtk in your own agent harness
-+description: Call rtk rewrite from your own bash tool instead of installing a shipped hook — the exit-code contract, where the call goes, fail-open rules, and per-session accounting
-+sidebar:
-+  order: 5
-+---
-+
-+# Embedding rtk in your own agent harness
-+
-+This page is for people who build an agent harness and want the rewrite step inside their own bash tool, rather than installing one of the hooks listed in [Supported Agents](supported-agents.md). The Pi and Hermes plugins and the legacy shell hooks are thin delegates around one binary call, `rtk rewrite`; the Rust-binary hooks that `rtk init` installs today (`rtk hook claude`, `rtk hook opencode` and friends) run the same registry in-process. For a host of your own, `rtk rewrite` is the whole integration surface. Everything below was verified against rtk 1.2.0.
-+
-+## What `rtk rewrite` returns
-+
-+`rtk rewrite -- "<command>"` prints the rewritten command to stdout (no trailing newline) and reports its decision in the exit code. Pass `--` before the command: without it, a command string that reads as an option of `rtk rewrite` itself (`--help`, `-h`) prints rtk's help on stdout with exit 0. The contract is defined in [`src/hooks/rewrite_cmd.rs`](https://github.com/rtk-ai/rtk/blob/master/src/hooks/rewrite_cmd.rs):
-+
-+| Exit | Stdout | Meaning | What your host should do |
-+|------|--------|---------|--------------------------|
-+| 0 | rewritten command | Rewrite, and Claude Code allow rules cover every command in it | Run the rewritten command |
-+| 1 | empty | No RTK equivalent, or a Claude Code deny rule matched inside a shell wrapper's script (`bash -c '…'`) | Run the original command |
-+| 2 | empty | A Claude Code deny rule matched | Your call. The rule comes from Claude Code's settings, so the usual choice is to run the original command and let your own policy decide |
-+| 3 | rewritten command | Rewrite, with an "ask" rule matched, allow rules covering only part of the command, a shell wrapper (`bash -c '…'`), a settings file that cannot be parsed, or no rule matched at all | Run the rewritten command |
-+
-+The exit code carries a permission verdict read from Claude Code's settings files (`settings.json` and `settings.local.json` in the nearest `.claude/` directory above the working directory, and in `~/.claude`, or in `$CLAUDE_CONFIG_DIR` when it is set to a non-empty path; for a project under your home with no `.claude/` of its own, the nearest one is usually `~/.claude` itself). Outside Claude Code those files usually do not exist, so no rule matches, the verdict is `Default`, and **exit 3 is the ordinary answer for every rewritable command**:
-+
-+```bash
-+$ rtk rewrite -- "git status"; echo " -> exit $?"
-+rtk git status -> exit 3
-+$ rtk rewrite -- "htop"; echo " -> exit $?"
-+ -> exit 1
-+```
-+
-+A host that treats 3 as anything other than 0 has RTK silently switched off. Treat 0 and 3 identically: when stdout is non-empty, that is the command to run. On a machine that also has Claude Code installed, its allow and deny rules show up as 0 and 2, and an `RTK_REWRITE_HOST=openclaw` inherited from the environment turns the ordinary 3 into 0; treating 0 and 3 alike keeps your host indifferent to both.
-+
-+Three more details of the call:
-+
-+- **Read stdout only.** Stderr can carry advisory lines: a once-a-day "No hook installed" notice on machines where the Claude Code config directory (`~/.claude`, or `$CLAUDE_CONFIG_DIR`) exists without an RTK hook, or an `RTK_DISABLED=1 detected` message.
-+- **Compare output with input.** A command that already starts with `rtk` comes back unchanged (still exit 3), and there is nothing to substitute.
-+- **Check `RTK_DISABLED` yourself before spawning `rtk rewrite`**, as the Pi extension does. Releases up to 1.2.0 honor it only as an in-command prefix (`rtk rewrite -- "RTK_DISABLED=1 git status"` exits 1); [rtk-ai/rtk#3917](https://github.com/rtk-ai/rtk/pull/3917) makes `rtk rewrite` honor the exported variable as well.
-+
-+`rtk rewrite` does not run the command and does not open the savings database. Compound commands are handled (`cargo fmt --all && cargo test` becomes `rtk cargo fmt --all && rtk cargo test`); commands containing a file redirect (`> out.txt`) or command substitution pass through with exit 1; a file-descriptor duplication such as `2>&1` does not block the rewrite.
-+
-+## Where the call goes
-+
-+Run the rewrite **after your own approval gate and before you spawn the shell**:
-+
-+```text
-+agent asks for "git status"
-+  -> your policy check or permission prompt sees "git status"
-+  -> rtk rewrite -- "git status"     prints "rtk git status", exit 3
-+  -> the shell runs "rtk git status"
-+  -> the model reads the filtered output
-+```
-+
-+A person approving a command then sees the command the agent asked for, not the rewritten one, and allow or deny patterns written for `git ...` keep matching. If your transcript shows the executed command, show the re
-```
-
-**File**: `docs/guide/getting-started/supported-agents.md` (modified, +2/-0)
-```diff
-@@ -328,6 +328,8 @@ Strips only RTK's `[[hooks]]` block and the `~/.vibe/prompts/rtk.md` file. Any o
- 
- Rules file integrations (Cline, Windsurf, Kilo Code) rely on the model following instructions. Full hook integrations (Claude Code, Trae, Cursor, Gemini, Codex, Factory Droid, Antigravity) apply rewrites before execution whenever RTK supports and can safely attest the command. Plugin integrations (OpenCode, Pi, Hermes) use in-place mutation via the agent's extension or plugin API.
- 
-+Building a harness of your own? A host can skip these hooks and call `rtk rewrite` from its own bash tool. [Embedding rtk in your own agent harness](embedding.md) covers the exit-code contract, where the call goes, the fail-open rules, and per-session accounting.
-+
- ## Windows support
- 
- Since v0.37.2 the hooks for Claude Code, Cursor, Copilot, Codex, Trae, Factory Droid and Mistral Vibe are native binary commands (`rtk hook <agent>`), so auto-rewrite works on native Windows — no Unix shell, bash or jq required. `rtk init -g` installs the native hook on Windows exactly as on Linux and macOS, and adds it to Claude Code's `settings.json` once you answer `y` to the prompt (or pass `--auto-patch`).
-```
-
----
-
-### Incident Patch 3: `2f90f4a9` (2026-11-16)
-**Commit Message**: Merge pull request #4507 from TechWizard9999/fix/4462-opencode-path-resolution
-
-fix(opencode): resolve rtk binary path for GUI-launched OpenCode (#4462)
-
-**File**: `hooks/opencode/README.md` (modified, +1/-2)
-```diff
-@@ -11,8 +11,7 @@
- - The Rust side judges the command against OpenCode's own permission rules and answers `{}` whenever the rewrite would change the verdict those rules give — OpenCode evaluates the final command itself, so RTK never lifts a deny, silences an ask, or blocks an allow (#4195). Rules are read from root and project `opencode.json`/`.jsonc` in the order OpenCode resolves them: the legacy `permission` map first, then the 2.x `permissions` list, whatever order the file declares them. Every file's root rules load before any file's agent rules, so a project `allow` cannot outrank a global agent `ask`. 2.x list actions match as globs against `shell`, so `sh*` covers it; a list rule whose action only names `bash` does not count, because OpenCode ignores it there. A legacy map key the two generations read differently (`shell` and `sh*` apply only on 2.x, `b*` only on 1.x) makes rtk leave the command as typed, because it cannot tell which generation it is serving. Global rules come before project rules. An agent defined as a markdown file in `agents/` or `agent/`, under `~/.config/opencode/` or any `.opencode/` from the working directory up, whose frontmatter declares `permission:` or `permissions:`, is not parsed here, so no rewrite happens for that agent and OpenCode applies its own rules.
- - Uses standard `node:child_process.execFile` (compatible with OpenCode CLI, OpenCode Desktop/Electron, and Windows; zero Bun/zx dependencies)
- - Passes the command as a single argv element, never through a shell
--- Resolves rtk from the system `PATH` only (`PATHEXT` on Windows), and skips a PATH entry that is a directory. OpenCode's shell tool runs with OpenCode's own `PATH` and never sources `.profile`/`.bashrc`, so an rtk found outside `PATH` cannot be spawned as a bare `rtk …` — see #4462
--- Probes the resolved binary once per session with `rtk hook opencode --help` (cached): exit 0 means the subcommand is there, exit 2 means it predates it, and a broken or wrong-arch binary fails to spawn. Not a version number — a develop build reports `rtk 0.49.0` and so does a release that lacks the subcommand
-+- Resolves rtk in this order, skipping any directory named `rtk`: OpenCode's own `PATH` (`PATHEXT` on Windows), then `RTK_BIN` when it is an absolute path to a file named `rtk`, then `~/.cargo/bin`, `~/.local/bin` (`install.sh`'s default), `/opt/homebrew/bin`, `/usr/local/bin`, `/usr/bin` and, on Windows, `%LOCALAPPDATA%\cargo\bin` and `%ProgramFiles%\rtk`. The rewrite stays a bare `rtk …`, so OpenCode judges the same string `rtk hook opencode` judged; to make every `rtk` in it resolve, the plugin appends rtk's directory to the end of the spawned shell's `PATH` through OpenCode 2.x's `ctx.shell.hook("create.before")` and OpenCode 1.x's `shell.env` hook. Appending leaves every command that already resolves on `PATH` resolving to the same binary (the other programs in rtk's directory become reachable too), and changes nothing at all when rtk is already on `PATH`. That is also why an rtk on `PATH` comes before `RTK_BIN`: it is the one the shell runs, so it is the one that has to judge the command (#4462)
- - Passes OpenCode 2.x's `event.agent` as `rtk hook opencode --agent <name>`, so an `agent.<name>.permission` ask or deny is judged against the agent that runs the command. OpenCode 1.x sends no agent field, so that path stays root-only
- - Two separate off switches, both named `RTK_DISABLED`. The per-command form is `RTK_DISABLED=1 git status`, an env prefix inside the command string; the Rust rewrite engine handles that one and the plugin passes the string through untouched. The plugin also reads `RTK_DISABLED=1` from OpenCode's own process environment, which switches rewriting off for the whole session
- - Mutates command in-place (`event.input.command` in v2, `output.args.command` in v1) if the answered rewrite differs from the original
-```
-
-**File**: `hooks/opencode/rtk.test.mjs` (modified, +361/-25)
-```diff
-@@ -1,34 +1,49 @@
- import test, { after, before } from "node:test"
- import assert from "node:assert/strict"
--import { copyFileSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs"
-+import { execSync } from "node:child_process"
-+import { copyFileSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, symlinkSync, writeFileSync } from "node:fs"
- import { tmpdir } from "node:os"
--import { delimiter, join } from "node:path"
-+import { delimiter, dirname, join } from "node:path"
- import RtkOpenCodePlugin, {
-+  candidateRtkDirs,
-   probeRtkHookOpencode,
-   resolveRtkPath,
-   runHookOpencode,
-   tryRewriteCommand,
-   _resetCachedRtkPath,
- } from "./rtk.ts"
- 
--// The plugin resolves rtk off PATH and runs it, so the tests need a real rtk
--// to find. node is copied in under the name `rtk`, and because the plugin
--// spawns `[<rtk>, "hook", "opencode", …]` — node reading argv[2] as the script
--// to run — the mock script is named `hook` and the tests chdir into the mock
--// directory so it is found there instead of over whatever sits in the repo.
-+// The plugin resolves rtk off PATH or candidate directories and runs it, so
-+// the tests need a real rtk to find. Node is symlinked/copied in under the name
-+// `rtk`, and because the plugin spawns `[<rtk>, "hook", "opencode", …]` — node
-+// reading argv[2] as the script to run — the mock script is named `hook` and the
-+// tests chdir into the mock directory so it is found there instead of over
-+// whatever sits in the repo.
- // Everything below then exercises the shipped code path: PATH discovery, the
- // `hook opencode --help` probe, argv construction, and the registered hooks.
- const BIN = process.platform === "win32" ? "rtk.EXE" : "rtk"
- let mockDir = ""
- let emptyDir = ""
- let savedPath = ""
-+let savedHome = ""
-+let savedUserProfile = ""
- let savedCwd = ""
- 
-+function installMockBin(dest) {
-+  try {
-+    symlinkSync(process.execPath, dest)
-+  } catch {
-+    copyFileSync(process.execPath, dest)
-+  }
-+}
-+
- const MOCK = `
- const fs = require("fs")
- const [sub, ...rest] = process.argv.slice(2)
- 
- if (rest[0] === "--help") {
-+  // marks a run from a shell command, so a test can count which rtk ran
-+  console.log("rtk-mock")
-   if (process.env.MOCK_PROBE_LOG) fs.appendFileSync(process.env.MOCK_PROBE_LOG, "probe\\n")
-   // pre-#4349 rtk has no such subcommand and answers like clap does: exit 2
-   process.exit(process.env.MOCK_NO_SUB ? 2 : 0)
-@@ -42,6 +57,10 @@ if (process.env.MOCK_ECHO) {
-   console.log(JSON.stringify({ command: JSON.stringify(process.argv.slice(2)) }))
- } else if (command === "ls -la") {
-   console.log(JSON.stringify({ command: "rtk ls -la" }))
-+} else if (command === "cd sub && ls -la") {
-+  console.log(JSON.stringify({ command: "cd sub && rtk ls -la" }))
-+} else if (command === "ls -la && git status") {
-+  console.log(JSON.stringify({ command: "rtk ls -la && rtk git status" }))
- } else if (command === "unchanged") {
-   // what the Rust side answers when the rewrite would change the verdict
-   console.log("{}")
-@@ -73,17 +92,25 @@ const v1Input = { tool: "bash", sessionID: "ses_1", callID: "call_1" }
- const v1Output = (command) => ({ args: { command, description: "list files" } })
- 
- async function captureSetup() {
--  const names = []
--  let hook = null
-+  const toolHooks = []
-+  const shellHooks = []
-+  let toolHook = null
-+  let shellHook = null
-   await RtkOpenCodePlugin.setup({
-     tool: {
-       hook(name, callback) {
--        names.push(name)
--        if (name === "execute.before") hook = callback
-+        toolHooks.push(name)
-+        if (name === "execute.before") toolHook = callback
-+      },
-+    },
-+    shell: {
-+      hook(name, callback) {
-+        shellHooks.push(name)
-+        if (name === "create.before") shellHook = callback
-       },
-     },
-   })
--  return { names, hook }
-+  return { names: toolHooks, hook: toolHook, toolHooks, shellHooks, shellHook }
+-#[derive(Debug, Clone)]
++#[derive(Debug, Clone, Copy)]
+ pub enum CargoCommand {
+     Build,
+     Test,
+     Clippy,
+     Check,
+     Install,
+     Nextest,
++    Fmt,
  }
  
- async function captureServer() {
-@@ -94,33 +121,47 @@ async function captureServer() {
- before(() => {
-   savedCwd = process.cwd()
-   savedPath = process.env.PATH ?? ""
-+  savedHome = process.env.HOME ?? ""
-+  savedUserProfile = process.env.USERPROFILE ?? ""
-   mockDir = mkdtempSync(join(tmpdir(), "rtk-opencode-mock-"))
-   emptyDir = mkdtempSync(join(tmpdir(), "rtk-opencode-empty-"))
-   writeFileSync(join(mockDir, "package.json"), '{"type":"commonjs"}')
-   writeFileSync(join(mockDir, "hook"), MOCK)
--  copyFileSync(process.execPath, mockBin())
-+  installMockBin(mockBin())
-   process.chdir(mockDir)
-   process.env.PATH = `${mockDir}${delimiter}${savedPath}`
-+  process.env.HOME = emptyDir
-+  process.env.USERPROFILE = emptyDir
-+  delete process.env.RTK_BIN
-   _resetCachedRtkPath()
- })
- 
- after(() => {
-   process.chdir(savedCwd)
-   process.env.PATH = savedPath
-+  process.env.HOME = savedHome
-+  process.env.USERPROFILE = savedUserProfile
-   delete process.env.MOCK_ECHO
-   delete process.env.MOCK_NO_SUB
-   delete process.env.MOCK_PROBE_LOG
-   delete proce
-```
-
-**File**: `hooks/opencode/rtk.ts` (modified, +130/-25)
-```diff
-@@ -1,6 +1,7 @@
- import { execFile } from "node:child_process"
- import { existsSync, statSync } from "node:fs"
--import { delimiter, join } from "node:path"
-+import { homedir } from "node:os"
-+import { basename, delimiter, dirname, isAbsolute, join } from "node:path"
- 
- // RTK OpenCode plugin — rewrites commands to use rtk for token savings.
- //
-@@ -28,40 +29,127 @@ export function _resetCachedRtkPath(): void {
-   probedBin = null
- }
- 
-+function probeDirsForRtk(dirs: string[], exts: string[]): string | null {
-+  for (const dir of dirs) {
-+    for (const ext of exts) {
-+      const fullPath = join(dir, `rtk${ext}`)
-+      try {
-+        if (existsSync(fullPath) && !statSync(fullPath).isDirectory()) {
-+          return fullPath
+-pub fn run(cmd: CargoCommand, args: &[String], verbose: u8) -> Result<i32> {
+-    match cmd {
+-        CargoCommand::Build => run_build(args, verbose),
++impl CargoCommand {
++    pub fn as_str(self) -> &'static str {
++        match self {
++            Self::Build => "build",
++            Self::Test => "test",
++            Self::Clippy => "clippy",
++            Self::Check => "check",
++            Self::Install => "install",
++            Self::Nextest => "nextest",
++            Self::Fmt => "fmt",
 +        }
-+      } catch {
-+        continue
-+      }
 +    }
-+  }
-+  return null
++
++    /// Find a supported canonical command and its index, inspecting only Cargo's prefix.
++    /// The original OS arguments are kept separately and forwarded without reconstruction.
++    pub fn parse<T: AsRef<OsStr>>(args: &[T]) -> Option<(Self, usize)> {
++        let words: Vec<_> = args
++            .iter()
++            .map(|arg| arg.as_ref().to_string_lossy())
++            .collect();
++        // Rustup recognizes +toolchain only as the first argument.
++        // https://rust-lang.github.io/rustup/overrides.html#toolchain-override-shorthand
++        let start = usize::from(words.first().is_some_and(|arg| arg.starts_with('+')));
++        let tokens =
++            arg_tokenizer::tokenize_grammar(&words[start..], &prefix_option_value, Dialect::Posix);
++        for token in &tokens {
++            if token.kind == TokenKind::Positional {
++                if !token.is_free_positional() {
++                    continue;
++                }
++                // Configurable aliases (including b/c/t) cannot safely select a filter.
++                // https://doc.rust-lang.org/cargo/reference/config.html#alias
++                return [
++                    Self::Build,
++                    Self::Test,
++                    Self::Clippy,
++                    Self::Check,
++                    Self::Install,
++                    Self::Nextest,
++                    Self::Fmt,
++                ]
++                .into_iter()
++                .find(|command| command.as_str() == token.text)
++                .map(|command| (command, start + token.source_index));
++            }
++            if prefix_option_value(token.kind, token.text).is_some() {
++                let value = token.value(&tokens)?;
++                // The existing POSIX tokenizer can consume a separate option as a value.
++                // Cargo's prefix options reject that form; leave its diagnostic untouched.
++                // https://docs.rs/clap/latest/clap/struct.Arg.html#method.allow_hyphen_values
++                if token.linked.is_some() && value.starts_with('-') && value != "-" {
++                    return None;
++                }
++                if token.kind == TokenKind::Short
++                    && token.text == "Z"
++                    && value.trim_start_matches('=').split('=').next() == Some("help")
++                {
++                    return None;
++                }
++                continue;
++            }
++            match (token.kind, token.text) {
++                (TokenKind::Long, "locked" | "offline" | "frozen" | "quiet" | "verbose")
++                | (TokenKind::Short, "q" | "v") => {}
++                // Root actions (--help/--version/--list/--explain), -- and unknown
++                // options leave the whole invocation to Cargo. Guessing an unknown
++                // option's arity could mistake its value for the command.
++                _ => return None,
++            }
++        }
++        None
++    }
 +}
 +
-+/**
-+ * Whether the shell reaches `bin` as a bare `rtk` once `dirname(bin)` is
-+ * appended to its PATH: an absolute path (a relative one would be resolved
-+ * against the shell's working directory) to a file named `rtk`.
-+ */
-+function reachableAsRtk(bin: string, exts: string[]): boolean {
-+  const fold = (s: string) => (process.platform === "win32" ? s.toLowerCase() : s)
-+  const name = fold(basename(bin))
-+  if (!isAbsolute(bin) || !exts.some((ext) => name === fold(`rtk${ext}`))) return false
-+  try {
-+    return existsSync(bin) && !statSync(bin).isDirectory()
-+  } catch {
-+    return false
-+  }
++/// Only prefix options that consume a value matter for locating the command.
++/// Command-specific options are still inspected by the existing runners below.
++/// https://doc.rust-lang.org/cargo/commands/cargo.html#options
++fn prefix_option_value(kind: TokenKind, name: &str) -> Option<ValueSpec> {
++    match (kind, name) {
++        (TokenKind::Long, "config" | "color") | (TokenKind::Short, "C" | "Z") => {
++            Some(ValueSpec::value())
++        }
++        _ => None,
++    }
 +}
 +
- /**
-- * Resolves the rtk binary from the system PATH.
-+ * Resolves the rtk binary that OpenCode's shell will run.
-  *
-- * PATH only, deliberately. OpenCode's bash/shell tool runs commands with
-- * OpenCode's own PATH and never sources `.profile`, `.bashrc` or
-- * `.bash_profile`, so an rtk found outside PATH cannot be spawned as a bare
-- * `rtk …` — the tool comes back `rtk: command not found`. Finding one anyway
-- * is worse than not rewriting (#4462 carries that case). A directory on PATH
-- * named `rtk` is skipped rather than frozen as the answer: it disables the
-- * plugin for the whole session.
-+ * The rewrite stays a bare `rtk …` and the shell hooks only append rtk's
-+ * directory to the shell's PATH, so an rtk already on PATH is the one every
-+ * rewritten command runs. It is therefore checked first (PATHEXT on Windows,
-+ * #1993): probing and judging the command with any other rtk would let the
-+ * binary that judged it and the one that runs it disagree. Without one,
-+ * RTK_BIN is used when the shell can reach it as `rtk`, then the standard
-+ * install directories: ~/.cargo/bin, ~/.local/bin, /opt/homebrew/bin,
-+ * /usr/local/bin, /usr/bin, and Windows local app data / program files. Those
-+ * are where an rtk sits when OpenCode is launched from a desktop GUI (macOS
-+ * Dock, a Linux desktop entry) that does not source the shell profile (#4462).
-  *
-- * Windows still probes PATHEXT, which is the #1993 fix: `which` does not exist
-- * there.
-+ * A directory named `rtk` is skipped rather than returned.
-  */
- export function resolveRtkPath(): string | null {
-   if (cachedRtkPath && existsSync(cachedRtkPath)) return cachedRtkPath
- 
--  const dirs = (process.env.PATH ?? "").split(delimiter).filter(Boolean)
-   const exts = process.platform === "win32"
-     ? (process.env.PATHEXT ?? ".EXE;.CMD;.BAT;.COM").split(";")
-     : [""]
-+  const rtkBinEnv = process.env.RTK_BIN
- 
--  for (const dir of dirs) {
--    for (const ext of exts) {
--      const fullPath = join(dir, `rtk${ext}`)
--      if (existsSync(fullPath) && !statSync(fullPath).isDirectory()) {
--        return (cachedRtkPath = fullPath)
--      }
-+  // 1. System PATH
-+  const pathDirs = (process.env.PATH ?? "").split(delimiter).filter(Boolean)
-+  const pathMatch = probeDirsForRtk(pathDirs, exts)
-+  if (pathMatch) {
-+    if (rtkBinEnv && rtkBinEnv !== pathMatch) {
-+      console.warn(`[rtk] RTK_BIN=${rtkBinEnv} ignored: ${pathMatch} is on PATH, so it is the rtk OpenCode's shell runs`)
-     }
-+    return (cachedRtkPath = pathMatch)
-   }
- 
-+  // 2. RTK_BIN
-+  if (rtkBinEnv) {
-+    if (reachableAsRtk(rtkBinEnv, exts)) return (cachedRtkPath = rtkBinEnv)
-+    console.warn(`[rtk] RTK_BIN=${rtkBinEnv} ignored: it must be an absolute path to a file named rtk`)
-+  }
-+
-+  // 3. Candidate directories outside system PATH (#4462)
-+  const candidateMatch = probeDirsForRtk(candidateRtkDirs(), exts)
-+  if (candidateMatch) return (cachedRtkPath = candidateMatch)
-+
-   return (cachedRtkPath = null)
++pub fn run(args: &[OsString], verbose: u8) -> Result<i32> {
++    let Some((command, index)) = CargoCommand::parse(args) else {
++        return runner::run_passthrough
+```
+
+**File**: `src/core/runner.rs` (modified, +8/-0)
+```diff
+@@ -474,6 +474,14 @@ fn help_spelling(stem: &str, first: Option<&str>) -> HelpSpelling {
  }
  
-+/** Install directories probed when rtk is on neither `PATH` nor `RTK_BIN`. */
-+export function candidateRtkDirs(): string[] {
-+  const home = homedir()
-+  const dirs: string[] = [
-+    join(home, ".cargo", "bin"),
-+    join(home, ".local", "bin"), // install.sh's default INSTALL_DIR
-+    "/opt/homebrew/bin",
-+    "/usr/local/bin",
-+    "/usr/bin",
-+  ]
+ fn asks_for_usage(stem: &str, args: &[String]) -> bool {
++    // Cargo's prefix does not change the command's existing help/version semantics.
++    let args = if stem == "cargo"
++        && let Some((_, index)) = crate::cmds::rust::cargo_cmd::CargoCommand::parse(args)
++    {
++        &args[index..]
++    } else {
++        args
++    };
+     let first = args.first().map(String::as_str);
+     let spelling = help_spelling(stem, first);
+     let takes_value = |kind: TokenKind, name: &str| {
+```
+
+**File**: `src/discover/lexer.rs` (modified, +1/-1)
+```diff
+@@ -917,7 +917,7 @@ pub fn strip_quotes(s: &str) -> String {
+ /// Turns a coalesced word's raw text (quotes/escapes still literal, as
+ /// `tokenize()` preserves them) into argv-ready text: quote chars that
+ /// open/close a span are stripped, backslash escapes resolved.
+-fn resolve_word_text(raw: &str) -> String {
++pub(super) fn resolve_word_text(raw: &str) -> String {
+     let mut result = String::new();
+     let mut chars = raw.chars().peekable();
+     let mut quote: Option<char> = None;
+```
+
+**File**: `src/discover/registry.rs` (modified, +101/-2)
+```diff
+@@ -8,8 +8,8 @@ use std::sync::LazyLock;
+ 
+ use super::lexer::{
+     ParsedToken, PipeKind, QuoteScan, TokenKind, ansi_c_quote_defeats_lexer, coalesce_words,
+-    contains_unattestable_construct_in, is_crlf_at, redirect_has_file_target, shell_split,
+-    split_on_operators, tokenize, tokenize_with_newlines,
++    contains_unattestable_construct_in, is_crlf_at, redirect_has_file_target, resolve_word_text,
++    shell_split, split_on_operators, tokenize, tokenize_with_newlines,
+ };
+ use super::rules::{IGNORED_EXACT, IGNORED_PREFIXES, RULES, RtkRule};
+ use super::shell_wrapper::parse_shell_wrapper;
+@@ -234,6 +234,8 @@ pub fn classify_command(cmd: &str) -> Classification {
+         } else {
+             cmd_normalized
+         };
++    // Match on the canonical Cargo command, but emit the original shell text when rewriting.
++    let cmd_normalized = normalize_cargo_command(&cmd_normalized);
+     let cmd_clean = cmd_normalized.as_str();
+ 
+     // Exclude cat/head/tail with redirect operators — these are writes, not reads (#315)
+@@ -456,6 +458,29 @@ fn strip_git_global_opts(cmd: &str) -> String {
+     format!("git {}", stripped.trim())
+ }
+ 
++fn normalize_cargo_command(cmd: &str) -> String {
++    // Bash blanks separate the command name; other whitespace can belong to it.
++    // https://www.gnu.org/software/bash/manual/html_node/Definitions.html
++    if cmd
++        .strip_prefix("cargo")
++        .is_some_and(|tail| tail.starts_with([' ', '\t']))
++    {
++        let tokens = tokenize(cmd);
++        let raw_words = coalesce_words(cmd, &tokens);
++        let words: Vec<_> = raw_words[1..]
++            .iter()
++            .map(|(word, _)| resolve_word_text(word))
++            .collect();
++        if let Some((command, index)) = crate::cmds::rust::cargo_cmd::CargoCommand::parse(&words) {
++            // Preserve the raw suffix so argument-specific exclusions still see its
++            // original quoting and spacing after the canonical command name.
++            let (word, offset) = raw_words[index + 1];
++            return format!("cargo {}{}", command.as_str(), &cmd[offset + word.len()..]);
++        }
++    }
++    cmd.to_owned()
++}
 +
-+  if (process.platform === "win32") {
-+    if (process.env.LOCALAPPDATA) dirs.push(join(process.env.LOCALAPPDATA, "cargo", "bin"))
-+    if (process.env.ProgramFiles) dirs.push(join(process.env.ProgramFiles, "rtk"))
-+ 
+ /// Strip pnpm global options before the subcommand (mirror of `strip_git_global_opts`).
+ /// `pnpm -r install` → `pnpm install`; `pnpm --filter @app list` → `pnpm list`.
+ /// Classification only — the rewrite re-emits the ORIGINAL command, so the stripped
+@@ -2093,6 +2118,13 @@ fn rewrite_segment_inner(
+ /// Rewrite the command part of a segment (trailing redirects already split
+ /// off) with `rule`, or `None` when this rule does not rewrite it.
+ fn rewrite_command_part(rule: &RtkRule, cmd_part: &str) -> Option<String> {
++    if rule.rtk_cmd == "rtk cargo"
++        && cmd_part
++            .strip_prefix("cargo")
++            .is_some_and(|tail| tail.starts_with([' ', '\t']))
++    {
++        return Some(format!("rtk {cmd_part}"));
++    }
+     if rule.rtk_cmd == "rtk golangci-lint run"
+         && let Some(parts) = parse_golangci_run_parts(cmd_part)
+     {
+@@ -2192,6 +2224,9 @@ fn tool_form(cmd_clean: &str, rtk_equivalent: &str) -> String {
+     let normalized = strip_absolute_path(
+         &php_tool_form(cmd_clean, rtk_equivalent).unwrap_or_else(|| cmd_clean.to_string()),
+     );
++    if rtk_equivalent == "rtk cargo" {
++        return normalize_cargo_command(&normalized);
++    }
+     RULES
+         .iter()
+         .find(|r| r.rtk_cmd == rtk_equivalent)
+@@ -7377,6 +7412,70 @@ mod tests {
+         );
+     }
+ 
++    #[test]
++    fn test_exclude_cargo_command_covers_toolchain_and_global_prefixes() {
++        for command in [
++            "cargo test",
++            "cargo +stable test",
++            "cargo --locked test",
++            "cargo --config 'build.rustflags=[\"--cfg\", \"demo\"]' test --lib",
++            "cargo +nightly -Zunstable-options -C 'some path' test",
++            "cargo\t+stable\ttest --lib",
++            "cargo +stable 'te'\"st\" --lib",
++            "RUSTUP_TOOLCHAIN=nightly cargo +stable test",
++        ] {
++            assert_eq!(
++                rewrite_command_no_prefixes(command, &["cargo test".to_string()]),
++                None,
++                "{command}"
++            );
++        }
++        for command in ["cargo +stable check", "cargo --config test check"] {
++            assert_eq!(
++                rewrite_command_no_prefixes(command, &["cargo test".to_string()]),
++                Some(format!("rtk {command}")),
++                "{command}"
++            );
++        }
++        assert_eq!(
++            rewrite_command_no_prefixes("cargo +stable test", &["cargo +stable test".to_string()]),
++            None
++        );
++    }
++
++    #[test]
++    fn test_exclude_cargo_arguments_keep_their_raw_spelling() {
++        for (pattern, command, excluded) in [
++            ("^cargo test$", "cargo +stable test", true),
++            ("^cargo test$", "cargo +stable test --lib", false),
++            ("cargo test --lib", "cargo --locked test --lib", true),
++            ("
+```
+
+**File**: `src/lib.rs` (modified, +43/-68)
+```diff
+@@ -699,8 +699,9 @@ enum Commands {
+ 
+     /// Cargo commands with compact output
+     Cargo {
+-        #[command(subcommand)]
+-        command: CargoCommands,
++        /// Cargo arguments, including toolchain selectors and global options
++        #[arg(trailing_var_arg = true, allow_hyphen_values = true)]
++        args: Vec<OsString>,
+     },
+ 
+     /// npm run with filtered output (strip boilerplate)
+@@ -1615,49 +1616,6 @@ enum PrismaMigrateCommands {
+     },
+ }
+ 
+-#[derive(Debug, Subcommand)]
+-enum CargoCommands {
+-    /// Build with compact output (strip Compiling lines, keep errors)
+-    Build {
+-        /// Additional cargo build arguments
+-        #[arg(trailing_var_arg = true, allow_hyphen_values = true)]
+-        args: Vec<String>,
+-    },
+-    /// Test with failures-only output
+-    Test {
+-        /// Additional cargo test arguments
+-        #[arg(trailing_var_arg = true, allow_hyphen_values = true)]
+-        args: Vec<String>,
+-    },
+-    /// Clippy with warnings grouped by lint rule
+-    Clippy {
+-        /// Additional cargo clippy arguments
+-        #[arg(trailing_var_arg = true, allow_hyphen_values = true)]
+-        args: Vec<String>,
+-    },
+-    /// Check with compact output (strip Checking lines, keep errors)
+-    Check {
+-        /// Additional cargo check arguments
+-        #[arg(trailing_var_arg = true, allow_hyphen_values = true)]
+-        args: Vec<String>,
+-    },
+-    /// Install with compact output (strip dep compilation, keep installed/errors)
+-    Install {
+-        /// Additional cargo install arguments
+-        #[arg(trailing_var_arg = true, allow_hyphen_values = true)]
+-        args: Vec<String>,
+-    },
+-    /// Nextest with failures-only output
+-    Nextest {
+-        /// Additional cargo nextest arguments (e.g., run, list, --lib)
+-        #[arg(trailing_var_arg = true, allow_hyphen_values = true)]
+-        args: Vec<String>,
+-    },
+-    /// Passthrough: runs any unsupported cargo subcommand directly
+-    #[command(external_subcommand)]
+-    Other(Vec<OsString>),
+-}
+-
+ #[derive(Debug, Subcommand)]
+ enum DotnetCommands {
+     /// Build with compact output
+@@ -1912,8 +1870,18 @@ where
+     I: IntoIterator<Item = T>,
+     T: Into<std::ffi::OsString> + Clone,
+ {
+-    let matches = rtk_command().try_get_matches_from(args)?;
+-    <Cli as clap::FromArgMatches>::from_arg_matches(&matches)
++    let raw_args: Vec<OsString> = args.into_iter().map(Into::into).collect();
++    let matches = rtk_command().try_get_matches_from(&raw_args)?;
++    let mut cli = <Cli as clap::FromArgMatches>::from_arg_matches(&matches)?;
++    if let Commands::Cargo { args } = &mut cli.command {
++        // A flat trailing-args field preserves -- after its first argument, but clap
++        // consumes a leading --. Restore that separator from the raw OS argv suffix.
++        let start = raw_args.len() - args.len();
++        if start > 0 && raw_args[start - 1] == "--" {
++            args.insert(0, OsString::from("--"));
++        }
++    }
++    Ok(cli)
+ }
+ 
+ fn run_fallback(parse_error: clap::Error) -> Result<i32> {
+@@ -3425,27 +3393,7 @@ fn run_cli() -> Result<i32> {
+ 
+         Commands::Playwright { args } => playwright_cmd::run(&args, cli.verbose)?,
+ 
+-        Commands::Cargo { command } => match command {
+-            CargoCommands::Build { args } => {
+-                cargo_cmd::run(cargo_cmd::CargoCommand::Build, &args, cli.verbose)?
+-            }
+-            CargoCommands::Test { args } => {
+-                cargo_cmd::run(cargo_cmd::CargoCommand::Test, &args, cli.verbose)?
+-            }
+-            CargoCommands::Clippy { args } => {
+-                cargo_cmd::run(cargo_cmd::CargoCommand::Clippy, &args, cli.verbose)?
+-            }
+-            CargoCommands::Check { args } => {
+-                cargo_cmd::run(cargo_cmd::CargoCommand::Check, &args, cli.verbose)?
+-            }
+-            CargoCommands::Install { args } => {
+-                cargo_cmd::run(cargo_cmd::CargoCommand::Install, &args, cli.verbose)?
+-            }
+-            CargoCommands::Nextest { args } => {
+-                cargo_cmd::run(cargo_cmd::CargoCommand::Nextest, &args, cli.verbose)?
+-            }
+-            CargoCommands::Other(args) => cargo_cmd::run_passthrough(&args, cli.verbose)?,
+-        },
++        Commands::Cargo { args } => cargo_cmd::run(&args, cli.verbose)?,
+ 
+         Commands::Bun { command } => match command {
+             BunCommands::Install { args } => bun_cmd::run_pkg("install", &args, cli.verbose)?,
+@@ -4149,6 +4097,33 @@ mod tests {
+     use crate::core::test_isolation;
+     use std::cell::Cell;
+ 
++    #[test]
++    fn test_cargo_cli_preserves_global_options_and_separators() {
++        for args in [
++            vec!["+stable", "--locked", "check"],
++            vec!["--config", "check", "test", "--", "--nocapture"],
++            vec![
++                "+nightly",
++                "-Z",
++                "unstable-options",
++                "-C",
++                "some path",
++                "check",
+```
+
+**File**: `tests/cargo_toolchain_test.rs` (added, +518/-0)
+```diff
+@@ -0,0 +1,518 @@
++mod common;
++
++fn assert_rewrite(command: &str, expected: Option<&str>) {
++    let output = common::rtk_command()
++        .args(["rewrite", command])
++        .output()
++        .unwrap();
++    if let Some(expected) = expected {
++        assert!(
++            matches!(output.status.code(), Some(0 | 3)),
++            "{command}: {output:?}"
++        );
++        assert_eq!(
++            String::from_utf8(output.stdout)
++                .unwrap()
++                .trim_end_matches('\n'),
++            expected,
++            "{command}"
++        );
++    } else {
++        assert_eq!(output.status.code(), Some(1), "{command}: {output:?}");
++        assert!(output.stdout.is_empty(), "{command}: {output:?}");
++    }
++}
++
++#[test]
++fn toolchain_rewrites_preserve_the_original_command() {
++    for toolchain in ["+stable", "+nightly", "+1.75.0", "+nightly-2026-08-01"] {
++        for command in ["build", "check", "clippy", "test", "install", "fmt"] {
++            let original = format!("cargo {toolchain} {command} -p demo");
++            assert_rewrite(&original, Some(&format!("rtk {original}")));
++        }
++    }
++    for original in [
++        "cargo --locked check",
++        "cargo --offline test",
++        "cargo --frozen build",
++        "cargo --color never check",
++        "cargo --color=never check",
++        "cargo --config check build",
++        "cargo --config=check build",
++        "cargo -C check build",
++        "cargo -C=check build",
++        "cargo -Ccheck build",
++        "cargo -Z check build",
++        "cargo -Z=check build",
++        "cargo -Zcheck build",
++        "cargo -q check",
++        "cargo -vv build",
++        "cargo --verbose --quiet check",
++        "cargo +nightly -vvZunstable-options -C 'some path' check",
++        "cargo +nightly -Zscript check",
++        "cargo +nightly -Z script check",
++        r#"cargo  +stable  --config 'build.rustflags=["--cfg", "demo"]' check -p "some package""#,
++        "cargo\t+stable\tcheck",
++    ] {
++        assert_rewrite(original, Some(&format!("rtk {original}")));
++    }
++    assert_rewrite(
++        "RUSTUP_TOOLCHAIN=nightly cargo --locked check",
++        Some("RUSTUP_TOOLCHAIN=nightly rtk cargo --locked check"),
++    );
++}
++
++#[test]
++fn ambiguous_prefixes_and_unsupported_commands_are_not_rewritten() {
++    for original in [
++        "cargo",
++        "cargo +stable",
++        "cargo --config",
++        "cargo --config check metadata",
++        "cargo --config=check metadata",
++        "cargo --color check metadata",
++        "cargo --color=check metadata",
++        "cargo -C check metadata",
++        "cargo -C=check metadata",
++        "cargo -Ccheck metadata",
++        "cargo -Z check metadata",
++        "cargo -Z=check metadata",
++        "cargo -Zcheck metadata",
++        "cargo --locked +stable check",
++        "cargo +stable +nightly check",
++        "cargo --unknown check",
++        "cargo -vx check",
++        "cargo --version check",
++        "cargo -V check",
++        "cargo --list check",
++        "cargo --explain E0425 check",
++        "cargo --explain=E0425 check",
++        "cargo --help check",
++        "cargo -h check",
++        "cargo -Zhelp check",
++        "cargo -- check",
++        "cargo +stable -- check",
++        "cargo --config -- check",
++        "cargo --config --help check",
++        "cargo --color -- check",
++        "cargo -C -- check",
++        "cargo -Z -- check",
++        "cargo +nightly -Zscript file.rs check",
++        "cargo +stable metadata",
++        "cargo +stable checker",
++        "cargo b",
++        "cargo c",
++        "cargo t",
++        "cargo +stable t",
++        "cargo --locked c",
++        "cargo nextest run",
++        "cargo nextest list",
++        "cargo nextest show-config test-groups",
++        "cargo +stable nextest list",
++    ] {
++        assert_rewrite(original, None);
++    }
++}
++
++#[test]
++fn non_shell_whitespace_does_not_identify_a_cargo_command() {
++    for gap in ['\u{a0}', '\u{2003}', '\u{202f}', '\r', '\u{b}', '\u{c}'] {
++        assert_rewrite(&format!("cargo{gap}check"), None);
++    }
++}
++
++#[cfg(target_os = "linux")]
++#[test]
++fn configured_cargo_exclusions_cover_prefixes_and_keep_argument_patterns() {
++    let config = common::tempdir();
++    let rtk_config = config.path().join("rtk");
++    std::fs::create_dir_all(&rtk_config).unwrap();
++    for (pattern, command, excluded) in [
++        ("cargo test", "cargo +stable test", true),
++        ("cargo test", "cargo --locked test", true),
++        ("cargo test", "cargo --config test check", false),
++        ("^cargo test$", "cargo +stable test", true),
++        ("^cargo test$", "cargo +stable test --lib", false),
++        (
++            "^cargo test --package 'some package'$",
++            "cargo --locked test --package 'some package'",
++            true,
++        ),
++        (
++            "^cargo test --package 'some package'$",
++            "cargo --locked test --package \"some package\"",
++            false,
++        ),
+
 ```
 
 #### Recent Merged Pull Requests:
@@ -2175,7 +2316,7 @@ fix(opencode): resolve rtk binary path for GUI-launched OpenCode (#4462)
 - **PR #5068** (2026-11-11): chore(deps): bump softprops/action-gh-release from 3.0.3 to 3.0.4 (@dependabot[bot])
 - **PR #5067** (2026-11-11): chore(deps): bump codepage from 0.1.2 to 0.1.3 (@dependabot[bot])
 - **PR #5060** (closed): Sync/upstream reliability (@idolgoff)
-- **PR #5053** (2026-11-10): docs: present RTK as the cost reduction engine for AI coding agents (@aeppling)
+- **PR #5056** (2026-11-17): fix(cargo): filter toolchain and global-prefix invocations (@milyin)
 
 ---
 
@@ -2195,36 +2336,63 @@ fix(opencode): resolve rtk binary path for GUI-launched OpenCode (#4462)
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs(guide): bring the embedding page in line with rtk 1.2.0
+## X. Empirical Invariant Guard in cargo_cmd.rs
 
 **RULE**:
-When implementing operations in `docs/guide/getting-started/embedding.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rtk-ai/rtk. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/cmds/rust/cargo_cmd.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in rtk-ai/rtk. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `61de0133`: docs(guide): bring the embedding page in line with rtk 1.2.0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6c94fc51`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/guide/getting-started/embedding.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/cmds/rust/cargo_cmd.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-This page is for people who build an agent harness and want the rewrite step inside their own bash tool, rather than installing one of the hooks listed in [Supported Agents](supported-agents.md). The Pi and Hermes plugins and the legacy shell hooks are thin delegates around one binary call, `rtk rewrite`; the Rust-binary hooks that `rtk init` installs today (`rtk hook claude`, `rtk hook opencode` and friends) run the same registry in-process. For a host of your own, `rtk rewrite` is the whole integration surface. Everything below was verified against rtk 1.2.0.
-`rtk rewrite -- "<command>"` prints the rewritten command to stdout (no trailing newline) and reports its decision in the exit code. Pass `--` before the command: without it, a command string that reads as an option of `rtk rewrite` itself (`--help`, `-h`) prints rtk's help on stdout with exit 0. The contract is defined in [`src/hooks/rewrite_cmd.rs`](https://github.com/rtk-ai/rtk/blob/master/src/hooks/rewrite_cmd.rs):
-| 0 | rewritten command | Rewrite, and Claude Code allow rules cover every command in it | Run the rewritten command |
-| 1 | empty | No RTK equivalent, or a Claude Code deny rule matched inside a shell wrapper
+use crate::core::arg_tokenizer::{self, Dialect, TokenKind, ValueSpec};
+use crate::core::tracking;
+use std::ffi::{OsStr, OsString};
+#[derive(Debug, Clone, Copy)]
+    Fmt,
+impl CargoCommand {
+    pub fn as_str(self) -> &'static str {
+        match self {
+            Self::Build => "build",
+            Self::Test => "test",
+            Self::Clippy => "clippy",
+            Self::Check => "check",
+            Self::Install => "install",
+            Self::Nextest => "nextest",
+            Self::Fmt => "fmt",
+        }
+    }
+
+    /// Find a supported canonical command and its index, inspecting only Cargo's prefix.
+    /// The original OS arguments are kept separately and forwarded without reconstruction.
+    pub fn parse<T: AsRef<OsStr>>(args: &[T]) -> Option<(Self, usize)> {
+        let words: Vec<_> = args
+            .iter()
+            .map(|arg| arg.as_ref().to_string_lossy())
+            .collect();
+        // Rustup recognizes +toolchain only as the first argument.
+        // https://rust-lang.github.io/rustup/overrides.html#toolchain-override-shorthand
+        let start = usize::from(words.first().is_some_and(|arg| arg.starts_with('+')));
+        let tokens =
+            arg_toke
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-This page is for people who build an agent harness and want the rewrite step inside their own bash tool, rather than installing one of the hooks listed in [Supported Agents](supported-agents.md). The Pi, OpenCode and Hermes plugins and the legacy shell hooks are thin delegates around one binary call, `rtk rewrite`; the Rust-binary hooks that `rtk init` installs today (`rtk hook claude` and friends) run the same registry in-process. For a host of your own, `rtk rewrite` is the whole integration surface. Everything below was verified against rtk 0.48.0.
-`rtk rewrite "<command>"` prints the rewritten command to stdout (no trailing newline) and reports its decision in the exit code. The contract is defined in [`src/hooks/rewrite_cmd.rs`](https://github.com/rtk-ai/rtk/blob/master/src/hooks/rewrite_cmd.rs):
-| 0 | rewritten command | Rewrite, and an explicit Claude Code allow rule matched | Run the rewritten command |
-| 1 | empty | No RTK equivalent | Run the original command |
-| 3 | rewritten command | Rewrite, with an "ask" rule matched or no rule matched at all | Run the rewritten command |
-The exit code carries a permission verdict read from Claude Code's settings files (`.claude/sett
+use crate::core::args_utils;
+use crate::core::shell::display_args;
+use std::ffi::OsString;
+#[derive(Debug, Clone)]
+pub fn run(cmd: CargoCommand, args: &[String], verbose: u8) -> Result<i32> {
+    match cmd {
+        CargoCommand::Build => run_build(args, verbose),
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `61de0133` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6c94fc51` are properly handled with clean fallback behavior.
