@@ -10822,3 +10822,6 @@ Every entry in this ledger must capture:
 | `learn-github-codewhale-hq-codewhale` | `https://github.com/Hmbown/Codewhale` | `af6fc33a` | Multi-dimensional audit evidence | 2026-11-18T03:39:24.450Z |
 | `learn-github-pixeltable-pixeltable` | `https://github.com/pixeltable/pixeltable` | `b7363f1f` | Multi-dimensional audit evidence | 2026-11-18T03:39:35.917Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `7bc9f013` | Multi-dimensional audit evidence | 2026-11-18T03:39:37.112Z |
+| `learn-huggingface-altworld-hemmingway-1` | `https://huggingface.co/Altworld/Hemmingway-1` | `hf-altworl` | Multi-dimensional audit evidence | 2026-11-18T03:47:58.568Z |
+| `learn-github-amir1376-ab-download-manager` | `https://github.com/amir1376/ab-download-manager` | `f15b691c` | Multi-dimensional audit evidence | 2026-11-18T03:48:05.073Z |
+| `learn-github-risingwavelabs-risingwave` | `https://github.com/risingwavelabs/risingwave` | `5d7a0e11` | Multi-dimensional audit evidence | 2026-11-18T03:48:14.308Z |

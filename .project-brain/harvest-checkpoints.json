@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-18T03:39:37.152Z",
+  "last_updated": "2026-11-18T03:48:14.316Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -5781,14 +5781,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-risingwavelabs-risingwave",
-      "content_hash": "2bd29a48078f0c87f357becf39afab60b42c37a36a2574b34e4976463e559f40",
-      "verified_at": "2026-11-17T03:26:22.199Z",
+      "content_hash": "1a515577a2ff7c4737743c309319433437b018d81aeda8f99f812498224f0ce0",
+      "verified_at": "2026-11-18T03:48:14.315Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T03:26:22.199Z"
+      "last_updated": "2026-11-18T03:48:14.315Z"
     },
     "mertJF/tailblocks": {
       "repository": "mertJF/tailblocks",
@@ -9876,14 +9876,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-amir1376-ab-download-manager",
-      "content_hash": "f06be1456d30970d16defeb060291c6f2e4213cf1444794532b55a1c0bb1a817",
-      "verified_at": "2026-11-07T19:47:49.585Z",
+      "content_hash": "ee89749e2e60f4232c8772b84701c6be325041aa6bc5db3129734358f38f50f7",
+      "verified_at": "2026-11-18T03:48:05.080Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-07T19:47:49.585Z"
+      "last_updated": "2026-11-18T03:48:05.080Z"
     },
     "bitnami/sealed-secrets": {
       "repository": "bitnami/sealed-secrets",
@@ -15636,14 +15636,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-altworld-hemmingway-1",
-      "content_hash": "2b44b08c4f0c2595bb4780dd40e0d0e5f7f8eb4cf3d31cc45486ea3827065faa",
-      "verified_at": "2026-11-13T15:47:03.990Z",
+      "content_hash": "8b3a444b34f24555a48351919e3f72f7bc07f2705ba3591dc7c198f72c0ed004",
+      "verified_at": "2026-11-18T03:47:58.575Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T15:47:03.990Z"
+      "last_updated": "2026-11-18T03:47:58.575Z"
     },
     "nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16": {
       "repository": "nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16",

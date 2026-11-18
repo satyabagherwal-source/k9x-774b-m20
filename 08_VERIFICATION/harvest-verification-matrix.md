@@ -10789,3 +10789,6 @@
 | `CYCLE-20261118-ODR2` | `2026-11-18T03:39:24.446Z` | `codewhale-hq/Codewhale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9112` | Yes (`5cc29110...`) |
 | `CYCLE-20261118-OMLL` | `2026-11-18T03:39:35.913Z` | `pixeltable/pixeltable` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9113` | Yes (`6782c64d...`) |
 | `CYCLE-20261118-ONIR` | `2026-11-18T03:39:37.107Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md` | Yes (`215d9286...`) |
+| `CYCLE-20261118-ZEG4` | `2026-11-18T03:47:58.564Z` | `HemmingwayAI/Hemmingway-1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-altworld-hemmingway-1-learnings.md` | Yes (`8b3a444b...`) |
+| `CYCLE-20261118-ZJGT` | `2026-11-18T03:48:05.069Z` | `amir1376/ab-download-manager` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9114` | Yes (`ee89749e...`) |
+| `CYCLE-20261118-ZQLC` | `2026-11-18T03:48:14.304Z` | `risingwavelabs/risingwave` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9115` | Yes (`1a515577...`) |

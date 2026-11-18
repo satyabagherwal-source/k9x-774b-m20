@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T03:39:37.138Z",
-  "total_cycles_completed": 10334,
-  "total_learnings_persisted": 10334,
-  "total_rules_promoted": 9861,
+  "last_updated": "2026-11-18T03:48:14.312Z",
+  "total_cycles_completed": 10337,
+  "total_learnings_persisted": 10337,
+  "total_rules_promoted": 9863,
   "history": [
-    {
-      "timestamp": "2026-11-17T15:06:11.882Z",
-      "repository": "mistralai/Timestral-209M",
-      "learningId": "learn-huggingface-mistralai-timestral-209m",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T15:06:21.253Z",
-      "repository": "invertase/react-native-firebase",
-      "learningId": "learn-github-invertase-react-native-firebase",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T15:06:24.092Z",
-      "repository": "argoproj/argo-workflows",
-      "learningId": "learn-github-argoproj-argo-workflows",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-17T15:16:34.733Z",
       "repository": "juicedata/juicefs",
@@ -1403,6 +1382,27 @@
       "repository": "NucleoidAI/Nucleoid",
       "learningId": "learn-github-nucleoidai-nucleoid",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T03:47:58.573Z",
+      "repository": "HemmingwayAI/Hemmingway-1",
+      "learningId": "learn-huggingface-altworld-hemmingway-1",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T03:48:05.078Z",
+      "repository": "amir1376/ab-download-manager",
+      "learningId": "learn-github-amir1376-ab-download-manager",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T03:48:14.312Z",
+      "repository": "risingwavelabs/risingwave",
+      "learningId": "learn-github-risingwavelabs-risingwave",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

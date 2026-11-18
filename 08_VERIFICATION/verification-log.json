@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261116-FYYM",
-    "timestamp": "2026-11-16T04:53:30.430Z",
-    "repository": "vespa-engine/vespa",
-    "learningId": "learn-github-vespa-engine-vespa",
-    "contentHash": "552f7b88e0bf0150047334219654d85e6a1d39b8ab0d8bcd0c8d7dc2fe194a98",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261116-25PY",
-    "timestamp": "2026-11-16T05:10:45.622Z",
-    "repository": "aleo-labs-protocol/snarkOS",
-    "learningId": "learn-github-aleo-labs-protocol-snarkos",
-    "contentHash": "bdf37aa45793ffaeaf74ce0677c971cfd7c2b1ee542bd36f8046dfd1b4e492f1",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261116-AXPK",
-    "timestamp": "2026-11-16T05:17:35.144Z",
-    "repository": "bahdotsh/wrkflw",
-    "learningId": "learn-github-bahdotsh-wrkflw",
-    "contentHash": "1818df581c557b75d1bdc22568e36578198fa1e6db1435880aa40d4e41ff0b1f",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261116-B170",
     "timestamp": "2026-11-16T05:17:39.660Z",
     "repository": "chrisbanes/skills",
@@ -7492,6 +7447,51 @@
     "contentHash": "215d9286690704e8c272e1b9fdb337e8a26658b367511443917a4c3f5db9d338",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-ZEG4",
+    "timestamp": "2026-11-18T03:47:58.564Z",
+    "repository": "HemmingwayAI/Hemmingway-1",
+    "learningId": "learn-huggingface-altworld-hemmingway-1",
+    "contentHash": "8b3a444b34f24555a48351919e3f72f7bc07f2705ba3591dc7c198f72c0ed004",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-ZJGT",
+    "timestamp": "2026-11-18T03:48:05.069Z",
+    "repository": "amir1376/ab-download-manager",
+    "learningId": "learn-github-amir1376-ab-download-manager",
+    "contentHash": "ee89749e2e60f4232c8772b84701c6be325041aa6bc5db3129734358f38f50f7",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-ZQLC",
+    "timestamp": "2026-11-18T03:48:14.304Z",
+    "repository": "risingwavelabs/risingwave",
+    "learningId": "learn-github-risingwavelabs-risingwave",
+    "contentHash": "1a515577a2ff7c4737743c309319433437b018d81aeda8f99f812498224f0ce0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

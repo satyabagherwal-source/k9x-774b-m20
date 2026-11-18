@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-18T03:39:43.002Z",
-  "total_records": 1745,
+  "last_updated": "2026-11-18T03:48:19.001Z",
+  "total_records": 1749,
   "domains": {
     "A": {
       "total": 11,
@@ -870,7 +870,7 @@
       ]
     },
     "G": {
-      "total": 303,
+      "total": 305,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -1174,7 +1174,9 @@
         "domain_intelligence-architecture-intelligence-tanstack-router-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-matrixorigin-matrixone-core-invariants",
         "domain_intelligence-architecture-intelligence-peerdb-io-peerdb-core-invariants",
-        "domain_intelligence-architecture-intelligence-peerdb-io-peerdb-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-peerdb-io-peerdb-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-amir1376-ab-download-manager-core-invariants",
+        "domain_intelligence-architecture-intelligence-amir1376-ab-download-manager-learnings-core-invariants"
       ]
     },
     "H": {
@@ -1592,7 +1594,7 @@
       ]
     },
     "I": {
-      "total": 82,
+      "total": 84,
       "record_ids": [
         "DOM-I-16F011E5",
         "DOM-I-BF0A22A6",
@@ -1675,7 +1677,9 @@
         "domain_intelligence-content-information-intelligence-tursodatabase-turso-core-invariants",
         "domain_intelligence-content-information-intelligence-tursodatabase-limbo-learnings-core-invariants",
         "domain_intelligence-content-information-intelligence-dragonflyoss-dragonfly-core-invariants",
-        "domain_intelligence-content-information-intelligence-dragonflyoss-dragonfly-learnings-core-invariant"
+        "domain_intelligence-content-information-intelligence-dragonflyoss-dragonfly-learnings-core-invariant",
+        "domain_intelligence-content-information-intelligence-risingwavelabs-risingwave-core-invariants",
+        "domain_intelligence-content-information-intelligence-risingwavelabs-risingwave-learnings-core-invari"
       ]
     },
     "J": {
@@ -7929,8 +7933,8 @@
       "title": "Research & Knowledge Intelligence: HemmingwayAI/Hemmingway-1 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-altworld-hemmingway-1-research-knowledge-intelligence-hemmingwayai-hemmingway.md",
       "repository": "HemmingwayAI/Hemmingway-1",
-      "content_hash": "557fdac03f691373e37800f256a8067e6f3f3019dff0cc190de3258c97fe3efd",
-      "created_at": "2026-11-13T15:47:04.111Z"
+      "content_hash": "eea4435fd07e2713066c320ee411e10b6a9b6426952400ae3ea3f452fe39fcca",
+      "created_at": "2026-11-18T03:47:58.731Z"
     },
     "domain_intelligence-quality-verification-intelligence-saffsanity-sill-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-saffsanity-sill-core-invariants",
@@ -8007,8 +8011,8 @@
       "title": "Research & Knowledge Intelligence: hf-altworld-hemmingway-1-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-altworld-hemmingway-1-learnings-research-knowledge-intelligence-hf-altworld-h.md",
       "repository": "hf-altworld-hemmingway-1-learnings",
-      "content_hash": "e3d16f31aa5fbc943eb49dce19f5b3394d3e2208cec5cce479df30f1149a723c",
-      "created_at": "2026-11-13T15:47:56.016Z"
+      "content_hash": "60176547f3445e53c8ee0f30fc2fe00be464fd019875d365943eb83c43c16137",
+      "created_at": "2026-11-18T03:48:17.687Z"
     },
     "domain_intelligence-quality-verification-intelligence-saffsanity-sill-learnings-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-saffsanity-sill-learnings-core-invariants",
@@ -29294,6 +29298,42 @@
       "repository": "peerdb-io-peerdb-learnings",
       "content_hash": "8e288dbb2b902f088882503627f66df889e6f3792457281ab760ad0282834bb9",
       "created_at": "2026-11-18T02:42:49.473Z"
+    },
+    "domain_intelligence-architecture-intelligence-amir1376-ab-download-manager-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-amir1376-ab-download-manager-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: amir1376/ab-download-manager Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-amir1376-ab-download-manager-architecture-intelligence-amir1376-ab-download-mana.md",
+      "repository": "amir1376/ab-download-manager",
+      "content_hash": "735d154a97896adcea648c722d5aa34ccdeb46c1aeccba932b22a69c7d23a694",
+      "created_at": "2026-11-18T03:48:05.373Z"
+    },
+    "domain_intelligence-content-information-intelligence-risingwavelabs-risingwave-core-invariants": {
+      "record_id": "domain_intelligence-content-information-intelligence-risingwavelabs-risingwave-core-invariants",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: risingwavelabs/risingwave Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-risingwavelabs-risingwave-content-information-intelligence-risingwavelabs-rising.md",
+      "repository": "risingwavelabs/risingwave",
+      "content_hash": "fb05eb1f2a77b3aa9943737e9e7ba8be07d380ac43236cccdd764f0140e098be",
+      "created_at": "2026-11-18T03:48:14.605Z"
+    },
+    "domain_intelligence-architecture-intelligence-amir1376-ab-download-manager-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-amir1376-ab-download-manager-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: amir1376-ab-download-manager-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-amir1376-ab-download-manager-learnings-architecture-intelligence-amir1376-ab-dow.md",
+      "repository": "amir1376-ab-download-manager-learnings",
+      "content_hash": "629315ee35e61ce96702441decb74263565a9c7f63c5d7084c74ca0d9443b8cd",
+      "created_at": "2026-11-18T03:48:18.389Z"
+    },
+    "domain_intelligence-content-information-intelligence-risingwavelabs-risingwave-learnings-core-invari": {
+      "record_id": "domain_intelligence-content-information-intelligence-risingwavelabs-risingwave-learnings-core-invari",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: risingwavelabs-risingwave-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-risingwavelabs-risingwave-learnings-content-information-intelligence-risingwavel.md",
+      "repository": "risingwavelabs-risingwave-learnings",
+      "content_hash": "417af97e71f2eef494db01874d931808456b98eb37b37ee97aa2d8a7c06110fc",
+      "created_at": "2026-11-18T03:48:19.001Z"
     }
   }
 }

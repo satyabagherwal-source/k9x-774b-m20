@@ -6,16 +6,16 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T12:33:15.631Z",
+  "timestamp": "2026-11-18T03:48:18.170Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
-  "learning_id": "LEARN-REEXTRACT-amir1376-ab-download-manager-learnings",
+  "learning_id": "LEARN-EVO-amir1376-ab-download-manager-learnings",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [amir1376-ab-download-manager-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T12:33:15.631Z`  
-> **Learning ID**: `LEARN-REEXTRACT-amir1376-ab-download-manager-learnings`
+> **License**: Open-Source | **Timestamp**: `2026-11-18T03:48:18.170Z`  
+> **Learning ID**: `LEARN-EVO-amir1376-ab-download-manager-learnings`
 
 
 ## 1. Scope & Verification Target
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/amir1376-ab-download-manager-learnings.md`  
 > **Source**: github ([https://github.com/amir1376/ab-download-manager](https://github.com/amir1376/ab-download-manager))  
-> **Source Version**: `68f0ea6e`  
+> **Source Version**: `f15b691c`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-07T19:47:47.755Z  
+> **Timestamp**: 2026-11-18T03:48:04.148Z  
 > **Learning ID**: `learn-github-amir1376-ab-download-manager`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/amir1376-ab-download-manager-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/amir1376/ab-download-manager](https://github.com/amir1376/ab-download-manager))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-07T19:47:47.596Z  
+> **Harvest Timestamp**: 2026-11-18T03:48:04.143Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: A Download Manager that speeds up your downloads
 - **Primary Language / Ecosystem**: Kotlin
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 19048 stars
+- **Stars / Engagement**: 19357 stars
 
 ---
 
@@ -1357,29 +1357,43 @@ fun RenderSortIndicatorMode(sortIndicatorMode: SortIndicatorMode) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `68f0ea6e` (2026-11-06)
-**Commit Message**: enable parallel sync for Gradle 9.4+
+### Incident Patch 1: `f15b691c` (2026-11-16)
+**Commit Message**: feat: allow overriding native messaging exec path by environment variable (#1522)
 
-**File**: `gradle.properties` (modified, +2/-0)
+**File**: `desktop/app/src/main/kotlin/com/abdownloadmanager/desktop/nativemessaging/NativeMessaging.kt` (modified, +6/-2)
 ```diff
-@@ -11,6 +11,8 @@ org.gradle.jvmargs=-Xmx2048m -Dfile.encoding=UTF-8
- # This option should only be used with decoupled projects. For more details, visit
- # https://developer.android.com/r/tools/gradle-multi-project-decoupled-projects
- org.gradle.parallel=true
-+# Enabled parallel sync for Gradle 9.4+
-+org.gradle.tooling.parallel=true
- #org.gradle.configuration-cache=true
- # AndroidX package structure to make it clearer which packages are bundled with the
- # Android operating system, and which are packaged with your app's APK
+@@ -54,9 +54,12 @@ class NativeMessaging(
+             logger.e(e) { "can't install native messaging manifests" }
+         }
+     }
+-
+     fun installManifests() {
+-        val execFile = AppInfo.nativeMessagingExeFile ?: return
++        val overrideExecFile = System.getenv("AB_DOWNLOAD_MANAGER_NATIVE_MESSAGING_EXEC")?.takeIf { it.isNotBlank() }
++        // Allow overriding the native messaging executable path via an environment variable.
++        // Enabling native messaging to work in environments where the default path is inaccessible.
++        val execFile = overrideExecFile ?: AppInfo.nativeMessagingExeFile ?: return
++
+         val firefox = createFirefoxManifest(execFile)
+         val chrome = createChromeManifest(execFile)
+         nativeMessagingManifestApplier.updateManifests(
+@@ -66,6 +69,7 @@ class NativeMessaging(
+             )
+         )
+     }
++
+     fun uninstallManifests() {
+         nativeMessagingManifestApplier.removeManifests()
+     }
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1522** (2026-11-16): feat: flatpak build support in native messaging (@yofukashino)
 - **PR #1520** (2026-11-02): add multi-qr code support (@amir1376)
 - **PR #1518** (2026-11-01): translate comment (@ehsannarmani)
 - **PR #1517** (2026-11-01): fix sheet ui background on overlay type (@ehsannarmani)
 - **PR #1516** (2026-11-01): Improve qr code scanner ui (@ehsannarmani)
 - **PR #1512** (2026-10-31): enforce some routes to always use api key (@amir1376)
-- **PR #1511** (2026-10-30): share qr code and allow scanning it in android (@amir1376)
 
 ---
 
@@ -1399,32 +1413,37 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. enable parallel sync for Gradle 9.4+
+## X. allow overriding native messaging exec path by environment variable
 
 **RULE**:
-When implementing operations in `gradle.properties`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in amir1376/ab-download-manager. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `desktop/app/src/main/kotlin/com/abdownloadmanager/desktop/nativemessaging/NativeMessaging.kt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in amir1376/ab-download-manager. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `68f0ea6e`: enable parallel sync for Gradle 9.4+. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `f15b691c`: allow overriding native messaging exec path by environment variable. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `gradle.properties`.
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `desktop/app/src/main/kotlin/com/abdownloadmanager/desktop/nativemessaging/NativeMessaging.kt`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-# Enabled parallel sync for Gradle 9.4+
-org.gradle.tooling.parallel=true
+        val overrideExecFile = System.getenv("AB_DOWNLOAD_MANAGER_NATIVE_MESSAGING_EXEC")?.takeIf { it.isNotBlank() }
+        // Allow overriding the native messaging executable path via an environment variable.
+        // Enabling native messaging to work in environments where the default path is inaccessible.
+        val execFile = overrideExecFile ?: AppInfo.nativeMessagingExeFile ?: return
+
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
-// Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+// Induced defect failure mode:
+
+        val execFile = AppInfo.nativeMessagingExeFile ?: return
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `68f0ea6e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `f15b691c` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

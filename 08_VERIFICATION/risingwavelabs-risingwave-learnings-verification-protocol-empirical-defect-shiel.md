@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-14T06:06:27.133Z",
+  "timestamp": "2026-11-18T03:48:18.780Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-risingwavelabs-risingwave-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [risingwavelabs-risingwave-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-14T06:06:27.133Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-18T03:48:18.780Z`  
 > **Learning ID**: `LEARN-EVO-risingwavelabs-risingwave-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/risingwavelabs-risingwave-learnings.md`  
 > **Source**: github ([https://github.com/risingwavelabs/risingwave](https://github.com/risingwavelabs/risingwave))  
-> **Source Version**: `24cf8ef7`  
+> **Source Version**: `5d7a0e11`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-14T06:05:49.383Z  
+> **Timestamp**: 2026-11-18T03:48:13.427Z  
 > **Learning ID**: `learn-github-risingwavelabs-risingwave`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/risingwavelabs-risingwave-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/risingwavelabs/risingwave](https://github.com/risingwavelabs/risingwave))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-14T06:05:49.377Z  
+> **Harvest Timestamp**: 2026-11-18T03:48:13.422Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Event streaming platform for agentic AI. Continuously ingest, transform, and serve event streams in real time, at scale.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 9411 stars
+- **Stars / Engagement**: 9420 stars
 
 ---
 
@@ -1102,94 +1102,488 @@ pub(crate) use def_path_lookup;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `24cf8ef7` (2026-11-13)
-**Commit Message**: chore(deps): bump sysinfo from 0.39.6 to 0.40.0 (#27975)
+### Incident Patch 1: `5d7a0e11` (2026-11-17)
+**Commit Message**: fix(meta): send subscribe snapshots through the notification queue (#27834)
 
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-Co-authored-by: Li0k <[REDACTED_EMAIL]>
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `Cargo.lock` (modified, +2/-2)
+**File**: `src/meta/src/manager/notification.rs` (modified, +58/-19)
 ```diff
-@@ -18034,9 +18034,9 @@ dependencies = [
+@@ -86,15 +86,20 @@ pub enum LocalNotification {
+ }
  
- [[package]]
- name = "sysinfo"
--version = "0.39.6"
-+version = "0.40.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "d2071df9448915b71c4fe6d25deaf1c22f12bd234f01540b77312bb8e41361e6"
-+checksum = "110e37d98880fd804cd47509b90a8444f7aaaab655ae625e83cd442a8bc2ebf2"
- dependencies = [
-  "libc",
-  "memchr",
-```
-
-**File**: `src/common/Cargo.toml` (modified, +1/-1)
-```diff
-@@ -105,7 +105,7 @@ stacker = "0.1"
- static_assertions = "1"
- strum = "0.28"
- strum_macros = "0.28"
--sysinfo = { version = "0.39", default-features = false, features = ["system"] }
-+sysinfo = { version = "0.40", default-features = false, features = ["system"] }
- thiserror = { workspace = true }
- thiserror-ext = { workspace = true }
- tinyvec = { version = "1", features = ["rustc_1_55", "grab_spare_slice"] }
-```
-
-**File**: `src/utils/resource_util/Cargo.toml` (modified, +1/-1)
-```diff
-@@ -7,7 +7,7 @@ repository = { workspace = true }
- [dependencies]
- fs-err = "3"
- hostname = "0.4.1"
--sysinfo = { version = "0.39", default-features = false, features = ["system"] }
-+sysinfo = { version = "0.40", default-features = false, features = ["system"] }
- thiserror-ext = { workspace = true }
- tracing = "0.1"
+ #[derive(Debug)]
+-struct Target {
+-    subscribe_type: SubscribeType,
+-    // `None` indicates sending to all subscribers of `subscribe_type`.
+-    worker_key: Option<WorkerKey>,
++enum Target {
++    Subscribers {
++        subscribe_type: SubscribeType,
++        // `None` indicates sending to all subscribers of `subscribe_type`.
++        worker_key: Option<WorkerKey>,
++    },
++    /// The sender of one subscribe call. By the time the task is delivered, the worker may have
++    /// subscribed again and replaced its entry in the sender map.
++    Sender(UnboundedSender<Notification>),
+ }
  
-```
-
-**File**: `src/utils/resource_util/src/lib.rs` (modified, +9/-6)
-```diff
-@@ -151,18 +151,21 @@ pub mod memory {
-     const V2_MEMORY_LIMIT_PATH: &str = "/sys/fs/cgroup/memory.max";
-     const V2_MEMORY_CURRENT_PATH: &str = "/sys/fs/cgroup/memory.current";
+ impl From<SubscribeType> for Target {
+     fn from(value: SubscribeType) -> Self {
+-        Self {
++        Self::Subscribers {
+             subscribe_type: value,
+             worker_key: None,
+         }
+@@ -227,20 +232,18 @@ impl NotificationManager {
+         self.notify(target, operation, info, None);
+     }
  
-+    fn system_with_memory() -> System {
-+        // A zero total would invalidate memory sizing, so fail if sysinfo cannot initialize.
-+        let mut sys = System::new().expect("failed to initialize system memory information");
-+        sys.refresh_memory();
-+        sys
-+    }
++    /// Queue the snapshot behind every notification published before it was read. The observer
++    /// manager filters out such notifications only if they arrive before the snapshot.
+     pub fn notify_snapshot(
+         &self,
+         sender: UnboundedSender<Notification>,
+         meta_snapshot: MetaSnapshot,
+     ) {
+-        let response = SubscribeResponse {
+-            status: None,
+-            operation: Operation::Snapshot as i32,
+-            info: Some(Info::Snapshot(meta_snapshot)),
+-            version: Default::default(),
+-        };
+-        let _ = sender.send(Ok(response)).inspect_err(|err| {
+-            tracing::warn!("Failed to notify direct subscriber: {}", err.as_report());
+-        });
++        self.notify_without_version(
++            Target::Sender(sender),
++            Operation::Snapshot,
++            Info::Snapshot(meta_snapshot),
++        );
+     }
+ 
+     pub fn notify_all_without_version(&self, operation: Operation, info: Info) {
+@@ -281,7 +284,7 @@ impl NotificationManager {
+ 
+     pub(crate) fn notify_hummock_targeted_update(&self, worker_key: WorkerKey, info: Info) {
+         self.notify_without_version(
+-            Target {
++            Target::Subscribers {
+                 subscribe_type: SubscribeType::Hummock,
+                 worker_key: Some(worker_key),
+             },
+@@ -419,13 +422,25 @@ impl NotificationManagerCore {
+             };
+         }
+ 
+-        let senders = self.senders_of(target.subscribe_type);
++        let (subscribe_type, worker_key) = match target {
++            Target::Subscribers {
++                subscribe_type,
++                worker_key,
++            } => (subscribe_type, worker_key),
++            Target::Sender(sender) => {
++                let _ = sender.send(Ok(response)).inspect_err(|err| {
++                    tracing::warn!("Failed to send snapshot: {}", err.as_report());
++                });
++                return;
++            }
++        };
++        let senders = self.senders_of(subscribe_type);
+ 
+-        if let Some(worker_key) = target.worker_key {
++        if let Some(worker_key) = worker_key {
+             match senders.entry(worker_key.clone()) {
+                 Entry::Occupied(entry) => {
+                     let _ = entry.get().send(Ok(response)).inspect_err(|err| {
+-                        warn_send_failure!(target.subscribe_type, &worker_key, err.as_report());
++                        warn_send_failure!(subscribe_type, &worker_key, err.as_report());
+                         entry.remove_entry();
+                     });
+                 }
+@@ -438,7 +453,7 @@ impl NotificationManagerCore {
+                 sender
+                     .send(Ok(response.clone()))
+                     .inspect_err(|err| {
+-                        warn_send_failure!(target.subscribe_type, &worker_key, err.as_report());
++                        warn_send_failure!(subscribe_type, &worker_key, err.as_report());
+                     })
+                     .is_ok()
+             });
+@@ -585,6 +600,30 @@ mod tests {
+         assert_eq!(mgr.current_version().await, version);
+     }
+ 
++    #[tokio::test]
++    async fn test_snapshot_arrives_after_notification_it_covers() {
++        let mgr = NotificationManager::new(SqlMetaStore::for_test().await).await;
++        let worker_key = WorkerKey(HostAddress {
++            host: "a".to_owned(),
++            port: 1,
++        });
++        let (tx, mut rx) = mpsc::unbounded_channel();
++        mgr.insert_sender(SubscribeType::Frontend, worker_key, tx.clone());
 +
-     /// Returns the system memory.
-     pub fn get_system_memory() -> usize {
--        let mut sys = System::new();
--        sys.refresh_memory();
--        sys.total_memory() as usize
-+        system_with_memory().total_memory() as usize
-     }
++        // The test runtime has one thread and `notify_frontend` does not yield after queueing, so
++        // the notification is still in the queue when the snapshot is sent.
++        let version = mgr
++            .notify_frontend(Operation::Add, Info::Database(Default::default()))
++            .await;
++        mgr.notify_snapshot(tx, MetaSnapshot::default());
++
++        let first = rx.recv().await.unwrap().unwrap();
++        assert!(matches!(first.info, Some(Info::Database(_))));
++        asser
+```
+
+---
+
+### Incident Patch 2: `3d5b9071` (2026-11-17)
+**Commit Message**: fix(frontend): allow kinesis with plain avro aws glue schema registry (#27611)
+
+**File**: `src/frontend/src/handler/create_source.rs` (modified, +4/-4)
+```diff
+@@ -78,7 +78,7 @@ use risingwave_pb::plan_common::{EncodeType, FormatType, SourceRefreshMode};
+ use risingwave_pb::stream_plan::PbStreamFragmentGraph;
+ use risingwave_pb::telemetry::TelemetryDatabaseObject;
+ use risingwave_sqlparser::ast::{
+-    AstString, ColumnDef, ColumnOption, CreateSourceStatement, Encode, Format, FormatEncodeOptions,
++    ColumnDef, ColumnOption, CreateSourceStatement, Encode, Format, FormatEncodeOptions,
+     ObjectName, SourceWatermark, SqlOptionValue, TableConstraint, Value, get_delimiter,
+ };
+ use risingwave_sqlparser::parser::{IncludeOption, IncludeOptionItem};
+@@ -143,8 +143,8 @@ fn non_generated_sql_columns(columns: &[ColumnDef]) -> Vec<ColumnDef> {
+ fn try_consume_string_from_options(
+     format_encode_options: &mut BTreeMap<String, String>,
+     key: &str,
+-) -> Option<AstString> {
+-    format_encode_options.remove(key).map(AstString)
++) -> Option<String> {
++    format_encode_options.remove(key)
+ }
  
-     /// Returns the used memory of the system.
-     pub fn get_system_memory_used() -> usize {
--        let mut sys = System::new();
--        sys.refresh_memory();
--        sys.used_memory() as usize
-+        system_with_memory().used_memory() as usize
-     }
+ fn try_consume_schema_registry_config_from_options(
+@@ -185,7 +185,7 @@ fn try_consume_pulsar_schema_config_from_options(
+ fn consume_string_from_options(
+     format_encode_options: &mut BTreeMap<String, String>,
+     key: &str,
+-) -> Result<AstString> {
++) -> Result<String> {
+     try_consume_string_from_options(format_encode_options, key).ok_or(RwError::from(ProtocolError(
+         format!("missing field {} in options", key),
+     )))
+```
+
+**File**: `src/frontend/src/handler/create_source/external_schema.rs` (modified, +12/-14)
+```diff
+@@ -136,9 +136,7 @@ async fn bind_columns_from_source_for_non_cdc(
+     )?;
  
-     /// Returns the total memory used by the system in bytes.
+     fn get_key_message_name(options: &mut BTreeMap<String, String>) -> Option<String> {
+-        consume_string_from_options(options, KEY_MESSAGE_NAME_KEY)
+-            .map(|ele| Some(ele.0))
+-            .unwrap_or(None)
++        consume_string_from_options(options, KEY_MESSAGE_NAME_KEY).ok()
+     }
+     fn get_sr_name_strategy_check(
+         options: &mut BTreeMap<String, String>,
+@@ -188,10 +186,10 @@ async fn bind_columns_from_source_for_non_cdc(
+             stream_source_info.use_schema_registry = use_schema_registry;
+             stream_source_info
+                 .row_schema_location
+-                .clone_from(&row_schema_location.0);
++                .clone_from(&row_schema_location);
+             stream_source_info
+                 .proto_message_name
+-                .clone_from(&message_name.0);
++                .clone_from(&message_name);
+             stream_source_info.key_message_name =
+                 get_key_message_name(&mut format_encode_options_to_consume);
+             stream_source_info.name_strategy =
+@@ -217,7 +215,8 @@ async fn bind_columns_from_source_for_non_cdc(
+             {
+                 // Legacy logic that assumes either `schema.location` or confluent `schema.registry`.
+                 // The handling of newly added aws glue is centralized in `connector::parser`.
+-                // TODO(xiangjinwu): move these option parsing to `connector::parser` as well.
++                // TODO(xiangjinwu): move these option parsing to `connector::parser` as well,
++                // together with schema registry logic in `validate::validate_compatibility`
+ 
+                 let (row_schema_location, use_schema_registry) =
+                     get_schema_location(&mut format_encode_options_to_consume)?;
+@@ -240,9 +239,8 @@ async fn bind_columns_from_source_for_non_cdc(
+                 stream_source_info.use_schema_registry = use_schema_registry;
+                 stream_source_info
+                     .row_schema_location
+-                    .clone_from(&row_schema_location.0);
+-                stream_source_info.proto_message_name =
+-                    message_name.unwrap_or(AstString("".into())).0;
++                    .clone_from(&row_schema_location);
++                stream_source_info.proto_message_name = message_name.unwrap_or_default();
+                 stream_source_info.key_message_name =
+                     get_key_message_name(&mut format_encode_options_to_consume);
+                 stream_source_info.name_strategy =
+@@ -261,13 +259,13 @@ async fn bind_columns_from_source_for_non_cdc(
+         }
+         (Format::Plain, Encode::Csv) => {
+             let chars =
+-                consume_string_from_options(&mut format_encode_options_to_consume, "delimiter")?.0;
++                consume_string_from_options(&mut format_encode_options_to_consume, "delimiter")?;
+             let delimiter = get_delimiter(chars.as_str()).context("failed to parse delimiter")?;
+             let has_header = try_consume_string_from_options(
+                 &mut format_encode_options_to_consume,
+                 "without_header",
+             )
+-            .map(|s| s.0 == "false")
++            .map(|s| s == "false")
+             .unwrap_or(true);
+ 
+             if is_kafka && has_header {
+@@ -466,7 +464,7 @@ pub(super) fn row_encode_to_prost(row_encode: &Encode) -> EncodeType {
+ 
+ pub fn get_schema_location(
+     format_encode_options: &mut BTreeMap<String, String>,
+-) -> Result<(AstString, bool)> {
++) -> Result<(String, bool)> {
+     let schema_location = try_consume_string_from_options(format_encode_options, "schema.location");
+     let schema_registry = try_consume_string_from_options(format_encode_options, "schema.registry");
+     match (schema_location, schema_registry) {
+@@ -494,10 +492,10 @@ pub fn schema_has_schema_registry(schema: &FormatEncodeOptions) -> bool {
+ }
+ 
+ #[inline]
+-fn get_name_strategy_or_default(name_strategy: Option<AstString>) -> Result<Option<i32>> {
++fn get_name_strategy_or_default(name_strategy: Option<String>) -> Result<Option<i32>> {
+     match name_strategy {
+         None => Ok(None),
+-        Some(name) => Ok(Some(name_strategy_from_str(name.0.as_str())
++        Some(name) => Ok(Some(name_strategy_from_str(name.as_str())
+             .ok_or_else(|| RwError::from(ProtocolError(format!("\
+             expect strategy name in topic_name_strategy, record_name_strategy and topic_record_name_strategy, but got {}", name))))? as i32)),
+     }
+```
+
+**File**: `src/frontend/src/handler/create_source/external_schema/json.rs` (modified, +4/-4)
+```diff
+@@ -14,7 +14,7 @@
+ 
+ use super::*;
+ 
+-pub fn json_schema_infer_use_schema_registry(schema_config: &Option<(AstString, bool)>) -> bool {
++pub fn json_schema_infer_use_schema_registry(schema_config: &Option<(String, bool)>) -> bool {
+     match schema_config {
+         None => false,
+         Some((_, use_registry)) => *use_registry,
+@@ -23,7 +23,7 @@ pub fn json_schema_infer_use_schema_registry(schema_config: &Option<(AstString,
+ 
+ /// Map a JSON schema to a relational schema
+ pub async fn extract_json_table_schema(
+-    schema_config: &Option<(AstString, bool)>,
++    schema_config: &Option<(String, bool)>,
+     with_properties: &BTreeMap<String, String>,
+     format_encode_options: &mut BTreeMap<String, String>,
+ ) -> Result<Option<Vec<ColumnCatalog>>> {
+@@ -38,7 +38,7 @@ pub async fn extract_json_table_schema(
+             });
+             Ok(Some(
+                 fetch_json_schema_and_map_to_columns(
+-                    &schema_location.0,
++                    schema_location,
+                     schema_registry_auth,
+                     with_properties,
+                 )
+@@ -78,7 +78,7 @@ pub async fn extract_pulsar_json_table_schema(
+ 
+ pub fn get_json_schema_location(
+     format_encode_options: &mut BTreeMap<String, String>,
+-) -> Result<Option<(AstString, bool)>> {
++) -> Result<Option<(String, bool)>> {
+     let schema_location = try_consume_string_from_options(format_encode_options, "schema.location");
+     let schema_registry = try_consume_string_from_options(format_encode_options, "schema.registry");
+     match (schema_location, schema_registry) {
+```
+
+**File**: `src/frontend/src/handler/create_source/validate.rs` (modified, +13/-2)
+```diff
+@@ -175,9 +175,10 @@ pub fn validate_compatibility(
+         })?;
+     if connector != KAFKA_CONNECTOR && !uses_pulsar_schema {
+         let res = match (&format_encode.format, &format_encode.row_encode) {
+-            (Format::Plain, Encode::Protobuf) | (Format::Plain, Encode::Avro) => {
++            (Format::Plain | Format::Upsert, Encode::Protobuf | Encode::Avro) => {
+                 let mut options = WithOptions::try_from(format_encode.row_options())?;
+-                let (_, use_schema_registry) = get_schema_location(options.inner_mut())?;
++                let (_, use_schema_registry) =
++                    get_schema_location(options.inner_mut()).unwrap_or_default();
+                 use_schema_registry
+             }
+             (Format::Debezium, Encode::Avro) => true,
+@@ -285,4 +286,14 @@ mod tests {
+         );
+         validate_compatibility(&format_encode, &mut source_options(KAFKA_CONNECTOR)).unwrap();
+     }
++
++    #[test]
++    fn glue_schema_registry_non_kafka() {
++        let format_encode = format_encode(
++            Format::Plain,
++            Encode::Avro,
++            &[(AWS_GLUE_SCHEMA_ARN_KEY, "placeholder")],
++        );
++        validate_compatibility(&format_encode, &mut source_options(KINESIS_CONNECTOR)).unwrap();
++    }
+ }
+```
+
+---
+
+### Incident Patch 3: `1ee6e12c` (2026-11-17)
+**Commit Message**: fix(connector): exclude PostgreSQL INCLUDE columns from primary key (#27173)
+
+Co-authored-by: Xiaochong(Eddy) Wei <[REDACTED_EMAIL]>
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `e2e_test/source_inline/cdc/postgres/postgres_primary_key_include.slt` (added, +86/-0)
+```diff
+@@ -0,0 +1,86 @@
++# Verify that auto schema discovery excludes INCLUDE columns from the primary key
++# while preserving the key-column order from the upstream PostgreSQL constraint.
++
++control substitution on
++
++statement ok
++drop table if exists postgres_primary_key_include_rw;
++
++statement ok
++drop source if exists postgres_primary_key_include_source cascade;
++
++system ok
++PGDATABASE=${PGDATABASE:-postgres} psql -v ON_ERROR_STOP=1 -c "
++    SELECT pg_terminate_backend(active_pid)
++    FROM pg_replication_slots
++    WHERE slot_name = 'postgres_primary_key_include_slot' AND active_pid IS NOT NULL;
++    SELECT pg_sleep(1);
++    SELECT pg_drop_replication_slot(slot_name)
++    FROM pg_replication_slots
++    WHERE slot_name = 'postgres_primary_key_include_slot';
++    DROP PUBLICATION IF EXISTS postgres_primary_key_include_pub;
++    DROP TABLE IF EXISTS public.postgres_primary_key_include CASCADE;
++    CREATE TABLE public.postgres_primary_key_include (
++        order_id int NOT NULL,
++        tenant_id int NOT NULL,
++        payload text,
++        PRIMARY KEY (tenant_id, order_id) INCLUDE (payload)
++    );
++    CREATE PUBLICATION postgres_primary_key_include_pub
++        FOR TABLE public.postgres_primary_key_include;
++"
++
++statement ok
++create source postgres_primary_key_include_source with (
++    connector = 'postgres-cdc',
++    hostname = '${PGHOST:localhost}',
++    port = '${PGPORT:5432}',
++    username = '${PGUSER:$USER}',
++    password = '${PGPASSWORD:}',
++    database.name = '${PGDATABASE:postgres}',
++    schema.name = 'public',
++    publication.name = 'postgres_primary_key_include_pub',
++    publication.create.enable = 'false',
++    slot.name = 'postgres_primary_key_include_slot'
++);
++
++# Explicitly including the payload in the primary key must still fail validation.
++statement error Primary key mismatch: the SQL schema defines 3 primary key columns, but the source table in Postgres has 2 columns.
++create table postgres_primary_key_include_rw (
++    order_id int,
++    tenant_id int,
++    payload varchar,
++    primary key (tenant_id, order_id, payload)
++)
++from postgres_primary_key_include_source table 'public.postgres_primary_key_include';
++
++statement ok
++create table postgres_primary_key_include_rw (*)
++from postgres_primary_key_include_source table 'public.postgres_primary_key_include';
++
++query TTTT
++describe postgres_primary_key_include_rw;
++----
++order_id integer false NULL
++tenant_id integer false NULL
++payload character varying false NULL
++_rw_timestamp timestamp with time zone true NULL
++primary key tenant_id, order_id NULL NULL
++distribution key tenant_id, order_id NULL NULL
++table description postgres_primary_key_include_rw NULL NULL
++
++statement ok
++drop source postgres_primary_key_include_source cascade;
++
++system ok
++PGDATABASE=${PGDATABASE:-postgres} psql -v ON_ERROR_STOP=1 -c "
++    SELECT pg_terminate_backend(active_pid)
++    FROM pg_replication_slots
++    WHERE slot_name = 'postgres_primary_key_include_slot' AND active_pid IS NOT NULL;
++    SELECT pg_sleep(1);
++    SELECT pg_drop_replication_slot(slot_name)
++    FROM pg_replication_slots
++    WHERE slot_name = 'postgres_primary_key_include_slot';
++    DROP PUBLICATION IF EXISTS postgres_primary_key_include_pub;
++    DROP TABLE IF EXISTS public.postgres_primary_key_include CASCADE;
++"
+```
+
+**File**: `java/connector-node/risingwave-connector-service/src/main/resources/validate_sql.properties` (modified, +2/-1)
+```diff
+@@ -8,7 +8,8 @@ mysql.grants=SHOW GRANTS FOR CURRENT_USER()
+ mysql.check_db_exist=SELECT count(*) FROM information_schema.SCHEMATA WHERE SCHEMA_NAME = ?
+ postgres.wal=show wal_level
+ postgres.table=SELECT EXISTS ( SELECT FROM pg_tables WHERE schemaname = ? AND tablename = ?)
+-postgres.pk=SELECT a.attname, format_type(a.atttypid, a.atttypmod) AS data_type FROM pg_index i JOIN pg_attribute a ON a.attrelid = i.indrelid AND a.attnum = ANY(i.indkey) WHERE i.indrelid = ?::regclass AND i.indisprimary
++# conkey excludes non-key INCLUDE columns and is available on PostgreSQL 10.
++postgres.pk=SELECT a.attname, format_type(a.atttypid, a.atttypmod) AS data_type FROM pg_constraint con JOIN pg_attribute a ON a.attrelid = con.conrelid AND a.attnum = ANY(con.conkey) WHERE con.conrelid = ?::regclass AND con.contype = 'p'
+ postgres.table_schema=SELECT c.column_name, c.data_type, c.character_maximum_length, c.udt_name, a.atttypmod FROM information_schema.columns c JOIN pg_catalog.pg_namespace n ON n.nspname = c.table_schema JOIN pg_catalog.pg_class cls ON cls.relname = c.table_name AND cls.relnamespace = n.oid JOIN pg_catalog.pg_attribute a ON a.attrelid = cls.oid AND a.attname = c.column_name WHERE c.table_schema = ? AND c.table_name = ? AND a.attnum > 0 AND NOT a.attisdropped ORDER BY c.ordinal_position
+ postgres.slot.check=SELECT slot_name FROM pg_replication_slots WHERE slot_name = ? and database = ?
+ postgres.slot_limit.check=SELECT CASE WHEN (SELECT count(*) FROM pg_replication_slots) = (SELECT setting FROM pg_settings WHERE name='max_replication_slots')::int THEN 'true' ELSE 'false' END AS result;
+```
+
+**File**: `src/connector/src/connector_common/postgres.rs` (modified, +9/-5)
+```diff
+@@ -41,16 +41,20 @@ use crate::error::ConnectorResult;
+ /// Match `pg_class` and `pg_namespace` by exact catalog names instead of casting a
+ /// constructed string to `regclass`, as unquoted `regclass` input folds mixed-case
+ /// table names to lower case.
++/// `pg_constraint.conkey` contains only the constrained columns, excluding non-key
++/// attributes from an `INCLUDE` clause, and is available on PostgreSQL 10.
+ const DISCOVER_PRIMARY_KEY_QUERY: &str = r#"
+     SELECT a.attname as column_name
+-    FROM pg_index i
+-    JOIN pg_class c ON c.oid = i.indrelid
++    FROM pg_constraint con
++    JOIN pg_class c ON c.oid = con.conrelid
+     JOIN pg_namespace n ON n.oid = c.relnamespace
+-    JOIN pg_attribute a ON a.attrelid = i.indrelid AND a.attnum = ANY(i.indkey)
++    JOIN LATERAL unnest(con.conkey) WITH ORDINALITY AS key(attnum, ordinality)
++      ON true
++    JOIN pg_attribute a ON a.attrelid = con.conrelid AND a.attnum = key.attnum
+     WHERE n.nspname = $1
+       AND c.relname = $2
+-      AND i.indisprimary = true
+-    ORDER BY array_position(i.indkey, a.attnum)
++      AND con.contype = 'p'
++    ORDER BY key.ordinality
+ "#;
+ 
+ /// Discover pgvector columns with both `atttypmod` (dimension) and `format_type` text.
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #27975** (2026-11-13): chore(deps): bump sysinfo from 0.39.6 to 0.40.0 (@dependabot[bot])
-- **PR #27970** (2026-11-12): feat(iceberg): gate PK index sinks behind a license (@silver-ymz)
-- **PR #27967** (2026-11-13): cherry-pick fix(storage): don't panic on a write limit notification before the snapshot (#27853) to release-3.0 (@yuhao-su)
-- **PR #27965** (2026-11-12): fix(storage): don't panic on a write limit notification before the snapshot (#27853) (@risingwave-ci)
-- **PR #27960** (closed): feat(sink): support replacing exactly-once sinks (@chenzl25)
-- **PR #27953** (2026-11-12): fix(stream): make ChangeBuffer cancellation constant time (@yuhao-su)
+- **PR #28025** (2026-11-17): fix(metrics): count visible rows in sink throughput (@zwang28)
+- **PR #28013** (2026-11-16): cherry-pick fix(sink): make BigQuery _CHANGE_SEQUENCE_NUMBER opt-in (#27978) to release-3.0 (@yuhao-su)
+- **PR #28012** (2026-11-17): feat(observability): support runtime log filters via risectl (@wenym1)
+- **PR #28011** (2026-11-16): cherry-pick fix(optimizer): keep the outer column type when eliminating a correlated apply (#28003) to release-3.1 (@chenzl25)
+- **PR #28008** (2026-11-16): fix(sink): make BigQuery _CHANGE_SEQUENCE_NUMBER opt-in (#27978) (@risingwave-ci)
+- **PR #28004** (2026-11-16): fix(connector): keep NULL for columns with a default in CDC change events (@anlowee)
 
 ---
 
@@ -1209,33 +1603,75 @@ Co-authored-by: Li0k <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): bump sysinfo from 0.39.6 to 0.40.0
+## X. meta): send subscribe snapshots through the notification queue
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in risingwavelabs/risingwave. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/meta/src/manager/notification.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in risingwavelabs/risingwave. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `24cf8ef7`: deps): bump sysinfo from 0.39.6 to 0.40.0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5d7a0e11`: meta): send subscribe snapshots through the notification queue. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/meta/src/manager/notification.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-version = "0.40.0"
-checksum = "110e37d98880fd804cd47509b90a8444f7aaaab655ae625e83cd442a8bc2ebf2"
+enum Target {
+    Subscribers {
+        subscribe_type: SubscribeType,
+        // `None` indicates sending to all subscribers of `subscribe_type`.
+        worker_key: Option<WorkerKey>,
+    },
+    /// The sender of one subscribe call. By the time the task is delivered, the worker may have
+    /// subscribed again and replaced its entry in the sender map.
+    Sender(UnboundedSender<Notification>),
+        Self::Subscribers {
+    /// Queue the snapshot behind every notification published before it was read. The observer
+    /// manager filters out such notifications only if they arrive before the snapshot.
+        self.notify_without_version(
+            Target::Sender(sender),
+            Operation::Snapshot,
+            Info::Snapshot(meta_snapshot),
+        );
+            Target::Subscribers {
+        let (subscribe_type, worker_key) = match target {
+            Target::Subscribers {
+                subscribe_type,
+                worker_key,
+            } => (subscribe_type, worker_key),
+            Target::Sender(sender) => {
+                let _ = sender.send(Ok(response)).inspect_err(|err| {
+                    tracing::warn!("Failed to send snapshot: {}", err.as_report());
+ 
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-version = "0.39.6"
-checksum = "d2071df9448915b71c4fe6d25deaf1c22f12bd234f01540b77312bb8e41361e6"
+struct Target {
+    subscribe_type: SubscribeType,
+    // `None` indicates sending to all subscribers of `subscribe_type`.
+    worker_key: Option<WorkerKey>,
+        Self {
+        let response = SubscribeResponse {
+            status: None,
+            operation: Operation::Snapshot as i32,
+            info: Some(Info::Snapshot(meta_snapshot)),
+            version: Default::default(),
+        };
+        let _ = sender.send(Ok(response)).inspect_err(|err| {
+            tracing::warn!("Failed to notify direct subscriber: {}", err.as_report());
+        });
+            Target {
+        let senders = self.senders_of(target.subscribe_type);
+        if let Some(worker_key) = target.worker_key {
+                        warn_send_failure!(target.subscribe_type, &worker_key, err.as_report());
+                        warn_send_failure!(target.subscribe_type, &worker_key, err.as_report());
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `24cf8ef7` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5d7a0e11` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

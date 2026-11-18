@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/risingwavelabs-risingwave-learnings.md`  
 > **Source**: github ([https://github.com/risingwavelabs/risingwave](https://github.com/risingwavelabs/risingwave))  
-> **Source Version**: `5b172d1a`  
+> **Source Version**: `5d7a0e11`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-17T03:26:21.097Z  
+> **Timestamp**: 2026-11-18T03:48:13.427Z  
 > **Learning ID**: `learn-github-risingwavelabs-risingwave`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/risingwavelabs-risingwave-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/risingwavelabs/risingwave](https://github.com/risingwavelabs/risingwave))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T03:26:21.090Z  
+> **Harvest Timestamp**: 2026-11-18T03:48:13.422Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Event streaming platform for agentic AI. Continuously ingest, transform, and serve event streams in real time, at scale.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 9416 stars
+- **Stars / Engagement**: 9420 stars
 
 ---
 
@@ -1077,43 +1077,383 @@ pub(crate) use def_path_lookup;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ab28399d` (2026-11-16)
-**Commit Message**: fix(connector): keep NULL for columns with a default in CDC change events (#28004)
+### Incident Patch 1: `5d7a0e11` (2026-11-17)
+**Commit Message**: fix(meta): send subscribe snapshots through the notification queue (#27834)
 
-Co-authored-by: Claude Fable 5.1 <[REDACTED_EMAIL]>
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `e2e_test/source_inline/cdc/postgres/postgres_null_with_default.slt` (added, +77/-0)
+**File**: `src/meta/src/manager/notification.rs` (modified, +58/-19)
 ```diff
-@@ -0,0 +1,77 @@
+@@ -86,15 +86,20 @@ pub enum LocalNotification {
+ }
+ 
+ #[derive(Debug)]
+-struct Target {
+-    subscribe_type: SubscribeType,
+-    // `None` indicates sending to all subscribers of `subscribe_type`.
+-    worker_key: Option<WorkerKey>,
++enum Target {
++    Subscribers {
++        subscribe_type: SubscribeType,
++        // `None` indicates sending to all subscribers of `subscribe_type`.
++        worker_key: Option<WorkerKey>,
++    },
++    /// The sender of one subscribe call. By the time the task is delivered, the worker may have
++    /// subscribed again and replaced its entry in the sender map.
++    Sender(UnboundedSender<Notification>),
+ }
+ 
+ impl From<SubscribeType> for Target {
+     fn from(value: SubscribeType) -> Self {
+-        Self {
++        Self::Subscribers {
+             subscribe_type: value,
+             worker_key: None,
+         }
+@@ -227,20 +232,18 @@ impl NotificationManager {
+         self.notify(target, operation, info, None);
+     }
+ 
++    /// Queue the snapshot behind every notification published before it was read. The observer
++    /// manager filters out such notifications only if they arrive before the snapshot.
+     pub fn notify_snapshot(
+         &self,
+         sender: UnboundedSender<Notification>,
+         meta_snapshot: MetaSnapshot,
+     ) {
+-        let response = SubscribeResponse {
+-            status: None,
+-            operation: Operation::Snapshot as i32,
+-            info: Some(Info::Snapshot(meta_snapshot)),
+-            version: Default::default(),
+-        };
+-        let _ = sender.send(Ok(response)).inspect_err(|err| {
+-            tracing::warn!("Failed to notify direct subscriber: {}", err.as_report());
+-        });
++        self.notify_without_version(
++            Target::Sender(sender),
++            Operation::Snapshot,
++            Info::Snapshot(meta_snapshot),
++        );
+     }
+ 
+     pub fn notify_all_without_version(&self, operation: Operation, info: Info) {
+@@ -281,7 +284,7 @@ impl NotificationManager {
+ 
+     pub(crate) fn notify_hummock_targeted_update(&self, worker_key: WorkerKey, info: Info) {
+         self.notify_without_version(
+-            Target {
++            Target::Subscribers {
+                 subscribe_type: SubscribeType::Hummock,
+                 worker_key: Some(worker_key),
+             },
+@@ -419,13 +422,25 @@ impl NotificationManagerCore {
+             };
+         }
+ 
+-        let senders = self.senders_of(target.subscribe_type);
++        let (subscribe_type, worker_key) = match target {
++            Target::Subscribers {
++                subscribe_type,
++                worker_key,
++            } => (subscribe_type, worker_key),
++            Target::Sender(sender) => {
++                let _ = sender.send(Ok(response)).inspect_err(|err| {
++                    tracing::warn!("Failed to send snapshot: {}", err.as_report());
++                });
++                return;
++            }
++        };
++        let senders = self.senders_of(subscribe_type);
+ 
+-        if let Some(worker_key) = target.worker_key {
++        if let Some(worker_key) = worker_key {
+             match senders.entry(worker_key.clone()) {
+                 Entry::Occupied(entry) => {
+                     let _ = entry.get().send(Ok(response)).inspect_err(|err| {
+-                        warn_send_failure!(target.subscribe_type, &worker_key, err.as_report());
++                        warn_send_failure!(subscribe_type, &worker_key, err.as_report());
+                         entry.remove_entry();
+                     });
+                 }
+@@ -438,7 +453,7 @@ impl NotificationManagerCore {
+                 sender
+                     .send(Ok(response.clone()))
+                     .inspect_err(|err| {
+-                        warn_send_failure!(target.subscribe_type, &worker_key, err.as_report());
++                        warn_send_failure!(subscribe_type, &worker_key, err.as_report());
+                     })
+                     .is_ok()
+             });
+@@ -585,6 +600,30 @@ mod tests {
+         assert_eq!(mgr.current_version().await, version);
+     }
+ 
++    #[tokio::test]
++    async fn test_snapshot_arrives_after_notification_it_covers() {
++        let mgr = NotificationManager::new(SqlMetaStore::for_test().await).await;
++        let worker_key = WorkerKey(HostAddress {
++            host: "a".to_owned(),
++            port: 1,
++        });
++        let (tx, mut rx) = mpsc::unbounded_channel();
++        mgr.insert_sender(SubscribeType::Frontend, worker_key, tx.clone());
++
++        // The test runtime has one thread and `notify_frontend` does not yield after queueing, so
++        // the notification is still in the queue when the snapshot is sent.
++        let version = mgr
++            .notify_frontend(Operation::Add, Info::Database(Default::default()))
++            .await;
++        mgr.notify_snapshot(tx, MetaSnapshot::default());
++
++        let first = rx.recv().await.unwrap().unwrap();
++        assert!(matches!(first.info, Some(Info::Database(_))));
++        asser
+```
+
+---
+
+### Incident Patch 2: `3d5b9071` (2026-11-17)
+**Commit Message**: fix(frontend): allow kinesis with plain avro aws glue schema registry (#27611)
+
+**File**: `src/frontend/src/handler/create_source.rs` (modified, +4/-4)
+```diff
+@@ -78,7 +78,7 @@ use risingwave_pb::plan_common::{EncodeType, FormatType, SourceRefreshMode};
+ use risingwave_pb::stream_plan::PbStreamFragmentGraph;
+ use risingwave_pb::telemetry::TelemetryDatabaseObject;
+ use risingwave_sqlparser::ast::{
+-    AstString, ColumnDef, ColumnOption, CreateSourceStatement, Encode, Format, FormatEncodeOptions,
++    ColumnDef, ColumnOption, CreateSourceStatement, Encode, Format, FormatEncodeOptions,
+     ObjectName, SourceWatermark, SqlOptionValue, TableConstraint, Value, get_delimiter,
+ };
+ use risingwave_sqlparser::parser::{IncludeOption, IncludeOptionItem};
+@@ -143,8 +143,8 @@ fn non_generated_sql_columns(columns: &[ColumnDef]) -> Vec<ColumnDef> {
+ fn try_consume_string_from_options(
+     format_encode_options: &mut BTreeMap<String, String>,
+     key: &str,
+-) -> Option<AstString> {
+-    format_encode_options.remove(key).map(AstString)
++) -> Option<String> {
++    format_encode_options.remove(key)
+ }
+ 
+ fn try_consume_schema_registry_config_from_options(
+@@ -185,7 +185,7 @@ fn try_consume_pulsar_schema_config_from_options(
+ fn consume_string_from_options(
+     format_encode_options: &mut BTreeMap<String, String>,
+     key: &str,
+-) -> Result<AstString> {
++) -> Result<String> {
+     try_consume_string_from_options(format_encode_options, key).ok_or(RwError::from(ProtocolError(
+         format!("missing field {} in options", key),
+     )))
+```
+
+**File**: `src/frontend/src/handler/create_source/external_schema.rs` (modified, +12/-14)
+```diff
+@@ -136,9 +136,7 @@ async fn bind_columns_from_source_for_non_cdc(
+     )?;
+ 
+     fn get_key_message_name(options: &mut BTreeMap<String, String>) -> Option<String> {
+-        consume_string_from_options(options, KEY_MESSAGE_NAME_KEY)
+-            .map(|ele| Some(ele.0))
+-            .unwrap_or(None)
++        consume_string_from_options(options, KEY_MESSAGE_NAME_KEY).ok()
+     }
+     fn get_sr_name_strategy_check(
+         options: &mut BTreeMap<String, String>,
+@@ -188,10 +186,10 @@ async fn bind_columns_from_source_for_non_cdc(
+             stream_source_info.use_schema_registry = use_schema_registry;
+             stream_source_info
+                 .row_schema_location
+-                .clone_from(&row_schema_location.0);
++                .clone_from(&row_schema_location);
+             stream_source_info
+                 .proto_message_name
+-                .clone_from(&message_name.0);
++                .clone_from(&message_name);
+             stream_source_info.key_message_name =
+                 get_key_message_name(&mut format_encode_options_to_consume);
+             stream_source_info.name_strategy =
+@@ -217,7 +215,8 @@ async fn bind_columns_from_source_for_non_cdc(
+             {
+                 // Legacy logic that assumes either `schema.location` or confluent `schema.registry`.
+                 // The handling of newly added aws glue is centralized in `connector::parser`.
+-                // TODO(xiangjinwu): move these option parsing to `connector::parser` as well.
++                // TODO(xiangjinwu): move these option parsing to `connector::parser` as well,
++                // together with schema registry logic in `validate::validate_compatibility`
+ 
+                 let (row_schema_location, use_schema_registry) =
+                     get_schema_location(&mut format_encode_options_to_consume)?;
+@@ -240,9 +239,8 @@ async fn bind_columns_from_source_for_non_cdc(
+                 stream_source_info.use_schema_registry = use_schema_registry;
+                 stream_source_info
+                     .row_schema_location
+-                    .clone_from(&row_schema_location.0);
+-                stream_source_info.proto_message_name =
+-                    message_name.unwrap_or(AstString("".into())).0;
++                    .clone_from(&row_schema_location);
++                stream_source_info.proto_message_name = message_name.unwrap_or_default();
+                 stream_source_info.key_message_name =
+                     get_key_message_name(&mut format_encode_options_to_consume);
+                 stream_source_info.name_strategy =
+@@ -261,13 +259,13 @@ async fn bind_columns_from_source_for_non_cdc(
+         }
+         (Format::Plain, Encode::Csv) => {
+             let chars =
+-                consume_string_from_options(&mut format_encode_options_to_consume, "delimiter")?.0;
++                consume_string_from_options(&mut format_encode_options_to_consume, "delimiter")?;
+             let delimiter = get_delimiter(chars.as_str()).context("failed to parse delimiter")?;
+             let has_header = try_consume_string_from_options(
+                 &mut format_encode_options_to_consume,
+                 "without_header",
+             )
+-            .map(|s| s.0 == "false")
++            .map(|s| s == "false")
+             .unwrap_or(true);
+ 
+             if is_kafka && has_header {
+@@ -466,7 +464,7 @@ pub(super) fn row_encode_to_prost(row_encode: &Encode) -> EncodeType {
+ 
+ pub fn get_schema_location(
+     format_encode_options: &mut BTreeMap<String, String>,
+-) -> Result<(AstString, bool)> {
++) -> Result<(String, bool)> {
+     let schema_location = try_consume_string_from_options(format_encode_options, "schema.location");
+     let schema_registry = try_consume_string_from_options(format_encode_options, "schema.registry");
+     match (schema_location, schema_registry) {
+@@ -494,10 +492,10 @@ pub fn schema_has_schema_registry(schema: &FormatEncodeOptions) -> bool {
+ }
+ 
+ #[inline]
+-fn get_name_strategy_or_default(name_strategy: Option<AstString>) -> Result<Option<i32>> {
++fn get_name_strategy_or_default(name_strategy: Option<String>) -> Result<Option<i32>> {
+     match name_strategy {
+         None => Ok(None),
+-        Some(name) => Ok(Some(name_strategy_from_str(name.0.as_str())
++        Some(name) => Ok(Some(name_strategy_from_str(name.as_str())
+             .ok_or_else(|| RwError::from(ProtocolError(format!("\
+             expect strategy name in topic_name_strategy, record_name_strategy and topic_record_name_strategy, but got {}", name))))? as i32)),
+     }
+```
+
+**File**: `src/frontend/src/handler/create_source/external_schema/json.rs` (modified, +4/-4)
+```diff
+@@ -14,7 +14,7 @@
+ 
+ use super::*;
+ 
+-pub fn json_schema_infer_use_schema_registry(schema_config: &Option<(AstString, bool)>) -> bool {
++pub fn json_schema_infer_use_schema_registry(schema_config: &Option<(String, bool)>) -> bool {
+     match schema_config {
+         None => false,
+         Some((_, use_registry)) => *use_registry,
+@@ -23,7 +23,7 @@ pub fn json_schema_infer_use_schema_registry(schema_config: &Option<(AstString,
+ 
+ /// Map a JSON schema to a relational schema
+ pub async fn extract_json_table_schema(
+-    schema_config: &Option<(AstString, bool)>,
++    schema_config: &Option<(String, bool)>,
+     with_properties: &BTreeMap<String, String>,
+     format_encode_options: &mut BTreeMap<String, String>,
+ ) -> Result<Option<Vec<ColumnCatalog>>> {
+@@ -38,7 +38,7 @@ pub async fn extract_json_table_schema(
+             });
+             Ok(Some(
+                 fetch_json_schema_and_map_to_columns(
+-                    &schema_location.0,
++                    schema_location,
+                     schema_registry_auth,
+                     with_properties,
+                 )
+@@ -78,7 +78,7 @@ pub async fn extract_pulsar_json_table_schema(
+ 
+ pub fn get_json_schema_location(
+     format_encode_options: &mut BTreeMap<String, String>,
+-) -> Result<Option<(AstString, bool)>> {
++) -> Result<Option<(String, bool)>> {
+     let schema_location = try_consume_string_from_options(format_encode_options, "schema.location");
+     let schema_registry = try_consume_string_from_options(format_encode_options, "schema.registry");
+     match (schema_location, schema_registry) {
+```
+
+**File**: `src/frontend/src/handler/create_source/validate.rs` (modified, +13/-2)
+```diff
+@@ -175,9 +175,10 @@ pub fn validate_compatibility(
+         })?;
+     if connector != KAFKA_CONNECTOR && !uses_pulsar_schema {
+         let res = match (&format_encode.format, &format_encode.row_encode) {
+-            (Format::Plain, Encode::Protobuf) | (Format::Plain, Encode::Avro) => {
++            (Format::Plain | Format::Upsert, Encode::Protobuf | Encode::Avro) => {
+                 let mut options = WithOptions::try_from(format_encode.row_options())?;
+-                let (_, use_schema_registry) = get_schema_location(options.inner_mut())?;
++                let (_, use_schema_registry) =
++                    get_schema_location(options.inner_mut()).unwrap_or_default();
+                 use_schema_registry
+             }
+             (Format::Debezium, Encode::Avro) => true,
+@@ -285,4 +286,14 @@ mod tests {
+         );
+         validate_compatibility(&format_encode, &mut source_options(KAFKA_CONNECTOR)).unwrap();
+     }
++
++    #[test]
++    fn glue_schema_registry_non_kafka() {
++        let format_encode = format_encode(
++            Format::Plain,
++            Encode::Avro,
++            &[(AWS_GLUE_SCHEMA_ARN_KEY, "placeholder")],
++        );
++        validate_compatibility(&format_encode, &mut source_options(KINESIS_CONNECTOR)).unwrap();
++    }
+ }
+```
+
+---
+
+### Incident Patch 3: `1ee6e12c` (2026-11-17)
+**Commit Message**: fix(connector): exclude PostgreSQL INCLUDE columns from primary key (#27173)
+
+Co-authored-by: Xiaochong(Eddy) Wei <[REDACTED_EMAIL]>
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `e2e_test/source_inline/cdc/postgres/postgres_primary_key_include.slt` (added, +86/-0)
+```diff
+@@ -0,0 +1,86 @@
++# Verify that auto schema discovery excludes INCLUDE columns from the primary key
++# while preserving the key-column order from the upstream PostgreSQL constraint.
++
 +control substitution on
 +
 +statement ok
-+drop source if exists postgres_null_with_default_source cascade;
++drop table if exists postgres_primary_key_include_rw;
++
++statement ok
++drop source if exists postgres_primary_key_include_source cascade;
 +
 +system ok
-+PGDATABASE=${PGDATABASE:-postgres} psql -c "
++PGDATABASE=${PGDATABASE:-postgres} psql -v ON_ERROR_STOP=1 -c "
 +    SELECT pg_terminate_backend(active_pid)
 +    FROM pg_replication_slots
-+    WHERE slot_name = 'postgres_null_with_default_slot' AND active_pid IS NOT NULL;
++    WHERE slot_name = 'postgres_primary_key_include_slot' AND active_pid IS NOT NULL;
 +    SELECT pg_sleep(1);
 +    SELECT pg_drop_replication_slot(slot_name)
 +    FROM pg_replication_slots
-+    WHERE slot_name = 'postgres_null_with_default_slot';
-+    DROP PUBLICATION IF EXISTS postgres_null_with_default_pub;
-+    DROP TABLE IF EXISTS public.postgres_null_with_default CASCADE;
-+    CREATE TABLE public.postgres_null_with_default (
-+        id int PRIMARY KEY,
-+        v int,
-+        c_text text DEFAULT 'x',
-+        c_jsonb jsonb DEFAULT '{}'::jsonb,
-+        c_ts timestamp DEFAULT now()
++    WHERE slot_name = 'postgres_primary_key_include_slot';
++    DROP PUBLICATION IF EXISTS postgres_primary_key_include_pub;
++    DROP TABLE IF EXISTS public.postgres_primary_key_include CASCADE;
++    CREATE TABLE public.postgres_primary_key_include (
++        order_id int NOT NULL,
++        tenant_id int NOT NULL,
++        payload text,
++        PRIMARY KEY (tenant_id, order_id) INCLUDE (payload)
 +    );
-+    INSERT INTO public.postgres_null_with_default VALUES (1, 0, NULL, NULL, NULL);
-+    CREATE PUBLICATION postgres_null_with_default_pub FOR TABLE public.postgres_null_with_default;
-+    "
++    CREATE PUBLICATION postgres_primary_key_include_pub
++        FOR TABLE public.postgres_primary_key_include;
++"
 +
 +statement ok
-+create source postgres_null_with_default_source with (
++create source postgres_primary_key_include_source with (
 +    connector = 'postgres-cdc',
 +    hostname = '${PGHOST:localhost}',
 +    port = '${PGPORT:5432}',
@@ -1121,641 +1461,104 @@ Co-authored-by: Claude Fable 5.1 <[REDACTED_EMAIL]>
 +    password = '${PGPASSWORD:}',
 +    database.name = '${PGDATABASE:postgres}',
 +    schema.name = 'public',
-+    publication.name = 'postgres_null_with_default_pub',
++    publication.name = 'postgres_primary_key_include_pub',
 +    publication.create.enable = 'false',
-+    slot.name = 'postgres_null_with_default_slot'
++    slot.name = 'postgres_primary_key_include_slot'
 +);
 +
-+statement ok
-+create table postgres_null_with_default_rw (*)
-+from postgres_null_with_default_source table 'public.postgres_null_with_default';
-+
-+query IITTT retry 30 backoff 1s
-+select id, v, c_text, c_jsonb, c_ts from postgres_null_with_default_rw order by id;
-+----
-+1 0 NULL NULL NULL
-+
-+system ok
-+PGDATABASE=${PGDATABASE:-postgres} psql -c "
-+    INSERT INTO public.postgres_null_with_default VALUES (2, 0, NULL, NULL, NULL);
-+    UPDATE public.postgres_null_with_default SET v = 1 WHERE id = 1;
-+    "
-+
-+query IITTT retry 30 backoff 1s
-+select id, v, c_text, c_jsonb, c_ts from postgres_null_with_default_rw order by id;
-+----
-+1 1 NULL NULL NULL
-+2 0 NULL NULL NULL
++# Explicitly including the payload in the primary key must still fail validation.
++statement error Primary key mismatch: the SQL schema defines 3 primary key columns, but the source table in Postgres has 2 columns.
++create table postgres_primary_key_include_rw (
++    order_id int,
++    tenant_id int,
++    payload varchar,
++    primary key (tenant_id, order_id, payload)
++)
++from postgres_primary_key_include_source table 'public.postgres_primary_key_include';
 +
 +statement ok
-+drop source postgres_null_with_default_source cascade;
++create table postgres_primary_key_include_rw (*)
++from postgres_primary_key_include_source table 'public.postgres_primary_key_include';
++
++query TTTT
++describe postgres_primary_key_include_rw;
++----
++order_id integer false NULL
++tenant_id integer false NULL
++payload character varying false NULL
++_rw_timestamp timestamp with time zone true NULL
++primary key tenant_id, order_id NULL NULL
++distribution key tenant_id, order_id NULL NULL
++table description postgres_primary_key_include_rw NULL NULL
++
++statement ok
++drop source postgres_primary_key_include_source cascade;
 +
 +system ok
-+PGDATABASE=${PGDATABASE:-postgres} psql -c "
++PGDATABASE=${PGDATABASE:-postgres} psql -v ON_ERROR_STOP=1 -c "
 +    SELECT pg_terminate_backend(active_pid)
 +    FROM pg_replication_slots
-+    WHERE slot_name = 'postgres_null_with_default_slot' AND active_pid IS NOT NULL;
++    WHERE slot_name = 'postgres_primary_key_include_slot' AND active_pid IS NOT NULL;
 +    SELECT pg_sleep(1);
 +    SELECT pg_drop_replication_slot(slot_name)
 +    FROM pg_replication_slots
-+    WHERE slot_name = 'postgres_null_with_default_slot';
-+    DROP PUBLICATION IF EXISTS postgres_null_with_default_pub;
-+    DROP TABLE IF EXISTS public.postgres_null_with_default CASCADE;
-+    "
++    WHERE slot_name = 'postgres_primary_key_include_slot';
++    DROP PUBLICATION IF EXISTS postgres_primary_key_include_pub;
++    DROP TABLE IF EXISTS public.postgres_primary_key_include CASCADE;
++"
 ```
 
-**File**: `java/connector-node/risingwave-connector-service/src/main/java/com/risingwave/connector/source/core/DbzCdcEngine.java` (modified, +10/-12)
+**File**: `java/connector-node/risingwave-connector-service/src/main/resources/validate_sql.properties` (modified, +2/-1)
 ```diff
-@@ -19,11 +19,10 @@
- import static io.debezium.config.CommonConnectorConfig.TOPIC_PREFIX;
- import static io.debezium.schema.AbstractTopicNamingStrategy.*;
- 
--import com.risingwave.connector.api.source.SourceTypeE;
-+import com.risingwave.connector.source.common.DbzConnectorConfig;
- import com.risingwave.proto.ConnectorServiceProto;
- import io.debezium.embedded.Connect;
- import io.debezium.engine.DebeziumEngine;
--import java.util.Properties;
- import java.util.concurrent.ArrayBlockingQueue;
- import java.util.concurrent.BlockingQueue;
- 
-@@ -36,28 +35,27 @@ public class DbzCdcEngine implements Runnable {
- 
-     /** If config is not valid will throw exceptions */
-     public DbzCdcEngine(
--            SourceTypeE connector,
--            long sourceId,
--            Properties config,
--            DebeziumEngine.CompletionCallback completionCallback) {
--        var heartbeatTopicPrefix = config.getProperty(TOPIC_HEARTBEAT_PREFIX.name());
--        var topicPrefix = config.getProperty(TOPIC_PREFIX.name());
-+            DbzConnectorConfig config, DebeziumEngine.CompletionCallback completionCallback) {
-+        var dbzProps = config.getResolvedDebeziumProps();
-+        var heartbeatTopicPrefix = dbzProps.getProperty(TOPIC_HEARTBEAT_PREFIX.name());
-+        var topicPrefix = dbzProps.getProperty(TOPIC_PREFIX.name());
-         var transactionTopic = String.format("%s.%s", topicPrefix, DEFAULT_TRANSACTION_TOPIC);
-         var consumer =
-                 new DbzChangeEventConsumer(
--                        connector,
--                        sourceId,
-+                        config.getSourceType(),
-+                        config.getSourceId(),
-                         heartbeatTopicPrefix,
-                         transactionTopic,
-                         topicPrefix,
-+                        config.isBackfillSource(),
-                         new ArrayBlockingQueue<>(DEFAULT_QUEUE_CAPACITY));
- 
-         // Builds a debezium engine but not start it
--        this.id = sourceId;
-+        this.id = config.getSourceId();
-         this.changeEventConsumer = consumer;
-         this.engine =
-                 DebeziumEngine.create(Connect.class)
--                        .using(config)
-+                        .using(dbzProps)
-                         .using(completionCallback)
-                         .notifying(consumer)
-                         .build();
+@@ -8,7 +8,8 @@ mysql.grants=SHOW GRANTS FOR CURRENT_USER()
+ mysql.check_db_exist=SELECT count(*) FROM information_schema.SCHEMATA WHERE SCHEMA_NAME = ?
+ postgres.wal=show wal_level
+ postgres.table=SELECT EXISTS ( SELECT FROM pg_tables WHERE schemaname = ? AND tablename = ?)
+-postgres.pk=SELECT a.attname, format_type(a.atttypid, a.atttypmod) AS data_type FROM pg_index i JOIN pg_attribute a ON a.attrelid = i.indrelid AND a.attnum = ANY(i.indkey) WHERE i.indrelid = ?::regclass AND i.indisprimary
++# conkey excludes non-key INCLUDE columns and is available on PostgreSQL 10.
++postgres.pk=SELECT a.attname, format_type(a.atttypid, a.atttypmod) AS data_type FROM pg_constraint con JOIN pg_attribute a ON a.attrelid = con.conrelid AND a.attnum = ANY(con.conkey) WHERE con.conrelid = ?::regclass AND con.contype = 'p'
+ postgres.table_schema=SELECT c.column_name, c.data_type, c.character_maximum_length, c.udt_name, a.atttypmod FROM information_schema.columns c JOIN pg_catalog.pg_namespace n ON n.nspname = c.table_schema JOIN pg_catalog.pg_class cls ON cls.relname = c.table_name AND cls.relnamespace = n.oid JOIN pg_catalog.pg_attribute a ON a.attrelid = cls.oid AND a.attname = c.column_name WHERE c.table_schema = ? AND c.table_name = ? AND a.attnum > 0 AND NOT a.attisdropped ORDER BY c.ordinal_position
+ postgres.slot.check=SELECT slot_name FROM pg_replication_slots WHERE slot_name = ? and database = ?
+ postgres.slot_limit.check=SELECT CASE WHEN (SELECT count(*) FROM pg_replication_slots) = (SELECT setting FROM pg_settings WHERE name='max_replication_slots')::int THEN 'true' ELSE 'false' END AS result;
 ```
 
-**File**: `java/connector-node/risingwave-connector-service/src/main/java/com/risingwave/connector/source/core/DbzCdcEngineRunner.java` (modified, +2/-6)
+**File**: `src/connector/src/connector_common/postgres.rs` (modified, +9/-5)
 ```diff
-@@ -45,9 +45,7 @@ public static DbzCdcEngineRunner newCdcEngineRunner(
-             var sourceId = config.getSourceId();
-             var engine =
-                     new DbzCdcEngine(
--                            config.getSourceType(),
--                            config.getSourceId(),
--                            config.getResolvedDebeziumProps(),
-+                            config,
-                             (success, message, error) -> {
-                                 if (!success) {
-                                     LOG.error(
-@@ -79,9 +77,7 @@ public static DbzCdcEngineRunner create(DbzConnectorConfig config, CdcSourceChan
-             final DbzCdcEngineRunner finalRunner = runner;
-             var engine =
-                     new DbzCdcEngine(
--                            config.getSourceType(),
--                            config.getSourceId(),
--                            config.getResolvedDebeziumProps(),
-+                            config,
-                             (success, message, error) -> {
-                                 if (!success) {
-                                     LOG.error(
-```
-
-**File**: `java/connector-node/risingwave-connector-service/src/main/java/com/risingwave/connector/source/core/DbzChangeEventConsumer.java` (modified, +3/-1)
-```diff
-@@ -72,6 +72,7 @@ public class DbzChangeEventConsumer
-             String heartbeatTopicPrefix,
-             String transactionTopic,
-             String schemaChangeTopic,
-+            boolean isBackfillSource,
-             BlockingQueue<GetEventStreamResponse> queue) {
-         this.connector = connector;
-         this.sourceId = sourceId;
-@@ -85,11 +86,12 @@ public class DbzChangeEventConsumer
-         // to source parser, we use a customized JSON converter to avoid outputting the `schema`
-         // field.
-         var payloadConverter = new DbzJsonConverter();
--        final HashMap<String, Object> configs = new HashMap<>(2);
-+        final HashMap<String, Object> configs = new HashMap<>(3);
-         // only serialize the value part
-         configs.put(ConverterConfig.TYPE_CONFIG, ConverterType.VALUE.getName());
-         // include record schema to output JSON in { "schema": { ... }, "payload": { ... } } format
-         configs.put(JsonConverterConfig.SCHEMAS_ENABLE_CONFIG, true);
-+        configs.put(JsonConverterConfig.REPLACE_NULL_WITH_DEFAULT_CONFIG, !isBackfillSource);
-         payloadConverter.configure(configs);
-         this.payloadConverter = payloadConverter;
+@@ -41,16 +41,20 @@ use crate::error::ConnectorResult;
+ /// Match `pg_class` and `pg_namespace` by exact catalog names instead of casting a
+ /// constructed string to `regclass`, as unquoted `regclass` input folds mixed-case
+ /// table names to lower case.
++/// `pg_constraint.conkey` contains only the constrained columns, excluding non-key
++/// attributes from an `INCLUDE` clause, and is available on PostgreSQL 10.
+ const DISCOVER_PRIMARY_KEY_QUERY: &str = r#"
+     SELECT a.attname as column_name
+-    FROM pg_index i
+-    JOIN pg_class c ON c.oid = i.indrelid
++    FROM pg_constraint con
++    JOIN pg_class c ON c.oid = con.conrelid
+     JOIN pg_namespace n ON n.oid = c.relnamespace
+-    JOIN pg_attribute a ON a.attrelid = i.indrelid AND a.attnum = ANY(i.indkey)
++    JOIN LATERAL unnest(con.conkey) WITH ORDINALITY AS key(attnum, ordinality)
++      ON true
++    JOIN pg_attribute a ON a.attrelid = con.conrelid AND a.attnum = key.attnum
+     WHERE n.nspname = $1
+       AND c.relname = $2
+-      AND i.indisprimary = true
+-    ORDER BY array_position(i.indkey, a.attnum)
++      AND con.contype = 'p'
++    ORDER BY key.ordinality
+ "#;
  
-```
-
-**File**: `java/connector-node/risingwave-connector-service/src/test/java/com/risingwave/connector/source/core/DbzCdcEngineRunnerTest.java` (modified, +1/-5)
-```diff
-@@ -139,11 +139,7 @@ private static class WaitingEngine extends DbzCdcEngine {
-         boolean failStop;
- 
-         WaitingEngine(DbzConnectorConfig config) {
--            super(
--                    config.getSourceType(),
--                    config.getSourceId(),
--                    config.getResolvedDebeziumProps(),
--                    (success, message, error) -> {});
-+            super(config, (success, message, error) -> {});
-         }
- 
-         @Override
-```
-
----
-
-### Incident Patch 2: `8ac9c69f` (2026-11-16)
-**Commit Message**: fix(sink): make BigQuery _CHANGE_SEQUENCE_NUMBER opt-in (#27978)
-
-Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `src/connector/src/allow_alter_on_fly_fields.rs` (modified, +7/-0)
-```diff
-@@ -178,6 +178,13 @@ pub static SOURCE_ALLOW_ALTER_ON_FLY_FIELDS: LazyLock<HashMap<String, HashSet<St
- pub static SINK_ALLOW_ALTER_ON_FLY_FIELDS: LazyLock<HashMap<String, HashSet<String>>> = LazyLock::new(|| {
-     use sink_properties::*;
-     let mut map = HashMap::new();
-+    // BigQueryConfig
-+    map.try_insert(
-+        std::any::type_name::<BigQueryConfig>().to_owned(),
-+        [
-+            "bigquery.change_sequence_number".to_owned(),
-+        ].into_iter().collect(),
-+    ).unwrap();
-     // ClickHouseConfig
-     map.try_insert(
-         std::any::type_name::<ClickHouseConfig>().to_owned(),
-```
-
-**File**: `src/connector/src/sink/big_query.rs` (modified, +112/-42)
-```diff
-@@ -21,6 +21,7 @@ use anyhow::{Context, anyhow};
- use async_trait::async_trait;
- use base64::Engine;
- use base64::prelude::BASE64_STANDARD;
-+use either::Either;
- use futures::future::pending;
- use futures::prelude::Future;
- use futures::{Stream, StreamExt};
-@@ -265,6 +266,14 @@ pub struct BigQueryConfig {
-     pub aws_auth_props: AwsAuthProps,
-     pub r#type: String, // accept "append-only" or "upsert"
- 
-+    /// Write `_CHANGE_SEQUENCE_NUMBER` on upsert rows, so that `BigQuery` applies the changes of
-+    /// each key in the order they are sent. Once a table has rows written with it, turning it off
-+    /// makes `BigQuery` ignore later changes to those rows.
-+    #[serde(rename = "bigquery.change_sequence_number", default)]
-+    #[serde_as(as = "DisplayFromStr")]
-+    #[with_option(allow_alter_on_fly)]
-+    pub change_sequence_number: bool,
-+
-     #[serde(flatten)]
-     pub unknown_fields: std::collections::HashMap<String, String>,
- }
-@@ -538,6 +547,11 @@ impl Sink for BigQuerySink {
- 
-     crate::impl_validate_sink_unknown_fields!();
- 
-+    fn validate_alter_config(config: &BTreeMap<String, String>) -> Result<()> {
-+        BigQueryConfig::from_btreemap(config.clone())?;
-+        Ok(())
-+    }
-+
-     async fn new_log_sinker(&self, _writer_param: SinkWriterParam) -> Result<Self::LogSinker> {
-         let (writer, resp_stream) = BigQuerySinkWriter::new(
-             self.config.clone(),
-@@ -696,13 +710,15 @@ impl BigQuerySinkWriter {
-                 ..Default::default()
-             };
-             descriptor_proto.field.push(field);
--            let field = FieldDescriptorProto {
--                name: Some(CHANGE_SEQUENCE_NUMBER.to_owned()),
--                number: Some((schema.len() + 2) as i32),
--                r#type: Some(field_descriptor_proto::Type::String.into()),
--                ..Default::default()
--            };
--            descriptor_proto.field.push(field);
-+            if config.change_sequence_number {
-+                let field = FieldDescriptorProto {
-+                    name: Some(CHANGE_SEQUENCE_NUMBER.to_owned()),
-+                    number: Some((schema.len() + 2) as i32),
-+                    r#type: Some(field_descriptor_proto::Type::String.into()),
-+                    ..Default::default()
-+                };
-+                descriptor_proto.field.push(field);
-+            }
-         }
- 
-         let descriptor_pool = build_protobuf_descriptor_pool(&descriptor_proto)?;
-@@ -724,7 +740,7 @@ impl BigQuerySinkWriter {
-         } else {
-             None
-         };
--        let change_sequence_number_field = if !is_append_only {
-+        let change_sequence_number_field = if !is_append_only && config.change_sequence_number {
-             let field = message_descriptor
-                 .get_field_by_name(CHANGE_SEQUENCE_NUMBER)
-                 .ok_or_else(|| {
-@@ -772,7 +788,11 @@ impl BigQuerySinkWriter {
-     }
- 
-     fn upsert(&mut self, chunk: StreamChunk) -> Result<Vec<Vec<u8>>> {
--        let sequence_numbers = CHANGE_SEQUENCE_CLOCK.reserve(chunk.cardinality());
-+        let sequence_numbers = if self.change_sequence_number_field.is_some() {
-+            Either::Left(CHANGE_SEQUENCE_CLOCK.reserve(chunk.cardinality()).map(Some))
-+        } else {
-+            Either::Right(std::iter::repeat_n(None, chunk.cardinality()))
-+        };
-         let mut serialized_rows: Vec<Vec<u8>> = Vec::with_capacity(chunk.capacity());
-         for ((op, row), sequence_number) in chunk.rows().zip_eq_debug(sequence_numbers) {
-             if op == Op::UpdateDelete {
-@@ -803,13 +823,15 @@ impl BigQuerySinkWriter {
-                     )
-                     .map_err(|e| SinkError::BigQuery(e.into()))?,
-             };
--            pb_row
--                .message
--                .try_set_field(
--                    self.change_sequence_number_field.as_ref().unwrap(),
--                    prost_reflect::Value::String(sequence_number),
--                )
--                .map_err(|e| SinkError::BigQuery(e.into()))?;
-+            if let Some(sequence_number) = sequence_number {
-+                pb_row
-+                    .message
-+                    .try_set_field(
-+                        self.change_sequence_number_field.as_ref().unwrap(),
-+                        prost_reflect::Value::String(sequence_number),
-+                    )
-+                    .map_err(|e| SinkError::BigQuery(e.into()))?;
-+            }
- 
-             serialized_rows.push(pb_row.ser_to()?)
-         }
-@@ -1120,12 +1142,14 @@ mod test {
-     use risingwave_common::types::{DataType, StructType};
-     use tokio::sync::mpsc;
- 
-+    use crate::allow_alter_on_fly_fields::check_sink_allow_alter_on_fly_fields;
-     use crate::connector_common::AwsAuthProps;
-     use crate::sink::big_query::{
--        BigQueryCommon, BigQueryConfig, BigQuerySink, BigQuerySinkWriter, CHANGE_SEQUENCE_NUMBER,
--        CHANGE_TYPE, ChangeSequenceClock, StorageWriterClient, build_protobuf_descriptor_pool,
--        build_protobuf_schema,
-+      
-```
-
-**File**: `src/connector/with_options_sink.yaml` (modified, +9/-0)
-```diff
-@@ -115,6 +115,15 @@ BigQueryConfig:
-   - name: r#type
-     field_type: String
-     required: true
-+  - name: bigquery.change_sequence_number
-+    field_type: bool
-+    comments: |-
-+      Write `_CHANGE_SEQUENCE_NUMBER` on upsert rows, so that `BigQuery` applies the changes of
-+      each key in the order they are sent. Once a table has rows written with it, turning it off
-+      makes `BigQuery` ignore later changes to those rows.
-+    required: false
-+    default: Default::default
-+    allow_alter_on_fly: true
- ClickHouseConfig:
-   fields:
-   - name: clickhouse.url
-```
-
----
-
-### Incident Patch 3: `5b172d1a` (2026-11-17)
-**Commit Message**: fix(storage): preserve listing pagination across full GC batches (#27766)
-
-**File**: `src/ctl/src/cmd_impl/hummock/migrate_legacy_object.rs` (modified, +1/-1)
-```diff
-@@ -55,7 +55,7 @@ pub async fn migrate_legacy_object(
-     let ObjectStoreImpl::Opendal(opendal) = store else {
-         return Err(anyhow!("OpenDAL is required"));
-     };
--    let mut iter = opendal.list(source_dir, None, None).await?;
-+    let mut iter = opendal.list(source_dir).await?;
-     let mut count = 0;
-     println!("Migration is started: from {source_dir} to {target_dir}.");
-     let mut from_to = Vec::with_capacity(concurrency as usize);
-```
-
-**File**: `src/ctl/src/cmd_impl/hummock/sst_dump.rs` (modified, +1/-1)
-```diff
-@@ -141,7 +141,7 @@ pub async fn sst_dump(context: &CtlContext, args: SstDumpArgs) -> anyhow::Result
-             .await?;
-         } else {
-             let mut metadata_iter = sstable_store
--                .list_sst_object_metadata_from_object_store(None, None, None)
-+                .list_sst_object_metadata_from_object_store(None)
-                 .await?;
-             while let Some(obj) = metadata_iter.try_next().await? {
-                 print_object(&obj);
-```
-
-**File**: `src/jni_core/src/opendal_schema_history.rs` (modified, +2/-8)
-```diff
-@@ -243,10 +243,7 @@ pub extern "system" fn Java_com_risingwave_java_binding_Binding_listObject<'a>(
-         let files: Vec<String> = JAVA_BINDING_ASYNC_RUNTIME.block_on(async {
-             let object_store = get_object_store().await;
-             let mut prefix_stripped_paths = Vec::new();
--            let mut stream = object_store
--                .list(&dir, None, None)
--                .await
--                .map_err(|e| anyhow!(e))?;
-+            let mut stream = object_store.list(&dir).await.map_err(|e| anyhow!(e))?;
-             use futures::StreamExt;
-             while let Some(obj) = stream.next().await {
-                 let obj = obj.map_err(|e| anyhow!(e))?;
-@@ -292,10 +289,7 @@ pub extern "system" fn Java_com_risingwave_java_binding_Binding_deleteObjects<'a
-         JAVA_BINDING_ASYNC_RUNTIME.block_on(async {
-             let object_store = get_object_store().await;
-             let mut keys = Vec::new();
--            let mut stream = object_store
--                .list(&dir, None, None)
--                .await
--                .map_err(|e| anyhow!(e))?;
-+            let mut stream = object_store.list(&dir).await.map_err(|e| anyhow!(e))?;
-             use futures::StreamExt;
-             while let Some(obj) = stream.next().await {
-                 let obj = obj.map_err(|e| anyhow!(e))?;
-```
-
-**File**: `src/meta/src/backup_restore/restore.rs` (modified, +1/-3)
-```diff
-@@ -293,9 +293,7 @@ async fn validate_integrity(
-         )
-         .await,
-     );
--    let mut iter = object_store
--        .list(hummock_storage_directory, None, None)
--        .await?;
-+    let mut iter = object_store.list(hummock_storage_directory).await?;
-     while let Some(obj) = iter.try_next().await? {
-         let Some(obj_id) = try_get_object_id_from_path(&obj.key) else {
-             continue;
-```
-
-**File**: `src/meta/src/hummock/manager/gc.rs` (modified, +227/-46)
-```diff
-@@ -95,11 +95,9 @@ impl GcManager {
-     async fn list_object_metadata_from_object_store(
-         &self,
-         prefix: Option<String>,
--        start_after: Option<String>,
--        limit: Option<usize>,
-     ) -> Result<ObjectMetadataIter> {
-         let list_path = format!("{}/{}", self.path_prefix, prefix.unwrap_or("".into()));
--        let raw_iter = self.store.list(&list_path, start_after, limit).await?;
-+        let raw_iter = self.store.list(&list_path).await?;
-         let valid_suffixes = VALID_OBJECT_ID_SUFFIXES.map(|suffix| format!(".{}", suffix));
-         let iter = raw_iter.filter(move |r| match r {
-             Ok(i) => future::ready(valid_suffixes.iter().any(|suffix| i.key.ends_with(suffix))),
-@@ -108,41 +106,23 @@ impl GcManager {
-         Ok(Box::pin(iter))
-     }
- 
--    /// Returns **filtered** object ids, and **unfiltered** total object count and size.
--    pub async fn list_objects(
--        &self,
-+    /// Consumes a batch from the same listing, preserving the backend's pagination state.
-+    /// Returns object ids filtered by retention, and the batch's count and size before that filter.
-+    async fn list_objects_batch(
-+        metadata_iter: &mut ObjectMetadataIter,
-         object_retention_watermark: u64,
--        prefix: Option<String>,
--        start_after: Option<String>,
--        limit: Option<u64>,
--    ) -> Result<(HashSet<HummockObjectId>, u64, u64, Option<String>)> {
--        tracing::debug!(
--            object_retention_watermark,
--            prefix,
--            start_after,
--            limit,
--            "Try to list objects."
--        );
-+        limit: usize,
-+    ) -> Result<(HashSet<HummockObjectId>, u64, u64)> {
-         let mut total_object_count = 0;
-         let mut total_object_size = 0;
--        let mut next_start_after: Option<String> = None;
--        let metadata_iter = self
--            .list_object_metadata_from_object_store(prefix, start_after, limit.map(|i| i as usize))
--            .await?;
-         let filtered = metadata_iter
-+            .by_ref()
-+            .take(limit)
-             .filter_map(|r| {
-                 let result = match r {
-                     Ok(o) => {
-                         total_object_count += 1;
-                         total_object_size += o.total_size;
--                        // Determine if the LIST has been truncated.
--                        // A false positives would at most cost one additional LIST later.
--                        if let Some(limit) = limit
--                            && limit == total_object_count
--                        {
--                            next_start_after = Some(o.key.clone());
--                            tracing::debug!(next_start_after, "set next start after");
--                        }
-                         if o.last_modified < object_retention_watermark as f64 {
-                             Some(Ok(get_object_id_from_path(&o.key)))
-                         } else {
-@@ -155,12 +135,7 @@ impl GcManager {
-             })
-             .try_collect::<HashSet<HummockObjectId>>()
-             .await?;
--        Ok((
--            filtered,
--            total_object_count,
--            total_object_size as u64,
--            next_start_after,
--        ))
-+        Ok((filtered, total_object_count, total_object_size as u64))
-     }
- 
-     pub fn add_may_delete_object_ids(
-@@ -271,8 +246,11 @@ impl HummockManager {
-             object_retention_time,
-             Duration::from_secs(self.env.opts.min_sst_retention_time_sec),
-         );
--        let limit = self.env.opts.full_gc_object_limit;
--        let mut start_after = None;
-+        let limit = usize::try_from(self.env.opts.full_gc_object_limit)
-+            .map_err(|_| anyhow::anyhow!("full_gc_object_limit exceeds usize::MAX"))?;
-+        if limit == 0 {
-+            return Err(anyhow::anyhow!("full_gc_object_limit must be greater than zero").into());
-+        }
-         let object_retention_watermark = self
-             .now()
-             .await?
-@@ -285,21 +263,24 @@ impl HummockManager {
-             limit,
-             "Start GC."
-         );
-+        // Keep one lister across batches so backends such as Azure Blob can use their
-+        // continuation tokens without requiring support for listing after an object key.
-+        let mut metadata_iter = self
-+            .gc_manager
-+            .list_object_metadata_from_object_store(prefix.clone())
-+            .await?;
-         loop {
-             tracing::debug!(
-                 retention_sec = object_retention_time.as_secs(),
-                 prefix,
--                start_after,
-                 limit,
-                 "Start a GC batch."
-             );
--            let (object_ids, batch_object_count, batch_object_size, next_start_after) = self
--                .gc_manager
--                .list_objects(
-+            let (object_ids, batch_object_count, batch_object_size) =
-+                GcManager::list_objects_batch(
-+                    &mut metadata_iter,
- 
-```
-
-**File**: `src/meta/src/hummock/manager/worker.rs` (modified, +1/-1)
-```diff
-@@ -142,7 +142,7 @@ async fn try_clean_up_cdc_source_schema_history(
-     // The path should follow that defined in OpenDalSchemaHIstory.java prefixed by data_directory.
-     let object_dir: String = format!("{data_directory}/rw-cdc-schema-history/source-{source_id}");
-     let mut keys: Vec<String> = Vec::new();
--    let mut stream = object_store.list(&object_dir, None, None).await?;
-+    let mut stream = object_store.list(&object_dir).await?;
-     use futures::StreamExt;
-     while let Some(obj) = stream.next().await {
-         let obj = obj?;
-```
-
-**File**: `src/object_store/src/benchmark/basic.rs` (modified, +3/-8)
-```diff
-@@ -213,7 +213,7 @@ pub(super) async fn metadata(
-             async move {
-                 Outcome::from_result(
-                     async {
--                        let mut stream = s.list(&prefix, None, None).await?;
-+                        let mut stream = s.list(&prefix).await?;
-                         let mut count = 0;
-                         while stream.try_next().await?.is_some() {
-                             count += 1;
-@@ -417,7 +417,7 @@ pub(super) async fn preflight(
-                     );
-                 }
-                 let listed = store
--                    .list(&prefix, None, None)
-+                    .list(&prefix)
-                     .await
-                     .context("preflight LIST")?
-                     .try_collect::<Vec<_>>()
-@@ -431,12 +431,7 @@ pub(super) async fn preflight(
-                     .await
-                     .context("preflight DELETE")?;
-                 ensure!(
--                    store
--                        .list(&prefix, None, None)
--                        .await?
--                        .try_next()
--                        .await?
--                        .is_none(),
-+                    store.list(&prefix).await?.try_next().await?.is_none(),
-                     "preflight object is still listed after DELETE"
-                 );
-                 Ok(Sample {
-```
-
-**File**: `src/object_store/src/benchmark/tests.rs` (modified, +5/-11)
-```diff
-@@ -168,13 +168,7 @@ async fn all_profiles_clean_only_owned_objects() {
-             30
-         );
-     }
--    let remaining: Vec<_> = store
--        .list("", None, None)
--        .await
--        .unwrap()
--        .try_collect()
--        .await
--        .unwrap();
-+    let remaining: Vec<_> = store.list("").await.unwrap().try_collect().await.unwrap();
-     assert_eq!(remaining.len(), 1);
-     assert_eq!(remaining[0].key, "production/object");
-     assert!(!report.backpressure_verified);
-@@ -286,7 +280,7 @@ async fn kept_data_and_pre_cancelled_run() {
-     assert!(report.succeeded());
-     assert_eq!(
-         store
--            .list("risectl-bench/kept/", None, None)
-+            .list("risectl-bench/kept/")
-             .await
-             .unwrap()
-             .try_collect::<Vec<_>>()
-@@ -325,7 +319,7 @@ async fn kept_data_and_pre_cancelled_run() {
-     assert_eq!(report.cleanup_status, "completed");
-     assert!(
-         store
--            .list("risectl-bench/cancelled/", None, None)
-+            .list("risectl-bench/cancelled/")
-             .await
-             .unwrap()
-             .try_collect::<Vec<_>>()
-@@ -660,7 +654,7 @@ async fn real_s3_profiles() {
-     assert!(report.succeeded(), "{report:#?}");
-     assert!(
-         store
--            .list(&prefix, None, None)
-+            .list(&prefix)
-             .await
-             .unwrap()
-             .try_collect::<Vec<_>>()
-@@ -742,7 +736,7 @@ async fn basic_caps_measurement_reuses_keys_and_replenishes_deletes() {
-     assert_eq!(deleted.items, 12); // Two five-object rounds and one two-object batch.
-     assert!(deleted.wall_elapsed_ms >= deleted.elapsed_ms + deleted.setup_elapsed_ms);
-     let remaining = store
--        .list("risectl-bench/budget/", None, None)
-+        .list("risectl-bench/budget/")
-         .await
-         .unwrap()
-         .try_collect::<Vec<_>>()
+ /// Discover pgvector columns with both `atttypmod` (dimension) and `format_type` text.
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #28025** (2026-11-17): fix(metrics): count visible rows in sink throughput (@zwang28)
 - **PR #28013** (2026-11-16): cherry-pick fix(sink): make BigQuery _CHANGE_SEQUENCE_NUMBER opt-in (#27978) to release-3.0 (@yuhao-su)
+- **PR #28012** (2026-11-17): feat(observability): support runtime log filters via risectl (@wenym1)
 - **PR #28011** (2026-11-16): cherry-pick fix(optimizer): keep the outer column type when eliminating a correlated apply (#28003) to release-3.1 (@chenzl25)
 - **PR #28008** (2026-11-16): fix(sink): make BigQuery _CHANGE_SEQUENCE_NUMBER opt-in (#27978) (@risingwave-ci)
 - **PR #28004** (2026-11-16): fix(connector): keep NULL for columns with a default in CDC change events (@anlowee)
-- **PR #28003** (2026-11-16): fix(optimizer): keep the outer column type when eliminating a correlated apply (@chenzl25)
-- **PR #27987** (2026-11-16): fix(build): patch native dependencies for modern GCC and glibc (@silver-ymz)
 
 ---
 
@@ -1775,60 +1578,72 @@ Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. connector): keep NULL for columns with a default in CDC change events
+## X. meta): send subscribe snapshots through the notification queue
 
 **RULE**:
-When implementing operations in `e2e_test/source_inline/cdc/postgres/postgres_null_with_default.slt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in risingwavelabs/risingwave. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `src/meta/src/manager/notification.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in risingwavelabs/risingwave. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ab28399d`: connector): keep NULL for columns with a default in CDC change events. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5d7a0e11`: meta): send subscribe snapshots through the notification queue. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `e2e_test/source_inline/cdc/postgres/postgres_null_with_default.slt`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `src/meta/src/manager/notification.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-control substitution on
-
-statement ok
-drop source if exists postgres_null_with_default_source cascade;
-
-system ok
-PGDATABASE=${PGDATABASE:-postgres} psql -c "
-    SELECT pg_terminate_backend(active_pid)
-    FROM pg_replication_slots
-    WHERE slot_name = 'postgres_null_with_default_slot' AND active_pid IS NOT NULL;
-    SELECT pg_sleep(1);
-    SELECT pg_drop_replication_slot(slot_name)
-    FROM pg_replication_slots
-    WHERE slot_name = 'postgres_null_with_default_slot';
-    DROP PUBLICATION IF EXISTS postgres_null_with_default_pub;
-    DROP TABLE IF EXISTS public.postgres_null_with_default CASCADE;
-    CREATE TABLE public.postgres_null_with_default (
-        id int PRIMARY KEY,
-        v int,
-        c_text text DEFAULT 'x',
-        c_jsonb jsonb DEFAULT '{}'::jsonb,
-        c_ts timestamp DEFAULT now()
-    );
-    INSERT INTO public.postgres_null_with_default VALUES (1, 0, NULL, NULL, NULL);
-    CREATE PUBLICATION postgres_null_with_default_pub FOR TABLE public.postgres_null_with_default;
-    "
-
-statement ok
-create source postgres_null_with_default_source with (
-    connector = 'postgres-cdc',
-    hostname = '${PGHOST:localhost}',
-    port = '${PGPORT:5432}',
-    username = '${PGUS
+enum Target {
+    Subscribers {
+        subscribe_type: SubscribeType,
+        // `None` indicates sending to all subscribers of `subscribe_type`.
+        worker_key: Option<WorkerKey>,
+    },
+    /// The sender of one subscribe call. By the time the task is delivered, the worker may have
+    /// subscribed again and replaced its entry in the sender map.
+    Sender(UnboundedSender<Notification>),
+        Self::Subscribers {
+    /// Queue the snapshot behind every notification published before it was read. The observer
+    /// manager filters out such notifications only if they arrive before the snapshot.
+        self.notify_without_version(
+            Target::Sender(sender),
+            Operation::Snapshot,
+            Info::Snapshot(meta_snapshot),
+        );
+            Target::Subscribers {
+        let (subscribe_type, worker_key) = match target {
+            Target::Subscribers {
+                subscribe_type,
+                worker_key,
+            } => (subscribe_type, worker_key),
+            Target::Sender(sender) => {
+                let _ = sender.send(Ok(response)).inspect_err(|err| {
+                    tracing::warn!("Failed to send snapshot: {}", err.as_report());
+ 
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+struct Target {
+    subscribe_type: SubscribeType,
+    // `None` indicates sending to all subscribers of `subscribe_type`.
+    worker_key: Option<WorkerKey>,
+        Self {
+        let response = SubscribeResponse {
+            status: None,
+            operation: Operation::Snapshot as i32,
+            info: Some(Info::Snapshot(meta_snapshot)),
+            version: Default::default(),
+        };
+        let _ = sender.send(Ok(response)).inspect_err(|err| {
+            tracing::warn!("Failed to notify direct subscriber: {}", err.as_report());
+        });
+            Target {
+        let senders = self.senders_of(target.subscribe_type);
+        if let Some(worker_key) = target.worker_key {
+                        warn_send_failure!(target.subscribe_type, &worker_key, err.as_report());
+                        warn_send_failure!(target.subscribe_type, &worker_key, err.as_report());
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ab28399d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5d7a0e11` are properly handled with clean fallback behavior.

@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-18T03:39:42.573Z",
+  "updated_at": "2026-11-18T03:48:18.101Z",
   "stats": {
-    "total_discovered": 5224,
-    "approved_pending_harvest": 4922,
+    "total_discovered": 5232,
+    "approved_pending_harvest": 4930,
     "harvested_count": 0,
     "rejected_count": 302,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 4919,
+      "COMMUNITY_AND_EXPERT": 4927,
       "OFFICIAL_DOCUMENTATION": 164,
       "STANDARDS_AND_SPECIFICATIONS": 108,
       "ENGINEERING_BLOGS": 3,
@@ -112835,6 +112835,182 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pixeltable-pixeltable-learnings.md",
         "fileName": "pixeltable-pixeltable-learnings.md"
+      }
+    },
+    "SRC-FE2D3DA7E588": {
+      "id": "SRC-FE2D3DA7E588",
+      "url": "https://github.com/amir1376/ab-download-manager",
+      "title": "https://github.com/amir1376/ab-download-manager",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T03:48:17.865Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/amir1376-ab-download-manager-learnings.md",
+        "fileName": "amir1376-ab-download-manager-learnings.md"
+      }
+    },
+    "SRC-67E7F515B7BB": {
+      "id": "SRC-67E7F515B7BB",
+      "url": "https://duckduckgo.com/",
+      "title": "https://duckduckgo.com/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T03:48:17.899Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/amir1376-ab-download-manager-learnings.md",
+        "fileName": "amir1376-ab-download-manager-learnings.md"
+      }
+    },
+    "SRC-D0AC1A6EEE42": {
+      "id": "SRC-D0AC1A6EEE42",
+      "url": "https://www.google.com/search",
+      "title": "https://www.google.com/search",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T03:48:17.933Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/amir1376-ab-download-manager-learnings.md",
+        "fileName": "amir1376-ab-download-manager-learnings.md"
+      }
+    },
+    "SRC-D0E196A0C25D": {
+      "id": "SRC-D0E196A0C25D",
+      "url": "https://www.google.com/",
+      "title": "https://www.google.com/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T03:48:17.965Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/amir1376-ab-download-manager-learnings.md",
+        "fileName": "amir1376-ab-download-manager-learnings.md"
+      }
+    },
+    "SRC-0028427D56E6": {
+      "id": "SRC-0028427D56E6",
+      "url": "https://www.bing.com/search",
+      "title": "https://www.bing.com/search",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T03:48:18.000Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/amir1376-ab-download-manager-learnings.md",
+        "fileName": "amir1376-ab-download-manager-learnings.md"
+      }
+    },
+    "SRC-70573784FD54": {
+      "id": "SRC-70573784FD54",
+      "url": "https://search.brave.com/search",
+      "title": "https://search.brave.com/search",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T03:48:18.033Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/amir1376-ab-download-manager-learnings.md",
+        "fileName": "amir1376-ab-download-manager-learnings.md"
+      }
+    },
+    "SRC-4B8A9E5717AB": {
+      "id": "SRC-4B8A9E5717AB",
+      "url": "https://search.brave.com/",
+      "title": "https://search.brave.com/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T03:48:18.070Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/amir1376-ab-download-manager-learnings.md",
+        "fileName": "amir1376-ab-download-manager-learnings.md"
+      }
+    },
+    "SRC-5FAC0AB0D0A1": {
+      "id": "SRC-5FAC0AB0D0A1",
+      "url": "https://drive.google.com/file/d/1hD079ItxFp7XOcLvm82V20uSvjN4fO8h/view?usp=sharing",
+      "title": "https://drive.google.com/file/d/1hD079ItxFp7XOcLvm82V20uSvjN4fO8h/view?usp=sharing",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T03:48:18.101Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/amir1376-ab-download-manager-learnings.md",
+        "fileName": "amir1376-ab-download-manager-learnings.md"
       }
     }
   }
