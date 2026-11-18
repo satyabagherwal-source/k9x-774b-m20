@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-18T19:35:07.405Z",
+  "last_updated": "2026-11-18T19:44:33.095Z",
   "total_records": 1896,
   "domains": {
     "A": {
@@ -8629,8 +8629,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "d14bd72bd86355df84a1fe1fe3ab596265fd94824500fc8110cc8c6660a326d8",
-      "created_at": "2026-11-18T19:35:07.405Z"
+      "content_hash": "489e9cb324ec757b3638e856c8f0a39b79d1ea4408deabe39340432266bc91c2",
+      "created_at": "2026-11-18T19:44:32.646Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -11797,8 +11797,8 @@
       "title": "Research & Knowledge Intelligence: black-forest-labs/FLUX.1-schnell Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-black-forest-labs-flux-1-schnell-research-knowledge-intelligence-black-forest.md",
       "repository": "black-forest-labs/FLUX.1-schnell",
-      "content_hash": "9d3917e90ab45ccfc6d776586518d5b3fb7fd070e46344199b956975631dba0d",
-      "created_at": "2026-11-14T00:36:15.229Z"
+      "content_hash": "e53b06183d623ea1b949f6a35b86b696e18d858389f536c0bb8cf8dfaa9abd71",
+      "created_at": "2026-11-18T19:44:20.168Z"
     },
     "domain_intelligence-architecture-intelligence-flux-iac-tofu-controller-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-flux-iac-tofu-controller-core-invariants",
@@ -11857,8 +11857,8 @@
       "title": "Research & Knowledge Intelligence: hf-black-forest-labs-flux.1-schnell-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-black-forest-labs-flux-1-schnell-learnings-research-knowledge-intelligence-hf.md",
       "repository": "hf-black-forest-labs-flux.1-schnell-learnings",
-      "content_hash": "86e8ce1178eed323139e33bf910b6ba6f56a9427d4e57a46353e19e0f4eebb6a",
-      "created_at": "2026-11-14T00:37:02.289Z"
+      "content_hash": "a84be14e7e5797771497539429644c58a74895dc1421a35f6fed629604bd8e35",
+      "created_at": "2026-11-18T19:44:32.067Z"
     },
     "domain_intelligence-architecture-intelligence-flux-iac-tofu-controller-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-flux-iac-tofu-controller-learnings-core-invariants",
@@ -30992,8 +30992,8 @@
       "title": "Technical Construction Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zulip-zulip-learnings-technical-construction-intelligence-zulip-zulip-learnings-.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "a4e51407f71d472c5e1bc1db8aa67f715d6f2fd4c35c144b1620c4f84febdb56",
-      "created_at": "2026-11-18T18:00:32.114Z"
+      "content_hash": "172dd35eed8020dac4b2b49eb4532d5059e7da81cfe935cb44db1a51b4e02ac6",
+      "created_at": "2026-11-18T19:44:33.095Z"
     },
     "domain_intelligence-product-intelligence-software-mansion-argent-core-invariants": {
       "record_id": "domain_intelligence-product-intelligence-software-mansion-argent-core-invariants",

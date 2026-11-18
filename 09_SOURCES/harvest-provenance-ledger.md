@@ -11113,3 +11113,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-openai-whisper-large-v3` | `https://huggingface.co/openai/whisper-large-v3` | `hf-openai-` | Multi-dimensional audit evidence | 2026-11-18T19:34:14.324Z |
 | `learn-github-materializeinc-materialize` | `https://github.com/MaterializeInc/materialize` | `fdc9d4be` | Multi-dimensional audit evidence | 2026-11-18T19:34:30.350Z |
 | `learn-dom-d-30cf6f55` | `project://hf-openai-whisper-large-v3` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-openai-whisper-large-v3-learnings.md` | 2026-11-18T19:35:04.131Z |
+| `learn-huggingface-black-forest-labs-flux-1-schnell` | `https://huggingface.co/black-forest-labs/FLUX.1-schnell` | `hf-black-f` | Multi-dimensional audit evidence | 2026-11-18T19:44:20.010Z |

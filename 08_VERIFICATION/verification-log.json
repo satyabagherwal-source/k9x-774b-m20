@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261117-VQ53",
-    "timestamp": "2026-11-17T11:25:20.535Z",
-    "repository": "meituan-longcat/LongCat-Video-Avatar-1.6",
-    "learningId": "learn-huggingface-meituan-longcat-longcat-video-avatar-1-6",
-    "contentHash": "77084bf06e4435ef650ddd8e84e11fe046dc4784e1f27ece083b04a3f79ae2cf",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261117-VRZ8",
     "timestamp": "2026-11-17T11:25:22.916Z",
     "repository": "nex-agi/Nex-N2.6",
@@ -7492,6 +7477,21 @@
     "contentHash": "3d36fd7601b31d792958c2f796d1bcabe0c0c5f85d9f79f5c9e49b804e227459",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-5A93",
+    "timestamp": "2026-11-18T19:44:20.007Z",
+    "repository": "black-forest-labs/FLUX.1-schnell",
+    "learningId": "learn-huggingface-black-forest-labs-flux-1-schnell",
+    "contentHash": "5e9dd4c0025948ef72fed27d0ba78f815421f8cf59a3c6356ce061ce23bbb77c",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

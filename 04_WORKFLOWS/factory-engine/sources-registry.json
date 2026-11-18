@@ -69,8 +69,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-18T19:34:33.624Z",
-    "lastVerified": "2026-11-18T19:34:33.624Z",
+    "lastChecked": "2026-11-18T19:44:31.799Z",
+    "lastVerified": "2026-11-18T19:44:31.799Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -221,9 +221,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-18T18:38:17.490Z",
+    "lastChecked": "2026-11-18T19:44:31.791Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-18T18:38:17.490Z"
+    "lastVerified": "2026-11-18T19:44:31.791Z"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -354,12 +354,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "smallstep-cli": {
-    "name": "smallstep/cli",
+    "name": "cli",
     "officialUrl": "https://github.com/smallstep/cli",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-18T14:40:41.628Z",
-    "lastVerified": "2026-11-18T14:40:41.628Z",
+    "lastChecked": "2026-11-18T19:44:26.524Z",
+    "lastVerified": "2026-11-18T19:44:26.524Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-smallstep-cli",
@@ -368,7 +368,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "537c15c1"
   },
   "milvus-io-milvus": {
     "name": "milvus-io/milvus",
@@ -3786,5 +3787,50 @@
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "chmln-sd": {
+    "name": "sd",
+    "officialUrl": "https://github.com/chmln/sd",
+    "lastChecked": "2026-11-18T19:44:16.529Z",
+    "revisionIdentifier": "44febdf8",
+    "lastVerified": "2026-11-18T19:44:16.529Z"
+  },
+  "hf-black-forest-labs-flux.1-schnell": {
+    "name": "black-forest-labs/FLUX.1-schnell",
+    "officialUrl": "https://huggingface.co/black-forest-labs/FLUX.1-schnell",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-18T19:44:19.445Z",
+    "lastVerified": "2026-11-18T19:44:19.445Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-black-forest-labs-flux-1-schnell",
+    "contentHash": "5e9dd4c0025948ef72fed27d0ba78f815421f8cf59a3c6356ce061ce23bbb77c",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "akveo-kittentricks": {
+    "name": "kittenTricks",
+    "officialUrl": "https://github.com/akveo/kittenTricks",
+    "lastChecked": "2026-11-18T19:44:21.569Z",
+    "revisionIdentifier": "e9d81da3",
+    "lastVerified": "2026-11-18T19:44:21.569Z"
+  },
+  "kubeshop-botkube": {
+    "name": "botkube",
+    "officialUrl": "https://github.com/kubeshop/botkube",
+    "lastChecked": "2026-11-18T19:44:24.027Z",
+    "revisionIdentifier": "ee94e191",
+    "lastVerified": "2026-11-18T19:44:24.027Z"
+  },
+  "helixdb-helix-db": {
+    "name": "helix-db",
+    "officialUrl": "https://github.com/HelixDB/helix-db",
+    "lastChecked": "2026-11-18T19:44:29.005Z",
+    "revisionIdentifier": "2b9e3612",
+    "lastVerified": "2026-11-18T19:44:29.005Z"
   }
 }

@@ -11080,3 +11080,4 @@
 | `CYCLE-20261118-SAWF` | `2026-11-18T19:34:14.319Z` | `openai/whisper-large-v3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openai-whisper-large-v3-learnings.md` | Yes (`c2f22dcc...`) |
 | `CYCLE-20261118-SN9L` | `2026-11-18T19:34:30.345Z` | `MaterializeInc/materialize` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9275` | Yes (`3d36fd76...`) |
 | `CYCLE-2026-11-18-PROJ-EVOLVE` | `2026-11-18T19:35:04.131Z` | `hf-openai-whisper-large-v3` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-30CF6F55` [Domain D] | Yes (`c42b74e4...`) |
+| `CYCLE-20261118-5A93` | `2026-11-18T19:44:20.007Z` | `black-forest-labs/FLUX.1-schnell` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-black-forest-labs-flux.1-schnell-learnings.md` | Yes (`5e9dd4c0...`) |
