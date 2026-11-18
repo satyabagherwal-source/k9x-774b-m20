@@ -10813,3 +10813,7 @@
 | `CYCLE-20261118-R63Q` | `2026-11-18T04:37:33.734Z` | `projectdiscovery/nuclei` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9125` | Yes (`47697e5c...`) |
 | `CYCLE-20261118-6TPE` | `2026-11-18T04:49:44.162Z` | `inclusionAI/Ming-Image-0.1-Design` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-inclusionai-ming-image-0.1-design-learnings.md` | Yes (`76aec619...`) |
 | `CYCLE-20261118-6UX4` | `2026-11-18T04:49:45.736Z` | `metalbear-co/mirrord` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/metalbear-co-mirrord-learnings.md` | Yes (`06e8695a...`) |
+| `CYCLE-20261118-GHJZ` | `2026-11-18T04:57:14.975Z` | `deepseek-ai/DeepSeek-V4.1-Flash` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4.1-flash-learnings.md` | Yes (`a1cbf683...`) |
+| `CYCLE-20261118-GJ9E` | `2026-11-18T04:57:17.186Z` | `unhappychoice/gitlogue` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8012` | Yes (`4eff7a10...`) |
+| `CYCLE-20261118-GNSY` | `2026-11-18T04:57:23.074Z` | `onejs/one` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9126` | Yes (`c859c2c3...`) |
+| `CYCLE-20261118-GQRZ` | `2026-11-18T04:57:26.927Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9127` | Yes (`d0aa2ee3...`) |

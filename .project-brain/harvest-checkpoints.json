@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-18T04:49:45.767Z",
+  "last_updated": "2026-11-18T04:57:26.938Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -635,14 +635,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash",
-      "content_hash": "a4ce1a5c66e66c947520f1022d2ce3a5e7bec4a5f8d38a401b444a841e6cd0d5",
-      "verified_at": "2026-11-13T17:37:30.474Z",
+      "content_hash": "a1cbf683a1d0386b29cb0f11acac0f9b77151bf621623c4d669d0e820473d69d",
+      "verified_at": "2026-11-18T04:57:14.987Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T17:37:30.474Z"
+      "last_updated": "2026-11-18T04:57:14.987Z"
     },
     "akatz-ai/MiniMax-H3-Character-Swap-LoRA": {
       "repository": "akatz-ai/MiniMax-H3-Character-Swap-LoRA",
@@ -4731,14 +4731,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-unhappychoice-gitlogue",
-      "content_hash": "3dc7fd1227bb5507f0cbc626f559328e47bd16fb0c9b3c4b1d42a7f884163557",
-      "verified_at": "2026-11-11T17:13:09.830Z",
+      "content_hash": "4eff7a1010567610113737479fe9dbfc50099feb956a8b347240110b0867b76a",
+      "verified_at": "2026-11-18T04:57:17.197Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-11T17:13:09.830Z"
+      "last_updated": "2026-11-18T04:57:17.197Z"
     },
     "FaridSafi/react-native-gifted-chat": {
       "repository": "FaridSafi/react-native-gifted-chat",
@@ -5496,14 +5496,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tailscale-tailscale",
-      "content_hash": "1a19cb22dee23b843c2f1d9715f815f221a0686e4d4f73065f9fd3a392b08f3a",
-      "verified_at": "2026-11-17T22:11:10.888Z",
+      "content_hash": "d0aa2ee39eee9bd432f48f6057a72354b483d9540a1a84b8a2edfa1cb2017e4e",
+      "verified_at": "2026-11-18T04:57:26.937Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T22:11:10.888Z"
+      "last_updated": "2026-11-18T04:57:26.937Z"
     },
     "dingodb/dingo": {
       "repository": "dingodb/dingo",
@@ -10446,14 +10446,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-onejs-one",
-      "content_hash": "fb7258adbfc0674b7ebe182f4e47cdd564d50ff61fc4252296dac7428d66be32",
-      "verified_at": "2026-11-14T21:50:36.478Z",
+      "content_hash": "c859c2c39fdc8cf4a0f471319aac0900b1ad03a7332030ec178d0743a5e42628",
+      "verified_at": "2026-11-18T04:57:23.084Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-14T21:50:36.478Z"
+      "last_updated": "2026-11-18T04:57:23.084Z"
     },
     "influxdata/influxdb": {
       "repository": "influxdata/influxdb",

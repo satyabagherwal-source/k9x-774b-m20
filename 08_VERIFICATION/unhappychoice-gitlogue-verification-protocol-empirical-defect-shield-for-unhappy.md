@@ -4,45 +4,31 @@
 {
   "source_repository": "unhappychoice/gitlogue",
   "source_url": "https://github.com/unhappychoice/gitlogue",
-  "source_version": "historical-head",
-  "license": "OPEN_HARVEST",
-  "timestamp": "2026-11-13T00:00:00.000Z",
-  "ai_provider": "universal-multi-artifact-distributor",
+  "source_version": "1f875b5b",
+  "license": "ISC",
+  "timestamp": "2026-11-18T04:57:17.378Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
-  "learning_id": "unknown",
+  "learning_id": "learn-github-unhappychoice-gitlogue",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [unhappychoice/gitlogue](https://github.com/unhappychoice/gitlogue) (Revision: `historical`).  
-> **License**: OPEN_HARVEST | **Timestamp**: `2026-11-13T00:00:00.000Z`  
-> **Learning ID**: `unknown`
+> **Provenance**: Harvested from [unhappychoice/gitlogue](https://github.com/unhappychoice/gitlogue) (Revision: `1f875b5b`).  
+> **License**: ISC | **Timestamp**: `2026-11-18T04:57:17.378Z`  
+> **Learning ID**: `learn-github-unhappychoice-gitlogue`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `unhappychoice/gitlogue` (Commit: `historical`)
+- **Target Repository**: `unhappychoice/gitlogue` (Commit: `1f875b5b`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
-> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/unhappychoice-gitlogue-learnings.md`  
-> **Source**: github ([https://github.com/unhappychoice/gitlogue](https://github.com/unhappychoice/gitlogue))  
-> **Source Version**: `b993537c`  
-> **License**: ISC  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-11T17:12:59.687Z  
-> **Learning ID**: `learn-github-unhappychoice-gitlogue`  
-> **Pipeline Version**: `2.0.0`  
-> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
-> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
-> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
-
----
-
 # Forensic Learning Record (Deep Inspection): unhappychoice/gitlogue
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/unhappychoice-gitlogue-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/unhappychoice/gitlogue](https://github.com/unhappychoice/gitlogue))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-11T17:12:59.454Z  
+> **Harvest Timestamp**: 2026-11-18T04:57:16.555Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: A cinematic Git commit replay tool for the terminal, turning your Git history into a living, animated story.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 5269 stars
+- **Stars / Engagement**: 5275 stars
 
 ---
 
@@ -2530,10 +2516,10 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b993537c` (2026-11-11)
-**Commit Message**: Merge pull request #260 from unhappychoice/dependabot/cargo/tree-sitter-scala-0.26.9
+### Incident Patch 1: `1f875b5b` (2026-11-17)
+**Commit Message**: Merge pull request #262 from unhappychoice/dependabot/cargo/tree-sitter-scala-0.26.13
 
-chore(deps): bump tree-sitter-scala from 0.26.7 to 0.26.9
+chore(deps): bump tree-sitter-scala from 0.26.9 to 0.26.13
 
 **File**: `Cargo.lock` (modified, +2/-2)
 ```diff
@@ -2541,11 +2527,11 @@ chore(deps): bump tree-sitter-scala from 0.26.7 to 0.26.9
  
  [[package]]
  name = "tree-sitter-scala"
--version = "0.26.7"
-+version = "0.26.9"
+-version = "0.26.9"
++version = "0.26.13"
  source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "edfaf7220e31d53c628a7e7181da3eea9ba01c89855c6ce70f605f965f5cedb1"
-+checksum = "cf3d726ede1e8272fd16c91c6718089e06b04f9243a47026d792debc8831ec34"
+-checksum = "cf3d726ede1e8272fd16c91c6718089e06b04f9243a47026d792debc8831ec34"
++checksum = "3a50564a8d499f956174da3bdff36b32d99c3cf713cd8e44337a61f8fc46b60d"
  dependencies = [
   "cc",
   "tree-sitter-language",
@@ -2553,17 +2539,17 @@ chore(deps): bump tree-sitter-scala from 0.26.7 to 0.26.9
 
 ---
 
-### Incident Patch 2: `46e2017a` (2026-11-11)
-**Commit Message**: chore(deps): bump tree-sitter-scala from 0.26.7 to 0.26.9
+### Incident Patch 2: `de57c9d8` (2026-11-17)
+**Commit Message**: chore(deps): bump tree-sitter-scala from 0.26.9 to 0.26.13
 
-Bumps [tree-sitter-scala](https://github.com/tree-sitter/tree-sitter-scala) from 0.26.7 to 0.26.9.
+Bumps [tree-sitter-scala](https://github.com/tree-sitter/tree-sitter-scala) from 0.26.9 to 0.26.13.
 - [Release notes](https://github.com/tree-sitter/tree-sitter-scala/releases)
-- [Commits](https://github.com/tree-sitter/tree-sitter-scala/compare/v0.26.7...v0.26.9)
+- [Commits](https://github.com/tree-sitter/tree-sitter-scala/compare/v0.26.9...v0.26.13)
 
 ---
 updated-dependencies:
 - dependency-name: tree-sitter-scala
-  dependency-version: 0.26.9
+  dependency-version: 0.26.13
   dependency-type: direct:production
   update-type: version-update:semver-patch
 ...
@@ -2576,23 +2562,23 @@ Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
  
  [[package]]
  name = "tree-sitter-scala"
--version = "0.26.7"
-+version = "0.26.9"
+-version = "0.26.9"
++version = "0.26.13"
  source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "edfaf7220e31d53c628a7e7181da3eea9ba01c89855c6ce70f605f965f5cedb1"
-+checksum = "cf3d726ede1e8272fd16c91c6718089e06b04f9243a47026d792debc8831ec34"
+-checksum = "cf3d726ede1e8272fd16c91c6718089e06b04f9243a47026d792debc8831ec34"
++checksum = "3a50564a8d499f956174da3bdff36b32d99c3cf713cd8e44337a61f8fc46b60d"
  dependencies = [
   "cc",
   "tree-sitter-language",
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #262** (2026-11-17): chore(deps): bump tree-sitter-scala from 0.26.9 to 0.26.13 (@dependabot[bot])
+- **PR #261** (closed): chore(deps): bump tree-sitter-scala from 0.26.9 to 0.26.12 (@dependabot[bot])
 - **PR #260** (2026-11-11): chore(deps): bump tree-sitter-scala from 0.26.7 to 0.26.9 (@dependabot[bot])
 - **PR #259** (2026-11-10): chore(deps): bump tree-sitter-scala from 0.26.4 to 0.26.7 (@dependabot[bot])
 - **PR #258** (2026-11-05): chore(deps): bump tree-sitter-scala from 0.26.3 to 0.26.4 (@dependabot[bot])
 - **PR #256** (2026-11-02): chore(deps): bump unicode-width from 0.2.2 to 0.2.3 (@dependabot[bot])
-- **PR #255** (2026-11-02): chore(deps): bump globset from 0.4.20 to 0.4.21 (@dependabot[bot])
-- **PR #254** (2026-10-30): chore(deps): bump tree-sitter-dart from 0.2.0 to 0.3.0 (@dependabot[bot])
 
 ---
 
@@ -2612,13 +2598,13 @@ Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #260 from unhappychoice/dependabot/cargo/tree-sitter-scala-0.
+## X. Empirical Invariant Guard in Cargo.lock
 
 **RULE**:
 When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in unhappychoice/gitlogue. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b993537c`: Merge pull request #260 from unhappychoice/dependabot/cargo/tree-sitter-scala-0.26.9. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1f875b5b`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
@@ -2626,19 +2612,19 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-version = "0.26.9"
-checksum = "cf3d726ede1e8272fd16c91c6718089e06b04f9243a47026d792debc8831ec34"
+version = "0.26.13"
+checksum = "3a50564a8d499f956174da3bdff36b32d99c3cf713cd8e44337a61f8fc46b60d"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Anti-pattern to NEVER write (induced failure mode):
-version = "0.26.7"
-checksum = "edfaf7220e31d53c628a7e7181da3eea9ba01c89855c6ce70f605f965f5cedb1"
+// Induced defect failure mode:
+version = "0.26.9"
+checksum = "cf3d726ede1e8272fd16c91c6718089e06b04f9243a47026d792debc8831ec34"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b993537c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1f875b5b` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

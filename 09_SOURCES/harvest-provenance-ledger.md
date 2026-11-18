@@ -10846,3 +10846,7 @@ Every entry in this ledger must capture:
 | `learn-github-projectdiscovery-nuclei` | `https://github.com/projectdiscovery/nuclei` | `76040802` | Multi-dimensional audit evidence | 2026-11-18T04:37:33.737Z |
 | `learn-huggingface-inclusionai-ming-image-0-1-design` | `https://huggingface.co/inclusionAI/Ming-Image-0.1-Design` | `hf-inclusi` | Multi-dimensional audit evidence | 2026-11-18T04:49:44.166Z |
 | `learn-github-metalbear-co-mirrord` | `https://github.com/metalbear-co/mirrord` | `c133334a` | Multi-dimensional audit evidence | 2026-11-18T04:49:45.739Z |
+| `learn-huggingface-deepseek-ai-deepseek-v4-1-flash` | `https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash` | `hf-deepsee` | Multi-dimensional audit evidence | 2026-11-18T04:57:14.979Z |
+| `learn-github-unhappychoice-gitlogue` | `https://github.com/unhappychoice/gitlogue` | `1f875b5b` | Multi-dimensional audit evidence | 2026-11-18T04:57:17.190Z |
+| `learn-github-onejs-one` | `https://github.com/onejs/one` | `aaba81ee` | Multi-dimensional audit evidence | 2026-11-18T04:57:23.077Z |
+| `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `075e6403` | Multi-dimensional audit evidence | 2026-11-18T04:57:26.930Z |

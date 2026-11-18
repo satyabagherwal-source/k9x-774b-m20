@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-14T21:51:09.112Z",
+  "timestamp": "2026-11-18T04:57:31.127Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-onejs-one-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [onejs-one-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-14T21:51:09.112Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-18T04:57:31.127Z`  
 > **Learning ID**: `LEARN-EVO-onejs-one-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/onejs-one-learnings.md`  
 > **Source**: github ([https://github.com/onejs/one](https://github.com/onejs/one))  
-> **Source Version**: `e49f6c39`  
+> **Source Version**: `aaba81ee`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-14T21:50:35.778Z  
+> **Timestamp**: 2026-11-18T04:57:22.201Z  
 > **Learning ID**: `learn-github-onejs-one`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/onejs-one-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/onejs/one](https://github.com/onejs/one))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-14T21:50:35.774Z  
+> **Harvest Timestamp**: 2026-11-18T04:57:22.196Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: ❶ One lets you target React web and React Native with a single Vite plugin. Everything you need to build great websites and apps with unified routing.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 4644 stars
+- **Stars / Engagement**: 4646 stars
 
 ---
 
@@ -1908,219 +1908,400 @@ class OneBackgroundWorker(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6f2dc32f` (2026-11-14)
-**Commit Message**: perf(one): render blocking head scripts ahead of the css links in the root layout (#1225)
+### Incident Patch 1: `855a28f7` (2026-11-17)
+**Commit Message**: Merge pull request #1291 from onejs/fix/bun-foreign-unprotect
 
-* perf(one): render blocking head scripts ahead of the css links in the root layout
+fix(vxrn): unprotect Bun JSI values only on the JS thread
 
-* perf(one): keep meta tags and the server context ahead of hoisted head scripts
-
-**File**: `apps/onestack.dev/data/docs/routing-layouts.mdx` (modified, +2/-0)
+**File**: `packages/vxrn/ios/OneBunEngine/BunRuntime.cpp` (modified, +60/-23)
 ```diff
-@@ -147,6 +147,8 @@ export default function Layout() {
+@@ -43,6 +43,7 @@ void bun_embed_grab_locks(void* dropper);
+ #include <mutex>
+ #include <sstream>
+ #include <thread>
++#include <vector>
  
- Note - you should have both a `lang` property on your `html` tag, and a `<meta charSet />` tag in your `head`. Otherwise, React can have hydration re-rendering issues.
+ namespace facebook::bun {
  
-+Blocking scripts in the root layout's `<head>` (no `async`, `defer` or `type="module"`) are rendered before the stylesheet links, after the `<meta>` tags, so they run as soon as the HTML parses instead of waiting for the stylesheets to download. A script that reads layout from a stylesheet, such as `getComputedStyle` or `offsetWidth`, no longer sees it loaded: wait for the `load` event or use a `defer` script for that.
+@@ -110,6 +111,42 @@ class ArgsConverter;
+ 
+ class JSCRuntime;
+ 
++// JSValueUnprotect takes the JS lock, and JSC scans the stack of every thread
++// that ever took it on each GC. a value dropped on the main thread registers it,
++// and the main thread later runs hermes (worklets) compiles on a fiber stack
++// outside its registered bounds, so the scan faults. only the JS thread unprotects.
++struct Releases {
++  std::atomic<bool> invalid{false};
++  // the runtime is created on the JS thread
++  const std::thread::id owner = std::this_thread::get_id();
++  std::mutex mutex;
++  std::vector<JSValueRef> pending;
 +
- ### Layout Render Modes
++  void release(JSGlobalContextRef ctx, JSValueRef value) {
++    if (invalid) {
++      return;
++    }
++    if (owner == std::this_thread::get_id()) {
++      JSValueUnprotect(ctx, value);
++      return;
++    }
++    std::lock_guard<std::mutex> lock(mutex);
++    pending.push_back(value);
++  }
++
++  // runs on the JS thread outside any GC
++  void drain(JSGlobalContextRef ctx) {
++    std::vector<JSValueRef> values;
++    {
++      std::lock_guard<std::mutex> lock(mutex);
++      values.swap(pending);
++    }
++    for (JSValueRef value : values) {
++      JSValueUnprotect(ctx, value);
++    }
++  }
++};
++
+ struct Lock {
+   void lock(const bun::JSCRuntime& /*unused*/) const {}
+   void unlock(const bun::JSCRuntime& /*unused*/) const {}
+@@ -167,19 +204,19 @@ class JSCRuntime : public jsi::Runtime {
+ #ifndef NDEBUG
+     JSCSymbolValue(
+         JSGlobalContextRef ctx,
+-        const std::atomic<bool>& ctxInvalid,
++        Releases& releases,
+         JSValueRef sym,
+         std::atomic<intptr_t>& counter);
+ #else
+     JSCSymbolValue(
+         JSGlobalContextRef ctx,
+-        const std::atomic<bool>& ctxInvalid,
++        Releases& releases,
+         JSValueRef sym);
+ #endif
+     void invalidate() noexcept override;
  
- Layouts support render mode suffixes just like pages. This is especially useful for the root layout:
-```
-
-**File**: `packages/one/src/router/useScreens.tsx` (modified, +39/-2)
-```diff
-@@ -121,6 +121,40 @@ const SSR_SAFE_METRICS = {
-   insets: { top: 0, left: 0, right: 0, bottom: 0 },
+     JSGlobalContextRef ctx_;
+-    const std::atomic<bool>& ctxInvalid_;
++    Releases& releases_;
+     // There is no C type in the JSC API to represent Symbol, so this stored
+     // a JSValueRef which contains the Symbol.
+     JSValueRef sym_;
+@@ -209,7 +246,7 @@ class JSCRuntime : public jsi::Runtime {
+   class JSCObjectValue final : public PointerValue {
+     JSCObjectValue(
+         JSGlobalContextRef ctx,
+-        const std::atomic<bool>& ctxInvalid,
++        Releases& releases,
+         JSObjectRef obj
+ #ifndef NDEBUG
+         ,
+@@ -220,7 +257,7 @@ class JSCRuntime : public jsi::Runtime {
+     void invalidate() noexcept override;
+ 
+     JSGlobalContextRef ctx_;
+-    const std::atomic<bool>& ctxInvalid_;
++    Releases& releases_;
+     JSObjectRef obj_;
+ #ifndef NDEBUG
+     std::atomic<intptr_t>& counter_;
+@@ -374,7 +411,7 @@ class JSCRuntime : public jsi::Runtime {
+   void checkException(JSValueRef res, JSValueRef exc, const char* msg);
+ 
+   JSGlobalContextRef ctx_;
+-  std::atomic<bool> ctxInvalid_;
++  mutable Releases releases_;
+   std::string desc_;
+   JSValueRef nativeStateSymbol_ = nullptr;
+   JSObjectRef arrayIsArray_ = nullptr;
+@@ -469,8 +506,7 @@ std::string to_string(void* value) {
+ } // namespace
+ 
+ JSCRuntime::JSCRuntime(JSGlobalContextRef ctx)
+-    : ctx_(JSGlobalContextRetain(ctx)),
+-      ctxInvalid_(false)
++    : ctx_(JSGlobalContextRetain(ctx))
+ #ifndef NDEBUG
+       ,
+       objectCounter_(0),
+@@ -497,7 +533,10 @@ JSCRuntime::~JSCRuntime() {
+   // JSValueUnprotect() can no longer be called.  We use an
+   // atomic<bool> to avoid unsafe unprotects happening after shutdown
+   // has started.
+-  ctxInvalid_ = true;
++  if (releases_.owner == std::this_thread::get_id()) {
++    releases_.drain(ctx_);
++  }
++  releases_.invalid = true;
+   // No need to unprotect nativeStateSymbol_ since the heap is getting torn down
+   // anyway
+   JSGlobalContextRelease(ctx_);
+@@ -529,6 +568,7 @@ jsi::Value JSCRuntime::evaluatePreparedJavaScript(
+ jsi::Value JSCRuntime::evaluateJavaScript(
+     const std::shared_ptr<const jsi::Buffer>& buffer,
+     const std::string& sourceURL) {
++  releases_.drain(ctx_);
+   // the compiled program replaces a bundle that starts with this marker
+   constexpr size_t markerLength = sizeof(kCompiledEntryMarker) - 1;
+   if (buffer->size() >= markerLength &&
+@@ -567,6 +607,7 @@ void JSCRuntime::queueMicrotask(const jsi::Function& callback) {
  }
  
-+// a classic script that blocks the parser waits for every stylesheet before it,
-+// so the ones a layout puts in <head> run ahead of the css links instead of
-+// after the whole stylesheet downloads. meta tags stay ahead of those scripts
-+// so charset and viewport keep their place. async, defer and module scripts
-+// never wait on a stylesheet and keep their place.
-+function splitBlockingHeadScripts(headChildren: React.ReactNode): {
-+  metas: React.ReactNode[]
-+  scripts: React.ReactNode[]
-+  rest: React.ReactNode[]
-+} {
-+  const metas: React.ReactNode[] = []
-+  const scripts: React.ReactNode[] = []
-+  const rest: React.ReactNode[] = []
-+  for (const child of React.Children.toArray(headChildren)) {
-+    if (React.isValidElement<{ async?: boolean; defer?: boolean; type?: string }>(child)) {
-+      if (child.type === 'meta') {
-+        metas.push(child)
-+        continue
-+      }
-+      if (
-+        child.type === 'script' &&
-+        !child.props.async &&
-+        !child.props.defer &&
-+        child.props.type !== 'module'
-+      ) {
-+        scripts.push(child)
-+        continue
-+      }
+ bool JSCRuntime::drainMicrotasks(int /*maxMicrotasksHint*/) {
++  releases_.drain(ctx_);
+   // bun delays JSC's own microtask drain between ticks, so promise jobs run
+   // only when bun ticks; either queue can refill the other.
+   do {
+@@ -598,15 +639,15 @@ bool JSCRuntime::isInspectable() {
+ 
+ JSCRuntime::JSCSymbolValue::JSCSymbolValue(
+     JSGlobalContextRef ctx,
+-    const std::atomic<bool>& ctxInvalid,
++    Releases& releases,
+     JSValueRef sym
+ #ifndef NDEBUG
+     ,
+     std::atomic<intptr_t>& counter
+ #endif
+     )
+     : ctx_(ctx),
+-      ctxInvalid_(ctxInvalid),
++  
+```
+
+---
+
+### Incident Patch 2: `053e4d48` (2026-11-17)
+**Commit Message**: fix(vxrn): unprotect Bun JSI values only on the JS thread
+
+A value dropped on the main thread took the JS lock and registered the main thread for conservative GC scans, which fault while worklets run Hermes on a fiber stack. Validation: clang -fsyntax-only against RN 0.8x JSI headers.
+
+**File**: `packages/vxrn/ios/OneBunEngine/BunRuntime.cpp` (modified, +60/-23)
+```diff
+@@ -43,6 +43,7 @@ void bun_embed_grab_locks(void* dropper);
+ #include <mutex>
+ #include <sstream>
+ #include <thread>
++#include <vector>
+ 
+ namespace facebook::bun {
+ 
+@@ -110,6 +111,42 @@ class ArgsConverter;
+ 
+ class JSCRuntime;
+ 
++// JSValueUnprotect takes the JS lock, and JSC scans the stack of every thread
++// that ever took it on each GC. a value dropped on the main thread registers it,
++// and the main thread later runs hermes (worklets) compiles on a fiber stack
++// outside its registered bounds, so the scan faults. only the JS thread unprotects.
++struct Releases {
++  std::atomic<bool> invalid{false};
++  // the runtime is created on the JS thread
++  const std::thread::id owner = std::this_thread::get_id();
++  std::mutex mutex;
++  std::vector<JSValueRef> pending;
++
++  void release(JSGlobalContextRef ctx, JSValueRef value) {
++    if (invalid) {
++      return;
 +    }
-+    rest.push(child)
++    if (owner == std::this_thread::get_id()) {
++      JSValueUnprotect(ctx, value);
++      return;
++    }
++    std::lock_guard<std::mutex> lock(mutex);
++    pending.push_back(value);
 +  }
-+  return { metas, scripts, rest }
-+}
 +
- /**
-  * Separate component for rendering root layouts with HTML.
-  * This is extracted into its own component so React's HMR can properly track changes.
-@@ -157,6 +191,7 @@ function RootLayoutRenderer({
-     any
-   >
-   const serverContext = useServerContext()
-+  const headScripts = splitBlockingHeadScripts(headChildren)
++  // runs on the JS thread outside any GC
++  void drain(JSGlobalContextRef ctx) {
++    std::vector<JSValueRef> values;
++    {
++      std::lock_guard<std::mutex> lock(mutex);
++      values.swap(pending);
++    }
++    for (JSValueRef value : values) {
++      JSValueUnprotect(ctx, value);
++    }
++  }
++};
++
+ struct Lock {
+   void lock(const bun::JSCRuntime& /*unused*/) const {}
+   void unlock(const bun::JSCRuntime& /*unused*/) const {}
+@@ -167,19 +204,19 @@ class JSCRuntime : public jsi::Runtime {
+ #ifndef NDEBUG
+     JSCSymbolValue(
+         JSGlobalContextRef ctx,
+-        const std::atomic<bool>& ctxInvalid,
++        Releases& releases,
+         JSValueRef sym,
+         std::atomic<intptr_t>& counter);
+ #else
+     JSCSymbolValue(
+         JSGlobalContextRef ctx,
+-        const std::atomic<bool>& ctxInvalid,
++        Releases& releases,
+         JSValueRef sym);
+ #endif
+     void invalidate() noexcept override;
  
-   let finalChildren = children
+     JSGlobalContextRef ctx_;
+-    const std::atomic<bool>& ctxInvalid_;
++    Releases& releases_;
+     // There is no C type in the JSC API to represent Symbol, so this stored
+     // a JSValueRef which contains the Symbol.
+     JSValueRef sym_;
+@@ -209,7 +246,7 @@ class JSCRuntime : public jsi::Runtime {
+   class JSCObjectValue final : public PointerValue {
+     JSCObjectValue(
+         JSGlobalContextRef ctx,
+-        const std::atomic<bool>& ctxInvalid,
++        Releases& releases,
+         JSObjectRef obj
+ #ifndef NDEBUG
+         ,
+@@ -220,7 +257,7 @@ class JSCRuntime : public jsi::Runtime {
+     void invalidate() noexcept override;
  
-@@ -182,6 +217,9 @@ function RootLayoutRenderer({
-     <>
-       <head key="head" {...headProps}>
-         <DevHead />
-+        <ServerContextScript />
-+        {headScripts.metas}
-+        {headScripts.scripts}
-         {serverContext?.cssContents?.length || serverContext?.cssInlineCount
-           ? // inline/mixed CSS: render each entry as <style> (if content) or <link>
-             serverContext?.cssContents
-@@ -204,8 +242,7 @@ function RootLayoutRenderer({
-           : serverContext?.css?.map((file) => (
-               <link key={file} rel="stylesheet" href={file} />
-             ))}
--        <ServerContextScript />
--        {headChildren}
-+        {headScripts.rest}
-       </head>
-       <body key="body" suppressHydrationWarning {...bodyProps}>
-         <SafeAreaProvider initialMetrics={SSR_SAFE_METRICS}>
+     JSGlobalContextRef ctx_;
+-    const std::atomic<bool>& ctxInvalid_;
++    Releases& releases_;
+     JSObjectRef obj_;
+ #ifndef NDEBUG
+     std::atomic<intptr_t>& counter_;
+@@ -374,7 +411,7 @@ class JSCRuntime : public jsi::Runtime {
+   void checkException(JSValueRef res, JSValueRef exc, const char* msg);
+ 
+   JSGlobalContextRef ctx_;
+-  std::atomic<bool> ctxInvalid_;
++  mutable Releases releases_;
+   std::string desc_;
+   JSValueRef nativeStateSymbol_ = nullptr;
+   JSObjectRef arrayIsArray_ = nullptr;
+@@ -469,8 +506,7 @@ std::string to_string(void* value) {
+ } // namespace
+ 
+ JSCRuntime::JSCRuntime(JSGlobalContextRef ctx)
+-    : ctx_(JSGlobalContextRetain(ctx)),
+-      ctxInvalid_(false)
++    : ctx_(JSGlobalContextRetain(ctx))
+ #ifndef NDEBUG
+       ,
+       objectCounter_(0),
+@@ -497,7 +533,10 @@ JSCRuntime::~JSCRuntime() {
+   // JSValueUnprotect() can no longer be called.  We use an
+   // atomic<bool> to avoid unsafe unprotects happening after shutdown
+   // has started.
+-  ctxInvalid_ = true;
++  if (releases_.owner == std::this_thread::get_id()) {
++    releases_.drain(ctx_);
++  }
++  releases_.invalid = true;
+   // No need to unprotect nativeStateSymbol_ since the heap is getting torn down
+   // anyway
+   JSGlobalContextRelease(ctx_);
+@@ -529,6 +568,7 @@ jsi::Value JSCRuntime::evaluatePreparedJavaScript(
+ jsi::Value JSCRuntime::evaluateJavaScript(
+     const std::shared_ptr<const jsi::Buffer>& buffer,
+     const std::string& sourceURL) {
++  releases_.drain(ctx_);
+   // the compiled program replaces a bundle that starts with this marker
+   constexpr size_t markerLength = sizeof(kCompiledEntryMarker) - 1;
+   if (buffer->size() >= markerLength &&
+@@ -567,6 +607,7 @@ void JSCRuntime::queueMicrotask(const jsi::Function& callback) {
+ }
+ 
+ bool JSCRuntime::drainMicrotasks(int /*maxMicrotasksHint*/) {
++  releases_.drain(ctx_);
+   // bun delays JSC's own microtask drain between ticks, so promise jobs run
+   // only when bun ticks; either queue can refill the other.
+   do {
+@@ -598,15 +639,15 @@ bool JSCRuntime::isInspectable() {
+ 
+ JSCRuntime::JSCSymbolValue::JSCSymbolValue(
+     JSGlobalContextRef ctx,
+-    const std::atomic<bool>& ctxInvalid,
++    Releases& releases,
+     JSValueRef sym
+ #ifndef NDEBUG
+     ,
+     std::atomic<intptr_t>& counter
+ #endif
+     )
+     : ctx_(ctx),
+-      ctxInvalid_(ctxInvalid),
++  
 ```
 
 ---
 
-### Incident Patch 2: `030daa2a` (2026-11-14)
-**Commit Message**: fix(one): native production loads the root layout before the router shell (#1226)
+### Incident Patch 3: `ccd0ddf4` (2026-11-17)
+**Commit Message**: fix(one): presentations hosting react native content stop tracking the keyboard (#1296)
 
-* fix(one): native production loads the root layout before the router shell
+* fix(one): presented content ignores the keyboard safe area
 
-One.Updates counts a launch as good at React Native's first native view, which is the router shell, so a root layout that failed to load rendered empty and its update was never rolled back.
+SwiftUI kept a dismissed keyboard's inset on a sheet presented while the keyboard was up, sizing the React Native slot to zero until a trait change. React Native content avoids the keyboard itself, as in a Modal.
 
-Validation: Contrast rv139 Release sim with a planted update whose One SDK generation mismatches the binary: before, white screen and the update counted a success; after, the load error is fatal before the first view and One.Updates rolls back to the embedded bundle in the same launch. Normal launch, 5 alternating cold-launch pairs to root layout commit: control median 1306 ms, this 1289 ms.
-Team-Machine-Session: p258464
+Team-Machine-Session: m130059
 
-* fix(one): record a falsy route load rejection as an error
+* fix(one): presentations hosting react native content stop tracking the keyboard
 
-Validation: tsc --noEmit in packages/one; rollback repro rerun on the rv139 sim.
-Team-Machine-Session: p258464
+A safe area modifier still left the stale inset in place, growing the slot instead. Dropping the keyboard region on the presentation's hosting controller removes the stale state at its source.
 
-* chore(one): regenerate route loader types
+Team-Machine-Session: m130059
 
-Team-Machine-Session: p258464
-
-**File**: `packages/one/src/Root.tsx` (modified, +9/-1)
+**File**: `packages/one/ios/OneNativeSlot.swift` (modified, +17/-0)
 ```diff
-@@ -23,7 +23,7 @@ import { handleNavigationContainerStateChange } from './router/router'
- import { ServerLocationContext } from './router/serverLocationContext'
- import { LaunchScreenRelease } from './router/LaunchScreenRelease'
- import { useInitializeOneRouter } from './router/useInitializeOneRouter'
--import { useViteRoutes } from './router/useViteRoutes'
-+import { getRouteLoadError, useViteRoutes } from './router/useViteRoutes'
- import type { GlobbedRouteImports } from './types'
- import { evictOldest } from './utils/evictOldest'
- import { ServerRenderID } from './useServerHeadInsertion'
-@@ -131,6 +131,14 @@ export function Root(props: RootProps) {
- 
-   onRenderId?.(id)
- 
-+  // One.Updates counts a launch as good once react native shows its first
-+  // native view, which is the shell below. load the root layout before it, so
-+  // an update whose root layout cannot load fails first and rolls back.
-+  if (isNative && process.env.NODE_ENV === 'production' && store.routeNode) {
-+    const loadError = getRouteLoadError(store.routeNode.loadRoute())
-+    if (loadError) throw loadError
-+  }
-+
-   // Use Vercel's global ID if available, otherwise use AsyncLocalStorage
-   const value = process.env.VERCEL
-     ? globalThis['__oneGlobalContextId']
-```
-
-**File**: `packages/one/src/router/useViteRoutes.tsx` (modified, +11/-3)
-```diff
-@@ -10,6 +10,13 @@ import { hmrImport } from './hmrImport'
- let lastVersion = 0
- let context
- 
-+// the stand-in module a route gets when its import failed, mapped to that error.
-+const routeLoadErrors = new WeakMap<object, Error>()
-+
-+export function getRouteLoadError(route: unknown): Error | undefined {
-+  return typeof route === 'object' && route ? routeLoadErrors.get(route) : undefined
-+}
-+
- // for some reason putting it in state doesnt even re-render
- export function useViteRoutes(
-   routes: GlobbedRouteImports,
-@@ -330,9 +337,10 @@ export function globbedRoutesToRouteContext(
-                 .catch(() => {})
-             }
-           }
--          loadedRoutes[id] = {
--            default: () => null,
--          }
-+          const failed = { default: () => null }
-+          // a falsy rejection would read back as no error
-+          routeLoadErrors.set(failed, err instanceof Error ? err : new Error(String(err)))
-+          loadedRoutes[id] = failed
-           delete promises[id]
-         })
- 
-```
-
-**File**: `packages/one/types/router/useViteRoutes.d.ts` (modified, +1/-0)
-```diff
-@@ -1,5 +1,6 @@
- import type { GlobbedRouteImports } from '../types';
- import type { One } from '../vite/types';
-+export declare function getRouteLoadError(route: unknown): Error | undefined;
- export declare function useViteRoutes(routes: GlobbedRouteImports, routerRoot: string, options?: One.RouteOptions, version?: number): any;
- export declare function registerPreloadedRoute(key: string, module: any): void;
- export declare function getPreloadedModule(key: string): any;
-```
-
----
-
-### Incident Patch 3: `c11fcfd3` (2026-11-14)
-**Commit Message**: fix(one): fail package build when ios-bindings mismatch sdk generator (#1224)
-
-Validation: CI checks and tests green (11/11).
-
-**File**: `packages/one/codegen/sdk/build.ts` (modified, +3/-0)
-```diff
-@@ -78,6 +78,9 @@ if (import.meta.main) {
-   const { path, fingerprint } = await buildSdkApp(outdir)
-   console.log(`sdk app: ${path} ${fingerprint.slice(0, 16)}`)
-   if (outdir === undefined) {
-+    const manifest = JSON.parse(readFileSync(join(dir, '../../ios-bindings/manifest.json'), 'utf8'))
-+    if (manifest.generation !== fingerprint.slice(0, 16))
-+      throw new Error(`ios-bindings generation ${manifest.generation} does not match the sdk generator ${fingerprint.slice(0, 16)}; regenerate the facades before building`)
-     console.log(`ios facades: ${await buildIosFacades()} compiled`)
+@@ -49,6 +49,12 @@ extension View {
    }
  }
+ 
++// any hosting controller, whatever its root view
++@MainActor private protocol OneNativeSafeAreaRegionsHost: AnyObject {
++  var safeAreaRegions: SafeAreaRegions { get set }
++}
++extension UIHostingController: OneNativeSafeAreaRegionsHost {}
++
+ struct OneNativeSlot: UIViewRepresentable {
+   @Environment(\.oneNativeSlotScrolling) private var scrolling
+   enum Mode { case fill, passive, presented }
+@@ -190,6 +196,16 @@ struct OneNativeSlot: UIViewRepresentable {
+       addSubview(content)
+     }
+ 
++    // react native content avoids the keyboard itself, as in a Modal. swiftui could keep
++    // the inset of a keyboard that left while the presentation appeared, sizing this
++    // slot to zero until a trait change, so the presentation never tracks it.
++    private func dropPresentationKeyboardRegion() {
++      var responder: UIResponder? = next
++      while let current = responder, !(current is UIViewController) { responder = current.next }
++      guard let host = responder as? OneNativeSafeAreaRegionsHost, host.safeAreaRegions != .container else { return }
++      host.safeAreaRegions = .container
++    }
++
+     override func didMoveToWindow() {
+       super.didMoveToWindow()
+       let attached = window != nil
+@@ -205,6 +221,7 @@ struct OneNativeSlot: UIViewRepresentable {
+ 
+     override func layoutSubviews() {
+       super.layoutSubviews()
++      if mode == .presented, window != nil { dropPresentationKeyboardRegion() }
+       guard mode != .passive, window != nil, bounds.width > 0, bounds.height > 0 else { return }
+       content.frame = bounds
+       // scrolling moves existing rows without changing their bounds. publish their
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1226** (2026-11-14): fix(one): native production loads the root layout before the router shell (@natew)
-- **PR #1225** (2026-11-14): perf(one): render blocking head scripts ahead of the css links in the root layout (@natew)
-- **PR #1224** (2026-11-14): fix(one): fail the package build when ios-bindings do not match the sdk generator (@natew)
-- **PR #1223** (2026-11-14): fix(native): measure composed slots at their placed origins (@natew)
-- **PR #1221** (2026-11-14): feat(one): export EdgeFade by name (@natew)
-- **PR #1220** (2026-11-14): fix(metro): /index.assets and /index.map resolve to the main module like /index.bundle (@natew)
+- **PR #1305** (2026-11-18): fix(one): keep native hosts attached while their screen is covered (@natew)
+- **PR #1304** (2026-11-17): Make Cloudflare and Rozenite opt-in in One (@natew)
+- **PR #1303** (2026-11-17): Remove Biome and Prettier from One (@natew)
+- **PR #1302** (2026-11-17): perf(vxrn): drop hermes polyfills from bun ios production bundles (@natew)
+- **PR #1301** (2026-11-17): fix(one): dismiss native controllers with their child alerts (@natew)
+- **PR #1300** (2026-11-17): docs: add a setup recipe for Android bun engine builds (@natew)
 
 ---
 
@@ -2140,32 +2321,80 @@ Validation: CI checks and tests green (11/11).
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. one): render blocking head scripts ahead of the css links in the root layout
+## X. Empirical Invariant Guard in BunRuntime.cpp
 
 **RULE**:
-When implementing operations in `apps/onestack.dev/data/docs/routing-layouts.mdx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in onejs/one. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/vxrn/ios/OneBunEngine/BunRuntime.cpp`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in onejs/one. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6f2dc32f`: one): render blocking head scripts ahead of the css links in the root layout. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `855a28f7`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/onestack.dev/data/docs/routing-layouts.mdx`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/vxrn/ios/OneBunEngine/BunRuntime.cpp`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-Blocking scripts in the root layout's `<head>` (no `async`, `defer` or `type="module"`) are rendered before the stylesheet links, after the `<meta>` tags, so they run as soon as the HTML parses instead of waiting for the stylesheets to download. A script that reads layout from a stylesheet, such as `getComputedStyle` or `offsetWidth`, no longer sees it loaded: wait for the `load` event or use a `defer` script for that.
+#include <vector>
+// JSValueUnprotect takes the JS lock, and JSC scans the stack of every thread
+// that ever took it on each GC. a value dropped on the main thread registers it,
+// and the main thread later runs hermes (worklets) compiles on a fiber stack
+// outside its registered bounds, so the scan faults. only the JS thread unprotects.
+struct Releases {
+  std::atomic<bool> invalid{false};
+  // the runtime is created on the JS thread
+  const std::thread::id owner = std::this_thread::get_id();
+  std::mutex mutex;
+  std::vector<JSValueRef> pending;
 
+  void release(JSGlobalContextRef ctx, JSValueRef value) {
+    if (invalid) {
+      return;
+    }
+    if (owner == std::this_thread::get_id()) {
+      JSValueUnprotect(ctx, value);
+      return;
+    }
+    std::lock_guard<std::mutex> lock(mutex);
+    pending.push_back(value);
+  }
+
+  // runs on the JS thread outside any GC
+  void drain(JSGlobalContextRef ctx) {
+    std::vector<JSValueRef> values;
+    {
+      std::lock_guard<std::mutex> lock(mutex);
+      values.swap(pending);
+    }
+    for (JSValueRef value : values) {
+      JSValueUnprotect(ctx, value);
+    }
+  }
+};
+
+        Releases& releases,
+        Releases& releases,
+    Releases& 
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+        const std::atomic<bool>& ctxInvalid,
+        const std::atomic<bool>& ctxInvalid,
+    const std::atomic<bool>& ctxInvalid_;
+        const std::atomic<bool>& ctxInvalid,
+    const std::atomic<bool>& ctxInvalid_;
+  std::atomic<bool> ctxInvalid_;
+    : ctx_(JSGlobalContextRetain(ctx)),
+      ctxInvalid_(false)
+  ctxInvalid_ = true;
+    const std::atomic<bool>& ctxInvalid,
+      ctxInvalid_(ctxInvalid),
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6f2dc32f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `855a28f7` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

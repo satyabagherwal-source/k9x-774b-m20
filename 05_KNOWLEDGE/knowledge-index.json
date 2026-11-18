@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-18T04:49:57.586Z",
-  "total_verified_learnings": 8978,
+  "last_updated": "2026-11-18T04:57:31.479Z",
+  "total_verified_learnings": 8980,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 20885,
+  "total_items": 20895,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112393,10 +112393,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tailscale-tailscale-architecture-intelligence-tailscale-tailscale-core-invariant.md",
       "title": "Architecture Intelligence: tailscale/tailscale Core Invariants",
       "repository": "tailscale/tailscale",
-      "source_version": "8a1840ef",
-      "content_hash": "40bfdb8474387a3bd4f6d500425b36b21e043024743086a59a7e79c9acc0ade1",
+      "source_version": "075e6403",
+      "content_hash": "3ba7b8ef1d6e014fadbfca15b45997eff6bfe3767eebc57bde809e7147f922dc",
       "domain_letter": "G",
-      "persisted_at": "2026-11-17T22:11:11.304Z"
+      "persisted_at": "2026-11-18T04:57:27.214Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-tailscale-tailscale": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tailscale-tailscale",
@@ -112405,10 +112405,10 @@
       "relative_path": "08_VERIFICATION/tailscale-tailscale-verification-protocol-empirical-defect-shield-for-tailscale-.md",
       "title": "Verification Protocol: Empirical Defect Shield for tailscale/tailscale",
       "repository": "tailscale/tailscale",
-      "source_version": "8a1840ef",
-      "content_hash": "b4c47cb5ca2ba8e7a8b0fb2ec09c924804455d46a99e94158dae9728364f8d2a",
+      "source_version": "075e6403",
+      "content_hash": "72722ebc4f07df99de7a6e7577c77fc8be8e1c9eab875352138106f76fd66a3e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T22:11:11.480Z"
+      "persisted_at": "2026-11-18T04:57:27.330Z"
     },
     "candidate_directive-order-small-runtime-filter-builds-before-filtered-and-nested-scans-28768": {
       "item_id": "candidate_directive-order-small-runtime-filter-builds-before-filtered-and-nested-scans-28768",
@@ -114050,9 +114050,9 @@
       "title": "Research & Knowledge Intelligence: deepseek-ai/DeepSeek-V4.1-Flash Core Invariants",
       "repository": "deepseek-ai/DeepSeek-V4.1-Flash",
       "source_version": "hf-deepseek-ai-deepseek-v4.1-flash",
-      "content_hash": "a58b2e6d835bb27980462798946132248644158491ec24db79e78b6e0faa845e",
+      "content_hash": "50e55bec262241e7b8eb0afb347af1ef06c68f5885ec0955006ae704178f67d9",
       "domain_letter": "D",
-      "persisted_at": "2026-11-13T17:37:30.597Z"
+      "persisted_at": "2026-11-18T04:57:15.154Z"
     },
     "candidate_directive-ios-js-timers-when-the-system-clock-changes": {
       "item_id": "candidate_directive-ios-js-timers-when-the-system-clock-changes",
@@ -114122,9 +114122,9 @@
       "title": "Research & Knowledge Intelligence: hf-deepseek-ai-deepseek-v4.1-flash-learnings Core Invariants",
       "repository": "hf-deepseek-ai-deepseek-v4.1-flash-learnings",
       "source_version": "HEAD",
-      "content_hash": "cece8b4465c5e34a8631247b78897aa5f28587a5f4a6656090dcc3e6dc993370",
+      "content_hash": "d759bd1cab125fa7ff5331ba0d7cc0380f24740544b049d64e8e66c6f9fb0af7",
       "domain_letter": "D",
-      "persisted_at": "2026-11-13T17:38:17.341Z"
+      "persisted_at": "2026-11-18T04:57:30.919Z"
     },
     "domain_intelligence-research-knowledge-intelligence-efficient-large-model-open-h3-regenerate-2k-core": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-efficient-large-model-open-h3-regenerate-2k-core",
@@ -215559,26 +215559,26 @@
       "category": "ENGINEERING_PATTERN",
       "rule_number": 8012,
       "title": "Empirical Invariant Guard in Cargo.lock",
-      "source_url": "https://github.com/ProvableHQ/snarkOS",
-      "source_version": "497534cd",
+      "source_url": "https://github.com/unhappychoice/gitlogue",
+      "source_version": "1f875b5b",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-18T02:42:45.514Z"
+      "verified_at": "2026-11-18T04:57:17.028Z"
     },
     "candidate_directive-empirical-invariant-guard-in-cargo-lock": {
       "item_id": "candidate_directive-empirical-invariant-guard-in-cargo-lock",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-NMJ7-empirical-invariant-guard-in-cargo-lock.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-GTGE-empirical-invariant-guard-in-cargo-lock.md",
       "title": "Empirical Invariant Guard in Cargo.lock",
-      "repository": "provablehq-snarkos-learnings",
+      "repository": "unhappychoice-gitlogue-learnings",
       "source_version": "HEAD",
-      "content_hash": "185caad682b3fde40807046f18aa8bd9fd85ce4c2ccd324673259784b663fa02",
+      "content_hash": "591374eb07d1bb13f7079d8d1f1503c6a827c7eb0fcb77eb76c1a133e1615187",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T02:42:49.941Z"
+      "persisted_at": "2026-11-18T04:57:30.401Z"
     },
     "learn-github-langchain4j-langchain4j": {
       "learning_id": "learn-github-langchain4j-langchain4j",
@@ -222285,8 +222285,8 @@
       "slug": "tailscale-tailscale",
       "platform": "github",
       "source_url": "https://github.com/tailscale/tailscale",
-      "source_version": "8a1840ef",
-      "content_hash": "1a19cb22dee23b843c2f1d9715f815f221a0686e4d4f73065f9fd3a392b08f3a",
+      "source_version": "075e6403",
+      "content_hash": "d0aa2ee39eee9bd432f48f6057a72354b483d9540a1a84b8a2edfa1cb2017e4e",
       "dossier_path": "07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
       "promoted_rules": [
@@ -222334,6 +222334,11 @@
           "number": 9076,
           "title": "client/web,tool: bump node to 26.x LTS",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9127,
+          "title": "go.mod: bump github.com/tailscale/wireguard-go",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -222341,7 +222346,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T22:11:10.661Z",
+      "verified_at": "2026-11-18T04:57:26.770Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -236806,14 +236811,19 @@
       "slug": "onejs-one",
       "platform": "github",
       "source_url": "https://github.com/onejs/one",
-      "source_version": "e49f6c39",
-      "content_hash": "fb7258adbfc0674b7ebe182f4e47cdd564d50ff61fc4252296dac7428d66be32",
+      "source_version": "aaba81ee",
+      "content_hash": "c859c2c39fdc8cf4a0f471319aac0900b1ad03a7332030ec178d0743a5e42628",
       "dossier_path": "07_PROJECT_LEARNING/onejs-one-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/onejs-one-learnings.md",
       "promoted_rules": [
         {
           "number": 8542,
           "title": "render blocking head scripts ahead of the css links in the root layout",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9126,
+          "title": "Empirical Invariant Guard in BunRuntime.cpp",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -236822,7 +236832,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T21:50:36.341Z",
+      "verified_at": "2026-11-18T04:57:22.913Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -236864,10 +236874,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-onejs-one-architecture-intelligence-onejs-one-core-invariants.md",
       "title": "Architecture Intelligence: onejs/one Core Invariants",
       "repository": "onejs/one",
-      "source_version": "e49f6c39",
-      "content_hash": "e6fd1bf84c2868179be3895789f010c014fae1185fb554cf20de00ab77e5c89c",
+      "source_version": "aaba81ee",
+      "content_hash": "21596a7c5abd5dd59e23b5a49678f7caad601eb01688a679048b3ab4ac09c953",
       "domain_letter": "G",
-      "persisted_at": "2026-11-14T21:50:36.696Z"
+      "persisted_at": "2026-11-18T04:57:23.374Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-onejs-one": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-onejs-one",
@@ -236876,10 +236886,10 @@
       "relative_path": "08_VERIFICATION/onejs-one-verification-protocol-empirical-defect-shield-for-onejs-one.md",
       "title": "Verification Protocol: Empirical Defect Shield for onejs/one",
       "repository": "onejs/one",
-      "source_version": "e49f6c39",
-      "content_hash": "a691d88145670e3f1fb0375425529d0bfedc2cef57bc1f90cea1ea7cd2b0d2fd",
+      "source_version": "aaba81ee",
+      "content_hash": "335c94dfa7d71f3b610f04b6f3fbed2f15e7ca4ea0e05dbbc97f6e191c4f993c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T21:50:36.774Z"
+      "persisted_at": "2026-11-18T04:57:23.497Z"
     },
     "learn-github-duckdb-duckdb": {
       "learning_id": "learn-github-duckdb-duckdb",
@@ -236977,9 +236987,9 @@
       "title": "Architecture Intelligence: onejs-one-learnings Core Invariants",
       "repository": "onejs-one-learnings",
       "source_version": "HEAD",
-      "content_hash": "394dbe5b851adeab186f1a9924b266edcea42524d3dfc453e60deec5e3a01c68",
+      "content_hash": "0e0f70710968a360d95422b946935e093e7fc2bf4827092c10e1d6e8f637cccb",
       "domain_letter": "G",
-      "persisted_at": "2026-11-14T21:51:09.300Z"
+      "persisted_at": "2026-11-18T04:57:31.346Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-onejs-one-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-onejs-one-learnings",
@@ -236989,9 +236999,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for onejs-one-learnings",
       "repository": "onejs-one-learnings",
       "source_version": "HEAD",
-      "content_hash": "3ff2e85a690d690ddbcb514b643a7f4030cdb2e199182514a8f5ff99ae8678fe",
+      "content_hash": "b52085b79d5e89a35d74736e063cc40ce395afd6595c9c6e96e0a8e2c2bceff5",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T21:51:09.403Z"
+      "persisted_at": "2026-11-18T04:57:31.479Z"
     },
     "domain_intelligence-architecture-intelligence-duckdb-duckdb-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-duckdb-duckdb-learnings-core-invariants",
@@ -281199,6 +281209,166 @@
       "content_hash": "cc39cd13e5f91af53f9482aa14ccebe0222e541ca74ec6df81e9f80babea3330",
       "domain_letter": "H",
       "persisted_at": "2026-11-18T04:49:56.351Z"
+    },
+    "learn-huggingface-deepseek-ai-deepseek-v4-1-flash": {
+      "learning_id": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "deepseek-ai/DeepSeek-V4.1-Flash",
+      "repository": "deepseek-ai/DeepSeek-V4.1-Flash",
+      "slug": "hf-deepseek-ai-deepseek-v4.1-flash",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash",
+      "source_version": "hf-deepseek-ai-deepseek-v4.1-flash",
+      "content_hash": "a1cbf683a1d0386b29cb0f11acac0f9b77151bf621623c4d669d0e820473d69d",
+      "dossier_path": "07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4.1-flash-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4.1-flash-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-18T04:57:14.788Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "learn-github-unhappychoice-gitlogue": {
+      "learning_id": "learn-github-unhappychoice-gitlogue",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "unhappychoice/gitlogue",
+      "repository": "unhappychoice/gitlogue",
+      "slug": "unhappychoice-gitlogue",
+      "platform": "github",
+      "source_url": "https://github.com/unhappychoice/gitlogue",
+      "source_version": "1f875b5b",
+      "content_hash": "4eff7a1010567610113737479fe9dbfc50099feb956a8b347240110b0867b76a",
+      "dossier_path": "07_PROJECT_LEARNING/unhappychoice-gitlogue-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/unhappychoice-gitlogue-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 8012,
+          "title": "Empirical Invariant Guard in Cargo.lock",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-18T04:57:17.028Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-design-intelligence-unhappychoice-gitlogue-core-invariants": {
+      "item_id": "domain_intelligence-design-intelligence-unhappychoice-gitlogue-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-unhappychoice-gitlogue-design-intelligence-unhappychoice-gitlogue-core-invariant.md",
+      "title": "Design Intelligence: unhappychoice/gitlogue Core Invariants",
+      "repository": "unhappychoice/gitlogue",
+      "source_version": "1f875b5b",
+      "content_hash": "6a87b10f16bae8a09f023b19a5853109da9dd27ea6d64337a90e391d375592bb",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-18T04:57:17.501Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-unhappychoice-gitlogue": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-unhappychoice-gitlogue",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/unhappychoice-gitlogue-verification-protocol-empirical-defect-shield-for-unhappy.md",
+      "title": "Verification Protocol: Empirical Defect Shield for unhappychoice/gitlogue",
+      "repository": "unhappychoice/gitlogue",
+      "source_version": "1f875b5b",
+      "content_hash": "938bdbb39e65443600342dd24d0f2adb1faeb196d2da0a0c8ed88c8451546e8c",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-18T04:57:17.623Z"
+    },
+    "rule-9126": {
+      "learning_id": "rule-9126",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9126,
+      "title": "Empirical Invariant Guard in BunRuntime.cpp",
+      "source_url": "https://github.com/onejs/one",
+      "source_version": "aaba81ee",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-18T04:57:22.913Z"
+    },
+    "candidate_directive-empirical-invariant-guard-in-bunruntime-cpp": {
+      "item_id": "candidate_directive-empirical-invariant-guard-in-bunruntime-cpp",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-GU3B-empirical-invariant-guard-in-bunruntime-cpp.md",
+      "title": "Empirical Invariant Guard in BunRuntime.cpp",
+      "repository": "onejs-one-learnings",
+      "source_version": "HEAD",
+      "content_hash": "57861cc2add3b4547f77d70e51013cca3a2102076dfd6a76f6471e67fc768a23",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-18T04:57:31.226Z"
+    },
+    "rule-9127": {
+      "learning_id": "rule-9127",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9127,
+      "title": "go.mod: bump github.com/tailscale/wireguard-go",
+      "source_url": "https://github.com/tailscale/tailscale",
+      "source_version": "075e6403",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-18T04:57:26.770Z"
+    },
+    "candidate_directive-go-mod-bump-github-com-tailscale-wireguard-go": {
+      "item_id": "candidate_directive-go-mod-bump-github-com-tailscale-wireguard-go",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-GQWM-go-mod-bump-github-com-tailscale-wireguard-go.md",
+      "title": "go.mod: bump github.com/tailscale/wireguard-go",
+      "repository": "tailscale/tailscale",
+      "source_version": "075e6403",
+      "content_hash": "867919f854ef7c4d8753096049963b261879a070180f1c25ed015fc946904716",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-18T04:57:27.095Z"
+    },
+    "domain_intelligence-design-intelligence-unhappychoice-gitlogue-learnings-core-invariants": {
+      "item_id": "domain_intelligence-design-intelligence-unhappychoice-gitlogue-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-unhappychoice-gitlogue-learnings-design-intelligence-unhappychoice-gitlogue-lear.md",
+      "title": "Design Intelligence: unhappychoice-gitlogue-learnings Core Invariants",
+      "repository": "unhappychoice-gitlogue-learnings",
+      "source_version": "HEAD",
+      "content_hash": "5f0aac9ae39465a9c976d5e29d97d8445ba341ee78aa7edebf2387a8d1608164",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-18T04:57:30.523Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-unhappychoice-gitlogue-learnin": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-unhappychoice-gitlogue-learnin",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/unhappychoice-gitlogue-learnings-verification-protocol-empirical-defect-shield-f.md",
+      "title": "Verification Protocol: Empirical Defect Shield for unhappychoice-gitlogue-learnings",
+      "repository": "unhappychoice-gitlogue-learnings",
+      "source_version": "HEAD",
+      "content_hash": "3dbd6beeecc2bfedba58f14f0cb00083b33544cb41f30950c931ca016aa64c0a",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-18T04:57:30.652Z"
     }
   },
   "ai-builder-brain": {

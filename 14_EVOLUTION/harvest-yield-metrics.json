@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T04:49:45.758Z",
-  "total_cycles_completed": 10357,
-  "total_learnings_persisted": 10357,
-  "total_rules_promoted": 9874,
+  "last_updated": "2026-11-18T04:57:26.934Z",
+  "total_cycles_completed": 10361,
+  "total_learnings_persisted": 10361,
+  "total_rules_promoted": 9877,
   "history": [
-    {
-      "timestamp": "2026-11-17T16:05:33.518Z",
-      "repository": "lodestones/Kromoss",
-      "learningId": "learn-huggingface-lodestones-kromoss",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T16:05:49.435Z",
-      "repository": "opentofu/opentofu",
-      "learningId": "learn-github-opentofu-opentofu",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T16:05:49.705Z",
-      "repository": "meilisearch/meilisearch",
-      "learningId": "learn-github-meilisearch-meilisearch",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T16:13:59.819Z",
-      "repository": "nvidia/NVIDIA-Nemotron-Labs-Dory1.0-4B-BF16",
-      "learningId": "learn-huggingface-nvidia-nvidia-nemotron-labs-dory1-0-4b-bf16",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-17T16:14:03.062Z",
       "repository": "domcyrus/rustnet",
@@ -1403,6 +1375,34 @@
       "repository": "metalbear-co/mirrord",
       "learningId": "learn-github-metalbear-co-mirrord",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T04:57:14.984Z",
+      "repository": "deepseek-ai/DeepSeek-V4.1-Flash",
+      "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T04:57:17.194Z",
+      "repository": "unhappychoice/gitlogue",
+      "learningId": "learn-github-unhappychoice-gitlogue",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T04:57:23.082Z",
+      "repository": "onejs/one",
+      "learningId": "learn-github-onejs-one",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T04:57:26.934Z",
+      "repository": "tailscale/tailscale",
+      "learningId": "learn-github-tailscale-tailscale",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

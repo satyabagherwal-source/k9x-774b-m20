@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-18T04:49:56.175Z",
+  "updated_at": "2026-11-18T04:57:30.215Z",
   "stats": {
-    "total_discovered": 5278,
-    "approved_pending_harvest": 4976,
+    "total_discovered": 5279,
+    "approved_pending_harvest": 4977,
     "harvested_count": 0,
     "rejected_count": 302,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 4968,
+      "COMMUNITY_AND_EXPERT": 4969,
       "OFFICIAL_DOCUMENTATION": 166,
       "STANDARDS_AND_SPECIFICATIONS": 108,
       "ENGINEERING_BLOGS": 4,
@@ -114023,6 +114023,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/metalbear-co-mirrord-learnings.md",
         "fileName": "metalbear-co-mirrord-learnings.md"
+      }
+    },
+    "SRC-13BDA84BF91D": {
+      "id": "SRC-13BDA84BF91D",
+      "url": "https://github.com/tree-sitter/tree-sitter-scala/compare/v0.26.9...v0.26.13",
+      "title": "https://github.com/tree-sitter/tree-sitter-scala/compare/v0.26.9...v0.26.13",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T04:57:30.215Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/unhappychoice-gitlogue-learnings.md",
+        "fileName": "unhappychoice-gitlogue-learnings.md"
       }
     }
   }

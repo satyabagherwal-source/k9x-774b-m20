@@ -515,8 +515,8 @@
     "sourceUrl": "https://huggingface.co/deepseek-ai/DeepSeek-V4.1-Flash",
     "sourceVersion": "hf-deepseek-ai-deepseek-v4.1-flash",
     "license": "Open-Source",
-    "contentHash": "a4ce1a5c66e66c947520f1022d2ce3a5e7bec4a5f8d38a401b444a841e6cd0d5",
-    "lastHarvestedAt": "2026-11-13T17:37:30.467Z",
+    "contentHash": "a1cbf683a1d0386b29cb0f11acac0f9b77151bf621623c4d669d0e820473d69d",
+    "lastHarvestedAt": "2026-11-18T04:57:14.979Z",
     "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-1-flash"
   },
   "hf-akatz-ai-minimax-h3-character-swap-lora": {
@@ -3073,10 +3073,10 @@
     "repository": "unhappychoice/gitlogue",
     "platform": "github",
     "sourceUrl": "https://github.com/unhappychoice/gitlogue",
-    "sourceVersion": "b993537c",
+    "sourceVersion": "1f875b5b",
     "license": "ISC",
-    "contentHash": "3dc7fd1227bb5507f0cbc626f559328e47bd16fb0c9b3c4b1d42a7f884163557",
-    "lastHarvestedAt": "2026-11-11T17:13:09.821Z",
+    "contentHash": "4eff7a1010567610113737479fe9dbfc50099feb956a8b347240110b0867b76a",
+    "lastHarvestedAt": "2026-11-18T04:57:17.190Z",
     "learningId": "learn-github-unhappychoice-gitlogue"
   },
   "faridsafi-react-native-gifted-chat": {
@@ -3583,10 +3583,10 @@
     "repository": "tailscale/tailscale",
     "platform": "github",
     "sourceUrl": "https://github.com/tailscale/tailscale",
-    "sourceVersion": "8a1840ef",
+    "sourceVersion": "075e6403",
     "license": "BSD-3-Clause",
-    "contentHash": "1a19cb22dee23b843c2f1d9715f815f221a0686e4d4f73065f9fd3a392b08f3a",
-    "lastHarvestedAt": "2026-11-17T22:11:10.878Z",
+    "contentHash": "d0aa2ee39eee9bd432f48f6057a72354b483d9540a1a84b8a2edfa1cb2017e4e",
+    "lastHarvestedAt": "2026-11-18T04:57:26.930Z",
     "learningId": "learn-github-tailscale-tailscale"
   },
   "dingodb-dingo": {
@@ -6923,10 +6923,10 @@
     "repository": "onejs/one",
     "platform": "github",
     "sourceUrl": "https://github.com/onejs/one",
-    "sourceVersion": "e49f6c39",
+    "sourceVersion": "aaba81ee",
     "license": "NOASSERTION",
-    "contentHash": "fb7258adbfc0674b7ebe182f4e47cdd564d50ff61fc4252296dac7428d66be32",
-    "lastHarvestedAt": "2026-11-14T21:50:36.471Z",
+    "contentHash": "c859c2c39fdc8cf4a0f471319aac0900b1ad03a7332030ec178d0743a5e42628",
+    "lastHarvestedAt": "2026-11-18T04:57:23.077Z",
     "learningId": "learn-github-onejs-one"
   },
   "influxdata-influxdb": {

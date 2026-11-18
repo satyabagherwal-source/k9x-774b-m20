@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-18T04:49:57.467Z",
-  "total_records": 1757,
+  "last_updated": "2026-11-18T04:57:31.346Z",
+  "total_records": 1759,
   "domains": {
     "A": {
       "total": 11,
@@ -826,7 +826,7 @@
       ]
     },
     "F": {
-      "total": 44,
+      "total": 46,
       "record_ids": [
         "DOM-F-C060CCE1",
         "DOM-F-83D565C2",
@@ -871,7 +871,9 @@
         "DOM-F-D22A5DEE",
         "domain_intelligence-design-intelligence-hf-qwen-qwen-image-2-1-learnings-core-invariants",
         "DOM-F-F03E14A5",
-        "DOM-F-B4186028"
+        "DOM-F-B4186028",
+        "domain_intelligence-design-intelligence-unhappychoice-gitlogue-core-invariants",
+        "domain_intelligence-design-intelligence-unhappychoice-gitlogue-learnings-core-invariants"
       ]
     },
     "G": {
@@ -7644,8 +7646,8 @@
       "title": "Architecture Intelligence: tailscale/tailscale Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tailscale-tailscale-architecture-intelligence-tailscale-tailscale-core-invariant.md",
       "repository": "tailscale/tailscale",
-      "content_hash": "40bfdb8474387a3bd4f6d500425b36b21e043024743086a59a7e79c9acc0ade1",
-      "created_at": "2026-11-17T22:11:11.304Z"
+      "content_hash": "3ba7b8ef1d6e014fadbfca15b45997eff6bfe3767eebc57bde809e7147f922dc",
+      "created_at": "2026-11-18T04:57:27.214Z"
     },
     "domain_intelligence-architecture-intelligence-duckdb-duckdb-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-duckdb-duckdb-core-invariants",
@@ -8697,8 +8699,8 @@
       "title": "Research & Knowledge Intelligence: deepseek-ai/DeepSeek-V4.1-Flash Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-deepseek-ai-deepseek-v4-1-flash-research-knowledge-intelligence-deepseek-ai-d.md",
       "repository": "deepseek-ai/DeepSeek-V4.1-Flash",
-      "content_hash": "a58b2e6d835bb27980462798946132248644158491ec24db79e78b6e0faa845e",
-      "created_at": "2026-11-13T17:37:30.597Z"
+      "content_hash": "50e55bec262241e7b8eb0afb347af1ef06c68f5885ec0955006ae704178f67d9",
+      "created_at": "2026-11-18T04:57:15.154Z"
     },
     "domain_intelligence-technical-construction-intelligence-react-react-native-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-react-react-native-core-invariants",
@@ -8766,8 +8768,8 @@
       "title": "Research & Knowledge Intelligence: hf-deepseek-ai-deepseek-v4.1-flash-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-deepseek-ai-deepseek-v4-1-flash-learnings-research-knowledge-intelligence-hf-.md",
       "repository": "hf-deepseek-ai-deepseek-v4.1-flash-learnings",
-      "content_hash": "cece8b4465c5e34a8631247b78897aa5f28587a5f4a6656090dcc3e6dc993370",
-      "created_at": "2026-11-13T17:38:17.341Z"
+      "content_hash": "d759bd1cab125fa7ff5331ba0d7cc0380f24740544b049d64e8e66c6f9fb0af7",
+      "created_at": "2026-11-18T04:57:30.919Z"
     },
     "domain_intelligence-research-knowledge-intelligence-efficient-large-model-open-h3-regenerate-2k-core": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-efficient-large-model-open-h3-regenerate-2k-core",
@@ -17861,8 +17863,8 @@
       "title": "Architecture Intelligence: onejs/one Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-onejs-one-architecture-intelligence-onejs-one-core-invariants.md",
       "repository": "onejs/one",
-      "content_hash": "e6fd1bf84c2868179be3895789f010c014fae1185fb554cf20de00ab77e5c89c",
-      "created_at": "2026-11-14T21:50:36.696Z"
+      "content_hash": "21596a7c5abd5dd59e23b5a49678f7caad601eb01688a679048b3ab4ac09c953",
+      "created_at": "2026-11-18T04:57:23.374Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-nerkyor-qwen3-8-27b-coder390-efficientthink-o": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-nerkyor-qwen3-8-27b-coder390-efficientthink-o",
@@ -17921,8 +17923,8 @@
       "title": "Architecture Intelligence: onejs-one-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-onejs-one-learnings-architecture-intelligence-onejs-one-learnings-core-invariant.md",
       "repository": "onejs-one-learnings",
-      "content_hash": "394dbe5b851adeab186f1a9924b266edcea42524d3dfc453e60deec5e3a01c68",
-      "created_at": "2026-11-14T21:51:09.300Z"
+      "content_hash": "0e0f70710968a360d95422b946935e093e7fc2bf4827092c10e1d6e8f637cccb",
+      "created_at": "2026-11-18T04:57:31.346Z"
     },
     "domain_intelligence-architecture-intelligence-duckdb-duckdb-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-duckdb-duckdb-learnings-core-invariants",
@@ -29447,6 +29449,24 @@
       "repository": "kotest-kotest-learnings",
       "content_hash": "4f3bc29db19352d9575d921fa869ef3a51b36749dacbb0e3e79b9779ed13efae",
       "created_at": "2026-11-18T04:29:24.859Z"
+    },
+    "domain_intelligence-design-intelligence-unhappychoice-gitlogue-core-invariants": {
+      "record_id": "domain_intelligence-design-intelligence-unhappychoice-gitlogue-core-invariants",
+      "domain_letter": "F",
+      "title": "Design Intelligence: unhappychoice/gitlogue Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-unhappychoice-gitlogue-design-intelligence-unhappychoice-gitlogue-core-invariant.md",
+      "repository": "unhappychoice/gitlogue",
+      "content_hash": "6a87b10f16bae8a09f023b19a5853109da9dd27ea6d64337a90e391d375592bb",
+      "created_at": "2026-11-18T04:57:17.501Z"
+    },
+    "domain_intelligence-design-intelligence-unhappychoice-gitlogue-learnings-core-invariants": {
+      "record_id": "domain_intelligence-design-intelligence-unhappychoice-gitlogue-learnings-core-invariants",
+      "domain_letter": "F",
+      "title": "Design Intelligence: unhappychoice-gitlogue-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-unhappychoice-gitlogue-learnings-design-intelligence-unhappychoice-gitlogue-lear.md",
+      "repository": "unhappychoice-gitlogue-learnings",
+      "content_hash": "5f0aac9ae39465a9c976d5e29d97d8445ba341ee78aa7edebf2387a8d1608164",
+      "created_at": "2026-11-18T04:57:30.523Z"
     }
   }
 }
