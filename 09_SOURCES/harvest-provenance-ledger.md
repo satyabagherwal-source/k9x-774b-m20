@@ -11063,3 +11063,8 @@ Every entry in this ledger must capture:
 | `learn-huggingface-psrben-visionhope` | `https://huggingface.co/PSRben/VisionHOPE` | `hf-psrben-` | Multi-dimensional audit evidence | 2026-11-18T15:51:33.155Z |
 | `learn-github-aleo-labs-protocol-snarkos` | `https://github.com/ProvableHQ/snarkOS` | `6728d177` | Multi-dimensional audit evidence | 2026-11-18T15:51:48.630Z |
 | `learn-github-lioensky-vcptoolbox` | `https://github.com/lioensky/VCPToolBox` | `ec435c0e` | Multi-dimensional audit evidence | 2026-11-18T15:51:51.046Z |
+| `learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf` | `https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF` | `hf-ista-da` | Multi-dimensional audit evidence | 2026-11-18T15:59:39.763Z |
+| `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `9811972d` | Multi-dimensional audit evidence | 2026-11-18T15:59:54.202Z |
+| `learn-huggingface-briaai-rmbg-3-0` | `https://huggingface.co/briaai/RMBG-3.0` | `hf-briaai-` | Multi-dimensional audit evidence | 2026-11-18T16:00:07.214Z |
+| `learn-dom-d-ee4276b2` | `project://hf-briaai-rmbg-3.0` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-briaai-rmbg-3.0-learnings.md` | 2026-11-18T16:00:41.165Z |
+| `learn-dom-l-902f756c` | `project://freenet-freenet-core` | `9811972d` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/freenet-freenet-core-learnings.md` | 2026-11-18T16:01:20.959Z |

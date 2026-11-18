@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-18T15:51:56.098Z",
+  "updated_at": "2026-11-18T16:00:41.185Z",
   "stats": {
-    "total_discovered": 5562,
-    "approved_pending_harvest": 5255,
+    "total_discovered": 5563,
+    "approved_pending_harvest": 5256,
     "harvested_count": 0,
     "rejected_count": 307,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 5239,
+      "COMMUNITY_AND_EXPERT": 5240,
       "OFFICIAL_DOCUMENTATION": 177,
       "STANDARDS_AND_SPECIFICATIONS": 110,
       "ENGINEERING_BLOGS": 4,
@@ -120236,6 +120236,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/lioensky-vcptoolbox-learnings.md",
         "fileName": "lioensky-vcptoolbox-learnings.md"
+      }
+    },
+    "SRC-5CFDCDFBCB5E": {
+      "id": "SRC-5CFDCDFBCB5E",
+      "url": "https://huggingface.co/briaai/RMBG-3.0",
+      "title": "https://huggingface.co/briaai/RMBG-3.0",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T16:00:41.185Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-briaai-rmbg-3.0-learnings.md",
+        "fileName": "hf-briaai-rmbg-3.0-learnings.md"
       }
     }
   }

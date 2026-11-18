@@ -605,8 +605,8 @@
     "sourceUrl": "https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
     "sourceVersion": "hf-ista-daslab-qwen3.8-flash-next-gsq-rco-coder-gguf",
     "license": "Open-Source",
-    "contentHash": "fbe1e4c9feee0e0165567206c023e70954a2c976fdb6abfb99e71928a5d0d0d1",
-    "lastHarvestedAt": "2026-11-18T06:41:15.131Z",
+    "contentHash": "47a77635a1b42bf31ca496cb0dbb3693a9d68f2ebf050e4cfb61737e4608c776",
+    "lastHarvestedAt": "2026-11-18T15:59:39.763Z",
     "learningId": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf"
   },
   "hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf": {
@@ -2853,10 +2853,10 @@
     "repository": "freenet/freenet-core",
     "platform": "github",
     "sourceUrl": "https://github.com/freenet/freenet-core",
-    "sourceVersion": "74fdd7b1",
+    "sourceVersion": "9811972d",
     "license": "NOASSERTION",
-    "contentHash": "5c025fc175c344d8e5599b053c3ae7c40b4b7f52414e0271c7b47343e5bd45c9",
-    "lastHarvestedAt": "2026-11-18T07:30:51.880Z",
+    "contentHash": "0d7df687d6711ef72bcfd3c283274849a52cba40c5d7e268d10f5df88d474a56",
+    "lastHarvestedAt": "2026-11-18T15:59:54.202Z",
     "learningId": "learn-github-freenet-freenet-core"
   },
   "vearch-vearch": {
@@ -12888,5 +12888,15 @@
     "contentHash": "c8ae96e0ebfcbcfaef9197b2108037b468b0df31e3e167ad83def7960e4bd9eb",
     "lastHarvestedAt": "2026-11-18T12:33:29.325Z",
     "learningId": "learn-github-software-mansion-argent"
+  },
+  "hf-briaai-rmbg-3.0": {
+    "repository": "briaai/RMBG-3.0",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/briaai/RMBG-3.0",
+    "sourceVersion": "hf-briaai-rmbg-3.0",
+    "license": "Open-Source",
+    "contentHash": "e77b39b820a82a7ace5cc1769a28eb54b5238ccead3d077e901088995200009d",
+    "lastHarvestedAt": "2026-11-18T16:00:07.214Z",
+    "learningId": "learn-huggingface-briaai-rmbg-3-0"
   }
 }

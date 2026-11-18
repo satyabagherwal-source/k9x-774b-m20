@@ -5194,3 +5194,7 @@ https://huggingface.co/KORMo-VL/KORMo-Web-11B
 # --- Automatically Discovered by AI Scout Engine [2026-11-18T12:32:53.103Z] ---
 # [AI-AGENTS] software-mansion/argent (2102 score) - An agentic toolkit to control, debug, and profile iOS and Android apps. Made by 
 https://github.com/software-mansion/argent
+
+# --- Automatically Discovered by AI Scout Engine [2026-11-18T15:59:30.648Z] ---
+# [HUGGINGFACE-AI-MODELS] briaai/RMBG-3.0 (912 score) - Verified Hugging Face Model: briaai/RMBG-3.0 (87 likes, 42 downloads)
+https://huggingface.co/briaai/RMBG-3.0

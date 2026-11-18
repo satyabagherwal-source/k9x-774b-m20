@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T15:51:56.877Z",
+  "last_updated": "2026-11-18T16:01:21.703Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-18T15:43:04.594Z",
@@ -603,9 +603,9 @@
       "staged_for_review": 1
     },
     "freenet-freenet-core-learnings.md": {
-      "processed_at": "2026-11-18T07:30:58.225Z",
-      "promoted_canonical": 0,
-      "staged_for_review": 1
+      "processed_at": "2026-11-18T16:01:20.959Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     },
     "slatedb-slatedb-learnings.md": {
       "processed_at": "2026-11-18T06:00:19.623Z",
@@ -2088,7 +2088,7 @@
       "staged_for_review": 0
     },
     "hf-ista-daslab-qwen3.8-flash-next-gsq-rco-coder-gguf-learnings.md": {
-      "processed_at": "2026-11-18T06:41:27.816Z",
+      "processed_at": "2026-11-18T16:00:41.601Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3441,9 +3441,14 @@
       "processed_at": "2026-11-18T14:40:49.985Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "hf-briaai-rmbg-3.0-learnings.md": {
+      "processed_at": "2026-11-18T16:00:41.165Z",
+      "promoted_canonical": 1,
+      "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 1998,
-  "total_canonical_promoted": 358,
-  "total_staged_for_review": 1515
+  "total_dossiers_evaluated": 2001,
+  "total_canonical_promoted": 360,
+  "total_staged_for_review": 1516
 }

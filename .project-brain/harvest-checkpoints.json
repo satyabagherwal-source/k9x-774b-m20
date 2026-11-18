@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-18T15:51:51.058Z",
+  "last_updated": "2026-11-18T16:00:07.223Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -755,14 +755,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf",
-      "content_hash": "fbe1e4c9feee0e0165567206c023e70954a2c976fdb6abfb99e71928a5d0d0d1",
-      "verified_at": "2026-11-18T06:41:15.142Z",
+      "content_hash": "47a77635a1b42bf31ca496cb0dbb3693a9d68f2ebf050e4cfb61737e4608c776",
+      "verified_at": "2026-11-18T15:59:39.770Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T06:41:15.142Z"
+      "last_updated": "2026-11-18T15:59:39.770Z"
     },
     "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF": {
       "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
@@ -4416,14 +4416,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-freenet-freenet-core",
-      "content_hash": "5c025fc175c344d8e5599b053c3ae7c40b4b7f52414e0271c7b47343e5bd45c9",
-      "verified_at": "2026-11-18T07:30:51.887Z",
+      "content_hash": "0d7df687d6711ef72bcfd3c283274849a52cba40c5d7e268d10f5df88d474a56",
+      "verified_at": "2026-11-18T15:59:54.210Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T07:30:51.887Z"
+      "last_updated": "2026-11-18T15:59:54.210Z"
     },
     "vearch/vearch": {
       "repository": "vearch/vearch",
@@ -19424,6 +19424,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-18T12:33:29.335Z"
+    },
+    "briaai/RMBG-3.0": {
+      "repository": "briaai/RMBG-3.0",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-briaai-rmbg-3-0",
+      "content_hash": "e77b39b820a82a7ace5cc1769a28eb54b5238ccead3d077e901088995200009d",
+      "verified_at": "2026-11-18T16:00:07.223Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-18T16:00:07.223Z"
     }
   },
   "repos": {

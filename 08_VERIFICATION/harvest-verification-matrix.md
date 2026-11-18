@@ -11030,3 +11030,8 @@
 | `CYCLE-20261118-TXCV` | `2026-11-18T15:51:33.151Z` | `PSRben/VisionHOPE` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-psrben-visionhope-learnings.md` | Yes (`fcbb1b56...`) |
 | `CYCLE-20261118-U9AQ` | `2026-11-18T15:51:48.626Z` | `aleo-labs-protocol/snarkOS` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9252` | Yes (`527f0642...`) |
 | `CYCLE-20261118-UB5U` | `2026-11-18T15:51:51.042Z` | `lioensky/VCPToolBox` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9253` | Yes (`5de0fd7a...`) |
+| `CYCLE-20261118-4CTQ` | `2026-11-18T15:59:39.758Z` | `ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-flash-next-gsq-rco-coder-gguf-learnings.md` | Yes (`47a77635...`) |
+| `CYCLE-20261118-4NYU` | `2026-11-18T15:59:54.198Z` | `freenet/freenet-core` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9254` | Yes (`0d7df687...`) |
+| `CYCLE-20261118-4Y0A` | `2026-11-18T16:00:07.210Z` | `briaai/RMBG-3.0` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-briaai-rmbg-3.0-learnings.md` | Yes (`e77b39b8...`) |
+| `CYCLE-2026-11-18-PROJ-EVOLVE` | `2026-11-18T16:00:41.165Z` | `hf-briaai-rmbg-3.0` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-EE4276B2` [Domain D] | Yes (`b06a1691...`) |
+| `CYCLE-2026-11-18-PROJ-EVOLVE` | `2026-11-18T16:01:20.959Z` | `freenet-freenet-core` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-L-902F756C` [Domain L] | Yes (`23d0ef54...`) |

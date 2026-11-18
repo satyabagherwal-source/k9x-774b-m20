@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261117-NDLQ",
-    "timestamp": "2026-11-17T07:06:54.494Z",
-    "repository": "actix/actix-web",
-    "learningId": "learn-github-actix-actix-web",
-    "contentHash": "98c35604eb2a413404890bc23e83f2634343c9b16116d9127b9d71454ee19be2",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261117-4A2D",
-    "timestamp": "2026-11-17T07:20:03.061Z",
-    "repository": "facebook/sam-3d-body-dinov3",
-    "learningId": "learn-huggingface-facebook-sam-3d-body-dinov3",
-    "contentHash": "e7764f574f5ce0415090edb814a76487afafd1a031b18a3b0331299d08a5e487",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261117-4FF9",
-    "timestamp": "2026-11-17T07:20:10.005Z",
-    "repository": "storybookjs/storybook",
-    "learningId": "learn-github-storybookjs-storybook",
-    "contentHash": "7393efc93792d2229e11a01fb971d0f4dbc5cb63ba7472f1736c05065727bb38",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261117-4MTD",
     "timestamp": "2026-11-17T07:20:19.585Z",
     "repository": "NucleoidAI/Nucleoid",
@@ -7492,6 +7447,51 @@
     "contentHash": "5de0fd7a43dd29a63ad39deff50fcba7ef3716cf9a3f953a6f3563927e996d84",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-4CTQ",
+    "timestamp": "2026-11-18T15:59:39.758Z",
+    "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
+    "learningId": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf",
+    "contentHash": "47a77635a1b42bf31ca496cb0dbb3693a9d68f2ebf050e4cfb61737e4608c776",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-4NYU",
+    "timestamp": "2026-11-18T15:59:54.198Z",
+    "repository": "freenet/freenet-core",
+    "learningId": "learn-github-freenet-freenet-core",
+    "contentHash": "0d7df687d6711ef72bcfd3c283274849a52cba40c5d7e268d10f5df88d474a56",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-4Y0A",
+    "timestamp": "2026-11-18T16:00:07.210Z",
+    "repository": "briaai/RMBG-3.0",
+    "learningId": "learn-huggingface-briaai-rmbg-3-0",
+    "contentHash": "e77b39b820a82a7ace5cc1769a28eb54b5238ccead3d077e901088995200009d",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

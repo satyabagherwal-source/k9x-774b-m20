@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-18T15:51:56.517Z",
-  "total_records": 1874,
+  "last_updated": "2026-11-18T16:01:21.385Z",
+  "total_records": 1878,
   "domains": {
     "A": {
       "total": 13,
@@ -51,7 +51,7 @@
       ]
     },
     "D": {
-      "total": 789,
+      "total": 792,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -841,7 +841,10 @@
         "domain_intelligence-research-knowledge-intelligence-hf-qwen-qwen-image-2-1-learnings-core-invariants",
         "domain_intelligence-research-knowledge-intelligence-fallow-rs-fallow-core-invariants",
         "domain_intelligence-research-knowledge-intelligence-fallow-rs-fallow-learnings-core-invariants",
-        "DOM-D-A606F2DF"
+        "DOM-D-A606F2DF",
+        "domain_intelligence-research-knowledge-intelligence-briaai-rmbg-3-0-core-invariants",
+        "DOM-D-EE4276B2",
+        "domain_intelligence-research-knowledge-intelligence-hf-briaai-rmbg-3-0-learnings-core-invariants"
       ]
     },
     "E": {
@@ -1919,7 +1922,7 @@
       ]
     },
     "L": {
-      "total": 14,
+      "total": 15,
       "record_ids": [
         "DOM-L-1B851132",
         "DOM-L-80D1F65C",
@@ -1934,7 +1937,8 @@
         "domain_intelligence-deployment-operations-intelligence-bahdotsh-wrkflw-learnings-core-invariants",
         "DOM-L-817D65B4",
         "DOM-L-497D3321",
-        "DOM-L-9579240F"
+        "DOM-L-9579240F",
+        "DOM-L-902F756C"
       ]
     },
     "M": {
@@ -9240,8 +9244,8 @@
       "title": "Technical Construction Intelligence: freenet/freenet-core Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-freenet-freenet-core-technical-construction-intelligence-freenet-freenet-core-co.md",
       "repository": "freenet/freenet-core",
-      "content_hash": "f1a8daeb46f1be457079b6a3f581579d1308d63af9dc24ab3ff1bacd168f56e6",
-      "created_at": "2026-11-18T07:30:52.208Z"
+      "content_hash": "80b8a967957257a8e7b029c7d6393e23dc38ddbcc8befc156d051f85790993b9",
+      "created_at": "2026-11-18T15:59:54.541Z"
     },
     "domain_intelligence-research-knowledge-intelligence-topoteretes-cognee-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-topoteretes-cognee-core-invariants",
@@ -9318,8 +9322,8 @@
       "title": "Technical Construction Intelligence: freenet-freenet-core-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-freenet-freenet-core-learnings-technical-construction-intelligence-freenet-freen.md",
       "repository": "freenet-freenet-core-learnings",
-      "content_hash": "a197f4013fb31a820b665fd053de000f3d131fae4fb61e6a5e81dc4918d1565b",
-      "created_at": "2026-11-18T07:30:58.516Z"
+      "content_hash": "b9a19603c1ca6b59b0fa9a8530227a516fdbd3239a25cfeb673279c54d4c2cb0",
+      "created_at": "2026-11-18T16:01:21.385Z"
     },
     "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-c": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-c",
@@ -9615,8 +9619,8 @@
       "title": "Research & Knowledge Intelligence: ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf-research-knowledge-intellig.md",
       "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
-      "content_hash": "622db2d793e656d61cc3da297bc48957ce22cfe92d2f689e11bd8612b7c1b033",
-      "created_at": "2026-11-18T06:41:15.363Z"
+      "content_hash": "10628d66c0ed73d244e27058292c3795602e5c59b30b5844a553d65368fc494c",
+      "created_at": "2026-11-18T15:59:39.946Z"
     },
     "domain_intelligence-architecture-intelligence-grpc-grpc-rust-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-grpc-grpc-rust-core-invariants",
@@ -9669,8 +9673,8 @@
       "title": "Research & Knowledge Intelligence: hf-ista-daslab-qwen3.8-flash-next-gsq-rco-coder-gguf-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf-learnings-research-knowledg.md",
       "repository": "hf-ista-daslab-qwen3.8-flash-next-gsq-rco-coder-gguf-learnings",
-      "content_hash": "f16e872ab56b748dc1171d8f4ed3dc47843bbf344932f0d757199f968836bd65",
-      "created_at": "2026-11-18T06:41:28.025Z"
+      "content_hash": "bab632ede1ee0a70744d4453b4067ff0d9fbfeba6eaf2f1bf81715363ccfdc63",
+      "created_at": "2026-11-18T16:00:41.822Z"
     },
     "domain_intelligence-content-information-intelligence-mattermost-mattermost-learnings-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-mattermost-mattermost-learnings-core-invariants",
@@ -31329,6 +31333,108 @@
       "repository": "lioensky-vcptoolbox-learnings",
       "content_hash": "daa508f70f966259f6f9d9649c7551841657ddb1515de2cb2844fd85e828ab0b",
       "created_at": "2026-11-18T15:51:56.517Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-briaai-rmbg-3-0-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-briaai-rmbg-3-0-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: briaai/RMBG-3.0 Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-briaai-rmbg-3-0-research-knowledge-intelligence-briaai-rmbg-3-0-core-invarian.md",
+      "repository": "briaai/RMBG-3.0",
+      "content_hash": "b06a5fbe31036759fcc3d2bed853e69cbcbe6adb763aa0a1265f77653cabe352",
+      "created_at": "2026-11-18T16:00:07.390Z"
+    },
+    "DOM-D-EE4276B2": {
+      "record_id": "DOM-D-EE4276B2",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): briaai/RMBG-3.0",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-briaai-rmbg-3.0-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/briaai/RMBG-3.0](https://huggingface.co/briaai/RMBG-3.0))  \n> **Source Version**: `hf-briaai-rm`  \n> **License**: Open-Source  \n> **Synthesized By**: zero-clo",
+      "content_hash": "b06a1691d8505d3c35f480a4ac6129866ad9a49aea67cf4468c3c13c4e403d1a",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-briaai-rmbg-3.0-learnings.md`  \n> **Source**: huggingface ([https://huggingface.c -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-briaai-rmbg-3.0-learnings.md`  \n> **Source**: huggingface ([https://huggingface.c",
+      "provenance": {
+        "source_uri": "project://hf-briaai-rmbg-3.0/hf-briaai-rmbg-3.0-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-18T16:00:10.177Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-briaai-rmbg-3.0)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-briaai-rmbg-3.0"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-18T16:00:41.143Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-briaai-rmbg-3-0-learnings-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-briaai-rmbg-3-0-learnings-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-briaai-rmbg-3.0-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-briaai-rmbg-3-0-learnings-research-knowledge-intelligence-hf-briaai-rmbg-3-0-.md",
+      "repository": "hf-briaai-rmbg-3.0-learnings",
+      "content_hash": "f247e3e9b5f43aa04a68c5c356924d1f00f13d9b89a3193be67e51edd7b6f5ae",
+      "created_at": "2026-11-18T16:00:41.413Z"
+    },
+    "DOM-L-902F756C": {
+      "record_id": "DOM-L-902F756C",
+      "domain_letter": "L",
+      "domain_id": "deployment_operations",
+      "domain_name": "Deployment & Operations Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "L",
+          "id": "deployment_operations",
+          "name": "Deployment & Operations Intelligence"
+        }
+      ],
+      "title": "hosting): bound per-neighbor hosting adverts and close disconnect race",
+      "content": "When implementing operations in `crates/core/src/node.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in freenet/freenet-core. All inputs crossing module boundaries must be explicitly verified before state persistence.",
+      "content_hash": "23d0ef549f141d46fa2fcc05a96a3197acae605f5019234e3c7601fbe2ad5e44",
+      "summary": "Prevents defects observed in production commit `9811972d`: hosting): bound per-neighbor hosting adverts and close disconnect race. Unvalidat -> When implementing operations in `crates/core/src/node.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and ",
+      "provenance": {
+        "source_uri": "project://freenet-freenet-core/freenet-freenet-core-learnings.md",
+        "source_version": "9811972d",
+        "observed_at": "2026-11-18T15:59:53.217Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (freenet-freenet-core)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of freenet-freenet-core"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "L"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.64,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-18T16:01:20.939Z"
     }
   }
 }

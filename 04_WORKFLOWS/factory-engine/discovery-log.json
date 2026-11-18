@@ -21544,5 +21544,17 @@
     "qualityScore": 2102,
     "verifiedOrg": false,
     "discoveredAt": "2026-11-18T12:29:28.108Z"
+  },
+  {
+    "name": "briaai/RMBG-3.0",
+    "fullName": "briaai/RMBG-3.0",
+    "url": "https://huggingface.co/briaai/RMBG-3.0",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: briaai/RMBG-3.0 (87 likes, 42 downloads)",
+    "likes": 87,
+    "downloads": 42,
+    "qualityScore": 912,
+    "discoveredAt": "2026-11-18T15:57:22.434Z"
   }
 ]

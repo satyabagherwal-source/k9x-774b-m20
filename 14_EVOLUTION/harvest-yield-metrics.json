@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T15:51:51.053Z",
-  "total_cycles_completed": 10550,
-  "total_learnings_persisted": 10550,
-  "total_rules_promoted": 10015,
+  "last_updated": "2026-11-18T16:00:07.220Z",
+  "total_cycles_completed": 10553,
+  "total_learnings_persisted": 10553,
+  "total_rules_promoted": 10016,
   "history": [
-    {
-      "timestamp": "2026-11-18T04:29:11.366Z",
-      "repository": "kotest/kotest",
-      "learningId": "learn-github-kotest-kotest",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-18T04:29:18.034Z",
-      "repository": "cilium/cilium",
-      "learningId": "learn-github-cilium-cilium",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-18T04:29:19.924Z",
-      "repository": "trailbaseio/trailbase",
-      "learningId": "learn-github-trailbaseio-trailbase",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-18T04:37:22.102Z",
       "repository": "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
@@ -1403,6 +1382,27 @@
       "repository": "lioensky/VCPToolBox",
       "learningId": "learn-github-lioensky-vcptoolbox",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T15:59:39.768Z",
+      "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
+      "learningId": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T15:59:54.207Z",
+      "repository": "freenet/freenet-core",
+      "learningId": "learn-github-freenet-freenet-core",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T16:00:07.220Z",
+      "repository": "briaai/RMBG-3.0",
+      "learningId": "learn-huggingface-briaai-rmbg-3-0",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]
