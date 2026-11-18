@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-18T21:50:22.640Z",
+  "updated_at": "2026-11-18T22:06:57.787Z",
   "stats": {
-    "total_discovered": 5700,
-    "approved_pending_harvest": 5391,
+    "total_discovered": 5704,
+    "approved_pending_harvest": 5395,
     "harvested_count": 0,
     "rejected_count": 309,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 5369,
+      "COMMUNITY_AND_EXPERT": 5373,
       "OFFICIAL_DOCUMENTATION": 184,
       "STANDARDS_AND_SPECIFICATIONS": 111,
       "ENGINEERING_BLOGS": 4,
@@ -123258,6 +123258,94 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/pulumi-pulumi-learnings.md",
         "fileName": "pulumi-pulumi-learnings.md"
+      }
+    },
+    "SRC-15BC13F098B2": {
+      "id": "SRC-15BC13F098B2",
+      "url": "https://github.com/embassy-rs/stm32-data-generated",
+      "title": "https://github.com/embassy-rs/stm32-data-generated",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T22:06:56.724Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/embassy-rs-embassy-learnings.md",
+        "fileName": "embassy-rs-embassy-learnings.md"
+      }
+    },
+    "SRC-473E39095E8E": {
+      "id": "SRC-473E39095E8E",
+      "url": "https://github.com/embassy-rs/embassy/blob/embassy-net-nrf91-v$VERSION/embassy-net-nrf91/src",
+      "title": "https://github.com/embassy-rs/embassy/blob/embassy-net-nrf91-v$VERSION/embassy-net-nrf91/src",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T22:06:56.777Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/embassy-rs-embassy-learnings.md",
+        "fileName": "embassy-rs-embassy-learnings.md"
+      }
+    },
+    "SRC-852987B11F85": {
+      "id": "SRC-852987B11F85",
+      "url": "https://github.com/embassy-rs/embassy/blob/$COMMIT/embassy-net-nrf91/src",
+      "title": "https://github.com/embassy-rs/embassy/blob/$COMMIT/embassy-net-nrf91/src",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T22:06:56.816Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/embassy-rs-embassy-learnings.md",
+        "fileName": "embassy-rs-embassy-learnings.md"
+      }
+    },
+    "SRC-BE088A69B81D": {
+      "id": "SRC-BE088A69B81D",
+      "url": "https://github.com/gluesql/gluesql/blob/dda0280aec2a591abc4895df1155d6416148947b/core/src/data/value/to_sql.rs",
+      "title": "https://github.com/gluesql/gluesql/blob/dda0280aec2a591abc4895df1155d6416148947b/core/src/data/value/to_sql.rs",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T22:06:57.787Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gluesql-gluesql-learnings.md",
+        "fileName": "gluesql-gluesql-learnings.md"
       }
     }
   }

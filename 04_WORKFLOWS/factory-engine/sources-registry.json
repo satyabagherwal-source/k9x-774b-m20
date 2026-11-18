@@ -80,8 +80,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-18T21:50:21.032Z",
-    "lastVerified": "2026-11-18T21:50:21.032Z",
+    "lastChecked": "2026-11-18T22:06:56.550Z",
+    "lastVerified": "2026-11-18T22:06:56.550Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -164,8 +164,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-18T21:23:25.131Z",
-    "lastVerified": "2026-11-18T21:23:25.131Z",
+    "lastChecked": "2026-11-18T22:03:33.064Z",
+    "lastVerified": "2026-11-18T22:03:33.064Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -1219,12 +1219,12 @@
     "lastVerified": "2026-11-18T12:16:02.295Z"
   },
   "rustcrypto-hashes": {
-    "name": "RustCrypto/hashes",
+    "name": "hashes",
     "officialUrl": "https://github.com/RustCrypto/hashes",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-18T16:22:27.109Z",
-    "lastVerified": "2026-11-18T16:22:27.109Z",
+    "lastChecked": "2026-11-18T22:03:28.064Z",
+    "lastVerified": "2026-11-18T22:03:28.064Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-rustcrypto-hashes",
@@ -1233,7 +1233,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "50a7ea68"
   },
   "t8y2-dbx": {
     "name": "t8y2/dbx",
@@ -4404,5 +4405,70 @@
     "lastChecked": "2026-11-18T21:50:15.677Z",
     "revisionIdentifier": "7b1b5f7e",
     "lastVerified": "2026-11-18T21:50:15.677Z"
+  },
+  "embassy-rs-embassy": {
+    "name": "embassy-rs/embassy",
+    "officialUrl": "https://github.com/embassy-rs/embassy",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-11-18T22:03:21.901Z",
+    "lastVerified": "2026-11-18T22:03:21.901Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-embassy-rs-embassy",
+    "contentHash": "68e97b1124d2f928be2302ecfdbc31034695ef94b6476a5c96ce40b7b81df021",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 12,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-meta-llama-llama-2-7b-chat-hf": {
+    "name": "meta-llama/Llama-2-7b-chat-hf",
+    "officialUrl": "https://huggingface.co/meta-llama/Llama-2-7b-chat-hf",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-18T22:03:20.565Z",
+    "lastVerified": "2026-11-18T22:03:20.565Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-meta-llama-llama-2-7b-chat-hf",
+    "contentHash": "4874b36c48dd43898245af8a4002df86cbf807098fd62070db7033af720eca5a",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "react-native-modal-react-native-modal": {
+    "name": "react-native-modal",
+    "officialUrl": "https://github.com/react-native-modal/react-native-modal",
+    "lastChecked": "2026-11-18T22:03:23.057Z",
+    "revisionIdentifier": "3e413c4c",
+    "lastVerified": "2026-11-18T22:03:23.057Z"
+  },
+  "saltstack-salt": {
+    "name": "salt",
+    "officialUrl": "https://github.com/saltstack/salt",
+    "lastChecked": "2026-11-18T22:03:25.733Z",
+    "revisionIdentifier": "d32a4535",
+    "lastVerified": "2026-11-18T22:03:25.733Z"
+  },
+  "gluesql-gluesql": {
+    "name": "gluesql/gluesql",
+    "officialUrl": "https://github.com/gluesql/gluesql",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-11-18T22:03:34.633Z",
+    "lastVerified": "2026-11-18T22:03:34.633Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-gluesql-gluesql",
+    "contentHash": "ae05025b8b9bebb1c1fea6c6014caa1aebb5e6caed17d4c0d2bc41487e0caae1",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

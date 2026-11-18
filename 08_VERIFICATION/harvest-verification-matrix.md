@@ -11109,3 +11109,6 @@
 | `CYCLE-20261118-N1AF` | `2026-11-18T21:50:06.663Z` | `stabilityai/stable-diffusion-3-medium` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-stabilityai-stable-diffusion-3-medium-learnings.md` | Yes (`fc468bf5...`) |
 | `CYCLE-20261118-N3O8` | `2026-11-18T21:50:09.752Z` | `grpc/grpc-rust` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9287` | Yes (`9f8fa370...`) |
 | `CYCLE-20261118-N9Z5` | `2026-11-18T21:50:17.921Z` | `pulumi/pulumi` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9025` | Yes (`0c38759b...`) |
+| `CYCLE-20261118-43QN` | `2026-11-18T22:03:22.991Z` | `embassy-rs/embassy` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9288` | Yes (`68e97b11...`) |
+| `CYCLE-20261118-4DGW` | `2026-11-18T22:03:35.600Z` | `gluesql/gluesql` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9289` | Yes (`ae05025b...`) |
+| `CYCLE-20261118-8MCA` | `2026-11-18T22:06:53.722Z` | `meta-llama/Llama-2-7b-chat-hf` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-meta-llama-llama-2-7b-chat-hf-learnings.md` | Yes (`4874b36c...`) |

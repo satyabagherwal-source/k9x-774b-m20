@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T21:50:17.930Z",
-  "total_cycles_completed": 10620,
-  "total_learnings_persisted": 10620,
-  "total_rules_promoted": 10050,
+  "last_updated": "2026-11-18T22:06:53.730Z",
+  "total_cycles_completed": 10623,
+  "total_learnings_persisted": 10623,
+  "total_rules_promoted": 10052,
   "history": [
-    {
-      "timestamp": "2026-11-18T08:06:05.908Z",
-      "repository": "gocd/gocd",
-      "learningId": "learn-github-gocd-gocd",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-18T08:06:27.620Z",
-      "repository": "BAAI/bge-m3",
-      "learningId": "learn-huggingface-baai-bge-m3",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-18T08:20:28.457Z",
-      "repository": "Qwen/Qwen3-0.6B",
-      "learningId": "learn-huggingface-qwen-qwen3-0-6b",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-18T08:21:35.314Z",
       "repository": "StarRocks/starrocks",
@@ -1403,6 +1382,27 @@
       "repository": "pulumi/pulumi",
       "learningId": "learn-github-pulumi-pulumi",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T22:03:23.000Z",
+      "repository": "embassy-rs/embassy",
+      "learningId": "learn-github-embassy-rs-embassy",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T22:03:35.609Z",
+      "repository": "gluesql/gluesql",
+      "learningId": "learn-github-gluesql-gluesql",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T22:06:53.730Z",
+      "repository": "meta-llama/Llama-2-7b-chat-hf",
+      "learningId": "learn-huggingface-meta-llama-llama-2-7b-chat-hf",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

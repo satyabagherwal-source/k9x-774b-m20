@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T21:50:22.864Z",
+  "last_updated": "2026-11-18T22:06:57.964Z",
   "directives": [
     {
       "id": "CD-001",
@@ -31021,6 +31021,48 @@
       "source_repo": "pulumi-pulumi",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-8F703B-update-module-go-opentelemetry-io-otel-s.md",
+      "staged_date": "2026-11-18"
+    },
+    {
+      "id": "CD-43W6",
+      "directive_title": "fix LPTIM time driver and low-power builds, make the LPTIM clock explicit",
+      "source_repo": "embassy-rs/embassy",
+      "source_commit": "b4d9d61a",
+      "staged_file": "11_INBOX/candidate-directives/CD-43W6-fix-lptim-time-driver-and-low-power-builds-make-the-lptim-clock-explicit.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-18",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-8PM1",
+      "directive_title": "Separate adjacent minus signs in SQL expressions",
+      "source_repo": "gluesql-gluesql-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-8PM1-separate-adjacent-minus-signs-in-sql-expressions.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-18",
+      "domain_letter": "I"
+    },
+    {
+      "id": "CD-8OVP",
+      "directive_title": "stm32: fix LPTIM time driver and low-power builds, make the LPTIM clock explicit",
+      "source_repo": "embassy-rs-embassy-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-8OVP-stm32-fix-lptim-time-driver-and-low-power-builds-make-the-lptim-clock-explicit.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-18",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-ADDF84",
+      "directive_title": "Separate adjacent minus signs in SQL expressions",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "gluesql-gluesql",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-ADDF84-separate-adjacent-minus-signs-in-sql-exp.md",
       "staged_date": "2026-11-18"
     }
   ]

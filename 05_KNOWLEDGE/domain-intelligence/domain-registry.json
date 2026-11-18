@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-18T21:50:22.998Z",
-  "total_records": 1912,
+  "last_updated": "2026-11-18T22:06:58.100Z",
+  "total_records": 1914,
   "domains": {
     "A": {
       "total": 13,
@@ -1723,7 +1723,7 @@
       ]
     },
     "I": {
-      "total": 95,
+      "total": 97,
       "record_ids": [
         "DOM-I-16F011E5",
         "DOM-I-BF0A22A6",
@@ -1819,7 +1819,9 @@
         "domain_intelligence-content-information-intelligence-lioensky-vcptoolbox-core-invariants",
         "domain_intelligence-content-information-intelligence-lioensky-vcptoolbox-learnings-core-invariants",
         "domain_intelligence-content-information-intelligence-erkamyaman-rust-anything-core-invariants",
-        "domain_intelligence-content-information-intelligence-erkamyaman-rust-anything-learnings-core-invaria"
+        "domain_intelligence-content-information-intelligence-erkamyaman-rust-anything-learnings-core-invaria",
+        "domain_intelligence-content-information-intelligence-gluesql-gluesql-core-invariants",
+        "domain_intelligence-content-information-intelligence-gluesql-gluesql-learnings-core-invariants"
       ]
     },
     "J": {
@@ -9725,8 +9727,8 @@
       "title": "Architecture Intelligence: embassy-rs/embassy Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-embassy-rs-embassy-architecture-intelligence-embassy-rs-embassy-core-invariants.md",
       "repository": "embassy-rs/embassy",
-      "content_hash": "181dec6d4397ff84ef46af08568184abf41b3b383df8eb622755947e2f1faa08",
-      "created_at": "2026-11-15T17:52:40.874Z"
+      "content_hash": "0fa555bd910d134a86df7ab0a111218507ec580fff3cc4025e5157007849217f",
+      "created_at": "2026-11-18T22:03:23.333Z"
     },
     "domain_intelligence-research-knowledge-intelligence-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf-core": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf-core",
@@ -9770,8 +9772,8 @@
       "title": "Architecture Intelligence: embassy-rs-embassy-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-embassy-rs-embassy-learnings-architecture-intelligence-embassy-rs-embassy-learni.md",
       "repository": "embassy-rs-embassy-learnings",
-      "content_hash": "53413a2e0de93844f6d2aae532ff78c3b576e03cae3bfed225b037b731ef37f0",
-      "created_at": "2026-11-15T17:52:50.394Z"
+      "content_hash": "07488624c70100babd13590fee64abc4461779c3cc331a43ef27330bdd8d8a1f",
+      "created_at": "2026-11-18T22:06:57.152Z"
     },
     "DOM-D-4AA06C1E": {
       "record_id": "DOM-D-4AA06C1E",
@@ -12949,8 +12951,8 @@
       "title": "Research & Knowledge Intelligence: meta-llama/Llama-2-7b-chat-hf Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-meta-llama-llama-2-7b-chat-hf-research-knowledge-intelligence-meta-llama-llam.md",
       "repository": "meta-llama/Llama-2-7b-chat-hf",
-      "content_hash": "97f51a3d3de341d1a05e2d5266776fccc71ddfb9d0761724b5ae72cc5daa04f6",
-      "created_at": "2026-11-14T04:06:08.770Z"
+      "content_hash": "1258f9f24f6e33c22b8ea6dec8168fcf92f7ba9b357bb5797f23c55ad1e2cb88",
+      "created_at": "2026-11-18T22:06:53.896Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-chatrlabs-qwen-image-2-1-uncensored-omni-quan": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-chatrlabs-qwen-image-2-1-uncensored-omni-quan",
@@ -13015,8 +13017,8 @@
       "title": "Research & Knowledge Intelligence: hf-meta-llama-llama-2-7b-chat-hf-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-meta-llama-llama-2-7b-chat-hf-learnings-research-knowledge-intelligence-hf-me.md",
       "repository": "hf-meta-llama-llama-2-7b-chat-hf-learnings",
-      "content_hash": "10d4a30e957151797906a5e8920f0a3c4b86918e0cd47393fc026e731fb81934",
-      "created_at": "2026-11-14T04:06:54.447Z"
+      "content_hash": "0a4cd87707cd401083aca69034546451263696d02cf5f887c2351155987ab4c3",
+      "created_at": "2026-11-18T22:06:57.602Z"
     },
     "domain_intelligence-research-knowledge-intelligence-mistralai-mixtral-8x7b-instruct-v0-1-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-mistralai-mixtral-8x7b-instruct-v0-1-core-invari",
@@ -32006,6 +32008,24 @@
       "repository": "pulumi/pulumi",
       "content_hash": "a97efa7b7e9411915847a6e1918217bd2e413aa65993165bbc012a10f04ad700",
       "created_at": "2026-11-18T21:50:18.259Z"
+    },
+    "domain_intelligence-content-information-intelligence-gluesql-gluesql-core-invariants": {
+      "record_id": "domain_intelligence-content-information-intelligence-gluesql-gluesql-core-invariants",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: gluesql/gluesql Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-gluesql-gluesql-content-information-intelligence-gluesql-gluesql-core-invariants.md",
+      "repository": "gluesql/gluesql",
+      "content_hash": "747755eb1828c9b7e4c65299d6fee1c1b4bb7d9d57dc88efc2bf308a2eac41f5",
+      "created_at": "2026-11-18T22:03:35.942Z"
+    },
+    "domain_intelligence-content-information-intelligence-gluesql-gluesql-learnings-core-invariants": {
+      "record_id": "domain_intelligence-content-information-intelligence-gluesql-gluesql-learnings-core-invariants",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: gluesql-gluesql-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-gluesql-gluesql-learnings-content-information-intelligence-gluesql-gluesql-learn.md",
+      "repository": "gluesql-gluesql-learnings",
+      "content_hash": "d48c22ed34f6126d21e4fc6b0c84070ce2cd57f19d59fd2a1b1a23f407d35489",
+      "created_at": "2026-11-18T22:06:58.100Z"
     }
   }
 }

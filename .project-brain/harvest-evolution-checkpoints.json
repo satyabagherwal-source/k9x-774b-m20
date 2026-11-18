@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T21:50:23.265Z",
+  "last_updated": "2026-11-18T22:06:58.349Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-18T21:02:10.043Z",
@@ -908,9 +908,9 @@
       "staged_for_review": 0
     },
     "embassy-rs-embassy-learnings.md": {
-      "processed_at": "2026-11-17T07:59:59.095Z",
+      "processed_at": "2026-11-18T22:06:56.686Z",
       "promoted_canonical": 0,
-      "staged_for_review": 0
+      "staged_for_review": 1
     },
     "hf-prunaai-p-h3-image-learnings.md": {
       "processed_at": "2026-11-17T00:38:46.347Z",
@@ -1633,7 +1633,7 @@
       "staged_for_review": 0
     },
     "gluesql-gluesql-learnings.md": {
-      "processed_at": "2026-11-17T06:28:36.125Z",
+      "processed_at": "2026-11-18T22:06:57.754Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2383,8 +2383,8 @@
       "staged_for_review": 1
     },
     "hf-meta-llama-llama-2-7b-chat-hf-learnings.md": {
-      "processed_at": "2026-11-14T04:06:54.223Z",
-      "promoted_canonical": 1,
+      "processed_at": "2026-11-18T22:06:57.435Z",
+      "promoted_canonical": 0,
       "staged_for_review": 0
     },
     "hf-mistralai-mixtral-8x7b-instruct-v0.1-learnings.md": {
@@ -3473,7 +3473,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 2085,
+  "total_dossiers_evaluated": 2088,
   "total_canonical_promoted": 367,
-  "total_staged_for_review": 1571
+  "total_staged_for_review": 1573
 }

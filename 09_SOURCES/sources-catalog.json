@@ -965,8 +965,8 @@
     "sourceUrl": "https://huggingface.co/meta-llama/Llama-2-7b-chat-hf",
     "sourceVersion": "hf-meta-llama-llama-2-7b-chat-hf",
     "license": "Open-Source",
-    "contentHash": "2c9409f01a99303c43698bf63706b6dc7e05c3411ced5e3bfbe28350c1f9e801",
-    "lastHarvestedAt": "2026-11-14T04:06:08.578Z",
+    "contentHash": "4874b36c48dd43898245af8a4002df86cbf807098fd62070db7033af720eca5a",
+    "lastHarvestedAt": "2026-11-18T22:06:53.726Z",
     "learningId": "learn-huggingface-meta-llama-llama-2-7b-chat-hf"
   },
   "hf-meta-llama-llama-2-7b": {
@@ -4123,10 +4123,10 @@
     "repository": "gluesql/gluesql",
     "platform": "github",
     "sourceUrl": "https://github.com/gluesql/gluesql",
-    "sourceVersion": "dda0280a",
+    "sourceVersion": "3a730bf0",
     "license": "Apache-2.0",
-    "contentHash": "9a410d07cd3ae58d1a98aa7bb8cb743b9093ba9ce0914821bdc22255da13b128",
-    "lastHarvestedAt": "2026-11-17T06:28:31.347Z",
+    "contentHash": "ae05025b8b9bebb1c1fea6c6014caa1aebb5e6caed17d4c0d2bc41487e0caae1",
+    "lastHarvestedAt": "2026-11-18T22:03:35.604Z",
     "learningId": "learn-github-gluesql-gluesql"
   },
   "mui-base-ui": {
@@ -5343,10 +5343,10 @@
     "repository": "embassy-rs/embassy",
     "platform": "github",
     "sourceUrl": "https://github.com/embassy-rs/embassy",
-    "sourceVersion": "03edb03b",
+    "sourceVersion": "b4d9d61a",
     "license": "Apache-2.0",
-    "contentHash": "f24812578b0e6aeb56ad93dd2a19e563394a903ede54fcf628655e2cacdb062a",
-    "lastHarvestedAt": "2026-11-17T07:59:55.558Z",
+    "contentHash": "68e97b1124d2f928be2302ecfdbc31034695ef94b6476a5c96ce40b7b81df021",
+    "lastHarvestedAt": "2026-11-18T22:03:22.995Z",
     "learningId": "learn-github-embassy-rs-embassy"
   },
   "jpush-aurora-imui": {

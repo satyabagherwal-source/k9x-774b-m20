@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/gluesql-gluesql-learnings.md`  
 > **Source**: github ([https://github.com/gluesql/gluesql](https://github.com/gluesql/gluesql))  
-> **Source Version**: `dda0280a`  
+> **Source Version**: `3a730bf0`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-17T06:28:30.492Z  
+> **Timestamp**: 2026-11-18T22:03:34.638Z  
 > **Learning ID**: `learn-github-gluesql-gluesql`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/gluesql-gluesql-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/gluesql/gluesql](https://github.com/gluesql/gluesql))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T06:28:30.487Z  
+> **Harvest Timestamp**: 2026-11-18T22:03:34.633Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: GlueSQL is quite sticky. It sticks to anything.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3139 stars
+- **Stars / Engagement**: 3141 stars
 
 ---
 
@@ -656,12 +656,15 @@ impl Expr {
                     pattern.to_sql_with(quoted)
                 )
             }
-            Expr::UnaryOp { op, expr } => match op {
-                UnaryOperator::Factorial => {
-                    format!("{}{}", expr.to_sql_with(quoted), op.to_sql())
+            Expr::UnaryOp { op, expr } => {
+                let expr = expr.to_sql_with(quoted);
+
+                match op {
+                    UnaryOperator::Minus if expr.starts_with('-') => format!("- {expr}"),
+                    UnaryOperator::Factorial => format!("{expr}{}", op.to_sql()),
+                    _ => format!("{}{expr}", op.to_sql()),
                 }
-                _ => format!("{}{}", op.to_sql(), expr.to_sql_with(quoted)),
-            },
+            }
             Expr::Nested(expr) => format!("({})", expr.to_sql_with(quoted)),
             Expr::Literal(s) => s.to_sql(),
             Expr::Value(v) => v.to_sql(),
@@ -757,9 +760,13 @@ impl Expr {
 mod tests {
 
     use {
-        crate::ast::{
-            BinaryOperator, DataType, DateTimeField, Expr, Literal, Projection, Query, Select,
-            SelectItem, SetExpr, TableFactor, TableWithJoins, ToSql, ToSqlUnquoted, UnaryOperator,
+        crate::{
+            ast::{
+                BinaryOperator, DataType, DateTimeField, Expr, Literal, Projection, Query, Select,
+                SelectItem, SetExpr, TableFactor, TableWithJoins, ToSql, ToSqlUnquoted,
+                UnaryOperator,
+            },
+            data::Value,
         },
         bigdecimal::BigDecimal,
         regex::Regex,
@@ -768,12 +775,7 @@ mod tests {
 
     #[test]
     fn to_sql() {
-        let re = Regex::new(r"\n\s+").unwrap();
-        let trim = |s: &str| re.replace_all(s.trim(), "\n").into_owned();
-
-        assert_eq!(r#""id""#, Expr::Identifier("id".to_owned()).to_sql());
-
-        assert_eq
+        let re = Regex::new(r"\n\s
 ```
 
 ### Core Architecture Module: `core/src/ast/function.rs`
@@ -2037,11 +2039,11 @@ impl BigDecimalExt for BigDecimal {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #2082** (2026-11-18): **Value::to_sql() emits invalid SQL for POINT values**
+  *Symptoms*: `Value::to_sql()` renders the point `(1, 2)` as `POINT(1 2)`. That spelling works as WKT text in `CAST('POINT(1 2)' AS POINT)`. When GlueSQL parses it as a standalone SQL expression, it fails at the second coordinate with `Expected: ), found: 2`.  ```rust use gluesql_core::{     ast::ToSql,     data::{Point, Value},     parse_sql::parse_expr, };  let sql = Value::Point(Point::new(1.0, 2.0)).to_sql(); parse_expr(&sql).unwrap(); ```  `to_sql()` should produce `POINT(1, 2)`, so parsing and evaluating the generated expression returns the original point. The existing unit test asserts the space-separated spelling. [Current unit test](https://github.com/gluesql/gluesql/blob/dda0280aec2a591abc4895df1155d6416148947b/core/src/data/value/to_sql.rs#L149-L153)  This surfaced while testing #2078. GlueSQL successfully creates a table with a bound `POINT` default, then fails to read the table schema when it parses the saved default.
+
 - **Issue #2011** (2026-09-28): **DELETE with multiple tables in FROM deletes from the first table only and reports success**
   *Symptoms*: ## Summary  `DELETE FROM T1, T2 WHERE ...` is accepted, but translation keeps only the first table and discards the rest. The statement reports a successful delete while the remaining tables are untouched.  This is a silent wrong result — nothing in the output indicates that part of the statement was ignored.  ## Reproduction  ```sql CREATE TABLE T1 (a INTEGER); CREATE TABLE T2 (a INTEGER); INSERT INTO T1 VALUES (1); INSERT INTO T2 VALUES (1);  DELETE FROM T1, T2 WHERE a = 1; -- "1 row deleted"  SELECT * FROM T1; -- | a | --            <- deleted  SELECT * FROM T2; -- | a | -- |---| -- | 1 |      <- still there ```  ## Expected behavior  | Statement | Expected | Today | |---|---|---| | `DELETE FROM T1, T2 WHERE a = 1` | `Translate.UnsupportedDeleteOption` | deletes from `T1` only, reports `1 row deleted` | | `DELETE FROM T1, T1 WHERE a = 1` | `Translate.UnsupportedDeleteOption` | deletes from `T1`, reports `1 row deleted` | | `DELETE FROM T1 WHERE a = 1` | deletes from `T1` | unchanged |  ## Root cause  `core/src/translate.rs:178-182`:  ```rust let table_name = from     .iter()     .map(translate_table_with_join)     .next()                                    // first entry only, rest discarded     .ok_or(TranslateError::UnreachableEmptyTable)??; ```  `from` is a `Vec<TableWithJoins>`. `.next()` takes the head and drops the tail without inspecting it.  This is the same failure shape as #2002, where `columns.first()` silently narrowed a composite `FOREIGN KEY` to its first col
-
-- **Issue #2009** (2026-09-27): **Statements in a batched `execute` are planned against the schema from before the batch**
-  *Symptoms*: ## Summary  `Glue::execute` plans every statement before executing any of them, so a statement is planned against the schema as it was before the batch started. Any DDL earlier in the same call is invisible to the planner.  Schema-dependent planner passes then silently no-op, and the executor receives a plan whose invariants were never established.  ## Reproduction  Each case is issued twice: once as a single `Glue::execute` call, once as one call per statement.  | SQL | One statement per call | Batched in one call | |---|---|---| | `CREATE TABLE S; INSERT INTO S VALUES ('{"a": 1}'); SELECT a FROM S;` | returns `a = 1` | ❌ `evaluate: identifier not found: a` | | `CREATE TABLE X (id INTEGER); CREATE TABLE Y (id INTEGER); INSERT INTO X VALUES (1); INSERT INTO Y VALUES (1); SELECT id FROM X JOIN Y ON X.id = Y.id;` | ❌ `planner: column reference id is ambiguous, please specify the table name` | returns `id = 1` | | `CREATE TABLE T (a INTEGER PRIMARY KEY); INSERT INTO T VALUES (1); SELECT a FROM T;` | returns `a = 1` | returns `a = 1` |  Case 1 rejects valid SQL. Case 2 accepts invalid SQL and returns a result. Case 3 is unaffected — no schema-dependent pass is load-bearing for it.  ## Root cause  `core/src/glue.rs:70-77`:  ```rust pub fn execute_with_params(...) -> Result<Vec<Payload>> {     let statements = self.plan_with_params(sql, params)?;   // every statement planned here     let mut payloads = Vec::<Payload>::new();     for statement in &statements {         let payload = 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2058,121 +2060,135 @@ impl BigDecimalExt for BigDecimal {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `dda0280a` (2026-11-16)
-**Commit Message**: Isolate JSON storage error fixtures by scenario (#2081)
+### Incident Patch 1: `3a730bf0` (2026-11-18)
+**Commit Message**: Separate adjacent minus signs in SQL expressions (#2089)
 
-Give each error scenario its own fixture directory so schema discovery
-cannot return an unrelated error based on filesystem iteration order.
+Insert a space when a negated operand starts with a minus sign so the SQL parser preserves both signs instead of reading them as a line comment.
 
-**File**: `storages/json-storage/tests/error.rs` (modified, +35/-32)
+**File**: `core/src/ast/expr.rs` (modified, +34/-8)
 ```diff
-@@ -4,62 +4,65 @@ use {
-         prelude::{Error, Glue},
-     },
-     gluesql_json_storage::{JsonStorage, error::JsonStorageError},
-+    std::path::Path,
- };
- 
- #[test]
- fn json_error() {
--    let path = "./tests/samples/";
--    let json_storage = JsonStorage::new(path).unwrap();
--    let mut glue = Glue::new(json_storage);
--
--    let cases = vec![
-+    let cases = [
-         (
--            glue.execute("SELECT * FROM WrongFormatJsonl"),
--            Err(ValueError::InvalidJsonString("[".to_owned()).into()),
-+            "wrong-format-jsonl",
-+            "SELECT * FROM WrongFormatJsonl",
-+            ValueError::InvalidJsonString("[".to_owned()).into(),
-         ),
-         (
--            glue.execute("SELECT * FROM WrongFormatJson"),
--            Err(Error::StorageMsg(
-+            "wrong-format-json",
-+            "SELECT * FROM WrongFormatJson",
-+            Error::StorageMsg(
-                 JsonStorageError::InvalidJsonContent("WrongFormatJson.json".to_owned()).to_string(),
--            )),
-+            ),
-         ),
-         (
--            glue.execute("SELECT * FROM WrongSchema"),
--            Err(Error::Schema(SchemaParseError::CannotParseDDL)),
-+            "wrong-schema",
-+            "SELECT * FROM WrongSchema",
-+            Error::Schema(SchemaParseError::CannotParseDDL),
-         ),
-         (
--            glue.execute("SELECT * FROM WrongTableName"),
--            Err(Error::StorageMsg(
--                JsonStorageError::TableNameDoesNotMatchWithFile.to_string(),
--            )),
-+            "wrong-table-name",
-+            "SELECT * FROM WrongTableName",
-+            Error::StorageMsg(JsonStorageError::TableNameDoesNotMatchWithFile.to_string()),
-         ),
-         (
--            glue.execute("SELECT * FROM Duplicated"),
--            Err(Error::StorageMsg(
-+            "duplicated",
-+            "SELECT * FROM Duplicated",
-+            Error::StorageMsg(
-                 JsonStorageError::BothJsonlAndJsonExist("Duplicated".to_owned()).to_string(),
--            )),
-+            ),
-         ),
-         (
--            glue.execute("DROP TABLE Duplicated"),
--            Err(Error::StorageMsg(
-+            "duplicated",
-+            "DROP TABLE Duplicated",
-+            Error::StorageMsg(
-                 JsonStorageError::BothJsonlAndJsonExist("Duplicated".to_owned()).to_string(),
--            )),
-+            ),
-         ),
-         (
--            glue.execute("SELECT * FROM JsonObjectTypeRequired"),
--            Err(Error::StorageMsg(
--                JsonStorageError::JsonObjectTypeRequired.to_string(),
--            )),
-+            "json-object-type-required",
-+            "SELECT * FROM JsonObjectTypeRequired",
-+            Error::StorageMsg(JsonStorageError::JsonObjectTypeRequired.to_string()),
-         ),
-         (
--            glue.execute("SELECT * FROM JsonArrayTypeRequired"),
--            Err(Error::StorageMsg(
--                JsonStorageError::JsonArrayTypeRequired.to_string(),
--            )),
-+            "json-array-type-required",
-+            "SELECT * FROM JsonArrayTypeRequired",
-+            Error::StorageMsg(JsonStorageError::JsonArrayTypeRequired.to_string()),
-         ),
-     ];
- 
--    for (actual, expected) in cases {
--        assert_eq!(actual.map(|mut payloads| payloads.remove(0)), expected);
-+    let samples = Path::new(env!("CARGO_MANIFEST_DIR")).join("tests/samples/errors");
+@@ -207,12 +207,15 @@ impl Expr {
+                     pattern.to_sql_with(quoted)
+                 )
+             }
+-            Expr::UnaryOp { op, expr } => match op {
+-                UnaryOperator::Factorial => {
+-                    format!("{}{}", expr.to_sql_with(quoted), op.to_sql())
++            Expr::UnaryOp { op, expr } => {
++                let expr = expr.to_sql_with(quoted);
 +
-+    for (directory, sql, expected) in cases {
-+        let storage = JsonStorage::new(samples.join(directory)).unwrap();
-+        let mut glue = Glue::new(storage);
-+        assert_eq!(glue.execute(sql).unwrap_err(), expected, "{sql}");
++                match op {
++                    UnaryOperator::Minus if expr.starts_with('-') => format!("- {expr}"),
++                    UnaryOperator::Factorial => format!("{expr}{}", op.to_sql()),
++                    _ => format!("{}{expr}", op.to_sql()),
+                 }
+-                _ => format!("{}{}", op.to_sql(), expr.to_sql_with(quoted)),
+-            },
++            }
+             Expr::Nested(expr) => format!("({})", expr.to_sql_with(quoted)),
+             Expr::Literal(s) => s.to_sql(),
+             Expr::Value(v) => v.to_sql(),
+@@ -308,9 +311,13 @@ impl Expr {
+ mod tests {
+ 
+     use {
+-        crate::ast::{
+-            BinaryOperator, DataType, DateTimeField, Expr, Literal, Projection, Query, Select,
+-            SelectItem, SetExpr, TableFactor, TableWithJoins, ToSql, ToSqlUnquoted, UnaryOperator,
++        crate::{
++            ast::{
++                BinaryOperator, DataType, DateTimeField, Expr, Literal, Projection, Query, Select,
++                SelectItem, SetExpr, TableFactor, TableWithJoins, ToSql, ToSqlUnquoted,
++                UnaryOperator,
++            },
++            data::Value,
+         },
+         bigdecimal::BigDecimal,
+         regex::Regex,
+@@ -351,6 +358,25 @@ mod tests {
+                 expected,
+             );
+         }
++
++        assert_eq!(
++            "- -1",
++            Expr::UnaryOp {
++                op: UnaryOperator::Minus,
++                expr: Box::new(Expr::Value(Value::I64(-1))),
++            }
++            .to_sql(),
++        );
++
++        assert_eq!(
++            "5!",
++            Expr::UnaryOp {
++                op: UnaryOperator::Factorial,
++                expr: Box::new(Expr::Literal(Literal::Number(5.into()))),
++            }
++            .to_sql(),
++        );
++
+         assert_eq!(
+             r#"-"id""#,
+             Expr::UnaryOp {
+```
+
+---
+
+### Incident Patch 2: `b754ff98` (2026-11-18)
+**Commit Message**: Escape double quotes in DDL table names (#2088)
+
+Double each embedded quote when writing the table name in CREATE TABLE
+and CREATE INDEX. This preserves the original identifier when the DDL
+is parsed again.
+
+**File**: `core/src/data/schema.rs` (modified, +22/-0)
+```diff
+@@ -48,6 +48,7 @@ impl Schema {
+             comment,
+         } = self;
+ 
++        let table_name = table_name.replace('"', "\"\"");
+         let columns = column_defs.as_ref().map(|column_defs| {
+             let foreign_keys = foreign_keys.iter().map(ToSql::to_sql);
+             let body = column_defs
+@@ -258,6 +259,27 @@ mod tests {
+         assert_schema(actual, schema);
      }
- }
+ 
++    #[test]
++    fn to_ddl_escapes_table_name_in_create_table_and_create_index() {
++        let ddl = r#"
++CREATE TABLE "a""b" ("id" INT NULL);
++CREATE INDEX "idx" ON "a""b" ("id");
++"#
++        .trim();
++        let schema = Schema::from_ddl(ddl).unwrap();
++
++        assert_eq!(schema.table_name, r#"a"b"#);
++        assert_eq!(schema.to_ddl(), ddl);
++    }
++
++    #[test]
++    fn ddl_round_trip_preserves_consecutive_quotes_in_table_name() {
++        let schema = Schema::from_ddl(r#"CREATE TABLE "a""""b";"#).unwrap();
++        let restored = Schema::from_ddl(&schema.to_ddl()).unwrap();
++
++        assert_eq!(restored.table_name, r#"a""b"#);
++    }
++
+     #[test]
+     fn table_primary() {
+         let schema = Schema {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2089** (2026-11-18): Separate adjacent minus signs in SQL expressions (@panarch)
+- **PR #2088** (2026-11-18): Escape double quotes in DDL table names (@panarch)
+- **PR #2083** (2026-11-18): Emit comma-separated coordinates in POINT SQL expressions (@panarch)
 - **PR #2081** (2026-11-16): Isolate JSON storage error fixtures by scenario (@panarch)
 - **PR #2080** (closed): json-storage: isolate the duplicate-file error test from shared fixtures (@chiliec)
 - **PR #2077** (2026-11-12): Make CREATE INDEX validation opt-in for storage planners (@panarch)
-- **PR #2076** (2026-11-12): Align NULL evaluation with common SQL semantics (@panarch)
-- **PR #2075** (2026-11-11): Unify Query Builder result assertions (@panarch)
-- **PR #2074** (2026-11-11): Simplify numeric samples in floating-point examples (@panarch)
 
 ---
 
@@ -2192,85 +2208,68 @@ cannot return an unrelated error based on filesystem iteration order.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Isolate JSON storage error fixtures by scenario
+## X. Separate adjacent minus signs in SQL expressions
 
 **RULE**:
-When implementing operations in `storages/json-storage/tests/error.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gluesql/gluesql. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `core/src/ast/expr.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in gluesql/gluesql. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `dda0280a`: Isolate JSON storage error fixtures by scenario. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `3a730bf0`: Separate adjacent minus signs in SQL expressions. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `storages/json-storage/tests/error.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/src/ast/expr.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    std::path::Path,
-    let cases = [
-            "wrong-format-jsonl",
-            "SELECT * FROM WrongFormatJsonl",
-            ValueError::InvalidJsonString("[".to_owned()).into(),
-            "wrong-format-json",
-            "SELECT * FROM WrongFormatJson",
-            Error::StorageMsg(
-            ),
-            "wrong-schema",
-            "SELECT * FROM WrongSchema",
-            Error::Schema(SchemaParseError::CannotParseDDL),
-            "wrong-table-name",
-            "SELECT * FROM WrongTableName",
-            Error::StorageMsg(JsonStorageError::TableNameDoesNotMatchWithFile.to_string()),
-            "duplicated",
-            "SELECT * FROM Duplicated",
-            Error::StorageMsg(
-            ),
-            "duplicated",
-            "DROP TABLE Duplicated",
-            Error::StorageMsg(
-            ),
-            "json-object-type-required",
-            "SELECT * FROM JsonObjectTypeRequired",
-            Error::StorageMsg(JsonStorageError::JsonObjectTypeRequired.to_string()),
-            "json-array-type-required",
-            "SELECT * FROM JsonArrayTypeRequired",
-            Error::StorageMsg(JsonStorageError::JsonArrayTypeRequired.to_string()),
-    let samples = P
+            Expr::UnaryOp { op, expr } => {
+                let expr = expr.to_sql_with(quoted);
+
+                match op {
+                    UnaryOperator::Minus if expr.starts_with('-') => format!("- {expr}"),
+                    UnaryOperator::Factorial => format!("{expr}{}", op.to_sql()),
+                    _ => format!("{}{expr}", op.to_sql()),
+            }
+        crate::{
+            ast::{
+                BinaryOperator, DataType, DateTimeField, Expr, Literal, Projection, Query, Select,
+                SelectItem, SetExpr, TableFactor, TableWithJoins, ToSql, ToSqlUnquoted,
+                UnaryOperator,
+            },
+            data::Value,
+
+        assert_eq!(
+            "- -1",
+            Expr::UnaryOp {
+                op: UnaryOperator::Minus,
+                expr: Box::new(Expr::Value(Value::I64(-1))),
+            }
+            .to_sql(),
+        );
+
+        assert_eq!(
+            "5!",
+            Expr::UnaryOp {
+                op: UnaryOperator::Factorial,
+                expr: Box::new(Expr::Literal(Literal::Number(5.into()))),
+            }
+            .to_sql(),
+        );
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-    let path = "./tests/samples/";
-    let json_storage = JsonStorage::new(path).unwrap();
-    let mut glue = Glue::new(json_storage);
-
-    let cases = vec![
-            glue.execute("SELECT * FROM WrongFormatJsonl"),
-            Err(ValueError::InvalidJsonString("[".to_owned()).into()),
-            glue.execute("SELECT * FROM WrongFormatJson"),
-            Err(Error::StorageMsg(
-            )),
-            glue.execute("SELECT * FROM WrongSchema"),
-            Err(Error::Schema(SchemaParseError::CannotParseDDL)),
-            glue.execute("SELECT * FROM WrongTableName"),
-            Err(Error::StorageMsg(
-                JsonStorageError::TableNameDoesNotMatchWithFile.to_string(),
-            )),
-            glue.execute("SELECT * FROM Duplicated"),
-            Err(Error::StorageMsg(
-            )),
-            glue.execute("DROP TABLE Duplicated"),
-            Err(Error::StorageMsg(
-            )),
-            glue.execute("SELECT * FROM JsonObjectTypeRequired"),
-            Err(Error::StorageMsg(
-                JsonStorageError::JsonObjectTypeRequired.to_string(),
-            )),
-            glue.execute("SELECT * FROM JsonArrayTypeRequired"),
-            Err(Error::StorageMsg(
-
+            Expr::UnaryOp { op, expr } => match op {
+                UnaryOperator::Factorial => {
+                    format!("{}{}", expr.to_sql_with(quoted), op.to_sql())
+                _ => format!("{}{}", op.to_sql(), expr.to_sql_with(quoted)),
+            },
+        crate::ast::{
+            BinaryOperator, DataType, DateTimeField, Expr, Literal, Projection, Query, Select,
+            SelectItem, SetExpr, TableFactor, TableWithJoins, ToSql, ToSqlUnquoted, UnaryOperator,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `dda0280a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `3a730bf0` are properly handled with clean fallback behavior.

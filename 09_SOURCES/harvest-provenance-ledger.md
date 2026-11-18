@@ -11142,3 +11142,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-stabilityai-stable-diffusion-3-medium` | `https://huggingface.co/stabilityai/stable-diffusion-3-medium` | `hf-stabili` | Multi-dimensional audit evidence | 2026-11-18T21:50:06.667Z |
 | `learn-github-grpc-grpc-rust` | `https://github.com/grpc/grpc-rust` | `9205207e` | Multi-dimensional audit evidence | 2026-11-18T21:50:09.756Z |
 | `learn-github-pulumi-pulumi` | `https://github.com/pulumi/pulumi` | `e61ba774` | Multi-dimensional audit evidence | 2026-11-18T21:50:17.925Z |
+| `learn-github-embassy-rs-embassy` | `https://github.com/embassy-rs/embassy` | `b4d9d61a` | Multi-dimensional audit evidence | 2026-11-18T22:03:22.995Z |
+| `learn-github-gluesql-gluesql` | `https://github.com/gluesql/gluesql` | `3a730bf0` | Multi-dimensional audit evidence | 2026-11-18T22:03:35.604Z |
+| `learn-huggingface-meta-llama-llama-2-7b-chat-hf` | `https://huggingface.co/meta-llama/Llama-2-7b-chat-hf` | `hf-meta-ll` | Multi-dimensional audit evidence | 2026-11-18T22:06:53.726Z |

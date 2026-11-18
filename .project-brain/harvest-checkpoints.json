@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-18T21:50:17.934Z",
+  "last_updated": "2026-11-18T22:06:53.733Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1265,14 +1265,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-meta-llama-llama-2-7b-chat-hf",
-      "content_hash": "2c9409f01a99303c43698bf63706b6dc7e05c3411ced5e3bfbe28350c1f9e801",
-      "verified_at": "2026-11-14T04:06:08.588Z",
+      "content_hash": "4874b36c48dd43898245af8a4002df86cbf807098fd62070db7033af720eca5a",
+      "verified_at": "2026-11-18T22:06:53.733Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-14T04:06:08.588Z"
+      "last_updated": "2026-11-18T22:06:53.733Z"
     },
     "meta-llama/Llama-2-7b": {
       "repository": "meta-llama/Llama-2-7b",
@@ -6306,14 +6306,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-gluesql-gluesql",
-      "content_hash": "9a410d07cd3ae58d1a98aa7bb8cb743b9093ba9ce0914821bdc22255da13b128",
-      "verified_at": "2026-11-17T06:28:31.354Z",
+      "content_hash": "ae05025b8b9bebb1c1fea6c6014caa1aebb5e6caed17d4c0d2bc41487e0caae1",
+      "verified_at": "2026-11-18T22:03:35.612Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T06:28:31.354Z"
+      "last_updated": "2026-11-18T22:03:35.612Z"
     },
     "mui/base-ui": {
       "repository": "mui/base-ui",
@@ -8136,14 +8136,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-embassy-rs-embassy",
-      "content_hash": "f24812578b0e6aeb56ad93dd2a19e563394a903ede54fcf628655e2cacdb062a",
-      "verified_at": "2026-11-17T07:59:55.566Z",
+      "content_hash": "68e97b1124d2f928be2302ecfdbc31034695ef94b6476a5c96ce40b7b81df021",
+      "verified_at": "2026-11-18T22:03:23.003Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T07:59:55.566Z"
+      "last_updated": "2026-11-18T22:03:23.003Z"
     },
     "jpush/aurora-imui": {
       "repository": "jpush/aurora-imui",
