@@ -11017,3 +11017,6 @@ Every entry in this ledger must capture:
 | `learn-github-higress-group-higress` | `https://github.com/higress-group/higress` | `392b64e8` | Multi-dimensional audit evidence | 2026-11-18T13:25:43.080Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `b8abe89e` | Multi-dimensional audit evidence | 2026-11-18T13:25:50.327Z |
 | `learn-dom-h-50457654` | `project://higress-group-higress` | `392b64e8` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/higress-group-higress-learnings.md` | 2026-11-18T13:26:20.147Z |
+| `learn-huggingface-altworld-hemmingway-1` | `https://huggingface.co/Altworld/Hemmingway-1` | `hf-altworl` | Multi-dimensional audit evidence | 2026-11-18T13:34:10.674Z |
+| `learn-github-faridsafi-react-native-gifted-chat` | `https://github.com/FaridSafi/react-native-gifted-chat` | `46a1ddbe` | Multi-dimensional audit evidence | 2026-11-18T13:34:17.810Z |
+| `learn-github-tailscale-tailscale` | `https://github.com/tailscale/tailscale` | `87edd6b4` | Multi-dimensional audit evidence | 2026-11-18T13:34:23.177Z |

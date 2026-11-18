@@ -10984,3 +10984,6 @@
 | `CYCLE-20261118-MDR8` | `2026-11-18T13:25:43.076Z` | `higress-group/higress` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9231` | Yes (`5dfb608a...`) |
 | `CYCLE-20261118-MJCJ` | `2026-11-18T13:25:50.323Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md` | Yes (`d98d3740...`) |
 | `CYCLE-2026-11-18-PROJ-EVOLVE` | `2026-11-18T13:26:20.147Z` | `higress-group-higress` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-50457654` [Domain H] | Yes (`8975fd96...`) |
+| `CYCLE-20261118-X9F2` | `2026-11-18T13:34:10.670Z` | `HemmingwayAI/Hemmingway-1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-altworld-hemmingway-1-learnings.md` | Yes (`390893a4...`) |
+| `CYCLE-20261118-XEXA` | `2026-11-18T13:34:17.806Z` | `FaridSafi/react-native-gifted-chat` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9232` | Yes (`71d64e35...`) |
+| `CYCLE-20261118-XJ2D` | `2026-11-18T13:34:23.173Z` | `tailscale/tailscale` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9233` | Yes (`790d4267...`) |

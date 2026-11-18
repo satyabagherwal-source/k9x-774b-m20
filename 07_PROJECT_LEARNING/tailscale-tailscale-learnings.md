@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source**: github ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
-> **Source Version**: `075e6403`  
+> **Source Version**: `87edd6b4`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-18T04:57:26.058Z  
+> **Timestamp**: 2026-11-18T13:34:22.216Z  
 > **Learning ID**: `learn-github-tailscale-tailscale`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tailscale-tailscale-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/tailscale/tailscale](https://github.com/tailscale/tailscale))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T04:57:26.052Z  
+> **Harvest Timestamp**: 2026-11-18T13:34:22.211Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The easiest, most secure way to use WireGuard and 2FA.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 39263 stars
+- **Stars / Engagement**: 39279 stars
 
 ---
 
@@ -823,77 +823,212 @@ export const sessionStateStorage: IPNStateStorage = {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `075e6403` (2026-11-17)
-**Commit Message**: go.mod: bump github.com/tailscale/wireguard-go
+### Incident Patch 1: `89b8a8e5` (2026-11-15)
+**Commit Message**: tka: fix OS name validation in signing deeplinks
 
-* github.com/tailscale/wireguard-go: https://github.com/tailscale/wireguard-go/compare/c90940ef3f06...a1800e9c5305
+Updates #cleanup
 
-Triggered by @bradfitz via the bumpdep workflow.
+Signed-off-by: IgorPolyakov <[REDACTED_EMAIL]>
 
-Updates tailscale/wireguard-go#132
-
-Signed-off-by: Dep Updater <[REDACTED_EMAIL]>
-
-**File**: `flake.nix` (modified, +1/-1)
+**File**: `tka/deeplink.go` (modified, +1/-1)
 ```diff
-@@ -173,4 +173,4 @@
-     });
-   };
+@@ -169,7 +169,7 @@ func (a *Authority) ValidateDeeplink(urlString string) DeeplinkValidationResult
+ 	}
+ 
+ 	osName := parsedUrl.Query().Get("os")
+-	if len(deviceName) == 0 {
++	if len(osName) == 0 {
+ 		return DeeplinkValidationResult{
+ 			IsValid: false,
+ 			Error:   "missing os (OSName) query parameter",
+```
+
+---
+
+### Incident Patch 2: `5123b036` (2026-10-10)
+**Commit Message**: feature/linuxdnsfight: watch only the directory, filtered by the kernel
+
+gonotify.NewDirWatcher registers IN_ALL_EVENTS on the directory and
+every subdirectory below it, and applies the caller's mask only in
+userspace. Watching /etc that way wakes tailscaled for every open or
+read of any file under /etc, including /etc/ld.so.cache on each exec.
+Under a busy exec or open loop tailscaled used 150-230% CPU.
+
+Use a plain inotify watch on the directory itself with the events we
+care about, so the kernel drops everything else. Call cb once at
+startup, which NewDirWatcher's synthetic events for existing files
+used to do.
+
+Rework TestWatchFile to wait for the startup callback first, so it
+still checks that a write triggers one, and add a test that reads and
+writes to other files don't.
+
+Fixes #21743
+Updates #16576
+
+Change-Id: Idf1b13a6dffde4191ce8744cbb0e24a74b7a5b82
+Signed-off-by: Yerassyl Urazalin <[REDACTED_EMAIL]>
+
+**File**: `feature/linuxdnsfight/linuxdnsfight.go` (modified, +23/-7)
+```diff
+@@ -37,19 +37,35 @@ func watchFile(ctx context.Context, dir, filename string, cb func()) error {
+ 		gonotify.IN_MODIFY |
+ 		gonotify.IN_MOVE
+ 
+-	watcher, err := gonotify.NewDirWatcher(ctx, events, dir)
++	// Watch only dir itself (not recursively) and only for the events
++	// above. gonotify.NewDirWatcher registers IN_ALL_EVENTS on every
++	// subdirectory and filters afterwards, so every open or read under
++	// /etc (including /etc/ld.so.cache on each exec) woke this goroutine.
++	in, err := gonotify.NewInotify(ctx)
+ 	if err != nil {
+-		return fmt.Errorf("NewDirWatcher: %w", err)
++		return fmt.Errorf("NewInotify: %w", err)
+ 	}
++	if _, err := in.AddWatch(dir, events|gonotify.IN_ONLYDIR); err != nil {
++		return fmt.Errorf("AddWatch: %w", err)
++	}
++
++	// NewDirWatcher used to emit a synthetic event for existing files,
++	// which ran cb once at startup. Keep that behavior.
++	cb()
+ 
+ 	for {
+-		select {
+-		case event := <-watcher.C:
+-			if event.Name == filename {
++		evs, err := in.Read()
++		if err != nil {
++			if ctx.Err() != nil {
++				return ctx.Err()
++			}
++			return fmt.Errorf("Read: %w", err)
++		}
++		for _, ev := range evs {
++			if ev.Name == filename {
+ 				cb()
++				break
+ 			}
+-		case <-ctx.Done():
+-			return ctx.Err()
+ 		}
+ 	}
  }
--# nix-direnv cache busting line: sha256-B8nHf+XTrjIVMTE1vnwejvSpdy1c/+nXAbBfvvK6uZ4=
-+# nix-direnv cache busting line: sha256-2FUoQbRKmhAbpWH356v/TpgjT9KrcZekMO5E1HbLtMA=
 ```
 
-**File**: `flakehashes.json` (modified, +2/-2)
+**File**: `feature/linuxdnsfight/linuxdnsfight_test.go` (modified, +54/-37)
 ```diff
-@@ -4,7 +4,7 @@
-     "sri": "sha256-Up4oMG6TVLQkV9inAYF3uYbxu+bMHeU7q9BLcXIllow="
-   },
-   "vendor": {
--    "goModSum": "sha256-gTCNeEeR6aT6p836GqPLbomgmn3Ytk7bGjzDrvorOzg=",
--    "sri": "sha256-B8nHf+XTrjIVMTE1vnwejvSpdy1c/+nXAbBfvvK6uZ4="
-+    "goModSum": "sha256-uGmj1yPXUtncPrsDPi9pVW4y+ZJuWPCUWXpgIiGJfIo=",
-+    "sri": "sha256-2FUoQbRKmhAbpWH356v/TpgjT9KrcZekMO5E1HbLtMA="
-   }
+@@ -8,56 +8,73 @@ package linuxdnsfight
+ import (
+ 	"context"
+ 	"errors"
+-	"fmt"
+ 	"os"
+-	"sync/atomic"
++	"path/filepath"
+ 	"testing"
+ 	"time"
+ 
+ 	"golang.org/x/sync/errgroup"
+ )
+ 
++// startWatch runs watchFile on dir/filename and returns a channel that
++// receives a value for each callback. It waits for the callback that
++// watchFile makes at startup, so the watch is in place on return.
++func startWatch(t *testing.T, dir, filename string) <-chan struct{} {
++	t.Helper()
++	ctx, cancel := context.WithCancel(context.Background())
++	calls := make(chan struct{}, 100)
++	var eg errgroup.Group
++	eg.Go(func() error {
++		return watchFile(ctx, dir, filename, func() { calls <- struct{}{} })
++	})
++	t.Cleanup(func() {
++		cancel()
++		if err := eg.Wait(); err != nil && !errors.Is(err, context.Canceled) {
++			t.Error(err)
++		}
++	})
++	select {
++	case <-calls:
++	case <-time.After(5 * time.Second):
++		t.Fatal("no callback at startup")
++	}
++	return calls
++}
++
+ func TestWatchFile(t *testing.T) {
+ 	dir := t.TempDir()
+-	filepath := dir + "/test.txt"
++	path := filepath.Join(dir, "test.txt")
++	calls := startWatch(t, dir, path)
+ 
+-	ctx, cancel := context.WithCancel(context.Background())
+-	defer cancel()
+-
+-	var callbackCalled atomic.Bool
+-	callbackDone := make(chan bool)
+-	callback := func() {
+-		// We only send to the channel once to avoid blocking if the
+-		// callback is called multiple times -- this happens occasionally
+-		// if inotify sends multiple events before we cancel the context.
+-		if !callbackCalled.Load() {
+-			callbackDone <- true
+-			callbackCalled.Store(true)
+-		}
++	if err := os.WriteFile(path, []byte("write"), 0644); err != nil {
++		t.Fatal(err)
+ 	}
++	select {
++	case <-calls:
++	case <-time.After(5 * time.Second):
++		t.Fatal("callback was not called after write")
++	}
++}
+ 
+-	var eg errgroup.Group
+-	eg.Go(func() error { return watchFile(ctx, dir, filepath, callback) })
+-
+-	// Keep writing until we get a callback.
+-	func() {
+-		for i := range 10000 {
+-			if err := os.WriteFile(filepath, fmt.Appendf(nil, "write%d", i), 0644); err != nil {
+-				t.Fatal(err)
+-			}
+-			select {
+-			case <-callbackDone:
+-				return
+-			case <-time.After(10 * time.Millisecond):
+-			}
+-		}
+-	}()
++func TestWatchFileIgnoresReadsAndOtherFiles(t *testing.T) {
++	dir := t.TempDir()
++	path := filepath.Join(dir, "test.txt")
++	if err := os.WriteFile(path, []byte("x"), 0644); err != nil {
++		t.Fatal(err)
++	}
++	calls := startWatch(t, dir, path)
+ 
+-	cancel()
+-	if err := eg.Wait(); err != nil && !errors.Is(err, context.Canceled) {
+-		t.Error(err)
++	for range 100 {
++		if _, err := os.ReadFile(path); err != nil {
++			t.Fatal(err)
++		}
++	}
++	if err := os.WriteFile(filepath.Join(dir, "other.txt"), []byte("x"), 0644); err != nil {
++		t.Fatal(err)
+ 	}
+-	if !callbackCalled.Load() {
+-		t.Error("callback was not called")
++	select {
++	case <-calls:
++		t.Fatal("callback called for reads or another file")
++	case <-time.After(200 * time.Millisecond):
+ 	}
  }
-```
-
-**File**: `go.mod` (modified, +1/-1)
-```diff
-@@ -126,7 +126,7 @@ require (
- 	github.com/tailscale/ts-gokrazy v0.0.0-20260630224145-b83088f2e52e
- 	github.com/tailscale/web-client-prebuilt v0.0.0-20260917222731-e0ed2d0d0fea
- 	github.com/tailscale/wf v0.0.0-20240214030419-6fbb0a674ee6
--	github.com/tailscale/wireguard-go v0.0.0-20261116233941-c90940ef3f06
-+	github.com/tailscale/wireguard-go v0.0.0-20261117232807-a1800e9c5305
- 	github.com/tailscale/xnet v0.0.0-20240729143630-8497ac4dab2e
- 	github.com/tc-hib/winres v0.3.1
- 	github.com/tcnksm/go-httpstat v0.2.0
-```
-
-**File**: `go.sum` (modified, +2/-2)
-```diff
-@@ -1154,8 +1154,8 @@ github.com/tailscale/web-client-prebuilt v0.0.0-20260917222731-e0ed2d0d0fea h1:a
- github.com/tailscale/web-client-prebuilt v0.0.0-20260917222731-e0ed2d0d0fea/go.mod h1:agQPE6y6ldqCOui2gkIh7ZMztTkIQKH049tv8siLuNQ=
- github.com/tailscale/wf v0.0.0-20240214030419-6fbb0a674ee6 h1:l10Gi6w9jxvinoiq15g8OToDdASBni4CyJOdHY1Hr8M=
- github.com/tailscale/wf v0.0.0-20240214030419-6fbb0a674ee6/go.mod h1:ZXRML051h7o4OcI0d3AaILDIad/Xw0IkXaHM17dic1Y=
--github.com/tailscale/wireguard-go v0.0.0-20261116233941-c90940ef3f06 h1:F/qY0CU5GQY0ecxAWIvWu8oIwXfgChQsec+LJZfY5N4=
--github.com/tailscale/wireguard-go v0.0.0-20261116233941-c90940ef3f06/go.mod h1:rUelGmuK4UnSJYM5gl5Mknp6YbwwcL8+VAPMhNYe+jg=
-+github.com/tailscale/wireguard-go v0.0.0-20261117232807-a1800e9c5305 h1:G6gRy8cR2fXAyvUj4U1uc01LBaKQ0YUc4ZT/FskxHww=
-+github.com/tailscale/wireguard-go v0.0.0-20261117232807-a1800e9c5305/go.mod h1:Hl7pyu83xNjc1LY5e9apq2mWm8Hl76wRtJbwZ2XISqY=
- github.com/tailscale/xnet v0.0.0-20240729143630-8497ac4dab2e h1:zOGKqN5D5hHhiYUp091JqK7DPCqSARyUfduhGUY8Bek=
- github.com/tailscale/xnet v0.0.0-20240729143630-8497ac4dab2e/go.mod h1:orPd6JZXXRyuDusYilywte7k094d7dycXXU5YnWsrwg=
- github.com/tc-hib/winres v0.3.1 h1:CwRjEGrKdbi5CvZ4ID+iyVhgyfatxFoizjPhzez9Io4=
-```
-
-**File**: `shell.nix` (modified, +1/-1)
-```diff
-@@ -16,4 +16,4 @@
- ) {
-   src =  ./.;
- }).shellNix
--# nix-direnv cache busting line: sha256-B8nHf+XTrjIVMTE1vnwejvSpdy1c/+nXAbBfvvK6uZ4=
-+# nix-direnv cache busting line: sha256-2FUoQbRKmhAbpWH356v/TpgjT9KrcZekMO5E1HbLtMA=
 ```
 
 #### Recent Merged Pull Requests:
@@ -922,28 +1057,28 @@ Signed-off-by: Dep Updater <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. go.mod: bump github.com/tailscale/wireguard-go
+## X. tka: fix OS name validation in signing deeplinks
 
 **RULE**:
-When implementing operations in `flake.nix`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `tka/deeplink.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in tailscale/tailscale. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `075e6403`: go.mod: bump github.com/tailscale/wireguard-go. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `89b8a8e5`: tka: fix OS name validation in signing deeplinks. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `flake.nix`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `tka/deeplink.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-# nix-direnv cache busting line: sha256-2FUoQbRKmhAbpWH356v/TpgjT9KrcZekMO5E1HbLtMA=
+	if len(osName) == 0 {
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-# nix-direnv cache busting line: sha256-B8nHf+XTrjIVMTE1vnwejvSpdy1c/+nXAbBfvvK6uZ4=
+	if len(deviceName) == 0 {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `075e6403` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `89b8a8e5` are properly handled with clean fallback behavior.

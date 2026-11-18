@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T13:26:20.861Z",
+  "last_updated": "2026-11-18T13:34:28.206Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-18T12:24:04.960Z",
@@ -118,7 +118,7 @@
       "staged_for_review": 1
     },
     "tailscale-tailscale-learnings.md": {
-      "processed_at": "2026-11-17T22:11:15.946Z",
+      "processed_at": "2026-11-18T13:34:27.599Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1943,7 +1943,7 @@
       "staged_for_review": 1
     },
     "hf-altworld-hemmingway-1-learnings.md": {
-      "processed_at": "2026-11-18T03:48:17.509Z",
+      "processed_at": "2026-11-18T13:34:26.394Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -2218,7 +2218,7 @@
       "staged_for_review": 0
     },
     "faridsafi-react-native-gifted-chat-learnings.md": {
-      "processed_at": "2026-11-13T21:59:57.785Z",
+      "processed_at": "2026-11-18T13:34:26.720Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3438,7 +3438,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 1950,
+  "total_dossiers_evaluated": 1953,
   "total_canonical_promoted": 355,
-  "total_staged_for_review": 1485
+  "total_staged_for_review": 1487
 }

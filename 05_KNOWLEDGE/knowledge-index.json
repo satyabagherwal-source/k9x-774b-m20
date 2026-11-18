@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-18T13:26:20.729Z",
+  "last_updated": "2026-11-18T13:34:28.085Z",
   "total_verified_learnings": 9002,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 21271,
+  "total_items": 21277,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112393,10 +112393,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tailscale-tailscale-architecture-intelligence-tailscale-tailscale-core-invariant.md",
       "title": "Architecture Intelligence: tailscale/tailscale Core Invariants",
       "repository": "tailscale/tailscale",
-      "source_version": "075e6403",
-      "content_hash": "3ba7b8ef1d6e014fadbfca15b45997eff6bfe3767eebc57bde809e7147f922dc",
+      "source_version": "87edd6b4",
+      "content_hash": "c9d11cd43584256d833ac1dd4ccc69c06eb6b20ed92fa558e2bc5739ce2dfa13",
       "domain_letter": "G",
-      "persisted_at": "2026-11-18T04:57:27.214Z"
+      "persisted_at": "2026-11-18T13:34:23.493Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-tailscale-tailscale": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tailscale-tailscale",
@@ -112405,10 +112405,10 @@
       "relative_path": "08_VERIFICATION/tailscale-tailscale-verification-protocol-empirical-defect-shield-for-tailscale-.md",
       "title": "Verification Protocol: Empirical Defect Shield for tailscale/tailscale",
       "repository": "tailscale/tailscale",
-      "source_version": "075e6403",
-      "content_hash": "72722ebc4f07df99de7a6e7577c77fc8be8e1c9eab875352138106f76fd66a3e",
+      "source_version": "87edd6b4",
+      "content_hash": "e4c1574a9e67f3326d6fe1120b50dbf3530732d3ad454ae136ba4828b267083c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T04:57:27.330Z"
+      "persisted_at": "2026-11-18T13:34:23.631Z"
     },
     "candidate_directive-order-small-runtime-filter-builds-before-filtered-and-nested-scans-28768": {
       "item_id": "candidate_directive-order-small-runtime-filter-builds-before-filtered-and-nested-scans-28768",
@@ -112886,9 +112886,9 @@
       "title": "Research & Knowledge Intelligence: HemmingwayAI/Hemmingway-1 Core Invariants",
       "repository": "HemmingwayAI/Hemmingway-1",
       "source_version": "hf-altworld-hemmingway-1",
-      "content_hash": "eea4435fd07e2713066c320ee411e10b6a9b6426952400ae3ea3f452fe39fcca",
+      "content_hash": "fd5b4179c94c1da9683e1ef0dfd0e2f642c4bb3b56d7bcfd575bc1d71d5ab990",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T03:47:58.731Z"
+      "persisted_at": "2026-11-18T13:34:10.855Z"
     },
     "candidate_directive-full-screen-s-plan-and-step-file-the-live-loopback-gate-s-result": {
       "item_id": "candidate_directive-full-screen-s-plan-and-step-file-the-live-loopback-gate-s-result",
@@ -113018,9 +113018,9 @@
       "title": "Research & Knowledge Intelligence: hf-altworld-hemmingway-1-learnings Core Invariants",
       "repository": "hf-altworld-hemmingway-1-learnings",
       "source_version": "HEAD",
-      "content_hash": "60176547f3445e53c8ee0f30fc2fe00be464fd019875d365943eb83c43c16137",
+      "content_hash": "894d36b8c4b581e84fb7519504067f99383371b4f36ee9aa9733ff614e9fd391",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T03:48:17.687Z"
+      "persisted_at": "2026-11-18T13:34:26.568Z"
     },
     "domain_intelligence-quality-verification-intelligence-saffsanity-sill-learnings-core-invariants": {
       "item_id": "domain_intelligence-quality-verification-intelligence-saffsanity-sill-learnings-core-invariants",
@@ -217355,17 +217355,23 @@
       "slug": "faridsafi-react-native-gifted-chat",
       "platform": "github",
       "source_url": "https://github.com/FaridSafi/react-native-gifted-chat",
-      "source_version": "ea2d83f9",
-      "content_hash": "91fb6f02cef4942a8ee82c3b2627cceee706c18e77be8ad64a8d3cb4563bc212",
+      "source_version": "46a1ddbe",
+      "content_hash": "71d64e358599001b7af0f4d02bda8431ca63c174b6036f382a7db324d903d5ee",
       "dossier_path": "07_PROJECT_LEARNING/faridsafi-react-native-gifted-chat-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/faridsafi-react-native-gifted-chat-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 9232,
+          "title": "link the hire page without a trailing slash",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-13T21:58:39.279Z",
+      "verified_at": "2026-11-18T13:34:17.619Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -217393,10 +217399,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-faridsafi-react-native-gifted-chat-technical-construction-intelligence-faridsafi.md",
       "title": "Technical Construction Intelligence: FaridSafi/react-native-gifted-chat Core Invariants",
       "repository": "FaridSafi/react-native-gifted-chat",
-      "source_version": "ea2d83f9",
-      "content_hash": "28977bae4dec64a8ac508f392d12e4cdea9c50a5908d94752a961c541a8acf20",
+      "source_version": "46a1ddbe",
+      "content_hash": "3b6f107891e42c92b8b5848448e8e0ac1ac3d0e9cd1c3d3eb6722325755d2ddd",
       "domain_letter": "H",
-      "persisted_at": "2026-11-13T21:58:39.770Z"
+      "persisted_at": "2026-11-18T13:34:18.142Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-faridsafi-react-native-gifted-": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-faridsafi-react-native-gifted-",
@@ -217406,9 +217412,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for faridsafi-react-native-gifted-chat-learnings",
       "repository": "faridsafi-react-native-gifted-chat-learnings",
       "source_version": "HEAD",
-      "content_hash": "4cacfa1e2bb04b31a5d8554fdece81cd8fcc58ff87f300c4189d202b907ac949",
+      "content_hash": "0bfc5445f1fe27b4a96cda74bb60d069a5ddcb71bf929a7c9a21f7c64b5784f8",
       "domain_letter": "K",
-      "persisted_at": "2026-11-13T21:59:58.752Z"
+      "persisted_at": "2026-11-18T13:34:27.465Z"
     },
     "learn-github-paradedb-paradedb": {
       "learning_id": "learn-github-paradedb-paradedb",
@@ -217591,9 +217597,9 @@
       "title": "Technical Construction Intelligence: faridsafi-react-native-gifted-chat-learnings Core Invariants",
       "repository": "faridsafi-react-native-gifted-chat-learnings",
       "source_version": "HEAD",
-      "content_hash": "087271b38c479f9309b9da649dcb9e16b908b52fb51494a18e60493376439dd8",
+      "content_hash": "360791069e10061cd1ab36fb0801fd684efe2fee303b277a77145b16f743e988",
       "domain_letter": "H",
-      "persisted_at": "2026-11-13T21:59:58.624Z"
+      "persisted_at": "2026-11-18T13:34:27.322Z"
     },
     "learn-huggingface-comfy-org-minimax-h3": {
       "learning_id": "learn-huggingface-comfy-org-minimax-h3",
@@ -222440,8 +222446,8 @@
       "slug": "tailscale-tailscale",
       "platform": "github",
       "source_url": "https://github.com/tailscale/tailscale",
-      "source_version": "075e6403",
-      "content_hash": "d0aa2ee39eee9bd432f48f6057a72354b483d9540a1a84b8a2edfa1cb2017e4e",
+      "source_version": "87edd6b4",
+      "content_hash": "790d4267191d07f65311c82040128f2b3e3f49746c45d382adac51b88940066e",
       "dossier_path": "07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tailscale-tailscale-learnings.md",
       "promoted_rules": [
@@ -222494,6 +222500,11 @@
           "number": 9127,
           "title": "go.mod: bump github.com/tailscale/wireguard-go",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9233,
+          "title": "fix OS name validation in signing deeplinks",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -222501,7 +222512,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T04:57:26.770Z",
+      "verified_at": "2026-11-18T13:34:22.992Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -222592,9 +222603,9 @@
       "title": "Architecture Intelligence: tailscale-tailscale-learnings Core Invariants",
       "repository": "tailscale-tailscale-learnings",
       "source_version": "HEAD",
-      "content_hash": "ecd1659a93baa6896533bd6422425dcb39b3b5fa0c33045d6572664d45448ba2",
+      "content_hash": "302f411444eb144b0e0058a43f03b8a0e18e4d411a5fb8d5d7d7dceb4578c88a",
       "domain_letter": "G",
-      "persisted_at": "2026-11-17T22:11:16.503Z"
+      "persisted_at": "2026-11-18T13:34:27.933Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-tailscale-tailscale-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tailscale-tailscale-learnings",
@@ -222604,9 +222615,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for tailscale-tailscale-learnings",
       "repository": "tailscale-tailscale-learnings",
       "source_version": "HEAD",
-      "content_hash": "6179e8079f26f2d3d0382d05d685cbf892ec13d9be4839b1006552444b719488",
+      "content_hash": "fe381802f87984016c7da5e833e9190f5d435455cbd3fea20c03e3bd26516e60",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T22:11:16.681Z"
+      "persisted_at": "2026-11-18T13:34:28.085Z"
     },
     "learn-huggingface-stabilityai-stable-diffusion-3-medium": {
       "learning_id": "learn-huggingface-stabilityai-stable-diffusion-3-medium",
@@ -280833,7 +280844,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Altworld/Hemmingway-1",
       "source_version": "hf-altworld-hemmingway-1",
-      "content_hash": "8b3a444b34f24555a48351919e3f72f7bc07f2705ba3591dc7c198f72c0ed004",
+      "content_hash": "390893a460e02b6ff744bd5a3705990d4245f20ece55cd6db8a3b5a2b77b8045",
       "dossier_path": "07_PROJECT_LEARNING/hf-altworld-hemmingway-1-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-altworld-hemmingway-1-learnings.md",
       "promoted_rules": [],
@@ -280842,7 +280853,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T03:47:58.381Z",
+      "verified_at": "2026-11-18T13:34:10.462Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -286988,6 +286999,82 @@
       "content_hash": "dc93e1b7a74b1aed29bb187b7f2727b19eb7ee2c9b1aa640acc681f05bff5cd6",
       "domain_letter": "I",
       "persisted_at": "2026-11-18T13:26:20.426Z"
+    },
+    "rule-9232": {
+      "learning_id": "rule-9232",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9232,
+      "title": "link the hire page without a trailing slash",
+      "source_url": "https://github.com/FaridSafi/react-native-gifted-chat",
+      "source_version": "46a1ddbe",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-18T13:34:17.619Z"
+    },
+    "candidate_directive-link-the-hire-page-without-a-trailing-slash": {
+      "item_id": "candidate_directive-link-the-hire-page-without-a-trailing-slash",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-XF2O-link-the-hire-page-without-a-trailing-slash.md",
+      "title": "link the hire page without a trailing slash",
+      "repository": "FaridSafi/react-native-gifted-chat",
+      "source_version": "46a1ddbe",
+      "content_hash": "55fae11266f2266becfd832ba922f5bbda5813584224832c7c584db6eeb0fa58",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-18T13:34:18.001Z"
+    },
+    "rule-9233": {
+      "learning_id": "rule-9233",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9233,
+      "title": "fix OS name validation in signing deeplinks",
+      "source_url": "https://github.com/tailscale/tailscale",
+      "source_version": "87edd6b4",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-18T13:34:22.992Z"
+    },
+    "candidate_directive-fix-os-name-validation-in-signing-deeplinks": {
+      "item_id": "candidate_directive-fix-os-name-validation-in-signing-deeplinks",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-XJ7D-fix-os-name-validation-in-signing-deeplinks.md",
+      "title": "fix OS name validation in signing deeplinks",
+      "repository": "tailscale/tailscale",
+      "source_version": "87edd6b4",
+      "content_hash": "26863132828105e417a03faa9b3e5da4b583b82b2d7d6522c452baaf7245604e",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-18T13:34:23.354Z"
+    },
+    "candidate_directive-docs-link-the-hire-page-without-a-trailing-slash": {
+      "item_id": "candidate_directive-docs-link-the-hire-page-without-a-trailing-slash",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-XM5P-docs-link-the-hire-page-without-a-trailing-slash.md",
+      "title": "docs: link the hire page without a trailing slash",
+      "repository": "faridsafi-react-native-gifted-chat-learnings",
+      "source_version": "HEAD",
+      "content_hash": "f5614a82ef26674e54ada604224a2e6f80fdfedf4257b4c31ef212dc8794b9c8",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-18T13:34:27.181Z"
+    },
+    "candidate_directive-tka-fix-os-name-validation-in-signing-deeplinks": {
+      "item_id": "candidate_directive-tka-fix-os-name-validation-in-signing-deeplinks",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-XMMP-tka-fix-os-name-validation-in-signing-deeplinks.md",
+      "title": "tka: fix OS name validation in signing deeplinks",
+      "repository": "tailscale-tailscale-learnings",
+      "source_version": "HEAD",
+      "content_hash": "b4ae6cd5ddfd6aa43c07ebca6e1c2c33142ea1916f681f5b10412827dd442169",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-18T13:34:27.793Z"
     }
   },
   "ai-builder-brain": {

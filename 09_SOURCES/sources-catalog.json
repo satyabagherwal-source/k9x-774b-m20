@@ -415,8 +415,8 @@
     "sourceUrl": "https://huggingface.co/Altworld/Hemmingway-1",
     "sourceVersion": "hf-altworld-hemmingway-1",
     "license": "Open-Source",
-    "contentHash": "8b3a444b34f24555a48351919e3f72f7bc07f2705ba3591dc7c198f72c0ed004",
-    "lastHarvestedAt": "2026-11-18T03:47:58.568Z",
+    "contentHash": "390893a460e02b6ff744bd5a3705990d4245f20ece55cd6db8a3b5a2b77b8045",
+    "lastHarvestedAt": "2026-11-18T13:34:10.674Z",
     "learningId": "learn-huggingface-altworld-hemmingway-1"
   },
   "hf-fastino-gliner2.5-decide": {
@@ -3083,10 +3083,10 @@
     "repository": "FaridSafi/react-native-gifted-chat",
     "platform": "github",
     "sourceUrl": "https://github.com/FaridSafi/react-native-gifted-chat",
-    "sourceVersion": "ea2d83f9",
+    "sourceVersion": "46a1ddbe",
     "license": "MIT",
-    "contentHash": "91fb6f02cef4942a8ee82c3b2627cceee706c18e77be8ad64a8d3cb4563bc212",
-    "lastHarvestedAt": "2026-11-13T21:58:39.443Z",
+    "contentHash": "71d64e358599001b7af0f4d02bda8431ca63c174b6036f382a7db324d903d5ee",
+    "lastHarvestedAt": "2026-11-18T13:34:17.810Z",
     "learningId": "learn-github-faridsafi-react-native-gifted-chat"
   },
   "taubyte-tau": {
@@ -3583,10 +3583,10 @@
     "repository": "tailscale/tailscale",
     "platform": "github",
     "sourceUrl": "https://github.com/tailscale/tailscale",
-    "sourceVersion": "075e6403",
+    "sourceVersion": "87edd6b4",
     "license": "BSD-3-Clause",
-    "contentHash": "d0aa2ee39eee9bd432f48f6057a72354b483d9540a1a84b8a2edfa1cb2017e4e",
-    "lastHarvestedAt": "2026-11-18T04:57:26.930Z",
+    "contentHash": "790d4267191d07f65311c82040128f2b3e3f49746c45d382adac51b88940066e",
+    "lastHarvestedAt": "2026-11-18T13:34:23.177Z",
     "learningId": "learn-github-tailscale-tailscale"
   },
   "dingodb-dingo": {

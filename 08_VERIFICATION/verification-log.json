@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261117-BSGN",
-    "timestamp": "2026-11-17T03:41:56.567Z",
-    "repository": "google/closure-compiler",
-    "learningId": "learn-github-google-closure-compiler",
-    "contentHash": "861d89f66afa2b8ee9d8a1b152388517156908ac0eddc35196b932f9e40228e8",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261117-BUC1",
-    "timestamp": "2026-11-17T03:41:58.993Z",
-    "repository": "wcandillon/react-native-skia",
-    "learningId": "learn-github-wcandillon-react-native-skia",
-    "contentHash": "3c210580124ce7a8b1c7aabff018ffac1c02553bdcb15ee23159eaf50983f10d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261117-M6QV",
-    "timestamp": "2026-11-17T03:50:01.639Z",
-    "repository": "mfontanini/presenterm",
-    "learningId": "learn-github-mfontanini-presenterm",
-    "contentHash": "be5a7840b8564b115a02cb446cc03a3632628c35b58fdf032e48a05527065dce",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261117-M9Q9",
     "timestamp": "2026-11-17T03:50:05.505Z",
     "repository": "sveltejs/svelte",
@@ -7492,6 +7447,51 @@
     "contentHash": "d98d374004dc259ee1628ff333ab7ea828dbc043c5d786d397a9be2ccd4318f9",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-X9F2",
+    "timestamp": "2026-11-18T13:34:10.670Z",
+    "repository": "HemmingwayAI/Hemmingway-1",
+    "learningId": "learn-huggingface-altworld-hemmingway-1",
+    "contentHash": "390893a460e02b6ff744bd5a3705990d4245f20ece55cd6db8a3b5a2b77b8045",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-XEXA",
+    "timestamp": "2026-11-18T13:34:17.806Z",
+    "repository": "FaridSafi/react-native-gifted-chat",
+    "learningId": "learn-github-faridsafi-react-native-gifted-chat",
+    "contentHash": "71d64e358599001b7af0f4d02bda8431ca63c174b6036f382a7db324d903d5ee",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-XJ2D",
+    "timestamp": "2026-11-18T13:34:23.173Z",
+    "repository": "tailscale/tailscale",
+    "learningId": "learn-github-tailscale-tailscale",
+    "contentHash": "790d4267191d07f65311c82040128f2b3e3f49746c45d382adac51b88940066e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

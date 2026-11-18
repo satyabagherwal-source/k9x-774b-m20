@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-18T13:26:20.583Z",
+  "last_updated": "2026-11-18T13:34:27.933Z",
   "total_records": 1854,
   "domains": {
     "A": {
@@ -7741,8 +7741,8 @@
       "title": "Architecture Intelligence: tailscale/tailscale Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tailscale-tailscale-architecture-intelligence-tailscale-tailscale-core-invariant.md",
       "repository": "tailscale/tailscale",
-      "content_hash": "3ba7b8ef1d6e014fadbfca15b45997eff6bfe3767eebc57bde809e7147f922dc",
-      "created_at": "2026-11-18T04:57:27.214Z"
+      "content_hash": "c9d11cd43584256d833ac1dd4ccc69c06eb6b20ed92fa558e2bc5739ce2dfa13",
+      "created_at": "2026-11-18T13:34:23.493Z"
     },
     "domain_intelligence-architecture-intelligence-duckdb-duckdb-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-duckdb-duckdb-core-invariants",
@@ -8038,8 +8038,8 @@
       "title": "Research & Knowledge Intelligence: HemmingwayAI/Hemmingway-1 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-altworld-hemmingway-1-research-knowledge-intelligence-hemmingwayai-hemmingway.md",
       "repository": "HemmingwayAI/Hemmingway-1",
-      "content_hash": "eea4435fd07e2713066c320ee411e10b6a9b6426952400ae3ea3f452fe39fcca",
-      "created_at": "2026-11-18T03:47:58.731Z"
+      "content_hash": "fd5b4179c94c1da9683e1ef0dfd0e2f642c4bb3b56d7bcfd575bc1d71d5ab990",
+      "created_at": "2026-11-18T13:34:10.855Z"
     },
     "domain_intelligence-quality-verification-intelligence-saffsanity-sill-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-saffsanity-sill-core-invariants",
@@ -8116,8 +8116,8 @@
       "title": "Research & Knowledge Intelligence: hf-altworld-hemmingway-1-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-altworld-hemmingway-1-learnings-research-knowledge-intelligence-hf-altworld-h.md",
       "repository": "hf-altworld-hemmingway-1-learnings",
-      "content_hash": "60176547f3445e53c8ee0f30fc2fe00be464fd019875d365943eb83c43c16137",
-      "created_at": "2026-11-18T03:48:17.687Z"
+      "content_hash": "894d36b8c4b581e84fb7519504067f99383371b4f36ee9aa9733ff614e9fd391",
+      "created_at": "2026-11-18T13:34:26.568Z"
     },
     "domain_intelligence-quality-verification-intelligence-saffsanity-sill-learnings-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-saffsanity-sill-learnings-core-invariants",
@@ -10939,8 +10939,8 @@
       "title": "Technical Construction Intelligence: FaridSafi/react-native-gifted-chat Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-faridsafi-react-native-gifted-chat-technical-construction-intelligence-faridsafi.md",
       "repository": "FaridSafi/react-native-gifted-chat",
-      "content_hash": "28977bae4dec64a8ac508f392d12e4cdea9c50a5908d94752a961c541a8acf20",
-      "created_at": "2026-11-13T21:58:39.770Z"
+      "content_hash": "3b6f107891e42c92b8b5848448e8e0ac1ac3d0e9cd1c3d3eb6722325755d2ddd",
+      "created_at": "2026-11-18T13:34:18.142Z"
     },
     "domain_intelligence-technical-construction-intelligence-paradedb-paradedb-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-paradedb-paradedb-core-invariants",
@@ -11026,8 +11026,8 @@
       "title": "Technical Construction Intelligence: faridsafi-react-native-gifted-chat-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-faridsafi-react-native-gifted-chat-learnings-technical-construction-intelligence.md",
       "repository": "faridsafi-react-native-gifted-chat-learnings",
-      "content_hash": "087271b38c479f9309b9da649dcb9e16b908b52fb51494a18e60493376439dd8",
-      "created_at": "2026-11-13T21:59:58.624Z"
+      "content_hash": "360791069e10061cd1ab36fb0801fd684efe2fee303b277a77145b16f743e988",
+      "created_at": "2026-11-18T13:34:27.322Z"
     },
     "domain_intelligence-research-knowledge-intelligence-comfy-org-minimax-h3-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-comfy-org-minimax-h3-core-invariants",
@@ -12768,8 +12768,8 @@
       "title": "Architecture Intelligence: tailscale-tailscale-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tailscale-tailscale-learnings-architecture-intelligence-tailscale-tailscale-lear.md",
       "repository": "tailscale-tailscale-learnings",
-      "content_hash": "ecd1659a93baa6896533bd6422425dcb39b3b5fa0c33045d6572664d45448ba2",
-      "created_at": "2026-11-17T22:11:16.503Z"
+      "content_hash": "302f411444eb144b0e0058a43f03b8a0e18e4d411a5fb8d5d7d7dceb4578c88a",
+      "created_at": "2026-11-18T13:34:27.933Z"
     },
     "domain_intelligence-research-knowledge-intelligence-stabilityai-stable-diffusion-3-medium-core-invar": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-stabilityai-stable-diffusion-3-medium-core-invar",

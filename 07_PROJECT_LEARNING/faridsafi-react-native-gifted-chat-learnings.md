@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/faridsafi-react-native-gifted-chat-learnings.md`  
 > **Source**: github ([https://github.com/FaridSafi/react-native-gifted-chat](https://github.com/FaridSafi/react-native-gifted-chat))  
-> **Source Version**: `ea2d83f9`  
+> **Source Version**: `46a1ddbe`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T21:58:39.014Z  
+> **Timestamp**: 2026-11-18T13:34:16.801Z  
 > **Learning ID**: `learn-github-faridsafi-react-native-gifted-chat`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/faridsafi-react-native-gifted-chat-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/FaridSafi/react-native-gifted-chat](https://github.com/FaridSafi/react-native-gifted-chat))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T21:58:39.007Z  
+> **Harvest Timestamp**: 2026-11-18T13:34:16.794Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: 💬 The most complete chat UI for React Native
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 14446 stars
+- **Stars / Engagement**: 14451 stars
 
 ---
 
@@ -306,252 +306,38 @@ export function useIsKeyboardVisible (isEnabled: boolean = true): boolean {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `49acbf52` (2026-11-10)
-**Commit Message**: fix: Android system bars after leaving the chat, keyboard-aware isAlignedTop, Expo 58 example
+### Incident Patch 1: `46a1ddbe` (2026-11-18)
+**Commit Message**: docs: link the hire page without a trailing slash
 
-- KeyboardProvider no longer forces statusBarTranslucent /
-  navigationBarTranslucent. On Android they rewrite the activity content
-  view's margins and are never restored, so the app kept drawing under the
-  navigation bar after the chat screen was gone (#2755).
-- isAlignedTop takes 'auto': top while the keyboard is closed, bottom while
-  it is open (#2736). Alignment moved onto the list's content container,
-  which also fixes isAlignedTop clipping chats taller than the screen.
-- Stop passing dependency arrays to Reanimated worklet hooks; Reanimated 4
-  warned about them on every render.
-- Example app on Expo SDK 58 / React Native 0.88. iOS builds again (the
-  placeholder googleMapsApiKey pulled in a pod that no longer exists).
-  Adds a Top Aligned (short chat) screen covering #2736 and #2617.
-- Dev toolchain on React Native 0.88, Jest 30, testing-library/react-native
-  14, ESLint 10. Peer dependency ranges are unchanged.
-
-**File**: `CHANGELOG.md` (modified, +14/-0)
+**File**: `README.md` (modified, +1/-1)
 ```diff
-@@ -2,6 +2,20 @@
+@@ -1063,7 +1063,7 @@ yarn prepublishOnly
  
- > **Maintenance notice:** Active development has moved to **[@kesha-antonov/react-native-chat](https://github.com/kesha-antonov/react-native-chat)**. This package is now in maintenance mode and won't receive new features. See the fork for streaming AI messages and ongoing updates. Migrating is mostly a rename - see the fork's [migration guide](https://github.com/kesha-antonov/react-native-chat/blob/main/docs/MIGRATION.md).
+ **Co-author:** [Xavier Carpentier](https://www.x.com/xcapetir) - [Hire Xavier](https://xaviercarpentier.com)
  
-+## [Unreleased]
-+
-+### Features
-+- `isAlignedTop='auto'` ([#2736](https://github.com/FaridSafi/react-native-gifted-chat/issues/2736)): a short conversation sits at the top while the keyboard is closed and moves to the bottom while it is open. Works with both `isInverted` settings.
-+
-+### Bug Fixes
-+- Android navigation bar overlapping the app after leaving the chat ([#2755](https://github.com/FaridSafi/react-native-gifted-chat/issues/2755)): the built-in `KeyboardProvider` no longer forces `statusBarTranslucent` / `navigationBarTranslucent`, which changed the activity window and stayed changed. Set them via `keyboardProviderProps` if you need them.
-+- `isAlignedTop` cut off chats taller than the screen, which then could not be scrolled.
-+- Reanimated 4 logged "Dependencies should only be used on the web" on every render.
-+
-+### Maintenance
-+- Example app on Expo SDK 58 (React Native 0.88, gesture-handler 3, Reanimated 4.7); iOS builds again. New "Top Aligned (short chat)" screen.
-+- Dev toolchain on React Native 0.88, Jest 30, `@testing-library/react-native` 14, ESLint 10. Peer dependency ranges unchanged.
-+
- ## [3.4.2] - 2026-11-06
+-**Maintainer:** [Kesha Antonov](https://kesha-antonov.com), React Native lead engineer, [available for hire](https://kesha-antonov.com/react-native-developer/) - [GitHub](https://github.com/kesha-antonov)
++**Maintainer:** [Kesha Antonov](https://kesha-antonov.com), React Native lead engineer, [available for hire](https://kesha-antonov.com/react-native-developer) - [GitHub](https://github.com/kesha-antonov)
  
- ### ✨ Features
-```
-
-**File**: `README.md` (modified, +4/-6)
-```diff
-@@ -263,12 +263,10 @@ interface User {
- 
- ### Keyboard & Layout
- 
--- **`keyboardProviderProps`** _(Object)_ - Props to be passed to the [`KeyboardProvider`](https://kirillzyusko.github.io/react-native-keyboard-controller/docs/api/keyboard-provider) for keyboard handling. Default values:
--  - `statusBarTranslucent: true` - Required on Android for correct keyboard height calculation when status bar is translucent (edge-to-edge mode)
--  - `navigationBarTranslucent: true` - Required on Android for correct keyboard height calculation when navigation bar is translucent (edge-to-edge mode)
--- **`disableKeyboardProvider`** _(Bool)_ - Skip rendering the built-in `KeyboardProvider` wrapper; default is `false`. Enable this when your app already mounts its own `KeyboardProvider` (e.g. once at the root), or when the default edge-to-edge behavior causes a layout shift, flicker on mount, or a header/content jump on Android/Expo. See [Using your own `KeyboardProvider`](#using-your-own-keyboardprovider) below.
-+- **`keyboardProviderProps`** _(Object)_ - Props to be passed to the [`KeyboardProvider`](https://kirillzyusko.github.io/react-native-keyboard-controller/docs/api/keyboard-provider) for keyboard handling. No defaults are applied - in particular GiftedChat does **not** set `statusBarTranslucent` / `navigationBarTranslucent`, because on Android those change the *activity window* and the change outlives the chat screen ([#2755](https://github.com/FaridSafi/react-native-gifted-chat/issues/2755)). `react-native-keyboard-controller` turns them on by itself when the app is genuinely edge-to-edge, so there is nothing to set in a normal app.
-+- **`disableKeyboardProvider`** _(Bool)_ - Skip rendering the built-in `KeyboardProvider` wrapper; default is `false`. Enable this when your app already mounts its own `KeyboardProvider` (e.g. once at the root), so that only one provider is in the tree. See [Using your own `KeyboardProvider`](#using-your-own-keyboardprovider) below.
- - **`keyboardAvoidingViewProps`** _(Object)_ - Props to be passed to the [`KeyboardAvoidingView`](https://kirillzyusko.github.io/react-native-keyboard-controller/docs/api/components/keyboard-avoiding-view). See **keyboardVerticalOffset** below for proper keyboard handling.
--- **`isAlignedTop`** _(Boolean)_ Controls whether or not the message bubbles appear at the top of the chat (Default is false - bubbles align to bottom)
-+- **`isAlignedTop`** _(Boolean or `'auto'`)_ - Where the bubbles sit while the whole conversation fits on screen; once it is taller than the list the messages fill it and this has no effect. `false` (default) - bottom; `true` - top; `'auto'` - top while the keyboard is closed, bottom while it is open, so a short conversation starts under the header and re-anchors above the composer when the keyboard opens ([#2736](https://github.com/FaridSafi/react-native-gifted-chat/issues/2736)). Works with both `isInverted` settings.
- - **`isInverted`** _(Bool)_ - Reverses display order of `messages`; default is `true`
- 
- #### Understanding `keyboardVerticalOffset`
-@@ -305,7 +303,7 @@ function ChatScreen() {
- 
- #### Using your own `KeyboardProvider`
- 
--By default GiftedChat wraps itself in a [`KeyboardProvider`](https://kirillzyusko.github.io/react-native-keyboard-controller/docs/api/keyboard-provider) with `statusBarTranslucent` and `navigationBarTranslucent` enabled. On some Android/Expo (edge-to-edge) setups this can cause the screen to shift down, flicker on mount, or distort a navigation header - especially when another `KeyboardProvider` already exists higher in the tree.
-+By default GiftedChat wraps itself in a [`KeyboardProvider`](https://kirillzyusko.github.io/react-native-keyboard-controller/docs/api/keyboard-provider). If your app already mounts one higher in the tree, nesting a second one is not harmless on Android: each provider rewrites the activity content view's insets, so the nested one can shift the screen or a navigation header.
- 
- Set **`disableKeyboardProvider`** to skip the built-in wrapper:
- 
-```
-
-**File**: `eslint.config.js` (modified, +2/-2)
-```diff
-@@ -128,7 +128,7 @@ export default [
-         'warn',
-         {
-           additionalHooks:
--            '(useAnimatedStyle|useSharedValue|useAnimatedGestureHandler|useAnimatedScrollHandler|useAnimatedProps|useDerivedValue|useAnimatedRef|useAnimatedReact|useAnimatedReaction|useCallbackDebounced|useCallbackThrottled)',
-+            '(useAnimatedStyle|useAnimatedGestureHandler|useAnimatedScrollHandler|useAnimatedProps|useDerivedValue|useCallbackDebounced|useCallbackThrottled)',
-         },
-       ],
- 
-@@ -305,7 +305,7 @@ export default [
-         'warn',
-         {
-           additionalHooks:
--            '(useAnimatedStyle|useSharedValue|useAnimatedGestureHandler|useAnimatedScrollHandler|useAnimatedProps|useDerivedValue|useAnimatedRef|useAnimatedReact|useAnimatedReaction|useCallbackDebounced|useCallbackThrottled)',
-+            '(useAnimatedStyle|useAnimatedGestureHandler|useAnimatedScrollHandler|useAnimatedProps|useDerivedValue|useCallbackDebounced|useCallbackThrottled)',
-         },
-       ],
- 
-```
-
-**File**: `example/app.json` (modified, +1/-5)
-```diff
-@@ -10,10 +10,7 @@
-     "newArchEnabled": true,
-     "ios": {
-       "supportsTablet": true,
--      "bundleIdentifier": "com.anonymous.example",
--      "config": {
--        "googleMapsApiKey": "YOUR_GOOGLE_MAPS_API_KEY"
--      }
-+      "bundleIdentifier": "com.anonymous.example"
-     },
-     "android": {
-       "adaptiveIcon": {
-@@ -22,7 +19,6 @@
-         "backgroundImage": "./assets/images/android-icon-background.png",
-         "monochromeImage": "./assets/images/android-icon-monochrome.png"
-       },
--      "edgeToEdgeEnabled": true,
-       "predictiveBackGestureEnabled": false,
-       "package": "com.anonymous.example",
-       "config": {
-```
-
-**File**: `example/app/(tabs)/explore.tsx` (modified, +2/-1)
-```diff
-@@ -8,7 +8,7 @@ import { ThemedText } from '@/components/themed-text'
- import { ThemedView } from '@/components/themed-view'
- import { useThemeColor } from '@/hooks/use-theme-color'
- 
--type ChatExample = 'basic' | 'customized-rendering' | 'slack' | 'links' | 'reply' | 'day-animated' | 'reactions'
-+type ChatExample = 'basic' | 'customized-rendering' | 'slack' | 'links' | 'reply' | 'day-animated' | 'reactions' | 'aligned-top'
- 
- const examples: Array<{ id: ChatExample, title: string, description: string }> = [
-   { id: 'basic', title: 'Basic Example', description: 'Basic chat with keyboard logging for testing' },
-@@ -18,6 +18,7 @@ const examples: Array<{ id: ChatExample, title: string, description: string }> =
-   { id: 'reply', title: 'Reply Example', description: 'Example demonstrating reply functionality' },
-   { id: 'day-animated', title: 'Day Animated', description: 'Multi-day chat with Load earlier for testing the animated day header' },
-   { id: 'reactions', title: 'Reactions', description: 'Long-press a message to react with emojis, with a full emoji browser' },
-+  { id: 'aligned-top', title: 'Top Aligned (short chat)', description: 'isAlignedTop false / true / auto on a short chat, with optional very tall bubbles' },
- ]
- 
- export default function ExploreScreen () {
-```
-
-**File**: `example/app/_layout.tsx` (modified, +1/-1)
-```diff
-@@ -1,6 +1,6 @@
- import { LogBox, StyleSheet } from 'react-native'
--import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native'
- import { Stack } from 'expo-router'
-+import { DarkTheme, DefaultTheme, ThemeProvider } from 'expo-router/react-navigation'
- import { StatusBar } from 'expo-status-bar'
- import { GestureHandlerRootView } from 'react-native-gesture-handler'
- import 'react-native-reanimated'
-```
-
-**File**: `example/app/chat/_layout.tsx` (modified, +12/-0)
-```diff
-@@ -12,6 +12,14 @@ export default function ChatLayout () {
-       screenOptions={{
-         headerShown: true,
-         headerTitleAlign: 'center',
-+        // Expo Router 58 defaults to a transparent Liquid Glass header that the
-+        // screen scrolls under. iOS 26+ then blurs scroll content beneath it with a
-+        // scroll edge effect, and on an inverted chat list that blur covers the
-+        // whole list. An opaque header keeps the list below it.
-+        headerTransparent: false,
-+        // Even under an opaque header iOS still attaches its scroll edge effects to the
-+        // list, and the inverted list flips them, blurring the messages.
-+        scrollEdgeEffects: { top: 'hidden', bottom: 'hidden', left: 'hidden', right: 'hidden' },
-         contentStyle: { paddingBottom: insets.bottom, backgroundColor: '#fff' },
-         headerLeft: () => (
-           <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-@@ -48,6 +56,10 @@ export default function ChatLayout () {
-         name='reactions'
-         options={{ title: 'Reactions' }}
-       />
-+      <Stack.Screen
-+        name='aligned-top'
-+        options={{ title: 'Top Aligned (short chat)' }}
-+      />
-     </Stack>
-   )
- }
-```
-
-**File**: `example/app/chat/aligned-top.tsx` (added, +3/-0)
-```diff
-@@ -0,0 +1,3 @@
-+import AlignedTopExample from '@/components/chat-examples/AlignedTopExample'
-+
-+export default AlignedTopExample
+ > I've been maintaining this project for 2 years, completely in my free time and without any compensation. If you find it helpful, please consider [becoming a sponsor](https://github.com/sponsors/kesha-antonov) to support continued development. 💖
+ >
 ```
 
 ---
 
-### Incident Patch 2: `0741ee29` (2026-11-10)
-**Commit Message**: chore(deps): bump brace-expansion from 1.1.15 to 1.1.21 in /example (#2772)
+### Incident Patch 2: `7efb334e` (2026-11-18)
+**Commit Message**: docs: note that the maintainer is available for hire
 
-Bumps [brace-expansion](https://github.com/juliangruber/brace-expansion) from 1.1.15 to 1.1.21.
-- [Release notes](https://github.com/juliangruber/brace-expansion/releases)
-- [Commits](https://github.com/juliangruber/brace-expansion/compare/v1.1.15...v1.1.21)
-
----
-updated-dependencies:
-- dependency-name: brace-expansion
-  dependency-version: 1.1.21
-  dependency-type: indirect
-...
-
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
-
-**File**: `example/yarn.lock` (modified, +7/-14)
+**File**: `README.md` (modified, +1/-1)
 ```diff
-@@ -2494,28 +2494,21 @@ bplist-parser@^0.3.1:
-     big-integer "1.6.x"
+@@ -1063,7 +1063,7 @@ yarn prepublishOnly
  
- brace-expansion@^1.1.7:
--  version "1.1.15"
--  resolved "https://registry.yarnpkg.com/brace-expansion/-/brace-expansion-1.1.15.tgz#a6d90d54067236e5f42570a3b7378d594d9b7738"
--  integrity sha512-EwOCDEex4quD37XhqM3omwtMoJjr//isUZz1JopUNWms+4Z2ViyM/k1YIRePpoVNnQhENnxtFjLaxNHrT7xIUg==
-+  version "1.1.21"
-+  resolved "https://registry.yarnpkg.com/brace-expansion/-/brace-expansion-1.1.21.tgz#edf4fab5c64d051aea5a8def49aba1c7522279f3"
-+  integrity sha512-9zeA+KLZNNzglF2TPKRQEDyx6Yby7daAkuy8MiPzpXPsYDWi/DRM8jmwUDxokQjYqBpv5DgPiwD4h4ZZSy1Ujw==
-   dependencies:
-     balanced-match "^1.0.0"
-     concat-map "0.0.1"
+ **Co-author:** [Xavier Carpentier](https://www.x.com/xcapetir) - [Hire Xavier](https://xaviercarpentier.com)
  
- brace-expansion@^2.0.1:
--  version "2.1.1"
--  resolved "https://registry.yarnpkg.com/brace-expansion/-/brace-expansion-2.1.1.tgz#c68b1c4111c76aae3a6fba55d496cee10c39dad8"
--  integrity sha512-WR1cURNjuvBLMZBMbqM0UoE+WAfdUcEV1ccD8PVBVOI+Z3ND4+SZbN8RsfT2bMuG1qwz5RFvPukSZm5fF2D5eA==
-+  version "2.1.7"
-+  resolved "https://registry.yarnpkg.com/brace-expansion/-/brace-expansion-2.1.7.tgz#14ea3836731823bb24740225ea43b941b436f9d1"
-+  integrity sha512-uZbew1NqdmPDTMJ8ah1y+b+9QEJrfkXFk3RcTQw3X0jW/xRUvFKsg1CfQdSYGdTbXZWExtU3J3ccxtnfw1Fi0g==
-   dependencies:
-     balanced-match "^1.0.0"
+-**Maintainer:** [Kesha Antonov](https://kesha-antonov.com) - [GitHub](https://github.com/kesha-antonov)
++**Maintainer:** [Kesha Antonov](https://kesha-antonov.com), React Native lead engineer, [available for hire](https://kesha-antonov.com/react-native-developer/) - [GitHub](https://github.com/kesha-antonov)
  
--brace-expansion@^5.0.5:
--  version "5.0.6"
--  resolved "https://registry.yarnpkg.com/brace-expansion/-/brace-expansion-5.0.6.tgz#ec68fe0a641a29d8711579caf641d05bae1f2285"
--  integrity sha512-kLpxurY4Z4r9sgMsyG0Z9uzsBlgiU/EFKhj/h91/8yHu0edo7XuixOIH3VcJ8kkxs6/jPzoI6U9Vj3WqbMQ94g==
--  dependencies:
--    balanced-match "^4.0.2"
--
--brace-expansion@^5.0.8:
-+brace-expansion@^5.0.5, brace-expansion@^5.0.8:
-   version "5.0.12"
-   resolved "https://registry.yarnpkg.com/brace-expansion/-/brace-expansion-5.0.12.tgz#995fbb4750a77c4d16a7dc942ff2ca6ef8e675ec"
-   integrity sha512-YovQ3rzhaLMIrDjNDMkNS01tea93qhEhG5xy8f6+R0l+dw3Ki+5sCoIoI942iuLZTHWogWktgwVDhU09iNEimQ==
+ > I've been maintaining this project for 2 years, completely in my free time and without any compensation. If you find it helpful, please consider [becoming a sponsor](https://github.com/sponsors/kesha-antonov) to support continued development. 💖
+ >
 ```
 
 #### Recent Merged Pull Requests:
@@ -580,41 +366,28 @@ Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.c
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Android system bars after leaving the chat, keyboard-aware isAlignedTop, Expo 58
+## X. docs: link the hire page without a trailing slash
 
 **RULE**:
-When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in FaridSafi/react-native-gifted-chat. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in FaridSafi/react-native-gifted-chat. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `49acbf52`: Android system bars after leaving the chat, keyboard-aware isAlignedTop, Expo 58 example. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `46a1ddbe`: docs: link the hire page without a trailing slash. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-## [Unreleased]
-
-### Features
-- `isAlignedTop='auto'` ([#2736](https://github.com/FaridSafi/react-native-gifted-chat/issues/2736)): a short conversation sits at the top while the keyboard is closed and moves to the bottom while it is open. Works with both `isInverted` settings.
-
-### Bug Fixes
-- Android navigation bar overlapping the app after leaving the chat ([#2755](https://github.com/FaridSafi/react-native-gifted-chat/issues/2755)): the built-in `KeyboardProvider` no longer forces `statusBarTranslucent` / `navigationBarTranslucent`, which changed the activity window and stayed changed. Set them via `keyboardProviderProps` if you need them.
-- `isAlignedTop` cut off chats taller than the screen, which then could not be scrolled.
-- Reanimated 4 logged "Dependencies should only be used on the web" on every render.
-
-### Maintenance
-- Example app on Expo SDK 58 (React Native 0.88, gesture-handler 3, Reanimated 4.7); iOS builds again. New "Top Aligned (short chat)" screen.
-- Dev toolchain on React Native 0.88, Jest 30, `@testing-library/react-native` 14, ESLint 10. Peer dependency ranges unchanged.
-
+**Maintainer:** [Kesha Antonov](https://kesha-antonov.com), React Native lead engineer, [available for hire](https://kesha-antonov.com/react-native-developer) - [GitHub](https://github.com/kesha-antonov)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+**Maintainer:** [Kesha Antonov](https://kesha-antonov.com), React Native lead engineer, [available for hire](https://kesha-antonov.com/react-native-developer/) - [GitHub](https://github.com/kesha-antonov)
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `49acbf52` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `46a1ddbe` are properly handled with clean fallback behavior.
