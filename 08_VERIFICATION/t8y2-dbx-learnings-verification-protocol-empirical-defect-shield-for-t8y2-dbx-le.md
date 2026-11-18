@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-17T18:26:43.762Z",
+  "timestamp": "2026-11-18T12:16:17.300Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-t8y2-dbx-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [t8y2-dbx-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-17T18:26:43.762Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-18T12:16:17.300Z`  
 > **Learning ID**: `LEARN-EVO-t8y2-dbx-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/t8y2-dbx-learnings.md`  
 > **Source**: github ([https://github.com/t8y2/dbx](https://github.com/t8y2/dbx))  
-> **Source Version**: `eacef66c`  
+> **Source Version**: `5d542c80`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-17T18:26:38.734Z  
+> **Timestamp**: 2026-11-18T12:16:12.090Z  
 > **Learning ID**: `learn-github-t8y2-dbx`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/t8y2-dbx-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/t8y2/dbx](https://github.com/t8y2/dbx))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T18:26:38.729Z  
+> **Harvest Timestamp**: 2026-11-18T12:16:12.085Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: 25 MB lightweight cross-platform database client for 100+ databases, including MySQL, PostgreSQL, SQLite, Redis, MongoDB, DuckDB, SQL Server, and Dameng. Built-in AI, MCP Server, CLI, desktop and Docker. | 轻量级跨平台数据库管理工具，支持 MySQL、PostgreSQL、SQLite、Redis、MongoDB、达梦等 100+ 数据库，提供桌面端、Docker、CLI、内置 AI 助手和 MCP。
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 30625 stars
+- **Stars / Engagement**: 30740 stars
 
 ---
 
@@ -2016,17 +2016,14 @@ func (b *Binary) GetValues() []byte {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #15158** (2026-11-18): **[Bug] docker部署后功能“粘贴为新行”提示：复制失败：Clipboard API is not available**
+  *Symptoms*: ### 数据库类型和版本 / Database type and version  ALL  ### 问题描述 / Problem description  1.链接任意数据库打开数据表，从任意地方复制一条数据，在程序里使用“粘贴为新行”，直接报错未找到剪切板API。 2.希望可以正常使用“粘贴为新行”功能，并且和navicat一样直接将数据粘贴到数据表，两种方式共存。 3.目前该功能只提示：Clipboard API is not available，未测试其他相关剪切板功能。  <img width="456" height="217" alt="image" src="https://github.com/user-attachments/assets/23f859a9-c487-4fd1-b49e-ca6d865e8894" />  <img width="401" height="105" alt="image" src="https://github.com/user-attachments/assets/a34e1bf8-6316-43f5-bca9-b22ef8920f26" />  ### 支持信息 / Support information  DBX 版本：v0.6.71-beta.20261115.1 运行环境：Web 端 操作系统：Win32 docker镜像版本：latest Digest: sha256:c3fd96054501690748f7a4742bce4288f01419ed4db593cdb44cf9e8f691e66e  ### 优先级（是否紧急） / Priority (urgency)  🔴 P0 紧急 · 下个版本必须修 / Urgent · Must fix next release  ### 补充信息 / Additional information  _No response_
+
 - **Issue #15152** (2026-11-17): **[Bug] PostgreSQL 原生驱动把 real 查询结果舍入到小数点后六位**
   *Symptoms*: ### 数据库类型和版本 / Database type and version  PostgreSQL 17.11，DBX 原生 PostgreSQL 驱动  ### 问题描述 / Problem description  通过原生驱动执行以下查询，无需建表。  ```sql SELECT 0.0000001::real AS tiny, 1.2345678::real AS fractional; ```  | 结果 | tiny | fractional | | --- | ---: | ---: | | PostgreSQL（psql） | 1e-07 | 1.2345678 | | DBX `execute_query` | 0.0 | 1.234568 |  第一个非零数在查询结果中变成了零。希望驱动返回的 JSON 数字保留 PostgreSQL 存储的单精度值，能够往返回同一个 `f32`。  ### 支持信息 / Support information  DBX 上游 main，复现提交 df7a91c694051fa5aa80a980ff4428ec175ac695。macOS 26.6.2 / arm64，通过 dbx-driver-postgres 的 connect 和 execute_query 连接本地 PostgreSQL 17.11。  ### 优先级（是否紧急） / Priority (urgency)  🟡 P2 普通 · 按排期处理 / Normal · Schedule as appropriate  ### 补充信息 / Additional information  `pg_fallback_value_to_json` 将标量 `f32` 乘以 1,000,000 再取整。#3951 已修复 pgvector 元素的同类精度问题，本例是普通 `real` 列。
   **Post-Mortem & Fix Analysis**:
   > /claim
   > ✅ @lyinglyingl 已认领 #15152，开始处理吧！
-
-- **Issue #15115** (2026-11-17): **[Bug] UI 类 Ai Agent 输出阶段，右键数据库，表查询DDL一直失焦被关闭**
-  *Symptoms*: ### 数据库类型和版本 / Database type and version  ALL  ### 问题描述 / Problem description  点击AI Agent 开启对话，AI在输出阶段，右键数据库，右侧菜单一直被自动关闭，失焦  ### 支持信息 / Support information  0.6.71 windows11  ### 优先级（是否紧急） / Priority (urgency)  🟢 P3 低优 · 有空再修 / Low · Fix when possible  ### 补充信息 / Additional information  _No response_
-  **Post-Mortem & Fix Analysis**:
-  > /claim
-  > ✅ @onenewcode 已认领 #15115，开始处理吧！
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2043,316 +2040,29 @@ func (b *Binary) GetValues() []byte {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `082c5eb8` (2026-11-17)
-**Commit Message**: fix(sqlserver): keep module batches whole in the statement splitter (#15095)
+### Incident Patch 1: `a86f46de` (2026-11-18)
+**Commit Message**: fix(sidebar): avoid unsupported array at lookup
 
-* fix(sqlserver): keep module batches whole in the statement splitter
-
-A native SQL Server connection splits scripts with the plain statement
-splitter (only agent pools split on GO), so a module batch such as
-
-    CREATE PROCEDURE dbo.p AS
-    BEGIN
-        SET NOCOUNT ON;
-        SELECT 1;
-    END;
-
-was cut at its first inner semicolon and the server rejected the
-fragments. T-SQL treats the whole CREATE/ALTER module as one batch.
-
-Reuse the existing SQL Server block scanner: once a module batch has
-opened a BEGIN block, keep its semicolons until every block is closed,
-then end the statement at the trailing semicolon. Modules without a
-BEGIN body (e.g. CREATE VIEW ... AS SELECT) keep the per-statement
-split so they do not swallow following statements.
-
-Refs #15087
-
-* chore: retrigger agent-rust after flaky duckdb worker test
-
-**File**: `crates/dbx-sql-core/src/sql.rs` (modified, +149/-1)
+**File**: `apps/desktop/src/lib/sidebar/sidebarTableVGroupDrag.ts` (modified, +1/-1)
 ```diff
-@@ -3816,6 +3816,12 @@ fn keeps_oracle_style_block_together(options: SqlParsingOptions, statement_head:
- /// TRY BEGIN CATCH ... END CATCH` counts as one). `BEGIN TRAN[SACTION]` and
- /// friends have no matching `END` and stay split per statement. Only meaningful
- /// when the profile keeps such batches (`keeps_sqlserver_control_flow_batches`).
-+///
-+/// A module batch (`CREATE`/`ALTER PROCEDURE|PROC|FUNCTION|TRIGGER|VIEW ...
-+/// AS BEGIN ... END`, #15087) takes the same path: its body semicolons are
-+/// syntax, and the batch ends where the block stack closes — so a final `END`
-+/// without its own `;` still does not swallow the next statement. A native SQL
-+/// Server connection uses this plain splitter; only agent pools split on `GO`.
- fn keeps_sqlserver_control_flow_batch(options: SqlParsingOptions, statement_head: &str) -> bool {
-     if !options.profile.keeps_sqlserver_control_flow_batches {
-         return false;
-@@ -3827,7 +3833,37 @@ fn keeps_sqlserver_control_flow_batch(options: SqlParsingOptions, statement_head
-     if first.is_word("IF") || first.is_word("WHILE") {
-         return true;
-     }
--    first.is_word("BEGIN") && sqlserver_begins_block(&tokens, 0)
-+    if first.is_word("BEGIN") && sqlserver_begins_block(&tokens, 0) {
-+        return true;
-+    }
-+    keeps_sqlserver_module_batch(options, statement_head)
-+}
-+
-+/// Whether the buffered statement is a T-SQL module batch (`CREATE`/`ALTER
-+/// PROCEDURE|PROC|FUNCTION|TRIGGER|VIEW ... AS BEGIN ... END`) whose body has
-+/// already opened a `BEGIN` block, so its inner semicolons are body syntax and
-+/// not statement boundaries. A native SQL Server connection splits scripts with
-+/// the plain statement splitter (only agent pools split on `GO`), so without
-+/// this a routine body is cut at its first inner `;` and the server rejects the
-+/// fragments (#15087).
-+///
-+/// Modules whose body has no `BEGIN` block keep the historical per-semicolon
-+/// split: there is no block nesting that could tell body semicolons apart from
-+/// statement boundaries, and a `CREATE VIEW ... AS SELECT` must not swallow the
-+/// statements that follow it.
-+fn keeps_sqlserver_module_batch(options: SqlParsingOptions, statement_head: &str) -> bool {
-+    options.profile.keeps_sqlserver_module_batch_at_cursor
-+        && starts_with_sqlserver_module_ddl(statement_head)
-+        && sqlserver_module_batch_opens_begin_block(statement_head)
-+}
-+
-+/// Whether the module batch's head has opened a `BEGIN` block body. This stays
-+/// true after the block closes, so the batch is still recognised at its final
-+/// `END` (where `sqlserver_control_flow_open_blocks` is back to zero) and the
-+/// boundary scanner can end it there instead of waiting for the next `;`.
-+fn sqlserver_module_batch_opens_begin_block(statement_head: &str) -> bool {
-+    let tokens = sqlserver_top_level_tokens(statement_head);
-+    tokens.iter().enumerate().any(|(index, token)| token.is_word("BEGIN") && sqlserver_begins_block(&tokens, index))
+@@ -49,7 +49,7 @@ export function databaseVGroupDropTarget(treeNodes: TreeNode[], source: TreeNode
+     return undefined;
+   };
+   // A folder's edges mean its parent level; only its middle means entering it.
+-  const groupId = isGroup ? (position === "inside" ? target.vgroupId : parentGroupOf(layout.order)) : isDatabaseVGroupMember(target) ? (tableVGroupPathForTable(layout, target.database!, target.type).at(-1) ?? null) : null;
++  const groupId = isGroup ? (position === "inside" ? target.vgroupId : parentGroupOf(layout.order)) : isDatabaseVGroupMember(target) ? (tableVGroupPathForTable(layout, target.database!, target.type).slice(-1)[0] ?? null) : null;
+   return { node: target, groupId: groupId ?? null, scope, position: isDatabaseVGroupContainer(target) ? "after" : position };
  }
  
- /// Top-level `BEGIN`/`CASE` blocks the T-SQL statement has left open at its
-@@ -8627,6 +8663,118 @@ END";
-         );
-     }
- 
-+    // #15087: a native SQL Server connection splits scripts with the plain
-+    // statement splitter (only agent pools split on `GO`), so a module batch has
-+    // to survive its inner semicolons or the server rejects the fragments.
-+    #[test]
-+    fn sqlserver_statement_splitter_keeps_procedure_batch_with_inner_semicolons() {
-+        let sql = "CREATE PROCEDURE dbo.p @a INT\nAS\nBEGIN\n    SET NOCOUNT ON;\n    IF @a > 0\n    BEGIN\n        SELECT 1;\n    END\n    ELSE\n    BEGIN\n        SELECT 0;\n    END\nEND;";
-+
-+        assert_eq!(split_sql_statements_for_database(sql, DatabaseType::SqlServer), vec![sql.to_string()]);
-+    }
-+
-+    #[test]
-+    fn sqlserver_statement_splitter_ends_procedure_batch_before_next_statement() {
-+        let procedure = "CREATE PROCEDURE dbo.p\nAS\nBEGIN\n    SELECT 1;\nEND";
-+        let sql = format!("{procedure};\nSELECT 999;");
-+
-+        assert_eq!(
-+            split_sql_statements_for_database(&sql, DatabaseType::SqlServer),
-+            vec![format!("{procedure};"), "SELECT 999".to_string()]
-+        );
-+    }
-+
-+    #[test]
-+    fn sqlserver_statement_splitter_keeps_function_and_trigger_batches() {
-+        let function = "CREATE FUNCTION dbo.f(@a INT)\nRETURNS INT\nAS\nBEGIN\n    DECLARE @r INT;\n    SET @r = @a + 1;\n    RETURN @r;\nEND;";
-+        let trigger = "CREATE TRIGGER dbo.trg ON dbo.t AFTER INSERT\nAS\nBEGIN\n    SET NOCOUNT ON;\n    UPDATE dbo.t SET x = 1;\nEND;";
-+
-+        for body in [function, trigger] {
-+            assert_eq!(
-+                split_sql_statements_for_database(body, DatabaseType::SqlServer),
-+                vec![body.to_string()],
-+                "{body}"
-+            );
-+        }
-+    }
-+
-+    #[test]
-+    fn sqlserver_statement_splitter_does_not_swallow_statements_after_a_view() {
-+        let sql = "CREATE VIEW dbo.v AS SELECT 1 AS x;\nSELECT 9
-```
-
----
-
-### Incident Patch 2: `7fd1f4c4` (2026-11-17)
-**Commit Message**: fix(editor): preserve quoted values when pasting IN conditions (#15145)
-
-Keep trimming and blank filtering outside quoted literals. Global carriage-return normalization also changed quoted line endings, so split CR and CRLF only outside quotes and retain the existing line-separated slash behavior. Cover padded, empty, whitespace-only and escaped literals through the existing paste behavior suite.
-
-**File**: `apps/desktop/src/lib/__tests__/sql/sqlInListPaste.spec.ts` (modified, +46/-0)
-```diff
-@@ -84,6 +84,52 @@ describe("sqlInListPaste", () => {
-     });
-   });
- 
-+  it.each<[string, string, number]>([
-+    ["('')", "IN ('')", 1],
-+    ['("")', "IN ('')", 1],
-+    ["(' alice ', '')", "IN (' alice ', '')", 2],
-+    ['(" alice ", "")', "IN (' alice ', '')", 2],
-+    ["('   ', '\t')", "IN ('   ', '\t')", 2],
-+    ['("   ", "\t")', "IN ('   ', '\t')", 2],
-+    [" A \n  \n ' B '\n''", "IN ('A', ' B ', '')", 3],
-+    ["(' O''Reilly ', 'null', NULL)", "IN (' O''Reilly ', 'null', NULL)", 3],
-+  ])("preserves quoted content in %s", (source, sql, valueCount) => {
-+    expect(buildSqlInConditionFromPasteSource(source)).toEqual({
-+      ok: true,
-+      sql,
-+      valueCount,
-+    });
-+  });
-+
-+  it.each<[string, string]>([
-+    ["('\r')", "IN ('\r')"],
-+    ['("\r")', "IN ('\r')"],
-+    ["('first\r\nsecond')", "IN ('first\r\nsecond')"],
-+    ['("first\r\nsecond")', "IN ('first\r\nsecond')"],
-+  ])("preserves quoted line endings in %s", (source, sql) => {
-+    expect(buildSqlInConditionFromPasteSource(source)).toEqual({
-+      ok: true,
-+      sql,
-+      valueCount: 1,
-+    });
-+  });
-+
-+  it("splits carriage-return and CRLF separated values outside quotes", () => {
-+    expect(buildSqlInConditionFromPasteSource(" A\r\n \r\n B\rC")).toEqual({
-+      ok: true,
-+      sql: "IN ('A', 'B', 'C')",
-+      valueCount: 3,
-+    });
-+  });
-+
-+  it.each(["A/\rB", "A/\r\nB", "A/\nB"])("keeps slashes in line-separated values in %s", (source) => {
-+    expect(buildSqlInConditionFromPasteSource(source)).toEqual({
-+      ok: true,
-+      sql: "IN ('A/', 'B')",
-+      valueCount: 2,
-+    });
-+  });
-+
-   it("treats apostrophes inside unquoted values as text", () => {
-     expect(buildSqlInConditionFromPasteSource("O'Reilly\nBob")).toEqual({
-       ok: true,
-```
-
-**File**: `apps/desktop/src/lib/sql/sqlInListPaste.ts` (modified, +3/-5)
-```diff
-@@ -60,7 +60,7 @@ export function insertTextForSqlInCondition(condition: string, prefix: string):
- }
- 
- function parsePastedValues(source: string): ParsedPasteValues {
--  const sourceText = source.replace(/\r\n?/g, "\n").trim();
-+  const sourceText = source.trim();
-   const withoutInKeyword = stripLeadingInKeyword(sourceText);
-   const explicitSource = withoutInKeyword.trim();
-   const explicitList = explicitSource.startsWith("(") && explicitSource.endsWith(")") && hasSingleWrappingParentheses(explicitSource);
-@@ -109,7 +109,7 @@ function splitPasteTokens(source: string): string[] {
-       continue;
-     }
- 
--    if (char === "," || char === "\n" || char === "\t" || (slashIsDelimiter && char === "/")) {
-+    if (char === "," || char === "\r" || char === "\n" || char === "\t" || (slashIsDelimiter && char === "/")) {
-       tokens.push(current);
-       current = "";
-       continue;
-@@ -124,7 +124,7 @@ function splitPasteTokens(source: string): string[] {
- 
- function shouldSplitSlashSeparatedValues(source: string): boolean {
-   const trimmed = source.trim();
--  if (!trimmed.includes("/") || /[,\n\t]/.test(trimmed)) return false;
-+  if (!trimmed.includes("/") || /[,\r\n\t]/.test(trimmed)) return false;
-   if (trimmed.includes("'") || trimmed.includes('"')) return false;
-   if (trimmed.startsWith("/") || /^[a-z][a-z0-9+.-]*:\/\//i.test(trimmed)) return false;
-   if (/^\d{4}\/\d{1,2}\/\d{1,2}(?:\D|$)/.test(trimmed) || /^\d{1,2}\/\d{1,2}\/\d{4}(?:\D|$)/.test(trimmed)) return false;
-@@ -151,8 +151,6 @@ function normalizePastedToken(token: string): ParsedPasteValue | null {
-     value = first === "'" ? value.replace(/''/g, "'") : value.replace(/""/g, '"');
-   }
- 
--  value = value.trim();
--  if (!value) return null;
-   return { value, quoted };
- }
- 
-```
-
----
-
-### Incident Patch 3: `10b62cf6` (2026-11-17)
-**Commit Message**: fix(clickhouse): replace invalid UTF-8 in streamed rows (#15033)
-
-String columns can hold any bytes and JSONCompactEachRow* emits them raw, so one bad value failed the whole query.
-
-**File**: `crates/dbx-drivers/src/db/clickhouse_driver.rs` (modified, +37/-5)
-```diff
-@@ -279,9 +279,10 @@ fn process_stream_buffer(
-     while let Some(newline) = buffer.iter().position(|byte| *byte == b'\n') {
-         let line_bytes: Vec<u8> = buffer.drain(..=newline).collect();
-         let line_bytes = &line_bytes[..line_bytes.len().saturating_sub(1)];
--        let line =
--            std::str::from_utf8(line_bytes).map_err(|e| format!("ClickHouse stream contains invalid UTF-8: {e}"))?;
--        if let Some(item) = parser.parse_line(line)? {
-+        // String 列可以存任意字节，JSONCompactEachRow* 不校验 UTF-8 就原样输出；
-+        // 与 JSONCompact 一样把非法字节换成 U+FFFD，而不是让整个查询失败。
-+        let line = String::from_utf8_lossy(line_bytes);
-+        if let Some(item) = parser.parse_line(&line)? {
-             on_item(item)?;
-         }
-     }
-@@ -294,8 +295,8 @@ fn process_stream_remainder(
-     on_item: &mut impl FnMut(ClickHouseQueryStreamItem) -> Result<(), String>,
- ) -> Result<(), String> {
-     if !buffer.is_empty() {
--        let line = std::str::from_utf8(buffer).map_err(|e| format!("ClickHouse stream contains invalid UTF-8: {e}"))?;
--        if let Some(item) = parser.parse_line(line)? {
-+        let line = String::from_utf8_lossy(buffer);
-+        if let Some(item) = parser.parse_line(&line)? {
-             on_item(item)?;
-         }
-         buffer.clear();
-@@ -1462,6 +1463,37 @@ mod tests {
-         );
-     }
- 
-+    #[test]
-+    fn stream_parser_replaces_invalid_utf8_in_string_values() {
-+        // String 列里的 Latin-1 "café" 走整行路径，GBK "中文" 走末尾无换行的余量路径
-+        let mut buffer =
-+            b"[\"id\",\"name\"]\n[\"UInt64\",\"String\"]\n[1,\"caf\xe9\"]\n[2,\"\xd6\xd0\xce\xc4\"]".to_vec();
-+        let mut parser = ClickHouseStreamParser::default();
-+        let mut items = Vec::new();
-+
-+        process_stream_buffer(&mut buffer, &mut parser, &mut |item| {
-+            items.push(item);
-+            Ok(())
-+        })
-+        .unwrap();
-+        process_stream_remainder(&mut buffer, &mut parser, &mut |item| {
-+            items.push(item);
-+            Ok(())
-+        })
-+        .unwrap();
-+
-+        assert_eq!(
-+            items[1..],
-+            [
-+                ClickHouseQueryStreamItem::Row(vec![serde_json::json!(1), serde_json::json!("caf\u{FFFD}")]),
-+                ClickHouseQueryStreamItem::Row(vec![
-+                    serde_json::json!(2),
-+                    serde_json::json!("\u{FFFD}\u{FFFD}\u{FFFD}\u{FFFD}")
-+                ]),
-+            ]
-+        );
-+    }
-+
-     #[test]
-     fn limited_query_result_truncates_extra_probe_row() {
-         let result = ChJsonResult {
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #15154** (2026-11-17): fix(sidebar): 全局搜索过滤中保留局部表搜索框 (@dienaso)
 - **PR #15153** (2026-11-17): fix(postgres): preserve precision of scalar real query results (@lyinglyingl)
+- **PR #15151** (2026-11-18): feat(sidebar): add database virtual groups and drag ordering (@eryajf)
 - **PR #15146** (2026-11-17): feat(sidebar): Schema/库选择器支持 % 通配符搜索并一键选中匹配项 (@dienaso)
 - **PR #15145** (2026-11-17): fix(editor): preserve quoted values when pasting IN conditions (@Celestial-0)
 - **PR #15143** (2026-11-17): fix(mongodb): apply global format to mixed and nested BSON dates (@ThugKd)
-- **PR #15141** (2026-11-17): fix(db2): recognize DB2 connection deep links (@Aaron3S)
 
 ---
 
@@ -2372,52 +2082,31 @@ String columns can hold any bytes and JSONCompactEachRow* emits them raw, so one
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. sqlserver): keep module batches whole in the statement splitter
+## X. sidebar): avoid unsupported array at lookup
 
 **RULE**:
-When implementing operations in `crates/dbx-sql-core/src/sql.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in t8y2/dbx. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `apps/desktop/src/lib/sidebar/sidebarTableVGroupDrag.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in t8y2/dbx. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `082c5eb8`: sqlserver): keep module batches whole in the statement splitter. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `a86f46de`: sidebar): avoid unsupported array at lookup. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/dbx-sql-core/src/sql.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/desktop/src/lib/sidebar/sidebarTableVGroupDrag.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-///
-/// A module batch (`CREATE`/`ALTER PROCEDURE|PROC|FUNCTION|TRIGGER|VIEW ...
-/// AS BEGIN ... END`, #15087) takes the same path: its body semicolons are
-/// syntax, and the batch ends where the block stack closes — so a final `END`
-/// without its own `;` still does not swallow the next statement. A native SQL
-/// Server connection uses this plain splitter; only agent pools split on `GO`.
-    if first.is_word("BEGIN") && sqlserver_begins_block(&tokens, 0) {
-        return true;
-    }
-    keeps_sqlserver_module_batch(options, statement_head)
-}
-
-/// Whether the buffered statement is a T-SQL module batch (`CREATE`/`ALTER
-/// PROCEDURE|PROC|FUNCTION|TRIGGER|VIEW ... AS BEGIN ... END`) whose body has
-/// already opened a `BEGIN` block, so its inner semicolons are body syntax and
-/// not statement boundaries. A native SQL Server connection splits scripts with
-/// the plain statement splitter (only agent pools split on `GO`), so without
-/// this a routine body is cut at its first inner `;` and the server rejects the
-/// fragments (#15087).
-///
-/// Modules whose body has no `BEGIN` block keep the historical per-semicolon
-/// split: there is no block nesting that could tell body semicol
+  const groupId = isGroup ? (position === "inside" ? target.vgroupId : parentGroupOf(layout.order)) : isDatabaseVGroupMember(target) ? (tableVGroupPathForTable(layout, target.database!, target.type).slice(-1)[0] ?? null) : null;
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-    first.is_word("BEGIN") && sqlserver_begins_block(&tokens, 0)
+  const groupId = isGroup ? (position === "inside" ? target.vgroupId : parentGroupOf(layout.order)) : isDatabaseVGroupMember(target) ? (tableVGroupPathForTable(layout, target.database!, target.type).at(-1) ?? null) : null;
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `082c5eb8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `a86f46de` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-14T22:39:37.548Z",
+  "timestamp": "2026-11-18T12:16:16.327Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-sharkdp-fd-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [sharkdp-fd-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-14T22:39:37.548Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-18T12:16:16.327Z`  
 > **Learning ID**: `LEARN-EVO-sharkdp-fd-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/sharkdp-fd-learnings.md`  
 > **Source**: github ([https://github.com/sharkdp/fd](https://github.com/sharkdp/fd))  
-> **Source Version**: `6cf33028`  
+> **Source Version**: `b80cd53e`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-14T22:39:17.340Z  
+> **Timestamp**: 2026-11-18T12:15:58.957Z  
 > **Learning ID**: `learn-github-sharkdp-fd`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/sharkdp-fd-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/sharkdp/fd](https://github.com/sharkdp/fd))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-14T22:39:17.334Z  
+> **Harvest Timestamp**: 2026-11-18T12:15:58.950Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: A simple, fast and user-friendly alternative to 'find'
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 45062 stars
+- **Stars / Engagement**: 45101 stars
 
 ---
 
@@ -1751,8 +1751,15 @@ impl FileTypes {
                 || (!self.char_devices && filesystem::is_char_device(*entry_type))
                 || (!self.sockets && filesystem::is_socket(*entry_type))
                 || (!self.pipes && filesystem::is_pipe(*entry_type))
-                || (self.executables_only && !entry.path().executable())
-                || (self.empty_only && !filesystem::is_empty(entry))
+                // The `executable` and `empty` modifiers only refine the file (and, for
+                // `empty`, directory) results they apply to. They must not filter out other
+                // explicitly-requested types such as symlinks, which are matched as a union.
+                || (self.executables_only
+                    && entry_type.is_file()
+                    && !entry.path().executable())
+                || (self.empty_only
+                    && (entry_type.is_file() || entry_type.is_dir())
+                    && !filesystem::is_empty(entry))
                 || !(entry_type.is_file()
                     || entry_type.is_dir()
                     || entry_type.is_symlink()
@@ -1834,138 +1841,263 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6cf33028` (2026-11-14)
-**Commit Message**: Merge pull request #2124 from pederbe/learn/2113-strip-prefix-search-paths
+### Incident Patch 1: `b80cd53e` (2026-11-18)
+**Commit Message**: Merge pull request #2100 from jaideeppyne/fix/type-modifier-union
 
-Allow stripping cwd prefix with explicit search paths
+fix: don't let --type executable/empty filter out other requested types
 
 **File**: `CHANGELOG.md` (modified, +1/-1)
 ```diff
-@@ -1,7 +1,7 @@
- # Upcoming release
- 
- ## Features
--
-+- Allow `--strip-cwd-prefix` with explicit search paths, see #2113 (@pederbe)
+@@ -4,7 +4,7 @@
+ - Allow `--strip-cwd-prefix` with explicit search paths, see #2113 (@pederbe)
  
  ## Bugfixes
+-
++- Fix `--type executable`/`--type empty` incorrectly filtering out other explicitly-requested types. When combined with e.g. `--type symlink`, the `executable`/`empty` modifier was applied to *all* results, so non-executable / non-empty symlinks (and other types) were dropped even though `--type` values are meant to be combined as a union.
  
+ ## Changes
+ - Delay-load `shell32.dll`, `combase.dll` and `advapi32.dll` in Windows MSVC builds, so most runs no longer load them (and the DLLs they pull in) at startup, see #2217 (@azchohfi)
 ```
 
-**File**: `doc/fd.1` (modified, +2/-1)
+**File**: `src/filetypes.rs` (modified, +9/-2)
 ```diff
-@@ -187,7 +187,8 @@ Never strip the ./ at the beginning of paths
- .IP always
- Always strip the ./ at the beginning of paths
- .IP auto
--Only strip if used with --exec, --exec-batch, or --print0. That is, it resets to the default behavior.
-+Only strip without explicit search paths and without --exec, --exec-batch,
-+or --print0. That is, it resets to the default behavior.
- .RE
- .TP
- .B \-\-one\-file\-system, \-\-mount, \-\-xdev
+@@ -56,8 +56,15 @@ impl FileTypes {
+                 || (!self.char_devices && filesystem::is_char_device(*entry_type))
+                 || (!self.sockets && filesystem::is_socket(*entry_type))
+                 || (!self.pipes && filesystem::is_pipe(*entry_type))
+-                || (self.executables_only && !entry.path().executable())
+-                || (self.empty_only && !filesystem::is_empty(entry))
++                // The `executable` and `empty` modifiers only refine the file (and, for
++                // `empty`, directory) results they apply to. They must not filter out other
++                // explicitly-requested types such as symlinks, which are matched as a union.
++                || (self.executables_only
++                    && entry_type.is_file()
++                    && !entry.path().executable())
++                || (self.empty_only
++                    && (entry_type.is_file() || entry_type.is_dir())
++                    && !filesystem::is_empty(entry))
+                 || !(entry_type.is_file()
+                     || entry_type.is_dir()
+                     || entry_type.is_symlink()
 ```
 
-**File**: `src/cli.rs` (modified, +14/-8)
+**File**: `tests/tests.rs` (modified, +75/-0)
 ```diff
-@@ -693,8 +693,15 @@ pub struct Opts {
-     /// -X/--exec-batch, or -0/--print0 are given, to reduce the risk of a
-     /// path starting with '-' being treated as a command line option. Use
-     /// this flag to change this behavior. If this flag is used without a value,
--    /// it is equivalent to passing "always".
--    #[arg(long, conflicts_with_all(&["path", "search_path"]), value_name = "when", hide_short_help = true, require_equals = true, long_help)]
-+    /// it is equivalent to passing "always". In "auto" mode, prefixes are only
-+    /// stripped without explicit search paths.
-+    #[arg(
-+        long,
-+        value_name = "when",
-+        hide_short_help = true,
-+        require_equals = true,
-+        long_help
-+    )]
-     strip_cwd_prefix: Option<Option<StripCwdWhen>>,
- 
-     /// By default, fd will traverse the file system tree as far as other options
-@@ -779,12 +786,11 @@ impl Opts {
- 
-     pub fn strip_cwd_prefix<P: FnOnce() -> bool>(&self, auto_pred: P) -> bool {
-         use self::StripCwdWhen::*;
--        self.no_search_paths()
--            && match self.strip_cwd_prefix.map_or(Auto, |o| o.unwrap_or(Always)) {
--                Auto => auto_pred(),
--                Always => true,
--                Never => false,
--            }
-+        match self.strip_cwd_prefix.map_or(Auto, |o| o.unwrap_or(Always)) {
-+            Auto => self.no_search_paths() && auto_pred(),
-+            Always => true,
-+            Never => false,
-+        }
-     }
- 
-     #[cfg(feature = "completions")]
-```
-
-**File**: `tests/tests.rs` (modified, +51/-0)
-```diff
-@@ -3025,6 +3025,57 @@ fn test_error_if_hidden_not_set_and_pattern_starts_with_dot() {
-     te.assert_output(&[".gitignore"], "");
+@@ -1656,6 +1656,81 @@ fn test_type_empty() {
+     te.assert_output(&["--type", "empty", "--type", "directory"], "dir_empty/");
  }
  
++/// The `executable` type modifier must only constrain the file results it
++/// applies to. When another type such as `symlink` is requested in addition,
++/// those entries must still be included even if they are not executable.
++#[cfg(unix)]
 +#[test]
-+fn test_strip_cwd_prefix_search_paths() {
-+    let te = TestEnv::new(
-+        &["a/b/c"],
-+        &["a/fileA", "a/b/fileB", "a/b/c/fileC", "a/-file"],
-+    );
++fn test_type_executable_combined_with_symlink() {
++    use std::os::unix::fs::OpenOptionsExt;
 +
-+    for paths in [
-+        vec!["--search-path=.", "--search-path=b/c"],
-+        vec!["", ".", "b/c"],
-+    ] {
-+        let mut args = vec!["-C", "a", "--type", "f", "--exclude", "b"];
-+        args.extend_from_slice(&paths);
-+        te.assert_output(
-+            &args,
-+            "./-file
-+            ./fileA
-+            b/c/fileC",
-+        );
-+
-+        for mode in ["--strip-cwd-prefix=auto", "--strip-cwd-prefix=never"] {
-+            let mut args = args.clone();
-+            args.push(mode);
-+            te.assert_output(
-+                &args,
-+                "./-file
-+                ./fileA
-+                b/c/fileC",
-+            );
-+        }
-+
-+        for mode in ["--strip-cwd-prefix", "--strip-cwd-prefix=always"] {
-+            let mut args = args.clone();
-+            args.push(mode);
-+            te.assert_output(
-+                &args,
-+                "./-file
-+                fileA
-+                b/c/fileC",
-+            );
-+            args.push("--print0");
-+            te.assert_output(
-+                &args,
-+                "./-fileNULL
-+                fileANULL
-+                b/c/fileCNULL",
-+            );
-+        }
++    // This test assumes the current user isn't root
++    // (otherwise if the executable bit is set for any level, it is executable for the current
++    // user)
++    if Uid::current().is_root() {
++        return;
 +    }
++
++    let mut te = TestEnv::new(DEFAULT_DIRS, DEFAULT_FILES);
++
++    fs::OpenOptions::new()
++        .create_new(true)
++        .truncate(true)
++        .write(true)
++        .mode(0o777)
++        .open(te.test_root().join("executable-file.sh"))
++        .unwrap();
++
++    // A broken symlink is a symlink that is not executable.
++    te.create_broken_symlink("broken_symlink").unwrap();
++
++    // `--type executable` on its own only lists executable regular files.
++    te.assert_output(&["--type", "executable"], "executable-file.sh");
++
++    // Adding `--type symlink` must additionally list *all* symlinks, including
++    // the non-executable broken symlink. `symlink` is the pre-existing symlink
++    // in the test fixture (pointing at a directory).
++    te.assert_output(
++        &["--type", "executable", "--type", "symlink"],
++        "executable-file.sh
++        symlink
++        broken_symlink",
++    );
 +}
 +
++/// The `empty` type modifier must only constrain the file/directory results it
++/// applies to. When another type such as `symlink` is requested in addition,
++/// those entries must still be included even if they are not empty.
++#[cfg(unix)]
++#[test]
++fn test_type_empty_combined_with_symlink() {
++    let mut te = TestEnv::new(&["dir_empty"], &[]);
++
++    create_file_with_size(te.test_root().join("0_bytes.foo"), 0);
++    create_file_with_size(te.test_root().join("5_bytes.foo"), 5);
++
++    // A broken symlink is a symlink that is not considered empty.
++    te.create_broken_symlink("broken_symlink").unwrap();
++
++    // `--type empty` on its own only lists empty files and directories.
++    te.assert_output(
++        &["--type", "empty"],
++        "0_bytes.foo
++        dir_empty/",
++    );
++
++    // Adding `--type symlink` must additionally list *all* symlinks, including
++    // the non-empty broken symlink. `symlink` is the symlink from the test
++    // fixture (dangling here, as its target does not exist in this environment).
++    te.assert_output(
++        &["--type", "empty", "--type", "symlink"],
++        "0_bytes.foo
++        dir_empty/
++        broken_symlink
++        symlink",
++    );
++}
++
+ /// File extension (--extension)
  #[test]
- fn test_strip_cwd_prefix() {
-     let te = TestEnv::new(DEFAULT_DIRS, DEFAULT_FILES);
+ fn test_extension() {
+```
+
+---
+
+### Incident Patch 2: `2c9a0c99` (2026-08-24)
+**Commit Message**: fix: don't let --type executable/empty filter out other requested types
+
+The `executable` and `empty` --type modifiers were applied as global
+filters in FileTypes::should_ignore, so combining them with another type
+(e.g. --type executable --type symlink) dropped entries of that other
+type that weren't executable/empty. --type values are documented to
+combine as a union, so scope each modifier to the results it applies to:
+`executable` to regular files, `empty` to files and directories.
+
+**File**: `CHANGELOG.md` (modified, +1/-1)
+```diff
+@@ -4,7 +4,7 @@
+ - Allow `--strip-cwd-prefix` with explicit search paths, see #2113 (@pederbe)
+ 
+ ## Bugfixes
+-
++- Fix `--type executable`/`--type empty` incorrectly filtering out other explicitly-requested types. When combined with e.g. `--type symlink`, the `executable`/`empty` modifier was applied to *all* results, so non-executable / non-empty symlinks (and other types) were dropped even though `--type` values are meant to be combined as a union.
+ 
+ ## Changes
+ - Delay-load `shell32.dll`, `combase.dll` and `advapi32.dll` in Windows MSVC builds, so most runs no longer load them (and the DLLs they pull in) at startup, see #2217 (@azchohfi)
+```
+
+**File**: `src/filetypes.rs` (modified, +9/-2)
+```diff
+@@ -56,8 +56,15 @@ impl FileTypes {
+                 || (!self.char_devices && filesystem::is_char_device(*entry_type))
+                 || (!self.sockets && filesystem::is_socket(*entry_type))
+                 || (!self.pipes && filesystem::is_pipe(*entry_type))
+-                || (self.executables_only && !entry.path().executable())
+-                || (self.empty_only && !filesystem::is_empty(entry))
++                // The `executable` and `empty` modifiers only refine the file (and, for
++                // `empty`, directory) results they apply to. They must not filter out other
++                // explicitly-requested types such as symlinks, which are matched as a union.
++                || (self.executables_only
++                    && entry_type.is_file()
++                    && !entry.path().executable())
++                || (self.empty_only
++                    && (entry_type.is_file() || entry_type.is_dir())
++                    && !filesystem::is_empty(entry))
+                 || !(entry_type.is_file()
+                     || entry_type.is_dir()
+                     || entry_type.is_symlink()
+```
+
+**File**: `tests/tests.rs` (modified, +75/-0)
+```diff
+@@ -1656,6 +1656,81 @@ fn test_type_empty() {
+     te.assert_output(&["--type", "empty", "--type", "directory"], "dir_empty/");
+ }
+ 
++/// The `executable` type modifier must only constrain the file results it
++/// applies to. When another type such as `symlink` is requested in addition,
++/// those entries must still be included even if they are not executable.
++#[cfg(unix)]
++#[test]
++fn test_type_executable_combined_with_symlink() {
++    use std::os::unix::fs::OpenOptionsExt;
++
++    // This test assumes the current user isn't root
++    // (otherwise if the executable bit is set for any level, it is executable for the current
++    // user)
++    if Uid::current().is_root() {
++        return;
++    }
++
++    let mut te = TestEnv::new(DEFAULT_DIRS, DEFAULT_FILES);
++
++    fs::OpenOptions::new()
++        .create_new(true)
++        .truncate(true)
++        .write(true)
++        .mode(0o777)
++        .open(te.test_root().join("executable-file.sh"))
++        .unwrap();
++
++    // A broken symlink is a symlink that is not executable.
++    te.create_broken_symlink("broken_symlink").unwrap();
++
++    // `--type executable` on its own only lists executable regular files.
++    te.assert_output(&["--type", "executable"], "executable-file.sh");
++
++    // Adding `--type symlink` must additionally list *all* symlinks, including
++    // the non-executable broken symlink. `symlink` is the pre-existing symlink
++    // in the test fixture (pointing at a directory).
++    te.assert_output(
++        &["--type", "executable", "--type", "symlink"],
++        "executable-file.sh
++        symlink
++        broken_symlink",
++    );
++}
++
++/// The `empty` type modifier must only constrain the file/directory results it
++/// applies to. When another type such as `symlink` is requested in addition,
++/// those entries must still be included even if they are not empty.
++#[cfg(unix)]
++#[test]
++fn test_type_empty_combined_with_symlink() {
++    let mut te = TestEnv::new(&["dir_empty"], &[]);
++
++    create_file_with_size(te.test_root().join("0_bytes.foo"), 0);
++    create_file_with_size(te.test_root().join("5_bytes.foo"), 5);
++
++    // A broken symlink is a symlink that is not considered empty.
++    te.create_broken_symlink("broken_symlink").unwrap();
++
++    // `--type empty` on its own only lists empty files and directories.
++    te.assert_output(
++        &["--type", "empty"],
++        "0_bytes.foo
++        dir_empty/",
++    );
++
++    // Adding `--type symlink` must additionally list *all* symlinks, including
++    // the non-empty broken symlink. `symlink` is the symlink from the test
++    // fixture (dangling here, as its target does not exist in this environment).
++    te.assert_output(
++        &["--type", "empty", "--type", "symlink"],
++        "0_bytes.foo
++        dir_empty/
++        broken_symlink
++        symlink",
++    );
++}
++
+ /// File extension (--extension)
+ #[test]
+ fn test_extension() {
 ```
 
 #### Recent Merged Pull Requests:
@@ -2000,7 +2132,7 @@ Allow stripping cwd prefix with explicit search paths
 When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sharkdp/fd. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6cf33028`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b80cd53e`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
@@ -2008,7 +2140,7 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- Allow `--strip-cwd-prefix` with explicit search paths, see #2113 (@pederbe)
+- Fix `--type executable`/`--type empty` incorrectly filtering out other explicitly-requested types. When combined with e.g. `--type symlink`, the `executable`/`empty` modifier was applied to *all* results, so non-executable / non-empty symlinks (and other types) were dropped even though `--type` values are meant to be combined as a union.
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2018,7 +2150,7 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6cf33028` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b80cd53e` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

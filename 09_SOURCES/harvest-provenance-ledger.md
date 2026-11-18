@@ -10986,3 +10986,6 @@ Every entry in this ledger must capture:
 | `learn-dom-d-e01f5e82` | `project://hf-kormo-vl-kormo-web-11b` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-kormo-vl-kormo-web-11b-learnings.md` | 2026-11-18T11:55:41.797Z |
 | `learn-huggingface-qwen-qwen-image-2-1` | `https://huggingface.co/Qwen/Qwen-Image-2.1` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-11-18T12:03:18.792Z |
 | `learn-github-pingcap-tidb` | `https://github.com/pingcap/tidb` | `5f929142` | Multi-dimensional audit evidence | 2026-11-18T12:03:29.368Z |
+| `learn-huggingface-contrastive-lm-clm-v0-1-8b` | `https://huggingface.co/Contrastive-LM/CLM-v0.1-8B` | `hf-contras` | Multi-dimensional audit evidence | 2026-11-18T12:15:59.149Z |
+| `learn-github-sharkdp-fd` | `https://github.com/sharkdp/fd` | `b80cd53e` | Multi-dimensional audit evidence | 2026-11-18T12:15:59.703Z |
+| `learn-github-t8y2-dbx` | `https://github.com/t8y2/dbx` | `5d542c80` | Multi-dimensional audit evidence | 2026-11-18T12:16:12.914Z |

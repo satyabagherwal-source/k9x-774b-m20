@@ -325,8 +325,8 @@
     "sourceUrl": "https://huggingface.co/Contrastive-LM/CLM-v0.1-8B",
     "sourceVersion": "hf-contrastive-lm-clm-v0.1-8b",
     "license": "Open-Source",
-    "contentHash": "346b5dbd697c4775650babf3048a037c5ea31a3aa9b77c9f8a0e7f83303a9106",
-    "lastHarvestedAt": "2026-11-18T00:43:27.961Z",
+    "contentHash": "c2bd952c89c95f9ef43bf9fc90691d87c49cd404bab9aa1efdfd7efad82f01e3",
+    "lastHarvestedAt": "2026-11-18T12:15:59.149Z",
     "learningId": "learn-huggingface-contrastive-lm-clm-v0-1-8b"
   },
   "hf-nvidia-nemotron-3-diarization": {
@@ -2543,10 +2543,10 @@
     "repository": "sharkdp/fd",
     "platform": "github",
     "sourceUrl": "https://github.com/sharkdp/fd",
-    "sourceVersion": "6cf33028",
+    "sourceVersion": "b80cd53e",
     "license": "Apache-2.0",
-    "contentHash": "01e530f1940384cd16f88127835ec3263c8acded75f6d2ebb7a88d7c6f3d2b53",
-    "lastHarvestedAt": "2026-11-14T22:39:18.301Z",
+    "contentHash": "255298cc5f39f1f80d78580e7f94ef0a26d5e255d2269ae73cfabab88c6881b5",
+    "lastHarvestedAt": "2026-11-18T12:15:59.703Z",
     "learningId": "learn-github-sharkdp-fd"
   },
   "maotoumao-musicfree": {
@@ -7163,10 +7163,10 @@
     "repository": "t8y2/dbx",
     "platform": "github",
     "sourceUrl": "https://github.com/t8y2/dbx",
-    "sourceVersion": "eacef66c",
+    "sourceVersion": "5d542c80",
     "license": "Apache-2.0",
-    "contentHash": "dcecdebe64f01f4b424fe4e711263b9ebe5a54ae552b554e3c842c2b30d00ec0",
-    "lastHarvestedAt": "2026-11-17T18:26:39.599Z",
+    "contentHash": "f126212ddb31a9101e151198f2881412dca57303f4b3e9617b087a62c7bcad2e",
+    "lastHarvestedAt": "2026-11-18T12:16:12.914Z",
     "learningId": "learn-github-t8y2-dbx"
   },
   "ouch-org-ouch": {

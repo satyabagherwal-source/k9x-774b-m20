@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-18T12:03:33.939Z",
-  "total_records": 1843,
+  "last_updated": "2026-11-18T12:16:17.507Z",
+  "total_records": 1845,
   "domains": {
     "A": {
       "total": 11,
@@ -1796,7 +1796,7 @@
       ]
     },
     "K": {
-      "total": 87,
+      "total": 89,
       "record_ids": [
         "DOM-K-353B93D6",
         "DOM-K-76C43650",
@@ -1884,7 +1884,9 @@
         "domain_intelligence-quality-verification-intelligence-yugabyte-yugabyte-db-learnings-core-invariants",
         "domain_intelligence-quality-verification-intelligence-cross-encoder-ms-marco-minilm-l6-v2-core-invar",
         "DOM-K-92DB8DFD",
-        "domain_intelligence-quality-verification-intelligence-hf-cross-encoder-ms-marco-minilm-l6-v2-learnin"
+        "domain_intelligence-quality-verification-intelligence-hf-cross-encoder-ms-marco-minilm-l6-v2-learnin",
+        "domain_intelligence-quality-verification-intelligence-sharkdp-fd-core-invariants",
+        "domain_intelligence-quality-verification-intelligence-sharkdp-fd-learnings-core-invariants"
       ]
     },
     "L": {
@@ -9884,8 +9886,8 @@
       "title": "Technical Construction Intelligence: t8y2/dbx Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-t8y2-dbx-technical-construction-intelligence-t8y2-dbx-core-invariants.md",
       "repository": "t8y2/dbx",
-      "content_hash": "eb3cf53b143ce5e4c2b5a85ddee917d6e0f18590fd451c4e814e83b6844956af",
-      "created_at": "2026-11-17T18:26:39.889Z"
+      "content_hash": "aaa09012628b47c357f012d36bf4f79ec32c0a736cba74c303c56f1d6452a961",
+      "created_at": "2026-11-18T12:16:13.232Z"
     },
     "DOM-D-218A5260": {
       "record_id": "DOM-D-218A5260",
@@ -19930,8 +19932,8 @@
       "title": "Technical Construction Intelligence: t8y2-dbx-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-t8y2-dbx-learnings-technical-construction-intelligence-t8y2-dbx-learnings-core-i.md",
       "repository": "t8y2-dbx-learnings",
-      "content_hash": "e3338af0278e8aca8d37787a2c98c0f2a0f0cf0d7de1bd30245816c9c19de31e",
-      "created_at": "2026-11-17T18:26:43.978Z"
+      "content_hash": "541f3ed4e589e61a764dc98a50743889e426a1e2155953ef0f5b81bf2739da4d",
+      "created_at": "2026-11-18T12:16:17.507Z"
     },
     "domain_intelligence-research-knowledge-intelligence-tencent-hy-memory-30b-a3b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-tencent-hy-memory-30b-a3b-core-invariants",
@@ -29084,8 +29086,8 @@
       "title": "Research & Knowledge Intelligence: Contrastive-LM/CLM-v0.1-8B Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-contrastive-lm-clm-v0-1-8b-research-knowledge-intelligence-contrastive-lm-clm.md",
       "repository": "Contrastive-LM/CLM-v0.1-8B",
-      "content_hash": "19e67bd5c50e90e208da437570339e1a945ea92a5af4f9aa3857a7b6dea25156",
-      "created_at": "2026-11-18T00:43:28.134Z"
+      "content_hash": "ca3dab70881d643b67d62634b028fbf6e214c0b7d6d31a2c5447faafdf1cd611",
+      "created_at": "2026-11-18T12:15:59.392Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-contrastive-lm-clm-v0-1-8b-learnings-core-inv": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-contrastive-lm-clm-v0-1-8b-learnings-core-inv",
@@ -29093,8 +29095,8 @@
       "title": "Research & Knowledge Intelligence: hf-contrastive-lm-clm-v0.1-8b-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-contrastive-lm-clm-v0-1-8b-learnings-research-knowledge-intelligence-hf-contr.md",
       "repository": "hf-contrastive-lm-clm-v0.1-8b-learnings",
-      "content_hash": "f2e1a684876ac4f918aa1c1eb4b7e469d709a1f200a35cc757f4e03d163bd544",
-      "created_at": "2026-11-18T00:43:45.861Z"
+      "content_hash": "f00c82f3114df27fcbb7e24e51dc02e006cab5d5bacd15e2ce5dfda5d6bbbb00",
+      "created_at": "2026-11-18T12:16:17.001Z"
     },
     "domain_intelligence-architecture-intelligence-matrixorigin-matrixone-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-matrixorigin-matrixone-core-invariants",
@@ -30887,6 +30889,24 @@
       "repository": "hf-qwen-qwen-image-2.1-learnings",
       "content_hash": "01d761995191910707f0dc8a6cf4f36cc30462eb7f8f1e9119cfa4c36e3128d9",
       "created_at": "2026-11-18T12:03:32.700Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-sharkdp-fd-core-invariants": {
+      "record_id": "domain_intelligence-quality-verification-intelligence-sharkdp-fd-core-invariants",
+      "domain_letter": "K",
+      "title": "Quality & Verification Intelligence: sharkdp/fd Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-sharkdp-fd-quality-verification-intelligence-sharkdp-fd-core-invariants.md",
+      "repository": "sharkdp/fd",
+      "content_hash": "c4c78f9ad482b2a2911a6dd02d483569974c1a52b8e9f3dfcd4e5cbdf723cc0f",
+      "created_at": "2026-11-18T12:16:00.037Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-sharkdp-fd-learnings-core-invariants": {
+      "record_id": "domain_intelligence-quality-verification-intelligence-sharkdp-fd-learnings-core-invariants",
+      "domain_letter": "K",
+      "title": "Quality & Verification Intelligence: sharkdp-fd-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-sharkdp-fd-learnings-quality-verification-intelligence-sharkdp-fd-learnings-core.md",
+      "repository": "sharkdp-fd-learnings",
+      "content_hash": "075748f0c4fab8a244d2ae74811a5fb029310497b46053e0cc42e52b859fb11a",
+      "created_at": "2026-11-18T12:16:16.570Z"
     }
   }
 }

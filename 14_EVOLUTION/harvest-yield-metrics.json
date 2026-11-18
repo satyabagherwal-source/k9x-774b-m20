@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T12:03:29.373Z",
-  "total_cycles_completed": 10477,
-  "total_learnings_persisted": 10477,
-  "total_rules_promoted": 9971,
+  "last_updated": "2026-11-18T12:16:12.919Z",
+  "total_cycles_completed": 10480,
+  "total_learnings_persisted": 10480,
+  "total_rules_promoted": 9973,
   "history": [
-    {
-      "timestamp": "2026-11-17T21:56:37.307Z",
-      "repository": "harness-hub/Qwen3.8-27B-pi-adapted",
-      "learningId": "learn-huggingface-harness-hub-qwen3-8-27b-pi-adapted",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T21:56:39.853Z",
-      "repository": "tencent/Hy-SimulMT-30B-A3B-FP8",
-      "learningId": "learn-huggingface-tencent-hy-simulmt-30b-a3b-fp8",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T21:56:49.197Z",
-      "repository": "goodrain/rainbond",
-      "learningId": "learn-github-goodrain-rainbond",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-17T21:56:55.768Z",
       "repository": "Bitterbot-AI/bitterbot-desktop",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-18T12:03:29.373Z",
       "repository": "pingcap/tidb",
       "learningId": "learn-github-pingcap-tidb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T12:15:59.154Z",
+      "repository": "Contrastive-LM/CLM-v0.1-8B",
+      "learningId": "learn-huggingface-contrastive-lm-clm-v0-1-8b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T12:15:59.709Z",
+      "repository": "sharkdp/fd",
+      "learningId": "learn-github-sharkdp-fd",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T12:16:12.919Z",
+      "repository": "t8y2/dbx",
+      "learningId": "learn-github-t8y2-dbx",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

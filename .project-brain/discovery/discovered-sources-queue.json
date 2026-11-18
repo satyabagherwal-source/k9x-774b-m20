@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-18T11:55:41.818Z",
+  "updated_at": "2026-11-18T12:16:17.212Z",
   "stats": {
-    "total_discovered": 5476,
-    "approved_pending_harvest": 5171,
+    "total_discovered": 5478,
+    "approved_pending_harvest": 5173,
     "harvested_count": 0,
     "rejected_count": 305,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 5155,
+      "COMMUNITY_AND_EXPERT": 5157,
       "OFFICIAL_DOCUMENTATION": 176,
       "STANDARDS_AND_SPECIFICATIONS": 109,
       "ENGINEERING_BLOGS": 4,
@@ -118358,6 +118358,50 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-kormo-vl-kormo-web-11b-learnings.md",
         "fileName": "hf-kormo-vl-kormo-web-11b-learnings.md"
+      }
+    },
+    "SRC-8414585EA722": {
+      "id": "SRC-8414585EA722",
+      "url": "https://github.com/user-attachments/assets/23f859a9-c487-4fd1-b49e-ca6d865e8894",
+      "title": "https://github.com/user-attachments/assets/23f859a9-c487-4fd1-b49e-ca6d865e8894",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T12:16:17.181Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/t8y2-dbx-learnings.md",
+        "fileName": "t8y2-dbx-learnings.md"
+      }
+    },
+    "SRC-E0DC1A1ADEE0": {
+      "id": "SRC-E0DC1A1ADEE0",
+      "url": "https://github.com/user-attachments/assets/a34e1bf8-6316-43f5-bca9-b22ef8920f26",
+      "title": "https://github.com/user-attachments/assets/a34e1bf8-6316-43f5-bca9-b22ef8920f26",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T12:16:17.212Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/t8y2-dbx-learnings.md",
+        "fileName": "t8y2-dbx-learnings.md"
       }
     }
   }

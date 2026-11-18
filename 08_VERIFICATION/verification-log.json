@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261117-EEN5",
-    "timestamp": "2026-11-17T00:56:00.929Z",
-    "repository": "rdfjs/N3.js",
-    "learningId": "learn-github-rdfjs-n3-js",
-    "contentHash": "77f7278d2e510c08edf725bedc574eefa6c889b990ea601f3caa9eaca2b283aa",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261117-EI63",
-    "timestamp": "2026-11-17T00:56:05.499Z",
-    "repository": "Permify/permify",
-    "learningId": "learn-github-permify-permify",
-    "contentHash": "da9437d6ecbadec69da9364a12578b41d42bcd40f686a21b0c7f84d27394e48f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261117-R3TF",
-    "timestamp": "2026-11-17T01:33:53.043Z",
-    "repository": "Orange-OpenSource/hurl",
-    "learningId": "learn-github-orange-opensource-hurl",
-    "contentHash": "169ff26f1dfba667f2d4f60c76a59e247584b3b7b3f59a659c5f0bece6e4f1e1",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261117-RA8N",
     "timestamp": "2026-11-17T01:34:01.367Z",
     "repository": "karmada-io/karmada",
@@ -7490,6 +7445,51 @@
     "repository": "pingcap/tidb",
     "learningId": "learn-github-pingcap-tidb",
     "contentHash": "f4372e656cbf8f58a24b5aa6adf63b1f4f26c551a7712aa5059bc2b2f014ac2f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-4PEX",
+    "timestamp": "2026-11-18T12:15:59.145Z",
+    "repository": "Contrastive-LM/CLM-v0.1-8B",
+    "learningId": "learn-huggingface-contrastive-lm-clm-v0-1-8b",
+    "contentHash": "c2bd952c89c95f9ef43bf9fc90691d87c49cd404bab9aa1efdfd7efad82f01e3",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-4PUB",
+    "timestamp": "2026-11-18T12:15:59.699Z",
+    "repository": "sharkdp/fd",
+    "learningId": "learn-github-sharkdp-fd",
+    "contentHash": "255298cc5f39f1f80d78580e7f94ef0a26d5e255d2269ae73cfabab88c6881b5",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-5016",
+    "timestamp": "2026-11-18T12:16:12.906Z",
+    "repository": "t8y2/dbx",
+    "learningId": "learn-github-t8y2-dbx",
+    "contentHash": "f126212ddb31a9101e151198f2881412dca57303f4b3e9617b087a62c7bcad2e",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

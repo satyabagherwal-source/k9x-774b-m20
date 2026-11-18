@@ -10953,3 +10953,6 @@
 | `CYCLE-2026-11-18-PROJ-EVOLVE` | `2026-11-18T11:55:41.797Z` | `hf-kormo-vl-kormo-web-11b` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-E01F5E82` [Domain D] | Yes (`013b190c...`) |
 | `CYCLE-20261118-OEPW` | `2026-11-18T12:03:18.788Z` | `Qwen/Qwen-Image-2.1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen-image-2.1-learnings.md` | Yes (`7edb1bad...`) |
 | `CYCLE-20261118-OMVO` | `2026-11-18T12:03:29.364Z` | `pingcap/tidb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9214` | Yes (`f4372e65...`) |
+| `CYCLE-20261118-4PEX` | `2026-11-18T12:15:59.145Z` | `Contrastive-LM/CLM-v0.1-8B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-contrastive-lm-clm-v0.1-8b-learnings.md` | Yes (`c2bd952c...`) |
+| `CYCLE-20261118-4PUB` | `2026-11-18T12:15:59.699Z` | `sharkdp/fd` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8545` | Yes (`255298cc...`) |
+| `CYCLE-20261118-5016` | `2026-11-18T12:16:12.906Z` | `t8y2/dbx` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9215` | Yes (`f126212d...`) |
