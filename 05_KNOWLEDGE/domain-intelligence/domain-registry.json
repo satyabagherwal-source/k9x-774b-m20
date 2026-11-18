@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-18T06:00:20.899Z",
-  "total_records": 1765,
+  "last_updated": "2026-11-18T06:07:49.787Z",
+  "total_records": 1766,
   "domains": {
     "A": {
       "total": 11,
@@ -1726,7 +1726,7 @@
       ]
     },
     "K": {
-      "total": 79,
+      "total": 80,
       "record_ids": [
         "DOM-K-353B93D6",
         "DOM-K-76C43650",
@@ -1806,7 +1806,8 @@
         "domain_intelligence-quality-verification-intelligence-okteto-okteto-core-invariants",
         "domain_intelligence-quality-verification-intelligence-okteto-okteto-learnings-core-invariants",
         "domain_intelligence-quality-verification-intelligence-kotest-kotest-core-invariants",
-        "domain_intelligence-quality-verification-intelligence-kotest-kotest-learnings-core-invariants"
+        "domain_intelligence-quality-verification-intelligence-kotest-kotest-learnings-core-invariants",
+        "domain_intelligence-quality-verification-intelligence-shifthackz-sdai-kmp-learnings-core-invariants"
       ]
     },
     "L": {
@@ -9218,8 +9219,8 @@
       "title": "Research & Knowledge Intelligence: orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-research-knowledge-intelligenc.md",
       "repository": "orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
-      "content_hash": "574778bda238c80ac316d293aa6ed61e84aa20e99c4a22f090cb5957c92475ed",
-      "created_at": "2026-11-13T18:43:38.036Z"
+      "content_hash": "c012793fcc06e9449f20644ca7867e7307f07b6d830239c46d5ce498980eb080",
+      "created_at": "2026-11-18T06:07:42.398Z"
     },
     "domain_intelligence-technical-construction-intelligence-kucherenko-jscpd-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-kucherenko-jscpd-core-invariants",
@@ -9254,8 +9255,8 @@
       "title": "Research & Knowledge Intelligence: hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-learnings-research-knowledge-i.md",
       "repository": "hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-learnings",
-      "content_hash": "51ca12b0ec185f053b4fc38da454a0c3d57053ca04301797d1a2e448981af744",
-      "created_at": "2026-11-13T18:43:51.129Z"
+      "content_hash": "022c0c8b0fe44c1f9f8c963a3646b0e60790b62f3b267d61dfcf947a8613aaa8",
+      "created_at": "2026-11-18T06:07:49.071Z"
     },
     "domain_intelligence-technical-construction-intelligence-expo-expo-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-expo-expo-learnings-core-invariants",
@@ -19204,8 +19205,8 @@
       "title": "Architecture Intelligence: Kuddev/pebrel Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-kuddev-pebrel-architecture-intelligence-kuddev-pebrel-core-invariants.md",
       "repository": "Kuddev/pebrel",
-      "content_hash": "fdebf22e711c56de08dbf6ac199247fcc8530973d91570dfa65968d5bebfe4b9",
-      "created_at": "2026-11-16T23:52:46.993Z"
+      "content_hash": "016b99939ce26431a05539dddcda5674474199a8243ee91d648b1dfe5a7544f4",
+      "created_at": "2026-11-18T06:07:39.893Z"
     },
     "domain_intelligence-architecture-intelligence-kuddev-pebrel-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-kuddev-pebrel-learnings-core-invariants",
@@ -19213,8 +19214,8 @@
       "title": "Architecture Intelligence: kuddev-pebrel-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-kuddev-pebrel-learnings-architecture-intelligence-kuddev-pebrel-learnings-core-i.md",
       "repository": "kuddev-pebrel-learnings",
-      "content_hash": "fec7bedc812e35fe11fc15957ac2aa35141dca557e2e80b3631eb525247f395b",
-      "created_at": "2026-11-16T23:52:59.288Z"
+      "content_hash": "ca1c8f0805c9104da4e73e3e6400e9fb71fd7ba15b6f54aced7047fd0e67a713",
+      "created_at": "2026-11-18T06:07:48.692Z"
     },
     "DOM-D-F3C53CD9": {
       "record_id": "DOM-D-F3C53CD9",
@@ -22829,10 +22830,10 @@
       "record_id": "domain_intelligence-quality-verification-intelligence-shifthackz-sdai-kmp-core-invariants",
       "domain_letter": "K",
       "title": "Quality & Verification Intelligence: ShiftHackZ/SDAI-KMP Core Invariants",
-      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-shifthackz-stable-diffusion-kmp-quality-verification-intelligence-shifthackz-sda.md",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-shifthackz-sdai-kmp-quality-verification-intelligence-shifthackz-sdai-kmp-core-i.md",
       "repository": "ShiftHackZ/SDAI-KMP",
-      "content_hash": "9c7643ddce76e242a28a06c8cc082b36c807251d76873d3c7125306de8aaa01c",
-      "created_at": "2026-11-16T02:17:27.376Z"
+      "content_hash": "e561b810d586861a6d4af5609138b21564908a30f55951104b53a92659f8d3fc",
+      "created_at": "2026-11-18T06:07:44.239Z"
     },
     "domain_intelligence-architecture-intelligence-saltstack-salt-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-saltstack-salt-core-invariants",
@@ -29585,6 +29586,15 @@
       "repository": "sayanarijit-xplr-learnings",
       "content_hash": "a116a98b739001b7c1c62a4d3e7fe28ab925bdf9ea0efe8840e0bdbb52aa0f49",
       "created_at": "2026-11-18T05:44:20.114Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-shifthackz-sdai-kmp-learnings-core-invariants": {
+      "record_id": "domain_intelligence-quality-verification-intelligence-shifthackz-sdai-kmp-learnings-core-invariants",
+      "domain_letter": "K",
+      "title": "Quality & Verification Intelligence: shifthackz-sdai-kmp-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-shifthackz-sdai-kmp-learnings-quality-verification-intelligence-shifthackz-sdai-.md",
+      "repository": "shifthackz-sdai-kmp-learnings",
+      "content_hash": "06c941b94c9271a08ed6efeea4f5cc9a5402454f0bc8ae169534f6306ffb85d1",
+      "created_at": "2026-11-18T06:07:49.787Z"
     }
   }
 }

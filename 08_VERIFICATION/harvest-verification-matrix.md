@@ -10831,3 +10831,6 @@
 | `CYCLE-20261118-FHJ2` | `2026-11-18T05:52:27.518Z` | `flox/flox` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9134` | Yes (`7d904f09...`) |
 | `CYCLE-20261118-P8I1` | `2026-11-18T06:00:02.377Z` | `prithivMLmods/Gender-Classifier-Mini` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-prithivmlmods-gender-classifier-mini-learnings.md` | Yes (`fae5a22d...`) |
 | `CYCLE-20261118-PIXM` | `2026-11-18T06:00:15.898Z` | `slatedb/slatedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9135` | Yes (`71964a45...`) |
+| `CYCLE-20261118-Z1AH` | `2026-11-18T06:07:39.593Z` | `Kuddev/pebrel` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9136` | Yes (`a30660a1...`) |
+| `CYCLE-20261118-Z3BL` | `2026-11-18T06:07:42.225Z` | `orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-learnings.md` | Yes (`6b82e5af...`) |
+| `CYCLE-20261118-Z4NL` | `2026-11-18T06:07:43.953Z` | `ShiftHackZ/SDAI-KMP` | Commit diff / Patch analysis | `VERIFIED` | `Rule 8692` | Yes (`9c23d536...`) |

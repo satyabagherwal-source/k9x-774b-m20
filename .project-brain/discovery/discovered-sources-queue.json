@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-18T06:00:19.693Z",
+  "updated_at": "2026-11-18T06:07:49.513Z",
   "stats": {
-    "total_discovered": 5303,
-    "approved_pending_harvest": 5001,
+    "total_discovered": 5313,
+    "approved_pending_harvest": 5011,
     "harvested_count": 0,
     "rejected_count": 302,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 4992,
+      "COMMUNITY_AND_EXPERT": 5002,
       "OFFICIAL_DOCUMENTATION": 167,
       "STANDARDS_AND_SPECIFICATIONS": 108,
       "ENGINEERING_BLOGS": 4,
@@ -114573,6 +114573,226 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/slatedb-slatedb-learnings.md",
         "fileName": "slatedb-slatedb-learnings.md"
+      }
+    },
+    "SRC-9B9EE038B123": {
+      "id": "SRC-9B9EE038B123",
+      "url": "https://github.com/google-antigravity/antigravity-cli/issues/1527",
+      "title": "https://github.com/google-antigravity/antigravity-cli/issues/1527",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T06:07:48.371Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kuddev-pebrel-learnings.md",
+        "fileName": "kuddev-pebrel-learnings.md"
+      }
+    },
+    "SRC-A5D3E65AFE03": {
+      "id": "SRC-A5D3E65AFE03",
+      "url": "https://github.com/Kuddev/pebrel/actions/runs/43998356666",
+      "title": "https://github.com/Kuddev/pebrel/actions/runs/43998356666",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T06:07:48.403Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kuddev-pebrel-learnings.md",
+        "fileName": "kuddev-pebrel-learnings.md"
+      }
+    },
+    "SRC-7D2017037271": {
+      "id": "SRC-7D2017037271",
+      "url": "https://zenodo.org/badge/DOI/10.5281/zenodo.21442838.svg",
+      "title": "https://zenodo.org/badge/DOI/10.5281/zenodo.21442838.svg",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T06:07:49.294Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/shifthackz-sdai-kmp-learnings.md",
+        "fileName": "shifthackz-sdai-kmp-learnings.md"
+      }
+    },
+    "SRC-AEAFE2BA6F6B": {
+      "id": "SRC-AEAFE2BA6F6B",
+      "url": "https://doi.org/10.5281/zenodo.21442838",
+      "title": "https://doi.org/10.5281/zenodo.21442838",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T06:07:49.328Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/shifthackz-sdai-kmp-learnings.md",
+        "fileName": "shifthackz-sdai-kmp-learnings.md"
+      }
+    },
+    "SRC-C60C24688FE8": {
+      "id": "SRC-C60C24688FE8",
+      "url": "https://codecov.io/gh/ShiftHackZ/SDAI-KMP/branch/master/graph/badge.svg",
+      "title": "https://codecov.io/gh/ShiftHackZ/SDAI-KMP/branch/master/graph/badge.svg",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T06:07:49.357Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/shifthackz-sdai-kmp-learnings.md",
+        "fileName": "shifthackz-sdai-kmp-learnings.md"
+      }
+    },
+    "SRC-37B065892D60": {
+      "id": "SRC-37B065892D60",
+      "url": "https://app.codecov.io/gh/ShiftHackZ/SDAI-KMP",
+      "title": "https://app.codecov.io/gh/ShiftHackZ/SDAI-KMP",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T06:07:49.388Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/shifthackz-sdai-kmp-learnings.md",
+        "fileName": "shifthackz-sdai-kmp-learnings.md"
+      }
+    },
+    "SRC-0BAC65C1411F": {
+      "id": "SRC-0BAC65C1411F",
+      "url": "https://img.shields.io/endpoint?color=blue&logo=google-play&logoColor=white&url=https%3A%2F%2Fplay.cuzi.workers.dev%2Fplay%3Fi%3Dcom.shifthackz.aisdv1.app%26l%3DGoogle%2520Play%26m%3D%24version",
+      "title": "https://img.shields.io/endpoint?color=blue&logo=google-play&logoColor=white&url=https%3A%2F%2Fplay.cuzi.workers.dev%2Fplay%3Fi%3Dcom.shifthackz.aisdv1.app%26l%3DGoogle%2520Play%26m%3D%24version",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T06:07:49.421Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/shifthackz-sdai-kmp-learnings.md",
+        "fileName": "shifthackz-sdai-kmp-learnings.md"
+      }
+    },
+    "SRC-955763C15534": {
+      "id": "SRC-955763C15534",
+      "url": "https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Ff-droid.org%2Fapi%2Fv1%2Fpackages%2Fcom.shifthackz.aisdv1.app.foss&query=%24.packages%5B0%5D.versionName&label=F-Droid&logo=fdroid&link=https%3A%2F%2Ff-droid.org%2Fpackages%2Fcom.shifthackz.aisdv1.app.foss%2F",
+      "title": "https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Ff-droid.org%2Fapi%2Fv1%2Fpackages%2Fcom.shifthackz.aisdv1.app.foss&query=%24.packages%5B0%5D.versionName&label=F-Droid&logo=fdroid&link=https%3A%2F%2Ff-droid.org%2Fpackages%2Fcom.shifthackz.aisdv1.app.foss%2F",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T06:07:49.452Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/shifthackz-sdai-kmp-learnings.md",
+        "fileName": "shifthackz-sdai-kmp-learnings.md"
+      }
+    },
+    "SRC-378049112E88": {
+      "id": "SRC-378049112E88",
+      "url": "https://gist.github.com/obfusk/61046e09cee352ae6dd109911534b12e",
+      "title": "https://gist.github.com/obfusk/61046e09cee352ae6dd109911534b12e",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T06:07:49.482Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/shifthackz-sdai-kmp-learnings.md",
+        "fileName": "shifthackz-sdai-kmp-learnings.md"
+      }
+    },
+    "SRC-DE624D30AE3C": {
+      "id": "SRC-DE624D30AE3C",
+      "url": "https://issuetracker.google.com/issues/231837768",
+      "title": "https://issuetracker.google.com/issues/231837768",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T06:07:49.513Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/shifthackz-sdai-kmp-learnings.md",
+        "fileName": "shifthackz-sdai-kmp-learnings.md"
       }
     }
   }

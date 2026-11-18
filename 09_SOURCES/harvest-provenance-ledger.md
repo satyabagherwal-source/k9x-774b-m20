@@ -10864,3 +10864,6 @@ Every entry in this ledger must capture:
 | `learn-github-flox-flox` | `https://github.com/flox/flox` | `83a6c49f` | Multi-dimensional audit evidence | 2026-11-18T05:52:27.523Z |
 | `learn-huggingface-prithivmlmods-gender-classifier-mini` | `https://huggingface.co/prithivMLmods/Gender-Classifier-Mini` | `hf-prithiv` | Multi-dimensional audit evidence | 2026-11-18T06:00:02.381Z |
 | `learn-github-slatedb-slatedb` | `https://github.com/slatedb/slatedb` | `ae4b403e` | Multi-dimensional audit evidence | 2026-11-18T06:00:15.902Z |
+| `learn-github-kuddev-pebrel` | `https://github.com/Kuddev/pebrel` | `303a7f4e` | Multi-dimensional audit evidence | 2026-11-18T06:07:39.596Z |
+| `learn-huggingface-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf` | `https://huggingface.co/orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF` | `hf-orcarou` | Multi-dimensional audit evidence | 2026-11-18T06:07:42.229Z |
+| `learn-github-shifthackz-sdai-kmp` | `https://github.com/ShiftHackZ/SDAI-KMP` | `440ea2b0` | Multi-dimensional audit evidence | 2026-11-18T06:07:43.957Z |

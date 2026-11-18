@@ -555,8 +555,8 @@
     "sourceUrl": "https://huggingface.co/orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
     "sourceVersion": "hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf",
     "license": "Open-Source",
-    "contentHash": "e6b4b1878bb571d5f160b5ba9250ce3bf2c7c4a866da66baac3a76f8c1463472",
-    "lastHarvestedAt": "2026-11-13T18:43:37.840Z",
+    "contentHash": "6b82e5af09e402283d74b57a5eb3778dfeb0513a3f97c4bb7a05d3e0505a250f",
+    "lastHarvestedAt": "2026-11-18T06:07:42.229Z",
     "learningId": "learn-huggingface-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf"
   },
   "hf-alissonerdx-bfs-best-face-swap": {
@@ -3373,10 +3373,10 @@
     "repository": "Kuddev/pebrel",
     "platform": "github",
     "sourceUrl": "https://github.com/Kuddev/pebrel",
-    "sourceVersion": "69a4f721",
+    "sourceVersion": "303a7f4e",
     "license": "GPL-3.0",
-    "contentHash": "a2a9bb3c804e1105894c7e1f7682ecd534558dea6b5de2a93ab1b7a3e53326e9",
-    "lastHarvestedAt": "2026-11-16T23:52:46.724Z",
+    "contentHash": "a30660a108498097d1b8d6d04a436fb8d9aa37d0cb7ff8c74edf0f1b5d71c2c7",
+    "lastHarvestedAt": "2026-11-18T06:07:39.596Z",
     "learningId": "learn-github-kuddev-pebrel"
   },
   "alibaba-formily": {
@@ -12163,10 +12163,10 @@
     "repository": "ShiftHackZ/SDAI-KMP",
     "platform": "github",
     "sourceUrl": "https://github.com/ShiftHackZ/SDAI-KMP",
-    "sourceVersion": "3d9670a7",
+    "sourceVersion": "440ea2b0",
     "license": "AGPL-3.0",
-    "contentHash": "774f930094bc136730a943c8c946ec3c2571129280f94c93c16b0ec29dc43372",
-    "lastHarvestedAt": "2026-11-15T00:37:27.169Z",
+    "contentHash": "9c23d536dd9c76c5a7cc80011faa27608522c5f43b6ebebb55f073b904ecee53",
+    "lastHarvestedAt": "2026-11-18T06:07:43.957Z",
     "learningId": "learn-github-shifthackz-sdai-kmp"
   },
   "qybaihe-bla": {

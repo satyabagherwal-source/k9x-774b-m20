@@ -4,22 +4,22 @@
 {
   "source_repository": "ShiftHackZ/SDAI-KMP",
   "source_url": "https://github.com/ShiftHackZ/SDAI-KMP",
-  "source_version": "3d9670a7",
+  "source_version": "440ea2b0",
   "license": "AGPL-3.0",
-  "timestamp": "2026-11-15T00:37:27.405Z",
+  "timestamp": "2026-11-18T06:07:44.127Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-shifthackz-sdai-kmp",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [ShiftHackZ/SDAI-KMP](https://github.com/ShiftHackZ/SDAI-KMP) (Revision: `3d9670a7`).  
-> **License**: AGPL-3.0 | **Timestamp**: `2026-11-15T00:37:27.405Z`  
+> **Provenance**: Harvested from [ShiftHackZ/SDAI-KMP](https://github.com/ShiftHackZ/SDAI-KMP) (Revision: `440ea2b0`).  
+> **License**: AGPL-3.0 | **Timestamp**: `2026-11-18T06:07:44.127Z`  
 > **Learning ID**: `learn-github-shifthackz-sdai-kmp`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `ShiftHackZ/SDAI-KMP` (Commit: `3d9670a7`)
+- **Target Repository**: `ShiftHackZ/SDAI-KMP` (Commit: `440ea2b0`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/shifthackz-sdai-kmp-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ShiftHackZ/SDAI-KMP](https://github.com/ShiftHackZ/SDAI-KMP))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-15T00:37:26.042Z  
+> **Harvest Timestamp**: 2026-11-18T06:07:43.384Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Stable Diffusion AI client app for Android and iOS
 - **Primary Language / Ecosystem**: Kotlin
 - **Discovered Manifests / Configurations**: README.md
-- **Stars / Engagement**: 1291 stars
+- **Stars / Engagement**: 1294 stars
 
 ---
 
@@ -47,6 +47,152 @@ PROVENANCE_END -->
 ### D1: Architecture & Structural Boundaries
 - Entry configurations inspected via direct stream: README.md.
 - Evaluated system abstractions and modular contracts.
+
+### Core Architecture Module: `app/android/src/main/java/com/shifthackz/aisdv1/app/inference/NativeInferenceEngineFactory.kt`
+```
+package com.shifthackz.aisdv1.app.inference
+
+import com.shifthackz.aisdv1.domain.entity.NativeGenerationRequest
+import com.shifthackz.aisdv1.domain.feature.diffusion.NativeInferenceEngine
+
+/**
+ * Composition-root factory for an independent, child-only native job graph.
+ *
+ * @author Dmitriy Moroz
+ */
+internal interface NativeInferenceEngineFactory {
+    /**
+     * Creates a child-only runtime and its independent dependency graph.
+     * The caller owns the returned engine and must close it after native execution returns.
+     *
+     * @param request Immutable job configuration used to construct runtime collaborators.
+     * @author Dmitriy Moroz
+     */
+    fun create(request: NativeGenerationRequest): NativeInferenceEngine
+}
+
+```
+
+### Core Architecture Module: `app/android/src/main/java/com/shifthackz/aisdv1/app/inference/NativeInferenceEngineFactoryImpl.kt`
+```
+package com.shifthackz.aisdv1.app.inference
+
+import android.content.Context
+import com.shifthackz.aisdv1.app.BuildConfig
+import com.shifthackz.aisdv1.domain.entity.NativeGenerationEngine
+import com.shifthackz.aisdv1.domain.entity.NativeGenerationRequest
+import com.shifthackz.aisdv1.domain.feature.diffusion.NativeInferenceEngine
+import com.shifthackz.aisdv1.feature.bonsai.di.bonsaiInferenceModule
+import com.shifthackz.aisdv1.feature.mediapipe.di.mediaPipeInferenceModule
+import com.shifthackz.aisdv1.feature.onnx.di.onnxInferenceModule
+import com.shifthackz.aisdv1.feature.sdxl.di.sdxlInferenceModule
+import org.koin.dsl.koinApplication
+
+/**
+ * The only place that resolves per-job feature dependencies; never installed in the host graph.
+ *
+ * @param context Child application context.
+ * @author Dmitriy Moroz
+ */
+internal class NativeInferenceEngineFactoryImpl(private val context: Context) :
+    NativeInferenceEngineFactory {
+    /**
+     * Creates a child-only runtime and its independent dependency graph.
+     * The caller owns the returned engine and must close it after native execution returns.
+     *
+     * @param request Immutable job inputs.
+     * @author Dmitriy Moroz
+     */
+    override fun create(request: NativeGenerationRequest): NativeInferenceEngine {
+        val graph = koinApplication {
+            modules(
+                when (request.engine) {
+                    NativeGenerationEngine.ONNX -> onnxInferenceModule(
+                        request,
+                        isDiagnosticsEnabled = BuildConfig.BUILD_TYPE == "dev",
+                    )
+
+                    NativeGenerationEngine.MEDIA_PIPE -> mediaPipeInferenceModule(context)
+                    NativeGenerationEngine.SDCPP -> sdxlInferenceModule()
+                    NativeGenerationEngine.BONSAI -> bonsaiInferenceModule()
+                }
+            )
+        }
+        return try {
+            val engine = graph.koin.get<NativeInferenceEngine>()
+            OwnedNativeInferenceEngine(engine, graph)
+        } catch (failure: Throwable) {
+            graph.close(); throw failure
+        }
+    }
+}
+
+```
+
+### Core Architecture Module: `app/android/src/main/java/com/shifthackz/aisdv1/app/inference/OwnedNativeInferenceEngine.kt`
+```
+package com.shifthackz.aisdv1.app.inference
+
+import com.shifthackz.aisdv1.domain.entity.LocalDiffusionStatus
+import com.shifthackz.aisdv1.domain.entity.NativeGenerationRequest
+import com.shifthackz.aisdv1.domain.entity.NativeGenerationStage
+import com.shifthackz.aisdv1.domain.feature.diffusion.NativeInferenceEngine
+import org.koin.core.KoinApplication
+
+/**
+ * Owns both a child runtime and its independent graph; graph teardown never precedes native exit.
+ *
+ * @param engine Job-scoped injected runtime.
+ * @param graph Composition-root graph that created the engine.
+ * @author Dmitriy Moroz
+ */
+internal class OwnedNativeInferenceEngine(
+    private val engine: NativeInferenceEngine,
+    private val graph: KoinApplication,
+) : NativeInferenceEngine {
+
+    private var isClosed = false
+
+    /**
+     * Delegates generation to the job-scoped runtime while retaining its graph until explicit close.
+     *
+     * @param request Immutable generation inputs.
+     * @param onProgress Nonblocking step callback.
+     * @param onStage Sanitized stage callback.
+     * @author Dmitriy Moroz
+     */
+    override suspend fun generate(
+        request: NativeGenerationRequest,
+        onProgress: (LocalDiffusionStatus) -> Unit,
+        onStage: (NativeGenerationStage) -> Unit
+    ): ByteArray =
+        engine.generate(request, onProgress, onStage)
+
+    /**
+     * Signals cooperative termination only.
+     *
+     * @author Dmitriy Moroz
+     */
+    override fun interrupt() = engine.interrupt()
+
+    /**
+     * Disposes collaborators once, on their inference owner thread.
+     *
+     * @author Dmitriy Moroz
+     */
+    override fun close() {
+        if (!isClosed) {
+            isClosed = true
+            try {
+                engine.close()
+            } finally {
+                graph.close()
+            }
+        }
+    }
+}
+
+```
 
 ### Core Architecture Module: `core/common/src/androidMain/kotlin/com/shifthackz/aisdv1/core/common/extensions/AppExtensions.kt`
 ```
@@ -672,156 +818,36 @@ internal inline val <T : Any> T.loggingTag: String
 
 ```
 
-### Core Architecture Module: `core/common/src/androidMain/kotlin/com/shifthackz/aisdv1/core/common/model/Hexagonal.kt`
-```
-package com.shifthackz.aisdv1.core.common.model
-
-import java.io.Serializable
-
-/**
- * Carries `Hexagonal` data through the SDAI core common layer.
- *
- * @author Dmitriy Moroz
- */
-data class Hexagonal<out A, out B, out C, out D, out E, out F>(
-    /**
-     * Exposes the `first` value used by the SDAI core common layer.
-     *
-     * @author Dmitriy Moroz
-     */
-    val first: A,
-    /**
-     * Exposes the `second` value used by the SDAI core common layer.
-     *
-     * @author Dmitriy Moroz
-     */
-    val second: B,
-    /**
-     * Exposes the `third` value used by the SDAI core common layer.
-     *
-     * @author Dmitriy Moroz
-     */
-    val third: C,
-    /**
-     * Exposes the `fourth` value used by the SDAI core common layer.
-     *
-     * @author Dmitriy Moroz
-     */
-    val fourth: D,
-    /**
-     * Exposes the `fifth` value used by the SDAI core common layer.
-     *
-     * @author Dmitriy Moroz
-     */
-    val fifth: E,
-    /**
-     * Exposes the `sixth` value used by the SDAI core common layer.
-     *
-     * @author Dmitriy Moroz
-     */
-    val sixth: F,
-) : Serializable {
-
-    /**
-     * Converts SDAI data with `toString`.
-     *
-     * @return Result produced by `toString`.
-     * @author Dmitriy Moroz
-     */
-    override fun toString(): String = "($first, $second, $third, $fourth, $fifth, $sixth)"
-}
-
-```
-
-### Core Architecture Module: `core/common/src/androidMain/kotlin/com/shifthackz/aisdv1/core/common/model/Quintuple.kt`
-```
-package com.shifthackz.aisdv1.core.common.model
-
-import java.io.Serializable
-
-/**
- * Carries `Quintuple` data through the SDAI core common layer.
- *
- * @author Dmitriy Moroz
- */
-data class Quintuple<out A, out B, out C, out D, out E>(
-    /**
-     * Exposes the `first` value used by the SDAI core common layer.
-     *
-     * @author Dmitriy Moroz
-     */
-    val first: A,
-    /**
-     * Exposes the `second` value used by the SDAI core common layer.
-     *
-     * @author Dmitriy Moroz
-     */
-    val second: B,
-    /**
-     * Exposes the `third` value used by the SDAI core common layer.
-     *
-     * @author Dmitriy Moroz
-     */
-    val third: C,
-    /**
-     * Exposes the `fourth` value used by the SDAI core common layer.
-     *
-     * @author Dmitriy Moroz
-     */
-    val fourth: D,
-    /**
-     * Exposes the `fifth` value used by the SDAI core common layer.
-     *
-     * @author Dmitriy Moroz
-     */
-    val fifth: E,
-) : Serializable {
-
-    /**
-     * Converts SDAI data with `toString`.
-     *
-     * @return Result produced by `toString`.
-     * @author Dmitriy Moroz
-     */
-    override fun toString(): String = "($first, $second, $third, $fourth, $fifth)"
-}
-
-```
-
-### Core Architecture Module: `core/common/src/androidMain/kotlin/com/shifthackz/aisdv1/core/common/time/PlatformTime.android.kt`
-```
-package com.shifthackz.aisdv1.core.common.time
-
-/**
- * Executes the `platformNanoTime` step in the SDAI core common layer.
- *
- * @author Dmitriy Moroz
- */
-internal actual fun platformNanoTime(): Long = System.nanoTime()
-
-/**
- * Executes the `platformCurrentTimeMillis` step in the SDAI core common layer.
- *
- * @author Dmitriy Moroz
- */
-internal actual fun platformCurrentTimeMillis(): Long = System.currentTimeMillis()
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #713** (2026-11-15): **Title: ONNX sampling steps and CFG scale reset after app restart
+
+Device: Samsung Galaxy A55 5G, model SM-A556E
+RAM: approximately 11.4 GB
+SDAI provider: Microsoft ONNX
+Model: Absolute Reality
+Installed version: 1.1.2
+
+The ONNX benchmark recommends 512 x 512, 16 sampling steps, and CFG scale 6.0. Generation works successfully with those settings.
+
+However, after closing and reopening SDAI:
+- Absolute Reality remains selected
+- Width 512 remains selected
+- Height 512 remains selected
+- Sampling steps reset from 16 to 20
+- CFG scale resets from 6.0 to 7.0
+
+The numeric ONNX generation settings do not persist between app launches, while the model and resolution do persist.
+
+Please make the ONNX sampling steps and CFG scale values persistent.**
+  *Symptoms*: **Describe the bug** A clear and concise description of what the bug is.  **To Reproduce** Steps to reproduce the behavior: 1. Go to '...' 2. Click on '....' 3. Scroll down to '....' 4. See error  **Expected behavior** A clear and concise description of what you expected to happen.  **Screenshots** If applicable, add screenshots to help explain your problem.  **Desktop (please complete the following information):**  - OS: [e.g. iOS]  - Browser [e.g. chrome, safari]  - Version [e.g. 22]  **Smartphone (please complete the following information):**  - Device: [e.g. iPhone6]  - OS: [e.g. iOS8.1]  - Browser [e.g. stock browser, safari]  - Version [e.g. 22]  **Additional context** Add any other context about the problem here. 
+
 - **Issue #230** (2024-08-09): **Local diffusion downloads**
   *Symptoms*: When I try to download 2 models at same time after taping the second model the first one stops downloading and after the second one finished the 1st one won't continue. 
-
-- **Issue #48** (2023-07-20): **Gallery not always visible**
-  *Symptoms*: Thanks for the great work. I hope in the future the API will support more features. I can successfully generate images, but even with "always save images" activated, they are only visible in the app gallery and I have to manually save them in the phone gallery. Is it possible to automatically save them there? My problem is, that after a while, the app gallery is not visible anymore and then I have no access to the generated images at all. Screenshot of the app gallery showing the problem ![Screenshot_2023-05-28-16-11-14-441_com.shifthackz.aisdv1.app.jpg](https://github.com/ShiftHackZ/Stable-Diffusion-Android/assets/15450754/79cc212a-90b9-4b60-bab9-766364e87eea)   
-  **Post-Mortem & Fix Analysis**:
-  > Hi @lead0r, thanks for telling about the issue.  The images are stored in local SQL-based DB as base64 string (not as actual file), so it is likely that some base64 reached the max limit, and there is an exception occurring while gallery loading and trying to convert that broken base64 to bitmap.  I think it can be fixed in converter not to process bad base64.  By the way, do you remember what image sizes you had in your gallery? Are there any images that are significantly large (like 2048x2048) ? 
-  > I don't remember, but that is very much likely, yes 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -838,281 +864,653 @@ internal actual fun platformCurrentTimeMillis(): Long = System.currentTimeMillis
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `3d9670a7` (2026-11-14)
-**Commit Message**: Sign nightly APKs with the release keystore
+### Incident Patch 1: `91d55b97` (2026-11-14)
+**Commit Message**: Fix large LoRA connections, setup timeouts, and traffic accounting (#740)
 
-**File**: `.github/workflows/nightly_android.yml` (modified, +26/-11)
+**File**: `core/localization/src/androidMain/res/values-de/strings.xml` (modified, +2/-2)
 ```diff
-@@ -36,6 +36,7 @@ jobs:
-   nightly:
-     name: Build Android full nightly
-     runs-on: ubuntu-24.04
-+    environment: android-release
-     timeout-minutes: 90
-     env:
-       TARGET_REF: ${{ github.event_name == 'workflow_dispatch' && inputs.target_ref || 'develop' }}
-@@ -128,18 +129,24 @@ jobs:
-             -Dkotlin.native.ignoreDisabledTargets=true \
-             -Pkotlin.native.ignoreDisabledTargets=true
- 
--      - name: Sign APK with apksigner key and certificate
-+      - name: Sign APK with release JKS
-         if: steps.plan.outputs.should_build == 'true'
-         id: sign
-         shell: bash
-         env:
--          ANDROID_NIGHTLY_CERT_PEM_BASE64: ${{ secrets.ANDROID_NIGHTLY_CERT_PEM_BASE64 }}
--          ANDROID_NIGHTLY_KEY_PK8_BASE64: ${{ secrets.ANDROID_NIGHTLY_KEY_PK8_BASE64 }}
-+          ANDROID_RELEASE_KEYSTORE_BASE64: ${{ secrets.ANDROID_RELEASE_KEYSTORE_BASE64 }}
-+          ANDROID_RELEASE_STORE_PASSWORD: ${{ secrets.ANDROID_RELEASE_STORE_PASSWORD }}
-+          ANDROID_RELEASE_KEY_ALIAS: ${{ secrets.ANDROID_RELEASE_KEY_ALIAS }}
-+          ANDROID_RELEASE_KEY_PASSWORD: ${{ secrets.ANDROID_RELEASE_KEY_PASSWORD }}
-+          ANDROID_RELEASE_CERT_SHA256: ${{ vars.ANDROID_RELEASE_CERT_SHA256 }}
-         run: |
-           set -euo pipefail
- 
--          : "${ANDROID_NIGHTLY_CERT_PEM_BASE64:?Missing ANDROID_NIGHTLY_CERT_PEM_BASE64 secret.}"
--          : "${ANDROID_NIGHTLY_KEY_PK8_BASE64:?Missing ANDROID_NIGHTLY_KEY_PK8_BASE64 secret.}"
-+          : "${ANDROID_RELEASE_KEYSTORE_BASE64:?Missing ANDROID_RELEASE_KEYSTORE_BASE64 secret.}"
-+          : "${ANDROID_RELEASE_STORE_PASSWORD:?Missing ANDROID_RELEASE_STORE_PASSWORD secret.}"
-+          : "${ANDROID_RELEASE_KEY_ALIAS:?Missing ANDROID_RELEASE_KEY_ALIAS secret.}"
-+          : "${ANDROID_RELEASE_CERT_SHA256:?Missing ANDROID_RELEASE_CERT_SHA256 variable.}"
-+          export ANDROID_RELEASE_KEY_PASSWORD="${ANDROID_RELEASE_KEY_PASSWORD:-${ANDROID_RELEASE_STORE_PASSWORD}}"
- 
-           unsigned_apk="$(find app/android/build/outputs/apk/full/release -type f -name '*-unsigned.apk' -print -quit)"
-           if [[ -z "${unsigned_apk}" ]]; then
-@@ -153,23 +160,31 @@ jobs:
-           zipalign="${build_tools}/zipalign"
- 
-           signing_dir="${RUNNER_TEMP}/nightly-signing"
-+          trap 'rm -rf -- "${signing_dir}"' EXIT
-           output_dir="${RUNNER_TEMP}/nightly-output"
-           install -m 700 -d "${signing_dir}" "${output_dir}"
- 
--          key_file="${signing_dir}/nightly.pk8"
--          cert_file="${signing_dir}/nightly.x509.pem"
-+          keystore="${signing_dir}/release.jks"
-           aligned_apk="${output_dir}/sdai-full-nightly-aligned.apk"
-           signed_apk="${output_dir}/${APK_NAME}"
- 
--          printf "%s" "${ANDROID_NIGHTLY_KEY_PK8_BASE64}" | base64 --decode > "${key_file}"
--          printf "%s" "${ANDROID_NIGHTLY_CERT_PEM_BASE64}" | base64 --decode > "${cert_file}"
--          chmod 600 "${key_file}" "${cert_file}"
-+          printf "%s" "${ANDROID_RELEASE_KEYSTORE_BASE64}" | base64 --decode > "${keystore}"
-+          chmod 600 "${keystore}"
- 
-           "${zipalign}" -p -f 4 "${unsigned_apk}" "${aligned_apk}"
- 
--          "${apksigner}" sign --key "${key_file}" --cert "${cert_file}" --out "${signed_apk}" "${aligned_apk}"
-+          "${apksigner}" sign --ks "${keystore}" --ks-key-alias "${ANDROID_RELEASE_KEY_ALIAS}" \
-+            --ks-pass env:ANDROID_RELEASE_STORE_PASSWORD --key-pass env:ANDROID_RELEASE_KEY_PASSWORD \
-+            --out "${signed_apk}" "${aligned_apk}"
-           "${apksigner}" verify --print-certs "${signed_apk}" > "${output_dir}/apksigner.txt"
- 
-+          expected_cert="$(printf '%s' "${ANDROID_RELEASE_CERT_SHA256}" | tr -d '[:space:]:' | tr '[:upper:]' '[:lower:]')"
-+          actual_cert="$(sed -n 's/^Signer #1 certificate SHA-256 digest: //p' "${output_dir}/apksigner.txt" | tr '[:upper:]' '[:lower:]')"
-+          if [[ ! "${expected_cert}" =~ ^[0-9a-f]{64}$ || "${actual_cert}" != "${expected_cert}" ]]; then
-+            echo "Signed APK certificate does not match the release certificate." >&2
-+            exit 1
-+          fi
-+
-           sha256sum "${signed_apk}" > "${output_dir}/${APK_NAME}.sha256"
-           echo "signed_apk=${signed_apk}" >> "${GITHUB_OUTPUT}"
-           echo "sha256_file=${output_dir}/${APK_NAME}.sha256" >> "${GITHUB_OUTPUT}"
+@@ -648,8 +648,8 @@
+     <string name="settings_generation_timeout_minutes">%1$s Min.</string>
+     <string name="settings_generation_timeout_unlimited">Unbegrenzt</string>
+     <string name="settings_connection_timeout">Verbindungszeitlimit</string>
+-    <string name="settings_connection_timeout_description">Zeit zum Verbindungsaufbau mit einem KI-Anbieter. Gilt für neue Anfragen.</string>
+-    <string name="settings_connection_timeout_ios_description">iOS verwaltet die Verbindungsdauer automatisch. Dieser Wert wird gespeichert, kann unter iOS aber nicht erzwungen werden.</string>
++    <string name="settings_connection_timeout_description">Zeitlimit für die Einrichtung einer Anbieterverbindung und Metadatenanfragen. Gilt für neue Anfragen.</string>
++    <string name="settings_connection_timeout_ios_description">Begrenzt die Verbindungseinrichtung und Metadatenanfragen. iOS verwaltet die Verbindungsdauer auf Netzwerkebene automatisch.</string>
+     <string name="srv_type_open_ai_compatible">OpenAI-kompatibel</string>
+     <string name="open_ai_compatible_help">Verbinde einen Bildserver oder Proxy über die OpenAI-Bild-API. Gib das vollständige API-Präfix ein, z. B. https://host/prefix/v1. Der API-Schlüssel ist optional. Der Server bestimmt die unterstützten Modelle und Größen.</string>
+     <string name="open_ai_compatible_url">API-Basis-URL (einschließlich /v1)</string>
 ```
 
-**File**: `NIGHTLY_BUILDS.md` (modified, +1/-10)
+**File**: `core/localization/src/androidMain/res/values-ru/strings.xml` (modified, +2/-2)
 ```diff
-@@ -34,16 +34,7 @@ The workflow does not upload separate GitHub Actions artifacts, so APK downloads
+@@ -611,8 +611,8 @@
+     <string name="settings_generation_timeout_minutes">%1$s мин</string>
+     <string name="settings_generation_timeout_unlimited">Без ограничения</string>
+     <string name="settings_connection_timeout">Тайм-аут подключения</string>
+-    <string name="settings_connection_timeout_description">Время на подключение к ИИ-провайдеру. Применяется к новым запросам.</string>
+-    <string name="settings_connection_timeout_ios_description">iOS автоматически управляет временем подключения. Значение сохраняется, но не может применяться в iOS.</string>
++    <string name="settings_connection_timeout_description">Время на настройку подключения к провайдеру и запросы метаданных. Применяется к новым запросам.</string>
++    <string name="settings_connection_timeout_ios_description">Ограничивает настройку подключения и запросы метаданных. iOS автоматически управляет временем низкоуровневого подключения.</string>
+     <string name="srv_type_open_ai_compatible">OpenAI-совместимый</string>
+     <string name="open_ai_compatible_help">Подключите сервер изображений или прокси через OpenAI Image API. Введите полный префикс API, например https://host/prefix/v1. Ключ API необязателен. Доступные модели и размеры определяет сервер.</string>
+     <string name="open_ai_compatible_url">Базовый URL API (включая /v1)</string>
+```
+
+**File**: `core/localization/src/androidMain/res/values-tr/strings.xml` (modified, +2/-2)
+```diff
+@@ -611,8 +611,8 @@
+     <string name="settings_generation_timeout_minutes">%1$s dk</string>
+     <string name="settings_generation_timeout_unlimited">Sınırsız</string>
+     <string name="settings_connection_timeout">Bağlantı zaman aşımı</string>
+-    <string name="settings_connection_timeout_description">Yapay zekâ sağlayıcısına bağlanmak için izin verilen süre. Yeni istekler için geçerlidir.</string>
+-    <string name="settings_connection_timeout_ios_description">iOS bağlantı süresini otomatik olarak yönetir. Bu değer kaydedilir ancak iOS üzerinde uygulanamaz.</string>
++    <string name="settings_connection_timeout_description">Sağlayıcı bağlantı kurulumu ve meta veri istekleri için izin verilen süre. Yeni istekler için geçerlidir.</string>
++    <string name="settings_connection_timeout_ios_description">Sağlayıcı bağlantı kurulumunu ve meta veri isteklerini sınırlar. iOS düşük seviyeli bağlantı süresini otomatik yönetir.</string>
+     <string name="srv_type_open_ai_compatible">OpenAI uyumlu</string>
+     <string name="open_ai_compatible_help">OpenAI görüntü API’sini kullanan bir görüntü sunucusuna veya proxy’ye bağlanın. Tam API önekini girin, örneğin https://host/prefix/v1. API anahtarı isteğe bağlıdır. Desteklenen modelleri ve boyutları sunucu belirler.</string>
+     <string name="open_ai_compatible_url">API temel URL’si (/v1 dahil)</string>
+```
+
+**File**: `core/localization/src/androidMain/res/values-uk/strings.xml` (modified, +2/-2)
+```diff
+@@ -611,8 +611,8 @@
+     <string name="settings_generation_timeout_minutes">%1$s хв</string>
+     <string name="settings_generation_timeout_unlimited">Без обмеження</string>
+     <string name="settings_connection_timeout">Тайм-аут підключення</string>
+-    <string name="settings_connection_timeout_description">Час на підключення до ШІ-провайдера. Застосовується до нових запитів.</string>
+-    <string name="settings_connection_timeout_ios_description">iOS автоматично керує часом підключення. Значення зберігається, але не може застосовуватися в iOS.</string>
++    <string name="settings_connection_timeout_description">Час на налаштування підключення до провайдера та запити метаданих. Застосовується до нових запитів.</string>
++    <string name="settings_connection_timeout_ios_description">Обмежує налаштування підключення та запити метаданих. iOS автоматично керує часом низькорівневого підключення.</string>
+     <string name="srv_type_open_ai_compatible">OpenAI-сумісний</string>
+     <string name="open_ai_compatible_help">Підключіть сервер зображень або проксі через OpenAI Image API. Введіть повний префікс API, наприклад https://host/prefix/v1. Ключ API необов’язковий. Доступні моделі та розміри визначає сервер.</string>
+     <string name="open_ai_compatible_url">Базовий URL API (включно з /v1)</string>
+```
+
+**File**: `core/localization/src/androidMain/res/values-zh/strings.xml` (modified, +2/-2)
+```diff
+@@ -663,8 +663,8 @@
+     <string name="settings_generation_timeout_minutes">%1$s 分钟</string>
+     <string name="settings_generation_timeout_unlimited">无限制</string>
+     <string name="settings_connection_timeout">连接超时</string>
+-    <string name="settings_connection_timeout_description">连接到 AI 服务提供商所允许的时间。适用于新请求。</string>
+-    <string name="settings_connection_timeout_ios_description">iOS 自动管理连接时长。此值会被保存，但无法在 iOS 上强制执行。</string>
++    <string name="settings_connection_timeout_description">提供商连接设置和元数据请求的时间限制。适用于新请求。</string>
++    <string name="settings_connection_timeout_ios_description">限制提供商连接设置和元数据请求的时间。iOS 自动管理底层连接时长。</string>
+     <string name="srv_type_open_ai_compatible">OpenAI 兼容服务</string>
+     <string name="open_ai_compatible_help">通过 OpenAI 图像 API 连接图像服务器或代理。请输入完整的 API 前缀，例如 https://host/prefix/v1。API 密钥可选。支持的模型和尺寸由服务器决定。</string>
+     <string name="open_ai_compatible_url">API 基础 URL（包含 /v1）</string>
+```
+
+**File**: `core/localization/src/androidMain/res/values/strings.xml` (modified, +2/-2)
+```diff
+@@ -648,8 +648,8 @@
+     <string name="settings_generation_timeout_minutes">%1$s min</string>
+     <string name="settings_generation_timeout_unlimited">No limit</string>
+     <string name="settings_connection_timeout">Connection timeout</string>
+-    <string name="settings_connection_timeout_description">Time allowed to connect to an AI provider. Applies to new requests.</string>
+-    <string name="settings_connection_timeout_ios_description">iOS manages connection timing automatically. This value is saved but cannot be enforced on iOS.</string>
++    <string name="settings_connection_timeout_description">Time allowed for provider setup and metadata requests. Applies to new requests.</string>
++    <string name="settings_connection_timeout_ios_description">Limits provider setup and metadata requests. iOS manages low-level connection timing automatically.</string>
+     <string name="srv_type_open_ai_compatible">OpenAI-compatible</string>
+     <string name="open_ai_compatible_help">Connect to an image server or proxy using the OpenAI image API. Enter the complete API prefix, for example https://host/prefix/v1. The API key is optional. The server determines which models and sizes are supported.</string>
+     <string name="open_ai_compatible_url">API base URL (including /v1)</string>
+```
+
+**File**: `data/src/androidUnitTest/kotlin/com/shifthackz/aisdv1/data/di/TrafficRecorderStartupTest.kt` (added, +30/-0)
+```diff
+@@ -0,0 +1,30 @@
++package com.shifthackz.aisdv1.data.di
++
++import com.shifthackz.aisdv1.network.client.NetworkUsageCounter
++import com.shifthackz.aisdv1.storage.db.persistent.dao.NetworkUsageDao
++import io.mockk.mockk
++import org.junit.Assert.assertNotNull
++import org.junit.Test
++import org.koin.core.context.startKoin
++import org.koin.core.context.stopKoin
++import org.koin.dsl.module
++
++/** Checks recorder installation through application DI startup before any Settings dependency is read.
++ * @author Dmitriy Moroz */
++class TrafficRecorderStartupTest {
++    @Test
++    fun `traffic recorder is ready before the first provider request`() {
++        NetworkUsageCounter.recorder = null
++        try {
++            startKoin {
++                modules(coreDataModule, module {
++                    single<NetworkUsageDao> { mockk(relaxed = true) }
++                })
++            }
++            assertNotNull(NetworkUsageCounter.recorder)
++        } finally {
++            stopKoin()
++            NetworkUsageCounter.recorder = null
++        }
++    }
++}
+```
+
+**File**: `data/src/androidUnitTest/kotlin/com/shifthackz/aisdv1/data/remote/StableDiffusionLorasRemoteDataSourceTest.kt` (modified, +18/-0)
+```diff
+@@ -3,6 +3,7 @@ package com.shifthackz.aisdv1.data.remote
+ import com.shifthackz.aisdv1.data.mocks.mockKtorStableDiffusionLoraRaw
+ import com.shifthackz.aisdv1.domain.feature.auth.AuthorizationCredentials
+ import com.shifthackz.aisdv1.network.api.automatic1111.Automatic1111MetadataApi
++import com.shifthackz.aisdv1.network.model.StableDiffusionLoraRaw
+ import io.mockk.coEvery
+ import io.mockk.mockk
+ import kotlinx.coroutines.test.runTest
+@@ -16,6 +17,23 @@ class KtorStableDiffusionLorasRemoteDataSourceTest {
  
- ## Signing Model
+     private val remoteDataSource = KtorStableDiffusionLorasRemoteDataSource(stubApi)
  
--Nightly signing does not use JKS or Gradle `signing.properties`.
--
--The workflow signs the unsigned APK with Android SDK `apksigner` using:
--
--- `ANDROID_NIGHTLY_KEY_PK8_BASE64`: Base64-encoded plain PKCS#8 private key file.
--- `ANDROID_NIGHTLY_CERT_PEM_BASE64`: Base64-encoded X.509 certificate file.
--
--These values should be stored as repository or environment secrets. Do not commit them to the repository.
--
--If the nightly key is different from the normal `full` release signing certificate, Android will not install a nightly APK as an update over an existing `com.shifthackz.aisdv1.app.full` build. Testers must uninstall the old build first, or the nightly signing certificate must match the installed build.
-+The workflow signs the unsigned APK with Android SDK `apksigner` using the same release JKS as normal `full` releases, configured in the `android-release` GitHub environment. See [release signing configuration](scripts/release/README.md#configure-signing).
- 
- ## Manual Run
- 
++    @Test
++    fun `2500 loras retain every name alias and path in domain models`() = runTest {
++        val response = List(2_500) { index ->
++            StableDiffusionLoraRaw("lora_$index", "alias_$index", "models/Lora/$index.safetensors")
++        }
++        coEvery { stubApi.fetchLoras(BASE_URL, null) } returns response
++
++        val actual = remoteDataSource.fetchLoras(BASE_URL, AuthorizationCredentials.None)
++
++        Assert.assertEquals(2_500, actual.size)
++        actual.forEachIndexed { index, lora ->
++            Assert.assertEquals(response[index].name, lora.name)
++            Assert.assertEquals(response[index].alias, lora.alias)
++            Assert.assertEquals(response[index].path, lora.path)
++        }
++    }
++
+     @Test
+     fun `given attempt to fetch loras, api returns success response, expected valid loras list value`() = runTest {
+         coEvery {
 ```
 
 ---
 
-### Incident Patch 2: `dd8e9edd` (2026-11-14)
-**Commit Message**: Restore Bonsai model downloads and remove obsolete sources
+### Incident Patch 2: `b805a1be` (2026-11-14)
+**Commit Message**: Fix sampler list recovery after app process recreation (#738)
 
-**File**: `docs/bonsai.json` (modified, +2/-2)
+* Fix sampler list recovery after app process recreation
+
+* Add sampler recovery regression tests and clarify boolean names
+
+**File**: `core/localization/src/androidMain/res/values-de/strings.xml` (modified, +1/-0)
 ```diff
-@@ -4,7 +4,7 @@
-     "name": "Bonsai Image 4B Ternary MLX 2-bit",
-     "size": "3.89 GB",
-     "sources": [
--      "https://sdai-models.moroz.cc/SDAI/Bonsai/bonsai-image-ternary-4b-mlx-2bit.zip"
-+      "https://huggingface.co/moroz-ellmsha/sdai-bonsai-model-archives/resolve/main/bonsai-image-ternary-4b-mlx-2bit.zip?download=true"
-     ],
-     "metadata": {
-       "src": "https://huggingface.co/prism-ml/bonsai-image-ternary-4B-mlx-2bit"
-@@ -15,7 +15,7 @@
-     "name": "Bonsai Image 4B Binary MLX 1-bit",
-     "size": "3.42 GB",
-     "sources": [
--      "https://sdai-models.moroz.cc/SDAI/Bonsai/bonsai-image-binary-4b-mlx-1bit.zip"
-+      "https://huggingface.co/moroz-ellmsha/sdai-bonsai-model-archives/resolve/main/bonsai-image-binary-4b-mlx-1bit.zip?download=true"
-     ],
-     "metadata": {
-       "src": "https://huggingface.co/prism-ml/bonsai-image-binary-4B-mlx-1bit"
+@@ -681,4 +681,5 @@
+     <string name="open_ai_oauth_storage_error">Geschützter Kontospeicher ist nicht verfügbar. Entsperre das Gerät und versuche es erneut.</string>
+     <string name="open_ai_oauth_error">Die ChatGPT-Anfrage ist fehlgeschlagen. Prüfe Verbindung, Kontozugriff und Bildgröße und versuche es erneut.</string>
+     <string name="open_ai_oauth_reset">Lokale Sitzung zurücksetzen</string>
++    <string name="error_samplers_unavailable">Die Sampling-Methoden konnten nicht geladen werden. Prüfe die Serververbindung und versuche es erneut.</string>
+ </resources>
 ```
 
-**File**: `docs/mediapipe.json` (modified, +4/-12)
+**File**: `core/localization/src/androidMain/res/values-ru/strings.xml` (modified, +1/-0)
 ```diff
-@@ -4,9 +4,7 @@
-     "name": "stable-diffusion-v1-5",
-     "size": "1.9 Gb",
-     "sources": [
--      "https://github.com/ShiftHackZ/Local-Diffusion-Models-SDAI-MediaPipe/releases/download/patch-26082024/stable-diffusion-v1-5.zip",
--      "https://sdai-models.moroz.cc/SDAI/MediaPipe/stable-diffusion-v1-5.zip",
--      "https://gh-proxy.ygxz.in/https://github.com/ShiftHackZ/Local-Diffusion-Models-SDAI-MediaPipe/releases/download/patch-26082024/stable-diffusion-v1-5.zip"
-+      "https://github.com/ShiftHackZ/Local-Diffusion-Models-SDAI-MediaPipe/releases/download/patch-26082024/stable-diffusion-v1-5.zip"
-     ],
-     "metadata": {
-       "src": "https://huggingface.co/runwayml/stable-diffusion-v1-5/blob/main/v1-5-pruned-emaonly.ckpt"
-@@ -17,9 +15,7 @@
-     "name": "miniSD",
-     "size": "1.82 Gb",
-     "sources": [
--      "https://github.com/ShiftHackZ/Local-Diffusion-Models-SDAI-MediaPipe/releases/download/patch-28082024/minisd.zip",
--      "https://sdai-models.moroz.cc/SDAI/MediaPipe/minisd.zip",
--      "https://gh-proxy.ygxz.in/https://github.com/ShiftHackZ/Local-Diffusion-Models-SDAI-MediaPipe/releases/download/patch-28082024/minisd.zip"
-+      "https://github.com/ShiftHackZ/Local-Diffusion-Models-SDAI-MediaPipe/releases/download/patch-28082024/minisd.zip"
-     ],
-     "metadata": {
-       "src": "https://huggingface.co/justinpinkney/miniSD/blob/main/miniSD.ckpt"
-@@ -30,9 +26,7 @@
-     "name": "waifu-diffusion-v1-4",
-     "size": "1.82 Gb",
-     "sources": [
--      "https://github.com/ShiftHackZ/Local-Diffusion-Models-SDAI-MediaPipe/releases/download/patch-28082024/waifu-diffusion-v1-4.zip",
--      "https://sdai-models.moroz.cc/SDAI/MediaPipe/waifu-diffusion-v1-4.zip",
--      "https://gh-proxy.ygxz.in/https://github.com/ShiftHackZ/Local-Diffusion-Models-SDAI-MediaPipe/releases/download/patch-28082024/waifu-diffusion-v1-4.zip"
-+      "https://github.com/ShiftHackZ/Local-Diffusion-Models-SDAI-MediaPipe/releases/download/patch-28082024/waifu-diffusion-v1-4.zip"
-     ],
-     "metadata": {
-       "src": "https://huggingface.co/hakurei/waifu-diffusion-v1-4/blob/main/models/wd-1-3-penultimate-ucg-cont.ckpt"
-@@ -43,9 +37,7 @@
-     "name": "aniverse_v50",
-     "size": "1.79 Gb",
-     "sources": [
--      "https://github.com/ShiftHackZ/Local-Diffusion-Models-SDAI-MediaPipe/releases/download/patch-19092024/aniverse_v50.zip",
--      "https://sdai-models.moroz.cc/SDAI/MediaPipe/aniverse_v50.zip",
--      "https://gh-proxy.ygxz.in/https://github.com/ShiftHackZ/Local-Diffusion-Models-SDAI-MediaPipe/releases/download/patch-19092024/aniverse_v50.zip"
-+      "https://github.com/ShiftHackZ/Local-Diffusion-Models-SDAI-MediaPipe/releases/download/patch-19092024/aniverse_v50.zip"
-     ],
-     "metadata": {
-       "src": "https://civitai.com/models/107842/aniverse"
+@@ -644,4 +644,5 @@
+     <string name="open_ai_oauth_storage_error">Защищённое хранилище аккаунта недоступно. Разблокируйте устройство и повторите попытку.</string>
+     <string name="open_ai_oauth_error">Запрос к ChatGPT завершился ошибкой. Проверьте подключение, доступ аккаунта и размер изображения, затем повторите попытку.</string>
+     <string name="open_ai_oauth_reset">Сбросить локальную сессию</string>
++    <string name="error_samplers_unavailable">Не удалось загрузить методы сэмплирования. Проверьте соединение с сервером и повторите попытку.</string>
+ </resources>
 ```
 
-**File**: `docs/models.json` (modified, +30/-90)
+**File**: `core/localization/src/androidMain/res/values-tr/strings.xml` (modified, +1/-0)
 ```diff
-@@ -4,39 +4,31 @@
-     "name": "chilloutmix",
-     "size": "1.2 Gb",
-     "sources": [
--      "https://github.com/ShiftHackZ/Local-Diffusion-Models-SDAI-ONXX/releases/download/patch-14022024/chilloutmix.zip",
--      "https://sdai-models.moroz.cc/SDAI/ONNX/chilloutmix.zip",
--      "https://gh-proxy.ygxz.in/https://github.com/ShiftHackZ/Local-Diffusion-Models-SDAI-ONXX/releases/download/patch-14022024/chilloutmix.zip"
-+      "https://github.com/ShiftHackZ/Local-Diffusion-Models-SDAI-ONXX/releases/download/patch-14022024/chilloutmix.zip"
-     ]
-   },
-   {
-     "id": "a1621c1c-0646-41bf-bc9f-6d0f23399799",
-     "name": "Absolute Reality",
-     "size": "1.01 Gb",
-     "sources": [
--      "https://github.com/ShiftHackZ/Local-Diffusion-Models-SDAI-ONXX/releases/download/patch-14022024/majicmix.zip",
--      "https://sdai-models.moroz.cc/SDAI/ONNX/majicmix.zip",
--      "https://gh-proxy.ygxz.in/https://github.com/ShiftHackZ/Local-Diffusion-Models-SDAI-ONXX/releases/download/patch-14022024/majicmix.zip"
-+      "https://github.com/ShiftHackZ/Local-Diffusion-Models-SDAI-ONXX/releases/download/patch-14022024/majicmix.zip"
-     ]
-   },
-   {
-     "id": "dfd7304e-a1da-4bbb-8814-5342ac88814d",
-     "name": "Real Vision",
-     "size": "1.8 Gb",
-     "sources": [
--      "https://github.com/ShiftHackZ/Local-Diffusion-Models-SDAI-ONXX/releases/download/patch-14022024/realvision.zip",
--      "https://sdai-models.moroz.cc/SDAI/ONNX/realvision.zip",
--      "https://gh-proxy.ygxz.in/https://github.com/ShiftHackZ/Local-Diffusion-Models-SDAI-ONXX/releases/download/patch-14022024/realvision.zip"
-+      "https://github.com/ShiftHackZ/Local-Diffusion-Models-SDAI-ONXX/releases/download/patch-14022024/realvision.zip"
-     ]
-   },
-   {
-     "id": "efe6dfe2-b014-4952-b140-8eb6b10ac508",
-     "name": "analogMadness",
-     "size": "1.0 Gb",
-     "sources": [
--      "https://github.com/ShiftHackZ/Local-Diffusion-Models-SDAI-ONXX/releases/download/patch-25022024/analogMadness.zip",
--      "https://sdai-models.moroz.cc/SDAI/ONNX/analogMadness.zip",
--      "https://gh-proxy.ygxz.in/https://github.com/ShiftHackZ/Local-Diffusion-Models-SDAI-ONXX/releases/download/patch-25022024/analogMadness.zip"
-+      "https://github.com/ShiftHackZ/Local-Diffusion-Models-SDAI-ONXX/releases/download/patch-25022024/analogMadness.zip"
-     ],
-     "metadata": {
-       "src": "https://huggingface.co/Androidonnxfork/test/tree/main/fp16fullonnxsdquantized_in_ort/miena%2Clyriel%2Ccetus%2Canalogmadness/analogMadness*"
-@@ -47,9 +39,7 @@
-     "name": "aniflatmix",
-     "size": "1.0 Gb",
-     "sources": [
--      "https://github.com/ShiftHackZ/Local-Diffusion-Models-SDAI-ONXX/releases/download/patch-25022024/aniflatmix.zip",
--      "https://sdai-models.moroz.cc/SDAI/ONNX/aniflatmix.zip",
--      "https://gh-proxy.ygxz.in/https://github.com/ShiftHackZ/Local-Diffusion-Models-SDAI-ONXX/releases/download/patch-25022024/aniflatmix.zip"
-+      "https://github.com/ShiftHackZ/Local-Diffusion-Models-SDAI-ONXX/releases/download/patch-25022024/aniflatmix.zip"
-     ],
-     "metadata": {
-       "src": "https://huggingface.co/Androidonnxfork/test/tree/main/fp16fullonnxsdquantized_in_ort/landscape_modelsfp32noslicing/aniflatmix*"
-@@ -60,9 +50,7 @@
-     "name": "beautifulReal_v60",
-     "size": "1.1 Gb",
-     "sources": [
--      "https://github.com/ShiftHackZ/Local-Diffusion-Models-SDAI-ONXX/releases/download/patch-25022024/beautifulRealistic_v60.zip",
--      "https://sdai-models.moroz.cc/SDAI/ONNX/beautifulRealistic_v60.zip",
--      "https://gh-proxy.ygxz.in/https://github.com/ShiftHackZ/Local-Diffusion-Models-SDAI-ONXX/releases/download/patch-25022024/beautifulRealistic_v60.zip"
-+      "https://github.com/ShiftHackZ/Local-Diffusion-Models-SDAI-ONXX/releases/download/patch-25022024/beautifulRealistic_v60.zip"
-     ],
-     "metadata": {
-       "src": "https://huggingface.co/Androidonnxfork/test/tree/main/fp16fullonnxsdquantized_in_ort/beautifulrealv6%2Cmajicmix%2Ccyberreal%2Cepicrealism%2C/beautifulRealistic_v60"
-@@ -73,9 +61,7 @@
-     "name": "cetusMix",
-     "size": "1.0 Gb",
-     "sources": [
--      "https://github.com/ShiftHackZ/Local-Diffusion-Models-SDAI-ONXX/releases/download/patch-25022024/cetusMix.zip",
--      "https://sdai-models.moroz.cc/SDAI/ONNX/cetusMix.zip",
--      "https://gh-proxy.ygxz.in/https://github.com/ShiftHackZ/Local-Diffusion-Models-SDAI-ONXX/releases/download/patch-25022024/cetusMix.zip"
-+      "https://github.com/ShiftHackZ/Local-Diffusion-Models-SDAI-ONXX/releases/download/patch-25022024/cetusMix.zip"
-     ],
-     "metadata": {
-       "src": "https://huggingface.co/Androidonnxfork/test/tree/main/fp16fullonnxsdquantized_in_ort/miena%2Clyriel%2Ccetus%2Canalogmadness/cetusMix*"
-@@ -86,9 +72,7 @@
-     "name": "counterfit-v3.0",
-     "size": "1.0 Gb",
-     "sources": [
--      "https://github.com/ShiftHackZ/Local-Diffusion-Models-SDAI-ONXX/releases/download/patch-25022024/counterfit-v3.0.zip",
--      "https://sdai-models.moroz.cc/SDAI/ONNX/counterfit-v3.0.zip",
--      "
+@@ -644,4 +644,5 @@
+     <string name="open_ai_oauth_storage_error">Korumalı hesap depolaması kullanılamıyor. Cihazın kilidini açıp yeniden deneyin.</string>
+     <string name="open_ai_oauth_error">ChatGPT isteği başarısız oldu. Bağlantınızı, hesap erişimini ve görsel boyutlarını kontrol edip yeniden deneyin.</string>
+     <string name="open_ai_oauth_reset">Yerel oturumu sıfırla</string>
++    <string name="error_samplers_unavailable">Örnekleme yöntemleri yüklenemedi. Sunucu bağlantısını kontrol edip yeniden deneyin.</string>
+ </resources>
+```
+
+**File**: `core/localization/src/androidMain/res/values-uk/strings.xml` (modified, +1/-0)
+```diff
+@@ -644,4 +644,5 @@
+     <string name="open_ai_oauth_storage_error">Захищене сховище облікового запису недоступне. Розблокуйте пристрій і повторіть спробу.</string>
+     <string name="open_ai_oauth_error">Запит до ChatGPT завершився помилкою. Перевірте з’єднання, доступ облікового запису й розмір зображення, потім повторіть спробу.</string>
+     <string name="open_ai_oauth_reset">Скинути локальну сесію</string>
++    <string name="error_samplers_unavailable">Не вдалося завантажити методи семплювання. Перевірте з’єднання із сервером і повторіть спробу.</string>
+ </resources>
+```
+
+**File**: `core/localization/src/androidMain/res/values-zh/strings.xml` (modified, +1/-0)
+```diff
+@@ -696,4 +696,5 @@
+     <string name="open_ai_oauth_storage_error">受保护的账户存储不可用。请解锁设备后重试。</string>
+     <string name="open_ai_oauth_error">ChatGPT 请求失败。请检查网络、账户访问权限和图像尺寸，然后重试。</string>
+     <string name="open_ai_oauth_reset">重置本地会话</string>
++    <string name="error_samplers_unavailable">无法加载采样方法。请检查服务器连接后重试。</string>
+ </resources>
+```
+
+**File**: `core/localization/src/androidMain/res/values/strings.xml` (modified, +1/-0)
+```diff
+@@ -681,4 +681,5 @@
+     <string name="open_ai_oauth_storage_error">Protected account storage is unavailable. Unlock the device and try again.</string>
+     <string name="open_ai_oauth_error">The ChatGPT request failed. Check your connection, account access and selected dimensions, then try again.</string>
+     <string name="open_ai_oauth_reset">Reset local session</string>
++    <string name="error_samplers_unavailable">Could not load sampling methods. Check the server connection and retry.</string>
+ </resources>
+```
+
+**File**: `data/src/androidUnitTest/kotlin/com/shifthackz/aisdv1/data/repository/StableDiffusionSamplersRecoveryTest.kt` (added, +186/-0)
+```diff
+@@ -0,0 +1,186 @@
++package com.shifthackz.aisdv1.data.repository
++
++import com.shifthackz.aisdv1.data.mocks.mockStableDiffusionSamplers
++import com.shifthackz.aisdv1.domain.datasource.StableDiffusionSamplersDataSource
++import com.shifthackz.aisdv1.domain.entity.StableDiffusionSampler
++import com.shifthackz.aisdv1.domain.feature.auth.AuthorizationCredentials
++import com.shifthackz.aisdv1.domain.feature.auth.AuthorizationStore
++import com.shifthackz.aisdv1.domain.preference.PreferenceManager
++import io.mockk.coEvery
++import io.mockk.coVerify
++import io.mockk.every
++import io.mockk.mockk
++import kotlinx.coroutines.CompletableDeferred
++import kotlinx.coroutines.CoroutineStart
++import kotlinx.coroutines.ExperimentalCoroutinesApi
++import kotlinx.coroutines.async
++import kotlinx.coroutines.cancelAndJoin
++import kotlinx.coroutines.test.runCurrent
++import kotlinx.coroutines.test.runTest
++import org.junit.Assert.assertEquals
++import org.junit.Assert.assertFalse
++import org.junit.Assert.assertTrue
++import org.junit.Before
++import org.junit.Test
++
++/**
++ * Verifies sampler cache ownership and complete snapshots during concurrent refresh and recovery.
++ *
++ * @author Dmitriy Moroz
++ */
++@OptIn(ExperimentalCoroutinesApi::class)
++class StableDiffusionSamplersRecoveryTest {
++
++    private val remote = mockk<StableDiffusionSamplersDataSource.Remote>()
++    private val local = mockk<StableDiffusionSamplersDataSource.Local>()
++    private val preferences = mockk<PreferenceManager>()
++    private val authorization = mockk<AuthorizationStore>()
++    private var serverUrl = "http://server-a:7860"
++    private var credentials: AuthorizationCredentials = AuthorizationCredentials.None
++    private var cachedSamplers = emptyList<StableDiffusionSampler>()
++    private val repository = createRepository()
++
++    @Before
++    fun initialize() {
++        every { preferences.automatic1111ServerUrl } answers { serverUrl }
++        every { authorization.getAuthorizationCredentials() } answers { credentials }
++        coEvery { remote.fetchSamplers(any(), any()) } returns mockStableDiffusionSamplers
++        coEvery { local.getSamplers() } answers { cachedSamplers }
++        coEvery { local.insertSamplers(any()) } coAnswers { cachedSamplers = firstArg() }
++    }
++
++    @Test
++    fun `an unowned cache is not accepted by a recreated repository`() = runTest {
++        repository.fetchSamplers()
++        assertEquals(mockStableDiffusionSamplers, repository.getSamplers())
++
++        assertTrue(createRepository().getSamplers().isEmpty())
++    }
++
++    @Test
++    fun `failed refresh retains cache only for the same server`() = runTest {
++        repository.fetchSamplers()
++        coEvery { remote.fetchSamplers(any(), any()) } throws IllegalStateException("HTTP 503")
++
++        assertTrue(runCatching { repository.fetchSamplers() }.isFailure)
++        assertEquals(mockStableDiffusionSamplers, repository.getSamplers())
++
++        serverUrl = "http://server-b:7860"
++        assertTrue(runCatching { repository.fetchSamplers() }.isFailure)
++        assertTrue(repository.getSamplers().isEmpty())
++    }
++
++    @Test
++    fun `changed credentials cannot reuse the previous account cache`() = runTest {
++        repository.fetchSamplers()
++        credentials = AuthorizationCredentials.HttpBasic("another-account", "fixture-only")
++        coEvery { remote.fetchSamplers(any(), any()) } throws IllegalStateException("HTTP 401")
++
++        assertTrue(runCatching { repository.fetchSamplers() }.isFailure)
++        assertTrue(repository.getSamplers().isEmpty())
++    }
++
++    @Test
++    fun `a response from a replaced server is discarded`() = runTest {
++        val response = CompletableDeferred<List<StableDiffusionSampler>>()
++        coEvery { remote.fetchSamplers(any(), any()) } coAnswers { response.await() }
++        val request = async { repository.fetchSamplers() }
++        runCurrent()
++        coVerify(exactly = 1) { remote.fetchSamplers("http://server-a:7860", AuthorizationCredentials.None) }
++
++        serverUrl = "http://server-b:7860"
++        response.complete(mockStableDiffusionSamplers)
++        request.await()
++
++        assertTrue(repository.getSamplers().isEmpty())
++        coVerify(exactly = 0) { local.insertSamplers(any()) }
++    }
++
++    @Test
++    fun `a response from replaced credentials is discarded`() = runTest {
++        val response = CompletableDeferred<List<StableDiffusionSampler>>()
++        coEvery { remote.fetchSamplers(any(), any()) } coAnswers { response.await() }
++        val request = async { repository.fetchSamplers() }
++        runCurrent()
++
++        credentials = AuthorizationCredentials.HttpBasic("another-account", "fixture-only")
++        response.complete(mockStableDiffusionSamplers)
++        request.await()
++
++        assertTrue(repository.getSamplers().isEmpty())
++        coVerify(exactly = 0) { local.insertSamplers(any()) }
++    }
++
++    @Test
++    fun `readers wait until cache replacement is complete`() = runTest {
++    
+```
+
+**File**: `data/src/androidUnitTest/kotlin/com/shifthackz/aisdv1/data/repository/StableDiffusionSamplersRepositoryImplTest.kt` (modified, +18/-0)
+```diff
+@@ -80,6 +80,7 @@ class StableDiffusionSamplersRepositoryImplTest {
+ 
+     @Test
+     fun `given attempt to get samplers, local data source returns list, expected valid domain models list value`() = runTest {
++        populateCache()
+         coEvery {
+             stubLocalDataSource.getSamplers()
+         } returns mockStableDiffusionSamplers
+@@ -89,6 +90,7 @@ class StableDiffusionSamplersRepositoryImplTest {
+ 
+     @Test
+     fun `given attempt to get samplers, local data source returns empty list, expected empty domain models list value`() = runTest {
++        populateCache()
+         coEvery {
+             stubLocalDataSource.getSamplers()
+         } returns emptyList()
+@@ -98,6 +100,7 @@ class StableDiffusionSamplersRepositoryImplTest {
+ 
+     @Test
+     fun `given attempt to get samplers, local data source throws exception, expected error value`() = runTest {
++        populateCache()
+         coEvery {
+             stubLocalDataSource.getSamplers()
+         } throws stubException
+@@ -106,4 +109,19 @@ class StableDiffusionSamplersRepositoryImplTest {
+ 
+         assertTrue(actual === stubException)
+     }
++
++    /**
++     * Associates the local cache fixture with the configured connection before reading it.
++     *
++     * @author Dmitriy Moroz
++     */
++    private suspend fun populateCache() {
++        coEvery {
++            stubRemoteDataSource.fetchSamplers(stubBaseUrl, stubCredentials)
++        } returns mockStableDiffusionSamplers
++        coEvery {
++            stubLocalDataSource.insertSamplers(mockStableDiffusionSamplers)
++        } returns Unit
++        repository.fetchSamplers()
++    }
+ }
+```
+
+---
+
+### Incident Patch 3: `bd27ab1c` (2026-11-17)
+**Commit Message**: Integrate Codecov coverage and modernize build conventions (#763)
+
+**File**: `.github/workflows/project_tests.yml` (modified, +36/-3)
+```diff
+@@ -2,19 +2,25 @@ name: Project Tests
+ 
+ on:
+   pull_request:
+-    branches: [develop]
++    branches: [master, develop]
+   push:
+     branches: [master, develop]
+     paths-ignore:
+       - "docs/docs/**"
+ 
++permissions:
++  contents: read
++
+ jobs:
+   test-feature:
+     runs-on: ubuntu-24.04
+ 
+     steps:
+       - name: Checkout code
+         uses: actions/checkout@v4.1.0
++        with:
++          fetch-depth: 0
++          persist-credentials: false
+ 
+       - name: Test OpenAI-compatible API contract
+         run: python3 scripts/test_openai_compatible_contract.py
+@@ -45,5 +51,32 @@ jobs:
+           path: build/reports/kotlinLint/
+           if-no-files-found: ignore
+ 
+-      - name: Run Tests with Gradle
+-        run: ./gradlew clean testDebugUnitTest :app:testFullDebugUnitTest
++      - name: Run unit tests and generate coverage
++        run: ./gradlew clean ciCoverage --no-daemon
++
++      - name: Upload unit-test and coverage reports
++        if: always()
++        uses: actions/upload-artifact@v4
++        with:
++          name: android-jvm-test-coverage
++          path: |
++            build/reports/jacoco/ciCoverage/
++            **/build/reports/tests/test*UnitTest/
++            **/build/test-results/test*UnitTest/*.xml
++          if-no-files-found: warn
++
++      - name: Verify coverage report
++        run: test -s build/reports/jacoco/ciCoverage/ciCoverage.xml
++
++      # Public fork and Dependabot PRs use Codecov's tokenless public-PR uploads.
++      # Keep this on pull_request; untrusted PR code must never receive base-repo secrets.
++      - name: Upload coverage to Codecov
++        uses: codecov/codecov-action@303a32d7a59b442fa8d48b6a1cc6825c09c847a5 # v7.1.1
++        with:
++          token: ${{ secrets.CODECOV_TOKEN }}
++          override_branch: ${{ github.actor == 'dependabot[bot]' && github.event_name == 'pull_request' && format('pr{0}:{1}', github.event.pull_request.number, github.head_ref) || '' }}
++          files: build/reports/jacoco/ciCoverage/ciCoverage.xml
++          disable_search: true
++          fail_ci_if_error: true
++          flags: android-unit
++          name: android-jvm-unit-tests
+```
+
+**File**: `README.md` (modified, +2/-0)
+```diff
+@@ -3,6 +3,7 @@
+ <img src="artwork/icon/sdai.png" alt="SDAI Logo" height="148" width="148">
+ 
+ [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.21442838.svg)](https://doi.org/10.5281/zenodo.21442838)
++[![Android/JVM coverage](https://codecov.io/gh/ShiftHackZ/SDAI-KMP/branch/master/graph/badge.svg)](https://app.codecov.io/gh/ShiftHackZ/SDAI-KMP)
+ 
+ ![Google Play](https://img.shields.io/endpoint?color=blue&logo=google-play&logoColor=white&url=https%3A%2F%2Fplay.cuzi.workers.dev%2Fplay%3Fi%3Dcom.shifthackz.aisdv1.app%26l%3DGoogle%2520Play%26m%3D%24version)
+ ![F-Droid](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Ff-droid.org%2Fapi%2Fv1%2Fpackages%2Fcom.shifthackz.aisdv1.app.foss&query=%24.packages%5B0%5D.versionName&label=F-Droid&logo=fdroid&link=https%3A%2F%2Ff-droid.org%2Fpackages%2Fcom.shifthackz.aisdv1.app.foss%2F)
+@@ -31,6 +32,7 @@ Root-level Markdown documents:
+ - [Nightly Android builds](NIGHTLY_BUILDS.md)
+ - [Git workflow](GIT_WORKFLOW.md)
+ - [Kotlin lint](KOTLIN_LINT.md)
++- [Unit tests and coverage](TESTING.md)
+ - [Code of conduct](CODE_OF_CONDUCT.md)
+ 
+ ## Why SDAI
+```
+
+**File**: `TESTING.md` (added, +59/-0)
+```diff
+@@ -0,0 +1,59 @@
++# Unit tests and coverage
++
++Run the Android/JVM unit tests and generate JaCoCo XML and HTML reports:
++
++```sh
++./gradlew clean ciCoverage --no-daemon
++```
++
++Use JDK 17 and the Android SDK configured for the project. The root task discovers
++modules using the JaCoCo convention automatically. It selects `debug` for plain
++modules and `fullDebug` for flavored modules, including the app. Each selected
++test task runs once. An enabled module without a supported CI variant fails
++configuration instead of silently disappearing from coverage.
++
++The combined report is available at:
++
++- XML: `build/reports/jacoco/ciCoverage/ciCoverage.xml`
++- HTML: `build/reports/jacoco/ciCoverage/html/index.html`
++
++For a single module, run its variant report task, for example:
++
++```sh
++./gradlew :domain:jacocoDebugReport
++./gradlew :app:jacocoFullDebugReport
++```
++
++Module reports are under `<module>/build/reports/jacoco/<report-task>/`.
++
++## Coverage scope
++
++Coverage measures Android/JVM production classes, including shared Kotlin
++compiled for Android. It does not measure Kotlin Native/iOS, Swift, C++, device
++instrumentation tests, or other Android flavors. Unit coverage does not replace
++testing normal application flows on Android and iOS.
++
++Reports include production classes without tests. Generated Android resource and
++configuration classes, Compose resource accessors and Room implementations are
++excluded. Class artifacts and execution data belong to the selected variant;
++unrelated build variants and dependency classes are not included.
++
++## CI and Codecov
++
++Project Tests runs coverage for pushes to `master` and `develop`, and pull requests
++targeting either branch. Pushes containing only generated `docs/docs/**` changes
++are skipped. CI retains test results and HTML/XML reports as workflow artifacts
++and uploads the combined XML to [Codecov](https://app.codecov.io/gh/ShiftHackZ/SDAI-KMP)
++with the `android-unit` flag.
++
++The repository Actions secret `CODECOV_TOKEN` authenticates trusted uploads.
++Public fork and Dependabot pull requests use Codecov's tokenless public-PR support;
++no `pull_request_target` workflow or secret forwarding is used. Codecov must have
++access to the repository through its GitHub integration to publish checks and
++update PR comments.
++
++`codecov.yml` defines components by module paths and informational project/patch
++checks. Coverage changes do not block merging initially; upload failures still
++fail CI. Establish branch baselines before choosing enforced coverage targets.
++The README badge follows `master`; comparisons need coverage for both the PR head
++and its base commit.
+```
+
+**File**: `build-logic/convention/build.gradle.kts` (modified, +6/-3)
+```diff
+@@ -1,3 +1,6 @@
++import org.jetbrains.kotlin.gradle.dsl.JvmTarget
++import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
++
+ plugins {
+     `kotlin-dsl`
+ }
+@@ -7,9 +10,9 @@ java {
+     targetCompatibility = JavaVersion.VERSION_17
+ }
+ 
+-tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile>().configureEach {
+-    kotlinOptions {
+-        jvmTarget = JavaVersion.VERSION_17.toString()
++tasks.withType<KotlinCompile>().configureEach {
++    compilerOptions {
++        jvmTarget.set(JvmTarget.JVM_17)
+     }
+ }
+ 
+```
+
+**File**: `build-logic/convention/src/main/kotlin/ApplicationConventionPlugin.kt` (modified, +1/-0)
+```diff
+@@ -8,6 +8,7 @@ import org.gradle.api.Plugin
+ import org.gradle.api.Project
+ import org.gradle.kotlin.dsl.configure
+ 
++@Suppress("unused")
+ class ApplicationConventionPlugin : Plugin<Project> {
+ 
+     override fun apply(target: Project) {
+```
+
+**File**: `build-logic/convention/src/main/kotlin/BaselineProFmConventionPlugin.kt` (modified, +1/-0)
+```diff
+@@ -16,6 +16,7 @@ import java.util.Collections
+  * Fix snippet   : https://gist.github.com/obfusk/61046e09cee352ae6dd109911534b12e
+  * Issue tracker : https://issuetracker.google.com/issues/231837768
+  */
++@Suppress("unused")
+ class BaselineProFmConventionPlugin : Plugin<Project> {
+ 
+     override fun apply(target: Project) {
+```
+
+**File**: `build-logic/convention/src/main/kotlin/ComposeConventionPlugin.kt` (modified, +3/-1)
+```diff
+@@ -6,7 +6,9 @@ import org.gradle.api.Plugin
+ import org.gradle.api.Project
+ import org.gradle.kotlin.dsl.configure
+ import org.gradle.kotlin.dsl.getByType
++import com.android.build.gradle.LibraryExtension as LegacyLibraryExtension
+ 
++@Suppress("unused")
+ class ComposeConventionPlugin : Plugin<Project> {
+ 
+     override fun apply(target: Project) {
+@@ -21,7 +23,7 @@ class ComposeConventionPlugin : Plugin<Project> {
+             val extension = extensions.getByType<LibraryExtension>()
+             configureCompose(extension)
+ 
+-            extensions.configure<com.android.build.gradle.LibraryExtension> {
++            extensions.configure<LegacyLibraryExtension> {
+                 configureKotlinAndroid(this)
+                 defaultConfig.targetSdk = libs.findVersion("targetSdk").get().toString().toInt()
+             }
+```
+
+**File**: `build-logic/convention/src/main/kotlin/FlavorsConventionPlugin.kt` (modified, +1/-0)
+```diff
+@@ -4,6 +4,7 @@ import org.gradle.api.Plugin
+ import org.gradle.api.Project
+ import org.gradle.kotlin.dsl.configure
+ 
++@Suppress("unused")
+ class FlavorsConventionPlugin : Plugin<Project> {
+ 
+     override fun apply(target: Project) {
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #740** (2026-11-14): Fix large LoRA connections, setup timeouts, and traffic accounting (@ShiftHackZ)
-- **PR #739** (2026-11-14): Fix web UI compatibility of generation seeds (@ShiftHackZ)
-- **PR #738** (2026-11-14): Fix sampler list recovery after app process recreation (@ShiftHackZ)
-- **PR #737** (2026-11-14): Add OpenAI-compatible and ChatGPT OAuth image providers (@ShiftHackZ)
-- **PR #735** (2026-11-14): Persist generation sampling steps and CFG scale (@ShiftHackZ)
-- **PR #734** (2026-11-14): Make network provider timeouts configurable (@ShiftHackZ)
+- **PR #767** (2026-11-17): Add SDAI LinkedIn links and cover artwork (@ShiftHackZ)
+- **PR #766** (closed): Bump org.jetbrains.kotlinx:kotlinx-serialization-json from 1.11.0 to 1.13.0 (@dependabot[bot])
+- **PR #765** (closed): Bump com.google.devtools.ksp from 2.3.9 to 2.3.14 (@dependabot[bot])
+- **PR #764** (closed): Bump org.robolectric:robolectric from 4.16.1 to 4.18 (@dependabot[bot])
+- **PR #763** (2026-11-17): Integrate Codecov coverage and modernize build conventions (@ShiftHackZ)
+- **PR #762** (2026-11-17): Restore Kotlin Native serialization compatibility (@ShiftHackZ)
 
 ---
 
@@ -1132,56 +1530,33 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Sign nightly APKs with the release keystore
+## X. large LoRA connections, setup timeouts, and traffic accounting
 
 **RULE**:
-When implementing operations in `.github/workflows/nightly_android.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ShiftHackZ/SDAI-KMP. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `core/localization/src/androidMain/res/values-de/strings.xml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ShiftHackZ/SDAI-KMP. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `3d9670a7`: Sign nightly APKs with the release keystore. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `91d55b97`: large LoRA connections, setup timeouts, and traffic accounting. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/nightly_android.yml`.
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `core/localization/src/androidMain/res/values-de/strings.xml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-    environment: android-release
-      - name: Sign APK with release JKS
-          ANDROID_RELEASE_KEYSTORE_BASE64: ${{ secrets.ANDROID_RELEASE_KEYSTORE_BASE64 }}
-          ANDROID_RELEASE_STORE_PASSWORD: ${{ secrets.ANDROID_RELEASE_STORE_PASSWORD }}
-          ANDROID_RELEASE_KEY_ALIAS: ${{ secrets.ANDROID_RELEASE_KEY_ALIAS }}
-          ANDROID_RELEASE_KEY_PASSWORD: ${{ secrets.ANDROID_RELEASE_KEY_PASSWORD }}
-          ANDROID_RELEASE_CERT_SHA256: ${{ vars.ANDROID_RELEASE_CERT_SHA256 }}
-          : "${ANDROID_RELEASE_KEYSTORE_BASE64:?Missing ANDROID_RELEASE_KEYSTORE_BASE64 secret.}"
-          : "${ANDROID_RELEASE_STORE_PASSWORD:?Missing ANDROID_RELEASE_STORE_PASSWORD secret.}"
-          : "${ANDROID_RELEASE_KEY_ALIAS:?Missing ANDROID_RELEASE_KEY_ALIAS secret.}"
-          : "${ANDROID_RELEASE_CERT_SHA256:?Missing ANDROID_RELEASE_CERT_SHA256 variable.}"
-          export ANDROID_RELEASE_KEY_PASSWORD="${ANDROID_RELEASE_KEY_PASSWORD:-${ANDROID_RELEASE_STORE_PASSWORD}}"
-          trap 'rm -rf -- "${signing_dir}"' EXIT
-          keystore="${signing_dir}/release.jks"
-          printf "%s" "${ANDROID_RELEASE_KEYSTORE_BASE64}" | base64 --decode > "${keystore}"
-          chmod 600 "${keystore
+    <string name="settings_connection_timeout_description">Zeitlimit für die Einrichtung einer Anbieterverbindung und Metadatenanfragen. Gilt für neue Anfragen.</string>
+    <string name="settings_connection_timeout_ios_description">Begrenzt die Verbindungseinrichtung und Metadatenanfragen. iOS verwaltet die Verbindungsdauer auf Netzwerkebene automatisch.</string>
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
 // Induced defect failure mode:
-      - name: Sign APK with apksigner key and certificate
-          ANDROID_NIGHTLY_CERT_PEM_BASE64: ${{ secrets.ANDROID_NIGHTLY_CERT_PEM_BASE64 }}
-          ANDROID_NIGHTLY_KEY_PK8_BASE64: ${{ secrets.ANDROID_NIGHTLY_KEY_PK8_BASE64 }}
-          : "${ANDROID_NIGHTLY_CERT_PEM_BASE64:?Missing ANDROID_NIGHTLY_CERT_PEM_BASE64 secret.}"
-          : "${ANDROID_NIGHTLY_KEY_PK8_BASE64:?Missing ANDROID_NIGHTLY_KEY_PK8_BASE64 secret.}"
-          key_file="${signing_dir}/nightly.pk8"
-          cert_file="${signing_dir}/nightly.x509.pem"
-          printf "%s" "${ANDROID_NIGHTLY_KEY_PK8_BASE64}" | base64 --decode > "${key_file}"
-          printf "%s" "${ANDROID_NIGHTLY_CERT_PEM_BASE64}" | base64 --decode > "${cert_file}"
-          chmod 600 "${key_file}" "${cert_file}"
-          "${apksigner}" sign --key "${key_file}" --cert "${cert_file}" --out "${signed_apk}" "${aligned_apk}"
+    <string name="settings_connection_timeout_description">Zeit zum Verbindungsaufbau mit einem KI-Anbieter. Gilt für neue Anfragen.</string>
+    <string name="settings_connection_timeout_ios_description">iOS verwaltet die Verbindungsdauer automatisch. Dieser Wert wird gespeichert, kann unter iOS aber nicht erzwungen werden.</string>
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `3d9670a7` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `91d55b97` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

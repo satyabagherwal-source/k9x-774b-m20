@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261116-4S6W",
-    "timestamp": "2026-11-16T15:00:39.992Z",
-    "repository": "RevenueCat/purchases-ios",
-    "learningId": "learn-github-revenuecat-purchases-ios",
-    "contentHash": "5743b956ceb725c6038815cfdcbb6b2973cd827743c6d9911ffe60fcaac04390",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261116-4XNY",
-    "timestamp": "2026-11-16T15:00:47.086Z",
-    "repository": "qdrant/qdrant",
-    "learningId": "learn-github-qdrant-qdrant",
-    "contentHash": "2fdda9e36f03c4baf38a033bf11dcf0e360b3fc46ca507efc1b5645aed7eac2f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261116-GRKO",
-    "timestamp": "2026-11-16T15:09:59.064Z",
-    "repository": "google/tcmalloc",
-    "learningId": "learn-github-google-tcmalloc",
-    "contentHash": "c2a7a096ccd37c9cafd9880a40da412a037b8d760c9d975590138b1abbd04893",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261116-GYUI",
     "timestamp": "2026-11-16T15:10:08.490Z",
     "repository": "topoteretes/cognee",
@@ -7490,6 +7445,51 @@
     "repository": "slatedb/slatedb",
     "learningId": "learn-github-slatedb-slatedb",
     "contentHash": "71964a4528888b62625ed2f45f250231b415ff49d55ab657a417c0468e74267a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-Z1AH",
+    "timestamp": "2026-11-18T06:07:39.593Z",
+    "repository": "Kuddev/pebrel",
+    "learningId": "learn-github-kuddev-pebrel",
+    "contentHash": "a30660a108498097d1b8d6d04a436fb8d9aa37d0cb7ff8c74edf0f1b5d71c2c7",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-Z3BL",
+    "timestamp": "2026-11-18T06:07:42.225Z",
+    "repository": "orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
+    "learningId": "learn-huggingface-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf",
+    "contentHash": "6b82e5af09e402283d74b57a5eb3778dfeb0513a3f97c4bb7a05d3e0505a250f",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-Z4NL",
+    "timestamp": "2026-11-18T06:07:43.953Z",
+    "repository": "ShiftHackZ/SDAI-KMP",
+    "learningId": "learn-github-shifthackz-sdai-kmp",
+    "contentHash": "9c23d536dd9c76c5a7cc80011faa27608522c5f43b6ebebb55f073b904ecee53",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

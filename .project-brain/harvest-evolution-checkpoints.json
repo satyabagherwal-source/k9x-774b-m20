@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T06:00:21.171Z",
+  "last_updated": "2026-11-18T06:07:50.000Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-18T04:11:36.483Z",
@@ -303,7 +303,7 @@
       "staged_for_review": 0
     },
     "shifthackz-sdai-kmp-learnings.md": {
-      "processed_at": "2026-11-15T00:38:23.005Z",
+      "processed_at": "2026-11-18T06:07:49.205Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -488,7 +488,7 @@
       "staged_for_review": 1
     },
     "kuddev-pebrel-learnings.md": {
-      "processed_at": "2026-11-16T23:52:58.952Z",
+      "processed_at": "2026-11-18T06:07:48.281Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2073,7 +2073,7 @@
       "staged_for_review": 1
     },
     "hf-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf-learnings.md": {
-      "processed_at": "2026-11-13T18:43:50.954Z",
+      "processed_at": "2026-11-18T06:07:48.920Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3393,7 +3393,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 1821,
+  "total_dossiers_evaluated": 1824,
   "total_canonical_promoted": 336,
-  "total_staged_for_review": 1404
+  "total_staged_for_review": 1407
 }
