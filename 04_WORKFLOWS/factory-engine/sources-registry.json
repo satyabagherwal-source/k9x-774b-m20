@@ -43,9 +43,9 @@
   "bitterbot-ai-bitterbot-desktop": {
     "name": "bitterbot-desktop",
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-    "lastChecked": "2026-11-18T17:18:34.475Z",
+    "lastChecked": "2026-11-18T18:00:30.633Z",
     "revisionIdentifier": "108f7135",
-    "lastVerified": "2026-11-18T17:18:34.475Z"
+    "lastVerified": "2026-11-18T18:00:30.633Z"
   },
   "hf-comfy-org-minimax-h3": {
     "name": "Comfy-Org/MiniMax-H3",
@@ -69,8 +69,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-18T17:51:26.833Z",
-    "lastVerified": "2026-11-18T17:51:26.833Z",
+    "lastChecked": "2026-11-18T18:00:30.639Z",
+    "lastVerified": "2026-11-18T18:00:30.639Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -1957,9 +1957,9 @@
   "mitmproxy-mitmproxy": {
     "name": "mitmproxy",
     "officialUrl": "https://github.com/mitmproxy/mitmproxy",
-    "lastChecked": "2026-11-18T13:46:58.975Z",
+    "lastChecked": "2026-11-18T18:00:25.680Z",
     "revisionIdentifier": "f7701d5f",
-    "lastVerified": "2026-11-18T13:46:58.975Z"
+    "lastVerified": "2026-11-18T18:00:25.680Z"
   },
   "databendlabs-databend": {
     "name": "databendlabs/databend",
@@ -3444,5 +3444,50 @@
     "lastChecked": "2026-11-18T17:51:15.249Z",
     "revisionIdentifier": "bb96a741",
     "lastVerified": "2026-11-18T17:51:15.249Z"
+  },
+  "pemistahl-grex": {
+    "name": "grex",
+    "officialUrl": "https://github.com/pemistahl/grex",
+    "lastChecked": "2026-11-18T18:00:15.658Z",
+    "revisionIdentifier": "99cc3477",
+    "lastVerified": "2026-11-18T18:00:15.658Z"
+  },
+  "hf-amazon-chronos-2": {
+    "name": "amazon/chronos-2",
+    "officialUrl": "https://huggingface.co/amazon/chronos-2",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-18T18:00:18.975Z",
+    "lastVerified": "2026-11-18T18:00:18.975Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-amazon-chronos-2",
+    "contentHash": "bef1a6bd8077bbe26a5806ca457bde930963dd55c4c4f866013ed00ffcb0516c",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "react-native-image-picker-react-native-image-picker": {
+    "name": "react-native-image-picker",
+    "officialUrl": "https://github.com/react-native-image-picker/react-native-image-picker",
+    "lastChecked": "2026-11-18T18:00:20.731Z",
+    "revisionIdentifier": "61c0cd41",
+    "lastVerified": "2026-11-18T18:00:20.731Z"
+  },
+  "go-chassis-go-chassis": {
+    "name": "go-chassis",
+    "officialUrl": "https://github.com/go-chassis/go-chassis",
+    "lastChecked": "2026-11-18T18:00:23.160Z",
+    "revisionIdentifier": "6bcf5150",
+    "lastVerified": "2026-11-18T18:00:23.160Z"
+  },
+  "neural-maze-ava-whatsapp-agent-course": {
+    "name": "ava-whatsapp-agent-course",
+    "officialUrl": "https://github.com/neural-maze/ava-whatsapp-agent-course",
+    "lastChecked": "2026-11-18T18:00:28.167Z",
+    "revisionIdentifier": "338fd687",
+    "lastVerified": "2026-11-18T18:00:28.167Z"
   }
 }

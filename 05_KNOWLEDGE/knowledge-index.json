@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-18T17:52:05.459Z",
+  "last_updated": "2026-11-18T18:00:32.114Z",
   "total_verified_learnings": 9006,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -113686,13 +113686,13 @@
       "item_id": "candidate_directive-editor-add-scoped-ios-account-deletion",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-XZO7-editor-add-scoped-ios-account-deletion.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-FSA7-editor-add-scoped-ios-account-deletion.md",
       "title": "editor): add scoped ios account deletion",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "84861a10156c43f0c510724ef9cda16386330e8c4ffd64fe85f33fc353faa120",
+      "content_hash": "dfc6c586f67f9530cb1a299579aae09fa568db67ba79b696587f57403329386a",
       "domain_letter": "H",
-      "persisted_at": "2026-11-18T17:18:41.626Z"
+      "persisted_at": "2026-11-18T18:00:31.474Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant",
@@ -113702,9 +113702,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "2f55b2d9a157e41141ad275fb2e27c7b24f7a84852a21bcdaa66b291b1bce74a",
+      "content_hash": "0ca84985a8cf1a8db52498bcc880ce351b96e292b06c32429827560eac78520b",
       "domain_letter": "H",
-      "persisted_at": "2026-11-18T17:18:41.762Z"
+      "persisted_at": "2026-11-18T18:00:31.611Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113714,9 +113714,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "bcdfc9ac3afb97334eaae3bbed05e76b4f4926ca32353ae316405fb440adc086",
+      "content_hash": "865ac54cb4ad5b53ecf6db7b076af7dea026fcda8d0ca50108b494c07455cd41",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T17:18:41.896Z"
+      "persisted_at": "2026-11-18T18:00:31.743Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -217548,7 +217548,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/amazon/chronos-2",
       "source_version": "hf-amazon-chronos-2",
-      "content_hash": "6db925888333e2b1eeb639b589237c225b09cf9a06db956c03c1314b6e8981f1",
+      "content_hash": "bef1a6bd8077bbe26a5806ca457bde930963dd55c4c4f866013ed00ffcb0516c",
       "dossier_path": "07_PROJECT_LEARNING/hf-amazon-chronos-2-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-amazon-chronos-2-learnings.md",
       "promoted_rules": [],
@@ -217557,7 +217557,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T09:02:22.003Z",
+      "verified_at": "2026-11-18T18:00:19.356Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -217574,9 +217574,9 @@
       "title": "Research & Knowledge Intelligence: amazon/chronos-2 Core Invariants",
       "repository": "amazon/chronos-2",
       "source_version": "hf-amazon-chronos-2",
-      "content_hash": "b81c515f27190ef36ba098fe24bccbc68636761975a72fb93c8b77810684ff10",
+      "content_hash": "781dd82a59ca06c20ec2509954ffe3d9d0784a669f14ab1e8db2135d08464a61",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T09:02:22.415Z"
+      "persisted_at": "2026-11-18T18:00:19.740Z"
     },
     "domain_intelligence-architecture-intelligence-xudong-huang-may-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-xudong-huang-may-learnings-core-invariants",
@@ -217610,9 +217610,9 @@
       "title": "Research & Knowledge Intelligence: hf-amazon-chronos-2-learnings Core Invariants",
       "repository": "hf-amazon-chronos-2-learnings",
       "source_version": "HEAD",
-      "content_hash": "fc9a1014f11401e8fc48f5c6b054196bb28be0e0cae51aafd396968b0556787d",
+      "content_hash": "52742ee2b6bffa446dcee423be813040a20cb389559ccc0f7ddb87325406d68e",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T09:02:40.874Z"
+      "persisted_at": "2026-11-18T18:00:30.941Z"
     },
     "domain_intelligence-technical-construction-intelligence-faridsafi-react-native-gifted-chat-learnings": {
       "item_id": "domain_intelligence-technical-construction-intelligence-faridsafi-react-native-gifted-chat-learnings",
@@ -286564,9 +286564,9 @@
       "title": "Technical Construction Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "d7d91e4e7cf16fa55cd139f0e68d73e1b2bde796c29cfcf0c05743ced105a2c6",
+      "content_hash": "a4e51407f71d472c5e1bc1db8aa67f715d6f2fd4c35c144b1620c4f84febdb56",
       "domain_letter": "H",
-      "persisted_at": "2026-11-18T17:10:31.653Z"
+      "persisted_at": "2026-11-18T18:00:32.114Z"
     },
     "learn-github-software-mansion-argent": {
       "learning_id": "learn-github-software-mansion-argent",
