@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-18T17:52:03.610Z",
+  "timestamp": "2026-11-18T23:18:31.956Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-nucleoidai-nucleoid-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [nucleoidai-nucleoid-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-18T17:52:03.610Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-18T23:18:31.956Z`  
 > **Learning ID**: `LEARN-EVO-nucleoidai-nucleoid-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), A (Human & Need Intelligence), B (Product Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), F (Design Intelligence), L (Deployment & Operations Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 61%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), D (Research & Knowledge Intelligence), B (Product Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence), M (Feedback & Evolution Intelligence), F (Design Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 51%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from nucleoidai-nucleoid-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source**: github ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
-> **Source Version**: `22d7c31d`  
+> **Source Version**: `226268f4`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-18T17:51:22.239Z  
+> **Timestamp**: 2026-11-18T23:18:26.376Z  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T17:51:22.232Z  
+> **Harvest Timestamp**: 2026-11-18T23:18:26.370Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1225,7 +1225,7 @@ export async function declarations({ train_dataset }) {
 export async function instances({ train_dataset }) {
   milestone.segmenting_training_objects();
 
-  const { instances } = await llm.generate({
+  const { result: instances } = await llm.generate({
     messages: [
       {
         role: "user",
@@ -1245,7 +1245,7 @@ export async function instances({ train_dataset }) {
           })}
           json_format:
           {
-            "instances": [{
+            "result": [{
               "input_instance_matrix": <INPUT_INSTANCE_MATRIX>,
               "output_instance_matrix": <OUTPUT_INSTANCE_MATRIX>
             }]
@@ -1260,8 +1260,15 @@ export async function instances({ train_dataset }) {
   return { instances };
 }
 
-export async function value({ train_dataset, input_matrix, instance }) {
-  milestone.constructing_instance({ instance_name: instance.instance_name });
+export async function value({
+  instance_name,
+  train_dataset,
+  input_matrix,
+  instance,
+}) {
+  milestone.constructing_instance({ instance_name });
+
+  instance.instance_name = instance_name;
 
   const { x, y, width, height, volume } = Matrix.locate(
     instance.input_instance_matrix
@@ -1280,7 +1287,7 @@ export async function value({ train_dataset, input_matrix, instance }) {
     volume,
   });
 
-  milestone.evaluating_rules({ instance_name: instance.instance_name });
+  milestone.evaluating_rules({ instance_name });
 
   const canvas_width: number = input_matrix[0].length;
   const canvas_height: number = input_matrix.length;
@@ -1294,14 +1301,15 @@ export async function value({ train_dataset, input_matrix, instance }) {
   );
 
   milestone.instance_constructed({
-    instance_name: instance.instance_name,
+    instance_name,
     input_instance_matrix: instance.input_instance_matrix,
     output_instance_matrix: instance.output_instance_matrix,
     implementation,
     input_value,
   });
 
-  return { implementation, input_value };
+  instance.implementation = implementation;
+  instance.input_value = input_value;
 }
 
 export async function state(train_dataset) {
@@ -1349,6 +1357,7 @@ import * as milestone from "./lib/milestone.ts";
 import arc_dataset from "./lib/arc_dataset.ts";
 import fs from "node:fs/promises";
 import synthesizer from "./synthesizer.ts";
+import object from "./object.ts";
 
 // Genesis puzzle_id: 3aa6fb7a
 export async function start(puzzle_id: string = "3aa6fb7a") {
@@ -1393,13 +1402,39 @@ export async function start(puzzle_id: string = "3aa6fb7a") {
     });
 
     for (const instance of instances) {
-      instance.instance_name = next_instance_name();
+      await analyzer.value({
+        instance_name: next_instance_name(),
+        train_dataset,
+        input_matrix: dataset.input_matrix,
+        instance,
+      });
     }
 
     dataset.instances = instances;
   }
 
   await analyzer.state(train_dataset);
+
+  const synthesized_dataset = await synthesizer.synthesize({ train_dataset });
+
+  for (const dataset of synthesized_dataset) {
+    for (const instance of dataset.instances) {
+      await analyzer.value({
+        instance_name: next_instance_name(),
+        train_dataset,
+        input_matrix: dataset.input_matrix,
+        instance,
+      });
+    }
+
+    await object.state({
+      declarations,
+      input_matrix: dataset.input_matrix,
+      input_instances: dataset.instances,
+    });
+
+    train_dataset.dataset.push(dataset);
+  }
 
   milestone.visualization();
 
@@ -1408,12 +1443,8 @@ export async function start(puzzle_id: string = "3aa6fb7a") {
     test_input_matrix,
   });
 
-  let result_matrix = Matrix.draw(
-    [],
-    test_input_matrix.length,
-    test_input_matrix[0].length,
-    0,
-    0
+  let result_matrix = Array.from({ length: test_input_matrix.length }, () =>
+    Array(test_input_matrix[0].length).fill(0)
   );
 
   const input_instances = [];
@@ -1436,11 +1467,11 @@ export async function start(puzzle_id: string = "3aa6fb7a") {
     });
   }
 
-  const synthesized_dataset = await synthesizer.synthesize({ train_dataset });
-
-  milestone.training_dataset_synthesized({ dataset: synthesized_dataset });
-
-  await visualizer.state({ declarations, test_input_matrix, input_instances });
+  await object.state({
+    declarations,
+    input_matrix: test_input_matrix,
+    input_instances,
+  });
 
   for (const input_instance of input_instances) {
     const { output_instance_matrix } = await visualizer.output_instance_matrix({
@@ -1560,8 +1591,8 @@ export { document } from "./dataset";
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `22d7c31d` (2026-11-18)
-**Commit Message**: Draft NUC 120 Union Reasoning Selections
+### Incident Patch 1: `226268f4` (2026-11-18)
+**Commit Message**: Draft NUC 121 Held Values of Reasoning Selections
 
 Category: Reasoning enhancement, drawn uniformly at random (index 3 of
 the five eligible categories in NUC 1's registry, p = 1/5, no redraw)
@@ -1569,49 +1600,49 @@ for a continuous /nuc-proposal cycle. The token non-regression gate is
 required for this category in continuous mode, so each new case gets an
 accepted-syntax counterpart.
 
-Requested change: a reasoning stage selection |> union(other) that
-selects what either of two explanations selects: the selection's steps
-in their order, followed by the steps of other whose node the selection
-does not select, in other's order, each with its fields unchanged. It
-completes NUC 106's set stages intersect and except; other is written as
-a pipeline's source is and steps are compared by their node. The result
-stays a selection that later stages can narrow, and it stays live
-through every observation of both selections. At the accepted revision
-each such pipeline raises the parse-time TypeError("union is not an
-operation"); union stays an ordinary name everywhere else, and a binding
-named union shadows the stage as bindings shadow the other stages. The
-accepted spelling is (selection).concat(other |> except(selection)).
+Requested change: a final reasoning stage selection |> holds that gives
+the values that the steps of a selection hold, as a list in the
+selection's order, exactly the accepted (selection).map(step =>
+step.holds), where a reference alone denotes its own one-step selection,
+as for NUC 112's nodes. It ends the pipeline, as nodes does. At the
+accepted revision each such pipeline raises the parse-time
+TypeError("holds is not an operation"); holds stays an ordinary name
+everywhere else, and a binding named holds shadows the stage as bindings
+shadow the other stages. NUC 112 left the projections of the other step
+fields out; this completes the one for holds, which the documents and
+datasets spell 38 times.
 
-
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Claude-Session: https://claude.ai/code/session_01AJtz8e8dqMwocimNqgffMq
 
 **File**: `docs/nuc-0000.md` (modified, +2/-0)
 ```diff
-@@ -147,6 +147,7 @@ Created: 31-Jul-2026
- | [101](nuc-0101.md) | Exact-Depth Reasoning Selections | Rejected: existing selector-case audit fails |
+@@ -148,6 +148,7 @@ Created: 31-Jul-2026
  | [106](nuc-0106.md) | Intersect and Except Reasoning Selections | Accepted |
  | [112](nuc-0112.md) | Node Names of Reasoning Selections | Accepted |
-+| [120](nuc-0120.md) | Union Reasoning Selections | Draft |
+ | [120](nuc-0120.md) | Union Reasoning Selections | Accepted |
++| [121](nuc-0121.md) | Held Values of Reasoning Selections | Draft |
  
  ### Language compatibility
  
-@@ -293,6 +294,7 @@ Created: 31-Jul-2026
- | [117](nuc-0117.md) | First and Last Element Methods | Standards Track | Language compatibility | Accepted |
+@@ -295,6 +296,7 @@ Created: 31-Jul-2026
  | [118](nuc-0118.md) | Case Conversion Method Aliases | Standards Track | Language compatibility | Accepted |
  | [119](nuc-0119.md) | Finally Clauses for Try Statements | Standards Track | Runtime features | Accepted |
-+| [120](nuc-0120.md) | Union Reasoning Selections | Standards Track | Reasoning enhancement | Draft |
+ | [120](nuc-0120.md) | Union Reasoning Selections | Standards Track | Reasoning enhancement | Accepted |
++| [121](nuc-0121.md) | Held Values of Reasoning Selections | Standards Track | Reasoning enhancement | Draft |
  
  ## Copyright
  
 ```
 
-**File**: `docs/nuc-0120.md` (added, +73/-0)
+**File**: `docs/nuc-0121.md` (added, +69/-0)
 ```diff
-@@ -0,0 +1,73 @@
-+# NUC 120 -- Union Reasoning Selections
+@@ -0,0 +1,69 @@
++# NUC 121 -- Held Values of Reasoning Selections
 +
 +```
-+NUC: 120
-+Title: Union Reasoning Selections
++NUC: 121
++Title: Held Values of Reasoning Selections
 +Author: Can Mingir <canmingir@gmail.com>
 +Status: Draft
 +Type: Standards Track
@@ -1621,42 +1652,38 @@ accepted spelling is (selection).concat(other |> except(selection)).
 +
 +## Abstract
 +
-+- `selection |> union(other)` selects what either of two explanations
-+  selects: the selection's steps in their order, followed by the steps of
-+  `other` whose node the selection does not select, in `other`'s order,
-+  each with its fields unchanged. So
-+  `tax |> why |> union(shipping |> why)` is everything the tax or the
-+  shipping rests on, each node once.
-+- It completes the set stages of [NUC 106](nuc-0106.md): `intersect` keeps
-+  what both explanations select and `except` what only the first selects,
-+  and `union` gives what either selects. `other` is written as a
-+  pipeline's source is, evaluated in place each time the stage applies,
-+  and steps are compared by their node.
-+- The result is a selection, so further stages follow it, and it stays
-+  live through every observation of both selections.
++- `selection |> holds` gives the values that the steps of a reasoning
++  selection hold, as a list in the selection's order. So
++  `tax |> why |> stated |> holds` is the values of the facts the tax rests
++  on, and `price |> affects |> holds` the values that a change of the price
++  reaches.
++- It completes [NUC 112](nuc-0112.md)'s projection: `nodes` names the
++  steps of a selection, and `holds` gives what they hold. It is exactly the
++  accepted `(selection).map(step => step.holds)`, where a reference alone
++  denotes its own one-step selection, as for `nodes`.
++- The stage ends the pipeline, as `nodes` does: its result is a list of
++  values, not a selection.
 +- At the accepted revision each such pipeline raises the parse-time
-+  `TypeError("union is not an operation")`. Only those programs change.
-+  `union` stays an ordinary name everywhere else, as a variable, function,
-+  property or object key, and a binding named `union` shadows the stage,
++  `TypeError("holds is not an operation")`. Only those programs change.
++  `holds` stays an ordinary name everywhere else, as a variable, function,
++  property or object key, and a binding named `holds` shadows the stage,
 +  as bindings shadow the other stages.
 +
 +## Motivation
 +
-+- World models answer questions about several conclusions at once: what
-+  an order's tax or its shipping rests on, which facts a decision or its
-+  audit depends on. NUC 106 answers the shared and the distinct parts of
-+  two explanations with `intersect` and `except`; their combined part has
-+  no stage.
-+- Today the combined part is spelled
-+  `(tax |> why).concat(shipping |> why |> except(tax |> why))`, which names
-+  the first explanation twice. The plain
-+  `(tax |> why).concat(shipping |> why)` lists a shared cause such as the
-+  quantity twice. Either result is a list rather than a selection, so no
-+  stage can follow it: `|> stated` after it raises
-+  `TypeError("Cannot explain ...")`.
-+- A union stage states the question once, keeps each node once, and keeps
-+  the answer a selection that `stated`, `derived` and the other stages can
-+  narrow further.
++- A world model explains a conclusion by what it rests on, and often needs
++  the values themselves: the figures behind a total, the readings behind an
++  alarm, or the values a change moves. `why`, `affects` and their stages
++  select the steps, and NUC 112's `nodes` names them; their values have no
++  stage.
++- Today the values are spelled
++  `(tax |> why |> stated).map(step => step.holds)`, or with the selector of
++  [NUC 79](nuc-0079.md), `(stated why tax).map(.holds)`, which wraps the
++  pipeline in parentheses and adds a call: six lexer tokens more than
++  `stated why tax |> holds`. The specification, the language reference, the
++  README, the examples and the synthesized records spell it 38 times.
++- A stage keeps the question one pipeline that reads left to right, as
++  `nodes` does for the names.
 +
 +## Rationale
 +
@@ -1684,218 +1711,229 @@ accepted spelling is (selection).concat(other |> except(selection)).
 
 ---
 
-### Incident Patch 2: `dca36fec` (2026-11-18)
-**Commit Message**: NUC 119 Finally Clauses for Try Statements
+### Incident Patch 2: `9da0bd15` (2026-11-18)
+**Commit Message**: NUC 120 Union Reasoning Selections
 
 Accepted under the automatic acceptance rule, in a continuous
-/nuc-proposal cycle (Runtime features, brand-new feature): the frozen
-candidate meets every hard criterion and passes every policy check, with
-the token check skipped, as NUC 1's matrix requires for a brand-new
-Runtime features feature in continuous mode. The cycle found no stale
-Draft, drew Runtime features uniformly from the five eligible
-categories, allocated NUC 119 in 9eeb878b, and completed it with a fresh
-baseline, candidate, proposer, Rust improvement pass and evaluator.
+/nuc-proposal cycle (Reasoning enhancement, token comparison required):
+the frozen candidate meets every hard criterion and passes every policy
+check, including the token non-regression gate. The cycle found no stale
+Draft, drew Reasoning enhancement uniformly from the five eligible
+categories, allocated NUC 120 in 22d7c31d, and completed it with fresh
+baselines, candidate, proposer, Rust improvement pass and evaluator.
 
-A complete try/catch statement may end with a finally clause, finally:
-and a suite on the logical line right after the catch suite at the try
-statement's level, which runs every time the statement ends: after the
-body completes, after the catch suite handles a failure, and before a
-return in either of them leaves. The pending outcome stands unless the
-finally suite changes it: a returned value is still returned and a catch
-suite's error still propagates afterwards, while a return or a failure
-of the finally suite replaces it, as in Python, JavaScript and Java. A
-failed body and a failed catch suite are
+A pipeline stage, selection |> union(other), selects the selection's
+steps in their order followed by the steps of other whose node the
+selection does not select, in other's order, compared by graph node:
+exactly the accepted (selection).concat(other |> except(selection)),
+except that an other that depth(null) makes undefined makes the whole
+selection undefined, as for intersect and except. The result stays a
+selection, so every later stage applies to it; each step keeps the NUC
+82 distance of the walk that selected it, and the union keeps the
+selection's walk direction for a later path. other is written as a
+pipeline source is and evaluated in place each time the stag
 
-**File**: `README.md` (modified, +31/-0)
+**File**: `README.md` (modified, +28/-0)
 ```diff
-@@ -2528,6 +2528,37 @@ assert([door.key, door.banner], ["side door", "SIDE DOOR"])
-   values keep their errors. See the
-   [root contract](nucleoid.spec.md#case-conversion-method-aliases).
+@@ -2559,6 +2559,34 @@ assert(attempts, [1111, 1234])
+   the pending result. See the
+   [root contract](nucleoid.spec.md#finally-clauses).
  
-+## Finally clauses
++## Union reasoning selections
 +
-+**Finally clauses record every attempt to unlock a door**
++**Union lists every fact behind either of two alarms**
 +
 +```nuc
-+attempts = []
-+def unlock(code):
-+    try:
-+        if code != 1234:
-+            throw "WRONG CODE"
-+        return "unlocked"
-+    catch reason:
-+        return reason
-+    finally:
-+        attempts.push(code)
-+assert(unlock(1111), "WRONG CODE")
-+assert(unlock(1234), "unlocked")
-+assert(attempts, [1111, 1234])
++pressure = 5
++flow = 3
++temperature = 70
++strain = pressure * flow
++leak = flow > 2 && pressure > 4
++overheat = temperature + strain > 80
++inspect = why leak |> union(why overheat) |> stated
++assert(inspect.map(step -> step.node), ["flow", "pressure", "temperature"])
++valve = 1
++leak = flow > 2 && pressure > 4 && valve == 1
++assert(inspect.map(step -> step.node), ["flow", "pressure", "valve", "temperature"])
 +```
 +
-+- [NUC 119](docs/nuc-0119.md) adds the `finally` clause of Python,
-+  JavaScript, Java, Kotlin and C# to complete `try`/`catch` statements:
-+  `finally:` and a suite, on the line after the catch suite, run however
-+  the statement ends.
-+- `unlock` returns from its body and from its catch suite, and the
-+  `finally` suite records the attempt on both paths before the value is
-+  returned. A failed body is rolled back before the catch suite runs, as
-+  without the clause, and a `return` in the `finally` suite would replace
-+  the pending result. See the
-+  [root contract](nucleoid.spec.md#finally-clauses).
++- [NUC 120](docs/nuc-0120.md) adds the reasoning stage `|> union(OTHER)`.
++  `why leak |> union(why overheat)` keeps the steps of the leak's
++  explanation and adds the steps of the overheat's explanation that it does
++  not hold yet, so every node that either alarm rests on appears once: the
++  flow and the pressure behind both alarms are listed with the leak's.
++- The union is still a selection, so `|> stated` narrows it to the facts to
++  inspect, and it stays live: once the leak rule also checks the valve, the
++  valve joins them. See the
++  [root contract](nucleoid.spec.md#union-reasoning-selections).
 +
  ## Reactive list flattening
  
  **Flat turns nested lists into one live list**
 ```
 
-**File**: `dataset/nucleoid.spec.jsonl` (modified, +19/-16)
+**File**: `dataset/nucleoid.spec.jsonl` (modified, +20/-16)
 ```diff
-@@ -788,19 +788,22 @@
- {"id":"spec-0788","description":"Nucleoid converts case with Kotlin, Rust and Swift spellings","code":"label = \"Front Door\"\nkey = label.lowercase()\ncode = label.to_uppercase()\nbanner = label.uppercased()\nassert([key, code, banner], [\"front door\", \"FRONT DOOR\", \"FRONT DOOR\"])\nlabel = \"Back Gate\"\nassert([key, code, banner], [\"back gate\", \"BACK GATE\", \"BACK GATE\"])\nassert([\"NORTH\".to_lowercase(), \"Mixed Case\".lowercased(), \"ok\".uppercase()], [\"north\", \"mixed case\", \"OK\"])\nstreet = \"Straße\"\nupper = street.uppercase()\nassert([upper, upper.length, street.length], [\"STRASSE\", 7, 6])\nassert([street.to_uppercase(), street.uppercased(), street.toUpperCase()], [upper, upper, upper])\nassert([\"ΟΔΟΣ\".lowercase(), \"ǅ\".uppercased(), \"ﬁx\".to_uppercase(), \"\".lowercased()], [\"οδος\", \"Ǆ\", \"FIX\", \"\"])\nstreet = \"Gasse\"\n[upper, key]","return":"[\"GASSE\",\"back gate\"]"}
- {"id":"spec-0789","description":"Nucleoid keeps class-level and mapped case conversions live","code":"class Badge(name, team):\n    this.name = name\n    this.team = team\n$Badge.login = $Badge.name.to_lowercase()\n$Badge.crest = $Badge.team.uppercased()\nana = Badge(\"Ana Lima\", \"blue\")\nbo = Badge(\"BO CHEN\", \"Red\")\nassert([ana.login, ana.crest, bo.login, bo.crest], [\"ana lima\", \"BLUE\", \"bo chen\", \"RED\"])\nbo.name = \"Bo Chen-Wu\"\nana.team = \"green\"\nassert([bo.login, ana.crest], [\"bo chen-wu\", \"GREEN\"])\ntags = [\"Urgent\", \"low\"]\nshout = tags.map(tag -> tag.uppercase())\nquiet = tags.map(tag -> tag.lowercased())\nassert([shout, quiet], [[\"URGENT\", \"LOW\"], [\"urgent\", \"low\"]])\ntags.push(\"Straße\")\nassert(shout, [\"URGENT\", \"LOW\", \"STRASSE\"])\nquiet","return":"[\"urgent\",\"low\",\"straße\"]"}
- {"id":"spec-0790","description":"Nucleoid rolls back failed updates through case conversion aliases","code":"label = \"door\"\ncode = label.uppercase()\nfailure = \"\"\ntry:\n    label = 7\ncatch error:\n    failure = error\nassert(failure, TypeError(\"number.uppercase is not a function\"))\nassert([label, code], [\"door\", \"DOOR\"])\ntry:\n    label = \"gate\"\n    assert(code, \"GATE\")\n    throw \"UNDO\"\ncatch error:\n    assert(error, \"UNDO\")\nassert([label, code], [\"door\", \"DOOR\"])\nclass Tag(name):\n    this.name = name\n$Tag.key = $Tag.name.to_lowercase()\nred = Tag(\"RED\")\ntry:\n    red.name = true\ncatch error:\n    failure = error\nassert(failure, TypeError(\"boolean.to_lowercase is not a function\"))\nassert([red.name, red.key], [\"RED\", \"red\"])\nred.name = \"Crimson\"\nred.key","return":"\"crimson\""}
--{"id":"spec-0791","description":"Nucleoid flattens nested lists by one level","code":"nested = [[1, 2], 2, [[3, [4]]], [], \"ab\"]\nonce = nested.flat()\ntwice = once.flat(1)\nassert(once, [1, 2, 2, [3, [4]], \"ab\"])\nassert(twice, [1, 2, 2, 3, [4], \"ab\"])\nassert(nested, [[1, 2], 2, [[3, [4]]], [], \"ab\"])\nnested.push([[5]], 6)\nassert(once, [1, 2, 2, [3, [4]], \"ab\", [5], 6])\nassert(twice, [1, 2, 2, 3, [4], \"ab\", 5, 6])\ntwice.length","return":"8"}
--{"id":"spec-0792","description":"Nucleoid flattens lists to a given depth","code":"deep = [1, [2, [3, [4, [5]]]], [[6]]]\ntwo = deep.flat(2)\nthree = deep.flat(3)\nsame = deep.flat(0)\nassert(two, [1, 2, 3, [4, [5]], 6])\nassert(three, [1, 2, 3, 4, [5], 6])\nassert(same, [1, [2, [3, [4, [5]]]], [[6]]])\ndeep.push([[7, [8]]])\nassert(two, [1, 2, 3, [4, [5]], 6, 7, [8]])\nassert(three, [1, 2, 3, 4, [5], 6, 7, 8])\nassert(same, deep)\nthree.length","return":"8"}
--{"id":"spec-0793","description":"Nucleoid keeps flattened lists live","code":"shifts = [[\"ana\", \"bo\"], [\"cy\"]]\nstaff = shifts.flat()\nsize = staff.length\nassert([staff, size], [[\"ana\", \"bo\", \"cy\"], 3])\nshifts.push([\"di\"])\nassert([staff, size], [[\"ana\", \"bo\", \"cy\", \"di\"], 4])\nshifts = [[\"eve\"], [], [\"fay\", \"gus\"]]\nassert([staff, size], [[\"eve\", \"fay\", \"gus\"], 3])\nshifts.shift()\nassert([staff, size], [[\"fay\", \"gus\"], 2])\nsize","return":"2"}
--{"id":"spec-0794","description":"Nucleoid flattens lists in class level rules","code":"class Team(squads):\n    this.squads = squads\n$Team.members = $Team.squads.flat()\nred = Team([[\"ana\", \"bo\"], [\"cy\"]])\nblue = Team([[\"di\"]])\nassert([red.members, blue.members], [[\"ana\", \"bo\", \"cy\"], [\"di\"]])\nred.squads.push([\"ed\"])\nblue.squads = [[\"fay\"], [\"gus\", \"hal\"]]\nassert([red.members, blue.members], [[\"ana\", \"bo\", \"cy\", \"ed\"], [\"fay\", \"gus\", \"hal\"]])\nred.members.length","return":"4"}
--{"id":"spec-0795","description":"Nucleoid queries the cells of flattened grids","code":"grid = [[1, 0, 2], [0, 3, 2]]\ncells = grid.flat()\ntotal = cells.sum()\ncolors = cells.distinct()\nfilled = cells.count(cell => cell > 0)\nassert([total, colors, filled], [8, [1, 0, 2, 3], 4])\ngrid.push([5, 0, 0])\nassert([total, colors, filled], [13, [1, 0, 2, 3, 5], 5])\ngrid = [[4, 4], [0]]\n[total, colors, filled]","ret
+@@ -791,19 +791,23 @@
+ {"id":"spec-0791","description":"Nucleoid runs a finally clause however a try statement ends","code":"attempts = []\ndef charge(balance, amount):\n    try:\n        if amount > balance:\n            throw \"DECLINED\"\n        return balance - amount\n    catch reason:\n        return reason\n    finally:\n        attempts.push(amount)\nassert(charge(50, 30), 20)\nassert(charge(20, 40), \"DECLINED\")\nassert(attempts, [30, 40])\nlog = []\ntry:\n    log.push(\"body\")\ncatch:\n    log.push(\"catch\")\nfinally:\n    log.push(\"finally\")\ntry: log.push(1)\ncatch: log.push(2)\nfinally: log.push(3); log.push(4)\nassert(log, [\"body\", \"finally\", 1, 3, 4])\nattempts.length","return":"2"}
+ {"id":"spec-0792","description":"Nucleoid rolls back a failed try body before its finally clause runs","code":"class Tank(level):\n    this.level = level\ntank = Tank(80)\nreading = tank.level * 2\naudit = []\nentries = audit.length\ntry:\n    tank.level = 120\n    assert(reading, 240)\n    throw \"OVERFLOW\"\ncatch alarm:\n    audit.push(alarm)\nfinally:\n    audit.push(tank.level)\nassert([tank.level, reading], [80, 160])\nassert([audit, entries], [[\"OVERFLOW\", 80], 2])\ntank.level = 90\nreading","return":"180"}
+ {"id":"spec-0793","description":"Nucleoid runs a finally clause before an error or a return leaves","code":"log = []\ntry:\n    try:\n        log.push(\"read\")\n        throw \"SENSOR\"\n    catch fault:\n        log.push(\"retry\")\n        throw fault + \" DOWN\"\n    finally:\n        assert(log, [])\n        log.push(\"cleanup\")\ncatch outage:\n    assert([outage, log], [\"SENSOR DOWN\", []])\n    log.push(outage)\nassert(log, [\"SENSOR DOWN\"])\ndef settle(order):\n    try:\n        order.state = \"paid\"\n        return order.state\n    catch:\n        return \"failed\"\n    finally:\n        order.state = \"closed\"\ncart = {state: \"open\"}\nassert([settle(cart), cart.state], [\"paid\", \"closed\"])\ndef recover(order):\n    try:\n        throw \"LOST\"\n    catch problem:\n        order.state = problem\n        throw problem\n    finally:\n        return order.state\nassert(recover(cart), \"closed\")\ncart.state","return":"\"closed\""}
+-{"id":"spec-0794","description":"Nucleoid flattens nested lists by one level","code":"nested = [[1, 2], 2, [[3, [4]]], [], \"ab\"]\nonce = nested.flat()\ntwice = once.flat(1)\nassert(once, [1, 2, 2, [3, [4]], \"ab\"])\nassert(twice, [1, 2, 2, 3, [4], \"ab\"])\nassert(nested, [[1, 2], 2, [[3, [4]]], [], \"ab\"])\nnested.push([[5]], 6)\nassert(once, [1, 2, 2, [3, [4]], \"ab\", [5], 6])\nassert(twice, [1, 2, 2, 3, [4], \"ab\", 5, 6])\ntwice.length","return":"8"}
+-{"id":"spec-0795","description":"Nucleoid flattens lists to a given depth","code":"deep = [1, [2, [3, [4, [5]]]], [[6]]]\ntwo = deep.flat(2)\nthree = deep.flat(3)\nsame = deep.flat(0)\nassert(two, [1, 2, 3, [4, [5]], 6])\nassert(three, [1, 2, 3, 4, [5], 6])\nassert(same, [1, [2, [3, [4, [5]]]], [[6]]])\ndeep.push([[7, [8]]])\nassert(two, [1, 2, 3, [4, [5]], 6, 7, [8]])\nassert(three, [1, 2, 3, 4, [5], 6, 7, 8])\nassert(same, deep)\nthree.length","return":"8"}
+-{"id":"spec-0796","description":"Nucleoid keeps flattened lists live","code":"shifts = [[\"ana\", \"bo\"], [\"cy\"]]\nstaff = shifts.flat()\nsize = staff.length\nassert([staff, size], [[\"ana\", \"bo\", \"cy\"], 3])\nshifts.push([\"di\"])\nassert([staff, size], [[\"ana\", \"bo\", \"cy\", \"di\"], 4])\nshifts = [[\"eve\"], [], [\"fay\", \"gus\"]]\nassert([staff, size], [[\"eve\", \"fay\", \"gus\"], 3])\nshifts.shift()\nassert([staff, size], [[\"fay\", \"gus\"], 2])\nsize","return":"2"}
+-{"id":"spec-0797","description":"Nucleoid flattens lists in class level rules","code":"class Team(squads):\n    this.squads = squads\n$Team.members = $Team.squads.flat()\nred = Team([[\"ana\", \"bo\"], [\"cy\"]])\nblue = Team([[\"di\"]])\nassert([red.members, blue.members], [[\"ana\", \"bo\", \"cy\"], [\"di\"]])\nred.squads.push([\"ed\"])\nblue.squads = [[\"fay\"], [\"gus\", \"hal\"]]\nassert([red.members, blue.members], [[\"ana\", \"bo\", \"cy\", \"ed\"], [\"fay\", \"gus\", \"hal\"]])\nred.members.length","return":"4"}
+-{"id":"spec-0798","description":"Nucleoid queries the cells of flattened grids","code":"grid = [[1, 0, 2], [0, 3, 2]]\ncells = grid.flat()\ntotal = cells.sum()\ncolors = cells.distinct()\nfilled = cells.count(cell => cell > 0)\nassert([total, colors, filled], [8, [1, 0, 2, 3], 4])\ngrid.push([5, 0, 0])\nassert([total, colors, filled], [13, [1, 0, 2, 3, 5], 5])\ngrid = [[4, 4], [0]]\n[total, colors, filled]","return":"[8,[4,0],2]"}
+-{"id":"spec-0799","description":"Nucleoid rolls back failed flattening updates","code":"rows = [[1, [2]], [3]]\ncells = rows.flat()\ntry:\n    rows.push([4])\n    assert(cells, [1, [2], 3, 4])\n    throw \"UNDO\"\ncatch error:\n    assert(error, \"UNDO\")\nassert([rows, cells], [[[1, [2]], [3]], [1, [2], 3]])\ntry:\n    cells = rows.flat(2)\n    assert(cells, [1, 2, 3])\n    throw \"UNDO\"\ncatch error:\n    a
 ```
 
-**File**: `dataset/nucleoid.synth.83.jsonl` (added, +16/-0)
+**File**: `dataset/nucleoid.synth.84.jsonl` (added, +12/-0)
 ```diff
-@@ -0,0 +1,16 @@
-+{"id":"synth-83-0001","description":"A finally clause runs after a try body that completes","code":"log = []\ntry:\n    log.push(\"work\")\ncatch:\n    log.push(\"fail\")\nfinally:\n    log.push(\"done\")\nlog","return":"[\"work\",\"done\"]"}
-+{"id":"synth-83-0002","description":"A finally clause runs after the catch suite handles a thrown value","code":"log = []\ntry:\n    throw \"JAM\"\ncatch problem:\n    log.push(problem)\nfinally:\n    log.push(\"done\")\nlog","return":"[\"JAM\",\"done\"]"}
-+{"id":"synth-83-0003","description":"A function records every attempt in finally whether it pays or declines","code":"attempts = []\ndef pay(balance, amount):\n    try:\n        if amount > balance:\n            throw \"DECLINED\"\n        return balance - amount\n    catch reason:\n        return reason\n    finally:\n        attempts.push(amount)\n[pay(50, 20), pay(10, 40), attempts]","return":"[30,\"DECLINED\",[20,40]]"}
-+{"id":"synth-83-0004","description":"A pending return keeps its value when finally changes what it read","code":"stock = 3\ndef take():\n    try:\n        return stock\n    catch:\n        return 0\n    finally:\n        stock = stock - 1\n[take(), stock]","return":"[3,2]"}
-+{"id":"synth-83-0005","description":"A return in finally replaces the value the body returned","code":"def status():\n    try:\n        return \"busy\"\n    catch:\n        return \"error\"\n    finally:\n        return \"idle\"\nstatus()","return":"\"idle\""}
-+{"id":"synth-83-0006","description":"A return in finally replaces the error a catch suite raised","code":"def fetch():\n    try:\n        throw \"TIMEOUT\"\n    catch problem:\n        throw problem + \" AGAIN\"\n    finally:\n        return \"cached\"\nfetch()","return":"\"cached\""}
-+{"id":"synth-83-0007","description":"A failed body rolls back before the catch suite and finally run","code":"balance = 10\nseen = []\ntry:\n    balance = 0\n    throw \"VOID\"\ncatch:\n    seen.push(balance)\nfinally:\n    seen.push(balance)\nseen","return":"[10,10]"}
-+{"id":"synth-83-0008","description":"A failed catch suite rolls back before finally returns","code":"retries = 0\ndef attempt():\n    try:\n        throw \"DOWN\"\n    catch problem:\n        retries = retries + 1\n        throw problem\n    finally:\n        return retries\n[attempt(), retries]","return":"[0,0]"}
-+{"id":"synth-83-0009","description":"An error leaving a try statement also rolls back its finally clause","code":"log = []\ntry:\n    try:\n        throw \"LEAK\"\n    catch problem:\n        throw problem + \"!\"\n    finally:\n        log.push(\"cleanup\")\ncatch outer:\n    log.push(outer)\nlog","return":"[\"LEAK!\"]"}
-+{"id":"synth-83-0010","description":"A finally clause that throws replaces the pending result","code":"result = \"\"\ntry:\n    try:\n        result = \"saved\"\n    catch:\n        result = \"failed\"\n    finally:\n        throw \"DISK FULL\"\ncatch problem:\n    result = problem\nresult","return":"\"DISK FULL\""}
-+{"id":"synth-83-0011","description":"The catch parameter is not bound inside the finally clause","code":"problem = \"none\"\ntry:\n    throw \"FIRE\"\ncatch problem:\n    caught = problem\nfinally:\n    after = problem\n[caught, after]","return":"[\"FIRE\",\"none\"]"}
-+{"id":"synth-83-0012","description":"A same-line finally clause runs semicolon-separated statements","code":"x = 0\ntry: x = 1\ncatch: x = 2\nfinally: x = x + 1; y = 5\n[x, y]","return":"[2,5]"}
-+{"id":"synth-83-0013","description":"A finally clause in a loop body runs once for every instance","code":"class Job(hours):\n    this.hours = hours\nJob(2)\nJob(9)\nlog = []\nfor job of Job:\n    try:\n        if job.hours > 8:\n            throw \"LONG\"\n        log.push(job.hours)\n    catch problem:\n        log.push(problem)\n    finally:\n        log.push(\"checked\")\nlog","return":"[2,\"checked\",\"LONG\",\"checked\"]"}
-+{"id":"synth-83-0014","description":"A standing conditional runs its finally clause each time it runs","code":"level = 0\nif level > 0:\n    try:\n        alarm = level\n    catch:\n        alarm = 0\n    finally:\n        checked = level * 10\nlevel = 1\nlevel = 3\n[alarm, checked]","return":"[3,30]"}
-+{"id":"synth-83-0015","description":"A declaration in a finally clause stays live like one in a catch suite","code":"rate = 2\ntry:\n    throw \"LATE\"\ncatch:\n    fee = rate * 5\nfinally:\n    total = rate * 7\nrate = 3\n[fee, total]","return":"[15,21]"}
-+{"id":"synth-83-0016","description":"finally stays an ordinary name beside a finally clause","code":"finally = 2\nx = 1\ntry:\n    x = x + finally\ncatch:\n    x = 0\nfinally:\n    x = x * finally\nx","return":"6"}
+@@ -0,0 +1,12 @@
++{"id":"synth-84-0001","description":"Union keeps the steps of an explanation and adds the steps of another explanation whose node it does not select, in that explanation's order","code":"price = 10\nquantity = 3\nrate = 0.2\nsubtotal = price * quantity\ntax = subtotal * rate\nshipping = quantity * 2\n(why tax |> union(why shipping)).map(step -> step.node)","return":"[\"tax\",\"subtotal\",\"rate\",\"price\",\"quantity\",\"shipping\"]"}
++{"id":"synth-84-0002","description":"A union begins with its own selection, so swapping the two explanations reorders the same nodes","code":"price = 10\nquantity = 3\nrate = 0.2\nsubtotal = price * quantity\ntax = subtotal * rate\nshipping = quantity * 2\n[(why shipping |> union(why tax)).map(step -> step.node), (why tax |> union(why shipping)).length]","return":"[[\"shipping\",\"quantity\",\"tax\",\"subtotal\",\"rate\",\"price\"],6]"}
++{"id":"synth-84-0003","description":"A union of two impact selections lists what a change of either input reaches, each node once","code":"price = 10\nrate = 0.2\nsubtotal = price * 3\ntax = subtotal * rate\ntotal = subtotal + tax\nfee = rate * 5\n(affects price |> union(affects rate)).map(step -> step.node)","return":"[\"subtotal\",\"tax\",\"total\",\"fee\"]"}
++{"id":"synth-84-0004","description":"A state filter after a union keeps the facts behind either explanation","code":"fan = 2\nload = 40\nspeed = 3\ncurrent = load * 2\nheat = current + fan\nnoise = fan * speed\n(why heat |> union(why noise) |> stated).map(step -> step.node)","return":"[\"fan\",\"load\",\"speed\"]"}
++{"id":"synth-84-0005","description":"A depth stage after a union measures each side from where its own walk began, so a node both sides select keeps its distance in the first","code":"a = 1\nb = a + 1\nc = b * 2\nd = a + 3\n[(why c |> union(why d) |> depth(1)).map(step -> step.node), (why c |> depth(1) |> union(why d |> depth(1))).map(step -> step.node)]","return":"[[\"c\",\"b\",\"d\"],[\"c\",\"b\",\"d\",\"a\"]]"}
++{"id":"synth-84-0006","description":"A walk after a union starts from every step of the union","code":"a = 1\nb = a + 1\nc = b * 2\nd = a + 3\nf = d + 1\n(b |> union(d) |> affects).map(step -> step.node)","return":"[\"f\",\"c\"]"}
++{"id":"synth-84-0007","description":"A standing union follows a rule rewired on the other side","code":"a = 1\nb = 2\nleft = a + 1\nright = b + 1\neither = why left |> union(why right)\nc = 5\nright = b + c\neither.map(step -> step.node)","return":"[\"left\",\"a\",\"right\",\"b\",\"c\"]"}
++{"id":"synth-84-0008","description":"A union with model adds every other node in model order, and the union of a selection with itself is the selection","code":"a = 1\nb = a + 1\nc = 4\n[(why b |> union(model)).map(step -> step.node), (why b |> union(why b)).length]","return":"[[\"b\",\"a\",\"c\"],2]"}
++{"id":"synth-84-0009","description":"A name that holds a selection is a reasoning observer, so it adds nothing as the other selection; the pipeline is written in place","code":"price = 10\ntax = price * 2\nshipping = price + 1\ncauses = why shipping\n[(why tax |> union(causes)).length, (why tax |> union(why shipping)).length]","return":"[2,3]"}
++{"id":"synth-84-0010","description":"A class-level rule gives every instance its own union","code":"class Item(price, qty, fee):\n    this.price = price\n    this.qty = qty\n    this.fee = fee\n$Item.total = $Item.price * $Item.qty\n$Item.cost = $Item.qty + $Item.fee\n$Item.basis = why $Item.total |> union(why $Item.cost)\npen = Item(2, 5, 1)\ncup = Item(3, 1, 4)\n[pen.basis.map(step -> step.node), cup.basis.map(step -> step.node)]","return":"[[\"pen.total\",\"pen.price\",\"pen.qty\",\"pen.cost\",\"pen.fee\"],[\"cup.total\",\"cup.price\",\"cup.qty\",\"cup.cost\",\"cup.fee\"]]"}
++{"id":"synth-84-0011","description":"Nodes names the steps of a union, and an other selection that a depth with a null limit makes undefined makes the union undefined","code":"a = 1\nb = a + 1\nc = b * 2\nd = a + 3\nn = null\n[c |> why |> union(d |> why) |> nodes, c |> why |> union(d |> why |> depth(n))]","return":"[[\"c\",\"b\",\"a\",\"d\"],null]"}
++{"id":"synth-84-0012","description":"A binding named union shadows the stage when the pipeline runs, so a try statement can catch the error","code":"a = 1\nb = a + 1\nunion = 0\nresult = \"\"\ntry:\n    result = why b |> union(why a)\ncatch error:\n    result = error\n[union, result]","return":"[0,\"TypeError: union is not an operation\"]"}
 ```
 
-**File**: `docs/README.md` (modified, +55/-1)
+**File**: `docs/README.md` (modified, +69/-7)
 ```diff
-@@ -2461,7 +2461,55 @@ catch
-   tokens, 603 are unchanged, and none increased. All 2,763 protected assertions
-   executed and all 50 explicit expected returns matched.
+@@ -4412,6 +4412,63 @@ common.map(step => step.node)
+   [intersect and except reasoning selections](../nucleoid.spec.md#intersect-and-except-reasoning-selections)
+   section.
  
--Full detail: [NUC 9](nuc-0009.md), [NUC 46](nuc-0046.md).
-+### Finally clauses
++### Union selections
 +
 +```
-+visits = []
-+def enter(room):
-+    try:
-+        if room == "vault":
-+            throw "LOCKED"
-+        return "open"
-+    catch reason:
-+        return reason
-+    finally:
-+        visits.push(room)
-+assert([enter("hall"), enter("vault")], ["open", "LOCKED"])
-+assert(visits, ["hall", "vault"])
-+visits.length
++price = 10
++quantity = 3
++rate = 0.2
++subtotal = price * quantity
++tax = subtotal * rate
++shipping = quantity * 2
++either = tax |> why |> union(shipping |> why)
++facts = tax |> why |> union(shipping |> why) |> stated
++assert(either.map(step => step.node), ["tax", "subtotal", "rate", "price", "quantity", "shipping"])
++assert(facts.map(step => step.node), ["rate", "price", "quantity"])
++fee = 2
++shipping = quantity * 2 + fee
++facts.map(step => step.node)
 +```
 +
-+- This is the complete
-+  `Nucleoid runs finally clauses as Python, JavaScript and Java do` program
++- This is the complete `Nucleoid joins two explanations with union` program
 +  in `tests/reference.md`, without its title and expected-return metadata;
-+  it returns `2`.
-+- [NUC 119](nuc-0119.md) adds the `finally` clause of Python, JavaScript,
-+  TypeScript, Java, Kotlin and C#: `finally:` and a suite, which runs
-+  however a complete `try`/`catch` statement ends. `finally` stays an
-+  ordinary name; the clause is the name and its colon at the start of the
-+  line after the catch suite, at the `try` statement's indentation.
-+- When the body or the catch suite completes, normally or by `return`, the
-+  `finally` suite runs and the statement then completes as that suite did,
-+  so `enter` returns `"open"` and `"LOCKED"` and records both rooms. A
-+  pending `return` keeps the value it computed.
-+- A failed body rolls back before the catch suite runs, as without the
-+  clause. A failed catch suite rolls back too, then the `finally` suite
-+  runs and the error propagates; when it leaves the statement, the enclosing
-+  rollback also undoes what the `finally` suite changed.
-+- A `return` in the `finally` suite replaces the pending result or error,
-+  and a failure of the `finally` suite propagates in its place, as in
-+  Python, JavaScript and Java. The catch parameter is not bound in the
-+  `finally` suite.
-+- `finally: NAME` before the end of its line stays the typed declaration of
-+  `finally`, a `finally` on the catch suite's own line or inside a call's
-+  parentheses keeps its `SyntaxError("Unexpected ':'")`, and `try` without
-+  `catch` still raises `SyntaxError("Expected 'catch' after 'try'")`.
-+- The native REPL buffers the clause with its `try` until a blank line; a
-+  blank line before `finally:` commits the statement first, as it does
-+  before a `catch`. See the
-+  [root contract](../nucleoid.spec.md#finally-clauses).
++  it returns `["rate","price","quantity","fee"]`.
++- [NUC 120](nuc-0120.md) adds the stage `selection |> union(other)`. It
++  selects the steps of `selection` in their order, followed by the steps of
++  `other` whose node `selection` does not select, in `other`'s order, with
++  their fields unchanged, so `tax |> why |> union(shipping |> why)` is
++  everything the tax or the shipping rests on, each node once. It is exactly
++  `(selection).concat(other |> except(selection))`, which names the
++  selection twice and gives a list rather than a selection.
++- `other` is written and evaluated as for `intersect` and `except`: a
++  reference, `model`, a prefix stage such as `why shipping` or a pipeline,
++  evaluated in place each time the stage applies, with steps compared by
++  their node, whatever they hold.
++- The result is a selection. `stated`, `derived`, `diff`, `intersect` and
++  `except` after it keep what they keep of each side, so
++  `tax |> why |> union(shipping |> why) |> stated` is the facts behind
++  either value, and a later `why` or `affects` walks from every step of the
++  union. Each step keeps the distance of the walk that selected it, so a
++  later `depth(n)` measures each side from its own walk, and the union keeps
++  the direction of the selection's most recent walk, which a later `path`
++  uses for every step.
++- An `other` that is undefined, because a `depth` in it has a `null` limit,
++  makes the selection undefined, where the accepted spelling appends
++  undefined as an element. An invalid `other` keeps the diagnostics of a
++  pipeline source, such as `TypeError("Cannot explain 1")`.
++- Only `|>` followed by `union` and `(` is the stage; `union` stays an
++  ordinary name everywhere else, and a bare `|> union` keeps its parse-time
++  `TypeError("union is not an operation")`. A local or parameter, variable,
++  function or class named `union` shadows the stage, as bindings shadow the
++  other stages: the stage then raises `TypeError("union is not an operation")`
++  before selecting its source.
++- The selection stays live through every observation of both selections,
++  including the steps each one drops. It renders as
++  `selection|>union(other)`.
++- The authoritative contract is the
++  [union reasoning selections](../nucleoid.spec.md#union-reasoning-selections)
++  section.
 +
-+Full detail: [NUC 9](nuc-0009.md), [NUC 46](nuc-0046.md), [NUC 119](nuc-0119.md).
+ ### Node names of reasoning selections
  
- ---
+ ```
+@@ -4447,10 +4504,10 @@ facts
+   `(total).map(step => step.node)` raises
+   `TypeError("number.map is not a function")`. An empty selection gives `[]`,
+   and a selection that a `depth(null)` makes undefined gives undefined.
+-- The stage ends the pipeline: a stage after it, or an `intersect`, `except`
+-  or `path` argument that ends with it, has a list of names rather than a
+-  selection and raises `TypeError("Cannot explain <source>")`, as it does
+-  after the accepted spelling.
++- The stage ends the pipeline: a stage after it, or an `intersect`, `except`,
++  `union` or `path` argument that ends with it, has a list of names rather
++  than a selection and raises `TypeError("Cannot explain <source>")`, as it
++  does after the accepted spelling.
+ - Only `|>` followed by `nodes` is the stage; `nodes` stays an ordinary name
+   everywhere else, and there is no prefix form. A local or parameter,
+   variable, function or class named `nodes` shadows the stage, as bindings
+@@ -4502,11 +4559,12 @@ c = b * 2
+   and its `before` and `after` fields, the [NUC 88](nuc-0088.md)
+   candidate adds a `path(target)` stage that NUC 11 does not plan, and the
+   [NUC 106](nuc-0106.md) candidate adds `intersect(other)` and
+-  `except(other)` stages, which NUC 11 does not plan either, and the
++  `except(other)` stages, which NUC 11 does not plan either, the
+   [NUC 112](nuc-0112.md) candidate adds a final `nodes` stage, which names
+   the nodes of a selection and, unlike NUC 11's operations, returns a list
+-  rather than a selection. Other NUC 11 operations remain proposals, not
+-  dependencies.
++  rather than a selection, and the [NUC 120](nuc-0120.md) candidate adds a
++  `union(other)` stage, which NUC 11 does not plan either. Other NUC 11
++  operations remain proposals, not dependencies.
  
-@@ -4892,6 +4940,12 @@ record = {amount: amount unit: "C"}    optional explicit-property comma (NUC 44)
- record = {...base, qty: 1}             copy base's entries in order; later entries win (NUC 81)
- 
- throw value                            raise a value
-+try:                                   run the body; a failure rolls it back
-+    statement
-+catch name:                            then runs this suite with the error bound
-+    statement
-+finally:                               runs however the statement ends (NUC 119)
-+    statement
- return expression                      yield from a block or function
- assert(actual, expected)                existing equality-check helper
- assert: actual, expected                optional statement spelling (Accepted NUC 45)
 ```
 
-**File**: `docs/examples.md` (modified, +35/-0)
+**File**: `docs/examples.md` (modified, +29/-0)
 ```diff
-@@ -4049,6 +4049,41 @@ present
-   scanned. See [NUC 118](nuc-0118.md) and the
-   [root contract](../nucleoid.spec.md#case-conversion-method-aliases).
+@@ -4084,6 +4084,35 @@ ana.busy
+   Ana busy. See [NUC 119](nuc-0119.md) and the
+   [root contract](../nucleoid.spec.md#finally-clauses).
  
-+## Finally clauses
++## Union reasoning selections
 +
-+**Finally clauses log every dispatch of a driver**
++**Union shows every figure that a change of rent or of wages moves**
 +
 +```nuc
-+class Driver(name, shift):
-+    this.name = name
-+    this.shift = shift
-+    this.log = []
-+$Driver.busy = $Driver.log.length > 2
-+def dispatch(driver, hours):
-+    try:
-+        if driver.shift + hours > 8:
-+            throw "OVERTIME"
-+        return driver.name + " goes"
-+    catch reason:
-+        return reason
-+    finally:
-+        driver.log.push(hours)
-+ana = Driver("Ana", 6)
-+assert(dispatch(ana, 1), "Ana goes")
-+assert(dispatch(ana, 3), "OVERTIME")
-+assert([ana.log, ana.busy], [[1, 3], false])
-+dispatch(ana, 2)
-+ana.busy
-+# return: true
++rent = 1200
++wages = 3000
++power = 150
++overhead = rent + power
++payroll = wages * 1.2
++costs = overhead + payroll
++price = costs / 100
++moved = affects rent |> union(affects wages)
++assert(moved.map(step -> step.node), ["overhead", "costs", "price", "payroll"])
++power = rent / 8
++wages = 3500
++[moved.map(step -> step.node), price]
++# return: [["overhead","power","costs","price","payroll"],55.5]
 +```
 +
-+- `dispatch` sends a driver out or refuses overtime, and both paths return.
-+  The `finally` suite logs the hours asked for on either path, where the
-+  accepted spelling would repeat the push before each `return`.
-+- Each driver's `busy` rule follows its log, so the third dispatch makes
-+  Ana busy. See [NUC 119](nuc-0119.md) and the
-+  [root contract](../nucleoid.spec.md#finally-clauses).
++- `affects rent |> union(affects wages)` is everything a change of the rent
++  or of the wages moves: what the rent moves, in its order, then what only
++  the wages move, here the payroll. The costs and the price, which both move,
++  appear once.
++- The union follows the model: once the power bill is a share of the rent,
++  it joins what the rent moves, and the price follows the new wages. See
++  [NUC 120](nuc-0120.md) and the
++  [root contract](../nucleoid.spec.md#union-reasoning-selections).
 +
  ## Reactive list flattening
  
@@ -1904,160 +1942,163 @@ failed body and a failed catch suite are
 
 **File**: `docs/nuc-0000.md` (modified, +2/-2)
 ```diff
-@@ -96,7 +96,7 @@ Created: 31-Jul-2026
- | [85](nuc-0085.md) | Fixed Cross-Property Class Anchors | Automatic-Accepted: independent evaluation rejected it because fixed-only cycles whose rules build fresh objects never settle; `$Pair.a = {v: $Pair.b@first}` with `$Pair.b = {v: $Pair.a@first}` reaches the 100,000-step propagation limit instead of settling as the proposal claims |
- | [90](nuc-0090.md) | Enum Declarations | Accepted |
- | [115](nuc-0115.md) | Count-Controlled Repeat Loops | Accepted |
--| [119](nuc-0119.md) | Finally Clauses for Try Statements | Draft |
-+| [119](nuc-0119.md) | Finally Clauses for Try Statements | Accepted |
+@@ -147,7 +147,7 @@ Created: 31-Jul-2026
+ | [101](nuc-0101.md) | Exact-Depth Reasoning Selections | Rejected: existing selector-case audit fails |
+ | [106](nuc-0106.md) | Intersect and Except Reasoning Selections | Accepted |
+ | [112](nuc-0112.md) | Node Names of Reasoning Selections | Accepted |
+-| [120](nuc-0120.md) | Union Reasoning Selections | Draft |
++| [120](nuc-0120.md) | Union Reasoning Selections | Accepted |
  
- ### Utility enhancement
+ ### Language compatibility
  
-@@ -292,7 +292,7 @@ Created: 31-Jul-2026
- | [116](nuc-0116.md) | Size and Emptiness Method Aliases | Standards Track | Language compatibility | Accepted |
+@@ -294,7 +294,7 @@ Created: 31-Jul-2026
  | [117](nuc-0117.md) | First and Last Element Methods | Standards Track | Language compatibility | Accepted |
  | [118](nuc-0118.md) | Case Conversion Method Aliases | Standards Track | Language compatibility | Accepted |
--| [119](nuc-0119.md) | Finally Clauses for Try Statements | Standards Track | Runtime features | Draft |
-+| [119](nuc-0119.md) | Finally Clauses for Try Statements | Standards Track | Runtime features | Accepted |
+ | [119](nuc-0119.md) | Finally Clauses for Try Statements | Standards Track | Runtime features | Accepted |
+-| [120](nuc-0120.md) | Union Reasoning Selections | Standards Track | Reasoning enhancement | Draft |
++| [120](nuc-0120.md) | Union Reasoning Selections | Standards Track | Reasoning enhancement | Accepted |
  
  ## Copyright
  
 ```
 
-**File**: `docs/nuc-0119.md` (modified, +1343/-11)
+**File**: `docs/nuc-0120.md` (modified, +1431/-17)
 ```diff
 @@ -4,10 +4,11 @@
- NUC: 119
- Title: Finally Clauses for Try Statements
+ NUC: 120
+ Title: Union Reasoning Selections
  Author: Can Mingir <canmingir@gmail.com>
 -Status: Draft
 +Status: Accepted
  Type: Standards Track
- Category: Runtime features
+ Category: Reasoning enhancement
  Created: 18-Nov-2026
-+Requires: 9, 46
++Requires: 48, 82, 83, 88, 106, 112
  ```
  
  ## Abstract
-@@ -29,13 +30,17 @@ Created: 18-Nov-2026
-   enclosing rollback undoes what the `finally` suite changed, with the
-   rest of the statement.
- - At the accepted revision each of these programs raises
--  `SyntaxError("Unexpected ':'")` at the colon after `finally`. Only those
--  programs change. `finally` stays an ordinary name everywhere else, as a
--  variable, property, object key, function or parameter, as in
--  `finally = 4`, `c ? finally : 1` and `{a: 2 finally: 3}`; a bare
--  `finally` line followed by an indented block keeps its accepted reading;
--  and `try` without `catch` keeps
-+  `SyntaxError("Unexpected ':'")`, reported at the token after `finally:`.
-+  Only those programs change. `finally` stays an ordinary name everywhere
-+  else, as a variable, property, object key, function, parameter or enum,
-+  as in `finally = 4`, `c ? finally : 1` and `{a: 2 finally: 3}`;
-+  `finally: NAME` before the end of its statement stays the typed
-+  declaration of `finally`; a bare `finally` line followed by an indented
-+  block keeps its accepted reading; and `try` without `catch` keeps
-   `SyntaxError("Expected 'catch' after 'try'")`.
-+- No keyword, lexer token, error type or message format is added. The
-+  authoritative contract is
-+  [Finally clauses](../nucleoid.spec.md#finally-clauses).
+@@ -23,47 +24,1460 @@ Created: 18-Nov-2026
+   and `union` gives what either selects. `other` is written as a
+   pipeline's source is, evaluated in place each time the stage applies,
+   and steps are compared by their node.
+-- The result is a selection, so further stages follow it, and it stays
+-  live through every observation of both selections.
++- For every source and stage the pipeline accepts, the stage selects
++  exactly what the accepted `(selection).concat(other |> except(selection))`
++  gives, except that an `other` that a `depth(null)` makes undefined makes
++  the whole selection undefined, as for `intersect` and `except`, where the
++  accepted spelling appends undefined as an element.
++- The result is a selection, so further stages follow it: `stated`,
++  `derived`, `diff`, `intersect` and `except` keep what they keep of each
++  side, a later `why` or `affects` walks from every step, each step keeps the
++  [NUC 82](nuc-0082.md) distance of the walk that selected it, and the union
++  keeps the direction of the selection's most recent walk for a later
++  [NUC 88](nuc-0088.md) `path`. It stays live through every observation of
++  both selections and renders as `selection|>union(other)`.
+ - At the accepted revision each such pipeline raises the parse-time
+-  `TypeError("union is not an operation")`. Only those programs change.
++  `TypeError("union is not an operation")`, or, where the statement parser
++  backtracks, another parse error first. Only those programs change.
+   `union` stays an ordinary name everywhere else, as a variable, function,
+-  property or object key, and a binding named `union` shadows the stage,
+-  as bindings shadow the other stages.
++  property or object key, and a binding named `union` shadows the stage, as
++  bindings shadow the other stages.
++- No keyword, lexer token, error type or message is added. The public `Expr`
++  enum gains one variant, `Expr::Union`, which needs human SemVer review. No
++  project version is changed. The authoritative contract is
++  [Union reasoning selections](../nucleoid.spec.md#union-reasoning-selections).
  
  ## Motivation
  
-@@ -60,19 +65,1346 @@ Created: 18-Nov-2026
- 
- ## Rationale
- 
--- Pending: the proposer completes this section.
-+- **Category and mode.** The allocating continuous cycle drew Runtime
-+  features with one tool-backed uniform draw over the five categories that
-+  NUC 1's registry marks eligible for automatic selection, index 1 with
-+  probability 1/5 and no redraw, and recorded the requested change in the
-+  allocation commit `9eeb878b`, which this revision pins.
-+- **Runtime applicability: `new_feature`.** No accepted construct runs a
-+  suite on every exit of a `try` statement. Code written after the
-+  statement does not run when the body or the catch suite returns, and the
-+  rewrite that emulates the clause turns each `return` into an assignment
-+  of a result, which inside a function writes state: a function's only
-+  local names are its parameters and loop variables, so at the accepted
-+  revision a function that assigns `r` in its suites leaves the state
-+  name `r` behind. A counterpart therefore changes the program's state and
-+  structure, as [NUC 74](nuc-0074.md)'s rest parameters did. Token
-+  comparison is skipped entirely, as NUC 1's matrix states for a brand-new
-+  runtime feature (`new_runtime_feature`). The skip is neither a measured
-+  comparison nor a passing token gate.
-+- **No counterparts.** Because comparison is skipped, the new cases have no
-+  accepted-syntax counterparts and there is no Baseline B or extra
-+  baseline. They execute their assertions and explicit returns with full
-+  coverage, and every pre-existing case is unchanged.
-+- **Optional evidence.** No hint was supplied. Advisory usefulness is
-+  unscored (`missing_rubric`), not zero. Strategy learning is
-+  `not_configured`, so this revision is unattributed, with no policy,
-+  selection receipt, trial or reward.
-+- **The name of Python, JavaScript and Java, without a reserved word.**
-+  `finally` stays an ordinary identifier. At the accepted revision a line
-+  that starts with the name `finally` and `:` after a catch suite is the
-+  name followed by a stray colon, which raises
-+  `SyntaxError("Unexpected ':'")`, so giving that line clause meaning
-+  changes no accepted program. Rejected: reserving `finally`, which would
-+  break programs that use it as a variable, property, key, function,
-+  parameter or enum name; Ruby's `ensure`, which follows `rescue` rather
-+  than `catch`; and Swift's and Go's `defer`, a statement that registers
-+  work for the end of a scope rather than a clause of `try`.
-+- **On its own line, at the `try` statement's level.** The clause starts
-+  the logical line that directly follows the catch suite, at the `try`
-+  statement's own layout level, as `catch` follows the body. On the catch
-+  suite's line, `finally` is already accepted syntax: after an inline
-+  suite, `x = 2 finally` is the statement `x = 2` followed by the name
-+  `finally`, and `c ? 2 finally : 3` would be a conditional, so a
-+  same-line clause would collide with juxtaposition and conditionals. A
-+  `finally:` after `;`, inside the catch suite, at a shallower level or
-+  without a `try` keeps its accepted error.
-+- **The declaration `finally: NAME` stays.** At the accepted revision
-+  `finally: NAME` before a newline, `;`, dedent or the end of input is the
-+  typed declaration of `finally`, which raises
-+  `ReferenceError("Missing definition")` when it runs. A function whose
-+  `try` 
+ - World models answer questions about several conclusions at once: what
+   an order's tax or its shipping rests on, which facts a decision or its
+-  audit depends on. NUC 106 answers the shared and the distinct parts of
+-  two explanations with `intersect` and `except`; their combined part has
+-  no stage.
++  audit depends on, and what a change of either of two inputs reaches. NUC
++  106 answers the shared and the distinct parts of two explanations with
++  `intersect` and `except`; their combined part has no stage.
+ - Today the combined part is spelled
+   `(tax |> why).concat(shipping |> why |> except(tax |> why))`, which names
+   the first explanation twice. The plain
+   `(tax |> why).concat(shipping |> why)` lists a shared cause such as the
+-  quantity twice. Either result is a list rather than a selection, so no
+-  stage can follow it: `|> stated` after it raises
+-  `TypeError("Cannot explain ...")`.
++  quantity twice: with the order of [Selection](#selection) it gives
++  `["tax", "subtotal", "rate", "price", "quantity", "shipping", "quantity"]`.
++  Removing the repeats with [NUC 71](nuc-0071.md)'s `distinct`, as in
++  `(tax |> why).concat(shipping |> why).distinct()`, compares the step
++  records by value instead of by node, so a step whose value is NaN, which
++  equals nothing, stays twice: with `x = 0 / 0`, `y = x + 1` and
++  `z = x * 2`, `(why y).concat(why z).distinct()` lists `x` twice.
++- Every such result is a list rather than a selection, so no stage can
++  follow it: `((tax |> why).concat(shipping |> why |> except(tax |> why))) |> stated`
++  raises
++  `TypeError("Cannot explain tax|>why.concat(shipping|>why|>except(tax|>why))")`.
++  Narrowing the combined part to its facts takes another spelling with the
++  filter written into both parts, such as
++  `(tax |> why |> stated).concat(shipping |> why |> stated).distinct()`.
+ - A union stage states the question once, keeps each node once, and keeps
+   the answer a selection that `stated`, `derived` and the other stages can
+-  narrow further.
++  narrow further. `why tax |> union(why shipping)` is 8 lexer tokens against
++  14 for the most compact accepted spelling,
++  `(why tax).concat(why shipping).distinct()`, and 16 for the spelling that
++  compares by node, `(why tax).concat(why shipping |> except(why tax))`;
++  `why tax |> union(why shipping) |> stated` is 10 against 18 and 20.
++- Prior art: SQL's `UNION`, Bazel query's `union` and `+` operators over
++  target sets, as in `deps(//a) union deps(//b)`, C# LINQ's `Union`,
++  Kotlin's `union`, Python's set `|` and `set.union`, and JavaScript's
++  `Set.p
 ```
 
-**File**: `docs/nucleoid.g4` (modified, +14/-1)
+**File**: `docs/nucleoid.g4` (modified, +11/-2)
 ```diff
-@@ -308,8 +308,19 @@ repeatStmt
-     : REPEAT clauseExpression suite     // Stmt::Repeat
+@@ -512,6 +512,7 @@ stage
+     | DEPTH LPAREN expression RPAREN                       // Expr::Depth
+     | PATH LPAREN expression RPAREN                        // Expr::Path
+     | (INTERSECT | EXCEPT) LPAREN expression RPAREN        // Expr::Combine
++    | UNION LPAREN expression RPAREN                       // Expr::Union
      ;
  
-+// Without finallyClause a tryStmt is Stmt::Try, with it Stmt::TryFinally.
- tryStmt
--    : TRY body lineSeparator* CATCH (LPAREN name RPAREN | name)? body
-+    : TRY body lineSeparator* CATCH (LPAREN name RPAREN | name)? body finallyClause?
-+    ;
-+
-+// FINALLY starts the logical line after the catch body, at the tryStmt's
-+// layout level: only NEWLINEs follow the catch body, and the token before
-+// FINALLY is a NEWLINE or the DEDENT that closes it. FINALLY on the catch
-+// body's line, after ';', or inside '(' and '[', which suppress layout, keeps
-+// its name reading, and so does 'FINALLY COLON name' before NEWLINE, ';',
-+// DEDENT or EOF, which stays a typeDeclaration.
-+finallyClause
-+    : NEWLINE* FINALLY suite
-     ;
- 
- functionDecl
-@@ -878,6 +889,7 @@ enumName
-     : NAME
-     | WHILE
-     | REPEAT
-+    | FINALLY
-     | ENUM
-     | EXTENDS
-     | IS
-@@ -962,6 +974,7 @@ TYPEOF           : 'typeof';
- 
- WHILE            : 'while';
- REPEAT           : 'repeat';
-+FINALLY          : 'finally';
- ENUM             : 'enum';
- EXTENDS          : 'extends';
- ASSERT           : 'assert';
+ logicalOr
+@@ -909,6 +910,7 @@ enumName
+     | PATH
+     | INTERSECT
+     | EXCEPT
++    | UNION
+     | NODES
+     | MODEL
+     | FIRST
+@@ -997,6 +999,7 @@ DEPTH            : 'depth';
+ PATH             : 'path';
+ INTERSECT        : 'intersect';
+ EXCEPT           : 'except';
++UNION            : 'union';
+ NODES            : 'nodes';
+ MODEL            : 'model';
+ FIRST            : 'first';
+@@ -1189,10 +1192,16 @@ fragment REGEX_CHAR
+  * for xs:                  -> iteration with the item name "it".
+  * catch without a name     -> the binding "error".
+  * model directly before |> -> Expr::Model.
+- * |> intersect(model)      -> its other selection is Expr::Model; also except.
++ * |> intersect(model)      -> its other selection is Expr::Model; also except
++ *                             and union.
++ * s |> union(o)            -> Expr::Union: the steps of s, then the steps of o
++ *                             whose node s does not select, in o's order. A
++ *                             binding named union shadows it at run time, and
++ *                             a bare |> union stays the parse-time
++ *                             TypeError("union is not an operation").
+  * s |> nodes               -> Expr::Reason with Stage::Nodes, the node names of
+  *                             s's selection. It ends the pipeline: a stage
+- *                             after it, or an intersect, except or path
++ *                             after it, or an intersect, except, union or path
+  *                             argument that ends with it, parses and then
+  *                             raises TypeError("Cannot explain <source>").
+  * An object containing spread uses Expr::SpreadObject, with later entries
 ```
 
 #### Recent Merged Pull Requests:
@@ -2086,13 +2127,13 @@ failed body and a failed catch suite are
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Draft NUC 120 Union Reasoning Selections
+## X. Draft NUC 121 Held Values of Reasoning Selections
 
 **RULE**:
 When implementing operations in `docs/nuc-0000.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `22d7c31d`: Draft NUC 120 Union Reasoning Selections. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `226268f4`: Draft NUC 121 Held Values of Reasoning Selections. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/nuc-0000.md`.
@@ -2100,8 +2141,8 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-| [120](nuc-0120.md) | Union Reasoning Selections | Draft |
-| [120](nuc-0120.md) | Union Reasoning Selections | Standards Track | Reasoning enhancement | Draft |
+| [121](nuc-0121.md) | Held Values of Reasoning Selections | Draft |
+| [121](nuc-0121.md) | Held Values of Reasoning Selections | Standards Track | Reasoning enhancement | Draft |
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2111,7 +2152,7 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `22d7c31d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `226268f4` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

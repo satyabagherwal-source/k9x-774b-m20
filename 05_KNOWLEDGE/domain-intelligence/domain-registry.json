@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-18T23:10:38.702Z",
+  "last_updated": "2026-11-18T23:18:32.211Z",
   "total_records": 1917,
   "domains": {
     "A": {
@@ -7660,8 +7660,8 @@
       "title": "Product Intelligence: cilium/cilium Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-cilium-cilium-product-intelligence-cilium-cilium-core-invariants.md",
       "repository": "cilium/cilium",
-      "content_hash": "2b55931e50ab4ef91cbfb6338405e2bed92baf2e3396c8f70b64ec96bbaaeefe",
-      "created_at": "2026-11-18T17:18:37.323Z"
+      "content_hash": "ae6f26168e2dbdefa9174ec70917e9668ec16659228333cdbff9eb11a5ef3fd2",
+      "created_at": "2026-11-18T23:18:23.938Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-viggle-qwen-image-2-1-viggle-turbo-learnings-": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-viggle-qwen-image-2-1-viggle-turbo-learnings-",
@@ -7678,8 +7678,8 @@
       "title": "Product Intelligence: cilium-cilium-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-cilium-cilium-learnings-product-intelligence-cilium-cilium-learnings-core-invari.md",
       "repository": "cilium-cilium-learnings",
-      "content_hash": "1b5b52ae9ae9345d75d1ab9b0d550b6b2b66cb092230a868bf55a3f6cf2574f2",
-      "created_at": "2026-11-18T17:18:40.978Z"
+      "content_hash": "8807f366ad1075fbff4b2f896a953787a68cc2a8739dcdefe00aebbbe4743237",
+      "created_at": "2026-11-18T23:18:31.420Z"
     },
     "domain_intelligence-technical-construction-intelligence-zvec-ai-zvec-grep-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-zvec-ai-zvec-grep-learnings-core-invariants",
@@ -13694,8 +13694,8 @@
       "title": "Research & Knowledge Intelligence: FermionResearch/Phonon-2 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-fermionresearch-phonon-2-research-knowledge-intelligence-fermionresearch-phon.md",
       "repository": "FermionResearch/Phonon-2",
-      "content_hash": "03dbdbce11f4c9618dd15ed9989ee3d2e35694bc113ab8642d4898d73d57cdad",
-      "created_at": "2026-11-14T06:05:36.708Z"
+      "content_hash": "586484a5d88dee4dc23283f7dc7c3583e52554c7c60156733f4949c8a8703076",
+      "created_at": "2026-11-18T23:18:10.116Z"
     },
     "domain_intelligence-technical-construction-intelligence-founded-labs-react-native-reusables-core-inv": {
       "record_id": "domain_intelligence-technical-construction-intelligence-founded-labs-react-native-reusables-core-inv",
@@ -13763,8 +13763,8 @@
       "title": "Research & Knowledge Intelligence: hf-fermionresearch-phonon-2-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-fermionresearch-phonon-2-learnings-research-knowledge-intelligence-hf-fermion.md",
       "repository": "hf-fermionresearch-phonon-2-learnings",
-      "content_hash": "ddb039a626fe9876a7c2771fd462df385a58c4b30ae19ab5fa113e1391f206db",
-      "created_at": "2026-11-14T06:06:26.081Z"
+      "content_hash": "20af19aaec5df3327371db8030422929dd977d76526e1ba133eac40f1be93575",
+      "created_at": "2026-11-18T23:18:30.862Z"
     },
     "domain_intelligence-technical-construction-intelligence-founded-labs-react-native-reusables-learning": {
       "record_id": "domain_intelligence-technical-construction-intelligence-founded-labs-react-native-reusables-learning",
@@ -15680,8 +15680,8 @@
       "title": "Technical Construction Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nucleoidai-nucleoid-technical-construction-intelligence-nucleoidai-nucleoid-core.md",
       "repository": "NucleoidAI/Nucleoid",
-      "content_hash": "cdd879bf4b2ccadedeb844d9440c313894f68f57a830aa38a1d6c954c792643c",
-      "created_at": "2026-11-18T21:42:26.713Z"
+      "content_hash": "cdaa9776b7a0929ea032d3c2343698b4aecbe3d13b7fa8dba5677b9859acff01",
+      "created_at": "2026-11-18T23:18:27.727Z"
     },
     "DOM-D-C603EFBB": {
       "record_id": "DOM-D-C603EFBB",
@@ -15740,8 +15740,8 @@
       "title": "Technical Construction Intelligence: nucleoidai-nucleoid-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nucleoidai-nucleoid-learnings-technical-construction-intelligence-nucleoidai-nuc.md",
       "repository": "nucleoidai-nucleoid-learnings",
-      "content_hash": "286f640bfe88839e5f8532a23a59173389edac80a1a1071cfccca97f9d7346aa",
-      "created_at": "2026-11-18T17:52:03.949Z"
+      "content_hash": "7858bb6e626db5799601b1afae1535aba9d8a5bb35a96b021ad551d7ef3f0d59",
+      "created_at": "2026-11-18T23:18:32.211Z"
     },
     "domain_intelligence-research-knowledge-intelligence-sentence-transformers-paraphrase-multilingual-mp": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-sentence-transformers-paraphrase-multilingual-mp",

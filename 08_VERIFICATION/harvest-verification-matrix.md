@@ -11125,3 +11125,6 @@
 | `CYCLE-20261118-I5TS` | `2026-11-18T23:10:18.112Z` | `Aleph-Alpha/Kolibri-1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-aleph-alpha-kolibri-1-learnings.md` | Yes (`4b821d4e...`) |
 | `CYCLE-20261118-IDKY` | `2026-11-18T23:10:28.162Z` | `meshery/meshery` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9295` | Yes (`46504042...`) |
 | `CYCLE-20261118-IH7M` | `2026-11-18T23:10:32.866Z` | `etcd-io/etcd` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9295` | Yes (`d6562afd...`) |
+| `CYCLE-20261118-S9VO` | `2026-11-18T23:18:09.924Z` | `FermionResearch/Phonon-2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-fermionresearch-phonon-2-learnings.md` | Yes (`a92320d1...`) |
+| `CYCLE-20261118-SKFG` | `2026-11-18T23:18:23.596Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9296` | Yes (`33d6eb46...`) |
+| `CYCLE-20261118-SNCQ` | `2026-11-18T23:18:27.386Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9297` | Yes (`4696a252...`) |

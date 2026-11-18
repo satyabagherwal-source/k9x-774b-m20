@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T23:10:32.876Z",
-  "total_cycles_completed": 10635,
-  "total_learnings_persisted": 10635,
-  "total_rules_promoted": 10059,
+  "last_updated": "2026-11-18T23:18:27.396Z",
+  "total_cycles_completed": 10638,
+  "total_learnings_persisted": 10638,
+  "total_rules_promoted": 10061,
   "history": [
-    {
-      "timestamp": "2026-11-18T09:28:27.438Z",
-      "repository": "rtk-ai/rtk",
-      "learningId": "learn-github-rtk-ai-rtk",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-18T09:28:33.919Z",
-      "repository": "react/react-native",
-      "learningId": "learn-github-react-react-native",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-18T09:48:15.076Z",
-      "repository": "Edge0/Audio8-ASR-Infinite",
-      "learningId": "learn-huggingface-edge0-audio8-asr-infinite",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-18T09:57:11.914Z",
       "repository": "abenzerps/Qwen-Image-2.1-Turbo-Quantized",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-18T23:10:32.876Z",
       "repository": "etcd-io/etcd",
       "learningId": "learn-github-etcd-io-etcd",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T23:18:09.934Z",
+      "repository": "FermionResearch/Phonon-2",
+      "learningId": "learn-huggingface-fermionresearch-phonon-2",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T23:18:23.605Z",
+      "repository": "cilium/cilium",
+      "learningId": "learn-github-cilium-cilium",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T23:18:27.396Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

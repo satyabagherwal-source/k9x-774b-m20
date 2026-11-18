@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T23:10:38.523Z",
+  "last_updated": "2026-11-18T23:18:32.067Z",
   "directives": [
     {
       "id": "CD-001",
@@ -31221,6 +31221,46 @@
       "source_repo": "etcd-io-etcd",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-A7F98B-empirical-invariant-guard-in-makefile.md",
+      "staged_date": "2026-11-18"
+    },
+    {
+      "id": "CD-SQCS",
+      "directive_title": "connectivity test: add support for Gardener Kubernetes clusters",
+      "source_repo": "cilium-cilium-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-SQCS-connectivity-test-add-support-for-gardener-kubernetes-clusters.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-18",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-SQYO",
+      "directive_title": "Draft NUC 121 Held Values of Reasoning Selections",
+      "source_repo": "nucleoidai-nucleoid-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-SQYO-draft-nuc-121-held-values-of-reasoning-selections.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-18",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-REV-C1D8E9",
+      "directive_title": "connectivity test: add support for Gardener Kubernetes clusters",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "cilium-cilium",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-C1D8E9-connectivity-test-add-support-for-garden.md",
+      "staged_date": "2026-11-18"
+    },
+    {
+      "id": "CD-REV-89B5DC",
+      "directive_title": "Draft NUC 121 Held Values of Reasoning Selections",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "nucleoidai-nucleoid",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-89B5DC-draft-nuc-121-held-values-of-reasoning-s.md",
       "staged_date": "2026-11-18"
     }
   ]

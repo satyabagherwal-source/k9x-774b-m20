@@ -1045,8 +1045,8 @@
     "sourceUrl": "https://huggingface.co/FermionResearch/Phonon-2",
     "sourceVersion": "hf-fermionresearch-phonon-2",
     "license": "Open-Source",
-    "contentHash": "668d3d1e3925272c45034402ea9c17b01ff71ff6edf7b84803c4a58341ff6e0e",
-    "lastHarvestedAt": "2026-11-14T06:05:36.509Z",
+    "contentHash": "a92320d16e9f5969c010b5b1569eebae2601c9b6dc1be917474a339526c2cd7f",
+    "lastHarvestedAt": "2026-11-18T23:18:09.928Z",
     "learningId": "learn-huggingface-fermionresearch-phonon-2"
   },
   "hf-infatoshi-glm-5.3-uncensored-exl3-3.0bpw": {
@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "f1c29264",
+    "sourceVersion": "226268f4",
     "license": "Apache-2.0",
-    "contentHash": "a9a7abe4eaeed6cc4b77e47f94646cdc67cddb6c28a84ddfbcd373312471c8d2",
-    "lastHarvestedAt": "2026-11-18T21:42:26.362Z",
+    "contentHash": "4696a2526d71de6f363c0e5729dbef93a5d60872adb6e8aeeaa1d94a63b6a51a",
+    "lastHarvestedAt": "2026-11-18T23:18:27.391Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -3343,10 +3343,10 @@
     "repository": "cilium/cilium",
     "platform": "github",
     "sourceUrl": "https://github.com/cilium/cilium",
-    "sourceVersion": "cde31357",
+    "sourceVersion": "d65ec42b",
     "license": "Apache-2.0",
-    "contentHash": "f9b013d16ea946c8baf4af0c8a4adf68b9689a582ab51af4fa1aafefe20feb05",
-    "lastHarvestedAt": "2026-11-18T17:18:36.997Z",
+    "contentHash": "33d6eb46953cea14aabe9c25a44246f6c9b63aff39932f592034697081d2a83a",
+    "lastHarvestedAt": "2026-11-18T23:18:23.600Z",
     "learningId": "learn-github-cilium-cilium"
   },
   "seekstorm-seekstorm": {

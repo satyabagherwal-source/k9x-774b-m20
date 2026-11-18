@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-18T23:10:32.880Z",
+  "last_updated": "2026-11-18T23:18:27.399Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1370,14 +1370,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-fermionresearch-phonon-2",
-      "content_hash": "668d3d1e3925272c45034402ea9c17b01ff71ff6edf7b84803c4a58341ff6e0e",
-      "verified_at": "2026-11-14T06:05:36.519Z",
+      "content_hash": "a92320d16e9f5969c010b5b1569eebae2601c9b6dc1be917474a339526c2cd7f",
+      "verified_at": "2026-11-18T23:18:09.936Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-14T06:05:36.519Z"
+      "last_updated": "2026-11-18T23:18:09.936Z"
     },
     "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw": {
       "repository": "Infatoshi/GLM-5.3-UNCENSORED-EXL3-3.0bpw",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "a9a7abe4eaeed6cc4b77e47f94646cdc67cddb6c28a84ddfbcd373312471c8d2",
-      "verified_at": "2026-11-18T21:42:26.392Z",
+      "content_hash": "4696a2526d71de6f363c0e5729dbef93a5d60872adb6e8aeeaa1d94a63b6a51a",
+      "verified_at": "2026-11-18T23:18:27.399Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T21:42:26.392Z"
+      "last_updated": "2026-11-18T23:18:27.399Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -5136,14 +5136,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-cilium-cilium",
-      "content_hash": "f9b013d16ea946c8baf4af0c8a4adf68b9689a582ab51af4fa1aafefe20feb05",
-      "verified_at": "2026-11-18T17:18:37.004Z",
+      "content_hash": "33d6eb46953cea14aabe9c25a44246f6c9b63aff39932f592034697081d2a83a",
+      "verified_at": "2026-11-18T23:18:23.608Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T17:18:37.004Z"
+      "last_updated": "2026-11-18T23:18:23.608Z"
     },
     "SeekStorm/SeekStorm": {
       "repository": "SeekStorm/SeekStorm",

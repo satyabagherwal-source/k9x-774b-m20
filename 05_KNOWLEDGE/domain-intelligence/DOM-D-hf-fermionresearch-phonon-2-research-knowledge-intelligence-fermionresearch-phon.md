@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/FermionResearch/Phonon-2",
   "source_version": "hf-fermionresearch-phonon-2",
   "license": "Open-Source",
-  "timestamp": "2026-11-14T06:05:36.707Z",
+  "timestamp": "2026-11-18T23:18:10.115Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-fermionresearch-phonon-2",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [FermionResearch/Phonon-2](https://huggingface.co/FermionResearch/Phonon-2) (Revision: `hf-fermion`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-14T06:05:36.707Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-18T23:18:10.115Z`  
 > **Learning ID**: `learn-huggingface-fermionresearch-phonon-2`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-fermionresearch-phonon-2-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/FermionResearch/Phonon-2](https://huggingface.co/FermionResearch/Phonon-2))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-14T06:05:35.930Z  
+> **Harvest Timestamp**: 2026-11-18T23:18:09.284Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: automatic-speech-recognition
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 4300 downloads | 383 likes
+- **Stars / Engagement**: 3324 downloads | 388 likes
 
 ---
 
