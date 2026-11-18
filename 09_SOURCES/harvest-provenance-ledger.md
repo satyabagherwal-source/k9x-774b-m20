@@ -11080,3 +11080,4 @@ Every entry in this ledger must capture:
 | `learn-github-gitoxidelabs-gitoxide` | `https://github.com/GitoxideLabs/gitoxide` | `3e89f3b5` | Multi-dimensional audit evidence | 2026-11-18T16:41:05.399Z |
 | `learn-github-okteto-okteto` | `https://github.com/okteto/okteto` | `a23d521e` | Multi-dimensional audit evidence | 2026-11-18T16:41:10.416Z |
 | `learn-github-matrixorigin-matrixone` | `https://github.com/matrixorigin/matrixone` | `87c44445` | Multi-dimensional audit evidence | 2026-11-18T16:41:21.957Z |
+| `learn-huggingface-cloudflare-clef-flash` | `https://huggingface.co/Cloudflare/clef-flash` | `hf-cloudfl` | Multi-dimensional audit evidence | 2026-11-18T16:49:28.167Z |

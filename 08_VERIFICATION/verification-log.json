@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261117-7F8U",
-    "timestamp": "2026-11-17T08:18:28.974Z",
-    "repository": "avajs/ava",
-    "learningId": "learn-github-avajs-ava",
-    "contentHash": "db976478b70a99f914b8688e87457cb37535c8accb5978b3691c72cdd197fc94",
-    "status": "VERIFIED",
-    "promotedRulesCount": 2,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261117-7NFI",
     "timestamp": "2026-11-17T08:18:39.582Z",
     "repository": "hashicorp/terraform",
@@ -7490,6 +7475,21 @@
     "repository": "matrixorigin/matrixone",
     "learningId": "learn-github-matrixorigin-matrixone",
     "contentHash": "96e52fd9dc045b387d78fb21ae28495340189ec9e2eaa4d32258d7a980d69cb5",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-WEOY",
+    "timestamp": "2026-11-18T16:49:28.162Z",
+    "repository": "Cloudflare/clef-flash",
+    "learningId": "learn-huggingface-cloudflare-clef-flash",
+    "contentHash": "c92520a4b0134e64f4d79bd3b1cf7938ed3842a08e3c1e17b5b77cb221b55f0e",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

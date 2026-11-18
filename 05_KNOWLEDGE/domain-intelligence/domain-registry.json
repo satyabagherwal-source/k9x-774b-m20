@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-18T16:41:26.997Z",
+  "last_updated": "2026-11-18T16:49:41.930Z",
   "total_records": 1883,
   "domains": {
     "A": {
@@ -8616,8 +8616,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "d956cfcb09406919250b45405a2dfc6539ddfca23dbf810784f6cca0eb0fbeaa",
-      "created_at": "2026-11-18T12:58:39.380Z"
+      "content_hash": "a081041ac0dc6dfdc2c8accd59c1529a0c8d74ba9ab3f875c9da9fdf5bcc0f16",
+      "created_at": "2026-11-18T16:49:41.247Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -10167,8 +10167,8 @@
       "title": "Research & Knowledge Intelligence: Cloudflare/clef-flash Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-cloudflare-clef-flash-research-knowledge-intelligence-cloudflare-clef-flash-c.md",
       "repository": "Cloudflare/clef-flash",
-      "content_hash": "00c62734dc94a38fdf76cbcb47a61e89ff8c787dbba46ab623fcd8510c44b671",
-      "created_at": "2026-11-18T07:30:40.567Z"
+      "content_hash": "164bcace2166b8512cd46373b0c560dbc0c3dbec265f45fe73b7c51980c14627",
+      "created_at": "2026-11-18T16:49:28.407Z"
     },
     "domain_intelligence-technical-construction-intelligence-salvo-rs-salvo-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-salvo-rs-salvo-core-invariants",
@@ -10254,8 +10254,8 @@
       "title": "Research & Knowledge Intelligence: hf-cloudflare-clef-flash-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-cloudflare-clef-flash-learnings-research-knowledge-intelligence-hf-cloudflare.md",
       "repository": "hf-cloudflare-clef-flash-learnings",
-      "content_hash": "d1de4aa74f4e247b71d5b88cd1098250efcd4f4c552a853c53a0537ad5213f3e",
-      "created_at": "2026-11-18T07:30:57.402Z"
+      "content_hash": "901a05b5a80e218cc236f9f50dccc106c5e40bec0686aad67d2b5f65252325ad",
+      "created_at": "2026-11-18T16:49:40.335Z"
     },
     "domain_intelligence-research-knowledge-intelligence-sentence-transformers-paraphrase-multilingual-mi": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-sentence-transformers-paraphrase-multilingual-mi",
@@ -30979,8 +30979,8 @@
       "title": "Technical Construction Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zulip-zulip-learnings-technical-construction-intelligence-zulip-zulip-learnings-.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "2c22049c936a942b7fd9d46e5d996f9913014b7c16b9c38fb0654bc6a48c4274",
-      "created_at": "2026-11-18T15:43:04.933Z"
+      "content_hash": "32b581d2f98d8bf7658ea2b4a1b79056f6a9a3a5c11238cd87a4e868d216dad8",
+      "created_at": "2026-11-18T16:49:41.930Z"
     },
     "domain_intelligence-product-intelligence-software-mansion-argent-core-invariants": {
       "record_id": "domain_intelligence-product-intelligence-software-mansion-argent-core-invariants",
