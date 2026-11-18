@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-18T13:09:09.916Z",
+  "timestamp": "2026-11-18T17:18:40.729Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-cilium-cilium-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [cilium-cilium-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-18T13:09:09.916Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-18T17:18:40.729Z`  
 > **Learning ID**: `LEARN-EVO-cilium-cilium-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source**: github ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
-> **Source Version**: `606a80fe`  
+> **Source Version**: `cde31357`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-18T13:09:03.654Z  
+> **Timestamp**: 2026-11-18T17:18:36.082Z  
 > **Learning ID**: `learn-github-cilium-cilium`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T13:09:03.648Z  
+> **Harvest Timestamp**: 2026-11-18T17:18:36.077Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: eBPF-based Networking, Security, and Observability
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod
-- **Stars / Engagement**: 25864 stars
+- **Stars / Engagement**: 25865 stars
 
 ---
 
@@ -1284,14 +1284,17 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #50107** (2026-11-18): **Revert "bpf: migrate ENABLE_IPV6 to runtime config part 5"**
+  *Symptoms*: Reverts cilium/cilium#50017. Edit. Confirmed that this PR was not the cause for the flake, which rather appears to be caused by a change merged and backported into v1.20.
+  **Post-Mortem & Fix Analysis**:
+  > Commits be2894b006bdb5fd31cb695880a92ead46f8aef0, 8da848612befb86f14ec866ed48f50baf50ae1a7, 163cf8b6884c0d1b7b244b7bd1372b61808bc5ff, 50bc4b6e7dd06d8e7bab70dcf86454dc70fe81d2 do not match "(?m)^Signed-off-by:".  Please follow instructions provided in https://docs.cilium.io/en/stable/contributing/development/contributing_guide/#developer-s-certificate-of-origin
+  > /ci-clustermesh
+
 - **Issue #50103** (2026-11-18): **gha/scale: bump cilium/scaffolding commit SHA**
   *Symptoms*: The image for the previously referenced SHA had not been built correctly due to a GitHub incident, causing the scale tests to fail while trying to pull it. Hence, let's manually bump it, rather than waiting for the next Renovate's run. 
   **Post-Mortem & Fix Analysis**:
   > /test
   > /scale-clustermesh
-
-- **Issue #50081** (2026-11-17): **helm/certgen: enable readOnlyRootFilesystem**
-  *Symptoms*: Please ensure your pull request adheres to the following guidelines:  - [x] For first time contributors, read [Submitting a pull request] - [ ] All code is covered by unit and/or runtime tests where feasible. - [x] All commits contain a well written commit description including a title,       description and a `Fixes: #XXX` line if the commit addresses a particular       GitHub issue. - [ ] If your commit description contains a `Fixes: <commit-id>` tag, then       please add the commit author[s] as reviewer[s] to this issue. - [x] All commits are signed off. See the section [Developer’s Certificate of Origin] - [x] Provide a title or release-note blurb suitable for the release notes. - [x] Describe how you have tested this change in a live environment such as       [kind], if applicable. - [x] Disclose use of machine learning models (including LLMs and other generative AI)       in accordance with the [Cilium AI Policy], and indicate the rating using       [AI Influence Level].       Example: "This PR was prepared with AIL:N. I personally checked X." - [x] Thanks for contributing!  <!-- Description of change -->  While this is a very short lived job, this does help in environments where this might be enforced.  ```release-note Hubble certgen CronJob jobs now run with readOnlyRootFilesystem enabled. ```  [AI Influence Level]: https://danielmiessler.com/blog/ai-influence-level-ail [Cilium AI Policy]: https://github.com/cilium/community/blob/main/AI-POLICY.md [Developer’s Certif
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1308,170 +1311,643 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `606a80fe` (2026-11-18)
-**Commit Message**: gha/scale: bump cilium/scaffolding commit SHA
+### Incident Patch 1: `cde31357` (2026-11-17)
+**Commit Message**: loadbalancer: report effective LocalRedirect mappings
 
-The image for the previously referenced SHA had not been built correctly
-due to a GitHub incident, causing the scale tests to fail while trying
-to pull it. Hence, let's manually bump it, rather than waiting for the
-next Renovate's run.
+The LRP API handler was updated in commit [0] to use an LRP's frontend
+mapping array as source of truth for outputting addressMatcher entries.
+However, this means the API handler might render an addressMatcher and
+backends, even if the LRP has not been programmed. This gives a false
+confirmation that the LRP is in effect.
 
-Signed-off-by: Marco Iorio <[REDACTED_EMAIL]>
+Rather than produce an output that is inconsistent with actual state,
+we modify the API handler to instead query StateDB for the frontend
+mapping of an addressMatcher. This allows us to more correctly reflect
+that an addressMatcher may exist, but has no effect. This aligns better
+with serviceMatcher output that has similar behaviour.
 
-**File**: `.github/workflows/scale-test-clustermesh.yaml` (modified, +1/-1)
+This commit also updates relevant addressMatcher script tests so that
+we are also verifying the API output.
+
+[0] d7d2397fba ("fix(cilium-dbg): include pod backends in lrp list")
+
+Fixes: d7d2397fba ("fix(cilium-dbg): include pod backends in lrp list")
+Signed-off-by: Alasdair McWilliam <[REDACTED_EMAIL]>
+
+**File**: `pkg/loadbalancer/redirectpolicy/api.go` (modified, +20/-55)
 ```diff
-@@ -63,7 +63,7 @@ env:
-   # renovate: datasource=docker depName=google/cloud-sdk
-   gcloud_version: 593.0.0
-   # renovate: datasource=git-refs depName=https://github.com/cilium/scaffolding branch=main
--  cmapisrv_mock_ref: b6e1820b795c5e309759ce87757dcba3c0bcd897
-+  cmapisrv_mock_ref: 025ce1681817379a72339710ba532b115d2ae00d
+@@ -5,7 +5,6 @@ package redirectpolicy
  
-   test_name: scale-clustermesh
-   cluster_name: ${{ github.run_id }}-${{ github.run_attempt }}
+ import (
+ 	"slices"
+-	"strings"
+ 
+ 	"github.com/cilium/statedb"
+ 	"github.com/go-openapi/runtime/middleware"
+@@ -21,23 +20,22 @@ type getLrpHandler struct {
+ 	db        *statedb.DB
+ 	lrps      statedb.Table[*LocalRedirectPolicy]
+ 	frontends statedb.Table[*lb.Frontend]
+-	backends  statedb.Table[*lb.Backend]
+ 	pods      statedb.Table[k8sTables.LocalPod]
+ }
+ 
+ func (h *getLrpHandler) Handle(params service.GetLrpParams) middleware.Responder {
+-	return service.NewGetLrpOK().WithPayload(getLRPs(h.db.ReadTxn(), h.lrps, h.frontends, h.backends, h.pods))
++	return service.NewGetLrpOK().WithPayload(getLRPs(h.db.ReadTxn(), h.lrps, h.frontends, h.pods))
+ }
+ 
+-func getLRPs(txn statedb.ReadTxn, lrps statedb.Table[*LocalRedirectPolicy], frontends statedb.Table[*lb.Frontend], backends statedb.Table[*lb.Backend], pods statedb.Table[k8sTables.LocalPod]) []*models.LRPSpec {
++func getLRPs(txn statedb.ReadTxn, lrps statedb.Table[*LocalRedirectPolicy], frontends statedb.Table[*lb.Frontend], pods statedb.Table[k8sTables.LocalPod]) []*models.LRPSpec {
+ 	list := make([]*models.LRPSpec, 0, lrps.NumObjects(txn))
+ 	for lrp := range lrps.All(txn) {
+-		list = append(list, lrp.getModel(txn, frontends, backends, pods))
++		list = append(list, lrp.getModel(txn, frontends, pods))
+ 	}
+ 	return list
+ }
+ 
+-func (lrp *LocalRedirectPolicy) getModel(txn statedb.ReadTxn, frontends statedb.Table[*lb.Frontend], backends statedb.Table[*lb.Backend], pods statedb.Table[k8sTables.LocalPod]) *models.LRPSpec {
++func (lrp *LocalRedirectPolicy) getModel(txn statedb.ReadTxn, frontends statedb.Table[*lb.Frontend], pods statedb.Table[k8sTables.LocalPod]) *models.LRPSpec {
+ 	if lrp == nil {
+ 		return nil
+ 	}
+@@ -74,7 +72,7 @@ func (lrp *LocalRedirectPolicy) getModel(txn statedb.ReadTxn, frontends statedb.
+ 		FrontendType:     feType,
+ 		LrpType:          lrpType,
+ 		ServiceID:        lrp.ServiceID.String(),
+-		FrontendMappings: lrp.getFrontendMappingModels(txn, frontends, backends, pods),
++		FrontendMappings: lrp.getFrontendMappingModels(txn, frontends, pods),
+ 	}
+ }
+ 
+@@ -129,65 +127,33 @@ func getBackendModels(
+ 	return beModels
+ }
+ 
+-// filterBackendsByFrontendMapping narrows the backend list of a pseudo-service
+-// generated from an addressMatcher LRP to a subset of pods that would actually
+-// be mapped by the controller.
+-func filterBackendsByFrontendMapping(
+-	bes lb.BackendsSeq2,
+-	feM feMapping,
+-	matchPortNames bool,
+-) lb.BackendsSeq2 {
+-	backendMatchesFrontendMapping := func(be *lb.Backend) bool {
+-		if !be.Address.Compatible(feM.feAddr) {
+-			return false
+-		}
+-		if matchPortNames && feM.fePort != "" && len(be.PortNames) > 0 {
+-			return slices.ContainsFunc(be.PortNames, func(portName string) bool {
+-				return strings.EqualFold(portName, string(feM.fePort))
+-			})
+-		}
+-		return true
+-	}
+-
+-	return func(yield func(*lb.Backend, statedb.Revision) bool) {
+-		for be, rev := range bes {
+-			if !backendMatchesFrontendMapping(be) {
+-				continue
+-			}
+-			if !yield(be, rev) {
+-				return
+-			}
+-		}
+-	}
+-}
+-
+-// Returns an array of FrontendMapping models for a LocalRedirectPolicy based on the
+-// StateDB frontend and backend tables.
++// Returns frontend mappings for a LocalRedirectPolicy using StateDB frontends and their
++// associated backends.
+ func (lrp *LocalRedirectPolicy) getFrontendMappingModels(
+ 	txn statedb.ReadTxn,
+ 	frontends statedb.Table[*lb.Frontend],
+-	backends statedb.Table[*lb.Backend],
+ 	pods statedb.Table[k8sTables.LocalPod],
+ ) []*models.FrontendMapping {
+ 	podIDByIP := getPodIDByIP(txn, pods)
++	lrpServiceName := lrp.RedirectServiceName()
+ 
+ 	switch lrp.LRPType {
+ 	case lrpTypes.LRPTypeAddressMatcher:
+-		// For addressMatcher LRPs, the configured frontend mappings are the source of
+-		// truth for frontend information. Since these mappings do not carry writer-
+-		// selected backends, filter the pseudo-service backends per mapping to match
+-		// the frontend/backend association the writer would produce.
+-		bes, _ := lb.ListBackendsByServiceName(txn, backends, lrp.RedirectServiceName())
+-		preferredBackends := lb.BackendsSeq2(lb.PreferredBackendsByAddress(bes))
++		// Only report mappings for frontends that this LRP currently owns. The
++		// configured mapping alone does not mean the redirect was installed: another
++		// service may own the same address.
+ 
+-		numFrontendMapping := len(lrp.FrontendMappings)
+-		matchNamedPorts := numFrontendMapping > 1
+-
+-		feMappingModelArray := make([]*models.FrontendMapping, 0, numFrontendMapping)
++		feMappingModelArray := make([]*models.FrontendMapping, 0, len(lrp.FrontendMappings))
+ 		for _, feM := range lrp.FrontendMappings {
++			fe, _, found := frontends.Get(txn, lb.FrontendByAddress(feM.feAddr))
++			if !found ||
++				fe.Type != lb.SVCTypeLocalRedirect ||
++				!fe.ServiceName.Equal(lrpServiceName) {
++				continue
++			}
++
+ 			feMappingModel := feM.getModel()
+-			filteredBackends := filterBackendsByFrontendMapping(preferredBackends, feM, matchNamedPorts)
+-			fe
 ```
 
-**File**: `.github/workflows/scale-test-egw.yaml` (modified, +1/-1)
+**File**: `pkg/loadbalancer/redirectpolicy/cell.go` (modified, +0/-2)
 ```diff
-@@ -80,7 +80,7 @@ env:
-   # Hosted under quay.io/cilium/egw-scale-utils and built by
-   # a workflow in cilium/scaffolding.
-   # renovate: datasource=git-refs depName=https://github.com/cilium/scaffolding branch=main
--  egw_utils_ref: b6e1820b795c5e309759ce87757dcba3c0bcd897
-+  egw_utils_ref: 025ce1681817379a72339710ba532b115d2ae00d
-   test_name: egw
-   cluster_name: ${{ github.run_id }}-${{ github.run_attempt }}
+@@ -84,14 +84,12 @@ func lrpAPI(
+ 	db *statedb.DB,
+ 	lrps statedb.Table[*LocalRedirectPolicy],
+ 	frontends statedb.Table[*lb.Frontend],
+-	backends statedb.Table[*lb.Backend],
+ 	pods statedb.Table[k8sTables.LocalPod],
+ ) service.GetLrpHandler {
+ 	return &getLrpHandler{
+ 		db:        db,
+ 		lrps:      lrps,
+ 		frontends: frontends,
+-		backends:  backends,
+ 		pods:      pods,
+ 	}
+ }
+```
+
+**File**: `pkg/loadbalancer/redirectpolicy/lrplist.go` (modified, +1/-2)
+```diff
+@@ -23,7 +23,6 @@ func newLRPListCommand(
+ 	db *statedb.DB,
+ 	lrps statedb.Table[*LocalRedirectPolicy],
+ 	frontends statedb.Table[*lb.Frontend],
+-	backends statedb.Table[*lb.Backend],
+ 	pods statedb.Table[k8sTables.LocalPod],
+ ) hive.ScriptCmdsOut {
+ 	return hive.NewScriptCmds(map[string]script.Cmd{
+@@ -49,7 +48,7 @@ func newLRPListCommand(
+ 				return func(s *script.State) (stdout string, stderr string, err error) {
+ 					var lines []string
  
+-					for _, spec := range getLRPs(db.ReadTxn(), lrps, frontends, backends, pods) {
++					for _, spec := range getLRPs(db.ReadTxn(), lrps, frontends, pods) {
+ 						lines = append(lines, formatLRPSpec(spec))
+ 					}
+ 
+```
+
+**File**: `pkg/loadbalancer/redirectpolicy/testdata/address-matcher-conflict.txtar` (modified, +7/-0)
+```diff
+@@ -25,6 +25,11 @@ k8s/update lrp-pod-ready.yaml
+ db/cmp backends backends.table
+ db/cmp frontends frontends-before.table
+ 
++# The LRP has backends, but it does not own the Service frontend, so lrp/list
++# must not report a redirect mapping.
++lrp/list lrp.actual
++cmp lrp.actual lrp-inactive.expected
++
+ # Removing the LRP tears down the pseudo-service and its backend, and
+ # leaves kube-dns untouched.
+ k8s/delete lrp-addr.yaml
+@@ -140,6 +145,8 @@ status:
+ Name               Type     FrontendType      Frontends
+ lrp-test/lrp-addr  address  addr-single-port  10.96.0.10:53/UDP
+ 
++-- lrp-inactive.expected --
++lrp-test/lrp-addr type=addr frontend-type="IP + port"
+ -- services-before.table --
+ Name                              Source
+ kube-system/kube-dns              k8s
+```
+
+**File**: `pkg/loadbalancer/redirectpolicy/testdata/address-matcher-named-ports.txtar` (modified, +8/-0)
+```diff
+@@ -14,6 +14,10 @@ db/cmp services services.table
+ db/cmp frontends frontends.table
+ db/cmp backends backends.table
+ 
++# Verify that each frontend mapping reports its corresponding backend.
++lrp/list lrp.actual
++cmp lrp.actual lrp-list.expected
++
+ # Remove the LRP.
+ k8s/delete lrp-addr.yaml
+ 
+@@ -78,6 +82,10 @@ Service                       Address
+ test/lrp-addr:local-redirect  10.244.2.1:50/TCP
+ test/lrp-addr:local-redirect  10.244.2.1:51/TCP
+ 
++-- lrp-list.expected --
++test/lrp-addr type=addr frontend-type="IP + named ports"
++  169.254.169.254:5050/TCP => 10.244.2.1:50/TCP (test/lrp-pod, active)
++  169.254.169.254:5051/TCP => 10.244.2.1:51/TCP (test/lrp-pod, active)
+ -- lrp-single.table --
+ Name                       Type     FrontendType      Frontends
+ test/lrp-addr-single       address  addr-single-port  169.254.169.254:5050/TCP
 ```
 
 ---
 
-### Incident Patch 2: `36d88648` (2026-11-13)
-**Commit Message**: datapath: Error if kernel lacks BTF
+### Incident Patch 2: `c241fa9c` (2026-10-26)
+**Commit Message**: loadbalancer: fall back to same-zone backends for PreferSameNode
 
-Cilium datapath has started to rely on BPF global functions. For
-non-simple function arguments (such as sk_buff) they rely on the kernel
-built with BTF.
+KEP-3015 specifies that endpoint selection for trafficDistribution:
+PreferSameNode should prefer endpoints whose ForNodes hint includes the
+local node, then endpoints whose ForZones hint includes the local zone,
+and only then all endpoints. The EndpointSlice controller sets both
+ForNodes and ForZones hints for PreferSameNode services.
 
-Fail cilium-agent if kernel lacks BTF, instead of progressing with
-half-functioning Cilium cluster.
+Cilium skipped the zone step: when no usable backend existed on the
+local node, it selected all backends in the cluster. In clusters spanning
+regions this sent traffic to far-away backends even though a backend in
+the local zone was available.
 
-Previously users got a non-terminating error message in the cilium-agent
-logs:
+Consult the ForZones hints for PreferSameNode when no same-node backend
+is found, applying the same safeguards as PreferSameZone. Also refresh
+PreferSameNode frontends when the local node's zone changes, as the
+selection now depends on it.
 
-    Verifier error: program tail_handle_snat_fwd_ipv6: load program:
-    invalid argument: Caller passes invalid args into func#1
-    ('snat_v6_nat') (244 line(s) omitted)
+Fixes: #44060
 
-Reported by https://github.com/cilium/cilium/issues/45224.
+Signed-off-by: Nemanja Zeljkovic <[REDACTED_EMAIL]>
 
-Signed-off-by: Martynas Pumputis <[REDACTED_EMAIL]>
-
-**File**: `Documentation/operations/upgrade-next.inc` (modified, +5/-0)
+**File**: `pkg/loadbalancer/service.go` (modified, +4/-2)
 ```diff
-@@ -34,6 +34,11 @@ notes carefully below to understand what to do during upgrade.
-   set ``k8sClusterNetworkPolicy.enabled=false``. See
-   :ref:`ClusterNetworkPolicy_enable`. If you manage RBAC manifests outside of
-   Helm, see :ref:`ClusterNetworkPolicy_rbac`.
-+* The Cilium agent now fails to start if the kernel lacks BTF
-+  (``CONFIG_DEBUG_INFO_BTF=y``), which is listed in the
-+  :ref:`kernel requirements <admin_kernel_version>`. Previously, the agent could
-+  start on such kernels but failed to load some BPF programs. Ensure all nodes
-+  run a kernel with BTF before upgrading.
+@@ -121,10 +121,12 @@ const (
+ )
  
- Informational Notes
- ~~~~~~~~~~~~~~~~~~~
-```
-
-**File**: `pkg/datapath/linux/probes/probes.go` (modified, +41/-0)
-```diff
-@@ -17,6 +17,7 @@ import (
- 
- 	"github.com/cilium/ebpf"
- 	"github.com/cilium/ebpf/asm"
-+	"github.com/cilium/ebpf/btf"
- 	"github.com/cilium/ebpf/features"
- 	"github.com/cilium/ebpf/link"
- 	"github.com/gopacket/gopacket"
-@@ -546,6 +547,46 @@ func HaveDeadCodeElim() error {
- 	return nil
+ // RequiresZoneUpdate returns true if the traffic distribution policy
+-// depends on node topology zone changes.
++// depends on node topology zone changes. PreferSameNode is included as it
++// falls back to same-zone backends when no same-node backend is available.
+ func (td TrafficDistribution) RequiresZoneUpdate() bool {
+ 	return td == TrafficDistributionPreferSameZone ||
+-		td == TrafficDistributionPreferClose
++		td == TrafficDistributionPreferClose ||
++		td == TrafficDistributionPreferSameNode
  }
  
-+// HaveBTF checks whether kernel is built with BTF.
-+//
-+// The check exercises loading BPF global functions, which rely on BTF.
-+// An alternative approach would have been to check for /sys/kernel/btf/vmlinux existence. However, some
-+// distros might put it in different places, or /sys/kernel/btf might be not accessible to Cilium pod.
-+var HaveBTF = sync.OnceValue(func() error {
-+	proto := &btf.FuncProto{
-+		Return: &btf.Int{Name: "int", Size: 4, Encoding: btf.Signed},
-+		Params: []btf.FuncParam{{
-+			Name: "ctx",
-+			Type: &btf.Pointer{Target: &btf.Struct{Name: "__sk_buff"}},
-+		}},
-+	}
-+	entry := &btf.Func{Name: "probe_entry", Type: proto, Linkage: btf.GlobalFunc}
-+	global := &btf.Func{Name: "probe_global", Type: proto, Linkage: btf.GlobalFunc}
-+
-+	// int probe_entry(struct __sk_buff *ctx) {
-+	//   return probe_global(ctx);
-+	// }
-+	// int probe_global(struct __sk_buff *ctx) {
-+	//   return 0;
-+	// }
-+	prog, err := ebpf.NewProgram(&ebpf.ProgramSpec{
-+		Type:    ebpf.SchedCLS,
-+		License: "Apache-2.0",
-+		Instructions: asm.Instructions{
-+			btf.WithFuncMetadata(asm.Call.Label(global.Name), entry),
-+			asm.Return(),
-+			btf.WithFuncMetadata(asm.Mov.Imm(asm.R0, 0), global).WithSymbol(global.Name),
-+			asm.Return(),
-+		},
-+	})
-+	if err != nil {
-+		return fmt.Errorf("loading program: %w", err)
-+	}
-+
-+	prog.Close()
-+	return nil
-+})
-+
- // HaveIPv6Support tests whether kernel can open an IPv6 socket. This will
- // also implicitly auto-load IPv6 kernel module if available and not yet
- // loaded.
+ func (svc *Service) DeepEqual(other *Service) bool {
 ```
 
-**File**: `pkg/datapath/linux/requirements.go` (modified, +5/-0)
+**File**: `pkg/loadbalancer/tests/testdata/prefer-same-zone-fallback.txtar` (modified, +102/-0)
 ```diff
-@@ -5,6 +5,7 @@ package linux
+@@ -2,6 +2,9 @@
+ #
+ # Test PreferSameZone fallback: when zone backends are incompatible,
+ # we should fall back to out-of-zone backends.
++#
++# Also test that PreferSameNode falls back to the same-zone backends when
++# there are no backends on the local node.
  
- import (
- 	"errors"
-+	"fmt"
- 	"log/slog"
- 	"os"
+ # Set the node zone label before starting
+ test/set-node-labels topology.kubernetes.io/zone=foo
+@@ -22,6 +25,37 @@ k8s/add endpointslice-wrong-port.yaml endpointslice-remote.yaml
+ # resulting in an empty frontends table or failure to match.
+ db/cmp frontends frontends-remote.table
  
-@@ -148,6 +149,10 @@ func CheckRequirements(log *slog.Logger) error {
- 			}
- 			log.Info("BPF_FIB_LOOKUP_SRC is not supported; it will not be used")
- 		}
++# Switch the service to trafficDistribution=PreferSameNode. There is no backend
++# on the local node ('testnode') and the zone backend is still incompatible, so
++# we keep falling back to the remote backend.
++sed 'PreferSameZone' 'PreferSameNode' service.yaml
++k8s/update service.yaml
++db/cmp services services-same-node.table
++db/cmp frontends frontends-remote.table
 +
-+		if err := probes.HaveBTF(); err != nil {
-+			return fmt.Errorf("Require kernel BTF support (CONFIG_DEBUG_INFO_BTF=y): %w", err)
-+		}
++# Add a compatible backend 10.244.3.1 in zone foo on another node. With no
++# backend on the local node we fall back to the backend in our zone.
++k8s/add endpointslice-same-zone.yaml
++db/cmp frontends frontends-same-zone.table
++
++# Add a backend 10.244.4.1 on the local node. It is preferred over the
++# same-zone backend.
++k8s/add endpointslice-same-node.yaml
++db/cmp frontends frontends-same-node.table
++
++# Remove the local-node backend. We fall back to the same-zone backend again.
++k8s/delete endpointslice-same-node.yaml
++db/cmp frontends frontends-same-zone.table
++
++# Move the node to a zone that matches no ForZones hint. We fall back to all
++# compatible backends.
++test/set-node-labels topology.kubernetes.io/zone=baz
++db/cmp frontends frontends-all.table
++
++# Move the node back. The same-zone backend is selected again.
++test/set-node-labels topology.kubernetes.io/zone=foo
++db/cmp frontends frontends-same-zone.table
++
+ #####
+ 
+ -- services.table --
+@@ -32,6 +66,22 @@ test/echo   k8s      http=80    Cluster        TrafficDistribution=PreferSameZon
+ Address               Type        ServiceName   PortName   Status  Backends
+ 10.96.50.104:80/TCP   ClusterIP   test/echo     http       Done    10.244.2.1:80/TCP
+ 
++-- services-same-node.table --
++Name        Source   PortNames  TrafficPolicy  Flags
++test/echo   k8s      http=80    Cluster        TrafficDistribution=PreferSameNode
++
++-- frontends-same-zone.table --
++Address               Type        ServiceName   PortName   Status  Backends
++10.96.50.104:80/TCP   ClusterIP   test/echo     http       Done    10.244.3.1:80/TCP
++
++-- frontends-same-node.table --
++Address               Type        ServiceName   PortName   Status  Backends
++10.96.50.104:80/TCP   ClusterIP   test/echo     http       Done    10.244.4.1:80/TCP
++
++-- frontends-all.table --
++Address               Type        ServiceName   PortName   Status  Backends
++10.96.50.104:80/TCP   ClusterIP   test/echo     http       Done    10.244.2.1:80/TCP, 10.244.3.1:80/TCP
++
+ -- service.yaml --
+ apiVersion: v1
+ kind: Service
+@@ -103,3 +153,55 @@ ports:
+ - name: http
+   port: 80
+   protocol: TCP
++
++-- endpointslice-same-zone.yaml --
++apiVersion: discovery.k8s.io/v1
++kind: EndpointSlice
++metadata:
++  labels:
++    kubernetes.io/service-name: echo
++  name: echo-eps3
++  namespace: test
++addressType: IPv4
++endpoints:
++- addresses:
++  - 10.244.3.1
++  conditions:
++    ready: true
++    serving: true
++    terminating: false
++  nodeName: node-same-zone
++  zone: foo
++  hints:
++    forZones:
++    - name: foo
++ports:
++- name: http
++  port: 80
++  protocol: TCP
++
++-- endpointslice-same-node.yaml --
++apiVersion: discovery.k8s.io/v1
++kind: EndpointSlice
++metadata:
++  labels:
++    kubernetes.io/service-name: echo
++  name: echo-eps4
++  namespace: test
++addressType: IPv4
++endpoints:
++- addresses:
++  - 10.244.4.1
++  conditions:
++    ready: true
++    serving: true
++    terminating: false
++  nodeName: testnode
++  zone: foo
++  hints:
++    forZones:
++    - name: foo
++ports:
++- name: http
++  port: 80
++  protocol: TCP
+```
+
+**File**: `pkg/loadbalancer/writer/writer.go` (modified, +4/-2)
+```diff
+@@ -571,7 +571,8 @@ func (w *Writer) DefaultSelectBackends(txn statedb.ReadTxn, bes iter.Seq2[*loadb
  	}
- 	return nil
+ 
+ 	// Check whether the [Backend.ForZones] hints should be consulted when
+-	// selecting a backend.
++	// selecting a backend. PreferSameNode falls back to the zone hints when
++	// no same-node backend was found above, as specified in KEP-3015.
+ 	checkZoneHints := false
+ 	var thisZone *string
+ 	if node, _, found := w.nodes.Get(txn, node.LocalNodeQuery); found {
+@@ -583,7 +584,8 @@ func (w *Writer) DefaultSelectBackends(txn statedb.ReadTxn, bes iter.Seq2[*loadb
+ 		thisZone != nil &&
+ 		fe != nil && fe.RedirectTo == nil &&
+ 		(fe.Service.TrafficDistribution == loadbalancer.TrafficDistributionPreferClose ||
+-			fe.Service.TrafficDistribution == loadbalancer.TrafficDistributionPreferSameZone) {
++			fe.Service.TrafficDistribution == loadbalancer.TrafficDistributionPreferSameZone ||
++			fe.Service.TrafficDistribution == loadbalancer.TrafficDistributionPreferSameNode) {
+ 		// Topology-aware routing enabled. See if we can find any backends fitting
+ 		// for our zone. If we don't find any we fall back to default behaviour.
+ 		// https://kubernetes.io/docs/concepts/services-networking/topology-aware-routing/#safeguards
+```
+
+**File**: `pkg/loadbalancer/writer/writer_test.go` (modified, +131/-0)
+```diff
+@@ -1231,3 +1231,134 @@ func TestWriter_SelectBackends_PreferSameNodeIgnoresNonActiveBackends(t *testing
+ 	assert.Contains(t, addresses, activeLocalAddr.String())
+ 	assert.Contains(t, addresses, terminatingLocalAddr.String())
+ }
++
++// TestWriter_SelectBackends_PreferSameNodeFallsBackToSameZone verifies the
++// KEP-3015 fallback chain for PreferSameNode: same-node backends are preferred,
++// then backends whose ForZones hints include the local zone, and finally all
++// backends.
++func TestWriter_SelectBackends_PreferSameNodeFallsBackToSameZone(t *testing.T) {
++	oldName := nodeTypes.GetName()
++	nodeTypes.SetName("node-a")
++	t.Cleanup(func() {
++		nodeTypes.SetName(oldName)
++	})
++
++	p := fixture(t)
++	p.Writer.config.EnableServiceTopology = true
++	p.LocalNodeStore.Update(func(n *node.LocalNode) {
++		if n.Labels == nil {
++			n.Labels = map[string]string{}
++		}
++		n.Labels[corev1.LabelTopologyZone] = "zone-a"
++	})
++
++	svcName := loadbalancer.NewServiceName("test", "svc")
++	feAddr := loadbalancer.NewL3n4Addr(loadbalancer.TCP, intToAddr(1), 80, loadbalancer.ScopeExternal)
++	beAddr := func(i int) loadbalancer.L3n4Addr {
++		return loadbalancer.NewL3n4Addr(loadbalancer.TCP, intToAddr(i), 8080, loadbalancer.ScopeExternal)
++	}
++	sameNode := &loadbalancer.Backend{
++		Address:  beAddr(2),
++		State:    loadbalancer.BackendStateActive,
++		NodeName: "node-a",
++		Zone:     &loadbalancer.BackendZone{Zone: "zone-a", ForZones: []string{"zone-a"}},
++	}
++	sameNodeQuarantined := &loadbalancer.Backend{
++		Address:  beAddr(2),
++		State:    loadbalancer.BackendStateQuarantined,
++		NodeName: "node-a",
++		Zone:     &loadbalancer.BackendZone{Zone: "zone-a", ForZones: []string{"zone-a"}},
++	}
++	sameZone := &loadbalancer.Backend{
++		Address:  beAddr(3),
++		State:    loadbalancer.BackendStateActive,
++		NodeName: "node-b",
++		Zone:     &loadbalancer.BackendZone{Zone: "zone-a", ForZones: []string{"zone-a"}},
++	}
++	otherZone := &loadbalancer.Backend{
++		Address:  beAddr(4),
++		State:    loadbalancer.BackendStateActive,
++		NodeName: "node-c",
++		Zone:     &loadbalancer.BackendZone{Zone: "zone-b", ForZones: []string{"zone-b"}},
++	}
++	otherZoneNoHints := &loadbalancer.Backend{
++		Address:  beAddr(4),
++		State:    loadbalancer.BackendStateActive,
++		NodeName: "node-c",
++		Zone:     &loadbalancer.BackendZone{Zone: "zone-b"},
++	}
++	otherZoneTerminating := &loadbalancer.Backend{
++		Address:  beAddr(5),
++		State:    loadbalancer.BackendStateTerminating,
++		NodeName: "node-c",
++		Zone:     &loadbalancer.BackendZone{Zone: "zone-b"},
++	}
++
++	tests := []struct {
++		name     string
++		backends []*loadbalancer.Backend
++		expected []*loadbalancer.Backend
++	}{
++		{
++			name:     "same-node backend preferred",
++			backends: []*loadbalancer.Backend{sameNode, sameZone, otherZone},
++			expected: []*loadbalancer.Backend{sameNode},
++		},
++		{
++			name:     "no same-node backend, fall back to same zone",
++			backends: []*loadbalancer.Backend{sameZone, otherZone},
++			expected: []*loadbalancer.Backend{sameZone},
++		},
++		{
++			// The quarantined backend is in the local zone and is thus kept in
++			// the selection, but it is not used for new connections.
++			name:     "same-node backend not active, fall back to same zone",
++			backends: []*loadbalancer.Backend{sameNodeQuarantined, sameZone, otherZone},
++			expected: []*loadbalancer.Backend{sameNodeQuarantined, sameZone},
++		},
++		{
++			name:     "terminating backends kept for draining in zone fallback",
++			backends: []*loadbalancer.Backend{sameZone, otherZone, otherZoneTerminating},
++			expected: []*loadbalancer.Backend{sameZone, otherZoneTerminating},
++		},
++		{
++			name:     "no backend in the local zone, fall back to all",
++			backends: []*loadbalancer.Backend{otherZone},
++			expected: []*loadbalancer.Backend{otherZone},
++		},
++		{
++			name:     "missing zone hints, fall back to all",
++			backends: []*loadbalancer.Backend{sameZone, otherZoneNoHints},
++			expected: []*loadbalancer.Backend{sameZone, otherZoneNoHints},
++		},
++	}
++
++	for _, tt := range tests {
++		t.Run(tt.name, func(t *testing.T) {
++			svc := &loadbalancer.Service{
++				Name:                svcName,
++				Source:              source.Kubernetes,
++				TrafficDistribution: loadbalancer.TrafficDistributionPreferSameNode,
++			}
++			fe := &loadbalancer.Frontend{
++				FrontendParams: loadbalancer.FrontendParams{
++					ServiceName: svcName,
++					Address:     feAddr,
++					Type:        loadbalancer.SVCTypeClusterIP,
++					ServicePort: feAddr.Port(),
++				},
++				Service: svc,
++			}
++			backends := iter.Seq2[*loadbalancer.Backend, statedb.Revision](func(yield func(*loadbalancer.Backend, statedb.Revision) bool) {
++				for i, be := range tt.backends {
++					if !yield(be, statedb.Revision(i+1)) {
++						return
++					}
++				}
++			})
++
++			selected := slices.Collect(statedb.ToSeq(p.Writer.SelectBackends(p.DB.ReadTxn(), backends, svc, fe)))
++			require.ElementsMatch(t, tt.expected, selected)
++		})
++	}
++}
+```
+
+**File**: `pkg/loadbalancer/writer/zones_test.go` (modified, +15/-7)
+```diff
+@@ -119,12 +119,13 @@ func TestZoneWatcher(t *testing.T) {
+ 		})
+ 		synctest.Wait()
+ 
+-		// Expected: Zonal services are refreshed, default and same-node are not.
++		// Expected: Zonal services are refreshed (including same-node, which falls
++		// back to same-zone backends), default is not.
+ 		expectedInitChanges := map[string]bool{
+ 			"svc-default":      false,
+ 			"svc-same-zone":    true,
+ 			"svc-prefer-close": true,
+-			"svc-same-node":    false,
++			"svc-same-node":    true,
+ 		}
+ 		revsAfterInit := verifyRevisions(initialRevs, expectedInitChanges, "Initial Zone Discovery")
+ 
+@@ -150,7 +151,7 @@ func TestZoneWatcher(t *testing.T) {
+ 			"svc-default":      false,
+ 			"svc-same-zone":    true,
+ 			"svc-prefer-close": true,
+-			"svc-same-node":    false,
++			"svc-same-node":    true,
+ 		}
+ 		revsAfterScenario3 := verifyRevisions(revsAfterInit, expectedZoneChanges, "Zone Change")
+ 
+@@ -161,11 +162,18 @@ func TestZoneWatcher(t *testing.T) {
+ 		// - Scenario 3 LocalNodeStore zone label update.
+ 		// - zoneWatcher background job path refresh and commit.
+ 		//
+-		// An implementation that correctly filters unrelated updates results in a total revision delta
+-		// of exactly 2 for the zonal services. Any extra frontend writes (e.g., due to unexpected path churn)
+-		// would cause a higher revision delta.
++		// The revision is table-wide, so a single refresh bumps each zonal frontend's revision by the
++		// number of refreshed frontends. An implementation that correctly filters unrelated updates
++		// thus results in a revision delta equal to the number of zonal services. Any extra frontend
++		// writes (e.g., due to unexpected path churn) would cause a higher revision delta.
++		zonalServices := 0
++		for _, changed := range expectedZoneChanges {
++			if changed {
++				zonalServices++
++			}
++		}
+ 		delta := revsAfterScenario3["svc-same-zone"] - revsAfterInit["svc-same-zone"]
+-		require.Equal(t, statedb.Revision(2), delta,
++		require.Equal(t, statedb.Revision(zonalServices), delta,
+ 			"Service was wrongly refreshed on unrelated node update (extra revision jump detected)")
+ 	})
  }
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #50107** (closed): Revert "bpf: migrate ENABLE_IPV6 to runtime config part 5" (@giorio94)
 - **PR #50103** (2026-11-18): gha/scale: bump cilium/scaffolding commit SHA (@giorio94)
+- **PR #50099** (2026-11-18): v1.18 Backports 2026-11-18 (@mhofstetter)
+- **PR #50097** (2026-11-18): v1.19 Backports 2026-11-18 (@mhofstetter)
 - **PR #50081** (2026-11-17): helm/certgen: enable readOnlyRootFilesystem (@Scrumplex)
 - **PR #50080** (2026-11-17): gha: Don't fail artifact merges on source deletion errors (@aanm)
-- **PR #50076** (2026-11-18): cilium-cli: Wait for the l7-lb deployment (@aanm)
-- **PR #50073** (2026-11-18): datapath: sockets: fix returned result from InetDiagDestroyEnabled() (@julianwiedmann)
-- **PR #50071** (2026-11-17): README: Update releases (@aanm)
 
 ---
 
@@ -1491,31 +1967,68 @@ Signed-off-by: Martynas Pumputis <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. gha/scale: bump cilium/scaffolding commit SHA
+## X. loadbalancer: report effective LocalRedirect mappings
 
 **RULE**:
-When implementing operations in `.github/workflows/scale-test-clustermesh.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/loadbalancer/redirectpolicy/api.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `606a80fe`: gha/scale: bump cilium/scaffolding commit SHA. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `cde31357`: loadbalancer: report effective LocalRedirect mappings. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/scale-test-clustermesh.yaml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/loadbalancer/redirectpolicy/api.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-  cmapisrv_mock_ref: 025ce1681817379a72339710ba532b115d2ae00d
+	return service.NewGetLrpOK().WithPayload(getLRPs(h.db.ReadTxn(), h.lrps, h.frontends, h.pods))
+func getLRPs(txn statedb.ReadTxn, lrps statedb.Table[*LocalRedirectPolicy], frontends statedb.Table[*lb.Frontend], pods statedb.Table[k8sTables.LocalPod]) []*models.LRPSpec {
+		list = append(list, lrp.getModel(txn, frontends, pods))
+func (lrp *LocalRedirectPolicy) getModel(txn statedb.ReadTxn, frontends statedb.Table[*lb.Frontend], pods statedb.Table[k8sTables.LocalPod]) *models.LRPSpec {
+		FrontendMappings: lrp.getFrontendMappingModels(txn, frontends, pods),
+// Returns frontend mappings for a LocalRedirectPolicy using StateDB frontends and their
+// associated backends.
+	lrpServiceName := lrp.RedirectServiceName()
+		// Only report mappings for frontends that this LRP currently owns. The
+		// configured mapping alone does not mean the redirect was installed: another
+		// service may own the same address.
+		feMappingModelArray := make([]*models.FrontendMapping, 0, len(lrp.FrontendMappings))
+			fe, _, found := frontends.Get(txn, lb.FrontendByAddress(feM.feAddr))
+			if !found ||
+				fe.Type != lb.SVCTypeLocalRedirect ||
+				!fe.ServiceName.Equal(lrpServiceName) {
+				continue
+			}
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-  cmapisrv_mock_ref: b6e1820b795c5e309759ce87757dcba3c0bcd897
+	"strings"
+	backends  statedb.Table[*lb.Backend]
+	return service.NewGetLrpOK().WithPayload(getLRPs(h.db.ReadTxn(), h.lrps, h.frontends, h.backends, h.pods))
+func getLRPs(txn statedb.ReadTxn, lrps statedb.Table[*LocalRedirectPolicy], frontends statedb.Table[*lb.Frontend], backends statedb.Table[*lb.Backend], pods statedb.Table[k8sTables.LocalPod]) []*models.LRPSpec {
+		list = append(list, lrp.getModel(txn, frontends, backends, pods))
+func (lrp *LocalRedirectPolicy) getModel(txn statedb.ReadTxn, frontends statedb.Table[*lb.Frontend], backends statedb.Table[*lb.Backend], pods statedb.Table[k8sTables.LocalPod]) *models.LRPSpec {
+		FrontendMappings: lrp.getFrontendMappingModels(txn, frontends, backends, pods),
+// filterBackendsByFrontendMapping narrows the backend list of a pseudo-service
+// generated from an addressMatcher LRP to a subset of pods that would actually
+// be mapped by the controller.
+func filterBackendsByFrontendMapping(
+	bes lb.BackendsSeq2,
+	feM feMapping,
+	matchPortNames bool,
+) lb.BackendsSeq2 {
+	backendMatchesFrontendMapping := func(be *lb.Backend) bool {
+		if !be.Address.Compatible(feM.feAddr) {
+			return false
+		}
+		if matchPortNames && feM.fePort != "" && len(be.P
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `606a80fe` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `cde31357` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261117-2CSK",
-    "timestamp": "2026-11-17T08:42:32.132Z",
-    "repository": "dubzzz/fast-check",
-    "learningId": "learn-github-dubzzz-fast-check",
-    "contentHash": "90336b5e9394475b5f4c447bcd7aab111ce2da995503cf26555f3a72ab64f673",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261117-3REK",
-    "timestamp": "2026-11-17T08:43:37.724Z",
-    "repository": "trinodb/trino",
-    "learningId": "learn-github-trinodb-trino",
-    "contentHash": "01a0096592c1741dc2e64f7acda30c4b8cbd1db2d8ddb063a929c5be2d1465de",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261117-KA64",
     "timestamp": "2026-11-17T08:56:28.540Z",
     "repository": "salvo-rs/salvo",
@@ -7490,6 +7460,36 @@
     "repository": "koderover/zadig",
     "learningId": "learn-github-koderover-zadig",
     "contentHash": "d07a9983748708a44297f2d71f55e15080e49f76f1e44e223faba3709cf86226",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-XL7F",
+    "timestamp": "2026-11-18T17:18:22.875Z",
+    "repository": "google-bert/bert-base-uncased",
+    "learningId": "learn-huggingface-google-bert-bert-base-uncased",
+    "contentHash": "f27f70b191ceb1060cf36f3428745a5719f4a8092fe278db5030d84f07eb0438",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-XW3L",
+    "timestamp": "2026-11-18T17:18:36.993Z",
+    "repository": "cilium/cilium",
+    "learningId": "learn-github-cilium-cilium",
+    "contentHash": "f9b013d16ea946c8baf4af0c8a4adf68b9689a582ab51af4fa1aafefe20feb05",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

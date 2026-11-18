@@ -43,9 +43,9 @@
   "bitterbot-ai-bitterbot-desktop": {
     "name": "bitterbot-desktop",
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-    "lastChecked": "2026-11-18T16:41:10.841Z",
+    "lastChecked": "2026-11-18T17:18:34.475Z",
     "revisionIdentifier": "108f7135",
-    "lastVerified": "2026-11-18T16:41:10.841Z"
+    "lastVerified": "2026-11-18T17:18:34.475Z"
   },
   "hf-comfy-org-minimax-h3": {
     "name": "Comfy-Org/MiniMax-H3",
@@ -69,8 +69,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-18T17:10:29.805Z",
-    "lastVerified": "2026-11-18T17:10:29.805Z",
+    "lastChecked": "2026-11-18T17:18:40.098Z",
+    "lastVerified": "2026-11-18T17:18:40.098Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -1652,12 +1652,12 @@
     "officialUrl": "https://github.com/cilium/cilium",
     "sourceType": "github",
     "technology": "Go",
-    "lastChecked": "2026-11-18T13:09:03.648Z",
-    "lastVerified": "2026-11-18T13:09:03.648Z",
+    "lastChecked": "2026-11-18T17:18:36.077Z",
+    "lastVerified": "2026-11-18T17:18:36.077Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-cilium-cilium",
-    "contentHash": "bfa5c974fef3678e3b2e3225ed4a0ffc1a18796771a793b25cba54986931268b",
+    "contentHash": "f9b013d16ea946c8baf4af0c8a4adf68b9689a582ab51af4fa1aafefe20feb05",
     "promotedRulesCount": 1,
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
@@ -3245,5 +3245,50 @@
     "lastChecked": "2026-11-18T17:10:24.965Z",
     "revisionIdentifier": "c4888cbb",
     "lastVerified": "2026-11-18T17:10:24.965Z"
+  },
+  "kuberwastaken-claurst": {
+    "name": "claurst",
+    "officialUrl": "https://github.com/Kuberwastaken/claurst",
+    "lastChecked": "2026-11-18T17:18:19.520Z",
+    "revisionIdentifier": "e4228cc6",
+    "lastVerified": "2026-11-18T17:18:19.520Z"
+  },
+  "hf-google-bert-bert-base-uncased": {
+    "name": "google-bert/bert-base-uncased",
+    "officialUrl": "https://huggingface.co/google-bert/bert-base-uncased",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-18T17:18:22.288Z",
+    "lastVerified": "2026-11-18T17:18:22.288Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-google-bert-bert-base-uncased",
+    "contentHash": "f27f70b191ceb1060cf36f3428745a5719f4a8092fe278db5030d84f07eb0438",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "ritz078-transform": {
+    "name": "transform",
+    "officialUrl": "https://github.com/ritz078/transform",
+    "lastChecked": "2026-11-18T17:18:24.584Z",
+    "revisionIdentifier": "ff755793",
+    "lastVerified": "2026-11-18T17:18:24.584Z"
+  },
+  "dosco-graphjin": {
+    "name": "graphjin",
+    "officialUrl": "https://github.com/dosco/graphjin",
+    "lastChecked": "2026-11-18T17:18:27.020Z",
+    "revisionIdentifier": "3fc0975a",
+    "lastVerified": "2026-11-18T17:18:27.020Z"
+  },
+  "supervc-stack-vectorchord": {
+    "name": "VectorChord",
+    "officialUrl": "https://github.com/supervc-stack/VectorChord",
+    "lastChecked": "2026-11-18T17:18:31.976Z",
+    "revisionIdentifier": "0768657e",
+    "lastVerified": "2026-11-18T17:18:31.976Z"
   }
 }

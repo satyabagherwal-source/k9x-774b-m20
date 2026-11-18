@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-18T17:10:26.509Z",
+  "last_updated": "2026-11-18T17:18:37.005Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -905,14 +905,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-google-bert-bert-base-uncased",
-      "content_hash": "957c07b0a00649cbd918fb2f2c4be7f6a487feb5f1c6a491a24e3433a7e69182",
-      "verified_at": "2026-11-18T07:56:18.558Z",
+      "content_hash": "f27f70b191ceb1060cf36f3428745a5719f4a8092fe278db5030d84f07eb0438",
+      "verified_at": "2026-11-18T17:18:22.887Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T07:56:18.558Z"
+      "last_updated": "2026-11-18T17:18:22.887Z"
     },
     "google/electra-base-discriminator": {
       "repository": "google/electra-base-discriminator",
@@ -5136,14 +5136,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-cilium-cilium",
-      "content_hash": "bfa5c974fef3678e3b2e3225ed4a0ffc1a18796771a793b25cba54986931268b",
-      "verified_at": "2026-11-18T13:09:04.832Z",
+      "content_hash": "f9b013d16ea946c8baf4af0c8a4adf68b9689a582ab51af4fa1aafefe20feb05",
+      "verified_at": "2026-11-18T17:18:37.004Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T13:09:04.832Z"
+      "last_updated": "2026-11-18T17:18:37.004Z"
     },
     "SeekStorm/SeekStorm": {
       "repository": "SeekStorm/SeekStorm",

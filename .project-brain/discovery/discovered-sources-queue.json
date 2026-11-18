@@ -2,15 +2,15 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-18T17:01:59.854Z",
+  "updated_at": "2026-11-18T17:18:40.656Z",
   "stats": {
-    "total_discovered": 5600,
-    "approved_pending_harvest": 5293,
+    "total_discovered": 5602,
+    "approved_pending_harvest": 5295,
     "harvested_count": 0,
     "rejected_count": 307,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 5276,
-      "OFFICIAL_DOCUMENTATION": 177,
+      "COMMUNITY_AND_EXPERT": 5277,
+      "OFFICIAL_DOCUMENTATION": 178,
       "STANDARDS_AND_SPECIFICATIONS": 111,
       "ENGINEERING_BLOGS": 4,
       "SECURITY_ADVISORIES": 24,
@@ -121072,6 +121072,50 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/peerdb-io-peerdb-learnings.md",
         "fileName": "peerdb-io-peerdb-learnings.md"
+      }
+    },
+    "SRC-759A4119963B": {
+      "id": "SRC-759A4119963B",
+      "url": "https://docs.cilium.io/en/stable/contributing/development/contributing_guide",
+      "title": "https://docs.cilium.io/en/stable/contributing/development/contributing_guide",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T17:18:40.620Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cilium-cilium-learnings.md",
+        "fileName": "cilium-cilium-learnings.md"
+      }
+    },
+    "SRC-192545A17CC3": {
+      "id": "SRC-192545A17CC3",
+      "url": "https://kubernetes.io/docs/concepts/services-networking/topology-aware-routing",
+      "title": "https://kubernetes.io/docs/concepts/services-networking/topology-aware-routing",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T17:18:40.656Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cilium-cilium-learnings.md",
+        "fileName": "cilium-cilium-learnings.md"
       }
     }
   }

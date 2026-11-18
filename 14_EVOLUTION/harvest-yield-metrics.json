@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T17:10:26.505Z",
-  "total_cycles_completed": 10571,
-  "total_learnings_persisted": 10571,
-  "total_rules_promoted": 10025,
+  "last_updated": "2026-11-18T17:18:37.002Z",
+  "total_cycles_completed": 10573,
+  "total_learnings_persisted": 10573,
+  "total_rules_promoted": 10026,
   "history": [
-    {
-      "timestamp": "2026-11-18T06:00:02.386Z",
-      "repository": "prithivMLmods/Gender-Classifier-Mini",
-      "learningId": "learn-huggingface-prithivmlmods-gender-classifier-mini",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-18T06:00:15.908Z",
-      "repository": "slatedb/slatedb",
-      "learningId": "learn-github-slatedb-slatedb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-18T06:07:39.600Z",
       "repository": "Kuddev/pebrel",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-18T17:10:26.505Z",
       "repository": "koderover/zadig",
       "learningId": "learn-github-koderover-zadig",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T17:18:22.884Z",
+      "repository": "google-bert/bert-base-uncased",
+      "learningId": "learn-huggingface-google-bert-bert-base-uncased",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T17:18:37.002Z",
+      "repository": "cilium/cilium",
+      "learningId": "learn-github-cilium-cilium",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

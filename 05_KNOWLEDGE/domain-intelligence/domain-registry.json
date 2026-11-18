@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-18T17:10:31.653Z",
+  "last_updated": "2026-11-18T17:18:41.762Z",
   "total_records": 1883,
   "domains": {
     "A": {
@@ -7626,8 +7626,8 @@
       "title": "Product Intelligence: cilium/cilium Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-cilium-cilium-product-intelligence-cilium-cilium-core-invariants.md",
       "repository": "cilium/cilium",
-      "content_hash": "28c4c370824ab573c225def48ed775596da2fc64d0683ac1c0dd9623bce1f6d4",
-      "created_at": "2026-11-18T13:09:05.239Z"
+      "content_hash": "2b55931e50ab4ef91cbfb6338405e2bed92baf2e3396c8f70b64ec96bbaaeefe",
+      "created_at": "2026-11-18T17:18:37.323Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-viggle-qwen-image-2-1-viggle-turbo-learnings-": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-viggle-qwen-image-2-1-viggle-turbo-learnings-",
@@ -7644,8 +7644,8 @@
       "title": "Product Intelligence: cilium-cilium-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-cilium-cilium-learnings-product-intelligence-cilium-cilium-learnings-core-invari.md",
       "repository": "cilium-cilium-learnings",
-      "content_hash": "e69779cc4b3bd3ff928cfaf4799280b78c6a7fbc83e90d9518d26579a62c4602",
-      "created_at": "2026-11-18T13:09:10.215Z"
+      "content_hash": "1b5b52ae9ae9345d75d1ab9b0d550b6b2b66cb092230a868bf55a3f6cf2574f2",
+      "created_at": "2026-11-18T17:18:40.978Z"
     },
     "domain_intelligence-technical-construction-intelligence-zvec-ai-zvec-grep-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-zvec-ai-zvec-grep-learnings-core-invariants",
@@ -8616,8 +8616,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "a081041ac0dc6dfdc2c8accd59c1529a0c8d74ba9ab3f875c9da9fdf5bcc0f16",
-      "created_at": "2026-11-18T16:49:41.247Z"
+      "content_hash": "2f55b2d9a157e41141ad275fb2e27c7b24f7a84852a21bcdaa66b291b1bce74a",
+      "created_at": "2026-11-18T17:18:41.762Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -10464,8 +10464,8 @@
       "title": "Research & Knowledge Intelligence: google-bert/bert-base-uncased Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-google-bert-bert-base-uncased-research-knowledge-intelligence-google-bert-ber.md",
       "repository": "google-bert/bert-base-uncased",
-      "content_hash": "fee6ae2e3fdf8563bbc6ae3f97167428b0bcff00646858296dd68b5c504ab9e3",
-      "created_at": "2026-11-18T07:56:18.708Z"
+      "content_hash": "ec857581b199d348435df3a7cc74f889e2d1eb75e0c944f4685bb89f855577e1",
+      "created_at": "2026-11-18T17:18:23.058Z"
     },
     "domain_intelligence-technical-construction-intelligence-pubkey-rxdb-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-pubkey-rxdb-core-invariants",
@@ -10533,8 +10533,8 @@
       "title": "Research & Knowledge Intelligence: hf-google-bert-bert-base-uncased-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-google-bert-bert-base-uncased-learnings-research-knowledge-intelligence-hf-go.md",
       "repository": "hf-google-bert-bert-base-uncased-learnings",
-      "content_hash": "ef8c744d57f88b8d5f51dad00d02a103d12c287577182383b75866978a2c8d84",
-      "created_at": "2026-11-18T07:56:37.553Z"
+      "content_hash": "eeafb955910faee6594795bdff2b3929aa86a50df12f11908a83bd14b81911c5",
+      "created_at": "2026-11-18T17:18:40.413Z"
     },
     "DOM-K-30566771": {
       "record_id": "DOM-K-30566771",

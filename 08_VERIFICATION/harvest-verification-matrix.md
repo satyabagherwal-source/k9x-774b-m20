@@ -11054,3 +11054,5 @@
 | `CYCLE-20261118-CFHR` | `2026-11-18T17:01:55.695Z` | `zama-ai/tfhe-rs` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9262` | Yes (`1f812a45...`) |
 | `CYCLE-20261118-N5KM` | `2026-11-18T17:10:16.054Z` | `google/electra-base-discriminator` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-electra-base-discriminator-learnings.md` | Yes (`71bd56a6...`) |
 | `CYCLE-20261118-NDMN` | `2026-11-18T17:10:26.495Z` | `koderover/zadig` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9263` | Yes (`d07a9983...`) |
+| `CYCLE-20261118-XL7F` | `2026-11-18T17:18:22.875Z` | `google-bert/bert-base-uncased` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-bert-bert-base-uncased-learnings.md` | Yes (`f27f70b1...`) |
+| `CYCLE-20261118-XW3L` | `2026-11-18T17:18:36.993Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9264` | Yes (`f9b013d1...`) |
