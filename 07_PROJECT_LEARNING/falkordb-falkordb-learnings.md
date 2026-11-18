@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/falkordb-falkordb-learnings.md`  
 > **Source**: github ([https://github.com/FalkorDB/FalkorDB](https://github.com/FalkorDB/FalkorDB))  
-> **Source Version**: `543357f1`  
+> **Source Version**: `aafdc4ae`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-16T22:19:18.925Z  
+> **Timestamp**: 2026-11-18T04:29:06.648Z  
 > **Learning ID**: `learn-github-falkordb-falkordb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/falkordb-falkordb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/FalkorDB/FalkorDB](https://github.com/FalkorDB/FalkorDB))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T22:19:18.917Z  
+> **Harvest Timestamp**: 2026-11-18T04:29:06.641Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A super fast Graph Database uses GraphBLAS under the hood for its sparse adjacency matrix graph representation. Our goal is to provide the best Knowledge Graph for LLM (GraphRAG).
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 10506 stars
+- **Stars / Engagement**: 10508 stars
 
 ---
 
@@ -1239,11 +1239,11 @@ print("bgsave status", r.info('persistence')['rdb_last_bgsave_status'])
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #3822** (2026-11-16): **Rust engine times out on multi-hop query with inline id map + WHERE on end node (C: ~5 ms)**
-  *Symptoms*: ## Summary  On the Rust engine (`edge-rs` and `edge-rs-redis` images), the Pokec baseline benchmark query `aggregate_expansion_3_with_filter`, and its 2- and 4-hop variants, hits the server `Query timed out` error after 20–60 s. C 4.22.1 answers the same query in milliseconds. The Valkey and Redis hosts behave the same, and the same happens through `redis-cli`, so this is an engine problem, not a client or protocol issue.  Under benchmark concurrency (parallel=8, pool size 8, 20 s timeout), these stuck queries tie up the pool's connections, and the timeouts cascade to other queries.  ## Repro  Graph: Pokec medium (~100k `User` nodes, ~1.77M edges) with an index on `User(id)`.  ```cypher MATCH (s:User {id: $id})-->()-->()-->(n:User) WHERE n.age >= 18 RETURN DISTINCT n.id ```  | Engine | Result | |---|---| | C (master / 4.22.1) | 5–80 ms | | Rust (main) | `Query timed out` |  ## Cause  The Rust engine starts the query from the wrong node:  ``` Distinct     Project         Filter             Conditional Traverse | (_anon_1)<-(s:User)                 Conditional Traverse | (_anon_3)<-(_anon_1)                     Conditional Traverse | (n)<-(_anon_3)                         Filter                             Node By Label Scan | (n:User) ```  Instead of looking up `s` through the index, it scans every `User` as `n` and walks three hops backwards.  In `select_scan_node`, `s` (inline `{id: …}`) and `n` (`WHERE n.age >= 18`) get the same score. The `filter_runs_late` tiebreak then p
+- **Issue #3857** (2026-11-17): **rust: a write that only registers a label ships no payload: the replica resyncs in full and the master's own AOF stops loading**
+  *Symptoms*: A write whose only effect is a newly registered label is not replicated and not written to the AOF. The next write that adds a label is then refused by the replica, which resyncs in full, and a master that restarts from its AOF exits during the load.  ### What happens  `OPTIONAL MATCH (n:Nope) SET n:L` matches nothing, but `L` has been interned in the write's version by the time `SET` finds no entity to label, and that version is published. `CommitOp::next` (`graph/src/runtime/ops/commit.rs`) builds an effects payload only when `Pending::effects_count()` is above zero, and that count covers entities, not names registered on the version. So the master has label `L` and ships nothing; the server logs `graph '...' was modified but produced no effects payload; the change will not reach replicas or the AOF`.  Every later payload numbers its labels from the master's dictionary. The next new label goes out with an id one past what the replica (or the AOF replay) would assign, and is refused.  ### Reproduce  Replica:  1. `GRAPH.QUERY g "CREATE (:A)"` 2. `GRAPH.QUERY g "OPTIONAL MATCH (n:Nope) SET n:OnlyRegistered"`: `CALL db.labels()` now differs between master and replica (4 of 4 runs). 3. `GRAPH.QUERY g "CREATE (:B)"`: the replica logs `Replica diverged from master applying GRAPH.EFFECT ...` and the master's `sync_full` goes up by one (every run).  AOF (`appendonly yes`): the same three writes, then restart. The server exits during the load in 3 of 3 runs:  ``` Diverged applying GR
 
-- **Issue #3781** (2026-11-16): **[Rust] A write or GRAPH.CONSTRAINT freezes the whole server while a read runs on the same graph**
-  *Symptoms*: ### Summary  On the Rust engine, a write query or a `GRAPH.CONSTRAINT CREATE`/`DROP` on a graph waits for every read running on that graph, and the whole server stops answering, PING included, until those reads finish. The C engine keeps answering in the same situation: writes since #3422, constraint commands since #3763. Index builds don't freeze the server on either engine.  ### Reproduce  `falkordb/falkordb-server:edge` at `sha256:61dca508…` (main 7df8e5887), started with `redis-server --loadmodule /var/lib/falkordb/bin/falkordb.so` and `GRAPH.CONFIG SET TIMEOUT 0`.  1. On graph `q`: `UNWIND range(0, 999999) AS i CREATE (:N {v: i})`. For the constraint rows, also `CREATE INDEX FOR (n:N) ON (n.v)`, wait until it is `OPERATIONAL`, and for DROP create the constraint first and wait until it is `OPERATIONAL`. 2. Client A runs a long read: `GRAPH.RO_QUERY q "MATCH (n:N) WITH n LIMIT 2000 UNWIND range(1, 200000) AS x RETURN count(x)"`. 3. One second later, client B sends the command in the table to `q`. 4. Client C sends `PING` every 10 ms throughout.  Both engines on the same machine (GCE n4-standard-16), each on a fresh server. C is `falkordb/falkordb-server:edge-c` at `sha256:2364d41f…` (master a61fbb67a). The read takes about 9 s on Rust and 23 s on C, so each engine's PING column compares with its own control row.  | Client B, during the read | Rust: B replied after | Rust: worst PING | C: B replied after | C: worst PING | |---|---|---|---|---| | nothing (control) | – | 0.5 
+- **Issue #3851** (2026-11-17): **rust: FLUSHALL ASYNC during a queued write: the write is answered OK into a graph no key holds, and the replica gets the key back**
+  *Symptoms*: If a database is flushed in the background (`FLUSHALL ASYNC`; a plain `FLUSHALL` on Valkey and Redis 8 with lazy flush) while a queued write is running, the write can commit into a graph that no key holds. The client is told OK, the master has no such key, and the replica gets the key back. C is not affected.  ### What happens  Before a queued write mutates, `authorize_write` (`src/query_session.rs`) checks `graph_is_registered`, which asks the module's registry. The registry entry is removed by `graph_free`, the type's free callback. For a background flush that runs on the lazy-free thread, later than the keys left the keyspace. A write that authorizes inside that window passes the check, commits into the orphaned graph, answers OK and replicates `GRAPH.EFFECT g`, which the replica applies after the `FLUSHALL` it already received: it creates `g`.  `key_holds_graph` (`src/redis_type.rs`) asks the keyspace instead and is already used by `GRAPH.CONSTRAINT` and telemetry for this reason; the query path does not use it.  ### Reproduce  Master and replica. On the master, with 5,000,000 filler keys (`DEBUG POPULATE`) so that the lazy-free thread takes a moment to reach the graph:  1. `GRAPH.QUERY g "UNWIND range(1, 6000000) AS x WITH count(x) AS c CREATE (:Slow {c: c})"` to a missing key `g`. 2. 40 ms later, from another client: `FLUSHALL ASYNC`.  | Engine | Write's reply | Master has `g` | Replica has `g` | |---|---|---|---| | Rust, 8 of 8 trials | OK | no | yes | | C, 4 of 4 tria
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1260,1569 +1260,1032 @@ print("bgsave status", r.info('persistence')['rdb_last_bgsave_status'])
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `dd1c68a0` (2026-11-15)
-**Commit Message**: chore: fix all pedantic/nursery/cargo clippy warnings (#3787)
+### Incident Patch 1: `27951021` (2026-11-17)
+**Commit Message**: fix: a cascaded edge of a new type no longer panics compact replies or opens a replica id gap (#3447) (#3461)
 
-* chore: fix all pedantic/nursery/cargo clippy warnings
+* fix: register the type of a cascaded pending relationship at commit (#3447)
 
-Clean under the strict set the repo's .vscode/settings.json runs:
+A relationship of a new type whose endpoint a DETACH DELETE removes in the
+same segment is cascaded into `cancelled_relationships`, and its emptied
+`created_rels_by_type` group is dropped, so `Pending::commit` never
+registered the type. Two symptoms followed:
 
-  cargo clippy --workspace --all-targets -- -W clippy::pedantic \
-    -W clippy::nursery -W clippy::cargo -A clippy::missing-errors-doc \
-    -A clippy::missing-panics-doc -A clippy::doc-markdown
+- the compact reply of the snapshotted edge called
+  `get_type_id(..).unwrap()` on the unregistered name and panicked the
+  server (src/reply.rs:260);
+- `digest_cancelled` skipped the cancelled edge's CREATE_EDGE/DELETE_EDGE
+  pair, leaving a hole in the replica's relationship id space that
+  `IdSpace::verify` refuses with a forced full resync.
 
-375 unique warnings -> 0. Most are clippy's own rewrites (use_self,
-redundant_clone, redundant_pub_crate, map_or, const fn, ...). Hand-made:
-
-- 1-byte IndexType/EntityType passed by value instead of by reference.
-- apply_pow, apply_one and add_argument_to_leaves borrow instead of
-  taking ownership; drops two Value clones in pow().
-- telemetry shutdown no longer holds FIELD_NAME_STRINGS' mutex while it
-  frees every name.
-- assert!(x.is_empty()) -> assert_eq!(x, []) so failures print the value.
-- `const` items hoisted above statements; long first doc paragraphs split.
-
-Where the lint is wrong or the shape is deliberate, a scoped
-#[allow(..., reason = "...")] says why (11 sites), e.g. QuerySession is
-taken by value because dropping it releases the locks, and the CASE
-null-semantics matches keep their per-a
-
-**File**: `.claude/skills/build/SKILL.md` (modified, +13/-4)
-```diff
-@@ -58,23 +58,32 @@ cargo build --release  # release build -> target/release/libfalkordb.{so,dylib}
- 
- ```bash
- cargo fmt --all -- --check
--CXX=clang++ cargo clippy --all-targets
-+CXX=clang++ cargo clippy --workspace --all-targets -- -D warnings
-+CXX=clang++ cargo clippy -p falkordb-rs -p graph --all-targets --features index-falkordb -- -D warnings
-+cargo clippy --all-targets --manifest-path native-deps/Cargo.toml -- -D warnings
- ```
- 
-+- The lint set is strict: pedantic, nursery and cargo, from `[workspace.lints]`
-+  in `Cargo.toml` (and `[lints]` in `native-deps/Cargo.toml`), so a plain
-+  `cargo clippy` shows what CI fails on. The `index-falkordb` run lints the
-+  native index, which the default build does not compile.
-+- In `native-deps`, `src/recipes/`, `src/toolchain.rs` and `src/util.rs` feed
-+  the dependency cache key: a style edit there rebuilds all three native deps
-+  everywhere. Allow their lints on the `mod` line in `src/lib.rs` instead.
-+
- - `CXX=clang++` is required for clippy (and any build invoking the GraphBLAS
-   FFI bindings under `graph/src/graph/graphblas/`, whose bindgen output is
-   `graphblas/mod.rs`) — without it, clippy fails trying to compile the C shims.
- - Format check uses the project's `rustfmt.toml` (vertical function-parameter
-   layout). Run `cargo fmt --all` (no `--check`) to auto-fix.
- - Run format + build + clippy together, in that order, for a full check —
-   fail fast on formatting before spending time on a full compile.
--- For a stricter, opt-in clippy pass (pedantic/nursery/cargo lints, plus an
--  auto-fix mode) see the `lint` skill.
-+- To auto-fix clippy warnings, see the `lint` skill.
- 
- ## Notes
- 
- - CI (`.github/workflows/rust-pr.yml`) runs the same `cargo fmt --all --check`
--  and `CXX=clang++ cargo clippy --all-targets` (pinned to a specific
-+  and the clippy commands above (pinned to a specific
-   `clang++` version in CI containers; any reasonably recent local `clang++`
-   works).
- - Cross-platform release *artifacts* (Linux `.so`, macOS `.dylib`) and
-```
-
-**File**: `.claude/skills/lint/SKILL.md` (modified, +36/-25)
-```diff
-@@ -1,40 +1,51 @@
- ---
- name: lint
--description: Run FalkorDB's stricter opt-in Clippy pass (pedantic/nursery/cargo lints) beyond the basic CI gate, optionally auto-fixing. Use when asked for a deep/strict lint pass or to auto-fix clippy warnings; for the standard fmt+clippy CI gate use the build skill.
-+description: Auto-fix FalkorDB's strict Clippy lints (pedantic/nursery/cargo, enforced by CI with -D warnings) and resolve what --fix cannot. Use when asked to fix clippy warnings or when CI's Lint job fails; for the plain fmt+clippy check use the build skill.
- allowed-tools: Bash
- ---
- 
--# Lint (advanced)
-+# Lint (auto-fix)
- 
--The `build` skill runs the CI gate (`cargo fmt --all -- --check` +
--`CXX=clang++ cargo clippy --all-targets`). This skill is the stricter,
--opt-in pass: pedantic + nursery + cargo lints, and an optional auto-fix.
-+CI fails on any clippy warning. The lint set (pedantic, nursery, cargo, minus
-+`missing_errors_doc`, `missing_panics_doc` and `doc_markdown`) lives in
-+`[workspace.lints]` in `Cargo.toml` and `[lints]` in `native-deps/Cargo.toml`,
-+so plain `cargo clippy` shows exactly what CI checks. The `build` skill has
-+the check commands.
- 
--## Deep clippy pass
-+## Auto-fix
- 
- ```bash
--CXX=clang++ cargo clippy --all-targets -- \
--  -W clippy::pedantic -W clippy::nursery -W clippy::cargo \
--  -A clippy::missing-errors-doc -A clippy::missing-panics-doc
-+CXX=${CXX:-clang++} cargo clippy --fix --allow-dirty --workspace --all-targets
-+CXX=${CXX:-clang++} cargo clippy --fix --allow-dirty -p falkordb-rs -p graph --all-targets --features index-falkordb
-+cargo clippy --fix --allow-dirty --all-targets --manifest-path native-deps/Cargo.toml
-+cargo fmt --all
-+cargo fmt --all --manifest-path native-deps/Cargo.toml
- ```
- 
--## Auto-fix where possible
-+`--fix` rewrites source in place; review the diff (its `map_or` rewrites can
-+delete comments inside match arms). Run it for both feature sets: code under
-+`index-falkordb` is only seen by the second run.
- 
--```bash
--CXX=clang++ cargo clippy --all-targets --fix --allow-dirty --allow-staged -- \
--  -W clippy::pedantic -W clippy::nursery -W clippy::cargo \
--  -A clippy::missing-errors-doc -A clippy::missing-panics-doc
--```
--`--fix` rewrites your source in place — review the diff afterward.
-+## When --fix rolls back ("errors present after applying fixes")
-+
-+One suggestion did not compile, so cargo reverted the whole crate. Rerun with
-+`--broken-code` to keep the fixes, then repair the few that broke. Known cases:
-+
-+- `redundant_closure_for_method_calls`: `|r| r.string()` → `Reader::string`
-+  loses a closure that must work for any borrow lifetime. Keep the closure.
-+- `missing_const_for_fn`: a fn made `const` in one feature set may call
-+  non-const code under the other (`#[cfg(feature = ...)]` bodies).
-+- `wildcard_imports`: the expanded list differs per feature set. Keep `*`.
-+- `redundant_clone` on a `Range` drops the clone but not the need for `mut`.
- 
--## Notes
-+## What --fix leaves
- 
--- `CXX=clang++` is required for clippy (GraphBLAS FFI), same reason as the
--  `build` skill.
--- `missing-errors-doc` / `missing-panics-doc` are deliberately allowed
--  (`-A`) to avoid noise on every fallible/panicking function.
--- These settings are stricter than CI's gate and `nursery` lints are
--  experimental (occasional false positives) — treat this as a cleanup aid,
--  not a merge blocker.
-+Fix it by hand, or put a scoped `#[allow(clippy::<lint>, reason = "...")]` on
-+the narrowest item it covers (a bench/test module at most), never crate-wide.
-+Changing a signature (`&T` → `T`, `Vec` → slice, dropping a `Result` that
-+cannot fail) also means updating its callers.
- 
--If any lints fail, report the errors clearly and help fix them.
-+In `native-deps`, do not edit `src/recipes/`, `src/toolchain.rs` or
-+`src/util.rs` for a lint: they feed the dependency cache key, so any edit
-+rebuilds GraphBLAS, LAGraph and RediSearch for everyone. Allow the lint on the
-+`mod` line in `src/lib.rs`.
-```
-
-**File**: `.github/workflows/rust-pr.yml` (modified, +6/-3)
-```diff
-@@ -266,12 +266,15 @@ jobs:
-       - name: Format
-         run: cargo fmt --all --check
-       - name: Lint
-+        # The lint set (pedantic, nursery, cargo) is Cargo.toml's
-+        # [workspace.lints]; -D warnings fails the job on any of them.
-+        # --workspace, so graph's tests and build script are linted too.
-         run: |
--          CXX=clang++-23 cargo clippy --all-targets
-+          CXX=clang++-23 cargo clippy --workspace --all-targets -- -D warnings
-       - name: Format (native-deps)
-         run: cargo fmt --all --check --manifest-path native-deps/Cargo.toml
-       - name: Lint (native-deps)
--        run: cargo clippy --all-targets --manifest-path native-deps/Cargo.toml
-+        run: cargo clippy --all-targets --manifest-path native-deps/Cargo.toml -- -D warnings
-       - name: deps/native-deps.lock is in step with the gitlinks
-         # `lock --check` reads the gitlinks with `git ls-files`. This job runs in
-         # a container whose user differs from the checkout's owner, so git refuses
-@@ -305,7 +308,7 @@ jobs:
-         # package's targets, and graph's tests are where most of the index's
-         # code under the flag lives.
-         run: |
--          CXX=clang++-23 cargo clippy -p falkordb-rs -p graph --all-targets --features index-falkordb
-+          CXX=clang++-23 cargo clippy -p falkordb-rs -p graph --all-targets --features index-falkordb -- -D warnings
-       - name: Unit tests
-         # The doctests link GraphBLAS's bundled zstd and the zstd-sys crate together, and
-         # both define the zstd error helpers: the same link flag `coverage` and `fuzz` pass.
-```
-
-**File**: `.vscode/settings.json` (modified, +1/-2)
-```diff
-@@ -1,9 +1,8 @@
- {
-     "rust-analyzer.check.command": "clippy",
--    "rust-analyzer.check.extraArgs": ["--", "-W", "clippy::pedantic", "-W", "clippy::nursery", "-W", "clippy::cargo", "-A", "clippy::missing-errors-doc", "-A", "clippy::missing-panics-doc", "-A", "clippy::doc-markdown"],
-     "python.testing.pytestArgs": [
-         "tests"
-     ],
-     "python.testing.unittestEnabled": false,
-     "python.testing.pytestEnabled": true
--}
-\ No newline at end of file
-+}
-```
-
-**File**: `CLAUDE.md` (modified, +12/-0)
-```diff
-@@ -214,6 +214,18 @@ Cypher Query String
-   (see `src/commands/explain.rs`)
- - The parser (`cypher.rs`) is hand-written, not generated from Cypher.g4 grammar file
- - GraphBLAS FFI bindings are in `graph/src/graph/GraphBLAS.rs` (auto-generated, do not edit)
-+- Keep clippy clean under the strict set: pedantic, nursery and cargo, from
-+  `[workspace.lints]` in `Cargo.toml`, which CI enforces with `-D warnings`.
-+  Check it before every commit, in both feature sets:
-+  ```bash
-+  CXX=${CXX:-clang++} cargo clippy --workspace --all-targets -- -D warnings
-+  CXX=${CXX:-clang++} cargo clippy -p falkordb-rs -p graph --all-targets --features index-falkordb -- -D warnings
-+  cargo clippy --all-targets --manifest-path native-deps/Cargo.toml -- -D warnings
-+  ```
-+  Fix every warning. Where a lint is wrong or the shape is deliberate, put a
-+  scoped `#[allow(clippy::<lint>, reason = "...")]` on the narrowest item it
-+  covers (a bench/test module at most), never a crate-wide allow. Review
-+  `--fix` output: its `map_or` rewrites can delete comments inside match arms.
- 
- ## Configuration
- 
-```
-
-**File**: `Cargo.toml` (modified, +16/-0)
-```diff
-@@ -7,6 +7,19 @@ members = [
- # so it must not inherit this workspace's RUSTFLAGS/target (e.g. an ASAN build).
- exclude = ["native-deps"]
- 
-+# The clippy lints CI enforces (with `-D warnings`). Here, rather than in CI's
-+# command line, so a plain `cargo clippy` (and rust-analyzer) checks the same set.
-+[workspace.lints.clippy]
-+pedantic = { level = "warn", priority = -1 }
-+nursery = { level = "warn", priority = -1 }
-+cargo = { level = "warn", priority = -1 }
-+missing_errors_doc = "allow"
-+missing_panics_doc = "allow"
-+doc_markdown = "allow"
-+
-+[workspace.lints.rust]
-+unexpected_cfgs = { level = "warn", check-cfg = ['cfg(tarpaulin)'] }
-+
- [package]
- name = "falkordb-rs"
- version = "99.99.99"
-@@ -18,6 +31,9 @@ readme = "README.md"
- keywords = ["graph", "database"]
- categories = ["database"]
- 
-+[lints]
-+workspace = true
-+
- [lib]
- crate-type = ["cdylib", "rlib"]
- name = "falkordb"
-```
-
-**File**: `fuzz/Cargo.toml` (modified, +3/-0)
-```diff
-@@ -7,6 +7,9 @@ edition = "2024"
- [package.metadata]
- cargo-fuzz = true
- 
-+[lints]
-+workspace = true
-+
- [dependencies]
- libfuzzer-sys = "0.4"
- libc = "0.2.186"
-```
-
-**File**: `graph/Cargo.toml` (modified, +2/-2)
-```diff
-@@ -9,8 +9,8 @@ readme = "../README.md"
- keywords = ["graph", "database"]
- categories = ["data-structures", "database"]
- 
--[lints.rust]
--unexpected_cfgs = { level = "warn", check-cfg = ['cfg(tarpaulin)'] }
-+[lints]
-+workspace = true
- 
- [features]
- # See root Cargo.toml feature of the same name. Pass-through so the runtime
-```
-
----
-
-### Incident Patch 2: `6b708851` (2026-11-15)
-**Commit Message**: revert: GraphBLAS wrappers for the CCH input (#3744) (#3818)
-
-This reverts commit 36c5d7ad7a38575ccac087175e19370676ce6851, except for
-the unit-test GraphBLAS start-up in graphblas/mod.rs.
-
-CCH needs a redesign. #3744 added GraphBLAS wrappers for the CCH input
-build (#3360): the CSR export, `Scalar<T>`, `Vector<f64>`,
-`pattern_union`, `grb!` and the read-only effective matrix, and it
-compiled `Matrix<f64>`, which was test-only, under `index-falkordb`.
-Nothing on main calls them, and what the redesigned CCH needs from
-GraphBLAS is not settled, so they come out until it is. `Matrix<f64>` is
-test-only again.
-
-The graphblas files go back to their state before #3744, and so do the
-proofs COVERAGE.tsv rows that point into them. The optimizer_scan and
-redis_layer rows go back to their old order; #3744 only reordered them.
-proofs/native_index/COVERAGE.tsv keeps main's copy: #3744 only reordered
-its rows, and #3737, written before #3744, has changed it since.
-
-Kept from #3744: `test_init::ensure_init` starts GraphBLAS on a thread
-that lives as long as the test process. With libomp linked statically,
-as on Linux, the OpenMP runtime goes away when the thread that started
-it exits, and every l
-
-**File**: `graph/src/graph/graphblas/csr.rs` (removed, +0/-384)
-```diff
-@@ -1,384 +0,0 @@
--//! Row-major CSR export of a GraphBLAS matrix, copied into Rust `Vec`s: the
--//! result type of [`Matrix::into_csr`] and [`Matrix::into_csr_pattern`], and
--//! the copy itself.
--//!
--//! GraphBLAS's own `GrB_Matrix_export` writes the arrays Rust allocated. It
--//! finishes the matrix's pending work first, so every row comes out sorted; it
--//! converts hypersparse, bitmap and full storage in a scratch copy of its own;
--//! it widens 32-bit indices to 64; and it expands iso values. A matrix stored
--//! by column is first copied by row (`Matrix::copy_csr`), since the export's
--//! own transpose can leave rows unsorted. So a matrix needs no setting up
--//! before it is exported, and nothing GraphBLAS allocated is ever freed by Rust.
--
--use std::os::raw::c_int;
--
--use super::length;
--#[cfg(doc)]
--use super::matrix::Matrix;
--use super::matrix::grb;
--use super::{GrB_Format, GrB_Index, GrB_Info, GrB_Matrix, GrB_Matrix_exportSize};
--
--/// Row-major CSR export of a GraphBLAS matrix.
--///
--/// Row `r` owns the entries `row_offsets[r] .. row_offsets[r + 1]`: their column
--/// indices are that slice of `column_indices`, ascending and duplicate-free, and —
--/// unless `V` is `()`, the pattern alone — their values are the same slice of
--/// `values`. `row_offsets` has one entry per row plus one, and ends at the entry
--/// count.
--pub struct CsrExport<V> {
--    /// One offset into `column_indices` (and `values`, when non-empty) per
--    /// row, plus one.
--    pub row_offsets: Vec<u64>,
--    /// One column index per entry, ascending within each row.
--    pub column_indices: Vec<u64>,
--    /// One value per entry; empty for the pattern export (`V = ()`).
--    pub values: Vec<V>,
--}
--
--impl<V> CsrExport<V> {
--    /// The matrix's row count.
--    #[must_use]
--    pub fn row_count(&self) -> usize {
--        self.row_offsets.len() - 1
--    }
--}
--
--/// A typed `GrB_Matrix_export_*`: its `Ax` must be of the matrix's own type.
--pub(super) type ExportFn<V> = unsafe extern "C" fn(
--    *mut GrB_Index,
--    *mut GrB_Index,
--    *mut V,
--    *mut GrB_Index,
--    *mut GrB_Index,
--    *mut GrB_Index,
--    c_int,
--    GrB_Matrix,
--) -> GrB_Info;
--
--/// Copy `matrix` out as row-major CSR through `export`.
--///
--/// Rows come out sorted when `matrix` is stored by row: see `Matrix::copy_csr`.
--/// An `export` of another type than the matrix's is refused by GraphBLAS
--/// (`GrB_DOMAIN_MISMATCH`), which panics here.
--///
--/// # Safety
--/// `matrix` is live and nobody else uses it until this returns: the export
--/// finishes its pending work, a mutation.
--pub(super) unsafe fn copy_out_csr<V: Copy + Default>(
--    matrix: GrB_Matrix,
--    export: ExportFn<V>,
--) -> CsrExport<V> {
--    let format = GrB_Format::GrB_CSR_FORMAT as c_int;
--    let (mut offset_count, mut index_count, mut value_count) = (0, 0, 0);
--    // SAFETY: `matrix` is live (the caller's contract); the counts are locals.
--    grb!(unsafe {
--        GrB_Matrix_exportSize(
--            &raw mut offset_count,
--            &raw mut index_count,
--            &raw mut value_count,
--            format,
--            matrix,
--        )
--    });
--    let mut row_offsets = vec![0; length(offset_count)];
--    let mut column_indices = vec![0; length(index_count)];
--    let mut values = vec![V::default(); length(value_count)];
--    // SAFETY: each array holds the count `GrB_Matrix_exportSize` asked for,
--    // which the export checks against before writing; `export` matches the
--    // matrix's type (the caller's contract).
--    grb!(unsafe {
--        export(
--            row_offsets.as_mut_ptr(),
--            column_indices.as_mut_ptr(),
--            values.as_mut_ptr(),
--            &raw mut offset_count,
--            &raw mut index_count,
--            &raw mut value_count,
--            format,
--            matrix,
--        )
--    });
--    row_offsets.truncate(length(offset_count));
--    column_indices.truncate(length(index_count));
--    values.truncate(length(value_count));
--    CsrExport {
--        row_offsets,
--        column_indices,
--        values,
--    }
--}
--
--#[cfg(test)]
--mod tests {
--    use rand::rngs::SmallRng;
--    use rand::{RngExt, SeedableRng};
--
--    use std::ptr::null_mut;
--
--    use super::CsrExport;
--    use crate::graph::graphblas::matrix::{Matrix, grb};
--    use crate::graph::graphblas::{
--        GrB_Matrix_get_INT32, GrB_Matrix_set_INT32, GrB_Orientation, GxB_BITMAP, GxB_Context,
--        GxB_Context_Field, GxB_Context_disengage, GxB_Context_engage, GxB_Context_free,
--        GxB_Context_get_INT32, GxB_Context_new, GxB_Context_set_INT32, GxB_FULL, GxB_HYPERSPARSE,
--        GxB_Option_Field, test_init,
--    };
--
--    /// Run `body` with this thread's GraphBLAS calls on `threads` threads,
--    /// however many cores the machine has: a `GxB_Context` engaged on this
--    /// thread only, so other tests are not affected.
--    fn on_threads<R>(
--        threads: i32,
--        body: impl FnOnce() -> R,
--    ) -> R {
--        let nthreads = GxB_Context_
-```
-
-**File**: `graph/src/graph/graphblas/matrix.rs` (modified, +33/-385)
-```diff
-@@ -75,68 +75,41 @@ use crate::graph::graphblas::{
- /// Size of the `GxB_Container_struct` in bytes.
- const CONTAINER_STRUCT_SIZE: usize = std::mem::size_of::<super::GxB_Container_struct>();
- 
--#[cfg(feature = "index-falkordb")]
--pub use super::csr::CsrExport;
--#[cfg(feature = "index-falkordb")]
--use super::csr::{ExportFn, copy_out_csr};
--#[cfg(any(test, feature = "index-falkordb"))]
--use super::length;
--#[cfg(feature = "index-falkordb")]
--use super::scalar::Scalar;
- use super::vector::Vector;
- use super::{
-     GrB_BOOL, GrB_BinaryOp, GrB_DESC_C, GrB_DESC_CT0, GrB_DESC_CT0T1, GrB_DESC_CT1, GrB_DESC_R,
-     GrB_DESC_RC, GrB_DESC_RCT0, GrB_DESC_RCT0T1, GrB_DESC_RCT1, GrB_DESC_RS, GrB_DESC_RSC,
-     GrB_DESC_RSCT0, GrB_DESC_RSCT0T1, GrB_DESC_RSCT1, GrB_DESC_RST0, GrB_DESC_RST0T1,
-     GrB_DESC_RST1, GrB_DESC_RT0, GrB_DESC_RT0T1, GrB_DESC_RT1, GrB_DESC_S, GrB_DESC_SC,
-     GrB_DESC_SCT0, GrB_DESC_SCT0T1, GrB_DESC_SCT1, GrB_DESC_ST0, GrB_DESC_ST0T1, GrB_DESC_ST1,
--    GrB_DESC_T0, GrB_DESC_T0T1, GrB_DESC_T1, GrB_Descriptor, GrB_FP64, GrB_GLOBAL,
--    GrB_Global_set_INT32, GrB_Info, GrB_MIN_FP64, GrB_MIN_MONOID_FP64, GrB_Matrix,
--    GrB_Matrix_apply, GrB_Matrix_assign_BOOL, GrB_Matrix_build_BOOL, GrB_Matrix_build_FP64,
-+    GrB_DESC_T0, GrB_DESC_T0T1, GrB_DESC_T1, GrB_Descriptor, GrB_GLOBAL, GrB_Global_set_INT32,
-+    GrB_Info, GrB_Matrix, GrB_Matrix_apply, GrB_Matrix_assign_BOOL, GrB_Matrix_build_BOOL,
-     GrB_Matrix_build_UINT64, GrB_Matrix_clear, GrB_Matrix_dup, GrB_Matrix_eWiseAdd_BinaryOp,
--    GrB_Matrix_eWiseMult_Semiring, GrB_Matrix_export_BOOL, GrB_Matrix_export_FP64,
--    GrB_Matrix_extractElement_BOOL, GrB_Matrix_extractElement_FP64,
--    GrB_Matrix_extractElement_UINT64, GrB_Matrix_extractTuples_FP64, GrB_Matrix_free,
--    GrB_Matrix_get_INT32, GrB_Matrix_ncols, GrB_Matrix_new, GrB_Matrix_nrows, GrB_Matrix_nvals,
--    GrB_Matrix_reduce_FP64, GrB_Matrix_removeElement, GrB_Matrix_resize, GrB_Matrix_select_INT64,
--    GrB_Matrix_select_UINT64, GrB_Matrix_set_INT32, GrB_Matrix_setElement_BOOL,
--    GrB_Matrix_setElement_FP64, GrB_Matrix_setElement_UINT64, GrB_Matrix_wait, GrB_Mode,
--    GrB_Monoid, GrB_OFFDIAG, GrB_ONEB_BOOL, GrB_Orientation, GrB_PLUS_MONOID_FP64,
--    GrB_SECOND_UINT64, GrB_Scalar, GrB_Scalar_free, GrB_Scalar_new, GrB_Scalar_setElement_BOOL,
--    GrB_Type, GrB_UINT64, GrB_VALUEEQ_UINT64, GrB_WaitMode, GrB_finalize, GrB_mxm, GrB_mxv,
--    GrB_transpose, GxB_ANY_BOOL, GxB_ANY_PAIR_BOOL, GxB_ANY_UINT64, GxB_Container_free,
--    GxB_Container_new, GxB_Global_Option_set_INT32, GxB_HYPERSPARSE, GxB_Iterator,
--    GxB_Iterator_free, GxB_Iterator_get_UINT64, GxB_Iterator_new, GxB_JIT_Control,
--    GxB_Matrix_build_Scalar, GxB_Matrix_eWiseUnion, GxB_Matrix_fprint, GxB_Matrix_isStoredElement,
--    GxB_Matrix_memoryUsage, GxB_Matrix_type, GxB_NTHREADS, GxB_ONE_BOOL, GxB_Option_Field,
--    GxB_PLUS_PAIR_UINT64, GxB_Print_Level, GxB_SPARSE, GxB_init, GxB_load_Matrix_from_Container,
--    GxB_rowIterator_attach, GxB_rowIterator_getColIndex, GxB_rowIterator_getRowIndex,
--    GxB_rowIterator_kount, GxB_rowIterator_nextCol, GxB_rowIterator_nextRow,
--    GxB_rowIterator_seekRow, GxB_unload_Matrix_into_Container,
-+    GrB_Matrix_eWiseMult_Semiring, GrB_Matrix_extractElement_BOOL,
-+    GrB_Matrix_extractElement_UINT64, GrB_Matrix_free, GrB_Matrix_get_INT32, GrB_Matrix_ncols,
-+    GrB_Matrix_new, GrB_Matrix_nrows, GrB_Matrix_nvals, GrB_Matrix_removeElement,
-+    GrB_Matrix_resize, GrB_Matrix_select_UINT64, GrB_Matrix_set_INT32, GrB_Matrix_setElement_BOOL,
-+    GrB_Matrix_setElement_UINT64, GrB_Matrix_wait, GrB_Mode, GrB_Orientation, GrB_SECOND_UINT64,
-+    GrB_Scalar, GrB_Scalar_free, GrB_Scalar_new, GrB_Scalar_setElement_BOOL, GrB_Type, GrB_UINT64,
-+    GrB_VALUEEQ_UINT64, GrB_WaitMode, GrB_finalize, GrB_mxm, GrB_mxv, GrB_transpose, GxB_ANY_BOOL,
-+    GxB_ANY_PAIR_BOOL, GxB_ANY_UINT64, GxB_Container_free, GxB_Container_new,
-+    GxB_Global_Option_set_INT32, GxB_HYPERSPARSE, GxB_Iterator, GxB_Iterator_free,
-+    GxB_Iterator_get_UINT64, GxB_Iterator_new, GxB_JIT_Control, GxB_Matrix_build_Scalar,
-+    GxB_Matrix_fprint, GxB_Matrix_isStoredElement, GxB_Matrix_memoryUsage, GxB_Matrix_type,
-+    GxB_NTHREADS, GxB_ONE_BOOL, GxB_Option_Field, GxB_PLUS_PAIR_UINT64, GxB_Print_Level,
-+    GxB_SPARSE, GxB_init, GxB_load_Matrix_from_Container, GxB_rowIterator_attach,
-+    GxB_rowIterator_getColIndex, GxB_rowIterator_getRowIndex, GxB_rowIterator_kount,
-+    GxB_rowIterator_nextCol, GxB_rowIterator_nextRow, GxB_rowIterator_seekRow,
-+    GxB_unload_Matrix_into_Container,
-+};
-+use super::{
-+    GrB_FP64, GrB_Matrix_build_FP64, GrB_Matrix_extractTuples_FP64, GrB_Matrix_select_INT64,
-+    GrB_Matrix_setElement_FP64, GrB_OFFDIAG,
- };
- use super::{
-     GrB_GT_UINT64, GrB_Matrix_eWiseMult_BinaryOp, GrB_Matrix_select_BOOL, GrB_VALUEEQ_BOOL,
- };
- 
--/// Check a `GrB_Info` and panic with the call's text on anything but success,
--/// in release too: for calls on data the caller built, where a failure is a
--/// bug, never bad inpu
-```
-
-**File**: `graph/src/graph/graphblas/mod.rs` (modified, +2/-18)
-```diff
-@@ -9,10 +9,8 @@
- //! ```text
- //! graphblas/
- //!   mod.rs                  <-- Auto-generated FFI bindings (GrB_* / GxB_* symbols)
--//!   matrix.rs               <-- Safe wrapper around GrB_Matrix
--//!   csr.rs                  <-- Row-major CSR export of a matrix
--//!   scalar.rs               <-- Safe wrapper around GrB_Scalar
--//!   vector.rs               <-- Safe wrapper around GrB_Vector
-+//!   matrix.rs               <-- Safe wrapper around GrB_Matrix (boolean sparse matrix)
-+//!   vector.rs               <-- Safe wrapper around GrB_Vector (boolean sparse vector)
- //!   tensor.rs               <-- 3D sparse structure for multi-edge storage
- //!   versioned_matrix.rs     <-- Copy-on-write matrix with MVCC delta tracking
- //!   lagraph_bindings.rs     <-- Auto-generated LAGraph FFI bindings
-@@ -72,8 +70,6 @@
- 
- #[cfg(test)]
- mod block_scaling_bench;
--#[cfg(feature = "index-falkordb")]
--mod csr;
- #[cfg(test)]
- mod degree_bench;
- #[cfg(test)]
-@@ -83,8 +79,6 @@ pub mod lagraphx_bindings;
- pub mod matrix;
- #[cfg(test)]
- mod me_delta_bench;
--#[cfg(feature = "index-falkordb")]
--pub(crate) mod scalar;
- pub mod serialization;
- pub mod tensor;
- pub mod vector;
-@@ -136,16 +130,6 @@ pub(crate) mod instr {
-     }
- }
- 
--/// A GraphBLAS count (`GrB_Index`, or a byte size) as a length.
--///
--/// # Panics
--/// If it does not fit a `usize`, which only a target narrower than 64 bits
--/// allows: GraphBLAS counts what this process holds in memory.
--#[cfg(any(test, feature = "index-falkordb"))]
--pub(crate) fn length(count: u64) -> usize {
--    usize::try_from(count).expect("a GraphBLAS count fits a usize")
--}
--
- /// Process-wide GraphBLAS initialization for unit tests. `GrB_init` may only
- /// be called once per process, so every `#[cfg(test)]` module must go through
- /// this shared guard rather than owning its own `Once`.
-```
-
-**File**: `graph/src/graph/graphblas/scalar.rs` (removed, +0/-115)
-```diff
-@@ -1,115 +0,0 @@
--//! [`Scalar`]: a typed `GrB_Scalar`, empty or holding one value, freed on drop.
--
--use std::marker::PhantomData;
--use std::ptr::null_mut;
--
--use super::matrix::grb;
--use super::{
--    GrB_BOOL, GrB_Info, GrB_Scalar, GrB_Scalar_free, GrB_Scalar_new, GrB_Scalar_setElement_BOOL,
--    GrB_Type,
--};
--
--/// A Rust type a [`Scalar`] holds: its GraphBLAS type and setter.
--pub(crate) trait ScalarElement: Copy {
--    /// The GraphBLAS type of a scalar holding `Self`.
--    fn grb_type() -> GrB_Type;
--
--    /// `GrB_Scalar_setElement_<T>`.
--    ///
--    /// # Safety
--    /// `scalar` is a live scalar of type [`Self::grb_type`].
--    unsafe fn set_element(
--        scalar: GrB_Scalar,
--        value: Self,
--    ) -> GrB_Info;
--}
--
--impl ScalarElement for bool {
--    fn grb_type() -> GrB_Type {
--        // SAFETY: a read of the type global `GrB_init` set.
--        unsafe { GrB_BOOL }
--    }
--
--    unsafe fn set_element(
--        scalar: GrB_Scalar,
--        value: Self,
--    ) -> GrB_Info {
--        unsafe { GrB_Scalar_setElement_BOOL(scalar, value) }
--    }
--}
--
--/// A `GrB_Scalar` of `T`, which this value owns and frees on drop.
--pub(crate) struct Scalar<T> {
--    scalar: GrB_Scalar,
--    element: PhantomData<T>,
--}
--
--impl<T: ScalarElement> Scalar<T> {
--    /// An empty scalar.
--    pub(crate) fn new() -> Self {
--        let mut scalar: GrB_Scalar = null_mut();
--        // SAFETY: `GrB_Scalar_new` writes a new scalar, which `Self` then frees.
--        grb!(unsafe { GrB_Scalar_new(&raw mut scalar, T::grb_type()) });
--        Self {
--            scalar,
--            element: PhantomData,
--        }
--    }
--
--    /// Hold `value`, replacing what the scalar held.
--    pub(crate) fn set(
--        &mut self,
--        value: T,
--    ) {
--        // SAFETY: our live scalar, of `T`'s type.
--        grb!(unsafe { T::set_element(self.scalar, value) });
--    }
--
--    /// The handle, for a GraphBLAS call. It stays this scalar's to free.
--    pub(crate) const fn ptr(&self) -> GrB_Scalar {
--        self.scalar
--    }
--}
--
--impl<T: ScalarElement> From<T> for Scalar<T> {
--    fn from(value: T) -> Self {
--        let mut scalar = Self::new();
--        scalar.set(value);
--        scalar
--    }
--}
--
--impl<T> Drop for Scalar<T> {
--    fn drop(&mut self) {
--        // SAFETY: `self.scalar` is live and ours alone.
--        let info = unsafe { GrB_Scalar_free(&raw mut self.scalar) };
--        debug_assert_eq!(info, GrB_Info::GrB_SUCCESS);
--    }
--}
--
--#[cfg(test)]
--mod tests {
--    use super::Scalar;
--    use crate::graph::graphblas::{GrB_Scalar_extractElement_BOOL, GrB_Scalar_nvals, test_init};
--
--    fn entries(scalar: &Scalar<bool>) -> u64 {
--        let mut count = 0;
--        // SAFETY: a live scalar.
--        unsafe { GrB_Scalar_nvals(&raw mut count, scalar.ptr()) };
--        count
--    }
--
--    #[test]
--    fn new_is_empty_and_set_holds_the_value() {
--        test_init::ensure_init();
--        let mut scalar = Scalar::<bool>::new();
--        assert_eq!(entries(&scalar), 0);
--        scalar.set(false);
--        assert_eq!(entries(&scalar), 1);
--        let mut value = true;
--        // SAFETY: a live scalar holding a `bool`.
--        unsafe { GrB_Scalar_extractElement_BOOL(&raw mut value, scalar.ptr()) };
--        assert!(!value);
--        assert_eq!(entries(&Scalar::from(true)), 1);
--    }
--}
-```
-
-**File**: `graph/src/graph/graphblas/tensor.rs` (modified, +0/-88)
-```diff
-@@ -130,8 +130,6 @@ use crate::graph::{
-     graphblas::matrix::{BoolExtract, Uint64Extract},
- };
- 
--#[cfg(feature = "index-falkordb")]
--use super::versioned_matrix::Effective;
- use super::{
-     matrix::{Descriptor, Dup, Matrix},
-     serialization::{Decode, Encode, Reader, Writer},
-@@ -1051,21 +1049,6 @@ impl Tensor {
-         &self.dm
-     }
- 
--    /// The effective forward adjacency `(m ∖ dm) ∪ dp` as one `UINT64`
--    /// matrix, `dp`'s value winning on a pair it shadows: no copy when both
--    /// deltas are empty (see [`Effective`]). A multi-edge pair holds
--    /// [`MULTI_EDGE`] here, as it does in every layer; its ids are in `me`.
--    #[cfg(feature = "index-falkordb")]
--    #[must_use]
--    pub(crate) fn effective_fwd(&self) -> Effective<'_, u64> {
--        // The deltas as every forward reader takes them (resynced, the fold
--        // decision latched), and the base's own wait, a no-op unless a resize
--        // flagged it: the merge reads it.
--        self.wait_fwd();
--        self.m.wait();
--        versioned_matrix::effective(&self.m, &self.dp, &self.dm)
--    }
--
-     /// Structure-only `(src, dst)` iterator over the effective forward
-     /// adjacency `(m ∖ dm) ∪ dp`, ignoring the stored edge-id values.
-     #[must_use]
-@@ -1878,77 +1861,6 @@ mod tests {
-     use super::super::test_init::ensure_init;
-     use super::*;
- 
--    /// The effective forward matrix is the committed base itself when there
--    /// are no deltas, and `(m ∖ dm) ∪ dp` (with `dp`'s value) when there are,
--    /// checked pair by pair against the tensor's own iterator.
--    #[test]
--    #[cfg(feature = "index-falkordb")]
--    fn effective_fwd_is_the_base_or_the_merge() {
--        ensure_init();
--        const N: u64 = 1_000;
--        let mut t = Tensor::new(2 * N, 2 * N);
--        let srcs: Vec<u64> = (0..N).collect();
--        let dsts: Vec<u64> = (0..N).map(|i| i + 1).collect();
--        let ids: Vec<u64> = (0..N).collect();
--        t.set_all_from_slices(&srcs, &dsts, &ids);
--        t.wait();
--        let mut t = t.dup();
--        t.flush();
--        assert!(t.fwd_m().nvals() == N && t.fwd_dp().nvals() == 0);
--        let eff = t.effective_fwd();
--        assert!(eff.is_borrowed(), "no deltas, yet a copy");
--        assert_eq!(eff.inner(), t.fwd_m().inner());
--
--        // Pending: delete ten committed edges, add ten new pairs and a second
--        // edge on one committed pair (which promotes it to MULTI_EDGE).
--        // `(edge_id, src, dst)`.
--        let gone: Vec<(u64, u64, u64)> = (0..10).map(|i| (i * 7, i * 7, i * 7 + 1)).collect();
--        t.remove_all(&gone);
--        let new_srcs: Vec<u64> = (0..10).map(|i| N + i).chain([500]).collect();
--        let new_dsts: Vec<u64> = (0..10).map(|i| N + i + 2).chain([501]).collect();
--        let new_ids: Vec<u64> = (0..11).map(|i| 5 * N + i).collect();
--        t.set_all_from_slices(&new_srcs, &new_dsts, &new_ids);
--        t.wait();
--        assert!(t.fwd_dp().nvals() > 0 && t.fwd_dm().nvals() > 0);
--
--        let eff = t.effective_fwd();
--        assert!(!eff.is_borrowed());
--        let mut want: FxHashMap<(u64, u64), Vec<u64>> = FxHashMap::default();
--        for (s, d, id) in t.iter_edges() {
--            want.entry((s, d)).or_default().push(id);
--        }
--        assert_eq!(eff.nvals(), want.len() as u64);
--        for ((s, d), ids) in &want {
--            let expect = if ids.len() == 1 { ids[0] } else { MULTI_EDGE };
--            assert_eq!(eff.get(*s, *d), Some(expect), "({s}, {d})");
--        }
--        assert_eq!(eff.get(500, 501), Some(MULTI_EDGE));
--        assert_eq!(eff.get(7, 8), None);
--    }
--
--    /// `effective_fwd` reads the deltas as every other forward reader does,
--    /// through `wait_fwd`: each delta's counter pinned to its exact size and
--    /// the fold decision latched (here a delta the size of the base: fold).
--    #[test]
--    #[cfg(feature = "index-falkordb")]
--    fn effective_fwd_resyncs_and_latches_like_every_forward_reader() {
--        ensure_init();
--        const N: u64 = 1_000;
--        let mut t = Tensor::new(2 * N, 2 * N);
--        let ids: Vec<u64> = (0..N).collect();
--        t.set_all_from_slices(&ids, &ids, &ids);
--        t.wait();
--        let mut t = t.dup();
--        t.flush();
--        let srcs: Vec<u64> = (N..2 * N).collect();
--        let new_ids: Vec<u64> = (N..2 * N).collect();
--        t.set_all_from_slices(&srcs, &ids, &new_ids);
--        assert!(!t.dp.folding());
--        let _ = t.effective_fwd();
--        assert!(t.dp.folding());
--        assert_eq!(t.dp.count(), t.dp.nvals());
--    }
--
-     /// Edge id 0 must survive the bool round-trips in the delta layers: the
-     /// bulk `remove_all` path derives `dm` from the committed u64 matrix, and
-     /// `extract` derives a bool pattern from it. Any op that *typecasts* the
-```
-
-**File**: `graph/src/graph/graphblas/vector.rs` (modified, +14/-78)
-```diff
-@@ -1,10 +1,8 @@
--//! Safe Rust wrapper around GraphBLAS sparse vectors.
-+//! Safe Rust wrapper around GraphBLAS boolean sparse vectors.
- //!
- //! This module provides [`Vector<T>`], which wraps `GrB_Vector` from the
--//! SuiteSparse:GraphBLAS C library. Three element types are implemented:
--//! `Vector<bool>`, used to represent sets of node IDs efficiently;
--//! `Vector<u64>`, a count or an id per index; and, with the `index-falkordb` feature,
--//! `Vector<f64>`, a weight per index.
-+//! SuiteSparse:GraphBLAS C library. Currently only `Vector<bool>` is
-+//! implemented, used to represent sets of node IDs efficiently.
- //!
- //! ## Use Cases
- //!
-@@ -48,10 +46,6 @@ use crate::graph::graphblas::{
-     GrB_Vector_setElement_UINT64, GxB_Vector_build_Scalar,
- };
- 
--#[cfg(feature = "index-falkordb")]
--use super::length;
--#[cfg(feature = "index-falkordb")]
--use super::matrix::grb;
- use super::serialization::{Decode, Encode, Reader, Writer};
- use super::{
-     GrB_BOOL, GrB_Info, GrB_Type, GrB_Type_get_String, GrB_Vector, GrB_Vector_free, GrB_Vector_new,
-@@ -62,11 +56,10 @@ use super::{
-     GxB_Vector_Iterator_seek, GxB_Vector_deserialize, GxB_Vector_load, GxB_Vector_serialize,
-     GxB_Vector_unload,
- };
--use super::{GrB_FP64, GrB_Vector_extractTuples_FP64, GrB_Vector_nvals};
- 
- /// A sparse vector backed by GraphBLAS.
- ///
--/// Generic over element type T: `bool`, `u64` and (with `index-falkordb`) `f64`.
-+/// Generic over element type T, though currently only bool is implemented.
- /// The vector automatically frees its GraphBLAS resources on drop.
- pub struct Vector<T> {
-     v: GrB_Vector,
-@@ -104,26 +97,12 @@ impl From<GrB_Vector> for Vector<u64> {
- }
- 
- impl<T> Vector<T> {
--    #[must_use]
--    pub const fn ptr(&self) -> GrB_Vector {
--        self.v
--    }
--
-     pub fn clear(&mut self) {
-         unsafe {
-             let info = GrB_Vector_clear(self.v);
-             debug_assert_eq!(info, GrB_Info::GrB_SUCCESS);
-         }
-     }
--
--    /// The number of stored entries.
--    #[cfg(feature = "index-falkordb")]
--    #[must_use]
--    fn nvals(&self) -> u64 {
--        let mut nvals = 0;
--        grb!(unsafe { GrB_Vector_nvals(&raw mut nvals, self.v) });
--        nvals
--    }
- }
- 
- impl Vector<bool> {
-@@ -191,6 +170,11 @@ impl Vector<bool> {
-         v
-     }
- 
-+    #[must_use]
-+    pub const fn ptr(&self) -> GrB_Vector {
-+        self.v
-+    }
-+
-     #[must_use]
-     #[allow(clippy::iter_without_into_iter)]
-     pub fn iter(&self) -> Iter<bool> {
-@@ -470,39 +454,6 @@ impl Decode<19> for Vector<bool> {
-     }
- }
- 
--/// `FP64` vectors, as a weight per index (e.g. a minimum per row).
--#[cfg(feature = "index-falkordb")]
--impl Vector<f64> {
--    #[must_use]
--    pub(crate) fn new(nrows: u64) -> Self {
--        let mut v: GrB_Vector = null_mut();
--        grb!(unsafe { GrB_Vector_new(&raw mut v, GrB_FP64, nrows) });
--        Self {
--            v,
--            phantom: PhantomData,
--        }
--    }
--
--    /// Every stored entry as parallel index and value arrays, in index order.
--    #[must_use]
--    pub(crate) fn extract_tuples(&self) -> (Vec<u64>, Vec<f64>) {
--        let mut count = self.nvals();
--        let mut indices = vec![0; length(count)];
--        let mut values = vec![0.0; length(count)];
--        grb!(unsafe {
--            GrB_Vector_extractTuples_FP64(
--                indices.as_mut_ptr(),
--                values.as_mut_ptr(),
--                &raw mut count,
--                self.v,
--            )
--        });
--        indices.truncate(length(count));
--        values.truncate(length(count));
--        (indices, values)
--    }
--}
--
- impl Vector<u64> {
-     pub fn new(nrows: u64) -> Self {
-         unsafe {
-@@ -537,6 +488,11 @@ impl Vector<u64> {
-         Iter::new(self)
-     }
- 
-+    #[must_use]
-+    pub const fn ptr(&self) -> GrB_Vector {
-+        self.v
-+    }
-+
-     /// The sum of the stored values (`PLUS` monoid; 0 when empty).
-     #[must_use]
-     pub fn sum(&self) -> u64 {
-@@ -860,23 +816,3 @@ mod decode_tests {
-         }
-     }
- }
--
--#[cfg(all(test, feature = "index-falkordb"))]
--mod fp64_tests {
--    use super::super::GrB_Vector_setElement_FP64;
--    use super::super::test_init::ensure_init;
--    use super::{Vector, grb};
--
--    /// Every entry, in index order, a stored `0.0` included; absent indices
--    /// are not reported.
--    #[test]
--    fn extract_tuples_returns_every_entry_in_index_order() {
--        ensure_init();
--        let v = Vector::<f64>::new(10);
--        assert_eq!(v.extract_tuples(), (vec![], vec![]));
--        for (i, x) in [(7, 2.5), (1, 0.0), (4, -1.0)] {
--            grb!(unsafe { GrB_Vector_setElement_FP64(v.ptr(), x, i) });
--        }
--        assert_eq!(v.extract_tuples(), (vec![1, 4, 7], vec![0.0, -1.0, 2.5]));
--    }
--}
-```
-
-**File**: `graph/src/graph/graphblas/versioned_matrix.rs` (modified, +1/-114)
-```diff
-@@ -69,8 +69,6 @@
- //! position), producing the effective state — sorted by `(row, col)` —
- //! without materializing a merged matrix or issuing per-entry point lookups.
- 
--#[cfg(feature = "index-falkordb")]
--use std::borrow;
- use std::ops::Deref;
- use std::sync::atomic::{AtomicBool, AtomicU64, Ordering};
- 
-@@ -82,72 +80,9 @@ use super::{
- };
- use crate::graph::{
-     cow::Cow,
--    graphblas::matrix::{BoolExtract, EWiseAdd, IterExtract, MatrixType},
-+    graphblas::matrix::{BoolExtract, IterExtract, MatrixType},
- };
- 
--/// The effective matrix of a base and its two delta layers, `(m ∖ dm) ∪ dp`,
--/// as [`effective`] returns it: the base itself, borrowed, when neither delta
--/// holds anything; a new matrix of its own otherwise. Read it through
--/// `Deref`, which never copies.
--///
--/// Read-only on purpose. `Matrix`'s `Clone` is shallow (a clone shares the
--/// GraphBLAS handle), so a `Cow`'s `to_mut` or `into_owned` on a borrowed
--/// base would hand out the shared base itself, and a write through it would
--/// change every version that holds it. A matrix of one's own is a `dup()`.
--#[cfg(feature = "index-falkordb")]
--pub(crate) struct Effective<'a, T>(borrow::Cow<'a, Matrix<T>>);
--
--#[cfg(feature = "index-falkordb")]
--impl<T> Effective<'_, T> {
--    /// Whether this is the base itself, not a merged copy.
--    #[cfg(test)]
--    pub(crate) fn is_borrowed(&self) -> bool {
--        matches!(self.0, borrow::Cow::Borrowed(_))
--    }
--}
--
--#[cfg(feature = "index-falkordb")]
--impl<T> Deref for Effective<'_, T> {
--    type Target = Matrix<T>;
--
--    fn deref(&self) -> &Matrix<T> {
--        &self.0
--    }
--}
--
--/// `(m ∖ dm) ∪ dp` in one GraphBLAS call: `eff<¬dm> = m ⊕ dp` (into a new matrix), with
--/// `⊕` from the element type ([`EWiseAdd`]), so on a `u64` layer a pending
--/// value in `dp` shadows the committed one; `dp ∩ dm = ∅`, so the mask never
--/// drops a pending addition. The mask is structural: a pair is deleted by
--/// being in `dm`, whatever value `dm` stores there. The delta fold writes the
--/// same union into the new base with a valued mask, which reads alike because
--/// `dm` stores only `true`; here it goes into a matrix of its own, and is
--/// skipped entirely when both deltas are empty.
--///
--/// The layers must not have pending work: reading a pending layer finishes
--/// that work, a mutation of a matrix readers may share. The callers wait
--/// first.
--#[cfg(feature = "index-falkordb")]
--pub(super) fn effective<'a, T: EWiseAdd + MatrixType>(
--    m: &'a Matrix<T>,
--    dp: &Matrix<T>,
--    dm: &Matrix<bool>,
--) -> Effective<'a, T> {
--    let (has_dp, has_dm) = (dp.nvals() != 0, dm.nvals() != 0);
--    if !has_dp && !has_dm {
--        return Effective(borrow::Cow::Borrowed(m));
--    }
--    let mut eff = T::new_matrix(m.nrows(), m.ncols());
--    let (mask, desc) = if has_dm {
--        (Some(dm), Some(matrix::Descriptor::SC))
--    } else {
--        (None, None)
--    };
--    eff.element_wise_add(mask, Some(m), Some(dp), desc);
--    eff.wait();
--    Effective(borrow::Cow::Owned(eff))
--}
--
- /// A delta layer is folded into the base once its size justifies a base
- /// rewrite. Every write transaction pays `O(|delta|)` just to touch a shared
- /// delta, while a fold costs a fixed `F` amortized over the entries the
-@@ -757,21 +692,6 @@ impl<T> VersionedMatrix<T> {
-         &self.dm
-     }
- 
--    /// The matrix a reader sees, `(m ∖ dm) ∪ dp`, as one GraphBLAS matrix
--    /// (see [`Effective`]): no copy when both deltas are empty.
--    #[cfg(feature = "index-falkordb")]
--    #[must_use]
--    pub(crate) fn effective(&self) -> Effective<'_, T>
--    where
--        T: EWiseAdd + MatrixType,
--    {
--        // As every reader: the deltas resynced and the fold decision latched;
--        // then the base, which the merge reads.
--        self.wait();
--        self.m.wait();
--        effective(&self.m, &self.dp, &self.dm)
--    }
--
-     #[must_use]
-     pub fn nrows(&self) -> u64 {
-         self.m.nrows()
-@@ -1607,43 +1527,10 @@ mod tests {
- 
-     use super::super::matrix::{Dup, Matrix};
-     use super::super::test_init::ensure_init;
--    #[cfg(feature = "index-falkordb")]
--    use super::effective;
-     use super::{
-         MIN_FOLD_DELTA, READ_FOLD_K, VersionedMatrix, WRITE_FOLD_K, should_fold, should_fold_read,
-     };
- 
--    /// `dm` masks structurally: a pair stored in `dm` is deleted even when
--    /// the stored value is `false`. A valued mask would read that `false` as
--    /// "not deleted" and let the committed entry through. Checked with `dm`
--    /// alone and with a pending addition in `dp`.
--    #[test]
--    #[cfg(feature = "index-falkordb")]
--    fn effective_masks_dm_by_structure_not_value() {
--        ensure_init();
--        let mut m = Matrix::<u64>::new(4, 4);
--        m.set(0, 1, 10);
--        m.set(2, 3, 20);
--        m.wait();
--        let mut dm = Matrix::<bool>::new(4, 4);
--        dm.set(0, 1, false);
--        dm.wait();
--        assert_eq!(dm.get(0, 1), Some(false), "an explicit stored
-```
-
-**File**: `proofs/optimizer_scan/COVERAGE.tsv` (modified, +3/-3)
-```diff
-@@ -48,6 +48,7 @@ graph/src/planner/optimizer/utilize_index.rs	subtree_has_any_property	569	PROVEN
- graph/src/planner/optimizer/utilize_index.rs	list_has_nested_list	582	PROVEN	Cleanup.nestedListE_iff
- graph/src/planner/optimizer/utilize_index.rs	try_in_filter_scan	602	PROVEN	Index.trySingle inn arm; sel_inList, trySingle_spec; IndexCex C7/C8/C9 counterexamples
- graph/src/planner/optimizer/utilize_index.rs	try_single_filter_scan	658	PROVEN	Index.trySingle; trySingle_spec
-+graph/src/planner/optimizer/utilize_index.rs	try_filter_pushdown	727	PROVEN	Index.tryPushdown/pushAnd/pushOr; pushAnd_spec, pushOr_spec, utilize_sound (an array-contains conjunct keeps its filter since #3736: C10 now states agreement)
- graph/src/planner/optimizer/utilize_index.rs	needs_post_filter	802	PROVEN	Index.needsPost; used in utilize_sound (¬keep ⇒ canUtilize); IndexCex C3/C4 (Date/computed constants)
- graph/src/planner/optimizer/utilize_index.rs	is_non_indexable_subexpr	855	PROVEN	Cleanup.nonIdxD_spec
- graph/src/planner/optimizer/utilize_index.rs	rewrite_until_stable	881	PROVEN	Cleanup.untilStable_preserves, untilStable_stable
-@@ -60,9 +61,6 @@ graph/src/planner/optimizer/utilize_index.rs	prune_all_node_scan_child	1051	PROV
- graph/src/planner/optimizer/utilize_index.rs	add_to_labels_filter	1080	PROVEN	Cleanup.addToLabels_idem, hasLabelsSem
- graph/src/planner/optimizer/utilize_index.rs	utilize_index	1120	PROVEN	Cleanup.utilizeIndex_sound (4 passes compose), Index.utilize_sound, Cleanup.tryIndexRewrite_sound/_pending_sound, EdgeInline.edge_utilize_sound
- graph/src/planner/optimizer/utilize_index.rs	is_has_labels_for	1138	PROVEN	Cleanup.isHasLabelsFor_build, addToLabels_idem
--graph/src/planner/optimizer/utilize_index.rs	try_filter_pushdown	727	PROVEN	Index.tryPushdown/pushAnd/pushOr; pushAnd_spec, pushOr_spec, utilize_sound (an array-contains conjunct keeps its filter since #3736: C10 now states agreement)
--graph/src/planner/optimizer/utilize_index.rs	is_array_contains	791	PROVEN	Index.isArrayContains: isArrayContains_good, tp_atom, pushAnd (C10 agreement)
--graph/src/planner/optimizer/utilize_index.rs	try_filter_pushdown/array-contains	727	MODELLED	the AND branch keeping an array-contains conjunct's filter (#3736): pushAnd models it, but utilize_sound assumes goodA, which excludes array-contains (as it does the standalone branch); checked by decide only (IndexCex C10)
- graph/src/planner/optimizer/utilize_node_by_id.rs	get_id_filter	52	PROVEN	IdSeek.getIdFilter: getIdFilter_spec, getIdFilter_other_scope ((id, scope) since #2390), flip_correct, flip_flip
- graph/src/planner/optimizer/utilize_node_by_id.rs	utilize_node_by_id	95	PROVEN	IdSeek.collectFilters + seek_sound (with runtime.rs evaluate_id_filter; empty graph since #3394); counterexamples negative/float/null; hazard: parent().unwrap() at line 106 (W4-plan-4 repro rejected by validation since #3297)
- graph/src/planner/optimizer/reorder_labels.rs	reorder_labels	16	PROVEN	ScanOrder.reorderLabels_sound, sortBy_perm
-@@ -73,3 +71,5 @@ graph/src/runtime/ops/node_by_index_scan.rs	new	58	PROVEN	EdgeInline.extraLabels
- graph/src/runtime/ops/node_by_index_scan.rs	can_utilize_index	253	PROVEN	EdgeInline.canUtilize_empty; Index.cu_inList, cu_merge, canUtilize_inList_eq_or (InList arm, #2383: same terms as the old Or)
- graph/src/runtime/ops/node_by_index_scan.rs	is_indexable	256	PROVEN	EdgeInline.isIndexable_spec
- graph/src/runtime/ops/node_by_index_scan.rs	next	302	PROVEN	EdgeInline.scanRow_eq_sel; Index.utilize_sound
-+graph/src/planner/optimizer/utilize_index.rs	is_array_contains	791	PROVEN	Index.isArrayContains: isArrayContains_good, tp_atom, pushAnd (C10 agreement)
-+graph/src/planner/optimizer/utilize_index.rs	try_filter_pushdown/array-contains	727	MODELLED	the AND branch keeping an array-contains conjunct's filter (#3736): pushAnd models it, but utilize_sound assumes goodA, which excludes array-contains (as it does the standalone branch); checked by decide only (IndexCex C10)
-```
-
----
-
-### Incident Patch 3: `bbabafe0` (2026-11-16)
-**Commit Message**: fix(fuzz): initialise RediSearch in the fuzz harnesses so index queries don't crash (#3839)
-
-* fix(fuzz): initialise RediSearch in the fuzz harnesses so index queries don't crash
-
-RediSearch allocates through the RedisModule_* function pointers that Redis
-fills in when it loads a module. The fuzz harnesses have no Redis, so they
-were null and any index DDL (`CREATE INDEX ON :L(p)`) jumped to address 0
-(rm_calloc in RediSearch_CreateIndexOptions): AFL found it as sig 11.
-
-Add graph::fuzz_support::init_index_support (behind a new `fuzz` feature of
-`graph`), shared by runtime-fuzz-target and the libFuzzer target. It points
-the allocator at libc, stubs the callbacks index creation/drop/population
-make (log, string handling, event subscription, thread-safe contexts),
-calls RediSearch_Init(REDISEARCH_INIT_LIBRARY) and starts the one-worker
-global thread pool that index population and drops are spawned on. The
-commented-out setup in the libFuzzer target is replaced by the helper.
+`Pending::commit` now registers the type of every cancelled relationship,
+so every type a segment named is in the dictionary after commit, as in C.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-* proofs: list the fuzz harness support functions as TEST-ONLY
+* fix: count cancelled entities in Pending::effects_count so a cancellation-only commit emits its schema additions (#3447)
 
-graph/src/fuzz_support.rs is compiled only with the `fuzz` feature, for the
-fuzz targets, so it
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `Cargo.lock` (modified, +10/-0)
+* fix: build against mai
+
+**File**: `graph/src/effects/v3/emit.rs` (modified, +4/-7)
 ```diff
-@@ -477,6 +477,14 @@ dependencies = [
-  "slab",
- ]
- 
-+[[package]]
-+name = "fuzz-support"
-+version = "0.1.0"
-+dependencies = [
-+ "graph",
-+ "libc",
-+]
-+
- [[package]]
- name = "generic-array"
- version = "0.14.7"
-@@ -573,6 +581,7 @@ dependencies = [
- name = "graph-fuzz"
- version = "0.0.0"
- dependencies = [
-+ "fuzz-support",
-  "graph",
-  "libc",
-  "libfuzzer-sys",
-@@ -1393,6 +1402,7 @@ name = "runtime-fuzz-target"
- version = "0.1.0"
- dependencies = [
-  "afl",
-+ "fuzz-support",
-  "graph",
- ]
- 
-```
-
-**File**: `Cargo.toml` (modified, +2/-1)
-```diff
-@@ -2,7 +2,8 @@
- members = [
-     "graph",
-     "fuzz",
--    "runtime-fuzz-target", ]
-+    "runtime-fuzz-target",
-+    "fuzz-support", ]
- # native-deps is its own workspace: graph/build.rs uses it as a build-dependency,
- # so it must not inherit this workspace's RUSTFLAGS/target (e.g. an ASAN build).
- exclude = ["native-deps"]
-```
-
-**File**: `fuzz-support/Cargo.toml` (added, +20/-0)
-```diff
-@@ -0,0 +1,20 @@
-+[package]
-+name = "fuzz-support"
-+version = "0.1.0"
-+edition = "2024"
-+description = "Process setup the fuzz harnesses need because they run the engine without Redis"
-+license = "SSPL-1.0"
-+repository = "https://github.com/FalkorDB/FalkorDB"
-+readme = "../README.md"
-+keywords = ["graph", "database"]
-+categories = ["data-structures", "database"]
-+publish = false
-+
-+[lints]
-+workspace = true
-+
-+[dependencies]
-+libc = "0.2"
-+
-+[dependencies.graph]
-+path = "../graph"
-```
-
-**File**: `fuzz-support/src/lib.rs` (added, +199/-0)
-```diff
-@@ -0,0 +1,199 @@
-+//! Setup shared by the fuzz harnesses (`runtime-fuzz-target`, `fuzz/`). A crate of its
-+//! own, so the engine (`graph`) carries no fuzz-only code.
-+//!
-+//! The harnesses run the engine in-process with no Redis. RediSearch calls the
-+//! `RedisModule_*` function pointers that Redis fills in when it loads a module,
-+//! so without Redis they are null and the first call (e.g. `rm_calloc` in
-+//! `CREATE INDEX`) jumps to address 0. [`init_index_support`] fills in the ones the
-+//! library-mode paths use and initialises RediSearch as `module_init` does.
-+
-+// Dependency version duplicates are from transitive dependencies.
-+#![allow(clippy::multiple_crate_versions)]
-+
-+use std::ffi::{c_char, c_int};
-+use std::ptr::null_mut;
-+use std::slice::from_raw_parts;
-+use std::sync::atomic::{AtomicUsize, Ordering};
-+
-+use graph::index::redisearch::{
-+    REDISEARCH_INIT_LIBRARY, RediSearch_Init,
-+    redis::{
-+        REDISMODULE_OK, RedisModule_Alloc, RedisModule_Calloc, RedisModule_CreateString,
-+        RedisModule_CreateStringFromString, RedisModule_Free, RedisModule_FreeString,
-+        RedisModule_FreeThreadSafeContext, RedisModule_GetDetachedThreadSafeContext,
-+        RedisModule_HoldString, RedisModule_Log, RedisModule_Realloc, RedisModule_RetainString,
-+        RedisModule_Strdup, RedisModule_StringPtrLen, RedisModule_SubscribeToServerEvent,
-+        RedisModule_TrimStringAllocation, RedisModuleCtx, RedisModuleEvent,
-+        RedisModuleEventCallback, RedisModuleString,
-+    },
-+};
-+use graph::threadpool::init_thread_pool;
-+
-+/// A `RedisModuleString` is opaque to RediSearch; the fuzz stand-in owns its bytes and
-+/// is reference counted because RediSearch retains and holds strings.
-+struct FuzzString {
-+    refs: AtomicUsize,
-+    bytes: Box<[u8]>,
-+}
-+
-+impl FuzzString {
-+    fn alloc(bytes: Box<[u8]>) -> *mut RedisModuleString {
-+        Box::into_raw(Box::new(Self {
-+            refs: AtomicUsize::new(1),
-+            bytes,
-+        }))
-+        .cast()
-+    }
-+}
-+
-+const unsafe extern "C" fn mock_get_detached_ctx(_ctx: *mut RedisModuleCtx) -> *mut RedisModuleCtx {
-+    null_mut()
-+}
-+
-+const unsafe extern "C" fn mock_free_ctx(_ctx: *mut RedisModuleCtx) {}
-+
-+const unsafe extern "C" fn mock_log(
-+    _ctx: *mut RedisModuleCtx,
-+    _level: *const c_char,
-+    _fmt: *const c_char,
-+) {
-+}
-+
-+#[allow(
-+    clippy::cast_possible_truncation,
-+    reason = "REDISMODULE_OK is the bindgen constant 0"
-+)]
-+const unsafe extern "C" fn mock_subscribe(
-+    _ctx: *mut RedisModuleCtx,
-+    _event: RedisModuleEvent,
-+    _callback: RedisModuleEventCallback,
-+) -> c_int {
-+    REDISMODULE_OK as c_int
-+}
-+
-+unsafe extern "C" fn mock_create_string(
-+    _ctx: *mut RedisModuleCtx,
-+    ptr: *const c_char,
-+    len: usize,
-+) -> *mut RedisModuleString {
-+    let bytes = if len == 0 {
-+        Box::default()
-+    } else {
-+        // SAFETY: the caller passes `len` readable bytes.
-+        unsafe { from_raw_parts(ptr.cast::<u8>(), len) }.into()
-+    };
-+    FuzzString::alloc(bytes)
-+}
-+
-+unsafe extern "C" fn mock_create_string_from_string(
-+    _ctx: *mut RedisModuleCtx,
-+    s: *const RedisModuleString,
-+) -> *mut RedisModuleString {
-+    // SAFETY: `s` came from `mock_create_string`.
-+    FuzzString::alloc(unsafe { &*s.cast::<FuzzString>() }.bytes.clone())
-+}
-+
-+unsafe extern "C" fn mock_retain_string(
-+    _ctx: *mut RedisModuleCtx,
-+    s: *mut RedisModuleString,
-+) {
-+    // SAFETY: `s` came from a `FuzzString` constructor.
-+    unsafe { &*s.cast::<FuzzString>() }
-+        .refs
-+        .fetch_add(1, Ordering::Relaxed);
-+}
-+
-+unsafe extern "C" fn mock_hold_string(
-+    ctx: *mut RedisModuleCtx,
-+    s: *mut RedisModuleString,
-+) -> *mut RedisModuleString {
-+    // SAFETY: as `mock_retain_string`.
-+    unsafe { mock_retain_string(ctx, s) };
-+    s
-+}
-+
-+const unsafe extern "C" fn mock_trim_string_allocation(_s: *mut RedisModuleString) {}
-+
-+unsafe extern "C" fn mock_string_ptr_len(
-+    s: *const RedisModuleString,
-+    len: *mut usize,
-+) -> *const c_char {
-+    // SAFETY: `s` came from `mock_create_string`; `len`, when non-null, is writable.
-+    let bytes = &unsafe { &*s.cast::<FuzzString>() }.bytes;
-+    if !len.is_null() {
-+        unsafe { len.write(bytes.len()) };
-+    }
-+    bytes.as_ptr().cast()
-+}
-+
-+unsafe extern "C" fn mock_free_string(
-+    _ctx: *mut RedisModuleCtx,
-+    s: *mut RedisModuleString,
-+) {
-+    if s.is_null() {
-+        return;
-+    }
-+    // SAFETY: `s` came from a `FuzzString` constructor; the last owner frees it.
-+    unsafe {
-+        if (*s.cast::<FuzzString>())
-+            .refs
-+            .fetch_sub(1, Ordering::AcqRel)
-+            == 1
-+        {
-+            drop(Box::from_raw(s.cast::<FuzzString>()));
-+        }
-+    }
-+}
-+
-+/// Makes index DDL and index-backed queries work without a server.
-+///
-+/// Points RediSearch's allocator at libc, stubs the server callbacks it makes while
-+/// indexing, initialises it in library mode, and starts the one-worker global th
-```
-
-**File**: `fuzz/Cargo.toml` (modified, +3/-0)
-```diff
-@@ -14,6 +14,9 @@ workspace = true
- libfuzzer-sys = "0.4"
- libc = "0.2.186"
- 
-+[dependencies.fuzz-support]
-+path = "../fuzz-support"
-+
- [dependencies.graph]
- path = "../graph"
- 
-```
-
-**File**: `fuzz/fuzz_targets/fuzz_target_runtime.rs` (modified, +2/-92)
-```diff
-@@ -1,92 +1,16 @@
--// #![feature(c_variadic)]
- #![no_main]
- 
--// use libc::{atexit, calloc, free, malloc, realloc, strdup};
--
-+use fuzz_support::init_index_support;
- use graph::{
-     graph::{
-         graph::{Graph, Plan},
-         graphblas::{GrB_Mode, GrB_init},
-         mvcc_graph::MvccGraph,
-     },
--    // redisearch::{
--    //     REDISEARCH_INIT_LIBRARY, RediSearch_Init,
--    //     redis::{
--    //         REDISMODULE_OK, RedisModule_Alloc, RedisModule_Calloc, RedisModule_CreateString,
--    //         RedisModule_CreateStringPrintf, RedisModule_Free, RedisModule_FreeString,
--    //         RedisModule_GetThreadSafeContext, RedisModule_Log, RedisModule_Realloc,
--    //         RedisModule_Strdup, RedisModule_StringPtrLen, RedisModule_SubscribeToServerEvent,
--    //         RedisModuleBlockedClient, RedisModuleCtx, RedisModuleEvent, RedisModuleEventCallback,
--    //         RedisModuleString,
--    //     },
--    // },
-     runtime::{functions::init_functions, runtime::Runtime},
- };
- use libfuzzer_sys::{Corpus, fuzz_target};
- 
--// const unsafe extern "C" fn mock_get_thread_safe_context(
--//     _bc: *mut RedisModuleBlockedClient
--// ) -> *mut RedisModuleCtx {
--//     null_mut()
--// }
--
--// unsafe extern "C" fn mock_printf(
--//     _ctx: *mut RedisModuleCtx,
--//     _fmt: *const c_char,
--//     ...
--// ) -> *mut RedisModuleString {
--//     null_mut()
--// }
--
--// unsafe extern "C" fn mock_log(
--//     _ctx: *mut RedisModuleCtx,
--//     _level: *const ::std::os::raw::c_char,
--//     _fmt: *const ::std::os::raw::c_char,
--//     ...
--// ) {
--// }
--
--// unsafe extern "C" fn mock_subscribe(
--//     _ctx: *mut RedisModuleCtx,
--//     _event: RedisModuleEvent,
--//     _callback: RedisModuleEventCallback,
--// ) -> ::std::os::raw::c_int {
--//     REDISMODULE_OK as c_int
--// }
--
--// const unsafe extern "C" fn mock_create_string(
--//     _ctx: *mut RedisModuleCtx,
--//     _ptr: *const ::std::os::raw::c_char,
--//     _len: usize,
--// ) -> *mut RedisModuleString {
--//     null_mut()
--// }
--
--// const unsafe extern "C" fn mock_string_ptr_len(
--//     _str: *const RedisModuleString,
--//     len: *mut usize,
--// ) -> *const ::std::os::raw::c_char {
--//     len.write(0);
--//     null_mut()
--// }
--
--// const unsafe extern "C" fn mock_free_string(
--//     _ctx: *mut RedisModuleCtx,
--//     _str: *mut RedisModuleString,
--// ) {
--// }
--
--// unsafe extern "C" {
--//     fn RediSearch_CleanupModule();
--// }
--
--// extern "C" fn exit() {
--//     unsafe {
--//         GrB_finalize();
--//         RediSearch_CleanupModule();
--//     }
--// }
--
- /// `WriteEscalation` for the fuzzer: there is no host and no locks, so becoming a
- /// writer always succeeds. Returning `Err` instead would reject every mutating
- /// query and starve the corpus of the write paths this target exists to exercise.
-@@ -104,22 +28,8 @@ impl graph::locks::WriteEscalation for AlwaysWritable {
- fuzz_target!(init: {
-         unsafe {
-             GrB_init(GrB_Mode::GrB_NONBLOCKING as _);
--            // RedisModule_Alloc = Some(malloc);
--            // RedisModule_Calloc = Some(calloc);
--            // RedisModule_Realloc = Some(realloc);
--            // RedisModule_Free = Some(free);
--            // RedisModule_FreeString = Some(mock_free_string);
--            // RedisModule_GetThreadSafeContext = Some(mock_get_thread_safe_context);
--            // RedisModule_CreateStringPrintf = Some(mock_printf);
--            // RedisModule_CreateString = Some(mock_create_string);
--            // RedisModule_Log = Some(mock_log);
--            // RedisModule_Strdup = Some(strdup);
--            // RedisModule_SubscribeToServerEvent = Some(mock_subscribe);
--            // RedisModule_StringPtrLen = Some(mock_string_ptr_len);
--            // let result = RediSearch_Init(null_mut(), REDISEARCH_INIT_LIBRARY as c_int);
--            // assert!(result == REDISMODULE_OK as c_int, "Failed to initialize RediSearch library");
--            // atexit(exit);
-         }
-+        init_index_support();
-         init_functions().expect("Failed to init functions");
-     },|data: &[u8]| -> Corpus {
-         let g = MvccGraph::new(1024, 1024, 25, "fuzz_test");
-```
-
-**File**: `runtime-fuzz-target/Cargo.toml` (modified, +4/-1)
-```diff
-@@ -16,4 +16,7 @@ workspace = true
- afl = "*"
- 
- [dependencies.graph]
--path = "../graph"
-\ No newline at end of file
-+path = "../graph"
-+
-+[dependencies.fuzz-support]
-+path = "../fuzz-support"
-```
-
-**File**: `runtime-fuzz-target/src/main.rs` (modified, +2/-0)
-```diff
-@@ -1,6 +1,7 @@
- // Dependency version duplicates are from transitive dependencies.
- #![allow(clippy::multiple_crate_versions)]
- 
-+use fuzz_support::init_index_support;
- use graph::{
-     graph::{
-         graph::{Graph, Plan},
-@@ -31,6 +32,7 @@ fn main() {
-     unsafe {
-         GrB_init(GrB_Mode::GrB_NONBLOCKING as _);
+@@ -445,13 +445,10 @@ fn digest_cancelled(
      }
-+    init_index_support();
-     init_functions().expect("Failed to init functions");
-     fuzz!(|data: &[u8]| {
-         if let Ok(query) = std::str::from_utf8(data) {
+     let mut pairs: Vec<(u32, IdList, IdList, IdList)> = Vec::with_capacity(by_type.len());
+     for (type_name, mut rels) in by_type {
+-        // A type whose every edge was cancelled was never registered on this
+-        // graph — nothing of it reached `create_relationships_bulk` — so there
+-        // is no id to state and no `ADD_SCHEMA` announcing one. Skipped rather
+-        // than invented: a made-up id would index the pair under some other
+-        // type. The reservation those ids came from is still the master's, so
+-        // this case leaves the two relationship bounds apart. It cannot be
+-        // closed with the records this format has.
++        // `Pending::commit` registers the type of every cancelled edge, so the
++        // id is there and `emit_schema_additions` has announced it. Skipped
++        // rather than invented if it ever is not: a made-up id would index the
++        // pair under some other type.
+         let Some(relation_id) = graph.get_type_id(&type_name).map(|t| schema_id(t.0)) else {
+             continue;
+         };
+```
+
+**File**: `graph/src/runtime/pending.rs` (modified, +20/-5)
+```diff
+@@ -926,11 +926,9 @@ impl Pending {
+             self.created_rel_types.remove(&rel_id);
+             if let Some(entries) = self.created_rels_by_type.get_mut(&type_name) {
+                 entries.retain(|(rid, _, _)| *rid != rel_id);
+-                // And drop the group once it is empty. A type whose every edge
+-                // was cascaded away was never registered on the graph — nothing
+-                // of that type reached `create_relationships_bulk` — so leaving
+-                // the key behind hands the effects emitter a type name it
+-                // cannot resolve.
++                // And drop the group once it is empty, so commit creates no
++                // edges for it. The type itself is still registered at commit,
++                // from `cancelled_relationships`.
+                 if entries.is_empty() {
+                     self.created_rels_by_type.remove(&type_name);
+                 }
+@@ -1366,6 +1364,18 @@ impl Pending {
+                     .map_err(|e| e.to_string())?;
+             }
+         }
++        // A type whose every edge a cascade cancelled never reached the loop
++        // above, yet it was named by this segment: the snapshot a reply reads
++        // states it by id, and so does the cancelled pair the effects carry to
++        // the replica. Register it, as C does when the edge is created.
++        // Once per type: a bulk cascade cancels many edges of the same few
++        // types, and each lookup scans the schema.
++        let mut cancelled_types: FxHashSet<&Arc<String>> = FxHashSet::default();
++        for r in &self.cancelled_relationships {
++            if cancelled_types.insert(&r.type_name) {
++                g.get_type_id_mut(&r.type_name);
++            }
++        }
+         if !self.set_labels.is_empty() {
+             let (rows, cols) = flatten_label_map(&self.set_labels);
+             // Pairs for nodes created in this transaction cannot already be
+@@ -1969,6 +1979,11 @@ impl Pending {
+             + self.created_rel_types.len() as u64
+             + self.deleted_nodes.len()
+             + self.deleted_relationships.len()
++            // A cancelled entity is emitted as a create and a delete, and its
++            // type (registered at commit) as a schema addition: a commit holding
++            // nothing else must still build its buffer.
++            + 2 * self.cancelled_nodes.len()
++            + 2 * self.cancelled_relationships.len() as u64
+             + self.new_nodes_attrs.len() as u64
+             + self.existing_nodes_attrs.len() as u64
+             + self.new_relationships_attrs.len() as u64
+```
+
+**File**: `proofs/FINDINGS.md` (modified, +1/-1)
+```diff
+@@ -196,7 +196,7 @@ A triage of every open `type:Bug label:rust` issue (live on Rust main 9d3869aa8
+ ### Open reports #3442–#3454 (gkorland, 2026-10-22)
+ Of the twelve Rust bugs filed on 2026-10-21 and reproduced against main b84473a7f and C, these are still open. #3446 (GRAPH.EFFECT expands a compressed id range eagerly) is a memory cost outside what the proofs can express. Common causes: operators modelled over the committed graph only (pending deletes and staged labels invisible to MERGE/ExpandInto/IncludePending/UDFs), label sets modelled as only growing (REMOVE), and replies or effect streams proven for shape only, with the panicking lookups taken as total.
+ 
+-- #3447 (store/effects→replica): `remove_pending_relationships_for_node` (pending.rs:839-896) drops a type's `created_rels_by_type` group once empty, so `Pending::commit` (pending.rs:1239-1253) never registers a type whose only edges were cascaded; `digest_cancelled` (emit.rs:457) skips that cancelled edge id and the replica's relationship id space has a hole that `IdSpace::verify` (id_space.rs:737-790) refuses. Lean bug3447_cancelled_edge_id_gap, bug3447_cascade_drops_type_key; property RelIdsCovered / CancelledTypeRegistered; fix relIdsCovered_of_registered.
++- #3447 (store/effects→replica): `remove_pending_relationships_for_node` (pending.rs:839-896) drops a type's `created_rels_by_type` group once empty, so `Pending::commit` (pending.rs:1239-1253) never registers a type whose only edges were cascaded; `digest_cancelled` (emit.rs:457) skips that cancelled edge id and the replica's relationship id space has a hole that `IdSpace::verify` (id_space.rs:737-790) refuses. Lean bug3447_cancelled_edge_id_gap, bug3447_cascade_drops_type_key; property RelIdsCovered / CancelledTypeRegistered; fix relIdsCovered_of_registered. **Fixed by #3461** (f203972c5): `Pending::commit` registers every cancelled relationship's type (pending.rs:1360-1371); Lean relIdsCovered_after_commit, fixed3447_cancelled_edge_id_gap, pending_commit PC.stCancelTypes_registers; old counterexample kept as pre3461_bug3447_cancelled_edge_id_gap. #3461 also makes `effects_count` (pending.rs:1970) count cancelled entities, fixing the cancelled half of W2-effects-1 (gate_ships_of_cancelled; history pre3461_gate_drops_cancelled, pre3461_cancelled_edge_attr_dropped); schema-only writes are still dropped (gate_drops_schema_only).
+ - #3447 (srv/reply, compact part): a pending edge of a new type that a DETACH DELETE cascades away is snapshotted with its type name. Its type is never registered, because Pending::commit registers only surviving groups (pending.rs:872-873, :1242-1251). The compact reply's `get_type_id(..).unwrap()` (reply.rs:260) then panics; the verbose reply renders the edge. Lean bug3447_compact_cancelled_new_type_panics; property RegisteredTypes ⇒ ReplyTotal (replyTotal_of_registered).
+ - #3448 (store/effects): `remove_node_labels` (pending.rs:699-711) also stages labels that were only staged, and `delete_pending_node` (:788) never clears `remove_labels`; `emit_v3` digests `remove_labels` (emit.rs:372) before `digest_cancelled` (:376), so `CREATE (n:Foo) REMOVE n:Foo DELETE n` emits `RemoveLabels [0]` before `CreateNode [0]` and the replica's `require_live` (apply.rs:359-360) refuses it. Lean bug3448_removeLabels_before_create_refused, bug3448_remove_of_staged_label, bug3448_cancelled_node_keeps_remL; property ReplayApplies / RemLCommitted / RemLLive.
+ - #3450 (binder REMOVE/WITH labels): `bind_ir` QueryIR::Remove (binder.rs:477-482) leaves `node_labels` alone; `bind_projection` copies the parent's labels to the WITH child (:1132-1141/:1159-1168) and `update_all_node_labels` (:122-134) stamps them on the next MATCH, so `MATCH (a:A) REMOVE a:A WITH a MATCH (a)-[:R]->(b)` scans `(a:A)` (Rust 0 rows, C 1). Lean bug3450_remove_label_kept_across_with; property StampedLabelsHeld.
+```
+
+**File**: `proofs/effects_emit_apply/COVERAGE.tsv` (modified, +11/-11)
+```diff
+@@ -5,15 +5,15 @@ graph/src/effects/v3/emit.rs	build_constraint_buffer	110	PROVEN	EmitDDL.buildCon
+ graph/src/effects/v3/emit.rs	encode_all	186	PROVEN	EmitDDL.encodeAll: encodeAll_ok, encodeAll_failed
+ graph/src/effects/v3/emit.rs	index_field_flags	204	PROVEN	EmitDDL.indexFieldFlags: indexFieldFlags_spec
+ graph/src/effects/v3/emit.rs	build_index_buffer	226	PROVEN	EmitDDL.buildIndexRec/resolveRefs + encodeAll: buildIndexRec_verifies, encodeAll_ok
+-graph/src/effects/v3/emit.rs	for_each_record	323	PROVEN	Emit.gate_zero_stream, Emit.commitShips_eq_iff (record-opcode granularity); emit-then-apply with cancellation (CancelGap): RemoveLabels for a created/cancelled node precedes its CREATE_NODE and the replica refuses it, ReplayApplies refuted: bug3448_removeLabels_before_create_refused (BUG #3448; control agree3448_without_stale_remL); when every allocated relationship type is registered, relIdsCovered_of_registered proves each id reaches a CREATE_EDGE; bug3447_cancelled_edge_id_gap refutes this on main (BUG #3447)
+-graph/src/effects/v3/emit.rs	digest_cancelled	395	PROVEN	Digests.digestCancelledF: digestCancelled_pairs; Emit.digestCancelled (gate); digestCancelled_pairs only covers cancelled edges of registered types: a type whose every edge was cascaded away has no id, the pair is skipped and the replica IdSpace has a hole: RelIdsCovered refuted by CancelGap.bug3447_cancelled_edge_id_gap (BUG #3447), fix property relIdsCovered_of_registered
+-graph/src/effects/v3/emit.rs	digest_created_nodes	497	PROVEN	Basic.memoGroup_eq_groupBy, Basic.sortDedup_set_eq, Basic.groupBy_flat, Basic.groupBy_keyed (+ proofs/replication emit/apply roundtrip over groupBy)
+-graph/src/effects/v3/emit.rs	digest_created_edges	574	PROVEN	Digests.digestCreatedEdges/mkEdgeRec: digestCreatedEdges_perm, digestCreatedEdges_keyed, mkEdgeRec_shape (FxHashMap order abstracted; theorems order-insensitive)
+-graph/src/effects/v3/emit.rs	digest_deleted_edges	634	PROVEN	Digests.digestDeletedEdges: digestDeletedEdges_perm
+-graph/src/effects/v3/emit.rs	digest_updates	685	PROVEN	Digests.digestUpdates/updKey: digestUpdates_perm, digestUpdates_shape
+-graph/src/effects/v3/emit.rs	digest_deleted_nodes	790	PROVEN	Basic.memoGroup_eq_groupBy, Basic.sortDedup_set_eq (the ascending cursor walk over deleted_node_labels is not modelled)
+-graph/src/effects/v3/emit.rs	digest_labels	852	PROVEN	Digests.digestLabels: digestLabels_perm, digestLabels_nonempty; called with skip=None for remove_labels (emit.rs:370), so a stale remove_labels entry of a cancelled node ships before its CREATE_NODE: CancelGap.bug3448_removeLabels_before_create_refused (BUG #3448)
+-graph/src/effects/v3/emit.rs	gather_rows	920	PROVEN	Emit.mergeRow_eq_lookup, Emit.gatherRows_length (+ unsorted counterexample example)
++graph/src/effects/v3/emit.rs	for_each_record	323	PROVEN	Emit.gate_zero_stream, Emit.commitShips_eq_iff (record-opcode granularity); emit-then-apply with cancellation (CancelGap): RemoveLabels for a created/cancelled node precedes its CREATE_NODE and the replica refuses it, ReplayApplies refuted: bug3448_removeLabels_before_create_refused (BUG #3448; control agree3448_without_stale_remL); when every allocated relationship type is registered, relIdsCovered_of_registered proves each id reaches a CREATE_EDGE; since #3461 commit registers every cancelled type: relIdsCovered_after_commit (BUG #3447 fixed; history pre3461_bug3447_cancelled_edge_id_gap)
++graph/src/effects/v3/emit.rs	digest_cancelled	395	PROVEN	Digests.digestCancelledF: digestCancelled_pairs; Emit.digestCancelled (gate); digestCancelled_pairs only covers cancelled edges of registered types; since #3461 Pending::commit registers every cancelled type (CancelGap.typesAfterCommit), so RelIdsCovered holds: CancelGap.relIdsCovered_after_commit, fixed3447_cancelled_edge_id_gap (BUG #3447 fixed; history pre3461_bug3447_cancelled_edge_id_gap), via relIdsCovered_of_registered
++graph/src/effects/v3/emit.rs	digest_created_nodes	494	PROVEN	Basic.memoGroup_eq_groupBy, Basic.sortDedup_set_eq, Basic.groupBy_flat, Basic.groupBy_keyed (+ proofs/replication emit/apply roundtrip over groupBy)
++graph/src/effects/v3/emit.rs	digest_created_edges	571	PROVEN	Digests.digestCreatedEdges/mkEdgeRec: digestCreatedEdges_perm, digestCreatedEdges_keyed, mkEdgeRec_shape (FxHashMap order abstracted; theorems order-insensitive)
++graph/src/effects/v3/emit.rs	digest_deleted_edges	631	PROVEN	Digests.digestDeletedEdges: digestDeletedEdges_perm
++graph/src/effects/v3/emit.rs	digest_updates	682	PROVEN	Digests.digestUpdates/updKey: digestUpdates_perm, digestUpdates_shape
++graph/src/effects/v3/emit.rs	digest_deleted_nodes	787	PROVEN	Basic.memoGroup_eq_groupBy, Basic.sortDedup_set_eq (the ascending cursor walk over deleted_node_labels is not modelled)
++graph/src/effects/v3/emit.rs	digest_labels	849	PROVEN	Digests.digestLabels: digestLabels_perm, digestLabels_nonempty; called with skip=None for remove_labels (emit.rs:370), so a stale remove_labels entry of a cancelled node s
+```
+
+**File**: `proofs/effects_emit_apply/FalkorEffectsEmitApply.lean` (modified, +10/-6)
+```diff
+@@ -27,7 +27,7 @@ Builds with `lake build`; no `sorry`, `admit` or `axiom`.
+ | `Emit.schemaAdditions`                 | `emit_schema_additions`, `emit.rs:60`                       |
+ | `Emit.digestCancelled`                 | `digest_cancelled`, `emit.rs:395`                           |
+ | `Emit.forEachRecord`                   | `for_each_record`, `emit.rs:323` (opcode granularity)       |
+-| `Emit.effectsCount`                    | `Pending::effects_count`, `pending.rs:1958`                 |
++| `Emit.effectsCount`                    | `Pending::effects_count`, `pending.rs:1970` (#3461: +2 per cancelled entity) |
+ | `Emit.commitShips`                     | `if estimated > 0 { buf.build(..) }`, `commit.rs:108`       |
+ | `Emit.applyAddName`                    | `apply_add_schema` + `verify_id`, `apply.rs:532,552`        |
+ | `Apply.createOne`                      | `Record::CreateNode` arm, `apply.rs:210`                    |
+@@ -61,8 +61,10 @@ Builds with `lake build`; no `sorry`, `admit` or `axiom`.
+   `wf_updateNode_live`, `wf_setLabels_live` — with a liveness check each node
+   arm preserves well-formedness (the fix, proved).
+ * Counterexamples (all by `decide`, all reproduced in Rust):
+-  `gate_drops_cancelled`, `gate_drops_schema_only`, `next_payload_refused`,
+-  `cancelled_edge_attr_dropped`. The ones fixed by #3022 (`18fc277b9`) were removed after 17ccc5412, the last commit that holds them.
++  `gate_drops_schema_only`, `next_payload_refused`. `gate_drops_cancelled` and
++  `cancelled_edge_attr_dropped` were fixed by #3461 (f203972c5, `effects_count`
++  counts cancelled entities): kept as `pre3461_*` over `effectsCountPre3461`; the fix
++  is `gate_ships_of_cancelled`, `gate_ships_cancelled`, `cancelled_edge_attr_ships`. The ones fixed by #3022 (`18fc277b9`) were removed after 17ccc5412, the last commit that holds them.
+ 
+ ## #3022 (`Liveness.lean`): every record that acts on an entity checks it is live
+ 
+@@ -196,7 +198,7 @@ node) — refused since #3298 (`createNode_repeat_refused`).
+ * ~~The documented `rel_bound` gap (`emit.rs:448-454`)~~ — **confirmed as #3447**
+   (2026-10-22): when the same segment also creates a surviving edge above the
+   cancelled id, the replica's relationship `IdSpace::verify` refuses the hole and
+-  forces a full resync. Proven in `CancelGap.lean` (`bug3447_cancelled_edge_id_gap`).
++  forces a full resync. Proven in `CancelGap.lean` (`pre3461_bug3447_cancelled_edge_id_gap`); fixed by #3461.
+ * C master (`bin/macos-arm64v8-release/falkordb.so`, Redis 8.6.2) aborts on
+   `OPTIONAL MATCH (n:Nope) SET n:L6` (`blocked.c:346 'server.also_propagate.numops
+   == 0'`), with or without a replica. C-side; not investigated further.
+@@ -210,13 +212,15 @@ master's pre-segment state accepts. Two properties, both refuted on b84473a7f:
+ | Lean | Rust (b84473a7f) |
+ | --- | --- |
+ | `CancelGap.verifyRange` | `IdSpace::verify`'s hole check (id_space.rs:737-790) |
+-| `CancelGap.typesAfterCommit` | `Pending::commit` → `create_relationships_bulk` → `get_type_id_mut` (pending.rs:1236-1249, graph.rs:2610/:1265): only `created_rels_by_type` keys are registered |
++| `CancelGap.typesAfterCommit` | `Pending::commit` (pending.rs:1345-1371, #3461): `created_rels_by_type` keys via `create_relationships_bulk`, then every `cancelled_relationships` type via `get_type_id_mut` (`typesAfterCommitPre3461`: the keys only, before #3461) |
+ | `CancelGap.toLive` | opcode records → `apply_record` arms (`RemoveLabels` `require_live`, apply.rs:359-360) |
+ 
+ * **#3447** (property `RelIdsCovered`: every relationship id allocated in the
+   segment reaches a `CREATE_EDGE`): `digest_cancelled` skips a cancelled edge
+   whose type has no id (emit.rs:455), and a type whose only edges were cascaded
+-  is never registered. `bug3447_cancelled_edge_id_gap` (live repro `CREATE
++  is never registered. **Fixed by #3461** (f203972c5: commit registers every
++  cancelled type): `relIdsCovered_after_commit` (for every `Pending`),
++  `fixed3447_cancelled_edge_id_gap`; history `pre3461_bug3447_cancelled_edge_id_gap` (live repro `CREATE
+   (a)-[r1:NEW_TYPE]->(b), (c)-[r2:EXISTING]->(d) DETACH DELETE a`): payload has
+   `CreateEdge [2]` and nothing for 1; master's id space verifies, replica's has a
+   hole. Fix property `relIdsCovered_of_registered` (holds for every `Pending`
+```
+
+**File**: `proofs/effects_emit_apply/FalkorEffectsEmitApply/CancelGap.lean` (modified, +72/-8)
+```diff
+@@ -17,7 +17,8 @@ pre-segment state* accepts. Two properties, both refuted on main:
+   (`Pending::commit` registers only `created_rels_by_type` keys via
+   `create_relationships_bulk` → `get_type_id_mut`, pending.rs:1236-1249,
+   graph.rs:2610/:1265; proofs/pending_commit `bug3447_cascade_drops_type_key`).
+-  `bug3447_cancelled_edge_id_gap`: live repro `CREATE ()-[:EXISTING]->()` then
++  `pre3461_bug3447_cancelled_edge_id_gap` (fixed by #3461, which registers every
++  cancelled type at commit: `relIdsCovered_after_commit`): live repro `CREATE ()-[:EXISTING]->()` then
+   `CREATE (a)-[r1:NEW_TYPE]->(b), (c)-[r2:EXISTING]->(d) DETACH DELETE a`; the
+   payload carries `CreateEdge{ids:[2]}` and nothing for 1, the replica's verify
+   refuses (`verifyRange`), the master's passes. `relIdsCovered_of_registered`:
+@@ -58,11 +59,22 @@ def allocated (p : Pending) : List Nat := p.createdRelTypes.flatMap (·.2) ++ p.
+ /-- **Property `RelIdsCovered`**. -/
+ def RelIdsCovered (p : Pending) (g : Schema) : Prop := ∀ i ∈ allocated p, i ∈ edgeIds (forEachRecord p g)
+ 
+-/-- The relationship-type dictionary after `Pending::commit`: each
+-`created_rels_by_type` key is get-or-created (pending.rs:1236-1249); cancelled
+-types are not looked at. -/
++/-- Get-or-create of one name (`get_type_id_mut`, graph.rs). -/
++def regName (ts : List Name) (n : Name) : List Name := if n ∈ ts then ts else ts ++ [n]
++
++/-- The relationship-type dictionary after `Pending::commit` before #3461:
++each `created_rels_by_type` key is get-or-created (pending.rs:1236-1249 on
++343e077f2); cancelled types are not looked at. -/
++def typesAfterCommitPre3461 (base : List Name) (p : Pending) : List Name :=
++  p.createdRelTypes.foldl (fun ts q => regName ts q.1) base
++
++/-- The relationship-type dictionary after `Pending::commit` (pending.rs:1345-1371,
++#3461): each `created_rels_by_type` key is get-or-created by
++`create_relationships_bulk`, then the type of every `cancelled_relationships`
++entry by `get_type_id_mut` (the `FxHashSet` only skips repeats, which
++get-or-create ignores anyway). -/
+ def typesAfterCommit (base : List Name) (p : Pending) : List Name :=
+-  p.createdRelTypes.foldl (fun ts q => if q.1 ∈ ts then ts else ts ++ [q.1]) base
++  p.cancelledRels.foldl (fun ts q => regName ts q.1) (typesAfterCommitPre3461 base p)
+ 
+ /-- `CREATE (a)-[r1:NEW_TYPE]->(b), (c)-[r2:EXISTING]->(d) DETACH DELETE a` after
+ `CREATE ()-[:EXISTING]->()` (nodes 0,1 and edge 0 committed): `a` = 2 is
+@@ -74,14 +86,15 @@ def pGap : Pending :=
+     setLabels := [], removeLabels := [], cancelledNodes := [2], cancelledRels := [("NEW_TYPE", 1)],
+     baseline := ⟨[], ["EXISTING"], []⟩ }
+ 
+-def gGap : Schema := ⟨[], typesAfterCommit ["EXISTING"] pGap, []⟩
++def gGap : Schema := ⟨[], typesAfterCommitPre3461 ["EXISTING"] pGap, []⟩
+ 
+-/-- **#3447**: `NEW_TYPE` is never registered, so the cancelled edge 1 is not
++/-- History (fixed by #3461, f203972c5; now `relIdsCovered_after_commit`).
++**#3447**: `NEW_TYPE` is never registered, so the cancelled edge 1 is not
+ in the payload; the master's relationship id space `{0, 1, 2}` (entry bound 1)
+ verifies, the replica's `{0} ∪ {2}` has a hole and is refused
+ (live: "effects buffer allocated relationship ids 1..=2 but created only 1 of
+ them … forced full resync"; C stays in sync). -/
+-theorem bug3447_cancelled_edge_id_gap :
++theorem pre3461_bug3447_cancelled_edge_id_gap :
+     gGap.types = ["EXISTING"] ∧
+     forEachRecord pGap gGap = [.createNode [3, 4, 5] [], .createEdge [2] 0, .createNode [2] [], .deleteNode [2] []] ∧
+     ¬ RelIdsCovered pGap gGap ∧
+@@ -151,6 +164,57 @@ theorem relIdsCovered_of_registered (p : Pending) (g : Schema)
+     simp only [List.mem_append]
+     simp [hmem]
+ 
++theorem regName_mem (ts : List Name) (n : Name) : n ∈ regName ts n := by
++  unfold regName; split
++  · assumption
++  · simp
++
++theorem regName_mono (ts : List Name) (n m : Name) (h : m ∈ ts) : m ∈ regName ts n := by
++  unfold regName; split
++  · exact h
++  · simp [h]
++
++theorem foldl_regName_mono {α} (f : α → Name) (l : List α) (ts : List Name) (m : Name) (h : m ∈ ts) :
++    m ∈ l.foldl (fun ts q => regName ts (f q)) ts := by
++  induction l generalizing ts with
++  | nil => exact h
++  | cons x xs ih => exact ih _ (regName_mono _ _ _ h)
++
++theorem foldl_regName_mem {α} (f : α → Name) (l : List α) (ts : List Name) (q : α) (hq : q ∈ l) :
++    f q ∈ l.foldl (fun ts q => regName ts (f q)) ts := by
++  induction l generalizing ts with
++  | nil => cases hq
++  | cons x xs ih =>
++    rcases List.mem_cons.mp hq with rfl | hq
++    · exact foldl_regName_mono f xs _ _ (regName_mem _ _)
++    · exact ih _ hq
++
++theorem idxOf_isSome_of_mem (l : List Name) (n : Name) (h : n ∈ l) : (idxOf l n).isSome := by
++  unfold idxOf
++  have : (l.findIdx? (· == n)).isSome := by
++    rw [List.findIdx?_isSome, List.any_eq_true]; exact ⟨n, h, by simp⟩
++  revert this; cases l.findIdx? (· == n) <;> simp
++
++/-- **#3461 fix of #3447 (`RelIdsCovered`)**: with the dictionary `Pending::commit`
++now leaves, e
+```
+
+**File**: `proofs/effects_emit_apply/FalkorEffectsEmitApply/Emit.lean` (modified, +56/-8)
+```diff
+@@ -230,10 +230,22 @@ structure Pending where
+   baseline          : Schema
+ deriving Repr
+ 
+-/-- `Pending::effects_count` (`runtime/pending.rs:1958-1977`), term for term.
+-    Note what is **not** summed: `cancelled_nodes`, `cancelled_relationships`,
+-    and the schema registered since `baseline`. -/
++/-- `Pending::effects_count` (`runtime/pending.rs:1970-1993`), term for term.
++    Since #3461 (f203972c5) a cancelled node or relationship counts twice (its
++    create and its delete). Note what is still **not** summed: the schema
++    registered since `baseline`. -/
+ def effectsCount (p : Pending) : Nat :=
++  p.createdNodes.length + p.createdRelTypes.length + p.deletedNodes.length
++  + p.deletedRels.length
++  + 2 * p.cancelledNodes.length + 2 * p.cancelledRels.length
++  + p.newNodesAttrs.length + p.existingNodesAttrs.length
++  + p.newRelsAttrs.length + p.existingRelsAttrs.length
++  + (p.setLabels.map (fun q => q.2.length)).sum
++  + (p.removeLabels.map (fun q => q.2.length)).sum
++
++/-- `effects_count` before #3461 (pending.rs:1958-1977 on 343e077f2): the
++    cancelled sets were not summed. History for the `pre3461_*` theorems. -/
++def effectsCountPre3461 (p : Pending) : Nat :=
+   p.createdNodes.length + p.createdRelTypes.length + p.deletedNodes.length
+   + p.deletedRels.length + p.newNodesAttrs.length + p.existingNodesAttrs.length
+   + p.newRelsAttrs.length + p.existingRelsAttrs.length
+@@ -290,6 +302,10 @@ def forEachRecord (p : Pending) (g : Schema) : List Rec :=
+ def commitShips (p : Pending) (g : Schema) : List Rec :=
+   if effectsCount p > 0 then forEachRecord p g else []
+ 
++/-- The gate before #3461, over `effectsCountPre3461`. -/
++def commitShipsPre3461 (p : Pending) (g : Schema) : List Rec :=
++  if effectsCountPre3461 p > 0 then forEachRecord p g else []
++
+ /-! ## What the gate drops -/
+ 
+ theorem sum_zero_nil : ∀ l : List (Nat × List Nat),
+@@ -320,6 +336,8 @@ theorem gate_zero_stream (p : Pending) (g : Schema) (h : effectsCount p = 0) :
+   have h2 : p.createdRelTypes = [] := List.eq_nil_of_length_eq_zero (by omega)
+   have h3 : p.deletedNodes = [] := List.eq_nil_of_length_eq_zero (by omega)
+   have h4 : p.deletedRels = [] := List.eq_nil_of_length_eq_zero (by omega)
++  have h11 : p.cancelledNodes = [] := List.eq_nil_of_length_eq_zero (by omega)
++  have h12 : p.cancelledRels = [] := List.eq_nil_of_length_eq_zero (by omega)
+   have h6 : p.existingNodesAttrs = [] := List.eq_nil_of_length_eq_zero (by omega)
+   have h8 : p.existingRelsAttrs = [] := List.eq_nil_of_length_eq_zero (by omega)
+   have h9 := sum_zero_nil p.setLabels (by omega)
+@@ -358,14 +376,34 @@ def pCancelled : Pending :=
+ 
+ def gCancelled : Schema := ⟨["A"], [], ["p"]⟩
+ 
+-theorem gate_drops_cancelled :
+-    effectsCount pCancelled = 0 ∧
++/-- History: before #3461 the gate dropped a fully cancelled write (fixed by
++    #3461, f203972c5; now `gate_ships_cancelled`). -/
++theorem pre3461_gate_drops_cancelled :
++    effectsCountPre3461 pCancelled = 0 ∧
+     forEachRecord pCancelled gCancelled =
+       [.addLabel 0 "A", .addAttribute 0 "p", .createNode [0] [], .deleteNode [0] []] ∧
+-    commitShips pCancelled gCancelled = [] := by
++    commitShipsPre3461 pCancelled gCancelled = [] := by
+   refine ⟨rfl, ?_, rfl⟩
+   decide
+ 
++/-- **#3461**: the same write now ships its whole stream. -/
++theorem gate_ships_cancelled :
++    effectsCount pCancelled = 2 ∧
++    commitShips pCancelled gCancelled =
++      [.addLabel 0 "A", .addAttribute 0 "p", .createNode [0] [], .deleteNode [0] []] := by
++  decide
++
++/-- **#3461**: any segment that cancelled a node or a relationship passes the
++    gate, so its cancelled pairs (and the schema it registered) ship. -/
++theorem gate_ships_of_cancelled (p : Pending) (g : Schema)
++    (h : p.cancelledNodes ≠ [] ∨ p.cancelledRels ≠ []) : commitShips p g = forEachRecord p g := by
++  have hpos : effectsCount p > 0 := by
++    unfold effectsCount
++    rcases h with h | h
++    · have := List.length_pos_iff.mpr h; omega
++    · have := List.length_pos_iff.mpr h; omega
++  simp [commitShips, hpos]
++
+ /-- `OPTIONAL MATCH (n:Nope) SET n:L6`: `L6` registered, nothing else. -/
+ def pSchemaOnly : Pending := { pCancelled with cancelledNodes := [] }
+ def gSchemaOnly : Schema := ⟨["L6"], [], []⟩
+@@ -402,12 +440,22 @@ theorem next_payload_refused :
+     (`cancelled_edge_attribute_is_a_silent_dictionary_divergence`). Here even an
+     un-gated emitter would say nothing about `T1`'s edges, since the type has no
+     id (`emit.rs:448-454`), but it would still announce `p4`. -/
+-theorem cancelled_edge_attr_dropped :
++theorem pre3461_cancelled_edge_attr_dropped :
+     let p : Pending := { pCancelled with cancelledNodes := [0, 1], cancelledRels := [("T1", 0)] }
+     let g : Schema := ⟨[], [], ["p4"]⟩
+-    effectsCount p = 0 ∧ commitShips p g = [] ∧
++    effectsCountPre3461 p = 0 ∧ commitShipsPre3461 p g = [] ∧
+     forEachRecord p g = [.addAttribute 0 "p4", .createNode [0, 1] [], .deleteNode [0, 1] []] := by
+   refine ⟨rfl, rfl, ?_⟩
+   decide
+ 
++/
+```
+
+**File**: `proofs/effects_emit_apply/README.md` (modified, +5/-5)
+```diff
+@@ -22,10 +22,10 @@ The full Lean↔Rust mapping is in the header of [`FalkorEffectsEmitApply.lean`]
+ 
+ The counterexamples are concrete queries:
+ 
+-- `CREATE (a:A {p:1}) DELETE a` registers label `A` and attribute `p` on the master and ships nothing (`gate_drops_cancelled`);
++- `CREATE (a:A {p:1}) DELETE a` registered label `A` and attribute `p` on the master and shipped nothing before #3461 (`pre3461_gate_drops_cancelled`; now `gate_ships_cancelled`);
+ - `OPTIONAL MATCH (n:Nope) SET n:L6` registers `L6` and ships nothing (`gate_drops_schema_only`);
+ - the next write's `ADD_SCHEMA 1 "K6"` is then refused by the replica, which would assign id 0 (`next_payload_refused`). That forces a full resync, and during AOF load the server exits;
+-- `CREATE (a)-[:T1 {p4:1}]->(b) DELETE a, b` is worse: no error at all, but the replica's attribute dictionary is missing `p4` (`cancelled_edge_attr_dropped`).
++- `CREATE (a)-[:T1 {p4:1}]->(b) DELETE a, b` is worse: no error at all, but the replica's attribute dictionary is missing `p4` (`pre3461_cancelled_edge_attr_dropped`; fixed by #3461, `cancelled_edge_attr_ships`).
+ 
+ **2. Can a payload that the replica accepts leave its graph broken?**
+ 
+@@ -82,11 +82,11 @@ All four were reproduced in Rust and against a live server (see [`../FINDINGS.md
+ 
+ | # | Theorem (counterexample) | What it means | Status |
+ |---|---|---|---|
+-| W2-effects-1 | `gate_drops_cancelled`, `gate_drops_schema_only`, `next_payload_refused`, `cancelled_edge_attr_dropped` | A write that only registers a name or only cancels entities ships nothing. The next payload is refused (full resync; AOF load exits), or the replica silently misses an attribute name. 134 of 200 random seeds diverge | **Open**: the gate at `commit.rs:107-108` is unchanged on 1d15bf713; no issue or PR yet |
++| W2-effects-1 | `pre3461_gate_drops_cancelled`, `gate_drops_schema_only`, `next_payload_refused`, `pre3461_cancelled_edge_attr_dropped` | A write that only registers a name or only cancels entities ships nothing. The next payload is refused (full resync; AOF load exits), or the replica silently misses an attribute name. 134 of 200 random seeds diverge | Cancelled half **fixed by #3461** (`effects_count` counts cancelled entities: `gate_ships_of_cancelled`, `gate_ships_cancelled`, `cancelled_edge_attr_ships`); schema-only writes still dropped (`gate_drops_schema_only`) |
+ | W2-effects-2 | removed (17ccc5412) | `UPDATE_NODE`/`UPDATE_EDGE`/`SET_LABELS`/`REMOVE_LABELS` on a dead id were accepted; the next node to recycle the id inherited the property or label | Fixed by #3022 (`wf_updateNode_live`, `wf_setLabels_live`, `apply_wf`) |
+ | W2-effects-3 | removed (17ccc5412) | `DELETE_NODE` of a node with edges was accepted; the edge dangled and the next node with that id inherited it | Fixed by #3022 (`wf_deleteNode`, `apply_wf`) |
+ | #3247 | removed (17ccc5412) | A `CREATE_NODE` naming the same id twice (`[2, 3, 2]`) applied: the id set created one node where the record named two, and the repeated id's row had no node of its own | Fixed by #3298 (`2bb51088b`): `createNode_repeat_refused`, `createNode_ok_nodup`, `a_repeated_node_id_in_one_create_is_refused` |
+-| #3447 | `bug3447_cancelled_edge_id_gap` (property `RelIdsCovered`) | An edge of a new type cascaded away by `DETACH DELETE` never registers its type, so `digest_cancelled` drops its id. With a surviving edge above it in the same segment the replica's relationship id space has a hole: `IdSpace::verify` refuses and forces a full resync. C stays in sync | **Open** (#3447) |
++| #3447 | `pre3461_bug3447_cancelled_edge_id_gap` (property `RelIdsCovered`) | An edge of a new type cascaded away by `DETACH DELETE` never registers its type, so `digest_cancelled` drops its id. With a surviving edge above it in the same segment the replica's relationship id space has a hole: `IdSpace::verify` refuses and forces a full resync. C stays in sync | **Fixed by #3461** (`relIdsCovered_after_commit`, `fixed3447_cancelled_edge_id_gap`) |
+ | #3448 | `bug3448_removeLabels_before_create_refused` (property `ReplayApplies`) | `CREATE (n:Foo) REMOVE n:Foo DELETE n` leaves `n` in `remove_labels`; the stream emits `RemoveLabels [0]` before the cancelled pair's `CreateNode [0]`, and the replica refuses node 0 as not live (full resync). C stays in sync | **Open** (#3448) |
+ | W2-effects-4 | none (the model has no indexes) | A refused buffer's `CREATE_INDEX` is not rolled back, because the `Indexer` is shared by `Arc` across versions | **Open** (PR #3235) |
+ 
+@@ -130,7 +130,7 @@ Every row is PROVEN. For `effects_count` and the gate, "PROVEN" means the model
+ - **Indexes and rollback.** W2-effects-4 is outside the model.
+ - **Index and constraint DDL apply** is checked only by a live Rust-vs-C differential (18 steps, all agree), not by a theorem.
+ - **`IdSpace` and `first_node_with_relationships`** are specs here, proven in `id_space` and `graph_queries`.
+-- The `rel_bound` gap documented at `emit.rs:448-454` is no long
+```
+
+---
+
+### Incident Patch 2: `b9b99e33` (2026-11-17)
+**Commit Message**: fix: a refused fulltext CREATE INDEX no longer leaks the RediSearch options block (#3274)
+
+* fix: a refused fulltext CREATE INDEX no longer leaks the RediSearch options block
+
+create_rs_index allocated the index options before its fallible CString
+conversions and returned early on them (and on an unsupported language)
+without freeing the block. Convert first, and free the options on the
+language error.
+
+Closes #3273
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* test: say why the refused CREATE FULLTEXT INDEX error is ignored
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* refactor: do not shadow c_stopwords in create_rs_index
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* test: the leak test checks the refusal it expects and always deletes its graph
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* proofs: update the Lean proofs for this change (proof-impact bot)
+
+Verified patch of the proof-impact run https://github.com/FalkorDB/FalkorDB/actions/runs/43749173381
+at 683bf60fc66ec8180690579d1bf137599f35da5b, applied on request of AviAvni (held items reviewed).
+
+Proof-Bot-Run: https://github.com/FalkorDB/FalkorDB/actions/runs/43749173381
+
+* ci: run CI on 
+
+**File**: `graph/src/index/mod.rs` (modified, +26/-19)
+```diff
+@@ -1108,6 +1108,27 @@ impl Index {
+         stopwords: Option<&Vec<Arc<String>>>,
+         language: Option<&Arc<String>>,
+     ) -> Result<(), String> {
++        // Every fallible conversion runs before the options block is
++        // allocated, so an early return cannot leak it.
++        let c_stopwords: Option<Vec<CString>> = stopwords
++            .map(|words| {
++                words
++                    .iter()
++                    .map(|s| CString::new(s.as_str()).map_err(|e| e.to_string()))
++                    .collect::<Result<Vec<_>, _>>()
++            })
++            .transpose()?;
++        // `RediSearch_IndexOptionsSetLanguage` only stores the raw pointer
++        // (`options->lang = lang`); `_CreateIndex` later reads it via
++        // `RSLanguage_Find` to convert to an enum, so this `CString` must
++        // outlive that call.
++        // (Bug uncovered by ASAN: heap-use-after-free in `RSLanguage_Find`
++        // when the inner `c_lang` was dropped at end of its if-let block.)
++        let c_lang: Option<CString> = language
++            .map(|lang| CString::new(lang.as_str()).map_err(|e| e.to_string()))
++            .transpose()?;
++        let clabel = CString::new(label.as_str()).map_err(|e| e.to_string())?;
++
+         unsafe {
+             // Requires the global lock (the host's module GIL):
+             // `RediSearch_CreateIndex` registers a GC timer in the host event loop
+@@ -1120,13 +1141,9 @@ impl Index {
+             // `RediSearch_IndexOptionsSetStopwords` deep-copies via
+             // `rm_strdup`, so our CStrings can drop as soon as the call
+             // returns.
+-            if let Some(stop_words) = stopwords {
+-                let c_stopwords: Vec<CString> = stop_words
+-                    .iter()
+-                    .map(|s| CString::new(s.as_str()).map_err(|e| e.to_string()))
+-                    .collect::<Result<Vec<_>, _>>()?;
++            if let Some(stopword_cstrs) = &c_stopwords {
+                 let mut ptrs: Vec<*const c_char> =
+-                    c_stopwords.iter().map(|cs| cs.as_ptr()).collect();
++                    stopword_cstrs.iter().map(|cs| cs.as_ptr()).collect();
+                 RediSearch_IndexOptionsSetStopwords(
+                     options,
+                     ptrs.as_mut_ptr(),
+@@ -1136,24 +1153,14 @@ impl Index {
+                 RediSearch_IndexOptionsSetStopwords(options, null_mut(), 0);
+             }
+ 
+-            // `RediSearch_IndexOptionsSetLanguage`, in contrast, only stores
+-            // the raw pointer (`options->lang = lang`); `_CreateIndex` later
+-            // reads it via `RSLanguage_Find` to convert to an enum, so the
+-            // backing `CString` must outlive that call.
+-            // (Bug uncovered by ASAN: heap-use-after-free in `RSLanguage_Find`
+-            // when the inner `c_lang` was dropped at end of its if-let block.)
+-            let _language_owner: Option<CString> = if let Some(lang) = language {
+-                let c_lang = CString::new(lang.as_str()).map_err(|e| e.to_string())?;
++            if let (Some(lang), Some(c_lang)) = (language, &c_lang) {
+                 if RediSearch_IndexOptionsSetLanguage(options, c_lang.as_ptr()) != 0 {
++                    RediSearch_FreeIndexOptions(options);
+                     return Err(format!("Language is not supported: {lang}"));
+                 }
+-                Some(c_lang)
+             } else {
+                 RediSearch_IndexOptionsSetLanguage(options, null_mut());
+-                None
+-            };
+-
+-            let clabel = CString::new(label.as_str()).map_err(|e| e.to_string())?;
++            }
+ 
+             // GIL is already held at the top of this unsafe block, covering
+             // CreateIndex's transitive RM_CreateTimer call.
+```
+
+**File**: `proofs/index_layer/COVERAGE.tsv` (modified, +1/-1)
+```diff
+@@ -50,7 +50,7 @@ graph/src/index/mod.rs	bump_id	1053	PROVEN	Slots.bump; bump_total, bump_fresh, o
+ graph/src/index/mod.rs	clone_for_update	1072	PROVEN	Meta.Idx.cloneForUpdate_eq
+ graph/src/index/mod.rs	has_rs_index	1092	PROVEN	Meta.Idx.hasRsIndex_spec
+ graph/src/index/mod.rs	rs_ptr	1099	PROVEN	Meta.Idx.hasRsIndex_spec (rsPtr)
+-graph/src/index/mod.rs	create_rs_index	1105	PROVEN	Meta.Idx.createRsIndex_ok, createRsIndex_lang_err (FFI create = fresh handle); #3166 gap: records the spec's stopword list as Idx.rsStop (IndexGaps.createRsIndex_stop)
++graph/src/index/mod.rs	create_rs_index	1105	PROVEN	Meta.Idx.createRsIndex_ok, createRsIndex_lang_err_cleanLabel (FFI create = fresh handle; #3274 counterexample createRsIndex_lang_err_fails: label NUL now reported before unsupported language); #3166 gap: records the spec's stopword list as Idx.rsStop (IndexGaps.createRsIndex_stop)
+ graph/src/index/mod.rs	register_fields	1185	PROVEN	Meta.Idx.registerOne_range/_text/_vector_err, registerAll_ok, registerFields_ok, metricOf_ok; never changes the spec's stopwords (IndexGaps.registerFields_stop); fulltext phonetic flag = TextOpts.phoneticEnabled since #3514 (a0ba12950): registerOne_text
+ graph/src/index/text_index_options.rs	phonetic_enabled	48	PROVEN	Meta.TextOpts.phoneticEnabled: phoneticEnabled_off_spellings, phoneticEnabled_code, phoneticEnabled_iff_ne_no; fixed3514_phonetic_no_is_off (#3514)
+ graph/src/index/mod.rs	value_to_numeric	1361	PROVEN	valueToNumeric; equal_exact, numRange_exact
+```
+
+**File**: `proofs/index_layer/FalkorIndexLayer.lean` (modified, +6/-0)
+```diff
+@@ -189,6 +189,12 @@ every range query on `n.s` is built against the fulltext field `s` instead of `r
+ (live, ports 18850 Rust / 18851 C). Fix: pick the field with `ty == IndexType::Range`.
+ Suspected, unconfirmed: `create_rs_index` returns `Err` on a NUL in a stopword/language/label
+ after `RediSearch_CreateIndexOptions` without `RediSearch_FreeIndexOptions` (leak only).
++#3274 fixes that leak by running every `CString::new` (stopwords, language, label) before
++the options block is allocated and freeing it on the unsupported-language return. Side
++effect: the label NUL check now precedes the unsupported-language check, so
++`createRsIndex_lang_err` is false on the new code (`createRsIndex_lang_err_fails`; label
++``L\0`` with `language: 'x'` reports the NUL error instead of `Language is not supported: x`);
++`createRsIndex_lang_err_cleanLabel` proves the message for NUL-free labels.
+ 
+ ## Re-target to 49f698d22 (#3087)
+ `Document::set` now adds a `VecF32` only if
+```
+
+**File**: `proofs/index_layer/FalkorIndexLayer/IndexM.lean` (modified, +31/-11)
+```diff
+@@ -68,17 +68,18 @@ def rsPtr (x : Idx) : Option Nat := x.spec
+ 
+ def hasNul (s : String) : Bool := s.toList.contains (Char.ofNat 0)
+ 
+-/-- `create_rs_index` (`mod.rs:1101`). Error order as in Rust: stopwords
+-`CString::new` (1108), language `CString::new`/unsupported (1129-1133), label
+-`CString::new` (1140). On success the spec is fresh and carries only
+-`NONE_INDEXABLE_FIELDS` (1155-1163), and (#3166 gap) is created with the stopword
+-list `stop` (`mod.rs:1119-1133`), recorded as `rsStop`. -/
++/-- `create_rs_index` (`mod.rs:1105`). Error order as in Rust (#3274): stopwords
++`CString::new` (1113-1120), language `CString::new` (1127-1129), label
++`CString::new` (1130), all before the options block is allocated; then
++unsupported language (1156-1160). On success the spec is fresh and carries only
++`NONE_INDEXABLE_FIELDS` (1175-1186), and (#3166 gap) is created with the stopword
++list `stop` (`mod.rs:1144-1154`), recorded as `rsStop`. -/
+ def createRsIndex (x : Idx) (label : String) (stop : Option (List String)) (lang : Option String)
+     (langOk : String → Bool) (fresh : Nat) : Except String Idx :=
+   if (stop.getD []).any hasNul then .error "nul" else
+   match lang with
+-  | some l => if hasNul l then .error "nul" else if !langOk l then .error s!"Language is not supported: {l}"
+-              else if hasNul label then .error "nul"
++  | some l => if hasNul l then .error "nul" else if hasNul label then .error "nul"
++              else if !langOk l then .error s!"Language is not supported: {l}"
+               else .ok { x with spec := some fresh, rs := [⟨"NONE_INDEXABLE_FIELDS", .noneTag⟩], rsStop := stop }
+   | none => if hasNul label then .error "nul"
+             else .ok { x with spec := some fresh, rs := [⟨"NONE_INDEXABLE_FIELDS", .noneTag⟩], rsStop := stop }
+@@ -210,11 +211,30 @@ theorem createRsIndex_ok (x : Idx) (label : String) (stop : Option (List String)
+   · split at h; · cases h
+     cases h; simp
+ 
+-theorem createRsIndex_lang_err (x : Idx) (label : String) (stop : Option (List String)) (l : String)
+-    (langOk : String → Bool) (fresh : Nat) (h1 : (stop.getD []).any hasNul = false)
+-    (h2 : hasNul l = false) (h3 : langOk l = false) :
++/-- The pre-#3274 statement of `createRsIndex_lang_err`: with NUL-free stopwords
++and language, an unsupported language is always reported, whatever the label. -/
++def LangErrSpec (x : Idx) : Prop :=
++  ∀ (label : String) (stop : Option (List String)) (l : String)
++    (langOk : String → Bool) (fresh : Nat), (stop.getD []).any hasNul = false →
++    hasNul l = false → langOk l = false →
++    createRsIndex x label stop (some l) langOk fresh = .error s!"Language is not supported: {l}"
++
++/-- Counterexample (#3274): the label `CString::new` now runs before the language
++check, so a label with a NUL byte and an unsupported language `x` reports the NUL
++error, not `Language is not supported: x`. -/
++theorem createRsIndex_lang_err_fails (x : Idx) : ¬ LangErrSpec x := by
++  intro h
++  have := h "L\x00" none "x" (fun _ => false) 0 rfl (by decide) rfl
++  simp [createRsIndex, hasNul] at this
++  exact absurd this (by decide)
++
++/-- What still holds on the new code: an unsupported language is reported when
++the stopwords, language and label are all NUL-free. -/
++theorem createRsIndex_lang_err_cleanLabel (x : Idx) (label : String) (stop : Option (List String))
++    (l : String) (langOk : String → Bool) (fresh : Nat) (h1 : (stop.getD []).any hasNul = false)
++    (h2 : hasNul l = false) (h4 : hasNul label = false) (h3 : langOk l = false) :
+     createRsIndex x label stop (some l) langOk fresh = .error s!"Language is not supported: {l}" := by
+-  simp [createRsIndex, h1, h2, h3]
++  simp [createRsIndex, h1, h2, h3, h4]
+ 
+ theorem metricOf_ok (sim : Option String) (m : String) (h : metricOf sim = .ok m) :
+     sim.getD "euclidean" ∈ ["euclidean", "ip", "cosine"] := by
+```
+
+**File**: `tests/flow/test_index_create.py` (modified, +36/-0)
+```diff
+@@ -870,6 +870,42 @@ def test16_index_creation_stats(self):
+         self.env.assertEqual(result.indices_created, 1)
+         self.env.assertEqual(result.labels_added, 1)
+ 
++    def test20_failed_fulltext_create_does_not_leak(self):
++        # A fulltext CREATE refused while building the RediSearch index
++        # (unsupported language, NUL byte in a stopword) must free the
++        # options block it allocated: ~56 bytes per statement leaked before.
++        conn = self.env.getConnection()
++        graph = self.db.select_graph("failed_fulltext_create_leak")
++        try:
++            graph.query("CREATE (:L {s:'a'})")
++            n = 10000
++            cases = [
++                ("CREATE FULLTEXT INDEX FOR (n:L) ON (n.s) OPTIONS {language:'klingon'}",
++                 "Language is not supported"),
++                ("CREATE FULLTEXT INDEX FOR (n:L) ON (n.s) OPTIONS {stopwords:['a\\u0000b']}",
++                 "nul byte"),
++            ]
++            for q, expected in cases:
++                def run(times):
++                    for _ in range(times):
++                        try:
++                            graph.query(q)
++                            self.env.assertTrue(False, message=q)
++                        except ResponseError as e:
++                            # Refused by design; only what the refusal leaves
++                            # behind is measured, and it must be this refusal.
++                            if expected not in str(e):
++                                self.env.assertTrue(False, message=f"{q}: {e}")
++                                return
++                run(100)  # warm up
++                before = conn.info('memory')['used_memory']
++                run(n)
++                grown = conn.info('memory')['used_memory'] - before
++                # the leak alone was ~560 KB here; allow for allocator noise
++                self.env.assertLess(grown, 200_000, message=q)
++        finally:
++            graph.delete()
++
+     def test19_index_options_validation(self):
+         # index OPTIONS are validated like C: a vector index needs a dimension
+         # and a similarity function (matched case-insensitively), and a
+```
+
+---
+
+### Incident Patch 3: `e0d9c218` (2026-11-17)
+**Commit Message**: fix: never reissue an id the same query freed (CALL {} DELETE then CREATE corrupts the graph) (#3641)
+
+* fix(planner): a UNION branch of a CALL body that imports nothing keeps its own labels
+
+Each UNION branch of a CALL body is bound by its own binder, whose scope
+ids restart at 0. The outer binder then applied its accumulated labels to
+the whole body, matching a branch's inner (scope, id) keys against the
+outer query's entries, so `MATCH (a:N) CALL { RETURN 0 AS x UNION CREATE
+(:New) RETURN 1 AS x }` created the node as :N. The branches are already
+labelled by their own binders, so skip the outer pass for a UNION body.
+
+Part of #3164.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* fix: never reissue an id the same query freed (#3164)
+
+A write query is several commit segments over one MVCC version: a CALL body
+commits once per input row, and a WITH after a write commits too. A segment's
+DELETE freed its ids into the recycle bin, and the next segment's CREATE took
+them back, while later rows (or later clauses) still held the old entity. Their
+DELETE/SET then hit the NEW node: lost nodes, a corrupted graph, stats counting
+each id several times.
+
+IdSpace now keeps what earlier
+
+**File**: `graph/src/graph/graph.rs` (modified, +30/-3)
+```diff
+@@ -1067,13 +1067,28 @@ impl Graph {
+         }
+     }
+ 
++    /// Everything a version does once, after its last mutation and before it is
++    /// published. Called once at MVCC commit; add new end-of-version cleanups
++    /// here rather than at the call site.
++    pub fn finish_version(&mut self) {
++        self.trim_attr_stores();
++        self.end_id_quarantine();
++    }
++
+     /// Reclaim attribute-arena growth slop on blocks touched by this version.
+-    /// Called once at MVCC commit.
+-    pub fn trim_attr_stores(&mut self) {
++    fn trim_attr_stores(&mut self) {
+         self.node_attrs.trim();
+         self.relationship_attrs.trim();
+     }
+ 
++    /// The query that owned this version is done: ids it freed may be handed out
++    /// again by the next one, and the set that held them back is not carried
++    /// into a published version. Called once at MVCC commit.
++    fn end_id_quarantine(&mut self) {
++        self.node_ids.end_quarantine();
++        self.relationship_ids.end_quarantine();
++    }
++
+     #[must_use]
+     pub fn new_version(&self) -> Self {
+         // One dictionary clone per version instead of the two the split tables cost.
+@@ -1591,6 +1606,17 @@ impl Graph {
+         Ok(())
+     }
+ 
++    /// Test stand-in for one whole query starting: open its batch and let
++    /// what an earlier query freed be reissued, as `MvccGraph` does when it
++    /// publishes. Not folded into [`Self::open_id_batches`]: that also runs
++    /// mid-query (via [`Self::roll_id_batches`]), where ending the quarantine
++    /// would let the same query reuse an id it freed.
++    #[cfg(test)]
++    fn begin_query_ids(&mut self) {
++        self.open_id_batches().expect("a consistent space");
++        self.end_id_quarantine();
++    }
++
+     /// Close the open batch and begin the next one where it left the boundary.
+     ///
+     /// A batch is not a scope: the write path's batch ends and the next begins
+@@ -5532,7 +5558,7 @@ mod reservation_tests {
+     impl Query {
+         /// Opening a query opens the graph's batch, exactly as `Commit` does.
+         fn new(g: &mut Graph) -> Self {
+-            g.open_id_batches().expect("a consistent space");
++            g.begin_query_ids();
+             Self {
+                 created: RoaringTreemap::new(),
+                 cancelled: RoaringTreemap::new(),
+@@ -5765,6 +5791,7 @@ mod reservation_tests {
+         // One in the bin, two live, so three ids handed out.
+         // A fresh batch, so nothing is outstanding: the first one committed.
+         g.open_id_batches().expect("a consistent space");
++        g.end_id_quarantine();
+         let ids = g
+             .relationship_id_space()
+             .reserve(2, &RoaringTreemap::new())
+```
+
+**File**: `graph/src/graph/graph/falkordb_index_tests.rs` (modified, +2/-1)
+```diff
+@@ -52,7 +52,8 @@ fn reserve_nodes(
+     g: &mut Graph,
+     n: usize,
+ ) -> Vec<u64> {
+-    g.open_id_batches().expect("a consistent space");
++    // Each call stands for a query of its own.
++    g.begin_query_ids();
+     g.node_id_space()
+         .reserve(n, &RoaringTreemap::new())
+         .expect("reserved")
+```
+
+**File**: `graph/src/graph/id_space.rs` (modified, +101/-3)
+```diff
+@@ -205,6 +205,18 @@ pub struct IdSpace {
+     /// id an earlier record of the same batch freed. Cleared with `taken`, for
+     /// the same reason.
+     released: RoaringTreemap,
++    /// Every id *earlier batches of this version* released: freed, but not yet
++    /// to be handed out again.
++    ///
++    /// A write query is many batches (one per commit segment) over one MVCC
++    /// version, and a row it is still carrying may name an entity an earlier
++    /// segment deleted — a `CALL {}` body commits once per input row, so row 2
++    /// still holds the node row 1's body deleted. Reissuing that id to a node
++    /// the next invocation creates makes row 2's `DELETE` remove the new node
++    /// (#3164). So [`Self::reserve`] skips these until the version is dropped:
++    /// [`Self::new_version`] starts empty, and the ids are ordinary free ids
++    /// to the next query. Accumulated by [`Self::open_batch`] from `released`.
++    quarantined: RoaringTreemap,
+ }
+ 
+ /// Append up to `count` ids from `pool` that `held` does not already hold, to
+@@ -245,10 +257,12 @@ fn reclaim_ids(
+     pool: &RoaringTreemap,
+     taken: &RoaringTreemap,
+     issued: &RoaringTreemap,
++    quarantined: &RoaringTreemap,
+     count: u64,
+     out: &mut Vec<u64>,
+ ) -> u64 {
+-    let free = pool - taken - issued;
++    let mut free = pool - taken - issued;
++    free -= quarantined;
+     let before = out.len();
+     out.extend(free.iter().take(count as usize));
+     (out.len() - before) as u64
+@@ -270,6 +284,7 @@ impl IdSpace {
+             entry_bound: 0,
+             taken: RoaringTreemap::new(),
+             released: RoaringTreemap::new(),
++            quarantined: RoaringTreemap::new(),
+         }
+     }
+ 
+@@ -288,6 +303,7 @@ impl IdSpace {
+             entry_bound,
+             taken: RoaringTreemap::new(),
+             released: RoaringTreemap::new(),
++            quarantined: RoaringTreemap::new(),
+         }
+     }
+ 
+@@ -357,6 +373,12 @@ impl IdSpace {
+         self.bound() - 1
+     }
+ 
++    /// Forget what earlier batches freed: the version's query is over, so those
++    /// ids are ordinary free ids to whoever reserves next.
++    pub fn end_quarantine(&mut self) {
++        self.quarantined = RoaringTreemap::new();
++    }
++
+     /// The same id space in a new MVCC version, with a fresh batch.
+     ///
+     /// A version is where a batch begins, so neither `taken` nor `released` is
+@@ -384,6 +406,7 @@ impl IdSpace {
+             entry_bound,
+             taken,
+             released: RoaringTreemap::new(),
++            quarantined: RoaringTreemap::new(),
+         }
+     }
+ 
+@@ -447,7 +470,17 @@ impl IdSpace {
+     pub fn open_batch(&mut self) -> Result<(), IdSpaceError> {
+         self.checked()?;
+         self.entry_bound = self.bound();
++        // What this batch freed stays unavailable for the rest of the version.
++        // So does an id it took and handed back ([`Self::cancel`]): a creation
++        // cancelled before it committed is just as stale to a reference the
++        // query still holds, and it sits in `recycled` without being `released`.
++        self.released |= &self.taken & &self.recycled;
+         self.taken.clear();
++        if self.quarantined.is_empty() {
++            std::mem::swap(&mut self.quarantined, &mut self.released);
++        } else {
++            self.quarantined |= std::mem::take(&mut self.released);
++        }
+         self.released.clear();
+         Ok(())
+     }
+@@ -495,7 +528,14 @@ impl IdSpace {
+         // — `GRAPH.BULK`, or anything reserving one id at a time — would
+         // otherwise have to hand its own creations back to the thing that
+         // recorded them.
+-        let reclaimed = reclaim_ids(&self.recycled, &self.taken, issued, count, &mut ids);
++        let reclaimed = reclaim_ids(
++            &self.recycled,
++            &self.taken,
++            issued,
++            &self.quarantined,
++            count,
++            &mut ids,
++        );
+ 
+         // Above every id ever handed out. `entry_bound` accounts for everything
+         // issued before this batch; the ids issued *by* it that sit at or above
+@@ -1025,6 +1065,56 @@ mod tests {
+         assert_eq!(next, vec![1], "not 0 again, even though it is free");
+     }
+ 
++    /// #3164: a later segment of the same version must not be handed an id an
++    /// earlier segment freed, since a row can still carry the old entity.
++    #[test]
++    fn an_id_released_by_an_earlier_batch_is_not_reissued_in_the_version() {
++        let mut space = IdSpace::restored(3, RoaringTreemap::new());
++        space.open_batch().expect("a consistent space");
++        space.release(&ids(&[0]), &ids(&[0])).expect("0 is live");
++
++        // Same batch: delete is committed after the reservations, nothing to see.
++        space.open_batch().expect("a consistent space");
++        let next = space.reserve(1, &RoaringTreemap::new()).expect("reserved");
++        assert_eq!(next, vec![3], "fresh, not the freed 0");
++
++        space.create(&ids
+```
+
+**File**: `graph/src/graph/mvcc_graph.rs` (modified, +1/-1)
+```diff
+@@ -327,7 +327,7 @@ impl MvccGraph {
+             new_graph.schema_version += 1;
+         }
+ 
+-        new_graph.trim_attr_stores();
++        new_graph.finish_version();
+ 
+         // Fold away any delta that has grown comparable to its base, then
+         // materialize every committed base before publishing. The transaction
+```
+
+**File**: `graph/src/planner/binder.rs` (modified, +11/-1)
+```diff
+@@ -827,7 +827,17 @@ impl Binder {
+         // 2b. Apply node labels to the inner body NOW, before the inner
+         // scopes are popped.  This prevents scope_id reuse in the outer
+         // query from overwriting the inner body's label entries.
+-        self.update_all_node_labels(&mut bound_body);
++        //
++        // A UNION body is the exception: each branch is bound by its own binder
++        // (scope ids restart at 0) and was labelled from that binder's own
++        // `node_labels` already. Applying this binder's labels on top would
++        // match the branch's inner `(scope, id)` keys against the OUTER
++        // query's entries and relabel a branch node that imports nothing —
++        // `MATCH (a:N) CALL { RETURN 0 AS x UNION CREATE (:New) RETURN 1 AS x }`
++        // created the node as `:N`.
++        if !matches!(bound_body, QueryIR::Union { .. }) {
++            self.update_all_node_labels(&mut bound_body);
++        }
+ 
+         // 2c. Remove inner-scope entries from node_labels so that a
+         // subsequent CALL body (which reuses the same scope_id range)
+```
+
+**File**: `graph/src/runtime/pending.rs` (modified, +7/-0)
+```diff
+@@ -944,6 +944,13 @@ impl Pending {
+             // The graph's half of the same event. Paired here so a caller cannot
+             // unwind the pending side and leave the id unreturned.
+             g.cancel_relationship_id(rel_id)?;
++            // The id stays held back for the rest of the query, so a later
++            // relationship takes the next one. The replica is told about the
++            // cancelled id as a create/delete pair of its type, which needs the
++            // type to exist: a type whose every edge was cancelled would
++            // otherwise never be registered and the pair skipped, leaving a
++            // hole before the next id that the replica refuses.
++            g.get_type_id_mut(&type_name);
+             // The one durable record that this id was ever handed out, the same
+             // role `cancelled_nodes` plays for the node above.
+             self.cancelled_relationships.push(CancelledRelationship {
+```
+
+**File**: `proofs/graph_queries/COVERAGE.tsv` (modified, +3/-1)
+```diff
+@@ -15,7 +15,7 @@ graph/src/graph/graph.rs	grow_cap	860	PROVEN	Schema.growCap/growStep: growCap_ge
+ graph/src/graph/graph.rs	new	876	PROVEN	Ids.newG_spec
+ graph/src/graph/graph.rs	restore	921	PROVEN	Ids.restore_ids, restoreCap_covers, clampTiers_mono, restore_LInv, fillEndpoints_spec
+ graph/src/graph/graph.rs	rebuild_derived_matrices	1034	PROVEN	Ids.rebuildRelType_complete (tensor rebuild_backward = GraphBLAS transpose); #3250 node half Ids.rebuildNodeMs (node_cap = max(node_cap, saved)): rebuild_never_shrinks, rebuild_keeps_entries (tensor dims not on Ten; Tensor::resize in versioned_matrix)
+-graph/src/graph/graph.rs	trim_attr_stores	1072	PROVEN	Ids.trimAttrStores_id
++graph/src/graph/graph.rs	trim_attr_stores	1079	PROVEN	Ids.trimAttrStores_id
+ graph/src/graph/graph.rs	new_version	1078	PROVEN	Ids.newVersion_spec (fresh batch per version)
+ graph/src/graph/graph.rs	name	1140	PROVEN	Accessors (field projection; newVersion_spec keeps it)
+ graph/src/graph/graph.rs	node_count	1145	PROVEN	Ids.markNodesLive_spec / nodeBound_eq (IdSpace::live) || IdSpaceContract discharged: IdRust.rustIdOps_contract (instances in IdRustUse)
+@@ -201,3 +201,5 @@ graph/src/graph/graph.rs	edge_has_type_id	1332	PROVEN	Schema.edgeHasTypeId_iff (
+ # Online index build (#2355): fns the background builder added, not modelled yet.
+ graph/src/graph/graph.rs	Graph::add_native_build	4510	NOT COVERED	online index build (#2355): not modelled yet
+ graph/src/graph/graph.rs	Graph::native_build_total	4546	NOT COVERED	online index build (#2355): not modelled yet
++graph/src/graph/graph.rs	end_id_quarantine	1087	NOT COVERED	(#3164): not modelled yet
++graph/src/graph/graph.rs	finish_version	1073	NOT COVERED	(#3164): end-of-version tail calling trim_attr_stores and end_id_quarantine; the quarantine half is not modelled yet
+```
+
+**File**: `proofs/id_space/COVERAGE.tsv` (modified, +4/-3)
+```diff
+@@ -10,16 +10,17 @@ graph/src/graph/id_space.rs	IdSpace::taken	311	PROVEN	IdSpace.takenSet: takenSet
+ graph/src/graph/id_space.rs	IdSpace::released	317	PROVEN	IdSpace.releasedSet: releasedSet_eq, released_new/restored/newVersion, openBatch_clears, release_records, create/cancel_keeps_released, Inv.relOk (#3022)
+ graph/src/graph/id_space.rs	IdSpace::recycled_count	323	PROVEN	IdSpace.recycledCount (= sLen recycled): release_succeeds bound arithmetic
+ graph/src/graph/id_space.rs	IdSpace::is_free	329	PROVEN	IdSpace.isFree (= recycled id): cancel_succeeds (free iff below boundary)
+-graph/src/graph/id_space.rs	IdSpace::bound	343	PROVEN	IdSpace.bound: checked_ok_iff, release_succeeds (unchanged by release), roll_inv
++graph/src/graph/id_space.rs	IdSpace::bound	361	PROVEN	IdSpace.bound: checked_ok_iff, release_succeeds (unchanged by release), roll_inv
+ graph/src/graph/id_space.rs	IdSpace::max_id	353	PROVEN	IdSpace.maxId: maxId_spec (bound - 1 cannot underflow when live != 0)
+ graph/src/graph/id_space.rs	IdSpace::new_version	367	PROVEN	IdSpace.newVersion: newVersion_spec, openBatch_eq_newVersion, roll_inv, released_newVersion (released not carried, #3022)
+ graph/src/graph/id_space.rs	IdSpace::checked	403	PROVEN	IdSpace.checked: checked_ok_iff (checked_add, expected == bound), Inv.checked
+-graph/src/graph/id_space.rs	IdSpace::open_batch	447	PROVEN	IdSpace.openBatch: openBatch_spec, openBatch_ok, openBatch_eq_newVersion, roll_inv, openBatch_clears (taken and released emptied, #3022)
++graph/src/graph/id_space.rs	IdSpace::open_batch	472	NOT COVERED	(#3164): open_batch now also quarantines the ids freed or cancelled in the segment (end_quarantine), which the model does not carry. Was PROVEN: IdSpace.openBatch: openBatch_spec, openBatch_ok, openBatch_eq_newVersion, roll_inv, openBatch_clears (taken and released emptied, #3022)
+ graph/src/graph/id_space.rs	IdSpace::reserve	483	PROVEN	IdSpace.reserve: reserve_spec (exact and unconditional, total: reclaimed prefix ++ fresh run whose u64 end wraps in release), reserve_spec_nowrap, reserve_wraps/reserve_wraps_example (the overflow case: restored(u64::MAX) + 1 id gives none), reserve_length (when the run's end fits in a u64), reserve_alloc_fail (unconditional). Corollaries reserve_fresh/reserve_then_cancel/lifecycle_fresh (ids fresh, then cancellable) take caller-state hypotheses hdense (taken/issued ids at or above eb lie below start; maintained by the batch's own create/cancel) and id != u64::MAX; not needed for the spec
+ graph/src/graph/id_space.rs	IdSpace::cancel	529	PROVEN	IdSpace.cancel: cancel_taken, cancel_fresh (unconditional, total). Corollary cancel_succeeds (Ok + Inv kept) takes caller hypotheses id != u64::MAX (cancel does not check it) and id fresh below eb iff recycled; reserve_then_cancel discharges the latter for ids from reserve
+ graph/src/graph/id_space.rs	IdSpace::refuse_recycled	550	PROVEN	IdSpace.refuseRecycled: refuseRecycled_ok, refuseRecycled_err
+-graph/src/graph/id_space.rs	IdSpace::create	581	PROVEN	IdSpace.create/idLimit: create_spec (all or nothing), create_out_of_range (max >= ID_LIMIT refused, #2911), create_expect_unreachable, create_succeeds, create_preserves
++graph/src/graph/id_space.rs	IdSpace::create	623	PROVEN	IdSpace.create/idLimit: create_spec (all or nothing), create_out_of_range (max >= ID_LIMIT refused, #2911), create_expect_unreachable, create_succeeds, create_preserves
+ graph/src/graph/id_space.rs	IdSpace::refuse_undeletable	637	PROVEN	IdSpace.refuseUndeletable: refuseUndeletable_ok, refuseUndeletable_err
+ graph/src/graph/id_space.rs	IdSpace::refuse_not_live	675	PROVEN	IdSpace.refuseNotLive: refuseNotLive_ok, refuseNotLive_err, refuseNotLive_live (accepts exactly live ids), refuseNotLive_minus_released, freed_earlier_refused (#3022)
+ graph/src/graph/id_space.rs	IdSpace::release	699	CONDITIONAL	IdSpace.release: release_spec, release_refused, release_records describe the model, whose afterRelease subtracts with Nat (saturating at 0); Rust does `self.live -= freed.len()` on u64 (id_space.rs:716: panics in debug, wraps in release). The two agree only under the caller contract freed ⊆ requested (hsub) with Inv, which Rust checks only by debug_assert! (id_space.rs:711) and which no proof discharges for the callers (graph.rs delete paths): undischarged hypothesis. Given it, release_no_underflow (|freed| ≤ live) and release_succeeds hold.
+ graph/src/graph/id_space.rs	IdSpace::verify	733	PROVEN	IdSpace.holeCheck/verify: holeCheck_eq, noHole_iff, verify_ok_iff (checked + taken>=eb = [eb, eb+created)), verify_hole, verify_no_underflow
++graph/src/graph/id_space.rs	IdSpace::end_quarantine	380	NOT COVERED	(#3164): not modelled yet
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #3853** (closed): fix: a queued write an inline write overtook re-runs as a writer, so a stream of them cannot starve it (@AviAvni)
 - **PR #3839** (2026-11-16): fix(fuzz): initialise RediSearch in the fuzz harnesses so index queries don't crash (@AviAvni)
+- **PR #3837** (2026-11-17): chore(proofs): Lean v4.36.0; retire the PR review projects (@AviAvni)
 - **PR #3833** (2026-11-16): ci: /proofs apply commits a held proof patch whose gates passed (@AviAvni)
 - **PR #3825** (2026-11-15): chore(deps): bump the cargo-deps group across 1 directory with 4 updates (@dependabot[bot])
 - **PR #3824** (2026-11-15): fix: AUTH on Valkey crashes the server in RediSearch's slot migration handler (@DvirDukhan)
-- **PR #3821** (2026-11-16): fix(planner): start a chain from an equality-pinned endpoint on score ties (@AviAvni)
-- **PR #3819** (2026-11-16): fix(constraint): don't freeze the server waiting for the write lock behind a long read (@DvirDukhan)
 
 ---
 
@@ -2842,43 +2305,37 @@ fuzz targets, so it
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. fix all pedantic/nursery/cargo clippy warnings
+## X. a cascaded edge of a new type no longer panics compact replies or opens a replic
 
 **RULE**:
-When implementing operations in `.claude/skills/build/SKILL.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in FalkorDB/FalkorDB. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `graph/src/effects/v3/emit.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in FalkorDB/FalkorDB. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `dd1c68a0`: fix all pedantic/nursery/cargo clippy warnings. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `27951021`: a cascaded edge of a new type no longer panics compact replies or opens a replica id gap. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/skills/build/SKILL.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `graph/src/effects/v3/emit.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-CXX=clang++ cargo clippy --workspace --all-targets -- -D warnings
-CXX=clang++ cargo clippy -p falkordb-rs -p graph --all-targets --features index-falkordb -- -D warnings
-cargo clippy --all-targets --manifest-path native-deps/Cargo.toml -- -D warnings
-- The lint set is strict: pedantic, nursery and cargo, from `[workspace.lints]`
-  in `Cargo.toml` (and `[lints]` in `native-deps/Cargo.toml`), so a plain
-  `cargo clippy` shows what CI fails on. The `index-falkordb` run lints the
-  native index, which the default build does not compile.
-- In `native-deps`, `src/recipes/`, `src/toolchain.rs` and `src/util.rs` feed
-  the dependency cache key: a style edit there rebuilds all three native deps
-  everywhere. Allow their lints on the `mod` line in `src/lib.rs` instead.
-
-- To auto-fix clippy warnings, see the `lint` skill.
-  and the clippy commands above (pinned to a specific
+        // `Pending::commit` registers the type of every cancelled edge, so the
+        // id is there and `emit_schema_additions` has announced it. Skipped
+        // rather than invented if it ever is not: a made-up id would index the
+        // pair under some other type.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-CXX=clang++ cargo clippy --all-targets
-- For a stricter, opt-in clippy pass (pedantic/nursery/cargo lints, plus an
-  auto-fix mode) see the `lint` skill.
-  and `CXX=clang++ cargo clippy --all-targets` (pinned to a specific
+        // A type whose every edge was cancelled was never registered on this
+        // graph — nothing of it reached `create_relationships_bulk` — so there
+        // is no id to state and no `ADD_SCHEMA` announcing one. Skipped rather
+        // than invented: a made-up id would index the pair under some other
+        // type. The reservation those ids came from is still the master's, so
+        // this case leaves the two relationship bounds apart. It cannot be
+        // closed with the records this format has.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `dd1c68a0` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `27951021` are properly handled with clean fallback behavior.

@@ -4,45 +4,31 @@
 {
   "source_repository": "trailbaseio/trailbase",
   "source_url": "https://github.com/trailbaseio/trailbase",
-  "source_version": "historical-head",
-  "license": "OPEN_HARVEST",
-  "timestamp": "2026-11-13T00:00:00.000Z",
-  "ai_provider": "universal-multi-artifact-distributor",
+  "source_version": "f7a68cdf",
+  "license": "OSL-3.0",
+  "timestamp": "2026-11-18T04:29:20.107Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
-  "learning_id": "unknown",
+  "learning_id": "learn-github-trailbaseio-trailbase",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [trailbaseio/trailbase](https://github.com/trailbaseio/trailbase) (Revision: `historical`).  
-> **License**: OPEN_HARVEST | **Timestamp**: `2026-11-13T00:00:00.000Z`  
-> **Learning ID**: `unknown`
+> **Provenance**: Harvested from [trailbaseio/trailbase](https://github.com/trailbaseio/trailbase) (Revision: `f7a68cdf`).  
+> **License**: OSL-3.0 | **Timestamp**: `2026-11-18T04:29:20.107Z`  
+> **Learning ID**: `learn-github-trailbaseio-trailbase`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `trailbaseio/trailbase` (Commit: `historical`)
+- **Target Repository**: `trailbaseio/trailbase` (Commit: `f7a68cdf`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
-> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/trailbaseio-trailbase-learnings.md`  
-> **Source**: github ([https://github.com/trailbaseio/trailbase](https://github.com/trailbaseio/trailbase))  
-> **Source Version**: `9e4c4967`  
-> **License**: OSL-3.0  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-11T19:15:18.226Z  
-> **Learning ID**: `learn-github-trailbaseio-trailbase`  
-> **Pipeline Version**: `2.0.0`  
-> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
-> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
-> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
-
----
-
 # Forensic Learning Record (Deep Inspection): trailbaseio/trailbase
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/trailbaseio-trailbase-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/trailbaseio/trailbase](https://github.com/trailbaseio/trailbase))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-11T19:15:18.220Z  
+> **Harvest Timestamp**: 2026-11-18T04:29:19.236Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: An open, sub-millisecond, single-executable Firebase alternative with type-safe APIs, built-in WebAssembly runtime, realtime subscriptions, auth, MCP and admin UI built on Rust, SQLite (PG) & Wasmtime.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 5755 stars
+- **Stars / Engagement**: 5771 stars
 
 ---
 
@@ -973,365 +959,679 @@ pub async fn test_email_handler(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6433cee2` (2026-11-09)
-**Commit Message**: Further simplify subscription state management. Avoid race between record-level subscriptions and record deletions, which may keep hooks unnecessarily alive.
+### Incident Patch 1: `ae955fe8` (2026-11-16)
+**Commit Message**: Update JavaScript dependencies. Addresses security advisories.
 
-**File**: `crates/core/src/records/subscribe/handler.rs` (modified, +2/-2)
+**File**: `client/testfixture/guests/typescript/package.json` (modified, +5/-5)
 ```diff
-@@ -455,7 +455,7 @@ pub async fn subscribe_ws(
-           return;
-         };
- 
--        let receiver = AutoCleanupEventStream::new(receiver, conn_state, subscription.id.clone());
-+        let receiver = AutoCleanupEventStream::new(receiver, &conn_state, subscription.id.clone());
- 
-         broker(state, subscription, receiver, &mut ws_sender, false).await
-       }))
-@@ -512,7 +512,7 @@ pub async fn subscribe_ws(
-           return;
-         };
- 
--        let receiver = AutoCleanupEventStream::new(receiver, conn_state, subscription.id.clone());
-+        let receiver = AutoCleanupEventStream::new(receiver, &conn_state, subscription.id.clone());
- 
-         broker(state, subscription, receiver, &mut ws_sender, true).await;
-       }))
-```
-
-**File**: `crates/core/src/records/subscribe/hook.rs` (modified, +45/-40)
-```diff
-@@ -297,57 +297,62 @@ mod tests {
- 
-   #[tokio::test]
-   async fn hook_lifecycle() {
--    let conn = Connection::open_in_memory().unwrap();
--    conn
--      .execute_batch("CREATE TABLE test (id INTEGER PRIMARY KEY) STRICT;")
--      .await
--      .unwrap();
-+    for _ in 0..20 {
-+      let conn = Connection::open_in_memory().unwrap();
-+      conn
-+        .execute_batch("CREATE TABLE test (id INTEGER PRIMARY KEY) STRICT;")
-+        .await
-+        .unwrap();
- 
--    conn
--      .execute_batch("INSERT INTO test (id) VALUES (1), (2);")
--      .await
--      .unwrap();
-+      conn
-+        .execute_batch("INSERT INTO test (id) VALUES (1), (2);")
-+        .await
-+        .unwrap();
- 
--    let (sender, receiver) = flume::bounded(CAPACITY);
--    let weak = WeakHookHandle::new(conn.clone(), move |event| {
--      sender.send(event).unwrap();
--    });
-+      let (sender, receiver) = flume::bounded(CAPACITY);
-+      let weak = WeakHookHandle::new(conn.clone(), move |event| {
-+        sender.send(event).unwrap();
-+      });
- 
--    assert_eq!(0, weak.state.read().strong_count());
-+      assert_eq!(0, weak.state.read().strong_count());
- 
--    {
--      let strong = weak.handle().unwrap();
-+      {
-+        let strong = weak.handle().unwrap();
- 
--      conn
--        .execute_batch("INSERT INTO test (id) VALUES (3);")
--        .await
--        .unwrap();
-+        conn
-+          .execute_batch("INSERT INTO test (id) VALUES (3);")
-+          .await
-+          .unwrap();
- 
--      drop(strong);
--    }
-+        drop(strong);
-+      }
- 
--    assert_eq!(0, weak.state.read().strong_count());
-+      assert_eq!(0, weak.state.read().strong_count());
- 
--    conn
--      .execute_batch("INSERT INTO test (id) VALUES (4);")
--      .await
--      .unwrap();
-+      conn
-+        .execute_batch("INSERT INTO test (id) VALUES (4);")
-+        .await
-+        .unwrap();
- 
--    let received: Vec<_> = receiver.drain().collect();
-+      // Wait for the broker thread to start brokering.
-+      let mut received = vec![receiver.recv_async().await.unwrap()];
-+      // Make sure there are on other pending events.
-+      received.extend(receiver.drain());
- 
--    assert_eq!(1, received.len());
-+      assert_eq!(1, received.len());
- 
--    let BrokerEvent::Event(ref event) = received[0] else {
--      panic!("expected event");
--    };
-+      let BrokerEvent::Event(ref event) = received[0] else {
-+        panic!("expected event");
-+      };
- 
--    assert_eq!(
--      QualifiedName {
--        name: "test".to_string(),
--        database_schema: None
--      },
--      event.table_name
--    );
--    assert_eq!(Value::Integer(3), event.record[0]);
-+      assert_eq!(
-+        QualifiedName {
-+          name: "test".to_string(),
-+          database_schema: None
-+        },
-+        event.table_name
-+      );
-+      assert_eq!(Value::Integer(3), event.record[0]);
-+    }
+@@ -16,13 +16,13 @@
+     "trailbase-wasm": "workspace:*"
+   },
+   "devDependencies": {
+-    "@bytecodealliance/jco": "^1.40.0",
++    "@bytecodealliance/jco": "^1.42.0",
+     "@eslint/js": "^10.0.1",
+     "@types/node": "^26.6.6",
+-    "eslint": "^10.14.0",
+-    "prettier": "^3.9.10",
++    "eslint": "^10.15.0",
++    "prettier": "^3.10.1",
+     "typescript": "^6.0.3",
+-    "typescript-eslint": "^8.72.1",
+-    "vite": "^8.3.5"
++    "typescript-eslint": "^8.72.2",
++    "vite": "^8.3.8"
    }
  }
 ```
 
-**File**: `crates/core/src/records/subscribe/manager.rs` (modified, +6/-6)
+**File**: `crates/assets/js/admin/package.json` (modified, +18/-18)
 ```diff
-@@ -19,7 +19,7 @@ pub struct SubscriptionManager {
-   record_apis: AsyncReactive<HashSet<RecordApiByName>>,
- 
-   /// Manages subscriptions for different connections based on `conn.id()`.
--  connections: Arc<RwLock<HashMap</* conn id= */ usize, Arc<PerConnectionState>>>>,
-+  connections: Arc<RwLock<HashMap</* conn id= */ usize, PerConnectionState>>>,
- }
- 
- impl SubscriptionManager {
-@@ -36,7 +36,7 @@ impl SubscriptionManager {
- 
-         let mut lock = connections.write();
- 
--        let mut old: HashMap<usize, Arc<PerConnectionState>> = std::mem::take(&mut lock);
-+        let mut old: HashMap<usize, PerConnectionState> = std::mem::take(&mut lock);
-         for api in record_apis.iter() {
-           if !api.enable_subscriptions() {
-             continue;
-@@ -84,7 +84,6 @@ impl SubscriptionManager {
-     let state = self.get_per_connection_state(&api).await;
- 
-     let subscription = state
--      .clone()
-       .add_table_subscription(api, user, filter, sender.clone())
-       .await?;
- 
-@@ -101,7 +100,7 @@ impl SubscriptionManager {
-     }
- 
-     return Ok((
--      AutoCleanupEventStream::new(receiver, state, subscription.id.clone()),
-+      AutoCleanupEventStream::new(receiver, &state, subscription.id.clone()),
-       subscription,
-     ));
+@@ -15,7 +15,7 @@
+   },
+   "dependencies": {
+     "@antv/x6": "^3.1.8",
+-    "@bufbuild/protobuf": "^2.16.0",
++    "@bufbuild/protobuf": "^2.17.0",
+     "@codemirror/autocomplete": "^6.20.4",
+     "@codemirror/lang-sql": "^6.10.0",
+     "@codemirror/language": "^6.13.1",
+@@ -30,9 +30,9 @@
+     "@nanostores/solid": "^1.1.1",
+     "@panzoom/panzoom": "^4.6.2",
+     "@solid-primitives/memo": "^1.5.1",
+-    "@solidjs/router": "^1.0.1",
++    "@solidjs/router": "^1.0.3",
+     "@tanstack/solid-form": "^1.33.5",
+-    "@tanstack/solid-query": "^5.105.0",
++    "@tanstack/solid-query": "^5.107.1",
+     "@tanstack/solid-table": "^9.3.1",
+     "@tanstack/table-core": "^9.3.1",
+     "@tiledb-inc/wkx": "github:TileDB-Inc/wkx",
+@@ -43,43 +43,43 @@
+     "geojson": "^0.5.0",
+     "i18n-iso-countries": "^7.14.0",
+     "long": "^5.3.2",
+-    "maplibre-gl": "^6.16.0",
++    "maplibre-gl": "^6.18.0",
+     "nanostores": "^1.5.5",
+-    "rapidoc": "^12.0.0",
++    "rapidoc": "^12.3.0",
+     "solid-icons": "^1.2.0",
+-    "solid-js": "^1.9.18",
++    "solid-js": "^1.9.19",
+     "tailwind-merge": "^3.7.0",
+     "trailbase": "file:../client",
+     "uuid": "^14.0.3"
+   },
+   "devDependencies": {
+     "@eslint/js": "^10.0.1",
+-    "@iconify-json/tabler": "^1.2.43",
++    "@iconify-json/tabler": "^1.2.46",
+     "@solidjs/testing-library": "^0.8.10",
+     "@tailwindcss/typography": "^0.5.20",
+-    "@tailwindcss/vite": "^4.3.3",
++    "@tailwindcss/vite": "^4.3.5",
+     "@testing-library/jest-dom": "^7.0.1",
+-    "@testing-library/user-event": "^14.6.8",
++    "@testing-library/user-event": "^14.6.10",
+     "@types/geojson": "^7946.0.16",
+     "@types/wicg-file-system-access": "^2023.10.7",
+     "autoprefixer": "^10.6.2",
+-    "eslint": "^10.14.0",
+-    "eslint-plugin-better-tailwindcss": "^4.10.0",
++    "eslint": "^10.15.0",
++    "eslint-plugin-better-tailwindcss": "^4.11.0",
+     "eslint-plugin-solid": "^0.18.1",
+-    "globals": "^17.13.0",
++    "globals": "^17.14.0",
+     "jsdom": "^30.1.3",
+-    "prettier": "^3.9.10",
++    "prettier": "^3.10.1",
+     "prettier-plugin-tailwindcss": "^0.8.1",
+-    "tailwindcss": "^4.3.3",
++    "tailwindcss": "^4.3.5",
+     "tailwindcss-animate": "^1.0.7",
+     "trailbase-bindings": "file:../bindings",
+-    "ts-proto": "^2.18.3",
++    "ts-proto": "^2.21.1",
+     "tw-animate-css": "^1.4.0",
+     "typescript": "^6.0.3",
+-    "typescript-eslint": "^8.72.1",
+-    "vite": "^8.3.5",
++    "typescript-eslint": "^8.72.2",
++    "vite": "^8.3.8",
+     "vite-plugin-csp-guard": "^4.0.1",
+-    "vite-plugin-solid": "^2.11.15",
++    "vite-plugin-solid": "^2.11.16",
+     "vite-tsconfig-paths": "6.1.1",
+     "vitest": "^4.1.12"
    }
-@@ -133,12 +132,12 @@ impl SubscriptionManager {
-     }
- 
-     return Ok((
--      AutoCleanupEventStream::new(receiver, state, subscription.id.clone()),
-+      AutoCleanupEventStream::new(receiver, &state, subscription.id.clone()),
-       subscription,
-     ));
-   }
- 
--  pub async fn get_per_connection_state(&self, api: &RecordApi) -> Arc<PerConnectionState> {
-+  pub async fn get_per_connection_state(&self, api: &RecordApi) -> PerConnectionState {
-     let conn_id: usize = api.conn().id();
- 
-     let mut lock = self.connections.upgradable_read();
-@@ -157,6 +156,7 @@ impl SubscriptionManager {
-             api.connection_metadata().clone(),
-             filter_record_apis(conn_id, &record_apis),
-           );
-+
-           v.insert(state).clone()
-         }
-       };
 ```
 
-**File**: `crates/core/src/records/subscribe/state.rs` (modified, +120/-99)
+**File**: `crates/assets/js/admin/src/components/editor/EditorPage.tsx` (modified, +4/-4)
 ```diff
-@@ -1,7 +1,6 @@
- use async_channel::WeakReceiver;
- use futures_util::Stream;
- use log::*;
--use once_cell::sync::Lazy;
- use parking_lot::Mutex;
- use pin_project_lite::pin_project;
- use std::collections::{HashMap, HashSet};
-@@ -36,7 +35,7 @@ pub struct SubscriptionId {
- /// e.g. client disconnects.
- struct AutoCleanupEventStreamState {
-   receiver: WeakReceiver<EventCandidate>,
--  state: Weak<PerConnectionState>,
-+  state: Weak<Mutex<PerConnectionStateInternal>>,
-   id: SubscriptionId,
+@@ -12,7 +12,7 @@ import {
+ } from "solid-js";
+ import type { Accessor, Signal } from "solid-js";
+ import { useQuery } from "@tanstack/solid-query";
+-import type { DefinedUseQueryResult } from "@tanstack/solid-query";
++import type { UseQueryResult } from "@tanstack/solid-query";
+ import { createWritableMemo } from "@solid-primitives/memo";
+ import type {
+   ColumnDef,
+@@ -134,15 +134,15 @@ function buildSchema(schemas: ListSchemasResponse): SQLNamespace {
  }
  
-@@ -52,7 +51,7 @@ impl Drop for AutoCleanupEventStreamState {
-         return;
-       };
- 
--      state.state.lock().remove_subscription(id);
-+      state.lock().remove_subscription(&id);
-     } else {
-       debug!("Subscription cleaned up already by the sender side.");
-     }
-@@ -72,13 +71,13 @@ pin_project! {
- impl AutoCleanupEventStream {
-   pub fn new(
-     receiver: async_channel::Receiver<EventCandidate>,
--    state: Arc<PerConnectionState>,
-+    state: &PerConnectionState,
-     id: SubscriptionId,
-   ) -> Self {
-     return Self {
-       state: AutoCleanupEventStreamState {
-         receiver: receiver.downgrade(),
--        state: Arc::downgrade(&state),
-+        state: Arc::downgrade(&state.state),
-         id,
-       },
-       receiver,
-@@ -169,12 +168,12 @@ struct PerConnectionStateInternal {
-   /// exclusively lock the entire map.
-   subscriptions: HashMap</* table_name= */ QualifiedName, Subscriptions>,
- 
--  /// Manages the installed hooks for the associated connection. Kept alive by subscriptions above.
--  weak_hook_handle: WeakHookHandle,
-+  /// Just a dead-subscriptions buffer to reduce allocations.
-+  buffer: Vec<usize>,
+ function isCached(
+-  query: DefinedUseQueryResult<ExecutionResult | null | undefined, Error>,
++  query: UseQueryResult<ExecutionResult | null | undefined, Error>,
+ ): boolean {
+   // We currently have two caching systems. Tanstack query and we store results with the scripts :/.
+   return !query.isFetchedAfterMount || query.data === undefined;
  }
  
- impl PerConnectionStateInternal {
--  fn remove_subscription(&mut self, id: SubscriptionId) {
-+  fn remove_subscription(&mut self, id: &SubscriptionId) {
-     let Some(subscriptions) = self.subscriptions.get_mut(&id.table_name) else {
-       return;
-     };
-@@ -201,38 +200,43 @@ impl PerConnectionStateInternal {
+ function ResultsHeader(props: {
+   script: Script;
+-  query: DefinedUseQueryResult<ExecutionResult | null | undefined, Error>;
++  query: UseQueryResult<ExecutionResult | null | undefined, Error>;
+   encoding: BlobEncoding;
+   setEncoding: (v: BlobEncoding) => void;
+ }) {
+@@ -189,7 +189,7 @@ function ResultsHeader(props: {
+ 
+ function ResultComponent(props: {
+   script: Script;
+-  query: DefinedUseQueryResult<ExecutionResult | null | undefined, Error>;
++  query: UseQueryResult<ExecutionResult | null | undefined, Error>;
+ }) {
+   // NOTE: We have two layers of caching :/. From Tanstack and from the scripts.
+   const response = () => props.query?.data ?? props.script.result;
+```
+
+**File**: `crates/assets/js/bindings/package.json` (modified, +1/-1)
+```diff
+@@ -12,7 +12,7 @@
+     "@microsoft/api-extractor": "^7.60.1",
+     "barrelize": "^1.11.0",
+     "typescript": "=6.0.3",
+-    "vite": "^8.3.5",
++    "vite": "^8.3.8",
+     "vite-plugin-dts": "^5.1.2"
    }
  }
+```
+
+**File**: `crates/assets/js/client/package.json` (modified, +6/-6)
+```diff
+@@ -44,19 +44,19 @@
+     "@eslint/js": "^10.0.1",
+     "@microsoft/api-extractor": "^7.60.1",
+     "@types/geojson": "^7946.0.16",
+-    "eslint": "^10.14.0",
+-    "globals": "^17.13.0",
++    "eslint": "^10.15.0",
++    "globals": "^17.14.0",
+     "http-status": "^2.1.0",
+     "jsdom": "^30.1.3",
+     "nano-spawn": "^2.1.0",
+     "oauth2-mock-server": "^8.2.3",
+     "otplib": "^13.6.0",
+-    "prettier": "^3.9.10",
+-    "tinybench": "^6.2.2",
++    "prettier": "^3.10.1",
++    "tinybench": "^6.2.3",
+     "trailbase-bindings": "file:../bindings",
+     "typescript": "^6.0.3",
+-    "typescript-eslint": "^8.72.1",
+-    "vite": "^8.3.5",
++    "typescript-eslint": "^8.72.2",
++    "vite": "^8.3.8",
+     "vite-node": "^6.0.0",
+     "vite-plugin-dts": "^5.1.2",
+     "vitest": "^4.1.12"
+```
+
+**File**: `crates/assets/js/client/tests/integration/wasm_integration.test.ts` (modified, +37/-33)
+```diff
+@@ -170,39 +170,43 @@ describe.concurrent.for(GUESTS)("WASM DB: $runtime", ({ runtime, base }) => {
+     await execute_batch(`${createTableSql};${createTableSql};${countSql}`);
+   });
  
-+#[derive(Clone)]
- pub struct PerConnectionState {
--  state: Mutex<PerConnectionStateInternal>,
-+  state: Arc<Mutex<PerConnectionStateInternal>>,
-+  /// Manages the installed hooks for the associated connection. Kept alive by subscriptions above.
-+  weak_hook_handle: Arc<WeakHookHandle>,
- }
- 
- impl PerConnectionState {
-   pub fn new(
-     conn: trailbase_sqlite::Connection,
-     connection_metadata: Arc<ConnectionMetadata>,
-     record_apis: HashSet<RecordApiByName>,
--  ) -> Arc<Self> {
--    let state = Arc::new(Self {
--      state: Mutex::new(PerConnectionStateInternal {
--        connection_metadata,
--        record_apis,
--        subscriptions: Default::default(),
--        // temporary dummy:
--        weak_hook_handle: WeakHookHandle::new(conn.clone(), |_ev| {}),
--      }),
--    });
+-  test("attaching/detaching multi DB", async ({ expect }) => {
+-    // Attach db with invalid name fails
+-    await expect(async () => await attach("session")).rejects.toThrow();
 -
--    state.state.lock().weak_hook_handle = WeakHookHandle::new(conn, {
-+  ) -> Self {
-+    let state = Arc::new(Mutex::new(PerConnectionStateInternal {
-+      connection_metadata,
-+      record_apis,
-+      subscriptions: Default::default(),
-+      buffer: Default::default(),
-+    }));
+-    const dbName = `db${runtime}`;
+-    const tableName = `'${dbName}'.'test'`;
+-
+-    await attach(dbName);
+-    await execute(`DROP TABLE IF EXISTS ${tableName};`);
+-    await execute(`CREATE TABLE ${tableName} (id INTEGER PRIMARY KEY)`);
+-
+-    for (let i = 0; i < 100; ++i) {
+-      await execute(
+-        `INSERT INTO ${tableName} (id) VALUES (${i * 3 + 0}), (${i * 3 + 1}), (${i * 3 + 2});`,
+-      );
+-    }
+-
+-    await detach(dbName);
+-    // Repeat detach fails:
+-    await expect(async () => await detach(dbName)).rejects.toThrow();
+-
+-    // COUNT fails after detach
+-    await expect(
+-      async () => await query(`SELECT COUNT(*) FROM ${tableName};`),
+-    ).rejects.toThrow();
+-
+-    // And succeeds after re-attach.
+-    await attach(dbName);
+-    expect(await query(`SELECT COUNT(*) FROM ${tableName};`)).toEqual("300");
+-
+-    // Finally detach to not clobber multiple executions.
+-    await detach(dbName);
+-  }, /* timeout= */ 15000);
++  test(
++    "attaching/detaching multi DB",
++    async ({ expect }) => {
++      // Attach db with invalid name fails
++      await expect(async () => await attach("session")).rejects.toThrow();
 +
-+    let weak_hook_handle = Arc::new(WeakHookHandle::new(conn, {
-       let state = state.clone();
++      const dbName = `db${runtime}`;
++      const tableName = `'${dbName}'.'test'`;
++
++      await attach(dbName);
++      await execute(`DROP TABLE IF EXISTS ${tableName};`);
++      await execute(`CREATE TABLE ${tableName} (id INTEGER PRIMARY KEY)`);
++
++      for (let i = 0; i < 100; ++i) {
++        await execute(
++          `INSERT INTO ${tableName} (id) VALUES (${i * 3 + 0}), (${i * 3 + 1}), (${i * 3 + 2});`,
++        );
++      }
++
++      await detach(dbName);
++      // Repeat detach fails:
++      await expect(async () => await detach(dbName)).rejects.toThrow();
++
++      // COUNT fails after detach
++      await expect(
++        async () => await query(`SELECT COUNT(*) FROM ${tableName};`),
++      ).rejects.toThrow();
++
++      // And succeeds after re-attach.
++      await attach(dbName);
++      expect(await query(`SELECT COUNT(*) FROM ${tableName};`)).toEqual("300");
++
++      // Finally detach to not clobber multiple executions.
++      await detach(dbName);
++    },
++    /* timeout= */ 15000,
++  );
  
-       move |event| match event {
-         BrokerEvent::EventLoss => {
--          state.state.lock().subscriptions.clear();
-+          state.lock().subscriptions.clear();
-+        }
-+        BrokerEvent::Event(event) => {
-+          broker(&mut state.lock(), event);
-         }
--        BrokerEvent::Event(event) => broker(&state, event),
-       }
--    });
-+    }));
+   test("concurrent query & execute", async ({ expect }) => {
+     const responses = await Promise.all(
+```
+
+**File**: `crates/auth-ui/ui/package.json` (modified, +11/-11)
+```diff
+@@ -14,39 +14,39 @@
+   },
+   "dependencies": {
+     "@astrojs/check": "^0.9.12",
+-    "@astrojs/solid-js": "^7.1.2",
++    "@astrojs/solid-js": "^7.1.6",
+     "@kobalte/core": "^0.13.14",
+     "@nanostores/persistent": "^1.3.5",
+     "@nanostores/solid": "^1.1.1",
+-    "astro": "^7.4.4",
++    "astro": "^7.4.12",
+     "astro-icon": "^1.2.0",
+     "class-variance-authority": "^0.7.1",
+     "clsx": "^2.1.1",
+     "nanostores": "^1.5.5",
+     "solid-icons": "^1.2.0",
+-    "solid-js": "^1.9.18",
++    "solid-js": "^1.9.19",
+     "tailwind-merge": "^3.7.0",
+     "tailwindcss-animate": "^1.0.7",
+     "trailbase": "file:../../assets/js/client"
+   },
+   "devDependencies": {
+     "@eslint/js": "^10.0.1",
+-    "@iconify-json/tabler": "^1.2.43",
++    "@iconify-json/tabler": "^1.2.46",
+     "@kobalte/tailwindcss": "^0.9.0",
+     "@tailwindcss/typography": "^0.5.20",
+-    "@tailwindcss/vite": "^4.3.3",
+-    "eslint": "^10.14.0",
++    "@tailwindcss/vite": "^4.3.5",
++    "eslint": "^10.15.0",
+     "eslint-plugin-astro": "^3.2.1",
+-    "eslint-plugin-better-tailwindcss": "^4.10.0",
++    "eslint-plugin-better-tailwindcss": "^4.11.0",
+     "eslint-plugin-solid": "^0.18.1",
+-    "globals": "^17.13.0",
+-    "prettier": "^3.9.10",
++    "globals": "^17.14.0",
++    "prettier": "^3.10.1",
+     "prettier-plugin-astro": "^1.1.2",
+     "prettier-plugin-tailwindcss": "^0.8.1",
+     "sharp": "^0.35.5",
+-    "tailwindcss": "^4.3.3",
++    "tailwindcss": "^4.3.5",
+     "tw-animate-css": "^1.4.0",
+     "typescript": "^6.0.3",
+-    "typescript-eslint": "^8.72.1"
++    "typescript-eslint": "^8.72.2"
+   }
+ }
+```
+
+**File**: `docs/examples/record_api_ts/package.json` (modified, +3/-3)
+```diff
+@@ -10,10 +10,10 @@
+   "devDependencies": {
+     "@eslint/js": "^10.0.1",
+     "@types/node": "^26.6.6",
+-    "eslint": "^10.14.0",
+-    "prettier": "^3.9.10",
++    "eslint": "^10.15.0",
++    "prettier": "^3.10.1",
+     "typescript": "^6.0.3",
+-    "typescript-eslint": "^8.72.1",
++    "typescript-eslint": "^8.72.2",
+     "vitest": "^4.1.12"
+   },
+   "dependencies": {
+```
+
+---
+
+### Incident Patch 2: `5141b1bc` (2026-11-16)
+**Commit Message**: Fix file write error propagation.
+
+**File**: `crates/core/src/records/error.rs` (modified, +10/-3)
+```diff
+@@ -79,9 +79,16 @@ impl From<trailbase_sqlite::from_sql::FromSqlError> for RecordError {
+   }
+ }
  
--    return state;
-+    return Self {
-+      state,
-+      weak_hook_handle,
+-impl From<Vec<crate::records::files::FileWriteError>> for RecordError {
+-  fn from(err: Vec<crate::records::files::FileWriteError>) -> Self {
+-    return RecordError::Internal(format!("{err:?}").into());
++impl From<crate::records::files::FileWriteError> for RecordError {
++  fn from(err: crate::records::files::FileWriteError) -> Self {
++    return match err {
++      crate::records::files::FileWriteError::StaleToken => {
++        RecordError::BadRequest("stale file token")
++      }
++      crate::records::files::FileWriteError::Storage(_uuid, err) => {
++        RecordError::Internal(format!("{err:?}").into())
++      }
 +    };
    }
+ }
  
-   pub fn update(
-@@ -254,58 +258,77 @@ impl PerConnectionState {
-   }
+```
+
+**File**: `crates/core/src/records/files.rs` (modified, +49/-36)
+```diff
+@@ -7,23 +7,22 @@ use log::*;
+ use object_store::{ObjectStore, ObjectStoreExt};
+ use std::collections::HashSet;
+ use std::sync::Arc;
+-use thiserror::Error;
+ use trailbase_schema::db::{QualifiedName, QualifiedNameEscaped};
+ use trailbase_schema::json_schema::{FileUpload, Payload};
+ use trailbase_sqlite::{ConnectionType, params};
  
-   pub async fn add_record_subscription(
--    self: Arc<Self>,
-+    &self,
-     api: RecordApi,
-     record: trailbase_sqlite::Value,
-     user: Option<User>,
-     sender: async_channel::Sender<EventCandidate>,
-   ) -> Result<Arc<Subscription>, RecordError> {
--    let table_name = api.table_name();
--    let pk_column = &api.record_pk_column().column.name;
--
--    let Some(row_id): Option<i64> = api
--      .conn()
--      .read_query_row_get(
--        format!(r#"SELECT _rowid_ FROM {table_name} WHERE "{pk_column}" = $1"#),
--        [record],
--        0,
--      )
--      .await?
--    else {
--      return Err(RecordError::RecordNotFound);
--    };
-+    async fn get_row_id(
-+      api: &RecordApi,
-+      record: trailbase_sqlite::Value,
-+    ) -> Result<i64, RecordError> {
-+      // NOTE: It's important that the handler already did ACL checking to not allow unprivileged
-+      // record enumerations.
-+      return api
-+        .conn()
-+        .read_query_row_get(
-+          format!(
-+            "SELECT _rowid_ FROM {table_name} WHERE \"{pk_column}\" = $1",
-+            table_name = api.table_name(),
-+            pk_column = api.record_pk_column().column.name,
-+          ),
-+          (record,),
-+          0,
-+        )
-+        .await
-+        .map_err(|err| RecordError::Internal(err.i
+ use crate::app_state::AppState;
+ use crate::records::params::FileMetadataAndPayload;
+ 
+-#[derive(Debug, Error)]
++#[derive(Debug, thiserror::Error)]
+ pub enum FileError {
+-  #[error("Storage error: {0}")]
++  #[error("Storage: {0}")]
+   Storage(#[from] object_store::Error),
+-  #[error("IO error: {0}")]
++  #[error("IO: {0}")]
+   IO(#[from] std::io::Error),
+-  #[error("Json serialization error: {0}")]
+-  JsonSerialization(#[from] serde_json::Error),
+-  #[error("SQL error: {0}")]
++  #[error("Json: {0}")]
++  Json(#[from] serde_json::Error),
++  #[error("SQL: {0}")]
+   Sql(#[from] trailbase_sqlite::Error),
+ }
+ 
+@@ -280,7 +279,13 @@ pub(crate) async fn delete_pending_files_impl(
+   return Ok(());
+ }
+ 
+-pub type FileWriteError = (String, object_store::Error);
++#[derive(Debug, thiserror::Error)]
++pub enum FileWriteError {
++  #[error("Storage: {0}")]
++  Storage(uuid::Uuid, object_store::Error),
++  #[error("StaleToken")]
++  StaleToken,
++}
+ 
+ pub(crate) struct FileManager {
+   store: Arc<dyn ObjectStore>,
+@@ -291,23 +296,23 @@ impl FileManager {
+   pub(crate) async fn write(
+     store: &Arc<dyn ObjectStore>,
+     files: FileMetadataAndPayload,
+-  ) -> Result<Self, Vec<FileWriteError>> {
++  ) -> Result<Self, FileWriteError> {
+     let results = join_all(files.into_iter().map(|(metadata, payload)| {
+       return write_or_check_file(store.clone(), metadata, payload);
+     }))
+     .await;
+ 
+-    let (written_files, errs): (Vec<FileUpload>, Vec<FileWriteError>) =
++    let (written_files, mut errs): (Vec<Option<FileUpload>>, Vec<FileWriteError>) =
+       results.into_iter().partition_map(|r| match r {
+         Ok(v) => Either::Left(v),
+         Err(e) => Either::Right(e),
+       });
+ 
+-    // NOTE: we don't do any clean-up for write failures, i.e. the DB may reference files that
+-    // cannot be found later. This may just be ok resulting in subsequent NOT_FOUND :shrug:.
+-    // We could retry or eventually unwind the DB write.
+-    if written_files.is_empty() && !errs.is_empty() {
+-      return Err(errs);
++    let written_files = written_files.into_iter().flatten().collect();
++
++    if !errs.is_empty() {
++      clean_up_written_files_async(store, written_files);
++      return Err(errs.swap_remove(0));
+     }
+ 
+     return Ok(Self {
+@@ -324,51 +329,59 @@ impl FileManager {
+ 
+ impl Drop for FileManager {
+   fn drop(&mut self) {
+-    let written_files = std::mem::take(&mut self.written_files);
++    // Unless files were explicitly released, clean up all written files.
++    clean_up_written_files_async(&self.store, std::mem::take(&mut self.written_files));
++  }
++}
+ 
+-    if !written_files.is_empty() {
+-      let store = self.store.clone();
++fn clean_up_written_files_async(store: &Arc<dyn ObjectStore>, written_files: Vec<FileUpload>) {
++  if written_files.is_empty() {
++    return;
++  }
+ 
+-      tokio::spawn(async move {
+-        for file in written_files {
+-          let path = object_store::path::Path::from(file.objectstore_id().to_string());
+-          if let Err(err) = store.delete(&path).await {
+-            warn!("Failed to cleanup just written file: {err}");
+-          }
++  tokio::spawn({
++    let store = store.clone();
++
++    async move {
++      for file in written_files {
++        let path = object_store::path::Path::from(file.objectstore_id().to_string());
++        if let Err(err) = store.delete(&path).await {
++          warn!("Failed to cleanup just written file: {err}");
+         }
+-      });
++      }
+     }
+-  }
++  });
+ }
+ 
+ async fn write_or_check_file(
+   store: Arc<dyn object_store::ObjectStore>,
+   metadata: FileUpload,
+   payload: Payload,
+-) -> Result<FileUpload, FileWriteError> {
++) -> Result<Option<FileUpload>, FileWriteError> {
+   let path = object_store::path::Path::from(metadata.objectstore_id().to_string());
+-  let err = |err: object_store::Error| -> FileWriteError {
+-    return (path.to_string(), err);
+-  };
+ 
+-  match payload {
++  return match payload {
+     Payload::Id | Payload::Token { .. } => {
+       // Existing, already written files are referenced. While we have nothing to write, we gotta
+       // make sure the file exists. The token (or id) may be stale, , e.g. if someone read, dropped
+       // the file and then still used the token.
+-      //
+-      // FIXME: We don't currently propagate the error to the user.
+       store
+         .head(&path)
+         .await
+-        .map_err(|err| (path.to_string(), err))?;
++        .map_err(|_| FileWriteError::StaleToken)?;
++
++      Ok(None)
+     }
+     Payload::Bytes(contents) => {
++      let err = |err: object_store::Error| -> FileWriteError {
++        return FileWriteError::Storage(*metadata.objectstore_id(), err);
++      };
+
+```
+
+**File**: `crates/core/src/records/read_record.rs` (modified, +40/-6)
+```diff
+@@ -316,8 +316,11 @@ pub fn test_only_validate_api_json_schema(
+ 
+ #[cfg(test)]
+ mod tests {
++  use std::assert_matches;
++
+   use axum::extract::{Path, Query, State};
+   use base64::prelude::*;
++  use itertools::Itertools;
+   use object_store::ObjectStoreExt;
+   use serde::Serialize;
+   use serde_json::json;
+@@ -1102,8 +1105,14 @@ mod tests {
+ 
+     let read_resp0: PartialResponseSchema = serde_json::from_str(read_resp0.get()).unwrap();
+     assert!(read_resp0.file.token.is_some());
+-    assert!(read_resp0.files[0].token.is_some());
+-    assert!(read_resp0.files[1].token.is_some());
++    let Some((Some(file1_token), Some(file2_token))) = read_resp0
++      .files
++      .into_iter()
++      .map(|f| f.token)
++      .collect_tuple()
++    else {
++      panic!("expected two tokens");
++    };
+ 
+     // Update the first record, which will also trigger deletions.
+     let _ = update_record_handler(
+@@ -1113,11 +1122,11 @@ mod tests {
+       Either::Json(
+         json_row_from_value(
+           serde_json::to_value(&PartialRequestSchema {
+-            // NOTE: We're overriding file1 with the same but fresh data, skipping file1 and
++            // NOTE: We're overriding file0 with the same but fresh data, skipping file1 and
+             // round-tripping file2's token.
+-            file: FileUploadRequest::Data(file1.clone()),
++            file: FileUploadRequest::Data(file0.clone()),
+             files: vec![FileUploadRequest::Token {
+-              token: read_resp0.files[1].token.clone().unwrap(),
++              token: file2_token.clone(),
+             }],
+           })
+           .unwrap(),
+@@ -1153,6 +1162,31 @@ mod tests {
+     // Ok, all pending deletions have been processed:
+     assert_eq!(0, pending_deletions.len(), "{pending_deletions:?}");
+ 
++    // Try to use the stale file token for file1.
++    let stale_result = update_record_handler(
++      State(state.clone()),
++      Path((API_NAME.to_string(), resp0.ids[0].clone())),
++      None,
++      Either::Json(
++        json_row_from_value(json!({
++          "files": vec![
++              // Stale token.
++              FileUploadRequest::Token { token: file1_token },
++              // Valid token.
++              FileUploadRequest::Token { token: file2_token }
++          ],
++        }))
++        .unwrap()
++        .into(),
++      ),
++    )
++    .await;
++
++    assert_matches!(
++      stale_result.err(),
++      Some(RecordError::BadRequest("stale file token"))
++    );
++
+     // Check that the deleted files are actually gone, both in the store and on the fs.
+     assert!(!check_file_with_id_exists(&state, &record0_file_ids[0]).await);
+     assert!(!check_file_with_id_exists(&state, &record0_file_ids[1]).await);
+@@ -1172,7 +1206,7 @@ mod tests {
+       Ok(_) => true,
+       Err(object_store::Error::NotFound { .. }) => false,
+       Err(err) => {
+-        panic!("unexpedted objectore error: {err}");
++        panic!("unexpected object-store error: {err}");
+       }
+     };
+ 
+```
+
+**File**: `crates/core/src/records/transaction.rs` (modified, +7/-2)
+```diff
+@@ -315,8 +315,13 @@ const INVALID_PARAMS_ERR: RecordError = RecordError::BadRequest("Invalid Paramet
+ /// operation, which would not work in transaction mode w/o locking the entire DB for extended
+ /// periods. In Batch mode we could break up execution into checking ACLs first, then writing files,
+ /// and then committing the DB operations, however ACL checks can depend on prior operations, which
+-/// makes this impossible. In either case, one would probably be better off to just submit N
+-/// independent operations.
++/// makes this impossible.
++///
++/// We could also be more optimistic, e.g. disallow only tokens and "hope" content writes will go
++/// through (e.g. no disk space or permission issues), however this may lead to invalid file
++/// references and hard-to-debug issues.
++///
++/// In the end, one is probably be better off to just submit N independent operations.
+ pub(crate) const FILES_IN_BATCH_MODE_ERR: RecordError =
+   RecordError::BadRequest("Files are not supported in batch-mode/transactions");
+ 
+```
+
+---
+
+### Incident Patch 3: `fe42dc0d` (2026-11-13)
+**Commit Message**: Fix test+release builds, e.g. benchmark builds.
+
+**File**: `crates/schema/src/json_schema/file.rs` (modified, +3/-6)
+```diff
+@@ -47,8 +47,7 @@ pub type FileTokenDecoder<'a> = dyn Fn(&str) -> Result<FileToken, Error> + 'a;
+ 
+ /// Wire representation of upload requests, which may either contain data or use a token to
+ /// represent round-tripped data for update operations.
+-#[derive(Debug, Clone, PartialEq, Deserialize, JsonSchema)]
+-#[cfg_attr(debug_assertions, derive(Serialize))]
++#[derive(Debug, Clone, PartialEq, Deserialize, Serialize, JsonSchema)]
+ #[serde(untagged)]
+ #[schemars(description = "")]
+ pub enum FileUploadRequest {
+@@ -97,8 +96,7 @@ impl FileUploadRequest {
+ /// File input schema used both for multipart-form uploads (in which case the name is mapped to
+ /// column names) and JSON where the column name is extracted from the corresponding key of the
+ /// parent object.
+-#[derive(Debug, Clone, PartialEq, Deserialize, JsonSchema)]
+-#[cfg_attr(debug_assertions, derive(Serialize))]
++#[derive(Debug, Clone, PartialEq, Deserialize, Serialize, JsonSchema)]
+ #[cfg_attr(debug_assertions, serde(deny_unknown_fields))]
+ #[schemars(description = "")]
+ pub struct FileUploadData {
+@@ -145,8 +143,7 @@ impl FileUploadData {
+ }
+ 
+ /// Wire-representation of FileUpload responses, e.g. read_file.
+-#[derive(Debug, Clone, PartialEq, Serialize, JsonSchema)]
+-#[cfg_attr(debug_assertions, derive(Deserialize))]
++#[derive(Debug, Clone, PartialEq, Deserialize, Serialize, JsonSchema)]
+ #[schemars(description = "")]
+ pub struct FileUploadResponse {
+   /// An opaque token to reference this file in update-operations.
 ```
 
 #### Recent Merged Pull Requests:
@@ -1360,33 +1660,39 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Further simplify subscription state management. Avoid race between record-level 
+## X. Update JavaScript dependencies. Addresses security advisories.
 
 **RULE**:
-When implementing operations in `crates/core/src/records/subscribe/handler.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trailbaseio/trailbase. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `client/testfixture/guests/typescript/package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in trailbaseio/trailbase. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6433cee2`: Further simplify subscription state management. Avoid race between record-level subscriptions and record deletions, which may keep hooks unnecessarily alive.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ae955fe8`: Update JavaScript dependencies. Addresses security advisories.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/core/src/records/subscribe/handler.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `client/testfixture/guests/typescript/package.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-        let receiver = AutoCleanupEventStream::new(receiver, &conn_state, subscription.id.clone());
-        let receiver = AutoCleanupEventStream::new(receiver, &conn_state, subscription.id.clone());
+    "@bytecodealliance/jco": "^1.42.0",
+    "eslint": "^10.15.0",
+    "prettier": "^3.10.1",
+    "typescript-eslint": "^8.72.2",
+    "vite": "^8.3.8"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Anti-pattern to NEVER write (induced failure mode):
-        let receiver = AutoCleanupEventStream::new(receiver, conn_state, subscription.id.clone());
-        let receiver = AutoCleanupEventStream::new(receiver, conn_state, subscription.id.clone());
+// Induced defect failure mode:
+    "@bytecodealliance/jco": "^1.40.0",
+    "eslint": "^10.14.0",
+    "prettier": "^3.9.10",
+    "typescript-eslint": "^8.72.1",
+    "vite": "^8.3.5"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6433cee2` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ae955fe8` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

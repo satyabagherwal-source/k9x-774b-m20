@@ -10804,3 +10804,8 @@
 | `CYCLE-20261118-5QF3` | `2026-11-18T04:20:53.631Z` | `sigstore/cosign` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9120` | Yes (`49a524d1...`) |
 | `CYCLE-20261118-5SBM` | `2026-11-18T04:20:56.098Z` | `HelixDB/helix-db` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9121` | Yes (`6b514a0b...`) |
 | `CYCLE-2026-11-18-PROJ-EVOLVE` | `2026-11-18T04:21:21.434Z` | `hf-apple-fastframes-l` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-AD9F2297` [Domain D] | Yes (`3e162796...`) |
+| `CYCLE-20261118-G9AA` | `2026-11-18T04:29:04.642Z` | `akhilaaa3/Jev-Omni` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-akhilaaa3-jev-omni-learnings.md` | Yes (`0a27583f...`) |
+| `CYCLE-20261118-GBMP` | `2026-11-18T04:29:07.681Z` | `FalkorDB/FalkorDB` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9122` | Yes (`1f39cf5e...`) |
+| `CYCLE-20261118-GEGT` | `2026-11-18T04:29:11.357Z` | `kotest/kotest` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9123` | Yes (`cf3f0130...`) |
+| `CYCLE-20261118-GJM2` | `2026-11-18T04:29:18.026Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9124` | Yes (`01938049...`) |
+| `CYCLE-20261118-GL2J` | `2026-11-18T04:29:19.915Z` | `trailbaseio/trailbase` | Commit diff / Patch analysis | `VERIFIED` | `Rule 6477` | Yes (`f8849855...`) |

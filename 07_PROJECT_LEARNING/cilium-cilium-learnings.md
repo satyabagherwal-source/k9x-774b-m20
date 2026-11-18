@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source**: github ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
-> **Source Version**: `4d102b34`  
+> **Source Version**: `e3f13487`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-17T21:22:30.101Z  
+> **Timestamp**: 2026-11-18T04:29:17.028Z  
 > **Learning ID**: `learn-github-cilium-cilium`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/cilium-cilium-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/cilium/cilium](https://github.com/cilium/cilium))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T21:22:30.096Z  
+> **Harvest Timestamp**: 2026-11-18T04:29:17.023Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: eBPF-based Networking, Security, and Observability
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod
-- **Stars / Engagement**: 25860 stars
+- **Stars / Engagement**: 25863 stars
 
 ---
 
@@ -1282,130 +1282,208 @@ func (fs Set) ExtractFromConfigMap(cm *v1.ConfigMap) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `67e39527` (2026-11-15)
-**Commit Message**: fix(deps): update module go.yaml.in/yaml/v3 to v4
+### Incident Patch 1: `e3f13487` (2026-11-17)
+**Commit Message**: datapath: sockets: fix returned result from InetDiagDestroyEnabled()
 
-Signed-off-by: cilium-renovate[bot] <134692979+cilium-renovate[bot]@users.noreply.github.com>
+After the function has been called once, any subsequent call will skip
+the assignment to `err` and always returns `nil`, instead of the actual
+probe result.
 
-**File**: `cilium-cli/install/helm_test.go` (modified, +1/-1)
+Fix this by caching the result in a gloval variable.
+
+Signed-off-by: Julian Wiedmann <[REDACTED_EMAIL]>
+
+**File**: `pkg/datapath/sockets/probe.go` (modified, +6/-4)
 ```diff
-@@ -10,7 +10,7 @@ import (
- 
- 	"github.com/blang/semver/v4"
- 	"github.com/stretchr/testify/assert"
--	"go.yaml.in/yaml/v3"
-+	"go.yaml.in/yaml/v4"
- 
- 	"github.com/cilium/cilium/cilium-cli/k8s"
- )
-```
-
-**File**: `clustermesh-apiserver/clustermesh/users_mgmt.go` (modified, +1/-1)
-```diff
-@@ -12,7 +12,7 @@ import (
- 
- 	"github.com/cilium/hive/cell"
- 	"github.com/spf13/pflag"
--	"go.yaml.in/yaml/v3"
-+	"go.yaml.in/yaml/v4"
- 
- 	cmtypes "github.com/cilium/cilium/pkg/clustermesh/types"
- 	"github.com/cilium/cilium/pkg/controller"
-```
-
-**File**: `contrib/scripts/check-workflow-check-name-collisions.go` (modified, +1/-1)
-```diff
-@@ -26,7 +26,7 @@ import (
- 	"slices"
- 	"strings"
- 
--	"go.yaml.in/yaml/v3"
-+	"go.yaml.in/yaml/v4"
+@@ -20,7 +20,10 @@ import (
+ 	"golang.org/x/sys/unix"
  )
  
- func main() {
-```
-
-**File**: `go.mod` (modified, +2/-1)
-```diff
-@@ -111,7 +111,7 @@ require (
- 	go.opentelemetry.io/otel/trace v1.47.0
- 	go.uber.org/goleak v1.3.0
- 	go.uber.org/zap v1.28.0
--	go.yaml.in/yaml/v3 v3.0.6
-+	go.yaml.in/yaml/v4 v4.0.0
- 	go4.org/netipx v0.0.0-20260823151212-3075585bcbeb
- 	golang.org/x/crypto v0.59.0
- 	golang.org/x/exp v0.0.0-20261014143641-f0251eb4aa3e
-@@ -308,6 +308,7 @@ require (
- 	go.uber.org/dig v1.17.1 // indirect
- 	go.uber.org/multierr v1.11.0 // indirect
- 	go.yaml.in/yaml/v2 v2.4.4 // indirect
-+	go.yaml.in/yaml/v3 v3.0.6 // indirect
- 	golang.org/x/oauth2 v0.37.0 // indirect
- 	golang.org/x/telemetry v0.0.0-20261009151841-97e8ea77aa2a // indirect
- 	golang.zx2c4.com/wireguard v0.0.0-20231211153847-12269c276173 // indirect
-```
-
-**File**: `go.sum` (modified, +2/-0)
-```diff
-@@ -812,6 +812,8 @@ go.yaml.in/yaml/v2 v2.4.4/go.mod h1:gMZqIpDtDqOfM0uNfy0SkpRhvUryYH0Z6wdMYcacYXQ=
- go.yaml.in/yaml/v3 v3.0.4/go.mod h1:DhzuOOF2ATzADvBadXxruRBLzYTpT36CKvDb3+aBEFg=
- go.yaml.in/yaml/v3 v3.0.6 h1:zcDfvjXEqTQmpjniUBLc91xYJMB2c4QOFxEF/LCEckM=
- go.yaml.in/yaml/v3 v3.0.6/go.mod h1:HVTZu1O7/Vkt2N+BFy8Zza+lnLsABggaTM2ZpNIGuKg=
-+go.yaml.in/yaml/v4 v4.0.0 h1:/LG1pNO84Z4l603j/xMn69CcS5OYhMQ/f7l2LoQUGuw=
-+go.yaml.in/yaml/v4 v4.0.0/go.mod h1:aZqd9kCMsGL7AuUv/m/PvWLdg5sjJsZ4oHDEnfPPfY0=
- go4.org/netipx v0.0.0-20260823151212-3075585bcbeb h1:XBM4hvfwGAttkkiTIFfeigdfcL1xIfdKXqFdgiHGtDs=
- go4.org/netipx v0.0.0-20260823151212-3075585bcbeb/go.mod h1:PLyyIXexvUFg3Owu6p/WfdlivPbZJsZdgWZlrGope/Y=
- golang.org/x/crypto v0.0.0-20180904163835-0709b304e793/go.mod h1:6SG95UA2DQfeDnfUPMdvaQW0Q7yPrPDi9nlGo2tz2b4=
-```
-
-**File**: `hubble/cmd/config/get.go` (modified, +1/-1)
-```diff
-@@ -9,7 +9,7 @@ import (
+-var probeOnce sync.Once
++var (
++	probeOnce sync.Once
++	probeErr  error
++)
  
- 	"github.com/spf13/cobra"
- 	"github.com/spf13/viper"
--	"go.yaml.in/yaml/v3"
-+	"go.yaml.in/yaml/v4"
- )
- 
- func newGetCommand(vp *viper.Viper) *cobra.Command {
+ type closer interface {
+ 	Close() error
+@@ -208,11 +211,10 @@ func probeForSockDestroy(ctx context.Context, logger *slog.Logger, tcp, udp bool
+ // and attempts to terminate it to probe for functionality enabled by
+ // CONFIG_INET_DIAG_DESTROY.
+ func InetDiagDestroyEnabled(logger *slog.Logger, probeTCP, probeUDP bool) error {
+-	var err error
+ 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+ 	defer cancel()
+ 	probeOnce.Do(func() {
+-		err = probeForSockDestroy(ctx, logger, probeTCP, probeUDP)
++		probeErr = probeForSockDestroy(ctx, logger, probeTCP, probeUDP)
+ 	})
+-	return err
++	return probeErr
+ }
 ```
 
-**File**: `hubble/cmd/config/view.go` (modified, +1/-1)
-```diff
-@@ -8,7 +8,7 @@ import (
- 
- 	"github.com/spf13/cobra"
- 	"github.com/spf13/viper"
--	"go.yaml.in/yaml/v3"
-+	"go.yaml.in/yaml/v4"
- )
- 
- func newViewCommand(vp *viper.Viper) *cobra.Command {
-```
+---
 
-**File**: `hubble/cmd/observe/flows.go` (modified, +1/-1)
+### Incident Patch 2: `2c41a804` (2026-11-02)
+**Commit Message**: clustermesh-apiserver: Move synchronizer event handling into syncLoop
+
+Move the per-event logic of the synchronization loop out of the
+RegisterSynchronizer closure and into methods of a new syncLoop type:
+handleResource for resource events, and handleNamespace for namespace
+events. The goroutine and the select over the event channels stay in
+RegisterSynchronizer, and namespaceHandler becomes a syncLoop method.
+
+This lets unit tests drive the event handling synchronously and in a
+deterministic order, which the script tests can't do.
+
+Signed-off-by: Hadrien Patte <[REDACTED_EMAIL]>
+
+**File**: `clustermesh-apiserver/clustermesh/synchronizer.go` (modified, +120/-87)
 ```diff
-@@ -18,7 +18,7 @@ import (
- 	"github.com/spf13/cobra"
- 	"github.com/spf13/pflag"
- 	"github.com/spf13/viper"
--	"go.yaml.in/yaml/v3"
-+	"go.yaml.in/yaml/v4"
- 	"google.golang.org/grpc/codes"
- 	"google.golang.org/grpc/status"
- 	"google.golang.org/protobuf/types/known/fieldmaskpb"
+@@ -87,23 +87,6 @@ func RegisterSynchronizer[T runtime.Object](in syncParams[T]) {
+ 
+ 	synced := in.SyncState.WaitForResource()
+ 
+-	// process is a helper function to log and execute store operations.
+-	process := func(invoker, op, key string, do func() error) {
+-		logger.Info("Updating resource in etcd",
+-			logfields.Reason, invoker,
+-			logfields.Operation, op,
+-			logfields.Key, key,
+-		)
+-		if err := do(); err != nil {
+-			logger.Warn("Failed updating resource in etcd",
+-				logfields.Error, err,
+-				logfields.Reason, invoker,
+-				logfields.Operation, op,
+-				logfields.Key, key,
+-			)
+-		}
+-	}
+-
+ 	in.JobGroup.Add(
+ 		job.OneShot(
+ 			fmt.Sprintf("%s-sync", strings.ToLower(in.Options.Resource)),
+@@ -114,6 +97,17 @@ func RegisterSynchronizer[T runtime.Object](in syncParams[T]) {
+ 				}
+ 				logger.Info("Starting synchronization")
+ 
++				loop := &syncLoop[T]{
++					logger:           logger,
++					namespaced:       in.Options.Namespaced,
++					converter:        in.Converter,
++					namespaceManager: in.NamespaceManager,
++					namespacer:       in.Namespacer,
++					store:            store,
++					resourceStore:    resourceStore,
++					synced:           synced,
++				}
++
+ 				// Get event channels
+ 				resourceEvents := in.Resource.Events(ctx)
+ 				var namespaceEvents <-chan resource.Event[*slim_corev1.Namespace]
+@@ -131,75 +125,13 @@ func RegisterSynchronizer[T runtime.Object](in syncParams[T]) {
+ 							resourceEvents = nil
+ 							continue
+ 						}
+-
+-						if event.Kind == resource.Sync {
+-							event.Done(nil)
+-							logger.Info("Initial entries successfully received from Kubernetes")
+-							store.Synced(ctx, synced)
+-							continue
+-						}
+-						// Filter the event based on namespace global status.
+-						// Only required for certain resource types.
+-						// Ignore delete events as they should always be processed.
+-						if event.Kind != resource.Delete && in.Options.Namespaced {
+-							ns := in.Namespacer.ExtractNamespace(event)
+-							if ns == "" {
+-								logger.Error("Failed to determine namespace for resource event, skipping",
+-									logfields.Name, event.Key.Name,
+-								)
+-								// No way to process this event, just mark done and continue.
+-								event.Done(nil)
+-								continue
+-							}
+-							isGlobal, err := in.NamespaceManager.IsGlobalNamespaceByName(ns)
+-							if err != nil {
+-								logger.Warn("Failed to determine if namespace is global",
+-									logfields.Error, err,
+-									logfields.K8sNamespace, ns,
+-								)
+-								// Retry this as it might succeed later.
+-								event.Done(err)
+-								continue
+-							}
+-							if !isGlobal {
+-								logger.Debug("Deleting resource event as it is not in a global namespace",
+-									logfields.Name, event.Key.Name,
+-									logfields.K8sNamespace, ns,
+-								)
+-								// Handle resources transitioning out of global namespaces.
+-								// If a resource was previously in a global namespace and is now
+-								// in a non-global namespace (e.g.,mutable fields like in CiliumEndpointSlice),
+-								// we need to delete it from kvstore. Convert the event to a delete to ensure cleanup.
+-								// event.Done will be called later during normal processing.
+-								event.Kind = resource.Delete
+-							}
+-						}
+-
+-						// No possible errors past this point.
+-						event.Done(nil)
+-
+-						upserts, deletes := in.Converter.Convert(event)
+-						for upsert := range upserts {
+-							process("resource-event", "upsert", upsert.GetKeyName(), func() error { return store.UpsertKey(ctx, upsert) })
+-						}
+-						for delete := range deletes {
+-							process("resource-event", "delete", delete.GetKeyName(), func() error { return store.DeleteKey(ctx, delete) })
+-						}
++						loop.handleResource(ctx, event)
+ 					case event, ok := <-namespaceEvents:
+ 						if !ok {
+ 							namespaceEvents = nil
+ 							continue
+ 						}
+-						event.Done(nil)
+-						for resEvent := range namespaceHandler(in, resourceStore, event) {
+-							upserts, deletes := in.Converter.Convert(resEvent)
+-							for upsert := range upserts {
+-								process("namespace-event", "upsert", upsert.GetKeyName(), func() error { return store.UpsertKey(ctx, upsert) })
+-							}
+-							for delete := range deletes {
+-								process("namespace-event", "delete", delete.GetKeyName(), func() error { return store.DeleteKey(ctx, delete) })
+-							}
+-						}
++						loop.handleNamespace(ctx, event)
+ 					}
+ 				}
+ 				logger.Info("Stopping synchronization")
+@@ -216,22 +148,123 @@ func RegisterSynchronizer[T runtime.Object](in syncParams[T]) {
+ 	)
+ }
+ 
++// syncLoop holds the state of the synchronization loop of a given resource,
++// and processes the resource and namespace events. Its methods must only be
++// invoked from a single goroutine.
++type syncLoop[T runtime.Object] struct {
++	logger           *slog.Logger
++	namespaced       bool
++	converter        Converter[T]
++	namespaceManager cmnamespace.Manager
++	namespacer       Namespacer[T]
++	store            store.SyncStor
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #50081** (2026-11-17): helm/certgen: enable readOnlyRootFilesystem (@Scrumplex)
 - **PR #50080** (2026-11-17): gha: Don't fail artifact merges on source deletion errors (@aanm)
+- **PR #50073** (2026-11-18): datapath: sockets: fix returned result from InetDiagDestroyEnabled() (@julianwiedmann)
 - **PR #50071** (2026-11-17): README: Update releases (@aanm)
 - **PR #50067** (2026-11-17): install: Update image digests for v1.20.5 (@cilium-release-bot[bot])
 - **PR #50066** (2026-11-17): install: Update image digests for v1.19.11 (@cilium-release-bot[bot])
-- **PR #50065** (2026-11-17): install: Update image digests for v1.18.17 (@cilium-release-bot[bot])
 
 ---
 
@@ -1425,28 +1503,36 @@ Signed-off-by: cilium-renovate[bot] <134692979+cilium-renovate[bot]@users.norepl
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): update module go.yaml.in/yaml/v3 to v4
+## X. datapath: sockets: fix returned result from InetDiagDestroyEnabled()
 
 **RULE**:
-When implementing operations in `cilium-cli/install/helm_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/datapath/sockets/probe.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in cilium/cilium. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `67e39527`: deps): update module go.yaml.in/yaml/v3 to v4. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e3f13487`: datapath: sockets: fix returned result from InetDiagDestroyEnabled(). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cilium-cli/install/helm_test.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/datapath/sockets/probe.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	"go.yaml.in/yaml/v4"
+var (
+	probeOnce sync.Once
+	probeErr  error
+)
+		probeErr = probeForSockDestroy(ctx, logger, probeTCP, probeUDP)
+	return probeErr
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-	"go.yaml.in/yaml/v3"
+var probeOnce sync.Once
+	var err error
+		err = probeForSockDestroy(ctx, logger, probeTCP, probeUDP)
+	return err
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `67e39527` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e3f13487` are properly handled with clean fallback behavior.

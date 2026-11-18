@@ -1,80 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261116-AK9L",
-    "timestamp": "2026-11-16T07:37:15.801Z",
-    "repository": "biomejs/biome",
-    "learningId": "learn-github-biomejs-biome",
-    "contentHash": "1cedd318c33fffce85df6678332d4785aaf70b5c951c19294a9e81f032dc1d05",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261116-KJRH",
-    "timestamp": "2026-11-16T07:45:01.709Z",
-    "repository": "oxc-project/oxc",
-    "learningId": "learn-github-oxc-project-oxc",
-    "contentHash": "21d14b8a1709d6416bbde92ecf938f9e225b0c4c4ece56c491f0cc182f78f0f8",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261116-CFYM",
-    "timestamp": "2026-11-16T08:06:43.150Z",
-    "repository": "volcengine/OpenViking",
-    "learningId": "learn-github-volcengine-openviking",
-    "contentHash": "01b2d3ce23cdef16f359cbe25f65ec6e63c8f9aed6a3eba7609f482a4388bfa4",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261116-IDB4",
-    "timestamp": "2026-11-16T08:11:19.648Z",
-    "repository": "zed-industries/zed",
-    "learningId": "learn-github-zed-industries-zed",
-    "contentHash": "b1d9abf3e5bbda3730582bf8ebeee6786e9ca44054f38093f3bf88134b05d9e5",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261116-0KDW",
-    "timestamp": "2026-11-16T08:53:28.244Z",
-    "repository": "astral-sh/ruff",
-    "learningId": "learn-github-astral-sh-ruff",
-    "contentHash": "ab015b7e3db43d7971505f9feba23558e04d83fcf8bb543ad723e99feb341eed",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261116-5C2E",
     "timestamp": "2026-11-16T11:45:08.438Z",
     "repository": "juicedata/juicefs",
@@ -7490,6 +7415,81 @@
     "repository": "HelixDB/helix-db",
     "learningId": "learn-github-helixdb-helix-db",
     "contentHash": "6b514a0bf994214ea2431c62922a78ccf34daea86979c036ad8be7643a1d3760",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-G9AA",
+    "timestamp": "2026-11-18T04:29:04.642Z",
+    "repository": "akhilaaa3/Jev-Omni",
+    "learningId": "learn-huggingface-akhilaaa3-jev-omni",
+    "contentHash": "0a27583fc01bdfb07338366713c99e946563ab5cf6343e5548b4e46defaa658f",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-GBMP",
+    "timestamp": "2026-11-18T04:29:07.681Z",
+    "repository": "FalkorDB/FalkorDB",
+    "learningId": "learn-github-falkordb-falkordb",
+    "contentHash": "1f39cf5e837dbebcf69291448160aa51b41f9bfa496a613f4f8766ebdbb7905e",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-GEGT",
+    "timestamp": "2026-11-18T04:29:11.357Z",
+    "repository": "kotest/kotest",
+    "learningId": "learn-github-kotest-kotest",
+    "contentHash": "cf3f01300db041e7ea6d5ac3deb0b6f7a5e13a6df5829d4b2a3731a5b46b1215",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-GJM2",
+    "timestamp": "2026-11-18T04:29:18.026Z",
+    "repository": "cilium/cilium",
+    "learningId": "learn-github-cilium-cilium",
+    "contentHash": "0193804985b332e31d24c72d559438b5a6601e70fe9e2394872dfcead5c61be2",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-GL2J",
+    "timestamp": "2026-11-18T04:29:19.915Z",
+    "repository": "trailbaseio/trailbase",
+    "learningId": "learn-github-trailbaseio-trailbase",
+    "contentHash": "f88498558ac6860893948a09335a1a0a0c8508317219daf0a577c207f2cfb204",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

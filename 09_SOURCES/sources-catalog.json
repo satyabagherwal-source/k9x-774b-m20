@@ -485,8 +485,8 @@
     "sourceUrl": "https://huggingface.co/akhilaaa3/Jev-Omni",
     "sourceVersion": "hf-akhilaaa3-jev-omni",
     "license": "Open-Source",
-    "contentHash": "376a15119d310f93ae2856af5ae1267429e6bdd85201865c7fd38f5257c69cf9",
-    "lastHarvestedAt": "2026-11-13T16:58:40.345Z",
+    "contentHash": "0a27583fc01bdfb07338366713c99e946563ab5cf6343e5548b4e46defaa658f",
+    "lastHarvestedAt": "2026-11-18T04:29:04.646Z",
     "learningId": "learn-huggingface-akhilaaa3-jev-omni"
   },
   "hf-xiaomimimo-mimo-v2.6-distill-qwen-9b": {
@@ -2893,10 +2893,10 @@
     "repository": "FalkorDB/FalkorDB",
     "platform": "github",
     "sourceUrl": "https://github.com/FalkorDB/FalkorDB",
-    "sourceVersion": "543357f1",
+    "sourceVersion": "aafdc4ae",
     "license": "NOASSERTION",
-    "contentHash": "b50a90a220af510138105ffcedc3047cdfe10707de3b11e0e61509bc720b65c9",
-    "lastHarvestedAt": "2026-11-16T22:19:20.041Z",
+    "contentHash": "1f39cf5e837dbebcf69291448160aa51b41f9bfa496a613f4f8766ebdbb7905e",
+    "lastHarvestedAt": "2026-11-18T04:29:07.684Z",
     "learningId": "learn-github-falkordb-falkordb"
   },
   "feathersjs-feathers": {
@@ -3343,10 +3343,10 @@
     "repository": "cilium/cilium",
     "platform": "github",
     "sourceUrl": "https://github.com/cilium/cilium",
-    "sourceVersion": "4d102b34",
+    "sourceVersion": "e3f13487",
     "license": "Apache-2.0",
-    "contentHash": "1c6a789ecf4d93adb8d0963c91aaad6afaa5e008e11199739d4fe443fb23f9f0",
-    "lastHarvestedAt": "2026-11-17T21:22:30.973Z",
+    "contentHash": "0193804985b332e31d24c72d559438b5a6601e70fe9e2394872dfcead5c61be2",
+    "lastHarvestedAt": "2026-11-18T04:29:18.029Z",
     "learningId": "learn-github-cilium-cilium"
   },
   "seekstorm-seekstorm": {
@@ -4023,10 +4023,10 @@
     "repository": "trailbaseio/trailbase",
     "platform": "github",
     "sourceUrl": "https://github.com/trailbaseio/trailbase",
-    "sourceVersion": "9e4c4967",
+    "sourceVersion": "f7a68cdf",
     "license": "OSL-3.0",
-    "contentHash": "475ff7ebc5f757296168b646663213b46230673aa5e588bc827818f84740b43f",
-    "lastHarvestedAt": "2026-11-11T19:15:32.230Z",
+    "contentHash": "f88498558ac6860893948a09335a1a0a0c8508317219daf0a577c207f2cfb204",
+    "lastHarvestedAt": "2026-11-18T04:29:19.919Z",
     "learningId": "learn-github-trailbaseio-trailbase"
   },
   "tremorlabs-tremor-npm": {
@@ -6783,10 +6783,10 @@
     "repository": "kotest/kotest",
     "platform": "github",
     "sourceUrl": "https://github.com/kotest/kotest",
-    "sourceVersion": "acd88ce5",
+    "sourceVersion": "9c81ef68",
     "license": "Apache-2.0",
-    "contentHash": "e04f0a928feb63456a832ac0ef684c711c04dab3b3debb0d7112debac69b4aec",
-    "lastHarvestedAt": "2026-11-14T21:20:58.607Z",
+    "contentHash": "cf3f01300db041e7ea6d5ac3deb0b6f7a5e13a6df5829d4b2a3731a5b46b1215",
+    "lastHarvestedAt": "2026-11-18T04:29:11.361Z",
     "learningId": "learn-github-kotest-kotest"
   },
   "projectcontour-contour": {

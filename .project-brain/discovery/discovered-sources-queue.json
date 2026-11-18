@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-18T04:21:22.351Z",
+  "updated_at": "2026-11-18T04:29:24.504Z",
   "stats": {
-    "total_discovered": 5269,
-    "approved_pending_harvest": 4967,
+    "total_discovered": 5271,
+    "approved_pending_harvest": 4969,
     "harvested_count": 0,
     "rejected_count": 302,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 4960,
+      "COMMUNITY_AND_EXPERT": 4962,
       "OFFICIAL_DOCUMENTATION": 165,
       "STANDARDS_AND_SPECIFICATIONS": 108,
       "ENGINEERING_BLOGS": 4,
@@ -113825,6 +113825,50 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/argoproj-argo-events-learnings.md",
         "fileName": "argoproj-argo-events-learnings.md"
+      }
+    },
+    "SRC-7C9B3C9C1CB8": {
+      "id": "SRC-7C9B3C9C1CB8",
+      "url": "https://github.com/FalkorDB/FalkorDB/actions/runs/43749173381",
+      "title": "https://github.com/FalkorDB/FalkorDB/actions/runs/43749173381",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T04:29:23.217Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/falkordb-falkordb-learnings.md",
+        "fileName": "falkordb-falkordb-learnings.md"
+      }
+    },
+    "SRC-E86E9D6E3551": {
+      "id": "SRC-E86E9D6E3551",
+      "url": "https://github.com/kotest/kotest/blob/master/kotest-assertions/kotest-assertions-core/src/commonMain/kotlin/io/kotest/matchers/collections/CollectionMatchers.kt",
+      "title": "https://github.com/kotest/kotest/blob/master/kotest-assertions/kotest-assertions-core/src/commonMain/kotlin/io/kotest/matchers/collections/CollectionMatchers.kt",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T04:29:24.504Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kotest-kotest-learnings.md",
+        "fileName": "kotest-kotest-learnings.md"
       }
     }
   }

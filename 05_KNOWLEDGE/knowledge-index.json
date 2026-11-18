@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-18T04:21:22.794Z",
-  "total_verified_learnings": 8974,
+  "last_updated": "2026-11-18T04:29:24.993Z",
+  "total_verified_learnings": 8976,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 20866,
+  "total_items": 20880,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -100860,13 +100860,13 @@
       "rule_number": 6477,
       "title": "Update JavaScript dependencies. Addresses security advisories.",
       "source_url": "https://github.com/trailbaseio/trailbase",
-      "source_version": "f7015b3d",
+      "source_version": "f7a68cdf",
       "file_path": "05_KNOWLEDGE/engineering-patterns.md",
       "status": "VERIFIED_CANONICAL_RULE",
       "verification_status": "VERIFIED_CANONICAL_RULE",
       "verified": true,
       "brain_readback": true,
-      "verified_at": "2026-11-02T17:46:53.040Z"
+      "verified_at": "2026-11-18T04:29:19.737Z"
     },
     "rule-6478": {
       "learning_id": "rule-6478",
@@ -111973,10 +111973,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-B-cilium-cilium-product-intelligence-cilium-cilium-core-invariants.md",
       "title": "Product Intelligence: cilium/cilium Core Invariants",
       "repository": "cilium/cilium",
-      "source_version": "4d102b34",
-      "content_hash": "880663bb87703a2084a9e9b4c2af76017e4aaf91a26a25c16a62712c833dfed6",
+      "source_version": "e3f13487",
+      "content_hash": "1e09c87b43065331c355037bb24872682f11faba2f861ae247b5a92ef7531749",
       "domain_letter": "B",
-      "persisted_at": "2026-11-17T21:22:31.256Z"
+      "persisted_at": "2026-11-18T04:29:18.363Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-cilium-cilium": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-cilium-cilium",
@@ -111985,10 +111985,10 @@
       "relative_path": "08_VERIFICATION/cilium-cilium-verification-protocol-empirical-defect-shield-for-cilium-cilium.md",
       "title": "Verification Protocol: Empirical Defect Shield for cilium/cilium",
       "repository": "cilium/cilium",
-      "source_version": "4d102b34",
-      "content_hash": "5e84b8b0838eb5adf8a66e279ae487d37c6fea6625f729fbcb7708504a6189b4",
+      "source_version": "e3f13487",
+      "content_hash": "4c5f925b6bba216aff20348a4238b66bf3495af3e7effcd8120ea23b77f21f2a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T21:22:31.379Z"
+      "persisted_at": "2026-11-18T04:29:18.498Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-viggle-qwen-image-2-1-viggle-turbo-learnings-": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-viggle-qwen-image-2-1-viggle-turbo-learnings-",
@@ -113606,9 +113606,9 @@
       "title": "Research & Knowledge Intelligence: akhilaaa3/Jev-Omni Core Invariants",
       "repository": "akhilaaa3/Jev-Omni",
       "source_version": "hf-akhilaaa3-jev-omni",
-      "content_hash": "1ff77c1ad314e88203e1f084d84b3e9fa0f413ffe7188c6b6b1006e1a6644efb",
+      "content_hash": "03f7eef6b65ee5ad465a996d9a4a4201abd44fa36a8c3e8158f486c1676cbb52",
       "domain_letter": "D",
-      "persisted_at": "2026-11-13T16:58:40.542Z"
+      "persisted_at": "2026-11-18T04:29:04.839Z"
     },
     "candidate_directive-batch-qdrant-upserts-under-the-32mb-request-limit-7140": {
       "item_id": "candidate_directive-batch-qdrant-upserts-under-the-32mb-request-limit-7140",
@@ -113654,9 +113654,9 @@
       "title": "Research & Knowledge Intelligence: hf-akhilaaa3-jev-omni-learnings Core Invariants",
       "repository": "hf-akhilaaa3-jev-omni-learnings",
       "source_version": "HEAD",
-      "content_hash": "f8061de3fb5c2050b6f60bd85749d8ed049a8feb952bf706c5fe72aa6ef95277",
+      "content_hash": "d788d462a7beb04da951fa13321bf2080c2694a0b92cdb49fc0fb789fa3088ea",
       "domain_letter": "D",
-      "persisted_at": "2026-11-13T16:59:44.723Z"
+      "persisted_at": "2026-11-18T04:29:24.052Z"
     },
     "domain_intelligence-technical-construction-intelligence-mintplex-labs-anything-llm-learnings-core-in": {
       "item_id": "domain_intelligence-technical-construction-intelligence-mintplex-labs-anything-llm-learnings-core-in",
@@ -214010,8 +214010,8 @@
       "slug": "cilium-cilium",
       "platform": "github",
       "source_url": "https://github.com/cilium/cilium",
-      "source_version": "4d102b34",
-      "content_hash": "1c6a789ecf4d93adb8d0963c91aaad6afaa5e008e11199739d4fe443fb23f9f0",
+      "source_version": "e3f13487",
+      "content_hash": "0193804985b332e31d24c72d559438b5a6601e70fe9e2394872dfcead5c61be2",
       "dossier_path": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/cilium-cilium-learnings.md",
       "promoted_rules": [
@@ -214059,6 +214059,11 @@
           "number": 9070,
           "title": "update module go.yaml.in/yaml/v3 to v4",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9124,
+          "title": "sockets: fix returned result from InetDiagDestroyEnabled()",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -214066,7 +214071,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T21:22:30.811Z",
+      "verified_at": "2026-11-18T04:29:17.848Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -236069,14 +236074,19 @@
       "slug": "kotest-kotest",
       "platform": "github",
       "source_url": "https://github.com/kotest/kotest",
-      "source_version": "acd88ce5",
-      "content_hash": "e04f0a928feb63456a832ac0ef684c711c04dab3b3debb0d7112debac69b4aec",
+      "source_version": "9c81ef68",
+      "content_hash": "cf3f01300db041e7ea6d5ac3deb0b6f7a5e13a6df5829d4b2a3731a5b46b1215",
       "dossier_path": "07_PROJECT_LEARNING/kotest-kotest-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kotest-kotest-learnings.md",
       "promoted_rules": [
         {
           "number": 8535,
           "title": "Update dependency dev.reformator.stacktracedecoroutinator:stacktrace-decoroutina",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9123,
+          "title": "report honest failure messages from matchInOrder/matchInOrderSubset o",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -236085,7 +236095,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T21:20:58.487Z",
+      "verified_at": "2026-11-18T04:29:11.171Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -236139,10 +236149,10 @@
       "relative_path": "08_VERIFICATION/kotest-kotest-verification-protocol-empirical-defect-shield-for-kotest-kotest.md",
       "title": "Verification Protocol: Empirical Defect Shield for kotest/kotest",
       "repository": "kotest/kotest",
-      "source_version": "acd88ce5",
-      "content_hash": "da6d4046b689becc22d4376b6961e4cda23995880f48cdd9c58643998d018419",
+      "source_version": "9c81ef68",
+      "content_hash": "bedeae2ba21d8d1e79622210dce60a44319b7ea8c19f66ecbf37c8fb40bcf96e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T21:20:58.892Z"
+      "persisted_at": "2026-11-18T04:29:11.855Z"
     },
     "rule-8536": {
       "learning_id": "rule-8536",
@@ -236321,9 +236331,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for kotest-kotest-learnings",
       "repository": "kotest-kotest-learnings",
       "source_version": "HEAD",
-      "content_hash": "e9be845794f8f9c140617a9d32947561415885305b9a946d56e03a2a0066bca6",
+      "content_hash": "6c25b8a18418f68c5b092237ef7a5fe07d9e135f9288941a7fa0bb575b1973f1",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T21:21:33.809Z"
+      "persisted_at": "2026-11-18T04:29:24.993Z"
     },
     "learn-huggingface-microsoft-frognano-4b-2609": {
       "learning_id": "learn-huggingface-microsoft-frognano-4b-2609",
@@ -238872,8 +238882,8 @@
       "slug": "falkordb-falkordb",
       "platform": "github",
       "source_url": "https://github.com/FalkorDB/FalkorDB",
-      "source_version": "543357f1",
-      "content_hash": "b50a90a220af510138105ffcedc3047cdfe10707de3b11e0e61509bc720b65c9",
+      "source_version": "aafdc4ae",
+      "content_hash": "1f39cf5e837dbebcf69291448160aa51b41f9bfa496a613f4f8766ebdbb7905e",
       "dossier_path": "07_PROJECT_LEARNING/falkordb-falkordb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/falkordb-falkordb-learnings.md",
       "promoted_rules": [
@@ -238886,6 +238896,11 @@
           "number": 8799,
           "title": "fix all pedantic/nursery/cargo clippy warnings",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9122,
+          "title": "a cascaded edge of a new type no longer panics compact replies or opens a replic",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -238893,7 +238908,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-16T22:19:19.824Z",
+      "verified_at": "2026-11-18T04:29:07.491Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -238935,10 +238950,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-falkordb-falkordb-technical-construction-intelligence-falkordb-falkordb-core-inv.md",
       "title": "Technical Construction Intelligence: FalkorDB/FalkorDB Core Invariants",
       "repository": "FalkorDB/FalkorDB",
-      "source_version": "d6fcd5aa",
-      "content_hash": "9d5b730e72bf751a4b17e2220c156e69bd20de136ece4b7a035caada51caf576",
+      "source_version": "aafdc4ae",
+      "content_hash": "bbd60be5b00c1e3e387bb509fa192eea1fdc9afe9302bfdf0c6ec5b8ab7c2cbd",
       "domain_letter": "H",
-      "persisted_at": "2026-11-15T01:32:39.859Z"
+      "persisted_at": "2026-11-18T04:29:08.039Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-falkordb-falkordb": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-falkordb-falkordb",
@@ -238947,10 +238962,10 @@
       "relative_path": "08_VERIFICATION/falkordb-falkordb-verification-protocol-empirical-defect-shield-for-falkordb-fal.md",
       "title": "Verification Protocol: Empirical Defect Shield for FalkorDB/FalkorDB",
       "repository": "FalkorDB/FalkorDB",
-      "source_version": "543357f1",
-      "content_hash": "56a36421f04a3a0a52d7bb0b3bc1a54088829c7d2dc97721df97a021d716c63e",
+      "source_version": "aafdc4ae",
+      "content_hash": "da6578d6800ebcb191fcfd2d8166d1196f3c987c638acadb200005e37c681fca",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T22:19:20.591Z"
+      "persisted_at": "2026-11-18T04:29:08.173Z"
     },
     "learn-github-tencent-tds-kuiklyui": {
       "learning_id": "learn-github-tencent-tds-kuiklyui",
@@ -239035,9 +239050,9 @@
       "title": "Technical Construction Intelligence: falkordb-falkordb-learnings Core Invariants",
       "repository": "falkordb-falkordb-learnings",
       "source_version": "HEAD",
-      "content_hash": "4638bf2c0ee5170eb623cc08cf26569bc9b3ccb99243f1a3420f5b6cf7b95327",
+      "content_hash": "18d0550a61a32af60f86c7b9f3c3030fcc5b530c900807b3fe5f66759680609b",
       "domain_letter": "H",
-      "persisted_at": "2026-11-15T01:32:51.042Z"
+      "persisted_at": "2026-11-18T04:29:23.581Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-falkordb-falkordb-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-falkordb-falkordb-learnings",
@@ -239047,9 +239062,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for falkordb-falkordb-learnings",
       "repository": "falkordb-falkordb-learnings",
       "source_version": "HEAD",
-      "content_hash": "d55157aef8d30ba2d07688133c66dd4dfa792f6bd8c4a45611a2887d6af96272",
+      "content_hash": "0ab62c632ad0fff281526f7182b22192cd1c11ea8d82199aa55cff53c82af396",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T22:19:34.617Z"
+      "persisted_at": "2026-11-18T04:29:23.726Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-liquidai-lfm2-5-24b-a2b-learnings-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-liquidai-lfm2-5-24b-a2b-learnings-core-invari",
@@ -280877,6 +280892,216 @@
       "content_hash": "741e4522577188a4d06763affab3b51c5e5bd3b1282f93ea457d507ea0369a59",
       "domain_letter": "G",
       "persisted_at": "2026-11-18T04:21:22.524Z"
+    },
+    "learn-huggingface-akhilaaa3-jev-omni": {
+      "learning_id": "learn-huggingface-akhilaaa3-jev-omni",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "akhilaaa3/Jev-Omni",
+      "repository": "akhilaaa3/Jev-Omni",
+      "slug": "hf-akhilaaa3-jev-omni",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/akhilaaa3/Jev-Omni",
+      "source_version": "hf-akhilaaa3-jev-omni",
+      "content_hash": "0a27583fc01bdfb07338366713c99e946563ab5cf6343e5548b4e46defaa658f",
+      "dossier_path": "07_PROJECT_LEARNING/hf-akhilaaa3-jev-omni-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-akhilaaa3-jev-omni-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-18T04:29:04.439Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-9122": {
+      "learning_id": "rule-9122",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9122,
+      "title": "a cascaded edge of a new type no longer panics compact replies or opens a replic",
+      "source_url": "https://github.com/FalkorDB/FalkorDB",
+      "source_version": "aafdc4ae",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-18T04:29:07.491Z"
+    },
+    "candidate_directive-a-cascaded-edge-of-a-new-type-no-longer-panics-compact-replies-or-opens-a-replic": {
+      "item_id": "candidate_directive-a-cascaded-edge-of-a-new-type-no-longer-panics-compact-replies-or-opens-a-replic",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-GNSE-a-cascaded-edge-of-a-new-type-no-longer-panics-compact-replies-or-opens-a-replic.md",
+      "title": "a cascaded edge of a new type no longer panics compact replies or opens a replic",
+      "repository": "falkordb-falkordb-learnings",
+      "source_version": "HEAD",
+      "content_hash": "6102ca33aa964aeb3804add540b7a29a6ec805ab476ae6eb0e9ab70a362b6846",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-18T04:29:23.442Z"
+    },
+    "rule-9123": {
+      "learning_id": "rule-9123",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9123,
+      "title": "report honest failure messages from matchInOrder/matchInOrderSubset o",
+      "source_url": "https://github.com/kotest/kotest",
+      "source_version": "9c81ef68",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-18T04:29:11.171Z"
+    },
+    "candidate_directive-report-honest-failure-messages-from-matchinorder-matchinordersubset-o": {
+      "item_id": "candidate_directive-report-honest-failure-messages-from-matchinorder-matchinordersubset-o",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-GEMK-report-honest-failure-messages-from-matchinorder-matchinordersubset-o.md",
+      "title": "report honest failure messages from matchInOrder/matchInOrderSubset o",
+      "repository": "kotest/kotest",
+      "source_version": "9c81ef68",
+      "content_hash": "3dfe4ca86ba515f2071df21041305753592fa4458366a2af2233b61f520a1811",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-18T04:29:11.565Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-kotest-kotest-core-invariants": {
+      "item_id": "domain_intelligence-quality-verification-intelligence-kotest-kotest-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-kotest-kotest-quality-verification-intelligence-kotest-kotest-core-invariants.md",
+      "title": "Quality & Verification Intelligence: kotest/kotest Core Invariants",
+      "repository": "kotest/kotest",
+      "source_version": "9c81ef68",
+      "content_hash": "04ade4416256c5e9e40f8156c61fe857c29afceff08e67bc54946726a7434e96",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-18T04:29:11.725Z"
+    },
+    "rule-9124": {
+      "learning_id": "rule-9124",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9124,
+      "title": "sockets: fix returned result from InetDiagDestroyEnabled()",
+      "source_url": "https://github.com/cilium/cilium",
+      "source_version": "e3f13487",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-18T04:29:17.848Z"
+    },
+    "candidate_directive-sockets-fix-returned-result-from-inetdiagdestroyenabled": {
+      "item_id": "candidate_directive-sockets-fix-returned-result-from-inetdiagdestroyenabled",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-GJRP-sockets-fix-returned-result-from-inetdiagdestroyenabled.md",
+      "title": "sockets: fix returned result from InetDiagDestroyEnabled()",
+      "repository": "cilium/cilium",
+      "source_version": "e3f13487",
+      "content_hash": "1d1b825eef29ddb183ef14766ddfb684109a165326bc354c795dd56e95ba1147",
+      "domain_letter": "B",
+      "persisted_at": "2026-11-18T04:29:18.232Z"
+    },
+    "learn-github-trailbaseio-trailbase": {
+      "learning_id": "learn-github-trailbaseio-trailbase",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "trailbaseio/trailbase",
+      "repository": "trailbaseio/trailbase",
+      "slug": "trailbaseio-trailbase",
+      "platform": "github",
+      "source_url": "https://github.com/trailbaseio/trailbase",
+      "source_version": "f7a68cdf",
+      "content_hash": "f88498558ac6860893948a09335a1a0a0c8508317219daf0a577c207f2cfb204",
+      "dossier_path": "07_PROJECT_LEARNING/trailbaseio-trailbase-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/trailbaseio-trailbase-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 6477,
+          "title": "Update JavaScript dependencies. Addresses security advisories.",
+          "status": "ALREADY_PRESENT_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-18T04:29:19.737Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "candidate_directive-update-javascript-dependencies-addresses-security-advisories": {
+      "item_id": "candidate_directive-update-javascript-dependencies-addresses-security-advisories",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-GL7U-update-javascript-dependencies-addresses-security-advisories.md",
+      "title": "Update JavaScript dependencies. Addresses security advisories.",
+      "repository": "trailbaseio/trailbase",
+      "source_version": "f7a68cdf",
+      "content_hash": "50e096ab0d938141adcea158365ca52e2680aa2f7106b57169069eddbcc8fded",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-18T04:29:20.107Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-trailbaseio-trailbase-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-trailbaseio-trailbase-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-trailbaseio-trailbase-technical-construction-intelligence-trailbaseio-trailbase-.md",
+      "title": "Technical Construction Intelligence: trailbaseio/trailbase Core Invariants",
+      "repository": "trailbaseio/trailbase",
+      "source_version": "f7a68cdf",
+      "content_hash": "b100cb809f2da13db356aafdcabd864c11d64eb17cd2fc4773dc96e7f2284621",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-18T04:29:20.238Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-trailbaseio-trailbase": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-trailbaseio-trailbase",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/trailbaseio-trailbase-verification-protocol-empirical-defect-shield-for-trailbas.md",
+      "title": "Verification Protocol: Empirical Defect Shield for trailbaseio/trailbase",
+      "repository": "trailbaseio/trailbase",
+      "source_version": "f7a68cdf",
+      "content_hash": "a947a405c2ac844d0aba51f9696243a7876b8a8e36b9714268d5bdb3bcaddbd8",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-18T04:29:20.372Z"
+    },
+    "candidate_directive-matchers-report-honest-failure-messages-from-matchinorder-matchinordersubset-o": {
+      "item_id": "candidate_directive-matchers-report-honest-failure-messages-from-matchinorder-matchinordersubset-o",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-GORL-matchers-report-honest-failure-messages-from-matchinorder-matchinordersubset-o.md",
+      "title": "matchers): report honest failure messages from matchInOrder/matchInOrderSubset o",
+      "repository": "kotest-kotest-learnings",
+      "source_version": "HEAD",
+      "content_hash": "577e1a4861e2a37887c7433c387650f7f072bcbe03120fac994aae5409a5ba09",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-18T04:29:24.706Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-kotest-kotest-learnings-core-invariants": {
+      "item_id": "domain_intelligence-quality-verification-intelligence-kotest-kotest-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-kotest-kotest-learnings-quality-verification-intelligence-kotest-kotest-learning.md",
+      "title": "Quality & Verification Intelligence: kotest-kotest-learnings Core Invariants",
+      "repository": "kotest-kotest-learnings",
+      "source_version": "HEAD",
+      "content_hash": "4f3bc29db19352d9575d921fa869ef3a51b36749dacbb0e3e79b9779ed13efae",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-18T04:29:24.859Z"
     }
   },
   "ai-builder-brain": {

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kotest-kotest-learnings.md`  
 > **Source**: github ([https://github.com/kotest/kotest](https://github.com/kotest/kotest))  
-> **Source Version**: `acd88ce5`  
+> **Source Version**: `9c81ef68`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-14T21:20:57.953Z  
+> **Timestamp**: 2026-11-18T04:29:10.371Z  
 > **Learning ID**: `learn-github-kotest-kotest`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/kotest-kotest-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/kotest/kotest](https://github.com/kotest/kotest))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-14T21:20:57.949Z  
+> **Harvest Timestamp**: 2026-11-18T04:29:10.366Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -676,11 +676,11 @@ export default Home;
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #6278** (2026-11-14): **update docs from amper to kotlin toolchain**
-  *Symptoms*: <!--  If this PR updates documentation, please update all relevant versions of the docs, see: https://github.com/kotest/kotest/tree/master/documentation/versioned_docs The documentation at https://github.com/kotest/kotest/tree/master/documentation/docs is the documentation for the next minor or major version _TO BE RELEASED_ --> update docs from amper to kotlin toolchain
+- **Issue #6288** (2026-11-17): **fix(matchers): report honest failure messages from matchInOrder/matchInOrderSubset on edge inputs**
+  *Symptoms*: Fixes #6286  ## What  `matchInOrder(...)` / `matchInOrderSubset(...)` produced broken failure messages on two edge inputs (pass/fail decisions were already correct; only the failure output was broken):  1. **Actual collection shorter than the assertions list** — the matching loop range `0..(actual.size - assertions.size)` is empty, `bestResult` stays `null`, and the message template interpolated the nullable fields literally:     ```    Best result when comparing from index [null], where null elements passed, but the following elements failed:                 null    ```  2. **Empty assertions list** — `assertions[elementsPassed]` threw `IndexOutOfBoundsException`, which the internal `runCatching` swallowed and rendered as element "problems":     ```    0 => Index 0 out of bounds for length 0    1 => Index 0 out of bounds for length 0    2 => Index 0 out of bounds for length 0    ```  ## Why  Every sibling in the family handles these edges properly:  - the structural twins `containsInOrder` / `existInOrder` reject an empty expected list eagerly (`require(...)` → `"expected values must not be empty"` / `"predicates must not be empty"`), - `matchEach` in the same file reports the analogous edges explicitly (`"No actual element for assertion at index N"` / `"Element has no corresponding assertion. Only N assertions provided"`).  `matchInOrder` / `matchInOrderSubset` were the only members whose edge-case output was garbage, leaving users without any diagnostic.  ## How  In `match
 
-- **Issue #6277** (2026-11-13): **fix flaky tests 2**
-  *Symptoms*: <!--  If this PR updates documentation, please update all relevant versions of the docs, see: https://github.com/kotest/kotest/tree/master/documentation/versioned_docs The documentation at https://github.com/kotest/kotest/tree/master/documentation/docs is the documentation for the next minor or major version _TO BE RELEASED_ --> 
+- **Issue #6286** (2026-11-17): **matchInOrder / matchInOrderSubset failure messages are broken on edge inputs: literal "null" in output and internal IndexOutOfBoundsException leaked as element problems**
+  *Symptoms*: ## Summary  `matchInOrder(...)` and `matchInOrderSubset(...)` in `io.kotest.matchers.collections` ([CollectionMatchers.kt](https://github.com/kotest/kotest/blob/master/kotest-assertions/kotest-assertions-core/src/commonMain/kotlin/io/kotest/matchers/collections/CollectionMatchers.kt)) build objectively broken failure messages on two edge inputs. The pass/fail decision is correct in both cases; the failure output is not, and both edges are already handled properly by every sibling in the same matcher family.  ## Manifestation 1 — more assertions than elements  ```kotlin listOf(1, 2) should matchInOrder<Int>(    { it shouldBe 1 },    { it shouldBe 2 },    { it shouldBe 3 } ) ```  The matching loop iterates `0..(actual.size - assertions.size)`, which is empty when the collection is shorter than the assertions list, so `bestResult` stays `null` and the message template interpolates the nullable fields literally. Actual output:  ``` Expected a sequence of elements to pass the assertions, but failed to match all assertions  Best result when comparing from index [null], where null elements passed, but the following elements failed:              null ```  The report contains no usable information (no element index, no counts, no failing assertion). Same output for `matchInOrderSubset` and for an empty actual collection.  ## Manifestation 2 — empty assertions list  ```kotlin listOf(1, 2, 3) should matchInOrder<Int>() ```  `assertions[elementsPassed]` throws `IndexOutOfBoundsException`
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -697,186 +697,153 @@ export default Home;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8d2e4b47` (2026-11-13)
-**Commit Message**: Update dependency dev.reformator.stacktracedecoroutinator:stacktrace-decoroutinator-jvm to v2.6.6 (#6265)
+### Incident Patch 1: `5f6bd903` (2026-11-17)
+**Commit Message**: fix(matchers): report honest failure messages from matchInOrder/matchInOrderSubset on edge inputs (#6288)
 
-This PR contains the following updates:
+Fixes #6286
 
-| Package | Change |
-[Age](https://docs.renovatebot.com/merge-confidence/) |
-[Confidence](https://docs.renovatebot.com/merge-confidence/) |
-|---|---|---|---|
-|
-[dev.reformator.stacktracedecoroutinator:stacktrace-decoroutinator-jvm](https://redirect.github.com/reformator14/stacktrace-decoroutinator)
-| `2.6.4` → `2.6.6` |
-![age](https://developer.mend.io/api/mc/badges/age/maven/dev.reformator.stacktracedecoroutinator:stacktrace-decoroutinator-jvm/2.6.6?slim=true)
-|
-![confidence](https://developer.mend.io/api/mc/badges/confidence/maven/dev.reformator.stacktracedecoroutinator:stacktrace-decoroutinator-jvm/2.6.4/2.6.6?slim=true)
-|
+## What
 
----
+`matchInOrder(...)` / `matchInOrderSubset(...)` produced broken failure
+messages on two edge inputs (pass/fail decisions were already correct;
+only the failure output was broken):
 
-### Release Notes
+1. **Actual collection shorter than the assertions list** — the matching
+loop range `0..(actual.size - assertions.size)` is empty, `bestResult`
+stays `null`, and the message template interpolated the nullable fields
+literally:
 
-<details>
-<summary>reformator14/stacktrace-decoroutinator
-(dev.reformator.stacktracedecoroutinator:stacktrace-decoroutinator-jvm)</summary>
+   ```
+Best result when comparing from index [null], where null elements
+passed, but the following elements failed:
 
-###
-[`v2.6.6`](https://redirect.github.com/reformator14/stacktrace-decoroutinator/releases/tag/v2.6.6):
-2.6.6
+               null
+   ```
 
-Fixes
+2. **Empty assertions list** — `assertions[elementsPassed]` threw
+`IndexOutOfBoundsException`, which the internal `runCatching` swallowed
+and rendered as element "problems":
 
--
-[#&#8203;85](https://redirect.github.com/reformator14/stacktrace-decoroutinator/issues/85):
-fix a 2.6.5 regression where Ktor pipeli
+   ```
+   0 => Index 0 out of bounds for length 0
+   1 => Index 0 out of bounds for length 0
+   2 => Index 0 out of bounds for length 0
+   ```
 
-**File**: `gradle/libs.versions.toml` (modified, +1/-1)
+## Why
+
+Every sibling in the family handles these edges properly:
+
+- the structural twins `containsInOrder` / `existInOrder` reject an
+empty expected list eagerly (`require(...)` → `"expected values
+
+**File**: `kotest-assertions/kotest-assertions-core/src/commonMain/kotlin/io/kotest/matchers/collections/CollectionMatchers.kt` (modified, +17/-5)
 ```diff
-@@ -83,7 +83,7 @@ nmcp = "1.0.2"
- xmlutil = "0.91.3"
+@@ -67,6 +67,8 @@ fun <T> matchInOrderSubset(vararg fns: (T) -> Unit): Matcher<Collection<T>?> =
+  */
+ fun <T> matchInOrder(assertions: List<(T) -> Unit>, allowGaps: Boolean): Matcher<Collection<T>?> =
+    neverNullMatcher { actual ->
++      require(assertions.isNotEmpty()) { "assertions must not be empty" }
++
+       val originalMode = errorCollector.getCollectionMode()
+       try {
+          data class MatchInOrderSubsetProblem(
+@@ -126,17 +128,27 @@ fun <T> matchInOrder(assertions: List<(T) -> Unit>, allowGaps: Boolean): Matcher
+          MatcherResult(
+             allPassed,
+             {
+-               """
++               val result = bestResult
++               if (result == null) {
++                  // the actual collection is shorter than the assertions list, so the loop above never ran
++                  """
+             |Expected a sequence of elements to pass the assertions, ${if (allowGaps) "possibly with gaps between " else ""}but failed to match all assertions
+             |
+-            |Best result when comparing from index [${bestResult?.startIndex}], where ${bestResult?.elementsPassed} elements passed, but the following elements failed:
++            |The collection has fewer elements (${actual.size}) than the number of assertions (${assertions.size}), so the assertions cannot all match.
++            """.trimMargin()
++               } else {
++                  """
++            |Expected a sequence of elements to pass the assertions, ${if (allowGaps) "possibly with gaps between " else ""}but failed to match all assertions
++            |
++            |Best result when comparing from index [${result.startIndex}], where ${result.elementsPassed} elements passed, but the following elements failed:
+             |
+             ${
+-                  bestResult?.problems?.joinToString("\n") { problem ->
+-                     "|${problem.atIndex} => ${problem.problem}"
++                     result.problems.joinToString("\n") { problem ->
++                        "|${problem.atIndex} => ${problem.problem}"
++                     }
+                   }
+-               }
+             """.trimMargin()
++               }
+             },
+             { "Expected some assertion to fail but all passed" }
+          )
+```
+
+**File**: `kotest-assertions/kotest-assertions-core/src/jvmTest/kotlin/com/sksamuel/kotest/matchers/collections/CollectionMatchersTest.kt` (modified, +36/-0)
+```diff
+@@ -739,6 +739,30 @@ expected:<2> but was:<3>""")
+             """.trimIndent()
+          }
  
- binary-compatibility-validator = "0.18.1"
--decoroutinator = "2.6.4"
-+decoroutinator = "2.6.6"
- pitest = "1.23.1"
++         "collection shorter than the assertions list reports a clear failure" {
++            shouldFail {
++               listOf(1, 2) should matchInOrder(
++                  { it shouldBe 1 },
++                  { it shouldBe 2 },
++                  { it shouldBe 3 }
++               )
++            }.message shouldBe """
++               Expected a sequence of elements to pass the assertions, but failed to match all assertions
++
++               The collection has fewer elements (2) than the number of assertions (3), so the assertions cannot all match.
++            """.trimIndent()
++         }
++
++         "empty assertions are rejected like in containsInOrder / existInOrder" {
++            shouldThrow<IllegalArgumentException> {
++               listOf(1, 2, 3) should matchInOrder<Int>()
++            }.message shouldBe "assertions must not be empty"
++
++            shouldThrow<IllegalArgumentException> {
++               listOf(1, 2, 3) should matchInOrderSubset<Int>()
++            }.message shouldBe "assertions must not be empty"
++         }
++
  
- # https://developer.android.com/jetpack/androidx/versions/all-channel
-```
-
----
-
-### Incident Patch 2: `aa801abc` (2026-11-13)
-**Commit Message**: fix flaky tests 2 (#6277)
-
-<!-- 
-If this PR updates documentation, please update all relevant versions of
-the docs, see:
-https://github.com/kotest/kotest/tree/master/documentation/versioned_docs
-The documentation at
-https://github.com/kotest/kotest/tree/master/documentation/docs is the
-documentation for the next minor or major version _TO BE RELEASED_
--->
-
-**File**: `kotest-assertions/kotest-assertions-core/src/jvmTest/kotlin/io/kotest/assertions/nondeterministic/EventuallyTest.kt` (modified, +3/-1)
-```diff
-@@ -254,7 +254,9 @@ class EventuallyTest : FunSpec() {
-          var count = 0
-          val config = eventuallyConfig {
-             interval = 1.milliseconds
--            duration = 10.milliseconds
-+            // bound by retries, not time, so a slow runner still gets a second ("last") attempt
-+            duration = 10.seconds
-+            retries = 3
+          "Non existing element causes error" {
+             shouldThrow<AssertionError> {
+@@ -837,6 +861,18 @@ expected:<2> but was:<3>""")
+             """.trimIndent()
           }
-          val message = shouldFail {
-             eventually(config) {
-```
-
-**File**: `kotest-framework/kotest-framework-engine/src/jvmTest/kotlin/com/sksamuel/kotest/engine/config/KotestPropertiesTest.kt` (modified, +10/-5)
-```diff
-@@ -14,11 +14,16 @@ class KotestPropertiesTest : FunSpec() {
-       test("properties file should be applied") {
-          // override the kotest.properties filename so it's only applied to this test
-          withSystemProperty(KotestEngineProperties.PROPERTIES_FILENAME, "/test.kotest.properties") {
--            TestEngineLauncher()
--               .withListener(NoopTestEngineListener)
--               .withSpecRefs(SpecRef.Reference(C::class))
--               .execute()
--            value shouldBe 123
-+            try {
-+               TestEngineLauncher()
-+                  .withListener(NoopTestEngineListener)
-+                  .withSpecRefs(SpecRef.Reference(C::class))
-+                  .execute()
-+               value shouldBe 123456
-+            } finally {
-+               // the loader applies the file as system properties, so don't leak the timeout into later engine runs
-+               System.clearProperty(KotestEngineProperties.PROJECT_TIMEOUT)
-+            }
-          }
-       }
-    }
-```
-
-**File**: `kotest-framework/kotest-framework-engine/src/jvmTest/kotlin/com/sksamuel/kotest/engine/test/SourceRefTest.kt` (modified, +6/-2)
-```diff
-@@ -41,14 +41,18 @@ class SourceRefTest : FunSpec() {
-       // retune if flaky on CI - history:
-       // - before 13/11/26 it was set to 600ms and flaky
-       // - as of 13/11/2026 it was raised to 1000ms
-+      // - after that, measured as best of 3 rounds after a warm-up, so one-off JIT/GC/CPU-contention stalls
-+      //   on shared runners don't fail it, while a real regression (every round slow) still does
-       test("source ref should be performant").config(timeout = 20.seconds) {
--         val duration = measureTime {
-+         fun round() = measureTime {
-             repeat(5_000) {
-                val spec = MySpecForTestCaseSourceRefTest()
-                Materializer().materialize(spec, Reference(spec::class, spec::class.bestName())).first().source
-             }
-          }
--         duration.inWholeMilliseconds shouldBeLessThan 1000L
-+         round() // warm-up
-+         val best = List(3) { round() }.min()
-+         best.inWholeMilliseconds shouldBeLessThan 1000L
-       }
-    }
- }
-```
-
-**File**: `kotest-framework/kotest-framework-engine/src/jvmTest/resources/test.kotest.properties` (modified, +1/-1)
-```diff
-@@ -1 +1 @@
--kotest.framework.projecttimeout=123
-+kotest.framework.projecttimeout=123456
-```
-
----
-
-### Incident Patch 3: `1d0057ed` (2026-11-13)
-**Commit Message**: fix flaky test (#6276)
-
-<!-- 
-If this PR updates documentation, please update all relevant versions of
-the docs, see:
-https://github.com/kotest/kotest/tree/master/documentation/versioned_docs
-The documentation at
-https://github.com/kotest/kotest/tree/master/documentation/docs is the
-documentation for the next minor or major version _TO BE RELEASED_
--->
-
-**File**: `kotest-framework/kotest-framework-engine/src/jvmTest/kotlin/com/sksamuel/kotest/engine/test/SourceRefTest.kt` (modified, +4/-2)
-```diff
-@@ -38,15 +38,17 @@ class SourceRefTest : FunSpec() {
-       // after PR https://github.com/kotest/kotest/pull/6203:
-       // StackWalker + plain java.lang.Class based implementation
  
--      // retune if flaky on CI
-+      // retune if flaky on CI - history:
-+      // - before 13/11/26 it was set to 600ms and flaky
-+      // - as of 13/11/2026 it was raised to 1000ms
-       test("source ref should be performant").config(timeout = 20.seconds) {
-          val duration = measureTime {
-             repeat(5_000) {
-                val spec = MySpecForTestCaseSourceRefTest()
-                Materializer().materialize(spec, Reference(spec::class, spec::class.bestName())).first().source
-             }
-          }
--         duration.inWholeMilliseconds shouldBeLessThan 600L
-+         duration.inWholeMilliseconds shouldBeLessThan 1000L
-       }
-    }
- }
++         "empty collection with assertions reports a clear failure" {
++            shouldFail {
++               emptyList<Int>() should matchInOrderSubset(
++                  { it shouldBe 1 }
++               )
++            }.message shouldBe """
++               Expected a sequence of elements to pass the assertions, possibly with gaps between but failed to match all assertions
++
++               The collection has fewer elements (0) than the number of assertions (1), so the assertions cannot all match.
++            """.trimIndent()
++         }
++
+          "out-of-order elements cause error" {
+             shouldThrow<AssertionError> {
+                listOf(1, 2, 3) should matchInOrderSubset(
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #6288** (2026-11-17): fix(matchers): report honest failure messages from matchInOrder/matchInOrderSubset on edge inputs (@Inf1mum)
+- **PR #6279** (2026-11-16): Add typed shouldBeLeft/shouldBeRight overloads for Either (@mdedetrich)
 - **PR #6278** (2026-11-14): update docs from amper to kotlin toolchain (@alfonsoristorato)
 - **PR #6277** (2026-11-13): fix flaky tests 2 (@alfonsoristorato)
 - **PR #6276** (2026-11-13): fix flaky test (@alfonsoristorato)
 - **PR #6275** (2026-11-14): pin more mockserver deps (@alfonsoristorato)
-- **PR #6274** (2026-11-12): update skill versions manually as release action failed step (@alfonsoristorato)
-- **PR #6273** (2026-11-11): Update build.gradle.kts to fix gradle plugin label (@sksamuel)
 
 ---
 
@@ -896,28 +863,48 @@ documentation for the next minor or major version _TO BE RELEASED_
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Update dependency dev.reformator.stacktracedecoroutinator:stacktrace-decoroutina
+## X. matchers): report honest failure messages from matchInOrder/matchInOrderSubset o
 
 **RULE**:
-When implementing operations in `gradle/libs.versions.toml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kotest/kotest. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `kotest-assertions/kotest-assertions-core/src/commonMain/kotlin/io/kotest/matchers/collections/CollectionMatchers.kt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kotest/kotest. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8d2e4b47`: Update dependency dev.reformator.stacktracedecoroutinator:stacktrace-decoroutinator-jvm to v2.6.6. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5f6bd903`: matchers): report honest failure messages from matchInOrder/matchInOrderSubset on edge inputs. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `gradle/libs.versions.toml`.
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `kotest-assertions/kotest-assertions-core/src/commonMain/kotlin/io/kotest/matchers/collections/CollectionMatchers.kt`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-decoroutinator = "2.6.6"
+      require(assertions.isNotEmpty()) { "assertions must not be empty" }
+
+               val result = bestResult
+               if (result == null) {
+                  // the actual collection is shorter than the assertions list, so the loop above never ran
+                  """
+            |The collection has fewer elements (${actual.size}) than the number of assertions (${assertions.size}), so the assertions cannot all match.
+            """.trimMargin()
+               } else {
+                  """
+            |Expected a sequence of elements to pass the assertions, ${if (allowGaps) "possibly with gaps between " else ""}but failed to match all assertions
+            |
+            |Best result when comparing from index [${result.startIndex}], where ${result.elementsPassed} elements passed, but the following elements failed:
+                     result.problems.joinToString("\n") { problem ->
+                        "|${problem.atIndex} => ${problem.problem}"
+                     }
+               }
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
 // Induced defect failure mode:
-decoroutinator = "2.6.4"
+               """
+            |Best result when comparing from index [${bestResult?.startIndex}], where ${bestResult?.elementsPassed} elements passed, but the following elements failed:
+                  bestResult?.problems?.joinToString("\n") { problem ->
+                     "|${problem.atIndex} => ${problem.problem}"
+               }
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8d2e4b47` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5f6bd903` are properly handled with clean fallback behavior.

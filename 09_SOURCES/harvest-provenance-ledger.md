@@ -10837,3 +10837,8 @@ Every entry in this ledger must capture:
 | `learn-github-sigstore-cosign` | `https://github.com/sigstore/cosign` | `0743bfcf` | Multi-dimensional audit evidence | 2026-11-18T04:20:53.634Z |
 | `learn-github-helixdb-helix-db` | `https://github.com/HelixDB/helix-db` | `2b9e3612` | Multi-dimensional audit evidence | 2026-11-18T04:20:56.101Z |
 | `learn-dom-d-ad9f2297` | `project://hf-apple-fastframes-l` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-apple-fastframes-l-learnings.md` | 2026-11-18T04:21:21.434Z |
+| `learn-huggingface-akhilaaa3-jev-omni` | `https://huggingface.co/akhilaaa3/Jev-Omni` | `hf-akhilaa` | Multi-dimensional audit evidence | 2026-11-18T04:29:04.646Z |
+| `learn-github-falkordb-falkordb` | `https://github.com/FalkorDB/FalkorDB` | `aafdc4ae` | Multi-dimensional audit evidence | 2026-11-18T04:29:07.684Z |
+| `learn-github-kotest-kotest` | `https://github.com/kotest/kotest` | `9c81ef68` | Multi-dimensional audit evidence | 2026-11-18T04:29:11.361Z |
+| `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `e3f13487` | Multi-dimensional audit evidence | 2026-11-18T04:29:18.029Z |
+| `learn-github-trailbaseio-trailbase` | `https://github.com/trailbaseio/trailbase` | `f7a68cdf` | Multi-dimensional audit evidence | 2026-11-18T04:29:19.919Z |

@@ -1,45 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T04:20:56.105Z",
-  "total_cycles_completed": 10348,
-  "total_learnings_persisted": 10348,
-  "total_rules_promoted": 9869,
+  "last_updated": "2026-11-18T04:29:19.924Z",
+  "total_cycles_completed": 10353,
+  "total_learnings_persisted": 10353,
+  "total_rules_promoted": 9873,
   "history": [
-    {
-      "timestamp": "2026-11-17T15:43:45.652Z",
-      "repository": "open-policy-agent/opa",
-      "learningId": "learn-github-open-policy-agent-opa",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T15:43:48.907Z",
-      "repository": "aleo-labs-protocol/snarkOS",
-      "learningId": "learn-github-aleo-labs-protocol-snarkos",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T15:51:18.790Z",
-      "repository": "lodestones/MOSS-Image-SFT-8-steps-dmd",
-      "learningId": "learn-huggingface-lodestones-moss-image-sft-8-steps-dmd",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T15:51:33.187Z",
-      "repository": "freenet/freenet-core",
-      "learningId": "learn-github-freenet-freenet-core",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T15:51:35.401Z",
-      "repository": "volcengine/OpenViking",
-      "learningId": "learn-github-volcengine-openviking",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-17T15:51:37.369Z",
       "repository": "NucleoidAI/Nucleoid",
@@ -1402,6 +1367,41 @@
       "timestamp": "2026-11-18T04:20:56.105Z",
       "repository": "HelixDB/helix-db",
       "learningId": "learn-github-helixdb-helix-db",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T04:29:04.651Z",
+      "repository": "akhilaaa3/Jev-Omni",
+      "learningId": "learn-huggingface-akhilaaa3-jev-omni",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T04:29:07.689Z",
+      "repository": "FalkorDB/FalkorDB",
+      "learningId": "learn-github-falkordb-falkordb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T04:29:11.366Z",
+      "repository": "kotest/kotest",
+      "learningId": "learn-github-kotest-kotest",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T04:29:18.034Z",
+      "repository": "cilium/cilium",
+      "learningId": "learn-github-cilium-cilium",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T04:29:19.924Z",
+      "repository": "trailbaseio/trailbase",
+      "learningId": "learn-github-trailbaseio-trailbase",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
