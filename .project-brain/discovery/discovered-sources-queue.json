@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-18T07:48:43.060Z",
+  "updated_at": "2026-11-18T07:56:37.901Z",
   "stats": {
-    "total_discovered": 5383,
-    "approved_pending_harvest": 5081,
+    "total_discovered": 5392,
+    "approved_pending_harvest": 5090,
     "harvested_count": 0,
     "rejected_count": 302,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 5063,
+      "COMMUNITY_AND_EXPERT": 5072,
       "OFFICIAL_DOCUMENTATION": 176,
       "STANDARDS_AND_SPECIFICATIONS": 108,
       "ENGINEERING_BLOGS": 4,
@@ -116333,6 +116333,204 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/trinodb-trino-learnings.md",
         "fileName": "trinodb-trino-learnings.md"
+      }
+    },
+    "SRC-F58CAE98B462": {
+      "id": "SRC-F58CAE98B462",
+      "url": "https://tuist.dev/tuist/server/tests/test-runs/df93631e-c324-4f93-8ac1-599b00713cb9",
+      "title": "https://tuist.dev/tuist/server/tests/test-runs/df93631e-c324-4f93-8ac1-599b00713cb9",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T07:56:36.718Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tuist-tuist-learnings.md",
+        "fileName": "tuist-tuist-learnings.md"
+      }
+    },
+    "SRC-021F42E005D1": {
+      "id": "SRC-021F42E005D1",
+      "url": "https://github.com/tuist/tuist/commit/270937d771dc768d2443d3a8dc3a6ae586f644af",
+      "title": "https://github.com/tuist/tuist/commit/270937d771dc768d2443d3a8dc3a6ae586f644af",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T07:56:36.753Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tuist-tuist-learnings.md",
+        "fileName": "tuist-tuist-learnings.md"
+      }
+    },
+    "SRC-9E86A076B212": {
+      "id": "SRC-9E86A076B212",
+      "url": "https://tuist.dev/",
+      "title": "https://tuist.dev/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T07:56:36.788Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tuist-tuist-learnings.md",
+        "fileName": "tuist-tuist-learnings.md"
+      }
+    },
+    "SRC-8C8CA54FAB2E": {
+      "id": "SRC-8C8CA54FAB2E",
+      "url": "https://ampcode.com/threads/T-01a1ed1e-6cec-7070-8985-b8935af02337",
+      "title": "https://ampcode.com/threads/T-01a1ed1e-6cec-7070-8985-b8935af02337",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T07:56:36.828Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tuist-tuist-learnings.md",
+        "fileName": "tuist-tuist-learnings.md"
+      }
+    },
+    "SRC-353D355F750A": {
+      "id": "SRC-353D355F750A",
+      "url": "https://tuist.dev`/",
+      "title": "https://tuist.dev`/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T07:56:36.857Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/tuist-tuist-learnings.md",
+        "fileName": "tuist-tuist-learnings.md"
+      }
+    },
+    "SRC-E07174706D40": {
+      "id": "SRC-E07174706D40",
+      "url": "https://github.com/mic",
+      "title": "https://github.com/mic",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T07:56:37.808Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/microsoft-react-native-windows-learnings.md",
+        "fileName": "microsoft-react-native-windows-learnings.md"
+      }
+    },
+    "SRC-C30FFD9CCAC3": {
+      "id": "SRC-C30FFD9CCAC3",
+      "url": "https://microsoft.github.io/react-native-windows/docs/next/rnw-dependencies",
+      "title": "https://microsoft.github.io/react-native-windows/docs/next/rnw-dependencies",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T07:56:37.842Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/microsoft-react-native-windows-learnings.md",
+        "fileName": "microsoft-react-native-windows-learnings.md"
+      }
+    },
+    "SRC-99092D0EEF27": {
+      "id": "SRC-99092D0EEF27",
+      "url": "https://microsoft.github.io/react-native-windows/docs/rnw-dependencies",
+      "title": "https://microsoft.github.io/react-native-windows/docs/rnw-dependencies",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T07:56:37.871Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/microsoft-react-native-windows-learnings.md",
+        "fileName": "microsoft-react-native-windows-learnings.md"
+      }
+    },
+    "SRC-E3C35D02FAAB": {
+      "id": "SRC-E3C35D02FAAB",
+      "url": "https://git-scm.com/download/win",
+      "title": "https://git-scm.com/download/win",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T07:56:37.901Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/microsoft-react-native-windows-learnings.md",
+        "fileName": "microsoft-react-native-windows-learnings.md"
       }
     }
   }

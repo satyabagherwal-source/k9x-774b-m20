@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-18T07:48:43.452Z",
+  "last_updated": "2026-11-18T07:56:38.189Z",
   "total_records": 1793,
   "domains": {
     "A": {
@@ -10374,8 +10374,8 @@
       "title": "Research & Knowledge Intelligence: google-bert/bert-base-uncased Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-google-bert-bert-base-uncased-research-knowledge-intelligence-google-bert-ber.md",
       "repository": "google-bert/bert-base-uncased",
-      "content_hash": "4a659b3b62d85c66f32c78a2eb86b75abd454f7eda5122d8bce5927a10591689",
-      "created_at": "2026-11-13T21:07:07.291Z"
+      "content_hash": "fee6ae2e3fdf8563bbc6ae3f97167428b0bcff00646858296dd68b5c504ab9e3",
+      "created_at": "2026-11-18T07:56:18.708Z"
     },
     "domain_intelligence-technical-construction-intelligence-pubkey-rxdb-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-pubkey-rxdb-core-invariants",
@@ -10443,8 +10443,8 @@
       "title": "Research & Knowledge Intelligence: hf-google-bert-bert-base-uncased-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-google-bert-bert-base-uncased-learnings-research-knowledge-intelligence-hf-go.md",
       "repository": "hf-google-bert-bert-base-uncased-learnings",
-      "content_hash": "e158265b28b2b6bfce38769b0440e5f13cc7105ffcef187d436f45f525e33ff8",
-      "created_at": "2026-11-13T21:07:54.154Z"
+      "content_hash": "ef8c744d57f88b8d5f51dad00d02a103d12c287577182383b75866978a2c8d84",
+      "created_at": "2026-11-18T07:56:37.553Z"
     },
     "DOM-K-30566771": {
       "record_id": "DOM-K-30566771",
@@ -19346,8 +19346,8 @@
       "title": "Technical Construction Intelligence: microsoft/react-native-windows Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-microsoft-react-native-windows-technical-construction-intelligence-microsoft-rea.md",
       "repository": "microsoft/react-native-windows",
-      "content_hash": "167fc39b2788b289a6e479534f32edcb2affbb1b337b2deb643f08d33fb83f56",
-      "created_at": "2026-11-15T04:43:56.514Z"
+      "content_hash": "54019d8576d8849472b82cbc4e24df04f2c35aa759bb3de4a362ecf5b7c71d37",
+      "created_at": "2026-11-18T07:56:26.130Z"
     },
     "DOM-D-31A60A1E": {
       "record_id": "DOM-D-31A60A1E",
@@ -19448,8 +19448,8 @@
       "title": "Technical Construction Intelligence: microsoft-react-native-windows-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-microsoft-react-native-windows-learnings-technical-construction-intelligence-mic.md",
       "repository": "microsoft-react-native-windows-learnings",
-      "content_hash": "a519fb09030f732bee464ac2210507e4da5e5f7cf46df1a1939dbe59897f93d8",
-      "created_at": "2026-11-15T04:45:04.260Z"
+      "content_hash": "17e30236fd22dc0b2424a490d49a6c10bfb324c7c3265c61e063ea0324d598d7",
+      "created_at": "2026-11-18T07:56:38.189Z"
     },
     "domain_intelligence-research-knowledge-intelligence-openmoss-team-moss-image-base-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-openmoss-team-moss-image-base-core-invariants",
@@ -20129,8 +20129,8 @@
       "title": "Architecture Intelligence: tuist/tuist Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tuist-tuist-architecture-intelligence-tuist-tuist-core-invariants.md",
       "repository": "tuist/tuist",
-      "content_hash": "a266c36fef1d3d0c3d9193db6da536d8235b04f995019d577900032e5e07ff5e",
-      "created_at": "2026-11-17T02:32:19.169Z"
+      "content_hash": "fc874b5132095fb8387421f9c10b85893894530aeb0c819e503bb4a74cb70f5c",
+      "created_at": "2026-11-18T07:56:22.607Z"
     },
     "domain_intelligence-quality-verification-intelligence-obliteratus-deepseek-v4-1-flash-1017-obliterat": {
       "record_id": "domain_intelligence-quality-verification-intelligence-obliteratus-deepseek-v4-1-flash-1017-obliterat",
@@ -20156,8 +20156,8 @@
       "title": "Architecture Intelligence: tuist-tuist-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tuist-tuist-learnings-architecture-intelligence-tuist-tuist-learnings-core-invar.md",
       "repository": "tuist-tuist-learnings",
-      "content_hash": "88b49407c5a2d630eb40e4f192f8a63a2879d91225960833df0961b2ca590d7f",
-      "created_at": "2026-11-17T02:32:26.981Z"
+      "content_hash": "507eff34ad7c7cefa54457c63ea2723521ad9089c0458da42bda84a9c2ca608e",
+      "created_at": "2026-11-18T07:56:37.166Z"
     },
     "domain_intelligence-quality-verification-intelligence-hf-obliteratus-deepseek-v4-1-flash-1017-oblite": {
       "record_id": "domain_intelligence-quality-verification-intelligence-hf-obliteratus-deepseek-v4-1-flash-1017-oblite",
@@ -26605,8 +26605,8 @@
       "title": "Technical Construction Intelligence: apache/zookeeper Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-apache-zookeeper-technical-construction-intelligence-apache-zookeeper-core-invar.md",
       "repository": "apache/zookeeper",
-      "content_hash": "62a6f770d9a68a7d00ac4ca2988a1f341c3692d071213a8d66be89397bed9db1",
-      "created_at": "2026-11-17T08:56:42.744Z"
+      "content_hash": "f6ac593ff4ba692b2ef3bfb2825d51f5b37e98324159b7aad43d4634e85524d6",
+      "created_at": "2026-11-18T07:56:33.806Z"
     },
     "DOM-D-C917D98C": {
       "record_id": "DOM-D-C917D98C",

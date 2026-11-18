@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261116-J2KP",
-    "timestamp": "2026-11-16T18:55:43.561Z",
-    "repository": "inikulin/parse5",
-    "learningId": "learn-github-inikulin-parse5",
-    "contentHash": "8316ee9bf9588597c5b3423b563e5bf324f3639345906115a1b634cc9686ac00",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261116-J3SL",
-    "timestamp": "2026-11-16T18:55:45.141Z",
-    "repository": "wquguru/cicada",
-    "learningId": "learn-github-wquguru-cicada",
-    "contentHash": "73ed9b5961213d0495a29e7a01752020259273108a57126f77659c77adeeb277",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261116-J6J7",
-    "timestamp": "2026-11-16T18:55:48.691Z",
-    "repository": "gardener/gardener",
-    "learningId": "learn-github-gardener-gardener",
-    "contentHash": "05ec2406f0d6b7f59130ba69697f8f9f997d29e034f49cd0df2789eae07298d9",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261116-J87A",
-    "timestamp": "2026-11-16T18:55:50.854Z",
-    "repository": "max-sixty/worktrunk",
-    "learningId": "learn-github-max-sixty-worktrunk",
-    "contentHash": "06e2e5da6ee64e35e08acdf980021486f0114c3244b2059b1d13a79e2ced0f7f",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261116-J93R",
     "timestamp": "2026-11-16T18:55:52.023Z",
     "repository": "langchain4j/langchain4j",
@@ -7490,6 +7430,66 @@
     "repository": "trinodb/trino",
     "learningId": "learn-github-trinodb-trino",
     "contentHash": "5c6100d4e4b9daf6ef60c257029905aa9c5d1abf601662799b87114c2753722c",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-URCJ",
+    "timestamp": "2026-11-18T07:56:18.547Z",
+    "repository": "google-bert/bert-base-uncased",
+    "learningId": "learn-huggingface-google-bert-bert-base-uncased",
+    "contentHash": "957c07b0a00649cbd918fb2f2c4be7f6a487feb5f1c6a491a24e3433a7e69182",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-UU8R",
+    "timestamp": "2026-11-18T07:56:22.299Z",
+    "repository": "tuist/tuist",
+    "learningId": "learn-github-tuist-tuist",
+    "contentHash": "032144885ad79350bfa186548a539df3869fd7cf025483784e8da003b1c06c7a",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-UWZ0",
+    "timestamp": "2026-11-18T07:56:25.836Z",
+    "repository": "microsoft/react-native-windows",
+    "learningId": "learn-github-microsoft-react-native-windows",
+    "contentHash": "ca3c84c83e33f9b8c52c0c7436566a30ee2b34b41e11c232fa33e19f879e1d10",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-V2WA",
+    "timestamp": "2026-11-18T07:56:33.514Z",
+    "repository": "apache/zookeeper",
+    "learningId": "learn-github-apache-zookeeper",
+    "contentHash": "246e519da959ede035fbeb271b08918714ce6f0ba3e7c6ef1245984ba38851e8",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

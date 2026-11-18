@@ -4,22 +4,22 @@
 {
   "source_repository": "microsoft/react-native-windows",
   "source_url": "https://github.com/microsoft/react-native-windows",
-  "source_version": "e49cdf04",
+  "source_version": "1ed932d5",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-15T04:43:56.409Z",
+  "timestamp": "2026-11-18T07:56:26.015Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-microsoft-react-native-windows",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [microsoft/react-native-windows](https://github.com/microsoft/react-native-windows) (Revision: `e49cdf04`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-15T04:43:56.409Z`  
+> **Provenance**: Harvested from [microsoft/react-native-windows](https://github.com/microsoft/react-native-windows) (Revision: `1ed932d5`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-18T07:56:26.015Z`  
 > **Learning ID**: `learn-github-microsoft-react-native-windows`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `microsoft/react-native-windows` (Commit: `e49cdf04`)
+- **Target Repository**: `microsoft/react-native-windows` (Commit: `1ed932d5`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/microsoft-react-native-windows-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/microsoft/react-native-windows](https://github.com/microsoft/react-native-windows))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-15T04:43:55.415Z  
+> **Harvest Timestamp**: 2026-11-18T07:56:24.960Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: A framework for building native Windows apps with React.
 - **Primary Language / Ecosystem**: C++
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 17377 stars
+- **Stars / Engagement**: 17381 stars
 
 ---
 
@@ -1584,160 +1584,176 @@ export default FocusManager;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `a115ff1c` (2026-11-12)
-**Commit Message**: Fix the build with MSVC 14.52 (C4864 and ARM64 internal compiler error) (#16618)
+### Incident Patch 1: `4463b281` (2026-11-17)
+**Commit Message**: Fix use-after-free when a task destroys the dispatch queue it was posted to (#16620)
 
-* Add template keyword for dependent template calls flagged by MSVC C4864
+* Keep the dispatch queue scheduler alive across Post and pending callbacks
 
-MSVC 14.52 reports C4864 (expected 'template' keyword before dependent
-template name) at member-template calls on dependent types. With /WX the
-warning fails the Microsoft.ReactNative build. Add the standard 'template'
-disambiguator at those calls. No behavior change.
+QueueService::Post and Resume read m_scheduler after releasing m_mutex. Once the
+task is enqueued, the queue's worker can run it. If the task drops the last outside
+reference to the queue (as ActiveObjectDeleter's Finalize task does when it destroys
+the queue's owner), the worker destroys the queue, and ~QueueService destroys
+m_scheduler, before the posting thread calls m_scheduler->Post(). Copy the scheduler
+into a local while the lock is held.
 
-* Work around MSVC 14.52 ARM64 internal compiler error in folly AtFork.cpp
+ThreadPoolSchedulerWin::~ThreadPoolSchedulerWin skips waiting for callbacks when it
+runs on its own callback thread, so a callback that another thread had already
+submitted could run on the freed scheduler. Post now takes a reference per submitted
+callback, and WorkCallback adopts it.
 
-MSVC 14.52 (toolset v145) crashes with C1001 when it optimizes
-folly/system/AtFork.cpp for ARM64 Release. Build that one file without
-the precompiled header, optimization, and whole-program optimization on
-ARM64 with v145 or later. The file only registers fork handlers, so the
-cost is negligible.
+Co-authored-by: Copilot <[REDACTED_EMAIL]>
+Copilot-Session: d6c44fcc-b095-4d25-8f92-aed85921fe83
 
-**File**: `change/react-native-windows-83836459-f769-4dd6-8f44-a1f7de330c7f.json` (added, +7/-0)
+* Change files
+
+Co-authored-by: Copilot <[REDACTED_EMAIL]>
+Copilot-Session: d6c44fcc-b095-4d25-8f92-aed85921fe83
+
+---------
+
+Co-authored-by: Copilot <[REDACTED_EMAIL]>
+Copilot-Session: d6c44fcc-b095-4d
+
+**File**: `change/react-native-windows-a9d8e7cf-7a98-4a5d-9d25-56cbb2423abc.json` (added, +7/-0)
 ```diff
 @@ -0,0 +1,7 @@
 +{
 +  "type": "prerelease",
-+  "comment": "Fix the build with MSVC 14.52: add template keywords flagged by C4864 and work around an ARM64 internal compiler error in folly AtFork.cpp",
++  "comment": "Fix a use-after-free when a dispatch queue is destroyed while a task is being posted to it",
 +  "packageName": "react-native-windows",
-+  "email": "vmorozov@microsoft.com",
++  "email": "tiagoma@microsoft.com",
 +  "dependentChangeType": "patch"
 +}
 ```
 
-**File**: `vnext/Microsoft.ReactNative/Fabric/Composition/CompositionContextHelper.cpp` (modified, +1/-1)
+**File**: `vnext/Mso/src/dispatchQueue/queueService.cpp` (modified, +13/-5)
 ```diff
-@@ -1796,7 +1796,7 @@ struct CompActivityVisual : winrt::implements<
-     auto innerBrush = TTypeRedirects::CompositionContextHelper::InnerBrush(brush);
-     if (brush) {
-       _themeProperties.InsertVector4(
--          L"Foreground", ColorAsVector4(innerBrush.as<TTypeRedirects::CompositionColorBrush>().Color()));
-+          L"Foreground", ColorAsVector4(innerBrush.template as<TTypeRedirects::CompositionColorBrush>().Color()));
-     } else {
-       _themeProperties.InsertVector4(L"Foreground", ColorAsVector4({0, 0, 0, 0}));
-     }
-```
-
-**File**: `vnext/Microsoft.ReactNative/Fabric/Composition/Modal/WindowsModalHostViewComponentView.cpp` (modified, +6/-4)
-```diff
-@@ -95,10 +95,12 @@ struct ModalHostView : public winrt::implements<ModalHostView, winrt::Windows::F
-       const winrt::Microsoft::ReactNative::Composition::PortalComponentView &portalComponentView) noexcept {
-     m_reactContext = portalComponentView.ReactContext();
+@@ -24,7 +24,11 @@ void QueueService::Post(DispatchTask &&task) noexcept {
+   VerifyElseCrashSz(task, "The task is empty");
  
--    portalComponentView.Mounted(
--        [](const auto & /*sender*/, const auto &view) { view.UserData().as<ModalHostView>()->OnMounted(view); });
--    portalComponentView.Unmounted(
--        [](const auto & /*sender*/, const auto &view) { view.UserData().as<ModalHostView>()->OnUnmounted(view); });
-+    portalComponentView.Mounted([](const auto & /*sender*/, const auto &view) {
-+      view.UserData().template as<ModalHostView>()->OnMounted(view);
-+    });
-+    portalComponentView.Unmounted([](const auto & /*sender*/, const auto &view) {
-+      view.UserData().template as<ModalHostView>()->OnUnmounted(view);
-+    });
+   bool isShutdown = false;
+-  bool shouldSchedule = false;
++
++  // Once m_mutex is released, another thread can run the task, and the task can drop the last outside
++  // reference to this queue (e.g. ActiveObjectDeleter posts a task that destroys the queue's owner); the
++  // worker then destroys the queue. Don't touch members after the unlock: keep the scheduler alive in a local.
++  Mso::CntPtr<IDispatchQueueScheduler> scheduler;
+ 
+   {
+     std::lock_guard lock{m_mutex};
+@@ -35,13 +39,15 @@ void QueueService::Post(DispatchTask &&task) noexcept {
+       isShutdown = m_shutdownAction.has_value();
+       if (!isShutdown) {
+         m_queue.Enqueue(std::move(task));
+-        shouldSchedule = (m_suspendCounter == 0);
++        if (m_suspendCounter == 0) {
++          scheduler = m_scheduler;
++        }
+       }
+     }
    }
  
-   void UpdateProps(
+-  if (shouldSchedule) {
+-    m_scheduler->Post();
++  if (scheduler) {
++    scheduler->Post();
+   } else if (isShutdown) {
+     CancelTask(std::move(task));
+   }
+@@ -150,18 +156,20 @@ void QueueService::Suspend() noexcept {
+ 
+ void QueueService::Resume() noexcept {
+   size_t postCount{0};
++  Mso::CntPtr<IDispatchQueueScheduler> scheduler; // See Post: no member access after the unlock.
+ 
+   {
+     std::lock_guard lock{m_mutex};
+     VerifyElseCrashSz(m_suspendCounter > 0, "m_suspendCounter must not be negative");
+ 
+     if (--m_suspendCounter == 0) {
+       postCount = m_queue.Size();
++      scheduler = m_scheduler;
+     }
+   }
+ 
+   for (size_t i = 0; i < postCount; ++i) {
+-    m_scheduler->Post();
++    scheduler->Post();
+   }
+ }
+ 
 ```
 
-**File**: `vnext/external/folly/folly.vcxitems` (modified, +10/-0)
+**File**: `vnext/Mso/src/dispatchQueue/threadPoolScheduler_win.cpp` (modified, +6/-1)
 ```diff
-@@ -153,6 +153,16 @@
-       <AdditionalIncludeDirectories>$(ReactNativeWindowsDir)Folly;$(ReactNativeWindowsDir)stubs;$(ExternalDir)folly;$(ExternalDir)fast-float\include;$(ExternalDir)fmt\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-     </ClCompile>
-   </ItemGroup>
-+  <!-- Work around MSVC v145 ARM64 optimizer C1001 in AtForkListSingleton::init.
-+       Disable PCH use so its Release optimization settings cannot override /Od.
-+       Keep the forced pch.h include as an ordinary header. Remove when the compiler is fixed. -->
-+  <ItemGroup>
-+    <ClCompile Update="$(ExternalDir)folly\folly\system\AtFork.cpp" Condition="'$(Platform)' == 'ARM64' And '$(PlatformToolsetVersion)' != '' And $(PlatformToolsetVersion)&gt;=145">
-+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
-+      <Optimization>Disabled</Optimization>
-+      <WholeProgramOptimization>false</WholeProgramOptimization>
-+    </ClCompile>
-+  </ItemGroup>
-   <!-- SysMman.cpp is Desktop-only and must not use folly's UWP pch; re-assert no-PCH after
-        the blanket Update above, which would otherwise force pch.h onto it. -->
-   <ItemGroup>
+@@ -116,10 +116,14 @@ ThreadPoolSchedulerWin::~ThreadPoolSchedulerWin() noexcept {
+     _Inout_ PTP_CALLBACK_INSTANCE /*instance*/,
+     _Inout_opt_ PVOID context,
+     _Inout_ PTP_WORK /*work*/) {
+-  // The ThreadPoolSchedulerWin is alive here because m_threadPoolWork must be completed before it is destroyed.
+   ThreadPoolSchedulerWin *self = static_cast<ThreadPoolSchedulerWin *>(context);
+   ThreadPoolSchedulerWinContext schedulerContext(self);
+ 
++  // Adopt the reference that Post() took for this callback: a callback can still be pending when the last other
++  // reference goes away, e.g. when an earlier callback destroys the queue and so the scheduler. Declared after
++  // schedulerContext so that a final release here sees CurrentScheduler() == self and doesn't wait for itself.
++  Mso::CntPtr<ThreadPoolSchedulerWin> keepAlive{self, Mso::AttachTag};
++
+   if (auto queue = self->m_queue.GetStrongPtr()) {
+     auto endTime = std::chrono::steady_clock::now() + 100ms;
+     DispatchTask task;
+@@ -162,6 +166,7 @@ void ThreadPoolSchedulerWin::Post() noexcept {
+   } while (!m_usedThreads.compare_exchange_weak(
+       usedThreads, usedThreads + 1, std::memory_order_release, std::memory_order_relaxed));
+ 
++  AddRef(); // Owned by the callback; see WorkCallback.
+   ::SubmitThreadpoolWork(m_threadPoolWork.get());
+ }
+ 
 ```
 
 ---
 
-### Incident Patch 2: `1e85f047` (2026-11-11)
-**Commit Message**: Update node-api-jsi to pick up the BigInt::toString fix (#16610)
+### Incident Patch 2: `1ed932d5` (2026-11-17)
+**Commit Message**: Fix dead rnw-dependencies links in contributor docs (#16635)
 
-Moves NodeApiJsiCommitHash from 4b8a4a59 to 9f2fdfa2, which corrects BigInt::toString for values larger than 64 bits (microsoft/node-api-jsi#18).
+The website no longer serves a docs/next/ version, so the
+rnw-dependencies links in CONTRIBUTING.md and docs/building-rnw.md
+return 404. Link the current docs/rnw-dependencies page instead.
 
-Co-authored-by: Anukrati Agrawal <[REDACTED_EMAIL]>
-Co-authored-by: Copilot <[REDACTED_EMAIL]>
-Copilot-Session: 6571d0a2-c95e-4c83-8fb7-82debbd8de73
-
-**File**: `change/react-native-windows-98883727-c128-42b8-a88d-506bdd7de350.json` (added, +7/-0)
+**File**: `CONTRIBUTING.md` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,7 @@
-+{
-+  "type": "prerelease",
-+  "comment": "Update node-api-jsi to pick up the BigInt::toString fix for values larger than 64 bits",
-+  "packageName": "react-native-windows",
-+  "email": "anuagra@microsoft.com",
-+  "dependentChangeType": "patch"
-+}
-```
-
-**File**: `vnext/Directory.Build.props` (modified, +1/-1)
-```diff
-@@ -26,7 +26,7 @@
-     <IncludeSymbols Condition="'$(Configuration)' == 'Release'">true</IncludeSymbols>
-     <IncludeSource Condition="'$(Configuration)' == 'Release'">false</IncludeSource>
-     <!-- Commit hash for https://github.com/microsoft/node-api-jsi code. -->
--    <NodeApiJsiCommitHash>4b8a4a59c4e1b7b988b809dedffd89a7662aa785</NodeApiJsiCommitHash>
-+    <NodeApiJsiCommitHash>9f2fdfa2a923784a73cc97da9b369edaf4c6c243</NodeApiJsiCommitHash>
-   </PropertyGroup>
+@@ -75,7 +75,7 @@ For a primer on our codebase, see ["Repository Contents"](https://github.com/mic
  
-   <!--
-```
-
-**File**: `vnext/Microsoft.ReactNative.Cxx/Microsoft.ReactNative.Cxx.vcxitems` (modified, +1/-1)
-```diff
-@@ -14,7 +14,7 @@
-     <!-- If your project is using glog, then GLog_IncludeDir could be set to include the actual location of glog -->
-     <GLog_IncludeDir Condition="'$(GLog_IncludeDir)' == '' AND Exists('$(MSBuildThisFileDirectory)stubs\glog\logging.h')">$(MSBuildThisFileDirectory)stubs</GLog_IncludeDir>
+ ## 👨‍💻 Development
  
--    <NodeApiJsiCommitHash>4b8a4a59c4e1b7b988b809dedffd89a7662aa785</NodeApiJsiCommitHash>
-+    <NodeApiJsiCommitHash>9f2fdfa2a923784a73cc97da9b369edaf4c6c243</NodeApiJsiCommitHash>
-     <NodeApiJsiLocal Condition="Exists('$(MSBuildThisFileDirectory)NodeApiJsiRuntime.cpp')">true</NodeApiJsiLocal>
-     <NodeApiJsiDir Condition="'$(NodeApiJsiDir)' == '' AND '$(NodeApiJsiLocal)' == 'true'">$(MSBuildThisFileDirectory)</NodeApiJsiDir>
-     <NodeApiJsiDir Condition="'$(NodeApiJsiDir)' == '' AND '$(ReactNativeDir)' != ''">$(ReactNativeDir)\..\..\node_modules\.node-api-jsi\node-api-jsi-$(NodeApiJsiCommitHash)\</NodeApiJsiDir>
+-> **System Requirements:** Contributing to this project requires a Windows machine, see [rnw-dependencies](https://microsoft.github.io/react-native-windows/docs/next/rnw-dependencies) for more info on this and the script for installing required dependencies.
++> **System Requirements:** Contributing to this project requires a Windows machine, see [rnw-dependencies](https://microsoft.github.io/react-native-windows/docs/rnw-dependencies) for more info on this and the script for installing required dependencies.
+ 
+ ### 🚧 Fork, Clone, Branch and Create your PR
+ 
 ```
 
-**File**: `vnext/ReactCommon/cgmanifest.json` (modified, +1/-1)
+**File**: `docs/building-rnw.md` (modified, +1/-1)
 ```diff
-@@ -6,7 +6,7 @@
-                 "Type": "git",
-                 "Git": {
-                   "RepositoryUrl": "https://github.com/microsoft/node-api-jsi",
--                  "CommitHash": "4b8a4a59c4e1b7b988b809dedffd89a7662aa785"
-+                  "CommitHash": "9f2fdfa2a923784a73cc97da9b369edaf4c6c243"
-                 }
-             },
-             "DevelopmentDependency": false
+@@ -1,7 +1,7 @@
+ 
+ # Building React-Native-Windows
+ 
+-- Make sure you have installed [dependencies](https://microsoft.github.io/react-native-windows/docs/next/rnw-dependencies). Just run `vnext\scripts\rnw-dependencies.ps1` in an elevated PowerShell session.
++- Make sure you have installed [dependencies](https://microsoft.github.io/react-native-windows/docs/rnw-dependencies). Just run `vnext\scripts\rnw-dependencies.ps1` in an elevated PowerShell session.
+ - Install [Git](https://git-scm.com/download/win) if you don't have it installed in your development machine
+ 
+ ## Build Steps
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #16619** (2026-11-13): 📦 [main]: Bump the all-dependencies group across 1 directory with 10 updates (@dependabot[bot])
-- **PR #16618** (2026-11-12): Fix the build with MSVC 14.52 (C4864 and ARM64 internal compiler error) (@vmoroz)
-- **PR #16617** (2026-11-12): [0.85] Fix the build with MSVC 14.52 (C4864 and ARM64 internal compiler error) (@vmoroz)
-- **PR #16616** (closed): 📦 [main]: Bump resolve from 1.22.13 to 1.22.14 in the all-dependencies group (@dependabot[bot])
-- **PR #16615** (2026-11-12): [0.81] Fix the build with MSVC 14.52 (C4864 and ARM64 internal compiler error) (@vmoroz)
-- **PR #16614** (2026-11-11): [0.81] Ignore generated Guardian SARIF reports (@vmoroz)
+- **PR #16635** (2026-11-17): Fix dead rnw-dependencies links in contributor docs (@farisbasha)
+- **PR #16634** (2026-11-17): [0.85] Fix use-after-free when a task destroys the dispatch queue it was posted to (@tiagomacarios)
+- **PR #16633** (2026-11-17): [0.81] Fix use-after-free when a task destroys the dispatch queue it was posted to (@tiagomacarios)
+- **PR #16632** (2026-11-17): 🚀 [main]: Release 10 packages (@azure-pipelines[bot])
+- **PR #16630** (2026-11-17): 🚀 [0.81]: Release 13 packages (@azure-pipelines[bot])
+- **PR #16628** (2026-11-16): [0.81] Update node-api-jsi to pick up the BigInt::toString fix (@anuagragith)
 
 ---
 
@@ -1757,25 +1773,25 @@ Copilot-Session: 6571d0a2-c95e-4c83-8fb7-82debbd8de73
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. the build with MSVC 14.52 (C4864 and ARM64 internal compiler error)
+## X. use-after-free when a task destroys the dispatch queue it was posted to
 
 **RULE**:
-When implementing operations in `change/react-native-windows-83836459-f769-4dd6-8f44-a1f7de330c7f.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in microsoft/react-native-windows. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `change/react-native-windows-a9d8e7cf-7a98-4a5d-9d25-56cbb2423abc.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in microsoft/react-native-windows. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `a115ff1c`: the build with MSVC 14.52 (C4864 and ARM64 internal compiler error). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `4463b281`: use-after-free when a task destroys the dispatch queue it was posted to. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `change/react-native-windows-83836459-f769-4dd6-8f44-a1f7de330c7f.json`.
+Subsystems managing C++ data structures, boundary deserialization, API parsing, or resource lifecycles matching `change/react-native-windows-a9d8e7cf-7a98-4a5d-9d25-56cbb2423abc.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```c++
 // Verified production-grade fix pattern:
 {
   "type": "prerelease",
-  "comment": "Fix the build with MSVC 14.52: add template keywords flagged by C4864 and work around an ARM64 internal compiler error in folly AtFork.cpp",
+  "comment": "Fix a use-after-free when a dispatch queue is destroyed while a task is being posted to it",
   "packageName": "react-native-windows",
-  "email": "vmorozov@microsoft.com",
+  "email": "tiagoma@microsoft.com",
   "dependentChangeType": "patch"
 }
 ```
@@ -1787,7 +1803,7 @@ Subsystems managing C++ data structures, boundary deserialization, API parsing, 
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `a115ff1c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `4463b281` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

@@ -4,17 +4,17 @@
 {
   "source_repository": "apache/zookeeper",
   "source_url": "https://github.com/apache/zookeeper",
-  "source_version": "9fde5223",
+  "source_version": "5cc6962c",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-17T08:56:42.614Z",
+  "timestamp": "2026-11-18T07:56:33.692Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-apache-zookeeper",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [apache/zookeeper](https://github.com/apache/zookeeper) (Revision: `9fde5223`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-17T08:56:42.614Z`  
+> **Provenance**: Harvested from [apache/zookeeper](https://github.com/apache/zookeeper) (Revision: `5cc6962c`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-18T07:56:33.692Z`  
 > **Learning ID**: `learn-github-apache-zookeeper`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/apache-zookeeper-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/apache/zookeeper](https://github.com/apache/zookeeper))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T08:56:41.333Z  
+> **Harvest Timestamp**: 2026-11-18T07:56:32.648Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1820,11 +1820,8 @@ def cherry_pick(pr_num, merge_hash, default_branch):
   > Verified this locally by building `zookeeper-contrib-zooinspector` and running tests with `mvn clean verify -Pfull-build -Dsurefire-forkcount=4 -DskipCppUnit -pl zookeeper-contrib/zookeeper-contrib-zooinspector`. It is successful.
   > Many thanks @anmolnar for the review! :+1: 
 
-- **Issue #2493** (2026-11-06): **ZOOKEEPER-5118: Update vulnerable website dependencies: @vitest/mocker, vite, zod, happy-dom, source-map-js**
-  *Symptoms*: npm audit before:  23 vulnerabilities (4 low, 15 moderate, 4 high)  Fix: Executed `npm audit fix`.  after fixing:  18 vulnerabilities (4 low, 13 moderate, 1 high)
-  **Post-Mortem & Fix Analysis**:
-  > ### Testing  Verified this locally:  - quickly checked with `npm run dev` - site is working fine - :heavy_check_mark:  - by building the site with executing `mvn site -pl zookeeper-website` and then checking the site with a quick HTTP server by running `(cd zookeeper-website/build/client && python3 -m http.server)`  Both website and docs are looking good - :heavy_check_mark:   <img width="1845" height="1168" alt="image" src="https://github.com/user-attachments/assets/bf094caf-762f-45fe-bbc7-6be899d38f36" />  <img width="1845" height="1168" alt="image" src="https://github.com/user-attachments/assets/ab38ffd5-cd93-4332-bd5e-0727134b35f2" /> 
-  > LGTM, thanks David!
+- **Issue #2497** (2026-11-17): **ZOOKEEPER-5122: (C client) xid counter is unnecessarily likely to wrap**
+  *Symptoms*: The C client allocated xids from one process global counter seeded with time(0). That left only about 350 million xids before the counter wrapped into negative values. Wrapped xids can collide with the reserved xids of control frames (-8 SetWatches, -4 auth, -2 ping), so replies could go to internal handlers instead of application completions, causing state errors, and desynchronizing the request queue.  In the single threaded library, the increment past INT32_MAX is also undefined behavior.  Allocate xids as ClientCnxn.getXid does in the Java client. Introduce a  per-handle counters rather than sharing one unsynchronized counter.  Also fix the xid mismatch log line in zookeeper_process, which printed the received xid as the expected one and vice versa.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1841,33 +1838,450 @@ def cherry_pick(pr_num, merge_hash, default_branch):
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `9fde5223` (2026-11-16)
-**Commit Message**: ZOOKEEPER-5127: Upgrade Google Guava to 33.7.2-jre in zookeeper-contrib/zookeeper-contrib-zooinspector
+### Incident Patch 1: `5cc6962c` (2026-11-17)
+**Commit Message**: ZOOKEEPER-5122: C client) xid counter is unnecessarily likely to wrap
 
-Reviewers: anmolnar
-Author: PDavid
-Closes #2503 from PDavid/ZOOKEEPER-5127
+Reviewers: kezhuw, anmolnar
+Author: apurtell
+Closes #2497 from apurtell/ZOOKEEPER-5122
 
-**File**: `zookeeper-contrib/zookeeper-contrib-zooinspector/pom.xml` (modified, +1/-1)
+**File**: `zookeeper-client/zookeeper-client-c/CMakeLists.txt` (modified, +1/-0)
 ```diff
-@@ -35,7 +35,7 @@
+@@ -259,6 +259,7 @@ set(test_sources
+   tests/TestClient.cc
+   tests/ZooKeeperQuorumServer.cc
+   tests/TestReadOnlyClient.cc
++  tests/TestXid.cc
+   tests/TestLogClientEnv.cc)
  
-   <properties>
-     <rat.version>0.6</rat.version>
--    <guava.version>32.1.3-jre</guava.version>
-+    <guava.version>33.7.2-jre</guava.version>
-   </properties>
+ if(WANT_SYNCAPI)
+```
+
+**File**: `zookeeper-client/zookeeper-client-c/Makefile.am` (modified, +1/-0)
+```diff
+@@ -119,6 +119,7 @@ TEST_SOURCES = \
+ 	tests/ZooKeeperQuorumServer.cc \
+ 	tests/ZooKeeperQuorumServer.h \
+ 	tests/TestReadOnlyClient.cc \
++	tests/TestXid.cc \
+ 	tests/TestLogClientEnv.cc \
+         tests/TestSASLAuth.cc \
+ 	$(NULL)
+```
+
+**File**: `zookeeper-client/zookeeper-client-c/src/mt_adaptor.c` (modified, +25/-6)
+```diff
+@@ -534,14 +534,33 @@ int32_t fetch_and_add(volatile int32_t* operand, int incr)
+ #endif
+ }
  
-   <build>
+-// make sure the static xid is initialized before any threads started
+-__attribute__((constructor)) int32_t get_xid()
++static int32_t compare_and_swap(volatile int32_t* operand, int32_t expected,
++        int32_t desired)
+ {
+-    static int32_t xid = -1;
+-    if (xid == -1) {
+-        xid = time(0);
++#ifndef WIN32
++    return __sync_val_compare_and_swap(operand, expected, desired);
++#else
++    return InterlockedCompareExchange((volatile LONG*)operand, desired, expected);
++#endif
++}
++
++/* This function uses the same xid sequence as ClientCnxn.getXid in the Java
++ * client. Each handle has a counter that starts at 1. The counter wraps from
++ * INT32_MAX back to 1, so a request never uses a reserved control xid. A
++ * compare-and-swap loop lets many application threads share one handle. */
++int32_t get_xid(zhandle_t *zh)
++{
++    int32_t current;
++    if (zh == NULL) {
++        /* Most API calls get an xid before they check the handle. These
++         * calls reject a NULL handle, so this xid never goes to a server. */
++        return 0;
+     }
+-    return fetch_and_add(&xid,1);
++    do {
++        current = zh->xid;
++    } while (compare_and_swap(&zh->xid, current,
++                current == INT32_MAX ? 1 : current + 1) != current);
++    return current;
+ }
+ 
+ int lock_reconfig(struct _zhandle *zh)
+```
+
+**File**: `zookeeper-client/zookeeper-client-c/src/st_adaptor.c` (modified, +13/-6)
+```diff
+@@ -75,13 +75,20 @@ int32_t inc_ref_counter(zhandle_t* zh,int i)
+     return zh->ref_counter;
+ }
+ 
+-int32_t get_xid()
+-{
+-    static int32_t xid = -1;
+-    if (xid == -1) {
+-        xid = time(0);
++/* This function uses the same xid sequence as ClientCnxn.getXid in the Java
++ * client. Each handle has a counter that starts at 1. The counter wraps from
++ * INT32_MAX back to 1, so a request never uses a reserved control xid. */
++int32_t get_xid(zhandle_t *zh)
++{
++    int32_t xid;
++    if (zh == NULL) {
++        /* Most API calls get an xid before they check the handle. These
++         * calls reject a NULL handle, so this xid never goes to a server. */
++        return 0;
+     }
+-    return xid++;
++    xid = zh->xid;
++    zh->xid = xid == INT32_MAX ? 1 : xid + 1;
++    return xid;
+ }
+ 
+ int lock_reconfig(struct _zhandle *zh)
+```
+
+**File**: `zookeeper-client/zookeeper-client-c/src/zk_adaptor.h` (modified, +6/-1)
+```diff
+@@ -254,6 +254,9 @@ struct _zhandle {
+      * right before top-level API call returns to the caller */
+     int32_t ref_counter;
+     volatile int close_requested;
++    /* The next xid for a request on this handle. Each handle has its own
++     * counter, as in the Java client. See get_xid. */
++    volatile int32_t xid;
+     void *adaptor_priv;
+ 
+     /* Used for debugging only: non-zero value indicates the time when the zookeeper_process
+@@ -313,7 +316,9 @@ int leave_critical(zhandle_t* zh);
+ // zhandle object reference counting
+ void api_prolog(zhandle_t* zh);
+ int api_epilog(zhandle_t *zh, int rc);
+-int32_t get_xid();
++/* Returns the next xid for zh. Request xids are always positive, because
++ * the protocol reserves negative xids for control frames. */
++int32_t get_xid(zhandle_t *zh);
+ 
+ // returns the new value of the ref counter
+ int32_t inc_ref_counter(zhandle_t* zh,int i);
+```
+
+**File**: `zookeeper-client/zookeeper-client-c/src/zookeeper.c` (modified, +19/-18)
+```diff
+@@ -1363,6 +1363,7 @@ static zhandle_t *zookeeper_init_internal(const char *host, watcher_fn watcher,
+     if (!zh) {
+         goto nomem;
+     }
++    zh->xid = 1;
+ 
+     // Set log callback before calling into log_env
+     zh->log_callback = log_callback;
+@@ -3024,7 +3025,7 @@ int queue_sasl_request(zhandle_t *zh, const char *client_data, int client_data_l
+     int rc;
+ 
+     /* Java client use normal xid, too. */
+-    struct RequestHeader h = { get_xid(), ZOO_SASL_OP };
++    struct RequestHeader h = { get_xid(zh), ZOO_SASL_OP };
+     struct GetSASLRequest req = { { client_data_len, client_data_len>0 ? (char *) client_data : "" } };
+ 
+     oa = create_buffer_oarchive();
+@@ -3622,7 +3623,7 @@ int zookeeper_process(zhandle_t *zh, int events)
+                 return api_epilog(zh,
+                                   handle_socket_error_msg(zh, __LINE__, __func__, ZRUNTIMEINCONSISTENCY,
+                                   "unexpected server response: expected %#x, but received %#x",
+-                                  hdr.xid,cptr->xid));
++                                  cptr->xid,hdr.xid));
+             }
+ 
+             if (hdr.zxid > 0) {
+@@ -4026,7 +4027,7 @@ int zookeeper_close(zhandle_t *zh)
+      * destroy the handle later. */
+     if (is_connected(zh)) {
+         struct oarchive *oa;
+-        struct RequestHeader h = {get_xid(), ZOO_CLOSE_OP};
++        struct RequestHeader h = {get_xid(zh), ZOO_CLOSE_OP};
+         LOG_INFO(LOGCALLBACK(zh), "Closing zookeeper sessionId=%#llx to %s\n",
+             zh->client_id.client_id, zoo_get_current_server(zh));
+         oa = create_buffer_oarchive();
+@@ -4174,7 +4175,7 @@ int zoo_awget(zhandle_t *zh, const char *path,
+     buffer_list_t *b;
+     struct oarchive *oa;
+     char *server_path = prepend_string(zh, path);
+-    struct RequestHeader h = {get_xid(), ZOO_GETDATA_OP};
++    struct RequestHeader h = {get_xid(zh), ZOO_GETDATA_OP};
+     struct GetDataRequest req =  { (char*)server_path, watcher!=0 };
+     int rc;
+ 
+@@ -4218,7 +4219,7 @@ int zoo_awgetconfig(zhandle_t *zh, watcher_fn watcher, void* watcherCtx,
+     struct oarchive *oa;
+     char *path = ZOO_CONFIG_NODE;
+     char *server_path = ZOO_CONFIG_NODE;
+-    struct RequestHeader h = { get_xid(), ZOO_GETDATA_OP };
++    struct RequestHeader h = { get_xid(zh), ZOO_GETDATA_OP };
+     struct GetDataRequest req =  { (char*)server_path, watcher!=0 };
+     int rc;
+ 
+@@ -4254,7 +4255,7 @@ int zoo_areconfig(zhandle_t *zh, const char *joining, const char *leaving,
+ {
+     buffer_list_t *b;
+     struct oarchive *oa;
+-    struct RequestHeader h = { get_xid(), ZOO_RECONFIG_OP };
++    struct RequestHeader h = { get_xid(zh), ZOO_RECONFIG_OP };
+     struct ReconfigRequest req;
+    int rc = 0;
+ 
+@@ -4306,7 +4307,7 @@ int zoo_aset(zhandle_t *zh, const char *path, const char *buffer, int buflen,
+ {
+     buffer_list_t *b;
+     struct oarchive *oa;
+-    struct RequestHeader h = {get_xid(), ZOO_SETDATA_OP};
++    struct RequestHeader h = {get_xid(zh), ZOO_SETDATA_OP};
+     struct SetDataRequest req;
+     int rc = SetDataRequest_init(zh, &req, path, buffer, buflen, version);
+     if (rc != ZOK) {
+@@ -4402,7 +4403,7 @@ int zoo_acreate_ttl(zhandle_t *zh, const char *path, const char *value,
+ {
+     buffer_list_t *b;
+     struct oarchive *oa;
+-    struct RequestHeader h = {get_xid(), get_create_op_type(mode, ZOO_CREATE_OP)};
++    struct RequestHeader h = {get_xid(zh), get_create_op_type(mode, ZOO_CREATE_OP)};
+     int rc;
+     char *req_path;
+ 
+@@ -4470,7 +4471,7 @@ int zoo_acreate2_ttl(zhandle_t *zh, const char *path, const char *value,
+ {
+     buffer_list_t *b;
+     struct oarchive *oa;
+-    struct RequestHeader h = { get_xid(), get_create_op_type(mode, ZOO_CREATE2_OP) };
++    struct RequestHeader h = { get_xid(zh), get_create_op_type(mode, ZOO_CREATE2_OP) };
+     int rc;
+     char *req_path;
+ 
+@@ -4540,7 +4541,7 @@ int zoo_adelete(zhandle_t *zh, const char *path, int version,
+ {
+     buffer_list_t *b;
+     struct oarchive *oa;
+-    struct RequestHeader h = {get_xid(), ZOO_DELETE_OP};
++    struct RequestHeader h = {get_xid(zh), ZOO_DELETE_OP};
+     struct DeleteRequest req;
+     int rc = DeleteRequest_init(zh, &req, path, version);
+     if (rc != ZOK) {
+@@ -4576,7 +4577,7 @@ int zoo_awexists(zhandle_t *zh, const char *path,
+ {
+     buffer_list_t *b;
+     struct oarchive *oa;
+-    struct RequestHeader h = {get_xid(), ZOO_EXISTS_OP};
++    struct RequestHeader h = {get_xid(zh), ZOO_EXISTS_OP};
+     struct ExistsRequest req;
+     int rc = Request_path_watch_init(zh, 0, &req.path, path,
+             &req.watch, watcher != NULL);
+@@ -4610,7 +4611,7 @@ static int zoo_awget_children_(zhandle_t *zh, const char *path,
+ {
+     buffer_list_t *b;
+     struct oarchive *oa;
+-    struct RequestHeader h = {get_xid(), ZOO_GETCHILDREN_OP};
++    struct RequestHeader h = {get_xid(zh), ZOO_GETCHILDREN_OP};
+     struct GetChildrenRequest req ;
+     int rc = Request_path_watch_init(zh, 0, &req.path, path,
+             &req.watch, watcher != NULL);
+@@ -4658,
+```
+
+**File**: `zookeeper-client/zookeeper-client-c/tests/TestXid.cc` (added, +290/-0)
+```diff
+@@ -0,0 +1,290 @@
++/**
++ * Licensed to the Apache Software Foundation (ASF) under one
++ * or more contributor license agreements.  See the NOTICE file
++ * distributed with this work for additional information
++ * regarding copyright ownership.  The ASF licenses this file
++ * to you under the Apache License, Version 2.0 (the
++ * "License"); you may not use this file except in compliance
++ * with the License.  You may obtain a copy of the License at
++ *
++ *     http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ */
++
++#include <cppunit/extensions/HelperMacros.h>
++#include "CppAssertHelper.h"
++
++#include <stdint.h>
++#include <string.h>
++#include <limits>
++#include <set>
++#include <string>
++#include <vector>
++
++#include "ZKMocks.h"
++
++using namespace std;
++
++static const int32_t XID_MAX = numeric_limits<int32_t>::max();
++
++/* These tests check that each handle allocates xids in the same way as the
++ * Java client. Xids start at 1, are always positive, and wrap from INT32_MAX
++ * back to 1. */
++class Zookeeper_xid : public CPPUNIT_NS::TestFixture
++{
++    CPPUNIT_TEST_SUITE(Zookeeper_xid);
++    CPPUNIT_TEST(testNewHandleStartsAtOne);
++    CPPUNIT_TEST(testWrapFromMaxToOne);
++    CPPUNIT_TEST(testHandlesHaveIndependentCounters);
++    CPPUNIT_TEST(testNullHandle);
++#ifndef THREADED
++    CPPUNIT_TEST(testRequestsAcrossWrap);
++    CPPUNIT_TEST(testMismatchLogOrder);
++#else
++    CPPUNIT_TEST(testConcurrentAllocationAcrossWrap);
++#endif
++    CPPUNIT_TEST_SUITE_END();
++
++    zhandle_t *zh;
++    FILE *logfile;
++
++    static void watcher(zhandle_t *, int, int, const char *, void *) {}
++
++public:
++    Zookeeper_xid() {
++        logfile = openlogfile("Zookeeper_xid");
++    }
++
++    ~Zookeeper_xid() {
++        if (logfile) {
++            fflush(logfile);
++            fclose(logfile);
++            logfile = 0;
++        }
++    }
++
++    void setUp()
++    {
++        zoo_set_log_stream(logfile);
++        zoo_deterministic_conn_order(0);
++        zh = 0;
++    }
++
++    void tearDown()
++    {
++        zookeeper_close(zh);
++    }
++
++    void testNewHandleStartsAtOne()
++    {
++        zh = zookeeper_init("localhost:2121", watcher, 10000, 0, 0, 0);
++        CPPUNIT_ASSERT(zh != 0);
++        CPPUNIT_ASSERT_EQUAL(1, get_xid(zh));
++        CPPUNIT_ASSERT_EQUAL(2, get_xid(zh));
++        CPPUNIT_ASSERT_EQUAL(3, get_xid(zh));
++    }
++
++    void testWrapFromMaxToOne()
++    {
++        zhandle_t h;
++        memset(&h, 0, sizeof(h));
++        h.xid = XID_MAX - 1;
++        CPPUNIT_ASSERT_EQUAL(XID_MAX - 1, get_xid(&h));
++        CPPUNIT_ASSERT_EQUAL(XID_MAX, get_xid(&h));
++        CPPUNIT_ASSERT_EQUAL(1, get_xid(&h));
++        CPPUNIT_ASSERT_EQUAL(2, get_xid(&h));
++    }
++
++    void testHandlesHaveIndependentCounters()
++    {
++        zhandle_t a;
++        zhandle_t b;
++        memset(&a, 0, sizeof(a));
++        memset(&b, 0, sizeof(b));
++        a.xid = 1;
++        b.xid = 1;
++        CPPUNIT_ASSERT_EQUAL(1, get_xid(&a));
++        CPPUNIT_ASSERT_EQUAL(2, get_xid(&a));
++        CPPUNIT_ASSERT_EQUAL(1, get_xid(&b));
++        CPPUNIT_ASSERT_EQUAL(3, get_xid(&a));
++        CPPUNIT_ASSERT_EQUAL(2, get_xid(&b));
++    }
++
++    void testNullHandle()
++    {
++        CPPUNIT_ASSERT_EQUAL(0, get_xid(NULL));
++        // An API call with a NULL handle fails before it sends a request.
++        CPPUNIT_ASSERT_EQUAL((int)ZBADARGUMENTS,
++                zoo_awget(NULL, "/a", 0, 0, NULL, NULL));
++    }
++
++#ifndef THREADED
++    class GetCompletion: public AsyncCompletion {
++    public:
++        GetCompletion(): called_(false), rc_(ZAPIERROR) {}
++        virtual void dataCompl(int rc, const char *value, int len,
++                const Stat *stat) {
++            called_ = true;
++            rc_ = rc;
++            if (rc == ZOK) {
++                value_.assign(value, len);
++            }
++        }
++        bool called_;
++        int rc_;
++        string value_;
++    };
++
++    // Send requests whose xids cross the wrap. Each reply must reach its
++    // own completion, and the session must stay connected.
++    void testRequestsAcrossWrap()
++    {
++        Mock_gettimeofday timeMock;
++        ZookeeperServer zkServer;
++        CloseFinally guard(&zh);
++
++        zh = zookeeper_init("localhost:2121", watcher, 10000, TEST_CLIENT_ID,
++                0, 0);
++        CPPUNIT_ASSERT(zh != 0);
++        forceConnected(zh, &timeMock.tv);
++        zh->xid = XID_MAX - 1;
++
++        const int count = 4;
++        GetCompletion res[count];
++        for (int i = 0; i < count; i++) {
++            char value[2] = { (char)('0' + i), 0 };
++            zkServer.addOperationResponse(new ZooGetResponse(value, 1));
++            CPPUNIT_ASSERT_EQUAL((int)ZOK,
++            
+```
+
+**File**: `zookeeper-client/zookeeper-client-c/tests/ZKMocks.cc` (modified, +2/-2)
+```diff
+@@ -161,10 +161,10 @@ Mock_flush_send_queue* Mock_flush_send_queue::mock_=0;
+ 
+ //******************************************************************************
+ //
+-DECLARE_WRAPPER(int32_t,get_xid,())
++DECLARE_WRAPPER(int32_t,get_xid,(zhandle_t* zh))
+ {
+     if(!Mock_get_xid::mock_)
+-        return CALL_REAL(get_xid,());
++        return CALL_REAL(get_xid,(zh));
+     return Mock_get_xid::mock_->call();
+ }
+ 
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #2503** (2026-11-16): ZOOKEEPER-5127: Upgrade Google Guava to 33.7.2-jre in zookeeper-contrib/zookeeper-contrib-zooinspector (@PDavid)
+- **PR #2497** (2026-11-17): ZOOKEEPER-5122: (C client) xid counter is unnecessarily likely to wrap (@apurtell)
 - **PR #2493** (2026-11-06): ZOOKEEPER-5118: Update vulnerable website dependencies: @vitest/mocker, vite, zod, happy-dom, source-map-js (@PDavid)
 - **PR #2492** (2026-11-04): ZOOKEEPER-5116: Pin CI build runner to ubuntu-24.04 to fix CI build (@PDavid)
 - **PR #2491** (2026-11-04): ZOOKEEPER-5116: Pin CI build runner to ubuntu-24.04 to fix CI build (@PDavid)
 - **PR #2490** (2026-11-09): Revert "ZOOKEEPER-4966: Decouple `ZKConfig` from `QuorumPeerConfig.ConfigException` (@kezhuw)
-- **PR #2487** (2026-11-04): ZOOKEEPER-5116: Pin website and CI build runner to ubuntu-24.04 to fix website and CI build (@PDavid)
 
 ---
 
@@ -1887,31 +2301,31 @@ Closes #2503 from PDavid/ZOOKEEPER-5127
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. ZOOKEEPER-5127: Upgrade Google Guava to 33.7.2-jre in zookeeper-contrib/zookeepe
+## X. ZOOKEEPER-5122: C client) xid counter is unnecessarily likely to wrap
 
 **RULE**:
-When implementing operations in `zookeeper-contrib/zookeeper-contrib-zooinspector/pom.xml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/zookeeper. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `zookeeper-client/zookeeper-client-c/CMakeLists.txt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in apache/zookeeper. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `9fde5223`: ZOOKEEPER-5127: Upgrade Google Guava to 33.7.2-jre in zookeeper-contrib/zookeeper-contrib-zooinspector. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5cc6962c`: ZOOKEEPER-5122: C client) xid counter is unnecessarily likely to wrap. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `zookeeper-contrib/zookeeper-contrib-zooinspector/pom.xml`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `zookeeper-client/zookeeper-client-c/CMakeLists.txt`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-    <guava.version>33.7.2-jre</guava.version>
+  tests/TestXid.cc
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
 // Induced defect failure mode:
-    <guava.version>32.1.3-jre</guava.version>
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `9fde5223` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5cc6962c` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

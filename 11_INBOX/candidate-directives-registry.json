@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T07:48:43.291Z",
+  "last_updated": "2026-11-18T07:56:38.075Z",
   "directives": [
     {
       "id": "CD-001",
@@ -28121,6 +28121,59 @@
       "source_repo": "trinodb-trino",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-9C8C2E-parquet-column-index-with-only-null-page.md",
+      "staged_date": "2026-11-18"
+    },
+    {
+      "id": "CD-UUDV",
+      "directive_title": "stop runner cache volume ratio alerts firing on NaN",
+      "source_repo": "tuist/tuist",
+      "source_commit": "3a155b20",
+      "staged_file": "11_INBOX/candidate-directives/CD-UUDV-stop-runner-cache-volume-ratio-alerts-firing-on-nan.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-18",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-V6EY",
+      "directive_title": "use-after-free when a task destroys the dispatch queue it was posted to",
+      "source_repo": "microsoft-react-native-windows-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-V6EY-use-after-free-when-a-task-destroys-the-dispatch-queue-it-was-posted-to.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-18",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-V317",
+      "directive_title": "C client) xid counter is unnecessarily likely to wrap",
+      "source_repo": "apache/zookeeper",
+      "source_commit": "5cc6962c",
+      "staged_file": "11_INBOX/candidate-directives/CD-V317-c-client-xid-counter-is-unnecessarily-likely-to-wrap.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-18",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-V5MC",
+      "directive_title": "infra): stop runner cache volume ratio alerts firing on NaN",
+      "source_repo": "tuist-tuist-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-V5MC-infra-stop-runner-cache-volume-ratio-alerts-firing-on-nan.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-18",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-D8246A",
+      "directive_title": "use-after-free when a task destroys the dispatch queue it was posted to",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "microsoft-react-native-windows",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-D8246A-use-after-free-when-a-task-destroys-the-.md",
       "staged_date": "2026-11-18"
     }
   ]

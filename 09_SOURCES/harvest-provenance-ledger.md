@@ -10910,3 +10910,7 @@ Every entry in this ledger must capture:
 | `learn-github-o2sh-onefetch` | `https://github.com/o2sh/onefetch` | `0b742098` | Multi-dimensional audit evidence | 2026-11-18T07:47:51.664Z |
 | `learn-github-trinodb-trino` | `https://github.com/trinodb/trino` | `5b9767ab` | Multi-dimensional audit evidence | 2026-11-18T07:48:08.669Z |
 | `learn-dom-d-e33ea755` | `project://o2sh-onefetch` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/o2sh-onefetch-learnings.md` | 2026-11-18T07:48:41.899Z |
+| `learn-huggingface-google-bert-bert-base-uncased` | `https://huggingface.co/google-bert/bert-base-uncased` | `hf-google-` | Multi-dimensional audit evidence | 2026-11-18T07:56:18.551Z |
+| `learn-github-tuist-tuist` | `https://github.com/tuist/tuist` | `3a155b20` | Multi-dimensional audit evidence | 2026-11-18T07:56:22.302Z |
+| `learn-github-microsoft-react-native-windows` | `https://github.com/microsoft/react-native-windows` | `1ed932d5` | Multi-dimensional audit evidence | 2026-11-18T07:56:25.840Z |
+| `learn-github-apache-zookeeper` | `https://github.com/apache/zookeeper` | `5cc6962c` | Multi-dimensional audit evidence | 2026-11-18T07:56:33.518Z |

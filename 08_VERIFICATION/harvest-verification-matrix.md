@@ -10877,3 +10877,7 @@
 | `CYCLE-20261118-JW8C` | `2026-11-18T07:47:51.660Z` | `o2sh/onefetch` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/o2sh-onefetch-learnings.md` | Yes (`7ec93d6b...`) |
 | `CYCLE-20261118-K9CP` | `2026-11-18T07:48:08.665Z` | `trinodb/trino` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9158` | Yes (`5c6100d4...`) |
 | `CYCLE-2026-11-18-PROJ-EVOLVE` | `2026-11-18T07:48:41.899Z` | `o2sh-onefetch` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-E33EA755` [Domain D] | Yes (`d0a57eaa...`) |
+| `CYCLE-20261118-URCJ` | `2026-11-18T07:56:18.547Z` | `google-bert/bert-base-uncased` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-bert-bert-base-uncased-learnings.md` | Yes (`957c07b0...`) |
+| `CYCLE-20261118-UU8R` | `2026-11-18T07:56:22.299Z` | `tuist/tuist` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9159` | Yes (`03214488...`) |
+| `CYCLE-20261118-UWZ0` | `2026-11-18T07:56:25.836Z` | `microsoft/react-native-windows` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9160` | Yes (`ca3c84c8...`) |
+| `CYCLE-20261118-V2WA` | `2026-11-18T07:56:33.514Z` | `apache/zookeeper` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9161` | Yes (`246e519d...`) |

@@ -715,8 +715,8 @@
     "sourceUrl": "https://huggingface.co/google-bert/bert-base-uncased",
     "sourceVersion": "hf-google-bert-bert-base-uncased",
     "license": "Open-Source",
-    "contentHash": "6f432600c6f07b144012992a26858c61540f930ced5374d92de6aeb01311ebec",
-    "lastHarvestedAt": "2026-11-13T21:07:07.096Z",
+    "contentHash": "957c07b0a00649cbd918fb2f2c4be7f6a487feb5f1c6a491a24e3433a7e69182",
+    "lastHarvestedAt": "2026-11-18T07:56:18.551Z",
     "learningId": "learn-huggingface-google-bert-bert-base-uncased"
   },
   "hf-google-electra-base-discriminator": {
@@ -5123,10 +5123,10 @@
     "repository": "apache/zookeeper",
     "platform": "github",
     "sourceUrl": "https://github.com/apache/zookeeper",
-    "sourceVersion": "9fde5223",
+    "sourceVersion": "5cc6962c",
     "license": "Apache-2.0",
-    "contentHash": "256b12fb526e5359b243566de3e194af8b98d18ebd2d371b37d728442b88c16b",
-    "lastHarvestedAt": "2026-11-17T08:56:42.418Z",
+    "contentHash": "246e519da959ede035fbeb271b08918714ce6f0ba3e7c6ef1245984ba38851e8",
+    "lastHarvestedAt": "2026-11-18T07:56:33.518Z",
     "learningId": "learn-github-apache-zookeeper"
   },
   "primer-react": {
@@ -7533,10 +7533,10 @@
     "repository": "microsoft/react-native-windows",
     "platform": "github",
     "sourceUrl": "https://github.com/microsoft/react-native-windows",
-    "sourceVersion": "e49cdf04",
+    "sourceVersion": "1ed932d5",
     "license": "NOASSERTION",
-    "contentHash": "30b42071349ac385dcc4164df5514524d3bfed6048cec461fc7034d1dc89b980",
-    "lastHarvestedAt": "2026-11-15T04:43:56.240Z",
+    "contentHash": "ca3c84c83e33f9b8c52c0c7436566a30ee2b34b41e11c232fa33e19f879e1d10",
+    "lastHarvestedAt": "2026-11-18T07:56:25.840Z",
     "learningId": "learn-github-microsoft-react-native-windows"
   },
   "paradedb-paradedb": {
@@ -12453,10 +12453,10 @@
     "repository": "tuist/tuist",
     "platform": "github",
     "sourceUrl": "https://github.com/tuist/tuist",
-    "sourceVersion": "de00da5d",
+    "sourceVersion": "3a155b20",
     "license": "NOASSERTION",
-    "contentHash": "f9ca6a7c116d49980779144281529540e801df5311cdaa26d9db004158a89f06",
-    "lastHarvestedAt": "2026-11-17T02:32:18.881Z",
+    "contentHash": "032144885ad79350bfa186548a539df3869fd7cf025483784e8da003b1c06c7a",
+    "lastHarvestedAt": "2026-11-18T07:56:22.302Z",
     "learningId": "learn-github-tuist-tuist"
   },
   "mixelpixx-kicad-mcp-server": {

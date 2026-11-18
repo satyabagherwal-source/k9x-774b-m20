@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-18T07:48:43.613Z",
+  "last_updated": "2026-11-18T07:56:38.310Z",
   "total_verified_learnings": 8995,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 21026,
+  "total_items": 21033,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -215741,7 +215741,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/google-bert/bert-base-uncased",
       "source_version": "hf-google-bert-bert-base-uncased",
-      "content_hash": "6f432600c6f07b144012992a26858c61540f930ced5374d92de6aeb01311ebec",
+      "content_hash": "957c07b0a00649cbd918fb2f2c4be7f6a487feb5f1c6a491a24e3433a7e69182",
       "dossier_path": "07_PROJECT_LEARNING/hf-google-bert-bert-base-uncased-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-google-bert-bert-base-uncased-learnings.md",
       "promoted_rules": [],
@@ -215750,7 +215750,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-13T21:07:06.937Z",
+      "verified_at": "2026-11-18T07:56:18.370Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -215767,9 +215767,9 @@
       "title": "Research & Knowledge Intelligence: google-bert/bert-base-uncased Core Invariants",
       "repository": "google-bert/bert-base-uncased",
       "source_version": "hf-google-bert-bert-base-uncased",
-      "content_hash": "4a659b3b62d85c66f32c78a2eb86b75abd454f7eda5122d8bce5927a10591689",
+      "content_hash": "fee6ae2e3fdf8563bbc6ae3f97167428b0bcff00646858296dd68b5c504ab9e3",
       "domain_letter": "D",
-      "persisted_at": "2026-11-13T21:07:07.291Z"
+      "persisted_at": "2026-11-18T07:56:18.708Z"
     },
     "learn-github-pubkey-rxdb": {
       "learning_id": "learn-github-pubkey-rxdb",
@@ -215967,9 +215967,9 @@
       "title": "Research & Knowledge Intelligence: hf-google-bert-bert-base-uncased-learnings Core Invariants",
       "repository": "hf-google-bert-bert-base-uncased-learnings",
       "source_version": "HEAD",
-      "content_hash": "e158265b28b2b6bfce38769b0440e5f13cc7105ffcef187d436f45f525e33ff8",
+      "content_hash": "ef8c744d57f88b8d5f51dad00d02a103d12c287577182383b75866978a2c8d84",
       "domain_letter": "D",
-      "persisted_at": "2026-11-13T21:07:54.154Z"
+      "persisted_at": "2026-11-18T07:56:37.553Z"
     },
     "candidate_directive-ci-make-the-tauri-example-e2e-test-robust-against-a-lost-webdriver-session": {
       "item_id": "candidate_directive-ci-make-the-tauri-example-e2e-test-robust-against-a-lost-webdriver-session",
@@ -241308,14 +241308,19 @@
       "slug": "microsoft-react-native-windows",
       "platform": "github",
       "source_url": "https://github.com/microsoft/react-native-windows",
-      "source_version": "e49cdf04",
-      "content_hash": "30b42071349ac385dcc4164df5514524d3bfed6048cec461fc7034d1dc89b980",
+      "source_version": "1ed932d5",
+      "content_hash": "ca3c84c83e33f9b8c52c0c7436566a30ee2b34b41e11c232fa33e19f879e1d10",
       "dossier_path": "07_PROJECT_LEARNING/microsoft-react-native-windows-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/microsoft-react-native-windows-learnings.md",
       "promoted_rules": [
         {
           "number": 8578,
           "title": "the build with MSVC 14.52 (C4864 and ARM64 internal compiler error)",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9160,
+          "title": "use-after-free when a task destroys the dispatch queue it was posted to",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -241324,7 +241329,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-15T04:43:56.092Z",
+      "verified_at": "2026-11-18T07:56:25.673Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -241366,10 +241371,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-microsoft-react-native-windows-technical-construction-intelligence-microsoft-rea.md",
       "title": "Technical Construction Intelligence: microsoft/react-native-windows Core Invariants",
       "repository": "microsoft/react-native-windows",
-      "source_version": "e49cdf04",
-      "content_hash": "167fc39b2788b289a6e479534f32edcb2affbb1b337b2deb643f08d33fb83f56",
+      "source_version": "1ed932d5",
+      "content_hash": "54019d8576d8849472b82cbc4e24df04f2c35aa759bb3de4a362ecf5b7c71d37",
       "domain_letter": "H",
-      "persisted_at": "2026-11-15T04:43:56.514Z"
+      "persisted_at": "2026-11-18T07:56:26.130Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-microsoft-react-native-windows": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-microsoft-react-native-windows",
@@ -241379,9 +241384,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for microsoft-react-native-windows-learnings",
       "repository": "microsoft-react-native-windows-learnings",
       "source_version": "HEAD",
-      "content_hash": "d1243d7d1c730464cdee05e077c79e1e0e1d5b69194425021e9eb3e8b663306a",
+      "content_hash": "4b783c77bab7b50d18ef7885f2db1d9ed1fcd0c2c261d8c202edb574446558fe",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T04:45:04.388Z"
+      "persisted_at": "2026-11-18T07:56:38.310Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-nvidia-qwen3-8-flash-next-fp4-local-learnings": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-nvidia-qwen3-8-flash-next-fp4-local-learnings",
@@ -241403,9 +241408,9 @@
       "title": "Technical Construction Intelligence: microsoft-react-native-windows-learnings Core Invariants",
       "repository": "microsoft-react-native-windows-learnings",
       "source_version": "HEAD",
-      "content_hash": "a519fb09030f732bee464ac2210507e4da5e5f7cf46df1a1939dbe59897f93d8",
+      "content_hash": "17e30236fd22dc0b2424a490d49a6c10bfb324c7c3265c61e063ea0324d598d7",
       "domain_letter": "H",
-      "persisted_at": "2026-11-15T04:45:04.260Z"
+      "persisted_at": "2026-11-18T07:56:38.189Z"
     },
     "learn-huggingface-openmoss-team-moss-image-base": {
       "learning_id": "learn-huggingface-openmoss-team-moss-image-base",
@@ -242822,8 +242827,8 @@
       "slug": "tuist-tuist",
       "platform": "github",
       "source_url": "https://github.com/tuist/tuist",
-      "source_version": "de00da5d",
-      "content_hash": "f9ca6a7c116d49980779144281529540e801df5311cdaa26d9db004158a89f06",
+      "source_version": "3a155b20",
+      "content_hash": "032144885ad79350bfa186548a539df3869fd7cf025483784e8da003b1c06c7a",
       "dossier_path": "07_PROJECT_LEARNING/tuist-tuist-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tuist-tuist-learnings.md",
       "promoted_rules": [
@@ -242836,6 +242841,11 @@
           "number": 8837,
           "title": "fail stalled node blob cache downloads within seconds",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9159,
+          "title": "stop runner cache volume ratio alerts firing on NaN",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -242843,7 +242853,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T02:32:18.708Z",
+      "verified_at": "2026-11-18T07:56:22.121Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -242885,10 +242895,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tuist-tuist-architecture-intelligence-tuist-tuist-core-invariants.md",
       "title": "Architecture Intelligence: tuist/tuist Core Invariants",
       "repository": "tuist/tuist",
-      "source_version": "de00da5d",
-      "content_hash": "a266c36fef1d3d0c3d9193db6da536d8235b04f995019d577900032e5e07ff5e",
+      "source_version": "3a155b20",
+      "content_hash": "fc874b5132095fb8387421f9c10b85893894530aeb0c819e503bb4a74cb70f5c",
       "domain_letter": "G",
-      "persisted_at": "2026-11-17T02:32:19.169Z"
+      "persisted_at": "2026-11-18T07:56:22.607Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-tuist-tuist": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tuist-tuist",
@@ -242897,10 +242907,10 @@
       "relative_path": "08_VERIFICATION/tuist-tuist-verification-protocol-empirical-defect-shield-for-tuist-tuist.md",
       "title": "Verification Protocol: Empirical Defect Shield for tuist/tuist",
       "repository": "tuist/tuist",
-      "source_version": "de00da5d",
-      "content_hash": "2eb04e482a24f3bfb3d269799c580090bd9f3a596c3952a8048fb157a6f809c9",
+      "source_version": "3a155b20",
+      "content_hash": "b96e1e6d1d0d4f725a34ea4834065a76590da7e07e1f00f71b0bdfe63d3e8e2e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T02:32:19.276Z"
+      "persisted_at": "2026-11-18T07:56:22.731Z"
     },
     "learn-huggingface-obliteratus-deepseek-v4-1-flash-1017-obliterated": {
       "learning_id": "learn-huggingface-obliteratus-deepseek-v4-1-flash-1017-obliterated",
@@ -243188,9 +243198,9 @@
       "title": "Architecture Intelligence: tuist-tuist-learnings Core Invariants",
       "repository": "tuist-tuist-learnings",
       "source_version": "HEAD",
-      "content_hash": "88b49407c5a2d630eb40e4f192f8a63a2879d91225960833df0961b2ca590d7f",
+      "content_hash": "507eff34ad7c7cefa54457c63ea2723521ad9089c0458da42bda84a9c2ca608e",
       "domain_letter": "G",
-      "persisted_at": "2026-11-17T02:32:26.981Z"
+      "persisted_at": "2026-11-18T07:56:37.166Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-tuist-tuist-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-tuist-tuist-learnings",
@@ -243200,9 +243210,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for tuist-tuist-learnings",
       "repository": "tuist-tuist-learnings",
       "source_version": "HEAD",
-      "content_hash": "03ff05721040493d4308ec60ff8d9c4adee256bb292ded5edcadbc70f7a2eff8",
+      "content_hash": "806de4190b8e700aff0f59f5137f0fc47553e9d0ac62a6867338d1226c4649ad",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T02:32:27.085Z"
+      "persisted_at": "2026-11-18T07:56:37.280Z"
     },
     "candidate_directive-orthogonal-weight-projection-invariant-for-activation-ablation": {
       "item_id": "candidate_directive-orthogonal-weight-projection-invariant-for-activation-ablation",
@@ -269195,14 +269205,19 @@
       "slug": "apache-zookeeper",
       "platform": "github",
       "source_url": "https://github.com/apache/zookeeper",
-      "source_version": "9fde5223",
-      "content_hash": "256b12fb526e5359b243566de3e194af8b98d18ebd2d371b37d728442b88c16b",
+      "source_version": "5cc6962c",
+      "content_hash": "246e519da959ede035fbeb271b08918714ce6f0ba3e7c6ef1245984ba38851e8",
       "dossier_path": "07_PROJECT_LEARNING/apache-zookeeper-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/apache-zookeeper-learnings.md",
       "promoted_rules": [
         {
           "number": 8941,
           "title": "Upgrade Google Guava to 33.7.2-jre in zookeeper-contrib/zookeepe",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9161,
+          "title": "C client) xid counter is unnecessarily likely to wrap",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -269211,7 +269226,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T08:56:42.159Z",
+      "verified_at": "2026-11-18T07:56:33.357Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -269253,10 +269268,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-apache-zookeeper-technical-construction-intelligence-apache-zookeeper-core-invar.md",
       "title": "Technical Construction Intelligence: apache/zookeeper Core Invariants",
       "repository": "apache/zookeeper",
-      "source_version": "9fde5223",
-      "content_hash": "62a6f770d9a68a7d00ac4ca2988a1f341c3692d071213a8d66be89397bed9db1",
+      "source_version": "5cc6962c",
+      "content_hash": "f6ac593ff4ba692b2ef3bfb2825d51f5b37e98324159b7aad43d4634e85524d6",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T08:56:42.744Z"
+      "persisted_at": "2026-11-18T07:56:33.806Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-apache-zookeeper": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-apache-zookeeper",
@@ -269265,10 +269280,10 @@
       "relative_path": "08_VERIFICATION/apache-zookeeper-verification-protocol-empirical-defect-shield-for-apache-zookee.md",
       "title": "Verification Protocol: Empirical Defect Shield for apache/zookeeper",
       "repository": "apache/zookeeper",
-      "source_version": "9fde5223",
-      "content_hash": "469991eda67c0b4954fc86b4c4d1099ca14f3905e096f07b338d48bf592d5a7c",
+      "source_version": "5cc6962c",
+      "content_hash": "2736bab10a993bd99fcdd1c0318dd8a900389d10b50f763ed742bb8e824fc9e4",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T08:56:42.884Z"
+      "persisted_at": "2026-11-18T07:56:33.924Z"
     },
     "domain_intelligence-architecture-intelligence-faker-js-faker-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-faker-js-faker-learnings-core-invariants",
@@ -283405,6 +283420,96 @@
       "content_hash": "37e77cc988fcc47b30a5d549b9938ad73b6e9249b8a7a32a946f87021b830b86",
       "domain_letter": "F",
       "persisted_at": "2026-11-18T07:48:42.265Z"
+    },
+    "rule-9159": {
+      "learning_id": "rule-9159",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9159,
+      "title": "stop runner cache volume ratio alerts firing on NaN",
+      "source_url": "https://github.com/tuist/tuist",
+      "source_version": "3a155b20",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-18T07:56:22.121Z"
+    },
+    "candidate_directive-stop-runner-cache-volume-ratio-alerts-firing-on-nan": {
+      "item_id": "candidate_directive-stop-runner-cache-volume-ratio-alerts-firing-on-nan",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-UUDV-stop-runner-cache-volume-ratio-alerts-firing-on-nan.md",
+      "title": "stop runner cache volume ratio alerts firing on NaN",
+      "repository": "tuist/tuist",
+      "source_version": "3a155b20",
+      "content_hash": "a46ebfdf36622b3880fa2bb8fd3a0dfc46cebbf6b87e68834df10d5e079da5c1",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-18T07:56:22.485Z"
+    },
+    "rule-9160": {
+      "learning_id": "rule-9160",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9160,
+      "title": "use-after-free when a task destroys the dispatch queue it was posted to",
+      "source_url": "https://github.com/microsoft/react-native-windows",
+      "source_version": "1ed932d5",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-18T07:56:25.673Z"
+    },
+    "candidate_directive-use-after-free-when-a-task-destroys-the-dispatch-queue-it-was-posted-to": {
+      "item_id": "candidate_directive-use-after-free-when-a-task-destroys-the-dispatch-queue-it-was-posted-to",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-V6EY-use-after-free-when-a-task-destroys-the-dispatch-queue-it-was-posted-to.md",
+      "title": "use-after-free when a task destroys the dispatch queue it was posted to",
+      "repository": "microsoft-react-native-windows-learnings",
+      "source_version": "HEAD",
+      "content_hash": "a022396a1499d113e102ee3e2b909234e989510296904dc924ac8ed6c2f37257",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-18T07:56:38.075Z"
+    },
+    "rule-9161": {
+      "learning_id": "rule-9161",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9161,
+      "title": "C client) xid counter is unnecessarily likely to wrap",
+      "source_url": "https://github.com/apache/zookeeper",
+      "source_version": "5cc6962c",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-18T07:56:33.357Z"
+    },
+    "candidate_directive-c-client-xid-counter-is-unnecessarily-likely-to-wrap": {
+      "item_id": "candidate_directive-c-client-xid-counter-is-unnecessarily-likely-to-wrap",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-V317-c-client-xid-counter-is-unnecessarily-likely-to-wrap.md",
+      "title": "C client) xid counter is unnecessarily likely to wrap",
+      "repository": "apache/zookeeper",
+      "source_version": "5cc6962c",
+      "content_hash": "ffe6792e14820a730f964dc7bac87e8d4d9eb18f65c8fe2d8ff5b4f4a1f38163",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-18T07:56:33.692Z"
+    },
+    "candidate_directive-infra-stop-runner-cache-volume-ratio-alerts-firing-on-nan": {
+      "item_id": "candidate_directive-infra-stop-runner-cache-volume-ratio-alerts-firing-on-nan",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-V5MC-infra-stop-runner-cache-volume-ratio-alerts-firing-on-nan.md",
+      "title": "infra): stop runner cache volume ratio alerts firing on NaN",
+      "repository": "tuist-tuist-learnings",
+      "source_version": "HEAD",
+      "content_hash": "8d6cb47c620afddf1d1bd7c3f558c6456e1b332ace66e36a179596c9b268ce54",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-18T07:56:37.047Z"
     }
   },
   "ai-builder-brain": {

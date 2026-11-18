@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/google-bert/bert-base-uncased",
   "source_version": "hf-google-bert-bert-base-uncased",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T21:07:07.290Z",
+  "timestamp": "2026-11-18T07:56:18.707Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-google-bert-bert-base-uncased",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [google-bert/bert-base-uncased](https://huggingface.co/google-bert/bert-base-uncased) (Revision: `hf-google-`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T21:07:07.290Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-18T07:56:18.707Z`  
 > **Learning ID**: `learn-huggingface-google-bert-bert-base-uncased`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-google-bert-bert-base-uncased-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/google-bert/bert-base-uncased](https://huggingface.co/google-bert/bert-base-uncased))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T21:07:06.480Z  
+> **Harvest Timestamp**: 2026-11-18T07:56:17.957Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: fill-mask
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 31634105 downloads | 3071 likes
+- **Stars / Engagement**: 33737851 downloads | 3083 likes
 
 ---
 

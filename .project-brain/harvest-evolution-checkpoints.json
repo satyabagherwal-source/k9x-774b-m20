@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T07:48:43.757Z",
+  "last_updated": "2026-11-18T07:56:38.412Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-18T04:11:36.483Z",
@@ -443,9 +443,9 @@
       "staged_for_review": 1
     },
     "microsoft-react-native-windows-learnings.md": {
-      "processed_at": "2026-11-15T04:45:03.819Z",
-      "promoted_canonical": 1,
-      "staged_for_review": 0
+      "processed_at": "2026-11-18T07:56:37.684Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     },
     "fallow-rs-fallow-learnings.md": {
       "processed_at": "2026-11-18T05:36:02.551Z",
@@ -1853,7 +1853,7 @@
       "staged_for_review": 1
     },
     "tuist-tuist-learnings.md": {
-      "processed_at": "2026-11-17T02:32:26.587Z",
+      "processed_at": "2026-11-18T07:56:36.683Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2168,8 +2168,8 @@
       "staged_for_review": 0
     },
     "hf-google-bert-bert-base-uncased-learnings.md": {
-      "processed_at": "2026-11-13T21:07:53.947Z",
-      "promoted_canonical": 1,
+      "processed_at": "2026-11-18T07:56:37.393Z",
+      "promoted_canonical": 0,
       "staged_for_review": 0
     },
     "pubkey-rxdb-learnings.md": {
@@ -3418,7 +3418,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 1860,
+  "total_dossiers_evaluated": 1863,
   "total_canonical_promoted": 341,
-  "total_staged_for_review": 1431
+  "total_staged_for_review": 1433
 }

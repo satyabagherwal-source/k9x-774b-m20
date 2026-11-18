@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T07:48:08.674Z",
-  "total_cycles_completed": 10414,
-  "total_learnings_persisted": 10414,
-  "total_rules_promoted": 9912,
+  "last_updated": "2026-11-18T07:56:33.522Z",
+  "total_cycles_completed": 10418,
+  "total_learnings_persisted": 10418,
+  "total_rules_promoted": 9915,
   "history": [
-    {
-      "timestamp": "2026-11-17T18:26:39.604Z",
-      "repository": "t8y2/dbx",
-      "learningId": "learn-github-t8y2-dbx",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T18:35:22.279Z",
-      "repository": "MoonMath-ai/DeepSeek-V4.1-Flash-1017-uncensored",
-      "learningId": "learn-huggingface-moonmath-ai-deepseek-v4-1-flash-1017-uncensored",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T18:35:24.790Z",
-      "repository": "HuggingFaceBio/Carbon-X",
-      "learningId": "learn-huggingface-huggingfacebio-carbon-x",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T18:35:35.711Z",
-      "repository": "flux-iac/tofu-controller",
-      "learningId": "learn-github-flux-iac-tofu-controller",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-17T18:42:41.860Z",
       "repository": "lingyired/status-trio",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-11-18T07:48:08.674Z",
       "repository": "trinodb/trino",
       "learningId": "learn-github-trinodb-trino",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T07:56:18.555Z",
+      "repository": "google-bert/bert-base-uncased",
+      "learningId": "learn-huggingface-google-bert-bert-base-uncased",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T07:56:22.307Z",
+      "repository": "tuist/tuist",
+      "learningId": "learn-github-tuist-tuist",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T07:56:25.844Z",
+      "repository": "microsoft/react-native-windows",
+      "learningId": "learn-github-microsoft-react-native-windows",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T07:56:33.522Z",
+      "repository": "apache/zookeeper",
+      "learningId": "learn-github-apache-zookeeper",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
