@@ -4,22 +4,22 @@
 {
   "source_repository": "zama-ai/tfhe-rs",
   "source_url": "https://github.com/zama-ai/tfhe-rs",
-  "source_version": "ab04f563",
+  "source_version": "fbc8b20d",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-18T17:01:55.967Z",
+  "timestamp": "2026-11-18T22:57:59.451Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-zama-ai-tfhe-rs",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [zama-ai/tfhe-rs](https://github.com/zama-ai/tfhe-rs) (Revision: `ab04f563`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-18T17:01:55.967Z`  
+> **Provenance**: Harvested from [zama-ai/tfhe-rs](https://github.com/zama-ai/tfhe-rs) (Revision: `fbc8b20d`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-18T22:57:59.451Z`  
 > **Learning ID**: `learn-github-zama-ai-tfhe-rs`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `zama-ai/tfhe-rs` (Commit: `ab04f563`)
+- **Target Repository**: `zama-ai/tfhe-rs` (Commit: `fbc8b20d`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/zama-ai/tfhe-rs](https://github.com/zama-ai/tfhe-rs))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T17:01:54.480Z  
+> **Harvest Timestamp**: 2026-11-18T22:57:58.472Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1946,538 +1946,106 @@ public:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `cf180b20` (2026-11-18)
-**Commit Message**: fix(gpu): automatically generated files should be excluded from `cargo::rerun-if-changed` (#4177)
+### Incident Patch 1: `fbc8b20d` (2026-11-18)
+**Commit Message**: chore: python tooling is subpar, call the right pre-installed python (#4178)
 
-**File**: `backends/tfhe-cuda-backend/build.rs` (modified, +7/-1)
+* chore: python tooling is subpar, call the right pre-installed python
+
+* chore: fix nvm installation on m1 runner
+
+* chore: rust has a bug on macOS 27, update recipe triggering the bug
+
+- rust bug https://github.com/rust-lang/rust/issues/157750
+- nightly toolchain are up to date enough
+- avoids changing the promises of the project
+
+**File**: `.github/workflows/m1_tests.yml` (modified, +36/-7)
 ```diff
-@@ -24,7 +24,13 @@ fn main() {
-     println!("cargo::rerun-if-changed=cuda/src");
-     println!("cargo::rerun-if-changed=cuda/tests_and_benchmarks");
-     println!("cargo::rerun-if-changed=cuda/CMakeLists.txt");
--    println!("cargo::rerun-if-changed=src");
-+    // Automatically generated files are excluded from `cargo::rerun-if-changed`
-+    for entry in std::fs::read_dir("src").unwrap() {
-+        let path = entry.unwrap().path();
-+        if path.file_name().is_some_and(|name| name != "bindings.rs") {
-+            println!("cargo::rerun-if-changed={}", path.display());
-+        }
-+    }
+@@ -43,23 +43,52 @@ jobs:
+     timeout-minutes: 720
  
-     // Platform/distro check is performed by tfhe-cuda-common's build.rs, which
-     // Cargo builds first as a dependency.
-```
-
-**File**: `backends/tfhe-cuda-common/build.rs` (modified, +7/-1)
-```diff
-@@ -24,7 +24,13 @@ fn main() {
-     println!("cargo::rerun-if-changed=cuda/include");
-     println!("cargo::rerun-if-changed=cuda/src");
-     println!("cargo::rerun-if-changed=cuda/CMakeLists.txt");
--    println!("cargo::rerun-if-changed=src");
-+    // Automatically generated files are excluded from `cargo::rerun-if-changed`
-+    for entry in std::fs::read_dir("src").unwrap() {
-+        let path = entry.unwrap().path();
-+        if path.file_name().is_some_and(|name| name != "cuda_bind.rs") {
-+            println!("cargo::rerun-if-changed={}", path.display());
-+        }
-+    }
+     steps:
+-      - name: Override NVM_DIR for proper node detection on this runner
+-        run: |
+-          echo "NVM_DIR=${HOME}/.nvm" >> "${GITHUB_ENV}"
+-
+       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+         with:
+           persist-credentials: "false"
+           token: ${{ env.CHECKOUT_TOKEN }}
  
-     if std::env::consts::OS == "linux" {
-         let manifest_dir = std::env::var("CARGO_MANIFEST_DIR")
-```
-
-**File**: `backends/zk-cuda-backend/build.rs` (modified, +7/-1)
-```diff
-@@ -15,7 +15,13 @@ fn main() {
-     println!("cargo::rerun-if-changed=cuda/include");
-     println!("cargo::rerun-if-changed=cuda/src");
-     println!("cargo::rerun-if-changed=cuda/CMakeLists.txt");
--    println!("cargo::rerun-if-changed=src");
-+    // Automatically generated files are excluded from `cargo::rerun-if-changed`
-+    for entry in std::fs::read_dir("src").unwrap() {
-+        let path = entry.unwrap().path();
-+        if path.file_name().is_some_and(|name| name != "bindings.rs") {
-+            println!("cargo::rerun-if-changed={}", path.display());
-+        }
-+    }
+-      - name: Setup Python
+-        uses: ./.github/actions/setup_python
+-
+       - name: Install latest stable
+         uses: dtolnay/rust-toolchain@683b588c487a69d01f6c6ddf40f036ff682cc2c8 # zizmor: ignore[stale-action-refs] this action doesn't create releases
+         with:
+           toolchain: stable
  
-     // Platform/distro check is performed by tfhe-cuda-common's build.rs, which
-     // Cargo builds first as a dependency.
-```
-
----
-
-### Incident Patch 2: `ccb5823a` (2026-11-18)
-**Commit Message**: fix(gpu): write the result into the input of shift and rotate assign functions when it has carries (#4189)
-
-**File**: `tfhe/src/integer/gpu/server_key/radix/rotate.rs` (modified, +8/-14)
-```diff
-@@ -207,7 +207,6 @@ impl CudaServerKey {
-     ) where
-         T: CudaIntegerRadixCiphertext,
-     {
--        let mut tmp_lhs: T;
-         let mut tmp_rhs: CudaUnsignedRadixCiphertext;
- 
-         let (lhs, rhs) = match (
-@@ -221,17 +220,15 @@ impl CudaServerKey {
-                 (ct, &tmp_rhs)
-             }
-             (false, true) => {
--                tmp_lhs = ct.duplicate(streams);
--                self.full_propagate_assign(&mut tmp_lhs, streams);
--                (&mut tmp_lhs, rotate)
-+                self.full_propagate_assign(ct, streams);
-+                (ct, rotate)
-             }
-             (false, false) => {
--                tmp_lhs = ct.duplicate(streams);
-                 tmp_rhs = rotate.duplicate(streams);
- 
--                self.full_propagate_assign(&mut tmp_lhs, streams);
-+                self.full_propagate_assign(ct, streams);
-                 self.full_propagate_assign(&mut tmp_rhs, streams);
--                (&mut tmp_lhs, &tmp_rhs)
-+                (ct, &tmp_rhs)
-             }
-         };
- 
-@@ -327,7 +324,6 @@ impl CudaServerKey {
-     ) where
-         T: CudaIntegerRadixCiphertext,
-     {
--        let mut tmp_lhs: T;
-         let mut tmp_rhs: CudaUnsignedRadixCiphertext;
- 
-         let (lhs, rhs) = match (
-@@ -341,17 +337,15 @@ impl CudaServerKey {
-                 (ct, &tmp_rhs)
-             }
-             (false, true) => {
--                tmp_lhs = ct.duplicate(streams);
--                self.full_propagate_assign(&mut tmp_lhs, streams);
--                (&mut tmp_lhs, rotate)
-+                self.full_propagate_assign(ct, streams);
-+                (ct, rotate)
-             }
-             (false, false) => {
--                tmp_lhs = ct.duplicate(streams);
-                 tmp_rhs = rotate.duplicate(streams);
- 
--                self.full_propagate_assign(&mut tmp_lhs, streams);
-+                self.full_propagate_assign(ct, streams);
-                 self.full_propagate_assign(&mut tmp_rhs, streams);
--                (&mut tmp_lhs, &tmp_rhs)
-+                (ct, &tmp_rhs)
-             }
-         };
- 
-```
-
-**File**: `tfhe/src/integer/gpu/server_key/radix/shift.rs` (modified, +8/-14)
-```diff
-@@ -206,7 +206,6 @@ impl CudaServerKey {
-     ) where
-         T: CudaIntegerRadixCiphertext,
-     {
--        let mut tmp_lhs: T;
-         let mut tmp_rhs: CudaUnsignedRadixCiphertext;
- 
-         let (lhs, rhs) = match (
-@@ -220,17 +219,15 @@ impl CudaServerKey {
-                 (ct, &tmp_rhs)
-             }
-             (false, true) => {
--                tmp_lhs = ct.duplicate(streams);
--                self.full_propagate_assign(&mut tmp_lhs, streams);
--                (&mut tmp_lhs, shift)
-+                self.full_propagate_assign(ct, streams);
-+                (ct, shift)
-             }
-             (false, false) => {
--                tmp_lhs = ct.duplicate(streams);
-                 tmp_rhs = shift.duplicate(streams);
- 
--                self.full_propagate_assign(&mut tmp_lhs, streams);
-+                self.full_propagate_assign(ct, streams);
-                 self.full_propagate_assign(&mut tmp_rhs, streams);
--                (&mut tmp_lhs, &tmp_rhs)
-+                (ct, &tmp_rhs)
-             }
-         };
- 
-@@ -325,7 +322,6 @@ impl CudaServerKey {
-     ) where
-         T: CudaIntegerRadixCiphertext,
-     {
--        let mut tmp_lhs: T;
-         let mut tmp_rhs: CudaUnsignedRadixCiphertext;
- 
-         let (lhs, rhs) = match (
-@@ -339,17 +335,15 @@ impl CudaServerKey {
-                 (ct, &tmp_rhs)
-             }
-             (false, true) => {
--                tmp_lhs = ct.duplicate(streams);
--                self.full_propagate_assign(&mut tmp_lhs, streams);
--                (&mut tmp_lhs, shift)
-+                self.full_propagate_assign(ct, streams);
-+                (ct, shift)
-             }
-             (false, false) => {
--                tmp_lhs = ct.duplicate(streams);
-                 tmp_rhs = shift.duplicate(streams);
- 
--                self.full_propagate_assign(&mut tmp_lhs, streams);
-+                self.full_propagate_assign(ct, streams);
-                 self.full_propagate_assign(&mut tmp_rhs, streams);
--                (&mut tmp_lhs, &tmp_rhs)
-+                (ct, &tmp_rhs)
-             }
-         };
- 
-```
-
----
-
-### Incident Patch 3: `86bb6bca` (2026-11-18)
-**Commit Message**: fix(gpu): rewrite full propagation to match CPU algorithm (#4137)
-
-**File**: `backends/tfhe-cuda-backend/cuda/include/integer/cast.h` (modified, +1/-1)
-```diff
-@@ -98,7 +98,7 @@ template <typename Torus> struct int_cast_to_unsigned_buffer {
- 
-     if (requires_full_propagate) {
-       this->prop_buffer = new int_fullprop_buffer<Torus>(
--          streams, params, allocate_gpu_memory, size_tracker);
-+          streams, params, num_input_blocks, allocate_gpu_memory, size_tracker);
-     }
- 
-     this->requires_sign_extension =
-```
-
-**File**: `backends/tfhe-cuda-backend/cuda/include/integer/ilog2.h` (modified, +1/-1)
-```diff
-@@ -270,7 +270,7 @@ template <typename Torus> struct int_ilog2_buffer {
-         allocate_gpu_memory);
- 
-     this->final_propagate_mem = new int_fullprop_buffer<Torus>(
--        streams, params, allocate_gpu_memory, size_tracker);
-+        streams, params, counter_num_blocks, allocate_gpu_memory, size_tracker);
-   }
- 
-   void release(CudaStreams streams) {
-```
-
-**File**: `backends/tfhe-cuda-backend/cuda/include/integer/integer.h` (modified, +3/-3)
-```diff
-@@ -144,12 +144,12 @@ void cuda_apply_many_univariate_lut_64_async(
- uint64_t scratch_cuda_full_propagation_64_inplace_async(
-     CudaStreamsFFI streams, int8_t **mem_ptr,
-     CudaLweBootstrapKeyParamsFFI bsk_params,
--    CudaLweKeyswitchKeyParamsFFI ksk_params, uint32_t message_modulus,
--    uint32_t carry_modulus, bool allocate_gpu_memory);
-+    CudaLweKeyswitchKeyParamsFFI ksk_params, uint32_t num_blocks,
-+    uint32_t message_modulus, uint32_t carry_modulus, bool allocate_gpu_memory);
- 
- void cuda_full_propagation_64_inplace_async(
-     CudaStreamsFFI streams, CudaRadixCiphertextFFI *input_blocks,
--    int8_t *mem_ptr, void *const *ksks, void *const *bsks, uint32_t num_blocks);
-+    int8_t *mem_ptr, void *const *ksks, void *const *bsks);
- 
- void cleanup_cuda_full_propagation_64_inplace(CudaStreamsFFI streams,
-                                               int8_t **mem_ptr_void);
-```
-
-**File**: `backends/tfhe-cuda-backend/cuda/include/integer/integer_utilities.h` (modified, +207/-43)
-```diff
-@@ -8,6 +8,7 @@
- #include "pbs/pbs_utilities.h"
- #include "pbs/programmable_bootstrap.cuh"
- #include "utils/helper_multi_gpu.cuh"
-+#include <algorithm>
- #include <cmath>
- #include <functional>
- #include <optional>
-@@ -501,6 +502,101 @@ inline void calculate_final_degrees(uint64_t *const out_degrees,
-   }
- }
- 
-+/// @brief Computes the output degrees and noise levels of a partial sum that
-+/// does not reduce its result to message blocks: each output block is the
-+/// plain sum of the blocks left in its column once every column holds at most
-+/// chunk_size blocks.
-+///
-+/// Panics if chunk_size is at most 2, or if an output degree reaches the block
-+/// modulus. In debug builds, also checks each output noise level.
-+/// @param out_degrees Output degree of each block, num_blocks entries.
-+/// @param out_noise_levels Output noise level of each block, num_blocks
-+/// entries.
-+/// @param input_degrees Degrees of the terms, num_radix_in_vec * num_blocks
-+/// entries, term after term. Terms of degree 0 are skipped.
-+/// @param input_noise_levels Noise levels of the terms, same layout as
-+/// input_degrees.
-+/// @param num_blocks Number of blocks of each term and of the output.
-+/// @param num_radix_in_vec Number of terms.
-+/// @param chunk_size Number of blocks summed into one message / carry pair,
-+/// the max_degree of the parameters.
-+/// @param message_modulus Message modulus of the parameters, bounds the
-+/// message blocks and divides the chunk sums into carry blocks.
-+/// @param carry_modulus Carry modulus of the parameters, used with
-+/// message_modulus to check the output degrees and noise levels.
-+inline void calculate_final_metadata_without_reduction(
-+    uint64_t *const out_degrees, uint64_t *const out_noise_levels,
-+    const uint64_t *const input_degrees,
-+    const uint64_t *const input_noise_levels, uint32_t num_blocks,
-+    uint32_t num_radix_in_vec, uint32_t chunk_size, uint64_t message_modulus,
-+    uint64_t carry_modulus) {
++      # Indicate which python3 binary to use
++      - name: Set python executable for macOS
++        run: |
++          version="$(make python_min_version)"
++          echo "PYTHON_EXE=python${version}" >> "${GITHUB_ENV}"
 +
-+  // A full chunk is replaced by 2 blocks: the loop below only terminates if
-+  // that is a reduction
-+  PANIC_IF_FALSE(chunk_size > 2,
-+                 "Cuda error: chunk size must be greater than 2, got %u",
-+                 chunk_size);
-+  struct block_metadata {
-+    uint64_t degree;
-+    uint64_t noise_level;
-+  };
-+  std::vector<std::vector<block_metadata>> columns(num_blocks);
-+  for (uint32_t i = 0; i < num_radix_in_vec; ++i) {
-+    for (uint32_t j = 0; j < num_blocks; ++j) {
-+      uint32_t block = i * num_blocks + j;
-+      if (input_degrees[block])
-+        columns[j].push_back({input_degrees[block], input_noise_levels[block]});
-+    }
-+  }
++      - name: Node setup
++        run: |
++          # Resolve the Node major pinned in the Makefile to its most recent release: the cache key
++          # below and all the make recipes of this job then use that exact release, so a new Node
++          # release invalidates the cache instead of being shadowed by a cached older one.
++          echo "NODE_VERSION=$(make node_latest_version)" >> "${GITHUB_ENV}"
 +
-+  auto needs_processing = [&columns, chunk_size]() {
-+    return std::any_of(columns.begin(), columns.end(),
-+                       [chunk_size](const std::vector<block_metadata> &column) {
-+                         return column.size() > chunk_size;
-+                       });
-+  };
-+  while (needs_processing()) {
-+    std::vector<std::vector<block_metadata>> messages(num_blocks);
-+    std::vector<std::vector<block_metadata>> carries(num_blocks);
-+    for (uint32_t j = 0; j < num_blocks; ++j) {
-+      uint32_t num_chunks = columns[j].size() / chunk_size;
-+      for (uint32_t chunk = 0; chunk < num_chunks; ++chunk) {
-+        uint64_t chunk_degree = 0;
-+        for (uint32_t k = 0; k < chunk_size; ++k)
-+          chunk_degree += columns[j][chunk * chunk_size + k].degree;
-+        messages[j].push_back(
-+            {std::min(message_modulus - 1, chunk_degree), NoiseLevel::NOMINAL});
-+        if (j + 1 < num_blocks)
-+          carries[j + 1].push_back(
-+              {chunk_degree / message_modulus, NoiseLevel::NOMINAL});
-+      }
-+    }
-+    for (uint32_t j = 0; j < num_blocks; ++j) {
-+      auto remaining_begin =
-+          columns[j].begin() + (columns[j].size() / chunk_size) * chunk_size;
-+      std::vector<block_metadata> new_column = std::move(messages[j]);
-+      new_column.insert(new_column.end(), carries[j].begin(), carries[j].end());
-+      new_column.insert(new_column.end(), remaining_begin, columns[j].end());
-+      columns[j] = std::move(new_column);
-+    }
-+  }
++      - name: Node cache restoration
++        id: node-cache
++        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 #v6.1.0
++        with:
++          path: |
++            .nvm
++            .npm
++          key: node-${{ runner.os }}-${{ runner.arch }}-${{ env.NODE_VERSION }}
 +
-+  for (uint32_t j = 0; j < num_blocks; ++j) {
-+    out_degrees[j] = 0;
-+    out_noise_levels[j] = 0;
-+    for (const auto &block : columns[j]) {
-+      out_degrees[j] += block.degree;
-+      out_noise_levels[j] += block.noise_level;
-+    }
-+    PANIC_IF_FALSE(out_degrees[j] < message_modulus * carry_modulus,
-+                   "Cuda error: degree %lu of block %u overflows the block "
-+                   "modulus %lu",
-+                   (unsigned long)out_degrees[j], j,
-+                   (unsigned long)(message_modulus * carry_modulus));
-+    CHECK_NOISE_LEVEL(out_noise_levels[j], message_modulus, carry_modulus);
-+  }
-+}
++      - name: Install Node
++        if: steps.node-cache.outputs.cache-hit != 'true'
++        run: |
++          make install_node
 +
- /// @brief Builds the PBS type parameters matching the bootstrap key type.
- /// @param bsk_params Bootstrap key parameters; its pbs_type selects the
- /// active member of its pbs_params union.
-@@ -1475,6 +1571,7 @@ str
++      - name: Node cache save
++        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 #v6.1.0
++        if: steps.node-cache.outputs.cache-hit != 'true'
++        with:
++          path: |
++            .nvm
++            .npm
++          key: node-${{ runner.os }}-${{ runner.arch }}-${{ env.NODE_VERSION }}
++
+       - name: Install Safe-Chain
+         run: |
+           make install_aikido_safe_chain
 ```
 
-**File**: `backends/tfhe-cuda-backend/cuda/src/integer/cast.cuh` (modified, +1/-1)
+**File**: `Makefile` (modified, +1/-1)
 ```diff
-@@ -135,7 +135,7 @@ host_cast_to_unsigned(CudaStreams streams, CudaRadixCiphertextFFI *output,
+@@ -237,7 +237,7 @@ install_node_impl:
+ 	@if ! [ -d "$(NVM_DIR)" ]; then mkdir -p "$(NVM_DIR)"; fi
+ 	$(SHELL) nvm_install.sh
+ 	@rm nvm_install.sh
+-	$(target_shell) -i -c 'nvm install $(NODE_VERSION)' || \
++	$(target_shell) -i -c 'source "$(NVM_DIR)"/nvm.sh && nvm install $(NODE_VERSION)' || \
+ 	( echo "Unable to install node, unknown error." && exit 1 )
  
-   if (mem_ptr->requires_full_propagate) {
-     host_full_propagate_inplace<Torus>(streams, input, mem_ptr->prop_buffer,
--                                       ksks, bsks, current_num_blocks);
-+                                       ksks, bsks);
-   }
- 
-   if (target_num_blocks > current_num_blocks) {
+ .PHONY: node_version # Return Node version that will be installed
 ```
 
-**File**: `backends/tfhe-cuda-backend/cuda/src/integer/ilog2.cuh` (modified, +1/-2)
+**File**: `make/benchmark_utils.mk` (modified, +1/-1)
 ```diff
-@@ -195,8 +195,7 @@ host_integer_ilog2(CudaStreams streams, CudaRadixCiphertextFFI *output_ct,
-       mem_ptr->counter_num_blocks, 3);
- 
-   host_full_propagate_inplace<Torus>(streams, output_ct,
--                                     mem_ptr->final_propagate_mem, ksks, bsks,
--                                     mem_ptr->counter_num_blocks);
-+                                     mem_ptr->final_propagate_mem, ksks, bsks);
- }
- 
- #endif
-```
-
-**File**: `backends/tfhe-cuda-backend/cuda/src/integer/integer.cu` (modified, +6/-7)
-```diff
-@@ -22,28 +22,27 @@ void cuda_add_lwe_ciphertext_vector_inplace_64(
- 
- void cuda_full_propagation_64_inplace_async(
-     CudaStreamsFFI streams, CudaRadixCiphertextFFI *input_blocks,
--    int8_t *mem_ptr, void *const *ksks, void *const *bsks,
--    uint32_t num_blocks) {
-+    int8_t *mem_ptr, void *const *ksks, void *const *bsks) {
- 
-   int_fullprop_buffer<uint64_t> *buffer =
-       (int_fullprop_buffer<uint64_t> *)mem_ptr;
- 
-   host_full_propagate_inplace<uint64_t>(CudaStreams(streams), input_blocks,
--                                        buffer, (uint64_t **)(ksks), bsks,
--                                        num_blocks);
-+                                        buffer, (uint64_t **)(ksks), bsks);
- }
- 
- uint64_t scratch_cuda_full_propagation_64_inplace_async(
-     CudaStreamsFFI streams, int8_t **mem_ptr,
-     CudaLweBootstrapKeyParamsFFI bsk_params,
--    CudaLweKeyswitchKeyParamsFFI ksk_params, uint32_t message_modulus,
--    uint32_t carry_modulus, bool allocate_gpu_memory) {
-+    CudaLweKeyswitchKeyParamsFFI ksk_params, uint32_t num_blocks,
-+    uint32_t message_modulus, uint32_t carry_modulus,
-+    bool allocate_gpu_memory) {
-   int_radix_params params(bsk_params, ksk_params, message_modulus,
-                           carry_modulus);
- 
-   return scratch_cuda_full_propagation<uint64_t>(
-       CudaStreams(streams), (int_fullprop_buffer<uint64_t> **)mem_ptr, params,
--      allocate_gpu_memory);
-+      num_blocks, allocate_gpu_memory);
- }
- 
- void cleanup_cuda_full_propagation_64_inplace(CudaStreamsFFI streams,
-```
-
-**File**: `backends/tfhe-cuda-backend/cuda/src/integer/integer.cuh` (modified, +165/-79)
-```diff
-@@ -2160,85 +2160,6 @@ void host_compute_shifted_blocks_and_borrow_states(
-       2 * num_radix_blocks);
- }
- 
--/*
-- * input_blocks: input radix ciphertext propagation will happen inplace
-- * acc_message_carry: list of two lut s, [(message_acc), (carry_acc)]
-- * lut_indexes_message_carry: lut_indexes_vec for message and carry, should
-- * always be  {0, 1} small_lwe_vector: output of keyswitch should have size = 2
-- * * (lwe_dimension + 1) * sizeof(Torus) big_lwe_vector: output of pbs should
-- * have size = 2 * (glwe_dimension * polynomial_size + 1) * sizeof(Torus)
-- */
--template <typename Torus, typename KSTorus>
--void host_full_propagate_inplace(CudaStreams streams,
--                                 CudaRadixCiphertextFFI *input_blocks,
--                                 int_fullprop_buffer<Torus> *mem_ptr,
--                                 KSTorus *const *ksks, void *const *bsks,
--                                 uint32_t num_blocks) {
--  auto params = mem_ptr->lut->params;
--
--  // In the case of extracting a single LWE this parameters are dummy
--  uint32_t num_many_lut = 1;
--  uint32_t lut_stride = 0;
--  for (int i = 0; i < num_blocks; i++) {
--    CudaRadixCiphertextFFI cur_input_block;
--    as_radix_ciphertext_slice<Torus>(&cur_input_block, input_blocks, i, i + 1);
--
--    /// Since the keyswitch is done on one input only, use only 1 GPU
--    execute_keyswitch_async<Torus>(
--        streams.get_ith(0), (Torus *)(mem_ptr->tmp_small_lwe_vector->ptr),
--        mem_ptr->lut->lwe_trivial_indexes, (Torus *)cur_input_block.ptr,
--        mem_ptr->lut->lwe_trivial_indexes, ksks, params.big_lwe_dimension,
--        params.small_lwe_dimension, params.ks_base_log, params.ks_level, 1,
--        mem_ptr->lut->using_trivial_lwe_indexes);
--
--    copy_radix_ciphertext_slice_async<Torus>(
--        streams.stream(0), streams.gpu_index(0), mem_ptr->tmp_small_lwe_vector,
--        1, 2, mem_ptr->tmp_small_lwe_vector, 0, 1);
--
--    execute_pbs_async<Torus, Torus>(
--        streams.get_ith(0), (Torus *)mem_ptr->tmp_big_lwe_vector->ptr,
--        mem_ptr->lut->lwe_trivial_indexes, mem_ptr->lut->lut_vec,
--        mem_ptr->lut->lut_indexes_vec,
--        (Torus *)mem_ptr->tmp_small_lwe_vector->ptr,
--        mem_ptr->lut->lwe_trivial_indexes, bsks, mem_ptr->lut->buffer,
--        params.bsk_params(), 2, num_many_lut, lut_stride);
--
--    copy_radix_ciphertext_slice_async<Torus>(
--        streams.stream(0), streams.gpu_index(0), &cur_input_block, 0, 1,
--        mem_ptr->tmp_big_lwe_vector, 0, 1);
--    auto degrees_index = mem_ptr->lut->h_lut_indexes[0];
--    input_blocks->degrees[i] = mem_ptr->lut->degrees[degrees_index];
--    input_blocks->noise_levels[i] = NoiseLevel::NOMINAL;
--    CHECK_NOISE_LEVEL(input_blocks->noise_levels[i], params.message_modulus,
--                      params.carry_modulus);
--
--    if (i < num_blocks - 1) {
--      CudaRadixCiphertextFFI next_input_block;
--      as_radix_ciphertext_slice<Torus>(&next_input_block, input_blocks, i + 1,
--                                       i + 2);
--      CudaRadixCiphertextFFI second_input;
--      as_radix_ciphertext_slice<Torus>(&second_input,
--                                       mem_ptr->tmp_big_lwe_vector, 1, 2);
--
--      host_addition<Torus>(streams.stream(0), streams.gpu_index(0),
--                           &next_input_block, &next_input_block, &second_input,
--                           1, params.message_modulus, params.carry_modulus);
--    }
--  }
--}
--
--template <typename Torus>
--uint64_t scratch_cuda_full_propagation(CudaStreams streams,
--                                       int_fullprop_buffer<Torus> **mem_ptr,
--                                       int_radix_params params,
--                                       bool allocate_gpu_memory) {
--
--  uint64_t size_tracker = 0;
--  *mem_ptr = new int_fullprop_buffer<Torus>(streams, params,
--                                            allocate_gpu_memory, size_tracker);
--  return size_tracker;
--}
--
- // (lwe_dimension+1) threads
- // (num_radix_blocks / 2) thread blocks
- template <typename Torus>
-@@ -2843,6 +2764,171 @@ void host_add_and_propagate_single_carry(
-   POP_RANGE()
- }
- 
-+/// @brief Extracts the carries of blocks so that each block ends up holding
-+/// at most a message plus the carry of the block below it: block 0 becomes its
-+/// message, and block i becomes message_i + carry_{i-1}. The carry of the last
-+/// block is dropped and never computed.
-+/// @tparam Torus Integer type of the ciphertexts.
-+/// @tparam KSTorus Integer type of the keyswitch keys.
-+/// @param streams Streams the computation runs on.
-+/// @param blocks Radix ciphertext updated in place, at least 2 blocks.
-+/// @param mem_ptr Full propagation buffer holding the message / carry LUTs and
-+/// the temporary blocks.
-+/// @param ksks Keyswitch keys, one per GPU.
-+/// @param bsks Bootstrapping keys, one per GPU.
-+template <typename Torus, typename KSTorus>
-+void host_full_propagate_extract_carries(CudaStreams streams,
-+                                  
+@@ -36,6 +36,6 @@ clippy_data_extractor: install_rs_check_toolchain
+ # No database needed, the extractor's profile test reads ci/regression.toml.
+ .PHONY: test_benchmark_utils # Run tests for benchmark_spec, the browser ids, the bench parser and the data extractor
+ test_benchmark_utils:
+-	RUSTFLAGS="$(RUSTFLAGS)" cargo test --profile $(CARGO_PROFILE) \
++	RUSTFLAGS="$(RUSTFLAGS)" cargo "$(CARGO_RS_CHECK_TOOLCHAIN)" test --profile $(CARGO_PROFILE) \
+ 		--all-targets -p benchmark_spec -p benchmark-spec-js -p tfhe-benchmark-parser \
+ 		-p tfhe-data-extractor
 ```
 
 #### Recent Merged Pull Requests:
@@ -2485,8 +2053,8 @@ Observed empirical fixes and code patches:
 - **PR #4189** (2026-11-18): fix(gpu): write the result into the input of shift and rotate assign functions when it has carries (@pdroalves)
 - **PR #4183** (2026-11-17): chore: simpler CODEOWNERS while still respecting guidelines (@IceTDrinker)
 - **PR #4181** (2026-11-17): chore: make pip timeout longer to avoid problem with potentially safe… (@IceTDrinker)
+- **PR #4178** (2026-11-18): actions/setup-python has insane requirements, make do without them (@IceTDrinker)
 - **PR #4177** (2026-11-18): fix(gpu): automatically generated files should be excluded from `cargo::rerun-if-changed` (@enzodimaria)
-- **PR #4175** (2026-11-18): chore(deps): bump docker/login-action from 4.7.0 to 4.8.0 (@dependabot[bot])
 
 ---
 
@@ -2506,37 +2074,66 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. gpu): automatically generated files should be excluded from `cargo::rerun-if-cha
+## X. python tooling is subpar, call the right pre-installed python
 
 **RULE**:
-When implementing operations in `backends/tfhe-cuda-backend/build.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zama-ai/tfhe-rs. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/m1_tests.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zama-ai/tfhe-rs. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `cf180b20`: gpu): automatically generated files should be excluded from `cargo::rerun-if-changed`. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `fbc8b20d`: python tooling is subpar, call the right pre-installed python. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `backends/tfhe-cuda-backend/build.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/m1_tests.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    // Automatically generated files are excluded from `cargo::rerun-if-changed`
-    for entry in std::fs::read_dir("src").unwrap() {
-        let path = entry.unwrap().path();
-        if path.file_name().is_some_and(|name| name != "bindings.rs") {
-            println!("cargo::rerun-if-changed={}", path.display());
-        }
-    }
+      # Indicate which python3 binary to use
+      - name: Set python executable for macOS
+        run: |
+          version="$(make python_min_version)"
+          echo "PYTHON_EXE=python${version}" >> "${GITHUB_ENV}"
+
+      - name: Node setup
+        run: |
+          # Resolve the Node major pinned in the Makefile to its most recent release: the cache key
+          # below and all the make recipes of this job then use that exact release, so a new Node
+          # release invalidates the cache instead of being shadowed by a cached older one.
+          echo "NODE_VERSION=$(make node_latest_version)" >> "${GITHUB_ENV}"
+
+      - name: Node cache restoration
+        id: node-cache
+        uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 #v6.1.0
+        with:
+          path: |
+            .nvm
+            .npm
+          key: node-${{ runner.os }}-${{ runner.arch }}-${{ env.NODE_VERSION }}
+
+      - name: Install Node
+        if: steps.node-cache.outputs.cache-hit != 'true'
+        run: |
+          make install_node
+
+      - name: Node cache save
+        uses: actions/cache/save@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 #v6.1.0
+        if: steps.node-cache.outputs.cache-
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-    println!("cargo::rerun-if-changed=src");
+      - name: Override NVM_DIR for proper node detection on this runner
+        run: |
+          echo "NVM_DIR=${HOME}/.nvm" >> "${GITHUB_ENV}"
+
+      - name: Setup Python
+        uses: ./.github/actions/setup_python
+
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `cf180b20` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `fbc8b20d` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

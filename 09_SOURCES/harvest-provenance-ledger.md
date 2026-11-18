@@ -11151,3 +11151,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-meta-llama-llama-2-7b` | `https://huggingface.co/meta-llama/Llama-2-7b` | `hf-meta-ll` | Multi-dimensional audit evidence | 2026-11-18T22:22:15.037Z |
 | `learn-dom-j-3ca866b9` | `project://hf-meta-llama-llama-2-7b` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-meta-llama-llama-2-7b-learnings.md` | 2026-11-18T22:22:51.811Z |
 | `learn-huggingface-deepseek-ai-deepseek-v3` | `https://huggingface.co/deepseek-ai/DeepSeek-V3` | `hf-deepsee` | Multi-dimensional audit evidence | 2026-11-18T22:30:28.874Z |
+| `learn-github-crossplane-crossplane` | `https://github.com/crossplane/crossplane` | `45007a31` | Multi-dimensional audit evidence | 2026-11-18T22:57:56.877Z |
+| `learn-github-zama-ai-tfhe-rs` | `https://github.com/zama-ai/tfhe-rs` | `fbc8b20d` | Multi-dimensional audit evidence | 2026-11-18T22:57:59.256Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `2a905004` | Multi-dimensional audit evidence | 2026-11-18T22:58:04.629Z |
+| `learn-huggingface-baidu-unlimited-ocr` | `https://huggingface.co/baidu/Unlimited-OCR` | `hf-baidu-u` | Multi-dimensional audit evidence | 2026-11-18T23:02:48.456Z |

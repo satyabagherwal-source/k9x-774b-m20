@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-18T22:14:43.594Z",
+  "updated_at": "2026-11-18T23:02:52.337Z",
   "stats": {
-    "total_discovered": 5705,
-    "approved_pending_harvest": 5396,
+    "total_discovered": 5706,
+    "approved_pending_harvest": 5397,
     "harvested_count": 0,
     "rejected_count": 309,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 5374,
+      "COMMUNITY_AND_EXPERT": 5375,
       "OFFICIAL_DOCUMENTATION": 184,
       "STANDARDS_AND_SPECIFICATIONS": 111,
       "ENGINEERING_BLOGS": 4,
@@ -123368,6 +123368,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aws-aws-cdk-learnings.md",
         "fileName": "aws-aws-cdk-learnings.md"
+      }
+    },
+    "SRC-49A2A473795F": {
+      "id": "SRC-49A2A473795F",
+      "url": "https://github.com/rust-lang/rust/issues/157750",
+      "title": "https://github.com/rust-lang/rust/issues/157750",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T23:02:52.337Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md",
+        "fileName": "zama-ai-tfhe-rs-learnings.md"
       }
     }
   }

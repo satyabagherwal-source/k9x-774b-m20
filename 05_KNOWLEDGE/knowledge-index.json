@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-18T22:30:42.255Z",
+  "last_updated": "2026-11-18T23:02:52.740Z",
   "total_verified_learnings": 9009,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 21496,
+  "total_items": 21502,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112117,10 +112117,10 @@
       "relative_path": "08_VERIFICATION/dathere-qsv-verification-protocol-empirical-defect-shield-for-dathere-qsv.md",
       "title": "Verification Protocol: Empirical Defect Shield for dathere/qsv",
       "repository": "dathere/qsv",
-      "source_version": "03493b2a",
-      "content_hash": "b13db32c14461b9c10044c520a1f5cdf1dee7a7f8f12b3113d281b303e581314",
+      "source_version": "2a905004",
+      "content_hash": "2e4a1f44fea073ab18d3695220e81a46a6d55b62be999207ba4b735200842e00",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T17:28:16.322Z"
+      "persisted_at": "2026-11-18T22:58:05.016Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-xingchen-agi-xing4-0-29b-a4b-learnings-core-i": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-xingchen-agi-xing4-0-29b-a4b-learnings-core-i",
@@ -112549,10 +112549,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-crossplane-crossplane-content-information-intelligence-crossplane-crossplane-cor.md",
       "title": "Content & Information Intelligence: crossplane/crossplane Core Invariants",
       "repository": "crossplane/crossplane",
-      "source_version": "ba22c621",
-      "content_hash": "e91d6ae9256e399c3439a53f47a4115939cec8cda177addbcd72f6c31b847df7",
+      "source_version": "45007a31",
+      "content_hash": "7b0443f80eb6cdbdd4eddcfddff631a84ab6c52c1695a930c90e6e9153be7142",
       "domain_letter": "I",
-      "persisted_at": "2026-11-18T07:30:50.494Z"
+      "persisted_at": "2026-11-18T22:57:57.157Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-crossplane-crossplane": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-crossplane-crossplane",
@@ -112561,10 +112561,10 @@
       "relative_path": "08_VERIFICATION/crossplane-crossplane-verification-protocol-empirical-defect-shield-for-crosspla.md",
       "title": "Verification Protocol: Empirical Defect Shield for crossplane/crossplane",
       "repository": "crossplane/crossplane",
-      "source_version": "ba22c621",
-      "content_hash": "454072be884ccefd2c02ee9e5e0d23dda307253eb8e7231c76834b9a03fd0b8b",
+      "source_version": "45007a31",
+      "content_hash": "dfbded4db76cad680e83d19db1dc9c5c706b729e832cbb03bf0aadff0f05e3f3",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T07:30:50.622Z"
+      "persisted_at": "2026-11-18T22:57:57.264Z"
     },
     "candidate_directive-handle-stop_sending-in-raw-quic-mode-8594": {
       "item_id": "candidate_directive-handle-stop_sending-in-raw-quic-mode-8594",
@@ -112670,9 +112670,9 @@
       "title": "Content & Information Intelligence: crossplane-crossplane-learnings Core Invariants",
       "repository": "crossplane-crossplane-learnings",
       "source_version": "HEAD",
-      "content_hash": "7a9af1d588f6e08f519fb46dbafb5cc1e480a2971b26b731b22e0fcc0d7c861b",
+      "content_hash": "64bf66a6e2036058afed3dd8e4bf87f49d6f71dc2fa3070ff92e221134cd4578",
       "domain_letter": "I",
-      "persisted_at": "2026-11-18T07:30:57.953Z"
+      "persisted_at": "2026-11-18T23:02:52.037Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-crossplane-crossplane-learning": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-crossplane-crossplane-learning",
@@ -112682,9 +112682,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for crossplane-crossplane-learnings",
       "repository": "crossplane-crossplane-learnings",
       "source_version": "HEAD",
-      "content_hash": "5168f06b509ba3eb3e03224f426a8bcebe3393e8d833744ec76235d225e7b246",
+      "content_hash": "085a589d5199256e2d3d6bdbef1f873bd74af4a7454146e29b3794b8751f68c2",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T07:30:58.101Z"
+      "persisted_at": "2026-11-18T23:02:52.162Z"
     },
     "domain_intelligence-architecture-intelligence-mitmproxy-mitmproxy-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-mitmproxy-mitmproxy-learnings-core-invariants",
@@ -213361,8 +213361,8 @@
       "slug": "zama-ai-tfhe-rs",
       "platform": "github",
       "source_url": "https://github.com/zama-ai/tfhe-rs",
-      "source_version": "ab04f563",
-      "content_hash": "1f812a45f823227f9c1a0a729b4c1c91dcabdfc5d50f548aa478f86fe54851c6",
+      "source_version": "fbc8b20d",
+      "content_hash": "7f4067d99a9e8519dbc7aa5360388f34638de25be84a3c7beffb7dab993ae0e5",
       "dossier_path": "07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/zama-ai-tfhe-rs-learnings.md",
       "promoted_rules": [
@@ -213395,6 +213395,11 @@
           "number": 9262,
           "title": "automatically generated files should be excluded from `cargo::rerun-if-cha",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9293,
+          "title": "python tooling is subpar, call the right pre-installed python",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -213402,7 +213407,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T17:01:55.469Z",
+      "verified_at": "2026-11-18T22:57:59.111Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -213444,10 +213449,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zama-ai-tfhe-rs-technical-construction-intelligence-zama-ai-tfhe-rs-core-invaria.md",
       "title": "Technical Construction Intelligence: zama-ai/tfhe-rs Core Invariants",
       "repository": "zama-ai/tfhe-rs",
-      "source_version": "ab04f563",
-      "content_hash": "246299ba4d52b367c2bc1c607a5a260704d8a6f35188bc7895932c451ec06dbc",
+      "source_version": "fbc8b20d",
+      "content_hash": "9741b6c0ed25d7796cbef11b2b1c5e329fa5ba771e79328d4da088354b18d5ac",
       "domain_letter": "H",
-      "persisted_at": "2026-11-18T17:01:56.154Z"
+      "persisted_at": "2026-11-18T22:57:59.570Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zama-ai-tfhe-rs": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zama-ai-tfhe-rs",
@@ -213456,10 +213461,10 @@
       "relative_path": "08_VERIFICATION/zama-ai-tfhe-rs-verification-protocol-empirical-defect-shield-for-zama-ai-tfhe-r.md",
       "title": "Verification Protocol: Empirical Defect Shield for zama-ai/tfhe-rs",
       "repository": "zama-ai/tfhe-rs",
-      "source_version": "ab04f563",
-      "content_hash": "760fb99b77fcd85ff540e93d6a2462ad19eeca918f14a8c2e1f99dbeddb95bdc",
+      "source_version": "fbc8b20d",
+      "content_hash": "59b4f20743c07a2d9ff66683a80c5b212369c266fb98906f5250f7ae6535da5c",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T17:01:56.340Z"
+      "persisted_at": "2026-11-18T22:57:59.715Z"
     },
     "learn-github-tursodatabase-turso": {
       "learning_id": "learn-github-tursodatabase-turso",
@@ -219362,8 +219367,8 @@
       "slug": "dathere-qsv",
       "platform": "github",
       "source_url": "https://github.com/dathere/qsv",
-      "source_version": "03493b2a",
-      "content_hash": "83cc3075368c36191bdc69d6f3a50d0921122d6c2675e18808a299bd6429657c",
+      "source_version": "2a905004",
+      "content_hash": "88afe4781ecee10a0e02efe36511d45385c684ca64bcfee93e842f5dff9084cd",
       "dossier_path": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/dathere-qsv-learnings.md",
       "promoted_rules": [
@@ -219456,6 +219461,11 @@
           "number": 9265,
           "title": "generate rows in parallel, seed-stable across --jobs",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9294,
+          "title": "add --shard k/N to generate one slice of a seeded dataset",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -219463,7 +219473,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T17:28:15.681Z",
+      "verified_at": "2026-11-18T22:58:04.461Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -220389,10 +220399,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dathere-qsv-architecture-intelligence-dathere-qsv-core-invariants.md",
       "title": "Architecture Intelligence: dathere/qsv Core Invariants",
       "repository": "dathere/qsv",
-      "source_version": "03493b2a",
-      "content_hash": "5e7bdf16e15b9c0f82dc863682580b83c9876306d78da738a821fff5ca5b1cd2",
+      "source_version": "2a905004",
+      "content_hash": "1c4508a755accdd4dfca57c3244e34808dbe8644d05acdf9c450a896e8734b95",
       "domain_letter": "G",
-      "persisted_at": "2026-11-18T17:28:16.187Z"
+      "persisted_at": "2026-11-18T22:58:04.906Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-h3-learnings-core-invariant": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-h3-learnings-core-invariant",
@@ -224619,7 +224629,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/baidu/Unlimited-OCR",
       "source_version": "hf-baidu-unlimited-ocr",
-      "content_hash": "bd2dea14a5580c21a1fb68db5a22a7b91bf9fff719ec8f89e65e2f4aa7a60356",
+      "content_hash": "033a860aa6f7e15ad16e4f8cf91359eed1be8496a6bd9fe93b8360b15f917e55",
       "dossier_path": "07_PROJECT_LEARNING/hf-baidu-unlimited-ocr-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-baidu-unlimited-ocr-learnings.md",
       "promoted_rules": [],
@@ -224628,7 +224638,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T05:31:29.824Z",
+      "verified_at": "2026-11-18T23:02:48.270Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -224645,9 +224655,9 @@
       "title": "Research & Knowledge Intelligence: baidu/Unlimited-OCR Core Invariants",
       "repository": "baidu/Unlimited-OCR",
       "source_version": "hf-baidu-unlimited-ocr",
-      "content_hash": "71d7bd1c18e4e5bde8deffaa0c847df68df585c8d26ee4a582d9cd0763b61545",
+      "content_hash": "5cc3de9039bb4e5b8855d1db31aadb00a11c20ba998522de2c195705385c6d96",
       "domain_letter": "D",
-      "persisted_at": "2026-11-14T05:31:30.181Z"
+      "persisted_at": "2026-11-18T23:02:48.607Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-baidu-unlimited-ocr-learnings-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-baidu-unlimited-ocr-learnings-core-invariants",
@@ -224657,9 +224667,9 @@
       "title": "Research & Knowledge Intelligence: hf-baidu-unlimited-ocr-learnings Core Invariants",
       "repository": "hf-baidu-unlimited-ocr-learnings",
       "source_version": "HEAD",
-      "content_hash": "024386d11a0dcc755474a15c0febd311577c19665725b90de132b44ed553ecad",
+      "content_hash": "33abf3706752a2c8dbfeb7a75bd755caa4c10e541b344f4800be6fee8e74ff47",
       "domain_letter": "D",
-      "persisted_at": "2026-11-14T05:32:15.370Z"
+      "persisted_at": "2026-11-18T23:02:51.525Z"
     },
     "learn-huggingface-aleph-alpha-kolibri-1": {
       "learning_id": "learn-huggingface-aleph-alpha-kolibri-1",
@@ -252791,8 +252801,8 @@
       "slug": "crossplane-crossplane",
       "platform": "github",
       "source_url": "https://github.com/crossplane/crossplane",
-      "source_version": "ba22c621",
-      "content_hash": "c22bad2d629ea5d51ecb7c1dfc32c5bd158e27ccbe8ab741ff32f9071e7a61ab",
+      "source_version": "45007a31",
+      "content_hash": "2f5582e9618e4f763e4e26ef4263eff20b6669075ddea8da5b248a6e3a975ec9",
       "dossier_path": "07_PROJECT_LEARNING/crossplane-crossplane-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/crossplane-crossplane-learnings.md",
       "promoted_rules": [
@@ -252805,6 +252815,11 @@
           "number": 9154,
           "title": "link converted MRDs to the CRDs their package installed",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9292,
+          "title": "Empirical Invariant Guard in renovate-base.json5",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -252812,7 +252827,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T07:30:50.020Z",
+      "verified_at": "2026-11-18T22:57:56.726Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -270644,9 +270659,9 @@
       "title": "Technical Construction Intelligence: zama-ai-tfhe-rs-learnings Core Invariants",
       "repository": "zama-ai-tfhe-rs-learnings",
       "source_version": "HEAD",
-      "content_hash": "3e8df1ba4ead0aa48ebd146c43c86e3177a6f5e157aa2074be66b0bedd0676e8",
+      "content_hash": "c8389ca233eff8e8040f7ca46675d9f027bcc6ca64b7e231b86d27e28c0ed617",
       "domain_letter": "H",
-      "persisted_at": "2026-11-18T17:02:01.162Z"
+      "persisted_at": "2026-11-18T23:02:52.626Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zama-ai-tfhe-rs-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zama-ai-tfhe-rs-learnings",
@@ -270656,9 +270671,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zama-ai-tfhe-rs-learnings",
       "repository": "zama-ai-tfhe-rs-learnings",
       "source_version": "HEAD",
-      "content_hash": "0702ee064faf75647728dbaa99ed42a0f7f1fd2acac229093f54e8191efb8fc1",
+      "content_hash": "693f54c1a92f8770745476980b8db94d8497412f33107fc32322c419addc67fa",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T17:02:01.381Z"
+      "persisted_at": "2026-11-18T23:02:52.740Z"
     },
     "learn-huggingface-meituan-longcat-longcat-video-avatar-1-6": {
       "learning_id": "learn-huggingface-meituan-longcat-longcat-video-avatar-1-6",
@@ -290236,6 +290251,84 @@
       "content_hash": "20a586670e0d96917fdbef2125e272d12c78ef3bff48f4640fe13f0e8de2eb99",
       "domain_letter": "D",
       "persisted_at": "2026-11-18T22:22:51.999Z"
+    },
+    "rule-9292": {
+      "learning_id": "rule-9292",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9292,
+      "title": "Empirical Invariant Guard in renovate-base.json5",
+      "source_url": "https://github.com/crossplane/crossplane",
+      "source_version": "45007a31",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-18T22:57:56.726Z"
+    },
+    "candidate_directive-empirical-invariant-guard-in-renovate-base-json5": {
+      "item_id": "candidate_directive-empirical-invariant-guard-in-renovate-base-json5",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-8LJO-empirical-invariant-guard-in-renovate-base-json5.md",
+      "title": "Empirical Invariant Guard in renovate-base.json5",
+      "repository": "crossplane-crossplane-learnings",
+      "source_version": "HEAD",
+      "content_hash": "2158d6be06242785d3015b47b5db9de4960ff5de3357cd75837f0beef0534bcc",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-18T23:02:51.924Z"
+    },
+    "rule-9293": {
+      "learning_id": "rule-9293",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9293,
+      "title": "python tooling is subpar, call the right pre-installed python",
+      "source_url": "https://github.com/zama-ai/tfhe-rs",
+      "source_version": "fbc8b20d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-18T22:57:59.111Z"
+    },
+    "candidate_directive-python-tooling-is-subpar-call-the-right-pre-installed-python": {
+      "item_id": "candidate_directive-python-tooling-is-subpar-call-the-right-pre-installed-python",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-8LZZ-python-tooling-is-subpar-call-the-right-pre-installed-python.md",
+      "title": "python tooling is subpar, call the right pre-installed python",
+      "repository": "zama-ai-tfhe-rs-learnings",
+      "source_version": "HEAD",
+      "content_hash": "ec338226d5494b4ae9a159ab39a456f1beaaffd3d0943ac71823803cd1885061",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-18T23:02:52.515Z"
+    },
+    "rule-9294": {
+      "learning_id": "rule-9294",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9294,
+      "title": "add --shard k/N to generate one slice of a seeded dataset",
+      "source_url": "https://github.com/dathere/qsv",
+      "source_version": "2a905004",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-18T22:58:04.461Z"
+    },
+    "candidate_directive-add-shard-k-n-to-generate-one-slice-of-a-seeded-dataset": {
+      "item_id": "candidate_directive-add-shard-k-n-to-generate-one-slice-of-a-seeded-dataset",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-2FZQ-add-shard-k-n-to-generate-one-slice-of-a-seeded-dataset.md",
+      "title": "add --shard k/N to generate one slice of a seeded dataset",
+      "repository": "dathere/qsv",
+      "source_version": "2a905004",
+      "content_hash": "98f64edc9a62db2ffecf5ef96cb43491cc35d718d5b4aa4f4fbdd0a3391cd9f4",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-18T22:58:04.795Z"
     }
   },
   "ai-builder-brain": {

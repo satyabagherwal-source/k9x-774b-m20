@@ -1005,8 +1005,8 @@
     "sourceUrl": "https://huggingface.co/baidu/Unlimited-OCR",
     "sourceVersion": "hf-baidu-unlimited-ocr",
     "license": "Open-Source",
-    "contentHash": "bd2dea14a5580c21a1fb68db5a22a7b91bf9fff719ec8f89e65e2f4aa7a60356",
-    "lastHarvestedAt": "2026-11-14T05:31:29.990Z",
+    "contentHash": "033a860aa6f7e15ad16e4f8cf91359eed1be8496a6bd9fe93b8360b15f917e55",
+    "lastHarvestedAt": "2026-11-18T23:02:48.456Z",
     "learningId": "learn-huggingface-baidu-unlimited-ocr"
   },
   "hf-aleph-alpha-kolibri-1": {
@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "03493b2a",
+    "sourceVersion": "2a905004",
     "license": "NOASSERTION",
-    "contentHash": "83cc3075368c36191bdc69d6f3a50d0921122d6c2675e18808a299bd6429657c",
-    "lastHarvestedAt": "2026-11-18T17:28:15.860Z",
+    "contentHash": "88afe4781ecee10a0e02efe36511d45385c684ca64bcfee93e842f5dff9084cd",
+    "lastHarvestedAt": "2026-11-18T22:58:04.629Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {
@@ -3283,10 +3283,10 @@
     "repository": "zama-ai/tfhe-rs",
     "platform": "github",
     "sourceUrl": "https://github.com/zama-ai/tfhe-rs",
-    "sourceVersion": "ab04f563",
+    "sourceVersion": "fbc8b20d",
     "license": "NOASSERTION",
-    "contentHash": "1f812a45f823227f9c1a0a729b4c1c91dcabdfc5d50f548aa478f86fe54851c6",
-    "lastHarvestedAt": "2026-11-18T17:01:55.700Z",
+    "contentHash": "7f4067d99a9e8519dbc7aa5360388f34638de25be84a3c7beffb7dab993ae0e5",
+    "lastHarvestedAt": "2026-11-18T22:57:59.256Z",
     "learningId": "learn-github-zama-ai-tfhe-rs"
   },
   "doobidoo-mcp-memory-service": {
@@ -4963,10 +4963,10 @@
     "repository": "crossplane/crossplane",
     "platform": "github",
     "sourceUrl": "https://github.com/crossplane/crossplane",
-    "sourceVersion": "ba22c621",
+    "sourceVersion": "45007a31",
     "license": "Apache-2.0",
-    "contentHash": "c22bad2d629ea5d51ecb7c1dfc32c5bd158e27ccbe8ab741ff32f9071e7a61ab",
-    "lastHarvestedAt": "2026-11-18T07:30:50.183Z",
+    "contentHash": "2f5582e9618e4f763e4e26ef4263eff20b6669075ddea8da5b248a6e3a975ec9",
+    "lastHarvestedAt": "2026-11-18T22:57:56.877Z",
     "learningId": "learn-github-crossplane-crossplane"
   },
   "apple-foundationdb": {

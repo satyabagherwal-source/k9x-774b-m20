@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T22:30:41.976Z",
+  "last_updated": "2026-11-18T23:02:52.515Z",
   "directives": [
     {
       "id": "CD-001",
@@ -31141,6 +31141,57 @@
       "source_repo": "zoontek-react-native-bootsplash",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-11980C-splash-screen-staying-visible-after-warm.md",
+      "staged_date": "2026-11-18"
+    },
+    {
+      "id": "CD-8LJO",
+      "directive_title": "Empirical Invariant Guard in renovate-base.json5",
+      "source_repo": "crossplane-crossplane-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-8LJO-empirical-invariant-guard-in-renovate-base-json5.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-18",
+      "domain_letter": "D"
+    },
+    {
+      "id": "CD-8LZZ",
+      "directive_title": "python tooling is subpar, call the right pre-installed python",
+      "source_repo": "zama-ai-tfhe-rs-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-8LZZ-python-tooling-is-subpar-call-the-right-pre-installed-python.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-18",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-2FZQ",
+      "directive_title": "add --shard k/N to generate one slice of a seeded dataset",
+      "source_repo": "dathere/qsv",
+      "source_commit": "2a905004",
+      "staged_file": "11_INBOX/candidate-directives/CD-2FZQ-add-shard-k-n-to-generate-one-slice-of-a-seeded-dataset.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-18",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-0701BB",
+      "directive_title": "Empirical Invariant Guard in renovate-base.json5",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "crossplane-crossplane",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-0701BB-empirical-invariant-guard-in-renovate-ba.md",
+      "staged_date": "2026-11-18"
+    },
+    {
+      "id": "CD-REV-1721B9",
+      "directive_title": "python tooling is subpar, call the right pre-installed python",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zama-ai-tfhe-rs",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-1721B9-python-tooling-is-subpar-call-the-right-.md",
       "staged_date": "2026-11-18"
     }
   ]

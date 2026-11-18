@@ -4,22 +4,22 @@
 {
   "source_repository": "dathere/qsv",
   "source_url": "https://github.com/dathere/qsv",
-  "source_version": "03493b2a",
+  "source_version": "2a905004",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-18T17:28:16.049Z",
+  "timestamp": "2026-11-18T22:58:04.795Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-dathere-qsv",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [dathere/qsv](https://github.com/dathere/qsv) (Revision: `03493b2a`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-18T17:28:16.049Z`  
+> **Provenance**: Harvested from [dathere/qsv](https://github.com/dathere/qsv) (Revision: `2a905004`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-18T22:58:04.795Z`  
 > **Learning ID**: `learn-github-dathere-qsv`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `dathere/qsv` (Commit: `03493b2a`)
+- **Target Repository**: `dathere/qsv` (Commit: `2a905004`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T17:28:14.889Z  
+> **Harvest Timestamp**: 2026-11-18T22:58:03.812Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -2212,408 +2212,410 @@ mod tests;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `03493b2a` (2026-11-18)
-**Commit Message**: feat(synthesize): generate rows in parallel, seed-stable across --jobs (#5069)
+### Incident Patch 1: `2a905004` (2026-11-18)
+**Commit Message**: feat(synthesize): add --shard k/N to generate one slice of a seeded dataset (#5073)
 
-* feat(synthesize): generate rows in parallel, seed-stable across --jobs
+* feat(synthesize): add --shard k/N to generate one slice of a seeded dataset
 
-Rows are generated in fixed 8,192-row chunks, each with its own RNG keyed
-on (base seed, chunk index) with fixed little-endian bytes, never on the
-fit-time RNG state. A window of 2 x jobs chunks is generated with rayon;
-each worker encodes its chunk with the output Config's CSV settings
-(new Config::writer_builder, which from_writer now uses), and the main
-thread appends the bytes in chunk order. A seeded run is byte-identical
-at any --jobs; --jobs now also sets generation threads.
-
-1M rows from a 10k-row source on 16 cores (release-dev): 475 ms -> 148 ms;
---jobs 1 is unchanged (466 ms). 65,536-row chunks were slower (187 ms)
-and used 3x the memory.
-
-Behavior change: a given --seed produces different rows than 29.0.0.
+Shard k of N generates a contiguous run of the 8192-row chunks, so
+slices 1..N joined in order with `qsv cat rows` are byte-identical to an
+unsharded run. Requires --seed. --report counts only the slice and
+records the shard.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-* docs(skills): note synthesize seed stability across --jobs [skip ci]
+* docs(changelog): cite #5073 [skip ci]
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-* docs(changelog): cite #5069 [skip ci]
+* fix(synthesize): surface stats/frequency warnings; harden --shard
+
+- Pass on the stderr of the internal stats and frequency runs, which was
+  discarded, so a fallback to approximate estimators is visible.
+- Refuse --shard with --infer-content-type (each slice would make its
+  own LLM call and could type columns differently).
+- Saturate the shard row-offset math so the last shard of a huge --rows
+  reports its real row count instead of overflowing.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-* fix(synthesize): cap in-flight chunk bytes; te
+* fix(synthesize): little-endian-only warning test; clarify --shard help
+
+- Gate synthesize_passes_on_stats_warnings to little-endian targets:
+  stats reject
 
 **File**: `.claude/skills/CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ ## [Unreleased]
+ 
+ ### Added
++- **`qsv-synthesize --shard <k/N>`**: generate slice k of N of a seeded dataset (needs `--seed`; refuses `--infer-content-type` without a shared `--dictionary`); slices joined in order with `qsv-cat rows` equal one unsharded run, unless `stats` or `frequency` on some slice warns that it switched to approximate estimators for lack of memory. Skill regenerated from the USAGE text. ([#5073](https://github.com/dathere/qsv/pull/5073))
+ - **`qsv-synthesize --report <file>`**: JSON report with the exact-match rate of synthetic rows against the source and what `--min-count` suppressed. Skill regenerated from the USAGE text. ([#5068](https://github.com/dathere/qsv/pull/5068))
+ - **`qsv-synthesize --min-count` trims numeric/date ranges**: range ends become the k-th smallest / largest values, so a lone outlier can't reappear. Skill regenerated from the USAGE text. ([#5067](https://github.com/dathere/qsv/pull/5067))
  - **`qsv-synthesize --min-count`**: privacy threshold (default 5). Values and `joint` tuples seen fewer than k times in the source are dropped from the real values it samples. Skill regenerated from the USAGE text. ([#5066](https://github.com/dathere/qsv/pull/5066))
- 
- ### Changed
-+- **`qsv-synthesize --seed` is the same at any `--jobs`**: rows are now generated in parallel, in fixed 8,192-row blocks, so a seed gives the same rows whatever `--jobs` is (unless `stats` uses approximate estimators, whether requested via `--stats-options` or switched on automatically when the input won't fit in memory), though different rows than qsv 29.0.0. Skill regenerated from the USAGE text. ([#5069](https://github.com/dathere/qsv/pull/5069))
- - **`qsv-synthesize` warns that its output is not anonymized** ([#5064](https://github.com/dathere/qsv/pull/5064)): synthetic output can contain real source values. The skill description was regenerated from the README command table.
- 
- ## [29.0.0] - 2026-11-15
 ```
 
-**File**: `.claude/skills/qsv/qsv-synthesize.json` (modified, +1/-1)
+**File**: `.claude/skills/qsv/qsv-synthesize.json` (modified, +17/-0)
 ```diff
-@@ -88,7 +88,7 @@
-       {
-         "flag": "--seed",
+@@ -90,6 +90,11 @@
          "type": "number",
--        "description": "RNG seed for fully reproducible output."
-+        "description": "RNG seed for fully reproducible output. The same seed gives the same rows at any --jobs, unless stats uses approximate estimators: either asked for via --stats-options (e.g. `--quantile-method approx`), or switched on by stats itself (with a warning) when the input won't fit in memory."
+         "description": "RNG seed for fully reproducible output. The same seed gives the same rows at any --jobs, unless stats uses approximate estimators: either asked for via --stats-options (e.g. `--quantile-method approx`), or switched on by stats itself (with a warning) when the input won't fit in memory."
        },
++      {
++        "flag": "--shard",
++        "type": "string",
++        "description": "Generate only slice k of N (k from 1 to N) of the rows --rows asks for. Requires --seed. Each slice is a run of whole 8192-row blocks, and slices 1 to N joined in order (with `qsv cat rows`) are the same as one unsharded run. Every slice must use the same <input>, options, qsv version and dictionary file, if any (--infer-content-type without --dictionary is refused). Each slice still profiles all of <input> itself, so if stats or frequency warns on one machine that it switched to approximate estimators for lack of memory, that slice comes from a different fit and the joined rows won't match one run. Each slice gets a header row even when it has no rows (when N exceeds the number of blocks). With --report, the counts are for this slice only."
++      },
        {
          "flag": "--stats-options",
+         "type": "string",
+@@ -126,6 +131,18 @@
+     {
+       "description": "Preserve inter-column relationships declared in the dictionary (e.g. city/state/zip, created_date <= closed_date)",
+       "command": "qsv synthesize data.csv --dictionary dict.json -n 1000 > synthetic.csv"
++    },
++    {
++      "description": "Generate 1B rows as 4 slices, e.g. one per machine, then join them into the same file a single run would write",
++      "command": "qsv synthesize data.csv -n 1000000000 --seed 42 --shard 1/4 -o part1.csv"
++    },
++    {
++      "description": "Generate 1B rows as 4 slices, e.g. one per machine, then join them into the same file a single run would write",
++      "command": "qsv synthesize data.csv -n 1000000000 --seed 42 --shard 2/4 -o part2.csv"
++    },
++    {
++      "description": "Generate 1B rows as 4 slices, e.g. one per machine, then join them into the same file a single run would write",
++      "command": "qsv cat rows part1.csv part2.csv part3.csv part4.csv -o synthetic.csv"
+     }
+   ]
+ }
 ```
 
 **File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
- - `synthesize`: a column with any null was never treated as fully enumerated, because frequency's `(NULL)` row parses to rank 0, the same as an "Other" bucket. Such columns fell back to fakers, filler or the min/max range instead of sampling their real values by frequency, which also let them bypass `--min-count`. Nulls are still reproduced through the null ratio. **Behavior change:** columns with blank cells now emit their real values (those seen at least `--min-count` times), like every other enumerated column. With a Data Dictionary but without `--consistent-fakes`, a name, email or address column that has blanks goes from generated fakes to real values; pass `--consistent-fakes` to keep fakes. ([#5066](https://github.com/dathere/qsv/pull/5066))
+@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ ## [Unreleased]
  
- ### Changed
-+- `synthesize`: rows are now generated in parallel, in fixed blocks of 8,192 rows. Each block draws from its own random stream, worked out from `--seed` and the block's position, so a seeded run gives the same output at any `--jobs` setting. `--jobs` now also sets the threads used to generate rows, not only those of the internal `stats` and `frequency` runs. On a 16-core machine, 1M rows from a 10k-row source took 142 ms instead of 475 ms, and `--jobs 1` is as fast as before. Blocks are written in order, and the output held in memory at once is capped at about 256 MiB, so memory does not grow with `-n` or with core count (1M rows of a 100-column file peaked at 302 MiB on 16 cores, against 104 MiB before). Seeded output is the same at any `--jobs` while `stats` computes exact statistics; approximate ones can differ, whether requested through `--stats-options` (e.g. `--quantile-method approx`) or switched on by `stats` itself, with a warning, when the input won't fit in memory. **Behavior change:** a given `--seed` now produces different rows than in 29.0.0. The values follow the same distributions, but they come out in a different sequence, so seeded outputs saved from 29.0.0 or earlier will not be reproduced. ([#5069](https://github.com/dathere/qsv/pull/5069))
- - `synthesize`: the help now warns that synthetic output is not anonymized. It can copy real values and value combinations from the source: fully enumerated columns, enumerated structured-faker columns without `--consistent-fakes`, `joint` relationship tuples, and outliers at the edge of numeric/date ranges. ([#5064](https://github.com/dathere/qsv/pull/5064))
- - `sqlp`: the `--try-parsedates` help now warns that Polars reads slash, dash and dot dates as day-first, so `01/05/2024` becomes `2024-05-01`, and that `CAST(col AS DATE)` does the same. For month-first (US) dates, leave `--try-parsedates` off and use `STRPTIME(col, '%m/%d/%Y')` ([#5062](https://github.com/dathere/qsv/pull/5062)).
- 
+ ### Added
++- `synthesize`: new `--shard <k/N>` generates only slice k of N of the rows `--rows` asks for, so several machines can each produce part of one dataset. It requires `--seed`. Each slice is a run of whole 8,192-row blocks, and slices 1 to N joined in order with `qsv cat rows` are byte-identical to one unsharded run. Every slice still profiles the whole source, so they must all use the same input, options, qsv version and dictionary file (`--infer-content-type` without `--dictionary` is refused, since each slice would make its own LLM call), and none may hit the automatic switch of `stats` or `frequency` to approximate estimators for lack of memory. `synthesize` now passes on the warnings of its internal `stats` and `frequency` runs, which it used to discard, so that switch is visible. With `--report`, row counts and matches are for the slice, and the report records the `shard`. ([#5073](https://github.com/dathere/qsv/pull/5073))
+ - `synthesize`: new `--report <file>` writes a JSON report of how much of the source a run reproduced: source and synthetic row counts, the `--min-count` used, how many synthetic rows exactly match a source row (and the rate), and the values and `joint` tuples `--min-count` dropped per column or group. Numbers and dates are compared by value, so `2020-01-05` matches a source `01/05/2020`; other columns are compared as text. A row with a float, free-text or faker column rarely matches exactly, so a low rate alone does not show the output is private. Takes one extra pass over the input and holds one hash per distinct source row; output is unchanged with or without it. ([#5068](https://github.com/dathere/qsv/pull/5068))
+ - `synthesize`: `--min-count` now also trims numeric and date/datetime ranges, and the gaps learned for `ordered` relationships. Each range end becomes the k-th smallest / k-th largest value, so at least k source rows lie at or beyond it and a lone outlier (a top salary, an earliest date, a decades-long tenure) no longer sets the range or reappears at its real value. The ends are still real values, and integers and dates can land on them. Quartiles are clamped into the trimmed range. A numeric or date column with fewer than 2k−1 non-null values (9 at the default) has no such range and is left empty, with a warning, unless its real values are sampled. `ordered` followers are clamped into their own trimmed range, and an `ordered` pair with fewer than 2k−1 rows that have both values is dropped to independent generation (or aborts under `--strict-relationships`). Costs one extra streaming pass over the input, skipped when there are no numeric/date columns or with `--min-count 1`, which keeps the real min/max. **Behavior change:** numeric/date output no longer reaches the source's extreme values by default. ([#5067](https://github.com/dathere/qsv/pull/5067))
+ - `synthesize`: new `--min-count <k>` privacy threshold (default 5). Real values of enumerated columns, and real `joint` relationship tuples, seen fewer than k times in the source are dropped from the values it samples; their share is redistributed over the kept values. A column whose values are all below k falls back to its faker or type-based generator (numeric and date columns to their numeric/date range), and a joint group to independent columns, or aborts under `--strict-relationships`. A warning is printed when a column or joint group is fully suppressed. **Behavior change:** existing runs no longer sample values or tuples seen 1–4 times, and small or highly varied sources can see whole categorical columns replaced by filler; pass `--min-count 1` for the previous output. ([#5066](https://github.com/dathere/qsv/pull/5066))
 ```
 
-**File**: `docs/help/synthesize.md` (modified, +4/-3)
+**File**: `docs/help/synthesize.md` (modified, +19/-1)
 ```diff
-@@ -96,7 +96,8 @@ can reappear at or near its real value.
- 
+@@ -97,7 +97,8 @@ can reappear at or near its real value.
  Review the output before sharing it, or training on it, as de-identified data.
  
--With --seed, output is fully reproducible.
-+With --seed, output is fully reproducible, whatever the --jobs setting.
-+Rows are generated in parallel, in fixed blocks of 8192 rows.
+ With --seed, output is fully reproducible, whatever the --jobs setting.
+-Rows are generated in parallel, in fixed blocks of 8192 rows.
++Rows are generated in parallel, in fixed blocks of 8192 rows. With --seed
++and --shard, several machines can each generate one slice of a dataset.
  
  
  <a name="examples"></a>
-@@ -156,7 +157,7 @@ qsv synthesize --help
- | &nbsp;`‑‑dictionary`&nbsp; | string | Data Dictionary JSON file produced by `describegpt --dictionary --infer-content-type --format JSON`. Layers semantic Content Types onto generation. If omitted, generation is purely type/frequency-based. |  |
+@@ -135,6 +136,22 @@ qsv synthesize data.csv --infer-content-type -n 1000 > synthetic.csv
+ qsv synthesize data.csv --dictionary dict.json -n 1000 > synthetic.csv
+ ```
+ 
++> Generate 1B rows as 4 slices, e.g. one per machine, then join them
++> into the same file a single run would write
++
++```console
++qsv synthesize data.csv -n 1000000000 --seed 42 --shard 1/4 -o part1.csv
++```
++
++```console
++qsv synthesize data.csv -n 1000000000 --seed 42 --shard 2/4 -o part2.csv
++```
++
++...
++```console
++qsv cat rows part1.csv part2.csv part3.csv part4.csv -o synthetic.csv
++```
++
+ For more examples, see [tests](https://github.com/dathere/qsv/blob/master/tests/test_synthesize.rs).
+ 
+ See also <https://github.com/dathere/qsv/wiki/AI-and-Documentation#synthesize>
+@@ -158,6 +175,7 @@ qsv synthesize --help
  | &nbsp;`‑‑infer‑content‑type`&nbsp; | flag | Generate the Data Dictionary on the fly by invoking `describegpt --dictionary --infer-content-type` on <input>. Requires an LLM API key (QSV_LLM_APIKEY). Ignored if --dictionary is given. |  |
  | &nbsp;`‑n,`<br>`‑‑rows`&nbsp; | integer | Number of synthetic rows to generate. | `100` |
--| &nbsp;`‑‑seed`&nbsp; | integer | RNG seed for fully reproducible output. |  |
-+| &nbsp;`‑‑seed`&nbsp; | integer | RNG seed for fully reproducible output. The same seed gives the same rows at any --jobs, unless stats uses approximate estimators: either asked for via --stats-options (e.g. `--quantile-method approx`), or switched on by stats itself (with a warning) when the input won't fit in memory. |  |
+ | &nbsp;`‑‑seed`&nbsp; | integer | RNG seed for fully reproducible output. The same seed gives the same rows at any --jobs, unless stats uses approximate estimators: either asked for via --stats-options (e.g. `--quantile-method approx`), or switched on by stats itself (with a warning) when the input won't fit in memory. |  |
++| &nbsp;`‑‑shard`&nbsp; | string | Generate only slice k of N (k from 1 to N) of the rows --rows asks for. Requires --seed. Each slice is a run of whole 8192-row blocks, and slices 1 to N joined in order (with `qsv cat rows`) are the same as one unsharded run. Every slice must use the same <input>, options, qsv version and dictionary file, if any (--infer-content-type without --dictionary is refused). Each slice still profiles all of <input> itself, so if stats or frequency warns on one machine that it switched to approximate estimators for lack of memory, that slice comes from a different fit and the joined rows won't match one run. Each slice gets a header row even when it has no rows (when N exceeds the number of blocks). With --report, the counts are for this slice only. |  |
  | &nbsp;`‑‑locale`&nbsp; | string | Locale for faker-backed columns. Case-insensitive. Supported: en, fr_fr, de_de, it_it, pt_br, pt_pt, ja_jp, zh_cn, zh_tw, ar_sa, cy_gb, fa_ir, nl_nl, tr_tr. Sparse locales (those without per-category data in fake-rs) silently fall back to en data for the missing categories — e.g. lorem text under a non-en locale is still English, since only zh_cn has localized lorem data. | `en` |
  | &nbsp;`‑‑freq‑limit`&nbsp; | integer | Frequency pool depth passed to the internal `frequency` run as --limit. A column is reproduced via exact frequency-weighted sampling only when its cardinality is fully captured within this limit; higher values reproduce more columns verbatim. 0 means unlimited. | `100` |
  | &nbsp;`‑‑min‑count`&nbsp; | integer | Privacy threshold. A real value of an enumerated column, or a real `joint` value-tuple, that occurs fewer than <k> times in <input> is dropped from the values it samples; its share is redistributed over the kept values. An enumerated column whose values are all below <k> falls back to its faker or type-based generator (numeric and date columns to their trimmed range), and a joint group to independent columns, or aborts under the --strict-relationships option. A warning is printed when either happens. 1 disables suppression. Counts are of rows, not people: where one person has many rows (transactions, visits, logs), one person's value can pass <k> alone. Raise <k>, or dedupe to one row per person first. Numeric and date ranges, and the gaps of `ordered` relationships, are also trimmed to their k-th smallest and k-th largest values (one extra pass over <input>). A numeric or date column with fewer than 2k-1 non-null values is left empty unless its real values are sampled. | `5` |
-@@ -167,7 +168,7 @@ qsv synthesize --help
- | &nbsp;`‑‑joint‑cardinality‑cap`&nbsp; | integer | Maximum number of distinct value-tuples a `joint` relationship may have. A joint group above this cap falls back to independent generation (or aborts under --strict-relationships). 0 means unlimited. | `100000` |
- | &nbsp;`‑‑correlation‑threshold`&nbsp; | float | Minimum absolute Spearman correlation for a pair of columns to stay in a `correlated` relationship. Weakly-correlated members are dropped. | `0.3` |
- | &nbsp;`‑‑strict‑relationships`&nbsp; | flag | Abort instead of warning-and-degrading when a declared relationship fails validation. |  |
--| &nbsp;`‑j,`<br>`‑‑jobs`&nbsp; | integer | Number of jobs to use for the internal `stats` and `frequency` runs. |  |
-+| &nbsp;`‑j,`<br>`‑‑jobs`&nbsp; | integer | Number of jobs to use for the internal `stats` and `frequency` runs and for generating rows. |  |
- 
- <a name="common-options"></a>
- 
 ```
 
-**File**: `src/cmd/synthesize/mod.rs` (modified, +131/-39)
+**File**: `src/cmd/synthesize/mod.rs` (modified, +110/-9)
 ```diff
-@@ -84,7 +84,8 @@ not stop it:
- 
+@@ -85,7 +85,8 @@ not stop it:
  Review the output before sharing it, or training on it, as de-identified data.
  
--With --seed, output is fully reproducible.
-+With --seed, output is fully reproducible, whatever the --jobs setting.
-+Rows are generated in parallel, in fixed blocks of 8192 rows.
+ With --seed, output is fully reproducible, whatever the --jobs setting.
+-Rows are generated in parallel, in fixed blocks of 8192 rows.
++Rows are generated in parallel, in fixed blocks of 8192 rows. With --seed
++and --shard, several machines can each generate one slice of a dataset.
  
  Examples:
  
-@@ -120,7 +121,12 @@ synthesize options:
-                            <input>. Requires an LLM API key (QSV_LLM_APIKEY).
-                            Ignored if --dictionary is given.
-     -n, --rows <n>         Number of synthetic rows to generate. [default: 100]
--    --seed <n>             RNG seed for fully reproducible output.
-+    --seed <n>             RNG seed for fully reproducible output. The same
-+                           seed gives the same rows at any --jobs, unless
-+                           stats uses approximate estimators: either asked
-+                           for via --stats-options (e.g. `--quantile-method
-+                           approx`), or switched on by stats itself (with a warning)
-+                           when the input won't fit in memory.
+@@ -104,6 +105,13 @@ Examples:
+   # (e.g. city/state/zip, created_date <= closed_date)
+   $ qsv synthesize data.csv --dictionary dict.json -n 1000 > synthetic.csv
+ 
++  # Generate 1B rows as 4 slices, e.g. one per machine, then join them
++  # into the same file a single run would write
++  $ qsv synthesize data.csv -n 1000000000 --seed 42 --shard 1/4 -o part1.csv
++  $ qsv synthesize data.csv -n 1000000000 --seed 42 --shard 2/4 -o part2.csv
++  ...
++  $ qsv cat rows part1.csv part2.csv part3.csv part4.csv -o synthetic.csv
++
+ For more examples, see https://github.com/dathere/qsv/blob/master/tests/test_synthesize.rs.
+ See also https://github.com/dathere/qsv/wiki/AI-and-Documentation#synthesize
+ 
+@@ -127,6 +135,22 @@ synthesize options:
+                            for via --stats-options (e.g. `--quantile-method
+                            approx`), or switched on by stats itself (with a warning)
+                            when the input won't fit in memory.
++    --shard <k/N>          Generate only slice k of N (k from 1 to N) of the
++                           rows --rows asks for. Requires --seed. Each slice
++                           is a run of whole 8192-row blocks, and slices 1 to
++                           N joined in order (with `qsv cat rows`) are the
++                           same as one unsharded run. Every slice must use the
++                           same <input>, options, qsv version and
++                           dictionary file, if any (--infer-content-type
++                           without --dictionary is refused). Each slice still
++                           profiles all of <input> itself, so if stats or
++                           frequency warns on one machine that it switched to
++                           approximate estimators for lack of memory, that
++                           slice comes from a different fit and the joined
++                           rows won't match one run. Each slice gets a header
++                           row even when it has no rows (when N exceeds the
++                           number of blocks). With --report, the counts are
++                           for this slice only.
      --locale <loc>         Locale for faker-backed columns. Case-insensitive.
                             Supported: en, fr_fr, de_de, it_it, pt_br, pt_pt,
                             ja_jp, zh_cn, zh_tw, ar_sa, cy_gb, fa_ir, nl_nl,
-@@ -205,7 +211,7 @@ synthesize options:
-     --strict-relationships  Abort instead of warning-and-degrading when a
-                            declared relationship fails validation.
-     -j, --jobs <arg>       Number of jobs to use for the internal `stats` and
--                           `frequency` runs.
-+                           `frequency` runs and for generating rows.
- 
- Common options:
-     -h, --help             Display this message
-@@ -214,9 +220,15 @@ Common options:
-                            Must be a single character. (default: ,)
- "#;
- 
--use std::{cell::RefCell, collections::HashMap, path::Path};
-+use std::{
-+    cell::RefCell,
-+    collections::{HashMap, HashSet},
-+    io::Write,
-+    path::Path,
-+};
- 
- use rand::{SeedableRng, rngs::StdRng};
-+use rayon::iter::{IntoParallelIterator, ParallelIterator};
- use serde::Deserialize;
- 
- use crate::{
-@@ -321,12 +333,12 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
-         }
+@@ -256,6 +280,7 @@ struct Args {
+     flag_infer_content_type:    bool,
+     flag_rows:                  u64,
+     flag_seed:                  Option<u64>,
++    flag_shard:                 Option<String>,
+     flag_locale:                String,
+     flag_freq_limit:            usize,
+     flag_stats_options:         Option<String>,
+@@ -286,6 +311,23 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
+     if args.flag_rows == 0 {
+         return fail_incorrectusage_clierror!("--rows must be greater than 0.");
      }
++    let shard = match args.flag_shard.as_deref() {
++        Some(_) if args.flag_seed.is_none() => {
++            return fail_incorrectusage_clierror!(
++                "--shard requires --seed, so every slice comes from the same dataset."
++            );
++        },
++        // Each slice would make its own, unseeded LLM call, which can type a
++        // column differently on each machine.
++        Some(_) if args.flag_infer_content_type && args.flag_dictionary.is_none() => {
++            return fail_incorrectusage_clierror!(
++                "--shard needs a shared --dictionary instead of --infer-content-type, so every \
++                 slice uses the same column types."
++            );
++        },
++        Some(spec) => Some(parse_shard(spec)?),
++        None => None,
++    };
+     // Column selection and --weight change which columns stats reports and in
+     // what order, which synthesize can't see; every pass that reads source
+     // cells relies on stats covering every column in order. Select first.
+@@ -383,23 +425,27 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
+         stats_args.extend(opts.split_whitespace().map(ToString::to_string));
+     }
+     let stats_args_ref: Vec<&str> = stats_args.iter().map(String::as_str).collect();
+-    let (stats_csv, _) = util::run_qsv_cmd(
++    // stats and frequency are silent unless they warn (e.g. that they switched
++    // to approximate estimators for lack of memory), so pass that on.
++    let (stats_csv, stats_err) = util::run_qsv_cmd(
+         "stats",
+         &stats_args_ref,
+         input_path,
+         "  Computed summary statistics",
+     )?;
++    eprint!("{stats_err}");
  
--    // Single master RNG, threaded through both the sampling/selection logic and
--    // every faker call, so a given --seed produces fully reproducible output.
--    let mut rng = match args.flag_seed {
--        Some(seed) => StdRng::seed_from_u64(seed), // DevSkim: ignore DS148264
--        _ => rand::make_rng::<StdRng>(),
--    };
-+    // The fit (pools, fake values, relationship validation) draws from an RNG
-+    // seeded with the base seed; each output chunk gets its own RNG keyed on
-+    // (base seed, chunk index), so a given --seed gives the same output at any
-+    // --jobs.
-+    let base_seed = args.flag_seed.unwrap_or_else(rand::random::<u64>);
-+    let mut rng = StdRng::seed_from_u64(base_seed); // DevSkim: ignore DS148264
- 
-     // --- 1. Analysis (stats + frequency + count) ---------------------------
-     // Index the input first (best-effort) to speed up stats/frequency.
-@@ -500,44 +512,58 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
-     let mut exact_matches = 0_u64;
- 
-     // --- 5. Emit -----------------------------------------------------------
--    let mut wtr = Config::new(args.flag_output.as_ref()).writer()?;
-+    let out_conf = Config::new(args.flag_output.as_ref());
-+    let mut wtr = out_conf.writer()?;
-+    let chunk_builder = out_conf.writer_builder();
- 
-     let header: csv::StringRecord = stats_records
-         .iter()
-         .map(|stats_record| stats_record.field.clone())
-         .collect();
-     wtr.write_record(&header)?;
--
--    // One reusable row buffer: each EmitUnit writes into its own column slot(s)
--    // by index, so the schedule can be walked in any fixed order per row.
-+    // Chunks arrive already encoded, so append them to the raw writer; taking
-+    // it out of the csv writer flushes the header first.
-+    let mut out = wtr.into_inner().map_err(|e| e.into_error())?;
-+
-+    // Chunks are generated in parallel, a window at a time, and written in
-+    // chunk order. The window starts at one chunk and is then sized from the
-+    // largest chunk seen so far, so the bytes held at once stay near
-+    // WINDOW_BYTES (but never below one chunk) however wide the rows are. The
-+    // window only affects memory and speed, never the output.
-     let ncols = stats_records.len();
--    let mut row: Vec<String> = vec![String::new(); ncols];
--    let mut record = csv::StringRecord::new();
--    for _ in 0..args.flag_rows {
--        for unit in &schedule {
--            match unit {
--                EmitUnit::Independent { col_idx, generator } => {
--                    row[*col_idx] = generator.next(&mut rng);
--                },
--                EmitUnit::Group(group) => {
--                    for (col_idx, value) in group.next(
+     
 ```
 
-**File**: `src/config.rs` (modified, +10/-3)
+**File**: `tests/test_synthesize.rs` (modified, +217/-0)
 ```diff
-@@ -1354,16 +1354,23 @@ impl Config {
-             warn!("failed to write UTF-8 BOM: {e}");
-         }
+@@ -3010,3 +3010,220 @@ fn synthesize_report_counts_matches_in_every_chunk() {
  
--        csv::WriterBuilder::new()
-+        self.writer_builder().from_writer(wtr)
-+    }
-+
-+    /// The CSV settings `from_writer` uses, without the BOM, for encoding output
-+    /// in pieces (e.g. per worker) that are then appended to one stream.
-+    pub fn writer_builder(&self) -> csv::WriterBuilder {
-+        let mut builder = csv::WriterBuilder::new();
-+        builder
-             .flexible(self.flexible)
-             .delimiter(self.write_delimiter)
-             .terminator(self.terminator)
-             .quote(self.quote)
-             .quote_style(self.quote_style)
-             .double_quote(self.double_quote)
-             .escape(self.escape.unwrap_or(b'\\'))
--            .buffer_capacity(self.write_buffer as usize)
--            .from_writer(wtr)
-+            .buffer_capacity(self.write_buffer as usize);
-+        builder
-     }
- }
- 
-```
-
-**File**: `tests/test_synthesize.rs` (modified, +167/-0)
-```diff
-@@ -2843,3 +2843,170 @@ fn synthesize_report_does_not_change_output() {
-     assert_eq!(without, with);
-     assert_eq!(read_report(&wrk)["synthetic_rows"], 200);
+     assert_eq!(read_report(&wrk)["privacy"]["exact_matches"], 20000);
  }
 +
-+/// city/state/zip in a `joint` group, a faker-backed email column and a numeric
-+/// column, so every generator kind draws from the per-chunk RNG.
-+fn chunked_fixture(wrk: &Workdir) {
-+    let mut rows = vec![svec!["city", "state", "zip", "email", "amount"]];
-+    let geo = [
-+        ("Springfield", "IL", "62701"),
-+        ("Chicago", "IL", "60601"),
-+        ("Boston", "MA", "02101"),
-+        ("Portland", "OR", "97201"),
-+    ];
-+    for i in 0..40 {
-+        let (city, state, zip) = geo[i % geo.len()];
-+        rows.push(vec![
-+            city.to_string(),
-+            state.to_string(),
-+            zip.to_string(),
-+            format!("user{i}@example.com"),
-+            format!("{}.{}", 100 + i * 37 % 900, i % 100),
-+        ]);
-+    }
-+    wrk.create("data.csv", rows);
-+    wrk.create_from_string(
-+        "dict.json",
-+        r#"{
-+    "fields": [
-+        {"name": "city", "type": "String"},
-+        {"name": "state", "type": "String"},
-+        {"name": "zip", "type": "String"},
-+        {"name": "email", "type": "String", "content_type": "email"},
-+        {"name": "amount", "type": "Float"}
-+    ],
-+    "relationships": [
-+        {"kind": "joint", "members": ["city", "state", "zip"]}
-+    ]
-+}"#,
++#[test]
++fn synthesize_shards_join_to_the_unsharded_output() {
++    let wrk = Workdir::new("synthesize_shard_join");
++    chunked_fixture(&wrk);
++
++    // 20000 rows = 3 chunks, so shard 1/2 gets chunk 0 and shard 2/2 chunks 1-2.
++    let run = |shard: Option<&str>| -> String {
++        let mut cmd = wrk.command("synthesize");
++        cmd.args(["-n", "20000", "--seed", "7", "--dictionary"])
++            .arg(wrk.path("dict.json"))
++            .arg("data.csv");
++        if let Some(shard) = shard {
++            cmd.args(["--shard", shard]);
++        }
++        wrk.stdout(&mut cmd)
++    };
++    let full = run(None);
++    let first = run(Some("1/2"));
++    let second = run(Some("2/2"));
++
++    assert_eq!(first.lines().count(), 8193);
++    // Each shard has its own header; drop the second's before joining.
++    let joined: Vec<&str> = first.lines().chain(second.lines().skip(1)).collect();
++    let full: Vec<&str> = full.lines().collect();
++    assert_eq!(full.len(), 20001);
++    assert!(
++        joined == full,
++        "shards 1..N joined in order must equal the unsharded output"
 +    );
 +}
 +
 +#[test]
-+fn synthesize_seeded_output_is_identical_at_any_jobs() {
-+    let wrk = Workdir::new("synthesize_chunked_jobs");
++fn synthesize_shard_past_the_last_chunk_is_header_only() {
++    let wrk = Workdir::new("synthesize_shard_empty");
 +    chunked_fixture(&wrk);
 +
-+    // 20000 rows = two full 8192-row chunks plus a partial third.
-+    let run = |jobs: &str, report: &str| -> String {
++    // 10 rows = 1 chunk, which goes to the last shard.
++    let run = |shard: &str| -> String {
 +        let mut cmd = wrk.command("synthesize");
-+        cmd.args(["-n", "20000", "--seed", "7", "--jobs", jobs, "--report"])
-+            .arg(wrk.path(report))
-+            .arg("--dictionary")
-+            .arg(wrk.path("dict.json"))
++        cmd.args(["-n", "10", "--seed", "7", "--shard", shard])
 +            .arg("data.csv");
 +        wrk.stdout(&mut cmd)
 +    };
-+    let serial = run("1", "r1.json");
-+    let parallel = run("2", "r2.json");
++    assert_eq!(run("1/2").lines().count(), 1);
++    assert_eq!(run("2/2").lines().count(), 11);
++}
 +
-+    assert_eq!(serial.lines().count(), 20001);
++#[test]
++fn synthesize_shard_requires_seed_and_a_valid_spec() {
++    let wrk = Workdir::new("synthesize_shard_usage");
++    chunked_fixture(&wrk);
++
++    let mut no_seed = wrk.command("synthesize");
++    no_seed.args(["--shard", "1/2", "data.csv"]);
 +    assert!(
-+        serial == parallel,
-+        "seeded output must not depend on --jobs"
++        wrk.output_stderr(&mut no_seed)
++            .contains("--shard requires --seed")
 +    );
-+    let read = |name: &str| -> serde_json::Value {
-+        serde_json::from_str(&std::fs::read_to_string(wrk.path(name)).unwrap()).unwrap()
-+    };
-+    assert_eq!(
-+        read("r1.json")["privacy"]["exact_matches"],
-+        read("r2.json")["privacy"]["exact_matches"]
-+    );
-+}
 +
-+#[test]
-+fn synthesize_chunks_draw_from_distinct_streams() {
-+    let wrk = Workdir::new("synthesize_chunked_streams");
-+    chunked_fixture(&wrk);
-+
-+    let mut cmd = wrk.command("synthesize");
-+    cmd.args(["-n", "16384", "--seed", "7", "--dictionary"])
-+        .arg(wrk.path("dict.json"))
-+        .arg("data.csv");
-+    let out: String = wrk.stdout(&mut cmd);
-+    let rows: Vec<&str> = out.lines().skip(1).collect();
-+
-+    assert_eq!(rows.len(), 16384);
-+    assert_ne!(
-+        rows[..8192],
-+        rows[8192..],
-+        "each chunk must have its own random stream"
-+    );
-+}
-+
-+#[test]
-+fn synthesize_row_count_spans_chunk_boundary() {
-+    let wrk = Workdir::new("synthesize_chunked_boundary");
-+    chunked_fixture(&wrk);
-+
-+    let mut cmd = wrk.command("synthesize");
-+    cmd.args(["-n", "8193", "--seed", "7"]).arg("data.csv");
-+    let out: String = wrk.stdout(&mut cmd);
-+
-+    assert_eq!(out.lines().count(), 8194);
-+}
-+
-+#[test]
-+fn synthesize_chunks_use_the_output_delimiter() {
-+    let wrk = Workdir::new("synthesize_chunked_tsv");
-+    chunked_fixture(&wrk);
-+
-+    let mut cmd = wrk.command("synthesize");
-+    cmd.args(["-n", "9000", "--seed", "7", "-o"])
-+        .arg(wrk.path("out.tsv"))
-+        .arg("data.csv");
-+    wrk.assert_success(&mut cmd);
-+
-+    let out = std::fs::read_to_string(wrk.path("out.tsv")).unwrap();
-+    let lines: Vec<&str> = out.lines().collect();
-+    assert_eq!(lines.len(), 9001);
-+    // the last line is in the second chunk
-+    for line in [lines[0], lines[1], lines[9000]] {
-+        assert_eq!(line.split('\t').count(), 5, "not tab-delimited: {line}");
++    for bad in ["0/2", "3/2", "2", "a/b", "1/0"] {
++        let mut cmd = wrk.command("synthesize");
++        cmd.args(["--seed", "1", "--shard", bad, "data.csv"]);
++        assert!(
++            wrk.output_stderr(&mut cmd).contains("--shard must be k/N"),
++            "--shard {bad} must be rejected"
++        );
 +    }
 +}
 +
 +#[test]
-+fn synthesize_chunks_write_one_bom() {
-+    let wrk = Workdir::new("synthesize_chunked_bom");
-+    chunked_fixture(&wrk);
++fn synthesize_report_counts_only_the_shard() {
++    let wrk = Workdir::new("synthesize_shard_report");
++    // Only real (city, state, zip) tuples can be emitted, so every row matches.
++    wrk.create("data.csv", geo_fixture());
++    wrk.create_from_string("dict.json", GEO_JOINT_DICT);
 +
 +    let mut cmd = wrk.command("synthesize");
-+    cmd.env("QSV_OUTPUT_BOM", "1")
-+        .args(["-n", "9000", "--seed", "7", "-o"])
-+        .arg(wrk.path("out.csv"))
-+        .arg("data.csv");
++    cmd.args([
++        "--min-count",
++        "1",
++        "-n",
++        "20000",
++        "--seed",
++        "7",
++        "--shard",
++        "2/2",
++        "--report",
++    ])
++    .arg(wrk.path("report.json"))
++    .arg("--dictionary")
++    .arg(wrk.path("dict.json"))
++    .arg("data.csv");
 +    wrk.assert_success(&mut cmd);
 +
-+    let out = std::fs::read_to_string(wrk.path("out.csv")).unwrap();
-+    assert!(out.starts_with('\u{FEFF}'));
-+    assert_eq!(out.matches('\u{FEFF}').count(), 1);
++    // Shard 2/2 is chunks 1-2: 20000 - 8192 rows.
++    let report = read_report(&wrk);
++    assert_eq!(report["synthetic_rows"], 11808);
++    assert_eq!(report["shard"], "2/2");
++    assert_eq!(report["privacy"]["exact_matches"], 11808);
++    assert_eq!(report["privacy"]["exact_match_rate"], 1.0);
 +}
 +
 +#[test]
-+fn synthesize_report_counts_matches_in_every_chunk() {
-+    let wrk = Workdir::new("synthesize_chunked_report_count");
-+    // Only real (city, state, zip) tuples can be emitted, so every row matches.
++fn synthesize_report_for_an_empty_shard_has_a_null_rate() {
++    let wrk = Workdir::new("synthesize_shard_empty_report");
 +    wrk.create("data.csv", geo_fixture());
-+    wrk.create_from_string("dict.json", GEO_JOINT_DICT
++    wrk.create_from_string("dict.json", GEO_JOINT_DICT);
++
++    // 10 rows = 1 chunk, which goes to shard 2/2, so 1/2 is header-only.
++    let mut cmd = wrk.command("synthesize");
++    cmd.args([
++        "--min-count",
++        "1",
++        "-n",
++        "10",
++        "--seed",
++        "7",
++        "--shard",
++        "1/2",
++        "--report",
++    ])
++    .arg(wrk.path("report.json"))
++    .arg("--dictionary")
++    .arg(wrk.path("dict.json"))
++    .arg("data.csv");
++    wrk.assert_success(&mut cmd);
++
++    let report = read_report(&wrk);
++    assert_eq!(report["synthetic_rows"], 0);
++    assert_eq!(report["privacy"]["exact_matches"], 0);
++    assert_eq!(
++        report.pointer("/privacy/exact_match_rate"),
++        Some(&serde_json::Value::Null)
++    );
++}
++
++// stats rejects --quantile-method approx on big-endian targets.
++#[cfg(target_endian = "little")]
++#[test]
++fn synthesize_passes_on_stats_warnings() {
++    let wrk = Workdir::new("synthesize_stats_warnings");
++    chunked_fixture(&wrk);
++
++    // Under approx quantiles stats warns that it drops MAD; synthesize must
++    // not swallow stats' warnings, or a memory fallback would go unseen.
++    let mut cmd = wrk.command("synthesize");
++    cmd.args([
++        "-n",
++        "5",
++        "--seed",
++        "1",
++        "--stats-options",
++       
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5073** (2026-11-18): feat(synthesize): add --shard k/N to generate one slice of a seeded dataset (@jqnatividad)
 - **PR #5069** (2026-11-18): feat(synthesize): generate rows in parallel, seed-stable across --jobs (@jqnatividad)
 - **PR #5068** (2026-11-18): feat(synthesize): add --report privacy summary (exact matches, suppression) (@jqnatividad)
 - **PR #5067** (2026-11-17): feat(synthesize): trim numeric/date ranges and ordered gaps by --min-count (@jqnatividad)
 - **PR #5066** (2026-11-17): feat(synthesize): add --min-count privacy threshold (default 5) (@jqnatividad)
 - **PR #5065** (2026-11-17): build(deps): bump anthropics/claude-code-action from 1.0.275 to 1.0.276 (@dependabot[bot])
-- **PR #5064** (2026-11-16): docs(synthesize): warn that synthetic output is not anonymized (@jqnatividad)
 
 ---
 
@@ -2633,13 +2635,13 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. synthesize): generate rows in parallel, seed-stable across --jobs
+## X. synthesize): add --shard k/N to generate one slice of a seeded dataset
 
 **RULE**:
 When implementing operations in `.claude/skills/CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `03493b2a`: synthesize): generate rows in parallel, seed-stable across --jobs. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2a905004`: synthesize): add --shard k/N to generate one slice of a seeded dataset. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/skills/CHANGELOG.md`.
@@ -2647,7 +2649,7 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-- **`qsv-synthesize --seed` is the same at any `--jobs`**: rows are now generated in parallel, in fixed 8,192-row blocks, so a seed gives the same rows whatever `--jobs` is (unless `stats` uses approximate estimators, whether requested via `--stats-options` or switched on automatically when the input won't fit in memory), though different rows than qsv 29.0.0. Skill regenerated from the USAGE text. ([#5069](https://github.com/dathere/qsv/pull/5069))
+- **`qsv-synthesize --shard <k/N>`**: generate slice k of N of a seeded dataset (needs `--seed`; refuses `--infer-content-type` without a shared `--dictionary`); slices joined in order with `qsv-cat rows` equal one unsharded run, unless `stats` or `frequency` on some slice warns that it switched to approximate estimators for lack of memory. Skill regenerated from the USAGE text. ([#5073](https://github.com/dathere/qsv/pull/5073))
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2657,7 +2659,7 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `03493b2a` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2a905004` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

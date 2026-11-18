@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-18T22:30:42.115Z",
+  "last_updated": "2026-11-18T23:02:52.626Z",
   "total_records": 1917,
   "domains": {
     "A": {
@@ -7900,8 +7900,8 @@
       "title": "Content & Information Intelligence: crossplane/crossplane Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-crossplane-crossplane-content-information-intelligence-crossplane-crossplane-cor.md",
       "repository": "crossplane/crossplane",
-      "content_hash": "e91d6ae9256e399c3439a53f47a4115939cec8cda177addbcd72f6c31b847df7",
-      "created_at": "2026-11-18T07:30:50.494Z"
+      "content_hash": "7b0443f80eb6cdbdd4eddcfddff631a84ab6c52c1695a930c90e6e9153be7142",
+      "created_at": "2026-11-18T22:57:57.157Z"
     },
     "domain_intelligence-architecture-intelligence-mitmproxy-mitmproxy-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-mitmproxy-mitmproxy-core-invariants",
@@ -7978,8 +7978,8 @@
       "title": "Content & Information Intelligence: crossplane-crossplane-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-crossplane-crossplane-learnings-content-information-intelligence-crossplane-cros.md",
       "repository": "crossplane-crossplane-learnings",
-      "content_hash": "7a9af1d588f6e08f519fb46dbafb5cc1e480a2971b26b731b22e0fcc0d7c861b",
-      "created_at": "2026-11-18T07:30:57.953Z"
+      "content_hash": "64bf66a6e2036058afed3dd8e4bf87f49d6f71dc2fa3070ff92e221134cd4578",
+      "created_at": "2026-11-18T23:02:52.037Z"
     },
     "domain_intelligence-architecture-intelligence-mitmproxy-mitmproxy-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-mitmproxy-mitmproxy-learnings-core-invariants",
@@ -9766,8 +9766,8 @@
       "title": "Technical Construction Intelligence: zama-ai/tfhe-rs Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zama-ai-tfhe-rs-technical-construction-intelligence-zama-ai-tfhe-rs-core-invaria.md",
       "repository": "zama-ai/tfhe-rs",
-      "content_hash": "246299ba4d52b367c2bc1c607a5a260704d8a6f35188bc7895932c451ec06dbc",
-      "created_at": "2026-11-18T17:01:56.154Z"
+      "content_hash": "9741b6c0ed25d7796cbef11b2b1c5e329fa5ba771e79328d4da088354b18d5ac",
+      "created_at": "2026-11-18T22:57:59.570Z"
     },
     "domain_intelligence-architecture-intelligence-embassy-rs-embassy-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-embassy-rs-embassy-learnings-core-invariants",
@@ -11974,8 +11974,8 @@
       "title": "Architecture Intelligence: dathere/qsv Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dathere-qsv-architecture-intelligence-dathere-qsv-core-invariants.md",
       "repository": "dathere/qsv",
-      "content_hash": "5e7bdf16e15b9c0f82dc863682580b83c9876306d78da738a821fff5ca5b1cd2",
-      "created_at": "2026-11-18T17:28:16.187Z"
+      "content_hash": "1c4508a755accdd4dfca57c3244e34808dbe8644d05acdf9c450a896e8734b95",
+      "created_at": "2026-11-18T22:58:04.906Z"
     },
     "DOM-D-F5645095": {
       "record_id": "DOM-D-F5645095",
@@ -13538,8 +13538,8 @@
       "title": "Research & Knowledge Intelligence: baidu/Unlimited-OCR Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-baidu-unlimited-ocr-research-knowledge-intelligence-baidu-unlimited-ocr-core-.md",
       "repository": "baidu/Unlimited-OCR",
-      "content_hash": "71d7bd1c18e4e5bde8deffaa0c847df68df585c8d26ee4a582d9cd0763b61545",
-      "created_at": "2026-11-14T05:31:30.181Z"
+      "content_hash": "5cc3de9039bb4e5b8855d1db31aadb00a11c20ba998522de2c195705385c6d96",
+      "created_at": "2026-11-18T23:02:48.607Z"
     },
     "DOM-D-2A203D84": {
       "record_id": "DOM-D-2A203D84",
@@ -13589,8 +13589,8 @@
       "title": "Research & Knowledge Intelligence: hf-baidu-unlimited-ocr-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-baidu-unlimited-ocr-learnings-research-knowledge-intelligence-hf-baidu-unlimi.md",
       "repository": "hf-baidu-unlimited-ocr-learnings",
-      "content_hash": "024386d11a0dcc755474a15c0febd311577c19665725b90de132b44ed553ecad",
-      "created_at": "2026-11-14T05:32:15.370Z"
+      "content_hash": "33abf3706752a2c8dbfeb7a75bd755caa4c10e541b344f4800be6fee8e74ff47",
+      "created_at": "2026-11-18T23:02:51.525Z"
     },
     "domain_intelligence-research-knowledge-intelligence-aleph-alpha-kolibri-1-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-aleph-alpha-kolibri-1-core-invariants",
@@ -26913,8 +26913,8 @@
       "title": "Technical Construction Intelligence: zama-ai-tfhe-rs-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zama-ai-tfhe-rs-learnings-technical-construction-intelligence-zama-ai-tfhe-rs-le.md",
       "repository": "zama-ai-tfhe-rs-learnings",
-      "content_hash": "3e8df1ba4ead0aa48ebd146c43c86e3177a6f5e157aa2074be66b0bedd0676e8",
-      "created_at": "2026-11-18T17:02:01.162Z"
+      "content_hash": "c8389ca233eff8e8040f7ca46675d9f027bcc6ca64b7e231b86d27e28c0ed617",
+      "created_at": "2026-11-18T23:02:52.626Z"
     },
     "domain_intelligence-research-knowledge-intelligence-meituan-longcat-longcat-video-avatar-1-6-core-in": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-meituan-longcat-longcat-video-avatar-1-6-core-in",

@@ -11118,3 +11118,7 @@
 | `CYCLE-20261118-SD89` | `2026-11-18T22:22:15.033Z` | `meta-llama/Llama-2-7b` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-meta-llama-llama-2-7b-learnings.md` | Yes (`a66f4b68...`) |
 | `CYCLE-2026-11-18-PROJ-EVOLVE` | `2026-11-18T22:22:51.811Z` | `hf-meta-llama-llama-2-7b` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-J-3CA866B9` [Domain J] | Yes (`d6893a36...`) |
 | `CYCLE-20261118-2Y9Y` | `2026-11-18T22:30:28.870Z` | `deepseek-ai/DeepSeek-V3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v3-learnings.md` | Yes (`fff8ed04...`) |
+| `CYCLE-20261118-29VT` | `2026-11-18T22:57:56.873Z` | `crossplane/crossplane` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9292` | Yes (`2f5582e9...`) |
+| `CYCLE-20261118-2BPX` | `2026-11-18T22:57:59.253Z` | `zama-ai/tfhe-rs` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9293` | Yes (`7f4067d9...`) |
+| `CYCLE-20261118-2FV7` | `2026-11-18T22:58:04.627Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9294` | Yes (`88afe478...`) |
+| `CYCLE-20261118-8IV9` | `2026-11-18T23:02:48.453Z` | `baidu/Unlimited-OCR` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baidu-unlimited-ocr-learnings.md` | Yes (`033a860a...`) |

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-18T22:30:28.882Z",
+  "last_updated": "2026-11-18T23:02:48.463Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1325,14 +1325,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-baidu-unlimited-ocr",
-      "content_hash": "bd2dea14a5580c21a1fb68db5a22a7b91bf9fff719ec8f89e65e2f4aa7a60356",
-      "verified_at": "2026-11-14T05:31:30.001Z",
+      "content_hash": "033a860aa6f7e15ad16e4f8cf91359eed1be8496a6bd9fe93b8360b15f917e55",
+      "verified_at": "2026-11-18T23:02:48.463Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-14T05:31:30.001Z"
+      "last_updated": "2026-11-18T23:02:48.463Z"
     },
     "Aleph-Alpha/Kolibri-1": {
       "repository": "Aleph-Alpha/Kolibri-1",
@@ -3681,14 +3681,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-dathere-qsv",
-      "content_hash": "83cc3075368c36191bdc69d6f3a50d0921122d6c2675e18808a299bd6429657c",
-      "verified_at": "2026-11-18T17:28:15.868Z",
+      "content_hash": "88afe4781ecee10a0e02efe36511d45385c684ca64bcfee93e842f5dff9084cd",
+      "verified_at": "2026-11-18T22:58:04.636Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T17:28:15.868Z"
+      "last_updated": "2026-11-18T22:58:04.636Z"
     },
     "assistant-ui/assistant-ui": {
       "repository": "assistant-ui/assistant-ui",
@@ -5046,14 +5046,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zama-ai-tfhe-rs",
-      "content_hash": "1f812a45f823227f9c1a0a729b4c1c91dcabdfc5d50f548aa478f86fe54851c6",
-      "verified_at": "2026-11-18T17:01:55.711Z",
+      "content_hash": "7f4067d99a9e8519dbc7aa5360388f34638de25be84a3c7beffb7dab993ae0e5",
+      "verified_at": "2026-11-18T22:57:59.263Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T17:01:55.711Z"
+      "last_updated": "2026-11-18T22:57:59.263Z"
     },
     "doobidoo/mcp-memory-service": {
       "repository": "doobidoo/mcp-memory-service",
@@ -7566,14 +7566,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-crossplane-crossplane",
-      "content_hash": "c22bad2d629ea5d51ecb7c1dfc32c5bd158e27ccbe8ab741ff32f9071e7a61ab",
-      "verified_at": "2026-11-18T07:30:50.193Z",
+      "content_hash": "2f5582e9618e4f763e4e26ef4263eff20b6669075ddea8da5b248a6e3a975ec9",
+      "verified_at": "2026-11-18T22:57:56.887Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T07:30:50.193Z"
+      "last_updated": "2026-11-18T22:57:56.887Z"
     },
     "apple/foundationdb": {
       "repository": "apple/foundationdb",
