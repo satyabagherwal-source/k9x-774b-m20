@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-18T06:50:19.698Z",
+  "last_updated": "2026-11-18T06:58:01.354Z",
   "total_verified_learnings": 8991,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 20976,
+  "total_items": 20984,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -213681,7 +213681,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/PrunaAI/P-H3-Image-Comfy",
       "source_version": "hf-prunaai-p-h3-image-comfy",
-      "content_hash": "ca3f8aabf280e7ff3d31d66c30494c62ed1d3fd9b3909646f0fe82eaca14177a",
+      "content_hash": "1f4edf17be8a79403fb24dde54bcb375624c127b45e8e803a13c352c59a76d93",
       "dossier_path": "07_PROJECT_LEARNING/hf-prunaai-p-h3-image-comfy-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-prunaai-p-h3-image-comfy-learnings.md",
       "promoted_rules": [],
@@ -213690,7 +213690,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-13T19:54:20.120Z",
+      "verified_at": "2026-11-18T06:57:41.354Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -213707,9 +213707,9 @@
       "title": "Research & Knowledge Intelligence: PrunaAI/P-H3-Image-Comfy Core Invariants",
       "repository": "PrunaAI/P-H3-Image-Comfy",
       "source_version": "hf-prunaai-p-h3-image-comfy",
-      "content_hash": "aa922abb761caae8d85dc4e7ba141246afd59c458a1d8bd9d2ad3fbfd240c451",
+      "content_hash": "bc90898f0905bb0f4634e44667681c949617d4f2d0574cd086adccac62c4d089",
       "domain_letter": "D",
-      "persisted_at": "2026-11-13T19:54:20.372Z"
+      "persisted_at": "2026-11-18T06:57:41.748Z"
     },
     "learn-github-telemt-telemt": {
       "learning_id": "learn-github-telemt-telemt",
@@ -213841,9 +213841,9 @@
       "title": "Research & Knowledge Intelligence: hf-prunaai-p-h3-image-comfy-learnings Core Invariants",
       "repository": "hf-prunaai-p-h3-image-comfy-learnings",
       "source_version": "HEAD",
-      "content_hash": "105e804ab2fb60cae66db829b86a494c749d69a6c172f259aefed1056f5a9351",
+      "content_hash": "210b5382b37261ce5e81f74648d3256550e0b2716c2cb643dcb5e1d5efa9e7d4",
       "domain_letter": "D",
-      "persisted_at": "2026-11-13T19:54:48.417Z"
+      "persisted_at": "2026-11-18T06:58:00.554Z"
     },
     "domain_intelligence-architecture-intelligence-krishhgg-insomnia-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-krishhgg-insomnia-learnings-core-invariants",
@@ -241970,8 +241970,8 @@
       "slug": "orange-opensource-hurl",
       "platform": "github",
       "source_url": "https://github.com/Orange-OpenSource/hurl",
-      "source_version": "e6a40af3",
-      "content_hash": "169ff26f1dfba667f2d4f60c76a59e247584b3b7b3f59a659c5f0bece6e4f1e1",
+      "source_version": "41a0fa4b",
+      "content_hash": "2faef2576996b0422c3309ffc1e5360f2e399cbb057ef2d43612eb6f7ccdd1ac",
       "dossier_path": "07_PROJECT_LEARNING/orange-opensource-hurl-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/orange-opensource-hurl-learnings.md",
       "promoted_rules": [
@@ -241984,6 +241984,11 @@
           "number": 8829,
           "title": "Changes client_key_file type from String to PathBuf.",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9146,
+          "title": "Install Rust in the update-crate workflow to get the same Rust as build.",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -241991,7 +241996,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T01:33:52.874Z",
+      "verified_at": "2026-11-18T06:57:43.778Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -242045,10 +242050,10 @@
       "relative_path": "08_VERIFICATION/orange-opensource-hurl-verification-protocol-empirical-defect-shield-for-orange-.md",
       "title": "Verification Protocol: Empirical Defect Shield for Orange-OpenSource/hurl",
       "repository": "Orange-OpenSource/hurl",
-      "source_version": "e6a40af3",
-      "content_hash": "80c06ddc4370189deafb8632ae32b131b5346ccd3e680538231b4dac3f4b511c",
+      "source_version": "41a0fa4b",
+      "content_hash": "27dd4d64c8fe2eb07d1ffd23e17d0afd94771198a9230d00c9efdb3b38226d6e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T01:33:53.482Z"
+      "persisted_at": "2026-11-18T06:57:44.452Z"
     },
     "domain_intelligence-technical-construction-intelligence-orange-opensource-hurl-learnings-core-invari": {
       "item_id": "domain_intelligence-technical-construction-intelligence-orange-opensource-hurl-learnings-core-invari",
@@ -242070,9 +242075,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for orange-opensource-hurl-learnings",
       "repository": "orange-opensource-hurl-learnings",
       "source_version": "HEAD",
-      "content_hash": "c49c00bc18caecb3dbc1750228a31f86a0e40b9b39a83a4d871876c948b36f7a",
+      "content_hash": "45090a7d067ab3c4870b8c7bad4ea0bd569f57e7565491606995eb924cb98de5",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T01:34:12.844Z"
+      "persisted_at": "2026-11-18T06:58:00.217Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-liquidai-lfm3-omni-2b-learnings-core-invarian": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-liquidai-lfm3-omni-2b-learnings-core-invarian",
@@ -249780,14 +249785,19 @@
       "slug": "etcd-io-etcd",
       "platform": "github",
       "source_url": "https://github.com/etcd-io/etcd",
-      "source_version": "b32ff8a1",
-      "content_hash": "f64ed31cfcc354bd2fa132c566b7e8701614d016379bc0b48745be07c01b4cf7",
+      "source_version": "dd2c518f",
+      "content_hash": "f57b142b2a97d9ea82d6d62fb98d790c457a2131061646746a930a4b8de09961",
       "dossier_path": "07_PROJECT_LEARNING/etcd-io-etcd-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/etcd-io-etcd-learnings.md",
       "promoted_rules": [
         {
           "number": 8904,
           "title": "Empirical Invariant Guard in CONTRIBUTING.md",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9147,
+          "title": "Empirical Invariant Guard in auth_test.go",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -249796,7 +249806,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T07:28:20.790Z",
+      "verified_at": "2026-11-18T06:57:55.931Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -249836,10 +249846,10 @@
       "relative_path": "08_VERIFICATION/etcd-io-etcd-verification-protocol-empirical-defect-shield-for-etcd-io-etcd.md",
       "title": "Verification Protocol: Empirical Defect Shield for etcd-io/etcd",
       "repository": "etcd-io/etcd",
-      "source_version": "b32ff8a1",
-      "content_hash": "a233da23cc717c9999f1de9b117b73e4b8cf979248d7ea5c66f8fee66d410219",
+      "source_version": "dd2c518f",
+      "content_hash": "cc69979eba212391897319ab25d92967cf05b2ca62a93d9e0f9d56a4abab94e5",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T07:28:21.364Z"
+      "persisted_at": "2026-11-18T06:57:56.632Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-webai-official-twil-8b-learnings-core-invaria": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-webai-official-twil-8b-learnings-core-invaria",
@@ -249885,9 +249895,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for etcd-io-etcd-learnings",
       "repository": "etcd-io-etcd-learnings",
       "source_version": "HEAD",
-      "content_hash": "24946028d3d83dead53dab8a4c114269991ad9648b3823696b911c7142b013db",
+      "content_hash": "0466e5d399dff3d1ae6d7e1a70a5a792542a2374f310f51af2fdab0a15df5470",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T07:28:25.931Z"
+      "persisted_at": "2026-11-18T06:58:01.354Z"
     },
     "learn-github-metrolistgroup-metrolist": {
       "learning_id": "learn-github-metrolistgroup-metrolist",
@@ -282648,6 +282658,106 @@
       "content_hash": "c5e8262e02119cade3a7a452c0b13cdbd6fafeb667aeb0aedb0c5402fe332768",
       "domain_letter": "K",
       "persisted_at": "2026-11-18T06:50:19.698Z"
+    },
+    "rule-9146": {
+      "learning_id": "rule-9146",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9146,
+      "title": "Install Rust in the update-crate workflow to get the same Rust as build.",
+      "source_url": "https://github.com/Orange-OpenSource/hurl",
+      "source_version": "41a0fa4b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-18T06:57:43.778Z"
+    },
+    "candidate_directive-install-rust-in-the-update-crate-workflow-to-get-the-same-rust-as-build": {
+      "item_id": "candidate_directive-install-rust-in-the-update-crate-workflow-to-get-the-same-rust-as-build",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-RRSM-install-rust-in-the-update-crate-workflow-to-get-the-same-rust-as-build.md",
+      "title": "Install Rust in the update-crate workflow to get the same Rust as build.",
+      "repository": "orange-opensource-hurl-learnings",
+      "source_version": "HEAD",
+      "content_hash": "b17aad0272d518cc06f7cd6a614c00758423b0d93bcce16af6a2923fb6fb1f8c",
+      "domain_letter": "A",
+      "persisted_at": "2026-11-18T06:57:59.931Z"
+    },
+    "domain_intelligence-architecture-intelligence-orange-opensource-hurl-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-orange-opensource-hurl-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-orange-opensource-hurl-architecture-intelligence-orange-opensource-hurl-core-inv.md",
+      "title": "Architecture Intelligence: Orange-OpenSource/hurl Core Invariants",
+      "repository": "Orange-OpenSource/hurl",
+      "source_version": "41a0fa4b",
+      "content_hash": "2669839600f3a2af1d648fd9bc406488faf272ba40f44bc9555ecb185596dfd6",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-18T06:57:44.301Z"
+    },
+    "rule-9147": {
+      "learning_id": "rule-9147",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9147,
+      "title": "Empirical Invariant Guard in auth_test.go",
+      "source_url": "https://github.com/etcd-io/etcd",
+      "source_version": "dd2c518f",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-18T06:57:55.931Z"
+    },
+    "candidate_directive-empirical-invariant-guard-in-auth_test-go": {
+      "item_id": "candidate_directive-empirical-invariant-guard-in-auth_test-go",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-RSNW-empirical-invariant-guard-in-auth_test-go.md",
+      "title": "Empirical Invariant Guard in auth_test.go",
+      "repository": "etcd-io-etcd-learnings",
+      "source_version": "HEAD",
+      "content_hash": "e1ab46f52c724220ea162597bbfad6e58cf4c12593def123f4f7c4d2f73cf4ec",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-18T06:58:01.052Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-etcd-io-etcd-core-invariants": {
+      "item_id": "domain_intelligence-quality-verification-intelligence-etcd-io-etcd-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-etcd-io-etcd-quality-verification-intelligence-etcd-io-etcd-core-invariants.md",
+      "title": "Quality & Verification Intelligence: etcd-io/etcd Core Invariants",
+      "repository": "etcd-io/etcd",
+      "source_version": "dd2c518f",
+      "content_hash": "27e217a465ee15f9dbf462b9dfac4119e13adb840d9b9b7730a311f50bd5ddab",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-18T06:57:56.492Z"
+    },
+    "domain_intelligence-architecture-intelligence-orange-opensource-hurl-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-orange-opensource-hurl-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-orange-opensource-hurl-learnings-architecture-intelligence-orange-opensource-hur.md",
+      "title": "Architecture Intelligence: orange-opensource-hurl-learnings Core Invariants",
+      "repository": "orange-opensource-hurl-learnings",
+      "source_version": "HEAD",
+      "content_hash": "a8b489ddaa690784539a3d2338ba228e1e48b83074edb851fa88b6400cfb7fbc",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-18T06:58:00.075Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-etcd-io-etcd-learnings-core-invariants": {
+      "item_id": "domain_intelligence-quality-verification-intelligence-etcd-io-etcd-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-etcd-io-etcd-learnings-quality-verification-intelligence-etcd-io-etcd-learnings-.md",
+      "title": "Quality & Verification Intelligence: etcd-io-etcd-learnings Core Invariants",
+      "repository": "etcd-io-etcd-learnings",
+      "source_version": "HEAD",
+      "content_hash": "3de5e80d7cf203889cf56fceabaa20b179c52f80e1bb7c2f93878776831fbf9b",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-18T06:58:01.213Z"
     }
   },
   "ai-builder-brain": {

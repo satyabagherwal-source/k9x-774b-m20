@@ -3733,10 +3733,10 @@
     "repository": "Orange-OpenSource/hurl",
     "platform": "github",
     "sourceUrl": "https://github.com/Orange-OpenSource/hurl",
-    "sourceVersion": "e6a40af3",
+    "sourceVersion": "41a0fa4b",
     "license": "Apache-2.0",
-    "contentHash": "169ff26f1dfba667f2d4f60c76a59e247584b3b7b3f59a659c5f0bece6e4f1e1",
-    "lastHarvestedAt": "2026-11-17T01:33:53.047Z",
+    "contentHash": "2faef2576996b0422c3309ffc1e5360f2e399cbb057ef2d43612eb6f7ccdd1ac",
+    "lastHarvestedAt": "2026-11-18T06:57:43.961Z",
     "learningId": "learn-github-orange-opensource-hurl"
   },
   "gregberge-svgr": {
@@ -4773,10 +4773,10 @@
     "repository": "etcd-io/etcd",
     "platform": "github",
     "sourceUrl": "https://github.com/etcd-io/etcd",
-    "sourceVersion": "b32ff8a1",
+    "sourceVersion": "dd2c518f",
     "license": "Apache-2.0",
-    "contentHash": "f64ed31cfcc354bd2fa132c566b7e8701614d016379bc0b48745be07c01b4cf7",
-    "lastHarvestedAt": "2026-11-17T07:28:20.961Z",
+    "contentHash": "f57b142b2a97d9ea82d6d62fb98d790c457a2131061646746a930a4b8de09961",
+    "lastHarvestedAt": "2026-11-18T06:57:56.152Z",
     "learningId": "learn-github-etcd-io-etcd"
   },
   "wasm-bindgen-wasm-pack": {
@@ -11925,8 +11925,8 @@
     "sourceUrl": "https://huggingface.co/PrunaAI/P-H3-Image-Comfy",
     "sourceVersion": "hf-prunaai-p-h3-image-comfy",
     "license": "Open-Source",
-    "contentHash": "ca3f8aabf280e7ff3d31d66c30494c62ed1d3fd9b3909646f0fe82eaca14177a",
-    "lastHarvestedAt": "2026-11-13T19:54:20.244Z",
+    "contentHash": "1f4edf17be8a79403fb24dde54bcb375624c127b45e8e803a13c352c59a76d93",
+    "lastHarvestedAt": "2026-11-18T06:57:41.556Z",
     "learningId": "learn-huggingface-prunaai-p-h3-image-comfy"
   },
   "jarvis322-macos-sysdata": {

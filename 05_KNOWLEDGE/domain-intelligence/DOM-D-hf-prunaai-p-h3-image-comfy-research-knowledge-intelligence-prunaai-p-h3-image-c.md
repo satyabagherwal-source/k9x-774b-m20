@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/PrunaAI/P-H3-Image-Comfy",
   "source_version": "hf-prunaai-p-h3-image-comfy",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T19:54:20.371Z",
+  "timestamp": "2026-11-18T06:57:41.747Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-prunaai-p-h3-image-comfy",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [PrunaAI/P-H3-Image-Comfy](https://huggingface.co/PrunaAI/P-H3-Image-Comfy) (Revision: `hf-prunaai`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T19:54:20.371Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-18T06:57:41.747Z`  
 > **Learning ID**: `learn-huggingface-prunaai-p-h3-image-comfy`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-prunaai-p-h3-image-comfy-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/PrunaAI/P-H3-Image-Comfy](https://huggingface.co/PrunaAI/P-H3-Image-Comfy))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T19:52:46.191Z  
+> **Harvest Timestamp**: 2026-11-18T06:57:40.882Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: text-to-image
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 1064331 downloads | 359 likes
+- **Stars / Engagement**: 1238173 downloads | 473 likes
 
 ---
 

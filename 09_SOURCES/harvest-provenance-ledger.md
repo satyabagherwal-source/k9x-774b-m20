@@ -10882,3 +10882,6 @@ Every entry in this ledger must capture:
 | `learn-github-sqlpage-sqlpage` | `https://github.com/sqlpage/SQLPage` | `1fe252ca` | Multi-dimensional audit evidence | 2026-11-18T06:49:17.639Z |
 | `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `db6acd1d` | Multi-dimensional audit evidence | 2026-11-18T06:49:19.562Z |
 | `learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf` | `https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF` | `hf-ista-da` | Multi-dimensional audit evidence | 2026-11-18T06:50:14.005Z |
+| `learn-huggingface-prunaai-p-h3-image-comfy` | `https://huggingface.co/PrunaAI/P-H3-Image-Comfy` | `hf-prunaai` | Multi-dimensional audit evidence | 2026-11-18T06:57:41.556Z |
+| `learn-github-orange-opensource-hurl` | `https://github.com/Orange-OpenSource/hurl` | `41a0fa4b` | Multi-dimensional audit evidence | 2026-11-18T06:57:43.961Z |
+| `learn-github-etcd-io-etcd` | `https://github.com/etcd-io/etcd` | `dd2c518f` | Multi-dimensional audit evidence | 2026-11-18T06:57:56.152Z |

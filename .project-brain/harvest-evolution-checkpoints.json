@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T06:50:19.809Z",
+  "last_updated": "2026-11-18T06:58:01.480Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-18T04:11:36.483Z",
@@ -568,7 +568,7 @@
       "staged_for_review": 1
     },
     "orange-opensource-hurl-learnings.md": {
-      "processed_at": "2026-11-17T01:34:12.266Z",
+      "processed_at": "2026-11-18T06:57:59.440Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -683,7 +683,7 @@
       "staged_for_review": 0
     },
     "etcd-io-etcd-learnings.md": {
-      "processed_at": "2026-11-17T07:28:25.311Z",
+      "processed_at": "2026-11-18T06:58:00.725Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2108,8 +2108,8 @@
       "staged_for_review": 1
     },
     "hf-prunaai-p-h3-image-comfy-learnings.md": {
-      "processed_at": "2026-11-13T19:54:48.263Z",
-      "promoted_canonical": 1,
+      "processed_at": "2026-11-18T06:58:00.356Z",
+      "promoted_canonical": 0,
       "staged_for_review": 0
     },
     "krishhgg-insomnia-learnings.md": {
@@ -3403,7 +3403,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 1839,
+  "total_dossiers_evaluated": 1842,
   "total_canonical_promoted": 337,
-  "total_staged_for_review": 1419
+  "total_staged_for_review": 1421
 }

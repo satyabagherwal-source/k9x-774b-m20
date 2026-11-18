@@ -10849,3 +10849,6 @@
 | `CYCLE-20261118-GKSJ` | `2026-11-18T06:49:17.635Z` | `sqlpage/SQLPage` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9142` | Yes (`4882323f...`) |
 | `CYCLE-20261118-GM9Y` | `2026-11-18T06:49:19.558Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9143` | Yes (`8c4ca953...`) |
 | `CYCLE-20261118-HSA9` | `2026-11-18T06:50:14.001Z` | `ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9144, Rule 9145` | Yes (`40be959b...`) |
+| `CYCLE-20261118-RDM8` | `2026-11-18T06:57:41.552Z` | `PrunaAI/P-H3-Image-Comfy` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-prunaai-p-h3-image-comfy-learnings.md` | Yes (`1f4edf17...`) |
+| `CYCLE-20261118-RFH1` | `2026-11-18T06:57:43.957Z` | `Orange-OpenSource/hurl` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9146` | Yes (`2faef257...`) |
+| `CYCLE-20261118-ROVO` | `2026-11-18T06:57:56.148Z` | `etcd-io/etcd` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9147` | Yes (`f57b142b...`) |

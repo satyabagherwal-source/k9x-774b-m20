@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T06:50:14.010Z",
-  "total_cycles_completed": 10390,
-  "total_learnings_persisted": 10390,
-  "total_rules_promoted": 9898,
+  "last_updated": "2026-11-18T06:57:56.158Z",
+  "total_cycles_completed": 10393,
+  "total_learnings_persisted": 10393,
+  "total_rules_promoted": 9900,
   "history": [
-    {
-      "timestamp": "2026-11-17T17:11:34.199Z",
-      "repository": "berty/berty",
-      "learningId": "learn-github-berty-berty",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T17:20:11.514Z",
-      "repository": "MiniMaxAI/MiniMax-M3.1-Flash",
-      "learningId": "learn-huggingface-minimaxai-minimax-m3-1-flash",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T17:20:14.347Z",
-      "repository": "zvec-ai/zvec-grep",
-      "learningId": "learn-github-zvec-ai-zvec-grep",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-17T17:20:20.990Z",
       "repository": "keybase/client",
@@ -1403,6 +1382,27 @@
       "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-GGUF",
       "learningId": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf",
       "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T06:57:41.562Z",
+      "repository": "PrunaAI/P-H3-Image-Comfy",
+      "learningId": "learn-huggingface-prunaai-p-h3-image-comfy",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T06:57:43.966Z",
+      "repository": "Orange-OpenSource/hurl",
+      "learningId": "learn-github-orange-opensource-hurl",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T06:57:56.158Z",
+      "repository": "etcd-io/etcd",
+      "learningId": "learn-github-etcd-io-etcd",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]
