@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-18T02:16:23.359Z",
-  "total_records": 1741,
+  "last_updated": "2026-11-18T02:33:22.396Z",
+  "total_records": 1743,
   "domains": {
     "A": {
       "total": 11,
@@ -1590,7 +1590,7 @@
       ]
     },
     "I": {
-      "total": 80,
+      "total": 82,
       "record_ids": [
         "DOM-I-16F011E5",
         "DOM-I-BF0A22A6",
@@ -1671,7 +1671,9 @@
         "domain_intelligence-content-information-intelligence-apache-pinot-learnings-core-invariants",
         "domain_intelligence-content-information-intelligence-gravitl-netmaker-core-invariants",
         "domain_intelligence-content-information-intelligence-tursodatabase-turso-core-invariants",
-        "domain_intelligence-content-information-intelligence-tursodatabase-limbo-learnings-core-invariants"
+        "domain_intelligence-content-information-intelligence-tursodatabase-limbo-learnings-core-invariants",
+        "domain_intelligence-content-information-intelligence-dragonflyoss-dragonfly-core-invariants",
+        "domain_intelligence-content-information-intelligence-dragonflyoss-dragonfly-learnings-core-invariant"
       ]
     },
     "J": {
@@ -7520,8 +7522,8 @@
       "title": "Research & Knowledge Intelligence: XingChen-AGI/Xing4.0-29B-A4B Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-xingchen-agi-xing4-0-29b-a4b-research-knowledge-intelligence-xingchen-agi-xin.md",
       "repository": "XingChen-AGI/Xing4.0-29B-A4B",
-      "content_hash": "c828e44c6b9c61b5a7cc25c6fc4f1e1d98f534e65b6b481264eea690bb117368",
-      "created_at": "2026-11-13T15:03:44.486Z"
+      "content_hash": "e1a7b9e5410241b7454ae5a05bfdcb10521419500d29e76ccc19fcbfb60e57a1",
+      "created_at": "2026-11-18T02:33:18.186Z"
     },
     "domain_intelligence-content-information-intelligence-dathere-qsv-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-dathere-qsv-core-invariants",
@@ -7538,8 +7540,8 @@
       "title": "Research & Knowledge Intelligence: hf-xingchen-agi-xing4.0-29b-a4b-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-xingchen-agi-xing4-0-29b-a4b-learnings-research-knowledge-intelligence-hf-xin.md",
       "repository": "hf-xingchen-agi-xing4.0-29b-a4b-learnings",
-      "content_hash": "c2b8d9f94a59859007e57917e31153bbf8260c8883b5e1368a2839a12ed0a712",
-      "created_at": "2026-11-13T15:04:04.636Z"
+      "content_hash": "1ec76adf97a2ec8534687f44c8f255be8cfb6d62014f4756abb1ec9ce127777d",
+      "created_at": "2026-11-18T02:33:21.147Z"
     },
     "domain_intelligence-content-information-intelligence-dathere-qsv-learnings-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-dathere-qsv-learnings-core-invariants",
@@ -16929,8 +16931,8 @@
       "title": "Technical Construction Intelligence: open-ani/animeko Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-open-ani-animeko-technical-construction-intelligence-open-ani-animeko-core-invar.md",
       "repository": "open-ani/animeko",
-      "content_hash": "92d9bc25dce4fe61415092767db12dbe83da0cabcb29a78e1bafda592fa681b3",
-      "created_at": "2026-11-14T18:26:28.729Z"
+      "content_hash": "7ba46940a1492243e2f2cbfb3555c74233365258135374f3c4053e4e725de147",
+      "created_at": "2026-11-18T02:28:21.027Z"
     },
     "domain_intelligence-technical-construction-intelligence-google-tcmalloc-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-google-tcmalloc-learnings-core-invariants",
@@ -16998,8 +17000,8 @@
       "title": "Technical Construction Intelligence: open-ani-animeko-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-open-ani-animeko-learnings-technical-construction-intelligence-open-ani-animeko-.md",
       "repository": "open-ani-animeko-learnings",
-      "content_hash": "1d66ed9c917dc9c002c8b5ab9c199fb3bf54503b912adba234d716f75947196d",
-      "created_at": "2026-11-14T18:27:17.065Z"
+      "content_hash": "6f4776e1f08f18d32b677e735ffdddbca6b4f1fcf6052838a9076127d771aa8b",
+      "created_at": "2026-11-18T02:33:21.643Z"
     },
     "domain_intelligence-research-knowledge-intelligence-cactus-compute-whistle-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-cactus-compute-whistle-core-invariants",
@@ -29254,6 +29256,24 @@
       "repository": "okteto-okteto-learnings",
       "content_hash": "b82cdd2b0280ed411c1ba3fad6ec8dcef1a59030a9db903efe302efdb06c8c92",
       "created_at": "2026-11-18T02:16:23.359Z"
+    },
+    "domain_intelligence-content-information-intelligence-dragonflyoss-dragonfly-core-invariants": {
+      "record_id": "domain_intelligence-content-information-intelligence-dragonflyoss-dragonfly-core-invariants",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: dragonflyoss/dragonfly Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-dragonflyoss-dragonfly-content-information-intelligence-dragonflyoss-dragonfly-c.md",
+      "repository": "dragonflyoss/dragonfly",
+      "content_hash": "fae4d1a421059aa93ea79a8c1a6962cd421ecaef59e7480ef6305cc3e4ed40fd",
+      "created_at": "2026-11-18T02:28:23.153Z"
+    },
+    "domain_intelligence-content-information-intelligence-dragonflyoss-dragonfly-learnings-core-invariant": {
+      "record_id": "domain_intelligence-content-information-intelligence-dragonflyoss-dragonfly-learnings-core-invariant",
+      "domain_letter": "I",
+      "title": "Content & Information Intelligence: dragonflyoss-dragonfly-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-dragonflyoss-dragonfly-learnings-content-information-intelligence-dragonflyoss-d.md",
+      "repository": "dragonflyoss-dragonfly-learnings",
+      "content_hash": "cba5903ed51feafc71011f20ecab5d1cfee53b135d06492003891767bc6b4921",
+      "created_at": "2026-11-18T02:33:22.396Z"
     }
   }
 }

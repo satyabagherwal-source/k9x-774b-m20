@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-18T02:16:23.501Z",
-  "total_verified_learnings": 8961,
+  "last_updated": "2026-11-18T02:33:22.525Z",
+  "total_verified_learnings": 8963,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 20796,
+  "total_items": 20808,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112082,9 +112082,9 @@
       "title": "Research & Knowledge Intelligence: XingChen-AGI/Xing4.0-29B-A4B Core Invariants",
       "repository": "XingChen-AGI/Xing4.0-29B-A4B",
       "source_version": "hf-xingchen-agi-xing4.0-29b-a4b",
-      "content_hash": "c828e44c6b9c61b5a7cc25c6fc4f1e1d98f534e65b6b481264eea690bb117368",
+      "content_hash": "e1a7b9e5410241b7454ae5a05bfdcb10521419500d29e76ccc19fcbfb60e57a1",
       "domain_letter": "D",
-      "persisted_at": "2026-11-13T15:03:44.486Z"
+      "persisted_at": "2026-11-18T02:33:18.186Z"
     },
     "candidate_directive-docs-fix-sqlp-and-polars-schema-file-name-in-usage-5046": {
       "item_id": "candidate_directive-docs-fix-sqlp-and-polars-schema-file-name-in-usage-5046",
@@ -112130,9 +112130,9 @@
       "title": "Research & Knowledge Intelligence: hf-xingchen-agi-xing4.0-29b-a4b-learnings Core Invariants",
       "repository": "hf-xingchen-agi-xing4.0-29b-a4b-learnings",
       "source_version": "HEAD",
-      "content_hash": "c2b8d9f94a59859007e57917e31153bbf8260c8883b5e1368a2839a12ed0a712",
+      "content_hash": "1ec76adf97a2ec8534687f44c8f255be8cfb6d62014f4756abb1ec9ce127777d",
       "domain_letter": "D",
-      "persisted_at": "2026-11-13T15:04:04.636Z"
+      "persisted_at": "2026-11-18T02:33:21.147Z"
     },
     "domain_intelligence-content-information-intelligence-dathere-qsv-learnings-core-invariants": {
       "item_id": "domain_intelligence-content-information-intelligence-dathere-qsv-learnings-core-invariants",
@@ -233866,14 +233866,19 @@
       "slug": "open-ani-animeko",
       "platform": "github",
       "source_url": "https://github.com/open-ani/animeko",
-      "source_version": "d54ba004",
-      "content_hash": "f551be5841118e97752eae7982d7d70953a5e68b5b090df8be402b4beefa6a4b",
+      "source_version": "42ef5d46",
+      "content_hash": "63730082740f96c97cea77b614aaf7f248c420eff5ca21a2a04414f4f0bd95fc",
       "dossier_path": "07_PROJECT_LEARNING/open-ani-animeko-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/open-ani-animeko-learnings.md",
       "promoted_rules": [
         {
           "number": 8520,
           "title": "prevent iOS video enhancement menu crash",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9107,
+          "title": "reduce navigation rail animation overhead",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -233882,7 +233887,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T18:26:28.196Z",
+      "verified_at": "2026-11-18T02:28:20.545Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -233924,10 +233929,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-open-ani-animeko-technical-construction-intelligence-open-ani-animeko-core-invar.md",
       "title": "Technical Construction Intelligence: open-ani/animeko Core Invariants",
       "repository": "open-ani/animeko",
-      "source_version": "d54ba004",
-      "content_hash": "92d9bc25dce4fe61415092767db12dbe83da0cabcb29a78e1bafda592fa681b3",
+      "source_version": "42ef5d46",
+      "content_hash": "7ba46940a1492243e2f2cbfb3555c74233365258135374f3c4053e4e725de147",
       "domain_letter": "H",
-      "persisted_at": "2026-11-14T18:26:28.729Z"
+      "persisted_at": "2026-11-18T02:28:21.027Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-open-ani-animeko": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-open-ani-animeko",
@@ -233936,10 +233941,10 @@
       "relative_path": "08_VERIFICATION/open-ani-animeko-verification-protocol-empirical-defect-shield-for-open-ani-anim.md",
       "title": "Verification Protocol: Empirical Defect Shield for open-ani/animeko",
       "repository": "open-ani/animeko",
-      "source_version": "d54ba004",
-      "content_hash": "7180a9dee5c1444edbead4802e228fb26c2fc5a86b69e1145e713dda6ff637c6",
+      "source_version": "42ef5d46",
+      "content_hash": "347d0a995c6b75ffb10f940feeae8f79152e5256ad3af5301f8ccfa7550fd2ce",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T18:26:28.870Z"
+      "persisted_at": "2026-11-18T02:28:21.147Z"
     },
     "candidate_directive-redundant_clone": {
       "item_id": "candidate_directive-redundant_clone",
@@ -234009,9 +234014,9 @@
       "title": "Technical Construction Intelligence: open-ani-animeko-learnings Core Invariants",
       "repository": "open-ani-animeko-learnings",
       "source_version": "HEAD",
-      "content_hash": "1d66ed9c917dc9c002c8b5ab9c199fb3bf54503b912adba234d716f75947196d",
+      "content_hash": "6f4776e1f08f18d32b677e735ffdddbca6b4f1fcf6052838a9076127d771aa8b",
       "domain_letter": "H",
-      "persisted_at": "2026-11-14T18:27:17.065Z"
+      "persisted_at": "2026-11-18T02:33:21.643Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-open-ani-animeko-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-open-ani-animeko-learnings",
@@ -234021,9 +234026,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for open-ani-animeko-learnings",
       "repository": "open-ani-animeko-learnings",
       "source_version": "HEAD",
-      "content_hash": "685dca99a26df78b977274eae2e63b262271857e8d8c6ac5706b66dd81de2adf",
+      "content_hash": "85a64fd2f131e7782b68a987d856104379b052972189f1c736ddb05a4a6c7813",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T18:27:17.205Z"
+      "persisted_at": "2026-11-18T02:33:21.770Z"
     },
     "learn-huggingface-cactus-compute-whistle": {
       "learning_id": "learn-huggingface-cactus-compute-whistle",
@@ -279735,6 +279740,190 @@
       "content_hash": "b82cdd2b0280ed411c1ba3fad6ec8dcef1a59030a9db903efe302efdb06c8c92",
       "domain_letter": "K",
       "persisted_at": "2026-11-18T02:16:23.359Z"
+    },
+    "rule-9107": {
+      "learning_id": "rule-9107",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9107,
+      "title": "reduce navigation rail animation overhead",
+      "source_url": "https://github.com/open-ani/animeko",
+      "source_version": "42ef5d46",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-18T02:28:20.545Z"
+    },
+    "candidate_directive-reduce-navigation-rail-animation-overhead": {
+      "item_id": "candidate_directive-reduce-navigation-rail-animation-overhead",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-4ZZ8-reduce-navigation-rail-animation-overhead.md",
+      "title": "reduce navigation rail animation overhead",
+      "repository": "open-ani/animeko",
+      "source_version": "42ef5d46",
+      "content_hash": "b10f31101f6eb77e7030f7b73a2357bf67789223427b805ca2c960b77bf1ebaf",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-18T02:28:20.903Z"
+    },
+    "learn-github-dragonflyoss-dragonfly": {
+      "learning_id": "learn-github-dragonflyoss-dragonfly",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "dragonflyoss/dragonfly",
+      "repository": "dragonflyoss/dragonfly",
+      "slug": "dragonflyoss-dragonfly",
+      "platform": "github",
+      "source_url": "https://github.com/dragonflyoss/dragonfly",
+      "source_version": "1ce4dd87",
+      "content_hash": "56f1b37e6696167de6d0e41490b156a9275a3912dee76be86f61bc93c3757a4e",
+      "dossier_path": "07_PROJECT_LEARNING/dragonflyoss-dragonfly-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/dragonflyoss-dragonfly-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 9108,
+          "title": "bump github.com/bits-and-blooms/bitset from 1.24.6 to 1.29.0",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-18T02:28:22.673Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-9108": {
+      "learning_id": "rule-9108",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9108,
+      "title": "bump github.com/bits-and-blooms/bitset from 1.24.6 to 1.29.0",
+      "source_url": "https://github.com/dragonflyoss/dragonfly",
+      "source_version": "1ce4dd87",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-18T02:28:22.673Z"
+    },
+    "candidate_directive-bump-github-com-bits-and-blooms-bitset-from-1-24-6-to-1-29-0": {
+      "item_id": "candidate_directive-bump-github-com-bits-and-blooms-bitset-from-1-24-6-to-1-29-0",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-51M4-bump-github-com-bits-and-blooms-bitset-from-1-24-6-to-1-29-0.md",
+      "title": "bump github.com/bits-and-blooms/bitset from 1.24.6 to 1.29.0",
+      "repository": "dragonflyoss/dragonfly",
+      "source_version": "1ce4dd87",
+      "content_hash": "9fb1412d252e107a2663b9dc4d9b1633344c8a7a15ff3b78737f31d3ded0ccf1",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-18T02:28:23.023Z"
+    },
+    "domain_intelligence-content-information-intelligence-dragonflyoss-dragonfly-core-invariants": {
+      "item_id": "domain_intelligence-content-information-intelligence-dragonflyoss-dragonfly-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-dragonflyoss-dragonfly-content-information-intelligence-dragonflyoss-dragonfly-c.md",
+      "title": "Content & Information Intelligence: dragonflyoss/dragonfly Core Invariants",
+      "repository": "dragonflyoss/dragonfly",
+      "source_version": "1ce4dd87",
+      "content_hash": "fae4d1a421059aa93ea79a8c1a6962cd421ecaef59e7480ef6305cc3e4ed40fd",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-18T02:28:23.153Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-dragonflyoss-dragonfly": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-dragonflyoss-dragonfly",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/dragonflyoss-dragonfly-verification-protocol-empirical-defect-shield-for-dragonf.md",
+      "title": "Verification Protocol: Empirical Defect Shield for dragonflyoss/dragonfly",
+      "repository": "dragonflyoss/dragonfly",
+      "source_version": "1ce4dd87",
+      "content_hash": "862415b7f93fd3782091cd440db5564b8bbdad4d7ad5afce9c2ee6ad306b44d6",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-18T02:28:23.298Z"
+    },
+    "learn-huggingface-xingchen-agi-xing4-0-29b-a4b": {
+      "learning_id": "learn-huggingface-xingchen-agi-xing4-0-29b-a4b",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "XingChen-AGI/Xing4.0-29B-A4B",
+      "repository": "XingChen-AGI/Xing4.0-29B-A4B",
+      "slug": "hf-xingchen-agi-xing4.0-29b-a4b",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/XingChen-AGI/Xing4.0-29B-A4B",
+      "source_version": "hf-xingchen-agi-xing4.0-29b-a4b",
+      "content_hash": "f0f9574cb97fd74b750db3e2b3135dc64b7a0de650b9aaf8d2264fdc7b817ffe",
+      "dossier_path": "07_PROJECT_LEARNING/hf-xingchen-agi-xing4.0-29b-a4b-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-xingchen-agi-xing4.0-29b-a4b-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-18T02:33:17.839Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "candidate_directive-tv-reduce-navigation-rail-animation-overhead": {
+      "item_id": "candidate_directive-tv-reduce-navigation-rail-animation-overhead",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-BFXG-tv-reduce-navigation-rail-animation-overhead.md",
+      "title": "tv): reduce navigation rail animation overhead",
+      "repository": "open-ani-animeko-learnings",
+      "source_version": "HEAD",
+      "content_hash": "b94cb66d5841a571f64964eb57a97c40f83e41c36ee46902ce1e0c5903a5c1ab",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-18T02:33:21.511Z"
+    },
+    "candidate_directive-deps-bump-github-com-bits-and-blooms-bitset-from-1-24-6-to-1-29-0": {
+      "item_id": "candidate_directive-deps-bump-github-com-bits-and-blooms-bitset-from-1-24-6-to-1-29-0",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-BGIP-deps-bump-github-com-bits-and-blooms-bitset-from-1-24-6-to-1-29-0.md",
+      "title": "deps): bump github.com/bits-and-blooms/bitset from 1.24.6 to 1.29.0",
+      "repository": "dragonflyoss-dragonfly-learnings",
+      "source_version": "HEAD",
+      "content_hash": "ae8f7484be923cc2941e18fcffaf44cba3761c0eb4c2d3544e0323cb1f5477c4",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-18T02:33:22.274Z"
+    },
+    "domain_intelligence-content-information-intelligence-dragonflyoss-dragonfly-learnings-core-invariant": {
+      "item_id": "domain_intelligence-content-information-intelligence-dragonflyoss-dragonfly-learnings-core-invariant",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-dragonflyoss-dragonfly-learnings-content-information-intelligence-dragonflyoss-d.md",
+      "title": "Content & Information Intelligence: dragonflyoss-dragonfly-learnings Core Invariants",
+      "repository": "dragonflyoss-dragonfly-learnings",
+      "source_version": "HEAD",
+      "content_hash": "cba5903ed51feafc71011f20ecab5d1cfee53b135d06492003891767bc6b4921",
+      "domain_letter": "I",
+      "persisted_at": "2026-11-18T02:33:22.396Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-dragonflyoss-dragonfly-learnin": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-dragonflyoss-dragonfly-learnin",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/dragonflyoss-dragonfly-learnings-verification-protocol-empirical-defect-shield-f.md",
+      "title": "Verification Protocol: Empirical Defect Shield for dragonflyoss-dragonfly-learnings",
+      "repository": "dragonflyoss-dragonfly-learnings",
+      "source_version": "HEAD",
+      "content_hash": "9f0607310c3a802571b100cc2f51b67cd7dbaacaadfa2c5db23c592c6e8b9745",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-18T02:33:22.525Z"
     }
   },
   "ai-builder-brain": {

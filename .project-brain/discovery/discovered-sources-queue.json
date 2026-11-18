@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-18T02:16:23.010Z",
+  "updated_at": "2026-11-18T02:33:22.116Z",
   "stats": {
-    "total_discovered": 5211,
-    "approved_pending_harvest": 4911,
+    "total_discovered": 5215,
+    "approved_pending_harvest": 4915,
     "harvested_count": 0,
     "rejected_count": 300,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 4906,
+      "COMMUNITY_AND_EXPERT": 4910,
       "OFFICIAL_DOCUMENTATION": 164,
       "STANDARDS_AND_SPECIFICATIONS": 108,
       "ENGINEERING_BLOGS": 3,
@@ -112563,6 +112563,94 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/okteto-okteto-learnings.md",
         "fileName": "okteto-okteto-learnings.md"
+      }
+    },
+    "SRC-3074E8F89C48": {
+      "id": "SRC-3074E8F89C48",
+      "url": "https://github.com/bits-and-blooms/bitset",
+      "title": "https://github.com/bits-and-blooms/bitset",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T02:33:21.982Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dragonflyoss-dragonfly-learnings.md",
+        "fileName": "dragonflyoss-dragonfly-learnings.md"
+      }
+    },
+    "SRC-A8EADFEB6878": {
+      "id": "SRC-A8EADFEB6878",
+      "url": "https://github.com/bits-and-blooms/bitset/releases",
+      "title": "https://github.com/bits-and-blooms/bitset/releases",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T02:33:22.019Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dragonflyoss-dragonfly-learnings.md",
+        "fileName": "dragonflyoss-dragonfly-learnings.md"
+      }
+    },
+    "SRC-313CEB536CA1": {
+      "id": "SRC-313CEB536CA1",
+      "url": "https://github.com/bits-and-blooms/bitset/compare/v1.24.6...v1.29.0",
+      "title": "https://github.com/bits-and-blooms/bitset/compare/v1.24.6...v1.29.0",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T02:33:22.053Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dragonflyoss-dragonfly-learnings.md",
+        "fileName": "dragonflyoss-dragonfly-learnings.md"
+      }
+    },
+    "SRC-9A859E1B705F": {
+      "id": "SRC-9A859E1B705F",
+      "url": "https://github.com/sigstore/cosign-installer/compare/cad07c2e89fa2edd6e2d7bab4c1aa38e53f76003...756fe2d284c7292c4e9b62c8a28f1e5629c59532",
+      "title": "https://github.com/sigstore/cosign-installer/compare/cad07c2e89fa2edd6e2d7bab4c1aa38e53f76003...756fe2d284c7292c4e9b62c8a28f1e5629c59532",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T02:33:22.116Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/dragonflyoss-dragonfly-learnings.md",
+        "fileName": "dragonflyoss-dragonfly-learnings.md"
       }
     }
   }

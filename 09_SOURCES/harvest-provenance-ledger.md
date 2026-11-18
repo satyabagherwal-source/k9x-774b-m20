@@ -10808,3 +10808,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-viggle-qwen-image-2-1-viggle-turbo` | `https://huggingface.co/Viggle/Qwen-Image-2.1-viggle-turbo` | `hf-viggle-` | Multi-dimensional audit evidence | 2026-11-18T02:16:09.745Z |
 | `learn-github-max-sixty-worktrunk` | `https://github.com/max-sixty/worktrunk` | `1bed6f84` | Multi-dimensional audit evidence | 2026-11-18T02:16:10.401Z |
 | `learn-github-okteto-okteto` | `https://github.com/okteto/okteto` | `0c260262` | Multi-dimensional audit evidence | 2026-11-18T02:16:18.261Z |
+| `learn-github-open-ani-animeko` | `https://github.com/open-ani/animeko` | `42ef5d46` | Multi-dimensional audit evidence | 2026-11-18T02:28:20.727Z |
+| `learn-github-dragonflyoss-dragonfly` | `https://github.com/dragonflyoss/dragonfly` | `1ce4dd87` | Multi-dimensional audit evidence | 2026-11-18T02:28:22.841Z |
+| `learn-huggingface-xingchen-agi-xing4-0-29b-a4b` | `https://huggingface.co/XingChen-AGI/Xing4.0-29B-A4B` | `hf-xingche` | Multi-dimensional audit evidence | 2026-11-18T02:33:18.013Z |

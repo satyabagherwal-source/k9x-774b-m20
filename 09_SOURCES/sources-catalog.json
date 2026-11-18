@@ -385,8 +385,8 @@
     "sourceUrl": "https://huggingface.co/XingChen-AGI/Xing4.0-29B-A4B",
     "sourceVersion": "hf-xingchen-agi-xing4.0-29b-a4b",
     "license": "Open-Source",
-    "contentHash": "a7225e606f9fac9353e26eddca581150a35d4009ef8ee85be8d6bc2cc520338f",
-    "lastHarvestedAt": "2026-11-13T15:03:44.294Z",
+    "contentHash": "f0f9574cb97fd74b750db3e2b3135dc64b7a0de650b9aaf8d2264fdc7b817ffe",
+    "lastHarvestedAt": "2026-11-18T02:33:18.013Z",
     "learningId": "learn-huggingface-xingchen-agi-xing4-0-29b-a4b"
   },
   "hf-supersoniclabs-julia-1": {
@@ -3513,10 +3513,10 @@
     "repository": "dragonflyoss/dragonfly",
     "platform": "github",
     "sourceUrl": "https://github.com/dragonflyoss/dragonfly",
-    "sourceVersion": "5ace19fb",
+    "sourceVersion": "1ce4dd87",
     "license": "Apache-2.0",
-    "contentHash": "9114cfef656a1eba3b0e7a6e6aabfda58ca50441b033db3585fa87a0275b95a8",
-    "lastHarvestedAt": "2026-11-13T08:22:06.383Z",
+    "contentHash": "56f1b37e6696167de6d0e41490b156a9275a3912dee76be86f61bc93c3757a4e",
+    "lastHarvestedAt": "2026-11-18T02:28:22.841Z",
     "learningId": "learn-github-dragonflyoss-dragonfly"
   },
   "sigstore-cosign": {
@@ -6303,10 +6303,10 @@
     "repository": "open-ani/animeko",
     "platform": "github",
     "sourceUrl": "https://github.com/open-ani/animeko",
-    "sourceVersion": "d54ba004",
+    "sourceVersion": "42ef5d46",
     "license": "AGPL-3.0",
-    "contentHash": "f551be5841118e97752eae7982d7d70953a5e68b5b090df8be402b4beefa6a4b",
-    "lastHarvestedAt": "2026-11-14T18:26:28.369Z",
+    "contentHash": "63730082740f96c97cea77b614aaf7f248c420eff5ca21a2a04414f4f0bd95fc",
+    "lastHarvestedAt": "2026-11-18T02:28:20.727Z",
     "learningId": "learn-github-open-ani-animeko"
   },
   "k3s-io-k3s": {

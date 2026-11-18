@@ -10775,3 +10775,6 @@
 | `CYCLE-20261118-PBT9` | `2026-11-18T02:16:09.741Z` | `Viggle/Qwen-Image-2.1-viggle-turbo` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-viggle-qwen-image-2.1-viggle-turbo-learnings.md` | Yes (`245e24b0...`) |
 | `CYCLE-20261118-PCBH` | `2026-11-18T02:16:10.397Z` | `max-sixty/worktrunk` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9105` | Yes (`31bfa2e5...`) |
 | `CYCLE-20261118-PIDT` | `2026-11-18T02:16:18.257Z` | `okteto/okteto` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9106` | Yes (`e6957a4a...`) |
+| `CYCLE-20261118-4ZUC` | `2026-11-18T02:28:20.724Z` | `open-ani/animeko` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9107` | Yes (`63730082...`) |
+| `CYCLE-20261118-51H1` | `2026-11-18T02:28:22.837Z` | `dragonflyoss/dragonfly` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9108` | Yes (`56f1b37e...`) |
+| `CYCLE-20261118-BD8A` | `2026-11-18T02:33:18.010Z` | `XingChen-AGI/Xing4.0-29B-A4B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-xingchen-agi-xing4.0-29b-a4b-learnings.md` | Yes (`f0f9574c...`) |

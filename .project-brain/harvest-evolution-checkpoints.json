@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T02:16:23.628Z",
+  "last_updated": "2026-11-18T02:33:22.657Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-18T00:27:32.940Z",
@@ -753,7 +753,7 @@
       "staged_for_review": 1
     },
     "dragonflyoss-dragonfly-learnings.md": {
-      "processed_at": "2026-11-12T03:30:59.262Z",
+      "processed_at": "2026-11-18T02:33:21.894Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1883,7 +1883,7 @@
       "staged_for_review": 0
     },
     "hf-xingchen-agi-xing4.0-29b-a4b-learnings.md": {
-      "processed_at": "2026-11-13T15:04:04.434Z",
+      "processed_at": "2026-11-18T02:33:20.966Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -2698,7 +2698,7 @@
       "staged_for_review": 0
     },
     "open-ani-animeko-learnings.md": {
-      "processed_at": "2026-11-14T18:27:16.638Z",
+      "processed_at": "2026-11-18T02:33:21.293Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3368,7 +3368,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 1764,
+  "total_dossiers_evaluated": 1767,
   "total_canonical_promoted": 333,
-  "total_staged_for_review": 1369
+  "total_staged_for_review": 1371
 }

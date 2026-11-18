@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T02:16:18.266Z",
-  "total_cycles_completed": 10320,
-  "total_learnings_persisted": 10320,
-  "total_rules_promoted": 9853,
+  "last_updated": "2026-11-18T02:33:18.018Z",
+  "total_cycles_completed": 10323,
+  "total_learnings_persisted": 10323,
+  "total_rules_promoted": 9855,
   "history": [
-    {
-      "timestamp": "2026-11-17T14:22:51.987Z",
-      "repository": "meta/docusaurus",
-      "learningId": "learn-github-meta-docusaurus",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T14:33:23.861Z",
-      "repository": "yvgude/lean-ctx",
-      "learningId": "learn-github-yvgude-lean-ctx",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T14:33:25.953Z",
-      "repository": "openreplay/openreplay",
-      "learningId": "learn-github-openreplay-openreplay",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-17T14:33:28.588Z",
       "repository": "kcl-lang/kcl",
@@ -1403,6 +1382,27 @@
       "repository": "okteto/okteto",
       "learningId": "learn-github-okteto-okteto",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T02:28:20.732Z",
+      "repository": "open-ani/animeko",
+      "learningId": "learn-github-open-ani-animeko",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T02:28:22.845Z",
+      "repository": "dragonflyoss/dragonfly",
+      "learningId": "learn-github-dragonflyoss-dragonfly",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T02:33:18.018Z",
+      "repository": "XingChen-AGI/Xing4.0-29B-A4B",
+      "learningId": "learn-huggingface-xingchen-agi-xing4-0-29b-a4b",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]
