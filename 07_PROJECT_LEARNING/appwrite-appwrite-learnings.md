@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/appwrite-appwrite-learnings.md`  
 > **Source**: github ([https://github.com/appwrite/appwrite](https://github.com/appwrite/appwrite))  
-> **Source Version**: `8e1e6556`  
+> **Source Version**: `23fd2350`  
 > **License**: BSD-3-Clause  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-17T07:40:13.435Z  
+> **Timestamp**: 2026-11-18T10:18:48.242Z  
 > **Learning ID**: `learn-github-appwrite-appwrite`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/appwrite-appwrite-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/appwrite/appwrite](https://github.com/appwrite/appwrite))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T07:40:13.283Z  
+> **Harvest Timestamp**: 2026-11-18T10:18:47.890Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: The open-source cloud for agents & devs. Including Auth, Databases, Storage, Functions, Messaging, Hosting, Realtime, WAF and more
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 58087 stars
+- **Stars / Engagement**: 58107 stars
 
 ---
 
@@ -1360,6 +1360,325 @@ export function DomainsDefaultState({
 
 ```
 
+### Core Architecture Module: `apps/console/src/components/pages/home/factory/engine.ts`
+```
+import {
+  Box3,
+  DirectionalLight,
+  Fog,
+  HemisphereLight,
+  LinearMipmapLinearFilter,
+  MathUtils,
+  Mesh,
+  MeshStandardMaterial,
+  type Object3D,
+  NeutralToneMapping,
+  PCFShadowMap,
+  PerspectiveCamera,
+  PlaneGeometry,
+  Raycaster,
+  SRGBColorSpace,
+  Scene,
+  ShadowMaterial,
+  Vector2,
+  Vector3,
+  WebGLRenderTarget,
+  WebGLRenderer,
+  type Texture,
+} from 'three'
+import { GlowLayer, ShadowLayer } from './effects'
+import { createFrameworkAtlas, loadFrameworkIcons } from './frameworks'
+import type { DisplayFit, FrameState } from './frame'
+import { applyKitPalette, createKit, disposeKit, type FactoryKit } from './kit'
+import {
+  BED_BACK,
+  BED_FRONT,
+  CYCLE,
+  EXTENSION,
+  MOVE,
+  STATION_COUNT,
+  TOWER_TOP,
+  easeInOutCubic,
+  easeOutCubic,
+  getLineState,
+  range,
+  stationX,
+} from './layout'
+import {
+  createFactoryPalette,
+  readPageBackground,
+  type FactoryPalette,
+} from './palette'
+import { ProductLine } from './products'
+import { StationLine } from './stations'
+import { createStudioEnvironment } from './studio'
+import {
+  createBlobTexture,
+  createDescriptionAtlas,
+  createNameplateAtlas,
+  createScreenAtlas,
+  createShadowTexture,
+  createTrackTexture,
+} from './textures'
+import { FactoryWorld, getStaticShadowShapes } from './world'
+
+export type FactoryEngineOptions = {
+  canvas: HTMLCanvasElement
+  /** Lucide SVG markup per station in `STATION_IDS` order, then the network gate's. */
+  icons: string[]
+  /** Translated product names, printed on each column, then the gate's sign. */
+  names: string[]
+  /** Translated product taglines, shown when a station unfolds. */
+  descriptions: string[]
+  /** Translated label of the shipped counter. */
+  counterLabel: string
+  /** Right-to-left page: nameplates put the icon on the right. */
+  rtl: boolean
+  dark: boolean
+  reducedMotion: boolean
+  onReady?: () => void
+  onHover?: (station: number) => void
+  /** WebGL failed or the context was lost for good. */
+  onError?: () => void
+}
+
+/**
+ * `overlay`: the scene fills the hero behind copy on the start side, so the
+ * line runs low and recedes toward the core on the far side.
+ * `band`: the scene sits in its own block under the copy.
+ */
+export type FactoryComposition = 'overlay' | 'band'
+
+/** A rectangle on the stage, in CSS pixels from its top left. */
+export type CopyArea = {
+  left: number
+  top: number
+  right: number
+  bottom: number
+}
+
+type Framing = {
+  /** World width to fit across the frame at the target. */
+  span: number
+  /** World height to fit. */
+  tall: number
+  elevation: number
+  azimuth: number
+  target: [number, number, number]
+  /** Lens shift as a fraction of the frame (positive moves the scene right / down). */
+  shiftX: number
+  shiftY: number
+  /** Narrow screens pan along the line instead of fitting all of it. */
+  track: boolean
+}
+
+const FRAMINGS: Record<'overlay' | 'band' | 'narrow', Framing> = {
+  overlay: {
+    span: 21.5,
+    tall: 7.4,
+    elevation: MathUtils.degToRad(29),
+    azimuth: MathUtils.degToRad(-17),
+    target: [1.8, 1.0, -2.0],
+    shiftX: 0.06,
+    shiftY: 0.11,
+    track: false,
+  },
+  band: {
+    span: 21,
+    tall: 6.6,
+    elevation: MathUtils.degToRad(29),
+    azimuth: MathUtils.degToRad(-17),
+    target: [1.8, 1.0, -2.0],
+    shiftX: 0,
+    shiftY: 0.04,
+    track: false,
+  },
+  narrow: {
+    span: 6.6,
+    tall: 6.4,
+    elevation: MathUtils.degToRad(28),
+    azimuth: MathUtils.degToRad(-16),
+    target: [1.2, 1.0, -1.6],
+    shiftX: 0,
+    shiftY: 0.02,
+    track: true,
+  },
+}
+
+/** Factory clock when the scene boots: a line already full of products. */
+const START_TIME = 30 * CYCLE + MOVE + 0.02
+/** Still frame for reduced motion: several machines mid-action. */
+const STILL_TIME = 30 * CYCLE + MOVE + 0.5
+/** Seconds the line takes to power up before it starts moving. */
+const INTRO_END = 2.4
+const FOV = 30
+const FRAME_INTERVAL = 1000 / 60
+
+const nextFrame = () =>
+  new Promise<void>((resolve) => {
+    if (typeof requestAnimationFrame === 'function')
+      requestAnimationFrame(() => resolve())
+    else setTimeout(resolve, 16)
+  })
+
+export class FactoryEngine {
+  private readonly renderer: WebGLRenderer
+  private readonly scene = new Scene()
+  private readonly camera = new PerspectiveCamera(FOV, 2, 0.5, 120)
+  /** The camera mirrored in the floor, for the reflection pass. */
+  private readonly mirror = new PerspectiveCamera()
+  private readonly target = new Vector3(1.5, 0.9, -0.3)
+  private readonly raycaster = new Raycaster()
+  private readonly hemi = new HemisphereLight()
+  private readonly key = new DirectionalLight()
+  private readonly rim = new DirectionalLight()
+  private readonly stationBoxes: Box3[] = []
+  private readonly displayBoxes: [Box3, Box3][] = []
+  private readonly scratch = new Vector3()
+  private readonly bufferSize = new Vector2()
+  private palette: FactoryPalette
+  private kit: FactoryKit | null = null
+  private world: FactoryWorld | null = null
+  private stations: StationLine | null = null
+  private products: ProductLine | null = null
+  private glows: GlowLayer | null = null
+  private shadows: ShadowLayer | null = null
+  private textures: Texture[] = []
+  private screenAtlas: Texture | null = null
+  private nameplateAtlas: Texture | null = null
+  private descriptionAtlas: Texture | null = null
+  private frameworkAtlas: Texture | null = null
+  /** Objects the floor should not mirror (things lying on it). */
+  private readonly unreflected: Object3D[] = []
+  private readonly environments = new Map<boolean, Texture>()
+  private frameState: FrameState | null = null
+  private copyArea: CopyArea | null = null
+  private readonly fits: DisplayFit[] = Array.from(
+    { length: STATION_COUNT },
+    () => ({ lift: 1, covers: false }),
+  )
+  private reflection: WebGLRenderTarget | null = null
+  private floor: Mesh | null = null
+  private shadowCatcher: Mesh | null = null
+
+  private width = 1
+  private height = 1
+  private quality = 1
+  private dpr = 1
+  private distance = 20
+  private active = false
+  private disposed = false
+  private ready = false
+  private rendered = false
+  private rafId = 0
+  private lastNow = 0
+  private lastRender = 0
+  private time = START_TIME
+  private introTime = 0
+  private slowWindows = 0
+  private fastWindows = 0
+  private sampleCount = 0
+  private readonly samples = new Float32Array(60)
+  private pointer = new Vector2(0, 0)
+  private pointerTarget = new Vector2(0, 0)
+  private readonly hoverPointer = new Vector2()
+  private pointerInside = false
+  private hovered = -1
+  private needsHoverTest = false
+  private mobile = false
+  private composition: FactoryComposition = 'band'
+  private framing: Framing = FRAMINGS.band
+  /** Shadow maps and the mirrored floor: only where there is GPU to spare. */
+  private readonly studio: boolean
+  private readonly anisotropy: number
+  private readonly pixelBudget: number
+
+  constructor(private readonly options: FactoryEngineOptions) {
+    this.renderer = new WebGLRenderer({
+      canvas: options.canvas,
+      antialias: true,
+      alpha: true,
+      stencil: false,
+      powerPreference: 'default',
+    })
+    this.renderer.setClearColor(0x000000, 0)
+    this.renderer.outputColorSpace = SRGBColorSpace
+    this.renderer.toneMapping = NeutralToneMapping
+    this.renderer.toneMappingExposure = 1
+    // Desktop-class GPUs (fine pointer, 4+ cores) get cast shadows and a polished floor.
+    this.studio =
+      typeof window !== 'undefined' &&
+      window.matchMedia('(pointer: fine)').matches &&
+      (navigator.hardwareConcurrency ?? 4) >= 4
+    this.renderer.shadowMap.enabled = this.studio
+    this.renderer.shadowMap.type = PCFShadowMap
+    // Native 2x on desktop-class GPUs; phones and low-core devices get a tighter budget.
+    this.pixelBudget = this.studio ? 7.4e6 : 2.2e6
+    // Screens and print sit at a steep angle; anisotropic filtering keeps them crisp.
+    this.anisotropy = Math.min(8, this.renderer.capabilities.getMaxAnisotropy())
+    this.palette = createFactoryPalette(
+      options.dark,
+      readPageBackground(options.dark),
+    )
+    options.canvas.addEventListener('webglcontextlost', this.handleContextLost)
+    if (options.reducedMotion) {
+      this.introTime = INTRO_END + 2
+      this.time = STILL_TIME
+    }
+  }
+
+  private handleContextLost = (event: Event) => {
+    event.preventDefault()
+    this.stop()
+    this.options.onError?.()
+  }
+
+  /** Builds the scene in small steps so no single task blocks input. */
+  async init() {
+    const palette = this.palette
+    const shadow = createShadowTexture(getStaticShadowShapes())
+    const blob = createBlobTexture()
+    const track = this.crisp(createTrackTexture(palette))
+    this.textures.push(shadow, blob)
+    await nextFrame()
+    if (this.disposed) return
+
+    const kit = createKit(palette, { shadow, blob, track })
+    this.kit = kit
+    const plates = this.createNameplates()
+    this.nameplateAtlas = this.crisp(plates.texture)
+    const descriptions = this.createDescriptions()
+    this.descriptionAtlas = this.crisp(descriptions.texture)
+    this.world = new FactoryWorld(
+      kit,
+      plates.texture,
+      descriptions.texture,
+      this.options.counterLabel,
+    )
+    this.floor = this.world.group.getObjectByName('floor') as Mesh
+    this.scene.add(this.world.group)
+    await nextFrame()
+    if (this.disposed) return
+
+    this.stations = new StationLine(kit)
+    this.scene.add(this.stations.group)
+    await nextFrame()
+    if (this.disposed) return
+
+    this.products = new ProductLine(kit)
+    const atlas = createScreenAtlas(this.atlasScale)
+    this.screenAtlas = this.crisp(atlas.texture)
+    this.products.setScreenAtlas(atlas.texture, atlas.cells)
+    this.scene.add(this.products.group)
+    this.glows = new GlowLayer(kit.glow)
+    this.shadows = new ShadowLayer(kit.blob)
+    this.scene.add(this.glows.points, this.shadows.mesh)
+    void loadFrameworkIcons().then((icons) => {
+      if (this.disposed || !this.world || !this.products) return
+      this.world.setFrameworkIcons(icons)
+      this.frameworkAtlas 
+```
+
 ### Core Architecture Module: `apps/console/src/components/pages/organizations/$orgId/apps/_components/AppsEmptyState.tsx`
 ```
 import { Check, FolderCheck, Package, ShieldCheck, Store } from 'lucide-react'
@@ -1747,201 +2066,6 @@ export function isSubscriptionFailedInvoiceWithError(
 
 ```
 
-### Core Architecture Module: `apps/console/src/components/pages/organizations/$orgId/domains/_components/DomainsEmptyState.tsx`
-```
-import { Check, Globe, Link2, ListTree, Server } from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from '@/components/ui/tooltip'
-import {
-  ProductEmptyStateCreateButton,
-  ProductEmptyStateDocsButton,
-  ProductEmptyStateHero,
-  ProductEmptyStateSteps,
-  ProductEmptyStateVisual,
-  type ProductEmptyStateStep,
-} from '@/components/global/shared/ProductEmptyState'
-import { useT } from '@/lib/i18n/translate'
-import { cn } from '@/lib/utils'
-
-const STEPS: ProductEmptyStateStep[] = [
-  {
-    icon: Server,
-    title: 'Bring or buy a domain',
-    description:
-      'Add a domain you already own, transfer it in, or buy a new one without leaving the console.',
-  },
-  {
-    icon: ListTree,
-    title: 'Manage DNS in one place',
-    description:
-      'Point your nameservers to Appwrite, then add records or apply presets for email and verification.',
-  },
-  {
-    icon: Link2,
-    title: 'Connect it everywhere',
-    description:
-      'Use the domain and its subdomains for sites, functions, and project APIs across the organization.',
-  },
-]
-
-const RECORDS = [
-  { type: 'A', name: '@', target: 'Sites' },
-  { type: 'CNAME', name: 'api', target: 'API' },
-  { type: 'CNAME', name: 'hooks', target: 'Functions' },
-  { type: 'MX', name: '@', target: 'mail' },
-] as const
-
-/** Decorative organization domain with its DNS zone. */
-function DomainsVisual() {
-  return (
-    <ProductEmptyStateVisual className="w-[360px] pb-6">
-      <div className="overflow-hidden rounded-xl border border-border bg-card text-start shadow-xl">
-        <div className="flex items-center gap-2 border-b border-border bg-muted/40 px-3 py-2">
-          <Globe className="h-3.5 w-3.5 text-muted-foreground" />
-          <span dir="ltr" className="font-mono text-[11px] text-foreground">
-            example.com
-          </span>
-          <span className="ms-auto flex h-4 w-4 items-center justify-center rounded-full bg-emerald-500/15 text-emerald-600 dark:text-emerald-400">
-            <Check className="h-2.5 w-2.5" />
-          </span>
-        </div>
-        <ul dir="ltr" className="divide-y divide-border">
-          {RECORDS.map((record) => (
-            <li
-              key={`${record.type}-${record.name}-${record.target}`}
-              className="grid grid-cols-[3.25rem_3rem_1fr] items-center gap-2 px-3 py-2 font-mono text-[10px]"
-            >
-              <span className="w-fit rounded bg-muted px-1 text-muted-foreground">
-                {record.type}
-              </span>
-              <span className="text-foreground">{record.name}</span>
-              <span
-                className={cn(
-                  'h-1.5 rounded-full',
-                  record.target === 'mail'
-                    ? 'w-16 bg-muted-foreground/20'
-                    : 'w-24 bg-[color-mix(in_oklch,var(--brand-cta)_45%,transparent)]',
-                )}
-              />
-            </li>
-          ))}
-        </ul>
-      </div>
-
-      <div className="absolute -start-48 top-14 w-44 rounded-lg border border-border bg-popover p-2.5 text-start shadow-lg">
-        <div className="flex items-center gap-1.5">
-          <Server className="h-3 w-3 text-muted-foreground" />
-          <span className="h-1.5 w-14 rounded-full bg-muted-foreground/25" />
-        </div>
-        <div dir="ltr" className="mt-2 space-y-1 font-mono text-[10px]">
-          <p className="text-foreground">ns1.appwrite.zone</p>
-          <p className="text-foreground">ns2.appwrite.zone</p>
-        </div>
-      </div>
-
-      <div className="absolute -end-24 -bottom-1 flex items-center gap-1.5 rounded-full border border-border bg-popover px-2.5 py-1.5 shadow-lg">
-        <span className="h-1.5 w-1.5 rounded-full bg-[var(--brand-cta)]" />
-        <span dir="ltr" className="font-mono text-[10px] text-foreground">
-          api.example.com
-        </span>
-      </div>
-    </ProductEmptyStateVisual>
-  )
-}
-
-function SecondaryAction({
-  label,
-  onClick,
-  disabledTooltip,
-}: {
-  label: string
-  onClick: () => void
-  disabledTooltip?: string
-}) {
-  const button = (
-    <Button
-      variant="outline"
-      className="h-9 text-[13px]"
-      onClick={onClick}
-      disabled={!!disabledTooltip}
-    >
-      {label}
-    </Button>
-  )
-  if (!disabledTooltip) return button
-  return (
-    <Tooltip>
-      <TooltipTrigger asChild>
-        <span tabIndex={0}>{button}</span>
-      </TooltipTrigger>
-      <TooltipContent className="max-w-xs text-[12px]">
-        {disabledTooltip}
-      </TooltipContent>
-    </Tooltip>
-  )
-}
-
-export function DomainsEmptyState({
-  onAdd,
-  onBuy,
-  onTransfer,
-  disabledTooltip,
-}: {
-  onAdd: () => void
-  /** Omitted where buying and transferring are unavailable. */
-  onBuy?: () => void
-  onTransfer?: () => void
-  /** Set when the plan's domain limit blocks every action. */
-  disabledTooltip?: string
-}) {
-  const t = useT()
-  return (
-    <div className="mx-auto w-full max-w-4xl py-6 sm:py-10">
-      <ProductEmptyStateHero
-        visual={<DomainsVisual />}
-        icon={Globe}
-        title={t('Your domains, managed by Appwrite')}
-        description={t(
-          'Register, transfer, and manage domains for your whole organization. Configure DNS once and connect it to your sites, functions, and APIs.',
-        )}
-        actions={
-          <>
-            <ProductEmptyStateCreateButton
-              onClick={onAdd}
-              disabled={!!disabledTooltip}
-              disabledTooltip={disabledTooltip}
-            >
-              {t('Add domain')}
-            </ProductEmptyStateCreateButton>
-            {onBuy ? (
-              <SecondaryAction
-                label={t('Buy domain')}
-                onClick={onBuy}
-                disabledTooltip={disabledTooltip}
-              />
-            ) : null}
-            {onTransfer ? (
-              <SecondaryAction
-                label={t('Transfer in')}
-                onClick={onTransfer}
-                disabledTooltip={disabledTooltip}
-              />
-            ) : null}
-            <ProductEmptyStateDocsButton path="/docs/products/domains" />
-          </>
-        }
-      />
-      <ProductEmptyStateSteps steps={STEPS} />
-    </div>
-  )
-}
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
@@ -1969,296 +2093,473 @@ export function DomainsEmptyState({
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8e1e6556` (2026-11-17)
-**Commit Message**: Merge pull request #15698 from appwrite/fix-console-read-quota-label
+### Incident Patch 1: `40012595` (2026-11-18)
+**Commit Message**: test(security): add the Railway endpoint to the baseline
 
-fix(console): show the 1.75M read quota instead of 1.8M
-
-**File**: `apps/console/src/components/pages/projects/$projectId/databases/_components/CreateDatabaseSummary.tsx` (modified, +1/-1)
+**File**: `tests/e2e/Security/baseline.json` (modified, +1/-0)
 ```diff
-@@ -97,7 +97,7 @@ function formatIncludedOpsValue(
-   t: (text: string) => string,
- ): string {
-   if (value === 'unlimited') return t('Unlimited')
--  return `${formatCompactCount(value)} ${t('included')}`
-+  return `${formatCompactCount(value, { decimals: 2 })} ${t('included')}`
- }
- 
- function ServerlessPlanOps({
-```
-
-**File**: `apps/console/src/components/pages/projects/$projectId/databases/_components/ServerlessSpecPrice.tsx` (modified, +1/-1)
-```diff
-@@ -24,7 +24,7 @@ function formatOpsCount(
-   t: (text: string) => string,
- ): string {
-   if (value === 'unlimited') return t('Unlimited')
--  return formatCompactCount(value)
-+  return formatCompactCount(value, { decimals: 2 })
- }
- 
- function formatIncludedOpsLabel(
-```
-
-**File**: `apps/console/src/lib/billing/usage-plan-overages.ts` (modified, +1/-1)
-```diff
-@@ -169,7 +169,7 @@ export function formatUsagePlanOverageValue(
-     case 'gbhours':
-       return formatGbHoursValue(value)
-     default:
--      return formatCompactCount(value)
-+      return formatCompactCount(value, { decimals: 2 })
-   }
- }
- 
-```
-
-**File**: `apps/console/src/lib/usage/format-metric.ts` (modified, +11/-6)
-```diff
-@@ -107,14 +107,19 @@ export function formatCompactBytesAxis(bytes: number): string {
- 
- export interface FormatCompactCountOptions {
-   compact?: boolean
-+  /**
-+   * Most decimals kept below 100 of a unit; trailing zeros are dropped. Default 1.
-+   * Plan quotas pass 2 so 1,750,000 reads read `1.75M`, not `1.8M`.
-+   */
-+  decimals?: number
- }
- 
- /** Compact count formatter for requests and similar metrics (`1.2M`, `12.5K`). */
- export function formatCompactCount(
-   num: number,
-   options: FormatCompactCountOptions = {},
- ): string {
--  const { compact = true } = options
-+  const { compact = true, decimals = 1 } = options
- 
-   if (!Number.isFinite(num) || num <= 0) {
-     return '0'
-@@ -125,7 +130,7 @@ export function formatCompactCount(
-     const amount =
-       scaled >= 100
-         ? Math.round(scaled).toString()
--        : trimTrailingZeros(scaled.toFixed(1))
-+        : trimTrailingZeros(scaled.toFixed(decimals))
-     return compact ? `${amount}B` : `${amount} B`
-   }
- 
-@@ -134,7 +139,7 @@ export function formatCompactCount(
-     const amount =
-       scaled >= 100
-         ? Math.round(scaled).toString()
--        : trimTrailingZeros(scaled.toFixed(1))
-+        : trimTrailingZeros(scaled.toFixed(decimals))
-     return compact ? `${amount}M` : `${amount} M`
-   }
- 
-@@ -143,14 +148,14 @@ export function formatCompactCount(
-     const amount =
-       scaled >= 100
-         ? Math.round(scaled).toString()
--        : trimTrailingZeros(scaled.toFixed(1))
-+        : trimTrailingZeros(scaled.toFixed(decimals))
-     return compact ? `${amount}K` : `${amount} K`
-   }
- 
-   if (num >= 1_000) {
-     return compact
--      ? `${trimTrailingZeros((num / 1_000).toFixed(1))}K`
--      : `${trimTrailingZeros((num / 1_000).toFixed(1))} K`
-+      ? `${trimTrailingZeros((num / 1_000).toFixed(decimals))}K`
-+      : `${trimTrailingZeros((num / 1_000).toFixed(decimals))} K`
-   }
- 
-   return Math.round(num).toLocaleString()
-```
-
-**File**: `apps/console/tests/unit/format-compact-count.test.ts` (added, +18/-0)
-```diff
-@@ -0,0 +1,18 @@
-+import { describe, expect, test } from 'bun:test'
-+import { formatCompactCount } from '@/lib/usage/format-metric'
-+
-+describe('formatCompactCount', () => {
-+  test('keeps one decimal by default', () => {
-+    expect(formatCompactCount(1_750_000)).toBe('1.8M')
-+    expect(formatCompactCount(12_500)).toBe('12.5K')
-+    expect(formatCompactCount(2_000_000)).toBe('2M')
-+  })
-+
-+  test('keeps a second decimal only when it is not zero', () => {
-+    expect(formatCompactCount(1_750_000, { decimals: 2 })).toBe('1.75M')
-+    expect(formatCompactCount(1_500_000, { decimals: 2 })).toBe('1.5M')
-+    expect(formatCompactCount(2_000_000, { decimals: 2 })).toBe('2M')
-+    expect(formatCompactCount(500_000, { decimals: 2 })).toBe('500K')
-+    expect(formatCompactCount(1_250, { decimals: 2 })).toBe('1.25K')
-+  })
-+})
+@@ -457,6 +457,7 @@
+         "PATCH /v1/project/oauth2/paypal",
+         "PATCH /v1/project/oauth2/paypalSandbox",
+         "PATCH /v1/project/oauth2/podio",
++        "PATCH /v1/project/oauth2/railway",
+         "PATCH /v1/project/oauth2/reddit",
+         "PATCH /v1/project/oauth2/resend",
+         "PATCH /v1/project/oauth2/roblox",
 ```
 
 ---
 
-### Incident Patch 2: `48e7f840` (2026-11-17)
-**Commit Message**: fix(console): show the 1.75M read quota instead of 1.8M
+### Incident Patch 2: `e59f7ca0` (2026-11-18)
+**Commit Message**: Merge pull request #15274 from appwrite/fix/nats-objectstore-chunk-leak
 
-formatCompactCount rounds to one decimal, so the Pro and Scale serverless
-read quota (1750 * 1000) showed as 1.8M in the Create database wizard, the
-database summary card and the downgrade usage warning. Quota labels now keep
-a second decimal when it isn't zero. Other callers keep one decimal.
+fix(nats): purge object-store chunks when a put fails mid-write (CLOUD-3RDX)
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `apps/console/src/components/pages/projects/$projectId/databases/_components/CreateDatabaseSummary.tsx` (modified, +1/-1)
+**File**: `packages/nats/src/ObjectStore/ObjectStore.php` (modified, +32/-8)
 ```diff
-@@ -97,7 +97,7 @@ function formatIncludedOpsValue(
-   t: (text: string) => string,
- ): string {
-   if (value === 'unlimited') return t('Unlimited')
--  return `${formatCompactCount(value)} ${t('included')}`
-+  return `${formatCompactCount(value, { decimals: 2 })} ${t('included')}`
- }
+@@ -9,6 +9,7 @@
+ use Utopia\NATS\Exception\ObjectStoreException;
+ use Utopia\NATS\Headers;
+ use Utopia\NATS\JetStream\AckPolicy;
++use Utopia\NATS\JetStream\ApiError;
+ use Utopia\NATS\JetStream\ConsumerConfig;
+ use Utopia\NATS\JetStream\DeliverPolicy;
+ use Utopia\NATS\JetStream\JetStream;
+@@ -59,9 +60,23 @@ private function writeVersion(string $name, string $data, ?ObjectMeta $previous,
  
- function ServerlessPlanOps({
-```
-
-**File**: `apps/console/src/components/pages/projects/$projectId/databases/_components/ServerlessSpecPrice.tsx` (modified, +1/-1)
-```diff
-@@ -24,7 +24,7 @@ function formatOpsCount(
-   t: (text: string) => string,
- ): string {
-   if (value === 'unlimited') return t('Unlimited')
--  return formatCompactCount(value)
-+  return formatCompactCount(value, { decimals: 2 })
- }
+         $chunks = 0;
+         $length = \strlen($data);
+-        for ($offset = 0; $offset < $length; $offset += self::CHUNK_SIZE) {
+-            $this->js->publish($chunkSubject, substr($data, $offset, self::CHUNK_SIZE));
+-            $chunks++;
++        try {
++            for ($offset = 0; $offset < $length; $offset += self::CHUNK_SIZE) {
++                $this->js->publish($chunkSubject, substr($data, $offset, self::CHUNK_SIZE));
++                $chunks++;
++            }
++        } catch (\Throwable $e) {
++            // A chunk write that fails part way through leaves the chunks before it
++            // in the stream under a NUID no meta record will ever name, so neither
++            // delete() nor a later put() of this object can reclaim them. On a
++            // bucket limited by max_bytes (discard=New) those orphans hold the byte
++            // budget forever and every later put is rejected the same way, so the
++            // failure has to be compensated here. No meta record names this NUID yet,
++            // so purging is safe even when the failure is an ambiguous one -- unlike
++            // at the meta publish below, where an ambiguous failure may have committed
++            // a record that now names these chunks.
++            $this->purgeChunks($nuid);
++            throw $e;
+         }
  
- function formatIncludedOpsLabel(
-```
-
-**File**: `apps/console/src/lib/billing/usage-plan-overages.ts` (modified, +1/-1)
-```diff
-@@ -169,7 +169,7 @@ export function formatUsagePlanOverageValue(
-     case 'gbhours':
-       return formatGbHoursValue(value)
-     default:
--      return formatCompactCount(value)
-+      return formatCompactCount(value, { decimals: 2 })
-   }
- }
+         $meta = new ObjectMeta(
+@@ -90,15 +105,24 @@ private function writeVersion(string $name, string $data, ?ObjectMeta $previous,
+                 expectedLastSubjectSeq: $expectedSeq,
+             );
+         } catch (JetStreamException $e) {
+-            // Purge only when the server actually rejected the CAS publish. On a
+-            // transport failure the meta publish is ambiguous -- it may well have
+-            // landed -- and purging here would delete the chunks this put just
+-            // wrote successfully.
+-            if ($e->apiError?->errCode !== JetStream::ERR_WRONG_LAST_SEQUENCE) {
++            // An exception carrying an ApiError is the server's decoded answer: it
++            // evaluated the publish and refused to store it, so the meta record
++            // definitely does not exist and this put's chunks are already orphaned.
++            // Reclaim them whatever the reason for the refusal -- a CAS conflict, or
++            // a bucket at max_bytes, which would otherwise keep the bytes of every
++            // failed put forever and reject every later one for the same reason.
++            // Without an ApiError the publish is ambiguous (it may well have landed),
++            // and purging would delete the chunks of a meta record that now names them.
++            if (!$e->apiError instanceof ApiError) {
+                 throw $e;
+             }
  
-```
-
-**File**: `apps/console/src/lib/usage/format-metric.ts` (modified, +11/-6)
-```diff
-@@ -107,14 +107,19 @@ export function formatCompactBytesAxis(bytes: number): string {
- 
- export interface FormatCompactCountOptions {
-   compact?: boolean
-+  /**
-+   * Most decimals kept below 100 of a unit; trailing zeros are dropped. Default 1.
-+   * Plan quotas pass 2 so 1,750,000 reads read `1.75M`, not `1.8M`.
-+   */
-+  decimals?: number
- }
- 
- /** Compact count formatter for requests and similar metrics (`1.2M`, `12.5K`). */
- export function formatCompactCount(
-   num: number,
-   options: FormatCompactCountOptions = {},
- ): string {
--  const { compact = true } = options
-+  const { compact = true, decimals = 1 } = options
- 
-   if (!Number.isFinite(num) || num <= 0) {
-     return '0'
-@@ -125,7 +130,7 @@ export function formatCompactCount(
-     const amount =
-       scaled >= 100
-         ? Math.round(scaled).toString()
--        : trimTrailingZeros(scaled.toFixed(1))
-+        : trimTrailingZeros(scaled.toFixed(decimals))
-     return compact ? `${amount}B` : `${amount} B`
-   }
- 
-@@ -134,7 +139,7 @@ export function formatCompactCount(
-     const amount =
-       scaled >= 100
-         ? Math.round(scaled).toString()
--        : trimTrailingZeros(scaled.toFixed(1))
-+        : trimTrailingZeros(scaled.toFixed(decimals))
-     return compact ? `${amount}M` : `${amount} M`
-   }
- 
-@@ -143,14 +148,14 @@ export function formatCompactCount(
-     const amount =
-       scaled >= 100
-         ? Math.round(scaled).toString()
--        : trimTrailingZeros(scaled.toFixed(1))
-+        : trimTrailingZeros(scaled.toFixed(decimals))
-     return compact ? `${amount}K` : `${amount} K`
-   }
- 
-   if (num >= 1_000) {
-     return compact
--      ? `${trimTrailingZeros((num / 1_000).toFixed(1))}K`
--      : `${trimTrailingZeros((num / 1_000).toFixed(1))} K`
-+      ? `${trimTrailingZeros((num / 1_000).toFixed(decimals))}K`
-+      : `${trimTrailingZeros((num / 1_000).toFixed(decimals))} K`
-   }
- 
-   return Math.round(num).toLocaleString()
-```
-
-**File**: `apps/console/tests/unit/format-compact-count.test.ts` (added, +18/-0)
-```diff
-@@ -0,0 +1,18 @@
-+import { describe, expect, test } from 'bun:test'
-+import { formatCompactCount } from '@/lib/usage/format-metric'
+             $this->purgeChunks($nuid);
 +
-+describe('formatCompactCount', () => {
-+  test('keeps one decimal by default', () => {
-+    expect(formatCompactCount(1_750_000)).toBe('1.8M')
-+    expect(formatCompactCount(12_500)).toBe('12.5K')
-+    expect(formatCompactCount(2_000_000)).toBe('2M')
-+  })
++            if ($e->apiError->errCode !== JetStream::ERR_WRONG_LAST_SEQUENCE) {
++                throw $e;
++            }
 +
-+  test('keeps a second decimal only when it is not zero', () => {
-+    expect(formatCompactCount(1_750_000, { decimals: 2 })).toBe('1.75M')
-+    expect(formatCompactCount(1_500_000, { decimals: 2 })).toBe('1.5M')
-+    expect(formatCompactCount(2_000_000, { decimals: 2 })).toBe('2M')
-+    expect(formatCompactCount(500_000, { decimals: 2 })).toBe('500K')
-+    expect(formatCompactCount(1_250, { decimals: 2 })).toBe('1.25K')
-+  })
-+})
+             throw new ObjectStoreException("conflicting concurrent write for object: {$name}", $e->getCode(), previous: $e);
+         }
+ 
+```
+
+**File**: `packages/nats/tests/E2E/ObjectStoreExtraTest.php` (modified, +38/-0)
+```diff
+@@ -6,6 +6,7 @@
+ 
+ use PHPUnit\Framework\TestCase;
+ use Utopia\NATS\Connection;
++use Utopia\NATS\Exception\JetStreamException;
+ use Utopia\NATS\Exception\ObjectStoreException;
+ use Utopia\NATS\JetStream\JetStream;
+ use Utopia\NATS\ObjectStore\ObjectMeta;
+@@ -40,6 +41,43 @@ protected function tearDown(): void
+         $this->conn->close();
+     }
+ 
++    public function testPutRejectedByTheBucketLimitStrandsNoChunks(): void
++    {
++        $bucket = 'objlimit_' . uniqid();
++        $store = ObjectStore::createOrUpdate($this->conn, $this->js, new ObjectStoreConfig(
++            bucket: $bucket,
++            maxBytes: 200 * 1024,
++        ));
++
++        try {
++            // Objects are written in 128 KiB chunks: the first fits, the second
++            // would push the bucket past max_bytes and an object-store stream
++            // discards New, so the server rejects that publish instead of
++            // evicting anything.
++            try {
++                $store->put('big.bin', str_repeat('a', 384 * 1024));
++                $this->fail('Expected the bucket limit to reject the put');
++            } catch (JetStreamException $e) {
++                $this->assertStringContainsString('maximum bytes exceeded', $e->getMessage());
++            }
++
++            // The chunk that did land carries a NUID no meta record names, so if
++            // the failed put leaves it behind nothing can ever reclaim it: the
++            // bucket stays full and every later put fails the same way.
++            $this->assertSame(0, $this->js->getStreamInfo("OBJ_{$bucket}")->state->messages);
++
++            $data = str_repeat('b', 128 * 1024);
++            $store->put('small.bin', $data);
++            $this->assertSame($data, $store->get('small.bin'));
++        } finally {
++            try {
++                $this->js->deleteStream("OBJ_{$bucket}");
++            } catch (\Throwable) {
++                // ignore
++            }
++        }
++    }
++
+     public function testWatchFiresOnPutAndDelete(): void
+     {
+         /** @var list<ObjectMeta> $events */
+```
+
+**File**: `packages/nats/tests/WriteFailureSemanticsTest.php` (modified, +209/-6)
+```diff
+@@ -7,6 +7,7 @@
+ use PHPUnit\Framework\TestCase;
+ use Utopia\NATS\Connection;
+ use Utopia\NATS\ConnectionOptions;
++use Utopia\NATS\Exception\JetStreamException;
+ use Utopia\NATS\Exception\KeyValueException;
+ use Utopia\NATS\Exception\ObjectStoreException;
+ use Utopia\NATS\Exception\TimeoutException;
+@@ -23,20 +24,31 @@
+  */
+ final class WriteFailureSemanticsTest extends TestCase
+ {
+-    /**
+-     * A connection whose requests are never answered: js->publish() waits for a
+-     * PubAck that never arrives and raises TimeoutException.
+-     */
+-    private function unresponsiveConnection(FakeTransport $fake): Connection
++    /** A stored message, as the server acknowledges one. */
++    private const PUB_ACK = '{"stream":"OBJ_BUCKET","seq":1}';
++
++    /** The server refusing to store a message because the stream is at max_bytes. */
++    private const MAX_BYTES = '{"error":{"code":400,"err_code":10077,"description":"maximum bytes exceeded"}}';
++
++    private function connection(FakeTransport $fake, float $requestTimeout = 1.0): Connection
+     {
+         return Connection::connect(new ConnectionOptions(
+             servers: 'nats://127.0.0.1:4222',
+             allowReconnect: false,
+-            requestTimeout: 0.02,
++            requestTimeout: $requestTimeout,
+             transportFactory: fn (string $scheme): FakeTransport => $fake,
+         ));
+     }
+ 
++    /**
++     * A connection whose requests are never answered: js->publish() waits for a
++     * PubAck that never arrives and raises TimeoutException.
++     */
++    private function unresponsiveConnection(FakeTransport $fake): Connection
++    {
++        return $this->connection($fake, 0.02);
++    }
++
+     public function testKeyValueCreatePropagatesATransportFailure(): void
+     {
+         $conn = $this->unresponsiveConnection(new FakeTransport());
+@@ -89,4 +101,195 @@ public function testObjectStorePutPropagatesATransportFailure(): void
+             $this->assertStringContainsString('Request timed out', $e->getMessage());
+         }
+     }
++
++    /**
++     * A bucket that has hit max_bytes rejects a publish with "maximum bytes
++     * exceeded" instead of evicting, because the object-store stream is created
++     * with discard=New. When that rejection lands on chunk N of a multi-chunk
++     * put, chunks 1..N-1 are already durably stored under a NUID no meta record
++     * will ever reference: nothing in the library can reclaim them, so their
++     * bytes occupy the bucket's limit forever and every later put fails the same
++     * way. The partially written version has to be purged before the failure is
++     * handed back to the caller.
++     */
++    public function testObjectStorePutPurgesItsChunksWhenTheBucketIsFull(): void
++    {
++        $chunks = [];
++        $metas = [];
++        $purges = [];
++        // The bucket's byte budget runs out on the second chunk.
++        $fake = $this->scriptedBucket(
++            static fn (int $chunk): string => $chunk === 1 ? self::PUB_ACK : self::MAX_BYTES,
++            static fn (): string => self::PUB_ACK,
++            $chunks,
++            $metas,
++            $purges,
++        );
++        $conn = $this->connection($fake);
++        $store = new ObjectStore($conn, $conn->jetStream(), 'BUCKET');
++
++        try {
++            // Two chunks: 128 KiB is the chunk size, so this spills over.
++            $store->put('object', str_repeat('a', 128 * 1024 + 1));
++            $this->fail('Expected the full bucket to reject the chunk publish');
++        } catch (JetStreamException $e) {
++            $this->assertSame('maximum bytes exceeded', $e->getMessage());
++        } finally {
++            $conn->close();
++        }
++
++        $this->assertCount(2, $chunks, 'Both chunks have to be attempted');
++        $this->assertSame([], $metas, 'A failed chunk write must not be committed');
++        $this->assertCount(1, $purges, 'The chunks this put wrote have to be reclaimed');
++        $this->assertSame(['filter' => $chunks[0]], json_decode($purges[0], true));
++    }
++
++    /**
++     * The same rejection can land on the meta publish instead: the chunks fit, the
++     * record naming them does not. The server decoded and refused that publish, so
++     * no meta record exists and the chunks are orphaned exactly as above -- only a
++     * CAS conflict used to be compensated, which left a full bucket leaking the
++     * whole of every failed put.
++     */
++    public function testObjectStorePutPurgesItsChunksWhenTheBucketRefusesTheMetaRecord(): void
++    {
++        $chunks = [];
++        $metas = [];
++        $purges = [];
++        $fake = $this->scriptedBucket(
++            static fn (int $chunk): string => self::PUB_ACK,
++            static fn (): string => self::MAX_BYTES,
++            $chunks,
++            $metas,
++            $purges,
++        );
++        $conn = $this->connection($fake);
++        $store = new ObjectStore($conn, $conn->jetStream(), 'BUCKET');
++
++        try {
++            $store->put('object', 'payload')
 ```
 
 ---
 
-### Incident Patch 3: `2465894a` (2026-11-17)
-**Commit Message**: fix(vcs): skip the authorization check when statuses are off
+### Incident Patch 3: `4c608520` (2026-11-18)
+**Commit Message**: Merge pull request #15509 from appwrite/fix/console-project-default-platform
 
-**File**: `src/Appwrite/Platform/Modules/VCS/Http/GitHub/Deployment.php` (modified, +4/-0)
+fix(console): seed new projects with a localhost web app, not a wildcard (appwrite:appwrite:alert#4782)
+
+**File**: `apps/console/e2e/console.mocked.wildcard-platform.spec.ts` (modified, +13/-11)
 ```diff
-@@ -381,6 +381,10 @@ protected function createGitDeployments(
-                 }
+@@ -3,9 +3,11 @@ import type { Models } from '@appwrite.io/console'
+ import { expect, test } from './fixtures'
  
-                 if (!$isAuthorized) {
-+                    if ($resource->getAttribute('providerSilentMode', false) === true || $resource->getAttribute('providerStatuses', true) === false) {
-+                        continue;
-+                    }
+ /**
+- * New projects start with a web app for any hostname (`*`), and the app lists
+- * flag it with the recommended next step. The Appwrite API is mocked at the
+- * network layer and the real console pages are asserted.
++ * New projects start with a web app for `localhost` only -- never for any
++ * hostname (`*`), which would make the project's client API reachable with
++ * credentials from every website. A `*` app added by hand is still flagged in
++ * the app lists with the recommended next step. The Appwrite API is mocked at
++ * the network layer and the real console pages are asserted.
+  */
+ 
+ const NOW = '2026-11-11T09:30:00.000+00:00'
+@@ -227,7 +229,7 @@ async function useSelfHosted(page: Page) {
+ }
+ 
+ test.describe('wildcard web platform (mocked API)', () => {
+-  test('a new project starts with a web app for any hostname', async ({
++  test('a new project starts with a web app for localhost only', async ({
+     page,
+   }) => {
+     await useSelfHosted(page)
+@@ -246,18 +248,18 @@ test.describe('wildcard web platform (mocked API)', () => {
+     const platform = calls.platformCreates[0]
+     expect(platform.headers()['x-appwrite-project']).toBe(created.projectId)
+     expect(platform.postDataJSON()).toMatchObject({
+-      name: 'Web app',
+-      hostname: '*',
++      name: 'Local development',
++      hostname: 'localhost',
+     })
+ 
+-    // The new project's overview lists it with the warning.
++    // The new project's overview lists it, with nothing to warn about.
+     await expect(page).toHaveURL(new RegExp(`/projects/${created.projectId}`), {
+       timeout: 60_000,
+     })
+-    const warning = page.getByTestId('wildcard-platform-warning')
+-    await expect(warning).toHaveCount(1, { timeout: 60_000 })
+-    await warning.hover()
+-    await expect(page.getByRole('tooltip')).toContainText(WARNING)
++    await expect(page.getByText('Local development').first()).toBeVisible({
++      timeout: 60_000,
++    })
++    await expect(page.getByTestId('wildcard-platform-warning')).toHaveCount(0)
+   })
+ 
+   test('the apps list flags only the wildcard app', async ({ page }) => {
+```
+
+**File**: `apps/console/src/lib/appwrite/console-projects.ts` (modified, +6/-5)
+```diff
+@@ -2,7 +2,7 @@ import { ID } from '@appwrite.io/console'
+ import type { Models } from '@appwrite.io/console'
+ import type { Region } from '@appwrite.io/console'
+ import { sdk } from '@/lib/appwrite/sdk'
+-import { WILDCARD_HOSTNAME } from '@/lib/utils/platform'
++import { LOOPBACK_HOSTNAME } from '@/lib/utils/platform'
+ 
+ type ListConsoleProjectsParams = {
+   /** Organization / team id. Required for `/organization/projects`. */
+@@ -78,8 +78,9 @@ export function listConsoleProjects(
+  * Create a project via the org-scoped console Organization SDK
+  * (`POST /organization/projects` with `X-Appwrite-Organization`).
+  * The org header assigns the project to `teamId`; no separate team update.
+- * The project starts with a web platform for any hostname, so a first web app
+- * connects without a CORS error; the apps list flags it until it is narrowed.
++ * The project starts with a web platform for LOOPBACK_HOSTNAME, so a first web
++ * app connects from local development without a CORS error; every other origin
++ * stays rejected until the developer adds its hostname on the apps page.
+  */
+ export async function createConsoleProject(params: {
+   projectId: string
+@@ -100,8 +101,8 @@ export async function createConsoleProject(params: {
+       .forProject(project.$id, project.region)
+       .project.createWebPlatform({
+         platformId: ID.unique(),
+-        name: 'Web app',
+-        hostname: WILDCARD_HOSTNAME,
++        name: 'Local development',
++        hostname: LOOPBACK_HOSTNAME,
+       })
+   } catch (error) {
+     // The project exists either way; its apps page still offers to add one.
+```
+
+**File**: `apps/console/src/lib/utils/platform.ts` (modified, +12/-0)
+```diff
+@@ -22,6 +22,18 @@ export function getPlatformIdentifier(
+ /** Web platform hostname that accepts requests from every website. */
+ export const WILDCARD_HOSTNAME = '*'
+ 
++/**
++ * Hostname seeded on a new project's first web app.
++ *
++ * Platform hostnames are the API's origin boundary: it folds them into the
++ * allowed-hostname list behind CORS with credentials and the origin check, and
++ * a `*` entry matches every host. Session cookies are SameSite=None, so a
++ * seeded WILDCARD_HOSTNAME would let any website a signed-in user visits call
++ * the project's client API with their session. Loopback keeps local
++ * development working without handing that out.
++ */
++export const LOOPBACK_HOSTNAME = 'localhost'
 +
-                     $message = 'Authorization required for external contributor.';
- 
-                     $providerRepositoryId = $repository->getAttribute('providerRepositoryId');
+ export function isWildcardHostname(hostname: string): boolean {
+   return hostname.trim() === WILDCARD_HOSTNAME
+ }
+```
+
+**File**: `apps/console/tests/unit/console-project-default-platform.test.ts` (added, +67/-0)
+```diff
+@@ -0,0 +1,67 @@
++import { afterAll, describe, expect, mock, test } from 'bun:test'
++import * as actualSdk from '@/lib/appwrite/sdk'
++import { createConsoleProject } from '@/lib/appwrite/console-projects'
++import { isWildcardHostname } from '@/lib/utils/platform'
++
++/**
++ * The seeded web app is the project's origin boundary: the API folds platform
++ * hostnames into the allowed-hostname list it uses for CORS with credentials
++ * and for the origin check. A seeded `*` would let any website call the new
++ * project's client API with a signed-in user's session cookie.
++ */
++describe('createConsoleProject', () => {
++  // Copy the real module now: the namespace import is live and points at the mock once it is set.
++  const realSdk = { ...actualSdk }
++
++  afterAll(() => {
++    mock.module('@/lib/appwrite/sdk', () => realSdk)
++  })
++
++  function mockSdk() {
++    const webPlatforms: Array<{ name: string; hostname: string }> = []
++
++    mock.module('@/lib/appwrite/sdk', () => ({
++      ...actualSdk,
++      sdk: {
++        forConsole: {
++          organization: () => ({
++            createProject: async ({
++              projectId,
++              name,
++            }: {
++              projectId: string
++              name: string
++            }) => ({ $id: projectId, name, region: 'default' }),
++          }),
++        },
++        forProject: () => ({
++          project: {
++            createWebPlatform: async (platform: {
++              name: string
++              hostname: string
++            }) => {
++              webPlatforms.push(platform)
++              return platform
++            },
++          },
++        }),
++      },
++    }))
++
++    return webPlatforms
++  }
++
++  test('seeds a web app for local development, never for any hostname', async () => {
++    const webPlatforms = mockSdk()
++
++    await createConsoleProject({
++      projectId: 'proj0000000000000000001',
++      name: 'Launch',
++      teamId: 'org00000000000000000001',
++    })
++
++    expect(webPlatforms).toHaveLength(1)
++    expect(isWildcardHostname(webPlatforms[0].hostname)).toBe(false)
++    expect(webPlatforms[0].hostname).toBe('localhost')
++  })
++})
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #15698** (2026-11-17): fix(console): show the 1.75M read quota instead of 1.8M (@eldadfux)
-- **PR #15696** (2026-11-17): docs(blog): announce encryption for files of every size (@atharvadeosthale)
-- **PR #15695** (2026-11-17): fix(console): wait a minute between verification emails (@jaysomani)
-- **PR #15694** (2026-11-17): fix(videos): bind jobs to the source file's internal IDs (@ChiragAgg5k)
-- **PR #15693** (2026-11-17): fix(console): reconcile billing project breakdown with org-level credits (@lohanidamodar)
-- **PR #15692** (2026-11-17): fix(user-agent): stop classifying native Android clients as tablets (@lohanidamodar)
+- **PR #15771** (2026-11-18): feat(reviews): name the host of the status images in review jobs (@TorstenDittmann)
+- **PR #15767** (2026-11-18): feat(console): add the Railway OAuth2 provider (@HarshMN2345)
+- **PR #15766** (2026-11-18): chore(console): update Harsh Mahajan's author role (@HarshMN2345)
+- **PR #15765** (2026-11-18): feat(auth): add Railway OAuth2 provider (@HarshMN2345)
+- **PR #15763** (2026-11-18): fix(videos): persist rendition path before chunk upload (@shimonewman)
+- **PR #15761** (2026-11-18): fix(realtime): return a query error for a select other than select("*") (@ArnabChatterjee20k)
 
 ---
 
@@ -2278,28 +2579,28 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Empirical Invariant Guard in CreateDatabaseSummary.tsx
+## X. test(security): add the Railway endpoint to the baseline
 
 **RULE**:
-When implementing operations in `apps/console/src/components/pages/projects/$projectId/databases/_components/CreateDatabaseSummary.tsx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in appwrite/appwrite. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `tests/e2e/Security/baseline.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in appwrite/appwrite. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8e1e6556`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `40012595`: test(security): add the Railway endpoint to the baseline. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/console/src/components/pages/projects/$projectId/databases/_components/CreateDatabaseSummary.tsx`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `tests/e2e/Security/baseline.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-  return `${formatCompactCount(value, { decimals: 2 })} ${t('included')}`
+        "PATCH /v1/project/oauth2/railway",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Induced defect failure mode:
-  return `${formatCompactCount(value)} ${t('included')}`
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8e1e6556` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `40012595` are properly handled with clean fallback behavior.

@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-18T10:08:58.600Z",
-  "total_verified_learnings": 8996,
+  "last_updated": "2026-11-18T10:22:57.606Z",
+  "total_verified_learnings": 8997,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 21124,
+  "total_items": 21146,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113749,10 +113749,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nolabs-ai-nono-architecture-intelligence-nolabs-ai-nono-core-invariants.md",
       "title": "Architecture Intelligence: nolabs-ai/nono Core Invariants",
       "repository": "nolabs-ai/nono",
-      "source_version": "0f1aceae",
-      "content_hash": "3604aa05faaa17ee780ee4b6c4fb0a419b133a60d838aa1663a831257a41bb22",
+      "source_version": "9ae5c5d3",
+      "content_hash": "0eecc2cbd07bf0daf0e388ae79e7623292a8dbde9b9058206bb1d20c062b6ba7",
       "domain_letter": "G",
-      "persisted_at": "2026-11-18T00:59:27.846Z"
+      "persisted_at": "2026-11-18T10:18:52.662Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-nolabs-ai-nono": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-nolabs-ai-nono",
@@ -113761,10 +113761,10 @@
       "relative_path": "12_DECISIONS/ADR-nolabs-ai-nono-adr-subsystem-boundary-modular-decoupling-in-nolabs-ai-nono.md",
       "title": "ADR: Subsystem Boundary & Modular Decoupling in nolabs-ai/nono",
       "repository": "nolabs-ai/nono",
-      "source_version": "0f1aceae",
-      "content_hash": "ef022e3691e5752cf1badd18ce71641b5cb51751549f3b1aa0b25efe3531f98b",
+      "source_version": "9ae5c5d3",
+      "content_hash": "2f9995bdebd9f60fed2df23b48973915ac2df87e8eac837c1aa3426c53e43cc5",
       "domain_letter": "G",
-      "persisted_at": "2026-11-18T00:59:27.984Z"
+      "persisted_at": "2026-11-18T10:18:52.790Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nolabs-ai-nono": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nolabs-ai-nono",
@@ -113773,10 +113773,10 @@
       "relative_path": "08_VERIFICATION/nolabs-ai-nono-verification-protocol-empirical-defect-shield-for-nolabs-ai-nono.md",
       "title": "Verification Protocol: Empirical Defect Shield for nolabs-ai/nono",
       "repository": "nolabs-ai/nono",
-      "source_version": "0f1aceae",
-      "content_hash": "0760647558a81fcab944b07b07dbe896d6e12c3b0bc817339f9447de29e149f9",
+      "source_version": "9ae5c5d3",
+      "content_hash": "08eb7e6def73d4e0473ca3cd3fc739a5ecee0a6fc7663c85482060d5cee6bb35",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T00:59:28.106Z"
+      "persisted_at": "2026-11-18T10:18:52.896Z"
     },
     "candidate_directive-merge-pull-request-6734-from-meilisearch-switch-macos-runner": {
       "item_id": "candidate_directive-merge-pull-request-6734-from-meilisearch-switch-macos-runner",
@@ -114493,10 +114493,10 @@
       "relative_path": "08_VERIFICATION/appwrite-appwrite-verification-protocol-empirical-defect-shield-for-appwrite-app.md",
       "title": "Verification Protocol: Empirical Defect Shield for appwrite/appwrite",
       "repository": "appwrite/appwrite",
-      "source_version": "8e1e6556",
-      "content_hash": "2f9dee6713f5755bc8d0a94b81838eaeaee6f61f051fb47af5becba6d75e6c44",
+      "source_version": "23fd2350",
+      "content_hash": "f096437a98041fc9b79ca36b3c761c317f1a3e5fcb795d0a01deb8d70fd15c83",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T07:40:14.658Z"
+      "persisted_at": "2026-11-18T10:18:49.605Z"
     },
     "candidate_directive-add-patch-cluster-consensus_state-api-to-fix-consensus-state-11411": {
       "item_id": "candidate_directive-add-patch-cluster-consensus_state-api-to-fix-consensus-state-11411",
@@ -114566,9 +114566,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for appwrite-appwrite-learnings",
       "repository": "appwrite-appwrite-learnings",
       "source_version": "HEAD",
-      "content_hash": "ed8e4d9b3789ddb8eb61082c37416268fb0648f5e3ccad79e24103e94be22281",
+      "content_hash": "f9bc701dfb10e4635af5b93a495c3ef191585d750a3f2a1faa0dea008e576059",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T07:40:19.628Z"
+      "persisted_at": "2026-11-18T10:22:56.987Z"
     },
     "domain_intelligence-architecture-intelligence-provablehq-snarkos-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-provablehq-snarkos-learnings-core-invariants",
@@ -238276,8 +238276,8 @@
       "slug": "nolabs-ai-nono",
       "platform": "github",
       "source_url": "https://github.com/nolabs-ai/nono",
-      "source_version": "0f1aceae",
-      "content_hash": "0ec3be99580619a3479bb72805b8f8128ec30edf5e8d681a7f157d045e4d4ce2",
+      "source_version": "9ae5c5d3",
+      "content_hash": "25982e132fe987ca83e96b1a8d73f133dcd3214736c0eea7a713d15442045619",
       "dossier_path": "07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md",
       "promoted_rules": [
@@ -238300,6 +238300,11 @@
           "number": 9093,
           "title": "forward http streamable mcp",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9194,
+          "title": "verify self-contained signed file bundles",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -238307,7 +238312,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T00:59:27.326Z",
+      "verified_at": "2026-11-18T10:18:52.175Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -240300,8 +240305,8 @@
       "slug": "vectifyai-pageindex",
       "platform": "github",
       "source_url": "https://github.com/VectifyAI/PageIndex",
-      "source_version": "996349a5",
-      "content_hash": "81a98ea5e0834e5b9e92a8c1a1e901a05cdf54b61cc03376f81bb9c447043e1a",
+      "source_version": "340b8535",
+      "content_hash": "011088f43bedc9fbdbf36e4bbd03be7a247336da1b45a16f46bc8166ba3ad057",
       "dossier_path": "07_PROJECT_LEARNING/vectifyai-pageindex-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/vectifyai-pageindex-learnings.md",
       "promoted_rules": [
@@ -240319,6 +240324,11 @@
           "number": 9009,
           "title": "PageIndexClient.build_index() is named build_outline_index(), and its errors say",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9195,
+          "title": "lift the litellm cap; 1.109 fixed the mcp import it was for",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -240326,7 +240336,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T16:46:47.923Z",
+      "verified_at": "2026-11-18T10:18:53.729Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -240368,10 +240378,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-vectifyai-pageindex-technical-construction-intelligence-vectifyai-pageindex-core.md",
       "title": "Technical Construction Intelligence: VectifyAI/PageIndex Core Invariants",
       "repository": "VectifyAI/PageIndex",
-      "source_version": "cc035e8d",
-      "content_hash": "65bbe1824556109c9569c20fb14deaad903d8100a4f5d1141159e09ad7a01c7d",
+      "source_version": "340b8535",
+      "content_hash": "ce2e14a7bd99d4b687f6c180f543a919fc19c4576241e2f4a44133f24e1bc61f",
       "domain_letter": "H",
-      "persisted_at": "2026-11-15T03:13:42.049Z"
+      "persisted_at": "2026-11-18T10:18:54.213Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-vectifyai-pageindex": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-vectifyai-pageindex",
@@ -240380,10 +240390,10 @@
       "relative_path": "08_VERIFICATION/vectifyai-pageindex-verification-protocol-empirical-defect-shield-for-vectifyai-.md",
       "title": "Verification Protocol: Empirical Defect Shield for VectifyAI/PageIndex",
       "repository": "VectifyAI/PageIndex",
-      "source_version": "996349a5",
-      "content_hash": "ebbb109c1f0614bd7dd68b2eddbb87828d186579dc44b038b43b3771d48dd020",
+      "source_version": "340b8535",
+      "content_hash": "25131325aeaa2c8313b4515d0b7801117778247d4cea356f4ba730e94e7081bb",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T16:46:48.540Z"
+      "persisted_at": "2026-11-18T10:18:54.338Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-black-forest-labs-flux-3-image-klein-learning": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-black-forest-labs-flux-3-image-klein-learning",
@@ -267656,14 +267666,19 @@
       "slug": "appwrite-appwrite",
       "platform": "github",
       "source_url": "https://github.com/appwrite/appwrite",
-      "source_version": "8e1e6556",
-      "content_hash": "3c10f5fcf7d8a649cc2ad8e4de9fb007f305f0513484135004ab4a8670ef3be2",
+      "source_version": "23fd2350",
+      "content_hash": "fabb8d06ede87ac7d3ec29c42f11a81ce940fc61d1a645c7a672225f7c64f961",
       "dossier_path": "07_PROJECT_LEARNING/appwrite-appwrite-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/appwrite-appwrite-learnings.md",
       "promoted_rules": [
         {
           "number": 8905,
           "title": "Empirical Invariant Guard in CreateDatabaseSummary.tsx",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9192,
+          "title": "test(security): add the Railway endpoint to the baseline",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -267672,7 +267687,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T07:40:14.092Z",
+      "verified_at": "2026-11-18T10:18:48.984Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -277660,16 +277675,27 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/cross-encoder/ms-marco-MiniLM-L6-v2",
       "source_version": "hf-cross-encoder-ms-marco-minilm-l6-v2",
-      "content_hash": "63ab8016765d188326432b5e65397e970a188adcd52aa06b1adb8755fba7dfe0",
+      "content_hash": "c45c9f042cb732b64f868e5663e1fe24de0b03747705f5157041cd8868118325",
       "dossier_path": "07_PROJECT_LEARNING/hf-cross-encoder-ms-marco-minilm-l6-v2-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-cross-encoder-ms-marco-minilm-l6-v2-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 9196,
+          "title": "Dual-Segment Token Type Invariant in Transformer Re-Rankers",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9197,
+          "title": "Identity Activation Preservation for Regression Re-Rankers",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T21:03:02.439Z",
+      "verified_at": "2026-11-18T10:21:58.745Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -284841,6 +284867,303 @@
       "content_hash": "5257c464cc9029e9b013733fcaba0f28a2f8f663107c995e288602f93ed6790e",
       "domain_letter": "K",
       "persisted_at": "2026-11-18T10:08:58.317Z"
+    },
+    "rule-9192": {
+      "learning_id": "rule-9192",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9192,
+      "title": "test(security): add the Railway endpoint to the baseline",
+      "source_url": "https://github.com/appwrite/appwrite",
+      "source_version": "23fd2350",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-18T10:18:48.984Z"
+    },
+    "candidate_directive-test-security-add-the-railway-endpoint-to-the-baseline": {
+      "item_id": "candidate_directive-test-security-add-the-railway-endpoint-to-the-baseline",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-3C1V-test-security-add-the-railway-endpoint-to-the-baseline.md",
+      "title": "test(security): add the Railway endpoint to the baseline",
+      "repository": "appwrite-appwrite-learnings",
+      "source_version": "HEAD",
+      "content_hash": "a6aee79fa6b8c2fd9ebf698ddc6b16e379f5043453ce9350d18e1a876162e69c",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-18T10:22:56.715Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-appwrite-appwrite-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-appwrite-appwrite-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-appwrite-appwrite-technical-construction-intelligence-appwrite-appwrite-core-inv.md",
+      "title": "Technical Construction Intelligence: appwrite/appwrite Core Invariants",
+      "repository": "appwrite/appwrite",
+      "source_version": "23fd2350",
+      "content_hash": "1d03bd63cb5235b299488c6b649442ddc4594f891c9188dfa5fb8e5fae867814",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-18T10:18:49.465Z"
+    },
+    "learn-github-kubernetes-sigs-aws-load-balancer-controller": {
+      "learning_id": "learn-github-kubernetes-sigs-aws-load-balancer-controller",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "kubernetes-sigs/aws-load-balancer-controller",
+      "repository": "kubernetes-sigs/aws-load-balancer-controller",
+      "slug": "kubernetes-sigs-aws-load-balancer-controller",
+      "platform": "github",
+      "source_url": "https://github.com/kubernetes-sigs/aws-load-balancer-controller",
+      "source_version": "6de51a66",
+      "content_hash": "19fe20183b5db04683acb424b60db54b7956767455a9ae4ad106b7156b8ced82",
+      "dossier_path": "07_PROJECT_LEARNING/kubernetes-sigs-aws-load-balancer-controller-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/kubernetes-sigs-aws-load-balancer-controller-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 9193,
+          "title": "Empirical Invariant Guard in group_loader.go",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-18T10:18:50.251Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-9193": {
+      "learning_id": "rule-9193",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9193,
+      "title": "Empirical Invariant Guard in group_loader.go",
+      "source_url": "https://github.com/kubernetes-sigs/aws-load-balancer-controller",
+      "source_version": "6de51a66",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-18T10:18:50.251Z"
+    },
+    "candidate_directive-empirical-invariant-guard-in-group_loader-go": {
+      "item_id": "candidate_directive-empirical-invariant-guard-in-group_loader-go",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-3CJ3-empirical-invariant-guard-in-group_loader-go.md",
+      "title": "Empirical Invariant Guard in group_loader.go",
+      "repository": "kubernetes-sigs-aws-load-balancer-controller-learnings",
+      "source_version": "HEAD",
+      "content_hash": "df31efd1f3765116aa7c92e23aa4fd0b1fd60dd8370d4d0270683b441626963e",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-18T10:22:57.336Z"
+    },
+    "domain_intelligence-architecture-intelligence-kubernetes-sigs-aws-load-balancer-controller-core-inva": {
+      "item_id": "domain_intelligence-architecture-intelligence-kubernetes-sigs-aws-load-balancer-controller-core-inva",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-kubernetes-sigs-aws-load-balancer-controller-architecture-intelligence-kubernete.md",
+      "title": "Architecture Intelligence: kubernetes-sigs/aws-load-balancer-controller Core Invariants",
+      "repository": "kubernetes-sigs/aws-load-balancer-controller",
+      "source_version": "6de51a66",
+      "content_hash": "69c91a8512843d3beb443ecdb840ff175a93a5ea59046cfc7c7a3f628c9e88bf",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-18T10:18:50.737Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-kubernetes-sigs-aws-load-balan": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-kubernetes-sigs-aws-load-balan",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/kubernetes-sigs-aws-load-balancer-controller-learnings-verification-protocol-emp.md",
+      "title": "Verification Protocol: Empirical Defect Shield for kubernetes-sigs-aws-load-balancer-controller-learnings",
+      "repository": "kubernetes-sigs-aws-load-balancer-controller-learnings",
+      "source_version": "HEAD",
+      "content_hash": "daa3f36c4031280a83ac4200892596d9523a63b2389f6fdeb7c6f4c047e22eb7",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-18T10:22:57.606Z"
+    },
+    "rule-9194": {
+      "learning_id": "rule-9194",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9194,
+      "title": "verify self-contained signed file bundles",
+      "source_url": "https://github.com/nolabs-ai/nono",
+      "source_version": "9ae5c5d3",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-18T10:18:52.175Z"
+    },
+    "candidate_directive-verify-self-contained-signed-file-bundles": {
+      "item_id": "candidate_directive-verify-self-contained-signed-file-bundles",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-Y3N5-verify-self-contained-signed-file-bundles.md",
+      "title": "verify self-contained signed file bundles",
+      "repository": "nolabs-ai/nono",
+      "source_version": "9ae5c5d3",
+      "content_hash": "cd9ad0f221143db674a325947b0e87fcebd2ef3a7b2723face2862b67cd63456",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-18T10:18:52.533Z"
+    },
+    "rule-9195": {
+      "learning_id": "rule-9195",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9195,
+      "title": "lift the litellm cap; 1.109 fixed the mcp import it was for",
+      "source_url": "https://github.com/VectifyAI/PageIndex",
+      "source_version": "340b8535",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-18T10:18:53.729Z"
+    },
+    "candidate_directive-lift-the-litellm-cap-1-109-fixed-the-mcp-import-it-was-for": {
+      "item_id": "candidate_directive-lift-the-litellm-cap-1-109-fixed-the-mcp-import-it-was-for",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-Y4U8-lift-the-litellm-cap-1-109-fixed-the-mcp-import-it-was-for.md",
+      "title": "lift the litellm cap; 1.109 fixed the mcp import it was for",
+      "repository": "VectifyAI/PageIndex",
+      "source_version": "340b8535",
+      "content_hash": "2bc7600bb2459bf41c31ca6352ca16bc82c9ee9999999410ae9caaaf60d05f7c",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-18T10:18:54.083Z"
+    },
+    "rule-9196": {
+      "learning_id": "rule-9196",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9196,
+      "title": "Dual-Segment Token Type Invariant in Transformer Re-Rankers",
+      "source_url": "https://huggingface.co/cross-encoder/ms-marco-MiniLM-L6-v2",
+      "source_version": "hf-cross-encoder-ms-marco-minilm-l6-v2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-18T10:21:58.745Z"
+    },
+    "rule-9197": {
+      "learning_id": "rule-9197",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9197,
+      "title": "Identity Activation Preservation for Regression Re-Rankers",
+      "source_url": "https://huggingface.co/cross-encoder/ms-marco-MiniLM-L6-v2",
+      "source_version": "hf-cross-encoder-ms-marco-minilm-l6-v2",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-18T10:21:58.745Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-cross-encoder-ms-marco-minilm-l6-v2-core-invar": {
+      "item_id": "domain_intelligence-quality-verification-intelligence-cross-encoder-ms-marco-minilm-l6-v2-core-invar",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-hf-cross-encoder-ms-marco-minilm-l6-v2-quality-verification-intelligence-cross-e.md",
+      "title": "Quality & Verification Intelligence: cross-encoder/ms-marco-MiniLM-L6-v2 Core Invariants",
+      "repository": "cross-encoder/ms-marco-MiniLM-L6-v2",
+      "source_version": "hf-cross-encoder-ms-marco-minilm-l6-v2",
+      "content_hash": "50e956adec6811e73ac90d6af874e6c728b0b2456bd1f68f8499b88a55d0f6f2",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-18T10:21:59.201Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-cross-encoder-ms-marco-minilm-": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-cross-encoder-ms-marco-minilm-",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/hf-cross-encoder-ms-marco-minilm-l6-v2-verification-protocol-empirical-defect-sh.md",
+      "title": "Verification Protocol: Empirical Defect Shield for cross-encoder/ms-marco-MiniLM-L6-v2",
+      "repository": "cross-encoder/ms-marco-MiniLM-L6-v2",
+      "source_version": "hf-cross-encoder-ms-marco-minilm-l6-v2",
+      "content_hash": "f2a487721f1c45ceab075f8c867cd1282c5e332894afed1005257e40d525f4df",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-18T10:21:59.319Z"
+    },
+    "candidate_directive-dual-segment-token-type-invariant-in-transformer-re-rankers": {
+      "item_id": "candidate_directive-dual-segment-token-type-invariant-in-transformer-re-rankers",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-3BE6-dual-segment-token-type-invariant-in-transformer-re-rankers.md",
+      "title": "Dual-Segment Token Type Invariant in Transformer Re-Rankers",
+      "repository": "hf-cross-encoder-ms-marco-minilm-l6-v2-learnings",
+      "source_version": "HEAD",
+      "content_hash": "7fa0af7acbafccb4e835a818f4723a497445e1f6df44731034043da1c2098aa8",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-18T10:22:55.856Z"
+    },
+    "candidate_directive-identity-activation-preservation-for-regression-re-rankers": {
+      "item_id": "candidate_directive-identity-activation-preservation-for-regression-re-rankers",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-3BE7-identity-activation-preservation-for-regression-re-rankers.md",
+      "title": "Identity Activation Preservation for Regression Re-Rankers",
+      "repository": "hf-cross-encoder-ms-marco-minilm-l6-v2-learnings",
+      "source_version": "HEAD",
+      "content_hash": "be0b9a6a5973d4638279b8cb880373d022c1e92f37e316558089e8768107d725",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-18T10:22:56.012Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-hf-cross-encoder-ms-marco-minilm-l6-v2-learnin": {
+      "item_id": "domain_intelligence-quality-verification-intelligence-hf-cross-encoder-ms-marco-minilm-l6-v2-learnin",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-hf-cross-encoder-ms-marco-minilm-l6-v2-learnings-quality-verification-intelligen.md",
+      "title": "Quality & Verification Intelligence: hf-cross-encoder-ms-marco-minilm-l6-v2-learnings Core Invariants",
+      "repository": "hf-cross-encoder-ms-marco-minilm-l6-v2-learnings",
+      "source_version": "HEAD",
+      "content_hash": "d7388d010768606dd6971972924ef3309e4229e8f866e71425342abcc0fcd6fd",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-18T10:22:56.154Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-hf-cross-encoder-ms-marco-mini": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-hf-cross-encoder-ms-marco-mini",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/hf-cross-encoder-ms-marco-minilm-l6-v2-learnings-verification-protocol-empirical.md",
+      "title": "Verification Protocol: Empirical Defect Shield for hf-cross-encoder-ms-marco-minilm-l6-v2-learnings",
+      "repository": "hf-cross-encoder-ms-marco-minilm-l6-v2-learnings",
+      "source_version": "HEAD",
+      "content_hash": "ee72a727e43a49ce9de5291b51731dc51220a69ac0f96482a7ce1697b1c50f95",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-18T10:22:56.309Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-appwrite-appwrite-learnings-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-appwrite-appwrite-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-appwrite-appwrite-learnings-technical-construction-intelligence-appwrite-appwrit.md",
+      "title": "Technical Construction Intelligence: appwrite-appwrite-learnings Core Invariants",
+      "repository": "appwrite-appwrite-learnings",
+      "source_version": "HEAD",
+      "content_hash": "49addc376f36775cff25c084cb992d44b1632932ecc04ea89ca91402dd2637e8",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-18T10:22:56.853Z"
+    },
+    "domain_intelligence-architecture-intelligence-kubernetes-sigs-aws-load-balancer-controller-learnings": {
+      "item_id": "domain_intelligence-architecture-intelligence-kubernetes-sigs-aws-load-balancer-controller-learnings",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-kubernetes-sigs-aws-load-balancer-controller-learnings-architecture-intelligence.md",
+      "title": "Architecture Intelligence: kubernetes-sigs-aws-load-balancer-controller-learnings Core Invariants",
+      "repository": "kubernetes-sigs-aws-load-balancer-controller-learnings",
+      "source_version": "HEAD",
+      "content_hash": "541a5dafd980675ab63b0e494f2bcdcd06ed9d8017a1cb51047b94fe3453e49e",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-18T10:22:57.474Z"
     }
   },
   "ai-builder-brain": {

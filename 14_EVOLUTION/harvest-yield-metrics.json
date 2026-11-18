@@ -1,45 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T10:08:53.907Z",
-  "total_cycles_completed": 10444,
-  "total_learnings_persisted": 10444,
-  "total_rules_promoted": 9947,
+  "last_updated": "2026-11-18T10:21:58.899Z",
+  "total_cycles_completed": 10449,
+  "total_learnings_persisted": 10449,
+  "total_rules_promoted": 9953,
   "history": [
-    {
-      "timestamp": "2026-11-17T20:03:27.995Z",
-      "repository": "biomejs/biome",
-      "learningId": "learn-github-biomejs-biome",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T20:03:28.714Z",
-      "repository": "TanStack/router",
-      "learningId": "learn-github-tanstack-router",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T20:03:33.773Z",
-      "repository": "moby/buildkit",
-      "learningId": "learn-github-moby-buildkit",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T20:03:39.032Z",
-      "repository": "paradedb/paradedb",
-      "learningId": "learn-github-paradedb-paradedb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T20:03:41.761Z",
-      "repository": "Bitterbot-AI/bitterbot-desktop",
-      "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-17T20:17:30.432Z",
       "repository": "convaiinnovations/laya",
@@ -1403,6 +1368,41 @@
       "repository": "milvus-io/milvus",
       "learningId": "learn-github-milvus-io-milvus",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T10:18:49.164Z",
+      "repository": "appwrite/appwrite",
+      "learningId": "learn-github-appwrite-appwrite",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T10:18:50.423Z",
+      "repository": "kubernetes-sigs/aws-load-balancer-controller",
+      "learningId": "learn-github-kubernetes-sigs-aws-load-balancer-controller",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T10:18:52.352Z",
+      "repository": "nolabs-ai/nono",
+      "learningId": "learn-github-nolabs-ai-nono",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T10:18:53.904Z",
+      "repository": "VectifyAI/PageIndex",
+      "learningId": "learn-github-vectifyai-pageindex",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T10:21:58.899Z",
+      "repository": "cross-encoder/ms-marco-MiniLM-L6-v2",
+      "learningId": "learn-huggingface-cross-encoder-ms-marco-minilm-l6-v2",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]

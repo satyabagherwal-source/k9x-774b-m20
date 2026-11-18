@@ -155,8 +155,8 @@
     "sourceUrl": "https://huggingface.co/cross-encoder/ms-marco-MiniLM-L6-v2",
     "sourceVersion": "hf-cross-encoder-ms-marco-minilm-l6-v2",
     "license": "Open-Source",
-    "contentHash": "63ab8016765d188326432b5e65397e970a188adcd52aa06b1adb8755fba7dfe0",
-    "lastHarvestedAt": "2026-11-17T21:03:02.632Z",
+    "contentHash": "c45c9f042cb732b64f868e5663e1fe24de0b03747705f5157041cd8868118325",
+    "lastHarvestedAt": "2026-11-18T10:21:58.895Z",
     "learningId": "learn-huggingface-cross-encoder-ms-marco-minilm-l6-v2"
   },
   "hf-baai-bge-small-en-v1.5": {
@@ -2353,10 +2353,10 @@
     "repository": "nolabs-ai/nono",
     "platform": "github",
     "sourceUrl": "https://github.com/nolabs-ai/nono",
-    "sourceVersion": "0f1aceae",
+    "sourceVersion": "9ae5c5d3",
     "license": "Apache-2.0",
-    "contentHash": "0ec3be99580619a3479bb72805b8f8128ec30edf5e8d681a7f157d045e4d4ce2",
-    "lastHarvestedAt": "2026-11-18T00:59:27.513Z",
+    "contentHash": "25982e132fe987ca83e96b1a8d73f133dcd3214736c0eea7a713d15442045619",
+    "lastHarvestedAt": "2026-11-18T10:18:52.348Z",
     "learningId": "learn-github-nolabs-ai-nono"
   },
   "dathere-qsv": {
@@ -6613,10 +6613,10 @@
     "repository": "VectifyAI/PageIndex",
     "platform": "github",
     "sourceUrl": "https://github.com/VectifyAI/PageIndex",
-    "sourceVersion": "996349a5",
+    "sourceVersion": "340b8535",
     "license": "MIT",
-    "contentHash": "81a98ea5e0834e5b9e92a8c1a1e901a05cdf54b61cc03376f81bb9c447043e1a",
-    "lastHarvestedAt": "2026-11-17T16:46:48.098Z",
+    "contentHash": "011088f43bedc9fbdbf36e4bbd03be7a247336da1b45a16f46bc8166ba3ad057",
+    "lastHarvestedAt": "2026-11-18T10:18:53.899Z",
     "learningId": "learn-github-vectifyai-pageindex"
   },
   "epicweb-dev-advanced-react-patterns": {
@@ -6703,10 +6703,10 @@
     "repository": "kubernetes-sigs/aws-load-balancer-controller",
     "platform": "github",
     "sourceUrl": "https://github.com/kubernetes-sigs/aws-load-balancer-controller",
-    "sourceVersion": "e8491dea",
+    "sourceVersion": "6de51a66",
     "license": "Apache-2.0",
-    "contentHash": "9a4bfbadee74aed17076420373153c40633c624d3adae0e326badaabaf16b5fa",
-    "lastHarvestedAt": "2026-11-13T00:01:50.723Z",
+    "contentHash": "19fe20183b5db04683acb424b60db54b7956767455a9ae4ad106b7156b8ced82",
+    "lastHarvestedAt": "2026-11-18T10:18:50.419Z",
     "learningId": "learn-github-kubernetes-sigs-aws-load-balancer-controller"
   },
   "qdrant-qdrant": {
@@ -10323,10 +10323,10 @@
     "repository": "appwrite/appwrite",
     "platform": "github",
     "sourceUrl": "https://github.com/appwrite/appwrite",
-    "sourceVersion": "8e1e6556",
+    "sourceVersion": "23fd2350",
     "license": "BSD-3-Clause",
-    "contentHash": "3c10f5fcf7d8a649cc2ad8e4de9fb007f305f0513484135004ab4a8670ef3be2",
-    "lastHarvestedAt": "2026-11-17T07:40:14.229Z",
+    "contentHash": "fabb8d06ede87ac7d3ec29c42f11a81ce940fc61d1a645c7a672225f7c64f961",
+    "lastHarvestedAt": "2026-11-18T10:18:49.159Z",
     "learningId": "learn-github-appwrite-appwrite"
   },
   "expo-expo": {

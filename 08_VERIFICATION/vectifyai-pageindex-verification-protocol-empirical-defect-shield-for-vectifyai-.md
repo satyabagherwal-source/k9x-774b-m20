@@ -4,22 +4,22 @@
 {
   "source_repository": "VectifyAI/PageIndex",
   "source_url": "https://github.com/VectifyAI/PageIndex",
-  "source_version": "996349a5",
+  "source_version": "340b8535",
   "license": "MIT",
-  "timestamp": "2026-11-17T16:46:48.282Z",
+  "timestamp": "2026-11-18T10:18:54.082Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-vectifyai-pageindex",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [VectifyAI/PageIndex](https://github.com/VectifyAI/PageIndex) (Revision: `996349a5`).  
-> **License**: MIT | **Timestamp**: `2026-11-17T16:46:48.282Z`  
+> **Provenance**: Harvested from [VectifyAI/PageIndex](https://github.com/VectifyAI/PageIndex) (Revision: `340b8535`).  
+> **License**: MIT | **Timestamp**: `2026-11-18T10:18:54.082Z`  
 > **Learning ID**: `learn-github-vectifyai-pageindex`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `VectifyAI/PageIndex` (Commit: `996349a5`)
+- **Target Repository**: `VectifyAI/PageIndex` (Commit: `340b8535`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/vectifyai-pageindex-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/VectifyAI/PageIndex](https://github.com/VectifyAI/PageIndex))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T16:46:47.168Z  
+> **Harvest Timestamp**: 2026-11-18T10:18:53.006Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: 📑 PageIndex: Document Index for Vectorless, Reasoning-based RAG
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 40454 stars
+- **Stars / Engagement**: 40465 stars
 
 ---
 
@@ -1087,7 +1087,7 @@ def _resolve_index_slot(index) -> "tuple[_CloudKey, dict[str, Any]]":
 
 ### Core Architecture Module: `pageindex/cloud_api.py`
 ```
-"""Cloud mode of the PageIndex SDK, based on the 0.2.8 client."""
+"""Cloud mode of the PageIndex SDK: the client of the PageIndex Cloud API."""
 import os
 import requests
 from pathlib import Path
@@ -1152,7 +1152,7 @@ class CloudAPI:
 
         Args:
             file_path (str): Path to the PDF file.
-            mode (str, optional): None (default), the OCR-based cloud pipeline, or "flash".
+            mode (str, optional): None (default), the default cloud pipeline, or "flash".
             beta_headers (List[str], optional): Beta feature headers (e.g., ["block_reference"]
                 to enable block-level content with bounding boxes). Defaults to None.
             folder_id (str, optional): Folder (workspace) ID to assign the document to. Defaults to None.
@@ -1352,7 +1352,7 @@ class CloudAPI:
             headers=self._headers(),
             timeout=30
         )
-        if response.stat
+        if res
 ```
 
 ### Core Architecture Module: `pageindex/errors.py`
@@ -1404,13 +1404,13 @@ __all__ = ["page_index_flash"]
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #687** (2026-11-18): **build: lift the litellm cap; 1.109 fixed the mcp import it was for**
+  *Symptoms*: Installs get current LiteLLM again instead of staying on 1.105, and own-model chat keeps working with an older mcp: the `<1.106` cap gives way to `litellm>=1.109.0`.  LiteLLM 1.106 through 1.108.3 import the proxy MCP handler on every call with tools, and that import fails under mcp<2.2 (BerriAI/litellm#46045). 1.108.4 and 1.109.0 onward import it only for a gateway tool (#45961). Every broken release, 1.107.0 included, sits below the new floor, so no `!=` list and no upper bound are needed. Fresh installs move to openai 3 and openai-agents 0.25.  ## Changes  - `pyproject.toml`, `requirements.txt`: `litellm>=1.109.0`, cap and its comments gone. - Kept for an install below the floor (another package can pin litellm lower, and pip lets the last install win): `_drop_repeated_thinking`, and the Claude "none" ladder and Databricks fill, which 1.110 makes redundant but 1.109 still needs. Two comments now say which versions need them. - Removed the tripwire tests asserting LiteLLM still has those three bugs: 1.109 or 1.110 fixed each, so they fail on every version CI installs. The behaviour tests of the kept code stay. - New direct test for `_drop_repeated_thinking` with both stream shapes, since no LiteLLM in range produces the repeat any more. - `ModelSettings.timeout` (openai-agents 0.25) added to the settings samples; `LitellmModel` does not forward it. - From 1.109 LiteLLM passes an unknown Bedrock model's `reasoning_effort` through instead of dropping it, so the summary ladder
+
 - **Issue #686** (2026-11-17): **refactor: PageIndexClient.build_index() is named build_outline_index(), and its errors say outline index**
   *Symptoms*: `PageIndexClient.build_index()` is renamed `build_outline_index()`, and the errors and docstrings say "outline index" where they said "index".  What a `PageSearchClient` or `PageExtractClient` upload leaves out is the document's outline: the tree `get_tree()` returns. Its pages are stored and can be searched already, so "no index" did not say what was missing.  `build_index()` was added in #681, after v0.7.0, and has not been released, so it is renamed with no alias.  ## Changes  - `PageIndexClient.build_outline_index(doc_id, wait=True, timeout=1800.0)` replaces `build_index()`. - `get_tree()` on a document without one raises `Document '<id>' has no outline index (index_status: skipped). Build one with build_outline_index(doc_id).` - The cloud-only, timeout and could-not-be-built errors name the outline index. - The `PageSearchClient` and `PageExtractClient` docstrings say their uploads build no outline index.  Not changed: the cloud route `POST /doc/{id}/index`, `CloudAPI.build_index()`, and the `index_status` field with its value `skipped`.  ## Testing  Full suite: 1275 passed, 7 skipped. 
   **Post-Mortem & Fix Analysis**:
   > <!-- codex-pull-request-review-summary --> <!-- codex-review-state:v1 {"code_review":{"commit_sha":"1c1b8dee3d4eaad83997f6a36d27b3761f4f51ce","has_any_findings":false,"has_unresolved_findings":false,"status":"completed"},"security_review":{"commit_sha":"1c1b8dee3d4eaad83997f6a36d27b3761f4f51ce","has_any_findings":null,"has_unresolved_findings":null,"status":"completed"}} --> <!-- codex-security-review:v1 {"blockingSeverityThreshold":"P0","headSha":"1c1b8dee3d4eaad83997f6a36d27b3761f4f51ce","mergeGateEnabled":false,"pullRequestNumber":686,"repository":"VectifyAI/PageIndex","status":"completed"} --> <details> <summary><strong>Codex Review Summary</strong>: ✅ Completed</summary>  This comment shows the latest Codex review activity on this pull request.  | Review | Status | Commit | Review trigger | | --- | --- | --- | --- | | 📝 **Code Review** | ✅ **Completed** <relative-time datetime="2026-11-17T13:37:51.031756Z">2026-11-17T13:37:51.031756Z</relative-time> | `1c1b8de` | PR opened | | 🔒
-
-- **Issue #684** (2026-11-17): **feat: a cloud client without PAGEINDEX_API_KEY reads the key Page Search or Page Extract users already export, each product client its own first**
-  *Symptoms*: A user moving from Page Search's or Page Extract's SDK keeps the environment variable they already export: a cloud client with no `PAGEINDEX_API_KEY` reads the key from `PAGEINDEX_SEARCH_API_KEY` or `PAGEINDEX_EXTRACT_API_KEY`. Those keys work on PageIndex once their accounts have moved here.  Follows #681, which is in `main`: this branch is rebased onto it.  ## Changes  - Every spelling that takes the key from the environment (`index="cloud"`, `mode="cloud"`, `PageIndexCloudClient()`) reads `PAGEINDEX_API_KEY` first, then the two older names. A client still never leaves local mode because a key is set. - `PageSearchClient` and `PageExtractClient` read the name their own product's SDK used before the other's: `PAGEINDEX_SEARCH_API_KEY` first for the one, `PAGEINDEX_EXTRACT_API_KEY` first for the other. With both set, every client used to take the Search key, so `PageExtractClient` ran, and was charged, on the Search account when the two keys belong to two accounts. - A key passed in still comes before all of them.  ## Verification  - `tests/test_client.py`: the older names are read last; with both set each product's client takes its own; with one set either client takes it; `PAGEINDEX_API_KEY` and a key passed in come first. - `pytest tests`: 1275 passed, 7 skipped. 
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1427,860 +1427,307 @@ __all__ = ["page_index_flash"]
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `996349a5` (2026-11-17)
-**Commit Message**: refactor: PageIndexClient.build_index() is named build_outline_index(), and its errors say outline index (#686)
+### Incident Patch 1: `340b8535` (2026-11-18)
+**Commit Message**: build: lift the litellm cap; 1.109 fixed the mcp import it was for (#687)
 
-What a Page Search or Page Extract upload leaves out, and what this method
-builds, is the document's outline: the tree get_tree() returns. "Index"
-alone does not say that, since such a document's pages are stored and can
-be searched already.
+LiteLLM 1.106 through 1.108.3 import the proxy MCP handler on every call
+with tools, and that import fails under mcp<2.2 (BerriAI/litellm#46045).
+1.108.4 and 1.109.0 onward import it only for a gateway tool (#45961).
+The floor is now 1.109.0 with no upper bound: 1.106.*, 1.107.* (1.107.0
+was malware) and 1.108.0-1.108.3 all sit below it. Fresh installs move
+to openai 3 and openai-agents 0.25.
 
-build_index() was added after v0.7.0 and never released, so it is renamed
-with no alias. The cloud route and CloudAPI.build_index() are unchanged.
+Kept for an install below the floor (another package can pin litellm
+lower, and pip lets the last install win): _drop_repeated_thinking, and
+the Claude "none" ladder and Databricks fill, which 1.110 makes redundant
+but 1.109 still needs.
 
-**File**: `pageindex/client.py` (modified, +22/-21)
+Tests:
+- The tripwires asserting LiteLLM still repeats streamed thinking, still
+  sends Claude no thinking for "none", and still drops a Databricks switch
+  beside "none" are removed: 1.109 or 1.110 fixed each, so they fail on
+  every version CI installs. The behaviour tests of the kept code stay.
+- No LiteLLM in range repeats streamed thinking any more, so
+  _drop_repeated_thinking gets a direct test with both stream shapes.
+- openai-agents 0.25 adds ModelSettings.timeout; LitellmMod
+
+**File**: `pageindex/local_chat.py` (modified, +2/-2)
 ```diff
-@@ -1129,16 +1129,17 @@ def get_tree(self, doc_id: str, node_summary: bool = False,
-             ('summary',) ('text',) 'nodes'} in both modes. Each node's summary
-             describes its own pages start_index..end_index; its text is the
-             part no child holds, though a parent's may share the page its
--            first child starts on. A cloud document that has no index, as one
--            uploaded with ``PageSearchClient`` or ``PageExtractClient``,
--            raises PageIndexAPIError: ``build_index()`` builds it.
-+            first child starts on. A cloud document that has no outline index,
-+            as one uploaded with ``PageSearchClient`` or
-+            ``PageExtractClient``, raises PageIndexAPIError:
-+            ``build_outline_index()`` builds it.
-         """
-         tree = self._api.get_tree(doc_id=doc_id, node_summary=node_summary,
-                                   include_text=include_text)
-         if not tree.get("result") and tree.get("index_status") == "skipped":
-             raise PageIndexAPIError(
--                f"Document '{doc_id}' has no index (index_status: skipped). "
--                "Build one with build_index(doc_id).")
-+                f"Document '{doc_id}' has no outline index (index_status: "
-+                "skipped). Build one with build_outline_index(doc_id).")
-         if tree.get("result"):
-             from .utils import _subtree, remove_fields, unify_tree
-             page_count = None
-@@ -1158,45 +1159,45 @@ def get_document_structure(self, doc_id: str) -> list[dict[str, Any]]:
-         """
-         return self.get_tree(doc_id, node_summary=True, include_text=False)["result"]
+@@ -1182,8 +1182,8 @@ def _cut_text(output) -> list:
  
--    def build_index(self, doc_id: str, wait: bool = True,
--                    timeout: float = 1800.0) -> dict[str, Any]:
-+    def build_outline_index(self, doc_id: str, wait: bool = True,
-+                            timeout: float = 1800.0) -> dict[str, Any]:
-         """
--        Build the index of a cloud document that has none, as one uploaded
--        with ``PageSearchClient`` or ``PageExtractClient``; ``get_tree()``
--        then returns it. Indexing is charged as an upload's is. A document
--        that has its index is left as it is. Cloud-only: local mode raises
--        PageIndexAPIError.
-+        Build the outline index of a cloud document that has none, as one
-+        uploaded with ``PageSearchClient`` or ``PageExtractClient``;
-+        ``get_tree()`` then returns it. Indexing is charged as an upload's
-+        is. A document that has its outline index is left as it is.
-+        Cloud-only: local mode raises PageIndexAPIError.
- 
-         Args:
-             doc_id (str): Document ID. One still processing raises
-                 PageIndexAPIError (HTTP 409).
--            wait (bool): Return once the index is built (default), up to
--                ``timeout`` seconds; raises PageIndexAPIError if it could not
--                be built or is not done in time (it goes on in the cloud).
--                False returns at once.
-+            wait (bool): Return once the outline index is built (default),
-+                up to ``timeout`` seconds; raises PageIndexAPIError if it
-+                could not be built or is not done in time (it goes on in the
-+                cloud). False returns at once.
- 
-         Returns:
-             dict: {'doc_id', 'index_status'}; 'index_status' is "queued",
-             "processing" or "completed".
-         """
-         api = self._require_cloud(
--            "build_index is cloud-only — a local document is indexed when it "
--            "is submitted.")
-+            "build_outline_index is cloud-only — a local document is indexed "
-+            "when it is submitted.")
-         built = api.build_index(doc_id)
-         deadline = time.monotonic() + timeout
-         while wait and built["index_status"] in ("queued", "processing"):
-             if time.monotonic() >= deadline:
-                 raise PageIndexAPIError(
--                    f"Timed out after {int(timeout)}s waiting for the index "
--                    f"(doc_id: {doc_id}, index_status: "
-+                    f"Timed out after {int(timeout)}s waiting for the outline "
-+                    f"index (doc_id: {doc_id}, index_status: "
-                     f"{built['index_status']}). It goes on being built in the "
-                     "cloud — read get_tree(doc_id)['index_status'].")
-             time.sleep(2)
-             built["index_status"] = api.get_tree(
-                 doc_id, include_text=False).get("index_status")
-         if wait and built["index_status"] != "completed":
-             raise PageIndexAPIError(
--                f"The index could not be built (doc_id: {doc_id}, "
-+                f"The outline index could not be built (doc_id: {doc_id}, "
-                 f"index_status: {built['index_status']}).")
-         return built
- 
+ def _drop_repeated_thinking(chunk, streamed: list) -> None:
+     """Blank a closing thinking block's text that repeats what streamed:
+-    LiteLLM's Anthropic stream sends the whole text again beside the
+-    signature. A test fails once it stops; this goes then."""
++    LiteLLM's Anthropic stream below our floor sends the whole text again
++    beside the signature, and an install can still land there."""
+     choices = getattr(chunk, "choices", None)
+     delta = getattr(choices[0], "delta", None) if choices else None
+     for block in getattr(delta, "thinking_blocks", None) or ():
 ```
 
-**File**: `pageindex/page_extract.py` (modified, +9/-8)
+**File**: `pageindex/utils.py` (modified, +2/-2)
 ```diff
-@@ -18,9 +18,10 @@ class PageExtractClient:
-         job["extract_result"]
+@@ -457,8 +457,8 @@ def _is_unrecoverable(exc: BaseException) -> bool:
  
-     A PDF given by its path is uploaded to the "Page Extract" collection,
--    with no index built. The documents are the ones ``PageIndexClient`` and
--    ``PageSearchClient`` see with the same key; ``client.pageindex`` is that
--    ``PageIndexClient``, for listing and deleting them.
-+    with no outline index built. The documents are the ones
-+    ``PageIndexClient`` and ``PageSearchClient`` see with the same key;
-+    ``client.pageindex`` is that ``PageIndexClient``, for listing and
-+    deleting them.
  
-     Args:
-         api_key (str, optional): Your PageIndex API key. Defaults to the
-@@ -57,11 +58,11 @@ def extract(
- 
-         Args:
-             document (str): A PDF's path: the file is uploaded to
--                ``collection`` first, with no index built, and uploading the
--                same file again uses the stored document. Or the ``doc_id``
--                of an uploaded document: one still processing is waited for
--                first, and with ``wait=False`` raises PageIndexAPIError
--                (HTTP 409).
-+                ``collection`` first, with no outline index built, and
-+                uploading the same file again uses the stored document. Or
-+                the ``doc_id`` of an uploaded document: one still processing
-+                is waited for first, and with ``wait=False`` raises
-+                PageIndexAPIError (HTTP 409).
-             schema (dict | type): A JSON Schema whose top is an object or an
-                 array, or a Pydantic model class.
-             tier (str): "standard" (default) or "pro".
+ # Claude's own ways to turn thinking off, then its lowest effort: the ladder
+-# down a Claude model's thinking, as LiteLLM sends no thinking field for
+-# reasoning_effort "none" (BerriAI/litellm#47924, #44298).
++# down a Claude model's thinking, as LiteLLM below 1.110 sends no thinking
++# field for reasoning_effort "none" (BerriAI/litellm#47924, #44298).
+ _CLAUDE_LADDER = ({"thinking": {"type": "disabled"}}, {"thinking": {"type": "between_tools"}},
+                   {"reasoning_effort": "low"})
+ _CLAUDE_ROUTES = ("anthropic", "bedrock", "vertex_ai", "azure_ai", "databricks")
 ```
 
-**File**: `pageindex/page_search.py` (modified, +8/-8)
+**File**: `pyproject.toml` (modified, +1/-4)
 ```diff
-@@ -14,10 +14,10 @@ class PageSearchClient:
-         doc = client.upload("report.pdf")
-         client.search("What was revenue in 2024?", document=doc["doc_id"])
- 
--    ``upload()`` stores a document's pages and builds no index. The documents
--    are the ones ``PageIndexClient`` and ``PageExtractClient`` see with the
--    same key; ``client.pageindex`` is that ``PageIndexClient``, for listing
--    and deleting them, collections and metadata.
-+    ``upload()`` stores a document's pages and builds no outline index. The
-+    documents are the ones ``PageIndexClient`` and ``PageExtractClient`` see
-+    with the same key; ``client.pageindex`` is that ``PageIndexClient``, for
-+    listing and deleting them, collections and metadata.
- 
-     Args:
-         api_key (str, optional): Your PageIndex API key. Defaults to the
-@@ -42,10 +42,10 @@ def upload(
-         timeout: float = 1800.0,
-     ) -> dict[str, Any]:
-         """
--        Upload a PDF to search. Its pages are stored and no index is built,
--        so no indexing is charged; ``PageIndexClient.build_index()`` builds
--        one later. Uploading the same file to the same place again returns
--        the stored document.
-+        Upload a PDF to search. Its pages are stored and no outline index is
-+        built, so no indexing is charged;
-+        ``PageIndexClient.build_outline_index()`` builds one later. Uploading
-+        the same file to the same place again returns the stored document.
- 
-         Args:
-             file_path (str): Path to the PDF file.
+@@ -34,10 +34,7 @@ openai = ">=2.45.0"
+ # loses its empty content (0.18.1), Claude thinking fails validation (<0.20).
+ openai-agents = ">=0.20.0"
+ mcp = ">=1.19.0,<3"
+-# <1.106: from 1.106 a call with tools imports LiteLLM's proxy MCP handler,
+-# which needs mcp>=2.2 (BerriAI/litellm#46045). The fix (#45961) is in the
+-# 1.107 line: lift the cap at its first clean release (1.107.0 was malware).
+-litellm = ">=1.105.1,<1.106"
++litellm = ">=1.109.0"
+ PyPDF2 = ">=3.0.0"
+ pypdfium2 = ">=5"
+ sortedcontainers = ">=2.4.0"
 ```
 
-**File**: `tests/test_client.py` (modified, +13/-12)
+**File**: `requirements.txt` (modified, +1/-2)
 ```diff
-@@ -2132,7 +2132,7 @@ def test_an_upload_to_search_builds_no_index(searching, sample_pdf, monkeypatch)
-     assert len(calls) == 1 and calls[0]["data"] == {"algorithm": "none"}
+@@ -1,5 +1,4 @@
+-# <1.106 until LiteLLM ships its mcp import fix: see pyproject.toml.
+-litellm>=1.105.1,<1.106
++litellm>=1.109.0
+ openai>=2.45.0
+ requests>=2.28.0
+ # MCP retries use Retry(allowed_methods=...), added in urllib3 1.26.
+```
+
+**File**: `tests/test_client.py` (modified, +2/-29)
+```diff
+@@ -4226,33 +4226,6 @@ def test_a_refusal_is_one_litellm_puts_on_no_cause_or_on_a_param():
+     assert not _refusal(litellm.AuthenticationError(**args))
  
  
--def test_build_index_builds_the_index_of_a_document_stored_without_one(served, monkeypatch):
-+def test_build_outline_index_builds_the_index_of_a_document_stored_without_one(served, monkeypatch):
-     client, calls, answers = served
-     monkeypatch.setattr("pageindex.client.time.sleep", lambda s: None)
-     def serve(*replies):
-@@ -2142,41 +2142,42 @@ def serve(*replies):
-     queued = {"doc_id": "pi/1", "index_status": "queued"}
- 
-     serve(dict(queued), {"index_status": "processing"}, {"index_status": "completed"})
--    assert client.build_index("pi/1") == {"doc_id": "pi/1", "index_status": "completed"}
-+    assert client.build_outline_index("pi/1") == {"doc_id": "pi/1", "index_status": "completed"}
-     assert (calls[0]["method"], calls[0]["path"]) == ("POST", "/doc/pi%2F1/index")
-     assert len(calls) == 3
- 
-     serve(dict(queued))
--    assert client.build_index("pi/1", wait=False)["index_status"] == "queued"
-+    assert client.build_outline_index("pi/1", wait=False)["index_status"] == "queued"
-     serve(dict(queued), {"index_status": "failed"})
-     with pytest.raises(PageIndexAPIError, match="could not be built"):
--        client.build_index("pi/1")
-+        client.build_outline_index("pi/1")
-     serve(dict(queued))
-     with pytest.raises(PageIndexAPIError, match="Timed out"):
--        client.build_index("pi/1", timeout=-1)
-+        client.build_outline_index("pi/1", timeout=-1)
-     serve((402, {"detail": "Insufficient credits."}))
-     with pytest.raises(PageIndexAPIError, match="Insufficient credits") as raised:
--        client.build_index("pi/1")
-+        client.build_outline_index("pi/1")
-     assert raised.value.status_code == 402
- 
- 
--def test_get_tree_of_a_document_without_an_index_says_how_to_build_it(served):
-+def test_get_tree_of_a_document_without_an_outline_index_says_how_to_build_it(served):
-     client, _, answers = served
-     answers.to = lambda method, path, kw: {
-         "doc_id": "pi-1", "status": "completed", "index_status": "skipped"}
--    with pytest.raises(PageIndexAPIError, match=r"no index.*build_index\(doc_id\)"):
-+    with pytest.raises(PageIndexAPIError,
-+                       match=r"no outline index.*build_outline_index\(doc_id\)"):
-         client.get_tree("pi-1")
--    with pytest.raises(PageIndexAPIError, match="no index"):
-+    with pytest.raises(PageIndexAPIError, match="no outline index"):
-         client.get_document_structure("pi-1")
- 
-     answers.to = lambda method, path, kw: {
-         "doc_id": "pi-1", "status": "completed", "index_status": "processing"}
-     assert client.get_tree("pi-1")["index_status"] == "processing"
- 
- 
--def test_build_index_is_cloud_only(local_client):
--    with pytest.raises(PageIndexAPIError, match="cloud-only"):
--        local_client.build_index("d")
-+def test_build_outline_index_is_cloud_only(local_client):
-+    with pytest.raises(PageIndexAPIError, match="build_outline_index is cloud-only"):
-+        local_client.build_outline_index("d")
+-def test_litellm_still_drops_a_databricks_switch_beside_none():
+-    """Fails once LiteLLM keeps a thinking switch sent beside
+-    reasoning_effort "none" on Databricks, as it does on Claude's other
+-    routes: then the fill hook (local_chat._register_fill) needn't take the
+-    "none" off any more."""
+-    pytest.importorskip("litellm")
+-    from litellm.utils import get_optional_params
+-    assert "thinking" not in get_optional_params(
+-        model="databricks-claude-sonnet-5", custom_llm_provider="databricks",
+-        reasoning_effort="none", thinking={"type": "disabled"})
+-
+-
+-@pytest.mark.parametrize("model", ["claude-haiku-5-5", "claude-sonnet-5", "claude-opus-5",
+-                                   "claude-sonnet-5-5"])
+-def test_litellm_still_sends_claude_no_thinking_for_none(model):
+-    """Fails once LiteLLM itself turns the model's thinking off for "none"
+-    (BerriAI/litellm#47924, #44298), which can show only after the
+-    litellm <1.106 cap is lifted: then the LiteLLM routes no longer need
+-    _claude_none for it. Keep its _CLAUDE_NONE row: the Messages lane
+-    still needs it, as Anthropic's effort takes no "none"."""
+-    pytest.importorskip("litellm")
+-    from litellm.utils import get_optional_params
+-    assert "thinking" not in get_optional_params(
+-        model=model, custom_llm_provider="anthropic", reasoning_effort="none",
+-        drop_params=True)
+-
+-
+ def test_parse_pages_keeps_whitespace_tolerance():
+     """0.2.10 accepted whitespace around parts (int() tolerance); the SDK
+     surface keeps that while the tool layer stays on the strict pattern."""
+@@ -5122,7 +5095,7 @@ def test_summary_effort_ladder_is_what_litellm_would_send():
+     """On LiteLLM's real map: a level LiteLLM would drop is skipped, read
+     as LiteLLM reads it (azure/gpt-5-nano as gpt-5-nano); a model it
+     doesn't know on an OpenAI-format API gets the effort as is, on any
+-    other none it would drop; no rung LiteLLM sends as thinking turned on
++    other only what LiteLLM would send; no rung LiteLLM sends as thinking turned on
+     (off stays); a Claude model, as LiteLLM tells one, goes down Claude's own
+     switches, from its known one on, past disabled where LiteLLM's map says
+     it always thinks; a rung this process saw refused is left out."""
+@@ -5142,7 +5115,7 @@ def efforts(*levels, forced=False):
+                           ("azure/my-gpt-deployment", efforts("none", "low", forced=True)),
+                           ("fireworks_ai/accounts/fireworks/models/test-unknown",
+                            efforts("none", "low", forced=True)),
+-                          ("bedrock/qwen.test-unknown-v9", []),
++                          ("bedrock/qwen.test-unknown-v9", efforts("none", "low")),
+                           ("bedrock/arn:aws:bedrock:us-east-1:123456789012:"
+                            "application-inference-profile/test", []),
+                           ("bedrock/us.amazon.nova-2-lite-v1:0", []),
+```
+
+**File**: `tests/test_local_chat.py` (modified, +21/-15)
+```diff
+@@ -1786,21 +1786,15 @@ def _model_key_missing():
  
  
- def test_search_one_document(searching):
+ @needs_agents
+-@pytest.mark.parametrize("stream, blank", [(False, True), (True, True),
+-                                           (True, False)])
++@pytest.mark.parametrize("stream", [False, True])
+ def test_claude_thinking_reaches_the_anthropic_wire_once(client, store_path,
+-                                                         monkeypatch, stream,
+-                                                         blank):
++                                                         monkeypatch, stream):
+     """Through LiteLLM's own Anthropic parsing and request building, with
+     no effort set: the run's next request carries the signed thinking
+-    block once, a stream's closing repeat of its text blanked. Without the
+-    blanking LiteLLM's stream must still repeat it, or the blanking goes."""
++    block once."""
+     pytest.importorskip("litellm")
+     from litellm.llms.custom_httpx.http_handler import (AsyncHTTPHandler,
+                                                         HTTPHandler)
+-    if not blank:
+-        monkeypatch.setattr(local_chat, "_drop_repeated_thinking",
+-                            lambda chunk, streamed: None)
+     monkeypatch.setenv("ANTHROPIC_API_KEY", "sk-ant-test")
+     doc_id = seed_doc(store_path, "pi-a", "report.pdf")
+     thinking = {"type": "thinking", "thinking": "plan step",
+@@ -1838,15 +1832,27 @@ async def fake_apost(self, url=None, *args, **kwargs):
+     assert not {"thinking", "output_config"} & set(bodies[0])
+     turn = next(m for m in bodies[1]["messages"] if m["role"] == "assistant")
+     sent = [b for b in turn["content"] if b["type"] == "thinking"]
+-    if not blank:
+-        assert sent == [{**thinking, "thinking": "plan stepplan step"}], (
+-            "LiteLLM stopped repeating streamed thinking: drop "
+-            "_drop_repeated_thinking")
+-        return
+     assert sent == [thinking]
+     assert result["messages"][0]["thinking_blocks"] == [thinking]
+ 
+ 
++def test_a_closing_thinking_block_repeating_the_stream_is_blanked():
++    """LiteLLM below our floor repeats the streamed text in the signed
++    closing block; only that repeat is blanked."""
++    for parts, closing, kept in ((["plan ", "step"], "plan step", ""),
++                                 (["plan ", "step"], "", ""),
++                                 ([], "plan step", "plan step")):
++        streamed = []
++        blocks = [{"type": "thinking", "thinking": part} for part in parts]
++        blocks.append({"type": "thinking", "thinking": closing, "signature": "SIG1"})
++        for block in blocks:
++            chunk = types.SimpleNamespace(choices=[types.SimpleNamespace(
++                delta=types.SimpleNamespace(thinking_blocks=[block]))])
++            local_chat._drop_repeated_thinking(chunk, streamed)
++        assert blocks[-1]["thinking"] == kept
++        assert streamed == []
++
++
+ def test_repeated_answers_keep_their_own_fields():
+     """Records keep conversation order: a repeated answer (or a reused call
+     id) gets its own reply's fields back, not the latest one's."""
+@@ -4391,7 +4397,7 @@ def test_litellm_model_settings_list_matches_litellm_model(monkeypatch):
+         "response_include": ["reasoning.encrypted_content"],
+         "top_logprobs": 2, "extra_query": {"q": "1"}, "extra_body": {"x": 1},
+         "extra_headers": {"X-Probe": "1"}, "extra_args": {"y": 2},
+-        "retry": {"max_retries": 1},
++        "retry": {"max_retries": 1}, "timeout": 5.0,
+         "context_management": [{"type": "compaction",
+                                 "compact_threshold": 1000}],
+         "prompt_cache_options": {"mode": "explicit", "ttl": "30m"},
 ```
 
 ---
 
-### Incident Patch 2: `f2b60c7e` (2026-11-17)
-**Commit Message**: feat!: Page Search and Page Extract get clients of their own, PageSearchClient and PageExtractClient, whose uploads build no index, and PageIndexClient.build_index() builds one later (#681)
+### Incident Patch 2: `8ec0c23d` (2026-11-17)
+**Commit Message**: docs: an upload without an outline index is charged, at less than one that builds it, and CloudAPI.build_index() is named build_outline_index() (#683)
 
-* feat!: Page Search and Page Extract get clients of their own, PageSearchClient and PageExtractClient, whose uploads build no index, and PageIndexClient.build_index() builds one later
+* docs: the docstrings say an upload without an outline index is charged, at less than one that builds it
 
-PageIndexClient has a local mode; page search, document search and Extract
-have none, and 0.7.0 put them on it as eight methods that raise there. They
-also read a document's pages and not its index, while every upload built
-the index and charged for it.
+* refactor: CloudAPI.build_index() is named build_outline_index(), as PageIndexClient's method is
 
-Breaking
-- search, search_documents, extract, wait_extract, get_extract,
-  list_extracts, cancel_extract and delete_extract leave PageIndexClient.
-  search and search_documents are on PageSearchClient, the Extract six on
-  PageExtractClient, with the names, arguments and answers they had.
-- extract(file) uploads the PDF first, where 0.7.0 sent it with the job and
-  did not keep it. The job's 'doc_id' is the stored document's.
-- get_tree() and get_document_structure() raise for a cloud document that
-  has no index (index_status "skipped"), where they returned no 
-
-**File**: `pageindex/__init__.py` (modified, +6/-2)
+**File**: `pageindex/client.py` (modified, +4/-3)
 ```diff
-@@ -4,6 +4,8 @@
- from .chat_stream import ChatStream, MessagesStream, ChatObject
- from .client import PageIndexClient, PageIndexCloudClient, PageIndexLocalClient
- from .errors import PageIndexAPIError
-+from .page_extract import PageExtractClient
-+from .page_search import PageSearchClient
- from .types import (ChatConfig, ChatProcessOptions, CloudIndexConfig,
-                     IndexConfig, LocalIndexConfig)
- 
-@@ -16,6 +18,7 @@
- 
- __all__ = [
-     "PageIndexClient", "PageIndexCloudClient", "PageIndexLocalClient",
-+    "PageSearchClient", "PageExtractClient",
-     "PageIndexAPIError",
-     "IndexConfig", "CloudIndexConfig", "LocalIndexConfig", "ChatConfig",
-     "ChatProcessOptions", "ChatStream", "MessagesStream", "ChatObject",
-@@ -31,8 +34,9 @@
- }
- _SUBMODULES = {"agent_tools", "chat_stream", "client", "cloud_api", "errors",
-                "flash", "imaging", "integrations", "local_api", "local_chat",
--               "local_store", "mcp_bridge", "page_index_classic",
--               "page_index_md", "retry", "tree_optimize", "types", "utils"}
-+               "local_store", "mcp_bridge", "page_extract", "page_index_classic",
-+               "page_index_md", "page_search", "retry", "tree_optimize", "types",
-+               "utils"}
- 
- 
- def __getattr__(name):
-```
-
-**File**: `pageindex/client.py` (modified, +71/-430)
-```diff
-@@ -901,20 +901,22 @@ def submit_document(
-                 over every call, in the Chat Completions usage shape
-                 LiteLLM returns.
+@@ -1164,8 +1164,9 @@ def build_outline_index(self, doc_id: str, wait: bool = True,
          """
--        result = self._api.submit_document(
--            file_path=file_path, mode=mode,
--            beta_headers=beta_headers, folder_id=folder_id, metadata=metadata,
--            collection_id=collection_id,
--        )
-+        return self._upload(
-+            file_path, wait, mode=mode, beta_headers=beta_headers,
-+            folder_id=folder_id, metadata=metadata, collection_id=collection_id)
-+
-+    def _upload(self, file_path: str, wait: bool, timeout: float = 1800.0,
-+                **options) -> dict[str, Any]:
-+        result = self._api.submit_document(file_path=file_path, **options)
-         stored = result.get("name")
-         if stored and stored != os.path.basename(file_path):
-             warnings.warn(
-                 f'Document "{os.path.basename(file_path)}" was stored as '
-                 f'"{stored}".',
--                stacklevel=2,
-+                stacklevel=3,
-             )
-         if wait:
--            self._wait_until_ready(result["doc_id"])
-+            self._wait_until_ready(result["doc_id"], timeout)
-         return result
- 
-     def wait_document(self, doc_id: str, timeout: float = 1800.0) -> dict[str, Any]:
-@@ -1113,10 +1115,16 @@ def get_tree(self, doc_id: str, node_summary: bool = False,
-             ('summary',) ('text',) 'nodes'} in both modes. Each node's summary
-             describes its own pages start_index..end_index; its text is the
-             part no child holds, though a parent's may share the page its
--            first child starts on.
-+            first child starts on. A cloud document that has no index, as one
-+            uploaded with ``PageSearchClient`` or ``PageExtractClient``,
-+            raises PageIndexAPIError: ``build_index()`` builds it.
-         """
-         tree = self._api.get_tree(doc_id=doc_id, node_summary=node_summary,
-                                   include_text=include_text)
-+        if not tree.get("result") and tree.get("index_status") == "skipped":
-+            raise PageIndexAPIError(
-+                f"Document '{doc_id}' has no index (index_status: skipped). "
-+                "Build one with build_index(doc_id).")
-         if tree.get("result"):
-             from .utils import _subtree, remove_fields, unify_tree
-             page_count = None
-@@ -1136,6 +1144,48 @@ def get_document_structure(self, doc_id: str) -> list[dict[str, Any]]:
-         """
-         return self.get_tree(doc_id, node_summary=True, include_text=False)["result"]
- 
-+    def build_index(self, doc_id: str, wait: bool = True,
-+                    timeout: float = 1800.0) -> dict[str, Any]:
-+        """
-+        Build the index of a cloud document that has none, as one uploaded
-+        with ``PageSearchClient`` or ``PageExtractClient``; ``get_tree()``
-+        then returns it. Indexing is charged as an upload's is. A document
-+        that has its index is left as it is. Cloud-only: local mode raises
-+        PageIndexAPIError.
-+
-+        Args:
-+            doc_id (str): Document ID. One still processing raises
-+                PageIndexAPIError (HTTP 409).
-+            wait (bool): Return once the index is built (default), up to
-+                ``timeout`` seconds; raises PageIndexAPIError if it could not
-+                be built or is not done in time (it goes on in the cloud).
-+                False returns at once.
-+
-+        Returns:
-+            dict: {'doc_id', 'index_status'}; 'index_status' is "queued",
-+            "processing" or "completed".
-+        """
-+        api = self._require_cloud(
-+            "build_index is cloud-only — a local document is indexed when it "
-+            "is submitted.")
-+        built = api.build_index(doc_id)
-+        deadline = time.monotonic() + timeout
-+        while wait and built["index_status"] in ("queued", "processing"):
-+            if time.monotonic() >= deadline:
-+                raise PageIndexAPIError(
-+                    f"Timed out after {int(timeout)}s waiting for the index "
-+                    f"(doc_id: {doc_id}, index_status: "
-+                    f"{built['index_status']}). It goes on being built in the "
-+                    "cloud — read get_tree(doc_id)['index_status'].")
-+            time.sleep(2)
-+            built["index_status"] = api.get_tree(
-+                doc_id, include_text=False).get("index_status")
-+        if wait and built["index_status"] != "completed":
-+            raise PageIndexAPIError(
-+                f"The index could not be built (doc_id: {doc_id}, "
-+                f"index_status: {built['index_status']}).")
-+        return built
-+
-     def is_retrieval_ready(self, doc_id: str) -> bool:
-         """
-         Check if a document is ready for retrieval. API errors (including a
-@@ -3188,428 +3238,6 @@ def delete_metadata_schema(
-         ).delete_metadata_schema(folder_id=folder_id,
-                     
-```
-
-**File**: `pageindex/cloud_api.py` (modified, +32/-23)
-```diff
-@@ -54,9 +54,11 @@ def submit_document(
-         folder_id: Optional[str] = None,
-         metadata: Optional[Dict[str, Any]] = None,
-         collection_id: Optional[str] = None,
-+        index: bool = True,
-     ) -> Dict[str, Any]:
-         """
--        Upload a PDF document for processing; the tree is built in the background.
-+        Upload a PDF document for processing; the tree is built in the background,
-+        or not at all with ``index=False``.
-         Immediately returns a document identifier (`doc_id`) for subsequent operations.
+         Build the outline index of a cloud document that has none, as one
+         uploaded with ``PageSearchClient`` or ``PageExtractClient``;
+-        ``get_tree()`` then returns it. Indexing is charged as an upload's
+-        is. A document that has its outline index is left as it is.
++        ``get_tree()`` then returns it. Building it is charged, at the price
++        of an upload that builds its index. A document that has its outline
++        index is left as it is.
+         Cloud-only: local mode raises PageIndexAPIError.
  
          Args:
-@@ -84,6 +86,8 @@ def submit_document(
-             # The server rejects if_retrieval alongside algorithm=flash, and
-             # keeps node text for Flash trees by default.
-             data = {'algorithm': 'flash'}
-+        if not index:
-+            data = {'algorithm': 'none'}
-         if beta_headers is not None:
-             data['beta_headers'] = json.dumps(beta_headers)
-         if folder_id is not None:
-@@ -265,6 +269,24 @@ def get_tree(self, doc_id: str, node_summary: bool = False,
+@@ -1183,7 +1184,7 @@ def build_outline_index(self, doc_id: str, wait: bool = True,
+         api = self._require_cloud(
+             "build_outline_index is cloud-only — a local document is indexed "
+             "when it is submitted.")
+-        built = api.build_index(doc_id)
++        built = api.build_outline_index(doc_id)
+         deadline = time.monotonic() + timeout
+         while wait and built["index_status"] in ("queued", "processing"):
+             if time.monotonic() >= deadline:
+```
+
+**File**: `pageindex/cloud_api.py` (modified, +1/-1)
+```diff
+@@ -269,7 +269,7 @@ def get_tree(self, doc_id: str, node_summary: bool = False,
                  status_code=response.status_code)
          return response.json()
  
-+    def build_index(self, doc_id: str) -> Dict[str, Any]:
-+        """
-+        Build the tree of a document stored without one.
-+
-+        Returns:
-+            dict: {'doc_id', 'index_status'}.
-+        """
-+        response = self._http.post(
-+            f"{self.BASE_URL}/doc/{_enc(doc_id)}/index",
-+            headers=self._headers(),
-+            timeout=30
-+        )
-+        if response.status_code != 200:
-+            raise PageIndexAPIError(
-+                f"Failed to build index: {response.text}",
-+                status_code=response.status_code)
-+        return response.json()
-+
-     # ---------- RETRIEVAL ----------
- 
-     def submit_query(self, doc_id: str, query: str, thinking: bool = False) -> Dict[str, Any]:
-@@ -868,39 +890,26 @@ def search_documents(
-     def create_extract(
-         self,
-         configuration: Dict[str, Any],
--        file_path: Optional[str] = None,
--        doc_id: Optional[str] = None,
-+        doc_id: str,
-     ) -> Dict[str, Any]:
+-    def build_index(self, doc_id: str) -> Dict[str, Any]:
++    def build_outline_index(self, doc_id: str) -> Dict[str, Any]:
          """
--        Start an extract job on a PDF sent with it (read for this job only, not
--        kept as a document) or on an uploaded document.
-+        Start an extract job on an uploaded document.
+         Build the tree of a document stored without one.
+ 
+```
+
+**File**: `pageindex/page_extract.py` (modified, +5/-3)
+```diff
+@@ -58,16 +58,18 @@ def extract(
  
          Args:
-             configuration (dict): {"data_schema", "tier", "cite_sources",
-                 "target_pages", "system_prompt"}.
--            file_path (str, optional): Path to the PDF file.
--            doc_id (str, optional): Document ID, in place of file_path.
-+            doc_id (str): Document ID.
- 
-         Returns:
-             dict: The job, pending: {"id", "status", "doc_id", "configuration",
-                 "created_at", "updated_at"}
+             document (str): A PDF's path: the file is uploaded to
+-                ``collection`` first, with no outline index built, and
+-                uploading the same file again uses the stored document. Or
++                ``collection`` first, with no outline index built (the upload
++                is charged for every page of the file), and uploading the
++                same file again uses the stored document. Or
+                 the ``doc_id`` of an uploaded document: one still processing
+                 is waited for first, and with ``wait=False`` raises
+                 PageIndexAPIError (HTTP 409).
+             schema (dict | type): A JSON Schema whose top is an object or an
+                 array, or a Pydantic model class.
+             tier (str): "standard" (default) or "pro".
+             pages (str | int | tuple, optional): Extract from these pages
+-                only, and only they are charged: "3-9", (3, 9) or 3.
++                only, and the extraction is charged for them alone: "3-9",
++                (3, 9) or 3.
+             cite_sources (bool): Give the page each list item is on, under
+                 'extract_metadata'.
+             system_prompt (str, optional): Your own instructions for the
+```
+
+**File**: `pageindex/page_search.py` (modified, +1/-1)
+```diff
+@@ -43,7 +43,7 @@ def upload(
+     ) -> dict[str, Any]:
          """
--        data = {"configuration": json.dumps(configuration)}
--        if file_path is not None:
--            with open(file_path, "rb") as f:
--                response = self._http.post(
--                    f"{self.BASE_URL}/extract/",
--                    headers=self._headers(),
--                    files={'file': (sanitize_filename(Path(file_path).name), f)},
--                    data=data
--                )
--        else:
--            response = self._http.post(
--                f"{self.BASE_URL}/extract/",
--                headers=self._headers(),
--                data={**data, "doc_id": doc_id},
--                timeout=60
--            )
-+        response = self._http.post(
-+            f"{self.BASE_URL}/extract/",
-+            headers=self._headers(),
-+            data={"configuration": json.dumps(configuration), "doc_id": doc_id},
-+            timeout=60
-+        )
-         if response.status_code != 202:
-             raise PageIndexAPIError(
-                 f"Failed to start extract job: {response.text}",
-```
-
-**File**: `pageindex/page_extract.py` (added, +243/-0)
-```diff
-@@ -0,0 +1,243 @@
-+"""Page Extract: JSON that fits a schema, extracted from a PDF."""
-+import os
-+import time
-+from typing import Any, Optional, Union
-+
-+from .client import PageIndexClient, _cloud_client
-+from .errors import PageIndexAPIError
-+
-+COLLECTION = "Page Extract"
-+
-+
-+class PageExtractClient:
-+    """
-+    Page Extract over your PageIndex cloud documents. Cloud-only.
-+
-+        client = PageExtractClient()   # reads PAGEINDEX_API_KEY
-+        job = client.extract("invoice.pdf", schema)
-+        job["extract_result"]
-+
-+    A PDF given by its path is uploaded to the "Page Extract" collection,
-+    with no index built. The documents are the ones ``PageIndexClient`` and
-+    ``PageSearchClient`` see with the same key; ``client.pageindex`` is that
-+    ``PageIndexClient``, for listing and deleting them.
-+
-+    Args:
-+        api_key (str, optional): Your PageIndex API key. Defaults to the
-+            PAGEINDEX_API_KEY environment variable.
-+        client (PageIndexClient, optional): A cloud ``PageIndexClient`` to
-+            work through, in place of ``api_key``.
-+    """
-+
-+    def __init__(self, api_key: Optional[str] = None, *,
-+                 client: Optional[PageIndexClient] = None):
-+        self.pageindex = _cloud_client(api_key, client, "PageExtractClient")
-+        self._collections: dict[str, str] = {}
-+
-+    def extract(
-+        self,
-+        document: Union[str, os.PathLike],
-+        schema: Any,
-+        *,
-+        tier: str = "standard",
-+        pages: Union[str, int, tuple[int, int], None] = None,
-+        cite_sources: bool = False,
-+        system_prompt: Optional[str] = None,
-+        wait: bool = True,
-+        timeout: float = 3600.0,
-+        collection: Optional[str] = COLLECTION,
-+    ) -> dict[str, Any]:
-+        """
-+        Extract JSON that fits ``schema`` from a PDF.
-+
-+            job = client.extract("invoice.pdf", schema)
-+            job["extract_result"]
-+
-+        Args:
-+            document (str): A PDF's path: the file is uploaded to
-+                ``collection`` first, with no index built, and uploading the
-+                same file again uses the stored document. Or the ``doc_id``
-+                of an uploaded document: one still processing is waited for
-+                first, and with ``wait=False`` raises PageIndexAPIError
-+                (HTTP 409).
-+            schema (dict | type): A JSON Schema whose top is an object or an
-+                array, or a Pydantic model class.
-+            tier (str): "standard" (default) or "pro".
-+            pages (str | int | tuple, optional): Extract from these pages
-+                only, and only they are charged: "3-9", (3, 9) or 3.
-+            cite_sources (bool): Give the page each list item is on, under
-+                'extract_metadata'.
-+            system_prompt (str, optional): Your own instructions for the
-+                extraction.
-+            wait (bool): Return the job once it is completed (default), up to
-+                ``timeout`` seconds; raises PageIndexAPIError if it failed or
-+                was cancelled, or is not done in time (it goes on running:
-+                read it with ``get_extract()``). False returns it pending
-+                once it starts, a file still uploaded and processed first:
-+                ``wait_extract()`` waits for it later.
-+            timeout (float): Seconds to wait, the document's upload and
-+                processing included. Defaults to an hour.
-+            collection (str, optional): Where a file is uploaded: a
-+                collection's name (any case) or ID, "Page Extract" by
-+                default. A name none of your collections has makes one.
-+                None stores the document outside any collection.
-+
-+        Returns:
-+            dict: The job: {'id', 'status', 'doc_id', 'configuration',
-+            'created_at', 'updated_at'}. 'status' is "pending", "running",
-+            "completed", "failed" or "cancelled". Completed, it also has
-+            'extract_result' (the JSON that fits the schema),
-+            'extract_metadata' ({'field_metadata': {...}}, with
-+            ``cite_sources`` the page of each list item by its JSON Pointer,
-+            as ``{"/rows/0": {"page": 3}}``) and 'usage' ({'pages',
-+            'credits'}); failed, 'error_message'.
-+        """
-+        api = self.pageindex._api
-+        if isinstance(schema, dict):
-+            data_schema = schema
-+        elif hasattr(schema, "model_json_schema"):
-+            data_schema = schema.model_json_schema()
-+        else:
-+            raise PageIndexAPIError(
-+                "schema must be a JSON Schema (a dict) or a Pydantic model class.")
-+        configuration: dict[str, Any] = {"data_schema": data_schema, "tier": tier}
-+        if isinstance(pages, tuple):
-+            pages = f"{pages[0]}-{pages[1]}"
-+        if pages is not None:
-+            configuration["target_pages"] = str(pages)
-+        if cite_sources:
-+            configuration["cite_s
-```
-
-**File**: `pageindex/page_search.py` (added, +292/-0)
-```diff
-@@ -0,0 +1,292 @@
-+"""Page Search: the pages, and the documents, that help answer a question."""
-+import time
-+from typing import Any, Optional, Union
-+
-+from .client import PageIndexClient, _cloud_client
-+from .errors import PageIndexAPIError
-+
-+
-+class PageSearchClient:
-+    """
-+    Page Search over your PageIndex cloud documents. Cloud-only.
-+
-+        client = PageSearchClient()   # reads PAGEINDEX_API_KEY
-+        doc = client.upload("report.pdf")
-+        client.search("What was revenue in 2024?", document=doc["doc_id"])
-+
-+    ``upload()`` stores a document's pages and builds no index. The documents
-+    are the ones ``PageIndexClient`` and ``PageExtractClient`` see with the
-+    same key; ``client.pageindex`` is that ``PageIndexClient``, for listing
-+    and deleting them, collections and metadata.
-+
-+    Args:
-+        api_key (str, optional): Your PageIndex API key. Defaults to the
-+            PAGEINDEX_API_KEY environment variable.
-+        client (PageIndexClient, optional): A cloud ``PageIndexClient`` to
-+            work through, in place of ``api_key``.
-+    """
-+
-+    def __init__(self, api_key: Optional[str] = None, *,
-+                 client: Optional[PageIndexClient] = None):
-+        self.pageindex = _cloud_client(api_key, client, "PageSearchClient")
-+
-+    def upload(
-+        self,
-+        file_path: str,
-+        *,
-+        collection: Optional[str] = None,
-+        metadata: Optional[dict] = None,
-+        wait: bool = True,
-+        timeout: float = 1800.0,
-+    ) -> dict[str, Any]:
-+        """
-+        Upload a PDF to search. Its pages are stored and no index is built,
-+        so no indexing is charged; ``PageIndexClient.build_index()`` builds
-+        one later. Uploading the same file to the same place again returns
-+        the stored document.
-+
-+        Args:
-+            file_path (str): Path to the PDF file.
-+            collection (str, optional): The ID of the collection to store it
-+                in.
-+            metadata (dict, optional): Your own tags for the document, as
-+                ``PageIndexClient.submit_document()`` takes them.
-+            wait (bool): Return once its pages can be searched (default), up
-+                to ``timeout`` seconds; raises PageIndexAPIError if its
-+                processing failed or is not done in time. False returns at
-+                once.
-+
-+        Returns:
-+            dict: {'doc_id': ..., 'name': ...}.
-+        """
-+        return self.pageindex._upload(
-+            file_path, wait, timeout, metadata=metadata,
-+            collection_id=collection, index=False)
-+
-+    def search(
-+        self,
-+        questions: Union[str, list[str]],
-+        *,
-+        document: Optional[str] = None,
-+        documents: Optional[list[str]] = None,
-+        collection: Optional[str] = None,
-+        folder: Optional[str] = None,
-+        recursive: bool = False,
-+        filter: Optional[dict[str, Any]] = None,
-+        max_documents: Optional[int] = None,
-+        document_top_k: Optional[int] = None,
-+        top_k: Optional[int] = None,
-+        include_text: bool = False,
-+        start_page: Optional[int] = None,
-+        end_page: Optional[int] = None,
-+    ) -> dict[str, Any]:
-+        """
-+        Ask up to 10 questions. For each, the pages that help answer it,
-+        under the documents they are in.
-+
-+            client.search(questions, document=doc_id)         # one document's pages
-+            client.search(questions, collection=collection_id)  # across documents
-+            client.search(questions)                          # across all of yours
-+
-+        Across documents, the most relevant documents for each question are
-+        found first, as ``search_documents()`` finds them, and only their
-+        pages are searched: the documents likely to answer, at most
-+        ``max_documents``, or exactly ``document_top_k``. Every page searched
-+        is charged, and across documents every document judged too.
-+
-+        Args:
-+            questions (str | list[str]): One question, or up to 10.
-+            document (str, optional): The document whose pages to search.
-+                Raises PageIndexAPIError (HTTP 409) while it is still
-+                processing.
-+            documents (list[str], optional): Search among these documents.
-+            collection (str, optional): Search among a collection's documents,
-+                by its ID.
-+            folder (str, optional): Search among a folder's documents, by its
-+                ID; "root" is the library root.
-+            recursive (bool): With ``folder``, the documents of its
-+                descendant folders too.
-+            filter (dict, optional): Search among the documents whose metadata
-+                meets it, e.g. ``{"year": {"$gte": 2023}}``.
-+            max_documents (int, optional): Across documents, the most a
-+                question's pages are searched in, 1 to 10. Defaults to 3.
-+            document_top_k (int, optional): 
-```
-
-**File**: `tests/test_client.py` (modified, +203/-44)
-```diff
-@@ -17,7 +17,8 @@
+         Upload a PDF to search. Its pages are stored and no outline index is
+-        built, so no indexing is charged;
++        built, so the upload is charged less than one that builds it;
+         ``PageIndexClient.build_outline_index()`` builds one later. Uploading
+         the same file to the same place again returns the stored document.
  
- import pageindex.flash
- import pageindex.utils
--from pageindex import PageIndexClient, PageIndexAPIError
-+from pageindex import (PageExtractClient, PageIndexAPIError, PageIndexClient,
-+                       PageSearchClient)
- 
- page_index_module = importlib.import_module("pageindex.page_index_classic")
- 
-@@ -2037,16 +2038,19 @@ def test_cloud_collection_wiring(cloud, sample_pdf):
-     assert calls[-1]["params"] == {"limit": 50, "offset": 0, "collection_id": "c/1"}
- 
- 
--def test_search_and_extract_are_cloud_only(local_client):
--    for call in (lambda: local_client.search("q", document="d"),
--                 lambda: local_client.search_documents("q"),
--                 lambda: local_client.extract("d", {"type": "object"}),
--                 lambda: local_client.get_extract("ext_1"),
--                 local_client.list_extracts,
--                 lambda: local_client.cancel_extract("ext_1"),
--                 lambda: local_client.delete_extract("ext_1")):
--        with pytest.raises(PageIndexAPIError, match="cloud-only"):
--            call()
-+@pytest.mark.parametrize("cls", [PageSearchClient, PageExtractClient])
-+def test_page_search_and_extract_clients_are_cloud_only(cls, local_client, monkeypatch):
-+    with pytest.raises(PageIndexAPIError, match="cloud-only"):
-+        cls(client=local_client)
-+    with pytest.raises(PageIndexAPIError, match="not both"):
-+        cls("secret", client=PageIndexClient(api_key="secret"))
-+
-+    monkeypatch.setenv("PAGEINDEX_API_KEY", "from-env")
-+    assert cls().pageindex._api.api_key == "from-env"
-+    assert cls("given").pageindex._api.api_key == "given"
-+    monkeypatch.setenv("PAGEINDEX_API_KEY", "")
-+    with pytest.raises(PageIndexAPIError, match="API key"):
-+        cls()
- 
- 
- @pytest.fixture
-@@ -2069,8 +2073,87 @@ def handler(method, url, kw):
-     return client, calls, Answers
- 
- 
--def test_search_one_document(served):
-+@pytest.fixture
-+def searching(served):
-+    client, calls, answers = served
-+    return PageSearchClient(client=client), calls, answers
-+
-+
-+@pytest.fixture
-+def extracting(served):
-+    client, calls, answers = served
-+    return PageExtractClient(client=client), calls, answers
-+
-+
-+def test_an_upload_to_search_builds_no_index(searching, sample_pdf, monkeypatch):
-+    client, calls, answers = searching
-+    monkeypatch.setattr("pageindex.client.time.sleep", lambda s: None)
-+    answers.to = lambda method, path, kw: (
-+        {"doc_id": "pi-1", "name": "sample.pdf"} if method == "POST"
-+        else {"id": "pi-1", "status": "completed"})
-+
-+    stored = client.upload(sample_pdf, collection="c-1", metadata={"year": 2025})
-+
-+    assert stored == {"doc_id": "pi-1", "name": "sample.pdf"}
-+    assert (calls[0]["method"], calls[0]["path"]) == ("POST", "/doc/")
-+    assert calls[0]["data"] == {"algorithm": "none", "collection_id": "c-1",
-+                                "metadata": '{"year": 2025}'}
-+    assert [(c["method"], c["path"]) for c in calls[1:]] == [("GET", "/doc/pi-1/metadata/")]
-+
-+    del calls[:]
-+    client.upload(sample_pdf, wait=False)
-+    assert len(calls) == 1 and calls[0]["data"] == {"algorithm": "none"}
-+
-+
-+def test_build_index_builds_the_index_of_a_document_stored_without_one(served, monkeypatch):
-     client, calls, answers = served
-+    monkeypatch.setattr("pageindex.client.time.sleep", lambda s: None)
-+    def serve(*replies):
-+        del calls[:]
-+        replies = iter(replies)
-+        answers.to = lambda method, path, kw: next(replies)
-+    queued = {"doc_id": "pi/1", "index_status": "queued"}
-+
-+    serve(dict(queued), {"index_status": "processing"}, {"index_status": "completed"})
-+    assert client.build_index("pi/1") == {"doc_id": "pi/1", "index_status": "completed"}
-+    assert (calls[0]["method"], calls[0]["path"]) == ("POST", "/doc/pi%2F1/index")
-+    assert len(calls) == 3
-+
-+    serve(dict(queued))
-+    assert client.build_index("pi/1", wait=False)["index_status"] == "queued"
-+    serve(dict(queued), {"index_status": "failed"})
-+    with pytest.raises(PageIndexAPIError, match="could not be built"):
-+        client.build_index("pi/1")
-+    serve(dict(queued))
-+    with pytest.raises(PageIndexAPIError, match="Timed out"):
-+        client.build_index("pi/1", timeout=-1)
-+    serve((402, {"detail": "Insufficient credits."}))
-+    with pytest.raises(PageIndexAPIError, match="Insufficient credits") as raised:
-+        client.build_index("pi/1")
-+    assert raised.value.status_code == 402
-+
-+
-+def test_get_tree_of_a_document_without_an_index_says_how_to_build_it(served):
-+    client, _, answers = served
-+    answers.to = lambda method, path, kw: {
-+        "doc_id": "pi-1", "status": "completed", "index_status": "skipped"}
-+    with pytest.raises(PageIndexAPIError, match=r"no index.*build_index\(doc_id\)"):
-+        client.get_tree("pi-1")
-+    with pytest.raises(PageIndexAPIError, match="no index"):
-+        client.get_document_structure("pi-1")
-+
-+    answers.to = lambda method, path, kw: {
-+    
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #687** (2026-11-18): build: lift the litellm cap; 1.109 fixed the mcp import it was for (@rejojer)
 - **PR #686** (2026-11-17): refactor: PageIndexClient.build_index() is named build_outline_index(), and its errors say outline index (@rejojer)
+- **PR #685** (closed): docs: README shows PageSearchClient and PageExtractClient beside PageIndexClient (@rejojer)
 - **PR #684** (2026-11-17): feat: a cloud client without PAGEINDEX_API_KEY reads the key Page Search or Page Extract users already export, each product client its own first (@rejojer)
-- **PR #681** (2026-11-17): feat!: Page Search and Page Extract get clients of their own, PageSearchClient and PageExtractClient, whose uploads build no index, and PageIndexClient.build_index() builds one later (@rejojer)
-- **PR #678** (2026-11-15): feat: page_image() gives a page, or a part of it drawn sharper, as an image; update_document() sets metadata keys; list_documents(filter=) lists by metadata (@rejojer)
-- **PR #677** (2026-11-15): feat: the client searches pages and documents, extracts JSON from a PDF, and returns a page or a part of it as an image (@rejojer)
-- **PR #674** (2026-11-14): release: collections, chat(collection_id=) with box citations, and get_citations for library paths (@rejojer)
+- **PR #683** (2026-11-17): docs: an upload without an outline index is charged, at less than one that builds it, and CloudAPI.build_index() is named build_outline_index() (@rejojer)
+- **PR #682** (2026-11-17): docs(cloud): submit_document no longer calls the cloud default the OCR-based cloud pipeline (@noobakong)
 
 ---
 
@@ -2300,66 +1747,33 @@ Breaking
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. PageIndexClient.build_index() is named build_outline_index(), and its errors say
+## X. build: lift the litellm cap; 1.109 fixed the mcp import it was for
 
 **RULE**:
-When implementing operations in `pageindex/client.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in VectifyAI/PageIndex. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pageindex/local_chat.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in VectifyAI/PageIndex. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `996349a5`: PageIndexClient.build_index() is named build_outline_index(), and its errors say outline index. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `340b8535`: build: lift the litellm cap; 1.109 fixed the mcp import it was for. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `pageindex/client.py`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `pageindex/local_chat.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-            first child starts on. A cloud document that has no outline index,
-            as one uploaded with ``PageSearchClient`` or
-            ``PageExtractClient``, raises PageIndexAPIError:
-            ``build_outline_index()`` builds it.
-                f"Document '{doc_id}' has no outline index (index_status: "
-                "skipped). Build one with build_outline_index(doc_id).")
-    def build_outline_index(self, doc_id: str, wait: bool = True,
-                            timeout: float = 1800.0) -> dict[str, Any]:
-        Build the outline index of a cloud document that has none, as one
-        uploaded with ``PageSearchClient`` or ``PageExtractClient``;
-        ``get_tree()`` then returns it. Indexing is charged as an upload's
-        is. A document that has its outline index is left as it is.
-        Cloud-only: local mode raises PageIndexAPIError.
-            wait (bool): Return once the outline index is built (default),
-                up to ``timeout`` seconds; raises PageIndexAPIError if it
-                could not be built or is not done in time (it goes on in the
-                cloud). False returns at once.
-            "build_outline_index is cloud-only — a 
+    LiteLLM's Anthropic stream below our floor sends the whole text again
+    beside the signature, and an install can still land there."""
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Induced defect failure mode:
-            first child starts on. A cloud document that has no index, as one
-            uploaded with ``PageSearchClient`` or ``PageExtractClient``,
-            raises PageIndexAPIError: ``build_index()`` builds it.
-                f"Document '{doc_id}' has no index (index_status: skipped). "
-                "Build one with build_index(doc_id).")
-    def build_index(self, doc_id: str, wait: bool = True,
-                    timeout: float = 1800.0) -> dict[str, Any]:
-        Build the index of a cloud document that has none, as one uploaded
-        with ``PageSearchClient`` or ``PageExtractClient``; ``get_tree()``
-        then returns it. Indexing is charged as an upload's is. A document
-        that has its index is left as it is. Cloud-only: local mode raises
-        PageIndexAPIError.
-            wait (bool): Return once the index is built (default), up to
-                ``timeout`` seconds; raises PageIndexAPIError if it could not
-                be built or is not done in time (it goes on in the cloud).
-                False returns at once.
-            "build_index is cloud-only — a local document is indexed when it "
-            "is submitted.")
-                    f"Timed
+    LiteLLM's Anthropic stream sends the whole text again beside the
+    signature. A test fails once it stops; this goes then."""
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `996349a5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `340b8535` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

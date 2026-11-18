@@ -4,17 +4,17 @@
 {
   "source_repository": "nolabs-ai/nono",
   "source_url": "https://github.com/nolabs-ai/nono",
-  "source_version": "0f1aceae",
+  "source_version": "9ae5c5d3",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-18T00:59:27.708Z",
+  "timestamp": "2026-11-18T10:18:52.532Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-nolabs-ai-nono",
   "canonical_classification": "architecture_decision"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [nolabs-ai/nono](https://github.com/nolabs-ai/nono) (Revision: `0f1aceae`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-18T00:59:27.708Z`  
+> **Provenance**: Harvested from [nolabs-ai/nono](https://github.com/nolabs-ai/nono) (Revision: `9ae5c5d3`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-18T10:18:52.532Z`  
 > **Learning ID**: `learn-github-nolabs-ai-nono`
 
 
@@ -30,7 +30,7 @@ During deep inspection of nolabs-ai/nono, modular boundaries, performance charac
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nolabs-ai-nono-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/nolabs-ai/nono](https://github.com/nolabs-ai/nono))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T00:59:26.438Z  
+> **Harvest Timestamp**: 2026-11-18T10:18:51.427Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -40,7 +40,7 @@ During deep inspection of nolabs-ai/nono, modular boundaries, performance charac
 - **Description**: agent runtime security - zero trust, zero setup, zero latency agent sandboxing
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 5035 stars
+- **Stars / Engagement**: 5042 stars
 
 ---
 
@@ -3001,330 +3001,561 @@ mod tests {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0f1aceae` (2026-11-17)
-**Commit Message**: fix(proxy): forward http streamable mcp (#2129)
+### Incident Patch 1: `9ae5c5d3` (2026-11-18)
+**Commit Message**: feat(platform): verify self-contained signed file bundles (#2336)
 
-* fix(proxy): close one-shot forward connections so keep-alive clients do not stall
+Deliver complete policy and pack inventories through nono Bundle v1 and managed policy protocol v2. Require verified assignments at managed startup, report enrollment readiness, and support explicit verified cache repair.
 
-The plain-HTTP forward path (absolute-form requests from HTTP_PROXY
-clients) serves one request per inbound connection, but:
+Add fetch-only pack preparation, strict inventory validation, bounded delivery, protocol documentation, and tamper regression coverage.
 
-- forwarded the client's Connection/Keep-Alive headers upstream, so a
-  keep-alive upstream (e.g. uvicorn) held the socket open and the
-  EOF-delimited relay blocked until its idle timeout; and
-- relayed the upstream response head verbatim, so the client reused the
-  connection for its next request, which was never read and was lost
-  when the proxy finally dropped the socket.
+Signed-off-by: Aleksy Siek <[REDACTED_EMAIL]>
 
-With an MCP Streamable HTTP server this lost notifications/initialized;
-opencode then fell back to the legacy SSE transport and reported
-"SSE error: Non-200 status code (400)".
-
-Strip Connection/Keep-Alive from forwarded requests and send
-Connection: close upstream, as the intercept and SPIFFE paths already
-do. Add forward_request_closing_inbound, which rewrites the final
-response head to Connection: close while preserving body bytes read
-with the head and passing 1xx interim responses through. Use it for the
-forward path and the SPIFFE reverse path, an
-
-**File**: `crates/nono-proxy/src/forward.rs` (modified, +227/-6)
+**File**: `crates/nono-cli/src/cli.rs` (modified, +7/-3)
 ```diff
-@@ -105,7 +105,31 @@ pub async fn forward_request<S>(
- where
-     S: AsyncRead + AsyncWrite + Unpin,
- {
--    forward_request_with_response_rewrite(inbound, request_bytes, body, upstream, audit, None).await
-+    forward_request_inner(inbound, request_bytes, body, upstream, audit, None, false).await
-+}
+@@ -718,6 +718,10 @@ pub struct PullArgs {
+     #[arg(long, help_heading = "OPTIONS")]
+     pub init: bool,
+ 
++    /// Fetch verified pack files without applying wiring or project installation
++    #[arg(long, conflicts_with = "init", help_heading = "OPTIONS")]
++    pub fetch_only: bool,
 +
-+/// Like [`forward_request`], for callers that serve exactly one request per
-+/// inbound connection and close it afterwards.
-+///
-+/// The final response head is rewritten to carry `Connection: close` so the
-+/// client does not reuse a connection the proxy is about to drop. Without it,
-+/// a keep-alive client (e.g. an MCP Streamable HTTP client) writes its next
-+/// request onto a socket nobody reads, and the request is lost when the
-+/// connection closes.
-+///
-+/// `request_bytes` must already ask the upstream for `Connection: close`: the
-+/// response body is relayed until upstream EOF.
-+pub async fn forward_request_closing_inbound<S>(
-+    inbound: &mut S,
-+    request_bytes: &[u8],
-+    body: &[u8],
-+    upstream: UpstreamSpec<'_>,
-+    audit: AuditCtx<'_>,
-+) -> Result<u16>
-+where
-+    S: AsyncRead + AsyncWrite + Unpin,
-+{
-+    forward_request_inner(inbound, request_bytes, body, upstream, audit, None, true).await
+     /// Print help
+     #[arg(long, short = 'h', action = clap::ArgAction::Help, help_heading = "OPTIONS")]
+     pub help: Option<bool>,
+@@ -984,7 +988,7 @@ pub struct ProfileShowArgs {
+     /// Show raw paths before expansion (e.g., $HOME instead of /Users/luke)
+     #[arg(long)]
+     pub raw: bool,
+-    /// Output format: profile, manifest, or portable (self-contained policy sources)
++    /// Output format: profile, manifest, or bundle (self-contained files)
+     #[arg(long, value_enum, value_name = "FORMAT")]
+     pub format: Option<ProfileShowFormat>,
+ }
+@@ -993,8 +997,8 @@ pub struct ProfileShowArgs {
+ pub enum ProfileShowFormat {
+     Profile,
+     Manifest,
+-    /// Self-contained profile sources with dependencies and device predicates preserved.
+-    Portable,
++    /// File inventory and contents for platform signing; no files are executed.
++    Bundle,
  }
  
- pub async fn forward_request_with_response_rewrite<S>(
-@@ -116,19 +140,45 @@ pub async fn forward_request_with_response_rewrite<S>(
-     audit: AuditCtx<'_>,
-     response_rewrite: Option<ResponseRewrite<'_>>,
- ) -> Result<u16>
-+where
-+    S: AsyncRead + AsyncWrite + Unpin,
-+{
-+    forward_request_inner(
-+        inbound,
-+        request_bytes,
-+        body,
-+        upstream,
-+        audit,
-+        response_rewrite,
-+        false,
-+    )
-+    .await
-+}
-+
-+async fn forward_request_inner<S>(
-+    inbound: &mut S,
-+    request_bytes: &[u8],
-+    body: &[u8],
-+    upstream: UpstreamSpec<'_>,
-+    audit: AuditCtx<'_>,
-+    response_rewrite: Option<ResponseRewrite<'_>>,
-+    close_inbound: bool,
-+) -> Result<u16>
- where
-     S: AsyncRead + AsyncWrite + Unpin,
- {
-     let status = match upstream.scheme {
-         UpstreamScheme::Https => {
-             let mut tls_stream = open_https_upstream(&upstream).await?;
-             write_request(&mut tls_stream, request_bytes, body).await?;
--            stream_or_rewrite_response(&mut tls_stream, inbound, response_rewrite).await?
-+            stream_or_rewrite_response(&mut tls_stream, inbound, response_rewrite, close_inbound)
-+                .await?
-         }
-         UpstreamScheme::Http => {
-             let mut tcp_stream = open_http_upstream(&upstream).await?;
-             write_request(&mut tcp_stream, request_bytes, body).await?;
--            stream_or_rewrite_response(&mut tcp_stream, inbound, response_rewrite).await?
-+            stream_or_rewrite_response(&mut tcp_stream, inbound, response_rewrite, close_inbound)
-+                .await?
-         }
-     };
- 
-@@ -148,14 +198,17 @@ async fn stream_or_rewrite_response<U, I>(
-     upstream: &mut U,
-     inbound: &mut I,
-     response_rewrite: Option<ResponseRewrite<'_>>,
-+    close_inbound: bool,
- ) -> Result<u16>
- where
-     U: AsyncRead + AsyncWrite + Unpin,
-     I: AsyncWrite + Unpin,
- {
--    match response_rewrite {
--        Some(rewrite) => buffer_rewrite_response(upstream, inbound, rewrite).await,
--        None => stream_response(upstream, inbound).await,
-+    match (response_rewrite, close_inbound) {
-+        // The rewrite path re-frames the whole response itself.
-+        (Some(rewrite), _) => buffer_rewrite_response(upstream, inbound, rewrite).await,
-+        (None, true) => stream_response_closing_inbound(upstream, inbound).await,
-+        (None, false) => stream_response(upstream, inbound).await,
-     }
- }
- 
-@@ -300,6 +353,115 @@ where
-     Ok(status_code)
- }
- 
-+/// Cap on a buffered response head while looking for its terminator. A head
-+/// that exceeds it is relayed unmodified rather than buffered without bound.
-+const MAX_RESPONSE_HEAD_BYTES: usize = 64 * 1024;
-+
-+/// Stream the upstream response back, forcing `Connection: close` on the
-+/// final response head.
-+///
-+/// Interim `1xx` heads (e.g. `100 Continue`) are relayed untouched. Body bytes
-+/// read together with the final head are written after the rewritten head, so
-+/// nothing read past the header terminator is lost. The body is then relayed
-+/// until upstream EOF.
-+async fn stream_response_closing_inbound<U, I>(upstream: &mut U, inbound: &mut I) -> Result<u16>
-+where
-+    U: AsyncRead + AsyncWrite + Unpin,
-+    I: AsyncWrite + Unpin,
-+{
-+    let mut buf = [0u8; 8192];
-+    let mut pending: Vec<u8> = Vec::new();
-+    let mut status_code: Option<u16> = None;
-+
-+    loop {
-+        if let Some(head_end) = find_header_end(&pending) {
-+            let head_len = head_end + 4;
-+            let status = parse_response_status(&pending);
-+            if (100..200).contains(&status) && status != 101 {
-+                inbound.write_all(&pending[..head_len]).await?;
-+                pending.drain(..head_len);
-+       
+ #[derive(Parser, Debug)]
 ```
 
-**File**: `crates/nono-proxy/src/reverse.rs` (modified, +13/-4)
+**File**: `crates/nono-cli/src/login_cmd.rs` (modified, +8/-0)
 ```diff
-@@ -922,8 +922,14 @@ async fn handle_spiffe_route(
-         method,
-         path: upstream_path,
-     };
--    if let Err(e) =
--        forward::forward_request(stream, request.as_bytes(), &body, upstream_spec, audit_ctx).await
-+    if let Err(e) = forward::forward_request_closing_inbound(
-+        stream,
-+        request.as_bytes(),
-+        &body,
-+        upstream_spec,
-+        audit_ctx,
-+    )
-+    .await
-     {
-         warn!("SPIFFE upstream connection failed: {}", e);
-         send_error(stream, 502, "Bad Gateway").await?;
-@@ -1881,14 +1887,17 @@ async fn pool_forward(
-     for (name, value) in response.headers() {
-         // Skip h2-specific pseudo-headers and connection-level headers
-         let name_str = name.as_str();
--        if name_str == "transfer-encoding" || name_str == "connection" {
-+        if name_str == "transfer-encoding" || name_str == "connection" || name_str == "keep-alive" {
-             continue;
-         }
-         inbound
-             .write_all(format!("{}: {}\r\n", name, value.to_str().unwrap_or("")).as_bytes())
-             .await?;
+@@ -255,6 +255,14 @@ fn finish_login(args: &LoginArgs, select: bool) -> Result<()> {
+         eprintln!(
+             "Device enrollment could not be confirmed: {error}\nRetry `{retry}` to enroll, or use `nono platform login --no-enroll` to sign in only."
+         );
++    } else if matches!(
++        enrollment,
++        Ok(EnrollmentResult::Enrolled | EnrollmentResult::Reenrolled | EnrollmentResult::Reused)
++    ) {
++        let state = platform_client::load_active_state()?.ok_or_else(|| {
++            NonoError::ActionRequired("device enrollment was saved but is unavailable for the policy check; run `nono platform status`".into())
++        })?;
++        platform_client::check_enrollment_policy(&state)?;
      }
--    inbound.write_all(b"\r\n").await?;
-+    // The inbound connection carries one request and is closed after this
-+    // response (which, with transfer-encoding stripped, may be close-delimited).
-+    // Say so, or keep-alive clients reuse a socket the proxy is dropping.
-+    inbound.write_all(b"connection: close\r\n\r\n").await?;
- 
-     // Stream body frames without buffering
-     let mut body = response.into_body();
+     Ok(())
+ }
 ```
 
-**File**: `crates/nono-proxy/src/server.rs` (modified, +175/-18)
+**File**: `crates/nono-cli/src/migration.rs` (modified, +1/-0)
 ```diff
-@@ -150,14 +150,30 @@ fn rewrite_absolute_to_origin_form(line: &str) -> Result<String> {
-     ))
- }
+@@ -139,6 +139,7 @@ fn run_pull(pack_ref: &str) -> Result<()> {
+             registry: None,
+             force: true,
+             init: false,
++            fetch_only: false,
+             help: None,
+         },
+         PullReason::ProfileAuto,
+```
+
+**File**: `crates/nono-cli/src/package.rs` (modified, +3/-0)
+```diff
+@@ -120,6 +120,8 @@ pub struct LockedPackage {
+     pub version: String,
+     pub installed_at: String,
+     #[serde(default)]
++    pub fetch_only: bool,
++    #[serde(default)]
+     pub pinned: bool,
+     #[serde(default)]
+     pub provenance: Option<PackageProvenance>,
+@@ -157,6 +159,7 @@ impl Default for LockedPackage {
+         Self {
+             version: String::new(),
+             installed_at: Utc::now().to_rfc3339(),
++            fetch_only: false,
+             pinned: false,
+             provenance: None,
+             artifacts: BTreeMap::new(),
+```
+
+**File**: `crates/nono-cli/src/package_cmd.rs` (modified, +101/-5)
+```diff
+@@ -18,6 +18,11 @@ use std::path::{Path, PathBuf};
+ use tempfile::TempDir;
  
--/// Strip hop-by-hop proxy headers (`Proxy-Connection`, `Proxy-Authorization`)
--/// from a raw header block before forwarding upstream.
-+/// Header fields the forward path never passes upstream: proxy hop-by-hop
-+/// fields, connection management (re-added as `Connection: close`), and body
-+/// framing (re-added as `Content-Length` after the body is read).
-+fn is_forward_stripped_header(name: &str) -> bool {
-+    [
-+        "proxy-connection",
-+        "proxy-authorization",
-+        "connection",
-+        "keep-alive",
-+        "content-length",
-+        "transfer-encoding",
-+    ]
-+    .iter()
-+    .any(|stripped| name.eq_ignore_ascii_case(stripped))
-+}
-+
-+/// Strip hop-by-hop headers from a raw header block before forwarding upstream.
- ///
- /// These headers are meaningful only on the client<->proxy hop and must never
--/// be forwarded: `Proxy-Authorization` carries the session token, and
--/// `Proxy-Connection` is a non-standard hop-by-hop hint. Other headers
--/// (including `Host`) are preserved verbatim so the forwarded request matches
--/// what the client sent.
-+/// be forwarded: `Proxy-Authorization` carries the session token,
-+/// `Proxy-Connection` is a non-standard hop-by-hop hint, and the client's
-+/// `Connection`/`Keep-Alive` would keep the upstream connection open after a
-+/// response the proxy relays until EOF. Other headers (including `Host`) are
-+/// preserved verbatim so the forwarded request matches what the client sent.
- fn strip_proxy_headers(header_bytes: &[u8]) -> Vec<u8> {
-     let header_str = match std::str::from_utf8(header_bytes) {
-         Ok(s) => s,
-@@ -168,11 +184,7 @@ fn strip_proxy_headers(header_bytes: &[u8]) -> Vec<u8> {
-     let mut out = Vec::with_capacity(header_bytes.len());
-     for line in header_str.split_inclusive("\r\n") {
-         let name = line.split(':').next().unwrap_or("").trim();
--        if name.eq_ignore_ascii_case("proxy-connection")
--            || name.eq_ignore_ascii_case("proxy-authorization")
--            || name.eq_ignore_ascii_case("content-length")
--            || name.eq_ignore_ascii_case("transfer-encoding")
--        {
-+        if is_forward_stripped_header(name) {
-             continue;
-         }
-         out.extend_from_slice(line.as_bytes());
-@@ -229,12 +241,7 @@ fn strip_and_redeem_proxy_headers(
-             out.extend_from_slice(line.as_bytes());
-             continue;
-         };
--        let trimmed_name = name.trim();
--        if trimmed_name.eq_ignore_ascii_case("proxy-connection")
--            || trimmed_name.eq_ignore_ascii_case("proxy-authorization")
--            || trimmed_name.eq_ignore_ascii_case("content-length")
--            || trimmed_name.eq_ignore_ascii_case("transfer-encoding")
--        {
-+        if is_forward_stripped_header(name.trim()) {
-             continue;
-         }
-         let (value, line_ending) = match rest.strip_suffix("\r\n") {
-@@ -2472,6 +2479,9 @@ async fn handle_forward_http(
-     let mut request_bytes = Vec::with_capacity(origin_line.len() + filtered_headers.len() + 64);
-     request_bytes.extend_from_slice(origin_line.as_bytes());
-     request_bytes.extend_from_slice(&filtered_headers);
-+    // One request per inbound connection: ask the upstream to close after the
-+    // response so the EOF-delimited relay ends when the response does.
-+    request_bytes.extend_from_slice(b"Connection: close\r\n");
-     // Always re-frame when the client declared a body (CL or chunked TE),
-     // including empty bodies — otherwise upstreams may answer 411 or hang.
-     if reverse::should_reframe_with_content_length(header_bytes) {
-@@ -2549,7 +2559,15 @@ async fn handle_forward_http(
-         path: &inbound_path,
-     };
+ pub fn run_pull(args: PullArgs, reason: PullReason) -> Result<()> {
++    if args.fetch_only && args.init {
++        return Err(NonoError::PackageInstall(
++            "--fetch-only cannot be combined with --init".into(),
++        ));
++    }
+     let package_ref = package::parse_package_ref(&args.package_ref)?;
+     let registry_url = resolve_registry_url(args.registry.as_deref());
+     let client = RegistryClient::new(registry_url.clone());
+@@ -27,8 +32,17 @@ pub fn run_pull(args: PullArgs, reason: PullReason) -> Result<()> {
+     validate_pull_response(&package_ref, &pull)?;
  
--    match forward::forward_request(stream, &request_bytes, &body, upstream, audit_ctx).await {
-+    match forward::forward_request_closing_inbound(
-+        stream,
-+        &request_bytes,
-+        &body,
-+        upstream,
-+        audit_ctx,
-+    )
-+    .await
+     let lockfile = package::read_lockfile()?;
++    if args.fetch_only
++        && lockfile
++            .packages
++            .get(&package_ref.key())
++            .is_some_and(|existing| !existing.wiring_record.is_empty())
 +    {
-         Ok(_status) => Ok(()),
-         Err(e) => {
-             warn!("forward-http upstream connection failed: {}", e);
-@@ -4192,6 +4210,66 @@ mod tests {
-             .to_string()
++        return Err(NonoError::PackageInstall("fetch-only requires an unwired package store; use a separate store instead of reversing existing wiring".into()));
++    }
+     if let Some(existing) = lockfile.packages.get(&package_ref.key())
+         && existing.version == pull.version
++        && existing.fetch_only == args.fetch_only
+         && !args.force
+     {
+         eprintln!(
+@@ -71,6 +85,7 @@ pub fn run_pull(args: PullArgs, reason: PullReason) -> Result<()> {
+     // proceed to apply the new directives). The lockfile entry stays
+     // intact so the user can investigate.
+     if let Some(prior_pkg) = lockfile.packages.get(&package_ref.key())
++        && !args.fetch_only
+         && !prior_pkg.wiring_record.is_empty()
+     {
+         let failures = crate::wiring::reverse(&prior_pkg.wiring_record);
+@@ -98,6 +113,7 @@ pub fn run_pull(args: PullArgs, reason: PullReason) -> Result<()> {
+         &manifest,
+         &downloads,
+         args.init,
++        args.fetch_only,
+         &pack_owned_files,
+     )?;
+     update_lockfile(
+@@ -107,7 +123,7 @@ pub fn run_pull(args: PullArgs, reason: PullReason) -> Result<()> {
+         &signer_identity,
+         &manifest,
+         &downloads.artifacts,
+-        &install.wiring_record,
++        &install,
+     )?;
+ 
+     let install_dir = package::package_install_dir(&package_ref.namespace, &package_ref.name)?;
+@@ -334,6 +350,7 @@ pub fn run_update(args: UpdateArgs) -> Result<()> {
+                             registry: args.registry.clone(),
+                             force: args.force,
+                             init: false,
++                            fetch_only: pkg.fetch_only,
+                             help: None,
+                         },
+                         PullReason::Update,
+@@ -596,6 +613,7 @@ struct VerifiedDownloads {
+ struct InstallSummary {
+     installed_artifacts: usize,
+     copied_to_project: usize,
++    fetch_only: bool,
+     /// Records produced by the wiring interpreter, persisted into the
+     /// lockfile so `nono remove` can reverse them.
+     wiring_record: Vec<crate::wiring::WiringRecord>,
+@@ -776,6 +794,7 @@ fn install_package(
+     manifest: &PackageManifest,
+     downloads: &VerifiedDownloads,
+     init: bool,
++    fetch_only: bool,
+     pack_owned_files: &HashMap<PathBuf, String>,
+ ) -> Result<InstallSummary> {
+     let staging_parent = package::package_store_dir()?
+@@ -807,6 +826,7 @@ fn install_package(
+             })?;
+         install_manifest_artifact(&staging_root, artifact, &downloaded.path)?;
+         if init
++            && !fetch_only
+             && artifact.artifact_type == ArtifactType::Instruction
+             && artifact.placement.as_deref() == Some("project")
+         {
+@@ -830,7 +850,7 @@ fn install_package(
+     // executes the closed vocabulary the pack supplies as data. The
+     // returned records go into the lockfile so `nono remove` can
+     // reverse them deterministically.
+-    let wiring_record = if manifest.wiring.is_empty() {
++    let wiring_record = if fetch_only || manifest.wiring.is_empty() {
+         Vec::new()
+     } else {
+         let ctx = crate::wiring::WiringContext {
+@@ -846,6 +866,7 @@ fn install_package(
+     };
+ 
+     Ok(InstallSummary {
++        fetch_only,
+         installed_artifacts: manifest.artifacts.len(),
+         copied_to_project,
+         wiring_record,
+@@ -999,7 +1020,7 @@ fn update_lockfile(
+     signer_identity: &str,
+     manifest: &PackageManifest,
+     downloads: &[DownloadedArtifact],
+-    wiring_record: &[crate::wiring::WiringRecord],
++    install: &InstallSummary,
+ ) -> Result<()> {
+     let mut lockfile = package::read_lockfile()?;
+     lockfile.lockfile_version = package::LOCKFILE_VERSION;
+@@ -1046,6 +1067,7 @@ fn update_lockfile(
+     lockfile.packages.insert(
+         package_ref.key(),
+         LockedPackage {
++            fetch_only: install.fetch_only,
+             version: pull.version.clone(),
+             installed_at: Utc::now().to_rfc3339(),
+             pinned: was_pinned,
+@@ -1062,7 +1084,7 @@ fn update_lockfile(
+                     .unwrap_or_else(|| Utc::now().t
+```
+
+**File**: `crates/nono-cli/src/platform_client.rs` (modified, +48/-3)
+```diff
+@@ -148,7 +148,41 @@ fn enroll(args: PlatformEnrollArgs) -> Result<()> {
+             None,
+         )
+     );
+-    Ok(())
++    check_enrollment_policy(&stored.state)
++}
++
++pub(crate) fn check_enrollment_policy(state: &PlatformState) -> Result<()> {
++    let checked = crate::platform_policy::refresh(state).and_then(|policy| {
++        policy.ok_or_else(|| {
++            NonoError::ActionRequired("platform returned no verified assignment".into())
++        })
++    });
++    match checked {
++        Ok(policy) => {
++            print!(
++                "{}",
++                crate::platform_policy::display::enrollment_summary(&policy)
++            );
++            Ok(())
++        }
++        Err(error) => {
++            tracing::warn!("Post-enrollment policy check failed; enrollment remains saved");
++            let mut text = summary_heading("Policy check failed", SummaryKind::Attention);
++            text.push_str(&summary_row("Enrollment", "Saved"));
++            text.push_str(&summary_row("Policy", "Not verified"));
++            text.push_str(&summary_row("Next step", "nono platform status --refresh"));
++            println!("{text}");
++            let subject = if state.subject_kind == "workload" {
++                "Workload"
++            } else {
++                "Device"
++            };
++            Err(NonoError::ActionRequired(format!(
++                "{subject} enrolled; policy check failed: {}\nEnrollment remains saved. Retry `nono platform status --refresh`; do not enrol again. Default startup still requires a successful policy check.",
++                safe_text(&error.to_string())
++            )))
++        }
++    }
+ }
+ 
+ fn status(args: PlatformStatusArgs) -> Result<()> {
+@@ -230,8 +264,8 @@ fn status(args: PlatformStatusArgs) -> Result<()> {
+ fn status_text(
+     context: Option<&crate::platform_oauth::session::SessionRecord>,
+     stored: Option<&StoredEnrollment>,
+-    policy: Option<&crate::platform_policy::protocol::PolicyClaims>,
+-    previous: Option<&crate::platform_policy::protocol::PolicyClaims>,
++    policy: Option<&crate::platform_policy::protocol::AssignmentClaims>,
++    previous: Option<&crate::platform_policy::protocol::AssignmentClaims>,
+     refreshed: bool,
+ ) -> String {
+     let t = crate::theme::current();
+@@ -653,6 +687,17 @@ pub(crate) fn load_active_state() -> Result<Option<PlatformState>> {
+         .map(|stored| stored.state))
+ }
+ 
++pub(crate) fn load_policy_state() -> Result<Option<PlatformState>> {
++    let stored = load_enrollment()?;
++    if stored.as_ref().is_some_and(|stored| stored.revoked) {
++        return Err(NonoError::ActionRequired(
++            "device enrollment was revoked; recover the enrollment before starting a session"
++                .into(),
++        ));
++    }
++    Ok(stored.map(|stored| stored.state))
++}
++
+ pub(crate) fn enrollment_revoked() -> Result<bool> {
+     Ok(load_enrollment()?.is_some_and(|stored| stored.revoked))
+ }
+```
+
+**File**: `crates/nono-cli/src/platform_policy.rs` (modified, +271/-139)
+```diff
+@@ -37,7 +37,18 @@ pub(crate) struct PolicySession {
+ #[derive(Default, Serialize, Deserialize)]
+ struct CachedPolicy {
+     trust_root: Option<PolicyTrustRoot>,
+-    response: Option<SignedPolicyResponse>,
++    response: Option<PolicyRefreshResponse>,
++}
++
++fn policy_sources(
++    policy: &AssignedBundle,
++    root: &PolicyTrustRoot,
++) -> Result<profile::bundle::PolicySources> {
++    let bundle = policy
++        .bundle
++        .as_ref()
++        .ok_or_else(|| NonoError::ConfigParse("missing signed bundle".into()))?;
++    profile::bundle::files::verify(bundle, root, &policy.content_digest, policy.revision)
+ }
+ 
+ #[derive(Debug)]
+@@ -51,14 +62,16 @@ impl RefreshFailure {
+     fn allows_local_fallback(
+         &self,
+         explicit_local: bool,
+-        previous: Option<&PolicyClaims>,
++        previous: Option<&AssignmentClaims>,
+         remembered_mode: Option<&str>,
+     ) -> bool {
+         match self {
+             Self::Unavailable(_) => {
+                 explicit_local
+                     || (remembered_mode != Some("advisory")
+-                        && previous.is_none_or(|policy| policy.management_mode == "audit_only"))
++                        && (remembered_mode == Some("audit_only")
++                            || previous
++                                .is_some_and(|policy| policy.management_mode == "audit_only")))
+             }
+             Self::ServiceUnavailable(_) => explicit_local,
+             Self::Invalid(_) => false,
+@@ -77,7 +90,14 @@ impl RefreshFailure {
+ 
+ impl From<NonoError> for RefreshFailure {
+     fn from(error: NonoError) -> Self {
+-        Self::Invalid(error.to_string())
++        Self::Invalid(error_reason(error))
++    }
++}
++
++fn error_reason(error: NonoError) -> String {
++    match error {
++        NonoError::ConfigParse(message) | NonoError::ActionRequired(message) => message,
++        other => other.to_string(),
+     }
+ }
+ 
+@@ -89,9 +109,8 @@ fn state_path(state: &PlatformState) -> Result<PathBuf> {
+         .join(format!("{}.json", platform_client::sha256_hex(&scope))))
+ }
+ 
+-fn load(state: &PlatformState) -> Result<CachedPolicy> {
+-    let path = state_path(state)?;
+-    match std::fs::read(path) {
++fn load_record(state: &PlatformState) -> Result<CachedPolicy> {
++    match std::fs::read(state_path(state)?) {
+         Ok(bytes) => serde_json::from_slice(&bytes).map_err(|error| {
+             NonoError::ConfigParse(format!("invalid cached platform policy: {error}"))
+         }),
+@@ -102,6 +121,57 @@ fn load(state: &PlatformState) -> Result<CachedPolicy> {
+     }
+ }
+ 
++fn load(state: &PlatformState) -> Result<CachedPolicy> {
++    let mut cache = load_record(state)?;
++    hydrate_cache(state, &mut cache)?;
++    Ok(cache)
++}
++
++fn hydrate_cache(state: &PlatformState, cache: &mut CachedPolicy) -> Result<()> {
++    if let Some(response) = &cache.response {
++        let payload = URL_SAFE_NO_PAD
++            .decode(&response.payload)
++            .map_err(|error| NonoError::ConfigParse(error.to_string()))?;
++        let claims: serde_json::Value = serde_json::from_slice(&payload)
++            .map_err(|error| NonoError::ConfigParse(error.to_string()))?;
++        if claims["protocol_version"].as_str() != Some(PROTOCOL) {
++            tracing::debug!(
++                "Discarding obsolete cached assignment; a fresh verified assignment is required"
++            );
++            cache.response = None;
++        }
++    }
++    if let Some(response) = &mut cache.response
++        && let Some(bundle) = &response.bundle
++    {
++        let claims: AssignmentClaims = serde_json::from_slice(
++            &URL_SAFE_NO_PAD
++                .decode(&response.payload)
++                .map_err(|e| NonoError::ConfigParse(e.to_string()))?,
++        )
++        .map_err(|e| NonoError::ConfigParse(e.to_string()))?;
++        let policy = claims
++            .policy
++            .ok_or_else(|| NonoError::ConfigParse("cached bundle has no assignment".into()))?;
++        let directory = profile::bundle::files::cache_path(
++            &state_path(state)?.with_extension(""),
++            bundle,
++            &policy.content_digest,
++            policy.revision,
++        )?;
++        let stored = profile::bundle::files::read_directory(&directory)?;
++        if stored.signature != bundle.signature {
++            tracing::debug!(file = "bundle.sig", directory = ?directory, "Cached signature differs from the recorded platform bundle signature");
++            return Err(NonoError::ConfigParse(format!(
++                "bundle verification failed: cached signature file {:?} differs from the recorded platform bundle signature",
++                directory.join("bundle.sig")
++            )));
++        }
++        response.bundle = Some(stored);
++    }
++    Ok(())
++}
++
+ fn validate_root(root: &PolicyTrustRoot) -> Result<()> {
+     let bytes = URL_SAFE_NO_PAD
+         .decode(&root.public_key)
+@@ -139,11 +209,11 @@ pub(crate) fn pin_enrollment_key(
+ }
+ 
+ fn verify(
+-    response: &SignedPolicyRespon
+```
+
+**File**: `crates/nono-cli/src/platform_policy/display.rs` (modified, +43/-25)
+```diff
+@@ -13,20 +13,12 @@ fn mode_label(mode: &str) -> &str {
+     }
+ }
+ 
+-pub(super) fn policy_name(policy: &DeliveredPolicy) -> String {
+-    let document = serde_json::from_str::<serde_json::Value>(&policy.profile_json).ok();
+-    let name = document.as_ref().and_then(|document| {
+-        document
+-            .get("root")
+-            .unwrap_or(document)
+-            .get("meta")?
+-            .get("name")?
+-            .as_str()
+-    });
+-    safe_text(
+-        name.filter(|name| !name.trim().is_empty())
+-            .unwrap_or(&policy.profile_id),
+-    )
++pub(super) fn policy_name(policy: &AssignedBundle) -> String {
++    if let Some(bundle) = &policy.bundle {
++        let name = crate::profile::bundle::files::name(bundle);
++        return safe_text(name.as_deref().unwrap_or(&policy.profile_id));
++    }
++    safe_text(&policy.profile_id)
+ }
+ 
+ pub(crate) fn session_summary(session: &PolicySession) -> String {
+@@ -75,7 +67,7 @@ fn checked_at(issued: DateTime<Utc>, now: DateTime<Utc>) -> String {
+     format!("{} · {age}", issued.format("%d %b %Y, %H:%M:%S UTC"))
+ }
+ 
+-fn refresh_message(previous: Option<&PolicyClaims>, current: &PolicyClaims) -> String {
++fn refresh_message(previous: Option<&AssignmentClaims>, current: &AssignmentClaims) -> String {
+     let Some(previous) = previous else {
+         return match &current.policy {
+             Some(policy) => format!("Fetched revision {}", policy.revision),
+@@ -98,8 +90,8 @@ fn refresh_message(previous: Option<&PolicyClaims>, current: &PolicyClaims) -> S
+ }
+ 
+ pub(crate) fn status_rows(
+-    policy: Option<&PolicyClaims>,
+-    previous: Option<&PolicyClaims>,
++    policy: Option<&AssignmentClaims>,
++    previous: Option<&AssignmentClaims>,
+     refreshed: bool,
+ ) -> String {
+     let Some(policy) = policy else {
+@@ -112,12 +104,7 @@ pub(crate) fn status_rows(
+             },
+         );
+     };
+-    let mut text = summary_row("Mode", mode_label(&policy.management_mode));
+-    let profile = match &policy.policy {
+-        Some(policy) => format!("{} · revision {}", policy_name(policy), policy.revision),
+-        None => "Local profiles".into(),
+-    };
+-    text.push_str(&summary_row("Policy", &profile));
++    let mut text = assignment_rows(policy);
+     let checked = format!(
+         "{} · {}",
+         checked_at(policy.issued_at, Utc::now()),
+@@ -136,6 +123,24 @@ pub(crate) fn status_rows(
+     text
+ }
+ 
++fn assignment_rows(policy: &AssignmentClaims) -> String {
++    let mut text = summary_row("Mode", mode_label(&policy.management_mode));
++    let profile = match &policy.policy {
++        Some(policy) => format!("{} · revision {}", policy_name(policy), policy.revision),
++        None => "Local profiles".into(),
++    };
++    text.push_str(&summary_row("Policy", &profile));
++    text
++}
++
++pub(crate) fn enrollment_summary(policy: &AssignmentClaims) -> String {
++    let mut text = summary_heading("Policy verified", SummaryKind::Success);
++    text.push_str(&assignment_rows(policy));
++    text.push_str(&summary_row("Status", "Verified and ready"));
++    text.push('\n');
++    text
++}
++
+ #[cfg(test)]
+ mod tests {
+     use super::*;
+@@ -181,9 +186,22 @@ mod tests {
+         let mut policy = super::super::tests::claims()
+             .policy
+             .expect("assigned policy");
+-        policy.profile_json = r#"{"root":{"meta":{"name":"Engineering\u001b[2J"}}}"#.into();
++        let bundle = policy.bundle.as_mut().expect("bundle");
++        use base64::Engine as _;
++        let payload = base64::engine::general_purpose::STANDARD
++            .decode(
++                bundle.signature["dsseEnvelope"]["payload"]
++                    .as_str()
++                    .expect("payload"),
++            )
++            .expect("base64");
++        let mut statement: serde_json::Value = serde_json::from_slice(&payload).expect("statement");
++        statement["predicate"]["name"] = serde_json::json!("Engineering\u{001b}[2J");
++        bundle.signature["dsseEnvelope"]["payload"] = base64::engine::general_purpose::STANDARD
++            .encode(serde_json::to_vec(&statement).expect("statement"))
++            .into();
+         assert_eq!(policy_name(&policy), "Engineering");
+-        policy.profile_json = "{}".into();
++        policy.bundle = None;
+         assert_eq!(policy_name(&policy), policy.profile_id);
      }
  
-+    /// The reverse path serves one request per inbound connection, so the
-+    /// pooled-upstream response must tell the client `Connection: close` even
-+    /// when the upstream advertised keep-alive, and the proxy must close the
-+    /// inbound connection once the body is relayed.
-+    #[tokio::test]
-+    async fn reverse_pool_response_tells_client_connection_close() {
-+        let listener = TcpListener::bind("127.0.0.1:0").await.unwrap();
-+        let upstream = format!("127.0.0.1:{}", listener.local_addr().unwrap().port());
-+        tokio::spawn(async move {
-+            if let Ok((mut sock, _)) = listener.accept().await {
-+                let mut buf = [0u8; 1024];
-+                let _ = sock.read(&mut buf).await;
-+          
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2336** (2026-11-18): feat(platform): verify self-contained signed file bundles (@SequeI)
 - **PR #2332** (2026-11-17): fix(audit): include session profile references in platform uploads (@SequeI)
 - **PR #2331** (2026-11-17): feat(cli): announce pending non-interactive approval queries (@lukehinds)
 - **PR #2329** (2026-11-17): feat(linux): implement mount namespace isolation and host IPC masking (@lukehinds)
 - **PR #2328** (2026-11-17): test: fix flaky tests in socket auth, capture and fd churn (@daescha)
 - **PR #2327** (2026-11-17): feat(platform): apply signed advisory policy at session startup (@SequeI)
-- **PR #2322** (2026-11-16): chore(deps): bump jsonschema from 0.60.2 to 0.61.2 (@dependabot[bot])
 
 ---
 
@@ -3344,71 +3575,39 @@ forward path and the SPIFFE reverse path, an
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. proxy): forward http streamable mcp
+## X. platform): verify self-contained signed file bundles
 
 **RULE**:
-When implementing operations in `crates/nono-proxy/src/forward.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nolabs-ai/nono. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `crates/nono-cli/src/cli.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nolabs-ai/nono. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0f1aceae`: proxy): forward http streamable mcp. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9ae5c5d3`: platform): verify self-contained signed file bundles. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/nono-proxy/src/forward.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/nono-cli/src/cli.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    forward_request_inner(inbound, request_bytes, body, upstream, audit, None, false).await
-}
+    /// Fetch verified pack files without applying wiring or project installation
+    #[arg(long, conflicts_with = "init", help_heading = "OPTIONS")]
+    pub fetch_only: bool,
 
-/// Like [`forward_request`], for callers that serve exactly one request per
-/// inbound connection and close it afterwards.
-///
-/// The final response head is rewritten to carry `Connection: close` so the
-/// client does not reuse a connection the proxy is about to drop. Without it,
-/// a keep-alive client (e.g. an MCP Streamable HTTP client) writes its next
-/// request onto a socket nobody reads, and the request is lost when the
-/// connection closes.
-///
-/// `request_bytes` must already ask the upstream for `Connection: close`: the
-/// response body is relayed until upstream EOF.
-pub async fn forward_request_closing_inbound<S>(
-    inbound: &mut S,
-    request_bytes: &[u8],
-    body: &[u8],
-    upstream: UpstreamSpec<'_>,
-    audit: AuditCtx<'_>,
-) -> Result<u16>
-where
-    S: AsyncRead + AsyncWrite + Unpin,
-{
-    forward_request_inner(inbound, request_bytes, body, upstream, audit, None, true).await
-where
-    S: AsyncRead + AsyncWrite + Unpin,
-{
-    forward_request_inner(
-        inbound,
-        request_bytes,
-        body,
-        upstream,
-        audit,
-        response_rewrite,
-   
+    /// Output format: profile, manifest, or bundle (self-contained files)
+    /// File inventory and contents for platform signing; no files are executed.
+    Bundle,
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-    forward_request_with_response_rewrite(inbound, request_bytes, body, upstream, audit, None).await
-            stream_or_rewrite_response(&mut tls_stream, inbound, response_rewrite).await?
-            stream_or_rewrite_response(&mut tcp_stream, inbound, response_rewrite).await?
-    match response_rewrite {
-        Some(rewrite) => buffer_rewrite_response(upstream, inbound, rewrite).await,
-        None => stream_response(upstream, inbound).await,
+    /// Output format: profile, manifest, or portable (self-contained policy sources)
+    /// Self-contained profile sources with dependencies and device predicates preserved.
+    Portable,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0f1aceae` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9ae5c5d3` are properly handled with clean fallback behavior.
 
 
 ## Consequences

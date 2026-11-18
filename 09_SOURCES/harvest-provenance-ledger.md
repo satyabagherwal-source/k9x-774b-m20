@@ -10950,3 +10950,10 @@ Every entry in this ledger must capture:
 | `learn-huggingface-sentence-transformers-all-minilm-l6-v2` | `https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2` | `hf-sentenc` | Multi-dimensional audit evidence | 2026-11-18T10:08:39.221Z |
 | `learn-github-nginx-kubernetes-ingress` | `https://github.com/nginx/kubernetes-ingress` | `10b9eec3` | Multi-dimensional audit evidence | 2026-11-18T10:08:47.766Z |
 | `learn-github-milvus-io-milvus` | `https://github.com/milvus-io/milvus` | `2d0d14cb` | Multi-dimensional audit evidence | 2026-11-18T10:08:53.902Z |
+| `learn-github-appwrite-appwrite` | `https://github.com/appwrite/appwrite` | `23fd2350` | Multi-dimensional audit evidence | 2026-11-18T10:18:49.159Z |
+| `learn-github-kubernetes-sigs-aws-load-balancer-controller` | `https://github.com/kubernetes-sigs/aws-load-balancer-controller` | `6de51a66` | Multi-dimensional audit evidence | 2026-11-18T10:18:50.419Z |
+| `learn-github-nolabs-ai-nono` | `https://github.com/nolabs-ai/nono` | `9ae5c5d3` | Multi-dimensional audit evidence | 2026-11-18T10:18:52.348Z |
+| `learn-github-vectifyai-pageindex` | `https://github.com/VectifyAI/PageIndex` | `340b8535` | Multi-dimensional audit evidence | 2026-11-18T10:18:53.899Z |
+| `learn-huggingface-cross-encoder-ms-marco-minilm-l6-v2` | `https://huggingface.co/cross-encoder/ms-marco-MiniLM-L6-v2` | `hf-cross-e` | Multi-dimensional audit evidence | 2026-11-18T10:21:58.895Z |
+| `learn-dom-k-92db8dfd` | `project://hf-cross-encoder-ms-marco-minilm-l6-v2` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-cross-encoder-ms-marco-minilm-l6-v2-learnings.md` | 2026-11-18T10:22:27.398Z |
+| `learn-dom-f-3ad6d1e9` | `project://hf-cross-encoder-ms-marco-minilm-l6-v2` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-cross-encoder-ms-marco-minilm-l6-v2-learnings.md` | 2026-11-18T10:22:55.656Z |

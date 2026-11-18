@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-18T10:08:58.459Z",
-  "total_records": 1816,
+  "last_updated": "2026-11-18T10:22:57.474Z",
+  "total_records": 1824,
   "domains": {
     "A": {
       "total": 11,
@@ -835,7 +835,7 @@
       ]
     },
     "F": {
-      "total": 56,
+      "total": 57,
       "record_ids": [
         "DOM-F-C060CCE1",
         "DOM-F-83D565C2",
@@ -892,11 +892,12 @@
         "domain_intelligence-design-intelligence-hf-qwen-qwen3-0-6b-learnings-core-invariants",
         "domain_intelligence-design-intelligence-google-t5-t5-small-core-invariants",
         "domain_intelligence-design-intelligence-hf-google-t5-t5-small-learnings-core-invariants",
-        "DOM-F-8389708E"
+        "DOM-F-8389708E",
+        "DOM-F-3AD6D1E9"
       ]
     },
     "G": {
-      "total": 317,
+      "total": 319,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -1214,11 +1215,13 @@
         "domain_intelligence-architecture-intelligence-arkivanov-decompose-core-invariants",
         "domain_intelligence-architecture-intelligence-arkivanov-decompose-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-crosspaste-crosspaste-desktop-core-invariants",
-        "domain_intelligence-architecture-intelligence-crosspaste-crosspaste-desktop-learnings-core-invariant"
+        "domain_intelligence-architecture-intelligence-crosspaste-crosspaste-desktop-learnings-core-invariant",
+        "domain_intelligence-architecture-intelligence-kubernetes-sigs-aws-load-balancer-controller-core-inva",
+        "domain_intelligence-architecture-intelligence-kubernetes-sigs-aws-load-balancer-controller-learnings"
       ]
     },
     "H": {
-      "total": 427,
+      "total": 429,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1646,7 +1649,9 @@
         "domain_intelligence-technical-construction-intelligence-msasikanth-twine-learnings-core-invariants",
         "domain_intelligence-technical-construction-intelligence-dnscontrol-dnscontrol-core-invariants",
         "domain_intelligence-technical-construction-intelligence-dnscontrol-dnscontrol-learnings-core-invaria",
-        "DOM-H-CC987E5F"
+        "DOM-H-CC987E5F",
+        "domain_intelligence-technical-construction-intelligence-appwrite-appwrite-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-appwrite-appwrite-learnings-core-invariants"
       ]
     },
     "I": {
@@ -1772,7 +1777,7 @@
       ]
     },
     "K": {
-      "total": 84,
+      "total": 87,
       "record_ids": [
         "DOM-K-353B93D6",
         "DOM-K-76C43650",
@@ -1857,7 +1862,10 @@
         "domain_intelligence-quality-verification-intelligence-etcd-io-etcd-core-invariants",
         "domain_intelligence-quality-verification-intelligence-etcd-io-etcd-learnings-core-invariants",
         "DOM-K-590BAEAB",
-        "domain_intelligence-quality-verification-intelligence-yugabyte-yugabyte-db-learnings-core-invariants"
+        "domain_intelligence-quality-verification-intelligence-yugabyte-yugabyte-db-learnings-core-invariants",
+        "domain_intelligence-quality-verification-intelligence-cross-encoder-ms-marco-minilm-l6-v2-core-invar",
+        "DOM-K-92DB8DFD",
+        "domain_intelligence-quality-verification-intelligence-hf-cross-encoder-ms-marco-minilm-l6-v2-learnin"
       ]
     },
     "L": {
@@ -8567,8 +8575,8 @@
       "title": "Architecture Intelligence: nolabs-ai/nono Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nolabs-ai-nono-architecture-intelligence-nolabs-ai-nono-core-invariants.md",
       "repository": "nolabs-ai/nono",
-      "content_hash": "3604aa05faaa17ee780ee4b6c4fb0a419b133a60d838aa1663a831257a41bb22",
-      "created_at": "2026-11-18T00:59:27.846Z"
+      "content_hash": "0eecc2cbd07bf0daf0e388ae79e7623292a8dbde9b9058206bb1d20c062b6ba7",
+      "created_at": "2026-11-18T10:18:52.662Z"
     },
     "domain_intelligence-technical-construction-intelligence-meilisearch-meilisearch-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-meilisearch-meilisearch-core-invariants",
@@ -19006,8 +19014,8 @@
       "title": "Technical Construction Intelligence: VectifyAI/PageIndex Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-vectifyai-pageindex-technical-construction-intelligence-vectifyai-pageindex-core.md",
       "repository": "VectifyAI/PageIndex",
-      "content_hash": "65bbe1824556109c9569c20fb14deaad903d8100a4f5d1141159e09ad7a01c7d",
-      "created_at": "2026-11-15T03:13:42.049Z"
+      "content_hash": "ce2e14a7bd99d4b687f6c180f543a919fc19c4576241e2f4a44133f24e1bc61f",
+      "created_at": "2026-11-18T10:18:54.213Z"
     },
     "DOM-D-1DE3F011": {
       "record_id": "DOM-D-1DE3F011",
@@ -30534,6 +30542,128 @@
       "confidence": 0.86,
       "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
       "created_at": "2026-11-18T09:29:18.893Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-appwrite-appwrite-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-appwrite-appwrite-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: appwrite/appwrite Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-appwrite-appwrite-technical-construction-intelligence-appwrite-appwrite-core-inv.md",
+      "repository": "appwrite/appwrite",
+      "content_hash": "1d03bd63cb5235b299488c6b649442ddc4594f891c9188dfa5fb8e5fae867814",
+      "created_at": "2026-11-18T10:18:49.465Z"
+    },
+    "domain_intelligence-architecture-intelligence-kubernetes-sigs-aws-load-balancer-controller-core-inva": {
+      "record_id": "domain_intelligence-architecture-intelligence-kubernetes-sigs-aws-load-balancer-controller-core-inva",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: kubernetes-sigs/aws-load-balancer-controller Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-kubernetes-sigs-aws-load-balancer-controller-architecture-intelligence-kubernete.md",
+      "repository": "kubernetes-sigs/aws-load-balancer-controller",
+      "content_hash": "69c91a8512843d3beb443ecdb840ff175a93a5ea59046cfc7c7a3f628c9e88bf",
+      "created_at": "2026-11-18T10:18:50.737Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-cross-encoder-ms-marco-minilm-l6-v2-core-invar": {
+      "record_id": "domain_intelligence-quality-verification-intelligence-cross-encoder-ms-marco-minilm-l6-v2-core-invar",
+      "domain_letter": "K",
+      "title": "Quality & Verification Intelligence: cross-encoder/ms-marco-MiniLM-L6-v2 Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-hf-cross-encoder-ms-marco-minilm-l6-v2-quality-verification-intelligence-cross-e.md",
+      "repository": "cross-encoder/ms-marco-MiniLM-L6-v2",
+      "content_hash": "50e956adec6811e73ac90d6af874e6c728b0b2456bd1f68f8499b88a55d0f6f2",
+      "created_at": "2026-11-18T10:21:59.201Z"
+    },
+    "DOM-K-92DB8DFD": {
+      "record_id": "DOM-K-92DB8DFD",
+      "domain_letter": "K",
+      "domain_id": "quality_verification",
+      "domain_name": "Quality & Verification Intelligence",
+      "secondary_domains": [],
+      "title": "Cross-Encoder Score Collapse via Incorrect Softmax Application (BUG-RANK-01)",
+      "content": "Scalar regression and ranking heads must be decoupled from categorical multi-class inference routines; never invoke softmax over a singleton output dimension.",
+      "content_hash": "4090ee805b79ca0bc8839fed2fe9e0941516f294d0e5b9449bc4ff71d874a328",
+      "summary": "Standard transformer sequence classification heads for N-class tasks have `num_labels >= 2`. For ranking, `num_labels = 1`. A 1-element soft -> Scalar regression and ranking heads must be decoupled from categorical multi-class inference routines; never invoke softmax over a singleton",
+      "provenance": {
+        "source_uri": "project://hf-cross-encoder-ms-marco-minilm-l6-v2/hf-cross-encoder-ms-marco-minilm-l6-v2-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-18T10:22:02.215Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-cross-encoder-ms-marco-minilm-l6-v2)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "`config.json` specifies:"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 1,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-18T10:22:27.378Z"
+    },
+    "DOM-F-3AD6D1E9": {
+      "record_id": "DOM-F-3AD6D1E9",
+      "domain_letter": "F",
+      "domain_id": "design",
+      "domain_name": "Design Intelligence",
+      "secondary_domains": [],
+      "title": "Truncation Strategy Starvation in Long Query-Passage Pairs (BUG-TRUNC-02)",
+      "content": "In search and IR re-ranking, query semantics are non-negotiable invariants. Truncation must be constrained to the candidate passage (`only_second`).",
+      "content_hash": "a0477a1cba8d8156bd2b5ec27e5297c4dbc1bae3ca575afbaf3282ff226bc779",
+      "summary": "Default truncation algorithms without segment priority can clip query intent tokens if the query itself is long, leaving an incomplete quest -> In search and IR re-ranking, query semantics are non-negotiable invariants. Truncation must be constrained to the candidate passage (`only_s",
+      "provenance": {
+        "source_uri": "project://hf-cross-encoder-ms-marco-minilm-l6-v2/hf-cross-encoder-ms-marco-minilm-l6-v2-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-18T10:22:02.215Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-cross-encoder-ms-marco-minilm-l6-v2)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "`tokenizer_config.json`: `\"model_max_length\": 512`, paired with BERT absolute position embeddings (`max_position_embeddings: 512`)."
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-18T10:22:55.637Z"
+    },
+    "domain_intelligence-quality-verification-intelligence-hf-cross-encoder-ms-marco-minilm-l6-v2-learnin": {
+      "record_id": "domain_intelligence-quality-verification-intelligence-hf-cross-encoder-ms-marco-minilm-l6-v2-learnin",
+      "domain_letter": "K",
+      "title": "Quality & Verification Intelligence: hf-cross-encoder-ms-marco-minilm-l6-v2-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-hf-cross-encoder-ms-marco-minilm-l6-v2-learnings-quality-verification-intelligen.md",
+      "repository": "hf-cross-encoder-ms-marco-minilm-l6-v2-learnings",
+      "content_hash": "d7388d010768606dd6971972924ef3309e4229e8f866e71425342abcc0fcd6fd",
+      "created_at": "2026-11-18T10:22:56.154Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-appwrite-appwrite-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-appwrite-appwrite-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: appwrite-appwrite-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-appwrite-appwrite-learnings-technical-construction-intelligence-appwrite-appwrit.md",
+      "repository": "appwrite-appwrite-learnings",
+      "content_hash": "49addc376f36775cff25c084cb992d44b1632932ecc04ea89ca91402dd2637e8",
+      "created_at": "2026-11-18T10:22:56.853Z"
+    },
+    "domain_intelligence-architecture-intelligence-kubernetes-sigs-aws-load-balancer-controller-learnings": {
+      "record_id": "domain_intelligence-architecture-intelligence-kubernetes-sigs-aws-load-balancer-controller-learnings",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: kubernetes-sigs-aws-load-balancer-controller-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-kubernetes-sigs-aws-load-balancer-controller-learnings-architecture-intelligence.md",
+      "repository": "kubernetes-sigs-aws-load-balancer-controller-learnings",
+      "content_hash": "541a5dafd980675ab63b0e494f2bcdcd06ed9d8017a1cb51047b94fe3453e49e",
+      "created_at": "2026-11-18T10:22:57.474Z"
     }
   }
 }

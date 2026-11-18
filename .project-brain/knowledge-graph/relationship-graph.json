@@ -2,19 +2,19 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-18T09:29:18.927Z",
+  "updated_at": "2026-11-18T10:22:55.654Z",
   "statistics": {
-    "total_nodes": 349,
+    "total_nodes": 351,
     "total_edges": 162,
     "domain_distribution": {
       "D": 240,
       "M": 1,
       "H": 48,
       "J": 13,
-      "K": 18,
+      "K": 19,
       "L": 5,
       "G": 1,
-      "F": 16,
+      "F": 17,
       "B": 2,
       "E": 1,
       "I": 4
@@ -7801,6 +7801,50 @@
       ],
       "created_at": "2026-11-18T09:29:18.927Z",
       "updated_at": "2026-11-18T09:29:18.927Z"
+    },
+    "DOM-K-92DB8DFD": {
+      "id": "DOM-K-92DB8DFD",
+      "domain": "K",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Cross-Encoder Score Collapse via Incorrect Softmax Application (BUG-RANK-01)",
+      "summary": "Standard transformer sequence classification heads for N-class tasks have `num_labels >= 2`. For ranking, `num_labels = 1`. A 1-element soft -> Scalar regression and ranking heads must be decoupled from categorical multi-class inference routines; never invoke softmax over a singleton",
+      "confidence": 1,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-cross-encoder-ms-marco-minilm-l6-v2/hf-cross-encoder-ms-marco-minilm-l6-v2-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-18T10:22:02.215Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-cross-encoder-ms-marco-minilm-l6-v2)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "K",
+        "Quality & Verification Intelligence"
+      ],
+      "created_at": "2026-11-18T10:22:27.396Z",
+      "updated_at": "2026-11-18T10:22:27.396Z"
+    },
+    "DOM-F-3AD6D1E9": {
+      "id": "DOM-F-3AD6D1E9",
+      "domain": "F",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Truncation Strategy Starvation in Long Query-Passage Pairs (BUG-TRUNC-02)",
+      "summary": "Default truncation algorithms without segment priority can clip query intent tokens if the query itself is long, leaving an incomplete quest -> In search and IR re-ranking, query semantics are non-negotiable invariants. Truncation must be constrained to the candidate passage (`only_s",
+      "confidence": 0.75,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-cross-encoder-ms-marco-minilm-l6-v2/hf-cross-encoder-ms-marco-minilm-l6-v2-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-18T10:22:02.215Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-cross-encoder-ms-marco-minilm-l6-v2)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "F",
+        "Design Intelligence"
+      ],
+      "created_at": "2026-11-18T10:22:55.654Z",
+      "updated_at": "2026-11-18T10:22:55.654Z"
     }
   },
   "edges": [

@@ -1,48 +1,34 @@
-# Verification Protocol: Verification Protocol: Empirical Defect Shield for kubernetes/sigs/aws/load/balancer/controller
+# Verification Protocol: Verification Protocol: Empirical Defect Shield for kubernetes-sigs/aws-load-balancer-controller
 
 <!-- PROVENANCE_START
 {
-  "source_repository": "kubernetes/sigs/aws/load/balancer/controller",
-  "source_url": "https://github.com/kubernetes/sigs/aws/load/balancer/controller",
-  "source_version": "historical-head",
-  "license": "OPEN_HARVEST",
-  "timestamp": "2026-11-13T00:00:00.000Z",
-  "ai_provider": "universal-multi-artifact-distributor",
+  "source_repository": "kubernetes-sigs/aws-load-balancer-controller",
+  "source_url": "https://github.com/kubernetes-sigs/aws-load-balancer-controller",
+  "source_version": "6de51a66",
+  "license": "Apache-2.0",
+  "timestamp": "2026-11-18T10:18:50.607Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
-  "learning_id": "unknown",
+  "learning_id": "learn-github-kubernetes-sigs-aws-load-balancer-controller",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [kubernetes/sigs/aws/load/balancer/controller](https://github.com/kubernetes/sigs/aws/load/balancer/controller) (Revision: `historical`).  
-> **License**: OPEN_HARVEST | **Timestamp**: `2026-11-13T00:00:00.000Z`  
-> **Learning ID**: `unknown`
+> **Provenance**: Harvested from [kubernetes-sigs/aws-load-balancer-controller](https://github.com/kubernetes-sigs/aws-load-balancer-controller) (Revision: `6de51a66`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-18T10:18:50.607Z`  
+> **Learning ID**: `learn-github-kubernetes-sigs-aws-load-balancer-controller`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `kubernetes/sigs/aws/load/balancer/controller` (Commit: `historical`)
+- **Target Repository**: `kubernetes-sigs/aws-load-balancer-controller` (Commit: `6de51a66`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
-> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kubernetes-sigs-aws-load-balancer-controller-learnings.md`  
-> **Source**: github ([https://github.com/kubernetes-sigs/aws-load-balancer-controller](https://github.com/kubernetes-sigs/aws-load-balancer-controller))  
-> **Source Version**: `fdcdb1e5`  
-> **License**: Apache-2.0  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-07T17:48:02.165Z  
-> **Learning ID**: `learn-github-kubernetes-sigs-aws-load-balancer-controller`  
-> **Pipeline Version**: `2.0.0`  
-> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
-> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
-> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
-
----
-
 # Forensic Learning Record (Deep Inspection): kubernetes-sigs/aws-load-balancer-controller
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/kubernetes-sigs-aws-load-balancer-controller-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/kubernetes-sigs/aws-load-balancer-controller](https://github.com/kubernetes-sigs/aws-load-balancer-controller))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-07T17:48:00.946Z  
+> **Harvest Timestamp**: 2026-11-18T10:18:49.490Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: A Kubernetes controller for Elastic Load Balancers
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 4343 stars
+- **Stars / Engagement**: 4344 stars
 
 ---
 
@@ -1612,14 +1598,11 @@ func IsLBConfigInUseByGateway(ctx context.Context, lbConfig *elbv2gw.LoadBalance
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #4942** (2026-11-03): **Update OWNERS file to modify approvers and reviewers**
-  *Symptoms*: ### Description  Removed 'oliviassss' and 'shuqz' from approvers and reviewers. Add 'bobert-2' to approvers and reviewers.  ### Checklist - [ ] Added tests that cover your change (if possible) - [ ] Added/modified documentation as required (such as the `README.md`, or the `docs` directory) - [ ] Manually tested - [ ] Made sure the title of the PR is a good description that can go into the release notes  ### BONUS POINTS checklist: complete for good vibes and maybe prizes?! :exploding_head: - [ ] Backfilled missing tests for code in same general area :tada: - [ ] Refactored something and made the world a better place :star2:   <!-- This is an auto-generated comment: release notes by coderabbit.ai -->  <!-- coderabbit-ai-generated:v1 -->  ## Summary by CodeRabbit  * **Chores**   * Updated the project’s listed review contacts. One contact was added, two were removed, and the remaining contacts were unchanged.  <!-- end of auto-generated comment: release notes by coderabbit.ai -->
-  **Post-Mortem & Fix Analysis**:
-  > <!-- coderabbit-ai-generated:v1 -->  <!-- This is an auto-generated comment: summarize by coderabbit.ai --> <!-- review_stack_entry_start -->  <a href="https://app.coderabbit.ai/change-stack/kubernetes-sigs/aws-load-balancer-controller/pull/4942?scope=ghh_OusAJGA4HG8ljoOV0wJvVx8NmnZIjc2DdjmxOu0xZWA&amp;cs_source=review_comment"><picture><source media="(prefers-color-scheme: dark)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-stack-in-coderabbit-ui-dark.svg?v=3"><source media="(prefers-color-scheme: light)" srcset="https://storage.googleapis.com/coderabbit_public_assets/review-stack-in-coderabbit-ui.svg?v=3"><img src="https://storage.googleapis.com/coderabbit_public_assets/review-stack-in-coderabbit-ui.svg?v=3" alt="Review in Change Stack →" height="32"></picture></a>  <!-- review_stack_entry_end -->  <!-- overview_findings_start --> <!-- overview_findings:v1 head_sha=e896591749452e322f1e25e02971c324781ba28f -->  ## Findings  <p><a href="https://github.com/kube
-  > [APPROVALNOTIFIER] This PR is **APPROVED**  This pull-request has been approved by: *<a href="https://github.com/kubernetes-sigs/aws-load-balancer-controller/pull/4942#" title="Author self-approved">bobert-2</a>*, *<a href="https://github.com/kubernetes-sigs/aws-load-balancer-controller/pull/4942#pullrequestreview-5760444672" title="Approved">wweiwei-li</a>*  The full list of commands accepted by this bot can be found [here](https://go.k8s.io/bot-commands?repo=kubernetes-sigs%2Faws-load-balancer-controller).  The pull request process is described [here](https://git.k8s.io/community/contributors/guide/owners.md#the-code-review-process)  <details > Needs approval from an approver in each of these files:  - ~~[OWNERS](https://github.com/kubernetes-sigs/aws-load-balancer-controller/blob/main/OWNERS)~~ [wweiwei-li]  Approvers can indicate their approval by writing `/approve` in a comment Approvers can cancel approval by writing `/approve cancel` in a comment </details> <!-- META={"approvers
+- **Issue #4957** (2026-11-18): **fix(ingress): don't block an IngressGroup while a member's namespace is terminating**
+  *Symptoms*: ### Issue  None filed. The scenario is described below.  ### Description  **Problem.** A deleted namespace stays `Terminating` for several seconds before its Ingress gets a `deletionTimestamp`. The namespace controller waits a 5 s grace period, and with `OrderedNamespaceDeletion` (default since 1.33) it deletes all Pods before other objects. During that time `NamespaceLifecycle` admission rejects every create in the namespace.  The group loader still treats the Ingress as an active member, so the reconcile tries to create its `TargetGroupBinding` and fails:  ``` targetgroupbindings.elbv2.k8s.aws "k8s-..." is forbidden: unable to create new content in namespace <ns> because it is being terminated ```  Example: an IngressGroup has members in `team-a` and `preview-123`. A CI job deletes `preview-123` seconds after creating it. Until the namespace controller deletes that Ingress, every group reconcile fails, so changes to `team-a` are not applied.  **Change.** - An Ingress whose namespace phase is `Terminating` (the condition `NamespaceLifecycle` admission uses) no longer belongs to any IngressGroup. With the group finalizer, it becomes an inactive member, so its resources and finalizer are cleaned up instead of re-created. - The model builder uses the same check, so `deletion_protection.enabled=true` still keeps the load balancer. - The namespace is read from the cached client, so the Namespace informer now always runs (before, only IngressClassParams with a `namespaceSelector` 
 
-- **Issue #4941** (2026-11-03): **fix(endpoint): add node ready time for pods that are ready as well**
-  *Symptoms*: ### Description  Populates `PodEndpoint.NodeReadyTime` for every returned pod endpoint whose node is Ready, so target registration latency is measured from when the pod became eligible again, not from when it first became ready.  **Problem:** when a node goes Ready -> NotReady -> Ready, the kubelet restores the pod's `Ready` condition with its original `LastTransitionTime`. The pod's endpoint comes back ready, so the resolver took the ready path, which never read the node. `NodeReadyTime` was only set for not-ready endpoints that were admitted because their containers were ready on a Ready node. Consumers measuring registration latency from the pod's conditions therefore reported the pod's age (hours to days) for these re-registrations.  **Change:** - Ready path: look up the pod's node (cached client) and set `NodeReadyTime` to the node's `Ready` condition `LastTransitionTime` when that condition is True. - Failing to read the node only leaves `NodeReadyTime` zero (logged at V(1)); the ready endpoint is still returned. Endpoint selection is unchanged. - Unknown/NotReady nodes (including fail-open endpoints) keep a zero `NodeReadyTime`, since their transition time marks when the node became unready. - Shared the node lookup and ready-time extraction between both paths (`getNode`, `nodeReadyTimeIfReady`), and updated the field comment.  **Dropped from an earlier revision:** exposing `endpoints.kubernetes.io/last-change-trigger-time` as an endpoint change time to cover selector/
+- **Issue #4955** (2026-11-12): **cut v3.6.3 release**
+  *Symptoms*: ## Description  Cuts **v3.6.3**, a patch release that ships the CVE remediation already merged to `main` in #4952: Go toolchain `1.26.10` → `1.27.4` and EKS-D base image `2026-10-23-1792785692.2023` → `2026-11-10-1794337279.2023` (plus the accompanying `golang.org/x/*` indirect bumps in `go.mod`/`go.sum`).  This PR is **version-strings only** — the output of `hack/set-version 3.6.3`:  - `Makefile` `IMG` - `config/controller/kustomization.yaml` `newTag` - `helm/aws-load-balancer-controller/{Chart.yaml,values.yaml,test.yaml}` - `version.txt`, `version-stable.txt` - `docs/deploy/installation.md`, `docs/examples/echo_server.md`  Because the Go and base-image bump already landed in #4952, this cut does **not** touch `.ko.yaml`, the `Makefile` `BASE_IMAGE` line, or `.go-version` — they are already at the new values on `main`.  Targets `main`. After this merges, the tag-release workflow tags v3.6.3 on `main`, and `release-3.6` is then fast-forwarded to `main` to pick up the tag.  No controller code changes. No CRD or RBAC changes.  ## Checklist  - [x] Added tests that cover your change (n/a — no code change) - [x] Added/modified documentation as required (version references updated) - [x] Manually tested - [x] Made sure the title of the PR is a good description that can go into the release notes   <!-- This is an auto-generated comment: release notes by coderabbit.ai -->  <!-- coderabbit-ai-generated:v1 -->  ## Summary by CodeRabbit  * **Release**   * Updated the AWS Load Balancer C
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1636,73 +1619,479 @@ func IsLBConfigInUseByGateway(ctx context.Context, lbConfig *elbv2gw.LoadBalance
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `fdcdb1e5` (2026-11-06)
-**Commit Message**: Merge pull request #4828 from BojanZelic-DD/add-match-conditions
+### Incident Patch 1: `6de51a66` (2026-11-18)
+**Commit Message**: Merge pull request #4957 from yash97/fix/ingress-terminating-namespace
 
-add support for matchConditions in the helm chart
+fix(ingress): don't block an IngressGroup while a member's namespace is terminating
 
-**File**: `helm/aws-load-balancer-controller/README.md` (modified, +1/-0)
+**File**: `pkg/ingress/group_loader.go` (modified, +38/-2)
 ```diff
-@@ -296,6 +296,7 @@ The default values set by the application itself can be confirmed [here](https:/
- | `serviceMutatorWebhookConfig.failurePolicy`                         | Failure policy for the Service Mutator webhook                                                                                                                                                                                                                                                                                               | `Fail`                                            |
- | `serviceMutatorWebhookConfig.objectSelector`                        | Object selector(s) to limit which objects will be mutated by the Service Mutator webhook                                                                                                                                                                                                                                                     | `[]`                                              |
- | `serviceMutatorWebhookConfig.operations`                            | List of operations that will trigger the the Service Mutator webhook                                                                                                                                                                                                                                                                         | `[ CREATE ]`                                      |
-+| `serviceMutatorWebhookConfig.matchConditions`                       | CEL matchCondition(s) to limit which Service objects will be mutated by the Service Mutator webhook (requires Kubernetes >= 1.27). See [matchConditions](https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#matching-requests-matchconditions)                                                        | `[]`                                              |
- | `autoscaling`                                                       | If `autoscaling.enabled=true`, enable the HPA on the controller mainly to survive load induced failure by the calls to the `aws-load-balancer-webhook-service`. Please keep in mind that the controller pods have `priorityClassName: system-cluster-critical`, enabling HPA may lead to the eviction of other low-priority pods in the node | `false`                                           |
- | `serviceTargetENISGTags`                                            | set of `key=value` pairs of AWS tags in addition to cluster name for finding the target ENI security group to which to add inbound rules from NLBs                                                                                                                                                                                           | None                                              |
- | `loadBalancerClass`                                                 | Sets the AWS load balancer type to be used when the Kubernetes service requests an external load balancer                                                                                                                                                                                                                                    | `service.k8s.aws/nlb`                             |
+@@ -9,7 +9,9 @@ import (
+ 	"strings"
+ 
+ 	"github.com/pkg/errors"
++	corev1 "k8s.io/api/core/v1"
+ 	networking "k8s.io/api/networking/v1"
++	"k8s.io/apimachinery/pkg/types"
+ 	"k8s.io/client-go/tools/record"
+ 	"sigs.k8s.io/aws-load-balancer-controller/v3/pkg/annotations"
+ 	"sigs.k8s.io/aws-load-balancer-controller/v3/pkg/k8s"
+@@ -39,6 +41,7 @@ type GroupLoader interface {
+ 
+ 	// LoadGroupIDIfAny loads the groupID for Ingress if Ingress belong to any IngressGroup.
+ 	// Ingresses that is not managed by this controller or in deletion state won't have a groupID.
++	// An Ingress whose namespace is being deleted is in deletion state as well.
+ 	LoadGroupIDIfAny(ctx context.Context, ing *networking.Ingress) (*GroupID, error)
+ 
+ 	// LoadGroupIDsPendingFinalization returns groupIDs that have associated finalizer on Ingress.
+@@ -173,8 +176,12 @@ func (m *defaultGroupLoader) checkGroupMembershipType(ctx context.Context, group
+ 
+ // loadGroupIDIfAnyHelper loads the groupID for Ingress if Ingress belong to any IngressGroup, along with the ClassifiedIngress object.
+ func (m *defaultGroupLoader) loadGroupIDIfAnyHelper(ctx context.Context, ing *networking.Ingress) (ClassifiedIngress, *GroupID, error) {
+-	// Ingress no longer belong to any IngressGroup when it's been deleted.
+-	if !ing.DeletionTimestamp.IsZero() {
++	// An Ingress no longer belongs to any IngressGroup when it, or its namespace, is being deleted.
++	beingDeleted, err := isIngressBeingDeleted(ctx, m.client, ing)
++	if err != nil {
++		return ClassifiedIngress{}, nil, err
++	}
++	if beingDeleted {
+ 		return ClassifiedIngress{}, nil, nil
+ 	}
+ 	classifiedIngress, matchesIngressClass, err := m.classifyIngress(ctx, ing)
+@@ -192,6 +199,35 @@ func (m *defaultGroupLoader) loadGroupIDIfAnyHelper(ctx context.Context, ing *ne
+ 	return classifiedIngress, &groupID, nil
+ }
+ 
++// isIngressBeingDeleted checks whether the Ingress has a deletionTimestamp or its namespace is being deleted.
++// For a terminating namespace, the namespace controller deletes the Ingress later. Until then, the API server
++// rejects any new object in that namespace, such as a TargetGroupBinding.
++func isIngressBeingDeleted(ctx context.Context, k8sClient client.Client, ing *networking.Ingress) (bool, error) {
++	if !ing.DeletionTimestamp.IsZero() {
++		return true, nil
++	}
++	return isIngressNamespaceTerminating(ctx, k8sClient, ing)
++}
++
++// isIngressNamespaceTerminating checks whether the namespace of the Ingress is being deleted.
++// It uses the condition of NamespaceLifecycle admission, which rejects new objects in a namespace
++// whose phase is Terminating. A namespace that is not found is treated as not terminating.
++func isIngressNamespaceTerminating(ctx context.Context, k8sClient client.Client, ing *networking.Ingress) (bool, error) {
++	ns := &corev1.Namespace{}
++	if err := k8sClient.Get(ctx, types.NamespacedName{Name: ing.Namespace}, ns); err != nil {
++		return false, client.IgnoreNotFound(err)
++	}
++	if ns.Status.Phase != corev1.NamespaceTerminating {
++		return false, nil
++	}
++	// The Namespace cache can lag behind the Ingress cache. An Ingress created after the cached
++	// namespace started terminating belongs to a newer namespace with the same name.
++	if ns.DeletionTimestamp != nil && ing.CreationTimestamp.After(ns.DeletionTimestamp.Time) {
++		return false, nil
++	}
++	return true, nil
++}
++
+ // classifyIngress will classify the Ingress resource and returns whether it should be managed by this controller, along with the ClassifiedIngress object.
+ func (m *defaultGroupLoader) classifyIngress(ctx context.Context, ing *networking.Ingress) (ClassifiedIngress, bool, error) {
+ 	// the "kubernetes.io/ingress.class" annotation takes higher priority than "ingressClassName" field
 ```
 
-**File**: `helm/aws-load-balancer-controller/templates/webhook.yaml` (modified, +4/-0)
+**File**: `pkg/ingress/group_loader_test.go` (modified, +136/-0)
 ```diff
-@@ -133,6 +133,10 @@ webhooks:
-     matchLabels:
-     {{- toYaml .Values.serviceMutatorWebhookConfig.objectSelector.matchLabels | nindent 6 }}
-     {{- end }}
-+  {{- if .Values.serviceMutatorWebhookConfig.matchConditions }}
-+  matchConditions:
-+  {{- toYaml .Values.serviceMutatorWebhookConfig.matchConditions | nindent 2 }}
-+  {{- end }}
-   rules:
-   - apiGroups:
-     - ""
+@@ -3,12 +3,14 @@ package ingress
+ import (
+ 	"context"
+ 	"testing"
++	"time"
+ 
+ 	awssdk "github.com/aws/aws-sdk-go-v2/aws"
+ 	"github.com/golang/mock/gomock"
+ 	"github.com/google/go-cmp/cmp"
+ 	"github.com/pkg/errors"
+ 	"github.com/stretchr/testify/assert"
++	corev1 "k8s.io/api/core/v1"
+ 	networking "k8s.io/api/networking/v1"
+ 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+ 	"k8s.io/apimachinery/pkg/runtime"
+@@ -17,7 +19,9 @@ import (
+ 	mock_client "sigs.k8s.io/aws-load-balancer-controller/v3/mocks/controller-runtime/client"
+ 	"sigs.k8s.io/aws-load-balancer-controller/v3/pkg/annotations"
+ 	"sigs.k8s.io/aws-load-balancer-controller/v3/pkg/equality"
++	"sigs.k8s.io/controller-runtime/pkg/client"
+ 	testclient "sigs.k8s.io/controller-runtime/pkg/client/fake"
++	"sigs.k8s.io/controller-runtime/pkg/client/interceptor"
+ )
+ 
+ func Test_defaultGroupLoader_Load(t *testing.T) {
+@@ -3072,3 +3076,135 @@ func Test_validateGroupName(t *testing.T) {
+ 		})
+ 	}
+ }
++
++func Test_isIngressNamespaceTerminating(t *testing.T) {
++	deletedAt := metav1.NewTime(time.Now().Add(-time.Hour).Truncate(time.Second))
++	ingCreatedBefore := metav1.NewTime(deletedAt.Add(-time.Hour))
++	ingCreatedAfter := metav1.NewTime(deletedAt.Add(time.Minute))
++	terminatingNS := &corev1.Namespace{
++		ObjectMeta: metav1.ObjectMeta{Name: "ing-ns", DeletionTimestamp: &deletedAt, Finalizers: []string{"unit-test/keep"}},
++		Status:     corev1.NamespaceStatus{Phase: corev1.NamespaceTerminating},
++	}
++	tests := []struct {
++		name       string
++		ns         *corev1.Namespace
++		ingCreated metav1.Time
++		getErr     error
++		want       bool
++		wantErr    string
++	}{
++		{
++			name: "namespace is active",
++			ns: &corev1.Namespace{
++				ObjectMeta: metav1.ObjectMeta{Name: "ing-ns"},
++				Status:     corev1.NamespaceStatus{Phase: corev1.NamespaceActive},
++			},
++			ingCreated: ingCreatedBefore,
++			want:       false,
++		},
++		{
++			name:       "namespace not found",
++			ingCreated: ingCreatedBefore,
++			want:       false,
++		},
++		{
++			name:       "namespace is terminating",
++			ns:         terminatingNS,
++			ingCreated: ingCreatedBefore,
++			want:       true,
++		},
++		{
++			name:       "Ingress is newer than the cached terminating namespace",
++			ns:         terminatingNS,
++			ingCreated: ingCreatedAfter,
++			want:       false,
++		},
++		{
++			name:       "namespace lookup fails",
++			ingCreated: ingCreatedBefore,
++			getErr:     errors.New("cache not ready"),
++			wantErr:    "cache not ready",
++		},
++	}
++	for _, tt := range tests {
++		t.Run(tt.name, func(t *testing.T) {
++			k8sSchema := runtime.NewScheme()
++			clientgoscheme.AddToScheme(k8sSchema)
++			builder := testclient.NewClientBuilder().WithScheme(k8sSchema)
++			if tt.ns != nil {
++				builder = builder.WithObjects(tt.ns.DeepCopy())
++			}
++			if tt.getErr != nil {
++				builder = builder.WithInterceptorFuncs(interceptor.Funcs{
++					Get: func(ctx context.Context, c client.WithWatch, key client.ObjectKey, obj client.Object, opts ...client.GetOption) error {
++						return tt.getErr
++					},
++				})
++			}
++			ing := &networking.Ingress{
++				ObjectMeta: metav1.ObjectMeta{Namespace: "ing-ns", Name: "ing", CreationTimestamp: tt.ingCreated},
++			}
++			got, err := isIngressNamespaceTerminating(context.Background(), builder.Build(), ing)
++			if tt.wantErr != "" {
++				assert.EqualError(t, err, tt.wantErr)
++				return
++			}
++			assert.NoError(t, err)
++			assert.Equal(t, tt.want, got)
++		})
++	}
++}
++
++func Test_defaultGroupLoader_Load_namespaceTerminating(t *testing.T) {
++	newIng := func(namespace string, finalizers ...string) *networking.Ingress {
++		return &networking.Ingress{
++			ObjectMeta: metav1.ObjectMeta{
++				Namespace: namespace,
++				Name:      "ing",
++				Annotations: map[string]string{
++					"kubernetes.io/ingress.class":          "alb",
++					"alb.ingress.kubernetes.io/group.name": "awesome-group",
++				},
++				Finalizers: finalizers,
++			},
++		}
++	}
++	member := newIng("ns-active", "group.ingress.k8s.aws/awesome-group")
++	leaving := newIng("ns-terminating", "group.ingress.k8s.aws/awesome-group")
++	notYetMember := newIng("ns-terminating-2")
++
++	k8sSchema := runtime.NewScheme()
++	clientgoscheme.AddToScheme(k8sSchema)
++	elbv2api.AddToScheme(k8sSchema)
++	k8sClient := testclient.NewClientBuilder().WithScheme(k8sSchema).Build()
++	for _, ns := range []*corev1.Namespace{
++		{ObjectMeta: metav1.ObjectMeta{Name: "ns-active"}, Status: corev1.NamespaceStatus{Phase: corev1.NamespaceActive}},
++		{ObjectMeta: metav1.ObjectMeta{Name: "ns-terminating"}, Status: corev1.NamespaceStatus{Phase: corev1.NamespaceTerminating}},
++		{ObjectMeta: metav1.ObjectMeta{Name: "ns-terminating-2"}, Status: corev1.NamespaceStatus{Phase: corev1.NamespaceTerminating}},
++	} {
++		assert.NoError(t, k8sClient.Create(context.Background(), ns))
++	}
++	for _, ing := range []*networking.Ingress{member, leaving, notYetMember} {
++		assert.NoError(t, k8sClient.Create(context.Background(), ing.DeepCopy()))
++	}
++	m := &defaultGroupLoader{
++		client:                     
 ```
 
-**File**: `helm/aws-load-balancer-controller/test.yaml` (modified, +3/-0)
+**File**: `pkg/ingress/model_builder.go` (modified, +7/-1)
 ```diff
-@@ -351,6 +351,9 @@ serviceMutatorWebhookConfig:
-     #   - <value>
-     matchLabels: {}
-       # key: value
-+  matchConditions: []
-+  # - name: <key>
-+  #   expression: <value>
-   # which operations trigger the webhook
-   operations:
-   - CREATE
+@@ -296,7 +296,13 @@ type defaultModelBuildTask struct {
+ 
+ func (t *defaultModelBuildTask) run(ctx context.Context) error {
+ 	for _, inactiveMember := range t.ingGroup.InactiveMembers {
+-		if !inactiveMember.DeletionTimestamp.IsZero() {
++		// Use the same rule as the group loader, so deletion protection applies to every Ingress that left
++		// its group because it is being deleted.
++		beingDeleted, err := isIngressBeingDeleted(ctx, t.k8sClient, inactiveMember)
++		if err != nil {
++			return err
++		}
++		if beingDeleted {
+ 			deletionProtectionEnabled, err := t.getDeletionProtectionViaAnnotation(inactiveMember)
+ 			if err != nil {
+ 				return err
 ```
 
-**File**: `helm/aws-load-balancer-controller/values.yaml` (modified, +3/-0)
+**File**: `pkg/ingress/model_builder_test.go` (modified, +81/-1)
 ```diff
-@@ -503,6 +503,9 @@ serviceMutatorWebhookConfig:
-   #   operator: <operator>
-   #   values:
-   #   - <value>
-+  matchConditions: []
-+  # - name: include-load-balancer-services
-+  #   expression: object.spec.type == 'LoadBalancer'
-   # which operations trigger the webhook
-   operations:
-   - CREATE
+@@ -459,7 +459,8 @@ func Test_defaultModelBuilder_Build(t *testing.T) {
+ 		err     error
+ 	}
+ 	type env struct {
+-		svcs []*corev1.Service
++		svcs       []*corev1.Service
++		namespaces []*corev1.Namespace
+ 	}
+ 	type listLoadBalancersCall struct {
+ 		matchedLBs []elbv2.LoadBalancerWithTags
+@@ -3071,6 +3072,82 @@ func Test_defaultModelBuilder_Build(t *testing.T) {
+ 			wantErr:    "deletion_protection is enabled, cannot delete the ingress: hello-ingress",
+ 			wantMetric: false,
+ 		},
++		{
++			name: "Ingress - deletion protection enabled error when its namespace is terminating",
++			env: env{
++				namespaces: []*corev1.Namespace{
++					{
++						ObjectMeta: metav1.ObjectMeta{Name: "terminating-ns"},
++						Status:     corev1.NamespaceStatus{Phase: corev1.NamespaceTerminating},
++					},
++				},
++			},
++			args: args{
++				ingGroup: Group{
++					ID: GroupID{Namespace: "terminating-ns", Name: "hello-ingress"},
++					InactiveMembers: []*networking.Ingress{
++						{
++							ObjectMeta: metav1.ObjectMeta{
++								Namespace: "terminating-ns",
++								Name:      "hello-ingress",
++								Annotations: map[string]string{
++									"kubernetes.io/ingress.class":                        "alb",
++									"alb.ingress.kubernetes.io/load-balancer-attributes": "deletion_protection.enabled=true",
++								},
++								Finalizers: []string{
++									"ingress.k8s.aws/resources",
++								},
++							},
++						},
++					},
++				},
++			},
++			wantErr:    "deletion_protection is enabled, cannot delete the ingress: hello-ingress",
++			wantMetric: false,
++		},
++		{
++			name: "Ingress - deletion protection not checked when an inactive member's namespace is active",
++			env: env{
++				namespaces: []*corev1.Namespace{
++					{
++						ObjectMeta: metav1.ObjectMeta{Name: "active-ns"},
++						Status:     corev1.NamespaceStatus{Phase: corev1.NamespaceActive},
++					},
++				},
++			},
++			args: args{
++				ingGroup: Group{
++					ID: GroupID{Namespace: "ns-1", Name: "ing-1"},
++					InactiveMembers: []*networking.Ingress{
++						{
++							ObjectMeta: metav1.ObjectMeta{
++								Namespace: "active-ns",
++								Name:      "hello-ingress",
++								Annotations: map[string]string{
++									"kubernetes.io/ingress.class":                        "alb",
++									"alb.ingress.kubernetes.io/load-balancer-attributes": "deletion_protection.enabled=true",
++								},
++								Finalizers: []string{
++									"ingress.k8s.aws/resources",
++								},
++							},
++						},
++					},
++				},
++			},
++			// No active members, so the stack has no AWS resources.
++			wantStackPatch: `
++{
++    "resources": {
++        "AWS::EC2::SecurityGroup": null,
++        "AWS::ElasticLoadBalancingV2::Listener": null,
++        "AWS::ElasticLoadBalancingV2::ListenerRule": null,
++        "AWS::ElasticLoadBalancingV2::LoadBalancer": null,
++        "AWS::ElasticLoadBalancingV2::TargetGroup": null,
++        "K8S::ElasticLoadBalancingV2::TargetGroupBinding": null
++    }
++}`,
++		},
+ 		{
+ 			name: "Ingress - with SG annotation",
+ 			env: env{
+@@ -4778,6 +4855,9 @@ func Test_defaultModelBuilder_Build(t *testing.T) {
+ 			for _, svc := range tt.env.svcs {
+ 				assert.NoError(t, k8sClient.Create(ctx, svc.DeepCopy()))
+ 			}
++			for _, ns := range tt.env.namespaces {
++				assert.NoError(t, k8sClient.Create(ctx, ns.DeepCopy()))
++			}
+ 			eventRecorder := record.NewFakeRecorder(10)
+ 			vpcID := "vpc-dummy"
+ 			clusterName := "cluster-dummy"
+```
+
+**File**: `test/e2e/ingress/ingress_group_namespace_deletion_test.go` (added, +207/-0)
+```diff
+@@ -0,0 +1,207 @@
++package ingress
++
++import (
++	"context"
++	"fmt"
++	"time"
++
++	. "github.com/onsi/ginkgo/v2"
++	. "github.com/onsi/gomega"
++	admissionregistrationv1 "k8s.io/api/admissionregistration/v1"
++	corev1 "k8s.io/api/core/v1"
++	networking "k8s.io/api/networking/v1"
++	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
++	"k8s.io/apimachinery/pkg/util/intstr"
++	"sigs.k8s.io/aws-load-balancer-controller/v3/pkg/k8s"
++	elbv2model "sigs.k8s.io/aws-load-balancer-controller/v3/pkg/model/elbv2"
++	"sigs.k8s.io/aws-load-balancer-controller/v3/test/framework"
++	"sigs.k8s.io/aws-load-balancer-controller/v3/test/framework/http"
++	"sigs.k8s.io/aws-load-balancer-controller/v3/test/framework/manifest"
++	"sigs.k8s.io/aws-load-balancer-controller/v3/test/framework/utils"
++	"sigs.k8s.io/controller-runtime/pkg/client"
++)
++
++var _ = Describe("IngressGroup member namespace deletion", func() {
++	// While a namespace is Terminating, the API server rejects new objects in it, but its Ingress has no
++	// deletionTimestamp until the namespace controller reaches it. The test holds a namespace in that state
++	// with a ValidatingAdmissionPolicy that blocks deleting its Ingress and Service, joins its Ingress to an
++	// IngressGroup, and then adds a member in another namespace. The group must keep reconciling.
++	It("other members keep reconciling while a member's namespace is terminating", func() {
++		ctx := context.Background()
++		groupName := fmt.Sprintf("e2e-group.%v", utils.RandomDNS1123Label(8))
++		stack := NewMultiPathBackendStack(map[string]NamespacedResourcesConfig{
++			"ns-1": {
++				IngCFGs: map[string]MultiPathIngressConfig{
++					"ing-1": {
++						GroupName: groupName,
++						PathCFGs:  []PathConfig{{Path: "/path-a", BackendID: "backend-a"}},
++					},
++				},
++				BackendCFGs: map[string]BackendConfig{
++					"backend-a": {Replicas: 2, TargetType: elbv2model.TargetTypeIP, HTTPBody: "backend-a"},
++				},
++			},
++		}, false)
++
++		By("deploy the long-lived member of the IngressGroup")
++		Expect(stack.Deploy(ctx, tf)).To(Succeed())
++		defer func() {
++			Expect(stack.Cleanup(ctx, tf)).To(Succeed())
++		}()
++		dnsName := expectDNSNameFromIngressNonEmpty(ctx, tf, stack, "ns-1", "ing-1")
++		expectDNSNameEventuallyAvailable(ctx, tf, dnsName)
++
++		By("create an Ingress that this controller does not manage yet in a second namespace")
++		holdNS, err := tf.NSManager.AllocateNamespace(ctx, "aws-lb-e2e")
++		Expect(err).NotTo(HaveOccurred())
++		defer func() {
++			Expect(client.IgnoreNotFound(tf.K8sClient.Delete(ctx, holdNS))).To(Succeed())
++			waitCtx, cancel := context.WithTimeout(ctx, 5*time.Minute)
++			defer cancel()
++			Expect(tf.NSManager.WaitUntilNamespaceDeleted(waitCtx, holdNS)).To(Succeed())
++		}()
++		svc := &corev1.Service{
++			ObjectMeta: metav1.ObjectMeta{Namespace: holdNS.Name, Name: "backend-x"},
++			Spec: corev1.ServiceSpec{
++				Type:     corev1.ServiceTypeClusterIP,
++				Selector: map[string]string{"app.kubernetes.io/name": "backend-x"},
++				Ports:    []corev1.ServicePort{{Port: 80, TargetPort: intstr.FromInt32(8080), Protocol: corev1.ProtocolTCP}},
++			},
++		}
++		Expect(tf.K8sClient.Create(ctx, svc)).To(Succeed())
++		exact := networking.PathTypeExact
++		ingX := manifest.NewIngressBuilder().
++			WithAnnotations(map[string]string{"kubernetes.io/ingress.class": "e2e-unmanaged"}).
++			AddHTTPRoute("", networking.HTTPIngressPath{
++				Path:     "/path-x",
++				PathType: &exact,
++				Backend: networking.IngressBackend{Service: &networking.IngressServiceBackend{
++					Name: svc.Name,
++					Port: networking.ServiceBackendPort{Number: 80},
++				}},
++			}).
++			Build(holdNS.Name, "ing-x")
++		Expect(tf.K8sClient.Create(ctx, ingX)).To(Succeed())
++
++		By("hold the second namespace in Terminating")
++		// Deferred calls run in reverse order: the binding goes first, so the namespace can finish deleting.
++		policy, binding := buildDeletionHoldPolicy(holdNS.Name)
++		Expect(tf.K8sClient.Create(ctx, policy)).To(Succeed())
++		defer func() {
++			Expect(client.IgnoreNotFound(tf.K8sClient.Delete(ctx, policy))).To(Succeed())
++		}()
++		Expect(tf.K8sClient.Create(ctx, binding)).To(Succeed())
++		defer func() {
++			Expect(client.IgnoreNotFound(tf.K8sClient.Delete(ctx, binding))).To(Succeed())
++		}()
++		Eventually(func() error {
++			return tf.K8sClient.Delete(ctx, svc.DeepCopy(), client.DryRunAll)
++		}, 1*time.Minute, 2*time.Second).Should(MatchError(ContainSubstring(deletionHoldMessage)))
++		// The API server sets the namespace phase to Terminating before the delete call returns.
++		Expect(tf.K8sClient.Delete(ctx, holdNS)).To(Succeed())
++
++		By("join the Ingress in the terminating namespace to the IngressGroup")
++		oldIngX := ingX.DeepCopy()
++		ingX.Annotations = groupMemberAnnotations(groupName)
++		Expect(tf.K8sClient.Patch(ctx, ingX, client.MergeFrom(oldIngX))).To(Succeed())
++
++		By("add a member to the IngressGroup in the long-lived namespace")
++		newIng := manifest.NewIngressBuilder().
++			WithAnnotations(groupMemberAnnotations(groupName)).
++			AddHT
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #4942** (2026-11-03): Update OWNERS file to modify approvers and reviewers (@bobert-2)
-- **PR #4941** (2026-11-03): fix(endpoint): add node ready time for pods that are ready as well (@zac-nixon)
-- **PR #4937** (2026-10-24): cut v3.6.2 release (@shraddhabang)
-- **PR #4935** (2026-10-22): perf(gw api): improve start up time by not enqueuing child resources (@zac-nixon)
-- **PR #4934** (2026-10-21): cut v3.6.1 release (@shraddhabang)
-- **PR #4933** (2026-10-20): build(deps): bump go to 1.26.10 and golang.org/x/net to v0.60.0 (@shraddhabang)
+- **PR #4957** (2026-11-18): fix(ingress): don't block an IngressGroup while a member's namespace is terminating (@yash97)
+- **PR #4955** (2026-11-12): cut v3.6.3 release (@shraddhabang)
+- **PR #4953** (2026-11-17): Add ec2:ValidateSecurityGroupQuotasForInterface (@wweiwei-li)
+- **PR #4952** (2026-11-11): Bump go version and base image (@shraddhabang)
+- **PR #4950** (2026-11-11): docs: fix invalid YAML in ingress annotation examples (@David-Uka)
+- **PR #4949** (closed): Support create-acm-cert for Gateway API listeners (@Mohith26)
 
 ---
 
@@ -1722,31 +2111,54 @@ add support for matchConditions in the helm chart
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Merge pull request #4828 from BojanZelic-DD/add-match-conditions
+## X. Empirical Invariant Guard in group_loader.go
 
 **RULE**:
-When implementing operations in `helm/aws-load-balancer-controller/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kubernetes-sigs/aws-load-balancer-controller. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pkg/ingress/group_loader.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in kubernetes-sigs/aws-load-balancer-controller. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `fdcdb1e5`: Merge pull request #4828 from BojanZelic-DD/add-match-conditions. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6de51a66`: . Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `helm/aws-load-balancer-controller/README.md`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/ingress/group_loader.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-| `serviceMutatorWebhookConfig.matchConditions`                       | CEL matchCondition(s) to limit which Service objects will be mutated by the Service Mutator webhook (requires Kubernetes >= 1.27). See [matchConditions](https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/#matching-requests-matchconditions)                                                        | `[]`                                              |
+	corev1 "k8s.io/api/core/v1"
+	"k8s.io/apimachinery/pkg/types"
+	// An Ingress whose namespace is being deleted is in deletion state as well.
+	// An Ingress no longer belongs to any IngressGroup when it, or its namespace, is being deleted.
+	beingDeleted, err := isIngressBeingDeleted(ctx, m.client, ing)
+	if err != nil {
+		return ClassifiedIngress{}, nil, err
+	}
+	if beingDeleted {
+// isIngressBeingDeleted checks whether the Ingress has a deletionTimestamp or its namespace is being deleted.
+// For a terminating namespace, the namespace controller deletes the Ingress later. Until then, the API server
+// rejects any new object in that namespace, such as a TargetGroupBinding.
+func isIngressBeingDeleted(ctx context.Context, k8sClient client.Client, ing *networking.Ingress) (bool, error) {
+	if !ing.DeletionTimestamp.IsZero() {
+		return true, nil
+	}
+	return isIngressNamespaceTerminating(ctx, k8sClient, ing)
+}
+
+// isIngressNamespaceTerminating checks whether the namespace of the Ingress is being deleted.
+// It uses the condition of NamespaceLifecycle admission, which rejects new objects in a namespace
+// whose phase is Terminating. A namespace that is not found is treated as not terminating.
+f
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
-// Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+// Induced defect failure mode:
+	// Ingress no longer belong to any IngressGroup when it's been deleted.
+	if !ing.DeletionTimestamp.IsZero() {
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `fdcdb1e5` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6de51a66` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

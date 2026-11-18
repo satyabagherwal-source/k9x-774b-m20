@@ -4,24 +4,24 @@
 {
   "source_repository": "VectifyAI/PageIndex",
   "source_url": "https://github.com/VectifyAI/PageIndex",
-  "source_version": "cc035e8d",
+  "source_version": "340b8535",
   "license": "MIT",
-  "timestamp": "2026-11-15T03:13:41.914Z",
+  "timestamp": "2026-11-18T10:18:54.080Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-vectifyai-pageindex",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [VectifyAI/PageIndex](https://github.com/VectifyAI/PageIndex) (Revision: `cc035e8d`).  
-> **License**: MIT | **Timestamp**: `2026-11-15T03:13:41.914Z`  
+> **Provenance**: Harvested from [VectifyAI/PageIndex](https://github.com/VectifyAI/PageIndex) (Revision: `340b8535`).  
+> **License**: MIT | **Timestamp**: `2026-11-18T10:18:54.080Z`  
 > **Learning ID**: `learn-github-vectifyai-pageindex`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: I (Content & Information Intelligence), D (Research & Knowledge Intelligence), G (Architecture Intelligence), K (Quality & Verification Intelligence), L (Deployment & Operations Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence), F (Design Intelligence)
-- **Confidence Rating**: 59%
+- **Secondary Corroborating Domains**: I (Content & Information Intelligence), G (Architecture Intelligence), K (Quality & Verification Intelligence), L (Deployment & Operations Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence), F (Design Intelligence)
+- **Confidence Rating**: 67%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from VectifyAI/PageIndex:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/vectifyai-pageindex-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/VectifyAI/PageIndex](https://github.com/VectifyAI/PageIndex))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-15T03:13:40.668Z  
+> **Harvest Timestamp**: 2026-11-18T10:18:53.006Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: 📑 PageIndex: Document Index for Vectorless, Reasoning-based RAG
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 40437 stars
+- **Stars / Engagement**: 40465 stars
 
 ---
 
@@ -352,6 +352,8 @@ from typing import TYPE_CHECKING as _TYPE_CHECKING
 from .chat_stream import ChatStream, MessagesStream, ChatObject
 from .client import PageIndexClient, PageIndexCloudClient, PageIndexLocalClient
 from .errors import PageIndexAPIError
+from .page_extract import PageExtractClient
+from .page_search import PageSearchClient
 from .types import (ChatConfig, ChatProcessOptions, CloudIndexConfig,
                     IndexConfig, LocalIndexConfig)
 
@@ -364,6 +366,7 @@ if _TYPE_CHECKING:
 
 __all__ = [
     "PageIndexClient", "PageIndexCloudClient", "PageIndexLocalClient",
+    "PageSearchClient", "PageExtractClient",
     "PageIndexAPIError",
     "IndexConfig", "CloudIndexConfig", "LocalIndexConfig", "ChatConfig",
     "ChatProcessOptions", "ChatStream", "MessagesStream", "ChatObject",
@@ -379,8 +382,9 @@ _LAZY = {
 }
 _SUBMODULES = {"agent_tools", "chat_stream", "client", "cloud_api", "errors",
                "flash", "imaging", "integrations", "local_api", "local_chat",
-               "local_store", "mcp_bridge", "page_index_classic",
-               "page_index_md", "retry", "tree_optimize", "types", "utils"}
+               "local_store", "mcp_bridge", "page_extract", "page_index_classic",
+               "page_index_md", "page_search", "retry", "tree_optimize", "types",
+               "utils"}
 
 
 def __getattr__(name):
@@ -840,7 +844,7 @@ import threading
 import time
 import warnings
 from typing import (TYPE_CHECKING, Any, Callable, Iterator, Literal, Mapping,
-                    Optional, Union, cast, overload)
+                    Optional, Sequence, Union, cast, overload)
 
 from .chat_stream import ChatStream, MessagesStream, ChatObject
 from .errors import PageIndexAPIError
@@ -1018,11 +1022,25 @@ _LOCAL_INDEX_KEYS = ("model", "summary_model", "backend", "storage_path",
 _RESERVED_MODE_WORDS = {"hosted", "managed"}
 
 
-def _env_cloud_key(spelling: str, inline: str = "api_key=...") -> str:
+# Page Search's and Page Extract's keys, which work here once their accounts
+# have moved, read only when PAGEINDEX_API_KEY is not set.
+_ENV_KEYS = ("PAGEINDEX_API_KEY", "PAGEINDEX_SEARCH_API_KEY",
+             "PAGEINDEX_EXTRACT_API_KEY")
+
+
+def _env_key(own: Optional[str] = None) -> Optional[str]:
+    """The key the environment gives; of the two older names, ``own`` is
+    read before the other."""
     # .env support lives in utils' import-time load_dotenv(): load it
     # before the read, or a key in .env is visible only by import order.
     from . import utils  # noqa: F401
-    key = os.environ.get("PAGEINDEX_API_KEY")
+    names = (_ENV_KEYS[0], own, *_ENV_KEYS[1:])
+    return next((os.environ[name] for name in names
+                 if name and os.environ.get(name)), None)
+
+
+def _env_cloud_key(spelling: str, inline: str = "api_key=...") -> str:
+    key = _env_key()
     if not key:
         raise PageIndexAPIError(
             f"{spelling} reads the PageIndex API key from the "
@@ -1067,28 +1085,16 @@ def _resolve_index_slot(index) -> "tuple[_CloudKey, dict[str, Any]]":
         # must never fall through and silently become a model name.
         word = index.strip().lower()
         if word in (PAGEINDEX_CLOUD, "cloud"):
-            return lambda: _env_cloud_key(f'index="{index.strip()}"',
-                                          'index={"api_key": ...}'), {}
-        if word == "local":
-            return None, {}
-        if word in _RESERVED_MODE_WORDS:
-            raise PageIndexAPIError(
-                f'index="{index}" is not a mode word — the cloud spelling '
-                'is index="cloud" (key from PAGEINDEX_API_KEY) or '
-                'index={"api_key": ...}.')
-        if index.strip():
-            return None, {"index_model": index}
-        raise PageIndexAPIError(
-         
+            return lambda: _env
 ```
 
 ### Core Architecture Module: `pageindex/cloud_api.py`
 ```
-"""Cloud mode of the PageIndex SDK, based on the 0.2.8 client."""
+"""Cloud mode of the PageIndex SDK: the client of the PageIndex Cloud API."""
 import os
 import requests
 from pathlib import Path
-from typing import Optional, Dict, Any, List, Union, Iterator
+from typing import Optional, Dict, Any, List, Sequence, Union, Iterator
 import json
 import urllib.parse
 
@@ -1140,14 +1146,16 @@ class CloudAPI:
         folder_id: Optional[str] = None,
         metadata: Optional[Dict[str, Any]] = None,
         collection_id: Optional[str] = None,
+        index: bool = True,
     ) -> Dict[str, Any]:
         """
-        Upload a PDF document for processing; the tree is built in the background.
+        Upload a PDF document for processing; the tree is built in the background,
+        or not at all with ``index=False``.
         Immediately returns a document identifier (`doc_id`) for subsequent operations.
 
         Args:
             file_path (str): Path to the PDF file.
-            mode (str, optional): None (default), the OCR-based cloud pipeline, or "flash".
+            mode (str, optional): None (default), the default cloud pipeline, or "flash".
             beta_headers (List[str], optional): Beta feature headers (e.g., ["block_reference"]
                 to enable block-level content with bounding boxes). Defaults to None.
             folder_id (str, optional): Folder (workspace) ID to assign the document to. Defaults to None.
@@ -1170,6 +1178,8 @@ class CloudAPI:
             # The server rejects if_retrieval alongside algorithm=flash, and
             # keeps node text for Flash trees by default.
             data = {'algorithm': 'flash'}
+        if not index:
+            data = {'algorithm': 'none'}
         if beta_headers is not None:
             data['beta_headers'] = json.dumps(beta_headers)
         if folder_id is not None:
@@ -1272,6 +1282,34 @@ class CloudAPI:
                 return img["url"]
         raise PageIndexAPIError(f"No image URL returned for page {page}.")
 
+    def page_image(self, doc_id: str, page: int, box: Optional[Sequence[float]] = None) -> bytes:
+        """A rendered page as JPEG bytes.
+
+        Args:
+            doc_id (str): Document ID.
+            page (int): 1-based page number.
+            box (sequence of 4 floats, optional): (x0, y0, x1, y1) as fractions
+                of the page from its top left: only that part, drawn sharper.
+
+        Returns:
+            bytes: The JPEG.
+        """
+        if box is None:
+            # a presigned URL: the API key stays off it
+            response = self._http.get(self.get_page_image(doc_id, page), timeout=60)
+        else:
+            response = self._http.get(
+                f"{self.BASE_URL}/doc/s3/{_enc(doc_id)}/images/region",
+                headers=self._headers(),
+                params={"page": page, "box": ",".join(str(v) for v in box)},
+                timeout=60
+            )
+        if response.status_code != 200:
+            raise PageIndexAPIError(
+                f"Failed to get page image: {response.text}",
+                status_code=response.status_code)
+        return response.content
+
     def get_document_image(self, doc_id: str, img_id: str) -> str:
         """Presigned URL for an embedded image extracted during OCR.
 
@@ -1317,44 +1355,7 @@ class CloudAPI:
             headers=self._headers(),
             timeout=30
         )
-        if response.status_code != 200:
-            raise PageIndexAPIError(
-                f"Failed to get tree result: {response.text}",
-                status_code=response.status_code)
-        return response.json()
-
-    # ---------- RETRIEVAL ----------
-
-    def submit_query(self, doc_id: str, query: str, thinking: bool = False) -> Dict[str, Any]:
-        """
-        Submit a retrieval query for a specific PageIndex document.
-
-        Args:
-            doc_id (str): Document ID.
-            query (str): User question or information need.
-            thinking (bool, optional): If true, enables deeper retrieval. Default is False.
-
-        Returns:
-            dict: {'retrieval_id': ...}
-        """
-        payload = {
-            "doc_id": doc_id,
-            "query": query,
-            "thinking": thinking
-        }
-        response = self._http.post(
-            f"{self.BASE_URL}/retrieval/",
-            headers=self._headers(),
-            json=payload,
-            timeout=30
-        )
-        if response.status_code != 200:
-            raise PageIndexAPIError(
-                f"Failed to submit retrieval: {response.text}",
-                status_code=response.status_code)
-        return response.json()
-
-    def get_retrieval(self, retrieval_id: str) -> Dict[str, Any]:
+        if res
 ```
 
 ### Core Architecture Module: `pageindex/errors.py`
@@ -1406,13 +1407,13 @@ __all__ = ["page_index_flash"]
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #674** (2026-11-14): **release: collections, chat(collection_id=) with box citations, and get_citations for library paths**
-  *Symptoms*: Cloud users get collections, own-model chat kept to one collection with citations that carry a box on the page, and `get_citations` that resolves the library paths the MCP server now cites. This brings `develop` into `main` for the next release.  ## Changes  - Collections: create, list and delete them, upload a document into one, list its documents, and declare their metadata fields. A collection without declared fields learns them from its documents' metadata. `delete_collection` waits up to 600 s for the server to delete every document. (The commits of #666.) - `chat(collection_id=)` keeps own-model cloud chat in one collection, and `citations=` takes a format name such as `cite_with_boxes`. (#668) - `get_citations` resolves the library paths the MCP server now cites. (#632) - Own-model chat drops a citation box on a page whose picture the call never saw. (#673, fixes #669) - Live tests:   - The envelope check passes on the cloud's text outline and on a picture page's extra blocks. (#670)   - The three exact-copy checks skip while the cloud addresses documents by path and local mode does not. (#671)  ## Merge  Merge with **Create a merge commit**. `develop`'s commits then land on `main` unchanged, and the next `develop` → `main` PR carries only new commits.  Fixes #669. 
+- **Issue #687** (2026-11-18): **build: lift the litellm cap; 1.109 fixed the mcp import it was for**
+  *Symptoms*: Installs get current LiteLLM again instead of staying on 1.105, and own-model chat keeps working with an older mcp: the `<1.106` cap gives way to `litellm>=1.109.0`.  LiteLLM 1.106 through 1.108.3 import the proxy MCP handler on every call with tools, and that import fails under mcp<2.2 (BerriAI/litellm#46045). 1.108.4 and 1.109.0 onward import it only for a gateway tool (#45961). Every broken release, 1.107.0 included, sits below the new floor, so no `!=` list and no upper bound are needed. Fresh installs move to openai 3 and openai-agents 0.25.  ## Changes  - `pyproject.toml`, `requirements.txt`: `litellm>=1.109.0`, cap and its comments gone. - Kept for an install below the floor (another package can pin litellm lower, and pip lets the last install win): `_drop_repeated_thinking`, and the Claude "none" ladder and Databricks fill, which 1.110 makes redundant but 1.109 still needs. Two comments now say which versions need them. - Removed the tripwire tests asserting LiteLLM still has those three bugs: 1.109 or 1.110 fixed each, so they fail on every version CI installs. The behaviour tests of the kept code stay. - New direct test for `_drop_repeated_thinking` with both stream shapes, since no LiteLLM in range produces the repeat any more. - `ModelSettings.timeout` (openai-agents 0.25) added to the settings samples; `LitellmModel` does not forward it. - From 1.109 LiteLLM passes an unknown Bedrock model's `reasoning_effort` through instead of dropping it, so the summary ladder
 
-- **Issue #673** (2026-11-13): **fix(chat): own-model chat drops a citation box on a page whose picture the call never saw**
-  *Symptoms*: Own-model `chat()` now drops a citation box on a page whose picture the call's tools never attached, leaving the page citation. A box is read off a page's picture, so a box on a page the model only read as text is a guess, and a reader that outlines it marks the wrong part of the page. PageIndex chat already drops such boxes when it shows a reply; the SDK passed them on, and so did everything built on `chat()`, the Dash playground included (compute's `/api/v1` runs it, and the playground draws each `box=`). Closes #669.  ## Changes  - Each own-model call records the pages its cloud tools pictured, as PageIndex chat counts them: `view_pages`' `returned_pages`, `get_page_content`'s `picture_pages`, `zoom_page`'s `page`, and only when the result carries an image. A citation matches by the result's library path, its `doc_name`, or either one's file name, with its `doc` matched as written or unescaped (`Release&notes.pdf` and `Q&amp;A.pdf` both match). A `box` on any other page is removed from the `<cite>` tag. - The answer lane, `chat_completions` and `responses` drop it in the model's reply before openai-agents reads it, so the answer, the stream, the events, the envelope and the returned `messages` all agree. A streamed `<cite` tag still open at a delta's end waits for the delta that closes it; text held at the end of the reply goes out before the part's done event. - `messages` drops it in each turn's message (so the returned `messages` agree) and in the stream's `text_delta`,
+- **Issue #686** (2026-11-17): **refactor: PageIndexClient.build_index() is named build_outline_index(), and its errors say outline index**
+  *Symptoms*: `PageIndexClient.build_index()` is renamed `build_outline_index()`, and the errors and docstrings say "outline index" where they said "index".  What a `PageSearchClient` or `PageExtractClient` upload leaves out is the document's outline: the tree `get_tree()` returns. Its pages are stored and can be searched already, so "no index" did not say what was missing.  `build_index()` was added in #681, after v0.7.0, and has not been released, so it is renamed with no alias.  ## Changes  - `PageIndexClient.build_outline_index(doc_id, wait=True, timeout=1800.0)` replaces `build_index()`. - `get_tree()` on a document without one raises `Document '<id>' has no outline index (index_status: skipped). Build one with build_outline_index(doc_id).` - The cloud-only, timeout and could-not-be-built errors name the outline index. - The `PageSearchClient` and `PageExtractClient` docstrings say their uploads build no outline index.  Not changed: the cloud route `POST /doc/{id}/index`, `CloudAPI.build_index()`, and the `index_status` field with its value `skipped`.  ## Testing  Full suite: 1275 passed, 7 skipped. 
   **Post-Mortem & Fix Analysis**:
-  > <!-- codex-pull-request-review-summary --> <!-- codex-review-state:v1 {"code_review":{"commit_sha":"e55aaf30a3c190d95710e9b50c43183f33950ffe","has_any_findings":true,"has_unresolved_findings":true,"status":"completed"},"security_review":{"commit_sha":"e55aaf30a3c190d95710e9b50c43183f33950ffe","has_any_findings":null,"has_unresolved_findings":null,"status":"completed"}} --> <!-- codex-security-review:v1 {"blockingSeverityThreshold":"P0","headSha":"e55aaf30a3c190d95710e9b50c43183f33950ffe","mergeGateEnabled":false,"pullRequestNumber":673,"repository":"VectifyAI/PageIndex","status":"completed"} --> <details> <summary><strong>Codex Review Summary</strong>: ✅ Completed</summary>  This comment shows the latest Codex review activity on this pull request.  | Review | Status | Commit | Review trigger | | --- | --- | --- | --- | | 📝 **Code Review** | ✅ **Completed** <relative-time datetime="2026-11-13T08:40:31.110567Z">2026-11-13T08:40:31.110567Z</relative-time> | `e55aaf3` | New commits | | 🔒
+  > <!-- codex-pull-request-review-summary --> <!-- codex-review-state:v1 {"code_review":{"commit_sha":"1c1b8dee3d4eaad83997f6a36d27b3761f4f51ce","has_any_findings":false,"has_unresolved_findings":false,"status":"completed"},"security_review":{"commit_sha":"1c1b8dee3d4eaad83997f6a36d27b3761f4f51ce","has_any_findings":null,"has_unresolved_findings":null,"status":"completed"}} --> <!-- codex-security-review:v1 {"blockingSeverityThreshold":"P0","headSha":"1c1b8dee3d4eaad83997f6a36d27b3761f4f51ce","mergeGateEnabled":false,"pullRequestNumber":686,"repository":"VectifyAI/PageIndex","status":"completed"} --> <details> <summary><strong>Codex Review Summary</strong>: ✅ Completed</summary>  This comment shows the latest Codex review activity on this pull request.  | Review | Status | Commit | Review trigger | | --- | --- | --- | --- | | 📝 **Code Review** | ✅ **Completed** <relative-time datetime="2026-11-17T13:37:51.031756Z">2026-11-17T13:37:51.031756Z</relative-time> | `1c1b8de` | PR opened | | 🔒
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1429,645 +1430,307 @@ __all__ = ["page_index_flash"]
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `eb582bee` (2026-11-13)
-**Commit Message**: fix(chat): own-model chat drops a citation box on a page whose picture the call never saw (#673)
+### Incident Patch 1: `340b8535` (2026-11-18)
+**Commit Message**: build: lift the litellm cap; 1.109 fixed the mcp import it was for (#687)
 
-- Each own-model call records the pages its cloud tools pictured, as PageIndex chat counts them: view_pages' returned_pages, get_page_content's picture_pages, zoom_page's page, and only when the result carries an image. A box on any other page is removed from its <cite> tag, leaving the page citation. A citation's doc matches the result's path, doc_name or either one's file name, as written or unescaped.
-- Every lane drops it before the reply reaches the caller: the answer, chat_completions and responses lanes in the model's reply before openai-agents reads it, messages in each turn and its stream events, claude-code/ in its deltas and final answer. A streamed <cite tag still open at a delta's end waits for the delta that closes it.
-- A picture seen in an earlier call does not count, as in PageIndex chat. Local mode drops every box. The as_* adapters, get_citations() and resolve_citations() are unchanged.
+LiteLLM 1.106 through 1.108.3 import the proxy MCP handler on every call
+with tools, and that import fails under mcp<2.2 (BerriAI/litellm#46045).
+1.108.4 and 1.109.0 onward import it only for a gateway tool (#45961).
+The floor is now 1.109.0 with no upper bound: 1.106.*, 1.107.* (1.107.0
+was malware) and 1.108.0-1.108.3 all sit below it. Fresh installs move
+to openai 3 and openai-agents 0.25.
 
-**File**: `pageindex/agent_tools.py` (modified, +84/-2)
+Kept for an install below the floor (another package can pin litellm
+lower, and pip lets the last install win): _drop_repeated_thinking, and
+the Claude "none" ladder and Databricks fill, which 1.110 makes redundant
+but 1.109 still needs.
+
+Tests:
+- The tripwires asserting LiteLLM still repeats streamed thinking, still
+  sends Claude no thinking for "none", and still drops a Databricks switch
+  beside "none" are removed: 1.109 or 1.110 fixed each, so they fail on
+  every version CI installs. The behaviour tests of the kept code stay.
+- No LiteLLM in range repeats streamed thinking any more, so
+  _drop_repeated_thinking gets a direct test with both stream shapes.
+- openai-agents 0.25 adds ModelSettings.timeout; LitellmMod
+
+**File**: `pageindex/local_chat.py` (modified, +2/-2)
 ```diff
-@@ -23,6 +23,7 @@
+@@ -1182,8 +1182,8 @@ def _cut_text(output) -> list:
  
- import copy
- import difflib
-+import html
- import inspect
- import json
- import re
-@@ -1381,8 +1382,84 @@ def _raise_account_limit(blocks: list) -> None:
-     raise PageIndexAPIError(message, status_code=status)
- 
- 
-+# The tools whose results attach page pictures, by the field naming those pages.
-+_PICTURE_PAGES = {"view_pages": "returned_pages",
-+                  "get_page_content": "picture_pages", "zoom_page": "page"}
-+_CITE_OPEN_RE = re.compile(r"<cite\s[^<>]*>")
-+_TAG_ATTR_RE = re.compile(r"""\b(\w+)\s*=\s*(["'])(.*?)\2""", re.S)
-+_BOX_ATTR_RE = re.compile(r"""\s+box\s*=\s*("[^"]*"|'[^']*')""")
-+
-+
-+class _SeenPages:
-+    """The pages one chat call's tools pictured; strip() drops boxes elsewhere."""
-+
-+    def __init__(self):
-+        self.pages: set = set()
-+
-+    def record(self, name: str, blocks: list) -> None:
-+        field = _PICTURE_PAGES.get(name)
-+        if field is None or not any(isinstance(block, dict)
-+                                    and block.get("type") == "image"
-+                                    for block in blocks):
-+            return
-+        try:
-+            result = json.loads(blocks[0]["text"])
-+            pictured = result[field]
-+            pages = ([pictured] if isinstance(pictured, int)
-+                     else _expand_pages(pictured))
-+        except (LookupError, TypeError, ValueError):
-+            return
-+        for ref in (result.get("path"), result.get("doc_name")):
-+            if isinstance(ref, str) and ref:
-+                for doc in (ref, ref.rsplit("/", 1)[-1]):
-+                    self.pages.update((doc, page) for page in pages)
-+
-+    def strip(self, text: str) -> str:
-+        return _CITE_OPEN_RE.sub(self._tag, text) if "box" in text else text
-+
-+    def _tag(self, match: re.Match) -> str:
-+        tag = match.group(0)
-+        attrs = {name: value for name, _, value in _TAG_ATTR_RE.findall(tag)}
-+        try:
-+            page = int(attrs.get("page", "").split("-")[0])
-+        except ValueError:
-+            return tag
-+        doc = attrs.get("doc", "").strip()
-+        if "box" not in attrs or (doc, page) in self.pages \
-+                or (html.unescape(doc), page) in self.pages:
-+            return tag
-+        return _BOX_ATTR_RE.sub("", tag, count=1)
-+
-+    def stream(self) -> "_HeldTags":
-+        return _HeldTags(self)
-+
-+
-+class _HeldTags:
-+    """strip() over a text's pieces: a tag open at a piece's end waits."""
-+
-+    def __init__(self, seen: _SeenPages):
-+        self.seen, self.held = seen, ""
-+
-+    def feed(self, piece: str) -> str:
-+        text = self.held + piece
-+        start = text.rfind("<")
-+        tail = text[start:] if start >= 0 else ""
-+        opening = ">" not in tail and (
-+            "<cite".startswith(tail) if len(tail) <= 5
-+            else tail.startswith("<cite") and tail[5].isspace())
-+        cut = start if start >= 0 and opening else len(text)
-+        self.held = text[cut:]
-+        return self.seen.strip(text[:cut])
-+
-+    def flush(self) -> str:
-+        """The text's end: a tag never closed goes out as written."""
-+        rest, self.held = self.held, ""
-+        return rest
-+
-+
- def _bridge_invoker(bridge, name: str, schema: dict,
-                     collection: Optional[str] = None,
-+                    seen: Optional[_SeenPages] = None,
-                     ) -> "Callable[[dict], tuple[list, bool]]":
-     """One cloud tool call proxied over MCP: string booleans are coerced
-     (same as call_tool), None-valued arguments are dropped (None ≡ omitted,
-@@ -1420,6 +1497,8 @@ def _invoke(arguments: dict[str, Any]) -> tuple[list, bool]:
-             return [{"type": "text", "text": _dumps(payload)}], True
-         if is_error:
-             _raise_account_limit(blocks)
-+        elif seen is not None:
-+            seen.record(name, blocks)
-         return blocks, is_error
-     return _invoke
- 
-@@ -1529,6 +1608,7 @@ def _require_doc_selection(doc_ids) -> None:
- def _tool_specs(client, include_management: bool = False, doc_ids=None,
-                 annotations: Optional[dict] = None,
-                 collection: Optional[str] = None,
-+                seen: Optional[_SeenPages] = None,
-                 ) -> "list[tuple[str, str, dict, Callable[[dict], tuple[list, bool]]]]":
-     """(name, description, schema, invoke) per tool, for adapters that take
-     the wire schema verbatim. ``invoke`` returns (content blocks, is_error):
-@@ -1539,7 +1619,8 @@ def _tool_specs(client, include_management: bool = False, doc_ids=None,
-     receives each annotated tool's MCP annotations by name: the server's
-     on cloud, the contract's locally. ``collection`` is the cloud chat's
-     collection, by name: every tool that takes one is held to it, and the
--    folder-tree tools are left out."""
-+    folder-tree tools are left out. ``seen`` records the pages the cloud
-+    tools picture."""
-     if getattr(client, "api_key", None):
-         bridge = _cloud_bridge(client, gated=not include_management)
- 
+ def _drop_repeated_thinking(chunk, streamed: list) -> None:
+     """Blank a closing thinking block's text that repeats what streamed:
+-    LiteLLM's Anthropic stream sends the whole text again beside the
+-    signature. A test fails once it stops; this goes then."""
++    LiteLLM's Anthropic stream below our floor sends the whole text again
++    beside the signature, and an install can still land there."""
+     choices = getattr(chunk, "choices", None)
+     delta = getattr(choices[0], "delta", None) if choices else None
+     for block in getattr(delta, "thinking_blocks", None) or ():
 ```
 
-**File**: `pageindex/client.py` (modified, +3/-1)
+**File**: `pageindex/utils.py` (modified, +2/-2)
 ```diff
-@@ -1469,7 +1469,9 @@ def chat(
-                 cloud document has blocks; ``"cite_with_boxes"`` adds
-                 ``box="x0,y0,x1,y1"`` to a tag with no block, the part of
-                 the page as fractions of its width and height from the top
--                left, and has the model look at each page it cites;
-+                left, and has the model look at each page it cites (a box
-+                on a page whose picture the call's tools never attached is
-+                dropped, leaving the page citation);
-                 ``"markdown"`` writes ``[doc, p. N]``. A format the server
-                 does not serve raises. The guidance joins the system prompt
-                 after the managed prompt and before ``instructions``; local
+@@ -457,8 +457,8 @@ def _is_unrecoverable(exc: BaseException) -> bool:
+ 
+ 
+ # Claude's own ways to turn thinking off, then its lowest effort: the ladder
+-# down a Claude model's thinking, as LiteLLM sends no thinking field for
+-# reasoning_effort "none" (BerriAI/litellm#47924, #44298).
++# down a Claude model's thinking, as LiteLLM below 1.110 sends no thinking
++# field for reasoning_effort "none" (BerriAI/litellm#47924, #44298).
+ _CLAUDE_LADDER = ({"thinking": {"type": "disabled"}}, {"thinking": {"type": "between_tools"}},
+                   {"reasoning_effort": "low"})
+ _CLAUDE_ROUTES = ("anthropic", "bedrock", "vertex_ai", "azure_ai", "databricks")
 ```
 
-**File**: `pageindex/integrations/anthropic_sdk.py` (modified, +4/-2)
+**File**: `pyproject.toml` (modified, +1/-4)
 ```diff
-@@ -27,7 +27,8 @@
- def build_anthropic_tools(client, include_management: bool = False,
-                           asynchronous: bool = False, doc_ids=None,
-                           failures: Optional[list] = None,
--                          collection: Optional[str] = None) -> list:
-+                          collection: Optional[str] = None,
-+                          seen=None) -> list:
-     """``failures`` records the invoker's re-raised failures for
-     chat(protocol="messages") to fail fast on."""
-     try:
-@@ -82,4 +83,5 @@ def _fn(**kwargs: Any) -> list:
- 
-     return [wrap(*spec)
-             for spec in _tool_specs(client, include_management,
--                                    doc_ids=doc_ids, collection=collection)]
-+                                    doc_ids=doc_ids, collection=collection,
-+                                    seen=seen)]
+@@ -34,10 +34,7 @@ openai = ">=2.45.0"
+ # loses its empty content (0.18.1), Claude thinking fails validation (<0.20).
+ openai-agents = ">=0.20.0"
+ mcp = ">=1.19.0,<3"
+-# <1.106: from 1.106 a call with tools imports LiteLLM's proxy MCP handler,
+-# which needs mcp>=2.2 (BerriAI/litellm#46045). The fix (#45961) is in the
+-# 1.107 line: lift the cap at its first clean release (1.107.0 was malware).
+-litellm = ">=1.105.1,<1.106"
++litellm = ">=1.109.0"
+ PyPDF2 = ">=3.0.0"
+ pypdfium2 = ">=5"
+ sortedcontainers = ">=2.4.0"
 ```
 
-**File**: `pageindex/integrations/claude_agent_sdk.py` (modified, +2/-2)
+**File**: `requirements.txt` (modified, +1/-2)
 ```diff
-@@ -54,7 +54,7 @@ def build_claude_mcp(client, include_management: bool = False, *,
- def tool_server(client, include_management: bool = False, *,
-                 server_name: str = "pageindex", doc_ids=None,
-                 failures: Optional[list] = None,
--                collection: Optional[str] = None):
-+                collection: Optional[str] = None, seen=None):
-     """The agent tools as an in-process server in either mode, on cloud
-     through the bridge: local as_claude_mcp()'s, and the claude-code/ chat
-     engine's, whose system prompt carries the guidance. ``failures``
-@@ -89,7 +89,7 @@ async def handler(arguments: dict[str, Any]) -> dict[str, Any]:
- 
-     hints: dict = {}  # readOnlyHint lets the CLI run the read tools in parallel
-     specs = _tool_specs(client, include_management, doc_ids, annotations=hints,
--                        collection=collection)
-+                        collection=collection, seen=seen)
-     tools = [
-         tool(name, description, schema, annotations=ToolAnnotations(
-             **(hints.get(name) or {}), maxResultSizeChars=MAX_RESULT_CHARS),
+@@ -1,5 +1,4 @@
+-# <1.106 until LiteLLM ships its mcp import fix: see pyproject.toml.
+-litellm>=1.105.1,<1.106
++litellm>=1.109.0
+ openai>=2.45.0
+ requests>=2.28.0
+ # MCP retries use Retry(allowed_methods=...), added in urllib3 1.26.
 ```
 
-**File**: `pageindex/integrations/openai_agents.py` (modified, +5/-4)
+**File**: `tests/test_client.py` (modified, +2/-29)
 ```diff
-@@ -32,14 +32,14 @@ def _tool_failure(ctx, error):
+@@ -4226,33 +4226,6 @@ def test_a_refusal_is_one_litellm_puts_on_no_cause_or_on_a_param():
+     assert not _refusal(litellm.AuthenticationError(**args))
  
  
- def build_mcp_server(client, include_management: bool = False, doc_ids=None,
--                     collection=None):
-+                     collection=None, seen=None):
-     """The tool set as an in-process MCP server for the Agents SDK."""
-     from agents.mcp import MCPServer
-     from mcp import types as mcp_types
-     from ..agent_tools import _tool_specs
- 
-     specs = _tool_specs(client, include_management, doc_ids,
--                        collection=collection)
-+                        collection=collection, seen=seen)
- 
-     class _ToolServer(MCPServer):
-         def __init__(self):
-@@ -79,7 +79,7 @@ async def get_prompt(self, name: str, arguments=None):
- 
- def build_openai_tools(client, include_management: bool = False,
-                        hosted: bool = False, doc_ids=None,
--                       collection=None) -> list:
-+                       collection=None, seen=None) -> list:
-     from agents import HostedMCPTool
-     from agents.mcp import MCPUtil
-     if getattr(client, "api_key", None) and hosted:
-@@ -95,6 +95,7 @@ def build_openai_tools(client, include_management: bool = False,
-             "require_approval": "never",
-         })]
- 
--    server = build_mcp_server(client, include_management, doc_ids, collection)
-+    server = build_mcp_server(client, include_management, doc_ids, collection,
-+                              seen)
-     return [MCPUtil.to_function_tool(tool, server, False)
-             for tool in server.tools]
+-def test_litellm_still_drops_a_databricks_switch_beside_none():
+-    """Fails once LiteLLM keeps a thinking switch sent beside
+-    reasoning_effort "none" on Databricks, as it does on Claude's other
+-    routes: then the fill hook (local_chat._register_fill) needn't take the
+-    "none" off any more."""
+-    pytest.importorskip("litellm")
+-    from litellm.utils import get_optional_params
+-    assert "thinking" not in get_optional_params(
+-        model="databricks-claude-sonnet-5", custom_llm_provider="databricks",
+-        reasoning_effort="none", thinking={"type": "disabled"})
+-
+-
+-@pytest.mark.parametrize("model", ["claude-haiku-5-5", "claude-sonnet-5", "claude-opus-5",
+-                                   "claude-sonnet-5-5"])
+-def test_litellm_still_sends_claude_no_thinking_for_none(model):
+-    """Fails once LiteLLM itself turns the model's thinking off for "none"
+-    (BerriAI/litellm#47924, #44298), which can show only after the
+-    litellm <1.106 cap is lifted: then the LiteLLM routes no longer need
+-    _claude_none for it. Keep its _CLAUDE_NONE row: the Messages lane
+-    still needs it, as Anthropic's effort takes no "none"."""
+-    pytest.importorskip("litellm")
+-    from litellm.utils import get_optional_params
+-    assert "thinking" not in get_optional_params(
+-        model=model, custom_llm_provider="anthropic", reasoning_effort="none",
+-        drop_params=True)
+-
+-
+ def test_parse_pages_keeps_whitespace_tolerance():
+     """0.2.10 accepted whitespace around parts (int() tolerance); the SDK
+     surface keeps that while the tool layer stays on the strict pattern."""
+@@ -5122,7 +5095,7 @@ def test_summary_effort_ladder_is_what_litellm_would_send():
+     """On LiteLLM's real map: a level LiteLLM would drop is skipped, read
+     as LiteLLM reads it (azure/gpt-5-nano as gpt-5-nano); a model it
+     doesn't know on an OpenAI-format API gets the effort as is, on any
+-    other none it would drop; no rung LiteLLM sends as thinking turned on
++    other only what LiteLLM would send; no rung LiteLLM sends as thinking turned on
+     (off stays); a Claude model, as LiteLLM tells one, goes down Claude's own
+     switches, from its known one on, past disabled where LiteLLM's map says
+     it always thinks; a rung this process saw refused is left out."""
+@@ -5142,7 +5115,7 @@ def efforts(*levels, forced=False):
+                           ("azure/my-gpt-deployment", efforts("none", "low", forced=True)),
+                           ("fireworks_ai/accounts/fireworks/models/test-unknown",
+                            efforts("none", "low", forced=True)),
+-                          ("bedrock/qwen.test-unknown-v9", []),
++                          ("bedrock/qwen.test-unknown-v9", efforts("none", "low")),
+                           ("bedrock/arn:aws:bedrock:us-east-1:123456789012:"
+                            "application-inference-profile/test", []),
+                           ("bedrock/us.amazon.nova-2-lite-v1:0", []),
 ```
 
-**File**: `pageindex/local_chat.py` (modified, +138/-12)
+**File**: `tests/test_local_chat.py` (modified, +21/-15)
 ```diff
-@@ -20,7 +20,7 @@
- from typing import Any, Generator, Iterator, Mapping, Optional, Union
- from urllib.parse import urlparse
- 
--from .agent_tools import _base_instructions, targeting_block
-+from .agent_tools import _base_instructions, _SeenPages, targeting_block
- from .chat_stream import (ChatStream, MessagesStream, ChatObject,
-                           _yaml_as_dict)
- from .errors import PageIndexAPIError, _pageindex_cause
-@@ -884,7 +884,7 @@ def _openai_agent(client, protocol: str, model_name: str, instructions: str,
-                   temperature, top_p, doc_ids=None, cache_key=None,
-                   reasoning=None, reasoning_effort=None, extra_body=None,
-                   max_tokens=None, backend=None, extra_headers=None,
--                  collection=None):
-+                  collection=None, seen=None):
-     _refuse_skeleton(extra_body)
-     from agents import Agent, ModelSettings
-     from openai.types.shared import Reasoning
-@@ -965,16 +965,83 @@ def _openai_agent(client, protocol: str, model_name: str, instructions: str,
-         if swap:
-             # the request hook (_register_fill) takes the "none" off beside it
-             settings = dataclasses.replace(settings, extra_args={**args, **swap})
-+    model = _openai_model(protocol, model_name, conn or None)
-+    if seen is not None:
-+        _drop_unseen_boxes(model, seen)
-     return Agent(
-         name="PageIndex",
-         instructions=instructions,
-         tools=build_openai_tools(client, doc_ids=doc_ids,
--                                 collection=collection),
--        model=_openai_model(protocol, model_name, conn or None),
-+                                 collection=collection, seen=seen),
-+        model=model,
-         model_settings=settings,
-     )
+@@ -1786,21 +1786,15 @@ def _model_key_missing():
  
  
-+def _strip_output(items, seen: _SeenPages) -> None:
-+    for item in items or ():
-+        if getattr(item, "type", None) == "message":
-+            for part in item.content or ():
-+                if getattr(part, "type", None) == "output_text":
-+                    part.text = seen.strip(part.text)
-+
-+
-+def _drop_unseen_boxes(model, seen: _SeenPages) -> None:
-+    """Strips each reply, streamed or not, before openai-agents reads it."""
-+    get_response = model.get_response
-+    stream_response = model.stream_response
-+
-+    async def getting(*args, **kwargs):
-+        response = await get_response(*args, **kwargs)
-+        _strip_output(response.output, seen)
-+        return response
-+
-+    async def streaming(*args, **kwargs):
-+        from contextlib import aclosing
-+        texts: dict = {}
-+
-+        def close(ended):
-+            for key in [key for key in texts if ended(key)]:
-+                held, last = texts.pop(key)
-+                rest = held.flush()
-+                if rest:
-+                    yield last.model_copy(update={"delta": rest})
-+
-+        async with aclosing(stream_response(*args, **kwargs)) as events:  # type: ignore[arg-type]
-+            async for event in events:
-+                kind = getattr(event, "type", None)
-+                if kind == "response.output_text.delta":
-+                    key = (event.item_id, event.content_index)
-+                    held = texts[key][0] if key in texts else seen.stream()
-+                    texts[key] = (held, event)
-+                    piece = event.delta
-+                    event.delta = held.feed(piece)
-+                    if piece and not event.delta:
-+                        continue
-+                elif kind in ("response.output_text.done",
-+                              "response.content_part.done"):
-+                    key = (event.item_id, event.content_index)
-+                    for rest in close(lambda k: k == key):
-+                        yield rest
-+                    if kind == "response.output_text.done":
-+                        event.text = seen.strip(event.text)
-+                    elif getattr(event.part, "type", None) == "output_text":
-+                        event.part.text = seen.strip(event.part.text)
-+                elif kind == "response.output_item.done":
-+                    for rest in close(lambda k: k[0] == event.item.id):
-+                        yield rest
-+                    _strip_output([event.item], seen)
-+                elif kind in ("response.completed", "response.incomplete",
-+                              "response.failed"):
-+                    for rest in close(lambda k: True):
-+                        yield rest
-+                    _strip_output(event.response.output, seen)
-+                yield event
-+
-+    model.get_response = getting
-+    model.stream_response = streaming
-+
-+
- def _validate_max_turns(max_turns) -> None:
-     if max_turns is not None and (not isinstance(max_turns, int)
-                                   or max_turns < 1):
-@@ -1329,7 +1396,8 @@ def _chat_agent(client, messages, doc_id, model, temperature=None,
-                           reasoning_effort=reasoning_effort,
-                           extra_body=extra_body, max_tokens=
-```
-
-**File**: `tests/test_agent_tools.py` (modified, +56/-0)
-```diff
-@@ -3780,3 +3780,59 @@ def test_render_prompt_text_flattens_messages():
-         {"role": "user"},
-     ]) == "a\nb\n[image/png content omitted: ~1 KB]"
-     assert render_prompt_text([]) == ""
-+
-+
-+def _pictured(payload, image=True):
-+    return [{"type": "text", "text": json.dumps(payload)},
-+            *([{"type": "image", "mimeType": "image/jpeg", "data": "AAAA"}]
-+              if image else [])]
-+
-+
-+def test_seen_pages_keep_only_boxes_on_pictured_pages():
-+    from pageindex.agent_tools import _bridge_invoker, _SeenPages
-+
-+    class Bridge:
-+        def call_tool(self, name, arguments):
-+            if name == "zoom_page":
-+                return _pictured({"error": "nope"}), True
-+            return {
-+                "view_pages": _pictured({"doc_name": "Reports/a.pdf",
-+                                         "path": "Reports/a.pdf",
-+                                         "returned_pages": "1-2"}),
-+                "get_page_content": _pictured({"doc_name": "b.pdf",
-+                                               "picture_pages": "5"}),
-+                "get_document_image": _pictured({"doc_name": "c.pdf",
-+                                                 "page": 9}),
-+            }[name], False
-+
-+    seen = _SeenPages()
-+    for name in ("view_pages", "get_page_content", "get_document_image",
-+                 "zoom_page"):
-+        _bridge_invoker(Bridge(), name, {}, seen=seen)({})
-+    seen.record("zoom_page", _pictured({"doc_name": "d.pdf", "page": 4}))
-+    seen.record("zoom_page", _pictured({"doc_name": "Q&A's.pdf", "page": 7}))
-+    seen.record("zoom_page", _pictured({"doc_name": "Release&notes.pdf",
-+                                        "page": 8}))
-+    seen.record("view_pages", _pictured({"doc_name": "e.pdf",
-+                                         "returned_pages": "3"}, image=False))
-+
-+    def cite(doc, page):
-+        return f'<cite doc="{doc}" page="{page}" box="0.1,0.2,0.3,0.4"/>'
-+
-+    kept = [cite("Reports/a.pdf", 2), cite("a.pdf", 1), cite("b.pdf", 5),
-+            cite("d.pdf", 4), cite("Q&amp;A&apos;s.pdf", 7),
-+            cite("Release&notes.pdf", 8), '<cite doc="x.pdf" page="1"/>']
-+    for tag in kept:
-+        assert seen.strip(tag) == tag
-+    for doc, page in (("a.pdf", 3), ("Other/a.pdf", 1), ("c.pdf", 9),
-+                      ("e.pdf", 3), ("b.pdf", 6)):
-+        assert seen.strip(cite(doc, page)) == f'<cite doc="{doc}" page="{page}"/>'
-+    text = ("x < y " + cite("a.pdf", 1) + " then " + cite("a.pdf", 3)
-+            + "<cite doc='f.pdf' page='2' box = '0,0,1,1'>z</cite> <ci")
-+    whole = seen.strip(text)
-+    assert "box" not in whole.split("then")[1]
-+    for size in range(1, 12):
-+        held = seen.stream()
-+        out = "".join(held.feed(text[i:i + size])
-+                      for i in range(0, len(text), size)) + held.flush()
-+        assert out == whole
-```
-
-**File**: `tests/test_claude_code.py` (modified, +45/-0)
-```diff
-@@ -1160,6 +1160,51 @@ async def the_model_calls_the_tool():
-                                               "maxResultSizeChars": 200_000}
+ @needs_agents
+-@pytest.mark.parametrize("stream, blank", [(False, True), (True, True),
+-                                           (True, False)])
++@pytest.mark.parametrize("stream", [False, True])
+ def test_claude_thinking_reaches_the_anthropic_wire_once(client, store_path,
+-                                                         monkeypatch, stream,
+-                                                         blank):
++                                                         monkeypatch, stream):
+     """Through LiteLLM's own Anthropic parsing and request building, with
+     no effort set: the run's next request carries the signed thinking
+-    block once, a stream's closing repeat of its text blanked. Without the
+-    blanking LiteLLM's stream must still repeat it, or the blanking goes."""
++    block once."""
+     pytest.importorskip("litellm")
+     from litellm.llms.custom_httpx.http_handler import (AsyncHTTPHandler,
+                                                         HTTPHandler)
+-    if not blank:
+-        monkeypatch.setattr(local_chat, "_drop_repeated_thinking",
+-                            lambda chunk, streamed: None)
+     monkeypatch.setenv("ANTHROPIC_API_KEY", "sk-ant-test")
+     doc_id = seed_doc(store_path, "pi-a", "report.pdf")
+     thinking = {"type": "thinking", "thinking": "plan step",
+@@ -1838,15 +1832,27 @@ async def fake_apost(self, url=None, *args, **kwargs):
+     assert not {"thinking", "output_config"} & set(bodies[0])
+     turn = next(m for m in bodies[1]["messages"] if m["role"] == "assistant")
+     sent = [b for b in turn["content"] if b["type"] == "thinking"]
+-    if not blank:
+-        assert sent == [{**thinking, "thinking": "plan stepplan step"}], (
+-            "LiteLLM stopped repeating streamed thinking: drop "
+-            "_drop_repeated_thinking")
+-        return
+     assert sent == [thinking]
+     assert result["messages"][0]["thinking_blocks"] == [thinking]
  
  
-+@needs_claude
-+def test_chat_drops_boxes_on_pages_never_seen(monkeypatch):
-+    import claude_agent_sdk
-+    import pageindex.mcp_bridge as mcp_bridge
-+    from pageindex import PageIndexCloudClient
-+
-+    class Bridge:
-+        def __init__(self, url, headers):
-+            pass
-+
-+        def list_tools(self):
-+            return [{"name": "view_pages", "description": "v",
-+                     "inputSchema": {"type": "object", "properties": {}}}]
-+
-+        def instructions(self):
-+            return "GUIDANCE"
-+
-+        def call_tool(self, name, arguments):
-+            return [{"type": "text", "text": json.dumps({
-+                "doc_name": "r.pdf", "returned_pages": "2"})},
-+                {"type": "image", "mimeType": "image/jpeg", "data": "AAAA"}], False
-+    monkeypatch.setattr(mcp_bridge, "McpBridge", Bridge)
-+    tools = {}
-+
-+    def server(**kwargs):
-+        tools.update({tool.name: tool for tool in kwargs["tools"]})
-+        return {"type": "sdk", "name": kwargs["name"], "instance": None}
-+    monkeypatch.setattr(claude_agent_sdk, "create_sdk_mcp_server", server)
-+
-+    async def the_model_views_page_2():
-+        await tools["view_pages"].handler({})
-+    text = ('A <cite doc="r.pdf" page="2" box="0.1,0.2,0.3,0.4"/> '
-+            'B <cite doc="r.pdf" page="3" box="0.5,0.6,0.7,0.8"/> <cite doc')
-+    expected = text.replace(' box="0.5,0.6,0.7,0.8"', "")
-+    said = AssistantMessage(content=[TextBlock(text)], model="haiku")
-+    pieces = [delta(text[i:i + 5]) for i in range(0, len(text), 5)]
-+    cloud = PageIndexCloudClient(api_key="pi-test-key",
-+                                 chat_model="claude-code/haiku")
-+    fake_cli(monkeypatch, said, result(text), during=the_model_views_page_2)
-+    assert cloud.chat("Q") == expected
-+    fake_cli(monkeypatch, *pieces[:-3], said, result(text),
-+             during=the_model_views_page_2)
-+    assert "".join(cloud.chat("Q", stream=True)) == expected
++def test_a_closing_thinking_block_repeating_the_stream_is_blanked():
++    """LiteLLM below our floor repeats the streamed text in the signed
++    closing block; only that repeat is blanked."""
++    for parts, closing, kept in ((["plan ", "step"], "plan step", ""),
++                                 (["plan ", "step"], "", ""),
++                                 ([], "plan step", "plan step")):
++        streamed = []
++        blocks = [{"type": "thinking", "thinking": part} for part in parts]
++        blocks.append({"type": "thinking", "thinking": closing, "signature": "SIG1"})
++        for block in blocks:
++            chunk = types.SimpleNamespace(choices=[types.SimpleNamespace(
++                delta=types.SimpleNamespace(thinking_blocks=[block]))])
++            local_chat._drop_repeated_thinking(chunk, streamed)
++        assert blocks[-1]["thinking"] == kept
++        assert streamed == []
 +
 +
- @needs_claude
- def test_chat_max_turns(monkeypatch, chat_client):
-     fake_cli(monkeypatch, result(None, is_error=True, subtype="error_max_turns",
+ def test_repeated_answers_keep_their_own_fields():
+     """Records keep conversation order: a repeated answer (or a reused call
+     id) gets its own reply's fields back, not the latest one's."""
+@@ -4391,7 +4397,7 @@ def test_litellm_model_settings_list_matches_litellm_model(monkeypatch):
+         "response_include": ["reasoning.encrypted_content"],
+         "top_logprobs": 2, "extra_query": {"q": "1"}, "extra_body": {"x": 1},
+         "extra_headers": {"X-Probe": "1"}, "extra_args": {"y": 2},
+-        "retry": {"max_retries": 1},
++        "retry": {"max_retries": 1}, "timeout": 5.0,
+         "context_management": [{"type": "compaction",
+                                 "compact_threshold": 1000}],
+         "prompt_cache_options": {"mode": "explicit", "ttl": "30m"},
 ```
 
 ---
 
-### Incident Patch 2: `9b036acc` (2026-11-11)
-**Commit Message**: fix(cloud): delete_collection waits up to 600 s for the server to delete every document, and list_documents names a collection among the places path is None
+### Incident Patch 2: `8ec0c23d` (2026-11-17)
+**Commit Message**: docs: an upload without an outline index is charged, at less than one that builds it, and CloudAPI.build_index() is named build_outline_index() (#683)
 
-The server deletes a collection's documents one by one before it answers.
-With the 30 s timeout, a collection of many documents timed out, and the
-retrying session sent the DELETE twice more while the first cascade was
-still running; the caller got a connection error while the server kept
-deleting. 600 s is the wait chat() already uses without streaming. A
-gateway that cuts the request first answers 5xx, which is still retried.
+* docs: the docstrings say an upload without an outline index is charged, at less than one that builds it
 
-A document in a collection has no folder chain, so its path is None too.
+* refactor: CloudAPI.build_index() is named build_outline_index(), as PageIndexClient's method is
 
-**File**: `pageindex/client.py` (modified, +2/-2)
+**File**: `pageindex/client.py` (modified, +4/-3)
 ```diff
-@@ -2175,8 +2175,8 @@ def list_documents(
- 
-         Each document carries ``path``, its folder chain rendered
-         ``"Parent/Child"`` — what a flat listing otherwise loses. None
--        at the library root, for a folder reached only through a share
--        of something below it, and for every local document.
-+        at the library root, in a collection, for a folder reached only
-+        through a share of something below it, and for every local document.
+@@ -1164,8 +1164,9 @@ def build_outline_index(self, doc_id: str, wait: bool = True,
          """
-         return self._api.list_documents(limit=limit, offset=offset,
-                                         folder_id=folder_id, recursive=recursive,
+         Build the outline index of a cloud document that has none, as one
+         uploaded with ``PageSearchClient`` or ``PageExtractClient``;
+-        ``get_tree()`` then returns it. Indexing is charged as an upload's
+-        is. A document that has its outline index is left as it is.
++        ``get_tree()`` then returns it. Building it is charged, at the price
++        of an upload that builds its index. A document that has its outline
++        index is left as it is.
+         Cloud-only: local mode raises PageIndexAPIError.
+ 
+         Args:
+@@ -1183,7 +1184,7 @@ def build_outline_index(self, doc_id: str, wait: bool = True,
+         api = self._require_cloud(
+             "build_outline_index is cloud-only — a local document is indexed "
+             "when it is submitted.")
+-        built = api.build_index(doc_id)
++        built = api.build_outline_index(doc_id)
+         deadline = time.monotonic() + timeout
+         while wait and built["index_status"] in ("queued", "processing"):
+             if time.monotonic() >= deadline:
 ```
 
 **File**: `pageindex/cloud_api.py` (modified, +1/-1)
 ```diff
-@@ -625,7 +625,7 @@ def delete_collection(self, collection_id: str) -> Dict[str, Any]:
-         response = self._http.delete(
-             f"{self.BASE_URL}/collection/{_enc(collection_id)}/",
-             headers=self._headers(),
--            timeout=30
-+            timeout=600
-         )
-         if response.status_code != 200:
-             raise PageIndexAPIError(
-```
-
----
-
-### Incident Patch 3: `c4191018` (2026-11-12)
-**Commit Message**: fix: get_citations resolves the library paths the MCP server now cites (#632)
-
-* fix: get_citations resolves the library paths the MCP server now cites
-
-* docs: get_citations says how doc_id= matches a cited path
-
-* refactor: get_citations keeps each path beside the names
-
-* docs: list_documents says a document's path ends with its file name
-
-The cloud listing's path is the folder chain plus the file name, and a root document's path is its name. get_citations relies on that meaning; the docstring still said folder chain only, None at the root.
-
----------
-
-Co-authored-by: Ray <[REDACTED_EMAIL]>
-
-**File**: `pageindex/client.py` (modified, +20/-9)
-```diff
-@@ -2249,10 +2249,11 @@ def list_documents(
-         Returns:
-             dict: {'documents': [...], 'total', 'limit', 'offset'}.
+@@ -269,7 +269,7 @@ def get_tree(self, doc_id: str, node_summary: bool = False,
+                 status_code=response.status_code)
+         return response.json()
  
--        Each document carries ``path``, its folder chain rendered
--        ``"Parent/Child"`` — what a flat listing otherwise loses. None
--        at the library root, in a collection, for a folder reached only
--        through a share of something below it, and for every local document.
-+        Each document carries ``path``, its folder chain plus its file
-+        name, ``"Parent/Child/Q3.pdf"`` — what a flat listing otherwise
-+        loses. Just the file name at the library root; None in a
-+        collection, for a folder reached only through a share of
-+        something below it, and for every local document.
+-    def build_index(self, doc_id: str) -> Dict[str, Any]:
++    def build_outline_index(self, doc_id: str) -> Dict[str, Any]:
          """
-         return self._api.list_documents(limit=limit, offset=offset,
-                                         folder_id=folder_id, recursive=recursive,
-@@ -2763,10 +2764,12 @@ def get_citations(
-             answer (str): The answer text, tags included.
-             doc_id (str | list[str], optional): The documents the answer
-                 was about — what ``chat(doc_id=...)`` took. Citations name
--                documents, and the ids come from here; without it your own
--                library is listed. Two documents sharing a cited name
--                raise PageIndexAPIError naming both ids: pass ``doc_id``
--                to pick.
-+                documents by name or by library path
-+                (``Research/2024/Q3.pdf``), and the ids come from here;
-+                without it your own library is listed. With it, a cited
-+                path matches by its file name. Two documents sharing a
-+                cited name raise PageIndexAPIError naming both ids: pass
-+                ``doc_id`` to pick.
+         Build the tree of a document stored without one.
  
-         Returns:
-             list: One dict per distinct citation: ``{'document', 'doc_id',
-@@ -2804,9 +2807,17 @@ def get_citations(
-             for doc in _all_documents(self):
-                 if doc.get("name") and doc.get("id"):
-                     names.setdefault(doc["name"], []).append(doc["id"])
-+                if doc.get("path") and doc.get("id"):
-+                    names.setdefault(doc["path"], []).append(doc["id"])
-         resolved: list[dict[str, Any]] = []
-         for citation in citations:
--            ids = list(dict.fromkeys(names.get(citation["document"], [])))
-+            cited = citation["document"]
-+            ids = names.get(cited)
-+            if not ids and doc_id is not None:
-+                # Document metadata carries no path: a cited path matches
-+                # by its file name within the scoped documents.
-+                ids = names.get(cited.rsplit("/", 1)[-1])
-+            ids = list(dict.fromkeys(ids or []))
-             if len(ids) > 1:
-                 raise PageIndexAPIError(
-                     f"{citation['document']!r} names {len(ids)} documents "
 ```
 
-**File**: `tests/test_client.py` (modified, +32/-3)
+**File**: `pageindex/page_extract.py` (modified, +5/-3)
 ```diff
-@@ -2252,12 +2252,13 @@ def test_parse_citations_scans_in_linear_time():
+@@ -58,16 +58,18 @@ def extract(
  
- def _library(docs):
-     """A cloud handler serving /docs/ (100 per page) and /doc/<id>/block/
--    lookups from {doc_id: (name, {block_id: block})}."""
-+    lookups from {doc_id: (name, {block_id: block}[, path])}."""
-     def handler(method, url, kw):
-         if url.endswith("/docs/"):
-             offset = kw["params"]["offset"]
--            entries = [{"id": doc_id, "name": name}
--                       for doc_id, (name, _) in docs.items()]
-+            entries = [{"id": doc_id, "name": doc[0],
-+                        **({"path": doc[2]} if len(doc) > 2 else {})}
-+                       for doc_id, doc in docs.items()]
-             return FakeResponse({"documents": entries[offset:offset + 100],
-                                  "total": len(entries), "limit": 100,
-                                  "offset": offset})
-@@ -2381,6 +2382,34 @@ def test_get_citations_refuses_a_shared_name(cloud, monkeypatch):
-         {"document": "a.pdf", "doc_id": "pi-2", "page": 1}]
+         Args:
+             document (str): A PDF's path: the file is uploaded to
+-                ``collection`` first, with no outline index built, and
+-                uploading the same file again uses the stored document. Or
++                ``collection`` first, with no outline index built (the upload
++                is charged for every page of the file), and uploading the
++                same file again uses the stored document. Or
+                 the ``doc_id`` of an uploaded document: one still processing
+                 is waited for first, and with ``wait=False`` raises
+                 PageIndexAPIError (HTTP 409).
+             schema (dict | type): A JSON Schema whose top is an object or an
+                 array, or a Pydantic model class.
+             tier (str): "standard" (default) or "pro".
+             pages (str | int | tuple, optional): Extract from these pages
+-                only, and only they are charged: "3-9", (3, 9) or 3.
++                only, and the extraction is charged for them alone: "3-9",
++                (3, 9) or 3.
+             cite_sources (bool): Give the page each list item is on, under
+                 'extract_metadata'.
+             system_prompt (str, optional): Your own instructions for the
+```
+
+**File**: `pageindex/page_search.py` (modified, +1/-1)
+```diff
+@@ -43,7 +43,7 @@ def upload(
+     ) -> dict[str, Any]:
+         """
+         Upload a PDF to search. Its pages are stored and no outline index is
+-        built, so no indexing is charged;
++        built, so the upload is charged less than one that builds it;
+         ``PageIndexClient.build_outline_index()`` builds one later. Uploading
+         the same file to the same place again returns the stored document.
  
- 
-+def test_get_citations_resolves_library_paths(cloud, monkeypatch):
-+    """The MCP server cites by library path: a nested path picks its own
-+    document over a same-name one at the root, a bare name keeps the
-+    shared-name refusal, and a path outside the listing (a shared mount)
-+    stays unresolved rather than borrowing a same-name own document."""
-+    client, calls, fake = cloud
-+    block = {"doc_id": "pi-n", "page": 4, "block_id": "p4_text_1",
-+             "bbox": [1, 2, 3, 4], "block_type": "text", "text": "Revenue."}
-+    _patch_requests(monkeypatch, _library({
-+        "pi-r": ("Q3 Report.pdf", {}, "Q3 Report.pdf"),
-+        "pi-n": ("Q3 Report.pdf", {"p4_text_1": block},
-+                 "Research/2024/Q3 Report.pdf"),
-+    }))
-+    nested = 'See <cite doc="Research/2024/Q3 Report.pdf" page="4" block="p4_text_1"/>.'
-+    assert client.get_citations(nested) == [
-+        {"document": "Research/2024/Q3 Report.pdf", **block}]
-+    with pytest.raises(PageIndexAPIError, match=r"pi-r, pi-n.*doc_id="):
-+        client.get_citations('<cite doc="Q3 Report.pdf" page="1"/>')
-+    assert client.get_citations(
-+        '<cite doc="Shared with me/Deals/Q3 Report.pdf" page="2"/>') == [
-+        {"document": "Shared with me/Deals/Q3 Report.pdf", "doc_id": None,
-+         "page": 2}]
-+    # doc_id= reads metadata, which carries no path: the file name decides.
-+    assert client.get_citations('<cite doc="Research/2024/Q3 Report.pdf" page="4"/>',
-+                                doc_id="pi-n") == [
-+        {"document": "Research/2024/Q3 Report.pdf", "doc_id": "pi-n", "page": 4}]
-+
-+
- def test_get_citations_keeps_blocks_it_cannot_read(cloud, monkeypatch):
-     """A denied block (403) keeps its bbox-less entry like a missing one;
-     a transport failure still propagates with its status."""
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #674** (2026-11-14): release: collections, chat(collection_id=) with box citations, and get_citations for library paths (@rejojer)
-- **PR #673** (2026-11-13): fix(chat): own-model chat drops a citation box on a page whose picture the call never saw (@rejojer)
-- **PR #671** (2026-11-13): test: the live copy checks skip while the cloud addresses documents by path and local mode does not (@rejojer)
-- **PR #670** (2026-11-13): test: the live envelope check passes on the cloud's text outline and on a picture page's extra blocks (@rejojer)
-- **PR #668** (2026-11-12): feat(chat): chat(collection_id=) keeps own-model cloud chat in one collection, and citations= takes a format name such as cite_with_boxes (@rejojer)
-- **PR #666** (2026-11-14): feat(cloud): collections: create, list and delete them, upload a document into one, list its documents, and declare its metadata fields (@rejojer)
+- **PR #687** (2026-11-18): build: lift the litellm cap; 1.109 fixed the mcp import it was for (@rejojer)
+- **PR #686** (2026-11-17): refactor: PageIndexClient.build_index() is named build_outline_index(), and its errors say outline index (@rejojer)
+- **PR #685** (closed): docs: README shows PageSearchClient and PageExtractClient beside PageIndexClient (@rejojer)
+- **PR #684** (2026-11-17): feat: a cloud client without PAGEINDEX_API_KEY reads the key Page Search or Page Extract users already export, each product client its own first (@rejojer)
+- **PR #683** (2026-11-17): docs: an upload without an outline index is charged, at less than one that builds it, and CloudAPI.build_index() is named build_outline_index() (@rejojer)
+- **PR #682** (2026-11-17): docs(cloud): submit_document no longer calls the cloud default the OCR-based cloud pipeline (@noobakong)
 
 ---
 
@@ -2087,59 +1750,33 @@ Co-authored-by: Ray <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. chat): own-model chat drops a citation box on a page whose picture the call neve
+## X. build: lift the litellm cap; 1.109 fixed the mcp import it was for
 
 **RULE**:
-When implementing operations in `pageindex/agent_tools.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in VectifyAI/PageIndex. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `pageindex/local_chat.py`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in VectifyAI/PageIndex. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `eb582bee`: chat): own-model chat drops a citation box on a page whose picture the call never saw. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `340b8535`: build: lift the litellm cap; 1.109 fixed the mcp import it was for. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `pageindex/agent_tools.py`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `pageindex/local_chat.py`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-import html
-# The tools whose results attach page pictures, by the field naming those pages.
-_PICTURE_PAGES = {"view_pages": "returned_pages",
-                  "get_page_content": "picture_pages", "zoom_page": "page"}
-_CITE_OPEN_RE = re.compile(r"<cite\s[^<>]*>")
-_TAG_ATTR_RE = re.compile(r"""\b(\w+)\s*=\s*(["'])(.*?)\2""", re.S)
-_BOX_ATTR_RE = re.compile(r"""\s+box\s*=\s*("[^"]*"|'[^']*')""")
-
-
-class _SeenPages:
-    """The pages one chat call's tools pictured; strip() drops boxes elsewhere."""
-
-    def __init__(self):
-        self.pages: set = set()
-
-    def record(self, name: str, blocks: list) -> None:
-        field = _PICTURE_PAGES.get(name)
-        if field is None or not any(isinstance(block, dict)
-                                    and block.get("type") == "image"
-                                    for block in blocks):
-            return
-        try:
-            result = json.loads(blocks[0]["text"])
-            pictured = result[field]
-            pages = ([pictured] if isinstance(pictured, int)
-                     else _expand_pages(pictured))
-        except (LookupError, TypeError, ValueError):
-            return
-        for ref in (result.get("path"), result.get("do
+    LiteLLM's Anthropic stream below our floor sends the whole text again
+    beside the signature, and an install can still land there."""
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
 // Induced defect failure mode:
-    folder-tree tools are left out."""
+    LiteLLM's Anthropic stream sends the whole text again beside the
+    signature. A test fails once it stops; this goes then."""
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `eb582bee` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `340b8535` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction
