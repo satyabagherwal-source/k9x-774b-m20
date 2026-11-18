@@ -1,6 +1,6 @@
 # Candidate Directive: portico: Fix typos on development community and security pages.
 
-- **Directive ID**: `CD-REV-9FEED1`
+- **Directive ID**: `CD-REV-3329F5`
 - **Status**: `STAGED_FOR_HUMAN_REVIEW`
 - **Target Domain**: Domain G (Architecture Intelligence)
 - **Source Repository**: `zulip-zulip`

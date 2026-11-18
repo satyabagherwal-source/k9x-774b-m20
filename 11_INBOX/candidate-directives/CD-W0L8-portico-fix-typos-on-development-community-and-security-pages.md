@@ -1,82 +1,73 @@
-# Candidate Directive: [CD-9BF3] editor): add scoped ios account deletion
+# Candidate Directive: [CD-W0L8] portico: Fix typos on development community and security pages.
 
 <!-- PROVENANCE_START
 {
-  "source_repository": "zseven-w-openpencil-learnings",
+  "source_repository": "zulip-zulip-learnings",
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-18T02:59:41.841Z",
+  "timestamp": "2026-11-18T03:17:20.919Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
-  "learning_id": "LEARN-EVO-zseven-w-openpencil-learnings",
+  "learning_id": "LEARN-EVO-zulip-zulip-learnings",
   "canonical_classification": "candidate_directive"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [zseven-w-openpencil-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-18T02:59:41.841Z`  
-> **Learning ID**: `LEARN-EVO-zseven-w-openpencil-learnings`
+> **Provenance**: Harvested from [zulip-zulip-learnings](unknown) (Revision: `HEAD`).  
+> **License**: Open-Source | **Timestamp**: `2026-11-18T03:17:20.919Z`  
+> **Learning ID**: `LEARN-EVO-zulip-zulip-learnings`
 
 
 ## Lifecycle Status
 - **Current Status**: `QUARANTINED_REJECT`
 - **Rejection / Holding Reason**: Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records
 - **Retry Eligibility**: `YES`
-- **Candidate Domain**: Domain H
+- **Candidate Domain**: Domain L
 
 ## Original Learning Payload (100% Preserved)
 **RULE**:
-When implementing operations in `crates/op-auth-bridge/src/hosted_access_tests.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ZSeven-W/openpencil. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `templates/corporate/development-community.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zulip/zulip. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `be4cf9c8`: editor): add scoped ios account deletion. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1bc06e2d`: portico: Fix typos on development community and security pages.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/op-auth-bridge/src/hosted_access_tests.rs`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `templates/corporate/development-community.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
-```rust
+```python
 // Verified production-grade fix pattern:
-        "product": "openpencil",
-
-#[test]
-fn legacy_or_other_product_access_cannot_bypass_product_deletion() {
-    let mut payload = fixture();
-    payload.as_object_mut().unwrap().remove("product");
-    assert!(decode(payload.to_string().as_bytes(), NOW).is_err());
-    payload["product"] = json!("another-product");
-    assert!(decode(payload.to_string().as_bytes(), NOW).is_err());
-}
+  for occasional conversations not related to Zulip, usually things
 ```
 
 **NEGATIVE CONSTRAINT**:
-```rust
-// Anti-pattern to NEVER write (induced failure mode):
-// Defect-prone omission of boundary validation
+```python
+// Induced defect failure mode:
+  is for occasional conversations not related to Zulip, usually things
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `be4cf9c8` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1bc06e2d` are properly handled with clean fallback behavior.
 
 ## Quality Gate Validation Dimensions
 ```json
 {
   "validator_version": "0.1.0",
-  "validated_at": "2026-11-18T02:59:41.961Z",
+  "validated_at": "2026-11-18T03:17:21.016Z",
   "decision": "REJECT",
   "decision_reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
   "recommended_action": "REJECT_FAIL_CLOSED",
   "confidence_score": 0,
   "confidence_justification": "Evaluated across 7 dimensions (Score: 0%). Source=FAIL (UNTRUSTED_EXTERNAL), Evidence=WARN (0 effective sources), Correctness=PASS, Reusability=PASS, Completeness=PASS, Freshness=WARN, Conflict=PASS.",
   "item": {
-    "id": "cand-1794970781961",
-    "title": "editor): add scoped ios account deletion",
+    "id": "cand-1794971841016",
+    "title": "portico: Fix typos on development community and security pages.",
     "category": "ENGINEERING_PATTERN",
     "domain": "ARCHITECTURE",
-    "source_id": "zseven-w-openpencil-learnings",
+    "source_id": "zulip-zulip-learnings",
     "source_uri": "",
     "source_version": "HEAD",
-    "content_hash": "4e36b5a9bdd7781f33dde27fae9dbd31c32eba94a6b55551766863bbf20ab31d"
+    "content_hash": "2158ed6ef9ca7b0ff8baecd583bdbb9e97080a8b1737693b46ef01686ff15443"
   },
   "evidence_fingerprint": "NO_EVIDENCE",
   "dimensions": {
@@ -151,7 +142,7 @@ Automated regression test asserting that input states reproducing defect `be4cf9
       "findings": [],
       "details": [
         "Free of known deprecated runtimes (Python 2, Node < 14, Webpack 1-3, React < 16)",
-        "Harvested/verified timestamp recorded: 2026-11-18T02:59:41.962Z"
+        "Harvested/verified timestamp recorded: 2026-11-18T03:17:21.017Z"
       ]
     },
     "duplication_and_conflict": {
@@ -174,7 +165,7 @@ Automated regression test asserting that input states reproducing defect `be4cf9
     "Staleness risk: MEDIUM"
   ],
   "evidence_references": [],
-  "auth_token": "caefc648f4619545532cd0125f50919e63bb9f81394e242cabad0af6c6a52e48"
+  "auth_token": "4ee9a6c4f29562d32278667f4abb24576b12743eec8d89d312dd0f3e03357f6d"
 }
 ```
 

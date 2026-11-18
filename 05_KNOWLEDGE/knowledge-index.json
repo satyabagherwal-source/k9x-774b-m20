@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-18T02:59:43.223Z",
+  "last_updated": "2026-11-18T03:17:21.958Z",
   "total_verified_learnings": 8966,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -112058,9 +112058,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "593f3c8f8d381edcaf724602aa0cb4199fdbc24c265d25a68fab7aee3731a227",
+      "content_hash": "c9e4d11f8c2d963a31c84f312256f3e1f62bf7d1f2004a07f151a19b1cc43b78",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T00:43:47.241Z"
+      "persisted_at": "2026-11-18T03:17:21.858Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112070,9 +112070,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "0f5d034cbf6f69ec57fed62b093b90dd8c61f6ec4c6694edb2817a4efaee736f",
+      "content_hash": "8a93e2edd56c6f61a3419ccb7786c962a7e0b795881220768f4078a518886325",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T00:43:47.357Z"
+      "persisted_at": "2026-11-18T03:17:21.958Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -112190,9 +112190,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zulip-zulip-learnings",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "e21efab513173f68a07ef06c5a89775c5b59aac893b57e63d2826c122dedaeb3",
+      "content_hash": "d8735ed8cae9dfc85c53e14f1676bff54a9fec514be6bd45bfe7b4d6a27797a6",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T02:59:43.223Z"
+      "persisted_at": "2026-11-18T03:17:21.285Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -112526,9 +112526,9 @@
       "title": "Research & Knowledge Intelligence: apple/LensVLM-9B Core Invariants",
       "repository": "apple/LensVLM-9B",
       "source_version": "hf-apple-lensvlm-9b",
-      "content_hash": "5ff0a203782d5fe7fdec10f813c4807366466890d632e17adb514a945f5d3165",
+      "content_hash": "6d5276537b4a049b1fd24d9c528387f0ea0c3ea9d028330092852ef77dbda8d9",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T02:59:29.494Z"
+      "persisted_at": "2026-11-18T03:17:09.043Z"
     },
     "candidate_directive-deps-update-go-dependencies": {
       "item_id": "candidate_directive-deps-update-go-dependencies",
@@ -112658,9 +112658,9 @@
       "title": "Research & Knowledge Intelligence: hf-apple-lensvlm-9b-learnings Core Invariants",
       "repository": "hf-apple-lensvlm-9b-learnings",
       "source_version": "HEAD",
-      "content_hash": "291ca0a32980189f7ce4dcc4942f065f1b8adc585aecba4d9dce05846f8e7206",
+      "content_hash": "6b80c7db0cfa59cf8b4c353b97962c5edebe9f458eb77d15bb5840eb32eb16bc",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T02:59:41.276Z"
+      "persisted_at": "2026-11-18T03:17:20.618Z"
     },
     "domain_intelligence-content-information-intelligence-crossplane-crossplane-learnings-core-invariants": {
       "item_id": "domain_intelligence-content-information-intelligence-crossplane-crossplane-learnings-core-invariants",
@@ -113686,13 +113686,13 @@
       "item_id": "candidate_directive-editor-add-scoped-ios-account-deletion",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-9BF3-editor-add-scoped-ios-account-deletion.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-NTUH-editor-add-scoped-ios-account-deletion.md",
       "title": "editor): add scoped ios account deletion",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "2ebb1d27ba3ec764b871a195ffec6ebc613ab8c49d179ca0506b7438574e26be",
+      "content_hash": "1bae02aa2ff40dcc41da7ac290f0f4ceb5fc12df7532e0a63f6395fd829b7729",
       "domain_letter": "H",
-      "persisted_at": "2026-11-18T02:59:41.972Z"
+      "persisted_at": "2026-11-18T01:19:00.572Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant",
@@ -113702,9 +113702,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "016434d3fb80d898748befc8bd31706bd219b70454b04492600b9d047a0df739",
+      "content_hash": "b013be5c0103390a5f321cf00435e50ba6b075b062fe37549c2cefb193b98920",
       "domain_letter": "H",
-      "persisted_at": "2026-11-18T02:59:42.146Z"
+      "persisted_at": "2026-11-18T01:19:00.706Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113714,9 +113714,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "640eff98dbc8cfeef3091aedd29df891467c84d2c3e05621b994fd9782ccdac2",
+      "content_hash": "327c8cc542e4c83058eec475b3fb1aea3d29878dd8bd336e9916349f89084f61",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T02:59:42.334Z"
+      "persisted_at": "2026-11-18T01:19:00.856Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -251794,9 +251794,9 @@
       "title": "Research & Knowledge Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "266da705963daa5c4aead81157a3268acbddf972088fc3c35ccbf00bb0a7f620",
+      "content_hash": "fb1c124af925df6eb5b7a28d929ecff64a94984139009532d431acff3fa005f1",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T00:43:47.107Z"
+      "persisted_at": "2026-11-18T03:17:21.746Z"
     },
     "learn-github-prof18-feed-flow": {
       "learning_id": "learn-github-prof18-feed-flow",
@@ -269700,13 +269700,13 @@
       "item_id": "candidate_directive-portico-fix-typos-on-development-community-and-security-pages",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-9C4B-portico-fix-typos-on-development-community-and-security-pages.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-W0L8-portico-fix-typos-on-development-community-and-security-pages.md",
       "title": "portico: Fix typos on development community and security pages.",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "2c1617e4940f9a091d98302fa525b4d5813342c9e40c588b8621b6544f493545",
+      "content_hash": "a552e378c84adb950dfbbc04c6aeee0b2f2603f28d31f0dd7fc874a91b896daa",
       "domain_letter": "L",
-      "persisted_at": "2026-11-18T02:59:42.881Z"
+      "persisted_at": "2026-11-18T03:17:21.023Z"
     },
     "domain_intelligence-human-need-intelligence-zulip-zulip-learnings-core-invariants": {
       "item_id": "domain_intelligence-human-need-intelligence-zulip-zulip-learnings-core-invariants",
@@ -269716,9 +269716,9 @@
       "title": "Human & Need Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "c081f8765299d923d4fd6d1605f11db3df42e64e4b147e369e491dab95dabe51",
+      "content_hash": "bc6940dd08dbf24a5582a5dbe53cedf476aa87483be853f14e8f5567babc19ef",
       "domain_letter": "A",
-      "persisted_at": "2026-11-18T02:59:43.050Z"
+      "persisted_at": "2026-11-18T03:17:21.144Z"
     },
     "candidate_directive-mito2-wait-for-a-stopped-region-s-checkpoint-before-reopening-it": {
       "item_id": "candidate_directive-mito2-wait-for-a-stopped-region-s-checkpoint-before-reopening-it",
@@ -274386,13 +274386,13 @@
       "item_id": "candidate_directive-rust-address-the-remaining-issues-in-418",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-EIZE-rust-address-the-remaining-issues-in-418.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-W124-rust-address-the-remaining-issues-in-418.md",
       "title": "rust): address the remaining issues in #418",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "50d53edb14d242872ac91f5e8189fc79abade5d8b066338cb896fbe690995374",
+      "content_hash": "ada610daa96226edaa25042e291c225ea8651ecc0d837e377edf3fa431c73dfb",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T00:43:46.973Z"
+      "persisted_at": "2026-11-18T03:17:21.630Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-m3-1-flash-learnings-core-i": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-m3-1-flash-learnings-core-i",
@@ -280141,7 +280141,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/apple/LensVLM-9B",
       "source_version": "hf-apple-lensvlm-9b",
-      "content_hash": "5ed56bfefdda08cbe056556f65d89f0f9d05ac832968decc56de8ec727a20ddb",
+      "content_hash": "39fcf5d730426699279996addfadaf15b4d7b163ab3fdfc69ec683331377ebda",
       "dossier_path": "07_PROJECT_LEARNING/hf-apple-lensvlm-9b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-apple-lensvlm-9b-learnings.md",
       "promoted_rules": [],
@@ -280150,7 +280150,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T02:59:29.016Z",
+      "verified_at": "2026-11-18T03:17:08.695Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,

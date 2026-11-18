@@ -10817,4 +10817,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-comfy-org-wan-2-2` | `https://huggingface.co/Comfy-Org/Wan-2.2` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-11-18T02:51:15.018Z |
 | `learn-github-koderover-zadig` | `https://github.com/koderover/zadig` | `2c932905` | Multi-dimensional audit evidence | 2026-11-18T02:51:25.657Z |
 | `learn-github-freenet-freenet-core` | `https://github.com/freenet/freenet-core` | `0515d873` | Multi-dimensional audit evidence | 2026-11-18T02:51:27.609Z |
-| `learn-huggingface-apple-lensvlm-9b` | `https://huggingface.co/apple/LensVLM-9B` | `hf-apple-l` | Multi-dimensional audit evidence | 2026-11-18T02:59:29.258Z |
+| `learn-huggingface-apple-lensvlm-9b` | `https://huggingface.co/apple/LensVLM-9B` | `hf-apple-l` | Multi-dimensional audit evidence | 2026-11-18T03:17:08.875Z |

@@ -1,73 +1,97 @@
-# Candidate Directive: [CD-9C4B] portico: Fix typos on development community and security pages.
+# Candidate Directive: [CD-W124] rust): address the remaining issues in #418
 
 <!-- PROVENANCE_START
 {
-  "source_repository": "zulip-zulip-learnings",
+  "source_repository": "zvec-ai-zvec-grep-learnings",
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-18T02:59:42.762Z",
+  "timestamp": "2026-11-18T03:17:21.529Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
-  "learning_id": "LEARN-EVO-zulip-zulip-learnings",
+  "learning_id": "LEARN-EVO-zvec-ai-zvec-grep-learnings",
   "canonical_classification": "candidate_directive"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [zulip-zulip-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-18T02:59:42.762Z`  
-> **Learning ID**: `LEARN-EVO-zulip-zulip-learnings`
+> **Provenance**: Harvested from [zvec-ai-zvec-grep-learnings](unknown) (Revision: `HEAD`).  
+> **License**: Open-Source | **Timestamp**: `2026-11-18T03:17:21.529Z`  
+> **Learning ID**: `LEARN-EVO-zvec-ai-zvec-grep-learnings`
 
 
 ## Lifecycle Status
 - **Current Status**: `QUARANTINED_REJECT`
 - **Rejection / Holding Reason**: Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records
 - **Retry Eligibility**: `YES`
-- **Candidate Domain**: Domain L
+- **Candidate Domain**: Domain D
 
 ## Original Learning Payload (100% Preserved)
 **RULE**:
-When implementing operations in `templates/corporate/development-community.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zulip/zulip. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `rust/crates/zg-engine/src/domain/metadata.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zvec-ai/zvec-grep. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1bc06e2d`: portico: Fix typos on development community and security pages.. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `75047201`: rust): address the remaining issues in #418. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `templates/corporate/development-community.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `rust/crates/zg-engine/src/domain/metadata.rs`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
-```python
+```rust
 // Verified production-grade fix pattern:
-  for occasional conversations not related to Zulip, usually things
-```
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    #[serde(default, skip_serializing_if = "std::ops::Not::not")]
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    #[serde(default, skip_serializing_if = "Vec::is_empty")]
 
-**NEGATIVE CONSTRAINT**:
-```python
-// Induced defect failure mode:
-  is for occasional conversations not related to Zulip, usually things
-```
+#[cfg(test)]
+mod tests {
+    use super::{CodeMetadata, MemberAlias, SymbolType};
 
-**VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1bc06e2d` are properly handled with clean fallback behavior.
+    /// The facts only the resolver reads. Retrieval never looks at them, so
+    /// storing a default for each of them would cost every record the fields of
+    /// the few files that use them.
+    const GRAPH_FACTS: [&str; 6] = [
+        "has_internal_linkage",
+        "declares_type",
+        "alias_of",
+        "object_members",
+        "overwritten_by",
+        "exported_as",
+    ];
+
+    #[test]
+    fn graph_facts_are_stored_only_when_set() {
+        let plain = serde_json::to_value(CodeMetadata::default()).expect("encode metadata");
+        for field in GRAPH_FACTS {
+            assert!(
+                plain.get(field).is_none(),
+                "{field} is omitted while it holds its default"
+            );
+        }
+
+  
+```
 
 ## Quality Gate Validation Dimensions
 ```json
 {
   "validator_version": "0.1.0",
-  "validated_at": "2026-11-18T02:59:42.875Z",
+  "validated_at": "2026-11-18T03:17:21.627Z",
   "decision": "REJECT",
   "decision_reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
   "recommended_action": "REJECT_FAIL_CLOSED",
   "confidence_score": 0,
   "confidence_justification": "Evaluated across 7 dimensions (Score: 0%). Source=FAIL (UNTRUSTED_EXTERNAL), Evidence=WARN (0 effective sources), Correctness=PASS, Reusability=PASS, Completeness=PASS, Freshness=WARN, Conflict=PASS.",
   "item": {
-    "id": "cand-1794970782875",
-    "title": "portico: Fix typos on development community and security pages.",
+    "id": "cand-1794971841627",
+    "title": "rust): address the remaining issues in #418",
     "category": "ENGINEERING_PATTERN",
     "domain": "ARCHITECTURE",
-    "source_id": "zulip-zulip-learnings",
+    "source_id": "zvec-ai-zvec-grep-learnings",
     "source_uri": "",
     "source_version": "HEAD",
-    "content_hash": "2158ed6ef9ca7b0ff8baecd583bdbb9e97080a8b1737693b46ef01686ff15443"
+    "content_hash": "f657b288eed16ef1f0bb0c8d75e77a0b7faaa3954b8fe96e0116433c6af9ef59"
   },
   "evidence_fingerprint": "NO_EVIDENCE",
   "dimensions": {
@@ -123,7 +147,7 @@ Automated regression test asserting that input states reproducing defect `1bc06e
     },
     "completeness": {
       "status": "PASS",
-      "score": 1,
+      "score": 0.85,
       "has_rule": true,
       "has_why": true,
       "has_when": true,
@@ -131,8 +155,7 @@ Automated regression test asserting that input states reproducing defect `1bc06e
       "details": [
         "Preserves normative RULE declaration",
         "Preserves technical rationale (WHY)",
-        "Preserves operational boundary (WHEN TO APPLY)",
-        "Includes explicit negative example / anti-pattern contrast"
+        "Preserves operational boundary (WHEN TO APPLY)"
       ]
     },
     "freshness": {
@@ -142,7 +165,7 @@ Automated regression test asserting that input states reproducing defect `1bc06e
       "findings": [],
       "details": [
         "Free of known deprecated runtimes (Python 2, Node < 14, Webpack 1-3, React < 16)",
-        "Harvested/verified timestamp recorded: 2026-11-18T02:59:42.875Z"
+        "Harvested/verified timestamp recorded: 2026-11-18T03:17:21.627Z"
       ]
     },
     "duplication_and_conflict": {
@@ -165,7 +188,7 @@ Automated regression test asserting that input states reproducing defect `1bc06e
     "Staleness risk: MEDIUM"
   ],
   "evidence_references": [],
-  "auth_token": "dea73d6f62535f7eb30f6aa8fc1e12a76dd95a384dfb0749395f3a7e92027353"
+  "auth_token": "970271cdc96e87218b0da7997b023dae4fb094af7b848a9957d67077e82dc944"
 }
 ```
 

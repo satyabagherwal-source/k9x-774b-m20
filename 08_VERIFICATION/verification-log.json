@@ -7485,11 +7485,11 @@
     }
   },
   {
-    "cycleId": "CYCLE-20261118-91LX",
-    "timestamp": "2026-11-18T02:59:29.253Z",
+    "cycleId": "CYCLE-20261118-VR7R",
+    "timestamp": "2026-11-18T03:17:08.871Z",
     "repository": "apple/LensVLM-9B",
     "learningId": "learn-huggingface-apple-lensvlm-9b",
-    "contentHash": "5ed56bfefdda08cbe056556f65d89f0f9d05ac832968decc56de8ec727a20ddb",
+    "contentHash": "39fcf5d730426699279996addfadaf15b4d7b163ab3fdfc69ec683331377ebda",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {
