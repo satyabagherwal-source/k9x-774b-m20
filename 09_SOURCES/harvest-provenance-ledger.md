@@ -11110,3 +11110,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-hexgrad-kokoro-82m` | `https://huggingface.co/hexgrad/Kokoro-82M` | `hf-hexgrad` | Multi-dimensional audit evidence | 2026-11-18T18:56:51.261Z |
 | `learn-huggingface-meta-llama-meta-llama-3-8b` | `https://huggingface.co/meta-llama/Meta-Llama-3-8B` | `hf-meta-ll` | Multi-dimensional audit evidence | 2026-11-18T19:09:59.444Z |
 | `learn-github-agent-field-agentfield` | `https://github.com/Agent-Field/agentfield` | `a9ed6a03` | Multi-dimensional audit evidence | 2026-11-18T19:10:09.036Z |
+| `learn-huggingface-openai-whisper-large-v3` | `https://huggingface.co/openai/whisper-large-v3` | `hf-openai-` | Multi-dimensional audit evidence | 2026-11-18T19:34:14.324Z |
+| `learn-github-materializeinc-materialize` | `https://github.com/MaterializeInc/materialize` | `fdc9d4be` | Multi-dimensional audit evidence | 2026-11-18T19:34:30.350Z |
+| `learn-dom-d-30cf6f55` | `project://hf-openai-whisper-large-v3` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-openai-whisper-large-v3-learnings.md` | 2026-11-18T19:35:04.131Z |

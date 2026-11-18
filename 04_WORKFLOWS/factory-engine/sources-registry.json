@@ -69,8 +69,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-18T19:10:12.501Z",
-    "lastVerified": "2026-11-18T19:10:12.501Z",
+    "lastChecked": "2026-11-18T19:34:33.624Z",
+    "lastVerified": "2026-11-18T19:34:33.624Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -153,8 +153,8 @@
     "officialUrl": "https://github.com/dathere/qsv",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-18T18:09:59.949Z",
-    "lastVerified": "2026-11-18T18:09:59.949Z",
+    "lastChecked": "2026-11-18T19:34:25.855Z",
+    "lastVerified": "2026-11-18T19:34:25.855Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-dathere-qsv",
@@ -276,9 +276,9 @@
   "openziti-zrok": {
     "name": "zrok",
     "officialUrl": "https://github.com/openziti/zrok",
-    "lastChecked": "2026-11-18T14:32:07.046Z",
+    "lastChecked": "2026-11-18T19:34:20.812Z",
     "revisionIdentifier": "1a535cfa",
-    "lastVerified": "2026-11-18T14:32:07.046Z"
+    "lastVerified": "2026-11-18T19:34:20.812Z"
   },
   "run-llama-llama_index": {
     "name": "llama_index",
@@ -3731,5 +3731,60 @@
     "lastChecked": "2026-11-18T19:10:08.728Z",
     "revisionIdentifier": "2d7cd32e",
     "lastVerified": "2026-11-18T19:10:08.728Z"
+  },
+  "timvisee-ffsend": {
+    "name": "ffsend",
+    "officialUrl": "https://github.com/timvisee/ffsend",
+    "lastChecked": "2026-11-18T19:34:10.801Z",
+    "revisionIdentifier": "85aae2f3",
+    "lastVerified": "2026-11-18T19:34:10.801Z"
+  },
+  "hf-openai-whisper-large-v3": {
+    "name": "openai/whisper-large-v3",
+    "officialUrl": "https://huggingface.co/openai/whisper-large-v3",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-18T19:34:13.705Z",
+    "lastVerified": "2026-11-18T19:34:13.705Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-openai-whisper-large-v3",
+    "contentHash": "c2f22dcc2b67992f17182142f979a613917bb90562ae8b1d19fab25a875a7d56",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "midudev-preguntas-entrevista-react": {
+    "name": "preguntas-entrevista-react",
+    "officialUrl": "https://github.com/midudev/preguntas-entrevista-react",
+    "lastChecked": "2026-11-18T19:34:16.140Z",
+    "revisionIdentifier": "99d805f1",
+    "lastVerified": "2026-11-18T19:34:16.140Z"
+  },
+  "go-eagle-eagle": {
+    "name": "eagle",
+    "officialUrl": "https://github.com/go-eagle/eagle",
+    "lastChecked": "2026-11-18T19:34:18.310Z",
+    "revisionIdentifier": "b1301b09",
+    "lastVerified": "2026-11-18T19:34:18.310Z"
+  },
+  "materializeinc-materialize": {
+    "name": "MaterializeInc/materialize",
+    "officialUrl": "https://github.com/MaterializeInc/materialize",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-11-18T19:34:29.336Z",
+    "lastVerified": "2026-11-18T19:34:29.336Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-materializeinc-materialize",
+    "contentHash": "3d36fd7601b31d792958c2f796d1bcabe0c0c5f85d9f79f5c9e49b804e227459",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 4,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

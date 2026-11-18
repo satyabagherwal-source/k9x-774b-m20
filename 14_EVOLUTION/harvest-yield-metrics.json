@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T19:10:09.042Z",
-  "total_cycles_completed": 10592,
-  "total_learnings_persisted": 10592,
-  "total_rules_promoted": 10036,
+  "last_updated": "2026-11-18T19:34:30.355Z",
+  "total_cycles_completed": 10594,
+  "total_learnings_persisted": 10594,
+  "total_rules_promoted": 10037,
   "history": [
-    {
-      "timestamp": "2026-11-18T06:57:56.158Z",
-      "repository": "etcd-io/etcd",
-      "learningId": "learn-github-etcd-io-etcd",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-18T07:05:36.375Z",
-      "repository": "unsloth/Qwen3.8-27B-GGUF",
-      "learningId": "learn-huggingface-unsloth-qwen3-8-27b-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-18T07:05:38.433Z",
       "repository": "asciinema/asciinema",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-18T19:10:09.042Z",
       "repository": "Agent-Field/agentfield",
       "learningId": "learn-github-agent-field-agentfield",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T19:34:14.329Z",
+      "repository": "openai/whisper-large-v3",
+      "learningId": "learn-huggingface-openai-whisper-large-v3",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T19:34:30.355Z",
+      "repository": "MaterializeInc/materialize",
+      "learningId": "learn-github-materializeinc-materialize",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

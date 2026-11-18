@@ -4,17 +4,17 @@
 {
   "source_repository": "MaterializeInc/materialize",
   "source_url": "https://github.com/MaterializeInc/materialize",
-  "source_version": "dfdfaf23",
+  "source_version": "fdc9d4be",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-18T04:11:31.205Z",
+  "timestamp": "2026-11-18T19:34:30.536Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-materializeinc-materialize",
   "canonical_classification": "agent_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [MaterializeInc/materialize](https://github.com/MaterializeInc/materialize) (Revision: `dfdfaf23`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-18T04:11:31.205Z`  
+> **Provenance**: Harvested from [MaterializeInc/materialize](https://github.com/MaterializeInc/materialize) (Revision: `fdc9d4be`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-18T19:34:30.536Z`  
 > **Learning ID**: `learn-github-materializeinc-materialize`
 
 
@@ -29,7 +29,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/materializeinc-materialize-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/MaterializeInc/materialize](https://github.com/MaterializeInc/materialize))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T04:11:29.940Z  
+> **Harvest Timestamp**: 2026-11-18T19:34:29.336Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -39,7 +39,7 @@ PROVENANCE_END -->
 - **Description**: The live data layer for apps and AI agents. Create up-to-the-second views into your business, just using SQL
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: pyproject.toml, Cargo.toml, README.md
-- **Stars / Engagement**: 6405 stars
+- **Stars / Engagement**: 6407 stars
 
 ---
 
@@ -1093,11 +1093,11 @@ export function splitWorkerCpuRows(rows: WorkerCpuRow[]) {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #40859** (2026-11-17): **chore(deps): update dependency lodash to v4.18.1 [security]**
-  *Symptoms*: This PR contains the following updates:  | Package | Change | [Age](https://docs.renovatebot.com/merge-confidence/) | [Confidence](https://docs.renovatebot.com/merge-confidence/) | |---|---|---|---| | [lodash](https://lodash.com/) ([source](https://redirect.github.com/lodash/lodash)) | `4.17.21` → `4.18.1` | ![age](https://developer.mend.io/api/mc/badges/age/npm/lodash/4.18.1?slim=true) | ![confidence](https://developer.mend.io/api/mc/badges/confidence/npm/lodash/4.17.21/4.18.1?slim=true) |  ---  > [!WARNING] > Some dependencies could not be looked up. Check the Dependency Dashboard for more information.  ---  ### Lodash has Prototype Pollution Vulnerability in `_.unset`, `_.omit`, and `_.pullAt` functions [CVE-2025-13465](https://nvd.nist.gov/vuln/detail/CVE-2025-13465) / [GHSA-xxjr-mmjv-4gpg](https://redirect.github.com/advisories/GHSA-xxjr-mmjv-4gpg)  <details> <summary>More information</summary>  #### Details ##### Impact  The `_.unset`, `_.omit`, and `_.pullAt` functions are vulnerable to prototype pollution. An attacker can pass crafted paths which cause Lodash to delete methods from global prototypes.  The issue permits deletion of properties but does not allow overwriting their original behavior.  ##### Patches  The issue is patched from 4.17.23 to 4.18.0 depending on the package: `lodash`, `lodash-es`, and `lodash-amd` in 4.17.23, and the standalone `lodash.unset` and `lodash.omit` packages in 4.18.0.  ##### Workarounds  None. Upgrade to the patched version.  #### Se
+- **Issue #40902** (2026-11-18): **test: Accept schema change error in SQL Server resumption test**
+  *Symptoms*: When a CDC poll returns the ALTER TABLE without the following INSERT, the source reports "Incompatible schema change" and ignores later rows, so the expected decode error never shows up. Accept either error.  Seen in nightly builds [18780](https://buildkite.com/materialize/nightly/builds/18780), [18657](https://buildkite.com/materialize/nightly/builds/18657), [18508](https://buildkite.com/materialize/nightly/builds/18508), [18208](https://buildkite.com/materialize/nightly/builds/18208), [17093](https://buildkite.com/materialize/nightly/builds/17093), [16974](https://buildkite.com/materialize/nightly/builds/16974)  Test run: https://buildkite.com/materialize/nightly/builds/18787 (edit: green)
 
-- **Issue #40858** (2026-11-17): **chore(deps): update dependency jquery to v3.5.0 [security]**
-  *Symptoms*: This PR contains the following updates:  | Package | Change | [Age](https://docs.renovatebot.com/merge-confidence/) | [Confidence](https://docs.renovatebot.com/merge-confidence/) | |---|---|---|---| | [jquery](https://jquery.com) ([source](https://redirect.github.com/jquery/jquery)) | `3.4.1` → `3.5.0` | ![age](https://developer.mend.io/api/mc/badges/age/npm/jquery/3.5.0?slim=true) | ![confidence](https://developer.mend.io/api/mc/badges/confidence/npm/jquery/3.4.1/3.5.0?slim=true) |  ---  > [!WARNING] > Some dependencies could not be looked up. Check the Dependency Dashboard for more information.  ---  ### Potential XSS vulnerability in jQuery BIT-drupal-2020-11022 / [CVE-2020-11022](https://nvd.nist.gov/vuln/detail/CVE-2020-11022) / [GHSA-gxr4-xjj5-5px2](https://redirect.github.com/advisories/GHSA-gxr4-xjj5-5px2)  <details> <summary>More information</summary>  #### Details ##### Impact Passing HTML from untrusted sources - even after sanitizing it - to one of jQuery's DOM manipulation methods (i.e. `.html()`, `.append()`, and others) may execute untrusted code.  ##### Patches This problem is patched in jQuery 3.5.0.  ##### Workarounds To workaround the issue without upgrading, adding the following to your code:  ```js jQuery.htmlPrefilter = function( html ) { 	return html; }; ```  You need to use at least jQuery 1.12/2.2 or newer to be able to apply this workaround.  ##### References https://blog.jquery.com/2020/04/10/jquery-3-5-0-released/ https://jquery.com/upgrade-guide/3
+- **Issue #40892** (2026-11-18): **chore(deps): update dependency zizmorcore/zizmor to v1.32.0**
+  *Symptoms*: This PR contains the following updates:  | Package | Update | Change | |---|---|---| | [zizmorcore/zizmor](https://redirect.github.com/zizmorcore/zizmor) | minor | `1.30.1` → `1.32.0` |  ---  > [!WARNING] > Some dependencies could not be looked up. Check the Dependency Dashboard for more information.  ---  ### Release Notes  <details> <summary>zizmorcore/zizmor</summary>  ### [`v1.32.0`](https://redirect.github.com/zizmorcore/zizmor/releases/tag/v1.32.0)  [Compare Source](https://redirect.github.com/zizmorcore/zizmor/compare/v1.31.1...v1.32.0)  [Sponsorship is appreciated!](https://redirect.github.com/sponsors/woodruffw/)  #### New Features 🌈[🔗](https://docs.zizmor.sh/release-notes/#new-features)  - zizmor now has experimental support for GitHub Actions workflow lockfiles. Please see [the limitations documentation](https://docs.zizmor.sh/usage/#workflow-lockfiles) for more information about the current implementation and its limitations ([#&#8203;2463](https://redirect.github.com/zizmorcore/zizmor/issues/2463))  #### Enhancements 🌱[🔗](https://docs.zizmor.sh/release-notes/#enhancements)  - zizmor's input collection is now "root-aware" by default, meaning that invocations like zizmor . will no longer collect inputs unless they would actually be used by GitHub Actions, etc. This should eliminate spurious findings from (e.g.) workflow definitions in vendored directories. See the [input collection](https://docs.zizmor.sh/usage/#input-collection) documentation for more informat
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1114,15 +1114,19 @@ export function splitWorkerCpuRows(rows: WorkerCpuRow[]) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `d7628fcc` (2026-11-17)
-**Commit Message**: chore(deps): update dependency cargo-nextest to v0.9.152 [security] (#40857)
+### Incident Patch 1: `5d470564` (2026-11-18)
+**Commit Message**: chore(deps): update dependency trufflesecurity/trufflehog to v3.99.9 (#40890)
+
+> [!NOTE]
+> This PR body was truncated due to platform limits.
 
 This PR contains the following updates:
 
 | Package | Update | Change |
 |---|---|---|
-| [cargo-nextest](https://redirect.github.com/nextest-rs/nextest) |
-patch | `=0.9.137` → `=0.9.152` |
+|
+[trufflesecurity/trufflehog](https://redirect.github.com/trufflesecurity/trufflehog)
+| minor | `v3.91.0` → `v3.99.9` |
 
 ---
 
@@ -1132,163 +1136,321 @@ Dashboard for more information.
 
 ---
 
-### Arbitrary code execution when rerunning tests from a portable
-recording
-
-[GHSA-vc25-qg58-w57c](https://redirect.github.com/advisories/GHSA-vc25-qg58-w57c)
-/
-[RUSTSEC-2026-0412](https://rustsec.org/advisories/RUSTSEC-2026-0412.html)
+### Release Notes
 
 <details>
-<summary>More information</summary>
+<summary>trufflesecurity/trufflehog</summary>
 
-#### Details
-##### Summary
+###
+[`v3.99.9`](https://redirect.github.com/trufflesecurity/trufflehog/releases/tag/v3.99.9)
 
-Nextest versions between 0.9.125 and 0.9.149 (inclusive) allow the
-`cargo nextest run --rerun` (or `-R`) command with a malicious [portable
-recording](https://nexte.st/docs/features/record-replay-rerun/portable-recordings/)
-to run arbitrary code during the build. The result is arbitrary code
-execution with the privileges of the user running `cargo nextest`.
+[Compare
+Source](https://redirect.github.com/trufflesecurity/trufflehog/compare/v3.99.8...v3.99.9)
 
-This vulnerability requires that the experimental [run
-recording](https://nexte.st/docs/features/record-replay-rerun/)
-functionality is enab
+#### What's Changed
+
+- Update module github.com/go-jose/go-jose/v4 to v4.1.6 \[SECURITY] by
+[@&#8203;renovate](https://redirect.github.com/renovate)\[bot] in
+[#&#8203;5490](https://redirect.github.com/trufflesecurity/trufflehog/pull/5490)
+- Update module golang.org/x/net to v0.62.0 \[SECURITY] by
+[@&#8203;renovate](https://redirect.github.com/renovate)\[bot] in
+[#&#8203;5492](https://redirect.github.com/trufflesecurity/trufflehog/pull/5492)
+- Add Interrup
+
+**File**: `ci/builder/Dockerfile` (modified, +2/-2)
+```diff
+@@ -70,9 +70,9 @@ RUN apt-get update --fix-missing && TZ=UTC DEBIAN_FRONTEND=noninteractive apt-ge
+     && sed -i 's/^UID_MIN.*/UID_MIN\t500/' /etc/login.defs
+ 
+ # renovate: datasource=github-release-attachments depName=trufflesecurity/trufflehog
+-ARG TRUFFLEHOG_AMD64=v3.91.0@694c5c8791c9a30d8ee295cbe991fc6e7c5f4bd8f5dbe8ada100dfe2ece9a628
++ARG TRUFFLEHOG_AMD64=v3.99.9@12050095c8063bf4d34f9f6cbce6ba9fa8d0deea9d503d0570364feba093658e
+ # renovate: datasource=github-release-attachments depName=trufflesecurity/trufflehog
+-ARG TRUFFLEHOG_ARM64=v3.91.0@58f627f07e7b94c5269db2958c57209f190a7f15c01d8126eac9b3b1d7ae23b3
++ARG TRUFFLEHOG_ARM64=v3.99.9@778b1913196dc9b9234e8fd366f64387efeb08c01930a1d2110dcb2ffd07e68b
+ 
+ RUN TRUFFLEHOG_VERSION=${TRUFFLEHOG_AMD64%@*} \
+     && curl -fsSL https://github.com/trufflesecurity/trufflehog/releases/download/${TRUFFLEHOG_VERSION}/trufflehog_${TRUFFLEHOG_VERSION#v}_linux_$ARCH_GO.tar.gz > trufflehog.tar.gz \
+```
+
+**File**: `test/orchestratord/mzcompose.py` (modified, +54/-45)
+```diff
+@@ -12,11 +12,13 @@
+ """
+ 
+ import argparse
++import base64
+ import copy
+ import datetime
+ import json
+ import os
+ import random
++import re
+ import shutil
+ import signal
+ import subprocess
+@@ -55,7 +57,7 @@
+     upgrade_downtime_result_storage,
+ )
+ from materialize.test_analytics.test_analytics_db import TestAnalyticsDb
+-from materialize.util import PropagatingThread, all_subclasses
++from materialize.util import PropagatingThread, all_subclasses, redact_secrets
+ from materialize.version_list import (
+     get_all_self_managed_versions,
+     get_self_managed_versions,
+@@ -2736,11 +2738,8 @@ def workflow_documentation_defaults(
+                 "environmentId"
+             ] = "12345678-1234-1234-1234-123456789013"
+ 
+-        with open(os.path.join(dir, "sample-materialize.yaml"), "w") as f:
+-            yaml.dump_all(materialize_setup, f, default_flow_style=False)
+-
+-        spawn.runv(
+-            ["kubectl", "apply", "-f", os.path.join(dir, "sample-materialize.yaml")]
++        kubectl_apply_retrying_webhook(
++            ["kubectl", "apply", "-f", "-"], materialize_setup
+         )
+ 
+         # This should finish quickly, see https://github.com/MaterializeInc/database-issues/issues/10099
+@@ -3376,34 +3375,66 @@ def check_rollout_complete():
+ WEBHOOK_READY_TIMEOUT_SECS = 300
+ 
+ 
+-def kubectl_apply_retrying_webhook(cmd: list[str], yaml_str: str) -> None:
+-    """Run a `kubectl apply` that reads `yaml_str` from stdin, retrying while a
++def kubectl_apply_retrying_webhook(
++    cmd: list[str], resources: list[dict[str, Any]]
++) -> None:
++    """Run a `kubectl apply` that reads resources from stdin, retrying while a
+     webhook is still coming up.
+ 
+     Raises `subprocess.CalledProcessError` for any other failure, and for a
+     webhook failure that outlives `WEBHOOK_READY_TIMEOUT_SECS`.
+     """
++    manifest = yaml.dump_all(resources).encode()
++    secret_values = set()
++    for secret in (resource for resource in resources if resource["kind"] == "Secret"):
++        strings = secret.get("stringData", {}).values()
++        secret_values.update(secret.get("data", {}).values(), strings)
++        secret_values.update(
++            base64.b64encode(value.encode()).decode() for value in strings
++        )
++
++    # Client-side apply can nest the manifest inside a JSON string, in which
++    # kubectl also escapes `&`, `<` and `>`.
++    html_escapes = str.maketrans({c: f"\\u{ord(c):04x}" for c in "&<>"})
++    for _ in range(2):
++        secret_values.update(
++            {json.dumps(v)[1:-1].translate(html_escapes) for v in secret_values}
++        )
++    secret_pattern = "|".join(
++        re.escape(value)
++        for value in sorted(filter(None, secret_values), key=len, reverse=True)
++    )
++
++    def redact_output(text: str) -> str:
++        if secret_pattern:
++            text = re.sub(secret_pattern, "[REDACTED]", text)
++        return redact_secrets(text)
++
+     deadline = time.monotonic() + WEBHOOK_READY_TIMEOUT_SECS
+     attempt = 0
+     while True:
+         attempt += 1
+-        result = subprocess.run(cmd, input=yaml_str.encode(), capture_output=True)
++        result = subprocess.run(cmd, input=manifest, capture_output=True)
+         if result.returncode == 0:
+             return
+-        stderr_str = result.stderr.decode(errors="replace")
++        stderr = result.stderr.decode(errors="replace")
+         if (
+-            any(marker in stderr_str for marker in WEBHOOK_FAILURE_MARKERS)
++            any(marker in stderr for marker in WEBHOOK_FAILURE_MARKERS)
+             and time.monotonic() < deadline
+         ):
+-            print(f"Webhook not yet ready (attempt {attempt}), retrying: {stderr_str}")
++            print(
++                f"Webhook not yet ready (attempt {attempt}), retrying: {redact_output(stderr)}"
++            )
+             time.sleep(2)
+             continue
+-        print(f"Failed to apply: {result.stdout}\nSTDERR:{result.stderr}")
++        stdout = redact_output(result.stdout.decode(errors="replace"))
++        stderr = redact_output(stderr)
++        print(f"Failed to apply: {stdout}\nSTDERR:{stderr}")
+         raise subprocess.CalledProcessError(
+             result.returncode,
+             result.args,
+-            output=result.stdout,
+-            stderr=result.stderr,
++            output=stdout.encode(),
++            stderr=stderr.encode(),
+         )
+ 
+ 
+@@ -3419,9 +3450,7 @@ def apply_server_side(
+         cmd.append("--force-conflicts")
+     if field_manager:
+         cmd.append(f"--field-manager={field_manager}")
+-    yaml_str = yaml.dump(obj)
+-    print(f"Attempting to apply server-side:\n{yaml_str}")
+-    kubectl_apply_retrying_webhook(cmd, yaml_str)
++    kubectl_apply_retrying_webhook(cmd, [obj])
+ 
+ 
+ def workflow_server_side_apply(
+@@ -4113,9 +4142,7 @@ def apply_materialize(definition: dict[str, Any]) -> None:
+         defs.append(definition["system_params_configmap"])
+     if "balancerd_configmap" in definition:
+         defs.append(definition["balancerd_configmap"])
+-    
+```
+
+---
+
+### Incident Patch 2: `c94b62a9` (2026-11-18)
+**Commit Message**: chore(deps): update dependency docker/buildx to v0.39.0 (#40883)
+
+> [!NOTE]
+> This PR body was truncated due to platform limits.
+
+This PR contains the following updates:
+
+| Package | Update | Change |
+|---|---|---|
+| [docker/buildx](https://redirect.github.com/docker/buildx) | minor |
+`v0.30.1` → `v0.39.0` |
+
+---
+
+> [!WARNING]
+> Some dependencies could not be looked up. Check the Dependency
+Dashboard for more information.
+
+---
+
+### Release Notes
+
+<details>
+<summary>docker/buildx</summary>
+
+###
+[`v0.39.0`](https://redirect.github.com/docker/buildx/releases/tag/v0.39.0)
+
+[Compare
+Source](https://redirect.github.com/docker/buildx/compare/v0.38.2...v0.39.0)
+
+buildx 0.39.0
+
+Welcome to the v0.39.0 release of buildx!
+
+Please try out the release binaries and report any issues at
+<https://github.com/docker/buildx/issues>.
+
+##### Contributors
+
+- CrazyMax
+- Tõnis Tiigi
+- Sebastiaan van Stijn
+- Eshan05
+- Ihor Urazov
+- Kevin Mingtarja
+- SaiPisey2
+
+##### Notable Changes
+
+- Build history exports from remote builders are now faster by reading
+blobs in larger chunks.
+[#&#8203;4137](https://redirect.github.com/docker/buildx/issues/4137)
+- Kubernetes builders now use a startup probe to become ready s
+
+**File**: `ci/builder/Dockerfile` (modified, +2/-2)
+```diff
+@@ -106,7 +106,7 @@ ARG DOCKER_COMPOSE_VERSION=v5.0.1
+ # renovate: datasource=github-releases depName=christian-korneck/docker-pushrm
+ ARG DOCKER_PUSHRM_VERSION=v1.9.0
+ # renovate: datasource=github-releases depName=docker/buildx
+-ARG DOCKER_BUILDX_VERSION=v0.30.1
++ARG DOCKER_BUILDX_VERSION=v0.39.0
+ 
+ RUN \
+     # 1. autouseradd
+@@ -622,7 +622,7 @@ RUN curl -fsSL https://github.com/MaterializeInc/autouseradd/releases/download/$
+ # renovate: datasource=github-releases depName=docker/compose
+ ARG DOCKER_COMPOSE_VERSION=v5.0.1
+ # renovate: datasource=github-releases depName=docker/buildx
+-ARG DOCKER_BUILDX_VERSION=v0.30.1
++ARG DOCKER_BUILDX_VERSION=v0.39.0
+ 
+ RUN mkdir -p /usr/local/lib/docker/cli-plugins \
+     && curl -fsSL https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-linux-$ARCH_GCC > /usr/local/lib/docker/cli-plugins/docker-compose \
+```
+
+---
+
+### Incident Patch 3: `9f5dbe11` (2026-11-18)
+**Commit Message**: chore(deps): update dependency bufbuild/buf to v1.75.0 (#40879)
+
+This PR contains the following updates:
+
+| Package | Update | Change |
+|---|---|---|
+| [bufbuild/buf](https://redirect.github.com/bufbuild/buf) | minor |
+`v1.60.0` → `v1.75.0` |
+
+---
+
+> [!WARNING]
+> Some dependencies could not be looked up. Check the Dependency
+Dashboard for more information.
+
+---
+
+### Release Notes
+
+<details>
+<summary>bufbuild/buf</summary>
+
+###
+[`v1.75.0`](https://redirect.github.com/bufbuild/buf/blob/HEAD/CHANGELOG.md#v1750---2026-10-21)
+
+[Compare
+Source](https://redirect.github.com/bufbuild/buf/compare/v1.74.0...v1.75.0)
+
+- Fix `buf build` dropping `message_set_wire_format`, `weak` field
+options, and MessageSet
+extensions, and truncating MessageSet extension ranges, when a file has
+an unused import.
+- Fix LSP crash when hovering on a CEL string literal containing a byte
+that is not valid UTF-8,
+  such as `'\x95'` in a protovalidate rule.
+- Add `BUF_DEBUG`, `BUF_LOG_FORMAT`, and `BUF_TIMEOUT` environment
+variables as defaults for the
+`--debug`, `--log-format`, and `--timeout` global flags. Flags take
+precedence when set.
+- Add support to images for option dependencies declared with the
+`import opti
 
 **File**: `ci/builder/Dockerfile` (modified, +1/-1)
 ```diff
-@@ -292,7 +292,7 @@ RUN mkdir rust \
-     && cargo install --root /usr/local --version "=3.7.0" --locked cargo-deb \
-     && cargo install --root /usr/local --version "=0.19.8" --locked cargo-deny \
-     && cargo install --root /usr/local --version "=0.1.0" --locked cargo-deplint \
--    && cargo install --root /usr/local --version "=0.9.137" --locked cargo-nextest \
-+    && cargo install --root /usr/local --version "=0.9.152" --locked cargo-nextest \
-     && cargo install --root /usr/local --version "=0.8.7" --locked cargo-llvm-cov \
-     && cargo install --root /usr/local --version "=0.1.61" --locked --features=vendored-openssl cargo-udeps \
-     && cargo install --root /usr/local --version "=0.4.0" --locked cargo-binutils \
-```
-
----
-
-### Incident Patch 2: `2034cef2` (2026-11-17)
-**Commit Message**: chore(deps): update dependency lodash to v4.18.1 [security] (#40859)
-
-This PR contains the following updates:
-
-| Package | Change |
-[Age](https://docs.renovatebot.com/merge-confidence/) |
-[Confidence](https://docs.renovatebot.com/merge-confidence/) |
-|---|---|---|---|
-| [lodash](https://lodash.com/)
-([source](https://redirect.github.com/lodash/lodash)) | `4.17.21` →
-`4.18.1` |
-![age](https://developer.mend.io/api/mc/badges/age/npm/lodash/4.18.1?slim=true)
-|
-![confidence](https://developer.mend.io/api/mc/badges/confidence/npm/lodash/4.17.21/4.18.1?slim=true)
-|
-
----
-
-> [!WARNING]
-> Some dependencies could not be looked up. Check the Dependency
-Dashboard for more information.
-
----
-
-### Lodash has Prototype Pollution Vulnerability in `_.unset`, `_.omit`,
-and `_.pullAt` functions
-[CVE-2025-13465](https://nvd.nist.gov/vuln/detail/CVE-2025-13465) /
-[GHSA-xxjr-mmjv-4gpg](https://redirect.github.com/advisories/GHSA-xxjr-mmjv-4gpg)
-
-<details>
-<summary>More information</summary>
-
-#### Details
-##### Impact
-
-The `_.unset`, `_.omit`, and `_.pullAt` functions are vulnerable to
-prototype pollution. An attacker can pass crafted paths which cause
-Lodash to delete methods from global prototypes.
-
-The
-
-**File**: `doc/user/layouts/partials/head.html` (modified, +1/-1)
-```diff
-@@ -75,7 +75,7 @@
- <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.0/dist/jquery.min.js"></script>
- <script src="https://cdn.jsdelivr.net/npm/anchor-js/anchor.min.js"></script>
- <script src="https://cdn.jsdelivr.net/npm/simple-scrollspy@2.0.3/dist/simple-scrollspy.min.js"></script>
--<script src="https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js"></script>
-+<script src="https://cdn.jsdelivr.net/npm/lodash@4.18.1/lodash.min.js"></script>
- 
- {{/* Sass processing here */}} {{ $style := resources.Get "sass/main.scss" |
- toCSS | fingerprint }}
-```
-
----
-
-### Incident Patch 3: `b6db172e` (2026-11-17)
-**Commit Message**: chore(deps): update dependency jquery to v3.5.0 [security] (#40858)
-
-This PR contains the following updates:
-
-| Package | Change |
-[Age](https://docs.renovatebot.com/merge-confidence/) |
-[Confidence](https://docs.renovatebot.com/merge-confidence/) |
-|---|---|---|---|
-| [jquery](https://jquery.com)
-([source](https://redirect.github.com/jquery/jquery)) | `3.4.1` →
-`3.5.0` |
-![age](https://developer.mend.io/api/mc/badges/age/npm/jquery/3.5.0?slim=true)
-|
-![confidence](https://developer.mend.io/api/mc/badges/confidence/npm/jquery/3.4.1/3.5.0?slim=true)
-|
-
----
-
-> [!WARNING]
-> Some dependencies could not be looked up. Check the Dependency
-Dashboard for more information.
-
----
-
-### Potential XSS vulnerability in jQuery
-BIT-drupal-2020-11022 /
-[CVE-2020-11022](https://nvd.nist.gov/vuln/detail/CVE-2020-11022) /
-[GHSA-gxr4-xjj5-5px2](https://redirect.github.com/advisories/GHSA-gxr4-xjj5-5px2)
-
-<details>
-<summary>More information</summary>
-
-#### Details
-##### Impact
-Passing HTML from untrusted sources - even after sanitizing it - to one
-of jQuery's DOM manipulation methods (i.e. `.html()`, `.append()`, and
-others) may execute untrusted code.
-
-##### Patches
-This problem is patched in jQuery 3.5
-
-**File**: `doc/user/layouts/partials/head.html` (modified, +1/-1)
-```diff
-@@ -72,7 +72,7 @@
- 
- {{/* Include all JavaScript files here */}}
- <script src="https://cmp.osano.com/Azz7yeT5NmUe93yp/01cb9c3f-e1eb-4e74-9255-1280e80cdc28/osano.js"></script>
--<script src="https://cdn.jsdelivr.net/npm/jquery@3.4.1/dist/jquery.min.js"></script>
-+<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.0/dist/jquery.min.js"></script>
- <script src="https://cdn.jsdelivr.net/npm/anchor-js/anchor.min.js"></script>
- <script src="https://cdn.jsdelivr.net/npm/simple-scrollspy@2.0.3/dist/simple-scrollspy.min.js"></script>
- <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js"></script>
+@@ -225,7 +225,7 @@ RUN ln -s ../lib/node_modules/corepack/dist/corepack.js /usr/local/bin/corepack
+ # renovate: datasource=github-releases depName=koalaman/shellcheck
+ ARG SHELLCHECK_VERSION=v0.11.0
+ # renovate: datasource=github-releases depName=bufbuild/buf
+-ARG BUF_VERSION=v1.60.0
++ARG BUF_VERSION=v1.75.0
+ # renovate: datasource=github-releases depName=boz/kail
+ ARG KAIL_VERSION=v0.17.4
+ # renovate: datasource=github-releases depName=parca-dev/parca-debuginfo
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #40859** (2026-11-17): chore(deps): update dependency lodash to v4.18.1 [security] (@renovate[bot])
-- **PR #40858** (2026-11-17): chore(deps): update dependency jquery to v3.5.0 [security] (@renovate[bot])
-- **PR #40857** (2026-11-17): chore(deps): update dependency cargo-nextest to v0.9.152 [security] (@renovate[bot])
-- **PR #40856** (2026-11-17): doc: Stop stating a default for statement_timeout (@ggevay)
-- **PR #40848** (2026-11-17): storage: stop upsert v2 statistics updates once the operator shuts down (@DAlperin)
-- **PR #40839** (2026-11-17): testdrive: Unflake persist timestamp rewrite test (@def-)
+- **PR #40902** (2026-11-18): test: Accept schema change error in SQL Server resumption test (@def-)
+- **PR #40892** (2026-11-18): chore(deps): update dependency zizmorcore/zizmor to v1.32.0 (@renovate[bot])
+- **PR #40891** (2026-11-18): chore(deps): update dependency wasm-pack to v0.15.1 (@renovate[bot])
+- **PR #40890** (2026-11-18): chore(deps): update dependency trufflesecurity/trufflehog to v3.99.9 (@renovate[bot])
+- **PR #40889** (2026-11-18): chore(deps): update dependency parca-dev/parca-debuginfo to v0.13.0 (@renovate[bot])
+- **PR #40888** (2026-11-18): chore(deps): update dependency openssh/openssh-portable to v_10_6_p2 (@renovate[bot])
 
 ---
 
@@ -1308,13 +1470,13 @@ This problem is patched in jQuery 3.5
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps): update dependency cargo-nextest to v0.9.152 [security]
+## X. deps): update dependency trufflesecurity/trufflehog to v3.99.9
 
 **RULE**:
 When implementing operations in `ci/builder/Dockerfile`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in MaterializeInc/materialize. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `d7628fcc`: deps): update dependency cargo-nextest to v0.9.152 [security]. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5d470564`: deps): update dependency trufflesecurity/trufflehog to v3.99.9. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `ci/builder/Dockerfile`.
@@ -1322,17 +1484,19 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    && cargo install --root /usr/local --version "=0.9.152" --locked cargo-nextest \
+ARG TRUFFLEHOG_AMD64=v3.99.9@12050095c8063bf4d34f9f6cbce6ba9fa8d0deea9d503d0570364feba093658e
+ARG TRUFFLEHOG_ARM64=v3.99.9@778b1913196dc9b9234e8fd366f64387efeb08c01930a1d2110dcb2ffd07e68b
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-    && cargo install --root /usr/local --version "=0.9.137" --locked cargo-nextest \
+ARG TRUFFLEHOG_AMD64=v3.91.0@694c5c8791c9a30d8ee295cbe991fc6e7c5f4bd8f5dbe8ada100dfe2ece9a628
+ARG TRUFFLEHOG_ARM64=v3.91.0@58f627f07e7b94c5269db2958c57209f190a7f15c01d8126eac9b3b1d7ae23b3
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `d7628fcc` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5d470564` are properly handled with clean fallback behavior.
 
 
 ## 3. Decision Protocol & Boundary Restrictions

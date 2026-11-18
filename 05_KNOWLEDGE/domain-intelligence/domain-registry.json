@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-18T19:10:14.678Z",
-  "total_records": 1893,
+  "last_updated": "2026-11-18T19:35:07.405Z",
+  "total_records": 1896,
   "domains": {
     "A": {
       "total": 13,
@@ -51,7 +51,7 @@
       ]
     },
     "D": {
-      "total": 799,
+      "total": 802,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -851,7 +851,10 @@
         "DOM-D-714854BB",
         "domain_intelligence-research-knowledge-intelligence-compvis-stable-diffusion-v1-4-core-invariants",
         "DOM-D-70CB2061",
-        "domain_intelligence-research-knowledge-intelligence-hf-compvis-stable-diffusion-v1-4-learnings-core-"
+        "domain_intelligence-research-knowledge-intelligence-hf-compvis-stable-diffusion-v1-4-learnings-core-",
+        "domain_intelligence-research-knowledge-intelligence-openai-whisper-large-v3-core-invariants",
+        "DOM-D-30CF6F55",
+        "domain_intelligence-research-knowledge-intelligence-hf-openai-whisper-large-v3-learnings-core-invari"
       ]
     },
     "E": {
@@ -8626,8 +8629,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "0ca84985a8cf1a8db52498bcc880ce351b96e292b06c32429827560eac78520b",
-      "created_at": "2026-11-18T18:00:31.611Z"
+      "content_hash": "d14bd72bd86355df84a1fe1fe3ab596265fd94824500fc8110cc8c6660a326d8",
+      "created_at": "2026-11-18T19:35:07.405Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -25473,8 +25476,8 @@
       "title": "Research & Knowledge Intelligence: MaterializeInc/materialize Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-materializeinc-materialize-research-knowledge-intelligence-materializeinc-materi.md",
       "repository": "MaterializeInc/materialize",
-      "content_hash": "94c7e6a4770ddbae2615b210b6989e48129da35aa16620a0d1f58d8928687f98",
-      "created_at": "2026-11-18T04:11:31.348Z"
+      "content_hash": "298fffd72facc2000022261de303735f6010950769672f8e2b37f40e429bc665",
+      "created_at": "2026-11-18T19:34:30.685Z"
     },
     "domain_intelligence-market-business-intelligence-mfontanini-presenterm-learnings-core-invariants": {
       "record_id": "domain_intelligence-market-business-intelligence-mfontanini-presenterm-learnings-core-invariants",
@@ -25500,8 +25503,8 @@
       "title": "Research & Knowledge Intelligence: materializeinc-materialize-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-materializeinc-materialize-learnings-research-knowledge-intelligence-materialize.md",
       "repository": "materializeinc-materialize-learnings",
-      "content_hash": "ec325f393b3ec81793a8135344ba3155f8b05393e599d3c448c504d46570b205",
-      "created_at": "2026-11-18T04:11:36.087Z"
+      "content_hash": "bb306f1ce57dd9a668ecdd8aafb476c01e09f7f1dd9d13ea66f0efcd64cea4e8",
+      "created_at": "2026-11-18T19:35:06.299Z"
     },
     "domain_intelligence-architecture-intelligence-solidjs-solid-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-solidjs-solid-core-invariants",
@@ -31684,6 +31687,66 @@
       "repository": "agent-field-agentfield-learnings",
       "content_hash": "ce5b13f0a3a9bce5fe74477d17928beb405888ac9a971d7bffa10283170d1be9",
       "created_at": "2026-11-18T19:10:13.645Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-openai-whisper-large-v3-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-openai-whisper-large-v3-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: openai/whisper-large-v3 Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-openai-whisper-large-v3-research-knowledge-intelligence-openai-whisper-large-.md",
+      "repository": "openai/whisper-large-v3",
+      "content_hash": "d4b6860422d609b28c9aac359410022fb7f7d9b6df199f2c3ef5117294a3bfec",
+      "created_at": "2026-11-18T19:34:14.511Z"
+    },
+    "DOM-D-30CF6F55": {
+      "record_id": "DOM-D-30CF6F55",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): openai/whisper-large-v3",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-openai-whisper-large-v3-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/openai/whisper-large-v3](https://huggingface.co/openai/whisper-large-v3))  \n> **Source Version**: `hf-openai-wh`  \n> **License**: Open-Source  \n> **Sy",
+      "content_hash": "c42b74e488d75620d8efc7574cbb4019bb10b0a1649b032f856af6e8f961a18b",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-openai-whisper-large-v3-learnings.md`  \n> **Source**: huggingface ([https://huggi -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-openai-whisper-large-v3-learnings.md`  \n> **Source**: huggingface ([https://huggi",
+      "provenance": {
+        "source_uri": "project://hf-openai-whisper-large-v3/hf-openai-whisper-large-v3-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-18T19:34:33.742Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-openai-whisper-large-v3)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-openai-whisper-large-v3"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-18T19:35:04.108Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-openai-whisper-large-v3-learnings-core-invari": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-openai-whisper-large-v3-learnings-core-invari",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-openai-whisper-large-v3-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-openai-whisper-large-v3-learnings-research-knowledge-intelligence-hf-openai-w.md",
+      "repository": "hf-openai-whisper-large-v3-learnings",
+      "content_hash": "63bc96b2f60b6eb30156345c308c089b287f0f758d7a15538f1ac9ef7e621ecb",
+      "created_at": "2026-11-18T19:35:04.359Z"
     }
   }
 }

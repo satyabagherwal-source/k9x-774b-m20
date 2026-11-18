@@ -11077,3 +11077,6 @@
 | `CYCLE-20261118-G855` | `2026-11-18T18:56:51.257Z` | `hexgrad/Kokoro-82M` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-hexgrad-kokoro-82m-learnings.md` | Yes (`cb029b1d...`) |
 | `CYCLE-20261118-X4B3` | `2026-11-18T19:09:59.439Z` | `meta-llama/Meta-Llama-3-8B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-meta-llama-meta-llama-3-8b-learnings.md` | Yes (`04efd8a5...`) |
 | `CYCLE-20261118-XBPK` | `2026-11-18T19:10:09.032Z` | `Agent-Field/agentfield` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9274` | Yes (`f90e9928...`) |
+| `CYCLE-20261118-SAWF` | `2026-11-18T19:34:14.319Z` | `openai/whisper-large-v3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-openai-whisper-large-v3-learnings.md` | Yes (`c2f22dcc...`) |
+| `CYCLE-20261118-SN9L` | `2026-11-18T19:34:30.345Z` | `MaterializeInc/materialize` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9275` | Yes (`3d36fd76...`) |
+| `CYCLE-2026-11-18-PROJ-EVOLVE` | `2026-11-18T19:35:04.131Z` | `hf-openai-whisper-large-v3` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-30CF6F55` [Domain D] | Yes (`c42b74e4...`) |

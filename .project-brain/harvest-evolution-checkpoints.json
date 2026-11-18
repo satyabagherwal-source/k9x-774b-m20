@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T19:10:15.171Z",
+  "last_updated": "2026-11-18T19:35:07.708Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-18T18:00:31.874Z",
@@ -268,7 +268,7 @@
       "staged_for_review": 1
     },
     "zseven-w-openpencil-learnings.md": {
-      "processed_at": "2026-11-18T18:00:31.097Z",
+      "processed_at": "2026-11-18T19:35:06.769Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -498,7 +498,7 @@
       "staged_for_review": 1
     },
     "materializeinc-materialize-learnings.md": {
-      "processed_at": "2026-11-18T04:11:34.781Z",
+      "processed_at": "2026-11-18T19:35:04.565Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2263,8 +2263,8 @@
       "staged_for_review": 0
     },
     "hf-openai-whisper-large-v3-learnings.md": {
-      "processed_at": "2026-11-13T23:45:19.455Z",
-      "promoted_canonical": 2,
+      "processed_at": "2026-11-18T19:35:04.131Z",
+      "promoted_canonical": 1,
       "staged_for_review": 0
     },
     "hf-atomicchat-lfm3-1.7b-uncensored-gguf-learnings.md": {
@@ -3463,7 +3463,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 2049,
-  "total_canonical_promoted": 363,
-  "total_staged_for_review": 1549
+  "total_dossiers_evaluated": 2052,
+  "total_canonical_promoted": 364,
+  "total_staged_for_review": 1551
 }
