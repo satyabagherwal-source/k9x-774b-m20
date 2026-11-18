@@ -10872,3 +10872,7 @@ Every entry in this ledger must capture:
 | `learn-github-necolas-react-native-web` | `https://github.com/necolas/react-native-web` | `06726fb2` | Multi-dimensional audit evidence | 2026-11-18T06:15:27.625Z |
 | `learn-dom-d-5e75492a` | `project://hf-alissonerdx-bfs-best-face-swap` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-alissonerdx-bfs-best-face-swap-learnings.md` | 2026-11-18T06:16:00.434Z |
 | `learn-huggingface-ukisai-swift-1-5-qwen3-8-27b-gsq-rco-gguf` | `https://huggingface.co/ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF` | `hf-ukisai-` | Multi-dimensional audit evidence | 2026-11-18T06:23:23.890Z |
+| `learn-huggingface-psrben-visionhope` | `https://huggingface.co/PSRben/VisionHOPE` | `hf-psrben-` | Multi-dimensional audit evidence | 2026-11-18T06:32:29.650Z |
+| `learn-github-ratatui-ratatui` | `https://github.com/ratatui/ratatui` | `5c1a8cd5` | Multi-dimensional audit evidence | 2026-11-18T06:32:30.658Z |
+| `learn-github-tencent-tds-kuiklyui` | `https://github.com/Tencent-TDS/KuiklyUI` | `0828d8ef` | Multi-dimensional audit evidence | 2026-11-18T06:32:37.128Z |
+| `learn-github-hashicorp-terraform` | `https://github.com/hashicorp/terraform` | `a1246154` | Multi-dimensional audit evidence | 2026-11-18T06:32:38.661Z |

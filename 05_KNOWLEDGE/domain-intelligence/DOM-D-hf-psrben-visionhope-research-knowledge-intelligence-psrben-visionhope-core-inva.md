@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/PSRben/VisionHOPE",
   "source_version": "hf-psrben-visionhope",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T19:19:06.541Z",
+  "timestamp": "2026-11-18T06:32:29.893Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-psrben-visionhope",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [PSRben/VisionHOPE](https://huggingface.co/PSRben/VisionHOPE) (Revision: `hf-psrben-`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T19:19:06.541Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-18T06:32:29.893Z`  
 > **Learning ID**: `learn-huggingface-psrben-visionhope`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-psrben-visionhope-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/PSRben/VisionHOPE](https://huggingface.co/PSRben/VisionHOPE))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T19:19:05.903Z  
+> **Harvest Timestamp**: 2026-11-18T06:32:28.855Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: image-classification
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 84 downloads | 216 likes
+- **Stars / Engagement**: 69 downloads | 216 likes
 
 ---
 

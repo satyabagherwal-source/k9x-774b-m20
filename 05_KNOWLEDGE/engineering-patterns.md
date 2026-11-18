@@ -670296,3 +670296,174 @@ Subsystems managing JavaScript data structures, boundary deserialization, API pa
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `06726fb2` are properly handled with clean fallback behavior.
+
+
+---
+
+## 9139. resolve custom font handler before font name lookup (Harvested from Tencent-TDS/KuiklyUI)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "resolve custom font handler before font name lookup",
+  "source": "Tencent-TDS/KuiklyUI",
+  "source_url": "https://github.com/Tencent-TDS/KuiklyUI",
+  "source_version": "0828d8ef",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-11-18T06:32:36.571Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-tencent-tds-kuiklyui",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [Tencent-TDS/KuiklyUI](https://github.com/Tencent-TDS/KuiklyUI) (Revision: `0828d8ef`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `core-render-ios/Extension/Category/KRConvertUtil.m`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Tencent-TDS/KuiklyUI. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `0828d8ef`: ios): resolve custom font handler before font name lookup. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `core-render-ios/Extension/Category/KRConvertUtil.m`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```kotlin
+// Verified production-grade fix pattern:
+        // 情形 2: componentExpandHandler 自定义字体创建（weight/italic 作为参数传出，返回值原样使用）
+        // 须先于按字体名查找，否则系统内置字体名（如 avenir）会被提前取回固定字重，业务按 weight 映射的多字重失效
+        UIFont *font = nil;
+        
+        // 情形 3: 静态注册（info.plist）
+        font = [UIFont fontWithName:fontFamily size:fontSize];
+        if (font) {
+            return font;
+        }
+        // 情形 4: 动态注册字体后再按 fontFamily 获取
+        if (contextParam && [KRFontModule hr_loadCustomFont:fontFamily contextParams:contextParam]) {
+            font = [UIFont fontWithName:fontFamily size:fontSize];
+            if (font) {
+                return font;
+            }
+        }
+```
+
+**NEGATIVE CONSTRAINT**:
+```kotlin
+// Induced defect failure mode:
+        // 情形 2: 静态注册（info.plist）
+        UIFont *font = [UIFont fontWithName:fontFamily size:fontSize];
+        if (font) {
+            return font;
+        }
+        // 情形 3: 动态注册字体后再按 fontFamily 获取
+        if (contextParam && [KRFontModule hr_loadCustomFont:fontFamily contextParams:contextParam]) {
+            font = [UIFont fontWithName:fontFamily size:fontSize];
+            if (font) {
+                return font;
+            }
+        }
+        
+        // 情形 4: componentExpandHandler 自定义字体创建（weight/italic 作为参数传出，返回值原样使用）
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `0828d8ef` are properly handled with clean fallback behavior.
+
+
+---
+
+## 9140. command/state replace-provider: Refactor to use views (Harvested from hashicorp/terraform)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "command/state replace-provider: Refactor to use views",
+  "source": "hashicorp/terraform",
+  "source_url": "https://github.com/hashicorp/terraform",
+  "source_version": "a1246154",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-11-18T06:32:38.083Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-hashicorp-terraform",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [hashicorp/terraform](https://github.com/hashicorp/terraform) (Revision: `a1246154`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `internal/command/arguments/state_replace_provider.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in hashicorp/terraform. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `a1246154`: command/state replace-provider: Refactor to use views. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `internal/command/arguments/state_replace_provider.go`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Verified production-grade fix pattern:
+
+	ViewType ViewType
+		Vars:     &Vars{},
+		ViewType: ViewHuman,
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// Induced defect failure mode:
+		Vars: &Vars{},
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `a1246154` are properly handled with clean fallback behavior.

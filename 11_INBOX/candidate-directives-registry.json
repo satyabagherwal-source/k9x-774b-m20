@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T06:23:37.298Z",
+  "last_updated": "2026-11-18T06:32:45.566Z",
   "directives": [
     {
       "id": "CD-001",
@@ -27699,6 +27699,61 @@
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-875A84-editor-add-scoped-ios-account-deletion.md",
       "staged_date": "2026-11-18"
+    },
+    {
+      "id": "CD-V00Z",
+      "directive_title": "!: move the calendar widget to ratatui-calendar",
+      "source_repo": "ratatui/ratatui",
+      "source_commit": "5c1a8cd5",
+      "staged_file": "11_INBOX/candidate-directives/CD-V00Z-move-the-calendar-widget-to-ratatui-calendar.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-18",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-V4ZF",
+      "directive_title": "resolve custom font handler before font name lookup",
+      "source_repo": "Tencent-TDS/KuiklyUI",
+      "source_commit": "0828d8ef",
+      "staged_file": "11_INBOX/candidate-directives/CD-V4ZF-resolve-custom-font-handler-before-font-name-lookup.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-18",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-V66P",
+      "directive_title": "command/state replace-provider: Refactor to use views",
+      "source_repo": "hashicorp/terraform",
+      "source_commit": "a1246154",
+      "staged_file": "11_INBOX/candidate-directives/CD-V66P-command-state-replace-provider-refactor-to-use-views.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-18",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-VACM",
+      "directive_title": "calendar)!: move the calendar widget to ratatui-calendar",
+      "source_repo": "ratatui-ratatui-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-VACM-calendar-move-the-calendar-widget-to-ratatui-calendar.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-18",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-VBB1",
+      "directive_title": "ios): resolve custom font handler before font name lookup",
+      "source_repo": "tencent-tds-kuiklyui-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-VBB1-ios-resolve-custom-font-handler-before-font-name-lookup.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-18",
+      "domain_letter": "G"
     }
   ]
 }

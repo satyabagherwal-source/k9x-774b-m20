@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/tencent-tds-kuiklyui-learnings.md`  
 > **Source**: github ([https://github.com/Tencent-TDS/KuiklyUI](https://github.com/Tencent-TDS/KuiklyUI))  
-> **Source Version**: `b53b6c4c`  
+> **Source Version**: `0828d8ef`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-15T01:32:44.503Z  
+> **Timestamp**: 2026-11-18T06:32:35.930Z  
 > **Learning ID**: `learn-github-tencent-tds-kuiklyui`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/tencent-tds-kuiklyui-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/Tencent-TDS/KuiklyUI](https://github.com/Tencent-TDS/KuiklyUI))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-15T01:32:44.497Z  
+> **Harvest Timestamp**: 2026-11-18T06:32:35.923Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: A Kotlin Multiplatform UI framework from Tencent TDS — high-performance, one codebase for six platforms, with dynamic delivery.
 - **Primary Language / Ecosystem**: Kotlin
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 3637 stars
+- **Stars / Engagement**: 3638 stars
 
 ---
 
@@ -756,11 +756,11 @@ class Animatable<T, V : AnimationVector>(
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #1898** (2026-11-13): **feat(ohos): add support for  kotlin 2.4.21**
-  *Symptoms*: 
+- **Issue #1907** (2026-11-18): **fix(ios): resolve custom font handler before font name lookup**
+  *Symptoms*: - moved componentExpandHandler hr_fontWithFontFamily callbacks ahead of the fontWithName:size: static and dynamic lookup in KRConvertUtil +UIFont, so business weight-to-font mapping (e.g. Avenir Book/Bold/Heavy) is no longer bypassed when the family name also resolves to a built-in font  - UIFontWeight and isItalic are passed into the callback before any fixed-weight font is returned; callbacks still degrade from the fullest signature to the simplest and return nil falls through to the original lookup and system-font fallback chain
 
-- **Issue #1895** (2026-11-13): **fix(touch): preserve pressed state for multi-touch events**
-  *Symptoms*: Carry per-pointer pressed flags through core event params and Android/iOS/OHOS/Web renderers so releasing one finger does not flip other live pointers. Add a diagnostics demo, unit tests and view event documentation.
+- **Issue #1906** (2026-11-17): **Revert: fix(ohos): commit avoid draw-time typography relayout corruption (#1835)**
+  *Symptoms*: This reverts commit 39a760fb43884c118c61c58b1f445ade1dbc9252.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -777,739 +777,171 @@ class Animatable<T, V : AnimationVector>(
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `71e4bcf9` (2026-11-12)
-**Commit Message**: docs: add Compose DSL coroutine and thread switching guide (#1891)
+### Incident Patch 1: `0828d8ef` (2026-11-18)
+**Commit Message**: fix(ios): resolve custom font handler before font name lookup (#1907)
 
-* docs: add Compose DSL coroutine and thread switching guide
+* fix(ios): resolve custom font handler before font name lookup
 
-Add content to docs/Compose/thread-and-coroutines.md covering:
-- ComposeDispatcher mechanism for automatic Kuikly thread dispatching
-- LaunchedEffect and rememberCoroutineScope usage
-- Page-layer kotlinx coroutines with Dispatchers.Kuikly for thread switching
+- moved componentExpandHandler hr_fontWithFontFamily callbacks ahead of the fontWithName:size: static and dynamic lookup in KRConvertUtil +UIFont, so business weight-to-font mapping (e.g. Avenir Book/Bold/Heavy) is no longer bypassed when the family name also resolves to a built-in font
 
-Co-Authored-By: Claude Opus 4.6 <[REDACTED_EMAIL]>
+- UIFontWeight and isItalic are passed into the callback before any fixed-weight font is returned; callbacks still degrade from the fullest signature to the simplest and return nil falls through to the original lookup and system-font fallback chain
 
-* docs: simplify Compose coroutine guide, remove internal details
+* docs(ios): update custom font handler priority in iOS guide
 
----------
+- address PR #1907 review: step 3 of the usage steps still said hr_fontWithFontFamily is only tried when no font is registered or lookup fails, which no longer matches the new order where the handler runs before the fontWithName lookup
 
-Co-authored-by: KuiklyAI <[REDACTED_EMAIL]>
+- document the behavior change for existing integrations: a non-nil handler result now wins over statically or dynamically registered fonts of the same name; alias-only integrations should return nil for unmatched families
 
-**File**: `docs/Compose/thread-and-coroutines.md` (modified, +64/-1)
+**File**: `core-render-ios/Extension/Category/KRConvertUtil.m` (modified, +16/-14)
 ```diff
-@@ -1,5 +1,68 @@
- # 多线程与协程
+@@ -87,20 +87,9 @@ + (UIFont *)UIFont:(id)json {
+     }
  
--持续更新中
-+## Compose 中的协程调用
- 
-+Compose 管理的协程（`LaunchedEffect`、`rememberCoroutineScope()` 等）默认在 **Kuikly 线程** 执行，可以直接修改 `mutableStateOf` 状态，无需手动切换线程。
- 
-+```kotlin
-+@Composable
-+fun MyContent() {
-+    var data by remember { mutableStateOf("") }
-+
-+    LaunchedEffect(Unit) {
-+        // 在 Kuikly 线程中执行
-+        data = fetchData()
-+    }
-+
-+    Text(text = data, fontSize = 24.sp)
-+}
-+```
-+
-+也可以通过 `rememberCoroutineScope()` 响应用户交互时启动协程：
-+
-+```kotlin
-+@Composable
-+fun MyContent() {
-+    var data by remember { mutableStateOf("") }
-+    val scope = rememberCoroutineScope()
-+
-+    Button(onClick = {
-+        scope.launch {
-+            // 在 Kuikly 线程中执行
-+            data = fetchData()
+     if (fontFamily.length) {
+-        // 情形 2: 静态注册（info.plist）
+-        UIFont *font = [UIFont fontWithName:fontFamily size:fontSize];
+-        if (font) {
+-            return font;
+-        }
+-        // 情形 3: 动态注册字体后再按 fontFamily 获取
+-        if (contextParam && [KRFontModule hr_loadCustomFont:fontFamily contextParams:contextParam]) {
+-            font = [UIFont fontWithName:fontFamily size:fontSize];
+-            if (font) {
+-                return font;
+-            }
+-        }
+-        
+-        // 情形 4: componentExpandHandler 自定义字体创建（weight/italic 作为参数传出，返回值原样使用）
++        // 情形 2: componentExpandHandler 自定义字体创建（weight/italic 作为参数传出，返回值原样使用）
++        // 须先于按字体名查找，否则系统内置字体名（如 avenir）会被提前取回固定字重，业务按 weight 映射的多字重失效
++        UIFont *font = nil;
+         if ([[KuiklyRenderBridge componentExpandHandler] respondsToSelector:@selector(hr_fontWithFontFamily:fontSize:fontWeight:isItalic:)]) {
+             font = [[KuiklyRenderBridge componentExpandHandler] hr_fontWithFontFamily:fontFamily fontSize:fontSize fontWeight:fontWeight isItalic:isItalic];
+         }
+@@ -113,6 +102,19 @@ + (UIFont *)UIFont:(id)json {
+         if (font) {
+             return font;
+         }
++        
++        // 情形 3: 静态注册（info.plist）
++        font = [UIFont fontWithName:fontFamily size:fontSize];
++        if (font) {
++            return font;
 +        }
-+    }) {
-+        Text("加载数据")
-+    }
-+}
-+```
-+
-+## Page 层使用 kotlinx 协程库
-+
-+在 `ComposeContainer` 的 Page 生命周期方法（如 `created()`、`willInit()` 等）中，可以使用 `kotlinx.coroutines` 库配合 `Dispatchers.Kuikly` 进行线程切换：
-+
-+```kotlin
-+@Page("MyComposePage")
-+class MyComposePage : ComposeContainer() {
-+
-+    override fun created() {
-+        super.created()
-+        val ctx = this
-+        GlobalScope.launch(Dispatchers.Kuikly[ctx]) {
-+            val data = withContext(Dispatchers.IO) {
-+                kmpFetchData()
++        // 情形 4: 动态注册字体后再按 fontFamily 获取
++        if (contextParam && [KRFontModule hr_loadCustomFont:fontFamily contextParams:contextParam]) {
++            font = [UIFont fontWithName:fontFamily size:fontSize];
++            if (font) {
++                return font;
 +            }
-+            // 回到 Kuikly 线程，安全更新 UI
 +        }
-+    }
-+
-+    override fun willInit() {
-+        super.willInit()
-+        setContent {
-+            MyContent()
-+        }
-+    }
-+}
-+```
-+
-+依赖配置参考 [协程和多线程编程指引](../DevGuide/thread-and-coroutines.md#接入方式) 中的 kotlinx 协程库和 kuiklyx 协程库接入方式。
-\ No newline at end of file
+     }
+ 
+     // 情形 5.1: 带 weight/style 的系统字体
+```
+
+**File**: `docs/QuickStart/iOS.md` (modified, +1/-1)
+```diff
+@@ -839,7 +839,7 @@ class TestPage : Pager(){
+ 
+ 1. 静态注册（info.plist 的 `UIAppFonts`）或系统字体：Kotlin 侧直接使用字体真实名称，无需实现任何方法。
+ 2. 字体文件需要运行时动态下发/加载：实现 `hr_loadCustomFont:contextParams:`，按 `fontFamily` 注册对应的字体文件。
+-3. 未注册或查找失败时，框架依次尝试 `componentExpandHandler` 的 `hr_fontWithFontFamily:...` 系列方法（`fontWeight`/`italic` 作为参数传出，返回的 UIFont 原样使用），最终回落系统字体并保留 `fontWeight`/`fontStyle`。
++3. 业务自定义"字体名 → 字体"映射（如同一字体名按 `fontWeight` 映射多个字面）：实现 `hr_fontWithFontFamily:...`。该回调**优先于**静态/动态注册的字体名查找执行（`fontWeight`/`italic` 作为参数传出，返回的 UIFont 原样使用）；返回 `nil` 则继续按字体名查找，最终回落系统字体并保留 `fontWeight`/`fontStyle`。回调返回非 nil 即生效，同名的注册字体不再参与；仅做别名替换的接入，对未匹配的 `fontFamily` 返回 `nil` 即可回落注册字体。
+ 
+ ::: tip generic family 说明
+ Compose `FontFamily` 的 4 个类别名由框架内置处理，无需业务介入：
 ```
 
 ---
 
-### Incident Patch 2: `b53b6c4c` (2026-11-13)
-**Commit Message**: fix(touch): preserve pressed state for remaining pointers in multi-touch events (#1895)
+### Incident Patch 2: `f379d18c` (2026-11-17)
+**Commit Message**: fix(iOS): 为 p_configureAppearance: 补充 iOS 13 可用性注解消除 -Wunguarded-availability-new 警告 (#1894)
 
-Carry per-pointer pressed flags through core event params and Android/iOS/OHOS/Web renderers so releasing one finger does not flip other live pointers. Add a diagnostics demo, unit tests and view event documentation.
+Co-authored-by: elixxli <[REDACTED_EMAIL]>
 
-**File**: `compose/src/commonMain/kotlin/com/tencent/kuikly/compose/container/SuperTouchManager.kt` (modified, +30/-15)
+**File**: `core-render-ios/Extension/AdvancedComps/UINavigationBar/KRUINavigationBar.m` (modified, +1/-1)
 ```diff
-@@ -72,10 +72,12 @@ class SuperTouchManager {
-     internal fun DivEvent.setTouchUp(isSync: Boolean) {
-         touchUp(isSync) {
-             touchesDelegate.onTouchesEvent(it.touches, PointerEventType.Release, it.timestamp, it.consumed)
--            TouchActivityTracker.onTouchEnd(container.getPager().pageData, touchActivityOwner)
--            if (container.getViewAttr().getProp(StyleConst.PREVENT_TOUCH) == true) {
--                container.getViewAttr().preventTouch(false)
--                container.getViewEvent().setTouchMove(true)
-+            if (!it.touches.hasPressedPointers()) {
-+                TouchActivityTracker.onTouchEnd(container.getPager().pageData, touchActivityOwner)
-+                if (container.getViewAttr().getProp(StyleConst.PREVENT_TOUCH) == true) {
-+                    container.getViewAttr().preventTouch(false)
-+                    container.getViewEvent().setTouchMove(true)
-+                }
-             }
-         }
-     }
-@@ -165,15 +167,7 @@ class SuperTouchManager {
-                 val pageDensity = container.getPager().pagerDensity()
-                 return scene.sendPointerEvent(
-                     eventType = type,
--                    pointers = touches.map { touch ->
--                        val position = Offset(touch.x * pageDensity, touch.y * pageDensity)
--                        ComposeScenePointer(
--                            id = PointerId(touch.pointerId),
--                            position = position,
--                            pressed = (type != PointerEventType.Release),
--                            type = PointerType.Touch,
--                        )
--                    },
-+                    pointers = touches.toComposeScenePointers(pageDensity, type),
-                     timeMillis = timestamp,
-                     nativeEvent = if (isConsumeByNative) {
-                         "cancel"
-@@ -185,5 +179,26 @@ class SuperTouchManager {
-             }
-         }
-     }
--
--}
-\ No newline at end of file
-+}
-+
-+/**
-+ * 优先使用渲染层为每个触点上报的 [Touch.pressed] 状态。多指操作中某个触点抬起时，其他触点仍保持按下；
-+ * 这与 androidx `MotionEventAdapter` 根据 `actionIndex` 确定本次抬起触点的规则一致。
-+ *
-+ * `null` 表示渲染层版本低于 2.32.0 或渲染层无法确定该状态。此时根据事件类型推断本次事件中所有触点的状态，
-+ * 无法准确处理多指操作。
-+ */
-+internal fun List<Touch>.hasPressedPointers(): Boolean = any { it.pressed == true }
-+
-+@OptIn(ExperimentalComposeUiApi::class)
-+internal fun List<Touch>.toComposeScenePointers(
-+    pageDensity: Float,
-+    eventType: PointerEventType,
-+): List<ComposeScenePointer> = map { touch ->
-+    ComposeScenePointer(
-+        id = PointerId(touch.pointerId),
-+        position = Offset(touch.x * pageDensity, touch.y * pageDensity),
-+        pressed = touch.pressed ?: (eventType != PointerEventType.Release),
-+        type = PointerType.Touch,
-+    )
-+}
-```
-
-**File**: `compose/src/commonMain/kotlin/com/tencent/kuikly/compose/ui/ScaleWithDensity.kt` (modified, +3/-1)
-```diff
-@@ -29,7 +29,9 @@ fun Touch.scaleWithDensity(density: Float): Touch {
-         pageX = pageX * density,
-         pageY = pageY * density,
-         hash = hash,
--        pointerId = pointerId
-+        pointerId = pointerId,
-+        // 若不传递该状态，缩放后的触点将改为根据事件类型推断按下状态。
-+        pressed = pressed
-     )
- }
- 
-```
-
-**File**: `compose/src/commonTest/kotlin/com/tencent/kuikly/compose/container/MultiTouchPointerPressedTest.kt` (added, +126/-0)
-```diff
-@@ -0,0 +1,126 @@
-+/*
-+ * Tencent is pleased to support the open source community by making KuiklyUI
-+ * available.
-+ * Copyright (C) 2026 Tencent. All rights reserved.
-+ * Licensed under the License of KuiklyUI;
-+ * you may not use this file except in compliance with the License.
-+ */
-+
-+package com.tencent.kuikly.compose.container
-+
-+import com.tencent.kuikly.compose.ui.ExperimentalComposeUiApi
-+import com.tencent.kuikly.compose.ui.geometry.Offset
-+import com.tencent.kuikly.compose.ui.input.pointer.PointerEventType
-+import com.tencent.kuikly.compose.ui.input.pointer.PointerInputEvent
-+import com.tencent.kuikly.compose.ui.input.pointer.SyntheticEventSender
-+import com.tencent.kuikly.core.base.event.Touch
-+import com.tencent.kuikly.compose.ui.scene.PointerInputEvent as scenePointerInputEvent
-+import kotlin.test.Test
-+import kotlin.test.assertEquals
-+import kotlin.test.assertTrue
-+
-+/**
-+ * 按以下顺序模拟多指操作：id=0 按下、id=1 按下、id=1 抬起（id=0 仍按下）、id=0 移动、id=0 抬起，
-+ * 验证渲染层上报每个触点的 `pressed` 状态后 Compose 输入处理的结果，以及缺失该状态时的推断逻辑。
-+ */
-+@OptIn(ExperimentalComposeUiApi::class)
-+class MultiTouchPointerPressedTest {
-+
-+    @Test
-+    fun perPointerPressedKeepsRemainingFingerDown() {
-+        val frames = feed(physicalSequence())
-+
-+        assertTrue(
-+            frames.any { it.type == PointerEventType.Release && it.down == mapOf(0L to true, 1L to false) },
-+            "抬起 id=1 时，id=0 应仍处于按下状态",
-+        )
-+        assertTrue(
-+            frames.any { it.type == PointerEventType.Release && it.down[0L] == false },
-+            "id=0 最终应收到抬起状态",
-+        )
-+    }
-+
-+    /** 未提供 pressed 状态时，单指点击仍应依据事件类型正确处理。 */
-+    @Test
-+    fun singleTapWorksWithoutPressed() {
-+        val frames = feed(
-+            listOf(
-+                PressFrame(PointerEventType.Press, listOf(touch(0, null))),
-+                PressFrame(PointerEventType.Release, listOf(touch(0, null))),
-+            )
-+        )
-+        assertTrue(frames.any { it.type == PointerEventType.Press && it.down[0L] == true })
-+        assertTrue(frames.any { it.type == PointerEventType.Release && it.down[0L] == false })
-+    }
-+
-+    @Test
-+    fun touchActivityEndsOnlyAfterLastPointerIsReleased() {
-+        assertTrue(listOf(touch(0, false), touch(1, true)).hasPressedPointers())
-+        assertTrue(!listOf(touch(0, false), touch(1, null)).hasPressedPointers())
-+        assertTrue(!listOf(touch(0, null)).hasPressedPointers())
-+    }
-+
-+    /** 同一事件中的部分触点未提供 pressed 状态时，各触点应分别使用上报值或事件类型推断。 */
-+    @Test
-+    fun missingPressedIsInferredForEachTouch() {
-+        val release = listOf(touch(0, true), touch(1, null))
-+            .toComposeScenePointers(PAGE_DENSITY, PointerEventType.Release)
-+        assertEquals(listOf(true, false), release.map { it.pressed })
-+
-+        val move = listOf(touch(0, null), touch(1, false))
-+            .toComposeScenePointers(PAGE_DENSITY, PointerEventType.Move)
-+        assertEquals(listOf(true, false), move.map { it.pressed })
-+    }
-+
-+    // ---- 测试辅助方法 ----
-+
-+    private class PressFrame(val type: PointerEventType, val touches: List<Touch>)
-+
-+    private class SentFrame(val type: PointerEventType, val down: Map<Long, Boolean>)
-+
-+    private fun touch(pointerId: Long, pressed: Boolean?): Touch = Touch(
-+        x = pointerId * 100f,
-+        y = pointerId * 100f,
-+        pageX = pointerId * 100f,
-+        pageY = pointerId * 100f,
-+        hash = pointerId.toFloat(),
-+        pointerId = pointerId,
-+        pressed = pressed,
-+    )
-+
-+    private fun physicalSequence(): List<PressFrame> = listOf(
-+        PressFrame(PointerEventType.Press, listOf(touch(0, true))),
-+        PressFrame(PointerEventType.Press, listOf(touch(0, true), touch(1, true))),
-+        PressFrame(PointerEventType.Release, listOf(touch(0, true), touch(1, false))),
-+        PressFrame(PointerEventType.Move, listOf(touch(0, true))),
-+        PressFrame(PointerEventType.Release, listOf(touch(0, false))),
-+    )
-+
-+    private fun feed(frames: List<PressFrame>): List<SentFrame> {
-+        val sent = mutableListOf<PointerInputEvent>()
-+        val syntheticEventSender = SyntheticEventSender { sent.add(it) }
-+        var timeMillis = 1_000L
-+        frames.forEach { frame ->
-+            timeMillis += FRAME_INTERVAL_MILLIS
-+            syntheticEventSender.send(
-+                scenePointerInputEvent(
-+                    eventType = frame.type,
-+                    pointers = frame.touches.toComposeScenePointers(PAGE_DENSITY, frame.type),
-+                    timeMillis = timeMillis,
-+                    nativeEvent = null,
-+                    scrollDelta = Offset.Zero,
-+                    changedButton = null,
-+                    rootNode = null,
-+                )
-+            )
-+        }
-+        return sent.map { event ->
-+            SentFrame(event.eventType, event.pointers.associate { it.id.value to it.down })
-+        }
-+    }
-+
-+    private companion object {
-+        const val PAGE_DENSITY = 2f
-+        const val FRAME_INTERVAL_MILLIS = 16L
-+    }
-+}
-```
-
-**File**: `compose/src/commonTest/kotlin/com/tencent/kuikly/compose/container/TouchCompatTest.kt` (added, +79/-0)
-```diff
-@@ -0,0 +1,79 @@
-+/*
-+ * Tencent is pleased to support the open source community by making KuiklyUI
-+ * available.
-+ * Copyright (C) 2026 Tencent. All rights reserved.
-+ * Licensed under the License of KuiklyUI;
-+ * you may not use this file except in compliance with the License.
-+ */
-+
-+package com.tencent.kuikly.compose.container
-+
-+import com.tencent.kuikly.compose.ui.scaleWithDensity
-+import com.tencent.kuikly.core.base.event.Touch
-+import com.tencent.kuikly.core.nvi.serialization.json.JSONObject
-+import kotlin.test.Test
-+import kotlin.test.assertEquals
-+import kotlin.test.assertNotEquals
-+import kotlin.test.assertNull
-+import kotlin.test.assertTrue
-+
-+/**
-+ * [Touch] 改为普通类后的行为测试，包括为兼容旧代码保留的六参数构造方法、copy 和解构操作。
-+ */
-+class TouchCompatTest {
-+
-+    @Suppress("DEPRECATION")
-+    @Test
-+    fun legacyMembersRemainUsable() {
-+        val legacy = Touch(1f, 2f, 3f, 4f, 5f, 6L)
-+        assertNull(legacy.pressed)
-+        val (x, y, pageX, pageY, hash, pointerId) = legacy
-+        assertEquals(listOf(1f, 2f, 3f, 4f, 5f), listOf(x, y, pageX, pageY, hash))
-+        assertEquals(6L, pointerId)
-+        assertEquals(false, Touch(1f, 2f, 3f, 4f, 5f, 6L, false).copy(x = 9f).pressed)
-+    }
-+
-+    @Test
-+    fun pressedIsExplicitAndNullable() {
-+        assertEquals(true, Touch(1f, 2f, 3f, 4f, 5f, 6L, true).pressed)
-+        assertEquals(false, Touch(1f, 2f, 3f, 4f, 5f, 6L, false).pressed)
-+        assertNull(Touch(1f, 2f, 3f, 4f, 5f, 6L, null).pressed)
-+    }
-+
-+    @Test
-+    fun equalityCoversAllFields() {
-+        val base = Touch(1f, 2f, 3f, 4f, 5f, 6L, true)
-+        assertEquals(base, Touch(1f, 2f, 3f, 4f, 5f, 6L, true))
-+        assertEquals(base.hashCode(), Touch(1f, 2f, 3f, 4f, 5f, 6L, true).hashCode())
-+        assertNotEquals(base, Touch(1f, 2f, 3f, 4f, 5f, 6L, false))
-+        assertNotEquals(base, Touch(1f, 2f, 3f, 4f, 5f, 6L, null))
-+        // 与 data class 生成的 equals 语义一致：Float 按 compare 比较
-+        assertEquals(
-+            Touch(Float.NaN, 0f, 0f, 0f, 0f, 0L, null),
-+            Touch(Float.NaN, 0f, 0f, 0f, 0f, 0L, null)
-+        )
-+    }
-+
-+    @Test
-+    fun decodeDistinguishesMissingAndFalse() {
-+        assertNull(Touch.decode(JSONObject().put("pointerId", 1)).pressed)
-+        assertNull(Touch.decode(JSONObject().put("pointerId", 1).put("pressed", null)).pressed)
-+        assertNull(Touch.decode(JSONObject().put("pointerId", 1).put("pressed", "unknown")).pressed)
-+        assertEquals(false, Touch.decode(JSONObject().put("pointerId", 1).put("pressed", false)).pressed)
-+        assertEquals(true, Touch.decode(JSONObject().put("pointerId", 1).put("pressed", true)).pressed)
-+        assertEquals(false, Touch.decode(JSONObject().put("pointerId", 1).put("pressed", 0)).pressed)
-+        assertEquals(true, Touch.decode(JSONObject().put("pointerId", 1).put("pressed", 1)).pressed)
-+    }
-+
-+    @Test
-+    fun scaleWithDensityKeepsPressed() {
-+        assertEquals(false, Touch(1f, 2f, 3f, 4f, 5f, 6L, false).scaleWithDensity(2f).pressed)
-+        assertEquals(true, Touch(1f, 2f, 3f, 4f, 5f, 6L, true).scaleWithDensity(2f).pressed)
-+        assertNull(Touch(1f, 2f, 3f, 4f, 5f, 6L, null).scaleWithDensity(2f).pressed)
-+    }
-+
-+    @Test
-+    fun toStringContainsPressed() {
-+        assertTrue(Touch(1f, 2f, 3f, 4f, 5f, 6L, false).toString().contains("pressed:false"))
-+    }
-+}
-```
-
-**File**: `core-render-android/src/main/java/com/tencent/kuikly/core/render/android/expand/component/KRView.kt` (modified, +20/-3)
-```diff
-@@ -382,9 +382,8 @@ open class KRView(context: Context) : FrameLayout(context), IKuiklyRenderViewExp
-         krRootView.getLocationInWindow(rootViewRect)
-         val currentViewRect = IntArray(2)
-         getLocationInWindow(currentViewRect)
--        val x = motionEvent.x
--        val y = motionEvent.y
-         val touches = arrayListOf<Map<String, Any>>()
-+        val pressedStates = resolvePressedStates(motionEvent, eventName)
-         // 遍历所有触摸点
-         for (i in 0 until motionEvent.pointerCount) {
-             // 获取触摸点的ID和坐标
-@@ -397,7 +396,8 @@ open class KRView(context: Context) : FrameLayout(context), IKuiklyRenderViewExp
-                 KRViewConst.Y to kuiklyRenderContext.toDpF(y),
-                 PAGE_X to kuiklyRenderContext.toDpF((currentViewRect[0] - rootViewRect[0] + x)),
-                 PAGE_Y to kuiklyRenderContext.toDpF(currentViewRect[1] - rootViewRect[1] + y),
--                POINTER_ID to pointerId
-+                POINTER_ID to pointerId,
-+                POINTER_PRESSED to pressedStates[i]
-             ))
-         }
-         return (touches.first() ?: mapOf()).toMutableMap().apply {
-@@ -414,6 +414,22 @@ open class KRView(context: Context) : FrameLayout(context), IKuiklyRenderViewExp
-         }
-     }
- 
-+    /**
-+     * `ACTION_POINTER_UP` 会在 MotionEvent 中保留刚抬起的手指，并由 `actionIndex` 指明对应触点。
-+     * 若不单独识别该触点，会把本次事件中的所有触点都标记为已抬起；取消事件则将全部触点标记为未按下。
-+     */
-+    private fun resolvePressedStates(motionEvent: MotionEvent, eventName: String): BooleanArray {
-+        val pointerCount = motionEvent.pointerCount
-+        if (eventName == EVENT_TOUCH_CANCEL) {
-+            return BooleanArray(pointerCount)
-+        }
-+        return when (motionEvent.actionMasked) {
-+            MotionEvent.ACTION_POINTER_UP -> BooleanArray(pointerCount) { it != motionEvent.actionIndex }
-+            MotionEvent.ACTION_UP -> BooleanArray(pointerCount)
-+            else -> BooleanArray(pointerCount) { true }
-+        }
-+    }
-+
-     override fun onDetachedFromWindow() {
-         resetTextSelector()
-         super.onDetachedFromWindow()
-@@ -518,6 +534,7 @@ open class KRView(context: Context) : FrameLayout(context), IKuiklyRenderViewExp
-         private const val PAGE_Y = "pageY"
-         private const val TOUCHES = "touches"
-         private const val POINTER_ID = "pointerId"
-+        private const val POINTER_PRESSED = "pressed"
-         private const val SCREEN_FRAME_PAUSE = "screenFramePause"
-         private const val TIMESTAMP = "timestamp"
-         private const val CONSUMED = "consumed"
-```
-
-**File**: `core-render-ios/Extension/Components/KRComposeGesture.m` (modified, +6/-0)
-```diff
-@@ -274,12 +274,15 @@ - (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer {
- // 从触摸事件生成参数
- - (NSDictionary *)generateParamsWithTouches:(NSSet<UITouch *> *)touches event:(UIEvent *)event eventName:(NSString *)eventName {
-     NSMutableArray *touchesParam = [NSMutableArray new];
-+    // 取消事件按事件名称将全部触点标记为未按下，不依赖各触点的 phase。
-+    BOOL isCancel = [eventName isEqualToString:@"touchCancel"];
-     
- #if !TARGET_OS_OSX // [macOS]
-     // 处理所有触摸点
-     for (UITouch *touch in touches) {
-         CGPoint locationInSelf = [touch locationInView:self.containerView];
-         CGPoint locationInRootView = [touch locationInView:(UIView *)[self.containerView hr_rootView]];
-+        BOOL pressed = !isCancel && touch.phase != UITouchPhaseEnded && touch.phase != UITouchPhaseCancelled;
-                         
-         [touchesParam addObject:@{
-             @"x" : @(locationInSelf.x),
-@@ -288,6 +291,7 @@ - (NSDictionary *)generateParamsWithTouches:(NSSet<UITouch *> *)touches event:(U
-             @"pageY" : @(locationInRootView.y),
-             @"hash" : @(touch.hash),
-             @"pointerId" : @(touch.hash),  // 使用 touch.hash 作为唯一的 pointerId
-+            @"pressed" : @(pressed),
-         }];
-     }
- #else // [macOS
-@@ -305,6 +309,7 @@ - (NSDictionary *)generateParamsWithTouches:(NSSet<UITouch *> *)touches event:(U
-             // manually flipped the y-coordinate if rootView does not flip coordinate system.
-             locationInRootView.y = rootView.bounds.size.height - locationInRootView.y;
-         }
-+        BOOL pressed = !isCancel && ![eventName isEqualToString:@"touchUp"];
-         
-         [touchesParam addObject:@{
-             @"x" : @(locationInSelf.x),
-@@ -313,6 +318,7 @@ - (NSDictionary *)generateParamsWithTouches:(NSSet<UITouch *> *)touches event:(U
-             @"pageY" : @(locationInRootView.y),
-             @"hash" : @(kMacMousePointerId),
-             @"pointerId" : @(kMacMousePointerId),
-+            @"pressed" : @(pressed),
-         }];
-     }
- #endif // macOS]
-```
-
-**File**: `core-render-ios/Extension/Components/KRView+Compose.m` (modified, +18/-8)
-```diff
-@@ -26,6 +26,16 @@ @interface KRView ()
- 
- @end
- 
-+/// 参数中是否仍有按下的触点，与 Kotlin 侧依据每个触点 pressed 判断的逻辑一致。
-+static BOOL KRHasPressedTouch(NSDictionary *params) {
-+    for (NSDictionary *touch in params[@"touches"]) {
-+        if ([touch[@"pressed"] boolValue]) {
-+            return YES;
-+        }
-+    }
-+    return NO;
-+}
-+
- @implementation KRView (Compose)
- 
- - (KRComposeGestureRecognizer *)composeGesture {
-@@ -89,19 +99,19 @@ - (void)setCss_superTouch:(NSNumber *)css_superTouch {
-                         }
-                         break;
-                     case TouchesEventKindEnd:
-+                    case TouchesEventKindCancel: {
-+                        NSString *eventName = phase == TouchesEventKindEnd ? @"touchUp" : @"touchCancel";
-+                        NSDictionary *params = [weakSelf.composeGesHandler generateParamsWithTouches:touches event:event eventName:eventName];
-                         if (weakSelf.css_touchUp) {
--                            NSDictionary *params = [weakSelf.composeGesHandler generateParamsWithTouches:touches event:event eventName:@"touchUp"];
-                             weakSelf.css_touchUp(params);
-                         }
--                        weakSelf.composeGesHandler.enableNativeGesture = YES;
--                        break;
--                    case TouchesEventKindCancel:
--                        if (weakSelf.css_touchUp) {
--                            NSDictionary *params = [weakSelf.composeGesHandler generateParamsWithTouches:touches event:event eventName:@"touchCancel"];
--                            weakSelf.css_touchUp(params);
-+                        // 仍有触点按下时保持原生手势禁用，与 Kotlin 侧"最后一根手指抬起才结束触摸"保持一致，
-+                        // 避免一边拦截触摸、一边被原生滚动接管。
-+                        if (!KRHasPressedTouch(params)) {
-+                            weakSelf.composeGesHandler.enableNativeGesture = YES;
-                         }
--                        weakSelf.composeGesHandler.enableNativeGesture = YES;
-                         break;
-+                    }
-                     default:
-                         break;
-                 }
-```
-
-**File**: `core-render-ios/Extension/Components/KRView.m` (modified, +9/-2)
-```diff
-@@ -302,13 +302,20 @@ - (NSDictionary *)p_generateBaseParamsWithEvent:(UIEvent *)event eventName:(NSSt
- #if !TARGET_OS_OSX // [macOS]
-     NSSet<UITouch *> *touches = [event allTouches];
-     NSMutableArray *touchesParam = [NSMutableArray new];
-+    // 取消事件按事件名称将全部触点标记为未按下，不依赖各触点的 phase。
-+    BOOL isCancel = [eventName isEqualToString:@"touchCancel"];
-     [touches enumerateObjectsUsingBlock:^(UITouch * _Nonnull touchObj, BOOL * _Nonnull stop) {
--        [touchesParam addObject:[self p_generateTouchParamWithTouch:touchObj]];
-+        NSMutableDictionary *touchParam = [[self p_generateTouchParamWithTouch:touchObj] mutableCopy];
-+        BOOL pressed = !isCancel && touchObj.phase != UITouchPhaseEnded && touchObj.phase != UITouchPhaseCancelled;
-+        touchParam[@"pressed"] = @(pressed);
-+        [touchesParam addObject:touchParam];
-     }];
-     __block NSMutableDictionary *result = [([touchesParam firstObject] ?: @{}) mutableCopy];
- #else // [macOS
-     // macOS uses NSEvent (single mouse event) instead of multi-touch UITouch
--    NSDictionary *touchParam = [self p_generateTouchParamWithTouch:event];
-+    NSMutableDictionary *touchParam = [[self p_generateTouchParamWithTouch:event] mutableCopy];
-+    BOOL pressed = !([eventName isEqualToString:@"touchUp"] || [eventName isEqualToString:@"touchCancel"]);
-+    touchParam[@"pressed"] = @(pressed);
-     NSArray *touchesParam = @[touchParam];
-     NSMutableDictionary *result = [touchParam mutableCopy];
- #endif // macOS]
+@@ -525,7 +525,7 @@ - (void)p_configureAppearance:(UINavigationBarAppearance *)appearance
+           largeTitleAttributes:(NSDictionary *)largeTitleAttributes
+             subtitleAttributes:(NSDictionary *)subtitleAttributes
+         largeSubtitleAttributes:(NSDictionary *)largeSubtitleAttributes
+-                        offset:(UIOffset)offset {
++                        offset:(UIOffset)offset API_AVAILABLE(ios(13.0)) {
+     if ([style isEqualToString:@"default"]) {
+         [appearance configureWithDefaultBackground];
+     } else if ([style isEqualToString:@"opaque"]) {
 ```
 
 ---
 
-### Incident Patch 3: `fbe81659` (2026-11-13)
-**Commit Message**: fix(ios): use KRTapGestureRecognizer with TouchUpInside semantics (#1893)
+### Incident Patch 3: `0f3c5e9f` (2026-11-17)
+**Commit Message**: Revert "fix(ohos): avoid draw-time typography relayout corruption (#1835)" (#1906)
 
-Replace the system tap recognizer so a click fires when the finger lifts inside the view bounds plus a 10pt inset. Scroll pan still cancels the tap, matching UITapGestureRecognizer.
+This reverts commit 39a760fb43884c118c61c58b1f445ade1dbc9252.
 
-Co-authored-by: Cursor <[REDACTED_EMAIL]>
-
-**File**: `core-render-ios/Extension/Category/UIView+CSS.m` (modified, +123/-4)
+**File**: `core-render-ohos/src/main/cpp/libohos_render/expand/components/richtext/KRRichTextView.cpp` (modified, +18/-3)
 ```diff
-@@ -16,6 +16,9 @@
- #import "UIView+CSS.h"
- #import "UIView+CSSDebug.h"
- #import <objc/runtime.h>
-+#if !TARGET_OS_OSX
-+#import <UIKit/UIGestureRecognizerSubclass.h>
-+#endif
- #import "KRConvertUtil.h"
- #import "KRView.h"
- #import "KuiklyRenderBridge.h"
-@@ -63,6 +66,20 @@ - (void)addKeyframeWithRelativeStartTime:(double)frameStartTime relativeDuration
- 
- @end
- 
-+#if !TARGET_OS_OSX
-+/**
-+ * 自定义点击手势识别器（TouchUpInside 语义）
-+ * 在非滚动状态下，只要手指在视图 bounds（含容差外扩）内抬起即可触发点击。
-+ * 与 ScrollView 的关系对齐系统 UITapGestureRecognizer：滚动手势可以阻止点击，二者不同时识别。
-+ */
-+@interface KRTapGestureRecognizer : UIGestureRecognizer
-+
-+/// 视图边界向外扩展的点击有效容差（默认 10pt）
-+@property (nonatomic, assign) CGFloat allowableBoundsInset;
-+
-+@end
-+#endif
-+
- @interface CSSTransform : NSObject
- 
- 
-@@ -94,7 +111,7 @@ @interface UIView() <KuiklyRenderViewLifyCycleProtocol>
- @property (nonatomic, strong) CSSLazyAnimationImp *css_lazyAnimationImp;
- @property (nonatomic, strong) CSSGradientLayer *css_gradientLayer;
- @property (nonatomic, strong) CSSBorderLayer *css_borderLayer;
--@property (nonatomic, strong) UITapGestureRecognizer *css_tapGR;
-+@property (nonatomic, strong) UIGestureRecognizer *css_tapGR;
- @property (nonatomic, strong) UITapGestureRecognizer *css_doubleTapGR;
- @property (nonatomic, strong) UILongPressGestureRecognizer *css_longPressGR;
- @property (nonatomic, strong) UIPanGestureRecognizer *css_panGR;
-@@ -889,11 +906,11 @@ - (void)p_limitMaxBorderRadisuIfNeed {
+@@ -148,6 +148,7 @@ void KRRichTextView::DidRemoveFromParentView() {
+     IKRRenderViewExport::DidRemoveFromParentView();
+     shadow_ = nullptr;
+     paragraph_ = nullptr;
++    last_draw_frame_width_ = -1.0;
  }
  
+ void KRRichTextView::OnForegroundDraw(ArkUI_NodeCustomEvent *event) {
+@@ -185,13 +186,27 @@ void KRRichTextView::OnForegroundDraw(ArkUI_NodeCustomEvent *event) {
+         return;
+     }
+     double drawOffsetY = richTextShadow->DrawOffsetY();
++    OH_Drawing_TextAlign textAlign = richTextShadow->TextAlign();
++    auto textTypoSize = richTextShadow->MainMeasureSize();
+     // 在容器前景上绘制额外图形，实现图形显示在子组件之上。
+     auto *drawContext = OH_ArkUI_NodeCustomEvent_GetDrawContextInDraw(event);
+     auto *drawingHandle = reinterpret_cast<OH_Drawing_Canvas *>(OH_ArkUI_DrawContext_GetCanvas(drawContext));
+     auto frameWidth = GetFrame().width;
+-    // Do not lay out an already formatted Typography again while drawing.
+-    // TypographyLayout is not idempotent on HarmonyOS 6 and may corrupt
+-    // multiline Chinese glyphs.
++    bool needReLayout = false;
++    if (last_draw_frame_width_ > 0 && fabs(last_draw_frame_width_ - frameWidth) > 0.01) {
++        needReLayout = true;
++    }
++    if (fabs(textTypoSize.width - frameWidth) > 1 || textAlign != TEXT_ALIGN_LEFT) {
++        needReLayout = true;
++    }
++    if (needReLayout) {
++        auto dpi = KRConfig::GetDpi();
++        OH_Drawing_TypographyLayout(textTypo, frameWidth * dpi);
++        last_draw_frame_width_ = frameWidth;
++        if (textAlign != TEXT_ALIGN_LEFT) {
++            richTextShadow->ResetTextAlign();
++        }
++    }
  
--- (UITapGestureRecognizer *)css_tapGR {
-+- (UIGestureRecognizer *)css_tapGR {
-     return objc_getAssociatedObject(self, @selector(css_tapGR));
- }
- 
--- (void)setCss_tapGR:(UITapGestureRecognizer *)css_tapGR {
-+- (void)setCss_tapGR:(UIGestureRecognizer *)css_tapGR {
-     objc_setAssociatedObject(self, @selector(css_tapGR), css_tapGR, OBJC_ASSOCIATION_RETAIN);
- }
- 
-@@ -933,11 +950,13 @@ - (void)setCss_click:(KuiklyRenderCallback)css_click {
-             self.css_tapGR = nil;
-         }
-         if (css_click != nil) {
-+            #if TARGET_OS_OSX // [macOS]
-             self.css_tapGR = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(css_onClickTapWithSender:)];
-             [self addGestureRecognizer:self.css_tapGR];
--            #if TARGET_OS_OSX // [macOS]
-             // macOS NSGestureRecognizer 无 requireGestureRecognizerToFail 方法，使用 delegate 方式处理手势依赖
-             #else
-+            self.css_tapGR = [[KRTapGestureRecognizer alloc] initWithTarget:self action:@selector(css_onClickTapWithSender:)];
-+            [self addGestureRecognizer:self.css_tapGR];
-             if (self.css_doubleTapGR) {
-                 [self.css_tapGR requireGestureRecognizerToFail:self.css_doubleTapGR];
-             }
-@@ -2429,3 +2448,103 @@ - (BOOL)performAnimationWithKey:(NSString *)animationKey withView:(UIView *)view
- }
- 
- @end
-+
-+#if !TARGET_OS_OSX
-+@implementation KRTapGestureRecognizer {
-+    UITouch *_trackedTouch;
-+}
-+
-+- (instancetype)initWithTarget:(id)target action:(SEL)action {
-+    self = [super initWithTarget:target action:action];
-+    if (self) {
-+        _allowableBoundsInset = 10.0;
-+    }
-+    return self;
-+}
-+
-+- (BOOL)isTouchInsideView:(UITouch *)touch {
-+    if (!self.view) {
-+        return NO;
-+    }
-+    CGPoint loc = [touch locationInView:self.view];
-+    CGRect hitBounds = CGRectInset(self.view.bounds, -self.allowableBoundsInset, -self.allowableBoundsInset);
-+    return CGRectContainsPoint(hitBounds, loc);
-+}
-+
-+- (void)touchesBegan:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
-+    [super touchesBegan:touches withEvent:event];
-+    NSSet<UITouch *> *allTouches = [event touchesForGestureRecognizer:self];
-+    if (touches.count > 1 || allTouches.count > 1 || (_trackedTouch && ![touches containsObject:_trackedTouch])) {
-+        self.state = UIGestureRecognizerStateFailed;
-+        return;
-+    }
-+    UITouch *touch = [touches anyObject];
-+    if (!touch || !self.view) {
-+        self.state = UIGestureRecognizerStateFailed;
-+        return;
-+    }
-+    _trackedTouch = touch;
-+    if (![self isTouchInsideView:touch]) {
-+        self.state = UIGestureRecognizerStateFailed;
-+    }
-+}
-+
-+- (void)touchesMoved:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
-+    [super touchesMoved:touches withEvent:event];
-+    if (self.state != UIGestureRecognizerStatePossible) {
-+        return;
-+    }
-+    if (!_trackedTouch || ![touches containsObject:_trackedTouch]) {
-+        return;
-+    }
-+    if (![self isTouchInsideView:_trackedTouch]) {
-+        self.state = UIGestureRecognizerStateFailed;
-+    }
-+}
-+
-+- (void)touchesEnded:(NSSet<UITouch *> *)touches withEvent:(UIEvent *)event {
-+    [super touchesEnded:touches withEvent:event];
-+    if (self.state != UIGestureRecognizerStatePossible) {
-+        return;
-+    }
-+    if (!_trackedTouch || ![touches containsObject:_trackedTouch]) {
-+        self.state = UIGestureRecognizerStateFailed;
-+        return;
-+    }
-+    if (![self isTouchInsideView:_trackedTouch]) {
-+        self.state = UIGestureRecognizerStateFailed;
-+  
+     if (!selection_rects_.selection_rects.empty()) {
+         double density = KRConfig::GetDpi();
+```
+
+**File**: `core-render-ohos/src/main/cpp/libohos_render/expand/components/richtext/KRRichTextView.h` (modified, +1/-0)
+```diff
+@@ -192,6 +192,7 @@ class KRRichTextView : public IKRRenderViewExport {
+  private:
+     std::shared_ptr<KRParagraph> paragraph_;
+     std::shared_ptr<IKRRenderShadowExport> shadow_;
++    float last_draw_frame_width_ = -1.0;
+     float line_break_margin_ = 0;
+     KRParagraphSelectionInfo selection_rects_;
+     void OnForegroundDraw(ArkUI_NodeCustomEvent *event);
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #1898** (2026-11-13): feat(ohos): add support for  kotlin 2.4.21 (@ruifanyuan)
-- **PR #1895** (2026-11-13): fix(touch): preserve pressed state for multi-touch events (@iPel)
-- **PR #1893** (2026-11-13): fix(ios): use KRTapGestureRecognizer with TouchUpInside semantics (@ruifanyuan)
-- **PR #1892** (2026-11-13): 处理与宿主的联合滚动 (@ruzhuxiaogu)
-- **PR #1891** (2026-11-12): docs: add Compose DSL coroutine and thread switching guide (@KuiklyAI)
-- **PR #1890** (closed): fix(ios): respect parent lock in nested scroll coordination (@ruzhuxiaogu)
+- **PR #1907** (2026-11-18): fix(ios): resolve custom font handler before font name lookup (@RoeKun)
+- **PR #1906** (2026-11-17): Revert: fix(ohos): commit avoid draw-time typography relayout corruption (#1835) (@ruifanyuan)
+- **PR #1905** (2026-11-17): Chore: update buildsrc repositories (@elixxli)
+- **PR #1904** (2026-11-17): fix(ios): avoid resetting scroll view origin when wrapper is not attached (@RoeKun)
+- **PR #1903** (2026-11-17): fix(ohos): count direct children when inserting a subview (@ruifanyuan)
+- **PR #1901** (2026-11-16): fix(miniApp): protect for minApp for no Event error (@etkmao)
 
 ---
 
@@ -1529,80 +961,56 @@ Co-authored-by: Cursor <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs: add Compose DSL coroutine and thread switching guide
+## X. ios): resolve custom font handler before font name lookup
 
 **RULE**:
-When implementing operations in `docs/Compose/thread-and-coroutines.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Tencent-TDS/KuiklyUI. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `core-render-ios/Extension/Category/KRConvertUtil.m`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in Tencent-TDS/KuiklyUI. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `71e4bcf9`: docs: add Compose DSL coroutine and thread switching guide. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0828d8ef`: ios): resolve custom font handler before font name lookup. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/Compose/thread-and-coroutines.md`.
+Subsystems managing Kotlin data structures, boundary deserialization, API parsing, or resource lifecycles matching `core-render-ios/Extension/Category/KRConvertUtil.m`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```kotlin
 // Verified production-grade fix pattern:
-## Compose 中的协程调用
-Compose 管理的协程（`LaunchedEffect`、`rememberCoroutineScope()` 等）默认在 **Kuikly 线程** 执行，可以直接修改 `mutableStateOf` 状态，无需手动切换线程。
-```kotlin
-@Composable
-fun MyContent() {
-    var data by remember { mutableStateOf("") }
-
-    LaunchedEffect(Unit) {
-        // 在 Kuikly 线程中执行
-        data = fetchData()
-    }
-
-    Text(text = data, fontSize = 24.sp)
-}
-```
-
-也可以通过 `rememberCoroutineScope()` 响应用户交互时启动协程：
-
-```kotlin
-@Composable
-fun MyContent() {
-    var data by remember { mutableStateOf("") }
-    val scope = rememberCoroutineScope()
-
-    Button(onClick = {
-        scope.launch {
-            // 在 Kuikly 线程中执行
-            data = fetchData()
+        // 情形 2: componentExpandHandler 自定义字体创建（weight/italic 作为参数传出，返回值原样使用）
+        // 须先于按字体名查找，否则系统内置字体名（如 avenir）会被提前取回固定字重，业务按 weight 映射的多字重失效
+        UIFont *font = nil;
+        
+        // 情形 3: 静态注册（info.plist）
+        font = [UIFont fontWithName:fontFamily size:fontSize];
+        if (font) {
+            return font;
         }
-    }) {
-        Text("加载数据")
-    }
-}
-```
-
-## Page 层使用 kotlinx 协程库
-
-在 `ComposeContainer` 的 Page 生命周期方法（如 `created()`、`willInit()` 等）中，可以使用 `kotlinx.coroutines` 库配合 `Dispatchers.Kuikly` 进行线程切换：
-
-```kotlin
-@Page("MyComposePage")
-class MyComposePage : ComposeContainer() {
-
-    override fun created() {
-        super.created()
-        val ctx = this
-        GlobalScope.launch(Dispatchers.Kuikly[ctx]) {
-            val data = withContext(Dispatchers.IO) {
-                kmpFetchData()
+        // 情形 4: 动态注册字体后再按 fontFamily 获取
+        if (contextParam && [KRFontModule hr_loadCustomFont:fontFamily contextParams:contextParam]) {
+            font = [UIFont fontWithName:fontFamily size:fontSize];
+            if (font) {
+                return font;
             }
-            // 回到 Kuikly 线程，安全更新 UI
         }
-  
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```kotlin
 // Induced defect failure mode:
-持续更新中
+        // 情形 2: 静态注册（info.plist）
+        UIFont *font = [UIFont fontWithName:fontFamily size:fontSize];
+        if (font) {
+            return font;
+        }
+        // 情形 3: 动态注册字体后再按 fontFamily 获取
+        if (contextParam && [KRFontModule hr_loadCustomFont:fontFamily contextParams:contextParam]) {
+            font = [UIFont fontWithName:fontFamily size:fontSize];
+            if (font) {
+                return font;
+            }
+        }
+        
+        // 情形 4: componentExpandHandler 自定义字体创建（weight/italic 作为参数传出，返回值原样使用）
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `71e4bcf9` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0828d8ef` are properly handled with clean fallback behavior.

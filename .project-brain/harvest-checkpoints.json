@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-18T06:23:23.899Z",
+  "last_updated": "2026-11-18T06:32:38.672Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -740,14 +740,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-psrben-visionhope",
-      "content_hash": "ebdc83804f284c0cd79c1f071eb1a2f6b74166e02075594a097883b65e1669cc",
-      "verified_at": "2026-11-13T19:19:06.393Z",
+      "content_hash": "a6add2170d72dcd62036112826357d49374363ab7705836f1742ff171c2df170",
+      "verified_at": "2026-11-18T06:32:29.662Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T19:19:06.393Z"
+      "last_updated": "2026-11-18T06:32:29.662Z"
     },
     "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF": {
       "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
@@ -5451,14 +5451,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-ratatui-ratatui",
-      "content_hash": "6d4c3a16c8d0c0f495b1aaa404476f473b5d8f7bb00f4fafdde33e5e1b03fe09",
-      "verified_at": "2026-11-17T00:38:32.004Z",
+      "content_hash": "a573b9326afc57b84dfb0b82f23b93e7b56ad8efbc7186418812c9d9f804250b",
+      "verified_at": "2026-11-18T06:32:30.697Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T00:38:32.004Z"
+      "last_updated": "2026-11-18T06:32:30.697Z"
     },
     "invertase/react-native-firebase": {
       "repository": "invertase/react-native-firebase",
@@ -7041,14 +7041,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-hashicorp-terraform",
-      "content_hash": "b3a6429bd044c53a37048a8bf61edf8ca76f89f31c5e4b2eaabc99ac62bb8ede",
-      "verified_at": "2026-11-17T08:18:39.592Z",
+      "content_hash": "38a4a8877440ebb3cdf51efadbb6327173a08f8e0fd0c281231ed1bf2fcd7828",
+      "verified_at": "2026-11-18T06:32:38.672Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T08:18:39.592Z"
+      "last_updated": "2026-11-18T06:32:38.672Z"
     },
     "TaKO8Ki/gobang": {
       "repository": "TaKO8Ki/gobang",
@@ -10896,14 +10896,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-tencent-tds-kuiklyui",
-      "content_hash": "e27bc1add262e86512b24fd366ae618263605365dc0fdd576962bba562145d12",
-      "verified_at": "2026-11-15T01:32:44.899Z",
+      "content_hash": "2541646c38047d421af0e11ca652d5f8430867af18c4ca17c75210c7b29d6057",
+      "verified_at": "2026-11-18T06:32:37.139Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-15T01:32:44.899Z"
+      "last_updated": "2026-11-18T06:32:37.139Z"
     },
     "SeaQL/sea-orm": {
       "repository": "SeaQL/sea-orm",

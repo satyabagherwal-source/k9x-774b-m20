@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-18T06:23:37.577Z",
+  "last_updated": "2026-11-18T06:32:45.944Z",
   "total_verified_learnings": 8990,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 20944,
+  "total_items": 20953,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -212331,7 +212331,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/PSRben/VisionHOPE",
       "source_version": "hf-psrben-visionhope",
-      "content_hash": "ebdc83804f284c0cd79c1f071eb1a2f6b74166e02075594a097883b65e1669cc",
+      "content_hash": "a6add2170d72dcd62036112826357d49374363ab7705836f1742ff171c2df170",
       "dossier_path": "07_PROJECT_LEARNING/hf-psrben-visionhope-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-psrben-visionhope-learnings.md",
       "promoted_rules": [],
@@ -212340,7 +212340,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-13T19:19:06.252Z",
+      "verified_at": "2026-11-18T06:32:29.407Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -212357,9 +212357,9 @@
       "title": "Research & Knowledge Intelligence: PSRben/VisionHOPE Core Invariants",
       "repository": "PSRben/VisionHOPE",
       "source_version": "hf-psrben-visionhope",
-      "content_hash": "af1431a8e904443781fa7a18c3abc041d2d64a20ad94d28c119f621755b70ca0",
+      "content_hash": "9a7362c6fa9ba3029124fb423156d272eeeae1982fc845d97912705eb05616b4",
       "domain_letter": "D",
-      "persisted_at": "2026-11-13T19:19:06.541Z"
+      "persisted_at": "2026-11-18T06:32:29.894Z"
     },
     "learn-github-argoproj-argo-workflows": {
       "learning_id": "learn-github-argoproj-argo-workflows",
@@ -212462,9 +212462,9 @@
       "title": "Research & Knowledge Intelligence: hf-psrben-visionhope-learnings Core Invariants",
       "repository": "hf-psrben-visionhope-learnings",
       "source_version": "HEAD",
-      "content_hash": "dfb973a1de41e112a755e6c100b3f67adb0f9659672848b4c95f216b15092bd4",
+      "content_hash": "547056cd577c83ab5d0b53b8cd44d5ba26311fd0f07bebace2a31c0ae81424b8",
       "domain_letter": "D",
-      "persisted_at": "2026-11-13T19:19:47.236Z"
+      "persisted_at": "2026-11-18T06:32:45.109Z"
     },
     "candidate_directive-controller-fail-containerset-nodes-of-a-pod-rejected-by-kubelet": {
       "item_id": "candidate_directive-controller-fail-containerset-nodes-of-a-pod-rejected-by-kubelet",
@@ -234147,8 +234147,8 @@
       "slug": "hashicorp-terraform",
       "platform": "github",
       "source_url": "https://github.com/hashicorp/terraform",
-      "source_version": "b3fb138b",
-      "content_hash": "b3a6429bd044c53a37048a8bf61edf8ca76f89f31c5e4b2eaabc99ac62bb8ede",
+      "source_version": "a1246154",
+      "content_hash": "38a4a8877440ebb3cdf51efadbb6327173a08f8e0fd0c281231ed1bf2fcd7828",
       "dossier_path": "07_PROJECT_LEARNING/hashicorp-terraform-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hashicorp-terraform-learnings.md",
       "promoted_rules": [
@@ -234171,6 +234171,11 @@
           "number": 8918,
           "title": "Mutual Incompatibility Enforcement for Environment & Configuration Credentials",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9140,
+          "title": "command/state replace-provider: Refactor to use views",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -234178,7 +234183,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T08:18:39.434Z",
+      "verified_at": "2026-11-18T06:32:38.420Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -234220,10 +234225,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-hashicorp-terraform-architecture-intelligence-hashicorp-terraform-core-invariant.md",
       "title": "Architecture Intelligence: hashicorp/terraform Core Invariants",
       "repository": "hashicorp/terraform",
-      "source_version": "b3fb138b",
-      "content_hash": "0abed73565bb7b5565a5e2e5142ba28f5937607cee6a7564a200f3865a27df89",
+      "source_version": "a1246154",
+      "content_hash": "49540bee7d860c74cb38d35d5e1c1bab15aaa4059d51be50f2e8f0940cbccbbd",
       "domain_letter": "G",
-      "persisted_at": "2026-11-17T08:18:40.086Z"
+      "persisted_at": "2026-11-18T06:32:39.115Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-hashicorp-terraform": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-hashicorp-terraform",
@@ -234232,10 +234237,10 @@
       "relative_path": "08_VERIFICATION/hashicorp-terraform-verification-protocol-empirical-defect-shield-for-hashicorp-.md",
       "title": "Verification Protocol: Empirical Defect Shield for hashicorp/terraform",
       "repository": "hashicorp/terraform",
-      "source_version": "b3fb138b",
-      "content_hash": "03291aea4fe104eb796f095a5f0e16e3e3ab89c05884987a6e98495d377d0566",
+      "source_version": "a1246154",
+      "content_hash": "b8933a78d217e3893bad286c8a7918616b0b025a5ed8dc4eabadee1d14954413",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T08:18:40.296Z"
+      "persisted_at": "2026-11-18T06:32:39.287Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-cactus-compute-whistle-learnings-core-invaria": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-cactus-compute-whistle-learnings-core-invaria",
@@ -239005,17 +239010,23 @@
       "slug": "tencent-tds-kuiklyui",
       "platform": "github",
       "source_url": "https://github.com/Tencent-TDS/KuiklyUI",
-      "source_version": "b53b6c4c",
-      "content_hash": "e27bc1add262e86512b24fd366ae618263605365dc0fdd576962bba562145d12",
+      "source_version": "0828d8ef",
+      "content_hash": "2541646c38047d421af0e11ca652d5f8430867af18c4ca17c75210c7b29d6057",
       "dossier_path": "07_PROJECT_LEARNING/tencent-tds-kuiklyui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/tencent-tds-kuiklyui-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 9139,
+          "title": "resolve custom font handler before font name lookup",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-15T01:32:44.719Z",
+      "verified_at": "2026-11-18T06:32:36.904Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -239055,10 +239066,10 @@
       "relative_path": "08_VERIFICATION/tencent-tds-kuiklyui-verification-protocol-empirical-defect-shield-for-tencent-t.md",
       "title": "Verification Protocol: Empirical Defect Shield for Tencent-TDS/KuiklyUI",
       "repository": "Tencent-TDS/KuiklyUI",
-      "source_version": "b53b6c4c",
-      "content_hash": "071038774eef2d3770f7c5024521b31cef8afc4d0a252c47cb78b96a982d69cf",
+      "source_version": "0828d8ef",
+      "content_hash": "2c15060db79efbb33f3d1913de1c6c6a78f7c52320886a375f30c4b697c3cdde",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T01:32:45.266Z"
+      "persisted_at": "2026-11-18T06:32:37.746Z"
     },
     "candidate_directive-docker-build-the-valkey-images-on-ubuntu-26-04-lts": {
       "item_id": "candidate_directive-docker-build-the-valkey-images-on-ubuntu-26-04-lts",
@@ -239140,9 +239151,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for tencent-tds-kuiklyui-learnings",
       "repository": "tencent-tds-kuiklyui-learnings",
       "source_version": "HEAD",
-      "content_hash": "8c25905544257f28b83df9c652a115438b7d63cfaaace0cacffb24165636f5a8",
+      "content_hash": "01739139e731ce53a675730761ce70dd43ff1e158ee2a7e70dfa3592ab24c34d",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T01:33:21.424Z"
+      "persisted_at": "2026-11-18T06:32:45.944Z"
     },
     "learn-huggingface-fishaudio-drama-3": {
       "learning_id": "learn-huggingface-fishaudio-drama-3",
@@ -261405,8 +261416,8 @@
       "slug": "ratatui-ratatui",
       "platform": "github",
       "source_url": "https://github.com/ratatui/ratatui",
-      "source_version": "77a25c16",
-      "content_hash": "6d4c3a16c8d0c0f495b1aaa404476f473b5d8f7bb00f4fafdde33e5e1b03fe09",
+      "source_version": "5c1a8cd5",
+      "content_hash": "a573b9326afc57b84dfb0b82f23b93e7b56ad8efbc7186418812c9d9f804250b",
       "dossier_path": "07_PROJECT_LEARNING/ratatui-ratatui-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/ratatui-ratatui-learnings.md",
       "promoted_rules": [
@@ -261421,7 +261432,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T00:38:31.779Z",
+      "verified_at": "2026-11-18T06:32:30.412Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -261463,10 +261474,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-ratatui-ratatui-architecture-intelligence-ratatui-ratatui-core-invariants.md",
       "title": "Architecture Intelligence: ratatui/ratatui Core Invariants",
       "repository": "ratatui/ratatui",
-      "source_version": "77a25c16",
-      "content_hash": "76c64e8c28849939230e87c8f1081e58cee9de62827d39f623e6b471f5e02636",
+      "source_version": "5c1a8cd5",
+      "content_hash": "c76a15ecc2d1056bb4890b12b0f39cb90294c776ceff3e572c676112b177101a",
       "domain_letter": "G",
-      "persisted_at": "2026-11-17T00:38:32.369Z"
+      "persisted_at": "2026-11-18T06:32:31.140Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-ratatui-ratatui": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-ratatui-ratatui",
@@ -261475,10 +261486,10 @@
       "relative_path": "08_VERIFICATION/ratatui-ratatui-verification-protocol-empirical-defect-shield-for-ratatui-ratatu.md",
       "title": "Verification Protocol: Empirical Defect Shield for ratatui/ratatui",
       "repository": "ratatui/ratatui",
-      "source_version": "77a25c16",
-      "content_hash": "0808404c72140c1e343364719ca479ae601864f040db54812e05f70695ca782f",
+      "source_version": "5c1a8cd5",
+      "content_hash": "d898f629fc3a04d3c4df68c33d555c280633771c86aca8aa1f867a4c966036c0",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T00:38:32.531Z"
+      "persisted_at": "2026-11-18T06:32:31.332Z"
     },
     "rule-8825": {
       "learning_id": "rule-8825",
@@ -261552,9 +261563,9 @@
       "title": "Architecture Intelligence: ratatui-ratatui-learnings Core Invariants",
       "repository": "ratatui-ratatui-learnings",
       "source_version": "HEAD",
-      "content_hash": "eaab0a1de8faa8b11043ebb4203517f8251e373790f5c3f789ce6dd8ee34d4be",
+      "content_hash": "297eba7c7e0e408e6b35d1629fa37dc6b59a2563157125adac49f4fb577f2636",
       "domain_letter": "G",
-      "persisted_at": "2026-11-17T00:38:46.041Z"
+      "persisted_at": "2026-11-18T06:32:44.511Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-ratatui-ratatui-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-ratatui-ratatui-learnings",
@@ -261564,9 +261575,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for ratatui-ratatui-learnings",
       "repository": "ratatui-ratatui-learnings",
       "source_version": "HEAD",
-      "content_hash": "6f0379858ca6b83cedc5e7741904aa6d485ac1ffbe6ed3b12a6651082f3d0e91",
+      "content_hash": "950cc316cd4e3a9cb4e114ec1d8601d40b5627cdb928922d585e26821bbb0711",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T00:38:46.195Z"
+      "persisted_at": "2026-11-18T06:32:44.720Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-prunaai-p-h3-image-learnings-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-prunaai-p-h3-image-learnings-core-invariants",
@@ -282192,6 +282203,118 @@
       "content_hash": "76a916f25bda4483ea155712cb35d79f26538cbf4f2d1715721188582c53cedb",
       "domain_letter": "D",
       "persisted_at": "2026-11-18T06:23:36.013Z"
+    },
+    "candidate_directive-move-the-calendar-widget-to-ratatui-calendar": {
+      "item_id": "candidate_directive-move-the-calendar-widget-to-ratatui-calendar",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-V00Z-move-the-calendar-widget-to-ratatui-calendar.md",
+      "title": "!: move the calendar widget to ratatui-calendar",
+      "repository": "ratatui/ratatui",
+      "source_version": "5c1a8cd5",
+      "content_hash": "58ce5abdd718a1e3f9df1bdd69c420b6b0f98505b1a8d6d76820b2c4f14defc7",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-18T06:32:30.949Z"
+    },
+    "rule-9139": {
+      "learning_id": "rule-9139",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9139,
+      "title": "resolve custom font handler before font name lookup",
+      "source_url": "https://github.com/Tencent-TDS/KuiklyUI",
+      "source_version": "0828d8ef",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-18T06:32:36.904Z"
+    },
+    "candidate_directive-resolve-custom-font-handler-before-font-name-lookup": {
+      "item_id": "candidate_directive-resolve-custom-font-handler-before-font-name-lookup",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-V4ZF-resolve-custom-font-handler-before-font-name-lookup.md",
+      "title": "resolve custom font handler before font name lookup",
+      "repository": "Tencent-TDS/KuiklyUI",
+      "source_version": "0828d8ef",
+      "content_hash": "7d8be7a07d9bba70e7aad11f274c51eda665f182f28c8de0625bd92074dc2858",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-18T06:32:37.373Z"
+    },
+    "domain_intelligence-architecture-intelligence-tencent-tds-kuiklyui-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-tencent-tds-kuiklyui-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tencent-tds-kuiklyui-architecture-intelligence-tencent-tds-kuiklyui-core-invaria.md",
+      "title": "Architecture Intelligence: Tencent-TDS/KuiklyUI Core Invariants",
+      "repository": "Tencent-TDS/KuiklyUI",
+      "source_version": "0828d8ef",
+      "content_hash": "794873951b63b1fe772d775ff297b1974168fd607842a1b6b043217e3c06854c",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-18T06:32:37.558Z"
+    },
+    "rule-9140": {
+      "learning_id": "rule-9140",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9140,
+      "title": "command/state replace-provider: Refactor to use views",
+      "source_url": "https://github.com/hashicorp/terraform",
+      "source_version": "a1246154",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-18T06:32:38.420Z"
+    },
+    "candidate_directive-command-state-replace-provider-refactor-to-use-views": {
+      "item_id": "candidate_directive-command-state-replace-provider-refactor-to-use-views",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-V66P-command-state-replace-provider-refactor-to-use-views.md",
+      "title": "command/state replace-provider: Refactor to use views",
+      "repository": "hashicorp/terraform",
+      "source_version": "a1246154",
+      "content_hash": "c45a8103a0e6ec9cac96fe13e4407ad8b5e8e7ab9890827a1a95f2b9a8240c61",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-18T06:32:38.935Z"
+    },
+    "candidate_directive-calendar-move-the-calendar-widget-to-ratatui-calendar": {
+      "item_id": "candidate_directive-calendar-move-the-calendar-widget-to-ratatui-calendar",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-VACM-calendar-move-the-calendar-widget-to-ratatui-calendar.md",
+      "title": "calendar)!: move the calendar widget to ratatui-calendar",
+      "repository": "ratatui-ratatui-learnings",
+      "source_version": "HEAD",
+      "content_hash": "594b682db9aa2327b844e3ce2e605d2a49b5d2f54a72cbc15a1c2e77630a2c3e",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-18T06:32:44.327Z"
+    },
+    "candidate_directive-ios-resolve-custom-font-handler-before-font-name-lookup": {
+      "item_id": "candidate_directive-ios-resolve-custom-font-handler-before-font-name-lookup",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-VBB1-ios-resolve-custom-font-handler-before-font-name-lookup.md",
+      "title": "ios): resolve custom font handler before font name lookup",
+      "repository": "tencent-tds-kuiklyui-learnings",
+      "source_version": "HEAD",
+      "content_hash": "29771e863f686edeb76fe48300823bc4821d3bca49d7b5a1ea7c56b26bb833e2",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-18T06:32:45.566Z"
+    },
+    "domain_intelligence-architecture-intelligence-tencent-tds-kuiklyui-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-tencent-tds-kuiklyui-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tencent-tds-kuiklyui-learnings-architecture-intelligence-tencent-tds-kuiklyui-le.md",
+      "title": "Architecture Intelligence: tencent-tds-kuiklyui-learnings Core Invariants",
+      "repository": "tencent-tds-kuiklyui-learnings",
+      "source_version": "HEAD",
+      "content_hash": "8b7f1efef50e4760e0a5d7184be3e8b06cc9dd54fd71629908d904bd20897644",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-18T06:32:45.746Z"
     }
   },
   "ai-builder-brain": {

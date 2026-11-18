@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-18T06:23:37.439Z",
-  "total_records": 1768,
+  "last_updated": "2026-11-18T06:32:45.746Z",
+  "total_records": 1770,
   "domains": {
     "A": {
       "total": 11,
@@ -880,7 +880,7 @@
       ]
     },
     "G": {
-      "total": 305,
+      "total": 307,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -1186,7 +1186,9 @@
         "domain_intelligence-architecture-intelligence-peerdb-io-peerdb-core-invariants",
         "domain_intelligence-architecture-intelligence-peerdb-io-peerdb-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-amir1376-ab-download-manager-core-invariants",
-        "domain_intelligence-architecture-intelligence-amir1376-ab-download-manager-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-amir1376-ab-download-manager-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-tencent-tds-kuiklyui-core-invariants",
+        "domain_intelligence-architecture-intelligence-tencent-tds-kuiklyui-learnings-core-invariants"
       ]
     },
     "H": {
@@ -9431,8 +9433,8 @@
       "title": "Research & Knowledge Intelligence: PSRben/VisionHOPE Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-psrben-visionhope-research-knowledge-intelligence-psrben-visionhope-core-inva.md",
       "repository": "PSRben/VisionHOPE",
-      "content_hash": "af1431a8e904443781fa7a18c3abc041d2d64a20ad94d28c119f621755b70ca0",
-      "created_at": "2026-11-13T19:19:06.541Z"
+      "content_hash": "9a7362c6fa9ba3029124fb423156d272eeeae1982fc845d97912705eb05616b4",
+      "created_at": "2026-11-18T06:32:29.894Z"
     },
     "domain_intelligence-human-need-intelligence-argoproj-argo-workflows-core-invariants": {
       "record_id": "domain_intelligence-human-need-intelligence-argoproj-argo-workflows-core-invariants",
@@ -9491,8 +9493,8 @@
       "title": "Research & Knowledge Intelligence: hf-psrben-visionhope-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-psrben-visionhope-learnings-research-knowledge-intelligence-hf-psrben-visionh.md",
       "repository": "hf-psrben-visionhope-learnings",
-      "content_hash": "dfb973a1de41e112a755e6c100b3f67adb0f9659672848b4c95f216b15092bd4",
-      "created_at": "2026-11-13T19:19:47.236Z"
+      "content_hash": "547056cd577c83ab5d0b53b8cd44d5ba26311fd0f07bebace2a31c0ae81424b8",
+      "created_at": "2026-11-18T06:32:45.109Z"
     },
     "domain_intelligence-human-need-intelligence-argoproj-argo-workflows-learnings-core-invariants": {
       "record_id": "domain_intelligence-human-need-intelligence-argoproj-argo-workflows-learnings-core-invariants",
@@ -17043,8 +17045,8 @@
       "title": "Architecture Intelligence: hashicorp/terraform Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-hashicorp-terraform-architecture-intelligence-hashicorp-terraform-core-invariant.md",
       "repository": "hashicorp/terraform",
-      "content_hash": "0abed73565bb7b5565a5e2e5142ba28f5937607cee6a7564a200f3865a27df89",
-      "created_at": "2026-11-17T08:18:40.086Z"
+      "content_hash": "49540bee7d860c74cb38d35d5e1c1bab15aaa4059d51be50f2e8f0940cbccbbd",
+      "created_at": "2026-11-18T06:32:39.115Z"
     },
     "DOM-D-666917A5": {
       "record_id": "DOM-D-666917A5",
@@ -24752,8 +24754,8 @@
       "title": "Architecture Intelligence: ratatui/ratatui Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-ratatui-ratatui-architecture-intelligence-ratatui-ratatui-core-invariants.md",
       "repository": "ratatui/ratatui",
-      "content_hash": "76c64e8c28849939230e87c8f1081e58cee9de62827d39f623e6b471f5e02636",
-      "created_at": "2026-11-17T00:38:32.369Z"
+      "content_hash": "c76a15ecc2d1056bb4890b12b0f39cb90294c776ceff3e572c676112b177101a",
+      "created_at": "2026-11-18T06:32:31.140Z"
     },
     "domain_intelligence-architecture-intelligence-ratatui-ratatui-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-ratatui-ratatui-learnings-core-invariants",
@@ -24761,8 +24763,8 @@
       "title": "Architecture Intelligence: ratatui-ratatui-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-ratatui-ratatui-learnings-architecture-intelligence-ratatui-ratatui-learnings-co.md",
       "repository": "ratatui-ratatui-learnings",
-      "content_hash": "eaab0a1de8faa8b11043ebb4203517f8251e373790f5c3f789ce6dd8ee34d4be",
-      "created_at": "2026-11-17T00:38:46.041Z"
+      "content_hash": "297eba7c7e0e408e6b35d1629fa37dc6b59a2563157125adac49f4fb577f2636",
+      "created_at": "2026-11-18T06:32:44.511Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-prunaai-p-h3-image-learnings-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-prunaai-p-h3-image-learnings-core-invariants",
@@ -29648,6 +29650,24 @@
       "repository": "hf-alissonerdx-bfs-best-face-swap-learnings",
       "content_hash": "813a70f8cc83d7b87a93e0551205a3bc9889c4684d8bbcdb72c395af18d9ac10",
       "created_at": "2026-11-18T06:16:00.661Z"
+    },
+    "domain_intelligence-architecture-intelligence-tencent-tds-kuiklyui-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-tencent-tds-kuiklyui-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: Tencent-TDS/KuiklyUI Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tencent-tds-kuiklyui-architecture-intelligence-tencent-tds-kuiklyui-core-invaria.md",
+      "repository": "Tencent-TDS/KuiklyUI",
+      "content_hash": "794873951b63b1fe772d775ff297b1974168fd607842a1b6b043217e3c06854c",
+      "created_at": "2026-11-18T06:32:37.558Z"
+    },
+    "domain_intelligence-architecture-intelligence-tencent-tds-kuiklyui-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-tencent-tds-kuiklyui-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: tencent-tds-kuiklyui-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-tencent-tds-kuiklyui-learnings-architecture-intelligence-tencent-tds-kuiklyui-le.md",
+      "repository": "tencent-tds-kuiklyui-learnings",
+      "content_hash": "8b7f1efef50e4760e0a5d7184be3e8b06cc9dd54fd71629908d904bd20897644",
+      "created_at": "2026-11-18T06:32:45.746Z"
     }
   }
 }

@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261116-XLGY",
-    "timestamp": "2026-11-16T15:51:03.922Z",
-    "repository": "webrecorder/pywb",
-    "learningId": "learn-github-webrecorder-pywb",
-    "contentHash": "00d76bf3c206cbd064ea7e391e82b5b5ff316f19c7e6bbc328ebbdf1f55713fd",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261116-XP04",
-    "timestamp": "2026-11-16T15:51:08.500Z",
-    "repository": "0xCUB3/wBlock",
-    "learningId": "learn-github-0xcub3-wblock",
-    "contentHash": "528710f73deb94446f1c6aa4751d938d9f1340055bd28b458d3d6ef3cc897768",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261116-XS6B",
-    "timestamp": "2026-11-16T15:51:12.611Z",
-    "repository": "cilium/cilium",
-    "learningId": "learn-github-cilium-cilium",
-    "contentHash": "807e9e43dbf8cee760a1f8a9045ca01f60da9053e145bf289d7f1d383eebd4f5",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261116-XTLB",
-    "timestamp": "2026-11-16T15:51:14.447Z",
-    "repository": "weaviate/weaviate",
-    "learningId": "learn-github-weaviate-weaviate",
-    "contentHash": "c813ade6f401d1b29c6f15fa8be85cb4a4ad4c9444ebac3d697e13abcbf251e8",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261116-9AA8",
     "timestamp": "2026-11-16T16:00:09.296Z",
     "repository": "Louis-CFM/coucou",
@@ -7492,6 +7432,66 @@
     "contentHash": "ceaa0f3ea69c80a612d2148b99bd10f7115c79ab57a773ab95c781900e598d25",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-UZ0U",
+    "timestamp": "2026-11-18T06:32:29.646Z",
+    "repository": "PSRben/VisionHOPE",
+    "learningId": "learn-huggingface-psrben-visionhope",
+    "contentHash": "a6add2170d72dcd62036112826357d49374363ab7705836f1742ff171c2df170",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-UZST",
+    "timestamp": "2026-11-18T06:32:30.653Z",
+    "repository": "ratatui/ratatui",
+    "learningId": "learn-github-ratatui-ratatui",
+    "contentHash": "a573b9326afc57b84dfb0b82f23b93e7b56ad8efbc7186418812c9d9f804250b",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-V4SK",
+    "timestamp": "2026-11-18T06:32:37.124Z",
+    "repository": "Tencent-TDS/KuiklyUI",
+    "learningId": "learn-github-tencent-tds-kuiklyui",
+    "contentHash": "2541646c38047d421af0e11ca652d5f8430867af18c4ca17c75210c7b29d6057",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-V5Z3",
+    "timestamp": "2026-11-18T06:32:38.655Z",
+    "repository": "hashicorp/terraform",
+    "learningId": "learn-github-hashicorp-terraform",
+    "contentHash": "38a4a8877440ebb3cdf51efadbb6327173a08f8e0fd0c281231ed1bf2fcd7828",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

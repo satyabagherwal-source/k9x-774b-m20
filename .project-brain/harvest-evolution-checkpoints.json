@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T06:23:37.699Z",
+  "last_updated": "2026-11-18T06:32:46.101Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-18T04:11:36.483Z",
@@ -328,7 +328,7 @@
       "staged_for_review": 1
     },
     "tencent-tds-kuiklyui-learnings.md": {
-      "processed_at": "2026-11-15T01:33:20.975Z",
+      "processed_at": "2026-11-18T06:32:45.303Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1778,7 +1778,7 @@
       "staged_for_review": 0
     },
     "ratatui-ratatui-learnings.md": {
-      "processed_at": "2026-11-17T00:38:45.052Z",
+      "processed_at": "2026-11-18T06:32:42.143Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2083,8 +2083,8 @@
       "staged_for_review": 1
     },
     "hf-psrben-visionhope-learnings.md": {
-      "processed_at": "2026-11-13T19:19:47.063Z",
-      "promoted_canonical": 1,
+      "processed_at": "2026-11-18T06:32:44.890Z",
+      "promoted_canonical": 0,
       "staged_for_review": 0
     },
     "hf-ista-daslab-qwen3.8-flash-next-gsq-rco-coder-gguf-learnings.md": {
@@ -3403,7 +3403,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 1830,
+  "total_dossiers_evaluated": 1833,
   "total_canonical_promoted": 337,
-  "total_staged_for_review": 1411
+  "total_staged_for_review": 1413
 }

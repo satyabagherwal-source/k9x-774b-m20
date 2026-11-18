@@ -2,15 +2,15 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-18T06:16:00.454Z",
+  "updated_at": "2026-11-18T06:32:44.081Z",
   "stats": {
-    "total_discovered": 5314,
-    "approved_pending_harvest": 5012,
+    "total_discovered": 5354,
+    "approved_pending_harvest": 5052,
     "harvested_count": 0,
     "rejected_count": 302,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 5003,
-      "OFFICIAL_DOCUMENTATION": 167,
+      "COMMUNITY_AND_EXPERT": 5035,
+      "OFFICIAL_DOCUMENTATION": 175,
       "STANDARDS_AND_SPECIFICATIONS": 108,
       "ENGINEERING_BLOGS": 4,
       "SECURITY_ADVISORIES": 24,
@@ -114815,6 +114815,886 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-alissonerdx-bfs-best-face-swap-learnings.md",
         "fileName": "hf-alissonerdx-bfs-best-face-swap-learnings.md"
+      }
+    },
+    "SRC-1420D8C468B7": {
+      "id": "SRC-1420D8C468B7",
+      "url": "https://crates.io/crates/ansi-to-tui",
+      "title": "https://crates.io/crates/ansi-to-tui",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T06:32:42.236Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ratatui-ratatui-learnings.md",
+        "fileName": "ratatui-ratatui-learnings.md"
+      }
+    },
+    "SRC-9B72D53918AC": {
+      "id": "SRC-9B72D53918AC",
+      "url": "https://github.com/ratatui/ratatui/releases/tag/ratatui-v0.30.1",
+      "title": "https://github.com/ratatui/ratatui/releases/tag/ratatui-v0.30.1",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T06:32:42.285Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ratatui-ratatui-learnings.md",
+        "fileName": "ratatui-ratatui-learnings.md"
+      }
+    },
+    "SRC-B4BAFF7CAAA4": {
+      "id": "SRC-B4BAFF7CAAA4",
+      "url": "https://docs.rs/ratatui-calendar",
+      "title": "https://docs.rs/ratatui-calendar",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T06:32:42.334Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ratatui-ratatui-learnings.md",
+        "fileName": "ratatui-ratatui-learnings.md"
+      }
+    },
+    "SRC-E84160B9C06F": {
+      "id": "SRC-E84160B9C06F",
+      "url": "https://img.shields.io/crates/v/ratatui-calendar",
+      "title": "https://img.shields.io/crates/v/ratatui-calendar",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T06:32:42.378Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ratatui-ratatui-learnings.md",
+        "fileName": "ratatui-ratatui-learnings.md"
+      }
+    },
+    "SRC-C79D6F1DFA96": {
+      "id": "SRC-C79D6F1DFA96",
+      "url": "https://crates.io/crates/ratatui-calendar",
+      "title": "https://crates.io/crates/ratatui-calendar",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T06:32:42.427Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ratatui-ratatui-learnings.md",
+        "fileName": "ratatui-ratatui-learnings.md"
+      }
+    },
+    "SRC-2A05D107A74D": {
+      "id": "SRC-2A05D107A74D",
+      "url": "https://docs.rs/ratatui-calendar/badge.svg",
+      "title": "https://docs.rs/ratatui-calendar/badge.svg",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T06:32:42.475Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ratatui-ratatui-learnings.md",
+        "fileName": "ratatui-ratatui-learnings.md"
+      }
+    },
+    "SRC-877ED9B57975": {
+      "id": "SRC-877ED9B57975",
+      "url": "https://img.shields.io/crates/l/ratatui-calendar",
+      "title": "https://img.shields.io/crates/l/ratatui-calendar",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T06:32:42.534Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ratatui-ratatui-learnings.md",
+        "fileName": "ratatui-ratatui-learnings.md"
+      }
+    },
+    "SRC-D67AB3E4E478": {
+      "id": "SRC-D67AB3E4E478",
+      "url": "https://crates.io/crates/ratatui",
+      "title": "https://crates.io/crates/ratatui",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T06:32:42.577Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ratatui-ratatui-learnings.md",
+        "fileName": "ratatui-ratatui-learnings.md"
+      }
+    },
+    "SRC-EC31D035969E": {
+      "id": "SRC-EC31D035969E",
+      "url": "https://docs.rs/ratatui-calendar/latest/ratatui_calendar/struct.Monthly.html",
+      "title": "https://docs.rs/ratatui-calendar/latest/ratatui_calendar/struct.Monthly.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T06:32:42.624Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ratatui-ratatui-learnings.md",
+        "fileName": "ratatui-ratatui-learnings.md"
+      }
+    },
+    "SRC-681DCB871AA0": {
+      "id": "SRC-681DCB871AA0",
+      "url": "https://docs.rs/ratatui-calendar/latest/ratatui_calendar/trait.DateStyler.html",
+      "title": "https://docs.rs/ratatui-calendar/latest/ratatui_calendar/trait.DateStyler.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T06:32:42.667Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ratatui-ratatui-learnings.md",
+        "fileName": "ratatui-ratatui-learnings.md"
+      }
+    },
+    "SRC-630879B09CA2": {
+      "id": "SRC-630879B09CA2",
+      "url": "https://docs.rs/ratatui-calendar/latest/ratatui_calendar/struct.CalendarEventStore.html",
+      "title": "https://docs.rs/ratatui-calendar/latest/ratatui_calendar/struct.CalendarEventStore.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T06:32:42.716Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ratatui-ratatui-learnings.md",
+        "fileName": "ratatui-ratatui-learnings.md"
+      }
+    },
+    "SRC-E90AB35C70EA": {
+      "id": "SRC-E90AB35C70EA",
+      "url": "https://docs.rs/ratatui_widgets/latest/ratatui_widgets/block/struct.Block.html",
+      "title": "https://docs.rs/ratatui_widgets/latest/ratatui_widgets/block/struct.Block.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T06:32:42.764Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ratatui-ratatui-learnings.md",
+        "fileName": "ratatui-ratatui-learnings.md"
+      }
+    },
+    "SRC-CDDB2575751E": {
+      "id": "SRC-CDDB2575751E",
+      "url": "https://github.com/ratatui/ratatui/blob/main/ratatui-calendar/examples/calendar.rs",
+      "title": "https://github.com/ratatui/ratatui/blob/main/ratatui-calendar/examples/calendar.rs",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T06:32:42.807Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ratatui-ratatui-learnings.md",
+        "fileName": "ratatui-ratatui-learnings.md"
+      }
+    },
+    "SRC-3CFC8F4D425A": {
+      "id": "SRC-3CFC8F4D425A",
+      "url": "https://github.com/ratatui/ratatui/tree/main/examples/apps/calendar-explorer",
+      "title": "https://github.com/ratatui/ratatui/tree/main/examples/apps/calendar-explorer",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T06:32:42.857Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ratatui-ratatui-learnings.md",
+        "fileName": "ratatui-ratatui-learnings.md"
+      }
+    },
+    "SRC-51F95BAEEEFC": {
+      "id": "SRC-51F95BAEEEFC",
+      "url": "https://crates.io/crates/ratatui-core",
+      "title": "https://crates.io/crates/ratatui-core",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T06:32:42.904Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ratatui-ratatui-learnings.md",
+        "fileName": "ratatui-ratatui-learnings.md"
+      }
+    },
+    "SRC-0BD1C788C48D": {
+      "id": "SRC-0BD1C788C48D",
+      "url": "https://github.com/ratatui/ratatui/blob/main/ratatui-widgets/examples",
+      "title": "https://github.com/ratatui/ratatui/blob/main/ratatui-widgets/examples",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T06:32:42.948Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ratatui-ratatui-learnings.md",
+        "fileName": "ratatui-ratatui-learnings.md"
+      }
+    },
+    "SRC-39DDB7F8F00D": {
+      "id": "SRC-39DDB7F8F00D",
+      "url": "https://github.com/ratatui/ratatui/blob/main/ratatui-calendar/examples",
+      "title": "https://github.com/ratatui/ratatui/blob/main/ratatui-calendar/examples",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T06:32:42.997Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ratatui-ratatui-learnings.md",
+        "fileName": "ratatui-ratatui-learnings.md"
+      }
+    },
+    "SRC-B20ECAB913C6": {
+      "id": "SRC-B20ECAB913C6",
+      "url": "https://github.com/ratatui/ratatui/blob/main/examples/README.md",
+      "title": "https://github.com/ratatui/ratatui/blob/main/examples/README.md",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T06:32:43.044Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ratatui-ratatui-learnings.md",
+        "fileName": "ratatui-ratatui-learnings.md"
+      }
+    },
+    "SRC-1569A407ACFB": {
+      "id": "SRC-1569A407ACFB",
+      "url": "https://github.com/ratatui/ratatui/pull/1691",
+      "title": "https://github.com/ratatui/ratatui/pull/1691",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T06:32:43.092Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ratatui-ratatui-learnings.md",
+        "fileName": "ratatui-ratatui-learnings.md"
+      }
+    },
+    "SRC-F5D58AD7A614": {
+      "id": "SRC-F5D58AD7A614",
+      "url": "https://github.com/ratatui/ratatui/pull/1735",
+      "title": "https://github.com/ratatui/ratatui/pull/1735",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T06:32:43.141Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ratatui-ratatui-learnings.md",
+        "fileName": "ratatui-ratatui-learnings.md"
+      }
+    },
+    "SRC-5BDF2C182403": {
+      "id": "SRC-5BDF2C182403",
+      "url": "https://github.com/ratatui/ratatui/pull/1149",
+      "title": "https://github.com/ratatui/ratatui/pull/1149",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T06:32:43.188Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ratatui-ratatui-learnings.md",
+        "fileName": "ratatui-ratatui-learnings.md"
+      }
+    },
+    "SRC-C0687269AA21": {
+      "id": "SRC-C0687269AA21",
+      "url": "https://github.com/ratatui/ratatui/pull/1159",
+      "title": "https://github.com/ratatui/ratatui/pull/1159",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T06:32:43.232Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ratatui-ratatui-learnings.md",
+        "fileName": "ratatui-ratatui-learnings.md"
+      }
+    },
+    "SRC-54658B2E2682": {
+      "id": "SRC-54658B2E2682",
+      "url": "https://github.com/ratatui/ratatui/pull/1148",
+      "title": "https://github.com/ratatui/ratatui/pull/1148",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T06:32:43.282Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ratatui-ratatui-learnings.md",
+        "fileName": "ratatui-ratatui-learnings.md"
+      }
+    },
+    "SRC-553745281878": {
+      "id": "SRC-553745281878",
+      "url": "https://github.com/ratatui/ratatui/pull/565",
+      "title": "https://github.com/ratatui/ratatui/pull/565",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T06:32:43.329Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ratatui-ratatui-learnings.md",
+        "fileName": "ratatui-ratatui-learnings.md"
+      }
+    },
+    "SRC-381B2DB4BB5E": {
+      "id": "SRC-381B2DB4BB5E",
+      "url": "https://keats.github.io/tera/docs",
+      "title": "https://keats.github.io/tera/docs",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T06:32:43.373Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ratatui-ratatui-learnings.md",
+        "fileName": "ratatui-ratatui-learnings.md"
+      }
+    },
+    "SRC-621C87A65355": {
+      "id": "SRC-621C87A65355",
+      "url": "https://git-cliff.org/docs/templating/syntax",
+      "title": "https://git-cliff.org/docs/templating/syntax",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T06:32:43.421Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ratatui-ratatui-learnings.md",
+        "fileName": "ratatui-ratatui-learnings.md"
+      }
+    },
+    "SRC-52FB6F03D0F8": {
+      "id": "SRC-52FB6F03D0F8",
+      "url": "https://ratatui.rs/showcase",
+      "title": "https://ratatui.rs/showcase",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T06:32:43.469Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ratatui-ratatui-learnings.md",
+        "fileName": "ratatui-ratatui-learnings.md"
+      }
+    },
+    "SRC-9097B5CD6B43": {
+      "id": "SRC-9097B5CD6B43",
+      "url": "https://ratatui.rs/concepts/rendering",
+      "title": "https://ratatui.rs/concepts/rendering",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T06:32:43.512Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ratatui-ratatui-learnings.md",
+        "fileName": "ratatui-ratatui-learnings.md"
+      }
+    },
+    "SRC-C449379A5FE1": {
+      "id": "SRC-C449379A5FE1",
+      "url": "https://ratatui.rs/concepts/application-patterns",
+      "title": "https://ratatui.rs/concepts/application-patterns",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T06:32:43.561Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ratatui-ratatui-learnings.md",
+        "fileName": "ratatui-ratatui-learnings.md"
+      }
+    },
+    "SRC-28651A6A8AEF": {
+      "id": "SRC-28651A6A8AEF",
+      "url": "https://ratatui.rs/tutorials/hello-world",
+      "title": "https://ratatui.rs/tutorials/hello-world",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T06:32:43.609Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ratatui-ratatui-learnings.md",
+        "fileName": "ratatui-ratatui-learnings.md"
+      }
+    },
+    "SRC-2C9E3AFBD467": {
+      "id": "SRC-2C9E3AFBD467",
+      "url": "https://ratatui.rs/tutorials/hello-ratatui",
+      "title": "https://ratatui.rs/tutorials/hello-ratatui",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T06:32:43.652Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ratatui-ratatui-learnings.md",
+        "fileName": "ratatui-ratatui-learnings.md"
+      }
+    },
+    "SRC-9CAEA9BD2DE7": {
+      "id": "SRC-9CAEA9BD2DE7",
+      "url": "https://ratatui.rs/concepts/backends",
+      "title": "https://ratatui.rs/concepts/backends",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T06:32:43.701Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ratatui-ratatui-learnings.md",
+        "fileName": "ratatui-ratatui-learnings.md"
+      }
+    },
+    "SRC-675FFDC3BF34": {
+      "id": "SRC-675FFDC3BF34",
+      "url": "https://ratatui.rs/concepts/backends/comparison",
+      "title": "https://ratatui.rs/concepts/backends/comparison",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T06:32:43.750Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ratatui-ratatui-learnings.md",
+        "fileName": "ratatui-ratatui-learnings.md"
+      }
+    },
+    "SRC-8E4A150CAD02": {
+      "id": "SRC-8E4A150CAD02",
+      "url": "https://ratatui.rs/recipes/widgets",
+      "title": "https://ratatui.rs/recipes/widgets",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T06:32:43.793Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ratatui-ratatui-learnings.md",
+        "fileName": "ratatui-ratatui-learnings.md"
+      }
+    },
+    "SRC-5055E833EADE": {
+      "id": "SRC-5055E833EADE",
+      "url": "https://github.com/ratatui/ratatui/issues/2547",
+      "title": "https://github.com/ratatui/ratatui/issues/2547",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T06:32:43.842Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ratatui-ratatui-learnings.md",
+        "fileName": "ratatui-ratatui-learnings.md"
+      }
+    },
+    "SRC-27FA163676AF": {
+      "id": "SRC-27FA163676AF",
+      "url": "https://github.com/ratatui/ratatui/pull/2579",
+      "title": "https://github.com/ratatui/ratatui/pull/2579",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T06:32:43.891Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ratatui-ratatui-learnings.md",
+        "fileName": "ratatui-ratatui-learnings.md"
+      }
+    },
+    "SRC-F737E9875E05": {
+      "id": "SRC-F737E9875E05",
+      "url": "https://en.wikipedia.org/wiki/Box_Drawing",
+      "title": "https://en.wikipedia.org/wiki/Box_Drawing",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T06:32:43.939Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ratatui-ratatui-learnings.md",
+        "fileName": "ratatui-ratatui-learnings.md"
+      }
+    },
+    "SRC-ADC6E45438C7": {
+      "id": "SRC-ADC6E45438C7",
+      "url": "https://ratatui.rs/recipes/layout/collapse-borders",
+      "title": "https://ratatui.rs/recipes/layout/collapse-borders",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T06:32:43.985Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ratatui-ratatui-learnings.md",
+        "fileName": "ratatui-ratatui-learnings.md"
+      }
+    },
+    "SRC-D693137D97A4": {
+      "id": "SRC-D693137D97A4",
+      "url": "https://docs.rs/ratatui/latest/ratatui/widgets/block/struct.Block.html",
+      "title": "https://docs.rs/ratatui/latest/ratatui/widgets/block/struct.Block.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T06:32:44.032Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ratatui-ratatui-learnings.md",
+        "fileName": "ratatui-ratatui-learnings.md"
+      }
+    },
+    "SRC-F112F6997C9A": {
+      "id": "SRC-F112F6997C9A",
+      "url": "https://docs.rs/ratatui/latest/ratatui/widgets/struct.Block.html",
+      "title": "https://docs.rs/ratatui/latest/ratatui/widgets/struct.Block.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T06:32:44.081Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ratatui-ratatui-learnings.md",
+        "fileName": "ratatui-ratatui-learnings.md"
       }
     }
   }
