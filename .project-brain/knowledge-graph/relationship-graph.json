@@ -2,12 +2,12 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-18T05:36:02.548Z",
+  "updated_at": "2026-11-18T06:16:00.432Z",
   "statistics": {
-    "total_nodes": 333,
+    "total_nodes": 334,
     "total_edges": 158,
     "domain_distribution": {
-      "D": 234,
+      "D": 235,
       "M": 1,
       "H": 43,
       "J": 12,
@@ -7454,6 +7454,28 @@
       ],
       "created_at": "2026-11-18T05:36:02.548Z",
       "updated_at": "2026-11-18T05:36:02.548Z"
+    },
+    "DOM-D-5E75492A": {
+      "id": "DOM-D-5E75492A",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): Alissonerdx/BFS-Best-Face-Swap",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-alissonerdx-bfs-best-face-swap-learnings.md`  \n> **Source**: huggingface ([https: -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-alissonerdx-bfs-best-face-swap-learnings.md`  \n> **Source**: huggingface ([https:",
+      "confidence": 0.6,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-alissonerdx-bfs-best-face-swap/hf-alissonerdx-bfs-best-face-swap-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-18T06:15:33.747Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-alissonerdx-bfs-best-face-swap)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence"
+      ],
+      "created_at": "2026-11-18T06:16:00.432Z",
+      "updated_at": "2026-11-18T06:16:00.432Z"
     }
   },
   "edges": [

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-18T06:07:49.787Z",
-  "total_records": 1766,
+  "last_updated": "2026-11-18T06:16:01.208Z",
+  "total_records": 1768,
   "domains": {
     "A": {
       "total": 11,
@@ -48,7 +48,7 @@
       ]
     },
     "D": {
-      "total": 766,
+      "total": 768,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -815,7 +815,9 @@
         "domain_intelligence-research-knowledge-intelligence-dathere-qsv-learnings-core-invariants",
         "domain_intelligence-research-knowledge-intelligence-apple-fastframes-l-core-invariants",
         "DOM-D-AD9F2297",
-        "domain_intelligence-research-knowledge-intelligence-hf-apple-fastframes-l-learnings-core-invariants"
+        "domain_intelligence-research-knowledge-intelligence-hf-apple-fastframes-l-learnings-core-invariants",
+        "DOM-D-5E75492A",
+        "domain_intelligence-research-knowledge-intelligence-hf-alissonerdx-bfs-best-face-swap-learnings-core"
       ]
     },
     "E": {
@@ -9273,8 +9275,8 @@
       "title": "Research & Knowledge Intelligence: Alissonerdx/BFS-Best-Face-Swap Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-alissonerdx-bfs-best-face-swap-research-knowledge-intelligence-alissonerdx-bf.md",
       "repository": "Alissonerdx/BFS-Best-Face-Swap",
-      "content_hash": "468e7069ea72e1b68cf53b3a2ac9d16f5ad9f3da4e3fd4524321690f84954eef",
-      "created_at": "2026-11-13T18:52:19.400Z"
+      "content_hash": "5a1f66b16bbc19db802f1302c9947a54d65b8cdb9dac34ec54af446b6d346ced",
+      "created_at": "2026-11-18T06:15:21.265Z"
     },
     "domain_intelligence-technical-construction-intelligence-actix-actix-web-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-actix-actix-web-core-invariants",
@@ -18425,8 +18427,8 @@
       "title": "Technical Construction Intelligence: necolas/react-native-web Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-necolas-react-native-web-technical-construction-intelligence-necolas-react-nativ.md",
       "repository": "necolas/react-native-web",
-      "content_hash": "f0897af0ec35b16157cf9022442486e1e4e922dc018c6e03ee61b21a1be409e6",
-      "created_at": "2026-11-15T00:50:41.127Z"
+      "content_hash": "cdb07b0bbf8ec9110bc343827cd1281f1e919a93da9f2f72be4872318b57658e",
+      "created_at": "2026-11-18T06:15:27.928Z"
     },
     "domain_intelligence-architecture-intelligence-cachix-devenv-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-cachix-devenv-learnings-core-invariants",
@@ -18494,8 +18496,8 @@
       "title": "Technical Construction Intelligence: necolas-react-native-web-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-necolas-react-native-web-learnings-technical-construction-intelligence-necolas-r.md",
       "repository": "necolas-react-native-web-learnings",
-      "content_hash": "bb8e9e5f0482180852ab3a38c0b9c812cea15fda91bcf92365e96d8a6c5d2c6f",
-      "created_at": "2026-11-15T00:51:34.597Z"
+      "content_hash": "7743458b802774284720f7f769b39d2ae9ff4bdecb1791eaff1f18d50b360d23",
+      "created_at": "2026-11-18T06:16:01.208Z"
     },
     "domain_intelligence-research-knowledge-intelligence-autotrust-autotrust-decider-pro-35b-nvfp4-core-i": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-autotrust-autotrust-decider-pro-35b-nvfp4-core-i",
@@ -19274,8 +19276,8 @@
       "title": "Architecture Intelligence: zeronsh/zeron Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zeronsh-zeron-architecture-intelligence-zeronsh-zeron-core-invariants.md",
       "repository": "zeronsh/zeron",
-      "content_hash": "a15171fa19e3e930f4aca4e9cda3f073fcba86863e89c53e6a7c63d6057afdb9",
-      "created_at": "2026-11-15T04:17:59.716Z"
+      "content_hash": "e6ffa20b7d7a987fa3652c406ae694be17bc835eeb043be35faabbdb4164407f",
+      "created_at": "2026-11-18T06:15:22.987Z"
     },
     "domain_intelligence-technical-construction-intelligence-openbmb-minicpm-v-4-7-35b-a3b-gguf-core-inva": {
       "record_id": "domain_intelligence-technical-construction-intelligence-openbmb-minicpm-v-4-7-35b-a3b-gguf-core-inva",
@@ -19292,8 +19294,8 @@
       "title": "Architecture Intelligence: zeronsh-zeron-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-zeronsh-zeron-learnings-architecture-intelligence-zeronsh-zeron-learnings-core-i.md",
       "repository": "zeronsh-zeron-learnings",
-      "content_hash": "ef27319d7056c2f0cd3e3406e1e0417bd0cf4a8cd4ae6c6e4df5250217bdd0d8",
-      "created_at": "2026-11-15T04:19:28.700Z"
+      "content_hash": "ae6f9482be40d273c1f09c61e232e702777a2fcffabdfa8ebaa7fe4eea04c5b1",
+      "created_at": "2026-11-18T06:15:33.500Z"
     },
     "domain_intelligence-technical-construction-intelligence-hf-openbmb-minicpm-v-4-7-35b-a3b-gguf-learni": {
       "record_id": "domain_intelligence-technical-construction-intelligence-hf-openbmb-minicpm-v-4-7-35b-a3b-gguf-learni",
@@ -29595,6 +29597,57 @@
       "repository": "shifthackz-sdai-kmp-learnings",
       "content_hash": "06c941b94c9271a08ed6efeea4f5cc9a5402454f0bc8ae169534f6306ffb85d1",
       "created_at": "2026-11-18T06:07:49.787Z"
+    },
+    "DOM-D-5E75492A": {
+      "record_id": "DOM-D-5E75492A",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): Alissonerdx/BFS-Best-Face-Swap",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-alissonerdx-bfs-best-face-swap-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/Alissonerdx/BFS-Best-Face-Swap](https://huggingface.co/Alissonerdx/BFS-Best-Face-Swap))  \n> **Source Version**: `hf-alissoner`  \n> **License**:",
+      "content_hash": "b5c9ec23df2e825d9b9fa602cd1807fc100467f22285fe6ff829b15b90e3f2e0",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-alissonerdx-bfs-best-face-swap-learnings.md`  \n> **Source**: huggingface ([https: -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-alissonerdx-bfs-best-face-swap-learnings.md`  \n> **Source**: huggingface ([https:",
+      "provenance": {
+        "source_uri": "project://hf-alissonerdx-bfs-best-face-swap/hf-alissonerdx-bfs-best-face-swap-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-18T06:15:33.747Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-alissonerdx-bfs-best-face-swap)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-alissonerdx-bfs-best-face-swap"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-18T06:16:00.413Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-alissonerdx-bfs-best-face-swap-learnings-core": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-alissonerdx-bfs-best-face-swap-learnings-core",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-alissonerdx-bfs-best-face-swap-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-alissonerdx-bfs-best-face-swap-learnings-research-knowledge-intelligence-hf-a.md",
+      "repository": "hf-alissonerdx-bfs-best-face-swap-learnings",
+      "content_hash": "813a70f8cc83d7b87a93e0551205a3bc9889c4684d8bbcdb72c395af18d9ac10",
+      "created_at": "2026-11-18T06:16:00.661Z"
     }
   }
 }

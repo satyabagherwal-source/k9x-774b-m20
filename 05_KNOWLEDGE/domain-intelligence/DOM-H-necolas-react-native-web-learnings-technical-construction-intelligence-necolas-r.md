@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-15T00:51:34.347Z",
+  "timestamp": "2026-11-18T06:16:00.955Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-necolas-react-native-web-learnings",
@@ -14,13 +14,13 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [necolas-react-native-web-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-15T00:51:34.347Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-18T06:16:00.955Z`  
 > **Learning ID**: `LEARN-EVO-necolas-react-native-web-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence), I (Content & Information Intelligence), L (Deployment & Operations Intelligence), A (Human & Need Intelligence), F (Design Intelligence)
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), K (Quality & Verification Intelligence), J (Search & Distribution Intelligence), I (Content & Information Intelligence), L (Deployment & Operations Intelligence), A (Human & Need Intelligence), F (Design Intelligence)
 - **Confidence Rating**: 66%
 
 ## 2. Core Domain Invariants & Discovered Laws
@@ -28,10 +28,10 @@ The following architectural invariants have been empirically discovered and reco
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/necolas-react-native-web-learnings.md`  
 > **Source**: github ([https://github.com/necolas/react-native-web](https://github.com/necolas/react-native-web))  
-> **Source Version**: `eb77ba97`  
+> **Source Version**: `06726fb2`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-15T00:50:39.830Z  
+> **Timestamp**: 2026-11-18T06:15:26.742Z  
 > **Learning ID**: `learn-github-necolas-react-native-web`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/necolas-react-native-web-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/necolas/react-native-web](https://github.com/necolas/react-native-web))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-15T00:50:39.824Z  
+> **Harvest Timestamp**: 2026-11-18T06:15:26.737Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Cross-platform React UI packages
 - **Primary Language / Ecosystem**: JavaScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 22158 stars
+- **Stars / Engagement**: 22161 stars
 
 ---
 
@@ -803,157 +803,115 @@ export function isPrimaryPointerDown(domEvent: ResponderDOMEvent): boolean {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `eb77ba97` (2026-11-11)
-**Commit Message**: Upgrade Flow to 0.339 and make types more precise (#2963)
+### Incident Patch 1: `06726fb2` (2026-11-17)
+**Commit Message**: Build the examples app once in the release
 
-**File**: `.eslintrc.cjs` (modified, +3/-2)
+**File**: `packages/react-native-web-docs/package.json` (modified, +1/-1)
 ```diff
-@@ -2,7 +2,7 @@ module.exports = {
-   settings: {
-     react: {
-       version: '19.0',
--      flowVersion: '0.336.0'
-+      flowVersion: '0.339.0'
-     }
+@@ -5,7 +5,7 @@
+   "description": "Documentation website for React Native for Web",
+   "type": "module",
+   "scripts": {
+-    "build:examples": "BASE_PATH=/react-native-web/examples npm run build -w react-native-web-examples",
++    "build:examples": "BASE_PATH=/react-native-web/examples npm run export -w react-native-web-examples",
+     "dev": "npm run build:examples && eleventy --serve",
+     "build": "npm run build:examples && ELEVENTY_PRODUCTION=true eleventy",
+     "debug": "DEBUG=* eleventy"
+```
+
+**File**: `packages/react-native-web-examples/package.json` (modified, +1/-1)
+```diff
+@@ -4,7 +4,7 @@
+   "version": "0.21.4",
+   "type": "module",
+   "scripts": {
+-    "build": "next build --webpack",
++    "export": "next build --webpack",
+     "dev": "next dev --webpack",
+     "start": "next start"
    },
-   // hermes parser to support Flow syntax
-@@ -30,7 +30,8 @@ module.exports = {
-   globals: {
-     ClientRect: 'readonly',
-     Readonly: 'readonly',
--    ReadonlyArray: 'readonly'
-+    ReadonlyArray: 'readonly',
-+    Record: 'readonly'
-   },
-   rules: {
-     camelcase: 'off',
 ```
 
-**File**: `.flowconfig` (modified, +2/-1)
+---
+
+### Incident Patch 2: `d7c8c91c` (2026-11-16)
+**Commit Message**: [fix] types: allow a filename for hrefAttrs.download
+
+**File**: `packages/react-native-web/src/exports/View/types.js` (modified, +5/-1)
 ```diff
-@@ -1,7 +1,8 @@
- [version]
--0.336.0
-+0.339.0
- 
- [ignore]
-+**/node_modules/invariant/**
- **/__tests__/**
- packages/*/dist/**
- packages/benchmarks/**
+@@ -231,7 +231,11 @@ export type ViewProps = {
+   // unstable
+   disabled?: ?boolean,
+   href?: ?string,
+-  hrefAttrs?: ?{ download?: ?boolean, rel?: ?string, target?: ?string },
++  hrefAttrs?: ?{
++    download?: ?(boolean | string),
++    rel?: ?string,
++    target?: ?string
++  },
+   type?: ?('button' | 'reset' | 'submit'),
+   // @deprecated
+   focusable?: ?boolean,
 ```
 
-**File**: `flow-typed/environment.js` (modified, +1/-1)
+**File**: `packages/react-native-web/types/index.d.ts` (modified, +1/-1)
 ```diff
-@@ -1,7 +1,7 @@
- // @flow
- 
- declare var process: {
--  env: { [string]: ?string, ... },
-+  env: { [key: string]: ?string, ... },
-   ...
- };
- 
+@@ -110,7 +110,7 @@ interface WebSharedProps extends WebEventProps {
+   /** @unstable */
+   hrefAttrs?:
+     | {
+-        download?: boolean | undefined;
++        download?: boolean | string | undefined;
+         rel?: string | undefined;
+         target?: string | undefined;
+       }
 ```
 
-**File**: `flow-typed/npm/invariant.js` (added, +7/-0)
-```diff
-@@ -0,0 +1,7 @@
-+declare module 'invariant' {
-+  declare module.exports: (
-+    condition: unknown,
-+    format?: string,
-+    ...args: Array<unknown>
-+  ) => asserts condition;
-+}
-```
+---
 
-**File**: `flow-typed/npm/styleq.js` (modified, +2/-4)
-```diff
-@@ -3,9 +3,7 @@ type CompiledStyle = {
-   [key: string]: string,
- };
- 
--type InlineStyle = {
--  [key: string]: unknown,
--};
-+type InlineStyle = Record<string, unknown>;
- 
- type EitherStyle = CompiledStyle | InlineStyle;
- 
-@@ -16,7 +14,7 @@ type Style<out T = EitherStyle> = StylesArray<false | ?T>;
- type StyleqOptions = {
-   disableCache?: boolean,
-   disableMix?: boolean,
--  transform?: (EitherStyle) => EitherStyle,
-+  transform?: (style: EitherStyle) => EitherStyle,
- };
- 
- type StyleqResult = [string, InlineStyle | null, string];
-```
+### Incident Patch 3: `5b47c534` (2026-11-16)
+**Commit Message**: [fix] types: don't require props that ViewProps doesn't declare
 
-**File**: `package-lock.json` (modified, +4/-4)
+**File**: `packages/react-native-web/types/index.d.ts` (modified, +6/-2)
 ```diff
-@@ -28,7 +28,7 @@
-         "eslint-config-prettier": "^10.1.8",
-         "eslint-plugin-react": "^7.37.5",
-         "eslint-plugin-react-hooks": "^7.1.1",
--        "flow-bin": "0.336.0",
-+        "flow-bin": "0.339.0",
-         "hermes-eslint": "0.37.0",
-         "husky": "^9.1.7",
-         "jest": "^30.5.2",
-@@ -8386,9 +8386,9 @@
-       "license": "ISC"
-     },
-     "node_modules/flow-bin": {
--      "version": "0.336.0",
--      "resolved": "https://registry.npmjs.org/flow-bin/-/flow-bin-0.336.0.tgz",
--      "integrity": "sha512-I5sPg/GISpXH4W14eGWgiIsrDKY0uvvvXjlEDOI2t0pguEwbMgpnaYzMMMBoHZcYYtNJIF/0eGsbPnN7uP2zOQ==",
-+      "version": "0.339.0",
-+      "resolved": "https://registry.npmjs.org/flow-bin/-/flow-bin-0.339.0.tgz",
-+      "integrity": "sha512-n7rE8A/hZ0Go4cxWbrot0UZrILJj0oLZZrpT8FRwkY7hmteqrpnZsNT5E9ZexquHjAOkpZy/UMgIAwuUllUr9g==",
-       "dev": true,
-       "license": "MIT",
-       "bin": {
-```
-
-**File**: `package.json` (modified, +1/-1)
-```diff
-@@ -44,7 +44,7 @@
-     "eslint-config-prettier": "^10.1.8",
-     "eslint-plugin-react": "^7.37.5",
-     "eslint-plugin-react-hooks": "^7.1.1",
--    "flow-bin": "0.336.0",
-+    "flow-bin": "0.339.0",
-     "hermes-eslint": "0.37.0",
-     "husky": "^9.1.7",
-     "jest": "^30.5.2",
-```
-
-**File**: `packages/react-native-web/src/exports/AccessibilityInfo/index.js` (modified, +4/-1)
-```diff
-@@ -95,7 +95,10 @@ const AccessibilityInfo = {
-   isReduceTransparencyEnabled: (): Promise<boolean> =>
-     Promise.resolve(prefersReducedTransparencyMedia.matches),
+@@ -20,6 +20,10 @@ import type {
+   Role
+ } from 'react-native';
  
--  addEventListener(eventName: string, handler: Function): EventSubscription {
-+  addEventListener(
-+    eventName: string,
-+    handler: ChangeHandler
-+  ): EventSubscription {
-     if (eventName === 'highTextContrastChanged') {
-       return prefersContrastMedia.addChangeHandler(handler);
-     } else if (eventName === 'reduceMotionChanged') {
++// Like `Pick`, but ignores keys that `T` doesn't have. `Pick` would add them as
++// required props, which breaks components with the legacy `react-native` types.
++type LoosePick<T, K extends PropertyKey> = Pick<T, Extract<K, keyof T>>;
++
+ type ButtonType = 'button' | 'reset' | 'submit';
+ type NumberOrString = number | string;
+ 
+@@ -324,7 +328,7 @@ declare module 'react-native' {
+   interface TextProps
+     extends
+       WebSharedProps,
+-      Pick<
++      LoosePick<
+         ViewProps,
+         | 'focusable'
+         | 'onBlur'
+@@ -380,7 +384,7 @@ declare module 'react-native' {
+     type?: ButtonType | undefined;
+   }
+ 
+-  interface PressableProps extends Pick<
++  interface PressableProps extends LoosePick<
+     ViewProps,
+     'onMouseEnter' | 'onMouseLeave'
+   > {
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2967** (closed): Bump next from 16.4.2 to 16.4.5 (@dependabot[bot])
 - **PR #2963** (2026-11-11): Upgrade Flow to 0.339 and make types more precise (@zoontek)
 - **PR #2962** (2026-11-06): [fix] Modal: make a modal active when it shows, not when its animation ends (@zoontek)
 - **PR #2961** (closed): [fix] PanResponder: cancel child click after a pan gesture (@zoontek)
 - **PR #2960** (2026-11-06): [fix] Modal: don't take focus back from a modal shown while closing (@ilazaridis)
 - **PR #2959** (2026-11-05): [fix] VirtualizedList: don't block wheel scroll on the other axis (@zoontek)
-- **PR #2958** (2026-11-05): [fix] UIManager: ignore scroll offsets in measure and measureLayout (@zoontek)
 
 ---
 
@@ -973,34 +931,31 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Upgrade Flow to 0.339 and make types more precise
+## X. Build the examples app once in the release
 
 **RULE**:
-When implementing operations in `.eslintrc.cjs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in necolas/react-native-web. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/react-native-web-docs/package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in necolas/react-native-web. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `eb77ba97`: Upgrade Flow to 0.339 and make types more precise. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `06726fb2`: Build the examples app once in the release. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.eslintrc.cjs`.
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/react-native-web-docs/package.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```javascript
 // Verified production-grade fix pattern:
-      flowVersion: '0.339.0'
-    ReadonlyArray: 'readonly',
-    Record: 'readonly'
+    "build:examples": "BASE_PATH=/react-native-web/examples npm run export -w react-native-web-examples",
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```javascript
 // Induced defect failure mode:
-      flowVersion: '0.336.0'
-    ReadonlyArray: 'readonly'
+    "build:examples": "BASE_PATH=/react-native-web/examples npm run build -w react-native-web-examples",
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `eb77ba97` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `06726fb2` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

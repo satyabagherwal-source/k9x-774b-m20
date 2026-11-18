@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-18T06:07:43.965Z",
+  "last_updated": "2026-11-18T06:15:27.633Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -710,14 +710,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-alissonerdx-bfs-best-face-swap",
-      "content_hash": "7e7e5649d41c689771237e5b2208eb6dad0c3b468cc68db73de960bc642857a4",
-      "verified_at": "2026-11-13T18:52:19.284Z",
+      "content_hash": "8e137501a0e054ac96cd835e1927fa8e125cc839d7b79e98ea2f7d5dd8059d65",
+      "verified_at": "2026-11-18T06:15:21.098Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T18:52:19.284Z"
+      "last_updated": "2026-11-18T06:15:21.098Z"
     },
     "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF": {
       "repository": "ukisai/Swift-1.5-Qwen3.8-27B-GSQ-RCO-GGUF",
@@ -5271,14 +5271,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zeronsh-zeron",
-      "content_hash": "3056f5ab0baaa91e6bf5148f54e37d2b2f153017f10074f0dd090e2c72c5c019",
-      "verified_at": "2026-11-17T00:10:43.072Z",
+      "content_hash": "8d37abb04e3e7db192128f7bdfeae93187706ca66e62b017cecfee0b29a94d9b",
+      "verified_at": "2026-11-18T06:15:22.677Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T00:10:43.072Z"
+      "last_updated": "2026-11-18T06:15:22.677Z"
     },
     "welldone-software/why-did-you-render": {
       "repository": "welldone-software/why-did-you-render",
@@ -10731,14 +10731,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-necolas-react-native-web",
-      "content_hash": "cd96f6396100241f458d1addf5168a927da1f2eb441cf6d8521ec9e98e6711b1",
-      "verified_at": "2026-11-15T00:50:40.830Z",
+      "content_hash": "77b78dcb961d240b56a4a377336c34e5af487a1bea9ab5cc981e625675d4439c",
+      "verified_at": "2026-11-18T06:15:27.632Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-15T00:50:40.830Z"
+      "last_updated": "2026-11-18T06:15:27.632Z"
     },
     "zvec-ai/zvec-grep": {
       "repository": "zvec-ai/zvec-grep",

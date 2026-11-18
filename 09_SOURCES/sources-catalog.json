@@ -565,8 +565,8 @@
     "sourceUrl": "https://huggingface.co/Alissonerdx/BFS-Best-Face-Swap",
     "sourceVersion": "hf-alissonerdx-bfs-best-face-swap",
     "license": "Open-Source",
-    "contentHash": "7e7e5649d41c689771237e5b2208eb6dad0c3b468cc68db73de960bc642857a4",
-    "lastHarvestedAt": "2026-11-13T18:52:19.277Z",
+    "contentHash": "8e137501a0e054ac96cd835e1927fa8e125cc839d7b79e98ea2f7d5dd8059d65",
+    "lastHarvestedAt": "2026-11-18T06:15:21.091Z",
     "learningId": "learn-huggingface-alissonerdx-bfs-best-face-swap"
   },
   "hf-ukisai-swift-1.5-qwen3.8-27b-gsq-rco-gguf": {
@@ -3433,10 +3433,10 @@
     "repository": "zeronsh/zeron",
     "platform": "github",
     "sourceUrl": "https://github.com/zeronsh/zeron",
-    "sourceVersion": "f6a9bbfc",
+    "sourceVersion": "c58f65e8",
     "license": "MIT",
-    "contentHash": "3056f5ab0baaa91e6bf5148f54e37d2b2f153017f10074f0dd090e2c72c5c019",
-    "lastHarvestedAt": "2026-11-17T00:10:43.065Z",
+    "contentHash": "8d37abb04e3e7db192128f7bdfeae93187706ca66e62b017cecfee0b29a94d9b",
+    "lastHarvestedAt": "2026-11-18T06:15:22.669Z",
     "learningId": "learn-github-zeronsh-zeron"
   },
   "welldone-software-why-did-you-render": {
@@ -7123,10 +7123,10 @@
     "repository": "necolas/react-native-web",
     "platform": "github",
     "sourceUrl": "https://github.com/necolas/react-native-web",
-    "sourceVersion": "eb77ba97",
+    "sourceVersion": "06726fb2",
     "license": "MIT",
-    "contentHash": "cd96f6396100241f458d1addf5168a927da1f2eb441cf6d8521ec9e98e6711b1",
-    "lastHarvestedAt": "2026-11-15T00:50:40.821Z",
+    "contentHash": "77b78dcb961d240b56a4a377336c34e5af487a1bea9ab5cc981e625675d4439c",
+    "lastHarvestedAt": "2026-11-18T06:15:27.625Z",
     "learningId": "learn-github-necolas-react-native-web"
   },
   "zvec-ai-zvec-grep": {

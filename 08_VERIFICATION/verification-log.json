@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261116-GYUI",
-    "timestamp": "2026-11-16T15:10:08.490Z",
-    "repository": "topoteretes/cognee",
-    "learningId": "learn-github-topoteretes-cognee",
-    "contentHash": "314216efa4368f94afa850a3f1557ff68a24616621622ef65a4a3b76e4db9e62",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261116-AO0H",
-    "timestamp": "2026-11-16T15:33:14.129Z",
-    "repository": "nguyenphutrong/quotio",
-    "learningId": "learn-github-nguyenphutrong-quotio",
-    "contentHash": "8cf905111d40d62f44b62280e4ad9de37b4a58f8f9c2848f1ca4efd8b113c161",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261116-AV2J",
-    "timestamp": "2026-11-16T15:33:23.275Z",
-    "repository": "envoyproxy/envoy",
-    "learningId": "learn-github-envoyproxy-envoy",
-    "contentHash": "14b8cde10666b0b0e2b23bbb74f10d94c5a24948d34ff505a8a2190fb9b2cefe",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261116-XIPM",
     "timestamp": "2026-11-16T15:51:00.346Z",
     "repository": "tw93/Pake",
@@ -7490,6 +7445,51 @@
     "repository": "ShiftHackZ/SDAI-KMP",
     "learningId": "learn-github-shifthackz-sdai-kmp",
     "contentHash": "9c23d536dd9c76c5a7cc80011faa27608522c5f43b6ebebb55f073b904ecee53",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-8XDR",
+    "timestamp": "2026-11-18T06:15:21.087Z",
+    "repository": "Alissonerdx/BFS-Best-Face-Swap",
+    "learningId": "learn-huggingface-alissonerdx-bfs-best-face-swap",
+    "contentHash": "8e137501a0e054ac96cd835e1927fa8e125cc839d7b79e98ea2f7d5dd8059d65",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-8YLM",
+    "timestamp": "2026-11-18T06:15:22.666Z",
+    "repository": "zeronsh/zeron",
+    "learningId": "learn-github-zeronsh-zeron",
+    "contentHash": "8d37abb04e3e7db192128f7bdfeae93187706ca66e62b017cecfee0b29a94d9b",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-92FA",
+    "timestamp": "2026-11-18T06:15:27.622Z",
+    "repository": "necolas/react-native-web",
+    "learningId": "learn-github-necolas-react-native-web",
+    "contentHash": "77b78dcb961d240b56a4a377336c34e5af487a1bea9ab5cc981e625675d4439c",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

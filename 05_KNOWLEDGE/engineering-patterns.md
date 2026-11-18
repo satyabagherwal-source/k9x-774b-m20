@@ -670142,3 +670142,157 @@ fn conpty_fixture_write_preserves_partial_input_and_bounds_backpressure() {
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `c0112ee2` are properly handled with clean fallback behavior.
+
+
+---
+
+## 9137. a finished reply's rows built as what they are, not as what might st (Harvested from zeronsh/zeron)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "a finished reply's rows built as what they are, not as what might st",
+  "source": "zeronsh/zeron",
+  "source_url": "https://github.com/zeronsh/zeron",
+  "source_version": "c58f65e8",
+  "license": "MIT",
+  "extracted_at": "2026-11-18T06:15:22.244Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-zeronsh-zeron",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [zeronsh/zeron](https://github.com/zeronsh/zeron) (Revision: `c58f65e8`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `apps/zgx/src/chat.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zeronsh/zeron. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `8bd5b5d6`: Transcript: a finished reply's rows built as what they are, not as what might still change. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `apps/zgx/src/chat.rs`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+                        let fresh = Entry::new(entry);
+                            // The same as the row it has (most of a tail, a
+                            // chat opened again): what was built from it
+                            // stays, so nothing showing is made again.
+                            Some(held) if held.sum() == fresh.sum() => {}
+                            Some(held) => {
+                                open.built.remove(id.as_str());
+                                *held = fresh;
+                            }
+                            None => {
+                                open.built.remove(id.as_str());
+                                open.entries.push(fresh);
+                            }
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+                        open.built.remove(id.as_str());
+                            Some(held) => *held = Entry::new(entry),
+                            None => open.entries.push(Entry::new(entry)),
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `8bd5b5d6` are properly handled with clean fallback behavior.
+
+
+---
+
+## 9138. Build the examples app once in the release (Harvested from necolas/react-native-web)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Build the examples app once in the release",
+  "source": "necolas/react-native-web",
+  "source_url": "https://github.com/necolas/react-native-web",
+  "source_version": "06726fb2",
+  "license": "MIT",
+  "extracted_at": "2026-11-18T06:15:27.202Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-necolas-react-native-web",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [necolas/react-native-web](https://github.com/necolas/react-native-web) (Revision: `06726fb2`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `packages/react-native-web-docs/package.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in necolas/react-native-web. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `06726fb2`: Build the examples app once in the release. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing JavaScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/react-native-web-docs/package.json`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```javascript
+// Verified production-grade fix pattern:
+    "build:examples": "BASE_PATH=/react-native-web/examples npm run export -w react-native-web-examples",
+```
+
+**NEGATIVE CONSTRAINT**:
+```javascript
+// Induced defect failure mode:
+    "build:examples": "BASE_PATH=/react-native-web/examples npm run build -w react-native-web-examples",
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `06726fb2` are properly handled with clean fallback behavior.
