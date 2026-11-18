@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-18T22:14:43.903Z",
-  "total_records": 1914,
+  "last_updated": "2026-11-18T22:22:53.224Z",
+  "total_records": 1917,
   "domains": {
     "A": {
       "total": 13,
@@ -53,7 +53,7 @@
       ]
     },
     "D": {
-      "total": 805,
+      "total": 807,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -859,7 +859,9 @@
         "domain_intelligence-research-knowledge-intelligence-hf-openai-whisper-large-v3-learnings-core-invari",
         "domain_intelligence-research-knowledge-intelligence-openai-gpt-oss-20b-core-invariants",
         "DOM-D-AE671E2B",
-        "domain_intelligence-research-knowledge-intelligence-hf-openai-gpt-oss-20b-learnings-core-invariants"
+        "domain_intelligence-research-knowledge-intelligence-hf-openai-gpt-oss-20b-learnings-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-meta-llama-llama-2-7b-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-hf-meta-llama-llama-2-7b-learnings-core-invarian"
       ]
     },
     "E": {
@@ -1825,7 +1827,7 @@
       ]
     },
     "J": {
-      "total": 25,
+      "total": 26,
       "record_ids": [
         "DOM-J-C14FC2D6",
         "DOM-J-B305372A",
@@ -1851,7 +1853,8 @@
         "DOM-J-ABC3C562",
         "domain_intelligence-search-distribution-intelligence-dragonflydb-dragonfly-core-invariants",
         "domain_intelligence-search-distribution-intelligence-dragonflydb-dragonfly-learnings-core-invariants",
-        "DOM-J-3AB0ED35"
+        "DOM-J-3AB0ED35",
+        "DOM-J-3CA866B9"
       ]
     },
     "K": {
@@ -8647,8 +8650,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "aa15ce07c06411c8d36350dbd5539af5099b163f813053619a8f8ef8e7b7cce8",
-      "created_at": "2026-11-18T21:23:27.521Z"
+      "content_hash": "1100685dc7378fc0606843704f9059a5182e4e518a65cb2976fea0515212de3a",
+      "created_at": "2026-11-18T22:22:52.697Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -31010,8 +31013,8 @@
       "title": "Technical Construction Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zulip-zulip-learnings-technical-construction-intelligence-zulip-zulip-learnings-.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "896480b3500598c8171eb04cbef7e4d244979cd8e6743d7e90684299f0103459",
-      "created_at": "2026-11-18T21:02:10.291Z"
+      "content_hash": "64fbbf29ad35d9d40ab678d4472dfe6fca7cad861e18a85fd823838fd6d7e4c4",
+      "created_at": "2026-11-18T22:22:53.224Z"
     },
     "domain_intelligence-product-intelligence-software-mansion-argent-core-invariants": {
       "record_id": "domain_intelligence-product-intelligence-software-mansion-argent-core-invariants",
@@ -32026,6 +32029,72 @@
       "repository": "gluesql-gluesql-learnings",
       "content_hash": "d48c22ed34f6126d21e4fc6b0c84070ce2cd57f19d59fd2a1b1a23f407d35489",
       "created_at": "2026-11-18T22:06:58.100Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-meta-llama-llama-2-7b-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-meta-llama-llama-2-7b-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: meta-llama/Llama-2-7b Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-meta-llama-llama-2-7b-research-knowledge-intelligence-meta-llama-llama-2-7b-c.md",
+      "repository": "meta-llama/Llama-2-7b",
+      "content_hash": "378d44dc3db57885bdac0fab6f5326f7173d2ab49125e9f50e2a8163a5f887f1",
+      "created_at": "2026-11-18T22:22:15.203Z"
+    },
+    "DOM-J-3CA866B9": {
+      "record_id": "DOM-J-3CA866B9",
+      "domain_letter": "J",
+      "domain_id": "search_distribution",
+      "domain_name": "Search & Distribution Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        },
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): meta-llama/Llama-2-7b",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-meta-llama-llama-2-7b-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/meta-llama/Llama-2-7b](https://huggingface.co/meta-llama/Llama-2-7b))  \n> **Source Version**: `hf-meta-llam`  \n> **License**: Open-Source  \n> **Synthesi",
+      "content_hash": "d6893a3697a64f5626f955c9a146a398a4676fa3205179923b2873d2aa43cceb",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-meta-llama-llama-2-7b-learnings.md`  \n> **Source**: huggingface ([https://hugging -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-meta-llama-llama-2-7b-learnings.md`  \n> **Source**: huggingface ([https://hugging",
+      "provenance": {
+        "source_uri": "project://hf-meta-llama-llama-2-7b/hf-meta-llama-llama-2-7b-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-18T22:22:26.780Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-meta-llama-llama-2-7b)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-meta-llama-llama-2-7b"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D",
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.85,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-18T22:22:51.786Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-meta-llama-llama-2-7b-learnings-core-invarian": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-meta-llama-llama-2-7b-learnings-core-invarian",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-meta-llama-llama-2-7b-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-meta-llama-llama-2-7b-learnings-research-knowledge-intelligence-hf-meta-llama.md",
+      "repository": "hf-meta-llama-llama-2-7b-learnings",
+      "content_hash": "20a586670e0d96917fdbef2125e272d12c78ef3bff48f4640fe13f0e8de2eb99",
+      "created_at": "2026-11-18T22:22:51.999Z"
     }
   }
 }

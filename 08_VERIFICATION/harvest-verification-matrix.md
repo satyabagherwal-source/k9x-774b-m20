@@ -11115,3 +11115,5 @@
 | `CYCLE-20261118-IDBH` | `2026-11-18T22:14:28.589Z` | `mistralai/Mixtral-8x7B-Instruct-v0.1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-mistralai-mixtral-8x7b-instruct-v0.1-learnings.md` | Yes (`7f100369...`) |
 | `CYCLE-20261118-IIV6` | `2026-11-18T22:14:35.778Z` | `react/metro` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9290` | Yes (`46aa0fcd...`) |
 | `CYCLE-20261118-ILJB` | `2026-11-18T22:14:39.239Z` | `aws/aws-cdk` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9291` | Yes (`5deac58d...`) |
+| `CYCLE-20261118-SD89` | `2026-11-18T22:22:15.033Z` | `meta-llama/Llama-2-7b` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-meta-llama-llama-2-7b-learnings.md` | Yes (`a66f4b68...`) |
+| `CYCLE-2026-11-18-PROJ-EVOLVE` | `2026-11-18T22:22:51.811Z` | `hf-meta-llama-llama-2-7b` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-J-3CA866B9` [Domain J] | Yes (`d6893a36...`) |

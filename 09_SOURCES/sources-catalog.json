@@ -975,8 +975,8 @@
     "sourceUrl": "https://huggingface.co/meta-llama/Llama-2-7b",
     "sourceVersion": "hf-meta-llama-llama-2-7b",
     "license": "Open-Source",
-    "contentHash": "5ceaa23623aeb9495fbb3cabce34c09d175b18688eb0c2397cb1a1a163a1dbaf",
-    "lastHarvestedAt": "2026-11-14T04:36:37.128Z",
+    "contentHash": "a66f4b68caa819fb648b40ab65220dbbe71efa3d045fb36075df4b076fc4e46e",
+    "lastHarvestedAt": "2026-11-18T22:22:15.037Z",
     "learningId": "learn-huggingface-meta-llama-llama-2-7b"
   },
   "hf-mistralai-mixtral-8x7b-instruct-v0.1": {

@@ -80,8 +80,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-18T22:14:42.339Z",
-    "lastVerified": "2026-11-18T22:14:42.339Z",
+    "lastChecked": "2026-11-18T22:22:26.686Z",
+    "lastVerified": "2026-11-18T22:22:26.686Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -299,12 +299,12 @@
     "lastVerified": "2026-11-18T09:57:21.136Z"
   },
   "nucleoidai-nucleoid": {
-    "name": "NucleoidAI/Nucleoid",
+    "name": "Nucleoid",
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-18T21:42:25.909Z",
-    "lastVerified": "2026-11-18T21:42:25.909Z",
+    "lastChecked": "2026-11-18T22:22:26.680Z",
+    "lastVerified": "2026-11-18T22:22:26.680Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -313,7 +313,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "f1c29264"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -1369,9 +1370,9 @@
   "lunasec-io-lunasec": {
     "name": "lunasec",
     "officialUrl": "https://github.com/lunasec-io/lunasec",
-    "lastChecked": "2026-11-18T16:41:05.614Z",
+    "lastChecked": "2026-11-18T22:22:21.688Z",
     "revisionIdentifier": "c6bb0762",
-    "lastVerified": "2026-11-18T16:41:05.614Z"
+    "lastVerified": "2026-11-18T22:22:21.688Z"
   },
   "seaql-sea-orm": {
     "name": "sea-orm",
@@ -4535,5 +4536,50 @@
     "lastChecked": "2026-11-18T22:14:37.744Z",
     "revisionIdentifier": "7dc1af6b",
     "lastVerified": "2026-11-18T22:14:37.744Z"
+  },
+  "webrtc-rs-webrtc": {
+    "name": "webrtc",
+    "officialUrl": "https://github.com/webrtc-rs/webrtc",
+    "lastChecked": "2026-11-18T22:22:11.698Z",
+    "revisionIdentifier": "3c4584ae",
+    "lastVerified": "2026-11-18T22:22:11.698Z"
+  },
+  "hf-meta-llama-llama-2-7b": {
+    "name": "meta-llama/Llama-2-7b",
+    "officialUrl": "https://huggingface.co/meta-llama/Llama-2-7b",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-18T22:22:14.511Z",
+    "lastVerified": "2026-11-18T22:22:14.511Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-meta-llama-llama-2-7b",
+    "contentHash": "a66f4b68caa819fb648b40ab65220dbbe71efa3d045fb36075df4b076fc4e46e",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "thecodingmachine-react-native-boilerplate": {
+    "name": "react-native-boilerplate",
+    "officialUrl": "https://github.com/thecodingmachine/react-native-boilerplate",
+    "lastChecked": "2026-11-18T22:22:16.814Z",
+    "revisionIdentifier": "1a8b1d5b",
+    "lastVerified": "2026-11-18T22:22:16.814Z"
+  },
+  "infracost-infracost": {
+    "name": "infracost",
+    "officialUrl": "https://github.com/infracost/infracost",
+    "lastChecked": "2026-11-18T22:22:19.204Z",
+    "revisionIdentifier": "34e9cd06",
+    "lastVerified": "2026-11-18T22:22:19.204Z"
+  },
+  "skytable-skytable": {
+    "name": "skytable",
+    "officialUrl": "https://github.com/skytable/skytable",
+    "lastChecked": "2026-11-18T22:22:24.181Z",
+    "revisionIdentifier": "146d8664",
+    "lastVerified": "2026-11-18T22:22:24.181Z"
   }
 }

@@ -11148,3 +11148,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-mistralai-mixtral-8x7b-instruct-v0-1` | `https://huggingface.co/mistralai/Mixtral-8x7B-Instruct-v0.1` | `hf-mistral` | Multi-dimensional audit evidence | 2026-11-18T22:14:28.593Z |
 | `learn-github-react-metro` | `https://github.com/react/metro` | `3b7e1e1b` | Multi-dimensional audit evidence | 2026-11-18T22:14:35.782Z |
 | `learn-github-aws-aws-cdk` | `https://github.com/aws/aws-cdk` | `0561d668` | Multi-dimensional audit evidence | 2026-11-18T22:14:39.242Z |
+| `learn-huggingface-meta-llama-llama-2-7b` | `https://huggingface.co/meta-llama/Llama-2-7b` | `hf-meta-ll` | Multi-dimensional audit evidence | 2026-11-18T22:22:15.037Z |
+| `learn-dom-j-3ca866b9` | `project://hf-meta-llama-llama-2-7b` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-meta-llama-llama-2-7b-learnings.md` | 2026-11-18T22:22:51.811Z |

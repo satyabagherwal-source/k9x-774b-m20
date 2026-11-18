@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T22:14:39.247Z",
-  "total_cycles_completed": 10626,
-  "total_learnings_persisted": 10626,
+  "last_updated": "2026-11-18T22:22:15.041Z",
+  "total_cycles_completed": 10627,
+  "total_learnings_persisted": 10627,
   "total_rules_promoted": 10054,
   "history": [
-    {
-      "timestamp": "2026-11-18T08:51:35.085Z",
-      "repository": "google-t5/t5-small",
-      "learningId": "learn-huggingface-google-t5-t5-small",
-      "promotedRulesCount": 2,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-18T08:51:35.973Z",
       "repository": "msasikanth/twine",
@@ -1403,6 +1396,13 @@
       "repository": "aws/aws-cdk",
       "learningId": "learn-github-aws-aws-cdk",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T22:22:15.041Z",
+      "repository": "meta-llama/Llama-2-7b",
+      "learningId": "learn-huggingface-meta-llama-llama-2-7b",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]
