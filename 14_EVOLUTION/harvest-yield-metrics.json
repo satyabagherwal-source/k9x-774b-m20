@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T12:33:29.332Z",
-  "total_cycles_completed": 10486,
-  "total_learnings_persisted": 10486,
-  "total_rules_promoted": 9976,
+  "last_updated": "2026-11-18T12:43:14.802Z",
+  "total_cycles_completed": 10489,
+  "total_learnings_persisted": 10489,
+  "total_rules_promoted": 9978,
   "history": [
-    {
-      "timestamp": "2026-11-17T22:39:51.260Z",
-      "repository": "google/tcmalloc",
-      "learningId": "learn-github-google-tcmalloc",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T22:40:00.204Z",
-      "repository": "aleo-labs-protocol/snarkOS",
-      "learningId": "learn-github-aleo-labs-protocol-snarkos",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T22:40:03.648Z",
-      "repository": "xerj-org/xerj",
-      "learningId": "learn-github-xerj-org-xerj",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-17T22:56:28.380Z",
       "repository": "jithin-sabu/purge-app",
@@ -1403,6 +1382,27 @@
       "repository": "software-mansion/argent",
       "learningId": "learn-github-software-mansion-argent",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T12:42:40.721Z",
+      "repository": "ajeetdsouza/zoxide",
+      "learningId": "learn-github-ajeetdsouza-zoxide",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T12:42:47.933Z",
+      "repository": "nats-io/nats-server",
+      "learningId": "learn-github-nats-io-nats-server",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T12:43:14.802Z",
+      "repository": "prism-ml/Ternary-Bonsai-2-27B-gguf",
+      "learningId": "learn-huggingface-prism-ml-ternary-bonsai-2-27b-gguf",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

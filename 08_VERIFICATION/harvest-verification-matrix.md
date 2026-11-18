@@ -10962,3 +10962,6 @@
 | `CYCLE-20261118-F0XO` | `2026-11-18T12:24:00.636Z` | `goharbor/harbor` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9217` | Yes (`9813239b...`) |
 | `CYCLE-20261118-QN34` | `2026-11-18T12:33:02.560Z` | `Lightricks/LTX-2.5` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-lightricks-ltx-2.5-learnings.md` | Yes (`78ef1999...`) |
 | `CYCLE-20261118-R7QH` | `2026-11-18T12:33:29.321Z` | `software-mansion/argent` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9218` | Yes (`c8ae96e0...`) |
+| `CYCLE-20261118-316W` | `2026-11-18T12:42:40.712Z` | `ajeetdsouza/zoxide` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9219` | Yes (`bb162008...`) |
+| `CYCLE-20261118-36R8` | `2026-11-18T12:42:47.924Z` | `nats-io/nats-server` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9220` | Yes (`8b1b5086...`) |
+| `CYCLE-20261118-3RHM` | `2026-11-18T12:43:14.794Z` | `prism-ml/Ternary-Bonsai-2-27B-gguf` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-prism-ml-ternary-bonsai-2-27b-gguf-learnings.md` | Yes (`022f5de1...`) |

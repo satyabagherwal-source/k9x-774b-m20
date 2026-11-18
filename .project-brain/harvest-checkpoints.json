@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-18T12:33:29.336Z",
+  "last_updated": "2026-11-18T12:43:14.804Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -425,14 +425,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-prism-ml-ternary-bonsai-2-27b-gguf",
-      "content_hash": "dbeb7164897df47373cbefb04e511b0e5dce0a610fcf2829e854d69cd3d045a7",
-      "verified_at": "2026-11-18T01:57:58.625Z",
+      "content_hash": "022f5de1c0e20818b725aaa60462c14d28aa273a6e6bb51171185dacaeefaa21",
+      "verified_at": "2026-11-18T12:43:14.804Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T01:57:58.625Z"
+      "last_updated": "2026-11-18T12:43:14.804Z"
     },
     "Viggle/Qwen-Image-2.1-viggle-turbo": {
       "repository": "Viggle/Qwen-Image-2.1-viggle-turbo",
@@ -4131,14 +4131,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-ajeetdsouza-zoxide",
-      "content_hash": "169daebcc6d860be289b993cd43ee5b393fca81100f636d278464febe3ffcdd5",
-      "verified_at": "2026-11-09T02:01:01.553Z",
+      "content_hash": "bb162008c94b9168737f2f3fe9273b2cc783e65bf01fdbb1b86a40871ddd8ed0",
+      "verified_at": "2026-11-18T12:42:40.723Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-09T02:01:01.553Z"
+      "last_updated": "2026-11-18T12:42:40.723Z"
     },
     "react-native-elements/react-native-elements": {
       "repository": "react-native-elements/react-native-elements",
@@ -10941,14 +10941,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nats-io-nats-server",
-      "content_hash": "462f2d59ef9b46f969f3203798665769e716b72cf38702932cebeac233be57c9",
-      "verified_at": "2026-11-17T19:27:30.676Z",
+      "content_hash": "8b1b5086757e389ba78ef06b5aadc3960711a7a21fee2820633d924823dc3863",
+      "verified_at": "2026-11-18T12:42:47.935Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T19:27:30.676Z"
+      "last_updated": "2026-11-18T12:42:47.935Z"
     },
     "str4d/rage": {
       "repository": "str4d/rage",

@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-18T12:33:35.043Z",
-  "total_verified_learnings": 9001,
+  "last_updated": "2026-11-18T12:43:19.407Z",
+  "total_verified_learnings": 9002,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 21234,
+  "total_items": 21244,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -221160,8 +221160,8 @@
       "slug": "nats-io-nats-server",
       "platform": "github",
       "source_url": "https://github.com/nats-io/nats-server",
-      "source_version": "582fb8e9",
-      "content_hash": "462f2d59ef9b46f969f3203798665769e716b72cf38702932cebeac233be57c9",
+      "source_version": "ea28ae77",
+      "content_hash": "8b1b5086757e389ba78ef06b5aadc3960711a7a21fee2820633d924823dc3863",
       "dossier_path": "07_PROJECT_LEARNING/nats-io-nats-server-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nats-io-nats-server-learnings.md",
       "promoted_rules": [
@@ -221179,6 +221179,11 @@
           "number": 9038,
           "title": "pull requests CI check",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9220,
+          "title": "[IMPROVED] Lock-free JetStream account usage updates",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -221186,7 +221191,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T19:27:30.475Z",
+      "verified_at": "2026-11-18T12:42:47.752Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -221228,10 +221233,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nats-io-nats-server-technical-construction-intelligence-nats-io-nats-server-core.md",
       "title": "Technical Construction Intelligence: nats-io/nats-server Core Invariants",
       "repository": "nats-io/nats-server",
-      "source_version": "582fb8e9",
-      "content_hash": "d489350393dd04c3288541303c8b33b8acd864b17c089f625fe61adf9314a43d",
+      "source_version": "ea28ae77",
+      "content_hash": "27293dc15df0aed8573dce35a7cc470f0923972853001a7032c0177aa91de368",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T19:27:31.000Z"
+      "persisted_at": "2026-11-18T12:42:48.254Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nats-io-nats-server": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nats-io-nats-server",
@@ -221240,10 +221245,10 @@
       "relative_path": "08_VERIFICATION/nats-io-nats-server-verification-protocol-empirical-defect-shield-for-nats-io-na.md",
       "title": "Verification Protocol: Empirical Defect Shield for nats-io/nats-server",
       "repository": "nats-io/nats-server",
-      "source_version": "582fb8e9",
-      "content_hash": "28bb9a13aa12cdbf30e3154d4fecdddf2a23bd79a65f5e6e539cce5f6bc99ca6",
+      "source_version": "ea28ae77",
+      "content_hash": "1541e45f1105da4b0a8b284d295b1d5dca497a7f78dae82ba40882ecacd28a5b",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T19:27:31.150Z"
+      "persisted_at": "2026-11-18T12:42:48.379Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-meituan-longcat-longcat-2-5-learnings-core-in": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-meituan-longcat-longcat-2-5-learnings-core-in",
@@ -221277,9 +221282,9 @@
       "title": "Technical Construction Intelligence: nats-io-nats-server-learnings Core Invariants",
       "repository": "nats-io-nats-server-learnings",
       "source_version": "HEAD",
-      "content_hash": "8436d24e75cc5be89de49f4b4e305113d25ae2e0cfceaba90c9c9df2e971e6aa",
+      "content_hash": "7d39d7a533aa43b51928175c434e9a22cb28f0d717a818c66ebd6646cc3f072a",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T19:27:40.816Z"
+      "persisted_at": "2026-11-18T12:43:19.284Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nats-io-nats-server-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nats-io-nats-server-learnings",
@@ -221289,9 +221294,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for nats-io-nats-server-learnings",
       "repository": "nats-io-nats-server-learnings",
       "source_version": "HEAD",
-      "content_hash": "b4ede8822037521ef58bbba38e0d239b4494a8d6c64f314e5f6df535ffa33ea0",
+      "content_hash": "3c15caefd1ae0a98362b61d00950be333cdf78cb9603277bdc0772e071c2e6cc",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T19:27:40.967Z"
+      "persisted_at": "2026-11-18T12:43:19.407Z"
     },
     "learn-huggingface-meta-llama-meta-llama-3-8b-instruct": {
       "learning_id": "learn-huggingface-meta-llama-meta-llama-3-8b-instruct",
@@ -280050,7 +280055,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/prism-ml/Ternary-Bonsai-2-27B-gguf",
       "source_version": "hf-prism-ml-ternary-bonsai-2-27b-gguf",
-      "content_hash": "dbeb7164897df47373cbefb04e511b0e5dce0a610fcf2829e854d69cd3d045a7",
+      "content_hash": "022f5de1c0e20818b725aaa60462c14d28aa273a6e6bb51171185dacaeefaa21",
       "dossier_path": "07_PROJECT_LEARNING/hf-prism-ml-ternary-bonsai-2-27b-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-prism-ml-ternary-bonsai-2-27b-gguf-learnings.md",
       "promoted_rules": [],
@@ -280059,7 +280064,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T01:57:58.425Z",
+      "verified_at": "2026-11-18T12:43:14.610Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -280076,9 +280081,9 @@
       "title": "Research & Knowledge Intelligence: prism-ml/Ternary-Bonsai-2-27B-gguf Core Invariants",
       "repository": "prism-ml/Ternary-Bonsai-2-27B-gguf",
       "source_version": "hf-prism-ml-ternary-bonsai-2-27b-gguf",
-      "content_hash": "3347b7340e55141f08c8b72710770a3cc42b4c75606317fd12d5b5bfca4e32a5",
+      "content_hash": "2394ed7343fb6c2792dde1f29191c7c52b3003764f3a57b3d107ba04cf41ee6b",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T01:57:58.793Z"
+      "persisted_at": "2026-11-18T12:43:14.968Z"
     },
     "rule-9104": {
       "learning_id": "rule-9104",
@@ -280126,9 +280131,9 @@
       "title": "Research & Knowledge Intelligence: hf-prism-ml-ternary-bonsai-2-27b-gguf-learnings Core Invariants",
       "repository": "hf-prism-ml-ternary-bonsai-2-27b-gguf-learnings",
       "source_version": "HEAD",
-      "content_hash": "37813d0e9c0270920fba94420b3f292d9ae3037cc13a98ec612de73af3b69ec8",
+      "content_hash": "5645c1805b99f8bd60ef53a3193c2fcdb67a8196b91b06250a325a6cd8031cf9",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T01:58:08.611Z"
+      "persisted_at": "2026-11-18T12:43:18.662Z"
     },
     "agent_contract-agent-contract-skyhook-io-radar-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-skyhook-io-radar-learnings-autonomous-specialist-persona",
@@ -286436,6 +286441,151 @@
       "content_hash": "172f81dd90bbb0fb3f132bb8c1def9443136a4df88ca4d29b82e6078cb941d19",
       "domain_letter": "K",
       "persisted_at": "2026-11-18T12:33:33.532Z"
+    },
+    "learn-github-ajeetdsouza-zoxide": {
+      "learning_id": "learn-github-ajeetdsouza-zoxide",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "ajeetdsouza/zoxide",
+      "repository": "ajeetdsouza/zoxide",
+      "slug": "ajeetdsouza-zoxide",
+      "platform": "github",
+      "source_url": "https://github.com/ajeetdsouza/zoxide",
+      "source_version": "2f4bceba",
+      "content_hash": "bb162008c94b9168737f2f3fe9273b2cc783e65bf01fdbb1b86a40871ddd8ed0",
+      "dossier_path": "07_PROJECT_LEARNING/ajeetdsouza-zoxide-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/ajeetdsouza-zoxide-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 9219,
+          "title": "keep the permissions of db.txt when saving",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-18T12:42:40.532Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-9219": {
+      "learning_id": "rule-9219",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9219,
+      "title": "keep the permissions of db.txt when saving",
+      "source_url": "https://github.com/ajeetdsouza/zoxide",
+      "source_version": "2f4bceba",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-18T12:42:40.532Z"
+    },
+    "candidate_directive-keep-the-permissions-of-db-txt-when-saving": {
+      "item_id": "candidate_directive-keep-the-permissions-of-db-txt-when-saving",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-31BS-keep-the-permissions-of-db-txt-when-saving.md",
+      "title": "keep the permissions of db.txt when saving",
+      "repository": "ajeetdsouza/zoxide",
+      "source_version": "2f4bceba",
+      "content_hash": "497f4497713134fe4212bf81bbbb280e4d601c69460dc56e37fc0cee4c6f8d86",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-18T12:42:40.889Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-ajeetdsouza-zoxide-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-ajeetdsouza-zoxide-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-ajeetdsouza-zoxide-technical-construction-intelligence-ajeetdsouza-zoxide-core-i.md",
+      "title": "Technical Construction Intelligence: ajeetdsouza/zoxide Core Invariants",
+      "repository": "ajeetdsouza/zoxide",
+      "source_version": "2f4bceba",
+      "content_hash": "045e17c5ac2e49cb8354811406d8ddbbe87d57b1cc22966a74059b047e647082",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-18T12:42:41.025Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-ajeetdsouza-zoxide": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-ajeetdsouza-zoxide",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/ajeetdsouza-zoxide-verification-protocol-empirical-defect-shield-for-ajeetdsouza.md",
+      "title": "Verification Protocol: Empirical Defect Shield for ajeetdsouza/zoxide",
+      "repository": "ajeetdsouza/zoxide",
+      "source_version": "2f4bceba",
+      "content_hash": "1dc764b063febd5c8e6bb41f1a886b4a2b5812b4d79828227af736c4697e5b29",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-18T12:42:41.158Z"
+    },
+    "rule-9220": {
+      "learning_id": "rule-9220",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9220,
+      "title": "[IMPROVED] Lock-free JetStream account usage updates",
+      "source_url": "https://github.com/nats-io/nats-server",
+      "source_version": "ea28ae77",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-18T12:42:47.752Z"
+    },
+    "candidate_directive-improved-lock-free-jetstream-account-usage-updates": {
+      "item_id": "candidate_directive-improved-lock-free-jetstream-account-usage-updates",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-3UUS-improved-lock-free-jetstream-account-usage-updates.md",
+      "title": "[IMPROVED] Lock-free JetStream account usage updates",
+      "repository": "nats-io-nats-server-learnings",
+      "source_version": "HEAD",
+      "content_hash": "9ecb796004069d58c9d7a87682ec160f0f1ad5af7ba6f5dfcf25d64deaef3873",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-18T12:43:19.158Z"
+    },
+    "candidate_directive-db-keep-the-permissions-of-db-txt-when-saving": {
+      "item_id": "candidate_directive-db-keep-the-permissions-of-db-txt-when-saving",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-3U1T-db-keep-the-permissions-of-db-txt-when-saving.md",
+      "title": "db): keep the permissions of db.txt when saving",
+      "repository": "ajeetdsouza-zoxide-learnings",
+      "source_version": "HEAD",
+      "content_hash": "3755fad90f861eadf077dbedc1e33a11a790ff93a6710903b84620456d5d1a5b",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-18T12:43:18.114Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-ajeetdsouza-zoxide-learnings-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-ajeetdsouza-zoxide-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-ajeetdsouza-zoxide-learnings-technical-construction-intelligence-ajeetdsouza-zox.md",
+      "title": "Technical Construction Intelligence: ajeetdsouza-zoxide-learnings Core Invariants",
+      "repository": "ajeetdsouza-zoxide-learnings",
+      "source_version": "HEAD",
+      "content_hash": "c621af2e0f780c527c33da0ffd837970414c1647c876a6e3cda7aeba32d61945",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-18T12:43:18.246Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-ajeetdsouza-zoxide-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-ajeetdsouza-zoxide-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/ajeetdsouza-zoxide-learnings-verification-protocol-empirical-defect-shield-for-a.md",
+      "title": "Verification Protocol: Empirical Defect Shield for ajeetdsouza-zoxide-learnings",
+      "repository": "ajeetdsouza-zoxide-learnings",
+      "source_version": "HEAD",
+      "content_hash": "85963665645438d2eb185f24f58bf188be316559ed3b95a480bda57d97bbdf3a",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-18T12:43:18.371Z"
     }
   },
   "ai-builder-brain": {

@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261117-RJ1M",
-    "timestamp": "2026-11-17T02:02:12.394Z",
-    "repository": "ClementTsang/bottom",
-    "learningId": "learn-github-clementtsang-bottom",
-    "contentHash": "a641928a34c431e3850a5cd6ad8b76499c9d29533d6eb77468d76cbd87e1afcc",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261117-RM9F",
-    "timestamp": "2026-11-17T02:02:16.563Z",
-    "repository": "KeyboardKit/KeyboardKit",
-    "learningId": "learn-github-keyboardkit-keyboardkit",
-    "contentHash": "5bfaf4648bc8712aeafa232c79c7dcd7e5d96b507c2e1a7dacc68809dbd34b56",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261117-RNQ7",
-    "timestamp": "2026-11-17T02:02:18.463Z",
-    "repository": "openkruise/kruise",
-    "learningId": "learn-github-openkruise-kruise",
-    "contentHash": "397ef3617c94eb968acdf4d911cb582685acde1c599406362119d38f34ed3ed8",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261117-RR78",
     "timestamp": "2026-11-17T02:02:22.964Z",
     "repository": "SeekStorm/SeekStorm",
@@ -7492,6 +7447,51 @@
     "contentHash": "c8ae96e0ebfcbcfaef9197b2108037b468b0df31e3e167ad83def7960e4bd9eb",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-316W",
+    "timestamp": "2026-11-18T12:42:40.712Z",
+    "repository": "ajeetdsouza/zoxide",
+    "learningId": "learn-github-ajeetdsouza-zoxide",
+    "contentHash": "bb162008c94b9168737f2f3fe9273b2cc783e65bf01fdbb1b86a40871ddd8ed0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-36R8",
+    "timestamp": "2026-11-18T12:42:47.924Z",
+    "repository": "nats-io/nats-server",
+    "learningId": "learn-github-nats-io-nats-server",
+    "contentHash": "8b1b5086757e389ba78ef06b5aadc3960711a7a21fee2820633d924823dc3863",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-3RHM",
+    "timestamp": "2026-11-18T12:43:14.794Z",
+    "repository": "prism-ml/Ternary-Bonsai-2-27B-gguf",
+    "learningId": "learn-huggingface-prism-ml-ternary-bonsai-2-27b-gguf",
+    "contentHash": "022f5de1c0e20818b725aaa60462c14d28aa273a6e6bb51171185dacaeefaa21",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

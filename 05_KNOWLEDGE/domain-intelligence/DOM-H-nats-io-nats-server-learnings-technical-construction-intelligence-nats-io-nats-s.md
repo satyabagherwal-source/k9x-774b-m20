@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-17T19:27:40.554Z",
+  "timestamp": "2026-11-18T12:43:19.053Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-nats-io-nats-server-learnings",
@@ -14,24 +14,24 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [nats-io-nats-server-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-17T19:27:40.554Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-18T12:43:19.053Z`  
 > **Learning ID**: `LEARN-EVO-nats-io-nats-server-learnings`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), I (Content & Information Intelligence), L (Deployment & Operations Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), D (Research & Knowledge Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 62%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), I (Content & Information Intelligence), L (Deployment & Operations Intelligence), M (Feedback & Evolution Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), D (Research & Knowledge Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 73%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from nats-io-nats-server-learnings:
 
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nats-io-nats-server-learnings.md`  
 > **Source**: github ([https://github.com/nats-io/nats-server](https://github.com/nats-io/nats-server))  
-> **Source Version**: `582fb8e9`  
+> **Source Version**: `ea28ae77`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-17T19:27:29.614Z  
+> **Timestamp**: 2026-11-18T12:42:46.968Z  
 > **Learning ID**: `learn-github-nats-io-nats-server`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nats-io-nats-server-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/nats-io/nats-server](https://github.com/nats-io/nats-server))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T19:27:29.608Z  
+> **Harvest Timestamp**: 2026-11-18T12:42:46.962Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: High-Performance server for NATS.io, the cloud and edge native messaging system.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 21053 stars
+- **Stars / Engagement**: 21055 stars
 
 ---
 
@@ -2754,33 +2754,606 @@ func (l *Logger) Tracef(format string, v ...any) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `fc69bed0` (2026-11-17)
-**Commit Message**: Fix pull requests CI check
+### Incident Patch 1: `ea28ae77` (2026-11-18)
+**Commit Message**: [IMPROVED] Lock-free JetStream account usage updates (#8893)
 
-[skip ci]
+Before this change, every stored or removed message ran
+jsAccount.wouldExceedLimits (usageMu read-locked, twice for fast batch)
+and then, from the store callback, jsAccount.updateUsage (usageMu
+write-locked) to add the message size to the tier's counters. With
+several streams in one account the stream goroutines serialized on that
+write lock, so aggregate ingest fell as streams were added (one stream
+1.35M msgs/s, 16 streams in one account 0.95M) while the same streams in
+separate accounts scaled (4.2M).
 
-Signed-off-by: Neil Twigg <[REDACTED_EMAIL]>
+This PR changes `jsaStorage` counters (and `lupdate` in `jsAccount`) to
+be Atomics, which unlocks the scalability when using multiple streams
+within one account as the per-message `updateUsage` hold `usageMu` only
+for reading.
 
-**File**: `.github/workflows/pull-requests.yml` (modified, +1/-1)
+A new jsa.tierUsage(tier) looks up or creates the tier entry and each
+stream keeps `mset.usage (atomic.Pointer[jsaStorage])` such that
+storeUpdates calls updateUsageCounters with that pointer and takes no
+lock, except while a drift repair is running (jsa.sync set).
+
+Measured on a 30-core machine, memory storage, 128B messages, fast
+batch, one publisher per stream, 16 streams in one account: 0.95M
+
+**File**: `server/jetstream.go` (modified, +88/-46)
 ```diff
-@@ -53,7 +53,7 @@ jobs:
-           done < <(git rev-list --no-merges "$range")
+@@ -154,9 +154,21 @@ type remoteUsage struct {
+ 	err   uint64
+ }
  
-           if [ "$missing" -ne 0 ]; then
--            body="$(printf 'Please review the `CONTRIBUTING.md` guide as some commits are missing the `Signed-off-by:` declaration in their commit messages.\n\nTo correct, please amend the commit messages of the following commits and force-push:\n\n%s\n\nWe can't merge your PR until this is done. If not corrected, this PR will be automatically closed soon.' "$missing_list")"
-+            body="$(printf 'Please review the `CONTRIBUTING.md` guide as some commits are missing the `Signed-off-by:` declaration in their commit messages.\n\nTo correct, please amend the commit messages of the following commits and force-push:\n\n%s\n\nWe cannot merge your PR until this is done. If not corrected, this PR will be automatically closed soon.' "$missing_list")"
-             gh pr comment "$PR_NUMBER" --repo "$GITHUB_REPOSITORY" --body "$body"
-             exit 1
-           fi
++// Per-tier usage counters of an account.
++type jsaCounters struct {
++	mem   atomic.Int64
++	store atomic.Int64
++}
++
+ type jsaStorage struct {
+-	total jsaUsage
+-	local jsaUsage
++	total jsaCounters // usage of this tier across the cluster: local + all remote nodes
++	local jsaCounters // usage of this tier on this server
++}
++
++// isZero reports whether nothing has been recorded for this tier.
++func (s *jsaStorage) isZero() bool {
++	return s.total.mem.Load() == 0 && s.total.store.Load() == 0 &&
++		s.local.mem.Load() == 0 && s.local.store.Load() == 0
+ }
+ 
+ // This represents a jetstream enabled account.
+@@ -189,7 +201,7 @@ type jsAccount struct {
+ 	usageErr   uint64
+ 	updatesPub string
+ 	updatesSub *subscription
+-	lupdate    time.Time
++	lupdate    atomic.Int64 // Unix nanos of the last cluster usage update, read without usageMu.
+ 	utimer     *time.Timer
+ }
+ 
+@@ -1974,14 +1986,14 @@ func (a *Account) JetStreamUsage() JetStreamAccountStats {
+ 			skipped := 0
+ 			stats.Tiers = make(map[string]JetStreamTier)
+ 			for t, total := range jsa.usage {
+-				if _, ok := jsa.limits[t]; !ok && (*total) == (jsaStorage{}) {
++				if _, ok := jsa.limits[t]; !ok && total.isZero() {
+ 					// skip tiers not present that don't contain a count
+ 					// In case this shows an empty stream, that tier will be added when iterating over streams
+ 					skipped++
+ 				} else {
+ 					tier := JetStreamTier{
+-						Memory: uint64(total.total.mem),
+-						Store:  uint64(total.total.store),
++						Memory: uint64(total.total.mem.Load()),
++						Store:  uint64(total.total.store.Load()),
+ 						Limits: jsa.limits[t],
+ 					}
+ 					if singleServer {
+@@ -2138,8 +2150,8 @@ func (jsa *jsAccount) removeRemoteUsage(rnode string) {
+ 	}
+ 	for tierName, usage := range rUsage.tiers {
+ 		if total := jsa.usage[tierName]; total != nil {
+-			total.total.mem -= usage.mem
+-			total.total.store -= usage.store
++			total.total.mem.Add(-usage.mem)
++			total.total.store.Add(-usage.store)
+ 		}
+ 	}
+ 	jsa.apiTotal -= rUsage.api
+@@ -2198,17 +2210,17 @@ func (jsa *jsAccount) remoteUpdateUsage(sub *subscription, c *client, _ *Account
+ 			total = &jsaStorage{}
+ 			jsa.usage[tierName] = total
+ 		}
+-		// Update the usage for this remote.
++		// Update the usage for this remote and move the tier total by the
++		// change against the previous snapshot from this node.
++		var prevMem, prevStore int64
+ 		if usage := rUsage.tiers[tierName]; usage != nil {
+-			// Decrement our old values.
+-			total.total.mem -= usage.mem
+-			total.total.store -= usage.store
++			prevMem, prevStore = usage.mem, usage.store
+ 			usage.mem, usage.store = memUsed, storeUsed
+ 		} else {
+ 			rUsage.tiers[tierName] = &jsaUsage{memUsed, storeUsed}
+ 		}
+-		total.total.mem += memUsed
+-		total.total.store += storeUsed
++		total.total.mem.Add(memUsed - prevMem)
++		total.total.store.Add(storeUsed - prevStore)
+ 	}
+ 
+ 	var le = binary.LittleEndian
+@@ -2302,22 +2314,22 @@ func (jsa *jsAccount) checkAndSyncUsage(tierName string, storeType StorageType)
+ 	var needClusterUpdate bool
+ 	// If we do not match on our calculations compute delta and adjust.
+ 	if storeType == MemoryStorage {
+-		if total != usage.local.mem {
++		if local := usage.local.mem.Load(); total != local {
+ 			s.Warnf("MemStore usage drift of %v vs %v detected for account %q",
+-				friendlyBytes(total), friendlyBytes(usage.local.mem), jsa.account.GetName())
+-			delta := total - usage.local.mem
+-			usage.local.mem += delta
+-			usage.total.mem += delta
++				friendlyBytes(total), friendlyBytes(local), jsa.account.GetName())
++			delta := total - local
++			usage.local.mem.Add(delta)
++			usage.total.mem.Add(delta)
+ 			atomic.AddInt64(&js.memUsed, delta)
+ 			needClusterUpdate = true
+ 		}
+ 	} else {
+-		if total != usage.local.store {
++		if local := usage.local.store.Load(); total != local {
+ 			s.Warnf("FileStore usage drift of %v vs %v detected for account %q",
+-				friendlyBytes(total), friendlyBytes(usage.local.store), jsa.account.GetName())
+-			delta := total - usage.local.store
+-			usage.local.store += delta
+-			usage.total.store += delta
++				friendlyBytes(total), friendlyBytes(local), jsa.account.GetName())
++			delta := total - local
++			usage.local.store.Add(delta)
++			usage.total.store.Add(delta)
+ 			atomic.AddInt64(&js.storeUsed, delta)
+ 			needClusterUpdate = true
+ 		}
+@@ -2329,9 +2341,31 @@ func (jsa *jsAccount) checkAndSyncUsage(tierName string, storeType StorageType)
+ 	}
+ }
+ 
++// Returns the tier's usage counters, creating them on first use.
++func (jsa *jsAccount) tierUsage(tierName string) *jsaStorage {
++	jsa.usageMu.RLock()
++	s := jsa.usage[tierName]
++	jsa.usageMu.RUnlock()
++	if s != nil {
++		return s
++	}
++	jsa.usageMu.Lock()
++	defer jsa.usageMu.Unlock()
++	if s = jsa.usage[tierName]; s == nil {
++		s = &jsaStorage{}
++		jsa.usage[tierName] = s
++	}
++	return s
++}
++
+ // Updates accounting on in use memory and storage. This is called from locally
+ // by the lower storage layers.
+ func (jsa *js
+```
+
+**File**: `server/jetstream_test.go` (modified, +46/-1)
+```diff
+@@ -18413,7 +18413,7 @@ func TestJetStreamUsageSyncDeadlock(t *testing.T) {
+ 	jsa.usageMu.Lock()
+ 	st, ok := jsa.usage[_EMPTY_]
+ 	require_True(t, ok)
+-	st.local.store = -1000
++	st.local.store.Store(-1000)
+ 	jsa.usageMu.Unlock()
+ 
+ 	sendStreamMsg(t, nc, "foo", "hello")
+@@ -29279,3 +29279,48 @@ func TestJetStreamStoredReservedDeliverSubjectRejected(t *testing.T) {
+ 	require_Error(t, err)
+ 	require_Contains(t, err.Error(), NewJSConsumerInvalidDeliverSubjectError().Error())
+ }
++
++func TestJetStreamAccountUsageConcurrentStreams(t *testing.T) {
++	s := RunBasicJetStreamServer(t)
++	defer s.Shutdown()
++
++	const numStreams, numMsgs = 8, 1000
++	acc := s.GlobalAccount()
++	msets := make([]*stream, numStreams)
++	for i := range msets {
++		mset, err := acc.addStream(&StreamConfig{
++			Name:     fmt.Sprintf("S%d", i),
++			Subjects: []string{fmt.Sprintf("s.%d", i)},
++			Storage:  MemoryStorage,
++			// Also removes messages, so usage goes both up and down.
++			MaxMsgs: numMsgs / 2,
++		})
++		require_NoError(t, err)
++		msets[i] = mset
++	}
++
++	// Store from one goroutine per stream, so all streams update the account usage concurrently.
++	payload := make([]byte, 128)
++	var wg sync.WaitGroup
++	for i, mset := range msets {
++		wg.Add(1)
++		go func(subj string, mset *stream) {
++			defer wg.Done()
++			for range numMsgs {
++				if err := mset.processJetStreamMsg(subj, _EMPTY_, nil, payload, 0, 0, nil, false, true); err != nil {
++					t.Error(err)
++					return
++				}
++			}
++		}(fmt.Sprintf("s.%d", i), mset)
++	}
++	wg.Wait()
++
++	var stored uint64
++	for _, mset := range msets {
++		state := mset.state()
++		require_Equal(t, state.Msgs, numMsgs/2)
++		stored += state.Bytes
++	}
++	require_Equal(t, acc.JetStreamUsage().Memory, stored)
++}
+```
+
+**File**: `server/stream.go` (modified, +8/-2)
+```diff
+@@ -576,6 +576,11 @@ type stream struct {
+ 	// which reads the raft node's current state, this tracks our own processed leadership.
+ 	leader atomic.Bool
+ 
++	// The tier is the number of replicas for the stream (e.g. "R1" or "R3"), with its account usage counters.
++	// Both are set on creation, and again when a replicas change moves the stream to another tier.
++	tier  string
++	usage atomic.Pointer[jsaStorage]
++
+ 	pubAck    []byte                  // The template (prefix) to generate the pubAck responses for this stream quickly.
+ 	outq      *jsOutQ                 // Queue of *jsPubMsg for sending messages.
+ 	msgs      *ipQueue[*inMsg]        // Intra-process queue for the ingress of messages.
+@@ -590,7 +595,6 @@ type stream struct {
+ 	cfgMu     sync.RWMutex            // Config mutex used to solve some races with consumer code
+ 	created   time.Time               // Time the stream was created.
+ 	stype     StorageType             // The storage type.
+-	tier      string                  // The tier is the number of replicas for the stream (e.g. "R1" or "R3").
+ 	ddMu      sync.Mutex              // Lock for dedupe state.
+ 	ddwin     time.Duration           // The dedupe window, mirrors cfg.Duplicates.
+ 	ddmap     map[string]*ddentry     // The dedupe map.
+@@ -1053,6 +1057,7 @@ func (a *Account) addStreamWithAssignmentAndMode(config *StreamConfig, fsConfig
+ 		created:   time.Now().UTC(),
+ 		restoring: restoring,
+ 	}
++	mset.usage.Store(jsa.tierUsage(tier))
+ 
+ 	// Add created timestamp used for the store, must match that of the stream assignment if it exists.
+ 	if sa != nil {
+@@ -2981,6 +2986,7 @@ func (mset *stream) updateWithAdvisory(config *StreamConfig, sendAdvisory bool,
+ 			jsa.updateUsage(mset.tier, mset.stype, -int64(reported))
+ 			jsa.updateUsage(targetTier, mset.stype, int64(reported))
+ 			mset.tier = targetTier
++			mset.usage.Store(jsa.tierUsage(targetTier))
+ 		}
+ 		// else in case the new tier does not exist (say on move), keep the old tier around
+ 		// a subsequent update to an existing tier will then move from existing past tier to existing new tier
+@@ -5671,7 +5677,7 @@ func (mset *stream) storeUpdates(md, bd int64, seq uint64, subj string) {
+ 	}
+ 
+ 	if mset.jsa != nil {
+-		mset.jsa.updateUsage(mset.tier, mset.stype, bd)
++		mset.jsa.updateUsageCounters(mset.usage.Load(), mset.tier, mset.stype, bd)
+ 	}
+ }
+ 
+```
+
+**File**: `server/stream_backup.go` (modified, +2/-2)
+```diff
+@@ -357,12 +357,12 @@ func (a *Account) RestoreStreamV2(ncfg *StreamConfig, r io.Reader) (retMset *str
+ 		if cfg.Storage == MemoryStorage {
+ 			limit = selected.MaxMemory
+ 			if usage != nil {
+-				used = usage.total.mem
++				used = usage.total.mem.Load()
+ 			}
+ 		} else {
+ 			limit = selected.MaxStore
+ 			if usage != nil {
+-				used = usage.total.store
++				used = usage.total.store.Load()
+ 			}
+ 		}
+ 		jsa.usageMu.RUnlock()
+```
+
+---
+
+### Incident Patch 2: `24ab7a29` (2026-11-17)
+**Commit Message**: [IMPROVED] Lock-free JetStream account usage updates
+
+Every stored or removed message ran, on the stream's internal loop goroutine, jsAccount.wouldExceedLimits (usageMu read-locked, twice for fast batch) and then, from the store callback, jsAccount.updateUsage (usageMu write-locked) to add the message size to the tier's counters. With several streams in one account the stream goroutines serialized on that lock, so aggregate ingest fell as streams were added.
+
+This improves the scalability of the performance when using multiple streams in a single account such that it matches the throughput achieved when using multiple accounts by using Atomics to avoid having to use a write lock.
+
+Co-authored-by: Jean-Noël Moyne <[REDACTED_EMAIL]>
+Co-authored-by: Maurice van Veen <[REDACTED_EMAIL]>
+
+Signed-off-by: Jean-Noël Moyne <[REDACTED_EMAIL]>
+
+**File**: `server/jetstream.go` (modified, +88/-46)
+```diff
+@@ -154,9 +154,21 @@ type remoteUsage struct {
+ 	err   uint64
+ }
+ 
++// Per-tier usage counters of an account.
++type jsaCounters struct {
++	mem   atomic.Int64
++	store atomic.Int64
++}
++
+ type jsaStorage struct {
+-	total jsaUsage
+-	local jsaUsage
++	total jsaCounters // usage of this tier across the cluster: local + all remote nodes
++	local jsaCounters // usage of this tier on this server
++}
++
++// isZero reports whether nothing has been recorded for this tier.
++func (s *jsaStorage) isZero() bool {
++	return s.total.mem.Load() == 0 && s.total.store.Load() == 0 &&
++		s.local.mem.Load() == 0 && s.local.store.Load() == 0
+ }
+ 
+ // This represents a jetstream enabled account.
+@@ -189,7 +201,7 @@ type jsAccount struct {
+ 	usageErr   uint64
+ 	updatesPub string
+ 	updatesSub *subscription
+-	lupdate    time.Time
++	lupdate    atomic.Int64 // Unix nanos of the last cluster usage update, read without usageMu.
+ 	utimer     *time.Timer
+ }
+ 
+@@ -1974,14 +1986,14 @@ func (a *Account) JetStreamUsage() JetStreamAccountStats {
+ 			skipped := 0
+ 			stats.Tiers = make(map[string]JetStreamTier)
+ 			for t, total := range jsa.usage {
+-				if _, ok := jsa.limits[t]; !ok && (*total) == (jsaStorage{}) {
++				if _, ok := jsa.limits[t]; !ok && total.isZero() {
+ 					// skip tiers not present that don't contain a count
+ 					// In case this shows an empty stream, that tier will be added when iterating over streams
+ 					skipped++
+ 				} else {
+ 					tier := JetStreamTier{
+-						Memory: uint64(total.total.mem),
+-						Store:  uint64(total.total.store),
++						Memory: uint64(total.total.mem.Load()),
++						Store:  uint64(total.total.store.Load()),
+ 						Limits: jsa.limits[t],
+ 					}
+ 					if singleServer {
+@@ -2138,8 +2150,8 @@ func (jsa *jsAccount) removeRemoteUsage(rnode string) {
+ 	}
+ 	for tierName, usage := range rUsage.tiers {
+ 		if total := jsa.usage[tierName]; total != nil {
+-			total.total.mem -= usage.mem
+-			total.total.store -= usage.store
++			total.total.mem.Add(-usage.mem)
++			total.total.store.Add(-usage.store)
+ 		}
+ 	}
+ 	jsa.apiTotal -= rUsage.api
+@@ -2198,17 +2210,17 @@ func (jsa *jsAccount) remoteUpdateUsage(sub *subscription, c *client, _ *Account
+ 			total = &jsaStorage{}
+ 			jsa.usage[tierName] = total
+ 		}
+-		// Update the usage for this remote.
++		// Update the usage for this remote and move the tier total by the
++		// change against the previous snapshot from this node.
++		var prevMem, prevStore int64
+ 		if usage := rUsage.tiers[tierName]; usage != nil {
+-			// Decrement our old values.
+-			total.total.mem -= usage.mem
+-			total.total.store -= usage.store
++			prevMem, prevStore = usage.mem, usage.store
+ 			usage.mem, usage.store = memUsed, storeUsed
+ 		} else {
+ 			rUsage.tiers[tierName] = &jsaUsage{memUsed, storeUsed}
+ 		}
+-		total.total.mem += memUsed
+-		total.total.store += storeUsed
++		total.total.mem.Add(memUsed - prevMem)
++		total.total.store.Add(storeUsed - prevStore)
+ 	}
+ 
+ 	var le = binary.LittleEndian
+@@ -2302,22 +2314,22 @@ func (jsa *jsAccount) checkAndSyncUsage(tierName string, storeType StorageType)
+ 	var needClusterUpdate bool
+ 	// If we do not match on our calculations compute delta and adjust.
+ 	if storeType == MemoryStorage {
+-		if total != usage.local.mem {
++		if local := usage.local.mem.Load(); total != local {
+ 			s.Warnf("MemStore usage drift of %v vs %v detected for account %q",
+-				friendlyBytes(total), friendlyBytes(usage.local.mem), jsa.account.GetName())
+-			delta := total - usage.local.mem
+-			usage.local.mem += delta
+-			usage.total.mem += delta
++				friendlyBytes(total), friendlyBytes(local), jsa.account.GetName())
++			delta := total - local
++			usage.local.mem.Add(delta)
++			usage.total.mem.Add(delta)
+ 			atomic.AddInt64(&js.memUsed, delta)
+ 			needClusterUpdate = true
+ 		}
+ 	} else {
+-		if total != usage.local.store {
++		if local := usage.local.store.Load(); total != local {
+ 			s.Warnf("FileStore usage drift of %v vs %v detected for account %q",
+-				friendlyBytes(total), friendlyBytes(usage.local.store), jsa.account.GetName())
+-			delta := total - usage.local.store
+-			usage.local.store += delta
+-			usage.total.store += delta
++				friendlyBytes(total), friendlyBytes(local), jsa.account.GetName())
++			delta := total - local
++			usage.local.store.Add(delta)
++			usage.total.store.Add(delta)
+ 			atomic.AddInt64(&js.storeUsed, delta)
+ 			needClusterUpdate = true
+ 		}
+@@ -2329,9 +2341,31 @@ func (jsa *jsAccount) checkAndSyncUsage(tierName string, storeType StorageType)
+ 	}
+ }
+ 
++// Returns the tier's usage counters, creating them on first use.
++func (jsa *jsAccount) tierUsage(tierName string) *jsaStorage {
++	jsa.usageMu.RLock()
++	s := jsa.usage[tierName]
++	jsa.usageMu.RUnlock()
++	if s != nil {
++		return s
++	}
++	jsa.usageMu.Lock()
++	defer jsa.usageMu.Unlock()
++	if s = jsa.usage[tierName]; s == nil {
++		s = &jsaStorage{}
++		jsa.usage[tierName] = s
++	}
++	return s
++}
++
+ // Updates accounting on in use memory and storage. This is called from locally
+ // by the lower storage layers.
+ func (jsa *js
+```
+
+**File**: `server/jetstream_test.go` (modified, +46/-1)
+```diff
+@@ -18413,7 +18413,7 @@ func TestJetStreamUsageSyncDeadlock(t *testing.T) {
+ 	jsa.usageMu.Lock()
+ 	st, ok := jsa.usage[_EMPTY_]
+ 	require_True(t, ok)
+-	st.local.store = -1000
++	st.local.store.Store(-1000)
+ 	jsa.usageMu.Unlock()
+ 
+ 	sendStreamMsg(t, nc, "foo", "hello")
+@@ -29279,3 +29279,48 @@ func TestJetStreamStoredReservedDeliverSubjectRejected(t *testing.T) {
+ 	require_Error(t, err)
+ 	require_Contains(t, err.Error(), NewJSConsumerInvalidDeliverSubjectError().Error())
+ }
++
++func TestJetStreamAccountUsageConcurrentStreams(t *testing.T) {
++	s := RunBasicJetStreamServer(t)
++	defer s.Shutdown()
++
++	const numStreams, numMsgs = 8, 1000
++	acc := s.GlobalAccount()
++	msets := make([]*stream, numStreams)
++	for i := range msets {
++		mset, err := acc.addStream(&StreamConfig{
++			Name:     fmt.Sprintf("S%d", i),
++			Subjects: []string{fmt.Sprintf("s.%d", i)},
++			Storage:  MemoryStorage,
++			// Also removes messages, so usage goes both up and down.
++			MaxMsgs: numMsgs / 2,
++		})
++		require_NoError(t, err)
++		msets[i] = mset
++	}
++
++	// Store from one goroutine per stream, so all streams update the account usage concurrently.
++	payload := make([]byte, 128)
++	var wg sync.WaitGroup
++	for i, mset := range msets {
++		wg.Add(1)
++		go func(subj string, mset *stream) {
++			defer wg.Done()
++			for range numMsgs {
++				if err := mset.processJetStreamMsg(subj, _EMPTY_, nil, payload, 0, 0, nil, false, true); err != nil {
++					t.Error(err)
++					return
++				}
++			}
++		}(fmt.Sprintf("s.%d", i), mset)
++	}
++	wg.Wait()
++
++	var stored uint64
++	for _, mset := range msets {
++		state := mset.state()
++		require_Equal(t, state.Msgs, numMsgs/2)
++		stored += state.Bytes
++	}
++	require_Equal(t, acc.JetStreamUsage().Memory, stored)
++}
+```
+
+**File**: `server/stream.go` (modified, +8/-2)
+```diff
+@@ -576,6 +576,11 @@ type stream struct {
+ 	// which reads the raft node's current state, this tracks our own processed leadership.
+ 	leader atomic.Bool
+ 
++	// The tier is the number of replicas for the stream (e.g. "R1" or "R3"), with its account usage counters.
++	// Both are set on creation, and again when a replicas change moves the stream to another tier.
++	tier  string
++	usage atomic.Pointer[jsaStorage]
++
+ 	pubAck    []byte                  // The template (prefix) to generate the pubAck responses for this stream quickly.
+ 	outq      *jsOutQ                 // Queue of *jsPubMsg for sending messages.
+ 	msgs      *ipQueue[*inMsg]        // Intra-process queue for the ingress of messages.
+@@ -590,7 +595,6 @@ type stream struct {
+ 	cfgMu     sync.RWMutex            // Config mutex used to solve some races with consumer code
+ 	created   time.Time               // Time the stream was created.
+ 	stype     StorageType             // The storage type.
+-	tier      string                  // The tier is the number of replicas for the stream (e.g. "R1" or "R3").
+ 	ddMu      sync.Mutex              // Lock for dedupe state.
+ 	ddwin     time.Duration           // The dedupe window, mirrors cfg.Duplicates.
+ 	ddmap     map[string]*ddentry     // The dedupe map.
+@@ -1053,6 +1057,7 @@ func (a *Account) addStreamWithAssignmentAndMode(config *StreamConfig, fsConfig
+ 		created:   time.Now().UTC(),
+ 		restoring: restoring,
+ 	}
++	mset.usage.Store(jsa.tierUsage(tier))
+ 
+ 	// Add created timestamp used for the store, must match that of the stream assignment if it exists.
+ 	if sa != nil {
+@@ -2981,6 +2986,7 @@ func (mset *stream) updateWithAdvisory(config *StreamConfig, sendAdvisory bool,
+ 			jsa.updateUsage(mset.tier, mset.stype, -int64(reported))
+ 			jsa.updateUsage(targetTier, mset.stype, int64(reported))
+ 			mset.tier = targetTier
++			mset.usage.Store(jsa.tierUsage(targetTier))
+ 		}
+ 		// else in case the new tier does not exist (say on move), keep the old tier around
+ 		// a subsequent update to an existing tier will then move from existing past tier to existing new tier
+@@ -5671,7 +5677,7 @@ func (mset *stream) storeUpdates(md, bd int64, seq uint64, subj string) {
+ 	}
+ 
+ 	if mset.jsa != nil {
+-		mset.jsa.updateUsage(mset.tier, mset.stype, bd)
++		mset.jsa.updateUsageCounters(mset.usage.Load(), mset.tier, mset.stype, bd)
+ 	}
+ }
+ 
+```
+
+**File**: `server/stream_backup.go` (modified, +2/-2)
+```diff
+@@ -357,12 +357,12 @@ func (a *Account) RestoreStreamV2(ncfg *StreamConfig, r io.Reader) (retMset *str
+ 		if cfg.Storage == MemoryStorage {
+ 			limit = selected.MaxMemory
+ 			if usage != nil {
+-				used = usage.total.mem
++				used = usage.total.mem.Load()
+ 			}
+ 		} else {
+ 			limit = selected.MaxStore
+ 			if usage != nil {
+-				used = usage.total.store
++				used = usage.total.store.Load()
+ 			}
+ 		}
+ 		jsa.usageMu.RUnlock()
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #8909** (closed): Optimize exact-subject pending counts at the latest sequence (@MoonShiesty)
 - **PR #8905** (2026-11-17): updated accConnsUpdate to use a read lock instead of a write lock. (@cfedersp)
 - **PR #8902** (2026-11-16): [FIXED] MQTT: readLoop JetStream requests stuck behind a pending route (@MauriceVanVeen)
 - **PR #8901** (2026-11-16): [FIXED] Data race between filestore ConsumerStore and UpdateConfig (@sciascid)
 - **PR #8900** (2026-11-16): [FIXED] memory store SkipMsgs sequence could overflow (@sciascid)
 - **PR #8899** (2026-11-16): [FIXED] Leafnode/route never reconnects after compression INFO write error (@MauriceVanVeen)
-- **PR #8896** (2026-11-16): [FIXED] Sublist.NumInterest undercounting overlapping wildcard subscriptions (@Ashuuu2606)
 
 ---
 
@@ -2800,31 +3373,81 @@ Signed-off-by: Neil Twigg <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. pull requests CI check
+## X. [IMPROVED] Lock-free JetStream account usage updates
 
 **RULE**:
-When implementing operations in `.github/workflows/pull-requests.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nats-io/nats-server. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `server/jetstream.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in nats-io/nats-server. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `fc69bed0`: pull requests CI check. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ea28ae77`: [IMPROVED] Lock-free JetStream account usage updates. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/pull-requests.yml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `server/jetstream.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-            body="$(printf 'Please review the `CONTRIBUTING.md` guide as some commits are missing the `Signed-off-by:` declaration in their commit messages.\n\nTo correct, please amend the commit messages of the following commits and force-push:\n\n%s\n\nWe cannot merge your PR until this is done. If not corrected, this PR will be automatically closed soon.' "$missing_list")"
+// Per-tier usage counters of an account.
+type jsaCounters struct {
+	mem   atomic.Int64
+	store atomic.Int64
+}
+
+	total jsaCounters // usage of this tier across the cluster: local + all remote nodes
+	local jsaCounters // usage of this tier on this server
+}
+
+// isZero reports whether nothing has been recorded for this tier.
+func (s *jsaStorage) isZero() bool {
+	return s.total.mem.Load() == 0 && s.total.store.Load() == 0 &&
+		s.local.mem.Load() == 0 && s.local.store.Load() == 0
+	lupdate    atomic.Int64 // Unix nanos of the last cluster usage update, read without usageMu.
+				if _, ok := jsa.limits[t]; !ok && total.isZero() {
+						Memory: uint64(total.total.mem.Load()),
+						Store:  uint64(total.total.store.Load()),
+			total.total.mem.Add(-usage.mem)
+			total.total.store.Add(-usage.store)
+		// Update the usage for this remote and move the tier total by the
+		// change against the previous snapshot from this node.
+		var prevMem, prevStore int64
+			prevMem, prevStore = usage.mem, usage.store
+		total.total.mem.Add(memUsed - prevMem)
+		total.total.store.Add(storeUsed - prevStore)
+		if local := usage.local.mem.Load(); total != local {
+				friendlyBytes(total), friendlyBytes(local), jsa.acc
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-            body="$(printf 'Please review the `CONTRIBUTING.md` guide as some commits are missing the `Signed-off-by:` declaration in their commit messages.\n\nTo correct, please amend the commit messages of the following commits and force-push:\n\n%s\n\nWe can't merge your PR until this is done. If not corrected, this PR will be automatically closed soon.' "$missing_list")"
+	total jsaUsage
+	local jsaUsage
+	lupdate    time.Time
+				if _, ok := jsa.limits[t]; !ok && (*total) == (jsaStorage{}) {
+						Memory: uint64(total.total.mem),
+						Store:  uint64(total.total.store),
+			total.total.mem -= usage.mem
+			total.total.store -= usage.store
+		// Update the usage for this remote.
+			// Decrement our old values.
+			total.total.mem -= usage.mem
+			total.total.store -= usage.store
+		total.total.mem += memUsed
+		total.total.store += storeUsed
+		if total != usage.local.mem {
+				friendlyBytes(total), friendlyBytes(usage.local.mem), jsa.account.GetName())
+			delta := total - usage.local.mem
+			usage.local.mem += delta
+			usage.total.mem += delta
+		if total != usage.local.store {
+				friendlyBytes(total), friendlyBytes(usage.local.store), jsa.account.GetName())
+			delta := total - usage.local.store
+			usage.local.store += delta
+			usage.total.store += delta
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `fc69bed0` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ea28ae77` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

@@ -355,8 +355,8 @@
     "sourceUrl": "https://huggingface.co/prism-ml/Ternary-Bonsai-2-27B-gguf",
     "sourceVersion": "hf-prism-ml-ternary-bonsai-2-27b-gguf",
     "license": "Open-Source",
-    "contentHash": "dbeb7164897df47373cbefb04e511b0e5dce0a610fcf2829e854d69cd3d045a7",
-    "lastHarvestedAt": "2026-11-18T01:57:58.618Z",
+    "contentHash": "022f5de1c0e20818b725aaa60462c14d28aa273a6e6bb51171185dacaeefaa21",
+    "lastHarvestedAt": "2026-11-18T12:43:14.797Z",
     "learningId": "learn-huggingface-prism-ml-ternary-bonsai-2-27b-gguf"
   },
   "hf-viggle-qwen-image-2.1-viggle-turbo": {
@@ -2663,10 +2663,10 @@
     "repository": "ajeetdsouza/zoxide",
     "platform": "github",
     "sourceUrl": "https://github.com/ajeetdsouza/zoxide",
-    "sourceVersion": "1bb06205",
+    "sourceVersion": "2f4bceba",
     "license": "MIT",
-    "contentHash": "169daebcc6d860be289b993cd43ee5b393fca81100f636d278464febe3ffcdd5",
-    "lastHarvestedAt": "2026-11-09T02:01:01.542Z",
+    "contentHash": "bb162008c94b9168737f2f3fe9273b2cc783e65bf01fdbb1b86a40871ddd8ed0",
+    "lastHarvestedAt": "2026-11-18T12:42:40.716Z",
     "learningId": "learn-github-ajeetdsouza-zoxide"
   },
   "react-native-elements-react-native-elements": {
@@ -7263,10 +7263,10 @@
     "repository": "nats-io/nats-server",
     "platform": "github",
     "sourceUrl": "https://github.com/nats-io/nats-server",
-    "sourceVersion": "582fb8e9",
+    "sourceVersion": "ea28ae77",
     "license": "Apache-2.0",
-    "contentHash": "462f2d59ef9b46f969f3203798665769e716b72cf38702932cebeac233be57c9",
-    "lastHarvestedAt": "2026-11-17T19:27:30.668Z",
+    "contentHash": "8b1b5086757e389ba78ef06b5aadc3960711a7a21fee2820633d924823dc3863",
+    "lastHarvestedAt": "2026-11-18T12:42:47.928Z",
     "learningId": "learn-github-nats-io-nats-server"
   },
   "str4d-rage": {

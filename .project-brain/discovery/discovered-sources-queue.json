@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-18T12:33:32.857Z",
+  "updated_at": "2026-11-18T12:43:17.912Z",
   "stats": {
-    "total_discovered": 5484,
-    "approved_pending_harvest": 5179,
+    "total_discovered": 5489,
+    "approved_pending_harvest": 5184,
     "harvested_count": 0,
     "rejected_count": 305,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 5163,
+      "COMMUNITY_AND_EXPERT": 5168,
       "OFFICIAL_DOCUMENTATION": 176,
       "STANDARDS_AND_SPECIFICATIONS": 109,
       "ENGINEERING_BLOGS": 4,
@@ -118534,6 +118534,116 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/software-mansion-argent-learnings.md",
         "fileName": "software-mansion-argent-learnings.md"
+      }
+    },
+    "SRC-9D9E4135A8B8": {
+      "id": "SRC-9D9E4135A8B8",
+      "url": "https://github.com/ajeetdsouza/zoxide",
+      "title": "https://github.com/ajeetdsouza/zoxide",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T12:43:17.767Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ajeetdsouza-zoxide-learnings.md",
+        "fileName": "ajeetdsouza-zoxide-learnings.md"
+      }
+    },
+    "SRC-DBF1D1615811": {
+      "id": "SRC-DBF1D1615811",
+      "url": "https://github.com/kubouch/virtualenv/tree/engine-q-update/src/virtualenv/activation/nushell",
+      "title": "https://github.com/kubouch/virtualenv/tree/engine-q-update/src/virtualenv/activation/nushell",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T12:43:17.806Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ajeetdsouza-zoxide-learnings.md",
+        "fileName": "ajeetdsouza-zoxide-learnings.md"
+      }
+    },
+    "SRC-7C881FD189F1": {
+      "id": "SRC-7C881FD189F1",
+      "url": "https://github.com/junegunn/fzf",
+      "title": "https://github.com/junegunn/fzf",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T12:43:17.840Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ajeetdsouza-zoxide-learnings.md",
+        "fileName": "ajeetdsouza-zoxide-learnings.md"
+      }
+    },
+    "SRC-CF4AA06D3B34": {
+      "id": "SRC-CF4AA06D3B34",
+      "url": "https://github.com/junegunn/fzf/pull/2659",
+      "title": "https://github.com/junegunn/fzf/pull/2659",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T12:43:17.872Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ajeetdsouza-zoxide-learnings.md",
+        "fileName": "ajeetdsouza-zoxide-learnings.md"
+      }
+    },
+    "SRC-1F8AE7B13E99": {
+      "id": "SRC-1F8AE7B13E99",
+      "url": "https://github.com/junegunn/fzf/pull/2799",
+      "title": "https://github.com/junegunn/fzf/pull/2799",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T12:43:17.912Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ajeetdsouza-zoxide-learnings.md",
+        "fileName": "ajeetdsouza-zoxide-learnings.md"
       }
     }
   }

@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-18T12:33:34.866Z",
-  "total_records": 1851,
+  "last_updated": "2026-11-18T12:43:19.284Z",
+  "total_records": 1853,
   "domains": {
     "A": {
       "total": 11,
@@ -1237,7 +1237,7 @@
       ]
     },
     "H": {
-      "total": 433,
+      "total": 435,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1671,7 +1671,9 @@
         "domain_intelligence-technical-construction-intelligence-eclipse-theia-theia-core-invariants",
         "domain_intelligence-technical-construction-intelligence-eclipse-theia-theia-learnings-core-invariant",
         "domain_intelligence-technical-construction-intelligence-zulip-zulip-core-invariants",
-        "domain_intelligence-technical-construction-intelligence-zulip-zulip-learnings-core-invariants"
+        "domain_intelligence-technical-construction-intelligence-zulip-zulip-learnings-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-ajeetdsouza-zoxide-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-ajeetdsouza-zoxide-learnings-core-invariants"
       ]
     },
     "I": {
@@ -12265,8 +12267,8 @@
       "title": "Technical Construction Intelligence: nats-io/nats-server Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nats-io-nats-server-technical-construction-intelligence-nats-io-nats-server-core.md",
       "repository": "nats-io/nats-server",
-      "content_hash": "d489350393dd04c3288541303c8b33b8acd864b17c089f625fe61adf9314a43d",
-      "created_at": "2026-11-17T19:27:31.000Z"
+      "content_hash": "27293dc15df0aed8573dce35a7cc470f0923972853001a7032c0177aa91de368",
+      "created_at": "2026-11-18T12:42:48.254Z"
     },
     "DOM-D-3A6226D8": {
       "record_id": "DOM-D-3A6226D8",
@@ -12376,8 +12378,8 @@
       "title": "Technical Construction Intelligence: nats-io-nats-server-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-nats-io-nats-server-learnings-technical-construction-intelligence-nats-io-nats-s.md",
       "repository": "nats-io-nats-server-learnings",
-      "content_hash": "8436d24e75cc5be89de49f4b4e305113d25ae2e0cfceaba90c9c9df2e971e6aa",
-      "created_at": "2026-11-17T19:27:40.816Z"
+      "content_hash": "7d39d7a533aa43b51928175c434e9a22cb28f0d717a818c66ebd6646cc3f072a",
+      "created_at": "2026-11-18T12:43:19.284Z"
     },
     "domain_intelligence-research-knowledge-intelligence-meta-llama-meta-llama-3-8b-instruct-core-invaria": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-meta-llama-meta-llama-3-8b-instruct-core-invaria",
@@ -29335,8 +29337,8 @@
       "title": "Research & Knowledge Intelligence: prism-ml/Ternary-Bonsai-2-27B-gguf Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-prism-ml-ternary-bonsai-2-27b-gguf-research-knowledge-intelligence-prism-ml-t.md",
       "repository": "prism-ml/Ternary-Bonsai-2-27B-gguf",
-      "content_hash": "3347b7340e55141f08c8b72710770a3cc42b4c75606317fd12d5b5bfca4e32a5",
-      "created_at": "2026-11-18T01:57:58.793Z"
+      "content_hash": "2394ed7343fb6c2792dde1f29191c7c52b3003764f3a57b3d107ba04cf41ee6b",
+      "created_at": "2026-11-18T12:43:14.968Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-prism-ml-ternary-bonsai-2-27b-gguf-learnings-": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-prism-ml-ternary-bonsai-2-27b-gguf-learnings-",
@@ -29344,8 +29346,8 @@
       "title": "Research & Knowledge Intelligence: hf-prism-ml-ternary-bonsai-2-27b-gguf-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-prism-ml-ternary-bonsai-2-27b-gguf-learnings-research-knowledge-intelligence-.md",
       "repository": "hf-prism-ml-ternary-bonsai-2-27b-gguf-learnings",
-      "content_hash": "37813d0e9c0270920fba94420b3f292d9ae3037cc13a98ec612de73af3b69ec8",
-      "created_at": "2026-11-18T01:58:08.611Z"
+      "content_hash": "5645c1805b99f8bd60ef53a3193c2fcdb67a8196b91b06250a325a6cd8031cf9",
+      "created_at": "2026-11-18T12:43:18.662Z"
     },
     "domain_intelligence-quality-verification-intelligence-okteto-okteto-core-invariants": {
       "record_id": "domain_intelligence-quality-verification-intelligence-okteto-okteto-core-invariants",
@@ -30967,6 +30969,24 @@
       "repository": "software-mansion-argent-learnings",
       "content_hash": "463f03c016ac61f82cc56fd2c199a79fe5c2f412964cef0e62e03856d09bf800",
       "created_at": "2026-11-18T12:33:33.335Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-ajeetdsouza-zoxide-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-ajeetdsouza-zoxide-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: ajeetdsouza/zoxide Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-ajeetdsouza-zoxide-technical-construction-intelligence-ajeetdsouza-zoxide-core-i.md",
+      "repository": "ajeetdsouza/zoxide",
+      "content_hash": "045e17c5ac2e49cb8354811406d8ddbbe87d57b1cc22966a74059b047e647082",
+      "created_at": "2026-11-18T12:42:41.025Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-ajeetdsouza-zoxide-learnings-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-ajeetdsouza-zoxide-learnings-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: ajeetdsouza-zoxide-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-ajeetdsouza-zoxide-learnings-technical-construction-intelligence-ajeetdsouza-zox.md",
+      "repository": "ajeetdsouza-zoxide-learnings",
+      "content_hash": "c621af2e0f780c527c33da0ffd837970414c1647c876a6e3cda7aeba32d61945",
+      "created_at": "2026-11-18T12:43:18.246Z"
     }
   }
 }

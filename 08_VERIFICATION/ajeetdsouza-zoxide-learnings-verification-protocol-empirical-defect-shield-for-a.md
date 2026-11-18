@@ -6,16 +6,16 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T12:33:04.250Z",
+  "timestamp": "2026-11-18T12:43:18.012Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
-  "learning_id": "LEARN-REEXTRACT-ajeetdsouza-zoxide-learnings",
+  "learning_id": "LEARN-EVO-ajeetdsouza-zoxide-learnings",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [ajeetdsouza-zoxide-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T12:33:04.250Z`  
-> **Learning ID**: `LEARN-REEXTRACT-ajeetdsouza-zoxide-learnings`
+> **License**: Open-Source | **Timestamp**: `2026-11-18T12:43:18.012Z`  
+> **Learning ID**: `LEARN-EVO-ajeetdsouza-zoxide-learnings`
 
 
 ## 1. Scope & Verification Target
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/ajeetdsouza-zoxide-learnings.md`  
 > **Source**: github ([https://github.com/ajeetdsouza/zoxide](https://github.com/ajeetdsouza/zoxide))  
-> **Source Version**: `1bb06205`  
+> **Source Version**: `2f4bceba`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-09T02:00:59.888Z  
+> **Timestamp**: 2026-11-18T12:42:39.760Z  
 > **Learning ID**: `learn-github-ajeetdsouza-zoxide`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/ajeetdsouza-zoxide-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/ajeetdsouza/zoxide](https://github.com/ajeetdsouza/zoxide))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-09T02:00:59.714Z  
+> **Harvest Timestamp**: 2026-11-18T12:42:39.442Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: A smarter cd command. Supports all major shells.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 40515 stars
+- **Stars / Engagement**: 40631 stars
 
 ---
 
@@ -231,12 +231,13 @@ pub fn write(path: impl AsRef<Path>, contents: impl AsRef<[u8]>) -> Result<()> {
             .write_all(contents)
             .with_context(|| format!("could not write to file: {}", tmp_path.display()))?;
 
-        // Set the owner of the tmpfile (UNIX only).
+        // Set the owner and permissions of the tmpfile (UNIX only).
         #[cfg(unix)]
         if let Ok(metadata) = path.metadata() {
             use std::os::unix::fs::{MetadataExt, fchown};
 
             _ = fchown(&tmp_file, Some(metadata.uid()), Some(metadata.gid()));
+            _ = tmp_file.set_permissions(metadata.permissions());
         }
 
         // Close and rename the tmpfile.
@@ -368,11 +369,7 @@ pub fn resolve_path(path: impl AsRef<Path>) -> Result<PathBuf> {
                 return Ok(path);
             }
 
-            if let Some(path) = env::var_os(format!("={}:", drive_letter as char)) {
-                return Ok(path.into());
-            }
-
-            let path = 
+            if let Some(path) = env::var_os(format!("={}:", drive_letter as char)
 ```
 
 ### Core Architecture Module: `contrib/completions/zoxide.ts`
@@ -1417,61 +1414,72 @@ impl Run for Remove {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `1bb06205` (2026-11-08)
-**Commit Message**: Bash: fix false doctor warning when PROMPT_COMMAND is wrapped (#1360)
+### Incident Patch 1: `2f4bceba` (2026-11-18)
+**Commit Message**: fix(db): keep the permissions of db.txt when saving (#1359)
 
-**File**: `templates/bash.txt` (modified, +9/-4)
+**File**: `CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -37,6 +37,7 @@ function __zoxide_cd() {
- {%- if hook == InitHook::Prompt %}
- function __zoxide_hook() {
-     \builtin local -r retval="$?"
-+    __zoxide_hook_ok=1
-     if [[ -o history ]]; then
-         # shellcheck disable=SC2312
-         \command zoxide add -- "$(__zoxide_pwd)"
-@@ -49,6 +50,7 @@ __zoxide_oldpwd="$(__zoxide_pwd)"
+@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ - POSIX: fix `z` failing to enter directories whose names start with `-`.
+ - Build: fix compilation failing when the source directory is read-only.
+ - PowerShell: the prompt hook no longer resets `$LASTEXITCODE`.
++- Database: keep the file permissions of `db.txt` when saving.
  
- function __zoxide_hook() {
-     \builtin local -r retval="$?"
-+    __zoxide_hook_ok=1
-     \builtin local pwd_tmp
-     pwd_tmp="$(__zoxide_pwd)"
-     if [[ ${__zoxide_oldpwd} != "${pwd_tmp}" ]]; then
-@@ -75,17 +77,20 @@ fi
+ ## [0.10.0] - 2026-07-04
  
- {%- endif %}
+```
+
+**File**: `src/util.rs` (modified, +23/-1)
+```diff
+@@ -165,12 +165,13 @@ pub fn write(path: impl AsRef<Path>, contents: impl AsRef<[u8]>) -> Result<()> {
+             .write_all(contents)
+             .with_context(|| format!("could not write to file: {}", tmp_path.display()))?;
  
-+{#
-+  Many terminal integrations (VS Code, Termius, Warp, inshellisense) replace
-+  PROMPT_COMMAND with a wrapper hook, so checking for __zoxide_hook in
-+  PROMPT_COMMAND doesn't work. Instead, the hook sets a flag when it runs.
-+-#}
- # Report common issues.
- function __zoxide_doctor() {
- {%- if hook == InitHook::None %}
-     return 0
+-        // Set the owner of the tmpfile (UNIX only).
++        // Set the owner and permissions of the tmpfile (UNIX only).
+         #[cfg(unix)]
+         if let Ok(metadata) = path.metadata() {
+             use std::os::unix::fs::{MetadataExt, fchown};
  
- {%- else %}
-     [[ ${_ZO_DOCTOR:-1} -eq 0 ]] && return 0
--    # shellcheck disable=SC2199
--    [[ ${PROMPT_COMMAND[@]:-} == *'__zoxide_hook'* ]] && return 0
--    # shellcheck disable=SC2199
--    [[ ${__vsc_original_prompt_command[@]:-} == *'__zoxide_hook'* ]] && return 0
-+    [[ -n ${__zoxide_hook_ok:-} ]] && return 0
-+    [[ $- == *i* ]] || return 0
+             _ = fchown(&tmp_file, Some(metadata.uid()), Some(metadata.gid()));
++            _ = tmp_file.set_permissions(metadata.permissions());
+         }
  
-     _ZO_DOCTOR=0
-     \builtin printf '%s\n' \
+         // Close and rename the tmpfile.
+@@ -378,3 +379,24 @@ pub fn to_lowercase(s: impl AsRef<str>) -> String {
+     let s = s.as_ref();
+     if s.is_ascii() { s.to_ascii_lowercase() } else { s.to_lowercase() }
+ }
++
++#[cfg(all(test, unix))]
++mod tests {
++    use std::os::unix::fs::PermissionsExt;
++
++    use super::*;
++
++    #[test]
++    fn write_preserves_permissions() {
++        let dir = tempfile::tempdir().unwrap();
++        let path = dir.path().join("db.txt");
++        fs::write(&path, "old").unwrap();
++        fs::set_permissions(&path, fs::Permissions::from_mode(0o600)).unwrap();
++
++        write(&path, "new").unwrap();
++
++        assert_eq!(fs::read_to_string(&path).unwrap(), "new");
++        let mode = fs::metadata(&path).unwrap().permissions().mode();
++        assert_eq!(mode & 0o777, 0o600);
++    }
++}
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #1360** (2026-11-08): Bash: fix false doctor warning when PROMPT_COMMAND is wrapped (@ajeetdsouza)
+- **PR #1359** (2026-11-18): fix(db): keep the permissions of db.txt when saving (@56steve)
 - **PR #1358** (closed): fix(bash): recognize Warp's preserved prompt hook (@mcollard0)
 - **PR #1357** (2026-11-07): db: accept a UTF-8 BOM at the start of db.txt (@b84330808)
 - **PR #1355** (2026-11-07): build(deps): bump Swatinem/rust-cache from 2.9.2 to 2.9.3 (@dependabot[bot])
 - **PR #1354** (2026-11-07): build(deps): bump taiki-e/install-action from 2.87.21 to 2.88.0 (@dependabot[bot])
-- **PR #1349** (2026-10-24): Avoid firing the ERR trap from the Bash hook in array PROMPT_COMMAND (@ajeetdsouza)
 
 ---
 
@@ -1491,42 +1499,31 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Bash: fix false doctor warning when PROMPT_COMMAND is wrapped (#1360)
+## X. db): keep the permissions of db.txt when saving
 
 **RULE**:
-When implementing operations in `templates/bash.txt`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ajeetdsouza/zoxide. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in ajeetdsouza/zoxide. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `1bb06205`: Bash: fix false doctor warning when PROMPT_COMMAND is wrapped (#1360). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `2f4bceba`: db): keep the permissions of db.txt when saving. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `templates/bash.txt`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    __zoxide_hook_ok=1
-    __zoxide_hook_ok=1
-{#
-  Many terminal integrations (VS Code, Termius, Warp, inshellisense) replace
-  PROMPT_COMMAND with a wrapper hook, so checking for __zoxide_hook in
-  PROMPT_COMMAND doesn't work. Instead, the hook sets a flag when it runs.
--#}
-    [[ -n ${__zoxide_hook_ok:-} ]] && return 0
-    [[ $- == *i* ]] || return 0
+- Database: keep the file permissions of `db.txt` when saving.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Anti-pattern to NEVER write (induced failure mode):
-    # shellcheck disable=SC2199
-    [[ ${PROMPT_COMMAND[@]:-} == *'__zoxide_hook'* ]] && return 0
-    # shellcheck disable=SC2199
-    [[ ${__vsc_original_prompt_command[@]:-} == *'__zoxide_hook'* ]] && return 0
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `1bb06205` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `2f4bceba` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

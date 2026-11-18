@@ -10995,3 +10995,6 @@ Every entry in this ledger must capture:
 | `learn-github-goharbor-harbor` | `https://github.com/goharbor/harbor` | `966747bd` | Multi-dimensional audit evidence | 2026-11-18T12:24:00.640Z |
 | `learn-huggingface-lightricks-ltx-2-5` | `https://huggingface.co/Lightricks/LTX-2.5` | `hf-lightri` | Multi-dimensional audit evidence | 2026-11-18T12:33:02.565Z |
 | `learn-github-software-mansion-argent` | `https://github.com/software-mansion/argent` | `fad5534a` | Multi-dimensional audit evidence | 2026-11-18T12:33:29.325Z |
+| `learn-github-ajeetdsouza-zoxide` | `https://github.com/ajeetdsouza/zoxide` | `2f4bceba` | Multi-dimensional audit evidence | 2026-11-18T12:42:40.716Z |
+| `learn-github-nats-io-nats-server` | `https://github.com/nats-io/nats-server` | `ea28ae77` | Multi-dimensional audit evidence | 2026-11-18T12:42:47.928Z |
+| `learn-huggingface-prism-ml-ternary-bonsai-2-27b-gguf` | `https://huggingface.co/prism-ml/Ternary-Bonsai-2-27B-gguf` | `hf-prism-m` | Multi-dimensional audit evidence | 2026-11-18T12:43:14.797Z |
