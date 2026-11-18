@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T06:57:56.158Z",
-  "total_cycles_completed": 10393,
-  "total_learnings_persisted": 10393,
-  "total_rules_promoted": 9900,
+  "last_updated": "2026-11-18T07:05:45.807Z",
+  "total_cycles_completed": 10397,
+  "total_learnings_persisted": 10397,
+  "total_rules_promoted": 9902,
   "history": [
-    {
-      "timestamp": "2026-11-17T17:20:20.990Z",
-      "repository": "keybase/client",
-      "learningId": "learn-github-keybase-client",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T17:20:22.578Z",
-      "repository": "nginx/kubernetes-ingress",
-      "learningId": "learn-github-nginx-kubernetes-ingress",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T17:20:24.691Z",
-      "repository": "tailscale/tailscale",
-      "learningId": "learn-github-tailscale-tailscale",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T17:27:56.161Z",
-      "repository": "ISTA-DASLab/DeepSeek-V4.1-Flash-1017-GSQ-RCO-GGUF",
-      "learningId": "learn-huggingface-ista-daslab-deepseek-v4-1-flash-1017-gsq-rco-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-17T17:28:09.127Z",
       "repository": "weaviate/weaviate",
@@ -1402,6 +1374,34 @@
       "timestamp": "2026-11-18T06:57:56.158Z",
       "repository": "etcd-io/etcd",
       "learningId": "learn-github-etcd-io-etcd",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T07:05:36.375Z",
+      "repository": "unsloth/Qwen3.8-27B-GGUF",
+      "learningId": "learn-huggingface-unsloth-qwen3-8-27b-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T07:05:38.433Z",
+      "repository": "asciinema/asciinema",
+      "learningId": "learn-github-asciinema-asciinema",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T07:05:41.726Z",
+      "repository": "arkivanov/Decompose",
+      "learningId": "learn-github-arkivanov-decompose",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T07:05:45.807Z",
+      "repository": "aws/aws-cdk",
+      "learningId": "learn-github-aws-aws-cdk",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

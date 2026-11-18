@@ -10852,3 +10852,8 @@
 | `CYCLE-20261118-RDM8` | `2026-11-18T06:57:41.552Z` | `PrunaAI/P-H3-Image-Comfy` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-prunaai-p-h3-image-comfy-learnings.md` | Yes (`1f4edf17...`) |
 | `CYCLE-20261118-RFH1` | `2026-11-18T06:57:43.957Z` | `Orange-OpenSource/hurl` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9146` | Yes (`2faef257...`) |
 | `CYCLE-20261118-ROVO` | `2026-11-18T06:57:56.148Z` | `etcd-io/etcd` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9147` | Yes (`f57b142b...`) |
+| `CYCLE-20261118-1JZI` | `2026-11-18T07:05:36.366Z` | `unsloth/Qwen3.8-27B-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-unsloth-qwen3.8-27b-gguf-learnings.md` | Yes (`72ae56f2...`) |
+| `CYCLE-20261118-1LKP` | `2026-11-18T07:05:38.425Z` | `asciinema/asciinema` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9148` | Yes (`c1addfd5...`) |
+| `CYCLE-20261118-1O45` | `2026-11-18T07:05:41.717Z` | `arkivanov/Decompose` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/arkivanov-decompose-learnings.md` | Yes (`7606e757...`) |
+| `CYCLE-20261118-1R9H` | `2026-11-18T07:05:45.797Z` | `aws/aws-cdk` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9149` | Yes (`a8af8a18...`) |
+| `CYCLE-2026-11-18-PROJ-EVOLVE` | `2026-11-18T07:06:16.401Z` | `arkivanov-decompose` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-45D6F650` [Domain D] | Yes (`ffbbd7cc...`) |

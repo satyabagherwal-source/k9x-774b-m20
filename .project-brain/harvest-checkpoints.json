@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-18T06:57:56.161Z",
+  "last_updated": "2026-11-18T07:05:45.811Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -785,14 +785,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-unsloth-qwen3-8-27b-gguf",
-      "content_hash": "06ed80162c5b7698e83953db7cd22b8062bb8f716047e5d73a514dc6a6efc68a",
-      "verified_at": "2026-11-13T20:07:10.640Z",
+      "content_hash": "72ae56f254a398c94de0a687923389368a422cd0fda647d855d6906bf8c4d3b4",
+      "verified_at": "2026-11-18T07:05:36.378Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T20:07:10.640Z"
+      "last_updated": "2026-11-18T07:05:36.378Z"
     },
     "DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF": {
       "repository": "DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF",
@@ -5811,14 +5811,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-asciinema-asciinema",
-      "content_hash": "ace48a1a2419bc56b02770b3b735751972d90f7298fa87fafcb97516106647bb",
-      "verified_at": "2026-11-06T13:34:46.661Z",
+      "content_hash": "c1addfd56c8ad8cfacba81a85d92e91f6bc1e1edd8a4bd864fcab3bc48d56fc9",
+      "verified_at": "2026-11-18T07:05:38.436Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-06T13:34:46.661Z"
+      "last_updated": "2026-11-18T07:05:38.436Z"
     },
     "software-mansion/react-native-reanimated": {
       "repository": "software-mansion/react-native-reanimated",
@@ -7326,14 +7326,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aws-aws-cdk",
-      "content_hash": "2d40116262cca2668c8588cdc801fbb038833ef033221889260d92dd86f42fea",
-      "verified_at": "2026-11-17T09:23:12.676Z",
+      "content_hash": "a8af8a186d4a937be91281a98585033fd9498584a3ef8f39a8e65a43805c08ac",
+      "verified_at": "2026-11-18T07:05:45.810Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T09:23:12.676Z"
+      "last_updated": "2026-11-18T07:05:45.810Z"
     },
     "cockroachdb/cockroach": {
       "repository": "cockroachdb/cockroach",
@@ -11061,14 +11061,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-arkivanov-decompose",
-      "content_hash": "5cfd6a0c1154f8ad86a59716bdab78e21dddec70427ac75c48cf10dfe0948f08",
-      "verified_at": "2026-11-11T15:27:48.625Z",
+      "content_hash": "7606e75778ea55dfa4d809b528b7afe2b58c7a9437ab3d4b637cc67f2a643b1f",
+      "verified_at": "2026-11-18T07:05:41.728Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-11T15:27:48.625Z"
+      "last_updated": "2026-11-18T07:05:41.728Z"
     },
     "langchain4j/langchain4j": {
       "repository": "langchain4j/langchain4j",

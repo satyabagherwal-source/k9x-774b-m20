@@ -10885,3 +10885,8 @@ Every entry in this ledger must capture:
 | `learn-huggingface-prunaai-p-h3-image-comfy` | `https://huggingface.co/PrunaAI/P-H3-Image-Comfy` | `hf-prunaai` | Multi-dimensional audit evidence | 2026-11-18T06:57:41.556Z |
 | `learn-github-orange-opensource-hurl` | `https://github.com/Orange-OpenSource/hurl` | `41a0fa4b` | Multi-dimensional audit evidence | 2026-11-18T06:57:43.961Z |
 | `learn-github-etcd-io-etcd` | `https://github.com/etcd-io/etcd` | `dd2c518f` | Multi-dimensional audit evidence | 2026-11-18T06:57:56.152Z |
+| `learn-huggingface-unsloth-qwen3-8-27b-gguf` | `https://huggingface.co/unsloth/Qwen3.8-27B-GGUF` | `hf-unsloth` | Multi-dimensional audit evidence | 2026-11-18T07:05:36.370Z |
+| `learn-github-asciinema-asciinema` | `https://github.com/asciinema/asciinema` | `e2c66002` | Multi-dimensional audit evidence | 2026-11-18T07:05:38.428Z |
+| `learn-github-arkivanov-decompose` | `https://github.com/arkivanov/Decompose` | `4ab3eaec` | Multi-dimensional audit evidence | 2026-11-18T07:05:41.721Z |
+| `learn-github-aws-aws-cdk` | `https://github.com/aws/aws-cdk` | `12341707` | Multi-dimensional audit evidence | 2026-11-18T07:05:45.801Z |
+| `learn-dom-d-45d6f650` | `project://arkivanov-decompose` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/arkivanov-decompose-learnings.md` | 2026-11-18T07:06:16.401Z |

@@ -2,12 +2,12 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-18T06:16:00.432Z",
+  "updated_at": "2026-11-18T07:06:16.399Z",
   "statistics": {
-    "total_nodes": 334,
+    "total_nodes": 335,
     "total_edges": 158,
     "domain_distribution": {
-      "D": 235,
+      "D": 236,
       "M": 1,
       "H": 43,
       "J": 12,
@@ -7476,6 +7476,28 @@
       ],
       "created_at": "2026-11-18T06:16:00.432Z",
       "updated_at": "2026-11-18T06:16:00.432Z"
+    },
+    "DOM-D-45D6F650": {
+      "id": "DOM-D-45D6F650",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Forensic Learning Record (Deep Inspection): arkivanov/Decompose",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/arkivanov-decompose-learnings.md`  \n> **Source**: github ([https://github.com/arkiva -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/arkivanov-decompose-learnings.md`  \n> **Source**: github ([https://github.com/arkiva",
+      "confidence": 0.6,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://arkivanov-decompose/arkivanov-decompose-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-18T07:05:49.995Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (arkivanov-decompose)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence"
+      ],
+      "created_at": "2026-11-18T07:06:16.399Z",
+      "updated_at": "2026-11-18T07:06:16.399Z"
     }
   },
   "edges": [

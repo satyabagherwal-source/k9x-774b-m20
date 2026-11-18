@@ -635,8 +635,8 @@
     "sourceUrl": "https://huggingface.co/unsloth/Qwen3.8-27B-GGUF",
     "sourceVersion": "hf-unsloth-qwen3.8-27b-gguf",
     "license": "Open-Source",
-    "contentHash": "06ed80162c5b7698e83953db7cd22b8062bb8f716047e5d73a514dc6a6efc68a",
-    "lastHarvestedAt": "2026-11-13T20:07:10.629Z",
+    "contentHash": "72ae56f254a398c94de0a687923389368a422cd0fda647d855d6906bf8c4d3b4",
+    "lastHarvestedAt": "2026-11-18T07:05:36.370Z",
     "learningId": "learn-huggingface-unsloth-qwen3-8-27b-gguf"
   },
   "hf-davidau-qwen3.8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf": {
@@ -3793,10 +3793,10 @@
     "repository": "asciinema/asciinema",
     "platform": "github",
     "sourceUrl": "https://github.com/asciinema/asciinema",
-    "sourceVersion": "f0775199",
+    "sourceVersion": "e2c66002",
     "license": "GPL-3.0",
-    "contentHash": "ace48a1a2419bc56b02770b3b735751972d90f7298fa87fafcb97516106647bb",
-    "lastHarvestedAt": "2026-11-06T13:34:46.652Z",
+    "contentHash": "c1addfd56c8ad8cfacba81a85d92e91f6bc1e1edd8a4bd864fcab3bc48d56fc9",
+    "lastHarvestedAt": "2026-11-18T07:05:38.428Z",
     "learningId": "learn-github-asciinema-asciinema"
   },
   "software-mansion-react-native-reanimated": {
@@ -4803,10 +4803,10 @@
     "repository": "aws/aws-cdk",
     "platform": "github",
     "sourceUrl": "https://github.com/aws/aws-cdk",
-    "sourceVersion": "4d6a58e6",
+    "sourceVersion": "12341707",
     "license": "Apache-2.0",
-    "contentHash": "2d40116262cca2668c8588cdc801fbb038833ef033221889260d92dd86f42fea",
-    "lastHarvestedAt": "2026-11-17T09:23:12.665Z",
+    "contentHash": "a8af8a186d4a937be91281a98585033fd9498584a3ef8f39a8e65a43805c08ac",
+    "lastHarvestedAt": "2026-11-18T07:05:45.801Z",
     "learningId": "learn-github-aws-aws-cdk"
   },
   "cockroachdb-cockroach": {
@@ -7343,10 +7343,10 @@
     "repository": "arkivanov/Decompose",
     "platform": "github",
     "sourceUrl": "https://github.com/arkivanov/Decompose",
-    "sourceVersion": "2cc1a4cc",
+    "sourceVersion": "4ab3eaec",
     "license": "Apache-2.0",
-    "contentHash": "5cfd6a0c1154f8ad86a59716bdab78e21dddec70427ac75c48cf10dfe0948f08",
-    "lastHarvestedAt": "2026-11-11T15:27:48.615Z",
+    "contentHash": "7606e75778ea55dfa4d809b528b7afe2b58c7a9437ab3d4b637cc67f2a643b1f",
+    "lastHarvestedAt": "2026-11-18T07:05:41.721Z",
     "learningId": "learn-github-arkivanov-decompose"
   },
   "langchain4j-langchain4j": {

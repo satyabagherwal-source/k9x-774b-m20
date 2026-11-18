@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-18T06:58:01.354Z",
-  "total_verified_learnings": 8991,
+  "last_updated": "2026-11-18T07:06:16.735Z",
+  "total_verified_learnings": 8993,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 20984,
+  "total_items": 20996,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -213890,7 +213890,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/unsloth/Qwen3.8-27B-GGUF",
       "source_version": "hf-unsloth-qwen3.8-27b-gguf",
-      "content_hash": "06ed80162c5b7698e83953db7cd22b8062bb8f716047e5d73a514dc6a6efc68a",
+      "content_hash": "72ae56f254a398c94de0a687923389368a422cd0fda647d855d6906bf8c4d3b4",
       "dossier_path": "07_PROJECT_LEARNING/hf-unsloth-qwen3.8-27b-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-unsloth-qwen3.8-27b-gguf-learnings.md",
       "promoted_rules": [],
@@ -213899,7 +213899,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-13T20:07:10.469Z",
+      "verified_at": "2026-11-18T07:05:36.176Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -213916,9 +213916,9 @@
       "title": "Research & Knowledge Intelligence: unsloth/Qwen3.8-27B-GGUF Core Invariants",
       "repository": "unsloth/Qwen3.8-27B-GGUF",
       "source_version": "hf-unsloth-qwen3.8-27b-gguf",
-      "content_hash": "b9106d4e7ff036274b33eb63ef6242238524a9c5828ff0cf98d3add50798ee4c",
+      "content_hash": "88b54bca967bd933d46bb3c52d79ab83b839befba8b21b79e2cc9fd734d50e73",
       "domain_letter": "D",
-      "persisted_at": "2026-11-13T20:07:10.831Z"
+      "persisted_at": "2026-11-18T07:05:36.543Z"
     },
     "learn-github-open-policy-agent-opa": {
       "learning_id": "learn-github-open-policy-agent-opa",
@@ -214223,9 +214223,9 @@
       "title": "Research & Knowledge Intelligence: hf-unsloth-qwen3.8-27b-gguf-learnings Core Invariants",
       "repository": "hf-unsloth-qwen3.8-27b-gguf-learnings",
       "source_version": "HEAD",
-      "content_hash": "1c77a7f5935cd61957ef35a51cc98334354efaeefd8412ee202100aa43615ad0",
+      "content_hash": "28763a15988ff6260a8abdbab039906ef76b21d851e454b60cfc3eeb3de56df0",
       "domain_letter": "D",
-      "persisted_at": "2026-11-13T20:08:03.207Z"
+      "persisted_at": "2026-11-18T07:05:49.859Z"
     },
     "candidate_directive-ast-fix-negative-number-location-text-for": {
       "item_id": "candidate_directive-ast-fix-negative-number-location-text-for",
@@ -234978,8 +234978,8 @@
       "slug": "aws-aws-cdk",
       "platform": "github",
       "source_url": "https://github.com/aws/aws-cdk",
-      "source_version": "4d6a58e6",
-      "content_hash": "2d40116262cca2668c8588cdc801fbb038833ef033221889260d92dd86f42fea",
+      "source_version": "12341707",
+      "content_hash": "a8af8a186d4a937be91281a98585033fd9498584a3ef8f39a8e65a43805c08ac",
       "dossier_path": "07_PROJECT_LEARNING/aws-aws-cdk-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/aws-aws-cdk-learnings.md",
       "promoted_rules": [
@@ -234992,6 +234992,11 @@
           "number": 8944,
           "title": "docs(bedrockagentcore): document Transaction Search prerequisite for Runtime tra",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9149,
+          "title": "--quiet is ignored for warning and skipped diagnostics",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -234999,7 +235004,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T09:23:12.456Z",
+      "verified_at": "2026-11-18T07:05:45.632Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -235041,10 +235046,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-aws-aws-cdk-technical-construction-intelligence-aws-aws-cdk-core-invariants.md",
       "title": "Technical Construction Intelligence: aws/aws-cdk Core Invariants",
       "repository": "aws/aws-cdk",
-      "source_version": "4d6a58e6",
-      "content_hash": "48d3b167723fe2b46d6d82b1b2f9153bd95cb59d669ff375c06fff373a6f80cf",
+      "source_version": "12341707",
+      "content_hash": "cac61691cd3597c8972acc565afaffd63a764be0dd6b451107d0a7dd0b24bf88",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T09:23:13.054Z"
+      "persisted_at": "2026-11-18T07:05:46.123Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-aws-aws-cdk": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-aws-aws-cdk",
@@ -235053,10 +235058,10 @@
       "relative_path": "08_VERIFICATION/aws-aws-cdk-verification-protocol-empirical-defect-shield-for-aws-aws-cdk.md",
       "title": "Verification Protocol: Empirical Defect Shield for aws/aws-cdk",
       "repository": "aws/aws-cdk",
-      "source_version": "4d6a58e6",
-      "content_hash": "0ee327799b44e874e1d1c915d02480854d20db84822e9b090f3d8aaca4fe5cf4",
+      "source_version": "12341707",
+      "content_hash": "6ed19f8bfc09ef7ea89552dcb3b47e0c53c8fc2aa3cd46f4ed2040628df30dfd",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T09:23:13.222Z"
+      "persisted_at": "2026-11-18T07:05:46.272Z"
     },
     "learn-huggingface-qwen-qwen3-4b": {
       "learning_id": "learn-huggingface-qwen-qwen3-4b",
@@ -282758,6 +282763,190 @@
       "content_hash": "3de5e80d7cf203889cf56fceabaa20b179c52f80e1bb7c2f93878776831fbf9b",
       "domain_letter": "K",
       "persisted_at": "2026-11-18T06:58:01.213Z"
+    },
+    "learn-github-asciinema-asciinema": {
+      "learning_id": "learn-github-asciinema-asciinema",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "asciinema/asciinema",
+      "repository": "asciinema/asciinema",
+      "slug": "asciinema-asciinema",
+      "platform": "github",
+      "source_url": "https://github.com/asciinema/asciinema",
+      "source_version": "e2c66002",
+      "content_hash": "c1addfd56c8ad8cfacba81a85d92e91f6bc1e1edd8a4bd864fcab3bc48d56fc9",
+      "dossier_path": "07_PROJECT_LEARNING/asciinema-asciinema-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/asciinema-asciinema-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 9148,
+          "title": "Upgrade avt to 0.21",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-18T07:05:38.251Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-9148": {
+      "learning_id": "rule-9148",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9148,
+      "title": "Upgrade avt to 0.21",
+      "source_url": "https://github.com/asciinema/asciinema",
+      "source_version": "e2c66002",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-18T07:05:38.251Z"
+    },
+    "candidate_directive-upgrade-avt-to-0-21": {
+      "item_id": "candidate_directive-upgrade-avt-to-0-21",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-1TZ4-upgrade-avt-to-0-21.md",
+      "title": "Upgrade avt to 0.21",
+      "repository": "asciinema-asciinema-learnings",
+      "source_version": "HEAD",
+      "content_hash": "8057950b6b84ca7f3fdd9bc0f687e4547541e3d7e819e27cbe811828de3132b8",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-18T07:05:49.315Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-asciinema-asciinema-core-invariants": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-asciinema-asciinema-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-asciinema-asciinema-technical-construction-intelligence-asciinema-asciinema-core.md",
+      "title": "Technical Construction Intelligence: asciinema/asciinema Core Invariants",
+      "repository": "asciinema/asciinema",
+      "source_version": "e2c66002",
+      "content_hash": "c32136bba40c74de254650bbab7fa63f9b8265804ee30a19c2105c8ba15c0c64",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-18T07:05:38.748Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-asciinema-asciinema": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-asciinema-asciinema",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/asciinema-asciinema-verification-protocol-empirical-defect-shield-for-asciinema-.md",
+      "title": "Verification Protocol: Empirical Defect Shield for asciinema/asciinema",
+      "repository": "asciinema/asciinema",
+      "source_version": "e2c66002",
+      "content_hash": "496505d4f0c4d3243fc5ce5730b4b10f9ea335eac25d56a02c855887e0f9d44a",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-18T07:05:38.871Z"
+    },
+    "learn-github-arkivanov-decompose": {
+      "learning_id": "learn-github-arkivanov-decompose",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "arkivanov/Decompose",
+      "repository": "arkivanov/Decompose",
+      "slug": "arkivanov-decompose",
+      "platform": "github",
+      "source_url": "https://github.com/arkivanov/Decompose",
+      "source_version": "4ab3eaec",
+      "content_hash": "7606e75778ea55dfa4d809b528b7afe2b58c7a9437ab3d4b637cc67f2a643b1f",
+      "dossier_path": "07_PROJECT_LEARNING/arkivanov-decompose-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/arkivanov-decompose-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-18T07:05:41.564Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-architecture-intelligence-arkivanov-decompose-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-arkivanov-decompose-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-arkivanov-decompose-architecture-intelligence-arkivanov-decompose-core-invariant.md",
+      "title": "Architecture Intelligence: arkivanov/Decompose Core Invariants",
+      "repository": "arkivanov/Decompose",
+      "source_version": "4ab3eaec",
+      "content_hash": "8c2e5261b56eac70f86f89c1ac856f0916db1600abbd25a0ea0077547c4efa7e",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-18T07:05:41.896Z"
+    },
+    "rule-9149": {
+      "learning_id": "rule-9149",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9149,
+      "title": "--quiet is ignored for warning and skipped diagnostics",
+      "source_url": "https://github.com/aws/aws-cdk",
+      "source_version": "12341707",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-18T07:05:45.632Z"
+    },
+    "candidate_directive-quiet-is-ignored-for-warning-and-skipped-diagnostics": {
+      "item_id": "candidate_directive-quiet-is-ignored-for-warning-and-skipped-diagnostics",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-1REZ-quiet-is-ignored-for-warning-and-skipped-diagnostics.md",
+      "title": "--quiet is ignored for warning and skipped diagnostics",
+      "repository": "aws/aws-cdk",
+      "source_version": "12341707",
+      "content_hash": "09df2d4ae1246daf4b0e81390b44069581ae0d0a70d18e249a893940746bc7cb",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-18T07:05:45.996Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-asciinema-asciinema-learnings-core-invariant": {
+      "item_id": "domain_intelligence-technical-construction-intelligence-asciinema-asciinema-learnings-core-invariant",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-asciinema-asciinema-learnings-technical-construction-intelligence-asciinema-asci.md",
+      "title": "Technical Construction Intelligence: asciinema-asciinema-learnings Core Invariants",
+      "repository": "asciinema-asciinema-learnings",
+      "source_version": "HEAD",
+      "content_hash": "6ee737595e549e025530d4f02a4af5627d75e27cf0a0b5d7b3c6407cded9fa70",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-18T07:05:49.449Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-asciinema-asciinema-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-asciinema-asciinema-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/asciinema-asciinema-learnings-verification-protocol-empirical-defect-shield-for-.md",
+      "title": "Verification Protocol: Empirical Defect Shield for asciinema-asciinema-learnings",
+      "repository": "asciinema-asciinema-learnings",
+      "source_version": "HEAD",
+      "content_hash": "481dae58464cea0dd395c7feaac0987f59204e9adcb8e19f59a9c51610b39b37",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-18T07:05:49.577Z"
+    },
+    "domain_intelligence-architecture-intelligence-arkivanov-decompose-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-arkivanov-decompose-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-arkivanov-decompose-learnings-architecture-intelligence-arkivanov-decompose-lear.md",
+      "title": "Architecture Intelligence: arkivanov-decompose-learnings Core Invariants",
+      "repository": "arkivanov-decompose-learnings",
+      "source_version": "HEAD",
+      "content_hash": "9651a6ec7c1b8b2b9d1e3534634d0b9e8b26b9bc5658de506055ab70532982dc",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-18T07:06:16.735Z"
     }
   },
   "ai-builder-brain": {

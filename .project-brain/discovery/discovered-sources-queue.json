@@ -2,15 +2,15 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-18T06:58:00.839Z",
+  "updated_at": "2026-11-18T07:06:16.538Z",
   "stats": {
-    "total_discovered": 5361,
-    "approved_pending_harvest": 5059,
+    "total_discovered": 5368,
+    "approved_pending_harvest": 5066,
     "harvested_count": 0,
     "rejected_count": 302,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 5042,
-      "OFFICIAL_DOCUMENTATION": 175,
+      "COMMUNITY_AND_EXPERT": 5048,
+      "OFFICIAL_DOCUMENTATION": 176,
       "STANDARDS_AND_SPECIFICATIONS": 108,
       "ENGINEERING_BLOGS": 4,
       "SECURITY_ADVISORIES": 24,
@@ -115849,6 +115849,160 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/etcd-io-etcd-learnings.md",
         "fileName": "etcd-io-etcd-learnings.md"
+      }
+    },
+    "SRC-48C27F97E6DE": {
+      "id": "SRC-48C27F97E6DE",
+      "url": "https://github.com/asciinema/asciinema",
+      "title": "https://github.com/asciinema/asciinema",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T07:05:49.037Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/asciinema-asciinema-learnings.md",
+        "fileName": "asciinema-asciinema-learnings.md"
+      }
+    },
+    "SRC-8956DCF9587D": {
+      "id": "SRC-8956DCF9587D",
+      "url": "https://docs.asciinema.org/manual/server/streaming",
+      "title": "https://docs.asciinema.org/manual/server/streaming",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T07:05:49.074Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/asciinema-asciinema-learnings.md",
+        "fileName": "asciinema-asciinema-learnings.md"
+      }
+    },
+    "SRC-90B512E16A80": {
+      "id": "SRC-90B512E16A80",
+      "url": "https://asciinema.org/a/569727",
+      "title": "https://asciinema.org/a/569727",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T07:05:49.111Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/asciinema-asciinema-learnings.md",
+        "fileName": "asciinema-asciinema-learnings.md"
+      }
+    },
+    "SRC-968EF27EFF6D": {
+      "id": "SRC-968EF27EFF6D",
+      "url": "https://github.com/arkivanov/Decompose",
+      "title": "https://github.com/arkivanov/Decompose",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T07:06:16.421Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/arkivanov-decompose-learnings.md",
+        "fileName": "arkivanov-decompose-learnings.md"
+      }
+    },
+    "SRC-2386360C57CB": {
+      "id": "SRC-2386360C57CB",
+      "url": "https://developer.android.com/guide/navigation/design/deep-link",
+      "title": "https://developer.android.com/guide/navigation/design/deep-link",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T07:06:16.460Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/arkivanov-decompose-learnings.md",
+        "fileName": "arkivanov-decompose-learnings.md"
+      }
+    },
+    "SRC-D02F042A2760": {
+      "id": "SRC-D02F042A2760",
+      "url": "https://developer.android.com/guide/components/activities/tasks-and-back-stack",
+      "title": "https://developer.android.com/guide/components/activities/tasks-and-back-stack",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T07:06:16.505Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/arkivanov-decompose-learnings.md",
+        "fileName": "arkivanov-decompose-learnings.md"
+      }
+    },
+    "SRC-7C0BF09D28D7": {
+      "id": "SRC-7C0BF09D28D7",
+      "url": "https://cs.android.com/androidx/platform/frameworks/support/+/androidx-main:navigation/navigation-runtime/src/main/java/androidx/navigation/NavController.kt;l=1486;drc=fd7d0dc4a56c2aef65424db7986aa057f9717661",
+      "title": "https://cs.android.com/androidx/platform/frameworks/support/+/androidx-main:navigation/navigation-runtime/src/main/java/androidx/navigation/NavController.kt;l=1486;drc=fd7d0dc4a56c2aef65424db7986aa057f9717661",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T07:06:16.538Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/arkivanov-decompose-learnings.md",
+        "fileName": "arkivanov-decompose-learnings.md"
       }
     }
   }

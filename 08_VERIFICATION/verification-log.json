@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261116-YM4C",
-    "timestamp": "2026-11-16T17:43:49.884Z",
-    "repository": "NucleoidAI/Nucleoid",
-    "learningId": "learn-github-nucleoidai-nucleoid",
-    "contentHash": "745dfdd34ffddb75855db35e7abf8b47c84ce7894b4e5a95d167b6eef41d93b8",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261116-YPW1",
-    "timestamp": "2026-11-16T17:43:54.769Z",
-    "repository": "ArchiveBox/ArchiveBox",
-    "learningId": "learn-github-archivebox-archivebox",
-    "contentHash": "d755a7204236bddf490d2a91f6a9e1d7382d4ba0aa9fffb75081c9dc18a667bc",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261116-YTVX",
-    "timestamp": "2026-11-16T17:43:59.949Z",
-    "repository": "tursodatabase/turso",
-    "learningId": "learn-github-tursodatabase-turso",
-    "contentHash": "f7dcf9bf2a0050220357641caf336307c1f0f87a150fbefca7dcb4ca238a0eb6",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261116-LFTE",
-    "timestamp": "2026-11-16T18:01:34.802Z",
-    "repository": "n4ze3m/tiny-voca",
-    "learningId": "learn-huggingface-n4ze3m-tiny-voca",
-    "contentHash": "abdfd71d8a7453ad86f44304e9cd79d05affff37bf328761db55a28439946fa0",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261116-LMP5",
     "timestamp": "2026-11-16T18:01:43.721Z",
     "repository": "yazinsai/OpenOats",
@@ -7490,6 +7430,66 @@
     "repository": "etcd-io/etcd",
     "learningId": "learn-github-etcd-io-etcd",
     "contentHash": "f57b142b2a97d9ea82d6d62fb98d790c457a2131061646746a930a4b8de09961",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-1JZI",
+    "timestamp": "2026-11-18T07:05:36.366Z",
+    "repository": "unsloth/Qwen3.8-27B-GGUF",
+    "learningId": "learn-huggingface-unsloth-qwen3-8-27b-gguf",
+    "contentHash": "72ae56f254a398c94de0a687923389368a422cd0fda647d855d6906bf8c4d3b4",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-1LKP",
+    "timestamp": "2026-11-18T07:05:38.425Z",
+    "repository": "asciinema/asciinema",
+    "learningId": "learn-github-asciinema-asciinema",
+    "contentHash": "c1addfd56c8ad8cfacba81a85d92e91f6bc1e1edd8a4bd864fcab3bc48d56fc9",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-1O45",
+    "timestamp": "2026-11-18T07:05:41.717Z",
+    "repository": "arkivanov/Decompose",
+    "learningId": "learn-github-arkivanov-decompose",
+    "contentHash": "7606e75778ea55dfa4d809b528b7afe2b58c7a9437ab3d4b637cc67f2a643b1f",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-1R9H",
+    "timestamp": "2026-11-18T07:05:45.797Z",
+    "repository": "aws/aws-cdk",
+    "learningId": "learn-github-aws-aws-cdk",
+    "contentHash": "a8af8a186d4a937be91281a98585033fd9498584a3ef8f39a8e65a43805c08ac",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

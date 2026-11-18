@@ -4,22 +4,22 @@
 {
   "source_repository": "aws/aws-cdk",
   "source_url": "https://github.com/aws/aws-cdk",
-  "source_version": "4d6a58e6",
+  "source_version": "12341707",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-17T09:23:12.898Z",
+  "timestamp": "2026-11-18T07:05:45.995Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-aws-aws-cdk",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [aws/aws-cdk](https://github.com/aws/aws-cdk) (Revision: `4d6a58e6`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-17T09:23:12.898Z`  
+> **Provenance**: Harvested from [aws/aws-cdk](https://github.com/aws/aws-cdk) (Revision: `12341707`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-18T07:05:45.995Z`  
 > **Learning ID**: `learn-github-aws-aws-cdk`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `aws/aws-cdk` (Commit: `4d6a58e6`)
+- **Target Repository**: `aws/aws-cdk` (Commit: `12341707`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/aws-aws-cdk-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/aws/aws-cdk](https://github.com/aws/aws-cdk))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T09:22:21.286Z  
+> **Harvest Timestamp**: 2026-11-18T07:05:44.904Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: The AWS Cloud Development Kit is a framework for defining cloud infrastructure in code
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 12980 stars
+- **Stars / Engagement**: 12986 stars
 
 ---
 
@@ -1211,67 +1211,80 @@ export abstract class OnlineEvaluationBase extends Resource implements IOnlineEv
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `88e01777` (2026-11-16)
-**Commit Message**: docs(bedrockagentcore): document Transaction Search prerequisite for Runtime tracing (#39754)
+### Incident Patch 1: `7105c256` (2026-11-17)
+**Commit Message**: fix(awslint): --quiet is ignored for warning and skipped diagnostics (#39790)
 
 ### Issue # (if applicable)
 
-No tracking issue.
+Closes #39789.
 
 ### Reason for this change
 
-Agents and users who copy the README tracing example hit a deploy failure on accounts where CloudWatch Transaction Search is off, and the docs do not mention the prerequisite. The deploy fails with:
+`awslint` prints every diagnostic regardless of `--quiet`, flooding CI logs with `skipped: [awslint...` and `warning: [awslint...` lines on every run, for example https://github.com/aws/aws-cdk/actions/runs/44101098065/job/134100986161?pr=39778.
 
-`X-Ray Delivery Destination is supported with CloudWatch Logs as a Trace Segment Destination`
-
-Runtime tracing delivers traces to X-Ray through CloudWatch Logs, and that delivery only works when Transaction Search is enabled in the account and Region.
+The print loop in `bin/awslint.ts` only sets a `color` variable when a diagnostic should actually be visible: errors always, warnings/skipped only when `!args.quiet`, success only when `--verbose`. An `else` branch, added in 0af7c343 (#38350) while chasing an unrelated chalk bug, then printed the message anyway, uncolored, whenever `color` was unset. Since CI output isn't a TTY and `--quiet` defaults to `true`, every warning and skipped diagnostic hits that branch and prints on every run, defeating the point of `--quiet` ("shows only errors").
 
 ### Description of changes
 
-Documentation only. No code behaviour change.
+Replaced the `color`-doubles-as-visibility-gate pattern with an explicit `show` flag per diagnostic level, so quiet/verbose actually controls whether a message prints, not just whether it's colored. Error messages still al
 
-- Added a docstring note on the `tracingEnabled` prop in `runtime.ts` explaining that tracing requires CloudWatch Transaction Search enabled in the account and Region (a one-time, account-wide setting), and that the deploy fails without it.
-- Added one note in the README observability section, after the tracing example, linking the `xray.CfnTransactionSearchConfig` API docs and the CloudWatch "Enable Transaction Search with CloudFormation" guide.
-
-There is no L2 construct for Transaction Search,
-
-**File**: `packages/aws-cdk-lib/aws-bedrockagentcore/README.md` (modified, +2/-0)
+**File**: `packages/awslint/bin/awslint.ts` (modified, +9/-12)
 ```diff
-@@ -877,6 +877,8 @@ new agentcore.Runtime(this, 'test-runtime', {
- });
- ```
+@@ -133,36 +133,33 @@ async function main() {
+     for (const diag of results) {
+       const suppressionKey = `${diag.rule.code}:${diag.scope}`;
  
-+> **Note:** Tracing requires CloudWatch Transaction Search, enabled once per account and Region. Without it the deploy fails with `X-Ray Delivery Destination is supported with CloudWatch Logs as a Trace Segment Destination`. Turn it on in the CloudWatch console, or deploy [`xray.CfnTransactionSearchConfig`](https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_xray.CfnTransactionSearchConfig.html) in a stack you deploy once per account; see [Enable Transaction Search with CloudFormation](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Transaction-Search-Cloudformation.html).
-+
- ```typescript fixture=default
- const repository = new ecr.Repository(this, 'TestRepository', {
-   repositoryName: 'test-agent-runtime',
-```
-
-**File**: `packages/aws-cdk-lib/aws-bedrockagentcore/lib/runtime/runtime.ts` (modified, +5/-0)
-```diff
-@@ -160,7 +160,12 @@ export interface RuntimeProps {
-    * Whether to enable X-Ray tracing for this runtime.
-    * When enabled, traces will be delivered to AWS X-Ray.
-    *
-+   * Tracing requires CloudWatch Transaction Search to be enabled in the account and
-+   * Region, so that the X-Ray trace segment destination is CloudWatch Logs.
-+   * Without it the deploy fails. This is a one-time, account-wide setting.
-+   *
-    * @see https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/observability.html
-+   * @see https://docs.aws.amazon.com/bedrock-agentcore/latest/devguide/observability-get-started.html
-    * @default false
-    */
-   readonly tracingEnabled?: boolean;
++      let show = false;
+       let color;
+       switch (diag.level) {
+         case DiagnosticLevel.Success:
+-          if (args.verbose) {
+-            color = chalk.gray;
+-          }
++          show = args.verbose;
++          color = chalk.gray;
+           break;
+         case DiagnosticLevel.Error:
+           errors++;
++          show = true;
+           color = chalk.red;
+           if (args.save) {
+             excludesToSave.push(suppressionKey);
+           }
+           break;
+         case DiagnosticLevel.Warning:
+-          if (!args.quiet) {
+-            color = chalk.yellow;
+-          }
++          show = !args.quiet;
++          color = chalk.yellow;
+           break;
+         case DiagnosticLevel.Skipped:
+-          if (!args.quiet) {
+-            color = chalk.blue;
+-          }
++          show = !args.quiet;
++          color = chalk.blue;
+           break;
+       }
+ 
+-      if (color) {
++      if (show) {
+         console.error(color(`${DiagnosticLevel[diag.level].toLowerCase()}: [${chalk.bold(`awslint:${diag.rule.code}`)}:${chalk.bold(diag.scope)}] ${diag.message}`));
+-      } else {
+-        console.error(`${DiagnosticLevel[diag.level].toLowerCase()}: [${`awslint:${diag.rule.code}`}:${diag.scope}] ${diag.message}`);
+       }
+     }
+ 
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #39755** (2026-11-16): docs(bedrockagentcore): document OpenTelemetry dependency for direct code deployment (@kumvprat)
-- **PR #39754** (2026-11-16): docs(bedrockagentcore): document Transaction Search prerequisite for Runtime tracing (@kumvprat)
-- **PR #39751** (closed): fix(bedrockagentcore): imported gateway target reports its status as its description (@laazyj)
-- **PR #39722** (2026-11-13): chore(merge-back): 2.277.0 (@aws-cdk-automation)
-- **PR #39712** (2026-11-12): feat(lambda-event-sources): support queue consumption mode for self-managed Kafka (@ainafee-amzn)
-- **PR #39711** (2026-11-12): chore(release): 2.277.0 (@aws-cdk-automation)
+- **PR #39805** (closed): feat(lambda): add acceleratorConfig for GPU functions on Lambda Managed Instances (@vicheey)
+- **PR #39796** (2026-11-17): chore: workflows still run on end-of-life Node 20 (@mrgrain)
+- **PR #39795** (2026-11-17): chore(scripts): the API compatibility check prints xargs warnings (@mrgrain)
+- **PR #39792** (2026-11-17): chore(ci): remove team-reviewers from workflows that open automated PRs (@alvazjor)
+- **PR #39790** (2026-11-17): fix(awslint): --quiet is ignored for warning and skipped diagnostics (@mrgrain)
+- **PR #39757** (2026-11-17): docs(cloudwatch): document that MAX in math expressions cannot mix metrics and scalars (@joris-de)
 
 ---
 
@@ -1291,32 +1304,50 @@ There is no L2 construct for Transaction Search,
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs(bedrockagentcore): document Transaction Search prerequisite for Runtime tra
+## X. awslint): --quiet is ignored for warning and skipped diagnostics
 
 **RULE**:
-When implementing operations in `packages/aws-cdk-lib/aws-bedrockagentcore/README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aws/aws-cdk. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `packages/awslint/bin/awslint.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aws/aws-cdk. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `88e01777`: docs(bedrockagentcore): document Transaction Search prerequisite for Runtime tracing. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `7105c256`: awslint): --quiet is ignored for warning and skipped diagnostics. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/aws-cdk-lib/aws-bedrockagentcore/README.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `packages/awslint/bin/awslint.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-> **Note:** Tracing requires CloudWatch Transaction Search, enabled once per account and Region. Without it the deploy fails with `X-Ray Delivery Destination is supported with CloudWatch Logs as a Trace Segment Destination`. Turn it on in the CloudWatch console, or deploy [`xray.CfnTransactionSearchConfig`](https://docs.aws.amazon.com/cdk/api/v2/docs/aws-cdk-lib.aws_xray.CfnTransactionSearchConfig.html) in a stack you deploy once per account; see [Enable Transaction Search with CloudFormation](https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/CloudWatch-Transaction-Search-Cloudformation.html).
-
+      let show = false;
+          show = args.verbose;
+          color = chalk.gray;
+          show = true;
+          show = !args.quiet;
+          color = chalk.yellow;
+          show = !args.quiet;
+          color = chalk.blue;
+      if (show) {
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Induced defect failure mode:
-// Defect-prone omission of boundary validation
+          if (args.verbose) {
+            color = chalk.gray;
+          }
+          if (!args.quiet) {
+            color = chalk.yellow;
+          }
+          if (!args.quiet) {
+            color = chalk.blue;
+          }
+      if (color) {
+      } else {
+        console.error(`${DiagnosticLevel[diag.level].toLowerCase()}: [${`awslint:${diag.rule.code}`}:${diag.scope}] ${diag.message}`);
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `88e01777` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `7105c256` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

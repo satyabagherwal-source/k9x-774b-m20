@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-18T06:58:01.213Z",
-  "total_records": 1780,
+  "last_updated": "2026-11-18T07:06:16.735Z",
+  "total_records": 1785,
   "domains": {
     "A": {
       "total": 11,
@@ -48,7 +48,7 @@
       ]
     },
     "D": {
-      "total": 768,
+      "total": 769,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -817,7 +817,8 @@
         "DOM-D-AD9F2297",
         "domain_intelligence-research-knowledge-intelligence-hf-apple-fastframes-l-learnings-core-invariants",
         "DOM-D-5E75492A",
-        "domain_intelligence-research-knowledge-intelligence-hf-alissonerdx-bfs-best-face-swap-learnings-core"
+        "domain_intelligence-research-knowledge-intelligence-hf-alissonerdx-bfs-best-face-swap-learnings-core",
+        "DOM-D-45D6F650"
       ]
     },
     "E": {
@@ -880,7 +881,7 @@
       ]
     },
     "G": {
-      "total": 313,
+      "total": 315,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -1194,11 +1195,13 @@
         "domain_intelligence-architecture-intelligence-sqlpage-sqlpage-core-invariants",
         "domain_intelligence-architecture-intelligence-sqlpage-sqlpage-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-orange-opensource-hurl-core-invariants",
-        "domain_intelligence-architecture-intelligence-orange-opensource-hurl-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-orange-opensource-hurl-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-arkivanov-decompose-core-invariants",
+        "domain_intelligence-architecture-intelligence-arkivanov-decompose-learnings-core-invariants"
       ]
     },
     "H": {
-      "total": 415,
+      "total": 417,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1614,7 +1617,9 @@
         "domain_intelligence-technical-construction-intelligence-spartan-ng-spartan-learnings-core-invariants",
         "DOM-H-0137E2F6",
         "domain_intelligence-technical-construction-intelligence-ista-daslab-qwen3-8-flash-next-gsq-rco-gguf-",
-        "domain_intelligence-technical-construction-intelligence-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-gg"
+        "domain_intelligence-technical-construction-intelligence-hf-ista-daslab-qwen3-8-flash-next-gsq-rco-gg",
+        "domain_intelligence-technical-construction-intelligence-asciinema-asciinema-core-invariants",
+        "domain_intelligence-technical-construction-intelligence-asciinema-asciinema-learnings-core-invariant"
       ]
     },
     "I": {
@@ -9803,8 +9808,8 @@
       "title": "Research & Knowledge Intelligence: unsloth/Qwen3.8-27B-GGUF Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-unsloth-qwen3-8-27b-gguf-research-knowledge-intelligence-unsloth-qwen3-8-27b-.md",
       "repository": "unsloth/Qwen3.8-27B-GGUF",
-      "content_hash": "b9106d4e7ff036274b33eb63ef6242238524a9c5828ff0cf98d3add50798ee4c",
-      "created_at": "2026-11-13T20:07:10.831Z"
+      "content_hash": "88b54bca967bd933d46bb3c52d79ab83b839befba8b21b79e2cc9fd734d50e73",
+      "created_at": "2026-11-18T07:05:36.543Z"
     },
     "domain_intelligence-technical-construction-intelligence-open-policy-agent-opa-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-open-policy-agent-opa-core-invariants",
@@ -9872,8 +9877,8 @@
       "title": "Research & Knowledge Intelligence: hf-unsloth-qwen3.8-27b-gguf-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-unsloth-qwen3-8-27b-gguf-learnings-research-knowledge-intelligence-hf-unsloth.md",
       "repository": "hf-unsloth-qwen3.8-27b-gguf-learnings",
-      "content_hash": "1c77a7f5935cd61957ef35a51cc98334354efaeefd8412ee202100aa43615ad0",
-      "created_at": "2026-11-13T20:08:03.207Z"
+      "content_hash": "28763a15988ff6260a8abdbab039906ef76b21d851e454b60cfc3eeb3de56df0",
+      "created_at": "2026-11-18T07:05:49.859Z"
     },
     "domain_intelligence-technical-construction-intelligence-open-policy-agent-opa-learnings-core-invaria": {
       "record_id": "domain_intelligence-technical-construction-intelligence-open-policy-agent-opa-learnings-core-invaria",
@@ -17292,8 +17297,8 @@
       "title": "Technical Construction Intelligence: aws/aws-cdk Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-aws-aws-cdk-technical-construction-intelligence-aws-aws-cdk-core-invariants.md",
       "repository": "aws/aws-cdk",
-      "content_hash": "48d3b167723fe2b46d6d82b1b2f9153bd95cb59d669ff375c06fff373a6f80cf",
-      "created_at": "2026-11-17T09:23:13.054Z"
+      "content_hash": "cac61691cd3597c8972acc565afaffd63a764be0dd6b451107d0a7dd0b24bf88",
+      "created_at": "2026-11-18T07:05:46.123Z"
     },
     "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-4b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-4b-core-invariants",
@@ -29768,6 +29773,84 @@
       "repository": "etcd-io-etcd-learnings",
       "content_hash": "3de5e80d7cf203889cf56fceabaa20b179c52f80e1bb7c2f93878776831fbf9b",
       "created_at": "2026-11-18T06:58:01.213Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-asciinema-asciinema-core-invariants": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-asciinema-asciinema-core-invariants",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: asciinema/asciinema Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-asciinema-asciinema-technical-construction-intelligence-asciinema-asciinema-core.md",
+      "repository": "asciinema/asciinema",
+      "content_hash": "c32136bba40c74de254650bbab7fa63f9b8265804ee30a19c2105c8ba15c0c64",
+      "created_at": "2026-11-18T07:05:38.748Z"
+    },
+    "domain_intelligence-architecture-intelligence-arkivanov-decompose-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-arkivanov-decompose-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: arkivanov/Decompose Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-arkivanov-decompose-architecture-intelligence-arkivanov-decompose-core-invariant.md",
+      "repository": "arkivanov/Decompose",
+      "content_hash": "8c2e5261b56eac70f86f89c1ac856f0916db1600abbd25a0ea0077547c4efa7e",
+      "created_at": "2026-11-18T07:05:41.896Z"
+    },
+    "domain_intelligence-technical-construction-intelligence-asciinema-asciinema-learnings-core-invariant": {
+      "record_id": "domain_intelligence-technical-construction-intelligence-asciinema-asciinema-learnings-core-invariant",
+      "domain_letter": "H",
+      "title": "Technical Construction Intelligence: asciinema-asciinema-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-asciinema-asciinema-learnings-technical-construction-intelligence-asciinema-asci.md",
+      "repository": "asciinema-asciinema-learnings",
+      "content_hash": "6ee737595e549e025530d4f02a4af5627d75e27cf0a0b5d7b3c6407cded9fa70",
+      "created_at": "2026-11-18T07:05:49.449Z"
+    },
+    "DOM-D-45D6F650": {
+      "record_id": "DOM-D-45D6F650",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): arkivanov/Decompose",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/arkivanov-decompose-learnings.md`  \n> **Source**: github ([https://github.com/arkivanov/Decompose](https://github.com/arkivanov/Decompose))  \n> **Source Version**: `4ab3eaec`  \n> **License**: Apache-2.0  \n> **Synthesized By**: zero-clone-struct",
+      "content_hash": "ffbbd7cccbc57caba8d63b8d0fefe57f1f26dce05046bc17a4827c754751e8d1",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/arkivanov-decompose-learnings.md`  \n> **Source**: github ([https://github.com/arkiva -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/arkivanov-decompose-learnings.md`  \n> **Source**: github ([https://github.com/arkiva",
+      "provenance": {
+        "source_uri": "project://arkivanov-decompose/arkivanov-decompose-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-18T07:05:49.995Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (arkivanov-decompose)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of arkivanov-decompose"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-18T07:06:16.372Z"
+    },
+    "domain_intelligence-architecture-intelligence-arkivanov-decompose-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-arkivanov-decompose-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: arkivanov-decompose-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-arkivanov-decompose-learnings-architecture-intelligence-arkivanov-decompose-lear.md",
+      "repository": "arkivanov-decompose-learnings",
+      "content_hash": "9651a6ec7c1b8b2b9d1e3534634d0b9e8b26b9bc5658de506055ab70532982dc",
+      "created_at": "2026-11-18T07:06:16.735Z"
     }
   }
 }

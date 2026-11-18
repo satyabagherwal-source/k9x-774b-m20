@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/unsloth/Qwen3.8-27B-GGUF",
   "source_version": "hf-unsloth-qwen3.8-27b-gguf",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T20:07:10.830Z",
+  "timestamp": "2026-11-18T07:05:36.543Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-unsloth-qwen3-8-27b-gguf",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [unsloth/Qwen3.8-27B-GGUF](https://huggingface.co/unsloth/Qwen3.8-27B-GGUF) (Revision: `hf-unsloth`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T20:07:10.830Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-18T07:05:36.543Z`  
 > **Learning ID**: `learn-huggingface-unsloth-qwen3-8-27b-gguf`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-unsloth-qwen3.8-27b-gguf-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/unsloth/Qwen3.8-27B-GGUF](https://huggingface.co/unsloth/Qwen3.8-27B-GGUF))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T20:07:10.076Z  
+> **Harvest Timestamp**: 2026-11-18T07:05:35.831Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: ML Foundation Model
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 6253865 downloads | 5858 likes
+- **Stars / Engagement**: 6827598 downloads | 6150 likes
 
 ---
 
