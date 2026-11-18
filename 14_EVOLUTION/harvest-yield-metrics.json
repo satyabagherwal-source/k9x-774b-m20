@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T07:56:33.522Z",
-  "total_cycles_completed": 10418,
-  "total_learnings_persisted": 10418,
-  "total_rules_promoted": 9915,
+  "last_updated": "2026-11-18T08:06:27.620Z",
+  "total_cycles_completed": 10422,
+  "total_learnings_persisted": 10422,
+  "total_rules_promoted": 9927,
   "history": [
-    {
-      "timestamp": "2026-11-17T18:42:41.860Z",
-      "repository": "lingyired/status-trio",
-      "learningId": "learn-github-lingyired-status-trio",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T18:42:43.205Z",
-      "repository": "emberstack/kubernetes-reflector",
-      "learningId": "learn-github-emberstack-kubernetes-reflector",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T18:42:50.173Z",
-      "repository": "SeaQL/sea-orm",
-      "learningId": "learn-github-seaql-sea-orm",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T18:44:17.218Z",
-      "repository": "Nanbeige/Nanbeige4.3-33B",
-      "learningId": "learn-huggingface-nanbeige-nanbeige4-3-33b",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-17T18:56:13.803Z",
       "repository": "briaai/Fibo-2.0-dev",
@@ -1403,6 +1375,34 @@
       "repository": "apache/zookeeper",
       "learningId": "learn-github-apache-zookeeper",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T08:05:59.956Z",
+      "repository": "GitoxideLabs/gitoxide",
+      "learningId": "learn-github-gitoxidelabs-gitoxide",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T08:06:01.637Z",
+      "repository": "CrossPaste/crosspaste-desktop",
+      "learningId": "learn-github-crosspaste-crosspaste-desktop",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T08:06:05.908Z",
+      "repository": "gocd/gocd",
+      "learningId": "learn-github-gocd-gocd",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T08:06:27.620Z",
+      "repository": "BAAI/bge-m3",
+      "learningId": "learn-huggingface-baai-bge-m3",
+      "promotedRulesCount": 3,
       "status": "PROMOTED"
     }
   ]

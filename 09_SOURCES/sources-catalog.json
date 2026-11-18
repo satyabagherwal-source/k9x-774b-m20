@@ -735,8 +735,8 @@
     "sourceUrl": "https://huggingface.co/BAAI/bge-m3",
     "sourceVersion": "hf-baai-bge-m3",
     "license": "Open-Source",
-    "contentHash": "fd73b4c7a675c3c30051a79610e39a7b378e3d2c44d8d2b48ce8d1a650cc6fd4",
-    "lastHarvestedAt": "2026-11-13T21:16:03.798Z",
+    "contentHash": "8d4daaa1f3dff10e714d84db2421ec472df54cfeb0cda4f6a67f70b7c8e066e7",
+    "lastHarvestedAt": "2026-11-18T08:06:27.616Z",
     "learningId": "learn-huggingface-baai-bge-m3"
   },
   "hf-qwen-qwen3-0.6b": {
@@ -4043,10 +4043,10 @@
     "repository": "GitoxideLabs/gitoxide",
     "platform": "github",
     "sourceUrl": "https://github.com/GitoxideLabs/gitoxide",
-    "sourceVersion": "ab7c5dc0",
+    "sourceVersion": "c3d18f4b",
     "license": "Apache-2.0",
-    "contentHash": "559ecc8d64813df2fb55dbabf7c2655dc5f5471a26e77352f565013f0aa72f8b",
-    "lastHarvestedAt": "2026-11-17T02:50:59.744Z",
+    "contentHash": "4ee7ecf6e97927b550e19cbf7fd4c1ef970e9002dc945180af3665b64c2c0488",
+    "lastHarvestedAt": "2026-11-18T08:05:59.951Z",
     "learningId": "learn-github-gitoxidelabs-gitoxide"
   },
   "devhubapp-devhub": {
@@ -5163,10 +5163,10 @@
     "repository": "gocd/gocd",
     "platform": "github",
     "sourceUrl": "https://github.com/gocd/gocd",
-    "sourceVersion": "c8c221d2",
+    "sourceVersion": "fb93a763",
     "license": "Apache-2.0",
-    "contentHash": "6f200f5ef41ea32d2b618b8a14e49ecb317d6b23a3e9810eee5105ad667f1116",
-    "lastHarvestedAt": "2026-11-17T11:25:33.277Z",
+    "contentHash": "6888cb5de98f60e276572c5fbae156e241b4d9037531c4e42ce8e45d11fc94a9",
+    "lastHarvestedAt": "2026-11-18T08:06:05.891Z",
     "learningId": "learn-github-gocd-gocd"
   },
   "citusdata-citus": {
@@ -7603,10 +7603,10 @@
     "repository": "CrossPaste/crosspaste-desktop",
     "platform": "github",
     "sourceUrl": "https://github.com/CrossPaste/crosspaste-desktop",
-    "sourceVersion": "bf971f9a",
+    "sourceVersion": "a38884fa",
     "license": "AGPL-3.0",
-    "contentHash": "f5f816616beca5de49082772105f5ba4895ac806c3f4e05b038eee7bb874e9d9",
-    "lastHarvestedAt": "2026-11-15T04:53:19.395Z",
+    "contentHash": "c9bb0e88aed58e2e0227c380ba64d419f29f43e6ab15814b1dbd5e831c0d696d",
+    "lastHarvestedAt": "2026-11-18T08:06:01.633Z",
     "learningId": "learn-github-crosspaste-crosspaste-desktop"
   },
   "infiniflow-infinity": {

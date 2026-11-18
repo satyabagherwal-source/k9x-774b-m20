@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T07:56:38.075Z",
+  "last_updated": "2026-11-18T08:08:45.082Z",
   "directives": [
     {
       "id": "CD-001",
@@ -28174,6 +28174,145 @@
       "source_repo": "microsoft-react-native-windows",
       "domain_letter": "G",
       "staged_file": "11_INBOX/candidate-directives/CD-REV-D8246A-use-after-free-when-a-task-destroys-the-.md",
+      "staged_date": "2026-11-18"
+    },
+    {
+      "id": "CD-90R5",
+      "directive_title": "Thread-Isolated Connections for High-Throughput Scoped SQLite Pipelines",
+      "source_repo": "gitoxidelabs-gitoxide-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-90R5-thread-isolated-connections-for-high-throughput-scoped-sqlite-pipelines.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-18",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-783R",
+      "directive_title": "Thread-Isolated Connections for High-Throughput Scoped SQLite Pipelines",
+      "source_repo": "GitoxideLabs/gitoxide",
+      "source_commit": "c3d18f4b",
+      "staged_file": "11_INBOX/candidate-directives/CD-783R-thread-isolated-connections-for-high-throughput-scoped-sqlite-pipelines.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-18",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-90RE",
+      "directive_title": "Allocation-Free String Interning via `Box::leak` on Scoped Lifecycles",
+      "source_repo": "gitoxidelabs-gitoxide-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-90RE-allocation-free-string-interning-via-box-leak-on-scoped-lifecycles.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-18",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-AR4K",
+      "directive_title": "Strict Mathematical Absorbing State Traversal in Cryptographic Session FSMs",
+      "source_repo": "crosspaste-crosspaste-desktop-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-AR4K-strict-mathematical-absorbing-state-traversal-in-cryptographic-session-fsms.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-18",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-79E4",
+      "directive_title": "Strict Mathematical Absorbing State Traversal in Cryptographic Session FSMs",
+      "source_repo": "CrossPaste/crosspaste-desktop",
+      "source_commit": "a38884fa",
+      "staged_file": "11_INBOX/candidate-directives/CD-79E4-strict-mathematical-absorbing-state-traversal-in-cryptographic-session-fsms.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-18",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-AR4L",
+      "directive_title": "Asymmetric Window Visibility Minimum Hold Durations for Flapping UI Indicators",
+      "source_repo": "crosspaste-crosspaste-desktop-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-AR4L-asymmetric-window-visibility-minimum-hold-durations-for-flapping-ui-indicators.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-18",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-7CPC",
+      "directive_title": "Sanitized Multi-Segment Regex Link Tokenizer for Untrusted Text",
+      "source_repo": "gocd/gocd",
+      "source_commit": "fb93a763",
+      "staged_file": "11_INBOX/candidate-directives/CD-7CPC-sanitized-multi-segment-regex-link-tokenizer-for-untrusted-text.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: PROMPT_INJECTION_DETECTED: Adversarial prompt injection pattern detected: \"<script>\"",
+      "date_staged": "2026-11-18",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-7CPA",
+      "directive_title": "Deterministic DOM-Safe Entity Identifier Sanitization",
+      "source_repo": "gocd/gocd",
+      "source_commit": "fb93a763",
+      "staged_file": "11_INBOX/candidate-directives/CD-7CPA-deterministic-dom-safe-entity-identifier-sanitization.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-18",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-7CPC",
+      "directive_title": "Blocking Entropy-Drain Guard for Headless Runtime Initialization",
+      "source_repo": "gocd/gocd",
+      "source_commit": "fb93a763",
+      "staged_file": "11_INBOX/candidate-directives/CD-7CPC-blocking-entropy-drain-guard-for-headless-runtime-initialization.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-18",
+      "domain_letter": "H"
+    },
+    {
+      "id": "CD-AQC7",
+      "directive_title": "Absolute Position Embedding Offset Invariant for RoBERTa/XLM-RoBERTa Derivatives",
+      "source_repo": "hf-baai-bge-m3-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-AQC7-absolute-position-embedding-offset-invariant-for-roberta-xlm-roberta-derivatives.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-18",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-AQC8",
+      "directive_title": "Sparse Head Logit Thresholding & Inverted Index Key Pruning Invariant",
+      "source_repo": "hf-baai-bge-m3-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-AQC8-sparse-head-logit-thresholding-inverted-index-key-pruning-invariant.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-18",
+      "domain_letter": "K"
+    },
+    {
+      "id": "CD-REV-F3BEFA",
+      "directive_title": "Eager Lock Acquisition Main-Thread Starvation (BUG-LOCK-01)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "crosspaste-crosspaste-desktop",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-F3BEFA-eager-lock-acquisition-main-thread-starv.md",
+      "staged_date": "2026-11-18"
+    },
+    {
+      "id": "CD-REV-E06F16",
+      "directive_title": "Compose Desktop Pointer Gesture Hardcoded Double-Tap Mismatch (BUG-GEST-02)",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "crosspaste-crosspaste-desktop",
+      "domain_letter": "A",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-E06F16-compose-desktop-pointer-gesture-hardcode.md",
       "staged_date": "2026-11-18"
     }
   ]

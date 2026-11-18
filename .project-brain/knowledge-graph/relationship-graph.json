@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Universal Knowledge Relationship Graph",
   "created_at": "2026-11-11T16:56:20.048Z",
-  "updated_at": "2026-11-18T07:48:41.795Z",
+  "updated_at": "2026-11-18T08:08:43.497Z",
   "statistics": {
-    "total_nodes": 338,
+    "total_nodes": 342,
     "total_edges": 160,
     "domain_distribution": {
-      "D": 238,
+      "D": 239,
       "M": 1,
-      "H": 44,
+      "H": 46,
       "J": 12,
       "K": 17,
       "L": 5,
@@ -17,7 +17,7 @@
       "F": 15,
       "B": 2,
       "E": 1,
-      "I": 2
+      "I": 3
     },
     "relation_distribution": {
       "CONSTRAINED_BY_ARCHITECTURE": 159,
@@ -7566,6 +7566,94 @@
       ],
       "created_at": "2026-11-18T07:48:41.795Z",
       "updated_at": "2026-11-18T07:48:41.795Z"
+    },
+    "DOM-I-7687380A": {
+      "id": "DOM-I-7687380A",
+      "domain": "I",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "Tree Harness Panic via Inferred Relocation Gitlink Collision (BUG-GIX-MERGE-01)",
+      "summary": "The blocked-directory-relocation match arm was restricted only to `(Change::Rewrite | Change::Modification, Change::Addition)` and was place -> Precedence ordering in recursive pattern matchers is a critical correctness invariant. Collision detection against inferred structural trans",
+      "confidence": 1,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://gitoxidelabs-gitoxide/gitoxidelabs-gitoxide-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-18T08:06:31.117Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (gitoxidelabs-gitoxide)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "I",
+        "Content & Information Intelligence"
+      ],
+      "created_at": "2026-11-18T08:06:55.947Z",
+      "updated_at": "2026-11-18T08:06:55.947Z"
+    },
+    "DOM-H-2B4F8699": {
+      "id": "DOM-H-2B4F8699",
+      "domain": "H",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "CI Failure via Transitive Vulnerability in libz-sys (BUG-GIX-SEC-02)",
+      "summary": "An upstream memory safety / boundary bug in the C library wrapper `libz-sys` triggered security alert flags in `cargo deny`, preventing all  -> Maintain locked-dependency hygiene through automated tools (`cargo-deny`). Isolate C-bindings (`libz-sys`) with pure-Rust fallbacks (e.g., `",
+      "confidence": 0.75,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://gitoxidelabs-gitoxide/gitoxidelabs-gitoxide-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-18T08:06:31.117Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (gitoxidelabs-gitoxide)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "H",
+        "Technical Construction Intelligence"
+      ],
+      "created_at": "2026-11-18T08:07:23.709Z",
+      "updated_at": "2026-11-18T08:07:23.709Z"
+    },
+    "DOM-D-C539E7DA": {
+      "id": "DOM-D-C539E7DA",
+      "domain": "D",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "The MIRACL Query ID Collision False-Positive Pruning Defect (BUG-MIRACL-COLLISION-01)",
+      "summary": "An architectural assumption from conversational search benchmarks (where query turns should not retrieve their own echo documents) was blind -> Benchmark evaluation harnesses must decouple query namespace keys from document corpus primary keys. Hard-coded deduplication filters based ",
+      "confidence": 0.6,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-baai-bge-m3/hf-baai-bge-m3-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-18T08:07:24.611Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-baai-bge-m3)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "D",
+        "Research & Knowledge Intelligence"
+      ],
+      "created_at": "2026-11-18T08:07:57.262Z",
+      "updated_at": "2026-11-18T08:07:57.262Z"
+    },
+    "DOM-H-7DF498D3": {
+      "id": "DOM-H-7DF498D3",
+      "domain": "H",
+      "type": "CANONICAL_DIRECTIVE",
+      "title": "8192 Token Window CUDA Out-Of-Memory & Attention Reflow Crash (BUG-ATTN-OOM-02)",
+      "summary": "Failure to enforce Scaled Dot-Product Attention (SDPA / FlashAttention) kernels or sequence chunking when using the expanded 8192 context wi -> Transformer models operating at sequence lengths $L \\ge 2048$ must structurally prohibit manual $Q \\cdot K^T$ realization in production infe",
+      "confidence": 0.75,
+      "epistemic_state": "CANONICAL",
+      "source_provenance": {
+        "source_uri": "project://hf-baai-bge-m3/hf-baai-bge-m3-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-18T08:07:24.611Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-baai-bge-m3)",
+        "license": "Proprietary-Universal"
+      },
+      "tags": [
+        "H",
+        "Technical Construction Intelligence"
+      ],
+      "created_at": "2026-11-18T08:08:43.497Z",
+      "updated_at": "2026-11-18T08:08:43.497Z"
     }
   },
   "edges": [

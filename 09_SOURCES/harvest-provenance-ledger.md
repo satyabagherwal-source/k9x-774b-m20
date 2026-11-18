@@ -10914,3 +10914,11 @@ Every entry in this ledger must capture:
 | `learn-github-tuist-tuist` | `https://github.com/tuist/tuist` | `3a155b20` | Multi-dimensional audit evidence | 2026-11-18T07:56:22.302Z |
 | `learn-github-microsoft-react-native-windows` | `https://github.com/microsoft/react-native-windows` | `1ed932d5` | Multi-dimensional audit evidence | 2026-11-18T07:56:25.840Z |
 | `learn-github-apache-zookeeper` | `https://github.com/apache/zookeeper` | `5cc6962c` | Multi-dimensional audit evidence | 2026-11-18T07:56:33.518Z |
+| `learn-github-gitoxidelabs-gitoxide` | `https://github.com/GitoxideLabs/gitoxide` | `c3d18f4b` | Multi-dimensional audit evidence | 2026-11-18T08:05:59.951Z |
+| `learn-github-crosspaste-crosspaste-desktop` | `https://github.com/CrossPaste/crosspaste-desktop` | `a38884fa` | Multi-dimensional audit evidence | 2026-11-18T08:06:01.633Z |
+| `learn-github-gocd-gocd` | `https://github.com/gocd/gocd` | `fb93a763` | Multi-dimensional audit evidence | 2026-11-18T08:06:05.891Z |
+| `learn-huggingface-baai-bge-m3` | `https://huggingface.co/BAAI/bge-m3` | `hf-baai-bg` | Multi-dimensional audit evidence | 2026-11-18T08:06:27.616Z |
+| `learn-dom-i-7687380a` | `project://gitoxidelabs-gitoxide` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gitoxidelabs-gitoxide-learnings.md` | 2026-11-18T08:06:55.949Z |
+| `learn-dom-h-2b4f8699` | `project://gitoxidelabs-gitoxide` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gitoxidelabs-gitoxide-learnings.md` | 2026-11-18T08:07:23.711Z |
+| `learn-dom-d-c539e7da` | `project://hf-baai-bge-m3` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-baai-bge-m3-learnings.md` | 2026-11-18T08:07:57.264Z |
+| `learn-dom-h-7df498d3` | `project://hf-baai-bge-m3` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-baai-bge-m3-learnings.md` | 2026-11-18T08:08:43.499Z |

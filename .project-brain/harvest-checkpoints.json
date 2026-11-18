@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-18T07:56:33.525Z",
+  "last_updated": "2026-11-18T08:06:27.623Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -935,14 +935,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-baai-bge-m3",
-      "content_hash": "fd73b4c7a675c3c30051a79610e39a7b378e3d2c44d8d2b48ce8d1a650cc6fd4",
-      "verified_at": "2026-11-13T21:16:03.805Z",
+      "content_hash": "8d4daaa1f3dff10e714d84db2421ec472df54cfeb0cda4f6a67f70b7c8e066e7",
+      "verified_at": "2026-11-18T08:06:27.622Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T21:16:03.805Z"
+      "last_updated": "2026-11-18T08:06:27.622Z"
     },
     "Qwen/Qwen3-0.6B": {
       "repository": "Qwen/Qwen3-0.6B",
@@ -6186,14 +6186,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-gitoxidelabs-gitoxide",
-      "content_hash": "559ecc8d64813df2fb55dbabf7c2655dc5f5471a26e77352f565013f0aa72f8b",
-      "verified_at": "2026-11-17T02:50:59.751Z",
+      "content_hash": "4ee7ecf6e97927b550e19cbf7fd4c1ef970e9002dc945180af3665b64c2c0488",
+      "verified_at": "2026-11-18T08:05:59.959Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T02:50:59.751Z"
+      "last_updated": "2026-11-18T08:05:59.959Z"
     },
     "devhubapp/devhub": {
       "repository": "devhubapp/devhub",
@@ -7866,14 +7866,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-gocd-gocd",
-      "content_hash": "6f200f5ef41ea32d2b618b8a14e49ecb317d6b23a3e9810eee5105ad667f1116",
-      "verified_at": "2026-11-17T11:25:33.284Z",
+      "content_hash": "6888cb5de98f60e276572c5fbae156e241b4d9037531c4e42ce8e45d11fc94a9",
+      "verified_at": "2026-11-18T08:06:05.918Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T11:25:33.284Z"
+      "last_updated": "2026-11-18T08:06:05.918Z"
     },
     "citusdata/citus": {
       "repository": "citusdata/citus",
@@ -11451,14 +11451,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-crosspaste-crosspaste-desktop",
-      "content_hash": "f5f816616beca5de49082772105f5ba4895ac806c3f4e05b038eee7bb874e9d9",
-      "verified_at": "2026-11-15T04:53:19.402Z",
+      "content_hash": "c9bb0e88aed58e2e0227c380ba64d419f29f43e6ab15814b1dbd5e831c0d696d",
+      "verified_at": "2026-11-18T08:06:01.639Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-15T04:53:19.402Z"
+      "last_updated": "2026-11-18T08:06:01.639Z"
     },
     "infiniflow/infinity": {
       "repository": "infiniflow/infinity",

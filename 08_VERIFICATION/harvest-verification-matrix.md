@@ -10881,3 +10881,11 @@
 | `CYCLE-20261118-UU8R` | `2026-11-18T07:56:22.299Z` | `tuist/tuist` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9159` | Yes (`03214488...`) |
 | `CYCLE-20261118-UWZ0` | `2026-11-18T07:56:25.836Z` | `microsoft/react-native-windows` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9160` | Yes (`ca3c84c8...`) |
 | `CYCLE-20261118-V2WA` | `2026-11-18T07:56:33.514Z` | `apache/zookeeper` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9161` | Yes (`246e519d...`) |
+| `CYCLE-20261118-77YK` | `2026-11-18T08:05:59.948Z` | `GitoxideLabs/gitoxide` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9162, Rule 9163, Rule 9164` | Yes (`4ee7ecf6...`) |
+| `CYCLE-20261118-7999` | `2026-11-18T08:06:01.629Z` | `CrossPaste/crosspaste-desktop` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9165, Rule 9166, Rule 9167` | Yes (`c9bb0e88...`) |
+| `CYCLE-20261118-7CJJ` | `2026-11-18T08:06:05.887Z` | `gocd/gocd` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9168, Rule 9169, Rule null` | Yes (`6888cb5d...`) |
+| `CYCLE-20261118-7TB0` | `2026-11-18T08:06:27.612Z` | `BAAI/bge-m3` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9170, Rule 9171, Rule 9172` | Yes (`8d4daaa1...`) |
+| `CYCLE-2026-11-18-PROJ-EVOLVE` | `2026-11-18T08:06:55.949Z` | `gitoxidelabs-gitoxide` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-I-7687380A` [Domain I] | Yes (`3f1805e8...`) |
+| `CYCLE-2026-11-18-PROJ-EVOLVE` | `2026-11-18T08:07:23.711Z` | `gitoxidelabs-gitoxide` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-2B4F8699` [Domain H] | Yes (`6d64d736...`) |
+| `CYCLE-2026-11-18-PROJ-EVOLVE` | `2026-11-18T08:07:57.264Z` | `hf-baai-bge-m3` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-C539E7DA` [Domain D] | Yes (`851a01dc...`) |
+| `CYCLE-2026-11-18-PROJ-EVOLVE` | `2026-11-18T08:08:43.499Z` | `hf-baai-bge-m3` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-7DF498D3` [Domain H] | Yes (`8e43d197...`) |

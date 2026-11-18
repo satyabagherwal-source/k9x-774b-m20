@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-18T07:56:38.189Z",
-  "total_records": 1793,
+  "last_updated": "2026-11-18T08:08:45.250Z",
+  "total_records": 1801,
   "domains": {
     "A": {
       "total": 11,
@@ -48,7 +48,7 @@
       ]
     },
     "D": {
-      "total": 773,
+      "total": 774,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -822,7 +822,8 @@
         "domain_intelligence-research-knowledge-intelligence-tencent-hy4-flash-core-invariants",
         "DOM-D-C631C795",
         "domain_intelligence-research-knowledge-intelligence-hf-tencent-hy4-flash-learnings-core-invariants",
-        "DOM-D-E33EA755"
+        "DOM-D-E33EA755",
+        "DOM-D-C539E7DA"
       ]
     },
     "E": {
@@ -833,7 +834,7 @@
       ]
     },
     "F": {
-      "total": 49,
+      "total": 51,
       "record_ids": [
         "DOM-F-C060CCE1",
         "DOM-F-83D565C2",
@@ -883,11 +884,13 @@
         "domain_intelligence-design-intelligence-unhappychoice-gitlogue-learnings-core-invariants",
         "DOM-F-9E7BDB5E",
         "domain_intelligence-design-intelligence-o2sh-onefetch-core-invariants",
-        "domain_intelligence-design-intelligence-o2sh-onefetch-learnings-core-invariants"
+        "domain_intelligence-design-intelligence-o2sh-onefetch-learnings-core-invariants",
+        "domain_intelligence-design-intelligence-baai-bge-m3-core-invariants",
+        "domain_intelligence-design-intelligence-hf-baai-bge-m3-learnings-core-invariants"
       ]
     },
     "G": {
-      "total": 315,
+      "total": 317,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -1203,11 +1206,13 @@
         "domain_intelligence-architecture-intelligence-orange-opensource-hurl-core-invariants",
         "domain_intelligence-architecture-intelligence-orange-opensource-hurl-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-arkivanov-decompose-core-invariants",
-        "domain_intelligence-architecture-intelligence-arkivanov-decompose-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-arkivanov-decompose-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-crosspaste-crosspaste-desktop-core-invariants",
+        "domain_intelligence-architecture-intelligence-crosspaste-crosspaste-desktop-learnings-core-invariant"
       ]
     },
     "H": {
-      "total": 419,
+      "total": 421,
       "record_ids": [
         "DOM-H-C4EF28D3",
         "DOM-H-83C24083",
@@ -1627,11 +1632,13 @@
         "domain_intelligence-technical-construction-intelligence-asciinema-asciinema-core-invariants",
         "domain_intelligence-technical-construction-intelligence-asciinema-asciinema-learnings-core-invariant",
         "DOM-H-75FCE7B9",
-        "domain_intelligence-technical-construction-intelligence-apache-shardingsphere-learnings-core-invaria"
+        "domain_intelligence-technical-construction-intelligence-apache-shardingsphere-learnings-core-invaria",
+        "DOM-H-2B4F8699",
+        "DOM-H-7DF498D3"
       ]
     },
     "I": {
-      "total": 86,
+      "total": 87,
       "record_ids": [
         "DOM-I-16F011E5",
         "DOM-I-BF0A22A6",
@@ -1718,7 +1725,8 @@
         "domain_intelligence-content-information-intelligence-risingwavelabs-risingwave-core-invariants",
         "domain_intelligence-content-information-intelligence-risingwavelabs-risingwave-learnings-core-invari",
         "domain_intelligence-content-information-intelligence-sayanarijit-xplr-core-invariants",
-        "domain_intelligence-content-information-intelligence-sayanarijit-xplr-learnings-core-invariants"
+        "domain_intelligence-content-information-intelligence-sayanarijit-xplr-learnings-core-invariants",
+        "DOM-I-7687380A"
       ]
     },
     "J": {
@@ -8187,8 +8195,8 @@
       "title": "Technical Construction Intelligence: gocd/gocd Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-gocd-gocd-technical-construction-intelligence-gocd-gocd-core-invariants.md",
       "repository": "gocd/gocd",
-      "content_hash": "3ae19679763e1c59704f1edb8115894ca8911c3aaaef70dacbf25fdb34bbb39e",
-      "created_at": "2026-11-17T11:25:33.573Z"
+      "content_hash": "56c4679a830d0d3ee2e3daaf968853b7a599a3809dd6f5e37c842f320d6eb710",
+      "created_at": "2026-11-18T08:06:06.487Z"
     },
     "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-27b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-orcarouter-orcasaq-2-27b-core-invariants",
@@ -20183,8 +20191,8 @@
       "title": "Architecture Intelligence: GitoxideLabs/gitoxide Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-gitoxidelabs-gitoxide-architecture-intelligence-gitoxidelabs-gitoxide-core-invar.md",
       "repository": "GitoxideLabs/gitoxide",
-      "content_hash": "97c816855bfe6d01f35b93cb7d4488c45d97ccb01a7f60d50e634f1e70666b8d",
-      "created_at": "2026-11-15T08:48:55.540Z"
+      "content_hash": "6c3234b59c1d1c7f0a8b23074920f62800bbb69d06d07ce8afdc24b3d717a8b7",
+      "created_at": "2026-11-18T08:06:00.531Z"
     },
     "domain_intelligence-technical-construction-intelligence-melnixdev-seo-crawl-audit-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-melnixdev-seo-crawl-audit-core-invariants",
@@ -20201,8 +20209,8 @@
       "title": "Architecture Intelligence: gitoxidelabs-gitoxide-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-gitoxidelabs-gitoxide-learnings-architecture-intelligence-gitoxidelabs-gitoxide-.md",
       "repository": "gitoxidelabs-gitoxide-learnings",
-      "content_hash": "e47024bf52cc5f82e42bfdb22983382965fb583f165a07b8a2d8c32d7101dd9f",
-      "created_at": "2026-11-15T08:52:27.555Z"
+      "content_hash": "d0c6028ee248a976e15bc215d9d99690353064baf8426be9cbca53b38627a2c1",
+      "created_at": "2026-11-18T08:07:24.356Z"
     },
     "DOM-J-C5E210D6": {
       "record_id": "DOM-J-C5E210D6",
@@ -30030,6 +30038,178 @@
       "repository": "o2sh-onefetch-learnings",
       "content_hash": "37e77cc988fcc47b30a5d549b9938ad73b6e9249b8a7a32a946f87021b830b86",
       "created_at": "2026-11-18T07:48:42.265Z"
+    },
+    "domain_intelligence-architecture-intelligence-crosspaste-crosspaste-desktop-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-crosspaste-crosspaste-desktop-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: CrossPaste/crosspaste-desktop Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-crosspaste-crosspaste-desktop-architecture-intelligence-crosspaste-crosspaste-de.md",
+      "repository": "CrossPaste/crosspaste-desktop",
+      "content_hash": "9140a407038e329cacf57e66d679cd077f132b956012853a2881835b1685625c",
+      "created_at": "2026-11-18T08:06:02.204Z"
+    },
+    "domain_intelligence-design-intelligence-baai-bge-m3-core-invariants": {
+      "record_id": "domain_intelligence-design-intelligence-baai-bge-m3-core-invariants",
+      "domain_letter": "F",
+      "title": "Design Intelligence: BAAI/bge-m3 Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-hf-baai-bge-m3-design-intelligence-baai-bge-m3-core-invariants.md",
+      "repository": "BAAI/bge-m3",
+      "content_hash": "fcac4ebf8342c2fe7f9f9d635674e3c00835f9bd50ba772b53e0f643f23cd7ab",
+      "created_at": "2026-11-18T08:06:28.001Z"
+    },
+    "DOM-I-7687380A": {
+      "record_id": "DOM-I-7687380A",
+      "domain_letter": "I",
+      "domain_id": "content_information",
+      "domain_name": "Content & Information Intelligence",
+      "secondary_domains": [],
+      "title": "Tree Harness Panic via Inferred Relocation Gitlink Collision (BUG-GIX-MERGE-01)",
+      "content": "Precedence ordering in recursive pattern matchers is a critical correctness invariant. Collision detection against inferred structural transformations must always evaluate before type-specific content dispatchers.",
+      "content_hash": "3f1805e8ec46835fa64fc64649465db3e54857cfa8e0303c8b4c82313ffc0040",
+      "summary": "The blocked-directory-relocation match arm was restricted only to `(Change::Rewrite | Change::Modification, Change::Addition)` and was place -> Precedence ordering in recursive pattern matchers is a critical correctness invariant. Collision detection against inferred structural trans",
+      "provenance": {
+        "source_uri": "project://gitoxidelabs-gitoxide/gitoxidelabs-gitoxide-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-18T08:06:31.117Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (gitoxidelabs-gitoxide)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Commit `2d8389f5`, PR #3214, `gix-merge/src/tree/function/resolve.rs`, `gix-merge/tests/merge/tree/synthetic_trees.rs`."
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 1,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-18T08:06:55.927Z"
+    },
+    "DOM-H-2B4F8699": {
+      "record_id": "DOM-H-2B4F8699",
+      "domain_letter": "H",
+      "domain_id": "technical_construction",
+      "domain_name": "Technical Construction Intelligence",
+      "secondary_domains": [],
+      "title": "CI Failure via Transitive Vulnerability in libz-sys (BUG-GIX-SEC-02)",
+      "content": "Maintain locked-dependency hygiene through automated tools (`cargo-deny`). Isolate C-bindings (`libz-sys`) with pure-Rust fallbacks (e.g., `zlib-rs` under `max-pure` feature) to minimize exposure to native memory corruption CVEs.",
+      "content_hash": "6d64d736c5edefe5e72c3328767e6433a766834b3dccca12bb4b2fe375e5f31d",
+      "summary": "An upstream memory safety / boundary bug in the C library wrapper `libz-sys` triggered security alert flags in `cargo deny`, preventing all  -> Maintain locked-dependency hygiene through automated tools (`cargo-deny`). Isolate C-bindings (`libz-sys`) with pure-Rust fallbacks (e.g., `",
+      "provenance": {
+        "source_uri": "project://gitoxidelabs-gitoxide/gitoxidelabs-gitoxide-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-18T08:06:31.117Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (gitoxidelabs-gitoxide)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Commit `c3d18f4b`, PR #3216, Issue #3216, `Cargo.lock`."
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-18T08:07:23.692Z"
+    },
+    "DOM-D-C539E7DA": {
+      "record_id": "DOM-D-C539E7DA",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [],
+      "title": "The MIRACL Query ID Collision False-Positive Pruning Defect (BUG-MIRACL-COLLISION-01)",
+      "content": "Benchmark evaluation harnesses must decouple query namespace keys from document corpus primary keys. Hard-coded deduplication filters based on ID equality introduce silent negative evaluation bias.",
+      "content_hash": "851a01dc630fe8c2ebd0bff8b3beb97f8f4a0b0a230cbeeefb4593622e3e9d43",
+      "summary": "An architectural assumption from conversational search benchmarks (where query turns should not retrieve their own echo documents) was blind -> Benchmark evaluation harnesses must decouple query namespace keys from document corpus primary keys. Hard-coded deduplication filters based ",
+      "provenance": {
+        "source_uri": "project://hf-baai-bge-m3/hf-baai-bge-m3-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-18T08:07:24.611Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-baai-bge-m3)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "`README.md` update 2024/7/1:"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-18T08:07:57.246Z"
+    },
+    "DOM-H-7DF498D3": {
+      "record_id": "DOM-H-7DF498D3",
+      "domain_letter": "H",
+      "domain_id": "technical_construction",
+      "domain_name": "Technical Construction Intelligence",
+      "secondary_domains": [],
+      "title": "8192 Token Window CUDA Out-Of-Memory & Attention Reflow Crash (BUG-ATTN-OOM-02)",
+      "content": "Transformer models operating at sequence lengths $L \\ge 2048$ must structurally prohibit manual $Q \\cdot K^T$ realization in production inference code paths.",
+      "content_hash": "8e43d1972e6f678e70c9ef7ad77db5a462312949c232972ca156e1185c2c878d",
+      "summary": "Failure to enforce Scaled Dot-Product Attention (SDPA / FlashAttention) kernels or sequence chunking when using the expanded 8192 context wi -> Transformer models operating at sequence lengths $L \\ge 2048$ must structurally prohibit manual $Q \\cdot K^T$ realization in production infe",
+      "provenance": {
+        "source_uri": "project://hf-baai-bge-m3/hf-baai-bge-m3-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-18T08:07:24.611Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-baai-bge-m3)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "`config.json` specifies `max_position_embeddings: 8194` and `output_past: true`, necessitating FlashAttention-2 / SDPA kernel routing in modern Hugging Face releases."
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-18T08:08:43.480Z"
+    },
+    "domain_intelligence-design-intelligence-hf-baai-bge-m3-learnings-core-invariants": {
+      "record_id": "domain_intelligence-design-intelligence-hf-baai-bge-m3-learnings-core-invariants",
+      "domain_letter": "F",
+      "title": "Design Intelligence: hf-baai-bge-m3-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-hf-baai-bge-m3-learnings-design-intelligence-hf-baai-bge-m3-learnings-core-invar.md",
+      "repository": "hf-baai-bge-m3-learnings",
+      "content_hash": "ee57001ecce70cf0f8ca720e152244988b53ad690f09ec21e63d1212ea809710",
+      "created_at": "2026-11-18T08:08:44.220Z"
+    },
+    "domain_intelligence-architecture-intelligence-crosspaste-crosspaste-desktop-learnings-core-invariant": {
+      "record_id": "domain_intelligence-architecture-intelligence-crosspaste-crosspaste-desktop-learnings-core-invariant",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: crosspaste-crosspaste-desktop-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-crosspaste-crosspaste-desktop-learnings-architecture-intelligence-crosspaste-cro.md",
+      "repository": "crosspaste-crosspaste-desktop-learnings",
+      "content_hash": "e335b7bc53c3a7524bf041183986fcba6187de8c6ab779bacf5fc7d54190a19d",
+      "created_at": "2026-11-18T08:08:45.250Z"
     }
   }
 }

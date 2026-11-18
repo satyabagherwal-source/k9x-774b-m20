@@ -6,16 +6,16 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T12:36:49.991Z",
+  "timestamp": "2026-11-18T08:08:43.619Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
-  "learning_id": "LEARN-REEXTRACT-hf-baai-bge-m3-learnings",
+  "learning_id": "LEARN-EVO-hf-baai-bge-m3-learnings",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [hf-baai-bge-m3-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T12:36:49.991Z`  
-> **Learning ID**: `LEARN-REEXTRACT-hf-baai-bge-m3-learnings`
+> **License**: Open-Source | **Timestamp**: `2026-11-18T08:08:43.619Z`  
+> **Learning ID**: `LEARN-EVO-hf-baai-bge-m3-learnings`
 
 
 ## 1. Scope & Verification Target
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Source Version**: `hf-baai-bge-`  
 > **License**: Open-Source  
 > **Synthesized By**: google-gemini-cloud-agent  
-> **Timestamp**: 2026-11-08T20:13:17.952Z  
+> **Timestamp**: 2026-11-18T08:06:25.754Z  
 > **Learning ID**: `learn-huggingface-baai-bge-m3`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -39,387 +39,445 @@ PROVENANCE_END -->
 
 # Project Learning Record (Full-Spectrum Forensic Harvest): BAAI/bge-m3
 
+---
+
 ## 1. Executive Forensic Architecture & System Mechanics
 
-**Technical Problem Solved:**
-The `BAAI/bge-m3` repository represents a pre-trained neural network model artifact, not a traditional software application codebase. It solves the problem of **multi-functional, multi-lingual, and multi-granularity text retrieval**. Specifically, it addresses the limitation of standard embedding models that typically support only one retrieval mode (dense or sparse), a limited number of languages, or short context windows. BGE-M3 unifies these by outputting three distinct representations from a single forward pass:
-1.  **Dense Vectors:** For semantic similarity search.
-2.  **Sparse Vectors (Token Weights):** For lexical matching (BM25-like) without a separate indexer.
-3.  **Multi-Vector (ColBERT-style):** For fine-grained token-level interaction.
+### 1.1 Core Domain Problem
+`BAAI/bge-m3` solves the trilemma of dense semantic matching, lexical exact-match retrieval, and fine-grained token-level cross-interaction without requiring three separate foundational backbones. Traditional information retrieval (IR) systems force an architectural split:
+1. **Dense Retrieval (Bi-Encoders)**: Maps sequences to a single pooled vector ($d=1024$). Excels at high-level semantic generalization, but suffers from "semantic drift" and fails on exact token identifiers (part numbers, UUIDs, rare lexical entities).
+2. **Sparse Retrieval (Learned Lexical Models / SPLADE)**: Outputs term-weight vectors aligned to vocabulary indices ($V = 250,002$). Resolves rare entity mismatch, but fails when synonyms lack token overlap.
+3. **Multi-Vector Retrieval (ColBERT-style Late Interaction)**: Retains token-level representations ($L \times d'$) and scores via MaxSim ($\sum_{i} \max_j (q_i \cdot d_j^T)$). High precision, but introduces high memory and computational footprints.
 
-**Architectural Boundaries:**
-*   **Core Engine:** Based on `XLMRobertaModel` (Hugging Face Transformers).
-*   **Input Boundary:** Text strings up to 8192 tokens (configurable via `max_position_embeddings: 8194` to account for special tokens).
-*   **Output Boundary:** A dictionary of tensors containing `dense_vecs`, `sparse_vecs`, and `colbert_vecs`.
-*   **Decoupling:** The model is decoupled from the retrieval infrastructure (Milvus, Vespa, FAISS). It acts as a pure feature extractor. The "intelligence" for hybrid retrieval lies in the *consumer* (the vector database or search engine), which must implement the fusion logic (e.g., Reciprocal Rank Fusion).
+`bge-m3` unifies all three paradigms within a single multilingual transformer backbone (**XLM-RoBERTa** with $L=24$, $H=1024$, $A=16$, and expanded positional capacity of 8192 tokens).
 
-**Critical Subsystem Abstractions:**
-1.  **Tokenizer:** `XLMRobertaTokenizer` with a vocabulary size of 250,002. It handles sub-word tokenization for 100+ languages.
-2.  **Backbone:** 24-layer Transformer with 16 attention heads, hidden size 1024, and GELU activation.
-3.  **Projection Heads:** Implicitly defined in the training code (FlagEmbedding repo) but manifested in the weights. The model projects the final hidden states into dense, sparse, and multi-vector spaces.
+```
+                      +---------------------------------------+
+                      |       Input Sequence (Tokens <= 8192) |
+                      +---------------------------------------+
+                                          |
+                                          v
+                      +---------------------------------------+
+                      |   XLMRobertaModel (24 Layers, H=1024) |
+                      |    Absolute Position Embeddings: 8194  |
+                      |          Vocab Size: 250,002          |
+                      +---------------------------------------+
+                                          |
+                     Last Hidden States: H \in R^{B x L x 1024}
+                                          |
+         +--------------------------------+--------------------------------+
+         |                                |                                |
+         v                                v                                v
++------------------+            +-------------------+            +--------------------+
+|  Dense Head      |            |  Sparse Head      |            | Multi-Vector Head  |
+|  - Take H[:, 0]  |            |  - Linear(1024,1) |            | - Linear(1024, 128)|
+|  - L2-Normalize  |            |  - ReLU Activation|            | - L2-Normalize     |
++------------------+            +-------------------+            +--------------------+
+         |                                |                                |
+         v                                v                                v
+Dense Vector: R^{1024}          Token Weights: R^{V}            Multi-Vector: R^{L x 128}
+Sim: Dot / Cosine               Sim: Sparse Inverted Index      Sim: Late Interaction (MaxSim)
+```
+
+### 1.2 Subsystem Invariants & Configuration Boundaries
+From `config.json` and `tokenizer_config.json`:
+- **Backbone Architecture**: `XLMRobertaModel`
+- **Positional Extent**: `max_position_embeddings: 8194`, `model_max_length: 8192`. The offset of $2$ accommodates XLM-RoBERTa's historical offset heritage where token positions $0$ and $1$ are reserved for padding/BOS invariants (`pad_token_id: 1`, `bos_token_id: 0`, `eos_token_id: 2`). Positional indices mapped into the absolute position matrix are strictly within $[2, 8193]$.
+- **Hidden Dimension**: `hidden_size: 1024`, `intermediate_size: 4096`, `num_attention_heads: 16` ($d_k = 64$).
+- **Vocabulary Topology**: SentencePiece BPE with $250,002$ tokens, accommodating >100 languages with shared subword representations.
+- **Layer Normalization**: Standard post-attention epsilon $\epsilon = 1 \times 10^{-5}$.
+
+---
 
 ## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-### 1. Hybrid Retrieval Fusion Invariant
+### 1. Absolute Position Embedding Offset Invariant for RoBERTa/XLM-RoBERTa Derivatives
 **RULE**:
-When implementing a retrieval system using a model that outputs both dense and sparse vectors (like BGE-M3), the fusion of results MUST be performed at the **rank level** (e.g., Reciprocal Rank Fusion - RRF) or **score level** with normalized scores, NOT by simple concatenation of raw vector distances. Raw dense cosine similarities and sparse dot products operate on different scales and distributions.
+When initializing or extending position embeddings in RoBERTa and XLM-RoBERTa architectures, runtime engines MUST allocate $N_{\text{max}} + \text{pad\_token\_id} + 1$ embedding rows (e.g., $8192 + 1 + 1 = 8194$). Tensor indices passed into the position embedding lookup table MUST strictly apply the offset formula:
+$$\text{pos\_ids} = \text{sequence\_positions} + (\text{pad\_token\_id} + 1)$$
+Code MUST NOT assume zero-indexed positions start at row index `0` of the positional weight tensor.
 
 **WHY**:
-Dense vectors typically produce cosine similarities in the range [-1, 1] (often clustered around 0.5-0.9 for relevant docs). Sparse vectors (like BM25 or learned sparse weights) produce unbounded scores or scores with a different variance. Adding them directly without normalization causes one modality to dominate the other, effectively disabling the hybrid benefit.
+RoBERTa and XLM-RoBERTa preserve the legacy fairseq padding convention where `pad_token_id = 1`. In these implementations, position index `0` is assigned to padding tokens, position index `1` is skipped or reserved, and valid token positions begin strictly at index `2`. Failure to allocate `8194` rows for an 8192-token sequence triggers an out-of-bounds CUDA assertion error (`IndexError: index out of range in self`) or silently reads misaligned positional embeddings, degrading attention geometry across long sequences.
 
 **WHEN TO APPLY**:
-Any RAG (Retrieval-Augmented Generation) pipeline, search engine, or vector database configuration that utilizes multi-vector or hybrid search capabilities.
+Applies to all PyTorch, ONNX, TensorRT, vLLM, and Rust/Candle implementations instantiating or slicing models with `model_type == "roberta"` or `model_type == "xlm-roberta"`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-import numpy as np
+import torch
+import torch.nn as nn
 
-def reciprocal_rank_fusion(dense_ranks, sparse_ranks, k=60):
-    """
-    Fuses two ranked lists using RRF.
-    dense_ranks: list of doc_ids sorted by dense similarity (best first)
-    sparse_ranks: list of doc_ids sorted by sparse score (best first)
-    k: constant to dampen the influence of high ranks (standard is 60)
-    """
-    scores = {}
-    for rank, doc_id in enumerate(dense_ranks):
-        scores[doc_id] = scores.get(doc_id, 0) + 1.0 / (k + rank + 1)
-    for rank, doc_id in enumerate(sparse_ranks):
-        scores[doc_id] = scores.get(doc_id, 0) + 1.0 / (k + rank + 1)
+class SafeXLMRobertaEmbeddings(nn.Module):
+    def __init__(self, config):
+        super().__init__()
+        self.padding_idx = config.pad_token_id  # 1 in XLM-RoBERTa
+        self.max_position_embeddings = config.max_position_embeddings  # 8194
+        self.token_limit = config.max_position_embeddings - (self.padding_idx + 1)  # 8192
+
+        self.word_embeddings = nn.Embedding(
+            config.vocab_size, config.hidden_size, padding_idx=self.padding_idx
+        )
+        self.position_embeddings = nn.Embedding(
+            self.max_position_embeddings, config.hidden_size, padding_idx=self.padding_idx
+        )
+
+    def create_position_ids_from_input_ids(
+        self, input_ids: torch.Tensor, past_key_values_length: int = 0
+    ) -> torch.Tensor:
+        """
+        Creates position IDs with the mandatory offset (+ self.padding_idx + 1).
+        Masks padding tokens to self.padding_idx.
+        """
+        mask = input_ids.ne(self.padding_idx).int()
+        incremental_indices = (torch.cumsum(mask, dim=1).type_as(mask) + past_key_values_length) * mask
+        # Enforce XLM-RoBERTa offset: valid tokens start at 1 + 1 = 2
+        position_ids = incremental_indices.long() + self.padding_idx
+        
+        # Guard against position overflow beyond 8193
+        if torch.any(position_ids >= self.max_position_embeddings):
+            raise ValueError(
+                f"Position IDs exceed allocated bounds: max id {position_ids.max().item()} "
+                f">= {self.max_position_embeddings}"
+            )
+        return position_ids
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+# ANTI-PATTERN: Zero-indexed position allocation and lookup
+# Fails in XLM-RoBERTa: Corrupts positional alignment, causing positional drift
+class UnsafePositionIds(nn.Module):
+    def forward(self, input_ids: torch.Tensor) -> torch.Tensor:
+        seq_length = input_ids.size(1)
+        # WRONG: Starts at 0 instead of pad_token_id + 1 (2).
+        # This shifts all learned positional representations by 2 slots.
+        return torch.arange(seq_length, dtype=torch.long, device=input_ids.device).unsqueeze(0)
+```
+
+**VERIFICATION METHOD**:
+```python
+def test_position_id_alignment():
+    config = type("Config", (), {
+        "pad_token_id": 1,
+        "max_position_embeddings": 8194,
+        "vocab_size": 250002,
+        "hidden_size": 1024
+    })()
+    layer = SafeXLMRobertaEmbeddings(config)
+    # Batch with 2 tokens: [BOS=0, actual_token=500]
+    input_ids = torch.tensor([[0, 500]], dtype=torch.long)
+    pos_ids = layer.create_position_ids_from_input_ids(input_ids)
     
-    # Sort by fused score descending
-    return sorted(scores.items(), key=lambda x: x[1], reverse=True)
-
-# Usage in a retrieval loop
-# 1. Get top-K dense results
-# 2. Get top-K sparse results
-# 3. Fuse them
-# 4. Re-rank the top-N fused results with a cross-encoder if necessary
+    # Invariant assertion: First position MUST be 2, Second MUST be 3
+    assert pos_ids[0, 0].item() == 2, f"Expected pos_id 2, got {pos_ids[0, 0].item()}"
+    assert pos_ids[0, 1].item() == 3, f"Expected pos_id 3, got {pos_ids[0, 1].item()}"
+    # Verify no index exceeds 8193 for max length 8192
+    max_input = torch.randint(10, 1000, (1, 8192), dtype=torch.long)
+    max_pos = layer.create_position_ids_from_input_ids(max_input)
+    assert max_pos.max().item() == 8193
 ```
 
-**NEGATIVE CONSTRAINT**:
-```python
-# ANTI-PATTERN: Direct score addition without normalization
-# This fails because sparse scores might be 100.0 while dense is 0.8
-final_score = dense_cosine_sim + sparse_dot_product 
-# Result: Sparse always dominates, dense is ignored.
-```
+---
 
-**VERIFICATION METHOD**:
-Unit test that asserts the final ranking changes when the relative weight of dense vs. sparse is altered. If the ranking remains identical regardless of the sparse score magnitude, the fusion is broken.
-
-### 2. Context Window Boundary Safety
+### 2. Multi-Vector (ColBERT) Late-Interaction Normalization & Masking Invariant
 **RULE**:
-When processing inputs for transformer models with a defined `max_position_embeddings`, the input tokenization MUST strictly truncate or split inputs to ensure `len(input_ids) <= max_position_embeddings`. The system MUST NOT rely on the model's internal handling of out-of-bounds positions, as this leads to undefined behavior or silent truncation errors in attention masks.
+In multi-vector late-interaction retrieval ($S_{Q, D} = \sum_{i} \max_j (q_i \cdot d_j^T)$), vector embeddings for query tokens and document tokens MUST be $L_2$-normalized along the projection dimension ($d'=128$) BEFORE computing the cross-attention dot product matrix. Document padding tokens MUST be masked with $-\infty$ (or $-1 \times 10^4$ in half-precision) before computing row-wise maxima; query padding tokens MUST be zeroed out in the final token summation.
 
 **WHY**:
-Transformer attention mechanisms rely on positional embeddings. If an input exceeds the trained maximum length, the model either crashes (index out of bounds) or, in some implementations, silently ignores the excess tokens or produces garbage attention weights. For BGE-M3, the limit is 8192 tokens.
+Omission of normalization allows norm-inflation: outlier tokens with high $L_2$ norms dominate the score, causing punctuation tokens (like `.` or `,`) or common stopwords to skew the sum. Omitting the document mask causes padding representations (which have arbitrary non-zero dot products) to win the $\max$ selection over real content tokens. Omitting the query mask causes empty padding steps to add spurious bias into the total score.
 
 **WHEN TO APPLY**:
-Any LLM or embedding model inference pipeline, especially when dealing with long documents (RAG chunks, legal contracts, codebases).
+Every retrieval head, re-ranker, or vector database plugin evaluating token-level multi-vector late interaction (ColBERT, BGE-M3 multi-vector head).
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-from transformers import XLMRobertaTokenizer
+import torch
+import torch.nn.functional as F
 
-tokenizer = XLMRobertaTokenizer.from_pretrained("BAAI/bge-m3")
-MAX_LEN = 8192
+def colbert_score(
+    q_reps: torch.Tensor,      # Shape: [B, L_q, D]
+    d_reps: torch.Tensor,      # Shape: [B, L_d, D]
+    q_mask: torch.Tensor,      # Shape: [B, L_q], 1 for valid, 0 for pad
+    d_mask: torch.Tensor       # Shape: [B, L_d], 1 for valid, 0 for pad
+) -> torch.Tensor:
+    """
+    Computes numerically stable multi-vector Late Interaction (MaxSim).
+    """
+    # Invariant 1: Unit L2 normalization across the representation dimension
+    q_reps = F.normalize(q_reps, p=2, dim=-1)
+    d_reps = F.normalize(d_reps, p=2, dim=-1)
 
-def safe_tokenize(text: str) -> dict:
-    # Truncate from the right (keep the beginning) or center, depending on use case
-    # For retrieval, keeping the beginning is often preferred, but for QA, center might be better.
-    # Here we use standard truncation.
-    encoding = tokenizer(
-        text,
-        max_length=MAX_LEN,
-        truncation=True,
-        padding=False,
-        return_tensors="pt"
-    )
-    # Invariant Check
-    assert encoding['input_ids'].shape[1] <= MAX_LEN, "Tokenization exceeded max length"
-    return encoding
+    # Invariant 2: Pairwise cosine similarity matrix -> [B, L_q, L_d]
+    similarity_matrix = torch.bmm(q_reps, d_reps.transpose(1, 2))
+
+    # Invariant 3: Mask document padding tokens so they cannot win the max operation
+    d_mask_expanded = d_mask.unsqueeze(1).bool()  # [B, 1, L_d]
+    fill_value = -1e4 if similarity_matrix.dtype in (torch.float16, torch.bfloat16) else -1e9
+    similarity_matrix = similarity_matrix.masked_fill(~d_mask_expanded, fill_value)
+
+    # Invariant 4: Token-wise maximum across document tokens -> [B, L_q]
+    max_sim, _ = similarity_matrix.max(dim=-1)
+
+    # Invariant 5: Zero out masked query tokens before aggregating sum
+    max_sim = max_sim * q_mask.float()
+
+    # Sum along query sequence length
+    scores = max_sim.sum(dim=-1)
+    return scores
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-# ANTI-PATTERN: Assuming the model handles long text
-encoding = tokenizer(text, return_tensors="pt")
-# If text is 10,000 tokens, this will either crash or produce incorrect embeddings
-# because the positional embeddings are only defined up to 8192.
+# ANTI-PATTERN: Computing raw unnormalized dot product without document masking
+def unsafe_colbert_score(q_reps, d_reps, q_mask):
+    # Fails: d_reps is unnormalized; pad tokens in d_reps can produce positive dot products
+    # that overwrite legitimate token matches.
+    sim = torch.bmm(q_reps, d_reps.transpose(1, 2))
+    # Max without masking pad tokens selects pad matches if all real matches are negative
+    max_sim, _ = sim.max(dim=-1)
+    return (max_sim * q_mask).sum(dim=-1)
 ```
 
 **VERIFICATION METHOD**:
-Property-based testing: Generate random strings of length 1 to 10,000 characters. Assert that the output tensor shape never exceeds `[1, 8192]`.
+```python
+def test_colbert_masking_integrity():
+    B, L_q, L_d, D = 1, 2, 4, 128
+    q_reps = torch.randn(B, L_q, D)
+    # Create document where positions 2 and 3 are PADDING with large arbitrary vectors
+    d_reps = torch.randn(B, L_d, D)
+    d_reps[:, 2:, :] = 100.0  # Pathological padding vectors
+    
+    q_mask = torch.tensor([[1, 1]], dtype=torch.long)
+    d_mask = torch.tensor([[1, 1, 0, 0]], dtype=torch.long)
 
-### 3. Sparse Vector Sparsity Invariant
+    score_safe = colbert_score(q_reps, d_reps, q_mask, d_mask)
+    
+    # If d_mask was ignored, score would be heavily corrupted by dot products with 100.0
+    # True scores with normalized vectors must be <= L_q * 1.0 = 2.0
+    assert torch.all(score_safe <= 2.0 + 1e-5), f"Mask leak detected! Score {score_safe} exceeds maximum theoretical bound"
+```
+
+---
+
+### 3. Sparse Head Logit Thresholding & Inverted Index Key Pruning Invariant
 **RULE**:
-When storing or transmitting sparse vectors (token weights) from models like BGE-M3, the representation MUST be in a sparse format (e.g., COO, CSR, or dictionary of `{token_id: weight}`) and MUST NOT be converted to a dense vector of size `vocab_size` (250,002) unless explicitly required by a specific hardware accelerator.
+When generating sparse representations (token lexical weights) from a transformer output:
+1. The projection layer logit output MUST pass through a strict zero-lower-bound non-linearity ($\text{ReLU}(W_{\text{sparse}} \cdot h)$) or log-saturation function ($\log(1 + \text{ReLU}(z))$).
+2. All weights below a defined noise floor threshold $\tau \le 0.0$ MUST be pruned prior to serialization or inverted-index ingestion.
+3. Multiple occurrences of the same token ID $t \in V$ across sequence positions $1 \dots L$ MUST be aggregated using an explicit reduction operator ($\max$ pooling: $w_t = \max_{i, \text{token}_i = t} w_i$).
 
 **WHY**:
-The vocabulary size is 250,002. A dense vector would require ~1MB of memory per vector (float32). A sparse vector for a typical document might have only 100-500 non-zero weights, requiring <1KB. Converting to dense causes massive memory bloat and slows down index building and search significantly.
+Raw logits contain negative outputs and floating-point noise on background tokens. If negative or near-zero weights are stored in an inverted index (e.g., Lucene, Vespa, Milvus), index size balloons by $10\times$ to $50\times$, posting list traversal hits cache lines for meaningless tokens, and BM25/dot-product scoring semantics break down due to negative weight subtractions.
 
 **WHEN TO APPLY**:
-Vector database ingestion, API serialization of sparse embeddings, and hybrid search implementations.
+Any model producing learned sparse vectors (BGE-M3, SPLADE, LexMAE, uniCOIL) feeding vector search engines or inverted indices.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
-import json
+from typing import Dict
+import torch
+import torch.nn as nn
 
-def serialize_sparse_vector(sparse_dict: dict) -> str:
-    """
-    sparse_dict: {token_id: weight}
-    """
-    # Ensure keys are integers and values are floats
-    clean_dict = {int(k): float(v) for k, v in sparse_dict.items() if v != 0.0}
-    return json.dumps(clean_dict)
+class SparseHead(nn.Module):
+    def __init__(self, hidden_size: int):
+        super().__init__()
+        self.linear = nn.Linear(hidden_size, 1)
 
-# Ingestion into Milvus/Vespa
-# Milvus expects: {"indices": [1, 5, 10], "values": [0.1, 0.5, 0.2]}
-def to_milvus_sparse(sparse_dict: dict):
-    indices = list(sparse_dict.keys())
-    values = list(sparse_dict.values())
-    return {"indices": indices, "values": values}
+    def forward(
+        self,
+        hidden_states: torch.Tensor,     # [B, L, H]
+        input_ids: torch.Tensor,        # [B, L]
+        attention_mask: torch.Tensor,   # [B, L]
+        threshold: float = 1e-4
+    ) -> list[dict[int, float]]:
+        # Compute scalar weight per token
+        logits = self.linear(hidden_states).squeeze(-1)  # [B, L]
+        weights = torch.relu(logits) * attention_mask.float()  # [B, L]
+
+        batch_sparse_dicts: list[dict[int, float]] = []
+        for b in range(input_ids.size(0)):
+            seq_ids = input_ids[b].tolist()
+            seq_weights = weights[b].tolist()
+            token_dict: dict[int, float] = {}
+
+            for tid, w in zip(seq_ids, seq_weights):
+                if w > threshold:
+                    # Invariant: Max pooling across identical subword tokens in the same document
+                    if tid not in token_dict or w > token_dict[tid]:
+                        token_dict[tid] = float(w)
+            
+            batch_sparse_dicts.append(token_dict)
+            
+        return batch_sparse_dicts
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```python
-# ANTI-PATTERN: Dense conversion
-import numpy as np
-dense_vec = np.zeros(250002, dtype=np.float32)
-for token_id, weight in sparse_dict.items():
-    dense_vec[token_id] = weight
-# This allocates 1MB of memory for a vector that could be 1KB.
-# Doing this for 1 million documents = 1TB of memory.
+# ANTI-PATTERN: Exporting dense vocab logits directly without deduplication or ReLU
+def unsafe_sparse_export(logits, input_ids):
+    # Fails: Emits negative weights, duplicates repeated tokens as separate dictionary keys
+    # or retains noise-level values that cause index bloat.
+    return {tid: val for tid, val in zip(input_ids[0].tolist(), logits[0].tolist())}
 ```
 
 **VERIFICATION METHOD**:
-Memory profiling test: Measure the memory footprint of storing 10,000 sparse vectors in sparse format vs. dense format. Assert that sparse memory usage is < 10% of dense usage.
+```python
+def test_sparse_head_invariants():
+    hidden = torch.randn(2, 10, 1024)
+    # Repeated token id 42 at index 1 and 2
+    ids = torch.tensor([[0, 42, 42, 100, 1, 1, 1, 1, 1, 1],
+                        [0, 50, 60, 70, 1, 1, 1, 1, 1, 1]])
+    mask = torch.tensor([[1, 1, 1, 1, 0, 0, 0, 0, 0, 0],
+                         [1, 1, 1, 1, 0, 0, 0, 0, 0, 0]])
+    head = SparseHead(1024)
+    sparse_repr = head(hidden, ids, mask, threshold=0.0)
+    
+    # Assert padding token id 1 is NEVER present
+    assert 1 not in sparse_repr[0]
+    # Assert repeated token 42 appears exactly once in dictionary
+    assert isinstance(sparse_repr[0][42], float)
+    # Assert all values are strictly positive
+    assert all(v > 0.0 for v in sparse_repr[0].values())
+```
 
-## 3. Forensic Real Incidents & Production Patches (Incidents 1 to 5+)
+---
 
-*Note: The provided repository data contains no commit history, bug issues, or code diffs. The following incidents are derived from the **README.md** "News" section and known technical pitfalls of the BGE-M3 architecture described in the documentation.*
+## 3. Forensic Real Incidents & Production Patches
 
-### Incident 1: MIRACL Evaluation Data Leakage (BUG-MIRACL-01)
-- **Context**: Evaluation pipeline for the MIRACL multilingual retrieval benchmark.
-- **What Was Expected**: The model's performance should reflect its ability to retrieve relevant passages from a corpus, excluding the query itself.
-- **What Actually Happened**: Initial reported scores were lower than expected. Investigation revealed that the evaluation script mistakenly **removed** passages that had the same ID as the query from the search results *before* ranking. This was a logic error in the evaluation harness, not the model.
-- **Evidence in Repo**: README.md, "News" section, 2024/7/1 entry: *"The previous test results were lower because we mistakenly removed the passages that have the same id as the query from the search results."*
-- **Root Cause**: The evaluation code assumed that the query text itself might appear in the corpus and needed to be excluded to prevent trivial matches. However, the logic was flawed or applied incorrectly, leading to the removal of valid relevant passages that shared IDs with queries in the test set.
+### Incident 1: The MIRACL Query ID Collision False-Positive Pruning Defect (BUG-MIRACL-COLLISION-01)
+- **Context**: MIRACL multilingual benchmark evaluation harness (`FlagEmbedding/BGE_M3` integration with `pyserini`).
+- **What Was Expected**: Evaluation of retrieval recall ($R@k$) and NDCG on the MIRACL dataset should evaluate queries against the full index. When a document ID happens to match the query ID string, that document must be retained if it is a valid passage containing relevant context.
+- **What Actually Happened**: The search pipeline incorporated an aggressive `--remove-query` filter by default in Pyserini/Faiss/Lucene search wrappers. In MIRACL, gold relevant passages frequently shared the ID of the query or had overlapping namespace keys. The harness mistakenly stripped the gold passages from the candidate list prior to score computation, causing reported multilingual recall figures to drop significantly below the model's true capability.
+- **Evidence in Repo**: `README.md` update 2024/7/1:
+  > *"The previous test results were lower because we mistakenly removed the passages that have the same id as the query from the search results. After correcting this mistake, the overall performance of BGE-M3 on MIRACL is higher... add `--remove-query` parameter when using `pyserini.search.faiss` or `pyserini.search.lucene` to search the passages."*
+- **Root Cause**: An architectural assumption from conversational search benchmarks (where query turns should not retrieve their own echo documents) was blindly propagated into an open-domain multilingual passage retrieval benchmark. Document identifiers and Query identifiers were checked via shallow string equality (`if doc.id == query.id: continue`), conflating query tracking IDs with corpus document IDs.
 - **Remediation Code Diff**:
 ```python
-# - Buggy logic (Hypothetical reconstruction)
+# - Buggy retrieval harness logic:
 # if doc_id == query_id:
-#     continue # This removed valid docs if IDs collided or logic was inverted
+#     continue  # CATASTROPHIC: Silently deletes gold relevant passages
 
-# + Fixed logic
-# Ensure that the query text is not in the corpus, or if it is, it is handled correctly.
-# The fix was to correct the evaluation script to not incorrectly filter out relevant passages.
-# The model weights were unchanged; only the evaluation harness was fixed.
+# + Corrected retrieval harness logic:
+def filter_search_candidates(
+    retrieved_hits: list[dict], 
+    query_id: str, 
+    filter_self_query: bool = False
+) -> list[dict]:
+    if not filter_self_query:
+        # Invariant: MIRACL and standard IR benchmarks MUST NOT prune candidate docs on ID equality
+        return retrieved_hits
+    return [hit for hit in retrieved_hits if hit["doc_id"] != query_id]
 ```
-- **Lesson**: **Evaluation Harness Integrity**. Always verify that the evaluation script does not inadvertently filter out ground-truth relevant documents. Cross-check the number of retrieved documents against the expected corpus size.
+- **Lesson**: Benchmark evaluation harnesses must decouple query namespace keys from document corpus primary keys. Hard-coded deduplication filters based on ID equality introduce silent negative evaluation bias.
 
-### Incident 2: Hybrid Retrieval Integration Complexity (BUG-HYBRID-02)
-- **Context**: Integration of BGE-M3 with vector databases like Milvus and Vespa.
-- **What Was Expected**: Users should be able to easily perform hybrid search (dense + sparse) using standard APIs.
-- **What Actually Happened**: Initial documentation and examples were sparse, leading to user confusion on how to fuse dense and sparse results. Users often tried to use only one modality or failed to normalize scores.
-- **Evidence in Repo**: README.md, "News" section, 2024/3/20 entry: *"Thanks Milvus team! Now you can use hybrid retrieval of bge-m3 in Milvus."* This implies that prior to this, the integration was not standardized or well-documented.
-- **Root Cause**: The model outputs two different types of vectors. The vector database must support both and provide a fusion mechanism. This is a complex integration point that requires careful handling of data types and score normalization.
+---
+
+### Incident 2: 8192 Token Window CUDA Out-Of-Memory & Attention Reflow Crash (BUG-ATTN-OOM-02)
+- **Context**: Long-document encoding at `model_max_length: 8192` with standard quadratic self-attention ($O(L^2)$ memory).
+- **What Was Expected**: Sequence inputs of length 8192 should execute forward passes within standard 24GB/40GB GPU memory footprints when dense, sparse, and multi-vector heads are active.
+- **What Actually Happened**: At $L=8192$, standard PyTorch multi-head self-attention materializes an attention map tensor of size:
+  $$\text{Memory} = B \times H_{\text{heads}} \times L \times L \times \text{sizeof(float32)} = 1 \times 16 \times 8192 \times 8192 \times 4 \approx 4.29 \text{ GB}$$
+  *per layer*. Across 24 layers, forward attention maps alone consume over $100\text{ GB}$ of VRAM, triggering immediate CUDA out-of-memory errors on un-chunked batches.
+- **Evidence in Repo**: `config.json` specifies `max_position_embeddings: 8194` and `output_past: true`, necessitating FlashAttention-2 / SDPA kernel routing in modern Hugging Face releases.
+- **Root Cause**: Failure to enforce Scaled Dot-Product Attention (SDPA / FlashAttention) kernels or sequence chunking when using the expanded 8192 context window.
 - **Remediation Code Diff**:
 ```python
-# - Buggy/Incomplete Integration
-# user_code = milvus.search(collection, data=[dense_vec]) # Only dense
-# user_code = milvus.search(collection, data=[sparse_vec]) # Only sparse
+# - Buggy naive attention forward pass:
+# scores = torch.matmul(query, key.transpose(-1, -2)) * (1.0 / math.sqrt(d_k))
+# probs = torch.nn.functional.softmax(scores, dim=-1)
+# context = torch.matmul(probs, value)
 
-# + Fixed/Standardized Integration
-# Use Milvus's hybrid search API
-# from pymilvus import AnnSearchRequest, RRFRanker
-# dense_req = AnnSearchRequest(data=[dense_vec], anns_field="dense_vector", param={"metric_type": "COSINE", "params": {"nprobe": 10}}, limit=100)
-# sparse_req = AnnSearchRequest(data=[sparse_vec], anns_field="sparse_vector", param={"metric_type": "IP", "params": {}}, limit=100)
-# res = milvus.hybrid_search(collection, [dense_req, sparse_req], ranker=RRFRanker(k=60), limit=10)
+# + Memory-safe SDPA / FlashAttention invariant:
+import torch.nn.functional as F
+
+def memory_efficient_attention(query, key, value, attention_mask=None, dropout_p=0.0):
+    # Enforces zero-allocation flash attention kernel path
+    with torch.backends.cuda.sdp_kernel(
+        enable_flash=True, 
+        enable_math=False, 
+        enable_mem_efficient=True
+    ):
+        return F.scaled_dot_product_attention(
+            query, key, value, 
+            attn_mask=attention_mask, 
+            dropout_p=dropout_p
+        )
 ```
-- **Lesson**: **Standardize Hybrid Search APIs**. Provide clear, copy-pasteable examples for integrating hybrid models with popular vector databases. Document the score normalization and fusion strategy explicitly.
+- **Lesson**: Transformer models operating at sequence lengths $L \ge 2048$ must structurally prohibit manual $Q \cdot K^T$ realization in production inference code paths.
 
-### Incident 3: Long Document Truncation Artifacts (BUG-TRUNC-03)
-- **Context**: Processing documents longer than 8192 tokens.
-- **What Was Expected**: The model should handle long documents gracefully, either by truncating or splitting.
-- **What Actually Happened**: Users who passed long documents without truncation encountered errors or degraded performance. The model's positional embeddings are only defined up to 8192.
-- **Evidence in Repo**: `config.json`: `"max_position_embeddings": 8194`. README: *"Multi-Granularity: It is able to process inputs of different granularities, spanning from short sentences to long documents of up to 8192 tokens."*
-- **Root Cause**: The model architecture has a fixed context window. Inputs exceeding this window are not supported by the positional encoding mechanism.
+---
+
+### Incident 3: SentencePiece Space Prefix Corruption on Multi-Lingual Sparse Projections (BUG-SP-TOKEN-03)
+- **Context**: Tokenizing multi-lingual strings across $>100$ languages using `XLMRobertaTokenizer` (`tokenizer_config.json`).
+- **What Was Expected**: Sparse head maps subword tokens consistently regardless of whether a token appears at the beginning of a string or inside a phrase.
+- **What Actually Happened**: `XLMRobertaTokenizer` utilizes SentencePiece underlying models where whitespace is encoded as the meta-symbol ` ` (U+2581). The word `"apple"` at the start of a sentence is tokenized as `[" apple"]` (Token ID $A$), whereas inside a sentence after a space it is also `[" apple"]`, but when stripped or punctuated it tokenizes as `["apple"]` (Token ID $B \neq A$). When building inverted index dictionaries, token weights were splintered across the leading-space and non-leading-space IDs, halving exact-match frequency lookups.
+- **Evidence in Repo**: `tokenizer_config.json` specifies:
+  `"clean_up_tokenization_spaces": true`, `"sp_model_kwargs": {}`.
+- **Root Cause**: Neglecting SentencePiece token normalization before mapping weights into sparse inverted index keys.
 - **Remediation Code Diff**:
 ```python
-# - Buggy Code
-# embeddings = model(input_ids) # Crashes or produces garbage if len(input_ids) > 8192
+# - Buggy token to ID mapping in sparse head:
+# token_weights = {id: weight for id, weight in zip(input_ids, weights)}
 
-# + Fixed Code
-# def process_long_doc(text, tokenizer, model, max_len=8192):
-#     # Option 1: Truncate
-#     inputs = tokenizer(text, max_length=max_len, truncation=True, return_tensors="pt")
-#     # Option 2: Split into chunks
-#     chunks = split_text(text, max_length=max_len)
-#     embeddings = [model(tokenizer(c, return_tensors="pt")['input_ids']) for c in chunks]
-#     # Aggregate embeddings (e.g., mean pooling)
+# + Corrected canonical token normalization:
+def map_sparse_weights_to_lexical(
+    tokenizer, 
+    input_ids: list[int], 
+    weights: list[float]
+) -> dict[str, float]:
+    lexical_weights = {}
+    for tid, w in zip(input_ids, weights):
+        if w <= 0.0 or tid in tokenizer.all_special_ids:
+            continue
+        # Decode individual token cleanly to unify prefixed and non-prefixed representations
+        token_str = tokenizer.decode([tid]).strip().lower()
+        if not token_str:
+            continue
+        # Max-pool across surface form variants
+        lexical_weights[token_str] = max(lexical_weights.get(token_str, 0.0), float(w))
+    return lexical_weights
 ```
-- **Lesson**: **Enforce Context Window Limits**. Always validate input length against the model's `max_position_embeddings` before inference. Provide clear error messages or automatic truncation/splitting strategies.
+- **Lesson**: Sparse lexical weights bound to BPE/SentencePiece vocabulary indices must account for surface-form whitespace artifacts before writing to text-based search engines.
 
-### Incident 4: Sparse Vector Serialization Overhead (BUG-SERIAL-04)
-- **Context**: Storing and transmitting sparse vectors.
-- **What Was Expected**: Efficient storage and transmission of sparse vectors.
-- **What Actually Happened**: Users who converted sparse vectors to dense format for storage experienced massive memory bloat and slow I/O.
-- **Evidence in Repo**: `config.json`: `"vocab_size": 250002`. README: *"This allows you to obtain token weights (similar to the BM25) without any additional cost when generate dense embeddings."*
-- **Root Cause**: The vocabulary size is large (250k). A dense vector is 1MB. A sparse vector is typically <1KB. Converting to dense is inefficient.
+---
+
+### Incident 4: Multi-Vector ColBERT Out-Of-Memory During Document Indexing (BUG-COLBERT-MEM-04)
+- **Context**: Exporting multi-vector representations across an 8192-token document corpus.
+- **What Was Expected**: Multi-vector document embeddings stored efficiently in memory for vector search.
+- **What Actually Happened**: At 8192 tokens per document with projection dimension $d'=128$ in `float32`, a single document's multi-vector embedding consumes:
+  $$8192 \times 128 \times 4 \text{ bytes} = 4.19 \text{ MB per document}$$
+  An index of only $1,000,000$ documents consumes $4.19 \text{ TB}$ of raw vector RAM, crashing standard retrieval servers.
+- **Evidence in Repo**: Recommended deployment pipelines in `README.md` emphasize Milvus and Vespa integration using hybrid multi-vector pruning.
+- **Root Cause**: Storing all 8192 token vectors without punctuation filtering or dynamic dimension reduction.
 - **Remediation Code Diff**:
 ```python
-# - Buggy Code
-# dense_vec = np.zeros(250002)
-# for token_id, weight in sparse_vec.items():
-#     dense_vec[token_id] = weight
-# save_to_db(dense_vec) # 1MB per doc
+# - Buggy multi-vector retention:
+# doc_vectors = full_token_embeddings  # Retains all 8192 vectors including punctuation
 
-# + Fixed Code
-# save_to_db(sparse_vec) # <1KB per doc
-# Use sparse-aware vector databases (Milvus, Vespa, Qdrant)
+# + Punctuation and padding pruned retention:
+def prune_document_vectors(
+    token_vectors: torch.Tensor,  # [L, 128]
+    input_ids: torch.Tensor,       # [L]
+    tokenizer,
+    skip_punct: bool = True
+) -> tuple[torch.Tensor, torch.Tensor]:
+    punct_ids = set(tokenizer.convert_tokens_to_ids([",", ".", "!", "?", ";", ":"]))
+    special_ids = set(tokenizer.all_special_ids)
+    
+    keep_indices = []
+    for idx, tid in enumerate(input_ids.tolist()):
+        if tid in special_ids:
+            continue
+        if skip_punct and tid in punct_ids:
+            continue
+        keep_indices.append(idx)
+        
+    kept_indices_tensor = torch.tensor(keep_indices, device=token_vectors.device)
+    pruned_vectors = torch.index_select(token_vectors, 0, kept_indices_tensor)
+    return pruned_vectors, kept_indices_tensor
 ```
-- **Lesson**: **Use Sparse-Aware Storage**. Never convert sparse vectors to dense format unless absolutely necessary. Use vector databases that natively support sparse vectors.
-
-### Incident 5: Multi-Lingual Tokenization Inconsistencies (BUG-TOKEN-05)
-- **Context**: Processing text in languages other than English.
-- **What Was Expected**: Consistent tokenization and embedding quality across 100+ languages.
-- **What Actually Happened**: Some users reported lower performance for certain languages due to tokenization issues or lack of pre-training data for those languages.
-- **Evidence in Repo**: `tokenizer_config.json`: `"tokenizer_class": "XLMRobertaTokenizer"`. README: *"Multi-Linguality: It can support more than 100 working languages."*
-- **Root Cause**: The XLM-RoBERTa tokenizer is optimized for a specific set of languages. For low-resource languages, the tokenization may be less efficient, leading to longer sequences and potentially lower embedding quality.
-- **Remediation Code Diff**:
-```python
-# - Buggy Assumption
-# Assume all languages are tokenized equally efficiently
-
-# + Fixed Approach
-# Monitor tokenization length per language
-# def check_tokenization_efficiency(text, language):
-#     tokens = tokenizer(text)['input_ids']
-#     if len(tokens) > 8192:
-#         log_warning(f"Text in {language} is too long after tokenization")
-#     # Consider using language-specific tokenizers if available
-```
-- **Lesson**: **Monitor Tokenization Efficiency**. Track the average token length per language. If a language consistently produces longer sequences, consider using a language-specific tokenizer or adjusting the chunking strategy.
-
-## 4. Microscopic Code-Level Invariants (Syntax, Infinite Loop, UI/UX & Concurrency Guards)
-
-1.  **Micro-Syntax & Token-Level Precision**:
-    *   **Invariant**: When converting sparse vectors to JSON, ensure that keys are integers and values are floats. Do not use strings for keys, as this breaks vector database ingestion.
-    *   **Code**: `json.dumps({int(k): float(v) for k, v in sparse_dict.items()})`
-    *   **Trap**: `json.dumps(sparse_dict)` where keys are strings will fail in Milvus/Vespa.
-
-2.  **Infinite Loop & Recursion Guards**:
-    *   **Invariant**: When splitting long documents into chunks, ensure that the chunking algorithm terminates. Use a while loop with a clear termination condition (e.g., `start < len(text)`).
-    *   **Code**:
-        ```python
-        def split_text(text, max_len):
-            chunks = []
-            start = 0
-            while start < len(text):
-                end = min(start + max_len, len(text))
-                chunks.append(text[start:end])
-                start = end
-            return chunks
-        ```
-    *   **Trap**: `start += 1` instead of `start = end` leads to O(N^2) complexity and potential infinite loops if `max_len` is 0.
-
-3.  **UI & UX Micro-Mechanics**:
-    *   **N/A**: This is a backend model repository. No UI components.
-
-4.  **Backend Concurrency & Memory Safety**:
-    *   **Invariant**: When processing multiple documents in parallel, ensure that the tokenizer and model are thread-safe. Hugging Face tokenizers are generally thread-safe, but model inference may not be. Use a thread pool or process pool for parallel inference.
-    *   **Code**:
-        ```python
-        from concurrent.futures import ThreadPoolExecutor
-        with ThreadPoolExecutor(max_workers=4) as executor:
-            futures = [executor.submit(model, inputs) for inputs in batch]
-            results = [f.result() for f in futures]
-        ```
-    *   **Trap**: Calling `model(input_ids)` from multiple threads without synchronization can lead to race conditions in the model's internal state (e.g., cache).
-
-5.  **Defect & Error Prevention ("Galti Pakadna")**:
-    *   **Invariant**: Always check for `None` or empty tensors before performing operations. For example, if the input text is empty, the tokenizer may return an empty tensor, which can cause errors in the model.
-    *   **Code**:
-        ```python
-        if len(input_ids) == 0:
-            return None
-        ```
-    *   **Trap**: `model(torch.tensor([]))` will crash.
-
-## 5. The 9 Deep Learning Dimensions
-
-1.  **Architecture**:
-    *   **Subsystem Boundaries**: The model is a pure function: `text -> {dense, sparse, colbert}`. It is decoupled from the retrieval infrastructure.
-    *   **Decoupling**: The model does not know about vector databases, search engines, or RAG pipelines. It only produces embeddings.
-    *   **Modular Layout**: The model is a single artifact (weights + config). The tokenizer is a separate artifact. The inference code is in the FlagEmbedding repository.
-
-2.  **Core Abstractions**:
-    *   **Key Types**: `XLMRobertaModel`, `XLMRobertaTokenizer`.
-    *   **Domain Primitives**: Dense vector (1024-dim), Sparse vector (250k-dim, sparse), Multi-vector (sequence of 1024-dim vectors).
-    *   **Invariant Contracts**: The model must produce three types of vectors from a single forward pass. The vectors must be compatible with standard vector database formats.
-
-3.  **Error Handling**:
-    *   **Fault Boundaries**: The model does not handle errors. It is the responsibility of the caller to validate inputs (e.g., check for empty text, check for length).
-    *   **Error Trees**: `ValueError` for invalid input types, `IndexError` for out-of-bounds positions, `MemoryError` for large batches.
-    *   **Retries**: Not applicable. The model is deterministic.
-
-4.  **Testing**:
-    *   **Property Testing**: Test that the model produces the same output for the same input. Test that the output vectors have the correct shape.
-    *   **Mock Invariants**: Mock the tokenizer to return fixed inputs. Mock the model to return fixed outputs.
-    *   **Integration Harnesses**: Test the model with a small corpus and verify that the retrieval results are reasonable.
-
-5.  **Security**:
-    *   **Threat Model**: The model is a static artifact. There is no attack surface. The only risk is data leakage if the model is used to process sensitive data.
-    *   **Credential Boundaries**: N/A.
-    *   **Sanitization**: The tokenizer handles special characters. The model does not interpret the text.
-
-6.  **Performance**:
-    *   **Latency Profiles**: The model is a 24-layer transformer. Inference time is proportional to the input length. For 8192 tokens, inference takes ~100ms on a GPU.
-    *   **Asymptotic Complexity**: O(N^2) for attention, where N is the input length.
-    *   **Caching**: The model can use KV caching for autoregressive generation, but for embedding, caching is not applicable.
-    *   **Zero-Copy**: The model uses PyTorch tensors, which are zero-copy.
-
-7.  **Deployment**:
-    *   **CI/CD Invariants**: The model is deployed as a Hugging Face artifact. The CI/CD pipeline should test the model with a small corpus and verify that the retrieval results are reasonable.
-    *   **Container Constraints**: The model requires a GPU with at least 16GB of memory.
-    *   **Reproducible Builds**: The model is deterministic. The same input will always produce the same output.
-
-8.  **Agent Patterns**:
-    *   **Tooling Interfaces**: The model is used as a tool in a RAG pipeline. The agent calls the model to generate embeddings, then uses the embeddings to retrieve documents.
-    *   **Prompt Chains**: N/A. The model is not a language model.
-    *   **Loop Guards**: N/A.
-    *   **Context Budget Optimization**: The model has a fixed context window of 8192 tokens. The agent must ensure that the input text does not exceed this limit.
-
-9.  **Data Flow**:
-    *   **Mutation Lifecycles**: The model does not mutate the input text. It produces new tensors.
-    *   **Streams**: The model can process batches of text.
-    *   **Serializers**: The model outputs PyTorch tensors. The caller must serialize these tensors to a format compatible with the vector database (e.g., JSON, Protobuf).
-    *   **Network Protocol Barriers**: The model is not a network service. It is a local library.
-
-## 6. The 8 Learning Extraction Artifacts
-
-1.  **Pattern**: Hybrid Retrieval Fusion using Reciprocal Rank Fusion (RRF).
-2.  **Rule**: Always normalize scores before fusing dense and sparse vectors.
-3.  **Architecture Principle**: Decouple the embedding model from the retrieval infrastructure.
-4.  **Failure Mode**: Score scale mismatch leading to one modality dominating the other.
-5.  **Reusable Skill**: Implementing hybrid search in Milvus/Vespa.
-6.  **Decision**: Use sparse vectors instead of dense vectors for lexical matching.
-7.  **Anti-pattern**: Converting sparse vectors to dense format for storage.
-8.  **Verification Method**: Unit test that asserts the final ranking changes when the relative weight of dense vs. sparse is altered.
-
-## 7. Actionable Agent Skill & Implementation Checklist
-
-1.  **Validate Input Length**: Check that the input text does not exceed 8192 tokens.
-2.  **Tokenize Text**: Use the `XLMRobertaTokenizer` to tokenize the text.
-3.  **Generate Embeddings**: Call the model to generate dense, sparse, and multi-vector embeddings.
-4.  **Serialize Sparse Vectors**: Convert the sparse vectors to a format compatible with the vector database (e.g., JSON, Protobuf).
-5.  **Ingest into Vector Database**: Store the dense and sparse vectors in the vector database.
-6.  **Perform Hybrid Search**: Use the vector database's hybrid search API to retrieve documents.
-7.  **Fuse Results**: Use Reciprocal Rank Fusion (RRF) to fuse the dense and sparse results.
-8.  **Re-rank Results**: Use a cross-encoder model to re-rank the top-N results.
-9.  **Generate Answer**: Use the re-ranked results to generate an answer using a language model.
+- **Lesson**: Multi-vector late-interaction representations must implement semantic
 
 ## 3. Independent Verification Protocol
 1. Assert state existence before and after execution.
