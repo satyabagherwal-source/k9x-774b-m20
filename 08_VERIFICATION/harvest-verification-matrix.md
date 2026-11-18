@@ -10796,3 +10796,5 @@
 | `CYCLE-20261118-A792` | `2026-11-18T03:56:22.454Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9116` | Yes (`9f7b1be3...`) |
 | `CYCLE-20261118-JUGA` | `2026-11-18T04:03:52.426Z` | `orcarouter/OrcaSAQ-2-27B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-orcarouter-orcasaq-2-27b-learnings.md` | Yes (`6ff1635d...`) |
 | `CYCLE-20261118-JW1T` | `2026-11-18T04:03:54.497Z` | `cachix/devenv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9117` | Yes (`e4b061e5...`) |
+| `CYCLE-20261118-TCCY` | `2026-11-18T04:11:15.538Z` | `TaichuAI/ZDTaichu5.0-9B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-taichuai-zdtaichu5.0-9b-learnings.md` | Yes (`8318d7a9...`) |
+| `CYCLE-20261118-TOAB` | `2026-11-18T04:11:30.995Z` | `MaterializeInc/materialize` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9118` | Yes (`38a762cf...`) |

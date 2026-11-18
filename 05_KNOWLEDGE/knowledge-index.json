@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-18T04:04:05.934Z",
-  "total_verified_learnings": 8971,
+  "last_updated": "2026-11-18T04:11:37.058Z",
+  "total_verified_learnings": 8972,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 20851,
+  "total_items": 20855,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112190,9 +112190,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zulip-zulip-learnings",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "d8735ed8cae9dfc85c53e14f1676bff54a9fec514be6bd45bfe7b4d6a27797a6",
+      "content_hash": "65ff5226c95bc9a35d7013c702604a65abe7135527478efcc1530b3710cd543e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T03:17:21.285Z"
+      "persisted_at": "2026-11-18T04:11:37.058Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -113366,9 +113366,9 @@
       "title": "Research & Knowledge Intelligence: TaichuAI/ZDTaichu5.0-9B Core Invariants",
       "repository": "TaichuAI/ZDTaichu5.0-9B",
       "source_version": "hf-taichuai-zdtaichu5.0-9b",
-      "content_hash": "143aeba451f9cf342d3244531f9f196b9f493886ff642c060f74105022248158",
+      "content_hash": "d63256e4a6caadd3f3cfdaaea1be52f94a4abc7b8056a5af9803546895a54e32",
       "domain_letter": "D",
-      "persisted_at": "2026-11-13T16:39:32.409Z"
+      "persisted_at": "2026-11-18T04:11:15.744Z"
     },
     "candidate_directive-deps-dev-bump-hono-4574": {
       "item_id": "candidate_directive-deps-dev-bump-hono-4574",
@@ -113426,9 +113426,9 @@
       "title": "Research & Knowledge Intelligence: hf-taichuai-zdtaichu5.0-9b-learnings Core Invariants",
       "repository": "hf-taichuai-zdtaichu5.0-9b-learnings",
       "source_version": "HEAD",
-      "content_hash": "f114c31b9fee24d23228c3c71dc6868da41a334d4308abeb6a4205a9b49ad5db",
+      "content_hash": "91851efc791ecb0c992ddb669115bab3a230b508fc513d79b7cf376f97afc32c",
       "domain_letter": "D",
-      "persisted_at": "2026-11-13T16:40:23.297Z"
+      "persisted_at": "2026-11-18T04:11:34.623Z"
     },
     "domain_intelligence-architecture-intelligence-microsoft-agent-governance-toolkit-learnings-core-inva": {
       "item_id": "domain_intelligence-architecture-intelligence-microsoft-agent-governance-toolkit-learnings-core-inva",
@@ -225714,8 +225714,8 @@
       "slug": "materializeinc-materialize",
       "platform": "github",
       "source_url": "https://github.com/MaterializeInc/materialize",
-      "source_version": "3d7977fc",
-      "content_hash": "20e890de299184242f7fde1e8e3b56fe6b1c5c3ca1cab4a5bda3be86a4964cec",
+      "source_version": "dfdfaf23",
+      "content_hash": "38a762cf83a9a461391662132d473c49563310f6214558173a31054288b4fd3f",
       "dossier_path": "07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
       "promoted_rules": [
@@ -225733,6 +225733,11 @@
           "number": 8860,
           "title": "build txn-wal batches without hollow runs",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9118,
+          "title": "update dependency cargo-nextest to v0.9.152 [security]",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -225740,7 +225745,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T03:50:15.052Z",
+      "verified_at": "2026-11-18T04:11:30.774Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -225794,10 +225799,10 @@
       "relative_path": "02_AGENT_INTELLIGENCE/materializeinc-materialize-agent-contract-materializeinc-materialize-autonomous-.md",
       "title": "Agent Contract: MaterializeInc/materialize Autonomous Specialist Persona",
       "repository": "MaterializeInc/materialize",
-      "source_version": "3d7977fc",
-      "content_hash": "481a319b53eae7cddfcfbcf9ad430c3d348bcd9d71dcbfce474f6ae62e9b42a3",
+      "source_version": "dfdfaf23",
+      "content_hash": "07127a4594205fb7942fa1df427a89410c87116943094abf77dc4a8e6d0e5e78",
       "domain_letter": "D",
-      "persisted_at": "2026-11-17T03:50:15.718Z"
+      "persisted_at": "2026-11-18T04:11:31.497Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-materializeinc-materialize": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-materializeinc-materialize",
@@ -225806,10 +225811,10 @@
       "relative_path": "08_VERIFICATION/materializeinc-materialize-verification-protocol-empirical-defect-shield-for-mat.md",
       "title": "Verification Protocol: Empirical Defect Shield for MaterializeInc/materialize",
       "repository": "MaterializeInc/materialize",
-      "source_version": "3d7977fc",
-      "content_hash": "c002058af4cc3fde45904928f233d86a1e3e29da72f146441d402a752f7b6f0d",
+      "source_version": "dfdfaf23",
+      "content_hash": "601ad059ec29204c53389563e8c4d4a2b0d529b7bb6d47f19e6d747297b277ed",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T03:50:15.837Z"
+      "persisted_at": "2026-11-18T04:11:31.627Z"
     },
     "candidate_directive-windows-fix-the-unit-test-binary-crashing-at-startup-on-rust-1-100": {
       "item_id": "candidate_directive-windows-fix-the-unit-test-binary-crashing-at-startup-on-rust-1-100",
@@ -247895,9 +247900,9 @@
       "title": "Agent Contract: materializeinc-materialize-learnings Autonomous Specialist Persona",
       "repository": "materializeinc-materialize-learnings",
       "source_version": "HEAD",
-      "content_hash": "8374ca6f893f105f272390dc8b40602d2e1ac2d7e8815896e6f0708c448d90e4",
+      "content_hash": "9d1981895547468203c0d7f0970f9164a0ceaa0e3b0630f91786b37df8bcacc9",
       "domain_letter": "D",
-      "persisted_at": "2026-11-17T03:50:21.177Z"
+      "persisted_at": "2026-11-18T04:11:36.229Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-materializeinc-materialize-lea": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-materializeinc-materialize-lea",
@@ -247907,9 +247912,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for materializeinc-materialize-learnings",
       "repository": "materializeinc-materialize-learnings",
       "source_version": "HEAD",
-      "content_hash": "d892eb52efa22b2da821decc47a35c86d3e2fcf524b33c1c0289780425bc4cfc",
+      "content_hash": "21b5c8455c5c817e25c1dfaa5ae57c6813d3992845bc43a0ff5e7177841431d1",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T03:50:21.298Z"
+      "persisted_at": "2026-11-18T04:11:36.352Z"
     },
     "learn-github-mlua-rs-mlua": {
       "learning_id": "learn-github-mlua-rs-mlua",
@@ -263788,10 +263793,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-materializeinc-materialize-research-knowledge-intelligence-materializeinc-materi.md",
       "title": "Research & Knowledge Intelligence: MaterializeInc/materialize Core Invariants",
       "repository": "MaterializeInc/materialize",
-      "source_version": "3d7977fc",
-      "content_hash": "6194aedd40bc8bd0fe5801665af3b9875eb0c2e79c05258c23ce98cb97f04029",
+      "source_version": "dfdfaf23",
+      "content_hash": "94c7e6a4770ddbae2615b210b6989e48129da35aa16620a0d1f58d8928687f98",
       "domain_letter": "D",
-      "persisted_at": "2026-11-17T03:50:15.584Z"
+      "persisted_at": "2026-11-18T04:11:31.348Z"
     },
     "candidate_directive-docs-document-the-use-of-merman-for-mermaid-graphs": {
       "item_id": "candidate_directive-docs-document-the-use-of-merman-for-mermaid-graphs",
@@ -263873,9 +263878,9 @@
       "title": "Research & Knowledge Intelligence: materializeinc-materialize-learnings Core Invariants",
       "repository": "materializeinc-materialize-learnings",
       "source_version": "HEAD",
-      "content_hash": "b95b457ef9a4cad4ea0248160c59f65e9f3e20510ebee82a3c9e538bd99036d4",
+      "content_hash": "ec325f393b3ec81793a8135344ba3155f8b05393e599d3c448c504d46570b205",
       "domain_letter": "D",
-      "persisted_at": "2026-11-17T03:50:21.049Z"
+      "persisted_at": "2026-11-18T04:11:36.087Z"
     },
     "learn-github-solidjs-solid": {
       "learning_id": "learn-github-solidjs-solid",
@@ -269725,13 +269730,13 @@
       "item_id": "candidate_directive-portico-fix-typos-on-development-community-and-security-pages",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-W0L8-portico-fix-typos-on-development-community-and-security-pages.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-TSQU-portico-fix-typos-on-development-community-and-security-pages.md",
       "title": "portico: Fix typos on development community and security pages.",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "a552e378c84adb950dfbbc04c6aeee0b2f2603f28d31f0dd7fc874a91b896daa",
+      "content_hash": "d371aea594666210ac13ea33082c3c886ca21d7c779788ffef5ca8eb567ba538",
       "domain_letter": "L",
-      "persisted_at": "2026-11-18T03:17:21.023Z"
+      "persisted_at": "2026-11-18T04:11:36.777Z"
     },
     "domain_intelligence-human-need-intelligence-zulip-zulip-learnings-core-invariants": {
       "item_id": "domain_intelligence-human-need-intelligence-zulip-zulip-learnings-core-invariants",
@@ -269741,9 +269746,9 @@
       "title": "Human & Need Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "bc6940dd08dbf24a5582a5dbe53cedf476aa87483be853f14e8f5567babc19ef",
+      "content_hash": "e8b7a41f7224427eee3c7e946d2c97e719d2118249a1d1d1d66eac67c05bd2a7",
       "domain_letter": "A",
-      "persisted_at": "2026-11-18T03:17:21.144Z"
+      "persisted_at": "2026-11-18T04:11:36.917Z"
     },
     "candidate_directive-mito2-wait-for-a-stopped-region-s-checkpoint-before-reopening-it": {
       "item_id": "candidate_directive-mito2-wait-for-a-stopped-region-s-checkpoint-before-reopening-it",
@@ -280624,6 +280629,71 @@
       "content_hash": "cc9eeae982774c21df34453be956bd274a7d3d6d63a4b9bd8d26c6610d1c5316",
       "domain_letter": "G",
       "persisted_at": "2026-11-18T04:04:04.586Z"
+    },
+    "learn-huggingface-taichuai-zdtaichu5-0-9b": {
+      "learning_id": "learn-huggingface-taichuai-zdtaichu5-0-9b",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "TaichuAI/ZDTaichu5.0-9B",
+      "repository": "TaichuAI/ZDTaichu5.0-9B",
+      "slug": "hf-taichuai-zdtaichu5.0-9b",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/TaichuAI/ZDTaichu5.0-9B",
+      "source_version": "hf-taichuai-zdtaichu5.0-9b",
+      "content_hash": "8318d7a9d2afb219c7e91ab387ddf94fbfe15f4e899bc8b1dcf66814ce2e6e09",
+      "dossier_path": "07_PROJECT_LEARNING/hf-taichuai-zdtaichu5.0-9b-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-taichuai-zdtaichu5.0-9b-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-18T04:11:15.330Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-9118": {
+      "learning_id": "rule-9118",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9118,
+      "title": "update dependency cargo-nextest to v0.9.152 [security]",
+      "source_url": "https://github.com/MaterializeInc/materialize",
+      "source_version": "dfdfaf23",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-18T04:11:30.774Z"
+    },
+    "candidate_directive-update-dependency-cargo-nextest-to-v0-9-152-security": {
+      "item_id": "candidate_directive-update-dependency-cargo-nextest-to-v0-9-152-security",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-TOG5-update-dependency-cargo-nextest-to-v0-9-152-security.md",
+      "title": "update dependency cargo-nextest to v0.9.152 [security]",
+      "repository": "MaterializeInc/materialize",
+      "source_version": "dfdfaf23",
+      "content_hash": "aea66c8cde844e5a72d527bebc23775103b28e7d86653440a5458661f37446a2",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-18T04:11:31.206Z"
+    },
+    "candidate_directive-deps-update-dependency-cargo-nextest-to-v0-9-152-security": {
+      "item_id": "candidate_directive-deps-update-dependency-cargo-nextest-to-v0-9-152-security",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-TS3X-deps-update-dependency-cargo-nextest-to-v0-9-152-security.md",
+      "title": "deps): update dependency cargo-nextest to v0.9.152 [security]",
+      "repository": "materializeinc-materialize-learnings",
+      "source_version": "HEAD",
+      "content_hash": "1b84fa59ca692ef61421986a3b5c96f87a76a4f03c006f9a247341786e95c746",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-18T04:11:35.950Z"
     }
   },
   "ai-builder-brain": {

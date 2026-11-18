@@ -10829,3 +10829,5 @@ Every entry in this ledger must capture:
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `39c445bb` | Multi-dimensional audit evidence | 2026-11-18T03:56:22.458Z |
 | `learn-huggingface-orcarouter-orcasaq-2-27b` | `https://huggingface.co/orcarouter/OrcaSAQ-2-27B` | `hf-orcarou` | Multi-dimensional audit evidence | 2026-11-18T04:03:52.430Z |
 | `learn-github-cachix-devenv` | `https://github.com/cachix/devenv` | `8efcb88c` | Multi-dimensional audit evidence | 2026-11-18T04:03:54.501Z |
+| `learn-huggingface-taichuai-zdtaichu5-0-9b` | `https://huggingface.co/TaichuAI/ZDTaichu5.0-9B` | `hf-taichua` | Multi-dimensional audit evidence | 2026-11-18T04:11:15.543Z |
+| `learn-github-materializeinc-materialize` | `https://github.com/MaterializeInc/materialize` | `dfdfaf23` | Multi-dimensional audit evidence | 2026-11-18T04:11:31.000Z |

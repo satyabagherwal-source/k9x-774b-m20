@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T04:03:54.506Z",
-  "total_cycles_completed": 10341,
-  "total_learnings_persisted": 10341,
-  "total_rules_promoted": 9865,
+  "last_updated": "2026-11-18T04:11:31.006Z",
+  "total_cycles_completed": 10343,
+  "total_learnings_persisted": 10343,
+  "total_rules_promoted": 9866,
   "history": [
-    {
-      "timestamp": "2026-11-17T15:23:59.630Z",
-      "repository": "rook/rook",
-      "learningId": "learn-github-rook-rook",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T15:35:00.236Z",
-      "repository": "meta-models/Muse-Spark-Open-816B-A42B-NVFP4",
-      "learningId": "learn-huggingface-meta-models-muse-spark-open-816b-a42b-nvfp4",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-17T15:35:15.704Z",
       "repository": "tickernelz/opencode-mem",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-18T04:03:54.506Z",
       "repository": "cachix/devenv",
       "learningId": "learn-github-cachix-devenv",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T04:11:15.550Z",
+      "repository": "TaichuAI/ZDTaichu5.0-9B",
+      "learningId": "learn-huggingface-taichuai-zdtaichu5-0-9b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T04:11:31.006Z",
+      "repository": "MaterializeInc/materialize",
+      "learningId": "learn-github-materializeinc-materialize",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

@@ -2,18 +2,18 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-18T04:04:04.389Z",
+  "updated_at": "2026-11-18T04:11:35.765Z",
   "stats": {
-    "total_discovered": 5240,
-    "approved_pending_harvest": 4938,
+    "total_discovered": 5266,
+    "approved_pending_harvest": 4964,
     "harvested_count": 0,
     "rejected_count": 302,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 4935,
+      "COMMUNITY_AND_EXPERT": 4958,
       "OFFICIAL_DOCUMENTATION": 164,
       "STANDARDS_AND_SPECIFICATIONS": 108,
-      "ENGINEERING_BLOGS": 3,
-      "SECURITY_ADVISORIES": 22,
+      "ENGINEERING_BLOGS": 4,
+      "SECURITY_ADVISORIES": 24,
       "LEGAL_AND_REGULATORY": 2,
       "RESEARCH_AND_ACADEMIA": 6
     }
@@ -113187,6 +113187,578 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/cachix-devenv-learnings.md",
         "fileName": "cachix-devenv-learnings.md"
+      }
+    },
+    "SRC-F105AA0DA34F": {
+      "id": "SRC-F105AA0DA34F",
+      "url": "https://lodash.com/",
+      "title": "https://lodash.com/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T04:11:34.873Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
+        "fileName": "materializeinc-materialize-learnings.md"
+      }
+    },
+    "SRC-10324C87C83F": {
+      "id": "SRC-10324C87C83F",
+      "url": "https://redirect.github.com/lodash/lodash",
+      "title": "https://redirect.github.com/lodash/lodash",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T04:11:34.917Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
+        "fileName": "materializeinc-materialize-learnings.md"
+      }
+    },
+    "SRC-EB1C3F8BAC4C": {
+      "id": "SRC-EB1C3F8BAC4C",
+      "url": "https://developer.mend.io/api/mc/badges/age/npm/lodash/4.18.1?slim=true",
+      "title": "https://developer.mend.io/api/mc/badges/age/npm/lodash/4.18.1?slim=true",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T04:11:34.960Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
+        "fileName": "materializeinc-materialize-learnings.md"
+      }
+    },
+    "SRC-C777F679BBED": {
+      "id": "SRC-C777F679BBED",
+      "url": "https://developer.mend.io/api/mc/badges/confidence/npm/lodash/4.17.21/4.18.1?slim=true",
+      "title": "https://developer.mend.io/api/mc/badges/confidence/npm/lodash/4.17.21/4.18.1?slim=true",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T04:11:34.998Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
+        "fileName": "materializeinc-materialize-learnings.md"
+      }
+    },
+    "SRC-740D1ADB3608": {
+      "id": "SRC-740D1ADB3608",
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2025-13465",
+      "title": "https://nvd.nist.gov/vuln/detail/CVE-2025-13465",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "SECURITY_ADVISORIES",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.96,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T04:11:35.032Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
+        "fileName": "materializeinc-materialize-learnings.md"
+      }
+    },
+    "SRC-349D3A84CCE5": {
+      "id": "SRC-349D3A84CCE5",
+      "url": "https://redirect.github.com/advisories/GHSA-xxjr-mmjv-4gpg",
+      "title": "https://redirect.github.com/advisories/GHSA-xxjr-mmjv-4gpg",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T04:11:35.066Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
+        "fileName": "materializeinc-materialize-learnings.md"
+      }
+    },
+    "SRC-21F4D84BC94A": {
+      "id": "SRC-21F4D84BC94A",
+      "url": "https://jquery.com/",
+      "title": "https://jquery.com/",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T04:11:35.103Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
+        "fileName": "materializeinc-materialize-learnings.md"
+      }
+    },
+    "SRC-28E824CA52A6": {
+      "id": "SRC-28E824CA52A6",
+      "url": "https://redirect.github.com/jquery/jquery",
+      "title": "https://redirect.github.com/jquery/jquery",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T04:11:35.138Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
+        "fileName": "materializeinc-materialize-learnings.md"
+      }
+    },
+    "SRC-6CD96D456574": {
+      "id": "SRC-6CD96D456574",
+      "url": "https://developer.mend.io/api/mc/badges/age/npm/jquery/3.5.0?slim=true",
+      "title": "https://developer.mend.io/api/mc/badges/age/npm/jquery/3.5.0?slim=true",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T04:11:35.172Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
+        "fileName": "materializeinc-materialize-learnings.md"
+      }
+    },
+    "SRC-45B3E85E1258": {
+      "id": "SRC-45B3E85E1258",
+      "url": "https://developer.mend.io/api/mc/badges/confidence/npm/jquery/3.4.1/3.5.0?slim=true",
+      "title": "https://developer.mend.io/api/mc/badges/confidence/npm/jquery/3.4.1/3.5.0?slim=true",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T04:11:35.207Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
+        "fileName": "materializeinc-materialize-learnings.md"
+      }
+    },
+    "SRC-C75997D49992": {
+      "id": "SRC-C75997D49992",
+      "url": "https://nvd.nist.gov/vuln/detail/CVE-2020-11022",
+      "title": "https://nvd.nist.gov/vuln/detail/CVE-2020-11022",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "SECURITY_ADVISORIES",
+      "authorityTier": "CANONICAL_STANDARD",
+      "trustScore": 0.96,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T04:11:35.240Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
+        "fileName": "materializeinc-materialize-learnings.md"
+      }
+    },
+    "SRC-C47701C2E579": {
+      "id": "SRC-C47701C2E579",
+      "url": "https://redirect.github.com/advisories/GHSA-gxr4-xjj5-5px2",
+      "title": "https://redirect.github.com/advisories/GHSA-gxr4-xjj5-5px2",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T04:11:35.273Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
+        "fileName": "materializeinc-materialize-learnings.md"
+      }
+    },
+    "SRC-E6351A08800A": {
+      "id": "SRC-E6351A08800A",
+      "url": "https://blog.jquery.com/2020/04/10/jquery-3-5-0-released",
+      "title": "https://blog.jquery.com/2020/04/10/jquery-3-5-0-released",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "ENGINEERING_BLOGS",
+      "authorityTier": "ENGINEERING_PEER",
+      "trustScore": 0.85,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T04:11:35.309Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
+        "fileName": "materializeinc-materialize-learnings.md"
+      }
+    },
+    "SRC-3350BACBFC75": {
+      "id": "SRC-3350BACBFC75",
+      "url": "https://jquery.com/upgrade-guide/3",
+      "title": "https://jquery.com/upgrade-guide/3",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T04:11:35.342Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
+        "fileName": "materializeinc-materialize-learnings.md"
+      }
+    },
+    "SRC-254CDF98C537": {
+      "id": "SRC-254CDF98C537",
+      "url": "https://redirect.github.com/nextest-rs/nextest",
+      "title": "https://redirect.github.com/nextest-rs/nextest",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T04:11:35.375Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
+        "fileName": "materializeinc-materialize-learnings.md"
+      }
+    },
+    "SRC-5198762EF56C": {
+      "id": "SRC-5198762EF56C",
+      "url": "https://redirect.github.com/advisories/GHSA-vc25-qg58-w57c",
+      "title": "https://redirect.github.com/advisories/GHSA-vc25-qg58-w57c",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T04:11:35.410Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
+        "fileName": "materializeinc-materialize-learnings.md"
+      }
+    },
+    "SRC-7A65E5D542C4": {
+      "id": "SRC-7A65E5D542C4",
+      "url": "https://rustsec.org/advisories/RUSTSEC-2026-0412.html",
+      "title": "https://rustsec.org/advisories/RUSTSEC-2026-0412.html",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T04:11:35.442Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
+        "fileName": "materializeinc-materialize-learnings.md"
+      }
+    },
+    "SRC-D9052999905E": {
+      "id": "SRC-D9052999905E",
+      "url": "https://nexte.st/docs/features/record-replay-rerun/portable-recordings",
+      "title": "https://nexte.st/docs/features/record-replay-rerun/portable-recordings",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T04:11:35.475Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
+        "fileName": "materializeinc-materialize-learnings.md"
+      }
+    },
+    "SRC-6E2D1A5140C8": {
+      "id": "SRC-6E2D1A5140C8",
+      "url": "https://nexte.st/docs/features/record-replay-rerun",
+      "title": "https://nexte.st/docs/features/record-replay-rerun",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T04:11:35.512Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
+        "fileName": "materializeinc-materialize-learnings.md"
+      }
+    },
+    "SRC-609590396BB9": {
+      "id": "SRC-609590396BB9",
+      "url": "https://cdn.jsdelivr.net/npm/jquery@3.5.0/dist/jquery.min.js",
+      "title": "https://cdn.jsdelivr.net/npm/jquery@3.5.0/dist/jquery.min.js",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T04:11:35.543Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
+        "fileName": "materializeinc-materialize-learnings.md"
+      }
+    },
+    "SRC-CA042CCF8A56": {
+      "id": "SRC-CA042CCF8A56",
+      "url": "https://cdn.jsdelivr.net/npm/anchor-js/anchor.min.js",
+      "title": "https://cdn.jsdelivr.net/npm/anchor-js/anchor.min.js",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T04:11:35.576Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
+        "fileName": "materializeinc-materialize-learnings.md"
+      }
+    },
+    "SRC-3003B240BD6D": {
+      "id": "SRC-3003B240BD6D",
+      "url": "https://cdn.jsdelivr.net/npm/simple-scrollspy@2.0.3/dist/simple-scrollspy.min.js",
+      "title": "https://cdn.jsdelivr.net/npm/simple-scrollspy@2.0.3/dist/simple-scrollspy.min.js",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T04:11:35.612Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
+        "fileName": "materializeinc-materialize-learnings.md"
+      }
+    },
+    "SRC-7C6F9249B4A1": {
+      "id": "SRC-7C6F9249B4A1",
+      "url": "https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js",
+      "title": "https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T04:11:35.644Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
+        "fileName": "materializeinc-materialize-learnings.md"
+      }
+    },
+    "SRC-85C1154823A4": {
+      "id": "SRC-85C1154823A4",
+      "url": "https://cdn.jsdelivr.net/npm/lodash@4.18.1/lodash.min.js",
+      "title": "https://cdn.jsdelivr.net/npm/lodash@4.18.1/lodash.min.js",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T04:11:35.677Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
+        "fileName": "materializeinc-materialize-learnings.md"
+      }
+    },
+    "SRC-3F585EDEBFEA": {
+      "id": "SRC-3F585EDEBFEA",
+      "url": "https://cmp.osano.com/Azz7yeT5NmUe93yp/01cb9c3f-e1eb-4e74-9255-1280e80cdc28/osano.js",
+      "title": "https://cmp.osano.com/Azz7yeT5NmUe93yp/01cb9c3f-e1eb-4e74-9255-1280e80cdc28/osano.js",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T04:11:35.725Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
+        "fileName": "materializeinc-materialize-learnings.md"
+      }
+    },
+    "SRC-D3A555BE4CB8": {
+      "id": "SRC-D3A555BE4CB8",
+      "url": "https://cdn.jsdelivr.net/npm/jquery@3.4.1/dist/jquery.min.js",
+      "title": "https://cdn.jsdelivr.net/npm/jquery@3.4.1/dist/jquery.min.js",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T04:11:35.765Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
+        "fileName": "materializeinc-materialize-learnings.md"
       }
     }
   }

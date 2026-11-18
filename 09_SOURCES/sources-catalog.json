@@ -455,8 +455,8 @@
     "sourceUrl": "https://huggingface.co/TaichuAI/ZDTaichu5.0-9B",
     "sourceVersion": "hf-taichuai-zdtaichu5.0-9b",
     "license": "Open-Source",
-    "contentHash": "929bfc80fe37a9b0834735235b3179515abb05e3bbf25f4d1741022579b4102b",
-    "lastHarvestedAt": "2026-11-13T16:39:32.248Z",
+    "contentHash": "8318d7a9d2afb219c7e91ab387ddf94fbfe15f4e899bc8b1dcf66814ce2e6e09",
+    "lastHarvestedAt": "2026-11-18T04:11:15.543Z",
     "learningId": "learn-huggingface-taichuai-zdtaichu5-0-9b"
   },
   "hf-phocinae-phocinae-largha-150m-v1": {
@@ -3923,10 +3923,10 @@
     "repository": "MaterializeInc/materialize",
     "platform": "github",
     "sourceUrl": "https://github.com/MaterializeInc/materialize",
-    "sourceVersion": "3d7977fc",
+    "sourceVersion": "dfdfaf23",
     "license": "NOASSERTION",
-    "contentHash": "20e890de299184242f7fde1e8e3b56fe6b1c5c3ca1cab4a5bda3be86a4964cec",
-    "lastHarvestedAt": "2026-11-17T03:50:15.255Z",
+    "contentHash": "38a762cf83a9a461391662132d473c49563310f6214558173a31054288b4fd3f",
+    "lastHarvestedAt": "2026-11-18T04:11:31.000Z",
     "learningId": "learn-github-materializeinc-materialize"
   },
   "react-bootstrap-react-bootstrap": {

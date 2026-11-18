@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-18T04:03:54.510Z",
+  "last_updated": "2026-11-18T04:11:31.010Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -560,14 +560,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-taichuai-zdtaichu5-0-9b",
-      "content_hash": "929bfc80fe37a9b0834735235b3179515abb05e3bbf25f4d1741022579b4102b",
-      "verified_at": "2026-11-13T16:39:32.256Z",
+      "content_hash": "8318d7a9d2afb219c7e91ab387ddf94fbfe15f4e899bc8b1dcf66814ce2e6e09",
+      "verified_at": "2026-11-18T04:11:15.553Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T16:39:32.256Z"
+      "last_updated": "2026-11-18T04:11:15.553Z"
     },
     "Comfy-Org/Qwen-Image-2.1": {
       "repository": "Comfy-Org/Qwen-Image-2.1",
@@ -6006,14 +6006,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-materializeinc-materialize",
-      "content_hash": "20e890de299184242f7fde1e8e3b56fe6b1c5c3ca1cab4a5bda3be86a4964cec",
-      "verified_at": "2026-11-17T03:50:15.264Z",
+      "content_hash": "38a762cf83a9a461391662132d473c49563310f6214558173a31054288b4fd3f",
+      "verified_at": "2026-11-18T04:11:31.010Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T03:50:15.264Z"
+      "last_updated": "2026-11-18T04:11:31.010Z"
     },
     "react-bootstrap/react-bootstrap": {
       "repository": "react-bootstrap/react-bootstrap",
