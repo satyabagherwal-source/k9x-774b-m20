@@ -10797,3 +10797,8 @@ Every entry in this ledger must capture:
 | `learn-dom-f-b4186028` | `project://shoutem-ui` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/shoutem-ui-learnings.md` | 2026-11-18T01:04:22.737Z |
 | `learn-huggingface-nvidia-nemotron-3-diarization` | `https://huggingface.co/nvidia/Nemotron-3-Diarization` | `hf-nvidia-` | Multi-dimensional audit evidence | 2026-11-18T01:18:46.902Z |
 | `learn-github-callstack-agent-device` | `https://github.com/callstack/agent-device` | `655ede27` | Multi-dimensional audit evidence | 2026-11-18T01:18:53.628Z |
+| `learn-huggingface-lightricks-ltx-2-5` | `https://huggingface.co/Lightricks/LTX-2.5` | `hf-lightri` | Multi-dimensional audit evidence | 2026-11-18T01:38:27.938Z |
+| `learn-github-iii-hq-iii` | `https://github.com/iii-hq/iii` | `3ffe1122` | Multi-dimensional audit evidence | 2026-11-18T01:38:29.531Z |
+| `learn-github-kumahq-kuma` | `https://github.com/kumahq/kuma` | `053b67f7` | Multi-dimensional audit evidence | 2026-11-18T01:38:37.077Z |
+| `learn-github-doobidoo-mcp-memory-service` | `https://github.com/doobidoo/mcp-memory-service` | `a908b7ba` | Multi-dimensional audit evidence | 2026-11-18T01:38:42.464Z |
+| `learn-dom-d-b990e946` | `project://kumahq-kuma` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kumahq-kuma-learnings.md` | 2026-11-18T01:39:14.972Z |

@@ -4,24 +4,24 @@
 {
   "source_repository": "doobidoo/mcp-memory-service",
   "source_url": "https://github.com/doobidoo/mcp-memory-service",
-  "source_version": "30f9eb40",
+  "source_version": "a908b7ba",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-17T01:54:48.106Z",
+  "timestamp": "2026-11-18T01:38:42.644Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-doobidoo-mcp-memory-service",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [doobidoo/mcp-memory-service](https://github.com/doobidoo/mcp-memory-service) (Revision: `30f9eb40`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-17T01:54:48.106Z`  
+> **Provenance**: Harvested from [doobidoo/mcp-memory-service](https://github.com/doobidoo/mcp-memory-service) (Revision: `a908b7ba`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-18T01:38:42.644Z`  
 > **Learning ID**: `learn-github-doobidoo-mcp-memory-service`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), G (Architecture Intelligence), A (Human & Need Intelligence), K (Quality & Verification Intelligence), D (Research & Knowledge Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence), F (Design Intelligence)
-- **Confidence Rating**: 81%
+- **Secondary Corroborating Domains**: I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), G (Architecture Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), D (Research & Knowledge Intelligence), J (Search & Distribution Intelligence), L (Deployment & Operations Intelligence), F (Design Intelligence), B (Product Intelligence)
+- **Confidence Rating**: 79%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from doobidoo/mcp-memory-service:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/doobidoo/mcp-memory-service](https://github.com/doobidoo/mcp-memory-service))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T01:54:47.002Z  
+> **Harvest Timestamp**: 2026-11-18T01:38:41.522Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Open-source persistent memory for AI agent pipelines (LangGraph, CrewAI, AutoGen) and Claude. REST API + knowledge graph + autonomous consolidation.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 2133 stars
+- **Stars / Engagement**: 2135 stars
 
 ---
 
@@ -2925,11 +2925,11 @@ Commands:
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #2030** (2026-11-16): **[Bug]: time_expr "between november and january" returns an inverted range and matches nothing**
-  *Symptoms*: ### Bug Description  A `between` range over month names that crosses New Year comes back with the start after the end, so `memory_search(time_expr=...)` returns no memories at all, with no error.  `between november and january` (run on 2026-11-15) resolves to 2026-11-01 .. 2026-01-31. Each month rolls back to its most recent occurrence on its own, and the start is never moved to the previous year. This happens for every cross-year month range whose first month is the current month or earlier (e.g. "between october and march" today), so for most of the year these searches are always empty. Yearless M/D ranges were fixed for the same problem in #1347; month names were not.  ### Steps to Reproduce  1. Clone main and install: `pip install -e .` 2. Save the script below as `repro_between_months.py` 3. Run `python repro_between_months.py`  ```python import asyncio, hashlib, logging, os, tempfile from datetime import datetime, timezone  tmp = tempfile.mkdtemp(prefix="mcp-repro-") os.environ["MCP_MEMORY_BASE_DIR"] = tmp os.environ["MCP_MEMORY_ALLOW_HASH_EMBEDDINGS"] = "1" logging.disable(logging.CRITICAL)  from mcp_memory_service.models.memory import Memory from mcp_memory_service.storage.sqlite_vec import SqliteVecMemoryStorage from mcp_memory_service.utils.time_parser import parse_time_expression   def memory(content, when):     m = Memory(content=content, content_hash=hashlib.sha256(content.encode()).hexdigest(),                tags=["repro"], memory_type="note")     m.created_at 
+- **Issue #2068** (2026-11-17): **Claim automation counts a maintainer's comment as an earlier claim**
+  *Symptoms*: ## What happens  On an issue labelled `auto-assign`, a `/claim` from a contributor is sent to manual confirmation when an earlier comment by a maintainer contains a phrase the claim classifier knows. The contributor gets "existing work, an earlier claim, edit or withdrawal needs a maintainer's confirmation" on an issue that is free.  Seen on #2060 on 2026-11-17. The issue had no assignee, no linked PR and no earlier claim. My comment settling the scope said "the content exists in another store and no longer names it". A contributor then commented `/claim`, the bot added `claim-pending` and posted the manual reply instead of assigning.  ## Why  In `scripts/ci/mark_claim_pending.py`:  - `WITHDRAWAL` (line 284) matches `no longer`, so `possible_claim()` returns true for the maintainer's comment. - `read_claim_history()` (line 685) builds `claims` from every comment that passes `human()` (line 355). `human()` checks the user type and login only, so maintainers are included. - `confirmed_claim()` (line 377) sees a comment by a different login before the command and returns `claims[0]`, the maintainer's comment. - `claim_ambiguity()` (line 387) finds that this "first claim" is not a command and reports ambiguity, and `prepare_assignment()` takes the manual path.  `should_label()` and `hint_command()` already skip comments whose `author_association` is in `EXEMPT_ASSOCIATIONS`. The claim history does not.  ## Reproduce  Run the classifier on the body of https://github.com/doobidoo/m
 
-- **Issue #2029** (2026-11-16): **[Bug]: time_expr "day before yesterday" selects yesterday**
-  *Symptoms*: ### Bug Description  `parse_time_expression("day before yesterday")` returns yesterday's window, so `memory_search(time_expr="day before yesterday")` silently returns the wrong day's memories, with no error. The parser matches the word "yesterday" inside the phrase and ignores "day before". `extract_time_expression` has the same problem and leaves "day before" in the search text.  ### Steps to Reproduce  1. Clone main and install: `pip install -e .` 2. Save the script below as `repro_day_before_yesterday.py` 3. Run `python repro_day_before_yesterday.py`  ```python import asyncio, hashlib, logging, os, tempfile from datetime import datetime, timedelta, timezone  tmp = tempfile.mkdtemp(prefix="mcp-repro-") os.environ["MCP_MEMORY_BASE_DIR"] = tmp os.environ["MCP_MEMORY_ALLOW_HASH_EMBEDDINGS"] = "1" logging.disable(logging.CRITICAL)  from mcp_memory_service.models.memory import Memory from mcp_memory_service.storage.sqlite_vec import SqliteVecMemoryStorage from mcp_memory_service.utils.time_parser import parse_time_expression   def memory(content, when):     m = Memory(content=content, content_hash=hashlib.sha256(content.encode()).hexdigest(),                tags=["repro"], memory_type="note")     m.created_at = when.timestamp()     m.created_at_iso = datetime.fromtimestamp(m.created_at, tz=timezone.utc).isoformat()     return m   async def main():     noon = datetime.now().replace(hour=12, minute=0, second=0, microsecond=0)     storage = SqliteVecMemoryStorage(os.path.join(tmp, 
+- **Issue #2040** (2026-11-17): **[Bug]: memory_ingest tool silently ignores memory_type and chunk_overlap in directory mode**
+  *Symptoms*: ### Bug Description   The memory_ingest MCP tool explicitly defines memory_type (string, default "document") and chunk_overlap (integer,   default 200) in its declarative input schema in   mcp-memory-service/src/mcp_memory_service/tools/registry.py:830-840.   When running in single-file mode (file_path), both parameters are parsed by handle_ingest_document in   mcp-memory-service/src/mcp_memory_service/server/handlers/documents.py:82-84 and properly applied to   loader.chunk_overlap and the stored memory.    However, in directory mode (directory_path):    1. handle_ingest_directory in mcp-memory-service/src/mcp_memory_service/server/handlers/documents.py:180-248 only   parses tags, recursive, file_extensions, chunk_size, and max_files. It completely omits extracting memory_type and   chunk_overlap from arguments.   2. FileIngestionProcessor in mcp-memory-service/src/mcp_memory_service/utils/directory_ingestion.py:83-153 does not   accept memory_type or chunk_overlap in __init__.   3. In process_file, loader.chunk_overlap is never configured on the document loader.   4. When calling _process_and_store_chunk(...) in FileIngestionProcessor.process_file, memory_type is omitted,   causing every chunk ingested across the directory to silently fall back to memory_type="document" regardless of   what the caller requested (e.g. memory_type="reference" or memory_type="learning").  ### Steps to Reproduce   1. Invoke the memory_ingest MCP tool with directory_path specifying a custom memo
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2946,570 +2946,660 @@ Commands:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `15a9e9a9` (2026-11-16)
-**Commit Message**: fix(security): keep memory_store side effects inside the granted store (GHSA-989p-hfjf-q97q) (#2036)
+### Incident Patch 1: `ed74a81e` (2026-11-17)
+**Commit Message**: fix(dashboard): do not cover the page during document uploads (#2009) (#2066)
 
-* fix(security): keep auto-capture and the NLI check inside the granted store (GHSA-989p-hfjf-q97q)
+* fix(dashboard): do not cover the page during document uploads
 
-A client holding only write:<store> could overwrite the default store
-through memory_store. handle_store_memory wrote the memory to the granted
-store but ran auto-capture without it: capture(), _try_evolve() and
-evolve_memory() took no store, so extracted candidates were compared with
-"default", replaced a similar memory there or were inserted there.
+handleDocumentUpload() blocked the whole page with the loading overlay
+although the status island already reports imports. Report the transfer
+to the island as a busy "Documents" source, disable the upload button
+while the request runs and ignore a second trigger. The other
+setLoading() call sites are not reported to the island and keep the
+overlay.
 
-The NLI contradiction check on store had the same gap, inline and in the
-background task: it searched "default" whatever store the memory went to,
-linked the two with a contradicts edge and reported the hit count. For the
-same reason it missed contradictions inside a named store.
+Refs #2009
 
-store is now passed down all of these paths, and evolve_memory() refuses a
-hash from another store on its own. The handler forwards the store the
-caller named rather than its "default" fallback: forwarding the fallback
-would have switched evolution off for every caller on a backend whose
-get_by_hash ignores store (Cloudflare, Milvus).
+Co-authored-by: jeej1k <[REDACTED_EMAIL]>
 
-The auto-capture and NL
+* fix(dashboard): keep the upload button disabled while uploading
 
-**File**: `changelog.d/ghsa-989p.fixed.md` (added, +2/-0)
+updateUploadButton() re-enabled the button when a chunk slider changed
+mid-upload. Keep it disabled while _uploading is set. Reported by the
+Greptile review on the PR.
+
+Refs #2009
+
+Co-authored-by: jeej1k <[REDACTED_EMAIL]>
+
+---------
+
+Co-authored-by: jeej1k <[REDACTED_EMAIL]>
+Co-authored-by: Henry Krupp <[REDACTED_EMAIL]>
+
+**File**: `changelog.d/2009.fixed.md` (added, +6/-0)
 ```diff
-@@ -0,0 +1,2 @@
-+- **A per-store write grant could write to and supersede memories in another store through `memory_store` (GHSA-989p-hfjf-q97q, reported by [RISCON Labs](https://www.risconlabs.com), @RISCON-Labs).**
-+  With `auto_extract=true`, `handle_store_memory` stored the memory in the granted store but ran auto-capture without it. `AutoCaptureService.capture()`, `SessionHarvester._try_evolve()` and `MemoryService.evolve_memory()` took no `store`, so the extracted candidates were compared with the `default` store, replaced a similar memory there, or were inserted there. A client holding only `write:projectA` could overwrite `default`. The NLI contradiction check on store (`MCP_NLI_ON_STORE`, inline and background) had the same gap: it compared a memory with the `default` store whatever store it was written to, linked the two with a `contradicts` edge and reported the hit count to the caller. It also missed contradictions inside a named store for the same reason. Conflict detection on store, which runs on every write without any flag, compared the new memory with every store as well and tagged a near-identical memory in another store `conflict:unresolved`, with `contradicts` edges between the two; it is confined to the store of the write now. `store` is now passed down all of these paths, and `evolve_memory()` refuses a hash from another store by itself. Setting `MCP_AUTO_EXTRACT_DEFAULT=false` was never a mitigation: an explicit `auto_extract` argument wins. Affected: 12.4.0 to 12.10.0, on backends that confine by store (sqlite-vec, hybrid). On Cloudflare and Milvus a per-store grant never authorized these calls; there, auto-capture for a named store now stores candidates in that store without evolving existing ones.
+@@ -0,0 +1,6 @@
++- **Starting a document upload no longer covers the dashboard with the loading overlay (#2009).**
++  `handleDocumentUpload()` blocked the whole page with `setLoading(true)` although the
++  status island already reports imports. It now reports the transfer to the island as a
++  busy "Documents" source, disables the upload button while the request runs and ignores
++  a second trigger. The overlay stays on the other `setLoading` call sites, which the
++  island does not report.
 ```
 
-**File**: `src/mcp_memory_service/consolidation/quarantine.py` (modified, +2/-1)
+**File**: `src/mcp_memory_service/web/static/app.js` (modified, +17/-5)
 ```diff
-@@ -357,8 +357,9 @@ async def _run_on_store_checks(
-         try:
-             from ..reasoning.nli import detect_contradictions_nli
+@@ -1671,7 +1671,7 @@ class MemoryDashboard {
+         const hasFiles = this.selectedFiles && this.selectedFiles.length > 0;
  
-+            nli_store_kw = {"store": store} if store is not None else {}
-             result = await detect_contradictions_nli(
--                storage, memory_hash=content_hash, dry_run=False
-+                storage, memory_hash=content_hash, dry_run=False, **nli_store_kw
-             )
-             pairs_detected = result.get("pairs_detected", 0)
-             logger.info(
-```
-
-**File**: `src/mcp_memory_service/harvest/auto_capture.py` (modified, +31/-16)
-```diff
-@@ -76,6 +76,32 @@ def extract_from_text(self, text: str, role: str = "assistant") -> List[HarvestC
-             if c.confidence >= self.min_confidence and c.memory_type in self.types
-         ]
+         if (uploadBtn) {
+-            uploadBtn.disabled = !hasFiles;
++            uploadBtn.disabled = !hasFiles || this._uploading;
+             uploadBtn.textContent = hasFiles ?
+                 `Upload & Ingest ${this.selectedFiles.length} file${this.selectedFiles.length > 1 ? 's' : ''}` :
+                 'Upload & Ingest';
+@@ -1714,6 +1714,8 @@ class MemoryDashboard {
+             this.showToast(this.t('toast.noFiles', 'No files selected'), 'error');
+             return;
+         }
++        // The upload button is disabled while the request runs; this also covers a second trigger.
++        if (this._uploading) return;
  
-+    async def _store_candidate(
-+        self,
-+        candidate,
-+        parent_hash: Optional[str],
-+        conversation_id: Optional[str],
-+        store: Optional[str],
-+    ) -> Dict[str, Any]:
-+        """Store one candidate as its own memory, in ``store`` when one is named."""
-+        tags = ["auto-capture"] + candidate.tags
-+        if parent_hash:
-+            tags.append(f"source:{parent_hash[:12]}")
-+        # An unnamed store is left to store_memory()'s default.
-+        store_kw: Dict[str, Any] = {"store": store} if store is not None else {}
-+        return await self.memory_service.store_memory(
-+            content=candidate.content,
-+            tags=tags,
-+            memory_type=candidate.memory_type,
-+            metadata={
-+                "confidence": candidate.confidence,
-+                "source": "auto_capture",
-+                "extracted_from": parent_hash,
-+            },
-+            conversation_id=conversation_id,
-+            **store_kw,
-+        )
-+
-     async def capture(
-         self,
-         text: str,
-@@ -86,6 +112,7 @@ async def capture(
-         dry_run: bool = True,
-         link_parent: bool = True,
-         harvest_config: Optional[HarvestConfig] = None,
-+        store: Optional[str] = None,
-     ) -> AutoCaptureResult:
-         """Extract candidates and optionally store them with graph links."""
-         candidates = self.extract_from_text(text, role=role)
-@@ -106,7 +133,9 @@ async def capture(
- 
-         for candidate in candidates:
-             try:
--                evolved, child_hash = await self._harvester._try_evolve(candidate, config)
-+                evolved, child_hash = await self._harvester._try_evolve(
-+                    candidate, config, store=store
-+                )
-                 if evolved:
-                     result.evolved += 1
-                     result.stored += 1
-@@ -119,21 +148,7 @@ async def capture(
-                         )
-                     continue
- 
--                tags = ["auto-capture"] + candidate.tags
--                if parent_hash:
--                    tags.append(f"source:{parent_hash[:12]}")
+         const tags = document.getElementById('docTags')?.value || '';
+         const chunkSize = this.chunkSizeInput?.value || 1000;
+@@ -1725,9 +1727,17 @@ class MemoryDashboard {
+         for (const file of this.selectedFiles) {
+             this._clearOperationError(`upload-request-${JSON.stringify([file.name, file.size, file.lastModified])}`);
+         }
++        this._uploading = true;
++        const uploadBtn = document.getElementById('uploadBtn');
++        if (uploadBtn) uploadBtn.disabled = true;
++        // No page overlay: the island shows the transfer, then each import by its own row.
++        this.statusIsland?.report('upload-batch', {
++            state: 'busy',
++            progress: 'unknown',
++            label: { key: 'nav.documents', fallback: 'Documents' },
++            text: { key: 'island.upload.processing', fallback: 'Importing' },
++        });
+         try {
+-            this.setLoading(true);
 -
--                resp = await self.memory_service.store_memory(
--                    content=candidate.content,
--                    tags=tags,
--                    memory_type=candidate.memory_type,
--                    metadata={
--                        "confidence": candidate.confidence,
--                        "source": "auto_capture",
--                        "extracted_from": parent_hash,
--                    },
--                    conversation_id=conversation_id,
--                )
-+                resp = await self._store_candidate(candidate, parent_hash, conversation_id, store)
+             if (this.selectedFiles.length === 1 || this.processingMode === 'individual') {
+                 // Individual file processing (single file or individual mode for multiple files)
+                 for (let i = 0; i < this.selectedFiles.length; i++) {
+@@ -1765,9 +1775,10 @@ class MemoryDashboard {
+                 });
+             }
  
-                 if not (isinstance(resp, dict) and resp.get("success")):
-                     if isinstance(resp, dict) and resp.get("refused_recreate"):
-```
-
-**File**: `src/mcp_memory_service/harvest/harvester.py` (modified, +14/-1)
-```diff
-@@ -342,7 +342,9 @@ def _is_older_statement(candidate, existing) -> bool:
-         existing_time = memory_statement_time(existing)
-         return existing_time is not None and candidate_time < existing_time
- 
--    async def _try_evolve(self, candidate, config: "HarvestConfig", metadata=None):
-+    async def _try_evolve(
-+        self, candidate, config: "HarvestConfig", metadata=None, store: Optional[str] = None
-+    ):
-         """Check for similar active memory; if found, evolve it.
- 
-         Returns ``(evolved, new_hash)``. ``evolved`` is True when an existing
-@@ -357,11 +359,21 @@ async def _try_evolve(self, candidate, config: "HarvestConfig", metadata=None):
-         if not hasattr(self.memory_service, "storage") or not self.memory_service.storage:
-             return False, None
- 
-+        # A caller confined to one store may only evolve a memory of that store.
-+        # Where get_by_hash ignores ``store`` that cannot be guaranteed, so the
-+        # candidate is stored as its own memory instead (as memory_update refuses).
-+        store_kw = {}
-+        if store not in (None, "all"):
-+            if not getattr(self.memory_service.storage, "get_by_hash_is_store_scoped", False):
-+                return False, None
-+            store_kw = {"store": store}
++            this.statusIsland?.clear('upload-batch');
 +
-         try:
-             similar = await self.memory_service.storage.retrieve(
-                 candidate.content,
-                 n_results=1,
-                 min_confidence=config.min_confidence_to_evolve,
-+                **store_kw,
-             )
-         except Exception as e:
-             logger.debug("Similarity check failed, falling back to store: %s", _sanitize_log_value(str(e)))
-@@ -390,6 +402,7 @@ async def _try_evolve(self, candidate, config: "HarvestConfig", metadata=None):
-                 memory_type=candidate.memory_type,
-                 metadata=metadata if metadata is not None else default_metadata,
-                 reason=f"Session harvest: {datetime.now(timezone.utc).isoformat()}",
-+                **store_kw,
-             )
-             if ok:
-                 logger.info("Evolved memory %s→%s", existing_hash[:8], new_hash[:8] if new_hash else "?")
-```
-
-**File**: `src/mcp_memory_service/reasoning/nli.py` (modified, +24/-14)
-```diff
-@@ -21,7 +21,7 @@
- import os
- import re
- from dataclasses import dataclass
--from typing import List, Tuple
-+from typing import Any, Dict, List, Optional, Tuple
+             // Clear selection and reload history
+             this.selectedFiles = [];
+-            this.updateUploadButton();
+             await this.loadUploadHistory();
  
- from .nli_patterns import load_nli_patterns
- from ..config.locale import get_active_locales
-@@ -439,8 +439,22 @@ async def _classify_band(
-     return contradictions
- 
- 
-+async def _entity_candidates(graph, entities, memory_hash: str) -> set:
-+    """Hashes of the other memories that share an entity with ``memory_hash``."""
-+    candidate_hashes = set()
-+    for entity in entities:
-+        try:
-+            hashes = await graph.find_memories_by_entity(entity)
-+            if hashes:
-+                candidate_hashes.update(hashes)
-+        except Exception:
-+            continue
-+    candidate_hashes.discard(memory_hash)
-+    return candidate_hashes
-+
-+
- async def detect_contradictions_nli(
--    storage, memory_hash: str = None, dry_run: bool = True
-+    storage, memory_hash: str = None, dry_run: bool = True, store: Optional[str] = None
- ) -> dict:
-     """
-     NLI-enhanced contradiction detection — 4-stage pipeline.
-@@ -466,8 +480,13 @@ async def detect_contradictions_nli(
-     if memory_hash is None:
-         return result
- 
-+    # Compare only inside the store the memory was written to. Omitted, the
-+    # search below falls back to "default" and a memory in another store gets
-+    # compared with, and linked to, the default store's memories.
-+    store_kw: Dict[str, Any] = {} if store in (None, "all") else {"store": store}
-+
-     # Get the source memory
--    mem_a = await storage.get_by_hash(memory_hash)
-+    mem_a = await storage.get_by_hash(memory_hash, **store_kw)
-     if mem_a is None:
-         return result
- 
-@@ -486,22 +505,13 @@ async def detect_contradictions_nli(
-         return result
- 
-     # Stage 1: Entity overlap gate
--    candidate_hashes = set()
--    for entity in entities_a:
--        try:
--            hashes = await graph.find_memories_by_entity(entity)
--            if hashes:
--                candidate_hashes.update(hashes)
--        except Exception:
--            continue
--    candidate_hashes.discard(memory_hash)
--
-+    candidate_hashes = await _entity_candidates(graph, entities_a, memory_hash)
-     if not candidate_hashes:
-         return result
- 
-     # Stage 2: Embedding pre-filter — get candidates in similarity band
-     try:
--        search_result = await storage.search_memories(query=mem_a.content, limit=20)
-+        search_result = await storage.search_memories(query=mem_a.content, limit=20, **store_kw)
-     except Exception:
-         search_result = {}
+             // Reset drop zone
+@@ -1795,7 +1806,8 @@ class MemoryDashboard {
+                 key: 'toast.uploadFailed', fallback: 'Upload failed: {message}', vars: { message: error.message },
+             }, { key: 'nav.documents', fallback: 'Documents' });
+         } finally {
+-            this.setLoading(false);
++            this._uploading = false;
++            this.updateUploadButton();
+         }
+     }
  
 ```
 
-**File**: `src/mcp_memory_service/server/handlers/memory.py` (modified, +74/-51)
+**File**: `tests/web/test_dashboard_upload_no_overlay.cjs` (added, +59/-0)
 ```diff
-@@ -222,6 +222,78 @@ def _dedup_outcome_note(result: dict) -> str:
-     return _one_dedup_note(result)
- 
- 
-+async def _nli_note_after_store(server, result: dict, store: str) -> str:
-+    """Run the inline NLI contradiction check for the memory just stored.
+@@ -0,0 +1,59 @@
++// Run with: node --test tests/web/test_dashboard_upload_no_overlay.cjs
++// handleDocumentUpload() no longer covers the page with the loading overlay (#2009):
++// the island reports the transfer, the upload button is disabled while it runs, and a
++// second trigger is ignored.
++const { test } = require('node:test');
++const assert = require('node:assert/strict');
++const fs = require('node:fs');
++const vm = require('node:vm');
 +
-+    The check compares within ``store``, the partition the memory was written
-+    to (GHSA-989p-hfjf-q97q). Returns the line to append to the response.
-+    """
-+    try:
-+        from ...reasoning.nli import detect_contradictions_nli
-+        mem_hash = result["memory"].get("content_hash")
-+        if mem_hash:
-+            nli_result = await detect_contradictions_nli(
-+                server.storage, memory_hash=mem_hash, dry_run=False, store=store
-+            )
-+            if nli_result.get("pairs_detected", 0) > 0:
-+                return f"\n⚠️ Contradiction detected: {nli_result['pairs_detected']} conflict(s) registered."
-+    except Exception as e:
-+        logger.debug("NLI on-store check failed: %s", _sanitize_log_value(e))
-+    return ""
++function dashboard() {
++    const button = { disabled: false, textContent: '' };
++    const context = vm.createContext({
++        console: { log() {}, warn() {}, error() {} },
++        document: { getElementById: (id) => (id === 'uploadBtn' ? button : null), addEventListener() {}, querySelectorAll: () => [] },
++        window: { addEventListener() {} },
++        localStorage: { getItem: () => null },
++    });
++    vm.runInContext(fs.readFileSync('src/mcp_memory_service/web/static/app.js', 'utf8') + '\nthis.Dashboard = MemoryDashboard;', context);
++    context.Dashboard.prototype.init = () => {};
++    const app = new context.Dashboard();
++    const island = { reports: [], cleared: [], report(id, entry) { this.reports.push([id, entry]); }, clear(id) { this.cleared.push(id); } };
++    app.statusIsland = island;
++    app.selectedFiles = [{ name: 'a.txt', size: 1, lastModified: 1 }];
++    app.processingMode = 'individual';
++    app.loadUploadHistory = async () => {};
++    app.setupDocumentsEventListeners = () => {};
++    app.setLoading = () => { throw new Error('the page overlay was shown'); };
++    return { app, island, button };
++}
++
++test('an upload shows no overlay, disables the button and reports busy to the island', async () => {
++    const { app, island, button } = dashboard();
++    let release;
++    let calls = 0;
++    app.uploadSingleDocument = () => { calls += 1; return new Promise((resolve) => { release = resolve; }); };
++    const first = app.handleDocumentUpload();
++    await new Promise((r) => setTimeout(r, 0));
++    assert.equal(button.disabled, true);
++    app.updateUploadButton(); // e.g. a chunk slider change mid-upload
++    assert.equal(button.disabled, true);
++    assert.equal(island.reports[0][0], 'upload-batch');
++    assert.equal(island.reports[0][1].state, 'busy');
++    await app.handleDocumentUpload(); // second trigger while running
++    assert.equal(calls, 1);
++    release();
++    await first;
++    assert.ok(island.cleared.includes('upload-batch'));
++    assert.equal(app._uploading, false);
++});
++
++test('a failed upload reports the file error and releases the guard', async () => {
++    const { app } = dashboard();
++    const errors = [];
++    app.uploadSingleDocument = async () => { throw new Error('boom'); };
++    app._reportOperationError = (source) => errors.push(source);
++    await app.handleDocumentUpload();
++    assert.equal(errors.length, 1);
++    assert.equal(app._uploading, false);
++});
+```
+
+**File**: `tests/web/test_dashboard_upload_no_overlay.py` (added, +21/-0)
+```diff
+@@ -0,0 +1,21 @@
++"""Run the upload overlay regression tests (#2009)."""
++
++import shutil
++import subprocess
++from pathlib import Path
++
++import pytest
 +
 +
-+async def _auto_capture_note(server, arguments: dict, content, result: dict, conversation_id) -> str:
-+    """RFC #1008 §3: optional inline auto-capture from the stored content.
-+
-+    Returns the line to append to the response, empty when nothing ran.
-+    """
-+    from ...config import MCP_AUTO_EXTRACT_DEFAULT, MCP_AUTO_EXTRACT_MIN_CONFIDENCE
-+    from ...harvest.auto_capture import (
-+        AutoCaptureService,
-+        parent_hash_from_store_result,
++@pytest.mark.skipif(shutil.which("node") is None, reason="node is not installed")
++def test_upload_has_no_page_overlay():
++    root = Path(__file__).resolve().parents[2]
++    result = subprocess.run(
++        ["node", "--test", "tests/web/test_dashboard_upload_no_overlay.cjs"],
++        cwd=root,
++        capture_output=True,
++        text=True,
++        timeout=30,
++        check=False,
 +    )
-+
-+    auto_extract = arguments.get("auto_extract")
-+    if auto_extract is None:
-+        auto_extract = MCP_AUTO_EXTRACT_DEFAULT
-+
-+    # Recursion guard: skip auto-extract for memories produced by auto-capture itself
-+    metadata_arg = arguments.get("metadata") or {}
-+    if isinstance(metadata_arg, dict) and metadata_arg.get("source") == "auto_capture":
-+        auto_extract = False
-+
-+    if not (auto_extract and content):
-+        return ""
-+    try:
-+        min_conf = arguments.get("min_extract_confidence")
-+        if min_conf is None:
-+            min_conf = MCP_AUTO_EXTRACT_MIN_CONFIDENCE
-+        capture_service = AutoCaptureService(
-+            memory_service=server.memory_service,
-+            min_confidence=min_conf,
-+            types=arguments.get("extract_types"),
-+        )
-+        capture = await capture_service.capture(
-+            content,
-+            role=arguments.get("role") or "assistant",
-+            parent_hash=parent_hash_from_store_result(result),
-+            conversation_id=conversation_id,
-+            dry_run=False,
-+            # The store the caller named, not the handler's "default" fallback:
-+            # capture() leaves an unnamed store to the storage defaults, and a
-+            # named one is enforced (GHSA-989p-hfjf-q97q).
-+            store=arguments.get("store"),
-+        )
-+        if capture.candidates:
-+            return (
-+                f"\nAuto-capture: {capture.stored} stored, {capture.evolved} evolved "
-+                f"from {len(capture.candidates)} candidate(s)."
-+            )
-+    except Exception as cap_err:
-+        logger.warning("auto-capture failed: %s", _sanitize_log_value(cap_err))
-+    return ""
-+
-+
- async def handle_store_memory(server, arguments: dict) -> List[types.TextContent]:
-     content = arguments.get("content")
-     metadata = arguments.get("metadata", {})
-@@ -378,15 +450,7 @@ async def handle_store_memory(server, arguments: dict) -> List[types.TextContent
-                 logger.debug("Could not schedule background NLI checks: %s", _sanitize_log_value(e))
- 
-         if nli_on_store and result.get("success") and "memory" in result:
--            try:
--                from ...reasoning.nli import detect_contradictions_nli
--                mem_hash = result["memory"].get("content_hash")
--                if mem_hash:
--                    nli_result = await detect_contradictions_nli(server.storage, memory_hash=mem_hash, dry_run=False)
--                    if nli_result.get("pairs_detected", 0) > 0:
--                        message += f"\n⚠️ Contradiction detected: {nli_result['pairs_detected']} conflict(s) registered."
--            except Exception as e:
--                logger.debug("NLI on-store check failed: %s", _sanitize_log_value(e))
-+            message += await _nli_note_after_store(server, result, store)
- 
-         # §6: Check against active beliefs (if belief service available)
-         if nli_on_store and result.get("success") and "memory" in result:
-@@ -405,48 +469,7 @@ async def handle_store_memory(server, arguments: dict) -> List[types.TextContent
-             except Exception as e:
-                 logger.debug("Belief quarantine check failed: %s", _sanitize_log_value(e))
- 
--        # RFC #1008 §3: optional inline auto-capture from stored content
--        from ...config import MCP_AUTO_EXTRACT_DEFAULT, MCP_AUTO_EXTRACT_MIN_CONFIDENCE
--        from ...harvest.auto_capture import (
--            AutoCaptureService,
--            parent_hash_from_store_re
-```
-
-**File**: `src/mcp_memory_service/services/memory_service.py` (modified, +16/-3)
-```diff
-@@ -717,6 +717,7 @@ async def evolve_memory(
-         memory_type: Optional[str] = None,
-         metadata: Optional[Dict[str, Any]] = None,
-         reason: Optional[str] = None,
-+        store: Optional[str] = None,
-     ) -> Tuple[bool, str, Optional[str]]:
-         """Versioned update that gets the same post-store steps as store_memory().
- 
-@@ -731,17 +732,29 @@ async def evolve_memory(
-         """
-         if not hasattr(self.storage, "update_memory_versioned"):
-             return False, "Storage backend does not support versioned updates", None
-+
-+        store_kw: Dict[str, Any] = {}
-+        if store not in (None, "all"):
-+            if not getattr(self.storage, "get_by_hash_is_store_scoped", False):
-+                return (
-+                    False,
-+                    "Store-scoped memory evolution is not supported by the active storage backend",
-+                    None,
-+                )
-+            store_kw = {"store": store}
-+
-         # Storage inherits omitted tags/type from the old version; keep that
-         # version around so the re-read fallback below can do the same.
-         previous = None
-         if tags is None or memory_type is None:
--            previous = await self.storage.get_by_hash(existing_hash)
-+            previous = await self.storage.get_by_hash(existing_hash, **store_kw)
-         ok, msg, new_hash = await self.storage.update_memory_versioned(
-             existing_hash,
-             content,
-             new_tags=tags,
-             new_memory_type=memory_type,
-             reason=reason,
-+            **store_kw,
-         )
-         if not ok or not new_hash:
-             return ok, msg, new_hash
-@@ -761,7 +774,7 @@ async def evolve_memory(
-         # is reported and worked around rather than turned into a failed evolve.
-         if final_metadata:
-             meta_ok, meta_msg = await self.storage.update_memory_metadata(
--                new_hash, {"metadata": final_metadata}, preserve_timestamps=True
-+                new_hash, {"metadata": final_metadata}, preserve_timestamps=True, **store_kw
-             )
-             if not meta_ok:
-                 logger.warning(
-@@ -770,7 +783,7 @@ async def evolve_memory(
-                 )
-                 msg = f"{msg} (metadata update failed: {meta_msg})"
- 
--        memory = await self.storage.get_by_hash(new_hash)
-+        memory = await self.storage.get_by_hash(new_hash, **store_kw)
-         if memory is None:
-             # Re-read failed; score the version as written instead of skipping it.
-             memory = self._as_written(new_hash, content, tags, memory_type, final_metadata, previous)
-```
-
-**File**: `src/mcp_memory_service/storage/mixins/metadata.py` (modified, +17/-5)
-```diff
-@@ -642,9 +642,16 @@ def _effective_confidence(
-         return round((confidence if confidence is not None else 1.0) * decay, 4)
- 
-     def _detect_conflicts(
--        self, new_hash: str, new_content: str, embedding, exclude_hash: Optional[str] = None
-+        self, new_hash: str, new_content: str, embedding, exclude_hash: Optional[str] = None,
-+        store: Optional[str] = None,
-     ) -> list:
--        """Detect conflicting active memories for a newly stored memory."""
-+        """Detect conflicting active memories for a newly stored memory.
-+
-+        With ``store`` set (other than ``"all"``) only memories of that store are
-+        compared: _record_conflicts() tags the other memory and links the pair,
-+        which a caller confined to one store must not do to another
-+        (GHSA-989p-hfjf-q97q).
-+        """
-         from difflib import SequenceMatcher
- 
-         SIMILARITY_THRESHOLD = 0.95
-@@ -653,21 +660,26 @@ def _detect_conflicts(
-         if not self.conn or embedding is None:
-             return []
- 
-+        # Qualified: memory_embeddings has a store column as well.
-+        confined = store not in (None, "all")
-+        store_sql = " AND m.store = ?" if confined else ""
-+        store_params = (store,) if confined else ()
-         try:
-             cursor = self.conn.execute(
--                """SELECT m.content_hash, m.content,
-+                f"""SELECT m.content_hash, m.content,
-                           vec_distance_cosine(me.content_embedding, ?) as distance
-                    FROM memories m
-                    JOIN memory_embeddings me ON m.rowid = me.rowid
-                    WHERE m.deleted_at IS NULL
-                      AND (m.superseded_by IS NULL OR m.superseded_by = '')
--                     AND m.content_hash NOT IN (?, ?)
-+                     AND m.content_hash NOT IN (?, ?){store_sql}
-                    ORDER BY distance ASC
-                    LIMIT 5""",
-                 (
-                     serialize_float32(embedding),
-                     new_hash,
-                     exclude_hash if exclude_hash is not None else new_hash,
-+                    *store_params,
-                 ),
-             )
-             candidates = cursor.fetchall()
-@@ -697,7 +709,7 @@ def _detect_conflicts(
- 
-     async def _record_conflicts(self, new_hash: str, conflicts: list) -> None:
-         """Tag conflicting memories and create graph edges."""
--        import json as _json
-+        import json as _json  # inline import
- 
-         def _record_all_conflicts():
-             for c in conflicts:
++    assert result.returncode == 0, result.stdout + result.stderr
 ```
 
 ---
 
-### Incident Patch 2: `6a321767` (2026-11-16)
-**Commit Message**: fix: prevent dashboard overflow at tablet widths (#2047)
+### Incident Patch 2: `4e9ba8b6` (2026-11-17)
+**Commit Message**: refactor(tools)!: rename five tools to the memory_* prefix, sharpen overlapping descriptions (#2052)
 
-**File**: `changelog.d/2012.fixed.md` (added, +1/-0)
+* refactor(tools)!: rename five tools to the memory_* prefix
+
+commit_session_legacy   -> memory_commit_session
+get_bootstrap_profile   -> memory_bootstrap_profile
+get_onboarding_guide    -> memory_onboarding_guide
+get_quarantined_memories -> memory_quarantine_list
+unquarantine_memory     -> memory_quarantine_release
+
+These five were the only tools outside the memory_* / mistake_note_*
+pattern. "legacy" in commit_session_legacy meant what a session leaves
+behind, but it reads as "deprecated", which is wrong: the server
+instructions require the tool at session end.
+
+Only the tool names change. Handler methods, the functions in
+consolidation/quarantine.py, arguments and stored data stay as they are.
+The server instructions, the onboarding guide and the README use the new
+names.
+
+BREAKING CHANGE: the old names are gone, there is no alias layer since
+v11. docs/MIGRATION.md lists the mapping and what to update.
+
+* docs(tools): say when to use each store and retrieval tool
+
+The store family (memory_store, memory_store_session, memory_ingest,
+memory_harvest, memory_distill, memory_commit_s
+
+**File**: `README.md` (modified, +1/-1)
 ```diff
-@@ -0,0 +1 @@
-+- **The dashboard stays within the viewport on tablet widths (#2012).** The localized navigation could exceed the available row width between the mobile and desktop breakpoints; it now wraps at tablet widths, while the header keeps its compact icon controls so long translations do not force horizontal scrolling.
+@@ -256,7 +256,7 @@ Full list, plus clients without OAuth such as Home Assistant:
+ - 💭 **Beliefs and contradiction handling** — Derive confidence-scored beliefs from
+   observations. Heuristic contradiction detection can mark older memories as superseded,
+   hiding them from default retrieval while retaining them for explicit lookup.
+-- 🤖 **Agent bootstrap profiles** — `get_bootstrap_profile` assembles behavioral context
++- 🤖 **Agent bootstrap profiles** — `memory_bootstrap_profile` assembles behavioral context
+   for a new agent within a token budget, with optional task-aware retrieval.
+   Requires `MCP_BOOTSTRAP_ENABLED=true`; profiles are not isolated by project.
+ - 🧬 **Knowledge graph and entities** — Explore typed causal relationships in the interactive
 ```
 
-**File**: `src/mcp_memory_service/web/static/style.css` (modified, +8/-0)
+**File**: `changelog.d/2052.removed.md` (added, +9/-0)
 ```diff
-@@ -1912,6 +1912,14 @@ body.dark-mode .form-group label {
+@@ -0,0 +1,9 @@
++- **BREAKING: five tools renamed to the `memory_*` prefix, old names removed (#2052).**
++  `commit_session_legacy` is now `memory_commit_session`, `get_bootstrap_profile` is
++  `memory_bootstrap_profile`, `get_onboarding_guide` is `memory_onboarding_guide`,
++  `get_quarantined_memories` is `memory_quarantine_list` and `unquarantine_memory` is
++  `memory_quarantine_release`. Arguments and stored data are unchanged. There is no
++  alias layer, so prompts, tool allowlists and scripts that name an old tool must be
++  updated; see `docs/MIGRATION.md`. The server instructions and the onboarding guide
++  already use the new names. The descriptions of the store and retrieval tools now
++  say when to use each one and which sibling to use instead.
+```
+
+**File**: `docs/MIGRATION.md` (modified, +24/-0)
+```diff
+@@ -201,6 +201,30 @@ warnings.filterwarnings('error', category=DeprecationWarning)
+ 4. **Better Discovery**: Clearer naming with `memory_*` prefix
+ 5. **MCP Compliance**: Follows best practice of 5-15 tools per server
+ 
++## Tool renames to the `memory_*` prefix (after v12.11.0)
++
++Five tools that did not follow the `memory_*` naming pattern were renamed. There is
++no alias layer since v11, so the old names stop working with the release that ships
++this change. A call to an old name returns an unknown-tool error.
++
++| Old Tool | New Tool | Notes |
++|----------|----------|-------|
++| `commit_session_legacy` | `memory_commit_session` | Arguments unchanged |
++| `get_bootstrap_profile` | `memory_bootstrap_profile` | Arguments unchanged |
++| `get_onboarding_guide` | `memory_onboarding_guide` | Arguments unchanged |
++| `get_quarantined_memories` | `memory_quarantine_list` | Arguments unchanged |
++| `unquarantine_memory` | `memory_quarantine_release` | Arguments unchanged |
++
++What to update on your side:
++
++- Prompts, agent instructions and steering files that name one of the old tools.
++- Tool allowlists and permission rules, for example `mcp__memory__get_bootstrap_profile`
++  in a Claude Code `settings.json`.
++- Scripts that call the tools over the HTTP `/mcp` endpoint.
++
++Stored data is not affected. Memories written by `commit_session_legacy` keep their
++content and tags and are read by `memory_bootstrap_profile` as before.
++
+ ## Support
+ 
+ - **Documentation**: See README.md and CLAUDE.md
+```
+
+**File**: `src/mcp_memory_service/consolidation/belief_service.py` (modified, +1/-1)
+```diff
+@@ -54,7 +54,7 @@
+     "[TREND]",    # auto trend statistic — investigação 31/out
+     "# Session Summary",
+     "## Session Summary",
+-    "Session: ",  # commit_session_legacy entries (#121 follow-up)
++    "Session: ",  # memory_commit_session entries (#121 follow-up)
+ )
+ 
+ _NOISE_PATTERNS = [
+```
+
+**File**: `src/mcp_memory_service/server_impl.py` (modified, +12/-12)
+```diff
+@@ -159,10 +159,10 @@ def _get_onboarding_guide(client_type: str = "generic") -> str:
+ 
+     _SERVER_DOES = """\
+ ### What the server does automatically:
+-- **Post-commit learning**: after `commit_session_legacy`, the server runs
++- **Post-commit learning**: after `memory_commit_session`, the server runs
+   harvest + distill in background (~8s). No action needed from you.
+ - **Scheduled distill**: every 6h, undistilled memories are batch-processed via LLM.
+-- **Bootstrap refresh**: `get_bootstrap_profile` always returns the latest profile.
++- **Bootstrap refresh**: `memory_bootstrap_profile` always returns the latest profile.
+ - **Frustration tracking**: errors weigh 3× more than successes. High-frustration
+   patterns are promoted to AVOID rules in your bootstrap profile.
+ - **Threshold trigger**: if >20 new observations accumulate without distill, it runs
+@@ -177,7 +177,7 @@ def _get_onboarding_guide(client_type: str = "generic") -> str:
+    → recall what was done recently (cross-session continuity)
+ 2. `mistake_note_search(query="<likely task context>")`
+    → check known pitfalls before starting work
+-3. `get_bootstrap_profile(agent_ids=["kiro"])` — behavioral rules (avoidances,
++3. `memory_bootstrap_profile(agent_ids=["kiro"])` — behavioral rules (avoidances,
+    conventions, beliefs). Best cached to disk 1x/day rather than fetched every session.
+ 
+ ### Before significant tasks (>15min):
+@@ -197,7 +197,7 @@ def _get_onboarding_guide(client_type: str = "generic") -> str:
+ 
+ {_DURING_SESSION}
+ ### On session end:
+-- `commit_session_legacy` with decisions, errors, corrections (triggers
++- `memory_commit_session` with decisions, errors, corrections (triggers
+   server-side harvest automatically). OR:
+ - `memory_harvest(sessions=1, dry_run=false)` as fallback if commit is unavailable.
+ - Rate memories consulted during the session (aim ≥3 ratings).
+@@ -214,11 +214,11 @@ def _get_onboarding_guide(client_type: str = "generic") -> str:
+         "claude-code": f"""## Integration Guide: mcp-memory-service → Claude Code
+ 
+ ### On session start (REQUIRED):
+-1. `get_bootstrap_profile(agent_ids=["claude-code"])` — incorporate returned rules.
++1. `memory_bootstrap_profile(agent_ids=["claude-code"])` — incorporate returned rules.
+ 2. `mistake_note_search(query="<task context>")` — check known pitfalls.
+ 
+ ### On session end (REQUIRED):
+-1. `commit_session_legacy` with session summary, decisions, errors, corrections.
++1. `memory_commit_session` with session summary, decisions, errors, corrections.
+    Server runs learning pipeline automatically after this call.
+ 2. Rate memories used during the session.
+ 
+@@ -231,11 +231,11 @@ def _get_onboarding_guide(client_type: str = "generic") -> str:
+         guide = f"""## Integration Guide: mcp-memory-service
+ 
+ ### On session start (REQUIRED):
+-1. `get_bootstrap_profile(agent_ids=["your_agent_id"])` — follow returned rules.
++1. `memory_bootstrap_profile(agent_ids=["your_agent_id"])` — follow returned rules.
+ 2. `mistake_note_search(query="<task context>")` — check known pitfalls.
+ 
+ ### On session end (REQUIRED):
+-1. `commit_session_legacy` with: session_id, agent_id, task_summary, outcome,
++1. `memory_commit_session` with: session_id, agent_id, task_summary, outcome,
+    decisions, errors, user_corrections. Triggers server-side learning.
+ 2. Rate memories consulted (≥3 ratings per session).
+ 
+@@ -2151,7 +2151,7 @@ async def handle_memory_harvest(self, arguments: dict) -> List[types.TextContent
+             ]
+         }
+ 
+-        # §9: auto_commit — bridge harvest candidates to commit_session_legacy
++        # §9: auto_commit — bridge harvest candidates to memory_commit_session
+         auto_commit = arguments.get("auto_commit", False)
+         # Single shared precedence (RFC #1100 + spec-agent-id-streamable R2):
+         # explicit arg > request header > MCP_AGENT_ID env > metadata, with the
+@@ -2166,7 +2166,7 @@ async def handle_memory_harvest(self, arguments: dict) -> List[types.TextContent
+             for r in results:
+                 if not r.candidates:
+                     continue
+-                # Map candidates to commit_session_legacy fields
++                # Map candidates to memory_commit_session fields
+                 decisions = [
+                     {"decision": c.content[:500], "reason": "harvested"}
+                     for c in r.candidates if c.memory_type == "decision"
+@@ -2521,7 +2521,7 @@ async def handle_commit_session_legacy(self, arguments: dict) -> List[types.Text
+             }))]
+ 
+         except Exception as e:
+-            logger.error("Error in commit_session_legacy: %s", _sanitize_log_value(e))
++            logger.error("Error in memory_commit_session: %s", _sanitize_log_value(e))
+             return [types.TextContent(type="text", text=json.dumps({"status": "error", "message": str(e)}))]
+ 
+     async def _post_commit_learning(self, session_id: str, agent_id: str):
+@@ -2864,7 +2864,7 @@ def _dedup_and_rank(entries: list) -> list:
+       
+```
+
+**File**: `src/mcp_memory_service/tools/registry.py` (modified, +43/-9)
+```diff
+@@ -30,7 +30,11 @@ class ToolDef:
+ TOOL_REGISTRY: list[ToolDef] = [
+     ToolDef(
+         name="memory_store",
+-        description="""Store new information with optional tags.
++        description="""Store one new memory (a fact, decision, note) with optional tags.
++
++Use this for a single piece of information you already have as text. For a whole
++multi-turn conversation use memory_store_session, for files on disk memory_ingest,
++and for the structured summary at the end of a session memory_commit_session.
+ 
+                     Accepts two tag formats in metadata:
+                     - Array: ["tag1", "tag2"]
+@@ -123,6 +127,9 @@ class ToolDef:
+         name="memory_store_session",
+         description="""Store a full conversation session as a single memory unit.
+ 
++This keeps the raw turns. To record what was learned in a session (decisions,
++errors, corrections) use memory_commit_session instead.
++
+ Use this instead of memory_store when you want to preserve the full context
+ of a multi-turn conversation. All turns are stored together, making session-level
+ retrieval more reliable than storing individual turns separately.
+@@ -190,6 +197,10 @@ class ToolDef:
+         name="memory_search",
+         description="""Search memories with flexible modes and filters. Primary tool for finding stored information.
+ 
++Start here for any question about stored content. Use memory_list to browse or page
++without a query, memory_explore for an entity-level overview of a topic, and
++memory_graph to follow associations from a memory you already have the hash of.
++
+ USE THIS WHEN:
+ - User asks "what do you remember about X", "recall", "find memories"
+ - Looking for past decisions, preferences, context from previous sessions
+@@ -780,6 +791,9 @@ class ToolDef:
+         name="memory_ingest",
+         description="""Ingest documents or directories into memory database.
+ 
++Reads files from disk and stores them as chunks. For text you already hold in the
++conversation use memory_store; for Claude Code session transcripts use memory_harvest.
++
+ USE THIS WHEN:
+ - User wants to import a document (PDF, TXT, MD, JSON)
+ - Need to batch import a directory of documents
+@@ -865,6 +879,10 @@ class ToolDef:
+         name="memory_harvest",
+         description="""Extract learnings from Claude Code session transcripts.
+ 
++The server reads the transcript files itself and picks the candidates. If you can
++summarise the session yourself, call memory_commit_session instead; use this as the
++fallback, or to mine past sessions. For other documents use memory_ingest.
++
+ USE THIS WHEN:
+ - End of session — auto-capture decisions, bugs, conventions, learnings
+ - User asks to "harvest" or "extract learnings" from sessions
+@@ -947,7 +965,7 @@ class ToolDef:
+                 "auto_commit": {
+                     "type": "boolean",
+                     "default": False,
+-                    "description": "Bridge harvested candidates to commit_session_legacy (feeds bootstrap profile)",
++                    "description": "Bridge harvested candidates to memory_commit_session (feeds bootstrap profile)",
+                 },
+                 "agent_id": {
+                     "type": "string",
+@@ -1025,6 +1043,10 @@ class ToolDef:
+         name="memory_graph",
+         description="""Memory association graph operations - explore connections between memories.
+ 
++Works on relationships, starting from a memory hash or an entity name. To find
++memories by content use memory_search; for a topic overview built from entities use
++memory_explore, then memory_detail for one entity.
++
+ ACTIONS:
+ - connected: Find memories connected via associations (BFS traversal)
+ - path: Find shortest path between two memories
+@@ -1233,7 +1255,7 @@ class ToolDef:
+         annotations={"destructiveHint": True},
+     ),
+     ToolDef(
+-        name="get_quarantined_memories",
++        name="memory_quarantine_list",
+         description="""List memories that have been quarantined due to contradicting active beliefs. Use to review flagged memories.""",
+         input_schema={
+             "type": "object",
+@@ -1248,7 +1270,7 @@ class ToolDef:
+         annotations={"readOnlyHint": True},
+     ),
+     ToolDef(
+-        name="unquarantine_memory",
++        name="memory_quarantine_release",
+         description="""Release a memory from quarantine. Use when a quarantined memory is valid (e.g., the contradicted belief was wrong).""",
+         input_schema={
+             "type": "object",
+@@ -1263,8 +1285,13 @@ class ToolDef:
+         annotations={"readOnlyHint": False},
+     ),
+     ToolDef(
+-        name="commit_session_legacy",
+-        description="""Record end-of-session learnings from an ephemeral agent. Stores decisions, errors, corrections as structured observations.""",
++        name="memory_commit_session",
++        description="""Record end-of-session learnings from an ephemeral agent. Stores decisions, errors, corrections as structured observations.
++
++Call this once when a session
+```
+
+**File**: `src/mcp_memory_service/tools/routing.py` (modified, +6/-6)
+```diff
+@@ -41,11 +41,11 @@ def _handler(module: str, func: str) -> tuple[str, str]:
+     "mistake_note_search": _handler("mistake_notes", "handle_mistake_note_search"),
+     "mistake_note_update": _handler("mistake_notes", "handle_mistake_note_update"),
+     "mistake_note_delete": _handler("mistake_notes", "handle_mistake_note_delete"),
+-    "get_quarantined_memories": ("__self__", "handle_get_quarantined_memories"),
+-    "unquarantine_memory": ("__self__", "handle_unquarantine_memory"),
+-    "commit_session_legacy": ("__self__", "handle_commit_session_legacy"),
+-    "get_bootstrap_profile": ("__self__", "handle_get_bootstrap_profile"),
+-    "get_onboarding_guide": ("__self__", "handle_get_onboarding_guide"),
++    "memory_quarantine_list": ("__self__", "handle_get_quarantined_memories"),
++    "memory_quarantine_release": ("__self__", "handle_unquarantine_memory"),
++    "memory_commit_session": ("__self__", "handle_commit_session_legacy"),
++    "memory_bootstrap_profile": ("__self__", "handle_get_bootstrap_profile"),
++    "memory_onboarding_guide": ("__self__", "handle_get_onboarding_guide"),
+     "memory_distill": ("__self__", "handle_memory_distill"),
  }
  
- @media (min-width: 769px) and (max-width: 1024px) {
-+    .nav-container {
-+        flex-wrap: wrap;
-+    }
-+
-+    .btn-text {
-+        display: none;
-+    }
-+
-     .dashboard-grid {
-         grid-template-columns: 1fr 300px;
-     }
+@@ -92,7 +92,7 @@ def resolve_handler(name: str) -> Callable | tuple | None:
+         _cache[name] = entry
+         return entry
+ 
+-    import importlib
++    import importlib  # inline import: only needed when a handler is first resolved
+     mod = importlib.import_module(module_path)
+     handler = getattr(mod, func_name, None)
+     if handler is not None:
 ```
 
-**File**: `tests/web/test_dashboard_style_guard.py` (modified, +13/-0)
+**File**: `tests/test_anti_hallucination.py` (modified, +6/-6)
 ```diff
-@@ -106,3 +106,16 @@ def test_weights_stay_at_or_below_600():
-         if not sel.startswith("@font-face") and re.search(r"font-weight:\s*(700|800|900|bold)\b", body)
-     ]
-     assert offenders == []
-+
-+
-+def test_tablet_navigation_wraps_for_translated_labels():
-+    tablet = re.search(
-+        r"@media\s*\(min-width:\s*769px\)\s*and\s*\(max-width:\s*1024px\)\s*\{(.*?)\n\}",
-+        CSS,
-+        flags=re.S,
-+    )
-+    assert tablet is not None
-+    nav = re.search(r"\.nav-container\s*\{([^}]*)\}", tablet.group(1))
-+    assert nav is not None
-+    assert re.search(r"flex-wrap:\s*wrap\s*;", nav.group(1))
-+    assert re.search(r"\.btn-text\s*\{[^}]*display:\s*none\s*;", tablet.group(1))
+@@ -257,12 +257,12 @@ def test_tool_annotations_readonlyhint():
+     """Verify readOnlyHint is correct for quarantine tools by checking registry source."""
+     from mcp_memory_service.tools.registry import TOOL_REGISTRY
+ 
+-    # get_quarantined_memories should have readOnlyHint=True
+-    get_tool = next(t for t in TOOL_REGISTRY if t.name == "get_quarantined_memories")
++    # memory_quarantine_list should have readOnlyHint=True
++    get_tool = next(t for t in TOOL_REGISTRY if t.name == "memory_quarantine_list")
+     assert get_tool.annotations.get("readOnlyHint") is True
+ 
+-    # unquarantine_memory should have readOnlyHint=False
+-    unq_tool = next(t for t in TOOL_REGISTRY if t.name == "unquarantine_memory")
++    # memory_quarantine_release should have readOnlyHint=False
++    unq_tool = next(t for t in TOOL_REGISTRY if t.name == "memory_quarantine_release")
+     assert unq_tool.annotations.get("readOnlyHint") is False
+ 
+ 
+@@ -271,8 +271,8 @@ async def test_quarantine_threshold_from_env():
+     """CONTRADICTION_THRESHOLD reads from env."""
+     with patch.dict(os.environ, {"MCP_QUARANTINE_CONTRADICTION_THRESHOLD": "5"}):
+         # Re-import to pick up env
+-        import importlib
+-        import mcp_memory_service.consolidation.quarantine as q_mod
++        import importlib  # inline import: reload under a patched environment
++        import mcp_memory_service.consolidation.quarantine as q_mod  # inline import: reloaded below
+         importlib.reload(q_mod)
+         assert q_mod.CONTRADICTION_THRESHOLD == 5
+ 
 ```
 
 ---
 
-### Incident Patch 3: `30f9eb40` (2026-11-16)
-**Commit Message**: docs(readme): add downloads, Docker, CI, contributors and Glama badges, fix DeepWiki badge (#2048)
+### Incident Patch 3: `fa42e9bf` (2026-11-17)
+**Commit Message**: fix(ingestion): stop character chunker emitting a duplicate trailing chunk (#2050)
 
-deepwiki.com/badge.svg answers 429 to GitHub's image proxy, so the badge rendered as a broken image. It is now a static shields.io badge with the same link target.
+* fix(ingestion): stop character chunker emitting a duplicate trailing chunk
 
-**File**: `README.md` (modified, +6/-1)
+_chunk_by_characters stepped back by the overlap after the chunk that
+reached the end of the text, so it appended a final chunk fully contained
+in the previous one. Used by the CSV and JSON loaders.
+
+* chore(changelog): name fragment after PR number
+
+---------
+
+Co-authored-by: Henry Krupp <[REDACTED_EMAIL]>
+
+**File**: `changelog.d/2050.fixed.md` (added, +2/-0)
 ```diff
-@@ -14,10 +14,15 @@ context in 5ms — without cloud lock-in or API costs.
- [![License: Apache 2.0](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
- [![PyPI version](https://img.shields.io/pypi/v/mcp-memory-service?color=blue&logo=pypi&logoColor=white)](https://pypi.org/project/mcp-memory-service/)
- [![Python](https://img.shields.io/pypi/pyversions/mcp-memory-service?logo=python&logoColor=white)](https://pypi.org/project/mcp-memory-service/)
-+[![PyPI Downloads](https://static.pepy.tech/personalized-badge/mcp-memory-service?period=total&units=INTERNATIONAL_SYSTEM&left_color=BLACK&right_color=GREEN&left_text=downloads)](https://pepy.tech/projects/mcp-memory-service)
-+[![Docker Pulls](https://img.shields.io/docker/pulls/doobidoo/mcp-memory-service?logo=docker&logoColor=white)](https://hub.docker.com/r/doobidoo/mcp-memory-service)
-+[![CI](https://img.shields.io/github/actions/workflow/status/doobidoo/mcp-memory-service/ci.yml?branch=main&logo=github&label=CI)](https://github.com/doobidoo/mcp-memory-service/actions/workflows/ci.yml)
- [![GitHub stars](https://img.shields.io/github/stars/doobidoo/mcp-memory-service?logo=github&label=stars)](https://github.com/doobidoo/mcp-memory-service)
-+[![Contributors](https://img.shields.io/github/contributors/doobidoo/mcp-memory-service)](https://github.com/doobidoo/mcp-memory-service/graphs/contributors)
- [![Remote MCP](https://img.shields.io/badge/MCP-Remote%20Support-blue?logo=anthropic)](https://github.com/doobidoo/mcp-memory-service/blob/main/docs/remote-mcp-setup.md)
- [![OAuth 2.0](https://img.shields.io/badge/Auth-OAuth%202.0%20%2B%20DCR-green)](https://github.com/doobidoo/mcp-memory-service/blob/main/docs/oauth-setup.md)
--[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/doobidoo/mcp-memory-service)
-+[![Ask DeepWiki](https://img.shields.io/badge/DeepWiki-Ask-0969da)](https://deepwiki.com/doobidoo/mcp-memory-service)
-+[![Glama score](https://glama.ai/mcp/servers/doobidoo/mcp-memory-service/badges/score.svg)](https://glama.ai/mcp/servers/doobidoo/mcp-memory-service)
- 
- Getting started: [English](https://mcpmemory.services/) · [Deutsch](https://mcpmemory.services/de/) · [Español](https://mcpmemory.services/es/) · [日本語](https://mcpmemory.services/ja/) · [简体中文](https://mcpmemory.services/zh-cn/) · [繁體中文](https://mcpmemory.services/zh-tw/) · [Français](https://mcpmemory.services/fr/) · [Português (Brasil)](https://mcpmemory.services/pt-br/) · [한국어](https://mcpmemory.services/ko/)
- 
+@@ -0,0 +1,2 @@
++- **Character-based chunking no longer emits a duplicate trailing chunk.**
++  `TextChunker._chunk_by_characters` (used by the CSV and JSON loaders) stepped back by the overlap even after a chunk had reached the end of the text, so it appended one extra chunk that was entirely contained in the previous one and stored the same tail twice. The loop now stops once a chunk reaches the end of the text.
+```
+
+**File**: `src/mcp_memory_service/ingestion/chunker.py` (modified, +5/-0)
+```diff
+@@ -220,6 +220,11 @@ def _chunk_by_characters(self, text: str) -> List[str]:
+             if len(chunk) >= self.strategy.min_chunk_size:
+                 chunks.append(chunk)
+             
++            # This chunk reached the end of the text. Stepping back by the
++            # overlap would emit a trailing chunk already contained in this one.
++            if end >= len(text):
++                break
++            
+             # Move start position with overlap
+             start = max(start + 1, end - self.strategy.chunk_overlap)
+         
+```
+
+**File**: `tests/unit/test_chunker_character_tail.py` (added, +39/-0)
+```diff
+@@ -0,0 +1,39 @@
++"""Character-based chunking must not emit a trailing chunk that duplicates the previous one."""
++
++import pytest
++
++from mcp_memory_service.ingestion.chunker import ChunkingStrategy, TextChunker
++
++
++def _char_chunker() -> TextChunker:
++    return TextChunker(
++        ChunkingStrategy(
++            chunk_size=1000,
++            chunk_overlap=200,
++            respect_paragraph_boundaries=False,
++            respect_sentence_boundaries=False,
++        )
++    )
++
++
++def _unique_text(length: int) -> str:
++    return " ".join(f"w{i:05d}" for i in range(length))[:length]
++
++
++@pytest.mark.parametrize("length", [1700, 2500, 3400])
++def test_final_chunk_is_not_contained_in_previous_chunk(length):
++    chunks = [text for text, _ in _char_chunker().chunk_text(_unique_text(length))]
++
++    assert len(chunks) >= 2
++    for previous, current in zip(chunks, chunks[1:]):
++        assert current not in previous
++
++
++@pytest.mark.parametrize("length", [1100, 1500, 1700, 2500])
++def test_chunks_cover_the_whole_text_and_metadata_is_consistent(length):
++    text = _unique_text(length)
++    result = _char_chunker().chunk_text(text)
++
++    assert text.rstrip().split()[-1] in result[-1][0]
++    assert [meta["chunk_index"] for _, meta in result] == list(range(len(result)))
++    assert all(meta["total_chunks"] == len(result) for _, meta in result)
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #2048** (2026-11-16): docs(readme): add downloads, Docker, CI, contributors and Glama badges, fix DeepWiki badge (@doobidoo)
-- **PR #2047** (2026-11-16): fix: prevent dashboard overflow at tablet widths (@jay23606)
-- **PR #2043** (2026-11-16): fix(dashboard): report a finished consolidation on the status island (#2006) (@dodoshell)
-- **PR #2042** (2026-11-16): feat(dashboard): report document imports to the status island (#2004) (@jilsnshah)
-- **PR #2039** (2026-11-16): Semantic dedup reads its one row through the KNN pushdown (#2032) (@Yoel-qin)
-- **PR #2038** (2026-11-16): refactor(logging): guard the six remaining handler, web/api, quality and sync modules (#1146) (@massimiliano1991)
+- **PR #2069** (2026-11-17): fix(ci): keep maintainer prose out of the claim history (@Goldloli)
+- **PR #2066** (2026-11-17): fix(dashboard): do not cover the page during document uploads (#2009) (@jeej3000)
+- **PR #2064** (2026-11-17): docs(contributing): decide repeated unclaimed PRs, and say when assignment has to wait (@doobidoo)
+- **PR #2063** (2026-11-17): fix(dashboard): keep long-operation failures on the status island (@OnlineBunker)
+- **PR #2055** (2026-11-17): docs(remote): point to a hosted inspector for checking a remote endpoint (@doobidoo)
+- **PR #2052** (2026-11-17): refactor(tools)!: rename five tools to the memory_* prefix, sharpen overlapping descriptions (@doobidoo)
 
 ---
 
@@ -3529,22 +3619,26 @@ deepwiki.com/badge.svg answers 429 to GitHub's image proxy, so the badge rendere
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. security): keep memory_store side effects inside the granted store (GHSA-989p-hf
+## X. dashboard): do not cover the page during document uploads
 
 **RULE**:
-When implementing operations in `changelog.d/ghsa-989p.fixed.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in doobidoo/mcp-memory-service. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `changelog.d/2009.fixed.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in doobidoo/mcp-memory-service. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `15a9e9a9`: security): keep memory_store side effects inside the granted store (GHSA-989p-hfjf-q97q). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `ed74a81e`: dashboard): do not cover the page during document uploads. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog.d/ghsa-989p.fixed.md`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog.d/2009.fixed.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-- **A per-store write grant could write to and supersede memories in another store through `memory_store` (GHSA-989p-hfjf-q97q, reported by [RISCON Labs](https://www.risconlabs.com), @RISCON-Labs).**
-  With `auto_extract=true`, `handle_store_memory` stored the memory in the granted store but ran auto-capture without it. `AutoCaptureService.capture()`, `SessionHarvester._try_evolve()` and `MemoryService.evolve_memory()` took no `store`, so the extracted candidates were compared with the `default` store, replaced a similar memory there, or were inserted there. A client holding only `write:projectA` could overwrite `default`. The NLI contradiction check on store (`MCP_NLI_ON_STORE`, inline and background) had the same gap: it compared a memory with the `default` store whatever store it was written to, linked the two with a `contradicts` edge and reported the hit count to the caller. It also missed contradictions inside a named store for the same reason. Conflict detection on store, which runs on every write without any flag, compared the new memory with every store as well and tagged a near-identical memory in another store `conflict:unresolved`, with `contradicts` edges between the t
+- **Starting a document upload no longer covers the dashboard with the loading overlay (#2009).**
+  `handleDocumentUpload()` blocked the whole page with `setLoading(true)` although the
+  status island already reports imports. It now reports the transfer to the island as a
+  busy "Documents" source, disables the upload button while the request runs and ignores
+  a second trigger. The overlay stays on the other `setLoading` call sites, which the
+  island does not report.
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -3554,7 +3648,7 @@ Subsystems managing Python data structures, boundary deserialization, API parsin
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `15a9e9a9` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `ed74a81e` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

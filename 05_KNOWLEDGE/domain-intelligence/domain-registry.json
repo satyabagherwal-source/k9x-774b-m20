@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-18T01:19:00.706Z",
-  "total_records": 1734,
+  "last_updated": "2026-11-18T01:39:15.331Z",
+  "total_records": 1737,
   "domains": {
     "A": {
       "total": 11,
@@ -48,7 +48,7 @@
       ]
     },
     "D": {
-      "total": 756,
+      "total": 759,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -805,7 +805,10 @@
         "domain_intelligence-research-knowledge-intelligence-contrastive-lm-clm-v0-1-8b-core-invariants",
         "domain_intelligence-research-knowledge-intelligence-hf-contrastive-lm-clm-v0-1-8b-learnings-core-inv",
         "domain_intelligence-research-knowledge-intelligence-nvidia-nemotron-3-diarization-core-invariants",
-        "domain_intelligence-research-knowledge-intelligence-hf-nvidia-nemotron-3-diarization-learnings-core-"
+        "domain_intelligence-research-knowledge-intelligence-hf-nvidia-nemotron-3-diarization-learnings-core-",
+        "domain_intelligence-research-knowledge-intelligence-lightricks-ltx-2-5-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-hf-lightricks-ltx-2-5-learnings-core-invariants",
+        "DOM-D-B990E946"
       ]
     },
     "E": {
@@ -12684,8 +12687,8 @@
       "title": "Technical Construction Intelligence: doobidoo/mcp-memory-service Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-doobidoo-mcp-memory-service-technical-construction-intelligence-doobidoo-mcp-mem.md",
       "repository": "doobidoo/mcp-memory-service",
-      "content_hash": "624b185fde1cc79989a6b621ed3e0483819d1f8cc7045fdeeac21d07731adf10",
-      "created_at": "2026-11-17T01:54:48.228Z"
+      "content_hash": "e47da0199449ba5a7a9f32f8224eef342debd8907371754b5a9314a497d38ec6",
+      "created_at": "2026-11-18T01:38:42.779Z"
     },
     "DOM-D-0BBA6E16": {
       "record_id": "DOM-D-0BBA6E16",
@@ -17508,8 +17511,8 @@
       "title": "Architecture Intelligence: iii-hq/iii Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-iii-hq-iii-architecture-intelligence-iii-hq-iii-core-invariants.md",
       "repository": "iii-hq/iii",
-      "content_hash": "99a5fc105dfca84ced740a8befeb938060e3eb081b9fef6346e16f57fafd7b11",
-      "created_at": "2026-11-16T18:38:25.551Z"
+      "content_hash": "50ed9f3682b5e901e42eaf5b1413e3c3fec12edd7989c799f3908d9953eb7ddd",
+      "created_at": "2026-11-18T01:38:29.865Z"
     },
     "domain_intelligence-architecture-intelligence-iii-hq-iii-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-iii-hq-iii-learnings-core-invariants",
@@ -17517,8 +17520,8 @@
       "title": "Architecture Intelligence: iii-hq-iii-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-iii-hq-iii-learnings-architecture-intelligence-iii-hq-iii-learnings-core-invaria.md",
       "repository": "iii-hq-iii-learnings",
-      "content_hash": "5eaea9058d5889e6df434b80f1bf8000394bb61a8105e0c97a6addb0f9c8a8b7",
-      "created_at": "2026-11-16T18:38:39.724Z"
+      "content_hash": "6855057460179f9e55969d9a6555f08c92e7358879e1ed021a41559e9503cfd6",
+      "created_at": "2026-11-18T01:38:46.174Z"
     },
     "DOM-D-73A9B4FE": {
       "record_id": "DOM-D-73A9B4FE",
@@ -25061,8 +25064,8 @@
       "title": "Technical Construction Intelligence: kumahq/kuma Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-kumahq-kuma-technical-construction-intelligence-kumahq-kuma-core-invariants.md",
       "repository": "kumahq/kuma",
-      "content_hash": "fc6dd8340b876a315fa793a1ff9db88082f8242c822bf456c04eaa7cef1a450e",
-      "created_at": "2026-11-17T03:16:54.720Z"
+      "content_hash": "9c006035b7bdc7535c7acd3bbaea8459a64a1ed35b09683ecf17272c4f280dfb",
+      "created_at": "2026-11-18T01:38:37.262Z"
     },
     "DOM-F-3EF61085": {
       "record_id": "DOM-F-3EF61085",
@@ -25104,8 +25107,8 @@
       "title": "Technical Construction Intelligence: kumahq-kuma-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-kumahq-kuma-learnings-technical-construction-intelligence-kumahq-kuma-learnings-.md",
       "repository": "kumahq-kuma-learnings",
-      "content_hash": "2f44981895e846f6c33f79a54942f106ae3451d1b86956e3ad588acf22b0242f",
-      "created_at": "2026-11-17T03:17:29.757Z"
+      "content_hash": "0042a8a5295c24da0e24f56243ed27803043598a8ba455edffad4791d1c02ef1",
+      "created_at": "2026-11-18T01:39:15.331Z"
     },
     "DOM-K-4B4C2E13": {
       "record_id": "DOM-K-4B4C2E13",
@@ -29151,6 +29154,66 @@
       "repository": "hf-nvidia-nemotron-3-diarization-learnings",
       "content_hash": "7edb8e340bc65c1dcf8de7dcbb680e164503ce01ebac223f70fe020bd7e8de3b",
       "created_at": "2026-11-18T01:18:59.167Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-lightricks-ltx-2-5-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-lightricks-ltx-2-5-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: Lightricks/LTX-2.5 Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-lightricks-ltx-2-5-research-knowledge-intelligence-lightricks-ltx-2-5-core-in.md",
+      "repository": "Lightricks/LTX-2.5",
+      "content_hash": "919e7b31fa255b5f122151501d2e220a2e1da81003e8abe0d62fd246b996f896",
+      "created_at": "2026-11-18T01:38:28.117Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-lightricks-ltx-2-5-learnings-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-lightricks-ltx-2-5-learnings-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-lightricks-ltx-2.5-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-lightricks-ltx-2-5-learnings-research-knowledge-intelligence-hf-lightricks-lt.md",
+      "repository": "hf-lightricks-ltx-2.5-learnings",
+      "content_hash": "4c797dba77213c3fdb83cefdeee69e2b17e1d11fcb686d6ee3c59a889e4baea5",
+      "created_at": "2026-11-18T01:38:46.723Z"
+    },
+    "DOM-D-B990E946": {
+      "record_id": "DOM-D-B990E946",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "D",
+          "id": "research_knowledge",
+          "name": "Research & Knowledge Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): kumahq/kuma",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kumahq-kuma-learnings.md`  \n> **Source**: github ([https://github.com/kumahq/kuma](https://github.com/kumahq/kuma))  \n> **Source Version**: `053b67f7`  \n> **License**: Apache-2.0  \n> **Synthesized By**: zero-clone-structural-synthesizer  \n> **T",
+      "content_hash": "923864f85ff67fff28d9731e1f02829cabdb48153f2882f43424bd45fb34658c",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kumahq-kuma-learnings.md`  \n> **Source**: github ([https://github.com/kumahq/kuma](h -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kumahq-kuma-learnings.md`  \n> **Source**: github ([https://github.com/kumahq/kuma](h",
+      "provenance": {
+        "source_uri": "project://kumahq-kuma/kumahq-kuma-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-18T01:38:46.861Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (kumahq-kuma)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of kumahq-kuma"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "D"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.6,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-18T01:39:14.943Z"
     }
   }
 }

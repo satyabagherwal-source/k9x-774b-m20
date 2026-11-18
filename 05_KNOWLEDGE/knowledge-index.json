@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-18T01:19:00.856Z",
-  "total_verified_learnings": 8958,
+  "last_updated": "2026-11-18T01:39:15.331Z",
+  "total_verified_learnings": 8959,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 20770,
+  "total_items": 20778,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -222725,8 +222725,8 @@
       "slug": "doobidoo-mcp-memory-service",
       "platform": "github",
       "source_url": "https://github.com/doobidoo/mcp-memory-service",
-      "source_version": "30f9eb40",
-      "content_hash": "bcbb81d4df96828d852949442ad13f8866d4920f236c6950368b6fb51c4fcf2a",
+      "source_version": "a908b7ba",
+      "content_hash": "1e33487a7cafd402d054956179a42de2ea523cf27fcb08a4b5742a889c633cd7",
       "dossier_path": "07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md",
       "promoted_rules": [
@@ -222744,6 +222744,11 @@
           "number": 8833,
           "title": "keep memory_store side effects inside the granted store (GHSA-989p-hf",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9102,
+          "title": "do not cover the page during document uploads",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -222751,7 +222756,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T01:54:47.749Z",
+      "verified_at": "2026-11-18T01:38:42.284Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -222793,10 +222798,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-doobidoo-mcp-memory-service-technical-construction-intelligence-doobidoo-mcp-mem.md",
       "title": "Technical Construction Intelligence: doobidoo/mcp-memory-service Core Invariants",
       "repository": "doobidoo/mcp-memory-service",
-      "source_version": "30f9eb40",
-      "content_hash": "624b185fde1cc79989a6b621ed3e0483819d1f8cc7045fdeeac21d07731adf10",
+      "source_version": "a908b7ba",
+      "content_hash": "e47da0199449ba5a7a9f32f8224eef342debd8907371754b5a9314a497d38ec6",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T01:54:48.228Z"
+      "persisted_at": "2026-11-18T01:38:42.779Z"
     },
     "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-doobidoo-mcp-memory-service": {
       "item_id": "architecture_decision-adr-subsystem-boundary-modular-decoupling-in-doobidoo-mcp-memory-service",
@@ -222805,10 +222810,10 @@
       "relative_path": "12_DECISIONS/ADR-doobidoo-mcp-memory-service-adr-subsystem-boundary-modular-decoupling-in-doobido.md",
       "title": "ADR: Subsystem Boundary & Modular Decoupling in doobidoo/mcp-memory-service",
       "repository": "doobidoo/mcp-memory-service",
-      "source_version": "30f9eb40",
-      "content_hash": "0d551350f3ca272f77f996ddaf4531d4ddec902cd97974d7edb34bfb13c6f622",
+      "source_version": "a908b7ba",
+      "content_hash": "62795b1da008f4d832c2216ec4638ba20df2709b31a40ba8d9d87f09b4e63ca8",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T01:54:48.357Z"
+      "persisted_at": "2026-11-18T01:38:42.910Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-doobidoo-mcp-memory-service": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-doobidoo-mcp-memory-service",
@@ -222817,10 +222822,10 @@
       "relative_path": "08_VERIFICATION/doobidoo-mcp-memory-service-verification-protocol-empirical-defect-shield-for-do.md",
       "title": "Verification Protocol: Empirical Defect Shield for doobidoo/mcp-memory-service",
       "repository": "doobidoo/mcp-memory-service",
-      "source_version": "30f9eb40",
-      "content_hash": "0e348d68d1db7e4aff094c43fb8b179590f425634fa563ba0bc892582ab09f0c",
+      "source_version": "a908b7ba",
+      "content_hash": "e06a93cc7ef9ade97861fd5cf2a203b3985d555c622966a81b379d5f0ccdb5ce",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T01:54:48.470Z"
+      "persisted_at": "2026-11-18T01:38:43.022Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-stabilityai-stable-diffusion-3-medium-learnin": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-stabilityai-stable-diffusion-3-medium-learnin",
@@ -227533,8 +227538,8 @@
       "slug": "kumahq-kuma",
       "platform": "github",
       "source_url": "https://github.com/kumahq/kuma",
-      "source_version": "a71f8a93",
-      "content_hash": "1eab0b8b2ba475562b648fe0a6bb025f0d8483302be3fd7f5d796f66c7a2869d",
+      "source_version": "053b67f7",
+      "content_hash": "5fa0c7e13b55cbc4025e73e5b42b01e29f5a6bd5c2a6a931b8b018f3966f8d95",
       "dossier_path": "07_PROJECT_LEARNING/kumahq-kuma-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/kumahq-kuma-learnings.md",
       "promoted_rules": [
@@ -227559,7 +227564,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T03:16:54.095Z",
+      "verified_at": "2026-11-18T01:38:36.884Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -235602,8 +235607,8 @@
       "slug": "iii-hq-iii",
       "platform": "github",
       "source_url": "https://github.com/iii-hq/iii",
-      "source_version": "756888ba",
-      "content_hash": "8125f69c7cb5b15a0072be8ab3a31c73c8014a2fa1efe862ec46a0547281bebe",
+      "source_version": "3ffe1122",
+      "content_hash": "b6f64f96e33779c8c53a0b53d13396b4889bd290f2e523a61f1c20cd5faa70c4",
       "dossier_path": "07_PROJECT_LEARNING/iii-hq-iii-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/iii-hq-iii-learnings.md",
       "promoted_rules": [
@@ -235616,6 +235621,11 @@
           "number": 8773,
           "title": "remove placeholder tutorials and pre-monorepo leftovers",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9101,
+          "title": "replace unmaintained chrono and validate ZIP headers",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -235623,7 +235633,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-16T18:38:25.072Z",
+      "verified_at": "2026-11-18T01:38:29.348Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -235665,10 +235675,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-iii-hq-iii-architecture-intelligence-iii-hq-iii-core-invariants.md",
       "title": "Architecture Intelligence: iii-hq/iii Core Invariants",
       "repository": "iii-hq/iii",
-      "source_version": "756888ba",
-      "content_hash": "99a5fc105dfca84ced740a8befeb938060e3eb081b9fef6346e16f57fafd7b11",
+      "source_version": "3ffe1122",
+      "content_hash": "50ed9f3682b5e901e42eaf5b1413e3c3fec12edd7989c799f3908d9953eb7ddd",
       "domain_letter": "G",
-      "persisted_at": "2026-11-16T18:38:25.551Z"
+      "persisted_at": "2026-11-18T01:38:29.865Z"
     },
     "agent_contract-agent-contract-iii-hq-iii-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-iii-hq-iii-autonomous-specialist-persona",
@@ -235677,10 +235687,10 @@
       "relative_path": "02_AGENT_INTELLIGENCE/iii-hq-iii-agent-contract-iii-hq-iii-autonomous-specialist-persona.md",
       "title": "Agent Contract: iii-hq/iii Autonomous Specialist Persona",
       "repository": "iii-hq/iii",
-      "source_version": "756888ba",
-      "content_hash": "f24c8f99cf15dd6e41ecedc936b2c5d73366c84403a77a2cefc9a6db8fe4ddb5",
+      "source_version": "3ffe1122",
+      "content_hash": "de21fe5078f1faddb0ba9fe39a0e5f62052ac59525024c8718342d1777963543",
       "domain_letter": "G",
-      "persisted_at": "2026-11-16T18:38:25.784Z"
+      "persisted_at": "2026-11-18T01:38:30.002Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-iii-hq-iii": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-iii-hq-iii",
@@ -235689,10 +235699,10 @@
       "relative_path": "08_VERIFICATION/iii-hq-iii-verification-protocol-empirical-defect-shield-for-iii-hq-iii.md",
       "title": "Verification Protocol: Empirical Defect Shield for iii-hq/iii",
       "repository": "iii-hq/iii",
-      "source_version": "756888ba",
-      "content_hash": "2778e0906dc89645678a3088818960193779dd9499d7eae06bea9c877ee66a72",
+      "source_version": "3ffe1122",
+      "content_hash": "a9c916a5dfe7b3416dcf84780183f88cc9187e510165eeaff53fa173989de165",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T18:38:25.894Z"
+      "persisted_at": "2026-11-18T01:38:30.123Z"
     },
     "learn-github-meshery-meshery": {
       "learning_id": "learn-github-meshery-meshery",
@@ -235807,9 +235817,9 @@
       "title": "Architecture Intelligence: iii-hq-iii-learnings Core Invariants",
       "repository": "iii-hq-iii-learnings",
       "source_version": "HEAD",
-      "content_hash": "5eaea9058d5889e6df434b80f1bf8000394bb61a8105e0c97a6addb0f9c8a8b7",
+      "content_hash": "6855057460179f9e55969d9a6555f08c92e7358879e1ed021a41559e9503cfd6",
       "domain_letter": "G",
-      "persisted_at": "2026-11-16T18:38:39.724Z"
+      "persisted_at": "2026-11-18T01:38:46.174Z"
     },
     "agent_contract-agent-contract-iii-hq-iii-learnings-autonomous-specialist-persona": {
       "item_id": "agent_contract-agent-contract-iii-hq-iii-learnings-autonomous-specialist-persona",
@@ -235819,9 +235829,9 @@
       "title": "Agent Contract: iii-hq-iii-learnings Autonomous Specialist Persona",
       "repository": "iii-hq-iii-learnings",
       "source_version": "HEAD",
-      "content_hash": "acc5ce530a0807a33858407b760155506cb40d99c5a0778c46f137d83f14c21e",
+      "content_hash": "7d9127fb4602bdd2255a1bfa4d137db88c6c9aba637a0c69c373781b314e4958",
       "domain_letter": "G",
-      "persisted_at": "2026-11-16T18:38:39.965Z"
+      "persisted_at": "2026-11-18T01:38:46.320Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-iii-hq-iii-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-iii-hq-iii-learnings",
@@ -235831,9 +235841,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for iii-hq-iii-learnings",
       "repository": "iii-hq-iii-learnings",
       "source_version": "HEAD",
-      "content_hash": "1a79a1079617aade3e67c3ea1dafbb5ec7f0c6ee26067aec11bde06894931d70",
+      "content_hash": "8cbf2db270e048216e3eb712ab9dd33ab5011a57c95daacd5d6e245a7553b1ed",
       "domain_letter": "K",
-      "persisted_at": "2026-11-16T18:38:40.080Z"
+      "persisted_at": "2026-11-18T01:38:46.437Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-autotrust-qwen3-8-flash-next-e384-fp4-v2-lear": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-autotrust-qwen3-8-flash-next-e384-fp4-v2-lear",
@@ -262732,10 +262742,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-kumahq-kuma-technical-construction-intelligence-kumahq-kuma-core-invariants.md",
       "title": "Technical Construction Intelligence: kumahq/kuma Core Invariants",
       "repository": "kumahq/kuma",
-      "source_version": "a71f8a93",
-      "content_hash": "fc6dd8340b876a315fa793a1ff9db88082f8242c822bf456c04eaa7cef1a450e",
+      "source_version": "053b67f7",
+      "content_hash": "9c006035b7bdc7535c7acd3bbaea8459a64a1ed35b09683ecf17272c4f280dfb",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T03:16:54.720Z"
+      "persisted_at": "2026-11-18T01:38:37.262Z"
     },
     "rule-8846": {
       "learning_id": "rule-8846",
@@ -262823,9 +262833,9 @@
       "title": "Technical Construction Intelligence: kumahq-kuma-learnings Core Invariants",
       "repository": "kumahq-kuma-learnings",
       "source_version": "HEAD",
-      "content_hash": "2f44981895e846f6c33f79a54942f106ae3451d1b86956e3ad588acf22b0242f",
+      "content_hash": "0042a8a5295c24da0e24f56243ed27803043598a8ba455edffad4791d1c02ef1",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T03:17:29.757Z"
+      "persisted_at": "2026-11-18T01:39:15.331Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-kumahq-kuma-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-kumahq-kuma-learnings",
@@ -279336,6 +279346,121 @@
       "content_hash": "bd953ee6dd7aed85b6e27a43e482f41fdf9a588e5d10aa6539866d715f3d6814",
       "domain_letter": "H",
       "persisted_at": "2026-11-18T01:18:59.735Z"
+    },
+    "learn-huggingface-lightricks-ltx-2-5": {
+      "learning_id": "learn-huggingface-lightricks-ltx-2-5",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "Lightricks/LTX-2.5",
+      "repository": "Lightricks/LTX-2.5",
+      "slug": "hf-lightricks-ltx-2.5",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/Lightricks/LTX-2.5",
+      "source_version": "hf-lightricks-ltx-2.5",
+      "content_hash": "e12a0af0311053f893919f04bb1574ca760edda72fca9e84ed42e4b414b6a978",
+      "dossier_path": "07_PROJECT_LEARNING/hf-lightricks-ltx-2.5-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-lightricks-ltx-2.5-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-18T01:38:27.736Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-lightricks-ltx-2-5-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-lightricks-ltx-2-5-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-lightricks-ltx-2-5-research-knowledge-intelligence-lightricks-ltx-2-5-core-in.md",
+      "title": "Research & Knowledge Intelligence: Lightricks/LTX-2.5 Core Invariants",
+      "repository": "Lightricks/LTX-2.5",
+      "source_version": "hf-lightricks-ltx-2.5",
+      "content_hash": "919e7b31fa255b5f122151501d2e220a2e1da81003e8abe0d62fd246b996f896",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-18T01:38:28.117Z"
+    },
+    "rule-9101": {
+      "learning_id": "rule-9101",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9101,
+      "title": "replace unmaintained chrono and validate ZIP headers",
+      "source_url": "https://github.com/iii-hq/iii",
+      "source_version": "3ffe1122",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-18T01:38:29.348Z"
+    },
+    "candidate_directive-replace-unmaintained-chrono-and-validate-zip-headers": {
+      "item_id": "candidate_directive-replace-unmaintained-chrono-and-validate-zip-headers",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-CVYZ-replace-unmaintained-chrono-and-validate-zip-headers.md",
+      "title": "replace unmaintained chrono and validate ZIP headers",
+      "repository": "iii-hq/iii",
+      "source_version": "3ffe1122",
+      "content_hash": "fbc15df1d22e7ee6305f05fd93c92f15de90d82720ebcde552e9abc94c85ab63",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-18T01:38:29.726Z"
+    },
+    "rule-9102": {
+      "learning_id": "rule-9102",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9102,
+      "title": "do not cover the page during document uploads",
+      "source_url": "https://github.com/doobidoo/mcp-memory-service",
+      "source_version": "a908b7ba",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-18T01:38:42.284Z"
+    },
+    "candidate_directive-do-not-cover-the-page-during-document-uploads": {
+      "item_id": "candidate_directive-do-not-cover-the-page-during-document-uploads",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-D5XW-do-not-cover-the-page-during-document-uploads.md",
+      "title": "do not cover the page during document uploads",
+      "repository": "doobidoo/mcp-memory-service",
+      "source_version": "a908b7ba",
+      "content_hash": "ef2ef2deb2d96028e93ab9d77a66086c5b74be4763d9207b45f26ed6941b0902",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-18T01:38:42.648Z"
+    },
+    "candidate_directive-security-replace-unmaintained-chrono-and-validate-zip-headers": {
+      "item_id": "candidate_directive-security-replace-unmaintained-chrono-and-validate-zip-headers",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-D8K5-security-replace-unmaintained-chrono-and-validate-zip-headers.md",
+      "title": "security): replace unmaintained chrono and validate ZIP headers",
+      "repository": "iii-hq-iii-learnings",
+      "source_version": "HEAD",
+      "content_hash": "7a947b90c2d3954ad57d9ace34c1f9fd4b1e2ce4e9b1a5f1a6abc06352f84e20",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-18T01:38:46.041Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-lightricks-ltx-2-5-learnings-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-lightricks-ltx-2-5-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-lightricks-ltx-2-5-learnings-research-knowledge-intelligence-hf-lightricks-lt.md",
+      "title": "Research & Knowledge Intelligence: hf-lightricks-ltx-2.5-learnings Core Invariants",
+      "repository": "hf-lightricks-ltx-2.5-learnings",
+      "source_version": "HEAD",
+      "content_hash": "4c797dba77213c3fdb83cefdeee69e2b17e1d11fcb686d6ee3c59a889e4baea5",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-18T01:38:46.723Z"
     }
   },
   "ai-builder-brain": {

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-18T01:18:53.637Z",
+  "last_updated": "2026-11-18T01:38:42.472Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -410,14 +410,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-lightricks-ltx-2-5",
-      "content_hash": "a33b62bf3f2f16019a8485fda271d6a633e9c6d5c89b4dfb701795c796c586a2",
-      "verified_at": "2026-11-13T13:50:15.454Z",
+      "content_hash": "e12a0af0311053f893919f04bb1574ca760edda72fca9e84ed42e4b414b6a978",
+      "verified_at": "2026-11-18T01:38:27.946Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T13:50:15.454Z"
+      "last_updated": "2026-11-18T01:38:27.946Z"
     },
     "prism-ml/Ternary-Bonsai-2-27B-gguf": {
       "repository": "prism-ml/Ternary-Bonsai-2-27B-gguf",
@@ -3396,14 +3396,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-iii-hq-iii",
-      "content_hash": "8125f69c7cb5b15a0072be8ab3a31c73c8014a2fa1efe862ec46a0547281bebe",
-      "verified_at": "2026-11-16T18:38:25.244Z",
+      "content_hash": "b6f64f96e33779c8c53a0b53d13396b4889bd290f2e523a61f1c20cd5faa70c4",
+      "verified_at": "2026-11-18T01:38:29.539Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-16T18:38:25.244Z"
+      "last_updated": "2026-11-18T01:38:29.539Z"
     },
     "crawlseo/crawlseo": {
       "repository": "crawlseo/crawlseo",
@@ -5061,14 +5061,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-doobidoo-mcp-memory-service",
-      "content_hash": "bcbb81d4df96828d852949442ad13f8866d4920f236c6950368b6fb51c4fcf2a",
-      "verified_at": "2026-11-17T01:54:47.928Z",
+      "content_hash": "1e33487a7cafd402d054956179a42de2ea523cf27fcb08a4b5742a889c633cd7",
+      "verified_at": "2026-11-18T01:38:42.471Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T01:54:47.928Z"
+      "last_updated": "2026-11-18T01:38:42.471Z"
     },
     "21st-dev/magic-mcp": {
       "repository": "21st-dev/magic-mcp",
@@ -5121,14 +5121,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-kumahq-kuma",
-      "content_hash": "1eab0b8b2ba475562b648fe0a6bb025f0d8483302be3fd7f5d796f66c7a2869d",
-      "verified_at": "2026-11-17T03:16:54.249Z",
+      "content_hash": "5fa0c7e13b55cbc4025e73e5b42b01e29f5a6bd5c2a6a931b8b018f3966f8d95",
+      "verified_at": "2026-11-18T01:38:37.084Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T03:16:54.249Z"
+      "last_updated": "2026-11-18T01:38:37.084Z"
     },
     "cilium/cilium": {
       "repository": "cilium/cilium",

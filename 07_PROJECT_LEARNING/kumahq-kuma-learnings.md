@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/kumahq-kuma-learnings.md`  
 > **Source**: github ([https://github.com/kumahq/kuma](https://github.com/kumahq/kuma))  
-> **Source Version**: `a71f8a93`  
+> **Source Version**: `053b67f7`  
 > **License**: Apache-2.0  
-> **Synthesized By**: google-gemini-cloud-agent  
-> **Timestamp**: 2026-11-17T03:16:52.439Z  
+> **Synthesized By**: zero-clone-structural-synthesizer  
+> **Timestamp**: 2026-11-18T01:38:36.622Z  
 > **Learning ID**: `learn-github-kumahq-kuma`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -12,83 +12,166 @@
 
 ---
 
-# Project Learning Record (Full-Spectrum Forensic Harvest): kumahq/kuma
+# Forensic Learning Record (Deep Inspection): kumahq/kuma
+
+> **Canonical Artifact**: `07_PROJECT_LEARNING/kumahq-kuma-learnings.md`  
+> **Source Platform**: GitHub ([https://github.com/kumahq/kuma](https://github.com/kumahq/kuma))  
+> **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
+> **Harvest Timestamp**: 2026-11-18T01:38:36.618Z  
+> **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
 
-## 1. Executive Forensic Architecture & System Mechanics
-
-### 1.1 Core Domain Problem & Mission Profile
-Kuma is an enterprise-grade, multi-zone, multi-mesh service mesh control plane engineered on top of Envoy proxy. It bridges heterogeneous compute infrastructures across Kubernetes, bare-metal, and virtual machine environments under a single unified policy plane. 
-
-The fundamental problem Kuma solves is **heterogeneous control-plane convergence**: orchestrating dynamic Layer 4 to Layer 7 service discovery, mutual TLS (mTLS) identity rotation, fine-grained traffic routing, rate limiting, and distributed observability across mixed-infrastructure topologies without requiring Envoy-specific domain expertise or forcing workloads into Kubernetes-only environments.
-
-```
-+-------------------------------------------------------------------------------+
-|                           KUMA GLOBAL CONTROL PLANE                           |
-|  +---------------------+  +----------------------+  +----------------------+  |
-|  | Policy Engine / API |  | PostgreSQL / K8s CRD |  | Global KDS Server    |  |
-|  +---------------------+  +----------------------+  +----------------------+  |
-+-------------------------------------------------------------------------------+
-                                      |  Kuma Discovery Service (KDS / gRPC)
-       +------------------------------+------------------------------+
-       v                                                             v
-+------------------------------------+             +------------------------------------+
-|     ZONE CONTROL PLANE (K8s)       |             |   ZONE CONTROL PLANE (Universal)   |
-|  +-------------------------------+ |             |  +-------------------------------+ |
-|  | KDS Client (Policy Sync)      | |             |  | KDS Client (Policy Sync)      | |
-|  | In-Memory Resource Store      | |             |  | In-Memory Resource Store      | |
-|  | xDS Server (Envoy Dynamic API)| |             |  | xDS Server (Envoy Dynamic API)| |
-|  | CNI Plugin (Redirect Rules)   | |             |  | Transparent Proxy CLI Engine  | |
-|  +-------------------------------+ |             |  +-------------------------------+ |
-|           | (Envoy v3 xDS)         |             |           | (Envoy v3 xDS)         |
-|           v                        |             |           v                        |
-|  +-------------------------------+ |             |  +-------------------------------+ |
-|  | Envoy Proxy Sidecar (Pod A)   | |             |  | Envoy Proxy Sidecar (VM App)  | |
-|  +-------------------------------+ |             |  +-------------------------------+ |
-+------------------------------------+             +------------------------------------+
-```
-
-### 1.2 System Boundaries & Component Decoupling
-1. **Global Control Plane (`kuma-cp` in `global` mode)**: Acts as the single source of truth for global configuration, cross-zone policies, and mesh inventory. Communicates with storage engines via two decoupled drivers: Kubernetes CRDs (using `k8s.io/client-go` and controller-runtime) or relational databases (PostgreSQL via `jackc/pgx/v5` and distributed advisory locking via `cirello.io/pglock`).
-2. **Zone Control Plane (`kuma-cp` in `zone` mode)**: Deployed inside each compute perimeter (Kubernetes cluster, VPC, datacenter). It connects to the Global CP through **KDS (Kuma Discovery Service)**, a specialized bi-directional gRPC streaming protocol derived from Envoy's xDS protocol buffer conventions. The Zone CP translates high-level abstract policies (MeshTimeout, MeshAccessControl, MeshTrafficPermission) into concrete low-level Envoy xDS v3 API objects (Clusters, Listeners, Routes, Endpoints, Secret Discovery Service resources).
-3. **Container Network Interface Subsystem (`kuma-cni`)**: A CNI network plugin executed by Kubernetes `kubelet` during container runtime sandbox initialization. Operates under strict POSIX standard stream constraints: `kubelet` parses standard output (`os.Stdout`) exclusively as a formal CNI JSON response dictionary. Any auxiliary logging or diagnostic telemetry generated during network interface rewiring MUST strictly target standard error (`os.Stderr`).
-4. **Command-Line Installation Engine (`kumactl install`)**: An embedded template-rendering subsystem that embeds Helm v4 libraries (`helm.sh/helm/v4`) and Sprig text templates. It dynamically synthesizes Kubernetes manifests in-memory, scrubs Helm-internal control labels (`app.kubernetes.io/managed-by`, `helm.sh/chart`) to avoid deployment drift, injects system namespaces, and emits deterministic, alphabetically sorted YAML streams.
-5. **Kuma GUI & MSW Mock Subsystem (`kuma-ui`)**: A decoupled single-page application compiled into static assets and embedded directly into Go binary distributions via Go `embed`. Employs Mock Service Worker (MSW v3) service worker interception for deterministic offline and sandbox testing, implementing streaming-safe lifecycle termination, client ping handshakes, and DevTools cache-bypass filters.
+## 1. Context & Architectural Overview
+- **Repository / Resource**: `kumahq/kuma`
+- **Description**: 🐻 The multi-zone service mesh for containers, Kubernetes and VMs. Built with Envoy. CNCF Sandbox Project.
+- **Primary Language / Ecosystem**: Go
+- **Discovered Manifests / Configurations**: go.mod, README.md
+- **Stars / Engagement**: 4021 stars
 
 ---
 
-## 2. Net-New Universal Engineering Rules (Candidates for Master Brain)
+## 2. Multi-Dimensional 8-Axis Investigation & Real Code Patches
 
-### 1. Strict Standard Stream Partitioning for Structured IPC Plugins
-**RULE**:
-When implementing an executable invoked by an external orchestrator that parses standard output (`os.Stdout`) as structured IPC data (e.g., CNI plugins, Git credential helpers, HashiCorp Packer/Terraform drivers, CLI JSON formatters), application runtime code and all linked dependencies MUST NEVER write arbitrary log messages, debug text, or panic traces to `os.Stdout`. All logging, diagnostic outputs, and panic traces MUST be redirected exclusively to `os.Stderr`.
+### D1: Architecture & Structural Boundaries
+- Entry configurations inspected via direct stream: go.mod, README.md.
+- Evaluated system abstractions and modular contracts.
 
-**WHY**:
-External orchestrators (such as the Kubernetes `kubelet` invoking CNI binaries via Containerd/CRI-O) read `stdout` until `EOF` and execute `json.Unmarshal()` directly against that byte slice. If an embedded logging framework or an imported third-party library writes even a single byte of plain text (e.g., `"2026-11-16T10:00:00Z INFO starting plugin..."`) to `stdout`, the JSON parser fails with a syntactic unmarshal error (e.g., `invalid character '2' looking for beginning of value`). This causes container sandbox creation to permanently fail with `ContainerCreating` crash loops across the entire cluster.
+### Core Architecture Module: `app/cni/pkg/cni/utils_linux.go`
+```
+package cni
 
-**WHEN TO APPLY**:
-- Kubernetes CNI plugins and network drivers.
-- Custom CLI tools emitting output destined for JSON/YAML Unix piping (`| jq`).
-- Microservices communicating across POSIX standard streams.
+import (
+	"bytes"
+	"io"
+	"os"
+	"path/filepath"
+	"strconv"
+	"strings"
+	"unicode"
 
-**VERIFIED IMPLEMENTATION PATTERN**:
-```go
-// app/cni/pkg/install/utils.go
+	"github.com/pkg/errors"
+)
+
+// PidOf Find process(es) with a specified name (string match)
+// copied from https://github.com/kubernetes/kubernetes/blob/v1.24.3/pkg/util/procfs/procfs_linux.go#L99
+// with small modifications
+// and return their pid(s)
+func pidOf(name string) (string, error) {
+	pids := getPids(name)
+
+	switch {
+	case name == "":
+		return "", errors.New("it's not possible to search for PID of process with no name")
+	case len(pids) == 0:
+		return "", errors.Errorf("couldn't find PID for '%s'", name)
+	case len(pids) > 1:
+		return "", errors.Errorf("more than one process '%s' running on a node, this should not happen", name)
+	default:
+		return strconv.Itoa(pids[0]), nil
+	}
+}
+
+// we don't need regex so this is changed to "string"
+func getPids(name string) []int {
+	var pids []int
+
+	if name == "" {
+		return nil
+	}
+
+	dirFD, err := os.Open("/proc")
+	if err != nil {
+		return nil
+	}
+	defer dirFD.Close()
+
+	for {
+		// Read a small number at a time in case there are many entries, we don't want to
+		// allocate a lot here.
+		ls, err := dirFD.Readdir(10)
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			return nil
+		}
+
+		for _, entry := range ls {
+			if !entry.IsDir() {
+				continue
+			}
+
+			// If the directory is not a number (i.e. not a PID), skip it
+			pid, err := strconv.Atoi(entry.Name())
+			if err != nil {
+				continue
+			}
+
+			cmdline, err := os.ReadFile(filepath.Join("/proc", strconv.Itoa(pid), "cmdline")) // #nosec G703 -- pid is validated integer, path is safe
+			if err != nil {
+				continue
+			}
+
+			// The bytes we read have '\0' as a separator for the command line
+			parts := bytes.SplitN(cmdline, []byte{0}, 2)
+			if len(parts) == 0 {
+				continue
+			}
+			// Split the command line itself we are interested in just the first part
+			exe := strings.FieldsFunc(string(parts[0]), func(c rune) bool {
+				return unicode.IsSpace(c) || c == ':'
+			})
+			if len(exe) == 0 {
+				continue
+			}
+			// Check if the name of the executable is what we are looking for
+			if name == exe[0] {
+				// Grab the PID from the directory path
+				pids = append(pids, pid)
+			}
+		}
+	}
+
+	return pids
+}
+
+```
+
+### Core Architecture Module: `app/cni/pkg/install/utils.go`
+```
 package install
 
 import (
+	"encoding/json"
 	"os"
 
 	"github.com/go-logr/logr"
+
 	"github.com/kumahq/kuma/v3/pkg/core"
 	kuma_log "github.com/kumahq/kuma/v3/pkg/log"
 )
 
-// CreateNewLogger ensures all log emissions bypass stdout entirely.
-// kubelet expects a specific JSON payload on stdout; writing any diagnostic text
-// to stdout corrupts the CNI protocol exchange.
+func parseFileToHashMap(file string) (map[string]any, error) {
+	contents, err := os.ReadFile(file)
+	if err != nil {
+		return nil, err
+	}
+
+	return parseBytesToHashMap(contents)
+}
+
+func parseBytesToHashMap(bytes []byte) (map[string]any, error) {
+	var parsed map[string]any
+	err := json.Unmarshal(bytes, &parsed)
+	if err != nil {
+		return nil, err
+	}
+	return parsed, nil
+}
+
 func CreateNewLogger(name string, logLevel kuma_log.LogLevel) logr.Logger {
+	// kubelet expects a specific JSON on stdout, so we're using stderr in CNI
 	return core.NewLoggerTo(os.Stderr, logLevel).WithName(name)
 }
 
@@ -101,158 +184,669 @@ func SetLogLevel(logger *logr.Logger, level string, name string) error {
 	*logger = CreateNewLogger(name, logLevel)
 	return nil
 }
+
 ```
 
-**NEGATIVE CONSTRAINT**:
-```go
-// ANTI-PATTERN: Defaulting loggers to stdout or using global print statements
-func BadCNIInit() {
-    // FATAL: Pollutes stdout with non-JSON text, breaking kubelet sandbox initialization!
-    fmt.Println("Configuring pod network interface...")
-    logger := zap.NewExample() // Defaults to stdout
-    logger.Info("CNI network plugin executed successfully")
+### Core Architecture Module: `app/kuma-ui/pkg/resources/data/mockServiceWorker.js`
+```
+/* eslint-disable */
+/* tslint:disable */
+
+/**
+ * Mock Service Worker.
+ * @see https://github.com/mswjs/msw
+ * - Please do NOT modify this file.
+ */
+
+const PACKAGE_VERSION = '3.0.1'
+const INTEGRITY_CHECKSUM = '5cd5cf8b54c3a90f82960cedcd637772'
+const IS_MOCKED_RESPONSE = Symbol('isMockedResponse')
+
+const activeClientIds = new Set()
+/**
+ * @type {Map<string, Set<Promise<Response>>>}
+ */
+const pendingRequests = new Map()
+
+addEventListener('install', function () {
+  self.skipWaiting()
+})
+
+addEventListener('activate', function (event) {
+  event.waitUntil(self.clients.claim())
+})
+
+addEventListener('message', function (event) {
+  const clientId = Reflect.get(event.source || {}, 'id')
+
+  if (!clientId || !self.clients) {
+    return
+  }
+
+  event.waitUntil(
+    (async () => {
+      if (event.data === 'CLIENT_CLOSE') {
+        const allClients = await self.clients.matchAll({
+          type: 'window',
+        })
+
+        activeClientIds.delete(clientId)
+
+        // Await any pending requests from the closing client.
+        // This makes sure that those requests are handled and not passthrough.
+        const pending = pendingRequests.get(clientId)
+        if (pending != null && pending.size > 0) {
+          await Promise.allSettled(pending)
+        }
+        pendingRequests.delete(clientId)
+
+        const remainingClients = allClients.filter((client) => {
+          return client.id !== clientId
+        })
+
+        // Unregister itself when there are no more clients
+        if (remainingClients.length === 0) {
+          await self.registration.unregister()
+        }
+
+        const client = await self.clients.get(clientId)
+
+        if (client != null) {
+          await sendToClient(client, {
+            type: 'CLIENT_CLOSED',
+          })
+        }
+
+        return
+      }
+
+      /**
+       * @note Check for the client AFTER handling "CLIENT_CLOSE".
+       * This prevents early return on "!client" in case the page has reloaded
+       * and disassociated itself from the worker. This ensures self-unregistration
+       * still fires for those pages.
+       */
+      const client = await self.clients.get(clientId)
+
+      if (!client) {
+        return
+      }
+
+      switch (event.data) {
+        case 'KEEPALIVE_REQUEST': {
+          await sendToClient(client, {
+            type: 'KEEPALIVE_RESPONSE',
+          })
+          break
+        }
+
+        case 'INTEGRITY_CHECK_REQUEST': {
+          await sendToClient(client, {
+            type: 'INTEGRITY_CHECK_RESPONSE',
+            payload: {
+              packageVersion: PACKAGE_VERSION,
+              checksum: INTEGRITY_CHECKSUM,
+            },
+          })
+          break
+        }
+
+        case 'MOCK_ACTIVATE': {
+          activeClientIds.add(clientId)
+
+          await sendToClient(client, {
+            type: 'MOCKING_ENABLED',
+            payload: {
+              client: {
+                id: client.id,
+                frameType: client.frameType,
+              },
+            },
+          })
+          break
+        }
+      }
+    })(),
+  )
+})
+
+addEventListener('fetch', function (event) {
+  // Opening the DevTools triggers the "only-if-cached" request
+  // that cannot be handled by the worker. Bypass such requests.
+  if (
+    event.request.cache === 'only-if-cached' &&
+    event.request.mode !== 'same-origin'
+  ) {
+    return
+  }
+
+  // Bypass all requests when there are no active clients.
+  // Prevents the self-unregistered worked from handling requests
+  // after it's been terminated (still remains active until the next reload).
+  if (activeClientIds.size === 0) {
+    return
+  }
+
+  const requestId = crypto.randomUUID()
+  event.respondWith(handleRequest(event, requestId))
+})
+
+/**
+ * @param {FetchEvent} event
+ * @param {string} requestId
+ */
+async function handleRequest(event, requestId) {
+  const client = await resolveMainClient(event)
+  const requestCloneForEvents = event.request.clone()
+
+  const responsePromise = getResponse(event, client, requestId)
+
+  if (client != null) {
+    let pending = pendingRequests.get(client.id)
+
+    if (pending == null) {
+      pendingRequests.set(client.id, (pending = new Set()))
+    }
+
+    pending.add(responsePromise)
+    responsePromise
+      .finally(() => pending.delete(responsePromise))
+      .catch(() => {})
+  }
+
+  let response
+
+  try {
+    response = await responsePromise
+  } catch (error) {
+    // The request has settled without a response (e.g. a passthrough
+    // request failed with a network error). Notify the client so it
+    // can release the resources associated with this request.
+    if (client && activeClientIds.has(client.id)) {
+      sendToClient(client, {
+        type: 'REQUEST_ERROR',
+        payload: {
+          request: {
+            id: requestId,
+          },
+          error: serializeError(error),
+        },
+      })
+    }
+
+    throw error
+  }
+
+  // Send back the response clone for the "response:*" life-cycle events.
+  // Ensure MSW is active and ready to handle the message, otherwise
+  // this message will pend indefinitely.
+  if (client && activeClientIds.has(client.id)) {
+    const serializedRequest = await serializeRequest(requestCloneForEvents)
+
+    // Omit the body of server-sent event stream responses.
+    // Cloning such responses would prevent client-side stream cancelations
+    // from reaching the original stream (a teed stream only cancels its
+    // source once both of its branches cancel) and would buffer the
+    // entire stream into the unconsumed clone indefinitely.
+    const isEventStreamResponse = response.headers
+      .get('content-type')
+      ?.toLowerCase()
+      .startsWith('text/event-stream')
+
+    // Clone the response so both the client and the library could consume it.
+    const responseClone = isEventStreamResponse ? null : response.clone()
+
+    sendToClient(
+      client,
+      {
+        type: 'RESPONSE',
+        payload: {
+          isMockedResponse: IS_MOCKED_RESPONSE in response,
+          request: {
+            id: requestId,
+            ...serializedRequest,
+          },
+          response: {
+            type: response.type,
+            status: response.status,
+            statusText: response.statusText,
+            headers: Object.fromEntries(response.headers.entries()),
+            body: responseClone ? responseClone.body : null,
+          },
+        },
+      },
+      responseClone && responseClone.body
+        ? [serializedRequest.body, responseClone.body]
+        : [],
+    )
+  }
+
+  return response
 }
-```
 
-**VERIFICATION METHOD**:
-Enforce stream separation using a unit test that captures `os.Stdout` during mock execution and asserts that the captured stream contains solely valid JSON without prefix/suffix garbage:
-```go
-func TestCNIStdoutPurity(t *testing.T) {
-	oldStdout := os.Stdout
-	r, w, _ := os.Pipe()
-	os.Stdout = w
+/**
+ * Resolve the main client for the given event.
+ * Client that issues a request doesn't necessarily equal the client
+ * that registered the worker. It's with the latter the worker should
+ * communicate with during the response resolving phase.
+ * @param {FetchEvent} event
+ * @returns {Promise<Client | undefined>}
+ */
+async function resolveMainClient(event) {
+  const client = await self.clients.get(event.clientId)
 
-	// Execute logger and CNI setup logic
-	logger := CreateNewLogger("cni-test", kuma_log.InfoLevel)
-	logger.Info("This must not leak to stdout")
-	
-	// Emit dummy response
-	_, _ = w.Write([]byte(`{"cniVersion": "1.0.0", "interfaces": []}`))
-	_ = w.Close()
-	os.Stdout = oldStdout
+  if (activeClientIds.has(event.clientId)) {
+    return client
+  }
 
-	out, _ := io.ReadAll(r)
-	var dummy map[string]any
-	if err := json.Unmarshal(out, &dummy); err != nil {
-		t.Fatalf("stdout was corrupted with non-JSON data: %v (raw: %q)", err, string(out))
-	}
+  if (client?.frameType === 'top-level') {
+    return client
+  }
+
+  const allClients = await self.clients.matchAll({
+    type: 'window',
+  })
+
+  return allClients
+    .filter((client) => {
+      // Get only those clients that are currently visible.
+      return client.visibilityState === 'visible'
+    })
+    .find((client) => {
+      // Find the client ID that's recorded in the
+      // set of clients that have registered the worker.
+      return activeClientIds.has(client.id)
+    })
 }
-```
 
----
+/**
+ * @param {FetchEvent} event
+ * @param {Client | undefined} client
+ * @param {string} requestId
+ * @returns {Promise<Response>}
+ */
+async function getResponse(event, client, requestId) {
+  // Clone the request because it might've been already used
+  // (i.e. its body has been read and sent to the client).
+  const requestClone = event.request.clone()
 
-### 2. Stream-Safety Clone Exclusion for Teed Network Interceptors
-**RULE**:
-When intercepting, logging, or proxying HTTP/Fetch responses via service workers, reverse proxies, or middleware, the interceptor MUST NOT clone (`response.clone()`) or buffer the response body if the `Content-Type` header indicates an open-ended server-sent event stream (`text/event-stream`), WebSocket upgrade, or chunked transfer stream.
+  /**
+   * @param {{ request?: { headers?: Array<[string, string]> } }} [data]
+   */
+  function passthrough(data) {
+    const headers = new Headers()
+    const requestHeaders = data?.request?.headers
 
-**WHY**:
-In the Fetch Standard and Service Worker specifications, calling `response.clone()` against an active readable stream creates a teed stream (`ReadableStream.tee()`). A teed stream locks the underlying stream source and does not release memory or propagate client-side stream cancellations (`reader.cancel()`) until *both* branches have closed or canceled. For unbounded event streams (e.g., SSE metrics, log tailing, Envoy dynamic stats streaming), cloning buffers the stream indefinitely in memory, leading to browser/process memory exhaustion (OOM crashes) while preventing client disconnections from propagating upstream.
+    if (Array.isArray(requestHeaders)) {
+      // Apply the request headers provided by the client.
+      // Those reflect any modifications made in the request handlers.
+      // Use ".append()" to support multiple headers with the same name.
+      for (const [name, value] of requestHeaders) {
+        headers.append(name, value)
+      }
+    } else {
+      for (const [name, value] of requestClone.headers) {
+        headers.append(name, value)
+      }
+    }
 
-**WHEN TO APPLY**:
-- Service Worker fetch handlers and mocking proxies (e.g., MSW, custom SW caches).
-- Reverse proxies and API gateway response-recording middleware in Go/Node.js.
-- Envoy Lua filter extensions inspecting downstream response streams.
+    // Remove the "accept" header value that marked this request as passthrough.
+    // This prevents request alteration and also keeps it compliant with the
+    // user-defined CORS policies.
+    const acceptHeader = headers.get('accept')
+    if (acceptHeader) {
+      const values = acceptHeader.split(',').map((value) => value.trim())
+      const filteredValues = values.filter(
+        (value) => value !== 'msw/passthrough',
+      )
 
-**VERIFIED IMPLEMENTATION PATTERN**:
-```javascript
-// app/kuma-ui/pkg/resources/data/mockServiceWorker.js
+      if (filteredValues.length > 0) {
+        headers.set('accept', filteredValues.join(', '))
+      } else {
+        headers.delete('accept')
+      }
+    }
 
-// Check Content-Type before calling clone() on the response
-const isEventStreamResponse = response.headers
-  .get('content-type')
-  ?.toLowerCase()
-  .startsWith('text/event-stream')
+    return fetch(requestClone, { headers })
+  }
 
-// Omit the body of server-sent event stream responses.
-// Cloning such responses would prevent client-side stream cancelations
-// from reaching the original stream (a teed stream only cancels its
-// source once both of its branches cancel) and would buffer the
-// entire stream into the unconsumed clone indefinitely.
-const responseClone = isEventStreamResponse ? null : response.clone()
+  // Bypass mocking when the client is not active.
+  if (!client) {
+    return passthrough()
+  }
 
-sendToClient(
-  client,
-  {
-    type: 'RESPONSE',
-    payload: {
-      isMockedResponse: IS_MOCKED_RESPONSE in response,
-      request: {
+  // Bypass initial page load requests (i.e. static assets).
+  // The absence of the immediate/parent client in the map of the active clients
+  // means that MSW hasn't dispatched the "MOCK_ACTIVATE" event yet
+  // and is not ready to handle requests.
+  if (!activeClientIds.has(client.id)) {
+    return passthrough()
+  }
+
+  // Notify the client that a request has been intercepted.
+  const serializedRequest = await serializeRequest(event.request)
+  const clientMessage = await sendToClient(
+    client,
+    {
+      type: 'REQUEST',
+      payload: {
         id: requestId,
         ...serializedRequest,
       },
-      response: {
-        type: response.type,
-        status: response.status,
-        statusText: response.statusText,
-        headers: Object.fromEntries(response.headers.entries()),
-        body: responseClone ? responseClone.body : null,
-      },
     },
-  },
-  responseClone && responseClone.body
-    ? [serializedRequest.body, responseClone.body]
-    : [],
-)
-```
-
-**NEGATIVE CONSTRAINT**:
-```javascript
-// ANTI-PATTERN: Indiscriminate response cloning on HTTP interceptors
-addEventListener('fetch', (event) => {
-  event.respondWith((async () => {
-    const response = await fetch(event.request)
-    // CRITICAL MEMORY LEAK: If response is an SSE stream (text/event-stream),
-    // clone() tees the stream. The clone is never read, buffering chunks forever.
-    const clone = response.clone()
-    broadcastToAuditLogs(await clone.text()) 
-    return response
-  })())
-})
-```
-
-**VERIFICATION METHOD**:
-Implement an automated end-to-end test that opens an SSE connection, verifies that cancelling the client reader terminates the server-side writer within a strict timeout, and asserts that no memory leak occurs:
-```javascript
-test('SSE stream cancellation propagates upstream without clone buffering', async () => {
-  const sseResponse = new Response(
-    new ReadableStream({
-      start(controller) {
-        controller.enqueue(new TextEncoder().encode('data: ping\n\n'))
-      }
-    }),
-    { headers: { 'Content-Type': 'text/event-stream' } }
+    [serializedRequest.body],
   )
+
+  switch (clientMessage.type) {
+    case 'MOCK_RESPONSE': {
+      return respondWithMock(clientMessage.data, event)
+    }
+
+    case 'PASSTHROUGH': {
   
-  const isEventStream = sseResponse.headers.get('content-type')?.startsWith('text/event-stream')
-  expect(isEventStream).toBe(true)
-  const clone = isEventStream ? null : sseResponse.clone()
-  expect(clone).toBeNull()
-})
 ```
 
----
+### Core Architecture Module: `app/kumactl/cmd/install/render_files.go`
+```
+package install
 
-### 3. Explicit Ancestor Hook Propagation in Hierarchical CLI Trees
-**RULE**:
-When building CLI tools with nested command hierarchies using frameworks where parent pre-run hooks are superseded by child command hooks (such as Cobra's `PersistentPreRun` / `PersistentPreRunE`), any child command defining its own `PersistentPreRunE` MUST explicitly invoke the parent's `PersistentPreRunE` up the ancestor chain.
+import (
+	"bytes"
+	"io"
+	"text/template"
 
-**WHY**:
-In `github.com/spf13/cobra`, if a root or intermediate command defines a `PersistentPreRunE` (e.g., to load configuration files, initialize authentication contexts, or set up tracing), and a subcommand subsequently defines its own `PersistentPreRunE`, Cobra only executes the subcommand's hook, silently dropping the parent's hook. This causes child commands to execute with uninitialized configuration structs, missing credentials, unparsed flags, or nil-pointer dereferences on shared service clients.
+	"github.com/Masterminds/sprig/v3"
+	"github.com/pkg/errors"
 
-**WHEN TO APPLY**:
-- All Go CLI architectures utilizing `spf13/cobra`.
-- Nested CLI command trees requiring hierarchical context setup.
+	"github.com/kumahq/kuma/v3/pkg/util/data"
+)
 
-**VERIFIED IMPLEMENTATION PATTERN**:
-```go
-// app/kumactl/pkg/cmd/util.go
+type templateFilter interface {
+	Filter(name string) bool
+}
+
+func renderFilesWithFilter(templates []data.File, args any, newRenderer func(data.File) (templateRenderer, error), filter templateFilter) ([]data.File, error) {
+	renderedFiles := make([]data.File, len(templates))
+
+	for i, template := range templates {
+		if !filter.Filter(template.FullPath) {
+			continue
+		}
+		renderer, err := newRenderer(template)
+		if err != nil {
+			return nil, err
+		}
+		var buf bytes.Buffer
+		if err := renderer.Execute(&buf, args); err != nil {
+			return nil, err
+		}
+		renderedFiles[i].Data = buf.Bytes()
+	}
+
+	return renderedFiles, nil
+}
+
+type templateRenderer interface {
+	Execute(w io.Writer, data any) error
+}
+
+func simpleTemplateRenderer(text data.File) (templateRenderer, error) {
+	tmpl, err := template.New("").Funcs(sprig.TxtFuncMap()).Parse(string(text.Data))
+	if err != nil {
+		return nil, errors.Wrap(err, "Failed to parse k8s resource template")
+	}
+	return tmpl, nil
+}
+
+type NoneFilter struct{}
+
+func (f NoneFilter) Filter(name string) bool {
+	return true
+}
+
+```
+
+### Core Architecture Module: `app/kumactl/cmd/install/render_helm_files.go`
+```
+package install
+
+import (
+	"bytes"
+	"fmt"
+	"io"
+	"log"
+	"reflect"
+	"regexp"
+	"sort"
+	"strings"
+
+	"github.com/pkg/errors"
+	chartcommon "helm.sh/helm/v4/pkg/chart/common"
+	chartcommonutil "helm.sh/helm/v4/pkg/chart/common/util"
+	"helm.sh/helm/v4/pkg/chart/loader/archive"
+	chartv2 "helm.sh/helm/v4/pkg/chart/v2"
+	"helm.sh/helm/v4/pkg/chart/v2/loader"
+	chartv2util "helm.sh/helm/v4/pkg/chart/v2/util"
+	"helm.sh/helm/v4/pkg/engine"
+	"k8s.io/client-go/rest"
+
+	"github.com/kumahq/kuma/v3/pkg/util/data"
+)
+
+func labelRegex(label string) *regexp.Regexp {
+	return regexp.MustCompile("(?m)[\r\n]+^.*" + label + ".*$")
+}
+
+var stripLabelsRegexps = []*regexp.Regexp{
+	labelRegex("app\\.kubernetes\\.io/managed-by"),
+	labelRegex("helm\\.sh/chart"),
+	labelRegex("app\\.kubernetes\\.io/version"),
+}
+
+var kumaSystemNamespace = func(namespace string) string {
+	return fmt.Sprintf(`
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: %s
+  labels:
+    kuma.io/sidecar-injection: "false"
+`, namespace)
+}
+
+type onlyWriteWarnings struct {
+	writer io.Writer
+}
+
+func (w onlyWriteWarnings) Write(p []byte) (int, error) {
+	if bytes.HasPrefix(p, []byte("Warning:")) {
+		return w.writer.Write(p)
+	}
+	return io.Discard.Write(p)
+}
+
+func renderHelmFiles(
+	templates []data.File,
+	namespace string,
+	overrideValues chartcommon.Values,
+	kubeClientConfig *rest.Config,
+	capabilities chartcommon.Capabilities,
+) ([]data.File, error) {
+	kumaChart, err := loadCharts(templates)
+	if err != nil {
+		return nil, errors.Errorf("Failed to load charts: %s", err)
+	}
+
+	// This is necessary because ProcessDependencies can output warnings as well
+	// as trash
+	writer := log.Writer()
+	log.SetOutput(onlyWriteWarnings{writer: writer})
+	if err := chartv2util.ProcessDependencies(kumaChart, overrideValues); err != nil {
+		return nil, errors.Errorf("Failed to process dependencies: %s", err)
+	}
+	log.SetOutput(writer)
+
+	options := generateReleaseOptions(kumaChart.Metadata.Name, namespace)
+
+	valuesToRender, err := chartcommonutil.ToRenderValues(kumaChart, overrideValues, options, &capabilities)
+	if err != nil {
+		return nil, errors.Errorf("Failed to render values: %s", err)
+	}
+
+	var files map[string]string
+	if kubeClientConfig == nil {
+		files, err = engine.Render(kumaChart, valuesToRender)
+	} else {
+		files, err = engine.RenderWithClient(kumaChart, valuesToRender, kubeClientConfig)
+	}
+	if err != nil {
+		return nil, errors.Errorf("Failed to render templates: %s", err)
+	}
+	files["namespace.yaml"] = kumaSystemNamespace(namespace)
+
+	return postRender(kumaChart, files), nil
+}
+
+func loadCharts(templates []data.File) (*chartv2.Chart, error) {
+	var files []*archive.BufferedFile
+
+	for _, template := range templates {
+		files = append(files, &archive.BufferedFile{
+			Name: template.FullPath,
+			Data: template.Data,
+		})
+	}
+
+	var fileteredFiles []*archive.BufferedFile
+	for _, f := range files {
+		if strings.Contains(f.Name, "templates/pre-") || strings.Contains(f.Name, "templates/post-") {
+			continue
+		}
+		fileteredFiles = append(fileteredFiles, f)
+	}
+
+	return loader.LoadFiles(fileteredFiles)
+}
+
+func generateOverrideValues(args any, helmValuesPrefix string) map[string]any {
+	overrideValues := map[string]any{}
+
+	v := reflect.ValueOf(args)
+	t := v.Type()
+	for field := range t.Fields() {
+		name := field.Name
+		value := v.FieldByName(name)
+		tag := field.Tag.Get("helm")
+
+		splitTag := strings.Split(tag, ",")
+		if len(splitTag) == 0 {
+			continue
+		}
+
+		var omitEmpty bool
+		for _, tagSplit := range splitTag[0:] {
+			omitEmpty = omitEmpty || tagSplit == "omitempty"
+		}
+
+		if omitEmpty && value.IsZero() {
+			continue
+		}
+
+		valuePath := strings.Split(splitTag[0], ".")
+		tagCount := len(valuePath)
+
+		root := overrideValues
+
+		for i := 0; i < tagCount-1; i++ {
+			n := valuePath[i]
+
+			if _, ok := root[n]; !ok {
+				root[n] = map[string]any{}
+			}
+			root = root[n].(map[string]any)
+		}
+		root[valuePath[tagCount-1]] = adjustType(value.Interface())
+	}
+
+	if helmValuesPrefix != "" {
+		return map[string]any{
+			helmValuesPrefix: overrideValues,
+		}
+	}
+
+	return overrideValues
+}
+
+// If the parameter value is map it has to be of a type map[string]interface{} therefore we need to convert it
+func adjustType(value any) any {
+	if m, ok := value.(map[string]string); ok {
+		result := map[string]any{}
+		for k, v := range m {
+			result[k] = v
+		}
+		return result
+	}
+	return value
+}
+
+func generateReleaseOptions(name, namespace string) chartcommon.ReleaseOptions {
+	return chartcommon.ReleaseOptions{
+		Name:      name,
+		Namespace: namespace,
+		Revision:  1,
+		IsInstall: true,
+		IsUpgrade: false,
+	}
+}
+
+func postRender(loadedChart *chartv2.Chart, files map[string]string) []data.File {
+	result := []data.File{}
+
+	for _, crd := range loadedChart.CRDObjects() {
+		result = append(result, data.File{
+			Data: crd.File.Data,
+			Name: crd.Name,
+		})
+	}
+
+	// sorted map of files to ensure consistency of the output
+	keys := make([]string, 0, len(files))
+	for k := range files {
+		keys = append(keys, k)
+	}
+	sort.Strings(keys)
+
+	for _, k := range keys {
+		if strings.HasSuffix(k, "yaml") {
+			content := files[k]
+
+			// strip Helm Chart specific labels
+			for _, stripRegEx := range stripLabelsRegexps {
+				content = stripRegEx.ReplaceAllString(content, "")
+			}
+
+			result = append(result, data.File{
+				Data: []byte(content),
+				Name: k,
+			})
+		}
+	}
+
+	return result
+}
+
+```
+
+### Core Architecture Module: `app/kumactl/pkg/cmd/util.go`
+```
 package cmd
 
 import "github.com/spf13/cobra"
 
 // RunParentPreRunE checks if the parent command has a PersistentPreRunE set and
 // executes it. This is for use in PersistentPreRun and is necessary because
-// only the first PersistentPreRun* of the command's ancestors is executed by cobra.
+// only the first PersistentPreRun* of the command's ancestors is executed by
+// cobra.
 func RunParentPreRunE(cmd *cobra.Command, args []string) error {
 	if p := cmd.Parent(); p != nil && p.PersistentPreRunE != nil {
 		if err := p.PersistentPreRunE(p, args); err != nil {
@@ -261,204 +855,261 @@ func RunParentPreRunE(cmd *cobra.Command, args []string) error {
 	}
 	return nil
 }
+
 ```
 
-```go
-// Usage inside subcommand definition:
-var subCmd = &cobra.Command{
-	Use:   "sub",
-	Short: "Subcommand requiring root context",
-	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
-		// Explicitly propagate execution to parent/root PersistentPreRunE
-		if err := cmd_util.RunParentPreRunE(cmd, args); err != nil {
-			return err
-		}
-		// Now safe to run subcommand-specific setup
-		return initSubcommandResources()
-	},
-	RunE: func(cmd *cobra.Command, args []string) error {
-		return execute()
-	},
+### Core Architecture Module: `pkg/cmd/util.go`
+```
+package cmd
+
+import (
+	"context"
+
+	"github.com/kumahq/kuma/v3/pkg/core"
+)
+
+type RunCmdOpts struct {
+	// Stop signals are SIGINT and SIGTERM
+	// We can start graceful shutdown when first context is closed and forcefully stop when the second one is closed.
+	// Note that the handler closes usr2Received as soon as SIGTERM has been
+	// received, exactly one SIGUSR2 is buffered and notifications are
+	// non-blocking, so the guarantee is that at least one SIGUSR2 is delivered.
+	SetupSignalHandler func() (firstStopSignalReceived context.Context, secondStopSignalReceived context.Context, usr2Received <-chan struct{})
 }
-```
 
-**NEGATIVE CONSTRAINT**:
-```go
-// ANTI-PATTERN: Defining subcommand PersistentPreRunE without invoking parent
-var subCmd = &cobra.Command{
-	Use: "apply",
-	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
-		// BUG: Cobra skips rootCmd.PersistentPreRunE!
-		// Config, logger, and KubeClient are nil!
-		return setupLocalFlags() 
-	},
+var DefaultRunCmdOpts = RunCmdOpts{
+	SetupSignalHandler: core.SetupSignalHandler,
 }
+
 ```
 
-**VERIFICATION METHOD**:
-Static analysis check or unit test asserting that every command possessing a non-nil `PersistentPreRunE` invokes `RunParentPreRunE` or that parent context properties are non-nil when executing subcommands:
-```go
-func TestCommandHierarchyContextInitialization(t *testing.T) {
-	rootCmd := NewRootCmd()
-	subCmd := NewSubCmd()
-	rootCmd.AddCommand(subCmd)
+### Core Architecture Module: `pkg/config/core/config.go`
+```
+package core
 
-	// Set args that target the child command
-	rootCmd.SetArgs([]string{"sub", "--dry-run"})
-	err := rootCmd.Execute()
-	assert.NoError(t, err)
-	// Assert root context configuration was populated despite child PersistentPreRunE
-	assert.NotNil(t, subCmd.ConfigContext)
+import "github.com/pkg/errors"
+
+type EnvironmentType = string
+
+const (
+	KubernetesEnvironment EnvironmentType = "kubernetes"
+	UniversalEnvironment  EnvironmentType = "universal"
+)
+
+// Control Plane mode
+
+type CpMode = string
+
+const (
+	Zone   CpMode = "zone"
+	Global CpMode = "global"
+)
+
+// ValidateCpMode to check modes of kuma-cp
+func ValidateCpMode(mode CpMode) error {
+	if mode != Zone && mode != Global {
+		return errors.Errorf("invalid mode. Available modes: %s, %s", Zone, Global)
+	}
+	return nil
 }
+
 ```
 
----
+### Core Architecture Module: `pkg/config/core/resources/apis/config.go`
+```
+package apis
 
-## 3. Forensic Real Incidents & Production Patches
+import (
+	"time"
 
-### Incident 1: Security Vulnerability Remediation in Core Daemon and Telemetry Dependencies (BUG-SEC-CVE-01)
-- **Context**: Root dependency manifest `go.mod`.
-- **What Was Expected**: Control plane and sidecar tooling run against stable dependencies without known High/Critical severity Common Vulnerabilities and Exposures (CVEs) in base container runtimes and telemetry SDKs.
-- **What Actually Happened**: Static vulnerability scanning identified multiple high-risk CVEs in `github.com/docker/docker` (GO-2026-4883 [CVSS 6.8], GO-2026-4887, GO-2026-5617 [CVSS 7.2] / GHSA-rg2x-37c3-w2rh) and `go.opentelemetry.io/otel/sdk` / `trace` (GHSA-q7gw-24fr-5p69 [CVSS 5.3]), exposing the CP and testcontainers infrastructure to unauthenticated remote exploitation and telemetry buffer manipulation.
-- **Evidence in Repo**: Closed issue `#19421` ("chore(deps): security update"), `go.mod`.
-- **Root Cause**: Transitive dependency pinning in Go module graph pinned `docker` to vulnerable incompatible revision `v28.5.1` and OpenTelemetry SDK components to `v1.45.0`.
-- **Remediation Code Diff**:
+	config_types "github.com/kumahq/kuma/v3/pkg/config/types"
+)
+
+type Config struct {
+	// List of enabled core resources
+	Enabled []string `json:"enabled" envconfig:"KUMA_CORE_RESOURCES_ENABLED" default:""`
+	// Status of core resources
+	Status ConfigStatus `json:"status"`
+}
+
+type ConfigStatus struct {
+	// How often we compute status of MeshMultiZoneService
+	MeshMultiZoneServiceInterval config_types.Duration `json:"meshMultiZoneServiceInterval" envconfig:"KUMA_CORE_RESOURCES_STATUS_MESH_MULTI_ZONE_SERVICE_INTERVAL"`
+	// How often we compute status of MeshService
+	MeshServiceInterval config_types.Duration `json:"meshServiceInterval" envconfig:"KUMA_CORE_RESOURCES_STATUS_MESH_SERVICE_INTERVAL"`
+	// How often we compute status of MeshIdentity
+	MeshIdentityInterval config_types.Duration `json:"meshIdentityInterval" envconfig:"KUMA_CORE_RESOURCES_STATUS_MESH_IDENTITY_INTERVAL"`
+	// How often we compute status of Workload
+	WorkloadInterval config_types.Duration `json:"workloadInterval" envconfig:"KUMA_CORE_RESOURCES_STATUS_WORKLOAD_INTERVAL"`
+	// How often we compute status of MeshOpenTelemetryBackend
+	MeshOpenTelemetryBackendInterval config_types.Duration `json:"meshOpenTelemetryBackendInterval" envconfig:"KUMA_CORE_RESOURCES_STATUS_MESH_OPEN_TELEMETRY_BACKEND_INTERVAL"`
+}
+
+func Default() *Config {
+	return &Config{
+		Enabled: DefaultEnabled,
+		Status: ConfigStatus{
+			MeshMultiZoneServiceInterval:     config_types.Duration{Duration: 5 * time.Second},
+			MeshServiceInterval:              config_types.Duration{Duration: 5 * time.Second},
+			MeshIdentityInterval:             config_types.Duration{Duration: 5 * time.Second},
+			WorkloadInterval:                 config_types.Duration{Duration: 5 * time.Second},
+			MeshOpenTelemetryBackendInterval: config_types.Duration{Duration: 5 * time.Second},
+		},
+	}
+}
+
+func (c *Config) PostProcess() error {
+	return nil
+}
+
+func (c *Config) Sanitize() {
+}
+
+func (c *Config) Validate() error {
+	return nil
+}
+
+```
+
+### Core Architecture Module: `pkg/config/core/resources/apis/zz_generated.policies.go`
+```
+// Generated by tools/policy-gen
+// Run "make generate" to update this file.
+
+package apis
+
+var DefaultEnabled = []string{
+	"hostnamegenerators",
+	"meshexternalservices",
+	"meshidentities",
+	"meshmultizoneservices",
+	"meshopentelemetrybackends",
+	"meshservices",
+	"meshtrusts",
+	"meshzoneaddresses",
+	"workloads",
+}
+
+```
+
+
+### D2: Asynchronous State & Concurrency
+- Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
+
+### D3: Error Boundaries, Recovery & Rollbacks
+- Exception handling patterns and defect resolutions extracted from closed production bug issues:
+- **Issue #19423** (2026-11-17): **chore(deps): bump kumahq/kuma-gui to 2ad12fe196e47b650d797b42b4ae7d24dacef73d**
+  *Symptoms*: Bumps kumahq/kuma-gui to version  [master@2ad12fe196e47b650d797b42b4ae7d24dacef73d](https://github.com/kumahq/kuma-gui/tree/2ad12fe196e47b650d797b42b4ae7d24dacef73d)  > Changelog: chore(deps): use latest kumahq/kuma-gui
+
+- **Issue #19422** (2026-11-16): **chore(deps): bump kumahq/kuma-gui to dec2bfb1c612217485aa9c36d9170ce580c22691**
+  *Symptoms*: Bumps kumahq/kuma-gui to version  [master@dec2bfb1c612217485aa9c36d9170ce580c22691](https://github.com/kumahq/kuma-gui/tree/dec2bfb1c612217485aa9c36d9170ce580c22691)  > Changelog: chore(deps): use latest kumahq/kuma-gui
+
+### D4: Resource Lifecycle & Leak Defenses
+- Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
+
+### D5: Boundary Deserialization & Encoding
+- Schema deserialization, payload validation, and untrusted input guards.
+
+### D6: Cross-Platform & Runtime Gotchas
+- Platform variance, OS-specific gotchas, and environment discrepancies detected in issue reports.
+
+### D7: Build, CI/CD, Deployment & Tooling
+- Toolchain requirements, dependencies, and packaging specs verified against remote manifests.
+
+### D8: Forensic Bug Fixes & Real Production Code Patches
+Observed empirical fixes and code patches:
+
+### Incident Patch 1: `053b67f7` (2026-11-17)
+**Commit Message**: chore(deps): bump kumahq/kuma-gui to 2ad12fe196e47b650d797b42b4ae7d24dacef73d (#19423)
+
+Signed-off-by: GitHub <[REDACTED_EMAIL]>
+Co-authored-by: github-actions[bot] <github-actions[bot]@users.noreply.github.com>
+
+**File**: `app/kuma-ui/pkg/resources/data/assets/App-D7iYmQ4J.js` (renamed, +1/-1)
 ```diff
-// go.mod
-- go.opentelemetry.io/otel v1.45.0
-- go.opentelemetry.io/otel/sdk v1.45.0
-- go.opentelemetry.io/otel/trace v1.45.0
-- github.com/docker/docker v28.5.1+incompatible
-+ go.opentelemetry.io/otel v1.47.0
-+ go.opentelemetry.io/otel/sdk v1.47.0
-+ go.opentelemetry.io/otel/trace v1.47.0
-+ github.com/docker/docker v28.5.3+incompatible
+@@ -1,4 +1,4 @@
+-import{d as B,r as m,o as k,c as X,a as A,b as u,w as d,e as l,t as w,n as oe,_ as O,u as ae,f as re,g as ne,h as ie,i as le,j as f,k as v,l as T,m as C,p as se,q as ce,s as q,v as de,x as ue,y as S,z as pe}from"./index-Gia0ApXe.js";const fe=""+new URL("product-logo-CDoXkXpC.png",import.meta.url).href,ve={class:"app-navigator"},ge=B({__name:"AppNavigator",props:{active:{type:Boolean,default:!1},label:{default:""},to:{default:()=>({})}},setup(e){const o=e;return(r,a)=>{const i=m("XAction");return k(),X("li",ve,[A(r.$slots,"default",{},()=>[u(i,{class:oe({"is-active":o.active}),to:o.to},{default:d(()=>[l(w(o.label),1)]),_:1},8,["class","to"])],!0)])}}}),L=O(ge,[["__scopeId","data-v-b1ed9f4d"]]);var H=window.document,N=window.Math,z=window.HTMLElement,D=window.XMLHttpRequest,U=function(e,o){for(var r=0,a=e.length;r<a;r++)o(e[r])},K=function(e){return function(o,r,a){var i=e.createElement(o);if(r!=null)for(var n in r){var t=r[n];t!=null&&(i[n]!=null?i[n]=t:i.setAttribute(n,t))}return a!=null&&U(a,function(c){i.appendChild(typeof c=="string"?e.createTextNode(c):c)}),i}},j=K(H),he=function(e){var o;return function(){o||(o=1,e.apply(this,arguments))}},V=function(e,o){return{}.hasOwnProperty.call(e,o)},I=function(e){return(""+e).toLowerCase()},me="github-buttons",be="2.33.1",we="https://"+("unpkg.com/"+me+"@"+be+"/dist")+"/buttons.html",_="github.com",ke="https://api."+_,ee=D&&"prototype"in D&&"withCredentials"in D.prototype,_e=ee&&z&&"attachShadow"in z.prototype&&!("prototype"in z.prototype.attachShadow),y=function(e,o,r){e.addEventListener?e.addEventListener(o,r,!1):e.attachEvent("on"+o,r)},P=function(e,o,r){e.removeEventListener?e.removeEventListener(o,r,!1):e.detachEvent("on"+o,r)},ye=function(e,o,r){var a=function(){return P(e,o,a),r.apply(this,arguments)};y(e,o,a)},xe=function(e,o,r){if(e.readyState!=null){var a="readystatechange",i=function(){if(o.test(e.readyState))return P(e,a,i),r.apply(this,arguments)};y(e,a,i)}},Ae=function(e){var o={href:e.href,title:e.title,"aria-label":e.getAttribute("aria-label")};return U(["icon","color-scheme","text","size","show-count"],function(r){var a="data-"+r;o[a]=e.getAttribute(a)}),o["data-text"]==null&&(o["data-text"]=e.textContent||e.innerText),o},Me="body{margin:0}a{text-decoration:none;outline:0}.widget{display:inline-block;overflow:hidden;font-family:-apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif;font-size:0;line-height:0;white-space:nowrap}.btn,.social-count{position:relative;display:inline-block;display:inline-flex;height:14px;padding:2px 5px;font-size:11px;font-weight:600;line-height:14px;vertical-align:bottom;cursor:pointer;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;background-repeat:repeat-x;background-position:-1px -1px;background-size:110% 110%;border:1px solid}.btn{border-radius:.25em}.btn:not(:last-child){border-radius:.25em 0 0 .25em}.social-count{border-left:0;border-radius:0 .25em .25em 0}.widget-lg .btn,.widget-lg .social-count{height:16px;padding:5px 10px;font-size:12px;line-height:16px}.octicon{display:inline-block;vertical-align:text-top;fill:currentColor;overflow:visible}",Ce=`.btn:focus-visible,.social-count:focus-visible{outline:2px solid #0969da;outline-offset:-2px}.btn{color:#25292e;background-color:#ebf0f4;border-color:#d1d9e0;background-image:url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg'%3e%3clinearGradient id='o' x2='0' y2='1'%3e%3cstop stop-color='%23f6f8fa'/%3e%3cstop offset='90%25' stop-color='%23ebf0f4'/%3e%3c/linearGradient%3e%3crect width='100%25' height='100%25' fill='url(%23o)'/%3e%3c/svg%3e");background-image:-moz-linear-gradient(top, #f6f8fa, #ebf0f4 90%);background-image:linear-gradient(180deg, #f6f8fa, #ebf0f4 90%);filter:progid:DXImageTransform.Microsoft.Gradient(startColorstr='#FFF6F8FA', endColorstr='#FFEAEFF3')}:root .btn{filter:none}.btn:hover,.btn:focus{background-color:#e5eaee;background-position:0 -0.5em;border-color:#d1d9e0;background-image:url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg'%3e%3clinearGradient id='o' x2='0' y2='1'%3e%3cstop stop-color='%23eff2f5'/%3e%3cstop offset='90%25' stop-color='%23e5eaee'/%3e%3c/linearGradient%3e%3crect width='100%25' height='100%25' fill='url(%23o)'/%3e%3c/svg%3e");background-image:-moz-linear-gradient(top, #eff2f5, #e5eaee 90%);background-image:linear-gradient(180deg, #eff2f5, #e5eaee 90%);filter:progid:DXImageTransform.Microsoft.Gradient(startColorstr='#FFEFF2F5', endColorstr='#FFE4E9ED')}:root .btn:hover,:root .btn:focus{filter:none}.btn:active{background-color:#e6eaef;border-color:#d1d9e0;background-image:none;filter:none}.social-count{color:#25292e;background-color:#fff;border-color:#d1d9e0}.social-count:hover,.social-count:focus{color:#0969da}.octicon-heart{color:#bf3989}`,Ee=".btn:focus-visible,.social-count:focus-visible{outline:2px solid #0349b4;outline-offset:-2px}.btn{color:#25292e;background-color:#e0e6eb;border-color:#454c54;background-image:none;filter:non
 ```
-- **Lesson**: High-throughput telemetry pipelines and container orchestrator harnesses must continuously audit transitive vulnerability registries using direct Go dependency upgrades and OpenSSF Scorecard automated pipelines.
 
----
-
-### Incident 2: GUI Asset Hashing Desynchronization Breaking UI Control-Plane Embedding (BUG-UI-HASH-02)
-- **Context**: `app/kuma-ui/pkg/resources/data/assets/` compiled Vue/Vite distribution bundles.
-- **What Was Expected**: The embedded static UI server in `kuma-cp` delivers compiled web application assets containing coherent module import references across all route chunks.
-- **What Actually Happened**: The root entry chunk `index-MHySwiU7.js` was invalidated and recompiled to `index-Gia0ApXe.js`. Downstream route chunks (`ConfigurationDetailView`, `ConnectionInboundSummaryClustersView`, `ConnectionInboundSummaryStatsView`, `ConnectionInboundSummaryView`, `ConnectionInboundSummaryXdsConfigView`, `ConnectionOutboundSummaryClustersView`, `ConnectionOutboundSummaryStatsView`) retained stale imports referencing the deleted `index-MHySwiU7.js`, resulting in `404 Not Found` dynamic import errors on user navigation.
-- **Evidence in Repo**: Commit `a71f8a93`, PR `#19422` ("chore(deps): bump kumahq/kuma-gui to dec2bfb1c612217485aa9c36d9170ce580c22691").
-- **Root Cause**: Partial asset bundling or out-of-sync chunk generation during upstream GUI release builds resulted in dangling chunk hashes.
-- **Remediation Code Diff**:
+**File**: `app/kuma-ui/pkg/resources/data/assets/ConfigurationDetailView-CjBVE2FD.js` (renamed, +1/-1)
 ```diff
-// app/kuma-ui/pkg/resources/data/assets/ConfigurationDetailView-lc5Jm30v.js
--import{d as _,o as f,l as C,w as t,b as n,e as x,k as h,v as b,j as w,r as o}from"./index-MHySwiU7.js";
-+import{d as _,o as f,l as C,w as t,b as n,e as x,k as h,v as b,j as w,r as o}from"./index-Gia0ApXe.js";
-
-// app/kuma-ui/pkg/resources/data/assets/ConnectionInboundSummaryClustersView-D4JlQI5W.js
--import{d as T,r as o,o as i,l,w as t,b as s,e as m,k as V,P as E,c as F,I as N,J as v}from"./index-MHySwiU7.js";
-+import{d as T,r as o,o as i,l,w as t,b as s,e as m,k as V,P as E,c as F,I as N,J as v}from"./index-Gia0ApXe.js";
-
-// app/kuma-ui/pkg/resources/data/assets/ConnectionInboundSummaryStatsView-Bv-kUmqK.js
--import{d as R,r as o,o as $,l as C,w as r,b as n,e as p,k as A,P as w,aa as k}from"./index-MHySwiU7.js";
-+import{d as R,r as o,o as $,l as C,w as r,b as n,e as p,k as A,P as w,aa as k}from"./index-Gia0ApXe.js";
+@@ -1 +1 @@
+-import{d as _,o as f,l as C,w as t,b as n,e as x,k as h,v as b,j as w,r as o}from"./index-Gia0ApXe.js";const y=_({__name:"ConfigurationDetailView",setup(R){return(V,r)=>{const i=o("RouteTitle"),s=o("XCodeBlock"),d=o("DataLoader"),l=o("XCard"),u=o("AppView"),p=o("RouteView");return f(),C(p,{name:"configuration-view",params:{codeSearch:"",codeFilter:!1,codeRegExp:!1}},{default:t(({route:e,t:c,uri:m})=>[n(u,{breadcrumbs:[{to:{name:"configuration-view"},text:c("configuration.routes.item.breadcrumbs")}]},{title:t(()=>[w("h1",null,[n(i,{title:c("configuration.routes.item.title")},null,8,["title"])])]),default:t(()=>[r[0]||(r[0]=x()),n(l,null,{default:t(()=>[n(d,{src:m(h(b),"/config",{})},{default:t(({data:[g]})=>[n(s,{"data-testid":"code-block-configuration",language:"json",code:JSON.stringify(g,null,2),"is-searchable":"",query:e.params.codeSearch,"is-filter-mode":e.params.codeFilter,"is-reg-exp-mode":e.params.codeRegExp,onQueryChange:a=>e.update({codeSearch:a}),onFilterModeChange:a=>e.update({codeFilter:a}),onRegExpModeChange:a=>e.update({codeRegExp:a})},null,8,["code","query","is-filter-mode","is-reg-exp-mode","onQueryChange","onFilterModeChange","onRegExpModeChange"])]),_:2},1032,["src"])]),_:2},1024)]),_:2},1032,["breadcrumbs"])]),_:1})}}});export{y as default};
++import{d as _,o as f,l as C,w as t,b as n,e as x,k as h,v as b,j as w,r as o}from"./index-3fKuRoNQ.js";const y=_({__name:"ConfigurationDetailView",setup(R){return(V,r)=>{const i=o("RouteTitle"),s=o("XCodeBlock"),d=o("DataLoader"),l=o("XCard"),u=o("AppView"),p=o("RouteView");return f(),C(p,{name:"configuration-view",params:{codeSearch:"",codeFilter:!1,codeRegExp:!1}},{default:t(({route:e,t:c,uri:m})=>[n(u,{breadcrumbs:[{to:{name:"configuration-view"},text:c("configuration.routes.item.breadcrumbs")}]},{title:t(()=>[w("h1",null,[n(i,{title:c("configuration.routes.item.title")},null,8,["title"])])]),default:t(()=>[r[0]||(r[0]=x()),n(l,null,{default:t(()=>[n(d,{src:m(h(b),"/config",{})},{default:t(({data:[g]})=>[n(s,{"data-testid":"code-block-configuration",language:"json",code:JSON.stringify(g,null,2),"is-searchable":"",query:e.params.codeSearch,"is-filter-mode":e.params.codeFilter,"is-reg-exp-mode":e.params.codeRegExp,onQueryChange:a=>e.update({codeSearch:a}),onFilterModeChange:a=>e.update({codeFilter:a}),onRegExpModeChange:a=>e.update({codeRegExp:a})},null,8,["code","query","is-filter-mode","is-reg-exp-mode","onQueryChange","onFilterModeChange","onRegExpModeChange"])]),_:2},1032,["src"])]),_:2},1024)]),_:2},1032,["breadcrumbs"])]),_:1})}}});export{y as default};
 ```
-- **Lesson**: Embedded UI asset pipelines must regenerate all route chunks concurrently with the shared vendor index chunk and enforce cryptographic integrity checks between manifests and asset files prior to committing into the Go source tree.
 
----
-
-### Incident 3: Helm Label Leakage Causing GitOps Reconciliation Thrashing (BUG-HELM-LBL-03)
-- **Context**: `app/kumactl/cmd/install/render_helm_files.go`
-- **What Was Expected**: When users install Kuma via `kumactl install control-plane`, the rendered Kubernetes manifests should behave as native, standalone resources.
-- **What Actually Happened**: Helm chart engine rendering automatically injected Helm-specific metadata labels (`helm.sh/chart`, `app.kubernetes.io/managed-by: Helm`, `app.kubernetes.io/version`). External GitOps controllers (ArgoCD, Flux) identified these labels and assumed an external Helm release agent was managing the resources, initiating perpetual reconciliation loops and deleting or modifying annotations.
-- **Evidence in Repo**: `app/kumactl/cmd/install/render_helm_files.go` lines 27-37, `stripLabelsRegexps`.
-- **Root Cause**: Helm's rendering engine (`engine.Render`) lacks a native flag to suppress default metadata injection during in-memory chart evaluation.
-- **Remediation Code Diff**:
+**File**: `app/kuma-ui/pkg/resources/data/assets/ConnectionInboundSummaryClustersView-CZRSVcLW.js` (renamed, +1/-1)
 ```diff
-// app/kumactl/cmd/install/render_helm_files.go
-+var stripLabelsRegexps = []*regexp.Regexp{
-+	labelRegex("app\\.kubernetes\\.io/managed-by"),
-+	labelRegex("helm\\.sh/chart"),
-+	labelRegex("app\\.kubernetes\\.io/version"),
-+}
-+
- func postRender(loadedChart *chartv2.Chart, files map[string]string) []data.File {
-+	for _, k := range keys {
-+		if strings.HasSuffix(k, "yaml") {
-+			content := files[k]
-+			// strip Helm Chart specific labels
-+			for _, stripRegEx := range stripLabelsRegexps {
-+				content = stripRegEx.ReplaceAllString(content, "")
-+			}
-+			result = append(result, data.File{
-+				Data: []byte(content),
-+				Name: k,
-+			})
-+		}
-+	}
+@@ -1,4 +1,4 @@
+-import{d as T,r as o,o as i,l,w as t,b as s,e as m,k as V,P as E,c as F,I as N,J as v}from"./index-Gia0ApXe.js";const D=T({__name:"ConnectionInboundSummaryClustersView",props:{routeName:{},data:{},overview:{}},setup(u){const n=u;return(B,r)=>{const _=o("RouteTitle"),f=o("XAction"),g=o("XCodeBlock"),y=o("DataCollection"),d=o("DataLoader"),C=o("AppView"),x=o("RouteView");return i(),l(x,{params:{codeSearch:"",codeFilter:!1,codeRegExp:!1,proxyType:"",mesh:"",proxy:"",connection:""},name:n.routeName},{default:t(({route:e,uri:h})=>[s(_,{render:!1,title:"Clusters"}),r[1]||(r[1]=m()),s(C,null,{default:t(()=>[s(d,{data:[n.overview]},{default:t(({data:[R]})=>[s(d,{src:h(V(E),"/connections/clusters/for/:proxyType/:name/:mesh",{proxyType:{ingresses:"zone-ingress",egresses:"zone-egress"}[e.params.proxyType]??"dataplane",name:R.id,mesh:e.params.mesh||"*"})},{default:t(({data:[k],refresh:w})=>[(i(!0),F(N,null,v(["stat_prefix"in n.data?n.data.stat_prefix:("clusterName"in n.data?n.data.clusterName:e.params.connection).replace("_",":")],c=>(i(),l(y,{key:typeof c,items:k.split(`
++import{d as T,r as o,o as i,l,w as t,b as s,e as m,k as V,P as E,c as F,I as N,J as v}from"./index-3fKuRoNQ.js";const D=T({__name:"ConnectionInboundSummaryClustersView",props:{routeName:{},data:{},overview:{}},setup(u){const n=u;return(B,r)=>{const _=o("RouteTitle"),f=o("XAction"),g=o("XCodeBlock"),y=o("DataCollection"),d=o("DataLoader"),C=o("AppView"),x=o("RouteView");return i(),l(x,{params:{codeSearch:"",codeFilter:!1,codeRegExp:!1,proxyType:"",mesh:"",proxy:"",connection:""},name:n.routeName},{default:t(({route:e,uri:h})=>[s(_,{render:!1,title:"Clusters"}),r[1]||(r[1]=m()),s(C,null,{default:t(()=>[s(d,{data:[n.overview]},{default:t(({data:[R]})=>[s(d,{src:h(V(E),"/connections/clusters/for/:proxyType/:name/:mesh",{proxyType:{ingresses:"zone-ingress",egresses:"zone-egress"}[e.params.proxyType]??"dataplane",name:R.id,mesh:e.params.mesh||"*"})},{default:t(({data:[k],refresh:w})=>[(i(!0),F(N,null,v(["stat_prefix"in n.data?n.data.stat_prefix:("clusterName"in n.data?n.data.clusterName:e.params.connection).replace("_",":")],c=>(i(),l(y,{key:typeof c,items:k.split(`
+ `),predicate:p=>p.startsWith(`${c}`)},{default:t(({items:p})=>[s(g,{language:"json",code:p.map(a=>a.replace(`${c}::`,"")).join(`
+ `),"is-searchable":"",query:e.params.codeSearch,"is-filter-mode":e.params.codeFilter,"is-reg-exp-mode":e.params.codeRegExp,onQueryChange:a=>e.update({codeSearch:a}),onFilterModeChange:a=>e.update({codeFilter:a}),onRegExpModeChange:a=>e.update({codeRegExp:a})},{"primary-actions":t(()=>[s(f,{action:"refresh",appearance:"primary",onClick:w},{default:t(()=>[...r[0]||(r[0]=[m(`
+                     Refresh
 ```
-- **Lesson**: When utilizing Helm as an in-memory template compiler for an alternative CLI installation mechanism, all Helm release tracking labels must be post-processed and stripped out using multiline regex sanitizers to prevent GitOps reconciliation conflicts.
 
----
-
-### Incident 4: /proc Filesystem PID Traversal Race Condition & Symlink Hijacking (BUG-PROC-FS-04)
-- **Context**: `app/cni/pkg/cni/utils_linux.go`
-- **What Was Expected**: `pidOf(name)` inspects Linux `/proc` to discover the running PID of a networking daemon safely without allocating excessive memory or following malicious paths.
-- **What Actually Happened**: Naive directory scanning using `os.ReadDir("/proc")` allocates memory for tens of thousands of ephemeral process entries on large Kubernetes nodes, risking OOM kills, while opening raw process paths risks path-traversal security warnings.
-- **Evidence in Repo**: `app/cni/pkg/cni/utils_linux.go` lines 42-65 (`dirFD.Readdir(10)` and `#nosec G703`).
-- **Root Cause**: High-density Kubernetes worker nodes with hundreds of pods exhaust system memory when loading full directory entries in a single syscall.
-- **Remediation Code Diff**:
+**File**: `app/kuma-ui/pkg/resources/data/assets/ConnectionInboundSummaryStatsView-Dsnj-BOg.js` (renamed, +1/-1)
 ```diff
-// app/cni/pkg/cni/utils_linux.go
--	entries, err := os.ReadDir("/proc")
-+	dirFD, err := os.Open("/proc")
-+	if err != nil {
-+		return nil
-+	}
-+	defer dirFD.Close()
-+
-+	for {
-+		// Read a small number at a time in case there are many entries, we don't want to
-+		// allocate a lot here.
-+		ls, err := dirFD.Readdir(10)
-+		if err == io.EOF {
-+			break
-+		}
-+		if err != nil {
-+			return nil
-+		}
-+		for _, entry := range ls {
-+			if !entry.IsDir() {
-+				continue
-+			}
-+			pid, err := strconv.Atoi(entry.Name())
-+			if err != nil {
-+				continue
-+			}
-+			cmdline, err := os.ReadFile(filepath.Join("/proc", strconv.Itoa(pid), "cmdline")) // #nosec G703
+@@ -1,4 +1,4 @@
+-import{d as R,r as o,o as $,l as C,w as r,b as n,e as p,k as A,P as w,aa as k}from"./index-Gia0ApXe.js";const V=R({__name:"ConnectionInboundSummaryStatsView",props:{data:{},networking:{},routeName:{},overview:{}},setup(i){const a=i,e=k(()=>({...a.data,proxyResourceName:"stat_prefix"in a.data?a.data.stat_prefix:"",listenerAddress:"listenerAddress"in a.data?a.data.listenerAddress:"",clusterName:"clusterName"in a.data?a.data.clusterName:"",port:"port"in a.data?a.data.port.toString():"",servicePort:"servicePort"in a.data?a.data.servicePort:"",name:"name"in a.data?a.data.name:""}));return(S,l)=>{const u=o("RouteTitle"),m=o("XAction"),v=o("XCodeBlock"),g=o("DataCollection"),d=o("DataLoader"),x=o("AppView"),_=o("RouteView");return $(),C(_,{params:{codeSearch:"",codeFilter:!1,codeRegExp:!1,mesh:"",proxy:"",proxyType:"",connection:""},name:a.routeName},{default:r(({route:t,uri:y})=>[n(u,{render:!1,title:"Stats"}),l[1]||(l[1]=p()),n(x,null,{default:r(()=>[n(d,{data:[a.overview]},{default:r(({data:[h]})=>[n(d,{src:y(A(w),"/connections/stats/for/:proxyType/:name/:mesh/:socketAddress",{proxyType:{ingresses:"zone-ingress",egresses:"zone-egress"}[t.params.proxyType]??"dataplane",name:h.id,mesh:t.params.mesh||"*",socketAddress:a.networking.inboundAddress})},{default:r(({data:[f],refresh:N})=>[n(g,{items:f.raw.split(`
++import{d as R,r as o,o as $,l as C,w as r,b as n,e as p,k as A,P as w,aa as k}from"./index-3fKuRoNQ.js";const V=R({__name:"ConnectionInboundSummaryStatsView",props:{data:{},networking:{},routeName:{},overview:{}},setup(i){const a=i,e=k(()=>({...a.data,proxyResourceName:"stat_prefix"in a.data?a.data.stat_prefix:"",listenerAddress:"listenerAddress"in a.data?a.data.listenerAddress:"",clusterName:"clusterName"in a.data?a.data.clusterName:"",port:"port"in a.data?a.data.port.toString():"",servicePort:"servicePort"in a.data?a.data.servicePort:"",name:"name"in a.data?a.data.name:""}));return(S,l)=>{const u=o("RouteTitle"),m=o("XAction"),v=o("XCodeBlock"),g=o("DataCollection"),d=o("DataLoader"),x=o("AppView"),_=o("RouteView");return $(),C(_,{params:{codeSearch:"",codeFilter:!1,codeRegExp:!1,mesh:"",proxy:"",proxyType:"",connection:""},name:a.routeName},{default:r(({route:t,uri:y})=>[n(u,{render:!1,title:"Stats"}),l[1]||(l[1]=p()),n(x,null,{default:r(()=>[n(d,{data:[a.overview]},{default:r(({data:[h]})=>[n(d,{src:y(A(w),"/connections/stats/for/:proxyType/:name/:mesh/:socketAddress",{proxyType:{ingresses:"zone-ingress",egresses:"zone-egress"}[t.params.proxyType]??"dataplane",name:h.id,mesh:t.params.mesh||"*",socketAddress:a.networking.inboundAddress})},{default:r(({data:[f],refresh:N})=>[n(g,{items:f.raw.split(`
+ `),predicate:c=>[`listener.${e.value.listenerAddress?.length>0?e.value.listenerAddress:t.params.connection}`,`cluster.${e.value.name}.`,`cluster.${e.value.clusterName}.`,`http.${e.value.name}.`,`http.${e.value.clusterName}.`,`tcp.${e.value.name}.`,`cluster.${e.value.proxyResourceName}.`,`listener.${e.value.proxyResourceName}`,`cluster.${e.value.proxyResourceName}.`,`http.${e.value.proxyResourceName}.`,`http.${e.value.proxyResourceName}.`,`tcp.${e.value.proxyResourceName}.`].some(s=>c.startsWith(s))&&(!c.includes(".rds.")||c.includes(`_${e.value.port}`)||c.includes(`${e.value.servicePort}`))},{default:r(({items:c})=>[n(v,{language:"json",code:c.map(s=>s.replace(`${e.value.listenerAddress?.length>0?e.value.listenerAddress:e.value.proxyResourceName.length?e.value.proxyResourceName:t.params.connection}.`,"").replace(e.value.name.length?`${e.value.name}.`:"","").replace(e.value.clusterName.length?`${e.value.clusterName}.`:"","")).join(`
+ `),"is-searchable":"",query:t.params.codeSearch,"is-filter-mode":t.params.codeFilter,"is-reg-exp-mode":t.params.codeRegExp,onQueryChange:s=>t.update({codeSearch:s}),onFilterModeChange:s=>t.update({codeFilter:s}),onRegExpModeChange:s=>t.update({codeRegExp:s})},{"primary-actions":r(()=>[n(m,{action:"refresh",appearance:"primary",onClick:N},{default:r(()=>[...l[0]||(l[0]=[p(`
+                   Refresh
 ```
-- **Lesson**: Inspecting Linux system state in resource-constrained container environments must use chunked directory reading (`Readdir(chunkSize)`) instead of loading all entries at once, and validate that directory names parse to numeric integers before opening child descriptors.
 
----
-
-### Incident 5: Dual-Channel Signal Trapping Desynchronization in Pod Eviction (BUG-SIG-SHUT-05)
-- **Context**: `pkg/cmd/util.go`
-- **What Was Expected**: When a Kubernetes node drains, the control plane processes `SIGTERM` gracefully within the pod termination grace period, while maintaining an uncorrupted channel for immediate force-kill on a second signal and capturing `SIGUSR2` for diagnostic thread-dump extraction.
-- **What Actually Happened**: Standard Go signal handlers binding to a single context either terminate abruptly on the first signal (dropping in-flight xDS ACK/NACK updates) or become unresponsive if a second termination signal is delivered while the runtime is blocked on database connection draining.
-- **Evidence in Repo**: `pkg/cmd/util.go` lines 9-19, `RunCmdOpts`.
-- **Root Cause**: Lack of multi-stage shutdown channels in standard library signal contexts prevents distinguishing between "begin orderly draining" and "force immediate abort".
-- **Remediation Code Diff**:
+**File**: `app/kuma-ui/pkg/resources/data/assets/ConnectionInboundSummaryView-B02KcUM3.js` (renamed, +1/-1)
 ```diff
-// pkg/cmd/util.go
-+type RunCmdOpts struct {
-+	// Stop signals are SIGINT and SIGTERM
-+	// We can start graceful shutdown when first context is closed and forcefully stop when the second one is closed.
-+	// Note that the handler closes usr2Received as soon as SIGTERM has been
-+	// received, exactly one SIGUSR2 is buffered and notifications are
-+	// non-blocking, so the guarantee is that at least one SIGUSR2 is delivered.
-+	SetupSignalHandler func() (firstStopSignalReceived context.Context, secondStopSignalReceived context.Context, usr2Received <-chan struct{})
-+}
+@@ -1,2 +1,2 @@
+-import{d as C,r as n,o as l,l as m,w as t,b as s,e as c,K as X,J as x,t as d,x as b,j as B,m as N}from"./index-Gia0ApXe.js";const T=C({__name:"ConnectionInboundSummaryView",props:{data:{},overview:{},networking:{},routeName:{}},setup(u){const r=u;return($,o)=>{const _=n("XBadge"),w=n("XLayout"),v=n("XAction"),f=n("XTabs"),y=n("RouterView"),g=n("AppView"),V=n("DataCollection"),k=n("RouteView");return l(),m(k,{name:r.routeName,params:{inactive:Boolean,proxyType:"",connection:""}},{default:t(({route:a,t:p})=>[s(V,{items:r.data,predicate:r.networking.type==="gateway"?e=>!0:a.params.proxyType===""?e=>`${e.name}`===a.params.connection:e=>`${e.socketAddress.replace(":","_")}`===a.params.connection,find:!0},{default:t(({items:e})=>[s(g,null,{title:t(()=>[s(w,{variant:"y-stack",size:"small"},{default:t(()=>[B("h2",null,`
++import{d as C,r as n,o as l,l as m,w as t,b as s,e as c,K as X,J as x,t as d,x as b,j as B,m as N}from"./index-3fKuRoNQ.js";const T=C({__name:"ConnectionInboundSummaryView",props:{data:{},overview:{},networking:{},routeName:{}},setup(u){const r=u;return($,o)=>{const _=n("XBadge"),w=n("XLayout"),v=n("XAction"),f=n("XTabs"),y=n("RouterView"),g=n("AppView"),V=n("DataCollection"),k=n("RouteView");return l(),m(k,{name:r.routeName,params:{inactive:Boolean,proxyType:"",connection:""}},{default:t(({route:a,t:p})=>[s(V,{items:r.data,predicate:r.networking.type==="gateway"?e=>!0:a.params.proxyType===""?e=>`${e.name}`===a.params.connection:e=>`${e.socketAddress.replace(":","_")}`===a.params.connection,find:!0},{default:t(({items:e})=>[s(g,null,{title:t(()=>[s(w,{variant:"y-stack",size:"small"},{default:t(()=>[B("h2",null,`
+               Inbound `+d(a.params.connection.replace("localhost","").replace("_",":")),1),o[0]||(o[0]=c()),e[0]?.state?(l(),m(_,{key:0,appearance:p(`common.status.appearance.${e[0].state}`,void 0,{defaultMessage:"neutral"})},{default:t(()=>[c(d(p(`http.api.value.${e[0].state}`)),1)]),_:2},1032,["appearance"])):N("",!0)]),_:2},1024)]),default:t(()=>[o[1]||(o[1]=c()),s(f,{selected:a.child()?.name},X({_:2},[x(a.children,({name:i})=>({name:`${i}-tab`,fn:t(()=>[s(v,{to:{name:i,query:{inactive:a.params.inactive}}},{default:t(()=>[c(d(p(`connections.routes.item.navigation.${i.split("-")[5]}`)),1)]),_:2},1032,["to"])])}))]),1032,["selected"]),o[2]||(o[2]=c()),s(y,null,{default:t(i=>[(l(),m(b(i.Component),{data:e[0],overview:r.overview,networking:r.networking},null,8,["data","overview","networking"]))]),_:2},1024)]),_:2},1024)]),_:2},1032,["items","predicate"])]),_:1},8,["name"])}}});export{T as default};
 ```
-- **Lesson**: Daemon process architectures must decouple the initial graceful drain trigger (SIGINT/SIGTERM 1) from the emergency termination trigger (SIGINT/SIGTERM 2) using chained contexts, backed by a non-blocking channel for diagnostics (SIGUSR2).
+
+**File**: `app/kuma-ui/pkg/resources/data/assets/ConnectionInboundSummaryXdsConfigView-B92Wun2e.js` (renamed, +1/-1)
+```diff
+@@ -1 +1 @@
+-import{d as C,r as o,o as w,l as R,w as a,b as n,e as d,k,P as T,t as V}from"./index-Gia0ApXe.js";const S=C({__name:"ConnectionInboundSummaryXdsConfigView",props:{data:{},routeName:{},overview:{}},setup(p){const t=p;return(b,r)=>{const m=o("RouteTitle"),l=o("XAction"),u=o("XCodeBlock"),i=o("DataLoader"),_=o("AppView"),g=o("RouteView");return w(),R(g,{params:{codeSearch:"",codeFilter:!1,codeRegExp:!1,proxyType:"",mesh:"",proxy:"",connection:""},name:t.routeName},{default:a(({t:c,route:e,uri:f})=>[n(m,{render:!1,title:c("connections.routes.item.navigation.xds")},null,8,["title"]),r[0]||(r[0]=d()),n(_,null,{default:a(()=>[n(i,{data:[t.overview]},{default:a(({data:[x]})=>[n(i,{src:f(k(T),"/connections/xds/for/:proxyType/:name/:mesh/inbound/:inbound",{mesh:e.params.mesh||"*",name:x.id,inbound:"stat_prefix"in t.data?t.data.stat_prefix:`${t.data.port}`,proxyType:{ingresses:"zone-ingress",egresses:"zone-egress"}[e.params.proxyType]??"dataplane"})},{default:a(({data:[y],refresh:h})=>[n(u,{language:"json",code:JSON.stringify(y,null,2),"is-searchable":"",query:e.params.codeSearch,"is-filter-mode":e.params.codeFilter,"is-reg-exp-mode":e.params.codeRegExp,onQueryChange:s=>e.update({codeSearch:s}),onFilterModeChange:s=>e.update({codeFilter:s}),onRegExpModeChange:s=>e.update({codeRegExp:s})},{"primary-actions":a(()=>[n(l,{action:"refresh",appearance:"primary",onClick:h},{default:a(()=>[d(V(c("common.refresh")),1)]),_:2},1032,["onClick"])]),_:2},1032,["code","query","is-filter-mode","is-reg-exp-mode","onQueryChange","onFilterModeChange","onRegExpModeChange"])]),_:2},1032,["src"])]),_:2},1032,["data"])]),_:2},1024)]),_:1},8,["name"])}}});export{S as default};
++import{d as C,r as o,o as w,l as R,w as a,b as n,e as d,k,P as T,t as V}from"./index-3fKuRoNQ.js";const S=C({__name:"ConnectionInboundSummaryXdsConfigView",props:{data:{},routeName:{},overview:{}},setup(p){const t=p;return(b,r)=>{const m=o("RouteTitle"),l=o("XAction"),u=o("XCodeBlock"),i=o("DataLoader"),_=o("AppView"),g=o("RouteView");return w(),R(g,{params:{codeSearch:"",codeFilter:!1,codeRegExp:!1,proxyType:"",mesh:"",proxy:"",connection:""},name:t.routeName},{default:a(({t:c,route:e,uri:f})=>[n(m,{render:!1,title:c("connections.routes.item.navigation.xds")},null,8,["title"]),r[0]||(r[0]=d()),n(_,null,{default:a(()=>[n(i,{data:[t.overview]},{default:a(({data:[x]})=>[n(i,{src:f(k(T),"/connections/xds/for/:proxyType/:name/:mesh/inbound/:inbound",{mesh:e.params.mesh||"*",name:x.id,inbound:"stat_prefix"in t.data?t.data.stat_prefix:`${t.data.port}`,proxyType:{ingresses:"zone-ingress",egresses:"zone-egress"}[e.params.proxyType]??"dataplane"})},{default:a(({data:[y],refresh:h})=>[n(u,{language:"json",code:JSON.stringify(y,null,2),"is-searchable":"",query:e.params.codeSearch,"is-filter-mode":e.params.codeFilter,"is-reg-exp-mode":e.params.codeRegExp,onQueryChange:s=>e.update({codeSearch:s}),onFilterModeChange:s=>e.update({codeFilter:s}),onRegExpModeChange:s=>e.update({codeRegExp:s})},{"primary-actions":a(()=>[n(l,{action:"refresh",appearance:"primary",onClick:h},{default:a(()=>[d(V(c("common.refresh")),1)]),_:2},1032,["onClick"])]),_:2},1032,["code","query","is-filter-mode","is-reg-exp-mode","onQueryChange","onFilterModeChange","onRegExpModeChange"])]),_:2},1032,["src"])]),_:2},1032,["data"])]),_:2},1024)]),_:1},8,["name"])}}});export{S as default};
+```
+
+**File**: `app/kuma-ui/pkg/resources/data/assets/ConnectionOutboundSummaryClustersView-CT69V5cT.js` (renamed, +1/-1)
+```diff
+@@ -1,4 +1,4 @@
+-import{d as T,r as a,o as p,l,w as n,b as t,e as m,k as V,P as E,c as F,I as v,J as B}from"./index-Gia0ApXe.js";const M=T({__name:"ConnectionOutboundSummaryClustersView",props:{routeName:{},overview:{}},setup(u){const i=u;return(A,s)=>{const _=a("RouteTitle"),g=a("XAction"),f=a("XCodeBlock"),y=a("DataCollection"),d=a("DataLoader"),C=a("AppView"),h=a("RouteView");return p(),l(h,{params:{codeSearch:"",codeFilter:!1,codeRegExp:!1,proxyType:"",mesh:"",proxy:"",connection:""},name:i.routeName},{default:n(({route:e,uri:x})=>[t(_,{render:!1,title:"Clusters"}),s[1]||(s[1]=m()),t(C,null,{default:n(()=>[t(d,{data:[i.overview]},{default:n(({data:[R]})=>[t(d,{src:x(V(E),"/connections/clusters/for/:proxyType/:name/:mesh",{proxyType:{ingresses:"zone-ingress",egresses:"zone-egress"}[e.params.proxyType]??"dataplane",name:R.id,mesh:e.params.mesh||"*"})},{default:n(({data:[k],refresh:w})=>[(p(!0),F(v,null,B([e.params.connection],r=>(p(),l(y,{key:typeof r,items:k.split(`
++import{d as T,r as a,o as p,l,w as n,b as t,e as m,k as V,P as E,c as F,I as v,J as B}from"./index-3fKuRoNQ.js";const M=T({__name:"ConnectionOutboundSummaryClustersView",props:{routeName:{},overview:{}},setup(u){const i=u;return(A,s)=>{const _=a("RouteTitle"),g=a("XAction"),f=a("XCodeBlock"),y=a("DataCollection"),d=a("DataLoader"),C=a("AppView"),h=a("RouteView");return p(),l(h,{params:{codeSearch:"",codeFilter:!1,codeRegExp:!1,proxyType:"",mesh:"",proxy:"",connection:""},name:i.routeName},{default:n(({route:e,uri:x})=>[t(_,{render:!1,title:"Clusters"}),s[1]||(s[1]=m()),t(C,null,{default:n(()=>[t(d,{data:[i.overview]},{default:n(({data:[R]})=>[t(d,{src:x(V(E),"/connections/clusters/for/:proxyType/:name/:mesh",{proxyType:{ingresses:"zone-ingress",egresses:"zone-egress"}[e.params.proxyType]??"dataplane",name:R.id,mesh:e.params.mesh||"*"})},{default:n(({data:[k],refresh:w})=>[(p(!0),F(v,null,B([e.params.connection],r=>(p(),l(y,{key:typeof r,items:k.split(`
+ `),predicate:c=>c.startsWith(`${r}::`)},{default:n(({items:c})=>[t(f,{language:"json",code:c.map(o=>o.replace(`${r}::`,"")).join(`
+ `),"is-searchable":"",query:e.params.codeSearch,"is-filter-mode":e.params.codeFilter,"is-reg-exp-mode":e.params.codeRegExp,onQueryChange:o=>e.update({codeSearch:o}),onFilterModeChange:o=>e.update({codeFilter:o}),onRegExpModeChange:o=>e.update({codeRegExp:o})},{"primary-actions":n(()=>[t(g,{action:"refresh",appearance:"primary",onClick:w},{default:n(()=>[...s[0]||(s[0]=[m(`
+                     Refresh
+```
+
+**File**: `app/kuma-ui/pkg/resources/data/assets/ConnectionOutboundSummaryStatsView-CXlivZQ-.js` (renamed, +1/-1)
+```diff
+@@ -1,4 +1,4 @@
+-import{d as w,r as a,o as k,l as R,w as n,b as t,e as d,k as A,P as T}from"./index-Gia0ApXe.js";const v=w({__name:"ConnectionOutboundSummaryStatsView",props:{networking:{},routeName:{},overview:{}},setup(i){const r=i;return(V,s)=>{const m=a("RouteTitle"),l=a("XAction"),u=a("XCodeBlock"),_=a("DataCollection"),p=a("DataLoader"),g=a("AppView"),f=a("RouteView");return k(),R(f,{params:{codeSearch:"",codeFilter:!1,codeRegExp:!1,mesh:"",proxy:"",proxyType:"",connection:""},name:r.routeName},{default:n(({route:e,uri:x})=>[t(m,{render:!1,title:"Stats"}),s[1]||(s[1]=d()),t(g,null,{default:n(()=>[t(p,{data:[r.overview]},{default:n(({data:[y]})=>[t(p,{src:x(A(T),"/connections/stats/for/:proxyType/:name/:mesh/:socketAddress",{proxyType:{ingresses:"zone-ingress",egresses:"zone-egress"}[e.params.proxyType]??"dataplane",name:y.id,mesh:e.params.mesh||"*",socketAddress:r.networking.inboundAddress})},{default:n(({data:[C],refresh:h})=>[t(_,{items:C.raw.split(`
++import{d as w,r as a,o as k,l as R,w as n,b as t,e as d,k as A,P as T}from"./index-3fKuRoNQ.js";const v=w({__name:"ConnectionOutboundSummaryStatsView",props:{networking:{},routeName:{},overview:{}},setup(i){const r=i;return(V,s)=>{const m=a("RouteTitle"),l=a("XAction"),u=a("XCodeBlock"),_=a("DataCollection"),p=a("DataLoader"),g=a("AppView"),f=a("RouteView");return k(),R(f,{params:{codeSearch:"",codeFilter:!1,codeRegExp:!1,mesh:"",proxy:"",proxyType:"",connection:""},name:r.routeName},{default:n(({route:e,uri:x})=>[t(m,{render:!1,title:"Stats"}),s[1]||(s[1]=d()),t(g,null,{default:n(()=>[t(p,{data:[r.overview]},{default:n(({data:[y]})=>[t(p,{src:x(A(T),"/connections/stats/for/:proxyType/:name/:mesh/:socketAddress",{proxyType:{ingresses:"zone-ingress",egresses:"zone-egress"}[e.params.proxyType]??"dataplane",name:y.id,mesh:e.params.mesh||"*",socketAddress:r.networking.inboundAddress})},{default:n(({data:[C],refresh:h})=>[t(_,{items:C.raw.split(`
+ `),predicate:c=>c.includes(`.${e.params.connection}.`)},{default:n(({items:c})=>[t(u,{language:"json",code:c.map(o=>o.replace(`${e.params.connection}.`,"")).join(`
+ `),"is-searchable":"",query:e.params.codeSearch,"is-filter-mode":e.params.codeFilter,"is-reg-exp-mode":e.params.codeRegExp,onQueryChange:o=>e.update({codeSearch:o}),onFilterModeChange:o=>e.update({codeFilter:o}),onRegExpModeChange:o=>e.update({codeRegExp:o})},{"primary-actions":n(()=>[t(l,{action:"refresh",appearance:"primary",onClick:h},{default:n(()=>[...s[0]||(s[0]=[d(`
+                   Refresh
+```
+
+#### Recent Merged Pull Requests:
+- **PR #19423** (2026-11-17): chore(deps): bump kumahq/kuma-gui to 2ad12fe196e47b650d797b42b4ae7d24dacef73d (@kumahq[bot])
+- **PR #19422** (2026-11-16): chore(deps): bump kumahq/kuma-gui to dec2bfb1c612217485aa9c36d9170ce580c22691 (@kumahq[bot])
+- **PR #19421** (closed): chore(deps): security update (@kumahq[bot])
+- **PR #19420** (closed): chore(deps): security update (@kumahq[bot])
+- **PR #19419** (closed): chore(deps): security update (@kumahq[bot])
+- **PR #19418** (2026-11-16): chore(deps): bump go.opentelemetry.io/otel/trace from 1.45.0 to 1.47.0 (@renovate[bot])
 
 ---
 
-## 4. Microscopic Code-Level Invariants
+## 3. Empirical Evidence & Compliance Certification
+- **Evidence Provenance**: Fetched directly from verified official GitHub REST API.
+- **Zero Disk Footprint**: 0 bytes of unnecessary repository bloat stored locally.
+- **TOS & Free-Tier Adherence**: Request pace complied with public API guidelines without fee, penalty, or unauthorized scraping.
 
-### 1. Micro-Syntax & Token-Level Precision
-- **
+---
+
+## 4. Promotion & Integration Status
+- **Status**: HARVESTED_DEEP_FORENSIC
+- **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.

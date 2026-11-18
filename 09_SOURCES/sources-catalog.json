@@ -345,8 +345,8 @@
     "sourceUrl": "https://huggingface.co/Lightricks/LTX-2.5",
     "sourceVersion": "hf-lightricks-ltx-2.5",
     "license": "Open-Source",
-    "contentHash": "a33b62bf3f2f16019a8485fda271d6a633e9c6d5c89b4dfb701795c796c586a2",
-    "lastHarvestedAt": "2026-11-13T13:50:15.446Z",
+    "contentHash": "e12a0af0311053f893919f04bb1574ca760edda72fca9e84ed42e4b414b6a978",
+    "lastHarvestedAt": "2026-11-18T01:38:27.938Z",
     "learningId": "learn-huggingface-lightricks-ltx-2-5"
   },
   "hf-prism-ml-ternary-bonsai-2-27b-gguf": {
@@ -2173,10 +2173,10 @@
     "repository": "iii-hq/iii",
     "platform": "github",
     "sourceUrl": "https://github.com/iii-hq/iii",
-    "sourceVersion": "756888ba",
+    "sourceVersion": "3ffe1122",
     "license": "PERMISSIVE_OPEN_SOURCE",
-    "contentHash": "8125f69c7cb5b15a0072be8ab3a31c73c8014a2fa1efe862ec46a0547281bebe",
-    "lastHarvestedAt": "2026-11-16T18:38:25.236Z",
+    "contentHash": "b6f64f96e33779c8c53a0b53d13396b4889bd290f2e523a61f1c20cd5faa70c4",
+    "lastHarvestedAt": "2026-11-18T01:38:29.531Z",
     "learningId": "learn-github-iii-hq-iii"
   },
   "crawlseo-crawlseo": {
@@ -3293,10 +3293,10 @@
     "repository": "doobidoo/mcp-memory-service",
     "platform": "github",
     "sourceUrl": "https://github.com/doobidoo/mcp-memory-service",
-    "sourceVersion": "30f9eb40",
+    "sourceVersion": "a908b7ba",
     "license": "Apache-2.0",
-    "contentHash": "bcbb81d4df96828d852949442ad13f8866d4920f236c6950368b6fb51c4fcf2a",
-    "lastHarvestedAt": "2026-11-17T01:54:47.920Z",
+    "contentHash": "1e33487a7cafd402d054956179a42de2ea523cf27fcb08a4b5742a889c633cd7",
+    "lastHarvestedAt": "2026-11-18T01:38:42.464Z",
     "learningId": "learn-github-doobidoo-mcp-memory-service"
   },
   "21st-dev-magic-mcp": {
@@ -3333,10 +3333,10 @@
     "repository": "kumahq/kuma",
     "platform": "github",
     "sourceUrl": "https://github.com/kumahq/kuma",
-    "sourceVersion": "a71f8a93",
+    "sourceVersion": "053b67f7",
     "license": "Apache-2.0",
-    "contentHash": "1eab0b8b2ba475562b648fe0a6bb025f0d8483302be3fd7f5d796f66c7a2869d",
-    "lastHarvestedAt": "2026-11-17T03:16:54.241Z",
+    "contentHash": "5fa0c7e13b55cbc4025e73e5b42b01e29f5a6bd5c2a6a931b8b018f3966f8d95",
+    "lastHarvestedAt": "2026-11-18T01:38:37.077Z",
     "learningId": "learn-github-kumahq-kuma"
   },
   "cilium-cilium": {

@@ -4,24 +4,24 @@
 {
   "source_repository": "iii-hq/iii",
   "source_url": "https://github.com/iii-hq/iii",
-  "source_version": "756888ba",
+  "source_version": "3ffe1122",
   "license": "PERMISSIVE_OPEN_SOURCE",
-  "timestamp": "2026-11-16T18:38:25.429Z",
+  "timestamp": "2026-11-18T01:38:29.723Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-iii-hq-iii",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [iii-hq/iii](https://github.com/iii-hq/iii) (Revision: `756888ba`).  
-> **License**: PERMISSIVE_OPEN_SOURCE | **Timestamp**: `2026-11-16T18:38:25.429Z`  
+> **Provenance**: Harvested from [iii-hq/iii](https://github.com/iii-hq/iii) (Revision: `3ffe1122`).  
+> **License**: PERMISSIVE_OPEN_SOURCE | **Timestamp**: `2026-11-18T01:38:29.723Z`  
 > **Learning ID**: `learn-github-iii-hq-iii`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), D (Research & Knowledge Intelligence), L (Deployment & Operations Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), A (Human & Need Intelligence), M (Feedback & Evolution Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence), F (Design Intelligence)
-- **Confidence Rating**: 77%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), D (Research & Knowledge Intelligence), L (Deployment & Operations Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), B (Product Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 71%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from iii-hq/iii:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/iii-hq-iii-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/iii-hq/iii](https://github.com/iii-hq/iii))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T18:38:24.308Z  
+> **Harvest Timestamp**: 2026-11-18T01:38:28.563Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Effortlessly compose, extend, observe, discover, and react to every service in real-time for the first time ever.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: package.json, Cargo.toml, README.md
-- **Stars / Engagement**: 18933 stars
+- **Stars / Engagement**: 18937 stars
 
 ---
 
@@ -2251,604 +2251,464 @@ pub use tui::run;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `756888ba` (2026-11-16)
-**Commit Message**: docs: remove placeholder tutorials and pre-monorepo leftovers (#2567)
+### Incident Patch 1: `e2be391c` (2026-11-17)
+**Commit Message**: fix(security): replace unmaintained chrono and validate ZIP headers (#2579)
 
-Co-authored-by: iii harness (claude-code/claude-opus-5-5) <[REDACTED_EMAIL]>
+Co-authored-by: iii harness (codex/gpt-6.1-sol) <[REDACTED_EMAIL]>
 
-**File**: `docs/changelog/index.mdx` (modified, +1/-1)
+**File**: `Cargo.lock` (modified, +65/-6)
 ```diff
-@@ -1367,7 +1367,7 @@ type: "reference"
+@@ -387,10 +387,8 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "c673075a2e0e5f4a1dde27ce9dee1ea4558c7ffe648f576438a20ca1d2acc4b0"
+ dependencies = [
+  "iana-time-zone",
+- "js-sys",
+  "num-traits",
+  "serde",
+- "wasm-bindgen",
+  "windows-link",
+ ]
  
-   <Callout type="tip">
-     Upgrading an existing app? Follow the step-by-step
--    [Upgrading from 0.19.x to 0.20.x](/next/upgrading/from-0-19-x) guide.
-+    [Upgrading from 0.19.x to 0.20.x](/0-21-0/upgrading/from-0-19-x) guide.
-   </Callout>
+@@ -1666,7 +1664,6 @@ dependencies = [
+  "async-trait",
+  "axum",
+  "base64",
+- "chrono",
+  "clap",
+  "clap-help",
+  "colored",
+@@ -1694,6 +1691,7 @@ dependencies = [
+  "indexmap",
+  "indicatif",
+  "inventory",
++ "jiff",
+  "jsonschema",
+  "libc",
+  "machineid-rs",
+@@ -1750,7 +1748,6 @@ dependencies = [
+ name = "iii-compose"
+ version = "0.1.0"
+ dependencies = [
+- "chrono",
+  "clap",
+  "colored",
+  "console 0.15.11",
+@@ -1762,6 +1759,7 @@ dependencies = [
+  "iii-sandbox-contract",
+  "iii-sdk",
+  "indexmap",
++ "jiff",
+  "jsonschema",
+  "nix 0.31.3",
+  "reqwest 0.12.28",
+@@ -1995,6 +1993,58 @@ version = "1.0.18"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "8f42a60cbdf9a97f5d2305f08a87dc4e09308d1276d28c869c684d7777685682"
  
-   ### Shared types extracted into `@iii-dev/helpers`
-```
-
-**File**: `docs/creating-workers/worker-manifest.mdx` (modified, +1/-1)
-```diff
-@@ -108,7 +108,7 @@ without a warning.
- <Note>
-   A registry bundle manifest rejects `scripts.setup` with `W180 BundleManifestRejected`. It accepts
-   `scripts.install` and `runtime.base_image`, and it rejects a base image that is not a plausible
--  OCI reference. See [Registry / Bundling workers](./workers-registry#bundle-archives).
-+  OCI reference. See [Worker Registry](../using-iii/workers-registry#artifact-types).
- </Note>
++[[package]]
++name = "jiff"
++version = "0.2.43"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "26699905cc795a23e3949585cc7ba3ee8ade090872a27e4316304a777297894a"
++dependencies = [
++ "jiff-core",
++ "jiff-static",
++ "jiff-tzdb-platform",
++ "log",
++ "portable-atomic",
++ "portable-atomic-util",
++ "serde_core",
++ "windows-link",
++]
++
++[[package]]
++name = "jiff-core"
++version = "0.1.5"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "ffe6854081f5ac0a3046a9b223729ccd7a20b1e0e8277e44dc0660eedf67dfe2"
++dependencies = [
++ "log",
++]
++
++[[package]]
++name = "jiff-static"
++version = "0.2.43"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "4b4ff49b2887190c760b86207b55cdcaabbdecaf7a0660d68aa2ed6f652abf0a"
++dependencies = [
++ "jiff-core",
++ "proc-macro2",
++ "quote",
++ "syn 2.0.117",
++]
++
++[[package]]
++name = "jiff-tzdb"
++version = "0.1.9"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "fa8377070c6bae868759445e5a77f66d84f0b72f3a054bfb00e6d038b8282da7"
++
++[[package]]
++name = "jiff-tzdb-platform"
++version = "0.1.3"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "875a5a69ac2bab1a891711cf5eccbec1ce0341ea805560dcd90b7a2e925132e8"
++dependencies = [
++ "jiff-tzdb",
++]
++
+ [[package]]
+ name = "js-sys"
+ version = "0.3.98"
+@@ -2757,6 +2807,15 @@ version = "1.13.1"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+ checksum = "c33a9471896f1c69cecef8d20cbe2f7accd12527ce60845ff44c153bb2a21b49"
  
- ## `env`
-```
-
-**File**: `docs/creating-workers/worker-manifest.mdx.skill.md` (modified, +1/-1)
-```diff
-@@ -102,7 +102,7 @@ without a warning.
- <Note>
-   A registry bundle manifest rejects `scripts.setup` with `W180 BundleManifestRejected`. It accepts
-   `scripts.install` and `runtime.base_image`, and it rejects a base image that is not a plausible
--  OCI reference. See [Registry / Bundling workers](./workers-registry#bundle-archives).
-+  OCI reference. See [Worker Registry](../using-iii/workers-registry#artifact-types).
- </Note>
++[[package]]
++name = "portable-atomic-util"
++version = "0.2.8"
++source = "registry+https://github.com/rust-lang/crates.io-index"
++checksum = "10ab3eb7f3becc3a1cbc4f2c6f20267996cfc1a6467a873763411b136a122715"
++dependencies = [
++ "portable-atomic",
++]
++
+ [[package]]
+ name = "potential_utf"
+ version = "0.1.5"
+@@ -5463,9 +5522,9 @@ dependencies = [
  
- ## `env`
+ [[package]]
+ name = "zip"
+-version = "9.0.4"
++version = "9.0.5"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "a954114b47a54df49f83d2722814e86b23d4bb1b54a1b90fb7d92b41619ddc22"
++checksum = "6e04976da629d3b04204ba8105b396a193af8ad2583b2c79bfb3ab8af580a11e"
+ dependencies = [
+  "crc32fast",
+  "flate2",
 ```
 
-**File**: `docs/creating-workers/workers-registry.mdx` (removed, +0/-149)
+**File**: `crates/iii-compose/Cargo.toml` (modified, +2/-2)
 ```diff
-@@ -1,149 +0,0 @@
-----
--title: "Registry"
--description: "Registry publishing, versioning, and the bundle artifact contract for iii workers."
--owner: "devrel"
--type: "reference"
-----
--
--The iii registry at [workers.iii.dev](https://workers.iii.dev/) serves the artifacts of published
--workers. A worker published as a native binary, an OCI image, or a bundle archive is installable by
--name from any iii project. For the consuming side, see
--[Worker Registry](../using-iii/workers-registry).
--
--## Publish a worker
--
--Publishing a worker uploads its artifact to the registry and records its semver version. The
--registry then resolves the worker by name for every project that requests it.
--
--## Version your worker
--
--Workers in the registry follow semver. Patch bumps for bug fixes, minor bumps for additive
--capability, major bumps for breaking changes to function signatures or `args_format`.
--
--## Build binary artifacts for multiple platforms
--
--Binary workers can publish artifacts for multiple platform targets in a single registry entry (macOS
--arm64/x64, Linux arm64/x64/armv7, Windows arm64/x64/x86). One published version covers every
--supported host without separate publications per platform.
--
--## Bundle archives
--
--A bundle worker publishes a single `tar.gz` archive that contains the worker's bundled source plus
--an `iii.worker.yaml` manifest at the archive root.
--
--Use a bundle when:
--
--- You ship a pre-built JavaScript bundle or a packaged Python worker, and you do not want to publish
--  a Docker image.
--- You want artifacts measured in KB, not MB. Only the bundled source travels in the archive. The
--  runtime ships with the engine-allowlisted base image (`docker.io/iiidev/node:latest` or
--  `docker.io/iiidev/python:latest`).
--
--<Note>
--  A bundle archive is not a binary artifact and not an OCI image. The archive carries source plus a
--  manifest, and the engine runs that source inside the sandbox VM.
--</Note>
--
--### Registry response shape
--
--```json
--{
--  "type": "bundle",
--  "name": "my-worker",
--  "version": "1.2.0",
--  "archive_url": "https://cdn.workers.iii.dev/my-worker/1.2.0/bundle.tar.gz",
--  "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
--}
--```
--
--The engine GETs `archive_url`, streams the bytes through a SHA-256 hasher, and compares the result
--against `sha256`. A mismatch, an HTTP error, a content type without an `application/` prefix, or a
--download above 64 MiB aborts the install with `W142`, and the engine deletes the downloaded archive.
--
--### Archive layout
--
--The archive root MUST contain `iii.worker.yaml`.
--
--```text
--my-worker-1.2.0.tar.gz
--├── iii.worker.yaml
--├── bundle.js
--└── assets/
--    └── logo.png
--```
--
--### Manifest contract (`iii.worker.yaml`)
--
--Every sample below is a complete manifest.
--
--#### Rejected fields
--
--`scripts.setup` is rejected with `W180 BundleManifestRejected`. Provisioning belongs in the base
--image. Pre-build the bundle and ship it ready to run.
--
--```yaml
--name: my-worker
--scripts:
--  setup: npm install
--  start: node bundle.js
--```
--
--#### Required fields
--
--- `name`: must equal the registry package name without an `@version` suffix. For example, use
--  `my-worker` for both `worker=my-worker` and `worker=my-worker@1.2.0`.
--- `scripts.start`: a non-empty shell string. The engine `exec`s this inside the sandbox VM.
--
--```yaml
--name: my-worker
--scripts:
--  start: node bundle.js
--```
--
--#### Optional fields
--
--- `scripts.install`: a shell string. The engine runs it inside the sandbox VM one time, before it
--  starts the worker. Python bundles use it for a pip bootstrap that cannot be vendored into the
--  archive.
--- `runtime.base_image`: an OCI image reference. The engine accepts any reference with alphanumerics
--  and the characters `._-/:@+`, for example `docker.io/iiidev/python:latest`. A malformed reference
--  is rejected with `W180`.
--- `resources.cpus`: defaults to `2`, capped at `4`.
--- `resources.memory`: defaults to `2048` MiB, capped at `4096` MiB.
--
--```yaml
--name: my-worker
--runtime:
--  base_image: docker.io/iiidev/python:latest
--scripts:
--  start: python -m my_worker
--  install: pip install -r requirements.txt
--resources:
--  cpus: 4
--  memory: 4096
--```
--
--A resource value above the cap is clamped to the cap, and the install prints a
--`W182 BundleResourceClamped` warning. A resource value is never rejected for its size. Keys outside
--the subset above are ignored: the bundle install does not reject unknown keys.
--
--<Note>
--  The bundle manifest is a subset of the [worker manifest](./worker-manifest). It rejects
--  `scripts.setup` and ignores every key outside the classes above.
--</Note>
--
--### Archive safety policy
--
--Bundle archives are extracted with tighter limits than OCI layers:
--
--| Limit                   | Value              |
--| ----------------------- | ------------------ |
--| Total uncompressed size | 64 MiB             |
--| Largest single file     | 32 MiB             |
--| Maximum entry count     | 1024     
+@@ -10,7 +10,7 @@ name = "iii_compose"
+ path = "src/lib.rs"
+ 
+ [dependencies]
+-chrono = "0.4"
++jiff = "0.2.43"
+ clap = { workspace = true }
+ serde = { workspace = true }
+ serde_yaml = { workspace = true }
+@@ -30,7 +30,7 @@ reqwest = { workspace = true }
+ url = { workspace = true }
+ flate2 = "1"
+ tar = "0.4"
+-zip = { version = "9", default-features = false, features = ["deflate-flate2"] }
++zip = { version = "9.0.5", default-features = false, features = ["deflate-flate2"] }
+ uuid = { workspace = true }
+ schemars = "0.8"
+ thiserror = { workspace = true }
 ```
 
-**File**: `docs/creating-workers/workers-registry.mdx.skill.md` (removed, +0/-147)
+**File**: `crates/iii-compose/src/registry.rs` (modified, +117/-3)
 ```diff
-@@ -1,147 +0,0 @@
--<!-- generated by iii-skill-render. DO NOT EDIT (changes here are overwritten on the next render). Edit docs/next/creating-workers/workers-registry.mdx. -->
--
--# Registry
--
--
--The iii registry at [workers.iii.dev](https://workers.iii.dev/) serves the artifacts of published
--workers. A worker published as a native binary, an OCI image, or a bundle archive is installable by
--name from any iii project. For the consuming side, see
--[Worker Registry](../using-iii/workers-registry).
--
--## Publish a worker
--
--Publishing a worker uploads its artifact to the registry and records its semver version. The
--registry then resolves the worker by name for every project that requests it.
--
--## Version your worker
--
--Workers in the registry follow semver. Patch bumps for bug fixes, minor bumps for additive
--capability, major bumps for breaking changes to function signatures or `args_format`.
--
--## Build binary artifacts for multiple platforms
--
--Binary workers can publish artifacts for multiple platform targets in a single registry entry (macOS
--arm64/x64, Linux arm64/x64/armv7, Windows arm64/x64/x86). One published version covers every
--supported host without separate publications per platform.
--
--## Bundle archives
--
--A bundle worker publishes a single `tar.gz` archive that contains the worker's bundled source plus
--an `iii.worker.yaml` manifest at the archive root.
--
--Use a bundle when:
--
--- You ship a pre-built JavaScript bundle or a packaged Python worker, and you do not want to publish
--  a Docker image.
--- You want artifacts measured in KB, not MB. Only the bundled source travels in the archive. The
--  runtime ships with the engine-allowlisted base image (`docker.io/iiidev/node:latest` or
--  `docker.io/iiidev/python:latest`).
--
--<Note>
--  A bundle archive is not a binary artifact and not an OCI image. The archive carries source plus a
--  manifest, and the engine runs that source inside the sandbox VM.
--</Note>
--
--### Registry response shape
--
--```json
--{
--  "type": "bundle",
--  "name": "my-worker",
--  "version": "1.2.0",
--  "archive_url": "https://cdn.workers.iii.dev/my-worker/1.2.0/bundle.tar.gz",
--  "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
--}
--```
--
--The engine GETs `archive_url`, streams the bytes through a SHA-256 hasher, and compares the result
--against `sha256`. A mismatch, an HTTP error, a content type without an `application/` prefix, or a
--download above 64 MiB aborts the install with `W142`, and the engine deletes the downloaded archive.
--
--### Archive layout
--
--The archive root MUST contain `iii.worker.yaml`.
--
--```text
--my-worker-1.2.0.tar.gz
--├── iii.worker.yaml
--├── bundle.js
--└── assets/
--    └── logo.png
--```
--
--### Manifest contract (`iii.worker.yaml`)
--
--Every sample below is a complete manifest.
--
--#### Rejected fields
--
--`scripts.setup` is rejected with `W180 BundleManifestRejected`. Provisioning belongs in the base
--image. Pre-build the bundle and ship it ready to run.
--
--```yaml
--name: my-worker
--scripts:
--  setup: npm install
--  start: node bundle.js
--```
--
--#### Required fields
--
--- `name`: must equal the registry package name without an `@version` suffix. For example, use
--  `my-worker` for both `worker=my-worker` and `worker=my-worker@1.2.0`.
--- `scripts.start`: a non-empty shell string. The engine `exec`s this inside the sandbox VM.
--
--```yaml
--name: my-worker
--scripts:
--  start: node bundle.js
--```
--
--#### Optional fields
--
--- `scripts.install`: a shell string. The engine runs it inside the sandbox VM one time, before it
--  starts the worker. Python bundles use it for a pip bootstrap that cannot be vendored into the
--  archive.
--- `runtime.base_image`: an OCI image reference. The engine accepts any reference with alphanumerics
--  and the characters `._-/:@+`, for example `docker.io/iiidev/python:latest`. A malformed reference
--  is rejected with `W180`.
--- `resources.cpus`: defaults to `2`, capped at `4`.
--- `resources.memory`: defaults to `2048` MiB, capped at `4096` MiB.
--
--```yaml
--name: my-worker
--runtime:
--  base_image: docker.io/iiidev/python:latest
--scripts:
--  start: python -m my_worker
--  install: pip install -r requirements.txt
--resources:
--  cpus: 4
--  memory: 4096
--```
--
--A resource value above the cap is clamped to the cap, and the install prints a
--`W182 BundleResourceClamped` warning. A resource value is never rejected for its size. Keys outside
--the subset above are ignored: the bundle install does not reject unknown keys.
--
--<Note>
--  The bundle manifest is a subset of the [worker manifest](./worker-manifest). It rejects
--  `scripts.setup` and ignores every key outside the classes above.
--</Note>
--
--### Archive safety policy
--
--Bundle archives are extracted with tighter limits than OCI layers:
--
--| Limit                   | Value              |
--| ----------------------- | ------------------ |
--| Total uncompressed size | 64 MiB             |
--| Largest single file     | 32 MiB             |
--| Maximum entry count     |
-```
-
-**File**: `docs/docs.json` (modified, +66/-2)
-```diff
-@@ -21,6 +21,54 @@
-     {
-       "source": "/next/how-to/use-trigger-conditions",
-       "destination": "/next/reference/filters"
-+    },
-+    {
-+      "source": "/tutorials/build-an-agent/:slug*",
-+      "destination": "/tutorials/linkly/overview"
-+    },
-+    {
-+      "source": "/tutorials/incremental-adoption/:slug*",
-+      "destination": "/tutorials/linkly/overview"
-+    },
-+    {
-+      "source": "/tutorials/reactive-crud/:slug*",
-+      "destination": "/tutorials/linkly/overview"
-+    },
-+    {
-+      "source": "/creating-workers/workers-registry",
-+      "destination": "/using-iii/workers-registry"
-+    },
-+    {
-+      "source": "/how-to/build-a-realtime-todo-app",
-+      "destination": "/upgrading/migrate-from-streams"
-+    },
-+    {
-+      "source": "/upgrading/from-0-19-x",
-+      "destination": "/0-21-0/upgrading/from-0-19-x"
-+    },
-+    {
-+      "source": "/next/tutorials/build-an-agent/:slug*",
-+      "destination": "/next/tutorials/linkly/overview"
-+    },
-+    {
-+      "source": "/next/tutorials/incremental-adoption/:slug*",
-+      "destination": "/next/tutorials/linkly/overview"
-+    },
-+    {
-+      "source": "/next/tutorials/reactive-crud/:slug*",
-+      "destination": "/next/tutorials/linkly/overview"
-+    },
-+    {
-+      "source": "/next/creating-workers/workers-registry",
-+      "destination": "/next/using-iii/workers-registry"
-+    },
-+    {
-+      "source": "/next/how-to/build-a-realtime-todo-app",
-+      "destination": "/next/upgrading/migrate-from-streams"
-+    },
-+    {
-+      "source": "/next/upgrading/from-0-19-x",
-+      "destination": "/0-21-0/upgrading/from-0-19-x"
+@@ -1310,12 +1310,29 @@ fn extract_and_publish(
+     archive_sha256: &str,
+     cancel: &crate::shutdown::BlockingCancellation,
+ ) -> Result<()> {
++    cancel.check(install_dir)?;
++    // Validate the whole ZIP before even creating a staging directory: checking
++    // only each opened entry could write earlier entries before a later mismatch.
++    let mut zip_archive = if bytes.starts_with(b"PK\x03\x04") || bytes.starts_with(b"PK\x05\x06") {
++        Some(
++            zip::ZipArchive::new(std::io::Cursor::new(&bytes))
++                .and_then(|mut archive| {
++                    archive.validate_header_consistency()?;
++                    Ok(archive)
++                })
++                .map_err(|source| ComposeError::Io {
++                    path: install_dir.to_path_buf(),
++                    source: source.into(),
++                })?,
++        )
++    } else {
++        None
++    };
+     unpack_and_publish(
+         |staging| {
+-            if bytes.starts_with(b"PK\x03\x04") || bytes.starts_with(b"PK\x05\x06") {
++            if let Some(archive) = &mut zip_archive {
+                 use zip::HasZipMetadata;
+ 
+-                let mut archive = zip::ZipArchive::new(std::io::Cursor::new(&bytes))?;
+                 for index in 0..archive.len() {
+                     cancel.check(staging).map_err(std::io::Error::other)?;
+                     let mut entry = archive.by_index(index)?;
+@@ -1362,7 +1379,7 @@ fn extract_and_publish(
+                 Ok(())
+             } else {
+                 tar::Archive::new(ArchiveReader {
+-                    inner: flate2::read::GzDecoder::new(std::io::Cursor::new(bytes)),
++                    inner: flate2::read::GzDecoder::new(std::io::Cursor::new(&bytes)),
+                     cancel,
+                     path: staging,
+                 })
+@@ -1713,6 +1730,103 @@ mod tests {
+         assert_eq!(artifact_requests(&server).await, 1);
      }
-   ],
-   "theme": "mint",
-@@ -138,6 +186,7 @@
-                       "next/creating-workers/database",
-                       "next/creating-workers/http",
-                       "next/creating-workers/queues",
-+                      "next/how-to/schedule-cron-task",
-                       "next/creating-workers/observability",
-                       "next/creating-workers/sandboxes",
-                       "next/creating-workers/worker-manager"
-@@ -147,7 +196,14 @@
-                   "next/creating-workers/functions",
-                   "next/creating-workers/observable-functions",
-                   "next/creating-workers/worker-manifest",
--                  "next/creating-workers/channels"
-+                  "next/creating-workers/channels",
-+                  {
-+                    "group": "Patterns",
-+                    "pages": [
-+                      "next/patterns/reactive-state-pattern",
-+                      "next/patterns/adapter-pattern"
-+                    ]
-+                  }
-                 ]
-               },
-               {
-@@ -284,6 +340,7 @@
-                       "creating-workers/database",
-                       "creating-workers/http",
-                       "creating-workers/queues",
-+                      "how-to/schedule-cron-task",
-                       "creating-workers/observability",
-                       "creating-workers/sandboxes",
-                       "creating-workers/worker-manager"
-@@ -293,7 +350,14 @@
-                   "creating-workers/functions",
-                   "creating-workers/observable-functions",
-                   "creating-workers/worker-manifest",
--                  "creating-workers/channels"
-+                  "creating-workers/channels",
-+                  {
-+                    "group": "Patterns",
-+                    "pages": [
-+                      "patterns/reactive-state-pattern",
-+                      "patterns/adapter-pattern"
-+                    ]
-+                  }
-                 ]
-               },
-               {
+ 
++    #[test]
++    fn zip_valid_archive_preserves_contents_and_integrity_marker() {
++        let root = tempfile::tempdir().unwrap();
++        let install = root.path().join("install");
++        let cancel = crate::shutdown::BlockingCancellation::default();
++        let name = format!("package/worker{}", std::env::consts::EXE_SUFFIX);
++        extract_and_publish(
++            zip_archive(&name, b"worker contents"),
++            &install,
++            "digest",
++            &cancel,
++        )
++        .unwrap();
++        assert_eq!(
++            std::fs::read(install.join(name)).unwrap(),
++            b"worker contents"
++        );
++        assert!(cache_matches(&install, "digest", &cancel).unwrap());
++        assert!(!cache_matches(&install, "different digest", &cancel).unwrap());
++    }
++
++    #[test]
++    fn zip_header_mismatch_is_rejected_before_any_staging_writes() {
++        use std::io::Write;
++        let mut writer = zip::ZipWriter::new(std::io::Cursor::new(Vec::new()));
++        for name in ["first.txt", "safe.txt"] {
++            writer
++                .start_file(name, zip::write::SimpleFileOptions::default())
++                .unwrap();
++            writer.write_all(b"contents").unwrap();
++        }
++        let bytes = writer.finish().unwrap().into_inner();
++        let local = bytes
++            .windows(4)
++            .enumerate()
++            .filter(|(_, b)| *b == b"PK\x03\x04")
++            .nth(1)
++            .unwrap()
++            .0;
++        // An absent parent proves validation happened before staging creation,
++        // not just that a partially extracted staging directory was removed.
++        for offset in [30, 6, 8, 10, 14, 18, 22] {
++            let root = tempfile::tempdir().unwrap();
++            let install = root.path().join("absent/worker");
++            let mut malicious = bytes.clone();
++            if offset == 30 {
++                malicious[local + 30..local + 38].copy_from_slice(b"evil.txt");
++            } else {
++                malicious[local + offset] ^= 1;
++            }
++            let error = extract_and_publish(
++                malicious,
++                &install,
++                "digest",
++                &crate::shutdown::BlockingCancellation::default(),
++            )
++            .unwrap_err();
++            assert!(
++                error.to_string().contains("header inconsistency"),
++                "offset {offset}: {error}"
++            );
++            assert_eq!(std::fs::read_dir(root.path()).unwrap().count(), 0);
++        }
++    }
++
++    #[test]
++    fn zip_corrupted_payload_is_not_published() {
++        let root = tempfile::tempdir().unwrap();
++        let install = root.path().join("install");
++        use std::io::Write;
++        let mut writer = zip::ZipWriter::new(std::io::Cursor::new(Vec::new()));
++        writer
++            .start_file(
++                "worker",
++                zip::write::SimpleFileOptions::default()
++                    .compression_method(zip::CompressionMethod::Stored),
++            )
++            .unwrap();
++        writer.write_
 ```
 
-**File**: `docs/how-to/build-a-realtime-todo-app.mdx` (removed, +0/-69)
+**File**: `crates/iii-compose/src/report.rs` (modified, +2/-2)
 ```diff
-@@ -1,69 +0,0 @@
-----
--title: "Build a real-time todo app"
--description: "End-to-end reactive todo app over a single browser-to-engine WebSocket."
--owner: "devrel"
--type: "how-to"
-----
--
--A full-stack reactive todo app over a single browser-to-engine WebSocket. Function calls and live
--change notifications flow over the same connection. The app follows the stored records pattern from
--[Recipe 2: stored records with live updates](../upgrading/migrate-from-streams#recipe-2-stored-records-with-live-updates):
--the todo worker owns the data, serves queries, and announces each change by calling
--`todos::on-changed`, a function that each browser observes.
--
--## Engine configuration
--
--The workers needed to support a browser-driven reactive app: `state` for storage and an RBAC
--listener (`rbac-proxy` or `iii-worker-manager`) for browser connections. No streaming worker is
--required.
--
--## Backend
--
--The worker, auth, storage, change notifications, and CRUD functions that power the app server-side.
--
--### Worker setup
--
--Connect a worker and register the functions the app needs.
--
--### Auth function (RBAC)
--
--An auth function runs on each new browser WebSocket connection, issues a session ID, and namespaces
--the session's registered functions to prevent collisions. The listener exposes `todos::on-changed`
--to the session so the browser can observe it.
--
--### Storage
--
--Todos live in the `state` worker under one scope, one key per todo, each with a revision number that
--every write increments.
--
--### Change notifications
--
--The todo worker registers `todos::on-changed` as a private function whose handler returns the change
--`{ id, revision, op }`, and calls it after every committed write. When it runs, the target of each
--browser's observer runs. Its `onObserverAdded` hook caps the number of browsers that observe it,
--rejecting the observer past the cap.
--
--### Functions
--
--The CRUD functions the browser calls (create, toggle, delete) write to storage and then call
--`todos::on-changed`. `todos::get` and a paginated `todos::list` serve reads.
--
--## Frontend
--
--The browser-side WebSocket connection and reactive hook that render live updates.
--
--### Connection
--
--Connect the browser to the engine over a single WebSocket using `iii-browser-sdk`.
--
--### Real-time hook
--
--A hook that observes `todos::on-changed` with a browser function as the target, then loads the list
--with `todos::list`. Each notification re-reads one todo unless the hook already has that revision,
--and the hook reloads the list after a reconnect.
--
--## Key concepts
--
--The reactive primitives this app relies on: single-WebSocket transport, per-session RBAC
--namespacing, an observable function for change notifications, and a query for the initial state and
--recovery.
+@@ -37,8 +37,8 @@ use std::{
+     time::{Duration, Instant},
+ };
+ 
+-use chrono::Local;
+ use colored::{Color, Colorize};
++use jiff::Zoned;
+ 
+ tokio::task_local! {
+     static PROJECT_SCOPE: String;
+@@ -1653,7 +1653,7 @@ pub(crate) fn restarting(key: &str) {
+         "{} {} {}",
+         RUNNING.dimmed(),
+         key.bold(),
+-        format!("restarting at {}", Local::now().format("%H:%M:%S")).dimmed()
++        format!("restarting at {}", Zoned::now().strftime("%H:%M:%S")).dimmed()
+     ));
+ }
+ 
 ```
 
-**File**: `docs/how-to/build-a-realtime-todo-app.mdx.skill.md` (removed, +0/-67)
+**File**: `engine/Cargo.toml` (modified, +2/-2)
 ```diff
-@@ -1,67 +0,0 @@
--<!-- generated by iii-skill-render. DO NOT EDIT (changes here are overwritten on the next render). Edit docs/next/how-to/build-a-realtime-todo-app.mdx. -->
--
--# Build a real-time todo app
--
--
--A full-stack reactive todo app over a single browser-to-engine WebSocket. Function calls and live
--change notifications flow over the same connection. The app follows the stored records pattern from
--[Recipe 2: stored records with live updates](../upgrading/migrate-from-streams#recipe-2-stored-records-with-live-updates):
--the todo worker owns the data, serves queries, and announces each change by calling
--`todos::on-changed`, a function that each browser observes.
--
--## Engine configuration
--
--The workers needed to support a browser-driven reactive app: `state` for storage and an RBAC
--listener (`rbac-proxy` or `iii-worker-manager`) for browser connections. No streaming worker is
--required.
--
--## Backend
--
--The worker, auth, storage, change notifications, and CRUD functions that power the app server-side.
--
--### Worker setup
--
--Connect a worker and register the functions the app needs.
--
--### Auth function (RBAC)
--
--An auth function runs on each new browser WebSocket connection, issues a session ID, and namespaces
--the session's registered functions to prevent collisions. The listener exposes `todos::on-changed`
--to the session so the browser can observe it.
--
--### Storage
--
--Todos live in the `state` worker under one scope, one key per todo, each with a revision number that
--every write increments.
--
--### Change notifications
--
--The todo worker registers `todos::on-changed` as a private function whose handler returns the change
--`{ id, revision, op }`, and calls it after every committed write. When it runs, the target of each
--browser's observer runs. Its `onObserverAdded` hook caps the number of browsers that observe it,
--rejecting the observer past the cap.
--
--### Functions
--
--The CRUD functions the browser calls (create, toggle, delete) write to storage and then call
--`todos::on-changed`. `todos::get` and a paginated `todos::list` serve reads.
--
--## Frontend
--
--The browser-side WebSocket connection and reactive hook that render live updates.
--
--### Connection
--
--Connect the browser to the engine over a single WebSocket using `iii-browser-sdk`.
--
--### Real-time hook
--
--A hook that observes `todos::on-changed` with a browser function as the target, then loads the list
--with `todos::list`. Each notification re-reads one todo unless the hook already has that revision,
--and the hook reloads the list after a reconnect.
--
--## Key concepts
--
--The reactive primitives this app relies on: single-WebSocket transport, per-session RBAC
--namespacing, an observable function for change notifications, and a query for the initial state and
--recovery.
+@@ -115,7 +115,7 @@ opentelemetry_sdk = { version = "0.32.1", features = ["rt-tokio"] }
+ opentelemetry-otlp = { version = "0.32", features = ["tonic", "grpc-tonic", "logs", "tls-roots", "tls-ring"] }
+ futures = "0.3"
+ futures-util = "0.3"
+-chrono = { version = "0.4", features = ["serde"] }
++jiff = { version = "0.2.43", features = ["serde"] }
+ 
+ axum = { version = "0.8", features = ["ws", "macros"] }
+ # Both already in the tree via axum; declared directly so the worker WS
+@@ -176,7 +176,7 @@ indicatif = "0.18"
+ semver = { version = "1", features = ["serde"] }
+ flate2 = "1"
+ tar = "0.4"
+-zip = { version = "9", default-features = false, features = ["deflate-flate2"] }
++zip = { version = "9.0.5", default-features = false, features = ["deflate-flate2"] }
+ thiserror = "2"
+ tokio-tungstenite = "0.28"
+ # Used by bin_resolve::find_existing_binary to locate helper binaries on $PATH.
+```
+
+**File**: `engine/src/builtins/kv.rs` (modified, +1/-1)
+```diff
+@@ -457,7 +457,7 @@ impl BuiltinKvStore {
+     }
+ 
+     pub async fn try_acquire_lock(&self, index: &str, key: &str, owner: &str, ttl_ms: u64) -> bool {
+-        let now_ms = chrono::Utc::now().timestamp_millis();
++        let now_ms = jiff::Timestamp::now().as_millisecond();
+         let expires_at_ms = now_ms.saturating_add(ttl_ms as i64);
+         let lock_value = serde_json::to_value(KvLockEntry {
+             owner: owner.to_string(),
+```
+
+**File**: `engine/src/cli/advisory.rs` (modified, +2/-2)
+```diff
+@@ -142,7 +142,7 @@ pub fn print_advisory_warnings(matched: &[MatchedAdvisory]) {
+ mod tests {
+     use super::*;
+     use crate::cli::state::BinaryState;
+-    use chrono::Utc;
++    use jiff::Timestamp;
+     use std::collections::HashMap;
+ 
+     fn make_state(binary: &str, version: &str) -> AppState {
+@@ -151,7 +151,7 @@ mod tests {
+             binary.to_string(),
+             BinaryState {
+                 version: Version::parse(version).unwrap(),
+-                installed_at: Utc::now(),
++                installed_at: Timestamp::now(),
+                 asset_name: "test.tar.gz".to_string(),
+             },
+         );
+```
+
+**File**: `engine/src/cli/download.rs` (modified, +57/-1)
+```diff
+@@ -170,13 +170,17 @@ fn extract_from_targz(binary_name: &str, archive_bytes: &[u8]) -> Result<Vec<u8>
+ }
+ 
+ /// Extract a binary from a zip archive (Windows).
+-#[cfg(target_os = "windows")]
++#[cfg(any(target_os = "windows", test))]
+ fn extract_from_zip(binary_name: &str, archive_bytes: &[u8]) -> Result<Vec<u8>, ExtractError> {
+     use std::io::{Cursor, Read};
+ 
+     let reader = Cursor::new(archive_bytes);
+     let mut archive =
+         zip::ZipArchive::new(reader).map_err(|e| ExtractError::ExtractionFailed(e.to_string()))?;
++    // Validate every entry before returning any installable binary bytes.
++    archive
++        .validate_header_consistency()
++        .map_err(|e| ExtractError::ExtractionFailed(e.to_string()))?;
+ 
+     let exe_name = format!("{}.exe", binary_name);
+ 
+@@ -256,6 +260,58 @@ pub enum DownloadAndInstallError {
+ mod tests {
+     use super::*;
+ 
++    fn zip_entries(entries: &[(&str, &[u8])]) -> Vec<u8> {
++        use std::io::Write;
++        let mut archive = zip::ZipWriter::new(std::io::Cursor::new(Vec::new()));
++        for (name, body) in entries {
++            archive
++                .start_file(
++                    *name,
++                    zip::write::SimpleFileOptions::default()
++                        .compression_method(zip::CompressionMethod::Stored),
++                )
++                .unwrap();
++            archive.write_all(body).unwrap();
++        }
++        archive.finish().unwrap().into_inner()
++    }
++
++    #[test]
++    fn zip_windows_reader_accepts_root_nested_and_extensionless_binaries() {
++        for name in ["iii.exe", "package/iii.exe", "iii"] {
++            assert_eq!(
++                extract_from_zip("iii", &zip_entries(&[(name, b"binary")])).unwrap(),
++                b"binary"
++            );
++        }
++    }
++
++    #[test]
++    fn zip_windows_reader_rejects_later_header_mismatch_before_returning_binary() {
++        let mut bytes = zip_entries(&[("iii.exe", b"binary"), ("safe.txt", b"other")]);
++        let local = bytes
++            .windows(4)
++            .enumerate()
++            .filter(|(_, b)| *b == b"PK\x03\x04")
++            .nth(1)
++            .unwrap()
++            .0;
++        bytes[local + 30..local + 38].copy_from_slice(b"evil.txt");
++        let error = extract_from_zip("iii", &bytes).unwrap_err();
++        assert!(
++            error.to_string().contains("header inconsistency"),
++            "{error}"
++        );
++    }
++
++    #[test]
++    fn zip_windows_reader_rejects_corrupted_payload_crc() {
++        let mut bytes = zip_entries(&[("iii.exe", b"binary")]);
++        let index = bytes.windows(6).position(|b| b == b"binary").unwrap();
++        bytes[index] ^= 1;
++        assert!(extract_from_zip("iii", &bytes).is_err());
++    }
++
+     #[test]
+     fn test_checksum_computation() {
+         let data = b"hello world";
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #2570** (2026-11-16): feat(compose): sandbox contract 1.4, binary VM workers and data-preserving destroy (@guibeira)
-- **PR #2567** (2026-11-16): docs: remove placeholder tutorials and pre-monorepo leftovers (@guibeira)
-- **PR #2566** (2026-11-13): fix(sdk-go): infer a schema for interface and recursive types (@sergiofilhowz)
-- **PR #2565** (2026-11-16): feat(compose): keep package copies and builds in the project's .iii/ (@guibeira)
-- **PR #2564** (2026-11-13): fix(observability): redact credentials in every span the engine stores or exports (@guibeira)
-- **PR #2562** (2026-11-13): feat: deprecate iii-http-functions and HttpInvocationConfig (@guibeira)
+- **PR #2582** (2026-11-17): docs: rename Console to ADE (docs/next + backport to docs) (@anthonyiscoding)
+- **PR #2579** (2026-11-17): fix(security): replace unmaintained chrono and validate ZIP headers (@guibeira)
+- **PR #2578** (2026-11-17): test(compose): fix Windows and macOS regression fixture portability (@guibeira)
+- **PR #2577** (2026-11-17): fix(compose): address explicit VM mode review findings (@guibeira)
+- **PR #2572** (2026-11-17): ci: publish iii to the registry as an executable with its own installer (@sergiofilhowz)
+- **PR #2571** (2026-11-17): change enter to y/n and allow exit (@anthonyiscoding)
 
 ---
 
@@ -2868,31 +2728,85 @@ Co-authored-by: iii harness (claude-code/claude-opus-5-5) <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. docs: remove placeholder tutorials and pre-monorepo leftovers
+## X. security): replace unmaintained chrono and validate ZIP headers
 
 **RULE**:
-When implementing operations in `docs/changelog/index.mdx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in iii-hq/iii. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in iii-hq/iii. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `756888ba`: docs: remove placeholder tutorials and pre-monorepo leftovers. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `e2be391c`: security): replace unmaintained chrono and validate ZIP headers. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/changelog/index.mdx`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-    [Upgrading from 0.19.x to 0.20.x](/0-21-0/upgrading/from-0-19-x) guide.
+ "jiff",
+ "jiff",
+[[package]]
+name = "jiff"
+version = "0.2.43"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "26699905cc795a23e3949585cc7ba3ee8ade090872a27e4316304a777297894a"
+dependencies = [
+ "jiff-core",
+ "jiff-static",
+ "jiff-tzdb-platform",
+ "log",
+ "portable-atomic",
+ "portable-atomic-util",
+ "serde_core",
+ "windows-link",
+]
+
+[[package]]
+name = "jiff-core"
+version = "0.1.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ffe6854081f5ac0a3046a9b223729ccd7a20b1e0e8277e44dc0660eedf67dfe2"
+dependencies = [
+ "log",
+]
+
+[[package]]
+name = "jiff-static"
+version = "0.2.43"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "4b4ff49b2887190c760b86207b55cdcaabbdecaf7a0660d68aa2ed6f652abf0a"
+dependencies = [
+ "jiff-core",
+ "proc-macro2",
+ "quote",
+ "syn 2.0.117",
+]
+
+[[package]]
+name = "jiff-tzdb"
+version = "0.1.9"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "fa8377070c6bae868759445e5a77f66d84f0b72f3a054bfb00e6d038b8282da7"
+
+[[package]]
+name = "jiff-tzdb-platform"
+version = "0.1.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "875a5a69ac2bab1a8
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-    [Upgrading from 0.19.x to 0.20.x](/next/upgrading/from-0-19-x) guide.
+ "js-sys",
+ "wasm-bindgen",
+ "chrono",
+ "chrono",
+version = "9.0.4"
+checksum = "a954114b47a54df49f83d2722814e86b23d4bb1b54a1b90fb7d92b41619ddc22"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `756888ba` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `e2be391c` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

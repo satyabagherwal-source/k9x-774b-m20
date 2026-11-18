@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-18T01:18:59.548Z",
+  "updated_at": "2026-11-18T01:39:15.084Z",
   "stats": {
-    "total_discovered": 5200,
-    "approved_pending_harvest": 4906,
+    "total_discovered": 5202,
+    "approved_pending_harvest": 4908,
     "harvested_count": 0,
     "rejected_count": 294,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 4895,
+      "COMMUNITY_AND_EXPERT": 4897,
       "OFFICIAL_DOCUMENTATION": 164,
       "STANDARDS_AND_SPECIFICATIONS": 108,
       "ENGINEERING_BLOGS": 3,
@@ -112363,6 +112363,50 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/callstack-agent-device-learnings.md",
         "fileName": "callstack-agent-device-learnings.md"
+      }
+    },
+    "SRC-0898470829B6": {
+      "id": "SRC-0898470829B6",
+      "url": "https://github.com/kumahq/kuma-gui/tree/2ad12fe196e47b650d797b42b4ae7d24dacef73d",
+      "title": "https://github.com/kumahq/kuma-gui/tree/2ad12fe196e47b650d797b42b4ae7d24dacef73d",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T01:39:15.047Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kumahq-kuma-learnings.md",
+        "fileName": "kumahq-kuma-learnings.md"
+      }
+    },
+    "SRC-57CAAFE70613": {
+      "id": "SRC-57CAAFE70613",
+      "url": "https://github.com/kumahq/kuma-gui/tree/dec2bfb1c612217485aa9c36d9170ce580c22691",
+      "title": "https://github.com/kumahq/kuma-gui/tree/dec2bfb1c612217485aa9c36d9170ce580c22691",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T01:39:15.084Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/kumahq-kuma-learnings.md",
+        "fileName": "kumahq-kuma-learnings.md"
       }
     }
   }
