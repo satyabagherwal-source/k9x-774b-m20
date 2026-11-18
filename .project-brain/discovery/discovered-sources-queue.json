@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-18T08:53:20.159Z",
+  "updated_at": "2026-11-18T09:57:33.263Z",
   "stats": {
-    "total_discovered": 5393,
-    "approved_pending_harvest": 5091,
+    "total_discovered": 5396,
+    "approved_pending_harvest": 5094,
     "harvested_count": 0,
     "rejected_count": 302,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 5072,
+      "COMMUNITY_AND_EXPERT": 5075,
       "OFFICIAL_DOCUMENTATION": 176,
       "STANDARDS_AND_SPECIFICATIONS": 109,
       "ENGINEERING_BLOGS": 4,
@@ -116553,6 +116553,72 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/msasikanth-twine-learnings.md",
         "fileName": "msasikanth-twine-learnings.md"
+      }
+    },
+    "SRC-38A031998A65": {
+      "id": "SRC-38A031998A65",
+      "url": "https://storybook.js.org/docs/contribute",
+      "title": "https://storybook.js.org/docs/contribute",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T09:57:33.166Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/storybookjs-storybook-learnings.md",
+        "fileName": "storybookjs-storybook-learnings.md"
+      }
+    },
+    "SRC-4E98A986DE72": {
+      "id": "SRC-4E98A986DE72",
+      "url": "https://github.com/storybookjs/storybook/issues/32836",
+      "title": "https://github.com/storybookjs/storybook/issues/32836",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T09:57:33.214Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/storybookjs-storybook-learnings.md",
+        "fileName": "storybookjs-storybook-learnings.md"
+      }
+    },
+    "SRC-50F101E09635": {
+      "id": "SRC-50F101E09635",
+      "url": "https://github.com/storybookjs/storybook/issues/36283",
+      "title": "https://github.com/storybookjs/storybook/issues/36283",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T09:57:33.263Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/storybookjs-storybook-learnings.md",
+        "fileName": "storybookjs-storybook-learnings.md"
       }
     }
   }

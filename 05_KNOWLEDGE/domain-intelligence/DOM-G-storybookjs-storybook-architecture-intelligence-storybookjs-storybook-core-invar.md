@@ -4,24 +4,24 @@
 {
   "source_repository": "storybookjs/storybook",
   "source_url": "https://github.com/storybookjs/storybook",
-  "source_version": "5aea8b6a",
+  "source_version": "1227202d",
   "license": "MIT",
-  "timestamp": "2026-11-17T07:20:10.175Z",
+  "timestamp": "2026-11-18T09:57:19.663Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-storybookjs-storybook",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [storybookjs/storybook](https://github.com/storybookjs/storybook) (Revision: `5aea8b6a`).  
-> **License**: MIT | **Timestamp**: `2026-11-17T07:20:10.175Z`  
+> **Provenance**: Harvested from [storybookjs/storybook](https://github.com/storybookjs/storybook) (Revision: `1227202d`).  
+> **License**: MIT | **Timestamp**: `2026-11-18T09:57:19.663Z`  
 > **Learning ID**: `learn-github-storybookjs-storybook`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), K (Quality & Verification Intelligence), B (Product Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence), D (Research & Knowledge Intelligence), F (Design Intelligence), C (Market & Business Intelligence)
-- **Confidence Rating**: 57%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), K (Quality & Verification Intelligence), I (Content & Information Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), B (Product Intelligence), F (Design Intelligence), C (Market & Business Intelligence), A (Human & Need Intelligence)
+- **Confidence Rating**: 50%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from storybookjs/storybook:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/storybookjs-storybook-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/storybookjs/storybook](https://github.com/storybookjs/storybook))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T07:20:09.182Z  
+> **Harvest Timestamp**: 2026-11-18T09:57:18.121Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Storybook is the industry standard workshop for building, documenting, and testing UI components in isolation
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 91599 stars
+- **Stars / Engagement**: 91621 stars
 
 ---
 
@@ -569,11 +569,11 @@ export function isRecord(value: unknown): value is Record<string, unknown> {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #37454** (2026-11-16): **Addon A11y: Update vision simulators to be more rigorous**
-  *Symptoms*: Closes #36154  Supersedes #36232  ## What I did  I built on top of @Thodorr's implementation to conclude the work to do on vision simulators. Changes include:  * Replaced the default trinatopia algorithm with Brettel et al 1997 which is more accurate for this deficiency (Machado et al themselves state their algorithm is not accurate) * Kept the inaccurate Machado et al algorithm but declared it inaccurate in the UI * Added a contrast deficiency simulator to match Google Chrome * Reworked Select UI labels to include paper sources when available * Added a migration stop for users who have superseded globals  <img width="306" height="603" alt="image" src="https://github.com/user-attachments/assets/bbd818dc-bd2c-42a7-a9c8-af90d06d6e85" />   ## Checklist for Contributors  ### Testing  <!-- Please check (put an "x" inside the "[ ]") the applicable items below to communicate how to test your changes -->  #### The changes in this PR are covered in the following automated tests:  - [ ] stories - [ ] unit tests - [ ] integration tests - [ ] end-to-end tests  #### Manual testing  See https://github.com/storybookjs/storybook/pull/36232  ### Documentation  <!-- Please check (put an "x" inside the "[ ]") the applicable items below to indicate which documentation has been updated. -->  - [ ] Add or update documentation reflecting your changes - [x] If you are deprecating/removing a feature, make sure to update       [MIGRATION.MD](https://github.com/storybookjs/storybook/blob/next/MIGRATION
+- **Issue #37514** (2026-11-17): **CLI: Delete stale Storybook cache directory on upgrade**
+  *Symptoms*: Closes # <!-- If your PR is related to an issue, provide the number(s) above; if it resolves multiple issues, be sure to break them up (e.g. "closes #1000, closes #1001"). -->  <!--  Thank you for contributing to Storybook! Please submit all PRs to the `next` branch unless they are specific to the current release. Storybook maintainers cherry-pick bug and documentation fixes into the `main` branch as part of the release process, so you shouldn't need to worry about this. For additional guidance: https://storybook.js.org/docs/contribute  -->  ## What I did  After upgrading to Storybook 11.0.0-beta.3, some users hit errors on Storybook restart that went away after restarting Storybook again. Stale state in `node_modules/.cache/storybook` is the suspected cause, and the team confirmed the directory holds nothing that cannot be safely deleted.  This PR makes `storybook upgrade` delete the whole `node_modules/.cache/storybook` directory on every upgrade, regardless of the version transition:  - The deletion is best-effort: it is wrapped in a try/catch, failures are logged via `logger.debug`, and a failed deletion never fails the upgrade. - Dry runs (`--dry-run`) do not touch the filesystem, so the deletion is skipped there. - The path matches the fallback in `resolve-path-in-sb-cache.ts` (`join(process.cwd(), 'node_modules', '.cache', 'storybook')`).  **How it was tested:** new unit tests in `upgrade.skills.test.ts` cover that (1) the cache directory is removed on upgrade, (2) a d
 
-- **Issue #37449** (2026-11-16): **[Bug]: Storybook Docs Missing Component & Prop Documentation (`docgenServer` + TypeScript 7)**
-  *Symptoms*: ### Describe the bug  ## Summary  In `@vicacha-travels/storefront`, components with complete JSDoc comments and TypeScript prop types (such as [`AccountInfo`](file:///Users/sjoseluis/Projects/experiments/products/tourism/vicacha-travels-develop/apps/storefront/src/modules/account/components/account-info/index.tsx)) appeared in Storybook Docs without their component description, without prop descriptions, and without optional props in the ArgsTable.  ## Observed Behavior  On `/?path=/docs/storefront-account-accountinfo--docs`: - The component-level JSDoc description on [`AccountInfo`](file:///Users/sjoseluis/Projects/experiments/products/tourism/vicacha-travels-develop/apps/storefront/src/modules/account/components/account-info/index.tsx#L27-L30) was not rendered. - The ArgsTable only listed the 4 props explicitly supplied in [`AccountInfo.stories.tsx`](file:///Users/sjoseluis/Projects/experiments/products/tourism/vicacha-travels-develop/apps/storefront/src/modules/account/components/account-info/AccountInfo.stories.tsx#L24-L33) (`label`, `currentInfo`, `clearState`, `children`). - The **Description** column showed `-` for every listed prop. - Optional props defined on [`AccountInfoProps`](file:///Users/sjoseluis/Projects/experiments/products/tourism/vicacha-travels-develop/apps/storefront/src/modules/account/components/account-info/index.tsx#L8-L25) (`isSuccess`, `isError`, `errorMessage`, `data-testid`) were omitted from the table.  ## Root Cause  1. In `@storybook/react-vit
+- **Issue #37511** (2026-11-17): **CLI: Update compatibility guidance URL in summary message**
+  *Symptoms*: Closes #  <!-- If your PR is related to an issue, provide the number(s) above; if it resolves multiple issues, be sure to break them up (e.g. "closes #1000, closes #1001"). -->  <!--  Thank you for contributing to Storybook! Please submit all PRs to the `next` branch unless they are specific to the current release. Storybook maintainers cherry-pick bug and documentation fixes into the `main` branch as part of the release process, so you shouldn't need to worry about this. For additional guidance: https://storybook.js.org/docs/contribute  -->  ## What I did  The Storybook doctor compatibility guidance link was incorrect, pointing to the issue about [Storybook 10 compatibility](https://github.com/storybookjs/storybook/issues/32836) and not [Storybook 11 compatibility](https://github.com/storybookjs/storybook/issues/36283). This PR fixes that!  ## Checklist for Contributors  ### Testing  <!-- Please check (put an "x" inside the "[ ]") the applicable items below to communicate how to test your changes -->  #### The changes in this PR are covered in the following automated tests:  - [ ] stories - [ ] unit tests - [ ] integration tests - [ ] end-to-end tests  #### Manual testing  It's such a minor change the only manual test you could do is check whether the link is correct  ### Documentation  <!-- Please check (put an "x" inside the "[ ]") the applicable items below to indicate which documentation has been updated. -->  - [ ] Add or update docume
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -590,197 +590,140 @@ export function isRecord(value: unknown): value is Record<string, unknown> {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b7a138cf` (2026-11-16)
-**Commit Message**: fix(react): document the declaring file, and fail on a missing export
+### Incident Patch 1: `fbb34286` (2026-11-17)
+**Commit Message**: fix(cli): check addon ranges that start with a 0.x canary part
 
-The engines read the file and export core follows the import to, so a member a parts module renames is documented, not the first docgen in the barrel. A missing export becomes an error. Core resolves with React's own extension order, `.js` first, so a `ui.js` next to `ui.tsx` gives one file. The local-object mapping no longer compares export names, which now name the declaring file.
+`checkPackageCompatibility` skipped any range matching `/^[~^]?0\./`, to
+ignore 0.x ranges it cannot compare. The regex tested the start of the whole
+range, so `^0.0.0-0 || ^10.0.0`, a common way for addons to accept canaries,
+was skipped as a whole. `storybook-addon-test-codegen@3.0.4` declares such a
+range, so doctor reported nothing on 11.0.0-beta.3 while the addon's preset
+failed to load (#37285).
 
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `code/renderers/react/src/componentManifest/getComponentImports.ts` (modified, +10/-5)
-```diff
-@@ -47,11 +47,9 @@ export interface TypescriptOptions extends TypescriptOptionsBase {
- 
- export type { ComponentRef } from './types.ts';
- 
--// The file that declares a component, and the export it declares it under.
--export interface DocgenTarget {
--  path: string;
--  exportName: string;
--}
-+// The file that declares a component and the export it declares it under, or why the module the
-+// story reads it from has no such export.
-+export type DocgenTarget = { path: string; exportName: string } | { missing: string };
- 
- /** Selected component for a story file; `storyPath` is the absolute path on disk. */
- export type StoryRef = {
-@@ -195,6 +193,13 @@ export const getComponents = async ({
-         // Core's resolver decides which file and export the engines document, as in every other
-         // renderer. The ref keeps the story file's own import, which the import lines need.
-         const target = docgenTargets?.get(c);
-+        // An export core found missing is an error, not a reason to document another component.
-+        if (target && 'missing' in target) {
-+          const error = { name: 'Component export not found', message: target.missing };
-+          return docgenEngine === 'react-docgen'
-+            ? { ...componentWithPackage, path, reactDocgen: { type: 'error' as const, error } }
-+            : { ...componentWithPackage, path, reactDocgenTypescriptError: error };
-+        }
-         const docgenRef = target
-           ? {
-               ...componentWithPackage,
-```
-
-**File**: `code/renderers/react/src/componentManifest/resolveComponents.ts` (modified, +31/-7)
-```diff
-@@ -1,6 +1,8 @@
- import {
-   createMetaComponentResolver,
-+  createModuleResolver,
-   extractDeclaredSubcomponents,
-+  supportedExtensions,
- } from 'storybook/internal/common';
- import { storyNameFromExport } from 'storybook/internal/csf/csf-utils';
- import {
-@@ -29,8 +31,24 @@ import { cachedReadTextFileSync } from './utils.ts';
- 
- export type ParsedCsf = ReturnType<ReturnType<typeof loadCsf>['parse']>;
- 
--// One instance per process: the resolver caches its module resolutions.
--const resolveMetaComponent = createMetaComponentResolver();
-+// One instance per process: the resolver caches its module resolutions. It tries extensions in the
-+// order React's own lookup does, `.js` first as Vite does, so when `ui.js` sits next to `ui.tsx`
-+// both pick the same file.
-+const resolveMetaComponent = createMetaComponentResolver({
-+  reader: {
-+    resolver: createModuleResolver({
-+      extensions: [...supportedExtensions],
-+      extensionAlias: {
-+        '.js': ['.js', '.ts', '.tsx'],
-+        '.jsx': ['.jsx', '.tsx'],
-+        '.mjs': ['.mjs', '.mts'],
-+        '.cjs': ['.cjs', '.cts'],
-+      },
-+      mainFields: ['module', 'main'],
-+      tsconfig: 'auto',
-+    }),
-+  },
-+});
- 
- /** A declared subcomponent paired with the component ref it resolved to (if any). */
- export interface ResolvedSubcomponent {
-@@ -138,14 +156,20 @@ export async function resolveStoryFileComponents(options: {
-   const resolveName = (name: string, node?: ESTreeNode) => {
-     const resolved = resolveMetaComponent(csf, storyPath, node);
-     if ('reason' in resolved) {
-+      if (resolved.reason === 'missing-export') {
-+        docgenTargets.set(name, {
-+          missing: `"${resolved.importId}" has no export "${resolved.exportName}", which ${resolved.expression} reads.`,
-+        });
-+      }
-       return name;
-     }
-     const { localName, importId, importer, path, exportName } = resolved.component;
--    const own = storyImports.get(localName);
--    const ownName =
--      importer === storyPath && own?.importId === importId && own?.importName === exportName
--        ? localName
--        : name;
-+    // Core landed on a binding the story file imports itself, through an object the file declares.
-+    const throughLocalObject =
-+      importer === storyPath &&
-+      storyImports.get(localName)?.importId === importId &&
-+      !storyImports.has(name.split('.')[0]);
-+    const ownName = throughLocalObject ? localName : name;
-     if (importId && path) {
-       docgenTargets.set(ownName, { path, exportName });
-     }
-```
-
----
-
-### Incident Patch 2: `5e0ee43b` (2026-11-16)
-**Commit Message**: fix(vue3): report a missing export
+Skip a range only when every `||` part is 0.x. Canaries still satisfy the
+`^0.0.0-0` part when the whole range is compared.
 
 Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
-**File**: `code/renderers/vue3/src/docgen/component-docgen/build-docgen.ts` (modified, +4/-0)
+**File**: `code/lib/cli-storybook/src/doctor/getIncompatibleStorybookPackages.test.ts` (modified, +28/-0)
 ```diff
-@@ -75,6 +75,10 @@ const UNRESOLVED_COMPONENT_MESSAGES: Record<
-     name: 'No component import found',
-     message: `No component file found for the component declared in ${subject}. Import it into the story file.`,
-   }),
-+  'missing-export': (subject) => ({
-+    name: 'No component found',
-+    message: `${subject} names an export that its module does not have. Check the name against the module's exports, and any barrel that re-exports it.`,
-+  }),
-   'unreadable-component-expression': (subject) => ({
-     name: 'No component found',
-     message: `We could not follow ${subject} to a component. Storybook follows an imported name, a namespace-import property access, or a chain of property accesses and spreads through modules it can resolve.`,
-```
-
-**File**: `code/renderers/vue3/src/docgen/component-docgen/resolve-component/resolve-component.ts` (modified, +2/-1)
-```diff
-@@ -17,7 +17,8 @@ export interface ResolvedVueComponent {
- export type UnresolvedComponentReason =
-   | 'no-meta-component'
-   | 'no-component-import'
--  | 'unreadable-component-expression';
-+  | 'unreadable-component-expression'
-+  | 'missing-export';
+@@ -78,6 +78,34 @@ describe('checkPackageCompatibility', () => {
+     );
+   });
  
- const resolveComponent = createMetaComponentResolver({ extensions: ['.vue'] });
- 
-```
-
----
-
-### Incident Patch 3: `0452ab57` (2026-11-16)
-**Commit Message**: fix(core): write component paths with pathe, and keep a path on another drive
-
-Across Windows drives `relative` gives an absolute path, which `join` glued onto the story folder.
-
-Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
-
-**File**: `code/core/src/common/utils/component-path-from-story.ts` (modified, +8/-3)
-```diff
-@@ -1,20 +1,25 @@
- import { realpathSync } from 'node:fs';
--import { dirname, isAbsolute, join, relative } from 'node:path';
++  it.each([
++    ['ignores a 0.x range', '^0.4.0', '11.0.0', false],
++    [
++      'flags a range whose canary part comes first',
++      '^0.0.0-0 || ^10.0.0 || ^10.3.0-0',
++      '11.0.0-beta.3',
++      true,
++    ],
++    ['accepts a range with a canary part', '^0.0.0-0 || ^10.6.0-0 || ^11.0.0-0', '11.0.0', false],
++    [
++      'accepts a canary through the canary part',
++      '^0.0.0-0 || ^10.0.0',
++      '0.0.0-pr-1-sha-abc',
++      false,
++    ],
++  ])('%s', async (_, range, currentStorybookVersion, hasIncompatibleDependencies) => {
++    vi.mocked(packageManagerMock.getModulePackageJSON).mockResolvedValueOnce({
++      name: 'my-storybook-package',
++      version: '1.0.0',
++      peerDependencies: { storybook: range },
++    });
++    const result = await checkPackageCompatibility('my-storybook-package', {
++      currentStorybookVersion,
++      packageManager: packageManagerMock as JsPackageManager,
++    });
++    expect(result.hasIncompatibleDependencies).toBe(hasIncompatibleDependencies);
++  });
 +
-+import { dirname, isAbsolute, join, relative } from 'pathe';
+   it('returns that a package is incompatible and because it is core, can be upgraded', async () => {
+     const packageName = '@storybook/addon-docs';
  
- /**
-  * The path of a component's file, written like the story file's index `importPath` it was reached
-  * from.
-  *
-  * Module resolvers follow symlinks, so the component path is taken relative to the story file's
-  * real folder and joined to the folder the index wrote. A symlinked story folder, as in linked
-- * sandboxes, then gives the same path as a plain one.
-+ * sandboxes, then gives the same path as a plain one. A component on another drive has no relative
-+ * path, so its absolute path is returned.
-  */
- export function componentPathFromStory(
-   storyImportPath: string,
-   storyFilePath: string,
-   componentPath: string
- ): string {
-   const fromStory = relative(dirname(realpathSync(storyFilePath)), componentPath);
--  const path = join(dirname(storyImportPath), fromStory).replaceAll('\\', '/');
-+  if (isAbsolute(fromStory)) {
-+    return fromStory;
-+  }
-+  const path = join(dirname(storyImportPath), fromStory);
-   return isAbsolute(path) || path.startsWith('../') ? path : `./${path}`;
- }
+```
+
+**File**: `code/lib/cli-storybook/src/doctor/getIncompatibleStorybookPackages.ts` (modified, +2/-2)
+```diff
+@@ -58,8 +58,8 @@ export const checkPackageCompatibility = async (
+         // prevent issues with "tag" based versions e.g. "latest" or "next" instead of actual numbers
+         return (
+           versionRange &&
+-          // We can't check compatibility for 0.x packages, so we skip them
+-          !/^[~^]?0\./.test(versionRange) &&
++          // We can't check compatibility for 0.x packages, so we skip ranges that only allow 0.x
++          versionRange.split('||').some((part) => !/^[~^]?0\./.test(part.trim())) &&
+           semver.validRange(versionRange) &&
+           !semver.satisfies(currentStorybookVersion, versionRange)
+         );
+```
+
+---
+
+### Incident Patch 2: `b637a776` (2026-11-17)
+**Commit Message**: Merge pull request #37506 from storybookjs/steve/addon-panel-code-tab-any-renderer
+
+E2E: Check the Code tab snippet by the story's label
+
+**File**: `code/e2e-sandbox/addon-panel.spec.ts` (modified, +4/-1)
+```diff
+@@ -151,11 +151,14 @@ test.describe('addon panel', () => {
+     await sbPage.deepLinkToStory(storybookUrl, 'addons/docs/codePanel', 'default');
+     await expect(codeTab).toBeVisible();
+     await sbPage.viewAddonPanel('Code');
+-    await expect(sbPage.panelContent()).toContainText('Button');
++    // Each renderer prints the snippet its own way, and some fall back to the story as written, so
++    // the story's label is what every snippet shares; the component name is not.
++    await expect(sbPage.panelContent()).toContainText('e2eStoryDocsBefore');
+     await expect(sbPage.panelContent()).not.toContainText('Custom code');
+ 
+     await sbPage.navigateToStory('addons/docs/codePanel', 'custom-code');
+     await expect(sbPage.panelContent()).toContainText('Custom code');
++    await expect(sbPage.panelContent()).not.toContainText('e2eStoryDocsBefore');
+ 
+     await sbPage.navigateToStory('addons/docs/codePanel', 'without-panel');
+     await expect(codeTab).toBeHidden();
+```
+
+---
+
+### Incident Patch 3: `6d069198` (2026-11-17)
+**Commit Message**: Merge pull request #37492 from storybookjs/fix/resolver-destructured-shadow-test
+
+Core: Update the stale expectation for a destructured export shadowing an `export *`
+
+**File**: `code/core/src/common/utils/resolve-meta-component.test.ts` (modified, +8/-2)
+```diff
+@@ -165,11 +165,17 @@ describe('createMetaComponentResolver', () => {
+       ).toMatchObject({ component: { path: join(FIXTURES, 'button.component.ts') } });
+     });
+ 
+-    it('does not follow an `export *` that a destructured export of the same name shadows', () => {
++    it('follows a destructured export that shadows an `export *` to the file that declares the member', () => {
+       expect(
+         resolveInFixtures(`import { UI } from './barrel/destructured';
+                            export default { component: UI.Button };`)
+-      ).toEqual({ reason: 'unreadable-component-expression', expression: 'UI.Button' });
++      ).toMatchObject({
++        component: {
++          importId: '../button.component',
++          importer: join(FIXTURES, 'barrel', 'destructured.ts'),
++          path: join(FIXTURES, 'button.component.ts'),
++        },
++      });
+     });
+ 
+     it('reports a named import that is not a namespace as unreadable', () => {
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #37454** (2026-11-16): Addon A11y: Update vision simulators to be more rigorous (@Sidnioulz)
-- **PR #37451** (2026-11-16): Build: Inject CJS require shim only where node outputs use it (@ndelangen)
-- **PR #37445** (2026-11-16): Docs: Clear the inline story error once it renders again (@shivastuu)
-- **PR #37443** (2026-11-16): CLI: Report the real configuration error when doctor cannot read a project (@aleksaToljic)
-- **PR #37442** (2026-11-16): Next.js: Fix TypeScript 6 peer conflict (@Kakadus)
-- **PR #37432** (closed): Core: Enable addon-vitest when its Vitest plugin is configured for the Storybook (@kasperpeulen)
+- **PR #37514** (closed): CLI: Delete stale Storybook cache directory on upgrade (@obvious-autobuild[bot])
+- **PR #37513** (2026-11-17): CI: Show cancelled CircleCI jobs as pending instead of failed (@ndelangen)
+- **PR #37512** (2026-11-17): CLI: the skills-removal hint is optional and quotes the command (@obvious-autobuild[bot])
+- **PR #37511** (2026-11-17): CLI: Update compatibility guidance URL in summary message (@yannbf)
+- **PR #37506** (2026-11-17): E2E: Check the Code tab snippet by the story's label (@Sidnioulz)
+- **PR #37505** (closed): MCP: Stop announcing list-changed notifications, which made Claude Code wait 25 seconds (@kasperpeulen)
 
 ---
 
@@ -800,44 +743,58 @@ Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. react): document the declaring file, and fail on a missing export
+## X. cli): check addon ranges that start with a 0.x canary part
 
 **RULE**:
-When implementing operations in `code/renderers/react/src/componentManifest/getComponentImports.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in storybookjs/storybook. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `code/lib/cli-storybook/src/doctor/getIncompatibleStorybookPackages.test.ts`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in storybookjs/storybook. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b7a138cf`: react): document the declaring file, and fail on a missing export. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `fbb34286`: cli): check addon ranges that start with a 0.x canary part. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `code/renderers/react/src/componentManifest/getComponentImports.ts`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `code/lib/cli-storybook/src/doctor/getIncompatibleStorybookPackages.test.ts`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-// The file that declares a component and the export it declares it under, or why the module the
-// story reads it from has no such export.
-export type DocgenTarget = { path: string; exportName: string } | { missing: string };
-        // An export core found missing is an error, not a reason to document another component.
-        if (target && 'missing' in target) {
-          const error = { name: 'Component export not found', message: target.missing };
-          return docgenEngine === 'react-docgen'
-            ? { ...componentWithPackage, path, reactDocgen: { type: 'error' as const, error } }
-            : { ...componentWithPackage, path, reactDocgenTypescriptError: error };
-        }
+  it.each([
+    ['ignores a 0.x range', '^0.4.0', '11.0.0', false],
+    [
+      'flags a range whose canary part comes first',
+      '^0.0.0-0 || ^10.0.0 || ^10.3.0-0',
+      '11.0.0-beta.3',
+      true,
+    ],
+    ['accepts a range with a canary part', '^0.0.0-0 || ^10.6.0-0 || ^11.0.0-0', '11.0.0', false],
+    [
+      'accepts a canary through the canary part',
+      '^0.0.0-0 || ^10.0.0',
+      '0.0.0-pr-1-sha-abc',
+      false,
+    ],
+  ])('%s', async (_, range, currentStorybookVersion, hasIncompatibleDependencies) => {
+    vi.mocked(packageManagerMock.getModulePackageJSON).mockResolvedValueOnce({
+      name: 'my-storybook-package',
+      version: '1.0.0',
+      peerDependencies: { storybook: range },
+    });
+    const result = await checkPackageCompatibility('my-storybook-package', {
+      currentStorybookVersion,
+      packageManager: packageManagerMock as JsPackageManager,
+    });
+    expect(result.hasIncompatibleDependencies).toBe(hasIncompatibleDependencies);
+  });
+
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```typescript
 // Induced defect failure mode:
-// The file that declares a component, and the export it declares it under.
-export interface DocgenTarget {
-  path: string;
-  exportName: string;
-}
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b7a138cf` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `fbb34286` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source**: github ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
-> **Source Version**: `db6acd1d`  
+> **Source Version**: `266b9114`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-18T06:49:18.652Z  
+> **Timestamp**: 2026-11-18T09:57:27.856Z  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T06:49:18.646Z  
+> **Harvest Timestamp**: 2026-11-18T09:57:27.848Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1518,59 +1518,59 @@ export { document } from "./dataset";
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `db6acd1d` (2026-11-18)
-**Commit Message**: Draft NUC 117 First and Last Element Methods
+### Incident Patch 1: `266b9114` (2026-11-18)
+**Commit Message**: Draft NUC 118 Case Conversion Method Aliases
 
 Category: Language compatibility, drawn uniformly at random (index 4 of
 the five eligible categories in NUC 1's registry, p = 1/5, no redraw)
 for a continuous /nuc-proposal cycle. Language compatibility skips the
 token non-regression gate categorically.
 
-Requested change: lists and class populations gain the first and last
-methods of Kotlin, Rust, Swift, Ruby and C#'s LINQ as aliases of
-accepted queries. RECEIVER.first() gives RECEIVER.at(0) and
-RECEIVER.last() gives RECEIVER.at(-1); with a function, Kotlin's and
-LINQ's predicate overloads, RECEIVER.first(PREDICATE) gives
-RECEIVER.find(PREDICATE) and RECEIVER.last(PREDICATE) gives
-RECEIVER.findLast(PREDICATE). Each alias behaves as its accepted
-spelling: an empty receiver gives undefined, a predicate that matches
-nothing gives null, declarations stay live, and any other argument
-raises find's error with the name as written. At the accepted revision
-each call raises TypeError("<receiver>.<name> is not a function");
-instance methods, function-valued properties, strings, other receivers,
-property reads and the state versions xs@first and xs@last keep their
-accepted results.
+Requested change: strings gain the case conversion methods of Kotlin,
+Rust and Swift as aliases of the accepted toUpperCase() and
+toLowerCase(): TEXT.uppercase() and TEXT.lowercase() (Kotlin),
+TEXT.to_uppercase() and TEXT.to_lowercase() (Rust), and
+TEXT.uppercased() and TEXT.lowercased() (Swift). Each alias behaves as
+its accepted spelling: the same full Unicode case mapping, further
+arguments evaluated and ignored, and declarations that stay live. At the
+accepted revision each call raises TypeError("<text>.<name> is not a
+function"); lists, numbers and other values, object members, instance
+methods, functions named like the aliases, null-safe receivers and
+property reads keep their accepted results.
 
-This allocatio
+This allocation changes only the Draft and its two index rows.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Claude-Session: https://claude.ai/code/session_01AJtz8e8dqMwocimNqgffMq
 
 **File**: `docs/nuc-0000.md` (modified, +2/-0)
 ```diff
-@@ -160,6 +160,7 @@ Created: 31-Jul-2026
- | [107](nuc-0107.md) | Python-Style Self Parameters | Accepted |
+@@ -161,6 +161,7 @@ Created: 31-Jul-2026
  | [110](nuc-0110.md) | Python String Method Aliases | Accepted |
  | [116](nuc-0116.md) | Size and Emptiness Method Aliases | Accepted |
-+| [117](nuc-0117.md) | First and Last Element Methods | Draft |
+ | [117](nuc-0117.md) | First and Last Element Methods | Accepted |
++| [118](nuc-0118.md) | Case Conversion Method Aliases | Draft |
  
  ### Documentation
  
-@@ -287,6 +288,7 @@ Created: 31-Jul-2026
- | [114](nuc-0114.md) | List and Population Products | Standards Track | Utility enhancement | Accepted |
+@@ -289,6 +290,7 @@ Created: 31-Jul-2026
  | [115](nuc-0115.md) | Count-Controlled Repeat Loops | Standards Track | Runtime features | Accepted |
  | [116](nuc-0116.md) | Size and Emptiness Method Aliases | Standards Track | Language compatibility | Accepted |
-+| [117](nuc-0117.md) | First and Last Element Methods | Standards Track | Language compatibility | Draft |
+ | [117](nuc-0117.md) | First and Last Element Methods | Standards Track | Language compatibility | Accepted |
++| [118](nuc-0118.md) | Case Conversion Method Aliases | Standards Track | Language compatibility | Draft |
  
  ## Copyright
  
 ```
 
-**File**: `docs/nuc-0117.md` (added, +87/-0)
+**File**: `docs/nuc-0118.md` (added, +84/-0)
 ```diff
-@@ -0,0 +1,87 @@
-+# NUC 117 -- First and Last Element Methods
+@@ -0,0 +1,84 @@
++# NUC 118 -- Case Conversion Method Aliases
 +
 +```
-+NUC: 117
-+Title: First and Last Element Methods
++NUC: 118
++Title: Case Conversion Method Aliases
 +Author: Can Mingir <canmingir@gmail.com>
 +Status: Draft
 +Type: Standards Track
@@ -1580,55 +1580,52 @@ This allocatio
 +
 +## Abstract
 +
-+- Lists and class populations gain the `first` and `last` methods that
-+  Kotlin, Rust, Swift, Ruby and C#'s LINQ spell, as aliases of accepted
-+  queries:
-+  - `RECEIVER.first()` gives `RECEIVER.at(0)` and `RECEIVER.last()` gives
-+    `RECEIVER.at(-1)`, so a population's first and last instances are the
-+    first and latest created;
-+  - with a function, Kotlin's and LINQ's predicate overloads,
-+    `RECEIVER.first(PREDICATE)` gives `RECEIVER.find(PREDICATE)` and
-+    `RECEIVER.last(PREDICATE)` gives `RECEIVER.findLast(PREDICATE)`.
-+- Each alias behaves as its accepted spelling does: an empty receiver gives
-+  undefined, a predicate that matches nothing gives `null`, a declaration
-+  that holds the call stays live as the receiver changes, and any other
-+  argument raises the error that `find` raises for it, with the name as
-+  written.
++- Strings gain the case conversion methods that Kotlin, Rust and Swift
++  spell, as aliases of the accepted `toUpperCase()` and `toLowerCase()`:
++  - `TEXT.uppercase()` and `TEXT.lowercase()`, Kotlin's;
++  - `TEXT.to_uppercase()` and `TEXT.to_lowercase()`, Rust's;
++  - `TEXT.uppercased()` and `TEXT.lowercased()`, Swift's.
++- Each alias behaves as its accepted spelling does: it converts the whole
++  string with the same full Unicode case mapping, so `"straße".uppercase()`
++  gives `"STRASSE"`; further arguments are evaluated and ignored; and a
++  declaration that holds the call stays live as the string changes.
 +- At the accepted revision each of these calls raises
-+  `TypeError("<receiver>.<name> is not a function")`. Every other reading
-+  of the names is kept: instance methods and function-valued properties
-+  named `first` or `last` keep running, strings and other values keep
-+  their accepted errors, property reads such as `xs.first` stay undefined,
-+  and the state versions `xs@first` and `xs@last` are unchanged. `at`,
-+  `find` and `findLast` stay the canonical spellings, and no syntax, token
-+  or keyword is added.
++  `TypeError("<text>.<name> is not a function")`, unless an argument
++  raises first. Only those calls change, along with the programs that
++  caught that error. Every other reading of the names is kept: lists,
++  numbers and other values keep their accepted errors, object members,
++  instance methods and functions named like the aliases keep running,
++  `null` and undefined receivers stay null-safe, and reads without a call,
++  such as `s.uppercase`, stay undefined.
++- `toUpperCase`, `toLowerCase`, `upper` and `lower` stay the canonical
++  spellings. No token, keyword, syntax-tree node, error type or message
++  format, dependency or public item is added.
 +
 +## Motivation
 +
-+- Programs and models written by people and LLMs that know Kotlin, Rust,
-+  Swift, Ruby or C# ask a collection for its first and last elements by
-+  name: `list.first()` and `list.last()` in Kotlin and Rust, `first` and
-+  `last` in Swift and Ruby, and `First()` and `Last()` in LINQ, where
-+  Kotlin and LINQ also take a predicate, as in
-+  `orders.first { it.open }`. In Nucleoid every one of them raises
-+  `TypeError("<receiver>.<name> is not a function")`, so a world model that
-+  reads a sensor's latest reading with `readings.last()` or the next job
-+  with `queue.first()` fails before it runs, although the accepted
-+  spellings `readings.at(-1)` and `queue.at(0)` say the same thing.
-+- World models read the ends of their collections constantly: the newest
-+  reading of a sensor, the oldest order in a queue, the latest instance of
-+  a class, the first item that meets a condition. These reads are standing,
-+  so they must follow every later push and pop, which the accepted `at`,
-+  `find` and `findLast` already do and the aliases inherit.
++- Programs and models written by people and LLMs that know Kotlin, Rust
++  or Swift convert case by those languages' names: `name.uppercase()` in
++  Kotlin, `name.to_uppercase()` in Rust and `name.uppercased()` in Swift.
++  In Nucleoid every one of them raises
++  `TypeError("<text>.<name> is not a function")`, so a world model that
++  normalizes a sensor's label with `label.lowercase()` or a code with
++  `code.to_uppercase()` fails before it runs, although the accepted
++  spellings `label.toLowerCase()` and `code.toUpperCase()` say the same
++  thing.
++- World models normalize the text they compare: identifiers, labels,
++  codes and names read from different sources. These conversions are
++  standing, so they must follow every later write of the string, which the
++  accepted `toUpperCase` and `toLowerCase` already do and the aliases
++  inherit.
 +- The aliases advance the language-superset aspiration of the Language
-+  compatibility category. The accepted `this`/`self`, `=>`/`->`, `append`,
-+  `contains`, `lower`, `upper`, `strip`, NUC 110's `startswith`, `endswith`
-+  and `join`, and NUC 116's `size`, `len`, `isEmpty`, `is_empty` and
-+  `isNotEmpty` follow the same pattern: an equivalent familiar spelling
-+  beside the canonical one, with no change to any accepted program.
-+- Kotlin's `first()`, `last()`, `first(predicate)` and `last(predicate)`,
-+  Rust's `first()` and `last()`, Swift's and Ruby's `first` and `last`,
-+  and LINQ's `First()` and `Last()` with their predicate overloads are the
++  compatibility category. The accepted `this`/`self`, `=>`/`->`, `lower`,
++  `upper`, `strip`, NUC 110's `startswith`, `endswith` and `join`,
++  NUC 116's `size`, `len`, `isEmpty`, `is_empty` and `isNotEmpty`, and
++  NUC 117's `first` and `last` follow the same pattern: an equivalent
++  familiar spelling beside the canonical one, with no change to any
++  accepted program.
++- Kotlin's `uppercase()` and `lowercase()`, Rust's `to_uppercase()` and
++  `to_lowercase()`, and Swift's `uppercased()` and `lowercased()` are the
 +  prior art.
 +
 +## Rationale
@@ -1657,8 +1654,8 @@ This allocatio
 
 ---
 
-### Incident Patch 2: `ae720b15` (2026-11-18)
-**Commit Message**: NUC 116 Size and Emptiness Method Aliases
+### Incident Patch 2: `e6a2ae3c` (2026-11-18)
+**Commit Message**: NUC 117 First and Last Element Methods
 
 Accepted under the automatic acceptance rule, in a continuous
 /nuc-proposal cycle (Language compatibility): the frozen candidate meets
@@ -1666,52 +1663,58 @@ every hard criterion and passes every policy check, with the token check
 skipped categorically, as NUC 1's matrix requires for continuous
 Language compatibility cycles. The cycle found no stale Draft, drew
 Language compatibility uniformly from the five eligible categories,
-allocated NUC 116 in 7bc9f013, and completed it with a fresh baseline,
+allocated NUC 117 in db6acd1d, and completed it with a fresh baseline,
 candidate, proposer, Rust improvement pass and evaluator.
 
-Lists, class populations and strings gain the size and emptiness methods
-of Java, Kotlin, C++ and Rust as aliases of the accepted length:
-RECEIVER.size() and RECEIVER.len() give RECEIVER.length,
-RECEIVER.isEmpty() and RECEIVER.is_empty() give RECEIVER.length == 0,
-RECEIVER.isNotEmpty() gives RECEIVER.length > 0, and strings also answer
-TEXT.length(), as lists and populations already do. Each alias behaves
-as the accepted length() call: the receiver is read before its
-arguments, which are evaluated once and ignored, declarations stay live,
-a class without instances has size 0, and strings count characters. At
-th
+Lists and class populations gain the first and last methods of Kotlin,
+Rust, Swift, Ruby and LINQ as aliases of the accepted queries:
+RECEIVER.first() gives RECEIVER.at(0) and RECEIVER.last() gives
+RECEIVER.at(-1), so an empty list gives undefined and a class without
+instances null; with a function, RECEIVER.first(PREDICATE) gives
+RECEIVER.find(PREDICATE) and RECEIVER.last(PREDICATE) gives
+RECEIVER.findLast(PREDICATE), null when nothing matches, with further
+arguments evaluated and ignored; any other supplied first argument
+raises the error of find with the name as written, TypeError("first
+expects a function") or
 
-**File**: `README.md` (modified, +27/-0)
+**File**: `README.md` (modified, +33/-0)
 ```diff
-@@ -2441,6 +2441,33 @@ assert(cool, true)
-   still `"abab"`. See the
-   [root contract](nucleoid.spec.md#count-controlled-repeat-loops).
+@@ -2468,6 +2468,39 @@ assert([idle, backlog, orders.length], [true, 0, 0])
+   values keep their errors. See the
+   [root contract](nucleoid.spec.md#size-and-emptiness-method-aliases).
  
-+## Size and emptiness aliases
++## First and last element methods
 +
-+**Size and emptiness methods keep an order queue's rules live**
++**First and last methods keep a sensor's newest reading live**
 +
 +```nuc
-+orders = ["tea"]
-+idle = orders.isEmpty()
-+backlog = orders.size()
-+orders.push("cake", "pie")
-+assert([idle, backlog], [false, 3])
-+orders.pop()
-+orders.pop()
-+orders.pop()
-+assert([idle, backlog, orders.length], [true, 0, 0])
++class Sensor(name):
++    this.name = name
++    this.readings = []
++$Sensor.newest = $Sensor.readings.last()
++$Sensor.firstAlarm = $Sensor.readings.first(reading -> reading > 40)
++oven = Sensor("oven")
++oven.readings.push(35, 52, 38)
++assert([oven.newest, oven.firstAlarm], [38, 52])
++oven.readings.push(41)
++assert([oven.newest, oven.firstAlarm], [41, 52])
++oven.readings.shift()
++oven.readings.shift()
++assert([oven.newest, oven.firstAlarm], [41, 41])
 +```
 +
-+- [NUC 116](docs/nuc-0116.md) adds the size and emptiness methods that
-+  Java, Kotlin, C++ and Rust write, as aliases of `length` on lists, class
-+  populations and strings: `size()` and `len()` are `length`, `isEmpty()`
-+  and `is_empty()` are `length == 0`, and `isNotEmpty()` is `length > 0`.
-+  Strings also take Java's `length()`, as lists and populations do.
-+- `idle` and `backlog` are standing rules, so every push and pop of the
-+  queue updates them, as `orders.length == 0` and `orders.length` would.
-+  Reads without a call, such as `orders.size`, stay undefined, and other
-+  values keep their errors. See the
-+  [root contract](nucleoid.spec.md#size-and-emptiness-method-aliases).
++- [NUC 117](docs/nuc-0117.md) adds the `first` and `last` methods that
++  Kotlin, Rust, Swift, Ruby and C#'s LINQ write, as aliases on lists and
++  class populations: `first()` is `at(0)` and `last()` is `at(-1)`, and with
++  a predicate, as Kotlin writes `orders.first { it.open }`, `first(test)` is
++  `find(test)` and `last(test)` is `findLast(test)`.
++- Each sensor's `newest` and `firstAlarm` follow its own readings through
++  the class-level rules, as `$Sensor.readings.at(-1)` and
++  `$Sensor.readings.find(reading -> reading > 40)` would: a new reading
++  replaces the newest, and shifting out the old ones moves the first alarm
++  to `41`. An empty list gives undefined and a predicate that accepts
++  nothing `null`, as their spellings do. See the
++  [root contract](nucleoid.spec.md#first-and-last-element-methods).
 +
  ## Reactive list flattening
  
@@ -1720,123 +1723,123 @@ th
 
 **File**: `dataset/nucleoid.spec.jsonl` (modified, +19/-16)
 ```diff
-@@ -779,19 +779,22 @@
- {"id":"spec-0779","description":"Nucleoid evaluates a repeat count once and truncates it","code":"team = [\"ana\", \"bo\"]\nsize = team.length\nrepeat size:\n    team.push(\"hire\")\nassert(team, [\"ana\", \"bo\", \"hire\", \"hire\"])\nassert(size, 4)\ndef culture(cells, hours):\n    total = cells\n    repeat hours:\n        total = total * 2\n    return total\nassert([culture(1, 3), culture(1, 2.9), culture(1, \"3\"), culture(1, true)], [8, 4, 8, 2])\nassert([culture(5, 0), culture(5, -2), culture(5, null)], [5, 5, 5])","return":null}
- {"id":"spec-0780","description":"Nucleoid runs repeat loops in constructors and methods with return","code":"class Shelf(levels):\n    this.bins = []\n    repeat levels:\n        this.bins.push(this.bins.length * 10)\n    def take(count):\n        weight = 0\n        repeat count:\n            if this.bins.length == 0:\n                return \"short\"\n            weight = weight + this.bins.pop()\n        return weight\nshelf = Shelf(3)\nassert(shelf.bins, [0, 10, 20])\nassert(shelf.take(2), 30)\nassert(shelf.take(2), \"short\")\nassert(shelf.bins, [])","return":null}
- {"id":"spec-0781","description":"Nucleoid nests repeat loops and rolls back a failed iteration","code":"class Crate(row):\n    this.row = row\nrows = 2\nrepeat rows:\n    repeat 3: Crate(rows)\n    rows = rows + 1\nassert(Crate.map(crate -> crate.row), [2, 2, 2, 3, 3, 3])\nloaded = Crate.length\ntry:\n    repeat 2:\n        Crate(0)\n        if loaded > 7:\n            throw \"FULL\"\ncatch error:\n    failure = error\nassert(failure, \"FULL\")\nassert([loaded, rows], [6, 4])","return":null}
--{"id":"spec-0782","description":"Nucleoid flattens nested lists by one level","code":"nested = [[1, 2], 2, [[3, [4]]], [], \"ab\"]\nonce = nested.flat()\ntwice = once.flat(1)\nassert(once, [1, 2, 2, [3, [4]], \"ab\"])\nassert(twice, [1, 2, 2, 3, [4], \"ab\"])\nassert(nested, [[1, 2], 2, [[3, [4]]], [], \"ab\"])\nnested.push([[5]], 6)\nassert(once, [1, 2, 2, [3, [4]], \"ab\", [5], 6])\nassert(twice, [1, 2, 2, 3, [4], \"ab\", 5, 6])\ntwice.length","return":"8"}
--{"id":"spec-0783","description":"Nucleoid flattens lists to a given depth","code":"deep = [1, [2, [3, [4, [5]]]], [[6]]]\ntwo = deep.flat(2)\nthree = deep.flat(3)\nsame = deep.flat(0)\nassert(two, [1, 2, 3, [4, [5]], 6])\nassert(three, [1, 2, 3, 4, [5], 6])\nassert(same, [1, [2, [3, [4, [5]]]], [[6]]])\ndeep.push([[7, [8]]])\nassert(two, [1, 2, 3, [4, [5]], 6, 7, [8]])\nassert(three, [1, 2, 3, 4, [5], 6, 7, 8])\nassert(same, deep)\nthree.length","return":"8"}
--{"id":"spec-0784","description":"Nucleoid keeps flattened lists live","code":"shifts = [[\"ana\", \"bo\"], [\"cy\"]]\nstaff = shifts.flat()\nsize = staff.length\nassert([staff, size], [[\"ana\", \"bo\", \"cy\"], 3])\nshifts.push([\"di\"])\nassert([staff, size], [[\"ana\", \"bo\", \"cy\", \"di\"], 4])\nshifts = [[\"eve\"], [], [\"fay\", \"gus\"]]\nassert([staff, size], [[\"eve\", \"fay\", \"gus\"], 3])\nshifts.shift()\nassert([staff, size], [[\"fay\", \"gus\"], 2])\nsize","return":"2"}
--{"id":"spec-0785","description":"Nucleoid flattens lists in class level rules","code":"class Team(squads):\n    this.squads = squads\n$Team.members = $Team.squads.flat()\nred = Team([[\"ana\", \"bo\"], [\"cy\"]])\nblue = Team([[\"di\"]])\nassert([red.members, blue.members], [[\"ana\", \"bo\", \"cy\"], [\"di\"]])\nred.squads.push([\"ed\"])\nblue.squads = [[\"fay\"], [\"gus\", \"hal\"]]\nassert([red.members, blue.members], [[\"ana\", \"bo\", \"cy\", \"ed\"], [\"fay\", \"gus\", \"hal\"]])\nred.members.length","return":"4"}
--{"id":"spec-0786","description":"Nucleoid queries the cells of flattened grids","code":"grid = [[1, 0, 2], [0, 3, 2]]\ncells = grid.flat()\ntotal = cells.sum()\ncolors = cells.distinct()\nfilled = cells.count(cell => cell > 0)\nassert([total, colors, filled], [8, [1, 0, 2, 3], 4])\ngrid.push([5, 0, 0])\nassert([total, colors, filled], [13, [1, 0, 2, 3, 5], 5])\ngrid = [[4, 4], [0]]\n[total, colors, filled]","return":"[8,[4,0],2]"}
--{"id":"spec-0787","description":"Nucleoid rolls back failed flattening updates","code":"rows = [[1, [2]], [3]]\ncells = rows.flat()\ntry:\n    rows.push([4])\n    assert(cells, [1, [2], 3, 4])\n    throw \"UNDO\"\ncatch error:\n    assert(error, \"UNDO\")\nassert([rows, cells], [[[1, [2]], [3]], [1, [2], 3]])\ntry:\n    cells = rows.flat(2)\n    assert(cells, [1, 2, 3])\n    throw \"UNDO\"\ncatch error:\n    assert(error, \"UNDO\")\nrows.push([[5]])\ncells","return":"[1,[2],3,[5]]"}
--{"id":"spec-0788","description":"Nucleoid tests membership with in and not in","code":"tags = [\"red\", \"blue\"]\nassert(\"red\" in tags, true)\nassert(\"green\" in tags, false)\nassert(\"green\" not in tags, true)\nassert(\"red\" not in tags, false)\nassert([1, 2] in [[1, 2], [3]], true)\nassert({ x: 1 } in [{ x: 1 }, null], true)\nassert(null in [1, null], true)\nassert(Number.NaN in [Number.NaN], false)\nassert(\"ell\" in \"hello\", true)\nassert(1 in \"a1\", true)\nassert(\"\
+@@ -782,19 +782,22 @@
+ {"id":"spec-0782","description":"Nucleoid sizes lists, populations and strings with size and len","code":"queue = [\"ana\", \"bo\"]\nwaiting = queue.size()\nserved = queue.len()\nassert([waiting, served], [2, 2])\nqueue.push(\"cy\")\nassert([waiting, served, queue.length], [3, 3, 3])\nclass Order(item):\n    this.item = item\norders = Order.size()\nassert([orders, Order.len()], [0, 0])\nOrder(\"tea\")\nOrder(\"cake\")\nassert([orders, Order.len(), Order.length], [2, 2, 2])\nname = \"Zoë\"\nletters = name.size()\nassert([letters, name.len(), name.length(), name.length], [3, 3, 3, 3])\nname = \"Ada Lovelace\"\nassert([letters, \"\".size(), [].len()], [12, 0, 0])\nqueue.shift()\n[waiting, served]","return":"[2,2]"}
+ {"id":"spec-0783","description":"Nucleoid tests emptiness with isEmpty, is_empty and isNotEmpty","code":"jobs = []\nidle = jobs.isEmpty()\nbusy = jobs.isNotEmpty()\nassert([idle, busy, jobs.is_empty()], [true, false, true])\njobs.push(\"print\", \"scan\")\nassert([idle, busy], [false, true])\njobs.pop()\njobs.pop()\nassert([idle, busy], [true, false])\nclass Sensor(name):\n    this.name = name\n    this.readings = []\n$Sensor.silent = $Sensor.readings.is_empty()\n$Sensor.alarm = $Sensor.readings.isNotEmpty() && $Sensor.readings.at(-1) > 40\ndoor = Sensor(\"door\")\noven = Sensor(\"oven\")\nassert([door.silent, oven.silent, oven.alarm], [true, true, false])\noven.readings.push(35, 52)\nassert([oven.silent, oven.alarm, door.silent], [false, true, true])\noven.readings.pop()\nassert([oven.silent, oven.alarm], [false, false])\nassert([Sensor.isEmpty(), Sensor.isNotEmpty(), \"\".isEmpty(), \"on\".is_empty()], [false, true, true, false])","return":null}
+ {"id":"spec-0784","description":"Nucleoid rolls back failed updates through size and emptiness aliases","code":"stock = [\"bolt\", \"nut\"]\nlow = stock.size() < 3\nfailure = \"\"\ntry:\n    stock = 7\ncatch error:\n    failure = error\nassert(failure, TypeError(\"number.size is not a function\"))\nassert([stock, low], [[\"bolt\", \"nut\"], true])\ntry:\n    stock.push(\"gear\")\n    assert([stock.len(), low], [3, false])\n    throw \"UNDO\"\ncatch error:\n    assert(error, \"UNDO\")\nassert([stock.len(), low], [2, true])\nclass Bin(items):\n    this.items = items\n$Bin.empty = $Bin.items.isEmpty()\nbin = Bin([\"pin\"])\ntry:\n    bin.items = 0\ncatch error:\n    failure = error\nassert(failure, TypeError(\"number.isEmpty is not a function\"))\nassert([bin.items, bin.empty], [[\"pin\"], false])\nlabel = \"ok\"\nshown = label.length()\ntry:\n    label = true\ncatch error:\n    failure = error\nassert([failure, label, shown], [TypeError(\"boolean.length is not a function\"), \"ok\", 2])\nbin.items.pop()\nbin.empty","return":"true"}
+-{"id":"spec-0785","description":"Nucleoid flattens nested lists by one level","code":"nested = [[1, 2], 2, [[3, [4]]], [], \"ab\"]\nonce = nested.flat()\ntwice = once.flat(1)\nassert(once, [1, 2, 2, [3, [4]], \"ab\"])\nassert(twice, [1, 2, 2, 3, [4], \"ab\"])\nassert(nested, [[1, 2], 2, [[3, [4]]], [], \"ab\"])\nnested.push([[5]], 6)\nassert(once, [1, 2, 2, [3, [4]], \"ab\", [5], 6])\nassert(twice, [1, 2, 2, 3, [4], \"ab\", 5, 6])\ntwice.length","return":"8"}
+-{"id":"spec-0786","description":"Nucleoid flattens lists to a given depth","code":"deep = [1, [2, [3, [4, [5]]]], [[6]]]\ntwo = deep.flat(2)\nthree = deep.flat(3)\nsame = deep.flat(0)\nassert(two, [1, 2, 3, [4, [5]], 6])\nassert(three, [1, 2, 3, 4, [5], 6])\nassert(same, [1, [2, [3, [4, [5]]]], [[6]]])\ndeep.push([[7, [8]]])\nassert(two, [1, 2, 3, [4, [5]], 6, 7, [8]])\nassert(three, [1, 2, 3, 4, [5], 6, 7, 8])\nassert(same, deep)\nthree.length","return":"8"}
+-{"id":"spec-0787","description":"Nucleoid keeps flattened lists live","code":"shifts = [[\"ana\", \"bo\"], [\"cy\"]]\nstaff = shifts.flat()\nsize = staff.length\nassert([staff, size], [[\"ana\", \"bo\", \"cy\"], 3])\nshifts.push([\"di\"])\nassert([staff, size], [[\"ana\", \"bo\", \"cy\", \"di\"], 4])\nshifts = [[\"eve\"], [], [\"fay\", \"gus\"]]\nassert([staff, size], [[\"eve\", \"fay\", \"gus\"], 3])\nshifts.shift()\nassert([staff, size], [[\"fay\", \"gus\"], 2])\nsize","return":"2"}
+-{"id":"spec-0788","description":"Nucleoid flattens lists in class level rules","code":"class Team(squads):\n    this.squads = squads\n$Team.members = $Team.squads.flat()\nred = Team([[\"ana\", \"bo\"], [\"cy\"]])\nblue = Team([[\"di\"]])\nassert([red.members, blue.members], [[\"ana\", \"bo\", \"cy\"], [\"di\"]])\nred.squads.push([\"ed\"])\nblue.squads = [[\"fay\"], [\"gus\", \"hal\"]]\nassert([red.members, blue.members], [[\"ana\", \"bo\", \"cy\", \"ed\"], [\"fay\", \"gus\", \"hal\"]])\nred.members.length","return":"4"}
+-{"id":"spec-0789","description":"Nucleoid queries the cells of flattened grids","code":"grid = [[1, 0, 2], [0, 3, 2]]\ncells = grid.flat()\ntotal = cells.sum()\ncolors = cells.distinct()\nfilled = cells.count(cell => cell > 0)\nassert([total, colors, filled], [8, [1, 0, 2, 3], 4])\ngrid.push([5,
 ```
 
-**File**: `dataset/nucleoid.synth.80.jsonl` (added, +14/-0)
+**File**: `dataset/nucleoid.synth.81.jsonl` (added, +15/-0)
 ```diff
-@@ -0,0 +1,14 @@
-+{"id":"synth-80-0001","description":"List size and len give the list's length, as Java and Rust spell them","code":"orders = [\"tea\", \"cake\"]\n[orders.size(), orders.len(), orders.length]","return":"[2,2,2]"}
-+{"id":"synth-80-0002","description":"isEmpty and isNotEmpty follow a queue as it is pushed","code":"queue = []\nidle = queue.isEmpty()\nbusy = queue.isNotEmpty()\nqueue.push(\"job\")\n[idle, busy]","return":"[false,true]"}
-+{"id":"synth-80-0003","description":"Rust's is_empty tests a list, and the rule follows a later pop","code":"stack = [1]\nempty = stack.is_empty()\nstack.pop()\nempty","return":"true"}
-+{"id":"synth-80-0004","description":"A string's length() method gives its character count, as Java writes it","code":"name = \"Zoë\"\n[name.length(), name.size(), name.len(), name.length]","return":"[3,3,3,3]"}
-+{"id":"synth-80-0005","description":"Strings answer isEmpty, is_empty and isNotEmpty","code":"[\"\".isEmpty(), \"\".is_empty(), \" \".isEmpty(), \"a\".isNotEmpty()]","return":"[true,true,false,true]"}
-+{"id":"synth-80-0006","description":"A class population's size counts its instances and follows new ones","code":"class Order(item):\n    this.item = item\norders = Order.size()\nOrder(\"tea\")\nOrder(\"cake\")\norders","return":"2"}
-+{"id":"synth-80-0007","description":"A class without instances is empty and has size 0","code":"class Ticket\n[Ticket.isEmpty(), Ticket.size()]","return":"[true,0]"}
-+{"id":"synth-80-0008","description":"A class-level rule tests each instance's list with isEmpty","code":"class Bin(items):\n    this.items = items\n$Bin.empty = $Bin.items.isEmpty()\nfull = Bin([1])\nspare = Bin([])\nfull.items.pop()\n[full.empty, spare.empty]","return":"[true,true]"}
-+{"id":"synth-80-0009","description":"Arguments of a size alias are evaluated and ignored, as length() treats them","code":"xs = [1, 2, 3]\n[xs.size(0), xs.len(\"x\", null)]","return":"[3,3]"}
-+{"id":"synth-80-0010","description":"On a class name the population alias wins over an instance method of the same name","code":"class Box:\n    def size() => 99\nb = Box()\n[b.size(), Box.size()]","return":"[99,1]"}
-+{"id":"synth-80-0011","description":"A failed update through an alias rolls back, so the rule keeps its value","code":"stock = [\"bolt\"]\nlow = stock.size() < 2\nfailure = \"\"\ntry:\n    stock = 7\ncatch error:\n    failure = error\n[stock, low, failure]","return":"[[\"bolt\"],true,\"TypeError: number.size is not a function\"]"}
-+{"id":"synth-80-0012","description":"A program that caught the former alias error now receives the size","code":"xs = [1, 2]\ntry:\n    r = xs.size()\ncatch e:\n    r = \"caught\"\nr","return":"2"}
-+{"id":"synth-80-0013","description":"Templates and conditional expressions read the aliases","code":"jobs = [\"a\", \"b\"]\nlabel = `${jobs.size()} jobs`\nstate = jobs.isEmpty() ? \"idle\" : \"busy\"\n[label, state]","return":"[\"2 jobs\",\"busy\"]"}
-+{"id":"synth-80-0014","description":"Counting the empty shelves of a population with filter, isEmpty and size","code":"class Shelf(items):\n    this.items = items\nShelf([])\nShelf([1])\nShelf([])\nShelf.filter(shelf -> shelf.items.isEmpty()).size()","return":"2"}
+@@ -0,0 +1,15 @@
++{"id":"synth-81-0001","description":"List first and last give its ends, as Kotlin and Rust spell them","code":"queue = [\"tea\", \"cake\", \"pie\"]\n[queue.first(), queue.last()]","return":"[\"tea\",\"pie\"]"}
++{"id":"synth-81-0002","description":"A sensor's newest reading follows a later push through last","code":"readings = [18, 21]\nnewest = readings.last()\nreadings.push(25)\nnewest","return":"25"}
++{"id":"synth-81-0003","description":"The head of a queue follows a shift through first","code":"queue = [\"ana\", \"bo\"]\nhead = queue.first()\nqueue.shift()\nhead","return":"\"bo\""}
++{"id":"synth-81-0004","description":"Kotlin's first with a predicate finds the first cheap price","code":"prices = [12, 7, 30, 4]\nprices.first(price -> price < 10)","return":"7"}
++{"id":"synth-81-0005","description":"last with a predicate searches from the back, as findLast does","code":"prices = [12, 7, 30, 4]\nprices.last(price -> price > 10)","return":"30"}
++{"id":"synth-81-0006","description":"A predicate that accepts nothing gives null, as find does","code":"xs = [1, 2]\n[xs.first(x -> x > 5), xs.last(x -> x > 5)]","return":"[null,null]"}
++{"id":"synth-81-0007","description":"A standing first over an empty list takes the first item pushed","code":"empty = []\nhead = empty.first()\nempty.push(4, 6)\n[head, empty.last()]","return":"[4,6]"}
++{"id":"synth-81-0008","description":"A class's first and last instances are its first and latest created","code":"class Order(item):\n    this.item = item\nOrder(\"tea\")\nOrder(\"cake\")\n[Order.first().item, Order.last().item]","return":"[\"tea\",\"cake\"]"}
++{"id":"synth-81-0009","description":"A standing last over a class follows each new instance","code":"class Visit(name):\n    this.name = name\nlatest = Visit.last()\nVisit(\"ana\")\nVisit(\"bo\")\nlatest.name","return":"\"bo\""}
++{"id":"synth-81-0010","description":"A class without instances has null as its first and last","code":"class Empty\n[Empty.first(), Empty.last()]","return":"[null,null]"}
++{"id":"synth-81-0011","description":"A class-level rule keeps each sensor's newest reading","code":"class Sensor(name):\n    this.name = name\n    this.readings = []\n$Sensor.newest = $Sensor.readings.last()\nfan = Sensor(\"fan\")\nfan.readings.push(3, 9)\nfan.newest","return":"9"}
++{"id":"synth-81-0012","description":"The first pending task follows the property its predicate reads and new tasks","code":"class Task(title, done):\n    this.title = title\n    this.done = done\nTask(\"a\", true)\nb = Task(\"b\", false)\npending = Task.first(task -> !task.done)\nb.done = true\nTask(\"c\", false)\npending.title","return":"\"c\""}
++{"id":"synth-81-0013","description":"A count is not a predicate, so first raises find's error with its own name","code":"xs = [1, 2]\ntry:\n    r = xs.first(2)\ncatch error:\n    r = error\nr","return":"\"TypeError: first expects a function\""}
++{"id":"synth-81-0014","description":"A program that caught the former error now receives the last item","code":"xs = [5]\ntry:\n    r = xs.last()\ncatch e:\n    r = \"caught\"\nr","return":"5"}
++{"id":"synth-81-0015","description":"A failed replacement rolls back through a standing last","code":"stock = [\"bolt\"]\nnewest = stock.last()\nfailure = \"\"\ntry:\n    stock = 7\ncatch error:\n    failure = error\n[failure, newest]","return":"[\"TypeError: number.last is not a function\",\"bolt\"]"}
 ```
 
-**File**: `docs/README.md` (modified, +47/-2)
+**File**: `docs/README.md` (modified, +61/-1)
 ```diff
-@@ -2595,9 +2595,9 @@ Full detail: [NUC 9](nuc-0009.md), [NUC 46](nuc-0046.md).
- | `Boolean` | `Boolean(value)` |
- | `Number` | `Number.MAX_INTEGER` |
+@@ -1272,6 +1272,7 @@ counter.doubled()
+ - An instance created without a variable name gets a generated `id`.
+ - Instances are addressed by index `Name[0]`, by id `Name["id"]`, or by query `Name.find(...)`.
+ - `Name[1:]`, `Name.at(-1)`, `Name.list()` and `Name.all()` read them by range, by position from either end, and all at once, in population order ([NUC 61](nuc-0061.md)).
++- `Name.first()` and `Name.last()` are the first and latest created instances, exactly `Name.at(0)` and `Name.at(-1)`, and `Name.first(predicate)` and `Name.last(predicate)` are `Name.find(predicate)` and `Name.findLast(predicate)` ([NUC 117](nuc-0117.md)).
+ 
+ ### Subtypes
+ 
+@@ -2597,7 +2598,7 @@ Full detail: [NUC 9](nuc-0009.md), [NUC 46](nuc-0046.md).
  | `Math` | `pow`, `sqrt`, `floor`, `round`, `max`, `min`, `clamp` ([NUC 21](nuc-0021.md)), `lerp` ([NUC 22](nuc-0022.md)), `saturate` ([NUC 23](nuc-0023.md)), `smoothstep(lower, upper, value)` (accepted [NUC 33](nuc-0033.md)), `smootherstep(lower, upper, value)` (accepted [NUC 35](nuc-0035.md)), `remap(start, end, targetStart, targetEnd, value)` (accepted [NUC 39](nuc-0039.md)) |
--| `String` | `String.fromCharCode`; instance `charAt`, `length`, `lower`, `replace`, `replaceAll` (accepted [NUC 42](nuc-0042.md)), `repeat`, `split`, `padStart` and `padEnd` ([NUC 111](nuc-0111.md)), and Python's `startswith`, `endswith` and `join(items)`, with the separator as the receiver ([NUC 110](nuc-0110.md)) |
-+| `String` | `String.fromCharCode`; instance `charAt`, `length`, `lower`, `replace`, `replaceAll` (accepted [NUC 42](nuc-0042.md)), `repeat`, `split`, `padStart` and `padEnd` ([NUC 111](nuc-0111.md)), Python's `startswith`, `endswith` and `join(items)`, with the separator as the receiver ([NUC 110](nuc-0110.md)), and the size and emptiness methods `length()`, `size()`, `len()`, `isEmpty()`, `is_empty()` and `isNotEmpty()` ([NUC 116](nuc-0116.md)) |
+ | `String` | `String.fromCharCode`; instance `charAt`, `length`, `lower`, `replace`, `replaceAll` (accepted [NUC 42](nuc-0042.md)), `repeat`, `split`, `padStart` and `padEnd` ([NUC 111](nuc-0111.md)), Python's `startswith`, `endswith` and `join(items)`, with the separator as the receiver ([NUC 110](nuc-0110.md)), and the size and emptiness methods `length()`, `size()`, `len()`, `isEmpty()`, `is_empty()` and `isNotEmpty()` ([NUC 116](nuc-0116.md)) |
  | `Date` | `Date()`, `Date(string)`, `Date(number)`, `Date.now()`, `Date.parse()`; instance `getTime`, `getYear`, `toDateString` |
--| `List` | `push`, `pop`, `filter`, `map`, `flatMap` (accepted [NUC 41](nuc-0041.md)), `flat` ([NUC 103](nuc-0103.md)), `reduce`, `find`, `some`, `every`, `slice`, `sort` (in place, [NUC 58](nuc-0058.md)), `join`, `length`, and the queries `at`, `includes`, `indexOf`, `lastIndexOf`, `findIndex`, `findLast`, `findLastIndex` and `concat` ([NUC 61](nuc-0061.md)), `sum` ([NUC 68](nuc-0068.md)), `max` and `min` ([NUC 69](nuc-0069.md)), `distinct` ([NUC 71](nuc-0071.md)), `count(predicate)` ([NUC 73](nuc-0073.md)), `mode` ([NUC 75](nuc-0075.md)), `maxBy` and `minBy` ([NUC 77](nuc-0077.md)), `average` ([NUC 80](nuc-0080.md)), `median` ([NUC 84](nuc-0084.md)), `sortBy` ([NUC 105](nuc-0105.md)), `partition` ([NUC 108](nuc-0108.md)), and `product` ([NUC 114](nuc-0114.md)); `sum`, `max`, `min` and `mode` also read as `sum of list` ([NUC 75](nuc-0075.md) revision 2) |
-+| `List` | `push`, `pop`, `filter`, `map`, `flatMap` (accepted [NUC 41](nuc-0041.md)), `flat` ([NUC 103](nuc-0103.md)), `reduce`, `find`, `some`, `every`, `slice`, `sort` (in place, [NUC 58](nuc-0058.md)), `join`, `length`, and the queries `at`, `includes`, `indexOf`, `lastIndexOf`, `findIndex`, `findLast`, `findLastIndex` and `concat` ([NUC 61](nuc-0061.md)), `sum` ([NUC 68](nuc-0068.md)), `max` and `min` ([NUC 69](nuc-0069.md)), `distinct` ([NUC 71](nuc-0071.md)), `count(predicate)` ([NUC 73](nuc-0073.md)), `mode` ([NUC 75](nuc-0075.md)), `maxBy` and `minBy` ([NUC 77](nuc-0077.md)), `average` ([NUC 80](nuc-0080.md)), `median` ([NUC 84](nuc-0084.md)), `sortBy` ([NUC 105](nuc-0105.md)), `partition` ([NUC 108](nuc-0108.md)), `product` ([NUC 114](nuc-0114.md)), and the size and emptiness aliases `size()`, `len()`, `isEmpty()`, `is_empty()` and `isNotEmpty()` ([NUC 116](nuc-0116.md)); `sum`, `max`, `min` and `mode` also read as `sum of list` ([NUC 75](nuc-0075.md) revision 2) |
+-| `List` | `push`, `pop`, `filter`, `map`, `flatMap` (accepted [NUC 41](nuc-0041.md)), `flat` ([NUC 103](nuc-0103.md)), `reduce`, `find`, `some`, `every`, `slice`, `sort` (in place, [NUC 58](nuc-0058.md)), `join`, `length`, and the queries `at`, `includes`, `indexOf`, `lastIndexOf`, `findIndex`, `findLast`, `findLastIndex` and `concat` ([NUC 61](nuc-0061.md)), `sum` ([NUC 68](nuc-0068.md)), `max` and `min` ([NUC 69](nuc-0069.md)), `distinct` ([NUC 71](nuc-0071.md)), `count(predicate)` ([NUC 73](nuc-0073.md)), `mode` ([NUC 75](nuc-0075.md)), `maxBy` and `minBy` ([NUC 77](nuc-0077.md)), `average` ([NUC 80](nuc-0080.md)), `median` ([NUC 84](nuc-0084.md)), `sortBy` ([NUC 105](nuc-0105.md)), `partition` ([NUC 108](nuc-0108.md)), `product` ([NUC 114](nuc-0114.md)), and the size and emptiness aliases `size()`, `len()`, `isEmpty()`, `is_empty()` and `isNotEmpty()` ([NUC 116](nuc-0116.md)); `sum`, `max`, `min` and `mode` also read as `sum of list` ([NUC 75](nuc-0075.md) revision 2) |
++| `List` | `push`, `pop`, `filter`, `map`, `flatMap` (accepted [NUC 41](nuc-0041.md)), `flat` ([NUC 103](nuc-0103.md)), `reduce`, `find`, `some`, `every`, `slice`, `sort` (in place, [NUC 58](nuc-0058.md)), `join`, `length`, and the queries `at`, `includes`, `indexOf`, `lastIndexOf`, `findIndex`, `findLast`, `findLastIndex` and `concat` ([NUC 61](nuc-0061.md)), `sum` ([NUC 68](nuc-0068.md)), `max` and `min` ([NUC 69](nuc-0069.md)), `distinct` ([NUC 71](nuc-0071.md)), `count(predicate)` ([NUC 73](nuc-0073.md)), `mode` ([NUC 75](nuc-0075.md)), `maxBy` and `minBy` ([NUC 77](nuc-0077.md)), `average` ([NUC 80](nuc-0080.md)), `median` ([NUC 84](nuc-0084.md)), `sortBy` ([NUC 105](nuc-0105.md)), `partition` ([NUC 108](nuc-0108.md)), `product` ([NUC 114](nuc-0114.md)), the size and emptiness aliases `size()`, `len()`, `isEmpty()`, `is_empty()` and `isNotEmpty()` ([NUC 116](nuc-0116.md)), and the first and last element aliases `first()`, `last()`, `first(predicate)` and `last(predicate)` ([NUC 117](nuc-0117.md)); `sum`, `max`, `min` and `mode` also read as `sum of list` ([NUC 75](nuc-0075.md) revision 2) |
  | `Class` | the global list of declared types; `Class.length` |
  
  ```
-@@ -2702,6 +2702,48 @@ listing == scripts.join(", ")
-   [root section](../nucleoid.spec.md#python-string-method-aliases) and its
-   three appended entries define the results, liveness and rollback.
+@@ -2744,6 +2745,62 @@ pending == inbox.length
+   [root section](../nucleoid.spec.md#size-and-emptiness-method-aliases) and
+   its three appended entries define the results, liveness and rollback.
  
-+### Size and emptiness method aliases
++### First and last element methods
 +
 +```
-+class Task(title):
-+    this.title = title
-+inbox = ["call ana", "pay rent"]
-+pending = inbox.size()
-+clear = inbox.isEmpty()
-+Task("plan trip")
-+assert([pending, inbox.len(), Task.size(), "inbox".length()], [2, 2, 1, 5])
-+inbox.pop()
-+inbox.pop()
-+assert([pending, clear, inbox.is_empty(), Task.isNotEmpty()], [0, true, true, true])
-+pending == inbox.length
++class Job(name, done):
++    this.name = name
++    this.done = done
++queue = ["scan", "print"]
++head = queue.first()
++tail = queue.last()
++Job("backup", true)
++Job("deploy", false)
++pending = Job.first(job -> !job.done)
++assert([head, tail, pending.name, Job.last().name], ["scan", "print", "deploy", "deploy"])
++queue.shift()
++queue.push("fax")
++assert([head, tail], ["print", "fax"])
++[queue.first(job -> job == "copy"), [].last()]
 +```
 +
-+- [NUC 116](nuc-0116.md) adds the size and emptiness methods of Java,
-+  Kotlin, C++ and Rust as aliases of `length` on lists, class populations
-+  and strings. `size()` and `len()` are `length`, `isEmpty()` and
-+  `is_empty()` are `length == 0`, and `isNotEmpty()` is `length > 0`.
-+  Strings also take Java's `length()`, which lists and populations already
-+  take, and every receiver counts characters, as `length` does.
-+- Each alias evaluates its receiver and then its arguments, which it
-+  ignores, and stays live like its accepted spelling: `pending` and `clear`
-+  follow the pops. `why` names the same dependencies.
-+- Only calls on lists, populations and strings change. Other receivers keep
-+  their errors, as their `length()` does, so `(5).size()` still raises
-+  `TypeError("number.size is not a function")`. Reads such as `xs.size`
-+  without a call, functions, properties and methods of the same names, and
-+  `$Name` inside a class-level rule, where it is the instance, keep their
-+  behavior.
++- [NUC 117](nuc-0117.md) adds the `first` and `last` methods of Kotlin,
++  Rust, Swift, Ruby and C#'s LINQ as aliases on lists and class
++  populations. `first()` is `at(0)` and `last()` is `at(-1)`, so a class's
++  first and last instances are its first and latest created. With a
++  function, `first(test)` is `find(test)` and `last(test)` is
++  `findLast(test)`, as Kotlin's `orders.first { it.open }` and LINQ's
++  `First(predica
 ```
 
-**File**: `docs/examples.md` (modified, +29/-0)
+**File**: `docs/examples.md` (modified, +30/-0)
 ```diff
-@@ -3961,6 +3961,35 @@ Car(local)
-   in the constructor does not run again. See [NUC 115](nuc-0115.md) and the
-   [root contract](../nucleoid.spec.md#count-controlled-repeat-loops).
+@@ -3990,6 +3990,36 @@ restock
+   shelf takes it to `0`. See [NUC 116](nuc-0116.md) and the
+   [root contract](../nucleoid.spec.md#size-and-emptiness-method-aliases).
  
-+## Size and emptiness aliases
++## First and last element methods
 +
-+**Emptiness methods keep every shelf's restock count live**
++**First and last methods keep the next urgent patient live**
 +
 +```nuc
-+class Shelf(aisle):
-+    this.aisle = aisle
-+    this.items = []
-+$Shelf.empty = $Shelf.items.isEmpty()
-+$Shelf.stocked = $Shelf.items.len()
-+north = Shelf("north")
-+south = Shelf("south")
-+north.items.push("bolt", "nut")
-+assert([north.empty, north.stocked, south.empty, south.stocked], [false, 2, true, 0])
-+restock = Shelf.filter(shelf -> shelf.empty).size()
-+assert(restock, 1)
-+south.items.push("gear")
-+restock
-+# return: 0
++class Patient(name, urgent):
++    this.name = name
++    this.urgent = urgent
++nextUrgent = Patient.first(patient -> patient.urgent)
++newest = Patient.last()
++ana = Patient("ana", false)
++bo = Patient("bo", true)
++assert([nextUrgent, newest], [bo, bo])
++cy = Patient("cy", true)
++ana.urgent = true
++assert([nextUrgent, newest], [ana, cy])
++[nextUrgent.name, newest.name]
++# return: ["ana","cy"]
 +```
 +
-+- Each shelf's `empty` and `stocked` follow its own list through the
-+  class-level rules, written as Java's `isEmpty()` and Rust's `len()` where
-+  accepted syntax writes `$Shelf.items.length == 0` and
-+  `$Shelf.items.length`.
-+- `restock` counts the empty shelves with `size()`, so stocking the south
-+  shelf takes it to `0`. See [NUC 116](nuc-0116.md) and the
-+  [root contract](../nucleoid.spec.md#size-and-emptiness-method-aliases).
++- `nextUrgent` is the first patient, in arrival order, whose case is
++  urgent, written as Kotlin's `first` with a predicate where accepted syntax
++  writes `Patient.find(patient -> patient.urgent)`, and `newest` is the
++  latest arrival, written as `last()` where accepted syntax writes
++  `Patient.at(-1)`.
++- Both follow the population: `cy`'s arrival moves `newest`, and `ana`
++  turning urgent moves `nextUrgent` back to her, since she arrived first.
++  See [NUC 117](nuc-0117.md) and the
++  [root contract](../nucleoid.spec.md#first-and-last-element-methods).
 +
  ## Reactive list flattening
  
@@ -1845,90 +1848,92 @@ th
 
 **File**: `docs/nuc-0000.md` (modified, +2/-2)
 ```diff
-@@ -159,7 +159,7 @@ Created: 31-Jul-2026
- | [99](nuc-0099.md) | SQL-Style Inequality | Rejected: full suite fails 14 corpus-count assertions |
+@@ -160,7 +160,7 @@ Created: 31-Jul-2026
  | [107](nuc-0107.md) | Python-Style Self Parameters | Accepted |
  | [110](nuc-0110.md) | Python String Method Aliases | Accepted |
--| [116](nuc-0116.md) | Size and Emptiness Method Aliases | Draft |
-+| [116](nuc-0116.md) | Size and Emptiness Method Aliases | Accepted |
+ | [116](nuc-0116.md) | Size and Emptiness Method Aliases | Accepted |
+-| [117](nuc-0117.md) | First and Last Element Methods | Draft |
++| [117](nuc-0117.md) | First and Last Element Methods | Accepted |
  
  ### Documentation
  
-@@ -286,7 +286,7 @@ Created: 31-Jul-2026
- | [113](nuc-0113.md) | Implicit Receivers in Method Bodies | Standards Track | Syntax enhancement | Accepted |
+@@ -288,7 +288,7 @@ Created: 31-Jul-2026
  | [114](nuc-0114.md) | List and Population Products | Standards Track | Utility enhancement | Accepted |
  | [115](nuc-0115.md) | Count-Controlled Repeat Loops | Standards Track | Runtime features | Accepted |
--| [116](nuc-0116.md) | Size and Emptiness Method Aliases | Standards Track | Language compatibility | Draft |
-+| [116](nuc-0116.md) | Size and Emptiness Method Aliases | Standards Track | Language compatibility | Accepted |
+ | [116](nuc-0116.md) | Size and Emptiness Method Aliases | Standards Track | Language compatibility | Accepted |
+-| [117](nuc-0117.md) | First and Last Element Methods | Standards Track | Language compatibility | Draft |
++| [117](nuc-0117.md) | First and Last Element Methods | Standards Track | Language compatibility | Accepted |
  
  ## Copyright
  
 ```
 
-**File**: `docs/nuc-0116.md` (modified, +1146/-18)
+**File**: `docs/nuc-0117.md` (modified, +1260/-18)
 ```diff
-@@ -4,7 +4,7 @@
- NUC: 116
- Title: Size and Emptiness Method Aliases
+@@ -4,10 +4,11 @@
+ NUC: 117
+ Title: First and Last Element Methods
  Author: Can Mingir <canmingir@gmail.com>
 -Status: Draft
 +Status: Accepted
  Type: Standards Track
  Category: Language compatibility
- Created: 17-Nov-2026
-@@ -25,14 +25,21 @@ Created: 17-Nov-2026
-   for lists and populations: its arguments are evaluated and ignored, a
-   declaration that holds it stays live as the receiver changes, and a class
-   with no instances has size `0`. A string's size counts its characters, as
--  `TEXT.length` does.
-+  `TEXT.length` does, so `"Zoë".len()` is `3`.
+ Created: 18-Nov-2026
++Requires: 61
+ ```
+ 
+ ## Abstract
+@@ -21,19 +22,27 @@ Created: 18-Nov-2026
+   - with a function, Kotlin's and LINQ's predicate overloads,
+     `RECEIVER.first(PREDICATE)` gives `RECEIVER.find(PREDICATE)` and
+     `RECEIVER.last(PREDICATE)` gives `RECEIVER.findLast(PREDICATE)`.
+-- Each alias behaves as its accepted spelling does: an empty receiver gives
+-  undefined, a predicate that matches nothing gives `null`, a declaration
+-  that holds the call stays live as the receiver changes, and any other
+-  argument raises the error that `find` raises for it, with the name as
+-  written.
++- Each alias behaves as its accepted spelling does: an empty list gives
++  undefined and a class without instances `null`, as `at` gives them; a
++  predicate that accepts nothing gives `null`; further arguments are
++  evaluated and ignored; a declaration that holds the call stays live as
++  the receiver, and what the predicate reads, change; and any other first
++  argument raises the error that `find` and `findLast` raise for it, with
++  the name as written: `TypeError("first expects a function")` or
++  `TypeError("last expects a function")`.
  - At the accepted revision each of these calls raises
 -  `TypeError("<receiver>.<name> is not a function")`. Every other reading
 -  of the names is kept: instance methods and function-valued properties
--  named `size`, `len`, `isEmpty`, `is_empty`, `isNotEmpty` or `length` keep
--  running, other values keep their accepted errors, and property reads such
--  as `xs.size` stay undefined. `length` stays the canonical spelling, and no
--  syntax, token or keyword is added.
-+  `TypeError("<receiver>.<name> is not a function")`. Only those calls
-+  change, along with the programs that caught that error. On every other
-+  receiver the names keep the reading that `length()` has there: numbers,
-+  booleans, functions, dates and regular expressions keep their
-+  `TypeError`, objects and instances keep their methods, callable
-+  properties and undefined members, a `null` or undefined receiver stays
-+  undefined, and a class declared as `Math`, `Number`, `String` or `Date`
-+  keeps reaching that namespace's static methods. Reads without a call,
-+  such as `xs.size`, stay undefined.
-+- `length` stays the canonical spelling. No token, keyword, syntax-tree
-+  node, error type or message format, dependency or public item is added.
+-  named `first` or `last` keep running, strings and other values keep
+-  their accepted errors, property reads such as `xs.first` stay undefined,
+-  and the state versions `xs@first` and `xs@last` are unchanged. `at`,
+-  `find` and `findLast` stay the canonical spellings, and no syntax, token
+-  or keyword is added.
++  `TypeError("<receiver>.<name> is not a function")`, unless an argument
++  raises first. Only those calls change, along with the programs that
++  caught that error. Every other reading of the names is kept: instance
++  methods, callable properties and functions named `first` or `last` keep
++  running, strings and other values keep their accepted errors, reads
++  without a call such as `xs.first` stay undefined, and the state versions
++  `xs@first` and `xs@last` are unchanged.
++- `at`, `find` and `findLast` stay the canonical spellings. No token,
++  keyword, syntax-tree node, error type or message format, dependency or
++  public item is added.
 +- The authoritative contract is
-+  [Size and emptiness method aliases](../nucleoid.spec.md#size-and-emptiness-method-aliases).
++  [First and last element methods](../nucleoid.spec.md#first-and-last-element-methods).
  
  ## Motivation
  
-@@ -45,30 +52,1151 @@ Created: 17-Nov-2026
-   model that guards a rule with `queue.isEmpty()` or reports
-   `orders.size()` fails before it runs, although the accepted spellings
-   `queue.length == 0` and `orders.length` say the same thing.
-+- A world model is often guarded by emptiness: a queue that is idle when it
-+  holds no job, a shelf to restock when it holds no item, a sensor that is
-+  silent until it reads a value. These rules are standing, so they must
-+  follow every later push and pop, which the accepted `length` already
-+  does and the aliases inherit.
- - The aliases advance the language-superset aspiration of the Language
-   compatibility category. The accepted `this`/`self`, `=>`/`->`, `append`,
--  `contains`, `lower`, `upper`, `strip` and NUC 110's `startswith`,
--  `endswith` and `join` follow the same pattern: an equivalent familiar
--  spelling beside the canonical one, with no change to any accepted program.
--- Java's `Collection.size()`, `Collection.isEmpty()` and `String.length()`,
--  Kotlin's `isEmpty()` and `isNotEmpty()`, C++'s `size()` and Rust's `len()`
--  and `is_empty()` are the prior art.
-+  `find`, `contains`, `lower`, `upper`, `strip`, `substr` and NUC 110's
-+  `startswith`, `endswith` and `join` follow the same pattern: an
-+  equivalent familiar spelling beside the canonical one, with no change to
-+  any accepted program.
-+- Prior art: Java's `Collection.size()`, `Collection.isEmpty()` and
-+  `String.length()`, Kotlin's `isEmpty()` and `isNotEmpty()`, C++'s
-+  `size()`, and Rust's `len()` and `is_empty()`.
+@@ -46,7 +55,8 @@ Created: 18-Nov-2026
+   `TypeError("<receiver>.<name> is not a function")`, so a world model that
+   reads a sensor's latest reading with `readings.last()` or the next job
+   with `queue.first()` fails before it runs, although the accepted
+-  spellings `readings.at(-1)` and `queue.at(0)` say the same thing.
++  spellings `readings.at(-1)` and `queue.at(0)` say the same thing, and
++  `orders.find(order -> order.open)` says what the predicate overload says.
+ - World models read the ends of their collections constantly: the newest
+   reading of a sensor, the oldest order in a queue, the latest instance of
+   a class, the first item that meets a condition. These reads are standing,
+@@ -65,19 +75,1251 @@ Created: 18-Nov-2026
  
  ## Rationale
  
@@ -1937,7 +1942,7 @@ th
 +  compatibility with one tool-backed uniform draw over the five categories
 +  that NUC 1's registry marks eligible for automatic selection, index 4
 +  with probability 1/5 and no redraw, and recorded the requested change in
-+  the allocation commit `7bc9f013`, which this revision pins. Token
++  the allocation commit `db6acd1d`, which this revision pins. Token
 +  comparison is therefore skipped as `language_compatibility`. The skip is
 +  categorical; it is neither a measured comparison nor a passing token
 +  gate. Runtime applicability does not apply to this category.
@@ -1948,98 +1953,97 @@ th
 +  unscored (`missing_rubric`), not zero. Strategy learning is
 +  `not_configured`, so this revision is unattributed, with no policy,
 +  selection receipt, trial or reward.
-+- **Only former errors.** At the accepted revision every call of the five
-+  names on a list, population or string receiver, and every `length()` call
-+  on a string, raises `TypeError("<receiver>.<name> is not a function")` at
-+  the start of the running statement, in plain and JSON output alike,
-+  unless an argument raises first. No accepted test, document case, dataset
-+  
++- **Only former errors.** At the accepted revision every call of the two
++  names on a list or population receiver raises
++  `TypeError("<receiver>.<name> is not a function")` at the start of the
++  running statement, in plain and JSON output alike, unless an argument
++  raises first. No accepted test, document case, dataset record or ARC
++  dataset calls them on a list or a population, and no test pins that
++  error. The accepted calls of a member named `fi
 ```
 
-**File**: `nucleoid.spec.md` (modified, +163/-0)
+**File**: `nucleoid.spec.md` (modified, +174/-0)
 ```diff
-@@ -371,6 +371,81 @@ operator-chain diagnostics and source positions are preserved.
-   specify the executable behavior. `tests/python_string_aliases.rs` executes
-   the rest.
+@@ -446,6 +446,92 @@ operator-chain diagnostics and source positions are preserved.
+   specify the executable behavior. `tests/size_and_emptiness_aliases.rs`
+   executes the rest.
  
-+## Size and emptiness method aliases
++## First and last element methods
 +
-+- [NUC 116](docs/nuc-0116.md) adds the size and emptiness methods that
-+  Java, Kotlin, C++ and Rust write, as aliases of the accepted `length` on
-+  lists, class populations and strings. They join the accepted aliases
-+  `append`, `find`, `contains`, `lower`, `upper`, `strip`, `substr`,
-+  `startswith`, `endswith` and `join`. No token, keyword, syntax tree node,
-+  error type or message format is added.
-+- `RECEIVER.size()` and `RECEIVER.len()` are `RECEIVER.length`,
-+  `RECEIVER.isEmpty()` and `RECEIVER.is_empty()` are `RECEIVER.length == 0`,
-+  and `RECEIVER.isNotEmpty()` is `RECEIVER.length > 0`. A string also takes
-+  `TEXT.length()`, as lists and populations already do. A string's size
-+  counts its characters, Unicode scalar values, as `TEXT.length` does, so
-+  `"Zoë".size()` is `3`.
++- [NUC 117](docs/nuc-0117.md) adds the `first` and `last` methods that
++  Kotlin, Rust, Swift, Ruby and C#'s LINQ write, as aliases of the accepted
++  `at`, `find` and `findLast` on lists and class populations. They join the
++  accepted aliases `append`, `contains`, `size`, `len`, `isEmpty`,
++  `is_empty` and `isNotEmpty`. No token, keyword, syntax tree node, error
++  type or message format is added.
++- `RECEIVER.first()` is `RECEIVER.at(0)` and `RECEIVER.last()` is
++  `RECEIVER.at(-1)`: the first and last items of a list, or the first and
++  latest created instances of a class. An empty list gives undefined, which
++  a declaration stores as `null`, and a class without instances gives
++  `null`, as `at` gives them.
++- With a function, `RECEIVER.first(PREDICATE)` is `RECEIVER.find(PREDICATE)`
++  and `RECEIVER.last(PREDICATE)` is `RECEIVER.findLast(PREDICATE)`: the
++  first item the predicate accepts, searching from the front or from the
++  back, or `null` when it accepts none. Further arguments are evaluated and
++  ignored, as `find` ignores them.
++- Any other supplied first argument raises
++  `TypeError("first expects a function")` or
++  `TypeError("last expects a function")`, the error that `find` and
++  `findLast` raise for it, with the name as written: a number, a string, a
++  list, an object, a class, `null` and an undefined value among them, even
++  on an empty receiver.
 +- **Receivers.** A list however it is reached, including a literal, a
-+  property, a call or query result, a `.value` snapshot and a list read from
-+  a state version; a declared class's instances, named by the class, by a
-+  variable or parameter that holds it, or by `$Name` outside a class-level
-+  rule or conditional, where a class without instances has size `0`; and a
-+  string however it is reached, including a template and the empty string.
-+- **Evaluation.** The receiver is read first, then every argument once, left
-+  to right, as for every call. The values are ignored, so `xs.size(1)` is
-+  `xs.length`, and an argument's error, such as
-+  `ReferenceError("missing is not defined")`, propagates before the alias
-+  runs.
++  property, a call or query result, an index or a slice, a `.value`
++  snapshot and a list read from a state version; and a declared class's
++  instances, named by the class, by a variable or parameter that holds it,
++  or by `$Name` outside a class-level rule or conditional.
++- **Evaluation.** The receiver is read first, a population's instances
++  included, then every argument once, left to right, as for every call. An
++  argument's error, such as `ReferenceError("missing is not defined")`,
++  propagates before the alias runs.
 +- **Live.** A declaration or class-level rule that calls an alias depends on
-+  what its receiver reads, as the accepted spelling does:
-+  `idle = jobs.isEmpty()` follows pushes, pops, shifts and replacements of
-+  `jobs`, `orders = Order.size()` follows new and deleted instances, and
-+  `$Sensor.silent = $Sensor.readings.is_empty()` follows each sensor's
-+  readings. Errors roll back through the existing transaction.
++  what its accepted spelling depends on: `newest = readings.last()` follows
++  pushes, pops, shifts, sorts and replacements of `readings`,
++  `latest = Order.last()` follows new and deleted instances,
++  `open = Order.first(order -> order.open)` also follows the properties its
++  predicate reads, and `$Sensor.latest = $Sensor.readings.last()` follows
++  each sensor's readings. Errors roll back through the existing
++  transaction.
 +- **Rendering.** Statements, `why`, `affects`, `--graph` and graph keys show
 +  the call as written. Its dependencies are those of the accepted spelling,
-+  so `why n` after `n = xs.size()` shows `n` read from `xs`, as after
-+  `n = xs.length`.
-+- **Unchanged.** Only calls of the six names on a list, population or
-+  string receiver change; each raised
++  so `why n` after `n = xs.last()` shows `n` read from `xs`, as after
++  `n = xs.at(-1)`.
++- **Unchanged.** Only calls of the two names on a list or population
++  receiver change; each raised
 +  `TypeError("<receiver>.<name> is not a function")`, or an argument's error
 +  first, which stays.
++  - Strings keep `TypeError("<text>.<name> is not a function")`: their
++    accepted `find` is `indexOf`, and `TEXT[0]` and `TEXT[-1]` read their
++    first and last characters.
 +  - Numbers, booleans, functions, dates and regular expressions keep their
-+    `TypeError`, as their `length()` does, although their `length` reads
-+    undefined: `(5).size()` raises `TypeError("number.size is not a function")`.
++    `TypeError`, as `(5).first()` raises
++    `TypeError("number.first is not a function")`.
 +  - Objects and instances keep their routing: instance methods and callable
-+    properties named `size`, `len`, `isEmpty`, `is_empty`, `isNotEmpty` or
-+    `length` keep running, a property that is not a function keeps its
-+    `TypeError`, and a missing member stays undefined. Inside a class-level
-+    rule or conditional `$Name` is the instance, so `$Name.size()` there
-+    keeps calling the instance's method or giving undefined.
++    properties named `first` or `last` keep running, a property of that name
++    that is not a function keeps its `TypeError`, and a missing member stays
++    undefined. Inside a class-level rule or conditional `$Name` is the
++    instance, so `$Name.first()` there keeps calling the instance's method
++    or giving undefined.
 +  - On a class name the population alias wins over an instance method of
-+    the same name, as `Name.length()` already does, and instances keep
-+    calling the method.
++    the same name, and instances keep calling the method.
 +  - A class declared as `Math`, `Number`, `String` or `Date` reaches that
-+    namespace's static methods, so `Math.size()` keeps raising
-+    `TypeError("Math.size is not a function")`, as `Math.length()` does.
-+    `Boolean`, `Class`, `Object`, `List`, `Function`, `JSON` and `RegExp`,
-+    without a declared class of that name, keep
-+    `ReferenceError("<name> is not defined")`, as their `length()` does.
++    namespace's static methods, so `Math.first()` keeps raising
++    `TypeError("Math.first is not a function")`. `Boolean`, `Class`,
++    `Object`, `List`, `Function`, `JSON` and `RegExp`, without a declared
++    class of that name, keep `ReferenceError("<name> is not defined")`.
 +  - A `null` or undefined receiver stays undefined without evaluating the
-+    arguments. Reads without a call, such as `xs.size`, stay undefined, and
-+    `xs.size = 2` keeps raising `TypeError("Cannot assign 'size' on list")`.
-+    Functions named `size`, `len`, `isEmpty`, `is_empty` or `isNotEmpty`
-+    keep their calls, such as `size(xs)`.
-+- **Source-language differences.** These stay out: Kotlin's `size` and
-+  Swift's `isEmpty` read as properties, while `xs.size` and `xs.isEmpty`
-+  without a call stay undefined; Java's `isEmpty()` on maps and other
-+  objects, which keep their routing; C++'s `empty()`; and Python's
-+  `len(xs)`. Every receiver counts characters, where Java counts UTF-16 code
-+  units and C++ and Rust count bytes, so `"Zoë".len()` is `3` where Rust
-+  gives `4`.
-+- The three entries beginning
-+  `Nucleoid sizes lists, populations and strings with size and len`
-+  through `Nucleoid rolls back failed updates through size and emptiness aliases`
-+  specify the executable behavior. `tests/size_and_emptiness_aliases.rs`
-+  executes the rest.
-+
- ## Reactive string padding
- 
-
++    arguments. Reads without a call, such as `xs.first`, stay undefined, and
++    `xs.first = 2` keeps raising `TypeError("Cannot assign 'first' on list")`.
++    Functions named `first` or `last` keep their calls, such as `first(xs)`,
++    and the state versions `xs@first` and `xs@last` keep their meaning.
++- **Source-language differences.** These stay out: Kotlin's, Java's and
++  LINQ's `first()` and `last()` throw on an empty receiver or when nothing
++  matches, where the aliases gi
 ```
 
 #### Recent Merged Pull Requests:
@@ -2068,13 +2072,13 @@ th
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Draft NUC 117 First and Last Element Methods
+## X. Draft NUC 118 Case Conversion Method Aliases
 
 **RULE**:
 When implementing operations in `docs/nuc-0000.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `db6acd1d`: Draft NUC 117 First and Last Element Methods. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `266b9114`: Draft NUC 118 Case Conversion Method Aliases. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/nuc-0000.md`.
@@ -2082,8 +2086,8 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-| [117](nuc-0117.md) | First and Last Element Methods | Draft |
-| [117](nuc-0117.md) | First and Last Element Methods | Standards Track | Language compatibility | Draft |
+| [118](nuc-0118.md) | Case Conversion Method Aliases | Draft |
+| [118](nuc-0118.md) | Case Conversion Method Aliases | Standards Track | Language compatibility | Draft |
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -2093,4 +2097,4 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `db6acd1d` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `266b9114` are properly handled with clean fallback behavior.

@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-18T09:48:19.540Z",
+  "last_updated": "2026-11-18T09:57:35.098Z",
   "total_verified_learnings": 8996,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 21114,
+  "total_items": 21119,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -114253,10 +114253,10 @@
       "relative_path": "12_DECISIONS/ADR-storybookjs-storybook-adr-subsystem-boundary-modular-decoupling-in-storybookjs-s.md",
       "title": "ADR: Subsystem Boundary & Modular Decoupling in storybookjs/storybook",
       "repository": "storybookjs/storybook",
-      "source_version": "5aea8b6a",
-      "content_hash": "cd53ad49f39bc3601689f29769f9d2efa19ae263b4b049a6775d86fe05997874",
+      "source_version": "1227202d",
+      "content_hash": "10596ff1d641eb5fef8d6592521cc5d6698500a7ea6c4aa376f776234d5ed6bf",
       "domain_letter": "G",
-      "persisted_at": "2026-11-17T07:20:10.386Z"
+      "persisted_at": "2026-11-18T09:57:20.021Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-storybookjs-storybook": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-storybookjs-storybook",
@@ -114265,10 +114265,10 @@
       "relative_path": "08_VERIFICATION/storybookjs-storybook-verification-protocol-empirical-defect-shield-for-storyboo.md",
       "title": "Verification Protocol: Empirical Defect Shield for storybookjs/storybook",
       "repository": "storybookjs/storybook",
-      "source_version": "5aea8b6a",
-      "content_hash": "1102fb60b5f159d2955f6216e21f637483ddbf7469a707ec12bfc4743f75c3bf",
+      "source_version": "1227202d",
+      "content_hash": "f39dcec966890c53a080858a742fc19156d36456ddfa45626c8e7202db39ca39",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T07:20:10.478Z"
+      "persisted_at": "2026-11-18T09:57:20.177Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-akatz-ai-minimax-h3-character-swap-lora-learn": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-akatz-ai-minimax-h3-character-swap-lora-learn",
@@ -114302,9 +114302,9 @@
       "title": "ADR: Subsystem Boundary & Modular Decoupling in storybookjs-storybook-learnings",
       "repository": "storybookjs-storybook-learnings",
       "source_version": "HEAD",
-      "content_hash": "648d743f0d36e6ee4fdacff71ae50deb14c193591fa8af74e9f71e85b078998e",
+      "content_hash": "acb05b06a32e4555f19b766dbce54fffe438baf0317bf5da7542c162e5f8830f",
       "domain_letter": "G",
-      "persisted_at": "2026-11-17T07:20:47.281Z"
+      "persisted_at": "2026-11-18T09:57:33.876Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-storybookjs-storybook-learning": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-storybookjs-storybook-learning",
@@ -114314,9 +114314,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for storybookjs-storybook-learnings",
       "repository": "storybookjs-storybook-learnings",
       "source_version": "HEAD",
-      "content_hash": "661c66b6da3cac34cb26a5311086210dd9553446e2054778acaba5c518567409",
+      "content_hash": "324b3b1b8edc11ebc742719d18a6b4ddf0ad5214e28fb70ea9c4d5696e0e0e7e",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T07:20:47.384Z"
+      "persisted_at": "2026-11-18T09:57:34.034Z"
     },
     "candidate_directive-deps-bump-the-npm-dependencies-group-in-packages-ui-with-6-updates-766": {
       "item_id": "candidate_directive-deps-bump-the-npm-dependencies-group-in-packages-ui-with-6-updates-766",
@@ -228289,8 +228289,8 @@
       "slug": "nucleoidai-nucleoid",
       "platform": "github",
       "source_url": "https://github.com/NucleoidAI/Nucleoid",
-      "source_version": "db6acd1d",
-      "content_hash": "8c4ca953c0bd50760a51c3ae8750b677a854f67196b5e4e57ad6e543a44ab4a4",
+      "source_version": "266b9114",
+      "content_hash": "da3514bcbe6892f81195fc280b67fe8f43097401c35857bf7cb35b7a61839ed7",
       "dossier_path": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md",
       "promoted_rules": [
@@ -228383,6 +228383,11 @@
           "number": 9143,
           "title": "Draft NUC 117 First and Last Element Methods",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9189,
+          "title": "Draft NUC 118 Case Conversion Method Aliases",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -228390,7 +228395,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T06:49:19.390Z",
+      "verified_at": "2026-11-18T09:57:28.900Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -228432,10 +228437,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-architecture-intelligence-nucleoidai-nucleoid-core-invariant.md",
       "title": "Architecture Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "repository": "NucleoidAI/Nucleoid",
-      "source_version": "db6acd1d",
-      "content_hash": "7022cc73a93938b20f31a109a8f85f37d3c4ae91038b16c8d68853954a062678",
+      "source_version": "266b9114",
+      "content_hash": "fa3f593996022a837be72a92b6bbaa6ec476d0e849f7b0c0d064739471086248",
       "domain_letter": "G",
-      "persisted_at": "2026-11-18T06:49:19.876Z"
+      "persisted_at": "2026-11-18T09:57:29.576Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid",
@@ -228444,10 +228449,10 @@
       "relative_path": "08_VERIFICATION/nucleoidai-nucleoid-verification-protocol-empirical-defect-shield-for-nucleoidai.md",
       "title": "Verification Protocol: Empirical Defect Shield for NucleoidAI/Nucleoid",
       "repository": "NucleoidAI/Nucleoid",
-      "source_version": "db6acd1d",
-      "content_hash": "d40545cbde56662cdb080d4d05c3adb3ff0c87c89ebcae23e3231cfc06476ebf",
+      "source_version": "266b9114",
+      "content_hash": "a3bdaed2155a5a7f7ad1a298f9ba67f39f0f038f07eba7ae96b38dd2b8397096",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T06:49:20.003Z"
+      "persisted_at": "2026-11-18T09:57:29.755Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -229444,9 +229449,9 @@
       "title": "Architecture Intelligence: nucleoidai-nucleoid-learnings Core Invariants",
       "repository": "nucleoidai-nucleoid-learnings",
       "source_version": "HEAD",
-      "content_hash": "53766813fcc1b8e3e03bb96a798c013c96f84afb3db43df3bdd1f9231fa08e26",
+      "content_hash": "47ff2731e7150a5fd110fecddce70131402d006ae0a44373353dc4b4fd0c0446",
       "domain_letter": "G",
-      "persisted_at": "2026-11-17T20:33:27.787Z"
+      "persisted_at": "2026-11-18T09:57:34.917Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-nucleoidai-nucleoid-learnings",
@@ -229456,9 +229461,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for nucleoidai-nucleoid-learnings",
       "repository": "nucleoidai-nucleoid-learnings",
       "source_version": "HEAD",
-      "content_hash": "f5e74fcce93e63c2398af34f7826d48a114d1d77e2d89d2ad73ea4987939db70",
+      "content_hash": "19c7d9bc5a3ea7dfec64527d3320fd6ad982a3971deb08c4386572c630c79526",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T20:33:27.919Z"
+      "persisted_at": "2026-11-18T09:57:35.098Z"
     },
     "learn-huggingface-qwen-qwen3-8b": {
       "learning_id": "learn-huggingface-qwen-qwen3-8b",
@@ -237923,9 +237928,9 @@
       "title": "Research & Knowledge Intelligence: abenzerps/Qwen-Image-2.1-Turbo-Quantized Core Invariants",
       "repository": "abenzerps/Qwen-Image-2.1-Turbo-Quantized",
       "source_version": "hf-abenzerps-qwen-image-2.1-uncensored-gguf",
-      "content_hash": "309e9e3b789ae3fcbfdb699a60ab2097d2d20a31a2550a8a572a559a461f89d8",
+      "content_hash": "14a294858ac79b0bc419e44af9a497fca99be71cf9c754d7060a97128efcfd4b",
       "domain_letter": "D",
-      "persisted_at": "2026-11-17T20:33:06.713Z"
+      "persisted_at": "2026-11-18T09:57:12.162Z"
     },
     "learn-github-dnscontrol-dnscontrol": {
       "learning_id": "learn-github-dnscontrol-dnscontrol",
@@ -267332,14 +267337,19 @@
       "slug": "storybookjs-storybook",
       "platform": "github",
       "source_url": "https://github.com/storybookjs/storybook",
-      "source_version": "5aea8b6a",
-      "content_hash": "7393efc93792d2229e11a01fb971d0f4dbc5cb63ba7472f1736c05065727bb38",
+      "source_version": "1227202d",
+      "content_hash": "d9b795ec365b2232aad81e5567d0d93a667ba1347f6906a9ec1d9f321c9c0546",
       "dossier_path": "07_PROJECT_LEARNING/storybookjs-storybook-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/storybookjs-storybook-learnings.md",
       "promoted_rules": [
         {
           "number": 8900,
           "title": "document the declaring file, and fail on a missing export",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9188,
+          "title": "check addon ranges that start with a 0.x canary part",
           "status": "PROMOTED_AND_VERIFIED"
         }
       ],
@@ -267348,7 +267358,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T07:20:09.858Z",
+      "verified_at": "2026-11-18T09:57:19.168Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -267390,10 +267400,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-storybookjs-storybook-architecture-intelligence-storybookjs-storybook-core-invar.md",
       "title": "Architecture Intelligence: storybookjs/storybook Core Invariants",
       "repository": "storybookjs/storybook",
-      "source_version": "5aea8b6a",
-      "content_hash": "7ac5e4f055a93b5deba6271de26e53e5ab4178d988bf6bfb9b42cdd442c4b33b",
+      "source_version": "1227202d",
+      "content_hash": "55fc632355726d9422618dc440a620d3804a21b85dc4366015978ffcef0e4346",
       "domain_letter": "G",
-      "persisted_at": "2026-11-17T07:20:10.281Z"
+      "persisted_at": "2026-11-18T09:57:19.842Z"
     },
     "rule-8901": {
       "learning_id": "rule-8901",
@@ -267453,9 +267463,9 @@
       "title": "Architecture Intelligence: storybookjs-storybook-learnings Core Invariants",
       "repository": "storybookjs-storybook-learnings",
       "source_version": "HEAD",
-      "content_hash": "a7c80252bf815bba6fe4e7ee24b291c14a0e03200b7321f4de6be8324a92db95",
+      "content_hash": "8362e3d03dc2b642d73e2e1538090bdf9d418ffe7b77434ca739d143d1c5c6f5",
       "domain_letter": "G",
-      "persisted_at": "2026-11-17T07:20:47.168Z"
+      "persisted_at": "2026-11-18T09:57:33.696Z"
     },
     "learn-github-transact-rs-sqlx": {
       "learning_id": "learn-github-transact-rs-sqlx",
@@ -277358,7 +277368,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-GGUF",
       "source_version": "hf-abenzerps-qwen-image-2.1-uncensored-gguf",
-      "content_hash": "cb799b9519474f3aa11190a1efdf16fa8beff215f76c9db39009a0fa8dffc0c7",
+      "content_hash": "c6266a0e873d799cbd8708bf605ec54271a4657928d00ddbfc9b9babcf5e09e2",
       "dossier_path": "07_PROJECT_LEARNING/hf-abenzerps-qwen-image-2.1-uncensored-gguf-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-abenzerps-qwen-image-2.1-uncensored-gguf-learnings.md",
       "promoted_rules": [],
@@ -277367,7 +277377,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T20:33:06.355Z",
+      "verified_at": "2026-11-18T09:57:11.639Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -277436,9 +277446,9 @@
       "title": "Research & Knowledge Intelligence: hf-abenzerps-qwen-image-2.1-uncensored-gguf-learnings Core Invariants",
       "repository": "hf-abenzerps-qwen-image-2.1-uncensored-gguf-learnings",
       "source_version": "HEAD",
-      "content_hash": "3fe5d42b8ee0ec5534c6292c3af53044fe7535d7552caa56d60fc716a67f8f2d",
+      "content_hash": "f64d190e80973f57bfc40784f003e80b1d6922797a73a593ccc5fc096825d5e6",
       "domain_letter": "D",
-      "persisted_at": "2026-11-17T20:33:27.216Z"
+      "persisted_at": "2026-11-18T09:57:32.894Z"
     },
     "rule-9062": {
       "learning_id": "rule-9062",
@@ -284693,6 +284703,70 @@
       "content_hash": "44bd85423b7054568da4cbb5ea85a6d81cd9fadbbff90777a5c376e970c18bf7",
       "domain_letter": "H",
       "persisted_at": "2026-11-18T09:29:19.434Z"
+    },
+    "rule-9188": {
+      "learning_id": "rule-9188",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9188,
+      "title": "check addon ranges that start with a 0.x canary part",
+      "source_url": "https://github.com/storybookjs/storybook",
+      "source_version": "1227202d",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-18T09:57:19.168Z"
+    },
+    "candidate_directive-check-addon-ranges-that-start-with-a-0-x-canary-part": {
+      "item_id": "candidate_directive-check-addon-ranges-that-start-with-a-0-x-canary-part",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-6E26-check-addon-ranges-that-start-with-a-0-x-canary-part.md",
+      "title": "check addon ranges that start with a 0.x canary part",
+      "repository": "storybookjs/storybook",
+      "source_version": "1227202d",
+      "content_hash": "77d440e445461d7e7bb575f34c320298fa5960b5a21a3c2ce22dca13c1edeefe",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-18T09:57:19.663Z"
+    },
+    "rule-9189": {
+      "learning_id": "rule-9189",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9189,
+      "title": "Draft NUC 118 Case Conversion Method Aliases",
+      "source_url": "https://github.com/NucleoidAI/Nucleoid",
+      "source_version": "266b9114",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-18T09:57:28.900Z"
+    },
+    "candidate_directive-draft-nuc-118-case-conversion-method-aliases": {
+      "item_id": "candidate_directive-draft-nuc-118-case-conversion-method-aliases",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-6POP-draft-nuc-118-case-conversion-method-aliases.md",
+      "title": "Draft NUC 118 Case Conversion Method Aliases",
+      "repository": "nucleoidai-nucleoid-learnings",
+      "source_version": "HEAD",
+      "content_hash": "b1b8b21e5b450aaf589c6c044d9f260175767a7295b60ff933c2fad8a9770ee6",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-18T09:57:34.733Z"
+    },
+    "candidate_directive-cli-check-addon-ranges-that-start-with-a-0-x-canary-part": {
+      "item_id": "candidate_directive-cli-check-addon-ranges-that-start-with-a-0-x-canary-part",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-6OQV-cli-check-addon-ranges-that-start-with-a-0-x-canary-part.md",
+      "title": "cli): check addon ranges that start with a 0.x canary part",
+      "repository": "storybookjs-storybook-learnings",
+      "source_version": "HEAD",
+      "content_hash": "bfc4b5e31cb3d7103b28bfbff9ce04df79ef4d87f198e473f839b96dfa7fe8df",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-18T09:57:33.511Z"
     }
   },
   "ai-builder-brain": {

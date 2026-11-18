@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261116-SU35",
-    "timestamp": "2026-11-16T22:19:16.433Z",
-    "repository": "facebook/dinov3-vitl16-pretrain-lvd1689m",
-    "learningId": "learn-huggingface-facebook-dinov3-vitl16-pretrain-lvd1689m",
-    "contentHash": "b5247ff9e549c20b6498f08d701bf65d4f25ef2abb3381df937f5fe8f1838209",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261116-SWV8",
-    "timestamp": "2026-11-16T22:19:20.036Z",
-    "repository": "FalkorDB/FalkorDB",
-    "learningId": "learn-github-falkordb-falkordb",
-    "contentHash": "b50a90a220af510138105ffcedc3047cdfe10707de3b11e0e61509bc720b65c9",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261116-T0MC",
-    "timestamp": "2026-11-16T22:19:24.900Z",
-    "repository": "iPlug2/iPlug2",
-    "learningId": "learn-github-iplug2-iplug2",
-    "contentHash": "805246a871aed266af460fa26ecb88d58aefe77bc026cae5b2cdd9f031263439",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261116-T54Z",
     "timestamp": "2026-11-16T22:19:30.755Z",
     "repository": "crate/crate",
@@ -7492,6 +7447,51 @@
     "contentHash": "4e5fa2f829b1d50ab87ac578bb4775a6554c99c5c6b2c9972e3e63bafa57ec4f",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-682N",
+    "timestamp": "2026-11-18T09:57:11.903Z",
+    "repository": "abenzerps/Qwen-Image-2.1-Turbo-Quantized",
+    "learningId": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-gguf",
+    "contentHash": "c6266a0e873d799cbd8708bf605ec54271a4657928d00ddbfc9b9babcf5e09e2",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-6DV3",
+    "timestamp": "2026-11-18T09:57:19.407Z",
+    "repository": "storybookjs/storybook",
+    "learningId": "learn-github-storybookjs-storybook",
+    "contentHash": "d9b795ec365b2232aad81e5567d0d93a667ba1347f6906a9ec1d9f321c9c0546",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-6LDC",
+    "timestamp": "2026-11-18T09:57:29.136Z",
+    "repository": "NucleoidAI/Nucleoid",
+    "learningId": "learn-github-nucleoidai-nucleoid",
+    "contentHash": "da3514bcbe6892f81195fc280b67fe8f43097401c35857bf7cb35b7a61839ed7",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

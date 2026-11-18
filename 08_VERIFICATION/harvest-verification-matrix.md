@@ -10911,3 +10911,6 @@
 | `CYCLE-20261118-5EGJ` | `2026-11-18T09:28:33.907Z` | `react/react-native` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9187` | Yes (`81404fc1...`) |
 | `CYCLE-2026-11-18-PROJ-EVOLVE` | `2026-11-18T09:29:18.930Z` | `react-react-native` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-CC987E5F` [Domain H] | Yes (`79428183...`) |
 | `CYCLE-20261118-UPUK` | `2026-11-18T09:48:15.068Z` | `Edge0/Audio8-ASR-Infinite` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-edge0-audio8-asr-infinite-learnings.md` | Yes (`4e5fa2f8...`) |
+| `CYCLE-20261118-682N` | `2026-11-18T09:57:11.903Z` | `abenzerps/Qwen-Image-2.1-Turbo-Quantized` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-abenzerps-qwen-image-2.1-uncensored-gguf-learnings.md` | Yes (`c6266a0e...`) |
+| `CYCLE-20261118-6DV3` | `2026-11-18T09:57:19.407Z` | `storybookjs/storybook` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9188` | Yes (`d9b795ec...`) |
+| `CYCLE-20261118-6LDC` | `2026-11-18T09:57:29.136Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9189` | Yes (`da3514bc...`) |

@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T09:48:15.076Z",
-  "total_cycles_completed": 10438,
-  "total_learnings_persisted": 10438,
-  "total_rules_promoted": 9943,
+  "last_updated": "2026-11-18T09:57:29.146Z",
+  "total_cycles_completed": 10441,
+  "total_learnings_persisted": 10441,
+  "total_rules_promoted": 9945,
   "history": [
-    {
-      "timestamp": "2026-11-17T19:45:01.102Z",
-      "repository": "freenet/freenet-core",
-      "learningId": "learn-github-freenet-freenet-core",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T19:53:40.536Z",
-      "repository": "siderolabs/talos",
-      "learningId": "learn-github-siderolabs-talos",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T19:53:45.644Z",
-      "repository": "databendlabs/databend",
-      "learningId": "learn-github-databendlabs-databend",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-17T19:53:47.443Z",
       "repository": "NucleoidAI/Nucleoid",
@@ -1403,6 +1382,27 @@
       "repository": "Edge0/Audio8-ASR-Infinite",
       "learningId": "learn-huggingface-edge0-audio8-asr-infinite",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T09:57:11.914Z",
+      "repository": "abenzerps/Qwen-Image-2.1-Turbo-Quantized",
+      "learningId": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T09:57:19.418Z",
+      "repository": "storybookjs/storybook",
+      "learningId": "learn-github-storybookjs-storybook",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T09:57:29.146Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

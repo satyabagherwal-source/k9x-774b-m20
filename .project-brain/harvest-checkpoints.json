@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-18T09:48:15.079Z",
+  "last_updated": "2026-11-18T09:57:29.151Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -3486,14 +3486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-nucleoidai-nucleoid",
-      "content_hash": "8c4ca953c0bd50760a51c3ae8750b677a854f67196b5e4e57ad6e543a44ab4a4",
-      "verified_at": "2026-11-18T06:49:19.569Z",
+      "content_hash": "da3514bcbe6892f81195fc280b67fe8f43097401c35857bf7cb35b7a61839ed7",
+      "verified_at": "2026-11-18T09:57:29.150Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T06:49:19.569Z"
+      "last_updated": "2026-11-18T09:57:29.150Z"
     },
     "tusen-ai/naive-ui": {
       "repository": "tusen-ai/naive-ui",
@@ -15456,14 +15456,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-storybookjs-storybook",
-      "content_hash": "7393efc93792d2229e11a01fb971d0f4dbc5cb63ba7472f1736c05065727bb38",
-      "verified_at": "2026-11-17T07:20:10.014Z",
+      "content_hash": "d9b795ec365b2232aad81e5567d0d93a667ba1347f6906a9ec1d9f321c9c0546",
+      "verified_at": "2026-11-18T09:57:19.421Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T07:20:10.014Z"
+      "last_updated": "2026-11-18T09:57:19.421Z"
     },
     "enaqx/awesome-react": {
       "repository": "enaqx/awesome-react",
@@ -17811,14 +17811,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-gguf",
-      "content_hash": "cb799b9519474f3aa11190a1efdf16fa8beff215f76c9db39009a0fa8dffc0c7",
-      "verified_at": "2026-11-17T20:33:06.550Z",
+      "content_hash": "c6266a0e873d799cbd8708bf605ec54271a4657928d00ddbfc9b9babcf5e09e2",
+      "verified_at": "2026-11-18T09:57:11.918Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T20:33:06.550Z"
+      "last_updated": "2026-11-18T09:57:11.918Z"
     },
     "agentlas-ai/Agentlas-OS": {
       "repository": "agentlas-ai/Agentlas-OS",

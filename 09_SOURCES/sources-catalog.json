@@ -135,8 +135,8 @@
     "sourceUrl": "https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-GGUF",
     "sourceVersion": "hf-abenzerps-qwen-image-2.1-uncensored-gguf",
     "license": "Open-Source",
-    "contentHash": "cb799b9519474f3aa11190a1efdf16fa8beff215f76c9db39009a0fa8dffc0c7",
-    "lastHarvestedAt": "2026-11-17T20:33:06.543Z",
+    "contentHash": "c6266a0e873d799cbd8708bf605ec54271a4657928d00ddbfc9b9babcf5e09e2",
+    "lastHarvestedAt": "2026-11-18T09:57:11.907Z",
     "learningId": "learn-huggingface-abenzerps-qwen-image-2-1-uncensored-gguf"
   },
   "hf-sentence-transformers-all-minilm-l6-v2": {
@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "db6acd1d",
+    "sourceVersion": "266b9114",
     "license": "Apache-2.0",
-    "contentHash": "8c4ca953c0bd50760a51c3ae8750b677a854f67196b5e4e57ad6e543a44ab4a4",
-    "lastHarvestedAt": "2026-11-18T06:49:19.562Z",
+    "contentHash": "da3514bcbe6892f81195fc280b67fe8f43097401c35857bf7cb35b7a61839ed7",
+    "lastHarvestedAt": "2026-11-18T09:57:29.140Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {
@@ -10293,10 +10293,10 @@
     "repository": "storybookjs/storybook",
     "platform": "github",
     "sourceUrl": "https://github.com/storybookjs/storybook",
-    "sourceVersion": "5aea8b6a",
+    "sourceVersion": "1227202d",
     "license": "MIT",
-    "contentHash": "7393efc93792d2229e11a01fb971d0f4dbc5cb63ba7472f1736c05065727bb38",
-    "lastHarvestedAt": "2026-11-17T07:20:10.008Z",
+    "contentHash": "d9b795ec365b2232aad81e5567d0d93a667ba1347f6906a9ec1d9f321c9c0546",
+    "lastHarvestedAt": "2026-11-18T09:57:19.411Z",
     "learningId": "learn-github-storybookjs-storybook"
   },
   "enaqx-awesome-react": {

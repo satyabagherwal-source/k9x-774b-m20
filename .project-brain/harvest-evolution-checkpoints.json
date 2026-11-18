@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T09:48:19.649Z",
+  "last_updated": "2026-11-18T09:57:35.257Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-18T08:41:54.992Z",
@@ -773,7 +773,7 @@
       "staged_for_review": 1
     },
     "nucleoidai-nucleoid-learnings.md": {
-      "processed_at": "2026-11-17T20:33:27.361Z",
+      "processed_at": "2026-11-18T09:57:34.212Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1723,7 +1723,7 @@
       "staged_for_review": 1
     },
     "hf-abenzerps-qwen-image-2.1-uncensored-gguf-learnings.md": {
-      "processed_at": "2026-11-17T20:33:27.040Z",
+      "processed_at": "2026-11-18T09:57:32.636Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -2033,9 +2033,9 @@
       "staged_for_review": 0
     },
     "storybookjs-storybook-learnings.md": {
-      "processed_at": "2026-11-17T07:20:46.792Z",
-      "promoted_canonical": 1,
-      "staged_for_review": 0
+      "processed_at": "2026-11-18T09:57:33.098Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     },
     "foreactlabs-openexecutive-learnings.md": {
       "processed_at": "2026-11-13T18:17:29.466Z",
@@ -3418,7 +3418,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 1887,
+  "total_dossiers_evaluated": 1890,
   "total_canonical_promoted": 351,
-  "total_staged_for_review": 1446
+  "total_staged_for_review": 1448
 }

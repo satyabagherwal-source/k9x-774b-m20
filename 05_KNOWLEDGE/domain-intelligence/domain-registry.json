@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-18T09:48:19.417Z",
+  "last_updated": "2026-11-18T09:57:34.917Z",
   "total_records": 1816,
   "domains": {
     "A": {
@@ -14895,8 +14895,8 @@
       "title": "Architecture Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-architecture-intelligence-nucleoidai-nucleoid-core-invariant.md",
       "repository": "NucleoidAI/Nucleoid",
-      "content_hash": "7022cc73a93938b20f31a109a8f85f37d3c4ae91038b16c8d68853954a062678",
-      "created_at": "2026-11-18T06:49:19.876Z"
+      "content_hash": "fa3f593996022a837be72a92b6bbaa6ec476d0e849f7b0c0d064739471086248",
+      "created_at": "2026-11-18T09:57:29.576Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -15345,8 +15345,8 @@
       "title": "Architecture Intelligence: nucleoidai-nucleoid-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-learnings-architecture-intelligence-nucleoidai-nucleoid-lear.md",
       "repository": "nucleoidai-nucleoid-learnings",
-      "content_hash": "53766813fcc1b8e3e03bb96a798c013c96f84afb3db43df3bdd1f9231fa08e26",
-      "created_at": "2026-11-17T20:33:27.787Z"
+      "content_hash": "47ff2731e7150a5fd110fecddce70131402d006ae0a44373353dc4b4fd0c0446",
+      "created_at": "2026-11-18T09:57:34.917Z"
     },
     "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8b-core-invariants",
@@ -18217,8 +18217,8 @@
       "title": "Research & Knowledge Intelligence: abenzerps/Qwen-Image-2.1-Turbo-Quantized Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-abenzerps-qwen-image-2-1-uncensored-gguf-research-knowledge-intelligence-aben.md",
       "repository": "abenzerps/Qwen-Image-2.1-Turbo-Quantized",
-      "content_hash": "309e9e3b789ae3fcbfdb699a60ab2097d2d20a31a2550a8a572a559a461f89d8",
-      "created_at": "2026-11-17T20:33:06.713Z"
+      "content_hash": "14a294858ac79b0bc419e44af9a497fca99be71cf9c754d7060a97128efcfd4b",
+      "created_at": "2026-11-18T09:57:12.162Z"
     },
     "domain_intelligence-architecture-intelligence-dnscontrol-dnscontrol-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-dnscontrol-dnscontrol-core-invariants",
@@ -25955,8 +25955,8 @@
       "title": "Architecture Intelligence: storybookjs/storybook Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-storybookjs-storybook-architecture-intelligence-storybookjs-storybook-core-invar.md",
       "repository": "storybookjs/storybook",
-      "content_hash": "7ac5e4f055a93b5deba6271de26e53e5ab4178d988bf6bfb9b42cdd442c4b33b",
-      "created_at": "2026-11-17T07:20:10.281Z"
+      "content_hash": "55fc632355726d9422618dc440a620d3804a21b85dc4366015978ffcef0e4346",
+      "created_at": "2026-11-18T09:57:19.842Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-facebook-sam-3d-body-dinov3-learnings-core-in": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-facebook-sam-3d-body-dinov3-learnings-core-in",
@@ -26015,8 +26015,8 @@
       "title": "Architecture Intelligence: storybookjs-storybook-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-storybookjs-storybook-learnings-architecture-intelligence-storybookjs-storybook-.md",
       "repository": "storybookjs-storybook-learnings",
-      "content_hash": "a7c80252bf815bba6fe4e7ee24b291c14a0e03200b7321f4de6be8324a92db95",
-      "created_at": "2026-11-17T07:20:47.168Z"
+      "content_hash": "8362e3d03dc2b642d73e2e1538090bdf9d418ffe7b77434ca739d143d1c5c6f5",
+      "created_at": "2026-11-18T09:57:33.696Z"
     },
     "domain_intelligence-technical-construction-intelligence-transact-rs-sqlx-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-transact-rs-sqlx-core-invariants",
@@ -28547,8 +28547,8 @@
       "title": "Research & Knowledge Intelligence: hf-abenzerps-qwen-image-2.1-uncensored-gguf-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-abenzerps-qwen-image-2-1-uncensored-gguf-learnings-research-knowledge-intelli.md",
       "repository": "hf-abenzerps-qwen-image-2.1-uncensored-gguf-learnings",
-      "content_hash": "3fe5d42b8ee0ec5534c6292c3af53044fe7535d7552caa56d60fc716a67f8f2d",
-      "created_at": "2026-11-17T20:33:27.216Z"
+      "content_hash": "f64d190e80973f57bfc40784f003e80b1d6922797a73a593ccc5fc096825d5e6",
+      "created_at": "2026-11-18T09:57:32.894Z"
     },
     "domain_intelligence-research-knowledge-intelligence-sentence-transformers-all-minilm-l6-v2-core-inva": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-sentence-transformers-all-minilm-l6-v2-core-inva",

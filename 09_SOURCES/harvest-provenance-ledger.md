@@ -10944,3 +10944,6 @@ Every entry in this ledger must capture:
 | `learn-github-react-react-native` | `https://github.com/react/react-native` | `cf7f3f39` | Multi-dimensional audit evidence | 2026-11-18T09:28:33.912Z |
 | `learn-dom-h-cc987e5f` | `project://react-react-native` | `cf7f3f39` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/react-react-native-learnings.md` | 2026-11-18T09:29:18.930Z |
 | `learn-huggingface-edge0-audio8-asr-infinite` | `https://huggingface.co/Edge0/Audio8-ASR-Infinite` | `hf-edge0-a` | Multi-dimensional audit evidence | 2026-11-18T09:48:15.071Z |
+| `learn-huggingface-abenzerps-qwen-image-2-1-uncensored-gguf` | `https://huggingface.co/abenzerps/Qwen-Image-2.1-Uncensored-GGUF` | `hf-abenzer` | Multi-dimensional audit evidence | 2026-11-18T09:57:11.907Z |
+| `learn-github-storybookjs-storybook` | `https://github.com/storybookjs/storybook` | `1227202d` | Multi-dimensional audit evidence | 2026-11-18T09:57:19.411Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `266b9114` | Multi-dimensional audit evidence | 2026-11-18T09:57:29.140Z |
