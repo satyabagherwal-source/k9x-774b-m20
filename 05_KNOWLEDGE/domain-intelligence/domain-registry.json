@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-18T00:27:33.403Z",
-  "total_records": 1722,
+  "last_updated": "2026-11-18T00:43:47.107Z",
+  "total_records": 1724,
   "domains": {
     "A": {
       "total": 11,
@@ -48,7 +48,7 @@
       ]
     },
     "D": {
-      "total": 752,
+      "total": 754,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -801,7 +801,9 @@
         "domain_intelligence-research-knowledge-intelligence-meta-llama-llama-3-1-8b-instruct-core-invariants",
         "domain_intelligence-research-knowledge-intelligence-hf-meta-llama-llama-3-1-8b-instruct-learnings-co",
         "domain_intelligence-research-knowledge-intelligence-xingchen-agi-teleocr-core-invariants",
-        "domain_intelligence-research-knowledge-intelligence-hf-xingchen-agi-teleocr-learnings-core-invariant"
+        "domain_intelligence-research-knowledge-intelligence-hf-xingchen-agi-teleocr-learnings-core-invariant",
+        "domain_intelligence-research-knowledge-intelligence-contrastive-lm-clm-v0-1-8b-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-hf-contrastive-lm-clm-v0-1-8b-learnings-core-inv"
       ]
     },
     "E": {
@@ -12340,8 +12342,8 @@
       "title": "Technical Construction Intelligence: neuron-core/neuron-ai Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-neuron-core-neuron-ai-technical-construction-intelligence-neuron-core-neuron-ai-.md",
       "repository": "neuron-core/neuron-ai",
-      "content_hash": "c2c46d0c8473e476a8c7f96dc0113844905a9add917757a099cd5d08ed9e8b54",
-      "created_at": "2026-11-15T17:04:04.180Z"
+      "content_hash": "7d1b1e2cc2b670b6b936e6499b59b8627b8e1a70d74a1c7a3e896d7fe7ee9c7c",
+      "created_at": "2026-11-18T00:43:42.751Z"
     },
     "DOM-D-78E4F99B": {
       "record_id": "DOM-D-78E4F99B",
@@ -12409,8 +12411,8 @@
       "title": "Technical Construction Intelligence: neuron-core-neuron-ai-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-neuron-core-neuron-ai-learnings-technical-construction-intelligence-neuron-core-.md",
       "repository": "neuron-core-neuron-ai-learnings",
-      "content_hash": "90c37658befbe65f078ef2038550450395ec45b47971a09a89fe662c8f621d06",
-      "created_at": "2026-11-14T03:02:23.777Z"
+      "content_hash": "03a158655ab0b269ff104630a3d3f155026492a8a319fec9553801d25f187f5b",
+      "created_at": "2026-11-18T00:43:46.438Z"
     },
     "domain_intelligence-technical-construction-intelligence-i18next-react-i18next-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-i18next-react-i18next-core-invariants",
@@ -22893,8 +22895,8 @@
       "title": "Research & Knowledge Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-zvec-ai-zvec-grep-learnings-research-knowledge-intelligence-zvec-ai-zvec-grep-le.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "d89711113dad567d47edb102b509f17c23879dac3dee30010deee36ca716ba1a",
-      "created_at": "2026-11-17T23:42:39.546Z"
+      "content_hash": "266da705963daa5c4aead81157a3268acbddf972088fc3c35ccbf00bb0a7f620",
+      "created_at": "2026-11-18T00:43:47.107Z"
     },
     "domain_intelligence-technical-construction-intelligence-prof18-feed-flow-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-prof18-feed-flow-core-invariants",
@@ -28956,6 +28958,24 @@
       "repository": "hf-qwen-qwen-image-2.1-learnings",
       "content_hash": "ef281bddac9cd76ec486f1adc44fbb2b93d145b912cafcd2d33f28ff458b969b",
       "created_at": "2026-11-18T00:27:31.835Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-contrastive-lm-clm-v0-1-8b-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-contrastive-lm-clm-v0-1-8b-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: Contrastive-LM/CLM-v0.1-8B Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-contrastive-lm-clm-v0-1-8b-research-knowledge-intelligence-contrastive-lm-clm.md",
+      "repository": "Contrastive-LM/CLM-v0.1-8B",
+      "content_hash": "19e67bd5c50e90e208da437570339e1a945ea92a5af4f9aa3857a7b6dea25156",
+      "created_at": "2026-11-18T00:43:28.134Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-contrastive-lm-clm-v0-1-8b-learnings-core-inv": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-contrastive-lm-clm-v0-1-8b-learnings-core-inv",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-contrastive-lm-clm-v0.1-8b-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-contrastive-lm-clm-v0-1-8b-learnings-research-knowledge-intelligence-hf-contr.md",
+      "repository": "hf-contrastive-lm-clm-v0.1-8b-learnings",
+      "content_hash": "f2e1a684876ac4f918aa1c1eb4b7e469d709a1f200a35cc757f4e03d163bd544",
+      "created_at": "2026-11-18T00:43:45.861Z"
     }
   }
 }

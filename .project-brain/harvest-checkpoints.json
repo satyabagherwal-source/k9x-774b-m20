@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-18T00:27:00.686Z",
+  "last_updated": "2026-11-18T00:43:42.444Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -380,14 +380,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-contrastive-lm-clm-v0-1-8b",
-      "content_hash": "974320fd1c7d99aaf3e702380d2e0e0c48b5417541ad9f8d67e86029102b1931",
-      "verified_at": "2026-11-13T13:20:25.904Z",
+      "content_hash": "346b5dbd697c4775650babf3048a037c5ea31a3aa9b77c9f8a0e7f83303a9106",
+      "verified_at": "2026-11-18T00:43:27.969Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T13:20:25.904Z"
+      "last_updated": "2026-11-18T00:43:27.969Z"
     },
     "nvidia/Nemotron-3-Diarization": {
       "repository": "nvidia/Nemotron-3-Diarization",
@@ -4791,14 +4791,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-neuron-core-neuron-ai",
-      "content_hash": "ad57dabb6696007d3ca730f8a05e1cf919457449c0c0094c586ffdc572875275",
-      "verified_at": "2026-11-15T17:04:03.853Z",
+      "content_hash": "21244158c13164db35db715833e1f093d8825e5e593936ae2dffddf56c2bd278",
+      "verified_at": "2026-11-18T00:43:42.444Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-15T17:04:03.853Z"
+      "last_updated": "2026-11-18T00:43:42.444Z"
     },
     "GeekyAnts/NativeBase": {
       "repository": "GeekyAnts/NativeBase",

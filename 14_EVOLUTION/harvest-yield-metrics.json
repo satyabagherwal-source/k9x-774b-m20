@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T00:27:00.683Z",
-  "total_cycles_completed": 10302,
-  "total_learnings_persisted": 10302,
-  "total_rules_promoted": 9838,
+  "last_updated": "2026-11-18T00:43:42.441Z",
+  "total_cycles_completed": 10304,
+  "total_learnings_persisted": 10304,
+  "total_rules_promoted": 9839,
   "history": [
-    {
-      "timestamp": "2026-11-17T11:40:43.358Z",
-      "repository": "cilium/cilium",
-      "learningId": "learn-github-cilium-cilium",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T12:09:28.074Z",
-      "repository": "pubkey/rxdb",
-      "learningId": "learn-github-pubkey-rxdb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-17T12:09:32.786Z",
       "repository": "projectdiscovery/nuclei",
@@ -1403,6 +1389,20 @@
       "repository": "Qwen/Qwen-Image-2.1",
       "learningId": "learn-huggingface-qwen-qwen-image-2-1",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T00:43:27.966Z",
+      "repository": "Contrastive-LM/CLM-v0.1-8B",
+      "learningId": "learn-huggingface-contrastive-lm-clm-v0-1-8b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T00:43:42.441Z",
+      "repository": "neuron-core/neuron-ai",
+      "learningId": "learn-github-neuron-core-neuron-ai",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

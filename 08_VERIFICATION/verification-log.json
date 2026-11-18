@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261116-PT0Z",
-    "timestamp": "2026-11-16T01:45:11.987Z",
-    "repository": "medialab/xan",
-    "learningId": "learn-github-medialab-xan",
-    "contentHash": "8b29a3da1c224a6a60e213db7bcb154f5b27430bb0212e7b663698373c262f68",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261116-PWON",
-    "timestamp": "2026-11-16T01:45:16.727Z",
-    "repository": "rickclephas/KMP-NativeCoroutines",
-    "learningId": "learn-github-rickclephas-kmp-nativecoroutines",
-    "contentHash": "d3f37df4319689395e332587b56b37907a47bb95646fb87aacf5c1720eb82e19",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261116-Q0W2",
     "timestamp": "2026-11-16T01:45:22.178Z",
     "repository": "aleo-labs-protocol/snarkOS",
@@ -7492,6 +7462,36 @@
     "contentHash": "406546fb95766040a32a63191befcdf70845e6b634e3690ae94caa9385e3cbb5",
     "status": "VERIFIED",
     "promotedRulesCount": 3,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-E4B9",
+    "timestamp": "2026-11-18T00:43:27.957Z",
+    "repository": "Contrastive-LM/CLM-v0.1-8B",
+    "learningId": "learn-huggingface-contrastive-lm-clm-v0-1-8b",
+    "contentHash": "346b5dbd697c4775650babf3048a037c5ea31a3aa9b77c9f8a0e7f83303a9106",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-EFHC",
+    "timestamp": "2026-11-18T00:43:42.432Z",
+    "repository": "neuron-core/neuron-ai",
+    "learningId": "learn-github-neuron-core-neuron-ai",
+    "contentHash": "21244158c13164db35db715833e1f093d8825e5e593936ae2dffddf56c2bd278",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

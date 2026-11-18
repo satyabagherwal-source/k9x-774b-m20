@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T00:27:33.681Z",
+  "last_updated": "2026-11-18T00:43:47.476Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-18T00:27:32.940Z",
@@ -8,7 +8,7 @@
       "staged_for_review": 1
     },
     "zvec-ai-zvec-grep-learnings.md": {
-      "processed_at": "2026-11-17T23:42:39.047Z",
+      "processed_at": "2026-11-18T00:43:46.710Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1828,8 +1828,8 @@
       "staged_for_review": 1
     },
     "hf-contrastive-lm-clm-v0.1-8b-learnings.md": {
-      "processed_at": "2026-11-13T13:21:07.338Z",
-      "promoted_canonical": 1,
+      "processed_at": "2026-11-18T00:43:45.671Z",
+      "promoted_canonical": 0,
       "staged_for_review": 0
     },
     "planetable-planet-learnings.md": {
@@ -2348,7 +2348,7 @@
       "staged_for_review": 0
     },
     "neuron-core-neuron-ai-learnings.md": {
-      "processed_at": "2026-11-14T03:02:23.413Z",
+      "processed_at": "2026-11-18T00:43:46.015Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3363,7 +3363,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 1746,
+  "total_dossiers_evaluated": 1749,
   "total_canonical_promoted": 329,
-  "total_staged_for_review": 1359
+  "total_staged_for_review": 1361
 }

@@ -10753,3 +10753,5 @@
 | `CYCLE-20261118-NIP3` | `2026-11-18T00:22:46.887Z` | `openziti/zrok` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9088` | Yes (`64a81af5...`) |
 | `CYCLE-20261118-SYIQ` | `2026-11-18T00:27:00.674Z` | `Qwen/Qwen-Image-2.1` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9089, Rule 9090, Rule 9091` | Yes (`406546fb...`) |
 | `CYCLE-2026-11-18-PROJ-EVOLVE` | `2026-11-18T00:27:31.206Z` | `hf-qwen-qwen-image-2.1` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-F-D22A5DEE` [Domain F] | Yes (`a48d2f8b...`) |
+| `CYCLE-20261118-E4B9` | `2026-11-18T00:43:27.957Z` | `Contrastive-LM/CLM-v0.1-8B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-contrastive-lm-clm-v0.1-8b-learnings.md` | Yes (`346b5dbd...`) |
+| `CYCLE-20261118-EFHC` | `2026-11-18T00:43:42.432Z` | `neuron-core/neuron-ai` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9092` | Yes (`21244158...`) |

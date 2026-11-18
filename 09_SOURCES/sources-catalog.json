@@ -325,8 +325,8 @@
     "sourceUrl": "https://huggingface.co/Contrastive-LM/CLM-v0.1-8B",
     "sourceVersion": "hf-contrastive-lm-clm-v0.1-8b",
     "license": "Open-Source",
-    "contentHash": "974320fd1c7d99aaf3e702380d2e0e0c48b5417541ad9f8d67e86029102b1931",
-    "lastHarvestedAt": "2026-11-13T13:20:25.890Z",
+    "contentHash": "346b5dbd697c4775650babf3048a037c5ea31a3aa9b77c9f8a0e7f83303a9106",
+    "lastHarvestedAt": "2026-11-18T00:43:27.961Z",
     "learningId": "learn-huggingface-contrastive-lm-clm-v0-1-8b"
   },
   "hf-nvidia-nemotron-3-diarization": {
@@ -3113,10 +3113,10 @@
     "repository": "neuron-core/neuron-ai",
     "platform": "github",
     "sourceUrl": "https://github.com/neuron-core/neuron-ai",
-    "sourceVersion": "5e9c7b57",
+    "sourceVersion": "c2b9a03e",
     "license": "MIT",
-    "contentHash": "ad57dabb6696007d3ca730f8a05e1cf919457449c0c0094c586ffdc572875275",
-    "lastHarvestedAt": "2026-11-15T17:04:03.842Z",
+    "contentHash": "21244158c13164db35db715833e1f093d8825e5e593936ae2dffddf56c2bd278",
+    "lastHarvestedAt": "2026-11-18T00:43:42.436Z",
     "learningId": "learn-github-neuron-core-neuron-ai"
   },
   "geekyants-nativebase": {

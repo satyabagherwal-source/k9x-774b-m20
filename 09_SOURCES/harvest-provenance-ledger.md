@@ -10786,3 +10786,5 @@ Every entry in this ledger must capture:
 | `learn-github-openziti-zrok` | `https://github.com/openziti/zrok` | `1a535cfa` | Multi-dimensional audit evidence | 2026-11-18T00:22:46.891Z |
 | `learn-huggingface-qwen-qwen-image-2-1` | `https://huggingface.co/Qwen/Qwen-Image-2.1` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-11-18T00:27:00.677Z |
 | `learn-dom-f-d22a5dee` | `project://hf-qwen-qwen-image-2.1` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-qwen-qwen-image-2.1-learnings.md` | 2026-11-18T00:27:31.206Z |
+| `learn-huggingface-contrastive-lm-clm-v0-1-8b` | `https://huggingface.co/Contrastive-LM/CLM-v0.1-8B` | `hf-contras` | Multi-dimensional audit evidence | 2026-11-18T00:43:27.961Z |
+| `learn-github-neuron-core-neuron-ai` | `https://github.com/neuron-core/neuron-ai` | `c2b9a03e` | Multi-dimensional audit evidence | 2026-11-18T00:43:42.436Z |

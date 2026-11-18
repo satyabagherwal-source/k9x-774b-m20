@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-18T00:27:33.551Z",
-  "total_verified_learnings": 8954,
+  "last_updated": "2026-11-18T00:43:47.357Z",
+  "total_verified_learnings": 8955,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 20733,
+  "total_items": 20738,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -112058,9 +112058,9 @@
       "title": "Agent Contract: zvec-ai-zvec-grep-learnings Autonomous Specialist Persona",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "6552e99bd82c389972ef6417db8f48f9706d897ac80148cd2161da1bc19113b7",
+      "content_hash": "593f3c8f8d381edcaf724602aa0cb4199fdbc24c265d25a68fab7aee3731a227",
       "domain_letter": "D",
-      "persisted_at": "2026-11-17T23:42:39.746Z"
+      "persisted_at": "2026-11-18T00:43:47.241Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zvec-ai-zvec-grep-learnings",
@@ -112070,9 +112070,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zvec-ai-zvec-grep-learnings",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "a5b21273a5a20c58748c9804dfa642c8cab5ff8d1edc01e01bbed84303be1af5",
+      "content_hash": "0f5d034cbf6f69ec57fed62b093b90dd8c61f6ec4c6694edb2817a4efaee736f",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T23:42:39.897Z"
+      "persisted_at": "2026-11-18T00:43:47.357Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xingchen-agi-xing4-0-29b-a4b-core-invariants",
@@ -221360,8 +221360,8 @@
       "slug": "neuron-core-neuron-ai",
       "platform": "github",
       "source_url": "https://github.com/neuron-core/neuron-ai",
-      "source_version": "5e9c7b57",
-      "content_hash": "ad57dabb6696007d3ca730f8a05e1cf919457449c0c0094c586ffdc572875275",
+      "source_version": "c2b9a03e",
+      "content_hash": "21244158c13164db35db715833e1f093d8825e5e593936ae2dffddf56c2bd278",
       "dossier_path": "07_PROJECT_LEARNING/neuron-core-neuron-ai-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/neuron-core-neuron-ai-learnings.md",
       "promoted_rules": [
@@ -221374,6 +221374,11 @@
           "number": 8631,
           "title": "sync streaming 0.4.1 in the frontend tests and lock file",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9092,
+          "title": "Empirical Invariant Guard in AGENTS.md",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -221381,7 +221386,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-15T17:04:03.655Z",
+      "verified_at": "2026-11-18T00:43:42.252Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -221423,10 +221428,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-neuron-core-neuron-ai-technical-construction-intelligence-neuron-core-neuron-ai-.md",
       "title": "Technical Construction Intelligence: neuron-core/neuron-ai Core Invariants",
       "repository": "neuron-core/neuron-ai",
-      "source_version": "5e9c7b57",
-      "content_hash": "c2c46d0c8473e476a8c7f96dc0113844905a9add917757a099cd5d08ed9e8b54",
+      "source_version": "c2b9a03e",
+      "content_hash": "7d1b1e2cc2b670b6b936e6499b59b8627b8e1a70d74a1c7a3e896d7fe7ee9c7c",
       "domain_letter": "H",
-      "persisted_at": "2026-11-15T17:04:04.180Z"
+      "persisted_at": "2026-11-18T00:43:42.751Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-neuron-core-neuron-ai": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-neuron-core-neuron-ai",
@@ -221435,10 +221440,10 @@
       "relative_path": "08_VERIFICATION/neuron-core-neuron-ai-verification-protocol-empirical-defect-shield-for-neuron-c.md",
       "title": "Verification Protocol: Empirical Defect Shield for neuron-core/neuron-ai",
       "repository": "neuron-core/neuron-ai",
-      "source_version": "5e9c7b57",
-      "content_hash": "1841283dc95167a931b05c554e68463e2b3a3a9da751ac0d39d2067208b1cff1",
+      "source_version": "c2b9a03e",
+      "content_hash": "fe6cf2b41238e7d17ecef537786666dd7b4aaa1831e9be8ba43cb418d5c7a294",
       "domain_letter": "K",
-      "persisted_at": "2026-11-15T17:04:04.320Z"
+      "persisted_at": "2026-11-18T00:43:42.891Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-zai-org-glm-5-2-learnings-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-zai-org-glm-5-2-learnings-core-invariants",
@@ -221496,9 +221501,9 @@
       "title": "Technical Construction Intelligence: neuron-core-neuron-ai-learnings Core Invariants",
       "repository": "neuron-core-neuron-ai-learnings",
       "source_version": "HEAD",
-      "content_hash": "90c37658befbe65f078ef2038550450395ec45b47971a09a89fe662c8f621d06",
+      "content_hash": "03a158655ab0b269ff104630a3d3f155026492a8a319fec9553801d25f187f5b",
       "domain_letter": "H",
-      "persisted_at": "2026-11-14T03:02:23.777Z"
+      "persisted_at": "2026-11-18T00:43:46.438Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-neuron-core-neuron-ai-learning": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-neuron-core-neuron-ai-learning",
@@ -221508,9 +221513,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for neuron-core-neuron-ai-learnings",
       "repository": "neuron-core-neuron-ai-learnings",
       "source_version": "HEAD",
-      "content_hash": "28456cfecc349c753b1898f02a5f09b4d9a01b988ee1d2d8068dcb991af647d3",
+      "content_hash": "de2f929490eacf04b4853b779c12d72a537be940e1612e1660ed8a18fb819560",
       "domain_letter": "K",
-      "persisted_at": "2026-11-14T03:02:23.864Z"
+      "persisted_at": "2026-11-18T00:43:46.577Z"
     },
     "learn-github-i18next-react-i18next": {
       "learning_id": "learn-github-i18next-react-i18next",
@@ -251724,9 +251729,9 @@
       "title": "Research & Knowledge Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "d89711113dad567d47edb102b509f17c23879dac3dee30010deee36ca716ba1a",
+      "content_hash": "266da705963daa5c4aead81157a3268acbddf972088fc3c35ccbf00bb0a7f620",
       "domain_letter": "D",
-      "persisted_at": "2026-11-17T23:42:39.546Z"
+      "persisted_at": "2026-11-18T00:43:47.107Z"
     },
     "learn-github-prof18-feed-flow": {
       "learning_id": "learn-github-prof18-feed-flow",
@@ -274316,13 +274321,13 @@
       "item_id": "candidate_directive-rust-address-the-remaining-issues-in-418",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-7X1L-rust-address-the-remaining-issues-in-418.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-EIZE-rust-address-the-remaining-issues-in-418.md",
       "title": "rust): address the remaining issues in #418",
       "repository": "zvec-ai-zvec-grep-learnings",
       "source_version": "HEAD",
-      "content_hash": "651de347a616590cde38cadb77f93cf5c4da10320863bad4459fa3f42c10bc67",
+      "content_hash": "50d53edb14d242872ac91f5e8189fc79abade5d8b066338cb896fbe690995374",
       "domain_letter": "D",
-      "persisted_at": "2026-11-17T23:42:39.375Z"
+      "persisted_at": "2026-11-18T00:43:46.973Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-m3-1-flash-learnings-core-i": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-minimaxai-minimax-m3-1-flash-learnings-core-i",
@@ -278767,6 +278772,83 @@
       "content_hash": "823675a83e35c961463070b314f6c1ca251dd98bf990051cf408e18fba9744e1",
       "domain_letter": "K",
       "persisted_at": "2026-11-18T00:27:31.991Z"
+    },
+    "learn-huggingface-contrastive-lm-clm-v0-1-8b": {
+      "learning_id": "learn-huggingface-contrastive-lm-clm-v0-1-8b",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "Contrastive-LM/CLM-v0.1-8B",
+      "repository": "Contrastive-LM/CLM-v0.1-8B",
+      "slug": "hf-contrastive-lm-clm-v0.1-8b",
+      "platform": "huggingface",
+      "source_url": "https://huggingface.co/Contrastive-LM/CLM-v0.1-8B",
+      "source_version": "hf-contrastive-lm-clm-v0.1-8b",
+      "content_hash": "346b5dbd697c4775650babf3048a037c5ea31a3aa9b77c9f8a0e7f83303a9106",
+      "dossier_path": "07_PROJECT_LEARNING/hf-contrastive-lm-clm-v0.1-8b-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/hf-contrastive-lm-clm-v0.1-8b-learnings.md",
+      "promoted_rules": [],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-18T00:43:27.763Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "domain_intelligence-research-knowledge-intelligence-contrastive-lm-clm-v0-1-8b-core-invariants": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-contrastive-lm-clm-v0-1-8b-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-contrastive-lm-clm-v0-1-8b-research-knowledge-intelligence-contrastive-lm-clm.md",
+      "title": "Research & Knowledge Intelligence: Contrastive-LM/CLM-v0.1-8B Core Invariants",
+      "repository": "Contrastive-LM/CLM-v0.1-8B",
+      "source_version": "hf-contrastive-lm-clm-v0.1-8b",
+      "content_hash": "19e67bd5c50e90e208da437570339e1a945ea92a5af4f9aa3857a7b6dea25156",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-18T00:43:28.134Z"
+    },
+    "rule-9092": {
+      "learning_id": "rule-9092",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9092,
+      "title": "Empirical Invariant Guard in AGENTS.md",
+      "source_url": "https://github.com/neuron-core/neuron-ai",
+      "source_version": "c2b9a03e",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-18T00:43:42.252Z"
+    },
+    "candidate_directive-empirical-invariant-guard-in-agents-md": {
+      "item_id": "candidate_directive-empirical-invariant-guard-in-agents-md",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-EIGX-empirical-invariant-guard-in-agents-md.md",
+      "title": "Empirical Invariant Guard in AGENTS.md",
+      "repository": "neuron-core-neuron-ai-learnings",
+      "source_version": "HEAD",
+      "content_hash": "8ccd5fea5c8516ebebbdf88e1c6fa39fdc8aac3cc6f4945e26c983fc950123ce",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-18T00:43:46.306Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-contrastive-lm-clm-v0-1-8b-learnings-core-inv": {
+      "item_id": "domain_intelligence-research-knowledge-intelligence-hf-contrastive-lm-clm-v0-1-8b-learnings-core-inv",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-contrastive-lm-clm-v0-1-8b-learnings-research-knowledge-intelligence-hf-contr.md",
+      "title": "Research & Knowledge Intelligence: hf-contrastive-lm-clm-v0.1-8b-learnings Core Invariants",
+      "repository": "hf-contrastive-lm-clm-v0.1-8b-learnings",
+      "source_version": "HEAD",
+      "content_hash": "f2e1a684876ac4f918aa1c1eb4b7e469d709a1f200a35cc757f4e03d163bd544",
+      "domain_letter": "D",
+      "persisted_at": "2026-11-18T00:43:45.861Z"
     }
   },
   "ai-builder-brain": {
