@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/nvidia/NVIDIA-NemotronLabs-RE-USE",
   "source_version": "hf-nvidia-nvidia-nemotronlabs-re-use",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T21:36:29.470Z",
+  "timestamp": "2026-11-18T08:41:50.872Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-nvidia-nvidia-nemotronlabs-re-use",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [nvidia/NVIDIA-NemotronLabs-RE-USE](https://huggingface.co/nvidia/NVIDIA-NemotronLabs-RE-USE) (Revision: `hf-nvidia-`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T21:36:29.470Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-18T08:41:50.872Z`  
 > **Learning ID**: `learn-huggingface-nvidia-nvidia-nemotronlabs-re-use`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotronlabs-re-use-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/nvidia/NVIDIA-NemotronLabs-RE-USE](https://huggingface.co/nvidia/NVIDIA-NemotronLabs-RE-USE))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T21:36:28.661Z  
+> **Harvest Timestamp**: 2026-11-18T08:35:40.651Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: audio-to-audio
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 43698 downloads | 225 likes
+- **Stars / Engagement**: 47777 downloads | 231 likes
 
 ---
 

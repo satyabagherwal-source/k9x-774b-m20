@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-18T08:22:08.518Z",
+  "last_updated": "2026-11-18T08:41:55.479Z",
   "total_records": 1804,
   "domains": {
     "A": {
@@ -8537,8 +8537,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "2219195bf2732ddc026ba4f92ec3916555fd866084217644d1b559c2ea4debdc",
-      "created_at": "2026-11-18T08:22:08.518Z"
+      "content_hash": "eb6498c712519c162d8e620c5bcb5d741d74d6351064df74c110d7183f2f9e18",
+      "created_at": "2026-11-18T08:41:54.704Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -10697,8 +10697,8 @@
       "title": "Research & Knowledge Intelligence: nvidia/NVIDIA-NemotronLabs-RE-USE Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-nvidia-nvidia-nemotronlabs-re-use-research-knowledge-intelligence-nvidia-nvid.md",
       "repository": "nvidia/NVIDIA-NemotronLabs-RE-USE",
-      "content_hash": "fbb6db15371b7ad64b00ead44ae1d42162f60b4f0394b27feb1d56ba59a68c56",
-      "created_at": "2026-11-13T21:36:29.471Z"
+      "content_hash": "4f63f5238702af74ef7278251ff91ac59a5760a4157f8587c5eff1186813fe1d",
+      "created_at": "2026-11-18T08:41:50.873Z"
     },
     "domain_intelligence-architecture-intelligence-streetwriters-notesnook-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-streetwriters-notesnook-core-invariants",
@@ -10757,8 +10757,8 @@
       "title": "Research & Knowledge Intelligence: hf-nvidia-nvidia-nemotronlabs-re-use-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-nvidia-nvidia-nemotronlabs-re-use-learnings-research-knowledge-intelligence-h.md",
       "repository": "hf-nvidia-nvidia-nemotronlabs-re-use-learnings",
-      "content_hash": "e9300714cf96d8111a29481d763eb086d83c2982a46f0f5c23614a044788fd6e",
-      "created_at": "2026-11-13T21:37:17.757Z"
+      "content_hash": "c6b9a76f59f9734071abc8b3a213b348101c920ff9de4dcff5dc86ebd7c744c0",
+      "created_at": "2026-11-18T08:41:53.908Z"
     },
     "domain_intelligence-architecture-intelligence-streetwriters-notesnook-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-streetwriters-notesnook-learnings-core-invariants",
@@ -26791,8 +26791,8 @@
       "title": "Human & Need Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-A-zulip-zulip-learnings-human-need-intelligence-zulip-zulip-learnings-core-invaria.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "e8b7a41f7224427eee3c7e946d2c97e719d2118249a1d1d1d66eac67c05bd2a7",
-      "created_at": "2026-11-18T04:11:36.917Z"
+      "content_hash": "d36b301b06d7c55a0b6fc76013e52378907a36c5923f8ac3adf7935154a1fdb6",
+      "created_at": "2026-11-18T08:41:55.479Z"
     },
     "domain_intelligence-technical-construction-intelligence-zama-ai-tfhe-rs-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-zama-ai-tfhe-rs-learnings-core-invariants",

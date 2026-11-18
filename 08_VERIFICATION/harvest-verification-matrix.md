@@ -10892,3 +10892,4 @@
 | `CYCLE-20261118-PU3K` | `2026-11-18T08:20:28.448Z` | `Qwen/Qwen3-0.6B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9173, Rule 9174, Rule 9175` | Yes (`9a0ff451...`) |
 | `CYCLE-20261118-R9OB` | `2026-11-18T08:21:35.291Z` | `StarRocks/starrocks` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule 9176` | Yes (`8a95280c...`) |
 | `CYCLE-2026-11-18-PROJ-EVOLVE` | `2026-11-18T08:22:06.101Z` | `hf-qwen-qwen3-0.6b` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-J-3AB0ED35` [Domain J] | Yes (`2ee3bd10...`) |
+| `CYCLE-20261118-HBGS` | `2026-11-18T08:41:50.668Z` | `nvidia/NVIDIA-NemotronLabs-RE-USE` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotronlabs-re-use-learnings.md` | Yes (`b8c020b3...`) |

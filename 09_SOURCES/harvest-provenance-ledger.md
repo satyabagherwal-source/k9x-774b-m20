@@ -10925,3 +10925,4 @@ Every entry in this ledger must capture:
 | `learn-huggingface-qwen-qwen3-0-6b` | `https://huggingface.co/Qwen/Qwen3-0.6B` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-11-18T08:20:28.452Z |
 | `learn-github-starrocks-starrocks` | `https://github.com/StarRocks/starrocks` | `37e75d93` | Multi-dimensional audit evidence | 2026-11-18T08:21:35.295Z |
 | `learn-dom-j-3ab0ed35` | `project://hf-qwen-qwen3-0.6b` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-qwen-qwen3-0.6b-learnings.md` | 2026-11-18T08:22:06.101Z |
+| `learn-huggingface-nvidia-nvidia-nemotronlabs-re-use` | `https://huggingface.co/nvidia/NVIDIA-NemotronLabs-RE-USE` | `hf-nvidia-` | Multi-dimensional audit evidence | 2026-11-18T08:41:50.671Z |

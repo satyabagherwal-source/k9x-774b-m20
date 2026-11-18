@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-18T08:21:35.317Z",
+  "last_updated": "2026-11-18T08:41:50.682Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -17976,14 +17976,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-nvidia-nvidia-nemotronlabs-re-use",
-      "content_hash": "977cd09488b5998a0372796818cb403af8e58f59fbc8d78f34b6d82bf23d5e23",
-      "verified_at": "2026-11-13T21:36:29.284Z",
+      "content_hash": "b8c020b32bdbb46ec72f00f29d13a5d5b0ef68aebd2f702018f1edce854b1e1d",
+      "verified_at": "2026-11-18T08:41:50.681Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T21:36:29.284Z"
+      "last_updated": "2026-11-18T08:41:50.681Z"
     },
     "ricursiveAI/Ripple-65B-Preview": {
       "repository": "ricursiveAI/Ripple-65B-Preview",

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-18T08:22:08.670Z",
+  "last_updated": "2026-11-18T08:41:55.622Z",
   "total_verified_learnings": 8995,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -112190,9 +112190,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zulip-zulip-learnings",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "65ff5226c95bc9a35d7013c702604a65abe7135527478efcc1530b3710cd543e",
+      "content_hash": "5997895be35b2d242797345bf171a49a5066c206945ec6b46a75b6e01a421203",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T04:11:37.058Z"
+      "persisted_at": "2026-11-18T08:41:55.622Z"
     },
     "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-supersoniclabs-julia-1-core-invariants",
@@ -113686,13 +113686,13 @@
       "item_id": "candidate_directive-editor-add-scoped-ios-account-deletion",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-RZ6Q-editor-add-scoped-ios-account-deletion.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-HEGR-editor-add-scoped-ios-account-deletion.md",
       "title": "editor): add scoped ios account deletion",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "84252e989fedebadcd5cfdd6e60ebb12acd979d42038d3a857ae7c1810c06d48",
+      "content_hash": "faedd52f6bb5ded6e5557410842ebd483606c80c85387f9cc15b15ca0f9aea6a",
       "domain_letter": "H",
-      "persisted_at": "2026-11-18T08:22:08.366Z"
+      "persisted_at": "2026-11-18T08:41:54.560Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant",
@@ -113702,9 +113702,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "2219195bf2732ddc026ba4f92ec3916555fd866084217644d1b559c2ea4debdc",
+      "content_hash": "eb6498c712519c162d8e620c5bcb5d741d74d6351064df74c110d7183f2f9e18",
       "domain_letter": "H",
-      "persisted_at": "2026-11-18T08:22:08.518Z"
+      "persisted_at": "2026-11-18T08:41:54.704Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113714,9 +113714,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "d2b165a343d9f3092081acb9dae6c94468709e6902f3d5c152b30bb614bbbe86",
+      "content_hash": "bb0f602dafb30f9492ca19cdfafccdd7fab80b6c0e3a7d80d90e79fa7a876fd0",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T08:22:08.670Z"
+      "persisted_at": "2026-11-18T08:41:54.849Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -216606,7 +216606,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/nvidia/NVIDIA-NemotronLabs-RE-USE",
       "source_version": "hf-nvidia-nvidia-nemotronlabs-re-use",
-      "content_hash": "977cd09488b5998a0372796818cb403af8e58f59fbc8d78f34b6d82bf23d5e23",
+      "content_hash": "b8c020b32bdbb46ec72f00f29d13a5d5b0ef68aebd2f702018f1edce854b1e1d",
       "dossier_path": "07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotronlabs-re-use-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-nvidia-nvidia-nemotronlabs-re-use-learnings.md",
       "promoted_rules": [],
@@ -216615,7 +216615,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-13T21:36:29.109Z",
+      "verified_at": "2026-11-18T08:41:50.429Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -216632,9 +216632,9 @@
       "title": "Research & Knowledge Intelligence: nvidia/NVIDIA-NemotronLabs-RE-USE Core Invariants",
       "repository": "nvidia/NVIDIA-NemotronLabs-RE-USE",
       "source_version": "hf-nvidia-nvidia-nemotronlabs-re-use",
-      "content_hash": "fbb6db15371b7ad64b00ead44ae1d42162f60b4f0394b27feb1d56ba59a68c56",
+      "content_hash": "4f63f5238702af74ef7278251ff91ac59a5760a4157f8587c5eff1186813fe1d",
       "domain_letter": "D",
-      "persisted_at": "2026-11-13T21:36:29.471Z"
+      "persisted_at": "2026-11-18T08:41:50.873Z"
     },
     "learn-github-streetwriters-notesnook": {
       "learning_id": "learn-github-streetwriters-notesnook",
@@ -216806,9 +216806,9 @@
       "title": "Research & Knowledge Intelligence: hf-nvidia-nvidia-nemotronlabs-re-use-learnings Core Invariants",
       "repository": "hf-nvidia-nvidia-nemotronlabs-re-use-learnings",
       "source_version": "HEAD",
-      "content_hash": "e9300714cf96d8111a29481d763eb086d83c2982a46f0f5c23614a044788fd6e",
+      "content_hash": "c6b9a76f59f9734071abc8b3a213b348101c920ff9de4dcff5dc86ebd7c744c0",
       "domain_letter": "D",
-      "persisted_at": "2026-11-13T21:37:17.757Z"
+      "persisted_at": "2026-11-18T08:41:53.908Z"
     },
     "domain_intelligence-architecture-intelligence-streetwriters-notesnook-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-streetwriters-notesnook-learnings-core-invariants",
@@ -270030,13 +270030,13 @@
       "item_id": "candidate_directive-portico-fix-typos-on-development-community-and-security-pages",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-TSQU-portico-fix-typos-on-development-community-and-security-pages.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-HF2A-portico-fix-typos-on-development-community-and-security-pages.md",
       "title": "portico: Fix typos on development community and security pages.",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "d371aea594666210ac13ea33082c3c886ca21d7c779788ffef5ca8eb567ba538",
+      "content_hash": "811ca0b7df46cbdc17e4557c0163261cd5219f7f14e7b2d1054f6b6633921b01",
       "domain_letter": "L",
-      "persisted_at": "2026-11-18T04:11:36.777Z"
+      "persisted_at": "2026-11-18T08:41:55.334Z"
     },
     "domain_intelligence-human-need-intelligence-zulip-zulip-learnings-core-invariants": {
       "item_id": "domain_intelligence-human-need-intelligence-zulip-zulip-learnings-core-invariants",
@@ -270046,9 +270046,9 @@
       "title": "Human & Need Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "e8b7a41f7224427eee3c7e946d2c97e719d2118249a1d1d1d66eac67c05bd2a7",
+      "content_hash": "d36b301b06d7c55a0b6fc76013e52378907a36c5923f8ac3adf7935154a1fdb6",
       "domain_letter": "A",
-      "persisted_at": "2026-11-18T04:11:36.917Z"
+      "persisted_at": "2026-11-18T08:41:55.479Z"
     },
     "candidate_directive-mito2-wait-for-a-stopped-region-s-checkpoint-before-reopening-it": {
       "item_id": "candidate_directive-mito2-wait-for-a-stopped-region-s-checkpoint-before-reopening-it",

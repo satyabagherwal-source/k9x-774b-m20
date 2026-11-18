@@ -11945,8 +11945,8 @@
     "sourceUrl": "https://huggingface.co/nvidia/NVIDIA-NemotronLabs-RE-USE",
     "sourceVersion": "hf-nvidia-nvidia-nemotronlabs-re-use",
     "license": "Open-Source",
-    "contentHash": "977cd09488b5998a0372796818cb403af8e58f59fbc8d78f34b6d82bf23d5e23",
-    "lastHarvestedAt": "2026-11-13T21:36:29.274Z",
+    "contentHash": "b8c020b32bdbb46ec72f00f29d13a5d5b0ef68aebd2f702018f1edce854b1e1d",
+    "lastHarvestedAt": "2026-11-18T08:41:50.671Z",
     "learningId": "learn-huggingface-nvidia-nvidia-nemotronlabs-re-use"
   },
   "hf-ricursiveai-ripple-65b-preview": {

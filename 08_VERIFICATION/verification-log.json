@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261116-KOIP",
-    "timestamp": "2026-11-16T20:20:57.505Z",
-    "repository": "sharkdp/bat",
-    "learningId": "learn-github-sharkdp-bat",
-    "contentHash": "43b45712cca4c9f198789a6477cd23e13371cf1c8c9455d10bd77039e0cbd895",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261116-KTFD",
     "timestamp": "2026-11-16T20:21:03.865Z",
     "repository": "flux-iac/tofu-controller",
@@ -7492,6 +7477,21 @@
     "contentHash": "8a95280c874f724c166963b038920d3fe649597c1fbbb2ac9ab5cd5b3fd29024",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-HBGS",
+    "timestamp": "2026-11-18T08:41:50.668Z",
+    "repository": "nvidia/NVIDIA-NemotronLabs-RE-USE",
+    "learningId": "learn-huggingface-nvidia-nvidia-nemotronlabs-re-use",
+    "contentHash": "b8c020b32bdbb46ec72f00f29d13a5d5b0ef68aebd2f702018f1edce854b1e1d",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
