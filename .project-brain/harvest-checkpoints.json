@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-18T08:06:27.623Z",
+  "last_updated": "2026-11-18T08:21:35.317Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -950,14 +950,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-qwen-qwen3-0-6b",
-      "content_hash": "482ba5ac952555a806646df31bb76c0290ddc6d49b8053f0cfb17380d6fb45b4",
-      "verified_at": "2026-11-13T21:28:08.215Z",
+      "content_hash": "9a0ff4516f74a029b5139525566ba93187eb56ed5112246c0986ccdd53c47a95",
+      "verified_at": "2026-11-18T08:20:28.459Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T21:28:08.215Z"
+      "last_updated": "2026-11-18T08:20:28.459Z"
     },
     "google-t5/t5-small": {
       "repository": "google-t5/t5-small",
@@ -7956,14 +7956,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-starrocks-starrocks",
-      "content_hash": "8de6e9419384b57d718f984090d6f33d5665553ec671f4a45b2fe4fe783b49a1",
-      "verified_at": "2026-11-17T09:47:33.344Z",
+      "content_hash": "8a95280c874f724c166963b038920d3fe649597c1fbbb2ac9ab5cd5b3fd29024",
+      "verified_at": "2026-11-18T08:21:35.316Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T09:47:33.344Z"
+      "last_updated": "2026-11-18T08:21:35.316Z"
     },
     "lobehub/lobe-ui": {
       "repository": "lobehub/lobe-ui",

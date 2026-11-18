@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T08:06:27.620Z",
-  "total_cycles_completed": 10422,
-  "total_learnings_persisted": 10422,
-  "total_rules_promoted": 9927,
+  "last_updated": "2026-11-18T08:21:35.314Z",
+  "total_cycles_completed": 10424,
+  "total_learnings_persisted": 10424,
+  "total_rules_promoted": 9932,
   "history": [
-    {
-      "timestamp": "2026-11-17T18:56:13.803Z",
-      "repository": "briaai/Fibo-2.0-dev",
-      "learningId": "learn-huggingface-briaai-fibo-2-0-dev",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T18:56:24.423Z",
-      "repository": "pingcap/tidb",
-      "learningId": "learn-github-pingcap-tidb",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-17T19:04:49.279Z",
       "repository": "XHToken/Spark-X2.6-4B-GGUF",
@@ -1403,6 +1389,20 @@
       "repository": "BAAI/bge-m3",
       "learningId": "learn-huggingface-baai-bge-m3",
       "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T08:20:28.457Z",
+      "repository": "Qwen/Qwen3-0.6B",
+      "learningId": "learn-huggingface-qwen-qwen3-0-6b",
+      "promotedRulesCount": 3,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T08:21:35.314Z",
+      "repository": "StarRocks/starrocks",
+      "learningId": "learn-github-starrocks-starrocks",
+      "promotedRulesCount": 2,
       "status": "PROMOTED"
     }
   ]

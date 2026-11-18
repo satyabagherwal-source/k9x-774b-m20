@@ -10889,3 +10889,6 @@
 | `CYCLE-2026-11-18-PROJ-EVOLVE` | `2026-11-18T08:07:23.711Z` | `gitoxidelabs-gitoxide` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-2B4F8699` [Domain H] | Yes (`6d64d736...`) |
 | `CYCLE-2026-11-18-PROJ-EVOLVE` | `2026-11-18T08:07:57.264Z` | `hf-baai-bge-m3` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-C539E7DA` [Domain D] | Yes (`851a01dc...`) |
 | `CYCLE-2026-11-18-PROJ-EVOLVE` | `2026-11-18T08:08:43.499Z` | `hf-baai-bge-m3` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-7DF498D3` [Domain H] | Yes (`8e43d197...`) |
+| `CYCLE-20261118-PU3K` | `2026-11-18T08:20:28.448Z` | `Qwen/Qwen3-0.6B` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9173, Rule 9174, Rule 9175` | Yes (`9a0ff451...`) |
+| `CYCLE-20261118-R9OB` | `2026-11-18T08:21:35.291Z` | `StarRocks/starrocks` | Commit diff / Patch analysis | `VERIFIED` | `Rule null, Rule 9176` | Yes (`8a95280c...`) |
+| `CYCLE-2026-11-18-PROJ-EVOLVE` | `2026-11-18T08:22:06.101Z` | `hf-qwen-qwen3-0.6b` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-J-3AB0ED35` [Domain J] | Yes (`2ee3bd10...`) |

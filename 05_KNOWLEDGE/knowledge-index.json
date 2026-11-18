@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-18T08:08:45.543Z",
+  "last_updated": "2026-11-18T08:22:08.670Z",
   "total_verified_learnings": 8995,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 21063,
+  "total_items": 21076,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113686,13 +113686,13 @@
       "item_id": "candidate_directive-editor-add-scoped-ios-account-deletion",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-6IZ7-editor-add-scoped-ios-account-deletion.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-RZ6Q-editor-add-scoped-ios-account-deletion.md",
       "title": "editor): add scoped ios account deletion",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "9fa0ae85aeb931917d76b045c02e73ba4e37b59e6ff82169633d4d58a28eda84",
+      "content_hash": "84252e989fedebadcd5cfdd6e60ebb12acd979d42038d3a857ae7c1810c06d48",
       "domain_letter": "H",
-      "persisted_at": "2026-11-18T06:41:28.728Z"
+      "persisted_at": "2026-11-18T08:22:08.366Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant",
@@ -113702,9 +113702,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "84e478e462d6d1e7a9e77433efc6baf141c1a89a3701aaf0abd02a4b18d8259f",
+      "content_hash": "2219195bf2732ddc026ba4f92ec3916555fd866084217644d1b559c2ea4debdc",
       "domain_letter": "H",
-      "persisted_at": "2026-11-18T06:41:28.907Z"
+      "persisted_at": "2026-11-18T08:22:08.518Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113714,9 +113714,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "f75e03a80b0c663ef1994e9bd8cb2a22acd31eb3810b5068d22176ca57972cf9",
+      "content_hash": "d2b165a343d9f3092081acb9dae6c94468709e6902f3d5c152b30bb614bbbe86",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T06:41:29.083Z"
+      "persisted_at": "2026-11-18T08:22:08.670Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -216539,16 +216539,32 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/Qwen/Qwen3-0.6B",
       "source_version": "hf-qwen-qwen3-0.6b",
-      "content_hash": "482ba5ac952555a806646df31bb76c0290ddc6d49b8053f0cfb17380d6fb45b4",
+      "content_hash": "9a0ff4516f74a029b5139525566ba93187eb56ed5112246c0986ccdd53c47a95",
       "dossier_path": "07_PROJECT_LEARNING/hf-qwen-qwen3-0.6b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-qwen-qwen3-0.6b-learnings.md",
-      "promoted_rules": [],
+      "promoted_rules": [
+        {
+          "number": 9173,
+          "title": "Mandatory Tied Weight Slicing and Gradient Scaling Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9174,
+          "title": "Multi-Token EOS Termination Array Invariant",
+          "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9175,
+          "title": "Presence Penalty Activation for Sub-Billion Parameter Long-Context Loops",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
       "status": "VERIFIED_LEARNING",
       "verification_status": "VERIFIED_LEARNING",
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-13T21:28:07.993Z",
+      "verified_at": "2026-11-18T08:20:28.274Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -232142,11 +232158,16 @@
       "slug": "starrocks-starrocks",
       "platform": "github",
       "source_url": "https://github.com/StarRocks/starrocks",
-      "source_version": "7dd4de40",
-      "content_hash": "8de6e9419384b57d718f984090d6f33d5665553ec671f4a45b2fe4fe783b49a1",
+      "source_version": "37e75d93",
+      "content_hash": "8a95280c874f724c166963b038920d3fe649597c1fbbb2ac9ab5cd5b3fd29024",
       "dossier_path": "07_PROJECT_LEARNING/starrocks-starrocks-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/starrocks-starrocks-learnings.md",
       "promoted_rules": [
+        {
+          "number": null,
+          "title": "Two-Phase Read-Validate Under Cache Concurrency",
+          "status": "WITHHELD_REJECT"
+        },
         {
           "number": 8508,
           "title": "[BugFix][RB-1649] Grow the parquet plain binary decode buffer geometrically acro",
@@ -232171,6 +232192,11 @@
           "number": 8948,
           "title": "Numerical Serialization Output Buffer Boundary Invariant",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9176,
+          "title": "Optional-Index Degradation Invariant under Shared-Data Storage",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -232178,7 +232204,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T09:47:33.112Z",
+      "verified_at": "2026-11-18T08:21:35.095Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -232220,10 +232246,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-starrocks-starrocks-technical-construction-intelligence-starrocks-starrocks-core.md",
       "title": "Technical Construction Intelligence: StarRocks/starrocks Core Invariants",
       "repository": "StarRocks/starrocks",
-      "source_version": "7dd4de40",
-      "content_hash": "c7bc0cf4ec45de8004a056d987ed96ce16c4a64ff429c2d830db12a678e2a02e",
+      "source_version": "37e75d93",
+      "content_hash": "fa6648e7ed8a2d02813d2d71ef89e88cbc602688886d7aef9c4064e23760f492",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T09:47:33.967Z"
+      "persisted_at": "2026-11-18T08:21:35.749Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-starrocks-starrocks": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-starrocks-starrocks",
@@ -232232,10 +232258,10 @@
       "relative_path": "08_VERIFICATION/starrocks-starrocks-verification-protocol-empirical-defect-shield-for-starrocks-.md",
       "title": "Verification Protocol: Empirical Defect Shield for StarRocks/starrocks",
       "repository": "StarRocks/starrocks",
-      "source_version": "7dd4de40",
-      "content_hash": "b955711ad8ac6f12d1ad130b1218594f4522c99ec4d69e075bea7f98571fa92c",
+      "source_version": "37e75d93",
+      "content_hash": "a207b97b49077067113a62674e3b02cbd17b580bf3aab7182e035b7290177d84",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T09:47:34.103Z"
+      "persisted_at": "2026-11-18T08:21:35.884Z"
     },
     "learn-huggingface-autotrust-jev-27b-vl": {
       "learning_id": "learn-huggingface-autotrust-jev-27b-vl",
@@ -232332,9 +232358,9 @@
       "title": "Technical Construction Intelligence: starrocks-starrocks-learnings Core Invariants",
       "repository": "starrocks-starrocks-learnings",
       "source_version": "HEAD",
-      "content_hash": "52c200a618e9e24aa0e722c6fd916625bf87dd56f168077118712cbd99a3b91a",
+      "content_hash": "f1a48c293874798610d921b28f9bc86644fabdbefe67da79c908927b561a5c0f",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T09:48:07.036Z"
+      "persisted_at": "2026-11-18T08:22:07.594Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-starrocks-starrocks-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-starrocks-starrocks-learnings",
@@ -232344,9 +232370,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for starrocks-starrocks-learnings",
       "repository": "starrocks-starrocks-learnings",
       "source_version": "HEAD",
-      "content_hash": "7e047f272ffba6c55e57c50a14eba85526349dcd59cd8b47948c8f67c95309bb",
+      "content_hash": "4758c0898bfb91c494443679f938db91eda2bc3ccb107a4e4585ad99c5d60d15",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T09:48:07.328Z"
+      "persisted_at": "2026-11-18T08:22:07.757Z"
     },
     "learn-github-oven-sh-bun": {
       "learning_id": "learn-github-oven-sh-bun",
@@ -283953,6 +283979,170 @@
       "content_hash": "e335b7bc53c3a7524bf041183986fcba6187de8c6ab779bacf5fc7d54190a19d",
       "domain_letter": "G",
       "persisted_at": "2026-11-18T08:08:45.250Z"
+    },
+    "rule-9173": {
+      "learning_id": "rule-9173",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9173,
+      "title": "Mandatory Tied Weight Slicing and Gradient Scaling Invariant",
+      "source_url": "https://huggingface.co/Qwen/Qwen3-0.6B",
+      "source_version": "hf-qwen-qwen3-0.6b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-18T08:20:28.274Z"
+    },
+    "rule-9174": {
+      "learning_id": "rule-9174",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9174,
+      "title": "Multi-Token EOS Termination Array Invariant",
+      "source_url": "https://huggingface.co/Qwen/Qwen3-0.6B",
+      "source_version": "hf-qwen-qwen3-0.6b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-18T08:20:28.274Z"
+    },
+    "rule-9175": {
+      "learning_id": "rule-9175",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9175,
+      "title": "Presence Penalty Activation for Sub-Billion Parameter Long-Context Loops",
+      "source_url": "https://huggingface.co/Qwen/Qwen3-0.6B",
+      "source_version": "hf-qwen-qwen3-0.6b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-18T08:20:28.274Z"
+    },
+    "domain_intelligence-design-intelligence-qwen-qwen3-0-6b-core-invariants": {
+      "item_id": "domain_intelligence-design-intelligence-qwen-qwen3-0-6b-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-hf-qwen-qwen3-0-6b-design-intelligence-qwen-qwen3-0-6b-core-invariants.md",
+      "title": "Design Intelligence: Qwen/Qwen3-0.6B Core Invariants",
+      "repository": "Qwen/Qwen3-0.6B",
+      "source_version": "hf-qwen-qwen3-0.6b",
+      "content_hash": "8a1a8de3dac69b8e48f328794da37f92e83d491a4347cb12b59abb1cd9bf8fbf",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-18T08:20:28.883Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-qwen-qwen3-0-6b": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-qwen-qwen3-0-6b",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/hf-qwen-qwen3-0-6b-verification-protocol-empirical-defect-shield-for-qwen-qwen3-.md",
+      "title": "Verification Protocol: Empirical Defect Shield for Qwen/Qwen3-0.6B",
+      "repository": "Qwen/Qwen3-0.6B",
+      "source_version": "hf-qwen-qwen3-0.6b",
+      "content_hash": "39ecdffbf6a63a80756f5908e53c37effb19d8477c7aae54ea42a4b5013e4242",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-18T08:20:29.022Z"
+    },
+    "rule-9176": {
+      "learning_id": "rule-9176",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9176,
+      "title": "Optional-Index Degradation Invariant under Shared-Data Storage",
+      "source_url": "https://github.com/StarRocks/starrocks",
+      "source_version": "37e75d93",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-18T08:21:35.095Z"
+    },
+    "candidate_directive-two-phase-read-validate-under-cache-concurrency": {
+      "item_id": "candidate_directive-two-phase-read-validate-under-cache-concurrency",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-RYCZ-two-phase-read-validate-under-cache-concurrency.md",
+      "title": "Two-Phase Read-Validate Under Cache Concurrency",
+      "repository": "starrocks-starrocks-learnings",
+      "source_version": "HEAD",
+      "content_hash": "2dfb2f8c7688346710a4bbb8b7438cc1c65b257074bed1f643b71dd7d535dabd",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-18T08:22:07.284Z"
+    },
+    "candidate_directive-optional-index-degradation-invariant-under-shared-data-storage": {
+      "item_id": "candidate_directive-optional-index-degradation-invariant-under-shared-data-storage",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-RYCZ-optional-index-degradation-invariant-under-shared-data-storage.md",
+      "title": "Optional-Index Degradation Invariant under Shared-Data Storage",
+      "repository": "starrocks-starrocks-learnings",
+      "source_version": "HEAD",
+      "content_hash": "202806f654bbc39ec87a26312eff4cbd518cecedae04008748b1b500527bccf9",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-18T08:22:07.447Z"
+    },
+    "candidate_directive-mandatory-tied-weight-slicing-and-gradient-scaling-invariant": {
+      "item_id": "candidate_directive-mandatory-tied-weight-slicing-and-gradient-scaling-invariant",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-RXLZ-mandatory-tied-weight-slicing-and-gradient-scaling-invariant.md",
+      "title": "Mandatory Tied Weight Slicing and Gradient Scaling Invariant",
+      "repository": "hf-qwen-qwen3-0.6b-learnings",
+      "source_version": "HEAD",
+      "content_hash": "f7fe18a1f01690fba5fe149b0a3066f26c8cb437c175bbdb2e11e6899c0cd237",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-18T08:22:06.324Z"
+    },
+    "candidate_directive-multi-token-eos-termination-array-invariant": {
+      "item_id": "candidate_directive-multi-token-eos-termination-array-invariant",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-RXM0-multi-token-eos-termination-array-invariant.md",
+      "title": "Multi-Token EOS Termination Array Invariant",
+      "repository": "hf-qwen-qwen3-0.6b-learnings",
+      "source_version": "HEAD",
+      "content_hash": "aa9508168f87e3773ca47fefd56f5e89db2e888808d294e7c7cddbb8a6e3ddd0",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-18T08:22:06.477Z"
+    },
+    "candidate_directive-presence-penalty-activation-for-sub-billion-parameter-long-context-loops": {
+      "item_id": "candidate_directive-presence-penalty-activation-for-sub-billion-parameter-long-context-loops",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-RXMB-presence-penalty-activation-for-sub-billion-parameter-long-context-loops.md",
+      "title": "Presence Penalty Activation for Sub-Billion Parameter Long-Context Loops",
+      "repository": "hf-qwen-qwen3-0.6b-learnings",
+      "source_version": "HEAD",
+      "content_hash": "de7e771e9b4a9166ca2a5243fe4949f34727ce078def2cd7954d54e22691760c",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-18T08:22:06.621Z"
+    },
+    "domain_intelligence-design-intelligence-hf-qwen-qwen3-0-6b-learnings-core-invariants": {
+      "item_id": "domain_intelligence-design-intelligence-hf-qwen-qwen3-0-6b-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-hf-qwen-qwen3-0-6b-learnings-design-intelligence-hf-qwen-qwen3-0-6b-learnings-co.md",
+      "title": "Design Intelligence: hf-qwen-qwen3-0.6b-learnings Core Invariants",
+      "repository": "hf-qwen-qwen3-0.6b-learnings",
+      "source_version": "HEAD",
+      "content_hash": "4223fba40f0c0dda209ed79beaa25328d222d992f866c192704f0a253b71ff33",
+      "domain_letter": "F",
+      "persisted_at": "2026-11-18T08:22:06.777Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-hf-qwen-qwen3-0-6b-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-hf-qwen-qwen3-0-6b-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/hf-qwen-qwen3-0-6b-learnings-verification-protocol-empirical-defect-shield-for-h.md",
+      "title": "Verification Protocol: Empirical Defect Shield for hf-qwen-qwen3-0.6b-learnings",
+      "repository": "hf-qwen-qwen3-0.6b-learnings",
+      "source_version": "HEAD",
+      "content_hash": "b024e3493e612b2332137169bc3f7feeecf55798fd290e06aa53807b895c5322",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-18T08:22:06.926Z"
     }
   },
   "ai-builder-brain": {

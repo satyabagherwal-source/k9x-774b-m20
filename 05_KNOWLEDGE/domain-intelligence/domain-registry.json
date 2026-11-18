@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-18T08:08:45.250Z",
-  "total_records": 1801,
+  "last_updated": "2026-11-18T08:22:08.518Z",
+  "total_records": 1804,
   "domains": {
     "A": {
       "total": 11,
@@ -834,7 +834,7 @@
       ]
     },
     "F": {
-      "total": 51,
+      "total": 53,
       "record_ids": [
         "DOM-F-C060CCE1",
         "DOM-F-83D565C2",
@@ -886,7 +886,9 @@
         "domain_intelligence-design-intelligence-o2sh-onefetch-core-invariants",
         "domain_intelligence-design-intelligence-o2sh-onefetch-learnings-core-invariants",
         "domain_intelligence-design-intelligence-baai-bge-m3-core-invariants",
-        "domain_intelligence-design-intelligence-hf-baai-bge-m3-learnings-core-invariants"
+        "domain_intelligence-design-intelligence-hf-baai-bge-m3-learnings-core-invariants",
+        "domain_intelligence-design-intelligence-qwen-qwen3-0-6b-core-invariants",
+        "domain_intelligence-design-intelligence-hf-qwen-qwen3-0-6b-learnings-core-invariants"
       ]
     },
     "G": {
@@ -1730,7 +1732,7 @@
       ]
     },
     "J": {
-      "total": 24,
+      "total": 25,
       "record_ids": [
         "DOM-J-C14FC2D6",
         "DOM-J-B305372A",
@@ -1755,7 +1757,8 @@
         "domain_intelligence-search-distribution-intelligence-archivebox-archivebox-learnings-core-invariants",
         "DOM-J-ABC3C562",
         "domain_intelligence-search-distribution-intelligence-dragonflydb-dragonfly-core-invariants",
-        "domain_intelligence-search-distribution-intelligence-dragonflydb-dragonfly-learnings-core-invariants"
+        "domain_intelligence-search-distribution-intelligence-dragonflydb-dragonfly-learnings-core-invariants",
+        "DOM-J-3AB0ED35"
       ]
     },
     "K": {
@@ -8534,8 +8537,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "84e478e462d6d1e7a9e77433efc6baf141c1a89a3701aaf0abd02a4b18d8259f",
-      "created_at": "2026-11-18T06:41:28.907Z"
+      "content_hash": "2219195bf2732ddc026ba4f92ec3916555fd866084217644d1b559c2ea4debdc",
+      "created_at": "2026-11-18T08:22:08.518Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -16362,8 +16365,8 @@
       "title": "Technical Construction Intelligence: StarRocks/starrocks Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-starrocks-starrocks-technical-construction-intelligence-starrocks-starrocks-core.md",
       "repository": "StarRocks/starrocks",
-      "content_hash": "c7bc0cf4ec45de8004a056d987ed96ce16c4a64ff429c2d830db12a678e2a02e",
-      "created_at": "2026-11-17T09:47:33.967Z"
+      "content_hash": "fa6648e7ed8a2d02813d2d71ef89e88cbc602688886d7aef9c4064e23760f492",
+      "created_at": "2026-11-18T08:21:35.749Z"
     },
     "domain_intelligence-research-knowledge-intelligence-autotrust-autotrust-decider-pro-vision-27b-core-": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-autotrust-autotrust-decider-pro-vision-27b-core-",
@@ -16440,8 +16443,8 @@
       "title": "Technical Construction Intelligence: starrocks-starrocks-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-starrocks-starrocks-learnings-technical-construction-intelligence-starrocks-star.md",
       "repository": "starrocks-starrocks-learnings",
-      "content_hash": "52c200a618e9e24aa0e722c6fd916625bf87dd56f168077118712cbd99a3b91a",
-      "created_at": "2026-11-17T09:48:07.036Z"
+      "content_hash": "f1a48c293874798610d921b28f9bc86644fabdbefe67da79c908927b561a5c0f",
+      "created_at": "2026-11-18T08:22:07.594Z"
     },
     "domain_intelligence-technical-construction-intelligence-oven-sh-bun-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-oven-sh-bun-core-invariants",
@@ -30210,6 +30213,58 @@
       "repository": "crosspaste-crosspaste-desktop-learnings",
       "content_hash": "e335b7bc53c3a7524bf041183986fcba6187de8c6ab779bacf5fc7d54190a19d",
       "created_at": "2026-11-18T08:08:45.250Z"
+    },
+    "domain_intelligence-design-intelligence-qwen-qwen3-0-6b-core-invariants": {
+      "record_id": "domain_intelligence-design-intelligence-qwen-qwen3-0-6b-core-invariants",
+      "domain_letter": "F",
+      "title": "Design Intelligence: Qwen/Qwen3-0.6B Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-hf-qwen-qwen3-0-6b-design-intelligence-qwen-qwen3-0-6b-core-invariants.md",
+      "repository": "Qwen/Qwen3-0.6B",
+      "content_hash": "8a1a8de3dac69b8e48f328794da37f92e83d491a4347cb12b59abb1cd9bf8fbf",
+      "created_at": "2026-11-18T08:20:28.883Z"
+    },
+    "DOM-J-3AB0ED35": {
+      "record_id": "DOM-J-3AB0ED35",
+      "domain_letter": "J",
+      "domain_id": "search_distribution",
+      "domain_name": "Search & Distribution Intelligence",
+      "secondary_domains": [],
+      "title": "Infinite Repetition Trap in Sub-Billion Long-Context Generation (BUG-QWEN3-02)",
+      "content": "Sub-billion parameter models deployed for extended sequence generation require explicit presence penalty regularization in their generation configs to destabilize degenerate cyclical attractors.",
+      "content_hash": "2ee3bd10ab3aff056627322f70a0ba0e24f0bc7fc76774a9667796237fa0a473",
+      "summary": "Compact dense architectures ($0.44\\text{B}$ non-embedding parameters) have lower entropy dissipation capacity across deep transformer depths -> Sub-billion parameter models deployed for extended sequence generation require explicit presence penalty regularization in their generation ",
+      "provenance": {
+        "source_uri": "project://hf-qwen-qwen3-0.6b/hf-qwen-qwen3-0.6b-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-18T08:21:38.649Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-qwen-qwen3-0.6b)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "`README.md` explicitly warns:"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 1,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-18T08:22:06.079Z"
+    },
+    "domain_intelligence-design-intelligence-hf-qwen-qwen3-0-6b-learnings-core-invariants": {
+      "record_id": "domain_intelligence-design-intelligence-hf-qwen-qwen3-0-6b-learnings-core-invariants",
+      "domain_letter": "F",
+      "title": "Design Intelligence: hf-qwen-qwen3-0.6b-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-F-hf-qwen-qwen3-0-6b-learnings-design-intelligence-hf-qwen-qwen3-0-6b-learnings-co.md",
+      "repository": "hf-qwen-qwen3-0.6b-learnings",
+      "content_hash": "4223fba40f0c0dda209ed79beaa25328d222d992f866c192704f0a253b71ff33",
+      "created_at": "2026-11-18T08:22:06.777Z"
     }
   }
 }

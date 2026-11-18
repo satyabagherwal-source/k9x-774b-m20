@@ -745,8 +745,8 @@
     "sourceUrl": "https://huggingface.co/Qwen/Qwen3-0.6B",
     "sourceVersion": "hf-qwen-qwen3-0.6b",
     "license": "Open-Source",
-    "contentHash": "482ba5ac952555a806646df31bb76c0290ddc6d49b8053f0cfb17380d6fb45b4",
-    "lastHarvestedAt": "2026-11-13T21:28:08.205Z",
+    "contentHash": "9a0ff4516f74a029b5139525566ba93187eb56ed5112246c0986ccdd53c47a95",
+    "lastHarvestedAt": "2026-11-18T08:20:28.452Z",
     "learningId": "learn-huggingface-qwen-qwen3-0-6b"
   },
   "hf-google-t5-t5-small": {
@@ -5223,10 +5223,10 @@
     "repository": "StarRocks/starrocks",
     "platform": "github",
     "sourceUrl": "https://github.com/StarRocks/starrocks",
-    "sourceVersion": "7dd4de40",
+    "sourceVersion": "37e75d93",
     "license": "Apache-2.0",
-    "contentHash": "8de6e9419384b57d718f984090d6f33d5665553ec671f4a45b2fe4fe783b49a1",
-    "lastHarvestedAt": "2026-11-17T09:47:33.336Z",
+    "contentHash": "8a95280c874f724c166963b038920d3fe649597c1fbbb2ac9ab5cd5b3fd29024",
+    "lastHarvestedAt": "2026-11-18T08:21:35.295Z",
     "learningId": "learn-github-starrocks-starrocks"
   },
   "lobehub-lobe-ui": {

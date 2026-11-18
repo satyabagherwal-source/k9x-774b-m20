@@ -10922,3 +10922,6 @@ Every entry in this ledger must capture:
 | `learn-dom-h-2b4f8699` | `project://gitoxidelabs-gitoxide` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gitoxidelabs-gitoxide-learnings.md` | 2026-11-18T08:07:23.711Z |
 | `learn-dom-d-c539e7da` | `project://hf-baai-bge-m3` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-baai-bge-m3-learnings.md` | 2026-11-18T08:07:57.264Z |
 | `learn-dom-h-7df498d3` | `project://hf-baai-bge-m3` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-baai-bge-m3-learnings.md` | 2026-11-18T08:08:43.499Z |
+| `learn-huggingface-qwen-qwen3-0-6b` | `https://huggingface.co/Qwen/Qwen3-0.6B` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-11-18T08:20:28.452Z |
+| `learn-github-starrocks-starrocks` | `https://github.com/StarRocks/starrocks` | `37e75d93` | Multi-dimensional audit evidence | 2026-11-18T08:21:35.295Z |
+| `learn-dom-j-3ab0ed35` | `project://hf-qwen-qwen3-0.6b` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-qwen-qwen3-0.6b-learnings.md` | 2026-11-18T08:22:06.101Z |
