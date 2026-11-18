@@ -4,24 +4,24 @@
 {
   "source_repository": "NucleoidAI/Nucleoid",
   "source_url": "https://github.com/NucleoidAI/Nucleoid",
-  "source_version": "b8abe89e",
+  "source_version": "9eeb878b",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-18T13:25:50.545Z",
+  "timestamp": "2026-11-18T14:05:01.889Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-nucleoidai-nucleoid",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid) (Revision: `b8abe89e`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-18T13:25:50.545Z`  
+> **Provenance**: Harvested from [NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid) (Revision: `9eeb878b`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-18T14:05:01.889Z`  
 > **Learning ID**: `learn-github-nucleoidai-nucleoid`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), B (Product Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), J (Search & Distribution Intelligence)
-- **Confidence Rating**: 51%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), B (Product Intelligence), D (Research & Knowledge Intelligence), K (Quality & Verification Intelligence), A (Human & Need Intelligence), M (Feedback & Evolution Intelligence), I (Content & Information Intelligence)
+- **Confidence Rating**: 64%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from NucleoidAI/Nucleoid:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/nucleoidai-nucleoid-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/NucleoidAI/Nucleoid](https://github.com/NucleoidAI/Nucleoid))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T13:25:49.902Z  
+> **Harvest Timestamp**: 2026-11-18T14:05:00.468Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1532,391 +1532,133 @@ export { document } from "./dataset";
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b8abe89e` (2026-11-18)
-**Commit Message**: NUC 118 Case Conversion Method Aliases
+### Incident Patch 1: `9eeb878b` (2026-11-18)
+**Commit Message**: Draft NUC 119 Finally Clauses for Try Statements
 
-Accepted under the automatic acceptance rule, in a continuous
-/nuc-proposal cycle (Language compatibility): the frozen candidate meets
-every hard criterion and passes every policy check, with the token check
-skipped categorically, as NUC 1's matrix requires for continuous
-Language compatibility cycles. The cycle found no stale Draft, drew
-Language compatibility uniformly from the five eligible categories,
-allocated NUC 118 in 266b9114, and completed it with a fresh baseline,
-candidate, proposer, Rust improvement pass and evaluator.
+Category: Runtime features, drawn uniformly at random (index 1 of the
+five eligible categories in NUC 1's registry, p = 1/5, no redraw) for a
+continuous /nuc-proposal cycle. Runtime applicability: new_feature,
+since no accepted construct runs a suite on every exit of a try
+statement, so the token non-regression gate is skipped as NUC 1's matrix
+requires for a brand-new runtime feature.
 
-Strings gain the case conversion methods of Kotlin, Rust and Swift as
-aliases of the accepted spellings: TEXT.uppercase(), TEXT.to_uppercase()
-and TEXT.uppercased() give TEXT.toUpperCase(), and TEXT.lowercase(),
-TEXT.to_lowercase() and TEXT.lowercased() give TEXT.toLowerCase(), with
-the same full Unicode case mapping ("straße" gives "STRASSE") and
-further arguments evaluated and ignored. The receiver is read before its
-arguments, declarations and class-level rules stay live as their
-spellings do, and calls render as written. The equivalence holds per
-evaluation of the receiver: when a later write replaces a held s
+Requested change: a complete try/catch statement may end with a finally
+clause, finally: followed by a suite on its own line, which runs every
+time the statement ends: after the body completes, after the catch suite
+handles a failure, and before a return in either leaves the function or
+the program. The pending outcome stands unless the finally suite returns
+or fails, which replaces it. A failed body's changes are rolled back
+before the catch suite runs, as now, and a failed catch suite's changes
+before the finally suite runs. At the accepted revision each such
+program raises SyntaxError("Unexpected ':'") at the colon after finally;
+finally stays an ordinary name everywhere else, a bare finally line
+followed by an indented block keeps its accepted re
 
-**File**: `README.md` (modified, +27/-0)
+**File**: `docs/nuc-0000.md` (modified, +2/-0)
 ```diff
-@@ -2501,6 +2501,33 @@ assert([oven.newest, oven.firstAlarm], [41, 41])
-   nothing `null`, as their spellings do. See the
-   [root contract](nucleoid.spec.md#first-and-last-element-methods).
+@@ -96,6 +96,7 @@ Created: 31-Jul-2026
+ | [85](nuc-0085.md) | Fixed Cross-Property Class Anchors | Automatic-Accepted: independent evaluation rejected it because fixed-only cycles whose rules build fresh objects never settle; `$Pair.a = {v: $Pair.b@first}` with `$Pair.b = {v: $Pair.a@first}` reaches the 100,000-step propagation limit instead of settling as the proposal claims |
+ | [90](nuc-0090.md) | Enum Declarations | Accepted |
+ | [115](nuc-0115.md) | Count-Controlled Repeat Loops | Accepted |
++| [119](nuc-0119.md) | Finally Clauses for Try Statements | Draft |
  
-+## Case conversion method aliases
-+
-+**Case conversion methods keep a sensor's labels normalized**
-+
-+```nuc
-+class Sensor(label):
-+    this.label = label
-+$Sensor.key = $Sensor.label.to_lowercase()
-+$Sensor.banner = $Sensor.label.uppercased()
-+door = Sensor("Front Door")
-+assert([door.key, door.banner], ["front door", "FRONT DOOR"])
-+door.label = "Side Door"
-+assert([door.key, door.banner], ["side door", "SIDE DOOR"])
-+```
-+
-+- [NUC 118](docs/nuc-0118.md) adds the case conversion methods that
-+  Kotlin, Rust and Swift write, as aliases of `toUpperCase()` and
-+  `toLowerCase()` on strings: Kotlin's `uppercase()` and `lowercase()`,
-+  Rust's `to_uppercase()` and `to_lowercase()`, and Swift's `uppercased()`
-+  and `lowercased()`.
-+- Each sensor's `key` and `banner` follow its own label through the
-+  class-level rules, as `$Sensor.label.toLowerCase()` and
-+  `$Sensor.label.toUpperCase()` would. The mapping is the full Unicode one
-+  of those spellings, so `"Straße".uppercase()` is `"STRASSE"`, and other
-+  values keep their errors. See the
-+  [root contract](nucleoid.spec.md#case-conversion-method-aliases).
-+
- ## Reactive list flattening
+ ### Utility enhancement
  
- **Flat turns nested lists into one live list**
-```
-
-**File**: `dataset/nucleoid.spec.jsonl` (modified, +19/-16)
-```diff
-@@ -785,19 +785,22 @@
- {"id":"spec-0785","description":"Nucleoid reads the first and last items of lists and populations","code":"readings = [21, 23]\noldest = readings.first()\nnewest = readings.last()\nassert([oldest, newest], [21, 23])\nreadings.push(25)\nassert([oldest, newest], [21, 25])\nreadings.shift()\nassert([oldest, newest], [23, 25])\nclass Order(item):\n    this.item = item\nqueued = Order.first()\nlatest = Order.last()\nassert([queued, latest], [null, null])\ntea = Order(\"tea\")\ncake = Order(\"cake\")\nassert([queued, latest], [tea, cake])\nassert([Order.first().item, Order.last().item], [\"tea\", \"cake\"])\nempty = []\nassert([empty.first(), empty.last(), [7].first(), [7].last()], [null, null, 7, 7])\nreadings = []\n[oldest, newest]","return":"[null,null]"}
- {"id":"spec-0786","description":"Nucleoid finds the first and last matches with first and last predicates","code":"class Order(item, open):\n    this.item = item\n    this.open = open\ntea = Order(\"tea\", false)\ncake = Order(\"cake\", true)\npie = Order(\"pie\", true)\noldestOpen = Order.first(order -> order.open)\nnewestOpen = Order.last(order -> order.open)\nassert([oldestOpen, newestOpen], [cake, pie])\ntea.open = true\nassert([oldestOpen, newestOpen], [tea, pie])\npie.open = false\nassert(newestOpen, cake)\nprices = [12, 7, 30, 4]\ncheap = prices.first(price -> price < 10)\npricey = prices.last(price -> price > 10)\nassert([cheap, pricey, prices.first(price -> price > 99)], [7, 30, null])\nprices.push(3, 50)\nassert([cheap, pricey], [7, 50])\nassert([prices.last(price -> price > 99, \"ignored\"), [].first(price -> true)], [null, null])\n[cheap, pricey]","return":"[7,50]"}
- {"id":"spec-0787","description":"Nucleoid rolls back failed updates through first and last aliases","code":"stock = [\"bolt\", \"nut\"]\nnewest = stock.last()\nfailure = \"\"\ntry:\n    stock = 7\ncatch error:\n    failure = error\nassert(failure, TypeError(\"number.last is not a function\"))\nassert([stock, newest], [[\"bolt\", \"nut\"], \"nut\"])\ntry:\n    stock.push(\"gear\")\n    assert([stock.first(), newest], [\"bolt\", \"gear\"])\n    throw \"UNDO\"\ncatch error:\n    assert(error, \"UNDO\")\nassert([stock.last(), newest], [\"nut\", \"nut\"])\ntry:\n    stock.first(2)\ncatch error:\n    failure = error\nassert(failure, TypeError(\"first expects a function\"))\nclass Sensor(name):\n    this.name = name\n    this.readings = [18]\n$Sensor.latest = $Sensor.readings.last()\ndoor = Sensor(\"door\")\ntry:\n    door.readings = 0\ncatch error:\n    failure = error\nassert(failure, TypeError(\"number.last is not a function\"))\nassert([door.readings, door.latest], [[18], 18])\ndoor.readings.push(21)\ndoor.latest","return":"21"}
--{"id":"spec-0788","description":"Nucleoid flattens nested lists by one level","code":"nested = [[1, 2], 2, [[3, [4]]], [], \"ab\"]\nonce = nested.flat()\ntwice = once.flat(1)\nassert(once, [1, 2, 2, [3, [4]], \"ab\"])\nassert(twice, [1, 2, 2, 3, [4], \"ab\"])\nassert(nested, [[1, 2], 2, [[3, [4]]], [], \"ab\"])\nnested.push([[5]], 6)\nassert(once, [1, 2, 2, [3, [4]], \"ab\", [5], 6])\nassert(twice, [1, 2, 2, 3, [4], \"ab\", 5, 6])\ntwice.length","return":"8"}
--{"id":"spec-0789","description":"Nucleoid flattens lists to a given depth","code":"deep = [1, [2, [3, [4, [5]]]], [[6]]]\ntwo = deep.flat(2)\nthree = deep.flat(3)\nsame = deep.flat(0)\nassert(two, [1, 2, 3, [4, [5]], 6])\nassert(three, [1, 2, 3, 4, [5], 6])\nassert(same, [1, [2, [3, [4, [5]]]], [[6]]])\ndeep.push([[7, [8]]])\nassert(two, [1, 2, 3, [4, [5]], 6, 7, [8]])\nassert(three, [1, 2, 3, 4, [5], 6, 7, 8])\nassert(same, deep)\nthree.length","return":"8"}
--{"id":"spec-0790","description":"Nucleoid keeps flattened lists live","code":"shifts = [[\"ana\", \"bo\"], [\"cy\"]]\nstaff = shifts.flat()\nsize = staff.length\nassert([staff, size], [[\"ana\", \"bo\", \"cy\"], 3])\nshifts.push([\"di\"])\nassert([staff, size], [[\"ana\", \"bo\", \"cy\", \"di\"], 4])\nshifts = [[\"eve\"], [], [\"fay\", \"gus\"]]\nassert([staff, size], [[\"eve\", \"fay\", \"gus\"], 3])\nshifts.shift()\nassert([staff, size], [[\"fay\", \"gus\"], 2])\nsize","return":"2"}
--{"id":"spec-0791","description":"Nucleoid flattens lists in class level rules","code":"class Team(squads):\n    this.squads = squads\n$Team.members = $Team.squads.flat()\nred = Team([[\"ana\", \"bo\"], [\"cy\"]])\nblue = Team([[\"di\"]])\nassert([red.members, blue.members], [[\"ana\", \"bo\", \"cy\"], [\"di\"]])\nred.squads.push([\"ed\"])\nblue.squads = [[\"fay\"], [\"gus\", \"hal\"]]\nassert([red.members, blue.members], [[\"ana\", \"bo\", \"cy\", \"ed\"], [\"fay\", \"gus\", \"hal\"]])\nred.members.length","return":"4"}
--{"id":"spec-0792","description":"Nucleoid queries the cells of flattened grids","code":"grid = [[1, 0, 2], [0, 3, 2]]\ncells = grid.flat()\ntotal = cells.sum()\ncolors = cells.distinct()\nfilled = cells.count(cell => cell > 0)\nassert([total, colors, filled], [8, [1, 0, 2, 3], 4])\ngrid.push([5, 0, 0])\nassert([total, colors, fi
-```
-
-**File**: `dataset/nucleoid.synth.82.jsonl` (added, +17/-0)
-```diff
-@@ -0,0 +1,17 @@
-+{"id":"synth-82-0001","description":"Kotlin's uppercase converts a whole label, as toUpperCase does","code":"label = \"front door\"\nlabel.uppercase()","return":"\"FRONT DOOR\""}
-+{"id":"synth-82-0002","description":"Rust's to_lowercase normalizes an email address read from a form","code":"email = \"Ada@Example.ORG\"\nemail.to_lowercase()","return":"\"ada@example.org\""}
-+{"id":"synth-82-0003","description":"Swift's uppercased writes a product code in capitals","code":"code = \"ab-12\"\ncode.uppercased()","return":"\"AB-12\""}
-+{"id":"synth-82-0004","description":"A key declared with lowercase follows a later write of its name","code":"name = \"ADA\"\nkey = name.lowercase()\nname = \"Bo\"\nkey","return":"\"bo\""}
-+{"id":"synth-82-0005","description":"A country code declared with to_uppercase follows a later write","code":"country = \"pt\"\niso = country.to_uppercase()\ncountry = \"br\"\niso","return":"\"BR\""}
-+{"id":"synth-82-0006","description":"Tags mapped through lowercased stay live as a tag is pushed","code":"tags = [\"Urgent\", \"LOW\"]\nsoft = tags.map(tag -> tag.lowercased())\ntags.push(\"Mid\")\nsoft","return":"[\"urgent\",\"low\",\"mid\"]"}
-+{"id":"synth-82-0007","description":"A class-level handle follows each user's name through to_lowercase","code":"class User(name):\n    this.name = name\n$User.handle = $User.name.to_lowercase()\nana = User(\"Ana Lima\")\nana.name = \"Ana King\"\nana.handle","return":"\"ana king\""}
-+{"id":"synth-82-0008","description":"A class-level condition compares a role in one case with lowercase","code":"class Account(role):\n    this.role = role\nif $Account.role.lowercase() == \"admin\":\n    $Account.admin = true\nelse:\n    $Account.admin = false\nroot = Account(\"ADMIN\")\nguest = Account(\"Guest\")\n[root.admin, guest.admin]","return":"[true,false]"}
-+{"id":"synth-82-0009","description":"Full Unicode case mapping can change a string's length","code":"street = \"Straße\"\nloud = street.uppercase()\n[loud, loud.length, street.length]","return":"[\"STRASSE\",7,6]"}
-+{"id":"synth-82-0010","description":"Lowering Greek capitals gives a word-final sigma its final form","code":"[\"ΟΔΟΣ\".lowercased(), \"ΣΑΣ\".to_lowercase()]","return":"[\"οδος\",\"σας\"]"}
-+{"id":"synth-82-0011","description":"Title-case digraphs and ligatures convert as toUpperCase converts them","code":"[\"ǅ\".uppercase(), \"ǅ\".lowercase(), \"ﬁx\".to_uppercase()]","return":"[\"Ǆ\",\"ǆ\",\"FIX\"]"}
-+{"id":"synth-82-0012","description":"Every alias gives exactly its accepted spelling's result","code":"s = \"MiXeD 42\"\n[s.uppercase() == s.toUpperCase(), s.to_uppercase() == s.toUpperCase(), s.uppercased() == s.toUpperCase(), s.lowercase() == s.toLowerCase(), s.to_lowercase() == s.toLowerCase(), s.lowercased() == s.toLowerCase()]","return":"[true,true,true,true,true,true]"}
-+{"id":"synth-82-0013","description":"A locale argument is evaluated and ignored, so no Turkish mapping applies","code":"[\"title\".uppercased(\"tr\"), \"I\".lowercase(\"tr-TR\"), \"İ\".to_lowercase(\"tr\").length]","return":"[\"TITLE\",\"i\",2]"}
-+{"id":"synth-82-0014","description":"A template interpolation converts a name with uppercased","code":"name = \"ada\"\n`Hello, ${name.uppercased()}!`","return":"\"Hello, ADA!\""}
-+{"id":"synth-82-0015","description":"A failed write rolls back through a standing uppercase","code":"label = \"door\"\ncode = label.uppercase()\nfailure = \"\"\ntry:\n    label = 7\ncatch error:\n    failure = error\n[failure, label, code]","return":"[\"TypeError: number.uppercase is not a function\",\"door\",\"DOOR\"]"}
-+{"id":"synth-82-0016","description":"A program that caught the former error now receives the converted text","code":"s = \"ab\"\ntry:\n    r = s.uppercase()\ncatch e:\n    r = \"caught\"\nr","return":"\"AB\""}
-+{"id":"synth-82-0017","description":"A standing alias reads its name on whatever value its receiver later holds","code":"s = \"ab\"\nu = s.uppercase()\ns = {uppercase: () => \"own\"}\nu","return":"\"own\""}
-```
-
-**File**: `docs/README.md` (modified, +57/-1)
-```diff
-@@ -2596,7 +2596,7 @@ Full detail: [NUC 9](nuc-0009.md), [NUC 46](nuc-0046.md).
- | `Boolean` | `Boolean(value)` |
- | `Number` | `Number.MAX_INTEGER` |
- | `Math` | `pow`, `sqrt`, `floor`, `round`, `max`, `min`, `clamp` ([NUC 21](nuc-0021.md)), `lerp` ([NUC 22](nuc-0022.md)), `saturate` ([NUC 23](nuc-0023.md)), `smoothstep(lower, upper, value)` (accepted [NUC 33](nuc-0033.md)), `smootherstep(lower, upper, value)` (accepted [NUC 35](nuc-0035.md)), `remap(start, end, targetStart, targetEnd, value)` (accepted [NUC 39](nuc-0039.md)) |
--| `String` | `String.fromCharCode`; instance `charAt`, `length`, `lower`, `replace`, `replaceAll` (accepted [NUC 42](nuc-0042.md)), `repeat`, `split`, `padStart` and `padEnd` ([NUC 111](nuc-0111.md)), Python's `startswith`, `endswith` and `join(items)`, with the separator as the receiver ([NUC 110](nuc-0110.md)), and the size and emptiness methods `length()`, `size()`, `len()`, `isEmpty()`, `is_empty()` and `isNotEmpty()` ([NUC 116](nuc-0116.md)) |
-+| `String` | `String.fromCharCode`; instance `charAt`, `length`, `lower`, `replace`, `replaceAll` (accepted [NUC 42](nuc-0042.md)), `repeat`, `split`, `padStart` and `padEnd` ([NUC 111](nuc-0111.md)), Python's `startswith`, `endswith` and `join(items)`, with the separator as the receiver ([NUC 110](nuc-0110.md)), the size and emptiness methods `length()`, `size()`, `len()`, `isEmpty()`, `is_empty()` and `isNotEmpty()` ([NUC 116](nuc-0116.md)), and the case conversion aliases `uppercase()`, `to_uppercase()` and `uppercased()` of `toUpperCase()`, and `lowercase()`, `to_lowercase()` and `lowercased()` of `toLowerCase()` ([NUC 118](nuc-0118.md)) |
- | `Date` | `Date()`, `Date(string)`, `Date(number)`, `Date.now()`, `Date.parse()`; instance `getTime`, `getYear`, `toDateString` |
- | `List` | `push`, `pop`, `filter`, `map`, `flatMap` (accepted [NUC 41](nuc-0041.md)), `flat` ([NUC 103](nuc-0103.md)), `reduce`, `find`, `some`, `every`, `slice`, `sort` (in place, [NUC 58](nuc-0058.md)), `join`, `length`, and the queries `at`, `includes`, `indexOf`, `lastIndexOf`, `findIndex`, `findLast`, `findLastIndex` and `concat` ([NUC 61](nuc-0061.md)), `sum` ([NUC 68](nuc-0068.md)), `max` and `min` ([NUC 69](nuc-0069.md)), `distinct` ([NUC 71](nuc-0071.md)), `count(predicate)` ([NUC 73](nuc-0073.md)), `mode` ([NUC 75](nuc-0075.md)), `maxBy` and `minBy` ([NUC 77](nuc-0077.md)), `average` ([NUC 80](nuc-0080.md)), `median` ([NUC 84](nuc-0084.md)), `sortBy` ([NUC 105](nuc-0105.md)), `partition` ([NUC 108](nuc-0108.md)), `product` ([NUC 114](nuc-0114.md)), the size and emptiness aliases `size()`, `len()`, `isEmpty()`, `is_empty()` and `isNotEmpty()` ([NUC 116](nuc-0116.md)), and the first and last element aliases `first()`, `last()`, `first(predicate)` and `last(predicate)` ([NUC 117](nuc-0117.md)); `sum`, `max`, `min` and `mode` also read as `sum of list` ([NUC 75](nuc-0075.md) revision 2) |
- | `Class` | the global list of declared types; `Class.length` |
-@@ -2801,6 +2801,59 @@ assert([head, tail], ["print", "fax"])
-   [root section](../nucleoid.spec.md#first-and-last-element-methods) and its
-   three appended entries define the results, liveness and rollback.
- 
-+### Case conversion method aliases
-+
-+```
-+class User(name):
-+    this.name = name
-+$User.handle = $User.name.lowercase()
-+ada = User("Ada Lovelace")
-+email = "ADA@EXAMPLE.ORG"
-+inbox = email.to_lowercase()
-+shown = ada.name.uppercased()
-+assert([ada.handle, inbox, shown], ["ada lovelace", "ada@example.org", "ADA LOVELACE"])
-+ada.name = "Ada King"
-+email = "Countess@Example.org"
-+assert([ada.handle, inbox, shown], ["ada king", "countess@example.org", "ADA KING"])
-+["straße".to_uppercase(), "ÉCOLE".lowercased(), "ok".uppercase()]
-+```
-+
-+- [NUC 118](nuc-0118.md) adds the case conversion methods of Kotlin, Rust
-+  and Swift as aliases on strings. `uppercase()`, `to_uppercase()` and
-+  `uppercased()` are `toUpperCase()`, and `lowercase()`, `to_lowercase()`
-+  and `lowercased()` are `toLowerCase()`, with the same full Unicode case
-+  mapping, so the last line holds `"STRASSE"`, one letter longer than
-+  `"straße"`, and `"école"`.
-+- Each alias evaluates its receiver and then its arguments, which it
-+  ignores, and stays live like its spelling: `ada.handle`, `inbox` and
-+  `shown` follow the writes of the name and the address. `why` names the
-+  same dependencies.
-+- An alias equals its spelling only while its receiver is a string. When a
-+  later write replaces the receiver of a standing call with another kind
-+  of value, the call reads the alias's name on that value: a number raises
-+  `TypeError("number.uppercase is not a function")` where the spelling
-+  raises `TypeError("number.toUpperCase is not a function")`, and an object
-+  whose `uppercase` is a function runs it where the spelling gives
-+  undefined.
-+- Only calls on strings change. Lists, populations and other receivers keep
-+  their errors, so `(5).uppercase()` still raises
-+  `TypeError("number.uppercase is not a function")`. Reads such as
-+  `
-```
-
-**File**: `docs/examples.md` (modified, +29/-0)
-```diff
-@@ -4020,6 +4020,35 @@ assert([nextUrgent, newest], [ana, cy])
-   See [NUC 117](nuc-0117.md) and the
-   [root contract](../nucleoid.spec.md#first-and-last-element-methods).
- 
-+## Case conversion method aliases
-+
-+**Case conversions match badge scans to every employee**
-+
-+```nuc
-+class Employee(name):
-+    this.name = name
-+$Employee.key = $Employee.name.lowercase()
-+scans = ["ANA LIMA", "bo chen"]
-+seen = scans.map(scan -> scan.to_lowercase())
-+ana = Employee("Ana Lima")
-+bo = Employee("Bo Chen")
-+assert([ana.key, bo.key], ["ana lima", "bo chen"])
-+present = Employee.filter(employee -> seen.includes(employee.key)).map(employee -> employee.name.uppercased())
-+assert(present, ["ANA LIMA", "BO CHEN"])
-+scans.pop()
-+present
-+# return: ["ANA LIMA"]
-+```
-+
-+- Badge scans arrive in whatever case the reader prints, so `seen` lowers
-+  each one with Rust's `to_lowercase()`, and each employee's `key` lowers
-+  the name on file with Kotlin's `lowercase()`, where accepted syntax
-+  writes `toLowerCase()` for both.
-+- `present` matches the two sources and shows each name with Swift's
-+  `uppercased()`, so withdrawing a scan leaves only the employees still
-+  scanned. See [NUC 118](nuc-0118.md) and the
-+  [root contract](../nucleoid.spec.md#case-conversion-method-aliases).
-+
- ## Reactive list flattening
- 
- **Flattening keeps the dirty tiles of every room counted**
-```
-
-**File**: `docs/nuc-0000.md` (modified, +2/-2)
-```diff
-@@ -161,7 +161,7 @@ Created: 31-Jul-2026
- | [110](nuc-0110.md) | Python String Method Aliases | Accepted |
- | [116](nuc-0116.md) | Size and Emptiness Method Aliases | Accepted |
- | [117](nuc-0117.md) | First and Last Element Methods | Accepted |
--| [118](nuc-0118.md) | Case Conversion Method Aliases | Draft |
-+| [118](nuc-0118.md) | Case Conversion Method Aliases | Accepted |
- 
- ### Documentation
- 
-@@ -290,7 +290,7 @@ Created: 31-Jul-2026
- | [115](nuc-0115.md) | Count-Controlled Repeat Loops | Standards Track | Runtime features | Accepted |
+@@ -291,6 +292,7 @@ Created: 31-Jul-2026
  | [116](nuc-0116.md) | Size and Emptiness Method Aliases | Standards Track | Language compatibility | Accepted |
  | [117](nuc-0117.md) | First and Last Element Methods | Standards Track | Language compatibility | Accepted |
--| [118](nuc-0118.md) | Case Conversion Method Aliases | Standards Track | Language compatibility | Draft |
-+| [118](nuc-0118.md) | Case Conversion Method Aliases | Standards Track | Language compatibility | Accepted |
+ | [118](nuc-0118.md) | Case Conversion Method Aliases | Standards Track | Language compatibility | Accepted |
++| [119](nuc-0119.md) | Finally Clauses for Try Statements | Standards Track | Runtime features | Draft |
  
  ## Copyright
  
 ```
 
-**File**: `docs/nuc-0118.md` (modified, +1284/-20)
+**File**: `docs/nuc-0119.md` (added, +82/-0)
 ```diff
-@@ -4,7 +4,7 @@
- NUC: 118
- Title: Case Conversion Method Aliases
- Author: Can Mingir <canmingir@gmail.com>
--Status: Draft
-+Status: Accepted
- Type: Standards Track
- Category: Language compatibility
- Created: 18-Nov-2026
-@@ -17,21 +17,34 @@ Created: 18-Nov-2026
-   - `TEXT.uppercase()` and `TEXT.lowercase()`, Kotlin's;
-   - `TEXT.to_uppercase()` and `TEXT.to_lowercase()`, Rust's;
-   - `TEXT.uppercased()` and `TEXT.lowercased()`, Swift's.
--- Each alias behaves as its accepted spelling does: it converts the whole
--  string with the same full Unicode case mapping, so `"straße".uppercase()`
--  gives `"STRASSE"`; further arguments are evaluated and ignored; and a
--  declaration that holds the call stays live as the string changes.
-+- Whenever its receiver evaluates to a string, each alias gives exactly
-+  what its accepted spelling gives: it converts the whole string with the
-+  same full Unicode case mapping, so `"straße".uppercase()` gives
-+  `"STRASSE"`; further arguments are evaluated and ignored; and a
-+  declaration that holds the call stays live as the string changes, with
-+  the accepted spelling's dependencies.
-+- The equivalence holds per evaluation of the receiver. When a later write
-+  turns the receiver of a standing call into another kind of value, the
-+  call reads the alias's name on that value, as every other receiver does:
-+  a number raises `TypeError("number.uppercase is not a function")` where
-+  the spelling raises `TypeError("number.toUpperCase is not a function")`,
-+  and an object whose `uppercase` member is a function runs it where the
-+  spelling gives undefined. Every such program raised the alias's
-+  `TypeError` at its declaration at the accepted revision.
- - At the accepted revision each of these calls raises
-   `TypeError("<text>.<name> is not a function")`, unless an argument
-   raises first. Only those calls change, along with the programs that
-   caught that error. Every other reading of the names is kept: lists,
-   numbers and other values keep their accepted errors, object members,
-   instance methods and functions named like the aliases keep running,
--  `null` and undefined receivers stay null-safe, and reads without a call,
--  such as `s.uppercase`, stay undefined.
-+  `null` and undefined receivers stay null-safe, `String.uppercase()` keeps
-+  its error, and reads without a call, such as `s.uppercase`, stay
-+  undefined.
- - `toUpperCase`, `toLowerCase`, `upper` and `lower` stay the canonical
-   spellings. No token, keyword, syntax-tree node, error type or message
-   format, dependency or public item is added.
-+- The authoritative contract is
-+  [Case conversion method aliases](../nucleoid.spec.md#case-conversion-method-aliases).
- 
- ## Motivation
- 
-@@ -45,36 +58,1287 @@ Created: 18-Nov-2026
-   spellings `label.toLowerCase()` and `code.toUpperCase()` say the same
-   thing.
- - World models normalize the text they compare: identifiers, labels,
--  codes and names read from different sources. These conversions are
--  standing, so they must follow every later write of the string, which the
--  accepted `toUpperCase` and `toLowerCase` already do and the aliases
--  inherit.
-+  codes and names read from different sources, such as a badge reader
-+  that prints names in capitals and a roster that does not. These
-+  conversions are standing, so they must follow every later write of the
-+  string, which the accepted `toUpperCase` and `toLowerCase` already do and
-+  the aliases inherit.
- - The aliases advance the language-superset aspiration of the Language
-   compatibility category. The accepted `this`/`self`, `=>`/`->`, `lower`,
--  `upper`, `strip`, NUC 110's `startswith`, `endswith` and `join`,
--  NUC 116's `size`, `len`, `isEmpty`, `is_empty` and `isNotEmpty`, and
--  NUC 117's `first` and `last` follow the same pattern: an equivalent
--  familiar spelling beside the canonical one, with no change to any
--  accepted program.
-+  `upper`, `strip`, `find`, `contains`, `substr`, NUC 110's `startswith`,
-+  `endswith` and `join`, NUC 116's `size`, `len`, `isEmpty`, `is_empty` and
-+  `isNotEmpty`, and NUC 117's `first` and `last` follow the same pattern:
-+  an equivalent familiar spelling beside the canonical one, with no change
-+  to any accepted program.
- - Kotlin's `uppercase()` and `lowercase()`, Rust's `to_uppercase()` and
-   `to_lowercase()`, and Swift's `uppercased()` and `lowercased()` are the
-   prior art.
- 
- ## Rationale
- 
--- Pending: the proposer completes this section.
-+- **Category and mode.** The allocating continuous cycle drew Language
-+  compatibility with one tool-backed uniform draw over the five categories
-+  that NUC 1's registry marks eligible for automatic selection, index 4
-+  with probability 1/5 and no redraw, and recorded the requested change in
-+  the allocation commit `266b9114`, which this revision pins. Token
-+  comparison is therefore skipped as `language_compatibility`. The skip is
-+  categorical; it is neither a measured comparison nor a passing token
-+  gate. Runt
-```
-
-**File**: `nucleoid.spec.md` (modified, +153/-0)
-```diff
-@@ -532,6 +532,86 @@ operator-chain diagnostics and source positions are preserved.
-   specify the executable behavior. `tests/first_and_last_methods.rs`
-   executes the rest.
- 
-+## Case conversion method aliases
+@@ -0,0 +1,82 @@
++# NUC 119 -- Finally Clauses for Try Statements
 +
-+- [NUC 118](docs/nuc-0118.md) adds the case conversion methods that Kotlin,
-+  Rust and Swift write, as aliases of the accepted `toUpperCase` and
-+  `toLowerCase` on strings. They join the accepted aliases `lower`, `upper`,
-+  `strip`, `find`, `contains`, `substr`, `startswith`, `endswith`, `join`,
-+  `size`, `len`, `isEmpty`, `is_empty` and `isNotEmpty`. No token, keyword,
-+  syntax tree node, error type or message format is added.
-+- `TEXT.uppercase()`, `TEXT.to_uppercase()` and `TEXT.uppercased()` are
-+  `TEXT.toUpperCase()`, and `TEXT.lowercase()`, `TEXT.to_lowercase()` and
-+  `TEXT.lowercased()` are `TEXT.toLowerCase()`: the whole string in the same
-+  full Unicode case mapping, which can change its length, so
-+  `"Straße".uppercase()` is `"STRASSE"`, and which lowers a word's final
-+  capital sigma to `ς`, so `"ΟΔΟΣ".lowercase()` is `"οδος"`. Further
-+  arguments are evaluated and ignored.
-+- **Receivers.** A string however it is reached, including a literal, a
-+  name, a property, a call or query result, a template, an index, a
-+  `.value` snapshot and a string read from a state version.
-+- **Evaluation.** The receiver is read first, then every argument once, left
-+  to right, as for every call. An argument's error, such as
-+  `ReferenceError("missing is not defined")`, propagates before the alias
-+  runs.
-+- **Live.** A declaration or class-level rule that calls an alias depends on
-+  what its accepted spelling depends on: `key = label.lowercase()` follows
-+  writes of `label`, `quiet = tags.map(tag -> tag.lowercased())` follows
-+  pushes to `tags`, and `$Badge.login = $Badge.name.to_lowercase()` follows
-+  each badge's name. Errors roll back through the existing transaction.
-+- **Per evaluation.** An alias gives its spelling's result whenever its
-+  receiver evaluates to a string. A later write that replaces a held
-+  receiver with another kind of value re-evaluates the call on that value,
-+  which reads the alias's name as it reads any other method name: after
-+  `code = label.uppercase()`, writing `label = 7` raises
-+  `TypeError("number.uppercase is not a function")` and rolls back, where
-+  the spelling raises `TypeError("number.toUpperCase is not a function")`;
-+  writing a list raises `TypeError("label.uppercase is not a function")`,
-+  where the spelling names `toUpperCase`; and writing an object or instance
-+  whose `uppercase` member is a function runs it, where the spelling gives
-+  undefined.
-+- **Rendering.** Statements, `why`, `affects`, `--graph` and graph keys show
-+  the call as written. Its dependencies are those of the accepted spelling,
-+  so `why key` after `key = label.lowercase()` shows `key` read from
-+  `label`, as after `key = label.toLowerCase()`.
-+- **Unchanged.** Only calls of the six names on a string receiver change;
-+  each raised `TypeError("<text>.<name> is not a function")`, or an
-+  argument's error first, which stays.
-+  - Lists, class populations, numbers, booleans, functions, dates and
-+    regular expressions keep their `TypeError`: `(5).uppercase()` raises
-+    `TypeError("number.uppercase is not a function")`.
-+  - Objects and instances keep their routing: instance methods and callable
-+    properties named like the aliases keep running, a property of that name
-+    that is not a function keeps its `TypeError`, and a missing member stays
-+    undefined. Inside a class-level rule `$Name` is the instance, so
-+    `$Name.uppercase()` there keeps calling the instance's method or giving
-+    undefined.
-+  - `String.uppercase()` keeps raising
-+    `TypeError("String.uppercase is not a function")`, also when a class
-+    named `String` is declared.
-+  - A `null` or undefined receiver stays undefined without evaluating the
-+    arguments. Reads without a call, such as `text.uppercase`, stay
-+    undefined, and `text.uppercase = 1` keeps raising
-+    `TypeError("Cannot assign 'uppercase' on string")`. Functions named like
-+    the aliases keep their calls, such as `uppercase(text)`.
-+- **Source-language differences.** Kotlin's `uppercase()` and `lowercase()`
-+  use the invariant locale, as Nucleoid's mapping does, and Rust's
-+  `to_uppercase()` and `to_lowercase()` are that mapping. A locale argument,
-+  as in Kotlin's and Java's `Locale` overloads and Swift's
-+  `uppercased(with:)`, is evaluated and ignored, so no locale-specific
-+  mapping such as Turkish dotless `ı` applies. Kotlin's `Char.uppercase()`
-+  has no counterpart, since Nucleoid has no character type. C#'s
-+  `ToUpper()` and `ToLower()`, Rust's ASCII-only `to_ascii_uppercase()` and
-+  `to_ascii_lowercase()`, Ruby's `upcase` and `downcase`, Python's
-+  `casefold()`, `swapcase()`, `title()` and `capitalize()`, Kotlin's
-+  `capitalize()` and `replaceFirstChar`, and Swift's `capitalized` are not
++```
++NUC: 119
++Title: Finally Clauses for Try Statements
++Author: Can Mingir <canmingir@gmail.com>
++Status: Draft
++Type: Standards Track
++Category: Runtime features
++Created: 18-Nov-2026
++```
++
++## Abstract
++
++- A complete `try`/`catch` statement may end with a `finally` clause,
++  `finally:` followed by a suite, which runs every time the statement
++  ends: after the body completes, after the catch suite handles a
++  failure, and before a `return` in either of them leaves the function or
++  the program.
++- The pending outcome stands unless the `finally` suite changes it: a
++  value that the body or the catch suite returns is still returned, and
++  an error that the catch suite raises still propagates afterwards. A
++  `return` or a failure of the `finally` suite replaces it, as in Python,
++  JavaScript and Java.
++- Nucleoid's transactions are kept. A failed body's changes are rolled
++  back before the catch suite runs, as they are now, and a failed catch
++  suite's changes before the `finally` suite runs, so no suite runs on the
++  partial changes of a failed one. When an error leaves the statement, the
++  enclosing rollback undoes what the `finally` suite changed, with the
++  rest of the statement.
++- At the accepted revision each of these programs raises
++  `SyntaxError("Unexpected ':'")` at the colon after `finally`. Only those
++  programs change. `finally` stays an ordinary name everywhere else, as a
++  variable, property, object key, function or parameter, as in
++  `finally = 4`, `c ? finally : 1` and `{a: 2 finally: 3}`; a bare
++  `finally` line followed by an indented block keeps its accepted reading;
++  and `try` without `catch` keeps
++  `SyntaxError("Expected 'catch' after 'try'")`.
++
++## Motivation
++
++- Mainstream languages with `try`/`catch` have a clause that runs however
++  the statement ends: `finally` in Python, JavaScript, TypeScript, Java,
++  Kotlin and C#, `ensure` in Ruby, and `defer` in Swift and Go. Programs
++  and models written by people and LLMs use it to record that an
++  operation ran, to count attempts or to log on every path. In Nucleoid
++  each of them raises `SyntaxError("Unexpected ':'")` at `finally:`.
++- Without it, a function whose body and catch suite both return has to
++  repeat the shared work before each `return`, or turn each `return` into
++  an assignment of a result followed by one `return` after the statement.
++  Inside a function such an assignment writes state, because a function's
++  only local names are its parameters and loop variables, so the rewrite
++  changes the shape of the program and adds a state name the model did
++  not have.
++- World models record what happened as well as what holds: an attempt, an
++  audit entry, a retry count. A `finally` clause states such a record
++  once, beside the operation it follows, and keeps the statement's
++  transaction: what the record writes commits with the statement or rolls
++  back with it.
++
++## Rationale
++
++- Pending: the proposer completes this section.
++
++## Specification
++
++- Pending: the proposer completes this section.
++
++## Errors
++
++- Pending: the proposer completes this section.
++
++## Reference Implementation
++
++- Pending: the proposer completes this section.
++
++## Copyright
++
++Copyright 2020 Nucleoid
++
++This document is licensed under the Apache License, Version 2.0. See
++[LICENSE](../LICENSE) for the full text.
 ```
 
 #### Recent Merged Pull Requests:
@@ -1945,47 +1687,22 @@ evaluation of the receiver: when a later write replaces a held s
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. NUC 118 Case Conversion Method Aliases
+## X. Draft NUC 119 Finally Clauses for Try Statements
 
 **RULE**:
-When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/nuc-0000.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in NucleoidAI/Nucleoid. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b8abe89e`: NUC 118 Case Conversion Method Aliases. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `9eeb878b`: Draft NUC 119 Finally Clauses for Try Statements. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/nuc-0000.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-## Case conversion method aliases
-
-**Case conversion methods keep a sensor's labels normalized**
-
-```nuc
-class Sensor(label):
-    this.label = label
-$Sensor.key = $Sensor.label.to_lowercase()
-$Sensor.banner = $Sensor.label.uppercased()
-door = Sensor("Front Door")
-assert([door.key, door.banner], ["front door", "FRONT DOOR"])
-door.label = "Side Door"
-assert([door.key, door.banner], ["side door", "SIDE DOOR"])
-```
-
-- [NUC 118](docs/nuc-0118.md) adds the case conversion methods that
-  Kotlin, Rust and Swift write, as aliases of `toUpperCase()` and
-  `toLowerCase()` on strings: Kotlin's `uppercase()` and `lowercase()`,
-  Rust's `to_uppercase()` and `to_lowercase()`, and Swift's `uppercased()`
-  and `lowercased()`.
-- Each sensor's `key` and `banner` follow its own label through the
-  class-level rules, as `$Sensor.label.toLowerCase()` and
-  `$Sensor.label.toUpperCase()` would. The mapping is the full Unicode one
-  of those spellings, so `"Straße".uppercase()` is `"STRASSE"`, and other
-  values keep their errors. See the
-  [root contract](nucleoid.spec.md#case-conversion-method-aliases).
-
+| [119](nuc-0119.md) | Finally Clauses for Try Statements | Draft |
+| [119](nuc-0119.md) | Finally Clauses for Try Statements | Standards Track | Runtime features | Draft |
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1995,7 +1712,7 @@ assert([door.key, door.banner], ["side door", "SIDE DOOR"])
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b8abe89e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `9eeb878b` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

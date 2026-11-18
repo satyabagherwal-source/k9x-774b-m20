@@ -10995,3 +10995,5 @@
 | `CYCLE-20261118-QD44` | `2026-11-18T13:56:48.484Z` | `orcarouter/OrcaSAQ-2-27B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-orcarouter-orcasaq-2-27b-learnings.md` | Yes (`ffb077a8...`) |
 | `CYCLE-20261118-QFCY` | `2026-11-18T13:56:51.394Z` | `fallow-rs/fallow` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9236` | Yes (`750d1c85...`) |
 | `CYCLE-20261118-QOFX` | `2026-11-18T13:57:03.165Z` | `paradedb/paradedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9237` | Yes (`312a6755...`) |
+| `CYCLE-20261118-0XNX` | `2026-11-18T14:05:01.677Z` | `NucleoidAI/Nucleoid` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9238` | Yes (`d815b07f...`) |
+| `CYCLE-20261118-4XMZ` | `2026-11-18T14:08:08.267Z` | `TaichuAI/ZDTaichu5.0-9B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-taichuai-zdtaichu5.0-9b-learnings.md` | Yes (`9cb2ef41...`) |

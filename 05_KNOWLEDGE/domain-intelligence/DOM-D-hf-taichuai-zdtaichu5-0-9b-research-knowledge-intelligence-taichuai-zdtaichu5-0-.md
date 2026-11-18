@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/TaichuAI/ZDTaichu5.0-9B",
   "source_version": "hf-taichuai-zdtaichu5.0-9b",
   "license": "Open-Source",
-  "timestamp": "2026-11-18T04:11:15.743Z",
+  "timestamp": "2026-11-18T14:08:08.469Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-taichuai-zdtaichu5-0-9b",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [TaichuAI/ZDTaichu5.0-9B](https://huggingface.co/TaichuAI/ZDTaichu5.0-9B) (Revision: `hf-taichua`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-18T04:11:15.743Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-18T14:08:08.469Z`  
 > **Learning ID**: `learn-huggingface-taichuai-zdtaichu5-0-9b`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-taichuai-zdtaichu5.0-9b-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/TaichuAI/ZDTaichu5.0-9B](https://huggingface.co/TaichuAI/ZDTaichu5.0-9B))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T04:11:14.906Z  
+> **Harvest Timestamp**: 2026-11-18T14:04:43.781Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: image-text-to-text
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 1224 downloads | 3044 likes
+- **Stars / Engagement**: 1174 downloads | 3044 likes
 
 ---
 

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-18T13:57:08.815Z",
+  "last_updated": "2026-11-18T14:08:12.996Z",
   "total_records": 1860,
   "domains": {
     "A": {
@@ -8341,8 +8341,8 @@
       "title": "Research & Knowledge Intelligence: TaichuAI/ZDTaichu5.0-9B Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-taichuai-zdtaichu5-0-9b-research-knowledge-intelligence-taichuai-zdtaichu5-0-.md",
       "repository": "TaichuAI/ZDTaichu5.0-9B",
-      "content_hash": "d63256e4a6caadd3f3cfdaaea1be52f94a4abc7b8056a5af9803546895a54e32",
-      "created_at": "2026-11-18T04:11:15.744Z"
+      "content_hash": "d10c3917e2504c96caac2e1bab9741b70c3e3edbd83fde5163d47f7f48953e92",
+      "created_at": "2026-11-18T14:08:08.470Z"
     },
     "domain_intelligence-architecture-intelligence-microsoft-agent-governance-toolkit-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-microsoft-agent-governance-toolkit-core-invariants",
@@ -8401,8 +8401,8 @@
       "title": "Research & Knowledge Intelligence: hf-taichuai-zdtaichu5.0-9b-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-taichuai-zdtaichu5-0-9b-learnings-research-knowledge-intelligence-hf-taichuai.md",
       "repository": "hf-taichuai-zdtaichu5.0-9b-learnings",
-      "content_hash": "91851efc791ecb0c992ddb669115bab3a230b508fc513d79b7cf376f97afc32c",
-      "created_at": "2026-11-18T04:11:34.623Z"
+      "content_hash": "539250d236d018b3f82a6cd9f723280b635ab705e20e1bdf82109156a5ac940e",
+      "created_at": "2026-11-18T14:08:11.505Z"
     },
     "domain_intelligence-architecture-intelligence-microsoft-agent-governance-toolkit-learnings-core-inva": {
       "record_id": "domain_intelligence-architecture-intelligence-microsoft-agent-governance-toolkit-learnings-core-inva",
@@ -14939,8 +14939,8 @@
       "title": "Architecture Intelligence: NucleoidAI/Nucleoid Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-architecture-intelligence-nucleoidai-nucleoid-core-invariant.md",
       "repository": "NucleoidAI/Nucleoid",
-      "content_hash": "d46d6a234505efde3698c5c8a31037e0f2ea6ec04321a5e873026a09700422cc",
-      "created_at": "2026-11-18T13:25:50.678Z"
+      "content_hash": "7212a1c9541b0eedcc97d7e5b322602be3f416e814973354860af01625815f5c",
+      "created_at": "2026-11-18T14:05:02.042Z"
     },
     "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-zenbu-labs-terminal-browser-learnings-core-invariants",
@@ -15389,8 +15389,8 @@
       "title": "Architecture Intelligence: nucleoidai-nucleoid-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-nucleoidai-nucleoid-learnings-architecture-intelligence-nucleoidai-nucleoid-lear.md",
       "repository": "nucleoidai-nucleoid-learnings",
-      "content_hash": "47ff2731e7150a5fd110fecddce70131402d006ae0a44373353dc4b4fd0c0446",
-      "created_at": "2026-11-18T09:57:34.917Z"
+      "content_hash": "2beefb46eef199f84852b06ba10fbd7ea20b55769f4cf80836e244c80131bb1a",
+      "created_at": "2026-11-18T14:08:12.265Z"
     },
     "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8b-core-invariants",
@@ -23031,8 +23031,8 @@
       "title": "Research & Knowledge Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-zvec-ai-zvec-grep-learnings-research-knowledge-intelligence-zvec-ai-zvec-grep-le.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "2552c5a6f866a5c48753df233d62e5138307c92ee93dbdf35885381faafd177d",
-      "created_at": "2026-11-18T11:22:49.805Z"
+      "content_hash": "35a2539aea34ed5f0eb07d51e12b5df9e1002dee16d3a3cf8b3d57f8ec1be1a1",
+      "created_at": "2026-11-18T14:08:12.996Z"
     },
     "domain_intelligence-technical-construction-intelligence-prof18-feed-flow-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-prof18-feed-flow-core-invariants",

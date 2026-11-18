@@ -455,8 +455,8 @@
     "sourceUrl": "https://huggingface.co/TaichuAI/ZDTaichu5.0-9B",
     "sourceVersion": "hf-taichuai-zdtaichu5.0-9b",
     "license": "Open-Source",
-    "contentHash": "8318d7a9d2afb219c7e91ab387ddf94fbfe15f4e899bc8b1dcf66814ce2e6e09",
-    "lastHarvestedAt": "2026-11-18T04:11:15.543Z",
+    "contentHash": "9cb2ef41af93c6916049f11a48d8bf36f9041b8aa5c628f439581bf8c4be0444",
+    "lastHarvestedAt": "2026-11-18T14:08:08.271Z",
     "learningId": "learn-huggingface-taichuai-zdtaichu5-0-9b"
   },
   "hf-phocinae-phocinae-largha-150m-v1": {
@@ -2233,10 +2233,10 @@
     "repository": "NucleoidAI/Nucleoid",
     "platform": "github",
     "sourceUrl": "https://github.com/NucleoidAI/Nucleoid",
-    "sourceVersion": "b8abe89e",
+    "sourceVersion": "9eeb878b",
     "license": "Apache-2.0",
-    "contentHash": "d98d374004dc259ee1628ff333ab7ea828dbc043c5d786d397a9be2ccd4318f9",
-    "lastHarvestedAt": "2026-11-18T13:25:50.327Z",
+    "contentHash": "d815b07f56e6839f22223de5382769498f08c54db6dd6d7f9aa62f9378d6f918",
+    "lastHarvestedAt": "2026-11-18T14:05:01.681Z",
     "learningId": "learn-github-nucleoidai-nucleoid"
   },
   "tusen-ai-naive-ui": {

@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261117-6AXL",
-    "timestamp": "2026-11-17T04:05:40.185Z",
-    "repository": "vitejs/vite",
-    "learningId": "learn-github-vitejs-vite",
-    "contentHash": "8034c7907c13807ad38ccbdfe8c1157e888c057110e03df23162aff38e0495d6",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261117-6DGB",
-    "timestamp": "2026-11-17T04:05:43.451Z",
-    "repository": "tauri-apps/tauri",
-    "learningId": "learn-github-tauri-apps-tauri",
-    "contentHash": "13817b8a86cef06f858947f28599e749d52018dfe7eac2378a64f49aa33940bc",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261117-6EKR",
     "timestamp": "2026-11-17T04:05:44.907Z",
     "repository": "fabio-rovai/open-ontologies",
@@ -7492,6 +7462,36 @@
     "contentHash": "312a6755f6456901cb6ecedc70379dddc0bfcccc07da2cb8a4f060272872722c",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-0XNX",
+    "timestamp": "2026-11-18T14:05:01.677Z",
+    "repository": "NucleoidAI/Nucleoid",
+    "learningId": "learn-github-nucleoidai-nucleoid",
+    "contentHash": "d815b07f56e6839f22223de5382769498f08c54db6dd6d7f9aa62f9378d6f918",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-4XMZ",
+    "timestamp": "2026-11-18T14:08:08.267Z",
+    "repository": "TaichuAI/ZDTaichu5.0-9B",
+    "learningId": "learn-huggingface-taichuai-zdtaichu5-0-9b",
+    "contentHash": "9cb2ef41af93c6916049f11a48d8bf36f9041b8aa5c628f439581bf8c4be0444",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

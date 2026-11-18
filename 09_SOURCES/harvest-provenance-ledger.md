@@ -11028,3 +11028,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-orcarouter-orcasaq-2-27b` | `https://huggingface.co/orcarouter/OrcaSAQ-2-27B` | `hf-orcarou` | Multi-dimensional audit evidence | 2026-11-18T13:56:48.490Z |
 | `learn-github-fallow-rs-fallow` | `https://github.com/fallow-rs/fallow` | `bf272e19` | Multi-dimensional audit evidence | 2026-11-18T13:56:51.399Z |
 | `learn-github-paradedb-paradedb` | `https://github.com/paradedb/paradedb` | `b2eb4729` | Multi-dimensional audit evidence | 2026-11-18T13:57:03.169Z |
+| `learn-github-nucleoidai-nucleoid` | `https://github.com/NucleoidAI/Nucleoid` | `9eeb878b` | Multi-dimensional audit evidence | 2026-11-18T14:05:01.681Z |
+| `learn-huggingface-taichuai-zdtaichu5-0-9b` | `https://huggingface.co/TaichuAI/ZDTaichu5.0-9B` | `hf-taichua` | Multi-dimensional audit evidence | 2026-11-18T14:08:08.271Z |

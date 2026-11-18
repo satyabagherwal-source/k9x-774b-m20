@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T13:57:03.176Z",
-  "total_cycles_completed": 10516,
-  "total_learnings_persisted": 10516,
-  "total_rules_promoted": 9996,
+  "last_updated": "2026-11-18T14:08:08.277Z",
+  "total_cycles_completed": 10518,
+  "total_learnings_persisted": 10518,
+  "total_rules_promoted": 9997,
   "history": [
-    {
-      "timestamp": "2026-11-18T01:58:04.507Z",
-      "repository": "skyhook-io/radar",
-      "learningId": "learn-github-skyhook-io-radar",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-18T02:16:09.751Z",
-      "repository": "Viggle/Qwen-Image-2.1-viggle-turbo",
-      "learningId": "learn-huggingface-viggle-qwen-image-2-1-viggle-turbo",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-18T02:16:10.406Z",
       "repository": "max-sixty/worktrunk",
@@ -1403,6 +1389,20 @@
       "repository": "paradedb/paradedb",
       "learningId": "learn-github-paradedb-paradedb",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T14:05:01.687Z",
+      "repository": "NucleoidAI/Nucleoid",
+      "learningId": "learn-github-nucleoidai-nucleoid",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T14:08:08.277Z",
+      "repository": "TaichuAI/ZDTaichu5.0-9B",
+      "learningId": "learn-huggingface-taichuai-zdtaichu5-0-9b",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]
