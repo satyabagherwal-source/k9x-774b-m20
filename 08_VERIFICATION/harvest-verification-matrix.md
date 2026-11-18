@@ -10924,3 +10924,6 @@
 | `CYCLE-20261118-23FW` | `2026-11-18T10:21:58.892Z` | `cross-encoder/ms-marco-MiniLM-L6-v2` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9196, Rule 9197` | Yes (`c45c9f04...`) |
 | `CYCLE-2026-11-18-PROJ-EVOLVE` | `2026-11-18T10:22:27.398Z` | `hf-cross-encoder-ms-marco-minilm-l6-v2` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-K-92DB8DFD` [Domain K] | Yes (`4090ee80...`) |
 | `CYCLE-2026-11-18-PROJ-EVOLVE` | `2026-11-18T10:22:55.656Z` | `hf-cross-encoder-ms-marco-minilm-l6-v2` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-F-3AD6D1E9` [Domain F] | Yes (`a0477a1c...`) |
+| `CYCLE-20261118-FJWD` | `2026-11-18T10:32:26.749Z` | `BAAI/bge-small-en-v1.5` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baai-bge-small-en-v1.5-learnings.md` | Yes (`1280dd32...`) |
+| `CYCLE-20261118-FQ5S` | `2026-11-18T10:32:34.864Z` | `laurent22/joplin` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9198` | Yes (`27a43e26...`) |
+| `CYCLE-20261118-FR5O` | `2026-11-18T10:32:36.156Z` | `open-policy-agent/gatekeeper` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9199` | Yes (`3cedc4bf...`) |

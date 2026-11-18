@@ -165,8 +165,8 @@
     "sourceUrl": "https://huggingface.co/BAAI/bge-small-en-v1.5",
     "sourceVersion": "hf-baai-bge-small-en-v1.5",
     "license": "Open-Source",
-    "contentHash": "29f461b676b480bd80f8d3249e908696d9c744a743be0f30f0b0af2382cd76f5",
-    "lastHarvestedAt": "2026-11-17T21:22:17.227Z",
+    "contentHash": "1280dd32ee53d08f6102f21e7c788f6f3aa9dd22ff7afd0583f4c5c8a03e330f",
+    "lastHarvestedAt": "2026-11-18T10:32:26.753Z",
     "learningId": "learn-huggingface-baai-bge-small-en-v1-5"
   },
   "hf-autotrust-glm5.3-flash-e224-dgx-spark": {
@@ -6753,10 +6753,10 @@
     "repository": "open-policy-agent/gatekeeper",
     "platform": "github",
     "sourceUrl": "https://github.com/open-policy-agent/gatekeeper",
-    "sourceVersion": "b000ecec",
+    "sourceVersion": "fbbf865c",
     "license": "Apache-2.0",
-    "contentHash": "8780100db7e962f3d55589b4add70d8e3efbd621e60e7fcb694330fca667f7fd",
-    "lastHarvestedAt": "2026-11-17T17:36:49.652Z",
+    "contentHash": "3cedc4bf1281daf9216e58d41244d1aa6780ed8de52bf9644bf2259a6bde1ae1",
+    "lastHarvestedAt": "2026-11-18T10:32:36.160Z",
     "learningId": "learn-github-open-policy-agent-gatekeeper"
   },
   "chakra-ui-chakra-ui": {
@@ -10313,10 +10313,10 @@
     "repository": "laurent22/joplin",
     "platform": "github",
     "sourceUrl": "https://github.com/laurent22/joplin",
-    "sourceVersion": "68b1f922",
+    "sourceVersion": "a96f8bd5",
     "license": "NOASSERTION",
-    "contentHash": "40dd56d96f8998769f331935cff58def95ff427aa2596ad66221922c5ed73360",
-    "lastHarvestedAt": "2026-11-17T07:55:47.304Z",
+    "contentHash": "27a43e261a4472e2fa75b956b5c28acc76a5845764a708304eca88270f9cf5c0",
+    "lastHarvestedAt": "2026-11-18T10:32:34.868Z",
     "learningId": "learn-github-laurent22-joplin"
   },
   "appwrite-appwrite": {

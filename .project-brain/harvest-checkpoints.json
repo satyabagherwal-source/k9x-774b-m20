@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-18T10:21:58.902Z",
+  "last_updated": "2026-11-18T10:32:36.168Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -126,14 +126,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-baai-bge-small-en-v1-5",
-      "content_hash": "29f461b676b480bd80f8d3249e908696d9c744a743be0f30f0b0af2382cd76f5",
-      "verified_at": "2026-11-17T21:22:17.235Z",
+      "content_hash": "1280dd32ee53d08f6102f21e7c788f6f3aa9dd22ff7afd0583f4c5c8a03e330f",
+      "verified_at": "2026-11-18T10:32:26.761Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T21:22:17.235Z"
+      "last_updated": "2026-11-18T10:32:26.761Z"
     },
     "hasaneyldrm/exercises-dataset": {
       "repository": "hasaneyldrm/exercises-dataset",
@@ -10191,14 +10191,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-open-policy-agent-gatekeeper",
-      "content_hash": "8780100db7e962f3d55589b4add70d8e3efbd621e60e7fcb694330fca667f7fd",
-      "verified_at": "2026-11-17T17:36:49.662Z",
+      "content_hash": "3cedc4bf1281daf9216e58d41244d1aa6780ed8de52bf9644bf2259a6bde1ae1",
+      "verified_at": "2026-11-18T10:32:36.167Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T17:36:49.662Z"
+      "last_updated": "2026-11-18T10:32:36.167Z"
     },
     "chakra-ui/chakra-ui": {
       "repository": "chakra-ui/chakra-ui",
@@ -15486,14 +15486,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-laurent22-joplin",
-      "content_hash": "40dd56d96f8998769f331935cff58def95ff427aa2596ad66221922c5ed73360",
-      "verified_at": "2026-11-17T07:55:47.322Z",
+      "content_hash": "27a43e261a4472e2fa75b956b5c28acc76a5845764a708304eca88270f9cf5c0",
+      "verified_at": "2026-11-18T10:32:34.875Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T07:55:47.322Z"
+      "last_updated": "2026-11-18T10:32:34.875Z"
     },
     "appwrite/appwrite": {
       "repository": "appwrite/appwrite",

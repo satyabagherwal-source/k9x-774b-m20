@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-18T10:22:57.474Z",
+  "last_updated": "2026-11-18T10:32:40.682Z",
   "total_records": 1824,
   "domains": {
     "A": {
@@ -9181,8 +9181,8 @@
       "title": "Technical Construction Intelligence: laurent22/joplin Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-laurent22-joplin-technical-construction-intelligence-laurent22-joplin-core-invar.md",
       "repository": "laurent22/joplin",
-      "content_hash": "117f1fe782255841c8e843137d10101dc774367d9bf9a4b4168f30f5b0aa9e68",
-      "created_at": "2026-11-17T07:55:47.599Z"
+      "content_hash": "a9ab7d2a80195c814641f04b6a715d0df687e94ae112405e897099f3ebd3d5a0",
+      "created_at": "2026-11-18T10:32:35.180Z"
     },
     "domain_intelligence-technical-construction-intelligence-freenet-freenet-core-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-freenet-freenet-core-core-invariants",
@@ -9259,8 +9259,8 @@
       "title": "Technical Construction Intelligence: laurent22-joplin-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-laurent22-joplin-learnings-technical-construction-intelligence-laurent22-joplin-.md",
       "repository": "laurent22-joplin-learnings",
-      "content_hash": "c1e952c858cd98763b938d620949c2a298f874ecf809e52c54ee983a85860e4e",
-      "created_at": "2026-11-17T08:00:00.564Z"
+      "content_hash": "2e84a9dbaf7e385430903031fb7d99883801b96a4131636220e253dd472b25a7",
+      "created_at": "2026-11-18T10:32:40.077Z"
     },
     "domain_intelligence-technical-construction-intelligence-freenet-freenet-core-learnings-core-invarian": {
       "record_id": "domain_intelligence-technical-construction-intelligence-freenet-freenet-core-learnings-core-invarian",
@@ -20397,8 +20397,8 @@
       "title": "Quality & Verification Intelligence: open-policy-agent/gatekeeper Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-open-policy-agent-gatekeeper-quality-verification-intelligence-open-policy-agent.md",
       "repository": "open-policy-agent/gatekeeper",
-      "content_hash": "c7d3119ff3ffba9e133ebd5b8bbaf3c9debd91f7da3515da80d41090a04b97c6",
-      "created_at": "2026-11-17T17:36:50.073Z"
+      "content_hash": "48d3f47a375b20789f8c270e670299187c941b7d8defbba37f4068cc80c89d48",
+      "created_at": "2026-11-18T10:32:36.482Z"
     },
     "domain_intelligence-research-knowledge-intelligence-liquidai-d1-2b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-liquidai-d1-2b-core-invariants",
@@ -20475,8 +20475,8 @@
       "title": "Quality & Verification Intelligence: open-policy-agent-gatekeeper-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-K-open-policy-agent-gatekeeper-learnings-quality-verification-intelligence-open-po.md",
       "repository": "open-policy-agent-gatekeeper-learnings",
-      "content_hash": "b4291738f7e6b895caa80fef61b7ed1bc8148549cba1e5885e6bb17fc2d8c557",
-      "created_at": "2026-11-17T17:36:56.394Z"
+      "content_hash": "8e349f27767f6487519d73e024011ed6181ffb35e60a1ac0c4ba530082789633",
+      "created_at": "2026-11-18T10:32:40.682Z"
     },
     "domain_intelligence-research-knowledge-intelligence-tencent-qwen3-8-27b-dspine-b16-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-tencent-qwen3-8-27b-dspine-b16-core-invariants",
@@ -28660,8 +28660,8 @@
       "title": "Research & Knowledge Intelligence: BAAI/bge-small-en-v1.5 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-baai-bge-small-en-v1-5-research-knowledge-intelligence-baai-bge-small-en-v1-5.md",
       "repository": "BAAI/bge-small-en-v1.5",
-      "content_hash": "60ee0047785fd6c334829c23de75d7913d3054c5298b0ad2a0f4b59a231d7f1b",
-      "created_at": "2026-11-17T21:22:17.396Z"
+      "content_hash": "4d980ed8d6c413d7c7087da884135b19139ae954f2f99c65ee415d651a49f0f8",
+      "created_at": "2026-11-18T10:32:26.922Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-baai-bge-small-en-v1-5-learnings-core-invaria": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-hf-baai-bge-small-en-v1-5-learnings-core-invaria",
@@ -28669,8 +28669,8 @@
       "title": "Research & Knowledge Intelligence: hf-baai-bge-small-en-v1.5-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-baai-bge-small-en-v1-5-learnings-research-knowledge-intelligence-hf-baai-bge-.md",
       "repository": "hf-baai-bge-small-en-v1.5-learnings",
-      "content_hash": "3937b933d2291b02156e5b9cd5648929b9753fffee70836e41d4114949f98a3d",
-      "created_at": "2026-11-17T21:22:34.977Z"
+      "content_hash": "6f44cdae146251f744bfe4105d6f308ef68ed1912e7e1b170b7ca35df5d6f256",
+      "created_at": "2026-11-18T10:32:39.555Z"
     },
     "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8-27b-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8-27b-core-invariants",

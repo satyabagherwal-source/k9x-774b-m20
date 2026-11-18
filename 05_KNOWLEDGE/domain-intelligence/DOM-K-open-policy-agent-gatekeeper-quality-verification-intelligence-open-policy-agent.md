@@ -4,24 +4,24 @@
 {
   "source_repository": "open-policy-agent/gatekeeper",
   "source_url": "https://github.com/open-policy-agent/gatekeeper",
-  "source_version": "b000ecec",
+  "source_version": "fbbf865c",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-17T17:36:49.908Z",
+  "timestamp": "2026-11-18T10:32:36.343Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-open-policy-agent-gatekeeper",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [open-policy-agent/gatekeeper](https://github.com/open-policy-agent/gatekeeper) (Revision: `b000ecec`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-17T17:36:49.908Z`  
+> **Provenance**: Harvested from [open-policy-agent/gatekeeper](https://github.com/open-policy-agent/gatekeeper) (Revision: `fbbf865c`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-18T10:32:36.343Z`  
 > **Learning ID**: `learn-github-open-policy-agent-gatekeeper`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain K (Quality & Verification Intelligence)
-- **Secondary Corroborating Domains**: I (Content & Information Intelligence), G (Architecture Intelligence), H (Technical Construction Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), F (Design Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence), B (Product Intelligence)
-- **Confidence Rating**: 54%
+- **Secondary Corroborating Domains**: G (Architecture Intelligence), I (Content & Information Intelligence), H (Technical Construction Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), F (Design Intelligence), J (Search & Distribution Intelligence), A (Human & Need Intelligence)
+- **Confidence Rating**: 67%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from open-policy-agent/gatekeeper:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/open-policy-agent-gatekeeper-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/open-policy-agent/gatekeeper](https://github.com/open-policy-agent/gatekeeper))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T17:36:48.362Z  
+> **Harvest Timestamp**: 2026-11-18T10:32:35.180Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1299,607 +1299,147 @@ const (
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `b000ecec` (2026-11-17)
-**Commit Message**: chore: bump k8s deps to v0.37.2 and controller-runtime to v0.25.2 (#4925)
+### Incident Patch 1: `fbbf865c` (2026-11-18)
+**Commit Message**: chore: bump the all group across 1 directory with 9 updates (#4923)
 
-Signed-off-by: Abhishek Sheth <[REDACTED_EMAIL]>
-
-**File**: `go.mod` (modified, +32/-23)
-```diff
-@@ -18,7 +18,7 @@ require (
- 	github.com/open-policy-agent/frameworks/constraint v0.0.0-20260616163050-e1eaa1bf6d62
- 	github.com/open-policy-agent/opa v1.17.1
- 	github.com/pkg/errors v0.9.1
--	github.com/prometheus/client_golang v1.23.2
-+	github.com/prometheus/client_golang v1.24.0
- 	github.com/spf13/cobra v1.10.2
- 	github.com/stretchr/testify v1.12.1
- 	go.opentelemetry.io/contrib/detectors/aws/ec2 v1.21.1
-@@ -37,15 +37,15 @@ require (
- 	golang.org/x/sys v0.48.0
- 	golang.org/x/time v0.15.0
- 	gopkg.in/yaml.v3 v3.0.1
--	k8s.io/api v0.36.6
--	k8s.io/apiextensions-apiserver v0.36.6
--	k8s.io/apimachinery v0.36.6
--	k8s.io/apiserver v0.36.6
--	k8s.io/client-go v0.36.6
-+	k8s.io/api v0.37.2
-+	k8s.io/apiextensions-apiserver v0.37.2
-+	k8s.io/apimachinery v0.37.2
-+	k8s.io/apiserver v0.37.2
-+	k8s.io/client-go v0.37.2
- 	k8s.io/klog/v2 v2.140.0
--	k8s.io/utils v0.0.0-20260210185600-b8788abfbbc2
-+	k8s.io/utils v0.0.0-20260626114624-be93311217bd
- 	oras.land/oras-go/v2 v2.6.4
--	sigs.k8s.io/controller-runtime v0.24.1
-+	sigs.k8s.io/controller-runtime v0.25.2
- 	sigs.k8s.io/release-utils v0.7.7
- 	sigs.k8s.io/yaml v1.6.0
- )
-@@ -71,11 +71,22 @@ require (
- 	github.com/evanphx/json-patch/v5 v5.9.11 // indirect
- 	github.com/felixge/httpsnoop v1.0.4 // indirect
- 	github.com/fsnotify/fsnotify v1.10.1 // indirect
--	github.com/fxamacker/cbor/v2 v2.9.0 // indirect
-+	github.com/fxamacker/cbor/v2 v2.9.1 // indirect
- 	github.com/go-logr/stdr v1.2.2 // indirect
--	github.com/go-openapi/jsonpointer v0.21.0 // indirect
--	github.com/go-openapi/jsonreference v0.21.0 // indirect
--	github.com/go-openapi/swag v0.23.0 // indirect
-+	github.com/go-openapi/jsonpointer v1.0.0 // indirect
-+	github.com/go-openapi/jsonreference v1.0.0 // indirect
-+	github.com/go-openapi/swag v0.27.1 // indirect
-+	github.com/go-openapi/swag/cmdutils v0.27.1 // indirect
-+	github.com/go-openapi/swag/conv v0.27.1 // indirect
-+	github.com/go-openapi/swag/fileutils v0.27.1 // indirect
-+	github.com/go-openapi/swag/jsonutils v0.27.1 // indirect
-+	github.com/go-openapi/swag/loading v0.27.1 // indirect
-+	github.com/go-openapi/swag/mangling v0.27.1 // indirect
-+	github.com/go-openapi/swag/netutils v0.27.1 // indirect
-+	github.com/go-openapi/swag/pools v0.27.1 // indirect
-+	github.com/go-openapi/swag/stringutils v0.27.1 // indirect
-+	github.com/go-openapi/swag/typeutils v0.27.1 // indirect
-+	github.com/go-openapi/swag/yamlutils v0.27.1 // indirect
- 	github.com/gobwas/glob v0.2.3 // indirect
- 	github.com/goccy/go-json v0.10.6 // indirect
- 	github.com/golang/glog v1.2.5 // indirect
-@@ -86,7 +97,6 @@ require (
- 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.29.0 // indirect
- 	github.com/inconshreveable/mousetrap v1.1.0 // indirect
- 	github.com/jmespath/go-jmespath v0.4.0 // indirect
--	github.com/josharian/intern v1.0.0 // indirect
- 	github.com/json-iterator/go v1.1.12 // indirect
- 	github.com/lestrrat-go/blackmagic v1.0.4 // indirect
- 	github.com/lestrrat-go/dsig v1.2.1 // indirect
-@@ -95,17 +105,16 @@ require (
- 	github.com/lestrrat-go/httprc/v3 v3.0.5 // indirect
- 	github.com/lestrrat-go/jwx/v3 v3.1.1 // indirect
- 	github.com/lestrrat-go/option/v2 v2.0.0 // indirect
--	github.com/mailru/easyjson v0.7.7 // indirect
- 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
- 	github.com/modern-go/reflect2 v1.0.3-0.20250322232337-35a7c28c31ee // indirect
- 	github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 // indirect
- 	github.com/opencontainers/go-digest v1.0.0 // indirect
- 	github.com/opencontainers/image-spec v1.1.1 // indirect
- 	github.com/pmezard/go-difflib v1.0.1-0.20181226105442-5d4384ee4fb2 // indirect
- 	github.com/prometheus/client_model v0.6.2 // indirect
--	github.com/prometheus/common v0.67.5 // indirect
-+	github.com/prometheus/common v0.70.0 // indirect
- 	github.com/prometheus/otlptranslator v1.0.0 // indirect
--	github.com/prometheus/procfs v0.20.1 // indirect
-+	github.com/prometheus/procfs v0.21.1 // indirect
- 	github.com/rcrowley/go-metrics v0.0.0-20250401214520-65e299d6c5c9 // indirect
- 	github.com/segmentio/asm v1.2.1 // indirect
- 	github.com/sirupsen/logrus v1.9.4 // indirect
-@@ -118,8 +127,8 @@ require (
- 	github.com/xeipuuv/gojsonreference v0.0.0-20180127040603-bd5ef7bd5415 // indirect
- 	github.com/yashtewari/glob-intersection v0.2.0 // indirect
- 	go.opentelemetry.io/auto/sdk v1.2.1 // indirect
--	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.65.0 // indirect
--	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.68.0 // indirect
-+	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.68.0 // indirect
-+	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.69.0 // indirect
- 	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.45.0 // indirect
- 	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.45.0 // indirect
- 	go.opentelemetry.io/otel/log v1.47.0 // indirect
-@@ -128,7 +137,7 @@ require (
- 	go.uber.org/atomic v1.11.0 // indirect
- 	go.uber.org/mult
-```
-
-**File**: `go.sum` (modified, +78/-56)
-```diff
-@@ -89,29 +89,55 @@ github.com/foxcpp/go-mockdns v1.2.0 h1:omK3OrHRD1IWJz1FuFBCFquhXslXoF17OvBS6JPzZ
- github.com/foxcpp/go-mockdns v1.2.0/go.mod h1:IhLeSFGed3mJIAXPH2aiRQB+kqz7oqu8ld2qVbOu7Wk=
- github.com/fsnotify/fsnotify v1.10.1 h1:b0/UzAf9yR5rhf3RPm9gf3ehBPpf0oZKIjtpKrx59Ho=
- github.com/fsnotify/fsnotify v1.10.1/go.mod h1:TLheqan6HD6GBK6PrDWyDPBaEV8LspOxvPSjC+bVfgo=
--github.com/fxamacker/cbor/v2 v2.9.0 h1:NpKPmjDBgUfBms6tr6JZkTHtfFGcMKsw3eGcmD/sapM=
--github.com/fxamacker/cbor/v2 v2.9.0/go.mod h1:vM4b+DJCtHn+zz7h3FFp/hDAI9WNWCsZj23V5ytsSxQ=
-+github.com/fxamacker/cbor/v2 v2.9.1 h1:2rWm8B193Ll4VdjsJY28jxs70IdDsHRWgQYAI80+rMQ=
-+github.com/fxamacker/cbor/v2 v2.9.1/go.mod h1:vM4b+DJCtHn+zz7h3FFp/hDAI9WNWCsZj23V5ytsSxQ=
- github.com/go-logr/logr v1.2.2/go.mod h1:jdQByPbusPIv2/zmleS9BjJVeZ6kBagPoEUsqbVz/1A=
- github.com/go-logr/logr v1.4.4 h1:tG4xh9yMsRCAiodLVTxyrkzSZ9+o0L1Kg/+cPVcbP/8=
- github.com/go-logr/logr v1.4.4/go.mod h1:9T104GzyrTigFIr8wt5mBrctHMim0Nb2HLGrmQ40KvY=
- github.com/go-logr/stdr v1.2.2 h1:hSWxHoqTgW2S2qGc0LTAI563KZ5YKYRhT3MFKZMbjag=
- github.com/go-logr/stdr v1.2.2/go.mod h1:mMo/vtBO5dYbehREoey6XUKy/eSumjCCveDpRre4VKE=
- github.com/go-logr/zapr v1.3.0 h1:XGdV8XW8zdwFiwOA2Dryh1gj2KRQyOOoNmBy4EplIcQ=
- github.com/go-logr/zapr v1.3.0/go.mod h1:YKepepNBd1u/oyhd/yQmtjVXmm9uML4IXUgMOwR8/Gg=
--github.com/go-openapi/jsonpointer v0.21.0 h1:YgdVicSA9vH5RiHs9TZW5oyafXZFc6+2Vc1rr/O9oNQ=
--github.com/go-openapi/jsonpointer v0.21.0/go.mod h1:IUyH9l/+uyhIYQ/PXVA41Rexl+kOkAPDdXEYns6fzUY=
--github.com/go-openapi/jsonreference v0.21.0 h1:Rs+Y7hSXT83Jacb7kFyjn4ijOuVGSvOdF2+tg1TRrwQ=
--github.com/go-openapi/jsonreference v0.21.0/go.mod h1:LmZmgsrTkVg9LG4EaHeY8cBDslNPMo06cago5JNLkm4=
--github.com/go-openapi/swag v0.23.0 h1:vsEVJDUo2hPJ2tu0/Xc+4noaxyEffXNIs3cOULZ+GrE=
--github.com/go-openapi/swag v0.23.0/go.mod h1:esZ8ITTYEsH1V2trKHjAN8Ai7xHb8RV+YSZ577vPjgQ=
-+github.com/go-openapi/jsonpointer v1.0.0 h1:kR9tHqY0CtZaOPVFm622dPVNhrvYpwr4uCxgL3h1H8s=
-+github.com/go-openapi/jsonpointer v1.0.0/go.mod h1:Z3rw7dWu1p9IgitXCFamSlA5lmDiklEB6vkaxcNZW5Y=
-+github.com/go-openapi/jsonreference v1.0.0 h1:jlmTr6torcd1YgDQvSfNmRtKzYDO4FGBkrAdlAVWnpY=
-+github.com/go-openapi/jsonreference v1.0.0/go.mod h1:jtwdyGbJk0Xhe5Y+rwtglQP6Sb1WZST4rT32LWB+sv0=
-+github.com/go-openapi/swag v0.27.1 h1:VotvOLWW8q/EAxB0YdsBBGC8XYyeL1YwBj2ungAGPNg=
-+github.com/go-openapi/swag v0.27.1/go.mod h1:GTkJPwHfhJp6MWr4/rCh64HVI3Ofu+tcsbfjfHmTxpE=
-+github.com/go-openapi/swag/cmdutils v0.27.1 h1:I7sYqaWVl5mq0NEmNQkAmFDyNin9ufvMX/p2zwtQaOE=
-+github.com/go-openapi/swag/cmdutils v0.27.1/go.mod h1:Sm1MVFMkF6guJJ+pQqHnQA3N0j9qALV3NxzDSv6bETM=
-+github.com/go-openapi/swag/conv v0.27.1 h1:8wi9ZG+olmY1wXphl93EWniPtbSPkXM/feH7FgjsvrU=
-+github.com/go-openapi/swag/conv v0.27.1/go.mod h1:QbqMivkpKhC3g1B1GGGOJ6ANewI3S62dbzYu3Duowqs=
-+github.com/go-openapi/swag/fileutils v0.27.1 h1:QQqBSoi5mW4XpU85nS0mLcA+zAE6vLzrb0QkmLKf9oM=
-+github.com/go-openapi/swag/fileutils v0.27.1/go.mod h1:VvJFZLTZS0AI854gEQz5tk7dBESdLjiNUMSZ/th2ry8=
-+github.com/go-openapi/swag/jsonutils v0.27.1 h1:SVgK3i4USzCU5mibOOS/l4ea2h9UQXy7J7RNLTjuXjU=
-+github.com/go-openapi/swag/jsonutils v0.27.1/go.mod h1:tdlEpZqdcQ17uj6J4YdK9vd8It5qWMwjWXOs0tjpRlk=
-+github.com/go-openapi/swag/jsonutils/fixtures_test v0.27.1 h1:mJu3COL9WEaZVp/Kf2PRMi7tPszPEJfSr/OO75ynCs8=
-+github.com/go-openapi/swag/jsonutils/fixtures_test v0.27.1/go.mod h1:mofwUWx70wvskwESqRJ//k/9kURmCgyJl5m5Ppoh5kY=
-+github.com/go-openapi/swag/loading v0.27.1 h1:/DxUgDXKbBX4bcn7r9uEXfJyzN5XpiJmZplzQTjrRCY=
-+github.com/go-openapi/swag/loading v0.27.1/go.mod h1:jvGh3iA2+zyUUycB5fgJWzeHnhrpvGnJJM0RVE9ZShE=
-+github.com/go-openapi/swag/mangling v0.27.1 h1:yC9D0HyUE8gbP+BfmGx9+AA89ikwZTMjESK3OnnoaqA=
-+github.com/go-openapi/swag/mangling v0.27.1/go.mod h1:jtBE2+V+3pILxOR7Vgce+Cwp6A2PgZbvVqfNntbVs0w=
-+github.com/go-openapi/swag/netutils v0.27.1 h1:mICMFoS82F5TZ4Zy3cqmcQk+BFeCp3Uyq3Np7GI0/qU=
-+github.com/go-openapi/swag/netutils v0.27.1/go.mod h1:J+WYyFMLtvtCGqa6jLv+YNUmIKI3ZRQRrvfNDMoQoEQ=
-+github.com/go-openapi/swag/pools v0.27.1 h1:9LeadcMyb2GJCbXX5hVQDbZ2Lq9TL4dCs/nx1j5DO0E=
-+github.com/go-openapi/swag/pools v0.27.1/go.mod h1:kVQefhSK5RWuRe7BXsL8htgBPAMpN7HDGpGEknqugeE=
-+github.com/go-openapi/swag/stringutils v0.27.1 h1:ZXePZ0r2p1qSjo8tD3Un4vFj8+FqlCkczxDrJIhYUp8=
-+github.com/go-openapi/swag/stringutils v0.27.1/go.mod h1:lzRN95CxXmA03XcDWHLOb6nOMcxCqR5rGY0lOgsfRoM=
-+github.com/go-openapi/swag/typeutils v0.27.1 h1:KSTdFlfnse4r6dP9IrEnwMldjE+zs71UeEB3//PtVXc=
-+github.com/go-openapi/swag/typeutils v0.27.1/go.mod h1:Srm0xFNRZ1Y+vCxJclo5qzx8aj+1pAKda/YfFPrG0dQ=
-+github.com/go-openapi/swag/yamlutils v0.27.1 h1:ftxv6xvXb1E3zohUc+okZ9nSqNb9StQX/FXnKZ98sQA=
-+github.com/go-openapi/swag/yamlutils v0.27.1/go.mod h1:bnxFIB1qewGRiZHypXGZ3fNgf13/0HfRgnS/iZBDrOo=
-+github.com/go-openapi/testify/enable/yaml/v2 v2.6.0 h1:gGHwAJ0R/5jU8BEGDbfRNR3hL68dAVi84WuOApp29B0=
-+github.com/go-openapi/testify/enable/yaml/v2 v2.6.0/go.mod h1:tY+St1SGq4NFl0QIqdTY4aEdbChAHxhyB77XQi9iJCo=
-+github.com/go-openapi/
-```
-
-**File**: `pkg/drivers/k8scel/transform/request.go` (modified, +2/-2)
-```diff
-@@ -22,8 +22,8 @@ func RequestToVersionedAttributes(request *admissionv1.AdmissionRequest) (*admis
- 	return &admission.VersionedAttributes{
- 		Attributes:         wrapped,
- 		VersionedKind:      wrapped.GetKind(),
--		VersionedOldObject: wrapped.GetOldObject(),
--		VersionedObject:    wrapped.GetObject(),
-+		VersionedOldObject: admission.NewLazyObject(wrapped.GetOldObject()),
-+		VersionedObject:    admission.NewLazyObject(wrapped.GetObject()),
- 	}, nil
- }
- 
-```
-
----
-
-### Incident Patch 2: `ee118ad8` (2026-11-16)
-**Commit Message**: feat: graduate Connection API and audit disk export to beta (#4913)
-
-Serve and store Connection v1beta1 while retaining alpha API compatibility and migrating existing stored objects. Graduate audit routing and disk export without changing defaults or enabling admission export.
-
-Preserve Helm upgrades from alpha-only Connection CRDs and document the API, storage migration, and rollback contract.
-
-Signed-off-by: Jaydip Gabani <[REDACTED_EMAIL]>
 Co-authored-by: Copilot <[REDACTED_EMAIL]>
 
-**File**: `Makefile` (modified, +1/-1)
+**File**: `.github/workflows/benchmark.yaml` (modified, +1/-1)
 ```diff
-@@ -434,7 +434,7 @@ generate: __conversion-gen __controller-gen
- 	$(CONTROLLER_GEN) object:headerFile=./hack/boilerplate.go.txt paths="./apis/..." paths="./pkg/..."
- 	$(CONVERSION_GEN) \
- 		--output-base=/gatekeeper \
--		--input-dirs=./apis/mutations/v1,./apis/mutations/v1beta1,./apis/mutations/v1alpha1,./apis/expansion/v1alpha1,./apis/syncset/v1alpha1,./apis/gvkmanifest/v1alpha1 \
-+		--input-dirs=./apis/mutations/v1,./apis/mutations/v1beta1,./apis/mutations/v1alpha1,./apis/expansion/v1alpha1,./apis/syncset/v1alpha1,./apis/gvkmanifest/v1alpha1,./apis/connection/v1alpha1,./apis/connection/v1beta1 \
- 		--go-header-file=./hack/boilerplate.go.txt \
- 		--output-file-base=zz_generated.conversion
+@@ -17,7 +17,7 @@ jobs:
+       pull-requests: write
+     steps:
+       - name: Harden Runner
+-        uses: step-security/harden-runner@46b06cea07f9e64621fdf066ba77ac6915163d43 # v2.22.3
++        uses: step-security/harden-runner@1d88384fd173af6ecb012dfd0264a306b711241a # v2.22.4
+         with:
+           egress-policy: audit
  
 ```
 
-**File**: `apis/addtoscheme_connection_v1beta1.go` (added, +25/-0)
+**File**: `.github/workflows/check-manifest.yaml` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,25 @@
-+/*
-+
-+Licensed under the Apache License, Version 2.0 (the "License");
-+you may not use this file except in compliance with the License.
-+You may obtain a copy of the License at
-+
-+    http://www.apache.org/licenses/LICENSE-2.0
-+
-+Unless required by applicable law or agreed to in writing, software
-+distributed under the License is distributed on an "AS IS" BASIS,
-+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+See the License for the specific language governing permissions and
-+limitations under the License.
-+*/
-+
-+package apis
-+
-+import (
-+	"github.com/open-policy-agent/gatekeeper/v3/apis/connection/v1beta1"
-+)
-+
-+func init() {
-+	// Register the types with the Scheme so the components can map objects to GroupVersionKinds and back
-+	AddToSchemes = append(AddToSchemes, v1beta1.AddToScheme)
-+}
+@@ -32,7 +32,7 @@ jobs:
+     timeout-minutes: 10
+     steps:
+       - name: Harden Runner
+-        uses: step-security/harden-runner@46b06cea07f9e64621fdf066ba77ac6915163d43 # v2.22.3
++        uses: step-security/harden-runner@1d88384fd173af6ecb012dfd0264a306b711241a # v2.22.4
+         with:
+           egress-policy: audit
+ 
 ```
 
-**File**: `apis/connection/connection_test.go` (added, +236/-0)
+**File**: `.github/workflows/codeql.yaml` (modified, +4/-4)
 ```diff
-@@ -0,0 +1,236 @@
-+package connection_test
-+
-+import (
-+	"os"
-+	"path/filepath"
-+	"testing"
-+	"time"
-+
-+	"github.com/open-policy-agent/gatekeeper/v3/apis"
-+	"github.com/open-policy-agent/gatekeeper/v3/apis/connection/unversioned"
-+	connectionv1alpha1 "github.com/open-policy-agent/gatekeeper/v3/apis/connection/v1alpha1"
-+	connectionv1beta1 "github.com/open-policy-agent/gatekeeper/v3/apis/connection/v1beta1"
-+	statusv1alpha1 "github.com/open-policy-agent/gatekeeper/v3/apis/status/v1alpha1"
-+	"github.com/open-policy-agent/gatekeeper/v3/pkg/mutation/types"
-+	"github.com/stretchr/testify/require"
-+	apiextensionsv1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
-+	apiequality "k8s.io/apimachinery/pkg/api/equality"
-+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-+	"k8s.io/apimachinery/pkg/runtime"
-+	"k8s.io/apimachinery/pkg/runtime/schema"
-+	"k8s.io/apimachinery/pkg/runtime/serializer"
-+	"sigs.k8s.io/yaml"
-+)
-+
-+func TestConnectionConversionRoundTrip(t *testing.T) {
-+	tests := []struct {
-+		name   string
-+		config *types.Anything
-+	}{
-+		{name: "nil"},
-+		{name: "null", config: &types.Anything{}},
-+		{name: "empty object", config: &types.Anything{Value: map[string]interface{}{}}},
-+		{name: "nested unknown values", config: nestedConfig()},
-+	}
-+
-+	for _, tt := range tests {
-+		t.Run(tt.name, func(t *testing.T) {
-+			scheme := connectionScheme(t)
-+			alpha := connectionFixture(tt.config)
-+			internal := &unversioned.Connection{}
-+			require.NoError(t, scheme.Convert(alpha, internal, nil))
-+			beta := &connectionv1beta1.Connection{}
-+			require.NoError(t, scheme.Convert(internal, beta, nil))
-+			require.Equal(t, alpha.ObjectMeta, beta.ObjectMeta)
-+			require.Equal(t, alpha.Spec.Driver, beta.Spec.Driver)
-+			require.Equal(t, alpha.Spec.Config, beta.Spec.Config)
-+			require.Equal(t, alpha.Status.ByPod, beta.Status.ByPod)
-+
-+			roundTripInternal := &unversioned.Connection{}
-+			require.NoError(t, scheme.Convert(beta, roundTripInternal, nil))
-+			roundTripAlpha := &connectionv1alpha1.Connection{}
-+			require.NoError(t, scheme.Convert(roundTripInternal, roundTripAlpha, nil))
-+			require.Equal(t, alpha, roundTripAlpha)
-+		})
-+	}
-+}
-+
-+func TestConnectionListConversionRoundTrip(t *testing.T) {
-+	for _, items := range [][]connectionv1alpha1.Connection{nil, {}, {*connectionFixture(nestedConfig())}} {
-+		scheme := connectionScheme(t)
-+		alpha := &connectionv1alpha1.ConnectionList{
-+			ListMeta: metav1.ListMeta{ResourceVersion: "42", Continue: "next"},
-+			Items:    items,
-+		}
-+		internal := &unversioned.ConnectionList{}
-+		require.NoError(t, scheme.Convert(alpha, internal, nil))
-+		beta := &connectionv1beta1.ConnectionList{}
-+		require.NoError(t, scheme.Convert(internal, beta, nil))
-+		require.Equal(t, alpha.ListMeta, beta.ListMeta)
-+		require.Len(t, beta.Items, len(items))
-+
-+		roundTripInternal := &unversioned.ConnectionList{}
-+		require.NoError(t, scheme.Convert(beta, roundTripInternal, nil))
-+		roundTripAlpha := &connectionv1alpha1.ConnectionList{}
-+		require.NoError(t, scheme.Convert(roundTripInternal, roundTripAlpha, nil))
-+		require.Equal(t, alpha, roundTripAlpha)
-+	}
-+}
-+
-+func TestConnectionSchemeAndSerialization(t *testing.T) {
-+	scheme := connectionScheme(t)
-+	alpha := connectionFixture(nestedConfig())
-+	internal := &unversioned.Connection{}
-+	require.NoError(t, scheme.Convert(alpha, internal, nil))
-+	beta := &connectionv1beta1.Connection{}
-+	require.NoError(t, scheme.Convert(internal, beta, nil))
-+
-+	for _, tt := range []struct {
-+		object runtime.Object
-+		gvk    schema.GroupVersionKind
-+	}{
-+		{object: alpha, gvk: connectionv1alpha1.GroupVersion.WithKind("Connection")},
-+		{object: beta, gvk: connectionv1beta1.GroupVersion.WithKind("Connection")},
-+		{object: &connectionv1alpha1.ConnectionList{Items: []connectionv1alpha1.Connection{*alpha}}, gvk: connectionv1alpha1.GroupVersion.WithKind("ConnectionList")},
-+		{object: &connectionv1beta1.ConnectionList{Items: []connectionv1beta1.Connection{*beta}}, gvk: connectionv1beta1.GroupVersion.WithKind("ConnectionList")},
-+	} {
-+		t.Run(tt.gvk.String(), func(t *testing.T) {
-+			kinds, unversionedType, err := scheme.ObjectKinds(tt.object)
-+			require.NoError(t, err)
-+			require.False(t, unversionedType)
-+			require.Equal(t, []schema.GroupVersionKind{tt.gvk}, kinds)
-+			created, err := scheme.New(tt.gvk)
-+			require.NoError(t, err)
-+			require.IsType(t, tt.object, created)
-+
-+			codecs := serializer.NewCodecFactory(scheme)
-+			encoded, err := runtime.Encode(codecs.LegacyCodec(tt.gvk.GroupVersion()), tt.object)
-+			require.NoError(t, err)
-+			decoded, gvk, err := codecs.UniversalDeserializer().Decode(encoded, nil, nil)
-+			require.NoError(t, err)
-+			require.Equal(t, tt.gvk, *gvk)
-+			expected := tt.object.DeepCopyObject()
-+			expected.GetObjectKind().SetGroupVersionKind(tt.gvk)
-+			require.IsType(t, expected, decoded)
-+			require.True(t, apiequality.Semantic.DeepEqual(expected, decoded))
-+		})
-+	}
-+}
-+
-+func TestConnectionDeepCopy(t *testing.T) {
-+	const changedV
+@@ -17,20 +17,20 @@ jobs:
+ 
+     steps:
+       - name: Harden Runner
+-        uses: step-security/harden-runner@46b06cea07f9e64621fdf066ba77ac6915163d43 # v2.22.3
++        uses: step-security/harden-runner@1d88384fd173af6ecb012dfd0264a306b711241a # v2.22.4
+         with:
+           egress-policy: audit
+ 
+       - name: Checkout repository
+         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+ 
+       - name: Initialize CodeQL
+-        uses: github/codeql-action/init@9b3254085494b55a0f7c4c2b3d2d52cc712ce370
++        uses: github/codeql-action/init@33d7b85da1a04171e211befe2c739303b9a4c066
+         with:
+           languages: go
+ 
+       - name: Autobuild
+-        uses: github/codeql-action/autobuild@9b3254085494b55a0f7c4c2b3d2d52cc712ce370
++        uses: github/codeql-action/autobuild@33d7b85da1a04171e211befe2c739303b9a4c066
+ 
+       - name: Perform CodeQL Analysis
+-        uses: github/codeql-action/analyze@9b3254085494b55a0f7c4c2b3d2d52cc712ce370
++        uses: github/codeql-action/analyze@33d7b85da1a04171e211befe2c739303b9a4c066
 ```
 
-**File**: `apis/connection/unversioned/connection_types.go` (added, +63/-0)
+**File**: `.github/workflows/dependency-review.yml` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,63 @@
-+/*
-+
-+Licensed under the Apache License, Version 2.0 (the "License");
-+you may not use this file except in compliance with the License.
-+You may obtain a copy of the License at
-+
-+    http://www.apache.org/licenses/LICENSE-2.0
-+
-+Unless required by applicable law or agreed to in writing, software
-+distributed under the License is distributed on an "AS IS" BASIS,
-+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+See the License for the specific language governing permissions and
-+limitations under the License.
-+*/
-+
-+package unversioned
-+
-+import (
-+	statusv1alpha1 "github.com/open-policy-agent/gatekeeper/v3/apis/status/v1alpha1"
-+	"github.com/open-policy-agent/gatekeeper/v3/pkg/mutation/types"
-+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-+)
-+
-+// ConnectionSpec defines the desired state of Connection.
-+type ConnectionSpec struct {
-+	// driver is the name of one of the expected drivers i.e. disk
-+	// +kubebuilder:validation:Required
-+	Driver string `json:"driver"`
-+	// config is the driver-specific configuration for this connection.
-+	// +kubebuilder:validation:Required
-+	// +kubebuilder:validation:Schemaless
-+	// +kubebuilder:pruning:PreserveUnknownFields
-+	Config *types.Anything `json:"config"`
-+}
-+
-+// ConnectionStatus defines the observed state of Connection.
-+type ConnectionStatus struct {
-+	// byPod lists the observed status of this Connection for each pod.
-+	ByPod []statusv1alpha1.ConnectionPodStatusStatus `json:"byPod,omitempty"`
-+}
-+
-+// +kubebuilder:object:root=true
-+
-+// Connection is the internal representation of a connection.
-+type Connection struct {
-+	metav1.TypeMeta `json:",inline"`
-+	// metadata is the standard object metadata.
-+	metav1.ObjectMeta `json:"metadata,omitempty"`
-+
-+	// spec defines the desired state of Connection.
-+	Spec ConnectionSpec `json:"spec,omitempty"`
-+	// status is the observed state of Connection.
-+	Status ConnectionStatus `json:"status,omitempty"`
-+}
-+
-+// +kubebuilder:object:root=true
-+
-+// ConnectionList contains a list of Connection.
-+type ConnectionList struct {
-+	metav1.TypeMeta `json:",inline"`
-+	metav1.ListMeta `json:"metadata,omitempty"`
-+	Items           []Connection `json:"items"`
-+}
+@@ -17,7 +17,7 @@ jobs:
+     runs-on: oracle-vm-2cpu-8gb-x86-64
+     steps:
+       - name: Harden Runner
+-        uses: step-security/harden-runner@46b06cea07f9e64621fdf066ba77ac6915163d43 # v2.22.3
++        uses: step-security/harden-runner@1d88384fd173af6ecb012dfd0264a306b711241a # v2.22.4
+         with:
+           egress-policy: audit
+ 
 ```
 
-**File**: `apis/connection/unversioned/doc.go` (added, +5/-0)
+**File**: `.github/workflows/disk-export.yaml` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,5 @@
-+// Package unversioned contains the internal representation of connection objects.
-+//
-+// +kubebuilder:object:generate=true
-+// +kubebuilder:skip
-+package unversioned
+@@ -43,7 +43,7 @@ jobs:
+         KUBERNETES_VERSION: ["1.35.8", "1.36.4", "1.37.0"]
+     steps:
+       - name: Harden Runner
+-        uses: step-security/harden-runner@46b06cea07f9e64621fdf066ba77ac6915163d43 # v2.22.3
++        uses: step-security/harden-runner@1d88384fd173af6ecb012dfd0264a306b711241a # v2.22.4
+         with:
+           egress-policy: audit
+ 
 ```
 
-**File**: `apis/connection/unversioned/zz_generated.deepcopy.go` (added, +125/-0)
+**File**: `.github/workflows/helm-lint.yaml` (modified, +1/-1)
 ```diff
-@@ -0,0 +1,125 @@
-+//go:build !ignore_autogenerated
-+
-+/*
-+
-+Licensed under the Apache License, Version 2.0 (the "License");
-+you may not use this file except in compliance with the License.
-+You may obtain a copy of the License at
-+
-+    http://www.apache.org/licenses/LICENSE-2.0
-+
-+Unless required by applicable law or agreed to in writing, software
-+distributed under the License is distributed on an "AS IS" BASIS,
-+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+See the License for the specific language governing permissions and
-+limitations under the License.
-+*/
-+
-+// Code generated by controller-gen. DO NOT EDIT.
-+
-+package unversioned
-+
-+import (
-+	"github.com/open-policy-agent/gatekeeper/v3/apis/status/v1alpha1"
-+	runtime "k8s.io/apimachinery/pkg/runtime"
-+)
-+
-+// DeepCopyInto is an autogenerated deepcopy function, copying the receiver, writing into out. in must be non-nil.
-+func (in *Connection) DeepCopyInto(out *Connection) {
-+	*out = *in
-+	out.TypeMeta = in.TypeMeta
-+	in.ObjectMeta.DeepCopyInto(&out.ObjectMeta)
-+	in.Spec.DeepCopyInto(&out.Spec)
-+	in.Status.DeepCopyInto(&out.Status)
-+}
-+
-+// DeepCopy is an autogenerated deepcopy function, copying the receiver, creating a new Connection.
-+func (in *Connection) DeepCopy() *Connection {
-+	if in == nil {
-+		return nil
-+	}
-+	out := new(Connection)
-+	in.DeepCopyInto(out)
-+	return out
-+}
-+
-+// DeepCopyObject is an autogenerated deepcopy function, copying the receiver, creating a new runtime.Object.
-+func (in *Connection) DeepCopyObject() runtime.Object {
-+	if c := in.DeepCopy(); c != nil {
-+		return c
-+	}
-+	return nil
-+}
-+
-+// DeepCopyInto is an autogenerated deepcopy function, copying the receiver, writing into out. in must be non-nil.
-+func (in *ConnectionList) DeepCopyInto(out *ConnectionList) {
-+	*out = *in
-+	out.TypeMeta = in.TypeMeta
-+	in.ListMeta.DeepCopyInto(&out.ListMeta)
-+	if in.Items != nil {
-+		in, out := &in.Items, &out.Items
-+		*out = make([]Connection, len(*in))
-+		for i := range *in {
-+			(*in)[i].DeepCopyInto(&(*out)[i])
-+		}
-+	}
-+}
-+
-+// DeepCopy is an autogenerated deepcopy function, copying the receiver, creating a new ConnectionList.
-+func (in *ConnectionList) DeepCopy() *ConnectionList {
-+	if in == nil {
-+		return nil
-+	}
-+	out := new(ConnectionList)
-+	in.DeepCopyInto(out)
-+	return out
-+}
-+
-+// DeepCopyObject is an autogenerated deepcopy function, copying the receiver, creating a new runtime.Object.
-+func (in *ConnectionList) DeepCopyObject() runtime.Object {
-+	if c := in.DeepCopy(); c != nil {
-+		return c
-+	}
-+	return nil
-+}
-+
-+// DeepCopyInto is an autogenerated deepcopy function, copying the receiver, writing into out. in must be non-nil.
-+func (in *ConnectionSpec) DeepCopyInto(out *ConnectionSpec) {
-+	*out = *in
-+	if in.Config != nil {
-+		in, out := &in.Config, &out.Config
-+		*out = (*in).DeepCopy()
-+	}
-+}
-+
-+// DeepCopy is an autogenerated deepcopy function, copying the receiver, creating a new ConnectionSpec.
-+func (in *ConnectionSpec) DeepCopy() *ConnectionSpec {
-+	if in == nil {
-+		return nil
-+	}
-+	out := new(ConnectionSpec)
-+	in.DeepCopyInto(out)
-+	return out
-+}
-+
-+// DeepCopyInto is an autogenerated deepcopy function, copying the receiver, writing into out. in must be non-nil.
-+func (in *ConnectionStatus) DeepCopyInto(out *ConnectionStatus) {
-+	*out = *in
-+	if in.ByPod != nil {
-+		in, out := &in.ByPod, &out.ByPod
-+		*out = make([]v1alpha1.ConnectionPodStatusStatus, len(*in))
-+		for i := range *in {
-+			(*in)[i].DeepCopyInto(&(*out)[i])
-+		}
-+	}
-+}
-+
-+// DeepCopy is an autogenerated deepcopy function, copying the receiver, creating a new ConnectionStatus.
-+func (in *ConnectionStatus) DeepCopy() *ConnectionStatus {
-+	if in == nil {
-+		return nil
-+	}
-+	out := new(ConnectionStatus)
-+	in.DeepCopyInto(out)
-+	return out
-+}
+@@ -22,7 +22,7 @@ jobs:
+       uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+     
+     - name: Set up Helm
+-      uses: azure/setup-helm@9bc31f4ebc9c6b171d7bfbaa5d006ae7abdb4310 # v5.0.1
++      uses: azure/setup-helm@2f5e7bc67f1f9972ab16657bb795f36d8f04de0e # v5.1.0
+       with:
+         version: "4.2.3"
+       id: install
 ```
 
-**File**: `apis/connection/v1alpha1/connection_types.go` (modified, +0/-1)
+**File**: `.github/workflows/license-lint.yaml` (modified, +1/-1)
 ```diff
-@@ -45,7 +45,6 @@ type ConnectionStatus struct {
- // +kubebuilder:resource:scope=Namespaced
- // +kubebuilder:object:root=true
- // +kubebuilder:subresource:status
--// +kubebuilder:storageversion
- // Connection is the Schema for the connections API.
- type Connection struct {
- 	metav1.TypeMeta `json:",inline"`
+@@ -23,7 +23,7 @@ jobs:
+       contents: read
+     steps:
+       - name: Harden Runner
+-        uses: step-security/harden-runner@46b06cea07f9e64621fdf066ba77ac6915163d43 # v2.22.3
++        uses: step-security/harden-runner@1d88384fd173af6ecb012dfd0264a306b711241a # v2.22.4
+         with:
+           egress-policy: audit
+ 
 ```
 
-**File**: `apis/connection/v1alpha1/doc.go` (added, +5/-0)
+**File**: `.github/workflows/lint.yaml` (modified, +2/-2)
 ```diff
-@@ -0,0 +1,5 @@
-+// Package v1alpha1 includes v1alpha1 connections.
-+
-+// +k8s:conversion-gen=github.com/open-policy-agent/gatekeeper/v3/apis/connection/unversioned
-+// -external-types=github.com/open-policy-agent/gatekeeper/v3/apis/connection/v1alpha1
-+package v1alpha1
+@@ -33,7 +33,7 @@ jobs:
+     runs-on: oracle-vm-4cpu-16gb-x86-64
+     steps:
+       - name: Harden Runner
+-        uses: step-security/harden-runner@46b06cea07f9e64621fdf066ba77ac6915163d43 # v2.22.3
++        uses: step-security/harden-runner@1d88384fd173af6ecb012dfd0264a306b711241a # v2.22.4
+         with:
+           egress-policy: audit
+ 
+@@ -46,7 +46,7 @@ jobs:
+     runs-on: oracle-vm-4cpu-16gb-x86-64
+     steps:
+       - name: Harden Runner
+-        uses: step-security/harden-runner@46b06cea07f9e64621fdf066ba77ac6915163d43 # v2.22.3
++        uses: step-security/harden-runner@1d88384fd173af6ecb012dfd0264a306b711241a # v2.22.4
+         with:
+           egress-policy: audit
+ 
 ```
 
 #### Recent Merged Pull Requests:
 - **PR #4925** (2026-11-17): chore: bump k8s deps to v0.37.2 and controller-runtime to v0.25.2 (@abhisheksheth28)
+- **PR #4923** (2026-11-18): chore: bump the all group across 1 directory with 9 updates (@dependabot[bot])
 - **PR #4921** (2026-11-16): chore: bump js-yaml from 3.14.1 to 3.15.2 in /website (@dependabot[bot])
 - **PR #4920** (2026-11-16): chore: bump go.opentelemetry.io/otel/trace from 1.45.0 to 1.47.0 (@dependabot[bot])
 - **PR #4918** (closed): chore: bump the all group with 7 updates (@dependabot[bot])
 - **PR #4913** (2026-11-16): feat: graduate Connection API and audit disk export to beta (@JaydipGabani)
-- **PR #4912** (2026-11-13): fix: validate Connection names before status creation (@JaydipGabani)
 
 ---
 
@@ -1919,72 +1459,31 @@ Co-authored-by: Copilot <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. bump k8s deps to v0.37.2 and controller-runtime to v0.25.2
+## X. bump the all group across 1 directory with 9 updates
 
 **RULE**:
-When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in open-policy-agent/gatekeeper. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/benchmark.yaml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in open-policy-agent/gatekeeper. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `b000ecec`: bump k8s deps to v0.37.2 and controller-runtime to v0.25.2. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `fbbf865c`: bump the all group across 1 directory with 9 updates. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/benchmark.yaml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	github.com/prometheus/client_golang v1.24.0
-	k8s.io/api v0.37.2
-	k8s.io/apiextensions-apiserver v0.37.2
-	k8s.io/apimachinery v0.37.2
-	k8s.io/apiserver v0.37.2
-	k8s.io/client-go v0.37.2
-	k8s.io/utils v0.0.0-20260626114624-be93311217bd
-	sigs.k8s.io/controller-runtime v0.25.2
-	github.com/fxamacker/cbor/v2 v2.9.1 // indirect
-	github.com/go-openapi/jsonpointer v1.0.0 // indirect
-	github.com/go-openapi/jsonreference v1.0.0 // indirect
-	github.com/go-openapi/swag v0.27.1 // indirect
-	github.com/go-openapi/swag/cmdutils v0.27.1 // indirect
-	github.com/go-openapi/swag/conv v0.27.1 // indirect
-	github.com/go-openapi/swag/fileutils v0.27.1 // indirect
-	github.com/go-openapi/swag/jsonutils v0.27.1 // indirect
-	github.com/go-openapi/swag/loading v0.27.1 // indirect
-	github.com/go-openapi/swag/mangling v0.27.1 // indirect
-	github.com/go-openapi/swag/netutils v0.27.1 // indirect
-	github.com/go-openapi/swag/pools v0.27.1 // indirect
-	github.com/go-openapi/swag/stringutils v0.27.1 // indirect
-	github.com/go-openapi/swag/typeutils v0.27.1 // indirect
-	github.com/go-openapi/swag/yamlutils v0.27.1 // indirect
-	github.com/prometheus/common v0.70.0 // indirect
-	github.com/prometheus/procfs v0.21.1 // i
+        uses: step-security/harden-runner@1d88384fd173af6ecb012dfd0264a306b711241a # v2.22.4
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-	github.com/prometheus/client_golang v1.23.2
-	k8s.io/api v0.36.6
-	k8s.io/apiextensions-apiserver v0.36.6
-	k8s.io/apimachinery v0.36.6
-	k8s.io/apiserver v0.36.6
-	k8s.io/client-go v0.36.6
-	k8s.io/utils v0.0.0-20260210185600-b8788abfbbc2
-	sigs.k8s.io/controller-runtime v0.24.1
-	github.com/fxamacker/cbor/v2 v2.9.0 // indirect
-	github.com/go-openapi/jsonpointer v0.21.0 // indirect
-	github.com/go-openapi/jsonreference v0.21.0 // indirect
-	github.com/go-openapi/swag v0.23.0 // indirect
-	github.com/josharian/intern v1.0.0 // indirect
-	github.com/mailru/easyjson v0.7.7 // indirect
-	github.com/prometheus/common v0.67.5 // indirect
-	github.com/prometheus/procfs v0.20.1 // indirect
-	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.65.0 // indirect
-	go.opentelemetry.io/contrib/instrumentation/net/http/otelhttp v0.68.0 // indirect
+        uses: step-security/harden-runner@46b06cea07f9e64621fdf066ba77ac6915163d43 # v2.22.3
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `b000ecec` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `fbbf865c` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

@@ -69,8 +69,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-18T10:22:02.092Z",
-    "lastVerified": "2026-11-18T10:22:02.092Z",
+    "lastChecked": "2026-11-18T10:32:39.259Z",
+    "lastVerified": "2026-11-18T10:32:39.259Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -210,9 +210,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-18T09:43:25.942Z",
+    "lastChecked": "2026-11-18T10:32:38.312Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-18T09:43:25.942Z"
+    "lastVerified": "2026-11-18T10:32:38.312Z"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -456,5 +456,77 @@
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "surrealdb-surrealdb": {
+    "name": "surrealdb",
+    "officialUrl": "https://github.com/surrealdb/surrealdb",
+    "lastChecked": "2026-11-18T10:32:23.311Z",
+    "revisionIdentifier": "1b73f91b",
+    "lastVerified": "2026-11-18T10:32:23.311Z"
+  },
+  "hf-baai-bge-small-en-v1.5": {
+    "name": "BAAI/bge-small-en-v1.5",
+    "officialUrl": "https://huggingface.co/BAAI/bge-small-en-v1.5",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-18T10:32:26.093Z",
+    "lastVerified": "2026-11-18T10:32:26.093Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-baai-bge-small-en-v1-5",
+    "contentHash": "1280dd32ee53d08f6102f21e7c788f6f3aa9dd22ff7afd0583f4c5c8a03e330f",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "laurent22-joplin": {
+    "name": "laurent22/joplin",
+    "officialUrl": "https://github.com/laurent22/joplin",
+    "sourceType": "github",
+    "technology": "TypeScript",
+    "lastChecked": "2026-11-18T10:32:33.951Z",
+    "lastVerified": "2026-11-18T10:32:33.951Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-laurent22-joplin",
+    "contentHash": "27a43e261a4472e2fa75b956b5c28acc76a5845764a708304eca88270f9cf5c0",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 2,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "open-policy-agent-gatekeeper": {
+    "name": "open-policy-agent/gatekeeper",
+    "officialUrl": "https://github.com/open-policy-agent/gatekeeper",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-11-18T10:32:35.180Z",
+    "lastVerified": "2026-11-18T10:32:35.180Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-open-policy-agent-gatekeeper",
+    "contentHash": "3cedc4bf1281daf9216e58d41244d1aa6780ed8de52bf9644bf2259a6bde1ae1",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hashicorp-boundary": {
+    "name": "boundary",
+    "officialUrl": "https://github.com/hashicorp/boundary",
+    "lastChecked": "2026-11-18T10:32:33.336Z",
+    "revisionIdentifier": "eeb38a1a",
+    "lastVerified": "2026-11-18T10:32:33.336Z"
+  },
+  "qdrant-qdrant": {
+    "name": "qdrant",
+    "officialUrl": "https://github.com/qdrant/qdrant",
+    "lastChecked": "2026-11-18T10:32:36.102Z",
+    "revisionIdentifier": "23065a0b",
+    "lastVerified": "2026-11-18T10:32:36.102Z"
   }
 }

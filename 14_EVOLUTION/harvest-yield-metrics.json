@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T10:21:58.899Z",
-  "total_cycles_completed": 10449,
-  "total_learnings_persisted": 10449,
-  "total_rules_promoted": 9953,
+  "last_updated": "2026-11-18T10:32:36.165Z",
+  "total_cycles_completed": 10452,
+  "total_learnings_persisted": 10452,
+  "total_rules_promoted": 9955,
   "history": [
-    {
-      "timestamp": "2026-11-17T20:17:30.432Z",
-      "repository": "convaiinnovations/laya",
-      "learningId": "learn-huggingface-convaiinnovations-laya",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T20:17:34.951Z",
-      "repository": "oxc-project/oxc",
-      "learningId": "learn-github-oxc-project-oxc",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T20:17:40.353Z",
-      "repository": "higress-group/higress",
-      "learningId": "learn-github-higress-group-higress",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-17T20:17:47.424Z",
       "repository": "dathere/qsv",
@@ -1403,6 +1382,27 @@
       "repository": "cross-encoder/ms-marco-MiniLM-L6-v2",
       "learningId": "learn-huggingface-cross-encoder-ms-marco-minilm-l6-v2",
       "promotedRulesCount": 2,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T10:32:26.758Z",
+      "repository": "BAAI/bge-small-en-v1.5",
+      "learningId": "learn-huggingface-baai-bge-small-en-v1-5",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T10:32:34.873Z",
+      "repository": "laurent22/joplin",
+      "learningId": "learn-github-laurent22-joplin",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T10:32:36.165Z",
+      "repository": "open-policy-agent/gatekeeper",
+      "learningId": "learn-github-open-policy-agent-gatekeeper",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

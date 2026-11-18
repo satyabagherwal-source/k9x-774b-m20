@@ -1,50 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261116-E0EW",
-    "timestamp": "2026-11-16T23:03:44.024Z",
-    "repository": "sozercan/kaset",
-    "learningId": "learn-github-sozercan-kaset",
-    "contentHash": "4d721833db4b6aa942be50f44df336fcf2219b69c037c87a9d172cb701debacc",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261116-E2WZ",
-    "timestamp": "2026-11-16T23:03:47.267Z",
-    "repository": "higress-group/higress",
-    "learningId": "learn-github-higress-group-higress",
-    "contentHash": "20a4ea81b8d8a8089ad4a6b74f4c4bcc15f41c7adddaef09779c2b1dd7810f57",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261116-S6HZ",
-    "timestamp": "2026-11-16T23:14:45.095Z",
-    "repository": "urllib3/urllib3",
-    "learningId": "learn-github-urllib3-urllib3",
-    "contentHash": "d2e8fee056a0eaa2d9ee9bc718907eb1d06debe426bb66883835e72fdcd0a678",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261116-SBMY",
     "timestamp": "2026-11-16T23:14:51.754Z",
     "repository": "sigstore/cosign",
@@ -7492,6 +7447,51 @@
     "contentHash": "c45c9f042cb732b64f868e5663e1fe24de0b03747705f5157041cd8868118325",
     "status": "VERIFIED",
     "promotedRulesCount": 2,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-FJWD",
+    "timestamp": "2026-11-18T10:32:26.749Z",
+    "repository": "BAAI/bge-small-en-v1.5",
+    "learningId": "learn-huggingface-baai-bge-small-en-v1-5",
+    "contentHash": "1280dd32ee53d08f6102f21e7c788f6f3aa9dd22ff7afd0583f4c5c8a03e330f",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-FQ5S",
+    "timestamp": "2026-11-18T10:32:34.864Z",
+    "repository": "laurent22/joplin",
+    "learningId": "learn-github-laurent22-joplin",
+    "contentHash": "27a43e261a4472e2fa75b956b5c28acc76a5845764a708304eca88270f9cf5c0",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-FR5O",
+    "timestamp": "2026-11-18T10:32:36.156Z",
+    "repository": "open-policy-agent/gatekeeper",
+    "learningId": "learn-github-open-policy-agent-gatekeeper",
+    "contentHash": "3cedc4bf1281daf9216e58d41244d1aa6780ed8de52bf9644bf2259a6bde1ae1",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,

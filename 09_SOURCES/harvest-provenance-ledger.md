@@ -10957,3 +10957,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-cross-encoder-ms-marco-minilm-l6-v2` | `https://huggingface.co/cross-encoder/ms-marco-MiniLM-L6-v2` | `hf-cross-e` | Multi-dimensional audit evidence | 2026-11-18T10:21:58.895Z |
 | `learn-dom-k-92db8dfd` | `project://hf-cross-encoder-ms-marco-minilm-l6-v2` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-cross-encoder-ms-marco-minilm-l6-v2-learnings.md` | 2026-11-18T10:22:27.398Z |
 | `learn-dom-f-3ad6d1e9` | `project://hf-cross-encoder-ms-marco-minilm-l6-v2` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-cross-encoder-ms-marco-minilm-l6-v2-learnings.md` | 2026-11-18T10:22:55.656Z |
+| `learn-huggingface-baai-bge-small-en-v1-5` | `https://huggingface.co/BAAI/bge-small-en-v1.5` | `hf-baai-bg` | Multi-dimensional audit evidence | 2026-11-18T10:32:26.753Z |
+| `learn-github-laurent22-joplin` | `https://github.com/laurent22/joplin` | `a96f8bd5` | Multi-dimensional audit evidence | 2026-11-18T10:32:34.868Z |
+| `learn-github-open-policy-agent-gatekeeper` | `https://github.com/open-policy-agent/gatekeeper` | `fbbf865c` | Multi-dimensional audit evidence | 2026-11-18T10:32:36.160Z |

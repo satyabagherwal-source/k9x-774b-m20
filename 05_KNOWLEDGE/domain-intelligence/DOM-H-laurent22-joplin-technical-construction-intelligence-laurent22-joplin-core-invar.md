@@ -4,24 +4,24 @@
 {
   "source_repository": "laurent22/joplin",
   "source_url": "https://github.com/laurent22/joplin",
-  "source_version": "68b1f922",
+  "source_version": "a96f8bd5",
   "license": "NOASSERTION",
-  "timestamp": "2026-11-17T07:55:47.497Z",
+  "timestamp": "2026-11-18T10:32:35.049Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-laurent22-joplin",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [laurent22/joplin](https://github.com/laurent22/joplin) (Revision: `68b1f922`).  
-> **License**: NOASSERTION | **Timestamp**: `2026-11-17T07:55:47.497Z`  
+> **Provenance**: Harvested from [laurent22/joplin](https://github.com/laurent22/joplin) (Revision: `a96f8bd5`).  
+> **License**: NOASSERTION | **Timestamp**: `2026-11-18T10:32:35.049Z`  
 > **Learning ID**: `learn-github-laurent22-joplin`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain H (Technical Construction Intelligence)
-- **Secondary Corroborating Domains**: L (Deployment & Operations Intelligence), I (Content & Information Intelligence), G (Architecture Intelligence), K (Quality & Verification Intelligence), C (Market & Business Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), D (Research & Knowledge Intelligence)
-- **Confidence Rating**: 87%
+- **Secondary Corroborating Domains**: L (Deployment & Operations Intelligence), G (Architecture Intelligence), I (Content & Information Intelligence), K (Quality & Verification Intelligence), C (Market & Business Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence)
+- **Confidence Rating**: 82%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from laurent22/joplin:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/laurent22-joplin-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/laurent22/joplin](https://github.com/laurent22/joplin))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T07:55:46.921Z  
+> **Harvest Timestamp**: 2026-11-18T10:32:33.951Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Joplin - the privacy-focused note taking app with sync capabilities for Windows, macOS, Linux, Android and iOS.
 - **Primary Language / Ecosystem**: TypeScript
 - **Discovered Manifests / Configurations**: package.json, README.md
-- **Stars / Engagement**: 57216 stars
+- **Stars / Engagement**: 57229 stars
 
 ---
 
@@ -944,14 +944,11 @@ export {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #17119** (2026-11-16): **Desktop: Fixes #17089: Keep indentation and code block blank lines in Paste as Markdown**
-  *Symptoms*: Fixes #17089  ### Problem  **Edit → Paste as Markdown** calls `HtmlToMd.parse()` with `collapseMultipleBlankLines: true`. Turndown then ran this on the whole Markdown output:  ```js output = output.replace(/(\n\s*){3,}/g, '\n\n') ```  This has two side effects:  1. `\s*` also matches the spaces and tabs at the start of the next non-blank line, so that line loses its indentation. This breaks indentation-sensitive content, e.g. Python code, or a paragraph nested in a list item. 2. It also runs inside fenced code blocks, where blank lines are part of the code.  For example, pasting this `<pre><code>`:  ```python def f():     x = 1       return x ```  gave:  ```python def f():     x = 1  return x ```  ### Solution  The regex is replaced with a small line-based function, `collapseMultipleBlankLines()`, in `packages/turndown/src/turndown.js`:  - Each run of two or more blank lines (empty or whitespace-only) is still replaced with a single empty line. This is the same result the regex gave for blank lines. - Non-blank lines are never changed, so they keep their indentation. - While inside a fenced code block, lines are copied as they are. The block opens with a line that starts (after optional indentation, e.g. inside a list item) with three or more backticks or tildes. It closes with a fence of the same character that is at least as long and has nothing after it. This also handles the longer fence Turndown uses when the code itself contains a fence.  The option is only enabled by P
+- **Issue #17129** (2026-11-17): **Server: Delete every copy of an item when an account has several items for the same Joplin ID**
+  *Symptoms*: An account can still have access to two server items for the same Joplin ID if it got into that state before 4fee80ca7 and 02dd16b5d. The client sees these as a single item.  Batch delete (`DELETE /api/batch_items`) already deletes every copy, because it loads items with `loadByNames`. Single delete (`DELETE /api/items/:id`) only deleted one copy. The other copy stayed on the server, so the item could come back on the client later.  With this change, single delete removes every copy, the same as batch delete. Each copy still goes through the existing permission check. If any copy is refused, nothing is deleted.
 
-- **Issue #17111** (2026-11-14): **Desktop, Mobile: Fixes #17110: Do not crash on invalid folder icon**
-  *Symptoms*: Parse the `icon` field of a notebook with a `try/catch` in `Folder.unserializeIcon()`. When the value is not valid JSON, return `null`, the same as for an empty field. All places that render notebook icons already show the default icon for `null`, on both apps, so nothing crashes while the notebook list renders.  Fixes #17110.  Details and crash reports are in the issue.  **How to test:** run the Folder suite in `packages/lib`:      yarn jest models/Folder  Unit tests were added for invalid, empty and valid icon values. Locally all 50 tests of the suite pass (dev branch, Linux). 
-  **Post-Mortem & Fix Analysis**:
-  > All contributors have signed the CLA  ✍️ ✅<br/><sub>Posted by the ****CLA Assistant Lite bot****.</sub>
-  > I have read the CLA Document and I hereby sign the CLA
+- **Issue #17127** (2026-11-17): **time.anythingToMs() returns a Date instead of milliseconds for moment-like input**
+  *Symptoms*: ### Operating system  macOS  ### Joplin version  Not app version specific. Found in the source on the dev branch (commit 68b1f92, Nov 16, 2026), in packages/lib/time.ts.  ### Desktop version info  N/A - this was found by reading and unit testing packages/lib/time.ts, not by running the desktop app.  ### Current behaviour  In packages/lib/time.ts, anythingToMs() should return a timestamp in milliseconds, but when it is given an object with a toDate() method (such as a moment object), line 138 returns o.toDate(), which is a Date object.  The same line appears in anythingToDateTime() (line 128), where returning a Date is correct, so it looks like it was copied from there.  I reproduced it with a Jest unit test:      const momentLike = { toDate: () => new Date(1700000000123) };     expect(typeof time.anythingToMs(momentLike)).toBe('number');     // Expected: "number"     // Received: "object"  ### Expected behaviour  anythingToMs() should return a number of milliseconds for this input too, e.g. return o.toDate().getTime()  ### Logs  Impact -> Low: I searched the codebase and could not find any remaining callers of anythingToMs() or anythingToDateTime(). The last ones appear to have been removed in commit 2c71557d8 (the fix for #12770, Markdown + Front Matter import dates).  Would you prefer that I: 1. fix the return value and add a unit test, or 2. remove the two unused functions?  I'm happy to open a PR for either once you let me know which you'd prefer.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -968,431 +965,104 @@ export {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `68b1f922` (2026-11-16)
-**Commit Message**: Doc: Update security threat model
+### Incident Patch 1: `1f1fda83` (2026-11-17)
+**Commit Message**: Tools: Fix random Jest worker SIGSEGV on Apple Silicon CI
 
-**File**: `SECURITY.md` (modified, +6/-0)
+Node 24 before 24.22 has a V8 GC bug that randomly crashes Jest workers on macOS arm64. Since CI switched to the Apple Silicon runner, about 44% of runs failed with this crash.
+
+Also upload macOS crash reports on failure, so that if it happens again we can tell whether V8 or a native module crashed.
+
+**File**: `.github/workflows/github-actions-main.yml` (modified, +10/-0)
 ```diff
-@@ -51,6 +51,12 @@ See also [Physically-local attacks](https://chromium.googlesource.com/chromium/s
+@@ -92,6 +92,16 @@ jobs:
+         run: |
+           "${GITHUB_WORKSPACE}/.github/scripts/run_ci.sh"
  
- No, but you should use disk encryption. See also [Physically-local attacks](https://chromium.googlesource.com/chromium/src.git/+/master/docs/security/faq.md#why-arent-physically_local-attacks-in-chromes-threat-model)
++      # When a Jest worker is killed by a signal, the macOS crash report is the
++      # only way to find out whether V8 or a native module crashed.
++      - uses: actions/upload-artifact@v7
++        if: failure() && runner.os == 'macOS'
++        with:
++          name: crash-reports-${{ matrix.os }}
++          path: ~/Library/Logs/DiagnosticReports/node*.ips
++          if-no-files-found: ignore
++          retention-days: 14
++
+       - name: Build and publish Windows app
+         if: runner.os == 'Windows' && startsWith(github.ref, 'refs/tags/v')
+         env:
+```
+
+**File**: `.github/workflows/shared/setup-build-environment/action.yml` (modified, +3/-1)
+```diff
+@@ -59,7 +59,9 @@ runs:
  
-+### Can a share recipient modify, delete or move notes in a shared notebook?
-+
-+Yes, this is intended. A notebook is only shared with someone after the owner has invited them by email and they have accepted the invitation, so share participants are considered trusted with the content of that notebook. They can edit or delete any note in it, or move a note out of it.
-+
-+Reports that rely on a share participant acting on the content of the shared notebook are therefore not considered vulnerabilities.
-+
- ## Bounty
- 
- We **do not** offer a bounty for discovering vulnerabilities, please do not ask.
+     - uses: actions/setup-node@v6
+       with:
+-        node-version: '24.18'
++        # Node 24 before 24.22 has a V8 GC bug that randomly crashes Jest workers
++        # with SIGSEGV on Apple Silicon - https://github.com/johnfrog76/toolkit/issues/182
++        node-version: '24.22'
+         registry-url: ${{ inputs.registry-url }}
+         # Disable the cache on ARM runners. For now, we don't run "yarn install" on these
+         # environments and this breaks actions/setup-node.
 ```
 
 ---
 
-### Incident Patch 2: `40727589` (2026-11-16)
-**Commit Message**: Merge branch 'server-security-fixes' into dev
+### Incident Patch 2: `45639916` (2026-11-17)
+**Commit Message**: Server: Fix error when an item is uploaded twice at the same time
 
-**File**: `packages/server/src/app.ts` (modified, +9/-5)
+**File**: `packages/server/src/models/ItemModel.test.ts` (modified, +4/-2)
 ```diff
-@@ -39,6 +39,8 @@ interface Argv {
- import * as nodeSqlite from 'sqlite3';
- import { shimInit } from '@joplin/lib/shim-init-node';
- import { isSameSite } from './utils/urlUtils';
-+import { errorMessageForLog, isUnexpectedError, unexpectedErrorMessage } from './utils/errors';
-+import { uuidgen } from '@joplin/lib/uuid';
- const cors = require('@koa/cors');
- shimInit({ nodeSqlite });
- 
-@@ -174,11 +176,13 @@ async function main() {
- 			await next();
- 		} catch (error) {
- 			ctx.status = error.httpCode || 500;
-+			const errorId = uuidgen();
-+			const publicMessage = isUnexpectedError(error) ? unexpectedErrorMessage(errorId) : error.message;
- 
- 			if (ctx.status >= 500) {
--				appLogger().error(`Middleware error on ${ctx.path}:`, error);
-+				appLogger().error(`Middleware error on ${ctx.path}: Error ID ${errorId}:`, error);
- 			} else {
--				appLogger().info(`Middleware error on ${ctx.path}:`, error);
-+				appLogger().info(`Middleware error on ${ctx.path}: ${errorMessageForLog(String(error.message))}`);
- 			}
- 
- 			const responseFormat = routeResponseFormat(ctx);
-@@ -193,15 +197,15 @@ async function main() {
- 						title: 'Error',
- 						path: 'index/error',
- 						showFooter: true,
--						content: { error },
-+						content: { error: { message: publicMessage } },
- 					});
- 				} catch (anotherError) {
- 					ctx.response.set('Content-Type', 'application/json');
--					ctx.body = JSON.stringify({ error: `${error.message} (Check the server log for more information)` });
-+					ctx.body = JSON.stringify({ error: `${publicMessage} (Check the server log for more information)` });
- 				}
- 			} else {
- 				ctx.response.set('Content-Type', 'application/json');
--				ctx.body = JSON.stringify({ error: error.message });
-+				ctx.body = JSON.stringify({ error: publicMessage });
- 			}
- 		}
- 	});
-```
-
-**File**: `packages/server/src/middleware/routeHandler.ts` (modified, +11/-9)
-```diff
-@@ -7,10 +7,10 @@ import { createCsrfTag } from '../utils/csrf';
- import { getImpersonatorAdminSessionId } from '../routes/admin/utils/users/impersonate';
- import { onRequestComplete, onRequestStart } from '../utils/metrics';
- import { uuidgen } from '@joplin/lib/uuid';
--import { ApiError, ErrorTooManyRequests } from '../utils/errors';
-+import { ApiError, errorMessageForLog, ErrorTooManyRequests, isUnexpectedError, unexpectedErrorMessage } from '../utils/errors';
- import { formatBytesSimple } from '../utils/bytes';
- 
--const logRequestInfo = (ctx: AppContext, requestStartTime: number, error: Error | string | null) => {
-+const logRequestInfo = (ctx: AppContext, requestStartTime: number, requestId: string, error: Error | string | null) => {
- 	try {
- 		const owner = ctx.joplin.owner;
- 		// Technically this is not the total request duration because there are
-@@ -28,13 +28,14 @@ const logRequestInfo = (ctx: AppContext, requestStartTime: number, error: Error
- 		// If it's a successful request or a user error (error code < 500) we display the
- 		// information on a single line.
- 		const line = getLinePrefix();
--		if (error && typeof error === 'string') line.push(error);
-+		if (error && typeof error === 'string') line.push(errorMessageForLog(error));
- 		line.push(`${ctx.request.method} ${ctx.path} (${ctx.response.status}) (${requestDuration}ms)`);
- 		ctx.joplin.appLogger().info(line.join(': '));
- 
- 		// If we have an error object (should be a server error), we log the full stack trace.
- 		if (error && typeof error !== 'string' && error.message) {
- 			const line = getLinePrefix();
-+			line.push(`Error ID ${requestId}`);
- 			ctx.joplin.appLogger().error(`${line.join(': ')}:`, error);
- 		}
- 	} catch (logFunctionError) {
-@@ -73,7 +74,7 @@ export default async function(ctx: AppContext) {
- 			ctx.response.body = [undefined, null].includes(responseObject) ? '' : responseObject;
- 		}
- 
--		logRequestInfo(ctx, requestStartTime, null);
-+		logRequestInfo(ctx, requestStartTime, requestId, null);
- 	} catch (e) {
- 		const error = e as ApiError;
- 
-@@ -83,12 +84,13 @@ export default async function(ctx: AppContext) {
- 		ctx.response.status = error.httpCode ? error.httpCode : 500;
- 
- 		if (error.httpCode >= 400 && error.httpCode < 500) {
--			logRequestInfo(ctx, requestStartTime, error.message);
-+			logRequestInfo(ctx, requestStartTime, requestId, error.message);
- 		} else {
--			logRequestInfo(ctx, requestStartTime, error);
-+			logRequestInfo(ctx, requestStartTime, requestId, error);
- 		}
- 
- 		const responseFormat = routeResponseFormat(ctx);
-+		const publicMessage = isUnexpectedError(error) ? unexpectedErrorMessage(requestId) : error.message;
- 
- 		if ((error as ErrorTooManyRequests).retryAfterMs) ctx.response.set('Retry-After', Math.ceil((error as ErrorTooManyRequests).retryAfterMs / 1000).toString());
- 
-@@ -101,7 +103,7 @@ export default async function(ctx: AppContext) {
- 				path: 'index/error',
- 				showFooter: true,
- 				content: {
--					error,
-+					error: { message: publicMessage },
- 					stack: config().showErrorStackTraces ? error.stack : '',
- 					owner: ctx.joplin.owner,
- 				},
-@@ -110,9 +112,9 @@ export default async function(ctx: AppContext) {
- 			ctx.response.body = await ctx.joplin.services.mustache.renderView(view);
- 		} else { // JSON
- 			ctx.response.set('Content-Type', 'application/json');
--			const r: { error: string; stack?: string; code?: string } = { error: error.message };
-+			const r: { error: string; stack?: string; code?: string } = { error: publicMessage };
- 			if (ctx.joplin.env === Env.Dev && error.stack) r.stack = error.stack;
--			if (error.code) r.code = error.code;
-+			if (error.code && !isUnexpectedError(error)) r.code = error.code;
- 			ctx.response.body = r;
- 		}
- 	} finally {
-```
-
-**File**: `packages/server/src/models/ChangeModel/ChangeModel.ts` (modified, +9/-2)
-```diff
-@@ -6,7 +6,7 @@ import { Config } from '../../utils/types';
- import ChangeModelOld from './ChangeModel.old';
- import ChangeModelNew from './ChangeModel.new';
- import BaseModel, { LoadOptions } from '../BaseModel';
--import { ErrorResyncRequired } from '../../utils/errors';
-+import { ErrorBadRequest, ErrorResyncRequired } from '../../utils/errors';
- import Logger from '@joplin/utils/Logger';
- 
- export { defaultChangeTtl } from './BaseChangeModel';
-@@ -48,11 +48,18 @@ export function defaultDeltaPagination(): ChangePagination {
- 	};
- }
- 
-+const deltaMaxLimit = 1000;
+@@ -720,13 +720,15 @@ describe('ItemModel', () => {
+ 		// Simulates a client retrying an upload while the original request is still being
+ 		// processed: the item does not exist when the caller checks for it, but does by the
+ 		// time it is inserted.
++		const name = `.resource/${'a'.repeat(32)}`;
 +
- export function requestDeltaPagination(query: ChangePagination | null): ChangePagination {
- 	if (!query) return defaultDeltaPagination();
- 
- 	const output: ChangePagination = {};
--	if ('limit' in query) output.limit = query.limit;
-+	if ('limit' in query) {
-+		// It comes from the query string, so it is a string at runtime
-+		const limit = Number(query.limit);
-+		if (!Number.isInteger(limit) || limit < 1 || limit > deltaMaxLimit) throw new ErrorBadRequest(`Limit must be an integer from 1 to ${deltaMaxLimit}`);
-+		output.limit = limit;
-+	}
- 	if ('cursor' in query) output.cursor = query.cursor;
- 	return output;
- }
-```
-
-**File**: `packages/server/src/models/RecoveryCodeModel.ts` (modified, +3/-1)
-```diff
-@@ -6,7 +6,7 @@ import { ErrorForbidden } from '../utils/errors';
- import { isValidMFACode } from '../utils/crypto';
- import recoveryCodesAccessedTemplate from '../views/emails/recoveryCodesAccessedTemplate';
- import { forgotPasswordUrl } from '../utils/urlUtils';
--import { formatDateOnServer } from '../utils/time';
-+import { formatDateOnServer, Hour } from '../utils/time';
- import { DbConnection } from '../db';
- import { NewModelFactoryHandler } from './factory';
- import { Services } from '../services/types';
-@@ -148,6 +148,8 @@ export default class RecoveryCodeModel extends BaseModel<RecoveryCode> {
- 			recipient_name: user.full_name,
- 			recipient_id: userId,
- 			sender_id: EmailSender.NoReply,
-+			// Viewing the codes can be repeated at will, so this limits the alert to one per hour
-+			key: `recoveryCodesAccessed::${Math.floor(Date.now() / Hour)}`,
+ 		await models().item().saveForUser(user1.id, {
+-			name: 'test.txt',
++			name,
+ 			content: Buffer.from('original'),
  		});
  
- 		return recoveryCodeAccess;
-```
-
-**File**: `packages/server/src/routes/api/batch_items.test.ts` (modified, +35/-1)
-```diff
-@@ -1,6 +1,10 @@
- import { beforeAllDb, afterAllTests, beforeEachDb, createUserAndSession, models, createItem } from '../../utils/testing/testUtils';
--import { deleteApi } from '../../utils/testing/apiUtils';
-+import { deleteApi, getApiC } from '../../utils/testing/apiUtils';
- import { makeNoteSerializedBody } from '../../utils/testing/serializedItems';
-+import ItemModel from '../../models/ItemModel';
-+
-+const unexpectedError = () => new Error('select * from "users" where "password" = \'secret\'');
-+const unexpectedErrorMessage = /^Internal server error \(error ID: [\w-]+\)$/;
- 
- 
- const batchDeleteItems = (sessionId: string, jopId: string[]) => {
-@@ -63,4 +67,34 @@ describe('api/batch_items', () => {
- 			},
- 		});
- 	});
-+
-+	test('should not return the details of unexpected errors', async () => {
-+		const { session } = await createUserAndSession(1, true);
-+		const noteId = '00000000000000000000000000000001';
-+		await createItem(session.id, `root:/${noteId}.md:`, makeNoteSerializedBody({ id: noteId }));
-+		jest.spyOn(ItemModel.prototype, 'checkIfAllowed').mockRejectedValueOnce(unexpectedError());
-+
-+		try {
-+			const response = await batchDeleteItems(session.id, [noteId, '12345678901234567890123456789012']) as { items: Record<string, { error: object }> };
-+			expect(response.items[`${noteId}.md`].error).toEqual({ message: expect.stringMatching(unexpectedErrorMessage) });
-+			expect(response.items['12345678901234567890123456789012.md'].error).toEqual({ httpCode: 404, message: 'Not found: 12345678901234567890123456789012.md' });
-+		} finally {
-+			jest.restoreAllMocks();
-+		}
-+	});
-+
-+	test('should not return the message of an unexpected error thrown by a route', async () => {
-+		const { session } = await createUserAndSession(1, true);
-+		jest.spyOn(ItemModel.prototype, 'loadByName').mockRejectedValueOnce(unexpectedError());
-+
-+		try {
-+			const context = await getApiC(session.id, 'items/root:/test.md:');
-+			expect(context.response.status).toBe(500);
-+			const body = context.response.body as { error: string; code?: string };
-+			expect(body.error).toMatch(unexpectedErrorMessage);
-+			expect(body.code).toBeUndefined();
-+		} finally {
-+			jest.restoreAllMocks();
-+		}
-+	});
- });
-```
-
-**File**: `packages/server/src/routes/api/events.ts` (modified, +2/-1)
-```diff
-@@ -1,4 +1,5 @@
- import { ErrorNotFound } from '../../utils/errors';
-+import { hasOwnProperty } from '@joplin/utils/object';
- import { bodyFields } from '../../utils/requestUtils';
- import Router from '../../utils/Router';
- import { RouteType } from '../../utils/types';
-@@ -19,7 +20,7 @@ const router = new Router(RouteType.Api);
- 
- router.post('api/events', async (_path: SubPath, ctx: AppContext) => {
- 	const event = await bodyFields<Event>(ctx.req);
--	if (!supportedEvents[event.name]) throw new ErrorNotFound(`Unknown event name: ${event.name}`);
-+	if (typeof event.name !== 'string' || !hasOwnProperty(supportedEvents, event.name)) throw new ErrorNotFound('Unknown event name');
- 	await supportedEvents[event.name](ctx);
- });
- 
-```
-
-**File**: `packages/server/src/routes/api/items.test.ts` (modified, +14/-0)
-```diff
-@@ -507,4 +507,18 @@ describe('api/items', () => {
- 		expect(await models().item().loadByJopId(user1.id, '00000000000000000000000000000003')).toBeTruthy();
- 	});
- 
-+	test.each(['x', '0', '1001', '1.5'])('should refuse an invalid delta limit: %s', async (limit) => {
-+		const { session } = await createUserAndSession(1, true);
-+		await expectHttpError(async () => getApi(session.id, 'items/root/delta', { query: { limit } }), ErrorBadRequest.httpCode);
-+	});
-+
-+	test('should accept a valid delta limit', async () => {
-+		const { session } = await createUserAndSession(1, true);
-+		await createNote(session.id, { id: '00000000000000000000000000000001' });
-+		await createNote(session.id, { id: '00000000000000000000000000000002' });
-+		const result = await getApi<{ items: unknown[]; has_more: boolean }>(session.id, 'items/root/delta', { query: { limit: '1' } });
-+		expect(result.items.length).toBe(1);
-+		expect(result.has_more).toBe(true);
-+	});
-+
- });
-```
-
-**File**: `packages/server/src/routes/api/items.ts` (modified, +14/-6)
-```diff
-@@ -5,17 +5,27 @@ import Router from '../../utils/Router';
- import { RouteType } from '../../utils/types';
- import { AppContext } from '../../utils/types';
- import * as fs from 'fs-extra';
--import { ErrorBadRequest, ErrorForbidden, ErrorMethodNotAllowed, ErrorNotFound, ErrorPayloadTooLarge, errorToPlainObject } from '../../utils/errors';
-+import { ErrorBadRequest, ErrorForbidden, ErrorMethodNotAllowed, ErrorNotFound, ErrorPayloadTooLarge, errorToApiOutput, isUnexpectedError } from '../../utils/errors';
- import ItemModel, { ItemSaveOption, SaveFromRawContentItem } from '../../models/ItemModel';
- import { requestPagination } from '../../models/utils/pagination';
- import { AclAction } from '../../models/BaseModel';
- import { safeRemove } from '../../utils/fileUtils';
- import { formatBytes, MB } from '../../utils/bytes';
- import { requestDeltaPagination } from '../../models/ChangeModel/ChangeModel';
- import { hasOwnProperty } from '@joplin/utils/object';
-+import Logger from '@joplin/utils/Logger';
-+import { uuidgen } from '@joplin/lib/uuid';
-+
-+const logger = Logger.create('api/items');
- 
- const router = new Router(RouteType.Api);
- 
-+const itemErrorToApiOutput = (itemName: string, error: unknown) => {
-+	const errorId = uuidgen();
-+	if (isUnexpectedError(error)) logger.error(`Could not process item ${itemName}: Error ID ${errorId}:`, error);
-+	return errorToApiOutput(error, errorId);
-+};
-+
- const batchMaxSize = 1 * MB;
- 
- export async function putItemContents(path: SubPath, ctx: AppContext, isBatch: boolean) {
-@@ -81,7 +91,7 @@ export async function putItemContents(path: SubPath, ctx: AppContext, isBatch: b
- 	const output = await ctx.joplin.models.item().saveFromRawContent(ctx.joplin.owner, items, saveOptions);
- 	for (const [name] of Object.entries(output)) {
- 		if (output[name].item) output[name].item = (await ctx.joplin.models.item().toApiOutput(output[name].item)) as Item;
--		if (output[name].error) output[name].error = errorToPlainObject(output[name].error);
-+		if (output[name].error) output[name].error = itemErrorToApiOutput(name, output[name].error);
- 	}
- 
- 	return output;
-@@ -125,7 +135,7 @@ export async function delItems(path: SubPath, ctx: AppContext, isBatch: boolean)
- 				batchResponse[item.name] = {};
- 			} catch (error) {
- 				batchResponse[item.name] = {
--					error: errorToPlainObject(error),
-+					error: itemErrorToApiOutput(item.name, error),
- 				};
- 			}
- 		}
-@@ -134,9 +144,7 @@ export async function delItems(path: SubPath, ctx: AppContext, isBatch: boolean)
- 			const wasLoaded: boolean = hasOwnProperty(batchResponse, item);
- 			if (!wasLoaded) {
- 				batchResponse[item] = {
--					error: errorToPlainObject(
--						new ErrorNotFound(`Not found: ${item}`),
--					),
-+					error: itemErrorToApiOutput(item, new ErrorNotFound(`Not found: ${item}`)),
- 				};
- 			}
- 		}
-```
-
----
-
-### Incident Patch 3: `926f9bf2` (2026-11-12)
-**Commit Message**: Server: Security: Send at most one alert per hour when the recovery codes are viewed
-
-**File**: `packages/server/src/models/RecoveryCodeModel.ts` (modified, +3/-1)
-```diff
-@@ -6,7 +6,7 @@ import { ErrorForbidden } from '../utils/errors';
- import { isValidMFACode } from '../utils/crypto';
- import recoveryCodesAccessedTemplate from '../views/emails/recoveryCodesAccessedTemplate';
- import { forgotPasswordUrl } from '../utils/urlUtils';
--import { formatDateOnServer } from '../utils/time';
-+import { formatDateOnServer, Hour } from '../utils/time';
- import { DbConnection } from '../db';
- import { NewModelFactoryHandler } from './factory';
- import { Services } from '../services/types';
-@@ -148,6 +148,8 @@ export default class RecoveryCodeModel extends BaseModel<RecoveryCode> {
- 			recipient_name: user.full_name,
- 			recipient_id: userId,
- 			sender_id: EmailSender.NoReply,
-+			// Viewing the codes can be repeated at will, so this limits the alert to one per hour
-+			key: `recoveryCodesAccessed::${Math.floor(Date.now() / Hour)}`,
+ 		const savedItem = await models().item().saveForUser(user1.id, {
+-			name: 'test.txt',
++			name,
+ 			content: Buffer.from('retried'),
  		});
  
- 		return recoveryCodeAccess;
 ```
 
-**File**: `packages/server/src/routes/index/recovery_codes.test.ts` (modified, +3/-3)
+**File**: `packages/server/src/models/ItemModel.ts` (modified, +2/-1)
 ```diff
-@@ -155,7 +155,7 @@ describe('index/recovery_codes', () => {
- 		expect(!!emails.find(e => e.subject === '[Joplin Server] Your multi-factor authentication recovery codes were viewed')).toBe(false);
- 	});
+@@ -1234,7 +1234,7 @@ export default class ItemModel extends BaseModel<Item> {
+ 					// The item was created by a concurrent request - typically a client
+ 					// retrying an upload that is still being processed. Save it as an update
+ 					// so that the retry is not treated as an error.
+-					const existingItem = await this.loadByName(item.owner_id || userId, item.name, { fields: ['id'] });
++					const existingItem = await this.loadByName(item.owner_id || userId, item.name, { fields: ['id', 'jop_share_id'] });
  
--	test('should send a email to user when the recovery codes are accessed, but the first time', async () => {
-+	test('should send a email to user when the recovery codes are accessed, but the first time, at most once per hour', async () => {
- 		const { session, user } = await createUserAndSession(1, undefined, { email: 'user@localhost' });
- 		await models().user().enableMFA(user.id, 'asdf', session.id);
+ 					if (!existingItem) {
+ 						modelLogger.error(`Unique constraint error on item, but the item could not be found: ${JSON.stringify({ id: item.id, name: item.name, jop_id: item.jop_id, owner_id: item.owner_id })}`, error);
+@@ -1244,6 +1244,7 @@ export default class ItemModel extends BaseModel<Item> {
+ 					modelLogger.info(`Item was created by a concurrent request - updating it instead: ${JSON.stringify({ name: item.name, jop_id: item.jop_id, owner_id: item.owner_id })}`);
  
-@@ -175,13 +175,13 @@ describe('index/recovery_codes', () => {
- 		// first time doesn't send an email
- 		await accessRecoveryCodes();
- 
--		// second time upwards should receive and email alert
-+		// second time upwards should receive an email alert, but only one per hour
- 		await accessRecoveryCodes();
- 		await accessRecoveryCodes();
- 		await accessRecoveryCodes();
- 
- 		const emails = await models().email().all();
- 
--		expect(emails.filter(e => e.subject === '[Joplin Server] Your multi-factor authentication recovery codes were viewed').length).toBe(3);
-+		expect(emails.filter(e => e.subject === '[Joplin Server] Your multi-factor authentication recovery codes were viewed').length).toBe(1);
- 	});
- });
+ 					isNew = false;
++					previousItem = { jop_share_id: existingItem.jop_share_id };
+ 					item = await super.save({ ...item, id: existingItem.id }, { ...options, isNew: false });
+ 				} else {
+ 					throw error;
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #17133** (closed): Mobile: Resolves #3838: Add grid view mode for the note list (@huntervcx)
+- **PR #17130** (closed): Desktop, Mobile, Cli: Fixes #17127: Fix moment-like values in anythingToMs (@buurosaaqi-dev)
+- **PR #17129** (2026-11-17): Server: Delete every copy of an item when an account has several items for the same Joplin ID (@laurent22)
 - **PR #17119** (closed): Desktop: Fixes #17089: Keep indentation and code block blank lines in Paste as Markdown (@SahinurDEV)
 - **PR #17117** (closed): Android: Resolves #14254: Support client certificates (mutual TLS) for synchronisation (@kasati111)
 - **PR #17116** (closed): Desktop: Fixes #16834: Keep a note in the notebook it was moved to when the editor saves (@arshil42)
-- **PR #17115** (closed): Desktop: Fixes #17105: Allow printing a conflict note (@arshil42)
-- **PR #17111** (closed): Desktop, Mobile: Fixes #17110: Do not crash on invalid folder icon (@catch-26)
-- **PR #17109** (closed): Desktop, Mobile: Fixes #17110: Do not crash on invalid folder icon (@catch-26)
 
 ---
 
@@ -1412,25 +1082,29 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Doc: Update security threat model
+## X. Tools: Fix random Jest worker SIGSEGV on Apple Silicon CI
 
 **RULE**:
-When implementing operations in `SECURITY.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in laurent22/joplin. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.github/workflows/github-actions-main.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in laurent22/joplin. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `68b1f922`: Doc: Update security threat model. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `1f1fda83`: Tools: Fix random Jest worker SIGSEGV on Apple Silicon CI. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `SECURITY.md`.
+Subsystems managing TypeScript data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/github-actions-main.yml`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```typescript
 // Verified production-grade fix pattern:
-### Can a share recipient modify, delete or move notes in a shared notebook?
-
-Yes, this is intended. A notebook is only shared with someone after the owner has invited them by email and they have accepted the invitation, so share participants are considered trusted with the content of that notebook. They can edit or delete any note in it, or move a note out of it.
-
-Reports that rely on a share participant acting on the content of the shared notebook are therefore not considered vulnerabilities.
+      # When a Jest worker is killed by a signal, the macOS crash report is the
+      # only way to find out whether V8 or a native module crashed.
+      - uses: actions/upload-artifact@v7
+        if: failure() && runner.os == 'macOS'
+        with:
+          name: crash-reports-${{ matrix.os }}
+          path: ~/Library/Logs/DiagnosticReports/node*.ips
+          if-no-files-found: ignore
+          retention-days: 14
 
 ```
 
@@ -1441,7 +1115,7 @@ Reports that rely on a share participant acting on the content of the shared not
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `68b1f922` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `1f1fda83` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

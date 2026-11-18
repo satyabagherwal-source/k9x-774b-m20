@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-18T09:57:33.263Z",
+  "updated_at": "2026-11-18T10:32:39.757Z",
   "stats": {
-    "total_discovered": 5396,
-    "approved_pending_harvest": 5094,
+    "total_discovered": 5397,
+    "approved_pending_harvest": 5095,
     "harvested_count": 0,
     "rejected_count": 302,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 5075,
+      "COMMUNITY_AND_EXPERT": 5076,
       "OFFICIAL_DOCUMENTATION": 176,
       "STANDARDS_AND_SPECIFICATIONS": 109,
       "ENGINEERING_BLOGS": 4,
@@ -116619,6 +116619,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/storybookjs-storybook-learnings.md",
         "fileName": "storybookjs-storybook-learnings.md"
+      }
+    },
+    "SRC-BBCD4D1CBDF1": {
+      "id": "SRC-BBCD4D1CBDF1",
+      "url": "https://github.com/johnfrog76/toolkit/issues/182",
+      "title": "https://github.com/johnfrog76/toolkit/issues/182",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T10:32:39.757Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/laurent22-joplin-learnings.md",
+        "fileName": "laurent22-joplin-learnings.md"
       }
     }
   }
