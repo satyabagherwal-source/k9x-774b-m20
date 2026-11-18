@@ -11121,3 +11121,6 @@ Every entry in this ledger must capture:
 | `learn-huggingface-qwen-qwen3-8-flash-next` | `https://huggingface.co/Qwen/Qwen3.8-Flash-Next` | `hf-qwen-qw` | Multi-dimensional audit evidence | 2026-11-18T20:14:17.570Z |
 | `learn-github-malisper-pgrust` | `https://github.com/malisper/pgrust` | `df8a9bb4` | Multi-dimensional audit evidence | 2026-11-18T20:14:29.483Z |
 | `learn-github-bitterbot-ai-bitterbot-desktop` | `https://github.com/Bitterbot-AI/bitterbot-desktop` | `9ef0e544` | Multi-dimensional audit evidence | 2026-11-18T20:14:32.165Z |
+| `learn-huggingface-deepseek-ai-deepseek-v4-pro` | `https://huggingface.co/deepseek-ai/DeepSeek-V4-Pro` | `hf-deepsee` | Multi-dimensional audit evidence | 2026-11-18T20:37:34.790Z |
+| `learn-github-aome510-spotify-player` | `https://github.com/aome510/spotify-player` | `8d17edec` | Multi-dimensional audit evidence | 2026-11-18T20:37:37.916Z |
+| `learn-github-typedb-typedb` | `https://github.com/typedb/typedb` | `d20b8787` | Multi-dimensional audit evidence | 2026-11-18T20:37:54.767Z |

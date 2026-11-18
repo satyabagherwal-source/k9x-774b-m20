@@ -885,8 +885,8 @@
     "sourceUrl": "https://huggingface.co/deepseek-ai/DeepSeek-V4-Pro",
     "sourceVersion": "hf-deepseek-ai-deepseek-v4-pro",
     "license": "Open-Source",
-    "contentHash": "0a5da3600d6f3df933a3008ce9624754965d0d993ede8a7becb21aafb22814c5",
-    "lastHarvestedAt": "2026-11-14T02:06:11.258Z",
+    "contentHash": "d99a261f436e5b77354862918b8cfc0a61b20e09cd402fb6cc1e3700a27b2ab4",
+    "lastHarvestedAt": "2026-11-18T20:37:34.790Z",
     "learningId": "learn-huggingface-deepseek-ai-deepseek-v4-pro"
   },
   "hf-tongyi-mai-z-image-turbo": {
@@ -4323,10 +4323,10 @@
     "repository": "typedb/typedb",
     "platform": "github",
     "sourceUrl": "https://github.com/typedb/typedb",
-    "sourceVersion": "fb7c1cce",
+    "sourceVersion": "d20b8787",
     "license": "MPL-2.0",
-    "contentHash": "23f6d4abfb272e14f679f8f7cd1a639711dca060cac048e747f1d643a6bce41e",
-    "lastHarvestedAt": "2026-11-17T04:31:29.798Z",
+    "contentHash": "7417c405d0711e048a72602e710c7f760e9554ddb472119926bbd1546aa0002e",
+    "lastHarvestedAt": "2026-11-18T20:37:54.767Z",
     "learningId": "learn-github-typedb-typedb"
   },
   "mfontanini-presenterm": {
@@ -4843,10 +4843,10 @@
     "repository": "aome510/spotify-player",
     "platform": "github",
     "sourceUrl": "https://github.com/aome510/spotify-player",
-    "sourceVersion": "966d84a6",
+    "sourceVersion": "8d17edec",
     "license": "MIT",
-    "contentHash": "9a0e60b54f70122244e7f878de772fef9016604c4163a313414f24009440bc63",
-    "lastHarvestedAt": "2026-11-06T21:06:39.893Z",
+    "contentHash": "6bd64b79da60a67e3711f30703812c0777a4de53741ebf4108340dc537b5516d",
+    "lastHarvestedAt": "2026-11-18T20:37:37.916Z",
     "learningId": "learn-github-aome510-spotify-player"
   },
   "react-native-device-info-react-native-device-info": {

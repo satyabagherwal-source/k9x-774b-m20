@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-18T20:14:35.911Z",
+  "updated_at": "2026-11-18T20:38:00.581Z",
   "stats": {
-    "total_discovered": 5651,
-    "approved_pending_harvest": 5344,
+    "total_discovered": 5667,
+    "approved_pending_harvest": 5358,
     "harvested_count": 0,
-    "rejected_count": 307,
+    "rejected_count": 309,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 5324,
+      "COMMUNITY_AND_EXPERT": 5340,
       "OFFICIAL_DOCUMENTATION": 180,
       "STANDARDS_AND_SPECIFICATIONS": 111,
       "ENGINEERING_BLOGS": 4,
@@ -122194,6 +122194,344 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/malisper-pgrust-learnings.md",
         "fileName": "malisper-pgrust-learnings.md"
+      }
+    },
+    "SRC-8AC83830E262": {
+      "id": "SRC-8AC83830E262",
+      "url": "https://github.com/aome510/spotify-player",
+      "title": "https://github.com/aome510/spotify-player",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T20:37:58.288Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aome510-spotify-player-learnings.md",
+        "fileName": "aome510-spotify-player-learnings.md"
+      }
+    },
+    "SRC-85951D64752E": {
+      "id": "SRC-85951D64752E",
+      "url": "https://github.com/mikez/spotify-folders",
+      "title": "https://github.com/mikez/spotify-folders",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T20:37:58.347Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aome510-spotify-player-learnings.md",
+        "fileName": "aome510-spotify-player-learnings.md"
+      }
+    },
+    "SRC-E42295FC681C": {
+      "id": "SRC-E42295FC681C",
+      "url": "https://github.com/aome510/spotify-player/issues/109",
+      "title": "https://github.com/aome510/spotify-player/issues/109",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T20:37:58.405Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aome510-spotify-player-learnings.md",
+        "fileName": "aome510-spotify-player-learnings.md"
+      }
+    },
+    "SRC-88C363B61422": {
+      "id": "SRC-88C363B61422",
+      "url": "https://github.com/user-attachments/files/33934809/spotify-player-26-10-25-11-16.log",
+      "title": "https://github.com/user-attachments/files/33934809/spotify-player-26-10-25-11-16.log",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T20:37:58.460Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aome510-spotify-player-learnings.md",
+        "fileName": "aome510-spotify-player-learnings.md"
+      }
+    },
+    "SRC-17EA08AA942D": {
+      "id": "SRC-17EA08AA942D",
+      "url": "https://github.com/aome510/spotify-player?tab=readme-ov-file",
+      "title": "https://github.com/aome510/spotify-player?tab=readme-ov-file",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T20:37:58.527Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aome510-spotify-player-learnings.md",
+        "fileName": "aome510-spotify-player-learnings.md"
+      }
+    },
+    "SRC-E5DCBFECB30E": {
+      "id": "SRC-E5DCBFECB30E",
+      "url": "https://github.com/user-attachments/assets/359fba39-814f-4606-9f9b-306f33fbb002",
+      "title": "https://github.com/user-attachments/assets/359fba39-814f-4606-9f9b-306f33fbb002",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T20:37:58.583Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aome510-spotify-player-learnings.md",
+        "fileName": "aome510-spotify-player-learnings.md"
+      }
+    },
+    "SRC-64A1988BC50A": {
+      "id": "SRC-64A1988BC50A",
+      "url": "https://developer.spotify.com/documentation/web-api/tutorials/code-pkce-flow",
+      "title": "https://developer.spotify.com/documentation/web-api/tutorials/code-pkce-flow",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T20:37:58.639Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aome510-spotify-player-learnings.md",
+        "fileName": "aome510-spotify-player-learnings.md"
+      }
+    },
+    "SRC-F2FBA94A3EBA": {
+      "id": "SRC-F2FBA94A3EBA",
+      "url": "http://127.0.0.1:8989/login%60",
+      "title": "http://127.0.0.1:8989/login%60",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-18T20:37:58.695Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aome510-spotify-player-learnings.md",
+        "fileName": "aome510-spotify-player-learnings.md"
+      }
+    },
+    "SRC-EDA5DED5D796": {
+      "id": "SRC-EDA5DED5D796",
+      "url": "http://127.0.0.1:8989/ncspot_login%60",
+      "title": "http://127.0.0.1:8989/ncspot_login%60",
+      "status": "REJECTED_INSECURE_PROTOCOL_NON_HTTPS",
+      "rejection_reasons": [
+        "INSECURE_PROTOCOL_NON_HTTPS"
+      ],
+      "category": "COMMUNITY_AND_EXPERT",
+      "discovered_at": "2026-11-18T20:37:58.750Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aome510-spotify-player-learnings.md",
+        "fileName": "aome510-spotify-player-learnings.md"
+      }
+    },
+    "SRC-F7C485B8B41A": {
+      "id": "SRC-F7C485B8B41A",
+      "url": "https://developer.spotify.com/documentation/web-api/concepts/quota-modes",
+      "title": "https://developer.spotify.com/documentation/web-api/concepts/quota-modes",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T20:37:58.806Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aome510-spotify-player-learnings.md",
+        "fileName": "aome510-spotify-player-learnings.md"
+      }
+    },
+    "SRC-179C386938D2": {
+      "id": "SRC-179C386938D2",
+      "url": "https://developer.spotify.com/blog/2024-11-27-changes-to-the-web-api",
+      "title": "https://developer.spotify.com/blog/2024-11-27-changes-to-the-web-api",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T20:37:58.867Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aome510-spotify-player-learnings.md",
+        "fileName": "aome510-spotify-player-learnings.md"
+      }
+    },
+    "SRC-7FF887BB9F3B": {
+      "id": "SRC-7FF887BB9F3B",
+      "url": "https://github.com/hrkfdn/ncspot",
+      "title": "https://github.com/hrkfdn/ncspot",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T20:37:58.924Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/aome510-spotify-player-learnings.md",
+        "fileName": "aome510-spotify-player-learnings.md"
+      }
+    },
+    "SRC-F5EA32BE71EF": {
+      "id": "SRC-F5EA32BE71EF",
+      "url": "https://github.com/typedb/typedb-protocol?rev=dd606e1063d7c83781b5e04c1d348b824d3a7428",
+      "title": "https://github.com/typedb/typedb-protocol?rev=dd606e1063d7c83781b5e04c1d348b824d3a7428",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T20:38:00.355Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/typedb-typedb-learnings.md",
+        "fileName": "typedb-typedb-learnings.md"
+      }
+    },
+    "SRC-E287C331028F": {
+      "id": "SRC-E287C331028F",
+      "url": "https://github.com/typedb/typeql?rev=4c37fe7d",
+      "title": "https://github.com/typedb/typeql?rev=4c37fe7d",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T20:38:00.431Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/typedb-typedb-learnings.md",
+        "fileName": "typedb-typedb-learnings.md"
+      }
+    },
+    "SRC-B328B9B6FBD3": {
+      "id": "SRC-B328B9B6FBD3",
+      "url": "https://github.com/typedb/bazel-distribution",
+      "title": "https://github.com/typedb/bazel-distribution",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T20:38:00.530Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/typedb-typedb-learnings.md",
+        "fileName": "typedb-typedb-learnings.md"
+      }
+    },
+    "SRC-FFE876387EB2": {
+      "id": "SRC-FFE876387EB2",
+      "url": "https://github.com/typedb/dependencies",
+      "title": "https://github.com/typedb/dependencies",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T20:38:00.581Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/typedb-typedb-learnings.md",
+        "fileName": "typedb-typedb-learnings.md"
       }
     }
   }

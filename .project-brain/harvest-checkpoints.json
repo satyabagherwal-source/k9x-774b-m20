@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-18T20:14:32.173Z",
+  "last_updated": "2026-11-18T20:37:54.777Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -1145,14 +1145,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-deepseek-ai-deepseek-v4-pro",
-      "content_hash": "0a5da3600d6f3df933a3008ce9624754965d0d993ede8a7becb21aafb22814c5",
-      "verified_at": "2026-11-14T02:06:11.266Z",
+      "content_hash": "d99a261f436e5b77354862918b8cfc0a61b20e09cd402fb6cc1e3700a27b2ab4",
+      "verified_at": "2026-11-18T20:37:34.801Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-14T02:06:11.266Z"
+      "last_updated": "2026-11-18T20:37:34.801Z"
     },
     "Tongyi-MAI/Z-Image-Turbo": {
       "repository": "Tongyi-MAI/Z-Image-Turbo",
@@ -6606,14 +6606,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-typedb-typedb",
-      "content_hash": "23f6d4abfb272e14f679f8f7cd1a639711dca060cac048e747f1d643a6bce41e",
-      "verified_at": "2026-11-17T04:31:29.805Z",
+      "content_hash": "7417c405d0711e048a72602e710c7f760e9554ddb472119926bbd1546aa0002e",
+      "verified_at": "2026-11-18T20:37:54.777Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T04:31:29.805Z"
+      "last_updated": "2026-11-18T20:37:54.777Z"
     },
     "mfontanini/presenterm": {
       "repository": "mfontanini/presenterm",
@@ -7386,14 +7386,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-aome510-spotify-player",
-      "content_hash": "9a0e60b54f70122244e7f878de772fef9016604c4163a313414f24009440bc63",
-      "verified_at": "2026-11-06T21:06:39.903Z",
+      "content_hash": "6bd64b79da60a67e3711f30703812c0777a4de53741ebf4108340dc537b5516d",
+      "verified_at": "2026-11-18T20:37:37.926Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-06T21:06:39.903Z"
+      "last_updated": "2026-11-18T20:37:37.926Z"
     },
     "react-native-device-info/react-native-device-info": {
       "repository": "react-native-device-info/react-native-device-info",

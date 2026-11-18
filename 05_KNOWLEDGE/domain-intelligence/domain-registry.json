@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-18T20:14:36.893Z",
-  "total_records": 1901,
+  "last_updated": "2026-11-18T20:38:01.028Z",
+  "total_records": 1903,
   "domains": {
     "A": {
       "total": 13,
@@ -927,7 +927,7 @@
       ]
     },
     "G": {
-      "total": 335,
+      "total": 337,
       "record_ids": [
         "DOM-G-D1C40B63",
         "domain_intelligence-architecture-intelligence-zulip-zulip-learnings-core-invariants",
@@ -1263,7 +1263,9 @@
         "domain_intelligence-architecture-intelligence-trailbaseio-trailbase-core-invariants",
         "domain_intelligence-architecture-intelligence-trailbaseio-trailbase-learnings-core-invariants",
         "domain_intelligence-architecture-intelligence-malisper-pgrust-core-invariants",
-        "domain_intelligence-architecture-intelligence-malisper-pgrust-learnings-core-invariants"
+        "domain_intelligence-architecture-intelligence-malisper-pgrust-learnings-core-invariants",
+        "domain_intelligence-architecture-intelligence-aome510-spotify-player-core-invariants",
+        "domain_intelligence-architecture-intelligence-aome510-spotify-player-learnings-core-invariants"
       ]
     },
     "H": {
@@ -12132,8 +12134,8 @@
       "title": "Research & Knowledge Intelligence: deepseek-ai/DeepSeek-V4-Pro Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-deepseek-ai-deepseek-v4-pro-research-knowledge-intelligence-deepseek-ai-deeps.md",
       "repository": "deepseek-ai/DeepSeek-V4-Pro",
-      "content_hash": "65c8d04e8af302adc6baeee65857a529f4efe94b74739fbf8fb3c357e7bbce13",
-      "created_at": "2026-11-14T02:06:11.406Z"
+      "content_hash": "26f6e4de7ab65477fa0a80f48fab362aecf954adea25e4c26b1c9e8296e1471b",
+      "created_at": "2026-11-18T20:37:35.031Z"
     },
     "domain_intelligence-deployment-operations-intelligence-graphprotocol-graph-node-core-invariants": {
       "record_id": "domain_intelligence-deployment-operations-intelligence-graphprotocol-graph-node-core-invariants",
@@ -12219,8 +12221,8 @@
       "title": "Research & Knowledge Intelligence: hf-deepseek-ai-deepseek-v4-pro-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-deepseek-ai-deepseek-v4-pro-learnings-research-knowledge-intelligence-hf-deep.md",
       "repository": "hf-deepseek-ai-deepseek-v4-pro-learnings",
-      "content_hash": "be3ec0e1bbd9dbda57c5ab051097424c87ba0721701e628c0f66d7f2699555c6",
-      "created_at": "2026-11-14T02:06:55.826Z"
+      "content_hash": "e43bde4fcd3ffbbe08ea98d57ee9b88c407514e0135a264f30af67ddb38c1510",
+      "created_at": "2026-11-18T20:38:00.001Z"
     },
     "domain_intelligence-architecture-intelligence-goharbor-harbor-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-goharbor-harbor-learnings-core-invariants",
@@ -14363,8 +14365,8 @@
       "title": "Technical Construction Intelligence: typedb/typedb Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-typedb-typedb-technical-construction-intelligence-typedb-typedb-core-invariants.md",
       "repository": "typedb/typedb",
-      "content_hash": "1043dd44d4e12c10349ee7cf6beacd2c86190356afdee0e6f54ce04ffac24036",
-      "created_at": "2026-11-17T04:31:30.094Z"
+      "content_hash": "3bbcc55c11223da163c6b206b30da37747a9a61df90ede52271c4124d7318304",
+      "created_at": "2026-11-18T20:37:55.190Z"
     },
     "DOM-D-6D95F34C": {
       "record_id": "DOM-D-6D95F34C",
@@ -14423,8 +14425,8 @@
       "title": "Technical Construction Intelligence: typedb-typedb-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-typedb-typedb-learnings-technical-construction-intelligence-typedb-typedb-learni.md",
       "repository": "typedb-typedb-learnings",
-      "content_hash": "db77a3bebe25158fbf0bc6480301a775a79b5ba87e8485ea41c52604b00a5212",
-      "created_at": "2026-11-17T04:31:34.312Z"
+      "content_hash": "e90c4f754bb33e2e8e4f5044617078f1612ac7a4af67a44792781dcf153f11bd",
+      "created_at": "2026-11-18T20:38:01.028Z"
     },
     "domain_intelligence-technical-construction-intelligence-wix-react-native-ui-lib-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-wix-react-native-ui-lib-core-invariants",
@@ -31830,6 +31832,24 @@
       "repository": "malisper-pgrust-learnings",
       "content_hash": "751f8951e455f09c97d885f6532818a418c5eeed54c763f69b7e720e3b55ac3b",
       "created_at": "2026-11-18T20:14:36.246Z"
+    },
+    "domain_intelligence-architecture-intelligence-aome510-spotify-player-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-aome510-spotify-player-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: aome510/spotify-player Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-aome510-spotify-player-architecture-intelligence-aome510-spotify-player-core-inv.md",
+      "repository": "aome510/spotify-player",
+      "content_hash": "ff515ac8d836f6814c777d15c8e4f21b88b98b3a12e6845029662ed876e7a73c",
+      "created_at": "2026-11-18T20:37:38.365Z"
+    },
+    "domain_intelligence-architecture-intelligence-aome510-spotify-player-learnings-core-invariants": {
+      "record_id": "domain_intelligence-architecture-intelligence-aome510-spotify-player-learnings-core-invariants",
+      "domain_letter": "G",
+      "title": "Architecture Intelligence: aome510-spotify-player-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-aome510-spotify-player-learnings-architecture-intelligence-aome510-spotify-playe.md",
+      "repository": "aome510-spotify-player-learnings",
+      "content_hash": "0bfbcf338196e054f6b9437220535effda6f916dbd0530bec42f600b22b292e3",
+      "created_at": "2026-11-18T20:37:59.380Z"
     }
   }
 }

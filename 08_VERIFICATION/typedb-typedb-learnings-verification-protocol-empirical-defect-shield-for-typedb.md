@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-17T04:31:34.101Z",
+  "timestamp": "2026-11-18T20:38:00.699Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-typedb-typedb-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [typedb-typedb-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-17T04:31:34.101Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-18T20:38:00.699Z`  
 > **Learning ID**: `LEARN-EVO-typedb-typedb-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/typedb-typedb-learnings.md`  
 > **Source**: github ([https://github.com/typedb/typedb](https://github.com/typedb/typedb))  
-> **Source Version**: `fb7c1cce`  
+> **Source Version**: `d20b8787`  
 > **License**: MPL-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-17T04:31:29.192Z  
+> **Timestamp**: 2026-11-18T20:37:53.479Z  
 > **Learning ID**: `learn-github-typedb-typedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/typedb-typedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/typedb/typedb](https://github.com/typedb/typedb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T04:31:29.187Z  
+> **Harvest Timestamp**: 2026-11-18T20:37:53.471Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: TypeDB: Built for systems, not records
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 4516 stars
+- **Stars / Engagement**: 4518 stars
 
 ---
 
@@ -1852,11 +1852,11 @@ impl UserOperator for LocalUserOperator {
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #8071** (2026-11-16): **Prepare release 3.15.0**
-  *Symptoms*: ## Product change and motivation Bump version & prepare release notes 
+- **Issue #8074** (2026-11-18): **Sync cargo files**
+  *Symptoms*: Sync cargo files
 
-- **Issue #8067** (2026-11-13): **Prepare for release 3.15.0-rc1**
-  *Symptoms*: 
+- **Issue #8073** (2026-11-18): **Simplify workspace referencing**
+  *Symptoms*: ## Product change and motivation  Each TypeDB dependency's commit or tag is now written once, in its `git_override` in `MODULE.bazel`.   Before, refs were duplicated in `workspace_refs`' commit and tag dicts, with commented-out alternatives for switching between the two.   ## Implementation  Reordered entries to follow the shape of `MODULE.bazel` files from other repositories (the difference was confusing).   Changed `workspace_refs` from ``` workspace_refs(     name = "typedb_workspace_refs",     workspace_commit_dict = { #        "typedb_protocol+": "99e080bd0d599ae235607da4e4e69787e681cbe1", #        "typeql+": "d07e949229b2551d59127d3bc3300cd38bdf33ff",     },     workspace_tag_dict = {         "typedb_protocol+": "3.15.0",         "typeql+": "3.15.0",     }, ) ```  to: ``` workspace_refs(     name = "typedb_workspace_refs",     module_file = "//:MODULE.bazel", ) ```  
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -1873,20 +1873,334 @@ impl UserOperator for LocalUserOperator {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `fb7c1cce` (2026-11-16)
-**Commit Message**: Prepare release 3.15.0 (#8071)
+### Incident Patch 1: `d20b8787` (2026-11-18)
+**Commit Message**: Sync cargo files (#8074)
+
+Sync cargo files
+
+**File**: `Cargo.lock` (modified, +11/-11)
+```diff
+@@ -1999,7 +1999,7 @@ dependencies = [
+  "bstr",
+  "log",
+  "regex-automata",
+- "regex-syntax 0.8.11",
++ "regex-syntax 0.8.12",
+ ]
+ 
+ [[package]]
+@@ -4373,25 +4373,25 @@ dependencies = [
+ 
+ [[package]]
+ name = "regex"
+-version = "1.13.1"
++version = "1.13.2"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "f020237b6c8eed93db2e2cb53c00c60a8e1bc73da7d073199a1180401450218d"
++checksum = "9807af0e638c12e753aa1b4e601791bf2a8f71274023c8bbeec12fc149950857"
+ dependencies = [
+  "aho-corasick",
+  "memchr",
+  "regex-automata",
+- "regex-syntax 0.8.11",
++ "regex-syntax 0.8.12",
+ ]
+ 
+ [[package]]
+ name = "regex-automata"
+-version = "0.4.18"
++version = "0.4.19"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "ad8553b9b26413251cbf30e620595c7a41b3887f03da04579c0e6b0d6a06b4b2"
++checksum = "41d60ef07df457506a0a1a2073112eb4aae5733dbd2813c3da77d1b0fd441158"
+ dependencies = [
+  "aho-corasick",
+  "memchr",
+- "regex-syntax 0.8.11",
++ "regex-syntax 0.8.12",
+ ]
+ 
+ [[package]]
+@@ -4402,9 +4402,9 @@ checksum = "f162c6dd7b008981e4d40210aca20b4bd0f9b60ca9271061b07f78537722f2e1"
+ 
+ [[package]]
+ name = "regex-syntax"
+-version = "0.8.11"
++version = "0.8.12"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "d6f6ff9a378485b298a5286656da665ba74413d36db0979633275d2e708145d4"
++checksum = "d902046e6a28a1e4c3cab97258a0ce11e994903f01c2d97a9447a0b3df85f4f6"
+ 
+ [[package]]
+ name = "remove_dir_all"
+@@ -5214,9 +5214,9 @@ checksum = "0c790de23124f9ab44544d7ac05d60440adc586479ce501c1d6d7da3cd8c9cf5"
+ 
+ [[package]]
+ name = "smallvec"
+-version = "1.16.5"
++version = "1.16.6"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "149309498a5f7334b12ddae0cad8aba81ce785fe91755068867e017cf98fee46"
++checksum = "3244542535d5de959d90ec55d1b5ff0fd2bb7b1310223907d5f11932847f7b59"
+ 
+ [[package]]
+ name = "smart-default"
+```
+
+**File**: `Cargo.toml` (modified, +2/-2)
+```diff
+@@ -371,7 +371,7 @@
+ 		[workspace.dependencies.regex]
+ 			default-features = false
+ 			features = ["default", "perf", "perf-backtrack", "perf-cache", "perf-dfa", "perf-inline", "perf-literal", "perf-onepass", "std", "unicode", "unicode-age", "unicode-bool", "unicode-case", "unicode-gencat", "unicode-perl", "unicode-script", "unicode-segment"]
+-			version = "1.13.1"
++			version = "1.13.2"
+ 
+ 		[workspace.dependencies.resource]
+ 			default-features = false
+@@ -446,7 +446,7 @@
+ 		[workspace.dependencies.smallvec]
+ 			default-features = false
+ 			features = ["const_generics", "const_new"]
+-			version = "1.16.5"
++			version = "1.16.6"
+ 
+ 		[workspace.dependencies.smol]
+ 			default-features = false
+```
+
+---
+
+### Incident Patch 2: `ff881372` (2026-11-18)
+**Commit Message**: Simplify workspace referencing (#8073)
 
 ## Product change and motivation
-Bump version & prepare release notes
 
-**File**: `Cargo.lock` (modified, +2/-2)
+Each TypeDB dependency's commit or tag is now written once, in its
+`git_override` in `MODULE.bazel`.
+
+Before, refs were duplicated in `workspace_refs`' commit and tag dicts,
+with commented-out alternatives for switching between the two.
+
+## Implementation
+
+Reordered entries to follow the shape of `MODULE.bazel` files from other
+repositories (the difference was confusing).
+
+Changed `workspace_refs` from
+```
+workspace_refs(
+    name = "typedb_workspace_refs",
+    workspace_commit_dict = {
+#        "typedb_protocol+": "99e080bd0d599ae235607da4e4e69787e681cbe1",
+#        "typeql+": "d07e949229b2551d59127d3bc3300cd38bdf33ff",
+    },
+    workspace_tag_dict = {
+        "typedb_protocol+": "3.15.0",
+        "typeql+": "3.15.0",
+    },
+)
+```
+
+to:
+```
+workspace_refs(
+    name = "typedb_workspace_refs",
+    module_file = "//:MODULE.bazel",
+)
+```
+
+**File**: `Cargo.lock` (modified, +34/-34)
 ```diff
+@@ -401,7 +401,7 @@ checksum = "82f6aeea286b8eb4dd3431a1be1b59d290ace00f5bfd8e2a159bc2a05e2c1667"
+ dependencies = [
+  "proc-macro2",
+  "quote",
+- "syn 3.0.9",
++ "syn 3.0.10",
+ ]
+ 
+ [[package]]
+@@ -867,9 +867,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "clap"
+-version = "4.6.7"
++version = "4.6.8"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "aa8876b300ab35ba921adea3dfd70157a46249b33f95c9084ae5709785478946"
++checksum = "ac230478587d0269d8d6998b82ae69ea51509d55df66d9e92edd1f986904cd4a"
+ dependencies = [
+  "clap_builder",
+  "clap_derive",
+@@ -890,14 +890,14 @@ dependencies = [
+ 
+ [[package]]
+ name = "clap_derive"
+-version = "4.6.7"
++version = "4.6.8"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "f9c751b79415d4e559e3d1fcf128e09e720eb673a06d26cf6f392d37d75b66e0"
++checksum = "895c9d8d2ac2dd8b8a29f3724a14e72aaaa6debcf8c38c82f97305c6a172767a"
+ dependencies = [
+  "heck 0.5.0",
+  "proc-macro2",
+  "quote",
+- "syn 3.0.9",
++ "syn 3.0.10",
+ ]
+ 
+ [[package]]
+@@ -1267,7 +1267,7 @@ dependencies = [
+  "proc-macro2",
+  "quote",
+  "strsim",
+- "syn 3.0.9",
++ "syn 3.0.10",
+ ]
+ 
+ [[package]]
+@@ -1278,7 +1278,7 @@ checksum = "2ac7135c3ef02b2f7833bbeb1be5ba7f966dcde8a87c6b87f65a778d71a02785"
+ dependencies = [
+  "darling_core",
+  "quote",
+- "syn 3.0.9",
++ "syn 3.0.10",
+ ]
+ 
+ [[package]]
+@@ -1361,7 +1361,7 @@ dependencies = [
+  "defmt-parser",
+  "proc-macro2",
+  "quote",
+- "syn 3.0.9",
++ "syn 3.0.10",
+ ]
+ 
+ [[package]]
+@@ -1454,7 +1454,7 @@ checksum = "c6232dd377dcc64799954cbd3a9bb882e9cdc1308ccd87b1c098f1fb2eaf82a8"
+ dependencies = [
+  "proc-macro2",
+  "quote",
+- "syn 3.0.9",
++ "syn 3.0.10",
+ ]
+ 
+ [[package]]
+@@ -1879,7 +1879,7 @@ checksum = "9fb9654ba8355388abeb8dcb4fc62f511300867002afc858860463bdd9fe0c44"
+ dependencies = [
+  "proc-macro2",
+  "quote",
+- "syn 3.0.9",
++ "syn 3.0.10",
+ ]
+ 
+ [[package]]
+@@ -3742,7 +3742,7 @@ dependencies = [
+  "pest_meta",
+  "proc-macro2",
+  "quote",
+- "syn 3.0.9",
++ "syn 3.0.10",
+ ]
+ 
+ [[package]]
+@@ -4368,7 +4368,7 @@ checksum = "92ecd8964f8453721699a1ed72037b0db49ce2f5a5138486ee89bed6f67cdf3a"
+ dependencies = [
+  "proc-macro2",
+  "quote",
+- "syn 3.0.9",
++ "syn 3.0.10",
+ ]
+ 
+ [[package]]
+@@ -4498,9 +4498,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "rpassword"
+-version = "7.5.4"
++version = "7.5.5"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "2da316a15f47e3d053de9cb2c439650bd8fa4aaeb9365f2e5f27f492ff73c196"
++checksum = "1fa2c5d9304b618df61ff17f3d3485c6e1854a3d94902a49abbb8d43dfbe0464"
+ dependencies = [
+  "libc",
+  "rtoolbox",
+@@ -4955,7 +4955,7 @@ checksum = "e7a5d71263a5a7d47b41f6b3f06ba276f10cc18b0931f1799f710578e2309348"
+ dependencies = [
+  "proc-macro2",
+  "quote",
+- "syn 3.0.9",
++ "syn 3.0.10",
+ ]
+ 
+ [[package]]
+@@ -5024,7 +5024,7 @@ dependencies = [
+  "darling",
+  "proc-macro2",
+  "quote",
+- "syn 3.0.9",
++ "syn 3.0.10",
+ ]
+ 
+ [[package]]
+@@ -5214,9 +5214,9 @@ checksum = "0c790de23124f9ab44544d7ac05d60440adc586479ce501c1d6d7da3cd8c9cf5"
+ 
+ [[package]]
+ name = "smallvec"
+-version = "1.16.4"
++version = "1.16.5"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "d0d5d4b1981b8bbbb7aed204cae5726d683d5d6ac7e74ec54122ea28f315e7c8"
++checksum = "149309498a5f7334b12ddae0cad8aba81ce785fe91755068867e017cf98fee46"
+ 
+ [[package]]
+ name = "smart-default"
+@@ -5464,9 +5464,9 @@ dependencies = [
+ 
+ [[package]]
+ name = "syn"
+-version = "3.0.9"
++version = "3.0.10"
+ source = "registry+https://github.com/rust-lang/crates.io-index"
+-checksum = "d78c8dee4c7bf0e14673097256fed6142ce9d3b85a408189d07482442145823b"
++checksum = "4ae9ccbea3a7b0b09443036490c8f34a8b1b760fd345e5c0dae0aac718faea79"
+ dependencies = [
+  "proc-macro2",
+  "quote",
+@@ -5490,7 +5490,7 @@ checksum = "901704edd0dfe137f1987838ee4f259e4e063c31371bdb423f7ae38ec6f77f02"
+ dependencies = [
+  "proc-macro2",
+  "quote",
+- "syn 3.0.9",
++ "syn 3.0.10",
+ ]
+ 
+ [[package]]
+@@ -5736,7 +5736,7 @@ checksum = "fe5197923287db20a58125f0bc85c062f7f2c892de97b18c356f9efb14b28524"
+ dependencies = [
+  "proc-macro2",
+  "quote",
+- "syn 3.0.9",
++ "syn 3.0.10",
+ ]
+ 
+ [[package]]
+@@ -5829,7 +5829,7 @@ checksum = "78773a2a397f451582ce068015985c33193cf6dea8b74d2a639fe457b2f07b0e"
+ dependencies = [
+  "proc-macro2",
+  "quote",
+- "syn 3.0.9",
++ "syn 3.0.10",
+ ]
+ 
+ [[package]]
 @@ -6158,7 +6158,7 @@ dependencies = [
  [[package]]
  name = "typedb-protocol"
  version = "0.0.0"
--source = "git+https://github.com/typedb/typedb-protocol?tag=3.15.0-rc0#b84ca107f9d6d8f22d88a6d9975b6ee94c5ac7fa"
-+source = "git+https://github.com/typedb/typedb-protocol?tag=3.15.0#9cafb3315ce97ca936fa2e97e768ed74618817b3"
+-source = "git+https://github.com/typedb/typedb-protocol?tag=3.15.0#9cafb3315ce97ca936fa2e97e768ed74618817b3"
++source = "git+https://github.com/typedb/typedb-protocol?rev=dd606e1063d7c83781b5e04c1d348b824d3a7428#dd606e1063d7c83781b5e04c1d348b824d3a7428"
  dependencies = [
   "prost",
   "tonic",
@@ -1894,307 +2208,201 @@ Bump version & prepare release notes
  [[package]]
  name = "typeql"
  version = "0.0.0"
--source = "git+https://github.com/typedb/typeql?tag=3.15.0-rc0#c41d01cc167dcc864b9c1e907feafc52d39cda17"
-+source = "git+https://github.com/typedb/typeql?tag=3.15.0#7de03ede9d849a793603d9d4406a6268a01ddd67"
- dependencies = [
-  "chrono",
-  "itertools 0.14.0",
+-source = "git+https://github.com/typedb/typeql?tag=3.15.0#7de03ede9d849a793603d9d4406a6268a01ddd67"
++source = "git+https://github.com/typedb/typeql?rev=4c37fe7d
 ```
 
-**File**: `Cargo.toml` (modified, +2/-2)
+**File**: `Cargo.toml` (modified, +7/-7)
 ```diff
+@@ -151,7 +151,7 @@
+ 		[workspace.dependencies.clap]
+ 			default-features = false
+ 			features = ["color", "default", "derive", "error-context", "help", "std", "suggestions", "usage", "wrap_help"]
+-			version = "4.6.7"
++			version = "4.6.8"
+ 
+ 		[workspace.dependencies.compiler]
+ 			default-features = false
+@@ -386,7 +386,7 @@
+ 		[workspace.dependencies.rpassword]
+ 			default-features = false
+ 			features = []
+-			version = "7.5.4"
++			version = "7.5.5"
+ 
+ 		[workspace.dependencies.rustls-pemfile]
+ 			default-features = false
+@@ -446,7 +446,7 @@
+ 		[workspace.dependencies.smallvec]
+ 			default-features = false
+ 			features = ["const_generics", "const_new"]
+-			version = "1.16.4"
++			version = "1.16.5"
+ 
+ 		[workspace.dependencies.smol]
+ 			default-features = false
 @@ -582,13 +582,13 @@
  			default-features = false
  			features = []
  			git = "https://github.com/typedb/typedb-protocol"
--			tag = "3.15.0-rc0"
-+			tag = "3.15.0"
+-			tag = "3.15.0"
++			rev = "dd606e1063d7c83781b5e04c1d348b824d3a7428"
  
  		[workspace.dependencies.typeql]
  			default-features = false
  			features = []
  			git = "https://github.com/typedb/typeql"
--			tag = "3.15.0-rc0"
-+			tag = "3.15.0"
+-			tag = "3.15.0"
++			rev = "4c37fe7d62a59e54623e5b554f0e11f9d45aa610"
  
  		[workspace.dependencies.unicase]
  			default-features = false
+@@ -608,7 +608,7 @@
+ 		[workspace.dependencies.uuid]
+ 			default-features = false
+ 			features = ["default", "fast-rng", "rng", "serde", "std", "v4"]
+-			version = "1.29.0"
++			version = "1.29.3"
+ 
+ 		[workspace.dependencies.xoshiro]
+ 			default-features = false
+@@ -618,7 +618,7 @@
+ 		[workspace.dependencies.xxhash-rust]
+ 			default-features = false
+ 			features = ["xxh3"]
+-			version = "0.8.19"
++			version = "0.8.21"
+ 
+ 		[workspace.dependencies.yaml-rust2]
+ 			default-features = false
 ```
 
-**File**: `MODULE.bazel` (modified, +6/-6)
+**File**: `MODULE.bazel` (modified, +40/-47)
 ```diff
-@@ -113,8 +113,8 @@ workspace_refs(
- #        "typeql+": "d07e949229b2551d59127d3bc3300cd38bdf33ff",
-     },
-     workspace_tag_dict = {
--        "typedb_protocol+": "3.15.0-rc0",
--        "typeql+": "3.15.0-rc0",
-+        "typedb_protocol+": "3.15.0",
-+        "typeql+": "3.15.0",
-     },
+@@ -105,17 +105,49 @@ oci.pull(
  )
+ use_repo(oci, "typedb-ubuntu-x86_64", "typedb-ubuntu-x86_64_linux_amd64", "typedb-ubuntu-arm64", "typedb-ubuntu-arm64_linux_arm64")
  
-@@ -125,13 +125,13 @@ native_artifact_files.artifact(
-     group_name = "typedb-console-{platform}",
-     artifact_name = "typedb-console-{platform}-{version}.{ext}",
-     archive_strip_prefix = "typedb-console-{platform}-{version}",
--    tag = "3.15.0-rc3",
-+    tag = "3.15.0",
- )
- native_artifact_files.artifact(
-     name = "typedb_loader_artifact",
-     group_name = "typedb-loader-{platform}",
-     artifact_name = "typedb-loader-{platform}-{version}.{ext}",
--    tag = "3.15.0-rc3",
-+    tag = "3.15.0",
- )
- use_repo(
-     native_artifact_files,
-@@ -179,14 +179,14 @@ bazel_dep(name = "typeql", version = "0.0.0")
- git_override(
-     module_name = "typeql",
-     remote = "https://github.com/typedb/typeql",
--    tag = "3.15.0-rc0",
-+    tag = "3.15.0",
- )
- 
- bazel_dep(name = "typedb_protocol", version = "0.0.0")
- git_override(
-     module_name = "typedb_protocol",
-     remote = "https://github.com/typedb/typedb-protocol",
--    tag = "3.15.0-rc0",
-+    tag = "3.15.0",
- )
- 
- bazel_dep(name = "typedb_behaviour", version = "0.0.0")
-```
-
-**File**: `MODULE.bazel.lock` (modified, +36/-36)
-```diff
-@@ -8431,7 +8431,7 @@
-     "@@typedb_dependencies+//distribution/artifact:rules.bzl%native_artifact_files": {
-       "general": {
-         "bzlTransitiveDigest": "Kb5QWQrUc0s27j+2UawgVDIuZeaZUkqrRVUHDu0Ao8s=",
--        "usagesDigest": "pr1ZFc1JCaOXlXAgwheSrLGi1nXzwgiUKOrvI6yZI8I=",
-+        "usagesDigest": "+UkqLtnPTIvjgsBx2m1r1kI5fvgcYQHvm2mqBcCOf64=",
-         "recordedFileInputs": {},
-         "recordedDirentsInputs": {},
-         "envVariables": {},
-@@ -8440,111 +8440,111 @@
-             "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_file",
-             "attributes": {
-               "urls": [
--                "https://repo.typedb.com/public/public-release/raw/names/typedb-console-linux-arm64/versions/3.15.0-rc3/typedb-console-linux-arm64-3.15.0-rc3.tar.gz"
-+                "https://repo.typedb.com/public/public-release/raw/names/typedb-console-linux-arm64/versions/3.15.0/typedb-console-linux-arm64-3.15.0.tar.gz"
-               ],
--              "downloaded_file_path": "typedb-console-linux-arm64-3.15.0-rc3.tar.gz"
-+              "downloaded_file_path": "typedb-console-linux-arm64-3.15.0.tar.gz"
-             }
-           },
-           "typedb_console_artifact_linux-arm64-extracted": {
-             "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
-             "attributes": {
-               "urls": [
--                "https://repo.typedb.com/public/public-release/raw/names/typedb-console-linux-arm64/versions/3.15.0-rc3/typedb-console-linux-arm64-3.15.0-rc3.tar.gz"
-+                "https://repo.typedb.com/public/public-release/raw/names/typedb-console-linux-arm64/versions/3.15.0/typedb-console-linux-arm64-3.15.0.tar.gz"
-               ],
--              "strip_prefix": "typedb-console-linux-arm64-3.15.0-rc3",
-+              "strip_prefix": "typedb-console-linux-arm64-3.15.0",
-               "build_file_content": "\nfilegroup(\n    name = \"all_files\",\n    srcs = glob([\"**/*\"]),\n    visibility = [\"//visibility:public\"],\n)\n                        "
-             }
-           },
-           "typedb_console_artifact_linux-x86_64": {
-             "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_file",
-             "attributes": {
-               "urls": [
--                "https://repo.typedb.com/public/public-release/raw/names/typedb-console-linux-x86_64/versions/3.15.0-rc3/typedb-console-linux-x86_64-3.15.0-rc3.tar.gz"
-+                "https://repo.typedb.com/public/public-release/raw/names/typedb-console-linux-x86_64/versions/3.15.0/typedb-console-linux-x86_64-3.15.0.tar.gz"
-               ],
--              "downloaded_file_path": "typedb-console-linux-x86_64-3.15.0-rc3.tar.gz"
-+              "downloaded_file_path": "typedb-console-linux-x86_64-3.15.0.tar.gz"
-             }
-           },
-           "typedb_console_artifact_linux-x86_64-extracted": {
-             "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
-             "attributes": {
-               "urls": [
--                "https://repo.typedb.com/public/public-release/raw/names/typedb-console-linux-x86_64/versions/3.15.0-rc3/typedb-console-linux-x86_64-3.15.0-rc3.tar.gz"
-+                "https://repo.typedb.com/public/public-release/raw/names/typedb-console-linux-x86_64/versions/3.15.0/typedb-console-linux-x86_64-3.15.0.tar.gz"
-               ],
--              "strip_prefix": "typedb-console-linux-x86_64-3.15.0-rc3",
-+              "strip_prefix": "typedb-console-linux-x86_64-3.15.0",
-               "build_file_content": "\nfilegroup(\n    name = \"all_files\",\n    srcs = glob([\"**/*\"]),\n    visibility = [\"//visibility:public\"],\n)\n                        "
-             }
-           },
-           "typedb_console_artifact_mac-arm64": {
-             "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_file",
-             "attributes": {
-               "urls": [
--                "https://repo.typedb.com/public/public-release/raw/names/typedb-console-mac-arm64/versions/3.15.0-rc3/typedb-console-mac-arm64-3.15.0-rc3.zip"
-+                "https://repo.typedb.com/public/public-release/raw/names/typedb-console-mac-arm64/versions/3.15.0/typedb-console-mac-arm64-3.15.0.zip"
-               ],
--              "downloaded_file_path": "typedb-console-mac-arm64-3.15.0-rc3.zip"
-+              "downloaded_file_path": "typedb-console-mac-arm64-3.15.0.zip"
-             }
-           },
-           "typedb_console_artifact_mac-arm64-extracted": {
-             "repoRuleId": "@@bazel_tools//tools/build_defs/repo:http.bzl%http_archive",
-             "attributes": {
-               "urls": [
--                "https://repo.typedb.com/public/public-release/raw/names/typedb-console-mac-arm64/versions/3.15.0-rc3/typedb-console-mac-arm64-3.15.0-rc3.zip"
-+                "https://repo.typedb.com/public/public-release/raw/names/typedb-console-mac-arm64/versions/3.15.0/typedb-console-mac-arm64-3.15.0.zip"
-               ],
--              "strip_prefix": "typedb-console
-```
-
-**File**: `RELEASE_NOTES_LATEST.md` (modified, +118/-5)
-```diff
-@@ -1,16 +1,97 @@
- **Download from TypeDB Package Repository:**
- 
--[Distributions for 3.15.0-rc1](https://cloudsmith.io/~typedb/repos/public-release/packages/?q=name%3A%5Etypedb-all+version%3A3.15.0-rc1)
-+[Distributions for 3.15.0](https://cloudsmith.io/~typedb/repos/public-release/packages/?q=name%3A%5Etypedb-all+version%3A3.15.0)
- 
- **Pull the Docker image:**
- 
--```docker pull typedb/typedb:3.15.0-rc1```
-+```docker pull typedb/typedb:3.15.0```
- 
- 
- ## New Features
-+- **Implement optimized database import**
-+  
-+  We introduce the possibility of **parallelized, read-free database imports**, when specific conditions are met. In test we achieve up to 100k relations/sec consistently up to billions of loaded relations.
-+  
-+  This path utilizes an updated typedb-protocol (backwards compatible). Old import files/old servers fall back to the existing, slower import path. This protocol is designed for an upcoming data loader that reads from specifically shaped tables or CSV files, and for importing TypeDB exports rapidly.
-+  
-+  We combine existing guarantees that are implicit and not explicitly marked, with additional constraints.
-+  
-+  _Existing implicit requirements_:
-+  - Entity or relation import messages _never re-uses global or type-label scoped IDs_ (therefore, every entity and relation is _complete and listed with all its components, exactly once_)
-+  - All attributes mentioned as owned in other entity or relation import messages are listed as _separate Attribute messages_
-+  - All references are correct (eg. any concept IDs refer to concepts that have their own import messages; attribute values that are referenced are imported)
-+  
-+  _Additional, optional guarantees, required for the optimized path_:
-+  1) When the data is imported in order of attributes, entities, then relations => This enables **parallelism** on import, since import items can never collide.
-+    a) Exception: hashed attributes _can_ collide when allocating a hash value, so we add a rarely used retry for isolation conflicts
-+    b) Exception: `plays` cardinality bounds. Expect slowdowns/failures when plays cardinality is set (future work: relax plays cardinality and revalidate once at the end)
-+  
-+  2) When guaranteed links to relation players by 'type-local ids' (which are u64), we can directly create the edges between the relation and the player without any reads into the importer mapping table. We skip creating the mapping table, mapping IDs, and existence checks when this is guaranteed and the AER order is guaranteed.
-+  
-+  3) When guaranteed that attribute ownerships link to attributes by value, rather than ID that has to be remapped, and that the AER order is guaranteed, we can skip recording new IDs for attributes whose ID is derivable from the value (in effect, any attribute that is not hashed). This skips the mapping table creation, mapping IDs, and attribute existence checks.
-+  
-+  4) When attribute messages are guaranteed to be unique, we also never read on `put` of the attribute - it's a straight write without read.
-+  
-+  In combination, we can freely **parallelize** and **avoid almost all reads during import**, skipping both mapping tables and reads on the write and commit path in transactions. **This is only as "safe" as the import data - dangling references will lead to a corrupt TypeDB dataset!**
-+  
-+  Two read operations are not yet skippable:
-+  
-+  - Unavoidable read into main storage: creating >16 byte string, struct, and vector values. These will always require a hash probe to avoid collisions). Loaded first when the dataset is smallest. Unavoidable in our architecture!
-+  - Unavoidable read into importer storage: Mapping a string, struct, and vector attribute ownership to the new database's IID space.
-+  
-+  In addition, we have one thing that we can skip with additional implementation work:
-+  - Relations playing roles in other relations validate at commit time by reading disk, and to regenerate the index.
-+  
-+  
-+  
-+- **Type-inference & optional dereference safety improvements**
-+  Large refactors to type-inference & optional dereference checks for better stability.
-+  
-+  - **Stricter optional dereference rules**
++# ===========================================================
++# TypeDB repos
++# ===========================================================
 +
-+    Previously, referencing an optional variable in a match-stage would simply discard the row. With this change, any reference must to an optional variable must explicitly address the optionality.
-+    * Within a match pattern, the variable must be tested using the newly introduced `isset` constraint ( e.g. `isset $x;`- this fails the row if the variable is empty.
-+    * A reference to an optional variable in an expression may be marked with `?` to  short-circuit the expression and assign the empty value to the result. ( e.g.  `let $y = $x?  + 1;`) . Note the assigned variable must then be optional.
-+    * When fetching the attributes of an optional variable, it may be marked with `?` to return an empty value for that field. e.g. `fetch { "opt": $opt?.* }`
-+  
-+    * **Note:**  These are n
-```
-
-**File**: `VERSION` (modified, +1/-1)
-```diff
-@@ -1 +1 @@
--3.15.0-rc1
-\ No newline at end of file
-+3.15.0
-\ No newline at end of file
-```
-
----
-
-### Incident Patch 2: `0a759167` (2026-11-16)
-**Commit Message**: Assign positions to selected variables of unsatisfiable conjunctions (#8064)
-
-## Product change and motivation
-
-A conjunction that type inference proves unsatisfiable used to panic the
-server when followed by further query stages, because we compiled away
-the unsatisfiable variables in that clause entirely.
-
-The planner now registers an output position for every selected variable
-when lowering the Unsatisfiable check. No rows are ever produced when
-executed, so the positions used.
-
-Test written up in https://github.com/typedb/typedb-behaviour/pull/463
-
-Fixes https://github.com/typedb/typedb/issues/8021
-
-## Implementation
-
-A conjunction was lowered to a single Unsatisfiable check that produces
-no variables, so its selected variables were never assigned a row
-position. Later stages referring to them (reduce with a variable,
-groupby, require, fetch) panicked or failed to compile, e.g. `match $t
-label plan; $t sub release-plan; reduce $n = count($t);` panicked at
-compiler/executable/reduce.rs.
-
-Now, we always assign variables positions before lowering to an
-unsatisfiable check.
-
-**File**: `MODULE.bazel` (modified, +1/-1)
-```diff
-@@ -193,7 +193,7 @@ bazel_dep(name = "typedb_behaviour", version = "0.0.0")
- git_override(
-     module_name = "typedb_behaviour",
-     remote = "https://github.com/typedb/typedb-behaviour",
--    commit = "20f8e6359a646fc668437ae80446b8cee4c33adf",
-+    commit = "a07218a2e764386c5ca786f635990e9c1fcb1d26",
++bazel_dep(name = "typedb_bazel_distribution", version = "0.0.0")
++git_override(
++    module_name = "typedb_bazel_distribution",
++    remote = "https://github.com/typedb/bazel-distribution",
++    commit = "890d556f60f6ae496fcfc1b7be4bc8c2b7a47082",
++)
++
++bazel_dep(name = "typedb_dependencies", version = "0.0.0")
++git_override(
++    module_name = "typedb_dependencies",
++    remote = "https://github.com/typedb/dependencies",
++    commit = "5655182f0d6ac9e7b1a6e767df7f48c511692ce2",
++)
++
++bazel_dep(name = "typeql", version = "0.0.0")
++git_override(
++    module_name = "typeql",
++    remote = "https://github.com/typedb/typeql",
++    commit = "4c37fe7d62a59e54623e5b554f0e11f9d45aa610",
++)
++
++bazel_dep(name = "typedb_protocol", version = "0.0.0")
++git_override(
++    module_name = "typedb_protocol",
++    remote = "https://github.com/typedb/typedb-protocol",
++    commit = "dd606e1063d7c83781b5e04c1d348b824d3a7428",
++)
++
++bazel_dep(name = "typedb_behaviour", version = "0.0.0")
++git_override(
++    module_name = "typedb_behaviour",
++    remote = "https://github.com/typedb/typedb-behaviour",
++    commit = "6cb99621b617372d758fa49652517926183bd90b",
++)
++
+ workspace_refs = use_repo_rule("@typedb_bazel_distribution//common/workspace_refs:rules.bzl", "_workspace_refs")
+ workspace_refs(
+     name = "typedb_workspace_refs",
+-    workspace_commit_dict = {
+-#        "typedb_protocol+": "99e080bd0d599ae235607da4e4e69787e681cbe1",
+-#        "typeql+": "d07e949229b2551d59127d3bc3300cd38bdf33ff",
+-    },
+-    workspace_tag_dict = {
+-        "typedb_protocol+": "3.15.0",
+-        "typeql+": "3.15.0",
+-    },
++    module_file = "//:MODULE.bazel",
  )
  
+ # TypeDB Console and Loader artifacts
+@@ -157,45 +189,6 @@ use_repo(
+     "typedb_loader_artifact_windows-x86_64-extracted",
+ )
+ 
+-# ===========================================================
+-# TypeDB repos
+-# ===========================================================
+-
+-bazel_dep(name = "typedb_bazel_distribution", version = "0.0.0")
+-git_override(
+-    module_name = "typedb_bazel_distribution",
+-    remote = "https://github.com/typedb/bazel-distribution",
+-    commit = "c496caa8603aed28411b806e37ce3ebfe7e2812a",
+-)
+-
+-bazel_dep(name = "typedb_dependencies", version = "0.0.0")
+-git_override(
+-    module_name = "typedb_dependencies",
+-    remote = "https://github.com/typedb/dependencies",
+-    commit = "70adfe8c89d8c860c02abda0623c408662ddd295",
+-)
+-
+-bazel_dep(name = "typeql", version = "0.0.0")
+-git_override(
+-    module_name = "typeql",
+-    remote = "https://github.com/typedb/typeql",
+-    tag = "3.15.0",
+-)
+-
+-bazel_dep(name = "typedb_protocol", version = "0.0.0")
+-git_override(
+-    module_name = "typedb_protocol",
+-    remote = "https://github.com/typedb/typedb-protocol",
+-    tag = "3.15.0",
+-)
+-
+-bazel_dep(name = "typedb_behaviour", version = "0.0.0")
+-git_override(
+-    module_name = "typedb_behaviour",
+-    remote = "https://github.com/typedb/typedb-behaviour",
+-    commit = "a07218a2e764386c5ca786f635990e9c1fcb1d26",
+-)
+-
  http_file = use_repo_rule("@bazel_tools//tools/build_defs/repo:http.bzl", "http_file")
+ http_file(
+     name = "typedb_developer_id_combined",
 ```
 
-**File**: `compiler/executable/match_/planner/plan.rs` (modified, +12/-1)
+**File**: `WORKSPACE.bazel` (modified, +1/-1)
 ```diff
-@@ -1592,7 +1592,18 @@ impl ConjunctionPlan<'_> {
+@@ -3,5 +3,5 @@
+ # file, You can obtain one at https://mozilla.org/MPL/2.0/.
  
-             PlannerVertex::Constraint(constraint) => self.lower_constraint_check(conjunction_builder, constraint),
- 
--            PlannerVertex::Unsatisfiable(_) => conjunction_builder.push_check(CheckInstruction::Unsatisfiable),
-+            PlannerVertex::Unsatisfiable(_) => {
-+                // The conjunction yields no rows, but every selected variable must still own a row position
-+                // for later stages to compile with
-+                for &variable in self.graph.variable_index.keys() {
-+                    if conjunction_builder.selected_variables.contains(&variable)
-+                        && !conjunction_builder.position_mapping().contains_key(&variable)
-+                    {
-+                        conjunction_builder.register_output(variable);
-+                    }
-+                }
-+                conjunction_builder.push_check(CheckInstruction::Unsatisfiable)
-+            }
- 
-             PlannerVertex::Expression(_) => {
-                 unreachable!("Would require multiple assignments to the same variable and be flagged")
+ # This file intentionally left empty.
+-# It serves as a workspace root marker for Bazelisk.
++# It serves as a workspace root marker for old versions of Bazel.
+ # All dependency management is done via MODULE.bazel (Bzlmod).
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #8074** (2026-11-18): Sync cargo files (@genovoselov)
+- **PR #8073** (2026-11-18): Simplify workspace referencing (@genovoselov)
 - **PR #8071** (2026-11-16): Prepare release 3.15.0 (@krishnangovindraj)
 - **PR #8067** (2026-11-13): Prepare for release 3.15.0-rc1 (@genovoselov)
 - **PR #8066** (2026-11-13): Update error messages & a missed warning on usages of try blocks in write stages (@krishnangovindraj)
 - **PR #8064** (2026-11-16): Assign positions to selected variables of unsatisfiable conjunctions (@flyingsilverfin)
-- **PR #8060** (2026-11-12): Fix TypeQL & protocol references in Cargo (@krishnangovindraj)
-- **PR #8059** (2026-11-13): Limit database import commits by estimated write size (@genovoselov)
 
 ---
 
@@ -2214,13 +2422,13 @@ unsatisfiable check.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Prepare release 3.15.0
+## X. Sync cargo files
 
 **RULE**:
 When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in typedb/typedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `fb7c1cce`: Prepare release 3.15.0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `d20b8787`: Sync cargo files. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
@@ -2228,19 +2436,37 @@ Subsystems managing Rust data structures, boundary deserialization, API parsing,
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-source = "git+https://github.com/typedb/typedb-protocol?tag=3.15.0#9cafb3315ce97ca936fa2e97e768ed74618817b3"
-source = "git+https://github.com/typedb/typeql?tag=3.15.0#7de03ede9d849a793603d9d4406a6268a01ddd67"
+ "regex-syntax 0.8.12",
+version = "1.13.2"
+checksum = "9807af0e638c12e753aa1b4e601791bf2a8f71274023c8bbeec12fc149950857"
+ "regex-syntax 0.8.12",
+version = "0.4.19"
+checksum = "41d60ef07df457506a0a1a2073112eb4aae5733dbd2813c3da77d1b0fd441158"
+ "regex-syntax 0.8.12",
+version = "0.8.12"
+checksum = "d902046e6a28a1e4c3cab97258a0ce11e994903f01c2d97a9447a0b3df85f4f6"
+version = "1.16.6"
+checksum = "3244542535d5de959d90ec55d1b5ff0fd2bb7b1310223907d5f11932847f7b59"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-source = "git+https://github.com/typedb/typedb-protocol?tag=3.15.0-rc0#b84ca107f9d6d8f22d88a6d9975b6ee94c5ac7fa"
-source = "git+https://github.com/typedb/typeql?tag=3.15.0-rc0#c41d01cc167dcc864b9c1e907feafc52d39cda17"
+ "regex-syntax 0.8.11",
+version = "1.13.1"
+checksum = "f020237b6c8eed93db2e2cb53c00c60a8e1bc73da7d073199a1180401450218d"
+ "regex-syntax 0.8.11",
+version = "0.4.18"
+checksum = "ad8553b9b26413251cbf30e620595c7a41b3887f03da04579c0e6b0d6a06b4b2"
+ "regex-syntax 0.8.11",
+version = "0.8.11"
+checksum = "d6f6ff9a378485b298a5286656da665ba74413d36db0979633275d2e708145d4"
+version = "1.16.5"
+checksum = "149309498a5f7334b12ddae0cad8aba81ce785fe91755068867e017cf98fee46"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `fb7c1cce` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `d20b8787` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

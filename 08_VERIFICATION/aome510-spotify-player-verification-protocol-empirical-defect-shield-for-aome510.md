@@ -1,48 +1,34 @@
-# Verification Protocol: Verification Protocol: Empirical Defect Shield for aome510/spotify/player
+# Verification Protocol: Verification Protocol: Empirical Defect Shield for aome510/spotify-player
 
 <!-- PROVENANCE_START
 {
-  "source_repository": "aome510/spotify/player",
-  "source_url": "https://github.com/aome510/spotify/player",
-  "source_version": "historical-head",
-  "license": "OPEN_HARVEST",
-  "timestamp": "2026-11-13T00:00:00.000Z",
-  "ai_provider": "universal-multi-artifact-distributor",
+  "source_repository": "aome510/spotify-player",
+  "source_url": "https://github.com/aome510/spotify-player",
+  "source_version": "8d17edec",
+  "license": "MIT",
+  "timestamp": "2026-11-18T20:37:38.184Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
-  "learning_id": "unknown",
+  "learning_id": "learn-github-aome510-spotify-player",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [aome510/spotify/player](https://github.com/aome510/spotify/player) (Revision: `historical`).  
-> **License**: OPEN_HARVEST | **Timestamp**: `2026-11-13T00:00:00.000Z`  
-> **Learning ID**: `unknown`
+> **Provenance**: Harvested from [aome510/spotify-player](https://github.com/aome510/spotify-player) (Revision: `8d17edec`).  
+> **License**: MIT | **Timestamp**: `2026-11-18T20:37:38.184Z`  
+> **Learning ID**: `learn-github-aome510-spotify-player`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `aome510/spotify/player` (Commit: `historical`)
+- **Target Repository**: `aome510/spotify-player` (Commit: `8d17edec`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
-> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/aome510-spotify-player-learnings.md`  
-> **Source**: github ([https://github.com/aome510/spotify-player](https://github.com/aome510/spotify-player))  
-> **Source Version**: `966d84a6`  
-> **License**: MIT  
-> **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-06T21:06:38.453Z  
-> **Learning ID**: `learn-github-aome510-spotify-player`  
-> **Pipeline Version**: `2.0.0`  
-> **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
-> **Data Governance**: CLASSIFICATION: PUBLIC. Sanitized against PII/secrets.  
-> **Policy Invariant**: Strictly for engineering retrieval and architecture documentation. Distillation prohibited.  
-
----
-
 # Forensic Learning Record (Deep Inspection): aome510/spotify-player
 
 > **Canonical Artifact**: `07_PROJECT_LEARNING/aome510-spotify-player-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/aome510/spotify-player](https://github.com/aome510/spotify-player))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-06T21:06:37.054Z  
+> **Harvest Timestamp**: 2026-11-18T20:37:36.600Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: A Spotify player in the terminal with full feature parity
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md, Dockerfile
-- **Stars / Engagement**: 7305 stars
+- **Stars / Engagement**: 7324 stars
 
 ---
 
@@ -845,10 +831,7 @@ impl Track {
 
     /// gets the track's album information
     pub fn album_info(&self) -> String {
-        self.album
-            .as_ref()
-            .map(|a| a.name.clone())
-            .unwrap_or_default()
+        self.album.as_ref().map_or_default(|a| a.name.clone())
     }
 
     /// gets the track's name, including an explicit label
@@ -877,7 +860,8 @@ impl Track {
                 name: track.name,
                 artists: from_simplified_artists_to_artists(track.artists),
                 album: None,
-                duration: track.duration.
+                duration: track.duration.to_std().expect("valid chrono duration"),
+      
 ```
 
 ### Core Architecture Module: `spotify_player/src/state/player.rs`
@@ -2142,29 +2126,295 @@ pub fn format_genres(genres: &[String], genre_num: u8) -> String {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `6ef4304b` (2026-11-05)
-**Commit Message**: fix: use `/nscpot_login` redirect URI for ncspot client (#1108)
+### Incident Patch 1: `8d17edec` (2026-11-17)
+**Commit Message**: fix: use `/ncspot_login` redirect URI for the default ncspot client (#1115)
 
-**File**: `spotify_player/src/auth.rs` (modified, +1/-1)
+* fix: use `/ncspot_login` redirect URI for the default ncspot client
+
+The fix in #1108 covered only the ncspot fallback client. With no custom client_id, the primary client is ncspot and still used login_redirect_uri (default /login), which ncspot no longer registers. Changing login_redirect_uri instead breaks the librespot login, which shares it.
+
+Fixes #1114
+
+* clippy fix
+
+---------
+
+Co-authored-by: Jesús López <[REDACTED_EMAIL]>
+Co-authored-by: Thang Pham <[REDACTED_EMAIL]>
+
+**File**: `README.md` (modified, +2/-2)
 ```diff
-@@ -13,7 +13,7 @@ use sha2::{Digest as _, Sha256};
+@@ -209,7 +209,7 @@ docker run --rm \
  
- pub const SPOTIFY_CLIENT_ID: &str = "65b708073fc0480ea92a077233ca87bd";
- pub const NCSPOT_CLIENT_ID: &str = "d420a117a32841c2b3474932e49fb54b";
--pub const NCSPOT_REDIRECT_URI: &str = "http://127.0.0.1:8989/login";
-+pub const NCSPOT_REDIRECT_URI: &str = "http://127.0.0.1:8989/ncspot_login";
+ `spotify_player` requires a **Spotify Premium** account and authenticates against the Spotify Web API using the [OAuth 2.0 authorization code flow with PKCE](https://developer.spotify.com/documentation/web-api/tutorials/code-pkce-flow). No client secret is stored or required.
  
- const SPOTIFY_AUTHORIZE_URL: &str = "https://accounts.spotify.com/authorize";
- const SPOTIFY_TOKEN_URL: &str = "https://accounts.spotify.com/api/token";
+-The simplest way to authenticate is to just **run the application** — on first use it prompts for whichever credentials are not yet cached. Each prompt opens the Spotify authorization page in your browser; after you approve access, Spotify redirects to a local loopback address (`login_redirect_uri`, default `http://127.0.0.1:8989/login`) where `spotify_player` captures the authorization code and exchanges it for an access token. Credentials are cached in the application's [cache folder](#caches), so this is a one-time step per machine.
++The simplest way to authenticate is to just **run the application** — on first use it prompts for whichever credentials are not yet cached. Each prompt opens the Spotify authorization page in your browser; after you approve access, Spotify redirects to a local loopback address (`http://127.0.0.1:8989/ncspot_login` for ncspot's client ID, otherwise `login_redirect_uri`, default `http://127.0.0.1:8989/login`) where `spotify_player` captures the authorization code and exchanges it for an access token. Credentials are cached in the application's [cache folder](#caches), so this is a one-time step per machine.
+ 
+ Alternatively, run the `spotify_player authenticate` CLI command to authenticate all required credentials up front — useful for setting things up ahead of a [daemon](#daemon) or headless launch. Unlike a normal launch, `authenticate` always forces fresh interactive logins, ignoring cached credentials, so it can also be used to re-authenticate from scratch.
+ 
+@@ -231,7 +231,7 @@ With the [streaming](#streaming) feature enabled (the default), the first launch
+ 
+ These are two independent OAuth flows with two different client IDs, so Spotify requires a separate approval for each, and each credential is cached separately in the [cache folder](#caches). This is a one-time step per machine — subsequent launches reuse and silently refresh them unless a cache is cleared or a credential is revoked.
+ 
+-When a custom `client_id` is configured, an ncspot fallback Web API token is also requested and cached as `<ncspot_client_id>_token.json`. Its OAuth callback always uses `http://127.0.0.1:8989/login`; `login_redirect_uri` applies only to the custom client. A custom setup with streaming enabled can therefore require three approvals on first launch. Web API token cache filenames include their client IDs, so changing `client_id` requires a new approval instead of reusing a token issued to another client.
++When a custom `client_id` is configured, an ncspot fallback Web API token is also requested and cached as `<ncspot_client_id>_token.json`. Like the default ncspot client, it always uses `http://127.0.0.1:8989/ncspot_login`; `login_redirect_uri` applies only to the custom client and the librespot session. A custom setup with streaming enabled can therefore require three approvals on first launch. Web API token cache filenames include their client IDs, so changing `client_id` requires a new approval instead of reusing a token issued to another client.
+ 
+ A fallback ncspot client is integrated since the custom client might not be registered with [extended quota mode](https://developer.spotify.com/documentation/web-api/concepts/quota-modes) and could therefore doesn't have access to [certain endpoints](https://developer.spotify.com/blog/2024-11-27-changes-to-the-web-api).
+ 
+```
+
+**File**: `docs/config.md` (modified, +2/-2)
+```diff
+@@ -33,7 +33,7 @@ spotify_player -o device.volume=80 -o theme=dracula
+ | `client_id`                       | Primary Spotify client ID for API access; rejected requests can fall back to ncspot (see notes).    | See code (default: ncspot's client ID)                                 |
+ | `client_id_command`               | Shell command that outputs client ID to stdout (overrides `client_id`).                             | `None`                                                                 |
+ | `ncspot_only_get_endpoints`       | Endpoint prefixes for GET requests that should always use the ncspot client.                        | `["me/playlists", "playlists/"]`                                       |
+-| `login_redirect_uri`              | Redirect URI for authentication.                                                                    | `http://127.0.0.1:8989/login`                                          |
++| `login_redirect_uri`              | Redirect URI for a custom `client_id` and the librespot login. ncspot's client ID always uses `http://127.0.0.1:8989/ncspot_login`. | `http://127.0.0.1:8989/login`                                          |
+ | `client_port`                     | Port for the application's client to handle CLI commands.                                           | `8080`                                                                 |
+ | `log_folder`                      | Path to store log files.                                                                            | `None`                                                                 |
+ | `tracks_playback_limit`           | Maximum number of tracks in a playback session.                                                     | `50`                                                                   |
+@@ -80,7 +80,7 @@ spotify_player -o device.volume=80 -o theme=dracula
+ 
+ ### Notes
+ 
+-- By default, `spotify-player` uses [ncspot](https://github.com/hrkfdn/ncspot)'s client ID for compatibility with Spotify's API. When a custom `client_id` is configured, most requests use it first and any `4xx` response is retried once with a separately authenticated ncspot fallback client. Each Web API token is stored as `<client_id>_token.json`, so changing `client_id` selects a different cache instead of reusing a token issued to another client. The fallback OAuth flow always uses `http://127.0.0.1:8989/login`, while `login_redirect_uri` applies only to the custom client. See the [Authentication section of the README](../README.md#authentication) for details.
++- By default, `spotify-player` uses [ncspot](https://github.com/hrkfdn/ncspot)'s client ID for compatibility with Spotify's API. When a custom `client_id` is configured, most requests use it first and any `4xx` response is retried once with a separately authenticated ncspot fallback client. Each Web API token is stored as `<client_id>_token.json`, so changing `client_id` selects a different cache instead of reusing a token issued to another client. The ncspot client, whether default or fallback, always uses `http://127.0.0.1:8989/ncspot_login`, while `login_redirect_uri` applies to the custom client and the librespot login. See the [Authentication section of the README](../README.md#authentication) for details.
+ - The custom client has no request middleware. For ncspot requests, `spotify-player` stores `Retry-After` durations globally and retries GET requests up to `api_rate_limit_retries` times. New ncspot GET requests wait for an active `Retry-After` period, while mutation requests are never delayed or retried by the middleware.
+ - `ap_port` and `proxy` are passed to Librespot for session configuration. Librespot uses its defaults if unset.
+ - Setting a positive `app_refresh_duration_in_ms` increases API usage and may trigger rate limits. By default, `playback_refresh_duration_in_ms=0` refreshes playback only on events or commands.
+```
+
+**File**: `spotify_player/src/cli/handlers.rs` (modified, +1/-2)
+```diff
+@@ -265,8 +265,7 @@ fn handle_playlist_subcommand(args: &ArgMatches) -> Result<Request> {
+ 
+             let description = args
+                 .get_one::<String>("description")
+-                .map(std::borrow::ToOwned::to_owned)
+-                .unwrap_or_default();
++                .map_or_default(std::borrow::ToOwned::to_owned);
+ 
+             let public = args.get_flag("public");
+             let collab = args.get_flag("collab");
+```
+
+**File**: `spotify_player/src/client/mod.rs` (modified, +2/-1)
+```diff
+@@ -123,7 +123,8 @@ pub fn new_api_client() -> Result<WebApiClient> {
+         )?;
+         let client = rspotify::AuthCodePkceSpotify::with_config(
+             rspotify::Credentials { id, secret: None },
+-            build_oauth(configs.app_config.login_redirect_uri.clone()),
++            // ncspot's app registers only this URI, whatever `login_redirect_uri` says.
++            build_oauth(auth::NCSPOT_REDIRECT_URI.to_string()),
+             config,
+         )
+         .with_middleware(middleware);
+```
+
+**File**: `spotify_player/src/event/page.rs` (modified, +12/-24)
+```diff
+@@ -260,9 +260,7 @@ fn handle_key_sequence_for_search_page(
+     match focus_state {
+         SearchFocusState::Input => anyhow::bail!("user's search input should be handled before"),
+         SearchFocusState::Tracks => {
+-            let tracks = search_results
+-                .map(|s| s.tracks.iter().collect::<Vec<_>>())
+-                .unwrap_or_default();
++            let tracks = search_results.map_or_default(|s| s.tracks.iter().collect::<Vec<_>>());
+ 
+             match found_keymap {
+                 CommandOrAction::Command(command) => window::handle_command_for_track_list_window(
+@@ -275,9 +273,7 @@ fn handle_key_sequence_for_search_page(
+             }
+         }
+         SearchFocusState::Artists => {
+-            let artists = search_results
+-                .map(|s| s.artists.iter().collect::<Vec<_>>())
+-                .unwrap_or_default();
++            let artists = search_results.map_or_default(|s| s.artists.iter().collect::<Vec<_>>());
+ 
+             match found_keymap {
+                 CommandOrAction::Command(command) => Ok(
+@@ -290,9 +286,7 @@ fn handle_key_sequence_for_search_page(
+             }
+         }
+         SearchFocusState::Albums => {
+-            let albums = search_results
+-                .map(|s| s.albums.iter().collect::<Vec<_>>())
+-                .unwrap_or_default();
++            let albums = search_results.map_or_default(|s| s.albums.iter().collect::<Vec<_>>());
+ 
+             match found_keymap {
+                 CommandOrAction::Command(command) => window::handle_command_for_album_list_window(
+@@ -305,14 +299,12 @@ fn handle_key_sequence_for_search_page(
+             }
+         }
+         SearchFocusState::Playlists => {
+-            let playlists = search_results
+-                .map(|s| {
+-                    s.playlists
+-                        .iter()
+-                        .map(|p| PlaylistFolderItem::Playlist(p.clone()))
+-                        .collect::<Vec<_>>()
+-                })
+-                .unwrap_or_default();
++            let playlists = search_results.map_or_default(|s| {
++                s.playlists
++                    .iter()
++                    .map(|p| PlaylistFolderItem::Playlist(p.clone()))
++                    .collect::<Vec<_>>()
++            });
+             let playlist_refs = playlists.iter().collect::<Vec<_>>();
+ 
+             match found_keymap {
+@@ -337,9 +329,7 @@ fn handle_key_sequence_for_search_page(
+             }
+         }
+         SearchFocusState::Shows => {
+-            let shows = search_results
+-                .map(|s| s.shows.iter().collect::<Vec<_>>())
+-                .unwrap_or_default();
++            let shows = search_results.map_or_default(|s| s.shows.iter().collect::<Vec<_>>());
+ 
+             match found_keymap {
+                 CommandOrAction::Command(command) => Ok(
+@@ -490,14 +480,12 @@ fn handle_command_for_browse_page(
+                 .browse
+                 .categories
+                 .as_deref()
+-                .map(|categories| ui.search_filtered_items(categories).len())
+-                .unwrap_or_default(),
++                .map_or_default(|categories| ui.search_filtered_items(categories).len()),
+             BrowsePageUIState::CategoryPlaylistList { category, .. } => data
+                 .browse
+                 .category_playlists
+                 .get(&category.id)
+-                .map(|v| ui.search_filtered_items(v).len())
+-                .unwrap_or_default(),
++                .map_or_default(|v| ui.search_filtered_items(v).len()),
+         },
+         _ => anyhow::bail!("expect a browse page state"),
+     };
+```
+
+**File**: `spotify_player/src/state/model.rs` (modified, +2/-5)
+```diff
+@@ -340,10 +340,7 @@ impl Track {
+ 
+     /// gets the track's album information
+     pub fn album_info(&self) -> String {
+-        self.album
+-            .as_ref()
+-            .map(|a| a.name.clone())
+-            .unwrap_or_default()
++        self.album.as_ref().map_or_default(|a| a.name.clone())
+     }
+ 
+     /// gets the track's name, including an explicit label
+@@ -399,7 +396,7 @@ impl Track {
+                 album: Album::try_from_simplified_album(track.album),
+                 duration: track.duration.to_std().expect("valid chrono duration"),
+                 explicit: track.explicit,
+-                added_at: added_at.map(|t| t.timestamp() as u64).unwrap_or_default(),
++                added_at: added_at.map_or_default(|t| t.timestamp() as u64),
+             })
+         } else {
+             None
+```
+
+**File**: `spotify_player/src/ui/page.rs` (modified, +7/-23)
+```diff
+@@ -173,9 +173,7 @@ pub fn render_search_page(
+ 
+     // 3. Construct the page's widgets
+     let (track_list, n_tracks) = {
+-        let track_items = search_results
+-            .map(|s| search_items(&s.tracks))
+-            .unwrap_or_default();
++        let track_items = search_results.map_or_default(|s| search_items(&s.tracks));
+ 
+         let is_active = is_active && focus_state == SearchFocusState::Tracks;
+         let selected_index = if is_active {
+@@ -188,9 +186,7 @@ pub fn render_search_page(
+     };
+ 
+     let (album_list, n_albums) = {
+-        let album_items = search_results
+-            .map(|s| search_items(&s.albums))
+-            .unwrap_or_default();
++        let album_items = search_results.map_or_default(|s| search_items(&s.albums));
+ 
+         let is_active = is_active && focus_state == SearchFocusState::Albums;
+         let selected_index = if is_active {
+@@ -203,9 +199,7 @@ pub fn render_search_page(
+     };
+ 
+     let (artist_list, n_artists) = {
+-        let artist_items = search_results
+-            .map(|s| search_items(&s.artists))
+-            .unwrap_or_default();
++        let artist_items = search_results.map_or_default(|s| search_items(&s.artists));
+ 
+         let is_active = is_active && focus_state == SearchFocusState::Artists;
+         let selected_index = if is_active {
+@@ -218,9 +212,7 @@ pub fn render_search_page(
+     };
+ 
+     let (playlist_list, n_playlists) = {
+-        let playlist_items = search_results
+-            .map(|s| search_items(&s.playlists))
+-            .unwrap_or_default();
++        let playlist_items = search_results.map_or_default(|s| search_items(&s.playlists));
+ 
+         let is_active = is_active && focus_state == SearchFocusState::Playlists;
+         let selected_index = if is_active {
+@@ -233,9 +225,7 @@ pub fn render_search_page(
+     };
+ 
+     let (show_list, n_shows) = {
+-        let show_items = search_results
+-            .map(|s| search_items(&s.shows))
+-            .unwrap_or_default();
++        let show_items = search_results.map_or_default(|s| search_items(&s.shows));
+         let is_active = is_active && focus_state == SearchFocusState::Shows;
+         let selected_index = if is_active {
+             ui.current_page_mut().selected()
+@@ -247,9 +237,7 @@ pub fn render_search_page(
+     };
+ 
+     let (episode_list, n_episodes) = {
+-        let episode_items = search_results
+-            .map(|s| search_items(&s.episodes))
+-            .unwrap_or_default();
++        let episode_items = search_results.map_or_default(|s| search_items(&s.episodes));
+ 
+         let is_active = is_active && focus_state == SearchFocusState::Episodes;
+         let selected_index = if is_active {
+@@ -1078,11 +1066,7 @@ fn render_track_table(
+     let mut playing_id = "";
+     if let Some(ref playback) = state.player.read().playback {
+         if let Some(rspotify::model::PlayableItem::Track(ref track)) = playback.item {
+-            playing_track_uri = track
+-                .id
+-                .as_ref()
+-                .map(rspotify::prelude::Id::uri)
+-                .unwrap_or_default();
++            playing_track_uri = track.id.as_ref().map_or_default(rspotify::prelude::Id::uri);
+ 
+             playing_id = if playback.is_playing {
+                 &configs.app_config.play_icon
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #1115** (2026-11-17): fix: use `/ncspot_login` redirect URI for the default ncspot client (@jeregon1)
 - **PR #1108** (2026-11-05): fix: use /nscpot_login redirect URI for ncspot client (@geetarOS)
 - **PR #1106** (closed): Visualizer: caption the cover with the track, artists and album (@nelsong6)
 - **PR #1094** (closed): cli: add --offset to 'playback start context' and image URLs to albums, artists and playlists (@Phyro-bit)
 - **PR #1088** (closed): Add offline downloads with artwork and fallback playback (@CormAlan)
 - **PR #1084** (2026-09-12): fix selected item handling in filtered lists (@aome510)
-- **PR #1082** (2026-09-09): render loading UI for search page (@aome510)
 
 ---
 
@@ -2184,31 +2434,33 @@ Observed empirical fixes and code patches:
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. use `/nscpot_login` redirect URI for ncspot client (#1108)
+## X. use `/ncspot_login` redirect URI for the default ncspot client
 
 **RULE**:
-When implementing operations in `spotify_player/src/auth.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aome510/spotify-player. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `README.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in aome510/spotify-player. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `6ef4304b`: use `/nscpot_login` redirect URI for ncspot client (#1108). Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `8d17edec`: use `/ncspot_login` redirect URI for the default ncspot client. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `spotify_player/src/auth.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `README.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-pub const NCSPOT_REDIRECT_URI: &str = "http://127.0.0.1:8989/ncspot_login";
+The simplest way to authenticate is to just **run the application** — on first use it prompts for whichever credentials are not yet cached. Each prompt opens the Spotify authorization page in your browser; after you approve access, Spotify redirects to a local loopback address (`http://127.0.0.1:8989/ncspot_login` for ncspot's client ID, otherwise `login_redirect_uri`, default `http://127.0.0.1:8989/login`) where `spotify_player` captures the authorization code and exchanges it for an access token. Credentials are cached in the application's [cache folder](#caches), so this is a one-time step per machine.
+When a custom `client_id` is configured, an ncspot fallback Web API token is also requested and cached as `<ncspot_client_id>_token.json`. Like the default ncspot client, it always uses `http://127.0.0.1:8989/ncspot_login`; `login_redirect_uri` applies only to the custom client and the librespot session. A custom setup with streaming enabled can therefore require three approvals on first launch. Web API token cache filenames include their client IDs, so changing `client_id` requires a new approval instead of reusing a token issued to another client.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
-// Anti-pattern to NEVER write (induced failure mode):
-pub const NCSPOT_REDIRECT_URI: &str = "http://127.0.0.1:8989/login";
+// Induced defect failure mode:
+The simplest way to authenticate is to just **run the application** — on first use it prompts for whichever credentials are not yet cached. Each prompt opens the Spotify authorization page in your browser; after you approve access, Spotify redirects to a local loopback address (`login_redirect_uri`, default `http://127.0.0.1:8989/login`) where `spotify_player` captures the authorization code and exchanges it for an access token. Credentials are cached in the application's [cache folder](#caches), so this is a one-time step per machine.
+When a custom `client_id` is configured, an ncspot fallback Web API token is also requested and cached as `<ncspot_client_id>_token.json`. Its OAuth callback always uses `http://127.0.0.1:8989/login`; `login_redirect_uri` applies only to the custom client. A custom setup with streaming enabled can therefore require three approvals on first launch. Web API token cache filenames include their client IDs, so changing `client_id` requires a new approval instead of reusing a token issued to another client.
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `6ef4304b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `8d17edec` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

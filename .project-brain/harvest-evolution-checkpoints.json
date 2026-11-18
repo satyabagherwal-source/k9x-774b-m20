@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T20:14:37.173Z",
+  "last_updated": "2026-11-18T20:38:01.368Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-18T19:44:32.866Z",
@@ -558,7 +558,7 @@
       "staged_for_review": 1
     },
     "typedb-typedb-learnings.md": {
-      "processed_at": "2026-11-17T04:31:33.634Z",
+      "processed_at": "2026-11-18T20:38:00.207Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2318,8 +2318,8 @@
       "staged_for_review": 1
     },
     "hf-deepseek-ai-deepseek-v4-pro-learnings.md": {
-      "processed_at": "2026-11-14T02:06:55.661Z",
-      "promoted_canonical": 1,
+      "processed_at": "2026-11-18T20:37:59.762Z",
+      "promoted_canonical": 0,
       "staged_for_review": 0
     },
     "hf-tongyi-mai-z-image-turbo-learnings.md": {
@@ -3466,9 +3466,14 @@
       "processed_at": "2026-11-18T20:14:35.766Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
+    },
+    "aome510-spotify-player-learnings.md": {
+      "processed_at": "2026-11-18T20:37:58.256Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 2061,
+  "total_dossiers_evaluated": 2064,
   "total_canonical_promoted": 365,
-  "total_staged_for_review": 1556
+  "total_staged_for_review": 1558
 }

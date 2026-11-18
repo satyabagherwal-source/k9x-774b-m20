@@ -11088,3 +11088,6 @@
 | `CYCLE-20261118-7T9A` | `2026-11-18T20:14:17.566Z` | `Qwen/Qwen3.8-Flash-Next` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-qwen-qwen3.8-flash-next-learnings.md` | Yes (`be7d3716...`) |
 | `CYCLE-20261118-82G6` | `2026-11-18T20:14:29.478Z` | `malisper/pgrust` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/malisper-pgrust-learnings.md` | Yes (`7311c611...`) |
 | `CYCLE-20261118-84IP` | `2026-11-18T20:14:32.161Z` | `Bitterbot-AI/bitterbot-desktop` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9278` | Yes (`ccb24fad...`) |
+| `CYCLE-20261118-1RCX` | `2026-11-18T20:37:34.785Z` | `deepseek-ai/DeepSeek-V4-Pro` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4-pro-learnings.md` | Yes (`d99a261f...`) |
+| `CYCLE-20261118-1TRS` | `2026-11-18T20:37:37.912Z` | `aome510/spotify-player` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9279` | Yes (`6bd64b79...`) |
+| `CYCLE-20261118-26RU` | `2026-11-18T20:37:54.762Z` | `typedb/typedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9280` | Yes (`7417c405...`) |

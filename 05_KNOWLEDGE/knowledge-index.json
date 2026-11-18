@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-18T20:14:37.049Z",
-  "total_verified_learnings": 9008,
+  "last_updated": "2026-11-18T20:38:01.208Z",
+  "total_verified_learnings": 9009,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 21449,
+  "total_items": 21458,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -220752,7 +220752,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/deepseek-ai/DeepSeek-V4-Pro",
       "source_version": "hf-deepseek-ai-deepseek-v4-pro",
-      "content_hash": "0a5da3600d6f3df933a3008ce9624754965d0d993ede8a7becb21aafb22814c5",
+      "content_hash": "d99a261f436e5b77354862918b8cfc0a61b20e09cd402fb6cc1e3700a27b2ab4",
       "dossier_path": "07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4-pro-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-deepseek-ai-deepseek-v4-pro-learnings.md",
       "promoted_rules": [],
@@ -220761,7 +220761,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T02:06:11.133Z",
+      "verified_at": "2026-11-18T20:37:34.512Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -220778,9 +220778,9 @@
       "title": "Research & Knowledge Intelligence: deepseek-ai/DeepSeek-V4-Pro Core Invariants",
       "repository": "deepseek-ai/DeepSeek-V4-Pro",
       "source_version": "hf-deepseek-ai-deepseek-v4-pro",
-      "content_hash": "65c8d04e8af302adc6baeee65857a529f4efe94b74739fbf8fb3c357e7bbce13",
+      "content_hash": "26f6e4de7ab65477fa0a80f48fab362aecf954adea25e4c26b1c9e8296e1471b",
       "domain_letter": "D",
-      "persisted_at": "2026-11-14T02:06:11.406Z"
+      "persisted_at": "2026-11-18T20:37:35.031Z"
     },
     "learn-github-graphprotocol-graph-node": {
       "learning_id": "learn-github-graphprotocol-graph-node",
@@ -221100,9 +221100,9 @@
       "title": "Research & Knowledge Intelligence: hf-deepseek-ai-deepseek-v4-pro-learnings Core Invariants",
       "repository": "hf-deepseek-ai-deepseek-v4-pro-learnings",
       "source_version": "HEAD",
-      "content_hash": "be3ec0e1bbd9dbda57c5ab051097424c87ba0721701e628c0f66d7f2699555c6",
+      "content_hash": "e43bde4fcd3ffbbe08ea98d57ee9b88c407514e0135a264f30af67ddb38c1510",
       "domain_letter": "D",
-      "persisted_at": "2026-11-14T02:06:55.826Z"
+      "persisted_at": "2026-11-18T20:38:00.001Z"
     },
     "candidate_directive-replication-ignore-401-when-listing-labels-of-a-harbor-registry": {
       "item_id": "candidate_directive-replication-ignore-401-when-listing-labels-of-a-harbor-registry",
@@ -226903,8 +226903,8 @@
       "slug": "typedb-typedb",
       "platform": "github",
       "source_url": "https://github.com/typedb/typedb",
-      "source_version": "fb7c1cce",
-      "content_hash": "23f6d4abfb272e14f679f8f7cd1a639711dca060cac048e747f1d643a6bce41e",
+      "source_version": "d20b8787",
+      "content_hash": "7417c405d0711e048a72602e710c7f760e9554ddb472119926bbd1546aa0002e",
       "dossier_path": "07_PROJECT_LEARNING/typedb-typedb-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/typedb-typedb-learnings.md",
       "promoted_rules": [
@@ -226917,6 +226917,11 @@
           "number": 8470,
           "title": "Update error messages & a missed warning on usages of try blocks in write stages",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9280,
+          "title": "Sync cargo files",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -226924,7 +226929,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T04:31:29.637Z",
+      "verified_at": "2026-11-18T20:37:54.526Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -226966,10 +226971,10 @@
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-typedb-typedb-technical-construction-intelligence-typedb-typedb-core-invariants.md",
       "title": "Technical Construction Intelligence: typedb/typedb Core Invariants",
       "repository": "typedb/typedb",
-      "source_version": "fb7c1cce",
-      "content_hash": "1043dd44d4e12c10349ee7cf6beacd2c86190356afdee0e6f54ce04ffac24036",
+      "source_version": "d20b8787",
+      "content_hash": "3bbcc55c11223da163c6b206b30da37747a9a61df90ede52271c4124d7318304",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T04:31:30.094Z"
+      "persisted_at": "2026-11-18T20:37:55.190Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-typedb-typedb": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-typedb-typedb",
@@ -226978,10 +226983,10 @@
       "relative_path": "08_VERIFICATION/typedb-typedb-verification-protocol-empirical-defect-shield-for-typedb-typedb.md",
       "title": "Verification Protocol: Empirical Defect Shield for typedb/typedb",
       "repository": "typedb/typedb",
-      "source_version": "fb7c1cce",
-      "content_hash": "cd1e29160b57bdd49e02783ebc9eb86bb5f6cb24e19018cc5afb1db2cc26493c",
+      "source_version": "d20b8787",
+      "content_hash": "dab20a7d351e74538366c04de8cf474973cb5056fc3d9b8c63cbb9b6e2155b94",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T04:31:30.212Z"
+      "persisted_at": "2026-11-18T20:37:55.371Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-sentence-transformers-all-mpnet-base-v2-learn": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-sentence-transformers-all-mpnet-base-v2-learn",
@@ -227015,9 +227020,9 @@
       "title": "Technical Construction Intelligence: typedb-typedb-learnings Core Invariants",
       "repository": "typedb-typedb-learnings",
       "source_version": "HEAD",
-      "content_hash": "db77a3bebe25158fbf0bc6480301a775a79b5ba87e8485ea41c52604b00a5212",
+      "content_hash": "e90c4f754bb33e2e8e4f5044617078f1612ac7a4af67a44792781dcf153f11bd",
       "domain_letter": "H",
-      "persisted_at": "2026-11-17T04:31:34.312Z"
+      "persisted_at": "2026-11-18T20:38:01.028Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-typedb-typedb-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-typedb-typedb-learnings",
@@ -227027,9 +227032,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for typedb-typedb-learnings",
       "repository": "typedb-typedb-learnings",
       "source_version": "HEAD",
-      "content_hash": "985bba8601586258335092e3202040f1d0e2756d005e8f0318b24a32ba477d66",
+      "content_hash": "e519d04d38fa296fafca32c04136a0e621cdfd169d12b038f7972651ea137e2a",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T04:31:34.431Z"
+      "persisted_at": "2026-11-18T20:38:01.208Z"
     },
     "learn-github-wix-react-native-ui-lib": {
       "learning_id": "learn-github-wix-react-native-ui-lib",
@@ -289560,6 +289565,139 @@
       "content_hash": "806ab4092444b0895261cbdcd5b11146391d73fa34944f8e42592ee65d6f05ac",
       "domain_letter": "G",
       "persisted_at": "2026-11-18T20:14:36.751Z"
+    },
+    "learn-github-aome510-spotify-player": {
+      "learning_id": "learn-github-aome510-spotify-player",
+      "category": "HARVESTED_INTELLIGENCE_DOSSIER",
+      "source": "aome510/spotify-player",
+      "repository": "aome510/spotify-player",
+      "slug": "aome510-spotify-player",
+      "platform": "github",
+      "source_url": "https://github.com/aome510/spotify-player",
+      "source_version": "8d17edec",
+      "content_hash": "6bd64b79da60a67e3711f30703812c0777a4de53741ebf4108340dc537b5516d",
+      "dossier_path": "07_PROJECT_LEARNING/aome510-spotify-player-learnings.md",
+      "dossier_file": "07_PROJECT_LEARNING/aome510-spotify-player-learnings.md",
+      "promoted_rules": [
+        {
+          "number": 9279,
+          "title": "use `/ncspot_login` redirect URI for the default ncspot client",
+          "status": "PROMOTED_AND_VERIFIED"
+        }
+      ],
+      "status": "VERIFIED_LEARNING",
+      "verification_status": "VERIFIED_LEARNING",
+      "brain_readback": true,
+      "historical_duplicate_count": 1,
+      "historical_learning_ids": [],
+      "verified_at": "2026-11-18T20:37:37.672Z",
+      "verification_barriers": {
+        "storage_written": true,
+        "read_back_verified": true,
+        "content_hash_verified": true,
+        "rules_verified": true,
+        "index_read_back_verified": true
+      }
+    },
+    "rule-9279": {
+      "learning_id": "rule-9279",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9279,
+      "title": "use `/ncspot_login` redirect URI for the default ncspot client",
+      "source_url": "https://github.com/aome510/spotify-player",
+      "source_version": "8d17edec",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-18T20:37:37.672Z"
+    },
+    "candidate_directive-use-ncspot_login-redirect-uri-for-the-default-ncspot-client": {
+      "item_id": "candidate_directive-use-ncspot_login-redirect-uri-for-the-default-ncspot-client",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-2A6X-use-ncspot_login-redirect-uri-for-the-default-ncspot-client.md",
+      "title": "use `/ncspot_login` redirect URI for the default ncspot client",
+      "repository": "aome510-spotify-player-learnings",
+      "source_version": "HEAD",
+      "content_hash": "ad883e58666e43377c4f39fb0bdaba0e3dffeec05fae6f744d49a7877829fb24",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-18T20:37:59.197Z"
+    },
+    "domain_intelligence-architecture-intelligence-aome510-spotify-player-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-aome510-spotify-player-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-aome510-spotify-player-architecture-intelligence-aome510-spotify-player-core-inv.md",
+      "title": "Architecture Intelligence: aome510/spotify-player Core Invariants",
+      "repository": "aome510/spotify-player",
+      "source_version": "8d17edec",
+      "content_hash": "ff515ac8d836f6814c777d15c8e4f21b88b98b3a12e6845029662ed876e7a73c",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-18T20:37:38.365Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-aome510-spotify-player": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-aome510-spotify-player",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/aome510-spotify-player-verification-protocol-empirical-defect-shield-for-aome510.md",
+      "title": "Verification Protocol: Empirical Defect Shield for aome510/spotify-player",
+      "repository": "aome510/spotify-player",
+      "source_version": "8d17edec",
+      "content_hash": "714c63b27c30687f4f8ab44c3c1de6dd3bc53cf8ec690a0e2e7e841085dbcf72",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-18T20:37:38.559Z"
+    },
+    "rule-9280": {
+      "learning_id": "rule-9280",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9280,
+      "title": "Sync cargo files",
+      "source_url": "https://github.com/typedb/typedb",
+      "source_version": "d20b8787",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-18T20:37:54.526Z"
+    },
+    "candidate_directive-sync-cargo-files": {
+      "item_id": "candidate_directive-sync-cargo-files",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-2BGR-sync-cargo-files.md",
+      "title": "Sync cargo files",
+      "repository": "typedb-typedb-learnings",
+      "source_version": "HEAD",
+      "content_hash": "62ee0a2cfe62d20a4ba7718ca4f29b6af156314604f9561d100f952e5fbf7ad7",
+      "domain_letter": "H",
+      "persisted_at": "2026-11-18T20:38:00.846Z"
+    },
+    "domain_intelligence-architecture-intelligence-aome510-spotify-player-learnings-core-invariants": {
+      "item_id": "domain_intelligence-architecture-intelligence-aome510-spotify-player-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-aome510-spotify-player-learnings-architecture-intelligence-aome510-spotify-playe.md",
+      "title": "Architecture Intelligence: aome510-spotify-player-learnings Core Invariants",
+      "repository": "aome510-spotify-player-learnings",
+      "source_version": "HEAD",
+      "content_hash": "0bfbcf338196e054f6b9437220535effda6f916dbd0530bec42f600b22b292e3",
+      "domain_letter": "G",
+      "persisted_at": "2026-11-18T20:37:59.380Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-aome510-spotify-player-learnin": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-aome510-spotify-player-learnin",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/aome510-spotify-player-learnings-verification-protocol-empirical-defect-shield-f.md",
+      "title": "Verification Protocol: Empirical Defect Shield for aome510-spotify-player-learnings",
+      "repository": "aome510-spotify-player-learnings",
+      "source_version": "HEAD",
+      "content_hash": "5d26cd40db00df7d804b46e7972df58cb6daf53c3299a242f25042bc2850332e",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-18T20:37:59.588Z"
     }
   },
   "ai-builder-brain": {
