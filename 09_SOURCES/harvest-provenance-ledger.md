@@ -10876,3 +10876,5 @@ Every entry in this ledger must capture:
 | `learn-github-ratatui-ratatui` | `https://github.com/ratatui/ratatui` | `5c1a8cd5` | Multi-dimensional audit evidence | 2026-11-18T06:32:30.658Z |
 | `learn-github-tencent-tds-kuiklyui` | `https://github.com/Tencent-TDS/KuiklyUI` | `0828d8ef` | Multi-dimensional audit evidence | 2026-11-18T06:32:37.128Z |
 | `learn-github-hashicorp-terraform` | `https://github.com/hashicorp/terraform` | `a1246154` | Multi-dimensional audit evidence | 2026-11-18T06:32:38.661Z |
+| `learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf` | `https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF` | `hf-ista-da` | Multi-dimensional audit evidence | 2026-11-18T06:41:15.131Z |
+| `learn-github-1jehuang-jcode` | `https://github.com/1jehuang/jcode` | `44c58e8c` | Multi-dimensional audit evidence | 2026-11-18T06:41:17.223Z |

@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261116-9AA8",
-    "timestamp": "2026-11-16T16:00:09.296Z",
-    "repository": "Louis-CFM/coucou",
-    "learningId": "learn-github-louis-cfm-coucou",
-    "contentHash": "feb9d2924edf89cd7f4feb81ae2255a9beeaaf204870cc06dc6c086b44ce75be",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261116-9BJD",
-    "timestamp": "2026-11-16T16:00:10.921Z",
-    "repository": "prometheus/prometheus",
-    "learningId": "learn-github-prometheus-prometheus",
-    "contentHash": "499c6a7a4aac8939f1c61cef323f3348589e70f1351c89f948cb24bde48c52bd",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261116-9DEW",
     "timestamp": "2026-11-16T16:00:13.352Z",
     "repository": "projectdiscovery/nuclei",
@@ -7490,6 +7460,36 @@
     "repository": "hashicorp/terraform",
     "learningId": "learn-github-hashicorp-terraform",
     "contentHash": "38a4a8877440ebb3cdf51efadbb6327173a08f8e0fd0c281231ed1bf2fcd7828",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-68HJ",
+    "timestamp": "2026-11-18T06:41:15.127Z",
+    "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
+    "learningId": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf",
+    "contentHash": "fbe1e4c9feee0e0165567206c023e70954a2c976fdb6abfb99e71928a5d0d0d1",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-6A3M",
+    "timestamp": "2026-11-18T06:41:17.218Z",
+    "repository": "1jehuang/jcode",
+    "learningId": "learn-github-1jehuang-jcode",
+    "contentHash": "622293821c3ff5011de823d90752674844b2c35a6e8d9e5c4d65091eef18228b",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

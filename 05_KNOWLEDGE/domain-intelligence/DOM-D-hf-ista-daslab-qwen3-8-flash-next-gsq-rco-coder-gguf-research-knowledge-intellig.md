@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
   "source_version": "hf-ista-daslab-qwen3.8-flash-next-gsq-rco-coder-gguf",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T19:27:17.080Z",
+  "timestamp": "2026-11-18T06:41:15.362Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF](https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF) (Revision: `hf-ista-da`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T19:27:17.080Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-18T06:41:15.362Z`  
 > **Learning ID**: `learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-flash-next-gsq-rco-coder-gguf-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF](https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T19:27:16.459Z  
+> **Harvest Timestamp**: 2026-11-18T06:41:14.427Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: image-text-to-text
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 779220 downloads | 615 likes
+- **Stars / Engagement**: 826130 downloads | 632 likes
 
 ---
 

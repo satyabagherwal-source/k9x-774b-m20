@@ -10843,3 +10843,5 @@
 | `CYCLE-20261118-UZST` | `2026-11-18T06:32:30.653Z` | `ratatui/ratatui` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/ratatui-ratatui-learnings.md` | Yes (`a573b932...`) |
 | `CYCLE-20261118-V4SK` | `2026-11-18T06:32:37.124Z` | `Tencent-TDS/KuiklyUI` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9139` | Yes (`2541646c...`) |
 | `CYCLE-20261118-V5Z3` | `2026-11-18T06:32:38.655Z` | `hashicorp/terraform` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9140` | Yes (`38a4a887...`) |
+| `CYCLE-20261118-68HJ` | `2026-11-18T06:41:15.127Z` | `ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-ista-daslab-qwen3.8-flash-next-gsq-rco-coder-gguf-learnings.md` | Yes (`fbe1e4c9...`) |
+| `CYCLE-20261118-6A3M` | `2026-11-18T06:41:17.218Z` | `1jehuang/jcode` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9141` | Yes (`62229382...`) |

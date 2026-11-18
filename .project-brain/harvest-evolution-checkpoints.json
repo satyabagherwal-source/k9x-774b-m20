@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T06:32:46.101Z",
+  "last_updated": "2026-11-18T06:41:29.237Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-18T04:11:36.483Z",
@@ -268,7 +268,7 @@
       "staged_for_review": 1
     },
     "zseven-w-openpencil-learnings.md": {
-      "processed_at": "2026-11-18T06:23:36.885Z",
+      "processed_at": "2026-11-18T06:41:28.216Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -548,9 +548,9 @@
       "staged_for_review": 1
     },
     "1jehuang-jcode-learnings.md": {
-      "processed_at": "2026-11-17T00:56:37.024Z",
-      "promoted_canonical": 1,
-      "staged_for_review": 0
+      "processed_at": "2026-11-18T06:41:26.653Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     },
     "mrkai77-loop-learnings.md": {
       "processed_at": "2026-11-15T07:42:32.467Z",
@@ -2088,7 +2088,7 @@
       "staged_for_review": 0
     },
     "hf-ista-daslab-qwen3.8-flash-next-gsq-rco-coder-gguf-learnings.md": {
-      "processed_at": "2026-11-13T19:27:35.122Z",
+      "processed_at": "2026-11-18T06:41:27.816Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3403,7 +3403,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 1833,
+  "total_dossiers_evaluated": 1836,
   "total_canonical_promoted": 337,
-  "total_staged_for_review": 1413
+  "total_staged_for_review": 1416
 }

@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T06:32:38.668Z",
-  "total_cycles_completed": 10384,
-  "total_learnings_persisted": 10384,
-  "total_rules_promoted": 9892,
+  "last_updated": "2026-11-18T06:41:17.229Z",
+  "total_cycles_completed": 10386,
+  "total_learnings_persisted": 10386,
+  "total_rules_promoted": 9893,
   "history": [
-    {
-      "timestamp": "2026-11-17T16:54:55.877Z",
-      "repository": "cilium/cilium",
-      "learningId": "learn-github-cilium-cilium",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T17:02:24.432Z",
-      "repository": "Comfy-Org/Z-Image-Turbo",
-      "learningId": "learn-huggingface-comfy-org-z-image-turbo",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-17T17:02:32.366Z",
       "repository": "aws-amplify/amplify-js",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-18T06:32:38.668Z",
       "repository": "hashicorp/terraform",
       "learningId": "learn-github-hashicorp-terraform",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T06:41:15.138Z",
+      "repository": "ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
+      "learningId": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T06:41:17.229Z",
+      "repository": "1jehuang/jcode",
+      "learningId": "learn-github-1jehuang-jcode",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

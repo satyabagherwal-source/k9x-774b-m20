@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-18T06:32:44.081Z",
+  "updated_at": "2026-11-18T06:41:26.700Z",
   "stats": {
-    "total_discovered": 5354,
-    "approved_pending_harvest": 5052,
+    "total_discovered": 5355,
+    "approved_pending_harvest": 5053,
     "harvested_count": 0,
     "rejected_count": 302,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 5035,
+      "COMMUNITY_AND_EXPERT": 5036,
       "OFFICIAL_DOCUMENTATION": 175,
       "STANDARDS_AND_SPECIFICATIONS": 108,
       "ENGINEERING_BLOGS": 4,
@@ -115695,6 +115695,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/ratatui-ratatui-learnings.md",
         "fileName": "ratatui-ratatui-learnings.md"
+      }
+    },
+    "SRC-3CF0D2224B5A": {
+      "id": "SRC-3CF0D2224B5A",
+      "url": "https://github.com/1jehuang/jcode/releases/tag/v1.0.0",
+      "title": "https://github.com/1jehuang/jcode/releases/tag/v1.0.0",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T06:41:26.699Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/1jehuang-jcode-learnings.md",
+        "fileName": "1jehuang-jcode-learnings.md"
       }
     }
   }

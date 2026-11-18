@@ -605,8 +605,8 @@
     "sourceUrl": "https://huggingface.co/ISTA-DASLab/Qwen3.8-Flash-Next-GSQ-RCO-Coder-GGUF",
     "sourceVersion": "hf-ista-daslab-qwen3.8-flash-next-gsq-rco-coder-gguf",
     "license": "Open-Source",
-    "contentHash": "d2e1306a6630e3458eb251b2095033bbb2e9380d410d5bd50b95eccefce950b0",
-    "lastHarvestedAt": "2026-11-13T19:27:16.936Z",
+    "contentHash": "fbe1e4c9feee0e0165567206c023e70954a2c976fdb6abfb99e71928a5d0d0d1",
+    "lastHarvestedAt": "2026-11-18T06:41:15.131Z",
     "learningId": "learn-huggingface-ista-daslab-qwen3-8-flash-next-gsq-rco-coder-gguf"
   },
   "hf-ista-daslab-qwen3.8-flash-next-gsq-rco-gguf": {
@@ -3613,10 +3613,10 @@
     "repository": "1jehuang/jcode",
     "platform": "github",
     "sourceUrl": "https://github.com/1jehuang/jcode",
-    "sourceVersion": "c6280dda",
+    "sourceVersion": "44c58e8c",
     "license": "MIT",
-    "contentHash": "bc60fb0eeab187386347ce17e303dc4127dba6b7d22dbba9d52c3c38d1b9eed3",
-    "lastHarvestedAt": "2026-11-17T00:55:57.318Z",
+    "contentHash": "622293821c3ff5011de823d90752674844b2c35a6e8d9e5c4d65091eef18228b",
+    "lastHarvestedAt": "2026-11-18T06:41:17.223Z",
     "learningId": "learn-github-1jehuang-jcode"
   },
   "wix-detox": {

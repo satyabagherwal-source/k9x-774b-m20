@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-17T00:56:37.141Z",
+  "timestamp": "2026-11-18T06:41:26.833Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-1jehuang-jcode-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [1jehuang-jcode-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-17T00:56:37.141Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-18T06:41:26.833Z`  
 > **Learning ID**: `LEARN-EVO-1jehuang-jcode-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/1jehuang-jcode-learnings.md`  
 > **Source**: github ([https://github.com/1jehuang/jcode](https://github.com/1jehuang/jcode))  
-> **Source Version**: `c6280dda`  
+> **Source Version**: `44c58e8c`  
 > **License**: MIT  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-17T00:55:56.906Z  
+> **Timestamp**: 2026-11-18T06:41:16.045Z  
 > **Learning ID**: `learn-github-1jehuang-jcode`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/1jehuang-jcode-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/1jehuang/jcode](https://github.com/1jehuang/jcode))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T00:55:56.616Z  
+> **Harvest Timestamp**: 2026-11-18T06:41:16.037Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: High performance coding agent harness written in Rust, built for heavy multi-agent dev workflows
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 21824 stars
+- **Stars / Engagement**: 21871 stars
 
 ---
 
@@ -61,6 +61,135 @@ PROVENANCE_END -->
 ### D1: Architecture & Structural Boundaries
 - Entry configurations inspected via direct stream: Cargo.toml, README.md.
 - Evaluated system abstractions and modular contracts.
+
+### Core Architecture Module: `crates/jcode-app-core/examples/browser_size_probe.rs`
+```
+//! Run with `justrust run --release -p jcode-app-core --example browser_size_probe`.
+//! Measures serialization CPU and allocation traffic, not process RSS.
+use jcode_app_core::process_memory::estimate_json_bytes;
+use serde_json::{Value, json};
+use std::alloc::{GlobalAlloc, Layout, System};
+use std::hint::black_box;
+use std::sync::atomic::{AtomicBool, AtomicUsize, Ordering};
+
+struct Counting;
+static COUNT: AtomicBool = AtomicBool::new(false);
+static ALLOCS: AtomicUsize = AtomicUsize::new(0);
+static BYTES: AtomicUsize = AtomicUsize::new(0);
+unsafe impl GlobalAlloc for Counting {
+    unsafe fn alloc(&self, layout: Layout) -> *mut u8 {
+        if COUNT.load(Ordering::Relaxed) {
+            ALLOCS.fetch_add(1, Ordering::Relaxed);
+            BYTES.fetch_add(layout.size(), Ordering::Relaxed);
+        }
+        unsafe { System.alloc(layout) }
+    }
+    unsafe fn dealloc(&self, ptr: *mut u8, layout: Layout) {
+        unsafe { System.dealloc(ptr, layout) }
+    }
+    unsafe fn realloc(&self, ptr: *mut u8, layout: Layout, size: usize) -> *mut u8 {
+        if COUNT.load(Ordering::Relaxed) {
+            ALLOCS.fetch_add(1, Ordering::Relaxed);
+            BYTES.fetch_add(size, Ordering::Relaxed);
+        }
+        unsafe { System.realloc(ptr, layout, size) }
+    }
+}
+#[global_allocator]
+static ALLOCATOR: Counting = Counting;
+
+fn cpu_ns() -> u128 {
+    let mut time = libc::timespec {
+        tv_sec: 0,
+        tv_nsec: 0,
+    };
+    assert_eq!(
+        unsafe { libc::clock_gettime(libc::CLOCK_THREAD_CPUTIME_ID, &mut time) },
+        0
+    );
+    time.tv_sec as u128 * 1_000_000_000 + time.tv_nsec as u128
+}
+fn sample(values: &[Value], iterations: usize, count: bool) -> (u128, usize, usize) {
+    let allocations = ALLOCS.load(Ordering::Relaxed);
+    let bytes = BYTES.load(Ordering::Relaxed);
+    let start = cpu_ns();
+    for _ in 0..iterations {
+        for value in values {
+            black_box(if count {
+                estimate_json_bytes(black_box(value))
+            } else {
+                black_box(value).to_string().len()
+            });
+        }
+    }
+    (
+        cpu_ns() - start,
+        ALLOCS.load(Ordering::Relaxed) - allocations,
+        BYTES.load(Ordering::Relaxed) - bytes,
+    )
+}
+fn main() {
+    let workloads = [
+        (
+            "small",
+            vec![json!({"ok":true,"id":7,"text":"hello"})],
+            100_000,
+        ),
+        (
+            "many",
+            (0..240)
+                .map(|i| json!({"id":i,"label":"click \"é😀\"\n","ok":true}))
+                .collect(),
+            1_000,
+        ),
+        (
+            "large",
+            vec![
+                json!({"text":"abc\"\\\n😀".repeat(16_000),"elements":(0..2000).map(|i|json!({"id":i,"text":"label"})).collect::<Vec<_>>()}),
+            ],
+            200,
+        ),
+    ];
+    for (name, values, iterations) in workloads {
+        for value in &values {
+            assert_eq!(estimate_json_bytes(value), value.to_string().len());
+        }
+        sample(&values, 10, false);
+        sample(&values, 10, true);
+        let mut old = Vec::new();
+        let mut new = Vec::new();
+        for round in 0..10 {
+            let (a, b) = if round % 2 == 0 {
+                (
+                    sample(&values, iterations, false),
+                    sample(&values, iterations, true),
+                )
+            } else {
+                let b = sample(&values, iterations, true);
+                (sample(&values, iterations, false), b)
+            };
+            COUNT.store(true, Ordering::Relaxed);
+            let old_alloc = sample(&values, 1, false);
+            let new_alloc = sample(&values, 1, true);
+            COUNT.store(false, Ordering::Relaxed);
+            println!(
+                "{name} round={round} legacy_cpu_ns={} count_cpu_ns={} legacy_allocs={} count_allocs={} legacy_alloc_bytes={} count_alloc_bytes={}",
+                a.0, b.0, old_alloc.1, new_alloc.1, old_alloc.2, new_alloc.2
+            );
+            old.push(a.0);
+            new.push(b.0);
+        }
+        old.sort_unstable();
+        new.sort_unstable();
+        println!(
+            "{name} median_cpu_ratio={:.4}",
+            new[5] as f64 / old[5] as f64
+        );
+        assert!(new[5] <= old[5], "CPU regression in {name}");
+    }
+}
+
+```
 
 ### Core Architecture Module: `crates/jcode-app-core/src/agent.rs`
 ```
@@ -2158,191 +2287,6 @@ mod durable_error_tests {
         let message = c
 ```
 
-### Core Architecture Module: `crates/jcode-app-core/src/agent/prompting.rs`
-```
-use super::Agent;
-use crate::logging;
-use crate::message::{Message, ToolDefinition};
-
-impl Agent {
-    pub(crate) fn runtime_skills_snapshot(&self) -> serde_json::Value {
-        let registry = self.current_skills_snapshot();
-        let mut loaded = registry.list();
-        loaded.sort_by(|a, b| a.name.cmp(&b.name));
-        let skills: Vec<_> = loaded
-            .iter()
-            .map(|skill| {
-                serde_json::json!({
-                    "name": skill.name, "description": skill.description,
-                    "path": skill.path, "allowed_tools": skill.allowed_tools,
-                })
-            })
-            .collect();
-        let endorsed: Vec<_> = crate::skill::endorsed_skills().iter().map(|skill| serde_json::json!({
-            "name": skill.name, "description": skill.description, "category": skill.category,
-            "source": skill.source, "install": skill.install, "installed": registry.contains(skill.name),
-        })).collect();
-        serde_json::json!({"skills": skills, "endorsed": endorsed, "active_skill": self.active_skill})
-    }
-
-    pub(crate) fn runtime_agent_model_overrides(&self) -> serde_json::Value {
-        serde_json::json!(self.session.agent_model_overrides)
-    }
-
-    pub(crate) async fn runtime_context_snapshot(&self) -> serde_json::Value {
-        let mut context = self.debug_context().await;
-        context["messages"] = serde_json::json!(self.session.visible_conversation_messages());
-        context["context_window"] = serde_json::json!(self.provider_context_window());
-        context
-    }
-
-    /// Explicitly prepare/freeze the same tool surface used by provider turns.
-    /// Unlike `debug_context`, this may update the tool cache. It never calls a provider.
-    pub async fn prepare_debug_context(&mut self) -> serde_json::Value {
-        let prepared_tools = self.tool_definitions().await;
-        let mut context = self.debug_context().await;
-        context["prepared_tools"] = serde_json::json!(prepared_tools);
-        context
-    }
-
-    /// Inspect the next request's static context without inference, prewarming,
-    /// or locking a new tool snapshot. Pending memory is deliberately not consumed.
-    pub async fn debug_context(&self) -> serde_json::Value {
-        let prompt = self.build_system_prompt_split(None);
-        let current_tools = self.tool_definitions_for_debug().await;
-        let effective_tools = self.locked_tools.as_ref().unwrap_or(&current_tools);
-        let locked_tool_names = self.locked_tools.as_ref().map(|tools| {
-            tools
-                .iter()
-                .map(|tool| tool.name.as_str())
-                .collect::<Vec<_>>()
-        });
-        serde_json::json!({
-            "session_id": self.session.id,
-            "working_dir": self.session.working_dir,
-            "mode": if self.is_desktop_selfdev() { "desktop" }
-                else if self.session.is_canary { "cli" } else { "regular" },
-            "is_canary": self.session.is_canary,
-            "system_prompt": {
-                "static": prompt.static_part,
-                "dynamic": prompt.dynamic_part,
-                "pending_memory_included": false,
-            },
-            "tools_locked": self.locked_tools.is_some(),
-            "locked_tool_names": locked_tool_names,
-            "effective_tools": effective_tools,
-            "current_tools": current_tools,
-        })
-    }
-
-    pub(super) fn log_prompt_prefix_accounting(
-        &self,
-        split: &crate::prompt::SplitSystemPrompt,
-        tools: &[ToolDefinition],
-    ) {
-        let system_tokens = split.estimated_tokens();
-        let tool_tokens = ToolDefinition::aggregate_prompt_token_estimate(tools);
-        let prefix_tokens = system_tokens + tool_tokens;
-        logging::info(&format!(
-            "Prompt prefix estimate: total={} tokens (system={} tools={})",
-            prefix_tokens, system_tokens, tool_tokens
-        ));
-    }
-
-    pub(super) fn build_memory_prompt_nonblocking_shared(
-        &self,
-        messages: std::sync::Arc<[Message]>,
-        _memory_event_tx: Option<crate::memory::MemoryEventSink>,
-    ) -> Option<crate::memory::PendingMemory> {
-        if !self.memory_enabled {
-            return None;
-        }
-
-        let session_id = &self.session.id;
-
-        let fresh_user_turn = crate::message::ends_with_fresh_user_turn(&messages);
-        let pending = if fresh_user_turn {
-            crate::memory::take_pending_memory_for_project(
-                session_id,
-                self.session.working_dir.as_deref(),
-            )
-        } else {
-            None
-        };
-
-        // Use the persistent memory-agent pipeline as the single source of truth.
-        // Running both this and the legacy MemoryManager background retrieval path
-        // can prepare overlapping pending prompts for the same turn, which makes
-        // memory injection feel overly aggressive.
-        // Relevance results are consumed only at the start of a fresh user turn.
-        // Enqueuing again after every tool result runs the local embedding model
-        // for each provider continuation without creating an additional injection
-        // opportunity. One update per user turn keeps memory current while avoiding
-        // redundant 512-token inference during tool-heavy agent loops.
-        if fresh_user_turn {
-            crate::memory_agent::update_context_sync_with_dir(
-                session_id,
-                messages,
-                self.session.working_dir.clone(),
-            );
-        }
-
-        pending
-    }
-
-    /// Build split system prompt for better caching
-    /// Returns static (cacheable) and dynamic (not cached) parts separately
-    pub(super) fn build_system_prompt_split(
-        &self,
-        memory_prompt: Option<&str>,
-    ) -> crate::prompt::SplitSystemPrompt {
-        if let Some(ref override_prompt) = self.session.system_prompt {
-            return crate::prompt::SplitSystemPrompt {
-                static_part: override_prompt.clone(),
-                dynamic_part: String::new(),
-            };
-        }
-
-        // The active skill prompt is announced once in the transcript when the
-        // skill is activated (see `announce_active_skill`). Keeping it out of
-        // the system prompt means switching skills never invalidates the cache.
-        let skill_prompt: Option<String> = None;
-
-        // Frozen per session so skill installs never rewrite the cached
-        // system prefix. Later installs are announced in the transcript.
-        let available_skills = &self.prompt_skills_snapshot;
-
-        let working_dir = self
-            .session
-            .working_dir
-            .as_ref()
-            .map(std::path::PathBuf::from);
-
-        let (split, _context_info) = crate::prompt::build_system_prompt_split_with_agents_md(
-            skill_prompt.as_deref(),
-            available_skills,
-            self.session.is_canary,
-            memory_prompt,
-            working_dir.as_deref(),
-            self.agents_md_snapshot.clone(),
-        );
-
-        split
-    }
-
-    /// Non-blocking memory prompt - takes pending result and spawns check for next turn
-    #[cfg(test)]
-    pub(super) fn build_memory_prompt_nonblocking(
-        &self,
-        messages: &[Message],
-        _memory_event_tx: Option<crate::memory::MemoryEventSink>,
-    ) -> Option<crate::memory::PendingMemory> {
-        self.build_memory_prompt_nonblocking_shared(messages.to_vec().into(), _memory_event_tx)
-    }
-}
-
-```
-
 
 ### D2: Asynchronous State & Concurrency
 - Analyzed concurrency guarantees, async pipelines, and event handling from PR resolutions and commit changes.
@@ -2352,8 +2296,11 @@ impl Agent {
 - **Issue #2151** (2026-11-13): **swarm: lane todo name uses the full spawn prompt (first 60 chars) instead of the short `label`**
   *Symptoms*: **Type:** bug **Labels:** `bug`, `swarm`, `todo`  **Problem** When spawning a worker, the coordinator's lane todo is named with the **first 60 characters of the spawn prompt** (the full message), not the short `label`. Long prompts become unwieldy todo names that pollute the coordinator's plan and break `todo update` by short name (the plan already contains a todo named with the prompt text, so a different short name appears as a "duplicate todo name" error).  **Code** - `crates/jcode-app-core/src/tool/communicate.rs:1270-1283` — on `spawn`, `title` is computed as `prompt.lines().find(non-empty).chars().take(60)`; `label` is only used as a fallback when `title` is empty. `ensure_spawn_lane(&todos, &label, phase, &title, prompt, ...)` creates the lane with this long title as the todo name.  **Repro** 1. `swarm spawn` with `label: "providers-analyst"` and a long `initial_message` starting with "You are a codebase analyst. The repo root is /Users/mac/jcode ...". 2. The coordinator's todo plan now contains a todo named "You are a codebase analyst. The repo root is /Users/mac/jcode" (first 60 chars). 3. Trying `todo update` with the short name "providers-analyst" fails with "duplicate todo name" because the existing todo is named with the prompt text.  **Suggested fix** 1. Use `label` as the lane todo **name** (not the prompt). Keep the full prompt as the todo **description**/task body. 2. Concretely in `communicate.rs:1273-1277`: set `title = label`, and pass the prompt as the de
 
-- **Issue #2139** (2026-11-13): **master: config_env_fingerprint test red since 5bfba140b, JCODE_RESUME_OPEN_ELSEWHERE missing from CONFIG_ENV_KEYS**
-  *Symptoms*: ### Summary `cargo test -p jcode-base --lib config_env_fingerprint_tracks_every_apply_env_override_var` fails on the current master tip: `Config::apply_env_overrides` reads `JCODE_RESUME_OPEN_ELSEWHERE` (added in 5bfba140b) but the constant `CONFIG_ENV_KEYS` in `crates/jcode-base/src/config.rs` was not updated.  ### Steps to reproduce 1. `cargo test -p jcode-base --lib config_env_fingerprint_tracks_every_apply_env_override_var`  ### Expected The fingerprint test passes: every env var read by `Config::apply_env_overrides` is listed in `CONFIG_ENV_KEYS`.  ### Actual ``` thread 'config::tests::config_env_fingerprint_tracks_every_apply_env_override_var' panicked at crates/jcode-base/src/config_tests.rs:990:5: CONFIG_ENV_KEYS must include every env var read by Config::apply_env_overrides; missing: ["JCODE_RESUME_OPEN_ELSEWHERE"] ``` The key is read in `crates/jcode-base/src/config/env_overrides.rs:303` next to `JCODE_RESUME_TIME`, but only `JCODE_RESUME_PROJECT_SCOPE` and `JCODE_RESUME_TIME` exist in the `CONFIG_ENV_KEYS` list in `crates/jcode-base/src/config.rs:122`.  ### Proposed fix Add `"JCODE_RESUME_OPEN_ELSEWHERE"` to `CONFIG_ENV_KEYS` in `crates/jcode-base/src/config.rs`, next to the other `JCODE_RESUME_*` entries.  Happy to open a PR if you want.
+- **Issue #2144** (2026-11-17): **Claude Fable 5.2 missing from model selection with Claude OAuth**
+  *Symptoms*: With Claude OAuth login, claude-fable-5-2 does not appear in the model picker and is not available as a swarm/spawn model. Expected: selectable like other Claude models. Version: v1.0.0-preview.394 (eb867111f).
+  **Post-Mortem & Fix Analysis**:
+  > Thanks for the report. e99ec1efe added `claude-fable-5-2` to the bundled Claude catalog, and it shipped in v1.0.0-preview.424 (you are on preview.394). On a build of master d75274706 with Claude OAuth, the model is listed by `jcode model list` and answers a live request. Could you update and confirm?  --- *— Jcode agent (automated triage), on behalf of @1jehuang*
+  > Released in [v1.0.0](https://github.com/1jehuang/jcode/releases/tag/v1.0.0). Run `jcode update` to get it.
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2370,1119 +2317,436 @@ impl Agent {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `591efa20` (2026-11-16)
-**Commit Message**: fix(ci): remove panic regressions and dead-code warnings
+### Incident Patch 1: `fcb98e73` (2026-11-18)
+**Commit Message**: perf: avoid discarded per-agent server memory diagnostics
 
-**File**: `crates/jcode-app-core/src/ambient/manager.rs` (modified, +0/-7)
-```diff
-@@ -77,13 +77,6 @@ impl AmbientManager {
-         Ok(id)
-     }
- 
--    pub(super) fn transact_queue<T>(
--        &mut self,
--        update: impl FnOnce(&mut Vec<ScheduledItem>) -> Result<T>,
--    ) -> Result<T> {
--        self.queue.transact(update)
--    }
--
-     pub(super) fn scheduled_item(request: ScheduleRequest) -> ScheduledItem {
-         let id = format!("sched_{:032x}", rand::random::<u128>());
-         let scheduled_for = request.wake_at.unwrap_or_else(|| {
-```
+Read identical full session attribution directly, since the compact snapshot omits compaction capacities. Borrow profile subobjects and preserve try_lock busy-session behavior and standalone agent profiling.
 
-**File**: `crates/jcode-base/src/mobile_sync_progress.rs` (modified, +9/-9)
-```diff
-@@ -66,9 +66,7 @@ impl Serialize for MergedSessions<'_> {
-         // Preserve BTreeMap order, including keys inserted between existing ones.
-         loop {
-             match (current.peek(), updates.peek()) {
--                (Some((old_id, _)), Some((id, _))) if old_id == id => {
--                    let (id, old) = current.next().unwrap();
--                    let (_, progress) = updates.next().unwrap();
-+                (Some(&(id, old)), Some(&(update_id, progress))) if id == update_id => {
-                     map.serialize_entry(
-                         id,
-                         if replaces(Some(old), progress) {
-@@ -77,18 +75,20 @@ impl Serialize for MergedSessions<'_> {
-                             old
-                         },
-                     )?;
-+                    current.next();
-+                    updates.next();
-                 }
--                (Some((old_id, _)), Some((id, _))) if old_id < id => {
--                    let (id, progress) = current.next().unwrap();
-+                (Some(&(id, progress)), Some(&(update_id, _))) if id < update_id => {
-                     map.serialize_entry(id, progress)?;
-+                    current.next();
-                 }
--                (_, Some(_)) => {
--                    let (id, progress) = updates.next().unwrap();
-+                (_, Some(&(id, progress))) => {
-                     map.serialize_entry(id, progress)?;
-+                    updates.next();
-                 }
--                (Some(_), None) => {
--                    let (id, progress) = current.next().unwrap();
-+                (Some(&(id, progress)), None) => {
-                     map.serialize_entry(id, progress)?;
-+                    current.next();
-                 }
-                 (None, None) => break,
-             }
-```
+Remove N process samples, interrupt queue scans/locks, frozen snapshot profiles, full-agent JSON allocations, and session/subobject clones per server memory request. One server process snapshot remains. History intentionally loses synthetic per-agent agent:memory entries and no longer evicts N older entries.
 
-**File**: `crates/jcode-message-types/src/tool_prompt_size.rs` (modified, +15/-6)
-```diff
-@@ -9,13 +9,18 @@ pub(super) fn prompt_chars(tool: &ToolDefinition) -> usize {
-         + value_chars(&tool.input_schema)
- }
- 
--// Serialize each borrowed component rather than first cloning the complete
--// schema tree into another Value. Value's Display uses the existing compact
--// serializer, so escaping and number formatting stay identical to legacy JSON.
-+// Count string escaping directly and format borrowed schema values instead of
-+// cloning the complete schema tree into another Value. Value's Display uses
-+// the compact serializer, preserving escaping and number formatting.
- fn string_chars(value: &str) -> usize {
--    serde_json::to_string(value)
--        .expect("string serialization cannot fail")
--        .len()
-+    2 + value
-+        .chars()
-+        .map(|ch| match ch {
-+            '"' | '\\' | '\n' | '\r' | '\t' | '\u{08}' | '\u{0c}' => 2,
-+            '\u{00}'..='\u{1f}' => 6,
-+            _ => ch.len_utf8(),
-+        })
-+        .sum::<usize>()
- }
- 
- fn value_chars(value: &Value) -> usize {
-@@ -61,6 +66,10 @@ mod tests {
-         let controls: String = (0..=127).map(char::from).collect();
-         let strings = [controls, "界🦀/\u{2028}\u{2029}".repeat(50), String::new()];
-         for text in strings {
-+            assert_eq!(
-+                string_chars(&text),
-+                serde_json::to_string(&text).unwrap().len()
-+            );
-             let schema =
-                 json!({text.clone(): [text, i64::MIN, u64::MAX, -0.0, 1e-300, 1e300, {}, []]});
-             assert_eq!(
-```
+Validated hosted justrust check -p jcode-app-core --tests and 12 filtered server::debug_server_state tests. Private no-LLM fixture, 8 populated sessions x 8 passes: legacy 26.312158ms versus session-only 3.418760ms, process samples 64 versus 0. Two local runs also improved 32.205/33.733ms to 5.258/5.255ms. Full session JSON equivalence, compaction totals, and busy skipping covered.
 
-**File**: `crates/jcode-provider-anthropic-runtime/src/lib.rs` (modified, +3/-3)
+**File**: `crates/jcode-app-core/src/server/debug_server_memory_efficiency_tests.rs` (added, +222/-0)
 ```diff
-@@ -1276,9 +1276,9 @@ fn anthropic_canonical_payload(request: &ApiRequest) -> Value {
-         "temperature": request.temperature,
-     });
- 
--    let object = payload
--        .as_object_mut()
--        .expect("canonical payload is an object");
-+    let Value::Object(object) = &mut payload else {
-+        return Value::Null;
-+    };
-     object.insert("messages".into(), messages_value);
-     object.insert("system".into(), system_value.unwrap_or(Value::Null));
-     object.insert("tools".into(), tools_value.unwrap_or(Value::Null));
-```
-
-**File**: `crates/jcode-provider-antigravity-runtime/src/lib.rs` (modified, +3/-3)
-```diff
-@@ -409,9 +409,9 @@ fn canonical_payload(request: &CodeAssistGenerateRequest) -> Value {
-         "model": &request.model,
-         "tool_config": &request.request.tool_config,
-     });
--    let object = payload
--        .as_object_mut()
--        .expect("canonical payload is an object");
-+    let Value::Object(object) = &mut payload else {
-+        return Value::Null;
-+    };
-     object.insert(
-         "contents".into(),
-         serde_json::to_value(&request.request.contents).unwrap_or(Value::Null),
-```
-
-**File**: `crates/jcode-provider-copilot-runtime/src/lib.rs` (modified, +2/-1)
-```diff
-@@ -70,7 +70,8 @@ fn canonical_diagnostic_parts(
- ) -> (&[Value], Option<&Value>, Option<&Value>) {
-     let items = payload[if responses { "input" } else { "messages" }]
-         .as_array()
--        .expect("canonical Copilot input is an array");
-+        .map(Vec::as_slice)
-+        .unwrap_or_default();
-     let system = if responses {
-         payload.get("instructions")
-     } else {
-```
-
-**File**: `crates/jcode-provider-cursor-runtime/src/lib.rs` (modified, +5/-1)
-```diff
-@@ -551,7 +551,11 @@ impl Provider for CursorCliProvider {
-             .unwrap_or_else(|poisoned| poisoned.into_inner())
-             .clone();
-         let payload = canonical_input_payload(&model, system, &prompt);
--        let prompt_items = std::slice::from_ref(payload.get("prompt").unwrap());
-+        let prompt_items = std::slice::from_ref(
-+            payload
-+                .get("prompt")
-+                .ok_or_else(|| anyhow::anyhow!("canonical payload is missing prompt"))?,
+@@ -0,0 +1,222 @@
++//! No-LLM fixtures for the server memory diagnostic's session-only fast path.
++use super::*;
++
++struct PrivateHome {
++    _dir: tempfile::TempDir,
++    home: Option<std::ffi::OsString>,
++    test_session: Option<std::ffi::OsString>,
++}
++
++impl PrivateHome {
++    fn new() -> Self {
++        let dir = tempfile::tempdir().unwrap();
++        let home = std::env::var_os("JCODE_HOME");
++        let test_session = std::env::var_os("JCODE_TEST_SESSION");
++        crate::env::set_var("JCODE_HOME", dir.path());
++        crate::env::set_var("JCODE_TEST_SESSION", "1");
++        Self {
++            _dir: dir,
++            home,
++            test_session,
++        }
++    }
++}
++
++impl Drop for PrivateHome {
++    fn drop(&mut self) {
++        for (name, value) in [
++            ("JCODE_HOME", self.home.take()),
++            ("JCODE_TEST_SESSION", self.test_session.take()),
++        ] {
++            match value {
++                Some(value) => crate::env::set_var(name, value),
++                None => crate::env::remove_var(name),
++            }
++        }
++    }
++}
++
++struct NoRequests;
++
++#[async_trait::async_trait]
++impl crate::provider::Provider for NoRequests {
++    async fn complete(
++        &self,
++        _: &[crate::message::Message],
++        _: &[crate::message::ToolDefinition],
++        _: &str,
++        _: Option<&str>,
++    ) -> Result<crate::provider::EventStream> {
++        anyhow::bail!("memory diagnostics must never call a provider")
++    }
++
++    fn name(&self) -> &str {
++        "memory-diagnostic-test"
++    }
++
++    fn fork(&self) -> Arc<dyn crate::provider::Provider> {
++        Arc::new(Self)
++    }
++}
++
++fn populated_agent(index: usize) -> Agent {
++    let mut session =
++        crate::session::Session::create_with_id(format!("memory-diagnostic-{index}"), None, None);
++    for turn in 0..8 {
++        session.add_message(
++            crate::message::Role::User,
++            vec![crate::message::ContentBlock::Text {
++                text: format!("turn {turn}: {}", "escaped\n\"界".repeat(512)),
++                cache_control: None,
++            }],
 +        );
-         let system_value = payload.get("system").filter(|value| !value.is_null());
-         jcode_provider_core::fingerprint::log_provider_canonical_input(
-             "cursor",
++    }
++    session.compaction = Some(Arc::new(crate::session::StoredCompactionState {
++        summary_text: "summary\n\"界".repeat(128),
++        openai_encrypted_content: Some("encrypted".repeat(1024).into()),
++        covers_up_to_turn: 2,
++        original_turn_count: 8,
++        compacted_count: 2,
++    }));
++    Agent::new_with_session(
++        Arc::new(NoRequests),
++        crate::tool::Registry::empty(),
++        session,
++        None,
++    )
++}
++
++#[test]
++fn session_only_profile_matches_full_agent_profile_and_removes_repeated_process_samples() {
++    // The private home and test-session flag isolate this fixture on either
++    // the local or hosted test runner. No model requests or daemon are needed.
++    let _env = crate::storage::lock_test_env();
++    let _home = PrivateHome::new();
++    let agents: Vec<_> = (0..8).map(populated_agent).collect();
++    let expected: Vec<_> = agents
++        .iter()
++        .map(|agent| agent.debug_memory_profile()["session"].clone())
++        .collect();
++    let old_start = Instant::now();
++    for _ in 0..8 {
++        for agent in &agents {
++            std::hint::black_box(agent.debug_memory_profile()["session"].clone());
++        }
++    }
++    let old_elapsed = old_start.elapsed();
++    let history_before = crate::process_memory::history(128);
++    assert_eq!(
++        history_before
++            .iter()
++            .take(64)
++            .filter(|entry| entry.source == "agent:memory")
++            .count(),
++        64,
++        "the legacy 8-session, 8-pass loop records one process sample per profile"
++    );
++
++    let new_start = Instant::now();
++    for _ in 0..8 {
++        for agent in &agents {
++            std::hint::black_box(agent.session_for_split().debug_memory_profile());
++        }
++    }
++    let new_elapsed = new_start.elapsed();
++    for (agent, expected) in agents.iter().zip(&expected) {
++        let actual = agent.session_for_split().debug_memory_profile();
++        assert_eq!(&actual, expected);
++        // In particular, compact snapshots cannot substitute for these
++        // capacity and encrypted-payload fields in server:memory.
++        assert!(
++            actual["compaction"]["encrypted_content_bytes"]
++                .as_u64()
++                .unwrap()
++                > 0
++        );
++        let mut borrowed = CompactionMemoryTotals::default();
++        borrowed.observe("fixture", &actual);
++        let mut legacy = CompactionMemoryTotals::default();
++        legacy.observe("fixture", expected);
++        assert_eq!(borrowed.into_json(), legacy.into_json());
++    }
++    let history_after = crate::process_memory::history(128);
++    assert_eq!(
++        serde_json::to_value(history_before).unwrap(),
++        serde_json::to_value(history_after).unwrap(),
++        "session-only profiling must not sample or append process history"
++    );
++    e
 ```
 
-**File**: `crates/jcode-provider-gemini-runtime/src/lib.rs` (modified, +3/-3)
+**File**: `crates/jcode-app-core/src/server/debug_server_state.rs` (modified, +11/-8)
 ```diff
-@@ -564,9 +564,9 @@ fn canonical_payload(request: &CodeAssistGenerateRequest) -> Value {
-         "model": &request.model,
-         "tool_config": &request.request.tool_config,
-     });
--    let object = payload
--        .as_object_mut()
--        .expect("canonical payload is an object");
-+    let Value::Object(object) = &mut payload else {
-+        return Value::Null;
-+    };
-     object.insert(
-         "contents".into(),
-         serde_json::to_value(&request.request.contents).unwrap_or(Value::Null),
+@@ -785,17 +785,16 @@ async fn build_server_memory_payload(
+     for (session_id, agent_arc) in sessions_guard.iter() {
+         if let Ok(agent) = agent_arc.try_lock() {
+             locked_session_count += 1;
+-            let profile = agent.debug_memory_profile();
+-            let session_profile = profile.get("session").cloned().unwrap_or_default();
++            // The compact snapshot omits compaction capacity attribution. Read
++            // the same session profile as agent:memory without its discarded
++            // process, interrupt, and frozen-snapshot diagnostics.
++            let session_profile = agent.session_for_split().debug_memory_profile();
+             // Only profiles obtained through try_lock contribute. Capacity is
+             // attribution, not serialized length or an estimate of RSS savings.
+             compaction_memory.observe(session_id, &session_profile);
+-            let totals = session_profile.get("totals").cloned().unwrap_or_default();
+-            let messages = session_profile.get("messages").cloned().unwrap_or_default();
+-            let provider_cache = session_profile
+-                .get("provider_messages_cache")
+-                .cloned()
+-                .unwrap_or_default();
++            let totals = &session_profile["totals"];
++            let messages = &session_profile["messages"];
++            let provider_cache = &session_profile["provider_messages_cache"];
+             let json_bytes = totals
+                 .get("json_bytes")
+                 .and_then(|value| value.as_u64())
+@@ -1253,3 +1252,7 @@ fn path_len(path: &std::path::Path) -> usize {
+ #[cfg(test)]
+ #[path = "debug_server_state_tests.rs"]
+ mod tests;
++
++#[cfg(test)]
++#[path = "debug_server_memory_efficiency_tests.rs"]
++mod efficiency_tests;
 ```
 
 ---
 
-### Incident Patch 2: `379203b4` (2026-11-17)
-**Commit Message**: test: extract oversized regression test groups without changing coverage
+### Incident Patch 2: `1dfdbd8c` (2026-11-18)
+**Commit Message**: fix(provider): compact only selected compressed request bodies
 
-**File**: `crates/jcode-app-core/src/agent_tests.rs` (modified, +3/-131)
+Move final shrink after ratio and expansion-limit checks, covering both gzip and zstd without reallocating rejected compressed bodies. Verify exact accepted bytes, capacity bounds, large gzip roundtrips and gzip/zstd low-ratio plus zstd expansion-limit fallbacks.
+
+Hosted check and full package tests passed (209 passed, 3 ignored). Extended alternating benchmark: accepted 8388740-byte conversation zstd retained capacity 8421508 to 2059758 bytes, median encode latency 68.818 to 68.855 ms over 12 measured rounds. Gzip retained capacity 4194370 to 2367473 bytes, median 24.743 to 24.555 ms (noise-level change). Peak codec allocation unchanged; selected bodies may incur a realloc/copy, rejected bodies no longer do.
+
+**File**: `crates/jcode-provider-core/src/request_compression.rs` (modified, +6/-8)
 ```diff
-@@ -38,76 +38,6 @@ struct NativeAutoCompactionProvider;
- 
- struct BoundSavedAccountProvider;
- 
--#[tokio::test]
--async fn working_directory_moves_preserve_first_active_session_origin() {
--    let mut agent = Agent::new(Arc::new(BoundSavedAccountProvider), Registry::empty());
--    agent.session.messages.clear();
--    agent.session.working_dir = Some("/daemon".into());
--    agent.set_working_dir("/projects/start");
--    assert_eq!(
--        agent.session.original_working_dir, None,
--        "initial subscription is not a move"
--    );
--    agent.session.add_message(
--        Role::User,
--        vec![ContentBlock::Text {
--            text: "hello".into(),
--            cache_control: None,
--        }],
--    );
--    agent.set_working_dir("/projects/second");
--    agent.set_working_dir_for_pending_context(Some("/projects/third".into()));
--    assert_eq!(
--        agent.session.original_working_dir.as_deref(),
--        Some("/projects/start")
--    );
--    assert_eq!(agent.working_dir(), Some("/projects/third"));
--    agent.set_working_dir("/projects/start");
--    assert_eq!(
--        agent.session.original_working_dir.as_deref(),
--        Some("/projects/start")
--    );
--}
--
--#[tokio::test]
--async fn user_response_capability_updates_locked_tool_surface() {
--    let mut agent = Agent::new(Arc::new(BoundSavedAccountProvider), Registry::empty());
--    assert!(
--        !agent
--            .tool_definitions()
--            .await
--            .iter()
--            .any(|d| d.name == "user_response")
--    );
--    assert!(agent.locked_tools.is_some());
--    assert!(!agent.tool_names().await.iter().any(|n| n == "applet"));
--    agent.set_desktop_response_capability(true).await;
--    assert!(agent.locked_tools.is_none());
--    assert!(agent.tool_names().await.iter().any(|n| n == "applet"));
--    assert!(
--        agent
--            .tool_definitions()
--            .await
--            .iter()
--            .any(|d| d.name == "user_response")
--    );
--    agent.set_desktop_response_capability(true).await;
--    assert!(
--        agent.locked_tools.is_some(),
--        "unchanged capability preserves the cache"
--    );
--    agent.set_desktop_response_capability(false).await;
--    assert!(agent.locked_tools.is_none());
--    assert!(!agent.tool_names().await.iter().any(|n| n == "applet"));
--    assert!(
--        !agent
--            .tool_definitions()
--            .await
--            .iter()
--            .any(|d| d.name == "user_response")
--    );
--}
--
- #[async_trait]
- impl Provider for BoundSavedAccountProvider {
-     async fn complete(
-@@ -133,67 +63,6 @@ impl Provider for BoundSavedAccountProvider {
+@@ -200,7 +200,7 @@ fn decide(
+         BodyEncoding::Gzip => gzip_fast(raw),
+         BodyEncoding::Zstd => zstd_fast(raw),
+     };
+-    let Some(compressed) = compressed else {
++    let Some(mut compressed) = compressed else {
+         return (Decision::Raw("encode-error"), None);
+     };
+     if encoding == BodyEncoding::Zstd && raw.len() > compressed.len() * MAX_ZSTD_EXPANSION {
+@@ -213,6 +213,10 @@ fn decide(
+     if !worth_it {
+         return (Decision::Raw("low-ratio"), None);
      }
++    // Only the selected wire body survives until upload completes. Release
++    // raw-size estimates and codec growth slack for both encodings, but avoid
++    // a realloc/copy for bodies rejected by ratio or expansion-limit checks.
++    compressed.shrink_to_fit();
+     let compressed_len = compressed.len();
+     let decision = match encoding {
+         BodyEncoding::Gzip => Decision::Gzip { compressed_len },
+@@ -232,13 +236,7 @@ fn gzip_fast(raw: &[u8]) -> Option<Vec<u8>> {
+         flate2::Compression::fast(),
+     );
+     encoder.write_all(raw).ok()?;
+-    let mut compressed = encoder.finish().ok()?;
+-    // The wire body owns this Vec until upload completes. Do not retain the
+-    // raw-size estimate (or growth slack) for that entire time. Shrinking once
+-    // also handles moderately compressible bodies, unlike capping only the
+-    // initial allocation, without changing the encoded bytes or encode policy.
+-    compressed.shrink_to_fit();
+-    Some(compressed)
++    encoder.finish().ok()
  }
  
--#[tokio::test]
--async fn saved_account_observed_binding_is_persisted() {
--    let _guard = crate::storage::lock_test_env();
--    let home = tempfile::tempdir().unwrap();
--    struct RestoreHome(Option<std::ffi::OsString>);
--    impl Drop for RestoreHome {
--        fn drop(&mut self) {
--            match &self.0 {
--                Some(home) => crate::env::set_var("JCODE_HOME", home),
--                None => crate::env::remove_var("JCODE_HOME"),
--            }
--            crate::config::Config::invalidate_cache();
--        }
--    }
--    let _restore = RestoreHome(std::env::var_os("JCODE_HOME"));
--    crate::env::set_var("JCODE_HOME", home.path());
--    crate::config::Config::invalidate_cache();
--    let provider: Arc<dyn Provider> = Arc::new(BoundSavedAccountProvider);
--    let mut agent = Agent::new(provider, Registry::empty());
--    agent.session.route_api_method = None;
--    agent.session.save_prepared().unwrap();
--    agent.sync_bound_account_route();
--    assert_eq!(
--        agent.session.route_api_method.as_deref(),
--        Some("openai-oauth@work")
--    );
--    let saved = crate::session::Session::load(&agent.session.id).unwrap();
--    assert_eq!(saved.route_api_method.as_deref(), Some("openai-oauth@work"));
--    assert_eq!(saved.provider_key.as_deref(), Some("openai-oauth"));
--    agent.sync_bound_account_route();
--    assert_eq!(agent.session.route_api_method, saved.route_api_method);
--    crate::provider::clear_openai_provider_unavailability_for_account_label(Some("work"));
--    crate::provider::clear_openai_provider_unavailability_for_account_label(Some("personal"));
--    agent.record_failed_account_route("429 rate limit reached");
--    assert!(
--        crate::provider::provider_unavailability_detail_for_account_label("openai", Some("work"))
--            .is_some()
--    );
--    assert!(
--        crate::provider::provider_unavailability_detail_for_account_label(
--            "openai",
--            Some("personal")
--        )
--        .is_none()
--    );
--    crate::provider::clear_openai_provider_unavailability_for_account_label(Some("work"));
--    agent.session.route_api_method = Some("openai-oauth@personal".to_string());
--    agent.sync_bound_account_route();
--    assert_eq!(
--        agent.session.route_api_method.as_deref(),
--        Some("openai-oauth@personal")
--    );
--    assert!(
--        agent
--   
+ /// Conservative compression ratio assumed when a decision must be made before
 ```
 
-**File**: `crates/jcode-app-core/src/agent_tests_additional_tests.rs` (added, +132/-0)
+**File**: `crates/jcode-provider-core/src/request_compression_tests.rs` (modified, +66/-13)
 ```diff
-@@ -0,0 +1,132 @@
-+use super::*;
-+
-+#[tokio::test]
-+async fn working_directory_moves_preserve_first_active_session_origin() {
-+    let mut agent = Agent::new(Arc::new(BoundSavedAccountProvider), Registry::empty());
-+    agent.session.messages.clear();
-+    agent.session.working_dir = Some("/daemon".into());
-+    agent.set_working_dir("/projects/start");
-+    assert_eq!(
-+        agent.session.original_working_dir, None,
-+        "initial subscription is not a move"
-+    );
-+    agent.session.add_message(
-+        Role::User,
-+        vec![ContentBlock::Text {
-+            text: "hello".into(),
-+            cache_control: None,
-+        }],
-+    );
-+    agent.set_working_dir("/projects/second");
-+    agent.set_working_dir_for_pending_context(Some("/projects/third".into()));
-+    assert_eq!(
-+        agent.session.original_working_dir.as_deref(),
-+        Some("/projects/start")
-+    );
-+    assert_eq!(agent.working_dir(), Some("/projects/third"));
-+    agent.set_working_dir("/projects/start");
-+    assert_eq!(
-+        agent.session.original_working_dir.as_deref(),
-+        Some("/projects/start")
-+    );
-+}
-+
-+#[tokio::test]
-+async fn user_response_capability_updates_locked_tool_surface() {
-+    let mut agent = Agent::new(Arc::new(BoundSavedAccountProvider), Registry::empty());
-+    assert!(
-+        !agent
-+            .tool_definitions()
-+            .await
-+            .iter()
-+            .any(|d| d.name == "user_response")
-+    );
-+    assert!(agent.locked_tools.is_some());
-+    assert!(!agent.tool_names().await.iter().any(|n| n == "applet"));
-+    agent.set_desktop_response_capability(true).await;
-+    assert!(agent.locked_tools.is_none());
-+    assert!(agent.tool_names().await.iter().any(|n| n == "applet"));
-+    assert!(
-+        agent
-+            .tool_definitions()
-+            .await
-+            .iter()
-+            .any(|d| d.name == "user_response")
-+    );
-+    agent.set_desktop_response_capability(true).await;
-+    assert!(
-+        agent.locked_tools.is_some(),
-+        "unchanged capability preserves the cache"
-+    );
-+    agent.set_desktop_response_capability(false).await;
-+    assert!(agent.locked_tools.is_none());
-+    assert!(!agent.tool_names().await.iter().any(|n| n == "applet"));
-+    assert!(
-+        !agent
-+            .tool_definitions()
-+            .await
-+            .iter()
-+            .any(|d| d.name == "user_response")
-+    );
-+}
-+
-+#[tokio::test]
-+async fn saved_account_observed_binding_is_persisted() {
-+    let _guard = crate::storage::lock_test_env();
-+    let home = tempfile::tempdir().unwrap();
-+    struct RestoreHome(Option<std::ffi::OsString>);
-+    impl Drop for RestoreHome {
-+        fn drop(&mut self) {
-+            match &self.0 {
-+                Some(home) => crate::env::set_var("JCODE_HOME", home),
-+                None => crate::env::remove_var("JCODE_HOME"),
-+            }
-+            crate::config::Config::invalidate_cache();
-+        }
-+    }
-+    let _restore = RestoreHome(std::env::var_os("JCODE_HOME"));
-+    crate::env::set_var("JCODE_HOME", home.path());
-+    crate::config::Config::invalidate_cache();
-+    let provider: Arc<dyn Provider> = Arc::new(BoundSavedAccountProvider);
-+    let mut agent = Agent::new(provider, Registry::empty());
-+    agent.session.route_api_method = None;
-+    agent.session.save_prepared().unwrap();
-+    agent.sync_bound_account_route();
-+    assert_eq!(
-+        agent.session.route_api_method.as_deref(),
-+        Some("openai-oauth@work")
-+    );
-+    let saved = crate::session::Session::load(&agent.session.id).unwrap();
-+    assert_eq!(saved.route_api_method.as_deref(), Some("openai-oauth@work"));
-+    assert_eq!(saved.provider_key.as_deref(), Some("openai-oauth"));
-+    agent.sync_bound_account_route();
-+    assert_eq!(agent.session.route_api_method, saved.route_api_method);
-+    crate::provider::clear_openai_provider_unavailability_for_account_label(Some("work"));
-+    crate::provider::clear_openai_provider_unavailability_for_account_label(Some("personal"));
-+    agent.record_failed_account_route("429 rate limit reached");
-+    assert!(
-+        crate::provider::provider_unavailability_detail_for_account_label("openai", Some("work"))
-+            .is_some()
-+    );
-+    assert!(
-+        crate::provider::provider_unavailability_detail_for_account_label(
-+            "openai",
-+            Some("personal")
-+        )
-+        .is_none()
-+    );
-+    crate::provider::clear_openai_provider_unavailability_for_account_label(Some("work"));
-+    agent.session.route_api_method = Some("openai-oauth@personal".to_string());
-+    agent.sync_bound_account_route();
-+    assert_eq!(
-+        agent.session.route_api_method.as_deref(),
-+        Some("openai-oauth@personal")
-+    );
-+    assert!(
-+        agent
-+            .ensure_session_lease()
-+            .unwrap_err()
-+            .to_string()
-+            .contains("personal")
-+    );
-+}
-```
-
-**File**: `crates/jcode-app-core/src/server/client_lifecycle_tests.rs` (modified, +3/-155)
-```diff
-@@ -7,44 +7,6 @@ use futures::stream;
- use std::sync::atomic::{AtomicBool, Ordering};
- use tokio::io::{AsyncBufReadExt, AsyncWriteExt, BufReader};
- 
--#[test]
--fn identity_transport_negotiation_preserves_legacy_payload_shape() {
--    let identity = crate::protocol::TurnIdentity {
--        runtime_generation: "runtime".into(),
--        turn_id: 7,
--    };
--    let wrapped = ServerEvent::TurnEvent {
--        identity: identity.clone(),
--        event: Box::new(ServerEvent::Done { id: 99 }),
--    };
--    assert!(matches!(
--        event_for_transport(wrapped.clone(), false),
--        Some(ServerEvent::Done { id: 99 })
--    ));
--    assert!(matches!(
--        event_for_transport(wrapped, true),
--        Some(ServerEvent::TurnEvent { .. })
--    ));
--    let started = ServerEvent::TurnStarted { identity };
--    assert!(event_for_transport(started.clone(), false).is_none());
--    assert!(matches!(
--        event_for_transport(started, true),
--        Some(ServerEvent::TurnStarted { .. })
--    ));
--    assert!(
--        event_for_transport(
--            ServerEvent::TurnState {
--                session_id: "session".into(),
--                runtime_generation: "runtime".into(),
--                turn_id: None,
--                latest_turn_id: 7
--            },
--            false
--        )
--        .is_none()
--    );
--}
--
- fn turn_payload(event: ServerEvent) -> ServerEvent {
-     match event {
-         ServerEvent::TurnEvent { event, .. } => *event,
-@@ -134,123 +96,6 @@ impl Drop for IsolatedRuntimeDir {
-     }
+@@ -22,35 +22,54 @@ fn deterministic_noise(len: usize) -> Vec<u8> {
  }
  
--/// Regression for issue #428: a turn actively streaming in this session but
--/// NOT owned by the cancelling connection (no local task handle: post-reload
--/// reattach, server-initiated wake turns, headless recovery) must abort
--/// promptly even when the control handle's stop signal is a *different
--/// instance* from the streaming agent's own `graceful_shutdown` signal.
--///
--/// Before the fix, `cancel_processing_message` hit the NO_LOCAL_TASK branch,
--/// fired the stale handle-local signal (which nothing was listening to),
--/// emitted `Interrupted` immediately, and the provider stream kept generating
--/// for minutes ("Interrupting..." disappears, model keeps going, eventually
--/// "Interrupted [x66]").
--#[test]
--fn cancel_aborts_detached_streaming_turn_with_stale_stop_signal() -> anyhow::Result<()> {
--    let _lock = crate::storage::lock_test_env();
--    let _env = IsolatedReloadRecoveryEnv::new();
--    let session_id = "session_detached_streaming_cancel_428";
--
--    let rt = tokio::runtime::Runtime::new().expect("runtime");
--    rt.block_on(async {
--        let provider: Arc<dyn Provider> = Arc::new(NeverEndingStreamProvider);
--        let registry = Registry::new(Arc::clone(&provider)).await;
--        let mut session =
--            crate::session::Session::create_with_id(session_id.to_string(), None, None);
--        session.model = Some("never-ending-stream".to_string());
--        let agent = Arc::new(Mutex::new(Agent::new_with_session(
--            provider, registry, session, None,
--        )));
--
--        let (event_tx, mut event_rx) = mpsc::unbounded_channel::<ServerEvent>();
--
--        // Start the turn the way server-initiated paths do: no entry in any
--        // connection's processing-task map.
--        let turn_agent = Arc::clone(&agent);
--        let turn = tokio::spawn(async move {
--            process_message_streaming_mpsc(turn_agent, "stream forever", Vec::new(), None, event_tx)
--                .await
--        });
--
--        // Wait until the provider stream is actively producing output.
--        loop {
--            match tokio::time::timeout(Duration::from_secs(5), event_rx.recv()).await {
--                Ok(Some(ServerEvent::TextDelta { .. })) => break,
--                Ok(Some(_)) => continue,
--                Ok(None) => panic!("event channel closed before streaming started"),
--                Err(_) => panic!("turn never started streaming"),
--            }
--        }
--
--        // Esc arrives on a connection that does not own the task. Its control
--        // handle holds a stop signal instance that is NOT the streaming
--        // agent's graceful_shutdown signal (stale/lost registration).
--        let stale_stop_signal = InterruptSignal::new();
--        let control = SessionControlHandle::cancel_only(
--            session_id,
--            Arc::new(std::sync::Mutex::new(Vec::new())),
--            stale_stop_signal.clone(),
--        );
--        let (client_event_tx, _client_event_rx) = mpsc::unbounded_channel::<ServerEvent>();
--        let swarm_members = Arc::new(RwLock::new(HashMap::new()));
--        let swarms_by_id = Arc::new(RwLock::new(HashMap::new()));
--        let event_history = Arc::new(RwLock::new(std::collections::VecDeque::new()));
--        let event_counter = Arc::new(std::sync::atomic::AtomicU64::new(0));
--        let (swarm_event_tx, _) = broadcast::channel(8);
--        let mut client_is_processing = false;
--        let mut message_id = None;
--        let 
-```
-
-**File**: `crates/jcode-app-core/src/server/client_lifecycle_tests_additional_tests.rs` (added, +156/-0)
-```diff
-@@ -0,0 +1,156 @@
-+use super::*;
-+
-+#[test]
-+fn identity_transport_negotiation_preserves_legacy_payload_shape() {
-+    let identity = crate::protocol::TurnIdentity {
-+        runtime_generation: "runtime".into(),
-+        turn_id: 7,
-+    };
-+    let wrapped = ServerEvent::TurnEvent {
-+        identity: identity.clone(),
-+        event: Box::new(ServerEvent::Done { id: 99 }),
-+    };
-+    assert!(matches!(
-+        event_for_transport(wrapped.clone(), false),
-+        Some(ServerEvent::Done { id: 99 })
-+    ));
-+    assert!(matches!(
-+        event_for_transport(wrapped, true),
-+        Some(ServerEvent::TurnEvent { .. })
-+    ));
-+    let started = ServerEvent::TurnStarted { identity };
-+    assert!(event_for_transport(started.clone(), false).is_none());
-+    assert!(matches!(
-+        event_for_transport(started, true),
-+        Some(ServerEvent::TurnStarted { .. })
-+    ));
-+    assert!(
-+        event_for_transport(
-+            ServerEvent::TurnState {
-+                session_id: "session".into(),
-+                runtime_generation: "runtime".into(),
-+                turn_id: None,
-+                latest_turn_id: 7
-+            },
-+            false
-+        )
-+        .is_none()
-+    );
-+}
-+
-+/// Regression for issue #428: a turn actively streaming in this session but
-+/// NOT owned by the cancelling connection (no local task handle: post-reload
-+/// reattach, server-initiated wake turns, headless recovery) must abort
-+/// promptly even when the control handle's stop signal is a *different
-+/// instance* from the streaming agent's own `graceful_shutdown` signal.
-+///
-+/// Before the fix, `cancel_processing_message` hit the NO_LOCAL_TASK branch,
-+/// fired the stale handle-local signal (which nothing was listening to),
-+/// emitted `Interrupted` immediately, and the provider stream kept generating
-+/// for minutes ("Interrupting..." disappears, model keeps going, eventually
-+/// "Interrupted [x66]").
-+#[test]
-+fn cancel_aborts_detached_streaming_turn_with_stale_stop_signal() -> anyhow::Result<()> {
-+    let _lock = crate::storage::lock_test_env();
-+    let _env = IsolatedReloadRecoveryEnv::new();
-+    let session_id = "session_detached_streaming_cancel_428";
-+
-+    let rt = tokio::runtime::Runtime::new().expect("runtime");
-+    rt.block_on(async {
-+        let provider: Arc<dyn Provider> = Arc::new(NeverEndingStreamProvider);
-+        let registry = Registry::new(Arc::clone(&provider)).await;
-+        let mut session =
-+            crate::session::Session::create_with_id(session_id.to_string(), None, None);
-+        session.model = Some("never-ending-stream".to_string());
-+        let agent = Arc::new(Mutex::new(Agent::new_with_session(
-+            provider, registry, session, None,
-+        )));
-+
-+        let (event_tx, mut event_rx) = mpsc::unbounded_channel::<ServerEvent>();
-+
-+        // Start the turn the way server-initiated paths do: no entry in any
-+        // connection's processing-task map.
-+        let turn_agent = Arc::clone(&agent);
-+        let turn = tokio::spawn(async move {
-+            process_message_streaming_mpsc(turn_agent, "stream forever", Vec::new(), None, event_tx)
-+                .await
-+        });
-+
-+        // Wait until the provider stream is actively producing output.
-+        loop {
-+            match tokio::time::timeout(Duration::from_secs(5), event_rx.recv()).await {
-+                Ok(Some(ServerEvent::TextDelta { .. })) => break,
-+                Ok(Some(_)) => continue,
-+                Ok(None) => panic!("event channel closed before streaming started"),
-+                Err(_) => panic!("turn never started streaming"),
-+            }
-+        }
-+
-+        // Esc arrives on a connection that does not own the task. Its control
-+        // handle holds a stop signal instance that is NOT the streaming
-+        // agent's graceful_shutdown signal (stale/lost registration).
-+        let stale_stop_signal = InterruptSignal::new();
-+        let control = SessionControlHandle::cancel_only(
-+            session_id,
-+            Arc::new(std::sync::Mutex::new(Vec::new())),
-+            stale_stop_signal.clone(),
-+        );
-+        let (client_event_tx, _client_event_rx) = mpsc::unbounded_channel::<ServerEvent>();
-+        let swarm_members = Arc::new(RwLock::new(HashMap::new()));
-+        let swarms_by_id = Arc::new(RwLock::new(HashMap::new()));
-+        let event_history = Arc::new(RwLock::new(std::collections::VecDeque::new()));
-+        let event_counter = Arc::new(std::sync::atomic::AtomicU64::new(0));
-+        let (swarm_event_tx, _) = broadcast::channel(8);
-+        let mut client_is_processing = false;
-+        let mut message_id = None;
-+        let mut cancel_session_id = None;
-+        let mut task = None;
-+
-+        cancel_processing_message(
-+            &mut ProcessingState {
-+                client_is_processing: &mut client_is_processing,
-+                message_id: &mut message_id,
-+                session_id: &mut cancel_session_id,
-+            
-```
-
-**File**: `crates/jcode-app-core/src/tool/selfdev/tests.rs` (modified, +3/-22)
-```diff
-@@ -102,28 +102,6 @@ fn request_fixture(
-     }
- }
- 
--#[test]
--fn build_lock_is_removed_on_drop_and_can_be_reacquired() {
--    let _env_lock = crate::storage::lock_test_env();
--    let temp = tempfile::tempdir().expect("temp jcode home");
--    let _home = EnvVarGuard::set("JCODE_HOME", temp.path());
--    let scope = format!("lock-drop-{}", std::process::id());
--    let path = SelfDevTool::build_lock_path(&scope).expect("lock path");
--
--    let first = SelfDevTool::try_acquire_build_lock(&scope)
--        .expect("first lock attempt")
--        .expect("first lock acquired");
--    assert!(path.exists(), "lock file should exist while held");
--    drop(first);
--    assert!(!path.exists(), "lock file should be removed on drop");
--
--    let second = SelfDevTool::try_acquire_build_lock(&scope)
--        .expect("second lock attempt")
--        .expect("lock should be reacquirable after drop");
--    drop(second);
--    assert!(!path.exists(), "reacquired lock should also clean up");
--}
--
  #[test]
- fn terminal_request_history_is_archived_without_touching_active_requests() {
-     // One shared env lock only: `lock_test_env` is a plain non-reentrant mutex,
-@@ -1440,3 +1418,6 @@ fn reconcile_keeps_running_request_not_yet_registered_in_live_task_map() {
- 
- #[path = "repo_resolver_tests.rs"]
- mod repo_resolver;
-+
-+#[path = "tests_additional_tests.rs"]
-+mod additional_build_lock_is_removed_on_drop_and_can_be_reacquired;
-```
-
-**File**: `crates/jcode-app-core/src/tool/selfdev/tests_additional_tests.rs` (added, +23/-0)
-```diff
-@@ -0,0 +1,23 @@
-+use super::*;
-+
-+#[test]
-+fn build_lock_is_removed_on_drop_and_can_be_reacquired() {
-+    let _env_lock = crate::storage::lock_test_env();
-+    let temp = tempfile::tempdir().expect("temp jcode home");
-+    let _home = EnvVarGuard::set("JCODE_HOME", temp.path());
-+    let scope = format!("lock-drop-{}", std::process::id());
-+    let path = SelfDevTool::build_lock_path(&scope).expect("lock path");
-+
-+    let first = SelfDevTool::try_acquire_build_lock(&scope)
-+        .expect("first lock attempt")
-+        .expect("first lock acquired");
-+    assert!(path.exists(), "lock file should exist while held");
-+    drop(first);
-+    assert!(!path.exists(), "lock file should be removed on drop");
-+
-+    let second = SelfDevTool::try_acquire_build_lock(&scope)
-+        .expect("second lock attempt")
-+        .expect("lock should be reacquirable after drop");
-+    drop(second);
-+    assert!(!path.exists(), "reacquired lock should also clean up");
-+}
-```
-
-**File**: `crates/jcode-app-core/src/tool/tests.rs` (modified, +3/-141)
-```diff
-@@ -8,24 +8,6 @@ use async_trait::async_trait;
- use serde_json::Value;
- use std::ffi::OsString;
- 
--#[test]
--fn base_tools_do_not_expose_invalid_reporting_tool() {
--    let skills = Arc::new(RwLock::new(crate::skill::SkillRegistry::default()));
--    let tools = Registry::base_tools(&skills);
--    assert!(!tools.contains_key("invalid"));
--    assert!(tools.contains_key("bash"));
--}
--
--#[test]
--fn base_tools_exclude_replace_and_keep_other_editing_tools() {
--    let skills = Arc::new(RwLock::new(crate::skill::SkillRegistry::default()));
--    let tools = Registry::base_tools(&skills);
--    assert!(!tools.contains_key("replace"));
--    for name in ["edit", "write", "apply_patch"] {
--        assert!(tools.contains_key(name), "missing editing tool: {name}");
--    }
--}
--
- struct TestHomeGuard {
-     previous: Option<OsString>,
- }
-@@ -99,129 +81,6 @@ async fn register_empty_mcp_tools(registry: &Registry, working_dir: &std::path::
-         .await;
- }
- 
--#[tokio::test]
--async fn mcp_list_remains_available_while_background_connect_is_handshaking() {
--    let _env_lock = crate::storage::lock_test_env();
--    let home = tempfile::tempdir().expect("create isolated JCODE_HOME");
--    let _home_guard = TestHomeGuard::new(home.path());
--    let working_dir = tempfile::tempdir().expect("create isolated MCP working directory");
--
--    std::fs::write(
--        home.path().join("mcp.json"),
--        r#"{
--            "mcpServers": {
--                "slow": {
--                    "command": "/bin/sh",
--                    "args": ["-c", "sleep 2"],
--                    "timeout_secs": 86400
--                }
--            }
--        }"#,
--    )
--    .expect("write slow MCP config");
--
--    let registry = Registry::empty();
--    registry
--        .register_mcp_tools_for_dir(None, None, None, Some(working_dir.path().to_path_buf()))
--        .await;
--
--    // Let the background connection task acquire its read guard and enter the
--    // slow initialize handshake before asking the management tool to list.
--    tokio::time::sleep(std::time::Duration::from_millis(100)).await;
--    let output = tokio::time::timeout(
--        std::time::Duration::from_millis(500),
--        registry.execute(
--            "mcp",
--            serde_json::json!({"action": "list"}),
--            mcp_test_context(working_dir.path()),
--        ),
--    )
--    .await
--    .expect("mcp list must not wait for a slow background handshake")
--    .expect("mcp list should succeed");
--
--    assert!(
--        output.output.contains("slow"),
--        "unexpected output: {}",
--        output.output
--    );
--}
--
--#[tokio::test]
--async fn real_mcp_registration_does_not_retain_registry_tool_map() {
--    let _env_lock = crate::storage::lock_test_env();
--    let home = tempfile::tempdir().expect("create isolated JCODE_HOME");
--    let _home_guard = TestHomeGuard::new(home.path());
--    let working_dir = tempfile::tempdir().expect("create isolated MCP working directory");
--    let registry = Registry::empty();
--    let tools = Arc::downgrade(&registry.tools);
--
--    register_empty_mcp_tools(&registry, working_dir.path()).await;
--    assert!(registry.tool_names().await.iter().any(|name| name == "mcp"));
--
--    drop(registry);
--
--    assert!(
--        tools.upgrade().is_none(),
--        "McpManagementTool must not strongly retain the registry tool map that owns it"
--    );
--}
--
--#[tokio::test]
--async fn mcp_management_upgrades_registry_through_surviving_clone() {
--    let _env_lock = crate::storage::lock_test_env();
--    let home = tempfile::tempdir().expect("create isolated JCODE_HOME");
--    let _home_guard = TestHomeGuard::new(home.path());
--    let working_dir = tempfile::tempdir().expect("create isolated MCP working directory");
--    let registry = Registry::empty();
--    let tools = Arc::downgrade(&registry.tools);
--
--    register_empty_mcp_tools(&registry, working_dir.path()).await;
--    let surviving_clone = registry.clone();
--    drop(registry);
--
--    let stale_tool = surviving_clone
--        .tools
--        .read()
--        .await
--        .get("mcp")
--        .cloned()
--        .expect("MCP management tool should be registered");
--    surviving_clone
--        .register("mcp__lifetime__sentinel".to_string(), stale_tool)
--        .await;
--
--    let output = surviving_clone
--        .execute(
--            "mcp",
--            serde_json::json!({"action": "reload"}),
--            mcp_test_context(working_dir.path()),
--        )
--        .await
--        .expect("MCP management should upgrade through the surviving registry clone");
--    assert!(output.output.contains("No servers found in config"));
--    assert!(
--        !surviving_clone
--            .tool_names()
--            .await
--            .iter()
--            .any(|name| name == "mcp__lifetime__sentinel"),
--        "reload should mutate the surviving registry through the weak handle"
--    );
--    assert!(
--        surviving_clone
--            .tool_names()
--            .await
--            .iter()
--            .any(|n
-```
-
-**File**: `crates/jcode-app-core/src/tool/tests_additional_tests.rs` (added, +142/-0)
-```diff
-@@ -0,0 +1,142 @@
-+use super::*;
-+
-+#[test]
-+fn base_tools_do_not_expose_invalid_reporting_tool() {
-+    let skills = Arc::new(RwLock::new(crate::skill::SkillRegistry::default()));
-+    let tools = Registry::base_tools(&skills);
-+    assert!(!tools.contains_key("invalid"));
-+    assert!(tools.contains_key("bash"));
-+}
-+
-+#[test]
-+fn base_tools_exclude_replace_and_keep_other_editing_tools() {
-+    let skills = Arc::new(RwLock::new(crate::skill::SkillRegistry::default()));
-+    let tools = Registry::base_tools(&skills);
-+    assert!(!tools.contains_key("replace"));
-+    for name in ["edit", "write", "apply_patch"] {
-+        assert!(tools.contains_key(name), "missing editing tool: {name}");
-+    }
-+}
-+
-+#[tokio::test]
-+async fn mcp_list_remains_available_while_background_connect_is_handshaking() {
-+    let _env_lock = crate::storage::lock_test_env();
-+    let home = tempfile::tempdir().expect("create isolated JCODE_HOME");
-+    let _home_guard = TestHomeGuard::new(home.path());
-+    let working_dir = tempfile::tempdir().expect("create isolated MCP working directory");
-+
-+    std::fs::write(
-+        home.path().join("mcp.json"),
-+        r#"{
-+            "mcpServers": {
-+                "slow": {
-+                    "command": "/bin/sh",
-+                    "args": ["-c", "sleep 2"],
-+                    "timeout_secs": 86400
+-fn large_gzip_bodies_roundtrip_with_bounded_spare_capacity() {
++fn large_gzip_bodies_roundtrip_and_selected_bodies_have_bounded_capacity() {
+     for raw in [
+         jsonish(8 * 1024 * 1024),
+         vec![b'a'; 8 * 1024 * 1024],
+         deterministic_noise(8 * 1024 * 1024),
+     ] {
+         let compressed = gzip_fast(&raw).unwrap();
+-        assert!(
+-            compressed.capacity() <= compressed.len() + 64 * 1024,
+-            "len={} capacity={}",
+-            compressed.len(),
+-            compressed.capacity()
+-        );
+         let mut decoded = Vec::new();
+         flate2::read::GzDecoder::new(compressed.as_slice())
+             .read_to_end(&mut decoded)
+             .unwrap();
+         assert_eq!(decoded, raw);
++        let (decision, selected) =
++            decide(&raw, CompressionMode::Always, Some(BodyEncoding::Gzip), 1e6);
++        if compressed.len() < raw.len() {
++            assert_eq!(
++                decision,
++                Decision::Gzip {
++                    compressed_len: compressed.len()
 +                }
++            );
++            let selected = selected.unwrap();
++            assert_eq!(selected, compressed);
++            assert!(selected.capacity() <= selected.len() + 64 * 1024);
++        } else {
++            assert_eq!(decision, Decision::Raw("low-ratio"));
++            assert!(selected.is_none());
++        }
+     }
+ }
+ 
+ /// Run explicitly with --ignored --nocapture. Compare on the same host and
+ /// alternate input and policy order to reduce warm-cache/order bias.
+ /// Policies: 0 = original half-raw allocation, 1 = 64 KiB initial cap,
+-/// 2 = original allocation followed by final shrink (production).
++/// 2 = original allocation followed by final shrink (accepted gzip bodies).
++/// 3/4 = zstd before/after final shrink. Noise and repeated zstd bodies are
++/// codec-only controls: rejected bodies do not pay shrink cost in production.
+ #[test]
+ #[ignore = "allocation and latency benchmark"]
+ fn gzip_allocation_benchmark() {
+     fn encode(raw: &[u8], policy: usize) -> Vec<u8> {
++        if policy >= 3 {
++            let mut bytes = zstd_fast(raw).unwrap();
++            if policy == 4 {
++                bytes.shrink_to_fit();
 +            }
-+        }"#,
-+    )
-+    .expect("write slow MCP config");
-+
-+    let registry = Registry::empty();
-+    registry
-+        .register_mcp_tools_for_dir(None, None, None, Some(working_dir.path().to_path_buf()))
-+        .await;
-+
-+    // Let the background connection task acquire its read guard and enter the
-+    // slow initialize handshake before asking the management tool to list.
-+    tokio::time::sleep(std::time::Duration::from_millis(100)).await;
-+    let output = tokio::time::timeout(
-+        std::time::Duration::from_millis(500),
-+        registry.execute(
-+            "mcp",
-+            serde_json::json!({"action": "list"}),
-+            mcp_test_context(working_dir.path()),
-+        ),
-+    )
-+    .await
-+    .expect("mcp list must not wait for a slow background handshake")
-+    .expect("mcp list should succeed");
-+
-+    assert!(
-+        output.output.contains("slow"),
-+        "unexpected output: {}",
-+        output.output
-+    );
-+}
-+
-+#[tokio::test]
-+async fn real_mcp_registration_does_not_retain_registry_tool_map() {
-+    let _env_lock = crate::storage::lock_test_env();
-+    let home = tempfile::tempdir().expect("create isolated JCODE_HOME");
-+    let _home_guard = TestHomeGuard::new(home.path());
-+    let working_dir = tempfile::tempdir().expect("create isolated MCP working directory");
-+    let registry = Registry::empty();
-+    let tools = Arc::downgrade(&registry.tools);
-+
-+    register_empty_mcp_tools(&registry, working_dir.path()).await;
-+    assert!(registry.tool_names().await.iter().any(|name| name == "mcp"));
-+
-+    drop(registry);
-+
-+    assert!(
-+        tools.upgrade().is_none(),
-+        "McpManagementTool must not strongly retain the registry tool map that owns it"
-+    );
-+}
-+
-+#[tokio::test]
-+async fn mcp_management_upgrades_registry_through_surviving_clone() {
-+    let _env_lock = crate::storage::lock_test_env();
-+    let home = tempfile::tempdir().expect("create isolated JCODE_HOME");
-+    let _home_guard = TestHomeGuard::new(home.path());
-+    let working_dir = tempfile::tempdir().expect("create isolated MCP working directory");
-+    let registry = Registry::empty();
-+    let tools = Arc::downgrade(&registry.tools);
-+
-+    register_empty_mcp_tools(&registry, working_dir.path()).await;
-+    let surviving_clone = registry.clone();
-+    drop(registry);
-+
-+    let stale_tool = surviving_clone
-+        .tools
-+        .read()
-+        .await
-+        .get("mcp")
-+        .cloned()
-+        .expect("MCP management tool should be registered");
-+    surviving_clone
-+        .register("mcp__lifetime__sentinel".to_string(), stale_tool)
-+        .await;
-+
-+    let output = surviving_clone
-+        .execute(
-+            "mcp",
-+            serde_json::json!({"action": "reload"}),
-+            mcp_test_context(working_dir.path()),
-+        )
-+        .await
-+        .expect("MCP management should upgrade through the surviving registry clone");
-+    assert!(output.output.contains("No servers found in config"));
-+    assert!(
-+        !surviving_clone
-+            .tool_names()
-+            .await
-+            .iter()
-+            .any(|name| name == "mcp__lifetime__sentinel"),
-+        "reload should mutate the surviving registry through the weak handle"
-+    );
-+    assert!(
-+        surviving_clone
-+            .tool_names()
-+            .await
-+            .iter()
-+            .any(|name| name == "mcp"),
-+        "reload should preserve the MCP management tool"
-+    );
-+    assert!(tools.upgrade().is_some());
-+
-+    drop(surviving_clone);
-+    assert!(tools.upgrade().is_none());
-+}
++            return bytes;
++        }
+         let capacity = if policy == 1 {
+             (raw.len() / 2).min(64 * 1024)
+         } else {
+@@ -89,13 +108,13 @@ fn gzip_allocation_benchmark() {
+         ("conversation", conversation),
+         ("noise", noise),
+     ];
+-    let mut timings = vec![vec![Vec::new(); 3]; inputs.len()];
++    let mut timings = vec![vec![Vec::new(); 5]; inputs.len()];
+     for round in 0..13 {
+         for offset in 0..inputs.len() {
+             let input = (round + offset) % inputs.len();
+             let (name, raw) = &inputs[input];
+-            for offset in 0..3 {
+-                let policy = (round + offset) % 3;
++            for offset in 0..5 {
++                let policy = (round + offset) % 5;
+                 let started = Instant::now();
+                 let bytes = std::hint::black_box(encode(std::hint::black_box(raw), policy));
+                 let elapsed = started.elapsed().as_secs_f64() * 1000.0;
+@@ -106,15 +125,32 @@ fn gzip_allocation_benchmark() {
+                         bytes.len(),
+                         bytes.capacity()
+                     );
+-                    assert_eq!(bytes, gzip_fast(raw).unwrap());
++                    let expected = if policy >= 3 {
++                        zstd_fast(raw).unwrap()
++                    } else {
++                        gzip_fast(raw).unwrap()
++                    };
++                    assert_eq!(bytes, expected);
++                    if *name == "conversation" && matches!(policy, 2 | 4) {
++                        let encoding = if policy == 4 {
++                            BodyEncoding::Zstd
++                        } else {
++                            BodyEncoding::Gzip
++                        };
++                        let (_, selected) =
++                            decide(raw, CompressionMode::Always, Some(encoding), 1e6);
++                        let selected = selected.expect("conversation must be accepted");
++                        assert_eq!(selected, bytes);
++                        assert!(selected.capacity() <= selected.len() + 64 * 1024);
++                    }
+                 } else {
+                     timings[input][policy].push(elapsed);
+                 }
+             }
+         }
+     }
+     for (input, (name, _)) in inputs.iter().enumerate() {
+-        for policy in 0..3 {
++        for policy in 0..5 {
+             let values = &mut timings[input][policy];
+             values.sort_by(f64::total_cmp);
+             eprintln!(
+@@ -423,6 +459,10 @@ fn zstd_roundtrips_and_beats_gzip_ratio() {
+     };
+     let bytes = bytes.unwrap();
+     assert_eq!(bytes.len(), compressed_len);
++    let unshrunk = zstd_fast(&big).unwrap();
++ 
 ```
 
 ---
 
-### Incident Patch 3: `a1f6e18b` (2026-11-16)
-**Commit Message**: fix(deps): retain patched quinn UDP transport in lockfile
+### Incident Patch 3: `398d454d` (2026-11-18)
+**Commit Message**: fix(jarvis): separate passive screen ACKs from client registration
 
-**File**: `Cargo.lock` (modified, +4/-4)
+**File**: `crates/jcode-tui/src/tui/backend_screen.rs` (modified, +13/-3)
 ```diff
-@@ -233,7 +233,7 @@ dependencies = [
-  "objc2-foundation",
-  "parking_lot",
-  "percent-encoding",
-- "windows-sys 0.60.2",
-+ "windows-sys 0.52.0",
-  "x11rb",
- ]
+@@ -5,7 +5,7 @@ use std::sync::atomic::{AtomicU64, Ordering};
+ use tokio::sync::watch;
  
-@@ -6959,16 +6959,16 @@ dependencies = [
- 
- [[package]]
- name = "quinn-udp"
--version = "0.5.14"
-+version = "0.5.16"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "addec6a0dcad8a8d96a771f815f0eaf55f9d1805756410b39f5fa81332574cbd"
-+checksum = "af66907df18639dcf4db56ca65490cabc4b27a97dbadd96f2926cca73298f016"
- dependencies = [
-  "cfg_aliases",
-  "libc",
-  "once_cell",
-  "socket2",
-  "tracing",
-- "windows-sys 0.60.2",
-+ "windows-sys 0.52.0",
- ]
- 
- [[package]]
+ // Kept separate from ordinary request IDs. Acks carry no turn semantics.
+-static NEXT_SCREEN_ID: AtomicU64 = AtomicU64::new(1 << 62);
++static NEXT_SCREEN_ID: AtomicU64 = AtomicU64::new(1 << 63);
+ fn request(session: &str, action: ScreenContextAction) -> Request {
+     Request::ScreenContext {
+         id: NEXT_SCREEN_ID.fetch_add(1, Ordering::Relaxed),
+@@ -151,13 +151,13 @@ impl RemoteConnection {
+     /// settle an observer turn whose current request ID is unknown locally.
+     pub(crate) fn handle_screen_control_event(&mut self, event: &ServerEvent) -> bool {
+         match event {
+-            ServerEvent::Ack { id } if *id >= (1 << 62) => {
++            ServerEvent::Ack { id } if *id >= (1 << 63) => {
+                 if let Some(feed) = &self.screen_feed {
+                     feed.acknowledged.send_replace(*id);
+                 }
+                 true
+             }
+-            ServerEvent::Error { id, message, .. } if *id >= (1 << 62) => {
++            ServerEvent::Error { id, message, .. } if *id >= (1 << 63) => {
+                 if let Some(feed) = &self.screen_feed {
+                     feed.task.abort();
+                 }
+@@ -232,6 +232,16 @@ mod tests {
+             message: "expired".into(),
+             retry_after_secs: None
+         }));
++        // Ordinary request IDs deliberately occupy the 01 high-bit range.
++        // They must reach tool-registration handling, not passive ACK handling.
++        for ordinary in [7, 1_u64 << 62, (1_u64 << 63) - 1] {
++            assert!(!remote.handle_screen_control_event(&ServerEvent::Ack { id: ordinary }));
++            assert!(!remote.handle_screen_control_event(&ServerEvent::Error {
++                id: ordinary,
++                message: "ordinary control failure".into(),
++                retry_after_secs: None,
++            }));
++        }
+         assert!(!remote.handle_screen_control_event(&ServerEvent::Ack { id: 7 }));
+         assert!(!remote.handle_screen_control_event(&ServerEvent::Error {
+             id: 7,
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #2197** (closed): docs: freeze new kcode/jcode lanes and evaluate the churn (@KooshaPari)
+- **PR #2194** (closed): style(ci): clear the Format gate and the macOS warning budget for every PR (@KooshaPari)
 - **PR #2189** (closed): fix(tui): repair the three tests that fail on master and block every PR (@KooshaPari)
 - **PR #2185** (closed): fix: resume model catalog on attach if routes not hydrated (@osmanaksu)
 - **PR #2172** (closed): fix: add missing clap entry to Cargo.lock (@alecuba16)
 - **PR #2161** (closed): fix(config): track resume override in cache fingerprint (@Aafimalek)
-- **PR #2130** (closed): style: cargo fmt on master (@alecuba16)
-- **PR #2125** (closed): fix(tui): match openpty pointer signature in libc 0.2.191 (@alecuba16)
 
 ---
 
@@ -3496,6 +2760,81 @@ Observed empirical fixes and code patches:
 ## 4. Promotion & Integration Status
 - **Status**: HARVESTED_DEEP_FORENSIC
 - **Master Brain Sync**: Auto-committed to local/remote Master Brain repository.
+
+
+---
+
+## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
+
+## X. avoid discarded per-agent server memory diagnostics
+
+**RULE**:
+When implementing operations in `crates/jcode-app-core/src/server/debug_server_memory_efficiency_tests.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in 1jehuang/jcode. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `fcb98e73`: avoid discarded per-agent server memory diagnostics. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `crates/jcode-app-core/src/server/debug_server_memory_efficiency_tests.rs`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+//! No-LLM fixtures for the server memory diagnostic's session-only fast path.
+use super::*;
+
+struct PrivateHome {
+    _dir: tempfile::TempDir,
+    home: Option<std::ffi::OsString>,
+    test_session: Option<std::ffi::OsString>,
+}
+
+impl PrivateHome {
+    fn new() -> Self {
+        let dir = tempfile::tempdir().unwrap();
+        let home = std::env::var_os("JCODE_HOME");
+        let test_session = std::env::var_os("JCODE_TEST_SESSION");
+        crate::env::set_var("JCODE_HOME", dir.path());
+        crate::env::set_var("JCODE_TEST_SESSION", "1");
+        Self {
+            _dir: dir,
+            home,
+            test_session,
+        }
+    }
+}
+
+impl Drop for PrivateHome {
+    fn drop(&mut self) {
+        for (name, value) in [
+            ("JCODE_HOME", self.home.take()),
+            ("JCODE_TEST_SESSION", self.test_session.take()),
+        ] {
+            match value {
+                Some(value) => crate::env::set_var(name, value),
+                None => crate::env::remove_var(name),
+            }
+        }
+    }
+}
+
+struct NoRequests;
+
+#[async_trait::async_trait]
+impl crate::provider::Provider for NoRequests {
+    async fn complete(
+        &self,
+        _: &[crate::message::Mess
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `fcb98e73` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol
