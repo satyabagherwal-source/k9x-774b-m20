@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T17:18:42.015Z",
+  "last_updated": "2026-11-18T17:28:21.102Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-18T17:10:31.307Z",
@@ -8,7 +8,7 @@
       "staged_for_review": 1
     },
     "zvec-ai-zvec-grep-learnings.md": {
-      "processed_at": "2026-11-18T16:14:26.190Z",
+      "processed_at": "2026-11-18T17:28:20.333Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -748,7 +748,7 @@
       "staged_for_review": 1
     },
     "dathere-qsv-learnings.md": {
-      "processed_at": "2026-11-18T14:24:29.686Z",
+      "processed_at": "2026-11-18T17:28:19.431Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2178,8 +2178,8 @@
       "staged_for_review": 1
     },
     "hf-baai-bge-m3-learnings.md": {
-      "processed_at": "2026-11-18T08:08:43.499Z",
-      "promoted_canonical": 2,
+      "processed_at": "2026-11-18T17:28:19.092Z",
+      "promoted_canonical": 0,
       "staged_for_review": 0
     },
     "infinitered-reactotron-learnings.md": {
@@ -3458,7 +3458,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 2025,
+  "total_dossiers_evaluated": 2028,
   "total_canonical_promoted": 361,
-  "total_staged_for_review": 1533
+  "total_staged_for_review": 1535
 }

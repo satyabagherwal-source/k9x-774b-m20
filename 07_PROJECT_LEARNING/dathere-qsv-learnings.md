@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source**: github ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
-> **Source Version**: `52f21a8b`  
+> **Source Version**: `03493b2a`  
 > **License**: NOASSERTION  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-18T14:24:24.026Z  
+> **Timestamp**: 2026-11-18T17:28:14.894Z  
 > **Learning ID**: `learn-github-dathere-qsv`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/dathere-qsv-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/dathere/qsv](https://github.com/dathere/qsv))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T14:24:24.018Z  
+> **Harvest Timestamp**: 2026-11-18T17:28:14.889Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Blazing-fast, Neuro-symbolic Data-Wrangling toolkit
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 3827 stars
+- **Stars / Engagement**: 3828 stars
 
 ---
 
@@ -2201,184 +2201,408 @@ mod tests;
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `52f21a8b` (2026-11-18)
-**Commit Message**: deps: update lock file
+### Incident Patch 1: `03493b2a` (2026-11-18)
+**Commit Message**: feat(synthesize): generate rows in parallel, seed-stable across --jobs (#5069)
 
-Refresh compatible dependency versions in Cargo.lock.
+* feat(synthesize): generate rows in parallel, seed-stable across --jobs
 
-**File**: `Cargo.lock` (modified, +36/-46)
+Rows are generated in fixed 8,192-row chunks, each with its own RNG keyed
+on (base seed, chunk index) with fixed little-endian bytes, never on the
+fit-time RNG state. A window of 2 x jobs chunks is generated with rayon;
+each worker encodes its chunk with the output Config's CSV settings
+(new Config::writer_builder, which from_writer now uses), and the main
+thread appends the bytes in chunk order. A seeded run is byte-identical
+at any --jobs; --jobs now also sets generation threads.
+
+1M rows from a 10k-row source on 16 cores (release-dev): 475 ms -> 148 ms;
+--jobs 1 is unchanged (466 ms). 65,536-row chunks were slower (187 ms)
+and used 3x the memory.
+
+Behavior change: a given --seed produces different rows than 29.0.0.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* docs(skills): note synthesize seed stability across --jobs [skip ci]
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* docs(changelog): cite #5069 [skip ci]
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+* fix(synthesize): cap in-flight chunk bytes; te
+
+**File**: `.claude/skills/CHANGELOG.md` (modified, +1/-0)
 ```diff
-@@ -33,9 +33,9 @@ dependencies = [
+@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ - **`qsv-synthesize --min-count`**: privacy threshold (default 5). Values and `joint` tuples seen fewer than k times in the source are dropped from the real values it samples. Skill regenerated from the USAGE text. ([#5066](https://github.com/dathere/qsv/pull/5066))
  
- [[package]]
- name = "actix-http"
--version = "3.21.3"
-+version = "3.22.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "b90352ea64d82226a82060c41dc5fe3925696076f55998ec1bd44ae54611e593"
-+checksum = "50f98f47b03911915aa3f0b856749aa3d3915033afabb295ab6ac5ff3b8bd5c1"
- dependencies = [
-  "actix-codec",
-  "actix-service",
-@@ -80,9 +80,9 @@ dependencies = [
+ ### Changed
++- **`qsv-synthesize --seed` is the same at any `--jobs`**: rows are now generated in parallel, in fixed 8,192-row blocks, so a seed gives the same rows whatever `--jobs` is (unless `stats` uses approximate estimators, whether requested via `--stats-options` or switched on automatically when the input won't fit in memory), though different rows than qsv 29.0.0. Skill regenerated from the USAGE text. ([#5069](https://github.com/dathere/qsv/pull/5069))
+ - **`qsv-synthesize` warns that its output is not anonymized** ([#5064](https://github.com/dathere/qsv/pull/5064)): synthetic output can contain real source values. The skill description was regenerated from the README command table.
  
- [[package]]
- name = "actix-rt"
--version = "2.15.0"
-+version = "2.16.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "e5f794807f82bbd36430c12cd600c73bbab0f52fdde4f0ed49978df113f4807f"
-+checksum = "07c6d0b470c2b069868a1dc26ad646516e7d19dbf6f9563997c4a563faff6674"
- dependencies = [
-  "futures-core",
-  "tokio",
-@@ -126,9 +126,9 @@ dependencies = [
+ ## [29.0.0] - 2026-11-15
+```
+
+**File**: `.claude/skills/qsv/qsv-synthesize.json` (modified, +1/-1)
+```diff
+@@ -88,7 +88,7 @@
+       {
+         "flag": "--seed",
+         "type": "number",
+-        "description": "RNG seed for fully reproducible output."
++        "description": "RNG seed for fully reproducible output. The same seed gives the same rows at any --jobs, unless stats uses approximate estimators: either asked for via --stats-options (e.g. `--quantile-method approx`), or switched on by stats itself (with a warning) when the input won't fit in memory."
+       },
+       {
+         "flag": "--stats-options",
+```
+
+**File**: `CHANGELOG.md` (modified, +1/-0)
+```diff
+@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
+ - `synthesize`: a column with any null was never treated as fully enumerated, because frequency's `(NULL)` row parses to rank 0, the same as an "Other" bucket. Such columns fell back to fakers, filler or the min/max range instead of sampling their real values by frequency, which also let them bypass `--min-count`. Nulls are still reproduced through the null ratio. **Behavior change:** columns with blank cells now emit their real values (those seen at least `--min-count` times), like every other enumerated column. With a Data Dictionary but without `--consistent-fakes`, a name, email or address column that has blanks goes from generated fakes to real values; pass `--consistent-fakes` to keep fakes. ([#5066](https://github.com/dathere/qsv/pull/5066))
  
- [[package]]
- name = "actix-web"
--version = "4.19.0"
-+version = "4.20.0"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "acd6966acfcc7b66b37bdeea7d11665d5accac89333767e1784d2cecd33984e7"
-+checksum = "618475ea8d22e5ad6e8aefaf9f56253b6ad856a7522716bea0b48bbb772341ff"
- dependencies = [
-  "actix-codec",
-  "actix-http",
-@@ -778,15 +778,6 @@ dependencies = [
-  "rustversion",
- ]
+ ### Changed
++- `synthesize`: rows are now generated in parallel, in fixed blocks of 8,192 rows. Each block draws from its own random stream, worked out from `--seed` and the block's position, so a seeded run gives the same output at any `--jobs` setting. `--jobs` now also sets the threads used to generate rows, not only those of the internal `stats` and `frequency` runs. On a 16-core machine, 1M rows from a 10k-row source took 142 ms instead of 475 ms, and `--jobs 1` is as fast as before. Blocks are written in order, and the output held in memory at once is capped at about 256 MiB, so memory does not grow with `-n` or with core count (1M rows of a 100-column file peaked at 302 MiB on 16 cores, against 104 MiB before). Seeded output is the same at any `--jobs` while `stats` computes exact statistics; approximate ones can differ, whether requested through `--stats-options` (e.g. `--quantile-method approx`) or switched on by `stats` itself, with a warning, when the input won't fit in memory. **Behavior change:** a given `--seed` now produces different rows than in 29.0.0. The values follow the same distributions, but they come out in a different sequence, so seeded outputs saved from 29.0.0 or earlier will not be reproduced. ([#5069](https://github.com/dathere/qsv/pull/5069))
+ - `synthesize`: the help now warns that synthetic output is not anonymized. It can copy real values and value combinations from the source: fully enumerated columns, enumerated structured-faker columns without `--consistent-fakes`, `joint` relationship tuples, and outliers at the edge of numeric/date ranges. ([#5064](https://github.com/dathere/qsv/pull/5064))
+ - `sqlp`: the `--try-parsedates` help now warns that Polars reads slash, dash and dot dates as day-first, so `01/05/2024` becomes `2024-05-01`, and that `CAST(col AS DATE)` does the same. For month-first (US) dates, leave `--try-parsedates` off and use `STRPTIME(col, '%m/%d/%Y')` ([#5062](https://github.com/dathere/qsv/pull/5062)).
  
--[[package]]
--name = "atomic"
--version = "0.6.1"
--source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "a89cbf775b137e9b968e67227ef7f775587cde3fd31b0d8599dbd0f598a48340"
--dependencies = [
-- "bytemuck",
--]
+```
+
+**File**: `docs/help/synthesize.md` (modified, +4/-3)
+```diff
+@@ -96,7 +96,8 @@ can reappear at or near its real value.
+ 
+ Review the output before sharing it, or training on it, as de-identified data.
+ 
+-With --seed, output is fully reproducible.
++With --seed, output is fully reproducible, whatever the --jobs setting.
++Rows are generated in parallel, in fixed blocks of 8192 rows.
+ 
+ 
+ <a name="examples"></a>
+@@ -156,7 +157,7 @@ qsv synthesize --help
+ | &nbsp;`‑‑dictionary`&nbsp; | string | Data Dictionary JSON file produced by `describegpt --dictionary --infer-content-type --format JSON`. Layers semantic Content Types onto generation. If omitted, generation is purely type/frequency-based. |  |
+ | &nbsp;`‑‑infer‑content‑type`&nbsp; | flag | Generate the Data Dictionary on the fly by invoking `describegpt --dictionary --infer-content-type` on <input>. Requires an LLM API key (QSV_LLM_APIKEY). Ignored if --dictionary is given. |  |
+ | &nbsp;`‑n,`<br>`‑‑rows`&nbsp; | integer | Number of synthetic rows to generate. | `100` |
+-| &nbsp;`‑‑seed`&nbsp; | integer | RNG seed for fully reproducible output. |  |
++| &nbsp;`‑‑seed`&nbsp; | integer | RNG seed for fully reproducible output. The same seed gives the same rows at any --jobs, unless stats uses approximate estimators: either asked for via --stats-options (e.g. `--quantile-method approx`), or switched on by stats itself (with a warning) when the input won't fit in memory. |  |
+ | &nbsp;`‑‑locale`&nbsp; | string | Locale for faker-backed columns. Case-insensitive. Supported: en, fr_fr, de_de, it_it, pt_br, pt_pt, ja_jp, zh_cn, zh_tw, ar_sa, cy_gb, fa_ir, nl_nl, tr_tr. Sparse locales (those without per-category data in fake-rs) silently fall back to en data for the missing categories — e.g. lorem text under a non-en locale is still English, since only zh_cn has localized lorem data. | `en` |
+ | &nbsp;`‑‑freq‑limit`&nbsp; | integer | Frequency pool depth passed to the internal `frequency` run as --limit. A column is reproduced via exact frequency-weighted sampling only when its cardinality is fully captured within this limit; higher values reproduce more columns verbatim. 0 means unlimited. | `100` |
+ | &nbsp;`‑‑min‑count`&nbsp; | integer | Privacy threshold. A real value of an enumerated column, or a real `joint` value-tuple, that occurs fewer than <k> times in <input> is dropped from the values it samples; its share is redistributed over the kept values. An enumerated column whose values are all below <k> falls back to its faker or type-based generator (numeric and date columns to their trimmed range), and a joint group to independent columns, or aborts under the --strict-relationships option. A warning is printed when either happens. 1 disables suppression. Counts are of rows, not people: where one person has many rows (transactions, visits, logs), one person's value can pass <k> alone. Raise <k>, or dedupe to one row per person first. Numeric and date ranges, and the gaps of `ordered` relationships, are also trimmed to their k-th smallest and k-th largest values (one extra pass over <input>). A numeric or date column with fewer than 2k-1 non-null values is left empty unless its real values are sampled. | `5` |
+@@ -167,7 +168,7 @@ qsv synthesize --help
+ | &nbsp;`‑‑joint‑cardinality‑cap`&nbsp; | integer | Maximum number of distinct value-tuples a `joint` relationship may have. A joint group above this cap falls back to independent generation (or aborts under --strict-relationships). 0 means unlimited. | `100000` |
+ | &nbsp;`‑‑correlation‑threshold`&nbsp; | float | Minimum absolute Spearman correlation for a pair of columns to stay in a `correlated` relationship. Weakly-correlated members are dropped. | `0.3` |
+ | &nbsp;`‑‑strict‑relationships`&nbsp; | flag | Abort instead of warning-and-degrading when a declared relationship fails validation. |  |
+-| &nbsp;`‑j,`<br>`‑‑jobs`&nbsp; | integer | Number of jobs to use for the internal `stats` and `frequency` runs. |  |
++| &nbsp;`‑j,`<br>`‑‑jobs`&nbsp; | integer | Number of jobs to use for the internal `stats` and `frequency` runs and for generating rows. |  |
+ 
+ <a name="common-options"></a>
+ 
+```
+
+**File**: `src/cmd/synthesize/mod.rs` (modified, +131/-39)
+```diff
+@@ -84,7 +84,8 @@ not stop it:
+ 
+ Review the output before sharing it, or training on it, as de-identified data.
+ 
+-With --seed, output is fully reproducible.
++With --seed, output is fully reproducible, whatever the --jobs setting.
++Rows are generated in parallel, in fixed blocks of 8192 rows.
+ 
+ Examples:
+ 
+@@ -120,7 +121,12 @@ synthesize options:
+                            <input>. Requires an LLM API key (QSV_LLM_APIKEY).
+                            Ignored if --dictionary is given.
+     -n, --rows <n>         Number of synthetic rows to generate. [default: 100]
+-    --seed <n>             RNG seed for fully reproducible output.
++    --seed <n>             RNG seed for fully reproducible output. The same
++                           seed gives the same rows at any --jobs, unless
++                           stats uses approximate estimators: either asked
++                           for via --stats-options (e.g. `--quantile-method
++                           approx`), or switched on by stats itself (with a warning)
++                           when the input won't fit in memory.
+     --locale <loc>         Locale for faker-backed columns. Case-insensitive.
+                            Supported: en, fr_fr, de_de, it_it, pt_br, pt_pt,
+                            ja_jp, zh_cn, zh_tw, ar_sa, cy_gb, fa_ir, nl_nl,
+@@ -205,7 +211,7 @@ synthesize options:
+     --strict-relationships  Abort instead of warning-and-degrading when a
+                            declared relationship fails validation.
+     -j, --jobs <arg>       Number of jobs to use for the internal `stats` and
+-                           `frequency` runs.
++                           `frequency` runs and for generating rows.
+ 
+ Common options:
+     -h, --help             Display this message
+@@ -214,9 +220,15 @@ Common options:
+                            Must be a single character. (default: ,)
+ "#;
+ 
+-use std::{cell::RefCell, collections::HashMap, path::Path};
++use std::{
++    cell::RefCell,
++    collections::{HashMap, HashSet},
++    io::Write,
++    path::Path,
++};
+ 
+ use rand::{SeedableRng, rngs::StdRng};
++use rayon::iter::{IntoParallelIterator, ParallelIterator};
+ use serde::Deserialize;
+ 
+ use crate::{
+@@ -321,12 +333,12 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
+         }
+     }
+ 
+-    // Single master RNG, threaded through both the sampling/selection logic and
+-    // every faker call, so a given --seed produces fully reproducible output.
+-    let mut rng = match args.flag_seed {
+-        Some(seed) => StdRng::seed_from_u64(seed), // DevSkim: ignore DS148264
+-        _ => rand::make_rng::<StdRng>(),
+-    };
++    // The fit (pools, fake values, relationship validation) draws from an RNG
++    // seeded with the base seed; each output chunk gets its own RNG keyed on
++    // (base seed, chunk index), so a given --seed gives the same output at any
++    // --jobs.
++    let base_seed = args.flag_seed.unwrap_or_else(rand::random::<u64>);
++    let mut rng = StdRng::seed_from_u64(base_seed); // DevSkim: ignore DS148264
+ 
+     // --- 1. Analysis (stats + frequency + count) ---------------------------
+     // Index the input first (best-effort) to speed up stats/frequency.
+@@ -500,44 +512,58 @@ pub fn run(argv: &[&str]) -> CliResult<()> {
+     let mut exact_matches = 0_u64;
+ 
+     // --- 5. Emit -----------------------------------------------------------
+-    let mut wtr = Config::new(args.flag_output.as_ref()).writer()?;
++    let out_conf = Config::new(args.flag_output.as_ref());
++    let mut wtr = out_conf.writer()?;
++    let chunk_builder = out_conf.writer_builder();
+ 
+     let header: csv::StringRecord = stats_records
+         .iter()
+         .map(|stats_record| stats_record.field.clone())
+         .collect();
+     wtr.write_record(&header)?;
 -
- [[package]]
- name = "atomic-waker"
- version = "1.1.2"
-@@ -1218,9 +1209,9 @@ checksum = "1fd0f2584146f6f2ef48085050886acf353beff7305ebd1ae69500e27c67f64b"
+-    // One reusable row buffer: each EmitUnit writes into its own column slot(s)
+-    // by index, so the schedule can be walked in any fixed order per row.
++    // Chunks arrive already encoded, so append them to the raw writer; taking
++    // it out of the csv writer flushes the header first.
++    let mut out = wtr.into_inner().map_err(|e| e.into_error())?;
++
++    // Chunks are generated in parallel, a window at a time, and written in
++    // chunk order. The window starts at one chunk and is then sized from the
++    // largest chunk seen so far, so the bytes held at once stay near
++    // WINDOW_BYTES (but never below one chunk) however wide the rows are. The
++    // window only affects memory and speed, never the output.
+     let ncols = stats_records.len();
+-    let mut row: Vec<String> = vec![String::new(); ncols];
+-    let mut record = csv::StringRecord::new();
+-    for _ in 0..args.flag_rows {
+-        for unit in &schedule {
+-            match unit {
+-                EmitUnit::Independent { col_idx, generator } => {
+-                    row[*col_idx] = generator.next(&mut rng);
+-                },
+-                EmitUnit::Group(group) => {
+-                    for (col_idx, value) in group.next(
+```
+
+**File**: `src/config.rs` (modified, +10/-3)
+```diff
+@@ -1354,16 +1354,23 @@ impl Config {
+             warn!("failed to write UTF-8 BOM: {e}");
+         }
  
- [[package]]
- name = "bytes"
--version = "1.12.1"
-+version = "1.12.2"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "fc652a48c352aef3ea3aed32080501cf3ef6ed5da78602a020c991775b0aff04"
-+checksum = "776dfebd015e2d8732c684a2c71003674ccb49457b539b9e82151ba38e96dd7c"
- dependencies = [
-  "serde",
- ]
-@@ -2461,9 +2452,9 @@ checksum = "0e9c71c2167ca323c882b99918929403426e2373ea17242ff5653e0d5e1058be"
+-        csv::WriterBuilder::new()
++        self.writer_builder().from_writer(wtr)
++    }
++
++    /// The CSV settings `from_writer` uses, without the BOM, for encoding output
++    /// in pieces (e.g. per worker) that are then appended to one stream.
++    pub fn writer_builder(&self) -> csv::WriterBuilder {
++        let mut builder = csv::WriterBuilder::new();
++        builder
+             .flexible(self.flexible)
+             .delimiter(self.write_delimiter)
+             .terminator(self.terminator)
+             .quote(self.quote)
+             .quote_style(self.quote_style)
+             .double_quote(self.double_quote)
+             .escape(self.escape.unwrap_or(b'\\'))
+-            .buffer_capacity(self.write_buffer as usize)
+-            .from_writer(wtr)
++            .buffer_capacity(self.write_buffer as usize);
++        builder
+     }
+ }
  
- [[package]]
- name = "email_address"
--version = "0.2.9"
-+version = "0.2.10"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "e079f19b08ca6239f47f8ba8509c11cf3ea30095831f7fed61441475edd8c449"
-+checksum = "5ab6bbd053d3cdc62ba3de82aae11530a97bbd5b3a572fbdbcd0f0e545e3ff21"
- dependencies = [
-  "serde",
- ]
-@@ -2740,9 +2731,9 @@ dependencies = [
- 
- [[package]]
- name = "filetime"
--version = "0.2.29"
-+version = "0.2.30"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "5c287a33c7f0a620c38e641e7f60827713987b3c0f26e8ddc9462cc69cf75759"
-+checksum = "e1255e7a9f1902190d4c10a75f2f7f495d3d3ce13e9ba26e6c48683a0f4dbed7"
- dependencies = [
-  "cfg-if",
-  "libc",
-@@ -3467,9 +3458,9 @@ checksum = "7f24254aa9a54b5c858eaee2f5bccdb46aaf0e486a595ed5fd8f86ba55232a70"
- 
- [[package]]
- name = "hifijson"
--version = "0.5.0"
-+version = "0.5.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "242402749acf71e6f32f5857598b7002c4058a4e3c3b22b4c7d51cab9aea754e"
-+checksum = "5a9dfcf92104a9752d8dbac1879032a51873d7cebcf7e4cb2bdd0513e069440f"
- 
- [[package]]
- name = "hmac"
-@@ -4622,7 +4613,7 @@ version = "1.2.1"
- source = "registry+https://github.com/rust-lang/crates.io-index"
- checksum = "f3d0581a75c45969c63afd2bb87b1d8b25cfcc556c7a918cf9bb13b0fe8d2381"
- dependencies = [
-- "nix 0.31.3",
-+ "nix 0.31.4",
-  "windows-sys 0.61.2",
- ]
- 
-@@ -4973,9 +4964,9 @@ dependencies = [
- 
- [[package]]
- name = "nix"
--version = "0.31.3"
-+version = "0.31.4"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "cf20d2fde8ff38632c426f1165ed7436270b44f199fc55284c38276f9db47c3d"
-+checksum = "2bc81ce8148d3b4f3274da811f11cdd824ae661ee4ef732cdb229825cf5be7f7"
- dependencies = [
-  "bitflags 2.13.2",
-  "cfg-if",
-@@ -5352,7 +5343,7 @@ dependencies = [
-  "hyper",
-  "itertools 0.15.0",
-  "md-5 0.11.0",
-- "nix 0.31.3",
-+ "nix 0.31.4",
-  "parking_lot 0.12.5",
-  "percent-encoding",
-  "quick-xml 0.41.0",
-@@ -6670,9 +6661,9 @@ dependencies = [
- 
- [[package]]
- name = "pollster"
--version = "1.0.1"
-+version = "1.0.2"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "bc6355899e1c9462875b6757c79f3caa011a1fdae12bbb1a2e72dd1f234f8336"
-+checksum = "3c2c80c4e3afbec8224b9d3e641fbf3a5690cc7595b887b0a27a926bb357ed5c"
- 
- [[package]]
- name = "portable-atomic"
-@@ -7694,9 +7685,9 @@ dependencies = [
- 
- [[package]]
- name = "regex"
--version = "1.13.1"
-+version = "1.13.2"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "f020237b6c8eed93db2e2cb53c00c60a8e1bc73da7d073199a1180401450218d"
-+checksum = "9807af0e638c12e753aa1b4e601791bf2a8f71274023c8bbeec12fc149950857"
- dependencies = [
-  "aho-corasick",
-  "memchr",
-@@ -7706,9 +7697,9 @@ dependencies = [
- 
- [[package]]
- name = "regex-automata"
--version = "0.4.18"
-+version = "0.4.19"
- source = "registry+https://github.com/rust-lang/crates.io-index"
--checksum = "ad8553b9b26413251cbf30e620595c7a41b3887f03
+```
+
+**File**: `tests/test_synthesize.rs` (modified, +167/-0)
+```diff
+@@ -2843,3 +2843,170 @@ fn synthesize_report_does_not_change_output() {
+     assert_eq!(without, with);
+     assert_eq!(read_report(&wrk)["synthetic_rows"], 200);
+ }
++
++/// city/state/zip in a `joint` group, a faker-backed email column and a numeric
++/// column, so every generator kind draws from the per-chunk RNG.
++fn chunked_fixture(wrk: &Workdir) {
++    let mut rows = vec![svec!["city", "state", "zip", "email", "amount"]];
++    let geo = [
++        ("Springfield", "IL", "62701"),
++        ("Chicago", "IL", "60601"),
++        ("Boston", "MA", "02101"),
++        ("Portland", "OR", "97201"),
++    ];
++    for i in 0..40 {
++        let (city, state, zip) = geo[i % geo.len()];
++        rows.push(vec![
++            city.to_string(),
++            state.to_string(),
++            zip.to_string(),
++            format!("user{i}@example.com"),
++            format!("{}.{}", 100 + i * 37 % 900, i % 100),
++        ]);
++    }
++    wrk.create("data.csv", rows);
++    wrk.create_from_string(
++        "dict.json",
++        r#"{
++    "fields": [
++        {"name": "city", "type": "String"},
++        {"name": "state", "type": "String"},
++        {"name": "zip", "type": "String"},
++        {"name": "email", "type": "String", "content_type": "email"},
++        {"name": "amount", "type": "Float"}
++    ],
++    "relationships": [
++        {"kind": "joint", "members": ["city", "state", "zip"]}
++    ]
++}"#,
++    );
++}
++
++#[test]
++fn synthesize_seeded_output_is_identical_at_any_jobs() {
++    let wrk = Workdir::new("synthesize_chunked_jobs");
++    chunked_fixture(&wrk);
++
++    // 20000 rows = two full 8192-row chunks plus a partial third.
++    let run = |jobs: &str, report: &str| -> String {
++        let mut cmd = wrk.command("synthesize");
++        cmd.args(["-n", "20000", "--seed", "7", "--jobs", jobs, "--report"])
++            .arg(wrk.path(report))
++            .arg("--dictionary")
++            .arg(wrk.path("dict.json"))
++            .arg("data.csv");
++        wrk.stdout(&mut cmd)
++    };
++    let serial = run("1", "r1.json");
++    let parallel = run("2", "r2.json");
++
++    assert_eq!(serial.lines().count(), 20001);
++    assert!(
++        serial == parallel,
++        "seeded output must not depend on --jobs"
++    );
++    let read = |name: &str| -> serde_json::Value {
++        serde_json::from_str(&std::fs::read_to_string(wrk.path(name)).unwrap()).unwrap()
++    };
++    assert_eq!(
++        read("r1.json")["privacy"]["exact_matches"],
++        read("r2.json")["privacy"]["exact_matches"]
++    );
++}
++
++#[test]
++fn synthesize_chunks_draw_from_distinct_streams() {
++    let wrk = Workdir::new("synthesize_chunked_streams");
++    chunked_fixture(&wrk);
++
++    let mut cmd = wrk.command("synthesize");
++    cmd.args(["-n", "16384", "--seed", "7", "--dictionary"])
++        .arg(wrk.path("dict.json"))
++        .arg("data.csv");
++    let out: String = wrk.stdout(&mut cmd);
++    let rows: Vec<&str> = out.lines().skip(1).collect();
++
++    assert_eq!(rows.len(), 16384);
++    assert_ne!(
++        rows[..8192],
++        rows[8192..],
++        "each chunk must have its own random stream"
++    );
++}
++
++#[test]
++fn synthesize_row_count_spans_chunk_boundary() {
++    let wrk = Workdir::new("synthesize_chunked_boundary");
++    chunked_fixture(&wrk);
++
++    let mut cmd = wrk.command("synthesize");
++    cmd.args(["-n", "8193", "--seed", "7"]).arg("data.csv");
++    let out: String = wrk.stdout(&mut cmd);
++
++    assert_eq!(out.lines().count(), 8194);
++}
++
++#[test]
++fn synthesize_chunks_use_the_output_delimiter() {
++    let wrk = Workdir::new("synthesize_chunked_tsv");
++    chunked_fixture(&wrk);
++
++    let mut cmd = wrk.command("synthesize");
++    cmd.args(["-n", "9000", "--seed", "7", "-o"])
++        .arg(wrk.path("out.tsv"))
++        .arg("data.csv");
++    wrk.assert_success(&mut cmd);
++
++    let out = std::fs::read_to_string(wrk.path("out.tsv")).unwrap();
++    let lines: Vec<&str> = out.lines().collect();
++    assert_eq!(lines.len(), 9001);
++    // the last line is in the second chunk
++    for line in [lines[0], lines[1], lines[9000]] {
++        assert_eq!(line.split('\t').count(), 5, "not tab-delimited: {line}");
++    }
++}
++
++#[test]
++fn synthesize_chunks_write_one_bom() {
++    let wrk = Workdir::new("synthesize_chunked_bom");
++    chunked_fixture(&wrk);
++
++    let mut cmd = wrk.command("synthesize");
++    cmd.env("QSV_OUTPUT_BOM", "1")
++        .args(["-n", "9000", "--seed", "7", "-o"])
++        .arg(wrk.path("out.csv"))
++        .arg("data.csv");
++    wrk.assert_success(&mut cmd);
++
++    let out = std::fs::read_to_string(wrk.path("out.csv")).unwrap();
++    assert!(out.starts_with('\u{FEFF}'));
++    assert_eq!(out.matches('\u{FEFF}').count(), 1);
++}
++
++#[test]
++fn synthesize_report_counts_matches_in_every_chunk() {
++    let wrk = Workdir::new("synthesize_chunked_report_count");
++    // Only real (city, state, zip) tuples can be emitted, so every row matches.
++    wrk.create("data.csv", geo_fixture());
++    wrk.create_from_string("dict.json", GEO_JOINT_DICT
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5069** (2026-11-18): feat(synthesize): generate rows in parallel, seed-stable across --jobs (@jqnatividad)
 - **PR #5068** (2026-11-18): feat(synthesize): add --report privacy summary (exact matches, suppression) (@jqnatividad)
 - **PR #5067** (2026-11-17): feat(synthesize): trim numeric/date ranges and ordered gaps by --min-count (@jqnatividad)
 - **PR #5066** (2026-11-17): feat(synthesize): add --min-count privacy threshold (default 5) (@jqnatividad)
 - **PR #5065** (2026-11-17): build(deps): bump anthropics/claude-code-action from 1.0.275 to 1.0.276 (@dependabot[bot])
 - **PR #5064** (2026-11-16): docs(synthesize): warn that synthetic output is not anonymized (@jqnatividad)
-- **PR #5063** (2026-11-16): build(deps): bump anthropics/claude-code-action from 1.0.271 to 1.0.275 (@dependabot[bot])
 
 ---
 
@@ -2398,80 +2622,28 @@ Refresh compatible dependency versions in Cargo.lock.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. deps: update lock file
+## X. synthesize): generate rows in parallel, seed-stable across --jobs
 
 **RULE**:
-When implementing operations in `Cargo.lock`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `.claude/skills/CHANGELOG.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in dathere/qsv. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `52f21a8b`: deps: update lock file. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `03493b2a`: synthesize): generate rows in parallel, seed-stable across --jobs. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `Cargo.lock`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.claude/skills/CHANGELOG.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-version = "3.22.0"
-checksum = "50f98f47b03911915aa3f0b856749aa3d3915033afabb295ab6ac5ff3b8bd5c1"
-version = "2.16.0"
-checksum = "07c6d0b470c2b069868a1dc26ad646516e7d19dbf6f9563997c4a563faff6674"
-version = "4.20.0"
-checksum = "618475ea8d22e5ad6e8aefaf9f56253b6ad856a7522716bea0b48bbb772341ff"
-version = "1.12.2"
-checksum = "776dfebd015e2d8732c684a2c71003674ccb49457b539b9e82151ba38e96dd7c"
-version = "0.2.10"
-checksum = "5ab6bbd053d3cdc62ba3de82aae11530a97bbd5b3a572fbdbcd0f0e545e3ff21"
-version = "0.2.30"
-checksum = "e1255e7a9f1902190d4c10a75f2f7f495d3d3ce13e9ba26e6c48683a0f4dbed7"
-version = "0.5.1"
-checksum = "5a9dfcf92104a9752d8dbac1879032a51873d7cebcf7e4cb2bdd0513e069440f"
- "nix 0.31.4",
-version = "0.31.4"
-checksum = "2bc81ce8148d3b4f3274da811f11cdd824ae661ee4ef732cdb229825cf5be7f7"
- "nix 0.31.4",
-version = "1.0.2"
-checksum = "3c2c80c4e3afbec8224b9d3e641fbf3a5690cc7595b887b0a27a926bb357ed5c"
-version = "1.13.2"
-checksum = "9807af0e638c12e753aa1b4e601791bf2a8f71274023c8bbeec12fc149950857"
-version = "0.4.19"
+- **`qsv-synthesize --seed` is the same at any `--jobs`**: rows are now generated in parallel, in fixed 8,192-row blocks, so a seed gives the same rows whatever `--jobs` is (unless `stats` uses approximate estimators, whether requested via `--stats-options` or switched on automatically when the input won't fit in memory), though different rows than qsv 29.0.0. Skill regenerated from the USAGE text. ([#5069](https://github.com/dathere/qsv/pull/5069))
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-version = "3.21.3"
-checksum = "b90352ea64d82226a82060c41dc5fe3925696076f55998ec1bd44ae54611e593"
-version = "2.15.0"
-checksum = "e5f794807f82bbd36430c12cd600c73bbab0f52fdde4f0ed49978df113f4807f"
-version = "4.19.0"
-checksum = "acd6966acfcc7b66b37bdeea7d11665d5accac89333767e1784d2cecd33984e7"
-[[package]]
-name = "atomic"
-version = "0.6.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a89cbf775b137e9b968e67227ef7f775587cde3fd31b0d8599dbd0f598a48340"
-dependencies = [
- "bytemuck",
-]
-
-version = "1.12.1"
-checksum = "fc652a48c352aef3ea3aed32080501cf3ef6ed5da78602a020c991775b0aff04"
-version = "0.2.9"
-checksum = "e079f19b08ca6239f47f8ba8509c11cf3ea30095831f7fed61441475edd8c449"
-version = "0.2.29"
-checksum = "5c287a33c7f0a620c38e641e7f60827713987b3c0f26e8ddc9462cc69cf75759"
-version = "0.5.0"
-checksum = "242402749acf71e6f32f5857598b7002c4058a4e3c3b22b4c7d51cab9aea754e"
- "nix 0.31.3",
-version = "0.31.3"
-checksum = "cf20d2fde8ff38632c426f1165ed7436270b44f199fc55284c38276f9db47c3d"
- "nix 0.31.3",
-version = "1.0.1"
-checksum = "bc6355899e1c9462875b6757c79f3caa011a1fdae12bbb1a2e72dd1f234f8336"
-version = "1.13.1"
-checksum = "f020237b6c8eed93db2e2cb53c00c60a8e1bc73da7d0731
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `52f21a8b` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `03493b2a` are properly handled with clean fallback behavior.

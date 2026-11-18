@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261117-KA64",
-    "timestamp": "2026-11-17T08:56:28.540Z",
-    "repository": "salvo-rs/salvo",
-    "learningId": "learn-github-salvo-rs-salvo",
-    "contentHash": "51f0499ea818af710c26efa0a1a3f35c2cc50489d3a6050a3f9bd453a767ff8b",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261117-KCQJ",
-    "timestamp": "2026-11-17T08:56:31.867Z",
-    "repository": "faker-js/faker",
-    "learningId": "learn-github-faker-js-faker",
-    "contentHash": "08beee8908af7822bb903a22f43215867b0f8b5115d362b25145fbc314e136ff",
-    "status": "PROJECT_ONLY",
-    "promotedRulesCount": 0,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261117-KF30",
     "timestamp": "2026-11-17T08:56:34.908Z",
     "repository": "mattermost/mattermost",
@@ -7490,6 +7460,36 @@
     "repository": "cilium/cilium",
     "learningId": "learn-github-cilium-cilium",
     "contentHash": "f9b013d16ea946c8baf4af0c8a4adf68b9689a582ab51af4fa1aafefe20feb05",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-9X3A",
+    "timestamp": "2026-11-18T17:27:58.150Z",
+    "repository": "BAAI/bge-m3",
+    "learningId": "learn-huggingface-baai-bge-m3",
+    "contentHash": "535ba67f34bc832e2152eca6b3ca28f1a347bd2a567474f4271a0f80e3f24978",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-AAR4",
+    "timestamp": "2026-11-18T17:28:15.856Z",
+    "repository": "dathere/qsv",
+    "learningId": "learn-github-dathere-qsv",
+    "contentHash": "83cc3075368c36191bdc69d6f3a50d0921122d6c2675e18808a299bd6429657c",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

@@ -735,8 +735,8 @@
     "sourceUrl": "https://huggingface.co/BAAI/bge-m3",
     "sourceVersion": "hf-baai-bge-m3",
     "license": "Open-Source",
-    "contentHash": "8d4daaa1f3dff10e714d84db2421ec472df54cfeb0cda4f6a67f70b7c8e066e7",
-    "lastHarvestedAt": "2026-11-18T08:06:27.616Z",
+    "contentHash": "535ba67f34bc832e2152eca6b3ca28f1a347bd2a567474f4271a0f80e3f24978",
+    "lastHarvestedAt": "2026-11-18T17:27:58.155Z",
     "learningId": "learn-huggingface-baai-bge-m3"
   },
   "hf-qwen-qwen3-0.6b": {
@@ -2363,10 +2363,10 @@
     "repository": "dathere/qsv",
     "platform": "github",
     "sourceUrl": "https://github.com/dathere/qsv",
-    "sourceVersion": "52f21a8b",
+    "sourceVersion": "03493b2a",
     "license": "NOASSERTION",
-    "contentHash": "456c93c985a8f08cd3a88d15113bfb2ba2378c6c011c613220f63ce37c0e43be",
-    "lastHarvestedAt": "2026-11-18T14:24:24.859Z",
+    "contentHash": "83cc3075368c36191bdc69d6f3a50d0921122d6c2675e18808a299bd6429657c",
+    "lastHarvestedAt": "2026-11-18T17:28:15.860Z",
     "learningId": "learn-github-dathere-qsv"
   },
   "assistant-ui-assistant-ui": {

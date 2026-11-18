@@ -11056,3 +11056,5 @@
 | `CYCLE-20261118-NDMN` | `2026-11-18T17:10:26.495Z` | `koderover/zadig` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9263` | Yes (`d07a9983...`) |
 | `CYCLE-20261118-XL7F` | `2026-11-18T17:18:22.875Z` | `google-bert/bert-base-uncased` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-google-bert-bert-base-uncased-learnings.md` | Yes (`f27f70b1...`) |
 | `CYCLE-20261118-XW3L` | `2026-11-18T17:18:36.993Z` | `cilium/cilium` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9264` | Yes (`f9b013d1...`) |
+| `CYCLE-20261118-9X3A` | `2026-11-18T17:27:58.150Z` | `BAAI/bge-m3` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-baai-bge-m3-learnings.md` | Yes (`535ba67f...`) |
+| `CYCLE-20261118-AAR4` | `2026-11-18T17:28:15.856Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9265` | Yes (`83cc3075...`) |

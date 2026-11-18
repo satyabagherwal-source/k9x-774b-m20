@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T17:18:37.002Z",
-  "total_cycles_completed": 10573,
-  "total_learnings_persisted": 10573,
-  "total_rules_promoted": 10026,
+  "last_updated": "2026-11-18T17:28:15.865Z",
+  "total_cycles_completed": 10575,
+  "total_learnings_persisted": 10575,
+  "total_rules_promoted": 10027,
   "history": [
-    {
-      "timestamp": "2026-11-18T06:07:39.600Z",
-      "repository": "Kuddev/pebrel",
-      "learningId": "learn-github-kuddev-pebrel",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-18T06:07:42.233Z",
-      "repository": "orcarouter/OrcaSAQ-2-Cyber-27B-Uncensored-GGUF",
-      "learningId": "learn-huggingface-orcarouter-orcasaq-2-cyber-27b-uncensored-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-18T06:07:43.962Z",
       "repository": "ShiftHackZ/SDAI-KMP",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-18T17:18:37.002Z",
       "repository": "cilium/cilium",
       "learningId": "learn-github-cilium-cilium",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T17:27:58.160Z",
+      "repository": "BAAI/bge-m3",
+      "learningId": "learn-huggingface-baai-bge-m3",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T17:28:15.865Z",
+      "repository": "dathere/qsv",
+      "learningId": "learn-github-dathere-qsv",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

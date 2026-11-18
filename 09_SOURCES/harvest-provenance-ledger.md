@@ -11089,3 +11089,5 @@ Every entry in this ledger must capture:
 | `learn-github-koderover-zadig` | `https://github.com/koderover/zadig` | `39229c91` | Multi-dimensional audit evidence | 2026-11-18T17:10:26.499Z |
 | `learn-huggingface-google-bert-bert-base-uncased` | `https://huggingface.co/google-bert/bert-base-uncased` | `hf-google-` | Multi-dimensional audit evidence | 2026-11-18T17:18:22.879Z |
 | `learn-github-cilium-cilium` | `https://github.com/cilium/cilium` | `cde31357` | Multi-dimensional audit evidence | 2026-11-18T17:18:36.997Z |
+| `learn-huggingface-baai-bge-m3` | `https://huggingface.co/BAAI/bge-m3` | `hf-baai-bg` | Multi-dimensional audit evidence | 2026-11-18T17:27:58.155Z |
+| `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `03493b2a` | Multi-dimensional audit evidence | 2026-11-18T17:28:15.860Z |

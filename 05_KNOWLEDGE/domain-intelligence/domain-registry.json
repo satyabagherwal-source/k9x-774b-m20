@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-18T17:18:41.762Z",
+  "last_updated": "2026-11-18T17:28:20.721Z",
   "total_records": 1883,
   "domains": {
     "A": {
@@ -10602,8 +10602,8 @@
       "title": "Research & Knowledge Intelligence: BAAI/bge-m3 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-baai-bge-m3-research-knowledge-intelligence-baai-bge-m3-core-invariants.md",
       "repository": "BAAI/bge-m3",
-      "content_hash": "fa0c43662be6fcbf0c11bba26c3052069e999d2f9495110f7e58956cc5a6f549",
-      "created_at": "2026-11-13T21:16:03.930Z"
+      "content_hash": "10e3b5282b9df4ca98fa6742ccfa900e4fba7af249e1be08698e9a645d5311bb",
+      "created_at": "2026-11-18T17:27:58.337Z"
     },
     "domain_intelligence-technical-construction-intelligence-nvidia-cuda-rust-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-nvidia-cuda-rust-core-invariants",
@@ -10698,8 +10698,8 @@
       "title": "Research & Knowledge Intelligence: hf-baai-bge-m3-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-baai-bge-m3-learnings-research-knowledge-intelligence-hf-baai-bge-m3-learning.md",
       "repository": "hf-baai-bge-m3-learnings",
-      "content_hash": "912683187a2799637053e38aa207c890f4645f544be4d095cdbedb0385f25bb2",
-      "created_at": "2026-11-13T21:16:45.736Z"
+      "content_hash": "7fbdc235c5082047bb83a8eb0114b9514dbe2212ff82b736c4e09fbcfae20292",
+      "created_at": "2026-11-18T17:28:19.270Z"
     },
     "domain_intelligence-architecture-intelligence-infinitered-reactotron-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-infinitered-reactotron-learnings-core-invariants",
@@ -11940,8 +11940,8 @@
       "title": "Architecture Intelligence: dathere/qsv Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dathere-qsv-architecture-intelligence-dathere-qsv-core-invariants.md",
       "repository": "dathere/qsv",
-      "content_hash": "bfdcc20d73cff0bb85bcbffa02530a62851caa7a87695f37c97cb8360e3f8daf",
-      "created_at": "2026-11-18T14:24:25.299Z"
+      "content_hash": "5e7bdf16e15b9c0f82dc863682580b83c9876306d78da738a821fff5ca5b1cd2",
+      "created_at": "2026-11-18T17:28:16.187Z"
     },
     "DOM-D-F5645095": {
       "record_id": "DOM-D-F5645095",
@@ -12009,8 +12009,8 @@
       "title": "Architecture Intelligence: dathere-qsv-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-dathere-qsv-learnings-architecture-intelligence-dathere-qsv-learnings-core-invar.md",
       "repository": "dathere-qsv-learnings",
-      "content_hash": "d470bc1fc8f5b2188627622c537b5198c3a6c7b3a69e1be8d0c08dc5625e8bd2",
-      "created_at": "2026-11-18T14:24:30.407Z"
+      "content_hash": "63ad935990cf2937bc14a5af9d5cc7e2a3d2b3cbb649a20d80ba2439982f8afa",
+      "created_at": "2026-11-18T17:28:20.036Z"
     },
     "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8-flash-next-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-qwen-qwen3-8-flash-next-core-invariants",
@@ -23054,8 +23054,8 @@
       "title": "Research & Knowledge Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-zvec-ai-zvec-grep-learnings-research-knowledge-intelligence-zvec-ai-zvec-grep-le.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "07fbadbbe63dff951f6bf50809b82d469d8b98b1e1bdaa4e42cf0ad724715e61",
-      "created_at": "2026-11-18T16:14:26.596Z"
+      "content_hash": "0681a4b0bb11f5ec7e7867d7a01bcc28244100afb1ca1a84656d8d95ca668b5f",
+      "created_at": "2026-11-18T17:28:20.721Z"
     },
     "domain_intelligence-technical-construction-intelligence-prof18-feed-flow-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-prof18-feed-flow-core-invariants",
