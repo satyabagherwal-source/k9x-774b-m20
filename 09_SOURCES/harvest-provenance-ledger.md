@@ -11025,3 +11025,6 @@ Every entry in this ledger must capture:
 | `learn-github-databendlabs-databend` | `https://github.com/databendlabs/databend` | `6546196f` | Multi-dimensional audit evidence | 2026-11-18T13:47:07.685Z |
 | `learn-dom-k-4c047582` | `project://chaos-mesh-chaos-mesh` | `fc8e171f` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/chaos-mesh-chaos-mesh-learnings.md` | 2026-11-18T13:47:46.974Z |
 | `learn-dom-h-41a8ed4b` | `project://databendlabs-databend` | `6546196f` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/databendlabs-databend-learnings.md` | 2026-11-18T13:48:29.772Z |
+| `learn-huggingface-orcarouter-orcasaq-2-27b` | `https://huggingface.co/orcarouter/OrcaSAQ-2-27B` | `hf-orcarou` | Multi-dimensional audit evidence | 2026-11-18T13:56:48.490Z |
+| `learn-github-fallow-rs-fallow` | `https://github.com/fallow-rs/fallow` | `bf272e19` | Multi-dimensional audit evidence | 2026-11-18T13:56:51.399Z |
+| `learn-github-paradedb-paradedb` | `https://github.com/paradedb/paradedb` | `b2eb4729` | Multi-dimensional audit evidence | 2026-11-18T13:57:03.169Z |

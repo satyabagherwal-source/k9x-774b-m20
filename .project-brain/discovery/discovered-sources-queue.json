@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-18T13:34:27.003Z",
+  "updated_at": "2026-11-18T13:57:08.403Z",
   "stats": {
-    "total_discovered": 5515,
-    "approved_pending_harvest": 5210,
+    "total_discovered": 5521,
+    "approved_pending_harvest": 5216,
     "harvested_count": 0,
     "rejected_count": 305,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 5193,
+      "COMMUNITY_AND_EXPERT": 5199,
       "OFFICIAL_DOCUMENTATION": 177,
       "STANDARDS_AND_SPECIFICATIONS": 109,
       "ENGINEERING_BLOGS": 4,
@@ -119216,6 +119216,138 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/faridsafi-react-native-gifted-chat-learnings.md",
         "fileName": "faridsafi-react-native-gifted-chat-learnings.md"
+      }
+    },
+    "SRC-AD9464A96D04": {
+      "id": "SRC-AD9464A96D04",
+      "url": "https://github.com/fallow-rs/fallow/issues/4751",
+      "title": "https://github.com/fallow-rs/fallow/issues/4751",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T13:57:06.743Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fallow-rs-fallow-learnings.md",
+        "fileName": "fallow-rs-fallow-learnings.md"
+      }
+    },
+    "SRC-513203AFCC34": {
+      "id": "SRC-513203AFCC34",
+      "url": "https://github.com/fallow-rs/fallow/issues/4718",
+      "title": "https://github.com/fallow-rs/fallow/issues/4718",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T13:57:06.796Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fallow-rs-fallow-learnings.md",
+        "fileName": "fallow-rs-fallow-learnings.md"
+      }
+    },
+    "SRC-7B0ECDD629BD": {
+      "id": "SRC-7B0ECDD629BD",
+      "url": "https://github.com/fallow-rs/fallow/issues/4726",
+      "title": "https://github.com/fallow-rs/fallow/issues/4726",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T13:57:06.848Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fallow-rs-fallow-learnings.md",
+        "fileName": "fallow-rs-fallow-learnings.md"
+      }
+    },
+    "SRC-179E751C3DB1": {
+      "id": "SRC-179E751C3DB1",
+      "url": "https://github.com/fallow-rs/fallow/issues/4738",
+      "title": "https://github.com/fallow-rs/fallow/issues/4738",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T13:57:06.900Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fallow-rs-fallow-learnings.md",
+        "fileName": "fallow-rs-fallow-learnings.md"
+      }
+    },
+    "SRC-33B5ED132F3C": {
+      "id": "SRC-33B5ED132F3C",
+      "url": "https://github.com/fallow-rs/fallow/issues/4779",
+      "title": "https://github.com/fallow-rs/fallow/issues/4779",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T13:57:06.961Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/fallow-rs-fallow-learnings.md",
+        "fileName": "fallow-rs-fallow-learnings.md"
+      }
+    },
+    "SRC-60C38FAEB1D4": {
+      "id": "SRC-60C38FAEB1D4",
+      "url": "https://github.com/paradedb/paradedb/issues/6906",
+      "title": "https://github.com/paradedb/paradedb/issues/6906",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T13:57:08.403Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/paradedb-paradedb-learnings.md",
+        "fileName": "paradedb-paradedb-learnings.md"
       }
     }
   }

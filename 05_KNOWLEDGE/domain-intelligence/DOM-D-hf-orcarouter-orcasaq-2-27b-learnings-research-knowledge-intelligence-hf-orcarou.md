@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-18T04:04:05.054Z",
+  "timestamp": "2026-11-18T13:57:07.884Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-hf-orcarouter-orcasaq-2-27b-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [hf-orcarouter-orcasaq-2-27b-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-18T04:04:05.054Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-18T13:57:07.884Z`  
 > **Learning ID**: `LEARN-EVO-hf-orcarouter-orcasaq-2-27b-learnings`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Source Version**: `hf-orcaroute`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-18T04:03:51.993Z  
+> **Timestamp**: 2026-11-18T13:56:47.806Z  
 > **Learning ID**: `learn-huggingface-orcarouter-orcasaq-2-27b`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-orcarouter-orcasaq-2-27b-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/orcarouter/OrcaSAQ-2-27B](https://huggingface.co/orcarouter/OrcaSAQ-2-27B))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T04:03:51.778Z  
+> **Harvest Timestamp**: 2026-11-18T13:56:47.562Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: text-generation
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 1299 downloads | 288 likes
+- **Stars / Engagement**: 1240 downloads | 289 likes
 
 ---
 

@@ -445,8 +445,8 @@
     "sourceUrl": "https://huggingface.co/orcarouter/OrcaSAQ-2-27B",
     "sourceVersion": "hf-orcarouter-orcasaq-2-27b",
     "license": "Open-Source",
-    "contentHash": "6ff1635d662be2b7507b89d9ecd2833d64c77729be5c6e9882b32b9bea20d52f",
-    "lastHarvestedAt": "2026-11-18T04:03:52.430Z",
+    "contentHash": "ffb077a81cf5bc87ecdab6573ffca4cbdec2413d8f238a90a07165d659b569a2",
+    "lastHarvestedAt": "2026-11-18T13:56:48.490Z",
     "learningId": "learn-huggingface-orcarouter-orcasaq-2-27b"
   },
   "hf-taichuai-zdtaichu5.0-9b": {
@@ -3183,10 +3183,10 @@
     "repository": "fallow-rs/fallow",
     "platform": "github",
     "sourceUrl": "https://github.com/fallow-rs/fallow",
-    "sourceVersion": "548aba6d",
+    "sourceVersion": "bf272e19",
     "license": "MIT",
-    "contentHash": "9160c1394a741411f47d59c6b0083fbc0b678df9c48c684a7ef012fa86118f8e",
-    "lastHarvestedAt": "2026-11-18T05:35:26.565Z",
+    "contentHash": "750d1c8526e6aef003daab8e44542b6fee6fe204b848d7943f018be9f53d64e0",
+    "lastHarvestedAt": "2026-11-18T13:56:51.399Z",
     "learningId": "learn-github-fallow-rs-fallow"
   },
   "expo-create-react-native-app": {
@@ -7543,10 +7543,10 @@
     "repository": "paradedb/paradedb",
     "platform": "github",
     "sourceUrl": "https://github.com/paradedb/paradedb",
-    "sourceVersion": "d772968d",
+    "sourceVersion": "b2eb4729",
     "license": "AGPL-3.0",
-    "contentHash": "a2f4e489ec4fddf37170d5dace16a2fde335426526ed07a2d1bdc6489e061191",
-    "lastHarvestedAt": "2026-11-17T20:03:39.027Z",
+    "contentHash": "312a6755f6456901cb6ecedc70379dddc0bfcccc07da2cb8a4f060272872722c",
+    "lastHarvestedAt": "2026-11-18T13:57:03.169Z",
     "learningId": "learn-github-paradedb-paradedb"
   },
   "imsnif-diskonaut": {

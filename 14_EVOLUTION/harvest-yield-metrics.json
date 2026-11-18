@@ -1,31 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T13:47:07.691Z",
-  "total_cycles_completed": 10513,
-  "total_learnings_persisted": 10513,
-  "total_rules_promoted": 9994,
+  "last_updated": "2026-11-18T13:57:03.176Z",
+  "total_cycles_completed": 10516,
+  "total_learnings_persisted": 10516,
+  "total_rules_promoted": 9996,
   "history": [
-    {
-      "timestamp": "2026-11-18T01:38:42.468Z",
-      "repository": "doobidoo/mcp-memory-service",
-      "learningId": "learn-github-doobidoo-mcp-memory-service",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-18T01:57:56.243Z",
-      "repository": "Automattic/harper",
-      "learningId": "learn-github-automattic-harper",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-18T01:57:58.622Z",
-      "repository": "prism-ml/Ternary-Bonsai-2-27B-gguf",
-      "learningId": "learn-huggingface-prism-ml-ternary-bonsai-2-27b-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-18T01:58:04.507Z",
       "repository": "skyhook-io/radar",
@@ -1402,6 +1381,27 @@
       "timestamp": "2026-11-18T13:47:07.691Z",
       "repository": "databendlabs/databend",
       "learningId": "learn-github-databendlabs-databend",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T13:56:48.498Z",
+      "repository": "orcarouter/OrcaSAQ-2-27B",
+      "learningId": "learn-huggingface-orcarouter-orcasaq-2-27b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T13:56:51.405Z",
+      "repository": "fallow-rs/fallow",
+      "learningId": "learn-github-fallow-rs-fallow",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T13:57:03.176Z",
+      "repository": "paradedb/paradedb",
+      "learningId": "learn-github-paradedb-paradedb",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

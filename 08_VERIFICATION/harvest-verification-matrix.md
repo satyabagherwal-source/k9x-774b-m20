@@ -10992,3 +10992,6 @@
 | `CYCLE-20261118-DWYO` | `2026-11-18T13:47:07.680Z` | `databendlabs/databend` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9235` | Yes (`7cf29f9b...`) |
 | `CYCLE-2026-11-18-PROJ-EVOLVE` | `2026-11-18T13:47:46.974Z` | `chaos-mesh-chaos-mesh` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-K-4C047582` [Domain K] | Yes (`9e60cf5a...`) |
 | `CYCLE-2026-11-18-PROJ-EVOLVE` | `2026-11-18T13:48:29.772Z` | `databendlabs-databend` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-H-41A8ED4B` [Domain H] | Yes (`288664d0...`) |
+| `CYCLE-20261118-QD44` | `2026-11-18T13:56:48.484Z` | `orcarouter/OrcaSAQ-2-27B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-orcarouter-orcasaq-2-27b-learnings.md` | Yes (`ffb077a8...`) |
+| `CYCLE-20261118-QFCY` | `2026-11-18T13:56:51.394Z` | `fallow-rs/fallow` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9236` | Yes (`750d1c85...`) |
+| `CYCLE-20261118-QOFX` | `2026-11-18T13:57:03.165Z` | `paradedb/paradedb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9237` | Yes (`312a6755...`) |

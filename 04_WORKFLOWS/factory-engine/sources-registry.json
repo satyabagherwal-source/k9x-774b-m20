@@ -69,8 +69,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-18T13:47:11.001Z",
-    "lastVerified": "2026-11-18T13:47:11.001Z",
+    "lastChecked": "2026-11-18T13:57:06.490Z",
+    "lastVerified": "2026-11-18T13:57:06.490Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -210,9 +210,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-18T13:17:28.444Z",
+    "lastChecked": "2026-11-18T13:56:59.631Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-18T13:17:28.444Z"
+    "lastVerified": "2026-11-18T13:56:59.631Z"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -1923,6 +1923,78 @@
     "contentHash": "7cf29f9be509c34ba7283affc17c75ec451f5ac27deba6cfebd425d9f81bcb4e",
     "promotedRulesCount": 1,
     "recentFixesCount": 5,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "fallow-rs-fallow": {
+    "name": "fallow-rs/fallow",
+    "officialUrl": "https://github.com/fallow-rs/fallow",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-11-18T13:56:50.231Z",
+    "lastVerified": "2026-11-18T13:56:50.231Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-fallow-rs-fallow",
+    "contentHash": "750d1c8526e6aef003daab8e44542b6fee6fe204b848d7943f018be9f53d64e0",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 14,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-orcarouter-orcasaq-2-27b": {
+    "name": "orcarouter/OrcaSAQ-2-27B",
+    "officialUrl": "https://huggingface.co/orcarouter/OrcaSAQ-2-27B",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-18T13:56:47.562Z",
+    "lastVerified": "2026-11-18T13:56:47.562Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-orcarouter-orcasaq-2-27b",
+    "contentHash": "ffb077a81cf5bc87ecdab6573ffca4cbdec2413d8f238a90a07165d659b569a2",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "expo-create-react-native-app": {
+    "name": "create-react-native-app",
+    "officialUrl": "https://github.com/expo/create-react-native-app",
+    "lastChecked": "2026-11-18T13:56:49.762Z",
+    "revisionIdentifier": "3a7b11ee",
+    "lastVerified": "2026-11-18T13:56:49.762Z"
+  },
+  "kubeedge-kubeedge": {
+    "name": "kubeedge",
+    "officialUrl": "https://github.com/kubeedge/kubeedge",
+    "lastChecked": "2026-11-18T13:56:52.552Z",
+    "revisionIdentifier": "3a9cb19f",
+    "lastVerified": "2026-11-18T13:56:52.552Z"
+  },
+  "aleo-labs-protocol-snarkos": {
+    "name": "snarkOS",
+    "officialUrl": "https://github.com/aleo-labs-protocol/snarkOS",
+    "lastChecked": "2026-11-18T13:56:54.717Z",
+    "revisionIdentifier": "497534cd",
+    "lastVerified": "2026-11-18T13:56:54.717Z"
+  },
+  "paradedb-paradedb": {
+    "name": "paradedb/paradedb",
+    "officialUrl": "https://github.com/paradedb/paradedb",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-11-18T13:57:01.986Z",
+    "lastVerified": "2026-11-18T13:57:01.986Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-paradedb-paradedb",
+    "contentHash": "312a6755f6456901cb6ecedc70379dddc0bfcccc07da2cb8a4f060272872722c",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 10,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"

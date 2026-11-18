@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-16T21:28:29.990Z",
+  "timestamp": "2026-11-18T13:57:08.518Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-paradedb-paradedb-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [paradedb-paradedb-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-16T21:28:29.990Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-18T13:57:08.518Z`  
 > **Learning ID**: `LEARN-EVO-paradedb-paradedb-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/paradedb-paradedb-learnings.md`  
 > **Source**: github ([https://github.com/paradedb/paradedb](https://github.com/paradedb/paradedb))  
-> **Source Version**: `1d25918c`  
+> **Source Version**: `b2eb4729`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-16T21:23:28.686Z  
+> **Timestamp**: 2026-11-18T13:57:01.993Z  
 > **Learning ID**: `learn-github-paradedb-paradedb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/paradedb-paradedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/paradedb/paradedb](https://github.com/paradedb/paradedb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-16T21:23:28.505Z  
+> **Harvest Timestamp**: 2026-11-18T13:57:01.986Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: One Postgres for your application data, full-text search, vector retrieval, and aggregations. Home of the pg_search extension.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 9530 stars
+- **Stars / Engagement**: 9539 stars
 
 ---
 
@@ -82,7 +82,7 @@ PROVENANCE_END -->
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 #![allow(unsafe_op_in_unsafe_fn)]
 
-use std::cell::UnsafeCell;
+use std::cell::{OnceCell, UnsafeCell};
 use std::collections::BTreeMap;
 use std::sync::Arc;
 
@@ -111,9 +111,12 @@ use crate::query::tid_bitmap_stream::BitmapCell;
 use std::ptr::NonNull;
 
 use crate::index::reader::vector::SharedVectorRouting;
+use crate::postgres::customscan::basescan::privdat::VectorFilterPlan;
 use pgrx::heap_tuple::PgHeapTuple;
-use pgrx::{PgTupleDesc, pg_sys};
+use pgrx::{JsonB, PgTupleDesc, pg_sys};
+use tantivy::DocAddress;
 use tantivy::index::SegmentId;
+use tantivy::query::Weight;
 use tantivy::snippet::SnippetGenerator;
 
 #[derive(Default)]
@@ -132,6 +135,7 @@ pub struct BaseScanState {
     /// Workers wait for the leader to publish this plan when they first need it.
     pub vector_routing_plan: Option<Arc<SharedVectorRouting>>,
     pub vector_routing_pending: bool,
+    pub vector_filter_plan: Option<VectorFilterPlan>,
 
     // Note: the range table index at execution time might be different from the one at planning time,
     // so we need to use the one at execution time when creating the custom scan state.
@@ -170,6 +174,10 @@ pub struct BaseScanState {
 
     pub need_scores: bool,
     pub score_funcoids: [pg_sys::Oid; 2],
+
+    pub need_score_explanation: bool,
+    /// The weight of the scan's query, built when the first row needs an explanation.
+    pub score_explanation_weight: OnceCell<Box<dyn Weight>>,
 
     /// True when a junk ORDER-BY `embedding <-> query` `OpExpr` in the scan's
     /// targetlist was replaced with a NULL placeholder `Const` (see
@@ -218,6 +226,7 @@ pub struct BaseScanState {
 pub struct BasePlaceholders {
     pub projection: PlaceholderProjection,
     pub score: PlaceholderColumn,
+    pub score_explanation: PlaceholderColumn,
     pub snippets: HashMap<SnippetType, Vec<PlaceholderColumn>>,
     /// Indexed by target entry position.
     pub window_aggs: HashMap<usize, PlaceholderColumn>,
@@ -277,20 +286,7 @@ impl BaseScanState {
     pub fn reset_exec_results(&mut self) {
         if self.search_reader.is_some() {
             self.exec_method_mut().reset(self);
-        }
-    }
-
-    /// Drop the current exec method (and with it any search results whose
-    /// scorers hold bitmap cursors) before the bitmap machinery is torn down.
-    pub fn drop_exec_method(&mut self) {
-        self.exec_method = UnsafeCell::new(Default::default());
-        self.exec_method_name = String::new();
-    }
-
-    #[inline(always)]
-    pub fn assign_exec_method<T: ExecMethod + 'static>(
-        &mut self,
-        m
+       
 ```
 
 ### Core Architecture Module: `benchmarks/src/utils.rs`
@@ -2250,795 +2246,507 @@ impl AggregateScanState {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `8d5419ed` (2026-11-16)
-**Commit Message**: fix: retain CPU-clock samples in ARM vector profiles (#7482)
+### Incident Patch 1: `6f893812` (2026-11-18)
+**Commit Message**: fix: prioritize background mergers over foreground backpressure (#7522)
 
 ## What
-Restore CPU-clock sampling in the vector benchmark profiler on ARM and
-fail profiling when either requested event has no samples.
+
+Give successfully launched background mergers priority over foreground
+backpressure.
 
 ## Why
-Perf includes the SVE `vg` register when selecting default DWARF
-registers on the benchmark runner. The software CPU-clock PMU rejects
-that register, so perf silently drops CPU-clock and produces a
-branch-miss-only profile.
+
+Above four times `target_segment_count`, an inserting backend currently
+reserves a foreground merge even after launching a background worker. It
+still holds `MergeLock`, so the new worker cannot claim those segments
+first. This can stall inserts and logical replication on large merges
+despite available background capacity.
 
 ## How
-Explicitly select ARM general-purpose registers for DWARF sampling and
-require nonzero `cpu-clock` and `branch-misses` sample headers in the
-report. Changes are limited to the existing profiler script.
+
+Return after a successful background launch, releasing the merge lock
+and pins. Keep the existing foreground fallback when a worker cannot be
+launched. Configure the existing reservation test to exercise foreground
+merging explicitly. Wait for older snapshots before vacuuming the
+index-only scan regression fixture so background merger timing does not
+change its expected plan.
 
 ## Tests
-- Bash syntax, ShellCheck, shfmt, and commit hooks pass.
-- Native ARM recording with the explicit register set captured 198
-CPU-clock samples and 34 branch-miss samples, verified directly in
-`perf.data`.
-- Native report generation was not validated end to end: the temporary
-smoke harness changed ownership before reporting. That harness is not
-included in this PR; the existing profiler reports before changing
-ownership.
 
-**File**: `.github/scripts/profile-postgres.sh` (modified, +20/-1)
-```diff
-@@ -1,5 +1,6 @@
- #!/usr/bin/env bash
- set -euo pipefail
-+export LC_ALL=C
- 
- if [ "$#" -lt 4 ] || [ "$3" != -- ]; then
-   echo "Usage: $0 CONTAINER OUTPUT_DIRECTORY -- COMMAND [ARGS...]" >&2
-@@ -15,6 +16,13 @@ readonly stack_bytes=16384
- readonly startup_timeout_seconds=30
- readonly callgraph_min_percent=0.5
- 
-+callgraph_args=(--call-graph "dwarf,$stack_bytes")
-+if [ "$(uname -m)" = aarch64 ]; then
-+  # The software clock PMU rejects the SVE vg register selected by perf's hardware probe.
-+  printf -v user_regs '%s,' x{0..29} lr sp pc
-+  callgraph_args+=("--user-regs=${user_regs%,}")
-+fi
-+
- mkdir -p "$output"
- output="$(realpath "$output")"
- if [ -e "$output/perf.data" ]; then
-@@ -80,6 +88,17 @@ cleanup() {
-       echo "::group::PostgreSQL perf report: $output"
-       cat "$output/report.txt" "$output/report-callgraph.txt" "$output/report.log"
-       echo '::endgroup::'
-+      if ! awk '
-+        /^# Samples: [1-9]/ {
-+          split($0, fields, "\047")
-+          split(fields[2], event, ":")
-+          seen[event[1]] = 1
-+        }
-+        END { exit !(seen["cpu-clock"] && seen["branch-misses"]) }
-+      ' "$output/report.txt"; then
-+        echo "perf must record nonzero cpu-clock and branch-misses samples" >&2
-+        report_status=1
-+      fi
-     else
-       echo "perf produced no profile: $output/perf.data" >&2
-       report_status=1
-@@ -99,7 +118,7 @@ trap 'exit 129' HUP
- 
- run_perf record --output "$output/perf.data" \
-   --event "$events" --freq "$sample_frequency" \
--  --call-graph "dwarf,$stack_bytes" --inherit --namespaces --pid "$pids" \
-+  "${callgraph_args[@]}" --inherit --namespaces --pid "$pids" \
-   --delay=-1 --control="fifo:$control_dir/control,$control_dir/ack" \
-   >"$output/record.log" 2>&1 &
- perf_pid=$!
-```
+- The index-only scan regression passed three consecutive PostgreSQL 18
+runs. A controlled older-snapshot reproduction confirms the fixture
+waits until the snapshot is released, then produces an index-only scan.
+- All five backpressure merge-policy SQL tests pass, including
+reserved-segment exclusio
 
----
-
-### Incident Patch 2: `44ce675c` (2026-11-16)
-**Commit Message**: perf(vector): lower fixed cost per query and per page read (#7450)
-
-## What
-
-Pins Tantivy to `main` at `8fe9139b4`, including paradedb/tantivy#420,
-paradedb/tantivy#422, paradedb/tantivy#426 and paradedb/tantivy#428.
-These changes lower the vector scan's per-query fixed cost, score the
-best estimates first in the exact phase, walk router lists in score
-order on demand, streamline sign scoring and vector reads, and retain
-pruning-threshold refinements when adaptive probing is off. This PR also
-removes two fixed costs from pg_search's vector Top K path: the plan
-carries the query vector once, as one hex string, and per-segment scan
-statistics are built only when something shows them. It also plans a
-query that matches everything without opening the index, and page reads
-re-pin the buffer that last held the page.
-
-## Why
-
-On Cohere 1M at probe 1, 327 µs of main's 639 µs round trip (51%) does
-not grow with the data scanned (fit: intercept of round-trip p50 against
-buffer hits over probes 1, 24 and 59).
-For k = 10 the exact phase scores 94.6 rows per query at probe 1, 120.2
-at probe 24 and 137.9 at probe 59.
-
-## How
-
-**Tantivy pin.** `tantivy`, `tantivy-common`, `tantivy-tokenizer-api`
-
-
-**File**: `Cargo.lock` (modified, +10/-10)
-```diff
-@@ -5183,7 +5183,7 @@ dependencies = [
- [[package]]
- name = "ownedbytes"
- version = "0.9.0"
--source = "git+https://github.com/paradedb/tantivy.git?rev=3df23dd559e4731e83e81c04cbbc797a0a79479c#3df23dd559e4731e83e81c04cbbc797a0a79479c"
-+source = "git+https://github.com/paradedb/tantivy.git?rev=8fe9139b4d5eca098b36c3f2fbe13338792630fa#8fe9139b4d5eca098b36c3f2fbe13338792630fa"
- dependencies = [
-  "stable_deref_trait",
- ]
-@@ -7405,7 +7405,7 @@ checksum = "7b2093cf4c8eb1e67749a6762251bc9cd836b6fc171623bd0a9d324d37af2417"
- [[package]]
- name = "tantivy"
- version = "0.27.0"
--source = "git+https://github.com/paradedb/tantivy.git?rev=3df23dd559e4731e83e81c04cbbc797a0a79479c#3df23dd559e4731e83e81c04cbbc797a0a79479c"
-+source = "git+https://github.com/paradedb/tantivy.git?rev=8fe9139b4d5eca098b36c3f2fbe13338792630fa#8fe9139b4d5eca098b36c3f2fbe13338792630fa"
- dependencies = [
-  "aho-corasick",
-  "arc-swap",
-@@ -7464,15 +7464,15 @@ dependencies = [
- [[package]]
- name = "tantivy-bitpacker"
- version = "0.10.0"
--source = "git+https://github.com/paradedb/tantivy.git?rev=3df23dd559e4731e83e81c04cbbc797a0a79479c#3df23dd559e4731e83e81c04cbbc797a0a79479c"
-+source = "git+https://github.com/paradedb/tantivy.git?rev=8fe9139b4d5eca098b36c3f2fbe13338792630fa#8fe9139b4d5eca098b36c3f2fbe13338792630fa"
- dependencies = [
-  "bitpacking",
- ]
- 
- [[package]]
- name = "tantivy-columnar"
- version = "0.7.0"
--source = "git+https://github.com/paradedb/tantivy.git?rev=3df23dd559e4731e83e81c04cbbc797a0a79479c#3df23dd559e4731e83e81c04cbbc797a0a79479c"
-+source = "git+https://github.com/paradedb/tantivy.git?rev=8fe9139b4d5eca098b36c3f2fbe13338792630fa#8fe9139b4d5eca098b36c3f2fbe13338792630fa"
- dependencies = [
-  "downcast-rs",
-  "fastdivide",
-@@ -7487,7 +7487,7 @@ dependencies = [
- [[package]]
- name = "tantivy-common"
- version = "0.11.0"
--source = "git+https://github.com/paradedb/tantivy.git?rev=3df23dd559e4731e83e81c04cbbc797a0a79479c#3df23dd559e4731e83e81c04cbbc797a0a79479c"
-+source = "git+https://github.com/paradedb/tantivy.git?rev=8fe9139b4d5eca098b36c3f2fbe13338792630fa#8fe9139b4d5eca098b36c3f2fbe13338792630fa"
- dependencies = [
-  "async-trait",
-  "byteorder",
-@@ -7520,7 +7520,7 @@ dependencies = [
- [[package]]
- name = "tantivy-quant"
- version = "0.1.0"
--source = "git+https://github.com/paradedb/tantivy.git?rev=3df23dd559e4731e83e81c04cbbc797a0a79479c#3df23dd559e4731e83e81c04cbbc797a0a79479c"
-+source = "git+https://github.com/paradedb/tantivy.git?rev=8fe9139b4d5eca098b36c3f2fbe13338792630fa#8fe9139b4d5eca098b36c3f2fbe13338792630fa"
- dependencies = [
-  "rand_chacha 0.3.1",
-  "rand_core 0.6.4",
-@@ -7529,7 +7529,7 @@ dependencies = [
- [[package]]
- name = "tantivy-query-grammar"
- version = "0.26.0"
--source = "git+https://github.com/paradedb/tantivy.git?rev=3df23dd559e4731e83e81c04cbbc797a0a79479c#3df23dd559e4731e83e81c04cbbc797a0a79479c"
-+source = "git+https://github.com/paradedb/tantivy.git?rev=8fe9139b4d5eca098b36c3f2fbe13338792630fa#8fe9139b4d5eca098b36c3f2fbe13338792630fa"
- dependencies = [
-  "fnv",
-  "nom 7.1.3",
-@@ -7541,7 +7541,7 @@ dependencies = [
- [[package]]
- name = "tantivy-sstable"
- version = "0.7.0"
--source = "git+https://github.com/paradedb/tantivy.git?rev=3df23dd559e4731e83e81c04cbbc797a0a79479c#3df23dd559e4731e83e81c04cbbc797a0a79479c"
-+source = "git+https://github.com/paradedb/tantivy.git?rev=8fe9139b4d5eca098b36c3f2fbe13338792630fa#8fe9139b4d5eca098b36c3f2fbe13338792630fa"
- dependencies = [
-  "futures-util",
-  "itertools 0.14.0",
-@@ -7554,7 +7554,7 @@ dependencies = [
- [[package]]
- name = "tantivy-stacker"
- version = "0.7.0"
--source = "git+https://github.com/paradedb/tantivy.git?rev=3df23dd559e4731e83e81c04cbbc797a0a79479c#3df23dd559e4731e83e81c04cbbc797a0a79479c"
-+source = "git+https://github.com/paradedb/tantivy.git?rev=8fe9139b4d5eca098b36c3f2fbe13338792630fa#8fe9139b4d5eca098b36c3f2fbe13338792630fa"
- dependencies = [
-  "fixedbitset",
-  "murmurhash32",
-@@ -7591,7 +7591,7 @@ dependencies = [
- [[package]]
- name = "tantivy-tokenizer-api"
- version = "0.7.0"
--source = "git+https://github.com/paradedb/tantivy.git?rev=3df23dd559e4731e83e81c04cbbc797a0a79479c#3df23dd559e4731e83e81c04cbbc797a0a79479c"
-+source = "git+https://github.com/paradedb/tantivy.git?rev=8fe9139b4d5eca098b36c3f2fbe13338792630fa#8fe9139b4d5eca098b36c3f2fbe13338792630fa"
- dependencies = [
-  "serde",
- ]
-```
-
-**File**: `Cargo.toml` (modified, +4/-4)
-```diff
-@@ -89,7 +89,7 @@ pgrx-tests = "=0.20.0"
- 
- # Keep the Git revisions for `tantivy`, `tantivy-common`, and the crates.io
- # patches in sync.
--tantivy = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy", rev = "3df23dd559e4731e83e81c04cbbc797a0a79479c", features = [
-+tantivy = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy", rev = "8fe9139b4d5eca098b36c3f2fbe13338792630fa", features = [
-   "columnar-zstd-compression",
-   "lz4-compression",
-   "paradedb",
-@@ -98,7 +98,7 @@ tantivy = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy"
-   "stemmer",
-   "stopwords",
- ], default-features = false }
--tantivy-common = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy-common", rev = "3df23dd559e4731e83e81c04cbbc797a0a79479c" }
-+tantivy-common = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy-common", rev = "8fe9139b4d5eca098b36c3f2fbe13338792630fa" }
- tantivy-jieba = "0.21.0"
- 
- async-trait = "0.1.92"
-@@ -184,8 +184,8 @@ rstest = "0.28.0"
- postgres = "0.19.14"
- 
- [patch.crates-io]
--tantivy-common = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy-common", rev = "3df23dd559e4731e83e81c04cbbc797a0a79479c" }
--tantivy-tokenizer-api = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy-tokenizer-api", rev = "3df23dd559e4731e83e81c04cbbc797a0a79479c" }
-+tantivy-common = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy-common", rev = "8fe9139b4d5eca098b36c3f2fbe13338792630fa" }
-+tantivy-tokenizer-api = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy-tokenizer-api", rev = "8fe9139b4d5eca098b36c3f2fbe13338792630fa" }
- 
- [workspace.lints.cargo]
- missing_lints_inheritance = "deny"
-```
-
-**File**: `basescan/src/postgres/customscan/basescan/mod.rs` (modified, +16/-0)
-```diff
-@@ -202,6 +202,11 @@ impl BaseScan {
-         )
-         .expect("should be able to open the search index reader");
-         search_reader.vector_routing_plan = state.custom_state().vector_routing_plan.clone();
-+        // Per-segment vector statistics are read by EXPLAIN ANALYZE's stage accounting, its I/O
-+        // trace and the `paradedb.vector_stats` display; otherwise nothing reads them.
-+        search_reader.vector_segment_info = gucs::vector_stats()
-+            || state.custom_state().explain_stage_accounting
-+            || state.custom_state().io_trace.is_some();
-         let ffhelper = Arc::new(FFHelper::for_ctid(&search_reader));
-         if let Some(checker) = state.custom_state_mut().visibility_checker.as_mut() {
-             checker.set_ffhelper(Arc::clone(&ffhelper));
-@@ -1613,6 +1618,17 @@ impl CustomScan for BaseScan {
-                 .map(|q| q.collect_expression_nodes())
-                 .unwrap_or_default();
- 
-+            // A Top K method carries the ORDER BY, query vector included, from here on.
-+            if matches!(
-+                builder.custom_private().exec_method_type(),
-+                ExecMethodType::TopK {
-+                    orderby_info: Some(_),
-+                    ..
-+                }
-+            ) {
-+                builder.custom_private_mut().clear_maybe_orderby_info();
-+            }
-+
-             let mut scan = builder.build();
-             if !subplan_quals.is_empty() {
-                 scan.scan.plan.qual = subplan_quals.into_pg();
-```
-
-**File**: `basescan/src/postgres/customscan/basescan/privdat.rs` (modified, +6/-0)
-```diff
-@@ -194,6 +194,12 @@ impl PrivateData {
-         self.maybe_orderby_info = Some(OrderByStyle::extract_orderby_info(style));
-     }
- 
-+    /// Drops the candidate ORDER BY once the chosen exec method carries it, so the plan holds
-+    /// one copy of it (and of any query vector in it).
-+    pub fn clear_maybe_orderby_info(&mut self) {
-+        self.maybe_orderby_info = None;
-+    }
-+
-     pub fn set_var_attname_lookup(
-         &mut self,
-         var_attname_lookup: HashMap<(Varno, pg_sys::AttrNumber), FieldName>,
-```
-
-**File**: `common/src/api/mod.rs` (modified, +92/-1)
-```diff
-@@ -334,11 +334,55 @@ impl SortDirection {
- 
- #[derive(Debug, Clone, PartialEq, serde::Serialize, serde::Deserialize)]
- pub enum QueryVector {
--    Resolved(Vec<f32>),
-+    Resolved(#[serde(with = "query_vector_bytes")] Vec<f32>),
-     Param(i32),
-     Expr(String),
- }
- 
-+/// A resolved query vector in serialized private data: one hex string of its little-endian
-+/// `f32` bytes, written and parsed as a single token rather than one JSON number per element.
-+mod query_vector_bytes {
-+    use serde::de::Error;
-+    use serde::{Deserialize, Deserializer, Serializer};
-+
-+    const HEX: &[u8; 16] = b"0123456789abcdef";
-+
-+    pub fn serialize<S: Serializer>(floats: &[f32], serializer: S) -> Result<S::Ok, S::Error> {
-+        let mut text = String::with_capacity(floats.len() * 8);
-+        for byte in floats.iter().flat_map(|value| value.to_le_bytes()) {
-+            text.push(char::from(HEX[usize::from(byte >> 4)]));
-+            text.push(char::from(HEX[usize::from(byte & 0x0f)]));
-+        }
-+        serializer.serialize_str(&text)
-+    }
-+
-+    pub fn deserialize<'de, D: Deserializer<'de>>(deserializer: D) -> Result<Vec<f32>, D::Error> {
-+        let text = String::deserialize(deserializer)?;
-+        if text.len() % 8 != 0 {
-+            return Err(D::Error::custom(
-+                "query vector bytes are not whole f32 values",
-+            ));
-+        }
-+        let nibble = |digit: u8| match digit {
-+            b'0'..=b'9' => Ok(digit - b'0'),
-+            b'a'..=b'f' => Ok(digit - b'a' + 10),
-+            _ => Err(D::Error::custom("query vector bytes are not lowercase hex")),
-+        };
-+        text.as_bytes()
-+            .as_chunks::<8>()
-+            .0
-+            .iter()
-+            .map(|digits| {
-+                let mut bytes = [0u8; 4];
-+                for (byte, [high, low]) in bytes.iter_mut().zip(digits.as_chunks::<2>().0) {
-+                    *byte = (nibble(*high)? << 4) | nibble(*low)?;
-+                }
-+                Ok(f32::from_le_bytes(bytes))
-+            })
-+            .collect()
-+    }
-+}
-+
- impl QueryVector {
-     pub fn resolved(&self) -> Option<&[f32]> {
-         match self {
-@@ -518,3 +562,50 @@ impl OrderByInfo {
-         }
-     }
- }
-+
-+#[cfg(test)]
-+mod query_vector_tests {
-+    use super::QueryVector;
-+
-+    /// A resolved vector serializes as one hex string and parses back bit for bit, signed zeros,
-+    /// infinities, subnormals and NaN payloads included; malformed text is rejected.
-+    #[test]
-+    fn resolved_vector_round_trips_as_one_hex_string() {
-+        let floats = vec![
-+            0.0,
-+            -0.0,
-+            1.5,
-+            -2.25e-3,
-+            f32::MIN_POSITIVE / 4.0,
-+            f32::INFINITY,
-+            f32::NEG_INFINITY,
-+            f32::from_bits(0x7fc0_1234),
-+        ];
-+        assert_eq!(
-+            serde_json::to_string(&QueryVector::Resolved(vec![1.0, -2.0])).unwrap(),
-+            r#"{"Resolved":"0000803f000000c0"}"#
-+        );
-+        let json = serde_json::to_string(&QueryVector::Resolved(floats.clone())).unwrap();
-+        assert_eq!(
-+            json.len(),
-+            r#"{"Resolved":""}"#.len() + floats.len() * 8,
-+            "{json}"
-+        );
-+        let QueryVector::Resolved(parsed) = serde_json::from_str(&json).unwrap() else {
-+            panic!("{json}");
-+        };
-+        assert_eq!(
-+            parsed
-+                .iter()
-+                .map(|value| value.to_bits())
-+                .collect::<Vec<_>>(),
-+            floats
-+                .iter()
-+                .map(|value| value.to_bits())
-+                .collect::<Vec<_>>()
-+        );
-+        for bad in [r#"{"Resolved":"0000803"}"#, r#"{"Resolved":"0000803G"}"#] {
-+            assert!(serde_json::from_str::<QueryVector>(bad).is_err(), "{bad}");
-+        }
-+    }
-+}
-```
-
-**File**: `common/src/api/operator.rs` (modified, +27/-18)
-```diff
-@@ -62,7 +62,8 @@ unsafe impl SqlTranslatable for ReturnedNodePointer {
- }
- 
- pub fn with_index_procoid() -> pg_sys::Oid {
--    unsafe {
-+    static CACHE: OnceLock<pg_sys::Oid> = OnceLock::new();
-+    *CACHE.get_or_init(|| unsafe {
-         direct_function_call::<pg_sys::Oid>(
-             pg_sys::regprocedurein,
-             // NB:  the SQL signature here needs to match our Rust implementation
-@@ -71,17 +72,18 @@ pub fn with_index_procoid() -> pg_sys::Oid {
-         .expect(
-             "the `paradedb.with_index(regclass, paradedb.searchqueryinput)` function should exist",
-         )
--    }
-+    })
- }
- 
- pub fn anyelement_query_input_procoid() -> pg_sys::Oid {
--    unsafe {
-+    static CACHE: OnceLock<pg_sys::Oid> = OnceLock::new();
-+    *CACHE.get_or_init(|| unsafe {
-         direct_function_call::<pg_sys::Oid>(
-             pg_sys::regprocedurein,
-             &[c"paradedb.search_with_query_input(anyelement, paradedb.searchqueryinput)".into_datum()],
-         )
-             .expect("the `paradedb.search_with_query_input(anyelement, paradedb.searchqueryinput) function should exist")
--    }
-+    })
- }
- 
- pub fn search_with_query_input_exec_procoids() -> [pg_sys::Oid; 4] {
-@@ -243,7 +245,8 @@ pub fn operator_name_from_oid(opno: pg_sys::Oid) -> String {
- }
- 
- pub fn searchqueryinput_typoid() -> pg_sys::Oid {
--    unsafe {
-+    static CACHE: OnceLock<pg_sys::Oid> = OnceLock::new();
-+    *CACHE.get_or_init(|| unsafe {
-         let oid = direct_function_call::<pg_sys::Oid>(
-             pg_sys::regtypein,
-             &[c"paradedb.SearchQueryInput".into_datum()],
-@@ -253,71 +256,77 @@ pub fn searchqueryinput_typoid() -> pg_sys::Oid {
-             panic!("type `paradedb.SearchQueryInput` should exist");
-         }
-         oid
--    }
-+    })
- }
- 
- pub fn pdb_query_typoid() -> pg_sys::Oid {
--    unsafe {
-+    static CACHE: OnceLock<pg_sys::Oid> = OnceLock::new();
-+    *CACHE.get_or_init(|| unsafe {
-         let oid =
-             direct_function_call::<pg_sys::Oid>(pg_sys::regtypein, &[c"pdb.Query".into_datum()])
-                 .expect("type `pdb.Query` should exist");
-         if oid == pg_sys::Oid::INVALID {
-             panic!("type `pdb.Query` should exist");
-         }
-         oid
--    }
-+    })
- }
- 
- pub fn boost_typoid() -> pg_sys::Oid {
--    unsafe {
-+    static CACHE: OnceLock<pg_sys::Oid> = OnceLock::new();
-+    *CACHE.get_or_init(|| unsafe {
-         let oid =
-             direct_function_call::<pg_sys::Oid>(pg_sys::regtypein, &[c"pdb.boost".into_datum()])
-                 .expect("type `pdb.boost` should exist");
-         if oid == pg_sys::Oid::INVALID {
-             panic!("type `pdb.boost` should exist");
-         }
-         oid
--    }
-+    })
- }
- 
- pub fn const_typoid() -> pg_sys::Oid {
--    unsafe {
-+    static CACHE: OnceLock<pg_sys::Oid> = OnceLock::new();
-+    *CACHE.get_or_init(|| unsafe {
-         let oid =
-             direct_function_call::<pg_sys::Oid>(pg_sys::regtypein, &[c"pdb.const".into_datum()])
-                 .expect("type `pdb.const` should exist");
-         if oid == pg_sys::Oid::INVALID {
-             panic!("type `pdb.const` should exist");
-         }
-         oid
--    }
-+    })
- }
- 
- pub fn fuzzy_typoid() -> pg_sys::Oid {
--    unsafe {
-+    static CACHE: OnceLock<pg_sys::Oid> = OnceLock::new();
-+    *CACHE.get_or_init(|| unsafe {
-         let oid =
-             direct_function_call::<pg_sys::Oid>(pg_sys::regtypein, &[c"pdb.fuzzy".into_datum()])
-                 .expect("type `pdb.fuzzy` should exist");
-         if oid == pg_sys::Oid::INVALID {
-             panic!("type `pdb.fuzzy` should exist");
-         }
-         oid
--    }
-+    })
- }
- 
- pub fn slop_typoid() -> pg_sys::Oid {
--    unsafe {
-+    static CACHE: OnceLock<pg_sys::Oid> = OnceLock::new();
-+    *CACHE.get_or_init(|| unsafe {
-         let oid =
-             direct_function_call::<pg_sys::Oid>(pg_sys::regtypein, &[c"pdb.slop".into_datum()])
-                 .expect("type `pdb.slop` should exist");
-         if oid == pg_sys::Oid::INVALID {
-             panic!("type `pdb.slop` should exist");
-         }
-         oid
--    }
-+    })
- }
- 
- pub fn pdb_proximityclause_typoid() -> pg_sys::Oid {
--    unsafe {
-+    static CACHE: OnceLock<pg_sys::Oid> = OnceLock::new();
-+    *CACHE.get_or_init(|| unsafe {
-         let oid = direct_function_call::<pg_sys::Oid>(
-             pg_sys::regtypein,
-             &[c"pdb.ProximityClause".into_datum()],
-@@ -327,7 +336,7 @@ pub fn pdb_proximityclause_typoid() -> pg_sys::Oid {
-             panic!("type `pdb.ProximityClause` should exist");
-         }
-         oid
--    }
-+    })
- }
- 
- pub unsafe fn row_expr_from_indexed_expr(
-```
-
-**File**: `docs/project/changelog/unreleased/7450.performance.mdx` (added, +5/-0)
+**File**: `docs/project/changelog/unreleased/7522.performance.mdx` (added, +5/-0)
 ```diff
 @@ -0,0 +1,5 @@
 +---
 +header: performance
 +---
 +
-+Vector `ORDER BY` searches cost less per query. The plan carries the query vector once, in a compact form, instead of twice as a list of numbers; per-segment scan statistics are built only when `EXPLAIN ANALYZE` or `paradedb.vector_stats` shows them; and the exact phase scores the most promising candidates first, so fewer of the rest are read and scored. Because that order changes which candidates near the cutoff are dropped, a top-k result can differ in rare cases. Planning a query that matches every row, such as `@@@ paradedb.all()`, on an index without a `WHERE` predicate estimates its selectivity and segment count without opening the index, so the planner's row estimate for it is the table's row count. Index page reads first try the shared buffer that last held the page and fall back to the usual buffer lookup. The index format is unchanged.
++- Writes now skip foreground merges after successfully launching a background merger. Foreground merging remains the fallback when a background merger cannot be launched.
 ```
 
-**File**: `index_read/src/api/operator.rs` (modified, +10/-0)
+**File**: `index_write/src/postgres/merge.rs` (modified, +7/-9)
 ```diff
-@@ -178,10 +178,20 @@ pub fn estimate_selectivity_and_cost(
-     }
- }
+@@ -325,7 +325,7 @@ fn backpressure(
  
-+/// The fraction of heap rows matching `search_query_input`, or `None` when it cannot be estimated.
-+///
-+/// A query that matches every indexed row of an index without a predicate matches every row, so
-+/// it is answered without opening the index.
- pub fn estimate_selectivity(
-     indexrel: &PgSearchRelation,
-     search_query_input: SearchQueryInput,
- ) -> Option<f64> {
-+    // SAFETY: `indexrel` is an open index; its predicate list comes from the relcache.
-+    if search_query_input.is_match_all()
-+        && unsafe { pg_sys::RelationGetIndexPredicate(indexrel.as_ptr()) }.is_null()
-+    {
-+        return Some(crate::FULL_RELATION_SELECTIVITY);
+ /// Kick off a merge of the index, if needed.
+ ///
+-/// Launch background work when possible; overfull indexes also need one eligible foreground merge.
++/// Prefer a background worker; help with one eligible merge when workers are busy or unavailable.
+ pub unsafe fn do_merge(index: &PgSearchRelation, style: MergeStyle) -> anyhow::Result<()> {
+     // don't kick off merges for invalid indexes
+     if !index.is_valid() {
+@@ -348,7 +348,11 @@ pub unsafe fn do_merge(index: &PgSearchRelation, style: MergeStyle) -> anyhow::R
+         layer_sizes.user_configured_background_layers() && !candidates.is_empty();
+     let background_launched =
+         needs_background_merge && try_launch_background_merger(index, largest_layer_size);
+-
++    // If a background merger launched successfully, exit before applying more backpressure
++    // so foreground backpressure does not race with it to claim segments.
++    if background_launched {
++        return Ok(());
 +    }
-     estimate_selectivity_and_cost(indexrel, search_query_input, None).selectivity
- }
- 
+     if let MergeStyle::Insert {
+         current_xid,
+         next_xid,
+@@ -366,11 +370,6 @@ pub unsafe fn do_merge(index: &PgSearchRelation, style: MergeStyle) -> anyhow::R
+             );
+             None
+         } else {
+-            let needs_foreground_backpressure =
+-                layer_sizes.visible_segment_count > BACKPRESSURE_MULTIPLIER * target_segment_count;
+-            if background_launched && !needs_foreground_backpressure {
+-                return Ok(());
+-            }
+             candidates
+                 .iter()
+                 .filter(|(layer, _)| layer_sizes.foreground_layer_sizes.contains(layer))
+@@ -956,7 +955,7 @@ mod tests {
+             .collect::<Vec<_>>();
+         drop(index);
+         Spi::run(&format!(
+-            "ALTER INDEX backpressure_idx SET (background_layer_sizes='{bytes} bytes')"
++            "ALTER INDEX backpressure_idx SET (layer_sizes='{bytes} bytes')"
+         ))
+         .unwrap();
+         let index = PgSearchRelation::open(oid);
+@@ -992,7 +991,6 @@ mod tests {
+         assert!(candidates.len() > 1);
+         drop(merger);
+         drop(merge_lock);
+-        assert!(MergeSlot::for_layer_size(oid, bytes).is_available());
+         do_merge(
+             &index,
+             MergeStyle::Insert {
+```
+
+**File**: `pg_search/tests/pg_regress/expected/index_only_scan.out` (modified, +22/-0)
+```diff
+@@ -357,6 +357,28 @@ BEGIN
+     );
+ END;
+ $$;
++-- Older background-worker snapshots can prevent VACUUM from marking pages all-visible.
++DO $$
++DECLARE
++    snapshot_wait_timeout CONSTANT interval := interval '2 minutes';
++    snapshot_poll_interval CONSTANT double precision := 0.1;
++    deadline timestamptz := clock_timestamp() + snapshot_wait_timeout;
++BEGIN
++    LOOP
++        PERFORM pg_stat_clear_snapshot();
++        EXIT WHEN NOT EXISTS (
++            SELECT FROM pg_stat_activity
++            WHERE pid <> pg_backend_pid()
++              AND backend_xmin IS NOT NULL
++              AND (datname = current_database() OR datname IS NULL)
++        );
++        IF clock_timestamp() >= deadline THEN
++            RAISE EXCEPTION 'timed out waiting for older snapshots before index-only scan VACUUM';
++        END IF;
++        PERFORM pg_sleep(snapshot_poll_interval);
++    END LOOP;
++END;
++$$;
+ VACUUM (FREEZE, ANALYZE) index_only_max_keys;
+ SELECT bool_and(pg_index_column_has_property('index_only_max_keys_idx', i, 'returnable')
+                 IS NOT DISTINCT FROM (i = current_setting('max_index_keys')::int)) AS correct_capabilities
+```
+
+**File**: `pg_search/tests/pg_regress/sql/index_only_scan.sql` (modified, +22/-0)
+```diff
+@@ -152,6 +152,28 @@ BEGIN
+     );
+ END;
+ $$;
++-- Older background-worker snapshots can prevent VACUUM from marking pages all-visible.
++DO $$
++DECLARE
++    snapshot_wait_timeout CONSTANT interval := interval '2 minutes';
++    snapshot_poll_interval CONSTANT double precision := 0.1;
++    deadline timestamptz := clock_timestamp() + snapshot_wait_timeout;
++BEGIN
++    LOOP
++        PERFORM pg_stat_clear_snapshot();
++        EXIT WHEN NOT EXISTS (
++            SELECT FROM pg_stat_activity
++            WHERE pid <> pg_backend_pid()
++              AND backend_xmin IS NOT NULL
++              AND (datname = current_database() OR datname IS NULL)
++        );
++        IF clock_timestamp() >= deadline THEN
++            RAISE EXCEPTION 'timed out waiting for older snapshots before index-only scan VACUUM';
++        END IF;
++        PERFORM pg_sleep(snapshot_poll_interval);
++    END LOOP;
++END;
++$$;
+ VACUUM (FREEZE, ANALYZE) index_only_max_keys;
+ SELECT bool_and(pg_index_column_has_property('index_only_max_keys_idx', i, 'returnable')
+                 IS NOT DISTINCT FROM (i = current_setting('max_index_keys')::int)) AS correct_capabilities
 ```
 
 ---
 
-### Incident Patch 3: `a4171971` (2026-11-16)
-**Commit Message**: fix: scale adaptive vector stopping with the probe budget (#7440)
+### Incident Patch 2: `6718494c` (2026-11-18)
+**Commit Message**: fix: stop auto_explain from crashing Aggregate Scan and Join Scan queries (#7426)
 
-Adaptive vector probing can stop too early when its stopping condition
-is only briefly satisfied. Pin [Tantivy
-#416](https://github.com/paradedb/tantivy/pull/416), which requires a
-consecutive quiet-work window: no added patience through 500 resolved
-work units, a linear ramp to 5% at 2,000, and 5% above that. Activity
-resets the window; refinement checks without additional scanning do not
-accumulate quiet work. The existing hard budgets and main's pruning
-fixes remain intact.
+# Ticket(s) Closed
 
-Rebased onto main after the 32-GiB, Cohere, and below-100-probe adaptive
-cutoff changes merged. Pin Tantivy merge commit
-`728a4355923d80d647d866ffe92b821186bc90d4`, whose tree is identical to
-the tested PR source. Also stabilize the existing MPP spill fixture: its
-6 MB MultiType budget could fit when task allocations did not overlap,
-making the nonzero-spill assertion depend on scheduling. A named 4 MB
-budget, matching the other MPP cases, retains the disabled-spill error,
-nonzero spill metrics, and exact result-parity assertions.
+- Closes #6906
 
-Validation:
-- Tantivy CI is green; 342 local vector tests passed, with 2 existing
-ignored tests.
-- Fifty isolate
+## What
 
-**File**: `Cargo.lock` (modified, +10/-10)
+With `auto_explain` loaded and `log_analyze` off, a query that runs as
+an Aggregate Scan or Join Scan no longer crashes its backend with a
+segfault when auto_explain logs the plan.
+
+## Why
+
+auto_explain prints plans from its `ExecutorEnd` hook. For a top-level
+query, PostgreSQL calls that hook when it drops the portal, or at
+`COMMIT` for cursors and extended-protocol portals, and no snapshot is
+active at that point. Without ANALYZE, both scans rebuild their
+DataFusion plan to print it. The rebuild calls `GetActiveSnapshot()`,
+which dereferences the NULL active snapshot. Plain `EXPLAIN` works
+because the EXPLAIN command runs with a snapshot.
+
+## How
+
+The shared `explain_custom_scan` callback in
+`planner/src/postgres/customscan/exec.rs` now holds
+`ActiveSnapshotGuard::ensure()` while the scan prints its plan. The
+guard pushes the transaction snapshot only when no snapshot is active,
+and pops it when the callback returns. Plain `EXPLAIN`, `EXPLAIN
+ANALYZE`, and auto_explain with `log_analyze` already run with a
+snapshot, so they behave as before.
+
+## Tests
+
+-
+
+**File**: `docs/project/changelog/unreleased/7426.bugfix.mdx` (added, +5/-0)
 ```diff
-@@ -5183,7 +5183,7 @@ dependencies = [
- [[package]]
- name = "ownedbytes"
- version = "0.9.0"
--source = "git+https://github.com/paradedb/tantivy.git?rev=8fe9139b4d5eca098b36c3f2fbe13338792630fa#8fe9139b4d5eca098b36c3f2fbe13338792630fa"
-+source = "git+https://github.com/paradedb/tantivy.git?rev=728a4355923d80d647d866ffe92b821186bc90d4#728a4355923d80d647d866ffe92b821186bc90d4"
- dependencies = [
-  "stable_deref_trait",
- ]
-@@ -7405,7 +7405,7 @@ checksum = "7b2093cf4c8eb1e67749a6762251bc9cd836b6fc171623bd0a9d324d37af2417"
- [[package]]
- name = "tantivy"
- version = "0.27.0"
--source = "git+https://github.com/paradedb/tantivy.git?rev=8fe9139b4d5eca098b36c3f2fbe13338792630fa#8fe9139b4d5eca098b36c3f2fbe13338792630fa"
-+source = "git+https://github.com/paradedb/tantivy.git?rev=728a4355923d80d647d866ffe92b821186bc90d4#728a4355923d80d647d866ffe92b821186bc90d4"
- dependencies = [
-  "aho-corasick",
-  "arc-swap",
-@@ -7464,15 +7464,15 @@ dependencies = [
- [[package]]
- name = "tantivy-bitpacker"
- version = "0.10.0"
--source = "git+https://github.com/paradedb/tantivy.git?rev=8fe9139b4d5eca098b36c3f2fbe13338792630fa#8fe9139b4d5eca098b36c3f2fbe13338792630fa"
-+source = "git+https://github.com/paradedb/tantivy.git?rev=728a4355923d80d647d866ffe92b821186bc90d4#728a4355923d80d647d866ffe92b821186bc90d4"
- dependencies = [
-  "bitpacking",
- ]
- 
- [[package]]
- name = "tantivy-columnar"
- version = "0.7.0"
--source = "git+https://github.com/paradedb/tantivy.git?rev=8fe9139b4d5eca098b36c3f2fbe13338792630fa#8fe9139b4d5eca098b36c3f2fbe13338792630fa"
-+source = "git+https://github.com/paradedb/tantivy.git?rev=728a4355923d80d647d866ffe92b821186bc90d4#728a4355923d80d647d866ffe92b821186bc90d4"
- dependencies = [
-  "downcast-rs",
-  "fastdivide",
-@@ -7487,7 +7487,7 @@ dependencies = [
- [[package]]
- name = "tantivy-common"
- version = "0.11.0"
--source = "git+https://github.com/paradedb/tantivy.git?rev=8fe9139b4d5eca098b36c3f2fbe13338792630fa#8fe9139b4d5eca098b36c3f2fbe13338792630fa"
-+source = "git+https://github.com/paradedb/tantivy.git?rev=728a4355923d80d647d866ffe92b821186bc90d4#728a4355923d80d647d866ffe92b821186bc90d4"
- dependencies = [
-  "async-trait",
-  "byteorder",
-@@ -7520,7 +7520,7 @@ dependencies = [
- [[package]]
- name = "tantivy-quant"
- version = "0.1.0"
--source = "git+https://github.com/paradedb/tantivy.git?rev=8fe9139b4d5eca098b36c3f2fbe13338792630fa#8fe9139b4d5eca098b36c3f2fbe13338792630fa"
-+source = "git+https://github.com/paradedb/tantivy.git?rev=728a4355923d80d647d866ffe92b821186bc90d4#728a4355923d80d647d866ffe92b821186bc90d4"
- dependencies = [
-  "rand_chacha 0.3.1",
-  "rand_core 0.6.4",
-@@ -7529,7 +7529,7 @@ dependencies = [
- [[package]]
- name = "tantivy-query-grammar"
- version = "0.26.0"
--source = "git+https://github.com/paradedb/tantivy.git?rev=8fe9139b4d5eca098b36c3f2fbe13338792630fa#8fe9139b4d5eca098b36c3f2fbe13338792630fa"
-+source = "git+https://github.com/paradedb/tantivy.git?rev=728a4355923d80d647d866ffe92b821186bc90d4#728a4355923d80d647d866ffe92b821186bc90d4"
- dependencies = [
-  "fnv",
-  "nom 7.1.3",
-@@ -7541,7 +7541,7 @@ dependencies = [
- [[package]]
- name = "tantivy-sstable"
- version = "0.7.0"
--source = "git+https://github.com/paradedb/tantivy.git?rev=8fe9139b4d5eca098b36c3f2fbe13338792630fa#8fe9139b4d5eca098b36c3f2fbe13338792630fa"
-+source = "git+https://github.com/paradedb/tantivy.git?rev=728a4355923d80d647d866ffe92b821186bc90d4#728a4355923d80d647d866ffe92b821186bc90d4"
- dependencies = [
-  "futures-util",
-  "itertools 0.14.0",
-@@ -7554,7 +7554,7 @@ dependencies = [
- [[package]]
- name = "tantivy-stacker"
- version = "0.7.0"
--source = "git+https://github.com/paradedb/tantivy.git?rev=8fe9139b4d5eca098b36c3f2fbe13338792630fa#8fe9139b4d5eca098b36c3f2fbe13338792630fa"
-+source = "git+https://github.com/paradedb/tantivy.git?rev=728a4355923d80d647d866ffe92b821186bc90d4#728a4355923d80d647d866ffe92b821186bc90d4"
- dependencies = [
-  "fixedbitset",
-  "murmurhash32",
-@@ -7591,7 +7591,7 @@ dependencies = [
- [[package]]
- name = "tantivy-tokenizer-api"
- version = "0.7.0"
--source = "git+https://github.com/paradedb/tantivy.git?rev=8fe9139b4d5eca098b36c3f2fbe13338792630fa#8fe9139b4d5eca098b36c3f2fbe13338792630fa"
-+source = "git+https://github.com/paradedb/tantivy.git?rev=728a4355923d80d647d866ffe92b821186bc90d4#728a4355923d80d647d866ffe92b821186bc90d4"
- dependencies = [
-  "serde",
- ]
-```
-
-**File**: `Cargo.toml` (modified, +4/-4)
-```diff
-@@ -89,7 +89,7 @@ pgrx-tests = "=0.20.0"
- 
- # Keep the Git revisions for `tantivy`, `tantivy-common`, and the crates.io
- # patches in sync.
--tantivy = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy", rev = "8fe9139b4d5eca098b36c3f2fbe13338792630fa", features = [
-+tantivy = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy", rev = "728a4355923d80d647d866ffe92b821186bc90d4", features = [
-   "columnar-zstd-compression",
-   "lz4-compression",
-   "paradedb",
-@@ -98,7 +98,7 @@ tantivy = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy"
-   "stemmer",
-   "stopwords",
- ], default-features = false }
--tantivy-common = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy-common", rev = "8fe9139b4d5eca098b36c3f2fbe13338792630fa" }
-+tantivy-common = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy-common", rev = "728a4355923d80d647d866ffe92b821186bc90d4" }
- tantivy-jieba = "0.21.0"
- 
- async-trait = "0.1.92"
-@@ -184,8 +184,8 @@ rstest = "0.28.0"
- postgres = "0.19.14"
- 
- [patch.crates-io]
--tantivy-common = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy-common", rev = "8fe9139b4d5eca098b36c3f2fbe13338792630fa" }
--tantivy-tokenizer-api = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy-tokenizer-api", rev = "8fe9139b4d5eca098b36c3f2fbe13338792630fa" }
-+tantivy-common = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy-common", rev = "728a4355923d80d647d866ffe92b821186bc90d4" }
-+tantivy-tokenizer-api = { git = "https://github.com/paradedb/tantivy.git", package = "tantivy-tokenizer-api", rev = "728a4355923d80d647d866ffe92b821186bc90d4" }
- 
- [workspace.lints.cargo]
- missing_lints_inheritance = "deny"
-```
-
-**File**: `nix/pg_search.nix` (modified, +1/-1)
-```diff
-@@ -70,7 +70,7 @@ buildPgrxExtension (finalAttrs: {
-   # If maintainers forget to do so, Nix will throw an error message that begins
-   # like this and then provides the correct new hash:
-   # error: hash mismatch in fixed-output derivation '...'
--  cargoHash = "sha256-k/jBGg20FCJxrU0M+IClInbR6x6N5UxYCMxo2tgxjoY=";
-+  cargoHash = "sha256-beGzBCa6ZA7Yq09Yafrx0ndYR5h981fTtC7yRUUcEc8=";
- 
-   inherit postgresql;
-   # The Nix builder also passes cargoPgrxFlags to `stop`, which does not accept
-```
-
-**File**: `tests/tests/spill.rs` (modified, +5/-4)
-```diff
-@@ -23,6 +23,8 @@ use rstest::*;
- use sqlx::{PgConnection, Row};
- use tests::fixtures::*;
- 
-+const MPP_SPILL_WORK_MEM: &str = "4MB";
+@@ -0,0 +1,5 @@
++---
++header: stability
++---
 +
- #[derive(Clone, Copy, Debug)]
- enum ExecutionMode {
-     Serial,
-@@ -54,15 +56,14 @@ impl SpillShape {
-     ///
-     /// Serial execution processes all ~28k groups in one `AggregateExec` pipeline,
-     /// whereas 3-worker MPP partitions the 3 immutable segments evenly across three
--    /// workers (~9.3k groups per worker).
-+    /// workers (~9.3k groups per worker). The MPP budget forces spilling without
-+    /// depending on concurrent partitions overlapping their memory use.
-     fn work_mem(self, mode: ExecutionMode) -> &'static str {
-         match (mode, self) {
-             (ExecutionMode::Serial, Self::MultiType) => "16MB",
-             (ExecutionMode::Serial, Self::DependentRowValue) => "12MB",
-             (ExecutionMode::Serial, Self::SmallBuildJoin) => "10MB",
--            (ExecutionMode::Mpp, Self::MultiType) => "6MB",
--            (ExecutionMode::Mpp, Self::DependentRowValue) => "4MB",
--            (ExecutionMode::Mpp, Self::SmallBuildJoin) => "4MB",
-+            (ExecutionMode::Mpp, _) => MPP_SPILL_WORK_MEM,
-         }
-     }
++- Queries that run as an Aggregate Scan or Join Scan no longer crash the backend when `auto_explain` logs their plan without `log_analyze`.
+```
+
+**File**: `pg_search/tests/pg_regress/expected/issue_6906.out` (added, +74/-0)
+```diff
+@@ -0,0 +1,74 @@
++-- auto_explain prints plans from its ExecutorEnd hook, where no snapshot is
++-- active. Without ANALYZE, the Aggregate Scan and Join Scan rebuild their
++-- DataFusion plans to print them, and that rebuild needs a snapshot.
++-- https://github.com/paradedb/paradedb/issues/6906
++CREATE EXTENSION IF NOT EXISTS pg_search;
++SET max_parallel_workers_per_gather = 0;
++CREATE TABLE issue_6906_t (id bigint PRIMARY KEY, cik bigint, body text);
++INSERT INTO issue_6906_t SELECT g, g % 7, 'letter of intent ' || g FROM generate_series(1, 100) g;
++CREATE INDEX issue_6906_t_idx ON issue_6906_t USING paradedb (id, body, cik);
++CREATE TABLE issue_6906_f (cik bigint PRIMARY KEY, name text);
++INSERT INTO issue_6906_f SELECT g, 'n' || g FROM generate_series(0, 6) g;
++CREATE INDEX issue_6906_f_idx ON issue_6906_f USING paradedb (cik, name);
++EXPLAIN (COSTS OFF)
++SELECT cik, count(*) FROM issue_6906_t GROUP BY cik ORDER BY 2 DESC, 1 LIMIT 1;
++                                                  QUERY PLAN                                                   
++---------------------------------------------------------------------------------------------------------------
++ Limit
++   ->  Custom Scan (ParadeDB Aggregate Scan)
++         Backend: DataFusion
++         Indexes: issue_6906_t_idx (issue_6906_t)
++         Group By: cik
++         Aggregates: COUNT(*)
++         DataFusion Physical Plan: 
++           : SortExec: TopK(fetch=1), expr=[agg_0@1 DESC, cik@0 ASC NULLS LAST], preserve_partitioning=[false]
++           :   AggregateExec: mode=Single, gby=[cik@0 as cik], aggr=[count(1) as agg_0]
++           :     CooperativeExec
++           :       PgSearchScan: table=issue_6906_t, segments=1, visibility=eager, query="all"
++(11 rows)
++
++EXPLAIN (COSTS OFF)
++SELECT t.id, f.name FROM issue_6906_t t JOIN issue_6906_f f ON f.cik = t.cik
++WHERE t.body @@@ 'intent' AND f.name @@@ 'n1'
++ORDER BY t.id LIMIT 5;
++                                                                                                QUERY PLAN                                                                                                 
++-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
++ Custom Scan (ParadeDB Join Scan)
++   Relation Tree: t INNER f
++   Join Cond: f.cik = t.cik
++   Limit: 5
++   Order By: t.id asc
++   DataFusion Physical Plan: 
++     : ProjectionExec: expr=[id@1 as col_1, NULL as col_2, ctid_0@0 as ctid_0, ctid_1@2 as ctid_1]
++     :   SortExec: TopK(fetch=5), expr=[id@1 ASC NULLS LAST], preserve_partitioning=[false]
++     :     VisibilityFilterExec: tables=[t, f]
++     :       HashJoinExec: mode=CollectLeft, join_type=Inner, on=[(cik@1, cik@1)], projection=[ctid_0@2, id@4, ctid_1@0]
++     :         CooperativeExec
++     :           PgSearchScan: table=f, segments=1, query={"with_index":{"query":{"parse_with_field":{"field":"name","query_string":"n1","lenient":null,"conjunction_mode":null}}}}
++     :         CooperativeExec
++     :           PgSearchScan: table=t, segments=1, dynamic_filters=2, query={"with_index":{"query":{"parse_with_field":{"field":"body","query_string":"intent","lenient":null,"conjunction_mode":null}}}}
++(14 rows)
++
++LOAD 'auto_explain';
++SET auto_explain.log_min_duration = 0;
++SELECT cik, count(*) FROM issue_6906_t GROUP BY cik ORDER BY 2 DESC, 1 LIMIT 1;
++ cik | count 
++-----+-------
++   1 |    15
++(1 row)
++
++SELECT t.id, f.name FROM issue_6906_t t JOIN issue_6906_f f ON f.cik = t.cik
++WHERE t.body @@@ 'intent' AND f.name @@@ 'n1'
++ORDER BY t.id LIMIT 5;
++ id | name 
++----+------
++  1 | n1
++  8 | n1
++ 15 | n1
++ 22 | n1
++ 29 | n1
++(5 rows)
++
++RESET auto_explain.log_min_duration;
++RESET max_parallel_workers_per_gather;
++DROP TABLE issue_6906_t, issue_6906_f;
+```
+
+**File**: `pg_search/tests/pg_regress/sql/issue_6906.sql` (added, +36/-0)
+```diff
+@@ -0,0 +1,36 @@
++-- auto_explain prints plans from its ExecutorEnd hook, where no snapshot is
++-- active. Without ANALYZE, the Aggregate Scan and Join Scan rebuild their
++-- DataFusion plans to print them, and that rebuild needs a snapshot.
++-- https://github.com/paradedb/paradedb/issues/6906
++
++CREATE EXTENSION IF NOT EXISTS pg_search;
++SET max_parallel_workers_per_gather = 0;
++
++CREATE TABLE issue_6906_t (id bigint PRIMARY KEY, cik bigint, body text);
++INSERT INTO issue_6906_t SELECT g, g % 7, 'letter of intent ' || g FROM generate_series(1, 100) g;
++CREATE INDEX issue_6906_t_idx ON issue_6906_t USING paradedb (id, body, cik);
++
++CREATE TABLE issue_6906_f (cik bigint PRIMARY KEY, name text);
++INSERT INTO issue_6906_f SELECT g, 'n' || g FROM generate_series(0, 6) g;
++CREATE INDEX issue_6906_f_idx ON issue_6906_f USING paradedb (cik, name);
++
++EXPLAIN (COSTS OFF)
++SELECT cik, count(*) FROM issue_6906_t GROUP BY cik ORDER BY 2 DESC, 1 LIMIT 1;
++
++EXPLAIN (COSTS OFF)
++SELECT t.id, f.name FROM issue_6906_t t JOIN issue_6906_f f ON f.cik = t.cik
++WHERE t.body @@@ 'intent' AND f.name @@@ 'n1'
++ORDER BY t.id LIMIT 5;
++
++LOAD 'auto_explain';
++SET auto_explain.log_min_duration = 0;
++
++SELECT cik, count(*) FROM issue_6906_t GROUP BY cik ORDER BY 2 DESC, 1 LIMIT 1;
++
++SELECT t.id, f.name FROM issue_6906_t t JOIN issue_6906_f f ON f.cik = t.cik
++WHERE t.body @@@ 'intent' AND f.name @@@ 'n1'
++ORDER BY t.id LIMIT 5;
++
++RESET auto_explain.log_min_duration;
++RESET max_parallel_workers_per_gather;
++DROP TABLE issue_6906_t, issue_6906_f;
+```
+
+**File**: `planner/src/postgres/customscan/exec.rs` (modified, +4/-0)
+```diff
+@@ -17,6 +17,7 @@
  
+ use crate::postgres::customscan::explainer::Explainer;
+ use crate::postgres::customscan::{CustomScan, MarkRestoreCapable, wrap_custom_scan_state};
++use crate::postgres::utils::ActiveSnapshotGuard;
+ use pgrx::{pg_guard, pg_sys};
+ 
+ /// Complete initialization of the supplied CustomScanState. Standard fields have been initialized
+@@ -125,6 +126,9 @@ pub extern "C-unwind" fn explain_custom_scan<CS: CustomScan>(
+     es: *mut pg_sys::ExplainState,
+ ) {
+     let custom_state = wrap_custom_scan_state::<CS>(node);
++    // auto_explain calls this from its ExecutorEnd hook, where no snapshot is active, and the
++    // Aggregate and Join Scans rebuild their DataFusion plans here, which needs one.
++    let _snapshot = ActiveSnapshotGuard::ensure();
+     unsafe {
+         let plan = (*node).ss.ps.plan;
+         if !es.is_null() && !(*es).deparse_cxt.is_null() && !plan.is_null() {
+```
+
+---
+
+### Incident Patch 3: `4a86c256` (2026-11-18)
+**Commit Message**: fix: remove stopwords before stemming and ASCII folding (#7343)
+
+# Ticket(s) Closed
+
+- Closes #7342
+
+## What
+
+Stopwords (`stopwords_language` and `stopwords`) are now removed right
+after lowercasing, before `stemmer` and `ascii_folding`.
+
+## Why
+
+Stopword lists hold whole, accented words. Filtering after stemming or
+folding lets through every stopword those filters change:
+
+```sql
+SELECT 'silla para niño'::pdb.simple('stemmer=spanish', 'stopwords_language=spanish')::text[];
+-- before: {sill,par,niñ}   after: {sill,niñ}
+```
+
+Lucene applies the stop filter before stemming, and before folding too:
+`GermanAnalyzer` runs `StopFilter` ahead of `GermanNormalizationFilter`.
+
+## How
+
+`add_filters!` now runs trim, length, lowercase and the stopword
+filters, then stemmer, ASCII folding, any extra filters and
+alphanumeric-only. The filters after the language stopwords stay static,
+so the chain costs what it did before.
+
+Indexes that combine stopwords with `stemmer` or `ascii_folding` should
+be reindexed to drop the stopword tokens they already hold; the
+changelog entry says so.
+
+## Performance
+
+Wikipedia text in Spanish, English and German, median of 31 passes,
+release build:
+
+| config | chang
+
+**File**: `docs/project/changelog/unreleased/7343.bugfix.mdx` (added, +5/-0)
+```diff
+@@ -0,0 +1,5 @@
++---
++header: stability
++---
++
++- Stopwords (`stopwords_language` and `stopwords`) are now removed before stemming and ASCII folding. Previously, a transformed stopword could be indexed, such as Spanish `para` stemmed to `par`. Existing indexes that combine stopwords with stemming or ASCII folding remain usable, but searches can miss matches or return extra matches because older rows were indexed with the previous filter order. Run `REINDEX` on affected indexes to make results consistent across existing rows and new writes.
+```
+
+**File**: `docs/reference/token-filters/stopwords.mdx` (modified, +3/-0)
+```diff
+@@ -15,6 +15,9 @@ CREATE INDEX search_idx ON mock_items
+ USING paradedb (id, (description::pdb.simple('stopwords_language=english')));
+ ```
+ 
++Stopwords are removed right after lowercasing, before [stemming](/reference/token-filters/stemming) and
++[ASCII folding](/reference/token-filters/ascii-folding), so a stopword such as Spanish "para" is removed even when a stemmer would turn it into "par".
++
+ Valid languages are `Czech`, `Danish`, `Dutch`, `English`, `Finnish`, `French`, `German`, `Hungarian`, `Italian`, `Norwegian`, `Polish`, `Portuguese`, `Russian`, `Spanish`, and `Swedish`. Language names are case-insensitive.
+ 
+ ## Multiple Languages
+```
+
+**File**: `tokenizers/src/manager.rs` (modified, +35/-8)
+```diff
+@@ -333,25 +333,27 @@ impl SearchTokenizerFilters {
+ 
+ macro_rules! add_filters {
+     ($tokenizer:expr, $filters:expr $(, $extra_filter:expr )* $(,)?) => {{
+-        // Build the analyzer with static filters first
++        // Stopwords go right after lowercasing: their lists hold whole, accented words, which stemming and
++        // folding would change, so "para" stemmed to "par" or "más" folded to "mas" would no longer match.
+         let mut builder = tantivy::tokenizer::TextAnalyzer::builder($tokenizer)
+             .filter($filters.trim_filter())
+             .filter($filters.token_length_filter())
+             .filter($filters.lower_caser())
+-            .filter($filters.stemmer())
+             .filter($filters.stopwords())
+-            .filter($filters.ascii_folding())
+-            $(
+-                .filter($extra_filter)
+-            )*
+-            .filter($filters.alpha_num_only())
+             // Convert to type-erased builder for dynamic filter application
+             .dynamic();
+         // Apply stopword language filters dynamically in a for loop
+         for stopword_filter in $filters.stopwords_languages() {
+             builder = builder.filter_dynamic(stopword_filter);
+         }
+-        builder.build()
++        builder
++            .filter($filters.stemmer())
++            .filter($filters.ascii_folding())
++            $(
++                .filter($extra_filter)
++            )*
++            .filter($filters.alpha_num_only())
++            .build()
+     }};
+ }
+ 
+@@ -1850,4 +1852,29 @@ mod tests {
+             "tokenizer (name={tokenizer_name}) whitespace did not keep/remove whitespace as expected"
+         );
+     }
++
++    #[rstest]
++    #[case::spanish(r#"{"type": "default", "stemmer": "Spanish", "stopwords_language": "Spanish"}"#, "silla para más madera", &["sill", "mader"])]
++    #[case::french(r#"{"type": "default", "stemmer": "French", "stopwords_language": "French"}"#, "nous avons mangé des pommes", &["mang", "pomm"])]
++    #[case::german(r#"{"type": "default", "stemmer": "German", "stopwords_language": "German"}"#, "welches Haus hatte er", &["haus"])]
++    #[case::custom(r#"{"type": "default", "stemmer": "English", "stopwords": ["running"]}"#, "she was running home", &["she", "was", "home"])]
++    #[case::folded(r#"{"type": "default", "ascii_folding": true, "stopwords_language": "German"}"#, "Stuhl für Kinder", &["stuhl", "kinder"])]
++    fn test_stopwords_removed_before_stemming_and_folding(
++        #[case] json: &str,
++        #[case] text: &str,
++        #[case] expected: &[&str],
++    ) {
++        use tantivy::tokenizer::TokenStream;
++
++        // Stopword lists hold whole words: "para" stems to "par" and "für" folds to "fur", which no list holds.
++        let tokenizer =
++            SearchTokenizer::from_json_value(&serde_json::from_str(json).unwrap()).unwrap();
++        let mut analyzer = tokenizer.to_tantivy_tokenizer().unwrap();
++        let mut token_stream = analyzer.token_stream(text);
++        let mut tokens = Vec::new();
++        while token_stream.advance() {
++            tokens.push(token_stream.token().text.clone());
++        }
++        assert_eq!(tokens, expected);
++    }
+ }
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #7491** (2026-11-16): chore: Consume the latest version of RHEL PG releases from pgdg. (@paradedb-github-bot[bot])
-- **PR #7490** (2026-11-16): chore: Consume the latest version of RHEL PG releases from pgdg. (@stuhood)
-- **PR #7488** (2026-11-16): chore: Generate Dockerfiles for v0.26.7 (@paradedb-github-bot[bot])
-- **PR #7487** (2026-11-16): chore: Generate Dockerfiles for v0.26.7 (@paradedb-github-bot[bot])
-- **PR #7485** (2026-11-16): docs: Use the new Python ORM versions (@isaacvando)
-- **PR #7482** (2026-11-16): fix: retain CPU-clock samples in ARM vector profiles (@rebasedming)
+- **PR #7528** (2026-11-18): chore: Generate Dockerfiles for v0.26.8 (@paradedb-github-bot[bot])
+- **PR #7527** (2026-11-18): chore: Generate Dockerfiles for v0.26.8 (@paradedb-github-bot[bot])
+- **PR #7525** (2026-11-18): fix: prioritize background mergers over foreground backpressure (@paradedb-github-bot[bot])
+- **PR #7524** (2026-11-18): chore: set default target leaf size to 400 (@RuchirRaj)
+- **PR #7523** (2026-11-18): fix: skip foreground immutable merges in logical apply workers (@paradedb-github-bot[bot])
+- **PR #7522** (2026-11-18): fix: prioritize background mergers over foreground backpressure (@rebasedming)
 
 ---
 
@@ -3058,50 +2766,35 @@ ignored tests.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. retain CPU-clock samples in ARM vector profiles
+## X. prioritize background mergers over foreground backpressure
 
 **RULE**:
-When implementing operations in `.github/scripts/profile-postgres.sh`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in paradedb/paradedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/project/changelog/unreleased/7522.performance.mdx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in paradedb/paradedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `8d5419ed`: retain CPU-clock samples in ARM vector profiles. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6f893812`: prioritize background mergers over foreground backpressure. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/scripts/profile-postgres.sh`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/project/changelog/unreleased/7522.performance.mdx`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-export LC_ALL=C
-callgraph_args=(--call-graph "dwarf,$stack_bytes")
-if [ "$(uname -m)" = aarch64 ]; then
-  # The software clock PMU rejects the SVE vg register selected by perf's hardware probe.
-  printf -v user_regs '%s,' x{0..29} lr sp pc
-  callgraph_args+=("--user-regs=${user_regs%,}")
-fi
+---
+header: performance
+---
 
-      if ! awk '
-        /^# Samples: [1-9]/ {
-          split($0, fields, "\047")
-          split(fields[2], event, ":")
-          seen[event[1]] = 1
-        }
-        END { exit !(seen["cpu-clock"] && seen["branch-misses"]) }
-      ' "$output/report.txt"; then
-        echo "perf must record nonzero cpu-clock and branch-misses samples" >&2
-        report_status=1
-      fi
-  "${callgraph_args[@]}" --inherit --namespaces --pid "$pids" \
+- Writes now skip foreground merges after successfully launching a background merger. Foreground merging remains the fallback when a background merger cannot be launched.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-  --call-graph "dwarf,$stack_bytes" --inherit --namespaces --pid "$pids" \
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `8d5419ed` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6f893812` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

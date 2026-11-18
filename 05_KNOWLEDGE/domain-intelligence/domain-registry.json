@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-18T13:48:30.370Z",
-  "total_records": 1858,
+  "last_updated": "2026-11-18T13:57:08.815Z",
+  "total_records": 1860,
   "domains": {
     "A": {
       "total": 11,
@@ -49,7 +49,7 @@
       ]
     },
     "D": {
-      "total": 786,
+      "total": 788,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -836,7 +836,9 @@
         "DOM-D-E01F5E82",
         "domain_intelligence-research-knowledge-intelligence-hf-kormo-vl-kormo-web-11b-learnings-core-invaria",
         "domain_intelligence-research-knowledge-intelligence-qwen-qwen-image-2-1-core-invariants",
-        "domain_intelligence-research-knowledge-intelligence-hf-qwen-qwen-image-2-1-learnings-core-invariants"
+        "domain_intelligence-research-knowledge-intelligence-hf-qwen-qwen-image-2-1-learnings-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-fallow-rs-fallow-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-fallow-rs-fallow-learnings-core-invariants"
       ]
     },
     "E": {
@@ -8261,8 +8263,8 @@
       "title": "Research & Knowledge Intelligence: orcarouter/OrcaSAQ-2-27B Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-orcarouter-orcasaq-2-27b-research-knowledge-intelligence-orcarouter-orcasaq-2.md",
       "repository": "orcarouter/OrcaSAQ-2-27B",
-      "content_hash": "e8ac13b1d9fe42d627c661681c37f2703953e80e60ab6ff270ab7ac7b38ac4ef",
-      "created_at": "2026-11-18T04:03:52.612Z"
+      "content_hash": "ae15c3b8fc26e57d271608dd8317654b0f4576a508871f01f73350dbd5ff8bc6",
+      "created_at": "2026-11-18T13:56:48.755Z"
     },
     "DOM-D-1FD73085": {
       "record_id": "DOM-D-1FD73085",
@@ -8312,8 +8314,8 @@
       "title": "Research & Knowledge Intelligence: hf-orcarouter-orcasaq-2-27b-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-orcarouter-orcasaq-2-27b-learnings-research-knowledge-intelligence-hf-orcarou.md",
       "repository": "hf-orcarouter-orcasaq-2-27b-learnings",
-      "content_hash": "7346149267d47ef41e2b01b9fe943cf1da14cea2e2fa375356e41b20dd170ff4",
-      "created_at": "2026-11-18T04:04:05.150Z"
+      "content_hash": "81c3a3fc1f623b04018e41bcf920353d1f045847c58138175c17fbe28eec9afc",
+      "created_at": "2026-11-18T13:57:07.997Z"
     },
     "domain_intelligence-architecture-intelligence-gauthierpiarrette-highball-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-gauthierpiarrette-highball-learnings-core-invariants",
@@ -20674,8 +20676,8 @@
       "title": "Architecture Intelligence: paradedb/paradedb Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-paradedb-paradedb-architecture-intelligence-paradedb-paradedb-core-invariants.md",
       "repository": "paradedb/paradedb",
-      "content_hash": "ec6aeddd2949dda0aae5447c9eeb4817950504eddb69711ade175acc1a98ffcd",
-      "created_at": "2026-11-17T20:03:39.336Z"
+      "content_hash": "c58166ce0dd41af4deaf88d0af0aa790c4010a7407e2c754664833e2cdfa4554",
+      "created_at": "2026-11-18T13:57:03.606Z"
     },
     "DOM-D-53AB726C": {
       "record_id": "DOM-D-53AB726C",
@@ -24446,8 +24448,8 @@
       "title": "Architecture Intelligence: paradedb-paradedb-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-paradedb-paradedb-learnings-architecture-intelligence-paradedb-paradedb-learning.md",
       "repository": "paradedb-paradedb-learnings",
-      "content_hash": "fbd11a850bd94293518165efa6842415c475ced80398520b1a3bffa22622cba2",
-      "created_at": "2026-11-16T21:28:30.254Z"
+      "content_hash": "4d4985a4352737f14fb3e86a1bb09c8bfa119cad1b919608464c624962f8fa03",
+      "created_at": "2026-11-18T13:57:08.815Z"
     },
     "domain_intelligence-technical-construction-intelligence-cachix-devenv-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-cachix-devenv-core-invariants",
@@ -31136,6 +31138,24 @@
       "repository": "databendlabs-databend-learnings",
       "content_hash": "88041435fc0a805d7f6a8948e6654e3d6ccc997d6fc1b14177e9b66cc07782e6",
       "created_at": "2026-11-18T13:48:30.370Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-fallow-rs-fallow-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-fallow-rs-fallow-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: fallow-rs/fallow Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-fallow-rs-fallow-research-knowledge-intelligence-fallow-rs-fallow-core-invariant.md",
+      "repository": "fallow-rs/fallow",
+      "content_hash": "88c228279be35727d8ed92264817f2946efff4704a188fbf972f2c23da052fac",
+      "created_at": "2026-11-18T13:56:51.851Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-fallow-rs-fallow-learnings-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-fallow-rs-fallow-learnings-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: fallow-rs-fallow-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-fallow-rs-fallow-learnings-research-knowledge-intelligence-fallow-rs-fallow-lear.md",
+      "repository": "fallow-rs-fallow-learnings",
+      "content_hash": "48137d476371414ef51747bb27ebe220d193c597a5373902e655ad43d8aa2eaa",
+      "created_at": "2026-11-18T13:57:07.414Z"
     }
   }
 }

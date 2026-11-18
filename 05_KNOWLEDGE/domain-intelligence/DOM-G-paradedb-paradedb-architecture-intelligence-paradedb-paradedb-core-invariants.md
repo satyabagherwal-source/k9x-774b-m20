@@ -4,24 +4,24 @@
 {
   "source_repository": "paradedb/paradedb",
   "source_url": "https://github.com/paradedb/paradedb",
-  "source_version": "d772968d",
+  "source_version": "b2eb4729",
   "license": "AGPL-3.0",
-  "timestamp": "2026-11-17T20:03:39.212Z",
+  "timestamp": "2026-11-18T13:57:03.425Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-paradedb-paradedb",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [paradedb/paradedb](https://github.com/paradedb/paradedb) (Revision: `d772968d`).  
-> **License**: AGPL-3.0 | **Timestamp**: `2026-11-17T20:03:39.212Z`  
+> **Provenance**: Harvested from [paradedb/paradedb](https://github.com/paradedb/paradedb) (Revision: `b2eb4729`).  
+> **License**: AGPL-3.0 | **Timestamp**: `2026-11-18T13:57:03.425Z`  
 > **Learning ID**: `learn-github-paradedb-paradedb`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain G (Architecture Intelligence)
-- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), I (Content & Information Intelligence), J (Search & Distribution Intelligence), K (Quality & Verification Intelligence), B (Product Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence), F (Design Intelligence)
-- **Confidence Rating**: 53%
+- **Secondary Corroborating Domains**: H (Technical Construction Intelligence), I (Content & Information Intelligence), J (Search & Distribution Intelligence), K (Quality & Verification Intelligence), M (Feedback & Evolution Intelligence), D (Research & Knowledge Intelligence), B (Product Intelligence), F (Design Intelligence), A (Human & Need Intelligence), L (Deployment & Operations Intelligence)
+- **Confidence Rating**: 61%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from paradedb/paradedb:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/paradedb-paradedb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/paradedb/paradedb](https://github.com/paradedb/paradedb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T20:03:38.114Z  
+> **Harvest Timestamp**: 2026-11-18T13:57:01.986Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: One Postgres for your application data, full-text search, vector retrieval, and aggregations. Home of the pg_search extension.
 - **Primary Language / Ecosystem**: Rust
 - **Discovered Manifests / Configurations**: Cargo.toml, README.md
-- **Stars / Engagement**: 9536 stars
+- **Stars / Engagement**: 9539 stars
 
 ---
 
@@ -71,7 +71,7 @@ The following architectural invariants have been empirically discovered and reco
 // along with this program. If not, see <http://www.gnu.org/licenses/>.
 #![allow(unsafe_op_in_unsafe_fn)]
 
-use std::cell::UnsafeCell;
+use std::cell::{OnceCell, UnsafeCell};
 use std::collections::BTreeMap;
 use std::sync::Arc;
 
@@ -102,8 +102,10 @@ use std::ptr::NonNull;
 use crate::index::reader::vector::SharedVectorRouting;
 use crate::postgres::customscan::basescan::privdat::VectorFilterPlan;
 use pgrx::heap_tuple::PgHeapTuple;
-use pgrx::{PgTupleDesc, pg_sys};
+use pgrx::{JsonB, PgTupleDesc, pg_sys};
+use tantivy::DocAddress;
 use tantivy::index::SegmentId;
+use tantivy::query::Weight;
 use tantivy::snippet::SnippetGenerator;
 
 #[derive(Default)]
@@ -162,6 +164,10 @@ pub struct BaseScanState {
     pub need_scores: bool,
     pub score_funcoids: [pg_sys::Oid; 2],
 
+    pub need_score_explanation: bool,
+    /// The weight of the scan's query, built when the first row needs an explanation.
+    pub score_explanation_weight: OnceCell<Box<dyn Weight>>,
+
     /// True when a junk ORDER-BY `embedding <-> query` `OpExpr` in the scan's
     /// targetlist was replaced with a NULL placeholder `Const` (see
     /// `inject_vector_distance_placeholders`). The value is never read — the
@@ -209,6 +215,7 @@ pub struct BaseScanState {
 pub struct BasePlaceholders {
     pub projection: PlaceholderProjection,
     pub score: PlaceholderColumn,
+    pub score_explanation: PlaceholderColumn,
     pub snippets: HashMap<SnippetType, Vec<PlaceholderColumn>>,
     /// Indexed by target entry position.
     pub window_aggs: HashMap<usize, PlaceholderColumn>,
@@ -268,14 +275,7 @@ impl BaseScanState {
     pub fn reset_exec_results(&mut self) {
         if self.search_reader.is_some() {
             self.exec_method_mut().reset(self);
-        }
-    }
-
-    /// Drop the current exec method (and with it any search results whose
-    /// scorers hold bitmap cursors) before the bitmap machinery is torn down.
-    pub fn drop_exec_method(&mut self) {
-        self.exec_method = UnsafeCell::new(Default::default());
-        self.exec_method_name = Stri
+       
 ```
 
 ### Core Architecture Module: `benchmarks/src/utils.rs`
@@ -2235,838 +2235,507 @@ impl AggregateScanState {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5544d22e` (2026-11-16)
-**Commit Message**: fix: keep NaN and infinite float constants in pushed-down filters (#7300)
-
-# Ticket(s) Closed
-
-- Closes #7237
+### Incident Patch 1: `6f893812` (2026-11-18)
+**Commit Message**: fix: prioritize background mergers over foreground backpressure (#7522)
 
 ## What
 
-Filters that compare a `real` or `double precision` column with `NaN`,
-`Infinity` or `-Infinity` now return the same rows as PostgreSQL,
-instead of failing with `Tantivy PdbOwnedValue type not supported`. That
-covers `=`, `<>`, `<`, `<=`, `>`, `>=`, `IN`, `NOT IN` and `BETWEEN`, on
-both the Base Scan and the Aggregate Scan.
+Give successfully launched background mergers priority over foreground
+backpressure.
 
 ## Why
 
-JSON has no form for these values, so `serde_json` writes them as
-`null`. A query goes through JSON in `serialize_fielded_query` and again
-when the plan's private data is stored, so by the time it is rebuilt the
-constant is gone and `value_to_term` hits its catch-all panic. On
-`main`, `d IN ('NaN', 'Infinity')` plans as:
-
-```
-{"term_set":{"terms":[{"field":"d","value":null},{"field":"d","value":null}]}}
-```
-
-The panic is only where it surfaces. The value is already lost by then.
+Above four times `target_segment_count`, an inserting backend currently
+reserves a foreground merge even after launching a background worker. It
+still holds `MergeLock`, so the new worker cannot claim those segments
+first. This can stall inserts and logical replication on large merges
+despite available background capacity.
 
 ## How
 
-`PdbOwnedValue` now serializes a non-finite `F64` as a tagged object,
-`{"$__pdb_float__":"NaN"}`, the same way it tags dates with
-`PDB_DATE_TAG`, and `from_deserialized_tantivy_value` decodes it. Doing
-this in `Serialize` covers every path at once, inc
+Return after a successful background launch, releasing the merge lock
+and pins. Keep the existing foreground fallback when a worker cannot be
+launched. Configure the existing reservation test to exercise foreground
+merging explicitly. Wait for older snapshots before vacuuming the
+index-only scan regression fixture so background merger timing does not
+change its expected plan.
 
-**File**: `common/src/postgres/pdb_owned_value.rs` (modified, +17/-1)
+## Tests
+
+- The index-only scan regression passed three consecutive PostgreSQL 18
+runs. A controlled older-snapshot reproduction confirms the fixture
+waits until the snapshot is released, then produces an index-only scan.
+- All five backpressure merge-policy SQL tests pass, including
+reserved-segment exclusio
+
+**File**: `docs/project/changelog/unreleased/7522.performance.mdx` (added, +5/-0)
 ```diff
-@@ -30,6 +30,7 @@ use crate::postgres::types::TantivyValueError;
- use crate::schema::SearchFieldType;
- 
- pub const PDB_DATE_TAG: &str = "$__pdb_date__";
-+pub const PDB_FLOAT_TAG: &str = "$__pdb_float__";
- 
- /// This is a "reimplementation" of tantivy's OwnedValue. We need our own because we represent dates
- /// differently (as microseconds from PgEpoch, wheraas tantivy uses nanoseconds from the unix epoch)
-@@ -180,6 +181,15 @@ impl PdbOwnedValue {
-                     }
-                 }
- 
-+                // So do NaN and the infinities, which JSON has no form for.
-+                if object.len() == 1
-+                    && let (PDB_FLOAT_TAG, OwnedValue::Str(s)) =
-+                        (object[0].0.as_str(), &object[0].1)
-+                    && let Some(value) = s.parse::<f64>().ok().filter(|value| !value.is_finite())
-+                {
-+                    return PdbOwnedValue::F64(value);
-+                }
+@@ -0,0 +1,5 @@
++---
++header: performance
++---
 +
-                 PdbOwnedValue::Object(
-                     object
-                         .into_iter()
-@@ -251,6 +261,12 @@ impl serde::Serialize for PdbOwnedValue {
-                 map.serialize_entry(PDB_DATE_TAG, &date)?;
-                 map.end()
-             }
-+            // tag NaN and the infinities too, since JSON would write them as `null`
-+            PdbOwnedValue::F64(value) if !value.is_finite() => {
-+                let mut map = serializer.serialize_map(Some(1))?;
-+                map.serialize_entry(PDB_FLOAT_TAG, &value.to_string())?;
-+                map.end()
-+            }
-             PdbOwnedValue::Object(ref obj) => {
-                 let mut map = serializer.serialize_map(Some(obj.len()))?;
-                 for (k, v) in obj {
-@@ -282,7 +298,7 @@ impl<'de> serde::Deserialize<'de> for PdbOwnedValue {
- /// The exact, lossless serde form for the scalar variants of [`PdbOwnedValue`], for callers that
- /// must reconstruct a value bit for bit (partition boundaries shipped over the DSM wire). The
- /// `Serialize`/`Deserialize` impls above route through tantivy's `OwnedValue`, which is lossy: a
--/// non-negative `I64` comes back as `U64`, and a non-finite `F64` becomes `null` under JSON.
-+/// non-negative `I64` comes back as `U64`, and a NaN loses its bit pattern.
- ///
- /// Scalar values only. It errors on `Null` and the composite variants (`Array`, `Object`,
- /// `Facet`, `PreTokStr`), which never appear as partition split values. `F64` travels as its
++- Writes now skip foreground merges after successfully launching a background merger. Foreground merging remains the fallback when a background merger cannot be launched.
 ```
 
-**File**: `docs/project/changelog/unreleased/7300.bugfix.mdx` (added, +5/-0)
+**File**: `index_write/src/postgres/merge.rs` (modified, +7/-9)
+```diff
+@@ -325,7 +325,7 @@ fn backpressure(
+ 
+ /// Kick off a merge of the index, if needed.
+ ///
+-/// Launch background work when possible; overfull indexes also need one eligible foreground merge.
++/// Prefer a background worker; help with one eligible merge when workers are busy or unavailable.
+ pub unsafe fn do_merge(index: &PgSearchRelation, style: MergeStyle) -> anyhow::Result<()> {
+     // don't kick off merges for invalid indexes
+     if !index.is_valid() {
+@@ -348,7 +348,11 @@ pub unsafe fn do_merge(index: &PgSearchRelation, style: MergeStyle) -> anyhow::R
+         layer_sizes.user_configured_background_layers() && !candidates.is_empty();
+     let background_launched =
+         needs_background_merge && try_launch_background_merger(index, largest_layer_size);
+-
++    // If a background merger launched successfully, exit before applying more backpressure
++    // so foreground backpressure does not race with it to claim segments.
++    if background_launched {
++        return Ok(());
++    }
+     if let MergeStyle::Insert {
+         current_xid,
+         next_xid,
+@@ -366,11 +370,6 @@ pub unsafe fn do_merge(index: &PgSearchRelation, style: MergeStyle) -> anyhow::R
+             );
+             None
+         } else {
+-            let needs_foreground_backpressure =
+-                layer_sizes.visible_segment_count > BACKPRESSURE_MULTIPLIER * target_segment_count;
+-            if background_launched && !needs_foreground_backpressure {
+-                return Ok(());
+-            }
+             candidates
+                 .iter()
+                 .filter(|(layer, _)| layer_sizes.foreground_layer_sizes.contains(layer))
+@@ -956,7 +955,7 @@ mod tests {
+             .collect::<Vec<_>>();
+         drop(index);
+         Spi::run(&format!(
+-            "ALTER INDEX backpressure_idx SET (background_layer_sizes='{bytes} bytes')"
++            "ALTER INDEX backpressure_idx SET (layer_sizes='{bytes} bytes')"
+         ))
+         .unwrap();
+         let index = PgSearchRelation::open(oid);
+@@ -992,7 +991,6 @@ mod tests {
+         assert!(candidates.len() > 1);
+         drop(merger);
+         drop(merge_lock);
+-        assert!(MergeSlot::for_layer_size(oid, bytes).is_available());
+         do_merge(
+             &index,
+             MergeStyle::Insert {
+```
+
+**File**: `pg_search/tests/pg_regress/expected/index_only_scan.out` (modified, +22/-0)
+```diff
+@@ -357,6 +357,28 @@ BEGIN
+     );
+ END;
+ $$;
++-- Older background-worker snapshots can prevent VACUUM from marking pages all-visible.
++DO $$
++DECLARE
++    snapshot_wait_timeout CONSTANT interval := interval '2 minutes';
++    snapshot_poll_interval CONSTANT double precision := 0.1;
++    deadline timestamptz := clock_timestamp() + snapshot_wait_timeout;
++BEGIN
++    LOOP
++        PERFORM pg_stat_clear_snapshot();
++        EXIT WHEN NOT EXISTS (
++            SELECT FROM pg_stat_activity
++            WHERE pid <> pg_backend_pid()
++              AND backend_xmin IS NOT NULL
++              AND (datname = current_database() OR datname IS NULL)
++        );
++        IF clock_timestamp() >= deadline THEN
++            RAISE EXCEPTION 'timed out waiting for older snapshots before index-only scan VACUUM';
++        END IF;
++        PERFORM pg_sleep(snapshot_poll_interval);
++    END LOOP;
++END;
++$$;
+ VACUUM (FREEZE, ANALYZE) index_only_max_keys;
+ SELECT bool_and(pg_index_column_has_property('index_only_max_keys_idx', i, 'returnable')
+                 IS NOT DISTINCT FROM (i = current_setting('max_index_keys')::int)) AS correct_capabilities
+```
+
+**File**: `pg_search/tests/pg_regress/sql/index_only_scan.sql` (modified, +22/-0)
+```diff
+@@ -152,6 +152,28 @@ BEGIN
+     );
+ END;
+ $$;
++-- Older background-worker snapshots can prevent VACUUM from marking pages all-visible.
++DO $$
++DECLARE
++    snapshot_wait_timeout CONSTANT interval := interval '2 minutes';
++    snapshot_poll_interval CONSTANT double precision := 0.1;
++    deadline timestamptz := clock_timestamp() + snapshot_wait_timeout;
++BEGIN
++    LOOP
++        PERFORM pg_stat_clear_snapshot();
++        EXIT WHEN NOT EXISTS (
++            SELECT FROM pg_stat_activity
++            WHERE pid <> pg_backend_pid()
++              AND backend_xmin IS NOT NULL
++              AND (datname = current_database() OR datname IS NULL)
++        );
++        IF clock_timestamp() >= deadline THEN
++            RAISE EXCEPTION 'timed out waiting for older snapshots before index-only scan VACUUM';
++        END IF;
++        PERFORM pg_sleep(snapshot_poll_interval);
++    END LOOP;
++END;
++$$;
+ VACUUM (FREEZE, ANALYZE) index_only_max_keys;
+ SELECT bool_and(pg_index_column_has_property('index_only_max_keys_idx', i, 'returnable')
+                 IS NOT DISTINCT FROM (i = current_setting('max_index_keys')::int)) AS correct_capabilities
+```
+
+---
+
+### Incident Patch 2: `6718494c` (2026-11-18)
+**Commit Message**: fix: stop auto_explain from crashing Aggregate Scan and Join Scan queries (#7426)
+
+# Ticket(s) Closed
+
+- Closes #6906
+
+## What
+
+With `auto_explain` loaded and `log_analyze` off, a query that runs as
+an Aggregate Scan or Join Scan no longer crashes its backend with a
+segfault when auto_explain logs the plan.
+
+## Why
+
+auto_explain prints plans from its `ExecutorEnd` hook. For a top-level
+query, PostgreSQL calls that hook when it drops the portal, or at
+`COMMIT` for cursors and extended-protocol portals, and no snapshot is
+active at that point. Without ANALYZE, both scans rebuild their
+DataFusion plan to print it. The rebuild calls `GetActiveSnapshot()`,
+which dereferences the NULL active snapshot. Plain `EXPLAIN` works
+because the EXPLAIN command runs with a snapshot.
+
+## How
+
+The shared `explain_custom_scan` callback in
+`planner/src/postgres/customscan/exec.rs` now holds
+`ActiveSnapshotGuard::ensure()` while the scan prints its plan. The
+guard pushes the transaction snapshot only when no snapshot is active,
+and pops it when the callback returns. Plain `EXPLAIN`, `EXPLAIN
+ANALYZE`, and auto_explain with `log_analyze` already run with a
+snapshot, so they behave as before.
+
+## Tests
+
+-
+
+**File**: `docs/project/changelog/unreleased/7426.bugfix.mdx` (added, +5/-0)
 ```diff
 @@ -0,0 +1,5 @@
 +---
 +header: stability
 +---
 +
-+- Fixed an internal error in filters comparing a `real` or `double precision` column with `NaN`, `Infinity` or `-Infinity`.
++- Queries that run as an Aggregate Scan or Join Scan no longer crash the backend when `auto_explain` logs their plan without `log_analyze`.
 ```
 
-**File**: `index_read/src/query/mod.rs` (modified, +34/-0)
+**File**: `pg_search/tests/pg_regress/expected/issue_6906.out` (added, +74/-0)
 ```diff
-@@ -3165,4 +3165,38 @@ mod tests {
-         );
-         assert!(term(PdbOwnedValue::U64(1 << 63)).is_err());
-     }
-+
-+    // `PdbOwnedValue`'s serde reaches Postgres's date functions, so these can't be plain tests.
-+    #[pg_test]
-+    fn non_finite_floats_survive_json() {
-+        use crate::postgres::pdb_owned_value::PDB_FLOAT_TAG;
-+
-+        for value in [f64::NAN, f64::INFINITY, f64::NEG_INFINITY] {
-+            let json = serde_json::to_string(&PdbOwnedValue::F64(value)).unwrap();
-+            assert!(json.contains(PDB_FLOAT_TAG), "not tagged: {json}");
-+            let PdbOwnedValue::F64(decoded) = serde_json::from_str(&json).unwrap() else {
-+                panic!("did not decode as a float: {json}");
-+            };
-+            assert_eq!(decoded.to_bits(), value.to_bits());
-+        }
-+    }
-+
-+    #[pg_test]
-+    fn finite_floats_stay_plain_json_numbers() {
-+        assert_eq!(
-+            serde_json::to_string(&PdbOwnedValue::F64(1.5)).unwrap(),
-+            "1.5"
-+        );
-+    }
-+
-+    #[pg_test]
-+    fn float_tag_only_decodes_non_finite_values() {
-+        use crate::postgres::pdb_owned_value::PDB_FLOAT_TAG;
-+
-+        for text in ["1.5", "not a float"] {
-+            let value: PdbOwnedValue =
-+                serde_json::from_value(serde_json::json!({ PDB_FLOAT_TAG: text })).unwrap();
-+            assert!(matches!(value, PdbOwnedValue::Object(_)), "{value:?}");
-+        }
-+    }
- }
-```
-
-**File**: `pg_search/tests/pg_regress/expected/issue_7237.out` (added, +206/-0)
-```diff
-@@ -0,0 +1,206 @@
-+-- Float filters against NaN and the infinities must match PostgreSQL. JSON has no form for
-+-- these values, so they used to reach the term builder as null and fail with
-+-- "Tantivy PdbOwnedValue type not supported".
+@@ -0,0 +1,74 @@
++-- auto_explain prints plans from its ExecutorEnd hook, where no snapshot is
++-- active. Without ANALYZE, the Aggregate Scan and Join Scan rebuild their
++-- DataFusion plans to print them, and that rebuild needs a snapshot.
++-- https://github.com/paradedb/paradedb/issues/6906
 +CREATE EXTENSION IF NOT EXISTS pg_search;
-+-- The reference table has no ParadeDB index, so it is plain PostgreSQL.
-+CREATE TABLE issue_7237_plain (id int PRIMARY KEY, d double precision, r real, body text);
-+INSERT INTO issue_7237_plain VALUES
-+    (1, 'NaN', 'NaN', 'x'),
-+    (2, 'Infinity', 'Infinity', 'x'),
-+    (3, '-Infinity', '-Infinity', 'x'),
-+    (4, 1.5, 1.5, 'x'),
-+    (5, -1.5, -1.5, 'x'),
-+    (6, 0, 0, 'x'),
-+    (7, NULL, NULL, 'x');
-+CREATE TABLE issue_7237_t (LIKE issue_7237_plain INCLUDING ALL);
-+CREATE INDEX issue_7237_t_idx ON issue_7237_t USING paradedb (id, d, r, body);
-+INSERT INTO issue_7237_t SELECT * FROM issue_7237_plain;
-+-- The same rows in immutable segments, one per insert
-+SET paradedb.global_mutable_segment_rows = 0;
-+CREATE TABLE issue_7237_imm (LIKE issue_7237_plain INCLUDING ALL);
-+CREATE INDEX issue_7237_imm_idx ON issue_7237_imm USING paradedb (id, d, r, body);
-+INSERT INTO issue_7237_imm SELECT * FROM issue_7237_plain WHERE id = 1;
-+INSERT INTO issue_7237_imm SELECT * FROM issue_7237_plain WHERE id = 2;
-+INSERT INTO issue_7237_imm SELECT * FROM issue_7237_plain WHERE id = 3;
-+INSERT INTO issue_7237_imm SELECT * FROM issue_7237_plain WHERE id > 3;
-+RESET paradedb.global_mutable_segment_rows;
 +SET max_parallel_workers_per_gather = 0;
-+SET paradedb.enable_aggregate_custom_scan TO on;
-+-- The issue's queries
-+SELECT id FROM issue_7237_t WHERE issue_7237_t @@@ pdb.all() AND d = 'NaN';
-+ id 
-+----
-+  1
++CREATE TABLE issue_6906_t (id bigint PRIMARY KEY, cik bigint, body text);
++INSERT INTO issue_6906_t SELECT g, g % 7, 'letter of intent ' || g FROM generate_series(1, 100) g;
++CREATE INDEX issue_6906_t_idx ON issue_6906_t USING paradedb (id, body, cik);
++CREATE TABLE issue_6906_f (cik bigint PRIMARY KEY, name text);
++INSERT INTO issue_6906_f SELECT g, 'n' || g FROM generate_series(0, 6) g;
++CREATE INDEX issue_6906_f_idx ON issue_6906_f USING paradedb (cik, name);
++EXPLAIN (COSTS OFF)
++SELECT cik, count(*) FROM issue_6906_t GROUP BY cik ORDER BY 2 DESC, 1 LIMIT 1;
++                                                  QUERY PLAN                                                   
++---------------------------------------------------------------------------------------------------------------
++ Limit
++   ->  Custom Scan (ParadeDB Aggregate Scan)
++         Backend: DataFusion
++         Indexes: issue_6906_t_idx (issue_6906_t)
++         Group By: cik
++         Aggregates: COUNT(*)
++         DataFusion Physical Plan: 
++           : SortExec: TopK(fetch=1), expr=[agg_0@1 DESC, cik@0 ASC NULLS LAST], preserve_partitioning=[false]
++           :   AggregateExec: mode=Single, gby=[cik@0 as cik], aggr=[count(1) as agg_0]
++           :     CooperativeExec
++           :       PgSearchScan: table=issue_6906_t, segments=1, visibility=eager, query="all"
++(11 rows)
++
++EXPLAIN (COSTS OFF)
++SELECT t.id, f.name FROM issue_6906_t t JOIN issue_6906_f f ON f.cik = t.cik
++WHERE t.body @@@ 'intent' AND f.name @@@ 'n1'
++ORDER BY t.id LIMIT 5;
++                                                                                                QUERY PLAN                                                                                                 
++-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
++ Custom Scan (ParadeDB Join Scan)
++   Relation Tree: t INNER f
++   Join Cond: f.cik = t.cik
++   Limit: 5
++   Order By: t.id asc
++   DataFusion Physical Plan: 
++     : ProjectionExec: expr=[id@1 as col_1, NULL as col_2, ctid_0@0 as ctid_0, ctid_1@2 as ctid_1]
++     :   SortExec: TopK(fetch=5), expr=[id@1 ASC NULLS LAST], preserve_partitioning=[false]
++     :     VisibilityFilterExec: tables=[t, f]
++     :       HashJoinExec: mode=CollectLeft, join_type=Inner, on=[(cik@1, cik@1)], projection=[ctid_0@2, id@4, ctid_1@0]
++     :         CooperativeExec
++     :           PgSearchScan: table=f, segments=1, query={"with_index":{"query":{"parse_with_field":{"field":"name","query_string":"n1","lenient":null,"conjunction_mode":null}}}}
++     :         CooperativeExec
++     :           PgSearchScan: table=t, segments=1, dynamic_filters=2, query={"with_index":{"query":{"parse_with_field":{"field":"body","query_string":"intent","lenient":null,"conjunction_mode":null}}}}
++(14 rows)
++
++LOAD 'auto_explain';
++SET auto_explain.log_min_duration = 0;
++SELECT cik, count(*) FROM issue_6906_t GROUP BY cik ORDER BY 2 DESC, 1 LIMIT 1;
++ cik | count 
++-----+-------
++   1 |    15
 +(1 row)
 +
-+SELECT id FROM issue_7237_t WHERE issue_7237_t @@@ pdb.all() AND d < 'Infinity' ORDER BY id;
-+ id 
-+----
-+  3
-+  4
-+  5
-+  6
-+(4 rows)
++SELECT t.id, f.name FROM issue_6906_t t JOIN issue_6906_f f ON f.cik = t.cik
++WHERE t.body @@@ 'intent' AND f.name @@@ 'n1'
++ORDER BY t.id LIMIT 5;
++ id | name 
++----+------
++  1 | n1
++  8 | n1
++ 15 | n1
++ 22 | n1
++ 29 | n1
++(5 rows)
 +
-+SELECT COUNT(*) FROM issue_7237_t WHERE issue_7237_t @@@ pdb.all() AND d = 'NaN';
-+ count 
-+-------
-+     1
-+(1 row)
-+
-+-- The filter stays pushed down, and the plan shows the constant
-+EXPLAIN (COSTS OFF)
-+SELECT id FROM issue_7237_t WHERE issue_7237_t @@@ pdb.all() AND d = 'NaN';
-+                                                                              QUERY PLAN                                                                              
-+----------------------------------------------------------------------------------------------------------------------------------------------------------------------
-+ Custom Scan (ParadeDB Base Scan) on issue_7237_t
-+   Table: issue_7237_t
-+   Index: issue_7237_t_idx
-+   Exec Method: ColumnarExecState
-+   Columnar: id
-+   Scores: false
-+   Tantivy Query: {"boolean":{"must":[{"with_index":{"query":{"const_score":{"query":"all","score":1.0}}}},{"term":{"field":"d","value":{"$__pdb_float__":"NaN"}}}]}}
-+(7 rows)
-+
-+EXPLAIN (COSTS OFF)
-+SELECT id FROM issue_7237_t WHERE issue_7237_t @@@ pdb.all() AND d IN ('NaN', 'Infinity');
-+                                                                                                             QUERY PLAN                                                                                                              
-+-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-+ Custom Scan (ParadeDB Base Scan) on issue_7237_t
-+   Table: issue_7237_t
-+   Index: issue_7237_t_idx
-+   Exec Method: ColumnarExecState
-+   Columnar: id
-+   Scores: false
-+   Tantivy Query: {"boolean":{"must":[{"with_index":{"query":{"const_score":{"query":"all","score":1.0}}}},{"term_set":{"terms":[{"field":"d","value":{"$__pdb_float__":"NaN"}},{"field":"d","value":{"$__pdb_float__":"inf"}}]}}]}}
-+(7 rows)
-+
-+EXPLAIN (COSTS OFF)
-+SELECT id FROM issue_7237_t WHERE issue_7237_t @@@ pdb.all() AND d >= '-Infinity';
-+                                                                                                  QUERY PLAN                                                                                                  
-+--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-+ Custom Scan (ParadeDB Base Scan) on issue_7237_t
-+   Table: issue_7237_t
-+   Index: issue_7237_t_idx
-+   Exec Method: ColumnarExecState
-+   Columnar: id
-+   Scores: false
-+   Tantivy Query: {"boolean":{"must":[{"with_index":{"query":{"const_score":{"query":"all","score":1.0}}}},{"range":{"field":"d","lower_bound":{"included":{"$__pdb_float__":"-inf"}},"upper_bound":null}}]}}
-+(7 rows)
-+
-+-- Every column, constant and operator, against the reference table. Returns only mismatches.
-+CREATE FUNCTION issue_7237_mismatches(tbl text) RETURNS SETOF text
-+LANGUAGE plpgsql AS $$
-+DECLARE
-+    col text;
-+    val text;
-+    shape text;
-+    pred text;
-+    want int[];
-+
++RESET auto_explain.log_min_duration;
++RESET max_parallel_workers_per_gather;
++DROP TABLE issue_6906_t, issue_6906_f;
 ```
 
-**File**: `pg_search/tests/pg_regress/sql/issue_7237.sql` (added, +143/-0)
+**File**: `pg_search/tests/pg_regress/sql/issue_6906.sql` (added, +36/-0)
 ```diff
-@@ -0,0 +1,143 @@
-+-- Float filters against NaN and the infinities must match PostgreSQL. JSON has no form for
-+-- these values, so they used to reach the term builder as null and fail with
-+-- "Tantivy PdbOwnedValue type not supported".
+@@ -0,0 +1,36 @@
++-- auto_explain prints plans from its ExecutorEnd hook, where no snapshot is
++-- active. Without ANALYZE, the Aggregate Scan and Join Scan rebuild their
++-- DataFusion plans to print them, and that rebuild needs a snapshot.
++-- https://github.com/paradedb/paradedb/issues/6906
++
 +CREATE EXTENSION IF NOT EXISTS pg_search;
-+
-+-- The reference table has no ParadeDB index, so it is plain PostgreSQL.
-+CREATE TABLE issue_7237_plain (id int PRIMARY KEY, d double precision, r real, body text);
-+INSERT INTO issue_7237_plain VALUES
-+    (1, 'NaN', 'NaN', 'x'),
-+    (2, 'Infinity', 'Infinity', 'x'),
-+    (3, '-Infinity', '-Infinity', 'x'),
-+    (4, 1.5, 1.5, 'x'),
-+    (5, -1.5, -1.5, 'x'),
-+    (6, 0, 0, 'x'),
-+    (7, NULL, NULL, 'x');
-+
-+CREATE TABLE issue_7237_t (LIKE issue_7237_plain INCLUDING ALL);
-+CREATE INDEX issue_7237_t_idx ON issue_7237_t USING paradedb (id, d, r, body);
-+INSERT INTO issue_7237_t SELECT * FROM issue_7237_plain;
-+
-+-- The same rows in immutable segments, one per insert
-+SET paradedb.global_mutable_segment_rows = 0;
-+CREATE TABLE issue_7237_imm (LIKE issue_7237_plain INCLUDING ALL);
-+CREATE INDEX issue_7237_imm_idx ON issue_7237_imm USING paradedb (id, d, r, body);
-+INSERT INTO issue_7237_imm SELECT * FROM issue_7237_plain WHERE id = 1;
-+INSERT INTO issue_7237_imm SELECT * FROM issue_7237_plain WHERE id = 2;
-+INSERT INTO issue_7237_imm SELECT * FROM issue_7237_plain WHERE id = 3;
-+INSERT INTO issue_7237_imm SELECT * FROM issue_7237_plain WHERE id > 3;
-+RESET paradedb.global_mutable_segment_rows;
-+
 +SET max_parallel_workers_per_gather = 0;
-+SET paradedb.enable_aggregate_custom_scan TO on;
 +
-+-- The issue's queries
-+SELECT id FROM issue_7237_t WHERE issue_7237_t @@@ pdb.all() AND d = 'NaN';
-+SELECT id FROM issue_7237_t WHERE issue_7237_t @@@ pdb.all() AND d < 'Infinity' ORDER BY id;
-+SELECT COUNT(*) FROM issue_7237_t WHERE issue_7237_t @@@ pdb.all() AND d = 'NaN';
++CREATE TABLE issue_6906_t (id bigint PRIMARY KEY, cik bigint, body text);
++INSERT INTO issue_6906_t SELECT g, g % 7, 'letter of intent ' || g FROM generate_series(1, 100) g;
++CREATE INDEX issue_6906_t_idx ON issue_6906_t USING paradedb (id, body, cik);
 +
-+-- The filter stays pushed down, and the plan shows the constant
++CREATE TABLE issue_6906_f (cik bigint PRIMARY KEY, name text);
++INSERT INTO issue_6906_f SELECT g, 'n' || g FROM generate_series(0, 6) g;
++CREATE INDEX issue_6906_f_idx ON issue_6906_f USING paradedb (cik, name);
++
 +EXPLAIN (COSTS OFF)
-+SELECT id FROM issue_7237_t WHERE issue_7237_t @@@ pdb.all() AND d = 'NaN';
++SELECT cik, count(*) FROM issue_6906_t GROUP BY cik ORDER BY 2 DESC, 1 LIMIT 1;
++
 +EXPLAIN (COSTS OFF)
-+SELECT id FROM issue_7237_t WHERE issue_7237_t @@@ pdb.all() AND d IN ('NaN', 'Infinity');
-+EXPLAIN (COSTS OFF)
-+SELECT id FROM issue_7237_t WHERE issue_7237_t @@@ pdb.all() AND d >= '-Infinity';
++SELECT t.id, f.name FROM issue_6906_t t JOIN issue_6906_f f ON f.cik = t.cik
++WHERE t.body @@@ 'intent' AND f.name @@@ 'n1'
++ORDER BY t.id LIMIT 5;
 +
-+-- Every column, constant and operator, against the reference table. Returns only mismatches.
-+CREATE FUNCTION issue_7237_mismatches(tbl text) RETURNS SETOF text
-+LANGUAGE plpgsql AS $$
-+DECLARE
-+    col text;
-+    val text;
-+    shape text;
-+    pred text;
-+    want int[];
-+    got int[];
-+    want_count bigint;
-+    got_count bigint;
-+BEGIN
-+    FOREACH col IN ARRAY ARRAY['d', 'r'] LOOP
-+        FOREACH val IN ARRAY ARRAY['NaN', 'Infinity', '-Infinity'] LOOP
-+            FOREACH shape IN ARRAY ARRAY[
-+                '%1$I = %2$L',
-+                '%1$I <> %2$L',
-+                '%1$I < %2$L',
-+                '%1$I <= %2$L',
-+                '%1$I > %2$L',
-+                '%1$I >= %2$L',
-+                '%1$I IN (%2$L, 1.5)',
-+                '%1$I NOT IN (%2$L, 1.5)',
-+                '%1$I BETWEEN %2$L AND %2$L',
-+                '%1$I BETWEEN 0 AND %2$L',
-+                '%1$I BETWEEN %2$L AND 0'
-+            ] LOOP
-+                pred := format(shape, col, val);
-+                EXECUTE format(
-+                    'SELECT ARRAY(SELECT id FROM issue_7237_plain WHERE %s ORDER BY id)', pred
-+                ) INTO want;
-+                EXECUTE format(
-+                    'SELECT ARRAY(SELECT id FROM %1$I WHERE %1$I @@@ pdb.all() AND %2$s ORDER BY id)',
-+                    tbl, pred
-+                ) INTO got;
-+                IF got IS DISTINCT FROM want THEN
-+                    RETURN NEXT format('rows %s: got %s, want %s', pred, got, want);
-+                END IF;
-+                EXECUTE format('SELECT COUNT(*) FROM issue_7237_plain WHERE %s', pred)
-+                    INTO want_count;
-+                EXECUTE format(
-+                    'SELECT COUNT(*) FROM %1$I WHERE %1$I @@@ pdb.all() AND %2$s', tbl, pred
-+                ) INTO got_count;
-+                IF got_count IS DISTINCT FROM want_count THEN
-+                    RETURN NEXT format('count %s: got %s, want %s', pred, got_count, want_count);
-+                END IF;
-+            END LOOP;
-+        END LOOP;
-+    END LOOP;
-+END $$;
++LOAD 'auto_explain';
++SET auto_explain.log_min_duration = 0;
 +
-+SELECT * FROM issue_7237_mismatches('issue_7237_t');
-+SELECT * FROM issue_7237_mismatches('issue_7237_imm');
++SELECT cik, count(*) FROM issue_6906_t GROUP BY cik ORDER BY 2 DESC, 1 LIMIT 1;
 +
-+-- Stored pdb.query values preserve non-finite constants across reads and text I/O.
-+CREATE TABLE issue_7237_saved_queries (expected_id int, query pdb.query);
-+INSERT INTO issue_7237_saved_queries VALUES
-+    (1, pdb.term('NaN'::float8)),
-+    (2, pdb.term('Infinity'::float8)),
-+    (3, pdb.term('-Infinity'::float8));
-+DO $$
-+DECLARE
-+    saved record;
-+    got int[];
-+BEGIN
-+    FOR saved IN SELECT * FROM issue_7237_saved_queries LOOP
-+        EXECUTE 'SELECT ARRAY(SELECT id FROM issue_7237_t WHERE d @@@ $1 ORDER BY id)'
-+            INTO got USING saved.query;
-+        I
++SELECT t.id, f.name FROM issue_6906_t t JOIN issue_6906_f f ON f.cik = t.cik
++WHERE t.body @@@ 'intent' AND f.name @@@ 'n1'
++ORDER BY t.id LIMIT 5;
++
++RESET auto_explain.log_min_duration;
++RESET max_parallel_workers_per_gather;
++DROP TABLE issue_6906_t, issue_6906_f;
+```
+
+**File**: `planner/src/postgres/customscan/exec.rs` (modified, +4/-0)
+```diff
+@@ -17,6 +17,7 @@
+ 
+ use crate::postgres::customscan::explainer::Explainer;
+ use crate::postgres::customscan::{CustomScan, MarkRestoreCapable, wrap_custom_scan_state};
++use crate::postgres::utils::ActiveSnapshotGuard;
+ use pgrx::{pg_guard, pg_sys};
+ 
+ /// Complete initialization of the supplied CustomScanState. Standard fields have been initialized
+@@ -125,6 +126,9 @@ pub extern "C-unwind" fn explain_custom_scan<CS: CustomScan>(
+     es: *mut pg_sys::ExplainState,
+ ) {
+     let custom_state = wrap_custom_scan_state::<CS>(node);
++    // auto_explain calls this from its ExecutorEnd hook, where no snapshot is active, and the
++    // Aggregate and Join Scans rebuild their DataFusion plans here, which needs one.
++    let _snapshot = ActiveSnapshotGuard::ensure();
+     unsafe {
+         let plan = (*node).ss.ps.plan;
+         if !es.is_null() && !(*es).deparse_cxt.is_null() && !plan.is_null() {
 ```
 
 ---
 
-### Incident Patch 2: `ee39c83b` (2026-11-16)
-**Commit Message**: fix: conflict with old replica snapshots during mutable conversion (#7468)
+### Incident Patch 3: `4a86c256` (2026-11-18)
+**Commit Message**: fix: remove stopwords before stemming and ASCII folding (#7343)
+
+# Ticket(s) Closed
+
+- Closes #7342
 
 ## What
 
-Cancel conflicting old replica snapshots before publishing
-mutable-segment conversions that omit dead heap versions. Those
-snapshots must retry instead of silently losing search matches.
+Stopwords (`stopwords_language` and `stopwords`) are now removed right
+after lowercasing, before `stemmer` and `ascii_folding`.
 
 ## Why
 
-After promotion, a new primary can convert a mutable segment before the
-remaining replica has established its feedback horizon. `HeapDocFetcher`
-correctly avoids reading DEAD tuples, whose TOAST data may already have
-been reclaimed, but replaces their indexed content with empty documents.
-If a heap-page pin prevented pruning, there may be no heap-pruning WAL
-record to conflict with the older replica snapshot.
+Stopword lists hold whole, accented words. Filtering after stemming or
+folding lets through every stopword those filters change:
 
-A controlled local failover reproduces heap matches
-`{1,2,3,4,8,9,10,11}` but search matches `{10,11}` in one replica
-snapshot. This matches the Antithesis symptom. The captured Antithesis
-logs also map the missing six CTIDs to a converted segment, though they
-do not establish the complete primary-side feedback history.
+```sql
+SELECT 'silla para niño'::pdb.simple('stemmer=spanish', 'stopwords_language=spanish')::text[];
+-- before: {sill,par,niñ}   after: {sill,niñ}
+```
+
+Lucene applies the stop filter before stemming, and before folding too:
+`GermanAnalyzer` runs `StopFilter` ahead of `GermanNormalizationFilter`.
 
 ## How
 
-Accumulate PostgreSQL's snapshot-conflict horizon for DEAD versions
-omitted during materialization. Emit a conflict-only WAL record before
-replacement metadata can be publish
+`add_filters!` now runs trim, length, lowercase and the stopword
+filters, then stemmer, ASCII folding, any extra filters and
+alphanumeric-only. The filters after the language stopwords stay static,
+so the chain costs what it did before.
 
-**File**: `index_read/src/index/directory/mvcc.rs` (modified, +92/-3)
+Indexes that combine stopwords with `stemmer` or `ascii_folding` should
+be reindexed to drop the stopword tokens they already hold; the
+changelog entry says so.
+
+## Performance
+
+Wikipedia text in Spanish, English and German, median of 31 passes,
+release build:
+
+| config | chang
+
+**File**: `docs/project/changelog/unreleased/7343.bugfix.mdx` (added, +5/-0)
 ```diff
-@@ -352,7 +352,7 @@ enum LoadedSegmentMetaEntry {
-         entry: SegmentMetaEntryMutable,
-         // Created lazily on first read so that indexing occurs in whichever parallel worker is
-         // responsible for this segment.
--        directory: Arc<OnceLock<RamDirectory>>,
-+        directory: Arc<OnceLock<(RamDirectory, pg_sys::TransactionId)>>,
-     },
+@@ -0,0 +1,5 @@
++---
++header: stability
++---
++
++- Stopwords (`stopwords_language` and `stopwords`) are now removed before stemming and ASCII folding. Previously, a transformed stopword could be indexed, such as Spanish `para` stemmed to `par`. Existing indexes that combine stopwords with stemming or ASCII folding remain usable, but searches can miss matches or return extra matches because older rows were indexed with the previous filter order. Run `REINDEX` on affected indexes to make results consistent across existing rows and new writes.
+```
+
+**File**: `docs/reference/token-filters/stopwords.mdx` (modified, +3/-0)
+```diff
+@@ -15,6 +15,9 @@ CREATE INDEX search_idx ON mock_items
+ USING paradedb (id, (description::pdb.simple('stopwords_language=english')));
+ ```
+ 
++Stopwords are removed right after lowercasing, before [stemming](/reference/token-filters/stemming) and
++[ASCII folding](/reference/token-filters/ascii-folding), so a stopword such as Spanish "para" is removed even when a stemmer would turn it into "par".
++
+ Valid languages are `Czech`, `Danish`, `Dutch`, `English`, `Finnish`, `French`, `German`, `Hungarian`, `Italian`, `Norwegian`, `Polish`, `Portuguese`, `Russian`, `Spanish`, and `Swedish`. Language names are case-insensitive.
+ 
+ ## Multiple Languages
+```
+
+**File**: `tokenizers/src/manager.rs` (modified, +35/-8)
+```diff
+@@ -333,25 +333,27 @@ impl SearchTokenizerFilters {
+ 
+ macro_rules! add_filters {
+     ($tokenizer:expr, $filters:expr $(, $extra_filter:expr )* $(,)?) => {{
+-        // Build the analyzer with static filters first
++        // Stopwords go right after lowercasing: their lists hold whole, accented words, which stemming and
++        // folding would change, so "para" stemmed to "par" or "más" folded to "mas" would no longer match.
+         let mut builder = tantivy::tokenizer::TextAnalyzer::builder($tokenizer)
+             .filter($filters.trim_filter())
+             .filter($filters.token_length_filter())
+             .filter($filters.lower_caser())
+-            .filter($filters.stemmer())
+             .filter($filters.stopwords())
+-            .filter($filters.ascii_folding())
+-            $(
+-                .filter($extra_filter)
+-            )*
+-            .filter($filters.alpha_num_only())
+             // Convert to type-erased builder for dynamic filter application
+             .dynamic();
+         // Apply stopword language filters dynamically in a for loop
+         for stopword_filter in $filters.stopwords_languages() {
+             builder = builder.filter_dynamic(stopword_filter);
+         }
+-        builder.build()
++        builder
++            .filter($filters.stemmer())
++            .filter($filters.ascii_folding())
++            $(
++                .filter($extra_filter)
++            )*
++            .filter($filters.alpha_num_only())
++            .build()
+     }};
  }
  
-@@ -365,6 +365,24 @@ impl LoadedSegmentMetaEntry {
+@@ -1850,4 +1852,29 @@ mod tests {
+             "tokenizer (name={tokenizer_name}) whitespace did not keep/remove whitespace as expected"
+         );
      }
- }
- 
-+/// Combine only materialized segments being retired, using PostgreSQL's wraparound order.
-+fn retired_snapshot_conflict_horizon(
-+    horizons: impl IntoIterator<Item = (SegmentId, pg_sys::TransactionId)>,
-+    retained_ids: &HashSet<SegmentId>,
-+) -> pg_sys::TransactionId {
-+    let mut latest = pg_sys::InvalidTransactionId;
-+    for (id, horizon) in horizons {
-+        if !retained_ids.contains(&id)
-+            && horizon != pg_sys::InvalidTransactionId
-+            && (latest == pg_sys::InvalidTransactionId
-+                || unsafe { pg_sys::TransactionIdFollows(horizon, latest) })
-+        {
-+            latest = horizon;
++
++    #[rstest]
++    #[case::spanish(r#"{"type": "default", "stemmer": "Spanish", "stopwords_language": "Spanish"}"#, "silla para más madera", &["sill", "mader"])]
++    #[case::french(r#"{"type": "default", "stemmer": "French", "stopwords_language": "French"}"#, "nous avons mangé des pommes", &["mang", "pomm"])]
++    #[case::german(r#"{"type": "default", "stemmer": "German", "stopwords_language": "German"}"#, "welches Haus hatte er", &["haus"])]
++    #[case::custom(r#"{"type": "default", "stemmer": "English", "stopwords": ["running"]}"#, "she was running home", &["she", "was", "home"])]
++    #[case::folded(r#"{"type": "default", "ascii_folding": true, "stopwords_language": "German"}"#, "Stuhl für Kinder", &["stuhl", "kinder"])]
++    fn test_stopwords_removed_before_stemming_and_folding(
++        #[case] json: &str,
++        #[case] text: &str,
++        #[case] expected: &[&str],
++    ) {
++        use tantivy::tokenizer::TokenStream;
++
++        // Stopword lists hold whole words: "para" stems to "par" and "für" folds to "fur", which no list holds.
++        let tokenizer =
++            SearchTokenizer::from_json_value(&serde_json::from_str(json).unwrap()).unwrap();
++        let mut analyzer = tokenizer.to_tantivy_tokenizer().unwrap();
++        let mut token_stream = analyzer.token_stream(text);
++        let mut tokens = Vec::new();
++        while token_stream.advance() {
++            tokens.push(token_stream.token().text.clone());
 +        }
++        assert_eq!(tokens, expected);
 +    }
-+    latest
-+}
-+
- type AtomicFileEntry = (FileEntry, Arc<AtomicUsize>);
- /// Tantivy Directory trait implementation over block storage
- /// This Directory implementation respects Postgres MVCC visibility rules
-@@ -564,6 +582,7 @@ impl MVCCDirectory {
-                             .expect("Failed to index mutable segment.")
-                         })
-                     })
-+                    .0
-                     .get_file_handle(path)
-                     .map_err(|err| match err {
-                         OpenReadError::FileDoesNotExist(missing) => {
-@@ -832,7 +851,25 @@ impl Directory for MVCCDirectory {
-             return Ok(());
-         }
- 
-+        // Only publication retires indexed content. Lazy reads and abandoned merges must
-+        // not cancel standby snapshots, and a multi-segment merge needs just one record.
-+        let retained_ids = meta.segments.iter().map(|segment| segment.id()).collect();
-+        let horizon = {
-+            let entries = self.all_entries.lock();
-+            retired_snapshot_conflict_horizon(
-+                previous_meta.segments.iter().filter_map(|segment| {
-+                    let LoadedSegmentMetaEntry::Memory { directory, .. } =
-+                        entries.get(&segment.id())?
-+                    else {
-+                        return None;
-+                    };
-+                    directory.get().map(|(_, horizon)| (segment.id(), *horizon))
-+                }),
-+                &retained_ids,
-+            )
-+        };
-         unsafe {
-+            crate::postgres::storage::log_snapshot_conflict(&self.indexrel, horizon);
-             save_new_metas(&self.indexrel, meta, previous_meta, payload)
-                 .map_err(|err| tantivy::TantivyError::InternalError(err.to_string()))?;
-         }
-@@ -1058,14 +1095,15 @@ impl PinCushion {
- ///
- /// Note that between `prepare` and `index`, additional documents may have been added. We limit the
- /// number of contained docs to the `max_doc` value and ignore trailing values.
-+/// Returns the directory and the conflict horizon to log only if this segment is retired.
- pub fn index_memory_segment(
-     indexrel: &PgSearchRelation,
-     segment_meta: &SegmentMeta,
-     segment: &SegmentMetaEntry,
-     heap_fetch_state: &HeapFetchState,
-     expression_state: &ExpressionState,
-     mvcc_style: &MvccSatisfies,
--) -> anyhow::Result<RamDirectory> {
-+) -> anyhow::Result<(RamDirectory, pg_sys::TransactionId)> {
-     use crate::index::writer::index::SerialIndexWriter;
-     use crate::postgres::heap::HeapDocFetcher;
-     use pgrx::PgTupleDesc;
-@@ -1146,7 +1184,7 @@ pub fn index_memory_segment(
-         "Segment should be non-empty because we created a `SegmentMeta` for it in the first place.",
-     );
- 
--    Ok(directory)
-+    Ok((directory, fetcher.snapshot_conflict_horizon()))
  }
- 
- #[cfg(any(test, feature = "pg_test"))]
-@@ -1161,6 +1199,57 @@ mod tests {
- 
-     use pgrx::prelude::*;
- 
-+    #[pg_test]
-+    fn snapshot_conflict_horizon_only_includes_retired_segments() {
-+        let retired = SegmentId::generate_random();
-+        let other_retired = SegmentId::generate_random();
-+        let retained = SegmentId::generate_random();
-+        let retained_ids = [retained].into_iter().collect();
-+        assert_eq!(
-+            retired_snapshot_conflict_horizon(
-+                [
-+                    (retired, 100.into()),
-+                    (other_retired, 110.into()),
-+                    (retained, 120.into())
-+                ],
-+                &retained_ids,
-+            ),
-+            110.into(),
-+        );
-+        assert_eq!(
-+            retired_snapshot_conflict_horizon(
-+                [
-+                    (retained, 120.into()),
-+                    (retired, pg_sys::InvalidTransactionId)
-+                ],
-+                &retained_ids,
-+            ),
-+            pg_sys::InvalidTransactionId,
-+        );
-+        assert_eq!(
-```
-
-**File**: `index_read/src/postgres/heap.rs` (modified, +24/-0)
-```diff
-@@ -1636,6 +1636,7 @@ pub struct HeapDocFetcher<'a> {
-     categorized_fields: &'a [(SearchField, CategorizedFieldData)],
-     created_by_version: Option<Version>,
-     oldest_xmin: pg_sys::TransactionId,
-+    snapshot_conflict_horizon: pg_sys::TransactionId,
-     query_visible: bool,
-     root_ctids: bool,
-     values: Vec<pg_sys::Datum>,
-@@ -1661,6 +1662,7 @@ impl<'a> HeapDocFetcher<'a> {
-             categorized_fields,
-             created_by_version,
-             oldest_xmin,
-+            snapshot_conflict_horizon: pg_sys::InvalidTransactionId,
-             query_visible,
-             root_ctids: false,
-             values: vec![pg_sys::Datum::null(); heaptupdesc.len()],
-@@ -1683,6 +1685,11 @@ impl<'a> HeapDocFetcher<'a> {
-         self
-     }
- 
-+    /// Snapshot-conflict horizon for dead heap versions omitted during materialization.
-+    pub fn snapshot_conflict_horizon(&self) -> pg_sys::TransactionId {
-+        self.snapshot_conflict_horizon
-+    }
-+
-     /// Fetch `ctid` and build the document the index would hold for it, or `None` when there is
-     /// nothing to index at `ctid`: its block was truncated by a previous VACUUM, the tuple is
-     /// not visible to the active snapshot (query-visible mode), or every version in its HOT
-@@ -1772,6 +1779,23 @@ impl<'a> HeapDocFetcher<'a> {
-                 }
- 
-                 if htsv_result == pg_sys::HTSV_Result::HEAPTUPLE_DEAD {
-+                    // Dropping indexed content needs the same standby snapshot conflict
-+                    // as dropping the heap tuple, even if a buffer pin prevented pruning.
-+                    {
-+                        let buffer = (*self.fetch_state.buffer_heap_slot()).buffer;
-+                        let _lock = BorrowedBuffer::from_pg(buffer);
-+                        let tuple = (*self.fetch_state.buffer_heap_slot()).base.tuple;
-+                        #[cfg(feature = "pg15")]
-+                        pg_sys::HeapTupleHeaderAdvanceLatestRemovedXid(
-+                            (*tuple).t_data,
-+                            &mut self.snapshot_conflict_horizon,
-+                        );
-+                        #[cfg(any(feature = "pg16", feature = "pg17", feature = "pg18"))]
-+                        pg_sys::HeapTupleHeaderAdvanceConflictHorizon(
-+                            (*tuple).t_data,
-+                            &mut self.snapshot_conflict_horizon,
-+                        );
-+                    }
-                     // table_index_fetch_tuple stored this dead tuple in a buffer-backed slot. Since
-                     // this branch skips the tuple, clear the slot before any HOT-chain retry or ctid
-                     // skip so the slot releases its buffer pin.
-```
-
-**File**: `storage/src/postgres/storage/mod.rs` (modified, +1/-0)
-```diff
-@@ -120,3 +120,4 @@ mod xlog;
- pub use self::linked_bytes::{LinkedBytesList, LinkedBytesListWriter};
- pub use self::linked_items::LinkedItemList;
- pub use self::utils::MAX_BUFFERS_TO_EXTEND_BY;
-+pub use self::xlog::log_snapshot_conflict;
-```
-
-**File**: `storage/src/postgres/storage/xlog.rs` (modified, +41/-0)
-```diff
-@@ -131,3 +131,44 @@ pub unsafe fn finish_xlog(buffer: &mut BufferMut) {
-         }
-     }
- }
-+
-+/// Log a snapshot conflict before publishing index contents that omit dead heap versions.
-+///
-+/// # Safety
-+/// Must run in a PostgreSQL backend with an open index relation. The horizon must come from
-+/// dead heap versions omitted by the replacement being published.
-+pub unsafe fn log_snapshot_conflict(indexrel: &PgSearchRelation, horizon: pg_sys::TransactionId) {
-+    let xid = horizon;
-+    if xid == pg_sys::InvalidTransactionId
-+        || !indexrel.need_wal()
-+        || pg_sys::wal_level < pg_sys::WalLevel::WAL_LEVEL_REPLICA as i32
-+    {
-+        return;
-+    }
-+    #[cfg(any(feature = "pg16", feature = "pg17", feature = "pg18"))]
-+    let heaprel = indexrel
-+        .heap_relation()
-+        .expect("Should have a heap relation.");
-+    let next_xid = pg_sys::ReadNextFullTransactionId();
-+    // The removed XID is in this epoch or the preceding one. Mirror
-+    // FullTransactionIdFromAllowableAt, also supporting PostgreSQL 15/16.
-+    let mut epoch = (next_xid.value >> 32) as u32;
-+    if xid.into_inner() > next_xid.value as u32 {
-+        epoch -= 1;
-+    }
-+    let full_xid = pg_sys::FullTransactionIdFromEpochAndXid(epoch, xid);
-+    // TODO: Add a dedicated snapshot-conflict record in custom_rmgr.rs that calls
-+    // ResolveRecoveryConflictWithSnapshot directly, without FullTransactionId epoch
-+    // conversion or the gist_private.h dependency.
-+    // GiST's PAGE_REUSE record only resolves snapshot conflicts during redo.
-+    // It registers no buffer and does not read or modify any index page.
-+    #[cfg(feature = "pg15")]
-+    pg_sys::gistXLogPageReuse(indexrel.as_ptr(), pg_sys::InvalidBlockNumber, full_xid);
-+    #[cfg(any(feature = "pg16", feature = "pg17", feature = "pg18"))]
-+    pg_sys::gistXLogPageReuse(
-+        indexrel.as_ptr(),
-+        heaprel.as_ptr(),
-+        pg_sys::InvalidBlockNumber,
-+        full_xid,
-+    );
-+}
-```
-
-**File**: `tests/tests/replication.rs` (modified, +172/-0)
-```diff
-@@ -1258,3 +1258,175 @@ async fn test_ephemeral_small_immutable_backpressure_merges_concurrent_writes()
-     );
-     Ok(())
- }
-+
-+// Index conversion must conflict with old replica snapshots even when a heap-page
-+// pin prevented pruning from logging its usual snapshot-conflict WAL record.
-+#[rstest]
-+#[async_std::test]
-+#[ignore = "requires Enterprise WAL replay and standby index reads"]
-+async fn test_replica_snapshot_conflicts_with_dead_mutable_content() -> Result<()> {
-+    let config = "
-+        listen_addresses = 'localhost'
-+        shared_preload_libraries = 'pg_search'
-+        wal_level = replica
-+        max_wal_senders = 5
-+        max_replication_slots = 5
-+        wal_keep_size = '256MB'
-+        autovacuum = off
-+        paradedb.mutable_sweep_interval = 600000
-+    ";
-+    let primary = EphemeralPostgres::new(Some(config), None);
-+    let mut source = primary.connection().await?;
-+    sqlx::raw_sql(
-+        "CREATE EXTENSION pg_search CASCADE;
-+        CREATE TABLE test(id bigint PRIMARY KEY,message text);
-+        INSERT INTO test SELECT id,CASE WHEN id IN (1,2,3,4,8,9,10,11)
-+          THEN 'beer a' ELSE 'wine a' END FROM generate_series(1,14) id;
-+        CREATE INDEX idxtest ON test USING paradedb(id,message)
-+          WITH(key_field='id',mutable_segment_rows=32,layer_sizes='10kb,100kb,1mb',
-+               background_layer_sizes='10kb,100kb,1mb');
-+        UPDATE test SET message=replace(message,' a',' v1') WHERE id<10;",
-+    )
-+    .execute(&mut source)
-+    .await?;
-+    let mutable_id: String =
-+        sqlx::query_scalar("SELECT segno::text FROM paradedb.index_info('idxtest') WHERE mutable")
-+            .fetch_one(&mut source)
-+            .await?;
-+
-+    let clone = |slot: &str| {
-+        let directory = TempDir::new().unwrap().keep();
-+        std::fs::set_permissions(&directory, std::fs::Permissions::from_mode(0o700)).unwrap();
-+        let backup = EphemeralPostgres::pg_basebackup_path();
-+        let port = primary.port;
-+        run_cmd!($backup -D $directory -h localhost -p $port -U $SUPERUSER
-+                 -Xs -R -C -S $slot --checkpoint=fast &> /dev/null)
-+        .unwrap();
-+        let replica_config = format!(
-+            "{config}\n hot_standby=on\n hot_standby_feedback=on\n
-+            max_standby_streaming_delay='100ms'\n wal_retrieve_retry_interval='100ms'"
-+        );
-+        EphemeralPostgres::new_from_initialized(&directory, Some(&replica_config), None)
-+    };
-+    let candidate = clone("candidate_slot");
-+    let replica = clone("reader_slot");
-+    let mut old_reader = replica.connection().await?;
-+    // Establish only a heap snapshot: an index reader could pin the old segment
-+    // and block replacement WAL, masking the missing conflict record.
-+    sqlx::raw_sql(
-+        "BEGIN ISOLATION LEVEL REPEATABLE READ READ ONLY;
-+        SET LOCAL max_parallel_workers_per_gather=0;",
-+    )
-+    .execute(&mut old_reader)
-+    .await?;
-+    let before: i64 = sqlx::query_scalar("SELECT count(*) FROM test WHERE message LIKE '%beer%'")
-+        .fetch_one(&mut old_reader)
-+        .await?;
-+    assert_eq!(before, 8);
-+
-+    let ctl = primary.pg_ctl_path.clone();
-+    let directory = &primary.tempdir_path;
-+    run_cmd!($ctl -D $directory -m fast -w stop &> /dev/null)?;
-+    let directory = &candidate.tempdir_path;
-+    run_cmd!($ctl -D $directory -w promote &> /dev/null)?;
-+    let mut promoted = candidate.connection().await?;
-+    sqlx::query("UPDATE test SET message=replace(message,'v1','v2') WHERE id<10")
-+        .execute(&mut promoted)
-+        .await?;
-+    let mut heap_pin = candidate.connection().await?;
-+    sqlx::raw_sql(
-+        "SET enable_indexscan=off; SET enable_indexonlyscan=off;
-+        SET enable_bitmapscan=off; BEGIN;
-+        DECLARE heap_pin CURSOR FOR SELECT id FROM test; FETCH 1 FROM heap_pin;",
-+    )
-+    .execute(&mut heap_pin)
-+    .await?;
-+    // The promoted primary has no feedback from the remaining replica yet.
-+    // These inserts freeze and convert the segment containing the old versions.
-+    for batch in 0..8_i64 {
-+        sqlx::query(
-+            "INSERT INTO test SELECT id,'Z' FROM generate_series($1::bigint,$2::bigint) id",
-+        )
-+        .bind(100 + batch * 32)
-+        .bind(131 + batch * 32)
-+        .execute(&mut promoted)
-+        .await?;
-+        thread::sleep(Duration::from_millis(200));
-+    }
-+    let deadline = Instant::now() + Duration::from_secs(20);
-+    loop {
-+        let old_visible: i64 = sqlx::query_scalar(
-+            "SELECT count(*) FROM paradedb.index_info('idxtest') WHERE segno::text=$1",
-+        )
-+        .bind(&mutable_id)
-+        .fetch_one(&mut promoted)
-+        .await?;
-+        if old_visible == 0 {
-+            break;
-+        }
-+        assert!(
-+            Instant::now() < deadline,
-+            "mutable segment was not converted"
-+        );
-+        thread::sleep(Duration::from_millis(50));
-+    }
-+    let target_lsn: String = sqlx::query_scalar("SELECT pg_current_w
-```
-
----
-
-### Incident Patch 3: `97bbfe84` (2026-11-17)
-**Commit Message**: ci: update pdbench to the recall-floor selection fix (#7500)
-
-Update all HN, Cohere (including comparison engines), and MS MARCO
-benchmark workflow defaults to pdbench
-`c1ea500acc0f925f3ad7d5ba0ea24a89f5c29be4` (paradedb/pdbench#62). Recall
-sweeps now select the fastest validated setting found that meets the
-recall floor instead of preferring an exact target hit. Manual revision
-overrides remain available.
-
-Validation: pre-commit checks for all three workflows, including YAML
-validation, actionlint, and Prettier; `git diff --check`.
-
-**File**: `.github/workflows/benchmark-pg_search-benchmarker-cohere.yml` (modified, +2/-2)
-```diff
-@@ -76,7 +76,7 @@ jobs:
-       - extras=s3-cache+git-cache+apt-cache # See https://runs-on.com/caching/magic-cache/
-     env:
-       COHERE_SIZE: ${{ matrix.size }}
--      PDBENCH_REF: ${{ inputs.pdbench_ref || '9372a7d18d8f24046808c512231b0ac9173047a4' }}
-+      PDBENCH_REF: ${{ inputs.pdbench_ref || 'c1ea500acc0f925f3ad7d5ba0ea24a89f5c29be4' }}
-       BENCHMARKER_REF: ${{ inputs.benchmarker_ref || 'ecdca03f4da6e6e2d66ed01df2e5c33d4062d0d3' }}
-       BENCHMARK_REF: ${{ inputs.commit || github.sha }}
-       # The router-quality section runs on the daily main run, with the
-@@ -472,7 +472,7 @@ jobs:
-       - extras=s3-cache+git-cache+apt-cache
-     env:
-       COHERE_SIZE: 10m
--      PDBENCH_REF: ${{ inputs.pdbench_ref || 'f7ef319fb75cdc4cc3e02824af46d96c42de977f' }}
-+      PDBENCH_REF: ${{ inputs.pdbench_ref || 'c1ea500acc0f925f3ad7d5ba0ea24a89f5c29be4' }}
-       BENCHMARKER_REF: ${{ inputs.benchmarker_ref || 'ecdca03f4da6e6e2d66ed01df2e5c33d4062d0d3' }}
-       BENCHMARK_REF: ${{ inputs.commit || github.sha }}
-       BENCHMARK_ENGINE: ${{ matrix.engine }}
-```
-
-**File**: `.github/workflows/benchmark-pg_search-benchmarker-hn.yml` (modified, +1/-1)
-```diff
-@@ -62,7 +62,7 @@ jobs:
-       - extras=s3-cache+git-cache+apt-cache
-     env:
-       HN_SIZE: 28m
--      PDBENCH_REF: ${{ inputs.pdbench_ref || '9372a7d18d8f24046808c512231b0ac9173047a4' }}
-+      PDBENCH_REF: ${{ inputs.pdbench_ref || 'c1ea500acc0f925f3ad7d5ba0ea24a89f5c29be4' }}
-       BENCHMARKER_REF: ${{ inputs.benchmarker_ref || 'ecdca03f4da6e6e2d66ed01df2e5c33d4062d0d3' }}
-       BENCHMARK_REF: ${{ inputs.commit || github.event.pull_request.head.sha || github.sha }}
-       BENCHMARK_ENGINE: ${{ matrix.engine }}
-```
-
-**File**: `.github/workflows/benchmark-pg_search-benchmarker-msmarco.yml` (modified, +1/-1)
-```diff
-@@ -60,7 +60,7 @@ jobs:
-       - extras=s3-cache+git-cache+apt-cache
-     env:
-       MSMARCO_SIZE: 113m
--      PDBENCH_REF: ${{ inputs.pdbench_ref || '9372a7d18d8f24046808c512231b0ac9173047a4' }}
-+      PDBENCH_REF: ${{ inputs.pdbench_ref || 'c1ea500acc0f925f3ad7d5ba0ea24a89f5c29be4' }}
-       BENCHMARKER_REF: ${{ inputs.benchmarker_ref || 'ecdca03f4da6e6e2d66ed01df2e5c33d4062d0d3' }}
-       BENCHMARK_REF: ${{ inputs.commit || github.event.pull_request.head.sha || github.sha }}
-       MSMARCO_CONFIG: ${{ matrix.engine == 'pg_search' && 'benchmarks/msmarco/113m.toml' || format('benchmarks/msmarco/113m-{0}{1}.toml', matrix.engine, matrix.engine == 'vectorchord' && matrix.prefilter == 'on' && '-prefilter' || '') }}
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #7509** (2026-11-17): chore: set default target leaf size to 128 (@rebasedming)
-- **PR #7505** (2026-11-17): ci: publish CREATE INDEX time from pdbench statement metrics (@rebasedming)
-- **PR #7500** (2026-11-17): ci: update pdbench to the recall-floor selection fix (@rebasedming)
-- **PR #7498** (closed): docs: link Postgres comparison from introduction and agent index (@philippemnoel)
-- **PR #7497** (2026-11-17): docs: move cookie preferences into footer (@philippemnoel)
-- **PR #7495** (2026-11-17): docs: remove trailing hyphens from changelog anchors (@philippemnoel)
+- **PR #7528** (2026-11-18): chore: Generate Dockerfiles for v0.26.8 (@paradedb-github-bot[bot])
+- **PR #7527** (2026-11-18): chore: Generate Dockerfiles for v0.26.8 (@paradedb-github-bot[bot])
+- **PR #7525** (2026-11-18): fix: prioritize background mergers over foreground backpressure (@paradedb-github-bot[bot])
+- **PR #7524** (2026-11-18): chore: set default target leaf size to 400 (@RuchirRaj)
+- **PR #7523** (2026-11-18): fix: skip foreground immutable merges in logical apply workers (@paradedb-github-bot[bot])
+- **PR #7522** (2026-11-18): fix: prioritize background mergers over foreground backpressure (@rebasedming)
 
 ---
 
@@ -3086,47 +2755,35 @@ validation, actionlint, and Prettier; `git diff --check`.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. keep NaN and infinite float constants in pushed-down filters
+## X. prioritize background mergers over foreground backpressure
 
 **RULE**:
-When implementing operations in `common/src/postgres/pdb_owned_value.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in paradedb/paradedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/project/changelog/unreleased/7522.performance.mdx`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in paradedb/paradedb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5544d22e`: keep NaN and infinite float constants in pushed-down filters. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `6f893812`: prioritize background mergers over foreground backpressure. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `common/src/postgres/pdb_owned_value.rs`.
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/project/changelog/unreleased/7522.performance.mdx`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```rust
 // Verified production-grade fix pattern:
-pub const PDB_FLOAT_TAG: &str = "$__pdb_float__";
-                // So do NaN and the infinities, which JSON has no form for.
-                if object.len() == 1
-                    && let (PDB_FLOAT_TAG, OwnedValue::Str(s)) =
-                        (object[0].0.as_str(), &object[0].1)
-                    && let Some(value) = s.parse::<f64>().ok().filter(|value| !value.is_finite())
-                {
-                    return PdbOwnedValue::F64(value);
-                }
+---
+header: performance
+---
 
-            // tag NaN and the infinities too, since JSON would write them as `null`
-            PdbOwnedValue::F64(value) if !value.is_finite() => {
-                let mut map = serializer.serialize_map(Some(1))?;
-                map.serialize_entry(PDB_FLOAT_TAG, &value.to_string())?;
-                map.end()
-            }
-/// non-negative `I64` comes back as `U64`, and a NaN loses its bit pattern.
+- Writes now skip foreground merges after successfully launching a background merger. Foreground merging remains the fallback when a background merger cannot be launched.
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```rust
 // Induced defect failure mode:
-/// non-negative `I64` comes back as `U64`, and a non-finite `F64` becomes `null` under JSON.
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5544d22e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `6f893812` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

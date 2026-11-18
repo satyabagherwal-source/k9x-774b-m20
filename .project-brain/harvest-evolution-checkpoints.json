@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T13:48:30.770Z",
+  "last_updated": "2026-11-18T13:57:09.148Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-18T12:24:04.960Z",
@@ -448,9 +448,9 @@
       "staged_for_review": 1
     },
     "fallow-rs-fallow-learnings.md": {
-      "processed_at": "2026-11-18T05:36:02.551Z",
-      "promoted_canonical": 1,
-      "staged_for_review": 0
+      "processed_at": "2026-11-18T13:57:06.668Z",
+      "promoted_canonical": 0,
+      "staged_for_review": 1
     },
     "crosspaste-crosspaste-desktop-learnings.md": {
       "processed_at": "2026-11-18T08:08:44.546Z",
@@ -1298,7 +1298,7 @@
       "staged_for_review": 1
     },
     "paradedb-paradedb-learnings.md": {
-      "processed_at": "2026-11-16T21:28:29.600Z",
+      "processed_at": "2026-11-18T13:57:08.206Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -1968,7 +1968,7 @@
       "staged_for_review": 1
     },
     "hf-orcarouter-orcasaq-2-27b-learnings.md": {
-      "processed_at": "2026-11-18T04:04:04.986Z",
+      "processed_at": "2026-11-18T13:57:07.759Z",
       "promoted_canonical": 0,
       "staged_for_review": 0
     },
@@ -3438,7 +3438,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 1956,
+  "total_dossiers_evaluated": 1959,
   "total_canonical_promoted": 357,
-  "total_staged_for_review": 1487
+  "total_staged_for_review": 1489
 }
