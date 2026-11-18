@@ -11076,3 +11076,7 @@ Every entry in this ledger must capture:
 | `learn-huggingface-davidau-qwen3-8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf` | `https://huggingface.co/DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF` | `hf-davidau` | Multi-dimensional audit evidence | 2026-11-18T16:31:29.403Z |
 | `learn-github-skyhook-io-radar` | `https://github.com/skyhook-io/radar` | `e02bbdaa` | Multi-dimensional audit evidence | 2026-11-18T16:31:42.390Z |
 | `learn-dom-d-9d26cbbb` | `project://hf-huggingfacetb-smolvlm2-256m-video-instruct` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-huggingfacetb-smolvlm2-256m-video-instruct-learnings.md` | 2026-11-18T16:32:22.482Z |
+| `learn-huggingface-cloudflare-clef` | `https://huggingface.co/Cloudflare/clef` | `hf-cloudfl` | Multi-dimensional audit evidence | 2026-11-18T16:40:59.087Z |
+| `learn-github-gitoxidelabs-gitoxide` | `https://github.com/GitoxideLabs/gitoxide` | `3e89f3b5` | Multi-dimensional audit evidence | 2026-11-18T16:41:05.399Z |
+| `learn-github-okteto-okteto` | `https://github.com/okteto/okteto` | `a23d521e` | Multi-dimensional audit evidence | 2026-11-18T16:41:10.416Z |
+| `learn-github-matrixorigin-matrixone` | `https://github.com/matrixorigin/matrixone` | `87c44445` | Multi-dimensional audit evidence | 2026-11-18T16:41:21.957Z |

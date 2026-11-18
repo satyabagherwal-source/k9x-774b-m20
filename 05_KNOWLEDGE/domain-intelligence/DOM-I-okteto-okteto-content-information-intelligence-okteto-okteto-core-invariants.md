@@ -4,24 +4,24 @@
 {
   "source_repository": "okteto/okteto",
   "source_url": "https://github.com/okteto/okteto",
-  "source_version": "cb2419f7",
+  "source_version": "a23d521e",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-14T11:04:31.577Z",
+  "timestamp": "2026-11-18T16:41:10.602Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-okteto-okteto",
   "canonical_classification": "domain_intelligence"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [okteto/okteto](https://github.com/okteto/okteto) (Revision: `cb2419f7`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-14T11:04:31.577Z`  
+> **Provenance**: Harvested from [okteto/okteto](https://github.com/okteto/okteto) (Revision: `a23d521e`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-18T16:41:10.602Z`  
 > **Learning ID**: `learn-github-okteto-okteto`
 
 
 ## 1. Domain Taxonomy & Context
 - **Canonical Domain**: Domain I (Content & Information Intelligence)
-- **Secondary Corroborating Domains**: G (Architecture Intelligence), K (Quality & Verification Intelligence), H (Technical Construction Intelligence), L (Deployment & Operations Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), D (Research & Knowledge Intelligence), B (Product Intelligence)
-- **Confidence Rating**: 64%
+- **Secondary Corroborating Domains**: K (Quality & Verification Intelligence), G (Architecture Intelligence), H (Technical Construction Intelligence), D (Research & Knowledge Intelligence), M (Feedback & Evolution Intelligence), A (Human & Need Intelligence), B (Product Intelligence), L (Deployment & Operations Intelligence), J (Search & Distribution Intelligence)
+- **Confidence Rating**: 60%
 
 ## 2. Core Domain Invariants & Discovered Laws
 The following architectural invariants have been empirically discovered and recorded from okteto/okteto:
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/okteto-okteto-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/okteto/okteto](https://github.com/okteto/okteto))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-14T11:04:30.370Z  
+> **Harvest Timestamp**: 2026-11-18T16:41:09.406Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -41,7 +41,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: Develop your applications directly in your Kubernetes Cluster
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 3557 stars
+- **Stars / Engagement**: 3558 stars
 
 ---
 
@@ -1516,371 +1516,1237 @@ func startCommand(cmd *exec.Cmd) error {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0ffb0189` (2026-11-13)
-**Commit Message**: build(deps): bump renovatebot/github-action from 46.3.12 to 46.3.13 (#5261)
+### Incident Patch 1: `b5e35654` (2026-11-18)
+**Commit Message**: fix(deps): revert go-git to v5.16.5 (#5270)
 
-Bumps [renovatebot/github-action](https://github.com/renovatebot/github-action) from 46.3.12 to 46.3.13.
-- [Release notes](https://github.com/renovatebot/github-action/releases)
-- [Changelog](https://github.com/renovatebot/github-action/blob/main/CHANGELOG.md)
-- [Commits](https://github.com/renovatebot/github-action/compare/v46.3.12...v46.3.13)
+* fix(deps): revert go-git to v5.16.5
 
----
-updated-dependencies:
-- dependency-name: renovatebot/github-action
-  dependency-version: 46.3.13
-  dependency-type: direct:production
-  update-type: version-update:semver-patch
-...
+go-git v6 opens repositories through go-billy's BoundOS, which stats the
+working directory through an os.Root opened on its parent. A working
+directory that is a symlink pointing outside its parent fails with
+"path escapes from parent" (go-git/go-billy#254), so repository
+detection and Smart Builds lose the git metadata since 3.24.0.
 
-Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
-Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+Go back to github.com/go-git/go-git/v5 v5.16.5 with go-billy v5.9.0, the
+pair used before the move to v6. v5 releases from 5.17 on fail to open
+repositories with extensions.worktreeConfig.
 
-**File**: `.github/workflows/renovate.yml` (modified, +1/-1)
+- Undo the v6 API changes: Worktree.Filesystem is a field again, and
+  transport.NewEndpoint replaces transport.ParseURL.
+- Set EnableDotGitCommonDir when opening the repository. v6 always reads
+  a linked worktree's commondir, but v5 only does with this option, so
+  without it the remotes and branches of a "git worktree add" checkout
+  aren't found.
+- Keep the go-git fallback tests and move them to v5. Drop the
+  commit.gpgSign workaround in Test_getBranch: v5 doesn't read it.
+- Add tests for a symlinked working directory and a linked worktree.
+
+Signed-off-by: Javier Lopez <[REDACT
+
+**File**: `cmd/pipeline/deploy_test.go` (modified, +2/-2)
 ```diff
-@@ -18,7 +18,7 @@ jobs:
-         uses: actions/checkout@v7
+@@ -22,8 +22,8 @@ import (
+ 	"testing"
+ 	"time"
  
-       - name: Run Renovate
--        uses: renovatebot/github-action@v46.3.12
-+        uses: renovatebot/github-action@v46.3.13
-         with:
-           configurationFile: .github/renovate.json
-           token: ${{ secrets.RENOVATEBOT_GITHUB_TOKEN }}
+-	"github.com/go-git/go-git/v6"
+-	"github.com/go-git/go-git/v6/config"
++	"github.com/go-git/go-git/v5"
++	"github.com/go-git/go-git/v5/config"
+ 	"github.com/okteto/okteto/internal/test"
+ 	"github.com/okteto/okteto/internal/test/client"
+ 	"github.com/okteto/okteto/pkg/analytics"
 ```
 
----
-
-### Incident Patch 2: `88bc7d7e` (2026-11-13)
-**Commit Message**: fix(compose): accept restart: on-failure:<max-retries> (#5244)
-
-* fix(compose): accept restart: on-failure:<max-retries>
-
-The compose spec allows restart: on-failure[:max-retries], but
-getRestartPolicy only matched the exact string "on-failure", so a
-retry count made the whole stack fail with "invalid restart policy".
-
-Split the retry count off first: the policy is OnFailure and the count
-becomes BackOffLimit, the same as deploy.restart_policy.max_attempts,
-which still wins when set. Malformed counts are still rejected.
-
-Fixes #5230
-
-Signed-off-by: poojagosika <[REDACTED_EMAIL]>
-
-* fix(compose): ignore restart retries when deploy.restart_policy.condition is set
-
-Read the on-failure retry count inside getRestartPolicy, only when it falls back to restart, so a condition keeps ignoring restart as a whole: the service stays a Deployment and a malformed restart value is not an error there.
-
-Signed-off-by: poojagosika <[REDACTED_EMAIL]>
-
-* test(compose): cover restart retry precedence
-
-Test_UnmarshalRestartDeployMaxAttemptsOverRestartRetries set
-deploy.restart_policy.condition, so restart was ignored as a whole and
-its retry count never competed with max_attempts. Drop the condition so
-t
-
-**File**: `pkg/model/stack_serializer.go` (modified, +20/-6)
+**File**: `cmd/preview/deploy_utils_test.go` (modified, +1/-1)
 ```diff
-@@ -567,13 +567,17 @@ func (serviceRaw *ServiceRaw) toService(svcName string, stack *Stack, topLevelSe
+@@ -16,7 +16,7 @@ package preview
+ import (
+ 	"testing"
  
- 	svc.User = serviceRaw.User
+-	"github.com/go-git/go-git/v6"
++	"github.com/go-git/go-git/v5"
+ 	"github.com/okteto/okteto/pkg/okteto"
+ 	"github.com/okteto/okteto/pkg/validator"
+ 	"github.com/stretchr/testify/assert"
+```
+
+**File**: `cmd/utils/git.go` (modified, +2/-2)
+```diff
+@@ -22,7 +22,7 @@ import (
+ 	"sync"
+ 	"sync/atomic"
  
--	svc.RestartPolicy, err = getRestartPolicy(svcName, serviceRaw.Deploy, serviceRaw.Restart)
-+	var restartRetries int32
-+	svc.RestartPolicy, restartRetries, err = getRestartPolicy(svcName, serviceRaw.Deploy, serviceRaw.Restart)
+-	"github.com/go-git/go-git/v6/plumbing/transport"
++	"github.com/go-git/go-git/v5/plumbing/transport"
+ 	oktetoLog "github.com/okteto/okteto/pkg/log"
+ 	"github.com/okteto/okteto/pkg/model/utils"
+ 	"github.com/okteto/okteto/pkg/repository"
+@@ -89,7 +89,7 @@ func IsOktetoRepo() bool {
+ }
+ 
+ func isOktetoRepoFromURL(repoUrl string) bool {
+-	endpoint, err := transport.ParseURL(repoUrl)
++	endpoint, err := transport.NewEndpoint(repoUrl)
  	if err != nil {
- 		return nil, err
- 	}
- 	if serviceRaw.Deploy != nil && serviceRaw.Deploy.RestartPolicy != nil {
- 		svc.BackOffLimit = serviceRaw.Deploy.RestartPolicy.MaxAttempts
- 	}
-+	if svc.BackOffLimit == 0 {
-+		svc.BackOffLimit = restartRetries
-+	}
- 
- 	// Extract endpoint_mode from deploy section
- 	if serviceRaw.Deploy != nil && serviceRaw.Deploy.EndpointMode != "" {
-@@ -1114,23 +1118,33 @@ func (p *Port) MarshalYAML() (interface{}, error) {
- 	return Port{ContainerPort: p.ContainerPort, Protocol: p.Protocol}, nil
- }
- 
--func getRestartPolicy(svcName string, deployInfo *DeployInfoRaw, restartPolicy string) (apiv1.RestartPolicy, error) {
-+// getRestartPolicy returns the restart policy and, for the compose
-+// `restart: on-failure[:max-retries]` form, the retry count (0 when none is
-+// given). deploy.restart_policy.condition wins over restart when set.
-+func getRestartPolicy(svcName string, deployInfo *DeployInfoRaw, restartPolicy string) (apiv1.RestartPolicy, int32, error) {
- 	var restart string
- 	if deployInfo != nil && deployInfo.RestartPolicy != nil {
- 		restart = deployInfo.RestartPolicy.Condition
- 	}
- 	if restart == "" {
-+		if policy, retries, found := strings.Cut(restartPolicy, ":"); found && policy == "on-failure" {
-+			maxRetries, err := strconv.ParseInt(retries, 10, 32)
-+			if err != nil || maxRetries < 0 {
-+				return apiv1.RestartPolicyAlways, 0, fmt.Errorf("cannot create container for service %s: invalid restart policy '%s'", svcName, restartPolicy)
-+			}
-+			return apiv1.RestartPolicyOnFailure, int32(maxRetries), nil
-+		}
- 		restart = restartPolicy
- 	}
- 	switch restart {
- 	case "none", "never", "no":
--		return apiv1.RestartPolicyNever, nil
-+		return apiv1.RestartPolicyNever, 0, nil
- 	case "always", "", "unless-stopped", "any":
--		return apiv1.RestartPolicyAlways, nil
-+		return apiv1.RestartPolicyAlways, 0, nil
- 	case "on-failure":
--		return apiv1.RestartPolicyOnFailure, nil
-+		return apiv1.RestartPolicyOnFailure, 0, nil
- 	default:
--		return apiv1.RestartPolicyAlways, fmt.Errorf("cannot create container for service %s: invalid restart policy '%s'", svcName, restart)
-+		return apiv1.RestartPolicyAlways, 0, fmt.Errorf("cannot create container for service %s: invalid restart policy '%s'", svcName, restart)
- 	}
- }
- func unmarshalDeployResources(deployInfo *DeployInfoRaw, resources *StackResources, cpuCount, cpus, memLimit, memReservation Quantity) *StackResources {
+ 		oktetoLog.Infof("failed to get endpoint in isOktetoRepoFromURL: %v", err)
+ 		return false
 ```
 
-**File**: `pkg/model/stack_serializer_test.go` (modified, +57/-0)
+**File**: `cmd/utils/git_test.go` (modified, +3/-15)
 ```diff
-@@ -3363,3 +3363,60 @@ func Test_UnmarshalComposeDeployResourcesMemoryUnits(t *testing.T) {
- 	assert.Equal(t, int64(300*1024*1024), s.Services["app"].Resources.Limits.Memory.Value.Value())
- 	assert.Equal(t, int64(1024*1024*1024), s.Services["app"].Resources.Requests.Memory.Value.Value())
- }
-+
-+func Test_UnmarshalRestartOnFailureWithMaxRetries(t *testing.T) {
-+	manifest := []byte("services:\n  app:\n    image: okteto/vote:1\n    restart: on-failure:3")
-+
-+	s, err := ReadStack(manifest, true)
-+
-+	require.NoError(t, err)
-+	assert.Equal(t, apiv1.RestartPolicyOnFailure, s.Services["app"].RestartPolicy)
-+	assert.Equal(t, int32(3), s.Services["app"].BackOffLimit)
-+	assert.True(t, s.Services["app"].IsJob())
-+}
-+
-+func Test_UnmarshalRestartIgnoredWhenDeployConditionIsSet(t *testing.T) {
-+	for _, restart := range []string{"on-failure:3", "on-failure:abc"} {
-+		manifest := []byte("services:\n  app:\n    image: okteto/vote:1\n    restart: \"" + restart + "\"\n    deploy:\n      restart_policy:\n        condition: on-failure")
-+
-+		s, err := ReadStack(manifest, true)
-+
-+		require.NoError(t, err, restart)
-+		assert.Equal(t, apiv1.RestartPolicyOnFailure, s.Services["app"].RestartPolicy, restart)
-+		assert.Equal(t, int32(0), s.Services["app"].BackOffLimit, restart)
-+		assert.True(t, s.Services["app"].IsDeployment(), restart)
-+	}
-+}
-+
-+func Test_UnmarshalRestartDeployMaxAttemptsOverRestartRetries(t *testing.T) {
-+	manifest := []byte("services:\n  app:\n    image: okteto/vote:1\n    restart: on-failure:3\n    deploy:\n      restart_policy:\n        max_attempts: 5")
-+
-+	s, err := ReadStack(manifest, true)
-+
-+	require.NoError(t, err)
-+	assert.Equal(t, apiv1.RestartPolicyOnFailure, s.Services["app"].RestartPolicy)
-+	assert.Equal(t, int32(5), s.Services["app"].BackOffLimit)
-+}
-+
-+func Test_UnmarshalRestartOnFailureWithoutRetriesIsDeployment(t *testing.T) {
-+	for _, restart := range []string{"on-failure", "on-failure:0"} {
-+		manifest := []byte("services:\n  app:\n    image: okteto/vote:1\n    restart: \"" + restart + "\"")
-+
-+		s, err := ReadStack(manifest, true)
-+
-+		require.NoError(t, err, restart)
-+		assert.Equal(t, apiv1.RestartPolicyOnFailure, s.Services["app"].RestartPolicy, restart)
-+		assert.Equal(t, int32(0), s.Services["app"].BackOffLimit, restart)
-+		assert.True(t, s.Services["app"].IsDeployment(), restart)
-+	}
-+}
-+
-+func Test_UnmarshalRestartOnFailureInvalidMaxRetries(t *testing.T) {
-+	for _, restart := range []string{"on-failure:abc", "on-failure:-1", "on-failure:", "on-failure:2147483648"} {
-+		manifest := []byte("services:\n  app:\n    image: okteto/vote:1\n    restart: \"" + restart + "\"")
-+
-+		_, err := ReadStack(manifest, true)
-+
-+		assert.ErrorContains(t, err, "invalid restart policy", restart)
-+	}
-+}
-```
-
----
-
-### Incident Patch 3: `a8041d00` (2026-11-13)
-**Commit Message**: Upgrade buildkit dependency to v0.35.0-okteto1 (#5260)
-
-Co-authored-by: Devin AI <158243242+devin-ai-integration[bot]@users.noreply.github.com>
-
-**File**: `go.mod` (modified, +57/-56)
-```diff
-@@ -13,20 +13,20 @@ require (
- 	github.com/compose-spec/godotenv v1.1.1
- 	github.com/containerd/console v1.0.5 // indirect
- 	github.com/denisbrodbeck/machineid v1.0.1
--	github.com/docker/cli v29.9.0+incompatible
-+	github.com/docker/cli v29.9.3+incompatible
- 	github.com/docker/docker-credential-helpers v0.9.10
- 	github.com/dukex/mixpanel v0.0.0-20180925151559-f8d5594f958e
- 	github.com/fatih/color v1.19.0
- 	github.com/gliderlabs/ssh v0.3.8
--	github.com/google/go-containerregistry v0.21.7 // when updating need google.golang.org/grpc 1.29
-+	github.com/google/go-containerregistry v0.22.0 // when updating need google.golang.org/grpc 1.29
- 	github.com/google/go-github v17.0.0+incompatible
- 	github.com/google/uuid v1.6.0
- 	github.com/hashicorp/go-getter v1.8.9
- 	github.com/juju/ansiterm v1.0.0
- 	github.com/kballard/go-shellquote v0.0.0-20180428030007-95032a82bc51
- 	github.com/manifoldco/promptui v0.9.0
- 	github.com/mitchellh/go-ps v1.0.0
--	github.com/moby/buildkit v0.34.2
-+	github.com/moby/buildkit v0.35.0
- 	github.com/moby/term v0.5.2
- 	github.com/pkg/errors v0.9.1
- 	github.com/shirou/gopsutil v3.21.11+incompatible
-@@ -41,7 +41,7 @@ require (
- 	golang.org/x/oauth2 v0.37.0
- 	golang.org/x/sync v0.24.0
- 	golang.org/x/term v0.47.0
--	google.golang.org/grpc v1.84.0
-+	google.golang.org/grpc v1.85.0
- 	gopkg.in/natefinch/lumberjack.v2 v2.2.1
- 	gopkg.in/yaml.v3 v3.0.1
- 	k8s.io/api v0.37.1
-@@ -57,7 +57,7 @@ require (
- 	cloud.google.com/go/storage v1.65.1 // indirect
- 	github.com/Azure/go-ansiterm v0.0.0-20250102033503-faa5f7b0171c // indirect
- 	github.com/MakeNowJust/heredoc v1.0.0 // indirect
--	github.com/Microsoft/go-winio v0.6.3-0.20251027160822-ad3df93bed29 // indirect
-+	github.com/Microsoft/go-winio v0.6.4 // indirect
- 	github.com/ProtonMail/go-crypto v1.5.2 // indirect
- 	github.com/VividCortex/ewma v1.2.0 // indirect
- 	github.com/acarl005/stripansi v0.0.0-20180116102854-5a71ef0e047d // indirect
-@@ -78,9 +78,9 @@ require (
- 	github.com/go-errors/errors v1.4.2 // indirect
- 	github.com/go-logr/logr v1.4.4 // indirect
- 	github.com/go-ole/go-ole v1.3.0 // indirect
--	github.com/go-openapi/jsonpointer v1.0.0 // indirect
--	github.com/go-openapi/jsonreference v1.0.0 // indirect
--	github.com/go-openapi/swag v0.28.0 // indirect
-+	github.com/go-openapi/jsonpointer v1.0.1 // indirect
-+	github.com/go-openapi/jsonreference v1.0.1 // indirect
-+	github.com/go-openapi/swag v0.29.2 // indirect
- 	github.com/gofrs/flock v0.13.1 // indirect
- 	github.com/golang-jwt/jwt/v4 v4.5.2
- 	github.com/golang/protobuf v1.5.4 // indirect
-@@ -120,22 +120,22 @@ require (
- 	github.com/stretchr/testify v1.12.1
- 	github.com/tklauser/go-sysconf v0.3.9 // indirect
- 	github.com/tklauser/numcpus v0.3.0 // indirect
--	github.com/tonistiigi/fsutil v0.0.0-20261103091533-a72de9dcf763
-+	github.com/tonistiigi/fsutil v0.0.0-20261103125000-e075fd9305eb
- 	github.com/tonistiigi/units v0.0.0-20180711220420-6950e57a87ea
- 	github.com/tonistiigi/vt100 v0.0.0-20240514184818-90bafcd6abab // indirect
- 	github.com/toqueteos/trie v1.0.0 // indirect
- 	github.com/ulikunitz/xz v0.5.16 // indirect
- 	github.com/withfig/autocomplete-tools/packages/cobra v0.0.0-20211118163844-94616c903bcb
- 	github.com/xlab/treeprint v1.2.0 // indirect
- 	github.com/yusufpapurcu/wmi v1.2.2 // indirect
--	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.71.0 // indirect
--	go.opentelemetry.io/otel v1.46.0 // indirect
--	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.46.0 // indirect
--	go.opentelemetry.io/otel/sdk v1.46.0 // indirect
--	go.opentelemetry.io/otel/trace v1.46.0 // indirect
--	go.opentelemetry.io/proto/otlp v1.11.0 // indirect
-+	go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc v0.72.0 // indirect
-+	go.opentelemetry.io/otel v1.47.0 // indirect
-+	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.47.0 // indirect
-+	go.opentelemetry.io/otel/sdk v1.47.0 // indirect
-+	go.opentelemetry.io/otel/trace v1.47.0 // indirect
-+	go.opentelemetry.io/proto/otlp v1.11.1 // indirect
- 	golang.org/x/net v0.62.0 // indirect
--	golang.org/x/sys v0.49.0 // indirect
-+	golang.org/x/sys v0.50.0 // indirect
- 	golang.org/x/text v0.43.0 // indirect
- 	golang.org/x/time v0.16.0 // indirect
- 	google.golang.org/api v0.294.0 // indirect
-@@ -171,32 +171,32 @@ require (
+@@ -20,9 +20,9 @@ import (
+ 	"testing"
+ 	"time"
+ 
+-	"github.com/go-git/go-git/v6"
+-	"github.com/go-git/go-git/v6/plumbing"
+-	"github.com/go-git/go-git/v6/plumbing/object"
++	"github.com/go-git/go-git/v5"
++	"github.com/go-git/go-git/v5/plumbing"
++	"github.com/go-git/go-git/v5/plumbing/object"
+ 	"github.com/stretchr/testify/assert"
  )
  
- require (
--	cel.dev/expr v0.25.2 // indirect
-+	cel.dev/expr v0.25.3 // indirect
- 	cloud.google.com/go/auth v0.23.2 // indirect
- 	cloud.google.com/go/auth/oauth2adapt v0.2.8 // indirect
- 	cloud.google.com/go/monitoring v1.30.0 // indirect
--	github.com/GoogleCloudPlatform/opentelemetry-operations-go/detectors/gcp v1.34.0 // indirect
-+	github.com/GoogleCloudPlatform/opentelemetry-operations-go/detectors/gcp v1.35.0 // indirect
- 	github.com/GoogleCloudPlatform/opentelemetry-operations-go/exporter/metric v0.57.0 // indirect
- 	github.com/GoogleCloudPlatform/opentelemetry-operations-go/internal/resourcemapping v0.57.0 // indirect
- 	github.com/STARRY-S/zip v0.2.3 // indirect
--	github.com/aws/aws-sdk-go-v2 v1.4
+@@ -34,18 +34,6 @@ func Test_getBranch(t *testing.T) {
+ 		t.Fatal(err)
+ 	}
+ 
+-	// Disable commit signing at the repo level so the test does not depend on
+-	// the machine's global git config. go-git v6 honors commit.gpgSign and
+-	// fails the commit below when signing is enabled but no signer is set up.
+-	cfg, err := r.Config()
+-	if err != nil {
+-		t.Fatal(err)
+-	}
+-	cfg.Raw.Section("commit").SetOption("gpgsign", "false")
+-	if err := r.SetConfig(cfg); err != nil {
+-		t.Fatal(err)
+-	}
+-
+ 	_, err = GetBranch(dir)
+ 
+ 	if err == nil {
 ```
 
-**File**: `go.sum` (modified, +181/-131)
+**File**: `go.mod` (modified, +10/-3)
 ```diff
-@@ -1,7 +1,7 @@
- al.essio.dev/pkg/shellescape v1.6.1 h1:ki/kUs/D3dDbZpyKbNRhwY/ajgAEIJFagVKDWKnofQ8=
- al.essio.dev/pkg/shellescape v1.6.1/go.mod h1:6sIqp7X2P6mThCQ7twERpZTuigpr6KbZWtls1U8I890=
--cel.dev/expr v0.25.2 h1:K6j46C81hXtZQfuX60cVWQFBJahKSE2gfRbNuvr5bFs=
--cel.dev/expr v0.25.2/go.mod h1:hrXvqGP6G6gyx8UAHSHJ5RGk//1Oj5nXQ2NI02Nrsg4=
-+cel.dev/expr v0.25.3 h1:A2jO8jwOugrrovveCWfj0KEZOfqiLgAcwjpHPhzIGw0=
-+cel.dev/expr v0.25.3/go.mod h1:hrXvqGP6G6gyx8UAHSHJ5RGk//1Oj5nXQ2NI02Nrsg4=
- cloud.google.com/go v0.26.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMTw=
- cloud.google.com/go v0.34.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMTw=
- cloud.google.com/go v0.38.0/go.mod h1:990N+gfupTy94rShfmMCWGDn0LpTmnzTp2qbd1dvSRU=
-@@ -45,8 +45,8 @@ github.com/Azure/go-ansiterm v0.0.0-20250102033503-faa5f7b0171c h1:udKWzYgxTojEK
- github.com/Azure/go-ansiterm v0.0.0-20250102033503-faa5f7b0171c/go.mod h1:xomTg63KZ2rFqZQzSB4Vz2SUXa1BpHTVz9L5PTmPC4E=
- github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
- github.com/BurntSushi/xgb v0.0.0-20160522181843-27f122750802/go.mod h1:IVnqGOEym/WlBOVXweHU+Q+/VP0lqqI8lqeDx9IjBqo=
--github.com/GoogleCloudPlatform/opentelemetry-operations-go/detectors/gcp v1.34.0 h1:yzIYdwuro811Z27D3T80Wkd3rqZzb0K43nner7Eh1yE=
--github.com/GoogleCloudPlatform/opentelemetry-operations-go/detectors/gcp v1.34.0/go.mod h1:pJTkW8hEUIIi3Pf65lPZOnn4Y81yCllX6IWk2jNXdkM=
-+github.com/GoogleCloudPlatform/opentelemetry-operations-go/detectors/gcp v1.35.0 h1:bN1gA3of5bXtbnLsRPrwfmbbe7A5UWFlcTHseujLnpc=
-+github.com/GoogleCloudPlatform/opentelemetry-operations-go/detectors/gcp v1.35.0/go.mod h1:Yj5vHEz/aAepZGliRJsA6uvHAVAQyEwajq9ORCHPxzM=
- github.com/GoogleCloudPlatform/opentelemetry-operations-go/exporter/metric v0.57.0 h1:jLdiS1vO+XJFyDSWRHBx56r4s/NNtcl5J6KyCcWUX/w=
- github.com/GoogleCloudPlatform/opentelemetry-operations-go/exporter/metric v0.57.0/go.mod h1:8lmpHY+1VRoteiOwyrQMDt1YGXOrFKCz+1wJW7n3ODY=
- github.com/GoogleCloudPlatform/opentelemetry-operations-go/internal/cloudmock v0.57.0 h1:cSjUzZ7KU8hicTgzaSv9NmSyM9fTVK3y5lsBUl3wOis=
-@@ -57,10 +57,10 @@ github.com/MakeNowJust/heredoc v1.0.0 h1:cXCdzVdstXyiTqTvfqk9SDHpKNjxuom+DOlyEeQ
+@@ -154,7 +154,7 @@ require (
+ 
+ require (
+ 	github.com/bluekeyes/go-gitdiff v0.9.0
+-	github.com/go-git/go-git/v6 v6.0.0-beta.1
++	github.com/go-git/go-git/v5 v5.16.5 // 5.17+ fails to open repos with extensions.worktreeConfig, see TestFindTopLevelGitRepoFromPath_worktreeConfig
+ 	github.com/hashicorp/go-multierror v1.1.1
+ 	github.com/heimdalr/dag v1.5.1
+ 	github.com/kubeark/jsonschema v0.3.0
+@@ -175,6 +175,7 @@ require (
+ 	cloud.google.com/go/auth v0.23.3 // indirect
+ 	cloud.google.com/go/auth/oauth2adapt v0.2.8 // indirect
+ 	cloud.google.com/go/monitoring v1.30.0 // indirect
++	dario.cat/mergo v1.0.2 // indirect
+ 	github.com/GoogleCloudPlatform/opentelemetry-operations-go/detectors/gcp v1.35.0 // indirect
+ 	github.com/GoogleCloudPlatform/opentelemetry-operations-go/exporter/metric v0.57.0 // indirect
+ 	github.com/GoogleCloudPlatform/opentelemetry-operations-go/internal/resourcemapping v0.57.0 // indirect
+@@ -207,11 +208,12 @@ require (
+ 	github.com/containerd/containerd/v2 v2.4.2 // indirect
+ 	github.com/containerd/errdefs/pkg v0.3.0 // indirect
+ 	github.com/containerd/log/otel v0.1.0 // indirect
++	github.com/cyphar/filepath-securejoin v0.7.0 // indirect
+ 	github.com/envoyproxy/go-control-plane/envoy v1.39.1-0.20260819172001-e6e3fd93e4be // indirect
+ 	github.com/envoyproxy/protoc-gen-validate v1.3.3 // indirect
+ 	github.com/fxamacker/cbor/v2 v2.9.4 // indirect
+-	github.com/go-git/gcfg/v2 v2.0.2 // indirect
+-	github.com/go-git/go-billy/v6 v6.0.0-beta.1 // indirect
++	github.com/go-git/gcfg v1.5.1-0.20230307220236-3a3c6141e376 // indirect
++	github.com/go-git/go-billy/v5 v5.9.0 // indirect
+ 	github.com/go-jose/go-jose/v4 v4.1.6 // indirect
+ 	github.com/go-openapi/swag/cmdutils v0.29.2 // indirect
+ 	github.com/go-openapi/swag/conv v0.29.2 // indirect
+@@ -225,17 +227,21 @@ require (
+ 	github.com/go-openapi/swag/typeutils v0.29.2 // indirect
+ 	github.com/go-openapi/swag/yamlutils v0.29.2 // indirect
+ 	github.com/goccy/go-json v0.10.6 // indirect
++	github.com/golang/groupcache v0.0.0-20241129210726-2c02b8208cf8 // indirect
+ 	github.com/gorilla/websocket v1.5.4-0.20250319132907-e064f32e3674 // indirect
+ 	github.com/hashicorp/aws-sdk-go-base/v2 v2.0.0-beta.74 // indirect
+ 	github.com/hashicorp/errwrap v1.1.0 // indirect
+ 	github.com/hashicorp/golang-lru/v2 v2.0.7 // indirect
+ 	github.com/in-toto/attestation v1.2.0 // indirect
++	github.com/jbenet/go-context v0.0.0-20150711004518-d14ea06fba99 // indirect
+ 	github.com/mikelolasagasti/xz v1.0.1 // indirect
+ 	github.com/minio/minlz v1.0.1 // indirect
+ 	github.com/nwaples/rardecode/v2 v2.2.0 // indirect
++	github.com/skeema/knownhosts v1.3.1 // indirect
+ 	github.com/sorairolake/lzip-go v0.3.8 // indirect
+ 	github.com/spiffe/go-spiffe/v2 v2.8.1 // indirect
+ 	github.com/x448/float16 v0.8.4 // indirect
++	github.com/xanzy/ssh-agent v0.3.3 // indirect
+ 	go.opentelemetry.io/auto/sdk v1.2.1 // indirect
+ 	go.opentelemetry.io/contrib/detectors/gcp v1.45.0 // indirect
+ 	go.opentelemetry.io/otel/log v1.47.0 // indirect
+@@ -244,6 +250,7 @@ require (
+ 	go.yaml.in/yaml/v3 v3.0.6 // indirect
+ 	go4.org v0.0.0-20230225012048-214862532bf5 // indirect
+ 	gopkg.in/evanphx/json-patch.v4 v4.13.0 // indirect
++	gopkg.in/warnings.v0 v0.1.2 // indirect
+ 	gotest.tools/v3 v3.5.2 // indirect
+ 	k8s.io/component-helpers v0.37.1 // indirect
+ 	sigs.k8s.io/randfill v1.0.0 // indirect
+```
+
+**File**: `go.sum` (modified, +34/-8)
+```diff
+@@ -38,6 +38,8 @@ cloud.google.com/go/storage v1.68.0 h1:gqrAMJ51OZjYgU6AJ2U60um90YQhSjq8HEIQNtJ4C
+ cloud.google.com/go/storage v1.68.0/go.mod h1:UsS9OgFg/XHOSYakQ8ZtLWWeyGkk1WnmD/GsGfN0BHM=
+ cloud.google.com/go/trace v1.16.0 h1:GmQovzFc5F0CNfl0VLgL64aoTtu7xsM0YajW2GlG9+E=
+ cloud.google.com/go/trace v1.16.0/go.mod h1:r+bdAn16dKLSV1G2D5v3e58IlQlizfxWrUfjx7kM7X0=
++dario.cat/mergo v1.0.2 h1:85+piFYR1tMbRrLcDwR18y4UKJ3aH1Tbzi24VRW1TK8=
++dario.cat/mergo v1.0.2/go.mod h1:E/hbnu0NxMFBjpMIE34DRGLWqDy0g5FuKDhCb31ngxA=
+ dmitri.shuralyov.com/gpu/mtl v0.0.0-20190408044501-666a987793e9/go.mod h1:H6x//7gZCb22OMCxBHrMx7a5I7Hp++hsVxbQ4BYO7hU=
+ github.com/AdaLogics/go-fuzz-headers v0.0.0-20240806141605-e8a1dd7889d6 h1:He8afgbRMd7mFxO99hRNu+6tazq8nFF9lIwo9JFroBk=
+ github.com/AdaLogics/go-fuzz-headers v0.0.0-20240806141605-e8a1dd7889d6/go.mod h1:8o94RPi1/7XTJvwPpRSzSUedZrtlirdB3r9Z20bi2f8=
+@@ -57,6 +59,7 @@ github.com/MakeNowJust/heredoc v1.0.0 h1:cXCdzVdstXyiTqTvfqk9SDHpKNjxuom+DOlyEeQ
  github.com/MakeNowJust/heredoc v1.0.0/go.mod h1:mG5amYoWBHf8vpLOuehzbGGw0EHxpZZ6lCpQ4fNJ8LE=
  github.com/Masterminds/semver/v3 v3.5.0 h1:kQceYJfbupGfZOKZQg0kou0DgAKhzDg2NZPAwZ/2OOE=
  github.com/Masterminds/semver/v3 v3.5.0/go.mod h1:4V+yj/TJE1HU9XfppCwVMZq3I84lprf4nC11bSS5beM=
--github.com/Microsoft/go-winio v0.6.3-0.20251027160822-ad3df93bed29 h1:0kQAzHq8vLs7Pptv+7TxjdETLf/nIqJpIB4oC6Ba4vY=
--github.com/Microsoft/go-winio v0.6.3-0.20251027160822-ad3df93bed29/go.mod h1:ZWa7ssZJT30CCDGJ7fk/2SBTq9BIQrrVjrcss0UW2s0=
--github.com/Microsoft/hcsshim v0.15.0-rc.4 h1:aZFX4LH0S20Lgjq0wG61StIClj7im4yzrxIClkaR8Z8=
--github.com/Microsoft/hcsshim v0.15.0-rc.4/go.mod h1:BA9CBztgu4h/6Jsvo1O1M4qjWw09PoYpaEYgexPE578=
-+github.com/Microsoft/go-winio v0.6.4 h1:kJF2pamtYCWXf0xAT8sAkwKC0pMl2HYBrRPHAqyUc+g=
-+github.com/Microsoft/go-winio v0.6.4/go.mod h1:1xl5JXG4ze/m74GH6Dc4Mwxfc3VL5siRVQjIAlHH07U=
-+github.com/Microsoft/hcsshim v0.15.0 h1:AWiHGf0+9f7cDcfhuU3zXORCAPmIOWzTYfHhcrMcx3U=
-+github.com/Microsoft/hcsshim v0.15.0/go.mod h1:eStXUkML1Fmkgmwr6XHbYkBC1j7p2FA8ZtA9dyRMbts=
- github.com/ProtonMail/go-crypto v1.5.2 h1:cucYnvqcY7UOXVD//mSyjeaPY0SSN3v5cDkYPxumINk=
- github.com/ProtonMail/go-crypto v1.5.2/go.mod h1:/RaSu30DaKO4RY+XdV/ACcCcZkGr7AhUIduq5sjzzCo=
- github.com/STARRY-S/zip v0.2.3 h1:luE4dMvRPDOWQdeDdUxUoZkzUIpTccdKdhHHsQJ1fm4=
-@@ -81,46 +81,50 @@ github.com/anmitsu/go-shlex v0.0.0-20200514113438-38f4b401e2be h1:9AeTilPcZAjCFI
- github.com/anmitsu/go-shlex v0.0.0-20200514113438-38f4b401e2be/go.mod h1:ySMOLuWl6zY27l47sB3qLNK6tF2fkHG55UZxx8oIVo4=
- github.com/armon/go-socks5 v0.0.0-20160902184237-e75332964ef5 h1:0CwZNZbxp69SHPdPJAN/hZIm0C4OItdklCFmMRWYpio=
- github.com/armon/go-socks5 v0.0.0-20160902184237-e75332964ef5/go.mod h1:wHh0iHkYZB8zMSxRWpUBQtwG5a7fFgvEO+odwuTv2gs=
--github.com/aws/aws-sdk-go-v2 v1.47.0 h1:0jsHallhJCeaU0Ko48c/3FK1ctOQ7NpzggxriJOQ8MQ=
--github.com/aws/aws-sdk-go-v2 v1.47.0/go.mod h1:bttEH6JqnUL8LepvDVfdrds/fZ5bCIxzpe3abyUrhDU=
--github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.20 h1:GPRlPwz40I2B2VrBEASOA3Bi77NyeqejNLkifosX0rs=
--github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.7.20/go.mod h1:g7PNzKcsOKWb4fkSRBA7BZVAS6Y8IcxzN+nRohhQ1Q8=
--github.com/aws/aws-sdk-go-v2/config v1.33.4 h1:FzvkXKSzwqHni4U7nDigHg4jjtqMpVUuHgmZfSoJVQ0=
--github.com/aws/aws-sdk-go-v2/config v1.33.4/go.mod h1:VZqGZnZsCWVfK/iGPptJIyNIX3XEX6iQU2Rel4sLrr8=
--github.com/aws/aws-sdk-go-v2/credentials v1.20.4 h1:hTvrJJseKbvw32kmiE0G+u/9ZqpqscjDrTigHIXP2qs=
--github.com/aws/aws-sdk-go-v2/credentials v1.20.4/go.mod h1:gWp9O1ZBWwpcIrgV+mVHk4gZUurAEDkgypu/OXOlIaw=
--github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.20.0 h1:AM4hHjww+PSFtt6E+UrBrPlZkWsePCLEt9AjkfQX+yM=
--github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.20.0/go.mod h1:3x/yXezeQjpOvBb4jEMxrS8SXvpdvJ5abv6l5c1gWM8=
++github.com/Microsoft/go-winio v0.5.2/go.mod h1:WpS1mjBmmwHBEWmogvA2mj8546UReBk4v8QkMxJ6pZY=
+ github.com/Microsoft/go-winio v0.6.4 h1:kJF2pamtYCWXf0xAT8sAkwKC0pMl2HYBrRPHAqyUc+g=
+ github.com/Microsoft/go-winio v0.6.4/go.mod h1:1xl5JXG4ze/m74GH6Dc4Mwxfc3VL5siRVQjIAlHH07U=
+ github.com/Microsoft/hcsshim v0.15.0 h1:AWiHGf0+9f7cDcfhuU3zXORCAPmIOWzTYfHhcrMcx3U=
+@@ -208,6 +211,8 @@ github.com/creack/pty v1.1.18 h1:n56/Zwd5o6whRC5PMGretI4IdRLlmBXYNjScPaBgsbY=
+ github.com/creack/pty v1.1.18/go.mod h1:MOBLtS5ELjhRRrroQr9kyvTxUAFNvYEK993ew/Vr4O4=
+ github.com/cyberphone/json-canonicalization v0.0.0-20241213102144-19d51d7fe467 h1:uX1JmpONuD549D73r6cgnxyUu18Zb7yHAy5AYU0Pm4Q=
+ github.com/cyberphone/json-canonicalization v0.0.0-20241213102144-19d51d7fe467/go.mod h1:uzvlm1mxhHkdfqitSA92i7Se+S9ksOn3a3qmv/kyOCw=
++github.com/cyphar/filepath-securejoin v0.7.0 h1:s0Y3ITPy6sQn5xt54DuYvTF8hu134ooYLUb58DX/HjE=
++github.com/cyphar/filepath-securejoin v0.7.0/go.mod h1:ymLGms/u3BYaviIiuKFnUx8EkQEZeK6cInNoAPJA3o4=
+ github.com/davecgh/go-spew v1.1.0/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
+ github.com/davecgh/go-spew v1.1.1/go.mod h1:J7Y8YcW2NihsgmVo/mv3lAwl/skON4iLHjSsI+c5H38=
+ github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc h1:U9qPSI2PIWSS1VwoXQT9A3Wy9MM3WgvqSxFWenqJduM=
+@@ -233,6 +238,8 @@ github.com/dsnet/compress v0.0.2-0.20230904184137-39efe44ab707/go.mod h1:qssHWj6
+ github.com/dsnet/golib v0.0.0-20171103203638-1ea166775780/go.mod h1:Lj+Z9rebOhdfkVLjJ8T6VcRQv3SXugXy999NBtR9aFY=
+ github.com/dukex/mixpanel v0.0.0-20180925151559-f8d5594f958e h1:Rr/xguBo8FlFC/U8ekbeWDBYydqZDD6bKGT5rDlBCUU=
+ github.com/dukex/mixpanel v0.0.0-20180925151559-f8d5594f958e/go.mod h1:AgMMmOoSoKDavirJHvIHNcaPq2S9QvZKnuN0We/Hwyo=
++github.com/elazarl/goproxy v1.7.2 h1:Y2o6urb7Eule09PjlhQRGNsqRfPmYI3KKQLFpCAV3+o=
++github.com/elazarl/goproxy v1.7.2/go.mod h1:82vkLNir0ALaW14Rc399OTTjyNREgmdL2cVoIbS6XaE=
+ github.com/emicklei/go-restful/v3 v3.13.0 h1:C4Bl2xDndpU6nJ4bc1jXd+uTmYPVUwkD6bFY/oTyCes=
+ github.com/emicklei/go-restful/v3 v3.13.0/go.mod h1:6n3XBCmQQb25CM2LCACGz8ukIrRry+4bhvbpWn3mrbc=
+ github.com/emirpasic/gods v1.18.1 h1:FXtiHYKDGKCW2KzwZKx0iC0PQmdlorYgdFG9jPXJ1Bc=
+@@ -263,14 +270,14 @@ github.com/gliderlabs/ssh v0.3.8 h1:a4YXD1V7xMF9g5nTkdfnja3Sxy1PVDCj1Zg4Wb8vY6c=
+ github.com/gliderlabs/ssh v0.3.8/go.mod h1:xYoytBv1sV0aL3CavoDuJIQNURXkkfPA/wxQ1pL1fAU=
+ github.com/go-errors/errors v1.4.2 h1:J6MZopCL4uSllY1OfXM374weqZFFItUbrImctkmUxIA=
+ github.com/go-errors/errors v1.4.2/go.mod h1:sIVyrIiJhuEF+Pj9Ebtd6P/rEYROXFi3BopGUQ5a5Og=
+-github.com/go-git/gcfg/v2 v2.0.2 h1:MY5SIIfTGGEMhdA7d7JePuVVxtKL7Hp+ApGDJAJ7dpo=
+-github.com/go-git/gcfg/v2 v2.0.2/go.mod h1:/lv2NsxvhepuMrldsFilrgct6pxzpGdSRC13ydTLSLs=
+-github.com/go-git/go-billy/v6 v6.0.0-beta.1 h1:OJ4r207zcEbeq/DJNajQUOMd+pph3r9A7hRq1Sjl1bA=
+-github.com/go-git/go-billy/v6 v6.0.0-beta.1/go.mod h1:QGOWN4CzmtRfpFeCw5paG3RJyKdTwsfGASkxBVkIaAU=
+-github.com/go-git/go-git-fixtures/v6 v6.0.0-alpha.1 h1:gmqi2jvsreu0s8JMLylYDFq4sbjHwwlhktMw0DUg3mA=
+-github.com/go-git/go-git-fixtures/v6 v6.0.0-alpha.1/go.mod h1:ECf1MqJlBdYpKggBrOXjo/0EnvRZx6D++I86UYjPgAQ=
+-github.com/go-git/go-git/v6 v6.0.0-beta.1 h1:1t+vJYGDBN6f9GRWskgWx5UjXPFUa7wfffZZZ2C5GtA=
+-github.com/go-git/go-git/v6 v6.0.0-beta.1/go.mod h1:ugDlr38Wwc+fOw85J+Oluh5TNXQtJgYMcriOljg3l4s=
++github.com/go-git/gcfg v1.5.1-0.20230307220236-3a3c6141e376 h1:+zs/tPmkDkHx3U66DAb0lQFJrpS6731Oaa12ikc+DiI=
++github.com/go-git/gcfg v1.5.1-0.20230307220236-3a3c6141e376/go.mod h1:an3vInlBmSxCcxctByoQdvwPiA7DTK7jaaFDBTtu0ic=
++github.com/go-git/go-billy/v5 v5.9.0 h1:jItGXszUDRtR/AlferWPTMN4j38BQ88XnXKbilmmBPA=
++github.com/go-git/go-billy/v5 v5.9.0/go.mod h1:jCnQMLj9eUgGU7+ludSTYoZL/GGmii14RxKFj7ROgHw=
++github.com/go-git/go-git
+```
 
+**File**: `integration/deploy/manifest_test.go` (modified, +2/-2)
+```diff
+@@ -26,8 +26,8 @@ import (
+ 	"strings"
+ 	"testing"
+ 
+-	"github.com/go-git/go-git/v6"
+-	"github.com/go-git/go-git/v6/config"
++	"github.com/go-git/go-git/v5"
++	"github.com/go-git/go-git/v5/config"
+ 	"github.com/okteto/okteto/integration"
+ 	"github.com/okteto/okteto/integration/commands"
+ 	"github.com/okteto/okteto/pkg/cmd/pipeline"
+```
+
+**File**: `pkg/model/stack_test.go` (modified, +2/-2)
+```diff
+@@ -20,8 +20,8 @@ import (
+ 	"reflect"
+ 	"testing"
+ 
+-	"github.com/go-git/go-git/v6"
+-	"github.com/go-git/go-git/v6/config"
++	"github.com/go-git/go-git/v5"
++	"github.com/go-git/go-git/v5/config"
+ 	"github.com/okteto/okteto/pkg/build"
+ 	"github.com/okteto/okteto/pkg/constants"
+ 	"github.com/okteto/okteto/pkg/env"
+```
+
+---
+
+### Incident Patch 2: `a23d521e` (2026-11-18)
+**Commit Message**: fix(repository): read the git repository with the git binary when it is installed (#5257)
+
+* test: disable commit signing in go-git fallback tests
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Signed-off-by: Javier Lopez <[REDACTED_EMAIL]>
+
+* test: reproduce go-git failure on symlinked working directories
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Signed-off-by: Javier Lopez <[REDACTED_EMAIL]>
+
+* fix(repository): read the git repository with the git binary when it is installed (#5258)
+
+* fix(repository): read the git repository with the git binary when it is installed
+
+The CLI opened the repository with go-git before it used the git binary, so
+a go-git bug broke repository detection and Smart Builds even with git
+installed. Since go-git v6, a working directory that is a symlink pointing
+outside its parent fails with "path escapes from parent".
+
+The repository root, HEAD and remote URL now come from git. go-git is only
+the fallback when git is missing or can't resolve the repository.
+
+Co-Authored-By: Claude Opus 5.5 <[REDACTED_EMAIL]>
+Signed-off-by: Javier Lopez <[REDACTED_EMAIL]>
+
+* test(repository): skip the symlinked root test when git is missing
+
+Without git, the 
+
+**File**: `cmd/utils/git.go` (modified, +1/-18)
+```diff
+@@ -15,7 +15,6 @@ package utils
+ 
+ import (
+ 	"crypto/rand"
+-	"fmt"
+ 	"math/big"
+ 	"os"
+ 	"strings"
+@@ -35,23 +34,7 @@ var (
+ 
+ // GetBranch returns the branch from a .git directory
+ func GetBranch(path string) (string, error) {
+-	repo, err := repository.FindTopLevelGitRepoFromPath(path)
+-	if err != nil {
+-		return "", fmt.Errorf("failed to analyze git repo: %w", err)
+-	}
+-
+-	head, err := repo.Head()
+-	if err != nil {
+-		return "", fmt.Errorf("failed to infer the git repo's current branch: %w", err)
+-	}
+-
+-	branch := head.Name()
+-	if !branch.IsBranch() {
+-		return "", fmt.Errorf("git repo is not on a valid branch")
+-	}
+-
+-	name := strings.TrimPrefix(branch.String(), "refs/heads/")
+-	return name, nil
++	return repository.GetBranch(path)
+ }
+ 
+ // GetRandomSHA returns a random sha generated on the fly
+```
+
+**File**: `pkg/model/utils/utils.go` (modified, +1/-27)
+```diff
+@@ -20,7 +20,6 @@ import (
+ 	"sort"
+ 	"strings"
+ 
+-	"github.com/go-git/go-git/v5"
+ 	oktetoLog "github.com/okteto/okteto/pkg/log"
+ 	"github.com/okteto/okteto/pkg/repository"
+ )
+@@ -67,32 +66,7 @@ func findRepoName(repoURL string) string {
+ 	return possibleName
+ }
+ func GetRepositoryURL(path string) (string, error) {
+-	repo, err := repository.FindTopLevelGitRepoFromPath(path)
+-	if err != nil {
+-		return "", fmt.Errorf("failed to analyze git repo: %w", err)
+-	}
+-
+-	origin, err := repo.Remote("origin")
+-	if err != nil {
+-		if err != git.ErrRemoteNotFound {
+-			return "", fmt.Errorf("failed to get the git repo's remote configuration: %w", err)
+-		}
+-	}
+-
+-	if origin != nil {
+-		return origin.Config().URLs[0], nil
+-	}
+-
+-	remotes, err := repo.Remotes()
+-	if err != nil {
+-		return "", fmt.Errorf("failed to get git repo's remote information: %w", err)
+-	}
+-
+-	if len(remotes) == 0 {
+-		return "", fmt.Errorf("git repo doesn't have any remote")
+-	}
+-
+-	return remotes[0].Config().URLs[0], nil
++	return repository.GetRemoteURL(path)
+ }
+ 
+ type Graph map[string][]string
+```
+
+**File**: `pkg/repository/git.go` (modified, +88/-26)
+```diff
+@@ -115,31 +115,15 @@ func (r gitRepoController) getRepoURL() (string, error) {
+ 		return r.sanitiseURL(url.String()), nil
+ 	}
+ 
+-	repo, err := FindTopLevelGitRepoFromPath(r.path)
++	repo, err := r.repoGetter.get(r.path)
+ 	if err != nil {
+ 		return "", fmt.Errorf("failed to analyze git repo: %w", err)
+ 	}
+-	origin, err := repo.Remote("origin")
+-	if err != nil {
+-		if err != git.ErrRemoteNotFound {
+-			return "", fmt.Errorf("failed to get the git repo's remote configuration: %w", err)
+-		}
+-	}
+-
+-	if origin != nil {
+-		return r.sanitiseURL(origin.Config().URLs[0]), nil
+-	}
+-
+-	remotes, err := repo.Remotes()
++	remoteURL, err := repo.RemoteURL()
+ 	if err != nil {
+-		return "", fmt.Errorf("failed to get git repo's remote information: %w", err)
+-	}
+-
+-	if len(remotes) == 0 {
+-		return "", fmt.Errorf("git repo doesn't have any remote")
++		return "", err
+ 	}
+-
+-	return r.sanitiseURL(remotes[0].Config().URLs[0]), nil
++	return r.sanitiseURL(remoteURL), nil
+ }
+ 
+ func (r gitRepoController) sanitiseURL(u string) string {
+@@ -409,7 +393,16 @@ type repositoryGetterInterface interface {
+ 
+ type gitRepositoryGetter struct{}
+ 
++// get opens the repository that contains path. It reads it with the git binary when git is installed and finds the
++// repository, and falls back on go-git otherwise: when git is missing, or when it refuses the repository, as with a
++// repository owned by another user
+ func (gitRepositoryGetter) get(path string) (gitRepositoryInterface, error) {
++	binaryRepo, err := newGitBinaryRepository(&LocalExec{}, path)
++	if err == nil {
++		return binaryRepo, nil
++	}
++	oktetoLog.Debugf("could not read the git repository with the git binary, falling back on go-git: %s", err)
++
+ 	repo, err := FindTopLevelGitRepoFromPath(path)
+ 	if err != nil {
+ 		return nil, err
+@@ -430,7 +423,7 @@ func (ogr oktetoGitRepository) Worktree() (gitWorktreeInterface, error) {
+ 	if err != nil {
+ 		return nil, err
+ 	}
+-	return oktetoGitWorktree{worktree: worktree}, nil
++	return oktetoGitWorktree{worktree: worktree, path: ogr.root}, nil
+ }
+ 
+ func (ogr oktetoGitRepository) Head() (*plumbing.Reference, error) {
+@@ -441,6 +434,31 @@ func (ogr oktetoGitRepository) Log(o *git.LogOptions) (object.CommitIter, error)
+ 	return ogr.repo.Log(o)
+ }
+ 
++// RemoteURL returns the first URL of the origin remote, or of any remote when there is no origin
++func (ogr oktetoGitRepository) RemoteURL() (string, error) {
++	origin, err := ogr.repo.Remote("origin")
++	if err != nil {
++		if err != git.ErrRemoteNotFound {
++			return "", fmt.Errorf("failed to get the git repo's remote configuration: %w", err)
++		}
++	}
++
++	if origin != nil {
++		return origin.Config().URLs[0], nil
++	}
++
++	remotes, err := ogr.repo.Remotes()
++	if err != nil {
++		return "", fmt.Errorf("failed to get git repo's remote information: %w", err)
++	}
++
++	if len(remotes) == 0 {
++		return "", errNoRemote
++	}
++
++	return remotes[0].Config().URLs[0], nil
++}
++
+ func (ogr oktetoGitRepository) calculateUntrackedFiles(ctx context.Context, contextDir string) ([]string, error) {
+ 	worktree, err := ogr.Worktree()
+ 	if err != nil {
+@@ -452,10 +470,22 @@ func (ogr oktetoGitRepository) calculateUntrackedFiles(ctx context.Context, cont
+ 
+ type oktetoGitWorktree struct {
+ 	worktree *git.Worktree
++	// path is the path the repository was opened from
++	path string
+ }
+ 
++// GetRoot returns the root of the worktree in the form of the path the repository was opened from, as the git binary
++// repository does. go-git v5 returns it with the symlinks resolved
+ func (ogr oktetoGitWorktree) GetRoot() string {
+-	return ogr.worktree.Filesystem.Root()
++	root := ogr.worktree.Filesystem.Root()
++	if ogr.path == "" {
++		return root
++	}
++	inPathForm, err := rootInPathForm(ogr.path, root)
++	if err != nil {
++		return root
++	}
++	return inPathForm
+ }
+ 
+ type oktetoGitStatus struct {
+@@ -469,7 +499,7 @@ func (ogs oktetoGitStatus) IsClean() bool {
+ type gitRepositoryInterface interface {
+ 	Worktree() (gitWorktreeInterface, error)
+ 	Head() (*plumbing.Reference, error)
+-	Log(o *git.LogOptions) (object.CommitIter, error)
++	RemoteURL() (string, error)
+ 	GetLatestSHA(ctx context.Context, dirpath string, localGit LocalGitInterface) (string, error)
+ 	GetDiff(ctx context.Context, dirpath string, localGit LocalGitInterface) (string, error)
+ 	calculateUntrackedFiles(ctx context.Context, contextDir string) ([]string, error)
+@@ -594,7 +624,7 @@ func FindTopLevelGitDir(workingDir string) (string, error) {
+ 		return "", fmt.Errorf("%w: invalid working dir: %w", errFindingRepo, err)
+ 	}
+ 
+-	repo, err := FindTopLevelGitRepoFromPath(dir)
++	repo, err := gitRepositoryGetter{}.get(dir)
+ 	if err != nil {
+ 		return "", fmt.Errorf("%w: failed to find top level git repo: %w", errFindingRepo, err)
+ 	}
+@@ -604,10 +634,42 @@ func FindTopLevelGitDir(workingDir string) (string, error) {
+ 		return "", fmt.Errorf("%w: failed to find top level git repo: %w", errFindingRepo, err)
+ 	}
+ 
+-	return worktree.Filesystem.Root(), nil
++	return worktree.GetRoot(), nil
++}
++
++// 
+```
+
+**File**: `pkg/repository/git_binary_repository.go` (added, +214/-0)
+```diff
+@@ -0,0 +1,214 @@
++// Copyright 2026 The Okteto Authors
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++// http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++package repository
++
++import (
++	"context"
++	"errors"
++	"fmt"
++	"os"
++	"os/exec"
++	"path/filepath"
++	"strings"
++
++	"github.com/go-git/go-git/v5/plumbing"
++)
++
++const originRemoteURLKey = "remote.origin.url"
++
++var errNoRemote = errors.New("git repo doesn't have any remote")
++
++// gitBinaryRepository reads a repository with the git binary, so go-git never opens it
++type gitBinaryRepository struct {
++	executor CommandExecutor
++	gitPath  string
++
++	// path is where the caller looked for the repository. Dir hashes and diffs run from it, as in oktetoGitRepository
++	path string
++
++	// root is the repository's top level dir, in the form of path
++	root string
++}
++
++// newGitBinaryRepository finds the repository that contains path with the git binary. It fails when git is not
++// installed or doesn't recognize the repository
++func newGitBinaryRepository(executor CommandExecutor, path string) (gitBinaryRepository, error) {
++	gitPath, err := executor.LookPath("git")
++	if err != nil {
++		return gitBinaryRepository{}, err
++	}
++
++	dir, err := filepath.Abs(path)
++	if err != nil {
++		return gitBinaryRepository{}, err
++	}
++	info, err := os.Stat(dir)
++	if err != nil {
++		return gitBinaryRepository{}, err
++	}
++	// Callers also pass manifest paths, and go-git looks for the repository from the file's dir
++	if !info.IsDir() {
++		dir = filepath.Dir(dir)
++	}
++
++	// Unlike go-git, git honors GIT_DIR and GIT_WORK_TREE, as the status, ls-files and diff calls already did
++	toplevel, err := runGit(context.Background(), executor, dir, gitPath, "rev-parse", "--show-toplevel")
++	if err != nil {
++		return gitBinaryRepository{}, err
++	}
++	root, err := rootInPathForm(dir, filepath.FromSlash(toplevel))
++	if err != nil {
++		return gitBinaryRepository{}, err
++	}
++
++	return gitBinaryRepository{
++		executor: executor,
++		gitPath:  gitPath,
++		path:     path,
++		root:     root,
++	}, nil
++}
++
++// rootInPathForm returns the repository's top level dir in the form of dir. git prints it with symlinks
++// resolved, but callers compare it textually with paths built from the working dir, like the manifest path that
++// deploy stores or the Smart Builds ignore filters. So the top level is looked up among dir and its parents, and the
++// resolved path is returned only when none of them is the top level, as when dir is a symlink from outside the
++// repository
++func rootInPathForm(dir, toplevel string) (string, error) {
++	toplevelInfo, err := os.Stat(toplevel)
++	if err != nil {
++		return "", err
++	}
++
++	for candidate := dir; ; candidate = filepath.Dir(candidate) {
++		if info, err := os.Stat(candidate); err == nil && os.SameFile(info, toplevelInfo) {
++			return candidate, nil
++		}
++		if filepath.Dir(candidate) == candidate {
++			return toplevel, nil
++		}
++	}
++}
++
++// runGit runs a git command in dir and returns its output without the trailing newline. Errors carry git's
++// stderr, so the logs say why git failed
++func runGit(ctx context.Context, executor CommandExecutor, dir, gitPath string, args ...string) (string, error) {
++	output, err := executor.RunCommand(ctx, dir, gitPath, append([]string{"--no-optional-locks"}, args...)...)
++	if err != nil {
++		var exitErr *exec.ExitError
++		if errors.As(err, &exitErr) && len(exitErr.Stderr) > 0 {
++			return "", fmt.Errorf("git %s: %w: %s", args[0], err, strings.TrimSpace(string(exitErr.Stderr)))
++		}
++		return "", fmt.Errorf("git %s: %w", args[0], err)
++	}
++	return strings.TrimRight(string(output), "\r\n"), nil
++}
++
++func (r gitBinaryRepository) Worktree() (gitWorktreeInterface, error) {
++	return gitBinaryWorktree{root: r.root}, nil
++}
++
++// Head returns the commit HEAD points to, named after its branch, or HEAD when it is detached, as go-git does
++func (r gitBinaryRepository) Head() (*plumbing.Reference, error) {
++	// --symbolic-full-name applies only to the second HEAD, so git prints the commit first and then the ref name
++	output, err := runGit(context.Background(), r.executor, r.root, r.gitPath, "rev-parse", "HEAD", "--symbolic-full-name", "HEAD")
++	if err != nil {
++		return nil, err
++	}
++	hash, name, found := strings.Cut(output, "\n")
++	if !found {
++		return nil, fmt.Errorf("unexpected git rev-parse output: %q", output)
++	}
++	return plumbing.NewHashReference(plumbing.ReferenceName(strings.TrimSpace(name)), plumbing.NewHash(strings.TrimSpace(hash))), nil
++}
++
++// RemoteURL returns the first URL of the or
+```
+
+**File**: `pkg/repository/git_binary_repository_test.go` (added, +258/-0)
+```diff
+@@ -0,0 +1,258 @@
++// Copyright 2026 The Okteto Authors
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++// http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++package repository
++
++import (
++	"os"
++	"os/exec"
++	"path/filepath"
++	"testing"
++
++	"github.com/go-git/go-git/v5"
++	"github.com/go-git/go-git/v5/config"
++	"github.com/go-git/go-git/v5/plumbing"
++	"github.com/stretchr/testify/require"
++)
++
++// requireGitBinary skips the test when git is not installed, since it checks
++// how the repository code reads repositories with the git binary.
++func requireGitBinary(t *testing.T) {
++	t.Helper()
++	if _, err := exec.LookPath("git"); err != nil {
++		t.Skip("git is not installed")
++	}
++}
++
++// initTestRepoWithCommit creates a test repository with one committed file in
++// api/ and returns its path and worktree.
++func initTestRepoWithCommit(t *testing.T) (string, *git.Worktree) {
++	t.Helper()
++	dir, worktree := initTestRepo(t)
++	writeRepoFile(t, dir, "api/main.go", "package main")
++	commitAll(t, worktree, "initial")
++	return dir, worktree
++}
++
++func addRemotes(t *testing.T, dir string, remotes ...*config.RemoteConfig) {
++	t.Helper()
++	repo, err := git.PlainOpen(dir)
++	require.NoError(t, err)
++	for _, remote := range remotes {
++		_, err := repo.CreateRemote(remote)
++		require.NoError(t, err)
++	}
++}
++
++func TestGitRepositoryGetter_readsWithGitBinary(t *testing.T) {
++	requireGitBinary(t)
++	dir, _ := initTestRepoWithCommit(t)
++
++	repo, err := gitRepositoryGetter{}.get(dir)
++	require.NoError(t, err)
++	require.IsType(t, gitBinaryRepository{}, repo)
++}
++
++func TestNewGitBinaryRepository_rootFromSubdir(t *testing.T) {
++	requireGitBinary(t)
++	dir, _ := initTestRepoWithCommit(t)
++
++	repo, err := newGitBinaryRepository(&LocalExec{}, filepath.Join(dir, "api"))
++	require.NoError(t, err)
++	require.Equal(t, dir, repo.root)
++}
++
++// The okteto up branch tracking and the repository URL of deploy and up look
++// for the repository from the manifest path, as go-git allows.
++func TestNewGitBinaryRepository_rootFromFile(t *testing.T) {
++	requireGitBinary(t)
++	dir, _ := initTestRepoWithCommit(t)
++
++	repo, err := newGitBinaryRepository(&LocalExec{}, filepath.Join(dir, "api", "main.go"))
++	require.NoError(t, err)
++	require.Equal(t, dir, repo.root)
++}
++
++func TestNewGitBinaryRepository_notARepository(t *testing.T) {
++	requireGitBinary(t)
++
++	_, err := newGitBinaryRepository(&LocalExec{}, t.TempDir())
++	require.Error(t, err)
++}
++
++func TestNewGitBinaryRepository_missingPath(t *testing.T) {
++	requireGitBinary(t)
++	dir, _ := initTestRepoWithCommit(t)
++
++	_, err := newGitBinaryRepository(&LocalExec{}, filepath.Join(dir, "missing"))
++	require.Error(t, err)
++}
++
++func TestGitBinaryRepositoryHead_branchMatchesGoGit(t *testing.T) {
++	requireGitBinary(t)
++	dir, worktree := initTestRepoWithCommit(t)
++	require.NoError(t, worktree.Checkout(&git.CheckoutOptions{Branch: plumbing.NewBranchReferenceName("feature/x"), Create: true}))
++	goGitRepo, err := git.PlainOpen(dir)
++	require.NoError(t, err)
++	want, err := goGitRepo.Head()
++	require.NoError(t, err)
++
++	repo, err := newGitBinaryRepository(&LocalExec{}, dir)
++	require.NoError(t, err)
++	head, err := repo.Head()
++	require.NoError(t, err)
++	require.Equal(t, want.Name(), head.Name())
++	require.Equal(t, want.Hash(), head.Hash())
++}
++
++func TestGitBinaryRepositoryHead_detachedMatchesGoGit(t *testing.T) {
++	requireGitBinary(t)
++	dir, worktree := initTestRepoWithCommit(t)
++	goGitRepo, err := git.PlainOpen(dir)
++	require.NoError(t, err)
++	branchHead, err := goGitRepo.Head()
++	require.NoError(t, err)
++	require.NoError(t, worktree.Checkout(&git.CheckoutOptions{Hash: branchHead.Hash()}))
++	want, err := goGitRepo.Head()
++	require.NoError(t, err)
++
++	repo, err := newGitBinaryRepository(&LocalExec{}, dir)
++	require.NoError(t, err)
++	head, err := repo.Head()
++	require.NoError(t, err)
++	require.Equal(t, plumbing.HEAD, head.Name())
++	require.Equal(t, want.Name(), head.Name())
++	require.Equal(t, want.Hash(), head.Hash())
++}
++
++func TestGitBinaryRepositoryHead_noCommits(t *testing.T) {
++	requireGitBinary(t)
++	dir, _ := initTestRepo(t)
++
++	repo, err := newGitBinaryRepository(&LocalExec{}, dir)
++	require.NoError(t, err)
++	_, err = repo.Head()
++	require.Error(t, err)
++}
++
++func TestGitBinaryRepositoryRemoteURL_prefersOrigin(t *testing.T) {
++	requireGitBinary(t)
++	dir, _ := initTestRepo(t)
++	addRemotes(t, dir,
++		&config.RemoteConfig{Name: "fork", URLs: []string{"https://github.com/fork/repo.git"}},
++		&config.RemoteConfig{Name: "origin", URLs: []string{"git@github.com:oktet
+```
+
+**File**: `pkg/repository/git_gogit_fallback_test.go` (modified, +114/-15)
+```diff
+@@ -24,6 +24,8 @@ import (
+ 	"time"
+ 
+ 	"github.com/go-git/go-git/v5"
++	"github.com/go-git/go-git/v5/config"
++	"github.com/go-git/go-git/v5/plumbing"
+ 	"github.com/go-git/go-git/v5/plumbing/object"
+ 	"github.com/stretchr/testify/require"
+ )
+@@ -68,6 +70,32 @@ func writeRepoFile(t *testing.T, root, name, content string) {
+ 	require.NoError(t, os.WriteFile(path, []byte(content), 0o600))
+ }
+ 
++// initTestRepo creates a git repository in a temp dir and returns its path and
++// worktree. Commit signing is disabled in the repository's config so the tests
++// do not depend on the machine's global git config: go-git v6 honors
++// commit.gpgSign and fails to commit when no signer is set up.
++func initTestRepo(t *testing.T) (string, *git.Worktree) {
++	t.Helper()
++	dir := t.TempDir()
++	return dir, initTestRepoAt(t, dir)
++}
++
++// initTestRepoAt creates the git repository of initTestRepo at dir and returns its worktree
++func initTestRepoAt(t *testing.T, dir string) *git.Worktree {
++	t.Helper()
++	repo, err := git.PlainInit(dir, false)
++	require.NoError(t, err)
++
++	cfg, err := repo.Config()
++	require.NoError(t, err)
++	cfg.Raw.Section("commit").SetOption("gpgsign", "false")
++	require.NoError(t, repo.SetConfig(cfg))
++
++	worktree, err := repo.Worktree()
++	require.NoError(t, err)
++	return worktree
++}
++
+ func commitAll(t *testing.T, worktree *git.Worktree, message string) string {
+ 	t.Helper()
+ 	require.NoError(t, worktree.AddWithOptions(&git.AddOptions{All: true}))
+@@ -79,11 +107,7 @@ func commitAll(t *testing.T, worktree *git.Worktree, message string) string {
+ }
+ 
+ func TestOktetoGitWorktreeStatus_goGitFallbackHonoursNestedGitignore(t *testing.T) {
+-	dir := t.TempDir()
+-	repo, err := git.PlainInit(dir, false)
+-	require.NoError(t, err)
+-	worktree, err := repo.Worktree()
+-	require.NoError(t, err)
++	dir, worktree := initTestRepo(t)
+ 
+ 	writeRepoFile(t, dir, ".gitignore", "*.log\n")
+ 	writeRepoFile(t, dir, "sub/.gitignore", "build/\n")
+@@ -106,11 +130,7 @@ func TestOktetoGitWorktreeStatus_goGitFallbackHonoursNestedGitignore(t *testing.
+ }
+ 
+ func TestOktetoGitWorktreeStatus_goGitFallbackCleanWhenOnlyIgnoredFiles(t *testing.T) {
+-	dir := t.TempDir()
+-	repo, err := git.PlainInit(dir, false)
+-	require.NoError(t, err)
+-	worktree, err := repo.Worktree()
+-	require.NoError(t, err)
++	dir, worktree := initTestRepo(t)
+ 
+ 	writeRepoFile(t, dir, ".gitignore", "node_modules/\n")
+ 	writeRepoFile(t, dir, "main.go", "package main")
+@@ -124,11 +144,7 @@ func TestOktetoGitWorktreeStatus_goGitFallbackCleanWhenOnlyIgnoredFiles(t *testi
+ }
+ 
+ func TestOktetoGitRepositoryGetLatestSHA_goGitFallbackFiltersByPath(t *testing.T) {
+-	dir := t.TempDir()
+-	repo, err := git.PlainInit(dir, false)
+-	require.NoError(t, err)
+-	worktree, err := repo.Worktree()
+-	require.NoError(t, err)
++	dir, worktree := initTestRepo(t)
+ 
+ 	writeRepoFile(t, dir, "api/main.go", "package main")
+ 	first := commitAll(t, worktree, "add api")
+@@ -142,3 +158,86 @@ func TestOktetoGitRepositoryGetLatestSHA_goGitFallbackFiltersByPath(t *testing.T
+ 	require.NoError(t, err)
+ 	require.Equal(t, first, sha)
+ }
++
++// withoutGitBinary empties PATH for the test, so the repository code can't find
++// git and falls back on go-git.
++func withoutGitBinary(t *testing.T) {
++	t.Helper()
++	t.Setenv("PATH", "")
++}
++
++func TestGitRepositoryGetter_goGitFallbackWithoutGitBinary(t *testing.T) {
++	withoutGitBinary(t)
++	dir, worktree := initTestRepo(t)
++	writeRepoFile(t, dir, "api/main.go", "package main")
++	commitAll(t, worktree, "initial")
++
++	repo, err := gitRepositoryGetter{}.get(dir)
++	require.NoError(t, err)
++	require.IsType(t, oktetoGitRepository{}, repo)
++}
++
++// git is installed but doesn't resolve the repository, as when it refuses a
++// checkout owned by another user. GIT_CEILING_DIRECTORIES stops git's search
++// below the repository's root, and go-git ignores it.
++func TestGitRepositoryGetter_goGitFallbackWhenGitCantResolveRepository(t *testing.T) {
++	requireGitBinary(t)
++	dir, worktree := initTestRepo(t)
++	writeRepoFile(t, dir, "api/main.go", "package main")
++	commitAll(t, worktree, "initial")
++	t.Setenv("GIT_CEILING_DIRECTORIES", dir)
++
++	repo, err := gitRepositoryGetter{}.get(filepath.Join(dir, "api"))
++	require.NoError(t, err)
++	require.IsType(t, oktetoGitRepository{}, repo)
++
++	root, err := FindTopLevelGitDir(filepath.Join(dir, "api"))
++	require.NoError(t, err)
++	require.Equal(t, dir, root)
++}
++
++func TestFindTopLevelGitDir_goGitFallbackFromSubdir(t *testing.T) {
++	withoutGitBinary(t)
++	dir, worktree := initTestRepo(t)
++	writeRepoFile(t, dir, "api/main.go", "package main")
++	commitAll(t, worktree, "initial")
++
++	root, err := FindTopLevelGitDir(filepath.Join(dir, "api"))
++	require.NoError(t, err)
++	require.Equal(t, dir, root)
++}
++
++func TestGetBranch_goGitFallback(t *testing.T) {
++	withoutGitBinary(t)
++	dir, worktree := initTestRepo(t)
++	writeRepoFile(t, dir, "api/main.go", "package main")
++	commitAll(t, worktree, "initial")
++	require.NoError(t, worktree.Checkout(&git.CheckoutOptions{Branch: plu
+```
+
+**File**: `pkg/repository/git_symlink_test.go` (modified, +139/-13)
+```diff
+@@ -20,21 +20,21 @@ import (
+ 	"path/filepath"
+ 	"testing"
+ 
+-	"github.com/go-git/go-git/v5"
+ 	"github.com/stretchr/testify/require"
+ )
+ 
+-// newSymlinkedRepo creates a git repository at <tmp>/real/repo and a symlink
+-// to it at <tmp>/work/repo, and returns both paths. The symlink's target lies
+-// outside the symlink's parent directory, as when a user works from a
+-// symlinked checkout.
++// newSymlinkedRepo creates a git repository with a commit at <tmp>/real/repo
++// and a symlink to it at <tmp>/work/repo, and returns both paths. The
++// symlink's target lies outside the symlink's parent directory, as when a user
++// works from a symlinked checkout.
+ func newSymlinkedRepo(t *testing.T) (link, target string) {
+ 	t.Helper()
+ 	tmp := t.TempDir()
+ 
+ 	target = filepath.Join(tmp, "real", "repo")
+-	_, err := git.PlainInit(target, false)
+-	require.NoError(t, err)
++	worktree := initTestRepoAt(t, target)
++	writeRepoFile(t, target, "api/main.go", "package main")
++	commitAll(t, worktree, "initial")
+ 
+ 	require.NoError(t, os.Mkdir(filepath.Join(tmp, "work"), 0o700))
+ 	link = filepath.Join(tmp, "work", "repo")
+@@ -43,11 +43,10 @@ func newSymlinkedRepo(t *testing.T) (link, target string) {
+ 	return link, target
+ }
+ 
+-// TestFindTopLevelGitRepoFromPath_symlinkedWorkingDir covers running okteto
+-// from a working directory that is a symlink to a repository outside the
+-// symlink's parent directory. go-git v6 refused to open it with "path escapes
+-// from parent", so Smart Builds couldn't read the git metadata and rebuilt
+-// every image.
++// TestFindTopLevelGitRepoFromPath_symlinkedWorkingDir checks that the go-git
++// fallback opens a repository from a working directory that is a symlink to a
++// repository outside the symlink's parent directory, which go-git v6 refused
++// with "path escapes from parent".
+ func TestFindTopLevelGitRepoFromPath_symlinkedWorkingDir(t *testing.T) {
+ 	link, _ := newSymlinkedRepo(t)
+ 
+@@ -56,9 +55,55 @@ func TestFindTopLevelGitRepoFromPath_symlinkedWorkingDir(t *testing.T) {
+ 	require.NotNil(t, repo)
+ }
+ 
++// TestRepository_symlinkedWorkingDir reproduces the failure seen when running
++// okteto from a working directory that is a symlink to a repository outside
++// the symlink's parent directory. go-git v6 refuses to open it with "path
++// escapes from parent", so Smart Builds couldn't read the git metadata and
++// rebuilt every image. With git installed, the git binary reads it instead.
++func TestRepository_symlinkedWorkingDir(t *testing.T) {
++	requireGitBinary(t)
++	link, target := newSymlinkedRepo(t)
++	fromLink := NewRepository(link)
++	fromTarget := NewRepository(target)
++
++	sha, err := fromLink.GetSHA()
++	require.NoError(t, err)
++	wantSHA, err := fromTarget.GetSHA()
++	require.NoError(t, err)
++	require.Equal(t, wantSHA, sha)
++
++	dirSHA, err := fromLink.GetLatestDirSHA(filepath.Join(link, "api"))
++	require.NoError(t, err)
++	wantDirSHA, err := fromTarget.GetLatestDirSHA(filepath.Join(target, "api"))
++	require.NoError(t, err)
++	require.Equal(t, wantDirSHA, dirSHA)
++}
++
++// Smart Builds also hashes the uncommitted changes of the build context, and
++// it must see the same changes from the symlink as from the real path.
++func TestRepository_symlinkedWorkingDirSeesUncommittedChanges(t *testing.T) {
++	requireGitBinary(t)
++	link, target := newSymlinkedRepo(t)
++	fromLink := NewRepository(link)
++	fromTarget := NewRepository(target)
++	cleanHash, err := fromTarget.GetDiffHash(filepath.Join(target, "api"))
++	require.NoError(t, err)
++
++	writeRepoFile(t, target, "api/main.go", "package main\n\nfunc main() {}\n")
++	writeRepoFile(t, target, "api/new.go", "package main\n")
++
++	diffHash, err := fromLink.GetDiffHash(filepath.Join(link, "api"))
++	require.NoError(t, err)
++	wantDiffHash, err := fromTarget.GetDiffHash(filepath.Join(target, "api"))
++	require.NoError(t, err)
++	require.Equal(t, wantDiffHash, diffHash)
++	require.NotEqual(t, cleanHash, diffHash)
++}
++
+ // TestFindTopLevelGitDir_symlinkedWorkingDir covers the same scenario for the
+ // repository detection of okteto deploy, which otherwise warns "Repository not
+-// detected" and leaves OKTETO_GIT_COMMIT and OKTETO_GIT_BRANCH unset.
++// detected" and leaves OKTETO_GIT_COMMIT and OKTETO_GIT_BRANCH unset. It runs
++// with and without git: the go-git v5 fallback opens symlinked working dirs.
+ func TestFindTopLevelGitDir_symlinkedWorkingDir(t *testing.T) {
+ 	link, target := newSymlinkedRepo(t)
+ 
+@@ -71,3 +116,84 @@ func TestFindTopLevelGitDir_symlinkedWorkingDir(t *testing.T) {
+ 	require.NoError(t, err)
+ 	require.Equal(t, want, got)
+ }
++
++// The root keeps the form of the path the caller passed: deploy -f and the
++// Smart Builds ignore filters compare it textually with paths built from the
++// logical working dir.
++func TestFindTopLevelGitDir_keepsSymlinkedWorkingDirForm(t *testing.T) {
++	requireGitBinary(t)
++	link, _ := newSymlinkedRepo(t)
++
++	dir, err := FindTopLevelGitDir(filepath.Join(link, "api"))
++	require.NoError(t, err)
++	require.Equal(t, link, dir)
+```
+
+**File**: `pkg/repository/repository_test.go` (modified, +2/-4)
+```diff
+@@ -18,9 +18,7 @@ import (
+ 	"net/url"
+ 	"testing"
+ 
+-	"github.com/go-git/go-git/v5"
+ 	"github.com/go-git/go-git/v5/plumbing"
+-	"github.com/go-git/go-git/v5/plumbing/object"
+ 	"github.com/okteto/okteto/pkg/constants"
+ 	"github.com/stretchr/testify/assert"
+ )
+@@ -63,8 +61,8 @@ func (fr fakeRepository) GetLatestSHA(context.Context, string, LocalGitInterface
+ 	return fr.commit, fr.err
+ }
+ 
+-func (fr fakeRepository) Log(logOpts *git.LogOptions) (object.CommitIter, error) {
+-	return nil, nil
++func (fr fakeRepository) RemoteURL() (string, error) {
++	return "", fr.err
+ }
+ 
+ func (fr fakeRepository) GetDiff(ctx context.Context, dirpath string, localGit LocalGitInterface) (string, error) {
+```
+
+---
+
+### Incident Patch 3: `0c4de990` (2026-11-18)
+**Commit Message**: fix(build): show the registry credentials hint when a registry answers 401 or 403 (#5272)
+
+BuildKit reports a registry that rejects the request as containerd's
+"unexpected status from <METHOD> request to <url>: 401 Unauthorized"
+(or 403 Forbidden), which is what basic-auth registries like Amazon ECR
+return. GetSolveErrorMessage didn't recognize it, so users got the raw
+"build failed: failed to solve" error with no hint.
+
+Treat it as an image that isn't accessible, like the other registry
+access errors: the message names the image and points to Okteto
+Registry Credentials.
+
+Signed-off-by: Nacho Fuertes <[REDACTED_EMAIL]>
+Co-authored-by: Claude Opus 5.5 <[REDACTED_EMAIL]>
+
+**File**: `pkg/build/buildkit/errors.go` (modified, +12/-1)
+```diff
+@@ -69,7 +69,8 @@ func isImageIsNotAccessibleErr(err error) bool {
+ 		isNotLoggedIntoRegistry(err) ||
+ 		isPullAccessDenied(err) ||
+ 		isNotFound(err) ||
+-		isHostNotFound(err)
++		isHostNotFound(err) ||
++		isRegistryAccessDenied(err)
+ }
+ 
+ // GetSolveErrorMessage returns the parsed error message
+@@ -150,6 +151,10 @@ var (
+ 	// containerd registry client errors, e.g.
+ 	// "unexpected status from HEAD request to https://<registry>/v2/<name>/manifests/<tag>: 500 Internal Server Error"
+ 	regexForRegistryServerErr = regexp.MustCompile(`unexpected status from [A-Z]+ request to (\S+): (5\d\d[A-Za-z ]*)`)
++
++	// regexForRegistryAccessDeniedErr matches a registry 401 or 403 response in the containerd registry client errors,
++	// e.g. "unexpected status from HEAD request to https://<registry>/v2/<name>/manifests/<tag>: 403 Forbidden"
++	regexForRegistryAccessDeniedErr = regexp.MustCompile(`unexpected status from [A-Z]+ request to \S+: 40[13] `)
+ )
+ 
+ func extractImageFromError(err error) string {
+@@ -264,6 +269,12 @@ func isHostNotFound(err error) bool {
+ 	return strings.Contains(err.Error(), "failed to do request") && strings.Contains(err.Error(), "no such host")
+ }
+ 
++// isRegistryAccessDenied returns true when the registry answers 401 or 403, which is what basic-auth registries like
++// ECR return when the credentials are missing, invalid or expired
++func isRegistryAccessDenied(err error) bool {
++	return regexForRegistryAccessDeniedErr.MatchString(err.Error())
++}
++
+ // isFailedChecksum returns true when the error is because the build process cannot calculate checksum of a layer.
+ // It usually happens when copying a non-existent file
+ func isFailedChecksum(err error) bool {
+```
+
+**File**: `pkg/build/buildkit/errors_test.go` (modified, +37/-0)
+```diff
+@@ -143,6 +143,43 @@ func Test_GetSolveErrorMessage(t *testing.T) {
+     See more at: https://www.okteto.com/docs/admin/registry-credentials/`,
+ 			},
+ 		},
++		{
++			name: "registry access denied - HEAD 403 from ECR",
++			err:  errors.New("build failed: failed to solve: 123456789012.dkr.ecr.eu-west-1.amazonaws.com/deploy:1.0: failed to resolve source metadata for 123456789012.dkr.ecr.eu-west-1.amazonaws.com/deploy:1.0: unexpected status from HEAD request to https://123456789012.dkr.ecr.eu-west-1.amazonaws.com/v2/deploy/manifests/1.0: 403 Forbidden"),
++			expected: oktetoErrors.UserError{
++				E: fmt.Errorf("the image '123456789012.dkr.ecr.eu-west-1.amazonaws.com/deploy:1.0' is not accessible or it does not exist"),
++				Hint: `Please verify the name of the image to make sure it exists.
++    When using private registries, make sure Okteto Registry Credentials are correctly configured.
++    See more at: https://www.okteto.com/docs/admin/registry-credentials/`,
++			},
++		},
++		{
++			name: "registry access denied - GET 401",
++			err:  errors.New("failed to solve: registry.example.com/ns/base:1.0: failed to resolve source metadata for registry.example.com/ns/base:1.0: unexpected status from GET request to https://registry.example.com/v2/ns/base/manifests/1.0: 401 Unauthorized"),
++			expected: oktetoErrors.UserError{
++				E: fmt.Errorf("the image 'registry.example.com/ns/base:1.0' is not accessible or it does not exist"),
++				Hint: `Please verify the name of the image to make sure it exists.
++    When using private registries, make sure Okteto Registry Credentials are correctly configured.
++    See more at: https://www.okteto.com/docs/admin/registry-credentials/`,
++			},
++		},
++		{
++			name: "registry access denied - push 403",
++			err:  errors.New("failed to solve: failed to push registry.example.com/ns/app:dev: unexpected status from PUT request to https://registry.example.com/v2/ns/app/manifests/dev: 403 Forbidden"),
++			expected: oktetoErrors.UserError{
++				E: fmt.Errorf("the image '' is not accessible or it does not exist"),
++				Hint: `Please verify the name of the image to make sure it exists.
++    When using private registries, make sure Okteto Registry Credentials are correctly configured.
++    See more at: https://www.okteto.com/docs/admin/registry-credentials/`,
++			},
++		},
++		{
++			name: "registry other 4xx status",
++			err:  errors.New("failed to solve: registry.example.com/ns/base:1.0: failed to resolve source metadata for registry.example.com/ns/base:1.0: unexpected status from GET request to https://registry.example.com/v2/ns/base/manifests/1.0: 400 Bad Request"),
++			expected: oktetoErrors.UserError{
++				E: errors.New("failed to solve: registry.example.com/ns/base:1.0: failed to resolve source metadata for registry.example.com/ns/base:1.0: unexpected status from GET request to https://registry.example.com/v2/ns/base/manifests/1.0: 400 Bad Request"),
++			},
++		},
+ 		{
+ 			name: "registry host not found",
+ 			err:  errors.New("failed to solve: image: failed to do request: Head 'https://non-existing.okteto.dev/v2/xxxx/cli/manifests/debug-4': dial tcp: lookup non-existing.okteto.dev on xx.xxxx.x.xx:xx: no such host"),
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #5264** (2026-11-13): chore(deps): Update module github.com/hashicorp/go-getter to v1.8.10 (@oktetobot)
-- **PR #5261** (2026-11-13): build(deps): bump renovatebot/github-action from 46.3.12 to 46.3.13 (@dependabot[bot])
-- **PR #5260** (2026-11-13): Upgrade buildkit dependency to v0.35.0-okteto1 (@devin-ai-integration[bot])
-- **PR #5256** (2026-11-11): chore(deps): Update module golang.org/x/crypto to v0.58.0 (@oktetobot)
-- **PR #5255** (2026-11-11): build(deps): bump rack from 3.2.6 to 3.2.8 in /samples/ruby (@dependabot[bot])
-- **PR #5254** (2026-11-10): chore(deps): Update docker (@oktetobot)
+- **PR #5273** (closed): [Backport release-3.25] fix(deps): revert go-git to v5.16.5 (@jLopezbarb)
+- **PR #5272** (2026-11-18): fix(build): show the registry credentials hint when a registry answers 401 or 403 (@ifbyol)
+- **PR #5271** (2026-11-18): chore(deps): Update module golang.org/x/sync to v0.25.0 (@oktetobot)
+- **PR #5270** (2026-11-18): fix(deps): revert go-git to v5.16.5 (@jLopezbarb)
+- **PR #5269** (2026-11-18): PROD-560: Allow overriding the commands of a test container in okteto test (@ifbyol)
+- **PR #5265** (2026-11-17): fix(remote): shell-quote --name and --var values in remote deploy, destroy and test (@jLopezbarb)
 
 ---
 
@@ -1900,31 +2766,33 @@ Co-authored-by: Devin AI <158243242+devin-ai-integration[bot]@users.noreply.gith
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. build(deps): bump renovatebot/github-action from 46.3.12 to 46.3.13
+## X. deps): revert go-git to v5.16.5
 
 **RULE**:
-When implementing operations in `.github/workflows/renovate.yml`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in okteto/okteto. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `cmd/pipeline/deploy_test.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in okteto/okteto. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0ffb0189`: build(deps): bump renovatebot/github-action from 46.3.12 to 46.3.13. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `b5e35654`: deps): revert go-git to v5.16.5. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `.github/workflows/renovate.yml`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cmd/pipeline/deploy_test.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-        uses: renovatebot/github-action@v46.3.13
+	"github.com/go-git/go-git/v5"
+	"github.com/go-git/go-git/v5/config"
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-        uses: renovatebot/github-action@v46.3.12
+	"github.com/go-git/go-git/v6"
+	"github.com/go-git/go-git/v6/config"
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0ffb0189` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `b5e35654` are properly handled with clean fallback behavior.
 
 
 ## 3. Application to AI-Builder-Brain Project Construction

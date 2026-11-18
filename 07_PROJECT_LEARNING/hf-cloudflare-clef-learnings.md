@@ -3,7 +3,7 @@
 > **Source Version**: `hf-cloudflar`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-18T07:22:55.867Z  
+> **Timestamp**: 2026-11-18T16:40:58.653Z  
 > **Learning ID**: `learn-huggingface-cloudflare-clef`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-cloudflare-clef-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/Cloudflare/clef](https://huggingface.co/Cloudflare/clef))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T07:22:55.641Z  
+> **Harvest Timestamp**: 2026-11-18T16:40:58.415Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: image-text-to-text
 - **Primary Language / Ecosystem**: Custom
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 77427 downloads | 2374 likes
+- **Stars / Engagement**: 78027 downloads | 2376 likes
 
 ---
 

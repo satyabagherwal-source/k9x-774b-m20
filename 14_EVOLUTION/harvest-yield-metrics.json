@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T16:31:42.397Z",
-  "total_cycles_completed": 10560,
-  "total_learnings_persisted": 10560,
-  "total_rules_promoted": 10019,
+  "last_updated": "2026-11-18T16:41:21.986Z",
+  "total_cycles_completed": 10564,
+  "total_learnings_persisted": 10564,
+  "total_rules_promoted": 10021,
   "history": [
-    {
-      "timestamp": "2026-11-18T04:57:26.934Z",
-      "repository": "tailscale/tailscale",
-      "learningId": "learn-github-tailscale-tailscale",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-18T05:10:28.404Z",
-      "repository": "Efficient-Large-Model/Open-H3-Regenerate-2K",
-      "learningId": "learn-huggingface-efficient-large-model-open-h3-regenerate-2k",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-18T05:10:29.062Z",
-      "repository": "spartan-ng/spartan",
-      "learningId": "learn-github-spartan-ng-spartan",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-18T05:25:52.479Z",
-      "repository": "mikepenz/AboutLibraries",
-      "learningId": "learn-github-mikepenz-aboutlibraries",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-18T05:27:40.697Z",
       "repository": "akatz-ai/MiniMax-H3-Character-Swap-LoRA",
@@ -1403,6 +1375,34 @@
       "repository": "skyhook-io/radar",
       "learningId": "learn-github-skyhook-io-radar",
       "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T16:40:59.092Z",
+      "repository": "Cloudflare/clef",
+      "learningId": "learn-huggingface-cloudflare-clef",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T16:41:05.404Z",
+      "repository": "GitoxideLabs/gitoxide",
+      "learningId": "learn-github-gitoxidelabs-gitoxide",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T16:41:10.421Z",
+      "repository": "okteto/okteto",
+      "learningId": "learn-github-okteto-okteto",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T16:41:21.986Z",
+      "repository": "matrixorigin/matrixone",
+      "learningId": "learn-github-matrixorigin-matrixone",
+      "promotedRulesCount": 0,
       "status": "PROMOTED"
     }
   ]

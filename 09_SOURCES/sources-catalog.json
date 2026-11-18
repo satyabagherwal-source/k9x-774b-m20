@@ -685,8 +685,8 @@
     "sourceUrl": "https://huggingface.co/Cloudflare/clef",
     "sourceVersion": "hf-cloudflare-clef",
     "license": "Open-Source",
-    "contentHash": "99583d057e9bec8320d6cf2045bffed4fba58636ec55fd62e359e27c71abd9c5",
-    "lastHarvestedAt": "2026-11-18T07:22:56.265Z",
+    "contentHash": "52f949f9a0d5bd7fab607fad80bf7dccf1cd8e5031d72c4c2d324d0f56f77ad3",
+    "lastHarvestedAt": "2026-11-18T16:40:59.087Z",
     "learningId": "learn-huggingface-cloudflare-clef"
   },
   "hf-cloudflare-clef-flash": {
@@ -3173,10 +3173,10 @@
     "repository": "matrixorigin/matrixone",
     "platform": "github",
     "sourceUrl": "https://github.com/matrixorigin/matrixone",
-    "sourceVersion": "517e1695",
+    "sourceVersion": "87c44445",
     "license": "Apache-2.0",
-    "contentHash": "00d84dde34b7e87842f3cc3ec3739b3d33ed9dfa42cf0ffdae38f3abcac59348",
-    "lastHarvestedAt": "2026-11-18T00:59:31.270Z",
+    "contentHash": "96e52fd9dc045b387d78fb21ae28495340189ec9e2eaa4d32258d7a980d69cb5",
+    "lastHarvestedAt": "2026-11-18T16:41:21.957Z",
     "learningId": "learn-github-matrixorigin-matrixone"
   },
   "fallow-rs-fallow": {
@@ -3463,10 +3463,10 @@
     "repository": "okteto/okteto",
     "platform": "github",
     "sourceUrl": "https://github.com/okteto/okteto",
-    "sourceVersion": "0c260262",
+    "sourceVersion": "a23d521e",
     "license": "Apache-2.0",
-    "contentHash": "e6957a4af2dc9a7cba9230072fbdf392fef35ed3091e5c493333ec9394522025",
-    "lastHarvestedAt": "2026-11-18T02:16:18.261Z",
+    "contentHash": "6db9d0ac83264405f1d1ac1389911a43f29a05dc564168dbf0b31fbaa0bc96eb",
+    "lastHarvestedAt": "2026-11-18T16:41:10.416Z",
     "learningId": "learn-github-okteto-okteto"
   },
   "supervc-stack-vectorchord": {
@@ -4043,10 +4043,10 @@
     "repository": "GitoxideLabs/gitoxide",
     "platform": "github",
     "sourceUrl": "https://github.com/GitoxideLabs/gitoxide",
-    "sourceVersion": "c3d18f4b",
+    "sourceVersion": "3e89f3b5",
     "license": "Apache-2.0",
-    "contentHash": "4ee7ecf6e97927b550e19cbf7fd4c1ef970e9002dc945180af3665b64c2c0488",
-    "lastHarvestedAt": "2026-11-18T08:05:59.951Z",
+    "contentHash": "8bd4b8f0fba215e1b43c1cfa4ca336a66debfd92e4e1bfa77771c25ff55ca9c6",
+    "lastHarvestedAt": "2026-11-18T16:41:05.399Z",
     "learningId": "learn-github-gitoxidelabs-gitoxide"
   },
   "devhubapp-devhub": {

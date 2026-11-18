@@ -43,9 +43,9 @@
   "bitterbot-ai-bitterbot-desktop": {
     "name": "bitterbot-desktop",
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
-    "lastChecked": "2026-11-18T15:59:51.300Z",
+    "lastChecked": "2026-11-18T16:41:10.841Z",
     "revisionIdentifier": "108f7135",
-    "lastVerified": "2026-11-18T15:59:51.300Z"
+    "lastVerified": "2026-11-18T16:41:10.841Z"
   },
   "hf-comfy-org-minimax-h3": {
     "name": "Comfy-Org/MiniMax-H3",
@@ -69,8 +69,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-18T16:31:45.763Z",
-    "lastVerified": "2026-11-18T16:31:45.763Z",
+    "lastChecked": "2026-11-18T16:41:25.107Z",
+    "lastVerified": "2026-11-18T16:41:25.107Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -1355,9 +1355,9 @@
   "lunasec-io-lunasec": {
     "name": "lunasec",
     "officialUrl": "https://github.com/lunasec-io/lunasec",
-    "lastChecked": "2026-11-18T12:33:09.066Z",
+    "lastChecked": "2026-11-18T16:41:05.614Z",
     "revisionIdentifier": "c6bb0762",
-    "lastVerified": "2026-11-18T12:33:09.066Z"
+    "lastVerified": "2026-11-18T16:41:05.614Z"
   },
   "seaql-sea-orm": {
     "name": "sea-orm",
@@ -3005,5 +3005,80 @@
     "lastChecked": "2026-11-18T16:31:38.529Z",
     "revisionIdentifier": "c2b9a03e",
     "lastVerified": "2026-11-18T16:31:38.529Z"
+  },
+  "gitoxidelabs-gitoxide": {
+    "name": "GitoxideLabs/gitoxide",
+    "officialUrl": "https://github.com/GitoxideLabs/gitoxide",
+    "sourceType": "github",
+    "technology": "Rust",
+    "lastChecked": "2026-11-18T16:41:04.416Z",
+    "lastVerified": "2026-11-18T16:41:04.416Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-gitoxidelabs-gitoxide",
+    "contentHash": "8bd4b8f0fba215e1b43c1cfa4ca336a66debfd92e4e1bfa77771c25ff55ca9c6",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 7,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "hf-cloudflare-clef": {
+    "name": "Cloudflare/clef",
+    "officialUrl": "https://huggingface.co/Cloudflare/clef",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-18T16:40:58.415Z",
+    "lastVerified": "2026-11-18T16:40:58.415Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-cloudflare-clef",
+    "contentHash": "52f949f9a0d5bd7fab607fad80bf7dccf1cd8e5031d72c4c2d324d0f56f77ad3",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "margelo-react-native-vision-camera": {
+    "name": "react-native-vision-camera",
+    "officialUrl": "https://github.com/margelo/react-native-vision-camera",
+    "lastChecked": "2026-11-18T16:41:00.957Z",
+    "revisionIdentifier": "087977a6",
+    "lastVerified": "2026-11-18T16:41:00.957Z"
+  },
+  "okteto-okteto": {
+    "name": "okteto/okteto",
+    "officialUrl": "https://github.com/okteto/okteto",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-11-18T16:41:09.406Z",
+    "lastVerified": "2026-11-18T16:41:09.406Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-okteto-okteto",
+    "contentHash": "6db9d0ac83264405f1d1ac1389911a43f29a05dc564168dbf0b31fbaa0bc96eb",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 3,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "matrixorigin-matrixone": {
+    "name": "matrixorigin/matrixone",
+    "officialUrl": "https://github.com/matrixorigin/matrixone",
+    "sourceType": "github",
+    "technology": "Go",
+    "lastChecked": "2026-11-18T16:41:21.491Z",
+    "lastVerified": "2026-11-18T16:41:21.491Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-matrixorigin-matrixone",
+    "contentHash": "96e52fd9dc045b387d78fb21ae28495340189ec9e2eaa4d32258d7a980d69cb5",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 2,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

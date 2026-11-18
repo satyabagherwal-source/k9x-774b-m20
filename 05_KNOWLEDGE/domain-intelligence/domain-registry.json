@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-18T16:32:24.350Z",
+  "last_updated": "2026-11-18T16:41:26.997Z",
   "total_records": 1883,
   "domains": {
     "A": {
@@ -10029,8 +10029,8 @@
       "title": "Research & Knowledge Intelligence: Cloudflare/clef Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-cloudflare-clef-research-knowledge-intelligence-cloudflare-clef-core-invarian.md",
       "repository": "Cloudflare/clef",
-      "content_hash": "9abcbe722149305c775db73d091272bbd115afa23169fc541c4faa2276c41762",
-      "created_at": "2026-11-18T07:22:56.434Z"
+      "content_hash": "03998326f6fdf01131a211482e82be93b628dba4433499858c980eb82d1274d1",
+      "created_at": "2026-11-18T16:40:59.273Z"
     },
     "domain_intelligence-research-knowledge-intelligence-trufflesecurity-trufflehog-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-trufflesecurity-trufflehog-core-invariants",
@@ -10098,8 +10098,8 @@
       "title": "Research & Knowledge Intelligence: hf-cloudflare-clef-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-cloudflare-clef-learnings-research-knowledge-intelligence-hf-cloudflare-clef-.md",
       "repository": "hf-cloudflare-clef-learnings",
-      "content_hash": "46058bf27e74c2ac1168b22b5007adaeeff8efa5b09c47d8aeacb05c336e6457",
-      "created_at": "2026-11-18T07:23:15.448Z"
+      "content_hash": "d0e7b511ed05d7cba5196efee719d67e15fd0ece48733e3070da9b82a8859365",
+      "created_at": "2026-11-18T16:41:26.109Z"
     },
     "domain_intelligence-architecture-intelligence-linkerd-linkerd2-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-linkerd-linkerd2-learnings-core-invariants",
@@ -14944,8 +14944,8 @@
       "title": "Content & Information Intelligence: okteto/okteto Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-okteto-okteto-content-information-intelligence-okteto-okteto-core-invariants.md",
       "repository": "okteto/okteto",
-      "content_hash": "810a0a78d9992e171c4056fc6034e98cc8ba223c1328cbadb3e5cbade0c22cb5",
-      "created_at": "2026-11-14T11:04:31.702Z"
+      "content_hash": "66fd5860d1db52e583b7ba4d4198e70651011d5caad51fd7f155d451514be17a",
+      "created_at": "2026-11-18T16:41:10.747Z"
     },
     "domain_intelligence-architecture-intelligence-slatedb-slatedb-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-slatedb-slatedb-core-invariants",
@@ -15031,8 +15031,8 @@
       "title": "Content & Information Intelligence: okteto-okteto-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-okteto-okteto-learnings-content-information-intelligence-okteto-okteto-learnings.md",
       "repository": "okteto-okteto-learnings",
-      "content_hash": "cad2ac2f341e472181aae3954abd8a6ea73b3aa0311adbfc09fd6130e0b94eb5",
-      "created_at": "2026-11-14T11:05:15.775Z"
+      "content_hash": "fe34ec422dfb5c637b84fc06edcbd925e88043d98f2592e9bb4a11f90131a3d5",
+      "created_at": "2026-11-18T16:41:26.997Z"
     },
     "domain_intelligence-research-knowledge-intelligence-nomic-ai-nomic-embed-text-v1-5-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-nomic-ai-nomic-embed-text-v1-5-core-invariants",
@@ -20273,8 +20273,8 @@
       "title": "Architecture Intelligence: GitoxideLabs/gitoxide Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-gitoxidelabs-gitoxide-architecture-intelligence-gitoxidelabs-gitoxide-core-invar.md",
       "repository": "GitoxideLabs/gitoxide",
-      "content_hash": "6c3234b59c1d1c7f0a8b23074920f62800bbb69d06d07ce8afdc24b3d717a8b7",
-      "created_at": "2026-11-18T08:06:00.531Z"
+      "content_hash": "fffed7244cefb90c45b3ab80be64583d249ad919f4f7626afebf799dccfd3314",
+      "created_at": "2026-11-18T16:41:05.728Z"
     },
     "domain_intelligence-technical-construction-intelligence-melnixdev-seo-crawl-audit-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-melnixdev-seo-crawl-audit-core-invariants",
@@ -20291,8 +20291,8 @@
       "title": "Architecture Intelligence: gitoxidelabs-gitoxide-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-gitoxidelabs-gitoxide-learnings-architecture-intelligence-gitoxidelabs-gitoxide-.md",
       "repository": "gitoxidelabs-gitoxide-learnings",
-      "content_hash": "d0c6028ee248a976e15bc215d9d99690353064baf8426be9cbca53b38627a2c1",
-      "created_at": "2026-11-18T08:07:24.356Z"
+      "content_hash": "17ccf568021f26dbdfdffeed73aa3de0cf3e18a71025bad4ec9ff8b8c36130d7",
+      "created_at": "2026-11-18T16:41:25.633Z"
     },
     "DOM-J-C5E210D6": {
       "record_id": "DOM-J-C5E210D6",
@@ -29142,8 +29142,8 @@
       "title": "Architecture Intelligence: matrixorigin/matrixone Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-matrixorigin-matrixone-architecture-intelligence-matrixorigin-matrixone-core-inv.md",
       "repository": "matrixorigin/matrixone",
-      "content_hash": "17f9726c5be6568a65584585a59872806762aac93f4b7d186614ff2c8a62474d",
-      "created_at": "2026-11-18T00:59:31.585Z"
+      "content_hash": "9f0560eb6d6d1981682ff31bd115b066a275ca414cdadf7094448c96d4b44ad1",
+      "created_at": "2026-11-18T16:41:22.327Z"
     },
     "domain_intelligence-technical-construction-intelligence-mradermacher-deepseek-v4-pro-qwen3-5-9b-unce": {
       "record_id": "domain_intelligence-technical-construction-intelligence-mradermacher-deepseek-v4-pro-qwen3-5-9b-unce",

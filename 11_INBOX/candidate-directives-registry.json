@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T16:32:24.130Z",
+  "last_updated": "2026-11-18T16:41:26.858Z",
   "directives": [
     {
       "id": "CD-001",
@@ -30183,6 +30183,59 @@
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-18",
       "domain_letter": "G"
+    },
+    {
+      "id": "CD-M29B",
+      "directive_title": "change(gix-merge)!: build merges and indexes from normalized three-way paths",
+      "source_repo": "gitoxidelabs-gitoxide-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-M29B-change-gix-merge-build-merges-and-indexes-from-normalized-three-way-paths.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-18",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-LQRT",
+      "directive_title": "revert go-git to v5.16.5",
+      "source_repo": "okteto/okteto",
+      "source_commit": "a23d521e",
+      "staged_file": "11_INBOX/candidate-directives/CD-LQRT-revert-go-git-to-v5-16-5.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-18",
+      "domain_letter": "I"
+    },
+    {
+      "id": "CD-LZPJ",
+      "directive_title": "preserve accepted UNIQUE keys in multi-target UPDATE IGNORE",
+      "source_repo": "matrixorigin/matrixone",
+      "source_commit": "87c44445",
+      "staged_file": "11_INBOX/candidate-directives/CD-LZPJ-preserve-accepted-unique-keys-in-multi-target-update-ignore.md",
+      "status": "STAGED_FOR_REVIEW",
+      "reason": "Quarantined for review: Incomplete rule definition or ungrounded evidence ()",
+      "date_staged": "2026-11-18",
+      "domain_letter": "G"
+    },
+    {
+      "id": "CD-REV-687DEE",
+      "directive_title": "change(gix-merge)!: build merges and indexes from normalized three-way paths",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "gitoxidelabs-gitoxide",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-687DEE-change-gix-merge-build-merges-and-indexe.md",
+      "staged_date": "2026-11-18"
+    },
+    {
+      "id": "CD-M3BB",
+      "directive_title": "deps): revert go-git to v5.16.5",
+      "source_repo": "okteto-okteto-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-M3BB-deps-revert-go-git-to-v5-16-5.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-18",
+      "domain_letter": "I"
     }
   ]
 }

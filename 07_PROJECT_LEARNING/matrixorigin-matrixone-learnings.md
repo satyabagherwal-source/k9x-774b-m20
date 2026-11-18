@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md`  
 > **Source**: github ([https://github.com/matrixorigin/matrixone](https://github.com/matrixorigin/matrixone))  
-> **Source Version**: `517e1695`  
+> **Source Version**: `87c44445`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-18T00:59:30.343Z  
+> **Timestamp**: 2026-11-18T16:41:21.498Z  
 > **Learning ID**: `learn-github-matrixorigin-matrixone`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/matrixorigin/matrixone](https://github.com/matrixorigin/matrixone))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T00:59:30.336Z  
+> **Harvest Timestamp**: 2026-11-18T16:41:21.491Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: AI-native HTAP database with Git-for-Data and built-in vector search, serving as the data and memory backbone for intelligent agents and applications.
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md
-- **Stars / Engagement**: 2067 stars
+- **Stars / Engagement**: 2068 stars
 
 ---
 
@@ -2349,11 +2349,11 @@ func runWorker(ctx context.Context, r WorkerRequest, control *workerControl) (ou
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #32868** (2026-11-17): **[4.2-dev] fix: restore DATA BRANCH lineage after restore**
-  *Symptoms*: ## What type of PR is this?  - [ ] API-change - [x] BUG - [ ] Improvement - [ ] Documentation - [ ] Feature - [ ] Test and CI - [ ] Code Refactoring  ## Which issue(s) this PR fixes:  Related to #32820.  ## What this PR does / why we need it:  Snapshot and PITR restore recreate DATA BRANCH tables with new physical `rel_id` values. The restore path preserved table data and `dat_type='data-branch'` but did not publish active `mo_branch_metadata` lineage for those new IDs, so the restored branch failed `DATA BRANCH DELETE` with Error 20101.  Multi-generation restore also has two related lifecycle requirements: ordinary ancestors need their historical branch protection, and a compacted ALTER generation can have no current metadata when its descendant is restored. Restore must coordinate with deletion of the last live sibling so reclamation cannot remove protection required by the restored descendant.  ### Root cause  1. Table recreation allocated new physical IDs without DATA BRANCH clone publication for the restored table's current ID. 2. Lineage reconciliation assumed every historical ALTER ancestor still had current metadata, even though ALTER cleanup can remove that generation. 3. Current lineage/protection inspection occurred outside the lineage DAG coordination used by ALTER compaction and sibling reclamation, allowing protection to be reclaimed after restore observed it.  ### Changes  - Add historical lineage collection and locked current-state reconciliation for table/dat
+- **Issue #32898** (2026-11-18): **[4.2-dev] Preserve normal completion on local stop during serial reader construction**
+  *Symptoms*: ## What type of PR is this?  - [ ] API-change - [x] BUG - [ ] Improvement - [ ] Documentation - [ ] Feature - [ ] Test and CI - [ ] Code Refactoring  ## Which issue(s) this PR fixes:  Related to #32389. The original nightly failure still needs independent confirmation.  ## What this PR does / why we need it:  When Scope.Run builds a reader on demand, a pipeline-local stop during construction can return context.Canceled while the query remains active. The early return carried that error into deferred cleanup and the downstream receiver. Apply the existing scope cancellation classifier at this return so the receiver sees normal completion for a local stop and still receives query cancellation and independent storage errors.  The regression test drives Scope.Run and checks both its result and the receiver's terminal result. The local-stop case failed on the base revision. All three cases passed after the change, the focused serial and parallel reader tests passed five repetitions, and the full pkg/sql/compile package passed locally. 
 
-- **Issue #32866** (2026-11-17): **[4.2-dev] fix(tae): propagate checkpoint fallback read errors on 4.2**
-  *Symptoms*: ## What type of PR is this?  - [x] BUG - [ ] API-change - [ ] Improvement - [ ] Documentation - [ ] Feature - [ ] Test and CI - [ ] Code Refactoring  ## Which issue(s) this PR fixes:  Fixes #32867.  Narrow 4.2-dev backport of the checkpoint-read error propagation already present in main via PR #29685 (d0e7f9a552f9).  ## What this PR does / why we need it:  When a checkpoint has no table-ID index, changed-table discovery falls back to reading checkpoint data. An object-read error was discarded, allowing the handler to return a successful empty or partial changed-table list. Propagate that error before publishing the response. Existing catalog lookup behavior is preserved.  The regression writes real checkpoint objects and injects a read error through the file service. It covers a complete successful list, failure on the first data read, and failure after a previous checkpoint contributed a table ID. Both error cases fail through the complete handler before the fix and pass after it with the same test source.  Validation on an isolated Linux builder: focused regression and owning rpc package pass (35 top-level tests passed; 2 existing tests skipped), gofmt, diff whitespace check and go vet pass. Focused race also passes (all three scenarios); changed-package golangci-lint reports 0 issues. The linter needed an environment-only workaround for its standard-library ReleaseTags probe inheriting -modfile; project loading continued to use the verified module file and unchanged depend
+- **Issue #32894** (2026-11-18): **[4.2-dev] perf: reduce clone metadata work and isolate checkpoint replay**
+  *Symptoms*: ## What type of PR is this?  - [ ] API-change - [ ] BUG - [x] Improvement - [ ] Documentation - [ ] Feature - [ ] Test and CI - [ ] Code Refactoring  ## Which issue(s) this PR fixes:  Related to #29383. Backports #29769 (merge commit `72d4a49db7`) to `4.2-dev`.  ## What this PR does / why we need it:  - Reuses source table definitions already collected by `CLONE DATABASE` when selecting foreign-key tables. The backport reuses the existing 4.2 source collector and retains fresh collection after locking. - Moves checkpoint replay outside the global subscription lock while keeping one active replay. Before publishing readiness or returning a replay error, the caller verifies the subscription entry, its incarnation, and the active partition. This preserves 4.2 replay fencing when a subscription or partition is replaced. - Coalesces the v13+ table-specific checkpoint metadata columns into a single read. While the columns are pinned, it selects the requested table and copies only its rows. This cuts cold backing-store column reads from two to one with a memory-only cache and preserves owned output. An absent table still requires loading the metadata columns but produces no owned row copies. The checkpoint format and older reader paths are unchanged.  ### Validation  The S3FS disk-adapter regression verifies one cold backing-store GET for metadata columns and zero additional GETs on a warm read, with identical data and tombstone ranges. The object header is primed separately. The wa
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2370,1417 +2370,1199 @@ func runWorker(ctx context.Context, r WorkerRequest, control *workerControl) (ou
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `59bf4b8f` (2026-11-17)
-**Commit Message**: fix(conntrack): restart ordered monitoring after receive errors (#32865)
+### Incident Patch 1: `87c44445` (2026-11-18)
+**Commit Message**: fix: preserve accepted UNIQUE keys in multi-target UPDATE IGNORE (#32827)
 
 ## What type of PR is this?
 
-- [ ] API-change
 - [x] BUG
-- [ ] Improvement
-- [ ] Documentation
-- [ ] Feature
-- [ ] Test and CI
-- [ ] Code Refactoring
 
 ## Which issue(s) this PR fixes:
 
-Related to #32851. Follow-up to merged #32854 for the fatal-receive-error availability gap identified during its review.
+Related to #31824. This PR addresses repeated-target **UPDATE IGNORE**;
+the non-IGNORE case was handled by #32821.
 
 ## What this PR does / why we need it:
 
-The ordered, single-worker conntrack listener exits on ENOBUFS or a decode error. Previously MO only logged that error and continued reporting its stale map forever. This affects diagnostic connection statistics, not SQL or stored data.
+When an UPDATE IGNORE writes the same physical table through multiple
+aliases, an earlier alias may have already accepted or rejected a
+change. Checking a later candidate against the original snapshot alone
+can commit duplicate UNIQUE keys. A CHECK-rejected candidate can leave
+an accepted key unprotected if arbitration depends on the arrival order
+of concurrent UNION inputs. A later alias can also emit a false CHECK
+warning when it is validated against a snapshot value already changed by
+an accepted alias.
 
-- Retain one worker and the existing 65,536-entry queue. A fatal listener error invalidates that statistics generation, closes its socket, and retries with fresh queues/map at most once every five seconds.
-- Drain pending publications while joining the old listener. Stop retrying if socket cleanup itself fails; repeated Dial/Listen failures do not busy-loop or accumulate listeners.
-- Keep existing log names/count fields, adding `scope=since_listener_start`, `complete=false`, and a start timestamp. This resumes future observation; it doe
+- Use the preceding accepted row image for current key ownership, while
+carrying snapshot-key release evidence separately.
+- Reuse the existing HashBuild/DedupJoin path to prioritize current
+owners and reservations over competing claims independent of input
+arrival order. Preserve the auxiliary-row contract in parallel copies,
+remote codecs and spill/rebuild.
+- Report warnings on
 
-**File**: `cmd/mo-service/debug_connections.go` (modified, +110/-12)
+**File**: `docs/design/20261117-update-ignore-unique-arbitration.md` (added, +126/-0)
 ```diff
-@@ -18,6 +18,7 @@ package main
+@@ -0,0 +1,126 @@
++# Unique arbitration for repeated-target UPDATE IGNORE
++
++Issue: [#31824](https://github.com/matrixorigin/matrixone/issues/31824)
++
++Implementation: [#32827](https://github.com/matrixorigin/matrixone/pull/32827)
++
++## Problem and contract
++
++An UPDATE can write the same physical table through more than one alias. Under
++IGNORE, each alias can change a row that an earlier alias already changed or
++rejected. Checking each alias against the statement snapshot independently is
++not sufficient: a later alias can claim a key already accepted for another row,
++or a surviving key can be mistaken for a released snapshot key. In either
++case the table or its unique index can contain conflicting entries.
++
++Keep the existing ordered alias stages. For each physical row, S is its
++statement-snapshot image and C its latest accepted image, initially S. Each
++active alias forms a candidate N from C, including recomputed generated
++columns. If its constraints reject it under IGNORE, retain C and report the
++rejected candidate; otherwise N becomes the next C. Earlier rejected
++assignments are not resurrected. Each accepted physical key must have at most
++one owner under the actual index equality and encoding, including NULL,
++composite, prefix and collation keys. Internal rows and inactive or no-op
++assignments do not themselves create duplicate warnings. A later failure of any
++constraint must reject the candidate atomically.
++
++The existing transaction remains the publication and rollback owner. A normal
++non-IGNORE UPDATE continues to validate the final merged physical image; this
++design does not replace that path. A single writable target and another physical
++table in the same statement retain their existing independent checks. Existing
++guards for repeated targets changing primary or partition identity, including
++generated dependencies, remain in force.
++
++## Existing owners and data flow
++
++The planner owns ordered candidate stages, S, C, and the projections used
++by each affected unique index. A candidate's old key is derived from C, not
++from S. Before checking an alias stage, the planner also represents:
++
++* **Reservation:** an accepted C key, even if its owner has no surviving
++  candidate after CHECK or a preceding unique-index check.
++* **Release:** the snapshot key of a row whose accepted C has a different
++  key for this unique index, using the index's actual encoding and null-safe
++  equality. A payload-only change does not release an unchanged key. This
++  evidence travels with the snapshot key and only exempts that old snapshot
++  entry from a probe; it cannot claim a candidate.
++
++These are auxiliary rows in the existing build input; a NULL physical row ID
++distinguishes them from candidate rows. The delete marker distinguishes release
++from reservation. They cannot reach the DML output or create warnings.
++
++HashBuild owns per-key arbitration using the priority **current-key owner >
++reservation > changed claimant > release**. Thus a current owner survives its
++own reservation, and a reservation defeats a competing changed claimant
++regardless of input arrival order. Release evidence survives compaction and
++rebuild, but never displaces an owner or claimant. The ordinary key and NULL
++rules remain authoritative; priority does not impose an order between unrelated
++keys. Within the existing alias-order contract, a failed candidate retains C.
++
++DedupJoin probes snapshot keys, observes releases, filters rejected candidates
++and renders diagnostics for real candidates. Compiler/operator-copy and
++pipeline serialization preserve the auxiliary-row column reference, including
++parallel copies; spill rebuild carries the same metadata and row roles. A
++selection mapping used for warnings must refer to the retained physical build
++row after compaction, including NULL keys and batch boundaries.
++
++## Alternatives and bounds
++
++Keeping per-alias snapshot checks cannot establish the accepted-image invariant.
++Depending on UNION arrival order is invalid when inputs execute concurrently.
++A separate global arbiter or new storage/state machine duplicates the existing
++materialized alias stages and introduces additional ownership and failure
++contracts. Arbitration inside the existing build/probe path keeps one owner for
++each part of the work and requires no new long-lived service or persistent
++format.
++
++For N retained rows, A affected alias stages and I affected unique
++indexes, each index stage can materialize up to approximately N candidate,
++N reservation and N release rows. It must also probe the snapshot index: if
++M is the number of index rows examined per stage, work can scale with
++A * I * (N + M), and M may be much larger than the affected-row set. The
++existing base also scans/probes the index; the comparison must measure the
++whole stage. Transient candidate state scales with N and carried key/row width,
++plus the existing hash, selection and spill costs. HashBuild owns and accounts
++
+```
+
+**File**: `pkg/sql/colexec/dedupjoin/join.go` (modified, +50/-2)
+```diff
+@@ -469,14 +469,15 @@ func (dedupJoin *DedupJoin) build(analyzer process.Analyzer, proc *process.Proce
+ 				SpillThreshold:            ctr.spillThreshold,
+ 				AdaptiveMemory:            ctr.autoSpill,
+ 				NeedsBuildForEmptyProbe:   true,
+-				NeedAllocateSels:          dedupJoin.OnDuplicateAction == plan.Node_UPDATE,
++				NeedAllocateSels:          dedupJoin.OnDuplicateAction == plan.Node_UPDATE || dedupJoin.OnDuplicateAction == plan.Node_IGNORE,
+ 				NeedBatches:               true,
+ 				IsDedup:                   true,
+ 				OnDuplicateAction:         dedupJoin.OnDuplicateAction,
+ 				DedupBuildKeepLast:        dedupJoin.DedupBuildKeepLast,
+ 				DedupColName:              dedupJoin.DedupColName,
+ 				DedupColTypes:             dedupJoin.DedupColTypes,
+ 				DedupKeyExprs:             dedupJoin.DedupKeyExprs,
++				AuxiliaryRowIdColIdx:      dedupJoin.AuxiliaryRowIdColIdx,
+ 				DelColIdx:                 dedupJoin.DelColIdx,
+ 				DedupDeleteMarkerColIdx:   dedupJoin.DedupDeleteMarkerColIdx,
+ 				DedupDeleteKeepColIdxList: dedupJoin.DedupDeleteKeepColIdxList,
+@@ -2136,6 +2137,15 @@ func (ctr *container) probe(bat *batch.Batch, ap *DedupJoin, proc *process.Proce
+ 		if !warningsEnabled {
+ 			return
+ 		}
++		suppressed, err := ctr.duplicateWarningSuppressed(ap, proc, group)
++		if err != nil {
++			// Diagnostics are optional; never turn IGNORE into a statement error.
++			duplicateWarnings.AddCount()
++			return
++		}
++		if suppressed {
++			return
++		}
+ 		if !duplicateWarnings.NeedsDiagnostic() {
+ 			duplicateWarnings.AddCount()
+ 			return
+@@ -2361,6 +2371,44 @@ func (dedupJoin *DedupJoin) resetRBat() error {
+ 	return nil
+ }
+ 
++func (ctr *container) duplicateWarningSuppressed(ap *DedupJoin, proc *process.Process, group uint64) (bool, error) {
++	if ap.AuxiliaryRowIdColIdx == 0 {
++		return false, nil
++	}
++	colIdx := ap.AuxiliaryRowIdColIdx - 1
++	checkBatchRow := func(bat *batch.Batch, row int) (bool, error) {
++		if row < 0 {
++			return false, moerr.NewInternalError(proc.Ctx, "negative duplicate diagnostic row")
++		}
++		if bat == nil || row >= bat.RowCount() {
++			return false, moerr.NewInternalError(proc.Ctx, "invalid duplicate warning suppression row")
++		}
++		if colIdx < 0 || int(colIdx) >= len(bat.Vecs) {
++			return false, moerr.NewInternalError(proc.Ctx, "invalid duplicate warning suppression column")
++		}
++		return bat.Vecs[colIdx].IsNull(uint64(row)), nil
++	}
++	checkRow := func(row int) (bool, error) {
++		if row < 0 {
++			return false, moerr.NewInternalError(proc.Ctx, "negative duplicate diagnostic row")
++		}
++		batIdx := row / colexec.DefaultBatchSize
++		if batIdx >= len(ctr.batches) {
++			return false, moerr.NewInternalError(proc.Ctx, "invalid duplicate warning suppression row")
++		}
++		return checkBatchRow(ctr.batches[batIdx], row%colexec.DefaultBatchSize)
++	}
++	if sels := ctr.mp.GetSels(group); len(sels) > 0 {
++		return checkRow(int(sels[0]))
++	}
++	if group == 0 {
++		return false, moerr.NewInternalError(proc.Ctx, "invalid duplicate warning suppression group")
++	}
++	// Marked HashBuilds always collect selections. With no explicit selections,
++	// GroupSels.Finalize proved this identity even if trailing keys are NULL.
++	return checkRow(int(group - 1))
++}
++
+ func (ctr *container) formatDuplicateEntry(ap *DedupJoin, proc *process.Process, probeRow int, group uint64) (string, error) {
+ 	if len(ap.DedupKeyExprs) == 0 {
+ 		return colexec.FormatDedupEntry(ctr.vecs[0], probeRow, ap.DedupColName, ap.DedupColTypes)
+@@ -2372,7 +2420,7 @@ func (ctr *container) formatDuplicateEntry(ap *DedupJoin, proc *process.Process,
+ 	if sels := ctr.mp.GetSels(group); len(sels) > 0 {
+ 		return render(int(sels[0]))
+ 	}
+-	if ctr.mp.GetGroupCount() == uint64(ctr.batchRowCount) {
++	if ap.AuxiliaryRowIdColIdx > 0 || ctr.mp.GetGroupCount() == uint64(ctr.batchRowCount) {
+ 		return render(int(group - 1))
+ 	}
+ 	// Compact maps omit row selections. NULL keys do not get a bucket, so a
+```
+
+**File**: `pkg/sql/colexec/dedupjoin/key_contract_test.go` (modified, +125/-0)
+```diff
+@@ -50,6 +50,131 @@ func TestDedupJoinAllocationSiteLedger(t *testing.T) {
+ 	require.Equal(t, uint8(113), uint8(dedupJoinAllocationSiteResultGrouping))
+ }
+ 
++func TestDedupJoinAuxiliaryArbitration(t *testing.T) {
++	for _, mode := range []dedupKeyContractMode{
++		{name: "resident"},
++		{name: "spill", shuffle: true, spillThreshold: hashmap.UnitLimit + 1, wantInitialSpill: true},
++		{name: "re-spill", shuffle: true, spillThreshold: 2, wantInitialSpill: true, wantReSpill: true},
++	} {
++		for _, reservationFirst := range []bool{false, true} {
++			t.Run(mode.name+"/reservationFirst="+strconv.FormatBool(reservationFirst), func(t *testing.T) {
++				proc, ctrl := newCaptureTestProc(t)
++				defer ctrl.Finish()
++				proc.Base.Lim.Size = 8 << 20
++				proc.Base.Lim.SpillSize = 64 << 20
++				session := &dedupJoinWarningSession{}
++				proc.Session = session
++				proc.SetStmtProfile(&process.StmtProfile{})
++				proc.GetStmtProfile().SetStatementRuntimeProfile("Update", "DML", true)
++				var join *DedupJoin
++				var build *hashbuild.HashBuild
++				buildBat, probeBat := batch.NewWithSize(4), batch.NewWithSize(1)
++				defer func() {
++					if join != nil {
++						join.Free(proc, false, nil)
++					}
++					if build != nil {
++						build.Free(proc, false, nil)
++					}
++					buildBat.Clean(proc.Mp())
++					probeBat.Clean(proc.Mp())
++					budget, err := proc.GetExecutionResourceBudget()
++					var used, disk, descriptors uint64
++					if err == nil {
++						used, disk, descriptors = budget.Used(), budget.SpillDiskUsed(), budget.SpillFDUsed()
++					}
++					proc.Free()
++					require.NoError(t, err)
++					require.Zero(t, used)
++					require.Zero(t, disk)
++					require.Zero(t, descriptors)
++					require.Zero(t, proc.Mp().CurrNB())
++				}()
++				intType, boolType := types.T_int32.ToType(), types.T_bool.ToType()
++				rightTypes := []types.Type{intType, intType, boolType, intType}
++				for i, typ := range rightTypes {
++					buildBat.Vecs[i] = vector.NewVec(typ)
++				}
++				probeBat.Vecs[0] = vector.NewVec(intType)
++				appendBuild := func(key, previous, id int32, auxiliary, release bool) {
++					require.NoError(t, vector.AppendFixed(buildBat.Vecs[0], key, false, proc.Mp()))
++					require.NoError(t, vector.AppendFixed(buildBat.Vecs[1], previous, auxiliary && !release, proc.Mp()))
++					require.NoError(t, vector.AppendFixed(buildBat.Vecs[2], release, false, proc.Mp()))
++					require.NoError(t, vector.AppendFixed(buildBat.Vecs[3], id, auxiliary, proc.Mp()))
++				}
++				// These unchanged, rejected rows retain reservations and exercise
++				// snapshot diagnostic suppression in every materialized partition.
++				for i := 0; i < hashmap.UnitLimit; i++ {
++					key := int32(1000 + i)
++					appendBuild(key, 0, 0, true, false)
++					require.NoError(t, vector.AppendFixed(probeBat.Vecs[0], key, false, proc.Mp()))
++				}
++				if reservationFirst {
++					appendBuild(30, 0, 0, true, false)
++				}
++				appendBuild(30, 20, 2, false, false) // B cannot steal A's accepted 30.
++				if !reservationFirst {
++					appendBuild(30, 0, 0, true, false)
++				}
++				appendBuild(20, 0, 0, true, false)
++				appendBuild(10, 10, 0, true, true)   // S=10 was released when A accepted 30.
++				appendBuild(10, 30, 1, false, false) // A may reclaim the now-unowned 10.
++				buildBat.SetRowCount(buildBat.Vecs[0].Length())
++				for _, key := range []int32{10, 20} {
++					require.NoError(t, vector.AppendFixed(probeBat.Vecs[0], key, false, proc.Mp()))
++				}
++				probeBat.SetRowCount(probeBat.Vecs[0].Length())
++				if mode.wantReSpill {
++					requireDedupTargetBucketReSpills(t, buildBat.Vecs[0], buildBat.RowCount()-1, mode.spillThreshold)
++				}
++				conditions := [][]*plan.Expr{{newExpr(0, intType)}, {newExpr(0, intType)}}
++				const mapTag = 328270
++				join = &DedupJoin{LeftTypes: []types.Type{intType}, RightTypes: rightTypes, Conditions: conditions,
++					Result:            []colexec.ResultPos{colexec.NewResultPos(1, 3), colexec.NewResultPos(1, 0)},
++					OnDuplicateAction: plan.Node_IGNORE, DelColIdx: 1, DedupDeleteMarkerColIdx: 2, AuxiliaryRowIdColIdx: 4,
++					DedupColName: "uk", DedupColTypes: []plan.Type{conditions[0][0].Typ},
++					IsShuffle: mode.shuffle, SpillThreshold: mode.spillThreshold, JoinMapTag: mapTag}
++				build = &hashbuild.HashBuild{NeedHashMap: true, NeedBatches: true, NeedAllocateSels: true, Conditions: conditions[1],
++					IsDedup: true, OnDuplicateAction: plan.Node_IGNORE, DelColIdx: 1, DedupDeleteMarkerColIdx: 2, AuxiliaryRowIdColIdx: 4,
++					DedupColName: join.DedupColName, DedupColTypes: join.DedupColTypes,
++					IsShuffle: mode.shuffle, SpillThreshold: mode.spillThreshold, JoinMapTag: mapTag, JoinMapRefCnt: 1}
++				if mode.shuffle {
++					build.RuntimeFilterSpec = &plan.RuntimeFilterSpec{Tag: mapTag + 1}
++				}
++				join.AppendChild(colexec.NewMockOperator().WithBatchs([]*batch.Batch{probeBat}))
++				build.AppendChild(colexec.NewMockOperator().WithBatchs([]*batch.Batch{buildBat}))
++				installTestAllocation(t, join, build)
++				spillMetric := metricv
+```
+
+**File**: `pkg/sql/colexec/dedupjoin/types.go` (modified, +9/-6)
+```diff
+@@ -329,12 +329,15 @@ type DedupJoin struct {
+ 	NumCPU   uint64
+ 	IsMerger bool
+ 
+-	OnDuplicateAction         plan.Node_OnDuplicateAction
+-	DedupBuildKeepLast        bool
+-	DedupColName              string
+-	SpillThreshold            int64
+-	DedupColTypes             []plan.Type
+-	DedupKeyExprs             []*plan.Expr
++	OnDuplicateAction  plan.Node_OnDuplicateAction
++	DedupBuildKeepLast bool
++	DedupColName       string
++	SpillThreshold     int64
++	DedupColTypes      []plan.Type
++	DedupKeyExprs      []*plan.Expr
++	// AuxiliaryRowIdColIdx is a one-based build-side row-ID column. NULL marks
++	// reservation/release evidence for IGNORE; zero disables that contract.
++	AuxiliaryRowIdColIdx      int32
+ 	DelColIdx                 int32
+ 	DedupDeleteMarkerColIdx   int32
+ 	DedupDeleteKeepColIdxList []int32
+```
+
+**File**: `pkg/sql/colexec/dedupjoin/warning_suppression_test.go` (added, +143/-0)
+```diff
+@@ -0,0 +1,143 @@
++// Copyright 2026 Matrix Origin
++//
++// Licensed under the Apache License, Version 2.0 (the "License");
++// you may not use this file except in compliance with the License.
++// You may obtain a copy of the License at
++//
++//      http://www.apache.org/licenses/LICENSE-2.0
++//
++// Unless required by applicable law or agreed to in writing, software
++// distributed under the License is distributed on an "AS IS" BASIS,
++// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++// See the License for the specific language governing permissions and
++// limitations under the License.
++
++package dedupjoin
++
++import (
++	"testing"
++
++	"github.com/matrixorigin/matrixone/pkg/common/mpool"
++	"github.com/matrixorigin/matrixone/pkg/container/batch"
++	"github.com/matrixorigin/matrixone/pkg/container/types"
++	"github.com/matrixorigin/matrixone/pkg/container/vector"
++	"github.com/matrixorigin/matrixone/pkg/pb/plan"
++	"github.com/matrixorigin/matrixone/pkg/sql/colexec"
++	"github.com/matrixorigin/matrixone/pkg/sql/colexec/hashbuild"
++	"github.com/matrixorigin/matrixone/pkg/vm"
++	"github.com/matrixorigin/matrixone/pkg/vm/process"
++	"github.com/stretchr/testify/require"
++)
++
++func TestAuxiliaryWarningGroupRows(t *testing.T) {
++	for _, prefixNull := range []bool{false, true} {
++		name := "trailing_NULL_compact_identity"
++		if prefixNull {
++			name = "prefix_NULL_explicit_selections"
++		}
++		t.Run(name, func(t *testing.T) {
++			proc, ctrl := newCaptureTestProc(t)
++			defer ctrl.Finish()
++			session := &dedupJoinWarningSession{}
++			proc.Session = session
++			proc.SetStmtProfile(&process.StmtProfile{})
++			proc.GetStmtProfile().SetStatementRuntimeProfile("Update", "DML", true)
++			buildBat, probeBat := batch.NewWithSize(4), batch.NewWithSize(1)
++			var join *DedupJoin
++			var build *hashbuild.HashBuild
++			var account *mpool.AllocationAccount
++			defer func() {
++				if join != nil {
++					join.Free(proc, false, nil)
++				}
++				if build != nil {
++					build.Free(proc, false, nil)
++				}
++				buildBat.Clean(proc.Mp())
++				probeBat.Clean(proc.Mp())
++				proc.Free()
++				require.Zero(t, proc.Mp().CurrNB())
++				if account != nil {
++					require.Zero(t, account.Snapshot().Used)
++				}
++			}()
++			intType, boolType := types.T_int32.ToType(), types.T_bool.ToType()
++			rightTypes := []types.Type{intType, intType, boolType, intType}
++			for i, typ := range rightTypes {
++				buildBat.Vecs[i] = vector.NewVec(typ)
++			}
++			probeBat.Vecs[0] = vector.NewVec(intType)
++			appendRow := func(key, id int32, keyNull, auxiliary bool) {
++				require.NoError(t, vector.AppendFixed(buildBat.Vecs[0], key, keyNull, proc.Mp()))
++				require.NoError(t, vector.AppendFixed(buildBat.Vecs[1], int32(0), true, proc.Mp()))
++				require.NoError(t, vector.AppendFixed(buildBat.Vecs[2], false, false, proc.Mp()))
++				require.NoError(t, vector.AppendFixed(buildBat.Vecs[3], id, auxiliary, proc.Mp()))
++			}
++			if prefixNull {
++				appendRow(0, 0, true, true)
++			}
++			appendRow(10, 1, false, false) // Conflicts with an untargeted snapshot row.
++			appendRow(20, 2, false, false) // The only accepted real candidate.
++			for i := 0; i < colexec.DefaultBatchSize; i++ {
++				appendRow(int32(1000+i), 0, false, true)
++			}
++			if !prefixNull {
++				appendRow(0, 0, true, true)
++			}
++			buildBat.SetRowCount(buildBat.Vecs[0].Length())
++			for _, key := range []int32{10, 1000 + colexec.DefaultBatchSize - 1} {
++				require.NoError(t, vector.AppendFixed(probeBat.Vecs[0], key, false, proc.Mp()))
++			}
++			probeBat.SetRowCount(2)
++			conditions := [][]*plan.Expr{{newExpr(0, intType)}, {newExpr(0, intType)}}
++			const mapTag = 918273
++			join = &DedupJoin{LeftTypes: []types.Type{intType}, RightTypes: rightTypes, Conditions: conditions,
++				Result:            []colexec.ResultPos{colexec.NewResultPos(1, 3), colexec.NewResultPos(1, 0)},
++				OnDuplicateAction: plan.Node_IGNORE, DelColIdx: 1, DedupDeleteMarkerColIdx: 2, AuxiliaryRowIdColIdx: 4,
++				DedupColName: "uk_named", DedupColTypes: []plan.Type{conditions[0][0].Typ},
++				DedupKeyExprs: []*plan.Expr{newExpr(0, intType)}, JoinMapTag: mapTag}
++			build = &hashbuild.HashBuild{NeedHashMap: true, NeedBatches: true, Conditions: conditions[1],
++				// The marked producer owns this requirement, including direct callers.
++				NeedAllocateSels: false, IsDedup: true, OnDuplicateAction: plan.Node_IGNORE,
++				DelColIdx: 1, DedupDeleteMarkerColIdx: 2, AuxiliaryRowIdColIdx: 4,
++				DedupColName: join.DedupColName, DedupColTypes: join.DedupColTypes,
++				JoinMapTag: mapTag, JoinMapRefCnt: 1}
++			join.AppendChild(colexec.NewMockOperator().WithBatchs([]*batch.Batch{probeBat}))
++			build.AppendChild(colexec.NewMockOperator().WithBatchs([]*batch.Batch{buildBat}))
++			account = installTestAllocation(t, join, build)
++			require.NoError(t, build.Prepare(proc))
++			require.NoError(t, join.Prepare(proc))
++			_, err := vm.Exec(build, proc)
++			require.NoError(t, err)
++			result, err := vm.Exec(join, proc)
++			require.
+```
+
+**File**: `pkg/sql/colexec/hashbuild/build.go` (modified, +1/-0)
+```diff
+@@ -105,6 +105,7 @@ func (hashBuild *HashBuild) Prepare(proc *process.Process) (err error) {
+ 	hashBuild.ctr.hashmapBuilder.DedupColName = hashBuild.DedupColName
+ 	hashBuild.ctr.hashmapBuilder.DedupColTypes = hashBuild.DedupColTypes
+ 	hashBuild.ctr.hashmapBuilder.DedupKeyExprs = hashBuild.DedupKeyExprs
++	hashBuild.ctr.hashmapBuilder.AuxiliaryRowIdColIdx = hashBuild.AuxiliaryRowIdColIdx
+ 	hashBuild.ctr.hashmapBuilder.TrackNullKeys = hashBuild.TrackNullKeys
+ 	hashBuild.ctr.hashmapBuilder.joinDiagnostic = hashBuild.JoinDiagnostic
+ 	if hashBuild.JoinDiagnostic != nil {
+```
+
+**File**: `pkg/sql/colexec/hashbuild/hashmap.go` (modified, +94/-21)
+```diff
+@@ -58,6 +58,9 @@ type HashmapBuilder struct {
+ 	DedupColName       string
+ 	DedupColTypes      []plan.Type
+ 	DedupKeyExprs      []*plan.Expr
++	// AuxiliaryRowIdColIdx is one-based; zero disables auxiliary arbitration.
++	// NULL identifies a reservation or release, rather than a real candidate.
++	AuxiliaryRowIdColIdx int32
+ 
+ 	IgnoreRows *bitmap.Bitmap
+ 
+@@ -195,6 +198,10 @@ func (hb *HashmapBuilder) Prepare(
+ 	proc *process.Process,
+ 	foldOwnedConstantCasts ...bool,
+ ) error {
++	if hb.AuxiliaryRowIdColIdx < 0 || hb.AuxiliaryRowIdColIdx > 0 &&
++		(!hb.IsDedup || hb.OnDuplicateAction != plan.Node_IGNORE || delColIdx < 0 || dedupDeleteMarkerColIdx < 0) {
++		return moerr.NewInternalError(proc.Ctx, "invalid auxiliary IGNORE arbitration metadata")
++	}
+ 	if len(hb.executors) == 0 {
+ 		needDupVec := false
+ 		keyWidth := 0
+@@ -501,6 +508,17 @@ func (hb *HashmapBuilder) RetainedBatchRecoverySafe() bool {
+ 	return hb.retainedBatchRecoverySafe
+ }
+ 
++// An auxiliary IGNORE stage protects the preceding accepted image before
++// admitting a changed key. Releases are persistent evidence, not competitors.
++// Without auxiliary metadata, only claimant/owner priorities are used, retaining
++// the generic IGNORE original-key-owner rule.
++const (
++	ignoreReleasePriority uint8 = iota
++	ignoreClaimPriority
++	ignoreReservationPriority
++	ignoreOwnerPriority
++)
++
+ func (hb *HashmapBuilder) buildHashmap(
+ 	hashOnPK bool,
+ 	needAllocateSels bool,
+@@ -509,6 +527,9 @@ func (hb *HashmapBuilder) buildHashmap(
+ 	dedupBuildKeepLast bool,
+ 	proc *process.Process,
+ ) (retErr error) {
++	// Auxiliary diagnostics need a physical build row for every group. Finalize
++	// keeps explicit selections unless the mapping is the compact g -> g-1 form.
++	needAllocateSels = needAllocateSels || hb.AuxiliaryRowIdColIdx > 0
+ 	runtimeFilterRequested := needUniqueVec
+ 	warningsEnabled := proc != nil && proc.GetStmtProfile() != nil &&
+ 		proc.GetStmtProfile().GetStatementIgnore() && hb.IsDedup &&
+@@ -529,6 +550,17 @@ func (hb *HashmapBuilder) buildHashmap(
+ 		if !warningsEnabled {
+ 			return
+ 		}
++		if hb.AuxiliaryRowIdColIdx > 0 {
++			batIdx := inputRow / colexec.DefaultBatchSize
++			colIdx := hb.AuxiliaryRowIdColIdx - 1
++			if batIdx < 0 || batIdx >= len(hb.Batches.Buf) || int(colIdx) >= len(hb.Batches.Buf[batIdx].Vecs) {
++				duplicateWarnings.AddCount()
++				return
++			}
++			if hb.Batches.Buf[batIdx].Vecs[colIdx].IsNull(uint64(inputRow % colexec.DefaultBatchSize)) {
++				return
++			}
++		}
+ 		if !duplicateWarnings.NeedsDiagnostic() {
+ 			duplicateWarnings.AddCount()
+ 			return
+@@ -555,6 +587,19 @@ func (hb *HashmapBuilder) buildHashmap(
+ 	if hb.InputBatchRowCount == 0 {
+ 		return nil
+ 	}
++	if hb.AuxiliaryRowIdColIdx > 0 {
++		for _, bat := range hb.Batches.Buf {
++			if int(hb.AuxiliaryRowIdColIdx) > len(bat.Vecs) ||
++				hb.delColIdx < 0 || int(hb.delColIdx) >= len(bat.Vecs) ||
++				hb.dedupDeleteMarkerColIdx < 0 || int(hb.dedupDeleteMarkerColIdx) >= len(bat.Vecs) ||
++				bat.Vecs[hb.AuxiliaryRowIdColIdx-1] == nil ||
++				bat.Vecs[hb.delColIdx] == nil ||
++				bat.Vecs[hb.dedupDeleteMarkerColIdx] == nil ||
++				bat.Vecs[hb.dedupDeleteMarkerColIdx].GetType().Oid != types.T_bool {
++				return moerr.NewInternalError(proc.Ctx, "invalid auxiliary IGNORE arbitration columns")
++			}
++		}
++	}
+ 	dedupBuildKeepLast = dedupBuildKeepLast && hb.IsDedup && hb.OnDuplicateAction == plan.Node_FAIL
+ 	defer func() {
+ 		if retErr != nil {
+@@ -690,24 +735,24 @@ func (hb *HashmapBuilder) buildHashmap(
+ 	}
+ 
+ 	var (
+-		vOld                   uint64
+-		cardinality            uint64
+-		lastBatch              = -1
+-		lastRows               []int64
+-		ignoreSurvivorRows     []int64
+-		ignoreSurvivorOwnsKey  []bool
+-		ignoreBuildGroups      []uint64
+-		ignoreBuildZvals       []int64
+-		ignoreCandidateOwnsKey []bool
+-		ignoreCandidateOldKey  []*vector.Vector
++		vOld                    uint64
++		cardinality             uint64
++		lastBatch               = -1
++		lastRows                []int64
++		ignoreSurvivorRows      []int64
++		ignoreSurvivorPriority  []uint8
++		ignoreBuildGroups       []uint64
++		ignoreBuildZvals        []int64
++		ignoreCandidatePriority []uint8
++		ignoreCandidateOldKey   []*vector.Vector
+ 	)
+ 	cleanupDedupScratch := func() {
+ 		freeDedupSlice(hb, lastRows, proc.Mp())
+ 		lastRows = nil
+ 		freeDedupSlice(hb, ignoreSurvivorRows, proc.Mp())
+ 		ignoreSurvivorRows = nil
+-		freeDedupSlice(hb, ignoreSurvivorOwnsKey, proc.Mp())
+-		ignoreSurvivorOwnsKey = nil
++		freeDedupSlice(hb, ignoreSurvivorPriority, proc.Mp())
++		ignoreSurvivorPriority = nil
+ 	}
+ 	defer cleanupDedupScratch()
+ 	if dedupBuildKeepLast {
+@@ -734,18 +779,18 @@ func (hb *HashmapBuilder) buildHashmap(
+ 		if err != nil {
+ 			return err
+ 		}
+-		ignoreSurvivorOwnsKey, err = makeDedupSlice[bool](
++		ignoreSurvivorPriority, err = makeDedupSlice[uint8](
+ 			hb,
+ 			hb.InputBatchRowCount+1,
+ 			proc.Mp(),
+-			HashBuildAllocationSiteDedupSurvivorOwnsKey,
++			HashBuildAllocationSiteDedupSurvivorPriority,
+ 		)
+ 		if err != n
+```
+
+**File**: `pkg/sql/colexec/hashbuild/hashmap_test.go` (modified, +89/-0)
+```diff
+@@ -1440,6 +1440,95 @@ func TestDedupBuildIgnoreRebuildsAfterOwnerReplacement(t *testing.T) {
+ 	require.True(t, hb.DelRows.Contains(1), "delRows=%s count=%d", hb.DelRows.String(), hb.DelRows.Count())
+ }
+ 
++func TestDedupBuildIgnoreAuxiliaryPriority(t *testing.T) {
++	type row struct {
++		key, previous, id  int32
++		auxiliary, release bool
++	}
++	reservation := row{key: 30, auxiliary: true}
++	claimant := row{key: 30, previous: 20, id: 2}
++	owner := row{key: 30, previous: 30, id: 1}
++	release := row{key: 30, previous: 30, auxiliary: true, release: true}
++	for _, tt := range []struct {
++		name     string
++		rows     []row
++		wantIDs  []int32
++		warnings uint64
++	}{
++		{"reservation first", []row{reservation, claimant}, nil, 1},
++		{"claimant first", []row{claimant, reservation}, nil, 1},
++		{"owner after reservation", []row{reservation, claimant, owner}, []int32{1}, 1},
++		{"owner before reservation", []row{owner, reservation, claimant}, []int32{1}, 1},
++		{"claimant reservation owner", []row{claimant, reservation, owner}, []int32{1}, 1},
++		{"claimant owner reservation", []row{claimant, owner, reservation}, []int32{1}, 1},
++		{"release before claimant", []row{release, claimant}, []int32{2}, 0},
++		{"release after claimant", []row{claimant, release}, []int32{2}, 0},
++		{"release survives discarded claimant", []row{claimant, release, reservation}, nil, 1},
++		{"release reservation claimant", []row{release, reservation, claimant}, nil, 1},
++	} {
++		t.Run(tt.name, func(t *testing.T) {
++			proc := testutil.NewProcessWithOwnedMPool(t, "", mpool.MustNewZero())
++			hb := newTestHashmapBuilder(t)
++			defer func() {
++				hb.Reset(proc, true)
++				hb.Free(proc)
++				proc.Free()
++				require.Zero(t, proc.Mp().CurrNB())
++			}()
++			session := &hashBuildWarningSession{}
++			proc.Session = session
++			proc.SetStmtProfile(&process.StmtProfile{})
++			proc.GetStmtProfile().SetStatementRuntimeProfile("Update", "DML", true)
++			hb.IsDedup = true
++			hb.OnDuplicateAction = plan.Node_IGNORE
++			hb.DedupColName = "uk"
++			hb.DedupColTypes = []plan.Type{newExpr(0, types.T_int32.ToType()).Typ}
++			hb.AuxiliaryRowIdColIdx = 4
++			require.NoError(t, hb.Prepare([]*plan.Expr{newExpr(0, types.T_int32.ToType())}, 1, 2, nil, proc))
++			bat := batch.NewWithSize(4)
++			defer bat.Clean(proc.Mp())
++			for i, typ := range []types.Type{types.T_int32.ToType(), types.T_int32.ToType(), types.T_bool.ToType(), types.T_int32.ToType()} {
++				bat.Vecs[i] = vector.NewVec(typ)
++			}
++			wantReleases := 0
++			for _, r := range tt.rows {
++				require.NoError(t, vector.AppendFixed(bat.Vecs[0], r.key, false, proc.Mp()))
++				require.NoError(t, vector.AppendFixed(bat.Vecs[1], r.previous, r.auxiliary && !r.release, proc.Mp()))
++				require.NoError(t, vector.AppendFixed(bat.Vecs[2], r.release, false, proc.Mp()))
++				require.NoError(t, vector.AppendFixed(bat.Vecs[3], r.id, r.auxiliary, proc.Mp()))
++				if r.release {
++					wantReleases++
++				}
++			}
++			bat.SetRowCount(len(tt.rows))
++			require.NoError(t, hb.CopyBuildBatch(bat, proc))
++			hb.InputBatchRowCount = bat.RowCount()
++			require.NoError(t, hb.BuildHashmap(false, true, false, proc))
++			var ids []int32
++			releases := 0
++			for _, output := range hb.Batches.Buf {
++				for i := 0; i < output.RowCount(); i++ {
++					if !output.Vecs[3].IsNull(uint64(i)) {
++						ids = append(ids, vector.GetFixedAtNoTypeCheck[int32](output.Vecs[3], i))
++					}
++					if vector.GetFixedAtNoTypeCheck[bool](output.Vecs[2], i) {
++						releases++
++					}
++				}
++			}
++			require.Equal(t, tt.wantIDs, ids)
++			require.Equal(t, wantReleases, releases, "release evidence must survive compaction")
++			require.Equal(t, tt.warnings, session.total)
++			if tt.warnings > 0 {
++				require.Equal(t, []hashBuildWarning{{code: moerr.ER_DUP_ENTRY, msg: "Duplicate entry '30' for key 'uk'"}}, session.warnings)
++			}
++			if wantReleases > 0 {
++				require.True(t, hb.DelRows.Contains(0))
++			}
++		})
++	}
++}
++
+ func TestBuildHashmapErrorDoesNotLeakIterators(t *testing.T) {
+ 	hb := newTestHashmapBuilder(t)
+ 	mp := mpool.MustNewZero()
+```
+
+---
+
+### Incident Patch 2: `5d63cf6b` (2026-11-18)
+**Commit Message**: ci: reduce race UT work and harden fixture retirement (#32872)
+
+## What type of PR is this?
+
+- [x] Improvement
+- [x] Test and CI
+
+## Which issue(s) this PR fixes:
+
+Refs #32745 (FLAKY-001). The issue is a long-lived tracker and should
+remain open.
+
+## What this PR does / why we need it:
+
+Reduce repeated race-test cluster setup and large query construction
+while retaining the distinct contracts:
+
+- Reuse one dedicated cluster for five compatible inventory CAS cases;
+verify each case's database, catalog table and writer transactions are
+retired before the next one. Keep restart and topology-sensitive cases
+separate.
+- Run one complete same-row-count collation repair, then verify each
+other field corruption using the real upgrade predicate and an
+independently rolled-back transaction. Keep the other repair and retry
+cases.
+- Keep real 256-branch planner boundary witnesses, but test budget reuse
+and case-insensitive admission without repeatedly building equivalent
+wide plans. Check that separate builds obtain a fresh budget and
+enumerate their own metadata.
+- Preserve all 24 strict CTAS error, alias-reuse and cleanup cases. For
+each successful mode and table type, keep the standalone co
+
+**File**: `pkg/cnservice/server_heartbeat.go` (modified, +30/-2)
+```diff
+@@ -16,6 +16,7 @@ package cnservice
  
  import (
  	"context"
 +	"errors"
- 	"fmt"
- 	"net"
  	"time"
-@@ -29,11 +30,13 @@ import (
+ 
+ 	"go.uber.org/zap"
+@@ -30,6 +31,33 @@ import (
+ 	"github.com/matrixorigin/matrixone/pkg/version"
  )
  
- const (
--	connsThreshold = 1024
-+	connsThreshold         = 1024
-+	conntrackRetryInterval = 5 * time.Second
- )
- 
- var (
- 	conntrackReportInterval = time.Second * 5
-+	errConntrackClose       = errors.New("conntrack socket close failed")
- )
- 
- type conntrackClient interface {
-@@ -52,11 +55,31 @@ func startConnectionTracking() (err error) {
- 		}
- 	}()
- 
--	c, err := dialConntrack()
-+	// Capture the factory once; every replacement has the same owner and policy.
-+	dial := dialConntrack
-+	listener, err := listenConntrack(dial)
- 	if err != nil {
- 		return err
- 	}
-+	// Keep the existing process lifetime. Runtime replacement only happens after
-+	// the worker reports a fatal error; it is then safe to join that worker.
-+	go runConnectionTracking(context.Background(), listener, dial)
-+	return nil
-+}
- 
-+// A listener owns one socket and its queues. Replacements never share queues
-+// or the consumer's map, so an old generation cannot update the new one.
-+type conntrackListener struct {
-+	client conntrackClient
-+	events chan conntrack.Event
-+	errors chan error
++// ViewMetadataWithdrawalError identifies a failed final admission withdrawal.
++// Close still returns the underlying diagnostic through Unwrap.
++type ViewMetadataWithdrawalError struct{ Err error }
++
++func (e *ViewMetadataWithdrawalError) Error() string { return e.Err.Error() }
++func (e *ViewMetadataWithdrawalError) Unwrap() error { return e.Err }
++
++// IsOnlyViewMetadataWithdrawalTimeout rejects mixed and unknown close errors.
++func IsOnlyViewMetadataWithdrawalTimeout(err error) bool {
++	if e, ok := err.(*ViewMetadataWithdrawalError); ok {
++		return errors.Is(e.Err, context.DeadlineExceeded)
++	}
++	if joined, ok := err.(interface{ Unwrap() []error }); ok {
++		children := joined.Unwrap()
++		if len(children) == 0 {
++			return false
++		}
++		for _, child := range children {
++			if !IsOnlyViewMetadataWithdrawalTimeout(child) {
++				return false
++			}
++		}
++		return true
++	}
++	return false
 +}
 +
-+func listenConntrack(dial func() (conntrackClient, error)) (*conntrackListener, error) {
-+	c, err := dial()
-+	if err != nil {
-+		return nil, err
-+	}
- 	events := make(chan conntrack.Event, 65536)
- 	// Keep receive, decode and delivery ordered. Concurrent conntrack workers
- 	// can deliver DESTROY before NEW, leaving a destroyed flow in activeConns.
-@@ -65,31 +88,96 @@ func startConnectionTracking() (err error) {
- 		netfilter.GroupCTDestroy,
- 	})
- 	if err != nil {
--		_ = c.Close()
+ var cnCommandPollFailed = logutil.Event{
+ 	Name:    "cn.schedule-command.poll.failed",
+ 	Message: "failed to poll cn schedule commands",
+@@ -257,13 +285,13 @@ func (s *service) withdrawViewMetadataAdmission() error {
+ 		err = moerr.AttachCause(ctx, err)
+ 		s.logger.Error("failed to publish final view metadata withdrawal",
+ 			zap.Bool("clean_handoff", false), zap.Error(err))
 -		return err
-+		if closeErr := c.Close(); closeErr != nil {
-+			return nil, errors.Join(err, errConntrackClose, closeErr)
-+		}
-+		return nil, err
++		return &ViewMetadataWithdrawalError{Err: err}
  	}
-+	return &conntrackListener{client: c, events: events, errors: errorChan}, nil
-+}
- 
-+func (l *conntrackListener) close() error {
-+	// conntrack.Close closes the socket, then waits for its worker. The worker
-+	// may be blocked publishing an event/error, which closing the fd cannot
-+	// interrupt. Keep draining both queues until Close has joined the worker.
-+	done := make(chan error, 1)
- 	go func() {
--		defer c.Close()
--		logConnTrack(context.Background(), events, errorChan)
-+		done <- l.client.Close()
- 	}()
-+	for {
-+		select {
-+		case err := <-done:
-+			return err
-+		case _, ok := <-l.events:
-+			if !ok {
-+				l.events = nil
-+			}
-+		case _, ok := <-l.errors:
-+			if !ok {
-+				l.errors = nil
-+			}
-+		}
-+	}
-+}
- 
--	return nil
-+func runConnectionTracking(ctx context.Context, listener *conntrackListener, dial func() (conntrackClient, error)) {
-+	for {
-+		err := logConnTrack(ctx, listener.events, listener.errors)
-+		closeErr := listener.close()
-+		if closeErr != nil {
-+			// Do not accumulate replacements when the old socket cannot be closed.
-+			logutil.Error("conntrack: tracking stopped", zap.Error(closeErr))
-+			return
-+		}
-+		if ctx.Err() != nil {
-+			return
-+		}
-+		logutil.Warn("conntrack: tracking interrupted; previous statistics invalid", zap.Error(err))
-+		for {
-+			// This is optional diagnostics, not a service admission gate. Retry at
-+			// most once per interval, including repeated Dial/Listen failures.
-+			timer := time.NewTimer(conntrackRetryInterval)
-+			select {
-+			case <-ctx.Done():
-+				timer.Stop()
-+				return
-+			case <-timer.C:
-+			}
-+			if ctx.Err() != nil {
-+				return
-+			}
-+			listener, err = listenConntrack(dial)
-+			if err == nil {
-+				break
-+			}
-+			logutil.Error("conntrack: restart failed", zap.Error(err))
-+			if errors.Is(err, errConntrackClose) {
-+				return
-+			}
-+		}
-+	}
- }
- 
--func logConnTrack(ctx context.Context, events chan conntrack.Event, errorChan chan error) {
-+func logConnTrack(ctx context.Context, events chan conntrack.Event, errorChan chan error) error {
- 
- 	activeConns := make(map[uint32]*conntrack.Flow)
- 	ticker := time.NewTicker(conntrackReportInterval)
- 	defer ticker.Stop()
-+	startedAt := time.Now()
- 
- 	for {
-+		if err := ctx.Err(); err != nil {
-+			return err
-+		}
- 		select {
- 
- 		case <-ctx.Done():
--			return
-+			return ctx.Err()
- 
--		case ev := <-events:
-+		case ev, ok := <-events:
-+			if !ok {
-+				return errors.New("conntrack event channel closed")
-+			}
- 			switch ev.Type {
- 
- 			case conntrack.EventNew:
-@@ -100,12 +188,20 @@ func logConnTrack(ctx context.Context, events chan conntrack.Event, errorChan ch
- 
- 			}
- 
--		case err := <-errorChan:
--			logutil.Error("conntrack: error", zap.Error(err))
-+		case err, ok := <-errorChan:
-+			if !ok || err == nil {
-+				return errors.New("conntrack listener stopped without an error")
-+			}
-+			// Listen has one worker, and every reported error terminates it.
-+			// Do not keep publishing stale counts after that worker exits.
-+			return err
- 
- 		case <-ticker.C:
- 			logutil.Info("conntrack: stats",
- 				zap.Any("connections", len(activeConns)),
-+				zap.String("scope", "since_listener_start"),
-+				zap.Bool("complete", false),
+ 	if ctx.Err() != nil {
+ 		err = moerr.AttachCause(ctx, ctx.Err())
+ 		s.logger.Error("final view metadata withdrawal timed out",
+ 			zap.Bool("clean_handoff", false), zap.Error(err))
+-		return err
++		return &ViewMetadataWithdrawalError{Err: err}
+ 	}
+ 	s.logger.Info("published final view metadata withdrawal",
+ 		zap.Bool("clean_handoff", true),
 ```
 
-**File**: `cmd/mo-service/debug_connections_test.go` (modified, +304/-57)
+**File**: `pkg/cnservice/server_heartbeat_test.go` (modified, +5/-1)
 ```diff
-@@ -19,13 +19,20 @@ package main
- import (
- 	"context"
- 	"errors"
--	"io"
--	"math/rand/v2"
-+	"fmt"
-+	"sync/atomic"
- 	"testing"
-+	"testing/synctest"
- 	"time"
- 
-+	"github.com/matrixorigin/matrixone/pkg/logutil"
-+	"github.com/stretchr/testify/require"
- 	"github.com/ti-mo/conntrack"
- 	"github.com/ti-mo/netfilter"
-+	"go.uber.org/zap/buffer"
-+	"go.uber.org/zap/zapcore"
-+	"go.uber.org/zap/zaptest/observer"
-+	"golang.org/x/sys/unix"
- )
- 
- type failingConntrackClient struct {
-@@ -54,7 +61,8 @@ func TestStartConnectionTrackingClosesOnListenFailure(t *testing.T) {
- 		return client, nil
- 	}
- 
--	if err := startConnectionTracking(); err == nil {
-+	err := startConnectionTracking()
-+	if err == nil {
- 		t.Fatal("expected Listen failure")
- 	}
- 	if !client.closed {
-@@ -82,64 +90,303 @@ func TestDialConntrack(t *testing.T) {
+@@ -318,7 +318,11 @@ func TestWithdrawViewMetadataAdmissionFailureIsNotCleanHandoff(t *testing.T) {
+ 			logger:                          zap.NewNop(),
+ 			viewMetadataAdmissionGeneration: 8,
+ 		}
+-		require.ErrorIs(t, s.withdrawViewMetadataAdmission(), context.DeadlineExceeded)
++		err := s.withdrawViewMetadataAdmission()
++		require.ErrorIs(t, err, context.DeadlineExceeded)
++		require.True(t, IsOnlyViewMetadataWithdrawalTimeout(errors.Join(err)))
++		require.False(t, IsOnlyViewMetadataWithdrawalTimeout(errors.Join(err, errors.New("local teardown failed"))))
++		require.False(t, IsOnlyViewMetadataWithdrawalTimeout(context.DeadlineExceeded))
+ 	})
  }
  
- func TestConntrack(t *testing.T) {
--	ctx, cancel := context.WithCancel(context.Background())
--	defer cancel()
--
--	events := make(chan conntrack.Event)
--	errorCh := make(chan error)
--
--	go logConnTrack(ctx, events, errorCh)
--
--	t0 := time.Now()
--	for {
--
--		for range connsThreshold {
--
--			events <- conntrack.Event{
--				Type: conntrack.EventNew,
--				Flow: &conntrack.Flow{
--					ID: rand.Uint32(),
--					TupleOrig: conntrack.Tuple{
--						Proto: conntrack.ProtoTuple{
--							SourcePort:      42,
--							DestinationPort: 41,
--						},
--					},
--				},
--			}
-+	synctest.Test(t, func(t *testing.T) {
-+		logs := observeConntrack(t)
-+		ctx, cancel := context.WithCancel(context.Background())
-+		defer cancel()
-+		events, errs := make(chan conntrack.Event), make(chan error)
-+		done := make(chan error, 1)
-+		go func() { done <- logConnTrack(ctx, events, errs) }()
-+		for id := uint32(0); id < connsThreshold; id++ {
-+			events <- conntrackEvent(false, id)
+```
+
+**File**: `pkg/embed/cdc_watermark_lifetime_test.go` (modified, +1/-1)
+```diff
+@@ -68,7 +68,7 @@ func (p *watermarkRetirementProbeExecutor) Query(ctx context.Context, sql string
+ func TestCDCWatermarkUpdaterRuntimeRetirement(t *testing.T) {
+ 	// This scenario owns its cluster independently of earlier shared-fixture tests.
+ 	require.NoError(t, CloseBaseClusterTests())
+-	require.NoError(t, CloseSingleCNBaseClusterTests())
++	require.NoError(t, discardSingleCNBaseClusterTests())
+ 	c, err := NewCluster(WithTesting(), WithCNCount(1))
+ 	require.NoError(t, err)
+ 	defer func() { require.NoError(t, c.Close()) }()
+```
+
+**File**: `pkg/embed/testing.go` (modified, +17/-1)
+```diff
+@@ -22,7 +22,9 @@ import (
+ 	"sync"
+ 	"time"
+ 
++	"github.com/matrixorigin/matrixone/pkg/cnservice"
+ 	"github.com/matrixorigin/matrixone/pkg/common/moerr"
++	"github.com/matrixorigin/matrixone/pkg/logutil"
+ 	"github.com/matrixorigin/matrixone/pkg/pb/metadata"
+ 	"github.com/matrixorigin/matrixone/pkg/testutil"
+ 	"github.com/matrixorigin/matrixone/pkg/util/metric/stats"
+@@ -469,6 +471,10 @@ func (c *SharedTestCluster) CloseIfActive() error {
+ // A topology switch may release an idle fixture, but must not wait for a
+ // callback that could be making the switch itself or bypass its cleanup.
+ func (c *SharedTestCluster) closeIfActive(waitForCallback bool) error {
++	return c.closeIfActiveWithDiscard(waitForCallback, false)
++}
++
++func (c *SharedTestCluster) closeIfActiveWithDiscard(waitForCallback, discard bool) error {
+ 	c.initializeRunCondition()
+ 	c.mu.Lock()
+ 	defer c.mu.Unlock()
+@@ -487,7 +493,7 @@ func (c *SharedTestCluster) closeIfActive(waitForCallback bool) error {
+ 	// automatic attempt has happened, this method remains the explicit retry
+ 	// path for incomplete cleanup.
+ 	if c.sealed && !c.cleanupTried && len(c.cleanupRegistrations) > 0 {
+-		if !waitForCallback {
++		if !waitForCallback || discard {
+ 			return moerr.NewInvalidStateNoCtx("shared cluster callback cleanup is still pending")
+ 		}
+ 		return nil
+@@ -501,6 +507,10 @@ func (c *SharedTestCluster) closeIfActive(waitForCallback bool) error {
+ 		return errors.Join(err, moerr.NewInvalidStateNoCtx("shared cluster cleanup is incomplete"))
+ 	}
+ 	c.resetGenerationLocked()
++	if discard && cnservice.IsOnlyViewMetadataWithdrawalTimeout(err) {
++		logutil.Warnf("discarded complete test cluster after final admission withdrawal timed out: %v", err)
++		return nil
++	}
+ 	return err
+ }
+ 
+@@ -735,6 +745,12 @@ func CloseSingleCNBaseClusterTests() error {
+ 	return singleCNClusterState.CloseIfActive()
+ }
+ 
++// discardSingleCNBaseClusterTests destroys the complete shared topology. A
++// timed-out remote handoff is diagnostic once its HAKeeper is also gone.
++func discardSingleCNBaseClusterTests() error {
++	return singleCNClusterState.closeIfActiveWithDiscard(true, true)
++}
++
+ // Admission is exclusive and all owners of this generation have completed
+ // cleanup. Keep the generation number monotonic so stale finalizers cannot
+ // affect a replacement fixture.
+```
+
+**File**: `pkg/embed/testing_test.go` (modified, +53/-0)
+```diff
+@@ -23,13 +23,66 @@ import (
+ 	"testing"
+ 	"time"
+ 
++	"github.com/matrixorigin/matrixone/pkg/cnservice"
+ 	mruntime "github.com/matrixorigin/matrixone/pkg/common/runtime"
+ 	"github.com/matrixorigin/matrixone/pkg/pb/metadata"
+ 	"github.com/matrixorigin/matrixone/pkg/taskservice"
+ 	"github.com/stretchr/testify/assert"
+ 	"github.com/stretchr/testify/require"
+ )
+ 
++func TestDiscardSharedClusterOnlyAcceptsCompletedWithdrawalTimeout(t *testing.T) {
++	remote := &cnservice.ViewMetadataWithdrawalError{Err: context.DeadlineExceeded}
++	local := errors.New("local teardown failed")
++	for _, tc := range []struct {
++		name     string
++		err      error
++		complete bool
++		wantOK   bool
++	}{
++		{"completed withdrawal timeout", remote, true, true},
++		{"nested withdrawal timeouts", errors.Join(remote, errors.Join(remote)), true, true},
++		{"plain local deadline", context.DeadlineExceeded, true, false},
++		{"other withdrawal error", &cnservice.ViewMetadataWithdrawalError{Err: local}, true, false},
++		{"mixed withdrawal and local error", errors.Join(remote, local), true, false},
++		{"incomplete teardown", remote, false, false},
++	} {
++		t.Run(tc.name, func(t *testing.T) {
++			svc := &completedCloseService{closeTrackingService: closeTrackingService{closeErr: tc.err}, complete: tc.complete}
++			op := &operator{state: started}
++			op.reset.svc = svc
++			value := &cluster{state: started, services: []*operator{op}}
++			state := SharedTestCluster{cluster: value}
++			err := state.closeIfActiveWithDiscard(true, true)
++			if tc.wantOK {
++				require.NoError(t, err)
++				require.Nil(t, state.cluster)
++				require.True(t, value.CloseComplete())
++			} else {
++				require.Error(t, err)
++				require.ErrorIs(t, err, tc.err)
++				if !tc.complete {
++					require.Same(t, value, state.cluster)
++				}
++			}
++		})
++	}
++	t.Run("pending callback cleanup", func(t *testing.T) {
++		svc := &completedCloseService{complete: true}
++		op := &operator{state: started}
++		op.reset.svc = svc
++		value := &cluster{state: started, services: []*operator{op}}
++		state := SharedTestCluster{
++			cluster:              value,
++			sealed:               true,
++			cleanupRegistrations: map[sharedCleanupRegistration]struct{}{{}: {}},
 +		}
-+		synctest.Wait()
-+		// Advance the fake clock, not a wall-clock synchronization sleep.
-+		time.Sleep(conntrackReportInterval)
-+		synctest.Wait()
-+		requireConntrackCount(t, logs, connsThreshold)
-+		require.Len(t, logs.FilterMessage("conntrack: source").All(), 1)
-+		require.Len(t, logs.FilterMessage("conntrack: destination").All(), 1)
-+		for id := uint32(0); id < connsThreshold; id++ {
-+			events <- conntrackEvent(true, id)
-+		}
-+		synctest.Wait()
-+		time.Sleep(conntrackReportInterval)
-+		synctest.Wait()
-+		requireConntrackCount(t, logs, 0)
-+		cancel()
-+		require.ErrorIs(t, <-done, context.Canceled)
++		require.ErrorContains(t, state.closeIfActiveWithDiscard(true, true), "callback cleanup is still pending")
++		require.Same(t, value, state.cluster)
++		require.Zero(t, svc.closeCount.Load())
 +	})
 +}
- 
--			events <- conntrack.Event{
--				Type: conntrack.EventDestroy,
--				Flow: &conntrack.Flow{
--					ID: rand.Uint32(),
--					TupleOrig: conntrack.Tuple{
--						Proto: conntrack.ProtoTuple{
--							SourcePort:      42,
--							DestinationPort: 41,
--						},
--					},
--				},
--			}
-+func conntrackEvent(destroy bool, id uint32) conntrack.Event {
-+	kind := conntrack.EventNew
-+	if destroy {
-+		kind = conntrack.EventDestroy
-+	}
-+	return conntrack.Event{Type: kind, Flow: &conntrack.Flow{ID: id, TupleOrig: conntrack.Tuple{
-+		Proto: conntrack.ProtoTuple{SourcePort: 42, DestinationPort: 41},
-+	}}}
-+}
- 
--		}
-+func observeConntrack(t *testing.T) *observer.ObservedLogs {
-+	t.Helper()
-+	core, logs := observer.New(zapcore.DebugLevel)
-+	oldReport, oldContext := logutil.GetReportZapFunc(), logutil.GetContextFieldFunc()
-+	t.Cleanup(func() { logutil.SetLogReporter(&logutil.TraceReporter{ReportZap: oldReport, ContextField: oldContext}) })
-+	pool := buffer.NewPool()
-+	logutil.SetLogReporter(&logutil.TraceReporter{ReportZap: func(_ zapcore.Encoder, entry zapcore.Entry, fields []zapcore.Field) (*buffer.Buffer, error) {
-+		return pool.Get(), core.Write(entry, fields)
-+	}})
-+	restore := logutil.SetupMOLoggerForTest(&logutil.LogConfig{Level: "info", DisableLog: true})
-+	t.Cleanup(func() { restore() })
-+	return logs
-+}
- 
--		errorCh <- io.ErrShortBuffer
--		events <- conntrack.Event{
--			Type: conntrack.EventNew,
--			Flow: &conntrack.Flow{
--				ID: rand.Uint32(),
--				TupleOrig: conntrack.Tuple{
--					Proto: conntrack.ProtoTuple{
--						SourcePort:      1,
--						DestinationPort: 2,
--					},
--				},
--			},
--		}
-+func requireConntrackCount(t *testing.T, logs *observer.ObservedLogs, count int) {
-+	t.Helper()
-+	stats := logs.FilterMessage("conntrack: stats").All()
-+	require.NotEmpty(t, stats)
-+	fields := stats[len(stats)-1].ContextMap()
-+	require.EqualValues(t, count, fields["connections"])
-+	require.Equal(t, "since_listener_start", fields["scope"])
-+	require.Equal(t, false, fields["complete"])
-+	require.Contains(t, fields, "listener_started_at")
-+}
 +
-+func TestConntrackListenerTerminal(t *testing.T) {
-+	for _, terminal := range []string{"ENOBUFS", "decode error", "events closed", "errors closed", "nil error"} {
-+		t.Run(terminal, func(t *testing.T) {
-+			synctest.Test(t, func(t *testing.T) {
-+				logs := observeConntrack(t)
-+				ctx, cancel := context.WithCancel(context.Background())
-+				defer cancel()
-+				events, errs := make(chan conntrack.Event), make(chan error)
-+				done := make(chan error, 1)
-+				go func() { done <- logConnTrack(ctx, events, errs) }()
-+				events <- conntrac
+ func TestWaitBasicClusterTaskServicesRejectsMissingCN(t *testing.T) {
+ 	err := waitBasicClusterTaskServices(context.Background(), &cluster{}, 1)
+ 	require.ErrorContains(t, err, "service not found")
 ```
 
----
-
-### Incident Patch 2: `612e34dc` (2026-11-17)
-**Commit Message**: fix: enforce unique checks in multi-target UPDATE (#32821)
-
-## What type of PR is this?
-
-- [ ] API-change
-- [x] BUG
-- [ ] Improvement
-- [ ] Documentation
-- [ ] Feature
-- [ ] Test and CI
-- [ ] Code Refactoring
-
-## Which issue(s) this PR fixes:
-
-issue #31824
-
-## What this PR does / why we need it:
-
-A multi-target self-join `UPDATE` could commit duplicate `UNIQUE`
-values. After repeated physical targets were merged, the selector
-guarding deduplication keys was no longer valid, and independent
-per-alias checks could not detect two target rows writing the same new
-key.
-
-This change:
-- rebuilds the physical-row selector after the non-`IGNORE`
-repeated-target merge;
-- consolidates `UNIQUE` checks per physical table/index and evaluates
-the final merged row image;
-- preserves the existing `UPDATE IGNORE` path and per-row old-key
-self-update exemption;
-- adds typed plan assertions plus end-to-end coverage for
-single/composite/prefix/multiple unique indexes, three aliases,
-same-physical-row updates, key swaps, `NULL`, atomicity, index reads,
-and retry.
-
-## Validation
-
-Earlier author-reported validation (before the latest rebase):
-- complete `./pkg/sql/plan` package;
-- focused planner assertio
-
-**File**: `pkg/sql/plan/bind_update.go` (modified, +91/-9)
+**File**: `pkg/fileservice/disk_cache_download_test.go` (modified, +23/-1)
 ```diff
-@@ -1084,6 +1084,30 @@ func (builder *QueryBuilder) bindUpdate(stmt *tree.Update, bindCtx *BindContext,
- 			}
- 			lastNodeID = builder.appendNode(selectNode, bindCtx)
- 			selectNodeTag = groupActiveTag
-+			for _, tableID := range physicalTableOrder {
-+				targets := targetsByTableID[tableID]
-+				if len(targets) < 2 {
-+					continue
-+				}
-+				ownerIdx := targets[0]
-+				rowIDPos := oldColName2Idx[dmlCtx.aliases[ownerIdx]+"."+catalog.Row_ID]
-+				var groupRowNumberPos int32
-+				lastNodeID, selectNode, selectNodeTag, groupRowNumberPos, err =
-+					builder.appendTargetRowNumberNode(
-+						bindCtx,
-+						lastNodeID,
-+						selectNode,
-+						selectNodeTag,
-+						rowIDPos,
-+						physicalTargetActivePos[ownerIdx],
-+					)
-+				if err != nil {
-+					return 0, err
-+				}
-+				for _, targetIdx := range targets {
-+					targetRowNumberPos[targetIdx] = groupRowNumberPos
+@@ -38,9 +38,14 @@ func downloading(t *testing.T) (*DiskCache, *io.PipeWriter, chan error) {
+ 	require.NoError(t, err)
+ 	t.Cleanup(func() { cache.Close(ctx) })
+ 	pr, pw := io.Pipe()
+-	t.Cleanup(func() { _ = pw.Close() })
+ 	filled := make(chan error, 1)
++	done := make(chan struct{})
++	t.Cleanup(func() {
++		_ = pw.CloseWithError(io.ErrClosedPipe)
++		<-done
++	})
+ 	go func() {
++		defer close(done)
+ 		filled <- cache.SetFile(ctx, "obj", func(context.Context) (io.ReadCloser, error) { return pr, nil })
+ 	}()
+ 	require.Eventually(t, func() bool { return cache.download(cache.pathForFile("obj")) != nil },
+@@ -130,6 +135,23 @@ func TestDiskCacheReadOfDownloadStopsOnCancel(t *testing.T) {
+ 	require.False(t, waitVector(t, pending).Entries[0].done)
+ }
+ 
++func TestDiskCacheDownloadCleanupJoinsAbandonedFill(t *testing.T) {
++	var filled chan error
++	// Establish TempDir's cleanup before registering the witness. downloading
++	// creates another directory under the same test-owned parent.
++	t.TempDir()
++	// The witness runs after downloading's cleanups and before TempDir removal.
++	t.Cleanup(func() {
++		select {
++		case err := <-filled:
++			require.ErrorIs(t, err, io.ErrClosedPipe)
++		default:
++			t.Error("abandoned cache fill outlived its cleanup")
++		}
++	})
++	_, _, filled = downloading(t)
++}
++
+ // A download that ends with the object shorter than a read leaves the read unserved.
+ func TestDiskCacheReadBeyondDownloadedObject(t *testing.T) {
+ 	rangeReadsCost(t, time.Hour)
+```
+
+**File**: `pkg/sql/plan/subscription_metadata_test.go` (modified, +51/-11)
+```diff
+@@ -603,37 +603,77 @@ func TestSubscriptionStatisticsBudgetUsesIdentifierCaseMode(t *testing.T) {
+ 
+ 	for _, mode := range []int64{1, 2} {
+ 		t.Run(fmt.Sprintf("case-insensitive mode %d deduplicates", mode), func(t *testing.T) {
+-			optimizer, ctx := newSubscriptionMetadataTestOptimizer(t)
++			_, ctx := newSubscriptionMetadataTestOptimizer(t)
+ 			ctx.lowerCaseTableNames = mode
+ 			ctx.metadata = metadata
+-
+-			queryPlan, err := runOneStmt(optimizer, t,
+-				"select count(*) from information_schema.statistics")
++			builder := NewQueryBuilder(plan.Query_SELECT, ctx, false, false)
++			visible, err := builder.visibleSubscriptionMetadata(nil)
+ 			require.NoError(t, err)
+-			require.Len(t, statisticsPublisherScanCounts(queryPlan.GetQuery()),
+-				maxSubscriptionStatisticsPublisherBranches)
+-			require.Equal(t, maxSubscriptionStatisticsPublisherBranches, ctx.publisherBindCount)
++			require.Len(t, visible, maxSubscriptionStatisticsPublisherBranches)
++			var matching []string
++			for _, subscription := range visible {
++				if strings.EqualFold(subscription.Meta.SubName, "SubCase") {
++					matching = append(matching, subscription.Meta.SubName)
 +				}
 +			}
- 		}
- 	}
- 	if !isMultiTargetUpdate && updateHasMultipleSourceTables(stmt) {
-@@ -1384,6 +1408,9 @@ func (builder *QueryBuilder) bindUpdate(stmt *tree.Update, bindCtx *BindContext,
- 		aliasIdxNeedConstraintCheck[i] = append([]bool(nil), idxNeedUpdate[i]...)
- 	}
- 	coalesceRepeatedPhysicalTargetRegularIndexes(dmlCtx, idxNeedUpdate)
-+	if !deferRepeatedPhysicalTargetMerge {
-+		coalesceRepeatedPhysicalTargetUniqueChecks(dmlCtx, aliasIdxNeedConstraintCheck)
-+	}
- 
- 	if updatePkOrUk {
- 		newProjTag := builder.genNewBindTag()
-@@ -1422,7 +1449,11 @@ func (builder *QueryBuilder) bindUpdate(stmt *tree.Update, bindCtx *BindContext,
- 			}
- 			return builder.makeIndexPartExprFromInputExpr(inputExpr, partName, prefixLengths)
- 		}
--		guardTargetDedupExpr := func(targetIdx int, expr *plan.Expr) (*plan.Expr, error) {
-+		uniqueDedupActivePos := targetBranchActivePos
-+		if !deferRepeatedPhysicalTargetMerge {
-+			uniqueDedupActivePos = physicalTargetActivePos
-+		}
-+		guardTargetDedupExpr := func(targetIdx int, activePositions []int32, expr *plan.Expr) (*plan.Expr, error) {
- 			rowNumberExpr := &plan.Expr{
- 				Typ: selectNode.ProjectList[targetRowNumberPos[targetIdx]].Typ,
- 				Expr: &plan.Expr_Col{
-@@ -1441,11 +1472,11 @@ func (builder *QueryBuilder) bindUpdate(stmt *tree.Update, bindCtx *BindContext,
- 				return nil, err
- 			}
- 			activeExpr := &plan.Expr{
--				Typ: selectNode.ProjectList[targetBranchActivePos[targetIdx]].Typ,
-+				Typ: selectNode.ProjectList[activePositions[targetIdx]].Typ,
- 				Expr: &plan.Expr_Col{
- 					Col: &plan.ColRef{
- 						RelPos: selectNodeTag,
--						ColPos: targetBranchActivePos[targetIdx],
-+						ColPos: activePositions[targetIdx],
- 					},
- 				},
- 			}
-@@ -1506,7 +1537,7 @@ func (builder *QueryBuilder) bindUpdate(stmt *tree.Update, bindCtx *BindContext,
- 
- 					newPkExpr, _ := BindFuncExprImplByPlanExpr(builder.GetContext(), "serial", args)
- 					if isMultiTargetUpdate {
--						newPkExpr, err = guardTargetDedupExpr(i, newPkExpr)
-+						newPkExpr, err = guardTargetDedupExpr(i, targetBranchActivePos, newPkExpr)
- 						if err != nil {
- 							return 0, err
- 						}
-@@ -1523,7 +1554,7 @@ func (builder *QueryBuilder) bindUpdate(stmt *tree.Update, bindCtx *BindContext,
- 							Col: &plan.ColRef{RelPos: selectNodeTag, ColPos: colPos},
- 						},
- 					}
--					pkExpr, err = guardTargetDedupExpr(i, pkExpr)
-+					pkExpr, err = guardTargetDedupExpr(i, targetBranchActivePos, pkExpr)
- 					if err != nil {
- 						return 0, err
- 					}
-@@ -1686,7 +1717,7 @@ func (builder *QueryBuilder) bindUpdate(stmt *tree.Update, bindCtx *BindContext,
- 						return 0, err
- 					}
- 					if isMultiTargetUpdate {
--						newUkExpr, err = guardTargetDedupExpr(i, newUkExpr)
-+						newUkExpr, err = guardTargetDedupExpr(i, uniqueDedupActivePos, newUkExpr)
- 						if err != nil {
- 							return 0, err
- 						}
-@@ -1730,7 +1761,7 @@ func (builder *QueryBuilder) bindUpdate(stmt *tree.Update, bindCtx *BindContext,
- 							}
- 						}
- 						if isMultiTargetUpdate {
--							newPartExpr, err = guardTargetDedupExpr(i, newPartExpr)
-+							newPartExpr, err = guardTargetDedupExpr(i, uniqueDedupActivePos, newPartExpr)
- 							if err != nil {
- 								return 0, err
- 							}
-@@ -1756,7 +1787,7 @@ func (builder *QueryBuilder) bindUpdate(stmt *tree.Update, bindCtx *BindContext,
- 							}
- 							newColName2Idx[idxTableDef.Name+"."+catalog.IndexTableIndexColName] = int32(len(newProjNode.ProjectList))
- 							if isMultiTargetUpdate {
--								newPartExpr, err = guardTargetDedupExpr(i, newPartExpr)
-+								newPartExpr, err = guardTargetDedupExpr(i, uniqueDedupActivePos, newPartExpr)
- 								if err != nil {
- 									return 0, err
- 								}
-@@ -1776,7 +1807,7 @@ func (builder *QueryBuilder) bindUpdate(stmt *tree.Update, bindCtx *BindContext,
- 									Col: &plan.ColRef{RelPos: selectNodeTag, ColPos: colPos},
- 								},
- 							}
--							newPartExpr, err = guardTargetDedupExpr(i, newPartExpr)
-+							newPartExpr, err = guardTargetDedupExpr(i, uniqueDedupActivePos, newPartExpr)
- 							if err != nil {
- 								return 0, err
- 							}
-@@ -2846,6 +2877,57 @@ func coalesceRepeated
-```
-
-**File**: `pkg/sql/plan/bind_update_test.go` (modified, +33/-0)
-```diff
-@@ -645,6 +645,39 @@ func TestCoalesceRepeatedPhysicalTargetIndexes(t *testing.T) {
- 	require.Empty(t, irregularIndexes[1])
- }
- 
-+func TestCoalesceRepeatedPhysicalTargetUniqueChecks(t *testing.T) {
-+	uniqueA := &IndexDef{IndexName: "uk_a", IndexTableName: "uk_a_table", Unique: true}
-+	uniqueB := &IndexDef{IndexName: "uk_b", IndexTableName: "uk_b_table", Unique: true}
-+	regular := &IndexDef{IndexName: "idx", IndexTableName: "idx_table"}
-+	indexes := []*IndexDef{uniqueA, uniqueB, regular}
-+	dmlCtx := &DMLContext{
-+		aliases: []string{"a", "b", "c"},
-+		tableDefs: []*TableDef{
-+			{TblId: 100, Indexes: indexes},
-+			{TblId: 100, Indexes: indexes},
-+			{TblId: 200, Indexes: indexes},
-+		},
-+		updateCol2Expr: []map[string]tree.Expr{
-+			{"x": nil},
-+			{"x": nil},
-+			{"x": nil},
-+		},
-+	}
-+
-+	checks := [][]bool{
-+		{false, false, false},
-+		{true, true, true},
-+		{true, false, false},
-+	}
-+	coalesceRepeatedPhysicalTargetUniqueChecks(dmlCtx, checks)
-+
-+	// All unique checks for one physical table are evaluated once by its owner.
-+	require.Equal(t, []bool{true, true, false}, checks[0])
-+	require.Equal(t, []bool{false, false, true}, checks[1])
-+	// Another physical table keeps its own independent check.
-+	require.Equal(t, []bool{true, false, false}, checks[2])
-+}
-+
- func TestPrimaryKeyUpdatedDetectsSingleAndCompositeKeys(t *testing.T) {
- 	tests := []struct {
- 		name       string
-```
-
-**File**: `pkg/sql/plan/issue_31824_plan_test.go` (added, +190/-0)
-```diff
-@@ -0,0 +1,190 @@
-+// Copyright 2021 - 2026 Matrix Origin
-+//
-+// Licensed under the Apache License, Version 2.0 (the "License");
-+// you may not use this file except in compliance with the License.
-+// You may obtain a copy of the License at
-+//
-+//      http://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing, software
-+// distributed under the License is distributed on an "AS IS" BASIS,
-+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+// See the License for the specific language governing permissions and
-+// limitations under the License.
-+
-+package plan
-+
-+import (
-+	"testing"
-+
-+	"github.com/stretchr/testify/require"
-+
-+	"github.com/matrixorigin/matrixone/pkg/pb/plan"
-+)
-+
-+type repeatedTargetDedupGuard struct {
-+	rowNumber *plan.ColRef
-+	active    *plan.ColRef
-+}
-+
-+func repeatedTargetFunctionsAtCol(query *plan.Query, pos int32, name string) []*plan.Function {
-+	var functions []*plan.Function
-+	for _, node := range query.Nodes {
-+		if int(pos) >= len(node.ProjectList) {
-+			continue
-+		}
-+		fn := node.ProjectList[pos].GetF()
-+		if fn != nil && fn.GetFunc().GetObjName() == name {
-+			functions = append(functions, fn)
-+		}
-+	}
-+	return functions
-+}
-+
-+func repeatedTargetExtractGuard(
-+	t *testing.T, query *plan.Query, dedup *plan.Node,
-+) repeatedTargetDedupGuard {
-+	t.Helper()
-+	require.Len(t, dedup.OnList, 1)
-+	joinEQ := dedup.OnList[0].GetF()
-+	require.NotNil(t, joinEQ)
-+	require.Equal(t, "=", joinEQ.GetFunc().GetObjName())
-+	require.Len(t, joinEQ.Args, 2)
-+	parseGuard := func(guardIF *plan.Function) (repeatedTargetDedupGuard, bool) {
-+		if guardIF == nil || guardIF.GetFunc().GetObjName() != "if" || len(guardIF.Args) != 3 {
-+			return repeatedTargetDedupGuard{}, false
-+		}
-+		guardAND := guardIF.Args[0].GetF()
-+		if guardAND == nil || guardAND.GetFunc().GetObjName() != "and" || len(guardAND.Args) != 2 {
-+			return repeatedTargetDedupGuard{}, false
-+		}
-+		selectedEQ := guardAND.Args[0].GetF()
-+		if selectedEQ == nil || selectedEQ.GetFunc().GetObjName() != "=" || len(selectedEQ.Args) != 2 ||
-+			selectedEQ.Args[0].GetCol() == nil || guardAND.Args[1].GetCol() == nil {
-+			return repeatedTargetDedupGuard{}, false
-+		}
-+		return repeatedTargetDedupGuard{
-+			rowNumber: selectedEQ.Args[0].GetCol(),
-+			active:    guardAND.Args[1].GetCol(),
-+		}, true
-+	}
-+	if guard, ok := parseGuard(joinEQ.Args[1].GetF()); ok {
-+		return guard
-+	}
-+
-+	// Some finalized plans retain a projection reference instead of inlining the guard.
-+	keyRef := joinEQ.Args[1].GetCol()
-+	require.NotNil(t, keyRef)
-+	var guards []repeatedTargetDedupGuard
-+	for _, guardIF := range repeatedTargetFunctionsAtCol(query, keyRef.ColPos, "if") {
-+		if guard, ok := parseGuard(guardIF); ok {
-+			guards = append(guards, guard)
-+		}
-+	}
-+	require.Len(t, guards, 1, "the DEDUP key must have one unambiguous row-level guard")
-+	return guards[0]
-+}
-+
-+func repeatedTargetDedupsByIndexTable(query *plan.Query) map[string][]*plan.Node {
-+	result := make(map[string][]*plan.Node)
-+	for _, node := range query.Nodes {
-+		if node.NodeType != plan.Node_JOIN || node.JoinType != plan.Node_DEDUP ||
-+			len(node.Children) != 2 {
-+			continue
-+		}
-+		indexScan := query.Nodes[node.Children[0]]
-+		if indexScan.TableDef == nil {
-+			continue
-+		}
-+		result[indexScan.TableDef.Name] = append(result[indexScan.TableDef.Name], node)
-+	}
-+	return result
-+}
-+
-+func TestUpdateRepeatedPhysicalTargetUniqueDedupPlan(t *testing.T) {
-+	t.Run("one merged physical check per unique index", func(t *testing.T) {
-+		mock := NewMockOptimizer(true, newPlanTestProcess(t))
-+		tableDef := mock.ctxt.tables["dept"]
-+		require.Len(t, tableDef.Indexes, 2)
-+		secondIndex := *tableDef.Indexes[0]
-+		secondIndex.IndexTableName = tableDef.Indexes[1].IndexTableName
-+		secondIndex.Parts = []string{"loc"}
-+		tableDef.Indexes[1] = &secondIndex
-+		logicPlan, err := runOneStmt(mock, t,
-+			"UPDATE dept a JOIN dept b ON a.deptno = b.deptno "+
-+				"SET a.dname = 'a', a.loc = 'a', b.dname = 'b', b.loc = 'b'")
-+		require.NoError(t, err)
-+		query := logicPlan.GetQuery()
-+		dedups := repeatedTargetDedupsByIndexTable(query)
-+
-+		var previous *repeatedTargetDedupGuard
-+		for _, indexDef := range tableDef.Indexes {
-+			indexDedups := dedups[indexDef.IndexTableName]
-+			require.Len(t, indexDedups, 1,
-+				"each physical unique index must be checked once, not once per alias")
-+			require.Equal(t, plan.Node_FAIL, indexDedups[0].OnDuplicateAction)
-+			guard := repeatedTargetExtractGuard(t, query, indexDedups[0])
-+			active := repeatedTargetFunctionsAtCol(query, guard.active.ColPos, "or")
-+			require.Len(t, active, 1,
-+				"the unique guard must use the merged physical active selector")
-+			require.Len(t, active[0].Args, 2)
-+			require.Equal(t, guard.active.ColPos+1, guard.rowNumber.ColPos,
-+				"the merged active selector and its physical row_number must be adjacent")
-+			if previous != nil {
-+				require.Equal(t, previous.rowNumber, guard.rowN
-```
-
-**File**: `pkg/tests/issues/issue_31824_test.go` (added, +423/-0)
-```diff
-@@ -0,0 +1,423 @@
-+// Copyright 2026 Matrix Origin
-+//
-+// Licensed under the Apache License, Version 2.0 (the "License");
-+// you may not use this file except in compliance with the License.
-+// You may obtain a copy of the License at
-+//
-+//      http://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing, software
-+// distributed under the License is distributed on an "AS IS" BASIS,
-+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+// See the License for the specific language governing permissions and
-+// limitations under the License.
-+
-+package issues
-+
-+import (
-+	"context"
-+	"database/sql"
-+	"fmt"
-+	"testing"
-+	"time"
-+
-+	"github.com/go-sql-driver/mysql"
-+	"github.com/stretchr/testify/require"
-+
-+	"github.com/matrixorigin/matrixone/pkg/embed"
-+	"github.com/matrixorigin/matrixone/pkg/tests/testutils"
-+)
-+
-+func TestIssue31824SelfJoinMultiTargetUpdateUnique(t *testing.T) {
-+	embed.RunBaseClusterTests(t, func(c embed.Cluster) {
-+		ctx, cancel := context.WithTimeout(context.Background(), 4*time.Minute)
-+		defer cancel()
-+
-+		cn, err := c.GetCNService(0)
-+		require.NoError(t, err)
-+		port := cn.GetServiceConfig().CN.Frontend.Port
-+		db, err := sql.Open("mysql", fmt.Sprintf(
-+			"dump:111@tcp(127.0.0.1:%d)/?interpolateParams=false", port))
-+		require.NoError(t, err)
-+		defer db.Close()
-+		conn, err := db.Conn(ctx)
-+		require.NoError(t, err)
-+		defer conn.Close()
-+
-+		dbName := testutils.GetDatabaseName(t)
-+		mustExec(t, ctx, conn, fmt.Sprintf("create database `%s`", dbName))
-+		defer func() {
-+			cleanupCtx, cleanupCancel := context.WithTimeout(context.Background(), 10*time.Second)
-+			defer cleanupCancel()
-+			if _, err := db.ExecContext(cleanupCtx, fmt.Sprintf("drop database if exists `%s`", dbName)); err != nil {
-+				t.Errorf("drop test database %s: %v", dbName, err)
++			require.Equal(t, []string{"SubCase"}, matching)
++			require.Equal(t, []int{maxSubscriptionStatisticsPublisherBranches}, ctx.metadataLimits)
++			require.Zero(t, ctx.publisherBindCount)
+ 			require.Nil(t, ctx.GetQueryingSubscription())
++			_, err = builder.visibleSubscriptionMetadata(nil)
++			require.ErrorContains(t, err, "publisher expansion exceeds planning budget of 256 branches")
++			if mode == 1 {
++				// Retain one complete boundary-sized plan without an outer filter.
++				optimizer, full := newSubscriptionMetadataTestOptimizer(t)
++				full.lowerCaseTableNames = mode
++				full.metadata = metadata
++				queryPlan, err := runOneStmt(optimizer, t, "select count(*) from information_schema.statistics")
++				require.NoError(t, err)
++				require.Len(t, statisticsPublisherScanCounts(queryPlan.GetQuery()), maxSubscriptionStatisticsPublisherBranches)
++				require.Equal(t, maxSubscriptionStatisticsPublisherBranches, full.publisherBindCount)
++				require.Nil(t, full.GetQueryingSubscription())
 +			}
-+		}()
-+		mustExec(t, ctx, conn, fmt.Sprintf("use `%s`", dbName))
-+
-+		originalRows := []string{"1,1,10,100", "2,1,20,200"}
-+		conflictTests := []struct {
-+			name           string
-+			uniqueDef      string
-+			indexName      string
-+			indexPredicate string
-+			update         string
-+		}{
-+			{
-+				name:           "single column existing key through second alias",
-+				uniqueDef:      "unique key uk_k(k)",
-+				indexName:      "uk_k",
-+				indexPredicate: "k=10",
-+				update: `update t as x join t as y on x.id=1 and y.id=2
-+					set x.v=x.v+1, y.k=10`,
-+			},
-+			{
-+				name:           "single column existing key through first alias",
-+				uniqueDef:      "unique key uk_k(k)",
-+				indexName:      "uk_k",
-+				indexPredicate: "k=20",
-+				update: `update t as y join t as x on x.id=1 and y.id=2
-+					set y.v=y.v+1, x.k=20`,
-+			},
-+			{
-+				name:           "single column same new key",
-+				uniqueDef:      "unique key uk_k(k)",
-+				indexName:      "uk_k",
-+				indexPredicate: "k=30",
-+				update: `update t as x join t as y on x.id=1 and y.id=2
-+					set x.k=30, y.k=30`,
-+			},
-+			{
-+				name:           "single column same new key reversed assignments",
-+				uniqueDef:      "unique key uk_k(k)",
-+				indexName:      "uk_k",
-+				indexPredicate: "k=30",
-+				update: `update t as y join t as x on x.id=1 and y.id=2
-+					set y.k=30, x.k=30`,
-+			},
-+			{
-+				name:           "composite existing key through second alias",
-+				uniqueDef:      "unique key uk_gk(g,k)",
-+				indexName:      "uk_gk",
-+				indexPredicate: "g=1 and k=10",
-+				update: `update t as x join t as y on x.id=1 and y.id=2
-+					set x.v=x.v+1, y.k=10`,
-+			},
-+			{
-+				name:           "composite existing key through first alias",
-+				uniqueDef:      "unique key uk_gk(g,k)",
-+				indexName:      "uk_gk",
-+				indexPredicate: "g=1 and k=20",
-+				update: `update t as y join t as x on x.id=1 and y.id=2
-+					set y.v=y.v+1, x.k=20`,
-+			},
-+			{
-+				name:           "composite same new key",
-+				uniqueDef:      "unique key uk_gk(g,k)",
-+				indexName:      "uk_gk",
-+				indexPredicate: "g=1 and k=30",
-+				update: `update t as x join t as y on x.id=1 and y.id=2
-+					set x.k=30, y.k=30`,
-+			},
-+			{
-+				name:           "composite same new key reversed assignments",
-+				uniqueDef:      "unique key uk_gk(g,k)",
-+				indexName:      "uk_gk",
-+				indexPredicate: "g=1 and k=30",
-+				update: `update t as y join t as x on x.id=1 and y.id=2
-+					set y.k=30, x.k=30`,
-+			},
-+		}
-+
-+		for _, tt := range conflictTests {
-+			t.Run(tt.name, func(t *testing.T) {
-+				createIssue31824Table(t, ctx, conn, tt.uniqueDef)
-+				_, err := conn.ExecContext(ctx, tt.update)
-+				requireIssue31824Duplicate(t, err)
-+
-+				require.Equal(t, originalRows, queryIssue31824Rows(t, ctx, conn,
-+					fmt.Sprintf("select id,g,k,v from t ignore index(%s) order by id", tt.indexName)))
-+				var wantIndexed []string
-+				switch tt.indexPredicate {
-+				case "k=10", "g=1 and k=10":
-+					wantIndexed = originalRows[:1]
-+				case "k=20", "g=1 and k=20":
-+					wantIndexed = originalRows[1:]
-+				}
-+				require.Equal(t, wantIndex
-```
-
----
-
-### Incident Patch 3: `e1160015` (2026-11-17)
-**Commit Message**: fix(logservice): harden lease fencing, snapshots and HAKeeper (#32688)
-
-## What type of PR is this?
-
-- [ ] API-change
-- [x] BUG
-- [ ] Improvement
-- [ ] Documentation
-- [ ] Feature
-- [ ] Test and CI
-- [ ] Code Refactoring
-
-## Which issue(s) this PR fixes:
-
-Fixes #32661
-Fixes #32667
-Fixes #32677
-Fixes #32678
-Fixes #32679
-Fixes #32681
-Fixes #32683
-
-## What this PR does / why we need it:
-
-- Stamp CN removal time in the HAKeeper proposal and reset the bootstrap deadline when the leader term changes. This keeps Raft apply deterministic and gives an A-B-A leader transfer a fresh bootstrap budget.
-- Classify rejected WAL append entries from persisted lease and recovery state so TN replay skips them. Bound each READ page's lease-history lookup with a sorted in-memory index.
-- Persist a retiring marker before stopping a zombie replica. Fence new exports and retain the marker while an accepted export can still finish; a restart retries final cleanup. Keep retired initial HAKeeper IDs blocked through bootstrap, even when cleanup runs first. Apply the same cleanup condition to catalog revocation.
-- Carry the TN ID into both truncate commands and check the lease inside Raft apply, before changin
-
-**File**: `pkg/common/moerr/error.go` (modified, +16/-0)
-```diff
-@@ -1493,10 +1493,26 @@ func NewInvalidTruncateLsn(ctx context.Context, shardId, idx uint64) *Error {
- 	return newError(ctx, ErrInvalidTruncateLsn, shardId, idx)
- }
- 
-+// NewInvalidTruncateLsnWithMessage preserves the diagnostic sent by a remote
-+// LogService while retaining the original MO error code and SQL metadata.
-+func NewInvalidTruncateLsnWithMessage(ctx context.Context, message string) *Error {
-+	err := NewInvalidTruncateLsn(ctx, 0, 0)
-+	err.message = message
-+	return err
-+}
-+
- func NewNotLeaseHolder(ctx context.Context, holderId uint64) *Error {
- 	return newError(ctx, ErrNotLeaseHolder, holderId)
- }
- 
-+// NewNotLeaseHolderWithMessage preserves the diagnostic sent by a remote
-+// LogService while retaining the original MO error code and SQL metadata.
-+func NewNotLeaseHolderWithMessage(ctx context.Context, message string) *Error {
-+	err := NewNotLeaseHolder(ctx, 0)
-+	err.message = message
-+	return err
-+}
-+
- func NewNoSuchTable(ctx context.Context, db, tbl string) *Error {
- 	noReportCtx := errutil.ContextWithNoReport(ctx, true)
- 	return newError(noReportCtx, ErrNoSuchTable, db, tbl)
-```
-
-**File**: `pkg/hakeeper/issue32661_regression_test.go` (added, +73/-0)
-```diff
-@@ -0,0 +1,73 @@
-+// Copyright 2026 Matrix Origin
-+//
-+// Licensed under the Apache License, Version 2.0 (the "License");
-+// you may not use this file except in compliance with the License.
-+// You may obtain a copy of the License at
-+//
-+// http://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing, software
-+// distributed under the License is distributed on an "AS IS" BASIS,
-+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+// See the License for the specific language governing permissions and
-+// limitations under the License.
-+
-+package hakeeper
-+
-+import (
-+	"testing"
-+	"time"
-+
-+	sm "github.com/lni/dragonboat/v4/statemachine"
-+	"github.com/stretchr/testify/require"
-+
-+	pb "github.com/matrixorigin/matrixone/pkg/pb/logservice"
-+)
-+
-+func TestDeleteCNStoreUsesReplicatedTime(t *testing.T) {
-+	a := NewStateMachine(0, 1).(*stateMachine)
-+	b := NewStateMachine(0, 2).(*stateMachine)
-+	store := pb.CNStoreInfo{SQLAddress: "10.0.0.1:6001", UpTime: 123}
-+	a.state.CNState.Stores["cn-1"] = store
-+	b.state.CNState.Stores["cn-1"] = store
-+	cmd := GetDeleteCNStoreCmd(pb.DeleteCNStore{StoreID: "cn-1", DownTime: 123456789})
-+	_, err := a.Update(sm.Entry{Cmd: cmd})
-+	require.NoError(t, err)
-+	time.Sleep(10 * time.Millisecond)
-+	_, err = b.Update(sm.Entry{Cmd: cmd})
-+	require.NoError(t, err)
-+	require.Len(t, a.state.DeletedStores, 1)
-+	require.Len(t, b.state.DeletedStores, 1)
-+	require.Equal(t, a.state.DeletedStores, b.state.DeletedStores)
-+	require.Equal(t, int64(123456789), a.state.DeletedStores[0].DownTime)
-+}
-+
-+func TestDeleteCNStoreLegacyAndUnsortedPruning(t *testing.T) {
-+	first := NewStateMachine(0, 1).(*stateMachine)
-+	second := NewStateMachine(0, 2).(*stateMachine)
-+	for _, machine := range []*stateMachine{first, second} {
-+		machine.state.CNState.Stores["legacy"] = pb.CNStoreInfo{UpTime: 42}
-+	}
-+	legacy := GetDeleteCNStoreCmd(pb.DeleteCNStore{StoreID: "legacy"})
-+	_, err := first.Update(sm.Entry{Cmd: legacy})
-+	require.NoError(t, err)
-+	time.Sleep(10 * time.Millisecond)
-+	_, err = second.Update(sm.Entry{Cmd: legacy})
-+	require.NoError(t, err)
-+	require.Equal(t, first.state.DeletedStores, second.state.DeletedStores)
-+	require.Zero(t, first.state.DeletedStores[0].DownTime)
-+
-+	const day = int64(24 * time.Hour)
-+	first.state.DeletedStores = []pb.DeletedStore{
-+		{UUID: "legacy", DownTime: 0},
-+		{UUID: "old", DownTime: day},
-+		{UUID: "recent", DownTime: 9 * day},
-+		{UUID: "older", DownTime: 2 * day},
-+		{UUID: "future", DownTime: 11 * day},
-+	}
-+	first.handleDeleteCNCmd("missing", 10*day)
-+	require.Equal(t, []pb.DeletedStore{
-+		{UUID: "recent", DownTime: 9 * day},
-+		{UUID: "future", DownTime: 11 * day},
-+	}, first.state.DeletedStores)
-+}
-```
-
-**File**: `pkg/hakeeper/rsm.go` (modified, +14/-8)
-```diff
-@@ -558,7 +558,7 @@ func (s *stateMachine) handleUpdateCommandsCmd(cmd []byte) sm.Result {
- 			s.handleSetStateCmd(GetSetStateCmd(pb.HAKeeperBootstrapCommandsReceived))
- 		}
- 		if c.DeleteCNStore != nil {
--			s.handleDeleteCNCmd(c.UUID)
-+			s.handleDeleteCNCmd(c.UUID, c.DeleteCNStore.DownTime)
- 			delete(s.state.ScheduleCommands, c.UUID)
- 			continue
- 		}
-@@ -1397,15 +1397,20 @@ func (s *stateMachine) handleTaskTableUserCmd(cmd []byte) sm.Result {
- 	return result
- }
- 
--func (s *stateMachine) handleDeleteCNCmd(uuid string) sm.Result {
-+func (s *stateMachine) handleDeleteCNCmd(uuid string, downTimeArg ...int64) sm.Result {
-+	var downTime int64
-+	if len(downTimeArg) != 0 {
-+		downTime = downTimeArg[0]
-+	}
- 	deletedTimeout := time.Hour * 24 * 7
--	var pos int
-+	kept := s.state.DeletedStores[:0]
- 	for _, store := range s.state.DeletedStores {
--		if time.Now().UnixNano()-store.DownTime > int64(deletedTimeout) {
--			pos++
-+		if downTime <= 0 || (store.DownTime > 0 &&
-+			(store.DownTime > downTime || downTime-store.DownTime <= int64(deletedTimeout))) {
-+			kept = append(kept, store)
- 		}
- 	}
--	s.state.DeletedStores = s.state.DeletedStores[pos:]
-+	s.state.DeletedStores = kept
- 	delete(s.state.ViewMetadataAdmissionCNReady, uuid)
- 	delete(s.state.ViewMetadataAdmissionCNTargets, uuid)
- 	delete(s.state.ViewMetadataAdmissionCNTargetTicks, uuid)
-@@ -1421,7 +1426,7 @@ func (s *stateMachine) handleDeleteCNCmd(uuid string) sm.Result {
- 			StoreType: "CN",
- 			Address:   addr,
- 			UpTime:    store.UpTime,
--			DownTime:  time.Now().UnixNano(),
-+			DownTime:  downTime,
  		})
  	}
- 	return sm.Result{}
-@@ -1710,7 +1715,8 @@ func (s *stateMachine) Update(e sm.Entry) (sm.Result, error) {
- 	case pb.PatchCNStore:
- 		return s.handlePatchCNStore(cmd), nil
- 	case pb.RemoveCNStore:
--		return s.handleDeleteCNCmd(parseDeleteCNStoreCmd(cmd).StoreID), nil
-+		request := parseDeleteCNStoreCmd(cmd)
-+		return s.handleDeleteCNCmd(request.StoreID, request.DownTime), nil
- 	case pb.ProxyHeartbeatUpdate:
- 		return s.handleProxyHeartbeat(cmd), nil
- 	case pb.UpdateNonVotingReplicaNum:
-```
-
-**File**: `pkg/logservice/catalog_metadata_executor.go` (modified, +6/-5)
-```diff
-@@ -146,13 +146,17 @@ func (l *store) catalogStartReplica(p pb.CatalogMetadataStartPermit) error {
- 	return l.startHAKeeperReplicaRaw(p.ReplicaID, nil, join)
  }
- func (l *store) catalogStopReplica(p pb.CatalogMetadataStartPermit) error {
-+	l.markReplicaRetiring(hakeeper.DefaultHAKeeperShardID, p.ReplicaID)
- 	if l.catalogReplicaPresent(p, false) {
- 		if err := l.stopReplicaRaw(hakeeper.DefaultHAKeeperShardID, p.ReplicaID); err != nil {
- 			return err
- 		}
- 	}
--	// REVOKING is already durable. Remove stale local recovery metadata even
--	// after a crash between StopReplica and this cleanup; retain the tombstone.
-+	// REVOKING is durable. Keep metadata until exported snapshots have been
-+	// removed; a failed removal is retried by the supervisor after restart.
-+	if err := l.snapshotMgr.RemoveReplica(hakeeper.DefaultHAKeeperShardID, p.ReplicaID); err != nil {
-+		return err
+ 
+ func TestSubscriptionStatisticsBudgetDoesNotLeakAcrossBuilds(t *testing.T) {
++	t.Run("admission is per builder", func(t *testing.T) {
++		_, ctx := newSubscriptionMetadataTestOptimizer(t)
++		ctx.metadata = subscriptionMetadataTestSet(129)
++		builder := NewQueryBuilder(plan.Query_SELECT, ctx, false, false)
++		visible, err := builder.visibleSubscriptionMetadata(nil)
++		require.NoError(t, err)
++		require.Len(t, visible, 129)
++		_, err = builder.visibleSubscriptionMetadata(nil)
++		require.ErrorContains(t, err, "publisher expansion exceeds planning budget of 256 branches")
++		fresh := NewQueryBuilder(plan.Query_SELECT, ctx, false, false)
++		visible, err = fresh.visibleSubscriptionMetadata(nil)
++		require.NoError(t, err)
++		require.Len(t, visible, 129)
++		require.Equal(t, []int{256, 256}, ctx.metadataLimits)
++	})
++
+ 	_, ctx := newSubscriptionMetadataTestOptimizer(t)
+-	ctx.metadata = subscriptionMetadataTestSet(129)
+ 	statements, err := mysql.Parse(context.Background(),
+ 		"select count(*) from information_schema.statistics", 1)
+ 	require.NoError(t, err)
+ 	require.Len(t, statements, 1)
+ 	defer statements[0].Free()
+ 
+-	for build := 0; build < 2; build++ {
++	wantScans := []map[string]int{
++		{"sub_00": 1, "sub_01": 1},
++		{"sub_00": 1, "sub_01": 1, "sub_02": 1},
 +	}
- 	l.removeMetadata(hakeeper.DefaultHAKeeperShardID, p.ReplicaID)
- 	return nil
++	for build := range wantScans {
++		ctx.metadata = subscriptionMetadataTestSet(build + 2)
+ 		queryPlan, buildErr := BuildPlan(ctx, statements[0], false, nil)
+ 		require.NoError(t, buildErr)
+-		require.Len(t, statisticsPublisherScanCounts(queryPlan.GetQuery()), 129)
++		require.Equal(t, wantScans[build], statisticsPublisherScanCounts(queryPlan.GetQuery()))
+ 		require.Nil(t, ctx.GetQueryingSubscription())
+ 	}
+-	require.Equal(t, 258, ctx.publisherBindCount,
++	require.Equal(t, []int{256, 256}, ctx.metadataLimits)
++	require.Equal(t, 5, ctx.publisherBindCount,
+ 		"the statement-wide budget must be fresh for each independent build")
  }
-@@ -519,9 +523,6 @@ func (l *store) executeCatalogCommand(cmd pb.ScheduleCommand) error {
- 		if err := l.executeCatalogStart(*p); err != nil {
- 			return err
- 		}
--		if cfg.ChangeType == pb.KillZombie {
--			l.removeMetadata(hakeeper.DefaultHAKeeperShardID, p.ReplicaID)
--		}
- 		return nil
- 	default:
- 		return catalogExecutionError()
+ 
 ```
 
-**File**: `pkg/logservice/catalog_metadata_executor_test.go` (modified, +7/-0)
+**File**: `pkg/tests/issues/issue_28605_test.go` (modified, +36/-7)
 ```diff
 @@ -18,6 +18,7 @@ import (
  	"context"
- 	"errors"
- 	"maps"
-+	"os"
- 	"sync"
+ 	"database/sql"
+ 	"fmt"
++	"strings"
  	"testing"
  	"time"
-@@ -249,6 +250,10 @@ func TestCatalogExecutorLifecycle(t *testing.T) {
- 	hb = s.getHeartbeatMessage()
- 	require.Equal(t, p.Token, hb.CatalogMetadataStartResult.Token)
- 	require.True(t, hb.CatalogMetadataStartResult.Completed)
-+	nid := nodeID{shardID: hakeeper.DefaultHAKeeperShardID, replicaID: p.ReplicaID}
-+	testPrepareSnapshot(t, s.snapshotMgr, nid, snapshotIndex(123))
-+	require.NoError(t, s.snapshotMgr.Init(nid.shardID, nid.replicaID))
-+	exportPath := s.snapshotMgr.exportPath(nid.shardID, nid.replicaID)
- 	revoke := p
- 	revoke.RevocationPending = true
- 	var wg sync.WaitGroup
-@@ -261,6 +266,8 @@ func TestCatalogExecutorLifecycle(t *testing.T) {
- 	wg.Wait()
- 	require.NoError(t, <-errs)
- 	require.False(t, s.catalogReplicaPresent(p, false))
-+	_, err = s.cfg.FS.Stat(exportPath)
-+	require.ErrorIs(t, err, os.ErrNotExist)
- 	require.Error(t, s.executeCatalogStart(p))
- 	require.True(t, s.getHeartbeatMessage().CatalogMetadataStartResult.Revoked)
- 	require.NoError(t, s.close())
-```
-
-**File**: `pkg/logservice/errors.go` (modified, +8/-3)
-```diff
-@@ -88,10 +88,15 @@ func toError(ctx context.Context, resp pb.Response) error {
- 	if resp.ErrorCode == uint32(moerr.ErrNoHAKeeper) {
- 		return moerr.NewNoHAKeeper(ctx)
- 	} else if resp.ErrorCode == uint32(moerr.ErrInvalidTruncateLsn) {
--		return moerr.NewInvalidTruncateLsn(ctx, 0, 0)
-+		if resp.ErrorMessage != "" {
-+			return moerr.NewInvalidTruncateLsnWithMessage(ctx, resp.ErrorMessage)
-+		}
-+		return moerr.NewInvalidTruncateLsnWithMessage(ctx, "invalid truncate lsn")
- 	} else if resp.ErrorCode == uint32(moerr.ErrNotLeaseHolder) {
--		// holder id get lost?
--		return moerr.NewNotLeaseHolder(ctx, 0xDEADBEEF)
-+		if resp.ErrorMessage != "" {
-+			return moerr.NewNotLeaseHolderWithMessage(ctx, resp.ErrorMessage)
-+		}
-+		return moerr.NewNotLeaseHolderWithMessage(ctx, "not lease holder")
- 	} else if resp.ErrorCode == uint32(moerr.ErrInternal) {
- 		// internal error
- 		return moerr.NewInternalError(ctx, resp.ErrorMessage)
-```
-
-**File**: `pkg/logservice/issue32667_regression_test.go` (added, +104/-0)
-```diff
-@@ -0,0 +1,104 @@
-+// Copyright 2026 Matrix Origin
-+//
-+// Licensed under the Apache License, Version 2.0 (the "License");
-+// you may not use this file except in compliance with the License.
-+// You may obtain a copy of the License at
-+//
-+// http://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing, software
-+// distributed under the License is distributed on an "AS IS" BASIS,
-+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+// See the License for the specific language governing permissions and
-+// limitations under the License.
-+
-+package logservice
-+
-+import (
-+	"context"
-+	"testing"
-+	"time"
-+
-+	"github.com/matrixorigin/matrixone/pkg/hakeeper"
-+	pb "github.com/matrixorigin/matrixone/pkg/pb/logservice"
-+	"github.com/stretchr/testify/require"
-+)
-+
-+func TestBootstrapLeaderRetakeStartsNewTermBudget(t *testing.T) {
-+	for _, tc := range []struct {
-+		name          string
-+		interval      time.Duration
-+		beforeB       time.Duration
-+		arrivalMargin time.Duration
-+	}{
-+		{name: "short", interval: 30 * time.Millisecond, beforeB: time.Second, arrivalMargin: 50 * time.Millisecond},
-+	} {
-+		t.Run(tc.name, func(t *testing.T) {
-+			runHAKeeperClusterTest(t, func(t *testing.T, services []*Service) {
-+				stores := []*store{services[0].store, services[1].store, services[2].store}
-+				for _, s := range stores {
-+					s.cfg.HAKeeperCheckInterval.Duration = tc.interval
-+				}
-+				require.NoError(t, stores[0].setInitialClusterInfo(1, 1, 3, hakeeper.K8SIDRangeEnd+10, nil, nil))
-+				ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
-+				defer cancel()
-+				for _, s := range stores {
-+					_, err := s.addLogStoreHeartbeat(ctx, s.getHeartbeatMessage())
-+					require.NoError(t, err)
-+				}
-+				_, err := stores[0].addTNStoreHeartbeat(ctx, pb.TNStoreHeartbeat{UUID: "retake-diagnostic-tn"})
-+				require.NoError(t, err)
-+				first := -1
-+				var term uint64
-+				for i, s := range stores {
-+					ok, currentTerm, err := s.isLeaderHAKeeper()
-+					require.NoError(t, err)
-+					if ok {
-+						first, term = i, currentTerm
-+						break
-+					}
-+				}
-+				require.NotEqual(t, -1, first)
-+				a := stores[first]
-+				second := (first + 1) % len(stores)
-+				b := stores[second]
-+				state, err := a.getCheckerState()
-+				require.NoError(t, err)
-+				require.NoError(t, a.bootstrap(term, state))
-+				state, err = a.getCheckerState()
-+				require.NoError(t, err)
-+				require.Equal(t, pb.HAKeeperBootstrapCommandsReceived, state.State)
-+				originalDeadline := a.bootstrapCheckDeadline
-+				require.False(t, originalDeadline.IsZero())
-+				a.hakeeperCheck()
-+				require.Equal(t, originalDeadline, a.bootstrapCheckDeadline)
-+				t.Logf("A deadline=%s, interval=%s", originalDeadline.Format(time.RFC3339Nano), tc.interval)
-+				time.Sleep(tc.beforeB)
-+				require.NoError(t, a.requestLeaderTransfer(hakeeper.DefaultHAKeeperShardID, uint64(second+1)))
-+				require.Eventually(t, func() bool { ok, _, err := b.isLeaderHAKeeper(); return err == nil && ok }, 10*time.Second, 20*time.Millisecond)
-+				state, err = b.getCheckerState()
-+				require.NoError(t, err)
-+				require.Equal(t, pb.HAKeeperBootstrapCommandsReceived, state.State)
-+				require.NoError(t, b.checkBootstrap(state))
-+				bDeadline := b.bootstrapCheckDeadline
-+				require.True(t, bDeadline.After(originalDeadline))
-+				t.Logf("B deadline=%s", bDeadline.Format(time.RFC3339Nano))
-+				if wait := time.Until(originalDeadline.Add(tc.arrivalMargin)); wait > 0 {
-+					time.Sleep(wait)
-+				}
-+				require.True(t, time.Now().Before(bDeadline), "B's budget must still be live")
-+				require.NoError(t, b.requestLeaderTransfer(hakeeper.DefaultHAKeeperShardID, uint64(first+1)))
-+				require.Eventually(t, func() bool { ok, _, err := a.isLeaderHAKeeper(); return err == nil && ok }, 10*time.Second, 20*time.Millisecond)
-+				state, err = a.getCheckerState()
-+				require.NoError(t, err)
-+				require.Equal(t, pb.HAKeeperBootstrapCommandsReceived, state.State)
-+				a.hakeeperCheck()
-+				state, err = a.getCheckerState()
-+				require.NoError(t, err)
-+				require.Equal(t, pb.HAKeeperBootstrapCommandsReceived, state.State)
-+				require.True(t, a.bootstrapCheckDeadline.After(originalDeadline))
-+				require.True(t, time.Now().Before(a.bootstrapCheckDeadline))
-+			})
-+		})
-+	}
-+}
-```
-
-**File**: `pkg/logservice/issue32677_regression_test.go` (added, +145/-0)
-```diff
-@@ -0,0 +1,145 @@
-+// Copyright 2026 Matrix Origin
-+//
-+// Licensed under the Apache License, Version 2.0 (the "License");
-+// you may not use this file except in compliance with the License.
-+// You may obtain a copy of the License at
-+//
-+// http://www.apache.org/licenses/LICENSE-2.0
-+//
-+// Unless required by applicable law or agreed to in writing, software
-+// distributed under the License is distributed on an "AS IS" BASIS,
-+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-+// See the License for the specific language governing permissions and
-+// limitations under the License.
-+
-+package logservice
-+
-+import (
-+	"bytes"
-+	"context"
-+	"encoding/hex"
-+	"strings"
-+	"testing"
-+	"time"
-+
-+	"github.com/lni/dragonboat/v4/raftpb"
-+	"github.com/matrixorigin/matrixone/pkg/common/moerr"
-+	pb "github.com/matrixorigin/matrixone/pkg/pb/logservice"
-+	"github.com/stretchr/testify/require"
-+)
-+
-+func TestRejectedAppendIsNotUserRecord(t *testing.T) {
-+	runServiceTest(t, false, true, func(t *testing.T, s *Service) {
-+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-+		defer cancel()
-+		connect := func(id uint64) {
-+			resp := s.handleConnect(ctx, pb.Request{Method: pb.CONNECT,
-+				LogRequest: pb.LogRequest{ShardID: 1, TNID: id}})
-+			require.Equal(t, uint32(moerr.Ok), resp.ErrorCode)
-+		}
-+		connect(100)
-+		connect(101)
-+		const walPayloadHex = "e8030200010000000000000000000000000000000000000000000000000000000000000000000100000001000000000000000000000000000000830000000100000000000000d5070100150000001c0000000000000083010000000000000000000000000000000000000000000072656a65637465642d6275742d7265706c617965643e00000045000000"
-+		walPayload, err := hex.DecodeString(walPayloadHex)
-+		require.NoError(t, err)
-+		cmd := getTestAppendCmd(100, walPayload)
-+		resp := s.handleAppend(ctx, pb.Request{Method: pb.APPEND_WAL,
-+			LogRequest: pb.LogRequest{ShardID: 1}}, cmd, true)
-+		require.NotEqual(t, uint32(moerr.Ok), resp.ErrorCode)
-+		require.Zero(t, resp.LogResponse.Lsn)
-+		records, _, err := s.store.queryLog(ctx, 1, 1, 1<<20)
-+		require.NoError(t, err)
-+		var found []pb.LogRecord
-+		for _, rec := range records {
-+			if bytes.Equal(rec.Data, cmd) {
-+				found = append(found, rec)
-+			}
-+		}
-+		require.Len(t, found, 1)
-+		require.Equal(t, pb.LeaseRejected, found[0].Type)
-+		require.NotZero(t, found[0].Lsn)
-+
-+		accepted := getTestAppendCmd(101, []byte("accepted-after-rejection"))
-+		resp = s.handleAppend(ctx, pb.Request{Method: pb.APPEND_WAL,
-+			LogRequest: pb.LogRequest{ShardID: 1}}, accepted, true)
-+		require.Equal(t, uint32(moerr.Ok), resp.ErrorCode)
-+		records, _, err = s.store.queryLog(ctx, 1, found[0].Lsn, 1<<20)
-+		require.NoError(t, err)
-+		var acceptedType pb.RecordType
-+		for _, rec := range records {
-+			if bytes.Equal(rec.Data, accepted) {
-+				acceptedType = rec.Type
-+			}
-+		}
-+		require.Equal(t, pb.UserRecord, acceptedType)
-+
-+		digest := strings.Repeat("a", walRecoveryDigestSize)
-+		_, err = s.store.propose(ctx, s.store.nh.GetNoOPSession(1), getBeginWALRecoveryCmd(digest, 1))
-+		require.NoError(t, err)
-+		firstRecovery := getTestAppendCmd(walRecoveryLeaseHolderID, []byte("recovery-accepted"))
-+		resp = s.handleAppend(ctx, pb.Request{Method: pb.APPEND_WAL,
-+			LogRequest: pb.LogRequest{ShardID: 1}}, firstRecovery, true)
-+		require.Equal(t, uint32(moerr.Ok), resp.ErrorCode)
-+		secondRecovery := getTestAppendCmd(walRecoveryLeaseHolderID, []byte("recovery-rejected"))
-+		resp = s.handleAppend(ctx, pb.Request{Method: pb.APPEND_WAL,
-+			LogRequest: pb.LogRequest{ShardID: 1}}, secondRecovery, true)
-+		require.Equal(t, uint32(moerr.ErrNotLeaseHolder), resp.ErrorCode)
-+		records, _, err = s.store.queryLog(ctx, 1, 1, 1<<20)
-+		require.NoError(t, err)
-+		recoveryTypes := make(map[string]pb.RecordType)
-+		for _, rec := range records {
-+			if bytes.Equal(rec.Data, firstRecovery) {
-+				recoveryTypes["first"] = rec.Type
-+			}
-+			if bytes.Equal(rec.Data, secondRecovery) {
-+				recoveryTypes["second"] = rec.Type
-+			}
-+		}
-+		require.Equal(t, pb.UserRecord, recoveryTypes["first"])
-+		require.Equal(t, pb.LeaseRejected, recoveryTypes["second"])
-+	})
-+}
-+
-+func TestRejectedReadKeepsLeaseSnapshotAcrossTruncate(t *testing.T) {
-+	machine := newStateMachine(1, 1).(*stateMachine)
-+	machine.state.Index = 9
-+	machine.state.LeaseHistory[3] = 100
-+	machine.state.LeaseHistory[4] = 101
-+	machine.state.LeaseHistory[7] = 100
-+	machine.rebuildLeaseIndexes()
-+	v, err := machine.Lookup(userEntryStateQuery{first: 5, last: 5})
-+	require.NoError(t, err)
-+	state := v.(userEntryState)
-+	machine.truncateLeaseHistory(8) // A truncate after the read snapshot drops the old transition.
-+	require.NotContains(t, machine.state.LeaseHistory, uint64(4))
-+	machine.state.TruncatedLsn = 8
-+	late, err := machine.Lookup(userEntryStateQuery{first: 5, last: 5})
-+	require.NoError(t, err)
-+	require.GreaterOrEqual(t, late.(userEntryState).truncatedLSN, uint64(5))
-+	cmd := getTestAppendCmd(100, []byte("rejected-before-truncat
+ 
+@@ -67,6 +68,8 @@ func TestCTASDivisionByZero(t *testing.T) {
+ 		exec("USE `" + name + "`")
+ 		exec("CREATE TABLE src(id INT PRIMARY KEY,n INT,d INT)")
+ 		exec("INSERT INTO src VALUES(1,10,2),(2,10,0),(3,9,3)")
++		runtimeExpressions := []string{"n/d", "n DIV d", "n % d", "CAST(n AS DECIMAL(18,4))/d", "CAST(n AS DOUBLE)/d"}
++		allExpressions := append([]string{runtimeExpressions[0], "10/0"}, runtimeExpressions[1:]...)
+ 		for _, temporary := range []bool{false, true} {
+ 			t.Run(fmt.Sprintf("temporary=%t", temporary), func(t *testing.T) {
+ 				prefix := "CREATE TABLE copied"
+@@ -77,14 +80,19 @@ func TestCTASDivisionByZero(t *testing.T) {
+ 					t.Run(mode, func(t *testing.T) {
+ 						err := execSQL("SET SESSION sql_mode='" + mode + "'")
+ 						require.NoError(t, err)
+-						for _, expression := range []string{"n/d", "10/0", "n DIV d", "n % d", "CAST(n AS DECIMAL(18,4))/d", "CAST(n AS DOUBLE)/d"} {
++						strict := mode == "STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO" || mode == "STRICT_ALL_TABLES,ERROR_FOR_DIVISION_BY_ZERO"
++						for _, expression := range allExpressions {
++							// Keep strict failures and constant folding in standalone CTAS
++							// statements. Successful runtime expressions are checked together.
++							if !strict && expression != "10/0" {
++								continue
++							}
+ 							t.Run(expression, func(t *testing.T) {
+ 								t.Cleanup(func() {
+ 									err := execSQL("DROP TABLE IF EXISTS copied")
+ 									require.NoError(t, err)
+ 								})
+ 								err := execSQL(prefix + " AS SELECT id," + expression + " AS v FROM src ORDER BY id")
+-								strict := mode == "STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO" || mode == "STRICT_ALL_TABLES,ERROR_FOR_DIVISION_BY_ZERO"
+ 								if strict {
+ 									var sqlErr *mysql.MySQLError
+ 									require.ErrorAs(t, err, &sqlErr)
+@@ -99,11 +107,32 @@ func TestCTASDivisionByZero(t *testing.T) {
+ 									var count, nulls int
+ 									require.NoError(t, queryScan("SELECT COUNT(*),COUNT(*)-COUNT(v) FROM copied", &count, &nulls))
+ 									require.Equal(t, 3, count)
+-									wantNulls := 1
+-									if expression == "10/0" {
+-										wantNulls = 3
+-									}
+-									require.Equal(t, wantNulls, nulls)
++									require.Equal(t, 3, nulls)
++								}
++							})
++						}
++						if !strict {
++							t.Run("runtime expressions", func(t *testing.T) {
++								t.Cleanup(func() {
++									err := execSQL("DROP TABLE IF EXISTS copied")
++									require.NoError(t, err)
++								})
++								projections := make([]string, len(runtimeExpressions))
++								for i, expression := range runtimeExpressions {
++									projections[i] = fmt.Sprintf("%s AS v%d", expression, i)
++								}
++								err := execSQL(prefix + " AS SELECT id," + strings.Join(projections, ",") + " FROM src ORDER BY id")
++								require.NoError(t, err)
++								for i, expression := range runtimeExpressions {
++									t.Run(expression, func(t *testing.T) {
++										var count, nulls, zeroDenominatorNulls int
++										column := fmt.Sprintf("v%d", i)
++										require.NoError(t, queryScan("SELECT COUNT(*),COUNT(*)-COUNT("+column+"),"+
++											"COUNT(CASE WHEN id=2 AND "+column+" IS NULL THEN 1 END) FROM copied", &count, &nulls, &zeroDenominatorNulls))
++										require.Equal(t, 3, count)
++										require.Equal(t, 1, nulls)
++										require.Equal(t, 1, zeroDenominatorNulls)
++									})
+ 								}
+ 							})
+ 						}
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #32868** (2026-11-17): [4.2-dev] fix: restore DATA BRANCH lineage after restore (@gouhongshen)
-- **PR #32866** (2026-11-17): [4.2-dev] fix(tae): propagate checkpoint fallback read errors on 4.2 (@LeftHandCold)
-- **PR #32865** (2026-11-17): fix(conntrack): restart ordered monitoring after receive errors (@LeftHandCold)
-- **PR #32864** (2026-11-17): fix(scan): admit nullable deep-offset pagination into the ordered cutoff (@gouhongshen)
-- **PR #32862** (2026-11-17): fix(compile): preserve prepared TP expression reuse (@LeftHandCold)
-- **PR #32861** (2026-11-17): [4.2.1-hotfix] backport VALUES and ODKU index maintenance fixes (@aptend)
+- **PR #32898** (2026-11-18): [4.2-dev] Preserve normal completion on local stop during serial reader construction (@VioletQwQ-0)
+- **PR #32894** (2026-11-18): [4.2-dev] perf: reduce clone metadata work and isolate checkpoint replay (@gouhongshen)
+- **PR #32888** (closed): fix(bitmap): preserve sparse tails during ordered remap (cherry-pick #32846) (@ck89119)
+- **PR #32887** (2026-11-18): [4.2-dev] Preserve ENUM definitions across schema rebuilds and honor explicit redefinition (@XuPeng-SH)
+- **PR #32877** (2026-11-18): [4.2-dev] fix: preserve SQL S3 environment region fallback (@Ariznawlll)
+- **PR #32874** (closed): fix: respect ci collations in ENUM/SET comparisons (@gouhongshen)
 
 ---
 
@@ -3800,71 +3582,49 @@ Fixes #32683
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. conntrack): restart ordered monitoring after receive errors
+## X. preserve accepted UNIQUE keys in multi-target UPDATE IGNORE
 
 **RULE**:
-When implementing operations in `cmd/mo-service/debug_connections.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in matrixorigin/matrixone. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/design/20261117-update-ignore-unique-arbitration.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in matrixorigin/matrixone. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `59bf4b8f`: conntrack): restart ordered monitoring after receive errors. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `87c44445`: preserve accepted UNIQUE keys in multi-target UPDATE IGNORE. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cmd/mo-service/debug_connections.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/design/20261117-update-ignore-unique-arbitration.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	"errors"
-	connsThreshold         = 1024
-	conntrackRetryInterval = 5 * time.Second
-	errConntrackClose       = errors.New("conntrack socket close failed")
-	// Capture the factory once; every replacement has the same owner and policy.
-	dial := dialConntrack
-	listener, err := listenConntrack(dial)
-	// Keep the existing process lifetime. Runtime replacement only happens after
-	// the worker reports a fatal error; it is then safe to join that worker.
-	go runConnectionTracking(context.Background(), listener, dial)
-	return nil
-}
-// A listener owns one socket and its queues. Replacements never share queues
-// or the consumer's map, so an old generation cannot update the new one.
-type conntrackListener struct {
-	client conntrackClient
-	events chan conntrack.Event
-	errors chan error
-}
+# Unique arbitration for repeated-target UPDATE IGNORE
 
-func listenConntrack(dial func() (conntrackClient, error)) (*conntrackListener, error) {
-	c, err := dial()
-	if err != nil {
-		return nil, err
-	}
-		if closeErr := c.Close(); closeErr != nil {
-			return nil, errors.Join(err, errConntrackClose, closeErr)
-		}
-		return nil, err
-	return &conntrackListener{client: c, events: events, errors: errorChan}, nil
-}
-func (l *conntrackListener) close() error {
-	// conntrack.C
+Issue: [#31824](https://github.com/matrixorigin/matrixone/issues/31824)
+
+Implementation: [#32827](https://github.com/matrixorigin/matrixone/pull/32827)
+
+## Problem and contract
+
+An UPDATE can write the same physical table through more than one alias. Under
+IGNORE, each alias can change a row that an earlier alias already changed or
+rejected. Checking each alias against the statement snapshot independently is
+not sufficient: a later alias can claim a key already accepted for another row,
+or a surviving key can be mistaken for a released snapshot key. In either
+case the table or its unique index can contain conflicting entries.
+
+Keep the existing ordered alias stages. For each physical row, S is its
+statement-snapshot image and C its latest accepted image, initially S. Each
+active alias forms a candidate N from C, including recomputed generated
+columns. If its constraints reject it under IGNORE, retain C and report the
+rejected candidate; otherwise N becomes the next C. Earlier rejected
+assignments are not resurrected. Each accepted physical key must have at most
+one owner under the actual index equality and encoding, including 
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-	connsThreshold = 1024
-	c, err := dialConntrack()
-		_ = c.Close()
-		return err
-		defer c.Close()
-		logConnTrack(context.Background(), events, errorChan)
-	return nil
-func logConnTrack(ctx context.Context, events chan conntrack.Event, errorChan chan error) {
-			return
-		case ev := <-events:
-		case err := <-errorChan:
-			logutil.Error("conntrack: error", zap.Error(err))
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `59bf4b8f` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `87c44445` are properly handled with clean fallback behavior.

@@ -11043,3 +11043,7 @@
 | `CYCLE-20261118-9ABA` | `2026-11-18T16:31:29.398Z` | `DavidAU/Qwen3.8-27B-TURBO-Fable-Cold-Fusion-735-882-Heretic-Uncensored-NEO-CODER-MAX-MTP-GGUF` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-davidau-qwen3.8-27b-turbo-fable-cold-fusion-735-882-heretic-uncensored-neo-coder-max-mtp-gguf-learnings.md` | Yes (`a3619a14...`) |
 | `CYCLE-20261118-9KC0` | `2026-11-18T16:31:42.384Z` | `skyhook-io/radar` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9257` | Yes (`c17403fb...`) |
 | `CYCLE-2026-11-18-PROJ-EVOLVE` | `2026-11-18T16:32:22.482Z` | `hf-huggingfacetb-smolvlm2-256m-video-instruct` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-9D26CBBB` [Domain D] | Yes (`055cb7c2...`) |
+| `CYCLE-20261118-LHVU` | `2026-11-18T16:40:59.082Z` | `Cloudflare/clef` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-cloudflare-clef-learnings.md` | Yes (`52f949f9...`) |
+| `CYCLE-20261118-LMR7` | `2026-11-18T16:41:05.395Z` | `GitoxideLabs/gitoxide` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9258` | Yes (`8bd4b8f0...`) |
+| `CYCLE-20261118-LQMK` | `2026-11-18T16:41:10.412Z` | `okteto/okteto` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9259` | Yes (`6db9d0ac...`) |
+| `CYCLE-20261118-LZJ5` | `2026-11-18T16:41:21.953Z` | `matrixorigin/matrixone` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md` | Yes (`96e52fd9...`) |

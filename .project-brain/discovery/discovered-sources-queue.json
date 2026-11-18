@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-18T16:32:23.842Z",
+  "updated_at": "2026-11-18T16:41:26.672Z",
   "stats": {
-    "total_discovered": 5592,
-    "approved_pending_harvest": 5285,
+    "total_discovered": 5599,
+    "approved_pending_harvest": 5292,
     "harvested_count": 0,
     "rejected_count": 307,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 5268,
+      "COMMUNITY_AND_EXPERT": 5275,
       "OFFICIAL_DOCUMENTATION": 177,
       "STANDARDS_AND_SPECIFICATIONS": 111,
       "ENGINEERING_BLOGS": 4,
@@ -120896,6 +120896,160 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/skyhook-io-radar-learnings.md",
         "fileName": "skyhook-io-radar-learnings.md"
+      }
+    },
+    "SRC-4B7C9BB45B7C": {
+      "id": "SRC-4B7C9BB45B7C",
+      "url": "https://rustsec.org/advisories/RUSTSEC-2026-0544",
+      "title": "https://rustsec.org/advisories/RUSTSEC-2026-0544",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T16:41:25.283Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/gitoxidelabs-gitoxide-learnings.md",
+        "fileName": "gitoxidelabs-gitoxide-learnings.md"
+      }
+    },
+    "SRC-D7B3B798E504": {
+      "id": "SRC-D7B3B798E504",
+      "url": "https://github.com/fork/repo.git",
+      "title": "https://github.com/fork/repo.git",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T16:41:26.480Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/okteto-okteto-learnings.md",
+        "fileName": "okteto-okteto-learnings.md"
+      }
+    },
+    "SRC-DCA6DB1959F2": {
+      "id": "SRC-DCA6DB1959F2",
+      "url": "https://www.okteto.com/docs/admin/registry-credentials/%60",
+      "title": "https://www.okteto.com/docs/admin/registry-credentials/%60",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T16:41:26.521Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/okteto-okteto-learnings.md",
+        "fileName": "okteto-okteto-learnings.md"
+      }
+    },
+    "SRC-BA205DE3BEB0": {
+      "id": "SRC-BA205DE3BEB0",
+      "url": "https://123456789012.dkr.ecr.eu-west-1.amazonaws.com/v2/deploy/manifests/1.0",
+      "title": "https://123456789012.dkr.ecr.eu-west-1.amazonaws.com/v2/deploy/manifests/1.0",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T16:41:26.558Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/okteto-okteto-learnings.md",
+        "fileName": "okteto-okteto-learnings.md"
+      }
+    },
+    "SRC-0A724D310585": {
+      "id": "SRC-0A724D310585",
+      "url": "https://registry.example.com/v2/ns/base/manifests/1.0",
+      "title": "https://registry.example.com/v2/ns/base/manifests/1.0",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T16:41:26.594Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/okteto-okteto-learnings.md",
+        "fileName": "okteto-okteto-learnings.md"
+      }
+    },
+    "SRC-CCAB4A1E5189": {
+      "id": "SRC-CCAB4A1E5189",
+      "url": "https://registry.example.com/v2/ns/app/manifests/dev",
+      "title": "https://registry.example.com/v2/ns/app/manifests/dev",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T16:41:26.636Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/okteto-okteto-learnings.md",
+        "fileName": "okteto-okteto-learnings.md"
+      }
+    },
+    "SRC-4CB07C0B4153": {
+      "id": "SRC-4CB07C0B4153",
+      "url": "https://non-existing.okteto.dev/v2/xxxx/cli/manifests/debug-4",
+      "title": "https://non-existing.okteto.dev/v2/xxxx/cli/manifests/debug-4",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T16:41:26.672Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/okteto-okteto-learnings.md",
+        "fileName": "okteto-okteto-learnings.md"
       }
     }
   }

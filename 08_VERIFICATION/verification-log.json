@@ -1,65 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261117-EHVC",
-    "timestamp": "2026-11-17T07:55:59.352Z",
-    "repository": "apache/shardingsphere",
-    "learningId": "learn-github-apache-shardingsphere",
-    "contentHash": "e7042acc1a7711d949272b0ccbde2d98eb7df0a30b180947113ed07a9d98b164",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261117-JK4J",
-    "timestamp": "2026-11-17T07:59:55.555Z",
-    "repository": "embassy-rs/embassy",
-    "learningId": "learn-github-embassy-rs-embassy",
-    "contentHash": "f24812578b0e6aeb56ad93dd2a19e563394a903ede54fcf628655e2cacdb062a",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261117-TWYC",
-    "timestamp": "2026-11-17T08:07:58.740Z",
-    "repository": "expo/expo",
-    "learningId": "learn-github-expo-expo",
-    "contentHash": "6a5debd9f94c1207a30698ce53a7dfb48412997767da2ab24b57eab4bafe6a89",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261117-VI7S",
-    "timestamp": "2026-11-17T08:09:12.952Z",
-    "repository": "rqlite/rqlite",
-    "learningId": "learn-github-rqlite-rqlite",
-    "contentHash": "b1fcb25d6c08ac275046d64b81cdd53de024cc518a9ea41b58de1ce87ee4b628",
-    "status": "VERIFIED",
-    "promotedRulesCount": 3,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261117-7F8U",
     "timestamp": "2026-11-17T08:18:28.974Z",
     "repository": "avajs/ava",
@@ -7492,6 +7432,66 @@
     "contentHash": "c17403fb063e4f1753bfe4f6c25d2256a023a2385a7fdc6c9400399e6054250e",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-LHVU",
+    "timestamp": "2026-11-18T16:40:59.082Z",
+    "repository": "Cloudflare/clef",
+    "learningId": "learn-huggingface-cloudflare-clef",
+    "contentHash": "52f949f9a0d5bd7fab607fad80bf7dccf1cd8e5031d72c4c2d324d0f56f77ad3",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-LMR7",
+    "timestamp": "2026-11-18T16:41:05.395Z",
+    "repository": "GitoxideLabs/gitoxide",
+    "learningId": "learn-github-gitoxidelabs-gitoxide",
+    "contentHash": "8bd4b8f0fba215e1b43c1cfa4ca336a66debfd92e4e1bfa77771c25ff55ca9c6",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-LQMK",
+    "timestamp": "2026-11-18T16:41:10.412Z",
+    "repository": "okteto/okteto",
+    "learningId": "learn-github-okteto-okteto",
+    "contentHash": "6db9d0ac83264405f1d1ac1389911a43f29a05dc564168dbf0b31fbaa0bc96eb",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-LZJ5",
+    "timestamp": "2026-11-18T16:41:21.953Z",
+    "repository": "matrixorigin/matrixone",
+    "learningId": "learn-github-matrixorigin-matrixone",
+    "contentHash": "96e52fd9dc045b387d78fb21ae28495340189ec9e2eaa4d32258d7a980d69cb5",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
     "barriers": {
       "storage_written": true,
       "read_back_verified": true,
