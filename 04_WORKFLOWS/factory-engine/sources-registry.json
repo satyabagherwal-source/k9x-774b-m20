@@ -41,12 +41,12 @@
     "compliance": "FREE_TIER_COMPLIANT"
   },
   "bitterbot-ai-bitterbot-desktop": {
-    "name": "Bitterbot-AI/bitterbot-desktop",
+    "name": "bitterbot-desktop",
     "officialUrl": "https://github.com/Bitterbot-AI/bitterbot-desktop",
     "sourceType": "github",
     "technology": "TypeScript",
-    "lastChecked": "2026-11-18T20:14:31.223Z",
-    "lastVerified": "2026-11-18T20:14:31.223Z",
+    "lastChecked": "2026-11-18T21:02:08.871Z",
+    "lastVerified": "2026-11-18T21:02:08.871Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-bitterbot-ai-bitterbot-desktop",
@@ -55,7 +55,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "9ef0e544"
   },
   "hf-comfy-org-minimax-h3": {
     "name": "Comfy-Org/MiniMax-H3",
@@ -79,8 +80,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-18T20:54:17.803Z",
-    "lastVerified": "2026-11-18T20:54:17.803Z",
+    "lastChecked": "2026-11-18T21:02:08.878Z",
+    "lastVerified": "2026-11-18T21:02:08.878Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -838,12 +839,12 @@
     "lastVerified": "2026-11-18T11:22:34.835Z"
   },
   "rustls-rustls": {
-    "name": "rustls/rustls",
+    "name": "rustls",
     "officialUrl": "https://github.com/rustls/rustls",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-18T15:35:10.299Z",
-    "lastVerified": "2026-11-18T15:35:10.299Z",
+    "lastChecked": "2026-11-18T21:02:03.873Z",
+    "lastVerified": "2026-11-18T21:02:03.873Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-rustls-rustls",
@@ -852,7 +853,8 @@
     "recentFixesCount": 1,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "836e411e"
   },
   "influxdata-influxdb": {
     "name": "influxdb",
@@ -4128,5 +4130,50 @@
     "lastChecked": "2026-11-18T20:54:15.271Z",
     "revisionIdentifier": "df2120d7",
     "lastVerified": "2026-11-18T20:54:15.271Z"
+  },
+  "kucherenko-jscpd": {
+    "name": "jscpd",
+    "officialUrl": "https://github.com/kucherenko/jscpd",
+    "lastChecked": "2026-11-18T21:01:53.922Z",
+    "revisionIdentifier": "b79927a3",
+    "lastVerified": "2026-11-18T21:01:53.922Z"
+  },
+  "hf-meta-llama-meta-llama-3-8b-instruct": {
+    "name": "meta-llama/Meta-Llama-3-8B-Instruct",
+    "officialUrl": "https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-18T21:01:56.628Z",
+    "lastVerified": "2026-11-18T21:01:56.628Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-meta-llama-meta-llama-3-8b-instruct",
+    "contentHash": "3f163f2f188846f106fc86d8b1653ea2b20120f6031a2f6749553ffaff44a6f4",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "ivpusic-react-native-image-crop-picker": {
+    "name": "react-native-image-crop-picker",
+    "officialUrl": "https://github.com/ivpusic/react-native-image-crop-picker",
+    "lastChecked": "2026-11-18T21:01:58.972Z",
+    "revisionIdentifier": "a18a50d4",
+    "lastVerified": "2026-11-18T21:01:58.972Z"
+  },
+  "vinceanalytics-vince": {
+    "name": "vince",
+    "officialUrl": "https://github.com/vinceanalytics/vince",
+    "lastChecked": "2026-11-18T21:02:01.347Z",
+    "revisionIdentifier": "fc06f7a2",
+    "lastVerified": "2026-11-18T21:02:01.347Z"
+  },
+  "cozodb-cozo": {
+    "name": "cozo",
+    "officialUrl": "https://github.com/cozodb/cozo",
+    "lastChecked": "2026-11-18T21:02:06.426Z",
+    "revisionIdentifier": "481af058",
+    "lastVerified": "2026-11-18T21:02:06.426Z"
   }
 }

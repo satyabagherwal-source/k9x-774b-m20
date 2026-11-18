@@ -1,20 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261117-0DKI",
-    "timestamp": "2026-11-17T12:24:56.754Z",
-    "repository": "diggerhq/digger",
-    "learningId": "learn-github-diggerhq-digger",
-    "contentHash": "e13be0207a9b7064ac197aafe8d5f7c19338cc259f9a94989ff03c45a4f4131d",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261117-0JSQ",
     "timestamp": "2026-11-17T12:25:04.826Z",
     "repository": "ytsaurus/ytsaurus",
@@ -7490,6 +7475,21 @@
     "repository": "openai/gpt-oss-120b",
     "learningId": "learn-huggingface-openai-gpt-oss-120b",
     "contentHash": "127990feb86ae2639790499317290303fc8e89458b70685c8d8d48e5afd95444",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-X3S3",
+    "timestamp": "2026-11-18T21:01:57.219Z",
+    "repository": "meta-llama/Meta-Llama-3-8B-Instruct",
+    "learningId": "learn-huggingface-meta-llama-meta-llama-3-8b-instruct",
+    "contentHash": "3f163f2f188846f106fc86d8b1653ea2b20120f6031a2f6749553ffaff44a6f4",
     "status": "PROJECT_ONLY",
     "promotedRulesCount": 0,
     "barriers": {

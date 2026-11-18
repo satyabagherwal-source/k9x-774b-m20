@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-18T20:54:19.302Z",
+  "last_updated": "2026-11-18T21:02:10.291Z",
   "total_verified_learnings": 9009,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
@@ -113686,13 +113686,13 @@
       "item_id": "candidate_directive-editor-add-scoped-ios-account-deletion",
       "artifact_type": "candidate_directive",
       "target_folder": "11_INBOX",
-      "relative_path": "11_INBOX/candidate-directives/CD-5JWY-editor-add-scoped-ios-account-deletion.md",
+      "relative_path": "11_INBOX/candidate-directives/CD-XDE6-editor-add-scoped-ios-account-deletion.md",
       "title": "editor): add scoped ios account deletion",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "5fa6a9083fe23ed587ba04c0a0f091672c001888035f9cd137c4af4673b26f40",
+      "content_hash": "2a46445809af4968724d45eea48102dc657634b7fa1524081afbf8bab3752c70",
       "domain_letter": "H",
-      "persisted_at": "2026-11-18T19:44:32.535Z"
+      "persisted_at": "2026-11-18T21:02:09.681Z"
     },
     "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant": {
       "item_id": "domain_intelligence-technical-construction-intelligence-zseven-w-openpencil-learnings-core-invariant",
@@ -113702,9 +113702,9 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "489e9cb324ec757b3638e856c8f0a39b79d1ea4408deabe39340432266bc91c2",
+      "content_hash": "e909e94063e25e67e1e1574d8c3b180afff005d3beba64900e718600533da7a5",
       "domain_letter": "H",
-      "persisted_at": "2026-11-18T19:44:32.646Z"
+      "persisted_at": "2026-11-18T21:02:09.804Z"
     },
     "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings": {
       "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-zseven-w-openpencil-learnings",
@@ -113714,9 +113714,9 @@
       "title": "Verification Protocol: Empirical Defect Shield for zseven-w-openpencil-learnings",
       "repository": "zseven-w-openpencil-learnings",
       "source_version": "HEAD",
-      "content_hash": "0fe539bad043f8e9aecee766dd0dea01d96d21c136dd907d6be47f8ab56fb355",
+      "content_hash": "e26728331a9e29d12f13f4302bef6c8b683f1bd823eb9709188246a1c1416756",
       "domain_letter": "K",
-      "persisted_at": "2026-11-18T19:44:32.757Z"
+      "persisted_at": "2026-11-18T21:02:09.923Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -221424,7 +221424,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct",
       "source_version": "hf-meta-llama-meta-llama-3-8b-instruct",
-      "content_hash": "70c42df2412388811314227de32f507c2a830900b96d209498cc6a89dd9625ee",
+      "content_hash": "3f163f2f188846f106fc86d8b1653ea2b20120f6031a2f6749553ffaff44a6f4",
       "dossier_path": "07_PROJECT_LEARNING/hf-meta-llama-meta-llama-3-8b-instruct-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-meta-llama-meta-llama-3-8b-instruct-learnings.md",
       "promoted_rules": [],
@@ -221433,7 +221433,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-14T02:45:51.014Z",
+      "verified_at": "2026-11-18T21:01:57.021Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -221450,9 +221450,9 @@
       "title": "Research & Knowledge Intelligence: meta-llama/Meta-Llama-3-8B-Instruct Core Invariants",
       "repository": "meta-llama/Meta-Llama-3-8B-Instruct",
       "source_version": "hf-meta-llama-meta-llama-3-8b-instruct",
-      "content_hash": "6cd40ab316919865ce3deebb35c2176e30695d67eaee7e5913212552dbd90cdd",
+      "content_hash": "e59da01ded4c1bc7403b3c70ef0b60b715e1dde2f767e8abc56214d1e4a93437",
       "domain_letter": "D",
-      "persisted_at": "2026-11-14T02:45:51.289Z"
+      "persisted_at": "2026-11-18T21:01:57.401Z"
     },
     "domain_intelligence-research-knowledge-intelligence-hf-meta-llama-meta-llama-3-8b-instruct-learnings": {
       "item_id": "domain_intelligence-research-knowledge-intelligence-hf-meta-llama-meta-llama-3-8b-instruct-learnings",
@@ -221462,9 +221462,9 @@
       "title": "Research & Knowledge Intelligence: hf-meta-llama-meta-llama-3-8b-instruct-learnings Core Invariants",
       "repository": "hf-meta-llama-meta-llama-3-8b-instruct-learnings",
       "source_version": "HEAD",
-      "content_hash": "58b6f0f56d06a4f63d6853bc99397079f0163ee612549604aa439b9965dc5fb8",
+      "content_hash": "562f5dfffa6ae0b7afe82ed17b1ba89a6196200b586e1d8c9c431d9f085e3c01",
       "domain_letter": "D",
-      "persisted_at": "2026-11-14T02:46:28.492Z"
+      "persisted_at": "2026-11-18T21:02:09.167Z"
     },
     "learn-huggingface-zai-org-glm-5-2": {
       "learning_id": "learn-huggingface-zai-org-glm-5-2",
@@ -286619,9 +286619,9 @@
       "title": "Technical Construction Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "bdd3b77167c975d386c93724af84177351c4271986a8e9c2523550502f4f231b",
+      "content_hash": "896480b3500598c8171eb04cbef7e4d244979cd8e6743d7e90684299f0103459",
       "domain_letter": "H",
-      "persisted_at": "2026-11-18T20:54:18.517Z"
+      "persisted_at": "2026-11-18T21:02:10.291Z"
     },
     "learn-github-software-mansion-argent": {
       "learning_id": "learn-github-software-mansion-argent",

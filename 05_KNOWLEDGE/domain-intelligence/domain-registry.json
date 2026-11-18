@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-18T20:54:19.054Z",
+  "last_updated": "2026-11-18T21:02:10.291Z",
   "total_records": 1906,
   "domains": {
     "A": {
@@ -8639,8 +8639,8 @@
       "title": "Technical Construction Intelligence: zseven-w-openpencil-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zseven-w-openpencil-learnings-technical-construction-intelligence-zseven-w-openp.md",
       "repository": "zseven-w-openpencil-learnings",
-      "content_hash": "489e9cb324ec757b3638e856c8f0a39b79d1ea4408deabe39340432266bc91c2",
-      "created_at": "2026-11-18T19:44:32.646Z"
+      "content_hash": "e909e94063e25e67e1e1574d8c3b180afff005d3beba64900e718600533da7a5",
+      "created_at": "2026-11-18T21:02:09.804Z"
     },
     "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-xiaomimimo-mimo-v2-6-distill-qwen-9b-core-invari",
@@ -12440,8 +12440,8 @@
       "title": "Research & Knowledge Intelligence: meta-llama/Meta-Llama-3-8B-Instruct Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-meta-llama-meta-llama-3-8b-instruct-research-knowledge-intelligence-meta-llam.md",
       "repository": "meta-llama/Meta-Llama-3-8B-Instruct",
-      "content_hash": "6cd40ab316919865ce3deebb35c2176e30695d67eaee7e5913212552dbd90cdd",
-      "created_at": "2026-11-14T02:45:51.289Z"
+      "content_hash": "e59da01ded4c1bc7403b3c70ef0b60b715e1dde2f767e8abc56214d1e4a93437",
+      "created_at": "2026-11-18T21:01:57.401Z"
     },
     "DOM-J-B241A1ED": {
       "record_id": "DOM-J-B241A1ED",
@@ -12497,8 +12497,8 @@
       "title": "Research & Knowledge Intelligence: hf-meta-llama-meta-llama-3-8b-instruct-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-meta-llama-meta-llama-3-8b-instruct-learnings-research-knowledge-intelligence.md",
       "repository": "hf-meta-llama-meta-llama-3-8b-instruct-learnings",
-      "content_hash": "58b6f0f56d06a4f63d6853bc99397079f0163ee612549604aa439b9965dc5fb8",
-      "created_at": "2026-11-14T02:46:28.492Z"
+      "content_hash": "562f5dfffa6ae0b7afe82ed17b1ba89a6196200b586e1d8c9c431d9f085e3c01",
+      "created_at": "2026-11-18T21:02:09.167Z"
     },
     "domain_intelligence-research-knowledge-intelligence-zai-org-glm-5-2-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-zai-org-glm-5-2-core-invariants",
@@ -31002,8 +31002,8 @@
       "title": "Technical Construction Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zulip-zulip-learnings-technical-construction-intelligence-zulip-zulip-learnings-.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "bdd3b77167c975d386c93724af84177351c4271986a8e9c2523550502f4f231b",
-      "created_at": "2026-11-18T20:54:18.517Z"
+      "content_hash": "896480b3500598c8171eb04cbef7e4d244979cd8e6743d7e90684299f0103459",
+      "created_at": "2026-11-18T21:02:10.291Z"
     },
     "domain_intelligence-product-intelligence-software-mansion-argent-core-invariants": {
       "record_id": "domain_intelligence-product-intelligence-software-mansion-argent-core-invariants",

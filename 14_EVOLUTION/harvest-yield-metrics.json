@@ -1,17 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T20:54:06.256Z",
-  "total_cycles_completed": 10607,
-  "total_learnings_persisted": 10607,
+  "last_updated": "2026-11-18T21:01:57.228Z",
+  "total_cycles_completed": 10608,
+  "total_learnings_persisted": 10608,
   "total_rules_promoted": 10043,
   "history": [
-    {
-      "timestamp": "2026-11-18T07:38:51.628Z",
-      "repository": "tencent/Hy4-flash",
-      "learningId": "learn-huggingface-tencent-hy4-flash",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-18T07:38:53.946Z",
       "repository": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
@@ -1402,6 +1395,13 @@
       "timestamp": "2026-11-18T20:54:06.256Z",
       "repository": "openai/gpt-oss-120b",
       "learningId": "learn-huggingface-openai-gpt-oss-120b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T21:01:57.228Z",
+      "repository": "meta-llama/Meta-Llama-3-8B-Instruct",
+      "learningId": "learn-huggingface-meta-llama-meta-llama-3-8b-instruct",
       "promotedRulesCount": 0,
       "status": "PROMOTED"
     }

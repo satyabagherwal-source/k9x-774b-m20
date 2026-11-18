@@ -1,9 +1,9 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T20:54:19.430Z",
+  "last_updated": "2026-11-18T21:02:10.419Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
-      "processed_at": "2026-11-18T20:54:18.265Z",
+      "processed_at": "2026-11-18T21:02:10.043Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -268,7 +268,7 @@
       "staged_for_review": 1
     },
     "zseven-w-openpencil-learnings.md": {
-      "processed_at": "2026-11-18T19:44:32.200Z",
+      "processed_at": "2026-11-18T21:02:09.315Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2338,8 +2338,8 @@
       "staged_for_review": 0
     },
     "hf-meta-llama-meta-llama-3-8b-instruct-learnings.md": {
-      "processed_at": "2026-11-14T02:46:28.314Z",
-      "promoted_canonical": 1,
+      "processed_at": "2026-11-18T21:02:08.996Z",
+      "promoted_canonical": 0,
       "staged_for_review": 0
     },
     "hf-zai-org-glm-5.2-learnings.md": {
@@ -3473,7 +3473,7 @@
       "staged_for_review": 1
     }
   },
-  "total_dossiers_evaluated": 2070,
+  "total_dossiers_evaluated": 2073,
   "total_canonical_promoted": 366,
-  "total_staged_for_review": 1561
+  "total_staged_for_review": 1563
 }

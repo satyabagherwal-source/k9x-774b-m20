@@ -11128,3 +11128,4 @@ Every entry in this ledger must capture:
 | `learn-github-clastix-kamaji` | `https://github.com/clastix/kamaji` | `d25aada2` | Multi-dimensional audit evidence | 2026-11-18T20:45:48.467Z |
 | `learn-dom-k-a46cd8ef` | `project://clastix-kamaji` | `d25aada2` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/clastix-kamaji-learnings.md` | 2026-11-18T20:46:21.116Z |
 | `learn-huggingface-openai-gpt-oss-120b` | `https://huggingface.co/openai/gpt-oss-120b` | `hf-openai-` | Multi-dimensional audit evidence | 2026-11-18T20:54:06.252Z |
+| `learn-huggingface-meta-llama-meta-llama-3-8b-instruct` | `https://huggingface.co/meta-llama/Meta-Llama-3-8B-Instruct` | `hf-meta-ll` | Multi-dimensional audit evidence | 2026-11-18T21:01:57.223Z |
