@@ -11048,3 +11048,7 @@
 | `CYCLE-20261118-LQMK` | `2026-11-18T16:41:10.412Z` | `okteto/okteto` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9259` | Yes (`6db9d0ac...`) |
 | `CYCLE-20261118-LZJ5` | `2026-11-18T16:41:21.953Z` | `matrixorigin/matrixone` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/matrixorigin-matrixone-learnings.md` | Yes (`96e52fd9...`) |
 | `CYCLE-20261118-WEOY` | `2026-11-18T16:49:28.162Z` | `Cloudflare/clef-flash` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-cloudflare-clef-flash-learnings.md` | Yes (`c92520a4...`) |
+| `CYCLE-20261118-C3HA` | `2026-11-18T17:01:40.126Z` | `sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-learnings.md` | Yes (`450d54a6...`) |
+| `CYCLE-20261118-C974` | `2026-11-18T17:01:47.536Z` | `PeerDB-io/peerdb` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9260` | Yes (`234286e4...`) |
+| `CYCLE-20261118-CDB5` | `2026-11-18T17:01:52.865Z` | `doobidoo/mcp-memory-service` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9261` | Yes (`dca1e9bc...`) |
+| `CYCLE-20261118-CFHR` | `2026-11-18T17:01:55.695Z` | `zama-ai/tfhe-rs` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9262` | Yes (`1f812a45...`) |

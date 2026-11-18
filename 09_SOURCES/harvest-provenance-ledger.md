@@ -11081,3 +11081,7 @@ Every entry in this ledger must capture:
 | `learn-github-okteto-okteto` | `https://github.com/okteto/okteto` | `a23d521e` | Multi-dimensional audit evidence | 2026-11-18T16:41:10.416Z |
 | `learn-github-matrixorigin-matrixone` | `https://github.com/matrixorigin/matrixone` | `87c44445` | Multi-dimensional audit evidence | 2026-11-18T16:41:21.957Z |
 | `learn-huggingface-cloudflare-clef-flash` | `https://huggingface.co/Cloudflare/clef-flash` | `hf-cloudfl` | Multi-dimensional audit evidence | 2026-11-18T16:49:28.167Z |
+| `learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2` | `https://huggingface.co/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2` | `hf-sentenc` | Multi-dimensional audit evidence | 2026-11-18T17:01:40.131Z |
+| `learn-github-peerdb-io-peerdb` | `https://github.com/PeerDB-io/peerdb` | `5f74e0ef` | Multi-dimensional audit evidence | 2026-11-18T17:01:47.541Z |
+| `learn-github-doobidoo-mcp-memory-service` | `https://github.com/doobidoo/mcp-memory-service` | `7957cfe5` | Multi-dimensional audit evidence | 2026-11-18T17:01:52.870Z |
+| `learn-github-zama-ai-tfhe-rs` | `https://github.com/zama-ai/tfhe-rs` | `ab04f563` | Multi-dimensional audit evidence | 2026-11-18T17:01:55.700Z |

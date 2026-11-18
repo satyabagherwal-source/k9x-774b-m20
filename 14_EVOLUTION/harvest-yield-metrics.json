@@ -1,38 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T16:49:28.173Z",
-  "total_cycles_completed": 10565,
-  "total_learnings_persisted": 10565,
-  "total_rules_promoted": 10021,
+  "last_updated": "2026-11-18T17:01:55.707Z",
+  "total_cycles_completed": 10569,
+  "total_learnings_persisted": 10569,
+  "total_rules_promoted": 10024,
   "history": [
-    {
-      "timestamp": "2026-11-18T05:35:26.585Z",
-      "repository": "fallow-rs/fallow",
-      "learningId": "learn-github-fallow-rs-fallow",
-      "promotedRulesCount": 3,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-18T05:44:05.491Z",
-      "repository": "unsloth/Qwen-Image-2.1-GGUF",
-      "learningId": "learn-huggingface-unsloth-qwen-image-2-1-gguf",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-18T05:44:07.521Z",
-      "repository": "sayanarijit/xplr",
-      "learningId": "learn-github-sayanarijit-xplr",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-18T05:44:16.102Z",
-      "repository": "zarf-dev/zarf",
-      "learningId": "learn-github-zarf-dev-zarf",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-18T05:52:25.850Z",
       "repository": "XiaomiMiMo/MiMo-V2.6-Pro-RL",
@@ -1403,6 +1375,34 @@
       "repository": "Cloudflare/clef-flash",
       "learningId": "learn-huggingface-cloudflare-clef-flash",
       "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T17:01:40.138Z",
+      "repository": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+      "learningId": "learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T17:01:47.550Z",
+      "repository": "PeerDB-io/peerdb",
+      "learningId": "learn-github-peerdb-io-peerdb",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T17:01:52.876Z",
+      "repository": "doobidoo/mcp-memory-service",
+      "learningId": "learn-github-doobidoo-mcp-memory-service",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T17:01:55.707Z",
+      "repository": "zama-ai/tfhe-rs",
+      "learningId": "learn-github-zama-ai-tfhe-rs",
+      "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
   ]

@@ -705,8 +705,8 @@
     "sourceUrl": "https://huggingface.co/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
     "sourceVersion": "hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
     "license": "Open-Source",
-    "contentHash": "4d49da5c404baf9b4a4c46a93df234f4c532be15d559cab70c37006f84921e20",
-    "lastHarvestedAt": "2026-11-18T07:38:53.939Z",
+    "contentHash": "450d54a6e9dcb68943d9916cf3464c2049b863477e6f00be396bcc184cc9e3f4",
+    "lastHarvestedAt": "2026-11-18T17:01:40.131Z",
     "learningId": "learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2"
   },
   "hf-google-bert-bert-base-uncased": {
@@ -3283,20 +3283,20 @@
     "repository": "zama-ai/tfhe-rs",
     "platform": "github",
     "sourceUrl": "https://github.com/zama-ai/tfhe-rs",
-    "sourceVersion": "ecc40009",
+    "sourceVersion": "ab04f563",
     "license": "NOASSERTION",
-    "contentHash": "58e2276eeb83e870e99b98c8c14fe092002aa7d7dda2f0a3de648528c1fe141f",
-    "lastHarvestedAt": "2026-11-18T12:51:04.099Z",
+    "contentHash": "1f812a45f823227f9c1a0a729b4c1c91dcabdfc5d50f548aa478f86fe54851c6",
+    "lastHarvestedAt": "2026-11-18T17:01:55.700Z",
     "learningId": "learn-github-zama-ai-tfhe-rs"
   },
   "doobidoo-mcp-memory-service": {
     "repository": "doobidoo/mcp-memory-service",
     "platform": "github",
     "sourceUrl": "https://github.com/doobidoo/mcp-memory-service",
-    "sourceVersion": "a908b7ba",
+    "sourceVersion": "7957cfe5",
     "license": "Apache-2.0",
-    "contentHash": "1e33487a7cafd402d054956179a42de2ea523cf27fcb08a4b5742a889c633cd7",
-    "lastHarvestedAt": "2026-11-18T01:38:42.464Z",
+    "contentHash": "dca1e9bc0b76fdfb601c19ac74b2b52235fe3af9d32fe922968e0a28631811cc",
+    "lastHarvestedAt": "2026-11-18T17:01:52.870Z",
     "learningId": "learn-github-doobidoo-mcp-memory-service"
   },
   "21st-dev-magic-mcp": {
@@ -3573,10 +3573,10 @@
     "repository": "PeerDB-io/peerdb",
     "platform": "github",
     "sourceUrl": "https://github.com/PeerDB-io/peerdb",
-    "sourceVersion": "5868e6e7",
+    "sourceVersion": "5f74e0ef",
     "license": "AGPL-3.0",
-    "contentHash": "a107ca5aa8c11730ee72b27e9bbb98b77b014ada035e2e9e5e73e984de2986bb",
-    "lastHarvestedAt": "2026-11-18T02:42:42.887Z",
+    "contentHash": "234286e4cec9e3feb13b81d1f13118eef1bc2741961f4c93d2657efe5dd9f653",
+    "lastHarvestedAt": "2026-11-18T17:01:47.541Z",
     "learningId": "learn-github-peerdb-io-peerdb"
   },
   "tailscale-tailscale": {

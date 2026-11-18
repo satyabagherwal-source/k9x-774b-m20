@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-18T16:49:41.930Z",
+  "last_updated": "2026-11-18T17:02:01.162Z",
   "total_records": 1883,
   "domains": {
     "A": {
@@ -9732,8 +9732,8 @@
       "title": "Technical Construction Intelligence: zama-ai/tfhe-rs Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zama-ai-tfhe-rs-technical-construction-intelligence-zama-ai-tfhe-rs-core-invaria.md",
       "repository": "zama-ai/tfhe-rs",
-      "content_hash": "f229253e57fa14ecd7133d701b4710076c3f8ccefd7f9299dd6b67f6aecd91a5",
-      "created_at": "2026-11-18T12:51:04.427Z"
+      "content_hash": "246299ba4d52b367c2bc1c607a5a260704d8a6f35188bc7895932c451ec06dbc",
+      "created_at": "2026-11-18T17:01:56.154Z"
     },
     "domain_intelligence-architecture-intelligence-embassy-rs-embassy-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-embassy-rs-embassy-learnings-core-invariants",
@@ -10263,8 +10263,8 @@
       "title": "Research & Knowledge Intelligence: sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-research-knowledg.md",
       "repository": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
-      "content_hash": "3cb267727cbdfe5cc2be89461da5090627867190cb1dbd62c5e6144328b49e4b",
-      "created_at": "2026-11-18T07:38:54.173Z"
+      "content_hash": "b1314bac431ae634e225c220d5445eccba1b80f9d4e2772f4255ef894180cda4",
+      "created_at": "2026-11-18T17:01:40.403Z"
     },
     "domain_intelligence-content-information-intelligence-temporalio-temporal-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-temporalio-temporal-core-invariants",
@@ -10290,8 +10290,8 @@
       "title": "Research & Knowledge Intelligence: hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-learnings-researc.md",
       "repository": "hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-learnings",
-      "content_hash": "233917508e6b8b533bad9a8eec1553c28bc9ef3dc3d519e2ddd17178e3ccdb16",
-      "created_at": "2026-11-18T07:39:47.959Z"
+      "content_hash": "90da0145632b85b80a7b4b55313ed63139c22757fd7da2112d3d159c4a4a9cc8",
+      "created_at": "2026-11-18T17:01:59.525Z"
     },
     "domain_intelligence-content-information-intelligence-temporalio-temporal-learnings-core-invariants": {
       "record_id": "domain_intelligence-content-information-intelligence-temporalio-temporal-learnings-core-invariants",
@@ -12833,8 +12833,8 @@
       "title": "Technical Construction Intelligence: doobidoo/mcp-memory-service Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-doobidoo-mcp-memory-service-technical-construction-intelligence-doobidoo-mcp-mem.md",
       "repository": "doobidoo/mcp-memory-service",
-      "content_hash": "e47da0199449ba5a7a9f32f8224eef342debd8907371754b5a9314a497d38ec6",
-      "created_at": "2026-11-18T01:38:42.779Z"
+      "content_hash": "d9622622023847262672dbe36e6bd7bb42fdcc723a55161e762c4e42ea5fe3a5",
+      "created_at": "2026-11-18T17:01:53.336Z"
     },
     "DOM-D-0BBA6E16": {
       "record_id": "DOM-D-0BBA6E16",
@@ -26879,8 +26879,8 @@
       "title": "Technical Construction Intelligence: zama-ai-tfhe-rs-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zama-ai-tfhe-rs-learnings-technical-construction-intelligence-zama-ai-tfhe-rs-le.md",
       "repository": "zama-ai-tfhe-rs-learnings",
-      "content_hash": "2354fa36c377c3928f6bc23f8f7622f2e9ef60a42778810be18de6f414d27944",
-      "created_at": "2026-11-18T12:51:11.676Z"
+      "content_hash": "3e8df1ba4ead0aa48ebd146c43c86e3177a6f5e157aa2074be66b0bedd0676e8",
+      "created_at": "2026-11-18T17:02:01.162Z"
     },
     "domain_intelligence-research-knowledge-intelligence-meituan-longcat-longcat-video-avatar-1-6-core-in": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-meituan-longcat-longcat-video-avatar-1-6-core-in",
@@ -29421,8 +29421,8 @@
       "title": "Architecture Intelligence: PeerDB-io/peerdb Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-peerdb-io-peerdb-architecture-intelligence-peerdb-io-peerdb-core-invariants.md",
       "repository": "PeerDB-io/peerdb",
-      "content_hash": "634cd810fc6c030353306e5b04896f6cac885cd28f88a5b5dc5d990866cb4c07",
-      "created_at": "2026-11-18T02:42:43.188Z"
+      "content_hash": "3db712258e09c1317b629219b76974c4a775b864bc683fb0056482733fc1ddb1",
+      "created_at": "2026-11-18T17:01:48.022Z"
     },
     "domain_intelligence-architecture-intelligence-peerdb-io-peerdb-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-peerdb-io-peerdb-learnings-core-invariants",
@@ -29430,8 +29430,8 @@
       "title": "Architecture Intelligence: peerdb-io-peerdb-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-peerdb-io-peerdb-learnings-architecture-intelligence-peerdb-io-peerdb-learnings-.md",
       "repository": "peerdb-io-peerdb-learnings",
-      "content_hash": "8e288dbb2b902f088882503627f66df889e6f3792457281ab760ad0282834bb9",
-      "created_at": "2026-11-18T02:42:49.473Z"
+      "content_hash": "043c0946632fac1ca9e5be30e97d25fafff754412131e6b0473f28d1169525c6",
+      "created_at": "2026-11-18T17:02:00.313Z"
     },
     "domain_intelligence-architecture-intelligence-amir1376-ab-download-manager-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-amir1376-ab-download-manager-core-invariants",

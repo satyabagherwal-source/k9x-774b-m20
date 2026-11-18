@@ -6,7 +6,7 @@
   "source_url": "https://huggingface.co/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
   "source_version": "hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
   "license": "Open-Source",
-  "timestamp": "2026-11-18T07:38:54.172Z",
+  "timestamp": "2026-11-18T17:01:40.402Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2](https://huggingface.co/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2) (Revision: `hf-sentenc`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-18T07:38:54.172Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-18T17:01:40.402Z`  
 > **Learning ID**: `learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2](https://huggingface.co/sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T07:38:53.375Z  
+> **Harvest Timestamp**: 2026-11-18T17:01:35.911Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---

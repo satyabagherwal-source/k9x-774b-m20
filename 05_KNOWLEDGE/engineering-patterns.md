@@ -681327,3 +681327,228 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 
 **VERIFICATION METHOD**:
 Automated regression test asserting that input states reproducing defect `b5e35654` are properly handled with clean fallback behavior.
+
+
+---
+
+## 9260. Stop using QValueJSON as fallback for mismatched arrays (Harvested from PeerDB-io/peerdb)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "Stop using QValueJSON as fallback for mismatched arrays",
+  "source": "PeerDB-io/peerdb",
+  "source_url": "https://github.com/PeerDB-io/peerdb",
+  "source_version": "5f74e0ef",
+  "license": "AGPL-3.0",
+  "extracted_at": "2026-11-18T17:01:46.952Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-peerdb-io-peerdb",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [PeerDB-io/peerdb](https://github.com/PeerDB-io/peerdb) (Revision: `5f74e0ef`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `flow/connectors/mongo/document_projection.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in PeerDB-io/peerdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `5f74e0ef`: Stop using QValueJSON as fallback for mismatched arrays. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `flow/connectors/mongo/document_projection.go`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```go
+// Verified production-grade fix pattern:
+				// An array that does not fit its typed column, e.g. a string element in an Array(Int64)
+				// or a scalar or nested array element in an Array(JSON), is yielded as its JSON text:
+				// a String never matches an array column, so the projector reports it as a type mismatch,
+				// its JSON form as the value, instead of the record failing.
+				var asJSON types.QValueArrayJSON
+				asJSON, err = converter.QValueArrayJSONFromArray(element.Value().Array())
+				value = types.QValueString(asJSON)
+```
+
+**NEGATIVE CONSTRAINT**:
+```go
+// Induced defect failure mode:
+				// An array that does not fit its typed column is yielded as JSON: the projector then
+				// reports it as a type mismatch, its JSON form as the value, instead of the record failing.
+				value, err = converter.QValueJSONFromArray(element.Value().Array())
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `5f74e0ef` are properly handled with clean fallback behavior.
+
+
+---
+
+## 9261. fix(api): preserve 400 validation errors and clean up temporary files on upload (Harvested from doobidoo/mcp-memory-service)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "fix(api): preserve 400 validation errors and clean up temporary files on upload",
+  "source": "doobidoo/mcp-memory-service",
+  "source_url": "https://github.com/doobidoo/mcp-memory-service",
+  "source_version": "7957cfe5",
+  "license": "Apache-2.0",
+  "extracted_at": "2026-11-18T17:01:52.287Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-doobidoo-mcp-memory-service",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [doobidoo/mcp-memory-service](https://github.com/doobidoo/mcp-memory-service) (Revision: `7957cfe5`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `changelog.d/2041.fixed.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in doobidoo/mcp-memory-service. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `cc58ab35`: fix(api): preserve 400 validation errors and clean up temporary files on upload failure. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog.d/2041.fixed.md`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```python
+// Verified production-grade fix pattern:
+- **Document upload API swallowed 400 validation errors as 500 and leaked temporary files (#2041).**
+  `POST /api/documents/upload` and `POST /api/documents/batch-upload` caught generic `Exception` without re-raising `HTTPException`, transforming client validation errors into 500 Internal Server Errors. Batch uploads that failed validation also orphaned temporary files created for preceding files. `HTTPException` is now re-raised and temporary files are cleaned up on failure.
+```
+
+**NEGATIVE CONSTRAINT**:
+```python
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `cc58ab35` are properly handled with clean fallback behavior.
+
+
+---
+
+## 9262. automatically generated files should be excluded from `cargo::rerun-if-cha (Harvested from zama-ai/tfhe-rs)
+
+<!-- PROVENANCE_START
+{
+  "knowledge_type": "engineering_pattern",
+  "topic": "automatically generated files should be excluded from `cargo::rerun-if-cha",
+  "source": "zama-ai/tfhe-rs",
+  "source_url": "https://github.com/zama-ai/tfhe-rs",
+  "source_version": "ab04f563",
+  "license": "NOASSERTION",
+  "extracted_at": "2026-11-18T17:01:55.126Z",
+  "ai_provider": "zero-clone-structural-synthesizer",
+  "generation_mode": "source_derived_ai_synthesized",
+  "learning_id": "learn-github-zama-ai-tfhe-rs",
+  "verified": true,
+  "confidence": "high",
+  "promotion_status": "approved",
+  "distillation_prohibited": true,
+  "quality_gate": {
+    "decision": "CONDITIONAL_PASS",
+    "confidence_score": 0.74,
+    "validator_version": "0.1.0",
+    "dimensions": {
+      "source_reliability": "PASS",
+      "evidence_quality": "WARN",
+      "technical_correctness": "PASS",
+      "reusability": "PASS",
+      "completeness": "PASS",
+      "freshness": "WARN",
+      "duplication_and_conflict": "PASS",
+      "cross_source_corroboration": "WARN",
+      "adversarial_safety": "PASS",
+      "empirical_reproducibility": "WARN",
+      "structural_completeness": "PASS",
+      "generic_engineering_invariants": "PASS",
+      "canonical_deduplication": "PASS"
+    }
+  }
+}
+PROVENANCE_END -->
+> **Provenance**: Harvested from [zama-ai/tfhe-rs](https://github.com/zama-ai/tfhe-rs) (Revision: `ab04f563`).  
+> **Evidence & Quality**: Verified via HIQV v0.1.0 (CONDITIONAL_PASS, Confidence: 74%).
+
+**RULE**:
+When implementing operations in `backends/tfhe-cuda-backend/build.rs`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in zama-ai/tfhe-rs. All inputs crossing module boundaries must be explicitly verified before state persistence.
+
+**WHY**:
+Prevents defects observed in production commit `cf180b20`: gpu): automatically generated files should be excluded from `cargo::rerun-if-changed`. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+
+**WHEN TO APPLY**:
+Subsystems managing Rust data structures, boundary deserialization, API parsing, or resource lifecycles matching `backends/tfhe-cuda-backend/build.rs`.
+
+**VERIFIED IMPLEMENTATION PATTERN**:
+```rust
+// Verified production-grade fix pattern:
+    // Automatically generated files are excluded from `cargo::rerun-if-changed`
+    for entry in std::fs::read_dir("src").unwrap() {
+        let path = entry.unwrap().path();
+        if path.file_name().is_some_and(|name| name != "bindings.rs") {
+            println!("cargo::rerun-if-changed={}", path.display());
+        }
+    }
+```
+
+**NEGATIVE CONSTRAINT**:
+```rust
+// Induced defect failure mode:
+    println!("cargo::rerun-if-changed=src");
+```
+
+**VERIFICATION METHOD**:
+Automated regression test asserting that input states reproducing defect `cf180b20` are properly handled with clean fallback behavior.

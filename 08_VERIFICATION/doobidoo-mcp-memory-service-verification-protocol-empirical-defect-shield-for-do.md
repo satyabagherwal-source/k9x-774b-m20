@@ -4,22 +4,22 @@
 {
   "source_repository": "doobidoo/mcp-memory-service",
   "source_url": "https://github.com/doobidoo/mcp-memory-service",
-  "source_version": "a908b7ba",
+  "source_version": "7957cfe5",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-18T01:38:42.647Z",
+  "timestamp": "2026-11-18T17:01:53.149Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-doobidoo-mcp-memory-service",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [doobidoo/mcp-memory-service](https://github.com/doobidoo/mcp-memory-service) (Revision: `a908b7ba`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-18T01:38:42.647Z`  
+> **Provenance**: Harvested from [doobidoo/mcp-memory-service](https://github.com/doobidoo/mcp-memory-service) (Revision: `7957cfe5`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-18T17:01:53.149Z`  
 > **Learning ID**: `learn-github-doobidoo-mcp-memory-service`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `doobidoo/mcp-memory-service` (Commit: `a908b7ba`)
+- **Target Repository**: `doobidoo/mcp-memory-service` (Commit: `7957cfe5`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/doobidoo-mcp-memory-service-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/doobidoo/mcp-memory-service](https://github.com/doobidoo/mcp-memory-service))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T01:38:41.522Z  
+> **Harvest Timestamp**: 2026-11-18T17:01:51.628Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Open-source persistent memory for AI agent pipelines (LangGraph, CrewAI, AutoGen) and Claude. REST API + knowledge graph + autonomous consolidation.
 - **Primary Language / Ecosystem**: Python
 - **Discovered Manifests / Configurations**: pyproject.toml, README.md
-- **Stars / Engagement**: 2135 stars
+- **Stars / Engagement**: 2136 stars
 
 ---
 
@@ -2925,8 +2925,8 @@ Commands:
 - **Issue #2068** (2026-11-17): **Claim automation counts a maintainer's comment as an earlier claim**
   *Symptoms*: ## What happens  On an issue labelled `auto-assign`, a `/claim` from a contributor is sent to manual confirmation when an earlier comment by a maintainer contains a phrase the claim classifier knows. The contributor gets "existing work, an earlier claim, edit or withdrawal needs a maintainer's confirmation" on an issue that is free.  Seen on #2060 on 2026-11-17. The issue had no assignee, no linked PR and no earlier claim. My comment settling the scope said "the content exists in another store and no longer names it". A contributor then commented `/claim`, the bot added `claim-pending` and posted the manual reply instead of assigning.  ## Why  In `scripts/ci/mark_claim_pending.py`:  - `WITHDRAWAL` (line 284) matches `no longer`, so `possible_claim()` returns true for the maintainer's comment. - `read_claim_history()` (line 685) builds `claims` from every comment that passes `human()` (line 355). `human()` checks the user type and login only, so maintainers are included. - `confirmed_claim()` (line 377) sees a comment by a different login before the command and returns `claims[0]`, the maintainer's comment. - `claim_ambiguity()` (line 387) finds that this "first claim" is not a command and reports ambiguity, and `prepare_assignment()` takes the manual path.  `should_label()` and `hint_command()` already skip comments whose `author_association` is in `EXEMPT_ASSOCIATIONS`. The claim history does not.  ## Reproduce  Run the classifier on the body of https://github.com/doobidoo/m
 
-- **Issue #2040** (2026-11-17): **[Bug]: memory_ingest tool silently ignores memory_type and chunk_overlap in directory mode**
-  *Symptoms*: ### Bug Description   The memory_ingest MCP tool explicitly defines memory_type (string, default "document") and chunk_overlap (integer,   default 200) in its declarative input schema in   mcp-memory-service/src/mcp_memory_service/tools/registry.py:830-840.   When running in single-file mode (file_path), both parameters are parsed by handle_ingest_document in   mcp-memory-service/src/mcp_memory_service/server/handlers/documents.py:82-84 and properly applied to   loader.chunk_overlap and the stored memory.    However, in directory mode (directory_path):    1. handle_ingest_directory in mcp-memory-service/src/mcp_memory_service/server/handlers/documents.py:180-248 only   parses tags, recursive, file_extensions, chunk_size, and max_files. It completely omits extracting memory_type and   chunk_overlap from arguments.   2. FileIngestionProcessor in mcp-memory-service/src/mcp_memory_service/utils/directory_ingestion.py:83-153 does not   accept memory_type or chunk_overlap in __init__.   3. In process_file, loader.chunk_overlap is never configured on the document loader.   4. When calling _process_and_store_chunk(...) in FileIngestionProcessor.process_file, memory_type is omitted,   causing every chunk ingested across the directory to silently fall back to memory_type="document" regardless of   what the caller requested (e.g. memory_type="reference" or memory_type="learning").  ### Steps to Reproduce   1. Invoke the memory_ingest MCP tool with directory_path specifying a custom memo
+- **Issue #2041** (2026-11-18): **[Bug]: Document upload API swallows HTTP 400 validation errors as 500 and leaks temporary files on batch failure**
+  *Symptoms*: ### Bug Description    In mcp-memory-service/src/mcp_memory_service/web/api/documents.py:238-241, both upload_document (POST   /api/documents/upload) and batch_upload_documents (POST /api/documents/batch-upload) catch generic Exception and   raise HTTPException(status_code=500, detail="Internal server error") without re-raising HTTPException.   This causes two distinct issues:    1. HTTP 400 Validation Errors are Swallowed as HTTP 500:   Both endpoints validate input and explicitly raise HTTPException(status_code=400, ...):       • When an unsupported file format is uploaded (raise HTTPException(status_code=400, detail="Unsupported file       type: ...")) (L185-L188, L281-L284)       • When a tag exceeds MAX_TAG_LENGTH in parse_and_validate_tags() (raise HTTPException(status_code=400,       detail="Tag exceeds maximum length...")) (L96-L100)       • When files is empty in batch upload (raise HTTPException(status_code=400, detail="No files provided")) (L267)   Because HTTPException is a subclass of Exception, the broad except Exception: block intercepts it, logs a critical   unhandled exception traceback (logger.exception("Upload error")), and returns a generic 500 Internal Server Error   to the client. The client never receives the explanation of what validation rule failed.   2. Temporary File Leak on Batch Upload Validation Failure:   In batch_upload_documents, files are looped over and written to disk via tempfile.NamedTemporaryFile(delete=False,   ...). If a subsequent fi
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -2943,660 +2943,1030 @@ Commands:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ed74a81e` (2026-11-17)
-**Commit Message**: fix(dashboard): do not cover the page during document uploads (#2009) (#2066)
+### Incident Patch 1: `cc58ab35` (2026-11-18)
+**Commit Message**:  fix(api): preserve 400 validation errors and clean up temporary files on upload failure (#2041) (#2057)
 
-* fix(dashboard): do not cover the page during document uploads
+* fix(api): preserve 400 validation errors and prevent temp file leaks in document uploads (#2041)
 
-handleDocumentUpload() blocked the whole page with the loading overlay
-although the status island already reports imports. Report the transfer
-to the island as a busy "Documents" source, disable the upload button
-while the request runs and ignore a second trigger. The other
-setLoading() call sites are not reported to the island and keep the
-overlay.
-
-Refs #2009
-
-Co-authored-by: jeej1k <[REDACTED_EMAIL]>
-
-* fix(dashboard): keep the upload button disabled while uploading
-
-updateUploadButton() re-enabled the button when a chunk slider changed
-mid-upload. Keep it disabled while _uploading is set. Reported by the
-Greptile review on the PR.
-
-Refs #2009
-
-Co-authored-by: jeej1k <[REDACTED_EMAIL]>
-
----------
-
-Co-authored-by: jeej1k <[REDACTED_EMAIL]>
-Co-authored-by: Henry Krupp <[REDACTED_EMAIL]>
-
-**File**: `changelog.d/2009.fixed.md` (added, +6/-0)
-```diff
-@@ -0,0 +1,6 @@
-+- **Starting a document upload no longer covers the dashboard with the loading overlay (#2009).**
-+  `handleDocumentUpload()` blocked the whole page with `setLoading(true)` although the
-+  status island already reports imports. It now reports the transfer to the island as a
-+  busy "Documents" source, disables the upload button while the request runs and ignores
-+  a second trigger. The overlay stays on the other `setLoading` call sites, which the
-+  island does not report.
-```
-
-**File**: `src/mcp_memory_service/web/static/app.js` (modified, +17/-5)
-```diff
-@@ -1671,7 +1671,7 @@ class MemoryDashboard {
-         const hasFiles = this.selectedFiles && this.selectedFiles.length > 0;
- 
-         if (uploadBtn) {
--            uploadBtn.disabled = !hasFiles;
-+            uploadBtn.disabled = !hasFiles || this._uploading;
-             uploadBtn.textContent = hasFiles ?
-                 `Upload & Ingest ${this.selectedFiles.length} file${this.selectedFiles.length > 1 ? 's' : ''}` :
-                 'Upload & Ingest';
-@@ -1714,6 +1714,8 @@ class MemoryDashboard {
-             this.showToast(this.t('toast.noFiles', 'No files selected'), 'error');
-             return;
-         }
-+        // The upload button is disabled while the request runs; this also covers a second trigger.
-+        if (this._uploading) return;
- 
-         const tags = document.getElementById('docTags')?.value || '';
-         const chunkSize = this.chunkSizeInput?.value || 1000;
-@@ -1725,9 +1727,17 @@ class MemoryDashboard {
-         for (const file of this.selectedFiles) {
-             this._clearOperationError(`upload-request-${JSON.stringify([file.name, file.size, file.lastModified])}`);
-         }
-+        this._uploading = true;
-+        const uploadBtn = document.getElementById('uploadBtn');
-+        if (uploadBtn) uploadBtn.disabled = true;
-+        // No page overlay: the island shows the transfer, then each import by its own row.
-+        this.statusIsland?.report('upload-batch', {
-+            state: 'busy',
-+            progress: 'unknown',
-+            label: { key: 'nav.documents', fallback: 'Documents' },
-+            text: { key: 'island.upload.processing', fallback: 'Importing' },
-+        });
-         try {
--            this.setLoading(true);
--
-             if (this.selectedFiles.length === 1 || this.processingMode === 'individual') {
-                 // Individual file processing (single file or individual mode for multiple files)
-                 for (let i = 0; i < this.selectedFiles.length; i++) {
-@@ -1765,9 +1775,10 @@ class MemoryDashboard {
-                 });
-             }
- 
-+            this.statusIsland?.clear('upload-batch');
-+
-             // Clear selection and reload history
-             this.selectedFiles = [];
--            this.updateUploadButton();
-             await this.loadUploadHistory();
- 
-             // Reset drop zone
-@@ -1795,7 +1806,8 @@ class MemoryDashboard {
-                 key: 'toast.uploadFailed', fallback: 'Upload failed: {message}', vars: { message: error.message },
-             }, { key: 'nav.documents', fallback: 'Documents' });
-         } finally {
--            this.setLoading(false);
-+            this._uploading = false;
-+            this.updateUploadButton();
-         }
-     }
- 
-```
-
-**File**: `tests/web/test_dashboard_upload_no_overlay.cjs` (added, +59/-0)
-```diff
-@@ -0,0 +1,59 @@
-+// Run with: node --test tests/web/test_dashboard_upload_no_overlay.cjs
-+// handleDocumentUpload() no longer covers the page with the loading overlay (#2009):
-+// the island reports the transfer, the upload button is disabled while it runs, and a
-+// second trigger is ignored.
-+const { test } = require('node:test');
-+const assert = require('node:assert/strict');
-+const fs = require('node:fs');
-+const vm = require('node:vm');
-+
-+function dashboard() {
-+    const button = { disabled: false, textContent: '' };
-+    const context = vm.createContext({
-+        console: { log() {}, warn() {}, error() {} },
-+        document: { getElementById: (id) => (id === 'uploadBtn' ? button : null), addEventListener() {}, querySelectorAll: () => [] },
-+        window: { addEventListener() {} },
-+        localStorage: { getItem: () => null },
-+    });
-+    vm.runInContext(fs.readFileSync('src/mcp_memory_service/web/static/app.js', 'utf8') + '\nthis.Dashboard = MemoryDashboard;', context);
-+    context.Dashboard.prototype.init = () => {};
-+    const app = new context.Dashboard();
-+    const island = { reports: [], cleared: [], report(id, entry) { this.reports.push([id, entry]); }, clear(id) { this.cleared.push(id); } };
-+    app.statusIsland = island;
-+    app.selectedFiles = [{ name: 'a.txt', size: 1, lastModified: 1 }];
-+    app.processingMode = 'individual';
-+    app.loadUploadHistory = async () => {};
-+    app.setupDocumentsEventListeners = () => {};
-+    app.setLoading = () => { throw new Error('the page overlay was shown'); };
-+    return { app, island, button };
-+}
-+
-+test('an upload shows no overlay, disables the button and reports busy to the island', async () => {
-+    const { app, island, button } = dashboard();
-+    let release;
-+    let calls = 0;
-+    app.uploadSingleDocument = () => { calls += 1; return new Promise((resolve) => { release = resolve; }); };
-+    const first = app.handleDocumentUpload();
-+    await new Promise((r) => setTimeout(r, 0));
-+    assert.equal(button.disabled, true);
-+    app.updateUploadButton(); // e.g. a chunk slider change mid-upload
-+    assert.equal(button.disabled, true);
-+    assert.equal(island.reports[0][0], 'upload-batch');
-+    assert.equal(island.reports[0][1].state, 'busy');
-+    await app.handleDocumentUpload(); // second trigger while running
-+    assert.equal(calls, 1);
-+    release();
-+    await first;
-+    assert.ok(island.cleared.includes('upload-batch'));
-+    assert.equal(app._uploading, false);
-+});
-+
-+test('a failed upload reports the file error and releases the guard', async () => {
-+    const { app } = dashboard();
-+    const errors = [];
-+    app.uploadSingleDocument = async () => { throw new Error('boom'); };
-+    app._reportOperationError = (source) => errors.push(source);
-+    await app.handleDocumentUpload();
-+    assert.equal(errors.length, 1);
-+    assert.equal(app._uploading, false);
-+});
-```
-
-**File**: `tests/web/test_dashboard_upload_no_overlay.py` (added, +21/-0)
-```diff
-@@ -0,0 +1,21 @@
-+"""Run the upload overlay regression tests (#2009)."""
-+
-+import shutil
-+import subprocess
-+from pathlib import Path
-+
-+import pytest
-+
-+
-+@pytest.mark.skipif(shutil.which("node") is None, reason="node is not installed")
-+def test_upload_has_no_page_overlay():
-+    root = Path(__file__).resolve().parents[2]
-+    result = subprocess.run(
-+        ["node", "--test", "tests/web/test_dashboard_upload_no_overlay.cjs"],
-+        cwd=root,
-+        capture_output=True,
-+        text=True,
-+        timeout=30,
-+        check=False,
-+    )
-+    assert result.returncode == 0, result.stdout + result.stderr
-```
-
----
-
-### Incident Patch 2: `4e9ba8b6` (2026-11-17)
-**Commit Message**: refactor(tools)!: rename five tools to the memory_* prefix, sharpen overlapping descriptions (#2052)
-
-* refactor(tools)!: rename five tools to the memory_* prefix
-
-commit_session_legacy   -> memory_commit_session
-get_bootstrap_profile   -> memory_bootstrap_profile
-get_onboarding_guide    -> memory_onboarding_guide
-get_quarantined_memories -> memory_quarantine_list
-unquarantine_memory     -> memory_quarantine_release
-
-These five were the only tools outside the memory_* / mistake_note_*
-pattern. "legacy" in commit_session_legacy meant what a session leaves
-behind, but it reads as "deprecated", which is wrong: the server
-instructions require the tool at session end.
-
-Only the tool names change. Handler methods, the functions in
-consolidation/quarantine.py, arguments and stored data stay as they are.
-The server instructions, the onboarding guide and the README use the new
-names.
-
-BREAKING CHANGE: the old names are gone, there is no alias layer since
-v11. docs/MIGRATION.md lists the mapping and what to update.
-
-* docs(tools): say when to use each store and retrieval tool
-
-The store family (memory_store, memory_store_session, memory_ingest,
-memory_harvest, memory_distill, memory_commit_s
-
-**File**: `README.md` (modified, +1/-1)
-```diff
-@@ -256,7 +256,7 @@ Full list, plus clients without OAuth such as Home Assistant:
- - 💭 **Beliefs and contradiction handling** — Derive confidence-scored beliefs from
-   observations. Heuristic contradiction detection can mark older memories as superseded,
-   hiding them from default retrieval while retaining them for explicit lookup.
--- 🤖 **Agent bootstrap profiles** — `get_bootstrap_profile` assembles behavioral context
-+- 🤖 **Agent bootstrap profiles** — `memory_bootstrap_profile` assembles behavioral context
-   for a new agent within a token budget, with optional task-aware retrieval.
-   Requires `MCP_BOOTSTRAP_ENABLED=true`; profiles are not isolated by project.
- - 🧬 **Knowledge graph and entities** — Explore typed causal relationships in the interactive
-```
-
-**File**: `changelog.d/2052.removed.md` (added, +9/-0)
-```diff
-@@ -0,0 +1,9 @@
-+- **BREAKING: five tools renamed to the `memory_*` prefix, old names removed (#2052).**
-+  `commit_session_legacy` is now `memory_commit_session`, `get_bootstrap_profile` is
-+  `memory_bootstrap_profile`, `get_onboarding_guide` is `memory_onboarding_guide`,
-+  `get_quarantined_memories` is `memory_quarantine_list` and `unquarantine_memory` is
-+  `memory_quarantine_release`. Arguments and stored data are unchanged. There is no
-+  alias layer, so prompts, tool allowlists and scripts that name an old tool must be
-+  updated; see `docs/MIGRATION.md`. The server instructions and the onboarding guide
-+  already use the new names. The descriptions of the store and retrieval tools now
-+  say when to use each one and which sibling to use instead.
-```
-
-**File**: `docs/MIGRATION.md` (modified, +24/-0)
-```diff
-@@ -201,6 +201,30 @@ warnings.filterwarnings('error', category=DeprecationWarning)
- 4. **Better Discovery**: Clearer naming with `memory_*` prefix
- 5. **MCP Compliance**: Follows best practice of 5-15 tools per server
- 
-+## Tool renames to the `memory_*` prefix (after v12.11.0)
-+
-+Five tools that did not follow the `memory_*` naming pattern were renamed. There is
-+no alias layer since v11, so the old names stop working with the release that ships
-+this change. A call to an old name returns an unknown-tool error.
-+
-+| Old Tool | New Tool | Notes |
-+|----------|----------|-------|
-+| `commit_session_legacy` | `memory_commit_session` | Arguments unchanged |
-+| `get_bootstrap_profile` | `memory_bootstrap_profile` | Arguments unchanged |
-+| `get_onboarding_guide` | `memory_onboarding_guide` | Arguments unchanged |
-+| `get_quarantined_memories` | `memory_quarantine_list` | Arguments unchanged |
-+| `unquarantine_memory` | `memory_quarantine_release` | Arguments unchanged |
-+
-+What to update on your side:
-+
-+- Prompts, agent instructions and steering files that name one of the old tools.
-+- Tool allowlists and permission rules, for example `mcp__memory__get_bootstrap_profile`
-+  in a Claude Code `settings.json`.
-+- Scripts that call the tools over the HTTP `/mcp` endpoint.
-+
-+Stored data is not affected. Memories written by `commit_session_legacy` keep their
-+content and tags and are read by `memory_bootstrap_profile` as before.
-+
- ## Support
- 
- - **Documentation**: See README.md and CLAUDE.md
-```
-
-**File**: `src/mcp_memory_service/consolidation/belief_service.py` (modified, +1/-1)
-```diff
-@@ -54,7 +54,7 @@
-     "[TREND]",    # auto trend statistic — investigação 31/out
-     "# Session Summary",
-     "## Session Summary",
--    "Session: ",  # commit_session_legacy entries (#121 follow-up)
-+    "Session: ",  # memory_commit_session entries (#121 follow-up)
- )
- 
- _NOISE_PATTERNS = [
-```
-
-**File**: `src/mcp_memory_service/server_impl.py` (modified, +12/-12)
-```diff
-@@ -159,10 +159,10 @@ def _get_onboarding_guide(client_type: str = "generic") -> str:
- 
-     _SERVER_DOES = """\
- ### What the server does automatically:
--- **Post-commit learning**: after `commit_session_legacy`, the server runs
-+- **Post-commit learning**: after `memory_commit_session`, the server runs
-   harvest + distill in background (~8s). No action needed from you.
- - **Scheduled distill**: every 6h, undistilled memories are batch-processed via LLM.
--- **Bootstrap refresh**: `get_bootstrap_profile` always returns the latest profile.
-+- **Bootstrap refresh**: `memory_bootstrap_profile` always returns the latest profile.
- - **Frustration tracking**: errors weigh 3× more than successes. High-frustration
-   patterns are promoted to AVOID rules in your bootstrap profile.
- - **Threshold trigger**: if >20 new observations accumulate without distill, it runs
-@@ -177,7 +177,7 @@ def _get_onboarding_guide(client_type: str = "generic") -> str:
-    → recall what was done recently (cross-session continuity)
- 2. `mistake_note_search(query="<likely task context>")`
-    → check known pitfalls before starting work
--3. `get_bootstrap_profile(agent_ids=["kiro"])` — behavioral rules (avoidances,
-+3. `memory_bootstrap_profile(agent_ids=["kiro"])` — behavioral rules (avoidances,
-    conventions, beliefs). Best cached to disk 1x/day rather than fetched every session.
- 
- ### Before significant tasks (>15min):
-@@ -197,7 +197,7 @@ def _get_onboarding_guide(client_type: str = "generic") -> str:
- 
- {_DURING_SESSION}
- ### On session end:
--- `commit_session_legacy` with decisions, errors, corrections (triggers
-+- `memory_commit_session` with decisions, errors, corrections (triggers
-   server-side harvest automatically). OR:
- - `memory_harvest(sessions=1, dry_run=false)` as fallback if commit is unavailable.
- - Rate memories consulted during the session (aim ≥3 ratings).
-@@ -214,11 +214,11 @@ def _get_onboarding_guide(client_type: str = "generic") -> str:
-         "claude-code": f"""## Integration Guide: mcp-memory-service → Claude Code
- 
- ### On session start (REQUIRED):
--1. `get_bootstrap_profile(agent_ids=["claude-code"])` — incorporate returned rules.
-+1. `memory_bootstrap_profile(agent_ids=["claude-code"])` — incorporate returned rules.
- 2. `mistake_note_search(query="<task context>")` — check known pitfalls.
- 
- ### On session end (REQUIRED):
--1. `commit_session_legacy` with session summary, decisions, errors, corrections.
-+1. `memory_commit_session` with session summary, decisions, errors, corrections.
-    Server runs learning pipeline automatically after this call.
- 2. Rate memories used during the session.
- 
-@@ -231,11 +231,11 @@ def _get_onboarding_guide(client_type: str = "generic") -> str:
-         guide = f"""## Integration Guide: mcp-memory-service
- 
- ### On session start (REQUIRED):
--1. `get_bootstrap_profile(agent_ids=["your_agent_id"])` — follow returned rules.
-+1. `memory_bootstrap_profile(agent_ids=["your_agent_id"])` — follow returned rules.
- 2. `mistake_note_search(query="<task context>")` — check known pitfalls.
- 
- ### On session end (REQUIRED):
--1. `commit_session_legacy` with: session_id, agent_id, task_summary, outcome,
-+1. `memory_commit_session` with: session_id, agent_id, task_summary, outcome,
-    decisions, errors, user_corrections. Triggers server-side learning.
- 2. Rate memories consulted (≥3 ratings per session).
- 
-@@ -2151,7 +2151,7 @@ async def handle_memory_harvest(self, arguments: dict) -> List[types.TextContent
-             ]
-         }
- 
--        # §9: auto_commit — bridge harvest candidates to commit_session_legacy
-+        # §9: auto_commit — bridge harvest candidates to memory_commit_session
-         auto_commit = arguments.get("auto_commit", False)
-         # Single shared precedence (RFC #1100 + spec-agent-id-streamable R2):
-         # explicit arg > request header > MCP_AGENT_ID env > metadata, with the
-@@ -2166,7 +2166,7 @@ async def handle_memory_harvest(self, arguments: dict) -> List[types.TextContent
-             for r in results:
-                 if not r.candidates:
-                     continue
--                # Map candidates to commit_session_legacy fields
-+                # Map candidates to memory_commit_session fields
-                 decisions = [
-                     {"decision": c.content[:500], "reason": "harvested"}
-                     for c in r.candidates if c.memory_type == "decision"
-@@ -2521,7 +2521,7 @@ async def handle_commit_session_legacy(self, arguments: dict) -> List[types.Text
-             }))]
- 
-         except Exception as e:
--            logger.error("Error in commit_session_legacy: %s", _sanitize_log_value(e))
-+            logger.error("Error in memory_commit_session: %s", _sanitize_log_value(e))
-             return [types.TextContent(type="text", text=json.dumps({"status": "error", "message": str(e)}))]
- 
-     async def _post_commit_learning(self, session_id: str, agent_id: str):
-@@ -2864,7 +2864,7 @@ def _dedup_and_rank(entries: list) -> list:
-       
-```
-
-**File**: `src/mcp_memory_service/tools/registry.py` (modified, +43/-9)
-```diff
-@@ -30,7 +30,11 @@ class ToolDef:
- TOOL_REGISTRY: list[ToolDef] = [
-     ToolDef(
-         name="memory_store",
--        description="""Store new information with optional tags.
-+        description="""Store one new memory (a fact, decision, note) with optional tags.
-+
-+Use this for a single piece of information you already have as text. For a whole
-+multi-turn conversation use memory_store_session, for files on disk memory_ingest,
-+and for the structured summary at the end of a session memory_commit_session.
- 
-                     Accepts two tag formats in metadata:
-                     - Array: ["tag1", "tag2"]
-@@ -123,6 +127,9 @@ class ToolDef:
-         name="memory_store_session",
-         description="""Store a full conversation session as a single memory unit.
- 
-+This keeps the raw turns. To record what was learned in a session (decisions,
-+errors, corrections) use memory_commit_session instead.
-+
- Use this instead of memory_store when you want to preserve the full context
- of a multi-turn conversation. All turns are stored together, making session-level
- retrieval more reliable than storing individual turns separately.
-@@ -190,6 +197,10 @@ class ToolDef:
-         name="memory_search",
-         description="""Search memories with flexible modes and filters. Primary tool for finding stored information.
- 
-+Start here for any question about stored content. Use memory_list to browse or page
-+without a query, memory_explore for an entity-level overview of a topic, and
-+memory_graph to follow associations from a memory you already have the hash of.
-+
- USE THIS WHEN:
- - User asks "what do you remember about X", "recall", "find memories"
- - Looking for past decisions, preferences, context from previous sessions
-@@ -780,6 +791,9 @@ class ToolDef:
-         name="memory_ingest",
-         description="""Ingest documents or directories into memory database.
- 
-+Reads files from disk and stores them as chunks. For text you already hold in the
-+conversation use memory_store; for Claude Code session transcripts use memory_harvest.
-+
- USE THIS WHEN:
- - User wants to import a document (PDF, TXT, MD, JSON)
- - Need to batch import a directory of documents
-@@ -865,6 +879,10 @@ class ToolDef:
-         name="memory_harvest",
-         description="""Extract learnings from Claude Code session transcripts.
- 
-+The server reads the transcript files itself and picks the candidates. If you can
-+summarise the session yourself, call memory_commit_session instead; use this as the
-+fallback, or to mine past sessions. For other documents use memory_ingest.
-+
- USE THIS WHEN:
- - End of session — auto-capture decisions, bugs, conventions, learnings
- - User asks to "harvest" or "extract learnings" from sessions
-@@ -947,7 +965,7 @@ class ToolDef:
-                 "auto_commit": {
-                     "type": "boolean",
-                     "default": False,
--                    "description": "Bridge harvested candidates to commit_session_legacy (feeds bootstrap profile)",
-+                    "description": "Bridge harvested candidates to memory_commit_session (feeds bootstrap profile)",
-                 },
-                 "agent_id": {
-                     "type": "string",
-@@ -1025,6 +1043,10 @@ class ToolDef:
-         name="memory_graph",
-         description="""Memory association graph operations - explore connections between memories.
- 
-+Works on relationships, starting from a memory hash or an entity name. To find
-+memories by content use memory_search; for a topic overview built from entities use
-+memory_explore, then memory_detail for one entity.
-+
- ACTIONS:
- - connected: Find memories connected via associations (BFS traversal)
- - path: Find shortest path between two memories
-@@ -1233,7 +1255,7 @@ class ToolDef:
-         annotations={"destructiveHint": True},
-     ),
-     ToolDef(
--        name="get_quarantined_memories",
-+        name="memory_quarantine_list",
-         description="""List memories that have been quarantined due to contradicting active beliefs. Use to review flagged memories.""",
-         input_schema={
-             "type": "object",
-@@ -1248,7 +1270,7 @@ class ToolDef:
-         annotations={"readOnlyHint": True},
-     ),
-     ToolDef(
--        name="unquarantine_memory",
-+        name="memory_quarantine_release",
-         description="""Release a memory from quarantine. Use when a quarantined memory is valid (e.g., the contradicted belief was wrong).""",
-         input_schema={
-             "type": "object",
-@@ -1263,8 +1285,13 @@ class ToolDef:
-         annotations={"readOnlyHint": False},
-     ),
-     ToolDef(
--        name="commit_session_legacy",
--        description="""Record end-of-session learnings from an ephemeral agent. Stores decisions, errors, corrections as structured observations.""",
-+        name="memory_commit_session",
-+        description="""Record end-of-session learnings from an ephemeral agent. Stores decisions, errors, corrections as structured observations.
-+
-+Call this once when a session
-```
-
-**File**: `src/mcp_memory_service/tools/routing.py` (modified, +6/-6)
-```diff
-@@ -41,11 +41,11 @@ def _handler(module: str, func: str) -> tuple[str, str]:
-     "mistake_note_search": _handler("mistake_notes", "handle_mistake_note_search"),
-     "mistake_note_update": _handler("mistake_notes", "handle_mistake_note_update"),
-     "mistake_note_delete": _handler("mistake_notes", "handle_mistake_note_delete"),
--    "get_quarantined_memories": ("__self__", "handle_get_quarantined_memories"),
--    "unquarantine_memory": ("__self__", "handle_unquarantine_memory"),
--    "commit_session_legacy": ("__self__", "handle_commit_session_legacy"),
--    "get_bootstrap_profile": ("__self__", "handle_get_bootstrap_profile"),
--    "get_onboarding_guide": ("__self__", "handle_get_onboarding_guide"),
-+    "memory_quarantine_list": ("__self__", "handle_get_quarantined_memories"),
-+    "memory_quarantine_release": ("__self__", "handle_unquarantine_memory"),
-+    "memory_commit_session": ("__self__", "handle_commit_session_legacy"),
-+    "memory_bootstrap_profile": ("__self__", "handle_get_bootstrap_profile"),
-+    "memory_onboarding_guide": ("__self__", "handle_get_onboarding_guide"),
-     "memory_distill": ("__self__", "handle_memory_distill"),
- }
- 
-@@ -92,7 +92,7 @@ def resolve_handler(name: str) -> Callable | tuple | None:
-         _cache[name] = entry
-         return entry
- 
--    import importlib
-+    import importlib  # inline import: only needed when a handler is first resolved
-     mod = importlib.import_module(module_path)
-     handler = getattr(mod, func_name, None)
-     if handler is not None:
-```
-
-**File**: `tests/test_anti_hallucination.py` (modified, +6/-6)
-```diff
-@@ -257,12 +257,12 @@ def test_tool_annotations_readonlyhint():
-     """Verify readOnlyHint is correct for quarantine tools by checking registry source."""
-     from mcp_memory_service.tools.registry import TOOL_REGISTRY
- 
--    # get_quarantined_memories should have readOnlyHint=True
--    get_tool = next(t for t in TOOL_REGISTRY if t.name == "get_quarantined_memories")
-+    # memory_quarantine_list should have readOnlyHint=True
-+    get_tool = next(t for t in TOOL_REGISTRY if t.name == "memory_quarantine_list")
-     assert get_tool.annotations.get("readOnlyHint") is True
- 
--    # unquarantine_memory should have readOnlyHint=False
--    unq_tool = next(t for t in TOOL_REGISTRY if t.name == "unquarantine_memory")
-+    # memory_quarantine_release should have readOnlyHint=False
-+    unq_tool = next(t for t in TOOL_REGISTRY if t.name == "memory_quarantine_release")
-     assert unq_tool.annotations.get("readOnlyHint") is False
- 
- 
-@@ -271,8 +271,8 @@ async def test_quarantine_threshold_from_env():
-     """CONTRADICTION_THRESHOLD reads from env."""
-     with patch.dict(os.environ, {"MCP_QUARANTINE_CONTRADICTION_THRESHOLD": "5"}):
-         # Re-import to pick up env
--        import importlib
--        import mcp_memory_service.consolidation.quarantine as q_mod
-+        import importlib  # inline import: reload under a patched environment
-+        import mcp_memory_service.consolidation.quarantine as q_mod  # inline import: reloaded below
-         importlib.reload(q_mod)
-         assert q_mod.CONTRADICTION_THRESHOLD == 5
- 
-```
-
----
-
-### Incident Patch 3: `fa42e9bf` (2026-11-17)
-**Commit Message**: fix(ingestion): stop character chunker emitting a duplicate trailing chunk (#2050)
-
-* fix(ingestion): stop character chunker emitting a duplicate trailing chunk
-
-_chunk_by_characters stepped back by the overlap after the chunk that
-reached the end of the text, so it appended a final chunk fully contained
-in the previous one. Used by the CSV and JSON loaders.
-
-* chore(changelog): name fragment after PR number
+* refactor(api): consolidate temp cleanup helper and tighten single-upload leak test (#2041)
 
 ---------
 
 Co-authored-by: Henry Krupp <[REDACTED_EMAIL]>
 
-**File**: `changelog.d/2050.fixed.md` (added, +2/-0)
+**File**: `changelog.d/2041.fixed.md` (added, +2/-0)
 ```diff
 @@ -0,0 +1,2 @@
-+- **Character-based chunking no longer emits a duplicate trailing chunk.**
-+  `TextChunker._chunk_by_characters` (used by the CSV and JSON loaders) stepped back by the overlap even after a chunk had reached the end of the text, so it appended one extra chunk that was entirely contained in the previous one and stored the same tail twice. The loop now stops once a chunk reaches the end of the text.
++- **Document upload API swallowed 400 validation errors as 500 and leaked temporary files (#2041).**
++  `POST /api/documents/upload` and `POST /api/documents/batch-upload` caught generic `Exception` without re-raising `HTTPException`, transforming client validation errors into 500 Internal Server Errors. Batch uploads that failed validation also orphaned temporary files created for preceding files. `HTTPException` is now re-raised and temporary files are cleaned up on failure.
 ```
 
-**File**: `src/mcp_memory_service/ingestion/chunker.py` (modified, +5/-0)
+**File**: `src/mcp_memory_service/web/api/documents.py` (modified, +25/-2)
 ```diff
-@@ -220,6 +220,11 @@ def _chunk_by_characters(self, text: str) -> List[str]:
-             if len(chunk) >= self.strategy.min_chunk_size:
-                 chunks.append(chunk)
-             
-+            # This chunk reached the end of the text. Stepping back by the
-+            # overlap would emit a trailing chunk already contained in this one.
-+            if end >= len(text):
-+                break
-+            
-             # Move start position with overlap
-             start = max(start + 1, end - self.strategy.chunk_overlap)
+@@ -146,6 +146,18 @@ class UploadStatus(BaseModel):
+     created_at: datetime
+     completed_at: Optional[datetime] = None
+ 
++
++def _cleanup_temp_files(*paths: Optional[str]) -> None:
++    """Best-effort removal of temporary files during upload error handling."""
++    for path in paths:
++        if path:
++            try:
++                os.unlink(path)
++            except OSError:
++                # File already deleted or unreachable; ignore cleanup errors
++                pass
++
++
+ @router.post("/upload", response_model=Dict[str, Any])
+ async def upload_document(
+     background_tasks: BackgroundTasks,
+@@ -172,6 +184,7 @@ async def upload_document(
+     Uses FastAPI BackgroundTasks for proper async processing.
+     """
+     logger.info("Document upload endpoint called")
++    temp_path = None
+     try:
+         # Read file content
+         file_content = await file.read()
+@@ -235,7 +248,13 @@ async def upload_document(
+             "message": f"Document {file.filename} queued for processing"
+         }
+ 
++    except HTTPException:
++        # File creation currently happens after validation, but guard against
++        # leaks if validation or file creation order changes in the future.
++        _cleanup_temp_files(temp_path)
++        raise
+     except Exception:
++        _cleanup_temp_files(temp_path)
+         logger.exception("Upload error")
+         raise HTTPException(status_code=500, detail="Internal server error")
+ 
+@@ -262,6 +281,7 @@ async def batch_upload_documents(
+     Returns:
+         Batch upload session information
+     """
++    temp_paths = []
+     try:
+         if not files:
+             raise HTTPException(status_code=400, detail="No files provided")
+@@ -271,7 +291,6 @@ async def batch_upload_documents(
+ 
+         # Create batch upload session
+         batch_id = str(uuid.uuid4())
+-        temp_paths = []
+ 
+         # Validate and save all files
+         for file in files:
+@@ -292,9 +311,9 @@ async def batch_upload_documents(
+                 suffix=safe_ext
+             )
+             temp_path = temp_file.name
++            temp_paths.append((file.filename, temp_path, len(content)))
+             with temp_file:
+                 temp_file.write(content)
+-            temp_paths.append((file.filename, temp_path, len(content)))
+ 
+         # Calculate total file size for the batch
+         total_file_size = sum(file_size for _, _, file_size in temp_paths)
+@@ -326,7 +345,11 @@ async def batch_upload_documents(
+             "message": f"Batch of {len(files)} documents queued for processing"
+         }
+ 
++    except HTTPException:
++        _cleanup_temp_files(*(p for _, p, _ in temp_paths))
++        raise
+     except Exception:
++        _cleanup_temp_files(*(p for _, p, _ in temp_paths))
+         logger.exception("Batch upload error")
+         raise HTTPException(status_code=500, detail="Internal server error")
+ 
+```
+
+**File**: `tests/web/api/test_documents_upload_errors.py` (added, +174/-0)
+```diff
+@@ -0,0 +1,174 @@
++# Copyright 2024 Heinrich Krupp
++#
++# Licensed under the Apache License, Version 2.0 (the "License");
++# you may not use this file except in compliance with the License.
++# You may obtain a copy of the License at
++#
++#     http://www.apache.org/licenses/LICENSE-2.0
++#
++# Unless required by applicable law or agreed to in writing, software
++# distributed under the License is distributed on an "AS IS" BASIS,
++# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++# See the License for the specific language governing permissions and
++# limitations under the License.
++
++"""Regression coverage for document upload validation error propagation and temp file cleanup (Issue #2041)."""
++
++import io
++import os
++from unittest.mock import MagicMock
++import pytest
++from fastapi import HTTPException, UploadFile
++
++from mcp_memory_service.web.api import documents
++
++
++def _make_upload_file(filename: str, content: bytes = b"sample text") -> UploadFile:
++    return UploadFile(filename=filename, file=io.BytesIO(content))
++
++
++@pytest.mark.asyncio
++async def test_upload_document_unsupported_file_type_raises_400():
++    """Verify single file upload with unsupported extension raises 400 Bad Request, not 500."""
++    bad_file = _make_upload_file("program.exe")
++    bg_tasks = MagicMock()
++
++    with pytest.raises(HTTPException) as exc_info:
++        await documents.upload_document(
++            background_tasks=bg_tasks,
++            file=bad_file,
++            tags="test",
++            user=None,
++        )
++
++    assert exc_info.value.status_code == 400
++    assert "Unsupported file type: .exe" in exc_info.value.detail
++    bg_tasks.add_task.assert_not_called()
++
++
++@pytest.mark.asyncio
++async def test_upload_document_tag_too_long_raises_400():
++    """Verify tag exceeding MAX_TAG_LENGTH raises 400 Bad Request, not 500."""
++    good_file = _make_upload_file("notes.txt")
++    long_tag = "x" * 105
++    bg_tasks = MagicMock()
++
++    with pytest.raises(HTTPException) as exc_info:
++        await documents.upload_document(
++            background_tasks=bg_tasks,
++            file=good_file,
++            tags=long_tag,
++            user=None,
++        )
++
++    assert exc_info.value.status_code == 400
++    assert "exceeds maximum length" in exc_info.value.detail
++    bg_tasks.add_task.assert_not_called()
++
++
++@pytest.mark.asyncio
++async def test_upload_document_cleans_up_temp_file_on_error(monkeypatch):
++    """Verify temp file is unlinked if an unexpected exception occurs before background queueing."""
++    good_file = _make_upload_file("doc.txt", b"hello world")
++    bg_tasks = MagicMock()
++
++    created_temp_files = []
++    real_named_temp = documents.tempfile.NamedTemporaryFile
++
++    def tracking_temp_file(*args, **kwargs):
++        tf = real_named_temp(*args, **kwargs)
++        created_temp_files.append(tf.name)
++        return tf
++
++    monkeypatch.setattr(documents.tempfile, "NamedTemporaryFile", tracking_temp_file)
++
++    def boom(*args, **kwargs):
++        raise RuntimeError("queue failed")
++
++    monkeypatch.setattr(documents.UploadStatus, "__init__", boom)
++
++    with pytest.raises(HTTPException) as exc_info:
++        await documents.upload_document(
++            background_tasks=bg_tasks,
++            file=good_file,
++            tags="valid",
++            user=None,
++        )
++
++    assert exc_info.value.status_code == 500
++    assert len(created_temp_files) == 1
++    assert not os.path.exists(created_temp_files[0]), f"Temp file {created_temp_files[0]} was leaked on disk!"
++
++
++@pytest.mark.asyncio
++async def test_batch_upload_empty_files_raises_400():
++    """Verify empty file list raises 400 Bad Request, not 500."""
++    bg_tasks = MagicMock()
++
++    with pytest.raises(HTTPException) as exc_info:
++        await documents.batch_upload_documents(
++            background_tasks=bg_tasks,
++            files=[],
++            tags="test",
++            user=None,
++        )
++
++    assert exc_info.value.status_code == 400
++    assert exc_info.value.detail == "No files provided"
++    bg_tasks.add_task.assert_not_called()
++
++
++@pytest.mark.asyncio
++async def test_batch_upload_tag_too_long_raises_400():
++    """Verify tag exceeding MAX_TAG_LENGTH in batch upload raises 400 Bad Request, not 500."""
++    file1 = _make_upload_file("doc1.txt")
++    long_tag = "y" * 105
++    bg_tasks = MagicMock()
++
++    with pytest.raises(HTTPException) as exc_info:
++        await documents.batch_upload_documents(
++            background_tasks=bg_tasks,
++            files=[file1],
++            tags=long_tag,
++            user=None,
++        )
++
++    assert exc_info.value.status_code == 400
++    assert "exceeds maximum length" in exc_info.value.detail
++    bg_tasks.add_task.assert_not_called()
++
++
++@pytest.mark.asyncio
++async def test_batch_upload_unsupported_file_cleans_up_partial_temp_files(monkeypatch):
++    """Verify batch upload unlinks previously written temporary files when a subsequent file fails validatio
+```
+
+---
+
+### Incident Patch 2: `4c0ae9f5` (2026-11-18)
+**Commit Message**: fix(cloudflare): set get_by_hash_is_store_scoped and close the write gaps first (#1915) (#2054)
+
+* fix(cloudflare): set get_by_hash_is_store_scoped and close two write gaps (#1915)
+
+Part 3 of 3 of #1915. With the read paths (#1923) and the hybrid sync
+queue (#1924) honoring store, CloudflareStorage now sets
+get_by_hash_is_store_scoped, so a per-store credential gets the
+store-confined tools for its store on Cloudflare as on sqlite-vec.
+
+Before the flip, two write paths still reached another store:
+
+- store() staged the Vectorize vector and R2 body, both keyed by the
+  content hash, before D1 rejected a duplicate row, so storing content
+  that lived in another store overwrote that memory's vector metadata.
+  It now refuses an exact duplicate before staging, with sqlite-vec's
+  message.
+- storing content whose row is a tombstone in another store purged that
+  tombstone and moved the hash into the caller's store. That is refused
+  now; re-storing content deleted from the same store still works.
+
+DELETE /api/memories/{hash}?store= also passes the store to the delete
+itself on backends that confine, not only to the lookup before it.
+
+Assisted-by: Claude Code / claude-opus-5-5
+Machine: M
+
+**File**: `changelog.d/1915.fixed.md` (added, +13/-0)
+```diff
+@@ -0,0 +1,13 @@
++- **Per-store credentials work on Cloudflare (closes #1915, tonydzi).** With the read paths
++  and the hybrid sync queue confined to `store`, `CloudflareStorage` now sets
++  `get_by_hash_is_store_scoped`, so a `read:<s>`/`write:<s>` credential is granted
++  `memory_search`, `memory_list` and the other store-confined tools for that store, as on
++  sqlite-vec, instead of being refused. Three gaps closed first. `store()` staged the Vectorize
++  vector and R2 body, both keyed by content hash alone, before D1 rejected a duplicate row,
++  so storing content that already lived in another store overwrote that memory's vector
++  metadata; it now refuses an exact duplicate before staging, with the same message as
++  sqlite-vec. Storing content whose D1 row is a tombstone in another store purged that
++  tombstone and moved the hash into the caller's store; that is refused now too, with the same message, while
++  re-storing content deleted from the same store works as before.
++  `DELETE /api/memories/{hash}?store=` checked the hash in the store but then
++  deleted unscoped; the delete itself now carries the store on backends that confine.
+```
+
+**File**: `src/mcp_memory_service/storage/cloudflare.py` (modified, +61/-5)
+```diff
+@@ -199,9 +199,10 @@ def _tag_match_params(tag: str) -> List[str]:
+ class CloudflareStorage(MemoryStorage):
+     """Cloudflare-based storage backend using Vectorize, D1, and R2."""
+ 
+-    # Hash-addressed operations (#1878) and the read paths (#1915) honor
+-    # ``store``, but get_by_hash_is_store_scoped stays False until the hybrid
+-    # sync queue carries ``store`` to Cloudflare too (#1915 points 2 and 3).
++    # Hash-addressed operations (#1878), the read paths and the hybrid sync
++    # queue (#1915) honor ``store``, so per-store credentials can be granted the
++    # store-confined tools here as on sqlite-vec.
++    get_by_hash_is_store_scoped = True
+ 
+     # Content length limit from configuration
+     _MAX_CONTENT_LENGTH = CLOUDFLARE_MAX_CONTENT_LENGTH
+@@ -736,6 +737,9 @@ async def _store_memory(
+         )
+         r2_key = None
+         try:
++            refusal = await self._live_duplicate_refusal(memory, store, restore_id)
++            if refusal:
++                return False, refusal
+             content_size, r2_key, stored_content = await self._stage_memory_artifacts(
+                 memory, vector_id, restore_id
+             )
+@@ -779,6 +783,57 @@ async def _store_memory(
+             logger.error("Failed to store memory %s: %s", _sanitize_log_value(memory.content_hash), _sanitize_log_value(e))
+             return False, f"Storage failed: {str(e)}"
+ 
++    @staticmethod
++    def _exact_duplicate_message(existing_store: str, requested_store: str) -> str:
++        """Describe an exact-hash conflict the way sqlite-vec does."""
++        message = "Duplicate content detected (exact match)"
++        if existing_store != requested_store:
++            return f"{message}; already exists in store {existing_store!r}"
++        return message
++
++    async def _live_duplicate_refusal(
++        self, memory: Memory, store: str, restore_id: Optional[str]
++    ) -> Optional[str]:
++        """Refuse an exact duplicate before staging anything.
++
++        The vector id and R2 key of a normal store are the content hash, so
++        staging first would overwrite the live memory's vector metadata, in
++        whichever store it lives, before D1 rejected the row. A restore stages
++        under its own keys and is checked against the tombstone instead.
++        """
++        if restore_id is not None:
++            return None
++        existing = await self._existing_row_of(memory.content_hash)
++        if existing is None:
++            return None
++        existing_store, deleted = existing
++        if deleted and existing_store == store:
++            return None  # re-storing content deleted from this store
++        # A tombstone in another store is refused too: re-storing would purge
++        # it and move the hash into this store. Same message as a live
++        # duplicate, so the caller does not learn whether it was deleted.
++        return self._exact_duplicate_message(existing_store, store)
++
++    async def _existing_row_of(self, content_hash: str) -> Optional[Tuple[str, bool]]:
++        """Return ``(store, is_tombstone)`` of the D1 row for ``content_hash``, if any.
++
++        ``content_hash`` is unique across stores in D1, as in sqlite-vec.
++        """
++        response = await self._retry_request(
++            "POST", f"{self.d1_url}/query",
++            json={
++                "sql": "SELECT store, deleted_at FROM memories WHERE content_hash = ? LIMIT 1",
++                "params": [content_hash],
++            },
++        )
++        result = response.json()
++        if not result.get("success"):
++            raise ValueError(f"Failed to check for an existing memory in D1: {result}")
++        rows = result.get("result", [{}])[0].get("results") or []
++        if not rows:
++            return None
++        return rows[0].get("store") or "default", rows[0].get("deleted_at") is not None
++
+     async def _cleanup_staged_restore_artifacts(
+         self, vector_id: Optional[str], r2_key: Optional[str]
+     ) -> None:
+@@ -2458,12 +2513,12 @@ async def recall(self, query: Optional[str] = None, n_results: int = 5, start_ti
+ 
+             # Build D1 query for time-based retrieval
+             if time_where:
+-                sql = f"SELECT * FROM memories WHERE {time_where}{store_sql} ORDER BY created_at DESC LIMIT ?"
++                sql = f"SELECT * FROM memories WHERE deleted_at IS NULL AND {time_where}{store_sql} ORDER BY created_at DESC LIMIT ?"
+                 params.extend(store_params)
+                 params.append(n_results)
+             else:
+                 # No time filters, get most recent
+-                sql = f"SELECT * FROM memories WHERE 1 = 1{store_sql} ORDER BY created_at DESC LIMIT ?"
++                sql = f"SELECT * FROM memories WHERE deleted_at IS NULL{store_sql} ORDER BY created_at DESC LIMIT ?"
+                 params = [*store_params, n_results]
+ 
+             payload = {"sql": sql, "params": params}
+@@ -2826,6 +2881,7 @@ async def get_memories_by_time_range(
+         end_time: float,
+ 
+```
+
+**File**: `src/mcp_memory_service/web/api/memories.py` (modified, +8/-1)
+```diff
+@@ -496,7 +496,14 @@ async def delete_memory(
+         if not existing:
+             raise HTTPException(status_code=404, detail="Memory not found")
+ 
+-        success, message = await storage.delete(content_hash)
++        # Confine the delete itself, not only the lookup before it. Backends
++        # that cannot confine do not accept a named ``store`` yet.
++        scope = (
++            {"store": resolve_store(store)}
++            if getattr(storage, "get_by_hash_is_store_scoped", False)
++            else {}
++        )
++        success, message = await storage.delete(content_hash, **scope)
          
+         # Broadcast SSE event for memory deletion
+         try:
 ```
 
-**File**: `tests/unit/test_chunker_character_tail.py` (added, +39/-0)
+**File**: `tests/unit/test_cloudflare_storage.py` (modified, +4/-2)
 ```diff
-@@ -0,0 +1,39 @@
-+"""Character-based chunking must not emit a trailing chunk that duplicates the previous one."""
+@@ -163,8 +163,10 @@ async def test_store_memory_small_content(self, cloudflare_storage, sample_memor
+             # Mock Vectorize storage (bypasses HTTP client) - must be AsyncMock for async method
+             with patch.object(cloudflare_storage, '_store_vectorize_vector', new_callable=AsyncMock):
+                 with patch.object(cloudflare_storage, '_retry_request') as mock_request:
+-                    # Need 6 responses: tombstone purge + memory insert + 2 calls per tag
++                    # Need 7 responses: duplicate check + tombstone purge + memory insert
++                    # + 2 calls per tag
+                     mock_request.side_effect = [
++                        mock_d1_response,  # Check for a live row with this hash
+                         mock_d1_response,  # Purge matching tombstone
+                         mock_d1_response,  # Insert memory
+                         mock_d1_response,  # Insert tag "test"
+@@ -179,7 +181,7 @@ async def test_store_memory_small_content(self, cloudflare_storage, sample_memor
+                     assert "successfully" in message.lower()
+ 
+                     # Verify all D1 calls were made
+-                    assert mock_request.call_count == 6
++                    assert mock_request.call_count == 7
+     
+     @pytest.mark.asyncio
+     async def test_store_memory_large_content(self, cloudflare_storage):
+```
+
+**File**: `tests/unit/test_cloudflare_store_scope.py` (modified, +19/-0)
+```diff
+@@ -429,3 +429,22 @@ async def test_count_excludes_soft_deleted_memories(cloudflare_storage, d1, two_
+         await cloudflare_storage.get_all_memories(store="b")
+     )
+     assert await cloudflare_storage.count_all_memories(store="all") == 1
++
++
++@pytest.mark.asyncio
++async def test_time_only_recall_skips_soft_deleted_memories(cloudflare_storage, d1, two_stores):
++    d1.db.execute("UPDATE memories SET deleted_at = 1.0 WHERE store = 'b'")
++    d1.db.commit()
++
++    assert _hashes(await cloudflare_storage.recall(None, store="b")) == set()
++    assert _hashes(await cloudflare_storage.recall(None, start_timestamp=0, store="b")) == set()
++    assert _hashes(await cloudflare_storage.recall(None, store="a")) == {two_stores["a"]}
++
++
++@pytest.mark.asyncio
++async def test_time_range_accepts_exclude_pending_as_base_search_passes_it(cloudflare_storage, two_stores):
++    # base.py's time-only search calls get_memories_by_time_range(..., exclude_pending=True, store=...)
++    a = two_stores["a"]
++    window = (0.0, 4102444800.0)
++
++    assert _hashes(await cloudflare_storage.get_memories_by_time_range(*window, exclude_pending=True, store="a")) == {a}
+```
+
+**File**: `tests/web/api/test_cloudflare_store_grant.py` (added, +212/-0)
+```diff
+@@ -0,0 +1,212 @@
++"""A per-store credential on Cloudflare stays inside its store (#1915).
++
++With ``get_by_hash_is_store_scoped`` set on Cloudflare, a ``read:a`` credential
++is granted ``memory_search`` and ``memory_list`` for ``store="a"``. These tests
++drive the real /mcp shim against ``CloudflareStorage`` with D1 replaced by an
++in-memory SQLite database and Vectorize answering every query with every stored
++vector, so only the store predicate keeps another store's memories out.
++"""
++
++import sqlite3
++from unittest.mock import AsyncMock, Mock
 +
 +import pytest
++import pytest_asyncio
++from fastapi.testclient import TestClient
 +
-+from mcp_memory_service.ingestion.chunker import ChunkingStrategy, TextChunker
++from mcp_memory_service.models.memory import Memory
++from mcp_memory_service.storage.cloudflare import CloudflareStorage
++from mcp_memory_service.utils.hashing import generate_content_hash
++from mcp_memory_service.web.dependencies import set_storage
++from tests.unit.test_cloudflare_store_scope import _FakeD1
++
++TEXT_A = "store a keeps the zebra rollout notes"
++TEXT_B = "store b keeps the zebra incident notes"
 +
 +
-+def _char_chunker() -> TextChunker:
-+    return TextChunker(
-+        ChunkingStrategy(
-+            chunk_size=1000,
-+            chunk_overlap=200,
-+            respect_paragraph_boundaries=False,
-+            respect_sentence_boundaries=False,
-+        )
++class _FakeCloudflare(_FakeD1):
++    """D1 on SQLite; Vectorize returns every stored vector for any query."""
++
++    def __init__(self, storage):
++        super().__init__(storage)
++        # TestClient runs the app on another thread than the fixture.
++        self.db.close()
++        self.db = sqlite3.connect(":memory:", check_same_thread=False)
++        self.db.row_factory = sqlite3.Row
++        self.db.execute("PRAGMA foreign_keys = ON")
++        self.vector_upserts = []
++
++    async def __call__(self, method, url, **kwargs):
++        if url == f"{self.storage.vectorize_url}/query":
++            ids = [r[0] for r in self.db.execute("SELECT vector_id FROM memories").fetchall()]
++            matches = [{"id": vector_id, "score": 0.9} for vector_id in ids]
++            return Mock(json=Mock(return_value={"success": True, "result": {"matches": matches}}))
++        return await super().__call__(method, url, **kwargs)
++
++
++@pytest.fixture
++def cloudflare_storage():
++    return CloudflareStorage(
++        api_token="test-token",
++        account_id="test-account",
++        vectorize_index="test-index",
++        d1_database_id="test-db",
++        r2_bucket="test-bucket",
++        embedding_model="@cf/baai/bge-base-en-v1.5",
 +    )
 +
 +
-+def _unique_text(length: int) -> str:
-+    return " ".join(f"w{i:05d}" for i in range(length))[:length]
++@pytest_asyncio.fixture
++async def cloudflare(cloudflare_storage, monkeypatch):
++    monkeypatch.setenv("MCP_SEMANTIC_DEDUP_ENABLED", "false")
++    fake = _FakeCloudflare(cloudflare_storage)
++    monkeypatch.setattr(cloudflare_storage, "_retry_request", fake)
++    upsert = AsyncMock()
++    monkeypatch.setattr(cloudflare_storage, "_store_vectorize_vector", upsert)
++    for name in ("_delete_vectorize_vector", "_store_r2_content", "_delete_r2_content"):
++        monkeypatch.setattr(cloudflare_storage, name, AsyncMock())
++    monkeypatch.setattr(cloudflare_storage, "_generate_embedding", AsyncMock(return_value=[0.1]))
++    await cloudflare_storage._initialize_d1_schema()
++    for text, store in ((TEXT_A, "a"), (TEXT_B, "b")):
++        memory = Memory(content=text, content_hash=generate_content_hash(text), tags=["zebra"])
++        ok, msg = await cloudflare_storage.store(memory, store=store)
++        assert ok, msg
++    fake.vector_upserts = upsert
++    yield fake
++    fake.db.close()
 +
 +
-+@pytest.mark.parametrize("length", [1700, 2500, 3400])
-+def test_final_chunk_is_not_contained_in_previous_chunk(length):
-+    chunks = [text for text, _ in _char_chunker().chunk_text(_unique_text(length))]
++@pytest.fixture
++def make_client(cloudflare_storage, cloudflare, monkeypatch):
++    from mcp_memory_service.web.app import app
++    from mcp_memory_service.web.oauth import middleware
++    from mcp_memory_service.web.api import mcp
++    from mcp_memory_service.web import dependencies
 +
-+    assert len(chunks) >= 2
-+    for previous, current in zip(chunks, chunks[1:]):
-+        assert current not in previous
++    monkeypatch.setattr(middleware, "API_KEY", None)
++    monkeypatch.setattr(middleware, "OAUTH_ENABLED", False)
++    monkeypatch.setattr(middleware, "ALLOW_ANONYMOUS_ACCESS", True)
++    monkeypatch.setattr(dependencies, "_storage", None)
++    set_storage(cloudflare_storage)
++    monkeypatch.setattr(mcp, "_memory_server", None)
++
++    def _make(scope):
++        async def mock_user():
++            return middleware.AuthenticationResult(
++                authenticated=True, client_id="c", scope=scope, auth_method="test",
++            )
++
++        app.dependency_overrides[middleware.get_current_user] = mock_user
++        app.dependency_overrides[middleware.require_read_access] = mock_user
++        return TestClient(app)
++
++    yield _make
++    app.dependency_overrides.clear()
 +
 +
-+@pytest.mark.parametrize("length", [1100, 1500, 1700, 2500])
-+def test_chunks_cover_the_whole_text_and_metadata_is_consistent(length):
-+    text = _unique_text(length)
-+    result = _char_chunker().chunk_text(text)
++def _call(client, name, arguments):
++    return client.post("/mcp", json={
++        "jsonrpc": "2.0", "id": 1, "method": "tools/call",
++        "params": {"name": name, "arguments": arguments},
++    })
 +
-+    assert text.rstrip().split()[-1] in result[-1][0]
-+    assert [meta["chunk_index"] for _, meta in result] == list(range(len(result)))
-+    assert all(meta["total_chunks"] == len(result) for _, meta in result)
++
++def _text(response):
++    assert response.status_code == 200, response.text
++    body = response.json()
++    assert "error" not in body, body
++    return " ".join(part.get("text", "") for part in body["result"]["content"])
++
++
++def test_cloudflare_confines_get_by_hash_to_store():
++    assert CloudflareStorage.get_by_hash_is_store_scoped is True
++
++
++@pytest.mark.integration
++def test_read_grant_searche
+```
+
+---
+
+### Incident Patch 3: `a5b29978` (2026-11-18)
+**Commit Message**: fix(onnx): enable tokenizer truncation for Hub models and replace vec0 rows cleanly (#2073) (#2074)
+
+* fix(onnx): enable tokenizer truncation for Hub models and replace vec0 rows cleanly (#2073)
+
+* fix(onnx): add changelog fragment, split max-length helpers, and batch regen savepoints (#2073)
+
+---------
+
+Co-authored-by: Salyvn <[REDACTED_EMAIL]>
+
+**File**: `changelog.d/2074.fixed.md` (added, +2/-0)
+```diff
+@@ -0,0 +1,2 @@
++- **Hub ONNX models failed past 512 tokens and embedding regeneration aborted on existing rows (#2073, #2074, @SalyyS1).**
++  Pre-exported Hugging Face Hub models such as `intfloat/multilingual-e5-small` ship `tokenizer.json` with `"truncation": null`, so inputs longer than the position embedding table crashed ONNX Runtime with `BroadcastIterator::Init`, and `scripts/maintenance/regenerate_embeddings.py` used `INSERT OR REPLACE` on the `sqlite-vec` `vec0` virtual table, raising `UNIQUE constraint failed` whenever a row already had a vector. `_init_model` now enables truncation when unset using the model's usable sequence length (accounting for RoBERTa/XLM-RoBERTa/MPNet padding offsets and ignoring Hugging Face `model_max_length` sentinels), and `regenerate_embeddings.py` replaces vectors via per-row savepoints inside 10-row batch transactions.
+```
+
+**File**: `scripts/maintenance/regenerate_embeddings.py` (modified, +24/-6)
+```diff
+@@ -110,12 +110,30 @@ async def _regenerate_all(actual_storage, memories):
+                 continue
+ 
+             # Insert embedding into the memory's own store partition. memory_embeddings is
+-            # a vec0 table with `store` as a partition key (#1521); writing without it lands
+-            # the vector in the wrong partition, invisible to store-scoped KNN search.
+-            actual_storage.conn.execute(
+-                'INSERT OR REPLACE INTO memory_embeddings(rowid, content_embedding, store) VALUES (?, ?, ?)',
+-                (result[0], serialize_float32(embedding), mem['store'])
+-            )
++            # a vec0 virtual table with `store` as a partition key (#1521): vec0 does not
++            # support SQLite's `INSERT OR REPLACE` conflict resolution and raises
++            # `UNIQUE constraint failed on memory_embeddings primary key` when a rowid
++            # already exists (#2073). Open an outer batch transaction so `RELEASE SAVEPOINT`
++            # does not auto-commit each row individually, while keeping a per-row savepoint
++            # so a failed insert restores the deleted vector cleanly.
++            rowid = result[0]
++            if not getattr(actual_storage.conn, 'in_transaction', False):
++                actual_storage.conn.execute('BEGIN')
++            actual_storage.conn.execute('SAVEPOINT regen_emb')
++            try:
++                actual_storage.conn.execute(
++                    'DELETE FROM memory_embeddings WHERE rowid = ?',
++                    (rowid,),
++                )
++                actual_storage.conn.execute(
++                    'INSERT INTO memory_embeddings(rowid, content_embedding, store) VALUES (?, ?, ?)',
++                    (rowid, serialize_float32(embedding), mem['store']),
++                )
++                actual_storage.conn.execute('RELEASE SAVEPOINT regen_emb')
++            except Exception:
++                actual_storage.conn.execute('ROLLBACK TO SAVEPOINT regen_emb')
++                actual_storage.conn.execute('RELEASE SAVEPOINT regen_emb')
++                raise
+ 
+             success_count += 1
+ 
+```
+
+**File**: `src/mcp_memory_service/embeddings/onnx_embeddings.py` (modified, +86/-1)
+```diff
+@@ -5,6 +5,7 @@
+ """
+ 
+ import hashlib
++import json
+ import logging
+ import os
+ import re
+@@ -262,6 +263,79 @@ def _find_onnx_file(self):
+                 return cand
+         return None
+ 
++    # Model families whose position embedding table reserves indices
++    # 0..pad_token_id (e.g. XLM-RoBERTa / RoBERTa / MPNet have
++    # max_position_embeddings=514 and pad_token_id=1 -> 512 usable tokens).
++    _OFFSET_POSITION_MODEL_TYPES = frozenset({
++        "xlm-roberta",
++        "roberta",
++        "camembert",
++        "mpnet",
++        "bart",
++        "mbart",
++        "longformer",
++    })
++    _MAX_REASONABLE_SEQ_LEN = 1_000_000
++    _DEFAULT_MAX_SEQ_LEN = 512
++
++    @staticmethod
++    def _read_json_dict(path: Path) -> Optional[dict]:
++        """Read a JSON object from disk, returning None if absent or malformed."""
++        if not path.exists():
++            return None
++        try:
++            data = json.loads(path.read_text(encoding="utf-8"))
++        except Exception as exc:
++            logger.debug(
++                "Could not parse %s: %s",
++                _sanitize_log_value(path),
++                _sanitize_log_value(exc),
++            )
++            return None
++        return data if isinstance(data, dict) else None
++
++    @classmethod
++    def _bounded_seq_len(cls, value: object) -> Optional[int]:
++        """Return value when it is a positive integer within reasonable sequence bounds."""
++        if isinstance(value, bool) or not isinstance(value, int):
++            return None
++        if 0 < value <= cls._MAX_REASONABLE_SEQ_LEN:
++            return value
++        return None
++
++    @classmethod
++    def _usable_config_max_length(cls, cfg: dict) -> Optional[int]:
++        """Extract usable sequence length from config.json, subtracting RoBERTa/MPNet pad offset."""
++        max_pos = cls._bounded_seq_len(cfg.get("max_position_embeddings"))
++        if max_pos is None:
++            return None
++        model_type = str(cfg.get("model_type") or "").lower()
++        if model_type not in cls._OFFSET_POSITION_MODEL_TYPES:
++            return max_pos
++        pad_id = cfg.get("pad_token_id", 1)
++        if not isinstance(pad_id, bool) and isinstance(pad_id, int) and 0 <= pad_id < max_pos - 1:
++            return max_pos - (pad_id + 1)
++        return max_pos
++
++    @classmethod
++    def _resolve_max_length(cls, model_dir: Path) -> int:
++        """Derive safe tokenizer truncation length from config.json / tokenizer_config.json."""
++        candidates: List[int] = []
++
++        cfg = cls._read_json_dict(model_dir / "config.json")
++        if cfg is not None:
++            cfg_max = cls._usable_config_max_length(cfg)
++            if cfg_max is not None:
++                candidates.append(cfg_max)
++
++        tok_cfg = cls._read_json_dict(model_dir / "tokenizer_config.json")
++        if tok_cfg is not None:
++            tok_max = cls._bounded_seq_len(tok_cfg.get("model_max_length"))
++            if tok_max is not None:
++                candidates.append(tok_max)
++
++        return min(candidates) if candidates else cls._DEFAULT_MAX_SEQ_LEN
++
+     def _init_model(self):
+         """Initialize ONNX model and tokenizer."""
+         model_path = self._resolve_model_path()
+@@ -286,8 +360,19 @@ def _init_model(self):
+             providers=self._preferred_providers
+         )
+         
+-        # Initialize tokenizer
++        # Initialize tokenizer. Many Hugging Face Hub repos (e.g.
++        # intfloat/multilingual-e5-small) ship tokenizer.json with
++        # "truncation": null, causing inputs longer than max_position_embeddings
++        # to fail inside ONNX Runtime's position-embedding broadcast (#2073).
+         self._tokenizer = Tokenizer.from_file(str(tokenizer_path))
++        if self._tokenizer.truncation is None:
++            max_len = self._resolve_max_length(tokenizer_path.parent)
++            self._tokenizer.enable_truncation(max_length=max_len)
++            logger.info(
++                "Enabled ONNX tokenizer truncation at max_length=%s for '%s'",
++                _sanitize_log_value(max_len),
++                _sanitize_log_value(self.model_name),
++            )
+         
+         # Get model info
+         self.embedding_dimension = self._model.get_outputs()[0].shape[-1]
+```
+
+**File**: `tests/test_onnx_custom_model.py` (modified, +99/-0)
+```diff
+@@ -136,3 +136,102 @@ def test_default_model_name_never_validated(monkeypatch):
+     m = _make_without_io(monkeypatch, "all-MiniLM-L6-v2")
+     assert m._is_default_model is True
+ 
++
++def test_resolve_max_length_xlm_roberta_and_bert(tmp_path):
++    """_resolve_max_length accounts for RoBERTa/XLM-R padding offset (#2073)."""
++    import json
++    from mcp_memory_service.embeddings.onnx_embeddings import ONNXEmbeddingModel
++
++    # 1. No config files -> 512 fallback
++    assert ONNXEmbeddingModel._resolve_max_length(tmp_path) == 512
++
++    # 2. XLM-RoBERTa (e.g. intfloat/multilingual-e5-small): 514 - (1 + 1) == 512
++    #    even when tokenizer_config.json uses HF's VERY_LARGE_INTEGER sentinel.
++    (tmp_path / "config.json").write_text(json.dumps({
++        "model_type": "xlm-roberta",
++        "max_position_embeddings": 514,
++        "pad_token_id": 1,
++    }))
++    (tmp_path / "tokenizer_config.json").write_text(json.dumps({
++        "model_max_length": 1000000000000000019884624838656,
++    }))
++    assert ONNXEmbeddingModel._resolve_max_length(tmp_path) == 512
++
++    # 3. Long-context XLM-RoBERTa (e.g. bge-m3): 8194 - 2 == 8192
++    (tmp_path / "config.json").write_text(json.dumps({
++        "model_type": "xlm-roberta",
++        "max_position_embeddings": 8194,
++        "pad_token_id": 1,
++    }))
++    assert ONNXEmbeddingModel._resolve_max_length(tmp_path) == 8192
++
++    # 4. BERT model with tighter tokenizer_config model_max_length=256
++    (tmp_path / "config.json").write_text(json.dumps({
++        "model_type": "bert",
++        "max_position_embeddings": 512,
++        "pad_token_id": 0,
++    }))
++    (tmp_path / "tokenizer_config.json").write_text(json.dumps({
++        "model_max_length": 256,
++    }))
++    assert ONNXEmbeddingModel._resolve_max_length(tmp_path) == 256
++
++
++def test_init_model_enables_truncation_when_tokenizer_truncation_is_null(monkeypatch, tmp_path):
++    """Hub tokenizers without built-in truncation get truncated to model limit (#2073)."""
++    import json
++    from tokenizers import Tokenizer
++    from tokenizers.models import WordLevel
++    from tokenizers.pre_tokenizers import Whitespace
++    from mcp_memory_service.embeddings import onnx_embeddings as mod
++
++    vocab = {"[UNK]": 0, "[PAD]": 1, "hello": 2, "world": 3}
++    tok = Tokenizer(WordLevel(vocab=vocab, unk_token="[UNK]"))
++    tok.pre_tokenizer = Whitespace()
++    assert tok.truncation is None
++
++    model_dir = tmp_path / "multilingual-e5-small"
++    model_dir.mkdir()
++    (model_dir / "model.onnx").write_bytes(b"stub-onnx")
++    tok.save(str(model_dir / "tokenizer.json"))
++    (model_dir / "config.json").write_text(json.dumps({
++        "model_type": "xlm-roberta",
++        "max_position_embeddings": 514,
++        "pad_token_id": 1,
++    }))
++
++    class _StubIO:
++        def __init__(self, name, shape=None):
++            self.name = name
++            self.shape = shape or [1, 384]
++
++    class _StubSession:
++        def __init__(self, path, providers=None):
++            self.path = path
++
++        def get_outputs(self):
++            return [_StubIO("last_hidden_state", [1, 512, 384])]
++
++        def get_inputs(self):
++            return [_StubIO("input_ids"), _StubIO("attention_mask")]
++
++    monkeypatch.setattr(mod.ort, "InferenceSession", _StubSession)
++    monkeypatch.setattr(mod.ONNXEmbeddingModel, "_download_model_if_needed", lambda self: None)
++
++    orig_init = mod.ONNXEmbeddingModel._init_model
++
++    def _patched_init(self):
++        self._model_dir = model_dir
++        orig_init(self)
++
++    monkeypatch.setattr(mod.ONNXEmbeddingModel, "_init_model", _patched_init)
++
++    instance = mod.ONNXEmbeddingModel(model_name="multilingual-e5-small")
++    assert instance._tokenizer.truncation is not None
++    assert instance._tokenizer.truncation["max_length"] == 512
++
++    long_text = " ".join(["hello"] * 700)
++    encoded = instance._tokenizer.encode(long_text)
++    assert len(encoded.ids) == 512
++
++
+```
+
+**File**: `tests/unit/test_onnx_truncation_and_regen.py` (added, +303/-0)
+```diff
+@@ -0,0 +1,303 @@
++"""Unit tests for ONNX Hub tokenizer truncation and embedding regeneration (#2073)."""
++
++import asyncio
++import importlib
++import json
++import sqlite3
++import struct
++import sys
++import types
++from pathlib import Path
++
++
++def _import_onnx_embeddings_with_stubs(monkeypatch):
++    """Import onnx_embeddings even in minimal unit-test environments without numpy."""
++    if "numpy" not in sys.modules:
++        try:
++            import numpy  # noqa: F401
++        except ImportError:
++            fake_np = types.ModuleType("numpy")
++            fake_np.ndarray = object
++            monkeypatch.setitem(sys.modules, "numpy", fake_np)
++    mod_name = "mcp_memory_service.embeddings.onnx_embeddings"
++    if mod_name in sys.modules:
++        return importlib.reload(sys.modules[mod_name])
++    return importlib.import_module(mod_name)
++
++
++def _load_regenerate_module(monkeypatch):
++    """Import scripts/maintenance/regenerate_embeddings.py with lightweight storage/config stubs."""
++    try:
++        import sqlite_vec  # noqa: F401
++    except ImportError:
++        fake_sqlite_vec = types.ModuleType("sqlite_vec")
++        fake_sqlite_vec.serialize_float32 = lambda vec: struct.pack(f"{len(vec)}f", *vec)
++        monkeypatch.setitem(sys.modules, "sqlite_vec", fake_sqlite_vec)
++
++    fake_factory = types.ModuleType("mcp_memory_service.storage.factory")
++    fake_factory.create_storage_instance = None
++    monkeypatch.setitem(sys.modules, "mcp_memory_service.storage.factory", fake_factory)
++
++    fake_cfg = types.ModuleType("mcp_memory_service.config")
++    fake_cfg.SQLITE_VEC_PATH = ":memory:"
++    monkeypatch.setitem(sys.modules, "mcp_memory_service.config", fake_cfg)
++
++    repo_root = Path(__file__).resolve().parents[2]
++    monkeypatch.syspath_prepend(str(repo_root / "scripts" / "maintenance"))
++    if "regenerate_embeddings" in sys.modules:
++        return importlib.reload(sys.modules["regenerate_embeddings"])
++    return importlib.import_module("regenerate_embeddings")
++
++
++def test_resolve_max_length_handles_offset_and_sentinel(monkeypatch, tmp_path: Path):
++    mod = _import_onnx_embeddings_with_stubs(monkeypatch)
++    cls = mod.ONNXEmbeddingModel
++
++    # Default when neither config.json nor tokenizer_config.json exists.
++    assert cls._resolve_max_length(tmp_path) == 512
++
++    # XLM-RoBERTa (intfloat/multilingual-e5-small): 514 - (pad_token_id=1 + 1) = 512,
++    # ignoring Hugging Face's VERY_LARGE_INTEGER sentinel in tokenizer_config.json.
++    (tmp_path / "config.json").write_text(
++        json.dumps({"model_type": "xlm-roberta", "max_position_embeddings": 514, "pad_token_id": 1}),
++        encoding="utf-8",
++    )
++    (tmp_path / "tokenizer_config.json").write_text(
++        json.dumps({"model_max_length": 1000000000000000019884624838656}),
++        encoding="utf-8",
++    )
++    assert cls._resolve_max_length(tmp_path) == 512
++
++    # MPNet (all-mpnet-base-v2): 514 - 2 = 512.
++    (tmp_path / "config.json").write_text(
++        json.dumps({"model_type": "mpnet", "max_position_embeddings": 514, "pad_token_id": 1}),
++        encoding="utf-8",
++    )
++    assert cls._resolve_max_length(tmp_path) == 512
++
++    # BGE-M3 long-context XLM-RoBERTa: 8194 - 2 = 8192.
++    (tmp_path / "config.json").write_text(
++        json.dumps({"model_type": "xlm-roberta", "max_position_embeddings": 8194, "pad_token_id": 1}),
++        encoding="utf-8",
++    )
++    assert cls._resolve_max_length(tmp_path) == 8192
++
++    # BERT with explicit stricter tokenizer_config.json limit (256 < 512).
++    (tmp_path / "config.json").write_text(
++        json.dumps({"model_type": "bert", "max_position_embeddings": 512, "pad_token_id": 0}),
++        encoding="utf-8",
++    )
++    (tmp_path / "tokenizer_config.json").write_text(
++        json.dumps({"model_max_length": 256}),
++        encoding="utf-8",
++    )
++    assert cls._resolve_max_length(tmp_path) == 256
++
++
++def test_init_model_enables_truncation_only_when_null(monkeypatch, tmp_path: Path):
++    mod = _import_onnx_embeddings_with_stubs(monkeypatch)
++
++    model_dir = tmp_path / "e5"
++    model_dir.mkdir()
++    (model_dir / "model.onnx").write_bytes(b"stub")
++    (model_dir / "tokenizer.json").write_text("{}", encoding="utf-8")
++    (model_dir / "config.json").write_text(
++        json.dumps({"model_type": "xlm-roberta", "max_position_embeddings": 514, "pad_token_id": 1}),
++        encoding="utf-8",
++    )
++
++    class _StubTokenizer:
++        def __init__(self, initial_truncation):
++            self.truncation = initial_truncation
++            self.enabled_with = None
++
++        def enable_truncation(self, max_length):
++            self.enabled_with = max_length
++            self.truncation = {"max_length": max_length}
++
++    class _StubIO:
++        def __init__(self, name, shape=None):
++            self.name = name
++            self.shape = shape or [1, 384]
++
++    class _StubSession:
++        def __init__(self, *_a, **_kw):
++            pass
++
++        def get_outputs(
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #2069** (2026-11-17): fix(ci): keep maintainer prose out of the claim history (@Goldloli)
-- **PR #2066** (2026-11-17): fix(dashboard): do not cover the page during document uploads (#2009) (@jeej3000)
-- **PR #2064** (2026-11-17): docs(contributing): decide repeated unclaimed PRs, and say when assignment has to wait (@doobidoo)
-- **PR #2063** (2026-11-17): fix(dashboard): keep long-operation failures on the status island (@OnlineBunker)
-- **PR #2055** (2026-11-17): docs(remote): point to a hosted inspector for checking a remote endpoint (@doobidoo)
-- **PR #2052** (2026-11-17): refactor(tools)!: rename five tools to the memory_* prefix, sharpen overlapping descriptions (@doobidoo)
+- **PR #2076** (2026-11-18): docs(contributing): block an account that keeps opening unclaimed PRs after a close (@doobidoo)
+- **PR #2075** (closed): fix(cloudflare): exclude tombstones from D1 timestamp queries (#2059) (@bfs2021)
+- **PR #2074** (2026-11-18): fix(onnx): enable tokenizer truncation for Hub models and replace vec0 rows cleanly (#2073) (@SalyyS1)
+- **PR #2072** (2026-11-18): chore(deps): bump the uv group with 9 updates (@dependabot[bot])
+- **PR #2071** (2026-11-18): --adapt-min-class: stray-label classes sit the balancing out; default flips to oversample (@Yoel-qin)
+- **PR #2070** (2026-11-18): feat(consolidation): report consolidation progress over SSE (#2011) (@massimiliano1991)
 
 ---
 
@@ -3616,26 +3986,22 @@ Co-authored-by: Henry Krupp <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. dashboard): do not cover the page during document uploads
+## X. fix(api): preserve 400 validation errors and clean up temporary files on upload 
 
 **RULE**:
-When implementing operations in `changelog.d/2009.fixed.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in doobidoo/mcp-memory-service. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `changelog.d/2041.fixed.md`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in doobidoo/mcp-memory-service. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ed74a81e`: dashboard): do not cover the page during document uploads. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `cc58ab35`: fix(api): preserve 400 validation errors and clean up temporary files on upload failure. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog.d/2009.fixed.md`.
+Subsystems managing Python data structures, boundary deserialization, API parsing, or resource lifecycles matching `changelog.d/2041.fixed.md`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```python
 // Verified production-grade fix pattern:
-- **Starting a document upload no longer covers the dashboard with the loading overlay (#2009).**
-  `handleDocumentUpload()` blocked the whole page with `setLoading(true)` although the
-  status island already reports imports. It now reports the transfer to the island as a
-  busy "Documents" source, disables the upload button while the request runs and ignores
-  a second trigger. The overlay stays on the other `setLoading` call sites, which the
-  island does not report.
+- **Document upload API swallowed 400 validation errors as 500 and leaked temporary files (#2041).**
+  `POST /api/documents/upload` and `POST /api/documents/batch-upload` caught generic `Exception` without re-raising `HTTPException`, transforming client validation errors into 500 Internal Server Errors. Batch uploads that failed validation also orphaned temporary files created for preceding files. `HTTPException` is now re-raised and temporary files are cleaned up on failure.
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -3645,7 +4011,7 @@ Subsystems managing Python data structures, boundary deserialization, API parsin
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ed74a81e` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `cc58ab35` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-18T16:49:28.178Z",
+  "last_updated": "2026-11-18T17:01:55.711Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -890,14 +890,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-sentence-transformers-paraphrase-multilingual-minilm-l12-v2",
-      "content_hash": "4d49da5c404baf9b4a4c46a93df234f4c532be15d559cab70c37006f84921e20",
-      "verified_at": "2026-11-18T07:38:53.950Z",
+      "content_hash": "450d54a6e9dcb68943d9916cf3464c2049b863477e6f00be396bcc184cc9e3f4",
+      "verified_at": "2026-11-18T17:01:40.141Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T07:38:53.950Z"
+      "last_updated": "2026-11-18T17:01:40.141Z"
     },
     "google-bert/bert-base-uncased": {
       "repository": "google-bert/bert-base-uncased",
@@ -5046,14 +5046,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-zama-ai-tfhe-rs",
-      "content_hash": "58e2276eeb83e870e99b98c8c14fe092002aa7d7dda2f0a3de648528c1fe141f",
-      "verified_at": "2026-11-18T12:51:04.107Z",
+      "content_hash": "1f812a45f823227f9c1a0a729b4c1c91dcabdfc5d50f548aa478f86fe54851c6",
+      "verified_at": "2026-11-18T17:01:55.711Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T12:51:04.107Z"
+      "last_updated": "2026-11-18T17:01:55.711Z"
     },
     "doobidoo/mcp-memory-service": {
       "repository": "doobidoo/mcp-memory-service",
@@ -5061,14 +5061,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-doobidoo-mcp-memory-service",
-      "content_hash": "1e33487a7cafd402d054956179a42de2ea523cf27fcb08a4b5742a889c633cd7",
-      "verified_at": "2026-11-18T01:38:42.471Z",
+      "content_hash": "dca1e9bc0b76fdfb601c19ac74b2b52235fe3af9d32fe922968e0a28631811cc",
+      "verified_at": "2026-11-18T17:01:52.881Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T01:38:42.471Z"
+      "last_updated": "2026-11-18T17:01:52.881Z"
     },
     "21st-dev/magic-mcp": {
       "repository": "21st-dev/magic-mcp",
@@ -5481,14 +5481,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-peerdb-io-peerdb",
-      "content_hash": "a107ca5aa8c11730ee72b27e9bbb98b77b014ada035e2e9e5e73e984de2986bb",
-      "verified_at": "2026-11-18T02:42:42.894Z",
+      "content_hash": "234286e4cec9e3feb13b81d1f13118eef1bc2741961f4c93d2657efe5dd9f653",
+      "verified_at": "2026-11-18T17:01:47.554Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T02:42:42.894Z"
+      "last_updated": "2026-11-18T17:01:47.554Z"
     },
     "tailscale/tailscale": {
       "repository": "tailscale/tailscale",

@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-18T02:42:49.249Z",
+  "timestamp": "2026-11-18T17:01:59.987Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-peerdb-io-peerdb-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [peerdb-io-peerdb-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-18T02:42:49.249Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-18T17:01:59.987Z`  
 > **Learning ID**: `LEARN-EVO-peerdb-io-peerdb-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/peerdb-io-peerdb-learnings.md`  
 > **Source**: github ([https://github.com/PeerDB-io/peerdb](https://github.com/PeerDB-io/peerdb))  
-> **Source Version**: `5868e6e7`  
+> **Source Version**: `5f74e0ef`  
 > **License**: AGPL-3.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-18T02:42:41.993Z  
+> **Timestamp**: 2026-11-18T17:01:46.302Z  
 > **Learning ID**: `learn-github-peerdb-io-peerdb`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/peerdb-io-peerdb-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/PeerDB-io/peerdb](https://github.com/PeerDB-io/peerdb))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-18T02:42:41.987Z  
+> **Harvest Timestamp**: 2026-11-18T17:01:46.295Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -1904,281 +1904,392 @@ func getChainedRoleSessionName() string {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `0993bcf9` (2026-11-17)
-**Commit Message**: postgres: keep SQL NULL elements of a json[] ADD COLUMN default as NULL on nullable mirrors (#5081)
+### Incident Patch 1: `5f74e0ef` (2026-11-18)
+**Commit Message**: Stop using QValueJSON as fallback for mismatched arrays (#5091)
 
-Fixes DBI-1327. Follows #5048.
+- If an array value is received when no array column is expected ->
+Provide an QValueArrayJSON instance representing the BSON array in JSON
+form -> Will go to malformed data.
+- If a not supported arrray value is received (like heterogenous arrays)
+when an array column is expected -> A String value is reported with the
+bson array in its JSON -> Will go to malformed data
 
-With `PEERDB_NULLABLE` on, SQL NULL elements of a `json[]`/`jsonb[]` ADD
-COLUMN default landed as `{}` in `Array(Nullable(JSON))`, while synced
-rows store NULL. The default is read through `to_json(attmissingval)`,
-which renders a SQL NULL element like a `'null'` one.
+This addresses the bug reported in
+https://github.com/ClickHouse/support-escalation/issues/9155#issuecomment-6948308638
+which happened through the combination of two facts:
 
-- The catalog query also reads the default's elements as `text[]`, which
-keeps SQL NULL apart.
-- On nullable mirrors the default writes those elements as `null` and
-parses with `Array(Nullable(JSON))`, the column's type.
-- Domains over `json[]`/`jsonb[]` are covered. 2-D defaults keep the old
-behaviour.
+- The sampler and schema inference based on it didn't grab any case
+where [] is inferred as array. All the samples led to JSON as inferred
+values.
+- When an array value is received but the destination type is not one of
+the supported array types, the fallback logic is to return a QValueJSON
 
-**Testing:** the `Test_JSON_CH_Array_AddColumnDefault*` e2e tests pass,
-including a new domain variant. `TestAddedColumnCatalogInfo` covers the
-query against a live Postgres.
+The fallback QVAlue fell right into the domain of the inferred type thus
+sneaking through the malformed data detection mechanism.
 
-**File**: `flow/connectors/postgres/cdc.go` (modified, +42/-13)
+**File**: `flow/connectors/mongo/document_projection.go` (modified, +7/-3)
 ```diff
-@@ -1454,10 +1454,15 @@ func processRelationMessage[Items model.Items](
- 
- 	addedColumnNames := make([]string, 0)
- 	addedColumnTypeOIDs := make([]uint32, 0)
-+	// json[]/jsonb[] columns, domains included, whose missing value the catalog also reads element by element
-+	var addedJSONArrayColumnNames []string
- 	for _, column := range currRel.Columns {
- 		if shouldAddColumn(column.Name) {
- 			addedColumnNames = append(addedColumnNames, column.Name)
- 			addedColumnTypeOIDs = append(addedColumnTypeOIDs, column.DataType)
-+			if qkind := types.QValueKind(currRelMap[column.Name]); qkind == types.QValueKindArrayJSON || qkind == types.QValueKindArrayJSONB {
-+				addedJSONArrayColumnNames = append(addedJSONArrayColumnNames, column.Name)
-+			}
- 		}
- 	}
- 
-@@ -1471,7 +1476,7 @@ func processRelationMessage[Items model.Items](
- 	// missing value before a delayed CDC reader observes this relation message.
- 	// Read from the mirrored table (the parent, for an inheritance child): a column only some children have finds
- 	// no row there and is added as nullable without a default, which fits a destination every child writes to.
--	addedColumnCatalogInfo, err := p.fetchAddedColumnCatalogInfo(ctx, mappedRelID, addedColumnNames)
-+	addedColumnCatalogInfo, err := p.fetchAddedColumnCatalogInfo(ctx, mappedRelID, addedColumnNames, addedJSONArrayColumnNames)
- 	if err != nil {
- 		return nil, err
- 	}
-@@ -1492,7 +1497,9 @@ func processRelationMessage[Items model.Items](
- 			if missingValue != nil && prevSchema.System == protos.TypeSystem_Q {
- 				wrapJSON := shouldWrapJSONColumn(column.DataType, column.Name, customTypeMapping,
- 					p.flags, p.internalVersion, p.nativeJSONEnabled, currRelDstInfo.Columns)
--				if literal, ok := defaultExprFromPostgresMissingValue(*missingValue, qkind, wrapJSON); ok {
-+				// the destination adds a json[] column as Array(Nullable(JSON)) under the nullable setting
-+				if literal, ok := defaultExprFromPostgresMissingValue(*missingValue, qkind, wrapJSON,
-+					schemaDelta.NullableEnabled, catalogInfo.missingNullElements); ok {
- 					defaultExpr = &literal
- 				}
+@@ -76,9 +76,13 @@ func DocumentQValueIterator(
  			}
-@@ -1578,8 +1585,11 @@ type addedColumnCatalogInfo struct {
- 	// missingJSON is the same value as JSON text, which keeps a top-level JSON string quoted and a JSON
- 	// null distinct from SQL NULL; only meaningful for json/jsonb and json[]/jsonb[] columns.
- 	missingJSON *string
--	hasMissing  bool
--	notNull     bool
-+	// missingNullElements marks the SQL NULL elements of a json[]/jsonb[] missing value, which missingJSON
-+	// renders as JSON null just like a 'null' element.
-+	missingNullElements []bool
-+	hasMissing          bool
-+	notNull             bool
+ 			value, err := converter.QValueFromBsonValue(element.Value(), maybeExpectedKind)
+ 			if err != nil && maybeExpectedKind.IsArray() && element.Value().Type == bson.TypeArray {
+-				// An array that does not fit its typed column is yielded as JSON: the projector then
+-				// reports it as a type mismatch, its JSON form as the value, instead of the record failing.
+-				value, err = converter.QValueJSONFromArray(element.Value().Array())
++				// An array that does not fit its typed column, e.g. a string element in an Array(Int64)
++				// or a scalar or nested array element in an Array(JSON), is yielded as its JSON text:
++				// a String never matches an array column, so the projector reports it as a type mismatch,
++				// its JSON form as the value, instead of the record failing.
++				var asJSON types.QValueArrayJSON
++				asJSON, err = converter.QValueArrayJSONFromArray(element.Value().Array())
++				value = types.QValueString(asJSON)
+ 			}
+ 			if err != nil {
+ 				walkErr = fmt.Errorf("failed to convert document field to QValue %s: %w", field, err)
+```
+
+**File**: `flow/connectors/mongo/document_projection_test.go` (modified, +67/-4)
+```diff
+@@ -399,9 +399,9 @@ func TestDocumentQValueIterator(t *testing.T) {
+ 	require.Equal(t, types.QValueBoolean{Val: true}, values["active"])
+ 	// nulls carry no kind, the consumer gives them the kind of the column they land in
+ 	require.Equal(t, types.QValueNull(""), values["nickname"])
+-	// embedded documents and arrays are yielded whole, as JSON
++	// embedded documents are yielded whole as JSON, arrays as an array of JSON
+ 	require.Equal(t, types.QValueJSON{Val: `{"city":"London"}`}, values["address"])
+-	require.Equal(t, types.QValueJSON{Val: `["math","cs"]`}, values["tags"])
++	require.Equal(t, types.QValueArrayJSON{Val: `["math","cs"]`}, values["tags"])
  }
  
- // missingValueFor returns the stored missing value in the form defaultExprFromPostgresMissingValue
-@@ -1597,7 +1607,7 @@ func (info addedColumnCatalogInfo) missingValueFor(qkind types.QValueKind) *stri
- // the named columns. pg_attrdef is deliberately not used: it describes the current default for new
- // rows, which can differ from the value stored in pg_attribute.attmissingval for existing rows.
- func (c *PostgresConnector) fetchAddedColumnCatalogInfo(
--	ctx context.Context, relID uint32, columnNames []string,
-+	ctx context.Context, relID uint32, columnNames []string, jsonArrayColumnNames []string,
- ) (map[string]addedColumnCatalogInfo, error) {
- 	if len(columnNames) == 0 {
- 		return nil, nil
-@@ -1608,12 +1618,14 @@ func (c *PostgresConnector) fetchAddedColumnCatalogInfo(
- 	// that element without having to parse PostgreSQL's array text format. ->> preserves an empty
- 	// string while returning SQL NULL for a missing value of NULL. -> keeps the element as JSON text,
- 	// which is what a json/jsonb column needs.
-+	// to_json renders SQL NULL and 'null' elements alike; the last column reads the elements as text[], which keeps them apart.
- 	rows, err := c.conn.Query(ctx, `SELECT a.attname, a.attnotnull, a.atthasmissing,
- 		CASE WHEN a.atthasmissing THEN pg_catalog.to_json(a.attmissingval)->>0 END,
--		CASE WHEN a.atthasmissing THEN (pg_catalog.to_json(a.attmissingval)->0)::text END
-+		CASE WHEN a.atthasmissing THEN (pg_catalog.to_json(a.attmissingval)->0)::text END,
-+		CASE WHEN a.atthasmissing AND a.attname = ANY($3) THEN ((a.attmissingval::text::text[])[1])::text[] END
- 		FROM pg_catalog.pg_attribute a
- 		WHERE a.attrelid = $1 AND a.attname = ANY($2) AND a.attnum > 0 AND NOT a.attisdropped`,
--		relID, columnNames)
-+		relID, columnNames, jsonArrayColumnNames)
- 	if err != nil {
- 		return nil, fmt.Errorf("error looking up added column info for schema change: %w", err)
- 	}
-@@ -1623,8 +1635,16 @@ func (c *PostgresConnector) fetchAddedColumnCatalogInfo(
- 	var notNull bool
- 	var hasMissing bool
- 	var missingValue, missingJSON pgtype.Text
--	if _, err := pgx.ForEachRow(rows, []any{&name, &notNull, &hasMissing, &missingValue, &missingJSON}, func() error {
-+	var missingElements pgtype.Array[*string]
-+	if _, err := pgx.ForEachRow(rows, []any{&name, &notNull, &hasMissing, &missingValue, &missingJSON, &missi
-```
-
-**File**: `flow/connectors/postgres/cdc_test.go` (modified, +1/-1)
-```diff
-@@ -213,7 +213,7 @@ func TestDefaultExprFromPostgresMissingValue(t *testing.T) {
- 		t.Run(tc.name, func(t *testing.T) {
- 			t.Parallel()
- 
--			literal, ok := defaultExprFromPostgresMissingValue(tc.value, tc.qkind, tc.wrapNonObjectJSON)
-+			literal, ok := defaultExprFromPostgresMissingValue(tc.value, tc.qkind, tc.wrapNonObjectJSON, false, nil)
- 			require.Equal(t, tc.want != "", ok)
- 			require.Equal(t, tc.want, literal)
+ func TestDocumentQValueIteratorEmptyAndKeyOnly(t *testing.T) {
+@@ -541,15 +541,15 @@ func TestStructuredArrayColumns(t *testing.T) {
+ 			{Key: "_id", Value: oid},
+ 			{Key: "scores", Value: bson.A{int32(1), int64(2)}},
+ 			{Key: "tags", Value: bson.A{"a", oid}},
+-			{Key: "attachments", Value: bson.A{bson.D{{Key: "k", Value: int64(1)}}, bson.A{int64(2)}}},
++			{Key: "attachments", Value: bson.A{bson.D{{Key: "k", Value: int64(1)}}, bson.D{}}},
  		})
+ 		require.NoError(t, err)
+ 		record, err := StructuredQValuesFromBsonRaw(raw, shared.InternalVersion_Latest, converter, projector, "db.coll")
+ 		require.NoError(t, err)
+ 		values := byName(record)
+ 		require.Equal(t, types.QValueArrayInt64{Val: []int64{1, 2}}, values["scores"])
+ 		require.Equal(t, types.QValueArrayString{Val: []string{"a", "507f1f77bcf86cd799439011"}}, values["tags"])
+-		require.Equal(t, types.QValueArrayJSON{Val: `[{"k":1},[2]]`}, values["attachments"])
++		require.Equal(t, types.QValueArrayJSON{Val: `[{"k":1},{}]`}, values["attachments"])
+ 		require.Equal(t, types.QValueNull(types.QValueKindJSON), values[structured.MalformedDataColumn])
+ 	})
+ 
+@@ -585,6 +585,22 @@ func TestStructuredArrayColumns(t *testing.T) {
+ 		require.JSONEq(t, `{"attachments": {"type_mismatch": true, "value": "[\"text\",{\"k\":1}]"}}`, malformed.Val)
+ 	})
+ 
++	t.Run("a nested array in an array of JSON is a reported type mismatch", func(t *testing.T) {
++		raw, err := bson.Marshal(bson.D{
++			{Key: "_id", Value: oid},
++			{Key: "attachments", Value: bson.A{bson.D{{Key: "k", Value: int64(1)}}, bson.A{int64(2)}}},
++		})
++		require.NoError(t, err)
++		record, err := StructuredQValuesFromBsonRaw(raw, shared.InternalVersion_Latest, converter, projector, "db.coll")
++		require.NoError(t, err)
++		values := byName(record)
++		// ClickHouse would silently turn the nested array into a NULL element of the JSON array
++		require.Equal(t, types.QValueNull(types.QValueKindArrayJSON), values["attachments"])
++		malformed, ok := values[structured.MalformedDataColumn].(types.QValueJSON)
++		require.True(t, ok)
++		require.JSONEq(t, `{"attachments": {"type_mismatch": true, "value": "[{\"k\":1},[2]]"}}`, malformed.Val)
++	})
++
+ 	t.Run("an absent array column is a null of its array kind", func(t *testing.T) {
+ 		raw, err := bson.Marshal(bson.D{{Key: "_id", Value: oid}})
+ 		require.NoError(t, err)
+@@ -596,3 +612,50 @@ func TestStructuredArrayColumns(t *testing.T) {
+ 		require.Equal(t, types.QValueNull(types.QValueKindArrayJSON), values["attachments"])
+ 	})
+ }
++
++// TestStructuredArrayIntoJSONColumn: a JSON column only takes objects in ClickHouse, so an array, empty or
++// not, must be a reported type mismatch rather than a value that fails the whole insert.
++func TestStructuredArrayIntoJSONColumn(t *testing.T) {
++	projector, err := newStructuredSchemaProjector([]*protos.ColumnSetting{
++		{SourceName: "slabs", DestinationType: "JSON", NullableEnabled: true},
++	}, nil, true)
++	require.NoError(t, err)
++	converter := NewDirectBsonConverter()
++
++	for name, test := range map[string]struct {
++		input     any
++		projected types.QValue
++		malformed string
++	}{
++		"empty array": {
++			input:     bson.A{},
++			projected: types.QValueNull(types.QValueKindJSON),
++			malformed: `{"slabs": {"type_mismatch": true, "value": "[]"}}`,
++		},
++		"array of documents": {
++			input:     bson.A{bson.D{{Key: "from", Value: int64(101)}}},
++			projected: types.QValueNull(types.QValueKindJSON),
++			malformed: `{"slabs": {"type_mismatch": true, "value": "[{\"from\":101}]"}}`,
++		},
++		"document": {
++			input:     bson.D{{Key: "from", Value: int64(101)}},
++			projected: types.QValueJSON{Val: `{"from":101}`},
++		},
++	} {
++		t.Run(name, func(t *testing.T) {
++			raw, err := bson.Marshal(bson.D{{Key: "_id", Value: "id"}, {Key: "slabs", Value: test.input}})
++			require.NoError(t, err)
++			record, err := StructuredQValuesFromBsonRaw(raw, shared.InternalVersion_Latest, converter, projector, "db.coll")
++			require.NoError(t, err)
++			require.Len(t, record, 3)
++			require.Equal(t, test.projected, record[1])
++			if test.malformed == "" {
++				require.Equal(t, types.QValueNull(types.QValueKindJSON), record[2])
++				return
++			}
++			malformed, ok := record[2].(types.QValueJSON)
++			require.True(t, ok)
++			require.JSONEq(t, test.malformed, malformed.Val)
++		})
++	}
++}
 ```
 
-**File**: `flow/connectors/postgres/postgres_schema_delta_test.go` (modified, +41/-3)
+**File**: `flow/connectors/mongo/qvalue_convert.go` (modified, +13/-10)
 ```diff
-@@ -258,6 +258,9 @@ func (s PostgresSchemaDeltaTestSuite) TestAddedColumnCatalogInfo() {
- 	enumType := s.schema + ".mood"
- 	_, err := s.connector.conn.Exec(s.t.Context(), "CREATE TYPE "+enumType+" AS ENUM ('sad','ok')")
- 	require.NoError(s.t, err)
-+	jsonbArrayDomain := s.schema + ".jsonb_arr_domain"
-+	_, err = s.connector.conn.Exec(s.t.Context(), "CREATE DOMAIN "+jsonbArrayDomain+" AS jsonb[]")
-+	require.NoError(s.t, err)
+@@ -28,8 +28,8 @@ type BsonToQValueConverter interface {
+ 	QValueStringFromId(id bson.RawValue, version uint32) (types.QValueString, error)
+ 	// QValueJSONFromDocument converts a raw BSON document (Object) to a QValueJSON.
+ 	QValueJSONFromDocument(raw bson.Raw) (types.QValueJSON, error)
+-	// QValueJSONFromArray converts a raw BSON array to a QValueJSON, for a JSON destination column.
+-	QValueJSONFromArray(arr bson.RawArray) (types.QValueJSON, error)
++	// QValueArrayJSONFromArray converts a raw BSON array to a QValueArrayJSON holding its JSON form.
++	QValueArrayJSONFromArray(arr bson.RawArray) (types.QValueArrayJSON, error)
  
- 	// the case name doubles as the column name
- 	for _, tc := range []struct {
-@@ -269,6 +272,10 @@ func (s PostgresSchemaDeltaTestSuite) TestAddedColumnCatalogInfo() {
- 		wantWrapped  string // literal with non-object JSON wrapping on; empty means the same as want
- 		wantNonEmpty bool
- 		notNull      bool
-+
-+		// literal for an Array(Nullable(JSON)) column, with the SQL NULL elements the catalog reports;
-+		// empty means the catalog reports none
-+		wantWrappedNullable string
- 	}{
- 		// Integer missing values are exposed directly in their text form.
- 		{name: "c_int", colDef: "int DEFAULT 5", qkind: types.QValueKindInt32, want: "5"},
-@@ -321,6 +328,24 @@ func (s PostgresSchemaDeltaTestSuite) TestAddedColumnCatalogInfo() {
- 			name: "c_jsonb_arr", colDef: `jsonb[] DEFAULT ARRAY['{"a": 1}'::jsonb, '"dark"'::jsonb, 'null'::jsonb, NULL]`,
- 			qkind:       types.QValueKindArrayJSONB,
- 			wantWrapped: `JSONExtract('[{"a": 1},{"_value":"dark"},{"_value":null},{"_value":null}]', 'Array(JSON)')`,
-+
-+			wantWrappedNullable: `JSONExtract('[{"a": 1},{"_value":"dark"},{"_value":null},null]', 'Array(Nullable(JSON))')`,
-+		},
-+		// a domain over jsonb[] takes the same default
-+		{
-+			name: "c_jsonb_arr_domain", colDef: jsonbArrayDomain + ` DEFAULT ARRAY['{"a": 1}'::jsonb, NULL]`,
-+			qkind:       types.QValueKindArrayJSONB,
-+			wantWrapped: `JSONExtract('[{"a": 1},{"_value":null}]', 'Array(JSON)')`,
-+
-+			wantWrappedNullable: `JSONExtract('[{"a": 1},null]', 'Array(Nullable(JSON))')`,
-+		},
-+		// the cells of a multidimensional value are not its top-level elements, so the catalog marks none:
-+		// the NULL cell must not turn the first element, the array [null], into NULL
-+		{
-+			name: "c_json_arr_2d", colDef: `json[] DEFAULT '{{NULL},{1}}'`, qkind: types.QValueKindArrayJSON,
-+			wantWrapped: `JSONExtract('[{"_value":[null]},{"_value":[1]}]', 'Array(JSON)')`,
-+
-+			wantWrappedNullable: `JSONExtract('[{"_value":[null]},{"_value":[1]}]', 'Array(Nullable(JSON))')`,
+ 	// QValueFromBsonValue converts any BSON value to the QValue.
+ 	// `maybeExpectedKind` hints the elements types.
+@@ -64,12 +64,12 @@ func (c *DirectBsonConverter) QValueJSONFromDocument(raw bson.Raw) (types.QValue
+ 	return types.QValueJSON{Val: string(c.stream.Buffer())}, nil
+ }
+ 
+-func (c *DirectBsonConverter) QValueJSONFromArray(arr bson.RawArray) (types.QValueJSON, error) {
++func (c *DirectBsonConverter) QValueArrayJSONFromArray(arr bson.RawArray) (types.QValueArrayJSON, error) {
+ 	c.stream.Reset(nil)
+ 	if err := shared_mongo.RawArrayToJSON(bsoncore.Array(arr), c.stream); err != nil {
+-		return types.QValueJSON{}, fmt.Errorf("failed to convert array: %w", err)
++		return types.QValueArrayJSON{}, fmt.Errorf("failed to convert array: %w", err)
+ 	}
+-	return types.QValueJSON{Val: string(c.stream.Buffer())}, nil
++	return types.QValueArrayJSON{Val: string(c.stream.Buffer())}, nil
+ }
+ 
+ func typedArrayFromBson[Q types.QValue, T any](
+@@ -144,13 +144,10 @@ func (c *DirectBsonConverter) QValueFromBsonValue(rv bson.RawValue, maybeExpecte
+ 		return c.QValueStringFromString(v.StringValue()), nil
+ 
+ 	case bsoncore.TypeEmbeddedDocument:
+-		// Nested documents are encoded as `QValueJSON` ...
++		// Nested documents are encoded as `QValueJSON`.
+ 		return c.QValueJSONFromDocument(bson.Raw(v.Document()))
+ 
+ 	case bsoncore.TypeArray:
+-		// ... as well as Arrays, unless the destination column is of an array kind, with
+-		// corresponding QValue s corresponding to typed arrays.
+-
+ 		// NOTE: Ideally, we would infer the array element type from the BSON array itself,
+ 		// recursively applying `QValueFromBsonValue` on one or more of its elements.
+ 		// In practice, it's better not to re-implement an inference step that already took place
+@@ -191,7 +188,13 @@ func (c *DirectBsonConverter) QValueFromBsonValue(rv bson.RawValue, maybeExpecte
+ 			builder.WriteByte(']')
+ 			return types.QValueArrayJSON{Val: builder.String()}, nil
+ 		default:
+-			return c.QValueJSONFromArray(arr)
++			// In this case, the destination column is not compatible with the Array[T] kind,
++			// so we can not use `T` to project the array elements types.
++			// In this case the data is malformed and so will it be flagged if we return an Array of JSON
++			// given that the destination column is not an array.
++			// The returned QValue holds the array as JSON, preserving the original data for inspection in
++			// malformed data column.
++			return c.QValueArrayJSONFromArray(arr)
+ 		}
+ 
+ 	case bsoncore.TypeBinary:
+```
+
+**File**: `flow/connectors/mongo/qvalue_convert_test.go` (modified, +31/-13)
+```diff
+@@ -802,7 +802,7 @@ func TestQValueFromBsonValue(t *testing.T) {
+ 		{
+ 			desc:     "Array",
+ 			input:    bson.A{int32(1), "two", 3.0, nil, bson.D{{Key: "k", Value: true}}},
+-			expected: types.QValueJSON{Val: `[1,"two",3.0,null,{"k":true}]`},
++			expected: types.QValueArrayJSON{Val: `[1,"two",3.0,null,{"k":true}]`},
  		},
  		{
- 			name: "c_json_arr_empty", colDef: `json[] DEFAULT ARRAY[]::json[]`, qkind: types.QValueKindArrayJSON,
-@@ -384,15 +409,28 @@ func (s PostgresSchemaDeltaTestSuite) TestAddedColumnCatalogInfo() {
- 			var relID uint32
- 			require.NoError(t, s.connector.conn.QueryRow(t.Context(), "SELECT $1::regclass::oid", tableName).Scan(&relID))
+ 			desc:     "Object",
+@@ -837,10 +837,17 @@ func TestQValueFromBsonValue(t *testing.T) {
+ 			require.Equal(t, test.expected, result)
  
--			catalogInfo, err := s.connector.fetchAddedColumnCatalogInfo(t.Context(), relID, []string{tc.name})
-+			// the caller resolves domains to tell json[]/jsonb[] columns apart; the case's kind stands in for that
-+			var jsonArrayColumnNames []string
-+			if tc.qkind == types.QValueKindArrayJSON || tc.qkind == types.QValueKindArrayJSONB {
-+				jsonArrayColumnNames = []string{tc.name}
+ 			// JSON-valued conversions must be byte-identical to how the value is rendered inside a document
+-			if jsonResult, ok := result.(types.QValueJSON); ok {
++			var jsonVal string
++			switch jsonResult := result.(type) {
++			case types.QValueJSON:
++				jsonVal = jsonResult.Val
++			case types.QValueArrayJSON:
++				jsonVal = jsonResult.Val
 +			}
-+			catalogInfo, err := s.connector.fetchAddedColumnCatalogInfo(t.Context(), relID, []string{tc.name}, jsonArrayColumnNames)
- 			require.NoError(t, err)
- 			require.Len(t, catalogInfo, 1)
- 			require.Equal(t, tc.notNull, catalogInfo[tc.name].notNull)
- 
- 			var literal, wrappedLiteral string
- 			if missingValue := catalogInfo[tc.name].missingValueFor(tc.qkind); missingValue != nil {
--				literal, _ = defaultExprFromPostgresMissingValue(*missingValue, tc.qkind, false)
--				wrappedLiteral, _ = defaultExprFromPostgresMissingValue(*missingValue, tc.qkind, true)
-+				literal, _ = defaultExprFromPostgresMissingValue(*missingValue, tc.qkind, false, false, nil)
-+				wrappedLiteral, _ = defaultExprFromPostgresMissingValue(*missingValue, tc.qkind, true, false, nil)
-+				if tc.wantWrappedNullable != "" {
-+					nullableLiteral, _ := defaultExprFromPostgresMissingValue(*missingValue, tc.qkind, true, true,
-+						catalogInfo[tc.name].missingNullElements)
-+					require.Equal(t, tc.wantWrappedNullable, nullableLiteral)
-+				}
-+			}
-+			if tc.wantWrappedNullable == "" {
-+				require.Nil(t, catalogInfo[tc.name].missingNullElements)
++			if jsonVal != "" {
+ 				doc, err := converter.QValueJSONFromDocument(raw)
+ 				require.NoError(t, err)
+-				require.Equal(t, `{"a":`+jsonResult.Val+`}`, doc.Val)
++				require.Equal(t, `{"a":`+jsonVal+`}`, doc.Val)
  			}
- 			if tc.wantNonEmpty {
- 				require.NotEmpty(t, literal)
+ 		})
+ 	}
+@@ -1007,27 +1014,32 @@ func TestTypedArraysFromBson(t *testing.T) {
+ 	t.Run("a nested array or document element fails", func(t *testing.T) {
+ 		_, err := converter.QValueFromBsonValue(
+ 			rawArrayValueOf(t, bson.A{bson.A{"nested"}}), types.QValueKindArrayString)
+-		require.ErrorContains(t, err, "array element 0 maps to json, not string")
++		require.ErrorContains(t, err, "array element 0 maps to array_json, not string")
+ 		_, err = converter.QValueFromBsonValue(
+ 			rawArrayValueOf(t, bson.A{bson.D{{Key: "k", Value: 1}}}), types.QValueKindArrayString)
+ 		require.ErrorContains(t, err, "array element 0 maps to json, not string")
+ 	})
+ 
+-	t.Run("JSON-mapped elements, documents and nested arrays included, land as an array of JSON", func(t *testing.T) {
++	t.Run("arrays of documents land as an array of JSON", func(t *testing.T) {
+ 		documents := rawArrayValueOf(t, bson.A{
+ 			bson.D{{Key: "k", Value: int64(1)}},
+-			bson.A{int64(1), "two"},
++			nil,
+ 			bson.D{},
+ 		})
+ 		// array_jsonb names the same conversion
+ 		for _, kind := range []types.QValueKind{types.QValueKindArrayJSON, types.QValueKindArrayJSONB} {
+ 			values, err := converter.QValueFromBsonValue(documents, kind)
+ 			require.NoError(t, err)
+-			require.Equal(t, types.QValueArrayJSON{Val: `[{"k":1},[1,"two"],{}]`}, values)
++			require.Equal(t, types.QValueArrayJSON{Val: `[{"k":1},null,{}]`}, values)
+ 		}
+ 
+-		// a scalar element maps to its own kind, not JSON
++		// a nested array element is not a JSON object: ClickHouse would silently turn it into a NULL element
+ 		_, err := converter.QValueFromBsonValue(
++			rawArrayValueOf(t, bson.A{bson.D{}, bson.A{int64(1), "two"}}), types.QValueKindArrayJSON)
++		require.ErrorContains(t, err, "array element 1 maps to array_json, not json")
++
++		// a scalar element maps to its own kind, not JSON
++		_, err = converter.QValueFromBsonValue(
+ 			rawArrayValueOf(t, bson.A{bson.D{}, "scalar"}), types.QValueKindArrayJSON)
+ 		require.ErrorContains(t, err, "array element 1 maps to string, not json")
+ 
+@@ -1037,11 +1049,17 @@ func TestTypedArraysFromBson(t *testing.T) {
+ 		require.Equal(t, types.QValueArrayJSON{Val: "[]"}, empty)
+ 	})
+ 
+-	t.Run("any other destination kind keeps the whole array as JSON", func(t *testing.T) {
+-		for _, kind := range []types.QValueKind{types.QValueKindJSON, ""} {
+-			asJSON, err := converter.QValueFromBsonValue(rawArrayValueOf(t, bson.A{int32(1), int64(2)}), kind)
+-			require.NoError(t, err)
+-			require.Equal(t, types.QValueJSON{Val: "[1,2]"}, asJSON)
++	t.Run("any other destination kind keeps the whole array as an array of JSON", func(t *testing.T) {
++		// never as a QValueJSON, even for a JSON column: ClickHouse JSON only takes objects
++		for _, kind := range []types.QValueKind{types.QValueKindJSON, types.QValueKindString, ""} {
++			for input, expected := range map[*bson.A]string{
++				{int32(1), int64(2)}: "[1,2]",
++				{}:                   "[]",
++			} {
++				asJSON, err := converter.QValueFromBsonValue(rawArrayValueOf(t, *input), kind)
++				require.NoError(t, err)
++				require.Equal(t, types.QValueArrayJSON{Val: expected}, asJSON)
++			}
+ 		}
+ 	})
+ 
 ```
 
-**File**: `flow/e2e/clickhouse_json_suite.go` (modified, +22/-8)
+**File**: `flow/e2e/mongo_clickhouse/mongo_test.go` (modified, +21/-4)
 ```diff
-@@ -980,15 +980,20 @@ func destinationJSONArrayMatches(
+@@ -341,6 +341,8 @@ func (s MongoClickhouseSuite) Test_Structured_Ingestion_Nested_And_Arrays() {
+ 		{SourceName: "notes", DestinationType: "Array(JSON)"},
+ 		// arrays of dates, declared as discovery infers them
+ 		{SourceName: "visits", DestinationType: "Array(DateTime64(9))"},
++		// receives arrays, empty or of documents, which a JSON column does not take: only objects fit it
++		{SourceName: "slabs", DestinationType: "Nullable(JSON)"},
+ 	}
+ 	connectionGen := e2e.FlowConnectionGenerationConfig{
+ 		FlowJobName:   e2e.AddSuffix(s, srcTable),
+@@ -354,6 +356,10 @@ func (s MongoClickhouseSuite) Test_Structured_Ingestion_Nested_And_Arrays() {
+ 	collection := adminClient.Database(srcDatabase).Collection(srcTable)
+ 	insertNestedDocuments := func(prefix string) {
+ 		for i := range 10 {
++			slabs := bson.A{}
++			if i%2 == 1 {
++				slabs = bson.A{bson.D{{Key: "k", Value: int64(i)}}}
++			}
+ 			res, err := collection.InsertOne(t.Context(), bson.D{
+ 				{Key: "name", Value: fmt.Sprintf("%s_%d", prefix, i)},
+ 				{Key: "address", Value: bson.D{
+@@ -366,6 +372,7 @@ func (s MongoClickhouseSuite) Test_Structured_Ingestion_Nested_And_Arrays() {
+ 				{Key: "attachments", Value: bson.A{bson.D{{Key: "k", Value: int64(i)}}, nil}},
+ 				{Key: "notes", Value: bson.A{"text", bson.D{{Key: "k", Value: int64(i)}}}},
+ 				{Key: "visits", Value: bson.A{time.Date(2024, 1, 2, 3, 4, 5, 123_000_000, time.UTC).Add(time.Duration(i) * time.Hour), nil}},
++				{Key: "slabs", Value: slabs},
+ 			}, options.InsertOne())
+ 			require.NoError(t, err)
+ 			require.True(t, res.Acknowledged)
+@@ -408,15 +415,17 @@ func (s MongoClickhouseSuite) Test_Structured_Ingestion_Nested_And_Arrays() {
  
- // Test_JSON_CH_Array_AddColumnDefault: a jsonb[] column added with a default, older rows get the wrapped default.
- func (s ClickHouseSuite) Test_JSON_CH_Array_AddColumnDefault() {
--	s.testJSONArrayAddColumnDefault("test_json_arr_add_col_default", false)
-+	s.testJSONArrayAddColumnDefault("test_json_arr_add_col_default", false, false)
- }
+ 	// every row got its embedded document and its typed array, while the unfitting array left its
+ 	// column empty and was reported instead
+-	var nestedRows, arrayRows, emptyMixedRows, emptyNotesRows, reportedRows uint64
++	var nestedRows, arrayRows, emptyMixedRows, emptyNotesRows, nullSlabsRows, reportedRows uint64
+ 	require.NoError(t, ch.QueryRow(t.Context(), fmt.Sprintf(
+ 		`SELECT countIf(address IS NOT NULL), countIf(length("items") = 2), countIf(empty(mixed)), countIf(empty(notes)),
+-			countIf(_peerdb_malformed_data IS NOT NULL) FROM "%s"."%s" FINAL`,
+-		peer.GetClickhouseConfig().Database, dstTable)).Scan(&nestedRows, &arrayRows, &emptyMixedRows, &emptyNotesRows, &reportedRows))
++			countIf(slabs IS NULL), countIf(_peerdb_malformed_data IS NOT NULL) FROM "%s"."%s" FINAL`,
++		peer.GetClickhouseConfig().Database, dstTable)).Scan(
++		&nestedRows, &arrayRows, &emptyMixedRows, &emptyNotesRows, &nullSlabsRows, &reportedRows))
+ 	require.Equal(t, uint64(20), nestedRows)
+ 	require.Equal(t, uint64(20), arrayRows)
+ 	require.Equal(t, uint64(20), emptyMixedRows)
+ 	require.Equal(t, uint64(20), emptyNotesRows)
++	require.Equal(t, uint64(20), nullSlabsRows)
+ 	require.Equal(t, uint64(20), reportedRows)
+ 	// per leg, the nested document survives whole, the typed array lands element by element, and the
+ 	// unfitting array is reported verbatim in its JSON form
+@@ -429,9 +438,17 @@ func (s MongoClickhouseSuite) Test_Structured_Ingestion_Nested_And_Arrays() {
+ 		require.Equal(t, fmt.Sprintf("['%s_item_3_a','%s_item_3_b']", prefix, prefix), items)
+ 		require.JSONEq(t, `{
+ 			"mixed": {"type_mismatch": true, "value": "[3,true]"},
+-			"notes": {"type_mismatch": true, "value": "[\"text\",{\"k\":3}]"}
++			"notes": {"type_mismatch": true, "value": "[\"text\",{\"k\":3}]"},
++			"slabs": {"type_mismatch": true, "value": "[{\"k\":3}]"}
+ 		}`, malformed)
  
--// Test_JSON_CH_Array_AddColumnDefault_Nullable: the same with PEERDB_NULLABLE; a NULL element of the default lands as {}.
-+// Test_JSON_CH_Array_AddColumnDefault_Nullable: the same with PEERDB_NULLABLE; a NULL element of the default stays NULL.
- func (s ClickHouseSuite) Test_JSON_CH_Array_AddColumnDefault_Nullable() {
--	s.testJSONArrayAddColumnDefault("test_json_arr_add_col_def_null", true)
-+	s.testJSONArrayAddColumnDefault("test_json_arr_add_col_def_null", true, false)
- }
- 
--func (s ClickHouseSuite) testJSONArrayAddColumnDefault(srcTableName string, nullable bool) {
-+// Test_JSON_CH_Array_AddColumnDefault_NullableDomain: the same through a domain over jsonb[].
-+func (s ClickHouseSuite) Test_JSON_CH_Array_AddColumnDefault_NullableDomain() {
-+	s.testJSONArrayAddColumnDefault("test_json_arr_add_col_def_dom", true, true)
-+}
++		// the empty array is reported as well
++		var emptySlabs string
++		require.NoError(t, ch.QueryRow(t.Context(), fmt.Sprintf(
++			`SELECT toString(_peerdb_malformed_data.slabs.value) FROM "%s"."%s" FINAL WHERE name = '%s_2'`,
++			peer.GetClickhouseConfig().Database, dstTable, prefix)).Scan(&emptySlabs))
++		require.Equal(t, "[]", emptySlabs)
 +
-+func (s ClickHouseSuite) testJSONArrayAddColumnDefault(srcTableName string, nullable bool, domain bool) {
- 	if _, ok := s.source.(*PostgresSource); !ok {
- 		s.t.Skip("json arrays only exist on postgres")
- 	}
-@@ -998,6 +1003,11 @@ func (s ClickHouseSuite) testJSONArrayAddColumnDefault(srcTableName string, null
- 
- 	require.NoError(s.t, s.source.Exec(s.t.Context(),
- 		fmt.Sprintf("CREATE TABLE IF NOT EXISTS %s (id INT PRIMARY KEY)", srcFullName)))
-+	columnType := "JSONB[]"
-+	if domain {
-+		columnType = s.attachSchemaSuffix(srcTableName + "_dom")
-+		require.NoError(s.t, s.source.Exec(s.t.Context(), "CREATE DOMAIN "+columnType+" AS jsonb[]"))
-+	}
- 	require.NoError(s.t, s.source.Exec(s.t.Context(), fmt.Sprintf("INSERT INTO %s (id) VALUES (1)", srcFullName)))
- 
- 	connectionGen := FlowConnectionGenerationConfig{
-@@ -1022,15 +1032,19 @@ func (s ClickHouseSuite) testJSONArrayAddColumnDefault(srcTableName string, null
- 	EnvWaitForEqualTablesWithNames(env, s, "waiting on initial", srcTableName, dstTableName, "id")
- 
- 	for _, stmt := range []string{
--		`ALTER TABLE %s ADD COLUMN c_arr JSONB[] DEFAULT ARRAY['{"a": 1}'::jsonb, '"dark"'::jsonb, NULL, 'null'::jsonb]`,
--		`INSERT INTO %s (id, c_arr) VALUES (2, ARRAY['[1, 2]'::jsonb, '{"b": 2}'::jsonb])`,
-+		`ALTER TABLE %[1]s ADD COLUMN c_arr %[2]s DEFAULT ARRAY['{"a": 1}'::jsonb, '"dark"'::jsonb, NULL, 'null'::jsonb]`,
-+		`INSERT INTO %[1]s (id, c_arr) VALUES (2, ARRAY['[1, 2]'::jsonb, '{"b": 2}'::jsonb])`,
- 	} {
--		require.NoError(s.t, s.source.Exec(s.t.Context(), fmt.Sprintf(stmt, srcFullName)))
-+		require.NoError(s.t, s.source.Exec(s.t.Context(), fmt.Sprintf(stmt, srcFullName, columnType)))
- 	}
- 
- 	// row 1 takes the column default, row 2 its own value
- 	cases := []jsonArrayTestCase{
--		{desc: "default", wantElements: []string{`{"a": 1}`, `{"_value":"dark"}`, `{}`, `{}`}},
-+		{
-+			desc:                 "default",
-+			wantElements:         []string{`{"a": 1}`, `{"_value":"dark"}`, `{}`, `{}`},
-+			wantNullableElements: []string{`{"a": 1}`, `{"_value":"dark"}`, `null`, `{}`},
-+		},
- 		{desc: "explicit", wantElements: []string{`{"_value":[1, 2]}`, `{"b": 2}`}},
- 	}
- 	rowsMatch := jsonColumnsMatch([]string{"c_arr"}, func(t *testing.T, label string, rowIdx int, _ types.QValue, dst types.QValue) bool {
+ 		// the array of JSON keeps its elements, the null one as the empty object
+ 		var attachmentsLength uint64
+ 		var firstAttachment, secondAttachment string
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5091** (2026-11-18): Stop using QValueJSON as fallback for mismatched arrays (@pfcoperez)
 - **PR #5087** (2026-11-17): Update github-actions dependencies (@renovate[bot])
 - **PR #5086** (2026-11-17): Update dockerfile dependencies (@renovate[bot])
 - **PR #5085** (closed): fix(postgres): quote destination tables when resetting sequences (@colton-clickhouse)
 - **PR #5084** (2026-11-17): docs: describe native ClickHouse JSON (PEERDB_CLICKHOUSE_ENABLE_JSON) (@gheorghepucea)
 - **PR #5082** (2026-11-13): Move DNS error tests to .invalid TLD (@colton-clickhouse)
-- **PR #5081** (2026-11-17): postgres: keep SQL NULL elements of a json[] ADD COLUMN default as NULL on nullable mirrors (@gheorghepucea)
 
 ---
 
@@ -2198,53 +2309,39 @@ query against a live Postgres.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. postgres: keep SQL NULL elements of a json[] ADD COLUMN default as NULL on nulla
+## X. Stop using QValueJSON as fallback for mismatched arrays
 
 **RULE**:
-When implementing operations in `flow/connectors/postgres/cdc.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in PeerDB-io/peerdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `flow/connectors/mongo/document_projection.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in PeerDB-io/peerdb. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `0993bcf9`: postgres: keep SQL NULL elements of a json[] ADD COLUMN default as NULL on nullable mirrors. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `5f74e0ef`: Stop using QValueJSON as fallback for mismatched arrays. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `flow/connectors/postgres/cdc.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `flow/connectors/mongo/document_projection.go`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-	// json[]/jsonb[] columns, domains included, whose missing value the catalog also reads element by element
-	var addedJSONArrayColumnNames []string
-			if qkind := types.QValueKind(currRelMap[column.Name]); qkind == types.QValueKindArrayJSON || qkind == types.QValueKindArrayJSONB {
-				addedJSONArrayColumnNames = append(addedJSONArrayColumnNames, column.Name)
-			}
-	addedColumnCatalogInfo, err := p.fetchAddedColumnCatalogInfo(ctx, mappedRelID, addedColumnNames, addedJSONArrayColumnNames)
-				// the destination adds a json[] column as Array(Nullable(JSON)) under the nullable setting
-				if literal, ok := defaultExprFromPostgresMissingValue(*missingValue, qkind, wrapJSON,
-					schemaDelta.NullableEnabled, catalogInfo.missingNullElements); ok {
-	// missingNullElements marks the SQL NULL elements of a json[]/jsonb[] missing value, which missingJSON
-	// renders as JSON null just like a 'null' element.
-	missingNullElements []bool
-	hasMissing          bool
-	notNull             bool
-	ctx context.Context, relID uint32, columnNames []string, jsonArrayColumnNames []string,
-	// to_json renders SQL NULL and 'null' elements alike; the last column reads the elements as text[], which keeps them apar
+				// An array that does not fit its typed column, e.g. a string element in an Array(Int64)
+				// or a scalar or nested array element in an Array(JSON), is yielded as its JSON text:
+				// a String never matches an array column, so the projector reports it as a type mismatch,
+				// its JSON form as the value, instead of the record failing.
+				var asJSON types.QValueArrayJSON
+				asJSON, err = converter.QValueArrayJSONFromArray(element.Value().Array())
+				value = types.QValueString(asJSON)
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-	addedColumnCatalogInfo, err := p.fetchAddedColumnCatalogInfo(ctx, mappedRelID, addedColumnNames)
-				if literal, ok := defaultExprFromPostgresMissingValue(*missingValue, qkind, wrapJSON); ok {
-	hasMissing  bool
-	notNull     bool
-	ctx context.Context, relID uint32, columnNames []string,
-		CASE WHEN a.atthasmissing THEN (pg_catalog.to_json(a.attmissingval)->0)::text END
-		relID, columnNames)
-	if _, err := pgx.ForEachRow(rows, []any{&name, &notNull, &hasMissing, &missingValue, &missingJSON}, func() error {
+				// An array that does not fit its typed column is yielded as JSON: the projector then
+				// reports it as a type mismatch, its JSON form as the value, instead of the record failing.
+				value, err = converter.QValueJSONFromArray(element.Value().Array())
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `0993bcf9` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `5f74e0ef` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

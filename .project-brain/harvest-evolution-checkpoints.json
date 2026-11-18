@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T16:49:42.107Z",
+  "last_updated": "2026-11-18T17:02:01.543Z",
   "processed_dossiers": {
     "zulip-zulip-learnings.md": {
       "processed_at": "2026-11-18T16:49:41.601Z",
@@ -73,7 +73,7 @@
       "staged_for_review": 1
     },
     "zama-ai-tfhe-rs-learnings.md": {
-      "processed_at": "2026-11-18T12:51:11.332Z",
+      "processed_at": "2026-11-18T17:02:00.688Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -763,7 +763,7 @@
       "staged_for_review": 1
     },
     "peerdb-io-peerdb-learnings.md": {
-      "processed_at": "2026-11-18T02:42:49.146Z",
+      "processed_at": "2026-11-18T17:01:59.747Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -2148,7 +2148,7 @@
       "staged_for_review": 0
     },
     "hf-sentence-transformers-paraphrase-multilingual-minilm-l12-v2-learnings.md": {
-      "processed_at": "2026-11-18T07:39:47.698Z",
+      "processed_at": "2026-11-18T17:01:59.251Z",
       "promoted_canonical": 0,
       "staged_for_review": 1
     },
@@ -3458,7 +3458,7 @@
       "staged_for_review": 0
     }
   },
-  "total_dossiers_evaluated": 2016,
+  "total_dossiers_evaluated": 2019,
   "total_canonical_promoted": 361,
-  "total_staged_for_review": 1526
+  "total_staged_for_review": 1529
 }
