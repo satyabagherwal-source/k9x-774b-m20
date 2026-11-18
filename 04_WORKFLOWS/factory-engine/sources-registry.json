@@ -69,8 +69,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-18T18:38:24.957Z",
-    "lastVerified": "2026-11-18T18:38:24.957Z",
+    "lastChecked": "2026-11-18T18:56:57.512Z",
+    "lastVerified": "2026-11-18T18:56:57.512Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -137,9 +137,9 @@
   "microsoft-security-101": {
     "name": "Security-101",
     "officialUrl": "https://github.com/microsoft/Security-101",
-    "lastChecked": "2026-11-18T14:15:50.327Z",
+    "lastChecked": "2026-11-18T18:56:52.609Z",
     "revisionIdentifier": "b0a31ff7",
-    "lastVerified": "2026-11-18T14:15:50.327Z"
+    "lastVerified": "2026-11-18T18:56:52.609Z"
   },
   "meilisearch-meilisearch": {
     "name": "meilisearch",
@@ -288,12 +288,12 @@
     "lastVerified": "2026-11-18T09:57:21.136Z"
   },
   "nucleoidai-nucleoid": {
-    "name": "NucleoidAI/Nucleoid",
+    "name": "Nucleoid",
     "officialUrl": "https://github.com/NucleoidAI/Nucleoid",
     "sourceType": "github",
     "technology": "Rust",
-    "lastChecked": "2026-11-18T17:51:22.232Z",
-    "lastVerified": "2026-11-18T17:51:22.232Z",
+    "lastChecked": "2026-11-18T18:56:57.506Z",
+    "lastVerified": "2026-11-18T18:56:57.506Z",
     "harvestMode": "ZERO_CLONE_API",
     "learningStatus": "VERIFIED_LEARNING",
     "learningId": "learn-github-nucleoidai-nucleoid",
@@ -302,7 +302,8 @@
     "recentFixesCount": 0,
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
-    "compliance": "FREE_TIER_COMPLIANT"
+    "compliance": "FREE_TIER_COMPLIANT",
+    "revisionIdentifier": "22d7c31d"
   },
   "lapce-lapce": {
     "name": "lapce",
@@ -3630,5 +3631,50 @@
     "closedIssuesCount": 2,
     "verificationMethod": "public-api-audit",
     "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "svenstaro-miniserve": {
+    "name": "miniserve",
+    "officialUrl": "https://github.com/svenstaro/miniserve",
+    "lastChecked": "2026-11-18T18:56:42.544Z",
+    "revisionIdentifier": "68b6f063",
+    "lastVerified": "2026-11-18T18:56:42.544Z"
+  },
+  "hf-hexgrad-kokoro-82m": {
+    "name": "hexgrad/Kokoro-82M",
+    "officialUrl": "https://huggingface.co/hexgrad/Kokoro-82M",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-18T18:56:45.041Z",
+    "lastVerified": "2026-11-18T18:56:45.041Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-hexgrad-kokoro-82m",
+    "contentHash": "cb029b1d34e804ddc351c48f449a0dc78750cf0fb6fafc0cff67dcfa5a344f9f",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "dylanvann-react-native-fast-image": {
+    "name": "react-native-fast-image",
+    "officialUrl": "https://github.com/DylanVann/react-native-fast-image",
+    "lastChecked": "2026-11-18T18:56:47.544Z",
+    "revisionIdentifier": "d86d925a",
+    "lastVerified": "2026-11-18T18:56:47.544Z"
+  },
+  "apptainer-singularity": {
+    "name": "singularity",
+    "officialUrl": "https://github.com/apptainer/singularity",
+    "lastChecked": "2026-11-18T18:56:50.031Z",
+    "revisionIdentifier": "9dceb424",
+    "lastVerified": "2026-11-18T18:56:50.031Z"
+  },
+  "spacejam-sled": {
+    "name": "sled",
+    "officialUrl": "https://github.com/spacejam/sled",
+    "lastChecked": "2026-11-18T18:56:55.025Z",
+    "revisionIdentifier": "e449d171",
+    "lastVerified": "2026-11-18T18:56:55.025Z"
   }
 }

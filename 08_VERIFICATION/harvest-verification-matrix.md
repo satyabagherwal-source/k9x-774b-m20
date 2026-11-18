@@ -11074,3 +11074,4 @@
 | `CYCLE-20261118-S5UQ` | `2026-11-18T18:38:08.546Z` | `erkamyaman/rust-anything` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9272` | Yes (`03384e9e...`) |
 | `CYCLE-20261118-SFWB` | `2026-11-18T18:38:21.563Z` | `risingwavelabs/risingwave` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9273` | Yes (`86d871b4...`) |
 | `CYCLE-2026-11-18-PROJ-EVOLVE` | `2026-11-18T18:39:02.365Z` | `hf-compvis-stable-diffusion-v1-4` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-70CB2061` [Domain D] | Yes (`f192a4d7...`) |
+| `CYCLE-20261118-G855` | `2026-11-18T18:56:51.257Z` | `hexgrad/Kokoro-82M` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-hexgrad-kokoro-82m-learnings.md` | Yes (`cb029b1d...`) |

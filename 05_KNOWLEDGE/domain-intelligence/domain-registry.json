@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-18T18:39:03.475Z",
+  "last_updated": "2026-11-18T18:56:59.119Z",
   "total_records": 1891,
   "domains": {
     "A": {
@@ -11291,8 +11291,8 @@
       "title": "Research & Knowledge Intelligence: hexgrad/Kokoro-82M Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-hexgrad-kokoro-82m-research-knowledge-intelligence-hexgrad-kokoro-82m-core-in.md",
       "repository": "hexgrad/Kokoro-82M",
-      "content_hash": "4f8e741282452a4b3a623b7fb7b1f44546fb450950512488c2c18bfa8c050ed1",
-      "created_at": "2026-11-13T23:01:32.085Z"
+      "content_hash": "866b1a66dc85cbdd1941e71c96253b031b8169fe6a5c2b415f509eec72bd09f6",
+      "created_at": "2026-11-18T18:56:51.437Z"
     },
     "domain_intelligence-technical-construction-intelligence-u-root-u-root-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-u-root-u-root-core-invariants",
@@ -11378,8 +11378,8 @@
       "title": "Research & Knowledge Intelligence: hf-hexgrad-kokoro-82m-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-hexgrad-kokoro-82m-learnings-research-knowledge-intelligence-hf-hexgrad-kokor.md",
       "repository": "hf-hexgrad-kokoro-82m-learnings",
-      "content_hash": "a574653d8e1123c685eb9517ea09094bfef3a710c2cded918d624d31ae580a46",
-      "created_at": "2026-11-13T23:02:23.438Z"
+      "content_hash": "70c4d4d3eca86da0aa2945b94f229d86632df8cd1fb2653e3908728d89d2076f",
+      "created_at": "2026-11-18T18:56:57.808Z"
     },
     "domain_intelligence-technical-construction-intelligence-openreplay-openreplay-learnings-core-invaria": {
       "record_id": "domain_intelligence-technical-construction-intelligence-openreplay-openreplay-learnings-core-invaria",
@@ -14682,8 +14682,8 @@
       "title": "Technical Construction Intelligence: zoontek-react-native-bootsplash-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zoontek-react-native-bootsplash-learnings-technical-construction-intelligence-zo.md",
       "repository": "zoontek-react-native-bootsplash-learnings",
-      "content_hash": "9cadf78e2e28c996719c6d2de997957212ec6ae2d2d6e26e98b4ccb767c9fcfd",
-      "created_at": "2026-11-18T16:14:27.383Z"
+      "content_hash": "fdd8fc67a02d4fd74dd5f84469e2295c3f6ce925acc38363c4cf618ff8f30de5",
+      "created_at": "2026-11-18T18:56:59.119Z"
     },
     "domain_intelligence-technical-construction-intelligence-onehumanbeing-esp32-iphone-agent-core-invari": {
       "record_id": "domain_intelligence-technical-construction-intelligence-onehumanbeing-esp32-iphone-agent-core-invari",
@@ -23062,8 +23062,8 @@
       "title": "Research & Knowledge Intelligence: zvec-ai-zvec-grep-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-zvec-ai-zvec-grep-learnings-research-knowledge-intelligence-zvec-ai-zvec-grep-le.md",
       "repository": "zvec-ai-zvec-grep-learnings",
-      "content_hash": "0681a4b0bb11f5ec7e7867d7a01bcc28244100afb1ca1a84656d8d95ca668b5f",
-      "created_at": "2026-11-18T17:28:20.721Z"
+      "content_hash": "404230c44ed940eb5b10a225a41172108137660242e5233b2d421627ff5f1c85",
+      "created_at": "2026-11-18T18:56:58.360Z"
     },
     "domain_intelligence-technical-construction-intelligence-prof18-feed-flow-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-prof18-feed-flow-core-invariants",

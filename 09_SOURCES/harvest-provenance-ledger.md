@@ -11107,3 +11107,4 @@ Every entry in this ledger must capture:
 | `learn-github-erkamyaman-rust-anything` | `https://github.com/erkamyaman/rust-anything` | `8a2e1d1f` | Multi-dimensional audit evidence | 2026-11-18T18:38:08.551Z |
 | `learn-github-risingwavelabs-risingwave` | `https://github.com/risingwavelabs/risingwave` | `e3c035e0` | Multi-dimensional audit evidence | 2026-11-18T18:38:21.568Z |
 | `learn-dom-d-70cb2061` | `project://hf-compvis-stable-diffusion-v1-4` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-compvis-stable-diffusion-v1-4-learnings.md` | 2026-11-18T18:39:02.365Z |
+| `learn-huggingface-hexgrad-kokoro-82m` | `https://huggingface.co/hexgrad/Kokoro-82M` | `hf-hexgrad` | Multi-dimensional audit evidence | 2026-11-18T18:56:51.261Z |
