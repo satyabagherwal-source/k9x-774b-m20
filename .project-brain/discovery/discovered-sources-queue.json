@@ -2,15 +2,15 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-18T04:11:35.765Z",
+  "updated_at": "2026-11-18T04:21:22.351Z",
   "stats": {
-    "total_discovered": 5266,
-    "approved_pending_harvest": 4964,
+    "total_discovered": 5269,
+    "approved_pending_harvest": 4967,
     "harvested_count": 0,
     "rejected_count": 302,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 4958,
-      "OFFICIAL_DOCUMENTATION": 164,
+      "COMMUNITY_AND_EXPERT": 4960,
+      "OFFICIAL_DOCUMENTATION": 165,
       "STANDARDS_AND_SPECIFICATIONS": 108,
       "ENGINEERING_BLOGS": 4,
       "SECURITY_ADVISORIES": 24,
@@ -113759,6 +113759,72 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/materializeinc-materialize-learnings.md",
         "fileName": "materializeinc-materialize-learnings.md"
+      }
+    },
+    "SRC-0F2A3986DB5A": {
+      "id": "SRC-0F2A3986DB5A",
+      "url": "https://huggingface.co/apple/FastFrames-L",
+      "title": "https://huggingface.co/apple/FastFrames-L",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T04:21:21.450Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-apple-fastframes-l-learnings.md",
+        "fileName": "hf-apple-fastframes-l-learnings.md"
+      }
+    },
+    "SRC-80B626C39CD7": {
+      "id": "SRC-80B626C39CD7",
+      "url": "https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node",
+      "title": "https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T04:21:22.325Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/argoproj-argo-events-learnings.md",
+        "fileName": "argoproj-argo-events-learnings.md"
+      }
+    },
+    "SRC-C2BB42B550A3": {
+      "id": "SRC-C2BB42B550A3",
+      "url": "https://docs.nats.io/running-a-nats-service/configuration",
+      "title": "https://docs.nats.io/running-a-nats-service/configuration",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "OFFICIAL_DOCUMENTATION",
+      "authorityTier": "AUTHORITATIVE_DOC",
+      "trustScore": 0.92,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T04:21:22.351Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/argoproj-argo-events-learnings.md",
+        "fileName": "argoproj-argo-events-learnings.md"
       }
     }
   }

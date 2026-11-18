@@ -1,8 +1,8 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-18T04:11:36.917Z",
-  "total_records": 1751,
+  "last_updated": "2026-11-18T04:21:22.660Z",
+  "total_records": 1754,
   "domains": {
     "A": {
       "total": 11,
@@ -48,7 +48,7 @@
       ]
     },
     "D": {
-      "total": 763,
+      "total": 766,
       "record_ids": [
         "DOM-D-C76D1D36",
         "DOM-D-29BA113A",
@@ -812,7 +812,10 @@
         "domain_intelligence-research-knowledge-intelligence-prism-ml-ternary-bonsai-2-27b-gguf-core-invarian",
         "domain_intelligence-research-knowledge-intelligence-hf-prism-ml-ternary-bonsai-2-27b-gguf-learnings-",
         "domain_intelligence-research-knowledge-intelligence-dathere-qsv-core-invariants",
-        "domain_intelligence-research-knowledge-intelligence-dathere-qsv-learnings-core-invariants"
+        "domain_intelligence-research-knowledge-intelligence-dathere-qsv-learnings-core-invariants",
+        "domain_intelligence-research-knowledge-intelligence-apple-fastframes-l-core-invariants",
+        "DOM-D-AD9F2297",
+        "domain_intelligence-research-knowledge-intelligence-hf-apple-fastframes-l-learnings-core-invariants"
       ]
     },
     "E": {
@@ -8310,8 +8313,8 @@
       "title": "Research & Knowledge Intelligence: Comfy-Org/Qwen-Image-2.1 Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-comfy-org-qwen-image-2-1-research-knowledge-intelligence-comfy-org-qwen-image.md",
       "repository": "Comfy-Org/Qwen-Image-2.1",
-      "content_hash": "2a93b5218f581a3c723f1aec39bb831448a4370cfe08349671f54196ef53cc1f",
-      "created_at": "2026-11-13T16:48:55.911Z"
+      "content_hash": "88fbdf304a51f3f439f8b7b1d91012e894dbc3dd9e6d0610011607b2ece6f45b",
+      "created_at": "2026-11-18T04:20:41.449Z"
     },
     "domain_intelligence-technical-construction-intelligence-makecindy-cindy-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-makecindy-cindy-core-invariants",
@@ -8379,8 +8382,8 @@
       "title": "Research & Knowledge Intelligence: hf-comfy-org-qwen-image-2.1-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-comfy-org-qwen-image-2-1-learnings-research-knowledge-intelligence-hf-comfy-o.md",
       "repository": "hf-comfy-org-qwen-image-2.1-learnings",
-      "content_hash": "1c725f29300b5464386dd70d1037d5cfc3d219ea6a5f8154f6516f21d4be018b",
-      "created_at": "2026-11-13T16:49:52.953Z"
+      "content_hash": "81c7b7babff10a1346e119d78f2205c10959d33a82442ea77b44d1608a8df617",
+      "created_at": "2026-11-18T04:21:22.006Z"
     },
     "domain_intelligence-technical-construction-intelligence-makecindy-cindy-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-makecindy-cindy-learnings-core-invariants",
@@ -13987,8 +13990,8 @@
       "title": "Architecture Intelligence: HelixDB/helix-db Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-helixdb-helix-db-architecture-intelligence-helixdb-helix-db-core-invariants.md",
       "repository": "HelixDB/helix-db",
-      "content_hash": "3046e9775067c24380aefa9dbf0252721575eeacb3fdc4d512ebb39df5f93012",
-      "created_at": "2026-11-17T03:58:03.538Z"
+      "content_hash": "5c37f95e5b08db30d326c76918752c9419072a5b7cae62a2303470919546464e",
+      "created_at": "2026-11-18T04:20:56.385Z"
     },
     "DOM-D-C8957CC0": {
       "record_id": "DOM-D-C8957CC0",
@@ -15619,8 +15622,8 @@
       "title": "Architecture Intelligence: argoproj/argo-events Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-argoproj-argo-events-architecture-intelligence-argoproj-argo-events-core-invaria.md",
       "repository": "argoproj/argo-events",
-      "content_hash": "d5ac3a4e000b03fb313e2c36328880d2facb9b2b988f6301d6ae803523e2496d",
-      "created_at": "2026-11-17T05:37:16.209Z"
+      "content_hash": "5f2c6c8a289a038da79b8cbc548714aedbb6a53a0d3cec892de379a93c5acbc9",
+      "created_at": "2026-11-18T04:20:51.296Z"
     },
     "domain_intelligence-architecture-intelligence-rqlite-rqlite-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-rqlite-rqlite-core-invariants",
@@ -15748,8 +15751,8 @@
       "title": "Architecture Intelligence: argoproj-argo-events-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-G-argoproj-argo-events-learnings-architecture-intelligence-argoproj-argo-events-le.md",
       "repository": "argoproj-argo-events-learnings",
-      "content_hash": "4d6f7cd3bbe935161439fb1714ddb955df0a52d0dfef34cbf9aa4552a9aa8c86",
-      "created_at": "2026-11-15T23:26:11.200Z"
+      "content_hash": "41687fa9ae9be7b99d72015b108ef76d65f3ca18bc957c9aef82c552d6d87645",
+      "created_at": "2026-11-18T04:21:22.660Z"
     },
     "domain_intelligence-research-knowledge-intelligence-lilylilith-qi_2-1_anyangle-core-invariants": {
       "record_id": "domain_intelligence-research-knowledge-intelligence-lilylilith-qi_2-1_anyangle-core-invariants",
@@ -24537,8 +24540,8 @@
       "title": "Content & Information Intelligence: sigstore/cosign Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-I-sigstore-cosign-content-information-intelligence-sigstore-cosign-core-invariants.md",
       "repository": "sigstore/cosign",
-      "content_hash": "0f224434e4f0575ca7c8b37d4445187b19d387a6294d8a0af5451196473f4919",
-      "created_at": "2026-11-17T21:03:13.667Z"
+      "content_hash": "e775615491c663d9442117240ace7e0f770b6348d3499e0fafebe7b8ad38179d",
+      "created_at": "2026-11-18T04:20:53.922Z"
     },
     "domain_intelligence-technical-construction-intelligence-urllib3-urllib3-learnings-core-invariants": {
       "record_id": "domain_intelligence-technical-construction-intelligence-urllib3-urllib3-learnings-core-invariants",
@@ -29354,6 +29357,66 @@
       "repository": "dathere-qsv-learnings",
       "content_hash": "f4a9606e0a48a03fd8e0eaa9eea1748c3682ce10b06ae080ce06a0d2571e2c74",
       "created_at": "2026-11-18T03:56:27.167Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-apple-fastframes-l-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-apple-fastframes-l-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: apple/FastFrames-L Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-apple-fastframes-l-research-knowledge-intelligence-apple-fastframes-l-core-in.md",
+      "repository": "apple/FastFrames-L",
+      "content_hash": "50e6f0b37594dac898606ccf4b19613bf277135abac7514a8f1aee0f3dfbe2f2",
+      "created_at": "2026-11-18T04:20:39.047Z"
+    },
+    "DOM-D-AD9F2297": {
+      "record_id": "DOM-D-AD9F2297",
+      "domain_letter": "D",
+      "domain_id": "research_knowledge",
+      "domain_name": "Research & Knowledge Intelligence",
+      "secondary_domains": [
+        {
+          "letter": "M",
+          "id": "feedback_evolution",
+          "name": "Feedback & Evolution Intelligence"
+        }
+      ],
+      "title": "Forensic Learning Record (Deep Inspection): apple/FastFrames-L",
+      "content": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-apple-fastframes-l-learnings.md`  \n> **Source**: huggingface ([https://huggingface.co/apple/FastFrames-L](https://huggingface.co/apple/FastFrames-L))  \n> **Source Version**: `hf-apple-fas`  \n> **License**: Open-Source  \n> **Synthesized By**:",
+      "content_hash": "3e162796e173c8eee7dd63352c05d7181fcc37e15c601100cd227cbbcd207738",
+      "summary": "> **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-apple-fastframes-l-learnings.md`  \n> **Source**: huggingface ([https://huggingfac -> > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/hf-apple-fastframes-l-learnings.md`  \n> **Source**: huggingface ([https://huggingfac",
+      "provenance": {
+        "source_uri": "project://hf-apple-fastframes-l/hf-apple-fastframes-l-learnings.md",
+        "source_version": "1.0.0",
+        "observed_at": "2026-11-18T04:20:59.225Z",
+        "author_or_entity": "AI-Builder-Brain Project Learning (hf-apple-fastframes-l)",
+        "license": "Proprietary-Universal"
+      },
+      "evidence": {
+        "evidence_type": "HARVESTED_REPOSITORY_DIFF_VERIFIED",
+        "verification_status": "DIRECTLY_VERIFIED",
+        "verification_reference": "Audit of hf-apple-fastframes-l"
+      },
+      "relationships": {
+        "prerequisite_rules": [],
+        "related_domains": [
+          "M"
+        ],
+        "applied_in_blueprints": [
+          "universal",
+          "astro-tailwind-v4"
+        ]
+      },
+      "confidence": 0.75,
+      "domain_routing_mode": "AUTOMATIC_CLASSIFICATION",
+      "created_at": "2026-11-18T04:21:21.418Z"
+    },
+    "domain_intelligence-research-knowledge-intelligence-hf-apple-fastframes-l-learnings-core-invariants": {
+      "record_id": "domain_intelligence-research-knowledge-intelligence-hf-apple-fastframes-l-learnings-core-invariants",
+      "domain_letter": "D",
+      "title": "Research & Knowledge Intelligence: hf-apple-fastframes-l-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-apple-fastframes-l-learnings-research-knowledge-intelligence-hf-apple-fastfra.md",
+      "repository": "hf-apple-fastframes-l-learnings",
+      "content_hash": "267b50017c898e020fded27bb27b6cc5f8cfe8d3ca559f4a6d2555d5a3207286",
+      "created_at": "2026-11-18T04:21:21.643Z"
     }
   }
 }

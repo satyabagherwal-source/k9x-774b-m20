@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T16:49:52.864Z",
+  "timestamp": "2026-11-18T04:21:21.941Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-hf-comfy-org-qwen-image-2.1-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [hf-comfy-org-qwen-image-2.1-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T16:49:52.864Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-18T04:21:21.941Z`  
 > **Learning ID**: `LEARN-EVO-hf-comfy-org-qwen-image-2.1-learnings`
 
 
@@ -31,7 +31,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Source Version**: `hf-comfy-org`  
 > **License**: Open-Source  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-13T16:48:55.459Z  
+> **Timestamp**: 2026-11-18T04:20:40.925Z  
 > **Learning ID**: `learn-huggingface-comfy-org-qwen-image-2-1`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -45,7 +45,7 @@ The following architectural invariants have been empirically discovered and reco
 > **Canonical Artifact**: `07_PROJECT_LEARNING/hf-comfy-org-qwen-image-2.1-learnings.md`  
 > **Source Platform**: Hugging Face ([https://huggingface.co/Comfy-Org/Qwen-Image-2.1](https://huggingface.co/Comfy-Org/Qwen-Image-2.1))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-13T16:48:55.272Z  
+> **Harvest Timestamp**: 2026-11-18T04:20:40.921Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -55,7 +55,7 @@ The following architectural invariants have been empirically discovered and reco
 - **Description**: text-to-image
 - **Primary Language / Ecosystem**: Model
 - **Discovered Manifests / Configurations**: config.json, generation_config.json, tokenizer_config.json, README.md
-- **Stars / Engagement**: 9971455 downloads | 1318 likes
+- **Stars / Engagement**: 9607028 downloads | 1341 likes
 
 ---
 

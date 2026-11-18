@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-18T04:11:31.010Z",
+  "last_updated": "2026-11-18T04:20:56.108Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -575,14 +575,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-comfy-org-qwen-image-2-1",
-      "content_hash": "e031e5033ec72c948132c5fafab23b6811b6536e4af5cb9531b816261bdba506",
-      "verified_at": "2026-11-13T16:48:55.757Z",
+      "content_hash": "0ac77fc50e183bdd5f7769d2010b87a7d0f5948b5b1637357115d5fa4542757a",
+      "verified_at": "2026-11-18T04:20:41.299Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-13T16:48:55.757Z"
+      "last_updated": "2026-11-18T04:20:41.299Z"
     },
     "akhilaaa3/Jev-Omni": {
       "repository": "akhilaaa3/Jev-Omni",
@@ -5406,14 +5406,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-sigstore-cosign",
-      "content_hash": "64355267f68d9f1c4d0cce3feddf29239a4eed3ff857e960cca3653a07bebfa9",
-      "verified_at": "2026-11-17T21:03:13.495Z",
+      "content_hash": "49a524d1a6973099f34ec08ab86c2ecb3724ab68bf03cad0319b4c89956848fe",
+      "verified_at": "2026-11-18T04:20:53.641Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T21:03:13.495Z"
+      "last_updated": "2026-11-18T04:20:53.641Z"
     },
     "LLPhant/LLPhant": {
       "repository": "LLPhant/LLPhant",
@@ -6066,14 +6066,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-argoproj-argo-events",
-      "content_hash": "fea7c4fd7df0c7eb965392e5214176e78549d7c4485bcf2ce8311a504ddf3e3f",
-      "verified_at": "2026-11-17T05:37:15.918Z",
+      "content_hash": "86cf8a7107dfbba979473fec124df60ed1c119edc0e55348a86553739bf98afd",
+      "verified_at": "2026-11-18T04:20:50.996Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T05:37:15.918Z"
+      "last_updated": "2026-11-18T04:20:50.996Z"
     },
     "HelixDB/helix-db": {
       "repository": "HelixDB/helix-db",
@@ -6081,14 +6081,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-helixdb-helix-db",
-      "content_hash": "5b1d7d18bbe54e14654bf3d5d1faa3cd685b875017c62c71e062583a66cfab5f",
-      "verified_at": "2026-11-17T03:58:03.345Z",
+      "content_hash": "6b514a0bf994214ea2431c62922a78ccf34daea86979c036ad8be7643a1d3760",
+      "verified_at": "2026-11-18T04:20:56.108Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T03:58:03.345Z"
+      "last_updated": "2026-11-18T04:20:56.108Z"
     },
     "microsoft/fluentui": {
       "repository": "microsoft/fluentui",
@@ -19334,6 +19334,21 @@
       "brain_readback": true,
       "knowledge_index_updated": true,
       "last_updated": "2026-11-17T21:56:37.311Z"
+    },
+    "apple/FastFrames-L": {
+      "repository": "apple/FastFrames-L",
+      "pipeline_mode": "CLOUD_HARVEST",
+      "stage": "VERIFIED",
+      "status": "VERIFIED_LEARNING",
+      "learning_id": "learn-huggingface-apple-fastframes-l",
+      "content_hash": "3d12a966d3be4e37b46954ed1eb190d33fd3395ef4dcf90bc1241484fda64250",
+      "verified_at": "2026-11-18T04:20:38.913Z",
+      "extracted": true,
+      "validated": true,
+      "brain_write": true,
+      "brain_readback": true,
+      "knowledge_index_updated": true,
+      "last_updated": "2026-11-18T04:20:38.913Z"
     }
   },
   "repos": {

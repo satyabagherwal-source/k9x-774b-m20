@@ -10798,3 +10798,9 @@
 | `CYCLE-20261118-JW1T` | `2026-11-18T04:03:54.497Z` | `cachix/devenv` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9117` | Yes (`e4b061e5...`) |
 | `CYCLE-20261118-TCCY` | `2026-11-18T04:11:15.538Z` | `TaichuAI/ZDTaichu5.0-9B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-taichuai-zdtaichu5.0-9b-learnings.md` | Yes (`8318d7a9...`) |
 | `CYCLE-20261118-TOAB` | `2026-11-18T04:11:30.995Z` | `MaterializeInc/materialize` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9118` | Yes (`38a762cf...`) |
+| `CYCLE-20261118-5F1Y` | `2026-11-18T04:20:38.902Z` | `apple/FastFrames-L` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-apple-fastframes-l-learnings.md` | Yes (`3d12a966...`) |
+| `CYCLE-20261118-5GW5` | `2026-11-18T04:20:41.285Z` | `Comfy-Org/Qwen-Image-2.1` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-comfy-org-qwen-image-2.1-learnings.md` | Yes (`0ac77fc5...`) |
+| `CYCLE-20261118-5ODM` | `2026-11-18T04:20:50.986Z` | `argoproj/argo-events` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9119` | Yes (`86cf8a71...`) |
+| `CYCLE-20261118-5QF3` | `2026-11-18T04:20:53.631Z` | `sigstore/cosign` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9120` | Yes (`49a524d1...`) |
+| `CYCLE-20261118-5SBM` | `2026-11-18T04:20:56.098Z` | `HelixDB/helix-db` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9121` | Yes (`6b514a0b...`) |
+| `CYCLE-2026-11-18-PROJ-EVOLVE` | `2026-11-18T04:21:21.434Z` | `hf-apple-fastframes-l` | HARVESTED_REPOSITORY_DIFF_VERIFIED | `VERIFIED` | `DOM-D-AD9F2297` [Domain D] | Yes (`3e162796...`) |

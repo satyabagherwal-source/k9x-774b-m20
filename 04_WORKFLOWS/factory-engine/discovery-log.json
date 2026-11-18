@@ -21463,5 +21463,17 @@
     "downloads": 0,
     "qualityScore": 850,
     "discoveredAt": "2026-11-17T21:54:22.493Z"
+  },
+  {
+    "name": "apple/FastFrames-L",
+    "fullName": "apple/FastFrames-L",
+    "url": "https://huggingface.co/apple/FastFrames-L",
+    "type": "huggingface",
+    "domain": "huggingface-ai-models",
+    "description": "Verified Hugging Face Model: apple/FastFrames-L (78 likes, 0 downloads)",
+    "likes": 78,
+    "downloads": 0,
+    "qualityScore": 780,
+    "discoveredAt": "2026-11-18T04:18:24.138Z"
   }
 ]

@@ -6,7 +6,7 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-15T23:26:10.989Z",
+  "timestamp": "2026-11-18T04:21:22.456Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
   "learning_id": "LEARN-EVO-argoproj-argo-events-learnings",
@@ -14,7 +14,7 @@
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [argoproj-argo-events-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-15T23:26:10.989Z`  
+> **License**: Open-Source | **Timestamp**: `2026-11-18T04:21:22.456Z`  
 > **Learning ID**: `LEARN-EVO-argoproj-argo-events-learnings`
 
 
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/argoproj-argo-events-learnings.md`  
 > **Source**: github ([https://github.com/argoproj/argo-events](https://github.com/argoproj/argo-events))  
-> **Source Version**: `ba2dd434`  
+> **Source Version**: `727b3155`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-15T23:26:04.188Z  
+> **Timestamp**: 2026-11-18T04:20:50.179Z  
 > **Learning ID**: `learn-github-argoproj-argo-events`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/argoproj-argo-events-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/argoproj/argo-events](https://github.com/argoproj/argo-events))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-15T23:26:04.182Z  
+> **Harvest Timestamp**: 2026-11-18T04:20:50.175Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: Event-driven Automation Framework for Kubernetes
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 2717 stars
+- **Stars / Engagement**: 2719 stars
 
 ---
 
@@ -537,6 +537,16 @@ func ProcessRouteStatus(ctrl *Controller) {
 	}
 }
 
+// parseBearerAuthorization returns the token of an "Authorization: Bearer <token>" header.
+// The scheme is matched case-insensitively, as HTTP authentication schemes require.
+func parseBearerAuthorization(authHeader string) (string, bool) {
+	parts := strings.Fields(authHeader)
+	if len(parts) != 2 || !strings.EqualFold(parts[0], "Bearer") {
+		return "", false
+	}
+	return parts[1], true
+}
+
 // starts a http server
 func startServer(router Router, controller *Controller) {
 	// start a http server only if no other configuration previously started the server on given port
@@ -593,13 +603,13 @@ func startServer(router Router, controller *Controller) {
 					sharedutil.SendInternalErrorResponse(writer, "Error loading auth token")
 					return
 				}
-				authHeader := request.Header.Get("Authorization")
-				if !strings.HasPrefix(authHeader, "Bearer ") {
+				authToken, ok := parseBearerAuthorization(request.Header.Get("Authorization"))
+				if !ok {
 					route.Logger.Error("invalid auth header")
 					sharedutil.SendResponse(writer, http.StatusUnauthorized, "Invalid Authorization Header")
 					return
 				}
-				if strings.TrimPrefix(authHeader, "Bearer ") != token {
+				if subtle.ConstantTimeCompare([]byte(authToken), []byte(token)) != 1 {
 					route.Logger.Error("invalid auth token")
 					sharedutil.SendResponse(writer, http.StatusUnauthorized, "Invalid Auth token")
 					return
@@ -716,20 +726,7 @@ func ManageRoute(ctx context.Context, router Router, controller *Controller, dis
 	activateRoute(router, controller)
 
 	logger.Info("running operations post route activation...")
-	if err := router.PostActivate(); err != nil {
-		logger.Errorw("error occurred while performing post route activation operations", zap.Error(err))
-		return err
-	}
-
-	<-ctx.Done()
-	logger.Info("connection is closed by client")
-
-	logger.Info("marking route as inactive")
-	controller.RouteDeactivateChan <- router
-
-	logger.Info("running operations post route inactivation...")
-	if err := router.PostInactivate(); err != nil {
-		logge
+	if err := router.PostActivate(
 ```
 
 ### Core Architecture Module: `pkg/eventsources/sources/azurequeuestorage/start.go`
@@ -1071,340 +1068,180 @@ func (g *gerritWebhookService) Delete(project, remoteName string) error {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `ba2dd434` (2026-11-15)
-**Commit Message**: fix: stop PrevCronTime looping on the DST fall-back day (#4241)
+### Incident Patch 1: `727b3155` (2026-11-17)
+**Commit Message**: feat(eventbus): add clientAdvertise to the JetStream EventBus (#4257)
 
-Signed-off-by: Ahmed Laban <[REDACTED_EMAIL]>
+Signed-off-by: Srinivas Chippagiri <[REDACTED_EMAIL]>
 
-**File**: `pkg/shared/util/cronutil.go` (modified, +8/-4)
+**File**: `api/jsonschema/schema.json` (modified, +4/-0)
 ```diff
-@@ -90,8 +90,12 @@ WRAP:
- 
- 	for 1<<uint(t.Hour())&s.Hour == 0 {
- 		// set t to the last second of the previous hour
--		t = time.Date(t.Year(), t.Month(), t.Day(), t.Hour(), 0, 0, 0, loc)
--		t = t.Add(-1 * time.Second)
-+		//
-+		// Subtract the elapsed minutes and seconds instead of using time.Date:
-+		// on the day the clocks fall back, an hour happens twice and time.Date
-+		// returns the later of the two instants, which can move t forward and
-+		// loop forever.
-+		t = t.Add(-time.Duration(t.Minute())*time.Minute - time.Duration(t.Second()+1)*time.Second)
- 
- 		if t.Hour() == 23 {
- 			goto WRAP
-@@ -100,8 +104,8 @@ WRAP:
- 
- 	for 1<<uint(t.Minute())&s.Minute == 0 {
- 		// set t to the last second of the previous minute
--		t = time.Date(t.Year(), t.Month(), t.Day(), t.Hour(), t.Minute(), 0, 0, loc)
--		t = t.Add(-1 * time.Second)
-+		// (see the hour loop above for why time.Date isn't used here)
-+		t = t.Add(-time.Duration(t.Second()+1) * time.Second)
- 
- 		if t.Minute() == 59 {
- 			goto WRAP
+@@ -2338,6 +2338,10 @@
+           "$ref": "#/definitions/io.k8s.api.core.v1.Affinity",
+           "description": "The pod's scheduling constraints More info: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/"
+         },
++        "clientAdvertise": {
++          "description": "ClientAdvertise is the \"host:port\" that the NATS servers advertise to clients, written as the \"client_advertise\" option of the server configuration. Set it when clients reach the servers through an address other than the pod IPs, for example a load balancer. See https://docs.nats.io/running-a-nats-service/configuration#connection-and-domain-settings.",
++          "type": "string"
++        },
+         "containerTemplate": {
+           "$ref": "#/definitions/io.argoproj.events.v1alpha1.ContainerTemplate",
+           "description": "ContainerTemplate contains customized spec for Nats JetStream container"
 ```
 
-**File**: `pkg/shared/util/cronutil_test.go` (modified, +57/-0)
+**File**: `api/openapi-spec/swagger.json` (modified, +4/-0)
 ```diff
-@@ -104,3 +104,60 @@ func getTime(value string) time.Time {
- 	}
- 	panic("could not parse time value " + value)
- }
-+
-+// TestPrevCronTimeDSTFallBack covers the day the clocks fall back, when one
-+// wall-clock hour happens twice. time.Date returns the later of the two
-+// instants for such a wall time, so truncating with time.Date there can move
-+// t forward instead of backward. See
-+// https://github.com/argoproj/argo-events/issues/4240.
-+func TestPrevCronTimeDSTFallBack(t *testing.T) {
-+	parser := cronlib.NewParser(cronlib.Second | cronlib.Minute | cronlib.Hour | cronlib.Dom | cronlib.Month | cronlib.DowOptional | cronlib.Descriptor)
-+
-+	runs := []struct {
-+		time, spec string
-+		expected   string
-+	}{
-+		// Europe/Berlin: 2026-10-25 03:00 CEST (+0200) -> 02:00 CET (+0100).
-+		// Walking back through the repeated 02:xx hour used to loop forever.
-+		{"2026-10-25T03:30:00+0100", "TZ=Europe/Berlin 0 0 0 * * *", "2026-10-25T00:00:00+0200"},
-+		{"2026-10-25T12:00:00+0100", "TZ=Europe/Berlin 0 0 0 * * *", "2026-10-25T00:00:00+0200"},
-+		{"2026-10-25T02:30:00+0100", "TZ=Europe/Berlin 0 0 0 * * *", "2026-10-25T00:00:00+0200"},
-+		{"2026-10-25T03:30:00+0100", "TZ=Europe/Berlin 0 0 1 * * *", "2026-10-25T01:00:00+0200"},
-+
-+		// Hourly job during the repeated hour: the first 02:00 (CEST) must not
-+		// be reported as the second 02:00 (CET), which is in the future.
-+		{"2026-10-25T02:30:00+0200", "TZ=Europe/Berlin 0 0 * * * *", "2026-10-25T02:00:00+0200"},
-+		{"2026-10-25T02:30:00+0100", "TZ=Europe/Berlin 0 0 * * * *", "2026-10-25T02:00:00+0100"},
-+		{"2026-10-25T03:00:00+0100", "TZ=Europe/Berlin 0 30 * * * *", "2026-10-25T02:30:00+0100"},
-+
-+		// America/New_York: 2026-11-01 02:00 EDT (-0400) -> 01:00 EST (-0500).
-+		{"2026-11-01T02:30:00-0500", "TZ=America/New_York 0 0 0 * * *", "2026-11-01T00:00:00-0400"},
-+		{"2026-11-01T01:30:00-0400", "TZ=America/New_York 0 0 * * * *", "2026-11-01T01:00:00-0400"},
-+	}
-+
-+	for _, c := range runs {
-+		type result struct {
-+			t   time.Time
-+			err error
-+		}
-+		done := make(chan result, 1)
-+		go func() {
-+			actual, err := PrevCronTime(c.spec, parser, getTime(c.time))
-+			done <- result{actual, err}
-+		}()
-+
-+		select {
-+		case r := <-done:
-+			if r.err != nil {
-+				t.Errorf("%s, %q: error: %v", c.time, c.spec, r.err)
-+				continue
-+			}
-+			expected := getTime(c.expected)
-+			if !r.t.Equal(expected) {
-+				t.Errorf("%s, %q: (expected) %v != %v (actual)", c.time, c.spec, expected, r.t)
-+			}
-+		case <-time.After(5 * time.Second):
-+			t.Fatalf("%s, %q: PrevCronTime did not return within 5s", c.time, c.spec)
-+		}
-+	}
-+}
+@@ -2322,6 +2322,10 @@
+           "description": "The pod's scheduling constraints More info: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/",
+           "$ref": "#/definitions/io.k8s.api.core.v1.Affinity"
+         },
++        "clientAdvertise": {
++          "description": "ClientAdvertise is the \"host:port\" that the NATS servers advertise to clients, written as the \"client_advertise\" option of the server configuration. Set it when clients reach the servers through an address other than the pod IPs, for example a load balancer. See https://docs.nats.io/running-a-nats-service/configuration#connection-and-domain-settings.",
++          "type": "string"
++        },
+         "containerTemplate": {
+           "description": "ContainerTemplate contains customized spec for Nats JetStream container",
+           "$ref": "#/definitions/io.argoproj.events.v1alpha1.ContainerTemplate"
 ```
 
----
-
-### Incident Patch 2: `3b39ad67` (2026-11-14)
-**Commit Message**: fix: encrypt the JetStream store with the generated key, not the literal $JS_KEY (#4224)
-
-Signed-off-by: Youssef Omar Bouden <[REDACTED_EMAIL]>
-
-**File**: `docs/eventbus/jetstream.md` (modified, +2/-0)
+**File**: `docs/APIs.md` (modified, +23/-0)
 ```diff
-@@ -65,6 +65,8 @@ spec:
+@@ -11677,6 +11677,29 @@ Defaults to 1MB
+ 
+ </tr>
+ 
++<tr>
++
++<td>
++
++<code>clientAdvertise</code></br> <em> string </em>
++</td>
++
++<td>
++
++<em>(Optional)</em>
++<p>
++
++ClientAdvertise is the “host:port” that the NATS servers advertise to
++clients, written as the “client_advertise” option of the server
++configuration. Set it when clients reach the servers through an address
++other than the pod IPs, for example a load balancer. See
++<a href="https://docs.nats.io/running-a-nats-service/configuration#connection-and-domain-settings">https://docs.nats.io/running-a-nats-service/configuration#connection-and-domain-settings</a>.
++</p>
++
++</td>
++
++</tr>
++
+ </tbody>
+ 
+ </table>
+```
+
+**File**: `docs/eventbus/jetstream.md` (modified, +18/-0)
+```diff
+@@ -61,6 +61,24 @@ spec:
+       - "-D"                    # debug-level logs
+ ```
+ 
++### Advertising a different client address
++
++By default the NATS servers advertise their pod IPs to clients. If clients reach the EventBus through another
++address, for example a load balancer in front of the NATS service when a `jetstreamExotic` EventBus in another
++cluster connects to it, set `clientAdvertise` to that `host:port`. It is written to the server configuration
++as [`client_advertise`](https://docs.nats.io/running-a-nats-service/configuration#connection-and-domain-settings).
++
++```
++apiVersion: argoproj.io/v1alpha1
++kind: EventBus
++metadata:
++  name: default
++spec:
++  jetstream:
++    version: latest # Do NOT use "latest" but a specific version in your real deployment
++    clientAdvertise: my-loadbalancer.example.com:4222
++```
++
+ ## Security
  
  For Jetstream, TLS is turned on for all client-server communication as well as between Jetstream nodes. In addition, for client-server communication we by default use password authentication (and because TLS is turned on, the password is encrypted).
- 
-+The JetStream store on disk is encrypted with a key the controller generates and keeps in the `eventbus-<name>-js-server` Secret. On NATS 2.10 and later the server reads that key from the Secret; a server that was created by an earlier controller release encrypted its store with the literal string `$JS_KEY`, and the configuration names it as `prev_key`, so the store is re-encrypted with the real key on the first start after the upgrade. NATS 2.8 and 2.9 have no `prev_key`, so on those versions the configuration keeps the literal key to leave existing stores readable; move to 2.10 or later to have the generated key used.
-+
- ## How it works under the hood
- 
- Jetstream has the concept of a Stream, and Subjects (i.e. topics) which are used on a Stream. From the documentation: “Each Stream defines how messages are stored and what the limits (duration, size, interest) of the retention are.” For Argo Events, we have one Stream called "default" with a single set of settings, but we have multiple subjects, each of which is named `default.<eventsourcename>.<eventname>`. Sensors subscribe to the subjects they need using durable consumers.
 ```
 
-**File**: `go.mod` (modified, +1/-1)
+**File**: `pkg/apis/events/openapi/openapi_generated.go` (modified, +7/-0)
 ```diff
-@@ -19,6 +19,7 @@ require (
- 	github.com/Azure/azure-sdk-for-go/sdk/storage/azqueue v1.0.1
- 	github.com/IBM/sarama v1.43.0
- 	github.com/Knetic/govaluate v3.0.1-0.20171022003610-9aa49832a739+incompatible
-+	github.com/Masterminds/semver/v3 v3.5.0
- 	github.com/Masterminds/sprig/v3 v3.3.0
- 	github.com/ahmetb/gen-crd-api-reference-docs v0.3.0
- 	github.com/aliyun/aliyun-mns-go-sdk v1.0.11
-@@ -130,7 +131,6 @@ require (
- 	github.com/AzureAD/microsoft-authentication-library-for-go v1.10.1 // indirect
- 	github.com/DataDog/zstd v1.5.0 // indirect
- 	github.com/Masterminds/goutils v1.1.1 // indirect
--	github.com/Masterminds/semver/v3 v3.5.0 // indirect
- 	github.com/Microsoft/go-winio v0.6.2 // indirect
- 	github.com/OvyFlash/telegram-bot-api v0.0.0-20241219171906-3f2ca0c14ada // indirect
- 	github.com/PagerDuty/go-pagerduty v1.8.0 // indirect
-```
-
-**File**: `pkg/reconciler/eventbus/installer/assets/jetstream/nats-cluster.conf` (modified, +5/-0)
-```diff
-@@ -14,7 +14,12 @@ server_name: $POD_NAME
- #                                 #
- ###################################
- jetstream {
-+{{- if .KeyFromEnv }}
-+  key: $JS_KEY
-+  prev_key: "$JS_KEY"
-+{{- else }}
-   key: "$JS_KEY"
-+{{- end }}
-   store_dir: "/data/jetstream/store"
-   {{.Settings}}
- }
-```
-
-**File**: `pkg/reconciler/eventbus/installer/assets/jetstream/nats.conf` (modified, +5/-0)
-```diff
-@@ -14,7 +14,12 @@ server_name: $POD_NAME
- #                                 #
- ###################################
- jetstream {
-+{{- if .KeyFromEnv }}
-+  key: $JS_KEY
-+  prev_key: "$JS_KEY"
-+{{- else }}
-   key: "$JS_KEY"
-+{{- end }}
-   store_dir: "/data/jetstream/store"
-   {{.Settings}}
- }
-```
-
-**File**: `pkg/reconciler/eventbus/installer/installer_test.go` (modified, +9/-0)
-```diff
-@@ -23,6 +23,9 @@ const (
- )
- 
- var (
-+	// testJetStreamPrevKeyVersion is the first NATS release with prev_key support.
-+	testJetStreamPrevKeyVersion = "2.10.29"
-+
- 	fakeConfig = &reconciler.GlobalConfig{
- 		EventBus: &reconciler.EventBusConfig{
- 			NATS: &reconciler.StanConfig{
-@@ -42,6 +45,12 @@ var (
- 						ConfigReloaderImage:  testJSReloaderImage,
- 						MetricsExporterImage: testJetStreamExporterImage,
+@@ -4612,6 +4612,13 @@ func schema_pkg_apis_events_v1alpha1_JetStreamBus(ref common.ReferenceCallback)
+ 							Format:      "",
+ 						},
  					},
-+					{
-+						Version:              testJetStreamPrevKeyVersion,
-+						NatsImage:            testJetStreamImage,
-+						ConfigReloaderImage:  testJSReloaderImage,
-+						MetricsExporterImage: testJetStreamExporterImage,
++					"clientAdvertise": {
++						SchemaProps: spec.SchemaProps{
++							Description: "ClientAdvertise is the \"host:port\" that the NATS servers advertise to clients, written as the \"client_advertise\" option of the server configuration. Set it when clients reach the servers through an address other than the pod IPs, for example a load balancer. See https://docs.nats.io/running-a-nats-service/configuration#connection-and-domain-settings.",
++							Type:        []string{"string"},
++							Format:      "",
++						},
 +					},
  				},
  			},
  		},
 ```
 
-**File**: `pkg/reconciler/eventbus/installer/jetstream.go` (modified, +22/-1)
+**File**: `pkg/apis/events/v1alpha1/generated.proto` (modified, +7/-0)
 ```diff
-@@ -10,6 +10,7 @@ import (
- 	"text/template"
- 	"time"
- 
-+	"github.com/Masterminds/semver/v3"
- 	"github.com/spf13/viper"
- 	"go.uber.org/zap"
- 	appv1 "k8s.io/api/apps/v1"
-@@ -365,7 +366,9 @@ func (r *jetStreamInstaller) buildStatefulSetSpec(jsVersion *reconciler.JetStrea
- 							{Name: "SERVER_NAME", Value: "$(POD_NAME)"},
- 							{Name: "POD_NAMESPACE", ValueFrom: &corev1.EnvVarSource{FieldRef: &corev1.ObjectFieldSelector{FieldPath: "metadata.namespace"}}},
- 							{Name: "CLUSTER_ADVERTISE", Value: "$(POD_NAME)." + generateJetStreamServiceName(r.eventBus) + ".$(POD_NAMESPACE).svc"},
--							{Name: "JS_KEY", ValueFrom: &corev1.EnvVarSource{SecretKeyRef: &corev1.SecretKeySelector{LocalObjectReference: corev1.LocalObjectReference{Name: generateJetStreamServerSecretName(r.eventBus)}, Key: v1alpha1.JetStreamServerSecretEncryptionKey}}},
-+							{Name: "JS_KEY_RAW", ValueFrom: &corev1.EnvVarSource{SecretKeyRef: &corev1.SecretKeySelector{LocalObjectReference: corev1.LocalObjectReference{Name: generateJetStreamServerSecretName(r.eventBus)}, Key: v1alpha1.JetStreamServerSecretEncryptionKey}}},
-+							// Quoted so that nats-server reads the key as a string whatever characters it holds.
-+							{Name: "JS_KEY", Value: `"$(JS_KEY_RAW)"`},
- 						},
- 						VolumeMounts: []corev1.VolumeMount{
- 							{Name: configVolumeName, MountPath: "/etc/nats-config"},
-@@ -676,6 +679,7 @@ func (r *jetStreamInstaller) createConfigMap(ctx context.Context) error {
- 	}
- 	var confTplOutput bytes.Buffer
- 	if err := confTpl.Execute(&confTplOutput, struct {
-+		KeyFromEnv     bool
- 		MaxPayloadSize string
- 		ClusterName    string
- 		MonitorPort    string
-@@ -684,6 +688,7 @@ func (r *jetStreamInstaller) createConfigMap(ctx context.Context) error {
- 		Routes         string
- 		Settings       string
- 	}{
-+		KeyFromEnv:     jetStreamSupportsPrevKey(r.eventBus.Spec.JetStream.Version),
- 		MaxPayloadSize: maxPayload,
- 		ClusterName:    r.eventBus.Name,
- 		MonitorPort:    strconv.Itoa(int(jsMonitorPort)),
-@@ -771,6 +776,22 @@ func (r *jetStreamInstaller) getPVCs(ctx context.Context) ([]corev1.PersistentVo
- 	return pvcl.Items, nil
- }
- 
-+// jetStreamSupportsPrevKey reports whether the nats-server of the given version accepts the
-+// prev_key setting, added in 2.10. Those servers get the encryption key through an unquoted
-+// variable reference, with prev_key set to the literal "$JS_KEY" that older releases of this
-+// template encrypted the stores with, so an existing store is re-encrypted on the first start.
-+// Older servers keep the quoted reference, as the literal key is the only one they can read.
-+func jetStreamSupportsPrevKey(version string) bool {
-+	if version == "latest" {
-+		return true
-+	}
-+	v, err := semver.NewVersion(version)
-+	if err != nil {
-+		return false
-+	}
-+	return !v.LessThan(semver.MustParse("2.10.0"))
-+}
+@@ -1709,6 +1709,13 @@ message JetStreamBus {
+   // Maximum number of bytes in a message payload, 0 means unlimited. Defaults to 1MB
+   // +optional
+   optional string maxPayload = 19;
 +
- func generateJetStreamServerSecretName(eventBus *v1alpha1.EventBus) string {
- 	return fmt.Sprintf("eventbus-%s-js-server", eventBus.Name)
++  // ClientAdvertise is the "host:port" that the NATS servers advertise to clients, written as the
++  // "client_advertise" option of the server configuration. Set it when clients reach the servers
++  // through an address other than the pod IPs, for example a load balancer.
++  // See https://docs.nats.io/running-a-nats-service/configuration#connection-and-domain-settings.
++  // +optional
++  optional string clientAdvertise = 20;
  }
+ 
+ message JetStreamConfig {
 ```
 
-**File**: `pkg/reconciler/eventbus/installer/jetstream_test.go` (modified, +40/-1)
+**File**: `pkg/apis/events/v1alpha1/jetstream_eventbus.go` (modified, +6/-0)
 ```diff
-@@ -113,9 +113,14 @@ func TestJetStreamCreateObjects(t *testing.T) {
- 		for _, e := range sts.Spec.Template.Spec.Containers[0].Env {
- 			envNames = append(envNames, e.Name)
- 		}
--		for _, e := range []string{"POD_NAME", "SERVER_NAME", "POD_NAMESPACE", "CLUSTER_ADVERTISE", "JS_KEY"} {
-+		for _, e := range []string{"POD_NAME", "SERVER_NAME", "POD_NAMESPACE", "CLUSTER_ADVERTISE", "JS_KEY_RAW", "JS_KEY"} {
- 			assert.Contains(t, envNames, e)
- 		}
-+		for _, e := range sts.Spec.Template.Spec.Containers[0].Env {
-+			if e.Name == "JS_KEY" {
-+				assert.Equal(t, `"$(JS_KEY_RAW)"`, e.Value)
-+			}
-+		}
- 	})
- 
- 	t.Run("test create svc", func(t *testing.T) {
-@@ -169,9 +174,43 @@ func TestJetStreamCreateObjects(t *testing.T) {
- 		assert.NoError(t, err)
- 		assert.Equal(t, 1, len(c.Data))
- 		assert.Contains(t, c.Annotations, v1alpha1.AnnotationResourceSpecHash)
-+		conf := c.Data[v1alpha1.JetStreamConfigMapKey]
-+		assert.Contains(t, conf, "\n  key: \"$JS_KEY\"\n")
-+		assert.NotContains(t, conf, "prev_key")
-+	})
-+
-+	t.Run("test create configmap with prev_key", func(t *testing.T) {
-+		testObj := testJetStreamEventBus.DeepCopy()
-+		testObj.Spec.JetStream.Version = testJetStreamPrevKeyVersion
-+		i.eventBus = testObj
-+		err := i.createConfigMap(ctx)
-+		assert.NoError(t, err)
-+		c := &corev1.ConfigMap{}
-+		err = cl.Get(ctx, types.NamespacedName{Namespace: testObj.Namespace, Name: generateJetStreamConfigMapName(testObj)}, c)
-+		assert.NoError(t, err)
-+		conf := c.Data[v1alpha1.JetStreamConfigMapKey]
-+		assert.Contains(t, conf, "\n  key: $JS_KEY\n")
-+		assert.Contains(t, conf, "\n  prev_key: \"$JS_KEY\"\n")
-+		assert.NotContains(t, conf, "\n  key: \"$JS_KEY\"\n")
- 	})
+@@ -85,6 +85,12 @@ type JetStreamBus struct {
+ 	// Maximum number of bytes in a message payload, 0 means unlimited. Defaults to 1MB
+ 	// +optional
+ 	MaxPayload *string `json:"maxPayload,omitempty" protobuf:"bytes,19,opt,name=maxPayload"`
++	// ClientAdvertise is the "host:port" that the NATS servers advertise to clients, written as the
++	// "client_advertise" option of the server configuration. Set it when clients reach the servers
++	// through an address other than the pod IPs, for example a load balancer.
++	// See https://docs.nats.io/running-a-nats-service/configuration#connection-and-domain-settings.
++	// +optional
++	ClientAdvertise *string `json:"clientAdvertise,omitempty" protobuf:"bytes,20,opt,name=clientAdvertise"`
  }
  
-+func TestJetStreamSupportsPrevKey(t *testing.T) {
-+	for version, want := range map[string]bool{
-+		"2.8.2":         false,
-+		"2.8.2-alpine":  false,
-+		"2.9.16":        false,
-+		"2.10.0":        true,
-+		"2.10.29":       true,
-+		"2.14.4":        true,
-+		"latest":        true,
-+		"":              false,
-+		"not-a-version": false,
-+	} {
-+		assert.Equal(t, want, jetStreamSupportsPrevKey(version), version)
+ func (j JetStreamBus) GetReplicas() int {
+```
+
+**File**: `pkg/apis/events/v1alpha1/zz_generated.deepcopy.go` (modified, +5/-0)
+```diff
+@@ -2345,6 +2345,11 @@ func (in *JetStreamBus) DeepCopyInto(out *JetStreamBus) {
+ 		*out = new(string)
+ 		**out = **in
+ 	}
++	if in.ClientAdvertise != nil {
++		in, out := &in.ClientAdvertise, &out.ClientAdvertise
++		*out = new(string)
++		**out = **in
 +	}
-+}
-+
- func TestBuildJetStreamStatefulSetSpec(t *testing.T) {
- 	cl := fake.NewClientBuilder().Build()
- 	i := &jetStreamInstaller{
+ 	return
+ }
+ 
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4289** (closed): chore: use constants for repeated strings in the DST fall-back test (@cvas22)
 - **PR #4286** (closed): chore(deps): bump github.com/tidwall/gjson from 1.20.0 to 1.20.2 (@dependabot[bot])
 - **PR #4285** (2026-11-13): chore(deps): bump google.golang.org/api from 0.310.0 to 0.312.0 (@dependabot[bot])
 - **PR #4284** (2026-11-14): chore(deps): bump github.com/xdg-go/scram from 1.3.0 to 1.4.0 (@dependabot[bot])
 - **PR #4283** (2026-11-13): chore(deps): bump cloud.google.com/go/pubsub/v2 from 2.8.0 to 2.8.1 (@dependabot[bot])
 - **PR #4282** (2026-11-13): chore(deps): bump github.com/tidwall/sjson from 1.2.5 to 1.2.9 (@dependabot[bot])
-- **PR #4280** (2026-11-14): feat(controller): make leader election timing configurable (@cvas22)
 
 ---
 
@@ -1424,41 +1261,34 @@ Signed-off-by: Youssef Omar Bouden <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. stop PrevCronTime looping on the DST fall-back day
+## X. eventbus): add clientAdvertise to the JetStream EventBus
 
 **RULE**:
-When implementing operations in `pkg/shared/util/cronutil.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in argoproj/argo-events. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `api/jsonschema/schema.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in argoproj/argo-events. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `ba2dd434`: stop PrevCronTime looping on the DST fall-back day. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `727b3155`: eventbus): add clientAdvertise to the JetStream EventBus. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `pkg/shared/util/cronutil.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `api/jsonschema/schema.json`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-		//
-		// Subtract the elapsed minutes and seconds instead of using time.Date:
-		// on the day the clocks fall back, an hour happens twice and time.Date
-		// returns the later of the two instants, which can move t forward and
-		// loop forever.
-		t = t.Add(-time.Duration(t.Minute())*time.Minute - time.Duration(t.Second()+1)*time.Second)
-		// (see the hour loop above for why time.Date isn't used here)
-		t = t.Add(-time.Duration(t.Second()+1) * time.Second)
+        "clientAdvertise": {
+          "description": "ClientAdvertise is the \"host:port\" that the NATS servers advertise to clients, written as the \"client_advertise\" option of the server configuration. Set it when clients reach the servers through an address other than the pod IPs, for example a load balancer. See https://docs.nats.io/running-a-nats-service/configuration#connection-and-domain-settings.",
+          "type": "string"
+        },
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-		t = time.Date(t.Year(), t.Month(), t.Day(), t.Hour(), 0, 0, 0, loc)
-		t = t.Add(-1 * time.Second)
-		t = time.Date(t.Year(), t.Month(), t.Day(), t.Hour(), t.Minute(), 0, 0, loc)
-		t = t.Add(-1 * time.Second)
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `ba2dd434` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `727b3155` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

@@ -1,80 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261116-5VER",
-    "timestamp": "2026-11-16T05:41:38.499Z",
-    "repository": "dragonflydb/dragonfly",
-    "learningId": "learn-github-dragonflydb-dragonfly",
-    "contentHash": "acee1c479ab6f540ef735eb80e9aa0475c01f2c48ab1b3fcf8fe67ab3ce60ee7",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261116-G1C0",
-    "timestamp": "2026-11-16T06:17:32.352Z",
-    "repository": "yyjeqhc/webcodex",
-    "learningId": "learn-github-yyjeqhc-webcodex",
-    "contentHash": "d8cd0526021646b1b2612b4682656dbe29c3765cf60d0a714ebca11f1ba98f42",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261116-GAVV",
-    "timestamp": "2026-11-16T06:17:44.731Z",
-    "repository": "ClickHouse/ClickHouse",
-    "learningId": "learn-github-clickhouse-clickhouse",
-    "contentHash": "34a258544d68889bd694c2bd340ff8410585765960a75ad65b6e29a9bc0eacbd",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261116-Y8CQ",
-    "timestamp": "2026-11-16T06:59:40.874Z",
-    "repository": "tursodatabase/turso",
-    "learningId": "learn-github-tursodatabase-turso",
-    "contentHash": "b770a9b8166830cf06931be3c0c448f76577fdc2e8e99f799ffe102420f983b4",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261116-O4IN",
-    "timestamp": "2026-11-16T07:19:48.959Z",
-    "repository": "codewhale-hq/Codewhale",
-    "learningId": "learn-github-codewhale-hq-codewhale",
-    "contentHash": "10f08cf6e988a2cc6c3eeb99b5b4098ab9db301b8f95cc98f8f0686f1022c857",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261116-AK9L",
     "timestamp": "2026-11-16T07:37:15.801Z",
     "repository": "biomejs/biome",
@@ -7490,6 +7415,81 @@
     "repository": "MaterializeInc/materialize",
     "learningId": "learn-github-materializeinc-materialize",
     "contentHash": "38a762cf83a9a461391662132d473c49563310f6214558173a31054288b4fd3f",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-5F1Y",
+    "timestamp": "2026-11-18T04:20:38.902Z",
+    "repository": "apple/FastFrames-L",
+    "learningId": "learn-huggingface-apple-fastframes-l",
+    "contentHash": "3d12a966d3be4e37b46954ed1eb190d33fd3395ef4dcf90bc1241484fda64250",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-5GW5",
+    "timestamp": "2026-11-18T04:20:41.285Z",
+    "repository": "Comfy-Org/Qwen-Image-2.1",
+    "learningId": "learn-huggingface-comfy-org-qwen-image-2-1",
+    "contentHash": "0ac77fc50e183bdd5f7769d2010b87a7d0f5948b5b1637357115d5fa4542757a",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-5ODM",
+    "timestamp": "2026-11-18T04:20:50.986Z",
+    "repository": "argoproj/argo-events",
+    "learningId": "learn-github-argoproj-argo-events",
+    "contentHash": "86cf8a7107dfbba979473fec124df60ed1c119edc0e55348a86553739bf98afd",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-5QF3",
+    "timestamp": "2026-11-18T04:20:53.631Z",
+    "repository": "sigstore/cosign",
+    "learningId": "learn-github-sigstore-cosign",
+    "contentHash": "49a524d1a6973099f34ec08ab86c2ecb3724ab68bf03cad0319b4c89956848fe",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-5SBM",
+    "timestamp": "2026-11-18T04:20:56.098Z",
+    "repository": "HelixDB/helix-db",
+    "learningId": "learn-github-helixdb-helix-db",
+    "contentHash": "6b514a0bf994214ea2431c62922a78ccf34daea86979c036ad8be7643a1d3760",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

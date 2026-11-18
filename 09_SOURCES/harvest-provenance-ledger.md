@@ -10831,3 +10831,9 @@ Every entry in this ledger must capture:
 | `learn-github-cachix-devenv` | `https://github.com/cachix/devenv` | `8efcb88c` | Multi-dimensional audit evidence | 2026-11-18T04:03:54.501Z |
 | `learn-huggingface-taichuai-zdtaichu5-0-9b` | `https://huggingface.co/TaichuAI/ZDTaichu5.0-9B` | `hf-taichua` | Multi-dimensional audit evidence | 2026-11-18T04:11:15.543Z |
 | `learn-github-materializeinc-materialize` | `https://github.com/MaterializeInc/materialize` | `dfdfaf23` | Multi-dimensional audit evidence | 2026-11-18T04:11:31.000Z |
+| `learn-huggingface-apple-fastframes-l` | `https://huggingface.co/apple/FastFrames-L` | `hf-apple-f` | Multi-dimensional audit evidence | 2026-11-18T04:20:38.905Z |
+| `learn-huggingface-comfy-org-qwen-image-2-1` | `https://huggingface.co/Comfy-Org/Qwen-Image-2.1` | `hf-comfy-o` | Multi-dimensional audit evidence | 2026-11-18T04:20:41.288Z |
+| `learn-github-argoproj-argo-events` | `https://github.com/argoproj/argo-events` | `727b3155` | Multi-dimensional audit evidence | 2026-11-18T04:20:50.989Z |
+| `learn-github-sigstore-cosign` | `https://github.com/sigstore/cosign` | `0743bfcf` | Multi-dimensional audit evidence | 2026-11-18T04:20:53.634Z |
+| `learn-github-helixdb-helix-db` | `https://github.com/HelixDB/helix-db` | `2b9e3612` | Multi-dimensional audit evidence | 2026-11-18T04:20:56.101Z |
+| `learn-dom-d-ad9f2297` | `project://hf-apple-fastframes-l` | `1.0.0` | `/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/hf-apple-fastframes-l-learnings.md` | 2026-11-18T04:21:21.434Z |

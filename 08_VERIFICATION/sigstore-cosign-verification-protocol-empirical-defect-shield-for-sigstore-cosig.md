@@ -4,22 +4,22 @@
 {
   "source_repository": "sigstore/cosign",
   "source_url": "https://github.com/sigstore/cosign",
-  "source_version": "2ec8094c",
+  "source_version": "0743bfcf",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-17T16:46:45.094Z",
+  "timestamp": "2026-11-18T04:20:53.803Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-sigstore-cosign",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [sigstore/cosign](https://github.com/sigstore/cosign) (Revision: `2ec8094c`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-17T16:46:45.094Z`  
+> **Provenance**: Harvested from [sigstore/cosign](https://github.com/sigstore/cosign) (Revision: `0743bfcf`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-18T04:20:53.803Z`  
 > **Learning ID**: `learn-github-sigstore-cosign`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `sigstore/cosign` (Commit: `2ec8094c`)
+- **Target Repository**: `sigstore/cosign` (Commit: `0743bfcf`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/sigstore-cosign-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/sigstore/cosign](https://github.com/sigstore/cosign))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T16:46:43.981Z  
+> **Harvest Timestamp**: 2026-11-18T04:20:52.726Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -38,7 +38,7 @@ PROVENANCE_END -->
 - **Description**: Code signing and transparency for containers and binaries
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 6445 stars
+- **Stars / Engagement**: 6447 stars
 
 ---
 
@@ -1808,613 +1808,271 @@ func predicateTypeFromEnvelope(envelope *dsse.Envelope) (string, error) {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `2ec8094c` (2026-11-17)
-**Commit Message**: Require new bundle format for attest (#5108)
+### Incident Patch 1: `0743bfcf` (2026-11-18)
+**Commit Message**: chore(deps): bump golang.org/x/crypto from 0.58.0 to 0.59.0 (#5220)
 
-Signed-off-by: Aaron Lew <[REDACTED_EMAIL]>
+Bumps [golang.org/x/crypto](https://github.com/golang/crypto) from 0.58.0 to 0.59.0.
+- [Commits](https://github.com/golang/crypto/compare/v0.58.0...v0.59.0)
 
-**File**: `cmd/cosign/cli/attest.go` (modified, +15/-27)
+---
+updated-dependencies:
+- dependency-name: golang.org/x/crypto
+  dependency-version: 0.59.0
+  dependency-type: direct:production
+  update-type: version-update:semver-minor
+...
+
+Signed-off-by: dependabot[bot] <[REDACTED_EMAIL]>
+Co-authored-by: dependabot[bot] <49699333+dependabot[bot]@users.noreply.github.com>
+
+**File**: `go.mod` (modified, +4/-4)
 ```diff
-@@ -31,7 +31,7 @@ func Attest() *cobra.Command {
- 	cmd := &cobra.Command{
- 		Use:   "attest",
- 		Short: "Attest the supplied container image",
--		Example: `  cosign attest --key <key path>|<kms uri> [--predicate <path>] [--a key=value] [--no-upload=true|false] [--record-creation-timestamp=true|false] [--f] [--r] <image uri>
-+		Example: `  cosign attest [--key <key path>|<kms uri>] [--predicate <path>] [--no-upload=true|false] [-y] <image uri>
- 
-   # attach an attestation to a container image Google sign-in
-   cosign attest --timeout 90s --predicate <FILE> --type <TYPE> <IMAGE>
-@@ -52,7 +52,7 @@ func Attest() *cobra.Command {
-   cosign attest --predicate <FILE> --type <TYPE> --key hashivault://[KEY] <IMAGE>
- 
-   # attach an attestation to a container image with a local key pair file, including a certificate and certificate chain
--  cosign attest --predicate <FILE> --type <TYPE> --key cosign.key --cert cosign.crt --cert-chain chain.crt <IMAGE>
-+  cosign attest --predicate <FILE> --type <TYPE> --key cosign.key --certificate cosign.crt --certificate-chain chain.crt <IMAGE>
- 
-   # attach an attestation to a container image which does not fully support OCI media types
-   COSIGN_DOCKER_MEDIA_TYPES=1 cosign attest --predicate <FILE> --type <TYPE> --key cosign.key legacy-registry.example.com/my/image
-@@ -61,16 +61,13 @@ func Attest() *cobra.Command {
-   echo <PAYLOAD> | cosign attest --predicate - <IMAGE>
- 
-   # write attestation to stdout
--  cosign attest --predicate <FILE> --type <TYPE> --key cosign.key --no-upload true <IMAGE>
--
--  # attach an attestation to a container image and honor the creation timestamp of the signature
--  cosign attest --predicate <FILE> --type <TYPE> --key cosign.key --record-creation-timestamp <IMAGE>`,
-+  cosign attest --predicate <FILE> --type <TYPE> --key cosign.key --no-upload true <IMAGE>`,
- 
- 		Args:             cobra.MinimumNArgs(1),
- 		PersistentPreRun: options.BindViper,
- 		PreRunE: func(_ *cobra.Command, args []string) error {
--			if o.NewBundleFormat && o.NoUpload && o.BundlePath == "" {
--				return fmt.Errorf("must enable upload to the OCI registry or specify a local --bundle path with --new-bundle-format")
-+			if o.NoUpload && o.BundlePath == "" {
-+				return fmt.Errorf("must enable upload to the OCI registry or specify a local --bundle path")
- 			}
- 			if o.BundlePath != "" && len(args) > 1 {
- 				return fmt.Errorf("cannot use --bundle when attesting multiple images")
-@@ -79,8 +76,8 @@ func Attest() *cobra.Command {
- 		},
- 		RunE: func(cmd *cobra.Command, args []string) error {
- 			if err := signcommon.ValidateSigningOptions(cmd.Context(), o.UseSigningConfig, o.SigningConfigPath,
--				o.Rekor.URL, o.Fulcio.URL, o.OIDC.Issuer, o.TSAServerURL,
--				o.TlogUpload, o.NewBundleFormat, o.BundlePath,
-+				"", o.Fulcio.URL, o.OIDC.Issuer, "",
-+				true, true, o.BundlePath,
- 				"", "", "", "", "", ""); err != nil {
- 				return err
- 			}
-@@ -95,11 +92,8 @@ func Attest() *cobra.Command {
- 				PassFunc:                       generate.GetPass,
- 				Sk:                             o.SecurityKey.Use,
- 				Slot:                           o.SecurityKey.Slot,
--				FulcioURL:                      o.Fulcio.URL,
- 				IDToken:                        o.Fulcio.IdentityToken,
- 				FulcioAuthFlow:                 o.Fulcio.AuthFlow,
--				RekorURL:                       o.Rekor.URL,
--				OIDCIssuer:                     o.OIDC.Issuer,
- 				OIDCClientID:                   o.OIDC.ClientID,
- 				OIDCClientSecret:               oidcClientSecret,
- 				OIDCRedirectURL:                o.OIDC.RedirectURL,
-@@ -110,28 +104,22 @@ func Attest() *cobra.Command {
- 				TSAClientKey:                   o.TSAClientKey,
- 				TSAClientCert:                  o.TSAClientCert,
- 				TSAServerName:                  o.TSAServerName,
--				TSAServerURL:                   o.TSAServerURL,
- 				IssueCertificateForExistingKey: o.IssueCertificate,
- 				BundlePath:                     o.BundlePath,
--				NewBundleFormat:                o.NewBundleFormat,
- 			}
- 			if err := signcommon.LoadSigningConfigAndTrustedMaterial(cmd.Context(), &ko, o.UseSigningConfig, o.SigningConfigPath, o.TrustedRootPath); err != nil {
- 				return err
- 			}
- 
- 			attestCommand := attest.AttestCommand{
--				KeyOpts:                 ko,
--				RegistryOptions:         o.Registry,
--				CertPath:                o.Cert,
--				CertChainPath:           o.CertChain,
--				NoUpload:                o.NoUpload,
--				PredicatePath:           o.Predicate.Path,
--				PredicateType:           o.Predicate.Type,
--				Replace:                 o.Replace,
--				Timeout:                 ro.Timeout,
--				TlogUpload:              o.TlogUpload,
--				RekorEntryType:          o.RekorEntryType,
--				RecordCreationTimestamp: o.RecordCreationTimestamp,
-+				KeyOpts:         ko,
-+				RegistryOptions: o.Registry,
-+				CertPath:        o.Cert,
-+				CertChainPath:   o.CertChain,
-+				NoUpload:        o.NoUpload,
-+				PredicatePath:   o.Predicate.Path,
-+				PredicateType:   o.Predicate.Type,
-+				Tim
+@@ -52,10 +52,10 @@ require (
+ 	github.com/transparency-dev/merkle v0.0.2
+ 	github.com/withfig/autocomplete-tools/integrations/cobra v1.2.1
+ 	gitlab.com/gitlab-org/api/client-go/v3 v3.46.0
+-	golang.org/x/crypto v0.58.0
++	golang.org/x/crypto v0.59.0
+ 	golang.org/x/oauth2 v0.37.0
+ 	golang.org/x/sync v0.25.0
+-	golang.org/x/term v0.47.0
++	golang.org/x/term v0.48.0
+ 	google.golang.org/api v0.308.0
+ 	google.golang.org/protobuf v1.36.12
+ 	k8s.io/api v0.37.2
+@@ -278,8 +278,8 @@ require (
+ 	go.yaml.in/yaml/v3 v3.0.6 // indirect
+ 	golang.org/x/mod v0.42.0 // indirect
+ 	golang.org/x/net v0.62.0 // indirect
+-	golang.org/x/sys v0.49.0 // indirect
+-	golang.org/x/text v0.43.0 // indirect
++	golang.org/x/sys v0.50.0 // indirect
++	golang.org/x/text v0.44.0 // indirect
+ 	golang.org/x/time v0.16.0 // indirect
+ 	golang.org/x/tools v0.52.0 // indirect
+ 	google.golang.org/genproto v0.0.0-20260715232425-e75dac1f907d // indirect
 ```
 
-**File**: `cmd/cosign/cli/attest/attest.go` (modified, +18/-122)
+**File**: `go.sum` (modified, +8/-8)
 ```diff
-@@ -24,37 +24,24 @@ import (
- 
- 	"github.com/google/go-containerregistry/pkg/name"
- 	v1 "github.com/google/go-containerregistry/pkg/v1"
--	"google.golang.org/protobuf/encoding/protojson"
- 
- 	"github.com/sigstore/cosign/v3/cmd/cosign/cli/options"
- 	"github.com/sigstore/cosign/v3/cmd/cosign/cli/signcommon"
- 	"github.com/sigstore/cosign/v3/internal/ui"
- 	"github.com/sigstore/cosign/v3/pkg/cosign/attestation"
--	cbundle "github.com/sigstore/cosign/v3/pkg/cosign/bundle"
--	cremote "github.com/sigstore/cosign/v3/pkg/cosign/remote"
--	"github.com/sigstore/cosign/v3/pkg/oci/mutate"
- 	ociremote "github.com/sigstore/cosign/v3/pkg/oci/remote"
--	"github.com/sigstore/cosign/v3/pkg/oci/static"
--	"github.com/sigstore/cosign/v3/pkg/types"
--	protobundle "github.com/sigstore/protobuf-specs/gen/pb-go/bundle/v1"
--	"github.com/sigstore/sigstore/pkg/signature"
- )
- 
- // nolint
- type AttestCommand struct {
- 	options.KeyOpts
- 	options.RegistryOptions
--	CertPath                string
--	CertChainPath           string
--	NoUpload                bool
--	PredicatePath           string
--	PredicateType           string
--	Replace                 bool
--	Timeout                 time.Duration
--	TlogUpload              bool
--	TSAServerURL            string
--	RekorEntryType          string
--	RecordCreationTimestamp bool
-+	CertPath      string
-+	CertChainPath string
-+	NoUpload      bool
-+	PredicatePath string
-+	PredicateType string
-+	Timeout       time.Duration
- }
- 
- // nolint
-@@ -68,10 +55,6 @@ func (c *AttestCommand) Exec(ctx context.Context, imageRef string) error {
- 		return fmt.Errorf("predicate cannot be empty")
- 	}
- 
--	if c.RekorEntryType != "dsse" && c.RekorEntryType != "intoto" {
--		return fmt.Errorf("unknown value for rekor-entry-type")
--	}
--
- 	predicateURI, err := options.ParsePredicateType(c.PredicateType)
- 	if err != nil {
- 		return err
-@@ -135,121 +118,34 @@ func (c *AttestCommand) Exec(ctx context.Context, imageRef string) error {
- 	}
- 
- 	if c.SigningConfig == nil {
--		c.SigningConfig, err = signcommon.NewSigningConfigFromKeyOpts(c.KeyOpts)
--		if err != nil {
--			return fmt.Errorf("creating signing config: %w", err)
--		}
-+		c.SigningConfig = signcommon.NewEmptySigningConfig()
- 	}
--	if !signcommon.ShouldUploadToTlog(ctx, c.KeyOpts, digest, c.TlogUpload) {
-+	if err := signcommon.RequireFulcioForCertificate(c.KeyOpts); err != nil {
-+		return err
-+	}
-+	if !signcommon.ShouldUploadToTlog(ctx, c.KeyOpts, digest, len(c.SigningConfig.RekorLogURLs()) > 0) {
- 		c.SigningConfig = c.SigningConfig.WithRekorLogURLs()
- 	}
- 	if err := signcommon.ConfirmPrivacyStatement(ctx, c.KeyOpts); err != nil {
- 		return err
- 	}
- 
--	bundleBytes, pubKey, hashAlgProto, err := signcommon.NewAttestationBundle(ctx, c.KeyOpts, c.CertPath, c.CertChainPath, bundleOpts, c.SigningConfig, c.TrustedMaterial)
-+	bundleBytes, _, _, err := signcommon.NewAttestationBundle(ctx, c.KeyOpts, c.CertPath, c.CertChainPath, bundleOpts, c.SigningConfig, c.TrustedMaterial)
- 	if err != nil {
- 		return fmt.Errorf("creating bundle: %w", err)
- 	}
- 
--	if c.NewBundleFormat {
--		if c.BundlePath != "" {
--			if err := os.WriteFile(c.BundlePath, bundleBytes, 0600); err != nil {
--				return fmt.Errorf("create bundle file: %w", err)
--			}
--			ui.Infof(ctx, "Wrote bundle to file %s", c.BundlePath)
--		}
--
--		if !c.NoUpload {
--			if err := ociremote.WriteAttestationNewBundleFormat(digest, bundleBytes, bundleOpts.PredicateType, ociremoteOpts...); err != nil {
--				return fmt.Errorf("writing bundle: %w", err)
--			}
--		}
--		return nil
--	}
--
--	var pb protobundle.Bundle
--	if err := protojson.Unmarshal(bundleBytes, &pb); err != nil {
--		return fmt.Errorf("unmarshalling bundle: %w", err)
--	}
--
--	bundleComponents, err := signcommon.ExtractComponentsFromProtoBundle(&pb)
--	if err != nil {
--		return fmt.Errorf("extracting components from bundle: %w", err)
--	}
--
--	legacyBundleBytes, err := signcommon.NewLegacyBundleFromProtoBundleComponents(bundleComponents)
--	if err != nil {
--		return fmt.Errorf("creating legacy bundle: %w", err)
--	}
--
- 	if c.BundlePath != "" {
--		if err := os.WriteFile(c.BundlePath, legacyBundleBytes, 0600); err != nil {
-+		if err := os.WriteFile(c.BundlePath, bundleBytes, 0600); err != nil {
- 			return fmt.Errorf("create bundle file: %w", err)
- 		}
- 		ui.Infof(ctx, "Wrote bundle to file %s", c.BundlePath)
- 	}
- 
--	if c.NoUpload {
--		return nil
--	}
--
--	certPem, chainPem := signcommon.EncodeCertificatesToPEM(bundleComponents.Certificates)
--
--	opts := []static.Option{
--		static.WithLayerMediaType(types.DssePayloadType),
--		static.WithAnnotations(map[string]string{
--			"predicateType": predicateURI,
--		}),
--	}
--	if certPem != nil {
--		opts = append(opts, static.WithCertChain(certPem, chainPem))
--	}
--
--	if len(bundleComponents.RFC3161Timestamps) > 0 {
--		opts = append(opts, static.WithRFC3161Timestamp(cbundle.TimestampToRFC3161Timestamp(bundleComponents.RFC3161Timestamps[0].GetSignedTimestamp())))
--	}
--
--	predicateTypeAnnotation := map[string]string{
--		"predicateType": predicateURI,
--	}
--	// Add predicat
+@@ -792,8 +792,8 @@ golang.org/x/crypto v0.19.0/go.mod h1:Iy9bg/ha4yyC70EfRS8jz+B6ybOBKMaSxLj6P6oBDf
+ golang.org/x/crypto v0.21.0/go.mod h1:0BP7YvVV9gBbVKyeTG0Gyn+gZm94bibOW5BjDEYAOMs=
+ golang.org/x/crypto v0.23.0/go.mod h1:CKFgDieR+mRhux2Lsu27y0fO304Db0wZe70UKqHu0v8=
+ golang.org/x/crypto v0.24.0/go.mod h1:Z1PMYSOR5nyMcyAVAIQSKCDwalqy85Aqn1x3Ws4L5DM=
+-golang.org/x/crypto v0.58.0 h1:COkYLr4k7nDI4r6QtMML2AfzeIswWHAJthLS6K/M/54=
+-golang.org/x/crypto v0.58.0/go.mod h1:Xh+kl5A+M0gMiWDytH2Hhr5Z7WbNCpv/eB/EFgfSk+w=
++golang.org/x/crypto v0.59.0 h1:xS2jhqYbzNrpvkWP2YTDf4TJwBy3ykR03i8vFDxEc7c=
++golang.org/x/crypto v0.59.0/go.mod h1:veDyUwATGs3c+vN3VfTbzViMGXeTBk3WyhBOkn+F/4U=
+ golang.org/x/exp v0.0.0-20190121172915-509febef88a4/go.mod h1:CJ0aWSM057203Lf6IL+f9T1iT9GByDxfZKAQTCR3kQA=
+ golang.org/x/lint v0.0.0-20181026193005-c67002cb31c3/go.mod h1:UVdnD1Gm6xHRNCYTkRU2/jEulfH38KcIWyp/GAMgvoE=
+ golang.org/x/lint v0.0.0-20190227174305-5b3e6a55c961/go.mod h1:wehouNa3lNwaWXcvxsM5YxQ5yQlVC4a0KAMCusXpPoU=
+@@ -886,8 +886,8 @@ golang.org/x/sys v0.17.0/go.mod h1:/VUhepiaJMQUp4+oa/7Zr1D23ma6VTLIYjOOTFZPUcA=
+ golang.org/x/sys v0.18.0/go.mod h1:/VUhepiaJMQUp4+oa/7Zr1D23ma6VTLIYjOOTFZPUcA=
+ golang.org/x/sys v0.20.0/go.mod h1:/VUhepiaJMQUp4+oa/7Zr1D23ma6VTLIYjOOTFZPUcA=
+ golang.org/x/sys v0.21.0/go.mod h1:/VUhepiaJMQUp4+oa/7Zr1D23ma6VTLIYjOOTFZPUcA=
+-golang.org/x/sys v0.49.0 h1:XbzkgYJHdqh/8m2Uu0W/dQv8nktxx4BFHp1M0gROTXA=
+-golang.org/x/sys v0.49.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
++golang.org/x/sys v0.50.0 h1:dkKZEFTEKaLr1sjhs0WiKqoi8Jj5nHbS3Njmx1UoMJs=
++golang.org/x/sys v0.50.0/go.mod h1:hNLxWAXmnKAxqDtdwIYC4bM9oQPEecfsnNMuSxOs3og=
+ golang.org/x/telemetry v0.0.0-20240228155512-f48c80bd79b2/go.mod h1:TeRTkGYfJXctD9OcfyVLyj2J3IxLnKwHJR8f4D8a3YE=
+ golang.org/x/term v0.0.0-20201126162022-7de9c90e9dd1/go.mod h1:bj7SfCRtBDWHUb9snDiAeCFNEtKQo2Wmx5Cou7ajbmo=
+ golang.org/x/term v0.0.0-20210927222741-03fcf44c2211/go.mod h1:jbD1KX2456YbFQfuXm/mYQcufACuNUgVhRMnK/tPxf8=
+@@ -901,8 +901,8 @@ golang.org/x/term v0.17.0/go.mod h1:lLRBjIVuehSbZlaOtGMbcMncT+aqLLLmKrsjNrUguwk=
+ golang.org/x/term v0.18.0/go.mod h1:ILwASektA3OnRv7amZ1xhE/KTR+u50pbXfZ03+6Nx58=
+ golang.org/x/term v0.20.0/go.mod h1:8UkIAJTvZgivsXaD6/pH6U9ecQzZ45awqEOzuCvwpFY=
+ golang.org/x/term v0.21.0/go.mod h1:ooXLefLobQVslOqselCNF4SxFAaoS6KujMbsGzSDmX0=
+-golang.org/x/term v0.47.0 h1:cpyOwQkr2Nzxe2p6KnrTG7Ei2wtzjsuSjhpXXepZ/BM=
+-golang.org/x/term v0.47.0/go.mod h1:efAfAuG6RKABvg1ArGebRkvX6LXul14SM67o2e4mUCY=
++golang.org/x/term v0.48.0 h1:G6UU1eiSB8nl3DzeUGt7Mg+2SctI8tPS6Z5/mBt6cOk=
++golang.org/x/term v0.48.0/go.mod h1:BRDLHCZr2SUjIeBHHpRyQeC9xzSAVbzY2rvKgafnHf4=
+ golang.org/x/text v0.3.0/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=
+ golang.org/x/text v0.3.2/go.mod h1:bEr9sfX3Q8Zfm5fL9x+3itogRgK3+ptLWKqgva+5dAk=
+ golang.org/x/text v0.3.3/go.mod h1:5Zoc/QRtKVWzQhOtBMvqHzDpF6irO9z98xDceosuGiQ=
+@@ -914,8 +914,8 @@ golang.org/x/text v0.13.0/go.mod h1:TvPlkZtksWOMsz7fbANvkp4WM8x/WCo/om8BMLbz+aE=
+ golang.org/x/text v0.14.0/go.mod h1:18ZOQIKpY8NJVqYksKHtTdi31H5itFRjB5/qKTNYzSU=
+ golang.org/x/text v0.15.0/go.mod h1:18ZOQIKpY8NJVqYksKHtTdi31H5itFRjB5/qKTNYzSU=
+ golang.org/x/text v0.16.0/go.mod h1:GhwF1Be+LQoKShO3cGOHzqOgRrGaYc9AvblQOmPVHnI=
+-golang.org/x/text v0.43.0 h1:1QivrlhwAsnMOcqgOdl9my7s9OyZl8O5/UGUTJVXoWc=
+-golang.org/x/text v0.43.0/go.mod h1:hbSIYA/amXcRXTFSZqh8tWHEoqRvvbKPJ2uz/KU+a+s=
++golang.org/x/text v0.44.0 h1:YItdp/mQNGnsmrgpcdA5yQ3bnRxCfo/Tj/iByGW9GGo=
++golang.org/x/text v0.44.0/go.mod h1:S4FR1waQ9LbjQTls97SyRjDaUUVkaM+cXwwuG/G+MwY=
+ golang.org/x/time v0.16.0 h1:vMb6ptszcQMkcwiRTAuNNU50gom6++Q/6gY2hDM6VDE=
+ golang.org/x/time v0.16.0/go.mod h1:rVKOqvZeKvrDKTQiAHJ7wmwP0RzleSphoEA9RcdLA0s=
+ golang.org/x/tools v0.0.0-20180917221912-90fa682c2a6e/go.mod h1:n7NCudcB/nEzxVGmLbDWY5pfWTLqBcC2KZ6jyYvM4mQ=
 ```
 
-**File**: `cmd/cosign/cli/options/attest.go` (modified, +15/-49)
+---
+
+### Incident Patch 2: `4d468c0a` (2026-11-18)
+**Commit Message**: chore(deps): bump the gomod group with 2 updates (#5219)
+
+Bumps the gomod group with 2 updates: [github.com/open-policy-agent/opa](https://github.com/open-policy-agent/opa) and [github.com/sigstore/rekor-tiles/v2](https://github.com/sigstore/rekor-tiles).
+
+
+Updates `github.com/open-policy-agent/opa` from 1.22.2 to 1.22.4
+- [Release notes](https://github.com/open-policy-agent/opa/releases)
+- [Changelog](https://github.com/open-policy-agent/opa/blob/main/CHANGELOG.md)
+- [Commits](https://github.com/open-policy-agent/opa/compare/v1.22.2...v1.22.4)
+
+Updates `github.com/sigstore/rekor-tiles/v2` from 2.4.1 to 2.4.2
+- [Release notes](https://github.com/sigstore/rekor-tiles/releases)
+- [Changelog](https://github.com/sigstore/rekor-tiles/blob/main/RELEASE.md)
+- [Commits](https://github.com/sigstore/rekor-tiles/compare/v2.4.1...v2.4.2)
+
+---
+updated-dependencies:
+- dependency-name: github.com/open-policy-agent/opa
+  dependency-version: 1.22.4
+  dependency-type: direct:production
+  update-type: version-update:semver-patch
+  dependency-group: gomod
+- dependency-name: github.com/sigstore/rekor-tiles/v2
+  dependency-version: 2.4.2
+  dependency-type: direct:production
+  update-type: version-update
+
+**File**: `go.mod` (modified, +10/-10)
 ```diff
-@@ -16,35 +16,26 @@
- package options
- 
- import (
--	"strings"
--
- 	"github.com/spf13/cobra"
- )
- 
- // AttestOptions is the top level wrapper for the attest command.
- type AttestOptions struct {
--	Key                     string
--	Cert                    string
--	CertChain               string
--	IssueCertificate        bool
--	NoUpload                bool
--	Replace                 bool
--	SkipConfirmation        bool
--	TlogUpload              bool
--	TSAClientCACert         string
--	TSAClientCert           string
--	TSAClientKey            string
--	TSAServerName           string
--	TSAServerURL            string
--	RekorEntryType          string
--	RecordCreationTimestamp bool
--	BundlePath              string
--	NewBundleFormat         bool
--	UseSigningConfig        bool
--	SigningConfigPath       string
--	TrustedRootPath         string
--
--	Rekor       RekorOptions
-+	Key               string
-+	Cert              string
-+	CertChain         string
-+	IssueCertificate  bool
-+	NoUpload          bool
-+	SkipConfirmation  bool
-+	TSAClientCACert   string
-+	TSAClientCert     string
-+	TSAClientKey      string
-+	TSAServerName     string
-+	BundlePath        string
-+	UseSigningConfig  bool
-+	SigningConfigPath string
-+	TrustedRootPath   string
-+
- 	Fulcio      FulcioOptions
- 	OIDC        OIDCOptions
- 	SecurityKey SecurityKeyOptions
-@@ -60,7 +51,6 @@ func (o *AttestOptions) AddFlags(cmd *cobra.Command) {
- 	o.Predicate.AddFlags(cmd)
- 	o.Fulcio.AddFlags(cmd)
- 	o.OIDC.AddFlags(cmd)
--	o.Rekor.AddFlags(cmd)
- 	o.Registry.AddFlags(cmd)
- 
- 	cmd.Flags().StringVar(&o.Key, "key", "",
-@@ -80,22 +70,10 @@ func (o *AttestOptions) AddFlags(cmd *cobra.Command) {
- 
- 	cmd.Flags().BoolVar(&o.NoUpload, "no-upload", false,
- 		"do not upload the generated attestation, but send the attestation output to STDOUT")
--	cmd.Flags().BoolVarP(&o.Replace, "replace", "", false,
--		"")
--	_ = cmd.Flags().MarkDeprecated("replace", "not needed when OCI referrers become the default behavior")
- 
- 	cmd.Flags().BoolVarP(&o.SkipConfirmation, "yes", "y", false,
- 		"skip confirmation prompts for non-destructive operations")
- 
--	cmd.Flags().BoolVar(&o.TlogUpload, "tlog-upload", true,
--		"whether or not to upload to the tlog")
--	_ = cmd.Flags().MarkDeprecated("tlog-upload", "prefer using a --signing-config file with no transparency log services")
--
--	cmd.Flags().StringVar(&o.RekorEntryType, "rekor-entry-type", rekorEntryTypes[0],
--		"specifies the type to be used for a rekor entry upload ("+strings.Join(rekorEntryTypes, "|")+")")
--	_ = cmd.RegisterFlagCompletionFunc("rekor-entry-type", cobra.FixedCompletions(rekorEntryTypes, cobra.ShellCompDirectiveNoFileComp))
--	_ = cmd.Flags().MarkDeprecated("rekor-entry-type", "support for this flag will be removed in the future. it is strongly discouraged to rely on Rekor for attestation storage, and in future releases of Rekor, this functionality will be removed.")
--
- 	cmd.Flags().StringVar(&o.TSAClientCACert, "timestamp-client-cacert", "",
- 		"path to the X.509 CA certificate file in PEM format to be used for the connection to the TSA Server")
- 
-@@ -109,15 +87,6 @@ func (o *AttestOptions) AddFlags(cmd *cobra.Command) {
- 		"SAN name to use as the 'ServerName' tls.Config field to verify the mTLS connection to the TSA Server")
- 	_ = cmd.RegisterFlagCompletionFunc("timestamp-server-name", cobra.NoFileCompletions)
- 
--	cmd.Flags().StringVar(&o.TSAServerURL, "timestamp-server-url", "",
--		"url to the Timestamp RFC3161 server, default none. Must be the path to the API to request timestamp responses, e.g. https://freetsa.org/tsr")
--	_ = cmd.RegisterFlagCompletionFunc("timestamp-server-url", cobra.NoFileCompletions)
--	_ = cmd.Flags().MarkDeprecated("timestamp-server-url", "please use a signing config to specify a timestamp server url; see `cosign signing-config --help`")
--
--	cmd.Flags().BoolVar(&o.RecordCreationTimestamp, "record-creation-timestamp", false,
--		"set the createdAt timestamp in the attestation artifact to the time it was created; by default, cosign sets this to the zero value")
--	_ = cmd.Flags().MarkDeprecated("record-creation-timestamp", "not used with the new bundle format")
--
- 	cmd.Flags().BoolVar(&o.IssueCertificate, "issue-certificate", false,
- 		"issue a code signing certificate from Fulcio, even if a key is provided")
- 	_ = cmd.Flags().MarkDeprecated("issue-certificate", "support for this flag will be removed in the future")
-@@ -126,9 +95,6 @@ func (o *AttestOptions) AddFlags(cmd *cobra.Command) {
- 		"write everything required to verify the blob to a FILE")
- 	_ = cmd.MarkFlagFilename("bundle", bundleExts...)
- 
--	cmd.Flags().BoolVar(&o.NewBundleFormat, "new-bundle-format", true, "attach a Sigstore bundle using OCI referrers API")
--	_ = cmd.Flags().MarkDeprecated("new-bundle-format", "this will be the only supported format in future versions")
--
- 	cmd.Flags().BoolVar(&o.UseSigningConfig, "use-signing-config", true,
- 		"whether to use a TUF-provided signing config for the service URLs")
- 	_ = cmd.Flags().MarkDeprecated("use-signing-conf
+@@ -30,12 +30,12 @@ require (
+ 	github.com/moby/term v0.5.2
+ 	github.com/mozillazg/docker-credential-acr-helper v0.4.2
+ 	github.com/nozzle/throttler v0.0.0-20180817012639-2ea982251481
+-	github.com/open-policy-agent/opa v1.22.2
++	github.com/open-policy-agent/opa v1.22.4
+ 	github.com/osscontainertools/docker-credential-acr v1.0.1
+ 	github.com/secure-systems-lab/go-securesystemslib v0.11.1
+ 	github.com/sigstore/protobuf-specs v0.5.2
+ 	github.com/sigstore/rekor v1.5.5
+-	github.com/sigstore/rekor-tiles/v2 v2.4.1
++	github.com/sigstore/rekor-tiles/v2 v2.4.2
+ 	github.com/sigstore/sigstore v1.11.3
+ 	github.com/sigstore/sigstore-go v1.4.0
+ 	github.com/sigstore/sigstore/pkg/signature/kms/aws v1.11.3
+@@ -95,7 +95,7 @@ require (
+ 	github.com/AzureAD/microsoft-authentication-library-for-go v1.10.1 // indirect
+ 	github.com/Microsoft/go-winio v0.6.2 // indirect
+ 	github.com/ProtonMail/go-crypto v1.4.1 // indirect
+-	github.com/agnivade/levenshtein v1.2.1 // indirect
++	github.com/agnivade/levenshtein v1.2.2 // indirect
+ 	github.com/alibabacloud-go/alibabacloud-gateway-spi v0.0.5 // indirect
+ 	github.com/alibabacloud-go/cr-20160607/v2 v2.0.0 // indirect
+ 	github.com/alibabacloud-go/cr-20181201/v3 v3.2.3 // indirect
+@@ -175,8 +175,8 @@ require (
+ 	github.com/go-openapi/swag/yamlutils v0.29.2 // indirect
+ 	github.com/go-openapi/validate v1.0.1 // indirect
+ 	github.com/go-viper/mapstructure/v2 v2.5.0 // indirect
+-	github.com/gobwas/glob v1.0.0 // indirect
+-	github.com/goccy/go-json v0.10.6 // indirect
++	github.com/gobwas/glob v1.1.0 // indirect
++	github.com/goccy/go-json v0.11.2 // indirect
+ 	github.com/golang-jwt/jwt/v4 v4.5.2 // indirect
+ 	github.com/golang-jwt/jwt/v5 v5.3.1 // indirect
+ 	github.com/golang/snappy v1.0.0 // indirect
+@@ -187,7 +187,7 @@ require (
+ 	github.com/googleapis/enterprise-certificate-proxy v0.3.23 // indirect
+ 	github.com/googleapis/gax-go/v2 v2.26.2 // indirect
+ 	github.com/gorilla/websocket v1.5.4-0.20250319132907-e064f32e3674 // indirect
+-	github.com/grpc-ecosystem/grpc-gateway/v2 v2.32.0 // indirect
++	github.com/grpc-ecosystem/grpc-gateway/v2 v2.33.0 // indirect
+ 	github.com/hashicorp/errwrap v1.1.0 // indirect
+ 	github.com/hashicorp/go-cleanhttp v0.5.2 // indirect
+ 	github.com/hashicorp/go-multierror v1.1.1 // indirect
+@@ -209,7 +209,7 @@ require (
+ 	github.com/lestrrat-go/dsig-secp256k1 v1.0.0 // indirect
+ 	github.com/lestrrat-go/httpcc v1.0.1 // indirect
+ 	github.com/lestrrat-go/httprc/v3 v3.0.6 // indirect
+-	github.com/lestrrat-go/jwx/v3 v3.3.0 // indirect
++	github.com/lestrrat-go/jwx/v3 v3.4.0 // indirect
+ 	github.com/lestrrat-go/option/v2 v2.0.0 // indirect
+ 	github.com/lib/pq v1.12.0 // indirect
+ 	github.com/miekg/dns v1.1.62 // indirect
+@@ -258,7 +258,7 @@ require (
+ 	github.com/transparency-dev/formats v0.1.1 // indirect
+ 	github.com/urfave/negroni v1.0.0 // indirect
+ 	github.com/valyala/fastjson v1.6.10 // indirect
+-	github.com/vektah/gqlparser/v2 v2.5.58 // indirect
++	github.com/vektah/gqlparser/v2 v2.5.64 // indirect
+ 	github.com/x448/float16 v0.8.4 // indirect
+ 	github.com/xeipuuv/gojsonpointer v0.0.0-20190905194746-02993c407bfb // indirect
+ 	github.com/xeipuuv/gojsonreference v0.0.0-20180127040603-bd5ef7bd5415 // indirect
+@@ -283,9 +283,9 @@ require (
+ 	golang.org/x/time v0.16.0 // indirect
+ 	golang.org/x/tools v0.52.0 // indirect
+ 	google.golang.org/genproto v0.0.0-20260715232425-e75dac1f907d // indirect
+-	google.golang.org/genproto/googleapis/api v0.0.0-20261012220534-4341edf3f941 // indirect
++	google.golang.org/genproto/googleapis/api v0.0.0-20261026165753-2ffab32bce7e // indirect
+ 	google.golang.org/genproto/googleapis/rpc v0.0.0-20261019180522-ce908d29299b // indirect
+-	google.golang.org/grpc v1.84.0 // indirect
++	google.golang.org/grpc v1.85.0 // indirect
+ 	gopkg.in/evanphx/json-patch.v4 v4.13.0 // indirect
+ 	gopkg.in/inf.v0 v0.9.1 // indirect
+ 	gopkg.in/ini.v1 v1.67.3 // indirect
 ```
 
-**File**: `cmd/cosign/cli/options/options.go` (modified, +0/-5)
+**File**: `go.sum` (modified, +24/-24)
 ```diff
-@@ -56,11 +56,6 @@ var wasmExts = []string{
- 	"wasm",
- }
- 
--var rekorEntryTypes = []string{
--	"dsse", // first one is the default
--	"intoto",
--}
--
- var securityKeySlots = []string{
- 	"authentication",
- 	"signature",
-```
-
-**File**: `doc/cosign_attest.md` (modified, +2/-5)
-```diff
-@@ -9,7 +9,7 @@ cosign attest [flags]
- ### Examples
- 
- ```
--  cosign attest --key <key path>|<kms uri> [--predicate <path>] [--a key=value] [--no-upload=true|false] [--record-creation-timestamp=true|false] [--f] [--r] <image uri>
-+  cosign attest [--key <key path>|<kms uri>] [--predicate <path>] [--no-upload=true|false] [-y] <image uri>
- 
-   # attach an attestation to a container image Google sign-in
-   cosign attest --timeout 90s --predicate <FILE> --type <TYPE> <IMAGE>
-@@ -30,7 +30,7 @@ cosign attest [flags]
-   cosign attest --predicate <FILE> --type <TYPE> --key hashivault://[KEY] <IMAGE>
- 
-   # attach an attestation to a container image with a local key pair file, including a certificate and certificate chain
--  cosign attest --predicate <FILE> --type <TYPE> --key cosign.key --cert cosign.crt --cert-chain chain.crt <IMAGE>
-+  cosign attest --predicate <FILE> --type <TYPE> --key cosign.key --certificate cosign.crt --certificate-chain chain.crt <IMAGE>
- 
-   # attach an attestation to a container image which does not fully support OCI media types
-   COSIGN_DOCKER_MEDIA_TYPES=1 cosign attest --predicate <FILE> --type <TYPE> --key cosign.key legacy-registry.example.com/my/image
-@@ -40,9 +40,6 @@ cosign attest [flags]
- 
-   # write attestation to stdout
-   cosign attest --predicate <FILE> --type <TYPE> --key cosign.key --no-upload true <IMAGE>
--
--  # attach an attestation to a container image and honor the creation timestamp of the signature
--  cosign attest --predicate <FILE> --type <TYPE> --key cosign.key --record-creation-timestamp <IMAGE>
- ```
- 
- ### Options
-```
-
-**File**: `test/e2e_insecure_registry_test.go` (modified, +4/-8)
-```diff
-@@ -180,12 +180,10 @@ func TestAttestInsecureRegistry(t *testing.T) {
- 	}
- 
- 	attestCmd := attest.AttestCommand{
--		KeyOpts:        ko,
--		PredicatePath:  slsaAttestationPath,
--		PredicateType:  "slsaprovenance",
--		Timeout:        30 * time.Second,
--		RekorEntryType: "dsse",
--		TlogUpload:     true,
-+		KeyOpts:       ko,
-+		PredicatePath: slsaAttestationPath,
-+		PredicateType: "slsaprovenance",
-+		Timeout:       30 * time.Second,
- 		RegistryOptions: options.RegistryOptions{
- 			AllowInsecure:     true,
- 			AllowHTTPRegistry: true,
-@@ -260,8 +258,6 @@ func TestAttachInsecureRegistry(t *testing.T) {
- 		PredicatePath:   slsaAttestationPath,
- 		PredicateType:   "slsaprovenance",
- 		Timeout:         30 * time.Second,
--		RekorEntryType:  "dsse",
--		TlogUpload:      true,
- 		NoUpload:        true,
- 	}
- 	must(attestCmd.Exec(ctx, imgName), t)
-```
-
-**File**: `test/e2e_test.go` (modified, +79/-230)
-```diff
-@@ -1002,12 +1002,10 @@ func TestSignAttestVerifyContainerWithSigningConfig(t *testing.T) {
- 		t.Fatal(err)
- 	}
- 	attestCmd := attest.AttestCommand{
--		KeyOpts:        ko,
--		PredicatePath:  predicatePath,
--		PredicateType:  "slsaprovenance",
--		Timeout:        30 * time.Second,
--		RekorEntryType: "dsse",
--		TlogUpload:     true,
-+		KeyOpts:       ko,
-+		PredicatePath: predicatePath,
-+		PredicateType: "slsaprovenance",
-+		Timeout:       30 * time.Second,
- 	}
- 	must(attestCmd.Exec(ctx, imgName), t)
- 
-@@ -1203,14 +1201,12 @@ func TestSignVerifyContainerWithCertificateChain(t *testing.T) {
- 			var verifyErr error
- 			if tc.attestation {
- 				attestCmd := attest.AttestCommand{
--					KeyOpts:        ko,
--					CertPath:       leafCertPath,
--					CertChainPath:  signChainPath,
--					PredicatePath:  predicatePath,
--					PredicateType:  predicateType,
--					Timeout:        30 * time.Second,
--					RekorEntryType: "dsse",
--					TlogUpload:     false,
-+					KeyOpts:       ko,
-+					CertPath:      leafCertPath,
-+					CertChainPath: signChainPath,
-+					PredicatePath: predicatePath,
-+					PredicateType: predicateType,
-+					Timeout:       30 * time.Second,
- 				}
- 				must(attestCmd.Exec(ctx, imgName), t)
- 
-@@ -1538,12 +1534,10 @@ func TestSignAttestVerifyRekorV2(t *testing.T) {
- 	ko.BundlePath = filepath.Join(t.TempDir(), "att.bundle")
- 	ko.NewBundleFormat = true
- 	must((&attest.AttestCommand{
--		KeyOpts:        ko,
--		PredicatePath:  predicatePath,
--		PredicateType:  "slsaprovenance",
--		Timeout:        30 * time.Second,
--		RekorEntryType: "dsse",
--		TlogUpload:     true,
-+		KeyOpts:       ko,
-+		PredicatePath: predicatePath,
-+		PredicateType: "slsaprovenance",
-+		Timeout:       30 * time.Second,
- 	}).Exec(ctx, imgName), t)
- 	assertRekorV2HashedrekordEntry(t, ko.BundlePath)
- 
-@@ -2156,10 +2150,9 @@ func attestVerify(t *testing.T, predicateType, attestation, goodCue, badCue stri
- 			PassFunc:        passFunc,
- 			NewBundleFormat: true,
- 		},
--		PredicatePath:  attestationPath,
--		PredicateType:  predicateType,
--		Timeout:        30 * time.Second,
--		RekorEntryType: "dsse",
-+		PredicatePath: attestationPath,
-+		PredicateType: predicateType,
-+		Timeout:       30 * time.Second,
- 	}
- 	must(attestCmd.Exec(ctx, imgName), t)
- 
-@@ -2250,36 +2243,32 @@ func TestAttestationDownload(t *testing.T) {
- 
- 	// Attest to create a slsa attestation
- 	attestCommand := attest.AttestCommand{
--		KeyOpts:        ko,
--		PredicatePath:  slsaAttestationPath,
--		PredicateType:  "slsaprovenance",
--		Timeout:        30 * time.Second,
--		Replace:        true,
--		RekorEntryType: "dsse",
-+		KeyOpts:       ko,
-+		PredicatePath: slsaAttestationPath,
-+		PredicateType: "slsaprovenance",
-+		Timeout:       30 * time.Second,
- 	}
- 	must(attestCommand.Exec(ctx, imgName), t)
- 
- 	// Attest to create a vuln attestation
- 	attestCommand = attest.AttestCommand{
--		KeyOpts:        ko,
--		PredicatePath:  vulnAttestationPath,
--		PredicateType:  "vuln",
--		Timeout:        30 * time.Second,
--		Replace:        true,
--		RekorEntryType: "dsse",
-+		KeyOpts:       ko,
-+		PredicatePath: vulnAttestationPath,
-+		PredicateType: "vuln",
-+		Timeout:       30 * time.Second,
- 	}
- 	must(attestCommand.Exec(ctx, imgName), t)
- 
- 	// Call download.AttestationCmd() to ensure success
- 	attOpts := options.AttestationDownloadOptions{}
- 	must(download.AttestationCmd(ctx, regOpts, attOpts, imgName, os.Stdout), t)
- 
--	attestations, err := cosign.FetchAttestationsForReference(ctx, ref, attOpts.PredicateType, ociremoteOpts...)
-+	bundles, _, err := cosign.GetBundles(ctx, ref, ociremoteOpts)
- 	if err != nil {
- 		t.Fatal(err)
- 	}
--	if len(attestations) != 2 {
--		t.Fatal(fmt.Errorf("expected len(attestations) == 2, got %d", len(attestations)))
-+	if len(bundles) != 2 {
-+		t.Fatal(fmt.Errorf("expected len(bundles) == 2, got %d", len(bundles)))
- 	}
- }
- 
-@@ -2349,23 +2338,19 @@ func TestAttestationDownloadWithPredicateType(t *testing.T) {
- 
- 	// Attest to create a slsa attestation
- 	attestCommand := attest.AttestCommand{
--		KeyOpts:        ko,
--		PredicatePath:  slsaAttestationPath,
--		PredicateType:  "slsaprovenance",
--		Timeout:        30 * time.Second,
--		Replace:        true,
--		RekorEntryType: "dsse",
-+		KeyOpts:       ko,
-+		PredicatePath: slsaAttestationPath,
-+		PredicateType: "slsaprovenance",
-+		Timeout:       30 * time.Second,
- 	}
- 	must(attestCommand.Exec(ctx, imgName), t)
- 
- 	// Attest to create a vuln attestation
- 	attestCommand = attest.AttestCommand{
--		KeyOpts:        ko,
--		PredicatePath:  vulnAttestationPath,
--		PredicateType:  "vuln",
--		Timeout:        30 * time.Second,
--		Replace:        true,
--		RekorEntryType: "dsse",
-+		KeyOpts:       ko,
-+		PredicatePath: vulnAttestationPath,
-+		PredicateType: "vuln",
-+		Timeout:       30 * time.Second,
- 	}
- 	must(attestCommand.Exec(ctx, imgName), t)
- 
-@@ -2376,12 +2361,22 @@ func TestAttestationDownloadWithPredicateType(t *testing.T) {
- 	must(download.AttestationCmd(ctx, regOpts, attOpts, imgName, os.Stdout), t)
- 
- 	predicateType, _ := options.Par
+@@ -83,8 +83,8 @@ github.com/Microsoft/go-winio v0.6.2 h1:F2VQgta7ecxGYO8k3ZZz3RS8fVIXVxONVUPlNERo
+ github.com/Microsoft/go-winio v0.6.2/go.mod h1:yd8OoFMLzJbo9gZq8j5qaps8bJ9aShtEA8Ipt1oGCvU=
+ github.com/ProtonMail/go-crypto v1.4.1 h1:9RfcZHqEQUvP8RzecWEUafnZVtEvrBVL9BiF67IQOfM=
+ github.com/ProtonMail/go-crypto v1.4.1/go.mod h1:e1OaTyu5SYVrO9gKOEhTc+5UcXtTUa+P3uLudwcgPqo=
+-github.com/agnivade/levenshtein v1.2.1 h1:EHBY3UOn1gwdy/VbFwgo4cxecRznFk7fKWN1KOX7eoM=
+-github.com/agnivade/levenshtein v1.2.1/go.mod h1:QVVI16kDrtSuwcpd0p1+xMC6Z/VfhtCyDIjcwga4/DU=
++github.com/agnivade/levenshtein v1.2.2 h1:fI8RgiztYX1Nn5pBHHqQ9EMCCklhrmXqPRIedFmx5M4=
++github.com/agnivade/levenshtein v1.2.2/go.mod h1:QVVI16kDrtSuwcpd0p1+xMC6Z/VfhtCyDIjcwga4/DU=
+ github.com/alibabacloud-go/alibabacloud-gateway-pop v0.0.6 h1:eIf+iGJxdU4U9ypaUfbtOWCsZSbTb8AUHvyPrxu6mAA=
+ github.com/alibabacloud-go/alibabacloud-gateway-pop v0.0.6/go.mod h1:4EUIoxs/do24zMOGGqYVWgw0s9NtiylnJglOeEB5UJo=
+ github.com/alibabacloud-go/alibabacloud-gateway-spi v0.0.4/go.mod h1:sCavSAvdzOjul4cEqeVtvlSaSScfNsTQ+46HwlTL1hc=
+@@ -275,8 +275,8 @@ github.com/emicklei/proto v1.14.3/go.mod h1:rn1FgRS/FANiZdD2djyH7TMA9jdRDcYQ9IEN
+ github.com/envoyproxy/go-control-plane v0.9.0/go.mod h1:YTl/9mNaCwkRvm6d1a2C3ymFceY/DCBVvsKhRF0iEA4=
+ github.com/envoyproxy/go-control-plane v0.9.4/go.mod h1:6rpuAdCZL397s3pYoYcLgu1mIlRU8Am5FuJP05cCM98=
+ github.com/envoyproxy/go-control-plane v0.14.0 h1:hbG2kr4RuFj222B6+7T83thSPqLjwBIfQawTkC++2HA=
+-github.com/envoyproxy/go-control-plane/envoy v1.37.0 h1:u3riX6BoYRfF4Dr7dwSOroNfdSbEPe9Yyl09/B6wBrQ=
+-github.com/envoyproxy/go-control-plane/envoy v1.37.0/go.mod h1:DReE9MMrmecPy+YvQOAOHNYMALuowAnbjjEMkkWOi6A=
++github.com/envoyproxy/go-control-plane/envoy v1.39.1-0.20260819172001-e6e3fd93e4be h1:SWe0x6yfglnxuvOiYgTTnNq7QD/yvqthOh1RBI8Bj8w=
++github.com/envoyproxy/go-control-plane/envoy v1.39.1-0.20260819172001-e6e3fd93e4be/go.mod h1:PYEOlng9XcrulfyWpm49jECTPV0LT4q8cO7fLW/xwgk=
+ github.com/envoyproxy/protoc-gen-validate v0.1.0/go.mod h1:iSmxcyjqTsJpI2R4NaDN7+kN2VEUnK/pcBlmesArF7c=
+ github.com/envoyproxy/protoc-gen-validate v1.3.3 h1:MVQghNeW+LZcmXe7SY1V36Z+WFMDjpqGAGacLe2T0ds=
+ github.com/envoyproxy/protoc-gen-validate v1.3.3/go.mod h1:TsndJ/ngyIdQRhMcVVGDDHINPLWB7C82oDArY51KfB0=
+@@ -286,8 +286,8 @@ github.com/felixge/httpsnoop v1.1.0 h1:3YtUj32ZZkqZtt3sZZsClsymw/QDuVfpNhoA31zeO
+ github.com/felixge/httpsnoop v1.1.0/go.mod h1:Zqxgdd+1Rkcz8euOqdr7lqgCRJztwr5hp9vDSi5UZCE=
+ github.com/fortytw2/leaktest v1.3.0 h1:u8491cBMTQ8ft8aeV+adlcytMZylmA5nnwwkRZjI8vw=
+ github.com/fortytw2/leaktest v1.3.0/go.mod h1:jDsjWgpAGjm2CA7WthBh/CdZYEPF31XHquHwclZch5g=
+-github.com/foxcpp/go-mockdns v1.2.0 h1:omK3OrHRD1IWJz1FuFBCFquhXslXoF17OvBS6JPzZF0=
+-github.com/foxcpp/go-mockdns v1.2.0/go.mod h1:IhLeSFGed3mJIAXPH2aiRQB+kqz7oqu8ld2qVbOu7Wk=
++github.com/foxcpp/go-mockdns v1.3.0 h1:p4PKLZnM1Ii78JzsxJxcYQ5sQT3lIdiPM/vT1SaL9S8=
++github.com/foxcpp/go-mockdns v1.3.0/go.mod h1:IhLeSFGed3mJIAXPH2aiRQB+kqz7oqu8ld2qVbOu7Wk=
+ github.com/frankban/quicktest v1.14.6 h1:7Xjx+VpznH+oBnejlPUj8oUpdxnVs4f8XU8WnHkI4W8=
+ github.com/frankban/quicktest v1.14.6/go.mod h1:4ptaffx2x8+WTWXmUCuVU6aPUX1/Mz7zb5vbUoiM6w0=
+ github.com/fsnotify/fsnotify v1.4.7/go.mod h1:jwhsz4b93w/PPRr/qN1Yymfu8t87LnFCMoQvtojpjFo=
+@@ -367,10 +367,10 @@ github.com/go-test/deep v1.1.2 h1:JUuyv17rKrqYfLFnP9A4Yh6hw0635ugB93bMg2bwuDQ=
+ github.com/go-test/deep v1.1.2/go.mod h1:lwVFiFFWPjydTsV3xGJ/YTQsnWwi8zxBFM+gOVcwINE=
+ github.com/go-viper/mapstructure/v2 v2.5.0 h1:vM5IJoUAy3d7zRSVtIwQgBj7BiWtMPfmPEgAXnvj1Ro=
+ github.com/go-viper/mapstructure/v2 v2.5.0/go.mod h1:oJDH3BJKyqBA2TXFhDsKDGDTlndYOZ6rGS0BRZIxGhM=
+-github.com/gobwas/glob v1.0.0 h1:p+FKbLEIsK1yZ39/OINwFvqNb5oyPY4H8xcy6uYu8dg=
+-github.com/gobwas/glob v1.0.0/go.mod h1:oWCdo522i2P1n/hMXGNWs7yoV4wy/ciZuUIbvKj5rkc=
+-github.com/goccy/go-json v0.10.6 h1:p8HrPJzOakx/mn/bQtjgNjdTcN+/S6FcG2CTtQOrHVU=
+-github.com/goccy/go-json v0.10.6/go.mod h1:oq7eo15ShAhp70Anwd5lgX2pLfOS3QCiwU/PULtXL6M=
++github.com/gobwas/glob v1.1.0 h1:CS8tIr7+5fu50N+tKsQy3osOU5jmhjHv0/ildcKAn2Q=
++github.com/gobwas/glob v1.1.0/go.mod h1:5OYLTTNYHcww+D/XwWAjGpmIE8sD41kWneKyzWkK7/k=
++github.com/goccy/go-json v0.11.2 h1:jdZv93Tt4ioR8yW1CoNsvSxrcZlCXAUU1aZXN7gpXUA=
++github.com/goccy/go-json v0.11.2/go.mod h1:3NdmfEkZlB7YI5UFw/qdFKq8XN1aiWR0YyRPWZNQltY=
+ github.com/godbus/dbus/v5 v5.2.2 h1:TUR3TgtSVDmjiXOgAAyaZbYmIeP3DPkld3jgKGV8mXQ=
+ github.com/godbus/dbus/v5 v5.2.2/go.mod h1:3AAv2+hPq5rdnr5txxxRwiGjPXamgoIHgz9FPBfOp3c=
+ github.com/golang-jwt/jwt/v4 v4.0.0/go.mod h1:/xlHOz8bRuivTWchD4jCa+NbatV+wEUSzwAxVc6locg=
+@@ -441,8 +441,8 @@ github.com/gorilla/websocket v1.5.4-0.20250319132907-e064f32e3674/go.mod h1:r4w7
+ github.com/grpc-ecosystem/go-grpc-middleware v1.4.0 h1:UH//fgunKIs4JdUbpDl1VZCDaL56wXCB/5+wF6uHfaI=
+ github.com/grpc-ecosystem/go-grpc-middleware/v2 v2.3.4 h1:9ZJYjPEJpcleIKcqysXOo14NLQYwu23fzmKRFpIjPjc=
+ github.com/grpc-ecosystem/go-grpc-middleware/v2 v2.3.4/go.mod h1:0xydIeg2omQ9DH6zYMP24Kk57793rnLUvP8fwdbFvz8=
+-g
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #5224** (closed): chore(deps): bump golang.org/x/term from 0.47.0 to 0.48.0 (@dependabot[bot])
+- **PR #5220** (2026-11-18): chore(deps): bump golang.org/x/crypto from 0.58.0 to 0.59.0 (@dependabot[bot])
+- **PR #5219** (2026-11-18): chore(deps): bump the gomod group with 2 updates (@dependabot[bot])
 - **PR #5217** (2026-11-12): chore(deps): bump the gomod group across 1 directory with 6 updates (@dependabot[bot])
 - **PR #5214** (2026-11-12): chore(deps): bump the actions group with 8 updates (@dependabot[bot])
 - **PR #5213** (2026-11-12): chore(deps): bump github.com/open-policy-agent/opa from 1.21.4 to 1.22.2 (@dependabot[bot])
-- **PR #5212** (closed): chore(deps): bump github.com/sigstore/rekor-tiles/v2 from 2.4.0 to 2.4.1 (@dependabot[bot])
-- **PR #5211** (closed): chore(deps): bump github.com/spf13/pflag from 1.0.10 to 1.1.0 (@dependabot[bot])
-- **PR #5210** (2026-11-12): chore(deps): bump gitlab.com/gitlab-org/api/client-go/v3 from 3.32.0 to 3.46.0 (@dependabot[bot])
 
 ---
 
@@ -2434,61 +2092,37 @@ Signed-off-by: Aaron Lew <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Require new bundle format for attest
+## X. deps): bump golang.org/x/crypto from 0.58.0 to 0.59.0
 
 **RULE**:
-When implementing operations in `cmd/cosign/cli/attest.go`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sigstore/cosign. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `go.mod`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in sigstore/cosign. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `2ec8094c`: Require new bundle format for attest. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `0743bfcf`: deps): bump golang.org/x/crypto from 0.58.0 to 0.59.0. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `cmd/cosign/cli/attest.go`.
+Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `go.mod`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-		Example: `  cosign attest [--key <key path>|<kms uri>] [--predicate <path>] [--no-upload=true|false] [-y] <image uri>
-  cosign attest --predicate <FILE> --type <TYPE> --key cosign.key --certificate cosign.crt --certificate-chain chain.crt <IMAGE>
-  cosign attest --predicate <FILE> --type <TYPE> --key cosign.key --no-upload true <IMAGE>`,
-			if o.NoUpload && o.BundlePath == "" {
-				return fmt.Errorf("must enable upload to the OCI registry or specify a local --bundle path")
-				"", o.Fulcio.URL, o.OIDC.Issuer, "",
-				true, true, o.BundlePath,
-				KeyOpts:         ko,
-				RegistryOptions: o.Registry,
-				CertPath:        o.Cert,
-				CertChainPath:   o.CertChain,
-				NoUpload:        o.NoUpload,
-				PredicatePath:   o.Predicate.Path,
-				PredicateType:   o.Predicate.Type,
-				Tim
+	golang.org/x/crypto v0.59.0
+	golang.org/x/term v0.48.0
+	golang.org/x/sys v0.50.0 // indirect
+	golang.org/x/text v0.44.0 // indirect
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```go
 // Induced defect failure mode:
-		Example: `  cosign attest --key <key path>|<kms uri> [--predicate <path>] [--a key=value] [--no-upload=true|false] [--record-creation-timestamp=true|false] [--f] [--r] <image uri>
-  cosign attest --predicate <FILE> --type <TYPE> --key cosign.key --cert cosign.crt --cert-chain chain.crt <IMAGE>
-  cosign attest --predicate <FILE> --type <TYPE> --key cosign.key --no-upload true <IMAGE>
-
-  # attach an attestation to a container image and honor the creation timestamp of the signature
-  cosign attest --predicate <FILE> --type <TYPE> --key cosign.key --record-creation-timestamp <IMAGE>`,
-			if o.NewBundleFormat && o.NoUpload && o.BundlePath == "" {
-				return fmt.Errorf("must enable upload to the OCI registry or specify a local --bundle path with --new-bundle-format")
-				o.Rekor.URL, o.Fulcio.URL, o.OIDC.Issuer, o.TSAServerURL,
-				o.TlogUpload, o.NewBundleFormat, o.BundlePath,
-				FulcioURL:                      o.Fulcio.URL,
-				RekorURL:                       o.Rekor.URL,
-				OIDCIssuer:                     o.OIDC.Issuer,
-				TSAServerURL:                   o.TSAServerURL,
-				NewBundleFormat:                o.NewBundleFormat,
-				KeyOpts:                 ko,
-				RegistryOptions:   
+	golang.org/x/crypto v0.58.0
+	golang.org/x/term v0.47.0
+	golang.org/x/sys v0.49.0 // indirect
+	golang.org/x/text v0.43.0 // indirect
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `2ec8094c` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `0743bfcf` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

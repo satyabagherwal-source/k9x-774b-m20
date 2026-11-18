@@ -1,9 +1,9 @@
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/argoproj-argo-events-learnings.md`  
 > **Source**: github ([https://github.com/argoproj/argo-events](https://github.com/argoproj/argo-events))  
-> **Source Version**: `5cda2887`  
+> **Source Version**: `727b3155`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-17T05:37:15.072Z  
+> **Timestamp**: 2026-11-18T04:20:50.179Z  
 > **Learning ID**: `learn-github-argoproj-argo-events`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -17,7 +17,7 @@
 > **Canonical Artifact**: `07_PROJECT_LEARNING/argoproj-argo-events-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/argoproj/argo-events](https://github.com/argoproj/argo-events))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T05:37:15.067Z  
+> **Harvest Timestamp**: 2026-11-18T04:20:50.175Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -27,7 +27,7 @@
 - **Description**: Event-driven Automation Framework for Kubernetes
 - **Primary Language / Ecosystem**: Go
 - **Discovered Manifests / Configurations**: go.mod, README.md, Dockerfile
-- **Stars / Engagement**: 2717 stars
+- **Stars / Engagement**: 2719 stars
 
 ---
 
@@ -1043,46 +1043,44 @@ func (g *gerritWebhookService) Delete(project, remoteName string) error {
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `5cda2887` (2026-11-16)
-**Commit Message**: fix(sns): support a custom STS endpoint for web identity and assume role credentials (#4215)
+### Incident Patch 1: `727b3155` (2026-11-17)
+**Commit Message**: feat(eventbus): add clientAdvertise to the JetStream EventBus (#4257)
 
-Signed-off-by: Youssef Omar Bouden <[REDACTED_EMAIL]>
-Signed-off-by: Derek Wang <[REDACTED_EMAIL]>
-Co-authored-by: Derek Wang <[REDACTED_EMAIL]>
+Signed-off-by: Srinivas Chippagiri <[REDACTED_EMAIL]>
 
 **File**: `api/jsonschema/schema.json` (modified, +4/-0)
 ```diff
-@@ -3785,6 +3785,10 @@
-           "$ref": "#/definitions/io.k8s.api.core.v1.SecretKeySelector",
-           "description": "SecretKey refers K8s secret containing aws secret key"
+@@ -2338,6 +2338,10 @@
+           "$ref": "#/definitions/io.k8s.api.core.v1.Affinity",
+           "description": "The pod's scheduling constraints More info: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/"
          },
-+        "stsEndpoint": {
-+          "description": "STSEndpoint configures connection to a specific STS endpoint instead of Amazons servers, used to assume RoleARN and to exchange a web identity token for credentials",
++        "clientAdvertise": {
++          "description": "ClientAdvertise is the \"host:port\" that the NATS servers advertise to clients, written as the \"client_advertise\" option of the server configuration. Set it when clients reach the servers through an address other than the pod IPs, for example a load balancer. See https://docs.nats.io/running-a-nats-service/configuration#connection-and-domain-settings.",
 +          "type": "string"
 +        },
-         "topicArn": {
-           "description": "TopicArn",
-           "type": "string"
+         "containerTemplate": {
+           "$ref": "#/definitions/io.argoproj.events.v1alpha1.ContainerTemplate",
+           "description": "ContainerTemplate contains customized spec for Nats JetStream container"
 ```
 
 **File**: `api/openapi-spec/swagger.json` (modified, +4/-0)
 ```diff
-@@ -3773,6 +3773,10 @@
-           "description": "SecretKey refers K8s secret containing aws secret key",
-           "$ref": "#/definitions/io.k8s.api.core.v1.SecretKeySelector"
+@@ -2322,6 +2322,10 @@
+           "description": "The pod's scheduling constraints More info: https://kubernetes.io/docs/concepts/scheduling-eviction/assign-pod-node/",
+           "$ref": "#/definitions/io.k8s.api.core.v1.Affinity"
          },
-+        "stsEndpoint": {
-+          "description": "STSEndpoint configures connection to a specific STS endpoint instead of Amazons servers, used to assume RoleARN and to exchange a web identity token for credentials",
++        "clientAdvertise": {
++          "description": "ClientAdvertise is the \"host:port\" that the NATS servers advertise to clients, written as the \"client_advertise\" option of the server configuration. Set it when clients reach the servers through an address other than the pod IPs, for example a load balancer. See https://docs.nats.io/running-a-nats-service/configuration#connection-and-domain-settings.",
 +          "type": "string"
 +        },
-         "topicArn": {
-           "description": "TopicArn",
-           "type": "string"
+         "containerTemplate": {
+           "description": "ContainerTemplate contains customized spec for Nats JetStream container",
+           "$ref": "#/definitions/io.argoproj.events.v1alpha1.ContainerTemplate"
 ```
 
-**File**: `docs/APIs.md` (modified, +21/-0)
+**File**: `docs/APIs.md` (modified, +23/-0)
 ```diff
-@@ -18119,6 +18119,27 @@ Amazons servers
+@@ -11677,6 +11677,29 @@ Defaults to 1MB
  
  </tr>
  
@@ -1090,7 +1088,7 @@ Co-authored-by: Derek Wang <[REDACTED_EMAIL]>
 +
 +<td>
 +
-+<code>stsEndpoint</code></br> <em> string </em>
++<code>clientAdvertise</code></br> <em> string </em>
 +</td>
 +
 +<td>
@@ -1098,9 +1096,11 @@ Co-authored-by: Derek Wang <[REDACTED_EMAIL]>
 +<em>(Optional)</em>
 +<p>
 +
-+STSEndpoint configures connection to a specific STS endpoint instead of
-+Amazons servers, used to assume RoleARN and to exchange a web identity
-+token for credentials
++ClientAdvertise is the “host:port” that the NATS servers advertise to
++clients, written as the “client_advertise” option of the server
++configuration. Set it when clients reach the servers through an address
++other than the pod IPs, for example a load balancer. See
++<a href="https://docs.nats.io/running-a-nats-service/configuration#connection-and-domain-settings">https://docs.nats.io/running-a-nats-service/configuration#connection-and-domain-settings</a>.
 +</p>
 +
 +</td>
@@ -1112,407 +1112,111 @@ Co-authored-by: Derek Wang <[REDACTED_EMAIL]>
  </table>
 ```
 
+**File**: `docs/eventbus/jetstream.md` (modified, +18/-0)
+```diff
+@@ -61,6 +61,24 @@ spec:
+       - "-D"                    # debug-level logs
+ ```
+ 
++### Advertising a different client address
++
++By default the NATS servers advertise their pod IPs to clients. If clients reach the EventBus through another
++address, for example a load balancer in front of the NATS service when a `jetstreamExotic` EventBus in another
++cluster connects to it, set `clientAdvertise` to that `host:port`. It is written to the server configuration
++as [`client_advertise`](https://docs.nats.io/running-a-nats-service/configuration#connection-and-domain-settings).
++
++```
++apiVersion: argoproj.io/v1alpha1
++kind: EventBus
++metadata:
++  name: default
++spec:
++  jetstream:
++    version: latest # Do NOT use "latest" but a specific version in your real deployment
++    clientAdvertise: my-loadbalancer.example.com:4222
++```
++
+ ## Security
+ 
+ For Jetstream, TLS is turned on for all client-server communication as well as between Jetstream nodes. In addition, for client-server communication we by default use password authentication (and because TLS is turned on, the password is encrypted).
+```
+
 **File**: `pkg/apis/events/openapi/openapi_generated.go` (modified, +7/-0)
 ```diff
-@@ -7099,6 +7099,13 @@ func schema_pkg_apis_events_v1alpha1_SNSEventSource(ref common.ReferenceCallback
+@@ -4612,6 +4612,13 @@ func schema_pkg_apis_events_v1alpha1_JetStreamBus(ref common.ReferenceCallback)
  							Format:      "",
  						},
  					},
-+					"stsEndpoint": {
++					"clientAdvertise": {
 +						SchemaProps: spec.SchemaProps{
-+							Description: "STSEndpoint configures connection to a specific STS endpoint instead of Amazons servers, used to assume RoleARN and to exchange a web identity token for credentials",
++							Description: "ClientAdvertise is the \"host:port\" that the NATS servers advertise to clients, written as the \"client_advertise\" option of the server configuration. Set it when clients reach the servers through an address other than the pod IPs, for example a load balancer. See https://docs.nats.io/running-a-nats-service/configuration#connection-and-domain-settings.",
 +							Type:        []string{"string"},
 +							Format:      "",
 +						},
 +					},
  				},
- 				Required: []string{"topicArn", "region"},
  			},
+ 		},
 ```
 
-**File**: `pkg/apis/events/v1alpha1/eventsource_types.go` (modified, +4/-0)
+**File**: `pkg/apis/events/v1alpha1/generated.proto` (modified, +7/-0)
 ```diff
-@@ -622,6 +622,10 @@ type SNSEventSource struct {
- 	// Endpoint configures connection to a specific SNS endpoint instead of Amazons servers
- 	// +optional
- 	Endpoint string `json:"endpoint" protobuf:"bytes,10,opt,name=endpoint"`
-+	// STSEndpoint configures connection to a specific STS endpoint instead of Amazons servers,
-+	// used to assume RoleARN and to exchange a web identity token for credentials
-+	// +optional
-+	STSEndpoint string `json:"stsEndpoint,omitempty" protobuf:"bytes,11,opt,name=stsEndpoint"`
- }
- 
- // SQSEventSource refers to event-source for AWS SQS related events
-```
-
-**File**: `pkg/apis/events/v1alpha1/generated.proto` (modified, +5/-0)
-```diff
-@@ -2761,6 +2761,11 @@ message SNSEventSource {
-   // Endpoint configures connection to a specific SNS endpoint instead of Amazons servers
+@@ -1709,6 +1709,13 @@ message JetStreamBus {
+   // Maximum number of bytes in a message payload, 0 means unlimited. Defaults to 1MB
    // +optional
-   optional string endpoint = 10;
+   optional string maxPayload = 19;
 +
-+  // STSEndpoint configures connection to a specific STS endpoint instead of Amazons servers,
-+  // used to assume RoleARN and to exchange a web identity token for credentials
++  // ClientAdvertise is the "host:port" that the NATS servers advertise to clients, written as the
++  // "client_advertise" option of the server configuration. Set it when clients reach the servers
++  // through an address other than the pod IPs, for example a load balancer.
++  // See https://docs.nats.io/running-a-nats-service/configuration#connection-and-domain-settings.
 +  // +optional
-+  optional string stsEndpoint = 11;
++  optional string clientAdvertise = 20;
  }
  
- // SQSEventSource refers to event-source for AWS SQS related events
+ message JetStreamConfig {
 ```
 
-**File**: `pkg/eventsources/common/aws/aws.go` (modified, +37/-10)
+**File**: `pkg/apis/events/v1alpha1/jetstream_eventbus.go` (modified, +6/-0)
 ```diff
-@@ -22,7 +22,9 @@ import (
- 	"github.com/aws/aws-sdk-go/aws"
- 	"github.com/aws/aws-sdk-go/aws/credentials"
- 	"github.com/aws/aws-sdk-go/aws/credentials/stscreds"
-+	"github.com/aws/aws-sdk-go/aws/endpoints"
- 	"github.com/aws/aws-sdk-go/aws/session"
-+	"github.com/aws/aws-sdk-go/service/sts"
- 	corev1 "k8s.io/api/core/v1"
- 
- 	sharedutil "github.com/argoproj/argo-events/pkg/shared/util"
-@@ -77,26 +79,51 @@ func GetAWSSession(creds *credentials.Credentials, region string) (*session.Sess
- 	})
+@@ -85,6 +85,12 @@ type JetStreamBus struct {
+ 	// Maximum number of bytes in a message payload, 0 means unlimited. Defaults to 1MB
+ 	// +optional
+ 	MaxPayload *string `json:"maxPayload,omitempty" protobuf:"bytes,19,opt,name=maxPayload"`
++	// ClientAdvertise is the "host:port" that the NATS servers advertise to clients, written as the
++	// "client_advertise" option of the server configuration. Set it when clients reach the servers
++	// through an address other than the pod IPs, for example a load balancer.
++	// See https://docs.nats.io/running-a-nats-service/configuration#connection-and-domain-settings.
++	// +optional
++	ClientAdvertise *string `json:"clientAdvertise,omitempty" protobuf:"bytes,20,opt,name=clientAdvertise"`
  }
  
--func GetAWSSessionWithoutCreds(region string) (*session.Session, error) {
-+func GetAWSSessionWithoutCreds(region, stsEndpoint string) (*session.Session, error) {
- 	return session.NewSession(&aws.Config{
--		Region: &region,
-+		Region:           &region,
-+		EndpointResolver: stsEndpointResolver(stsEndpoint, region),
- 	})
- }
- 
--func GetAWSAssumeRoleCreds(roleARN, region string) (*session.Session, error) {
--	sess := session.Must(session.NewSession())
-+func GetAWSAssumeRoleCreds(roleARN, region, stsEndpoint string) (*session.Session, error) {
-+	sess := session.Must(session.NewSession(&aws.Config{
-+		EndpointResolver: stsEndpointResolver(stsEndpoint, region),
-+	}))
- 	creds := stscreds.NewCredentials(sess, roleARN)
- 	return GetAWSSession(creds, region)
- }
- 
-+// stsEndpointResolver sends STS requests, including the web identity token exchange done by
-+// the default credential chain, to stsEndpoint. Other services keep their default endpoints.
-+func stsEndpointResolver(stsEndpoint, fallbackRegion string) endpoints.Resolver {
-+	if stsEndpoint == "" {
-+		return nil
+ func (j JetStreamBus) GetReplicas() int {
+```
+
+**File**: `pkg/apis/events/v1alpha1/zz_generated.deepcopy.go` (modified, +5/-0)
+```diff
+@@ -2345,6 +2345,11 @@ func (in *JetStreamBus) DeepCopyInto(out *JetStreamBus) {
+ 		*out = new(string)
+ 		**out = **in
+ 	}
++	if in.ClientAdvertise != nil {
++		in, out := &in.ClientAdvertise, &out.ClientAdvertise
++		*out = new(string)
++		**out = **in
 +	}
-+	defaultResolver := endpoints.DefaultResolver()
-+	return endpoints.ResolverFunc(func(service, region string, optFns ...func(*endpoints.Options)) (endpoints.ResolvedEndpoint, error) {
-+		if service == sts.EndpointsID {
-+			// Region comes from the ENV by default, take the region from the spec if not set.
-+			if region == "" {
-+				region = fallbackRegion
-+			}
-+			return endpoints.ResolvedEndpoint{
-+				URL:           endpoints.AddScheme(stsEndpoint, false),
-+				SigningRegion: region,
-+			}, nil
-+		}
-+		return defaultResolver.EndpointFor(service, region, optFns...)
-+	})
-+}
-+
- // CreateAWSSessionWithCredsInEnv based on credentials in ENV, return a aws session
--func CreateAWSSessionWithCredsInEnv(region string, roleARN string, accessKey *corev1.SecretKeySelector, secretKey *corev1.SecretKeySelector) (*session.Session, error) {
-+func CreateAWSSessionWithCredsInEnv(region string, roleARN string, accessKey *corev1.SecretKeySelector, secretKey *corev1.SecretKeySelector, stsEndpoint string) (*session.Session, error) {
- 	if roleARN != "" {
--		return GetAWSAssumeRoleCreds(roleARN, region)
-+		return GetAWSAssumeRoleCreds(roleARN, region, stsEndpoint)
- 	}
- 
- 	if accessKey == nil && secretKey == nil {
--		return GetAWSSessionWithoutCreds(region)
-+		return GetAWSSessionWithoutCreds(region, stsEndpoint)
- 	}
- 
- 	creds, err := GetAWSCredFromEnvironment(accessKey, secretKey)
-@@ -108,13 +135,13 @@ func CreateAWSSessionWithCredsInEnv(region string, roleARN string, accessKey *co
+ 	return
  }
  
- // CreateAWSSessionWithCredsInVolume based on credentials in mounted volumes, return a aws session
--func CreateAWSSessionWithCredsInVolume(region string, roleARN string, accessKey *corev1.SecretKeySelector, secretKey *corev1.SecretKeySelector, sessionToken *corev1.SecretKeySelector) (*session.Session, error) {
-+func CreateAWSSessionWithCredsInVolume(region string, roleARN string, accessKey *corev1.SecretKeySelector, secretKey *corev1.SecretKeySelector, sessionToken *corev1.SecretKeySelector, stsEndpoint string) (*session.Session, error) {
- 	if roleARN != "" {
--		return GetAWSAssumeRoleCreds(roleARN, region)
-+		return GetAWSAssumeRoleCreds(roleARN, region, stsEndpoint)
- 	}
- 
- 	if accessKey == nil && secretKey == nil {
--		return GetAWSSessionWithoutCreds(region)
-+		return GetAWSSessionWithoutCreds(region, stsEndpoint)
- 	}
- 
- 	creds, err := GetAWSCredFromVolume(accessKey, secretKey, sessionToken)
-```
-
-**File**: `pkg/eventsources/common/aws/aws_test.go` (modified, +84/-2)
-```diff
-@@ -18,7 +18,11 @@ package aws
- 
- import (
- 	"context"
-+	"fmt"
-+	"net/http"
-+	"net/http/httptest"
- 	"os"
-+	"path/filepath"
- 	"testing"
- 
- 	"github.com/smartystreets/goconvey/convey"
-@@ -85,17 +89,95 @@ func TestAWS(t *testing.T) {
- 
- 	convey.Convey("create AWS credential using already present config/IAM role", t, func() {
- 		convey.Convey("Get a new aws session", func() {
--			session, err := GetAWSSessionWithoutCreds("mock-region")
-+			session, err := GetAWSSessionWithoutCreds("mock-region", "")
- 			convey.So(err, convey.ShouldBeNil)
- 			convey.So(session, convey.ShouldNotBeNil)
- 		})
- 	})
- 
- 	convey.Convey("create AWS credential using assume roleARN", t, func() {
- 		convey.Convey("Get a new aws session", func() {
--			session, err := GetAWSAssumeRoleCreds("moke-roleARN", "mock-region")
-+			session, err := GetAWSAssumeRoleCreds("moke-roleARN", "mock-region", "")
- 			convey.So(err, convey.ShouldBeNil)
- 			convey.So(session, convey.ShouldNotBeNil)
- 		})
- 	})
-+
-+	convey.Convey("create AWS session using a custom STS endpoint", t, func() {
-+		stsEndpoint := "http://localhost:4566"
-+
-+		convey.Convey("Only STS is routed to the custom endpoint", func() {
-+			session, err := GetAWSSessionWithoutCreds("mock-region", stsEndpoint)
-+			convey.So(err, convey.ShouldBeNil)
-+			convey.So(session.ClientConfig("sts").Endpoint, convey.ShouldEqual, stsEndpoint)
-+			convey.So(session.ClientConfig("sns").Endpoint, convey.ShouldEqual, "https://sns.mock-region.amazonaws.com")
-+		})
-+
-+		convey.Convey("Scheme is added when missing", func() {
-+			resolved, err := stsEndpointResolver("localhost:4566", "").EndpointFor("sts", "mock-region")
-+			convey.So(err, convey.ShouldBeNil)
-+			convey.So(resolved.URL, convey.ShouldEqual, "https://localhost:4566")
-+		})
-+	})
-+
-+	convey.Convey("assume a role at a custom STS endpoint without a region in the environment", t, func() {
-+		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-+			_ = r.ParseForm()
-+			action := r.Form.Get("Action")
-+			fmt.Fprintf(w, `<%[1]sResponse><%[1]sResult><Credentials><AccessKeyId>key</AccessKeyId><SecretAccessKey>secret</SecretAccessKey><SessionToken>token</SessionToken><Expiration>2099-01-01T00:00:00Z</Expiration></Credentials></%[1]sResult></%[1]sResponse>`, action)
-+		}))
-+		defer server.Close()
-+
-+		t.Setenv("AWS_REGION", "")
-+		t.Setenv("AWS_DEFAULT_REGION", "")
-+		t.Setenv("AWS_ACCESS_KEY_ID", "id")
-+		t.Setenv("AWS_SECRET_ACCESS_KEY", "secret")
-+
-+		session, err := CreateAWSSessionWithCredsInVolume("mock-region", "arn:aws:iam::123456789012:role/assumed", nil, nil, nil, server.URL)
-+		convey.So(err, convey.ShouldBeNil)
-+
-+		value, err := session.Config.Credentials.Get()
-+		convey.So(err, convey.ShouldBeNil)
-+		convey.So(value.AccessKeyID, convey.ShouldEqual, "key")
-+	})
-+
-+	convey.Convey("exchange a web identity token at a custom STS endpoint", t, func() {
-+		actions := make(chan string, 2)
-+		server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-+			_ = r.ParseForm()
-+			action := r.Form.Get("Action")
-+			actions <- action
-+			fmt.Fprintf(w, `<%[1]sResponse><%[1]sResult><Credentials><AccessKeyId>%[2]s</AccessKeyId><SecretAccessKey>secret</SecretAccessKey><SessionToken>token</SessionToken><Expiration>2099-01-01T00:00:00Z</Expiration></Credentials></%[1]sResult></%[1]sResponse>`, action, "key-from-"+action)
-+		}))
-+		defer server.Close()
-+
-+		tokenFile := filepath.Join(t.TempDir(), "token")
-+		convey.So(os.WriteFile(tokenFile, []byte("web-identity-token"), 0o600), convey.ShouldBeNil)
-+		t.Setenv("AWS_ACCESS_KEY_ID", "")
-+		t.Setenv("AWS_SECRET_ACCESS_KEY", "")
-+		t.Setenv("AWS_REGION", "mock-region")
-+		t.Setenv("AWS_ROLE_ARN", "arn:aws:iam::123456789012:role/web-identity")
-+		t.Setenv("AWS_WEB_IDENTITY_TOKEN_FILE", tokenFile)
-+
-+		convey.Convey("Without roleARN", func() {
-+			session, err := CreateAWSSessionWithCredsInVolume("mock-region", "", nil, nil, nil, server.URL)
-+			convey.So(err, convey.ShouldBeNil)
-+
-+			value, err := session.Config.Credentials.Get()
-+			convey.So(err, convey.ShouldBeNil)
-+			convey.So(value.AccessKeyID, convey.ShouldEqual, "key-from-AssumeRoleWithWebIdentity")
-+			convey.So(<-actions, convey.ShouldEqual, "AssumeRoleWithWebIdentity")
-+		})
-+
-+		convey.Convey("With roleARN", func() {
-+			session, err := CreateAWSSessionWithCredsInVolume("mock-region", "arn:aws:iam::123456789012:role/assumed", nil, nil, nil, server.URL)
-+			convey.So(err, convey.ShouldBeNil)
-+
-+			value, err := session.Config.Credentials.Get()
-+			convey.So(err, convey.ShouldBeNil)
-+			convey.So(value.AccessKeyID, convey.ShouldEqual, "key-from-AssumeRole")
-+			convey.So(<-actions, convey.ShouldEqual, "AssumeRoleWithWebIdentity")
-+			convey.So(<-actions, convey.ShouldEqual, "AssumeRole")
-+		})
-+	})
- }
-```
-
----
-
-### Incident Patch 2: `84ecb705` (2026-11-16)
-**Commit Message**: fix: accept case-insensitive webhook bearer schemes (#4242)
-
-Signed-off-by: Wu Shuwen <[REDACTED_EMAIL]>
-Co-authored-by: Derek Wang <[REDACTED_EMAIL]>
-
-**File**: `pkg/eventsources/common/webhook/testconsts_test.go` (modified, +1/-0)
-```diff
-@@ -4,4 +4,5 @@ package webhook
- const (
- 	testEndpoint = "/fake"
- 	testUsername = "username"
-+	testToken    = "token"
- )
-```
-
-**File**: `pkg/eventsources/common/webhook/validate_test.go` (modified, +1/-1)
-```diff
-@@ -53,7 +53,7 @@ func TestValidateWebhookContextBasicAuth(t *testing.T) {
- 		context := &aev1.WebhookContext{
- 			Endpoint:   testEndpoint,
- 			Port:       "12000",
--			AuthSecret: &corev1.SecretKeySelector{Key: "token"},
-+			AuthSecret: &corev1.SecretKeySelector{Key: testToken},
- 			BasicAuth: &aev1.BasicAuth{
- 				Username: &corev1.SecretKeySelector{Key: testUsername},
- 				Password: &corev1.SecretKeySelector{Key: "password"},
-```
-
-**File**: `pkg/eventsources/common/webhook/webhook.go` (modified, +13/-3)
-```diff
-@@ -87,6 +87,16 @@ func ProcessRouteStatus(ctrl *Controller) {
- 	}
- }
- 
-+// parseBearerAuthorization returns the token of an "Authorization: Bearer <token>" header.
-+// The scheme is matched case-insensitively, as HTTP authentication schemes require.
-+func parseBearerAuthorization(authHeader string) (string, bool) {
-+	parts := strings.Fields(authHeader)
-+	if len(parts) != 2 || !strings.EqualFold(parts[0], "Bearer") {
-+		return "", false
-+	}
-+	return parts[1], true
-+}
-+
- // starts a http server
- func startServer(router Router, controller *Controller) {
- 	// start a http server only if no other configuration previously started the server on given port
-@@ -143,13 +153,13 @@ func startServer(router Router, controller *Controller) {
- 					sharedutil.SendInternalErrorResponse(writer, "Error loading auth token")
- 					return
- 				}
--				authHeader := request.Header.Get("Authorization")
--				if !strings.HasPrefix(authHeader, "Bearer ") {
-+				authToken, ok := parseBearerAuthorization(request.Header.Get("Authorization"))
-+				if !ok {
- 					route.Logger.Error("invalid auth header")
- 					sharedutil.SendResponse(writer, http.StatusUnauthorized, "Invalid Authorization Header")
- 					return
- 				}
--				if strings.TrimPrefix(authHeader, "Bearer ") != token {
-+				if subtle.ConstantTimeCompare([]byte(authToken), []byte(token)) != 1 {
- 					route.Logger.Error("invalid auth token")
- 					sharedutil.SendResponse(writer, http.StatusUnauthorized, "Invalid Auth token")
- 					return
-```
-
-**File**: `pkg/eventsources/common/webhook/webhook_test.go` (modified, +28/-0)
-```diff
-@@ -34,3 +34,31 @@ func TestNewWebhookHelper(t *testing.T) {
- 		convey.So(controller, convey.ShouldNotBeNil)
- 	})
- }
-+
-+func TestParseBearerAuthorization(t *testing.T) {
-+	tests := []struct {
-+		name      string
-+		header    string
-+		wantToken string
-+		wantOK    bool
-+	}{
-+		{name: "canonical scheme", header: "Bearer token", wantToken: testToken, wantOK: true},
-+		{name: "lowercase scheme", header: "bearer token", wantToken: testToken, wantOK: true},
-+		{name: "mixed case scheme", header: "bEaReR  token", wantToken: testToken, wantOK: true},
-+		{name: "wrong scheme", header: "Basic token"},
-+		{name: "empty header", header: ""},
-+		{name: "scheme only", header: "Bearer"},
-+		{name: "token only", header: testToken},
-+		{name: "missing token", header: "Bearer "},
-+		{name: "token contains whitespace", header: "Bearer token extra"},
-+	}
-+
-+	for _, test := range tests {
-+		t.Run(test.name, func(t *testing.T) {
-+			gotToken, gotOK := parseBearerAuthorization(test.header)
-+			if gotToken != test.wantToken || gotOK != test.wantOK {
-+				t.Fatalf("parseBearerAuthorization(%q) = (%q, %t), want (%q, %t)", test.header, gotToken, gotOK, test.wantToken, test.wantOK)
-+			}
-+		})
-+	}
-+}
-```
-
-**File**: `pkg/shared/util/cronutil_test.go` (modified, +4/-4)
-```diff
-@@ -119,15 +119,15 @@ func TestPrevCronTimeDSTFallBack(t *testing.T) {
- 	}{
- 		// Europe/Berlin: 2026-10-25 03:00 CEST (+0200) -> 02:00 CET (+0100).
- 		// Walking back through the repeated 02:xx hour used to loop forever.
--		{"2026-10-25T03:30:00+0100", "TZ=Europe/Berlin 0 0 0 * * *", "2026-10-25T00:00:00+0200"},
--		{"2026-10-25T12:00:00+0100", "TZ=Europe/Berlin 0 0 0 * * *", "2026-10-25T00:00:00+0200"},
--		{"2026-10-25T02:30:00+0100", "TZ=Europe/Berlin 0 0 0 * * *", "2026-10-25T00:00:00+0200"},
-+		{"2026-10-25T03:30:00+0100", testBerlinDaily, testBerlinMidnight},
-+		{"2026-10-25T12:00:00+0100", testBerlinDaily, testBerlinMidnight},
-+		{testBerlinAt0230, testBerlinDaily, testBerlinMidnight},
- 		{"2026-10-25T03:30:00+0100", "TZ=Europe/Berlin 0 0 1 * * *", "2026-10-25T01:00:00+0200"},
- 
- 		// Hourly job during the repeated hour: the first 02:00 (CEST) must not
- 		// be reported as the second 02:00 (CET), which is in the future.
- 		{"2026-10-25T02:30:00+0200", "TZ=Europe/Berlin 0 0 * * * *", "2026-10-25T02:00:00+0200"},
--		{"2026-10-25T02:30:00+0100", "TZ=Europe/Berlin 0 0 * * * *", "2026-10-25T02:00:00+0100"},
-+		{testBerlinAt0230, "TZ=Europe/Berlin 0 0 * * * *", "2026-10-25T02:00:00+0100"},
- 		{"2026-10-25T03:00:00+0100", "TZ=Europe/Berlin 0 30 * * * *", "2026-10-25T02:30:00+0100"},
- 
- 		// America/New_York: 2026-11-01 02:00 EDT (-0400) -> 01:00 EST (-0500).
-```
-
-**File**: `pkg/shared/util/testconsts_test.go` (modified, +3/-0)
-```diff
-@@ -5,4 +5,7 @@ const (
- 	testCronEvery15Min = "0 0/15 * * * *"
- 	testHello          = "hello"
- 	testWorld          = "world"
-+	testBerlinMidnight = "2026-10-25T00:00:00+0200"
-+	testBerlinAt0230   = "2026-10-25T02:30:00+0100"
-+	testBerlinDaily    = "TZ=Europe/Berlin 0 0 0 * * *"
- )
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #4289** (closed): chore: use constants for repeated strings in the DST fall-back test (@cvas22)
 - **PR #4286** (closed): chore(deps): bump github.com/tidwall/gjson from 1.20.0 to 1.20.2 (@dependabot[bot])
 - **PR #4285** (2026-11-13): chore(deps): bump google.golang.org/api from 0.310.0 to 0.312.0 (@dependabot[bot])
 - **PR #4284** (2026-11-14): chore(deps): bump github.com/xdg-go/scram from 1.3.0 to 1.4.0 (@dependabot[bot])
 - **PR #4283** (2026-11-13): chore(deps): bump cloud.google.com/go/pubsub/v2 from 2.8.0 to 2.8.1 (@dependabot[bot])
 - **PR #4282** (2026-11-13): chore(deps): bump github.com/tidwall/sjson from 1.2.5 to 1.2.9 (@dependabot[bot])
-- **PR #4280** (2026-11-14): feat(controller): make leader election timing configurable (@cvas22)
 
 ---
 
@@ -1532,13 +1236,13 @@ Co-authored-by: Derek Wang <[REDACTED_EMAIL]>
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. sns): support a custom STS endpoint for web identity and assume role credentials
+## X. eventbus): add clientAdvertise to the JetStream EventBus
 
 **RULE**:
 When implementing operations in `api/jsonschema/schema.json`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in argoproj/argo-events. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `5cda2887`: sns): support a custom STS endpoint for web identity and assume role credentials. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `727b3155`: eventbus): add clientAdvertise to the JetStream EventBus. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
 Subsystems managing Go data structures, boundary deserialization, API parsing, or resource lifecycles matching `api/jsonschema/schema.json`.
@@ -1546,8 +1250,8 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```go
 // Verified production-grade fix pattern:
-        "stsEndpoint": {
-          "description": "STSEndpoint configures connection to a specific STS endpoint instead of Amazons servers, used to assume RoleARN and to exchange a web identity token for credentials",
+        "clientAdvertise": {
+          "description": "ClientAdvertise is the \"host:port\" that the NATS servers advertise to clients, written as the \"client_advertise\" option of the server configuration. Set it when clients reach the servers through an address other than the pod IPs, for example a load balancer. See https://docs.nats.io/running-a-nats-service/configuration#connection-and-domain-settings.",
           "type": "string"
         },
 ```
@@ -1559,4 +1263,4 @@ Subsystems managing Go data structures, boundary deserialization, API parsing, o
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `5cda2887` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `727b3155` are properly handled with clean fallback behavior.

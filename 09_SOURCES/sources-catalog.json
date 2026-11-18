@@ -475,8 +475,8 @@
     "sourceUrl": "https://huggingface.co/Comfy-Org/Qwen-Image-2.1",
     "sourceVersion": "hf-comfy-org-qwen-image-2.1",
     "license": "Open-Source",
-    "contentHash": "e031e5033ec72c948132c5fafab23b6811b6536e4af5cb9531b816261bdba506",
-    "lastHarvestedAt": "2026-11-13T16:48:55.749Z",
+    "contentHash": "0ac77fc50e183bdd5f7769d2010b87a7d0f5948b5b1637357115d5fa4542757a",
+    "lastHarvestedAt": "2026-11-18T04:20:41.288Z",
     "learningId": "learn-huggingface-comfy-org-qwen-image-2-1"
   },
   "hf-akhilaaa3-jev-omni": {
@@ -3523,10 +3523,10 @@
     "repository": "sigstore/cosign",
     "platform": "github",
     "sourceUrl": "https://github.com/sigstore/cosign",
-    "sourceVersion": "d93bbdba",
+    "sourceVersion": "0743bfcf",
     "license": "Apache-2.0",
-    "contentHash": "64355267f68d9f1c4d0cce3feddf29239a4eed3ff857e960cca3653a07bebfa9",
-    "lastHarvestedAt": "2026-11-17T21:03:13.488Z",
+    "contentHash": "49a524d1a6973099f34ec08ab86c2ecb3724ab68bf03cad0319b4c89956848fe",
+    "lastHarvestedAt": "2026-11-18T04:20:53.634Z",
     "learningId": "learn-github-sigstore-cosign"
   },
   "llphant-llphant": {
@@ -3963,20 +3963,20 @@
     "repository": "argoproj/argo-events",
     "platform": "github",
     "sourceUrl": "https://github.com/argoproj/argo-events",
-    "sourceVersion": "5cda2887",
+    "sourceVersion": "727b3155",
     "license": "Apache-2.0",
-    "contentHash": "fea7c4fd7df0c7eb965392e5214176e78549d7c4485bcf2ce8311a504ddf3e3f",
-    "lastHarvestedAt": "2026-11-17T05:37:15.911Z",
+    "contentHash": "86cf8a7107dfbba979473fec124df60ed1c119edc0e55348a86553739bf98afd",
+    "lastHarvestedAt": "2026-11-18T04:20:50.989Z",
     "learningId": "learn-github-argoproj-argo-events"
   },
   "helixdb-helix-db": {
     "repository": "HelixDB/helix-db",
     "platform": "github",
     "sourceUrl": "https://github.com/HelixDB/helix-db",
-    "sourceVersion": "69db4b16",
+    "sourceVersion": "2b9e3612",
     "license": "Apache-2.0",
-    "contentHash": "5b1d7d18bbe54e14654bf3d5d1faa3cd685b875017c62c71e062583a66cfab5f",
-    "lastHarvestedAt": "2026-11-17T03:58:03.336Z",
+    "contentHash": "6b514a0bf994214ea2431c62922a78ccf34daea86979c036ad8be7643a1d3760",
+    "lastHarvestedAt": "2026-11-18T04:20:56.101Z",
     "learningId": "learn-github-helixdb-helix-db"
   },
   "microsoft-fluentui": {
@@ -12828,5 +12828,15 @@
     "contentHash": "84ba9b85bab2d4c645895618ca7beec1015a9bbfbdd12a88c2c27336838aae8e",
     "lastHarvestedAt": "2026-11-17T21:56:37.300Z",
     "learningId": "learn-huggingface-harness-hub-qwen3-8-27b-pi-adapted"
+  },
+  "hf-apple-fastframes-l": {
+    "repository": "apple/FastFrames-L",
+    "platform": "huggingface",
+    "sourceUrl": "https://huggingface.co/apple/FastFrames-L",
+    "sourceVersion": "hf-apple-fastframes-l",
+    "license": "Open-Source",
+    "contentHash": "3d12a966d3be4e37b46954ed1eb190d33fd3395ef4dcf90bc1241484fda64250",
+    "lastHarvestedAt": "2026-11-18T04:20:38.905Z",
+    "learningId": "learn-huggingface-apple-fastframes-l"
   }
 }

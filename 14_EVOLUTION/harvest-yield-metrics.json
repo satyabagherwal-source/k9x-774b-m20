@@ -1,45 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T04:11:31.006Z",
-  "total_cycles_completed": 10343,
-  "total_learnings_persisted": 10343,
-  "total_rules_promoted": 9866,
+  "last_updated": "2026-11-18T04:20:56.105Z",
+  "total_cycles_completed": 10348,
+  "total_learnings_persisted": 10348,
+  "total_rules_promoted": 9869,
   "history": [
-    {
-      "timestamp": "2026-11-17T15:35:15.704Z",
-      "repository": "tickernelz/opencode-mem",
-      "learningId": "learn-github-tickernelz-opencode-mem",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T15:35:17.440Z",
-      "repository": "dathere/qsv",
-      "learningId": "learn-github-dathere-qsv",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T15:43:34.750Z",
-      "repository": "reflection/Beam-1.0-501B-A23B",
-      "learningId": "learn-huggingface-reflection-beam-1-0-501b-a23b",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T15:43:37.992Z",
-      "repository": "dalance/procs",
-      "learningId": "learn-github-dalance-procs",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-17T15:43:43.808Z",
-      "repository": "software-mansion/react-native-reanimated",
-      "learningId": "learn-github-software-mansion-react-native-reanimated",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-17T15:43:45.652Z",
       "repository": "open-policy-agent/opa",
@@ -1402,6 +1367,41 @@
       "timestamp": "2026-11-18T04:11:31.006Z",
       "repository": "MaterializeInc/materialize",
       "learningId": "learn-github-materializeinc-materialize",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T04:20:38.910Z",
+      "repository": "apple/FastFrames-L",
+      "learningId": "learn-huggingface-apple-fastframes-l",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T04:20:41.297Z",
+      "repository": "Comfy-Org/Qwen-Image-2.1",
+      "learningId": "learn-huggingface-comfy-org-qwen-image-2-1",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T04:20:50.993Z",
+      "repository": "argoproj/argo-events",
+      "learningId": "learn-github-argoproj-argo-events",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T04:20:53.638Z",
+      "repository": "sigstore/cosign",
+      "learningId": "learn-github-sigstore-cosign",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T04:20:56.105Z",
+      "repository": "HelixDB/helix-db",
+      "learningId": "learn-github-helixdb-helix-db",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }
