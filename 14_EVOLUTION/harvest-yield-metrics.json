@@ -1,24 +1,10 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T14:24:24.866Z",
-  "total_cycles_completed": 10526,
-  "total_learnings_persisted": 10526,
-  "total_rules_promoted": 10003,
+  "last_updated": "2026-11-18T14:32:16.366Z",
+  "total_cycles_completed": 10528,
+  "total_learnings_persisted": 10528,
+  "total_rules_promoted": 10004,
   "history": [
-    {
-      "timestamp": "2026-11-18T02:51:15.023Z",
-      "repository": "Comfy-Org/Wan-2.2",
-      "learningId": "learn-huggingface-comfy-org-wan-2-2",
-      "promotedRulesCount": 0,
-      "status": "PROMOTED"
-    },
-    {
-      "timestamp": "2026-11-18T02:51:25.662Z",
-      "repository": "koderover/zadig",
-      "learningId": "learn-github-koderover-zadig",
-      "promotedRulesCount": 1,
-      "status": "PROMOTED"
-    },
     {
       "timestamp": "2026-11-18T02:51:27.614Z",
       "repository": "freenet/freenet-core",
@@ -1402,6 +1388,20 @@
       "timestamp": "2026-11-18T14:24:24.866Z",
       "repository": "dathere/qsv",
       "learningId": "learn-github-dathere-qsv",
+      "promotedRulesCount": 1,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T14:32:00.523Z",
+      "repository": "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
+      "learningId": "learn-huggingface-xiaomimimo-mimo-v2-6-distill-qwen-9b",
+      "promotedRulesCount": 0,
+      "status": "PROMOTED"
+    },
+    {
+      "timestamp": "2026-11-18T14:32:16.366Z",
+      "repository": "crate/crate",
+      "learningId": "learn-github-crate-crate",
       "promotedRulesCount": 1,
       "status": "PROMOTED"
     }

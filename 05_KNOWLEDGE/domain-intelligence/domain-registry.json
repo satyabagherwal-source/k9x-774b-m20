@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "description": "AI-Builder-Brain 13-Domain Universal Intelligence Registry",
-  "last_updated": "2026-11-18T14:24:30.407Z",
-  "total_records": 1860,
+  "last_updated": "2026-11-18T14:32:21.061Z",
+  "total_records": 1862,
   "domains": {
     "A": {
-      "total": 11,
+      "total": 13,
       "record_ids": [
         "DOM-A-DD59FA01",
         "domain_intelligence-human-need-intelligence-foreactlabs-openexecutive-core-invariants",
@@ -17,7 +17,9 @@
         "domain_intelligence-human-need-intelligence-defguard-defguard-core-invariants",
         "domain_intelligence-human-need-intelligence-defguard-defguard-learnings-core-invariants",
         "domain_intelligence-human-need-intelligence-zulip-zulip-core-invariants",
-        "domain_intelligence-human-need-intelligence-zulip-zulip-learnings-core-invariants"
+        "domain_intelligence-human-need-intelligence-zulip-zulip-learnings-core-invariants",
+        "domain_intelligence-human-need-intelligence-crate-crate-core-invariants",
+        "domain_intelligence-human-need-intelligence-crate-crate-learnings-core-invariants"
       ]
     },
     "B": {
@@ -8602,8 +8604,8 @@
       "title": "Research & Knowledge Intelligence: XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-xiaomimimo-mimo-v2-6-distill-qwen-9b-research-knowledge-intelligence-xiaomimi.md",
       "repository": "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
-      "content_hash": "7af4fe3b6be5369f505e393b96d25f2b691c678df4c14c38dd3aed6a74895622",
-      "created_at": "2026-11-18T04:37:22.266Z"
+      "content_hash": "180232ac6df3192263a290ceb9afb2d30647aaccfdea6efb4d7ce20ba18f0ce4",
+      "created_at": "2026-11-18T14:32:00.716Z"
     },
     "domain_intelligence-architecture-intelligence-nolabs-ai-nono-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-nolabs-ai-nono-core-invariants",
@@ -8671,8 +8673,8 @@
       "title": "Research & Knowledge Intelligence: hf-xiaomimimo-mimo-v2.6-distill-qwen-9b-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-D-hf-xiaomimimo-mimo-v2-6-distill-qwen-9b-learnings-research-knowledge-intelligenc.md",
       "repository": "hf-xiaomimimo-mimo-v2.6-distill-qwen-9b-learnings",
-      "content_hash": "38e6a4bdef6b061bad51aeace1ba82ad9967dbb613045683a9d656fe40fd782c",
-      "created_at": "2026-11-18T04:37:37.123Z"
+      "content_hash": "153b465cec6a711b68b3fbd82d0a4df32f2afcf5fe0ec72da16b7c1ec6694ce3",
+      "created_at": "2026-11-18T14:32:19.884Z"
     },
     "domain_intelligence-architecture-intelligence-nolabs-ai-nono-learnings-core-invariants": {
       "record_id": "domain_intelligence-architecture-intelligence-nolabs-ai-nono-learnings-core-invariants",
@@ -30956,8 +30958,8 @@
       "title": "Technical Construction Intelligence: zulip-zulip-learnings Core Invariants",
       "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-H-zulip-zulip-learnings-technical-construction-intelligence-zulip-zulip-learnings-.md",
       "repository": "zulip-zulip-learnings",
-      "content_hash": "a4b2af2049388da90fc47ab420805870ddd2cf52b8e111a889d6efbb3334c1a0",
-      "created_at": "2026-11-18T12:24:05.294Z"
+      "content_hash": "748152b76bbb94b4d22c3ee9a802fdd98e7f3ad9467755cf8af773e65cacabdc",
+      "created_at": "2026-11-18T14:32:21.061Z"
     },
     "domain_intelligence-product-intelligence-software-mansion-argent-core-invariants": {
       "record_id": "domain_intelligence-product-intelligence-software-mansion-argent-core-invariants",
@@ -31156,6 +31158,24 @@
       "repository": "fallow-rs-fallow-learnings",
       "content_hash": "48137d476371414ef51747bb27ebe220d193c597a5373902e655ad43d8aa2eaa",
       "created_at": "2026-11-18T13:57:07.414Z"
+    },
+    "domain_intelligence-human-need-intelligence-crate-crate-core-invariants": {
+      "record_id": "domain_intelligence-human-need-intelligence-crate-crate-core-invariants",
+      "domain_letter": "A",
+      "title": "Human & Need Intelligence: crate/crate Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-A-crate-crate-human-need-intelligence-crate-crate-core-invariants.md",
+      "repository": "crate/crate",
+      "content_hash": "ab32541cdd6564bbee522aee16944845676beb4bc3f95ac9a7d72161a9e04498",
+      "created_at": "2026-11-18T14:32:16.723Z"
+    },
+    "domain_intelligence-human-need-intelligence-crate-crate-learnings-core-invariants": {
+      "record_id": "domain_intelligence-human-need-intelligence-crate-crate-learnings-core-invariants",
+      "domain_letter": "A",
+      "title": "Human & Need Intelligence: crate-crate-learnings Core Invariants",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-A-crate-crate-learnings-human-need-intelligence-crate-crate-learnings-core-invaria.md",
+      "repository": "crate-crate-learnings",
+      "content_hash": "f9ebb8d13662e738d4c51d0c2d5a4e127d3d07b4fcc5a9e07889fc9cc1699f44",
+      "created_at": "2026-11-18T14:32:20.494Z"
     }
   }
 }

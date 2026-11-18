@@ -6,16 +6,16 @@
   "source_url": "unknown",
   "source_version": "HEAD",
   "license": "Open-Source",
-  "timestamp": "2026-11-13T12:34:37.894Z",
+  "timestamp": "2026-11-18T14:32:20.247Z",
   "ai_provider": "universal-multi-artifact-distributor",
   "generator_version": "2.0.0-universal",
-  "learning_id": "LEARN-REEXTRACT-crate-crate-learnings",
+  "learning_id": "LEARN-EVO-crate-crate-learnings",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
 > **Provenance**: Harvested from [crate-crate-learnings](unknown) (Revision: `HEAD`).  
-> **License**: Open-Source | **Timestamp**: `2026-11-13T12:34:37.894Z`  
-> **Learning ID**: `LEARN-REEXTRACT-crate-crate-learnings`
+> **License**: Open-Source | **Timestamp**: `2026-11-18T14:32:20.247Z`  
+> **Learning ID**: `LEARN-EVO-crate-crate-learnings`
 
 
 ## 1. Scope & Verification Target
@@ -25,10 +25,10 @@ PROVENANCE_END -->
 ## 2. Observed Failure Modes & Defect Traps
 > **Canonical Learning Artifact**: `07_PROJECT_LEARNING/crate-crate-learnings.md`  
 > **Source**: github ([https://github.com/crate/crate](https://github.com/crate/crate))  
-> **Source Version**: `f7d204bd`  
+> **Source Version**: `20da9e4b`  
 > **License**: Apache-2.0  
 > **Synthesized By**: zero-clone-structural-synthesizer  
-> **Timestamp**: 2026-11-11T10:52:14.429Z  
+> **Timestamp**: 2026-11-18T14:32:15.329Z  
 > **Learning ID**: `learn-github-crate-crate`  
 > **Pipeline Version**: `2.0.0`  
 > **Status**: VERIFIED_EMPIRICAL_INTELLIGENCE  
@@ -42,7 +42,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/crate-crate-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/crate/crate](https://github.com/crate/crate))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-11T10:52:14.422Z  
+> **Harvest Timestamp**: 2026-11-18T14:32:15.323Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -52,7 +52,7 @@ PROVENANCE_END -->
 - **Description**: CrateDB is a distributed and scalable SQL database for storing and analyzing massive amounts of data in near real-time, even with complex queries. It is PostgreSQL-compatible, and based on Lucene.
 - **Primary Language / Ecosystem**: Java
 - **Discovered Manifests / Configurations**: N/A
-- **Stars / Engagement**: 4452 stars
+- **Stars / Engagement**: 4455 stars
 
 ---
 
@@ -559,11 +559,11 @@ def patch_system_information(text: str, version: str, previous: str) -> str:
 
 ### D3: Error Boundaries, Recovery & Rollbacks
 - Exception handling patterns and defect resolutions extracted from closed production bug issues:
-- **Issue #20438** (2026-10-20): **[Regression] Range query returns 0 rows when a CLOSED partition is included (5.10.16 vs 6.4.5)**
-  *Symptoms*: ### CrateDB version  6.4.5 (also reproduced on 6.2.8; works as expected on 5.10.16)  ### CrateDB setup information  Number of nodes: 3  Node configuration: - 1 node with stage=bigeye - 2 nodes with stage=hot - Heap size: 5 GB per node  CRATE_HEAP_SIZE: 5g (each node) CRATE_JAVA_OPTS: Not specified  Test table configuration: - 1 primary shard - 0 replicas - Daily partitioning using a generated TIMESTAMP column  The issue was also reproduced using a newly created minimal test table without custom shard allocation settings.  The full crate.yml configuration can be provided if required.  ### Problem description  <html> <body> <!--StartFragment--><html><head></head><body><h3><span>Description</span></h3><p><span>We found a regression in CrateDB 6.x when querying a partitioned table containing CLOSED partitions.</span></p><p><span>In CrateDB 5.10.16, range queries spanning both OPEN and CLOSED partitions correctly return records from OPEN partitions.</span></p><p><span>However, in CrateDB 6.2.8 and 6.4.5, the same queries return 0 records, even when matching records exist in OPEN partitions.</span></p><p><span>This behavior was reproduced using a newly created test table.</span></p><h3><span>Steps to Reproduce</span></h3><p><strong><span>1. Create a partitioned table</span></strong></p><pre><code><span>CREATE TABLE IF NOT EXISTS doc.test_closed_partition (     ts TIMESTAMP WITHOUT TIME ZONE,     pdate TIMESTAMP WITHOUT TIME ZONE         GENERATED ALWAYS AS date_trunc('day', ts) ) P
+- **Issue #20596** (2026-11-17): **The `RewriteToQueryThenFetch` rule drops an aliased column**
+  *Symptoms*: ### CrateDB version  6.5.1  ### CrateDB setup information   Number of nodes: ? CRATE_HEAP_SIZE: ? CRATE_JAVA_OPTS: ?  crate.yml contents:  ### Problem description and reproduction steps  ```sql CREATE TABLE t1 (id INT, a INT, b INT, flag BOOLEAN); CREATE TABLE t2 (id INT);  SET optimizer_rewrite_to_query_then_fetch = true;  SELECT c.b, c.x FROM (SELECT id, a AS x, b FROM t1 WHERE flag) c JOIN t2 ON c.id = t2.id ORDER BY c.x LIMIT 10;  SET optimizer_rewrite_to_query_then_fetch = false;  SELECT c.b, c.x FROM (SELECT id, a AS x, b FROM t1 WHERE flag) c JOIN t2 ON c.id = t2.id ORDER BY c.x LIMIT 10; ```  ### Actual Result  ``` SQLParseException[Couldn't create execution plan from logical plan because of: Couldn't find x in SourceSymbols{inputs={id=INPUT(2), c._fetchid=INPUT(0), id=INPUT(1)}, nonDeterministicFunctions={}}: Eval[b, x] (rows=unknown)   └ Fetch[b, x, id, id] (rows=unknown)     └ Limit[10::bigint;0] (rows=unknown)       └ OrderBy[x ASC] (rows=unknown)         └ HashJoin[INNER | (id = id)] (rows=unknown)           ├ Rename[c._fetchid, id] AS c (rows=unknown)           │  └ Eval[_fetchid, id] (rows=unknown)           │    └ Collect[doc.t1 | [_fetchid, a AS x, id] | flag] (rows=unknown)           └ Collect[doc.t2 | [id] | true] (rows=unknown)] ```  ### Expected Result  ``` +---+---+ | b | x | +---+---+ +---+---+ ```
 
-- **Issue #20424** (2026-10-21): **Unable to remove dropped table from publication**
-  *Symptoms*: ### CrateDB version  6.4.6  ### CrateDB setup information  Standard setup  ### Problem description  If a subscription was created by listing tables explicitly, and one of the tables was dropped, it is not possible to remove it from the publication.  ### Steps to Reproduce  ```sql CREATE TABLE doc.t1 (a INTEGER); CREATE TABLE doc.t2 (a INTEGER);  CREATE PUBLICATION t_tables FOR TABLE doc.t1, doc.t2;  DROP TABLE t2;  SELECT * FROM pg_publication_tables; -- still shows t1 and t2  ALTER PUBLICATION t_tables DROP TABLE doc.t2; ```  ### Actual Result  ``` io.crate.exceptions.RelationUnknown: Relation 'doc.t2' unknown 	at io.crate.replication.logical.analyze.LogicalReplicationAnalyzer.lambda$analyze$1(LogicalReplicationAnalyzer.java:126) 	at io.crate.common.collections.Lists.map(Lists.java:206) 	at io.crate.replication.logical.analyze.LogicalReplicationAnalyzer.analyze(LogicalReplicationAnalyzer.java:121) 	at io.crate.analyze.Analyzer$AnalyzerDispatcher.visitAlterPublication(Analyzer.java:748) 	at io.crate.analyze.Analyzer$AnalyzerDispatcher.visitAlterPublication(Analyzer.java:275) 	at io.crate.sql.tree.AlterPublication.accept(AlterPublication.java:61) 	at io.crate.analyze.Analyzer.analyze(Analyzer.java:257) 	at io.crate.session.Session.analyze(Session.java:379) 	at io.crate.session.Session.parse(Session.java:355) 	at io.crate.rest.action.SqlHttpHandler.executeSimpleRequest(SqlHttpHandler.java:246) 	at io.crate.rest.action.SqlHttpHandler.handleSQLRequest(SqlHttpHandler.java:227) 	at
+- **Issue #20580** (2026-11-18): **ANALYZE accesses foreign tables as `crate`, ignoring the invoking user’s mapping**
+  *Symptoms*: ### CrateDB version  6.5.1  ### CrateDB setup information  Cloud cluster with Postgres FDW  ### Problem description and reproduction steps  Running ANALYZE on a CrateDB cluster with a JDBC foreign table fails when a user mapping exists for the invoking user but no mapping exists for the internal crate user. Regular SELECT queries work through the configured mapping. During statistics collection, CrateDB attempts to authenticate to PostgreSQL as crate instead of the mapped PostgreSQL reader. Shouldn't this be documented or perhaps the existing user mapping be used?  Steps to reproduce 1. Create a PostgreSQL table and a reader account with permission to query it. 2. Allow connections from the CrateDB cluster to PostgreSQL. 3. In CrateDB, connect as a user other than `crate` and run:  ```sql  CREATE SERVER pg_remote FOREIGN DATA WRAPPER jdbc OPTIONS (     url 'jdbc:postgresql://<POSTGRES_HOST>:5433/fdw_lab?sslmode=require' );  CREATE USER MAPPING FOR CURRENT_USER SERVER pg_remote OPTIONS (     "user" 'crate_ce',     password '<POSTGRES_PASSWORD>' );  CREATE FOREIGN TABLE doc.remote_documents (     id BIGINT,     value DOUBLE PRECISION ) SERVER pg_remote OPTIONS (     schema_name 'fdw_source',     table_name 'measurements' );  --- Check the FDW works with: SELECT * FROM doc.remote_documents WHERE id = 1;  ---To Collect the statistics run: ANALYZE; ```   ### Actual Result  `PSQLException[FATAL: no pg_hba.conf entry for host "---", user "crate", database "fdw_lab", SSL encryption]`
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -580,259 +580,97 @@ def patch_system_information(text: str, version: str, previous: str) -> str:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `7ce57725` (2026-11-09)
-**Commit Message**: Add release note entries for released security fixes
+### Incident Patch 1: `98aa881e` (2026-11-18)
+**Commit Message**: Fix exception during ANALYZE when no crate superuser mapping to remote
+server
 
-**File**: `docs/appendices/release-notes/6.4.7.rst` (modified, +33/-4)
+Fixes https://github.com/crate/crate/issues/20580
+
+A user mapping for the `crate` superuser on the foreign server pointing to a
+remote user with read access to the foreign table is required in order
+to collect statistics on the foreign table. Previously, we raised
+an exception when this mapping did not exist and it caused statistics
+collection to abort.
+
+We now fix this by logging and continuing statistics collection on other
+foreign tables, and also by improving the documentation
+
+**File**: `docs/admin/fdw.rst` (modified, +18/-0)
 ```diff
-@@ -194,7 +194,36 @@ Fixes
-   the subscriber cluster were relocated to another node or when a replica shard
-   was promoted to primary.
+@@ -85,6 +85,24 @@ system::
  
--- Subscribing user used in :ref:`CREATE SUBSCRIPTION<sql-create-subscription>`
--  with :ref:`pg_tunnel mode <sql-create-subscription-conn-info>` now requires
--  to have ``AL`` privilege to avoid a security issue when authenticated user can
--  can switch to CrateDB's unauthenticated internal transport protocol.
-+- Fixed a `security issue
-+  <https://github.com/crate/crate/security/advisories/GHSA-ppqq-957g-9jpc>`__
-+  that allowed authenticated users to switch to CrateDB's unauthenticated
-+  internal transport protocol, by using
-+  :ref:`CREATE SUBSCRIPTION <sql-create-subscription>` with
-+  :ref:`pg_tunnel mode <sql-create-subscription-conn-info>`. The subscribing
-+  user now requires the ``AL`` privilege.
-+
-+- Fixed security issues (`GHSA-7p46-fxpg-cwm7
-+  <https://github.com/crate/crate/security/advisories/GHSA-7p46-fxpg-cwm7>`__
-+  and `GHSA-jp7h-6782-g32q
-+  <https://github.com/crate/crate/security/advisories/GHSA-jp7h-6782-g32q>`__)
-+  that allowed existing sessions to use the privileges and role memberships
-+  their user had when the session was created. Changes in privileges and role
-+  memberships now take effect immediately and if the session user is dropped,
-+  all SQL statements are rejected. This includes prepared statements and portals
-+  created before the changes, and ``FETCH`` on cursors declared before such
-+  changes.
-+
-+- Fixed a `security issue
-+  <https://github.com/crate/crate/security/advisories/GHSA-2xvq-gg9f-54p9>`__
-+  that allowed users to read tables without having the required privileges,
-+  by using scalar subqueries in a ``VALUES`` list, in the arguments of a table
-+  function, or in a ``JOIN ... ON`` condition, e.g.::
-+
-+    SELECT * FROM (VALUES ((SELECT secret FROM restricted))) AS v(x)
-+
-+- Fixed a `security issue
-+  <https://github.com/crate/crate/security/advisories/GHSA-qcp3-r37v-7p8j>`__
-+  that allowed unauthenticated clients to exhaust the memory of a node by
-+  sending compressed HTTP requests, as their content was decompressed and
-+  buffered before the request was authenticated. HTTP requests are now
-+  authenticated before their content is decompressed.
-```
-
-**File**: `docs/appendices/release-notes/6.5.1.rst` (modified, +33/-4)
-```diff
-@@ -199,7 +199,36 @@ Fixes
-   the subscriber cluster were relocated to another node or when a replica shard
-   was promoted to primary.
+    Only `DQL` (Data Query Language) statements are supported on foreign tables.
  
--- Subscribing user used in :ref:`CREATE SUBSCRIPTION<sql-create-subscription>`
--  with :ref:`pg_tunnel mode <sql-create-subscription-conn-info>` now requires
--  to have ``AL`` privilege to avoid a security issue when authenticated user can
--  can switch to CrateDB's unauthenticated internal transport protocol.
-+- Fixed a `security issue
-+  <https://github.com/crate/crate/security/advisories/GHSA-ppqq-957g-9jpc>`__
-+  that allowed authenticated users to switch to CrateDB's unauthenticated
-+  internal transport protocol, by using
-+  :ref:`CREATE SUBSCRIPTION <sql-create-subscription>` with
-+  :ref:`pg_tunnel mode <sql-create-subscription-conn-info>`. The subscribing
-+  user now requires the ``AL`` privilege.
++.. _administration-fdw-statistics:
 +
-+- Fixed security issues (`GHSA-7p46-fxpg-cwm7
-+  <https://github.com/crate/crate/security/advisories/GHSA-7p46-fxpg-cwm7>`__
-+  and `GHSA-jp7h-6782-g32q
-+  <https://github.com/crate/crate/security/advisories/GHSA-jp7h-6782-g32q>`__)
-+  that allowed existing sessions to use the privileges and role memberships
-+  their user had when the session was created. Changes in privileges and role
-+  memberships now take effect immediately and if the session user is dropped,
-+  all SQL statements are rejected. This includes prepared statements and portals
-+  created before the changes, and ``FETCH`` on cursors declared before such
-+  changes.
++Collecting statistics on foreign tables
++=======================================
 +
-+- Fixed a `security issue
-+  <https://github.com/crate/crate/security/advisories/GHSA-2xvq-gg9f-54p9>`__
-+  that allowed users to read tables without having the required privileges,
-+  by using scalar subqueries in a ``VALUES`` list, in the arguments of a table
-+  function, or in a ``JOIN ... ON`` condition, e.g.::
++In order to collect statistics on foreign tables via :ref:`analyze`, a user
++mapping for the ``crate`` superuser on the foreign server, pointing to a
++remote user with read access to the foreign table is required
++(ref:`ref-create-user-mapping`).
 +
-+    SELECT * FROM (VALUES ((SELECT secret FROM restricted))) AS v(x)
++For example::
 +
-+- Fixed a `security issue
-+  <https://github.com/crate/crate/security/advisories/GHSA-qcp3-r37v-7p8j>`__
-+  that allowed unauthenticated clients to exhaust the memory of a node by
-+  sending compressed HTTP requests, as their content was decompressed and
-+  buffered before the request was authenticated. HTTP requests are now
-+  authenticated before their content is decompressed.
-```
-
----
-
-### Incident Patch 2: `f7d204bd` (2026-11-09)
-**Commit Message**: Fix SketchRamAccounting undercount bug
-
-**File**: `docs/appendices/release-notes/6.5.2.rst` (modified, +3/-0)
-```diff
-@@ -48,3 +48,6 @@ Fixes
++  CREATE USER MAPPING FOR crate
++  SERVER remote
++  OPTIONS (
++    "user" 'remote_user',
++    password '<PASSWORD>'
++  )
  
- - Fixed an issue where querying ``sys.nodes`` might return ``SQLParseException[Values less than -1 bytes
-   are not supported: -86016b]``.
-+- `Yannic Hamann <https://github.com/yannic-hamann-abb>`_ fixed an issue that
-+  caused :ref:`ANALYZE <analyze>` to exceed the configured I/O rate limit
-+  during statistics collection.
-```
-
-**File**: `server/src/main/java/io/crate/statistics/SketchRamAccounting.java` (modified, +4/-4)
-```diff
-@@ -53,14 +53,14 @@ public SketchRamAccounting(RamAccounting ramAccounting, RateLimiter rateLimiter)
- 
-     public void addBytes(long bytes) {
-         this.blockCache += bytes;
--        boolean checklimit = false;
-+        long flushedBytes = 0;
-         while (this.blockCache > BLOCK_SIZE) {
-             this.blockCache -= BLOCK_SIZE;
-             ramAccounting.addBytes(SHIFTED_BLOCK_SIZE);
--            checklimit = true;
-+            flushedBytes += BLOCK_SIZE;
-         }
--        if (checklimit) {
--            checkRateLimit(bytes);
-+        if (flushedBytes > 0) {
-+            checkRateLimit(flushedBytes);
-         }
-     }
+ .. _administration-fdw-jdbc:
  
 ```
 
-**File**: `server/src/test/java/io/crate/statistics/SketchRamAccountingTest.java` (modified, +5/-3)
+**File**: `docs/appendices/release-notes/6.5.2.rst` (modified, +6/-0)
 ```diff
-@@ -56,10 +56,12 @@ public void test_rate_limited_ram_accounting() {
-         TrackingRateLimiter rateLimiter = new TrackingRateLimiter(1000);
-         var ra = new SketchRamAccounting(RamAccounting.NO_ACCOUNTING, rateLimiter);
- 
--        long bytesToAdd = rateLimiter.getMinPauseCheckBytes() / 2;
-+        long totalBytesAdded = 0;
-+        long bytesToAdd = 5 * rateLimiter.getMinPauseCheckBytes() + 8;
- 
--        for (int i = 0; i < 10; i++) {
--            ra.addBytes(bytesToAdd);
-+        while (totalBytesAdded < bytesToAdd) {
-+            ra.addBytes(8);
-+            totalBytesAdded += 8;
-         }
- 
-         Assertions.assertThat(rateLimiter.pauses).isEqualTo(5);
+@@ -78,3 +78,9 @@ Fixes
+ - Fixed an issue that caused an error with the message
+   ``Couldn't find x in SourceSymbols`` in certain queries with aliased columns
+   and with the ``optimizer_rewrite_to_query_then_fetch`` enabled.
++
++- Fixed an issue where statistics gathering on foreign tables would abort and
++  raise a ``PSQLException[FATAL: role "crate" does not exist]`` if
++  there was no mapping of the ``crate`` superuser to the foreign server pointing
++  to a remote user with read access on the foreign table. Also improved documentation
++  on this required mapping. See :ref:`administration-fdw-statistics`.
 ```
 
----
-
-### Incident Patch 3: `d33cbcb3` (2026-11-05)
-**Commit Message**: Return 0 for negative "free" and "total" memory reported by the OS
-
-Related to https://github.com/crate/crate/issues/20558
-
-Ported from https://github.com/elastic/elasticsearch/pull/42725
-(The code in this elasticsearch PR contains comments about when the OS might report
-negative values for free and total memory)
-
-As mentioned in the CrateDB bug report, this seems to be a flaky issue.
-I wasn't able to re-create it. However the PR in elasticsearch
-(above) addresses an issue with the same error mentioned in the CrateDB
-issue: "Values less than -1 bytes are not supported: "
-
-**File**: `docs/appendices/release-notes/6.5.2.rst` (modified, +2/-1)
+**File**: `docs/sql/statements/analyze.rst` (modified, +3/-0)
 ```diff
-@@ -46,4 +46,5 @@ series.
- Fixes
- =====
- 
--None
-+- Fixed an issue where querying ``sys.nodes`` might return ``SQLParseException[Values less than -1 bytes
-+  are not supported: -86016b]``.
+@@ -34,3 +34,6 @@ I/O throughput during collection of statistics can be throttled with the
+ setting. Changes to this setting can be made and take effect while an analysis
+ is in progress, thus it's possible to adjust optimal value for a concrete setup
+ by trying different values while ``ANALYZE`` is running.
++
++For collecting statistics on foreign tables, please see
++:ref:`administration-fdw-statistics`.
 ```
 
-**File**: `server/src/main/java/org/elasticsearch/monitor/os/OsProbe.java` (modified, +18/-5)
+**File**: `server/src/main/java/io/crate/statistics/TransportAnalyzeAction.java` (modified, +4/-0)
 ```diff
-@@ -94,9 +94,15 @@ public long getFreePhysicalMemorySize() {
-             return -1;
-         }
-         try {
--            return (long) GET_FREE_PHYSICAL_MEMORY_SIZE.invoke(OS_MXBEAN);
-+            final long freeMem = (long) GET_FREE_PHYSICAL_MEMORY_SIZE.invoke(OS_MXBEAN);
-+            if (freeMem < 0) {
-+                logger.warn("OS reported a negative free memory value [{}]", freeMem);
-+                return 0;
-+            }
-+            return freeMem;
-         } catch (Exception e) {
--            return -1;
-+            logger.warn("exception retrieving free physical memory", e);
-+            return 0;
-         }
-     }
- 
-@@ -105,12 +111,19 @@ public long getFreePhysicalMemorySize() {
-      */
-     public long getTotalPhysicalMemorySize() {
-         if (GET_TOTAL_PHYSICAL_MEMORY_SIZE == null) {
--            return -1;
-+            logger.warn("getTotalPhysicalMemorySize is not available");
-+            return 0;
-         }
-         try {
--            return (long) GET_TOTAL_PHYSICAL_MEMORY_SIZE.invoke(OS_MXBEAN);
-+            final long totalMem = (long) GET_TOTAL_PHYSICAL_MEMORY_SIZE.invoke(OS_MXBEAN);
-+            if (totalMem < 0) {
-+                logger.warn("OS reported a negative total memory value [{}]", totalMem);
-+                return 0;
-+            }
-+            return totalMem;
-         } catch (Exception e) {
--            return -1;
-+            logger.warn("exception retrieving total physical memory", e);
-+            return 0;
-         }
-     }
- 
-```
-
-**File**: `server/src/main/java/org/elasticsearch/monitor/os/OsStats.java` (modified, +4/-0)
-```diff
-@@ -159,13 +159,17 @@ public static class Mem implements Writeable {
-         private final long free;
- 
-         public Mem(long total, long free) {
-+            assert total >= 0 : "expected total memory to be positive, got: " + total;
-+            assert free >= 0 : "expected free memory to be positive, got: " + total;
-             this.total = total;
-             this.free = free;
-         }
- 
-         public Mem(StreamInput in) throws IOException {
-             this.total = in.readLong();
-+            assert total >= 0 : "expected total memory to be positive, got: " + total;
-             this.free = in.readLong();
-+            assert free >= 0 : "expected free memory to be positive, got: " + total;
-         }
- 
-         @Override
+@@ -184,6 +184,10 @@ public CompletableFuture<AcknowledgedResponse> fetchSamplesThenGenerateAndPublis
+                         systemTxnCtx,
+                         List.of()
+                     ))
++                    .exceptionally(err -> {
++                        LOGGER.warn("Skipping statistics collection for foreign table {}: {}", foreignTable.ident(), err.getMessage(), err);
++                        return Stats.EMPTY;
++                    })
+                     .thenAccept(foreignStats -> {
+                         if (foreignStats != null && !foreignStats.isEmpty()) {
+                             entries.put(foreignTable.ident(), foreignStats);
 ```
 
 #### Recent Merged Pull Requests:
-- **PR #20579** (2026-11-10): Add docs reference for http.max_content_length (backport #20578) (@mergify[bot])
-- **PR #20578** (2026-11-10): Add docs reference for http.max_content_length (@matriv)
-- **PR #20577** (2026-11-10): Mention that authenticated DoS issues should be reported public (@mfussenegger)
-- **PR #20573** (2026-11-10): Update netty to 4.2.20 (backport #20572) (@mergify[bot])
-- **PR #20572** (2026-11-09): Update netty to 4.2.20 (@mfussenegger)
-- **PR #20571** (2026-11-09): Add release note entries for released security fixes (backport #20569) (@mergify[bot])
+- **PR #20619** (2026-11-18):   Fix exception during ANALYZE when no crate superuser mapping to remote server (backport #20590) (@mergify[bot])
+- **PR #20618** (2026-11-18): Fix OpenDAL operator leak and thread leaks (@mfussenegger)
+- **PR #20616** (2026-11-17):  Fix RewriteToQueryThenFetch dropping an aliased column  (backport #20615) (@mergify[bot])
+- **PR #20615** (2026-11-17):  Fix RewriteToQueryThenFetch dropping an aliased column  (@hariso)
+- **PR #20614** (2026-11-17): Fix logical replication not resuming after subscriber shard recovery (backport #20575) (@mergify[bot])
+- **PR #20613** (2026-11-17): Remove ExtraFunctionsPlugin (@mfussenegger)
 
 ---
 
@@ -852,55 +690,48 @@ issue: "Values less than -1 bytes are not supported: "
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Add release note entries for released security fixes
+## X. exception during ANALYZE when no crate superuser mapping to remote
 
 **RULE**:
-When implementing operations in `docs/appendices/release-notes/6.4.7.rst`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in crate/crate. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/admin/fdw.rst`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in crate/crate. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `7ce57725`: Add release note entries for released security fixes. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `98aa881e`: exception during ANALYZE when no crate superuser mapping to remote. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/appendices/release-notes/6.4.7.rst`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/admin/fdw.rst`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
-- Fixed a `security issue
-  <https://github.com/crate/crate/security/advisories/GHSA-ppqq-957g-9jpc>`__
-  that allowed authenticated users to switch to CrateDB's unauthenticated
-  internal transport protocol, by using
-  :ref:`CREATE SUBSCRIPTION <sql-create-subscription>` with
-  :ref:`pg_tunnel mode <sql-create-subscription-conn-info>`. The subscribing
-  user now requires the ``AL`` privilege.
+.. _administration-fdw-statistics:
 
-- Fixed security issues (`GHSA-7p46-fxpg-cwm7
-  <https://github.com/crate/crate/security/advisories/GHSA-7p46-fxpg-cwm7>`__
-  and `GHSA-jp7h-6782-g32q
-  <https://github.com/crate/crate/security/advisories/GHSA-jp7h-6782-g32q>`__)
-  that allowed existing sessions to use the privileges and role memberships
-  their user had when the session was created. Changes in privileges and role
-  memberships now take effect immediately and if the session user is dropped,
-  all SQL statements are rejected. This includes prepared statements and portals
-  created before the changes, and ``FETCH`` on cursors declared before such
-  changes.
+Collecting statistics on foreign tables
+=======================================
 
-- Fixed a `security issue
-  <https://github.com/crate/crate/security/advisories/GHSA-2xvq-gg9f-54p9>`__
-  that allowed users to read tables without having the required pri
+In order to collect statistics on foreign tables via :ref:`analyze`, a user
+mapping for the ``crate`` superuser on the foreign server, pointing to a
+remote user with read access to the foreign table is required
+(ref:`ref-create-user-mapping`).
+
+For example::
+
+  CREATE USER MAPPING FOR crate
+  SERVER remote
+  OPTIONS (
+    "user" 'remote_user',
+    password '<PASSWORD>'
+  )
 ```
 
 **NEGATIVE CONSTRAINT**:
 ```java
-// Anti-pattern to NEVER write (induced failure mode):
-- Subscribing user used in :ref:`CREATE SUBSCRIPTION<sql-create-subscription>`
-  with :ref:`pg_tunnel mode <sql-create-subscription-conn-info>` now requires
-  to have ``AL`` privilege to avoid a security issue when authenticated user can
-  can switch to CrateDB's unauthenticated internal transport protocol.
+// Induced defect failure mode:
+// Defect-prone omission of boundary validation
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `7ce57725` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `98aa881e` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

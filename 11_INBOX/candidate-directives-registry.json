@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "last_updated": "2026-11-18T14:24:30.224Z",
+  "last_updated": "2026-11-18T14:32:20.769Z",
   "directives": [
     {
       "id": "CD-001",
@@ -29750,6 +29750,35 @@
       "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
       "date_staged": "2026-11-18",
       "domain_letter": "G"
+    },
+    {
+      "id": "CD-022D",
+      "directive_title": "exception during ANALYZE when no crate superuser mapping to remote",
+      "source_repo": "crate-crate-learnings",
+      "source_commit": "HEAD",
+      "staged_file": "11_INBOX/candidate-directives/CD-022D-exception-during-analyze-when-no-crate-superuser-mapping-to-remote.md",
+      "status": "QUARANTINED_REJECT",
+      "reason": "Rejected fail-closed: MISSING_SOURCE_URI: Knowledge has no source URL or locator; NO_EVIDENCE_RECORDS: Knowledge item has zero associated evidence records",
+      "date_staged": "2026-11-18",
+      "domain_letter": "A"
+    },
+    {
+      "id": "CD-REV-667B8C",
+      "directive_title": "exception during ANALYZE when no crate superuser mapping to remote",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "crate-crate",
+      "domain_letter": "G",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-667B8C-exception-during-analyze-when-no-crate-s.md",
+      "staged_date": "2026-11-18"
+    },
+    {
+      "id": "CD-REV-3AA86B",
+      "directive_title": "Forensic Learning Record (Deep Inspection): zulip/zulip",
+      "status": "STAGED_FOR_HUMAN_REVIEW",
+      "source_repo": "zulip-zulip",
+      "domain_letter": "A",
+      "staged_file": "11_INBOX/candidate-directives/CD-REV-3AA86B-forensic-learning-record-deep-inspection.md",
+      "staged_date": "2026-11-18"
     }
   ]
 }

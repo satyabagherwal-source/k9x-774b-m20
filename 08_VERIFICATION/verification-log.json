@@ -1,35 +1,5 @@
 [
   {
-    "cycleId": "CYCLE-20261117-022E",
-    "timestamp": "2026-11-17T04:56:47.990Z",
-    "repository": "Saffsanity/sill",
-    "learningId": "learn-github-saffsanity-sill",
-    "contentHash": "e4882eac9192400567ab56b255e15d248ac53739b35c964e9a28b4b90e634570",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
-    "cycleId": "CYCLE-20261117-06DX",
-    "timestamp": "2026-11-17T04:56:53.589Z",
-    "repository": "cilium/cilium",
-    "learningId": "learn-github-cilium-cilium",
-    "contentHash": "803b72102688fcd02f05a3224ef90425752d7b31bb94f83e669090297fe9f5d3",
-    "status": "VERIFIED",
-    "promotedRulesCount": 1,
-    "barriers": {
-      "storage_written": true,
-      "read_back_verified": true,
-      "content_hash_verified": true,
-      "index_read_back_verified": true
-    }
-  },
-  {
     "cycleId": "CYCLE-20261117-TL78",
     "timestamp": "2026-11-17T05:19:45.812Z",
     "repository": "a2ui-project/a2ui",
@@ -7490,6 +7460,36 @@
     "repository": "dathere/qsv",
     "learningId": "learn-github-dathere-qsv",
     "contentHash": "456c93c985a8f08cd3a88d15113bfb2ba2378c6c011c613220f63ce37c0e43be",
+    "status": "VERIFIED",
+    "promotedRulesCount": 1,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-ZMRL",
+    "timestamp": "2026-11-18T14:32:00.513Z",
+    "repository": "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
+    "learningId": "learn-huggingface-xiaomimimo-mimo-v2-6-distill-qwen-9b",
+    "contentHash": "d2b2bd055fa5e88d57ef69a4ce79288cf854d4e7797d71f59a00d0a522ef62b4",
+    "status": "PROJECT_ONLY",
+    "promotedRulesCount": 0,
+    "barriers": {
+      "storage_written": true,
+      "read_back_verified": true,
+      "content_hash_verified": true,
+      "index_read_back_verified": true
+    }
+  },
+  {
+    "cycleId": "CYCLE-20261118-ZYZP",
+    "timestamp": "2026-11-18T14:32:16.357Z",
+    "repository": "crate/crate",
+    "learningId": "learn-github-crate-crate",
+    "contentHash": "0a651b5f501251f3070918e7c54eb72dc0a6224a99a04dfade5bd1e6c891d456",
     "status": "VERIFIED",
     "promotedRulesCount": 1,
     "barriers": {

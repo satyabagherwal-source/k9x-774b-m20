@@ -1,7 +1,7 @@
 {
   "version": "1.0.0",
   "pipeline_mode": "CLOUD_HARVEST",
-  "last_updated": "2026-11-18T14:24:24.871Z",
+  "last_updated": "2026-11-18T14:32:16.370Z",
   "checkpoints": {
     "expressjs/cors": {
       "repository": "expressjs/cors",
@@ -605,14 +605,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-huggingface-xiaomimimo-mimo-v2-6-distill-qwen-9b",
-      "content_hash": "ff89425170674d3178b4eeb60f076f3c1639fd3f54b3cd7f222f21cd56b264fb",
-      "verified_at": "2026-11-18T04:37:22.104Z",
+      "content_hash": "d2b2bd055fa5e88d57ef69a4ce79288cf854d4e7797d71f59a00d0a522ef62b4",
+      "verified_at": "2026-11-18T14:32:00.526Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-18T04:37:22.104Z"
+      "last_updated": "2026-11-18T14:32:00.526Z"
     },
     "inclusionAI/Ming-Image-0.1-Design": {
       "repository": "inclusionAI/Ming-Image-0.1-Design",
@@ -3471,14 +3471,14 @@
       "stage": "VERIFIED",
       "status": "VERIFIED_LEARNING",
       "learning_id": "learn-github-crate-crate",
-      "content_hash": "9d66194101a98e7569ae33a73b5aa00c91ee58ac133638a0bff0b5f2db0c1b54",
-      "verified_at": "2026-11-17T20:45:40.349Z",
+      "content_hash": "0a651b5f501251f3070918e7c54eb72dc0a6224a99a04dfade5bd1e6c891d456",
+      "verified_at": "2026-11-18T14:32:16.370Z",
       "extracted": true,
       "validated": true,
       "brain_write": true,
       "brain_readback": true,
       "knowledge_index_updated": true,
-      "last_updated": "2026-11-17T20:45:40.349Z"
+      "last_updated": "2026-11-18T14:32:16.370Z"
     },
     "NucleoidAI/Nucleoid": {
       "repository": "NucleoidAI/Nucleoid",

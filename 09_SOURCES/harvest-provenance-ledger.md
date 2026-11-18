@@ -11038,3 +11038,5 @@ Every entry in this ledger must capture:
 | `learn-huggingface-akhilaaa3-jev-omni` | `https://huggingface.co/akhilaaa3/Jev-Omni` | `hf-akhilaa` | Multi-dimensional audit evidence | 2026-11-18T14:24:06.805Z |
 | `learn-github-nats-io-nats-go` | `https://github.com/nats-io/nats.go` | `792e440f` | Multi-dimensional audit evidence | 2026-11-18T14:24:17.100Z |
 | `learn-github-dathere-qsv` | `https://github.com/dathere/qsv` | `52f21a8b` | Multi-dimensional audit evidence | 2026-11-18T14:24:24.859Z |
+| `learn-huggingface-xiaomimimo-mimo-v2-6-distill-qwen-9b` | `https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B` | `hf-xiaomim` | Multi-dimensional audit evidence | 2026-11-18T14:32:00.517Z |
+| `learn-github-crate-crate` | `https://github.com/crate/crate` | `20da9e4b` | Multi-dimensional audit evidence | 2026-11-18T14:32:16.361Z |

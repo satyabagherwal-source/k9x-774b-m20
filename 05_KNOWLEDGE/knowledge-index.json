@@ -1,11 +1,11 @@
 {
   "version": "1.0.0",
   "schema_version": "2.0.0",
-  "last_updated": "2026-11-18T14:24:30.594Z",
+  "last_updated": "2026-11-18T14:32:21.061Z",
   "total_verified_learnings": 9002,
   "total_canonical_rules": 1689,
   "total_dossiers": 1528,
-  "total_items": 21304,
+  "total_items": 21309,
   "total_promoted_rules": 8379,
   "items": {
     "learn-github-0xjacky-nginx-ui": {
@@ -113726,9 +113726,9 @@
       "title": "Research & Knowledge Intelligence: XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B Core Invariants",
       "repository": "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
       "source_version": "hf-xiaomimimo-mimo-v2.6-distill-qwen-9b",
-      "content_hash": "7af4fe3b6be5369f505e393b96d25f2b691c678df4c14c38dd3aed6a74895622",
+      "content_hash": "180232ac6df3192263a290ceb9afb2d30647aaccfdea6efb4d7ce20ba18f0ce4",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T04:37:22.266Z"
+      "persisted_at": "2026-11-18T14:32:00.716Z"
     },
     "candidate_directive-release-v0-82-0-2311": {
       "item_id": "candidate_directive-release-v0-82-0-2311",
@@ -113822,9 +113822,9 @@
       "title": "Research & Knowledge Intelligence: hf-xiaomimimo-mimo-v2.6-distill-qwen-9b-learnings Core Invariants",
       "repository": "hf-xiaomimimo-mimo-v2.6-distill-qwen-9b-learnings",
       "source_version": "HEAD",
-      "content_hash": "38e6a4bdef6b061bad51aeace1ba82ad9967dbb613045683a9d656fe40fd782c",
+      "content_hash": "153b465cec6a711b68b3fbd82d0a4df32f2afcf5fe0ec72da16b7c1ec6694ce3",
       "domain_letter": "D",
-      "persisted_at": "2026-11-18T04:37:37.123Z"
+      "persisted_at": "2026-11-18T14:32:19.884Z"
     },
     "domain_intelligence-architecture-intelligence-nolabs-ai-nono-learnings-core-invariants": {
       "item_id": "domain_intelligence-architecture-intelligence-nolabs-ai-nono-learnings-core-invariants",
@@ -218649,8 +218649,8 @@
       "slug": "crate-crate",
       "platform": "github",
       "source_url": "https://github.com/crate/crate",
-      "source_version": "bf89cdfb",
-      "content_hash": "9d66194101a98e7569ae33a73b5aa00c91ee58ac133638a0bff0b5f2db0c1b54",
+      "source_version": "20da9e4b",
+      "content_hash": "0a651b5f501251f3070918e7c54eb72dc0a6224a99a04dfade5bd1e6c891d456",
       "dossier_path": "07_PROJECT_LEARNING/crate-crate-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/crate-crate-learnings.md",
       "promoted_rules": [
@@ -218668,6 +218668,11 @@
           "number": 9065,
           "title": "Add connect and read timeouts to JWKS fetches",
           "status": "PROMOTED_AND_VERIFIED"
+        },
+        {
+          "number": 9244,
+          "title": "exception during ANALYZE when no crate superuser mapping to remote",
+          "status": "PROMOTED_AND_VERIFIED"
         }
       ],
       "status": "VERIFIED_LEARNING",
@@ -218675,7 +218680,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-17T20:45:40.162Z",
+      "verified_at": "2026-11-18T14:32:16.154Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -218729,10 +218734,10 @@
       "relative_path": "08_VERIFICATION/crate-crate-verification-protocol-empirical-defect-shield-for-crate-crate.md",
       "title": "Verification Protocol: Empirical Defect Shield for crate/crate",
       "repository": "crate/crate",
-      "source_version": "bf89cdfb",
-      "content_hash": "1123a3fef3a61cfedf2b541743e8f8107a44438a76c48eafb98d1072067693ce",
+      "source_version": "20da9e4b",
+      "content_hash": "9088b7aed076d662545a28c3c93d09cd6e17aeeb00aca3742910540c41a1ff91",
       "domain_letter": "K",
-      "persisted_at": "2026-11-17T20:45:40.813Z"
+      "persisted_at": "2026-11-18T14:32:16.867Z"
     },
     "candidate_directive-ci-add-risc-v-64-kernel-and-ovmf-binaries-docker-push-action": {
       "item_id": "candidate_directive-ci-add-risc-v-64-kernel-and-ovmf-binaries-docker-push-action",
@@ -281687,7 +281692,7 @@
       "platform": "huggingface",
       "source_url": "https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
       "source_version": "hf-xiaomimimo-mimo-v2.6-distill-qwen-9b",
-      "content_hash": "ff89425170674d3178b4eeb60f076f3c1639fd3f54b3cd7f222f21cd56b264fb",
+      "content_hash": "d2b2bd055fa5e88d57ef69a4ce79288cf854d4e7797d71f59a00d0a522ef62b4",
       "dossier_path": "07_PROJECT_LEARNING/hf-xiaomimimo-mimo-v2.6-distill-qwen-9b-learnings.md",
       "dossier_file": "07_PROJECT_LEARNING/hf-xiaomimimo-mimo-v2.6-distill-qwen-9b-learnings.md",
       "promoted_rules": [],
@@ -281696,7 +281701,7 @@
       "brain_readback": true,
       "historical_duplicate_count": 1,
       "historical_learning_ids": [],
-      "verified_at": "2026-11-18T04:37:21.898Z",
+      "verified_at": "2026-11-18T14:32:00.313Z",
       "verification_barriers": {
         "storage_written": true,
         "read_back_verified": true,
@@ -286436,9 +286441,9 @@
       "title": "Technical Construction Intelligence: zulip-zulip-learnings Core Invariants",
       "repository": "zulip-zulip-learnings",
       "source_version": "HEAD",
-      "content_hash": "a4b2af2049388da90fc47ab420805870ddd2cf52b8e111a889d6efbb3334c1a0",
+      "content_hash": "748152b76bbb94b4d22c3ee9a802fdd98e7f3ad9467755cf8af773e65cacabdc",
       "domain_letter": "H",
-      "persisted_at": "2026-11-18T12:24:05.294Z"
+      "persisted_at": "2026-11-18T14:32:21.061Z"
     },
     "learn-github-software-mansion-argent": {
       "learning_id": "learn-github-software-mansion-argent",
@@ -287469,6 +287474,68 @@
       "content_hash": "7dd66f85a5537cf3ba07d700bd0fa5fdf502998b71bdf0690d6387b5a5e0b04e",
       "domain_letter": "G",
       "persisted_at": "2026-11-18T14:24:30.224Z"
+    },
+    "rule-9244": {
+      "learning_id": "rule-9244",
+      "category": "ENGINEERING_PATTERN",
+      "rule_number": 9244,
+      "title": "exception during ANALYZE when no crate superuser mapping to remote",
+      "source_url": "https://github.com/crate/crate",
+      "source_version": "20da9e4b",
+      "file_path": "05_KNOWLEDGE/engineering-patterns.md",
+      "status": "VERIFIED_CANONICAL_RULE",
+      "verification_status": "VERIFIED_CANONICAL_RULE",
+      "verified": true,
+      "brain_readback": true,
+      "verified_at": "2026-11-18T14:32:16.154Z"
+    },
+    "candidate_directive-exception-during-analyze-when-no-crate-superuser-mapping-to-remote": {
+      "item_id": "candidate_directive-exception-during-analyze-when-no-crate-superuser-mapping-to-remote",
+      "artifact_type": "candidate_directive",
+      "target_folder": "11_INBOX",
+      "relative_path": "11_INBOX/candidate-directives/CD-022D-exception-during-analyze-when-no-crate-superuser-mapping-to-remote.md",
+      "title": "exception during ANALYZE when no crate superuser mapping to remote",
+      "repository": "crate-crate-learnings",
+      "source_version": "HEAD",
+      "content_hash": "36df69072558c2fb70bca65e19a32d7535fe86b15968c8370e5498bb8d340740",
+      "domain_letter": "A",
+      "persisted_at": "2026-11-18T14:32:20.341Z"
+    },
+    "domain_intelligence-human-need-intelligence-crate-crate-core-invariants": {
+      "item_id": "domain_intelligence-human-need-intelligence-crate-crate-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-A-crate-crate-human-need-intelligence-crate-crate-core-invariants.md",
+      "title": "Human & Need Intelligence: crate/crate Core Invariants",
+      "repository": "crate/crate",
+      "source_version": "20da9e4b",
+      "content_hash": "ab32541cdd6564bbee522aee16944845676beb4bc3f95ac9a7d72161a9e04498",
+      "domain_letter": "A",
+      "persisted_at": "2026-11-18T14:32:16.723Z"
+    },
+    "domain_intelligence-human-need-intelligence-crate-crate-learnings-core-invariants": {
+      "item_id": "domain_intelligence-human-need-intelligence-crate-crate-learnings-core-invariants",
+      "artifact_type": "domain_intelligence",
+      "target_folder": "05_KNOWLEDGE",
+      "relative_path": "05_KNOWLEDGE/domain-intelligence/DOM-A-crate-crate-learnings-human-need-intelligence-crate-crate-learnings-core-invaria.md",
+      "title": "Human & Need Intelligence: crate-crate-learnings Core Invariants",
+      "repository": "crate-crate-learnings",
+      "source_version": "HEAD",
+      "content_hash": "f9ebb8d13662e738d4c51d0c2d5a4e127d3d07b4fcc5a9e07889fc9cc1699f44",
+      "domain_letter": "A",
+      "persisted_at": "2026-11-18T14:32:20.494Z"
+    },
+    "verification_contract-verification-protocol-empirical-defect-shield-for-crate-crate-learnings": {
+      "item_id": "verification_contract-verification-protocol-empirical-defect-shield-for-crate-crate-learnings",
+      "artifact_type": "verification_contract",
+      "target_folder": "08_VERIFICATION",
+      "relative_path": "08_VERIFICATION/crate-crate-learnings-verification-protocol-empirical-defect-shield-for-crate-cr.md",
+      "title": "Verification Protocol: Empirical Defect Shield for crate-crate-learnings",
+      "repository": "crate-crate-learnings",
+      "source_version": "HEAD",
+      "content_hash": "bf5b3c4caaf0cb1c9e137881d1b0c865614440bf93279a803d699243e5ac090b",
+      "domain_letter": "K",
+      "persisted_at": "2026-11-18T14:32:20.635Z"
     }
   },
   "ai-builder-brain": {

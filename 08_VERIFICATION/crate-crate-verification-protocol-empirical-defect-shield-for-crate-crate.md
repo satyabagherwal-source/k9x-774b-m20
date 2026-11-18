@@ -4,22 +4,22 @@
 {
   "source_repository": "crate/crate",
   "source_url": "https://github.com/crate/crate",
-  "source_version": "bf89cdfb",
+  "source_version": "20da9e4b",
   "license": "Apache-2.0",
-  "timestamp": "2026-11-17T20:45:40.536Z",
+  "timestamp": "2026-11-18T14:32:16.563Z",
   "ai_provider": "zero-clone-structural-synthesizer",
   "generator_version": "2.0.0-universal",
   "learning_id": "learn-github-crate-crate",
   "canonical_classification": "verification_contract"
 }
 PROVENANCE_END -->
-> **Provenance**: Harvested from [crate/crate](https://github.com/crate/crate) (Revision: `bf89cdfb`).  
-> **License**: Apache-2.0 | **Timestamp**: `2026-11-17T20:45:40.536Z`  
+> **Provenance**: Harvested from [crate/crate](https://github.com/crate/crate) (Revision: `20da9e4b`).  
+> **License**: Apache-2.0 | **Timestamp**: `2026-11-18T14:32:16.563Z`  
 > **Learning ID**: `learn-github-crate-crate`
 
 
 ## 1. Scope & Verification Target
-- **Target Repository**: `crate/crate` (Commit: `bf89cdfb`)
+- **Target Repository**: `crate/crate` (Commit: `20da9e4b`)
 - **Pillar Alignment**: Pillar 11 (Empirical Truth & Mathematical Integrity)
 
 ## 2. Observed Failure Modes & Defect Traps
@@ -28,7 +28,7 @@ PROVENANCE_END -->
 > **Canonical Artifact**: `07_PROJECT_LEARNING/crate-crate-learnings.md`  
 > **Source Platform**: GitHub ([https://github.com/crate/crate](https://github.com/crate/crate))  
 > **Harvest Method**: Full-Spectrum Deep Extraction (Patches, Diffs, Source Code, Post-Mortems)  
-> **Harvest Timestamp**: 2026-11-17T20:45:39.391Z  
+> **Harvest Timestamp**: 2026-11-18T14:32:15.323Z  
 > **Compliance State**: Free Tier Guaranteed | Strict Rate-Limit Backoff Honored  
 
 ---
@@ -548,8 +548,8 @@ def patch_system_information(text: str, version: str, previous: str) -> str:
 - **Issue #20596** (2026-11-17): **The `RewriteToQueryThenFetch` rule drops an aliased column**
   *Symptoms*: ### CrateDB version  6.5.1  ### CrateDB setup information   Number of nodes: ? CRATE_HEAP_SIZE: ? CRATE_JAVA_OPTS: ?  crate.yml contents:  ### Problem description and reproduction steps  ```sql CREATE TABLE t1 (id INT, a INT, b INT, flag BOOLEAN); CREATE TABLE t2 (id INT);  SET optimizer_rewrite_to_query_then_fetch = true;  SELECT c.b, c.x FROM (SELECT id, a AS x, b FROM t1 WHERE flag) c JOIN t2 ON c.id = t2.id ORDER BY c.x LIMIT 10;  SET optimizer_rewrite_to_query_then_fetch = false;  SELECT c.b, c.x FROM (SELECT id, a AS x, b FROM t1 WHERE flag) c JOIN t2 ON c.id = t2.id ORDER BY c.x LIMIT 10; ```  ### Actual Result  ``` SQLParseException[Couldn't create execution plan from logical plan because of: Couldn't find x in SourceSymbols{inputs={id=INPUT(2), c._fetchid=INPUT(0), id=INPUT(1)}, nonDeterministicFunctions={}}: Eval[b, x] (rows=unknown)   └ Fetch[b, x, id, id] (rows=unknown)     └ Limit[10::bigint;0] (rows=unknown)       └ OrderBy[x ASC] (rows=unknown)         └ HashJoin[INNER | (id = id)] (rows=unknown)           ├ Rename[c._fetchid, id] AS c (rows=unknown)           │  └ Eval[_fetchid, id] (rows=unknown)           │    └ Collect[doc.t1 | [_fetchid, a AS x, id] | flag] (rows=unknown)           └ Collect[doc.t2 | [id] | true] (rows=unknown)] ```  ### Expected Result  ``` +---+---+ | b | x | +---+---+ +---+---+ ```
 
-- **Issue #20438** (2026-10-20): **[Regression] Range query returns 0 rows when a CLOSED partition is included (5.10.16 vs 6.4.5)**
-  *Symptoms*: ### CrateDB version  6.4.5 (also reproduced on 6.2.8; works as expected on 5.10.16)  ### CrateDB setup information  Number of nodes: 3  Node configuration: - 1 node with stage=bigeye - 2 nodes with stage=hot - Heap size: 5 GB per node  CRATE_HEAP_SIZE: 5g (each node) CRATE_JAVA_OPTS: Not specified  Test table configuration: - 1 primary shard - 0 replicas - Daily partitioning using a generated TIMESTAMP column  The issue was also reproduced using a newly created minimal test table without custom shard allocation settings.  The full crate.yml configuration can be provided if required.  ### Problem description  <html> <body> <!--StartFragment--><html><head></head><body><h3><span>Description</span></h3><p><span>We found a regression in CrateDB 6.x when querying a partitioned table containing CLOSED partitions.</span></p><p><span>In CrateDB 5.10.16, range queries spanning both OPEN and CLOSED partitions correctly return records from OPEN partitions.</span></p><p><span>However, in CrateDB 6.2.8 and 6.4.5, the same queries return 0 records, even when matching records exist in OPEN partitions.</span></p><p><span>This behavior was reproduced using a newly created test table.</span></p><h3><span>Steps to Reproduce</span></h3><p><strong><span>1. Create a partitioned table</span></strong></p><pre><code><span>CREATE TABLE IF NOT EXISTS doc.test_closed_partition (     ts TIMESTAMP WITHOUT TIME ZONE,     pdate TIMESTAMP WITHOUT TIME ZONE         GENERATED ALWAYS AS date_trunc('day', ts) ) P
+- **Issue #20580** (2026-11-18): **ANALYZE accesses foreign tables as `crate`, ignoring the invoking user’s mapping**
+  *Symptoms*: ### CrateDB version  6.5.1  ### CrateDB setup information  Cloud cluster with Postgres FDW  ### Problem description and reproduction steps  Running ANALYZE on a CrateDB cluster with a JDBC foreign table fails when a user mapping exists for the invoking user but no mapping exists for the internal crate user. Regular SELECT queries work through the configured mapping. During statistics collection, CrateDB attempts to authenticate to PostgreSQL as crate instead of the mapped PostgreSQL reader. Shouldn't this be documented or perhaps the existing user mapping be used?  Steps to reproduce 1. Create a PostgreSQL table and a reader account with permission to query it. 2. Allow connections from the CrateDB cluster to PostgreSQL. 3. In CrateDB, connect as a user other than `crate` and run:  ```sql  CREATE SERVER pg_remote FOREIGN DATA WRAPPER jdbc OPTIONS (     url 'jdbc:postgresql://<POSTGRES_HOST>:5433/fdw_lab?sslmode=require' );  CREATE USER MAPPING FOR CURRENT_USER SERVER pg_remote OPTIONS (     "user" 'crate_ce',     password '<POSTGRES_PASSWORD>' );  CREATE FOREIGN TABLE doc.remote_documents (     id BIGINT,     value DOUBLE PRECISION ) SERVER pg_remote OPTIONS (     schema_name 'fdw_source',     table_name 'measurements' );  --- Check the FDW works with: SELECT * FROM doc.remote_documents WHERE id = 1;  ---To Collect the statistics run: ANALYZE; ```   ### Actual Result  `PSQLException[FATAL: no pg_hba.conf entry for host "---", user "crate", database "fdw_lab", SSL encryption]`
 
 ### D4: Resource Lifecycle & Leak Defenses
 - Memory allocation, socket lifecycle, and handle cleanup observed from bug fixes and PR deltas.
@@ -566,518 +566,97 @@ def patch_system_information(text: str, version: str, previous: str) -> str:
 ### D8: Forensic Bug Fixes & Real Production Code Patches
 Observed empirical fixes and code patches:
 
-### Incident Patch 1: `e80e2ec6` (2026-11-17)
-**Commit Message**: Add connect and read timeouts to JWKS fetches
+### Incident Patch 1: `98aa881e` (2026-11-18)
+**Commit Message**: Fix exception during ANALYZE when no crate superuser mapping to remote
+server
 
-Fetching the OpenID configuration and the JWKS of an issuer had no
-connect or read timeout. An issuer which accepts the connection but
-never responds blocked the calling thread indefinitely.
+Fixes https://github.com/crate/crate/issues/20580
 
-Set a 5 second connect and read timeout on both requests.
+A user mapping for the `crate` superuser on the foreign server pointing to a
+remote user with read access to the foreign table is required in order
+to collect statistics on the foreign table. Previously, we raised
+an exception when this mapping did not exist and it caused statistics
+collection to abort.
 
-**File**: `docs/appendices/release-notes/6.5.2.rst` (modified, +5/-0)
+We now fix this by logging and continuing statistics collection on other
+foreign tables, and also by improving the documentation
+
+**File**: `docs/admin/fdw.rst` (modified, +18/-0)
 ```diff
-@@ -66,3 +66,8 @@ Fixes
-   of several tables if the rename options ``schema_rename_replacement``
-   or ``table_rename_replacement`` mapped them to the same name.
-   Now it fails with an error, similar to clashes with an existing table.
+@@ -85,6 +85,24 @@ system::
+ 
+    Only `DQL` (Data Query Language) statements are supported on foreign tables.
+ 
++.. _administration-fdw-statistics:
 +
-+- Fixed an issue that could cause :ref:`JWT authentication <auth_jwt>` to
-+  hang if the issuer accepted the connection but never responded, when fetching
-+  the OpenID configuration or its keys. These requests now time out after
-+  ``5 seconds``.
-```
-
-**File**: `server/src/main/java/io/crate/auth/CachingJwkProvider.java` (modified, +21/-10)
-```diff
-@@ -60,22 +60,27 @@
-  */
- public class CachingJwkProvider implements JwkProvider {
- 
-+    private static final Duration TIMEOUT = Duration.ofSeconds(5);
++Collecting statistics on foreign tables
++=======================================
 +
-     private final URL url;
-     private final ObjectReader reader;
-     private final Clock clock;
-+    private final Duration timeout;
-     private volatile JwkResult cache;
- 
-     public CachingJwkProvider(String issuer) {
--        this(issuer, Clock.systemUTC());
-+        this(issuer, Clock.systemUTC(), TIMEOUT);
-     }
- 
--    CachingJwkProvider(String issuer, Clock clock) {
--        this.url = resolveJwksUrlForDomain(issuer);
-+    @VisibleForTesting
-+    CachingJwkProvider(String issuer, Clock clock, Duration timeout) {
-+        this.timeout = timeout;
-+        this.url = resolveJwksUrlForDomain(issuer, timeout);
-         this.clock = clock;
-         this.reader = new ObjectMapper().readerFor(Map.class);
-     }
- 
--    static URL resolveJwksUrlForDomain(String issuer) {
-+    private static URL resolveJwksUrlForDomain(String issuer, Duration timeout) {
-         if (Strings.isNullOrEmpty(issuer)) {
-             throw new IllegalArgumentException("Issuer is required");
-         }
-@@ -90,8 +95,7 @@ static URL resolveJwksUrlForDomain(String issuer) {
-                     ? issuer + ".well-known/openid-configuration"
-                     : issuer + "/.well-known/openid-configuration";
- 
--            URLConnection connection = new URI(discovery).toURL().openConnection();
--            connection.setRequestProperty("Accept", "application/json");
-+            URLConnection connection = openConnection(new URI(discovery).toURL(), timeout);
- 
-             try (InputStream in = connection.getInputStream()) {
-                 Map<String, Object> config = XContentHelper.convertToMap(JsonXContent.JSON_XCONTENT, in, false);
-@@ -102,7 +106,7 @@ static URL resolveJwksUrlForDomain(String issuer) {
-             }
- 
-         } catch (IOException | URISyntaxException | ElasticsearchParseException e) {
--            //  Preserve previous behavior so getKeys() reports: this add secondary requestHandler call 
-+            //  Preserve previous behavior so getKeys() reports: this add secondary requestHandler call
-             //  highlighting the original issuer URL and aprropriate Test case is added to JwtAuthenticationIntegrationTest
-             try {
-                 return new URI(issuer).normalize().toURL();
-@@ -111,7 +115,7 @@ static URL resolveJwksUrlForDomain(String issuer) {
-             }
-         }
-     }
--    
++In order to collect statistics on foreign tables via :ref:`analyze`, a user
++mapping for the ``crate`` superuser on the foreign server, pointing to a
++remote user with read access to the foreign table is required
++(ref:`ref-create-user-mapping`).
 +
-     @Override
-     public Jwk get(String keyId) throws JwkException {
-         var keys = cache;
-@@ -137,8 +141,7 @@ private JwkResult getKeys() {
-         final List<Map<String, Object>> keys;
-         final Duration ttl;
-         try {
--            final URLConnection c = this.url.openConnection();
--            c.setRequestProperty("Accept", "application/json");
-+            final URLConnection c = openConnection(this.url, timeout);
-             try (InputStream inputStream = c.getInputStream()) {
-                 Map<String, Object> result = reader.readValue(inputStream);
-                 keys = (List<Map<String, Object>>) result.get("keys");
-@@ -161,6 +164,14 @@ private JwkResult getKeys() {
-         return new JwkResult(clock.instant().plus(ttl), parsedKeys);
-     }
- 
-+    private static URLConnection openConnection(URL url, Duration timeout) throws IOException {
-+        URLConnection connection = url.openConnection();
-+        connection.setConnectTimeout(Math.toIntExact(timeout.toMillis()));
-+        connection.setReadTimeout(Math.toIntExact(timeout.toMillis()));
-+        connection.setRequestProperty("Accept", "application/json");
-+        return connection;
-+    }
++For example::
 +
-     private record JwkResult(Instant expirationTime, Map<String, Jwk> keys) {
++  CREATE USER MAPPING FOR crate
++  SERVER remote
++  OPTIONS (
++    "user" 'remote_user',
++    password '<PASSWORD>'
++  )
  
-         public boolean expired(Instant now) {
-```
-
-**File**: `server/src/test/java/io/crate/auth/CachingJwkProviderTest.java` (modified, +47/-0)
-```diff
-@@ -23,10 +23,19 @@
- 
- import static org.assertj.core.api.Assertions.assertThat;
- 
-+import java.net.InetAddress;
-+import java.net.ServerSocket;
-+import java.net.SocketTimeoutException;
-+import java.time.Clock;
- import java.time.Duration;
-+import java.util.concurrent.CompletableFuture;
-+import java.util.concurrent.CompletionException;
-+import java.util.concurrent.TimeUnit;
- 
- import org.junit.Test;
- 
-+import com.auth0.jwk.JwkException;
-+
- public class CachingJwkProviderTest {
- 
-     @Test
-@@ -46,4 +55,42 @@ public void test_get_cache_control_max_age_from_request() throws Exception {
-         duration = CachingJwkProvider.parseCacheControl("max-age=0");
-         assertThat(duration).isEqualTo(Duration.ZERO);
-     }
-+
-+    @Test
-+    public void test_resolving_the_jwk_url_times_out_if_the_issuer_does_not_respond() throws Exception {
-+        try (var server = new ServerSocket(0, 1, InetAddress.getLoopbackAddress())) {
-+            String issuer = "http://" + server.getInetAddress().getHostAddress() + ":" + server.getLocalPort();
-+
-+            // Run in separate thread, so the test fails instead of hanging if there is no timeout
-+            Duration timeout = Duration.ofMillis(10);
-+            var provider = CompletableFuture.supplyAsync(() -> new CachingJwkProvider(issuer, Clock.systemUTC(), timeout));
-+
-+            // Resolving the jwks url falls back to the issuer URL
-+            assertThat(provider).succeedsWithin(Duration.ofSeconds(1));
-+        }
-+    }
-+
-+    @Test
-+    public void test_fetching_the_keys_times_out_if_the_issuer_does_not_respond() throws Exception {
-+        try (var server = new ServerSocket(0, 0, InetAddress.getLoopbackAddress())) {
-+            String issuer = "http://" + server.getInetAddress().getHostAddress() + ":" + server.getLocalPort();
-+
-+            // Run in separate thread, so the test fails instead of hanging if there is no timeout
-+            Duration timeout = Duration.ofMillis(10);
-+            var keys = CompletableFuture.supplyAsync(() -> {
-+                var provider = new CachingJwkProvider(issuer, Clock.systemUTC(), timeout);
-+                try {
-+                    return provider.get("kid");
-+                } catch (JwkException e) {
-+                    throw new CompletionException(e);
-+                }
-+            });
-+
-+            Throwable error = keys.handle((_, e) -> e).get(1, TimeUnit.SECONDS);
-+            // The keys are fetched from the issuer URL, as resolving the jwks url fell back to it
-+            assertThat(error)
-+                .hasMessageContaining("Cannot obtain jwks from url " + issuer)
-+                .hasRootCauseInstanceOf(SocketTimeoutException.class);
-+        }
-+    }
- }
-```
-
----
-
-### Incident Patch 2: `ba9f695f` (2026-11-17)
-**Commit Message**: Return random ObjectType with innerType to replace `extendedType` workaround
-
-For random type testing the flow so far was:
-
-- Get random type
-- Generate one random value - which for objectType's with no innerTypes
-  added a `x` property with a random type value
-- If that type happens to be an object type: Guess that value's entries type's,
-  and create a new objectType with that inner type info via
-  `extendedType`
-- Get another data generator from that extended type, to create more
-  random values that match the first value
-
-This simplifies the flow. A `randomType()` that happens to be an
-`ObjectType` will now always already contain an `x` inner type.
-
-Motivated by `test_types_with_storage_can_be_inserted_and_queried` flaky
-test failure:
-
-    io.crate.exceptions.SQLParseException: Cannot cast object element `x` with value `363.44974860097324554` to type `numeric(18,17)`
-    	at __randomizedtesting.SeedInfo.seed([EE5AD6896ADA8D77:CB442BF5B481FFC9]:0)
-
-Which I couldn't reproduce, but maybe this helps debugging in case it
-happens again.
-
-**File**: `server/src/test/java/io/crate/expression/predicate/FieldExistsQueryTest.java` (modified, +1/-2)
-```diff
-@@ -237,8 +237,7 @@ public void test_is_null_on_columns_without_doc_values() throws Exception {
-             }
-             Supplier<?> dataGenerator = DataTypeTesting.getDataGenerator(type);
-             Object val1 = dataGenerator.get();
--            var extendedType = DataTypeTesting.extendedType(type, val1);
--            String typeDefinition = SqlFormatter.formatSql(extendedType.toColumnType(null));
-+            String typeDefinition = SqlFormatter.formatSql(type.toColumnType(null));
-             String tableName = "tbl_" + idx++;
-             String stmt = "create table " + tableName + " (id int primary key, x " + typeDefinition + " storage with (columnstore = false))";
-             QueryTester.Builder builder = new QueryTester.Builder(
-```
-
-**File**: `server/src/test/java/io/crate/expression/predicate/NotPredicateTest.java` (modified, +3/-3)
-```diff
-@@ -133,7 +133,7 @@ public void test_neq_on_array_types_with_non_empty_array_does_not_filter_empty_a
-                 THREAD_POOL,
-                 clusterService,
-                 Version.CURRENT,
--                "create table \"t_0_" + typeDefinition + "\" (xs array(" + typeDefinition + "))"
-+                "create table \"t_0_" + type.getName() + "\" (xs array(" + typeDefinition + "))"
-             ).indexValues("xs", values).build()) {
-                 List<Object> result = tester.runQuery("xs", query);
-                 Asserts.assertThat(result)
-@@ -181,7 +181,7 @@ public void test_neq_on_array_types_with_empty_array_does_not_filter_array_of_nu
-                 THREAD_POOL,
-                 clusterService,
-                 Version.CURRENT,
--                "create table \"t_0_" + typeDefinition + "\" (xs array(" + typeDefinition + "))"
-+                "create table \"t_0_" + type.getName() + "\" (xs array(" + typeDefinition + "))"
-             ).indexValues("xs", values).build()) {
-                 List<Object> result = tester.runQuery("xs", query);
-                 Asserts.assertThat(result)
-@@ -198,7 +198,7 @@ public void test_neq_on_array_types_with_empty_array_does_not_filter_array_of_nu
-                 THREAD_POOL,
-                 clusterService,
-                 Version.CURRENT,
--                "create table \"t_1_" + typeDefinition + "\" (xs array(" + typeDefinition + ") storage with (columnstore = false))"
-+                "create table \"t_1_" + type.getName() + "\" (xs array(" + typeDefinition + ") storage with (columnstore = false))"
-             ).indexValues("xs", values).build()) {
-                 List<Object> result = tester.runQuery("xs", query);
-                 Asserts.assertThat(result)
-```
-
-**File**: `server/src/test/java/io/crate/integrationtests/LuceneQueryBuilderIntegrationTest.java` (modified, +3/-3)
-```diff
-@@ -26,6 +26,7 @@
- import static io.crate.testing.Asserts.assertThat;
- import static io.crate.testing.DataTypeTesting.randomType;
- import static io.crate.testing.TestingHelpers.printedTable;
-+import static org.assertj.core.api.Assertions.assertThat;
- 
- import java.util.List;
- import java.util.function.Supplier;
-@@ -352,10 +353,9 @@ public void testNullOperators() throws Exception {
-         DataType<?> type = randomType();
-         Supplier<?> dataGenerator = DataTypeTesting.getDataGenerator(type);
-         Object val1 = dataGenerator.get();
--        var extendedType = DataTypeTesting.extendedType(type, val1);
--        Object val2 = DataTypeTesting.getDataGenerator(extendedType).get();
-+        Object val2 = dataGenerator.get();
- 
--        String typeDefinition = SqlFormatter.formatSql(extendedType.toColumnType(null));
-+        String typeDefinition = SqlFormatter.formatSql(type.toColumnType(null));
-         execute("create table t1 (c " + typeDefinition + ") with (number_of_replicas = 0)");
- 
-         Object[][] bulkArgs = $$($(val1), $(val2), new Object[]{null});
-```
-
-**File**: `server/src/test/java/io/crate/integrationtests/TransportSQLActionTest.java` (modified, +2/-4)
-```diff
-@@ -1893,7 +1893,6 @@ public void test_bit_string_can_be_inserted_and_queried() throws Exception {
-         );
-     }
- 
--
-     @Test
-     @UseJdbc(0)
-     @SuppressWarnings({"unchecked"})
-@@ -1905,9 +1904,8 @@ public void test_types_with_storage_can_be_inserted_and_queried() {
-             }
-             Supplier<?> dataGenerator = DataTypeTesting.getDataGenerator(type);
-             Object val1 = dataGenerator.get();
--            var extendedType = DataTypeTesting.extendedType(type, val1);
--            Object val2 = DataTypeTesting.getDataGenerator(extendedType).get();
--            String typeDefinition = SqlFormatter.formatSql(extendedType.toColumnType(null));
-+            Object val2 = dataGenerator.get();
-+            String typeDefinition = SqlFormatter.formatSql(type.toColumnType(null));
-             execute("create table tbl (id int primary key, x " + typeDefinition + ")");
-             execute("insert into tbl (id, x) values (?, ?)", new Object[] { 1, val1 });
-             execute("insert into tbl (id, x) values (?, ?)", new Object[] { 2, val2 });
-```
-
-**File**: `server/src/testFixtures/java/io/crate/testing/DataTypeTesting.java` (modified, +14/-30)
-```diff
-@@ -48,7 +48,6 @@
- 
- import io.crate.protocols.postgres.types.PGTypes;
- import io.crate.sql.tree.BitString;
--import io.crate.sql.tree.ColumnPolicy;
- import io.crate.types.ArrayType;
- import io.crate.types.BitStringType;
- import io.crate.types.BooleanType;
-@@ -68,7 +67,6 @@
- import io.crate.types.LongType;
- import io.crate.types.NumericType;
- import io.crate.types.ObjectType;
--import io.crate.types.ObjectType.Builder;
- import io.crate.types.Regclass;
- import io.crate.types.RegclassType;
- import io.crate.types.Regtype;
-@@ -83,33 +81,42 @@ public final class DataTypeTesting {
- 
-     private DataTypeTesting() {}
- 
--    public static Set<DataType<?>> getStorableTypesExceptArrays(Random random) {
-+    public static Set<DataType<?>> getStorableTypesExceptArrays(Random random, Set<Integer> excluding) {
-         return DataTypes.TYPES_BY_NAME_OR_ALIAS
-             .values().stream()
-+            .filter(t -> !excluding.contains(t.id()))
-             .map(type -> {
-                 // Numeric needs precision to support storage
-                 if (type instanceof NumericType) {
-                     int precision = random.nextInt(2, 39);
-                     int scale = random.nextInt(0, precision - 1);
-                     return new NumericType(precision, scale);
-+                } else if (type instanceof ObjectType objectType && objectType.innerTypes().isEmpty()) {
-+                    DataType<?> innerType = RandomPicks.randomFrom(random, getStorableTypesExceptArrays(random, Set.of(ObjectType.ID)));
-+                    return ObjectType.of(objectType.columnPolicy())
-+                        .setInnerType("x", innerType)
-+                        .build();
-                 }
-                 return type;
-             })
-             .filter(x -> x.storageSupport() != null && x.id() != ArrayType.ID && x.id() != UndefinedType.ID)
-             .collect(Collectors.toSet());
-     }
- 
-+    public static Set<DataType<?>> getStorableTypesExceptArrays(Random random) {
-+        return getStorableTypesExceptArrays(random, Set.of());
-+    }
-+
-     public static DataType<?> randomType() {
-         Random random = RandomizedContext.current().getRandom();
-         return RandomPicks.randomFrom(random, getStorableTypesExceptArrays(random));
-     }
- 
-     public static DataType<?> randomTypeExcluding(Set<DataType<?>> excluding) {
-         Random random = RandomizedContext.current().getRandom();
--        Set<DataType<?>> pickFrom = getStorableTypesExceptArrays(random).stream()
--            .filter(t -> excluding.contains(t) == false)
--            .collect(Collectors.toSet());
--        return RandomPicks.randomFrom(random, pickFrom);
-+        Set<Integer> excludedTypeIds = excluding.stream().map(t -> t.id()).collect(Collectors.toSet());
-+        Set<DataType<?>> candidates = getStorableTypesExceptArrays(random, excludedTypeIds);
-+        return RandomPicks.randomFrom(random, candidates);
-     }
- 
-     @SuppressWarnings("unchecked")
-@@ -287,29 +294,6 @@ public static <T> Supplier<T> getDataGenerator(DataType<T> type) {
-         }
-     }
- 
--    /**
--     * Adds innerTypes to object type definitions
--     **/
--    public static DataType<?> extendedType(DataType<?> type, Object value) {
--        if (type.id() == ObjectType.ID) {
--            var entryIt = ((Map<?, ?>) value).entrySet().iterator();
--            Builder builder = ObjectType.of(ColumnPolicy.DYNAMIC);
--            while (entryIt.hasNext()) {
--                var entry = entryIt.next();
--                String innerName = (String) entry.getKey();
--                Object innerValue = entry.getValue();
--                DataType<?> innerType = DataTypes.guessType(innerValue);
--                if (innerType.id() == ObjectType.ID && innerValue instanceof Map<?, ?> m && m.containsKey("coordinates")) {
--                    innerType = DataTypes.GEO_SHAPE;
--                }
--                builder.setInnerType(innerName, extendedType(innerType, innerValue));
--            }
--            return builder.build();
--        } else {
--            return type;
--        }
--    }
--
-     private static String randomIPv6Address(Random random) {
-         String[] parts = new String[8];
-         for (int i = 0; i < 8; i++) {
-```
-
----
-
-### Incident Patch 3: `a7ec29a7` (2026-11-17)
-**Commit Message**: Require AL privs to change own JWT properties
-
-Since JWT is an admin defined way to authorize users in the database,
-the jwt properties should only be altered or reset by admins.
-
-**File**: `docs/admin/privileges.rst` (modified, +2/-0)
-```diff
-@@ -115,6 +115,8 @@ the user/role to execute the following statements:
- 
- - ``CREATE USER/ROLE``
- - ``DROP USER/ROLE``
-+- ``ALTER USER/ROLE`` on other users or roles, and ``ALTER USER`` changing the
-+  :ref:`JWT properties <auth_jwt>`. of any user, including their own.
- - ``SET GLOBAL``
- - ``RESTORE SNAPSHOT``, if the restored sections include user management
-   metadata, see :ref:`sql-restore-snapshot` for details.
-```
-
-**File**: `docs/appendices/release-notes/6.6.0.rst` (modified, +3/-0)
-```diff
-@@ -123,6 +123,9 @@ Administration and Operations
-   apply to foreign tables and views. Previously, they were always restored
-   under their original names.
- 
-+- Changed :ref:`ALTER USER <ref-alter-user>` to require the ``AL`` privilege
-+  when setting or resetting their own :ref:`JWT properties <auth_jwt>`.
-+
- Client interfaces
- -----------------
+ .. _administration-fdw-jdbc:
  
 ```
 
-**File**: `docs/sql/statements/alter-role.rst` (modified, +7/-1)
+**File**: `docs/appendices/release-notes/6.5.2.rst` (modified, +6/-0)
 ```diff
-@@ -22,7 +22,8 @@ Description
- 
- ``ALTER ROLE SET`` applies a change to an existing database user or role.
- Superusers and users with ``AL`` privileges can modify other roles. Every role
--has permission to modify themselves.
-+has permission to modify themselves, except for the ``jwt`` properties, which
-+require ``AL`` privileges.
- 
- ``ALTER ROLE RESET`` resets modifiable
- :ref:`session settings <conf-session>` to their default value, or removes the
-@@ -70,6 +71,11 @@ are supported to alter an existing user account:
-     If :ref:`auth.host_based.jwt.iss <auth.host_based.jwt.iss>` is set,
-     user specific properties are ignored and :ref:`jwt_defaults` are used.
- 
-+.. NOTE::
+@@ -78,3 +78,9 @@ Fixes
+ - Fixed an issue that caused an error with the message
+   ``Couldn't find x in SourceSymbols`` in certain queries with aliased columns
+   and with the ``optimizer_rewrite_to_query_then_fetch`` enabled.
 +
-+    Setting or resetting JWT properties requires ``AL`` privileges, also when
-+    users alter themselves.
-+
- .. NOTE::
- 
-    ``jwt = {...}`` overrides existing jwt properties. If an optional property
++- Fixed an issue where statistics gathering on foreign tables would abort and
++  raise a ``PSQLException[FATAL: role "crate" does not exist]`` if
++  there was no mapping of the ``crate`` superuser to the foreign server pointing
++  to a remote user with read access on the foreign table. Also improved documentation
++  on this required mapping. See :ref:`administration-fdw-statistics`.
 ```
 
-**File**: `server/src/main/java/io/crate/auth/AccessControlImpl.java` (modified, +4/-2)
+**File**: `docs/sql/statements/analyze.rst` (modified, +3/-0)
 ```diff
-@@ -373,8 +373,10 @@ public Void visitRerouteRetryFailedStatement(AnalyzedRerouteRetryFailed rerouteR
- 
-         @Override
-         public Void visitAnalyzedAlterRole(AnalyzedAlterRole analysis, Role user) {
--            // user is allowed to change it's own properties
--            if (analysis.roleName().equals(user.name())) {
-+            // user is allowed to change it's own properties, except JWT properties,
-+            // which define how the user is authenticated and thus require AL privileges
-+            if (analysis.roleName().equals(user.name())
-+                && analysis.properties().contains(Role.Properties.JWT_KEY) == false) {
-                 return null;
-             }
-             hasALPrivileges(user);
+@@ -34,3 +34,6 @@ I/O throughput during collection of statistics can be throttled with the
+ setting. Changes to this setting can be made and take effect while an analysis
+ is in progress, thus it's possible to adjust optimal value for a concrete setup
+ by trying different values while ``ANALYZE`` is running.
++
++For collecting statistics on foreign tables, please see
++:ref:`administration-fdw-statistics`.
 ```
 
-**File**: `server/src/test/java/io/crate/auth/AccessControlMayExecuteTest.java` (modified, +18/-0)
+**File**: `server/src/main/java/io/crate/statistics/TransportAnalyzeAction.java` (modified, +4/-0)
 ```diff
-@@ -230,6 +230,24 @@ public void testAlterOwnUserIsAllowed() {
-         assertThat(validationCallArguments).isEmpty();
-     }
- 
-+    @Test
-+    public void test_alter_own_user_jwt_requires_al_permission() {
-+        analyze("alter user normal set (jwt = {\"iss\" = 'https://example.com', \"username\" = 'other'})");
-+        assertAskedForCluster(Permission.AL);
-+    }
-+
-+    @Test
-+    public void test_reset_own_user_jwt_requires_al_permission() {
-+        analyze("alter user normal reset jwt");
-+        assertAskedForCluster(Permission.AL);
-+    }
-+
-+    @Test
-+    public void test_reset_all_own_user_is_allowed() {
-+        analyze("alter user normal reset all");
-+        assertThat(validationCallArguments).isEmpty();
-+    }
-+
-     @Test
-     public void test_set_global_statements_can_be_executed_with_al_cluster_privileges() throws Exception {
-         analyze("set global stats.enabled = true");
+@@ -184,6 +184,10 @@ public CompletableFuture<AcknowledgedResponse> fetchSamplesThenGenerateAndPublis
+                         systemTxnCtx,
+                         List.of()
+                     ))
++                    .exceptionally(err -> {
++                        LOGGER.warn("Skipping statistics collection for foreign table {}: {}", foreignTable.ident(), err.getMessage(), err);
++                        return Stats.EMPTY;
++                    })
+                     .thenAccept(foreignStats -> {
+                         if (foreignStats != null && !foreignStats.isEmpty()) {
+                             entries.put(foreignTable.ident(), foreignStats);
 ```
 
 #### Recent Merged Pull Requests:
+- **PR #20619** (2026-11-18):   Fix exception during ANALYZE when no crate superuser mapping to remote server (backport #20590) (@mergify[bot])
+- **PR #20618** (2026-11-18): Fix OpenDAL operator leak and thread leaks (@mfussenegger)
 - **PR #20616** (2026-11-17):  Fix RewriteToQueryThenFetch dropping an aliased column  (backport #20615) (@mergify[bot])
 - **PR #20615** (2026-11-17):  Fix RewriteToQueryThenFetch dropping an aliased column  (@hariso)
 - **PR #20614** (2026-11-17): Fix logical replication not resuming after subscriber shard recovery (backport #20575) (@mergify[bot])
 - **PR #20613** (2026-11-17): Remove ExtraFunctionsPlugin (@mfussenegger)
-- **PR #20612** (2026-11-17): docs: Clarify ALTER USER RESET <param>/ALL (backport #20611) (@mergify[bot])
-- **PR #20611** (2026-11-17): docs: Clarify ALTER USER RESET <param>/ALL (@matriv)
 
 ---
 
@@ -1097,25 +676,38 @@ the jwt properties should only be altered or reset by admins.
 
 ## 6. Net-New Universal Engineering Rules (Candidates for Master Brain)
 
-## X. Add connect and read timeouts to JWKS fetches
+## X. exception during ANALYZE when no crate superuser mapping to remote
 
 **RULE**:
-When implementing operations in `docs/appendices/release-notes/6.5.2.rst`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in crate/crate. All inputs crossing module boundaries must be explicitly verified before state persistence.
+When implementing operations in `docs/admin/fdw.rst`, engineers MUST enforce rigorous boundary validation, safe state transitions, and memory/concurrency invariants as established by production defect remediation in crate/crate. All inputs crossing module boundaries must be explicitly verified before state persistence.
 
 **WHY**:
-Prevents defects observed in production commit `e80e2ec6`: Add connect and read timeouts to JWKS fetches. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
+Prevents defects observed in production commit `98aa881e`: exception during ANALYZE when no crate superuser mapping to remote. Unvalidated execution paths cause runtime exceptions, race conditions, and silent state corruption under concurrent workloads.
 
 **WHEN TO APPLY**:
-Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/appendices/release-notes/6.5.2.rst`.
+Subsystems managing Java data structures, boundary deserialization, API parsing, or resource lifecycles matching `docs/admin/fdw.rst`.
 
 **VERIFIED IMPLEMENTATION PATTERN**:
 ```java
 // Verified production-grade fix pattern:
+.. _administration-fdw-statistics:
 
-- Fixed an issue that could cause :ref:`JWT authentication <auth_jwt>` to
-  hang if the issuer accepted the connection but never responded, when fetching
-  the OpenID configuration or its keys. These requests now time out after
-  ``5 seconds``.
+Collecting statistics on foreign tables
+=======================================
+
+In order to collect statistics on foreign tables via :ref:`analyze`, a user
+mapping for the ``crate`` superuser on the foreign server, pointing to a
+remote user with read access to the foreign table is required
+(ref:`ref-create-user-mapping`).
+
+For example::
+
+  CREATE USER MAPPING FOR crate
+  SERVER remote
+  OPTIONS (
+    "user" 'remote_user',
+    password '<PASSWORD>'
+  )
 ```
 
 **NEGATIVE CONSTRAINT**:
@@ -1125,7 +717,7 @@ Subsystems managing Java data structures, boundary deserialization, API parsing,
 ```
 
 **VERIFICATION METHOD**:
-Automated regression test asserting that input states reproducing defect `e80e2ec6` are properly handled with clean fallback behavior.
+Automated regression test asserting that input states reproducing defect `98aa881e` are properly handled with clean fallback behavior.
 
 
 ## 3. Independent Verification Protocol

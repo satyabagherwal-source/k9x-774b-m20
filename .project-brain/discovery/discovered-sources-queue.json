@@ -2,14 +2,14 @@
   "version": "1.0.0",
   "name": "AI-Builder-Brain Dynamic Discovered Sources Queue",
   "created_at": "2026-11-11T16:56:05.344Z",
-  "updated_at": "2026-11-18T13:57:08.403Z",
+  "updated_at": "2026-11-18T14:32:20.142Z",
   "stats": {
-    "total_discovered": 5521,
-    "approved_pending_harvest": 5216,
+    "total_discovered": 5522,
+    "approved_pending_harvest": 5217,
     "harvested_count": 0,
     "rejected_count": 305,
     "category_distribution": {
-      "COMMUNITY_AND_EXPERT": 5199,
+      "COMMUNITY_AND_EXPERT": 5200,
       "OFFICIAL_DOCUMENTATION": 177,
       "STANDARDS_AND_SPECIFICATIONS": 109,
       "ENGINEERING_BLOGS": 4,
@@ -119348,6 +119348,28 @@
       "discovered_from": {
         "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/paradedb-paradedb-learnings.md",
         "fileName": "paradedb-paradedb-learnings.md"
+      }
+    },
+    "SRC-88A0850201B8": {
+      "id": "SRC-88A0850201B8",
+      "url": "https://github.com/crate/crate/issues/20580",
+      "title": "https://github.com/crate/crate/issues/20580",
+      "invariantSummary": null,
+      "status": "APPROVED_PENDING_HARVEST",
+      "category": "COMMUNITY_AND_EXPERT",
+      "authorityTier": "COMMUNITY_LEAD",
+      "trustScore": 0.75,
+      "primaryDomains": [
+        "H"
+      ],
+      "retry_count": 0,
+      "max_retries": 3,
+      "last_attempt_at": null,
+      "harvested_at": null,
+      "discovered_at": "2026-11-18T14:32:20.142Z",
+      "discovered_from": {
+        "filePath": "/home/runner/work/k9x-774b-m20/k9x-774b-m20/07_PROJECT_LEARNING/crate-crate-learnings.md",
+        "fileName": "crate-crate-learnings.md"
       }
     }
   }

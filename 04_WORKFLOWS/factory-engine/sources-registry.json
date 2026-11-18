@@ -69,8 +69,8 @@
     "officialUrl": "https://github.com/satyabagherwal-source/k9x-774b-m20",
     "sourceType": "self-referential-metasystem",
     "technology": "autonomous-agent-framework",
-    "lastChecked": "2026-11-18T14:24:28.175Z",
-    "lastVerified": "2026-11-18T14:24:28.175Z",
+    "lastChecked": "2026-11-18T14:32:19.541Z",
+    "lastVerified": "2026-11-18T14:32:19.541Z",
     "harvestMode": "SELF_REFERENTIAL_META_LEARNER",
     "learningStatus": "VERIFIED",
     "classification": "TIER_1_CANONICAL_METASYSTEM",
@@ -220,9 +220,9 @@
   "synalinks-synalinks-skills": {
     "name": "synalinks-skills",
     "officialUrl": "https://github.com/SynaLinks/synalinks-skills",
-    "lastChecked": "2026-11-18T13:56:59.631Z",
+    "lastChecked": "2026-11-18T14:32:11.984Z",
     "revisionIdentifier": "17532841",
-    "lastVerified": "2026-11-18T13:56:59.631Z"
+    "lastVerified": "2026-11-18T14:32:11.984Z"
   },
   "herdrdev-herdr": {
     "name": "herdr",
@@ -275,9 +275,9 @@
   "openziti-zrok": {
     "name": "zrok",
     "officialUrl": "https://github.com/openziti/zrok",
-    "lastChecked": "2026-11-18T09:57:18.489Z",
+    "lastChecked": "2026-11-18T14:32:07.046Z",
     "revisionIdentifier": "1a535cfa",
-    "lastVerified": "2026-11-18T09:57:18.489Z"
+    "lastVerified": "2026-11-18T14:32:07.046Z"
   },
   "run-llama-llama_index": {
     "name": "llama_index",
@@ -2193,5 +2193,60 @@
     "lastChecked": "2026-11-18T14:24:15.693Z",
     "revisionIdentifier": "aec98ced",
     "lastVerified": "2026-11-18T14:24:15.693Z"
+  },
+  "kuddev-pebrel": {
+    "name": "pebrel",
+    "officialUrl": "https://github.com/Kuddev/pebrel",
+    "lastChecked": "2026-11-18T14:31:57.066Z",
+    "revisionIdentifier": "303a7f4e",
+    "lastVerified": "2026-11-18T14:31:57.066Z"
+  },
+  "hf-xiaomimimo-mimo-v2.6-distill-qwen-9b": {
+    "name": "XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
+    "officialUrl": "https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
+    "sourceType": "hugging face",
+    "technology": "ai-model",
+    "lastChecked": "2026-11-18T14:31:59.903Z",
+    "lastVerified": "2026-11-18T14:31:59.903Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-huggingface-xiaomimimo-mimo-v2-6-distill-qwen-9b",
+    "contentHash": "d2b2bd055fa5e88d57ef69a4ce79288cf854d4e7797d71f59a00d0a522ef62b4",
+    "promotedRulesCount": 0,
+    "recentFixesCount": 0,
+    "closedIssuesCount": 0,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
+  },
+  "welldone-software-why-did-you-render": {
+    "name": "why-did-you-render",
+    "officialUrl": "https://github.com/welldone-software/why-did-you-render",
+    "lastChecked": "2026-11-18T14:32:02.118Z",
+    "revisionIdentifier": "3ec3512d",
+    "lastVerified": "2026-11-18T14:32:02.118Z"
+  },
+  "goodrain-rainbond": {
+    "name": "rainbond",
+    "officialUrl": "https://github.com/goodrain/rainbond",
+    "lastChecked": "2026-11-18T14:32:04.609Z",
+    "revisionIdentifier": "5508cd38",
+    "lastVerified": "2026-11-18T14:32:04.609Z"
+  },
+  "crate-crate": {
+    "name": "crate/crate",
+    "officialUrl": "https://github.com/crate/crate",
+    "sourceType": "github",
+    "technology": "Java",
+    "lastChecked": "2026-11-18T14:32:15.323Z",
+    "lastVerified": "2026-11-18T14:32:15.323Z",
+    "harvestMode": "ZERO_CLONE_API",
+    "learningStatus": "VERIFIED_LEARNING",
+    "learningId": "learn-github-crate-crate",
+    "contentHash": "0a651b5f501251f3070918e7c54eb72dc0a6224a99a04dfade5bd1e6c891d456",
+    "promotedRulesCount": 1,
+    "recentFixesCount": 1,
+    "closedIssuesCount": 2,
+    "verificationMethod": "public-api-audit",
+    "compliance": "FREE_TIER_COMPLIANT"
   }
 }

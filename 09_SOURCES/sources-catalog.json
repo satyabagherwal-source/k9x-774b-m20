@@ -495,8 +495,8 @@
     "sourceUrl": "https://huggingface.co/XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B",
     "sourceVersion": "hf-xiaomimimo-mimo-v2.6-distill-qwen-9b",
     "license": "Open-Source",
-    "contentHash": "ff89425170674d3178b4eeb60f076f3c1639fd3f54b3cd7f222f21cd56b264fb",
-    "lastHarvestedAt": "2026-11-18T04:37:22.097Z",
+    "contentHash": "d2b2bd055fa5e88d57ef69a4ce79288cf854d4e7797d71f59a00d0a522ef62b4",
+    "lastHarvestedAt": "2026-11-18T14:32:00.517Z",
     "learningId": "learn-huggingface-xiaomimimo-mimo-v2-6-distill-qwen-9b"
   },
   "hf-inclusionai-ming-image-0.1-design": {
@@ -2223,10 +2223,10 @@
     "repository": "crate/crate",
     "platform": "github",
     "sourceUrl": "https://github.com/crate/crate",
-    "sourceVersion": "bf89cdfb",
+    "sourceVersion": "20da9e4b",
     "license": "Apache-2.0",
-    "contentHash": "9d66194101a98e7569ae33a73b5aa00c91ee58ac133638a0bff0b5f2db0c1b54",
-    "lastHarvestedAt": "2026-11-17T20:45:40.340Z",
+    "contentHash": "0a651b5f501251f3070918e7c54eb72dc0a6224a99a04dfade5bd1e6c891d456",
+    "lastHarvestedAt": "2026-11-18T14:32:16.361Z",
     "learningId": "learn-github-crate-crate"
   },
   "nucleoidai-nucleoid": {

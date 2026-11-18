@@ -11005,3 +11005,5 @@
 | `CYCLE-20261118-PH8W` | `2026-11-18T14:24:06.800Z` | `akhilaaa3/Jev-Omni` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-akhilaaa3-jev-omni-learnings.md` | Yes (`6ec93e8f...`) |
 | `CYCLE-20261118-PP6V` | `2026-11-18T14:24:17.095Z` | `nats-io/nats.go` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9243` | Yes (`d37c954f...`) |
 | `CYCLE-20261118-PV6F` | `2026-11-18T14:24:24.855Z` | `dathere/qsv` | Commit diff / Patch analysis | `VERIFIED` | `Rule EXISTING` | Yes (`456c93c9...`) |
+| `CYCLE-20261118-ZMRL` | `2026-11-18T14:32:00.513Z` | `XiaomiMiMo/MiMo-V2.6-Distill-Qwen-9B` | Commit diff / Patch analysis | `PROJECT_ONLY` | `07_PROJECT_LEARNING/hf-xiaomimimo-mimo-v2.6-distill-qwen-9b-learnings.md` | Yes (`d2b2bd05...`) |
+| `CYCLE-20261118-ZYZP` | `2026-11-18T14:32:16.357Z` | `crate/crate` | Commit diff / Patch analysis | `VERIFIED` | `Rule 9244` | Yes (`0a651b5f...`) |
